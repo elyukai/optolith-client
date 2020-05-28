@@ -3,6 +3,7 @@ import { Just, Maybe } from "../../../Data/Maybe"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
+import { V } from "../../Utilities/Variant"
 import { Item } from "../Hero/Item"
 import { OverridePrerequisite } from "../Static_Prerequisites.gen"
 import { CultureCombined } from "../View/CultureCombined"
@@ -84,58 +85,59 @@ export interface WikiEntryRecordByCategory {
   "TALENTS": Record<Skill>
 }
 
-export type EntryWithGroup = Record<CombatTechnique>
-                           | Record<LiturgicalChant>
-                           | Record<SpecialAbility>
-                           | Record<Spell>
-                           | Record<Skill>
+export type EntryWithGroup = V<"CombatTechnique", CombatTechnique>
+                           | V<"LiturgicalChant", LiturgicalChant>
+                           | V<"SpecialAbility", SpecialAbility>
+                           | V<"Spell", Spell>
+                           | V<"Skill", Skill>
 
-export type IncreasableEntry = Record<Attribute>
-                             | Record<Spell>
-                             | Record<LiturgicalChant>
-                             | Record<Skill>
-                             | Record<CombatTechnique>
+export type IncreasableEntry = V<"Attribute", Attribute>
+                             | V<"Spell", Spell>
+                             | V<"LiturgicalChant", LiturgicalChant>
+                             | V<"Skill", Skill>
+                             | V<"CombatTechnique", CombatTechnique>
 
-export type SkillishEntry = Record<Spell>
-                          | Record<LiturgicalChant>
-                          | Record<Skill>
-                          | Record<CombatTechnique>
+export type SkillishEntry = V<"Spell", Spell>
+                          | V<"LiturgicalChant", LiturgicalChant>
+                          | V<"Skill", Skill>
+                          | V<"CombatTechnique", CombatTechnique>
 
-export type ActivatableSkillEntry = Record<Spell>
-                                  | Record<LiturgicalChant>
+export type ActivatableSkillEntry = V<"Spell", Spell>
+                                  | V<"LiturgicalChant", LiturgicalChant>
 
-export type Entry = EntryWithCategory | Record<ItemTemplate>
+export type Entry = EntryWithCategory
+                  | Record<ItemTemplate>
 
-export type InlineWikiEntry = Record<RaceCombined>
-                            | Record<CultureCombined>
-                            | Record<ProfessionCombined>
-                            | Record<Advantage>
-                            | Record<Disadvantage>
-                            | Record<Skill>
-                            | Record<CombatTechnique>
-                            | Record<SpecialAbility>
-                            | Record<Spell>
-                            | Record<Cantrip>
-                            | Record<LiturgicalChant>
-                            | Record<Blessing>
-                            | Record<Item>
-                            | Record<ItemTemplate>
+export type InlineWikiEntry = V<"RaceCombined", RaceCombined>
+                            | V<"CultureCombined", CultureCombined>
+                            | V<"ProfessionCombined", ProfessionCombined>
+                            | V<"Advantage", Advantage>
+                            | V<"Disadvantage", Disadvantage>
+                            | V<"Skill", Skill>
+                            | V<"CombatTechnique", CombatTechnique>
+                            | V<"SpecialAbility", SpecialAbility>
+                            | V<"Spell", Spell>
+                            | V<"Cantrip", Cantrip>
+                            | V<"LiturgicalChant", LiturgicalChant>
+                            | V<"Blessing", Blessing>
+                            | V<"Item", Item>
+                            | V<"ItemTemplate", ItemTemplate>
 
-export type EntryWithCategory = Record<Race>
-                              | Record<RaceVariant>
-                              | Record<Culture>
-                              | Record<Profession>
-                              | Record<ProfessionVariant>
-                              | Record<Attribute>
-                              | Record<Advantage>
-                              | Record<Disadvantage>
-                              | Record<Skill>
-                              | Record<CombatTechnique>
-                              | Record<SpecialAbility>
-                              | Record<Spell>
-                              | Record<Cantrip>
-                              | Record<LiturgicalChant>
-                              | Record<Blessing>
+export type EntryWithCategory = V<"Race", Race>
+                              | V<"RaceVariant", RaceVariant>
+                              | V<"Culture", Culture>
+                              | V<"Profession", Profession>
+                              | V<"ProfessionVariant", ProfessionVariant>
+                              | V<"Attribute", Attribute>
+                              | V<"Advantage", Advantage>
+                              | V<"Disadvantage", Disadvantage>
+                              | V<"Skill", Skill>
+                              | V<"CombatTechnique", CombatTechnique>
+                              | V<"SpecialAbility", SpecialAbility>
+                              | V<"Spell", Spell>
+                              | V<"Cantrip", Cantrip>
+                              | V<"LiturgicalChant", LiturgicalChant>
+                              | V<"Blessing", Blessing>
 
 export enum ProfessionSelectionIds {
   SPECIALIZATION = "SPECIALISATION",
@@ -150,33 +152,34 @@ export enum ProfessionSelectionIds {
   GUILD_MAGE_UNFAMILIAR_SPELL = "GUILD_MAGE_UNFAMILIAR_SPELL",
 }
 
-export type AnyProfessionSelection =
-  Record<SpecializationSelection> |
-  Record<LanguagesScriptsSelection> |
-  Record<CombatTechniquesSelection> |
-  Record<CombatTechniquesSecondSelection> |
-  Record<CantripsSelection> |
-  Record<CursesSelection> |
-  Record<SkillsSelection> |
-  Record<TerrainKnowledgeSelection>
+export type AnyProfessionSelection = V<"SpecializationSelection", SpecializationSelection>
+                                   | V<"LanguagesScriptsSelection", LanguagesScriptsSelection>
+                                   | V<"CombatTechniquesSelection", CombatTechniquesSelection>
+                                   | V<
+                                       "CombatTechniquesSecondSelection",
+                                       CombatTechniquesSecondSelection
+                                     >
+                                   | V<"CantripsSelection", CantripsSelection>
+                                   | V<"CursesSelection", CursesSelection>
+                                   | V<"SkillsSelection", SkillsSelection>
+                                   | V<"TerrainKnowledgeSelection", TerrainKnowledgeSelection>
 
-export type AnyProfessionVariantSelection =
-  VariantSpecializationSelection |
-  Record<LanguagesScriptsSelection> |
-  VariantCombatTechniquesSelection |
-  VariantCombatTechniquesSecondSelection |
-  Record<CantripsSelection> |
-  Record<CursesSelection> |
-  Record<SkillsSelection> |
-  Record<TerrainKnowledgeSelection>
+export type AnyProfessionVariantSelection = VariantSpecializationSelection
+                                          | Record<LanguagesScriptsSelection>
+                                          | VariantCombatTechniquesSelection
+                                          | VariantCombatTechniquesSecondSelection
+                                          | Record<CantripsSelection>
+                                          | Record<CursesSelection>
+                                          | Record<SkillsSelection>
+                                          | Record<TerrainKnowledgeSelection>
 
-export type AllRequirements = "RCP" | AllRequirementObjects
+export type AllRequirements = "RCP"
+                            | AllRequirementObjects
+
 export type ActivatablePrerequisites = List<AllRequirements>
 
-export type LevelAwarePrerequisites =
-  ActivatablePrerequisites |
-  OrderedMap<number, ActivatablePrerequisites>
-
+export type LevelAwarePrerequisites = ActivatablePrerequisites
+                                    | OrderedMap<number, ActivatablePrerequisites>
 
 type Prerequisites_tIndex = Readonly<{
   sex?: OverridePrerequisite
@@ -236,18 +239,18 @@ export interface SkillExtension extends SelectOption {
   effect: string
 }
 
-export type Activatable = Record<Advantage>
-                        | Record<Disadvantage>
-                        | Record<SpecialAbility>
+export type Activatable = V<"Advantage", Advantage>
+                        | V<"Disadvantage", Disadvantage>
+                        | V<"SpecialAbility", SpecialAbility>
 
-export type EntryWithCheck = Record<Spell>
-                           | Record<LiturgicalChant>
-                           | Record<Skill>
+export type EntryWithCheck = V<"Spell", Spell>
+                           | V<"LiturgicalChant", LiturgicalChant>
+                           | V<"Skill", Skill>
 
-export type Skillish = Record<Spell>
-                     | Record<LiturgicalChant>
-                     | Record<Skill>
-                     | Record<CombatTechnique>
+export type Skillish = V<"Spell", Spell>
+                     | V<"LiturgicalChant", LiturgicalChant>
+                     | V<"Skill", Skill>
+                     | V<"CombatTechnique", CombatTechnique>
 
 export type SID = string | number | NonEmptyList<number>
 
@@ -275,37 +278,33 @@ export interface ActiveOptionalDependency extends ActiveDependency {
   origin: string
 }
 
-export type ProfessionDependency =
-  Record<SexRequirement> |
-  Record<RaceRequirement> |
-  Record<CultureRequirement>
+export type ProfessionDependency = V<"SexRequirement", SexRequirement>
+                                 | V<"RaceRequirement", RaceRequirement>
+                                 | V<"CultureRequirement", CultureRequirement>
 
-export type ProfessionPrerequisite =
-  Record<ProfessionRequireActivatable> |
-  Record<ProfessionRequireIncreasable>
+export type ProfessionPrerequisite = V<"ProfessionRequireActivatable", ProfessionRequireActivatable>
+                                   | V<"ProfessionRequireIncreasable", ProfessionRequireIncreasable>
 
-export type AbilityRequirement =
-  Record<RequireActivatable> |
-  Record<RequireIncreasable>
+export type AbilityRequirement = V<"RequireActivatable", RequireActivatable>
+                               | V<"RequireIncreasable", RequireIncreasable>
 
-export type DependentPrerequisite =
-  Record<RequireActivatable> |
-  Record<RequireIncreasable> |
-  Record<RequirePrimaryAttribute>
+export type DependentPrerequisite = V<"RequireActivatable", RequireActivatable>
+                                  | V<"RequireIncreasable", RequireIncreasable>
+                                  | V<"RequirePrimaryAttribute", RequirePrimaryAttribute>
 
-export type PrerequisitesWithIds = Record<RequireActivatable>
-                                 | Record<RequireIncreasable>
-                                 | Record<RequirePrimaryAttribute>
-                                 | Record<SexRequirement>
-                                 | Record<RaceRequirement>
-                                 | Record<CultureRequirement>
-                                 | Record<PactRequirement>
+export type PrerequisitesWithIds = V<"RequireActivatable", RequireActivatable>
+                                 | V<"RequireIncreasable", RequireIncreasable>
+                                 | V<"RequirePrimaryAttribute", RequirePrimaryAttribute>
+                                 | V<"SexRequirement", SexRequirement>
+                                 | V<"RaceRequirement", RaceRequirement>
+                                 | V<"CultureRequirement", CultureRequirement>
+                                 | V<"PactRequirement", PactRequirement>
 
-export type AllRequirementObjects = Record<RequireActivatable>
-                                  | Record<RequireIncreasable>
-                                  | Record<RequirePrimaryAttribute>
-                                  | Record<SexRequirement>
-                                  | Record<RaceRequirement>
-                                  | Record<CultureRequirement>
-                                  | Record<PactRequirement>
-                                  | Record<SocialPrerequisite>
+export type AllRequirementObjects = V<"RequireActivatable", RequireActivatable>
+                                  | V<"RequireIncreasable", RequireIncreasable>
+                                  | V<"RequirePrimaryAttribute", RequirePrimaryAttribute>
+                                  | V<"SexRequirement", SexRequirement>
+                                  | V<"RaceRequirement", RaceRequirement>
+                                  | V<"CultureRequirement", CultureRequirement>
+                                  | V<"PactRequirement", PactRequirement>
+                                  | V<"SocialPrerequisite", SocialPrerequisite>

@@ -1,22 +1,29 @@
-import { fromDefault, isRecord, Record } from "../../../../Data/Record"
-import { Sex } from "../../Hero/heroTypeHelpers"
+import { assertNever } from "../../../Utilities/Variant"
+import { Sex } from "../../Hero.gen"
+import { NameBySex, ProfessionName } from "../../Static_Profession.gen"
 
-export interface NameBySex {
-  "@@name": "NameBySex"
-  m: string
-  f: string
-}
-
-export const NameBySex =
-  fromDefault ("NameBySex")
-              <NameBySex> ({
-                m: "",
-                f: "",
-              })
+export { NameBySex }
 
 export const nameBySex =
-  (sex: Sex) => NameBySex.AL[sex] as unknown as (name: Record<NameBySex>) => string
+  (sex: Sex) => (name: NameBySex): string => {
+    switch (sex) {
+      case "Female":
+        return name.f
+      case "Male":
+        return name.m
+      default:
+        return assertNever (sex)
+    }
+  }
 
 export const nameBySexDef =
-  (sex: Sex) => (name: string | Record<NameBySex>) =>
-    isRecord (name) ? nameBySex (sex) (name) : name
+  (sex: Sex) => (name: ProfessionName): string => {
+    switch (name.tag) {
+      case "Const":
+        return name.value
+      case "BySex":
+        return nameBySex (sex) (name.value)
+      default:
+        return assertNever (name)
+    }
+  }

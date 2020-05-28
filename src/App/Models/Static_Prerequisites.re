@@ -159,7 +159,7 @@ type tWithLevel = {
   activatableMultiSelect: list(activatableMultiSelect),
   increasable: list(increasable),
   increasableMultiEntry: list(increasableMultiEntry),
-  levels: Ley.IntMap.t(t),
+  levels: Ley_IntMap.t(t),
 };
 
 [@genType]
@@ -177,7 +177,7 @@ type tWithLevelDisAdv = {
   activatableMultiSelect: list(activatableMultiSelect),
   increasable: list(increasable),
   increasableMultiEntry: list(increasableMultiEntry),
-  levels: Ley.IntMap.t(t),
+  levels: Ley_IntMap.t(t),
 };
 
 [@genType]
@@ -195,11 +195,11 @@ type tIndex = {
   pact: option(overridePrerequisite),
   social: option(overridePrerequisite),
   primaryAttribute: option(overridePrerequisite),
-  activatable: Ley.IntMap.t(overridePrerequisite),
-  activatableMultiEntry: Ley.IntMap.t(overridePrerequisite),
-  activatableMultiSelect: Ley.IntMap.t(overridePrerequisite),
-  increasable: Ley.IntMap.t(overridePrerequisite),
-  increasableMultiEntry: Ley.IntMap.t(overridePrerequisite),
+  activatable: Ley_IntMap.t(overridePrerequisite),
+  activatableMultiEntry: Ley_IntMap.t(overridePrerequisite),
+  activatableMultiSelect: Ley_IntMap.t(overridePrerequisite),
+  increasable: Ley_IntMap.t(overridePrerequisite),
+  increasableMultiEntry: Ley_IntMap.t(overridePrerequisite),
 };
 
 [@genType]
@@ -211,12 +211,12 @@ type tIndexWithLevel = {
   pact: option(overridePrerequisite),
   social: option(overridePrerequisite),
   primaryAttribute: option(overridePrerequisite),
-  activatable: Ley.IntMap.t(overridePrerequisite),
-  activatableMultiEntry: Ley.IntMap.t(overridePrerequisite),
-  activatableMultiSelect: Ley.IntMap.t(overridePrerequisite),
-  increasable: Ley.IntMap.t(overridePrerequisite),
-  increasableMultiEntry: Ley.IntMap.t(overridePrerequisite),
-  levels: Ley.IntMap.t(tIndex),
+  activatable: Ley_IntMap.t(overridePrerequisite),
+  activatableMultiEntry: Ley_IntMap.t(overridePrerequisite),
+  activatableMultiSelect: Ley_IntMap.t(overridePrerequisite),
+  increasable: Ley_IntMap.t(overridePrerequisite),
+  increasableMultiEntry: Ley_IntMap.t(overridePrerequisite),
+  levels: Ley_IntMap.t(tIndex),
 };
 
 module Decode = {

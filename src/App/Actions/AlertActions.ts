@@ -4,6 +4,7 @@ import { List } from "../../Data/List"
 import { fmapF, Just, Maybe } from "../../Data/Maybe"
 import { ADD_ALERT, REMOVE_ALERT } from "../Constants/ActionTypes"
 import { Static } from "../Models/Static.gen"
+import { StaticData } from "../Models/Wiki/WikiModel"
 import { getWiki } from "../Selectors/stateSelectors"
 import { translate, translateP } from "../Utilities/I18n"
 import { ReduxAction } from "./Actions"
@@ -148,7 +149,7 @@ export const addDefaultErrorAlertWithTitle =
 // CONFIRM
 
 export enum ConfirmResponse {
- Accepted, Rejected
+  Accepted, Rejected
 }
 
 export interface ConfirmOptions {
@@ -158,38 +159,38 @@ export interface ConfirmOptions {
 }
 
 export const addConfirm =
-  (staticData: StaticDataRecord) =>
-  (opts: Record<ConfirmOptions>): ReduxAction<Promise<Maybe<ConfirmResponse>>> =>
+  (staticData: StaticData) =>
+  (opts: ConfirmOptions): ReduxAction<Promise<Maybe<ConfirmResponse>>> =>
   async dispatch =>
     new Promise<Maybe<ConfirmResponse>> (resolve => {
-      dispatch<AddPromptAction> ({
+      dispatch<AddPromptAction<ConfirmResponse>> ({
         type: ADD_ALERT,
-        payload: PromptOptions ({
-          title: ConfirmOptions.A.title (opts),
-          message: ConfirmOptions.A.message (opts),
-          buttons: ConfirmOptions.A.useYesNo (opts)
+        payload: {
+          title: opts.title,
+          message: opts.message,
+          buttons: opts.useYesNo
             ? List (
-                PromptButton<ConfirmResponse> ({
+                {
                   label: translate (staticData) ("general.dialogs.yesbtn"),
                   response: ConfirmResponse.Accepted,
-                }),
-                PromptButton<ConfirmResponse> ({
+                },
+                {
                   label: translate (staticData) ("general.dialogs.nobtn"),
                   response: ConfirmResponse.Rejected,
-                })
+                },
               )
             : List (
-                PromptButton<ConfirmResponse> ({
+                {
                   label: translate (staticData) ("general.dialogs.okbtn"),
                   response: ConfirmResponse.Accepted,
-                }),
-                PromptButton<ConfirmResponse> ({
+                },
+                {
                   label: translate (staticData) ("general.dialogs.cancelbtn"),
                   response: ConfirmResponse.Rejected,
-                })
+                },
               ),
           resolve,
-        }),
+        },
       })
     })
 
@@ -211,11 +212,11 @@ export const addNotEnoughAPAlert =
   async (dispatch, getState) => {
     const staticData = getWiki (getState ())
 
-    await dispatch (addAlert (AlertOptions ({
+    await dispatch (addAlert ({
                                title: Just (translate (staticData)
                                                       ("general.dialogs.notenoughap.title")),
                                message: translateP (staticData)
                                                    ("general.dialogs.notenoughap.message")
                                                    (List (missing_ap)),
-                             })))
+                             }))
   }

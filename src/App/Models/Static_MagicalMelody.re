@@ -3,7 +3,7 @@
 type t = {
   id: int,
   name: string,
-  nameByTradition: Ley.IntMap.t(string),
+  nameByTradition: Ley_IntMap.t(string),
   check: (int, int, int),
   effect: string,
   duration: string,
@@ -11,7 +11,7 @@ type t = {
   aeCost: string,
   aeCostShort: string,
   skill: option(int),
-  musictraditions: Ley.IntSet.t,
+  musictraditions: Ley_IntSet.t,
   property: int,
   ic: IC.t,
   src: list(Static_SourceRef.t),

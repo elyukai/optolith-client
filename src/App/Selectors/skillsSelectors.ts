@@ -6,7 +6,6 @@ import { elems, insertF, lookup, OrderedMap } from "../../Data/OrderedMap"
 import { uncurryN, uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry"
 import { AdvantageId } from "../Constants/Ids"
 import { createPlainSkillDependent } from "../Models/ActiveEntries/SkillDependent"
-import { HeroModel } from "../Models/Hero/HeroModel"
 import { EntryRating } from "../Models/Hero/heroTypeHelpers"
 import { SkillCombined } from "../Models/View/SkillCombined"
 import { SkillWithRequirements } from "../Models/View/SkillWithRequirements"
@@ -85,9 +84,9 @@ export const getFilteredSkills = createMaybeSelector (
 
 export const getSkillRating = createMaybeSelector (
   getCurrentCulture,
-  maybe (OrderedMap.empty as StrMap<EntryRating>)
+  maybe (OrderedMap.empty)
         (c => pipe_ (
-          OrderedMap.empty as StrMap<EntryRating>,
+          OrderedMap.empty,
           flip (foldr (insertF<EntryRating> (EntryRating.Common)))
                (CA.commonSkills (c)),
           flip (foldr (insertF<EntryRating> (EntryRating.Uncommon)))

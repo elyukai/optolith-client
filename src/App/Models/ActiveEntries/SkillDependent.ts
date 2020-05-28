@@ -1,17 +1,14 @@
 import { fnull, List } from "../../../Data/List"
 import { add } from "../../../Data/Num"
 import { pipe } from "../../Utilities/pipe"
+import { Skill as SkillDependent } from "../Hero.gen"
 import { SkillDependency } from "../Hero/heroTypeHelpers"
 
-export interface SkillDependent {
-  id: string
-  value: number
-  dependencies: List<SkillDependency>
-}
+export { SkillDependent }
 
 export const createSkillDependent =
   (options: Partial<Omit<SkillDependent, "id">>) =>
-  (id: string): SkillDependent =>
+  (id: number): SkillDependent =>
     ({
       id,
       value: 0,

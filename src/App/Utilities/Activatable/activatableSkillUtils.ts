@@ -7,7 +7,7 @@
 import { filter, size } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { HeroModelRecord } from "../../Models/Hero/Hero"
 import { pipe } from "../pipe"
 
 type ActivatableSkillEntriesAccessor =

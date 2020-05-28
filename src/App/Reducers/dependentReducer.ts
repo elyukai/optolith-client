@@ -9,7 +9,7 @@ import * as SkillActions from "../Actions/SkillActions"
 import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions"
 import * as SpellsActions from "../Actions/SpellsActions"
 import * as ActionTypes from "../Constants/ActionTypes"
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/Hero"
 import { activatableReducer } from "./activatableReducer"
 import { increasableReducer } from "./increasableReducer"
 

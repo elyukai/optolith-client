@@ -8,7 +8,7 @@ import { and, ap, bind, bindF, ensure, fromJust, isJust, isNothing, join, Just, 
 import { gte } from "../../../Data/Num"
 import { elems, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { HeroModelRecord } from "../../Models/Hero/Hero"
 import { Pact } from "../../Models/Hero/Pact"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { PactCategory } from "../../Models/Wiki/PactCategory"

@@ -4,7 +4,7 @@ import { over, set } from "../../Data/Lens"
 import { fromJust, isJust, Just, Nothing } from "../../Data/Maybe"
 import * as PactActions from "../Actions/PactActions"
 import * as ActionTypes from "../Constants/ActionTypes"
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/Hero"
 import { Pact, PactL } from "../Models/Hero/Pact"
 
 type Action = PactActions.SetPactCategoryAction

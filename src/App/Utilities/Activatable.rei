@@ -1,9 +1,11 @@
 /**
  * A single active Activatable.
  */
+[@genType]
+[@genType.as "ActivatableSingleWithId"]
 type singleWithId = {
   id: int,
-  options: list(Hero.Activatable.option),
+  options: list(Hero.Activatable.parameter),
   level: option(int),
   customCost: option(int),
 };
@@ -38,7 +40,7 @@ module SelectOptions: {
    * `Nothing` if not found.
    */
   let getSelectOption:
-    (Static.activatable, Hero.Activatable.option) =>
+    (Static.activatable, Hero.Activatable.parameter) =>
     option(Static.SelectOption.t);
 
   /**
@@ -46,20 +48,20 @@ module SelectOptions: {
    * Returns `Nothing` if not found.
    */
   let getSelectOptionName:
-    (Static.activatable, Hero.Activatable.option) => option(string);
+    (Static.activatable, Hero.Activatable.parameter) => option(string);
 
   /**
    * Get a select option's cost with the given id from given static entry.
    * Returns `Nothing` if not found.
    */
   let getSelectOptionCost:
-    (Static.activatable, Hero.Activatable.option) => option(int);
+    (Static.activatable, Hero.Activatable.parameter) => option(int);
 
   /**
    * Get all first select option IDs from the given entry.
    */
   let getActiveSelections:
-    Hero.Activatable.t => list(Hero.Activatable.option);
+    Hero.Activatable.t => list(Hero.Activatable.parameter);
 };
 
 module Names: {

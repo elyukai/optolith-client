@@ -3,8 +3,8 @@
 type t = {
   id: int,
   name: string,
-  types: Ley.IntMap.t(string),
-  domains: Ley.IntMap.t(string),
+  types: Ley_IntMap.t(string),
+  domains: Ley_IntMap.t(string),
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),
 };

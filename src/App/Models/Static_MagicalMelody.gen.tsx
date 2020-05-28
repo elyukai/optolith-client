@@ -2,13 +2,13 @@
 /* eslint-disable import/first */
 
 
-import {IntMap_t as Ley_IntMap_t} from '../../../src/Data/Ley.gen';
-
-import {IntSet_t as Ley_IntSet_t} from '../../../src/Data/Ley.gen';
-
 import {list} from '../../../src/shims/ReasonPervasives.shim';
 
 import {t as IC_t} from '../../../src/App/Utilities/IC.gen';
+
+import {t as Ley_IntMap_t} from '../../../src/Data/Ley_IntMap.gen';
+
+import {t as Ley_IntSet_t} from '../../../src/Data/Ley_IntSet.gen';
 
 import {t as Static_Erratum_t} from './Static_Erratum.gen';
 

@@ -12,9 +12,8 @@ import { IC, MagicalGroup, MagicalTradition, Property } from "../../Constants/Gr
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Hero, HeroModelRecord } from "../../Models/Hero/Hero"
 import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar"
 import { SpellWithRequirements } from "../../Models/View/SpellWithRequirements"
 import { animistForceToSpell } from "../../Models/Wiki/AnimistForce"
@@ -128,7 +127,7 @@ export const getSpellMax = (startEL : Record<ExperienceLevel>) =>
  */
 export const isSpellIncreasable = (startEL : Record<ExperienceLevel>) =>
                                   (phase : number) =>
-                                  (attributes : HeroModel["attributes"]) =>
+                                  (attributes : Hero["attributes"]) =>
                                   (exceptionalSkill : Maybe<Record<ActivatableDependent>>) =>
                                   (propertyKnowledge : Maybe<Record<ActivatableDependent>>) =>
                                   (wiki_entry : Record<Spell>) =>
@@ -150,7 +149,7 @@ type SpellsAbove10ByProperty = OrderedMap<Property, number>
  * amount of spells at that exact SR.
  */
 export const spellsAbove10ByProperty : (wiki_spells : StaticData["spells"])
-                                     => (hero_spells : HeroModel["spells"])
+                                     => (hero_spells : Hero["spells"])
                                      => SpellsAbove10ByProperty
                                      = wiki_spells =>
                                          pipe (

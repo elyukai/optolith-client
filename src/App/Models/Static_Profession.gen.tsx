@@ -2,8 +2,6 @@
 /* eslint-disable import/first */
 
 
-import {IntMap_t as Ley_IntMap_t} from '../../../src/Data/Ley.gen';
-
 import {activatable as Static_Prerequisites_activatable} from './Static_Prerequisites.gen';
 
 import {list} from '../../../src/shims/ReasonPervasives.shim';
@@ -11,6 +9,8 @@ import {list} from '../../../src/shims/ReasonPervasives.shim';
 import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
 
 import {tProfession as Static_Prerequisites_tProfession} from './Static_Prerequisites.gen';
+
+import {t as Ley_IntMap_t} from '../../../src/Data/Ley_IntMap.gen';
 
 import {t as Static_Erratum_t} from './Static_Erratum.gen';
 

@@ -11,10 +11,8 @@ import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableAct
 import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType"
 import { ActivatableDeactivationOptions, ActivatableDeactivationOptionsL } from "../Models/Actions/ActivatableDeactivationOptions"
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
-import { ActiveObject } from "../Models/ActiveEntries/ActiveObject"
 import { ActiveObjectWithIdL, toActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId"
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { HeroModelRecord } from "../Models/Hero/Hero"
 import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost"
 import { Advantage, isAdvantage } from "../Models/Wiki/Advantage"
 import { Disadvantage, isDisadvantage } from "../Models/Wiki/Disadvantage"
@@ -34,7 +32,7 @@ import { pipe, pipe_ } from "../Utilities/pipe"
 import { misNumberM } from "../Utilities/typeCheckUtils"
 import { getWikiEntry } from "../Utilities/WikiUtils"
 import { ReduxAction, ReduxDispatch } from "./Actions"
-import { addAlert, addNotEnoughAPAlert, AlertOptions } from "./AlertActions"
+import { addAlert, addNotEnoughAPAlert } from "./AlertActions"
 
 /**
  * Advantages and disadvantages might not only be added or removed due to not

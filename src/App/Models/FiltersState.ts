@@ -1,7 +1,4 @@
-import { fromDefault, makeLenses } from "../../Data/Record"
-
 export interface FiltersState {
-  "@@name": "FiltersState"
   herolistFilterText: string
   racesFilterText: string
   culturesFilterText: string
@@ -23,30 +20,3 @@ export interface FiltersState {
   hitZoneArmorFilterText: string
   petsFilterText: string
 }
-
-export const FiltersState =
-  fromDefault ("FiltersState")
-              <FiltersState> ({
-                herolistFilterText: "",
-                racesFilterText: "",
-                culturesFilterText: "",
-                professionsFilterText: "",
-                advantagesFilterText: "",
-                inactiveAdvantagesFilterText: "",
-                disadvantagesFilterText: "",
-                inactiveDisadvantagesFilterText: "",
-                skillsFilterText: "",
-                combatTechniquesFilterText: "",
-                specialAbilitiesFilterText: "",
-                inactiveSpecialAbilitiesFilterText: "",
-                spellsFilterText: "",
-                inactiveSpellsFilterText: "",
-                liturgicalChantsFilterText: "",
-                inactiveLiturgicalChantsFilterText: "",
-                equipmentFilterText: "",
-                itemTemplatesFilterText: "",
-                hitZoneArmorFilterText: "",
-                petsFilterText: "",
-              })
-
-export const FiltersStateL = makeLenses (FiltersState)

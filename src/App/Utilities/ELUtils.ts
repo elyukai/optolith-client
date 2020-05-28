@@ -5,7 +5,7 @@ import { foldlWithKey, lookupF } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { IdPrefixes } from "../Constants/IdPrefixes"
 import { ExperienceLevelId } from "../Constants/Ids"
-import { HeroModel } from "../Models/Hero/HeroModel"
+import { Hero } from "../Models/Hero/Hero"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
 import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { getNumericId, prefixId } from "./IDUtils"
@@ -63,5 +63,5 @@ export const getHigherExperienceLevelId =
  * Returns the experience level selected before or during hero creation.
  */
 export const getExperienceLevelAtStart: (wiki: StaticDataRecord) =>
-                                        (r: Record<HeroModel>) => Maybe<Record<ExperienceLevel>> =
+                                        (r: Record<Hero>) => Maybe<Record<ExperienceLevel>> =
   wiki => pipe (HA.experienceLevel, lookupF (SDA.experienceLevels (wiki)))

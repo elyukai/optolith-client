@@ -35,7 +35,7 @@ type t = {
   uncommonSkills: option(list(int)),
   commonNames: string,
   culturalPackageCost: int,
-  culturalPackageSkills: Ley.IntMap.t(int),
+  culturalPackageSkills: Ley_IntMap.t(int),
 };
 
 module Decode = {

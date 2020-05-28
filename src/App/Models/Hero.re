@@ -24,9 +24,9 @@ module Rules = {
   [@genType.as "Rules"]
   type t = {
     areAllPublicationsActive: bool,
-    activePublications: list(string),
-    activeFocusRules: list(activeRule),
-    activeOptionalRules: list(activeRule),
+    activePublications: Ley_StrSet.t,
+    activeFocusRules: Ley_IntMap.t(activeRule),
+    activeOptionalRules: Ley_IntMap.t(activeRule),
   };
 };
 
@@ -49,7 +49,7 @@ type personalData = {
 };
 
 module Activatable = {
-  type option = [
+  type parameter = [
     | `Generic(int)
     | `Skill(int)
     | `CombatTechnique(int)
@@ -63,9 +63,9 @@ module Activatable = {
   [@genType]
   [@genType.as "ActivatableSingle"]
   type single = {
-    options: list(option),
-    level: Ley.Option.t(int),
-    customCost: Ley.Option.t(int),
+    options: list(parameter),
+    level: option(int),
+    customCost: option(int),
   };
 
   [@genType]
@@ -75,7 +75,7 @@ module Activatable = {
     target: oneOrMany(Ids.activatableId),
     active: bool,
     options: list(oneOrMany(Ids.selectOptionId)),
-    level: Ley.Option.t(int),
+    level: option(int),
   };
 
   [@genType]
@@ -175,11 +175,25 @@ module Item = {
   type mundaneItem = {structurePoints: option(oneOrMany(int))};
 
   [@genType]
+  [@genType.as "NewAttribute"]
+  type newAttribute = {
+    attribute: int,
+    threshold: int,
+  };
+
+  [@genType]
+  [@genType.as "AgilityStrength"]
+  type agilityStrength = {
+    agility: int,
+    strength: int,
+  };
+
+  [@genType]
   [@genType.as "PrimaryAttributeDamageThreshold"]
   type primaryAttributeDamageThreshold =
-    | SameAttribute(int)
-    | AgilityStrength(int, int)
-    | DifferentAttribute(int, int);
+    | DefaultAttribute(int)
+    | DifferentAttribute(newAttribute)
+    | AgilityStrength(agilityStrength);
 
   [@genType]
   [@genType.as "Damage"]
@@ -247,6 +261,7 @@ module Item = {
   [@genType.as "Item"]
   type t = {
     id: int,
+    name: string,
     amount: option(int),
     price: option(int),
     weight: option(int),
@@ -450,22 +465,22 @@ type t = {
   professionName: option(string),
   rules: Rules.t,
   personalData,
-  advantages: Ley.IntMap.t(Activatable.t),
-  disadvantages: Ley.IntMap.t(Activatable.t),
-  specialAbilities: Ley.IntMap.t(Activatable.t),
-  attributes: Ley.IntMap.t(Attribute.t),
+  advantages: Ley_IntMap.t(Activatable.t),
+  disadvantages: Ley_IntMap.t(Activatable.t),
+  specialAbilities: Ley_IntMap.t(Activatable.t),
+  attributes: Ley_IntMap.t(Attribute.t),
   attributeAdjustmentSelected: int,
   energies: Energies.t,
-  skills: Ley.IntMap.t(Skill.t),
-  combatTechniques: Ley.IntMap.t(Skill.t),
-  spells: Ley.IntMap.t(ActivatableSkill.t),
-  liturgicalChants: Ley.IntMap.t(ActivatableSkill.t),
-  cantrips: Ley.IntSet.t,
-  blessings: Ley.IntSet.t,
-  items: list(Item.t),
-  hitZoneArmors: list(hitZoneArmor),
+  skills: Ley_IntMap.t(Skill.t),
+  combatTechniques: Ley_IntMap.t(Skill.t),
+  spells: Ley_IntMap.t(ActivatableSkill.t),
+  liturgicalChants: Ley_IntMap.t(ActivatableSkill.t),
+  cantrips: Ley_IntSet.t,
+  blessings: Ley_IntSet.t,
+  items: Ley_IntMap.t(Item.t),
+  hitZoneArmors: Ley_IntMap.t(hitZoneArmor),
   purse,
-  pets: list(pet),
+  pets: Ley_IntMap.t(pet),
   pact: option(Pact.t),
   combatStyleDependencies: list(styleDependency),
   magicalStyleDependencies: list(styleDependency),

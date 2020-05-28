@@ -1,10 +1,8 @@
 import { List } from "../../../Data/List"
 import { Maybe } from "../../../Data/Maybe"
-import { OrderedMap } from "../../../Data/OrderedMap"
-import { OrderedSet } from "../../../Data/OrderedSet"
-import { Record, RecordI } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
 import { TabId } from "../../Utilities/LocationUtils"
+import { V } from "../../Utilities/Variant"
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent"
 import { ActiveObject } from "../ActiveEntries/ActiveObject"
@@ -16,20 +14,20 @@ import * as Wiki from "../Wiki/wikiTypeHelpers"
 import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold"
 import { SkillOptionalDependency } from "./SkillOptionalDependency"
 
-export type ExtendedSkillDependent = Record<SkillDependent>
-                                   | Record<ActivatableSkillDependent>
+export type ExtendedSkillDependent = V<"SkillDependent", SkillDependent>
+                                   | V<"ActivatableSkillDependent", ActivatableSkillDependent>
 
-export type ExtendedActivatableDependent = Record<ActivatableDependent>
-                                         | Record<ActivatableSkillDependent>
+export type ExtendedActivatableDependent = V<"ActivatableDependent", ActivatableDependent>
+                                         | V<"ActivatableSkillDependent", ActivatableSkillDependent>
 
-export type ValueBasedDependent = Record<AttributeDependent>
-                                | Record<SkillDependent>
-                                | Record<ActivatableSkillDependent>
+export type ValueBasedDependent = V<"AttributeDependent", AttributeDependent>
+                                | V<"SkillDependent", SkillDependent>
+                                | V<"ActivatableSkillDependent", ActivatableSkillDependent>
 
-export type Dependent = Record<ActivatableDependent>
-                      | Record<AttributeDependent>
-                      | Record<SkillDependent>
-                      | Record<ActivatableSkillDependent>
+export type Dependent = V<"ActivatableDependent", ActivatableDependent>
+                      | V<"AttributeDependent", AttributeDependent>
+                      | V<"SkillDependent", SkillDependent>
+                      | V<"ActivatableSkillDependent", ActivatableSkillDependent>
 
 export type ActivatableDependency = boolean | Record<DependencyObject>
 export type SkillDependency = number | Record<SkillOptionalDependency>

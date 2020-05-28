@@ -2,8 +2,6 @@
 /* eslint-disable import/first */
 
 
-import {IntMap_t as Ley_IntMap_t} from '../../../src/Data/Ley.gen';
-
 import {list} from '../../../src/shims/ReasonPervasives.shim';
 
 import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
@@ -11,6 +9,8 @@ import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/
 import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
 
 import {sex as Hero_sex} from './Hero.gen';
+
+import {t as Ley_IntMap_t} from '../../../src/Data/Ley_IntMap.gen';
 
 // tslint:disable-next-line:interface-over-type-literal
 export type sex = Hero_sex;

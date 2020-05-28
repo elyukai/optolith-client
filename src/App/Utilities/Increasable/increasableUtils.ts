@@ -1,43 +1,34 @@
-import { fmap } from "../../../Data/Functor"
-import { over } from "../../../Data/Lens"
-import { fromMaybe, Maybe } from "../../../Data/Maybe"
-import { dec, inc } from "../../../Data/Num"
-import { Record } from "../../../Data/Record"
-import { Category } from "../../Constants/Categories"
-import { icFromJs } from "../../Constants/Groups"
-import { ActivatableSkillDependentL, isActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
-import { AttributeDependentL, isAttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
-import { SkillDependent, SkillDependentL } from "../../Models/ActiveEntries/SkillDependent"
+import { fmapF, fromMaybe, Maybe } from "../../../Data/Maybe"
 import { ValueBasedDependent } from "../../Models/Hero/heroTypeHelpers"
-import { isAttribute } from "../../Models/Wiki/Attribute"
-import { Skill } from "../../Models/Wiki/Skill"
 import { IncreasableEntry } from "../../Models/Wiki/wikiTypeHelpers"
 import { getMissingAP } from "../AdventurePoints/adventurePointsUtils"
-import { getAPForInc } from "../IC.gen"
+import * as IC from "../IC.gen"
 
 export const addPoint =
-  <T extends ValueBasedDependent>(instance: T): T =>
-    isAttributeDependent (instance)
-    ? over (AttributeDependentL.value) (inc) (instance) as T
-    : isActivatableSkillDependent (instance)
-    ? over (ActivatableSkillDependentL.value) (inc) (instance) as T
-    : over (SkillDependentL.value) (inc) (instance as Record<SkillDependent>) as T
+  <T extends ValueBasedDependent>(instance: T): T => ({
+      ...instance,
+      value: {
+        ...instance.value,
+        value: instance.value.value + 1,
+      },
+    })
 
 export const removePoint =
-  <T extends ValueBasedDependent>(instance: T): T =>
-    isAttributeDependent (instance)
-    ? over (AttributeDependentL.value) (dec) (instance) as T
-    : isActivatableSkillDependent (instance)
-    ? over (ActivatableSkillDependentL.value) (dec) (instance) as T
-    : over (SkillDependentL.value) (dec) (instance as Record<SkillDependent>) as T
+  <T extends ValueBasedDependent>(instance: T): T => ({
+      ...instance,
+      value: {
+        ...instance.value,
+        value: instance.value.value - 1,
+      },
+    })
 
 export const getBaseValueByCategory =
-  (current_category: Category) => {
-    switch (current_category) {
-      case Category.ATTRIBUTES:
+  (current_category: IncreasableEntry) => {
+    switch (current_category.tag) {
+      case "Attribute":
         return 8
 
-      case Category.COMBAT_TECHNIQUES:
+      case "CombatTechnique":
         return 6
 
       default:
@@ -45,22 +36,30 @@ export const getBaseValueByCategory =
     }
   }
 
-const { category, ic } = Skill.AL
-const { value } = SkillDependent.AL
 
 const getValueFromHeroStateEntry =
   (wikiEntry: IncreasableEntry) =>
   (maybeEntry: Maybe<ValueBasedDependent>) =>
-    fromMaybe (getBaseValueByCategory (category (wikiEntry as Record<Skill>)))
-              (fmap (value) (maybeEntry))
+    fromMaybe (getBaseValueByCategory (wikiEntry))
+              (fmapF (maybeEntry) (entry => entry.value.value))
+
+const getIcForIncreasable = (wikiEntry: IncreasableEntry): IC.t => {
+  switch (wikiEntry.tag) {
+    case "Attribute":
+      return "E"
+
+    default:
+      return wikiEntry.value.ic
+  }
+}
 
 export const getAreSufficientAPAvailableForIncrease =
   (negativeApValid: boolean) =>
   <T extends ValueBasedDependent>
   (instance: Maybe<T>) =>
-  (wikiEntry: IncreasableEntry) =>
-    getMissingAP (negativeApValid)
-                 (getAPForInc (
-                   isAttribute (wikiEntry) ? "E" : icFromJs (ic (wikiEntry)),
-                   getValueFromHeroStateEntry (wikiEntry) (instance)
-                 ))
+  (wikiEntry: IncreasableEntry) => {
+    const ic = getIcForIncreasable (wikiEntry)
+
+    return getMissingAP (negativeApValid)
+                        (IC.getAPForInc (ic, getValueFromHeroStateEntry (wikiEntry) (instance)))
+  }

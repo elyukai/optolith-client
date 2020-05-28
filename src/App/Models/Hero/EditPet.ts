@@ -1,10 +1,7 @@
-import { Just, Maybe, Nothing } from "../../../Data/Maybe"
-import { fromDefault, makeLenses } from "../../../Data/Record"
 import { PetBase } from "./Pet"
 
 export interface EditPet extends PetBase {
-  "@@name": "EditPet"
-  id: Maybe<string>
+  id?: string
   size: string
   type: string
   attack: string
@@ -36,43 +33,5 @@ export interface EditPet extends PetBase {
 }
 
 export interface EditPetSafe extends EditPet {
-  id: Just<string>
+  id: string
 }
-
-export const EditPet =
-  fromDefault ("EditPet")
-              <EditPet> ({
-                id: Nothing,
-                name: "",
-                avatar: Nothing,
-                size: "",
-                type: "",
-                attack: "",
-                dp: "",
-                reach: "",
-                actions: "",
-                talents: "",
-                skills: "",
-                notes: "",
-                spentAp: "",
-                totalAp: "",
-                cou: "",
-                sgc: "",
-                int: "",
-                cha: "",
-                dex: "",
-                agi: "",
-                con: "",
-                str: "",
-                lp: "",
-                ae: "",
-                spi: "",
-                tou: "",
-                pro: "",
-                ini: "",
-                mov: "",
-                at: "",
-                pa: "",
-              })
-
-export const EditPetL = makeLenses (EditPet)

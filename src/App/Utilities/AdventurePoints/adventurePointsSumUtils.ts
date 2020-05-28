@@ -7,17 +7,15 @@ import { add, multiply } from "../../../Data/Num"
 import { foldr, lookupF } from "../../../Data/OrderedMap"
 import { OrderedSet } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
-import { bimap, first, fst, Pair, second, snd, Tuple } from "../../../Data/Tuple"
+import { bimap, first, fst, Pair, second, snd } from "../../../Data/Tuple"
 import { curryN3 } from "../../../Data/Tuple/Curry"
 import { Category } from "../../Constants/Categories"
 import { icFromJs } from "../../Constants/Groups"
 import { AdvantageIdsNoMaxInfl } from "../../Constants/Ids"
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
-import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
 import { Energies } from "../../Models/Hero/Energies"
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
-import { PermanentEnergyLossAndBoughtBack } from "../../Models/Hero/PermanentEnergyLossAndBoughtBack"
+import { Hero, HeroModelRecord } from "../../Models/Hero/Hero"
 import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
 import { Advantage } from "../../Models/Wiki/Advantage"
@@ -139,7 +137,7 @@ const AAA_ = ActiveActivatableA_
  */
 export const getAPSpentForAdvantages =
   (wiki: StaticDataRecord) =>
-  (xmap: HeroModel["advantages"]) =>
+  (xmap: Hero["advantages"]) =>
   (active: List<ActiveAdvantage>) =>
     pipe_ (
       active,
@@ -158,7 +156,7 @@ export const getAPSpentForAdvantages =
 
 export const getAPSpentForMagicalAdvantages =
   (wiki: StaticDataRecord) =>
-  (xmap: HeroModel["advantages"]) =>
+  (xmap: Hero["advantages"]) =>
     pipe (
       filter<ActiveAdvantage> (pipe (
                                 ActiveActivatable.A.wikiEntry,
@@ -170,7 +168,7 @@ export const getAPSpentForMagicalAdvantages =
 
 export const getAPSpentForBlessedAdvantages =
   (wiki: StaticDataRecord) =>
-  (xmap: HeroModel["advantages"]) =>
+  (xmap: Hero["advantages"]) =>
     pipe (
       filter<ActiveAdvantage> (pipe (
                                 ActiveActivatable.A.wikiEntry,
@@ -185,7 +183,7 @@ export const getAPSpentForBlessedAdvantages =
  */
 export const getAPSpentForDisadvantages =
   (wiki: StaticDataRecord) =>
-  (xmap: HeroModel["disadvantages"]) =>
+  (xmap: Hero["disadvantages"]) =>
   (active: List<ActiveDisadvantage>): Pair<number, number> =>
     pipe_ (
       active,
@@ -202,7 +200,7 @@ export const getAPSpentForDisadvantages =
 
 export const getAPSpentForMagicalDisadvantages =
   (wiki: StaticDataRecord) =>
-  (xmap: HeroModel["disadvantages"]) =>
+  (xmap: Hero["disadvantages"]) =>
     pipe (
       filter<ActiveDisadvantage> (pipe (
                                    ActiveActivatable.A.wikiEntry,
@@ -214,7 +212,7 @@ export const getAPSpentForMagicalDisadvantages =
 
 export const getAPSpentForBlessedDisadvantages =
   (wiki: StaticDataRecord) =>
-  (xmap: HeroModel["disadvantages"]) =>
+  (xmap: Hero["disadvantages"]) =>
     pipe (
       filter<ActiveDisadvantage> (pipe (
                                    ActiveActivatable.A.wikiEntry,
@@ -226,7 +224,7 @@ export const getAPSpentForBlessedDisadvantages =
 
 export const getAPSpentForSpecialAbilities =
   (wiki: StaticDataRecord) =>
-  (xmap: HeroModel["specialAbilities"]) =>
+  (xmap: Hero["specialAbilities"]) =>
   (active: List<ActiveSpecialAbility>) =>
     pipe_ (
       active,

@@ -9,7 +9,7 @@ import * as HerolistActions from "../Actions/HerolistActions"
 import { ReceiveInitialDataAction } from "../Actions/InitializationActions"
 import * as IOActions from "../Actions/IOActions"
 import * as ActionTypes from "../Constants/ActionTypes"
-import { HeroModel, HeroModelL } from "../Models/Hero/HeroModel"
+import { Hero, HeroModelL } from "../Models/Hero/Hero"
 import { HeroesState, HeroesStateL } from "../Models/HeroesState"
 import { composeL } from "../Utilities/compose"
 import { pipe } from "../Utilities/pipe"
@@ -83,7 +83,7 @@ export const precedingHerolistReducer =
         return state =>
           maybe
             (state)
-            ((hero: Record<UndoState<Record<HeroModel>>>) =>
+            ((hero: Record<UndoState<Record<Hero>>>) =>
               over (HeroesStateL.heroes)
                    (insert (newId)
                            (toHeroWithHistory (pipe (

@@ -1,20 +1,15 @@
 import { fnull, List } from "../../../Data/List"
+import { ActivatableSkill as ActivatableSkillDependent } from "../Hero.gen"
 import { ExtendedSkillDependency } from "../Hero/heroTypeHelpers"
 
-export interface ActivatableSkillDependent {
-  id: string
-  value: number
-  active: boolean
-  dependencies: List<ExtendedSkillDependency>
-}
+export { ActivatableSkillDependent }
 
 const createActivatableSkillDependent =
   (options: Partial<Omit<ActivatableSkillDependent, "id">>) =>
-  (id: string): ActivatableSkillDependent =>
+  (id: number): ActivatableSkillDependent =>
     ({
       id,
-      value: 0,
-      active: false,
+      value: "Inactive",
       dependencies: List<ExtendedSkillDependency> (),
       ...options,
     })
@@ -22,13 +17,13 @@ const createActivatableSkillDependent =
 export const createInactiveActivatableSkillDependent = createActivatableSkillDependent ({})
 
 export const createActiveActivatableSkillDependent =
-  createActivatableSkillDependent ({ active: true })
+  createActivatableSkillDependent ({ value: { tag: "Active", value: 0 } })
 
 export const createActivatableSkillDependentWithValue =
-  (x: number) => createActivatableSkillDependent ({ active: true, value: x })
+  (x: number) => createActivatableSkillDependent ({ value: { tag: "Active", value: x } })
 
 export const isActivatableSkillDependentUnused =
   (entry: ActivatableSkillDependent): boolean =>
-    entry.value === 0
-    && !entry.active
+    entry.value !== "Inactive"
+    && entry.value.value === 0
     && fnull (entry.dependencies)

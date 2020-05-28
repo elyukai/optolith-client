@@ -16,7 +16,7 @@ import { fst, Pair, snd } from "../../../Data/Tuple"
 import { ActivatableCategory, Category } from "../../Constants/Categories"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { HeroModelRecord } from "../../Models/Hero/Hero"
 import { ActivatableActivationValidation } from "../../Models/View/ActivatableActivationValidationObject"
 import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName"
 import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../../Models/View/ActivatableNameCost"
@@ -64,10 +64,10 @@ export const getActivatableWikiSliceByCategory =
   (category: A) =>
   (wiki: StaticDataRecord): StrMap<ActivatableWikiSliceByCategory<A>> =>
     category === Category.ADVANTAGES
-    ? SDA.advantages (wiki) as StrMap<ActivatableWikiSliceByCategory<A>>
+    ? SDA.advantages (wiki)
     : category === Category.DISADVANTAGES
-    ? SDA.disadvantages (wiki) as StrMap<ActivatableWikiSliceByCategory<A>>
-    : SDA.specialAbilities (wiki) as StrMap<ActivatableWikiSliceByCategory<A>>
+    ? SDA.disadvantages (wiki)
+    : SDA.specialAbilities (wiki)
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing
@@ -160,7 +160,7 @@ export const getAllActiveByCategory =
                                (getIsRemovalOrChangeDisabled (staticData)
                                                              (hero)
                                                              (matching_script_and_lang_related)
-                                                             (active)) as Entry
+                                                             (active))
                })
     )
   }

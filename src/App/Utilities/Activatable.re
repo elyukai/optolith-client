@@ -1,6 +1,6 @@
 type singleWithId = {
   id: int,
-  options: list(Hero.Activatable.option),
+  options: list(Hero.Activatable.parameter),
   level: option(int),
   customCost: option(int),
 };
@@ -106,7 +106,7 @@ module Convert = {
    } */
 
   let activatableOptionToSelectOptionId =
-      (id: Hero.Activatable.option): option(Ids.selectOptionId) =>
+      (id: Hero.Activatable.parameter): option(Ids.selectOptionId) =>
     switch (id) {
     | `Generic(_) as id
     | `Skill(_) as id
@@ -228,7 +228,7 @@ let getOption1 = heroEntry => heroEntry.options |> Ley.Option.listToOption;
 let getOption2 = getOption(1);
 let getOption3 = getOption(2);
 
-let getCustomInput = (option: Hero.Activatable.option) =>
+let getCustomInput = (option: Hero.Activatable.parameter) =>
   switch (option) {
   | `CustomInput(x) => Some(x)
   | `Generic(_)
@@ -240,7 +240,7 @@ let getCustomInput = (option: Hero.Activatable.option) =>
   | `Blessing(_) => None
   };
 
-let getGenericId = (option: Hero.Activatable.option) =>
+let getGenericId = (option: Hero.Activatable.parameter) =>
   switch (option) {
   | `Generic(x) => Some(x)
   | `Skill(_)
@@ -256,7 +256,7 @@ let lookupMap = (k, mp, f) =>
   Ley.Option.Functor.(f <$> Ley.IntMap.lookup(k, mp));
 
 let getSkillFromOption =
-    (staticData: Static.t, option: Hero.Activatable.option) =>
+    (staticData: Static.t, option: Hero.Activatable.parameter) =>
   switch (option) {
   | `Skill(id) => Ley.IntMap.lookup(id, staticData.skills)
   | `Generic(_)

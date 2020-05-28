@@ -1,16 +1,13 @@
 import { fnull, List } from "../../../Data/List"
+import { Activatable as ActivatableDependent } from "../Hero.gen"
 import { ActivatableDependency } from "../Hero/heroTypeHelpers"
 import { ActiveObject } from "./ActiveObject"
 
-export interface ActivatableDependent {
-  id: string
-  active: List<ActiveObject>
-  dependencies: List<ActivatableDependency>
-}
+export { ActivatableDependent }
 
 export const createActivatableDependent =
   (options: Partial<Omit<ActivatableDependent, "id">>) =>
-  (id: string): ActivatableDependent =>
+  (id: number): ActivatableDependent =>
     ({
       id,
       active: List<ActiveObject> (),

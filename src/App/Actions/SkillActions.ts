@@ -2,7 +2,6 @@ import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe
 import { lookup } from "../../Data/OrderedMap"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { SkillsSortOptions } from "../Models/Config"
-import { HeroModel } from "../Models/Hero/HeroModel"
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
 import { getCurrentHeroPresent, getSkills, getWikiSkills } from "../Selectors/stateSelectors"

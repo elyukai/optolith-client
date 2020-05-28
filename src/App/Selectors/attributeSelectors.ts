@@ -11,8 +11,7 @@ import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry"
 import { sel1, sel2, sel3 } from "../../Data/Tuple/Select"
 import { AttrId } from "../Constants/Ids"
 import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
-import { Energies } from "../Models/Hero/Energies"
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Hero, HeroModelRecord } from "../Models/Hero/Hero"
 import { AttributeCombined, AttributeCombinedA_ } from "../Models/View/AttributeCombined"
 import { AttributeWithRequirements } from "../Models/View/AttributeWithRequirements"
 import { Attribute } from "../Models/Wiki/Attribute"
@@ -161,7 +160,7 @@ export const getAttributesForSheet = createMaybeSelector (
  * Returns the maximum attribute value of the list of given attribute ids.
  */
 export const getMaxAttributeValueByID =
-  (attributes: HeroModel["attributes"]) =>
+  (attributes: Hero["attributes"]) =>
     pipe (
       mapMaybe (pipe (lookupF (attributes), fmap (AtDA.value))),
       consF (8),

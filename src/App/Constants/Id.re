@@ -86,6 +86,7 @@ type phase =
   | Definition
   | Advancement;
 
+[@genType]
 let unsafePhaseFromInt = id =>
   switch (id) {
   | 1 => Outline
@@ -97,6 +98,7 @@ let unsafePhaseFromInt = id =>
     )
   };
 
+[@genType]
 let phaseToInt = id =>
   switch (id) {
   | Outline => 1
@@ -104,6 +106,8 @@ let phaseToInt = id =>
   | Advancement => 3
   };
 
+[@genType]
+[@genType.as "ExperienceLevel"]
 type experienceLevel =
   | Inexperienced
   | Ordinary
@@ -113,6 +117,7 @@ type experienceLevel =
   | Brilliant
   | Legendary;
 
+[@genType]
 let unsafeExperienceLevelFromInt = id =>
   switch (id) {
   | 1 => Inexperienced
@@ -130,6 +135,7 @@ let unsafeExperienceLevelFromInt = id =>
     )
   };
 
+[@genType]
 let experienceLevelToInt = id =>
   switch (id) {
   | Inexperienced => 1
@@ -141,6 +147,8 @@ let experienceLevelToInt = id =>
   | Legendary => 7
   };
 
+[@genType]
+[@genType.as "Attribute"]
 type attribute =
   | Courage
   | Sagacity
@@ -151,6 +159,7 @@ type attribute =
   | Constitution
   | Strength;
 
+[@genType]
 let unsafeAttributeFromInt = id =>
   switch (id) {
   | 1 => Courage
@@ -169,6 +178,7 @@ let unsafeAttributeFromInt = id =>
     )
   };
 
+[@genType]
 let attributeToInt = id =>
   switch (id) {
   | Courage => 1
@@ -181,6 +191,8 @@ let attributeToInt = id =>
   | Strength => 8
   };
 
+[@genType]
+[@genType.as "DerivedCharacteristic"]
 type derivedCharacteristic =
   | LifePoints
   | ArcaneEnergy
@@ -192,6 +204,7 @@ type derivedCharacteristic =
   | Movement
   | WoundThreshold;
 
+[@genType]
 let unsafeDerivedCharacteristicFromString = id =>
   switch (id) {
   | "LP" => LifePoints
@@ -211,6 +224,7 @@ let unsafeDerivedCharacteristicFromString = id =>
     )
   };
 
+[@genType]
 let derivedCharacteristicToString = id =>
   switch (id) {
   | LifePoints => "LP"
@@ -224,6 +238,8 @@ let derivedCharacteristicToString = id =>
   | WoundThreshold => "WT"
   };
 
+[@genType]
+[@genType.as "Advantage"]
 type advantage =
   | Aptitude // Begabung
   | Nimble // Flink
@@ -255,6 +271,7 @@ type advantage =
   | Einkommen
   | Other(int);
 
+[@genType]
 let advantageFromInt = id =>
   switch (id) {
   | 4 => Aptitude
@@ -288,6 +305,7 @@ let advantageFromInt = id =>
   | x => Other(x)
   };
 
+[@genType]
 let advantageToInt = id =>
   switch (id) {
   | Aptitude => 4
@@ -321,6 +339,8 @@ let advantageToInt = id =>
   | Other(x) => x
   };
 
+[@genType]
+[@genType.as "Disadvantage"]
 type disadvantage =
   | AfraidOf
   | Poor
@@ -349,6 +369,7 @@ type disadvantage =
   | WenigeVisionen
   | Other(int);
 
+[@genType]
 let disadvantageFromInt = id =>
   switch (id) {
   | 1 => AfraidOf
@@ -379,6 +400,7 @@ let disadvantageFromInt = id =>
   | x => Other(x)
   };
 
+[@genType]
 let disadvantageToInt = id =>
   switch (id) {
   | AfraidOf => 1
@@ -409,6 +431,8 @@ let disadvantageToInt = id =>
   | Other(x) => x
   };
 
+[@genType]
+[@genType.as "Skill"]
 type skill =
   // Physical
   | Flying
@@ -475,6 +499,7 @@ type skill =
   | Earthencraft
   | Clothworking;
 
+[@genType]
 let unsafeSkillFromInt = id =>
   switch (id) {
   | 1 => Flying
@@ -542,6 +567,7 @@ let unsafeSkillFromInt = id =>
     )
   };
 
+[@genType]
 let skillToInt = id =>
   switch (id) {
   | Flying => 1
@@ -605,6 +631,8 @@ let skillToInt = id =>
   | Clothworking => 59
   };
 
+[@genType]
+[@genType.as "CombatTechnique"]
 type combatTechnique =
   | Crossbows
   | Bows
@@ -628,6 +656,7 @@ type combatTechnique =
   | Spiesswaffen
   | Other(int);
 
+[@genType]
 let combatTechniqueFromInt = id =>
   switch (id) {
   | 1 => Crossbows
@@ -653,6 +682,7 @@ let combatTechniqueFromInt = id =>
   | x => Other(x)
   };
 
+[@genType]
 let combatTechniqueToInt = id =>
   switch (id) {
   | Crossbows => 1
@@ -678,10 +708,13 @@ let combatTechniqueToInt = id =>
   | Other(x) => x
   };
 
+[@genType]
+[@genType.as "CombatTechniqueGroup"]
 type combatTechniqueGroup =
   | Melee
   | Ranged;
 
+[@genType]
 let unsafeCombatTechniqueGroupFromInt = id =>
   switch (id) {
   | 1 => Melee
@@ -694,12 +727,15 @@ let unsafeCombatTechniqueGroupFromInt = id =>
     )
   };
 
+[@genType]
 let combatTechniqueGroupToInt = id =>
   switch (id) {
   | Melee => 1
   | Ranged => 2
   };
 
+[@genType]
+[@genType.as "Property"]
 type property =
   | AntiMagic
   | Demonic
@@ -715,6 +751,7 @@ type property =
   | Temporal
   | Other(int);
 
+[@genType]
 let propertyFromInt = id =>
   switch (id) {
   | 1 => AntiMagic
@@ -732,6 +769,7 @@ let propertyFromInt = id =>
   | x => Other(x)
   };
 
+[@genType]
 let propertyToInt = id =>
   switch (id) {
   | AntiMagic => 1
@@ -749,6 +787,8 @@ let propertyToInt = id =>
   | Other(x) => x
   };
 
+[@genType]
+[@genType.as "SpecialAbility"]
 type specialAbility =
   | SkillSpecialization
   | TerrainKnowledge
@@ -849,6 +889,7 @@ type specialAbility =
   | TraditionBrobimGeoden
   | Other(int);
 
+[@genType]
 let specialAbilityFromInt = id =>
   switch (id) {
   | 9 => SkillSpecialization
@@ -951,6 +992,7 @@ let specialAbilityFromInt = id =>
   | x => Other(x)
   };
 
+[@genType]
 let specialAbilityToInt = id =>
   switch (id) {
   | SkillSpecialization => 9

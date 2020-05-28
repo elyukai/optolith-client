@@ -1,8 +1,6 @@
-import { Maybe, Nothing } from "../../Data/Maybe"
-import { fromDefault, makeLenses } from "../../Data/Record"
+import { Maybe } from "../../Data/Maybe"
 
 export interface UIWikiState {
-  "@@name": "UIWikiState"
   filter: string
   filterAll: string
   category1: Maybe<string>
@@ -15,21 +13,3 @@ export interface UIWikiState {
   liturgicalChantsGroup: Maybe<number>
   itemTemplatesGroup: Maybe<number>
 }
-
-export const UIWikiState =
-  fromDefault ("UIWikiState")
-              <UIWikiState> ({
-                filter: "",
-                filterAll: "",
-                category1: Nothing,
-                category2: Nothing,
-                professionsGroup: Nothing,
-                skillsGroup: Nothing,
-                combatTechniquesGroup: Nothing,
-                specialAbilitiesGroup: Nothing,
-                spellsGroup: Nothing,
-                liturgicalChantsGroup: Nothing,
-                itemTemplatesGroup: Nothing,
-              })
-
-export const UIWikiStateL = makeLenses (UIWikiState)

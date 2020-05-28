@@ -14,7 +14,7 @@ import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDepe
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
 import { ChantsSortOptions } from "../../Models/Config"
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Hero, HeroModelRecord } from "../../Models/Hero/Hero"
 import { NumIdName } from "../../Models/NumIdName"
 import { BlessingCombined } from "../../Models/View/BlessingCombined"
 import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../Models/View/LiturgicalChantWithRequirements"
@@ -114,7 +114,7 @@ export const getSpellMax = (current_tradition : Record<SpecialAbility>) =>
 export const isLCIncreasable = (currentTradition : Record<SpecialAbility>) =>
                                (startEL : Record<ExperienceLevel>) =>
                                (phase : number) =>
-                               (attributes : HeroModel["attributes"]) =>
+                               (attributes : Hero["attributes"]) =>
                                (exceptionalSkill : Maybe<Record<ActivatableDependent>>) =>
                                (propertyKnowledge : Maybe<Record<ActivatableDependent>>) =>
                                (wiki_entry : Record<LiturgicalChant>) =>
@@ -138,7 +138,7 @@ type LiturgicalChantsAbove10ByAspect = OrderedMap<Aspect, number>
  * amount of liturgical chants at that exact SR.
  */
 export const chantsAbove10ByAspect : (wiki_chants : StaticData["liturgicalChants"])
-                                   => (hero_chants : HeroModel["liturgicalChants"])
+                                   => (hero_chants : Hero["liturgicalChants"])
                                    => LiturgicalChantsAbove10ByAspect
                                    = wiki_chants =>
                                        pipe (

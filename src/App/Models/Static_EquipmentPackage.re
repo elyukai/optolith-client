@@ -3,7 +3,7 @@
 type t = {
   id: int,
   name: string,
-  items: Ley.IntMap.t(int),
+  items: Ley_IntMap.t(int),
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),
 };

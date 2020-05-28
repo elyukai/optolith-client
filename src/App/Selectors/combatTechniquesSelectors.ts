@@ -10,7 +10,7 @@ import { IdPrefixes } from "../Constants/IdPrefixes"
 import { AdvantageId, CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids.gen"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { createSkillDependentWithValue6, SkillDependent } from "../Models/ActiveEntries/SkillDependent"
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Hero, HeroModelRecord } from "../Models/Hero/Hero"
 import { CombatTechniqueWithAttackParryBase, CombatTechniqueWithAttackParryBaseA_ } from "../Models/View/CombatTechniqueWithAttackParryBase"
 import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
@@ -43,7 +43,7 @@ const ADA = ActivatableDependent.A
  * as the relevant ids.
  */
 const getPrimaryAttrMod =
-  (attributes: HeroModel["attributes"]) =>
+  (attributes: Hero["attributes"]) =>
     pipe (
       getMaxAttributeValueByID (attributes),
       subtractBy (8),
@@ -53,7 +53,7 @@ const getPrimaryAttrMod =
     )
 
 const getAttackBase =
-  (attributes: HeroModel["attributes"]) =>
+  (attributes: Hero["attributes"]) =>
   (wiki_entry: Record<CombatTechnique>) =>
   (hero_entry: Record<SkillDependent>): number =>
     pipe_ (
@@ -65,7 +65,7 @@ const getAttackBase =
     )
 
 const getParryBase =
-  (attributes: HeroModel["attributes"]) =>
+  (attributes: Hero["attributes"]) =>
   (wiki_entry: Record<CombatTechnique>) =>
   (hero_entry: Record<SkillDependent>): Maybe<number> => {
     const curr_id = CTA.id (wiki_entry)
@@ -135,7 +135,7 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
 const getMaximum =
   (exceptionalCombatTechnique: Maybe<Record<ActivatableDependent>>) =>
   (startEl: Maybe<Record<ExperienceLevel>>) =>
-  (attributes: HeroModel["attributes"]) =>
+  (attributes: Hero["attributes"]) =>
   (phase: number) =>
   (ct: Record<CombatTechniqueWithAttackParryBase>): number => {
     const curr_id = pipe_ (ct, CTWAPBA.wikiEntry, CTA.id)

@@ -2,11 +2,11 @@
 /* eslint-disable import/first */
 
 
-import {IntSet_t as Ley_IntSet_t} from '../../../src/Data/Ley.gen';
-
 import {activatable as Static_Prerequisites_activatable} from './Static_Prerequisites.gen';
 
 import {list} from '../../../src/shims/ReasonPervasives.shim';
+
+import {t as Ley_IntSet_t} from '../../../src/Data/Ley_IntSet.gen';
 
 import {t as Static_Erratum_t} from './Static_Erratum.gen';
 

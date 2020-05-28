@@ -22,7 +22,7 @@ import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/I
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { HeroModelRecord } from "../../Models/Hero/Hero"
 import { ActivatableNameCost, ActivatableNameCostA_, ActivatableNameCostL, ActivatableNameCostL_, ActivatableNameCostSafeCost } from "../../Models/View/ActivatableNameCost"
 import { Advantage } from "../../Models/Wiki/Advantage"
 import { Disadvantage, isDisadvantage } from "../../Models/Wiki/Disadvantage"

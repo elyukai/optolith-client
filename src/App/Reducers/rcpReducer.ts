@@ -6,7 +6,7 @@ import { SelectProfessionAction } from "../Actions/ProfessionActions"
 import { SelectProfessionVariantAction } from "../Actions/ProfessionVariantActions"
 import { SelectRaceAction, SetRaceVariantAction } from "../Actions/RaceActions"
 import * as ActionTypes from "../Constants/ActionTypes"
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/Hero"
 import { pipe } from "../Utilities/pipe"
 
 type Action = SelectRaceAction

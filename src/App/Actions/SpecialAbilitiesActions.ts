@@ -12,7 +12,6 @@ import { ActivatableDeactivationOptions, ActivatableDeactivationOptionsL } from 
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObjectWithIdL, toActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId"
 import { SpecialAbilitiesSortOptions } from "../Models/Config"
-import { HeroModel } from "../Models/Hero/HeroModel"
 import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost"
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
 import { StaticDataRecord } from "../Models/Wiki/WikiModel"

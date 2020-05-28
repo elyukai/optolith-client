@@ -8,7 +8,7 @@ type t = {
   duration: string,
   target: string,
   property: int,
-  traditions: Ley.IntSet.t,
+  traditions: Ley_IntSet.t,
   activatablePrerequisites: option(list(Static_Prerequisites.activatable)),
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),

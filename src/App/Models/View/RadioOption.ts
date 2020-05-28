@@ -1,25 +1,6 @@
-import { Maybe, Nothing } from "../../../Data/Maybe"
-import { fromDefault, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record"
-
-export type RadioOptionValue = string | number
-
-export interface RadioOption<A extends RadioOptionValue = RadioOptionValue> {
-  "@@name": "RadioOption"
-  className: Maybe<string>
-  disabled: Maybe<boolean>
+export interface RadioOption<A> {
+  className?: string
+  disabled?: boolean
   name: string
-  value: Maybe<A>
+  value?: A
 }
-
-export interface RadioOptionCreator extends RecordCreator<RadioOption<any>> {
-  <A extends RadioOptionValue = RadioOptionValue>
-  (x: PartialMaybeOrNothing<OmitName<RadioOption<A>>>): Record<RadioOption<A>>
-}
-
-export const RadioOption: RadioOptionCreator =
-  fromDefault ("RadioOption") <RadioOption<any>> ({
-                className: Nothing,
-                disabled: Nothing,
-                name: "",
-                value: Nothing,
-              })

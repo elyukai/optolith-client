@@ -10,15 +10,9 @@ import { lookupF, OrderedMap, toList } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd } from "../../../Data/Tuple"
 import { ActivatableDependent, isActivatableDependent, isExtendedActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
-import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
-import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
-import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject"
-import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Hero, HeroModelRecord } from "../../Models/Hero/Hero"
 import { ActivatableDependency, Dependent, Sex } from "../../Models/Hero/heroTypeHelpers"
 import { Pact } from "../../Models/Hero/Pact"
-import { PersonalData } from "../../Models/Hero/PersonalData"
 import { Culture } from "../../Models/Wiki/Culture"
 import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement"
 import { CultureRequirement, isCultureRequirement } from "../../Models/Wiki/prerequisites/CultureRequirement"
@@ -220,7 +214,7 @@ const isPrimaryAttributeValid =
              (getPrimaryAttributeId (HA.specialAbilities (state))
                                     (RequirePrimaryAttribute.AL.type (req))))
 
-const isSocialPrerequisiteValid: (hero: Record<HeroModel>) =>
+const isSocialPrerequisiteValid: (hero: Record<Hero>) =>
                                  (req: Record<SocialPrerequisite>) => boolean =
   hero =>
     pipe (

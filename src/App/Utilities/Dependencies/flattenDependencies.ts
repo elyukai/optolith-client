@@ -3,7 +3,7 @@ import { elem, filter, find, foldl, isList, List, map, maximumNonNegative } from
 import { bindF, Maybe, Nothing, or, sum } from "../../../Data/Maybe"
 import { gt, gte, inc } from "../../../Data/Num"
 import { isRecord, Record } from "../../../Data/Record"
-import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { HeroModelRecord } from "../../Models/Hero/Hero"
 import { ValueBasedDependent } from "../../Models/Hero/heroTypeHelpers"
 import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependency"
 import { Advantage } from "../../Models/Wiki/Advantage"

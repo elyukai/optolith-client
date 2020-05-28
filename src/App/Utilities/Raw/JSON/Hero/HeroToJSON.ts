@@ -9,17 +9,12 @@ import { Record, StringKeyObject, toObject } from "../../../../../Data/Record"
 import { isTuple, Pair, Tuple } from "../../../../../Data/Tuple"
 import { ProfessionId } from "../../../../Constants/Ids"
 import { ActivatableDependent } from "../../../../Models/ActiveEntries/ActivatableDependent"
-import { ActivatableSkillDependent } from "../../../../Models/ActiveEntries/ActivatableSkillDependent"
 import { ActiveObject } from "../../../../Models/ActiveEntries/ActiveObject"
 import { AttributeDependent } from "../../../../Models/ActiveEntries/AttributeDependent"
-import { Belongings } from "../../../../Models/Hero/Belongings"
-import { Energies } from "../../../../Models/Hero/Energies"
-import { HeroModel, HeroModelRecord } from "../../../../Models/Hero/HeroModel"
+import { Hero, HeroModelRecord } from "../../../../Models/Hero/Hero"
 import { ExtendedSkillDependent } from "../../../../Models/Hero/heroTypeHelpers"
 import { HitZoneArmor } from "../../../../Models/Hero/HitZoneArmor"
 import { Item } from "../../../../Models/Hero/Item"
-import { PersonalData } from "../../../../Models/Hero/PersonalData"
-import { Rules } from "../../../../Models/Hero/Rules"
 import { UndoableHero, UndoableHeroModelRecord } from "../../../../Models/Hero/UndoHero"
 import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
 import { current_version } from "../../../../Selectors/envSelectors"
@@ -87,7 +82,7 @@ const getActivatablesForSave =
                         (union (HA.disadvantages (hero)) (HA.specialAbilities (hero))))
 
 const getValuesForSave =
-  <T extends HeroModel[HeroStateMapKey]>
+  <T extends Hero[HeroStateMapKey]>
   (sliceGetter: (hero: HeroModelRecord) => T) =>
   (testFn: (obj: OrderedMapValueElement<T>) => boolean) =>
   (hero: HeroModelRecord) =>

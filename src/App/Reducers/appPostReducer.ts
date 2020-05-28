@@ -13,7 +13,7 @@ import { ReceiveHeroSaveAction, ReceiveImportedHeroAction } from "../Actions/IOA
 import * as ActionTypes from "../Constants/ActionTypes"
 import { AppStateL, AppStateRecord } from "../Models/AppState"
 import { PresavedCache } from "../Models/Cache"
-import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/Hero"
 import { User } from "../Models/Hero/heroTypeHelpers"
 import { HeroesStateL } from "../Models/HeroesState"
 import { getRuleBooksEnabledM } from "../Selectors/rulesSelectors"

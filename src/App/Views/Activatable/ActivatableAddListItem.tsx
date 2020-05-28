@@ -6,7 +6,7 @@ import { Record } from "../../../Data/Record"
 import { fst, snd } from "../../../Data/Tuple"
 import { AdvantageId, DisadvantageId } from "../../Constants/Ids"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
-import { HeroModel } from "../../Models/Hero/HeroModel"
+import { Hero } from "../../Models/Hero/Hero"
 import { NumIdName } from "../../Models/NumIdName"
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
@@ -38,7 +38,7 @@ export interface ActivatableAddListItemOwnProps {
 }
 
 export interface ActivatableAddListItemStateProps {
-  skills: Maybe<HeroModel["skills"]>
+  skills: Maybe<Hero["skills"]>
   staticData: StaticDataRecord
   isEditingAllowed: boolean
 }

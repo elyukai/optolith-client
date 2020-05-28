@@ -54,7 +54,7 @@ type meleeWeapon = {
   pa: option(int),
   reach: option(int),
   length: option(int),
-  structurePoints: option(int),
+  structurePoints: option(oneOrMany(int)),
   isParryingWeapon: bool,
   isTwoHandedWeapon: bool,
   isImprovisedWeapon: bool,
@@ -170,7 +170,8 @@ module Decode = {
     pa: json |> optionalField("pa", int),
     reach: json |> optionalField("reach", int),
     length: json |> optionalField("length", int),
-    structurePoints: json |> optionalField("structurePoints", int),
+    structurePoints:
+      json |> optionalField("structurePoints", oneOrMany(int)),
     isParryingWeapon: json |> field("isParryingWeapon", bool),
     isTwoHandedWeapon: json |> field("isTwoHandedWeapon", bool),
     isImprovisedWeapon: json |> field("isImprovisedWeapon", bool),

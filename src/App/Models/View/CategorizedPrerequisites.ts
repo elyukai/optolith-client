@@ -1,50 +1,63 @@
 import { List } from "../../../Data/List"
-import { Maybe, Nothing } from "../../../Data/Maybe"
-import { fromDefault, makeLenses, Record, RecordIBase } from "../../../Data/Record"
-import { RequireActivatable } from "../Wiki/prerequisites/ActivatableRequirement"
-import { RequireIncreasable } from "../Wiki/prerequisites/IncreasableRequirement"
-import { RequirePrimaryAttribute } from "../Wiki/prerequisites/PrimaryAttributeRequirement"
+import { Maybe } from "../../../Data/Maybe"
+import { V } from "../../Utilities/Variant"
+import { ActivatableMultiEntryPrerequisite, ActivatableMultiSelectPrerequisite, ActivatablePrerequisite } from "../Wiki/prerequisites/ActivatableRequirement"
+import { IncreasableMultiEntryPrerequisite, IncreasablePrerequisite } from "../Wiki/prerequisites/IncreasableRequirement"
+import { PrimaryAttributePrerequisite } from "../Wiki/prerequisites/PrimaryAttributeRequirement"
 import { RaceRequirement } from "../Wiki/prerequisites/RaceRequirement"
 import { SocialPrerequisite } from "../Wiki/prerequisites/SocialPrerequisite"
 
 /**
  * Note: Not the same as `ActivatablePrerequisiteText`!
  */
-export interface ActivatableStringObject {
+export type ActivatableStringObject = {
   id: string
   active: boolean
   value: string
 }
 
-export type ReplacedPrerequisite<T extends RecordIBase<any> = RequireActivatable> = Record<T>
-                                                                                  | string
+export type ReplacedIncreasablePrerequisite =
+  | V<"IncreasablePrerequisite", IncreasablePrerequisite>
+  | V<"IncreasableMultiEntryPrerequisite", IncreasableMultiEntryPrerequisite>
+  | V<"String", string>
 
-export type ActivatablePrerequisiteObjects = Record<RequireActivatable>
-                                           | ActivatableStringObject
+export type ReplacedPrimaryAttributePrerequisite =
+  | V<"ActivatablePrerequisite", PrimaryAttributePrerequisite>
+  | V<"String", string>
 
-export type PrimaryAttributePrerequisiteObjects = Record<RequirePrimaryAttribute>
-                                                | string
+export type ActivatablePrerequisiteObjects =
+  | V<"ActivatablePrerequisite", ActivatablePrerequisite>
+  | V<"ActivatableMultiEntryPrerequisite", ActivatableMultiEntryPrerequisite>
+  | V<"ActivatableMultiSelectPrerequisite", ActivatableMultiSelectPrerequisite>
+  | V<"ActivatableStringObject", ActivatableStringObject>
 
-export type IncreasablePrerequisiteObjects = Record<RequireIncreasable>
-                                           | string
+export type PrimaryAttributePrerequisiteObjects =
+  | V<"PrimaryAttributePrerequisite", PrimaryAttributePrerequisite>
+  | V<"String", string>
 
-export type RacePrerequisiteObjects = Record<RaceRequirement>
-                                    | string
+export type IncreasablePrerequisiteObjects =
+  | V<"IncreasablePrerequisite", IncreasablePrerequisite>
+  | V<"String", string>
 
-export type SocialPrerequisiteObjects = Record<SocialPrerequisite>
-                                      | string
+export type RacePrerequisiteObjects =
+  | V<"RaceRequirement", RaceRequirement>
+  | V<"String", string>
 
-export type RCPPrerequisiteObjects = boolean
-                                   | string
+export type SocialPrerequisiteObjects =
+  | V<"SocialPrerequisite", SocialPrerequisite>
+  | V<"String", string>
+
+export type RCPPrerequisiteObjects =
+  | V<"boolean", boolean>
+  | V<"String", string>
 
 export interface CategorizedPrerequisites {
-  "@@name": "CategorizedPrerequisites"
   rcp: RCPPrerequisiteObjects
   casterBlessedOne: List<ActivatablePrerequisiteObjects>
   traditions: List<ActivatablePrerequisiteObjects>
-  attributes: List<ReplacedPrerequisite<RequireIncreasable>>
-  primaryAttribute: Maybe<ReplacedPrerequisite<RequirePrimaryAttribute>>
-  skills: List<ReplacedPrerequisite<RequireIncreasable>>
+  attributes: List<ReplacedIncreasablePrerequisite>
+  primaryAttribute: Maybe<ReplacedPrimaryAttributePrerequisite>
+  skills: List<ReplacedIncreasablePrerequisite>
   activeSkills: List<ActivatablePrerequisiteObjects>
   otherActiveSpecialAbilities: List<ActivatablePrerequisiteObjects>
   inactiveSpecialAbilities: List<ActivatablePrerequisiteObjects>
@@ -55,25 +68,3 @@ export interface CategorizedPrerequisites {
   race: Maybe<RacePrerequisiteObjects>
   social: Maybe<SocialPrerequisiteObjects>
 }
-
-export const CategorizedPrerequisites =
-  fromDefault ("CategorizedPrerequisites")
-              <CategorizedPrerequisites> ({
-                rcp: false,
-                casterBlessedOne: List (),
-                traditions: List (),
-                attributes: List (),
-                primaryAttribute: Nothing,
-                skills: List (),
-                activeSkills: List (),
-                otherActiveSpecialAbilities: List (),
-                inactiveSpecialAbilities: List (),
-                otherActiveAdvantages: List (),
-                inactiveAdvantages: List (),
-                activeDisadvantages: List (),
-                inactiveDisadvantages: List (),
-                race: Nothing,
-                social: Nothing,
-              })
-
-export const CategorizedPrerequisitesL = makeLenses (CategorizedPrerequisites)

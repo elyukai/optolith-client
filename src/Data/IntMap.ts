@@ -354,7 +354,7 @@ export const findWithDefault =
  *
  * The empty map.
  */
-export const empty = ReIntMap.fromArray ([])
+export const empty: t<any> = ReIntMap.fromArray ([])
 
 /**
  * `singleton :: k -> a -> Map k a`

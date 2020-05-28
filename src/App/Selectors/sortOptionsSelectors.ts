@@ -3,7 +3,7 @@ import { bindF, ensure, fromMaybe, listToMaybe, maybe, Maybe } from "../../Data/
 import { compare } from "../../Data/Num"
 import { lookupF } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { HeroModelRecord } from "../Models/Hero/Hero"
 import { Sex } from "../Models/Hero/heroTypeHelpers"
 import { isItem, Item } from "../Models/Hero/Item"
 import { NumIdName } from "../Models/NumIdName"

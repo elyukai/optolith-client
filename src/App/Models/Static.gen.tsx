@@ -2,11 +2,11 @@
 /* eslint-disable import/first */
 
 
-import {IntMap_t as Ley_IntMap_t} from '../../../src/Data/Ley.gen';
-
-import {StrMap_t as Ley_StrMap_t} from '../../../src/Data/Ley.gen';
-
 import {group as Static_Skill_group} from './Static_Skill.gen';
+
+import {t as Ley_IntMap_t} from '../../../src/Data/Ley_IntMap.gen';
+
+import {t as Ley_StrMap_t} from '../../../src/Data/Ley_StrMap.gen';
 
 import {t as Static_Advantage_t} from './Static_Advantage.gen';
 

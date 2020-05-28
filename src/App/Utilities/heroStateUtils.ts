@@ -8,9 +8,9 @@ import { alter, elems, insert, lookup, lookupF, sdelete, update } from "../../Da
 import { IdPrefixes } from "../Constants/IdPrefixes"
 import { createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
-import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
+import { createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
 import { createPlainSkillDependent, createSkillDependentWithValue6 } from "../Models/ActiveEntries/SkillDependent"
-import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Hero, HeroModelL, HeroModelRecord } from "../Models/Hero/Hero"
 import { Dependent } from "../Models/Hero/heroTypeHelpers"
 import { Skill } from "../Models/Wiki/Skill"
 import { EntryWithGroup } from "../Models/Wiki/wikiTypeHelpers"
@@ -31,13 +31,13 @@ export type HeroStateListKey = HeroStateMapKey
                              | "cantrips"
 
 export type HeroStateListGetter<K extends HeroStateListKey = HeroStateListKey> =
-  (hero: HeroModelRecord) => HeroModel[K]
+  (hero: HeroModelRecord) => Hero[K]
 
 export type HeroStateListLens<K extends HeroStateListKey = HeroStateListKey> =
-  Lens_<HeroModelRecord, HeroModel[K]>
+  Lens_<HeroModelRecord, Hero[K]>
 
 export type HeroStateMapLens<K extends HeroStateMapKey = HeroStateMapKey> =
-  Lens_<HeroModelRecord, HeroModel[K]>
+  Lens_<HeroModelRecord, Hero[K]>
 
 /**
  * Returns a getter function for a `Hero` object based on the prefix of the
@@ -207,7 +207,7 @@ export const setHeroStateItem =
     fmap ((lens: HeroStateMapLens) =>
            over (lens)
                 (insert (id) (item) as
-                  (m: HeroModel[HeroStateMapKey]) => HeroModel[HeroStateMapKey])
+                  (m: Hero[HeroStateMapKey]) => Hero[HeroStateMapKey])
                 (state))
          (getHeroStateMapLensById (id))
 
@@ -217,7 +217,7 @@ export const removeHeroStateItem =
     fmap ((lens: HeroStateMapLens) =>
            over (lens)
                 (sdelete (id) as
-                  (m: HeroModel[HeroStateMapKey]) => HeroModel[HeroStateMapKey])
+                  (m: Hero[HeroStateMapKey]) => Hero[HeroStateMapKey])
                 (state))
          (getHeroStateMapLensById (id))
 
@@ -245,7 +245,7 @@ export const updateEntryDef =
                 over (lens)
                   (alter<D> (pipe (fromMaybe (creator (id)), f))
                             (id) as unknown as
-                    (m: HeroModel[HeroStateMapKey]) => HeroModel[HeroStateMapKey])
+                    (m: Hero[HeroStateMapKey]) => Hero[HeroStateMapKey])
                   (state))
               (getEntryCreatorById (id) as Maybe<(id: string) => D>)
               (getHeroStateMapLensById (id)))

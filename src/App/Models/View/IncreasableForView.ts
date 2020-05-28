@@ -1,29 +1,16 @@
-import { Maybe, Nothing } from "../../../Data/Maybe"
-import { fromDefault, Record } from "../../../Data/Record"
-import { IncreaseSkill } from "../Wiki/sub/IncreaseSkill"
-
 export interface IncreasableForView {
-  "@@name": "IncreasableForView"
-  id: string
+  id: number
   name: string
   value: number
-  previous: Maybe<number>
+  previous?: number
 }
 
-export const IncreasableForView =
-  fromDefault ("IncreasableForView")
-              <IncreasableForView> ({
-                id: "",
-                name: "",
-                value: 0,
-                previous: Nothing,
-              })
-
 export const increasableViewFrom =
-  (x: Record<IncreaseSkill>) =>
-  (name: string) =>
-    IncreasableForView ({
-      id: IncreaseSkill.A.id (x),
+  (id: number) =>
+  (value: number) =>
+  (name: string): IncreasableForView =>
+    ({
+      id,
       name,
-      value: IncreaseSkill.A.value (x),
+      value,
     })

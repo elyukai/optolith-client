@@ -27,10 +27,12 @@ import { uncurryN, uncurryN3, uncurryN4, uncurryN5 } from "./Tuple/All"
 export type Just<A> = A
 export const Just = <A> (x: A): Just<A> => x
 
-export type Nothing = null | undefined
+export type Nothing = undefined
 export const Nothing: Nothing = undefined
 
-export type Maybe<A> = ReOption.Option<A>
+const normalize = <A> (x: A | null | undefined): A | undefined => x === null ? undefined : x
+
+export type Maybe<A> = A | undefined
 
 export const isJust = <A> (x: Maybe<A>): x is Just<A> => ReOption.isSome (x)
 export const isNothing = <A> (x: Maybe<A>): x is Nothing => ReOption.isNone (x)
@@ -90,14 +92,14 @@ export const fromMaybe_ =
  */
 export const fmap =
   <A, B> (f: (x: A) => B) => (x: Maybe<A>): Maybe<B> =>
-    ReOption.Functor_fmap (f, x)
+    normalize (ReOption.Functor_fmap (f, x))
 
 /**
  * `fmapF :: f a -> (a -> b) -> f b`
  */
 export const fmapF =
   <A> (x: Maybe<A>) => <B> (f: (x: A) => B): Maybe<B> =>
-    ReOption.Functor_fmap (f, x)
+    normalize (ReOption.Functor_fmap (f, x))
 
 
 // APPLICATIVE
@@ -118,7 +120,7 @@ export const ap =
   <A, B>
   (f: Maybe<(x: A) => B>) =>
   (x: Maybe<A>): Maybe<B> =>
-    ReOption.Applicative_ap (f, x)
+    normalize (ReOption.Applicative_ap (f, x))
 
 
 // ALTERNATIVE
@@ -130,7 +132,7 @@ export const ap =
  */
 export const alt =
   <A> (x: Maybe<A>) => (y: Maybe<A>): Maybe<A> =>
-    ReOption.Alternative_alt (x, y)
+    normalize (ReOption.Alternative_alt (x, y))
 
 /**
  * `alt' :: Maybe a -> Maybe a -> Maybe a`
@@ -152,7 +154,7 @@ export const alt_ =
  */
 export const altF =
   <A> (y: Maybe<A>) => (x: Maybe<A>): Maybe<A> =>
-    ReOption.Alternative_alt (x, y)
+    normalize (ReOption.Alternative_alt (x, y))
 
 /**
  * `altF' :: Maybe a -> Maybe a -> Maybe a`
@@ -186,7 +188,7 @@ export const empty = Nothing
  */
 export const guard =
   (pred: boolean): Maybe<void> =>
-    ReOption.Alternative_guard (pred)
+    normalize (ReOption.Alternative_guard (pred))
 
 /**
  * `guard' :: (() -> Bool) -> Maybe ()`
@@ -209,7 +211,7 @@ export const guard =
  */
 export const guard_ =
   (pred: () => boolean): Maybe<void> =>
-    pred () ? pure<void> (undefined) : empty
+    normalize (pred () ? pure<void> (undefined) : empty)
 
 
 // MONAD
@@ -222,7 +224,7 @@ export const bind =
   (x: Maybe<A>) =>
   <B>
   (f: (x: A) => Maybe<B>): Maybe<B> =>
-    ReOption.Monad_bind (x, f)
+    normalize (ReOption.Monad_bind (x, f))
 
 /**
  * `(=<<) :: Monad m => (a -> m b) -> m a -> m b`
@@ -231,7 +233,7 @@ export const bindF =
   <A, B>
   (f: (x: A) => Maybe<B>) =>
   (x: Maybe<A>): Maybe<B> =>
-    ReOption.Monad_bindF (f, x)
+    normalize (ReOption.Monad_bindF (f, x))
 
 /**
  * `(>>) :: Maybe a -> Maybe b -> Maybe b`
@@ -244,7 +246,7 @@ export const bindF =
  */
 export const then =
   (x: Maybe<any>) => <A> (y: Maybe<A>): Maybe<A> =>
-    ReOption.Monad_then (x, y)
+    normalize (ReOption.Monad_then (x, y))
 
 /**
  * `(<<) :: Maybe a -> Maybe b -> Maybe a`
@@ -254,7 +256,7 @@ export const then =
  */
 export const thenF =
   <A> (x: Maybe<A>) => (y: Maybe<any>): Maybe<A> =>
-    ReOption.Monad_thenF (x, y)
+    normalize (ReOption.Monad_thenF (x, y))
 
 /**
  * `(>=>) :: (a -> Maybe b) -> (b -> Maybe c) -> a -> Maybe c`
@@ -267,7 +269,7 @@ export const kleisli =
   <C>
   (g: (x: B) => Maybe<C>) =>
   (x: A): Maybe<C> =>
-    ReOption.Monad_kleisli (f, g, x)
+    normalize (ReOption.Monad_kleisli (f, g, x))
 
 /**
  * `join :: Maybe (Maybe a) -> Maybe a`
@@ -278,7 +280,7 @@ export const kleisli =
  */
 export const join =
   <A> (x: Maybe<Maybe<A>>): Maybe<A> =>
-    ReOption.Monad_join (x)
+    normalize (ReOption.Monad_join (x))
 
 export type join<A> = (x: Maybe<Maybe<A>>) => Maybe<A>
 
@@ -295,7 +297,7 @@ export const mapM =
   <A, B>
   (f: (x: A) => Maybe<B>) =>
   (xs: List<A>): Maybe<List<B>> =>
-    ReOption.Monad_mapM (f, xs)
+    normalize (ReOption.Monad_mapM (f, xs))
 
 /**
  * `liftM2 :: (a1 -> a2 -> r) -> Maybe a1 -> Maybe a2 -> Maybe r`
@@ -308,7 +310,7 @@ export const liftM2 =
   (f: (a1: A1) => (a2: A2) => B) =>
   (x1: Maybe<A1>) =>
   (x2: Maybe<A2>): Maybe<B> =>
-    ReOption.Monad_liftM2 (uncurryN (f), x1, x2)
+    normalize (ReOption.Monad_liftM2 (uncurryN (f), x1, x2))
 
 /**
  * `liftM3 :: (a1 -> a2 -> a3 -> r) -> Maybe a1 -> Maybe a2 -> Maybe a3 -> Maybe r`
@@ -322,7 +324,7 @@ export const liftM3 =
   (x1: Maybe<A1>) =>
   (x2: Maybe<A2>) =>
   (x3: Maybe<A3>): Maybe<B> =>
-    ReOption.Monad_liftM3 (uncurryN3 (f), x1, x2, x3)
+    normalize (ReOption.Monad_liftM3 (uncurryN3 (f), x1, x2, x3))
 
 /**
  * `liftM4 :: Maybe m => (a1 -> a2 -> a3 -> a4 -> r) -> m a1 -> m a2 -> m a3 ->
@@ -338,7 +340,7 @@ export const liftM4 =
   (x2: Maybe<A2>) =>
   (x3: Maybe<A3>) =>
   (x4: Maybe<A4>): Maybe<B> =>
-    ReOption.Monad_liftM4 (uncurryN4 (f), x1, x2, x3, x4)
+    normalize (ReOption.Monad_liftM4 (uncurryN4 (f), x1, x2, x3, x4))
 
 /**
  * `liftM5 :: Maybe m => (a1 -> a2 -> a3 -> a4 -> a5 -> r) -> m a1 -> m a2 -> m
@@ -355,7 +357,7 @@ export const liftM5 =
   (x3: Maybe<A3>) =>
   (x4: Maybe<A4>) =>
   (x5: Maybe<A5>): Maybe<B> =>
-    ReOption.Monad_liftM5 (uncurryN5 (f), x1, x2, x3, x4, x5)
+    normalize (ReOption.Monad_liftM5 (uncurryN5 (f), x1, x2, x3, x4, x5))
 
 
 // FOLDABLE
@@ -589,7 +591,7 @@ interface Find {
  */
 export const find: Find =
   <A> (pred: (x: A) => boolean) => (x: Maybe<A>): Maybe<A> =>
-    ReOption.Foldable_find (pred, x)
+    normalize (ReOption.Foldable_find (pred, x))
 
 
 // SEMIGROUP
@@ -603,7 +605,7 @@ export const find: Find =
  */
 export const mappend =
   <A> (x: Maybe<List<A>>) => (y: Maybe<List<A>>): Maybe<List<A>> =>
-    ReOption.Semigroup_sappend (x, y)
+    normalize (ReOption.Semigroup_sappend (x, y))
 
 
 // MAYBE FUNCTIONS (PART 2)
@@ -630,7 +632,7 @@ export const maybe =
  */
 export const listToMaybe =
   <A> (xs: List<A>): Maybe<A> =>
-    ReOption.listToOption (xs)
+    normalize (ReOption.listToOption (xs))
 
 /**
  * `maybeToList :: Maybe a -> [a]`
@@ -699,7 +701,7 @@ export const ensure: Ensure =
   <A>
   (pred: (x: A) => boolean) =>
   (x: A): Maybe<A> =>
-    ReOption.ensure (pred, x)
+    normalize (ReOption.ensure (pred, x))
 
 Maybe.ensure = ensure
 

@@ -10,10 +10,8 @@ import { Record } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
 import { SkillId, SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
-import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Hero, HeroModelRecord } from "../../Models/Hero/Hero"
 import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
 import { SkillCombined, SkillCombinedA_ } from "../../Models/View/SkillCombined"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
@@ -59,7 +57,7 @@ export const getExceptionalSkillBonus = (exceptionalSkill : Maybe<Record<Activat
  * Creates the base for a list for calculating the maximum of a skill based on
  * the skill check's atrributes' values.
  */
-export const getMaxSRByCheckAttrs = (attrs : HeroModel["attributes"]) =>
+export const getMaxSRByCheckAttrs = (attrs : Hero["attributes"]) =>
                                     (wiki_entry : EntryWithCheck) : number =>
                                       pipe_ (
                                         wiki_entry,

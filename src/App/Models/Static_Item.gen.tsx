@@ -57,7 +57,7 @@ export type meleeWeapon = {
   readonly pa?: number; 
   readonly reach?: number; 
   readonly length?: number; 
-  readonly structurePoints?: number; 
+  readonly structurePoints?: GenericHelpers_oneOrMany<number>; 
   readonly isParryingWeapon: boolean; 
   readonly isTwoHandedWeapon: boolean; 
   readonly isImprovisedWeapon: boolean

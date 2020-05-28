@@ -108,7 +108,7 @@ function meleeWeapon(json) {
           pa: JsonStrict$OptolithClient.optionalField("pa", Json_decode.$$int, json),
           reach: JsonStrict$OptolithClient.optionalField("reach", Json_decode.$$int, json),
           length: JsonStrict$OptolithClient.optionalField("length", Json_decode.$$int, json),
-          structurePoints: JsonStrict$OptolithClient.optionalField("structurePoints", Json_decode.$$int, json),
+          structurePoints: JsonStrict$OptolithClient.optionalField("structurePoints", GenericHelpers$OptolithClient.Decode.oneOrMany(Json_decode.$$int), json),
           isParryingWeapon: Json_decode.field("isParryingWeapon", Json_decode.bool, json),
           isTwoHandedWeapon: Json_decode.field("isTwoHandedWeapon", Json_decode.bool, json),
           isImprovisedWeapon: Json_decode.field("isImprovisedWeapon", Json_decode.bool, json)

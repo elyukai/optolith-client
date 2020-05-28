@@ -7,7 +7,7 @@ type t = {
   range: string,
   duration: string,
   target: string,
-  traditions: Ley.IntSet.t,
+  traditions: Ley_IntSet.t,
   src: list(Static_SourceRef.t),
   errata: list(Static_Erratum.t),
 };

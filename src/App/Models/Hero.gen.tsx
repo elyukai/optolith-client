@@ -2,12 +2,6 @@
 /* eslint-disable import/first */
 
 
-import {IntMap_t as Ley_IntMap_t} from '../../../src/Data/Ley.gen';
-
-import {IntSet_t as Ley_IntSet_t} from '../../../src/Data/Ley.gen';
-
-import {Option_t as Ley_Option_t} from '../../../src/Data/Ley.gen';
-
 import {activatableAndSkillId as Ids_activatableAndSkillId} from '../../../src/App/Constants/Ids.gen';
 
 import {activatableId as Ids_activatableId} from '../../../src/App/Constants/Ids.gen';
@@ -21,6 +15,12 @@ import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/
 import {phase as Id_phase} from '../../../src/App/Constants/Id.gen';
 
 import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
+
+import {t as Ley_IntMap_t} from '../../../src/Data/Ley_IntMap.gen';
+
+import {t as Ley_IntSet_t} from '../../../src/Data/Ley_IntSet.gen';
+
+import {t as Ley_StrSet_t} from '../../../src/Data/Ley_StrSet.gen';
 
 // tslint:disable-next-line:interface-over-type-literal
 export type sex = "Male" | "Female";
@@ -39,9 +39,9 @@ export type ActiveRule = Rules_activeRule;
 // tslint:disable-next-line:interface-over-type-literal
 export type Rules_t = {
   readonly areAllPublicationsActive: boolean; 
-  readonly activePublications: list<string>; 
-  readonly activeFocusRules: list<Rules_activeRule>; 
-  readonly activeOptionalRules: list<Rules_activeRule>
+  readonly activePublications: Ley_StrSet_t; 
+  readonly activeFocusRules: Ley_IntMap_t<Rules_activeRule>; 
+  readonly activeOptionalRules: Ley_IntMap_t<Rules_activeRule>
 };
 export type Rules = Rules_t;
 
@@ -64,7 +64,7 @@ export type personalData = {
 export type PersonalData = personalData;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Activatable_option = 
+export type Activatable_parameter = 
     { tag: "Generic"; value: number }
   | { tag: "Skill"; value: number }
   | { tag: "CombatTechnique"; value: number }
@@ -76,9 +76,9 @@ export type Activatable_option =
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Activatable_single = {
-  readonly options: list<Activatable_option>; 
-  readonly level: Ley_Option_t<number>; 
-  readonly customCost: Ley_Option_t<number>
+  readonly options: list<Activatable_parameter>; 
+  readonly level?: number; 
+  readonly customCost?: number
 };
 export type ActivatableSingle = Activatable_single;
 
@@ -88,7 +88,7 @@ export type Activatable_dependency = {
   readonly target: GenericHelpers_oneOrMany<Ids_activatableId>; 
   readonly active: boolean; 
   readonly options: list<GenericHelpers_oneOrMany<Ids_selectOptionId>>; 
-  readonly level: Ley_Option_t<number>
+  readonly level?: number
 };
 export type ActivatableDependency = Activatable_dependency;
 
@@ -177,10 +177,18 @@ export type Item_mundaneItem = { readonly structurePoints?: GenericHelpers_oneOr
 export type MundaneItem = Item_mundaneItem;
 
 // tslint:disable-next-line:interface-over-type-literal
+export type Item_newAttribute = { readonly attribute: number; readonly threshold: number };
+export type NewAttribute = Item_newAttribute;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type Item_agilityStrength = { readonly agility: number; readonly strength: number };
+export type AgilityStrength = Item_agilityStrength;
+
+// tslint:disable-next-line:interface-over-type-literal
 export type Item_primaryAttributeDamageThreshold = 
-    { tag: "SameAttribute"; value: number }
-  | { tag: "AgilityStrength"; value: [number, number] }
-  | { tag: "DifferentAttribute"; value: [number, number] };
+    { tag: "DefaultAttribute"; value: number }
+  | { tag: "DifferentAttribute"; value: Item_newAttribute }
+  | { tag: "AgilityStrength"; value: Item_agilityStrength };
 export type PrimaryAttributeDamageThreshold = Item_primaryAttributeDamageThreshold;
 
 // tslint:disable-next-line:interface-over-type-literal
@@ -248,6 +256,7 @@ export type Special = Item_special;
 // tslint:disable-next-line:interface-over-type-literal
 export type Item_t = {
   readonly id: number; 
+  readonly name: string; 
   readonly amount?: number; 
   readonly price?: number; 
   readonly weight?: number; 
@@ -390,10 +399,10 @@ export type t = {
   readonly liturgicalChants: Ley_IntMap_t<ActivatableSkill_t>; 
   readonly cantrips: Ley_IntSet_t; 
   readonly blessings: Ley_IntSet_t; 
-  readonly items: list<Item_t>; 
-  readonly hitZoneArmors: list<hitZoneArmor>; 
+  readonly items: Ley_IntMap_t<Item_t>; 
+  readonly hitZoneArmors: Ley_IntMap_t<hitZoneArmor>; 
   readonly purse: purse; 
-  readonly pets: list<pet>; 
+  readonly pets: Ley_IntMap_t<pet>; 
   readonly pact?: Pact_t; 
   readonly combatStyleDependencies: list<styleDependency>; 
   readonly magicalStyleDependencies: list<styleDependency>; 

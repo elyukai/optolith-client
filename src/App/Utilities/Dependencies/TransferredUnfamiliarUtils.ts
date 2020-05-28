@@ -12,7 +12,7 @@ import { ActivatableDeactivationOptions } from "../../Models/Actions/Activatable
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
 import { ActiveObjectWithId, toActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
-import { HeroModel, HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Hero, HeroModelL, HeroModelRecord } from "../../Models/Hero/Hero"
 import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
 import { Spell } from "../../Models/Wiki/Spell"
@@ -78,7 +78,7 @@ const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
  * transferring unfamiliar spells.
  */
 export const addTransferUnfamiliarDependencies: (active: Record<ActiveObjectWithId>) =>
-                                                ident<Record<HeroModel>> =
+                                                ident<Record<Hero>> =
   pipe (
     getTransferredUnfamiliarById,
     maybe (ident as ident<HeroModelRecord>)
@@ -106,7 +106,7 @@ export const addTransferUnfamiliarDependenciesByActivationOptions =
  * transferring unfamiliar spells.
  */
 export const removeTransferUnfamiliarDependencies:
-  (active: Record<ActivatableDeactivationOptions>) => ident<Record<HeroModel>> =
+  (active: Record<ActivatableDeactivationOptions>) => ident<Record<Hero>> =
   active => hero => {
     const src_id = ADOA.id (active)
     const src_index = ADOA.index (active)

@@ -1,6 +1,5 @@
 import { List } from "../../Data/List"
-import { Just, Maybe, Nothing } from "../../Data/Maybe"
-import { fromDefault } from "../../Data/Record"
+import { Maybe } from "../../Data/Maybe"
 import { EquipmentGroup } from "../Constants/Groups"
 import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids"
 import { SortNames } from "../Views/Universal/SortOptions"
@@ -136,7 +135,6 @@ export enum Theme {
 }
 
 export interface Config {
-  "@@name": "Config"
   herolistSortOrder: HeroListSortOptions
   herolistVisibilityFilter: HeroListVisibilityFilter
   racesSortOrder: RacesSortOptions
@@ -165,35 +163,3 @@ export interface Config {
   rangedItemTemplatesCombatTechniqueFilter: Maybe<RangedCombatTechniqueId>
   enableAnimations: Maybe<boolean>
 }
-
-export const Config =
-  fromDefault ("Config")
-              <Config> ({
-                herolistSortOrder: SortNames.Name,
-                herolistVisibilityFilter: HeroListVisibilityFilter.All,
-                racesSortOrder: SortNames.Name,
-                culturesSortOrder: SortNames.Name,
-                culturesVisibilityFilter: CulturesVisibilityFilter.Common,
-                professionsSortOrder: SortNames.Name,
-                professionsVisibilityFilter: ProfessionsVisibilityFilter.Common,
-                professionsGroupVisibilityFilter: ProfessionsGroupVisibilityFilter.All,
-                advantagesDisadvantagesCultureRatingVisibility: false,
-                talentsSortOrder: SortNames.Group,
-                talentsCultureRatingVisibility: false,
-                combatTechniquesSortOrder: SortNames.Name,
-                specialAbilitiesSortOrder: SortNames.Name,
-                spellsSortOrder: SortNames.Name,
-                spellsUnfamiliarVisibility: false,
-                liturgiesSortOrder: SortNames.Name,
-                equipmentSortOrder: SortNames.Name,
-                equipmentGroupVisibilityFilter: EquipmentGroup.MeleeWeapons,
-                sheetCheckAttributeValueVisibility: Just (false),
-                enableActiveItemHints: false,
-                locale: Nothing,
-                fallbackLocale: Nothing,
-                theme: Just (Theme.Dark),
-                enableEditingHeroAfterCreationPhase: Just (false),
-                meleeItemTemplatesCombatTechniqueFilter: Nothing,
-                rangedItemTemplatesCombatTechniqueFilter: Nothing,
-                enableAnimations: Just (false),
-              })

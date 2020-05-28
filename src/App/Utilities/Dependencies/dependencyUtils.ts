@@ -6,8 +6,7 @@ import { consF, foldr, isList, sdelete } from "../../../Data/List"
 import { elemF, fromMaybe, isNothing, Just, Nothing } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
-import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject"
-import { HeroModel, HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Hero, HeroModelL, HeroModelRecord } from "../../Models/Hero/Hero"
 import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from "../../Models/Hero/heroTypeHelpers"
 import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependency"
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement"
@@ -150,7 +149,7 @@ const putIncreasableDependency =
 
 const modifySocialDependency: (isToAdd: boolean) =>
                               (prerequisite: Record<SocialPrerequisite>) =>
-                              (hero: Record<HeroModel>) => Record<HeroModel> =
+                              (hero: Record<Hero>) => Record<Hero> =
   isToAdd => x => over (HL.socialStatusDependencies)
                        ((isToAdd ? consF : sdelete) (SocialPrerequisite.A.value (x)))
 
@@ -161,7 +160,7 @@ const modifyDependencies =
   (modifyActivatableSkillDependency: ModifyActivatableSkillDependency) =>
   (modifyActivatableDependency: ModifyActivatableDependency) =>
   (sourceId: string) =>
-    flip (foldr ((x: AllRequirements): ident<Record<HeroModel>> => {
+    flip (foldr ((x: AllRequirements): ident<Record<Hero>> => {
                   if (RequirePrimaryAttribute.is (x)) {
                     return putPrimaryAttributeDependency (modifyAttributeDependency)
                                                           (x)

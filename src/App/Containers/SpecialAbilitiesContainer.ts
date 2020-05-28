@@ -8,7 +8,6 @@ import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActiv
 import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions"
 import { AppStateRecord } from "../Models/AppState"
 import { SpecialAbilitiesSortOptions } from "../Models/Config"
-import { HeroModel } from "../Models/Hero/HeroModel"
 import { getFilteredActiveSpecialAbilities } from "../Selectors/activatableSelectors"
 import { getFilteredInactiveSpecialAbilities } from "../Selectors/combinedActivatablesSelectors"
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors"

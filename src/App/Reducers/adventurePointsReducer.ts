@@ -3,7 +3,7 @@ import { over } from "../../Data/Lens"
 import { add } from "../../Data/Num"
 import { AddAdventurePointsAction } from "../Actions/ProfileActions"
 import * as ActionTypes from "../Constants/ActionTypes"
-import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/Hero"
 
 type Action = AddAdventurePointsAction
 

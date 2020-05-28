@@ -12,11 +12,11 @@ import { SetSelectionsAction } from "../Actions/ProfessionActions"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { SpecialAbilityId } from "../Constants/Ids"
 import { ActivatableDependent, ActivatableDependentL, createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
-import { ActivatableSkillDependent, ActivatableSkillDependentL } from "../Models/ActiveEntries/ActivatableSkillDependent"
+import { ActivatableSkillDependentL } from "../Models/ActiveEntries/ActivatableSkillDependent"
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject"
-import { AttributeDependent, AttributeDependentL } from "../Models/ActiveEntries/AttributeDependent"
-import { SkillDependent, SkillDependentL } from "../Models/ActiveEntries/SkillDependent"
-import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { AttributeDependentL } from "../Models/ActiveEntries/AttributeDependent"
+import { SkillDependentL } from "../Models/ActiveEntries/SkillDependent"
+import { Hero, HeroModelL, HeroModelRecord } from "../Models/Hero/Hero"
 import { Advantage } from "../Models/Wiki/Advantage"
 import { Culture } from "../Models/Wiki/Culture"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
@@ -206,7 +206,7 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
       foldIncSkillsIntoSRs (prof_skills_cts),
 
       over (CML.hero)
-           (flip (foldr (pipe (insert as insert<string>, over (HL.blessings))))
+           (flip (foldr (pipe (insert, over (HL.blessings))))
                  (PA.blessings (profession))),
 
       over (CML.activatable)
@@ -239,7 +239,7 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
               foldIncSkillsIntoSRs (prof_var_skills_cts),
 
               over (CML.hero)
-                   (flip (foldr (pipe (insert as insert<string>, over (HL.blessings))))
+                   (flip (foldr (pipe (insert, over (HL.blessings))))
                          (PVA.blessings (profession_variant))),
 
               over (CML.activatable)
@@ -628,7 +628,7 @@ const applyModifications =
 
       // - Lower Combat Techniques with too high CTR
       join (acc => over (composeL (CML.hero, HL.combatTechniques))
-                        (maybe (ident as ident<HeroModel["combatTechniques"]>)
+                        (maybe (ident as ident<Hero["combatTechniques"]>)
                                (pipe (min, over (SDL.value), OrderedMap.map))
                                (pipe_ (
                                  action .payload .wiki,

@@ -3,7 +3,7 @@
 type variant = {
   id: int,
   name: string,
-  commonCultures: Ley.IntSet.t,
+  commonCultures: Ley_IntSet.t,
   commonAdvantages: list(int),
   commonAdvantagesText: option(string),
   commonDisadvantages: list(int),
@@ -20,12 +20,12 @@ type variant = {
 
 [@genType]
 [@genType.as "RaceWithVariantsOptions"]
-type withVariants = {variants: Ley.IntMap.t(variant)};
+type withVariants = {variants: Ley_IntMap.t(variant)};
 
 [@genType]
 [@genType.as "RaceWithoutVariantsOptions"]
 type withoutVariants = {
-  commonCultures: Ley.IntSet.t,
+  commonCultures: Ley_IntSet.t,
   hairColors: list(int),
   eyeColors: list(int),
   sizeBase: int,
@@ -48,9 +48,9 @@ type t = {
   spi: int,
   tou: int,
   mov: int,
-  attributeAdjustments: Ley.IntMap.t(int),
+  attributeAdjustments: Ley_IntMap.t(int),
   attributeAdjustmentsSelectionValue: int,
-  attributeAdjustmentsSelectionList: Ley.IntSet.t,
+  attributeAdjustmentsSelectionList: Ley_IntSet.t,
   attributeAdjustmentsText: string,
   automaticAdvantages: list(int),
   automaticAdvantagesText: option(string),

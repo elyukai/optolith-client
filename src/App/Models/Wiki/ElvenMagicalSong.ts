@@ -1,87 +1,41 @@
-import { fmap } from "../../../Data/Functor"
+import { lookupF } from "../../../Data/IntMap"
 import { intercalate, List } from "../../../Data/List"
-import { mapMaybe, Maybe, Nothing } from "../../../Data/Maybe"
-import { lookupF } from "../../../Data/OrderedMap"
-import { fromDefault, Record } from "../../../Data/Record"
-import { Tuple } from "../../../Data/Tuple"
-import { sel1, sel2, sel3 } from "../../../Data/Tuple/All"
-import { icToJs, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
+import { fmap, mapMaybe, maybe } from "../../../Data/Maybe"
+import { MagicalGroup, MagicalTradition } from "../../Constants/Groups"
+import { skillToInt } from "../../Constants/Id.gen"
 import { ndash } from "../../Utilities/Chars"
 import { localizeOrList } from "../../Utilities/I18n"
-import { t as IC } from "../../Utilities/IC.gen"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { sortStrings } from "../../Utilities/sortBy"
-import { Skill } from "./Skill"
+import { ElvenMagicalSong } from "../Static_ElvenMagicalSong.gen"
 import { Spell } from "./Spell"
-import { Erratum } from "./sub/Errata"
-import { SourceLink } from "./sub/SourceLink"
-import { StaticData, StaticDataRecord } from "./WikiModel"
-import { CheckModifier } from "./wikiTypeHelpers"
+import { StaticData } from "./WikiModel"
 
-export interface ElvenMagicalSong {
-  "@@name": "ElvenMagicalSong"
-  id: string
-  name: string
-  check: Tuple<[string, string, string]>
-  checkmod: Maybe<CheckModifier>
+export { ElvenMagicalSong }
 
-  /**
-   * Does enhancing the song only work with one specific skill?
-   */
-  skill: List<"TAL_9" | "TAL_56">
-  ic: IC
-  property: Property
-  effect: string
-  cost: string
-  costShort: string
-  src: List<Record<SourceLink>>
-  errata: List<Record<Erratum>>
-}
-
-export const ElvenMagicalSong =
-  fromDefault ("ElvenMagicalSong")
-              <ElvenMagicalSong> ({
-                id: "",
-                name: "",
-                check: Tuple ("", "", ""),
-                checkmod: Nothing,
-                skill: List (),
-                ic: "A",
-                property: 0,
-                effect: "",
-                cost: "",
-                costShort: "",
-                src: List.empty,
-                errata: List (),
-              })
-
-const getApplicableSkills = (staticData: StaticDataRecord) =>
+const getApplicableSkills = (staticData: StaticData) =>
                               pipe (
-                                ElvenMagicalSong.A.skill,
+                                (x: ElvenMagicalSong) => x.skill,
+                                maybe (List (skillToInt ("Singing"), skillToInt ("Music")))
+                                      (x => List (x)),
                                 mapMaybe (pipe (
-                                  lookupF (StaticData.A.skills (staticData)),
-                                  fmap (Skill.A.name)
+                                  lookupF (staticData.skills),
+                                  fmap (x => x.name)
                                 )),
                                 sortStrings (staticData)
                               )
 
-export const elvenMagicalSongToSpell = (staticData: StaticDataRecord) =>
-                                       (x: Record<ElvenMagicalSong>): Record<Spell> => Spell ({
-                                         id: ElvenMagicalSong.A.id (x),
-                                         name: ElvenMagicalSong.A.name (x),
-                                         check: List (
-                                           sel1 (ElvenMagicalSong.A.check (x)),
-                                           sel2 (ElvenMagicalSong.A.check (x)),
-                                           sel3 (ElvenMagicalSong.A.check (x)),
-                                         ),
-                                         checkmod: ElvenMagicalSong.A.checkmod (x),
+export const elvenMagicalSongToSpell = (staticData: StaticData) =>
+                                       (x: ElvenMagicalSong): Spell => ({
+                                         id: x.id,
+                                         name: x.name,
+                                         check: x.check,
+                                         checkMod: x.checkMod,
                                          gr: MagicalGroup.ElvenMagicalSongs,
-                                         ic: icToJs (ElvenMagicalSong.A.ic (x)),
-                                         property: ElvenMagicalSong.A.property (x),
-                                         tradition: List (MagicalTradition.Elves),
-                                         subtradition: List (),
-                                         prerequisites: List (),
-                                         effect: ElvenMagicalSong.A.effect (x),
+                                         ic: x.ic,
+                                         property: x.property,
+                                         traditions: List (MagicalTradition.Elves),
+                                         effect: x.effect,
                                          castingTime: pipe_ (
                                            x,
                                            getApplicableSkills (staticData),
@@ -93,9 +47,9 @@ export const elvenMagicalSongToSpell = (staticData: StaticDataRecord) =>
                                            intercalate ("/")
                                          ),
                                          castingTimeNoMod: false,
-                                         cost: ElvenMagicalSong.A.cost (x),
-                                         costShort: ElvenMagicalSong.A.costShort (x),
-                                         costNoMod: false,
+                                         aeCost: x.aeCost,
+                                         aeCostShort: x.aeCostShort,
+                                         aeCostNoMod: false,
                                          range: ndash,
                                          rangeShort: ndash,
                                          rangeNoMod: false,
@@ -103,7 +57,6 @@ export const elvenMagicalSongToSpell = (staticData: StaticDataRecord) =>
                                          durationShort: ndash,
                                          durationNoMod: false,
                                          target: ndash,
-                                         src: ElvenMagicalSong.A.src (x),
-                                         errata: ElvenMagicalSong.A.errata (x),
-                                         category: Nothing,
+                                         src: x.src,
+                                         errata: x.errata,
                                        })
