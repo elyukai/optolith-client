@@ -13,6 +13,7 @@ export type Hero = ReHero.Hero
  */
 export const getInitialHeroObject =
   (staticData: StaticData) =>
+  (id: number) =>
   (name: string) =>
   (sex: ReHero.Sex) =>
   (experienceLevel: number) =>
@@ -20,6 +21,7 @@ export const getInitialHeroObject =
   (enableAllRuleBooks: boolean) =>
   (enabledRuleBooks: StrSet.StrSet): Hero =>
     ({
+      id,
       locale: staticData.messages.id,
       dateCreated: new Date (),
       dateModified: new Date (),

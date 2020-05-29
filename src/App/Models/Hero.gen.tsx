@@ -370,6 +370,7 @@ export type TransferUnfamiliar = TransferUnfamiliar_t;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type t = {
+  readonly id: number; 
   readonly name: string; 
   readonly dateCreated: Date; 
   readonly dateModified: Date; 

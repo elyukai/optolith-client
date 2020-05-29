@@ -1,5 +1,5 @@
-import { bind, bindF, fmapF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe"
-import { lookup } from "../../Data/StrMap"
+import { lookup } from "../../Data/IntMap"
+import { bindF, fmap, fmapF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe"
 import { curryN } from "../../Data/Tuple/All"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
@@ -9,17 +9,18 @@ import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
 import { getAPForInc } from "../Utilities/IC.gen"
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
+import { VC } from "../Utilities/Variant"
 import { ReduxAction } from "./Actions"
 import { addNotEnoughAPAlert } from "./AlertActions"
 
 export interface AddAttributePointAction {
   type: ActionTypes.ADD_ATTRIBUTE_POINT
   payload: {
-    id: string
+    id: number
   }
 }
 
-export const addAttributePoint = (id: string): ReduxAction<Promise<void>> =>
+export const addAttributePoint = (id: number): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
     const wiki_attributes = getWikiAttributes (state)
@@ -32,9 +33,16 @@ export const addAttributePoint = (id: string): ReduxAction<Promise<void>> =>
         bindF (hero => getAvailableAPMap (hero.id) (state, { hero })),
         join,
         liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
-                                                       (bind (mhero_attributes)
-                                                             (lookup (id))))
-               (lookup (id) (wiki_attributes)),
+                                                       (pipe_ (
+                                                         mhero_attributes,
+                                                         bindF (lookup (id)),
+                                                         fmap (VC ("AttributeDependent"))
+                                                       )))
+               (pipe_ (
+                 wiki_attributes,
+                 lookup (id),
+                 fmap (VC ("Attribute"))
+               )),
         join
       )
 

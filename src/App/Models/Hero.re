@@ -448,6 +448,7 @@ module TransferUnfamiliar = {
 [@genType]
 [@genType.as "Hero"]
 type t = {
+  id: int,
   name: string,
   dateCreated: Js.Date.t,
   dateModified: Js.Date.t,
