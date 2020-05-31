@@ -19,6 +19,13 @@
 		}
 	}
 
+  //in order to hide the spinners from numerical inputs
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+  }
+
 	input, textarea {
 		width: 100%;
 		height: 32px;
