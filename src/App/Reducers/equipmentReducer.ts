@@ -33,6 +33,7 @@ type Action = EquipmentActions.AddItemAction
             | EquipmentActions.SetSilverthalersAction
             | EquipmentActions.SetHellersAction
             | EquipmentActions.SetKreutzersAction
+            | EquipmentActions.SetPurseContentAction
             | EquipmentActions.AddArmorZonesAction
             | EquipmentActions.RemoveArmorZonesAction
             | EquipmentActions.SetAmmunitionAction
@@ -192,6 +193,14 @@ const purseReducer =
       case ActionTypes.SET_KREUTZERS:
         return set (composeL (belongings, purse, k))
                    (action.payload.value)
+                         
+      case ActionTypes.SET_PURSE_CONTENT:
+        return pipe (
+          set (composeL (belongings, purse, d))(action.payload.ducates.toString()),
+          set (composeL (belongings, purse, s))(action.payload.silverthalers.toString()),
+          set (composeL (belongings, purse, h))(action.payload.hellers.toString()),
+          set (composeL (belongings, purse, k))(action.payload.kreutzers.toString()),
+        )
 
       default:
         return ident
@@ -737,6 +746,7 @@ export const equipmentReducer =
       case ActionTypes.SET_SILVERTHALERS:
       case ActionTypes.SET_HELLERS:
       case ActionTypes.SET_KREUTZERS:
+      case ActionTypes.SET_PURSE_CONTENT:
         return purseReducer (action)
 
       case ActionTypes.ADD_ITEM:

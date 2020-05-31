@@ -330,6 +330,8 @@ export const getIsEditCharacterAvatarOpen =
 export const getIsEditPetAvatarOpen =
   pipe (ASA.ui, UIA.subwindows, SubW.isEditPetAvatarOpen)
 
+export const getIsAddRemoveMoneyOpen =
+  pipe (ASA.ui, UIA.subwindows, SubW.isAddRemoveMoneyOpen)
 
 export const getAdvantagesFilterText =
   pipe (ASA.ui, UIA.filters, Filt.advantagesFilterText)

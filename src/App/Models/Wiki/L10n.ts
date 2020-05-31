@@ -782,6 +782,13 @@ export const L10n =
                 "equipment.purse.kreutzers": "",
                 "equipment.purse.carryingcapacity": "",
                 "equipment.purse.initialstartingwealthandcarryingcapacity": "",
+                "equipment.purse.earnpay": "",
+                "equipment.purse.earn": "",
+                "equipment.purse.pay": "",
+                "equipment.purse.notefirst": "",
+                "equipment.purse.notesecond": "",
+                "equipment.purse.currentcredit": "",
+                "equipment.purse.amount": "",
 
                 "equipment.dialogs.addedit.damage": "",
                 "equipment.dialogs.addedit.length": "",

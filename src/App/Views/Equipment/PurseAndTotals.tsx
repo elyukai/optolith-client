@@ -8,6 +8,9 @@ import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { TextFieldLazy } from "../Universal/TextFieldLazy"
+import { Button } from "../Universal/Button"
+import { toInt } from "../../Utilities/NumberUtils"
+import { abs } from "../../../Data/Num"
 
 export interface PurseAndTotalsProps {
   carryingCapacity: number
@@ -21,6 +24,7 @@ export interface PurseAndTotalsProps {
   setSilverthalers (value: string): void
   setHellers (value: string): void
   setKreutzers (value: string): void
+  openAddRemoveMoney () : void
 }
 
 const PA = Purse.A
@@ -38,6 +42,7 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
     setSilverthalers,
     setHellers,
     setKreutzers,
+    openAddRemoveMoney,
   } = props
 
   const formatWeight = pipe (localizeWeight (staticData), localizeNumber (staticData))
@@ -64,31 +69,54 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
                                       ("general.pricevalue")
                                       (List (formatWeight (carryingCapacity)))
 
+
+  const calculateSafeInt = (value : string) => {
+    return pipe_ (value, toInt, fromMaybe (0), abs)
+  }
+
+  const setDucatesSafe  = (value : string) => setDucates(calculateSafeInt(value).toString())
+  const setSilverthalersSafe  = (value : string) => setSilverthalers(calculateSafeInt(value).toString())
+  const setHellersSafe  = (value : string) => setHellers(calculateSafeInt(value).toString())
+  const setKreutzersSafe  = (value : string) => setKreutzers(calculateSafeInt(value).toString())
+
   return (
     <>
       <div className="purse">
-        <h4>{translate (staticData) ("equipment.purse.title")}</h4>
-        <div className="fields">
-          <TextFieldLazy
-            label={translate (staticData) ("equipment.purse.ducats")}
-            value={pipe_ (purse, fmap (PA.d), maybeToUndefined)}
-            onChange={setDucates}
-            />
-          <TextFieldLazy
-            label={translate (staticData) ("equipment.purse.silverthalers")}
-            value={pipe_ (purse, fmap (PA.s), maybeToUndefined)}
-            onChange={setSilverthalers}
-            />
-          <TextFieldLazy
-            label={translate (staticData) ("equipment.purse.halers")}
-            value={pipe_ (purse, fmap (PA.h), maybeToUndefined)}
-            onChange={setHellers}
-            />
-          <TextFieldLazy
-            label={translate (staticData) ("equipment.purse.kreutzers")}
-            value={pipe_ (purse, fmap (PA.k), maybeToUndefined)}
-            onChange={setKreutzers}
-            />
+        <div>
+          <h4>{translate (staticData) ("equipment.purse.title")}</h4>
+          <div className="fields">
+            <TextFieldLazy
+              label={translate (staticData) ("equipment.purse.ducats")}
+              value={pipe_ (purse, fmap (PA.d), maybeToUndefined)}
+              type="number"
+              min="0"
+              onChange={setDucatesSafe}
+              />
+            <TextFieldLazy
+              label={translate (staticData) ("equipment.purse.silverthalers")}
+              value={pipe_ (purse, fmap (PA.s), maybeToUndefined)}
+              type="number"
+              min="0"
+              onChange={setSilverthalersSafe}
+              />
+            <TextFieldLazy
+              label={translate (staticData) ("equipment.purse.halers")}
+              value={pipe_ (purse, fmap (PA.h), maybeToUndefined)}
+              type="number"
+              min="0"
+              onChange={setHellersSafe}
+              />
+            <TextFieldLazy
+              label={translate (staticData) ("equipment.purse.kreutzers")}
+              type="number"
+              min="0"
+              value={pipe_ (purse, fmap (PA.k), maybeToUndefined)}
+              onChange={setKreutzersSafe}
+              />
+          </div>
+        </div>
+        <div>
+          <Button onClick={openAddRemoveMoney}>{translate (staticData) ("equipment.purse.earnpay")}</Button>
         </div>
       </div>
       <div className="total-points">

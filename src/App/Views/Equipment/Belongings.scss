@@ -3,7 +3,7 @@
 #equipment, #armor-zones {
 	.purse {
 		display: flex;
-		flex-direction: column;
+    flex-direction: column;
 
 		h4 {
 			// flex: 1 0 100%;
@@ -12,7 +12,8 @@
 
 		.fields {
 			display: flex;
-			margin-top: 16px;
+      margin-top: 16px;
+      margin-bottom: 10px;
 		}
 
 		.textfield {
@@ -88,4 +89,27 @@
 		font: 500 13px/22px Alegreya Sans;
 		color: var(--headings-color);
 	}
+}
+
+.flexrow {
+  display: flex;
+  margin-bottom: 10px;
+  justify-content: space-evenly;
+}
+
+.purseValue {
+  height: 32px;
+  border: 1px solid var(--disabled-color);
+  padding: 0 11px;
+  color: var(--headings-color);
+  font: 500 13px/30px Alegreya Sans;
+  display: block;
+  outline: 0 none;
+  background: none;
+  overflow: hidden;
+  position: relative;
+}
+
+.purseValue:not(:last-child) {
+  margin-right: 10px;
 }
