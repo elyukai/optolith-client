@@ -51,9 +51,11 @@ const toMagicalMelody : YamlPairConverterE<MagicalMelodyUniv, MagicalMelodyL10n,
 
 export const toMagicalMelodies : YamlFileConverter<string, Record<MM>>
                                = pipe (
-                                   (yaml_mp : YamlNameMap) => zipBy ("id")
-                                                                    (yaml_mp.MagicalMelodiesUniv)
-                                                                    (yaml_mp.MagicalMelodiesL10n),
+                                   (yaml_mp : YamlNameMap) =>
+                                     zipBy ("id")
+                                           (yaml_mp.MagicalMelodiesUniv)
+                                           (yaml_mp.MagicalMelodiesL10nDefault)
+                                           (yaml_mp.MagicalMelodiesL10nOverride),
                                    bindF (pipe (
                                      mapM (toMagicalMelody),
                                      bindF (toMapIntegrity),

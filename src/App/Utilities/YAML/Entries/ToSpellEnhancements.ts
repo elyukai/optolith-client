@@ -101,7 +101,8 @@ export const toSpellEnhancements : YamlFileConverter<number, Record<SelectOption
                                      (yaml_mp : YamlNameMap) =>
                                        zipBy ("target")
                                              (yaml_mp.SpellEnhancementsUniv)
-                                             (yaml_mp.SpellEnhancementsL10n),
+                                             (yaml_mp.SpellEnhancementsL10nDefault)
+                                             (yaml_mp.SpellEnhancementsL10nOverride),
                                      bindF (pipe (
                                        mapM (toSE),
                                        bindF (pipe (

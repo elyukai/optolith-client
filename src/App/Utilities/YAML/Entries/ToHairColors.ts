@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { HairColorL10n } from "../Schema/HairColors/HairColors.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toHairColor : (x : HairColorL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toHairColor : (x : HairColorL10n) => [number, Record<NumIdName>]
 
 export const toHairColors : YamlFileConverter<number, Record<NumIdName>>
                           = pipe (
-                              yaml_mp => yaml_mp.HairColorsL10n,
+                              yaml_mp => mergeBy ("id")
+                                                 (yaml_mp.HairColorsL10nDefault)
+                                                 (yaml_mp.HairColorsL10nOverride),
                               map (toHairColor),
                               toMapIntegrity,
                               second (fromMap)

@@ -47,9 +47,11 @@ const toMagicalDance : YamlPairConverterE<MagicalDanceUniv, MagicalDanceL10n, st
 
 export const toMagicalDances : YamlFileConverter<string, Record<MagicalDance>>
                              = pipe (
-                                 (yaml_mp : YamlNameMap) => zipBy ("id")
-                                                                  (yaml_mp.MagicalDancesUniv)
-                                                                  (yaml_mp.MagicalDancesL10n),
+                                 (yaml_mp : YamlNameMap) =>
+                                   zipBy ("id")
+                                         (yaml_mp.MagicalDancesUniv)
+                                         (yaml_mp.MagicalDancesL10nDefault)
+                                         (yaml_mp.MagicalDancesL10nOverride),
                                  bindF (pipe (
                                    mapM (toMagicalDance),
                                    bindF (toMapIntegrity),

@@ -256,7 +256,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
       active={Maybe.elem (IAA.id (item)) (selectedForInfo)}
       >
       <ListItemLeft>
-        <ListItemName name={IAA.name (item)} />
+        <ListItemName name={IAA.name (item)} onClick={handleSelectForInfo} />
         {fromMaybe (null as React.ReactNode) (mlevelElementBefore)}
         {fromMaybe (null as React.ReactNode) (mselectElement)}
         {fromMaybe (null as React.ReactNode) (msecondSelectElement)}

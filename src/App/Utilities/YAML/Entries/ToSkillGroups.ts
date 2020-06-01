@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { SkillGroupL10n } from "../Schema/SkillGroups/SkillGroups.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toSkillGroup : (x : SkillGroupL10n) => [number, Record<SkillGroup>]
@@ -16,7 +17,9 @@ const toSkillGroup : (x : SkillGroupL10n) => [number, Record<SkillGroup>]
 
 export const toSkillGroups : YamlFileConverter<number, Record<SkillGroup>>
                            = pipe (
-                               yaml_mp => yaml_mp.SkillGroupsL10n,
+                               yaml_mp => mergeBy ("id")
+                                                  (yaml_mp.SkillGroupsL10nDefault)
+                                                  (yaml_mp.SkillGroupsL10nOverride),
                                map (toSkillGroup),
                                toMapIntegrity,
                                second (fromMap)

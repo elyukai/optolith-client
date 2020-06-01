@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { ArcaneBardTraditionL10n } from "../Schema/ArcaneBardTraditions/ArcaneBardTraditions.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toArcaneBardTradition : (x : ArcaneBardTraditionL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toArcaneBardTradition : (x : ArcaneBardTraditionL10n) => [number, Record<N
 
 export const toArcaneBardTraditions : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
-                                        yaml_mp => yaml_mp.ArcaneBardTraditionsL10n,
+                                        yaml_mp => mergeBy ("id")
+                                                        (yaml_mp.ArcaneBardTraditionsL10nDefault)
+                                                        (yaml_mp.ArcaneBardTraditionsL10nOverride),
                                         map (toArcaneBardTradition),
                                         toMapIntegrity,
                                         second (fromMap)

@@ -10,6 +10,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { ConditionL10n } from "../Schema/Conditions/Conditions.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 import { toErrata } from "./ToErrata"
 import { toSourceRefs } from "./ToSourceRefs"
 
@@ -36,7 +37,9 @@ const toCondition : (l10n : ConditionL10n) => [string, Record<Condition>]
 
 export const toConditions : YamlFileConverter<string, Record<Condition>>
                           = pipe (
-                              yaml_mp => yaml_mp.ConditionsL10n,
+                              yaml_mp => mergeBy ("id")
+                                                 (yaml_mp.ConditionsL10nDefault)
+                                                 (yaml_mp.ConditionsL10nOverride),
                               map (toCondition),
                               toMapIntegrity,
                               second (fromMap)

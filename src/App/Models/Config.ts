@@ -158,6 +158,7 @@ export interface Config {
   sheetCheckAttributeValueVisibility: Maybe<boolean>
   enableActiveItemHints: boolean
   locale: Maybe<string>
+  fallbackLocale: Maybe<string>
   theme: Maybe<Theme>
   enableEditingHeroAfterCreationPhase: Maybe<boolean>
   meleeItemTemplatesCombatTechniqueFilter: Maybe<MeleeCombatTechniqueId>
@@ -189,6 +190,7 @@ export const Config =
                 sheetCheckAttributeValueVisibility: Just (false),
                 enableActiveItemHints: false,
                 locale: Nothing,
+                fallbackLocale: Nothing,
                 theme: Just (Theme.Dark),
                 enableEditingHeroAfterCreationPhase: Just (false),
                 meleeItemTemplatesCombatTechniqueFilter: Nothing,
