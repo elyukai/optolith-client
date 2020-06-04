@@ -23,7 +23,7 @@ import { UISettingsState } from "../Models/UISettingsState"
 import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { heroReducer } from "../Reducers/heroReducer"
 import { user_data_path } from "../Selectors/envSelectors"
-import { getCurrentHeroId, getHeroes, getLocaleId, getWiki } from "../Selectors/stateSelectors"
+import { getCurrentHeroId, getHeroes, getLocaleId, getWiki, getFallbackLocaleId } from "../Selectors/stateSelectors"
 import { getUISettingsState } from "../Selectors/uisettingsSelectors"
 import { prepareAPCache, prepareAPCacheForHero, writeCache } from "../Utilities/Cache"
 import { translate } from "../Utilities/I18n"
@@ -55,6 +55,7 @@ export const requestConfigSave: ReduxAction<Promise<boolean>> =
         Just (UISSA.enableEditingHeroAfterCreationPhase (uiSettingsState)),
       enableAnimations: Just (UISSA.enableAnimations (uiSettingsState)),
       locale: getLocaleId (state),
+      fallbackLocale: getFallbackLocaleId (state),
     })
 
     return pipe_ (

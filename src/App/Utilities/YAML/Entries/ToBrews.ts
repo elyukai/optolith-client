@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { BrewL10n } from "../Schema/Brews/Brews.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toBrew : (x : BrewL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toBrew : (x : BrewL10n) => [number, Record<NumIdName>]
 
 export const toBrews : YamlFileConverter<number, Record<NumIdName>>
                                     = pipe (
-                                        yaml_mp => yaml_mp.BrewsL10n,
+                                        yaml_mp => mergeBy ("id")
+                                                           (yaml_mp.BrewsL10nDefault)
+                                                           (yaml_mp.BrewsL10nOverride),
                                         map (toBrew),
                                         toMapIntegrity,
                                         second (fromMap)

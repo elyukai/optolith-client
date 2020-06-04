@@ -79,6 +79,9 @@
         "locale": {
           "type": "string"
         },
+        "fallbackLocale": {
+          "type": "string"
+        },
         "theme": {
           "enum": ["light", "dark"]
         },

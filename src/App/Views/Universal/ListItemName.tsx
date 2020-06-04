@@ -8,10 +8,11 @@ interface Props {
   children?: React.ReactNode
   large?: boolean | JSX.Element
   name: string
+  onClick? (): void
 }
 
 export const ListItemName: React.FC<Props> = props => {
-  const { addName: madd_name = Nothing, children, large, name } = props
+  const { addName: madd_name = Nothing, children, large, name, onClick } = props
 
   const titleElement = maybe (<p className="title">{name}</p>)
                              ((add_name: string) => (
@@ -30,6 +31,7 @@ export const ListItemName: React.FC<Props> = props => {
           guardReplace (large !== undefined) ("large")
         ))
       }
+      onClick={onClick}
       >
       {titleElement}
       {children}

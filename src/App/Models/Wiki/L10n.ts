@@ -136,6 +136,7 @@ export const L10n =
 
                 "settings.title": "",
                 "settings.language": "",
+                "settings.fallbacklanguage": "",
                 "settings.systemlanguage": "",
                 "settings.languagehint": "",
                 "settings.theme": "",

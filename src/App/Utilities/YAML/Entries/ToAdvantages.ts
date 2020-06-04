@@ -124,7 +124,8 @@ export const toAdvantages : (blessings : OrderedMap<string, Record<Blessing>>)
                             spells => pipe (
                               (yaml_mp : YamlNameMap) => zipBy ("id")
                                                                (yaml_mp.AdvantagesUniv)
-                                                               (yaml_mp.AdvantagesL10n),
+                                                               (yaml_mp.AdvantagesL10nDefault)
+                                                               (yaml_mp.AdvantagesL10nOverride),
                               bindF (pipe (
                                 mapM (toAdv (blessings)
                                             (cantrips)

@@ -8,6 +8,7 @@ import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { ArmorTypeL10n } from "../Schema/ArmorTypes/ArmorTypes.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 const toArmorType : (x : ArmorTypeL10n) => [number, Record<NumIdName>]
@@ -16,7 +17,9 @@ const toArmorType : (x : ArmorTypeL10n) => [number, Record<NumIdName>]
 
 export const toArmorTypes : YamlFileConverter<number, Record<NumIdName>>
                           = pipe (
-                              yaml_mp => yaml_mp.ArmorTypesL10n,
+                              yaml_mp => mergeBy ("id")
+                                                 (yaml_mp.ArmorTypesL10nDefault)
+                                                 (yaml_mp.ArmorTypesL10nOverride),
                               map (toArmorType),
                               toMapIntegrity,
                               second (fromMap)

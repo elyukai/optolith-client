@@ -14,7 +14,6 @@ import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { LiturgicalChantEnhancementL10n, LiturgicalChantEnhancementLevelL10n } from "../Schema/LiturgicalChantEnhancements/LiturgicalChantEnhancements.l10n"
 import { LiturgicalChantEnhancementLevelUniv, LiturgicalChantEnhancementUniv } from "../Schema/LiturgicalChantEnhancements/LiturgicalChantEnhancements.univ"
-import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
 import { toErrata } from "./ToErrata"
@@ -98,10 +97,15 @@ const toSE : (x : [LiturgicalChantEnhancementUniv, LiturgicalChantEnhancementL10
 
 export const toLiturgicalChantEnhancements : YamlFileConverter<number, Record<SelectOption>>
                                            = pipe (
-                                               (yaml_mp : YamlNameMap) =>
+                                               ({
+                                                 LiturgicalChantEnhancementsUniv,
+                                                 LiturgicalChantEnhancementsL10nDefault,
+                                                 LiturgicalChantEnhancementsL10nOverride,
+                                               }) =>
                                                  zipBy ("target")
-                                                       (yaml_mp.LiturgicalChantEnhancementsUniv)
-                                                       (yaml_mp.LiturgicalChantEnhancementsL10n),
+                                                       (LiturgicalChantEnhancementsUniv)
+                                                       (LiturgicalChantEnhancementsL10nDefault)
+                                                       (LiturgicalChantEnhancementsL10nOverride),
                                                bindF (pipe (
                                                  mapM (toSE),
                                                  bindF (pipe (

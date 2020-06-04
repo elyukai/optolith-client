@@ -8,11 +8,14 @@ import { pipe } from "../../pipe"
 import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
 import { YamlFileConverter } from "../ToRecordsByFile"
+import { mergeBy } from "../ZipById"
 
 
 export const toAttributes : YamlFileConverter<string, Record<Attribute>>
                           = pipe (
-                            yaml_mp => yaml_mp.AttributesL10n,
+                            yaml_mp => mergeBy ("id")
+                                               (yaml_mp.AttributesL10nDefault)
+                                               (yaml_mp.AttributesL10nOverride),
                             map ((x) : [string, Record<Attribute>] => [
                               x .id,
                               Attribute ({
