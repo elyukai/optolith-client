@@ -1,106 +1,106 @@
 .textfield {
-	width: 280px;
-	overflow: hidden;
-	margin: 10px 0;
-	position: relative;
-	font: 500 13px/30px "Alegreya Sans";
+  width: 280px;
+  overflow: hidden;
+  margin: 10px 0;
+  position: relative;
+  font: 500 13px/30px "Alegreya Sans";
 
-	.textfield-hint {
-		width: 100%;
-		height: 32px;
-		padding: 1px 12px;
-		pointer-events: none;
-		position: absolute;
-		color: var(--accent-color);
-		margin-top: -32px;
+  .textfield-hint {
+    width: 100%;
+    height: 32px;
+    padding: 1px 12px;
+    pointer-events: none;
+    position: absolute;
+    color: var(--accent-color);
+    margin-top: -32px;
 
-		&.hide {
-			visibility: hidden;
-		}
-	}
-
-  //in order to hide the spinners from numerical inputs
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
+    &.hide {
+      visibility: hidden;
+    }
   }
 
-	input, textarea {
-		width: 100%;
-		height: 32px;
-		border: 1px solid var(--accent-color);
-		padding: 0 11px;
-		margin: 0;
-		color: var(--headings-color);
-		font: 500 13px/30px Alegreya Sans;
-		display: block;
-		outline: 0 none;
-		background: none;
+  // in order to hide the spinners from numerical inputs
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 
-		&:hover, &:focus, &:active {
-			color: var(--headings-color);
-			border-color: var(--headings-color);
+  input, textarea {
+    width: 100%;
+    height: 32px;
+    border: 1px solid var(--accent-color);
+    padding: 0 11px;
+    margin: 0;
+    color: var(--headings-color);
+    font: 500 13px/30px Alegreya Sans;
+    display: block;
+    outline: 0 none;
+    background: none;
 
-			+ .textfield-hint {
-				color: var(--headings-color);
-			}
-		}
-	}
+    &:hover, &:focus, &:active {
+      color: var(--headings-color);
+      border-color: var(--headings-color);
 
-	&.fullWidth {
-		width: auto;
-	}
+      + .textfield-hint {
+        color: var(--headings-color);
+      }
+    }
+  }
 
-	&.disabled {
-		pointer-events: none;
+  &.fullWidth {
+    width: auto;
+  }
 
-		.textfield-hint {
-			color: var(--separator-color-halftransparent);
-		}
+  &.disabled {
+    pointer-events: none;
 
-		label {
-			color: var(--separator-color-halftransparent);
-		}
+    .textfield-hint {
+      color: var(--separator-color-halftransparent);
+    }
 
-		input, textarea {
-			border-color: var(--separator-color-transparent);
-			color: var(--separator-color-halftransparent);
-		}
-	}
+    label {
+      color: var(--separator-color-halftransparent);
+    }
 
-	&.invalid:not(.disabled) {
-		label {
-			color: var(--uncommon-bright-color);
-		}
+    input, textarea {
+      border-color: var(--separator-color-transparent);
+      color: var(--separator-color-halftransparent);
+    }
+  }
 
-		input, textarea {
-			border: 1px solid var(--uncommon-dark-color);
-			color: var(--uncommon-bright-color);
-		}
-	}
+  &.invalid:not(.disabled) {
+    label {
+      color: var(--uncommon-bright-color);
+    }
 
-//	hr {
-//		width: 100%;
-//		height: 0px;
-//		border: 0 none;
-//		margin: 0;
+    input, textarea {
+      border: 1px solid var(--uncommon-dark-color);
+      color: var(--uncommon-bright-color);
+    }
+  }
+
+//  hr {
+//    width: 100%;
+//    height: 0px;
+//    border: 0 none;
+//    margin: 0;
 //
-//		&.default {
-//			border-bottom: 1px solid #182424;
-//		}
+//    &.default {
+//      border-bottom: 1px solid #182424;
+//    }
 //
-//		&.accent {
-//			border-bottom: 2px solid $highlight;
-//			transform: scaleX(0);
-//			margin-top: -2px;
-//			@include defaultEasing (all);
-//		}
-//	}
+//    &.accent {
+//      border-bottom: 2px solid $highlight;
+//      transform: scaleX(0);
+//      margin-top: -2px;
+//      @include defaultEasing (all);
+//    }
+//  }
 
-//	&.focused {
-//		hr.accent {
-//			transform: scaleX(1);
-//		}
-//	}
+//  &.focused {
+//    hr.accent {
+//      transform: scaleX(1);
+//    }
+//  }
 }

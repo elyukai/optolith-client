@@ -175,69 +175,67 @@ export const PurseAddRemoveMoney: React.FC<PurseAddRemoveMoneyProps> = props => 
       close={close}
       isOpen={isOpen}
       >
-        <div id="equipment">
-          <div className="purse">
-            <div>
-              <label>
-                {translate (staticData) ("equipment.purse.notefirst")}
-                <br />
-                {translate (staticData) ("equipment.purse.notesecond")}
-              </label>
+        <div className="purse">
+          <div>
+            <label>
+              {translate (staticData) ("equipment.purse.notefirst")}
+              <br />
+              {translate (staticData) ("equipment.purse.notesecond")}
+            </label>
+          </div>
+          <h3>{translate (staticData) ("equipment.purse.currentcredit")}</h3>
+          <div className="flexrow">
+            <div className="textfield">
+              <label>{translate (staticData) ("equipment.purse.ducats")}</label>
+              <div className="purseValue">{pipe_ (purse, fmap (PA.d), maybeToUndefined)}</div>
             </div>
-            <div><h3>{translate (staticData) ("equipment.purse.currentcredit")}</h3></div>
-            <div className="flexrow">
-              <div className="textfield">
-                <label>{translate (staticData) ("equipment.purse.ducats")}</label>
-                <div className="purseValue">{pipe_ (purse, fmap (PA.d), maybeToUndefined)}</div>
-              </div>
-              <div className="textfield">
-                <label>{translate (staticData) ("equipment.purse.silverthalers")}</label>
-                <div className="purseValue">{pipe_ (purse, fmap (PA.s), maybeToUndefined)}</div>
-              </div>
-              <div className="textfield">
-                <label>{translate (staticData) ("equipment.purse.halers")}</label>
-                <div className="purseValue">{pipe_ (purse, fmap (PA.h), maybeToUndefined)}</div>
-              </div>
-              <div className="textfield">
-                <label>{translate (staticData) ("equipment.purse.kreutzers")}</label>
-                <div className="purseValue">{pipe_ (purse, fmap (PA.k), maybeToUndefined)}</div>
-              </div>
+            <div className="textfield">
+              <label>{translate (staticData) ("equipment.purse.silverthalers")}</label>
+              <div className="purseValue">{pipe_ (purse, fmap (PA.s), maybeToUndefined)}</div>
             </div>
-            <div><h3>{translate (staticData) ("equipment.purse.amount")}</h3></div>
-            <div className="flexrow" >
-              <TextField
-                label={translate (staticData) ("equipment.purse.ducats")}
-                value={valueD}
-                type="number"
-                min="0"
-                valid={isNaturalNumber (valueD)}
-                onChange={setValueDSafe}
-                />
-              <TextField
-                label={translate (staticData) ("equipment.purse.silverthalers")}
-                value={valueS}
-                type="number"
-                min="0"
-                valid={isNaturalNumber (valueS)}
-                onChange={setValueSSafe}
-                />
-              <TextField
-                label={translate (staticData) ("equipment.purse.halers")}
-                value={valueH}
-                type="number"
-                min="0"
-                valid={isNaturalNumber (valueH)}
-                onChange={setValueHSafe}
-                />
-              <TextField
-                label={translate (staticData) ("equipment.purse.kreutzers")}
-                value={valueK}
-                type="number"
-                min="0"
-                valid={isNaturalNumber (valueK)}
-                onChange={setValueKSafe}
-                />
+            <div className="textfield">
+              <label>{translate (staticData) ("equipment.purse.halers")}</label>
+              <div className="purseValue">{pipe_ (purse, fmap (PA.h), maybeToUndefined)}</div>
             </div>
+            <div className="textfield">
+              <label>{translate (staticData) ("equipment.purse.kreutzers")}</label>
+              <div className="purseValue">{pipe_ (purse, fmap (PA.k), maybeToUndefined)}</div>
+            </div>
+          </div>
+          <h3>{translate (staticData) ("equipment.purse.amount")}</h3>
+          <div className="flexrow" >
+            <TextField
+              label={translate (staticData) ("equipment.purse.ducats")}
+              value={valueD}
+              type="number"
+              min="0"
+              valid={isNaturalNumber (valueD)}
+              onChange={setValueDSafe}
+              />
+            <TextField
+              label={translate (staticData) ("equipment.purse.silverthalers")}
+              value={valueS}
+              type="number"
+              min="0"
+              valid={isNaturalNumber (valueS)}
+              onChange={setValueSSafe}
+              />
+            <TextField
+              label={translate (staticData) ("equipment.purse.halers")}
+              value={valueH}
+              type="number"
+              min="0"
+              valid={isNaturalNumber (valueH)}
+              onChange={setValueHSafe}
+              />
+            <TextField
+              label={translate (staticData) ("equipment.purse.kreutzers")}
+              value={valueK}
+              type="number"
+              min="0"
+              valid={isNaturalNumber (valueK)}
+              onChange={setValueKSafe}
+              />
           </div>
         </div>
     </Dialog>
