@@ -74,7 +74,7 @@ export interface HitZoneArmorsDispatchProps {
   setRightLeg (id: Maybe<string>): void
   setRightLegLoss (id: Maybe<number>): void
   setFilterText (filterText: string): void
-  setPurseContent (ducates: number, silverthalers: number, hellers: number, kreutzers: number) : void
+  setMoney (d: number, s: number, h: number, k: number): void
   openAddRemoveMoney (): void
   closeAddRemoveMoney (): void
 }
@@ -114,7 +114,7 @@ export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
     setKreutzers,
     openAddRemoveMoney,
     closeAddRemoveMoney,
-    setPurseContent,
+    setMoney,
     setName,
     setHead,
     setHeadLoss,
@@ -205,7 +205,7 @@ export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
         close={closeAddRemoveMoney}
         isOpen={isAddRemoveMoneyOpen}
         purse={purse}
-        setPurseContent={setPurseContent}
+        setMoney={setMoney}
         staticData={staticData}
         />
       {

@@ -2,7 +2,7 @@
 
 #equipment, #armor-zones {
 	.purse {
-		display: flex;
+    display: flex;
     flex-direction: column;
 
 		h4 {
@@ -11,7 +11,7 @@
 		}
 
 		.fields {
-			display: flex;
+      display: flex;
       margin-top: 16px;
       margin-bottom: 10px;
 		}

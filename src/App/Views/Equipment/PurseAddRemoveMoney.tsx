@@ -16,14 +16,18 @@ interface PurseAddRemoveMoneyProps {
   staticData: StaticDataRecord
   isOpen: boolean
   purse: Maybe<Record<Purse>>
-  setPurseContent (ducates: number, silverthalers: number, hellers: number, kreutzers: number): void
+  setMoney (d: number, s: number, h: number, k: number): void
   close (): void
 }
 
 const PA = Purse.A
 
+const calculateSafeInt = (value: string) => pipe_ (value, toInt, fromMaybe (0), abs)
+
+const getCurrentValueAsInt = (s: string) => pipe_ (s, toInt, fromMaybe (0))
+
 export const PurseAddRemoveMoney: React.FC<PurseAddRemoveMoneyProps> = props => {
-  const { setPurseContent, purse, staticData, isOpen, close } = props
+  const { setMoney, purse, staticData, isOpen, close } = props
 
   const [ valueD, setValueD ] = React.useState ("")
   const [ valueS, setValueS ] = React.useState ("")
@@ -39,107 +43,131 @@ export const PurseAddRemoveMoney: React.FC<PurseAddRemoveMoneyProps> = props => 
     setPrevIsOpen (isOpen)
   }
 
-  const calculateSafeInt = (value : string) => {
-    return pipe_ (value, toInt, fromMaybe (0), abs)
-  }
+  const setValueDSafe = React.useCallback (
+    (value: string) => {
+      setValueD (calculateSafeInt (value).toString ())
+    },
+    [ setValueD ]
+  )
 
-  const setValueDSafe  = (value : string) => setValueD(calculateSafeInt(value).toString())
-  const setValueSSafe  = (value : string) => setValueS(calculateSafeInt(value).toString())
-  const setValueHSafe  = (value : string) => setValueH(calculateSafeInt(value).toString())
-  const setValueKSafe  = (value : string) => setValueK(calculateSafeInt(value).toString())
+  const setValueSSafe = React.useCallback (
+    (value: string) => {
+      setValueS (calculateSafeInt (value).toString ())
+    },
+    [ setValueS ]
+  )
 
-  const getCurrentNumber = 
-    (f: (p: Record<Purse>) => string) => 
-    (p: Maybe<Record<Purse>>) => 
+  const setValueHSafe = React.useCallback (
+    (value: string) => {
+      setValueH (calculateSafeInt (value).toString ())
+    },
+    [ setValueH ]
+  )
+
+  const setValueKSafe = React.useCallback (
+    (value: string) => {
+      setValueK (calculateSafeInt (value).toString ())
+    },
+    [ setValueK ]
+  )
+
+  const getCurrentNumber =
+    (f: (p: Record<Purse>) => string) =>
+    (p: Maybe<Record<Purse>>) =>
       pipe_ (p, fmap (f), bindF (toInt), fromMaybe (0))
 
-  const computeCurrentPurseSum = () => {
-    const numberCurrentD = getCurrentNumber (PA.d) (purse)
-    const numberCurrentS = getCurrentNumber (PA.s) (purse)
-    const numberCurrentH = getCurrentNumber (PA.h) (purse)
-    const numberCurrentK = getCurrentNumber (PA.k) (purse)
-
-    return numberCurrentK + (numberCurrentH * 10) + (numberCurrentS * 100) + (numberCurrentD * 1000)
-  }
-
-  const getCurrentPurseSum  =
+  const getCurrentPurseSum =
    React.useMemo (
-     () => computeCurrentPurseSum(),
+     () => {
+      const nCurrentD = getCurrentNumber (PA.d) (purse)
+      const nCurrentS = getCurrentNumber (PA.s) (purse)
+      const nCurrentH = getCurrentNumber (PA.h) (purse)
+      const nCurrentK = getCurrentNumber (PA.k) (purse)
+
+      return nCurrentK + (nCurrentH * 10) + (nCurrentS * 100) + (nCurrentD * 1000)
+    },
     [ purse ]
   )
 
-  const getCurrentValueAsInt = (s: string) => {
-    return pipe_ (s, toInt, fromMaybe (0))
-  }
-
-  const computeCurrentDeltaSum = () => {
-    const nvalueD = getCurrentValueAsInt (valueD)
-    const nvalueS = getCurrentValueAsInt (valueS)
-    const nvalueH = getCurrentValueAsInt (valueH)
-    const nvalueK = getCurrentValueAsInt (valueK)
-    
-    return nvalueK + (nvalueH * 10) + (nvalueS * 100) + (nvalueD * 1000)
-  }
-
-  const getCurrentDeltaSum  =
+  const getCurrentDeltaSum =
     React.useMemo (
-      () => computeCurrentDeltaSum(),
+      () => {
+        const nvalueD = getCurrentValueAsInt (valueD)
+        const nvalueS = getCurrentValueAsInt (valueS)
+        const nvalueH = getCurrentValueAsInt (valueH)
+        const nvalueK = getCurrentValueAsInt (valueK)
+
+        return nvalueK + (nvalueH * 10) + (nvalueS * 100) + (nvalueD * 1000)
+      },
       [ valueD, valueS, valueH, valueK ]
   )
 
-  const computeIsCalculatedDifferencePositive = () => {
-    const purseSum = getCurrentPurseSum
-    const deltaSum = getCurrentDeltaSum
-
-    return (purseSum - deltaSum) >= 0
-  }
-
-  const isCalculatedDifferencePositive  =
+  const isCalculatedDifferencePositive =
   React.useMemo (
-    () => computeIsCalculatedDifferencePositive(),
-    [ valueD, valueS, valueH, valueK, purse ]
+    () => {
+      const purseSum = getCurrentPurseSum
+      const deltaSum = getCurrentDeltaSum
+
+      return (purseSum - deltaSum) >= 0
+    },
+    [ getCurrentPurseSum, getCurrentDeltaSum ]
   )
 
-  const addMoney = () => {
-    const purseSum = getCurrentPurseSum
-    const deltaSum = getCurrentDeltaSum
-    const resultSum = purseSum + deltaSum
+  const addMoney =
+   React.useCallback (
+    () => {
+      const purseSum = getCurrentPurseSum
+      const deltaSum = getCurrentDeltaSum
+      const resultSum = purseSum + deltaSum
 
-    const nEqualizedD = Math.floor(resultSum / 1000)
-    const nEqualizedS = Math.floor((resultSum - nEqualizedD * 1000) /  100)
-    const nEqualizedH = Math.floor((resultSum - nEqualizedD * 1000 - nEqualizedS * 100) /  10)
-    const nEqualizedK = resultSum %  10
+      const nEqualizedD = Math.floor (resultSum / 1000)
+      const nEqualizedS = Math.floor ((resultSum - nEqualizedD * 1000) / 100)
+      const nEqualizedH = Math.floor ((resultSum - nEqualizedD * 1000 - nEqualizedS * 100) / 10)
+      const nEqualizedK = resultSum % 10
 
-    setPurseContent(nEqualizedD,nEqualizedS,nEqualizedH,nEqualizedK)
-  }
+      setMoney (nEqualizedD, nEqualizedS, nEqualizedH, nEqualizedK)
+    },
+    [ getCurrentPurseSum, getCurrentDeltaSum, setMoney ]
+   )
 
-  const removeMoney = () => {
-    const purseSum = getCurrentPurseSum
-    const deltaSum = getCurrentDeltaSum
-    const resultSum = purseSum - deltaSum
+  const removeMoney =
+   React.useCallback (
+    () => {
+      const purseSum = getCurrentPurseSum
+      const deltaSum = getCurrentDeltaSum
+      const resultSum = purseSum - deltaSum
 
-    const nEqualizedD = Math.floor(resultSum / 1000)
-    const nEqualizedS = Math.floor((resultSum - nEqualizedD * 1000) /  100)
-    const nEqualizedH = Math.floor((resultSum - nEqualizedD * 1000 - nEqualizedS * 100) /  10)
-    const nEqualizedK = resultSum %  10
-    
-    if (resultSum >= 0) {
-      setPurseContent(nEqualizedD,nEqualizedS,nEqualizedH,nEqualizedK)
-    }
-  }
+      const nEqualizedD = Math.floor (resultSum / 1000)
+      const nEqualizedS = Math.floor ((resultSum - nEqualizedD * 1000) / 100)
+      const nEqualizedH = Math.floor ((resultSum - nEqualizedD * 1000 - nEqualizedS * 100) / 10)
+      const nEqualizedK = resultSum % 10
+
+      if (resultSum >= 0) {
+        setMoney (nEqualizedD, nEqualizedS, nEqualizedH, nEqualizedK)
+      }
+    },
+    [ getCurrentPurseSum, getCurrentDeltaSum, setMoney ]
+   )
 
   return (
     <Dialog
-      id="Purse-addremove-money"
+      id="purse-addremove-money"
       title={translate (staticData) ("equipment.purse.earnpay")}
       buttons={[
         {
-          disabled: !(isNaturalNumber (valueD) && isNaturalNumber (valueS) && isNaturalNumber (valueH) && isNaturalNumber (valueK)),
+          disabled: !(isNaturalNumber (valueD)
+                    && isNaturalNumber (valueS)
+                    && isNaturalNumber (valueH)
+                    && isNaturalNumber (valueK)),
           label: translate (staticData) ("equipment.purse.earn"),
           onClick: addMoney,
         },
         {
-          disabled: !(isCalculatedDifferencePositive && isNaturalNumber (valueD) && isNaturalNumber (valueS) && isNaturalNumber (valueH) && isNaturalNumber (valueK)),
+          disabled: !(isCalculatedDifferencePositive
+                    && isNaturalNumber (valueD)
+                    && isNaturalNumber (valueS)
+                    && isNaturalNumber (valueH)
+                    && isNaturalNumber (valueK)),
           label: translate (staticData) ("equipment.purse.pay"),
           onClick: removeMoney,
         },
@@ -150,8 +178,11 @@ export const PurseAddRemoveMoney: React.FC<PurseAddRemoveMoneyProps> = props => 
         <div id="equipment">
           <div className="purse">
             <div>
-              <label>{translate (staticData) ("equipment.purse.notefirst")}</label>
-              <label>{translate (staticData) ("equipment.purse.notesecond")}</label>
+              <label>
+                {translate (staticData) ("equipment.purse.notefirst")}
+                <br />
+                {translate (staticData) ("equipment.purse.notesecond")}
+              </label>
             </div>
             <div><h3>{translate (staticData) ("equipment.purse.currentcredit")}</h3></div>
             <div className="flexrow">

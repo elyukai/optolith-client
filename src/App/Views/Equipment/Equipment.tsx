@@ -73,7 +73,7 @@ export interface EquipmentDispatchProps {
   setRangedItemTemplatesCombatTechniqueFilter (filterOption: Maybe<RangedCombatTechniqueId>): void
   setFilterText (filterText: string): void
   setTemplatesFilterText (filterText: string): void
-  setPurseContent (ducates: number, silverthalers: number, hellers: number, kreutzers: number) : void
+  setMoney (d: number, w: number, h: number, k: number): void
   openAddRemoveMoney (): void
   closeAddRemoveMoney (): void
 }
@@ -157,7 +157,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
     setKreutzers,
     openAddRemoveMoney,
     closeAddRemoveMoney,
-    setPurseContent,
+    setMoney,
     addTemplateToList,
     createItem,
     deleteItem,
@@ -377,7 +377,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
         close={closeAddRemoveMoney}
         isOpen={isAddRemoveMoneyOpen}
         purse={purse}
-        setPurseContent={setPurseContent}
+        setMoney={setMoney}
         staticData={staticData}
         />
     </Page>

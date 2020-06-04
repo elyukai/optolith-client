@@ -24,10 +24,12 @@ export interface PurseAndTotalsProps {
   setSilverthalers (value: string): void
   setHellers (value: string): void
   setKreutzers (value: string): void
-  openAddRemoveMoney () : void
+  openAddRemoveMoney (): void
 }
 
 const PA = Purse.A
+
+const calculateSafeInt = (value: string) => pipe_ (value, toInt, fromMaybe (0), abs)
 
 export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
   const {
@@ -69,15 +71,33 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
                                       ("general.pricevalue")
                                       (List (formatWeight (carryingCapacity)))
 
+  const setDucatesSafe = React.useCallback (
+    (value: string) => {
+      setDucates (calculateSafeInt (value).toString ())
+    },
+    [ setDucates ]
+  )
 
-  const calculateSafeInt = (value : string) => {
-    return pipe_ (value, toInt, fromMaybe (0), abs)
-  }
+  const setSilverthalersSafe = React.useCallback (
+    (value: string) => {
+      setSilverthalers (calculateSafeInt (value).toString ())
+    },
+    [ setSilverthalers ]
+  )
 
-  const setDucatesSafe  = (value : string) => setDucates(calculateSafeInt(value).toString())
-  const setSilverthalersSafe  = (value : string) => setSilverthalers(calculateSafeInt(value).toString())
-  const setHellersSafe  = (value : string) => setHellers(calculateSafeInt(value).toString())
-  const setKreutzersSafe  = (value : string) => setKreutzers(calculateSafeInt(value).toString())
+  const setHellersSafe = React.useCallback (
+    (value: string) => {
+      setHellers (calculateSafeInt (value).toString ())
+    },
+    [ setHellers ]
+  )
+
+  const setKreutzersSafe = React.useCallback (
+    (value: string) => {
+      setKreutzers (calculateSafeInt (value).toString ())
+    },
+    [ setKreutzers ]
+  )
 
   return (
     <>
@@ -116,7 +136,9 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
           </div>
         </div>
         <div>
-          <Button onClick={openAddRemoveMoney}>{translate (staticData) ("equipment.purse.earnpay")}</Button>
+          <Button onClick={openAddRemoveMoney}>
+            {translate (staticData) ("equipment.purse.earnpay")}
+          </Button>
         </div>
       </div>
       <div className="total-points">

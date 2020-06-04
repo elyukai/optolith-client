@@ -76,25 +76,26 @@ export const addTemplateToList =
     return undefined
   }
 
-export interface SetPurseContentAction {
-  type: ActionTypes.SET_PURSE_CONTENT
+export interface SetMoneyAction {
+  type: ActionTypes.SET_MONEY
   payload: {
-    ducates: number,
-    silverthalers: number,
-    hellers: number,
-    kreutzers: number
+    d: number
+    s: number
+    h: number
+    k: number
   }
 }
 
-export const setPurseContent = (ducates: number, silverthalers: number, hellers: number, kreutzers: number): SetPurseContentAction => ({
-  type: ActionTypes.SET_PURSE_CONTENT,
+export const setMoney = (d: number, s: number, h: number, k: number): SetMoneyAction => ({
+  type: ActionTypes.SET_MONEY,
   payload: {
-    ducates,
-    silverthalers,
-    hellers,
-    kreutzers,
+    d,
+    s,
+    h,
+    k,
   },
-}) 
+})
+
 export interface CreateItemAction {
   type: ActionTypes.CREATE_ITEM
 }

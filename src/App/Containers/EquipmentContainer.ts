@@ -63,8 +63,8 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): EquipmentDispatchProps => 
   setKreutzers (value: string) {
     dispatch (EquipmentActions.setKreutzers (value))
   },
-  setPurseContent (ducates: number, silverthalers: number, hellers: number, kreutzers: number) {
-    dispatch (EquipmentActions.setPurseContent (ducates, silverthalers, hellers, kreutzers))
+  setMoney (d: number, s: number, h: number, k: number) {
+    dispatch (EquipmentActions.setMoney (d, s, h, k))
   },
   openAddRemoveMoney () {
     dispatch (SubwindowsActions.openAddRemoveMoney ())
