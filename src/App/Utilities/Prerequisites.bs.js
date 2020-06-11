@@ -468,9 +468,40 @@ var Dynamic = {
   getDynamicPrerequisites: getDynamicPrerequisites
 };
 
+function isCommonSuggestedByRCPValid(race, culture, profession, id) {
+  var variant = id[0];
+  if (variant !== -41058677) {
+    if (variant < 255955901) {
+      return false;
+    }
+    var id$1 = id[1];
+    if (Ley_List$OptolithClient.elem(id$1, race.stronglyRecommendedDisadvantages) || Ley_List$OptolithClient.elem(id$1, race.commonDisadvantages) || Ley_List$OptolithClient.elem(id$1, culture.commonDisadvantages)) {
+      return true;
+    } else {
+      return Ley_List$OptolithClient.elem(id$1, profession.suggestedDisadvantages);
+    }
+  }
+  var id$2 = id[1];
+  if (Ley_List$OptolithClient.elem(id$2, race.automaticAdvantages) || Ley_List$OptolithClient.elem(id$2, race.stronglyRecommendedAdvantages) || Ley_List$OptolithClient.elem(id$2, race.commonAdvantages) || Ley_List$OptolithClient.elem(id$2, culture.commonAdvantages)) {
+    return true;
+  } else {
+    return Ley_List$OptolithClient.elem(id$2, profession.suggestedAdvantages);
+  }
+}
+
+function isSexValid(prerequisite, current) {
+  return current === prerequisite;
+}
+
+var Validation = {
+  isCommonSuggestedByRCPValid: isCommonSuggestedByRCPValid,
+  isSexValid: isSexValid
+};
+
 export {
   Flatten ,
   Dynamic ,
+  Validation ,
   
 }
 /* Ley_IntMap-OptolithClient Not a pure module */

@@ -30,16 +30,16 @@ export type t = {
   readonly commonBlessedProfessionsAll: boolean; 
   readonly commonBlessedProfessionsExceptions?: list<frequencyException>; 
   readonly commonBlessedProfessionsText?: string; 
-  readonly commonAdvantages?: list<number>; 
+  readonly commonAdvantages: list<number>; 
   readonly commonAdvantagesText?: string; 
-  readonly commonDisadvantages?: list<number>; 
+  readonly commonDisadvantages: list<number>; 
   readonly commonDisadvantagesText?: string; 
-  readonly uncommonAdvantages?: list<number>; 
+  readonly uncommonAdvantages: list<number>; 
   readonly uncommonAdvantagesText?: string; 
-  readonly uncommonDisadvantages?: list<number>; 
+  readonly uncommonDisadvantages: list<number>; 
   readonly uncommonDisadvantagesText?: string; 
   readonly commonSkills: list<number>; 
-  readonly uncommonSkills?: list<number>; 
+  readonly uncommonSkills: list<number>; 
   readonly commonNames: string; 
   readonly culturalPackageCost: number; 
   readonly culturalPackageSkills: Ley_IntMap_t<number>

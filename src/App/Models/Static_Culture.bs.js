@@ -7,6 +7,7 @@ import * as Ley_Int$OptolithClient from "../../Data/Ley_Int.bs.js";
 import * as Yaml_Zip$OptolithClient from "../Utilities/Yaml_Zip.bs.js";
 import * as JsonStrict$OptolithClient from "../Utilities/JsonStrict.bs.js";
 import * as Ley_IntMap$OptolithClient from "../../Data/Ley_IntMap.bs.js";
+import * as Ley_Option$OptolithClient from "../../Data/Ley_Option.bs.js";
 
 function tL10n(json) {
   return {
@@ -111,16 +112,16 @@ function t(univ, l10n) {
             commonBlessedProfessionsAll: univ.commonBlessedProfessionsAll,
             commonBlessedProfessionsExceptions: univ.commonBlessedProfessionsExceptions,
             commonBlessedProfessionsText: l10n.commonBlessedProfessions,
-            commonAdvantages: univ.commonAdvantages,
+            commonAdvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.commonAdvantages),
             commonAdvantagesText: l10n.commonAdvantages,
-            commonDisadvantages: univ.commonDisadvantages,
+            commonDisadvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.commonDisadvantages),
             commonDisadvantagesText: l10n.commonDisadvantages,
-            uncommonAdvantages: univ.uncommonAdvantages,
+            uncommonAdvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.uncommonAdvantages),
             uncommonAdvantagesText: l10n.uncommonAdvantages,
-            uncommonDisadvantages: univ.uncommonDisadvantages,
+            uncommonDisadvantages: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.uncommonDisadvantages),
             uncommonDisadvantagesText: l10n.uncommonDisadvantages,
             commonSkills: univ.commonSkills,
-            uncommonSkills: univ.uncommonSkills,
+            uncommonSkills: Ley_Option$OptolithClient.fromOption(/* [] */0, univ.uncommonSkills),
             commonNames: l10n.commonNames,
             culturalPackageCost: univ.culturalPackageCost,
             culturalPackageSkills: Curry._1(Ley_IntMap$OptolithClient.fromList, univ.culturalPackageSkills)
