@@ -77,8 +77,8 @@ export const PurseAddRemoveMoney: React.FC<PurseAddRemoveMoneyProps> = props => 
       pipe_ (p, fmap (f), bindF (toInt), fromMaybe (0))
 
   const getCurrentPurseSum =
-   React.useMemo (
-     () => {
+    React.useMemo (
+      () => {
       const nCurrentD = getCurrentNumber (PA.d) (purse)
       const nCurrentS = getCurrentNumber (PA.s) (purse)
       const nCurrentH = getCurrentNumber (PA.h) (purse)
@@ -100,54 +100,54 @@ export const PurseAddRemoveMoney: React.FC<PurseAddRemoveMoneyProps> = props => 
         return nvalueK + (nvalueH * 10) + (nvalueS * 100) + (nvalueD * 1000)
       },
       [ valueD, valueS, valueH, valueK ]
-  )
+    )
 
   const isCalculatedDifferencePositive =
-  React.useMemo (
-    () => {
-      const purseSum = getCurrentPurseSum
-      const deltaSum = getCurrentDeltaSum
+    React.useMemo (
+      () => {
+        const purseSum = getCurrentPurseSum
+        const deltaSum = getCurrentDeltaSum
 
-      return (purseSum - deltaSum) >= 0
-    },
-    [ getCurrentPurseSum, getCurrentDeltaSum ]
+        return (purseSum - deltaSum) >= 0
+      },
+      [ getCurrentPurseSum, getCurrentDeltaSum ]
   )
 
   const addMoney =
-   React.useCallback (
-    () => {
-      const purseSum = getCurrentPurseSum
-      const deltaSum = getCurrentDeltaSum
-      const resultSum = purseSum + deltaSum
+    React.useCallback (
+      () => {
+        const purseSum = getCurrentPurseSum
+        const deltaSum = getCurrentDeltaSum
+        const resultSum = purseSum + deltaSum
 
-      const nEqualizedD = Math.floor (resultSum / 1000)
-      const nEqualizedS = Math.floor ((resultSum - nEqualizedD * 1000) / 100)
-      const nEqualizedH = Math.floor ((resultSum - nEqualizedD * 1000 - nEqualizedS * 100) / 10)
-      const nEqualizedK = resultSum % 10
+        const nEqualizedD = Math.floor (resultSum / 1000)
+        const nEqualizedS = Math.floor ((resultSum - nEqualizedD * 1000) / 100)
+        const nEqualizedH = Math.floor ((resultSum - nEqualizedD * 1000 - nEqualizedS * 100) / 10)
+        const nEqualizedK = resultSum % 10
 
-      setMoney (nEqualizedD, nEqualizedS, nEqualizedH, nEqualizedK)
-    },
-    [ getCurrentPurseSum, getCurrentDeltaSum, setMoney ]
+        setMoney (nEqualizedD, nEqualizedS, nEqualizedH, nEqualizedK)
+      },
+      [ getCurrentPurseSum, getCurrentDeltaSum, setMoney ]
    )
 
   const removeMoney =
-   React.useCallback (
-    () => {
-      const purseSum = getCurrentPurseSum
-      const deltaSum = getCurrentDeltaSum
-      const resultSum = purseSum - deltaSum
+    React.useCallback (
+      () => {
+        const purseSum = getCurrentPurseSum
+        const deltaSum = getCurrentDeltaSum
+        const resultSum = purseSum - deltaSum
 
-      const nEqualizedD = Math.floor (resultSum / 1000)
-      const nEqualizedS = Math.floor ((resultSum - nEqualizedD * 1000) / 100)
-      const nEqualizedH = Math.floor ((resultSum - nEqualizedD * 1000 - nEqualizedS * 100) / 10)
-      const nEqualizedK = resultSum % 10
+        const nEqualizedD = Math.floor (resultSum / 1000)
+        const nEqualizedS = Math.floor ((resultSum - nEqualizedD * 1000) / 100)
+        const nEqualizedH = Math.floor ((resultSum - nEqualizedD * 1000 - nEqualizedS * 100) / 10)
+        const nEqualizedK = resultSum % 10
 
-      if (resultSum >= 0) {
-        setMoney (nEqualizedD, nEqualizedS, nEqualizedH, nEqualizedK)
-      }
-    },
-    [ getCurrentPurseSum, getCurrentDeltaSum, setMoney ]
-   )
+        if (resultSum >= 0) {
+          setMoney (nEqualizedD, nEqualizedS, nEqualizedH, nEqualizedK)
+        }
+      },
+      [ getCurrentPurseSum, getCurrentDeltaSum, setMoney ]
+    )
 
   return (
     <Dialog
@@ -176,13 +176,11 @@ export const PurseAddRemoveMoney: React.FC<PurseAddRemoveMoneyProps> = props => 
       isOpen={isOpen}
       >
         <div className="purse">
-          <div>
-            <label>
-              {translate (staticData) ("equipment.purse.notefirst")}
-              <br />
-              {translate (staticData) ("equipment.purse.notesecond")}
-            </label>
-          </div>
+          <label>
+            {translate (staticData) ("equipment.purse.notefirst")}
+            <br />
+            {translate (staticData) ("equipment.purse.notesecond")}
+          </label>
           <h3>{translate (staticData) ("equipment.purse.currentcredit")}</h3>
           <div className="flexrow">
             <div className="textfield">
