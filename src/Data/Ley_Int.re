@@ -5,6 +5,8 @@ let max = (x: int, y: int) => x > y ? x : y;
 
 let min = (x: int, y: int) => x < y ? x : y;
 
+let minmax = (x: int, y: int) => x < y ? (x, y) : (y, x);
+
 let inc = (x: int) => x + 1;
 
 let dec = (x: int) => x - 1;

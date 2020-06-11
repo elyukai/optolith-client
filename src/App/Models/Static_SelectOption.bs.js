@@ -125,7 +125,8 @@ function t(univ, l10n) {
           specializationInput: l10n.specializationInput,
           animalGr: univ.animalGr,
           animalLevel: univ.animalLevel,
-          target: undefined,
+          enhancementTarget: undefined,
+          enhancementLevel: undefined,
           wikiEntry: undefined,
           src: l10n.src,
           errata: l10n.errata
@@ -179,7 +180,8 @@ function entryToSelectOption(id, name, wikiEntry, src, errata) {
           specializationInput: undefined,
           animalGr: undefined,
           animalLevel: undefined,
-          target: undefined,
+          enhancementTarget: undefined,
+          enhancementLevel: undefined,
           wikiEntry: wikiEntry,
           src: src,
           errata: errata
@@ -365,7 +367,8 @@ function l10nToSelectOption(l10n) {
           specializationInput: l10n.specializationInput,
           animalGr: undefined,
           animalLevel: undefined,
-          target: undefined,
+          enhancementTarget: undefined,
+          enhancementLevel: undefined,
           wikiEntry: undefined,
           src: l10n.src,
           errata: l10n.errata
@@ -387,7 +390,8 @@ function mergeUnivIntoSelectOption(univ, x) {
           specializationInput: x.specializationInput,
           animalGr: Ley_Option$OptolithClient.Alternative.$less$pipe$great(univ.animalGr, x.animalGr),
           animalLevel: Ley_Option$OptolithClient.Alternative.$less$pipe$great(univ.animalLevel, x.animalLevel),
-          target: x.target,
+          enhancementTarget: x.enhancementTarget,
+          enhancementLevel: x.enhancementLevel,
           wikiEntry: x.wikiEntry,
           src: x.src,
           errata: x.errata

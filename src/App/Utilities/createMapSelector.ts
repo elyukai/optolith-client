@@ -1,13 +1,9 @@
 import { ParametricSelector, Selector } from "reselect"
 import { cnst } from "../../Data/Function"
-import { fromJust, INTERNAL_shallowEquals, isMaybe, isNothing, Just, Maybe, Nothing, Some } from "../../Data/Maybe"
-import { fromMap, lookup, toMap } from "../../Data/OrderedMap"
+import { empty, insert, IntMap, lookup, mapWithKey, member } from "../../Data/IntMap"
+import { fromJust, isNothing, Just, Maybe, Nothing, Some } from "../../Data/Maybe"
 
-const maybeEquals =
-  (x: any, y: any) =>
-    isMaybe (x) && isMaybe (y)
-      ? INTERNAL_shallowEquals (x) (y)
-      : x === y
+type Key = number
 
 /**
  * ```haskell
@@ -34,7 +30,7 @@ const maybeEquals =
 export const createMapSelectorDebug =
   (debug: boolean) =>
   <S, P1, V extends Some>
-  (mapSelector: PSelector<S, P1, StrMap<V>>) =>
+  (mapSelector: PSelector<S, P1, IntMap<V>>) =>
   <K extends PSelectorWithKey<S, any, any>[]>
   (...globalSelectorsWithKey: K) =>
   <G extends PSelector<S, any, any>[]>
@@ -45,22 +41,21 @@ export const createMapSelectorDebug =
   (fold: Callback<S, V, K, G, M, R>): CreatedParametricSelector<S, P, V, R> => {
     let prevState: S | undefined = undefined
 
-    let prevMap: StrMap<V> | undefined = undefined
+    let prevMap: IntMap<V> | undefined = undefined
 
-    const prevValues: Map<string, V> = new Map ()
+    let prevValues: IntMap<V> = empty
 
-    const keyMap: Map<
-      string,
+    type SelectorInputs =
       [MappedReturnType<MappedReturnType<K>>, MappedReturnType<G>, MappedReturnType<M>]
-    > =
-      new Map ()
 
-    let resMap: Map<string, R> = new Map ()
-    const justResMap: Map<string, Just<R>> = new Map ()
+    let keyMap: IntMap<SelectorInputs> = empty
 
-    const g = (key_str: string) => (state: S, props: P): Maybe<R> => {
-      let res = resMap .get (key_str)
-      let mres = justResMap .get (key_str)
+    let resMap: IntMap<R> = empty
+    let justResMap: IntMap<Just<R>> = empty
+
+    const g = (key_str: Key) => (state: S, props: P): Maybe<R> => {
+      let res = lookup (key_str) (resMap)
+      let mres = lookup (key_str) (justResMap)
 
       if (state === prevState && mres !== undefined) {
         if (debug) {
@@ -101,16 +96,16 @@ export const createMapSelectorDebug =
       const newGlobalValues =
         globalSelectors .map (s => s (state, props)) as MappedReturnType<G>
 
-      const prevGlobalKeyAndGlobalValues = keyMap .get (key_str)
+      const prevGlobalKeyAndGlobalValues = lookup (key_str) (keyMap)
 
-      const prevMapValue = prevValues .get (key_str)
+      const prevMapValue = lookup (key_str) (prevValues)
 
       if (
         mres !== undefined
         && (
-          (map === prevMap && keyMap .has (key_str))
+          (map === prevMap && member (key_str) (keyMap))
           || (
-            maybeEquals (value, prevMapValue)
+            value === prevMapValue
             && prevGlobalKeyAndGlobalValues !== undefined
             && (newGlobalValuesWithKey as any[])
               .every ((x, i) => x === prevGlobalKeyAndGlobalValues [0] [i])
@@ -133,8 +128,14 @@ export const createMapSelectorDebug =
         valueSelectors .map (s => s (value, props)) as MappedReturnType<M>
 
       prevMap = map
-      prevValues .set (key_str, value)
-      keyMap .set (key_str, [ newGlobalValuesWithKey, newGlobalValues, newMapValueValues ])
+      prevValues = insert (key_str) (value) (prevValues)
+      keyMap = insert (key_str)
+                      <SelectorInputs> ([
+                        newGlobalValuesWithKey,
+                        newGlobalValues,
+                        newMapValueValues,
+                      ])
+                      (keyMap)
 
       res = fold (...newGlobalValuesWithKey as any)
                  (...newGlobalValues as any)
@@ -142,31 +143,42 @@ export const createMapSelectorDebug =
 
       mres = Just (res)
 
-      resMap .set (key_str, res)
-      justResMap .set (key_str, mres)
+      resMap = insert (key_str) (res) (resMap)
+      justResMap = insert (key_str) (mres) (justResMap)
 
       return mres
     }
 
-    g.getCacheAt = (key_str: string): Maybe<R> => Maybe (resMap .get (key_str))
+    g.getCacheAt = (key_str: Key): Maybe<R> => Maybe (lookup (key_str) (resMap))
+
     g.setCacheAt =
-      (key_str: string) =>
+      (key_str: Key) =>
       (x: R) => {
-        resMap .set (key_str, x)
-        justResMap .set (key_str, Just (x))
+        resMap = insert (key_str) (x) (resMap)
+        justResMap = insert (key_str) (Just (x)) (justResMap)
       }
-    g.getCache = () => fromMap (resMap)
+
+    g.getCache = () => resMap
+
     g.setCache =
-      (m: StrMap<R>) => {
-        resMap = toMap (m) as Map<string, R>
-        resMap .forEach ((v, k) => justResMap .set (k, Just (v)))
+      (m: IntMap<R>) => {
+        resMap = m
+
+        mapWithKey ((k: Key) => (x: R) => {
+                     justResMap = insert (k) (Just (x)) (justResMap)
+
+                     return x
+                   })
+                   (resMap)
       }
-    g.setBaseMap = (m: StrMap<V>) => {
- prevMap = m
-}
+
+    g.setBaseMap = (m: IntMap<V>) => {
+      prevMap = m
+    }
+
     g.setState = (s: S) => {
- prevState = s
-}
+      prevState = s
+    }
 
     return g
   }
@@ -196,7 +208,7 @@ export const createMapSelector = createMapSelectorDebug (false)
  */
 export const createMapSelectorS =
   <S, V extends Some>
-  (mapSelector: Selector<S, StrMap<V>>) =>
+  (mapSelector: Selector<S, IntMap<V>>) =>
   <G extends Selector<S, any>[]>
   (...globalSelectors: G) =>
   <M extends Selector<V, any>[]>
@@ -232,7 +244,7 @@ export const createMapSelectorS =
  */
 export const createMapSelectorP =
   <S, P1, V extends Some>
-  (mapSelector: PSelector<S, P1, StrMap<V>>) =>
+  (mapSelector: PSelector<S, P1, IntMap<V>>) =>
   <G extends PSelector<S, any, any>[]>
   (...globalSelectors: G) =>
   <M extends PSelector<V, any, any>[]>
@@ -289,25 +301,25 @@ type CallbackWithoutKeys
     (...mapValueValues: MappedReturnType<M>) => R
 
 interface Cache<S, V, R> {
-  getCacheAt (key_str: string): Maybe<R>
-  setCacheAt (key_str: string): (x: R) => void
-  getCache (): StrMap<R>
-  setCache (m: StrMap<R>): void
-  setBaseMap (m: StrMap<V>): void
+  getCacheAt (key_str: Key): Maybe<R>
+  setCacheAt (key_str: Key): (x: R) => void
+  getCache (): IntMap<R>
+  setCache (m: IntMap<R>): void
+  setBaseMap (m: IntMap<V>): void
   setState (s: S): void
 }
 
 interface CreatedSelector<S, V, R> extends Cache<S, V, R> {
-  (key_str: string): (state: S) => Maybe<R>
+  (key_str: Key): (state: S) => Maybe<R>
 }
 
 interface CreatedParametricSelector<S, P, V, R> extends Cache<S, V, R> {
-  (key_str: string): (state: S, props: P) => Maybe<R>
+  (key_str: Key): (state: S, props: P) => Maybe<R>
 }
 
 type PSelector<S, P, R> = ParametricSelector<S, P, R>
 
-export type PSelectorWithKey<S, P, R> = (key_str: string) => ParametricSelector<S, P, R>
+export type PSelectorWithKey<S, P, R> = (key_str: Key) => ParametricSelector<S, P, R>
 
 export const ignore3rd =
   <A, B, C> (f: (a: A) => (b: B) => C) => (a: A) => (b: B) => (): C => f (a) (b)

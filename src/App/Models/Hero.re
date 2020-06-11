@@ -49,7 +49,7 @@ type personalData = {
 };
 
 module Activatable = {
-  type parameter = [
+  type optionId = [
     | `Generic(int)
     | `Skill(int)
     | `CombatTechnique(int)
@@ -63,7 +63,7 @@ module Activatable = {
   [@genType]
   [@genType.as "ActivatableSingle"]
   type single = {
-    options: list(parameter),
+    options: list(optionId),
     level: option(int),
     customCost: option(int),
   };

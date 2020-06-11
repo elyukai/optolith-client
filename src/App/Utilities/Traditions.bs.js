@@ -45,7 +45,7 @@ function getEntries(staticData, mp) {
 }
 
 function idToNumId(staticData, id) {
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.lookup, id, staticData.magicalTraditions), (function (x) {
+  return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, id, staticData.magicalTraditions), (function (x) {
                 return x.numId;
               }));
 }
@@ -57,14 +57,6 @@ function numIdToId(staticData, id) {
                 return x.id;
               }));
 }
-
-var Magical = {
-  getHeroEntries: getHeroEntries,
-  getStaticEntries: getStaticEntries,
-  getEntries: getEntries,
-  idToNumId: idToNumId,
-  numIdToId: numIdToId
-};
 
 function getHeroEntry(staticData, mp) {
   return Curry._2(Ley_IntMap$OptolithClient.Foldable.find, (function (param) {
@@ -107,6 +99,14 @@ function numIdToId$1(staticData, id) {
                 return x.id;
               }));
 }
+
+var Magical = {
+  getHeroEntries: getHeroEntries,
+  getStaticEntries: getStaticEntries,
+  getEntries: getEntries,
+  idToNumId: idToNumId,
+  numIdToId: numIdToId
+};
 
 var Blessed = {
   getHeroEntry: getHeroEntry,

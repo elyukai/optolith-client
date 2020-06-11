@@ -53,12 +53,6 @@ function activatableOptionToSelectOptionId(id) {
   }
 }
 
-var Convert = {
-  heroEntryToSingles: heroEntryToSingles,
-  singleToSingleWithId: singleToSingleWithId,
-  activatableOptionToSelectOptionId: activatableOptionToSelectOptionId
-};
-
 function name(x) {
   return x[0].name;
 }
@@ -137,6 +131,18 @@ var SelectOptions = {
 
 function getOption(index, heroEntry) {
   return Ley_List$OptolithClient.Safe.atMay(heroEntry.options, index);
+}
+
+function getOption1(heroEntry) {
+  return Ley_Option$OptolithClient.listToOption(heroEntry.options);
+}
+
+function getOption2(param) {
+  return getOption(1, param);
+}
+
+function getOption3(param) {
+  return getOption(2, param);
 }
 
 function getCustomInput(option) {
@@ -492,7 +498,7 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
           return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(heroEntry.options), (function (param) {
                             return getSelectOption(staticEntry, param);
                           })), (function (enhancement) {
-                        return Ley_Option$OptolithClient.Monad.$great$great$eq(enhancement.target, (function (id) {
+                        return Ley_Option$OptolithClient.Monad.$great$great$eq(enhancement.enhancementTarget, (function (id) {
                                       var tmp;
                                       var exit = 0;
                                       if (typeof match$2 === "number" && match$2 === 25) {
@@ -1134,7 +1140,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
   }
 }
 
-function getCost(isEntryToAdd, automaticAdvantages, staticData, hero, staticEntry, heroEntry, singleHeroEntry) {
+function getApValue(isEntryToAdd, automaticAdvantages, staticData, hero, staticEntry, heroEntry, singleHeroEntry) {
   var isAutomatic = Ley_List$OptolithClient.elem(singleHeroEntry.id, automaticAdvantages);
   var modifyAbs;
   switch (staticEntry.tag | 0) {
@@ -1149,24 +1155,29 @@ function getCost(isEntryToAdd, automaticAdvantages, staticData, hero, staticEntr
   }
   var customCost = singleHeroEntry.customCost;
   if (customCost !== undefined) {
-    return /* tuple */[
-            Curry._1(modifyAbs, customCost),
-            isAutomatic
-          ];
+    return {
+            apValue: Curry._1(modifyAbs, customCost),
+            isAutomatic: isAutomatic
+          };
   } else {
-    return /* tuple */[
-            Curry._1(modifyAbs, Ley_Option$OptolithClient.fromOption(0, getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroEntry, singleHeroEntry))),
-            isAutomatic
-          ];
+    return {
+            apValue: Curry._1(modifyAbs, Ley_Option$OptolithClient.fromOption(0, getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroEntry, singleHeroEntry))),
+            isAutomatic: isAutomatic
+          };
   }
 }
+
+var Convert = {
+  heroEntryToSingles: heroEntryToSingles,
+  activatableOptionToSelectOptionId: activatableOptionToSelectOptionId
+};
 
 var Names = {
   getName: getName
 };
 
 var AdventurePoints = {
-  getCost: getCost
+  getApValue: getApValue
 };
 
 export {
@@ -1175,6 +1186,12 @@ export {
   Convert ,
   Accessors ,
   SelectOptions ,
+  getOption ,
+  getOption1 ,
+  getOption2 ,
+  getOption3 ,
+  getCustomInput ,
+  getGenericId ,
   Names ,
   AdventurePoints ,
   

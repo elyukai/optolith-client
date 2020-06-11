@@ -72,7 +72,8 @@ function liturgicalChantEnhancements(xs) {
                                 specializationInput: undefined,
                                 animalGr: undefined,
                                 animalLevel: undefined,
-                                target: x.target,
+                                enhancementTarget: x.target,
+                                enhancementLevel: 1,
                                 wikiEntry: undefined,
                                 src: x.src,
                                 errata: x.errata
@@ -125,7 +126,8 @@ function liturgicalChantEnhancements(xs) {
                                   specializationInput: undefined,
                                   animalGr: undefined,
                                   animalLevel: undefined,
-                                  target: x.target,
+                                  enhancementTarget: x.target,
+                                  enhancementLevel: 2,
                                   wikiEntry: undefined,
                                   src: x.src,
                                   errata: x.errata
@@ -195,7 +197,8 @@ function liturgicalChantEnhancements(xs) {
                                     specializationInput: undefined,
                                     animalGr: undefined,
                                     animalLevel: undefined,
-                                    target: x.target,
+                                    enhancementTarget: x.target,
+                                    enhancementLevel: 3,
                                     wikiEntry: undefined,
                                     src: x.src,
                                     errata: x.errata
@@ -231,7 +234,8 @@ function spellEnhancements(xs) {
                                 specializationInput: undefined,
                                 animalGr: undefined,
                                 animalLevel: undefined,
-                                target: x.target,
+                                enhancementTarget: x.target,
+                                enhancementLevel: 1,
                                 wikiEntry: undefined,
                                 src: x.src,
                                 errata: x.errata
@@ -284,7 +288,8 @@ function spellEnhancements(xs) {
                                   specializationInput: undefined,
                                   animalGr: undefined,
                                   animalLevel: undefined,
-                                  target: x.target,
+                                  enhancementTarget: x.target,
+                                  enhancementLevel: 2,
                                   wikiEntry: undefined,
                                   src: x.src,
                                   errata: x.errata
@@ -354,7 +359,8 @@ function spellEnhancements(xs) {
                                     specializationInput: undefined,
                                     animalGr: undefined,
                                     animalLevel: undefined,
-                                    target: x.target,
+                                    enhancementTarget: x.target,
+                                    enhancementLevel: 3,
                                     wikiEntry: undefined,
                                     src: x.src,
                                     errata: x.errata

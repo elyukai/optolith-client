@@ -3,10 +3,10 @@ open Ley.IntMap;
 open Ley.Option;
 
 module Magical = {
-  let%private isTraditionId = (staticData, id) =>
+  let isTraditionId = (staticData, id) =>
     member(id, staticData.magicalTraditions);
 
-  let%private isActiveTradition = (staticData, x: Hero.Activatable.t) =>
+  let isActiveTradition = (staticData, x: Hero.Activatable.t) =>
     isTraditionId(staticData, x.id) && Activatable.isActive(x);
 
   let getHeroEntries = (staticData, mp: Ley.IntMap.t(Hero.Activatable.t)) =>
@@ -35,8 +35,8 @@ module Magical = {
        );
 
   let idToNumId = (staticData, id) =>
-    Ley.Option.Functor.(
-      Ley.IntMap.lookup(id, staticData.magicalTraditions) <&> (x => x.numId)
+    Ley.Option.Monad.(
+      Ley.IntMap.lookup(id, staticData.magicalTraditions) >>= (x => x.numId)
     );
 
   let numIdToId = (staticData, id) =>
@@ -50,10 +50,10 @@ module Magical = {
 };
 
 module Blessed = {
-  let%private isTraditionId = (staticData, id) =>
+  let isTraditionId = (staticData, id) =>
     Ley.IntMap.member(id, staticData.blessedTraditions);
 
-  let%private isActiveTradition = (staticData, x: Hero.Activatable.t) =>
+  let isActiveTradition = (staticData, x: Hero.Activatable.t) =>
     isTraditionId(staticData, x.id) && Activatable.isActive(x);
 
   let getHeroEntry = (staticData, mp: Ley.IntMap.t(Hero.Activatable.t)) =>

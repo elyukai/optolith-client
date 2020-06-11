@@ -522,7 +522,7 @@ module Spells = {
     activePropertyKnowledges
     // Is spell part of dependencies of any active Property
     // Knowledge?
-    |> Ley.List.Foldable.any((sid: Hero.Activatable.parameter) =>
+    |> Ley.List.Foldable.any((sid: Hero.Activatable.optionId) =>
          switch (sid) {
          | `Generic(x) => x === staticEntry.property
          | _ => false
@@ -756,7 +756,7 @@ module LiturgicalChants = {
       ) =>
     activeAspectKnowledges
     // Is liturgical chant part of dependencies of any active Aspect Knowledge?
-    |> Ley.List.Foldable.any((sid: Hero.Activatable.parameter) =>
+    |> Ley.List.Foldable.any((sid: Hero.Activatable.optionId) =>
          switch (sid) {
          | `Generic(x) => Ley.List.Foldable.elem(x, staticEntry.aspects)
          | _ => false

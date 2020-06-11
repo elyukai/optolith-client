@@ -1,6 +1,6 @@
 type singleWithId = {
   id: int,
-  options: list(Hero.Activatable.parameter),
+  options: list(Hero.Activatable.optionId),
   level: option(int),
   customCost: option(int),
 };
@@ -106,7 +106,7 @@ module Convert = {
    } */
 
   let activatableOptionToSelectOptionId =
-      (id: Hero.Activatable.parameter): option(Ids.selectOptionId) =>
+      (id: Hero.Activatable.optionId): option(Ids.selectOptionId) =>
     switch (id) {
     | `Generic(_) as id
     | `Skill(_) as id
@@ -228,7 +228,7 @@ let getOption1 = heroEntry => heroEntry.options |> Ley.Option.listToOption;
 let getOption2 = getOption(1);
 let getOption3 = getOption(2);
 
-let getCustomInput = (option: Hero.Activatable.parameter) =>
+let getCustomInput = (option: Hero.Activatable.optionId) =>
   switch (option) {
   | `CustomInput(x) => Some(x)
   | `Generic(_)
@@ -240,7 +240,7 @@ let getCustomInput = (option: Hero.Activatable.parameter) =>
   | `Blessing(_) => None
   };
 
-let getGenericId = (option: Hero.Activatable.parameter) =>
+let getGenericId = (option: Hero.Activatable.optionId) =>
   switch (option) {
   | `Generic(x) => Some(x)
   | `Skill(_)
@@ -256,7 +256,7 @@ let lookupMap = (k, mp, f) =>
   Ley.Option.Functor.(f <$> Ley.IntMap.lookup(k, mp));
 
 let getSkillFromOption =
-    (staticData: Static.t, option: Hero.Activatable.parameter) =>
+    (staticData: Static.t, option: Hero.Activatable.optionId) =>
   switch (option) {
   | `Skill(id) => Ley.IntMap.lookup(id, staticData.skills)
   | `Generic(_)
@@ -506,7 +506,7 @@ module Names = {
         >>= SelectOptions.getSelectOption(staticEntry)
         >>= (
           enhancement =>
-            enhancement.target
+            enhancement.enhancementTarget
             >>= (
               id =>
                 (
@@ -781,6 +781,11 @@ module AdventurePoints = {
   open Ley.Option.Monad;
   open Static;
   open Ley.Function;
+
+  type combinedApValue = {
+    apValue: int,
+    isAutomatic: bool,
+  };
 
   let ensureFlat =
     fun
@@ -1210,7 +1215,7 @@ module AdventurePoints = {
    * @param isEntryToAdd If `entry` has not been added to the list of active
    * entries yet, this must be `true`, otherwise `false`.
    */
-  let getCost =
+  let getApValue =
       (
         ~isEntryToAdd,
         ~automaticAdvantages,
@@ -1230,7 +1235,7 @@ module AdventurePoints = {
       };
 
     switch (singleHeroEntry.customCost) {
-    | Some(customCost) => (modifyAbs(customCost), isAutomatic)
+    | Some(customCost) => {apValue: modifyAbs(customCost), isAutomatic}
     | None =>
       getEntrySpecificCost(
         ~isEntryToAdd,
@@ -1242,7 +1247,7 @@ module AdventurePoints = {
       )
       |> fromOption(0)
       |> modifyAbs
-      |> (apValue => (apValue, isAutomatic))
+      |> (apValue => {apValue, isAutomatic})
     };
   };
 };

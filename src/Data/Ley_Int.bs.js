@@ -19,6 +19,20 @@ function min(x, y) {
   }
 }
 
+function minmax(x, y) {
+  if (x < y) {
+    return /* tuple */[
+            x,
+            y
+          ];
+  } else {
+    return /* tuple */[
+            y,
+            x
+          ];
+  }
+}
+
 function inc(x) {
   return x + 1 | 0;
 }
@@ -50,6 +64,7 @@ var readOption = Pervasives.int_of_string_opt;
 export {
   max ,
   min ,
+  minmax ,
   inc ,
   dec ,
   negate ,

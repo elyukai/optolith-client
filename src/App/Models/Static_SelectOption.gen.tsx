@@ -49,7 +49,8 @@ export type t = {
   readonly specializationInput?: string; 
   readonly animalGr?: number; 
   readonly animalLevel?: number; 
-  readonly target?: number; 
+  readonly enhancementTarget?: number; 
+  readonly enhancementLevel?: number; 
   readonly wikiEntry?: wikiEntry; 
   readonly src: list<Static_SourceRef_t>; 
   readonly errata: list<Static_Erratum_t>

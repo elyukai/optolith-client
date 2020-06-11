@@ -64,7 +64,7 @@ export type personalData = {
 export type PersonalData = personalData;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Activatable_parameter = 
+export type Activatable_optionId = 
     { tag: "Generic"; value: number }
   | { tag: "Skill"; value: number }
   | { tag: "CombatTechnique"; value: number }
@@ -76,7 +76,7 @@ export type Activatable_parameter =
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Activatable_single = {
-  readonly options: list<Activatable_parameter>; 
+  readonly options: list<Activatable_optionId>; 
   readonly level?: number; 
   readonly customCost?: number
 };
