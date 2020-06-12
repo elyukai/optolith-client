@@ -177,11 +177,25 @@ module SelectOptions = {
     id |> getSelectOption(x) >>= (y => y.cost);
 
   /**
+   * Get all select option IDs from the given entry at the passed index.
+   */
+  let getActiveOptions = (index, x: Hero.Activatable.t) =>
+    x.active
+    |> mapOption((y: Hero.Activatable.single) =>
+         Ley.List.Safe.atMay(y.options, index)
+       );
+
+  /**
    * Get all first select option IDs from the given entry.
    */
-  let getActiveSelections = (x: Hero.Activatable.t) =>
+  let getActiveOptions1 = (x: Hero.Activatable.t) =>
     x.active
     |> mapOption((y: Hero.Activatable.single) => y.options |> listToOption);
+
+  /**
+   * Get all second select option IDs from the given entry.
+   */
+  let getActiveOptions2 = getActiveOptions(1);
   // type SecondarySelections = OrderedMap<number | string, List<string | number>>
   //
   // /**

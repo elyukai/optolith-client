@@ -44,6 +44,14 @@ module Magical: {
    */
   [@genType]
   let numIdToId: (Static.t, option(int)) => option(int);
+
+  /**
+   * Returns the primary attribute ID for the currently active magical
+   * tradition.
+   */
+  [@genType]
+  let getPrimaryAttributeId:
+    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) => option(int);
 };
 module Blessed: {
   /**
@@ -92,4 +100,12 @@ module Blessed: {
    */
   [@genType]
   let numIdToId: (Static.t, int) => option(int);
+
+  /**
+   * Returns the primary attribute ID for the currently active blessed
+   * tradition.
+   */
+  [@genType]
+  let getPrimaryAttributeId:
+    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) => option(int);
 };

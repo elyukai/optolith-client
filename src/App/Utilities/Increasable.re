@@ -137,7 +137,7 @@ module Skills = {
    */
   let getMinSrByDeps = (heroSkills, heroEntry: Hero.Skill.t) =>
     heroEntry.dependencies
-    |> Dependencies.flattenSkill(
+    |> Dependencies.Flatten.flattenSkillDependencies(
          id => heroSkills |> Ley.IntMap.lookup(id) |> getValueDef,
          heroEntry.id,
        )
@@ -351,7 +351,7 @@ module CombatTechniques = {
    */
   let getMinCtrByDeps = (heroCombatTechniques, heroEntry: Hero.Skill.t) =>
     heroEntry.dependencies
-    |> Dependencies.flattenSkill(
+    |> Dependencies.Flatten.flattenSkillDependencies(
          id => heroCombatTechniques |> Ley.IntMap.lookup(id) |> getValueDef,
          heroEntry.id,
        )
@@ -434,7 +434,7 @@ module Spells = {
   let getMaxSrFromPropertyKnowledge =
       (propertyKnowledge, staticEntry: Static.Spell.t) =>
     propertyKnowledge
-    <&> Activatable.SelectOptions.getActiveSelections
+    <&> Activatable.SelectOptions.getActiveOptions1
     |> option(
          true,
          Ley.List.Foldable.notElem(`Generic(staticEntry.property)),
@@ -548,26 +548,14 @@ module Spells = {
    */
   let getMinSrByDeps = (heroSpells, heroEntry: Hero.ActivatableSkill.t) =>
     heroEntry.dependencies
-    |> Dependencies.flattenActivatableSkill(
+    |> Dependencies.Flatten.flattenActivatableSkillDependencies(
          id => heroSpells |> Ley.IntMap.lookup(id) |> getValueDef,
          heroEntry.id,
        )
     |> ensure(Ley.List.Extra.notNull)
     >>= Ley.List.Foldable.foldr(
           (d, acc) =>
-            switch (d) {
-            | Inactive => Some(Inactive)
-            | Active(next) =>
-              option(
-                Some(Active(next)),
-                prev =>
-                  switch (prev) {
-                  | Inactive => Some(Inactive)
-                  | Active(prev) => Some(Active(Ley.Int.max(prev, next)))
-                  },
-                acc,
-              )
-            },
+            option(Some(d), prev => Some(Ley.Int.max(prev, d)), acc),
           None,
         );
 
@@ -581,18 +569,11 @@ module Spells = {
     let counter =
       getValidSpellsForPropertyKnowledgeCounter(staticSpells, heroSpells);
     let activePropertyKnowledges =
-      Activatable.SelectOptions.getActiveSelections(propertyKnowledge);
+      Activatable.SelectOptions.getActiveOptions1(propertyKnowledge);
 
     (~staticEntry, ~heroEntry) =>
       [
-        getMinSrByDeps(heroSpells, heroEntry)
-        >>= (
-          x =>
-            switch (x) {
-            | Active(value) => Some(value)
-            | Inactive => None
-            }
-        ),
+        getMinSrByDeps(heroSpells, heroEntry),
         getMinSrFromPropertyKnowledge(
           counter,
           activePropertyKnowledges,
@@ -651,7 +632,7 @@ module LiturgicalChants = {
   let getMaxSrFromAspectKnowledge =
       (aspectKnowledge, staticEntry: Static.LiturgicalChant.t) =>
     aspectKnowledge
-    <&> Activatable.SelectOptions.getActiveSelections
+    <&> Activatable.SelectOptions.getActiveOptions1
     |> option(true, actives =>
          Ley.List.Foldable.all(
            aspect => Ley.List.Foldable.notElem(`Generic(aspect), actives),
@@ -784,26 +765,14 @@ module LiturgicalChants = {
   let getMinSrByDeps =
       (heroLiturgicalChants, heroEntry: Hero.ActivatableSkill.t) =>
     heroEntry.dependencies
-    |> Dependencies.flattenActivatableSkill(
+    |> Dependencies.Flatten.flattenActivatableSkillDependencies(
          id => heroLiturgicalChants |> Ley.IntMap.lookup(id) |> getValueDef,
          heroEntry.id,
        )
     |> ensure(Ley.List.Extra.notNull)
     >>= Ley.List.Foldable.foldr(
           (d, acc) =>
-            switch (d) {
-            | Inactive => Some(Inactive)
-            | Active(next) =>
-              option(
-                Some(Active(next)),
-                prev =>
-                  switch (prev) {
-                  | Inactive => Some(Inactive)
-                  | Active(prev) => Some(Active(Ley.Int.max(prev, next)))
-                  },
-                acc,
-              )
-            },
+            option(Some(d), prev => Some(Ley.Int.max(prev, d)), acc),
           None,
         );
 
@@ -821,18 +790,11 @@ module LiturgicalChants = {
         heroLiturgicalChants,
       );
     let activeAspectKnowledges =
-      Activatable.SelectOptions.getActiveSelections(aspectKnowledge);
+      Activatable.SelectOptions.getActiveOptions1(aspectKnowledge);
 
     (~staticEntry, ~heroEntry) =>
       [
-        getMinSrByDeps(heroLiturgicalChants, heroEntry)
-        >>= (
-          x =>
-            switch (x) {
-            | Active(value) => Some(value)
-            | Inactive => None
-            }
-        ),
+        getMinSrByDeps(heroLiturgicalChants, heroEntry),
         getMinSrFromAspectKnowledge(
           counter,
           activeAspectKnowledges,

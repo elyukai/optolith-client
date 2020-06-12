@@ -116,18 +116,18 @@ function getSelectOptionCost(x, id) {
               }));
 }
 
-function getActiveSelections(x) {
+function getActiveOptions1(x) {
   return Ley_Option$OptolithClient.mapOption((function (y) {
                 return Ley_Option$OptolithClient.listToOption(y.options);
               }), x.active);
 }
 
-var SelectOptions = {
-  getSelectOption: getSelectOption,
-  getSelectOptionName: getSelectOptionName,
-  getSelectOptionCost: getSelectOptionCost,
-  getActiveSelections: getActiveSelections
-};
+function getActiveOptions2(param) {
+  var index = 1;
+  return Ley_Option$OptolithClient.mapOption((function (y) {
+                return Ley_List$OptolithClient.Safe.atMay(y.options, index);
+              }), param.active);
+}
 
 function getOption(index, heroEntry) {
   return Ley_List$OptolithClient.Safe.atMay(heroEntry.options, index);
@@ -1170,6 +1170,14 @@ function getApValue(isEntryToAdd, automaticAdvantages, staticData, hero, staticE
 var Convert = {
   heroEntryToSingles: heroEntryToSingles,
   activatableOptionToSelectOptionId: activatableOptionToSelectOptionId
+};
+
+var SelectOptions = {
+  getSelectOption: getSelectOption,
+  getSelectOptionName: getSelectOptionName,
+  getSelectOptionCost: getSelectOptionCost,
+  getActiveOptions1: getActiveOptions1,
+  getActiveOptions2: getActiveOptions2
 };
 
 var Names = {

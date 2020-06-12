@@ -2,7 +2,7 @@
 /* eslint-disable import/first */
 
 
-import {activatableAndSkillId as Ids_activatableAndSkillId} from '../../../src/App/Constants/Ids.gen';
+import {activatableAndSkill as Id_activatableAndSkill} from '../../../src/App/Constants/Id.gen';
 
 import {activatableId as Ids_activatableId} from '../../../src/App/Constants/Ids.gen';
 
@@ -85,7 +85,7 @@ export type ActivatableSingle = Activatable_single;
 // tslint:disable-next-line:interface-over-type-literal
 export type Activatable_dependency = {
   readonly source: Ids_activatableId; 
-  readonly target: GenericHelpers_oneOrMany<Ids_activatableId>; 
+  readonly target: GenericHelpers_oneOrMany<number>; 
   readonly active: boolean; 
   readonly options: list<GenericHelpers_oneOrMany<Ids_selectOptionId>>; 
   readonly level?: number
@@ -101,18 +101,26 @@ export type Activatable_t = {
 export type Activatable = Activatable_t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Attribute_dependency = {
-  readonly source: Ids_activatableId; 
+export type Skill_dependency = {
+  readonly source: Id_activatableAndSkill; 
   readonly target: GenericHelpers_oneOrMany<number>; 
-  readonly value?: number
+  readonly value: number
 };
-export type AttributeDependency = Attribute_dependency;
+export type SkillDependency = Skill_dependency;
+
+// tslint:disable-next-line:interface-over-type-literal
+export type Skill_t = {
+  readonly id: number; 
+  readonly value: number; 
+  readonly dependencies: list<Skill_dependency>
+};
+export type Skill = Skill_t;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Attribute_t = {
   readonly id: number; 
   readonly value: number; 
-  readonly dependencies: list<Attribute_dependency>
+  readonly dependencies: list<Skill_dependency>
 };
 export type Attribute = Attribute_t;
 
@@ -141,36 +149,12 @@ export type ActivatableSkill_value =
   | { tag: "Active"; value: number };
 
 // tslint:disable-next-line:interface-over-type-literal
-export type ActivatableSkill_dependency = {
-  readonly source: Ids_activatableAndSkillId; 
-  readonly target: GenericHelpers_oneOrMany<number>; 
-  readonly value: ActivatableSkill_value
-};
-export type ActivatableSkillDependency = ActivatableSkill_dependency;
-
-// tslint:disable-next-line:interface-over-type-literal
 export type ActivatableSkill_t = {
   readonly id: number; 
   readonly value: ActivatableSkill_value; 
-  readonly dependencies: list<ActivatableSkill_dependency>
-};
-export type ActivatableSkill = ActivatableSkill_t;
-
-// tslint:disable-next-line:interface-over-type-literal
-export type Skill_dependency = {
-  readonly source: Ids_activatableId; 
-  readonly target: GenericHelpers_oneOrMany<number>; 
-  readonly value: number
-};
-export type SkillDependency = Skill_dependency;
-
-// tslint:disable-next-line:interface-over-type-literal
-export type Skill_t = {
-  readonly id: number; 
-  readonly value: number; 
   readonly dependencies: list<Skill_dependency>
 };
-export type Skill = Skill_t;
+export type ActivatableSkill = ActivatableSkill_t;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Item_mundaneItem = { readonly structurePoints?: GenericHelpers_oneOrMany<number> };
@@ -380,8 +364,7 @@ export type t = {
   readonly phase: Id_phase; 
   readonly locale: string; 
   readonly avatar?: string; 
-  readonly race?: number; 
-  readonly raceVariant?: baseOrWithVariant; 
+  readonly race?: baseOrWithVariant; 
   readonly culture?: number; 
   readonly isCulturalPackageActive: boolean; 
   readonly profession?: baseOrWithVariant; 

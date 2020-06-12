@@ -74,6 +74,15 @@ export const Magical_numIdToId: (_1:Static_t, _2:(null | undefined | number)) =>
 };
 
 /** 
+   * Returns the primary attribute ID for the currently active magical
+   * tradition.
+    */
+export const Magical_getPrimaryAttributeId: (_1:Static_t, _2:Ley_IntMap_t<Hero_Activatable_t>) => (null | undefined | number) = function (Arg1: any, Arg2: any) {
+  const result = Curry._2(TraditionsBS.Magical.getPrimaryAttributeId, Arg1, Arg2);
+  return result
+};
+
+/** 
    * `getHeroEntry` returns the active special ability entry for the active
    * blessed traditions.
     */
@@ -159,5 +168,14 @@ export const Blessed_idToNumId: (_1:Static_t, _2:Ley_IntMap_key) => (null | unde
     */
 export const Blessed_numIdToId: (_1:Static_t, _2:number) => (null | undefined | number) = function (Arg1: any, Arg2: any) {
   const result = Curry._2(TraditionsBS.Blessed.numIdToId, Arg1, Arg2);
+  return result
+};
+
+/** 
+   * Returns the primary attribute ID for the currently active blessed
+   * tradition.
+    */
+export const Blessed_getPrimaryAttributeId: (_1:Static_t, _2:Ley_IntMap_t<Hero_Activatable_t>) => (null | undefined | number) = function (Arg1: any, Arg2: any) {
+  const result = Curry._2(TraditionsBS.Blessed.getPrimaryAttributeId, Arg1, Arg2);
   return result
 };

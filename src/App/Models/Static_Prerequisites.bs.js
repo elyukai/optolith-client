@@ -115,18 +115,41 @@ function activatableId(json) {
     case "Advantage" :
         return /* `Advantage */[
                 -41058677,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
     case "Disadvantage" :
         return /* `Disadvantage */[
                 255955901,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
     case "SpecialAbility" :
         return /* `SpecialAbility */[
                 -789492591,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
+    default:
+      throw [
+            Json_decode.DecodeError,
+            "Unknown activatable ID scope: " + scope
+          ];
+  }
+}
+
+function activatableIds(json) {
+  var scope = Json_decode.field("scope", Json_decode.string, json);
+  switch (scope) {
+    case "Advantage" :
+        return /* Advantages */Block.__(0, [Json_decode.field("value", (function (param) {
+                          return Json_decode.list(Json_decode.$$int, param);
+                        }), json)]);
+    case "Disadvantage" :
+        return /* Disadvantages */Block.__(1, [Json_decode.field("value", (function (param) {
+                          return Json_decode.list(Json_decode.$$int, param);
+                        }), json)]);
+    case "SpecialAbility" :
+        return /* SpecialAbilities */Block.__(2, [Json_decode.field("value", (function (param) {
+                          return Json_decode.list(Json_decode.$$int, param);
+                        }), json)]);
     default:
       throw [
             Json_decode.DecodeError,
@@ -141,32 +164,32 @@ function scopedSelectOptionId(json) {
     case "Blessing" :
         return /* `Blessing */[
                 797131559,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
     case "Cantrip" :
         return /* `Cantrip */[
                 -841776939,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
     case "CombatTechnique" :
         return /* `CombatTechnique */[
                 -920806756,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
     case "LiturgicalChant" :
         return /* `LiturgicalChant */[
                 -384382742,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
     case "Skill" :
         return /* `Skill */[
                 290194801,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
     case "Spell" :
         return /* `Spell */[
                 345443720,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
     default:
       throw [
@@ -211,9 +234,7 @@ function activatable(json) {
 
 function activatableMultiEntry(json) {
   return {
-          id: Json_decode.field("id", (function (param) {
-                  return Json_decode.list(activatableId, param);
-                }), json),
+          id: Json_decode.field("id", activatableIds, json),
           active: Json_decode.field("active", Json_decode.bool, json),
           sid: Json_decode.field("sid", (function (param) {
                   return JsonStrict$OptolithClient.maybe(selectOptionId, param);
@@ -243,62 +264,65 @@ function activatableMultiSelect(json) {
         };
 }
 
-function activatableSkillId(json) {
-  var scope = Json_decode.field("scope", Json_decode.string, json);
-  switch (scope) {
-    case "LiturgicalChant" :
-        return /* `LiturgicalChant */[
-                -384382742,
-                Json_decode.$$int(json)
-              ];
-    case "Spell" :
-        return /* `Spell */[
-                345443720,
-                Json_decode.$$int(json)
-              ];
-    default:
-      throw [
-            Json_decode.DecodeError,
-            "Unknown activatable skill ID scope: " + scope
-          ];
-  }
-}
-
-function activatableSkill(json) {
-  return {
-          id: Json_decode.field("id", activatableSkillId, json),
-          active: Json_decode.field("active", Json_decode.bool, json)
-        };
-}
-
 function increasableId(json) {
   var scope = Json_decode.field("scope", Json_decode.string, json);
   switch (scope) {
     case "Attribute" :
         return /* `Attribute */[
                 482562044,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
     case "CombatTechnique" :
         return /* `CombatTechnique */[
                 -920806756,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
     case "LiturgicalChant" :
         return /* `LiturgicalChant */[
                 -384382742,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
     case "Skill" :
         return /* `Skill */[
                 290194801,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
     case "Spell" :
         return /* `Spell */[
                 345443720,
-                Json_decode.$$int(json)
+                Json_decode.field("value", Json_decode.$$int, json)
               ];
+    default:
+      throw [
+            Json_decode.DecodeError,
+            "Unknown increasable ID scope: " + scope
+          ];
+  }
+}
+
+function increasableIds(json) {
+  var scope = Json_decode.field("scope", Json_decode.string, json);
+  switch (scope) {
+    case "Attribute" :
+        return /* Attributes */Block.__(0, [Json_decode.field("value", (function (param) {
+                          return Json_decode.list(Json_decode.$$int, param);
+                        }), json)]);
+    case "CombatTechnique" :
+        return /* CombatTechniques */Block.__(2, [Json_decode.field("value", (function (param) {
+                          return Json_decode.list(Json_decode.$$int, param);
+                        }), json)]);
+    case "LiturgicalChant" :
+        return /* LiturgicalChants */Block.__(4, [Json_decode.field("value", (function (param) {
+                          return Json_decode.list(Json_decode.$$int, param);
+                        }), json)]);
+    case "Skill" :
+        return /* Skills */Block.__(1, [Json_decode.field("value", (function (param) {
+                          return Json_decode.list(Json_decode.$$int, param);
+                        }), json)]);
+    case "Spell" :
+        return /* Spells */Block.__(3, [Json_decode.field("value", (function (param) {
+                          return Json_decode.list(Json_decode.$$int, param);
+                        }), json)]);
     default:
       throw [
             Json_decode.DecodeError,
@@ -316,9 +340,7 @@ function increasable(json) {
 
 function increasableMultiEntry(json) {
   return {
-          id: Json_decode.field("id", (function (param) {
-                  return Json_decode.list(increasableId, param);
-                }), json),
+          id: Json_decode.field("id", increasableIds, json),
           value: Json_decode.field("value", Json_decode.$$int, json)
         };
 }
@@ -739,14 +761,14 @@ var Decode = {
   pact: pact,
   socialStatus: Json_decode.$$int,
   activatableId: activatableId,
+  activatableIds: activatableIds,
   scopedSelectOptionId: scopedSelectOptionId,
   selectOptionId: selectOptionId,
   activatable: activatable,
   activatableMultiEntry: activatableMultiEntry,
   activatableMultiSelect: activatableMultiSelect,
-  activatableSkillId: activatableSkillId,
-  activatableSkill: activatableSkill,
   increasableId: increasableId,
+  increasableIds: increasableIds,
   increasable: increasable,
   increasableMultiEntry: increasableMultiEntry,
   tProfession: tProfession,

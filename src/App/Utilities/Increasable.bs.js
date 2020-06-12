@@ -112,7 +112,7 @@ function getMinSrByCraftInstruments(craftInstruments, skills, staticEntry) {
 }
 
 function getMinSrByDeps(heroSkills, heroEntry) {
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Dependencies$OptolithClient.flattenSkill((function (id) {
+  return Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Dependencies$OptolithClient.Flatten.flattenSkillDependencies((function (id) {
                         return getValueDef$1(Curry._2(Ley_IntMap$OptolithClient.lookup, id, heroSkills));
                       }), heroEntry.id, heroEntry.dependencies)), Ley_List$OptolithClient.Foldable.maximum);
 }
@@ -269,7 +269,7 @@ function getMinCtrByHunter(onlyOneCombatTechniqueForHunter, staticEntry) {
 }
 
 function getMinCtrByDeps(heroCombatTechniques, heroEntry) {
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Dependencies$OptolithClient.flattenSkill((function (id) {
+  return Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Dependencies$OptolithClient.Flatten.flattenSkillDependencies((function (id) {
                         return getValueDef$2(Curry._2(Ley_IntMap$OptolithClient.lookup, id, heroCombatTechniques));
                       }), heroEntry.id, heroEntry.dependencies)), Ley_List$OptolithClient.Foldable.maximum);
 }
@@ -338,7 +338,7 @@ function getMaxSrFromPropertyKnowledge(propertyKnowledge, staticEntry) {
   ];
   var hasRestriction = Ley_Option$OptolithClient.option(true, (function (param) {
           return Ley_List$OptolithClient.Foldable.notElem(partial_arg, param);
-        }), Ley_Option$OptolithClient.Functor.$less$amp$great(propertyKnowledge, Activatable$OptolithClient.SelectOptions.getActiveSelections));
+        }), Ley_Option$OptolithClient.Functor.$less$amp$great(propertyKnowledge, Activatable$OptolithClient.SelectOptions.getActiveOptions1));
   if (hasRestriction) {
     return 14;
   }
@@ -401,20 +401,12 @@ function getMinSrFromPropertyKnowledge(counter, activePropertyKnowledges, static
 }
 
 function getMinSrByDeps$1(heroSpells, heroEntry) {
-  return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Dependencies$OptolithClient.flattenActivatableSkill((function (id) {
+  return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Dependencies$OptolithClient.Flatten.flattenActivatableSkillDependencies((function (id) {
                         return getValueDef$3(Curry._2(Ley_IntMap$OptolithClient.lookup, id, heroSpells));
                       }), heroEntry.id, heroEntry.dependencies)), (function (param) {
                 return Ley_List$OptolithClient.Foldable.foldr((function (d, acc) {
-                              if (!d) {
-                                return /* Inactive */0;
-                              }
-                              var next = d[0];
-                              return Ley_Option$OptolithClient.option(/* Active */[next], (function (prev) {
-                                            if (prev) {
-                                              return /* Active */[Ley_Int$OptolithClient.max(prev[0], next)];
-                                            } else {
-                                              return /* Inactive */0;
-                                            }
+                              return Ley_Option$OptolithClient.option(d, (function (prev) {
+                                            return Ley_Int$OptolithClient.max(prev, d);
                                           }), acc);
                             }), undefined, param);
               }));
@@ -422,15 +414,10 @@ function getMinSrByDeps$1(heroSpells, heroEntry) {
 
 function getMin$2(propertyKnowledge, staticSpells, heroSpells) {
   var counter = getValidSpellsForPropertyKnowledgeCounter(staticSpells, heroSpells);
-  var activePropertyKnowledges = Activatable$OptolithClient.SelectOptions.getActiveSelections(propertyKnowledge);
+  var activePropertyKnowledges = Activatable$OptolithClient.SelectOptions.getActiveOptions1(propertyKnowledge);
   return (function (staticEntry, heroEntry) {
       return Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Ley_Option$OptolithClient.catOptions(/* :: */[
-                          Ley_Option$OptolithClient.Monad.$great$great$eq(getMinSrByDeps$1(heroSpells, heroEntry), (function (x) {
-                                  if (x) {
-                                    return x[0];
-                                  }
-                                  
-                                })),
+                          getMinSrByDeps$1(heroSpells, heroEntry),
                           /* :: */[
                             getMinSrFromPropertyKnowledge(counter, activePropertyKnowledges, staticEntry, heroEntry),
                             /* [] */0
@@ -493,7 +480,7 @@ function getMaxSrFromAspectKnowledge(aspectKnowledge, staticEntry) {
                                     aspect
                                   ], actives);
                       }), staticEntry.aspects);
-        }), Ley_Option$OptolithClient.Functor.$less$amp$great(aspectKnowledge, Activatable$OptolithClient.SelectOptions.getActiveSelections));
+        }), Ley_Option$OptolithClient.Functor.$less$amp$great(aspectKnowledge, Activatable$OptolithClient.SelectOptions.getActiveOptions1));
   if (hasRestriction) {
     return 14;
   }
@@ -568,20 +555,12 @@ function getMinSrFromAspectKnowledge(counter, activeAspectKnowledges, staticEntr
 }
 
 function getMinSrByDeps$2(heroLiturgicalChants, heroEntry) {
-  return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Dependencies$OptolithClient.flattenActivatableSkill((function (id) {
+  return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Dependencies$OptolithClient.Flatten.flattenActivatableSkillDependencies((function (id) {
                         return getValueDef$4(Curry._2(Ley_IntMap$OptolithClient.lookup, id, heroLiturgicalChants));
                       }), heroEntry.id, heroEntry.dependencies)), (function (param) {
                 return Ley_List$OptolithClient.Foldable.foldr((function (d, acc) {
-                              if (!d) {
-                                return /* Inactive */0;
-                              }
-                              var next = d[0];
-                              return Ley_Option$OptolithClient.option(/* Active */[next], (function (prev) {
-                                            if (prev) {
-                                              return /* Active */[Ley_Int$OptolithClient.max(prev[0], next)];
-                                            } else {
-                                              return /* Inactive */0;
-                                            }
+                              return Ley_Option$OptolithClient.option(d, (function (prev) {
+                                            return Ley_Int$OptolithClient.max(prev, d);
                                           }), acc);
                             }), undefined, param);
               }));
@@ -589,15 +568,10 @@ function getMinSrByDeps$2(heroLiturgicalChants, heroEntry) {
 
 function getMin$3(aspectKnowledge, staticLiturgicalChants, heroLiturgicalChants) {
   var counter = getValidLiturgicalChantsForAspectKnowledgeCounter(staticLiturgicalChants, heroLiturgicalChants);
-  var activeAspectKnowledges = Activatable$OptolithClient.SelectOptions.getActiveSelections(aspectKnowledge);
+  var activeAspectKnowledges = Activatable$OptolithClient.SelectOptions.getActiveOptions1(aspectKnowledge);
   return (function (staticEntry, heroEntry) {
       return Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Ley_Option$OptolithClient.catOptions(/* :: */[
-                          Ley_Option$OptolithClient.Monad.$great$great$eq(getMinSrByDeps$2(heroLiturgicalChants, heroEntry), (function (x) {
-                                  if (x) {
-                                    return x[0];
-                                  }
-                                  
-                                })),
+                          getMinSrByDeps$2(heroLiturgicalChants, heroEntry),
                           /* :: */[
                             getMinSrFromAspectKnowledge(counter, activeAspectKnowledges, staticEntry, heroEntry),
                             /* [] */0

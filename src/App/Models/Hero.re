@@ -72,7 +72,7 @@ module Activatable = {
   [@genType.as "ActivatableDependency"]
   type dependency = {
     source: Ids.activatableId,
-    target: oneOrMany(Ids.activatableId),
+    target: oneOrMany(int),
     active: bool,
     options: list(oneOrMany(Ids.selectOptionId)),
     level: option(int),
@@ -85,24 +85,54 @@ module Activatable = {
     active: list(single),
     dependencies: list(dependency),
   };
+
+  let empty = id => {id, active: [], dependencies: []};
+
+  let isUnused = x =>
+    Ley.List.Foldable.null(x.active)
+    && Ley.List.Foldable.null(x.dependencies);
 };
 
-module Attribute = {
+module Skill = {
   [@genType]
-  [@genType.as "AttributeDependency"]
+  [@genType.as "SkillDependency"]
   type dependency = {
-    source: Ids.activatableId,
+    source: Id.activatableAndSkill,
     target: oneOrMany(int),
-    value: option(int),
+    value: int,
   };
 
   [@genType]
-  [@genType.as "Attribute"]
+  [@genType.as "Skill"]
   type t = {
     id: int,
     value: int,
     dependencies: list(dependency),
   };
+
+  let emptySkill = id => {id, value: 0, dependencies: []};
+
+  let emptyCombatTechnique = id => {id, value: 6, dependencies: []};
+
+  let isUnusedSkill = x =>
+    x.value <= 0 && Ley.List.Foldable.null(x.dependencies);
+
+  let isUnusedCombatTechnique = x =>
+    x.value <= 6 && Ley.List.Foldable.null(x.dependencies);
+};
+
+module Attribute = {
+  [@genType]
+  [@genType.as "Attribute"]
+  type t = {
+    id: int,
+    value: int,
+    dependencies: list(Skill.dependency),
+  };
+
+  let empty = id => {id, value: 8, dependencies: []};
+
+  let isUnused = x => x.value <= 8 && Ley.List.Foldable.null(x.dependencies);
 };
 
 module Energies = {
@@ -135,38 +165,17 @@ module ActivatableSkill = {
     | Active(int);
 
   [@genType]
-  [@genType.as "ActivatableSkillDependency"]
-  type dependency = {
-    source: Ids.activatableAndSkillId,
-    target: oneOrMany(int),
-    value,
-  };
-
-  [@genType]
   [@genType.as "ActivatableSkill"]
   type t = {
     id: int,
     value,
-    dependencies: list(dependency),
-  };
-};
-
-module Skill = {
-  [@genType]
-  [@genType.as "SkillDependency"]
-  type dependency = {
-    source: Ids.activatableId,
-    target: oneOrMany(int),
-    value: int,
+    dependencies: list(Skill.dependency),
   };
 
-  [@genType]
-  [@genType.as "Skill"]
-  type t = {
-    id: int,
-    value: int,
-    dependencies: list(dependency),
-  };
+  let empty = id => {id, value: Inactive, dependencies: []};
+
+  let isUnused = x =>
+    x.value === Inactive && Ley.List.Foldable.null(x.dependencies);
 };
 
 module Item = {
@@ -458,8 +467,7 @@ type t = {
   phase: Id.phase,
   locale: string,
   avatar: option(string),
-  race: option(int),
-  raceVariant: option(baseOrWithVariant),
+  race: option(baseOrWithVariant),
   culture: option(int),
   isCulturalPackageActive: bool,
   profession: option(baseOrWithVariant),

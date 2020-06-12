@@ -117,6 +117,15 @@ export type permanentSkill =
 export type PermanentSkillId = permanentSkill;
 
 // tslint:disable-next-line:interface-over-type-literal
+export type increasable = 
+    { tag: "Attribute"; value: number }
+  | { tag: "Skill"; value: number }
+  | { tag: "CombatTechnique"; value: number }
+  | { tag: "Spell"; value: number }
+  | { tag: "LiturgicalChant"; value: number };
+export type IncreasableId = increasable;
+
+// tslint:disable-next-line:interface-over-type-literal
 export type selectOption = 
     { tag: "Generic"; value: number }
   | { tag: "Skill"; value: number }

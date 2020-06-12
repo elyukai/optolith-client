@@ -70,7 +70,14 @@ module SelectOptions: {
    * Get all first select option IDs from the given entry.
    */
   [@genType]
-  let getActiveSelections:
+  let getActiveOptions1:
+    Hero.Activatable.t => list(Hero.Activatable.optionId);
+
+  /**
+   * Get all second select option IDs from the given entry.
+   */
+  [@genType]
+  let getActiveOptions2:
     Hero.Activatable.t => list(Hero.Activatable.optionId);
 };
 

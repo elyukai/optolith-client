@@ -337,7 +337,12 @@ export const SelectOptions_getSelectOptionCost: (_1:Static_activatable, _2:Hero_
 /** 
    * Get all first select option IDs from the given entry.
     */
-export const SelectOptions_getActiveSelections: (_1:Hero_Activatable_t) => list<Hero_Activatable_optionId> = ActivatableBS.SelectOptions.getActiveSelections;
+export const SelectOptions_getActiveOptions1: (_1:Hero_Activatable_t) => list<Hero_Activatable_optionId> = ActivatableBS.SelectOptions.getActiveOptions1;
+
+/** 
+   * Get all second select option IDs from the given entry.
+    */
+export const SelectOptions_getActiveOptions2: (_1:Hero_Activatable_t) => list<Hero_Activatable_optionId> = ActivatableBS.SelectOptions.getActiveOptions2;
 
 /** 
    * `getName addLevelToName staticData staticActivatable singleEntry` returns
@@ -425,9 +430,9 @@ export const Names_getName: (_1:{ readonly addLevelToName: boolean }, _2:Static_
    * is the list of automatic advantage IDs.
     */
 export const AdventurePoints_getApValue: (_1:{ readonly isEntryToAdd: boolean; readonly automaticAdvantages: list<number> }, _2:Static_t, _3:Hero_t, _4:Static_activatable, _5:Hero_Activatable_t, _6:singleWithId) => AdventurePoints_combinedApValue = function (Arg1: any, Arg2: any, Arg3: any, Arg4: any, Arg5: any, Arg6: any) {
-  const result = Curry._7(ActivatableBS.AdventurePoints.getApValue, Arg1.isEntryToAdd, Arg1.automaticAdvantages, Arg2, {id:Arg3.id, name:Arg3.name, dateCreated:Arg3.dateCreated, dateModified:Arg3.dateModified, adventurePointsTotal:Arg3.adventurePointsTotal, experienceLevel:Arg3.experienceLevel, sex:$$toRE253136807[Arg3.sex], phase:$$toRE844170071[Arg3.phase], locale:Arg3.locale, avatar:Arg3.avatar, race:Arg3.race, raceVariant:(Arg3.raceVariant == null ? undefined : Arg3.raceVariant.tag==="Base"
-    ? CreateBucklescriptBlock.__(0, [Arg3.raceVariant.value])
-    : CreateBucklescriptBlock.__(1, Arg3.raceVariant.value)), culture:Arg3.culture, isCulturalPackageActive:Arg3.isCulturalPackageActive, profession:(Arg3.profession == null ? undefined : Arg3.profession.tag==="Base"
+  const result = Curry._7(ActivatableBS.AdventurePoints.getApValue, Arg1.isEntryToAdd, Arg1.automaticAdvantages, Arg2, {id:Arg3.id, name:Arg3.name, dateCreated:Arg3.dateCreated, dateModified:Arg3.dateModified, adventurePointsTotal:Arg3.adventurePointsTotal, experienceLevel:Arg3.experienceLevel, sex:$$toRE253136807[Arg3.sex], phase:$$toRE844170071[Arg3.phase], locale:Arg3.locale, avatar:Arg3.avatar, race:(Arg3.race == null ? undefined : Arg3.race.tag==="Base"
+    ? CreateBucklescriptBlock.__(0, [Arg3.race.value])
+    : CreateBucklescriptBlock.__(1, Arg3.race.value)), culture:Arg3.culture, isCulturalPackageActive:Arg3.isCulturalPackageActive, profession:(Arg3.profession == null ? undefined : Arg3.profession.tag==="Base"
     ? CreateBucklescriptBlock.__(0, [Arg3.profession.value])
     : CreateBucklescriptBlock.__(1, Arg3.profession.value)), professionName:Arg3.professionName, rules:Arg3.rules, personalData:Arg3.personalData, advantages:Arg3.advantages, disadvantages:Arg3.disadvantages, specialAbilities:Arg3.specialAbilities, attributes:Arg3.attributes, attributeAdjustmentSelected:Arg3.attributeAdjustmentSelected, energies:Arg3.energies, skills:Arg3.skills, combatTechniques:Arg3.combatTechniques, spells:Arg3.spells, liturgicalChants:Arg3.liturgicalChants, cantrips:Arg3.cantrips, blessings:Arg3.blessings, items:Arg3.items, hitZoneArmors:Arg3.hitZoneArmors, purse:Arg3.purse, pets:Arg3.pets, pact:(Arg3.pact == null ? undefined : {category:Arg3.pact.category, level:Arg3.pact.level, type:Arg3.pact.type, domain:Arg3.pact.domain.tag==="Predefined"
     ? CreateBucklescriptBlock.__(0, [Arg3.pact.domain.value])

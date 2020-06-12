@@ -1,7 +1,7 @@
 open Static_Prerequisites;
 
 type prerequisite =
-  | CommonSuggestedByRCP(bool)
+  | CommonSuggestedByRCP
   | Sex(sex)
   | Race(race)
   | Culture(culture)
@@ -116,7 +116,7 @@ module Flatten = {
       },
       [],
     )
-    |> Ley.List.cons(CommonSuggestedByRCP(p.commonSuggestedByRCP));
+    |> (p.commonSuggestedByRCP ? Ley.List.cons(CommonSuggestedByRCP) : id);
 
   let flattenPrerequisites = (oldLevel, newLevel, prerequisites: tWithLevel) =>
     if (Ley.IntMap.null(prerequisites.levels)) {
@@ -310,14 +310,14 @@ module Dynamic = {
         staticData.magicalTraditions
         |> Ley.IntMap.Foldable.foldr(
              (x: Static.MagicalTradition.t) =>
-               x.canLearnRituals ? Ley.List.cons(`SpecialAbility(x.id)) : id,
+               x.canLearnRituals ? Ley.List.cons(x.id) : id,
              [],
            )
         |> Ley.Option.ensure(Ley.List.Extra.notNull)
         |> Ley.Option.option([], ids =>
              [
                ActivatableMultiEntry({
-                 id: ids,
+                 id: SpecialAbilities(ids),
                  active: true,
                  sid: None,
                  sid2: None,
@@ -382,6 +382,376 @@ module Dynamic = {
     selectOptionSpecifics @ entrySpecifics;
   };
 };
+
+module Validation = {
+  open Ley.Function;
+  open Ley.Option.Monad;
+
+  // type Validator = (wiki: StaticDataRecord) =>
+  //                  (state: HeroModelRecord) =>
+  //                  (req: AllRequirements) =>
+  //                  (sourceId: string) => boolean
+
+  let getRaceCultureProfession = (staticData: Static.t, hero: Hero.t) => (
+    (
+      switch (hero.race) {
+      | Some(Base(id) | WithVariant(id, _)) => Some(id)
+      | None => None
+      }
+    )
+    >>= flip(Ley.IntMap.lookup, staticData.races),
+    (
+      switch (hero.culture) {
+      | Some(id) => Some(id)
+      | None => None
+      }
+    )
+    >>= flip(Ley.IntMap.lookup, staticData.cultures),
+    (
+      switch (hero.profession) {
+      | Some(Base(id) | WithVariant(id, _)) => Some(id)
+      | None => None
+      }
+    )
+    >>= flip(Ley.IntMap.lookup, staticData.professions),
+  );
+
+  let isCommonSuggestedByRCPValid = (staticData, hero, id: Id.t) => {
+    let (race, culture, profession) =
+      getRaceCultureProfession(staticData, hero);
+    switch (id) {
+    | `Advantage(id) =>
+      Ley.Option.option(
+        false,
+        (race: Static.Race.t) =>
+          Ley.List.elem(id, race.automaticAdvantages)
+          || Ley.List.elem(id, race.stronglyRecommendedAdvantages)
+          || Ley.List.elem(id, race.commonAdvantages),
+        race,
+      )
+      || Ley.Option.option(
+           false,
+           (culture: Static.Culture.t) =>
+             Ley.List.elem(id, culture.commonAdvantages),
+           culture,
+         )
+      || Ley.Option.option(
+           false,
+           (profession: Static.Profession.t) =>
+             Ley.List.elem(id, profession.suggestedAdvantages),
+           profession,
+         )
+    | `Disadvantage(id) =>
+      Ley.Option.option(
+        false,
+        (race: Static.Race.t) =>
+          Ley.List.elem(id, race.stronglyRecommendedDisadvantages)
+          || Ley.List.elem(id, race.commonDisadvantages),
+        race,
+      )
+      || Ley.Option.option(
+           false,
+           (culture: Static.Culture.t) =>
+             Ley.List.elem(id, culture.commonDisadvantages),
+           culture,
+         )
+      || Ley.Option.option(
+           false,
+           (profession: Static.Profession.t) =>
+             Ley.List.elem(id, profession.suggestedDisadvantages),
+           profession,
+         )
+    | _ => false
+    };
+  };
+
+  let isSexValid = (current: Hero.t, prerequisite: sex) =>
+    current.sex === prerequisite;
+
+  let isRaceValid = (current: Hero.t, prerequisite: race) =>
+    switch (current.race, prerequisite) {
+    | (Some(Base(id) | WithVariant(id, _)), {id: One(requiredId), active}) =>
+      requiredId === id === active
+    | (
+        Some(Base(id) | WithVariant(id, _)),
+        {id: Many(requiredIds), active},
+      ) =>
+      Ley.List.elem(id, requiredIds) === active
+    | (None, _) => false
+    };
+
+  let isCultureValid = (current: Hero.t, prerequisite: culture) =>
+    switch (current.culture, prerequisite) {
+    | (Some(id), One(requiredId)) => requiredId === id
+    | (Some(id), Many(requiredIds)) => Ley.List.elem(id, requiredIds)
+    | (None, _) => false
+    };
+
+  let hasSamePactCategory = (current: Hero.Pact.t, prerequisite: pact) =>
+    prerequisite.category === current.category;
+
+  let hasNeededPactType = (current: Hero.Pact.t, prerequisite: pact) =>
+    switch (prerequisite.category) {
+    // Fairies must be High Fairies to get into a pact
+    | 1 => current.type_ === 3
+    | _ => true
+    };
+
+  let hasNeededPactDomain = (current: Hero.Pact.t, prerequisite: pact) =>
+    switch (prerequisite.domain, current.domain) {
+    | (None, _) => true
+    | (_, Custom(_)) => false
+    | (Some(Many(requiredDomains)), Predefined(domain)) =>
+      Ley.List.elem(domain, requiredDomains)
+    | (Some(One(requiredDomain)), Predefined(domain)) =>
+      domain === requiredDomain
+    };
+
+  let hasNeededPactLevel = (current: Hero.Pact.t, prerequisite: pact) =>
+    switch (prerequisite.level) {
+    | Some(requiredLevel) =>
+      // Fulfills the level requirement
+      requiredLevel <= current.level
+      // Its a lesser Pact and the needed Pact-Level is "1"
+      || requiredLevel <= 1
+      && current.level === 0
+    | None => true
+    };
+
+  let isPactValid = (current: Hero.t, prerequisite: pact) =>
+    switch (current.pact) {
+    | Some(pact) =>
+      Pact.isPactFromStateValid(pact)
+      && hasSamePactCategory(pact, prerequisite)
+      && hasNeededPactType(pact, prerequisite)
+      && hasNeededPactDomain(pact, prerequisite)
+      && hasNeededPactLevel(pact, prerequisite)
+    | None => false
+    };
+
+  let getPrimaryAttributeId =
+      (staticData, heroSpecialAbilities, scope: primaryAttributeType) =>
+    switch (scope) {
+    | Magical =>
+      Traditions.Magical.getPrimaryAttributeId(
+        staticData,
+        heroSpecialAbilities,
+      )
+    | Blessed =>
+      Traditions.Blessed.getPrimaryAttributeId(
+        staticData,
+        heroSpecialAbilities,
+      )
+    };
+
+  let isPrimaryAttributeValid =
+      (staticData, current: Hero.t, prerequisite: primaryAttribute) =>
+    getPrimaryAttributeId(
+      staticData,
+      current.specialAbilities,
+      prerequisite.scope,
+    )
+    >>= flip(Ley.IntMap.lookup, current.attributes)
+    |> (
+      attr =>
+        Ley.Option.option(8, (attr: Hero.Attribute.t) => attr.value, attr)
+        >= prerequisite.value
+    );
+
+  let isSocialStatusValid = (current: Hero.t, prerequisite: socialStatus) =>
+    switch (current.personalData.socialStatus) {
+    | Some(socialStatus) => socialStatus >= prerequisite
+    | None => false
+    };
+
+  let hasIncreasableMinValue =
+      (current: Hero.t, {id, value: minValue}: increasable) =>
+    switch (id) {
+    | `Attribute(id) =>
+      current.attributes
+      |> Ley.IntMap.lookup(id)
+      |> Ley.Option.option(false, (x: Hero.Attribute.t) =>
+           x.value >= minValue
+         )
+    | `Skill(id) =>
+      current.skills
+      |> Ley.IntMap.lookup(id)
+      |> Ley.Option.option(false, (x: Hero.Skill.t) => x.value >= minValue)
+    | `CombatTechnique(id) =>
+      current.combatTechniques
+      |> Ley.IntMap.lookup(id)
+      |> Ley.Option.option(false, (x: Hero.Skill.t) => x.value >= minValue)
+    | `Spell(id) =>
+      current.spells
+      |> Ley.IntMap.lookup(id)
+      |> Ley.Option.option(false, (x: Hero.ActivatableSkill.t) =>
+           switch (x.value) {
+           | Active(value) => value >= minValue
+           | Inactive => false
+           }
+         )
+    | `LiturgicalChant(id) =>
+      current.liturgicalChants
+      |> Ley.IntMap.lookup(id)
+      |> Ley.Option.option(false, (x: Hero.ActivatableSkill.t) =>
+           switch (x.value) {
+           | Active(value) => value >= minValue
+           | Inactive => false
+           }
+         )
+    };
+
+  let isIncreasableValid = (current: Hero.t, prerequisite: increasable) =>
+    hasIncreasableMinValue(current, prerequisite);
+
+  let isIncreasableMultiEntryValid =
+      (current: Hero.t, {id: ids, value}: increasableMultiEntry) =>
+    Ley.List.Foldable.any(
+      id => hasIncreasableMinValue(current, {id, value}),
+      switch (ids) {
+      | Attributes(ids) => Ley.List.map(id => `Attribute(id), ids)
+      | Skills(ids) => Ley.List.map(id => `Skill(id), ids)
+      | CombatTechniques(ids) =>
+        Ley.List.map(id => `CombatTechnique(id), ids)
+      | Spells(ids) => Ley.List.map(id => `Spell(id), ids)
+      | LiturgicalChants(ids) =>
+        Ley.List.map(id => `LiturgicalChant(id), ids)
+      },
+    );
+
+  let isSafeSidValid = (single: Hero.Activatable.single, index, sid) =>
+    Ley.List.Safe.atMay(single.options, index)
+    >>= Activatable.Convert.activatableOptionToSelectOptionId
+    |> Ley.Option.option(false, (===)(sid));
+
+  let isSidValid = (single: Hero.Activatable.single, index, sid) =>
+    switch (sid) {
+    | None => true
+    | Some(sid) => isSafeSidValid(single, index, sid)
+    };
+
+  let isLevelValid = (single: Hero.Activatable.single, level) =>
+    switch (level) {
+    | None => true
+    | Some(level) => Ley.Option.option(false, (===)(level), single.level)
+    };
+
+  let isSingleActivatableValid =
+      (current: Hero.t, {id, active, sid, sid2, level}: activatable) =>
+    (
+      switch (id) {
+      | `Advantage(id) => current.advantages |> Ley.IntMap.lookup(id)
+      | `Disadvantage(id) => current.disadvantages |> Ley.IntMap.lookup(id)
+      | `SpecialAbility(id) =>
+        current.specialAbilities |> Ley.IntMap.lookup(id)
+      }
+    )
+    |> (
+      fun
+      // If there is no entry, it can't be active. So if it's required the entry
+      // must be inactive, this is automatically valid
+      | None => !active
+      | Some(heroEntry) => {
+          // Otherwise search for any entry that matches the entry options. If
+          // an entry is found must than match if the entry is required to be
+          // active or inactive
+          Ley.List.Foldable.any(
+            single =>
+              isSidValid(single, 0, sid)
+              && isSidValid(single, 1, sid2)
+              && isLevelValid(single, level),
+            heroEntry.active,
+          )
+          === active;
+        }
+    );
+
+  let isActivatableValid = (current: Hero.t, prerequisite: activatable) =>
+    isSingleActivatableValid(current, prerequisite);
+
+  let isActivatableMultiEntryValid =
+      (
+        current: Hero.t,
+        {id: ids, active, sid, sid2, level}: activatableMultiEntry,
+      ) =>
+    Ley.List.Foldable.any(
+      id =>
+        isSingleActivatableValid(current, {id, active, sid, sid2, level}),
+      switch (ids) {
+      | Advantages(ids) => Ley.List.map(id => `Advantage(id), ids)
+      | Disadvantages(ids) => Ley.List.map(id => `Disadvantage(id), ids)
+      | SpecialAbilities(ids) => Ley.List.map(id => `SpecialAbility(id), ids)
+      },
+    );
+
+  let isActivatableMultiSelectValid =
+      (
+        current: Hero.t,
+        {id, active, sid: sids, sid2, level}: activatableMultiSelect,
+      ) =>
+    (
+      switch (id) {
+      | `Advantage(id) => current.advantages |> Ley.IntMap.lookup(id)
+      | `Disadvantage(id) => current.disadvantages |> Ley.IntMap.lookup(id)
+      | `SpecialAbility(id) =>
+        current.specialAbilities |> Ley.IntMap.lookup(id)
+      }
+    )
+    |> (
+      fun
+      // If there is no entry, it can't be active. So if it's required the entry
+      // must be inactive, this is automatically valid
+      | None => !active
+      | Some(heroEntry) => {
+          // Otherwise search for any entry that matches the entry options. If
+          // an entry is found must than match if the entry is required to be
+          // active or inactive
+          Ley.List.Foldable.any(
+            single =>
+              Ley.List.Foldable.any(isSafeSidValid(single, 0), sids)
+              && isSidValid(single, 1, sid2)
+              && isLevelValid(single, level),
+            heroEntry.active,
+          )
+          === active;
+        }
+    );
+
+  /**
+   * Checks if the given prerequisite is met.
+   */
+  let isPrerequisiteMet = (staticData, hero, sourceId, prerequisite) =>
+    switch (prerequisite) {
+    | CommonSuggestedByRCP =>
+      isCommonSuggestedByRCPValid(staticData, hero, sourceId)
+    | Sex(sex) => isSexValid(hero, sex)
+    | Race(race) => isRaceValid(hero, race)
+    | Culture(culture) => isCultureValid(hero, culture)
+    | Pact(pact) => isPactValid(hero, pact)
+    | PrimaryAttribute(primary) =>
+      isPrimaryAttributeValid(staticData, hero, primary)
+    | Social(social) => isSocialStatusValid(hero, social)
+    | Activatable(activatable) => isActivatableValid(hero, activatable)
+    | ActivatableMultiEntry(activatable) =>
+      isActivatableMultiEntryValid(hero, activatable)
+    | ActivatableMultiSelect(activatable) =>
+      isActivatableMultiSelectValid(hero, activatable)
+    | Increasable(increasable) => isIncreasableValid(hero, increasable)
+    | IncreasableMultiEntry(increasable) =>
+      isIncreasableMultiEntryValid(hero, increasable)
+    };
+
+  /**
+   * `arePrerequisitesMet` checks if all prerequisites in the passed list are
+   * met.
+   */
+  let arePrerequisitesMet = (staticData, hero, sourceId, prerequisites) =>
+    Ley.List.Foldable.all(
+      isPrerequisiteMet(staticData, hero, sourceId),
+      prerequisites,
+    );
+};
+
 //
 // /**
 //  * Set the `id` property of the passed prerequisite. Note, that this will only
@@ -396,442 +766,100 @@ module Dynamic = {
 //     : RequireIncreasable.is (req)
 //     ? set (ri_id) (id) (req)
 //     : req
-
-module Validation = {
-  //
-  // type Validator = (wiki: StaticDataRecord) =>
-  //                  (state: HeroModelRecord) =>
-  //                  (req: AllRequirements) =>
-  //                  (sourceId: string) => boolean
-  //
-  let isCommonSuggestedByRCPValid =
-      (
-        race: Static.Race.t,
-        culture: Static.Culture.t,
-        profession: Static.Profession.t,
-        id: Id.activatable,
-      ) =>
-    switch (id) {
-    | `Advantage(id) =>
-      Ley.List.elem(id, race.automaticAdvantages)
-      || Ley.List.elem(id, race.stronglyRecommendedAdvantages)
-      || Ley.List.elem(id, race.commonAdvantages)
-      || Ley.List.elem(id, culture.commonAdvantages)
-      || Ley.List.elem(id, profession.suggestedAdvantages)
-    | `Disadvantage(id) =>
-      Ley.List.elem(id, race.stronglyRecommendedDisadvantages)
-      || Ley.List.elem(id, race.commonDisadvantages)
-      || Ley.List.elem(id, culture.commonDisadvantages)
-      || Ley.List.elem(id, profession.suggestedDisadvantages)
-    | `SpecialAbility(_) => false
-    };
-
-  let isSexValid = (prerequisite: Static.Prerequisites.sex, current: Hero.sex) =>
-    current === prerequisite;
-  //
-  // const isSexValid =
-  //   (currentSex: "m" | "f") => (req: Record<SexRequirement>): boolean =>
-  //     equals (currentSex) (SexRequirement.AL.value (req))
-  //
-  // const isRaceValid =
-  //   (current_race_id: string) =>
-  //   (req: Record<RaceRequirement>): boolean => {
-  //     const value = RaceRequirement.A.value (req)
-  //     const active = RaceRequirement.A.active (req)
-  //
-  //     if (isList (value)) {
-  //       return any (equals (current_race_id))
-  //                  (value) === active
-  //     }
-  //
-  //     return value === current_race_id === active
-  //   }
-  //
-  // const isCultureValid =
-  //   (current_culture_id: string) =>
-  //   (req: Record<CultureRequirement>): boolean => {
-  //     const value = CultureRequirement.AL.value (req)
-  //
-  //     if (isList (value)) {
-  //       return any (equals (current_culture_id))
-  //                  (value)
-  //     }
-  //
-  //     return value === current_culture_id
-  //   }
-  //
-  // const hasSamePactCategory =
-  //   (state: Record<Pact>) =>
-  //     pipe (
-  //       PactRequirement.AL.category,
-  //       equals (Pact.AL.category (state))
-  //     )
-  //
-  // const hasNeededPactType =
-  //   (state: Record<Pact>) => (req: Record<PactRequirement>) => {
-  //     switch (PactRequirement.AL.category (req)) {
-  //       case 1:
-  //         return equals (Pact.AL.type (state)) (3)
-  //       default:
-  //         return true
-  //     }
-  //   }
-  //
-  // const hasNeededPactDomain =
-  //   (state: Record<Pact>) => (req: Record<PactRequirement>) => {
-  //     const maybeReqDomain = PactRequirement.AL.domain (req)
-  //     const stateDomain = Pact.AL.domain (state)
-  //
-  //     if (isNothing (maybeReqDomain)) {
-  //       return true
-  //     }
-  //
-  //     if (typeof stateDomain === "string") {
-  //       return false
-  //     }
-  //
-  //     const reqDomain = fromJust (maybeReqDomain)
-  //
-  //     if (isList (reqDomain)) {
-  //       return elem (stateDomain) (reqDomain)
-  //     }
-  //
-  //     return reqDomain === stateDomain
-  //   }
-  //
-  // const hasNeededPactLevel = (state: Record<Pact>) => (req: Record<PactRequirement>) =>
-  //
-  //   // Fulfills the level requirement
-  //   or (fmap (lte (Pact.A.level (state))) (PactRequirement.A.level (req)))
-  //
-  //   // Its a lesser Pact and the needed Pact-Level is "1"
-  //   || (
-  //     or (fmap (lte (1)) (PactRequirement.A.level (req)))
-  //     && (Pact.A.level (state) === 0)
-  //   )
-  //
-  // const isPactValid =
-  //   (maybePact: Maybe<Record<Pact>>) => (req: Record<PactRequirement>): boolean =>
-  //     or (fmap<Record<Pact>, boolean> (currentPact => isPactFromStateValid (currentPact)
-  //                                            && hasSamePactCategory (currentPact) (req)
-  //                                            && hasNeededPactType (currentPact) (req)
-  //                                            && hasNeededPactDomain (currentPact) (req)
-  //                                            && hasNeededPactLevel (currentPact) (req))
-  //                                          (maybePact))
-  //
-  // const isPrimaryAttributeValid =
-  //   (state: HeroModelRecord) => (req: Record<RequirePrimaryAttribute>): boolean =>
-  //     or (fmap (pipe (
-  //                lookupF (HA.attributes (state)),
-  //                fmap (AttributeDependent.AL.value),
-  //                fromMaybe (8),
-  //                gte (RequirePrimaryAttribute.AL.value (req))
-  //              ))
-  //              (getPrimaryAttributeId (HA.specialAbilities (state))
-  //                                     (RequirePrimaryAttribute.AL.type (req))))
-  //
-  // const isSocialPrerequisiteValid: (hero: Record<Hero>) =>
-  //                                  (req: Record<SocialPrerequisite>) => boolean =
-  //   hero =>
-  //     pipe (
-  //       SocialPrerequisite.A.value,
-  //       lte (pipe_ (hero, HA.personalData, PDA.socialStatus, Maybe.sum))
-  //     )
-  //
-  // const isIncreasableValid =
-  //   (wiki: StaticDataRecord) =>
-  //   (state: HeroModelRecord) =>
-  //   (sourceId: string) =>
-  //   (req: Record<RequireIncreasable>) =>
-  //   (objectValidator: Validator): boolean => {
-  //     const id = RequireIncreasable.AL.id (req)
-  //
-  //     if (isList (id)) {
-  //       return any (pipe (
-  //                    set (RequireIncreasableL.id),
-  //                    thrush (req),
-  //                    objectValidator (wiki) (state),
-  //                    thrush (sourceId)
-  //                  ))
-  //                  (id)
-  //     }
-  //
-  //     return or (fmap ((obj: Dependent) =>
-  //                       !ActivatableDependent.is (obj) && SDAL.value (obj) >= RIA.value (req))
-  //                     (getHeroStateItem (state) (id)))
-  //   }
-  //
-  // /**
-  //  * Check if one of the passed selection ids is part of the currently active
-  //  * selections and if that matches the requirement (`active`).
-  //  */
-  // const isOneOfListActiveSelection =
-  //   (activeSelections: Maybe<List<string | number>>) =>
-  //   (req: Record<RequireActivatable>) =>
-  //   (sid: List<number>): boolean =>
-  //     Maybe.elem (RAA.active (req))
-  //                (fmap<List<string | number>, boolean> (pipe (List.elemF, any, thrush (sid)))
-  //                                                      (activeSelections))
-  //
-  // /**
-  //  * Check if the passed selection id is part of the currently active selections
-  //  * and if that matches the requirement (`active`).
-  //  */
-  // const isSingleActiveSelection =
-  //   (activeSelections: Maybe<List<string | number>>) =>
-  //   (req: Record<RequireActivatable>) =>
-  //   (sid: string | number): boolean =>
-  //     Maybe.elem (RAA.active (req))
-  //                (fmap (elem (sid)) (activeSelections))
-  //
-  // const isActiveSelection =
-  //   (activeSelections: Maybe<List<string | number>>) =>
-  //   (req: Record<RequireActivatable>) =>
-  //   (sid: SID): boolean =>
-  //     isList (sid)
-  //       ? isOneOfListActiveSelection (activeSelections) (req) (sid)
-  //       : isSingleActiveSelection (activeSelections) (req) (sid)
-  //
-  // /**
-  //  * Checks if the passed required level is fulfilled by the passed instance.
-  //  */
-  // const isNeededLevelGiven =
-  //   (level: number) =>
-  //     pipe (
-  //       ActivatableDependent.AL.active,
-  //       any (pipe (ActiveObject.AL.tier, fmap (gte (level)), or))
-  //     )
-  //
-  // const isActivatableValid =
-  //   (wiki: StaticDataRecord) =>
-  //   (state: HeroModelRecord) =>
-  //   (sourceId: string) =>
-  //   (req: Record<RequireActivatable>) =>
-  //   (objectValidator: Validator): boolean => {
-  //     const id = RAA.id (req)
-  //
-  //     if (isList (id)) {
-  //       return any (pipe (
-  //                    set (RequireActivatableL.id),
-  //                    thrush (req),
-  //                    objectValidator (wiki) (state),
-  //                    thrush (sourceId)
-  //                  ))
-  //                  (id)
-  //     }
-  //     else {
-  //       const sid = RAA.sid (req)
-  //
-  //       if (Maybe.elem<SID> ("sel") (sid)) {
-  //         return true
-  //       }
-  //
-  //       if (Maybe.elem<SID> ("GR") (sid)) {
-  //         return and (pipe (
-  //                            bindF<Dependent, Record<ActivatableDependent>>
-  //                              (ensure (isActivatableDependent)),
-  //                            bindF<Record<ActivatableDependent>, boolean>
-  //                              (target => {
-  //                                const arr =
-  //                                  map (Skill.AL.id)
-  //                                      (getAllWikiEntriesByGroup
-  //                                        (SDA.skills (wiki))
-  //                                        (maybeToList (
-  //                                          RAA.sid2 (req) as Maybe<number>
-  //                                        )))
-  //
-  //                                return fmap (all (pipe (elemF<string | number> (arr), not)))
-  //                                            (getActiveSelectionsMaybe (Just (target)))
-  //                              })
-  //                          )
-  //                          (getHeroStateItem (state) (id)))
-  //       }
-  //
-  //       const mhero_entry = bind (getHeroStateItem (state) (id))
-  //                                (ensure (isExtendedActivatableDependent))
-  //
-  //       if (Maybe.any (ActivatableDependent.is) (mhero_entry)) {
-  //         const hero_entry = fromJust (mhero_entry)
-  //         const activeSelections = getActiveSelectionsMaybe (mhero_entry)
-  //
-  //         const maybeSid = RAA.sid (req)
-  //         const maybeLevel = RAA.tier (req)
-  //
-  //         const sidValid = fmap (isActiveSelection (activeSelections) (req)) (maybeSid)
-  //         const levelValid = fmap (flip (isNeededLevelGiven) (hero_entry)) (maybeLevel)
-  //
-  //         if (isJust (maybeSid) || isJust (maybeLevel)) {
-  //           return and (sidValid) && and (levelValid)
-  //         }
-  //
-  //         return isActive (hero_entry) === RAA.active (req)
-  //       }
-  //
-  //       if (Maybe.any (ActivatableSkillDependent.is) (mhero_entry)) {
-  //         return ActivatableSkillDependent.AL.active (fromJust (mhero_entry))
-  //           === RAA.active (req)
-  //       }
-  //
-  //       return !RAA.active (req)
-  //     }
-  //   }
-  //
-  // /**
-  //  * Checks if the requirement is fulfilled.
-  //  * @param state The current hero data.
-  //  * @param req A requirement object.
-  //  * @param sourceId The id of the entry the requirement object belongs to.
-  //  * @param pact A valid `Pact` object or `undefined`.
-  //  */
-  // export const validateObject =
-  //   (wiki: StaticDataRecord) =>
-  //   (hero: HeroModelRecord) =>
-  //   (req: AllRequirements) =>
-  //   (sourceId: string): boolean =>
-  //     req === "RCP"
-  //       ? isRCPValid (wiki) (hero) (sourceId)
-  //       : SexRequirement.is (req)
-  //       ? isSexValid (HA.sex (hero)) (req)
-  //       : RaceRequirement.is (req)
-  //       ? or (fmapF (HA.race (hero)) (flip (isRaceValid) (req)))
-  //       : CultureRequirement.is (req)
-  //       ? or (fmapF (HA.culture (hero)) (flip (isCultureValid) (req)))
-  //       : PactRequirement.is (req)
-  //       ? isPactValid (HA.pact (hero)) (req)
-  //       : RequirePrimaryAttribute.is (req)
-  //       ? isPrimaryAttributeValid (hero) (req)
-  //       : SocialPrerequisite.is (req)
-  //       ? isSocialPrerequisiteValid (hero) (req)
-  //       : RequireIncreasable.is (req)
-  //       ? isIncreasableValid (wiki) (hero) (sourceId) (req) (validateObject)
-  //       : isActivatableValid (wiki) (hero) (sourceId) (req) (validateObject)
-  //
-  // /**
-  //  * Checks if all requirements are fulfilled.
-  //  * @param state The current hero data.
-  //  * @param prerequisites An array of requirement objects.
-  //  * @param sourceId The id of the entry the requirement objects belong to.
-  //  * @param pact A valid `Pact` object or `undefined`.
-  //  */
-  // export const validatePrerequisites =
-  //   (wiki: StaticDataRecord) =>
-  //   (state: HeroModelRecord) =>
-  //   (prerequisites: List<AllRequirements>) =>
-  //   (sourceId: string): boolean =>
-  //     all (pipe (validateObject (wiki) (state), thrush (sourceId)))
-  //         (prerequisites)
-  //
-  //
-  // /**
-  //  * ```haskell
-  //  * areSpellPrereqisitesMet :: Wiki -> Hero -> Spell -> Bool
-  //  * ```
-  //  *
-  //  * Checks if all prerequisites of the passed spell are met.
-  //  */
-  // export const areSpellPrereqisitesMet =
-  //   (wiki: StaticDataRecord) =>
-  //   (hero: HeroModelRecord) =>
-  //   (entry: Record<Spell>) =>
-  //     validatePrerequisites (wiki)
-  //                           (hero)
-  //                           (SA.prerequisites (entry))
-  //                           (SA.id (entry))
-  //
-  //
-  // /**
-  //  * Returns if the current index can be skipped because there is already a lower
-  //  * level which prerequisites are not met.
-  //  *
-  //  * This is for performance reasons to not check the prerequisites of higher levels.
-  //  */
-  // const skipLevelCheck =
-  //   (current_req: Pair<number, List<AllRequirements>>) =>
-  //   (mmax: Maybe<number>) =>
-  //     isJust (mmax) && pipe_ (current_req, fst, gt (fromJust (mmax)))
-  //
-  // /**
-  //  * Get maximum valid level.
-  //  * @param state The current hero data.
-  //  * @param requirements A Map of tier prereqisite arrays.
-  //  * @param sourceId The id of the entry the requirement objects belong to.
-  //  */
-  // export const validateLevel =
-  //   (wiki: StaticDataRecord) =>
-  //   (state: HeroModelRecord) =>
-  //   (requirements: OrderedMap<number, List<AllRequirements>>) =>
-  //   (dependencies: List<ActivatableDependency>) =>
-  //   (sourceId: string): Maybe<number> =>
-  //     pipe_ (
-  //       requirements,
-  //       toList,
-  //       sortBy (on (compare) (fst)),
-  //
-  //       // first check the prerequisites:
-  //       foldl ((max: Maybe<number>) => (entry: Pair<number, List<AllRequirements>>) =>
-  //
-  //               // if `max` is lower than the current level (from `entry`), just
-  //               // skip the prerequisite validation
-  //               !skipLevelCheck (entry) (max)
-  //
-  //               // otherwise, validate them
-  //               && !validatePrerequisites (wiki) (state) (snd (entry)) (sourceId)
-  //
-  //                 // if *not* valid, set the max to be lower than the actual
-  //                 // current level (because it must not be reached)
-  //                 ? Just (fst (entry) - 1)
-  //
-  //                 // otherwise, just pass the previous max value
-  //                 : max)
-  //             (Nothing),
-  //
-  //       // then, check the dependencies
-  //       flip (foldl ((max: Maybe<number>) => (dep: ActivatableDependency) =>
-  //
-  //                     // If `dep` prohibits higher level:
-  //                     // - it can only be contained in a record
-  //                     Record.isRecord (dep)
-  //
-  //                     // - and it must be *prohibited*, so `active` must be `false`
-  //                     && Maybe.elem (false) (DOA.active (dep))
-  //                       ? pipe_ (
-  //                           dep,
-  //
-  //                           // get the current prohibited level
-  //                           DOA.tier,
-  //
-  //                                 // - if its a Nothing, do nothing
-  //                           maybe (max)
-  //
-  //                                 // - otherwise decrease the level by one (the
-  //                                 // actual level must not be reached) and then
-  //                                 // take the lower one, if both the current and
-  //                                 // the previous are Justs, otherwise the
-  //                                 // current.
-  //                                 (pipe (dec, level => Just (maybe (level) (min (level)) (max))))
-  //                         )
-  //
-  //                       // otherwise, dont do anything
-  //                       : max))
-  //            (dependencies)
-  //     )
-  //
-  // /**
-  //  * Checks if all profession prerequisites are fulfilled.
-  //  * @param prerequisites An array of prerequisite objects.
-  //  */
-  // export const validateProfession =
-  //   (prerequisites: List<ProfessionDependency>) =>
-  //   (current_sex: Sex) =>
-  //   (current_race_id: string) =>
-  //   (current_culture_id: string): boolean =>
-  //     all<ProfessionDependency> (req =>
-  //                                 isSexRequirement (req)
-  //                                 ? isSexValid (current_sex) (req)
-  //                                 : RaceRequirement.is (req)
-  //                                 ? isRaceValid (current_race_id) (req)
-  //                                 : isCultureRequirement (req)
-  //                                 ? isCultureValid (current_culture_id) (req)
-  //                                 : false)
-  //                               (prerequisites)
-};
+//
+//
+// /**
+//  * Returns if the current index can be skipped because there is already a lower
+//  * level which prerequisites are not met.
+//  *
+//  * This is for performance reasons to not check the prerequisites of higher levels.
+//  */
+// const skipLevelCheck =
+//   (current_req: Pair<number, List<AllRequirements>>) =>
+//   (mmax: Maybe<number>) =>
+//     isJust (mmax) && pipe_ (current_req, fst, gt (fromJust (mmax)))
+//
+// /**
+//  * Get maximum valid level.
+//  * @param state The current hero data.
+//  * @param requirements A Map of tier prereqisite arrays.
+//  * @param sourceId The id of the entry the requirement objects belong to.
+//  */
+// export const validateLevel =
+//   (wiki: StaticDataRecord) =>
+//   (state: HeroModelRecord) =>
+//   (requirements: OrderedMap<number, List<AllRequirements>>) =>
+//   (dependencies: List<ActivatableDependency>) =>
+//   (sourceId: string): Maybe<number> =>
+//     pipe_ (
+//       requirements,
+//       toList,
+//       sortBy (on (compare) (fst)),
+//
+//       // first check the prerequisites:
+//       foldl ((max: Maybe<number>) => (entry: Pair<number, List<AllRequirements>>) =>
+//
+//               // if `max` is lower than the current level (from `entry`), just
+//               // skip the prerequisite validation
+//               !skipLevelCheck (entry) (max)
+//
+//               // otherwise, validate them
+//               && !validatePrerequisites (wiki) (state) (snd (entry)) (sourceId)
+//
+//                 // if *not* valid, set the max to be lower than the actual
+//                 // current level (because it must not be reached)
+//                 ? Just (fst (entry) - 1)
+//
+//                 // otherwise, just pass the previous max value
+//                 : max)
+//             (Nothing),
+//
+//       // then, check the dependencies
+//       flip (foldl ((max: Maybe<number>) => (dep: ActivatableDependency) =>
+//
+//                     // If `dep` prohibits higher level:
+//                     // - it can only be contained in a record
+//                     Record.isRecord (dep)
+//
+//                     // - and it must be *prohibited*, so `active` must be `false`
+//                     && Maybe.elem (false) (DOA.active (dep))
+//                       ? pipe_ (
+//                           dep,
+//
+//                           // get the current prohibited level
+//                           DOA.tier,
+//
+//                                 // - if its a Nothing, do nothing
+//                           maybe (max)
+//
+//                                 // - otherwise decrease the level by one (the
+//                                 // actual level must not be reached) and then
+//                                 // take the lower one, if both the current and
+//                                 // the previous are Justs, otherwise the
+//                                 // current.
+//                                 (pipe (dec, level => Just (maybe (level) (min (level)) (max))))
+//                         )
+//
+//                       // otherwise, dont do anything
+//                       : max))
+//            (dependencies)
+//     )
+//
+// /**
+//  * Checks if all profession prerequisites are fulfilled.
+//  * @param prerequisites An array of prerequisite objects.
+//  */
+// export const validateProfession =
+//   (prerequisites: List<ProfessionDependency>) =>
+//   (current_sex: Sex) =>
+//   (current_race_id: string) =>
+//   (current_culture_id: string): boolean =>
+//     all<ProfessionDependency> (req =>
+//                                 isSexRequirement (req)
+//                                 ? isSexValid (current_sex) (req)
+//                                 : RaceRequirement.is (req)
+//                                 ? isRaceValid (current_race_id) (req)
+//                                 : isCultureRequirement (req)
+//                                 ? isCultureValid (current_culture_id) (req)
+//                                 : false)
+//                               (prerequisites)

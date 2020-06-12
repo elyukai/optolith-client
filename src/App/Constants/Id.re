@@ -62,6 +62,16 @@ type activatableSkill = [ | `Spell(int) | `LiturgicalChant(int)];
 type permanentSkill = [ | `Skill(int) | `CombatTechnique(int)];
 
 [@genType]
+[@genType.as "IncreasableId"]
+type increasable = [
+  | `Attribute(int)
+  | `Skill(int)
+  | `CombatTechnique(int)
+  | `Spell(int)
+  | `LiturgicalChant(int)
+];
+
+[@genType]
 [@genType.as "SelectOptionId"]
 type selectOption = [
   | `Generic(int)

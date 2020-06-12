@@ -2,11 +2,17 @@
 /* eslint-disable import/first */
 
 
+import {activatable as Id_activatable} from '../../../src/App/Constants/Id.gen';
+
+import {increasable as Id_increasable} from '../../../src/App/Constants/Id.gen';
+
 import {list} from '../../../src/shims/ReasonPervasives.shim';
 
 import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
 
 import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
+
+import {selectOption as Id_selectOption} from '../../../src/App/Constants/Id.gen';
 
 import {sex as Hero_sex} from './Hero.gen';
 
@@ -44,33 +50,24 @@ export type primaryAttribute = { readonly value: number; readonly scope: primary
 export type PrimaryAttributePrerequisite = primaryAttribute;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type activatableId = 
-    { tag: "Advantage"; value: number }
-  | { tag: "Disadvantage"; value: number }
-  | { tag: "SpecialAbility"; value: number };
-
-// tslint:disable-next-line:interface-over-type-literal
 export type activatable = {
-  readonly id: activatableId; 
+  readonly id: Id_activatable; 
   readonly active: boolean; 
-  readonly sid?: Ids_selectOptionId; 
-  readonly sid2?: Ids_selectOptionId; 
+  readonly sid?: Id_selectOption; 
+  readonly sid2?: Id_selectOption; 
   readonly level?: number
 };
 export type ActivatablePrerequisite = activatable;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type activatableSkillId = 
-    { tag: "Spell"; value: number }
-  | { tag: "LiturgicalChant"; value: number };
-
-// tslint:disable-next-line:interface-over-type-literal
-export type activatableSkill = { readonly id: activatableSkillId; readonly active: boolean };
-export type ActivatableSkillPrerequisite = activatableSkill;
+export type activatableIds = 
+    { tag: "Advantages"; value: list<number> }
+  | { tag: "Disadvantages"; value: list<number> }
+  | { tag: "SpecialAbilities"; value: list<number> };
 
 // tslint:disable-next-line:interface-over-type-literal
 export type activatableMultiEntry = {
-  readonly id: list<activatableId>; 
+  readonly id: activatableIds; 
   readonly active: boolean; 
   readonly sid?: Ids_selectOptionId; 
   readonly sid2?: Ids_selectOptionId; 
@@ -80,7 +77,7 @@ export type ActivatableMultiEntryPrerequisite = activatableMultiEntry;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type activatableMultiSelect = {
-  readonly id: activatableId; 
+  readonly id: Id_activatable; 
   readonly active: boolean; 
   readonly sid: list<Ids_selectOptionId>; 
   readonly sid2?: Ids_selectOptionId; 
@@ -89,19 +86,19 @@ export type activatableMultiSelect = {
 export type ActivatableMultiSelectPrerequisite = activatableMultiSelect;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type increasableId = 
-    { tag: "Attribute"; value: number }
-  | { tag: "Skill"; value: number }
-  | { tag: "CombatTechnique"; value: number }
-  | { tag: "Spell"; value: number }
-  | { tag: "LiturgicalChant"; value: number };
-
-// tslint:disable-next-line:interface-over-type-literal
-export type increasable = { readonly id: increasableId; readonly value: number };
+export type increasable = { readonly id: Id_increasable; readonly value: number };
 export type IncreasablePrerequisite = increasable;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type increasableMultiEntry = { readonly id: list<increasableId>; readonly value: number };
+export type increasableIds = 
+    { tag: "Attributes"; value: list<number> }
+  | { tag: "Skills"; value: list<number> }
+  | { tag: "CombatTechniques"; value: list<number> }
+  | { tag: "Spells"; value: list<number> }
+  | { tag: "LiturgicalChants"; value: list<number> };
+
+// tslint:disable-next-line:interface-over-type-literal
+export type increasableMultiEntry = { readonly id: increasableIds; readonly value: number };
 export type IncreasableMultiEntryPrerequisite = increasableMultiEntry;
 
 // tslint:disable-next-line:interface-over-type-literal

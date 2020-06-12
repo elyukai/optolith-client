@@ -58,6 +58,17 @@ function numIdToId(staticData, id) {
               }));
 }
 
+function getPrimaryAttributeId(staticData, mp) {
+  return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_List$OptolithClient.Extra.firstJust((function (trad) {
+                    if (isActiveTradition(staticData, trad)) {
+                      return Curry._2(Ley_IntMap$OptolithClient.lookup, trad.id, staticData.magicalTraditions);
+                    }
+                    
+                  }), Curry._1(Ley_IntMap$OptolithClient.elems, mp)), (function (trad) {
+                return trad.primary;
+              }));
+}
+
 function getHeroEntry(staticData, mp) {
   return Curry._2(Ley_IntMap$OptolithClient.Foldable.find, (function (param) {
                 if (Curry._2(Ley_IntMap$OptolithClient.member, param.id, staticData.blessedTraditions)) {
@@ -100,12 +111,21 @@ function numIdToId$1(staticData, id) {
               }));
 }
 
+function getPrimaryAttributeId$1(staticData, mp) {
+  return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.Monad.$great$great$eq(getHeroEntry(staticData, mp), (function (trad) {
+                    return Curry._2(Ley_IntMap$OptolithClient.lookup, trad.id, staticData.magicalTraditions);
+                  })), (function (trad) {
+                return trad.primary;
+              }));
+}
+
 var Magical = {
   getHeroEntries: getHeroEntries,
   getStaticEntries: getStaticEntries,
   getEntries: getEntries,
   idToNumId: idToNumId,
-  numIdToId: numIdToId
+  numIdToId: numIdToId,
+  getPrimaryAttributeId: getPrimaryAttributeId
 };
 
 var Blessed = {
@@ -113,7 +133,8 @@ var Blessed = {
   getStaticEntry: getStaticEntry,
   getEntry: getEntry,
   idToNumId: idToNumId$1,
-  numIdToId: numIdToId$1
+  numIdToId: numIdToId$1,
+  getPrimaryAttributeId: getPrimaryAttributeId$1
 };
 
 export {

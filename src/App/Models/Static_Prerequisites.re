@@ -38,35 +38,25 @@ type primaryAttribute = {
   scope: primaryAttributeType,
 };
 
-type activatableId = [
-  | `Advantage(int)
-  | `Disadvantage(int)
-  | `SpecialAbility(int)
-];
-
 [@genType]
 [@genType.as "ActivatablePrerequisite"]
 type activatable = {
-  id: activatableId,
+  id: Id.activatable,
   active: bool,
-  sid: option(Ids.selectOptionId),
-  sid2: option(Ids.selectOptionId),
+  sid: option(Id.selectOption),
+  sid2: option(Id.selectOption),
   level: option(int),
 };
 
-type activatableSkillId = [ | `Spell(int) | `LiturgicalChant(int)];
-
-[@genType]
-[@genType.as "ActivatableSkillPrerequisite"]
-type activatableSkill = {
-  id: activatableSkillId,
-  active: bool,
-};
+type activatableIds =
+  | Advantages(list(int))
+  | Disadvantages(list(int))
+  | SpecialAbilities(list(int));
 
 [@genType]
 [@genType.as "ActivatableMultiEntryPrerequisite"]
 type activatableMultiEntry = {
-  id: list(activatableId),
+  id: activatableIds,
   active: bool,
   sid: option(Ids.selectOptionId),
   sid2: option(Ids.selectOptionId),
@@ -76,32 +66,31 @@ type activatableMultiEntry = {
 [@genType]
 [@genType.as "ActivatableMultiSelectPrerequisite"]
 type activatableMultiSelect = {
-  id: activatableId,
+  id: Id.activatable,
   active: bool,
   sid: list(Ids.selectOptionId),
   sid2: option(Ids.selectOptionId),
   level: option(int),
 };
 
-type increasableId = [
-  | `Attribute(int)
-  | `Skill(int)
-  | `CombatTechnique(int)
-  | `Spell(int)
-  | `LiturgicalChant(int)
-];
-
 [@genType]
 [@genType.as "IncreasablePrerequisite"]
 type increasable = {
-  id: increasableId,
+  id: Id.increasable,
   value: int,
 };
+
+type increasableIds =
+  | Attributes(list(int))
+  | Skills(list(int))
+  | CombatTechniques(list(int))
+  | Spells(list(int))
+  | LiturgicalChants(list(int));
 
 [@genType]
 [@genType.as "IncreasableMultiEntryPrerequisite"]
 type increasableMultiEntry = {
-  id: list(increasableId),
+  id: increasableIds,
   value: int,
 };
 
@@ -289,9 +278,27 @@ module Decode = {
     |> (
       scope =>
         switch (scope) {
-        | "Advantage" => json |> int |> (x => `Advantage(x))
-        | "Disadvantage" => json |> int |> (x => `Disadvantage(x))
-        | "SpecialAbility" => json |> int |> (x => `SpecialAbility(x))
+        | "Advantage" => json |> field("value", int) |> (x => `Advantage(x))
+        | "Disadvantage" =>
+          json |> field("value", int) |> (x => `Disadvantage(x))
+        | "SpecialAbility" =>
+          json |> field("value", int) |> (x => `SpecialAbility(x))
+        | _ => raise(DecodeError("Unknown activatable ID scope: " ++ scope))
+        }
+    );
+
+  let activatableIds = json =>
+    json
+    |> field("scope", string)
+    |> (
+      scope =>
+        switch (scope) {
+        | "Advantage" =>
+          json |> field("value", list(int)) |> (xs => Advantages(xs))
+        | "Disadvantage" =>
+          json |> field("value", list(int)) |> (xs => Disadvantages(xs))
+        | "SpecialAbility" =>
+          json |> field("value", list(int)) |> (xs => SpecialAbilities(xs))
         | _ => raise(DecodeError("Unknown activatable ID scope: " ++ scope))
         }
     );
@@ -302,12 +309,14 @@ module Decode = {
     |> (
       scope =>
         switch (scope) {
-        | "Skill" => json |> int |> (x => `Skill(x))
-        | "CombatTechnique" => json |> int |> (x => `CombatTechnique(x))
-        | "Spell" => json |> int |> (x => `Spell(x))
-        | "Cantrip" => json |> int |> (x => `Cantrip(x))
-        | "LiturgicalChant" => json |> int |> (x => `LiturgicalChant(x))
-        | "Blessing" => json |> int |> (x => `Blessing(x))
+        | "Skill" => json |> field("value", int) |> (x => `Skill(x))
+        | "CombatTechnique" =>
+          json |> field("value", int) |> (x => `CombatTechnique(x))
+        | "Spell" => json |> field("value", int) |> (x => `Spell(x))
+        | "Cantrip" => json |> field("value", int) |> (x => `Cantrip(x))
+        | "LiturgicalChant" =>
+          json |> field("value", int) |> (x => `LiturgicalChant(x))
+        | "Blessing" => json |> field("value", int) |> (x => `Blessing(x))
         | _ =>
           raise(DecodeError("Unknown select option ID scope: " ++ scope))
         }
@@ -325,7 +334,7 @@ module Decode = {
   };
 
   let activatableMultiEntry = (json): activatableMultiEntry => {
-    id: json |> field("id", list(activatableId)),
+    id: json |> field("id", activatableIds),
     active: json |> field("active", bool),
     sid: json |> field("sid", maybe(selectOptionId)),
     sid2: json |> field("sid2", maybe(selectOptionId)),
@@ -340,36 +349,37 @@ module Decode = {
     level: json |> field("tier", maybe(int)),
   };
 
-  let activatableSkillId = json =>
-    json
-    |> field("scope", string)
-    |> (
-      scope =>
-        switch (scope) {
-        | "Spell" => json |> int |> ((x) => (`Spell(x): activatableSkillId))
-        | "LiturgicalChant" =>
-          json |> int |> ((x) => (`LiturgicalChant(x): activatableSkillId))
-        | _ =>
-          raise(DecodeError("Unknown activatable skill ID scope: " ++ scope))
-        }
-    );
-
-  let activatableSkill = json => {
-    id: json |> field("id", activatableSkillId),
-    active: json |> field("active", bool),
-  };
-
   let increasableId = json =>
     json
     |> field("scope", string)
     |> (
       scope =>
         switch (scope) {
-        | "Attribute" => json |> int |> (x => `Attribute(x))
-        | "Skill" => json |> int |> (x => `Skill(x))
-        | "CombatTechnique" => json |> int |> (x => `CombatTechnique(x))
-        | "Spell" => json |> int |> (x => `Spell(x))
-        | "LiturgicalChant" => json |> int |> (x => `LiturgicalChant(x))
+        | "Attribute" => json |> field("value", int) |> (x => `Attribute(x))
+        | "Skill" => json |> field("value", int) |> (x => `Skill(x))
+        | "CombatTechnique" =>
+          json |> field("value", int) |> (x => `CombatTechnique(x))
+        | "Spell" => json |> field("value", int) |> (x => `Spell(x))
+        | "LiturgicalChant" =>
+          json |> field("value", int) |> (x => `LiturgicalChant(x))
+        | _ => raise(DecodeError("Unknown increasable ID scope: " ++ scope))
+        }
+    );
+
+  let increasableIds = json =>
+    json
+    |> field("scope", string)
+    |> (
+      scope =>
+        switch (scope) {
+        | "Attribute" =>
+          json |> field("value", list(int)) |> (xs => Attributes(xs))
+        | "Skill" => json |> field("value", list(int)) |> (xs => Skills(xs))
+        | "CombatTechnique" =>
+          json |> field("value", list(int)) |> (xs => CombatTechniques(xs))
+        | "Spell" => json |> field("value", list(int)) |> (xs => Spells(xs))
+        | "LiturgicalChant" =>
+          json |> field("value", list(int)) |> (xs => LiturgicalChants(xs))
         | _ => raise(DecodeError("Unknown increasable ID scope: " ++ scope))
         }
     );
@@ -380,7 +390,7 @@ module Decode = {
   };
 
   let increasableMultiEntry = (json): increasableMultiEntry => {
-    id: json |> field("id", list(increasableId)),
+    id: json |> field("id", increasableIds),
     value: json |> field("value", int),
   };
 

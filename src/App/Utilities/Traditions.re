@@ -47,6 +47,18 @@ module Magical = {
       )
       <&> (x => x.id)
     );
+
+  let getPrimaryAttributeId =
+      (staticData, mp: Ley.IntMap.t(Hero.Activatable.t)) =>
+    Ley.Option.Monad.(
+      mp
+      |> elems
+      |> Ley.List.Extra.firstJust(trad =>
+           isActiveTradition(staticData, trad)
+             ? Ley.IntMap.lookup(trad.id, staticData.magicalTraditions) : None
+         )
+      >>= (trad => trad.primary)
+    );
 };
 
 module Blessed = {
@@ -93,5 +105,14 @@ module Blessed = {
         staticData.blessedTraditions,
       )
       <&> (x => x.id)
+    );
+
+  let getPrimaryAttributeId =
+      (staticData, mp: Ley.IntMap.t(Hero.Activatable.t)) =>
+    Ley.Option.Monad.(
+      mp
+      |> getHeroEntry(staticData)
+      >>= (trad => Ley.IntMap.lookup(trad.id, staticData.magicalTraditions))
+      >>= (trad => trad.primary)
     );
 };
