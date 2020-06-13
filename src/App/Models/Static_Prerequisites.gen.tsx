@@ -10,8 +10,6 @@ import {list} from '../../../src/shims/ReasonPervasives.shim';
 
 import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
 
-import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
-
 import {selectOption as Id_selectOption} from '../../../src/App/Constants/Id.gen';
 
 import {sex as Hero_sex} from './Hero.gen';
@@ -69,8 +67,8 @@ export type activatableIds =
 export type activatableMultiEntry = {
   readonly id: activatableIds; 
   readonly active: boolean; 
-  readonly sid?: Ids_selectOptionId; 
-  readonly sid2?: Ids_selectOptionId; 
+  readonly sid?: Id_selectOption; 
+  readonly sid2?: Id_selectOption; 
   readonly level?: number
 };
 export type ActivatableMultiEntryPrerequisite = activatableMultiEntry;
@@ -79,8 +77,8 @@ export type ActivatableMultiEntryPrerequisite = activatableMultiEntry;
 export type activatableMultiSelect = {
   readonly id: Id_activatable; 
   readonly active: boolean; 
-  readonly sid: list<Ids_selectOptionId>; 
-  readonly sid2?: Ids_selectOptionId; 
+  readonly sid: list<Id_selectOption>; 
+  readonly sid2?: Id_selectOption; 
   readonly level?: number
 };
 export type ActivatableMultiSelectPrerequisite = activatableMultiSelect;

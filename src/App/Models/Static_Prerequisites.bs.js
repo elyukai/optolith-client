@@ -186,6 +186,11 @@ function scopedSelectOptionId(json) {
                 290194801,
                 Json_decode.field("value", Json_decode.$$int, json)
               ];
+    case "SpecialAbility" :
+        return /* `SpecialAbility */[
+                -789492591,
+                Json_decode.field("value", Json_decode.$$int, json)
+              ];
     case "Spell" :
         return /* `Spell */[
                 345443720,

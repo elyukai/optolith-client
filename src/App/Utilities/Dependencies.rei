@@ -27,6 +27,10 @@ module Flatten: {
 };
 
 module TransferredUnfamiliar: {
+  /**
+   * Returns if the passed spell is an unfamiliar spell based on the passed
+   * list of transferred unfamiliar spells and the active traditions.
+   */
   let isUnfamiliarSpell:
     (
       list(OptolithClient.Hero.TransferUnfamiliar.t),

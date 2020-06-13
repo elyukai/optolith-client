@@ -3,8 +3,6 @@
  *
  * `2D6` equals to `{ amount: 2, sides: 6 }`
  */
-[@genType]
-[@genType.as "Die"]
 type t = {
   amount: int,
   sides: int,

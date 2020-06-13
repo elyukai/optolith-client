@@ -4,7 +4,7 @@
 
 import {list} from '../../../src/shims/ReasonPervasives.shim';
 
-import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
+import {selectOption as Id_selectOption} from '../../../src/App/Constants/Id.gen';
 
 import {t as Static_Blessing_t} from './Static_Blessing.gen';
 
@@ -36,7 +36,7 @@ export type SelectOptionStaticEntry = wikiEntry;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type t = {
-  readonly id: Ids_selectOptionId; 
+  readonly id: Id_selectOption; 
   readonly name: string; 
   readonly cost?: number; 
   readonly prerequisites: Static_Prerequisites_t; 
@@ -58,7 +58,7 @@ export type t = {
 export type SelectOption = t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Ord_t = Ids_selectOptionId;
+export type Ord_t = Id_selectOption;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type SelectOptionMap_key = Ord_t;

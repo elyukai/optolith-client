@@ -47,7 +47,7 @@ let%private liturgicalChantEnhancements = xs =>
                       {
                         id:
                           `SpecialAbility(
-                            Ids.SpecialAbilityId.chantEnhancement,
+                            Id.specialAbilityToInt(ChantEnhancement),
                           ),
                         active: true,
                         sid: Some(`Generic(x.level1.id)),
@@ -87,7 +87,7 @@ let%private liturgicalChantEnhancements = xs =>
                       {
                         id:
                           `SpecialAbility(
-                            Ids.SpecialAbilityId.chantEnhancement,
+                            Id.specialAbilityToInt(ChantEnhancement),
                           ),
                         active: true,
                         sid: Some(`Generic(x.level1.id)),
@@ -99,7 +99,7 @@ let%private liturgicalChantEnhancements = xs =>
                       {
                         id:
                           `SpecialAbility(
-                            Ids.SpecialAbilityId.chantEnhancement,
+                            Id.specialAbilityToInt(ChantEnhancement),
                           ),
                         active: true,
                         sid: Some(`Generic(x.level2.id)),
@@ -176,7 +176,7 @@ let%private spellEnhancements = xs =>
                       {
                         id:
                           `SpecialAbility(
-                            Ids.SpecialAbilityId.spellEnhancement,
+                            Id.specialAbilityToInt(SpellEnhancement),
                           ),
                         active: true,
                         sid: Some(`Generic(x.level1.id)),
@@ -216,7 +216,7 @@ let%private spellEnhancements = xs =>
                       {
                         id:
                           `SpecialAbility(
-                            Ids.SpecialAbilityId.spellEnhancement,
+                            Id.specialAbilityToInt(SpellEnhancement),
                           ),
                         active: true,
                         sid: Some(`Generic(x.level1.id)),
@@ -228,7 +228,7 @@ let%private spellEnhancements = xs =>
                       {
                         id:
                           `SpecialAbility(
-                            Ids.SpecialAbilityId.spellEnhancement,
+                            Id.specialAbilityToInt(SpellEnhancement),
                           ),
                         active: true,
                         sid: Some(`Generic(x.level2.id)),

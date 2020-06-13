@@ -618,6 +618,23 @@ function propertyToInt(id) {
   }
 }
 
+function specialAbilityGroupFromInt(id) {
+  var switcher = id - 1 | 0;
+  if (switcher > 44 || switcher < 0) {
+    return /* Other */[id];
+  } else {
+    return switcher;
+  }
+}
+
+function specialAbilityGroupToInt(id) {
+  if (typeof id === "number") {
+    return id + 1 | 0;
+  } else {
+    return id[0];
+  }
+}
+
 function specialAbilityFromInt(id) {
   if (id >= 623) {
     if (id >= 1069) {
@@ -1351,6 +1368,8 @@ export {
   magicalTraditionToInt ,
   propertyFromInt ,
   propertyToInt ,
+  specialAbilityGroupFromInt ,
+  specialAbilityGroupToInt ,
   specialAbilityFromInt ,
   specialAbilityToInt ,
   

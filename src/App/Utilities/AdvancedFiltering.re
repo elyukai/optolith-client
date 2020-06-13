@@ -35,9 +35,6 @@ let searchByMulti = (searchAccessors, filterText, xs) =>
     )
   };
 
-let searchStrings = (filterText: string, xs) =>
-  Foldable.elem(filterText, xs);
-
 type sortOption('a) = {
   compare: compare('a),
   reverse: bool,

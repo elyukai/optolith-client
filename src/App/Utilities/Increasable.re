@@ -59,7 +59,7 @@ module Skills = {
    * list created by `getInitialMaximumList` if the hero is in character
    * creation phase.
    */
-  let getMaxSrFromEl = (startEl: Static.ExperienceLevel.t, phase: Ids.Phase.t) =>
+  let getMaxSrFromEl = (startEl: Static.ExperienceLevel.t, phase: Id.phase) =>
     switch (phase) {
     | Outline
     | Definition => Some(startEl.maxSkillRating)
@@ -286,7 +286,7 @@ module CombatTechniques = {
       exceptionalCombatTechnique,
     );
 
-  let getMaxCtrFromEl = (el: Static.ExperienceLevel.t, phase: Ids.Phase.t) =>
+  let getMaxCtrFromEl = (el: Static.ExperienceLevel.t, phase: Id.phase) =>
     switch (phase) {
     | Outline
     | Definition => Some(el.maxCombatTechniqueRating)

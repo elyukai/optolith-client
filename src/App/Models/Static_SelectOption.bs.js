@@ -28,14 +28,16 @@ function outerToInt(id) {
     } else {
       return 1;
     }
-  } else if (variant !== -841776939) {
+  } else if (variant >= -789492591) {
     if (variant >= -384382742) {
       return 6;
     } else {
-      return 3;
+      return 8;
     }
-  } else {
+  } else if (variant >= -841776939) {
     return 5;
+  } else {
+    return 3;
   }
 }
 
@@ -67,14 +69,16 @@ function showId(id) {
     } else {
       return "Generic(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
     }
-  } else if (variant !== -841776939) {
+  } else if (variant >= -789492591) {
     if (variant >= -384382742) {
       return "LiturgicalChant(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
     } else {
-      return "CombatTechnique(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+      return "SpecialAbility(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
     }
-  } else {
+  } else if (variant >= -841776939) {
     return "Cantrip(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+  } else {
+    return "CombatTechnique(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
   }
 }
 

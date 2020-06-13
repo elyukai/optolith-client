@@ -2,13 +2,15 @@
 
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
+import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
+import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as IC$OptolithClient from "./IC.bs.js";
 import * as Id$OptolithClient from "../Constants/Id.bs.js";
-import * as Ids$OptolithClient from "../Constants/Ids.bs.js";
 import * as Intl$OptolithClient from "./Intl.bs.js";
 import * as Chars$OptolithClient from "./Chars.bs.js";
 import * as Ley_Int$OptolithClient from "../../Data/Ley_Int.bs.js";
+import * as Caml_builtin_exceptions from "bs-platform/lib/es6/caml_builtin_exceptions.js";
 import * as Integers$OptolithClient from "./Integers.bs.js";
 import * as Ley_List$OptolithClient from "../../Data/Ley_List.bs.js";
 import * as Ley_IntMap$OptolithClient from "../../Data/Ley_IntMap.bs.js";
@@ -46,11 +48,52 @@ function singleToSingleWithId(x, s) {
 }
 
 function activatableOptionToSelectOptionId(id) {
-  if (id[0] >= 931971705) {
-    return ;
-  } else {
-    return id;
+  if (typeof id !== "number") {
+    var variant = id[0];
+    if (variant >= 61643256) {
+      if (variant >= 345443721) {
+        if (variant === 797131559) {
+          return id;
+        }
+        if (variant === 931971705) {
+          return ;
+        }
+        
+      } else {
+        if (variant === 290194801) {
+          return id;
+        }
+        if (variant >= 345443720) {
+          return id;
+        }
+        
+      }
+    } else if (variant >= -841776938) {
+      if (variant === -384382742) {
+        return id;
+      }
+      if (variant >= 61643255) {
+        return id;
+      }
+      
+    } else {
+      if (variant === -920806756) {
+        return id;
+      }
+      if (variant >= -841776939) {
+        return id;
+      }
+      
+    }
   }
+  throw [
+        Caml_builtin_exceptions.match_failure,
+        /* tuple */[
+          "Activatable.re",
+          110,
+          4
+        ]
+      ];
 }
 
 function name(x) {
@@ -146,18 +189,101 @@ function getOption3(param) {
 }
 
 function getCustomInput(option) {
-  if (option[0] >= 931971705) {
-    return option[1];
+  if (typeof option !== "number") {
+    var variant = option[0];
+    if (variant >= 61643256) {
+      if (variant >= 345443721) {
+        if (variant === 797131559) {
+          return ;
+        }
+        if (variant === 931971705) {
+          return option[1];
+        }
+        
+      } else {
+        if (variant === 290194801) {
+          return ;
+        }
+        if (variant >= 345443720) {
+          return ;
+        }
+        
+      }
+    } else if (variant >= -841776938) {
+      if (variant === -384382742) {
+        return ;
+      }
+      if (variant >= 61643255) {
+        return ;
+      }
+      
+    } else {
+      if (variant === -920806756) {
+        return ;
+      }
+      if (variant >= -841776939) {
+        return ;
+      }
+      
+    }
   }
-  
+  throw [
+        Caml_builtin_exceptions.match_failure,
+        /* tuple */[
+          "Activatable.re",
+          246,
+          2
+        ]
+      ];
 }
 
 function getGenericId(option) {
-  if (option[0] !== 61643255) {
-    return ;
-  } else {
-    return option[1];
+  if (typeof option !== "number") {
+    var variant = option[0];
+    if (variant >= 61643256) {
+      if (variant >= 345443721) {
+        if (variant === 797131559) {
+          return ;
+        }
+        if (variant === 931971705) {
+          return ;
+        }
+        
+      } else {
+        if (variant === 290194801) {
+          return ;
+        }
+        if (variant >= 345443720) {
+          return ;
+        }
+        
+      }
+    } else if (variant >= -841776938) {
+      if (variant === -384382742) {
+        return ;
+      }
+      if (variant >= 61643255) {
+        return option[1];
+      }
+      
+    } else {
+      if (variant === -920806756) {
+        return ;
+      }
+      if (variant >= -841776939) {
+        return ;
+      }
+      
+    }
   }
+  throw [
+        Caml_builtin_exceptions.match_failure,
+        /* tuple */[
+          "Activatable.re",
+          258,
+          2
+        ]
+      ];
 }
 
 function lookupMap(k, mp, f) {
@@ -165,11 +291,52 @@ function lookupMap(k, mp, f) {
 }
 
 function getSkillFromOption(staticData, option) {
-  if (option[0] !== 290194801) {
-    return ;
-  } else {
-    return Curry._2(Ley_IntMap$OptolithClient.lookup, option[1], staticData.skills);
+  if (typeof option !== "number") {
+    var variant = option[0];
+    if (variant >= 61643256) {
+      if (variant >= 345443721) {
+        if (variant === 797131559) {
+          return ;
+        }
+        if (variant === 931971705) {
+          return ;
+        }
+        
+      } else {
+        if (variant === 290194801) {
+          return Curry._2(Ley_IntMap$OptolithClient.lookup, option[1], staticData.skills);
+        }
+        if (variant >= 345443720) {
+          return ;
+        }
+        
+      }
+    } else if (variant >= -841776938) {
+      if (variant === -384382742) {
+        return ;
+      }
+      if (variant >= 61643255) {
+        return ;
+      }
+      
+    } else {
+      if (variant === -920806756) {
+        return ;
+      }
+      if (variant >= -841776939) {
+        return ;
+      }
+      
+    }
   }
+  throw [
+        Caml_builtin_exceptions.match_failure,
+        /* tuple */[
+          "Activatable.re",
+          274,
+          2
+        ]
+      ];
 }
 
 function getDefaultNameAddition(staticEntry, heroEntry) {
@@ -178,18 +345,37 @@ function getDefaultNameAddition(staticEntry, heroEntry) {
   var sid = Ley_Option$OptolithClient.listToOption(heroEntry.options);
   var sid2 = getOption(1, heroEntry);
   if (input$1 !== undefined) {
-    if (sid !== undefined) {
-      if (sid[0] >= 931971705) {
-        if (sid2 !== undefined) {
-          return ;
-        } else {
-          return sid[1];
+    if (sid === undefined) {
+      return ;
+    }
+    if (typeof sid === "number") {
+      return ;
+    }
+    var variant = sid[0];
+    if (variant >= 61643256) {
+      if (variant >= 345443721) {
+        if (variant !== 797131559) {
+          if (variant !== 931971705 || sid2 !== undefined) {
+            return ;
+          } else {
+            return sid[1];
+          }
         }
-      } else if (sid2 !== undefined && !(typeof sid2 === "number" || sid2[0] !== 931971705 || Curry._1(Static_SelectOption$OptolithClient.SelectOptionMap.size, selectOptions$1) <= 0)) {
-        return Ley_Option$OptolithClient.fromOption("", getSelectOptionName(staticEntry, sid)) + (": " + sid2[1]);
-      } else {
+        
+      } else if (variant !== 290194801 && variant < 345443720) {
         return ;
       }
+      
+    } else if (variant >= -841776938) {
+      if (variant !== -384382742 && variant < 61643255) {
+        return ;
+      }
+      
+    } else if (variant !== -920806756 && variant < -841776939) {
+      return ;
+    }
+    if (sid2 !== undefined && !(typeof sid2 === "number" || sid2[0] !== 931971705 || Curry._1(Static_SelectOption$OptolithClient.SelectOptionMap.size, selectOptions$1) <= 0)) {
+      return Ley_Option$OptolithClient.fromOption("", getSelectOptionName(staticEntry, sid)) + (": " + sid2[1]);
     } else {
       return ;
     }
@@ -200,18 +386,18 @@ function getDefaultNameAddition(staticEntry, heroEntry) {
   if (typeof sid === "number") {
     return ;
   }
-  var variant = sid[0];
-  if (variant >= 61643255) {
-    if (variant >= 345443720) {
-      if (variant !== 797131559 && variant >= 345443721) {
+  var variant$1 = sid[0];
+  if (variant$1 >= 61643255) {
+    if (variant$1 >= 345443720) {
+      if (variant$1 !== 797131559 && variant$1 >= 345443721) {
         return ;
       }
       
-    } else if (variant !== 290194801 && variant >= 61643256) {
+    } else if (variant$1 !== 290194801 && variant$1 >= 61643256) {
       return ;
     }
     
-  } else if (variant !== -920806756 && variant !== -841776939 && variant !== -384382742) {
+  } else if (variant$1 !== -920806756 && variant$1 !== -841776939 && variant$1 !== -384382742) {
     return ;
   }
   if (sid2 !== undefined) {
@@ -224,7 +410,7 @@ function getDefaultNameAddition(staticEntry, heroEntry) {
 function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
   switch (staticEntry.tag | 0) {
     case /* Advantage */0 :
-        var match = Ids$OptolithClient.AdvantageId.fromInt(staticEntry[0].id);
+        var match = Id$OptolithClient.advantageFromInt(staticEntry[0].id);
         var exit = 0;
         if (typeof match !== "number") {
           return getDefaultNameAddition(staticEntry, heroEntry);
@@ -270,42 +456,115 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
         switch (exit) {
           case 1 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(heroEntry.options), (function (sid) {
-                            var variant = sid[0];
-                            if (variant !== -384382742) {
-                              if (variant !== 290194801) {
-                                if (variant !== 345443720) {
-                                  return ;
+                            if (typeof sid !== "number") {
+                              var variant = sid[0];
+                              if (variant >= 61643256) {
+                                if (variant >= 345443721) {
+                                  if (variant === 797131559) {
+                                    return ;
+                                  }
+                                  if (variant === 931971705) {
+                                    return ;
+                                  }
+                                  
                                 } else {
-                                  return lookupMap(sid[1], staticData.spells, (function (x) {
+                                  if (variant === 290194801) {
+                                    return lookupMap(sid[1], staticData.skills, (function (x) {
+                                                  return x.name;
+                                                }));
+                                  }
+                                  if (variant >= 345443720) {
+                                    return lookupMap(sid[1], staticData.spells, (function (x) {
+                                                  return x.name;
+                                                }));
+                                  }
+                                  
+                                }
+                              } else if (variant >= -841776938) {
+                                if (variant === -384382742) {
+                                  return lookupMap(sid[1], staticData.liturgicalChants, (function (x) {
                                                 return x.name;
                                               }));
                                 }
+                                if (variant >= 61643255) {
+                                  return ;
+                                }
+                                
                               } else {
-                                return lookupMap(sid[1], staticData.skills, (function (x) {
-                                              return x.name;
-                                            }));
+                                if (variant === -920806756) {
+                                  return ;
+                                }
+                                if (variant >= -841776939) {
+                                  return ;
+                                }
+                                
                               }
-                            } else {
-                              return lookupMap(sid[1], staticData.liturgicalChants, (function (x) {
-                                            return x.name;
-                                          }));
                             }
+                            throw [
+                                  Caml_builtin_exceptions.match_failure,
+                                  /* tuple */[
+                                    "Activatable.re",
+                                    356,
+                                    12
+                                  ]
+                                ];
                           }));
           case 2 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(heroEntry.options), (function (sid) {
-                            if (sid[0] >= -841776939) {
-                              return ;
-                            } else {
-                              return lookupMap(sid[1], staticData.combatTechniques, (function (x) {
-                                            return x.name;
-                                          }));
+                            if (typeof sid !== "number") {
+                              var variant = sid[0];
+                              if (variant >= 61643256) {
+                                if (variant >= 345443721) {
+                                  if (variant === 797131559) {
+                                    return ;
+                                  }
+                                  if (variant === 931971705) {
+                                    return ;
+                                  }
+                                  
+                                } else {
+                                  if (variant === 290194801) {
+                                    return ;
+                                  }
+                                  if (variant >= 345443720) {
+                                    return ;
+                                  }
+                                  
+                                }
+                              } else if (variant >= -841776938) {
+                                if (variant === -384382742) {
+                                  return ;
+                                }
+                                if (variant >= 61643255) {
+                                  return ;
+                                }
+                                
+                              } else {
+                                if (variant === -920806756) {
+                                  return lookupMap(sid[1], staticData.combatTechniques, (function (x) {
+                                                return x.name;
+                                              }));
+                                }
+                                if (variant >= -841776939) {
+                                  return ;
+                                }
+                                
+                              }
                             }
+                            throw [
+                                  Caml_builtin_exceptions.match_failure,
+                                  /* tuple */[
+                                    "Activatable.re",
+                                    374,
+                                    12
+                                  ]
+                                ];
                           }));
           
         }
         break;
     case /* Disadvantage */1 :
-        var match$1 = Ids$OptolithClient.DisadvantageId.fromInt(staticEntry[0].id);
+        var match$1 = Id$OptolithClient.disadvantageFromInt(staticEntry[0].id);
         if (typeof match$1 === "number") {
           if (match$1 !== 12) {
             if (match$1 !== 18) {
@@ -331,7 +590,7 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
           return getDefaultNameAddition(staticEntry, heroEntry);
         }
     case /* SpecialAbility */2 :
-        var match$2 = Ids$OptolithClient.SpecialAbilityId.fromInt(staticEntry[0].id);
+        var match$2 = Id$OptolithClient.specialAbilityFromInt(staticEntry[0].id);
         var exit$1 = 0;
         if (typeof match$2 !== "number") {
           return getDefaultNameAddition(staticEntry, heroEntry);
@@ -342,19 +601,60 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
             if (match$2 >= 72) {
               return getDefaultNameAddition(staticEntry, heroEntry);
             } else {
-              return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.Monad.join(Ley_Option$OptolithClient.Monad.liftM2(getSelectOption, Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.lookup, Ids$OptolithClient.SpecialAbilityId.toInt(/* Language */6), staticData.specialAbilities), (function (specialAbility) {
+              return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.Monad.join(Ley_Option$OptolithClient.Monad.liftM2(getSelectOption, Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.lookup, Id$OptolithClient.specialAbilityToInt(/* Language */6), staticData.specialAbilities), (function (specialAbility) {
                                         return /* SpecialAbility */Block.__(2, [specialAbility]);
                                       })), Ley_Option$OptolithClient.listToOption(heroEntry.options))), (function (language) {
                             return Ley_Option$OptolithClient.Monad.$great$great$eq(getOption(1, heroEntry), (function (option2) {
-                                          var variant = option2[0];
                                           var tmp;
-                                          if (variant !== 61643255) {
-                                            tmp = variant >= 931971705 ? option2[1] : undefined;
+                                          var exit = 0;
+                                          if (typeof option2 === "number") {
+                                            exit = 1;
                                           } else {
-                                            var specializationId = option2[1];
-                                            tmp = Ley_Option$OptolithClient.Monad.$great$great$eq(language.specializations, (function (specializations) {
-                                                    return Ley_List$OptolithClient.Safe.atMay(specializations, specializationId - 1 | 0);
-                                                  }));
+                                            var variant = option2[0];
+                                            if (variant >= 61643256) {
+                                              if (variant >= 345443721) {
+                                                if (variant !== 797131559) {
+                                                  if (variant !== 931971705) {
+                                                    exit = 1;
+                                                  } else {
+                                                    tmp = option2[1];
+                                                  }
+                                                } else {
+                                                  tmp = undefined;
+                                                }
+                                              } else if (variant !== 290194801 && variant < 345443720) {
+                                                exit = 1;
+                                              } else {
+                                                tmp = undefined;
+                                              }
+                                            } else if (variant >= -841776938) {
+                                              if (variant !== -384382742) {
+                                                if (variant >= 61643255) {
+                                                  var specializationId = option2[1];
+                                                  tmp = Ley_Option$OptolithClient.Monad.$great$great$eq(language.specializations, (function (specializations) {
+                                                          return Ley_List$OptolithClient.Safe.atMay(specializations, specializationId - 1 | 0);
+                                                        }));
+                                                } else {
+                                                  exit = 1;
+                                                }
+                                              } else {
+                                                tmp = undefined;
+                                              }
+                                            } else if (variant !== -920806756 && variant < -841776939) {
+                                              exit = 1;
+                                            } else {
+                                              tmp = undefined;
+                                            }
+                                          }
+                                          if (exit === 1) {
+                                            throw [
+                                                  Caml_builtin_exceptions.match_failure,
+                                                  /* tuple */[
+                                                    "Activatable.re",
+                                                    566,
+                                                    16
+                                                  ]
+                                                ];
                                           }
                                           return Ley_Option$OptolithClient.Functor.$less$amp$great(tmp, (function (specialization) {
                                                         return language.name + (": " + specialization);
@@ -400,17 +700,58 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                               return getSkillFromOption(staticData, param);
                             })), (function (skill) {
                           return Ley_Option$OptolithClient.Monad.$great$great$eq(getOption(1, heroEntry), (function (option2) {
-                                        var variant = option2[0];
                                         var tmp;
-                                        if (variant !== 61643255) {
-                                          tmp = variant >= 931971705 ? option2[1] : undefined;
+                                        var exit = 0;
+                                        if (typeof option2 === "number") {
+                                          exit = 1;
                                         } else {
-                                          var id = option2[1];
-                                          tmp = Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.Foldable.find, (function (a) {
-                                                      return a.id === id;
-                                                    }), skill.applications), (function (a) {
-                                                  return a.name;
-                                                }));
+                                          var variant = option2[0];
+                                          if (variant >= 61643256) {
+                                            if (variant >= 345443721) {
+                                              if (variant !== 797131559) {
+                                                if (variant !== 931971705) {
+                                                  exit = 1;
+                                                } else {
+                                                  tmp = option2[1];
+                                                }
+                                              } else {
+                                                tmp = undefined;
+                                              }
+                                            } else if (variant !== 290194801 && variant < 345443720) {
+                                              exit = 1;
+                                            } else {
+                                              tmp = undefined;
+                                            }
+                                          } else if (variant >= -841776938) {
+                                            if (variant !== -384382742) {
+                                              if (variant >= 61643255) {
+                                                var id = option2[1];
+                                                tmp = Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.Foldable.find, (function (a) {
+                                                            return a.id === id;
+                                                          }), skill.applications), (function (a) {
+                                                        return a.name;
+                                                      }));
+                                              } else {
+                                                exit = 1;
+                                              }
+                                            } else {
+                                              tmp = undefined;
+                                            }
+                                          } else if (variant !== -920806756 && variant < -841776939) {
+                                            exit = 1;
+                                          } else {
+                                            tmp = undefined;
+                                          }
+                                        }
+                                        if (exit === 1) {
+                                          throw [
+                                                Caml_builtin_exceptions.match_failure,
+                                                /* tuple */[
+                                                  "Activatable.re",
+                                                  486,
+                                                  16
+                                                ]
+                                              ];
                                         }
                                         return Ley_Option$OptolithClient.Functor.$less$amp$great(tmp, (function (appName) {
                                                       return skill.name + (": " + appName);
@@ -438,13 +779,54 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
               break;
           case /* SpellEnhancement */25 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(heroEntry.options), (function (sid) {
-                            if (sid[0] !== -384382742) {
-                              return ;
-                            } else {
-                              return lookupMap(sid[1], staticData.liturgicalChants, (function (x) {
-                                            return x.name;
-                                          }));
+                            if (typeof sid !== "number") {
+                              var variant = sid[0];
+                              if (variant >= 61643256) {
+                                if (variant >= 345443721) {
+                                  if (variant === 797131559) {
+                                    return ;
+                                  }
+                                  if (variant === 931971705) {
+                                    return ;
+                                  }
+                                  
+                                } else {
+                                  if (variant === 290194801) {
+                                    return ;
+                                  }
+                                  if (variant >= 345443720) {
+                                    return ;
+                                  }
+                                  
+                                }
+                              } else if (variant >= -841776938) {
+                                if (variant === -384382742) {
+                                  return lookupMap(sid[1], staticData.liturgicalChants, (function (x) {
+                                                return x.name;
+                                              }));
+                                }
+                                if (variant >= 61643255) {
+                                  return ;
+                                }
+                                
+                              } else {
+                                if (variant === -920806756) {
+                                  return ;
+                                }
+                                if (variant >= -841776939) {
+                                  return ;
+                                }
+                                
+                              }
                             }
+                            throw [
+                                  Caml_builtin_exceptions.match_failure,
+                                  /* tuple */[
+                                    "Activatable.re",
+                                    464,
+                                    12
+                                  ]
+                                ];
                           }));
           case /* TraditionGuildMages */9 :
           case /* PredigtDerGemeinschaft */30 :
@@ -522,13 +904,54 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
         switch (exit$1) {
           case 1 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(heroEntry.options), (function (sid) {
-                            if (sid[0] !== 345443720) {
-                              return ;
-                            } else {
-                              return lookupMap(sid[1], staticData.spells, (function (x) {
-                                            return x.name;
-                                          }));
+                            if (typeof sid !== "number") {
+                              var variant = sid[0];
+                              if (variant >= 61643256) {
+                                if (variant >= 345443721) {
+                                  if (variant === 797131559) {
+                                    return ;
+                                  }
+                                  if (variant === 931971705) {
+                                    return ;
+                                  }
+                                  
+                                } else {
+                                  if (variant === 290194801) {
+                                    return ;
+                                  }
+                                  if (variant >= 345443720) {
+                                    return lookupMap(sid[1], staticData.spells, (function (x) {
+                                                  return x.name;
+                                                }));
+                                  }
+                                  
+                                }
+                              } else if (variant >= -841776938) {
+                                if (variant === -384382742) {
+                                  return ;
+                                }
+                                if (variant >= 61643255) {
+                                  return ;
+                                }
+                                
+                              } else {
+                                if (variant === -920806756) {
+                                  return ;
+                                }
+                                if (variant >= -841776939) {
+                                  return ;
+                                }
+                                
+                              }
                             }
+                            throw [
+                                  Caml_builtin_exceptions.match_failure,
+                                  /* tuple */[
+                                    "Activatable.re",
+                                    439,
+                                    12
+                                  ]
+                                ];
                           }));
           case 2 :
               return Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(heroEntry.options), (function (param) {
@@ -600,7 +1023,7 @@ function getEntrySpecificNameReplacements(addLevelToName, staticEntry, nameAddit
   };
   switch (staticEntry.tag | 0) {
     case /* Advantage */0 :
-        var match = Ids$OptolithClient.AdvantageId.fromInt(staticEntry[0].id);
+        var match = Id$OptolithClient.advantageFromInt(staticEntry[0].id);
         if (typeof match === "number") {
           if (match >= 13) {
             if (match !== 21) {
@@ -617,7 +1040,7 @@ function getEntrySpecificNameReplacements(addLevelToName, staticEntry, nameAddit
           return mapDefaultWithParens(undefined) + flatLevelName;
         }
     case /* Disadvantage */1 :
-        var match$1 = Ids$OptolithClient.DisadvantageId.fromInt(staticEntry[0].id);
+        var match$1 = Id$OptolithClient.disadvantageFromInt(staticEntry[0].id);
         if (typeof match$1 !== "number") {
           return mapDefaultWithParens(undefined) + flatLevelName;
         }
@@ -636,7 +1059,7 @@ function getEntrySpecificNameReplacements(addLevelToName, staticEntry, nameAddit
           return mapDefaultWithParens(undefined) + flatLevelName;
         }
     case /* SpecialAbility */2 :
-        var match$2 = Ids$OptolithClient.SpecialAbilityId.fromInt(staticEntry[0].id);
+        var match$2 = Id$OptolithClient.specialAbilityFromInt(staticEntry[0].id);
         if (typeof match$2 !== "number") {
           return mapDefaultWithParens(undefined) + flatLevelName;
         }
@@ -724,7 +1147,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
   var apValue$1 = Ley_Option$OptolithClient.fromOption(/* Flat */Block.__(0, [0]), apValue(staticEntry));
   switch (staticEntry.tag | 0) {
     case /* Advantage */0 :
-        var match = Ids$OptolithClient.AdvantageId.fromInt(staticEntry[0].id);
+        var match = Id$OptolithClient.advantageFromInt(staticEntry[0].id);
         var exit = 0;
         if (typeof match !== "number") {
           return getDefaultEntryCost(staticEntry, singleHeroEntry);
@@ -806,7 +1229,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
         }
         break;
     case /* Disadvantage */1 :
-        var match$1 = Ids$OptolithClient.DisadvantageId.fromInt(staticEntry[0].id);
+        var match$1 = Id$OptolithClient.disadvantageFromInt(staticEntry[0].id);
         if (typeof match$1 !== "number") {
           return getDefaultEntryCost(staticEntry, singleHeroEntry);
         }
@@ -927,7 +1350,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                                   }));
                     }));
     case /* SpecialAbility */2 :
-        var match$2 = Ids$OptolithClient.SpecialAbilityId.fromInt(staticEntry[0].id);
+        var match$2 = Id$OptolithClient.specialAbilityFromInt(staticEntry[0].id);
         var exit$1 = 0;
         if (typeof match$2 !== "number") {
           return getDefaultEntryCost(staticEntry, singleHeroEntry);
@@ -1167,6 +1590,161 @@ function getApValue(isEntryToAdd, automaticAdvantages, staticData, hero, staticE
   }
 }
 
+function getStyleDependenciesAcc(style) {
+  var match = Id$OptolithClient.specialAbilityGroupFromInt(style.gr);
+  if (typeof match === "number") {
+    if (match >= 14) {
+      if (match >= 26) {
+        if (match === 33 || match === 32) {
+          return /* tuple */[
+                  (function (hero) {
+                      return hero.skillStyleDependencies;
+                    }),
+                  (function (dependencies, hero) {
+                      var newrecord = Caml_obj.caml_obj_dup(hero);
+                      newrecord.skillStyleDependencies = dependencies;
+                      return newrecord;
+                    })
+                ];
+        } else {
+          return ;
+        }
+      } else if (match >= 24) {
+        return /* tuple */[
+                (function (hero) {
+                    return hero.blessedStyleDependencies;
+                  }),
+                (function (dependencies, hero) {
+                    var newrecord = Caml_obj.caml_obj_dup(hero);
+                    newrecord.blessedStyleDependencies = dependencies;
+                    return newrecord;
+                  })
+              ];
+      } else {
+        return ;
+      }
+    } else if (match >= 11) {
+      if (match >= 12) {
+        return /* tuple */[
+                (function (hero) {
+                    return hero.magicalStyleDependencies;
+                  }),
+                (function (dependencies, hero) {
+                    var newrecord = Caml_obj.caml_obj_dup(hero);
+                    newrecord.magicalStyleDependencies = dependencies;
+                    return newrecord;
+                  })
+              ];
+      } else {
+        return ;
+      }
+    } else if (match >= 8) {
+      return /* tuple */[
+              (function (hero) {
+                  return hero.combatStyleDependencies;
+                }),
+              (function (dependencies, hero) {
+                  var newrecord = Caml_obj.caml_obj_dup(hero);
+                  newrecord.combatStyleDependencies = dependencies;
+                  return newrecord;
+                })
+            ];
+    } else {
+      return ;
+    }
+  }
+  
+}
+
+function moveActiveInListToNew(newxs, x) {
+  var match = x.id;
+  var match$1 = x.active;
+  if (!match.tag) {
+    return /* tuple */[
+            newxs,
+            x
+          ];
+  }
+  if (match$1 === undefined) {
+    return /* tuple */[
+            newxs,
+            x
+          ];
+  }
+  var index = Ley_List$OptolithClient.findIndex((function (newx) {
+          var id = newx.id;
+          if (id.tag) {
+            return false;
+          } else {
+            return id[0] === match$1;
+          }
+        }), newxs);
+  if (index !== undefined) {
+    return /* tuple */[
+            Ley_List$OptolithClient.Index.modifyAt(index, (function (newx) {
+                    return {
+                            id: newx.id,
+                            active: match$1,
+                            origin: newx.origin
+                          };
+                  }), newxs),
+            {
+              id: x.id,
+              active: undefined,
+              origin: x.origin
+            }
+          ];
+  } else {
+    return /* tuple */[
+            newxs,
+            x
+          ];
+  }
+}
+
+function generateStyleDependencies(heroSpecialAbilities, styleSpecialAbility) {
+  return Ley_Option$OptolithClient.Functor.$less$amp$great(styleSpecialAbility.extended, (function (extended) {
+                var xs = Ley_List$OptolithClient.map((function (extendedId) {
+                        return {
+                                id: extendedId,
+                                active: undefined,
+                                origin: styleSpecialAbility.id
+                              };
+                      }), extended);
+                var match = Id$OptolithClient.specialAbilityFromInt(styleSpecialAbility.id);
+                if (typeof match !== "number") {
+                  return xs;
+                }
+                if (match !== 91) {
+                  return xs;
+                }
+                var param = Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, styleSpecialAbility.id, heroSpecialAbilities), (function (x) {
+                            return Ley_Option$OptolithClient.listToOption(x.active);
+                          })), (function (x) {
+                        return Ley_List$OptolithClient.Safe.atMay(x.options, 1);
+                      }));
+                if (param !== undefined && !(typeof param === "number" || param[0] !== -789492591)) {
+                  return /* :: */[
+                          {
+                            id: /* One */Block.__(0, [param[1]]),
+                            active: undefined,
+                            origin: styleSpecialAbility.id
+                          },
+                          xs
+                        ];
+                } else {
+                  return xs;
+                }
+              }));
+}
+
+function addStyleExtendedSpecialAbilityDependencies(styleSpecialAbility, hero) {
+  return Ley_Option$OptolithClient.fromOption(hero, Ley_Option$OptolithClient.Monad.liftM2((function (param, newxs) {
+                    var param$1 = Ley_List$OptolithClient.mapAccumL(moveActiveInListToNew, newxs, Curry._1(param[0], hero));
+                    return Curry._2(param[1], Pervasives.$at(param$1[0], param$1[1]), hero);
+                  }), getStyleDependenciesAcc(styleSpecialAbility), generateStyleDependencies(hero.specialAbilities, styleSpecialAbility)));
+}
+
 var Convert = {
   heroEntryToSingles: heroEntryToSingles,
   activatableOptionToSelectOptionId: activatableOptionToSelectOptionId
@@ -1188,6 +1766,10 @@ var AdventurePoints = {
   getApValue: getApValue
 };
 
+var ExtendedStyle = {
+  addStyleExtendedSpecialAbilityDependencies: addStyleExtendedSpecialAbilityDependencies
+};
+
 export {
   isActive ,
   isActiveM ,
@@ -1202,6 +1784,7 @@ export {
   getGenericId ,
   Names ,
   AdventurePoints ,
+  ExtendedStyle ,
   
 }
 /* Ley_IntMap-OptolithClient Not a pure module */

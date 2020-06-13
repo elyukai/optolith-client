@@ -57,6 +57,7 @@ module Activatable = {
     | `Cantrip(int)
     | `LiturgicalChant(int)
     | `Blessing(int)
+    | `SpecialAbility(int)
     | `CustomInput(string)
   ];
 
@@ -71,10 +72,10 @@ module Activatable = {
   [@genType]
   [@genType.as "ActivatableDependency"]
   type dependency = {
-    source: Ids.activatableId,
+    source: Id.activatable,
     target: oneOrMany(int),
     active: bool,
-    options: list(oneOrMany(Ids.selectOptionId)),
+    options: list(oneOrMany(Id.selectOption)),
     level: option(int),
   };
 
@@ -297,7 +298,7 @@ type hitZoneArmor = {
    * ID of the armor at zone *head*. Can be either a template ID or the ID of an
    * armor from `items`.
    */
-  head: option(Ids.hitZoneArmorZoneItemId),
+  head: option(Id.hitZoneArmorZoneItem),
   /**
    * The level of wear at zone *head*, if any. Ignores `wear` if custom armor is
    * used, even if `headWear` is not defined.
@@ -307,7 +308,7 @@ type hitZoneArmor = {
    * ID of the armor at zone *left arm*. Can be either a template ID or the ID
    * of an armor from `items`.
    */
-  leftArm: option(Ids.hitZoneArmorZoneItemId),
+  leftArm: option(Id.hitZoneArmorZoneItem),
   /**
    * The level of wear at zone *left arm*, if any. Ignores `wear` if custom
    * armor is used, even if `leftArmWear` is not defined.
@@ -317,7 +318,7 @@ type hitZoneArmor = {
    * ID of the armor at zone *right arm*. Can be either a template ID or the ID
    * of an item from `items`.
    */
-  rightArm: option(Ids.hitZoneArmorZoneItemId),
+  rightArm: option(Id.hitZoneArmorZoneItem),
   /**
    * The level of wear at zone *right arm*, if any. Ignores `wear` if custom
    * armor is used, even if `rightArmWear` is not defined.
@@ -327,7 +328,7 @@ type hitZoneArmor = {
    * ID of the armor at zone *torso*. Can be either a template ID or the ID of
    * an armor from `items`.
    */
-  torso: option(Ids.hitZoneArmorZoneItemId),
+  torso: option(Id.hitZoneArmorZoneItem),
   /**
    * The level of wear at zone *torso*, if any. Ignores `wear` if custom armor
    * is used, even if `torsoWear` is not defined.
@@ -337,7 +338,7 @@ type hitZoneArmor = {
    * ID of the armor at zone *left leg*. Can be either a template ID or the ID
    * of an armor from `items`.
    */
-  leftLeg: option(Ids.hitZoneArmorZoneItemId),
+  leftLeg: option(Id.hitZoneArmorZoneItem),
   /**
    * The level of wear at zone *left leg*, if any. Ignores `wear` if custom
    * armor is used, even if `leftLegWear` is not defined.
@@ -347,7 +348,7 @@ type hitZoneArmor = {
    * ID of the armor at zone *right leg*. Can be either a template ID or the ID
    * of an armor from `items`.
    */
-  rightLeg: option(Ids.hitZoneArmorZoneItemId),
+  rightLeg: option(Id.hitZoneArmorZoneItem),
   /**
    * The level of wear at zone *right leg*, if any. Ignores `wear` if custom
    * armor is used, even if `rightLegWear` is not defined.

@@ -4,7 +4,7 @@ import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
-import * as Ids$OptolithClient from "../Constants/Ids.bs.js";
+import * as Id$OptolithClient from "../Constants/Id.bs.js";
 import * as Ley_Int$OptolithClient from "../../Data/Ley_Int.bs.js";
 import * as Ley_List$OptolithClient from "../../Data/Ley_List.bs.js";
 import * as Yaml_Zip$OptolithClient from "../Utilities/Yaml_Zip.bs.js";
@@ -210,7 +210,7 @@ function variant(univ, l10n) {
                       return Ley_List$OptolithClient.Foldable.any((function (x) {
                                     if (Caml_obj.caml_equal(x.id, /* `SpecialAbility */[
                                             -789492591,
-                                            Ids$OptolithClient.SpecialAbilityId.traditionGuildMages
+                                            Id$OptolithClient.specialAbilityToInt(/* TraditionGuildMages */9)
                                           ])) {
                                       return x.active;
                                     } else {
@@ -361,7 +361,7 @@ function t(univ, l10n) {
                       return Ley_List$OptolithClient.Foldable.any((function (x) {
                                     if (Caml_obj.caml_equal(x.id, /* `SpecialAbility */[
                                             -789492591,
-                                            Ids$OptolithClient.SpecialAbilityId.traditionGuildMages
+                                            Id$OptolithClient.specialAbilityToInt(/* TraditionGuildMages */9)
                                           ])) {
                                       return x.active;
                                     } else {

@@ -157,15 +157,6 @@ function flattenPrerequisites(oldLevel, newLevel, prerequisites) {
   }
 }
 
-var Flatten = {
-  applicablePred: applicablePred,
-  filterApplicableLevels: filterApplicableLevels,
-  flattenPrerequisiteLevel: flattenPrerequisiteLevel,
-  getFirstLevelPrerequisites: getFirstLevelPrerequisites,
-  getFirstDisAdvLevelPrerequisites: getFirstDisAdvLevelPrerequisites,
-  flattenPrerequisites: flattenPrerequisites
-};
-
 function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEntry, heroEntry, singleEntry) {
   var sid = Activatable$OptolithClient.getOption1(singleEntry);
   var sid2 = Activatable$OptolithClient.getOption2(singleEntry);
@@ -438,37 +429,27 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
   }
 }
 
-function getSelectOptionPrerequisites(sid, staticEntry) {
-  var tmp;
-  switch (staticEntry.tag | 0) {
-    case /* Advantage */0 :
-    case /* Disadvantage */1 :
-        tmp = staticEntry[0].selectOptions;
-        break;
-    case /* SpecialAbility */2 :
-        tmp = staticEntry[0].selectOptions;
-        break;
-    
-  }
-  return Ley_Option$OptolithClient.option(/* [] */0, (function (option) {
-                return flattenPrerequisiteLevel(option.prerequisites, /* [] */0);
-              }), Curry._2(Static_SelectOption$OptolithClient.SelectOptionMap.lookup, sid, tmp));
-}
-
 function getDynamicPrerequisites(isEntryToAdd, staticData, staticEntry, heroEntry, singleEntry) {
   var sid = Activatable$OptolithClient.getOption1(singleEntry);
   var entrySpecifics = getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEntry, heroEntry, singleEntry);
   var selectOptionSpecifics = Ley_Option$OptolithClient.option(/* [] */0, (function (sid) {
-          return getSelectOptionPrerequisites(sid, staticEntry);
+          var tmp;
+          switch (staticEntry.tag | 0) {
+            case /* Advantage */0 :
+            case /* Disadvantage */1 :
+                tmp = staticEntry[0].selectOptions;
+                break;
+            case /* SpecialAbility */2 :
+                tmp = staticEntry[0].selectOptions;
+                break;
+            
+          }
+          return Ley_Option$OptolithClient.option(/* [] */0, (function (option) {
+                        return flattenPrerequisiteLevel(option.prerequisites, /* [] */0);
+                      }), Curry._2(Static_SelectOption$OptolithClient.SelectOptionMap.lookup, sid, tmp));
         }), Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable$OptolithClient.Convert.activatableOptionToSelectOptionId));
   return Pervasives.$at(selectOptionSpecifics, entrySpecifics);
 }
-
-var Dynamic = {
-  getEntrySpecificDynamicPrerequisites: getEntrySpecificDynamicPrerequisites,
-  getSelectOptionPrerequisites: getSelectOptionPrerequisites,
-  getDynamicPrerequisites: getDynamicPrerequisites
-};
 
 function getRaceCultureProfession(staticData, hero) {
   var match = hero.race;
@@ -488,76 +469,6 @@ function getRaceCultureProfession(staticData, hero) {
                   return Ley_Function$OptolithClient.flip(Ley_IntMap$OptolithClient.lookup, partial_arg$2, param);
                 }))
         ];
-}
-
-function isCommonSuggestedByRCPValid(staticData, hero, id) {
-  var match = getRaceCultureProfession(staticData, hero);
-  var profession = match[2];
-  var culture = match[1];
-  var race = match[0];
-  if (typeof id === "number") {
-    return false;
-  }
-  var variant = id[0];
-  if (variant !== -41058677) {
-    if (variant !== 255955901) {
-      return false;
-    }
-    var id$1 = id[1];
-    if (Ley_Option$OptolithClient.option(false, (function (race) {
-              return Ley_List$OptolithClient.elem(id$1, race.stronglyRecommendedDisadvantages) ? true : Ley_List$OptolithClient.elem(id$1, race.commonDisadvantages);
-            }), race) || Ley_Option$OptolithClient.option(false, (function (culture) {
-              return Ley_List$OptolithClient.elem(id$1, culture.commonDisadvantages);
-            }), culture)) {
-      return true;
-    } else {
-      return Ley_Option$OptolithClient.option(false, (function (profession) {
-                    return Ley_List$OptolithClient.elem(id$1, profession.suggestedDisadvantages);
-                  }), profession);
-    }
-  }
-  var id$2 = id[1];
-  if (Ley_Option$OptolithClient.option(false, (function (race) {
-            return Ley_List$OptolithClient.elem(id$2, race.automaticAdvantages) || Ley_List$OptolithClient.elem(id$2, race.stronglyRecommendedAdvantages) ? true : Ley_List$OptolithClient.elem(id$2, race.commonAdvantages);
-          }), race) || Ley_Option$OptolithClient.option(false, (function (culture) {
-            return Ley_List$OptolithClient.elem(id$2, culture.commonAdvantages);
-          }), culture)) {
-    return true;
-  } else {
-    return Ley_Option$OptolithClient.option(false, (function (profession) {
-                  return Ley_List$OptolithClient.elem(id$2, profession.suggestedAdvantages);
-                }), profession);
-  }
-}
-
-function isSexValid(current, prerequisite) {
-  return current.sex === prerequisite;
-}
-
-function isRaceValid(current, prerequisite) {
-  var match = current.race;
-  if (match === undefined) {
-    return false;
-  }
-  var requiredId = prerequisite.id;
-  if (requiredId.tag) {
-    return Ley_List$OptolithClient.elem(match[0], prerequisite.id[0]) === prerequisite.active;
-  } else {
-    return requiredId[0] === match[0] === prerequisite.active;
-  }
-}
-
-function isCultureValid(current, prerequisite) {
-  var match = current.culture;
-  if (match !== undefined) {
-    if (prerequisite.tag) {
-      return Ley_List$OptolithClient.elem(match, prerequisite[0]);
-    } else {
-      return prerequisite[0] === match;
-    }
-  } else {
-    return false;
-  }
 }
 
 function hasSamePactCategory(current, prerequisite) {
@@ -593,52 +504,11 @@ function hasNeededPactDomain(current, prerequisite) {
   }
 }
 
-function hasNeededPactLevel(current, prerequisite) {
-  var requiredLevel = prerequisite.level;
-  if (requiredLevel !== undefined && requiredLevel > current.level) {
-    if (requiredLevel <= 1) {
-      return current.level === 0;
-    } else {
-      return false;
-    }
-  } else {
-    return true;
-  }
-}
-
-function isPactValid(current, prerequisite) {
-  var pact = current.pact;
-  if (pact !== undefined && Pact$OptolithClient.isPactFromStateValid(pact) && hasSamePactCategory(pact, prerequisite) && hasNeededPactType(pact, prerequisite) && hasNeededPactDomain(pact, prerequisite)) {
-    return hasNeededPactLevel(pact, prerequisite);
-  } else {
-    return false;
-  }
-}
-
 function getPrimaryAttributeId(staticData, heroSpecialAbilities, scope) {
   if (scope) {
     return Traditions$OptolithClient.Blessed.getPrimaryAttributeId(staticData, heroSpecialAbilities);
   } else {
     return Traditions$OptolithClient.Magical.getPrimaryAttributeId(staticData, heroSpecialAbilities);
-  }
-}
-
-function isPrimaryAttributeValid(staticData, current, prerequisite) {
-  var partial_arg = current.attributes;
-  var attr = Ley_Option$OptolithClient.Monad.$great$great$eq(getPrimaryAttributeId(staticData, current.specialAbilities, prerequisite.scope), (function (param) {
-          return Ley_Function$OptolithClient.flip(Ley_IntMap$OptolithClient.lookup, partial_arg, param);
-        }));
-  return Ley_Option$OptolithClient.option(8, (function (attr) {
-                return attr.value;
-              }), attr) >= prerequisite.value;
-}
-
-function isSocialStatusValid(current, prerequisite) {
-  var socialStatus = current.personalData.socialStatus;
-  if (socialStatus !== undefined) {
-    return socialStatus >= prerequisite;
-  } else {
-    return false;
   }
 }
 
@@ -681,63 +551,6 @@ function hasIncreasableMinValue(current, param) {
                   }
                 }), Curry._2(Ley_IntMap$OptolithClient.lookup, id[1], current.liturgicalChants));
   }
-}
-
-var isIncreasableValid = hasIncreasableMinValue;
-
-function isIncreasableMultiEntryValid(current, param) {
-  var value = param.value;
-  var ids = param.id;
-  var tmp;
-  switch (ids.tag | 0) {
-    case /* Attributes */0 :
-        tmp = Ley_List$OptolithClient.map((function (id) {
-                return /* `Attribute */[
-                        482562044,
-                        id
-                      ];
-              }), ids[0]);
-        break;
-    case /* Skills */1 :
-        tmp = Ley_List$OptolithClient.map((function (id) {
-                return /* `Skill */[
-                        290194801,
-                        id
-                      ];
-              }), ids[0]);
-        break;
-    case /* CombatTechniques */2 :
-        tmp = Ley_List$OptolithClient.map((function (id) {
-                return /* `CombatTechnique */[
-                        -920806756,
-                        id
-                      ];
-              }), ids[0]);
-        break;
-    case /* Spells */3 :
-        tmp = Ley_List$OptolithClient.map((function (id) {
-                return /* `Spell */[
-                        345443720,
-                        id
-                      ];
-              }), ids[0]);
-        break;
-    case /* LiturgicalChants */4 :
-        tmp = Ley_List$OptolithClient.map((function (id) {
-                return /* `LiturgicalChant */[
-                        -384382742,
-                        id
-                      ];
-              }), ids[0]);
-        break;
-    
-  }
-  return Ley_List$OptolithClient.Foldable.any((function (id) {
-                return hasIncreasableMinValue(current, {
-                            id: id,
-                            value: value
-                          });
-              }), tmp);
 }
 
 function isSafeSidValid(single, index, sid) {
@@ -787,105 +600,233 @@ function isSingleActivatableValid(current, param) {
   }
 }
 
-var isActivatableValid = isSingleActivatableValid;
-
-function isActivatableMultiEntryValid(current, param) {
-  var level = param.level;
-  var sid2 = param.sid2;
-  var sid = param.sid;
-  var active = param.active;
-  var ids = param.id;
-  var tmp;
-  switch (ids.tag | 0) {
-    case /* Advantages */0 :
-        tmp = Ley_List$OptolithClient.map((function (id) {
-                return /* `Advantage */[
-                        -41058677,
-                        id
-                      ];
-              }), ids[0]);
-        break;
-    case /* Disadvantages */1 :
-        tmp = Ley_List$OptolithClient.map((function (id) {
-                return /* `Disadvantage */[
-                        255955901,
-                        id
-                      ];
-              }), ids[0]);
-        break;
-    case /* SpecialAbilities */2 :
-        tmp = Ley_List$OptolithClient.map((function (id) {
-                return /* `SpecialAbility */[
-                        -789492591,
-                        id
-                      ];
-              }), ids[0]);
-        break;
-    
-  }
-  return Ley_List$OptolithClient.Foldable.any((function (id) {
-                return isSingleActivatableValid(current, {
-                            id: id,
-                            active: active,
-                            sid: sid,
-                            sid2: sid2,
-                            level: level
-                          });
-              }), tmp);
-}
-
-function isActivatableMultiSelectValid(current, param) {
-  var level = param.level;
-  var sid2 = param.sid2;
-  var sids = param.sid;
-  var active = param.active;
-  var id = param.id;
-  var variant = id[0];
-  var heroEntry = variant !== -41058677 ? (
-      variant >= 255955901 ? Curry._2(Ley_IntMap$OptolithClient.lookup, id[1], current.disadvantages) : Curry._2(Ley_IntMap$OptolithClient.lookup, id[1], current.specialAbilities)
-    ) : Curry._2(Ley_IntMap$OptolithClient.lookup, id[1], current.advantages);
-  if (heroEntry !== undefined) {
-    return Ley_List$OptolithClient.Foldable.any((function (single) {
-                  if (Ley_List$OptolithClient.Foldable.any((function (param) {
-                            return isSafeSidValid(single, 0, param);
-                          }), sids) && isSidValid(single, 1, sid2)) {
-                    return isLevelValid(single, level);
-                  } else {
-                    return false;
-                  }
-                }), heroEntry.active) === active;
-  } else {
-    return !active;
-  }
-}
-
 function isPrerequisiteMet(staticData, hero, sourceId, prerequisite) {
   if (typeof prerequisite === "number") {
-    return isCommonSuggestedByRCPValid(staticData, hero, sourceId);
+    var match = getRaceCultureProfession(staticData, hero);
+    var profession = match[2];
+    var culture = match[1];
+    var race = match[0];
+    if (typeof sourceId === "number") {
+      return false;
+    }
+    var variant = sourceId[0];
+    if (variant !== -41058677) {
+      if (variant !== 255955901) {
+        return false;
+      }
+      var id = sourceId[1];
+      if (Ley_Option$OptolithClient.option(false, (function (race) {
+                return Ley_List$OptolithClient.elem(id, race.stronglyRecommendedDisadvantages) ? true : Ley_List$OptolithClient.elem(id, race.commonDisadvantages);
+              }), race) || Ley_Option$OptolithClient.option(false, (function (culture) {
+                return Ley_List$OptolithClient.elem(id, culture.commonDisadvantages);
+              }), culture)) {
+        return true;
+      } else {
+        return Ley_Option$OptolithClient.option(false, (function (profession) {
+                      return Ley_List$OptolithClient.elem(id, profession.suggestedDisadvantages);
+                    }), profession);
+      }
+    }
+    var id$1 = sourceId[1];
+    if (Ley_Option$OptolithClient.option(false, (function (race) {
+              return Ley_List$OptolithClient.elem(id$1, race.automaticAdvantages) || Ley_List$OptolithClient.elem(id$1, race.stronglyRecommendedAdvantages) ? true : Ley_List$OptolithClient.elem(id$1, race.commonAdvantages);
+            }), race) || Ley_Option$OptolithClient.option(false, (function (culture) {
+              return Ley_List$OptolithClient.elem(id$1, culture.commonAdvantages);
+            }), culture)) {
+      return true;
+    } else {
+      return Ley_Option$OptolithClient.option(false, (function (profession) {
+                    return Ley_List$OptolithClient.elem(id$1, profession.suggestedAdvantages);
+                  }), profession);
+    }
   }
   switch (prerequisite.tag | 0) {
     case /* Sex */0 :
         return hero.sex === prerequisite[0];
     case /* Race */1 :
-        return isRaceValid(hero, prerequisite[0]);
+        var prerequisite$1 = prerequisite[0];
+        var match$1 = hero.race;
+        if (match$1 === undefined) {
+          return false;
+        }
+        var requiredId = prerequisite$1.id;
+        if (requiredId.tag) {
+          return Ley_List$OptolithClient.elem(match$1[0], prerequisite$1.id[0]) === prerequisite$1.active;
+        } else {
+          return requiredId[0] === match$1[0] === prerequisite$1.active;
+        }
     case /* Culture */2 :
-        return isCultureValid(hero, prerequisite[0]);
+        var prerequisite$2 = prerequisite[0];
+        var match$2 = hero.culture;
+        if (match$2 !== undefined) {
+          if (prerequisite$2.tag) {
+            return Ley_List$OptolithClient.elem(match$2, prerequisite$2[0]);
+          } else {
+            return prerequisite$2[0] === match$2;
+          }
+        } else {
+          return false;
+        }
     case /* Pact */3 :
-        return isPactValid(hero, prerequisite[0]);
+        var prerequisite$3 = prerequisite[0];
+        var pact = hero.pact;
+        if (pact !== undefined && Pact$OptolithClient.isPactFromStateValid(pact) && hasSamePactCategory(pact, prerequisite$3) && hasNeededPactType(pact, prerequisite$3) && hasNeededPactDomain(pact, prerequisite$3)) {
+          var requiredLevel = prerequisite$3.level;
+          if (requiredLevel !== undefined && requiredLevel > pact.level) {
+            if (requiredLevel <= 1) {
+              return pact.level === 0;
+            } else {
+              return false;
+            }
+          } else {
+            return true;
+          }
+        } else {
+          return false;
+        }
     case /* Social */4 :
-        return isSocialStatusValid(hero, prerequisite[0]);
+        var prerequisite$4 = prerequisite[0];
+        var socialStatus = hero.personalData.socialStatus;
+        if (socialStatus !== undefined) {
+          return socialStatus >= prerequisite$4;
+        } else {
+          return false;
+        }
     case /* PrimaryAttribute */5 :
-        return isPrimaryAttributeValid(staticData, hero, prerequisite[0]);
+        var prerequisite$5 = prerequisite[0];
+        var partial_arg = hero.attributes;
+        var attr = Ley_Option$OptolithClient.Monad.$great$great$eq(getPrimaryAttributeId(staticData, hero.specialAbilities, prerequisite$5.scope), (function (param) {
+                return Ley_Function$OptolithClient.flip(Ley_IntMap$OptolithClient.lookup, partial_arg, param);
+              }));
+        return Ley_Option$OptolithClient.option(8, (function (attr) {
+                      return attr.value;
+                    }), attr) >= prerequisite$5.value;
     case /* Activatable */6 :
         return isSingleActivatableValid(hero, prerequisite[0]);
     case /* ActivatableMultiEntry */7 :
-        return isActivatableMultiEntryValid(hero, prerequisite[0]);
+        var param = prerequisite[0];
+        var level = param.level;
+        var sid2 = param.sid2;
+        var sid = param.sid;
+        var active = param.active;
+        var ids = param.id;
+        var tmp;
+        switch (ids.tag | 0) {
+          case /* Advantages */0 :
+              tmp = Ley_List$OptolithClient.map((function (id) {
+                      return /* `Advantage */[
+                              -41058677,
+                              id
+                            ];
+                    }), ids[0]);
+              break;
+          case /* Disadvantages */1 :
+              tmp = Ley_List$OptolithClient.map((function (id) {
+                      return /* `Disadvantage */[
+                              255955901,
+                              id
+                            ];
+                    }), ids[0]);
+              break;
+          case /* SpecialAbilities */2 :
+              tmp = Ley_List$OptolithClient.map((function (id) {
+                      return /* `SpecialAbility */[
+                              -789492591,
+                              id
+                            ];
+                    }), ids[0]);
+              break;
+          
+        }
+        return Ley_List$OptolithClient.Foldable.any((function (id) {
+                      return isSingleActivatableValid(hero, {
+                                  id: id,
+                                  active: active,
+                                  sid: sid,
+                                  sid2: sid2,
+                                  level: level
+                                });
+                    }), tmp);
     case /* ActivatableMultiSelect */8 :
-        return isActivatableMultiSelectValid(hero, prerequisite[0]);
+        var param$1 = prerequisite[0];
+        var level$1 = param$1.level;
+        var sid2$1 = param$1.sid2;
+        var sids = param$1.sid;
+        var active$1 = param$1.active;
+        var id$2 = param$1.id;
+        var variant$1 = id$2[0];
+        var heroEntry = variant$1 !== -41058677 ? (
+            variant$1 >= 255955901 ? Curry._2(Ley_IntMap$OptolithClient.lookup, id$2[1], hero.disadvantages) : Curry._2(Ley_IntMap$OptolithClient.lookup, id$2[1], hero.specialAbilities)
+          ) : Curry._2(Ley_IntMap$OptolithClient.lookup, id$2[1], hero.advantages);
+        if (heroEntry !== undefined) {
+          return Ley_List$OptolithClient.Foldable.any((function (single) {
+                        if (Ley_List$OptolithClient.Foldable.any((function (param) {
+                                  return isSafeSidValid(single, 0, param);
+                                }), sids) && isSidValid(single, 1, sid2$1)) {
+                          return isLevelValid(single, level$1);
+                        } else {
+                          return false;
+                        }
+                      }), heroEntry.active) === active$1;
+        } else {
+          return !active$1;
+        }
     case /* Increasable */9 :
         return hasIncreasableMinValue(hero, prerequisite[0]);
     case /* IncreasableMultiEntry */10 :
-        return isIncreasableMultiEntryValid(hero, prerequisite[0]);
+        var param$2 = prerequisite[0];
+        var value = param$2.value;
+        var ids$1 = param$2.id;
+        var tmp$1;
+        switch (ids$1.tag | 0) {
+          case /* Attributes */0 :
+              tmp$1 = Ley_List$OptolithClient.map((function (id) {
+                      return /* `Attribute */[
+                              482562044,
+                              id
+                            ];
+                    }), ids$1[0]);
+              break;
+          case /* Skills */1 :
+              tmp$1 = Ley_List$OptolithClient.map((function (id) {
+                      return /* `Skill */[
+                              290194801,
+                              id
+                            ];
+                    }), ids$1[0]);
+              break;
+          case /* CombatTechniques */2 :
+              tmp$1 = Ley_List$OptolithClient.map((function (id) {
+                      return /* `CombatTechnique */[
+                              -920806756,
+                              id
+                            ];
+                    }), ids$1[0]);
+              break;
+          case /* Spells */3 :
+              tmp$1 = Ley_List$OptolithClient.map((function (id) {
+                      return /* `Spell */[
+                              345443720,
+                              id
+                            ];
+                    }), ids$1[0]);
+              break;
+          case /* LiturgicalChants */4 :
+              tmp$1 = Ley_List$OptolithClient.map((function (id) {
+                      return /* `LiturgicalChant */[
+                              -384382742,
+                              id
+                            ];
+                    }), ids$1[0]);
+              break;
+          
+        }
+        return Ley_List$OptolithClient.Foldable.any((function (id) {
+                      return hasIncreasableMinValue(hero, {
+                                  id: id,
+                                  value: value
+                                });
+                    }), tmp$1);
     
   }
 }
@@ -896,30 +837,17 @@ function arePrerequisitesMet(staticData, hero, sourceId, prerequisites) {
               }), prerequisites);
 }
 
+var Flatten = {
+  getFirstLevelPrerequisites: getFirstLevelPrerequisites,
+  getFirstDisAdvLevelPrerequisites: getFirstDisAdvLevelPrerequisites,
+  flattenPrerequisites: flattenPrerequisites
+};
+
+var Dynamic = {
+  getDynamicPrerequisites: getDynamicPrerequisites
+};
+
 var Validation = {
-  getRaceCultureProfession: getRaceCultureProfession,
-  isCommonSuggestedByRCPValid: isCommonSuggestedByRCPValid,
-  isSexValid: isSexValid,
-  isRaceValid: isRaceValid,
-  isCultureValid: isCultureValid,
-  hasSamePactCategory: hasSamePactCategory,
-  hasNeededPactType: hasNeededPactType,
-  hasNeededPactDomain: hasNeededPactDomain,
-  hasNeededPactLevel: hasNeededPactLevel,
-  isPactValid: isPactValid,
-  getPrimaryAttributeId: getPrimaryAttributeId,
-  isPrimaryAttributeValid: isPrimaryAttributeValid,
-  isSocialStatusValid: isSocialStatusValid,
-  hasIncreasableMinValue: hasIncreasableMinValue,
-  isIncreasableValid: isIncreasableValid,
-  isIncreasableMultiEntryValid: isIncreasableMultiEntryValid,
-  isSafeSidValid: isSafeSidValid,
-  isSidValid: isSidValid,
-  isLevelValid: isLevelValid,
-  isSingleActivatableValid: isSingleActivatableValid,
-  isActivatableValid: isActivatableValid,
-  isActivatableMultiEntryValid: isActivatableMultiEntryValid,
-  isActivatableMultiSelectValid: isActivatableMultiSelectValid,
   isPrerequisiteMet: isPrerequisiteMet,
   arePrerequisitesMet: arePrerequisitesMet
 };

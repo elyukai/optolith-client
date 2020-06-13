@@ -92,6 +92,7 @@ type selectOption = [
   | `Cantrip(int)
   | `LiturgicalChant(int)
   | `Blessing(int)
+  | `SpecialAbility(int)
 ];
 
 [@genType]
@@ -876,6 +877,154 @@ let propertyToInt = id =>
   | Telekinesis => 10
   | Transformation => 11
   | Temporal => 12
+  | Other(x) => x
+  };
+
+type specialAbilityGroup =
+  | General
+  | Fate
+  | Combat
+  | Magical
+  | StaffEnchantments
+  | Witch
+  | Karma
+  | ProtectiveWardingCircles
+  | CombatStylesArmed
+  | CombatStylesUnarmed
+  | CombatExtended
+  | Commands
+  | MagicalStyles
+  | MagicalExtended
+  | Bannschwert
+  | Dolch
+  | Instrument
+  | Gewand
+  | Kugel
+  | Stecken
+  | Pruegel
+  | Ahnenzeichen
+  | Zeremonialgegenstaende
+  | Predigten
+  | BlessedStyles
+  | KarmaExtended
+  | Visionen
+  | MagicalTraditions
+  | BlessedTraditions
+  | Paktgeschenke
+  | Vampirismus
+  | Lykanthropie
+  | SkillStyles
+  | SkillExtended
+  | Magierkugel
+  | Hexenkessel
+  | Narrenkappe
+  | Schelmenspielzeug
+  | Alchimistenschale
+  | SexSchicksal
+  | Sex
+  | WaffenzauberAnimisten
+  | Sichelrituale
+  | Ringzauber
+  | Chronikzauber
+  | Other(int);
+
+let specialAbilityGroupFromInt = id =>
+  switch (id) {
+  | 1 => General
+  | 2 => Fate
+  | 3 => Combat
+  | 4 => Magical
+  | 5 => StaffEnchantments
+  | 6 => Witch
+  | 7 => Karma
+  | 8 => ProtectiveWardingCircles
+  | 9 => CombatStylesArmed
+  | 10 => CombatStylesUnarmed
+  | 11 => CombatExtended
+  | 12 => Commands
+  | 13 => MagicalStyles
+  | 14 => MagicalExtended
+  | 15 => Bannschwert
+  | 16 => Dolch
+  | 17 => Instrument
+  | 18 => Gewand
+  | 19 => Kugel
+  | 20 => Stecken
+  | 21 => Pruegel
+  | 22 => Ahnenzeichen
+  | 23 => Zeremonialgegenstaende
+  | 24 => Predigten
+  | 25 => BlessedStyles
+  | 26 => KarmaExtended
+  | 27 => Visionen
+  | 28 => MagicalTraditions
+  | 29 => BlessedTraditions
+  | 30 => Paktgeschenke
+  | 31 => Vampirismus
+  | 32 => Lykanthropie
+  | 33 => SkillStyles
+  | 34 => SkillExtended
+  | 35 => Magierkugel
+  | 36 => Hexenkessel
+  | 37 => Narrenkappe
+  | 38 => Schelmenspielzeug
+  | 39 => Alchimistenschale
+  | 40 => SexSchicksal
+  | 41 => Sex
+  | 42 => WaffenzauberAnimisten
+  | 43 => Sichelrituale
+  | 44 => Ringzauber
+  | 45 => Chronikzauber
+  | x => Other(x)
+  };
+
+let specialAbilityGroupToInt = id =>
+  switch (id) {
+  | General => 1
+  | Fate => 2
+  | Combat => 3
+  | Magical => 4
+  | StaffEnchantments => 5
+  | Witch => 6
+  | Karma => 7
+  | ProtectiveWardingCircles => 8
+  | CombatStylesArmed => 9
+  | CombatStylesUnarmed => 10
+  | CombatExtended => 11
+  | Commands => 12
+  | MagicalStyles => 13
+  | MagicalExtended => 14
+  | Bannschwert => 15
+  | Dolch => 16
+  | Instrument => 17
+  | Gewand => 18
+  | Kugel => 19
+  | Stecken => 20
+  | Pruegel => 21
+  | Ahnenzeichen => 22
+  | Zeremonialgegenstaende => 23
+  | Predigten => 24
+  | BlessedStyles => 25
+  | KarmaExtended => 26
+  | Visionen => 27
+  | MagicalTraditions => 28
+  | BlessedTraditions => 29
+  | Paktgeschenke => 30
+  | Vampirismus => 31
+  | Lykanthropie => 32
+  | SkillStyles => 33
+  | SkillExtended => 34
+  | Magierkugel => 35
+  | Hexenkessel => 36
+  | Narrenkappe => 37
+  | Schelmenspielzeug => 38
+  | Alchimistenschale => 39
+  | SexSchicksal => 40
+  | Sex => 41
+  | WaffenzauberAnimisten => 42
+  | Sichelrituale => 43
+  | Ringzauber => 44
+  | Chronikzauber => 45
   | Other(x) => x
   };
 

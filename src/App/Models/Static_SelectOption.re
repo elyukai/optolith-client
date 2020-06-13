@@ -11,7 +11,7 @@ type wikiEntry =
 [@genType]
 [@genType.as "SelectOption"]
 type t = {
-  id: Ids.selectOptionId,
+  id: Id.selectOption,
   name: string,
   cost: option(int),
   prerequisites: Static_Prerequisites.t,
@@ -32,9 +32,9 @@ type t = {
 };
 
 module Ord = {
-  type t = Ids.selectOptionId;
+  type t = Id.selectOption;
 
-  let%private outerToInt = (id: Ids.selectOptionId) =>
+  let%private outerToInt = (id: Id.selectOption) =>
     switch (id) {
     | `Generic(_) => 1
     | `Skill(_) => 2
@@ -43,17 +43,19 @@ module Ord = {
     | `Cantrip(_) => 5
     | `LiturgicalChant(_) => 6
     | `Blessing(_) => 7
+    | `SpecialAbility(_) => 8
     };
 
-  let%private innerToInt = (id: Ids.selectOptionId) =>
+  let%private innerToInt = (id: Id.selectOption) =>
     switch (id) {
-    | `Generic(x) => x
-    | `Skill(x) => x
-    | `CombatTechnique(x) => x
-    | `Spell(x) => x
-    | `Cantrip(x) => x
-    | `LiturgicalChant(x) => x
-    | `Blessing(x) => x
+    | `Generic(x)
+    | `Skill(x)
+    | `CombatTechnique(x)
+    | `Spell(x)
+    | `Cantrip(x)
+    | `LiturgicalChant(x)
+    | `Blessing(x)
+    | `SpecialAbility(x) => x
     };
 
   /**
@@ -72,7 +74,7 @@ module Ord = {
   };
 };
 
-let showId = (id: Ids.selectOptionId) =>
+let showId = (id: Id.selectOption) =>
   switch (id) {
   | `Generic(x) => "Generic(" ++ Ley.Int.show(x) ++ ")"
   | `Skill(x) => "Skill(" ++ Ley.Int.show(x) ++ ")"
@@ -81,6 +83,7 @@ let showId = (id: Ids.selectOptionId) =>
   | `Cantrip(x) => "Cantrip(" ++ Ley.Int.show(x) ++ ")"
   | `LiturgicalChant(x) => "LiturgicalChant(" ++ Ley.Int.show(x) ++ ")"
   | `Blessing(x) => "Blessing(" ++ Ley.Int.show(x) ++ ")"
+  | `SpecialAbility(x) => "SpecialAbility(" ++ Ley.Int.show(x) ++ ")"
   };
 
 module SelectOptionMap = Ley.Map.Make(Ord);
@@ -94,7 +97,7 @@ module Decode = {
   open JsonStrict;
 
   type tL10n = {
-    id: Ids.selectOptionId,
+    id: Id.selectOption,
     name: string,
     description: option(string),
     specializations: option(list(string)),
@@ -114,7 +117,7 @@ module Decode = {
   };
 
   type tUniv = {
-    id: Ids.selectOptionId,
+    id: Id.selectOption,
     cost: option(int),
     prerequisites: Static_Prerequisites.t,
     isSecret: option(bool),

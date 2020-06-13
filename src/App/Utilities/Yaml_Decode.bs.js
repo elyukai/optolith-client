@@ -2,7 +2,7 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
-import * as Ids$OptolithClient from "../Constants/Ids.bs.js";
+import * as Id$OptolithClient from "../Constants/Id.bs.js";
 import * as Ley_List$OptolithClient from "../../Data/Ley_List.bs.js";
 import * as Ley_IntMap$OptolithClient from "../../Data/Ley_IntMap.bs.js";
 import * as Static_Item$OptolithClient from "../Models/Static_Item.bs.js";
@@ -100,7 +100,7 @@ function liturgicalChantEnhancements(xs) {
                                         {
                                           id: /* `SpecialAbility */[
                                             -789492591,
-                                            Ids$OptolithClient.SpecialAbilityId.chantEnhancement
+                                            Id$OptolithClient.specialAbilityToInt(/* ChantEnhancement */46)
                                           ],
                                           active: true,
                                           sid: /* `Generic */[
@@ -155,7 +155,7 @@ function liturgicalChantEnhancements(xs) {
                                               {
                                                 id: /* `SpecialAbility */[
                                                   -789492591,
-                                                  Ids$OptolithClient.SpecialAbilityId.chantEnhancement
+                                                  Id$OptolithClient.specialAbilityToInt(/* ChantEnhancement */46)
                                                 ],
                                                 active: true,
                                                 sid: /* `Generic */[
@@ -170,7 +170,7 @@ function liturgicalChantEnhancements(xs) {
                                               {
                                                 id: /* `SpecialAbility */[
                                                   -789492591,
-                                                  Ids$OptolithClient.SpecialAbilityId.chantEnhancement
+                                                  Id$OptolithClient.specialAbilityToInt(/* ChantEnhancement */46)
                                                 ],
                                                 active: true,
                                                 sid: /* `Generic */[
@@ -262,7 +262,7 @@ function spellEnhancements(xs) {
                                         {
                                           id: /* `SpecialAbility */[
                                             -789492591,
-                                            Ids$OptolithClient.SpecialAbilityId.spellEnhancement
+                                            Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
                                           ],
                                           active: true,
                                           sid: /* `Generic */[
@@ -317,7 +317,7 @@ function spellEnhancements(xs) {
                                               {
                                                 id: /* `SpecialAbility */[
                                                   -789492591,
-                                                  Ids$OptolithClient.SpecialAbilityId.spellEnhancement
+                                                  Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
                                                 ],
                                                 active: true,
                                                 sid: /* `Generic */[
@@ -332,7 +332,7 @@ function spellEnhancements(xs) {
                                               {
                                                 id: /* `SpecialAbility */[
                                                   -789492591,
-                                                  Ids$OptolithClient.SpecialAbilityId.spellEnhancement
+                                                  Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
                                                 ],
                                                 active: true,
                                                 sid: /* `Generic */[

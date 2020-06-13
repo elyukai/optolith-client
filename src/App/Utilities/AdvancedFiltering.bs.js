@@ -23,10 +23,6 @@ function searchByMulti(searchAccessors, filterText, xs) {
   }
 }
 
-function searchStrings(filterText, xs) {
-  return Ley_List$OptolithClient.Foldable.elem(filterText, xs);
-}
-
 function sortByMulti(sortOptions, xs) {
   if (Ley_List$OptolithClient.Foldable.length(xs) < 2 || Ley_List$OptolithClient.Foldable.$$null(sortOptions)) {
     return xs;
@@ -72,7 +68,6 @@ function searchAndSortByMulti(searchAccessors, sortOptions, filterText, xs) {
 
 export {
   searchByMulti ,
-  searchStrings ,
   sortByMulti ,
   sortStrings ,
   searchAndSortByMulti ,

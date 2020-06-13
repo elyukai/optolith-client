@@ -137,7 +137,8 @@ export type selectOption =
   | { tag: "Spell"; value: number }
   | { tag: "Cantrip"; value: number }
   | { tag: "LiturgicalChant"; value: number }
-  | { tag: "Blessing"; value: number };
+  | { tag: "Blessing"; value: number }
+  | { tag: "SpecialAbility"; value: number };
 export type SelectOptionId = selectOption;
 
 // tslint:disable-next-line:interface-over-type-literal

@@ -58,8 +58,8 @@ type activatableIds =
 type activatableMultiEntry = {
   id: activatableIds,
   active: bool,
-  sid: option(Ids.selectOptionId),
-  sid2: option(Ids.selectOptionId),
+  sid: option(Id.selectOption),
+  sid2: option(Id.selectOption),
   level: option(int),
 };
 
@@ -68,8 +68,8 @@ type activatableMultiEntry = {
 type activatableMultiSelect = {
   id: Id.activatable,
   active: bool,
-  sid: list(Ids.selectOptionId),
-  sid2: option(Ids.selectOptionId),
+  sid: list(Id.selectOption),
+  sid2: option(Id.selectOption),
   level: option(int),
 };
 
@@ -303,7 +303,7 @@ module Decode = {
         }
     );
 
-  let scopedSelectOptionId = (json): Ids.selectOptionId =>
+  let scopedSelectOptionId = (json): Id.selectOption =>
     json
     |> field("scope", string)
     |> (
@@ -317,12 +317,14 @@ module Decode = {
         | "LiturgicalChant" =>
           json |> field("value", int) |> (x => `LiturgicalChant(x))
         | "Blessing" => json |> field("value", int) |> (x => `Blessing(x))
+        | "SpecialAbility" =>
+          json |> field("value", int) |> (x => `SpecialAbility(x))
         | _ =>
           raise(DecodeError("Unknown select option ID scope: " ++ scope))
         }
     );
 
-  let selectOptionId = (json): Ids.selectOptionId =>
+  let selectOptionId = (json): Id.selectOption =>
     json |> oneOf([map(x => `Generic(x), int), scopedSelectOptionId]);
 
   let activatable = (json): activatable => {

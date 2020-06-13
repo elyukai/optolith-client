@@ -409,7 +409,7 @@ module Decode = {
             false,
             Ley.List.Foldable.any((x: Static_Prerequisites.activatable) =>
               x.id
-              == `SpecialAbility(Ids.SpecialAbilityId.traditionGuildMages)
+              == `SpecialAbility(Id.specialAbilityToInt(TraditionGuildMages))
               && x.active
             ),
             univ.activatablePrerequisites,
@@ -646,7 +646,7 @@ module Decode = {
             false,
             Ley.List.Foldable.any((x: Static_Prerequisites.activatable) =>
               x.id
-              == `SpecialAbility(Ids.SpecialAbilityId.traditionGuildMages)
+              == `SpecialAbility(Id.specialAbilityToInt(TraditionGuildMages))
               && x.active
             ),
             univ.activatablePrerequisites,

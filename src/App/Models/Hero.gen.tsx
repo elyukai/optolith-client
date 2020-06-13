@@ -4,9 +4,9 @@
 
 import {activatableAndSkill as Id_activatableAndSkill} from '../../../src/App/Constants/Id.gen';
 
-import {activatableId as Ids_activatableId} from '../../../src/App/Constants/Ids.gen';
+import {activatable as Id_activatable} from '../../../src/App/Constants/Id.gen';
 
-import {hitZoneArmorZoneItemId as Ids_hitZoneArmorZoneItemId} from '../../../src/App/Constants/Ids.gen';
+import {hitZoneArmorZoneItem as Id_hitZoneArmorZoneItem} from '../../../src/App/Constants/Id.gen';
 
 import {list} from '../../../src/shims/ReasonPervasives.shim';
 
@@ -14,7 +14,7 @@ import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/
 
 import {phase as Id_phase} from '../../../src/App/Constants/Id.gen';
 
-import {selectOptionId as Ids_selectOptionId} from '../../../src/App/Constants/Ids.gen';
+import {selectOption as Id_selectOption} from '../../../src/App/Constants/Id.gen';
 
 import {t as Ley_IntMap_t} from '../../../src/Data/Ley_IntMap.gen';
 
@@ -72,6 +72,7 @@ export type Activatable_optionId =
   | { tag: "Cantrip"; value: number }
   | { tag: "LiturgicalChant"; value: number }
   | { tag: "Blessing"; value: number }
+  | { tag: "SpecialAbility"; value: number }
   | { tag: "CustomInput"; value: string };
 
 // tslint:disable-next-line:interface-over-type-literal
@@ -84,10 +85,10 @@ export type ActivatableSingle = Activatable_single;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Activatable_dependency = {
-  readonly source: Ids_activatableId; 
+  readonly source: Id_activatable; 
   readonly target: GenericHelpers_oneOrMany<number>; 
   readonly active: boolean; 
-  readonly options: list<GenericHelpers_oneOrMany<Ids_selectOptionId>>; 
+  readonly options: list<GenericHelpers_oneOrMany<Id_selectOption>>; 
   readonly level?: number
 };
 export type ActivatableDependency = Activatable_dependency;
@@ -256,17 +257,17 @@ export type Item = Item_t;
 export type hitZoneArmor = {
   readonly id: number; 
   readonly name: string; 
-  readonly head?: Ids_hitZoneArmorZoneItemId; 
+  readonly head?: Id_hitZoneArmorZoneItem; 
   readonly headWear?: number; 
-  readonly leftArm?: Ids_hitZoneArmorZoneItemId; 
+  readonly leftArm?: Id_hitZoneArmorZoneItem; 
   readonly leftArmWear?: number; 
-  readonly rightArm?: Ids_hitZoneArmorZoneItemId; 
+  readonly rightArm?: Id_hitZoneArmorZoneItem; 
   readonly rightArmWear?: number; 
-  readonly torso?: Ids_hitZoneArmorZoneItemId; 
+  readonly torso?: Id_hitZoneArmorZoneItem; 
   readonly torsoWear?: number; 
-  readonly leftLeg?: Ids_hitZoneArmorZoneItemId; 
+  readonly leftLeg?: Id_hitZoneArmorZoneItem; 
   readonly leftLegWear?: number; 
-  readonly rightLeg?: Ids_hitZoneArmorZoneItemId; 
+  readonly rightLeg?: Id_hitZoneArmorZoneItem; 
   readonly rightLegWear?: number
 };
 export type HitZoneArmor = hitZoneArmor;
