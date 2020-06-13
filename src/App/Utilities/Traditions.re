@@ -20,7 +20,15 @@ module Magical = {
            ? Ley.IntMap.lookup(trad.id, staticData.specialAbilities) : None
        );
 
-  let getEntries = (staticData, mp: Ley.IntMap.t(Hero.Activatable.t)) =>
+  type fullTradition = (
+    Static.SpecialAbility.t,
+    Hero.Activatable.t,
+    Static.MagicalTradition.t,
+  );
+
+  let getEntries =
+      (staticData, mp: Ley.IntMap.t(Hero.Activatable.t))
+      : list(fullTradition) =>
     mp
     |> elems
     |> mapOption(trad =>
@@ -78,7 +86,15 @@ module Blessed = {
       >>= (trad => Ley.IntMap.lookup(trad.id, staticData.specialAbilities))
     );
 
-  let getEntry = (staticData, mp: Ley.IntMap.t(Hero.Activatable.t)) =>
+  type fullTradition = (
+    Static.SpecialAbility.t,
+    Hero.Activatable.t,
+    Static.BlessedTradition.t,
+  );
+
+  let getEntry =
+      (staticData, mp: Ley.IntMap.t(Hero.Activatable.t))
+      : option(fullTradition) =>
     Ley.Option.Monad.(
       mp
       |> getHeroEntry(staticData)
@@ -88,7 +104,7 @@ module Blessed = {
             (staticEntry, traditionEntry) =>
               (staticEntry, trad, traditionEntry),
             Ley.IntMap.lookup(trad.id, staticData.specialAbilities),
-            Ley.IntMap.lookup(trad.id, staticData.magicalTraditions),
+            Ley.IntMap.lookup(trad.id, staticData.blessedTraditions),
           )
       )
     );

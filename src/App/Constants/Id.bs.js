@@ -584,6 +584,23 @@ function combatTechniqueGroupToInt(id) {
   }
 }
 
+function magicalTraditionFromInt(id) {
+  var switcher = id - 1 | 0;
+  if (switcher > 17 || switcher < 0) {
+    return /* Other */[id];
+  } else {
+    return switcher;
+  }
+}
+
+function magicalTraditionToInt(id) {
+  if (typeof id === "number") {
+    return id + 1 | 0;
+  } else {
+    return id[0];
+  }
+}
+
 function propertyFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 11 || switcher < 0) {
@@ -1330,6 +1347,8 @@ export {
   combatTechniqueToInt ,
   unsafeCombatTechniqueGroupFromInt ,
   combatTechniqueGroupToInt ,
+  magicalTraditionFromInt ,
+  magicalTraditionToInt ,
   propertyFromInt ,
   propertyToInt ,
   specialAbilityFromInt ,

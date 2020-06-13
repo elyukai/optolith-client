@@ -6,9 +6,12 @@ import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as Id$OptolithClient from "../Constants/Id.bs.js";
 import * as Hero$OptolithClient from "../Models/Hero.bs.js";
+import * as Ley_Bool$OptolithClient from "../../Data/Ley_Bool.bs.js";
 import * as Ley_List$OptolithClient from "../../Data/Ley_List.bs.js";
 import * as Ley_IntMap$OptolithClient from "../../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../../Data/Ley_Option.bs.js";
+import * as Traditions$OptolithClient from "./Traditions.bs.js";
+import * as Ley_Function$OptolithClient from "../../Data/Ley_Function.bs.js";
 
 function flattenSkillDependencies(getValueForTargetId, id, dependencies) {
   return Ley_Option$OptolithClient.mapOption((function (dep) {
@@ -181,17 +184,6 @@ function addSpecialAbilityDependency(dep, hero, id) {
   return newrecord;
 }
 
-var Single = {
-  addAttributeDependency: addAttributeDependency,
-  addSkillDependency: addSkillDependency,
-  addCombatTechniqueDependency: addCombatTechniqueDependency,
-  addSpellDependency: addSpellDependency,
-  addLiturgicalChantDependency: addLiturgicalChantDependency,
-  addAdvantageDependency: addAdvantageDependency,
-  addDisadvantageDependency: addDisadvantageDependency,
-  addSpecialAbilityDependency: addSpecialAbilityDependency
-};
-
 function addAttributeDependency$1(dep, hero) {
   var id = dep.target;
   if (id.tag) {
@@ -202,95 +194,6 @@ function addAttributeDependency$1(dep, hero) {
     return addAttributeDependency(dep, hero, id[0]);
   }
 }
-
-function addSkillDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return addSkillDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return addSkillDependency(dep, hero, id[0]);
-  }
-}
-
-function addCombatTechniqueDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return addCombatTechniqueDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return addCombatTechniqueDependency(dep, hero, id[0]);
-  }
-}
-
-function addSpellDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return addSpellDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return addSpellDependency(dep, hero, id[0]);
-  }
-}
-
-function addLiturgicalChantDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return addLiturgicalChantDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return addLiturgicalChantDependency(dep, hero, id[0]);
-  }
-}
-
-function addAdvantageDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return addAdvantageDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return addAdvantageDependency(dep, hero, id[0]);
-  }
-}
-
-function addDisadvantageDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return addDisadvantageDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return addDisadvantageDependency(dep, hero, id[0]);
-  }
-}
-
-function addSpecialAbilityDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return addSpecialAbilityDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return addSpecialAbilityDependency(dep, hero, id[0]);
-  }
-}
-
-var Add = {
-  Single: Single,
-  addAttributeDependency: addAttributeDependency$1,
-  addSkillDependency: addSkillDependency$1,
-  addCombatTechniqueDependency: addCombatTechniqueDependency$1,
-  addSpellDependency: addSpellDependency$1,
-  addLiturgicalChantDependency: addLiturgicalChantDependency$1,
-  addAdvantageDependency: addAdvantageDependency$1,
-  addDisadvantageDependency: addDisadvantageDependency$1,
-  addSpecialAbilityDependency: addSpecialAbilityDependency$1
-};
 
 function removeAttributeDependency(dep, hero, id) {
   var newrecord = Caml_obj.caml_obj_dup(hero);
@@ -436,17 +339,6 @@ function removeSpecialAbilityDependency(dep, hero, id) {
   return newrecord;
 }
 
-var Single$1 = {
-  removeAttributeDependency: removeAttributeDependency,
-  removeSkillDependency: removeSkillDependency,
-  removeCombatTechniqueDependency: removeCombatTechniqueDependency,
-  removeSpellDependency: removeSpellDependency,
-  removeLiturgicalChantDependency: removeLiturgicalChantDependency,
-  removeAdvantageDependency: removeAdvantageDependency,
-  removeDisadvantageDependency: removeDisadvantageDependency,
-  removeSpecialAbilityDependency: removeSpecialAbilityDependency
-};
-
 function removeAttributeDependency$1(dep, hero) {
   var id = dep.target;
   if (id.tag) {
@@ -458,94 +350,41 @@ function removeAttributeDependency$1(dep, hero) {
   }
 }
 
-function removeSkillDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return removeSkillDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return removeSkillDependency(dep, hero, id[0]);
+function isUnfamiliarSpell(transferredUnfamiliar, heroTraditions) {
+  var isIntuitiveMageActive = Ley_List$OptolithClient.Foldable.any((function (param) {
+          return param[0].id === Id$OptolithClient.specialAbilityToInt(/* TraditionIntuitiveMage */51);
+        }), heroTraditions);
+  if (isIntuitiveMageActive) {
+    return (function (param) {
+        return Ley_Function$OptolithClient.$$const(false, param);
+      });
   }
+  var activeTraditionNumericIds = Ley_List$OptolithClient.cons(Id$OptolithClient.magicalTraditionToInt(/* General */0), Ley_List$OptolithClient.Foldable.concatMap((function (param) {
+              var trad = param[2];
+              if (trad.id === Id$OptolithClient.specialAbilityToInt(/* TraditionGuildMages */9)) {
+                return Ley_List$OptolithClient.cons(Id$OptolithClient.magicalTraditionToInt(/* Qabalyamagier */10), Ley_Option$OptolithClient.optionToList(trad.numId));
+              } else {
+                return Ley_Option$OptolithClient.optionToList(trad.numId);
+              }
+            }), heroTraditions));
+  return (function (staticSpell) {
+      if (Ley_List$OptolithClient.Foldable.all((function (tu) {
+                var id = tu.id;
+                return typeof id === "number" ? (
+                          id === /* Spells */0 ? true : false
+                        ) : (
+                          id.tag ? false : id[0] !== staticSpell.id
+                        );
+              }), transferredUnfamiliar)) {
+        var param = staticSpell.traditions;
+        return Ley_Bool$OptolithClient.notP((function (param) {
+                      return Ley_List$OptolithClient.intersecting(activeTraditionNumericIds, param);
+                    }), param);
+      } else {
+        return false;
+      }
+    });
 }
-
-function removeCombatTechniqueDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return removeCombatTechniqueDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return removeCombatTechniqueDependency(dep, hero, id[0]);
-  }
-}
-
-function removeSpellDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return removeSpellDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return removeSpellDependency(dep, hero, id[0]);
-  }
-}
-
-function removeLiturgicalChantDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return removeLiturgicalChantDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return removeLiturgicalChantDependency(dep, hero, id[0]);
-  }
-}
-
-function removeAdvantageDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return removeAdvantageDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return removeAdvantageDependency(dep, hero, id[0]);
-  }
-}
-
-function removeDisadvantageDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return removeDisadvantageDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return removeDisadvantageDependency(dep, hero, id[0]);
-  }
-}
-
-function removeSpecialAbilityDependency$1(dep, hero) {
-  var id = dep.target;
-  if (id.tag) {
-    return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
-                  return removeSpecialAbilityDependency(dep, param, param$1);
-                }), hero, id[0]);
-  } else {
-    return removeSpecialAbilityDependency(dep, hero, id[0]);
-  }
-}
-
-var Remove = {
-  Single: Single$1,
-  removeAttributeDependency: removeAttributeDependency$1,
-  removeSkillDependency: removeSkillDependency$1,
-  removeCombatTechniqueDependency: removeCombatTechniqueDependency$1,
-  removeSpellDependency: removeSpellDependency$1,
-  removeLiturgicalChantDependency: removeLiturgicalChantDependency$1,
-  removeAdvantageDependency: removeAdvantageDependency$1,
-  removeDisadvantageDependency: removeDisadvantageDependency$1,
-  removeSpecialAbilityDependency: removeSpecialAbilityDependency$1
-};
 
 function getTransferredUnfamiliarById(single) {
   var match = Id$OptolithClient.specialAbilityFromInt(single.id);
@@ -612,16 +451,468 @@ function addTransferUnfamiliarDependencies(single, hero) {
   return newrecord;
 }
 
+function removeTradById(id, xs) {
+  return Ley_List$OptolithClient.filter((function (param) {
+                return param[0].id === id;
+              }), xs);
+}
+
+function removeUnfamiliarDepsById(id, xs) {
+  return Ley_List$OptolithClient.filter((function (x) {
+                return x.srcId === id;
+              }), xs);
+}
+
+function getUnfamiliarCountAfter(staticData, transferredUnfamiliar, heroTraditions, srcId, heroSpells) {
+  var transferredUnfamiliar$1 = removeUnfamiliarDepsById(srcId, transferredUnfamiliar);
+  var heroTraditions$1 = removeTradById(srcId, heroTraditions);
+  return Ley_List$OptolithClient.countBy((function (heroSpell) {
+                return Ley_Option$OptolithClient.option(false, isUnfamiliarSpell(transferredUnfamiliar$1, heroTraditions$1), Curry._2(Ley_IntMap$OptolithClient.lookup, heroSpell.id, staticData.spells));
+              }), heroSpells);
+}
+
+function isEntryAllowingTransferUnfamiliarRemovable(staticData, hero) {
+  var match = hero.phase;
+  if (match >= 2) {
+    return (function (param) {
+        return Ley_Function$OptolithClient.$$const(true, param);
+      });
+  }
+  var heroTraditions = Traditions$OptolithClient.Magical.getEntries(staticData, hero.specialAbilities);
+  var transferredUnfamiliar = hero.transferredUnfamiliarSpells;
+  var spells = Curry._1(Ley_IntMap$OptolithClient.elems, hero.spells);
+  return Ley_Option$OptolithClient.option((function (param) {
+                return Ley_Function$OptolithClient.$$const(false, param);
+              }), (function (el, srcId) {
+                return el.maxUnfamiliarSpells >= getUnfamiliarCountAfter(staticData, transferredUnfamiliar, heroTraditions, srcId, spells);
+              }), Curry._2(Ley_IntMap$OptolithClient.lookup, hero.experienceLevel, staticData.experienceLevels));
+}
+
+function filterUnfamiliar(pred, staticData, selectOptions) {
+  return Ley_List$OptolithClient.filter((function (x) {
+                var match = x.id;
+                return Ley_Option$OptolithClient.option(false, pred, typeof match === "number" || match[0] !== 345443720 ? undefined : Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.spells));
+              }), selectOptions);
+}
+
+function putActivatableDependency(mode, category, dependency, hero) {
+  if (mode) {
+    switch (category) {
+      case /* Advantages */0 :
+          var id = dependency.target;
+          if (id.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return removeAdvantageDependency(dependency, param, param$1);
+                        }), hero, id[0]);
+          } else {
+            return removeAdvantageDependency(dependency, hero, id[0]);
+          }
+      case /* Disadvantages */1 :
+          var id$1 = dependency.target;
+          if (id$1.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return removeDisadvantageDependency(dependency, param, param$1);
+                        }), hero, id$1[0]);
+          } else {
+            return removeDisadvantageDependency(dependency, hero, id$1[0]);
+          }
+      case /* SpecialAbilities */2 :
+          var id$2 = dependency.target;
+          if (id$2.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return removeSpecialAbilityDependency(dependency, param, param$1);
+                        }), hero, id$2[0]);
+          } else {
+            return removeSpecialAbilityDependency(dependency, hero, id$2[0]);
+          }
+      
+    }
+  } else {
+    switch (category) {
+      case /* Advantages */0 :
+          var id$3 = dependency.target;
+          if (id$3.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return addAdvantageDependency(dependency, param, param$1);
+                        }), hero, id$3[0]);
+          } else {
+            return addAdvantageDependency(dependency, hero, id$3[0]);
+          }
+      case /* Disadvantages */1 :
+          var id$4 = dependency.target;
+          if (id$4.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return addDisadvantageDependency(dependency, param, param$1);
+                        }), hero, id$4[0]);
+          } else {
+            return addDisadvantageDependency(dependency, hero, id$4[0]);
+          }
+      case /* SpecialAbilities */2 :
+          var id$5 = dependency.target;
+          if (id$5.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return addSpecialAbilityDependency(dependency, param, param$1);
+                        }), hero, id$5[0]);
+          } else {
+            return addSpecialAbilityDependency(dependency, hero, id$5[0]);
+          }
+      
+    }
+  }
+}
+
+function putIncreasableDependency(mode, category, dependency, hero) {
+  if (mode) {
+    switch (category) {
+      case /* Attributes */0 :
+          return removeAttributeDependency$1(dependency, hero);
+      case /* Skills */1 :
+          var id = dependency.target;
+          if (id.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return removeSkillDependency(dependency, param, param$1);
+                        }), hero, id[0]);
+          } else {
+            return removeSkillDependency(dependency, hero, id[0]);
+          }
+      case /* CombatTechniques */2 :
+          var id$1 = dependency.target;
+          if (id$1.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return removeCombatTechniqueDependency(dependency, param, param$1);
+                        }), hero, id$1[0]);
+          } else {
+            return removeCombatTechniqueDependency(dependency, hero, id$1[0]);
+          }
+      case /* Spells */3 :
+          var id$2 = dependency.target;
+          if (id$2.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return removeSpellDependency(dependency, param, param$1);
+                        }), hero, id$2[0]);
+          } else {
+            return removeSpellDependency(dependency, hero, id$2[0]);
+          }
+      case /* LiturgicalChants */4 :
+          var id$3 = dependency.target;
+          if (id$3.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return removeLiturgicalChantDependency(dependency, param, param$1);
+                        }), hero, id$3[0]);
+          } else {
+            return removeLiturgicalChantDependency(dependency, hero, id$3[0]);
+          }
+      
+    }
+  } else {
+    switch (category) {
+      case /* Attributes */0 :
+          return addAttributeDependency$1(dependency, hero);
+      case /* Skills */1 :
+          var id$4 = dependency.target;
+          if (id$4.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return addSkillDependency(dependency, param, param$1);
+                        }), hero, id$4[0]);
+          } else {
+            return addSkillDependency(dependency, hero, id$4[0]);
+          }
+      case /* CombatTechniques */2 :
+          var id$5 = dependency.target;
+          if (id$5.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return addCombatTechniqueDependency(dependency, param, param$1);
+                        }), hero, id$5[0]);
+          } else {
+            return addCombatTechniqueDependency(dependency, hero, id$5[0]);
+          }
+      case /* Spells */3 :
+          var id$6 = dependency.target;
+          if (id$6.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return addSpellDependency(dependency, param, param$1);
+                        }), hero, id$6[0]);
+          } else {
+            return addSpellDependency(dependency, hero, id$6[0]);
+          }
+      case /* LiturgicalChants */4 :
+          var id$7 = dependency.target;
+          if (id$7.tag) {
+            return Ley_List$OptolithClient.Foldable.foldl((function (param, param$1) {
+                          return addLiturgicalChantDependency(dependency, param, param$1);
+                        }), hero, id$7[0]);
+          } else {
+            return addLiturgicalChantDependency(dependency, hero, id$7[0]);
+          }
+      
+    }
+  }
+}
+
+function modifyDependencies(mode, staticData, prerequisites, sourceId, hero) {
+  return Ley_List$OptolithClient.Foldable.foldr((function (prerequisite) {
+                if (typeof prerequisite === "number") {
+                  return Ley_Function$OptolithClient.id;
+                }
+                switch (prerequisite.tag | 0) {
+                  case /* PrimaryAttribute */5 :
+                      var options = prerequisite[0];
+                      if (typeof sourceId === "number") {
+                        return Ley_Function$OptolithClient.id;
+                      }
+                      var variant = sourceId[0];
+                      if (variant >= -41058677) {
+                        if (variant !== 255955901 && variant !== 345443720 && variant >= -41058676) {
+                          return Ley_Function$OptolithClient.id;
+                        }
+                        
+                      } else if (variant !== -789492591 && variant !== -384382742) {
+                        return Ley_Function$OptolithClient.id;
+                      }
+                      return (function (param) {
+                          var match = options.scope;
+                          return Ley_Option$OptolithClient.option(param, (function (attrId) {
+                                        var dependency_target = /* One */Block.__(0, [attrId]);
+                                        var dependency_value = options.value;
+                                        var dependency = {
+                                          source: sourceId,
+                                          target: dependency_target,
+                                          value: dependency_value
+                                        };
+                                        if (mode) {
+                                          return removeAttributeDependency$1(dependency, param);
+                                        } else {
+                                          return addAttributeDependency$1(dependency, param);
+                                        }
+                                      }), match ? Traditions$OptolithClient.Blessed.getPrimaryAttributeId(staticData, param.specialAbilities) : Traditions$OptolithClient.Magical.getPrimaryAttributeId(staticData, param.specialAbilities));
+                        });
+                      break;
+                  case /* Activatable */6 :
+                      var options$1 = prerequisite[0];
+                      if (typeof sourceId === "number") {
+                        return Ley_Function$OptolithClient.id;
+                      }
+                      var variant$1 = sourceId[0];
+                      if (variant$1 !== -789492591 && variant$1 !== -41058677 && variant$1 !== 255955901) {
+                        return Ley_Function$OptolithClient.id;
+                      }
+                      return (function (param) {
+                          var match = options$1.id;
+                          var variant = match[0];
+                          var match$1 = options$1.id;
+                          var sid = options$1.sid;
+                          var tmp;
+                          if (sid !== undefined) {
+                            var sid2 = options$1.sid2;
+                            tmp = sid2 !== undefined ? /* :: */[
+                                /* One */Block.__(0, [sid]),
+                                /* :: */[
+                                  /* One */Block.__(0, [sid2]),
+                                  /* [] */0
+                                ]
+                              ] : /* :: */[
+                                /* One */Block.__(0, [sid]),
+                                /* [] */0
+                              ];
+                          } else {
+                            tmp = /* [] */0;
+                          }
+                          return putActivatableDependency(mode, variant !== -41058677 ? (
+                                        variant >= 255955901 ? /* Disadvantages */1 : /* SpecialAbilities */2
+                                      ) : /* Advantages */0, {
+                                      source: sourceId,
+                                      target: /* One */Block.__(0, [match$1[1]]),
+                                      active: options$1.active,
+                                      options: tmp,
+                                      level: options$1.level
+                                    }, param);
+                        });
+                      break;
+                  case /* ActivatableMultiEntry */7 :
+                      var options$2 = prerequisite[0];
+                      if (typeof sourceId === "number") {
+                        return Ley_Function$OptolithClient.id;
+                      }
+                      var variant$2 = sourceId[0];
+                      if (variant$2 !== -789492591 && variant$2 !== -41058677 && variant$2 !== 255955901) {
+                        return Ley_Function$OptolithClient.id;
+                      }
+                      return (function (param) {
+                          var match = options$2.id;
+                          var tmp;
+                          switch (match.tag | 0) {
+                            case /* Advantages */0 :
+                                tmp = /* Advantages */0;
+                                break;
+                            case /* Disadvantages */1 :
+                                tmp = /* Disadvantages */1;
+                                break;
+                            case /* SpecialAbilities */2 :
+                                tmp = /* SpecialAbilities */2;
+                                break;
+                            
+                          }
+                          var match$1 = options$2.id;
+                          var sid = options$2.sid;
+                          var tmp$1;
+                          if (sid !== undefined) {
+                            var sid2 = options$2.sid2;
+                            tmp$1 = sid2 !== undefined ? /* :: */[
+                                /* One */Block.__(0, [sid]),
+                                /* :: */[
+                                  /* One */Block.__(0, [sid2]),
+                                  /* [] */0
+                                ]
+                              ] : /* :: */[
+                                /* One */Block.__(0, [sid]),
+                                /* [] */0
+                              ];
+                          } else {
+                            tmp$1 = /* [] */0;
+                          }
+                          return putActivatableDependency(mode, tmp, {
+                                      source: sourceId,
+                                      target: /* Many */Block.__(1, [match$1[0]]),
+                                      active: options$2.active,
+                                      options: tmp$1,
+                                      level: options$2.level
+                                    }, param);
+                        });
+                      break;
+                  case /* ActivatableMultiSelect */8 :
+                      var options$3 = prerequisite[0];
+                      if (typeof sourceId === "number") {
+                        return Ley_Function$OptolithClient.id;
+                      }
+                      var variant$3 = sourceId[0];
+                      if (variant$3 !== -789492591 && variant$3 !== -41058677 && variant$3 !== 255955901) {
+                        return Ley_Function$OptolithClient.id;
+                      }
+                      return (function (param) {
+                          var match = options$3.id;
+                          var variant = match[0];
+                          var match$1 = options$3.id;
+                          var sid2 = options$3.sid2;
+                          return putActivatableDependency(mode, variant !== -41058677 ? (
+                                        variant >= 255955901 ? /* Disadvantages */1 : /* SpecialAbilities */2
+                                      ) : /* Advantages */0, {
+                                      source: sourceId,
+                                      target: /* One */Block.__(0, [match$1[1]]),
+                                      active: options$3.active,
+                                      options: sid2 !== undefined ? /* :: */[
+                                          /* Many */Block.__(1, [options$3.sid]),
+                                          /* :: */[
+                                            /* One */Block.__(0, [sid2]),
+                                            /* [] */0
+                                          ]
+                                        ] : /* :: */[
+                                          /* Many */Block.__(1, [options$3.sid]),
+                                          /* [] */0
+                                        ],
+                                      level: options$3.level
+                                    }, param);
+                        });
+                      break;
+                  case /* Increasable */9 :
+                      var options$4 = prerequisite[0];
+                      if (typeof sourceId === "number") {
+                        return Ley_Function$OptolithClient.id;
+                      }
+                      var variant$4 = sourceId[0];
+                      if (variant$4 >= -41058677) {
+                        if (variant$4 !== 255955901 && variant$4 !== 345443720 && variant$4 >= -41058676) {
+                          return Ley_Function$OptolithClient.id;
+                        }
+                        
+                      } else if (variant$4 !== -789492591 && variant$4 !== -384382742) {
+                        return Ley_Function$OptolithClient.id;
+                      }
+                      return (function (param) {
+                          var match = options$4.id;
+                          var variant = match[0];
+                          var match$1 = options$4.id;
+                          return putIncreasableDependency(mode, variant !== -384382742 ? (
+                                        variant >= 345443720 ? (
+                                            variant >= 482562044 ? /* Attributes */0 : /* Spells */3
+                                          ) : (
+                                            variant >= 290194801 ? /* Skills */1 : /* CombatTechniques */2
+                                          )
+                                      ) : /* LiturgicalChants */4, {
+                                      source: sourceId,
+                                      target: /* One */Block.__(0, [match$1[1]]),
+                                      value: options$4.value
+                                    }, param);
+                        });
+                      break;
+                  case /* IncreasableMultiEntry */10 :
+                      var options$5 = prerequisite[0];
+                      if (typeof sourceId === "number") {
+                        return Ley_Function$OptolithClient.id;
+                      }
+                      var variant$5 = sourceId[0];
+                      if (variant$5 >= -41058677) {
+                        if (variant$5 !== 255955901 && variant$5 !== 345443720 && variant$5 >= -41058676) {
+                          return Ley_Function$OptolithClient.id;
+                        }
+                        
+                      } else if (variant$5 !== -789492591 && variant$5 !== -384382742) {
+                        return Ley_Function$OptolithClient.id;
+                      }
+                      return (function (param) {
+                          var match = options$5.id;
+                          var tmp;
+                          switch (match.tag | 0) {
+                            case /* Attributes */0 :
+                                tmp = /* Attributes */0;
+                                break;
+                            case /* Skills */1 :
+                                tmp = /* Skills */1;
+                                break;
+                            case /* CombatTechniques */2 :
+                                tmp = /* CombatTechniques */2;
+                                break;
+                            case /* Spells */3 :
+                                tmp = /* Spells */3;
+                                break;
+                            case /* LiturgicalChants */4 :
+                                tmp = /* LiturgicalChants */4;
+                                break;
+                            
+                          }
+                          var match$1 = options$5.id;
+                          return putIncreasableDependency(mode, tmp, {
+                                      source: sourceId,
+                                      target: /* Many */Block.__(1, [match$1[0]]),
+                                      value: options$5.value
+                                    }, param);
+                        });
+                      break;
+                  default:
+                    return Ley_Function$OptolithClient.id;
+                }
+              }), hero, prerequisites);
+}
+
+function addDependencies(param, param$1, param$2, param$3) {
+  return modifyDependencies(/* Add */0, param, param$1, param$2, param$3);
+}
+
+function removeDependencies(param, param$1, param$2, param$3) {
+  return modifyDependencies(/* Remove */1, param, param$1, param$2, param$3);
+}
+
 var TransferredUnfamiliar = {
-  getTransferredUnfamiliarById: getTransferredUnfamiliarById,
-  addTransferUnfamiliarDependencies: addTransferUnfamiliarDependencies
+  isUnfamiliarSpell: isUnfamiliarSpell,
+  addTransferUnfamiliarDependencies: addTransferUnfamiliarDependencies,
+  isEntryAllowingTransferUnfamiliarRemovable: isEntryAllowingTransferUnfamiliarRemovable,
+  filterUnfamiliar: filterUnfamiliar
 };
 
 export {
   Flatten ,
-  Add ,
-  Remove ,
   TransferredUnfamiliar ,
+  addDependencies ,
+  removeDependencies ,
   
 }
 /* Ley_IntMap-OptolithClient Not a pure module */

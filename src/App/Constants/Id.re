@@ -71,6 +71,17 @@ type increasable = [
   | `LiturgicalChant(int)
 ];
 
+type prerequisiteSource = [
+  | `Advantage(int)
+  | `Disadvantage(int)
+  | `SpecialAbility(int)
+  | `Attribute(int)
+  | `Skill(int)
+  | `CombatTechnique(int)
+  | `Spell(int)
+  | `LiturgicalChant(int)
+];
+
 [@genType]
 [@genType.as "SelectOptionId"]
 type selectOption = [
@@ -742,6 +753,77 @@ let combatTechniqueGroupToInt = id =>
   switch (id) {
   | Melee => 1
   | Ranged => 2
+  };
+
+[@genType]
+[@genType.as "MagicalTradition"]
+type magicalTradition =
+  | General
+  | GuildMages
+  | Witches
+  | Elves
+  | Druids
+  | Scharlatane
+  | ArcaneBards
+  | ArcaneDancers
+  | IntuitiveZauberer
+  | Meistertalentierte
+  | Qabalyamagier
+  | Kristallomanten
+  | Geodes
+  | Alchimisten
+  | Rogues
+  | Animists
+  | Zibilija
+  | BrobimGeoden
+  | Other(int);
+
+[@genType]
+let magicalTraditionFromInt = id =>
+  switch (id) {
+  | 1 => General
+  | 2 => GuildMages
+  | 3 => Witches
+  | 4 => Elves
+  | 5 => Druids
+  | 6 => Scharlatane
+  | 7 => ArcaneBards
+  | 8 => ArcaneDancers
+  | 9 => IntuitiveZauberer
+  | 10 => Meistertalentierte
+  | 11 => Qabalyamagier
+  | 12 => Kristallomanten
+  | 13 => Geodes
+  | 14 => Alchimisten
+  | 15 => Rogues
+  | 16 => Animists
+  | 17 => Zibilija
+  | 18 => BrobimGeoden
+  | x => Other(x)
+  };
+
+[@genType]
+let magicalTraditionToInt = id =>
+  switch (id) {
+  | General => 1
+  | GuildMages => 2
+  | Witches => 3
+  | Elves => 4
+  | Druids => 5
+  | Scharlatane => 6
+  | ArcaneBards => 7
+  | ArcaneDancers => 8
+  | IntuitiveZauberer => 9
+  | Meistertalentierte => 10
+  | Qabalyamagier => 11
+  | Kristallomanten => 12
+  | Geodes => 13
+  | Alchimisten => 14
+  | Rogues => 15
+  | Animists => 16
+  | Zibilija => 17
+  | BrobimGeoden => 18
+  | Other(x) => x
   };
 
 [@genType]

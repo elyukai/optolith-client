@@ -6,8 +6,8 @@ function not_(prim) {
   return !prim;
 }
 
-function notP(f) {
-  return !f;
+function notP(f, x) {
+  return !Curry._1(f, x);
 }
 
 function bool(x, y, cond) {

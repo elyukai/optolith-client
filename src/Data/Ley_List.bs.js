@@ -1202,6 +1202,12 @@ function countBy(f, xs) {
               }), 0, xs);
 }
 
+function intersecting(xs, ys) {
+  return any((function (x) {
+                return elem(x, ys);
+              }), xs);
+}
+
 var lower = $$String.lowercase_ascii;
 
 function trimStart(str) {
@@ -1443,6 +1449,7 @@ export {
   maximumBy ,
   minimumBy ,
   countBy ,
+  intersecting ,
   listToArray ,
   arrayToList ,
   Extra ,

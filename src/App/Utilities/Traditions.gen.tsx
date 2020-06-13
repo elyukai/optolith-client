@@ -16,17 +16,27 @@ const TraditionsBS = require('./Traditions.bs');
 
 import {Activatable_t as Hero_Activatable_t} from '../../../src/App/Models/Hero.gen';
 
+import {BlessedTradition_t as Static_BlessedTradition_t} from '../../../src/App/Models/Static.gen';
+
+import {MagicalTradition_t as Static_MagicalTradition_t} from '../../../src/App/Models/Static.gen';
+
+import {SpecialAbility_t as Static_SpecialAbility_t} from '../../../src/App/Models/Static.gen';
+
 import {key as Ley_IntMap_key} from '../../../src/Data/Ley_IntMap.gen';
 
 import {list} from '../../../src/shims/ReasonPervasives.shim';
 
 import {t as Ley_IntMap_t} from '../../../src/Data/Ley_IntMap.gen';
 
-import {t as Static_MagicalTradition_t} from '../../../src/App/Models/Static_MagicalTradition.gen';
-
 import {t as Static_SpecialAbility_t} from '../../../src/App/Models/Static_SpecialAbility.gen';
 
 import {t as Static_t} from '../../../src/App/Models/Static.gen';
+
+// tslint:disable-next-line:interface-over-type-literal
+export type Magical_fullTradition = [Static_SpecialAbility_t, Hero_Activatable_t, Static_MagicalTradition_t];
+
+// tslint:disable-next-line:interface-over-type-literal
+export type Blessed_fullTradition = [Static_SpecialAbility_t, Hero_Activatable_t, Static_BlessedTradition_t];
 
 /** 
    * `getHeroEntries` returns active special ability entries for all active
@@ -50,7 +60,7 @@ export const Magical_getStaticEntries: (_1:Static_t, _2:Ley_IntMap_t<Hero_Activa
    * `getEntries` returns active and static special ability entries as well as
    * static tradition entries for active magical traditions.
     */
-export const Magical_getEntries: (_1:Static_t, _2:Ley_IntMap_t<Hero_Activatable_t>) => list<[Static_SpecialAbility_t, Hero_Activatable_t, Static_MagicalTradition_t]> = function (Arg1: any, Arg2: any) {
+export const Magical_getEntries: (_1:Static_t, _2:Ley_IntMap_t<Hero_Activatable_t>) => list<Magical_fullTradition> = function (Arg1: any, Arg2: any) {
   const result = Curry._2(TraditionsBS.Magical.getEntries, Arg1, Arg2);
   return result
 };
@@ -126,7 +136,7 @@ export const Blessed_getStaticEntry: (_1:Static_t, _2:Ley_IntMap_t<Hero_Activata
    * `getEntry` returns the active and static special ability entry as well as
    * the static tradition entry for the active blessed traditions.
     */
-export const Blessed_getEntry: (_1:Static_t, _2:Ley_IntMap_t<Hero_Activatable_t>) => (null | undefined | [Static_SpecialAbility_t, Hero_Activatable_t, Static_MagicalTradition_t]) = function (Arg1: any, Arg2: any) {
+export const Blessed_getEntry: (_1:Static_t, _2:Ley_IntMap_t<Hero_Activatable_t>) => (null | undefined | Blessed_fullTradition) = function (Arg1: any, Arg2: any) {
   const result = Curry._2(TraditionsBS.Blessed.getEntry, Arg1, Arg2);
   return (result == null ? result : [{id:result[0].id, name:result[0].name, nameInWiki:result[0].nameInWiki, levels:result[0].levels, max:result[0].max, rules:result[0].rules, effect:result[0].effect, selectOptions:result[0].selectOptions, input:result[0].input, penalty:result[0].penalty, combatTechniques:(result[0].combatTechniques == null ? result[0].combatTechniques : typeof(result[0].combatTechniques) === 'object'
     ? {tag:"List", value:result[0].combatTechniques[0]}

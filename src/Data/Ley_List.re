@@ -1149,6 +1149,11 @@ let countBy = (f, xs) =>
     xs,
   );
 
+/**
+ * Returns if the passed lists have at least one value in common.
+ */
+let intersecting = (xs, ys) => Foldable.any(x => Foldable.elem(x, ys), xs);
+
 // Lists and arrays
 
 [@genType]

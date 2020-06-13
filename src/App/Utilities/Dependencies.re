@@ -573,7 +573,50 @@ module Remove = {
 };
 
 module TransferredUnfamiliar = {
+  open Ley.Function;
   open Hero.TransferUnfamiliar;
+  open Traditions.Magical;
+
+  let isUnfamiliarSpell = (transferredUnfamiliar, heroTraditions) => {
+    let isIntuitiveMageActive =
+      Ley.List.Foldable.any(
+        ((staticSpecialAbility, _, _): fullTradition) =>
+          staticSpecialAbility.id
+          === Id.specialAbilityToInt(TraditionIntuitiveMage),
+        heroTraditions,
+      );
+
+    if (isIntuitiveMageActive) {
+      const(false);
+    } else {
+      let activeTraditionNumericIds =
+        heroTraditions
+        |> Ley.List.Foldable.concatMap(((_, _, trad): fullTradition) =>
+             trad.id === Id.specialAbilityToInt(TraditionGuildMages)
+               ? trad.numId
+                 |> Ley.Option.optionToList
+                 |> Ley.List.cons(Id.magicalTraditionToInt(Qabalyamagier))
+               : trad.numId |> Ley.Option.optionToList
+           )
+        |> Ley.List.cons(Id.magicalTraditionToInt(General));
+
+      let isNoTraditionActive =
+        Ley.Bool.notP(Ley.List.intersecting(activeTraditionNumericIds));
+
+      (staticSpell: Static.Spell.t) =>
+        Ley.List.Foldable.all(
+          tu =>
+            switch (tu.id) {
+            | Spell(id) => id !== staticSpell.id
+            | Spells => true
+            | LiturgicalChant(_)
+            | LiturgicalChants => false
+            },
+          transferredUnfamiliar,
+        )
+        && isNoTraditionActive(staticSpell.traditions);
+    };
+  };
 
   let getTransferredUnfamiliarById = (single: Activatable.singleWithId) =>
     switch (Id.specialAbilityFromInt(single.id)) {
@@ -652,269 +695,414 @@ module TransferredUnfamiliar = {
   //                         (hero))
   //                 (mnew_spells)
   //   }
-  //
-  // const removeTradById = (id: string) => filter (pipe (ADA.id, equals (id)))
-  //
-  // /**
-  //  * Remove all unfamiliar deps by the specified entry.
-  //  */
-  // const removeUnfamiliarDepsById = (id: string) => filter (pipe (TUA.srcId, equals (id)))
-  //
-  // const getUnfamiliarCount: (wiki: StaticDataRecord) =>
-  //                           (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
-  //                           (trad_hero_entries: List<Record<ActivatableDependent>>) =>
-  //                           (spells: List<Record<ActivatableSkillDependent>>) => number =
-  //   wiki =>
-  //   transferred_unfamiliar =>
-  //   trad_hero_entries =>
-  //     countWith ((x: Record<ActivatableSkillDependent>) =>
-  //                 pipe_ (
-  //                   x,
-  //                   ASDA.id,
-  //                   lookupF (SDA.spells (wiki)),
-  //                   maybe (false)
-  //                         (isUnfamiliarSpell (transferred_unfamiliar)
-  //                                           (trad_hero_entries))
-  //                 ))
-  //
-  // const getUnfamiliarCountAfter: (wiki: StaticDataRecord) =>
-  //                               (transferred_unfamiliar: List<Record<TransferUnfamiliar>>) =>
-  //                               (trad_hero_entries: List<Record<ActivatableDependent>>) =>
-  //                               (src_id: string) =>
-  //                               (spells: List<Record<ActivatableSkillDependent>>) => number =
-  //   wiki =>
-  //   transferred_unfamiliar =>
-  //   trad_hero_entries =>
-  //   src_id =>
-  //     getUnfamiliarCount (wiki)
-  //                       (removeUnfamiliarDepsById (src_id) (transferred_unfamiliar))
-  //                       (removeTradById (src_id) (trad_hero_entries))
-  //
-  // /**
-  //  * Check if an entry that allows transferring unfamiliar entries into a familiar
-  //  * tradition can be removed, because it might happen, that this is not allowed,
-  //  * because otherwise you'd have more unfamiliar spells than allowed by the
-  //  * selected experience level during creation phase.
-  //  */
-  // export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: StaticDataRecord) =>
-  //                                                         (hero: HeroModelRecord) =>
-  //                                                         (src_id: string) => boolean =
-  //   wiki => hero => {
-  //     if (HA.phase (hero) >= Phase.inGame) {
-  //       return cnst (true)
-  //     }
-  //
-  //     const trad_hero_entries = getMagicalTraditionsHeroEntries (HA.specialAbilities (hero))
-  //     const transferred_unfamiliar = HA.transferredUnfamiliarSpells (hero)
-  //     const spells = elems (HA.spells (hero))
-  //
-  //     return maybe (cnst (false) as (src_id: string) => boolean)
-  //                 (pipe (
-  //                   ELA.maxUnfamiliarSpells,
-  //                   max_unfamiliar => src_id =>
-  //                     max_unfamiliar >= getUnfamiliarCountAfter (wiki)
-  //                                                               (transferred_unfamiliar)
-  //                                                               (trad_hero_entries)
-  //                                                               (src_id)
-  //                                                               (spells)
-  //                 ))
-  //                 (lookup (HA.experienceLevel (hero))
-  //                         (SDA.experienceLevels (wiki)))
-  //   }
-  //
-  // /**
-  //  * From a list of spell select options, only return the **unfamiliar** ones.
-  //  */
-  // export const filterUnfamiliar =
-  //   (pred: (x: Record<Spell>) => boolean) =>
-  //   (static_data: StaticDataRecord) =>
-  //     filter ((x: Record<SelectOption>) =>
-  //               pipe_ (
-  //                 x,
-  //                 SOA.id,
-  //                 isStringM,
-  //                 bindF (lookupF (SDA.spells (static_data))),
-  //                 maybe (false) (pred)
-  //               ))
+
+  let removeTradById = (id, xs) =>
+    Ley.List.filter(((x, _, _): fullTradition) => x.id === id, xs);
+
+  /**
+   * Remove all unfamiliar deps by the specified entry.
+   */
+  let removeUnfamiliarDepsById = (id, xs) =>
+    Ley.List.filter((x: Hero.TransferUnfamiliar.t) => x.srcId === id, xs);
+
+  let getUnfamiliarCount =
+      (
+        staticData: Static.t,
+        transferredUnfamiliar,
+        heroTraditions,
+        heroSpells,
+      ) =>
+    Ley.List.countBy(
+      (heroSpell: Hero.ActivatableSkill.t) =>
+        Ley.IntMap.lookup(heroSpell.id, staticData.spells)
+        |> Ley.Option.option(
+             false,
+             isUnfamiliarSpell(transferredUnfamiliar, heroTraditions),
+           ),
+      heroSpells,
+    );
+
+  let getUnfamiliarCountAfter =
+      (
+        staticData: Static.t,
+        transferredUnfamiliar,
+        heroTraditions,
+        srcId,
+        heroSpells,
+      ) =>
+    getUnfamiliarCount(
+      staticData,
+      removeUnfamiliarDepsById(srcId, transferredUnfamiliar),
+      removeTradById(srcId, heroTraditions),
+      heroSpells,
+    );
+
+  /**
+   * Check if an entry that allows transferring unfamiliar entries into a familiar
+   * tradition can be removed, because it might happen, that this is not allowed,
+   * because otherwise you'd have more unfamiliar spells than allowed by the
+   * selected experience level during creation phase.
+   */
+  let isEntryAllowingTransferUnfamiliarRemovable =
+      (staticData: Static.t, hero: Hero.t) =>
+    switch (hero.phase) {
+    | Advancement => const(true)
+    | Outline
+    | Definition =>
+      open Static.ExperienceLevel;
+
+      let heroTraditions =
+        Traditions.Magical.getEntries(staticData, hero.specialAbilities);
+      let transferredUnfamiliar = hero.transferredUnfamiliarSpells;
+      let spells = Ley.IntMap.elems(hero.spells);
+
+      Ley.Option.option(
+        const(false),
+        (el, srcId) =>
+          el.maxUnfamiliarSpells
+          >= getUnfamiliarCountAfter(
+               staticData,
+               transferredUnfamiliar,
+               heroTraditions,
+               srcId,
+               spells,
+             ),
+        Ley.IntMap.lookup(hero.experienceLevel, staticData.experienceLevels),
+      );
+    };
+
+  /**
+   * From a list of spell select options, only return the **unfamiliar** ones.
+   */
+  let filterUnfamiliar = (pred, staticData: Static.t, selectOptions) =>
+    Ley.List.filter(
+      (x: Static.SelectOption.t) =>
+        (
+          switch (x.id) {
+          | `Spell(id) => Ley.IntMap.lookup(id, staticData.spells)
+          | _ => None
+          }
+        )
+        |> Ley.Option.option(false, pred),
+      selectOptions,
+    );
 };
 
-// type ModifyAttributeDependency =
-//   (d: SkillDependency) => (id: string) => (state: HeroModelRecord) => HeroModelRecord
-//
-// type ModifySkillDependency =
-//   (d: SkillDependency) => (id: string) => (state: HeroModelRecord) => HeroModelRecord
-//
-// type ModifyActivatableSkillDependency =
-//   (d: ExtendedSkillDependency) => (id: string) => (state: HeroModelRecord) => HeroModelRecord
-//
-// type ModifyActivatableDependency =
-//   (d: ActivatableDependency) => (id: string) => (state: HeroModelRecord) => HeroModelRecord
-//
-// const putActivatableDependency =
-//   (f: ModifyActivatableDependency) =>
-//   (sourceId: string) =>
-//   (req: Record<RequireActivatable>): ident<HeroModelRecord> => {
-//     const id = RAA.id (req)
-//     const sid = RAA.sid (req)
-//     const sid2 = RAA.sid2 (req)
-//     const level = RAA.tier (req)
-//
-//     if (isList (id)) {
-//       if (isNothing (sid) && isNothing (sid2) && isNothing (level)) {
-//         return flip (foldr (f (DependencyObject ({
-//                                                   origin: Just (sourceId),
-//                                                   active: Just (RAA.active (req)),
-//                                                 }))))
-//                     (id)
-//       }
-//
-//       return flip (foldr (f (DependencyObject ({
-//                                                 origin: Just (sourceId),
-//                                                 active:
-//                                                   isList (sid)
-//                                                   ? Just (RAA.active (req))
-//                                                   : Nothing,
-//                                                 sid,
-//                                                 sid2,
-//                                                 tier: level,
-//                                               }))))
-//                   (id)
-//     }
-//
-//     // current_id is no list:
-//
-//     if (isNothing (sid) && isNothing (sid2) && isNothing (level)) {
-//       return f (RAA.active (req)) (id)
-//     }
-//
-//     return f (DependencyObject ({
-//                                  active:
-//                                    isList (sid)
-//                                    ? Just (RAA.active (req))
-//                                    : Nothing,
-//                                  sid,
-//                                  sid2,
-//                                  tier: level,
-//                                }))
-//              (id)
-//   }
-//
-// const putPrimaryAttributeDependency =
-//   (f: ModifyAttributeDependency) =>
-//   (req: Record<RequirePrimaryAttribute>) =>
-//   (state: HeroModelRecord): HeroModelRecord =>
-//     fromMaybe (state)
-//               (fmap ((x: string) => f (RPAA.value (req)) (x) (state))
-//                     (getPrimaryAttributeId (HA.specialAbilities (state))
-//                                            (RPAA.type (req))))
-//
-// const getMatchingIncreasableModifier =
-//   (f: ModifyAttributeDependency) =>
-//   (g: ModifySkillDependency) =>
-//   (h: ModifyActivatableSkillDependency) =>
-//   (id: string): ModifySkillDependency => {
-//     const isOfCategory = elemF (getCategoryById (id))
-//
-//     if (isOfCategory (Category.ATTRIBUTES)) {
-//       return f
-//     }
-//
-//     if (isOfCategory (Category.LITURGICAL_CHANTS) || isOfCategory (Category.SPELLS)) {
-//       return h
-//     }
-//
-//     return g
-//   }
-//
-// const putIncreasableDependency =
-//   (f: ModifyAttributeDependency) =>
-//   (g: ModifySkillDependency) =>
-//   (h: ModifyActivatableSkillDependency) =>
-//   (sourceId: string) =>
-//   (req: Record<RequireIncreasable>) =>
-//   (state: HeroModelRecord): HeroModelRecord => {
-//     const { id, value } = RequireIncreasable.AL
-//
-//     const current_id = id (req)
-//
-//     if (isList (current_id)) {
-//       return foldr (join (pipe (
-//                                  getMatchingIncreasableModifier (f)
-//                                                                 (g)
-//                                                                 (h),
-//                                  thrush (SkillOptionalDependency ({
-//                                           origin: sourceId,
-//                                           value: value (req),
-//                                         }))
-//                    )))
-//                    (state)
-//                    (current_id)
-//     }
-//
-//     return getMatchingIncreasableModifier (f)
-//                                           (g)
-//                                           (h)
-//                                           (current_id)
-//                                           (value (req))
-//                                           (current_id)
-//                                           (state)
-//   }
-//
-// const modifySocialDependency: (isToAdd: boolean) =>
-//                               (prerequisite: Record<SocialPrerequisite>) =>
-//                               (hero: Record<Hero>) => Record<Hero> =
-//   isToAdd => x => over (HL.socialStatusDependencies)
-//                        ((isToAdd ? consF : sdelete) (SocialPrerequisite.A.value (x)))
-//
-// const modifyDependencies =
-//   (isToAdd: boolean) =>
-//   (modifyAttributeDependency: ModifyAttributeDependency) =>
-//   (modifySkillDependency: ModifySkillDependency) =>
-//   (modifyActivatableSkillDependency: ModifyActivatableSkillDependency) =>
-//   (modifyActivatableDependency: ModifyActivatableDependency) =>
-//   (sourceId: string) =>
-//     flip (foldr ((x: AllRequirements): ident<Record<Hero>> => {
-//                   if (RequirePrimaryAttribute.is (x)) {
-//                     return putPrimaryAttributeDependency (modifyAttributeDependency)
-//                                                           (x)
-//                   }
-//                   else if (RequireIncreasable.is (x)) {
-//                     return putIncreasableDependency (modifyAttributeDependency)
-//                                                     (modifySkillDependency)
-//                                                     (modifyActivatableSkillDependency)
-//                                                     (sourceId)
-//                                                     (x)
-//                   }
-//                   else if (
-//                     RequireActivatable.is (x)
-//                     && notEquals (RAA.sid (x)) (Just ("GR"))
-//                   ) {
-//                     return putActivatableDependency (modifyActivatableDependency)
-//                                                     (sourceId)
-//                                                     (x)
-//                   }
-//                   else if (SocialPrerequisite.is (x)) {
-//                     return modifySocialDependency (isToAdd) (x)
-//                   }
-//                   else {
-//                     return ident
-//                   }
-//                 }))
-//
-// /**
-//  * Adds dependencies to all required entries to ensure rule validity.
-//  */
-// export const addDependencies = modifyDependencies (true)
-//                                                   (addAttributeDependency)
-//                                                   (addSkillDependency)
-//                                                   (addActivatableSkillDependency)
-//                                                   (addActivatableDependency)
-//
-// /**
-//  * Removes dependencies from all required entries to ensure rule validity.
-//  */
-// export const removeDependencies = modifyDependencies (false)
-//                                                      (removeAttributeDependency)
-//                                                      (removeSkillDependency)
-//                                                      (removeActivatableSkillDependency)
-//                                                      (removeActivatableDependency)
+type mode =
+  | Add
+  | Remove;
+
+type activatableCategory =
+  | Advantages
+  | Disadvantages
+  | SpecialAbilities;
+
+let putActivatableDependency = (mode, category, dependency, hero) =>
+  switch (mode, category) {
+  | (Add, Advantages) => Add.addAdvantageDependency(dependency, hero)
+  | (Add, Disadvantages) => Add.addDisadvantageDependency(dependency, hero)
+  | (Add, SpecialAbilities) =>
+    Add.addSpecialAbilityDependency(dependency, hero)
+  | (Remove, Advantages) =>
+    Remove.removeAdvantageDependency(dependency, hero)
+  | (Remove, Disadvantages) =>
+    Remove.removeDisadvantageDependency(dependency, hero)
+  | (Remove, SpecialAbilities) =>
+    Remove.removeSpecialAbilityDependency(dependency, hero)
+  };
+
+let applyActivatablePrerequisite =
+    (mode, sourceId, prerequisite: Static.Prerequisites.activatable, hero) =>
+  putActivatableDependency(
+    mode,
+    switch (prerequisite.id) {
+    | `Advantage(_) => Advantages
+    | `Disadvantage(_) => Disadvantages
+    | `SpecialAbility(_) => SpecialAbilities
+    },
+    {
+      source: sourceId,
+      target:
+        switch (prerequisite.id) {
+        | `Advantage(id)
+        | `Disadvantage(id)
+        | `SpecialAbility(id) => One(id)
+        },
+      active: prerequisite.active,
+      options:
+        switch (prerequisite.sid) {
+        | Some(sid) =>
+          switch (prerequisite.sid2) {
+          | Some(sid2) => [One(sid), One(sid2)]
+          | None => [One(sid)]
+          }
+        | None => []
+        },
+      level: prerequisite.level,
+    },
+    hero,
+  );
+
+let applyActivatableMultiEntryPrerequisite =
+    (
+      mode,
+      sourceId,
+      prerequisite: Static.Prerequisites.activatableMultiEntry,
+      hero,
+    ) =>
+  putActivatableDependency(
+    mode,
+    switch (prerequisite.id) {
+    | Advantages(_) => Advantages
+    | Disadvantages(_) => Disadvantages
+    | SpecialAbilities(_) => SpecialAbilities
+    },
+    {
+      source: sourceId,
+      target:
+        switch (prerequisite.id) {
+        | Advantages(ids)
+        | Disadvantages(ids)
+        | SpecialAbilities(ids) => Many(ids)
+        },
+      active: prerequisite.active,
+      options:
+        switch (prerequisite.sid) {
+        | Some(sid) =>
+          switch (prerequisite.sid2) {
+          | Some(sid2) => [One(sid), One(sid2)]
+          | None => [One(sid)]
+          }
+        | None => []
+        },
+      level: prerequisite.level,
+    },
+    hero,
+  );
+
+let applyActivatableMultiSelectPrerequisite =
+    (
+      mode,
+      sourceId,
+      prerequisite: Static.Prerequisites.activatableMultiSelect,
+      hero,
+    ) =>
+  putActivatableDependency(
+    mode,
+    switch (prerequisite.id) {
+    | `Advantage(_) => Advantages
+    | `Disadvantage(_) => Disadvantages
+    | `SpecialAbility(_) => SpecialAbilities
+    },
+    {
+      source: sourceId,
+      target:
+        switch (prerequisite.id) {
+        | `Advantage(id)
+        | `Disadvantage(id)
+        | `SpecialAbility(id) => One(id)
+        },
+      active: prerequisite.active,
+      options:
+        switch (prerequisite.sid2) {
+        | Some(sid2) => [Many(prerequisite.sid), One(sid2)]
+        | None => [Many(prerequisite.sid)]
+        },
+      level: prerequisite.level,
+    },
+    hero,
+  );
+
+type increasableCategory =
+  | Attributes
+  | Skills
+  | CombatTechniques
+  | Spells
+  | LiturgicalChants;
+
+let putIncreasableDependency = (mode, category, dependency, hero) =>
+  switch (mode, category) {
+  | (Add, Attributes) => Add.addAttributeDependency(dependency, hero)
+  | (Add, Skills) => Add.addSkillDependency(dependency, hero)
+  | (Add, CombatTechniques) =>
+    Add.addCombatTechniqueDependency(dependency, hero)
+  | (Add, Spells) => Add.addSpellDependency(dependency, hero)
+  | (Add, LiturgicalChants) =>
+    Add.addLiturgicalChantDependency(dependency, hero)
+  | (Remove, Attributes) =>
+    Remove.removeAttributeDependency(dependency, hero)
+  | (Remove, Skills) => Remove.removeSkillDependency(dependency, hero)
+  | (Remove, CombatTechniques) =>
+    Remove.removeCombatTechniqueDependency(dependency, hero)
+  | (Remove, Spells) => Remove.removeSpellDependency(dependency, hero)
+  | (Remove, LiturgicalChants) =>
+    Remove.removeLiturgicalChantDependency(dependency, hero)
+  };
+
+let applyIncreasablePrerequisite =
+    (mode, sourceId, prerequisite: Static.Prerequisites.increasable, hero) =>
+  putIncreasableDependency(
+    mode,
+    switch (prerequisite.id) {
+    | `Attribute(_) => Attributes
+    | `Skill(_) => Skills
+    | `CombatTechnique(_) => CombatTechniques
+    | `Spell(_) => Spells
+    | `LiturgicalChant(_) => LiturgicalChants
+    },
+    {
+      source: sourceId,
+      target:
+        switch (prerequisite.id) {
+        | `Attribute(id)
+        | `Skill(id)
+        | `CombatTechnique(id)
+        | `Spell(id)
+        | `LiturgicalChant(id) => One(id)
+        },
+      value: prerequisite.value,
+    },
+    hero,
+  );
+
+let applyIncreasableMultiEntryPrerequisite =
+    (
+      mode,
+      sourceId,
+      prerequisite: Static.Prerequisites.increasableMultiEntry,
+      hero,
+    ) =>
+  putIncreasableDependency(
+    mode,
+    switch (prerequisite.id) {
+    | Attributes(_) => Attributes
+    | Skills(_) => Skills
+    | CombatTechniques(_) => CombatTechniques
+    | Spells(_) => Spells
+    | LiturgicalChants(_) => LiturgicalChants
+    },
+    {
+      source: sourceId,
+      target:
+        switch (prerequisite.id) {
+        | Attributes(ids)
+        | Skills(ids)
+        | CombatTechniques(ids)
+        | Spells(ids)
+        | LiturgicalChants(ids) => Many(ids)
+        },
+      value: prerequisite.value,
+    },
+    hero,
+  );
+
+let applyPrimaryAttributePrerequisite =
+    (
+      mode,
+      sourceId,
+      staticData,
+      prerequisite: Static.Prerequisites.primaryAttribute,
+      hero: Hero.t,
+    ) =>
+  (
+    switch (prerequisite.scope) {
+    | Magical =>
+      Traditions.Magical.getPrimaryAttributeId(
+        staticData,
+        hero.specialAbilities,
+      )
+    | Blessed =>
+      Traditions.Blessed.getPrimaryAttributeId(
+        staticData,
+        hero.specialAbilities,
+      )
+    }
+  )
+  |> Ley.Option.option(
+       hero,
+       attrId => {
+         let dependency: Hero.Skill.dependency = {
+           source: sourceId,
+           target: One(attrId),
+           value: prerequisite.value,
+         };
+
+         switch (mode) {
+         | Add => Add.addAttributeDependency(dependency, hero)
+         | Remove => Remove.removeAttributeDependency(dependency, hero)
+         };
+       },
+     );
+
+let applySocialPrerequisite =
+    (mode, prerequisite: Static.Prerequisites.socialStatus, hero: Hero.t) => {
+  ...hero,
+  socialStatusDependencies:
+    switch (mode) {
+    | Add => Ley.List.cons(prerequisite, hero.socialStatusDependencies)
+    | Remove => Ley.List.delete(prerequisite, hero.socialStatusDependencies)
+    },
+};
+
+let modifyDependencies =
+    (mode, staticData, prerequisites, sourceId: Id.prerequisiteSource, hero) =>
+  Ley.List.Foldable.foldr(
+    (prerequisite: Prerequisites.prerequisite) =>
+      switch (prerequisite, sourceId) {
+      | (
+          PrimaryAttribute(options),
+          `Advantage(_) as id | `Disadvantage(_) as id |
+          `SpecialAbility(_) as id |
+          `Spell(_) as id |
+          `LiturgicalChant(_) as id,
+        ) =>
+        applyPrimaryAttributePrerequisite(mode, id, staticData, options)
+      | (
+          Activatable(options),
+          `Advantage(_) as id | `Disadvantage(_) as id |
+          `SpecialAbility(_) as id,
+        ) =>
+        applyActivatablePrerequisite(mode, id, options)
+      | (
+          ActivatableMultiEntry(options),
+          `Advantage(_) as id | `Disadvantage(_) as id |
+          `SpecialAbility(_) as id,
+        ) =>
+        applyActivatableMultiEntryPrerequisite(mode, id, options)
+      | (
+          ActivatableMultiSelect(options),
+          `Advantage(_) as id | `Disadvantage(_) as id |
+          `SpecialAbility(_) as id,
+        ) =>
+        applyActivatableMultiSelectPrerequisite(mode, id, options)
+      | (
+          Increasable(options),
+          `Advantage(_) as id | `Disadvantage(_) as id |
+          `SpecialAbility(_) as id |
+          `Spell(_) as id |
+          `LiturgicalChant(_) as id,
+        ) =>
+        applyIncreasablePrerequisite(mode, id, options)
+      | (
+          IncreasableMultiEntry(options),
+          `Advantage(_) as id | `Disadvantage(_) as id |
+          `SpecialAbility(_) as id |
+          `Spell(_) as id |
+          `LiturgicalChant(_) as id,
+        ) =>
+        applyIncreasableMultiEntryPrerequisite(mode, id, options)
+      | _ => Ley.Function.id
+      },
+    hero,
+    prerequisites,
+  );
+
+/**
+ * Adds dependencies to all required entries to ensure rule validity.
+ */
+let addDependencies = modifyDependencies(Add);
+
+/**
+ * Removes dependencies from all required entries to ensure rule validity.
+ */
+let removeDependencies = modifyDependencies(Remove);

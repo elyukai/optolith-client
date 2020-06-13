@@ -10,7 +10,7 @@ let not = (!);
  *
  * This function inverts the output of the passed predicate function.
  */
-let notP = f => f |> (!);
+let notP = (f, x) => x |> f |> (!);
 
 /**
  * `otherwise :: Bool`

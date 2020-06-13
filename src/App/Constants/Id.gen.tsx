@@ -10,6 +10,10 @@ const $$toJS117798452: { [key: string]: any } = {"0": "Crossbows", "1": "Bows", 
 
 const $$toRE117798452: { [key: string]: any } = {"Crossbows": 0, "Bows": 1, "Daggers": 2, "FencingWeapons": 3, "ImpactWeapons": 4, "ChainWeapons": 5, "Lances": 6, "Brawling": 7, "Shields": 8, "Slings": 9, "Swords": 10, "Polearms": 11, "ThrownWeapons": 12, "TwoHandedImpactWeapons": 13, "TwoHandedSwords": 14, "SpittingFire": 15, "Blowguns": 16, "Discuses": 17, "Faecher": 18, "Spiesswaffen": 19};
 
+const $$toJS252323808: { [key: string]: any } = {"0": "General", "1": "GuildMages", "2": "Witches", "3": "Elves", "4": "Druids", "5": "Scharlatane", "6": "ArcaneBards", "7": "ArcaneDancers", "8": "IntuitiveZauberer", "9": "Meistertalentierte", "10": "Qabalyamagier", "11": "Kristallomanten", "12": "Geodes", "13": "Alchimisten", "14": "Rogues", "15": "Animists", "16": "Zibilija", "17": "BrobimGeoden"};
+
+const $$toRE252323808: { [key: string]: any } = {"General": 0, "GuildMages": 1, "Witches": 2, "Elves": 3, "Druids": 4, "Scharlatane": 5, "ArcaneBards": 6, "ArcaneDancers": 7, "IntuitiveZauberer": 8, "Meistertalentierte": 9, "Qabalyamagier": 10, "Kristallomanten": 11, "Geodes": 12, "Alchimisten": 13, "Rogues": 14, "Animists": 15, "Zibilija": 16, "BrobimGeoden": 17};
+
 const $$toJS434046323: { [key: string]: any } = {"0": "AntiMagic", "1": "Demonic", "2": "Influence", "3": "Elemental", "4": "Healing", "5": "Clairvoyance", "6": "Illusion", "7": "Spheres", "8": "Objekt", "9": "Telekinesis", "10": "Transformation", "11": "Temporal"};
 
 const $$toRE434046323: { [key: string]: any } = {"AntiMagic": 0, "Demonic": 1, "Influence": 2, "Elemental": 3, "Healing": 4, "Clairvoyance": 5, "Illusion": 6, "Spheres": 7, "Objekt": 8, "Telekinesis": 9, "Transformation": 10, "Temporal": 11};
@@ -338,6 +342,29 @@ export type combatTechniqueGroup = "Melee" | "Ranged";
 export type CombatTechniqueGroup = combatTechniqueGroup;
 
 // tslint:disable-next-line:interface-over-type-literal
+export type magicalTradition = 
+    "General"
+  | "GuildMages"
+  | "Witches"
+  | "Elves"
+  | "Druids"
+  | "Scharlatane"
+  | "ArcaneBards"
+  | "ArcaneDancers"
+  | "IntuitiveZauberer"
+  | "Meistertalentierte"
+  | "Qabalyamagier"
+  | "Kristallomanten"
+  | "Geodes"
+  | "Alchimisten"
+  | "Rogues"
+  | "Animists"
+  | "Zibilija"
+  | "BrobimGeoden"
+  | { tag: "Other"; value: number };
+export type MagicalTradition = magicalTradition;
+
+// tslint:disable-next-line:interface-over-type-literal
 export type property = 
     "AntiMagic"
   | "Demonic"
@@ -555,6 +582,20 @@ export const unsafeCombatTechniqueGroupFromInt: (id:number) => combatTechniqueGr
 
 export const combatTechniqueGroupToInt: (id:combatTechniqueGroup) => number = function (Arg1: any) {
   const result = IdBS.combatTechniqueGroupToInt($$toRE630338537[Arg1]);
+  return result
+};
+
+export const magicalTraditionFromInt: (id:number) => magicalTradition = function (Arg1: any) {
+  const result = IdBS.magicalTraditionFromInt(Arg1);
+  return typeof(result) === 'object'
+    ? {tag:"Other", value:result[0]}
+    : $$toJS252323808[result]
+};
+
+export const magicalTraditionToInt: (id:magicalTradition) => number = function (Arg1: any) {
+  const result = IdBS.magicalTraditionToInt(typeof(Arg1) === 'object'
+    ? CreateBucklescriptBlock.__(0, [Arg1.value])
+    : $$toRE252323808[Arg1]);
   return result
 };
 

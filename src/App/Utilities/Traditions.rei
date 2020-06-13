@@ -16,20 +16,19 @@ module Magical: {
     (Static.t, Ley_IntMap.t(Hero.Activatable.t)) =>
     list(Static_SpecialAbility.t);
 
+  type fullTradition = (
+    Static.SpecialAbility.t,
+    Hero.Activatable.t,
+    Static.MagicalTradition.t,
+  );
+
   /**
    * `getEntries` returns active and static special ability entries as well as
    * static tradition entries for active magical traditions.
    */
   [@genType]
   let getEntries:
-    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) =>
-    list(
-      (
-        Static_SpecialAbility.t,
-        Hero.Activatable.t,
-        Static_MagicalTradition.t,
-      ),
-    );
+    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) => list(fullTradition);
 
   /**
    * `idToNumId staticData id` converts a magical tradition's special ability ID
@@ -72,20 +71,19 @@ module Blessed: {
     (Static.t, Ley_IntMap.t(Hero.Activatable.t)) =>
     option(Static_SpecialAbility.t);
 
+  type fullTradition = (
+    Static.SpecialAbility.t,
+    Hero.Activatable.t,
+    Static.BlessedTradition.t,
+  );
+
   /**
    * `getEntry` returns the active and static special ability entry as well as
    * the static tradition entry for the active blessed traditions.
    */
   [@genType]
   let getEntry:
-    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) =>
-    option(
-      (
-        Static_SpecialAbility.t,
-        Hero.Activatable.t,
-        Static_MagicalTradition.t,
-      ),
-    );
+    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) => option(fullTradition);
 
   /**
    * `idToNumId staticData id` converts a blessed tradition's special ability ID

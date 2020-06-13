@@ -93,7 +93,7 @@ function getEntry(staticData, mp) {
                                       trad,
                                       traditionEntry
                                     ];
-                            }), Curry._2(Ley_IntMap$OptolithClient.lookup, trad.id, staticData.specialAbilities), Curry._2(Ley_IntMap$OptolithClient.lookup, trad.id, staticData.magicalTraditions));
+                            }), Curry._2(Ley_IntMap$OptolithClient.lookup, trad.id, staticData.specialAbilities), Curry._2(Ley_IntMap$OptolithClient.lookup, trad.id, staticData.blessedTraditions));
               }));
 }
 
