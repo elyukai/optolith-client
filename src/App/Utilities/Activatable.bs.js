@@ -10,7 +10,6 @@ import * as Id$OptolithClient from "../Constants/Id.bs.js";
 import * as Intl$OptolithClient from "./Intl.bs.js";
 import * as Chars$OptolithClient from "./Chars.bs.js";
 import * as Ley_Int$OptolithClient from "../../Data/Ley_Int.bs.js";
-import * as Caml_builtin_exceptions from "bs-platform/lib/es6/caml_builtin_exceptions.js";
 import * as Integers$OptolithClient from "./Integers.bs.js";
 import * as Ley_List$OptolithClient from "../../Data/Ley_List.bs.js";
 import * as Ley_IntMap$OptolithClient from "../../Data/Ley_IntMap.bs.js";
@@ -48,52 +47,11 @@ function singleToSingleWithId(x, s) {
 }
 
 function activatableOptionToSelectOptionId(id) {
-  if (typeof id !== "number") {
-    var variant = id[0];
-    if (variant >= 61643256) {
-      if (variant >= 345443721) {
-        if (variant === 797131559) {
-          return id;
-        }
-        if (variant === 931971705) {
-          return ;
-        }
-        
-      } else {
-        if (variant === 290194801) {
-          return id;
-        }
-        if (variant >= 345443720) {
-          return id;
-        }
-        
-      }
-    } else if (variant >= -841776938) {
-      if (variant === -384382742) {
-        return id;
-      }
-      if (variant >= 61643255) {
-        return id;
-      }
-      
-    } else {
-      if (variant === -920806756) {
-        return id;
-      }
-      if (variant >= -841776939) {
-        return id;
-      }
-      
-    }
+  if (id[0] >= 931971705) {
+    return ;
+  } else {
+    return id;
   }
-  throw [
-        Caml_builtin_exceptions.match_failure,
-        /* tuple */[
-          "Activatable.re",
-          110,
-          4
-        ]
-      ];
 }
 
 function name(x) {
@@ -189,101 +147,18 @@ function getOption3(param) {
 }
 
 function getCustomInput(option) {
-  if (typeof option !== "number") {
-    var variant = option[0];
-    if (variant >= 61643256) {
-      if (variant >= 345443721) {
-        if (variant === 797131559) {
-          return ;
-        }
-        if (variant === 931971705) {
-          return option[1];
-        }
-        
-      } else {
-        if (variant === 290194801) {
-          return ;
-        }
-        if (variant >= 345443720) {
-          return ;
-        }
-        
-      }
-    } else if (variant >= -841776938) {
-      if (variant === -384382742) {
-        return ;
-      }
-      if (variant >= 61643255) {
-        return ;
-      }
-      
-    } else {
-      if (variant === -920806756) {
-        return ;
-      }
-      if (variant >= -841776939) {
-        return ;
-      }
-      
-    }
+  if (option[0] >= 931971705) {
+    return option[1];
   }
-  throw [
-        Caml_builtin_exceptions.match_failure,
-        /* tuple */[
-          "Activatable.re",
-          246,
-          2
-        ]
-      ];
+  
 }
 
 function getGenericId(option) {
-  if (typeof option !== "number") {
-    var variant = option[0];
-    if (variant >= 61643256) {
-      if (variant >= 345443721) {
-        if (variant === 797131559) {
-          return ;
-        }
-        if (variant === 931971705) {
-          return ;
-        }
-        
-      } else {
-        if (variant === 290194801) {
-          return ;
-        }
-        if (variant >= 345443720) {
-          return ;
-        }
-        
-      }
-    } else if (variant >= -841776938) {
-      if (variant === -384382742) {
-        return ;
-      }
-      if (variant >= 61643255) {
-        return option[1];
-      }
-      
-    } else {
-      if (variant === -920806756) {
-        return ;
-      }
-      if (variant >= -841776939) {
-        return ;
-      }
-      
-    }
+  if (option[0] !== 61643255) {
+    return ;
+  } else {
+    return option[1];
   }
-  throw [
-        Caml_builtin_exceptions.match_failure,
-        /* tuple */[
-          "Activatable.re",
-          258,
-          2
-        ]
-      ];
 }
 
 function lookupMap(k, mp, f) {
@@ -291,52 +166,11 @@ function lookupMap(k, mp, f) {
 }
 
 function getSkillFromOption(staticData, option) {
-  if (typeof option !== "number") {
-    var variant = option[0];
-    if (variant >= 61643256) {
-      if (variant >= 345443721) {
-        if (variant === 797131559) {
-          return ;
-        }
-        if (variant === 931971705) {
-          return ;
-        }
-        
-      } else {
-        if (variant === 290194801) {
-          return Curry._2(Ley_IntMap$OptolithClient.lookup, option[1], staticData.skills);
-        }
-        if (variant >= 345443720) {
-          return ;
-        }
-        
-      }
-    } else if (variant >= -841776938) {
-      if (variant === -384382742) {
-        return ;
-      }
-      if (variant >= 61643255) {
-        return ;
-      }
-      
-    } else {
-      if (variant === -920806756) {
-        return ;
-      }
-      if (variant >= -841776939) {
-        return ;
-      }
-      
-    }
+  if (option[0] !== 290194801) {
+    return ;
+  } else {
+    return Curry._2(Ley_IntMap$OptolithClient.lookup, option[1], staticData.skills);
   }
-  throw [
-        Caml_builtin_exceptions.match_failure,
-        /* tuple */[
-          "Activatable.re",
-          274,
-          2
-        ]
-      ];
 }
 
 function getDefaultNameAddition(staticEntry, heroEntry) {
@@ -456,109 +290,36 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
         switch (exit) {
           case 1 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(heroEntry.options), (function (sid) {
-                            if (typeof sid !== "number") {
-                              var variant = sid[0];
-                              if (variant >= 61643256) {
-                                if (variant >= 345443721) {
-                                  if (variant === 797131559) {
-                                    return ;
-                                  }
-                                  if (variant === 931971705) {
-                                    return ;
-                                  }
-                                  
+                            var variant = sid[0];
+                            if (variant !== -384382742) {
+                              if (variant !== 290194801) {
+                                if (variant !== 345443720) {
+                                  return ;
                                 } else {
-                                  if (variant === 290194801) {
-                                    return lookupMap(sid[1], staticData.skills, (function (x) {
-                                                  return x.name;
-                                                }));
-                                  }
-                                  if (variant >= 345443720) {
-                                    return lookupMap(sid[1], staticData.spells, (function (x) {
-                                                  return x.name;
-                                                }));
-                                  }
-                                  
-                                }
-                              } else if (variant >= -841776938) {
-                                if (variant === -384382742) {
-                                  return lookupMap(sid[1], staticData.liturgicalChants, (function (x) {
+                                  return lookupMap(sid[1], staticData.spells, (function (x) {
                                                 return x.name;
                                               }));
                                 }
-                                if (variant >= 61643255) {
-                                  return ;
-                                }
-                                
                               } else {
-                                if (variant === -920806756) {
-                                  return ;
-                                }
-                                if (variant >= -841776939) {
-                                  return ;
-                                }
-                                
+                                return lookupMap(sid[1], staticData.skills, (function (x) {
+                                              return x.name;
+                                            }));
                               }
+                            } else {
+                              return lookupMap(sid[1], staticData.liturgicalChants, (function (x) {
+                                            return x.name;
+                                          }));
                             }
-                            throw [
-                                  Caml_builtin_exceptions.match_failure,
-                                  /* tuple */[
-                                    "Activatable.re",
-                                    356,
-                                    12
-                                  ]
-                                ];
                           }));
           case 2 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(heroEntry.options), (function (sid) {
-                            if (typeof sid !== "number") {
-                              var variant = sid[0];
-                              if (variant >= 61643256) {
-                                if (variant >= 345443721) {
-                                  if (variant === 797131559) {
-                                    return ;
-                                  }
-                                  if (variant === 931971705) {
-                                    return ;
-                                  }
-                                  
-                                } else {
-                                  if (variant === 290194801) {
-                                    return ;
-                                  }
-                                  if (variant >= 345443720) {
-                                    return ;
-                                  }
-                                  
-                                }
-                              } else if (variant >= -841776938) {
-                                if (variant === -384382742) {
-                                  return ;
-                                }
-                                if (variant >= 61643255) {
-                                  return ;
-                                }
-                                
-                              } else {
-                                if (variant === -920806756) {
-                                  return lookupMap(sid[1], staticData.combatTechniques, (function (x) {
-                                                return x.name;
-                                              }));
-                                }
-                                if (variant >= -841776939) {
-                                  return ;
-                                }
-                                
-                              }
+                            if (sid[0] >= -841776939) {
+                              return ;
+                            } else {
+                              return lookupMap(sid[1], staticData.combatTechniques, (function (x) {
+                                            return x.name;
+                                          }));
                             }
-                            throw [
-                                  Caml_builtin_exceptions.match_failure,
-                                  /* tuple */[
-                                    "Activatable.re",
-                                    374,
-                                    12
-                                  ]
-                                ];
                           }));
           
         }
@@ -605,56 +366,15 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                                         return /* SpecialAbility */Block.__(2, [specialAbility]);
                                       })), Ley_Option$OptolithClient.listToOption(heroEntry.options))), (function (language) {
                             return Ley_Option$OptolithClient.Monad.$great$great$eq(getOption(1, heroEntry), (function (option2) {
+                                          var variant = option2[0];
                                           var tmp;
-                                          var exit = 0;
-                                          if (typeof option2 === "number") {
-                                            exit = 1;
+                                          if (variant !== 61643255) {
+                                            tmp = variant >= 931971705 ? option2[1] : undefined;
                                           } else {
-                                            var variant = option2[0];
-                                            if (variant >= 61643256) {
-                                              if (variant >= 345443721) {
-                                                if (variant !== 797131559) {
-                                                  if (variant !== 931971705) {
-                                                    exit = 1;
-                                                  } else {
-                                                    tmp = option2[1];
-                                                  }
-                                                } else {
-                                                  tmp = undefined;
-                                                }
-                                              } else if (variant !== 290194801 && variant < 345443720) {
-                                                exit = 1;
-                                              } else {
-                                                tmp = undefined;
-                                              }
-                                            } else if (variant >= -841776938) {
-                                              if (variant !== -384382742) {
-                                                if (variant >= 61643255) {
-                                                  var specializationId = option2[1];
-                                                  tmp = Ley_Option$OptolithClient.Monad.$great$great$eq(language.specializations, (function (specializations) {
-                                                          return Ley_List$OptolithClient.Safe.atMay(specializations, specializationId - 1 | 0);
-                                                        }));
-                                                } else {
-                                                  exit = 1;
-                                                }
-                                              } else {
-                                                tmp = undefined;
-                                              }
-                                            } else if (variant !== -920806756 && variant < -841776939) {
-                                              exit = 1;
-                                            } else {
-                                              tmp = undefined;
-                                            }
-                                          }
-                                          if (exit === 1) {
-                                            throw [
-                                                  Caml_builtin_exceptions.match_failure,
-                                                  /* tuple */[
-                                                    "Activatable.re",
-                                                    566,
-                                                    16
-                                                  ]
-                                                ];
+                                            var specializationId = option2[1];
+                                            tmp = Ley_Option$OptolithClient.Monad.$great$great$eq(language.specializations, (function (specializations) {
+                                                    return Ley_List$OptolithClient.Safe.atMay(specializations, specializationId - 1 | 0);
+                                                  }));
                                           }
                                           return Ley_Option$OptolithClient.Functor.$less$amp$great(tmp, (function (specialization) {
                                                         return language.name + (": " + specialization);
@@ -700,58 +420,17 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                               return getSkillFromOption(staticData, param);
                             })), (function (skill) {
                           return Ley_Option$OptolithClient.Monad.$great$great$eq(getOption(1, heroEntry), (function (option2) {
+                                        var variant = option2[0];
                                         var tmp;
-                                        var exit = 0;
-                                        if (typeof option2 === "number") {
-                                          exit = 1;
+                                        if (variant !== 61643255) {
+                                          tmp = variant >= 931971705 ? option2[1] : undefined;
                                         } else {
-                                          var variant = option2[0];
-                                          if (variant >= 61643256) {
-                                            if (variant >= 345443721) {
-                                              if (variant !== 797131559) {
-                                                if (variant !== 931971705) {
-                                                  exit = 1;
-                                                } else {
-                                                  tmp = option2[1];
-                                                }
-                                              } else {
-                                                tmp = undefined;
-                                              }
-                                            } else if (variant !== 290194801 && variant < 345443720) {
-                                              exit = 1;
-                                            } else {
-                                              tmp = undefined;
-                                            }
-                                          } else if (variant >= -841776938) {
-                                            if (variant !== -384382742) {
-                                              if (variant >= 61643255) {
-                                                var id = option2[1];
-                                                tmp = Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.Foldable.find, (function (a) {
-                                                            return a.id === id;
-                                                          }), skill.applications), (function (a) {
-                                                        return a.name;
-                                                      }));
-                                              } else {
-                                                exit = 1;
-                                              }
-                                            } else {
-                                              tmp = undefined;
-                                            }
-                                          } else if (variant !== -920806756 && variant < -841776939) {
-                                            exit = 1;
-                                          } else {
-                                            tmp = undefined;
-                                          }
-                                        }
-                                        if (exit === 1) {
-                                          throw [
-                                                Caml_builtin_exceptions.match_failure,
-                                                /* tuple */[
-                                                  "Activatable.re",
-                                                  486,
-                                                  16
-                                                ]
-                                              ];
+                                          var id = option2[1];
+                                          tmp = Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.Foldable.find, (function (a) {
+                                                      return a.id === id;
+                                                    }), skill.applications), (function (a) {
+                                                  return a.name;
+                                                }));
                                         }
                                         return Ley_Option$OptolithClient.Functor.$less$amp$great(tmp, (function (appName) {
                                                       return skill.name + (": " + appName);
@@ -779,54 +458,13 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
               break;
           case /* SpellEnhancement */25 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(heroEntry.options), (function (sid) {
-                            if (typeof sid !== "number") {
-                              var variant = sid[0];
-                              if (variant >= 61643256) {
-                                if (variant >= 345443721) {
-                                  if (variant === 797131559) {
-                                    return ;
-                                  }
-                                  if (variant === 931971705) {
-                                    return ;
-                                  }
-                                  
-                                } else {
-                                  if (variant === 290194801) {
-                                    return ;
-                                  }
-                                  if (variant >= 345443720) {
-                                    return ;
-                                  }
-                                  
-                                }
-                              } else if (variant >= -841776938) {
-                                if (variant === -384382742) {
-                                  return lookupMap(sid[1], staticData.liturgicalChants, (function (x) {
-                                                return x.name;
-                                              }));
-                                }
-                                if (variant >= 61643255) {
-                                  return ;
-                                }
-                                
-                              } else {
-                                if (variant === -920806756) {
-                                  return ;
-                                }
-                                if (variant >= -841776939) {
-                                  return ;
-                                }
-                                
-                              }
+                            if (sid[0] !== -384382742) {
+                              return ;
+                            } else {
+                              return lookupMap(sid[1], staticData.liturgicalChants, (function (x) {
+                                            return x.name;
+                                          }));
                             }
-                            throw [
-                                  Caml_builtin_exceptions.match_failure,
-                                  /* tuple */[
-                                    "Activatable.re",
-                                    464,
-                                    12
-                                  ]
-                                ];
                           }));
           case /* TraditionGuildMages */9 :
           case /* PredigtDerGemeinschaft */30 :
@@ -904,54 +542,13 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
         switch (exit$1) {
           case 1 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(heroEntry.options), (function (sid) {
-                            if (typeof sid !== "number") {
-                              var variant = sid[0];
-                              if (variant >= 61643256) {
-                                if (variant >= 345443721) {
-                                  if (variant === 797131559) {
-                                    return ;
-                                  }
-                                  if (variant === 931971705) {
-                                    return ;
-                                  }
-                                  
-                                } else {
-                                  if (variant === 290194801) {
-                                    return ;
-                                  }
-                                  if (variant >= 345443720) {
-                                    return lookupMap(sid[1], staticData.spells, (function (x) {
-                                                  return x.name;
-                                                }));
-                                  }
-                                  
-                                }
-                              } else if (variant >= -841776938) {
-                                if (variant === -384382742) {
-                                  return ;
-                                }
-                                if (variant >= 61643255) {
-                                  return ;
-                                }
-                                
-                              } else {
-                                if (variant === -920806756) {
-                                  return ;
-                                }
-                                if (variant >= -841776939) {
-                                  return ;
-                                }
-                                
-                              }
+                            if (sid[0] !== 345443720) {
+                              return ;
+                            } else {
+                              return lookupMap(sid[1], staticData.spells, (function (x) {
+                                            return x.name;
+                                          }));
                             }
-                            throw [
-                                  Caml_builtin_exceptions.match_failure,
-                                  /* tuple */[
-                                    "Activatable.re",
-                                    439,
-                                    12
-                                  ]
-                                ];
                           }));
           case 2 :
               return Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(heroEntry.options), (function (param) {
@@ -1600,7 +1197,7 @@ function getStyleDependenciesAcc(style) {
                   (function (hero) {
                       return hero.skillStyleDependencies;
                     }),
-                  (function (dependencies, hero) {
+                  (function (hero, dependencies) {
                       var newrecord = Caml_obj.caml_obj_dup(hero);
                       newrecord.skillStyleDependencies = dependencies;
                       return newrecord;
@@ -1614,7 +1211,7 @@ function getStyleDependenciesAcc(style) {
                 (function (hero) {
                     return hero.blessedStyleDependencies;
                   }),
-                (function (dependencies, hero) {
+                (function (hero, dependencies) {
                     var newrecord = Caml_obj.caml_obj_dup(hero);
                     newrecord.blessedStyleDependencies = dependencies;
                     return newrecord;
@@ -1629,7 +1226,7 @@ function getStyleDependenciesAcc(style) {
                 (function (hero) {
                     return hero.magicalStyleDependencies;
                   }),
-                (function (dependencies, hero) {
+                (function (hero, dependencies) {
                     var newrecord = Caml_obj.caml_obj_dup(hero);
                     newrecord.magicalStyleDependencies = dependencies;
                     return newrecord;
@@ -1643,7 +1240,7 @@ function getStyleDependenciesAcc(style) {
               (function (hero) {
                   return hero.combatStyleDependencies;
                 }),
-              (function (dependencies, hero) {
+              (function (hero, dependencies) {
                   var newrecord = Caml_obj.caml_obj_dup(hero);
                   newrecord.combatStyleDependencies = dependencies;
                   return newrecord;
@@ -1741,8 +1338,139 @@ function generateStyleDependencies(heroSpecialAbilities, styleSpecialAbility) {
 function addStyleExtendedSpecialAbilityDependencies(styleSpecialAbility, hero) {
   return Ley_Option$OptolithClient.fromOption(hero, Ley_Option$OptolithClient.Monad.liftM2((function (param, newxs) {
                     var param$1 = Ley_List$OptolithClient.mapAccumL(moveActiveInListToNew, newxs, Curry._1(param[0], hero));
-                    return Curry._2(param[1], Pervasives.$at(param$1[0], param$1[1]), hero);
+                    return Curry._2(param[1], hero, Pervasives.$at(param$1[0], param$1[1]));
                   }), getStyleDependenciesAcc(styleSpecialAbility), generateStyleDependencies(hero.specialAbilities, styleSpecialAbility)));
+}
+
+function getIndexOfFreeDependency(extendedSpecialAbility, xs) {
+  return Ley_Option$OptolithClient.fromOption(-1, Ley_Option$OptolithClient.Alternative.$less$pipe$great(Ley_List$OptolithClient.findIndex((function (x) {
+                        var id = x.id;
+                        if (id.tag) {
+                          return false;
+                        } else {
+                          return id[0] === extendedSpecialAbility.id;
+                        }
+                      }), xs), Ley_List$OptolithClient.findIndex((function (x) {
+                        var ids = x.id;
+                        if (ids.tag) {
+                          return Ley_List$OptolithClient.Foldable.elem(extendedSpecialAbility.id, ids[0]);
+                        } else {
+                          return false;
+                        }
+                      }), xs)));
+}
+
+function addAllStyleRelatedDependencies(specialAbility, hero) {
+  var hero$1 = addStyleExtendedSpecialAbilityDependencies(specialAbility, hero);
+  return Ley_Option$OptolithClient.option(hero$1, (function (param) {
+                var xs = Curry._1(param[0], hero$1);
+                return Curry._2(param[1], hero$1, Ley_List$OptolithClient.Index.modifyAt(getIndexOfFreeDependency(specialAbility, xs), (function (d) {
+                                  return {
+                                          id: d.id,
+                                          active: specialAbility.id,
+                                          origin: d.origin
+                                        };
+                                }), xs));
+              }), getStyleDependenciesAcc(specialAbility));
+}
+
+function getSplittedRemainingAndToRemove(id, xs) {
+  return Ley_List$OptolithClient.partition((function (x) {
+                return x.origin === id;
+              }), xs);
+}
+
+function getAlternativeIndex(toBeRemoved, remainings) {
+  var activeId = toBeRemoved.active;
+  if (activeId !== undefined) {
+    return Ley_Option$OptolithClient.fromOption(-1, Ley_List$OptolithClient.findIndex((function (remaining) {
+                      var id = remaining.id;
+                      var tmp;
+                      tmp = id.tag ? Ley_List$OptolithClient.Foldable.elem(activeId, id[0]) : id[0] === activeId;
+                      if (tmp) {
+                        return Ley_Option$OptolithClient.isNone(remaining.active);
+                      } else {
+                        return false;
+                      }
+                    }), remainings));
+  } else {
+    return -1;
+  }
+}
+
+function removeStyleExtendedSpecialAbilityDependencies(styleSpecialAbility, hero) {
+  return Ley_Option$OptolithClient.option(hero, (function (param) {
+                var param$1 = getSplittedRemainingAndToRemove(styleSpecialAbility.id, Curry._1(param[0], hero));
+                return Curry._2(param[1], hero, Ley_List$OptolithClient.Foldable.foldr((function (toRemove, remainings) {
+                                  return Ley_List$OptolithClient.Index.modifyAt(getAlternativeIndex(toRemove, remainings), (function (remaining) {
+                                                return {
+                                                        id: remaining.id,
+                                                        active: toRemove.active,
+                                                        origin: remaining.origin
+                                                      };
+                                              }), remainings);
+                                }), param$1[1], Ley_List$OptolithClient.filter((function (x) {
+                                      return Ley_Option$OptolithClient.isSome(x.active);
+                                    }), param$1[0])));
+              }), getStyleDependenciesAcc(styleSpecialAbility));
+}
+
+function getIndexOfUsedDependency(extendedSpecialAbility, xs) {
+  return Ley_Option$OptolithClient.fromOption(-1, Ley_List$OptolithClient.findIndex((function (x) {
+                    var id = x.active;
+                    if (id !== undefined) {
+                      return id === extendedSpecialAbility.id;
+                    } else {
+                      return false;
+                    }
+                  }), xs));
+}
+
+function removeAllStyleRelatedDependencies(specialAbility, hero) {
+  var hero$1 = removeStyleExtendedSpecialAbilityDependencies(specialAbility, hero);
+  return Ley_Option$OptolithClient.option(hero$1, (function (param) {
+                var xs = Curry._1(param[0], hero$1);
+                return Curry._2(param[1], hero$1, Ley_List$OptolithClient.Index.modifyAt(getIndexOfUsedDependency(specialAbility, xs), (function (d) {
+                                  return {
+                                          id: d.id,
+                                          active: undefined,
+                                          origin: d.origin
+                                        };
+                                }), xs));
+              }), getStyleDependenciesAcc(specialAbility));
+}
+
+function getAvailableExtendedSpecialAbilities(styleDependencies) {
+  return Ley_List$OptolithClient.Foldable.concatMap((function (x) {
+                var match = x.active;
+                var match$1 = x.id;
+                if (match !== undefined) {
+                  return /* [] */0;
+                } else if (match$1.tag) {
+                  return match$1[0];
+                } else {
+                  return /* :: */[
+                          match$1[0],
+                          /* [] */0
+                        ];
+                }
+              }), styleDependencies);
+}
+
+function getAllAvailableExtendedSpecialAbilities(param) {
+  return Ley_List$OptolithClient.Foldable.concatMap(getAvailableExtendedSpecialAbilities, param);
+}
+
+function isStyleValidToRemove(hero, styleSpecialAbility) {
+  return Ley_Option$OptolithClient.option(true, (function (param) {
+                var param$1 = getSplittedRemainingAndToRemove(styleSpecialAbility.id, Curry._1(param[0], hero));
+                var remainingDependencies = param$1[1];
+                return Ley_List$OptolithClient.Foldable.all((function (x) {
+                              return getAlternativeIndex(x, remainingDependencies) > -1;
+                            }), Ley_List$OptolithClient.filter((function (x) {
+                                  return Ley_Option$OptolithClient.isSome(x.active);
+                                }), param$1[0]));
+              }), getStyleDependenciesAcc(styleSpecialAbility));
 }
 
 var Convert = {
@@ -1767,7 +1495,10 @@ var AdventurePoints = {
 };
 
 var ExtendedStyle = {
-  addStyleExtendedSpecialAbilityDependencies: addStyleExtendedSpecialAbilityDependencies
+  addAllStyleRelatedDependencies: addAllStyleRelatedDependencies,
+  removeAllStyleRelatedDependencies: removeAllStyleRelatedDependencies,
+  getAllAvailableExtendedSpecialAbilities: getAllAvailableExtendedSpecialAbilities,
+  isStyleValidToRemove: isStyleValidToRemove
 };
 
 export {

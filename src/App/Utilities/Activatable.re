@@ -114,7 +114,8 @@ module Convert = {
     | `Spell(_) as id
     | `Cantrip(_) as id
     | `LiturgicalChant(_) as id
-    | `Blessing(_) as id => Some(id)
+    | `Blessing(_) as id
+    | `SpecialAbility(_) as id => Some(id)
     | `CustomInput(_) => None
     };
 };
@@ -251,7 +252,8 @@ let getCustomInput = (option: Hero.Activatable.optionId) =>
   | `Spell(_)
   | `LiturgicalChant(_)
   | `Cantrip(_)
-  | `Blessing(_) => None
+  | `Blessing(_)
+  | `SpecialAbility(_) => None
   };
 
 let getGenericId = (option: Hero.Activatable.optionId) =>
@@ -263,6 +265,7 @@ let getGenericId = (option: Hero.Activatable.optionId) =>
   | `LiturgicalChant(_)
   | `Cantrip(_)
   | `Blessing(_)
+  | `SpecialAbility(_)
   | `CustomInput(_) => None
   };
 
@@ -279,6 +282,7 @@ let getSkillFromOption =
   | `LiturgicalChant(_)
   | `Cantrip(_)
   | `Blessing(_)
+  | `SpecialAbility(_)
   | `CustomInput(_) => None
   };
 
@@ -362,6 +366,7 @@ module Names = {
             | `CombatTechnique(_)
             | `Cantrip(_)
             | `Blessing(_)
+            | `SpecialAbility(_)
             | `CustomInput(_) => None
             }
         )
@@ -380,6 +385,7 @@ module Names = {
             | `LiturgicalChant(_)
             | `Cantrip(_)
             | `Blessing(_)
+            | `SpecialAbility(_)
             | `CustomInput(_) => None
             }
         )
@@ -444,6 +450,7 @@ module Names = {
             | `LiturgicalChant(_)
             | `Cantrip(_)
             | `Blessing(_)
+            | `SpecialAbility(_)
             | `CustomInput(_) => None
             }
         )
@@ -470,6 +477,7 @@ module Names = {
             | `Spell(_)
             | `Cantrip(_)
             | `Blessing(_)
+            | `SpecialAbility(_)
             | `CustomInput(_) => None
             }
         )
@@ -499,7 +507,8 @@ module Names = {
                   | `Spell(_)
                   | `LiturgicalChant(_)
                   | `Cantrip(_)
-                  | `Blessing(_) => None
+                  | `Blessing(_)
+                  | `SpecialAbility(_) => None
                   }
                 )
                 // Merge skill name and application name
@@ -580,7 +589,8 @@ module Names = {
                   | `Spell(_)
                   | `LiturgicalChant(_)
                   | `Cantrip(_)
-                  | `Blessing(_) => None
+                  | `Blessing(_)
+                  | `SpecialAbility(_) => None
                   }
                 )
                 <&> (specialization => language.name ++ ": " ++ specialization)
@@ -1298,11 +1308,7 @@ module AdventurePoints = {
 module ExtendedStyle = {
   open Ley.Option.Functor;
   open Ley.Option.Monad;
-
-  type getterSetter = (
-    Hero.t => list(Hero.styleDependency),
-    (list(Hero.styleDependency), Hero.t) => Hero.t,
-  );
+  open Ley.Option.Alternative;
 
   /**
    * Returns a getter and a setter for the appropiate dependency list for the
@@ -1316,7 +1322,7 @@ module ExtendedStyle = {
       Some((
         ((hero: Hero.t) => hero.combatStyleDependencies),
         (
-          (dependencies, hero: Hero.t) => {
+          (hero: Hero.t, dependencies) => {
             ...hero,
             combatStyleDependencies: dependencies,
           }
@@ -1327,7 +1333,7 @@ module ExtendedStyle = {
       Some((
         ((hero: Hero.t) => hero.magicalStyleDependencies),
         (
-          (dependencies, hero: Hero.t) => {
+          (hero: Hero.t, dependencies) => {
             ...hero,
             magicalStyleDependencies: dependencies,
           }
@@ -1338,7 +1344,7 @@ module ExtendedStyle = {
       Some((
         ((hero: Hero.t) => hero.blessedStyleDependencies),
         (
-          (dependencies, hero: Hero.t) => {
+          (hero: Hero.t, dependencies) => {
             ...hero,
             blessedStyleDependencies: dependencies,
           }
@@ -1349,7 +1355,7 @@ module ExtendedStyle = {
       Some((
         ((hero: Hero.t) => hero.skillStyleDependencies),
         (
-          (dependencies, hero: Hero.t) => {
+          (hero: Hero.t, dependencies) => {
             ...hero,
             skillStyleDependencies: dependencies,
           }
@@ -1452,594 +1458,232 @@ module ExtendedStyle = {
         |> get
         |> Ley.List.mapAccumL(moveActiveInListToNew, newxs)
         |> (((xs1, xs2)) => xs1 @ xs2)
-        |> (xs => set(xs, hero)),
+        |> set(hero),
       getStyleDependenciesAcc(styleSpecialAbility),
       generateStyleDependencies(hero.specialAbilities, styleSpecialAbility),
     )
     |> Ley.Option.fromOption(hero);
-  //
-  // const getIndexForExtendedSpecialAbilityDependency =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //   (xs: List<Record<StyleDependency>>) =>
-  //
-  //         // Checks if requested entry is plain dependency
-  //     alt_ (findIndex (pipe (SDA.id, equals<string | List<string>> (SAA.id (wiki_entry))))
-  //                     (xs))
-  //
-  //         /**
-  //           * Otherwise check if the requested entry is part of a list of
-  //           * options.
-  //           */
-  //         (() => findIndex ((e: ListI<typeof xs>) => {
-  //                             const e_id = SDA.id (e)
-  //
-  //                             return isList (e_id)
-  //                               && elem (SAA.id (wiki_entry)) (e_id)
-  //                           })
-  //                           (xs))
-  //
-  // /**
-  //  * Modifies a `StyleDependency` object to show a extended special ability has
-  //  * been added.
-  //  * @param hero Dependent instances state slice.
-  //  * @param wiki_entry The special ability you want to modify a dependency for.
-  //  * @returns Changed state slice.
-  //  */
-  // export const addExtendedSpecialAbilityDependency =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //   (hero: HeroModelRecord): HeroModelRecord =>
-  //     fromMaybe
-  //       (hero)
-  //       (fmap ((l: Lens_<HeroModelRecord, List<Record<StyleDependency>>>) =>
-  //               over (l)
-  //                   (xs =>
-  //                     modifyAt
-  //                       (fromMaybe
-  //                         (-1)
-  //                         (getIndexForExtendedSpecialAbilityDependency (wiki_entry)
-  //                                                                     (xs)))
-  //                       (set (StyleDependencyL.active) (Just (SAA.id (wiki_entry))))
-  //                       (xs))
-  //                   (hero))
-  //             (lensByExtended (wiki_entry)))
-  //
-  // /**
-  //  * A combination of `addStyleExtendedSpecialAbilityDependencies` and
-  //  * `addExtendedSpecialAbilityDependency`.
-  //  */
-  // export const addAllStyleRelatedDependencies =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //     pipe (
-  //       addStyleExtendedSpecialAbilityDependencies (wiki_entry),
-  //       addExtendedSpecialAbilityDependency (wiki_entry)
-  //     )
-  //
-  // /**
-  //  * Split the objects from the ability to to be removed (`fst`) and remaining
-  //  * (`snd`) objects.
-  //  */
-  // const getSplittedRemainingAndToRemove =
-  //   (styleId: string) =>
-  //     partition<Record<StyleDependency>> (pipe (SDA.origin, equals (styleId)))
-  //
-  // /**
-  //  * Checks if there is a second object to move the active
-  //  * dependency
-  //  */
-  // const checkForAlternativeIndex =
-  //   (dependency: Record<StyleDependency>):
-  //   (leftItems: List<Record<StyleDependency>>) => number =>
-  //     pipe (
-  //       findIndex ((e: Record<StyleDependency>) => {
-  //                   const current_id = SDA.id (e)
-  //                   const current_active = SDA.active (dependency)
-  //
-  //                   // If no List, the ids must be equal
-  //                   if (typeof current_id === "string") {
-  //                     return equals (current_active) (Just (current_id))
-  //                   }
-  //
-  //                   // Must be in List but List must not be used
-  //                   return isJust (current_active)
-  //                     && elem (fromJust (current_active)) (current_id)
-  //                     && isNothing (SDA.active (e))
-  //                 }),
-  //       fromMaybe (-1)
-  //     )
-  //
-  // /**
-  //  * Removes extended special ability dependencies if the passed entry is a style
-  //  * special ability.
-  //  * @param hero Dependent instances state slice.
-  //  * @param instance The special ability you want to remove extended entry
-  //  * dependencies for.
-  //  * @returns Changed state slice.
-  //  */
-  // const removeStyleExtendedSpecialAbilityDependencies =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //   (hero: HeroModelRecord): HeroModelRecord =>
-  //     fromMaybe
-  //       (hero)
-  //       (fmap ((l: Lens_<HeroModelRecord, List<Record<StyleDependency>>>) =>
-  //               over (l)
-  //                   (xs => {
-  //                     const splitted =
-  //                       getSplittedRemainingAndToRemove (SAA.id (wiki_entry))
-  //                                                       (xs)
-  //
-  //                     const itemsToRemove = fst (splitted)
-  //                     const leftItems = snd (splitted)
-  //
-  //                     return pipe_ (
-  //                       itemsToRemove,
-  //                       filter (pipe (SDA.active, isJust)),
-  //                       foldr ((d: Record<StyleDependency>) =>
-  //                               modifyAt (checkForAlternativeIndex (d) (leftItems))
-  //                                         (set (StyleDependencyL.active) (SDA.active (d))))
-  //                             (leftItems)
-  //                     )
-  //                   })
-  //                   (hero))
-  //             (lensByStyle (wiki_entry)))
-  //
-  // /**
-  //  * Modifies a `StyleDependency` object to show a extended special ability has
-  //  * been removed.
-  //  * @param hero Dependent instances state slice.
-  //  * @param wiki_entry The special ability you want to modify a dependency for.
-  //  * @returns Changed state slice.
-  //  */
-  // const removeExtendedSpecialAbilityDependency =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //   (hero: HeroModelRecord): HeroModelRecord =>
-  //     fromMaybe
-  //       (hero)
-  //       (fmap ((l: Lens_<HeroModelRecord, List<Record<StyleDependency>>>) =>
-  //               over (l)
-  //                   (xs => modifyAt
-  //                       (fromMaybe
-  //                         (-1)
-  //                         (getIndexForExtendedSpecialAbilityDependency (wiki_entry)
-  //                                                                     (xs)))
-  //                       (set (StyleDependencyL.active) (Nothing))
-  //                       (xs))
-  //                   (hero))
-  //             (lensByExtended (wiki_entry)))
-  //
-  // /**
-  //  * A combination of `removeStyleExtendedSpecialAbilityDependencies` and
-  //  * `removeExtendedSpecialAbilityDependency`.
-  //  */
-  // export const removeAllStyleRelatedDependencies =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //     pipe (
-  //       removeStyleExtendedSpecialAbilityDependencies (wiki_entry),
-  //       removeExtendedSpecialAbilityDependency (wiki_entry)
-  //     )
-  //
-  // /**
-  //  * Return flat array of available extended special abilities' IDs.
-  //  * @param xs List of set extended special ability objects.
-  //  */
-  // const getAvailableExtendedSpecialAbilities =
-  //   concatMap<Record<StyleDependency>, string>
-  //     (e => {
-  //       if (isNothing (SDA.active (e))) {
-  //         const current_id = SDA.id (e)
-  //
-  //         return isList (current_id) ? current_id : pure (current_id)
-  //       }
-  //
-  //       return empty
-  //     })
-  //
-  // /**
-  //  * Calculates a list of available Extended Special Abilties. The availability is
-  //  * only based on bought Style Special Abilities, so (other) prerequisites have
-  //  * to be checked separately.
-  //  * @param styleDependencies
-  //  */
-  // export const getAllAvailableExtendedSpecialAbilities =
-  //   foldr (pipe (getAvailableExtendedSpecialAbilities, append)) (empty)
-  //
-  //
-  // /**
-  //  * Checks if the passed special ability is a style and if it is valid to remove
-  //  * based on registered extended special abilities.
-  //  * @param state Dependent instances state slice.
-  //  * @param entry The special ability to check.
-  //  */
-  // export const isStyleValidToRemove =
-  //   (hero: HeroModelRecord):
-  //   (mwiki_entry: Maybe<Record<SpecialAbility>>) => boolean =>
-  //     pipe (
-  //       fmap (
-  //         (wiki_entry: Record<SpecialAbility>) =>
-  //           and (fmap ((l: Lens_<HeroModelRecord, List<Record<StyleDependency>>>) => {
-  //                       const splitted =
-  //                         getSplittedRemainingAndToRemove (SAA.id (wiki_entry))
-  //                                                         (view (l) (hero))
-  //
-  //                       const itemsToRemove = fst (splitted)
-  //                       const leftItems = snd (splitted)
-  //
-  //                       return pipe (
-  //                               filter<Record<StyleDependency>> (pipe (SDA.active, isJust)),
-  //                               all (pipe (flip (checkForAlternativeIndex) (leftItems), gt (-1)))
-  //                             )
-  //                             (itemsToRemove)
-  //                     })
-  //                     (lensByStyle (wiki_entry)))
-  //       ),
-  //       or
-  //     ) type StyleDependenciesLens = Lens_<HeroModelRecord, List<Record<StyleDependency>>>
-  //
-  // export type StyleDependencyStateKeys = "combatStyleDependencies"
-  //                                     | "magicalStyleDependencies"
-  //                                     | "blessedStyleDependencies"
-  //                                     | "skillStyleDependencies"
-  //
-  // /**
-  //  * Checks if the given entry is a Style Special Ability and which state key it
-  //  * belongs to.
-  //  */
-  // const lensByStyle =
-  //   (x: Record<SpecialAbility>): Maybe<StyleDependenciesLens> => {
-  //     switch (SAA.gr (x)) {
-  //       case SpecialAbilityGroup.CombatStylesArmed:
-  //       case SpecialAbilityGroup.CombatStylesUnarmed:
-  //         return Just (HL.combatStyleDependencies)
-  //
-  //       case SpecialAbilityGroup.MagicalStyles:
-  //         return Just (HL.magicalStyleDependencies)
-  //
-  //       case SpecialAbilityGroup.BlessedStyles:
-  //         return Just (HL.blessedStyleDependencies)
-  //
-  //       case SpecialAbilityGroup.SkillStyles:
-  //         return Just (HL.skillStyleDependencies)
-  //
-  //       default:
-  //         return Nothing
-  //     }
-  //   }
-  //
-  // /**
-  //  * Checks if the given entry is an Extended Special Ability and which state key
-  //  * it belongs to.
-  //  */
-  // const lensByExtended =
-  //   (x: Record<SpecialAbility>): Maybe<StyleDependenciesLens> => {
-  //     switch (SAA.gr (x)) {
-  //       case SpecialAbilityGroup.CombatExtended:
-  //         return Just (HL.combatStyleDependencies)
-  //
-  //       case SpecialAbilityGroup.MagicalExtended:
-  //         return Just (HL.magicalStyleDependencies)
-  //
-  //       case SpecialAbilityGroup.KarmaExtended:
-  //         return Just (HL.blessedStyleDependencies)
-  //
-  //       case SpecialAbilityGroup.SkillExtended:
-  //         return Just (HL.skillStyleDependencies)
-  //
-  //       default:
-  //         return Nothing
-  //     }
-  //   }
-  //
-  // const moveActiveInListToNew: (newxs: List<Record<StyleDependency>>) =>
-  //                             (x: Record<StyleDependency>) =>
-  //                             Pair<List<Record<StyleDependency>>, Record<StyleDependency>> =
-  //   newxs => x => {
-  //     const current_id = SDA.id (x)
-  //     const current_active = SDA.active (x)
-  //
-  //     // If the dependency has got a list of possible ids and
-  //     // is used, we check if the used id is included in the
-  //     // new dependencies as a dependency without a list of
-  //     // options to make more special abilities possible
-  //     if (isList (current_id) && isJust (current_active)) {
-  //       const index =
-  //         findIndex (pipe (
-  //                           SDA.id,
-  //                           equals,
-  //                           thrush (fromJust (current_active))
-  //                         ))
-  //                   (newxs)
-  //
-  //       if (isJust (index)) {
-  //         return Pair (
-  //           modifyAt (fromJust (index))
-  //                   (set (StyleDependencyL.active)
-  //                         (current_active))
-  //                   (newxs),
-  //           set (StyleDependencyL.active)
-  //               (Nothing)
-  //               (x)
-  //         )
-  //       }
-  //     }
-  //
-  //     return Pair (newxs, x)
-  //   }
-  //
-  //
-  // const getStyleDependencies =
-  //   (style_special_ability: Record<SpecialAbility>) =>
-  //   (hero: HeroModelRecord): Maybe<List<Record<StyleDependency>>> => {
-  //     const styleId = SAA.id (style_special_ability)
-  //
-  //     return pipe_ (
-  //       style_special_ability,
-  //       SAA.extended,
-  //       fmap (pipe (
-  //         map (x => StyleDependency ({ id: x, origin: styleId })),
-  //         xs => {
-  //           switch (styleId) {
-  //             case SpecialAbilityId.scholarDesMagierkollegsZuHoningen:
-  //               return pipe_ (
-  //                 hero,
-  //                 HA.specialAbilities,
-  //                 lookup (SpecialAbilityId.scholarDesMagierkollegsZuHoningen),
-  //                 bindF (pipe (ADA.active, listToMaybe)),
-  //                 bindF (AOA.sid2),
-  //                 misStringM,
-  //                 maybe (xs) (id => cons (xs) (StyleDependency ({ id, origin: styleId })))
-  //               )
-  //
-  //             default:
-  //               return xs
-  //           }
-  //         }
-  //       ))
-  //     )
-  //   }
-  //
-  //
-  // /**
-  //  * Adds extended special ability dependencies if the passed entry is a style
-  //  * special ability.
-  //  * @param hero Dependent instances state slice.
-  //  * @param wiki_entry The special ability you want to add extended entry
-  //  * dependencies for.
-  //  * @returns Changed state slice.
-  //  */
-  // export const addStyleExtendedSpecialAbilityDependencies =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //   (hero: HeroModelRecord): HeroModelRecord => {
-  //     const ml = lensByStyle (wiki_entry)
-  //
-  //     const mnewxs = getStyleDependencies (wiki_entry) (hero)
-  //
-  //     type DependencyList = List<Record<StyleDependency>>
-  //
-  //     return fromMaybe (hero)
-  //                     (liftM2 ((l: StyleDependenciesLens) => (newxs: DependencyList) =>
-  //                               over (l)
-  //                                     (pipe (
-  //                                       mapAccumL (moveActiveInListToNew)
-  //                                                 (newxs),
-  //                                       uncurry (append)
-  //                                     ))
-  //                                     (hero))
-  //                             (ml)
-  //                             (mnewxs))
-  //   }
-  //
-  // const getIndexForExtendedSpecialAbilityDependency =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //   (xs: List<Record<StyleDependency>>) =>
-  //
-  //         // Checks if requested entry is plain dependency
-  //     alt_ (findIndex (pipe (SDA.id, equals<string | List<string>> (SAA.id (wiki_entry))))
-  //                     (xs))
-  //
-  //         /**
-  //           * Otherwise check if the requested entry is part of a list of
-  //           * options.
-  //           */
-  //         (() => findIndex ((e: ListI<typeof xs>) => {
-  //                             const e_id = SDA.id (e)
-  //
-  //                             return isList (e_id)
-  //                               && elem (SAA.id (wiki_entry)) (e_id)
-  //                           })
-  //                           (xs))
-  //
-  // /**
-  //  * Modifies a `StyleDependency` object to show a extended special ability has
-  //  * been added.
-  //  * @param hero Dependent instances state slice.
-  //  * @param wiki_entry The special ability you want to modify a dependency for.
-  //  * @returns Changed state slice.
-  //  */
-  // export const addExtendedSpecialAbilityDependency =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //   (hero: HeroModelRecord): HeroModelRecord =>
-  //     fromMaybe
-  //       (hero)
-  //       (fmap ((l: Lens_<HeroModelRecord, List<Record<StyleDependency>>>) =>
-  //               over (l)
-  //                   (xs =>
-  //                     modifyAt
-  //                       (fromMaybe
-  //                         (-1)
-  //                         (getIndexForExtendedSpecialAbilityDependency (wiki_entry)
-  //                                                                     (xs)))
-  //                       (set (StyleDependencyL.active) (Just (SAA.id (wiki_entry))))
-  //                       (xs))
-  //                   (hero))
-  //             (lensByExtended (wiki_entry)))
-  //
-  // /**
-  //  * A combination of `addStyleExtendedSpecialAbilityDependencies` and
-  //  * `addExtendedSpecialAbilityDependency`.
-  //  */
-  // export const addAllStyleRelatedDependencies =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //     pipe (
-  //       addStyleExtendedSpecialAbilityDependencies (wiki_entry),
-  //       addExtendedSpecialAbilityDependency (wiki_entry)
-  //     )
-  //
-  // /**
-  //  * Split the objects from the ability to to be removed (`fst`) and remaining
-  //  * (`snd`) objects.
-  //  */
-  // const getSplittedRemainingAndToRemove =
-  //   (styleId: string) =>
-  //     partition<Record<StyleDependency>> (pipe (SDA.origin, equals (styleId)))
-  //
-  // /**
-  //  * Checks if there is a second object to move the active
-  //  * dependency
-  //  */
-  // const checkForAlternativeIndex =
-  //   (dependency: Record<StyleDependency>):
-  //   (leftItems: List<Record<StyleDependency>>) => number =>
-  //     pipe (
-  //       findIndex ((e: Record<StyleDependency>) => {
-  //                   const current_id = SDA.id (e)
-  //                   const current_active = SDA.active (dependency)
-  //
-  //                   // If no List, the ids must be equal
-  //                   if (typeof current_id === "string") {
-  //                     return equals (current_active) (Just (current_id))
-  //                   }
-  //
-  //                   // Must be in List but List must not be used
-  //                   return isJust (current_active)
-  //                     && elem (fromJust (current_active)) (current_id)
-  //                     && isNothing (SDA.active (e))
-  //                 }),
-  //       fromMaybe (-1)
-  //     )
-  //
-  // /**
-  //  * Removes extended special ability dependencies if the passed entry is a style
-  //  * special ability.
-  //  * @param hero Dependent instances state slice.
-  //  * @param instance The special ability you want to remove extended entry
-  //  * dependencies for.
-  //  * @returns Changed state slice.
-  //  */
-  // const removeStyleExtendedSpecialAbilityDependencies =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //   (hero: HeroModelRecord): HeroModelRecord =>
-  //     fromMaybe
-  //       (hero)
-  //       (fmap ((l: Lens_<HeroModelRecord, List<Record<StyleDependency>>>) =>
-  //               over (l)
-  //                   (xs => {
-  //                     const splitted =
-  //                       getSplittedRemainingAndToRemove (SAA.id (wiki_entry))
-  //                                                       (xs)
-  //
-  //                     const itemsToRemove = fst (splitted)
-  //                     const leftItems = snd (splitted)
-  //
-  //                     return pipe_ (
-  //                       itemsToRemove,
-  //                       filter (pipe (SDA.active, isJust)),
-  //                       foldr ((d: Record<StyleDependency>) =>
-  //                               modifyAt (checkForAlternativeIndex (d) (leftItems))
-  //                                         (set (StyleDependencyL.active) (SDA.active (d))))
-  //                             (leftItems)
-  //                     )
-  //                   })
-  //                   (hero))
-  //             (lensByStyle (wiki_entry)))
-  //
-  // /**
-  //  * Modifies a `StyleDependency` object to show a extended special ability has
-  //  * been removed.
-  //  * @param hero Dependent instances state slice.
-  //  * @param wiki_entry The special ability you want to modify a dependency for.
-  //  * @returns Changed state slice.
-  //  */
-  // const removeExtendedSpecialAbilityDependency =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //   (hero: HeroModelRecord): HeroModelRecord =>
-  //     fromMaybe
-  //       (hero)
-  //       (fmap ((l: Lens_<HeroModelRecord, List<Record<StyleDependency>>>) =>
-  //               over (l)
-  //                   (xs => modifyAt
-  //                       (fromMaybe
-  //                         (-1)
-  //                         (getIndexForExtendedSpecialAbilityDependency (wiki_entry)
-  //                                                                     (xs)))
-  //                       (set (StyleDependencyL.active) (Nothing))
-  //                       (xs))
-  //                   (hero))
-  //             (lensByExtended (wiki_entry)))
-  //
-  // /**
-  //  * A combination of `removeStyleExtendedSpecialAbilityDependencies` and
-  //  * `removeExtendedSpecialAbilityDependency`.
-  //  */
-  // export const removeAllStyleRelatedDependencies =
-  //   (wiki_entry: Record<SpecialAbility>) =>
-  //     pipe (
-  //       removeStyleExtendedSpecialAbilityDependencies (wiki_entry),
-  //       removeExtendedSpecialAbilityDependency (wiki_entry)
-  //     )
-  //
-  // /**
-  //  * Return flat array of available extended special abilities' IDs.
-  //  * @param xs List of set extended special ability objects.
-  //  */
-  // const getAvailableExtendedSpecialAbilities =
-  //   concatMap<Record<StyleDependency>, string>
-  //     (e => {
-  //       if (isNothing (SDA.active (e))) {
-  //         const current_id = SDA.id (e)
-  //
-  //         return isList (current_id) ? current_id : pure (current_id)
-  //       }
-  //
-  //       return empty
-  //     })
-  //
-  // /**
-  //  * Calculates a list of available Extended Special Abilties. The availability is
-  //  * only based on bought Style Special Abilities, so (other) prerequisites have
-  //  * to be checked separately.
-  //  * @param styleDependencies
-  //  */
-  // export const getAllAvailableExtendedSpecialAbilities =
-  //   foldr (pipe (getAvailableExtendedSpecialAbilities, append)) (empty)
-  //
-  //
-  // /**
-  //  * Checks if the passed special ability is a style and if it is valid to remove
-  //  * based on registered extended special abilities.
-  //  * @param state Dependent instances state slice.
-  //  * @param entry The special ability to check.
-  //  */
-  // export const isStyleValidToRemove =
-  //   (hero: HeroModelRecord):
-  //   (mwiki_entry: Maybe<Record<SpecialAbility>>) => boolean =>
-  //     pipe (
-  //       fmap (
-  //         (wiki_entry: Record<SpecialAbility>) =>
-  //           and (fmap ((l: Lens_<HeroModelRecord, List<Record<StyleDependency>>>) => {
-  //                       const splitted =
-  //                         getSplittedRemainingAndToRemove (SAA.id (wiki_entry))
-  //                                                         (view (l) (hero))
-  //
-  //                       const itemsToRemove = fst (splitted)
-  //                       const leftItems = snd (splitted)
-  //
-  //                       return pipe (
-  //                               filter<Record<StyleDependency>> (pipe (SDA.active, isJust)),
-  //                               all (pipe (flip (checkForAlternativeIndex) (leftItems), gt (-1)))
-  //                             )
-  //                             (itemsToRemove)
-  //                     })
-  //                     (lensByStyle (wiki_entry)))
-  //       ),
-  //       or
-  //     )
+
+  /**
+   * Get the index in the list of style dependencies where there is a free slot
+   * for the passed extended special ability. Prefers fixed ID slots.
+   */
+  let getIndexOfFreeDependency =
+      (
+        extendedSpecialAbility: Static.SpecialAbility.t,
+        xs: list(Hero.styleDependency),
+      ) =>
+    // Prefer dependency with fixed option
+    Ley.List.findIndex(
+      (x: Hero.styleDependency) =>
+        switch (x.id) {
+        | One(id) => id === extendedSpecialAbility.id
+        | Many(_) => false
+        },
+      xs,
+    )
+    // Otherwise search for dependency with dynamic option
+    <|> Ley.List.findIndex(
+          (x: Hero.styleDependency) =>
+            switch (x.id) {
+            | One(_) => false
+            | Many(ids) =>
+              Ley.List.Foldable.elem(extendedSpecialAbility.id, ids)
+            },
+          xs,
+        )
+    |> Ley.Option.fromOption(-1);
+
+  /**
+   * Adds the passed extended special ability to a free slot of a style
+   * dependency.
+   */
+  let addExtendedSpecialAbilityDependency =
+      (extendedSpecialAbility, hero: Hero.t) =>
+    extendedSpecialAbility
+    |> getStyleDependenciesAcc
+    |> Ley.Option.option(hero, ((get, set)) =>
+         hero
+         |> get
+         |> (
+           xs =>
+             Ley.List.Index.modifyAt(
+               getIndexOfFreeDependency(extendedSpecialAbility, xs),
+               (d: Hero.styleDependency) =>
+                 {...d, active: Some(extendedSpecialAbility.id)},
+               xs,
+             )
+             |> set(hero)
+         )
+       );
+
+  /**
+   * Adds extended special ability dependencies if the passed entry is a style
+   * special ability or adds the passed special ability's ID to a free slot of a
+   * style dependency if it is an extended special ability.
+   */
+  let addAllStyleRelatedDependencies = (specialAbility, hero) =>
+    hero
+    |> addStyleExtendedSpecialAbilityDependencies(specialAbility)
+    |> addExtendedSpecialAbilityDependency(specialAbility);
+
+  /**
+   * `getSplittedRemainingAndToRemove` takes a style special ability's ID and
+   * the list of style dependencies and returns `(toBeRemoved, remaining)`,
+   * where `toBeRemoved` is the list of style dependencies that have to be
+   * removed when removing the style special ability and `remaining` is the list
+   * of remaining style dependencies after the removal.
+   */
+  let getSplittedRemainingAndToRemove = (id, xs) =>
+    Ley.List.partition((x: Hero.styleDependency) => x.origin === id, xs);
+
+  /**
+   * Returns an index of a free style dependency so that the currently used
+   * style dependency can be removed and the use can be moved.
+   */
+  let getAlternativeIndex = (toBeRemoved: Hero.styleDependency, remainings) =>
+    switch (toBeRemoved.active) {
+    | Some(activeId) =>
+      remainings
+      |> Ley.List.findIndex((remaining: Hero.styleDependency) =>
+           (
+             switch (remaining.id) {
+             | One(id) => id === activeId
+             | Many(ids) => Ley.List.Foldable.elem(activeId, ids)
+             }
+           )
+           && Ley.Option.isNone(remaining.active)
+         )
+      |> Ley.Option.fromOption(-1)
+    | None => (-1)
+    };
+
+  /**
+   * Removes extended special ability dependencies if the passed entry is a
+   * style special ability.
+   */
+  let removeStyleExtendedSpecialAbilityDependencies =
+      (styleSpecialAbility, hero) =>
+    styleSpecialAbility
+    |> getStyleDependenciesAcc
+    |> Ley.Option.option(hero, ((get, set)) =>
+         hero
+         |> get
+         |> getSplittedRemainingAndToRemove(styleSpecialAbility.id)
+         |> (
+           ((dependenciesToRemove, remainingDependencies)) =>
+             dependenciesToRemove
+             |> Ley.List.filter((x: Hero.styleDependency) =>
+                  Ley.Option.isSome(x.active)
+                )
+             |> Ley.List.Foldable.foldr(
+                  (toRemove: Hero.styleDependency, remainings) =>
+                    Ley.List.Index.modifyAt(
+                      getAlternativeIndex(toRemove, remainings),
+                      (remaining: Hero.styleDependency) =>
+                        {...remaining, active: toRemove.active},
+                      remainings,
+                    ),
+                  remainingDependencies,
+                )
+             |> set(hero)
+         )
+       );
+
+  /**
+   * Get the index in the list of style dependencies where there is a used slot
+   * for the passed extended special ability.
+   */
+  let getIndexOfUsedDependency =
+      (
+        extendedSpecialAbility: Static.SpecialAbility.t,
+        xs: list(Hero.styleDependency),
+      ) =>
+    Ley.List.findIndex(
+      (x: Hero.styleDependency) =>
+        switch (x.active) {
+        | Some(id) => id === extendedSpecialAbility.id
+        | None => false
+        },
+      xs,
+    )
+    |> Ley.Option.fromOption(-1);
+
+  /**
+   * Removes the passed extended special ability from a used slot of a style
+   * dependency.
+   */
+  let removeExtendedSpecialAbilityDependency =
+      (extendedSpecialAbility, hero: Hero.t) =>
+    extendedSpecialAbility
+    |> getStyleDependenciesAcc
+    |> Ley.Option.option(hero, ((get, set)) =>
+         hero
+         |> get
+         |> (
+           xs =>
+             Ley.List.Index.modifyAt(
+               getIndexOfUsedDependency(extendedSpecialAbility, xs),
+               (d: Hero.styleDependency) => {...d, active: None},
+               xs,
+             )
+             |> set(hero)
+         )
+       );
+
+  /**
+   * Removes extended special ability dependencies if the passed entry is a
+   * style special ability or removes the passed special ability's ID from a
+   * used slot of a style dependency if it is an extended special ability.
+   */
+  let removeAllStyleRelatedDependencies = (specialAbility, hero) =>
+    hero
+    |> removeStyleExtendedSpecialAbilityDependencies(specialAbility)
+    |> removeExtendedSpecialAbilityDependency(specialAbility);
+
+  /**
+   * Return flat array of available extended special abilities' IDs.
+   */
+  let getAvailableExtendedSpecialAbilities = styleDependencies =>
+    styleDependencies
+    |> Ley.List.Foldable.concatMap((x: Hero.styleDependency) =>
+         switch (x.active, x.id) {
+         | (None, One(id)) => [id]
+         | (None, Many(ids)) => ids
+         | (Some(_), _) => []
+         }
+       );
+
+  /**
+   * Calculates a list of available Extended Special Abilties. The availability is
+   * only based on bought Style Special Abilities, so (other) prerequisites have
+   * to be checked separately.
+   */
+  let getAllAvailableExtendedSpecialAbilities =
+    Ley.List.Foldable.concatMap(getAvailableExtendedSpecialAbilities);
+
+  /**
+   * Checks if the passed special ability is a style and if it is valid to
+   * remove based on registered active extended special abilities.
+   */
+  let isStyleValidToRemove = (hero, styleSpecialAbility) =>
+    styleSpecialAbility
+    |> getStyleDependenciesAcc
+    |> Ley.Option.option(true, ((get, _)) =>
+         hero
+         |> get
+         |> getSplittedRemainingAndToRemove(styleSpecialAbility.id)
+         |> (
+           ((dependenciesToRemove, remainingDependencies)) =>
+             dependenciesToRemove
+             // Check for every used dependency slot...
+             |> Ley.List.filter((x: Hero.styleDependency) =>
+                  Ley.Option.isSome(x.active)
+                )
+             // ...if it can be moved to a different dependency
+             |> Ley.List.Foldable.all(x =>
+                  getAlternativeIndex(x, remainingDependencies) > (-1)
+                )
+         )
+       );
 };

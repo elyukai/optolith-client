@@ -6,6 +6,13 @@
 let ndash = {js|\u2013|js};
 
 /**
+ * &mdash;
+ *
+ * The em dash.
+ */
+let mdash = {js|\u2014|js};
+
+/**
  * &minus;
  *
  * The minus sign.

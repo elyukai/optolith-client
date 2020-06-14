@@ -3,6 +3,8 @@
 
 var ndash = "\u2013";
 
+var mdash = "\u2014";
+
 var minus = "\u2212";
 
 var nobr = "\u2060";
@@ -15,6 +17,7 @@ var closeIcon = "\uE5CD";
 
 export {
   ndash ,
+  mdash ,
   minus ,
   nobr ,
   nbsp ,
