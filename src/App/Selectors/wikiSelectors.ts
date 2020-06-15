@@ -5,6 +5,7 @@ import { fromMaybe, Maybe, maybe } from "../../Data/Maybe"
 import { elems, keysSet } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { uncurryN, uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry"
+import { traceShowId } from "../../Debug/Trace"
 import { numIdNameToDropdown } from "../Models/NumIdName"
 import { CultureCombinedA_ } from "../Models/View/CultureCombined"
 import { ProfessionCombined, ProfessionCombinedA_ } from "../Models/View/ProfessionCombined"
@@ -42,7 +43,7 @@ const PVCA = ProfessionVariantCombined.A
 
 export const filterByWikiAvailablilty = createMaybeSelector (
   getWikiBooks,
-  booksMap => filterByAvailabilityF (booksMap) (keysSet (booksMap)) (true)
+  booksMap => filterByAvailabilityF (booksMap) (traceShowId (keysSet (booksMap))) (true)
 )
 
 export const getRacesSortedByName = createMaybeSelector (
@@ -60,7 +61,9 @@ export const getPreparedRaces = createMaybeSelector (
   uncurryN3 (filterWiki => filter_text =>
               pipe (
                 filterRecordsByA ([ RaceCombinedA_.name ]) (filter_text),
-                filterWiki (RaceCombinedA_.src)
+                traceShowId,
+                filterWiki (RaceCombinedA_.src),
+                traceShowId,
               ))
 )
 

@@ -27,20 +27,16 @@ export const mergeBy : <K extends string> (key : K)
                     const result : ArrayValue<typeof base>[] = []
 
                     // collect all possible keys
-                    let allkeys : (string | number)[] = []
+                    const allkeys = new Set<string | number> ()
 
                     for (const b of base) {
-                      allkeys.push (b[key])
+                      allkeys.add (b[key])
                     }
 
                     if (override !== undefined) {
-                      for (const b of base) {
-                        if (!allkeys.includes (b[key])) {
-                          allkeys.push (b[key])
-                        }
+                      for (const b of override) {
+                        allkeys.add (b[key])
                       }
-                      // remove duplicates
-                      allkeys = allkeys.filter ((item, pos) => allkeys.indexOf (item) === pos)
                     }
 
                     // merge
@@ -86,39 +82,29 @@ export const zipBy : <K extends string> (key : K)
                                 = []
 
                      // collect all possible keys
-                     let allkeys : (string|number)[] = []
+                     const allkeys = new Set<string | number> ()
+
                      for (const b of base) {
-                       allkeys.push (b[key])
+                       allkeys.add (b[key])
                      }
+
                      if (override !== undefined) {
-                       for (const b of base) {
-                         if (!allkeys.includes (b[key])) {
-                           allkeys.push (b[key])
-                         }
+                       for (const b of override) {
+                         allkeys.add (b[key])
                        }
-                       // remove duplicates
-                       allkeys = allkeys.filter ((item, pos) => allkeys.indexOf (item) === pos)
                      }
 
                      // merge for all keys
                      for (const k of allkeys) {
-                      const u = os .find (x => (x[key] as A1) === (k as A1))
-                      const b = base.find (x => (x[key] as A1) === (k as A1))
-                      const o = override === undefined
-                                ? undefined
-                                : override.find (x => (x[key] as A1) === (k as A1))
+                       const u = os.find (x => (x[key] as A1) === (k as A1))
+
+                       const o = override?.find (x => (x[key] as A1) === (k as A1))
+                                 ?? base.find (x => (x[key] as A1) === (k as A1))
 
                        if (u === undefined) {
                          errs.push (new Error (`zipById: No matching entry found for "${JSON.stringify (k)}"`))
                        }
-                       else if (o === undefined) {
-                         // no override found, fall back to base.
-                         if (b !== undefined) {
-                           ress.push ([ u, b ])
-                         }
-                       }
-                       else {
-                         // override found
+                       else if (o !== undefined) {
                          ress.push ([ u, o ])
                        }
                      }
