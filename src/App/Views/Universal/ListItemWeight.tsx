@@ -1,28 +1,25 @@
 import * as React from "react"
-import { List } from "../../../Data/List"
-import { guardReplace, Just, orN, Maybe, fromMaybe, isJust } from "../../../Data/Maybe"
-import { classListMaybe } from "../../Utilities/CSS"
+import { Maybe, maybe } from "../../../Data/Maybe"
 import { ndash } from "../../Utilities/Chars.bs"
+import { pipe } from "../../Utilities/pipe"
+import { localizeSize, localizeNumber } from "../../Utilities/I18n"
+import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 
 interface Props {
   weight: Maybe<number>
   small?: boolean
+  staticData: StaticDataRecord
 }
 
 export const ListItemWeight: React.FC<Props> = props => {
-  const { weight, small } = props
+  const { weight, staticData } = props
 
-  const content = isJust (weight) ? (fromMaybe (-1) (weight)).toString () : ndash
+  const content = maybe (ndash)
+                        (pipe (localizeSize (staticData), localizeNumber (staticData)))
+                        (weight)
 
   return (
-    <div
-      className={
-        classListMaybe (List (
-          Just ("weight"),
-          guardReplace (orN (small)) ("small-info-text")
-        ))
-      }
-      >
+    <div className="weight">
       {content}
     </div>
   )

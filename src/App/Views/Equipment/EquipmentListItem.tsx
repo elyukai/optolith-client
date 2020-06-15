@@ -98,6 +98,7 @@ export const EquipmentListItem: React.FC<EquipmentListItemProps> = props => {
         />
       <ListItemWeight
         weight={IA.weight (data)}
+        staticData={staticData}
         />
       <ListItemButtons>
         <IconButton
