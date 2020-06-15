@@ -33,6 +33,7 @@ import { Slidein } from "../Universal/Slidein"
 import { SortNames, SortOptions } from "../Universal/SortOptions"
 import { EquipmentListItem } from "./EquipmentListItem"
 import { PurseAndTotals } from "./PurseAndTotals"
+import { PurseAddRemoveMoney } from "./PurseAddRemoveMoney"
 
 export interface EquipmentOwnProps {
   staticData: StaticDataRecord
@@ -55,6 +56,7 @@ export interface EquipmentStateProps {
   filterText: string
   templatesFilterText: string
   filteredEquipmentGroups: List<Record<DropdownOption<number>>>
+  isAddRemoveMoneyOpen: boolean
 }
 
 export interface EquipmentDispatchProps {
@@ -71,6 +73,9 @@ export interface EquipmentDispatchProps {
   setRangedItemTemplatesCombatTechniqueFilter (filterOption: Maybe<RangedCombatTechniqueId>): void
   setFilterText (filterText: string): void
   setTemplatesFilterText (filterText: string): void
+  setMoney (d: number, w: number, h: number, k: number): void
+  openAddRemoveMoney (): void
+  closeAddRemoveMoney (): void
 }
 
 export type EquipmentProps = EquipmentStateProps & EquipmentDispatchProps & EquipmentOwnProps
@@ -144,11 +149,15 @@ export const Equipment: React.FC<EquipmentProps> = props => {
     filterText,
     templatesFilterText,
     filteredEquipmentGroups,
+    isAddRemoveMoneyOpen,
     setSortOrder,
     setDucates,
     setSilverthalers,
     setHellers,
     setKreutzers,
+    openAddRemoveMoney,
+    closeAddRemoveMoney,
+    setMoney,
     addTemplateToList,
     createItem,
     deleteItem,
@@ -359,10 +368,18 @@ export const Equipment: React.FC<EquipmentProps> = props => {
           setSilverthalers={setSilverthalers}
           setHellers={setHellers}
           setKreutzers={setKreutzers}
+          openAddRemoveMoney={openAddRemoveMoney}
           />
         <WikiInfoContainer currentId={infoId} noWrapper />
       </Aside>
       <ItemEditorContainer staticData={staticData} />
+      <PurseAddRemoveMoney
+        close={closeAddRemoveMoney}
+        isOpen={isAddRemoveMoneyOpen}
+        purse={purse}
+        setMoney={setMoney}
+        staticData={staticData}
+        />
     </Page>
   )
 }

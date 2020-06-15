@@ -2,12 +2,13 @@ import { connect } from "react-redux"
 import { Maybe } from "../../Data/Maybe"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as EquipmentActions from "../Actions/EquipmentActions"
+import * as SubwindowsActions from "../Actions/SubwindowsActions"
 import { AppStateRecord } from "../Models/AppState"
 import { getInitialStartingWealth } from "../Selectors/activatableSelectors"
 import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors"
 import { getCarryingCapacity } from "../Selectors/attributeSelectors"
 import { getFilteredHitZoneArmors, getItems, getTemplates, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors"
-import { getArmorZonesEditorInstance, getIsInHitZoneArmorCreation, getPurse, getZoneArmorFilterText } from "../Selectors/stateSelectors"
+import { getArmorZonesEditorInstance, getIsInHitZoneArmorCreation, getPurse, getZoneArmorFilterText, getIsAddRemoveMoneyOpen } from "../Selectors/stateSelectors"
 import { HitZoneArmors, HitZoneArmorsDispatchProps, HitZoneArmorsOwnProps, HitZoneArmorsStateProps } from "../Views/HitZoneArmors/HitZoneArmors"
 
 const mapStateToProps = (
@@ -26,6 +27,7 @@ const mapStateToProps = (
   totalPrice: getTotalPrice (state),
   totalWeight: getTotalWeight (state),
   filterText: getZoneArmorFilterText (state),
+  isAddRemoveMoneyOpen: getIsAddRemoveMoneyOpen (state),
 })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): HitZoneArmorsDispatchProps => ({
@@ -58,6 +60,15 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): HitZoneArmorsDispatchProps
   },
   setKreutzers (value: string) {
     dispatch (EquipmentActions.setKreutzers (value))
+  },
+  setMoney (d: number, s: number, h: number, k: number) {
+    dispatch (EquipmentActions.setMoney (d, s, h, k))
+  },
+  openAddRemoveMoney () {
+    dispatch (SubwindowsActions.openAddRemoveMoney ())
+  },
+  closeAddRemoveMoney () {
+    dispatch (SubwindowsActions.closeAddRemoveMoney ())
   },
   setName (value: string): void {
     dispatch (EquipmentActions.setArmorZonesName (value))
