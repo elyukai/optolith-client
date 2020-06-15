@@ -1,71 +1,77 @@
 .list-header {
-	flex: none;
-	height: 32px;
-	padding: 0 37px 0 13px;
-	display: flex;
-	font: 500 12px Alegreya Sans;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
-	color: var(--secondary-text-color);
-	margin-top: 12px;
+  flex: none;
+  height: 32px;
+  padding: 0 37px 0 13px;
+  display: flex;
+  font: 500 12px Alegreya Sans;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--secondary-text-color);
+  margin-top: 12px;
 
-	+ .scroll {
-		flex: 1 1 auto;
-	}
+  + .scroll {
+    flex: 1 1 auto;
+  }
 
-	> div {
-		display: flex;
-		align-items: center;
-		height: 32px;
+  > div {
+    display: flex;
+    align-items: center;
+    height: 32px;
 
-		&.name {
-			flex: 1 1 auto;
-		}
+    &.name {
+      flex: 1 1 auto;
+    }
 
-		&:not(.name) {
-			flex: none;
-			margin-right: 12px;
-			justify-content: center;
-		}
+    &:not(.name) {
+      flex: none;
+      margin-right: 12px;
+      justify-content: flex-end;
+    }
 
-		&.group {
-			margin-left: 4px;
-		}
+    &.group {
+      margin-left: 4px;
+    }
 
-		&.value, &.ic, &.cost, &.primary, &.at, &.pa, &.mod {
-			width: 32px;
-		}
+    &.weight {
+      width: 54px;
+      margin-left: 4px;
+      text-align: right;
+    }
 
-		&.primary, &.at, &.pa, &.mod {
-			margin-right: 8px;
-		}
+    &.value, &.ic, &.cost, &.primary, &.at, &.pa, &.mod {
+      width: 32px;
+    }
 
-		&.ic {
-			margin-left: 4px;
-		}
+    &.primary, &.at, &.pa, &.mod {
+      margin-right: 8px;
+    }
 
-		&.check {
-			width: 112px;
-			margin-right: 8px;
-		}
+    &.ic {
+      margin-left: 4px;
+    }
 
-		&.btn-placeholder {
-			width: 32px;
-			margin-right: 0;
+    &.check {
+      width: 112px;
+      margin-right: 8px;
+    }
 
-			+ div.btn-placeholder.has-border {
-				margin-left: 5px;
-			}
-		}
+    &.btn-placeholder {
+      width: 32px;
+      margin-right: 0;
 
-		&.has-hint:hover {
-			cursor: pointer;
-		}
-	}
+      + div.btn-placeholder.has-border {
+        margin-left: 5px;
+      }
+    }
+
+    &.has-hint:hover {
+      cursor: pointer;
+    }
+  }
 }
 
 section > .page, .slidein-backdrop > .slidein > .slidein-content {
-	> .main-content > .list-header + .scroll .scroll-inner {
-		padding-top: 0;
-	}
+  > .main-content > .list-header + .scroll .scroll-inner {
+    padding-top: 0;
+  }
 }
