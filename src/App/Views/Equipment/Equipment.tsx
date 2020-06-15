@@ -317,6 +317,9 @@ export const Equipment: React.FC<EquipmentProps> = props => {
           <ListHeaderTag className="group">
             {translate (staticData) ("equipment.header.group")}
           </ListHeaderTag>
+          <ListHeaderTag className="weight">
+            {translate (staticData) ("equipment.dialogs.addedit.weight")}
+          </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
