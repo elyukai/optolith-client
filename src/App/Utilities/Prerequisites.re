@@ -144,8 +144,8 @@ module Dynamic = {
         heroEntry: option(Hero.Activatable.t),
         singleEntry: Activatable.singleWithId,
       ) => {
-    let sid = Activatable.getOption1(singleEntry);
-    let sid2 = Activatable.getOption2(singleEntry);
+    let sid = Activatable.SelectOptions.getOption1(singleEntry);
+    let sid2 = Activatable.SelectOptions.getOption2(singleEntry);
 
     switch (staticEntry) {
     | Advantage(entry) =>
@@ -361,7 +361,7 @@ module Dynamic = {
         heroEntry,
         singleEntry: Activatable.singleWithId,
       ) => {
-    let sid = Activatable.getOption1(singleEntry);
+    let sid = Activatable.SelectOptions.getOption1(singleEntry);
 
     let entrySpecifics =
       getEntrySpecificDynamicPrerequisites(

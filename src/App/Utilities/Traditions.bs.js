@@ -4,11 +4,11 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Ley_List$OptolithClient from "../../Data/Ley_List.bs.js";
 import * as Ley_IntMap$OptolithClient from "../../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../../Data/Ley_Option.bs.js";
-import * as Activatable$OptolithClient from "./Activatable.bs.js";
+import * as Activatable_Accessors$OptolithClient from "./Activatable_Accessors.bs.js";
 
 function isActiveTradition(staticData, x) {
   if (Curry._2(Ley_IntMap$OptolithClient.member, x.id, staticData.magicalTraditions)) {
-    return Activatable$OptolithClient.isActive(x);
+    return Activatable_Accessors$OptolithClient.isActive(x);
   } else {
     return false;
   }
@@ -72,7 +72,7 @@ function getPrimaryAttributeId(staticData, mp) {
 function getHeroEntry(staticData, mp) {
   return Curry._2(Ley_IntMap$OptolithClient.Foldable.find, (function (param) {
                 if (Curry._2(Ley_IntMap$OptolithClient.member, param.id, staticData.blessedTraditions)) {
-                  return Activatable$OptolithClient.isActive(param);
+                  return Activatable_Accessors$OptolithClient.isActive(param);
                 } else {
                   return false;
                 }

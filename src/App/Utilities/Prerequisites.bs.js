@@ -14,9 +14,10 @@ import * as Ley_List$OptolithClient from "../../Data/Ley_List.bs.js";
 import * as Ley_IntMap$OptolithClient from "../../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../../Data/Ley_Option.bs.js";
 import * as Traditions$OptolithClient from "./Traditions.bs.js";
-import * as Activatable$OptolithClient from "./Activatable.bs.js";
 import * as Ley_Function$OptolithClient from "../../Data/Ley_Function.bs.js";
+import * as Activatable_Convert$OptolithClient from "./Activatable_Convert.bs.js";
 import * as Static_SelectOption$OptolithClient from "../Models/Static_SelectOption.bs.js";
+import * as Activatable_SelectOptions$OptolithClient from "./Activatable_SelectOptions.bs.js";
 
 function applicablePred(oldLevel, newLevel) {
   var level;
@@ -158,8 +159,8 @@ function flattenPrerequisites(oldLevel, newLevel, prerequisites) {
 }
 
 function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEntry, heroEntry, singleEntry) {
-  var sid = Activatable$OptolithClient.getOption1(singleEntry);
-  var sid2 = Activatable$OptolithClient.getOption2(singleEntry);
+  var sid = Activatable_SelectOptions$OptolithClient.getOption1(singleEntry);
+  var sid2 = Activatable_SelectOptions$OptolithClient.getOption2(singleEntry);
   switch (staticEntry.tag | 0) {
     case /* Advantage */0 :
         var match = Id$OptolithClient.advantageFromInt(staticEntry[0].id);
@@ -173,7 +174,7 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                               Id$OptolithClient.disadvantageToInt(/* Incompetent */18)
                             ],
                             active: false,
-                            sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable$OptolithClient.Convert.activatableOptionToSelectOptionId),
+                            sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
                             sid2: undefined,
                             level: undefined
                           }]),
@@ -192,7 +193,7 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                             Id$OptolithClient.disadvantageToInt(/* MagicalRestriction */5)
                           ],
                           active: false,
-                          sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable$OptolithClient.Convert.activatableOptionToSelectOptionId),
+                          sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
                           sid2: undefined,
                           level: undefined
                         }]),
@@ -216,7 +217,7 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                               Id$OptolithClient.advantageToInt(/* Aptitude */0)
                             ],
                             active: false,
-                            sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable$OptolithClient.Convert.activatableOptionToSelectOptionId),
+                            sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
                             sid2: undefined,
                             level: undefined
                           }]),
@@ -227,7 +228,7 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                                 Id$OptolithClient.advantageToInt(/* ExceptionalSkill */4)
                               ],
                               active: false,
-                              sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable$OptolithClient.Convert.activatableOptionToSelectOptionId),
+                              sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
                               sid2: undefined,
                               level: undefined
                             }]),
@@ -243,7 +244,7 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                             Id$OptolithClient.advantageToInt(/* MagicalAttunement */13)
                           ],
                           active: false,
-                          sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable$OptolithClient.Convert.activatableOptionToSelectOptionId),
+                          sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
                           sid2: undefined,
                           level: undefined
                         }]),
@@ -270,7 +271,7 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                               Id$OptolithClient.specialAbilityToInt(/* Language */6)
                             ],
                             active: true,
-                            sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable$OptolithClient.Convert.activatableOptionToSelectOptionId),
+                            sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
                             sid2: undefined,
                             level: 3
                           }]),
@@ -318,7 +319,7 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                             ) | 0, 6)
                       }]) : undefined;
                 return Ley_List$OptolithClient.append(Ley_Option$OptolithClient.optionToList(sameSkillDependency), Ley_Option$OptolithClient.optionToList(Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.Monad.$great$great$eq(sid, (function (param) {
-                                          return Activatable$OptolithClient.SelectOptions.getSelectOption(staticEntry, param);
+                                          return Activatable_SelectOptions$OptolithClient.getSelectOption(staticEntry, param);
                                         })), (function (option) {
                                       var match = option.wikiEntry;
                                       var tmp;
@@ -348,7 +349,7 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                                 Id$OptolithClient.specialAbilityToInt(/* PropertyKnowledge */10)
                               ],
                               active: true,
-                              sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable$OptolithClient.Convert.activatableOptionToSelectOptionId),
+                              sid: Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
                               sid2: undefined,
                               level: undefined
                             }]),
@@ -406,7 +407,7 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
           }
         }
         return Ley_Option$OptolithClient.fromOption(/* [] */0, Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.Monad.$great$great$eq(sid, (function (param) {
-                              return Activatable$OptolithClient.SelectOptions.getSelectOption(staticEntry, param);
+                              return Activatable_SelectOptions$OptolithClient.getSelectOption(staticEntry, param);
                             })), (function (option) {
                           return Ley_Option$OptolithClient.Monad.liftM2((function (target, level) {
                                         return /* :: */[
@@ -430,7 +431,7 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
 }
 
 function getDynamicPrerequisites(isEntryToAdd, staticData, staticEntry, heroEntry, singleEntry) {
-  var sid = Activatable$OptolithClient.getOption1(singleEntry);
+  var sid = Activatable_SelectOptions$OptolithClient.getOption1(singleEntry);
   var entrySpecifics = getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEntry, heroEntry, singleEntry);
   var selectOptionSpecifics = Ley_Option$OptolithClient.option(/* [] */0, (function (sid) {
           var tmp;
@@ -447,7 +448,7 @@ function getDynamicPrerequisites(isEntryToAdd, staticData, staticEntry, heroEntr
           return Ley_Option$OptolithClient.option(/* [] */0, (function (option) {
                         return flattenPrerequisiteLevel(option.prerequisites, /* [] */0);
                       }), Curry._2(Static_SelectOption$OptolithClient.SelectOptionMap.lookup, sid, tmp));
-        }), Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable$OptolithClient.Convert.activatableOptionToSelectOptionId));
+        }), Ley_Option$OptolithClient.Monad.$great$great$eq(sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId));
   return Pervasives.$at(selectOptionSpecifics, entrySpecifics);
 }
 
@@ -556,7 +557,7 @@ function hasIncreasableMinValue(current, param) {
 function isSafeSidValid(single, index, sid) {
   return Ley_Option$OptolithClient.option(false, (function (param) {
                 return sid === param;
-              }), Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_List$OptolithClient.Safe.atMay(single.options, index), Activatable$OptolithClient.Convert.activatableOptionToSelectOptionId));
+              }), Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_List$OptolithClient.Safe.atMay(single.options, index), Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId));
 }
 
 function isSidValid(single, index, sid) {

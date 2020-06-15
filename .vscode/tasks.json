@@ -5,67 +5,17 @@
 	"presentation": {
 		"reveal": "always"
 	},
-	"type": "shell",
   "tasks": [
     {
-      "label": "build",
-      "command": "npm run build",
-      "problemMatcher": [
-        "$tsc"
-      ]
-    },
-    {
-      "label": "buildTest",
-      "command": "npm run buildTest"
-    },
-    {
-      "label": "buildMac",
-      "command": "npm run buildMac"
-    },
-    {
-      "label": "buildMacTest",
-      "command": "npm run buildMacTest"
-    },
-    {
-      "label": "watch",
-      "command": "npm run watch"
-    },
-    {
-      "label": "bundle",
-      "command": "npm run bundle",
-      "problemMatcher": [
-        "$tsc"
-      ]
-    },
-    {
-      "label": "run",
-      "command": "npm start"
-    },
-    {
-      "label": "bundle_l10ns",
-      "command": "npm run bundle_l10ns"
-    },
-    {
-      "label": "bundle_data",
-      "command": "npm run bundle_data"
-    },
-    {
-      "label": "bundle_css",
-      "command": "npm run bundle_css"
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "tsconfig.json",
+      "label": "re:watch",
+      "type": "shell",
+      "command": "npm run re:watch",
+      "group": "build",
       "isBackground": true,
-      "problemMatcher": [
-        "$tsc"
-      ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
+      "problemMatcher": []
     },
     {
+      "label": "ts:watch",
       "type": "typescript",
       "tsconfig": "tsconfig.json",
       "option": "watch",
@@ -76,9 +26,9 @@
       "group": "build"
     },
     {
-      "type": "npm",
-      "script": "buildWin",
-      "problemMatcher": []
-    }
+      "label": "watch",
+      "dependsOn": ["re:watch", "ts:watch"],
+      "group": "build"
+    },
   ]
 }

@@ -108,7 +108,8 @@ module Skills = {
       {
         switch (unsafeSkillFromInt(staticEntry.id)) {
         | Woodworking as skillId
-        | Metalworking as skillId when Activatable.isActiveM(craftInstruments) =>
+        | Metalworking as skillId
+            when Activatable.Accessors.isActiveM(craftInstruments) =>
           // Sum of Woodworking and Metalworking must be at least 12.
           let minimumSum = 12;
 

@@ -8,8 +8,9 @@ import * as Caml_builtin_exceptions from "bs-platform/lib/es6/caml_builtin_excep
 import * as Ley_List$OptolithClient from "../../Data/Ley_List.bs.js";
 import * as Ley_IntMap$OptolithClient from "../../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../../Data/Ley_Option.bs.js";
-import * as Activatable$OptolithClient from "./Activatable.bs.js";
 import * as Dependencies$OptolithClient from "./Dependencies.bs.js";
+import * as Activatable_Accessors$OptolithClient from "./Activatable_Accessors.bs.js";
+import * as Activatable_SelectOptions$OptolithClient from "./Activatable_SelectOptions.bs.js";
 
 function getValueDef(param) {
   return Ley_Option$OptolithClient.option(8, (function (x) {
@@ -88,7 +89,7 @@ function getMinSrByCraftInstruments(craftInstruments, skills, staticEntry) {
   if (match !== 50 && match !== 54) {
     return ;
   }
-  if (!Activatable$OptolithClient.isActiveM(craftInstruments)) {
+  if (!Activatable_Accessors$OptolithClient.isActiveM(craftInstruments)) {
     return ;
   }
   var otherSkillId;
@@ -98,7 +99,7 @@ function getMinSrByCraftInstruments(craftInstruments, skills, staticEntry) {
             Caml_builtin_exceptions.match_failure,
             /* tuple */[
               "Increasable.re",
-              116,
+              117,
               12
             ]
           ];
@@ -338,7 +339,7 @@ function getMaxSrFromPropertyKnowledge(propertyKnowledge, staticEntry) {
   ];
   var hasRestriction = Ley_Option$OptolithClient.option(true, (function (param) {
           return Ley_List$OptolithClient.Foldable.notElem(partial_arg, param);
-        }), Ley_Option$OptolithClient.Functor.$less$amp$great(propertyKnowledge, Activatable$OptolithClient.SelectOptions.getActiveOptions1));
+        }), Ley_Option$OptolithClient.Functor.$less$amp$great(propertyKnowledge, Activatable_SelectOptions$OptolithClient.getActiveOptions1));
   if (hasRestriction) {
     return 14;
   }
@@ -414,7 +415,7 @@ function getMinSrByDeps$1(heroSpells, heroEntry) {
 
 function getMin$2(propertyKnowledge, staticSpells, heroSpells) {
   var counter = getValidSpellsForPropertyKnowledgeCounter(staticSpells, heroSpells);
-  var activePropertyKnowledges = Activatable$OptolithClient.SelectOptions.getActiveOptions1(propertyKnowledge);
+  var activePropertyKnowledges = Activatable_SelectOptions$OptolithClient.getActiveOptions1(propertyKnowledge);
   return (function (staticEntry, heroEntry) {
       return Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Ley_Option$OptolithClient.catOptions(/* :: */[
                           getMinSrByDeps$1(heroSpells, heroEntry),
@@ -480,7 +481,7 @@ function getMaxSrFromAspectKnowledge(aspectKnowledge, staticEntry) {
                                     aspect
                                   ], actives);
                       }), staticEntry.aspects);
-        }), Ley_Option$OptolithClient.Functor.$less$amp$great(aspectKnowledge, Activatable$OptolithClient.SelectOptions.getActiveOptions1));
+        }), Ley_Option$OptolithClient.Functor.$less$amp$great(aspectKnowledge, Activatable_SelectOptions$OptolithClient.getActiveOptions1));
   if (hasRestriction) {
     return 14;
   }
@@ -568,7 +569,7 @@ function getMinSrByDeps$2(heroLiturgicalChants, heroEntry) {
 
 function getMin$3(aspectKnowledge, staticLiturgicalChants, heroLiturgicalChants) {
   var counter = getValidLiturgicalChantsForAspectKnowledgeCounter(staticLiturgicalChants, heroLiturgicalChants);
-  var activeAspectKnowledges = Activatable$OptolithClient.SelectOptions.getActiveOptions1(aspectKnowledge);
+  var activeAspectKnowledges = Activatable_SelectOptions$OptolithClient.getActiveOptions1(aspectKnowledge);
   return (function (staticEntry, heroEntry) {
       return Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Ley_Option$OptolithClient.catOptions(/* :: */[
                           getMinSrByDeps$2(heroLiturgicalChants, heroEntry),
