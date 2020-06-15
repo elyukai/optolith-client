@@ -15,6 +15,8 @@ interface Props {
   fullWidth?: boolean
   hint?: Maybe<string> | string
   label?: Maybe<string> | string
+  max?: string
+  min?: string
   type?: string
   value?: string
   valid?: boolean
@@ -34,6 +36,8 @@ export const TextFieldLazy: React.FC<Props> = props => {
     fullWidth,
     hint,
     label,
+    max,
+    min,
     onChange,
     onKeyDown,
     onKeyUp,
@@ -96,6 +100,8 @@ export const TextFieldLazy: React.FC<Props> = props => {
       >
       <input
         type={type}
+        min={min}
+        max={max}
         value={value}
         onChange={handleChange}
         onKeyPress={orN (disabled) ? undefined : onKeyDown}

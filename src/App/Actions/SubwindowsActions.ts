@@ -126,3 +126,19 @@ export interface CloseEditPetAvatarAction {
 export const closeEditPetAvatar = (): CloseEditPetAvatarAction => ({
   type: ActionTypes.CLOSE_EDIT_PET_AVATAR,
 })
+
+export interface OpenAddRemoveMoneyAction {
+  type: ActionTypes.OPEN_ADD_REMOVE_MONEY
+}
+
+export const openAddRemoveMoney = (): OpenAddRemoveMoneyAction => ({
+  type: ActionTypes.OPEN_ADD_REMOVE_MONEY,
+})
+
+export interface CloseAddRemoveMoneyAction {
+  type: ActionTypes.CLOSE_ADD_REMOVE_MONEY
+}
+
+export const closeAddRemoveMoney = (): CloseAddRemoveMoneyAction => ({
+  type: ActionTypes.CLOSE_ADD_REMOVE_MONEY,
+})

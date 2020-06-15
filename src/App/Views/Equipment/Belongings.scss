@@ -1,91 +1,115 @@
 @import "ItemEditor";
 
-#equipment, #armor-zones {
-	.purse {
-		display: flex;
-		flex-direction: column;
+#equipment, #armor-zones, .modal-content-inner {
+  .purse {
+    display: flex;
+    flex-direction: column;
 
-		h4 {
-			// flex: 1 0 100%;
-			justify-content: center;
-		}
+    h4 {
+      // flex: 1 0 100%;
+      justify-content: center;
+    }
 
-		.fields {
-			display: flex;
-			margin-top: 16px;
-		}
+    .fields {
+      display: flex;
+      margin-top: 16px;
+      margin-bottom: 10px;
+    }
 
-		.textfield {
-			flex: 1 1 25%;
-			margin: 0;
+    .textfield {
+      flex: 1 1 25%;
+      margin: 0;
 
-			label {
-				padding-left: 2px;
-			}
+      label {
+        padding-left: 2px;
+      }
 
-			&:not(:last-child) {
-				margin-right: 10px;
-			}
-		}
-	}
+      &:not(:last-child) {
+        margin-right: 10px;
+      }
+    }
+  }
 
-	.total-points {
-		display: flex;
-		flex-direction: column;
+  .total-points {
+    display: flex;
+    flex-direction: column;
 
-		h4 {
-			// flex: 1 0 100%;
-			justify-content: center;
-		}
-	}
+    h4 {
+      // flex: 1 0 100%;
+      justify-content: center;
+    }
+  }
 
-	li .group {
-		margin-left: 4px;
-		margin-right: 12px;
-	}
+  li .group {
+    margin-left: 4px;
+    margin-right: 12px;
+  }
 }
 
 .overlay > .inventory-item {
-	max-width: 280px;
+  max-width: 280px;
 
-	h4 {
-		span:first-child {
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			display: block;
-		}
-	}
+  h4 {
+    span:first-child {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+  }
 
-	table {
-		margin-top: 15px;
-		font: 500 13px/22px Alegreya Sans;
-		letter-spacing: 0.05em;
+  table {
+    margin-top: 15px;
+    font: 500 13px/22px Alegreya Sans;
+    letter-spacing: 0.05em;
 
-		td {
-			padding: 0;
-			border: none;
-			height: auto;
+    td {
+      padding: 0;
+      border: none;
+      height: auto;
 
-			&:first-child {
-				color: var(--text-color);
-				padding-right: 15px;
-				width: 0;
-			}
+      &:first-child {
+        color: var(--text-color);
+        padding-right: 15px;
+        width: 0;
+      }
 
-			&:last-child {
-				color: var(--headings-color);
-			}
-		}
-	}
+      &:last-child {
+        color: var(--headings-color);
+      }
+    }
+  }
 
-	p.ammunition {
-		margin-top: 3px;
-	}
+  p.ammunition {
+    margin-top: 3px;
+  }
 
-	p.armor {
-		margin-top: 10px;
-		font: 500 13px/22px Alegreya Sans;
-		color: var(--headings-color);
-	}
+  p.armor {
+    margin-top: 10px;
+    font: 500 13px/22px Alegreya Sans;
+    color: var(--headings-color);
+  }
+}
+
+.flexrow {
+  display: flex;
+  margin-bottom: 10px;
+  justify-content: space-evenly;
+}
+
+.purseValue {
+  height: 32px;
+  border: 1px solid var(--disabled-color);
+  padding: 0 11px;
+  color: var(--headings-color);
+  font: 500 13px/30px Alegreya Sans;
+  display: block;
+  outline: 0 none;
+  background: none;
+  overflow: hidden;
+  position: relative;
+}
+
+.purseValue:not(:last-child) {
+  margin-right: 10px;
 }

@@ -13,6 +13,7 @@ export interface SubWindowsState {
   isSettingsOpen: boolean
   isEditCharacterAvatarOpen: boolean
   isEditPetAvatarOpen: boolean
+  isAddRemoveMoneyOpen: boolean
 }
 
 export const SubWindowsState =
@@ -26,6 +27,7 @@ export const SubWindowsState =
                 isSettingsOpen: false,
                 isEditCharacterAvatarOpen: false,
                 isEditPetAvatarOpen: false,
+                isAddRemoveMoneyOpen: false,
               })
 
 export const SubWindowsStateL = makeLenses (SubWindowsState)

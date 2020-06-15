@@ -76,6 +76,26 @@ export const addTemplateToList =
     return undefined
   }
 
+export interface SetMoneyAction {
+  type: ActionTypes.SET_MONEY
+  payload: {
+    d: number
+    s: number
+    h: number
+    k: number
+  }
+}
+
+export const setMoney = (d: number, s: number, h: number, k: number): SetMoneyAction => ({
+  type: ActionTypes.SET_MONEY,
+  payload: {
+    d,
+    s,
+    h,
+    k,
+  },
+})
+
 export interface CreateItemAction {
   type: ActionTypes.CREATE_ITEM
 }
