@@ -40,6 +40,7 @@ export interface SpellsSheetProps {
   properties: Maybe<string>
   spells: Maybe<List<Record<SpellWithRequirements>>>
   switchAttributeValueVisibility (): void
+  useParchment: boolean
 }
 
 export function SpellsSheet (props: SpellsSheetProps) {
@@ -55,6 +56,7 @@ export function SpellsSheet (props: SpellsSheetProps) {
     properties,
     spells,
     switchAttributeValueVisibility,
+    useParchment,
   } = props
 
   const addHeader = List<Record<HeaderValue>> (
@@ -94,6 +96,7 @@ export function SpellsSheet (props: SpellsSheetProps) {
         addHeaderInfo={addHeader}
         staticData={staticData}
         attributes={attributes}
+        useParchment={useParchment}
         >
         <div className="all">
           <SpellsSheetSpells

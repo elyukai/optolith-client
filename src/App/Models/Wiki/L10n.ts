@@ -246,6 +246,7 @@ export const L10n =
                 "sheets.dialogs.pdfcreationerror.title": "",
                 "sheets.dialogs.pdfcreationerror.message": "",
                 "sheets.showattributevalues": "",
+                "sheets.useparchment": "",
                 "sheets.charactersheet": "",
                 "sheets.attributemodifiers.title": "",
 

@@ -31,6 +31,7 @@ interface Props {
   purse: Maybe<Record<Purse>>
   totalPrice: Maybe<number>
   totalWeight: Maybe<number>
+  useParchment: boolean
 }
 
 export const BelongingsSheet: React.FC<Props> = props => {
@@ -42,6 +43,7 @@ export const BelongingsSheet: React.FC<Props> = props => {
     totalPrice: maybeTotalPrice,
     totalWeight: maybeTotalWeight,
     pet,
+    useParchment,
   } = props
 
   const strength =
@@ -74,6 +76,7 @@ export const BelongingsSheet: React.FC<Props> = props => {
         title={translate (staticData) ("sheets.belongingssheet.title")}
         attributes={attributes}
         staticData={staticData}
+        useParchment={useParchment}
         >
         <div className="upper">
           <TextBox

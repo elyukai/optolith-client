@@ -156,6 +156,7 @@ export interface Config {
   equipmentSortOrder: EquipmentSortOptions
   equipmentGroupVisibilityFilter: EquipmentGroup
   sheetCheckAttributeValueVisibility: Maybe<boolean>
+  sheetUseParchment: Maybe<boolean>
   enableActiveItemHints: boolean
   locale: Maybe<string>
   fallbackLocale: Maybe<string>
@@ -188,6 +189,7 @@ export const Config =
                 equipmentSortOrder: SortNames.Name,
                 equipmentGroupVisibilityFilter: EquipmentGroup.MeleeWeapons,
                 sheetCheckAttributeValueVisibility: Just (false),
+                sheetUseParchment: Just (false),
                 enableActiveItemHints: false,
                 locale: Nothing,
                 fallbackLocale: Nothing,

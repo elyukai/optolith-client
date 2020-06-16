@@ -31,6 +31,7 @@ interface Props {
   scriptsWikiEntry: Maybe<Record<SpecialAbility>>
   skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
   skillGroupPages: OrderedMap<number, Pair<number, number>>
+  useParchment: boolean
   switchAttributeValueVisibility (): void
 }
 
@@ -46,6 +47,7 @@ export const SkillsSheet: React.FC<Props> = props => {
     skillsByGroup,
     skillGroupPages,
     switchAttributeValueVisibility,
+    useParchment,
   } = props
 
   return (
@@ -63,6 +65,7 @@ export const SkillsSheet: React.FC<Props> = props => {
         title={translate (staticData) ("sheets.gamestatssheet.title")}
         attributes={attributes}
         staticData={staticData}
+        useParchment={useParchment}
         >
         <SkillsSheetSkills
           attributes={attributes}

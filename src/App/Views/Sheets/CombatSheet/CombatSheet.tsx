@@ -58,6 +58,7 @@ interface Props {
   shieldsAndParryingWeapons: Maybe<List<Record<ShieldOrParryingWeapon>>>
   conditions: List<Record<Condition>>
   states: List<Record<State>>
+  useParchment: boolean
 }
 
 export const CombatSheet: React.FC<Props> = props => {
@@ -73,6 +74,7 @@ export const CombatSheet: React.FC<Props> = props => {
     shieldsAndParryingWeapons,
     conditions,
     states,
+    useParchment,
   } = props
 
   const addHeader = getAddCombatHeaderVals (derivedCharacteristics)
@@ -86,6 +88,7 @@ export const CombatSheet: React.FC<Props> = props => {
         addHeaderInfo={addHeader}
         attributes={attributes}
         staticData={staticData}
+        useParchment={useParchment}
         >
         <div className="upper">
           <CombatSheetTechniques

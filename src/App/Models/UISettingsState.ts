@@ -27,6 +27,7 @@ export interface UISettingsState {
   equipmentGroupVisibilityFilter: EquipmentGroup
   enableActiveItemHints: boolean
   sheetCheckAttributeValueVisibility: boolean
+  sheetUseParchment: boolean
   theme: Theme
   enableEditingHeroAfterCreationPhase: boolean
   meleeItemTemplatesCombatTechniqueFilter: Maybe<MeleeCombatTechniqueId>
@@ -57,6 +58,7 @@ export const UISettingsState =
                 equipmentGroupVisibilityFilter: EquipmentGroup.MeleeWeapons,
                 enableActiveItemHints: false,
                 sheetCheckAttributeValueVisibility: false,
+                sheetUseParchment: false,
                 theme: Theme.Dark,
                 enableEditingHeroAfterCreationPhase: false,
                 meleeItemTemplatesCombatTechniqueFilter: Nothing,
