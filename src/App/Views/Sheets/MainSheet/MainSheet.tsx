@@ -26,6 +26,7 @@ import { Sheet } from "../Sheet"
 import { SheetWrapper } from "../SheetWrapper"
 import { MainSheetAttributes } from "./MainSheetAttributes"
 import { MainSheetPersonalData } from "./MainSheetPersonalData"
+import { Checkbox } from "../../Universal/Checkbox"
 
 interface Props {
   advantagesActive: Maybe<List<Record<ActiveActivatable<Advantage>>>>
@@ -44,7 +45,9 @@ interface Props {
   profile: Record<PersonalData>
   race: Maybe<Record<Race>>
   sex: Maybe<Sex>
+  useParchment: boolean
   printToPDF (): void
+  switchUseParchment (): void
 }
 
 export const MainSheet: React.FC<Props> = props => {
@@ -66,6 +69,8 @@ export const MainSheet: React.FC<Props> = props => {
     printToPDF,
     race,
     sex,
+    switchUseParchment,
+    useParchment,
   } = props
 
   return (
@@ -76,12 +81,19 @@ export const MainSheet: React.FC<Props> = props => {
           label={translate (staticData) ("sheets.printtopdfbtn")}
           onClick={printToPDF}
           />
+        <Checkbox
+          checked={useParchment}
+          onClick={switchUseParchment}
+          >
+          {translate (staticData) ("sheets.useparchment")}
+        </Checkbox>
       </Options>
       <Sheet
         id="main-sheet"
         title={translate (staticData) ("sheets.mainsheet.title")}
         attributes={attributes}
         staticData={staticData}
+        useParchment={useParchment}
         >
         <MainSheetPersonalData
           ap={ap}

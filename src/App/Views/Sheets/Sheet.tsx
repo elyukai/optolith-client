@@ -11,13 +11,16 @@ export interface SheetProps {
   id: string
   staticData: StaticDataRecord
   title: string
+  useParchment: boolean
 }
 
 export const Sheet: React.FC<SheetProps> = props => {
-  const { addHeaderInfo, attributes, children, id, staticData, title } = props
+  const { addHeaderInfo, attributes, children, id, staticData, title, useParchment } = props
+
+  const className = useParchment ? "sheet paper" : "sheet"
 
   return (
-    <div className="sheet" id={id}>
+    <div className={className} id={id}>
       <SheetHeader
         title={title}
         add={addHeaderInfo}

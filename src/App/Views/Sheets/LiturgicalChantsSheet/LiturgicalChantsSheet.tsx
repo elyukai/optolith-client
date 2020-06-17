@@ -35,6 +35,7 @@ interface Props {
   blessedTradition: Maybe<string>
   blessings: Maybe<List<Record<BlessingCombined>>>
   checkAttributeValueVisibility: boolean
+  useParchment: boolean
   derivedCharacteristics: List<DCPair>
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
   staticData: StaticDataRecord
@@ -50,6 +51,7 @@ export const LiturgicalChantsSheet: React.FC<Props> = props => {
     blessedTradition,
     blessings,
     checkAttributeValueVisibility,
+    useParchment,
     derivedCharacteristics,
     liturgicalChants,
     staticData,
@@ -93,6 +95,7 @@ export const LiturgicalChantsSheet: React.FC<Props> = props => {
         addHeaderInfo={addHeader}
         staticData={staticData}
         attributes={attributes}
+        useParchment={useParchment}
         >
         <div className="all">
           <LiturgicalChantsSheetLiturgicalChants

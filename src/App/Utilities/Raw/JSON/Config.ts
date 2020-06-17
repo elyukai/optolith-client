@@ -152,6 +152,8 @@ export const parseConfig = async () => {
                                  validated_data.equipmentGroupVisibilityFilter,
                                sheetCheckAttributeValueVisibility:
                                  Maybe (validated_data.sheetCheckAttributeValueVisibility),
+                              sheetUseParchment:
+                                 Maybe (validated_data.sheetUseParchment),
                                enableActiveItemHints:
                                  validated_data.enableActiveItemHints,
                                locale:
@@ -187,6 +189,7 @@ export const writeConfig = (x: Record<Config>): string => {
   const serialized_obj: RawConfig = {
     ...obj,
     sheetCheckAttributeValueVisibility: maybeToUndefined (obj.sheetCheckAttributeValueVisibility),
+    sheetUseParchment: maybeToUndefined (obj.sheetUseParchment),
     locale: maybeToUndefined (obj.locale),
     fallbackLocale: maybeToUndefined (obj.fallbackLocale),
     theme: maybeToUndefined (obj.theme),

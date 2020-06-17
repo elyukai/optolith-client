@@ -77,6 +77,7 @@ export interface SheetsStateProps {
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
   name: Maybe<string>
   professionName: Maybe<string>
+  useParchment: boolean
 
   // profession: Maybe<Record<Profession>>
   // professionVariant: Maybe<Record<ProfessionVariant>>
@@ -117,6 +118,7 @@ export interface SheetsStateProps {
 export interface SheetsDispatchProps {
   printToPDF (): void
   switchAttributeValueVisibility (): void
+  switchUseParchment (): void
 }
 
 type Props = SheetsStateProps & SheetsDispatchProps & SheetsOwnProps
@@ -155,6 +157,8 @@ export const Sheets: React.FC<Props> = props => {
     skillsByGroup,
     skillGroupPages,
     switchAttributeValueVisibility,
+    switchUseParchment,
+    useParchment,
 
     armors,
     combatSpecialAbilities,
@@ -217,6 +221,8 @@ export const Sheets: React.FC<Props> = props => {
           race={race}
           sex={sex}
           printToPDF={printToPDF}
+          switchUseParchment={switchUseParchment}
+          useParchment={useParchment}
           />
         <SkillsSheet
           attributes={attributes}
@@ -229,6 +235,7 @@ export const Sheets: React.FC<Props> = props => {
           skillsByGroup={skillsByGroup}
           skillGroupPages={skillGroupPages}
           switchAttributeValueVisibility={switchAttributeValueVisibility}
+          useParchment={useParchment}
           />
         <CombatSheet
           armors={armors}
@@ -242,6 +249,7 @@ export const Sheets: React.FC<Props> = props => {
           shieldsAndParryingWeapons={shieldsAndParryingWeapons}
           conditions={conditions}
           states={states}
+          useParchment={useParchment}
           />
         {isBookEnabled (books)
                        (RA.enabledRuleBooks (HA.rules (hero)))
@@ -260,6 +268,7 @@ export const Sheets: React.FC<Props> = props => {
               shieldsAndParryingWeapons={shieldsAndParryingWeapons}
               conditions={conditions}
               states={states}
+              useParchment={useParchment}
               />
           )
           : null}
@@ -271,6 +280,7 @@ export const Sheets: React.FC<Props> = props => {
           purse={purse}
           totalPrice={totalPrice}
           totalWeight={totalWeight}
+          useParchment={useParchment}
           />
         {pipe_ (
           maybeArcaneEnergy,
@@ -288,6 +298,7 @@ export const Sheets: React.FC<Props> = props => {
                          properties={properties}
                          spells={spells}
                          switchAttributeValueVisibility={switchAttributeValueVisibility}
+                         useParchment={useParchment}
                          />
                      ))
         )}
@@ -307,6 +318,7 @@ export const Sheets: React.FC<Props> = props => {
                          liturgicalChants={liturgicalChants}
                          staticData={staticData}
                          switchAttributeValueVisibility={switchAttributeValueVisibility}
+                         useParchment={useParchment}
                          />
                      ))
         )}

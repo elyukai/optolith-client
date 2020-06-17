@@ -73,6 +73,9 @@
         "sheetCheckAttributeValueVisibility": {
           "type": "boolean"
         },
+        "sheetUseParchment": {
+          "type": "boolean"
+        },
         "enableActiveItemHints": {
           "type": "boolean"
         },
