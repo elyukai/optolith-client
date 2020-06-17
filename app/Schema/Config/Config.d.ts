@@ -21,6 +21,7 @@ export interface RawConfig {
   equipmentSortOrder: "name" | "groupname" | "where" | "weight"
   equipmentGroupVisibilityFilter: number
   sheetCheckAttributeValueVisibility?: boolean
+  sheetUseParchment?: boolean
   enableActiveItemHints: boolean
   locale?: string
   fallbackLocale?: string
