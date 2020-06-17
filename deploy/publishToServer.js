@@ -3,6 +3,7 @@
 require("dotenv").config()
 // const Client = require ("ssh2-sftp-client")
 const { Client } = require ("qusly-core")
+const readline = require ("readline")
 const os = require ("os")
 const fs = require ("fs")
 const path = require ("path")
@@ -119,8 +120,8 @@ const publishToServer =
 
     client.addListener("progress", (progress, info) => {
       if (loggedProgress) {
-        process.stdout.clearLine(1);
-        process.stdout.cursorTo(0);
+        readline.clearLine(process.stdout, 1);
+        readline.cursorTo(process.stdout, 0);
       }
       else {
         loggedProgress = true
