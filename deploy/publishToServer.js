@@ -1,7 +1,9 @@
 // @ts-check
 
 require("dotenv").config()
-const Client = require ("ssh2-sftp-client")
+// const Client = require ("ssh2-sftp-client")
+const { Client } = require ("qusly-core")
+const os = require ("os")
 const fs = require ("fs")
 const path = require ("path")
 const semver = require ("semver");
@@ -107,10 +109,24 @@ const publishToServer =
     console.log("Connecting to server...");
 
     await client.connect ({
+      protocol: "sftp",
       host: process.env.HOST,
-      port: 22,
-      username: process.env.USERNAME,
-      password: process.env.PASSWORD
+      user: process.env.USERNAME,
+      password: process.env.PASSWORD,
+    })
+
+    let loggedProgress = false
+
+    client.addListener("progress", (progress, info) => {
+      if (loggedProgress) {
+        process.stdout.clearLine(1);
+        process.stdout.cursorTo(0);
+      }
+      else {
+        loggedProgress = true
+      }
+
+      process.stdout.write(`Progress: ${progress.percent}%`);
     })
 
     console.log(`Server connection established`);
@@ -118,24 +134,48 @@ const publishToServer =
     for (const fileName of latestFileNames) {
       console.log(`Uploading ${fileName}`);
 
-      const stream = fs.readFileSync (path.join (...distPath, fileName))
-      const fileRes = await client.put (stream, `${serverPath}/${fileName}`)
+      loggedProgress = false
+      const stream = fs.createReadStream (path.join (...distPath, fileName))
+      await client.upload (`${serverPath}/${fileName}`, stream)
 
-      console.log(`Upload done: ${fileName} (${fileRes})`);
+      console.log(`\nUpload done: ${fileName}`);
     }
 
     console.log(`Uploading ${updateYmlName}`);
 
-    const updateYml = fs.readFileSync (path.join (...distPath, updateYmlName))
-    const ymlRes = await client.put (updateYml, `${serverPath}/${updateYmlName}`)
+    loggedProgress = false
+    const updateYml = fs.createReadStream (path.join (...distPath, updateYmlName))
+    await client.upload (`${serverPath}/${updateYmlName}`, updateYml)
 
-    console.log(`Upload done: ${updateYmlName} (${ymlRes})`);
+    console.log(`\nUpload done: ${updateYmlName}`);
 
-    await client.end ()
+    await client.disconnect ()
 
     console.log("Closed server connection.");
   }
 
 module.exports = {
   publishToServer
+}
+
+const getOS = () => {
+  switch (os.platform()) {
+    case "win32":
+      return "win"
+    case "darwin":
+      return "osx"
+    default:
+      return "linux"
+  }
+}
+
+// @ts-ignore
+if (require.main === module) {
+  const [channel] = process.argv.slice(2)
+  const platform = getOS()
+
+  console.log (channel, platform)
+
+  // @ts-ignore
+  publishToServer(channel, platform)
 }
