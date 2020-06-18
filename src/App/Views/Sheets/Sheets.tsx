@@ -1,18 +1,18 @@
 import * as React from "react"
 import { equals } from "../../../Data/Eq"
-import { find, List } from "../../../Data/List"
+import { fmapF } from "../../../Data/Functor"
+import { find, flength, List } from "../../../Data/List"
 import { bindF, Maybe, maybeRNull } from "../../../Data/Maybe"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd } from "../../../Data/Tuple"
 import { DCId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { Sex } from "../../Models/Hero/heroTypeHelpers"
 import { PersonalData } from "../../Models/Hero/PersonalData"
 import { Pet } from "../../Models/Hero/Pet"
 import { Purse } from "../../Models/Hero/Purse"
-import { Rules } from "../../Models/Hero/Rules"
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
 import { Armor } from "../../Models/View/Armor"
@@ -41,7 +41,6 @@ import { State } from "../../Models/Wiki/State"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { DCPair } from "../../Selectors/derivedCharacteristicsSelectors"
 import { pipe, pipe_ } from "../../Utilities/pipe"
-import { isBookEnabled } from "../../Utilities/RulesUtils"
 import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { Page } from "../Universal/Page"
 import { Scroll } from "../Universal/Scroll"
@@ -123,14 +122,10 @@ export interface SheetsDispatchProps {
 
 type Props = SheetsStateProps & SheetsDispatchProps & SheetsOwnProps
 
-const HA = HeroModel.A
-const RA = Rules.A
 
 export const Sheets: React.FC<Props> = props => {
   const {
     derivedCharacteristics,
-    books,
-    hero,
 
     advantagesActive,
     ap,
@@ -200,6 +195,9 @@ export const Sheets: React.FC<Props> = props => {
     find<DCPair> (pipe (fst, DerivedCharacteristic.A.id, equals<DerivedCharacteristicId> (DCId.KP)))
                  (derivedCharacteristics)
 
+  const nArmorZones = Maybe.sum (fmapF (armorZones) (flength))
+  const nArmors = Maybe.sum (fmapF (armors) (flength))
+
   return (
     <Page id="sheets">
       <Scroll className="sheet-wrapper">
@@ -237,39 +235,38 @@ export const Sheets: React.FC<Props> = props => {
           switchAttributeValueVisibility={switchAttributeValueVisibility}
           useParchment={useParchment}
           />
-        <CombatSheet
-          armors={armors}
-          attributes={attributes}
-          combatSpecialAbilities={combatSpecialAbilities}
-          combatTechniques={combatTechniques}
-          derivedCharacteristics={derivedCharacteristics}
-          staticData={staticData}
-          meleeWeapons={meleeWeapons}
-          rangedWeapons={rangedWeapons}
-          shieldsAndParryingWeapons={shieldsAndParryingWeapons}
-          conditions={conditions}
-          states={states}
-          useParchment={useParchment}
-          />
-        {isBookEnabled (books)
-                       (RA.enabledRuleBooks (HA.rules (hero)))
-                       (RA.enableAllRuleBooks (HA.rules (hero)))
-                       ("US25208")
-          ? (
-            <CombatSheetZones
-              armorZones={armorZones}
-              attributes={attributes}
-              combatSpecialAbilities={combatSpecialAbilities}
-              combatTechniques={combatTechniques}
-              derivedCharacteristics={derivedCharacteristics}
-              staticData={staticData}
-              meleeWeapons={meleeWeapons}
-              rangedWeapons={rangedWeapons}
-              shieldsAndParryingWeapons={shieldsAndParryingWeapons}
-              conditions={conditions}
-              states={states}
-              useParchment={useParchment}
-              />
+        {(nArmorZones === 0 || nArmors > 0) ? (
+          <CombatSheet
+            armors={armors}
+            attributes={attributes}
+            combatSpecialAbilities={combatSpecialAbilities}
+            combatTechniques={combatTechniques}
+            derivedCharacteristics={derivedCharacteristics}
+            staticData={staticData}
+            meleeWeapons={meleeWeapons}
+            rangedWeapons={rangedWeapons}
+            shieldsAndParryingWeapons={shieldsAndParryingWeapons}
+            conditions={conditions}
+            states={states}
+            useParchment={useParchment}
+            />
+            )
+            : null}
+        {nArmorZones > 0 ? (
+          <CombatSheetZones
+            armorZones={armorZones}
+            attributes={attributes}
+            combatSpecialAbilities={combatSpecialAbilities}
+            combatTechniques={combatTechniques}
+            derivedCharacteristics={derivedCharacteristics}
+            staticData={staticData}
+            meleeWeapons={meleeWeapons}
+            rangedWeapons={rangedWeapons}
+            shieldsAndParryingWeapons={shieldsAndParryingWeapons}
+            conditions={conditions}
+            states={states}
+            useParchment={useParchment}
+            />
           )
           : null}
         <BelongingsSheet
