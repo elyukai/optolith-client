@@ -8,9 +8,8 @@ import { fmap } from "../../../Data/Functor"
 import { pipe_ } from "../../Utilities/pipe"
 import { Record } from "../../../Data/Record"
 import { Purse } from "../../Models/Hero/Purse"
-import { isNaturalNumber } from "../../Utilities/RegexUtils"
+import { isNaturalNumber, isEmptyOr } from "../../Utilities/RegexUtils"
 import { TextField } from "../Universal/TextField"
-import { abs } from "../../../Data/Num"
 
 interface PurseAddRemoveMoneyProps {
   staticData: StaticDataRecord
@@ -21,8 +20,6 @@ interface PurseAddRemoveMoneyProps {
 }
 
 const PA = Purse.A
-
-const calculateSafeInt = (value: string) => pipe_ (value, toInt, fromMaybe (0), abs)
 
 const getCurrentValueAsInt = (s: string) => pipe_ (s, toInt, fromMaybe (0))
 
@@ -45,30 +42,30 @@ export const PurseAddRemoveMoney: React.FC<PurseAddRemoveMoneyProps> = props => 
 
   const setValueDSafe = React.useCallback (
     (value: string) => {
-      setValueD (calculateSafeInt (value).toString ())
+      setValueD (isEmptyOr (isNaturalNumber) (value) ? value : valueD)
     },
-    [ setValueD ]
+    [ setValueD, valueD ]
   )
 
   const setValueSSafe = React.useCallback (
     (value: string) => {
-      setValueS (calculateSafeInt (value).toString ())
+      setValueS (isEmptyOr (isNaturalNumber) (value) ? value : valueS)
     },
-    [ setValueS ]
+    [ setValueS, valueS ]
   )
 
   const setValueHSafe = React.useCallback (
     (value: string) => {
-      setValueH (calculateSafeInt (value).toString ())
+      setValueH (isEmptyOr (isNaturalNumber) (value) ? value : valueH)
     },
-    [ setValueH ]
+    [ setValueH, valueH ]
   )
 
   const setValueKSafe = React.useCallback (
     (value: string) => {
-      setValueK (calculateSafeInt (value).toString ())
+      setValueK (isEmptyOr (isNaturalNumber) (value) ? value : valueK)
     },
-    [ setValueK ]
+    [ setValueK, valueK ]
   )
 
   const getCurrentNumber =
