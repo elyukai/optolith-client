@@ -202,32 +202,24 @@ export const PurseAddRemoveMoney: React.FC<PurseAddRemoveMoneyProps> = props => 
             <TextField
               label={translate (staticData) ("equipment.purse.ducats")}
               value={valueD}
-              type="number"
-              min="0"
               valid={isNaturalNumber (valueD)}
               onChange={setValueDSafe}
               />
             <TextField
               label={translate (staticData) ("equipment.purse.silverthalers")}
               value={valueS}
-              type="number"
-              min="0"
               valid={isNaturalNumber (valueS)}
               onChange={setValueSSafe}
               />
             <TextField
               label={translate (staticData) ("equipment.purse.halers")}
               value={valueH}
-              type="number"
-              min="0"
               valid={isNaturalNumber (valueH)}
               onChange={setValueHSafe}
               />
             <TextField
               label={translate (staticData) ("equipment.purse.kreutzers")}
               value={valueK}
-              type="number"
-              min="0"
               valid={isNaturalNumber (valueK)}
               onChange={setValueKSafe}
               />
