@@ -53,13 +53,17 @@ function sortByMulti(sortOptions, xs) {
                 }))(xs);
 }
 
-function sortStrings(staticData, xs) {
+function compareLocale(staticData) {
   var partial_arg = Intl$OptolithClient.Collator.createWithOptions(staticData.messages.id, {
         numeric: true
       });
-  return Ley_List$OptolithClient.sortBy((function (param, param$1) {
-                  return Intl$OptolithClient.Collator.compare(partial_arg, param, param$1);
-                }))(xs);
+  return (function (param, param$1) {
+      return Intl$OptolithClient.Collator.compare(partial_arg, param, param$1);
+    });
+}
+
+function sortStrings(staticData, xs) {
+  return Ley_List$OptolithClient.sortBy(compareLocale(staticData))(xs);
 }
 
 function searchAndSortByMulti(searchAccessors, sortOptions, filterText, xs) {
@@ -69,6 +73,7 @@ function searchAndSortByMulti(searchAccessors, sortOptions, filterText, xs) {
 export {
   searchByMulti ,
   sortByMulti ,
+  compareLocale ,
   sortStrings ,
   searchAndSortByMulti ,
   

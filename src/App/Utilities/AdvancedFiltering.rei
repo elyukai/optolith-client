@@ -1,3 +1,10 @@
+/**
+ * Search and sort lists using multiple predicates.
+ *
+ * This module provides some functions on lists to search and sort them using
+ * multiple parameters and predicates.
+ */
+
 type searchAccessor('a) =
   | Flat('a => string)
   | Multi('a => list(string));
@@ -22,6 +29,12 @@ type sortOption('a) = {
  * second sort option, and so on.
  */
 let sortByMulti: (list(sortOption('a)), list('a)) => list('a);
+
+/**
+ * Creates a locale-aware string comparison function based on the currently
+ * selected locale.
+ */
+let compareLocale: (Static.t, string, string) => Ley.Ord.ordering;
 
 /**
  * `sortStrings` sorts a list of strings with respect to the passed

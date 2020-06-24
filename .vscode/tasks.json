@@ -12,7 +12,10 @@
       "command": "npm run re:watch",
       "group": "build",
       "isBackground": true,
-      "problemMatcher": []
+      "problemMatcher": [],
+      "presentation": {
+        "group": "watchers"
+      }
     },
     {
       "label": "ts:watch",
@@ -23,12 +26,16 @@
       "problemMatcher": [
         "$tsc-watch"
       ],
-      "group": "build"
+      "group": "build",
+      "presentation": {
+        "group": "watchers"
+      }
     },
     {
       "label": "watch",
       "dependsOn": ["re:watch", "ts:watch"],
-      "group": "build"
+      "group": "build",
+      "problemMatcher": []
     },
   ]
 }

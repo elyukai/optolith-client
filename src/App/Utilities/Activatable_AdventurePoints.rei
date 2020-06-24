@@ -1,3 +1,11 @@
+/**
+ * Functions for working on adventure point values for Activatable entries.
+ *
+ * This module provides types and functions for calculating and keeping
+ * adventure point value calculations in genereal and specific to certain
+ * entries.
+ */
+
 open Activatable_Convert;
 
 /**

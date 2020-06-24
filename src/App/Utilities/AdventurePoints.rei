@@ -1,3 +1,15 @@
+/**
+ * Generate final AP values.
+ *
+ * This module provides types and functions to sum up spent adventure points,
+ * make adjustments to calculations from other modules and to check if enough AP
+ * are available for certain operations.
+ */
+
+/**
+ * Provides an overview how many AP are spent on different categories and in
+ * general.
+ */
 type categories = {
   total: int,
   spent: int,

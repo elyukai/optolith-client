@@ -1,3 +1,10 @@
+/**
+ * Generate full names for an active Activatanle entry.
+ *
+ * This module provides types and functions to generate a full name string for
+ * an active Activatable entry.
+ */
+
 open Activatable_Convert;
 
 /**

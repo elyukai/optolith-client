@@ -1,3 +1,10 @@
+/**
+ * Get specific Select Options.
+ *
+ * This module provides some utility functions for working with static and
+ * active Select Options.
+ */
+
 open Activatable_Convert;
 
 /**

@@ -1,4 +1,12 @@
 /**
+ * Working with Style Special Abilties and their Extended Special Abilties.
+ *
+ * This module provides some functions for working with Style and Extended
+ * Special Abilties, how to manage their dependencies and what is allowed to do
+ * in that context.
+ */
+
+/**
  * Adds extended special ability dependencies if the passed entry is a style
  * special ability or adds the passed special ability's ID to a free slot of a
  * style dependency if it is an extended special ability.

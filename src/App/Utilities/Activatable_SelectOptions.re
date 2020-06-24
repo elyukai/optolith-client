@@ -1,3 +1,4 @@
+open Static;
 open Static.SelectOption;
 open Ley.Option;
 open Ley.Option.Functor;
@@ -134,6 +135,24 @@ let getSkillFromOption =
 //         bindF (DependencyObject.A.sid)
 //       ))
 //     ))
+
+let getAvailableSelectOptions =
+    (staticData, hero, staticEntry, maybeHeroEntry) => {
+  switch (staticEntry) {
+  | Advantage(staticAdvantage) =>
+    switch (staticAdvantage.id) {
+    | _ => []
+    }
+  | Disadvantage(staticDisadvantage) =>
+    switch (staticDisadvantage.id) {
+    | _ => []
+    }
+  | SpecialAbility(staticSpecialAbility) =>
+    switch (staticSpecialAbility.id) {
+    | _ => []
+    }
+  };
+};
 // /**
 //  * Modifies the select options of specific entries to match current conditions.
 //  */

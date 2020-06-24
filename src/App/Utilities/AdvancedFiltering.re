@@ -68,19 +68,23 @@ let sortByMulti = (sortOptions, xs) =>
   };
 
 /**
+ * Creates a locale-aware string comparison function based on the currently
+ * selected locale.
+ */
+let compareLocale = (staticData: Static.t) =>
+  Intl.Collator.compare(
+    Intl.Collator.createWithOptions(
+      staticData.messages.id,
+      {numeric: Some(true)},
+    ),
+  );
+
+/**
  * `sortStrings` sorts a list of strings with respect to the passed
  * locale.
  */
 let sortStrings = (staticData: Static.t, xs) =>
-  sortBy(
-    Intl.Collator.compare(
-      Intl.Collator.createWithOptions(
-        staticData.messages.id,
-        {numeric: Some(true)},
-      ),
-    ),
-    xs,
-  );
+  sortBy(compareLocale(staticData), xs);
 
 /**
  * A combination of `filterByMulti` and `sortByMulti`.
