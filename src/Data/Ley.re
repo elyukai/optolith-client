@@ -15,4 +15,5 @@ module Option = Ley_Option;
 module Ord = Ley_Ord;
 module Result = Ley_Result;
 module StrMap = Ley_StrMap;
+module StrSet = Ley_StrSet;
 module Tuple = Ley_Tuple;

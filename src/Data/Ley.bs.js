@@ -25,6 +25,8 @@ var Result;
 
 var StrMap;
 
+var StrSet;
+
 var Tuple;
 
 export {
@@ -40,6 +42,7 @@ export {
   Ord ,
   Result ,
   StrMap ,
+  StrSet ,
   Tuple ,
   
 }
