@@ -10,10 +10,11 @@ function uniquePairs(xs) {
   return List.fold_right((function (param, mp) {
                 var k = param[0];
                 if (Curry._2(Ley_IntMap$OptolithClient.member, k, mp)) {
-                  throw [
-                        Json_decode.DecodeError,
-                        "toMapIntegrity: Key " + (k.toString() + "is set twice")
-                      ];
+                  throw {
+                        RE_EXN_ID: Json_decode.DecodeError,
+                        _1: "toMapIntegrity: Key " + (k.toString() + "is set twice"),
+                        Error: new Error()
+                      };
                 }
                 return Curry._3(Ley_IntMap$OptolithClient.insert, k, param[1], mp);
               }), xs, Ley_IntMap$OptolithClient.empty);
@@ -22,10 +23,11 @@ function uniquePairs(xs) {
 function uniqueList(xs) {
   return List.fold_right((function (x, s) {
                 if (Curry._2(Ley_IntSet$OptolithClient.member, x, s)) {
-                  throw [
-                        Json_decode.DecodeError,
-                        "toMapIntegrity: Key " + (x.toString() + "is set twice")
-                      ];
+                  throw {
+                        RE_EXN_ID: Json_decode.DecodeError,
+                        _1: "toMapIntegrity: Key " + (x.toString() + "is set twice"),
+                        Error: new Error()
+                      };
                 }
                 return Curry._2(Ley_IntSet$OptolithClient.insert, x, s);
               }), xs, Ley_IntSet$OptolithClient.empty);

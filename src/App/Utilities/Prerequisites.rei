@@ -1,4 +1,4 @@
-open Static.Prerequisites;
+open Static_Prerequisites;
 
 type prerequisite =
   | CommonSuggestedByRCP
@@ -16,6 +16,13 @@ type prerequisite =
 
 module Flatten: {
   /**
+   * `flattenPrerequisites oldLevel newLevel prerequisites` returns a
+   * flattened list of the passed prerequisites object.
+   */
+  let flattenPrerequisites:
+    (Static_Prerequisites.t, list(prerequisite)) => list(prerequisite);
+
+  /**
    * Get a flattened list of the prerequisites of the first level of the passed
    * prerequisites object, which means it returns the base prerequisites that
    * must always be met to activate the associated entry.
@@ -32,11 +39,11 @@ module Flatten: {
     tWithLevelDisAdv => list(prerequisite);
 
   /**
-   * `flattenPrerequisites oldLevel newLevel prerequisites` returns a
+   * `flattenPrerequisitesRange oldLevel newLevel prerequisites` returns a
    * flattened list of the prerequisites of the matching levels of the passed
    * prerequisites object.
    */
-  let flattenPrerequisites:
+  let flattenPrerequisitesRange:
     (option(Ley.IntMap.key), option(Ley.IntMap.key), tWithLevel) =>
     list(prerequisite);
 };
@@ -57,7 +64,7 @@ module Dynamic: {
       Static.t,
       Static.activatable,
       option(Hero.Activatable.t),
-      Activatable.singleWithId
+      Activatable_Convert.singleWithId
     ) =>
     list(prerequisite);
 };

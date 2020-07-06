@@ -4,14 +4,14 @@ import * as Path from "path";
 import * as Yaml from "yaml";
 import * as IO$OptolithClient from "../../System/IO.bs.js";
 
-var Parser = { };
+var Parser = {};
 
 function readUnivYaml(name) {
   return IO$OptolithClient.readFile(Path.join(".", "app", "Database", "univ", name + ".yaml"));
 }
 
 function getUnivStaticData(param) {
-  return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+  return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                   readUnivYaml("Advantages"),
                   readUnivYaml("AnimistForces"),
                   readUnivYaml("BlessedTraditions"),
@@ -25,7 +25,7 @@ function getUnivStaticData(param) {
                 var blessedTraditions = param[2];
                 var animistForces = param[1];
                 var advantages = param[0];
-                return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+                return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                                 readUnivYaml("Cultures"),
                                 readUnivYaml("Curses"),
                                 readUnivYaml("Disadvantages"),
@@ -39,7 +39,7 @@ function getUnivStaticData(param) {
                               var disadvantages = param[2];
                               var curses = param[1];
                               var cultures = param[0];
-                              return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+                              return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                                               readUnivYaml("EquipmentPackages"),
                                               readUnivYaml("ExperienceLevels"),
                                               readUnivYaml("FocusRules"),
@@ -53,7 +53,7 @@ function getUnivStaticData(param) {
                                             var focusRules = param[2];
                                             var experienceLevels = param[1];
                                             var equipmentPackages = param[0];
-                                            return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+                                            return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                                                             readUnivYaml("MagicalDances"),
                                                             readUnivYaml("MagicalMelodies"),
                                                             readUnivYaml("MagicalTraditions"),
@@ -67,7 +67,7 @@ function getUnivStaticData(param) {
                                                           var magicalTraditions = param[2];
                                                           var magicalMelodies = param[1];
                                                           var magicalDances = param[0];
-                                                          return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+                                                          return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                                                                           readUnivYaml("RaceVariants"),
                                                                           readUnivYaml("RogueSpells"),
                                                                           readUnivYaml("Skills"),
@@ -81,7 +81,7 @@ function getUnivStaticData(param) {
                                                                         var skills = param[2];
                                                                         var rogueSpells = param[1];
                                                                         var raceVariants = param[0];
-                                                                        return IO$OptolithClient.Functor.$less$amp$great(Promise.all(/* tuple */[
+                                                                        return IO$OptolithClient.Functor.$less$amp$great(Promise.all([
                                                                                         readUnivYaml("ZibiljaRituals"),
                                                                                         readUnivYaml("Patrons")
                                                                                       ]), (function (param) {
@@ -132,7 +132,7 @@ function readL10nYaml(locale, name) {
 }
 
 function getLocaleSpecificStaticData(locale) {
-  return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+  return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                   readL10nYaml(locale, "Advantages"),
                   readL10nYaml(locale, "AnimistForces"),
                   readL10nYaml(locale, "ArcaneBardTraditions"),
@@ -146,7 +146,7 @@ function getLocaleSpecificStaticData(locale) {
                 var arcaneBardTraditions = param[2];
                 var animistForces = param[1];
                 var advantages = param[0];
-                return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+                return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                                 readL10nYaml(locale, "Attributes"),
                                 readL10nYaml(locale, "BlessedTraditions"),
                                 readL10nYaml(locale, "Blessings"),
@@ -160,7 +160,7 @@ function getLocaleSpecificStaticData(locale) {
                               var blessings = param[2];
                               var blessedTraditions = param[1];
                               var attributes = param[0];
-                              return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+                              return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                                               readL10nYaml(locale, "CombatSpecialAbilityGroups"),
                                               readL10nYaml(locale, "CombatTechniqueGroups"),
                                               readL10nYaml(locale, "CombatTechniques"),
@@ -174,7 +174,7 @@ function getLocaleSpecificStaticData(locale) {
                                             var combatTechniques = param[2];
                                             var combatTechniqueGroups = param[1];
                                             var combatSpecialAbilityGroups = param[0];
-                                            return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+                                            return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                                                             readL10nYaml(locale, "DerivedCharacteristics"),
                                                             readL10nYaml(locale, "Disadvantages"),
                                                             readL10nYaml(locale, "DominationRituals"),
@@ -188,7 +188,7 @@ function getLocaleSpecificStaticData(locale) {
                                                           var dominationRituals = param[2];
                                                           var disadvantages = param[1];
                                                           var derivedCharacteristics = param[0];
-                                                          return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+                                                          return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                                                                           readL10nYaml(locale, "EquipmentPackages"),
                                                                           readL10nYaml(locale, "ExperienceLevels"),
                                                                           readL10nYaml(locale, "EyeColors"),
@@ -202,7 +202,7 @@ function getLocaleSpecificStaticData(locale) {
                                                                         var eyeColors = param[2];
                                                                         var experienceLevels = param[1];
                                                                         var equipmentPackages = param[0];
-                                                                        return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+                                                                        return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                                                                                         readL10nYaml(locale, "LiturgicalChantEnhancements"),
                                                                                         readL10nYaml(locale, "LiturgicalChantGroups"),
                                                                                         readL10nYaml(locale, "LiturgicalChants"),
@@ -216,7 +216,7 @@ function getLocaleSpecificStaticData(locale) {
                                                                                       var liturgicalChants = param[2];
                                                                                       var liturgicalChantGroups = param[1];
                                                                                       var liturgicalChantEnhancements = param[0];
-                                                                                      return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+                                                                                      return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                                                                                                       readL10nYaml(locale, "OptionalRules"),
                                                                                                       readL10nYaml(locale, "Pacts"),
                                                                                                       readL10nYaml(locale, "Professions"),
@@ -230,7 +230,7 @@ function getLocaleSpecificStaticData(locale) {
                                                                                                     var professions = param[2];
                                                                                                     var pacts = param[1];
                                                                                                     var optionalRules = param[0];
-                                                                                                    return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+                                                                                                    return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                                                                                                                     readL10nYaml(locale, "RaceVariants"),
                                                                                                                     readL10nYaml(locale, "Reaches"),
                                                                                                                     readL10nYaml(locale, "RogueSpells"),
@@ -244,7 +244,7 @@ function getLocaleSpecificStaticData(locale) {
                                                                                                                   var rogueSpells = param[2];
                                                                                                                   var reaches = param[1];
                                                                                                                   var raceVariants = param[0];
-                                                                                                                  return IO$OptolithClient.Monad.$great$great$eq(Promise.all(/* tuple */[
+                                                                                                                  return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
                                                                                                                                   readL10nYaml(locale, "SpecialAbilities"),
                                                                                                                                   readL10nYaml(locale, "SpecialAbilityGroups"),
                                                                                                                                   readL10nYaml(locale, "SpellEnhancements"),
@@ -258,7 +258,7 @@ function getLocaleSpecificStaticData(locale) {
                                                                                                                                 var spellEnhancements = param[2];
                                                                                                                                 var specialAbilityGroups = param[1];
                                                                                                                                 var specialAbilities = param[0];
-                                                                                                                                return IO$OptolithClient.Functor.$less$amp$great(Promise.all(/* tuple */[
+                                                                                                                                return IO$OptolithClient.Functor.$less$amp$great(Promise.all([
                                                                                                                                                 readL10nYaml(locale, "Subjects"),
                                                                                                                                                 readL10nYaml(locale, "Tribes"),
                                                                                                                                                 readL10nYaml(locale, "UI"),
@@ -339,7 +339,7 @@ function getLocaleSpecificStaticData(locale) {
 }
 
 function getStaticData(locale) {
-  return IO$OptolithClient.Functor.$less$amp$great(Promise.all(/* tuple */[
+  return IO$OptolithClient.Functor.$less$amp$great(Promise.all([
                   getUnivStaticData(undefined),
                   getLocaleSpecificStaticData(locale)
                 ]), (function (param) {

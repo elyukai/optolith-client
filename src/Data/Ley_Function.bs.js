@@ -7,9 +7,9 @@ function $less$$great(f, g, x) {
 }
 
 function $less$amp$great(g, f) {
-  return (function (param) {
-      return Curry._1(f, Curry._1(g, param));
-    });
+  return function (param) {
+    return Curry._1(f, Curry._1(g, param));
+  };
 }
 
 var Functor = {

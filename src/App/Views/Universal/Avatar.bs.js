@@ -11,13 +11,13 @@ function Avatar(Props) {
   var onClick = Props.onClick;
   var alt = Props.alt;
   return React.createElement("div", {
-              className: ClassNames$OptolithClient.fold(/* :: */[
-                    Ley_Option$OptolithClient.Monad.$$return("avatar-wrapper"),
-                    /* :: */[
-                      className,
-                      /* [] */0
-                    ]
-                  ]),
+              className: ClassNames$OptolithClient.fold({
+                    hd: Ley_Option$OptolithClient.Monad.$$return("avatar-wrapper"),
+                    tl: {
+                      hd: className,
+                      tl: /* [] */0
+                    }
+                  }),
               onClick: onClick
             }, Ley_Option$OptolithClient.fromOption(null, overlay), React.createElement("img", {
                   className: "avatar",

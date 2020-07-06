@@ -7,8 +7,7 @@ module Flatten: {
    * result is a plain `List` of all non-optional dependencies.
    */
   let flattenSkillDependencies:
-    (int => int, int, list(OptolithClient.Hero.Skill.dependency)) =>
-    list(int);
+    (int => int, int, list(Hero.Skill.dependency)) => list(int);
 
   /**
    * `flattenSkillDependencies getValueForTargetId id dependencies` flattens the
@@ -18,12 +17,31 @@ module Flatten: {
    * result is a plain `List` of all non-optional dependencies.
    */
   let flattenActivatableSkillDependencies:
-    (
-      int => OptolithClient.Hero.ActivatableSkill.value,
-      int,
-      list(OptolithClient.Hero.Skill.dependency)
-    ) =>
+    (int => Hero.ActivatableSkill.value, int, list(Hero.Skill.dependency)) =>
     list(int);
+
+  /**
+   * `flattenActivatableDependencies getActiveListForTargetId id dependencies`
+   * flattens the list of dependencies to usable values. That means, optional
+   * dependencies (objects) will be evaluated and will be included in the
+   * resulting list, depending on whether it has to follow the optional
+   * dependency or not. The result is a plain `List` of all non-optional
+   * dependencies.
+   */
+  let flattenActivatableDependencies:
+    (
+      int => list(Hero.Activatable.single),
+      int,
+      list(Hero.Activatable.dependency)
+    ) =>
+    list(Hero.Activatable.dependency);
+
+  /**
+   * Get all required first select option ids from the given entry.
+   */
+  let getRequiredSelectOptions1:
+    (Ley.IntMap.t(Hero.Activatable.t), Hero.Activatable.t) =>
+    list(OneOrMany.t(Id.selectOption));
 };
 
 module TransferredUnfamiliar: {
@@ -33,9 +51,9 @@ module TransferredUnfamiliar: {
    */
   let isUnfamiliarSpell:
     (
-      list(OptolithClient.Hero.TransferUnfamiliar.t),
-      list(OptolithClient.Traditions.Magical.fullTradition),
-      OptolithClient.Static.Spell.t
+      list(Hero.TransferUnfamiliar.t),
+      list(Tradition.Magical.fullTradition),
+      Static.Spell.t
     ) =>
     bool;
 
@@ -44,8 +62,7 @@ module TransferredUnfamiliar: {
    * transferring unfamiliar spells.
    */
   let addTransferUnfamiliarDependencies:
-    (OptolithClient.Activatable.singleWithId, OptolithClient.Hero.t) =>
-    OptolithClient.Hero.t;
+    (Activatable_Convert.singleWithId, Hero.t) => Hero.t;
 
   /**
    * Check if an entry that allows transferring unfamiliar entries into a familiar
@@ -54,18 +71,14 @@ module TransferredUnfamiliar: {
    * selected experience level during creation phase.
    */
   let isEntryAllowingTransferUnfamiliarRemovable:
-    (OptolithClient.Static.t, OptolithClient.Hero.t, int) => bool;
+    (Static.t, Hero.t, int) => bool;
 
   /**
    * From a list of spell select options, only return the **unfamiliar** ones.
    */
   let filterUnfamiliar:
-    (
-      OptolithClient.Static.Spell.t => bool,
-      OptolithClient.Static.t,
-      list(OptolithClient.Static.SelectOption.t)
-    ) =>
-    list(OptolithClient.Static.SelectOption.t);
+    (Static.Spell.t => bool, Static.t, list(Static.SelectOption.t)) =>
+    list(Static.SelectOption.t);
 };
 
 /**

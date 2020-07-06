@@ -8,24 +8,24 @@ import {increasable as Id_increasable} from '../../../src/App/Constants/Id.gen';
 
 import {list} from '../../../src/shims/ReasonPervasives.shim';
 
-import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
-
 import {selectOption as Id_selectOption} from '../../../src/App/Constants/Id.gen';
 
 import {sex as Hero_sex} from './Hero.gen';
 
 import {t as Ley_IntMap_t} from '../../../src/Data/Ley_IntMap.gen';
 
+import {t as OneOrMany_t} from '../../../src/App/Utilities/OneOrMany.gen';
+
 // tslint:disable-next-line:interface-over-type-literal
 export type sex = Hero_sex;
 export type SexPrerequisite = sex;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type race = { readonly id: GenericHelpers_oneOrMany<number>; readonly active: boolean };
+export type race = { readonly id: OneOrMany_t<number>; readonly active: boolean };
 export type RacePrerequisite = race;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type culture = GenericHelpers_oneOrMany<number>;
+export type culture = OneOrMany_t<number>;
 export type CulturePrerequisite = culture;
 
 // tslint:disable-next-line:interface-over-type-literal
@@ -35,7 +35,7 @@ export type SocialPrerequisite = socialStatus;
 // tslint:disable-next-line:interface-over-type-literal
 export type pact = {
   readonly category: number; 
-  readonly domain?: GenericHelpers_oneOrMany<number>; 
+  readonly domain?: OneOrMany_t<number>; 
   readonly level?: number
 };
 export type PactPrerequisite = pact;

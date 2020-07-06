@@ -8,14 +8,14 @@ import * as Static_Erratum$OptolithClient from "./Static_Erratum.bs.js";
 import * as Static_SourceRef$OptolithClient from "./Static_SourceRef.bs.js";
 
 function type_(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
 }
 
 function domain(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -38,7 +38,7 @@ function t(json) {
 
 function all(yamlData) {
   return Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_List$OptolithClient.map((function (x) {
-                    return /* tuple */[
+                    return [
                             x.id,
                             x
                           ];

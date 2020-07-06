@@ -1150,6 +1150,64 @@ let countBy = (f, xs) =>
   );
 
 /**
+ * `lengthMin min xs` checks if the list `xs` has a minimum length of `min`.
+ */
+let rec lengthMin = (min, xs) =>
+  switch (xs) {
+  | [] => min <= 0
+  | [_, ...xs] => lengthMin(min - 1, xs)
+  };
+
+/**
+ * `countMinBy pred min xs` checks if the elements of list `xs` match the
+ * predicate `pred` a minimum of `min` times.
+ */
+let rec countMinBy = (pred, min, xs) =>
+  switch (xs) {
+  | [] => min <= 0
+  | [x, ...xs] => min <= 0 || countMinBy(pred, pred(x) ? min - 1 : min, xs)
+  };
+
+/**
+ * `countMin e min xs` checks if the element `e` occurs a minimum of `min` times
+ * in list `xs`.
+ */
+let countMin = e => countMinBy((==)(e));
+
+/**
+ * `lengthMax max xs` checks if the list `xs` has a maximum length of `max`.
+ */
+let rec lengthMax = (max, xs) =>
+  max < 0
+    ? false
+    : (
+      switch (xs) {
+      | [] => true
+      | [_, ...xs] => lengthMax(max - 1, xs)
+      }
+    );
+
+/**
+ * `countMaxBy pred max xs` checks if the elements of list `xs` match the
+ * predicate `pred` a maximum of `max` times.
+ */
+let rec countMaxBy = (pred, max, xs) =>
+  max < 0
+    ? false
+    : (
+      switch (xs) {
+      | [] => true
+      | [x, ...xs] => countMaxBy(pred, pred(x) ? max - 1 : max, xs)
+      }
+    );
+
+/**
+ * `countMax e max xs` checks if the element `e` occurs a maximum of `max` times
+ * in list `xs`.
+ */
+let countMax = e => countMaxBy((==)(e));
+
+/**
  * Returns if the passed lists have at least one value in common.
  */
 let intersecting = (xs, ys) => Foldable.any(x => Foldable.elem(x, ys), xs);

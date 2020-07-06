@@ -2,46 +2,46 @@
 
 import * as Ley_List$OptolithClient from "../../Data/Ley_List.bs.js";
 
-var romanNumbers = /* :: */[
-  "I",
-  /* :: */[
-    "II",
-    /* :: */[
-      "III",
-      /* :: */[
-        "IV",
-        /* :: */[
-          "V",
-          /* :: */[
-            "VI",
-            /* :: */[
-              "VII",
-              /* :: */[
-                "VIII",
-                /* :: */[
-                  "IX",
-                  /* :: */[
-                    "X",
-                    /* :: */[
-                      "XI",
-                      /* :: */[
-                        "XII",
-                        /* :: */[
-                          "XIII",
-                          /* [] */0
-                        ]
-                      ]
-                    ]
-                  ]
-                ]
-              ]
-            ]
-          ]
-        ]
-      ]
-    ]
-  ]
-];
+var romanNumbers = {
+  hd: "I",
+  tl: {
+    hd: "II",
+    tl: {
+      hd: "III",
+      tl: {
+        hd: "IV",
+        tl: {
+          hd: "V",
+          tl: {
+            hd: "VI",
+            tl: {
+              hd: "VII",
+              tl: {
+                hd: "VIII",
+                tl: {
+                  hd: "IX",
+                  tl: {
+                    hd: "X",
+                    tl: {
+                      hd: "XI",
+                      tl: {
+                        hd: "XII",
+                        tl: {
+                          hd: "XIII",
+                          tl: /* [] */0
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+};
 
 function intToRoman(x) {
   return Ley_List$OptolithClient.Safe.atMay(romanNumbers, x - 1 | 0);

@@ -1,5 +1,3 @@
-open GenericHelpers;
-
 [@genType]
 [@genType.as "SexPrerequisite"]
 type sex = Hero.sex;
@@ -7,13 +5,13 @@ type sex = Hero.sex;
 [@genType]
 [@genType.as "RacePrerequisite"]
 type race = {
-  id: oneOrMany(int),
+  id: OneOrMany.t(int),
   active: bool,
 };
 
 [@genType]
 [@genType.as "CulturePrerequisite"]
-type culture = oneOrMany(int);
+type culture = OneOrMany.t(int);
 
 [@genType]
 [@genType.as "SocialPrerequisite"]
@@ -23,7 +21,7 @@ type socialStatus = int;
 [@genType.as "PactPrerequisite"]
 type pact = {
   category: int,
-  domain: option(oneOrMany(int)),
+  domain: option(OneOrMany.t(int)),
   level: option(int),
 };
 
@@ -217,8 +215,8 @@ module Decode = {
 
   let oneOrManyInt =
     oneOf([
-      map((id): GenericHelpers.oneOrMany(int) => One(id), int),
-      map((id): GenericHelpers.oneOrMany(int) => Many(id), list(int)),
+      map((id): OneOrMany.t(int) => One(id), int),
+      map((id): OneOrMany.t(int) => Many(id), list(int)),
     ]);
 
   let sex = json =>

@@ -1,5 +1,3 @@
-open GenericHelpers;
-
 [@genType]
 [@genType.as "ItemInfo"]
 type info = {
@@ -13,7 +11,7 @@ type info = {
 
 [@genType]
 [@genType.as "MundaneItem"]
-type mundaneItem = {structurePoints: option(oneOrMany(int))};
+type mundaneItem = {structurePoints: option(OneOrMany.t(int))};
 
 [@genType]
 [@genType.as "NewAttribute"]
@@ -54,7 +52,7 @@ type meleeWeapon = {
   pa: option(int),
   reach: option(int),
   length: option(int),
-  structurePoints: option(oneOrMany(int)),
+  structurePoints: option(OneOrMany.t(int)),
   isParryingWeapon: bool,
   isTwoHandedWeapon: bool,
   isImprovisedWeapon: bool,
@@ -67,7 +65,7 @@ type rangedWeapon = {
   damage: option(damage),
   length: option(int),
   range: (int, int, int),
-  reloadTime: oneOrMany(int),
+  reloadTime: OneOrMany.t(int),
   ammunition: option(int),
   isImprovisedWeapon: bool,
 };
@@ -105,7 +103,7 @@ type t = {
 module Decode = {
   open Json.Decode;
   open JsonStrict;
-  open GenericHelpers.Decode;
+  open OneOrMany.Decode;
 
   let info = json => {
     note: json |> optionalField("note", string),
@@ -138,7 +136,7 @@ module Decode = {
 
   let mundaneItem = json => {
     structurePoints:
-      json |> optionalField("structurePoints", oneOrMany(int)),
+      json |> optionalField("structurePoints", OneOrMany.Decode.t(int)),
   };
 
   let newAttribute = json => {
@@ -171,7 +169,7 @@ module Decode = {
     reach: json |> optionalField("reach", int),
     length: json |> optionalField("length", int),
     structurePoints:
-      json |> optionalField("structurePoints", oneOrMany(int)),
+      json |> optionalField("structurePoints", OneOrMany.Decode.t(int)),
     isParryingWeapon: json |> field("isParryingWeapon", bool),
     isTwoHandedWeapon: json |> field("isTwoHandedWeapon", bool),
     isImprovisedWeapon: json |> field("isImprovisedWeapon", bool),
@@ -193,7 +191,7 @@ module Decode = {
         json |> field("mediumRange", int),
         json |> field("farRange", int),
       ),
-      reloadTime: json |> field("reloadTime", oneOrMany(int)),
+      reloadTime: json |> field("reloadTime", OneOrMany.Decode.t(int)),
       ammunition: json |> optionalField("ammunition", int),
       isImprovisedWeapon: json |> field("isImprovisedWeapon", bool),
     };

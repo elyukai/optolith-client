@@ -35,7 +35,7 @@ module Flatten = {
     Ley.IntMap.filterWithKey((k, _) => pred(k), mp);
   };
 
-  let flattenPrerequisiteLevel = (p: t, xs) =>
+  let flattenPrerequisites = (p: t, xs) =>
     xs
     |> Ley.Option.option(id, x => Sex(x) |> Ley.List.cons, p.sex)
     |> Ley.Option.option(id, x => Race(x) |> Ley.List.cons, p.race)
@@ -82,7 +82,7 @@ module Flatten = {
     );
 
   let getFirstLevelPrerequisites = (prerequisites: tWithLevel) =>
-    flattenPrerequisiteLevel(
+    flattenPrerequisites(
       {
         sex: prerequisites.sex,
         race: prerequisites.race,
@@ -100,7 +100,7 @@ module Flatten = {
     );
 
   let getFirstDisAdvLevelPrerequisites = (p: tWithLevelDisAdv) =>
-    flattenPrerequisiteLevel(
+    flattenPrerequisites(
       {
         sex: p.sex,
         race: p.race,
@@ -118,13 +118,14 @@ module Flatten = {
     )
     |> (p.commonSuggestedByRCP ? Ley.List.cons(CommonSuggestedByRCP) : id);
 
-  let flattenPrerequisites = (oldLevel, newLevel, prerequisites: tWithLevel) =>
+  let flattenPrerequisitesRange =
+      (oldLevel, newLevel, prerequisites: tWithLevel) =>
     if (Ley.IntMap.null(prerequisites.levels)) {
       getFirstLevelPrerequisites(prerequisites);
     } else {
       filterApplicableLevels(oldLevel, newLevel, prerequisites.levels)
       |> Ley.IntMap.Foldable.foldr(
-           flattenPrerequisiteLevel,
+           flattenPrerequisites,
            getFirstLevelPrerequisites(prerequisites),
          );
     };
@@ -142,10 +143,10 @@ module Dynamic = {
         staticData,
         staticEntry,
         heroEntry: option(Hero.Activatable.t),
-        singleEntry: Activatable.singleWithId,
+        singleEntry: Activatable_Convert.singleWithId,
       ) => {
-    let sid = Activatable.SelectOptions.getOption1(singleEntry);
-    let sid2 = Activatable.SelectOptions.getOption2(singleEntry);
+    let sid = Activatable_SelectOptions.getOption1(singleEntry);
+    let sid2 = Activatable_SelectOptions.getOption2(singleEntry);
 
     switch (staticEntry) {
     | Advantage(entry) =>
@@ -155,7 +156,7 @@ module Dynamic = {
           Activatable({
             id: `Disadvantage(Id.disadvantageToInt(Incompetent)),
             active: false,
-            sid: sid >>= Activatable.Convert.activatableOptionToSelectOptionId,
+            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
             sid2: None,
             level: None,
           }),
@@ -164,7 +165,7 @@ module Dynamic = {
           Activatable({
             id: `Disadvantage(Id.disadvantageToInt(MagicalRestriction)),
             active: false,
-            sid: sid >>= Activatable.Convert.activatableOptionToSelectOptionId,
+            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
             sid2: None,
             level: None,
           }),
@@ -177,7 +178,7 @@ module Dynamic = {
           Activatable({
             id: `Advantage(Id.advantageToInt(MagicalAttunement)),
             active: false,
-            sid: sid >>= Activatable.Convert.activatableOptionToSelectOptionId,
+            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
             sid2: None,
             level: None,
           }),
@@ -186,14 +187,14 @@ module Dynamic = {
           Activatable({
             id: `Advantage(Id.advantageToInt(Aptitude)),
             active: false,
-            sid: sid >>= Activatable.Convert.activatableOptionToSelectOptionId,
+            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
             sid2: None,
             level: None,
           }),
           Activatable({
             id: `Advantage(Id.advantageToInt(ExceptionalSkill)),
             active: false,
-            sid: sid >>= Activatable.Convert.activatableOptionToSelectOptionId,
+            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
             sid2: None,
             level: None,
           }),
@@ -227,7 +228,7 @@ module Dynamic = {
           };
 
         sid
-        >>= Activatable.SelectOptions.getSelectOption(staticEntry)
+        >>= Activatable_SelectOptions.getSelectOption(staticEntry)
         >>= (
           option =>
             (
@@ -261,7 +262,7 @@ module Dynamic = {
           Activatable({
             id: `SpecialAbility(Id.specialAbilityToInt(PropertyKnowledge)),
             active: true,
-            sid: sid >>= Activatable.Convert.activatableOptionToSelectOptionId,
+            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
             sid2: None,
             level: None,
           }),
@@ -279,7 +280,7 @@ module Dynamic = {
       | SpellEnhancement as id
       | ChantEnhancement as id =>
         sid
-        >>= Activatable.SelectOptions.getSelectOption(staticEntry)
+        >>= Activatable_SelectOptions.getSelectOption(staticEntry)
         >>= (
           option =>
             liftM2(
@@ -301,7 +302,7 @@ module Dynamic = {
           Activatable({
             id: `SpecialAbility(Id.specialAbilityToInt(Language)),
             active: true,
-            sid: sid >>= Activatable.Convert.activatableOptionToSelectOptionId,
+            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
             sid2: None,
             level: Some(3),
           }),
@@ -340,7 +341,7 @@ module Dynamic = {
     )
     |> Static.SelectOption.SelectOptionMap.lookup(sid)
     |> Ley.Option.option([], (option: Static.SelectOption.t) =>
-         Flatten.flattenPrerequisiteLevel(option.prerequisites, [])
+         Flatten.flattenPrerequisites(option.prerequisites, [])
        );
 
   /**
@@ -359,9 +360,9 @@ module Dynamic = {
         staticData,
         staticEntry,
         heroEntry,
-        singleEntry: Activatable.singleWithId,
+        singleEntry: Activatable_Convert.singleWithId,
       ) => {
-    let sid = Activatable.SelectOptions.getOption1(singleEntry);
+    let sid = Activatable_SelectOptions.getOption1(singleEntry);
 
     let entrySpecifics =
       getEntrySpecificDynamicPrerequisites(
@@ -374,7 +375,7 @@ module Dynamic = {
 
     let selectOptionSpecifics =
       sid
-      >>= Activatable.Convert.activatableOptionToSelectOptionId
+      >>= Activatable_Convert.activatableOptionToSelectOptionId
       |> Ley.Option.option([], sid =>
            getSelectOptionPrerequisites(sid, staticEntry)
          );
@@ -386,11 +387,6 @@ module Dynamic = {
 module Validation = {
   open Ley.Function;
   open Ley.Option.Monad;
-
-  // type Validator = (wiki: StaticDataRecord) =>
-  //                  (state: HeroModelRecord) =>
-  //                  (req: AllRequirements) =>
-  //                  (sourceId: string) => boolean
 
   let getRaceCultureProfession = (staticData: Static.t, hero: Hero.t) => (
     (
@@ -533,12 +529,12 @@ module Validation = {
       (staticData, heroSpecialAbilities, scope: primaryAttributeType) =>
     switch (scope) {
     | Magical =>
-      Traditions.Magical.getPrimaryAttributeId(
+      Tradition.Magical.getPrimaryAttributeId(
         staticData,
         heroSpecialAbilities,
       )
     | Blessed =>
-      Traditions.Blessed.getPrimaryAttributeId(
+      Tradition.Blessed.getPrimaryAttributeId(
         staticData,
         heroSpecialAbilities,
       )
@@ -621,7 +617,7 @@ module Validation = {
 
   let isSafeSidValid = (single: Hero.Activatable.single, index, sid) =>
     Ley.List.Safe.atMay(single.options, index)
-    >>= Activatable.Convert.activatableOptionToSelectOptionId
+    >>= Activatable_Convert.activatableOptionToSelectOptionId
     |> Ley.Option.option(false, (===)(sid));
 
   let isSidValid = (single: Hero.Activatable.single, index, sid) =>
@@ -761,7 +757,7 @@ module Validation = {
 // export const setPrerequisiteId =
 //   (id: string) =>
 //   (req: AllRequirementObjects) =>
-//     RequireActivatable.is (req)
+//     RequireActivatable_is (req)
 //     ? set (ra_id) (id) (req)
 //     : RequireIncreasable.is (req)
 //     ? set (ri_id) (id) (req)

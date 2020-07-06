@@ -18,19 +18,19 @@ function ActionSheet$Button(Props) {
             return Curry._1(onClick, value);
           }
           
-        }), /* tuple */[
+        }), [
         value,
         disabled,
         onClick
       ]);
   return React.createElement("button", {
-              className: ClassNames$OptolithClient.fold(/* :: */[
-                    ClassNames$OptolithClient.cond("disabled", disabled),
-                    /* :: */[
-                      ClassNames$OptolithClient.cond("destructive", style === /* Destructive */1),
-                      /* [] */0
-                    ]
-                  ]),
+              className: ClassNames$OptolithClient.fold({
+                    hd: ClassNames$OptolithClient.cond("disabled", disabled),
+                    tl: {
+                      hd: ClassNames$OptolithClient.cond("destructive", style === /* Destructive */1),
+                      tl: /* [] */0
+                    }
+                  }),
               type: "button",
               onClick: handleClick
             }, ReactUtils$OptolithClient.s(label));

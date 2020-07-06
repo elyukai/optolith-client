@@ -6,7 +6,6 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Js_int from "bs-platform/lib/es6/js_int.js";
 import * as $$String from "bs-platform/lib/es6/string.js";
 import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
-import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
 import * as Ley_Int$OptolithClient from "./Ley_Int.bs.js";
@@ -17,10 +16,10 @@ import * as Ley_Function$OptolithClient from "./Ley_Function.bs.js";
 
 function $less$$great(f, xs) {
   if (xs) {
-    return /* :: */[
-            Curry._1(f, xs[0]),
-            $less$$great(f, xs[1])
-          ];
+    return {
+            hd: Curry._1(f, xs.hd),
+            tl: $less$$great(f, xs.tl)
+          };
   } else {
     return /* [] */0;
   }
@@ -44,10 +43,10 @@ function $less$star$great(fs, xs) {
   if (!xs) {
     return /* [] */0;
   }
-  var x = xs[0];
+  var x = xs.hd;
   return Pervasives.$at($less$$great((function (f) {
                     return Curry._1(f, x);
-                  }), fs), $less$star$great(fs, xs[1]));
+                  }), fs), $less$star$great(fs, xs.tl));
 }
 
 var Applicative = {
@@ -65,10 +64,10 @@ function $less$pipe$great(xs, ys) {
 
 function guard(pred) {
   if (pred) {
-    return /* :: */[
-            undefined,
-            /* [] */0
-          ];
+    return {
+            hd: undefined,
+            tl: /* [] */0
+          };
   } else {
     return /* [] */0;
   }
@@ -82,7 +81,7 @@ var Alternative = {
 
 function $great$great$eq(xs, f) {
   if (xs) {
-    return Pervasives.$at(Curry._1(f, xs[0]), $great$great$eq(xs[1], f));
+    return Pervasives.$at(Curry._1(f, xs.hd), $great$great$eq(xs.tl, f));
   } else {
     return /* [] */0;
   }
@@ -147,7 +146,7 @@ var Monad = {
 
 function foldr(f, initial, xs) {
   if (xs) {
-    return Curry._2(f, xs[0], foldr(f, initial, xs[1]));
+    return Curry._2(f, xs.hd, foldr(f, initial, xs.tl));
   } else {
     return initial;
   }
@@ -155,7 +154,7 @@ function foldr(f, initial, xs) {
 
 function foldr1(f, xs) {
   if (xs) {
-    return foldr(f, xs[0], xs[1]);
+    return foldr(f, xs.hd, xs.tl);
   } else {
     return Pervasives.invalid_arg("Cannot apply foldr1 to an empty list.");
   }
@@ -168,15 +167,15 @@ function foldl(f, _initial, _xs) {
     if (!xs) {
       return initial;
     }
-    _xs = xs[1];
-    _initial = Curry._2(f, initial, xs[0]);
+    _xs = xs.tl;
+    _initial = Curry._2(f, initial, xs.hd);
     continue ;
   };
 }
 
 function foldl1(f, xs) {
   if (xs) {
-    return foldl(f, xs[0], xs[1]);
+    return foldl(f, xs.hd, xs.tl);
   } else {
     return Pervasives.invalid_arg("Cannot apply foldl1 to an empty list.");
   }
@@ -209,7 +208,9 @@ function sum(xs) {
 }
 
 function product(xs) {
-  return foldr(Caml_int32.imul, 1, xs);
+  return foldr((function (prim, prim$1) {
+                return Math.imul(prim, prim$1);
+              }), 1, xs);
 }
 
 function maximum(xs) {
@@ -238,10 +239,10 @@ function con(_xs) {
     if (!xs) {
       return true;
     }
-    if (!xs[0]) {
+    if (!xs.hd) {
       return false;
     }
-    _xs = xs[1];
+    _xs = xs.tl;
     continue ;
   };
 }
@@ -252,10 +253,10 @@ function dis(_xs) {
     if (!xs) {
       return false;
     }
-    if (xs[0]) {
+    if (xs.hd) {
       return true;
     }
-    _xs = xs[1];
+    _xs = xs.tl;
     continue ;
   };
 }
@@ -266,10 +267,10 @@ function any(f, _xs) {
     if (!xs) {
       return false;
     }
-    if (Curry._1(f, xs[0])) {
+    if (Curry._1(f, xs.hd)) {
       return true;
     }
-    _xs = xs[1];
+    _xs = xs.tl;
     continue ;
   };
 }
@@ -280,10 +281,10 @@ function all(f, _xs) {
     if (!xs) {
       return true;
     }
-    if (!Curry._1(f, xs[0])) {
+    if (!Curry._1(f, xs.hd)) {
       return false;
     }
-    _xs = xs[1];
+    _xs = xs.tl;
     continue ;
   };
 }
@@ -298,11 +299,11 @@ function find(f, _xs) {
     if (!xs) {
       return ;
     }
-    var y = xs[0];
+    var y = xs.hd;
     if (Curry._1(f, y)) {
       return Caml_option.some(y);
     }
-    _xs = xs[1];
+    _xs = xs.tl;
     continue ;
   };
 }
@@ -332,13 +333,13 @@ var Foldable = {
 
 function indexedAux(i, xs) {
   if (xs) {
-    return /* :: */[
-            /* tuple */[
+    return {
+            hd: [
               i,
-              xs[0]
+              xs.hd
             ],
-            indexedAux(i + 1 | 0, xs[1])
-          ];
+            tl: indexedAux(i + 1 | 0, xs.tl)
+          };
   } else {
     return /* [] */0;
   }
@@ -355,43 +356,43 @@ function deleteAt(index, xs) {
   if (!xs) {
     return /* [] */0;
   }
-  var xs$1 = xs[1];
+  var xs$1 = xs.tl;
   if (index === 0) {
     return xs$1;
   } else {
-    return /* :: */[
-            xs[0],
-            deleteAt(index - 1 | 0, xs$1)
-          ];
+    return {
+            hd: xs.hd,
+            tl: deleteAt(index - 1 | 0, xs$1)
+          };
   }
 }
 
 function deleteAtPair(index, xs) {
   if (index < 0) {
-    return /* tuple */[
+    return [
             undefined,
             xs
           ];
   }
   if (!xs) {
-    return /* tuple */[
+    return [
             undefined,
             /* [] */0
           ];
   }
-  var xs$1 = xs[1];
-  var x = xs[0];
+  var xs$1 = xs.tl;
+  var x = xs.hd;
   if (index === 0) {
-    return /* tuple */[
+    return [
             Caml_option.some(x),
             xs$1
           ];
   } else {
     return Ley_Tuple$OptolithClient.Bifunctor.second((function (xs) {
-                  return /* :: */[
-                          x,
-                          xs
-                        ];
+                  return {
+                          hd: x,
+                          tl: xs
+                        };
                 }), deleteAtPair(index - 1 | 0, xs$1));
   }
 }
@@ -403,17 +404,17 @@ function setAt(index, e, xs) {
   if (!xs) {
     return /* [] */0;
   }
-  var xs$1 = xs[1];
+  var xs$1 = xs.tl;
   if (index === 0) {
-    return /* :: */[
-            e,
-            xs$1
-          ];
+    return {
+            hd: e,
+            tl: xs$1
+          };
   } else {
-    return /* :: */[
-            xs[0],
-            setAt(index - 1 | 0, e, xs$1)
-          ];
+    return {
+            hd: xs.hd,
+            tl: setAt(index - 1 | 0, e, xs$1)
+          };
   }
 }
 
@@ -424,18 +425,18 @@ function modifyAt(index, f, xs) {
   if (!xs) {
     return /* [] */0;
   }
-  var xs$1 = xs[1];
-  var x = xs[0];
+  var xs$1 = xs.tl;
+  var x = xs.hd;
   if (index === 0) {
-    return /* :: */[
-            Curry._1(f, x),
-            xs$1
-          ];
+    return {
+            hd: Curry._1(f, x),
+            tl: xs$1
+          };
   } else {
-    return /* :: */[
-            x,
-            modifyAt(index - 1 | 0, f, xs$1)
-          ];
+    return {
+            hd: x,
+            tl: modifyAt(index - 1 | 0, f, xs$1)
+          };
   }
 }
 
@@ -446,20 +447,20 @@ function updateAt(index, f, xs) {
   if (!xs) {
     return /* [] */0;
   }
-  var xs$1 = xs[1];
-  var x = xs[0];
+  var xs$1 = xs.tl;
+  var x = xs.hd;
   if (index === 0) {
     return Ley_Option$OptolithClient.option(xs$1, (function (x$prime) {
-                  return /* :: */[
-                          x$prime,
-                          xs$1
-                        ];
+                  return {
+                          hd: x$prime,
+                          tl: xs$1
+                        };
                 }), Curry._1(f, x));
   } else {
-    return /* :: */[
-            x,
-            updateAt(index - 1 | 0, f, xs$1)
-          ];
+    return {
+            hd: x,
+            tl: updateAt(index - 1 | 0, f, xs$1)
+          };
   }
 }
 
@@ -468,15 +469,15 @@ function insertAt(index, e, xs) {
     return xs;
   } else if (xs) {
     if (index === 0) {
-      return /* :: */[
-              e,
-              xs
-            ];
+      return {
+              hd: e,
+              tl: xs
+            };
     } else {
-      return /* :: */[
-              xs[0],
-              insertAt(index - 1 | 0, e, xs[1])
-            ];
+      return {
+              hd: xs.hd,
+              tl: insertAt(index - 1 | 0, e, xs.tl)
+            };
     }
   } else {
     return /* [] */0;
@@ -485,10 +486,10 @@ function insertAt(index, e, xs) {
 
 function imapAux(f, i, xs) {
   if (xs) {
-    return /* :: */[
-            Curry._2(f, i, xs[0]),
-            imapAux(f, i + 1 | 0, xs[1])
-          ];
+    return {
+            hd: Curry._2(f, i, xs.hd),
+            tl: imapAux(f, i + 1 | 0, xs.tl)
+          };
   } else {
     return /* [] */0;
   }
@@ -500,7 +501,7 @@ function imap(f, xs) {
 
 function ifoldrAux(f, index, acc, xs) {
   if (xs) {
-    return Curry._3(f, index, xs[0], ifoldrAux(f, index + 1 | 0, acc, xs[1]));
+    return Curry._3(f, index, xs.hd, ifoldrAux(f, index + 1 | 0, acc, xs.tl));
   } else {
     return acc;
   }
@@ -518,8 +519,8 @@ function ifoldlAux(f, _index, _acc, _xs) {
     if (!xs) {
       return acc;
     }
-    _xs = xs[1];
-    _acc = Curry._3(f, acc, index, xs[0]);
+    _xs = xs.tl;
+    _acc = Curry._3(f, acc, index, xs.hd);
     _index = index + 1 | 0;
     continue ;
   };
@@ -536,10 +537,10 @@ function iallAux(f, _index, _xs) {
     if (!xs) {
       return true;
     }
-    if (!Curry._2(f, index, xs[0])) {
+    if (!Curry._2(f, index, xs.hd)) {
       return false;
     }
-    _xs = xs[1];
+    _xs = xs.tl;
     _index = index + 1 | 0;
     continue ;
   };
@@ -556,10 +557,10 @@ function ianyAux(f, _index, _xs) {
     if (!xs) {
       return false;
     }
-    if (Curry._2(f, index, xs[0])) {
+    if (Curry._2(f, index, xs.hd)) {
       return true;
     }
-    _xs = xs[1];
+    _xs = xs.tl;
     _index = index + 1 | 0;
     continue ;
   };
@@ -571,7 +572,7 @@ function iany(f, xs) {
 
 function iconcatMapAux(f, index, xs) {
   if (xs) {
-    return Pervasives.$at(Curry._2(f, index, xs[0]), iconcatMapAux(f, index + 1 | 0, xs[1]));
+    return Pervasives.$at(Curry._2(f, index, xs.hd), iconcatMapAux(f, index + 1 | 0, xs.tl));
   } else {
     return /* [] */0;
   }
@@ -584,10 +585,10 @@ function iconcatMap(f, xs) {
 function ifilter(pred, xs) {
   return ifoldr((function (i, x, acc) {
                 if (Curry._2(pred, i, x)) {
-                  return /* :: */[
-                          x,
-                          acc
-                        ];
+                  return {
+                          hd: x,
+                          tl: acc
+                        };
                 } else {
                   return acc;
                 }
@@ -597,25 +598,25 @@ function ifilter(pred, xs) {
 function ipartition(pred, xs) {
   return ifoldr((function (i, x) {
                 if (Curry._2(pred, i, x)) {
-                  return (function (param) {
-                      return Ley_Tuple$OptolithClient.Bifunctor.first((function (acc) {
-                                    return /* :: */[
-                                            x,
-                                            acc
-                                          ];
-                                  }), param);
-                    });
+                  return function (param) {
+                    return Ley_Tuple$OptolithClient.Bifunctor.first((function (acc) {
+                                  return {
+                                          hd: x,
+                                          tl: acc
+                                        };
+                                }), param);
+                  };
                 } else {
-                  return (function (param) {
-                      return Ley_Tuple$OptolithClient.Bifunctor.second((function (acc) {
-                                    return /* :: */[
-                                            x,
-                                            acc
-                                          ];
-                                  }), param);
-                    });
+                  return function (param) {
+                    return Ley_Tuple$OptolithClient.Bifunctor.second((function (acc) {
+                                  return {
+                                          hd: x,
+                                          tl: acc
+                                        };
+                                }), param);
+                  };
                 }
-              }), /* tuple */[
+              }), [
               /* [] */0,
               /* [] */0
             ], xs);
@@ -628,11 +629,11 @@ function ifindAux(pred, _index, _xs) {
     if (!xs) {
       return ;
     }
-    var x = xs[0];
+    var x = xs.hd;
     if (Curry._2(pred, index, x)) {
       return Caml_option.some(x);
     }
-    _xs = xs[1];
+    _xs = xs.tl;
     _index = index + 1 | 0;
     continue ;
   };
@@ -649,10 +650,10 @@ function ifindIndexAux(pred, _index, _xs) {
     if (!xs) {
       return ;
     }
-    if (Curry._2(pred, index, xs[0])) {
+    if (Curry._2(pred, index, xs.hd)) {
       return index;
     }
-    _xs = xs[1];
+    _xs = xs.tl;
     _index = index + 1 | 0;
     continue ;
   };
@@ -669,12 +670,12 @@ function ifindIndicesAux(pred, _i, _xs) {
     if (!xs) {
       return /* [] */0;
     }
-    var xs$1 = xs[1];
-    if (Curry._2(pred, i, xs[0])) {
-      return /* :: */[
-              i,
-              ifindIndicesAux(pred, i + 1 | 0, xs$1)
-            ];
+    var xs$1 = xs.tl;
+    if (Curry._2(pred, i, xs.hd)) {
+      return {
+              hd: i,
+              tl: ifindIndicesAux(pred, i + 1 | 0, xs$1)
+            };
     }
     _xs = xs$1;
     _i = i + 1 | 0;
@@ -717,15 +718,15 @@ var Index = {
 };
 
 function $less$plus$great(x, xs) {
-  return /* :: */[
-          x,
-          xs
-        ];
+  return {
+          hd: x,
+          tl: xs
+        };
 }
 
 function head(param) {
   if (param) {
-    return param[0];
+    return param.hd;
   } else {
     return Pervasives.invalid_arg("head does only work on non-empty lists. If you do not know whether the list is empty or not, use listToMaybe instead.");
   }
@@ -737,18 +738,18 @@ function last(_param) {
     if (!param) {
       return Pervasives.invalid_arg("last does only work on non-empty lists.");
     }
-    var xs = param[1];
+    var xs = param.tl;
     if (!xs) {
-      return param[0];
+      return param.hd;
     }
-    _param = xs[1];
+    _param = xs.tl;
     continue ;
   };
 }
 
 function tail(param) {
   if (param) {
-    return param[1];
+    return param.tl;
   } else {
     return Pervasives.invalid_arg("tail does only work on non-empty lists.");
   }
@@ -758,12 +759,12 @@ function init(param) {
   if (!param) {
     return Pervasives.invalid_arg("init does only work on non-empty lists.");
   }
-  var xs = param[1];
+  var xs = param.tl;
   if (xs) {
-    return /* :: */[
-            param[0],
-            init(xs)
-          ];
+    return {
+            hd: param.hd,
+            tl: init(xs)
+          };
   } else {
     return /* [] */0;
   }
@@ -771,9 +772,9 @@ function init(param) {
 
 function uncons(param) {
   if (param) {
-    return /* tuple */[
-            param[0],
-            param[1]
+    return [
+            param.hd,
+            param.tl
           ];
   }
   
@@ -789,21 +790,21 @@ function intersperse(sep, xs) {
   if (!xs) {
     return /* [] */0;
   }
-  var xs$1 = xs[1];
-  var x = xs[0];
+  var xs$1 = xs.tl;
+  var x = xs.hd;
   if (xs$1) {
-    return /* :: */[
-            x,
-            /* :: */[
-              sep,
-              intersperse(sep, xs$1)
-            ]
-          ];
+    return {
+            hd: x,
+            tl: {
+              hd: sep,
+              tl: intersperse(sep, xs$1)
+            }
+          };
   } else {
-    return /* :: */[
-            x,
-            /* [] */0
-          ];
+    return {
+            hd: x,
+            tl: /* [] */0
+          };
   }
 }
 
@@ -811,8 +812,8 @@ function intercalate(separator, xs) {
   if (!xs) {
     return "";
   }
-  var xs$1 = xs[1];
-  var x = xs[0];
+  var xs$1 = xs.tl;
+  var x = xs.hd;
   if (xs$1) {
     return intercalate(separator, xs$1) + (separator + x);
   } else {
@@ -822,7 +823,7 @@ function intercalate(separator, xs) {
 
 function permutationsPick(xs) {
   return imapAux((function (i, x) {
-                return /* tuple */[
+                return [
                         x,
                         deleteAt(i, xs)
                       ];
@@ -831,24 +832,24 @@ function permutationsPick(xs) {
 
 function permutations(xs) {
   if (xs) {
-    if (xs[1]) {
+    if (xs.tl) {
       return $great$great$eq(permutationsPick(xs), (function (param) {
                     var x$prime = param[0];
                     return $less$$great((function (param) {
-                                  return /* :: */[
-                                          x$prime,
-                                          param
-                                        ];
+                                  return {
+                                          hd: x$prime,
+                                          tl: param
+                                        };
                                 }), permutations(param[1]));
                   }));
     } else {
-      return /* :: */[
-              /* :: */[
-                xs[0],
-                /* [] */0
-              ],
-              /* [] */0
-            ];
+      return {
+              hd: {
+                hd: xs.hd,
+                tl: /* [] */0
+              },
+              tl: /* [] */0
+            };
     }
   } else {
     return /* [] */0;
@@ -856,54 +857,54 @@ function permutations(xs) {
 }
 
 function scanl(f, initial, xs) {
-  return /* :: */[
-          initial,
-          xs ? scanl(f, Curry._2(f, initial, xs[0]), xs[1]) : /* [] */0
-        ];
+  return {
+          hd: initial,
+          tl: xs ? scanl(f, Curry._2(f, initial, xs.hd), xs.tl) : /* [] */0
+        };
 }
 
 function mapAccumL(f, initial, ls) {
   if (!ls) {
-    return /* tuple */[
+    return [
             initial,
             /* [] */0
           ];
   }
-  var match = Curry._2(f, initial, ls[0]);
-  var match$1 = mapAccumL(f, match[0], ls[1]);
-  return /* tuple */[
+  var match = Curry._2(f, initial, ls.hd);
+  var match$1 = mapAccumL(f, match[0], ls.tl);
+  return [
           match$1[0],
-          /* :: */[
-            match[1],
-            match$1[1]
-          ]
+          {
+            hd: match[1],
+            tl: match$1[1]
+          }
         ];
 }
 
 function mapAccumR(f, initial, ls) {
   if (!ls) {
-    return /* tuple */[
+    return [
             initial,
             /* [] */0
           ];
   }
-  var match = mapAccumR(f, initial, ls[1]);
-  var match$1 = Curry._2(f, match[0], ls[0]);
-  return /* tuple */[
+  var match = mapAccumR(f, initial, ls.tl);
+  var match$1 = Curry._2(f, match[0], ls.hd);
+  return [
           match$1[0],
-          /* :: */[
-            match$1[1],
-            match[1]
-          ]
+          {
+            hd: match$1[1],
+            tl: match[1]
+          }
         ];
 }
 
 function replicate(len, x) {
   if (len > 0) {
-    return /* :: */[
-            x,
-            replicate(len - 1 | 0, x)
-          ];
+    return {
+            hd: x,
+            tl: replicate(len - 1 | 0, x)
+          };
   } else {
     return /* [] */0;
   }
@@ -912,10 +913,10 @@ function replicate(len, x) {
 function unfoldr(f, seed) {
   var param = Curry._1(f, seed);
   if (param !== undefined) {
-    return /* :: */[
-            param[0],
-            unfoldr(f, param[1])
-          ];
+    return {
+            hd: param[0],
+            tl: unfoldr(f, param[1])
+          };
   } else {
     return /* [] */0;
   }
@@ -925,10 +926,10 @@ function take(n, xs) {
   if (n <= 0 || !xs) {
     return /* [] */0;
   } else {
-    return /* :: */[
-            xs[0],
-            take(n - 1 | 0, xs[1])
-          ];
+    return {
+            hd: xs.hd,
+            tl: take(n - 1 | 0, xs.tl)
+          };
   }
 }
 
@@ -942,7 +943,7 @@ function drop(_n, _xs) {
     if (!xs) {
       return /* [] */0;
     }
-    _xs = xs[1];
+    _xs = xs.tl;
     _n = n - 1 | 0;
     continue ;
   };
@@ -950,23 +951,23 @@ function drop(_n, _xs) {
 
 function splitAt(n, xs) {
   if (n <= 0) {
-    return /* tuple */[
+    return [
             /* [] */0,
             xs
           ];
   }
   if (!xs) {
-    return /* tuple */[
+    return [
             /* [] */0,
             xs
           ];
   }
-  var match = splitAt(n - 1 | 0, xs[1]);
-  return /* tuple */[
-          /* :: */[
-            xs[0],
-            match[0]
-          ],
+  var match = splitAt(n - 1 | 0, xs.tl);
+  return [
+          {
+            hd: xs.hd,
+            tl: match[0]
+          },
           match[1]
         ];
 }
@@ -986,12 +987,12 @@ function lookup(k, xs) {
 function filter(pred, xs) {
   return foldr((function (x) {
                 if (Curry._1(pred, x)) {
-                  return (function (param) {
-                      return /* :: */[
-                              x,
-                              param
-                            ];
-                    });
+                  return function (param) {
+                    return {
+                            hd: x,
+                            tl: param
+                          };
+                  };
                 } else {
                   return Ley_Function$OptolithClient.id;
                 }
@@ -1001,25 +1002,25 @@ function filter(pred, xs) {
 function partition(pred, xs) {
   return foldr((function (x) {
                 if (Curry._1(pred, x)) {
-                  return (function (param) {
-                      return Ley_Tuple$OptolithClient.Bifunctor.first((function (param) {
-                                    return /* :: */[
-                                            x,
-                                            param
-                                          ];
-                                  }), param);
-                    });
+                  return function (param) {
+                    return Ley_Tuple$OptolithClient.Bifunctor.first((function (param) {
+                                  return {
+                                          hd: x,
+                                          tl: param
+                                        };
+                                }), param);
+                  };
                 } else {
-                  return (function (param) {
-                      return Ley_Tuple$OptolithClient.Bifunctor.second((function (param) {
-                                    return /* :: */[
-                                            x,
-                                            param
-                                          ];
-                                  }), param);
-                    });
+                  return function (param) {
+                    return Ley_Tuple$OptolithClient.Bifunctor.second((function (param) {
+                                  return {
+                                          hd: x,
+                                          tl: param
+                                        };
+                                }), param);
+                  };
                 }
-              }), /* tuple */[
+              }), [
               /* [] */0,
               /* [] */0
             ], xs);
@@ -1027,10 +1028,10 @@ function partition(pred, xs) {
 
 function elemIndex(e, xs) {
   if (xs) {
-    if (Caml_obj.caml_equal(e, xs[0])) {
+    if (Caml_obj.caml_equal(e, xs.hd)) {
       return 0;
     } else {
-      return Ley_Option$OptolithClient.Functor.$less$$great(Ley_Int$OptolithClient.inc, elemIndex(e, xs[1]));
+      return Ley_Option$OptolithClient.Functor.$less$$great(Ley_Int$OptolithClient.inc, elemIndex(e, xs.tl));
     }
   }
   
@@ -1043,12 +1044,12 @@ function elemIndicesAux(e, _i, _xs) {
     if (!xs) {
       return /* [] */0;
     }
-    var xs$1 = xs[1];
-    if (Caml_obj.caml_equal(e, xs[0])) {
-      return /* :: */[
-              i,
-              elemIndicesAux(e, i + 1 | 0, xs$1)
-            ];
+    var xs$1 = xs.tl;
+    if (Caml_obj.caml_equal(e, xs.hd)) {
+      return {
+              hd: i,
+              tl: elemIndicesAux(e, i + 1 | 0, xs$1)
+            };
     }
     _xs = xs$1;
     _i = i + 1 | 0;
@@ -1062,10 +1063,10 @@ function elemIndices(e, xs) {
 
 function findIndex(pred, xs) {
   if (xs) {
-    if (Curry._1(pred, xs[0])) {
+    if (Curry._1(pred, xs.hd)) {
       return 0;
     } else {
-      return Ley_Option$OptolithClient.Functor.$less$$great(Ley_Int$OptolithClient.inc, findIndex(pred, xs[1]));
+      return Ley_Option$OptolithClient.Functor.$less$$great(Ley_Int$OptolithClient.inc, findIndex(pred, xs.tl));
     }
   }
   
@@ -1078,12 +1079,12 @@ function findIndicesAux(pred, _i, _xs) {
     if (!xs) {
       return /* [] */0;
     }
-    var xs$1 = xs[1];
-    if (Curry._1(pred, xs[0])) {
-      return /* :: */[
-              i,
-              findIndicesAux(pred, i + 1 | 0, xs$1)
-            ];
+    var xs$1 = xs.tl;
+    if (Curry._1(pred, xs.hd)) {
+      return {
+              hd: i,
+              tl: findIndicesAux(pred, i + 1 | 0, xs$1)
+            };
     }
     _xs = xs$1;
     _i = i + 1 | 0;
@@ -1097,13 +1098,13 @@ function findIndices(pred, xs) {
 
 function zip(xs, ys) {
   if (xs && ys) {
-    return /* :: */[
-            /* tuple */[
-              xs[0],
-              ys[0]
+    return {
+            hd: [
+              xs.hd,
+              ys.hd
             ],
-            zip(xs[1], ys[1])
-          ];
+            tl: zip(xs.tl, ys.tl)
+          };
   } else {
     return /* [] */0;
   }
@@ -1111,10 +1112,10 @@ function zip(xs, ys) {
 
 function zipWith(f, xs, ys) {
   if (xs && ys) {
-    return /* :: */[
-            Curry._2(f, xs[0], ys[0]),
-            zipWith(f, xs[1], ys[1])
-          ];
+    return {
+            hd: Curry._2(f, xs.hd, ys.hd),
+            tl: zipWith(f, xs.tl, ys.tl)
+          };
   } else {
     return /* [] */0;
   }
@@ -1131,10 +1132,10 @@ function lines(x) {
 function nub(xs) {
   return foldr((function (x, acc) {
                 if (notElem(x, acc)) {
-                  return /* :: */[
-                          x,
-                          acc
-                        ];
+                  return {
+                          hd: x,
+                          tl: acc
+                        };
                 } else {
                   return acc;
                 }
@@ -1147,8 +1148,8 @@ function $$delete(e, _xs) {
     if (!xs) {
       return /* [] */0;
     }
-    var xs$1 = xs[1];
-    if (Caml_obj.caml_equal(e, xs[0])) {
+    var xs$1 = xs.tl;
+    if (Caml_obj.caml_equal(e, xs.hd)) {
       return xs$1;
     }
     _xs = xs$1;
@@ -1163,11 +1164,11 @@ function intersect(xs, ys) {
 }
 
 function sortBy(f) {
-  return (function (param) {
-      return List.sort((function (a, b) {
-                    return Ley_Ord$OptolithClient.fromOrdering(Curry._2(f, a, b));
-                  }), param);
-    });
+  return function (param) {
+    return List.sort((function (a, b) {
+                  return Ley_Ord$OptolithClient.fromOrdering(Curry._2(f, a, b));
+                }), param);
+  };
 }
 
 function maximumBy(f, xs) {
@@ -1200,6 +1201,83 @@ function countBy(f, xs) {
                   return Ley_Function$OptolithClient.id;
                 }
               }), 0, xs);
+}
+
+function lengthMin(_min, _xs) {
+  while(true) {
+    var xs = _xs;
+    var min = _min;
+    if (!xs) {
+      return min <= 0;
+    }
+    _xs = xs.tl;
+    _min = min - 1 | 0;
+    continue ;
+  };
+}
+
+function countMinBy(pred, _min, _xs) {
+  while(true) {
+    var xs = _xs;
+    var min = _min;
+    if (!xs) {
+      return min <= 0;
+    }
+    if (min <= 0) {
+      return true;
+    }
+    _xs = xs.tl;
+    _min = Curry._1(pred, xs.hd) ? min - 1 | 0 : min;
+    continue ;
+  };
+}
+
+function countMin(e) {
+  return function (param, param$1) {
+    return countMinBy((function (param) {
+                  return Caml_obj.caml_equal(e, param);
+                }), param, param$1);
+  };
+}
+
+function lengthMax(_max, _xs) {
+  while(true) {
+    var xs = _xs;
+    var max = _max;
+    if (max < 0) {
+      return false;
+    }
+    if (!xs) {
+      return true;
+    }
+    _xs = xs.tl;
+    _max = max - 1 | 0;
+    continue ;
+  };
+}
+
+function countMaxBy(pred, _max, _xs) {
+  while(true) {
+    var xs = _xs;
+    var max = _max;
+    if (max < 0) {
+      return false;
+    }
+    if (!xs) {
+      return true;
+    }
+    _xs = xs.tl;
+    _max = Curry._1(pred, xs.hd) ? max - 1 | 0 : max;
+    continue ;
+  };
+}
+
+function countMax(e) {
+  return function (param, param$1) {
+    return countMaxBy((function (param) {
+                  return Caml_obj.caml_equal(e, param);
+                }), param, param$1);
+  };
 }
 
 function intersecting(xs, ys) {
@@ -1240,7 +1318,7 @@ function notNullStr(xs) {
 
 function list(def, f, xs) {
   if (xs) {
-    return Curry._2(f, xs[0], xs[1]);
+    return Curry._2(f, xs.hd, xs.tl);
   } else {
     return def;
   }
@@ -1250,21 +1328,21 @@ function unsnoc(xs) {
   if (!xs) {
     return ;
   }
-  var xs$1 = xs[1];
-  var x = xs[0];
+  var xs$1 = xs.tl;
+  var x = xs.hd;
   if (!xs$1) {
-    return /* tuple */[
+    return [
             /* [] */0,
             x
           ];
   }
   var match = unsnoc(xs$1);
   if (match !== undefined) {
-    return /* tuple */[
-            /* :: */[
-              x,
-              match[0]
-            ],
+    return [
+            {
+              hd: x,
+              tl: match[0]
+            },
             match[1]
           ];
   }
@@ -1273,16 +1351,16 @@ function unsnoc(xs) {
 
 function snoc(xs, x) {
   if (!xs) {
-    return /* :: */[
-            x,
-            /* [] */0
-          ];
+    return {
+            hd: x,
+            tl: /* [] */0
+          };
   }
-  var x$1 = xs[0];
-  return /* :: */[
-          x$1,
-          snoc(xs[1], x$1)
-        ];
+  var x$1 = xs.hd;
+  return {
+          hd: x$1,
+          tl: snoc(xs.tl, x$1)
+        };
 }
 
 function maximumOn(f, xs) {
@@ -1290,17 +1368,17 @@ function maximumOn(f, xs) {
                     var max = param[1];
                     var res = Curry._1(f, x);
                     if (res > max) {
-                      return /* tuple */[
+                      return [
                               Caml_option.some(x),
                               res
                             ];
                     } else {
-                      return /* tuple */[
+                      return [
                               param[0],
                               max
                             ];
                     }
-                  }), /* tuple */[
+                  }), [
                   undefined,
                   Js_int.min
                 ], xs));
@@ -1311,17 +1389,17 @@ function minimumOn(f, xs) {
                     var min = param[1];
                     var res = Curry._1(f, x);
                     if (res < min) {
-                      return /* tuple */[
+                      return [
                               Caml_option.some(x),
                               res
                             ];
                     } else {
-                      return /* tuple */[
+                      return [
                               param[0],
                               min
                             ];
                     }
-                  }), /* tuple */[
+                  }), [
                   undefined,
                   Js_int.max
                 ], xs));
@@ -1333,11 +1411,11 @@ function firstJust(pred, _xs) {
     if (!xs) {
       return ;
     }
-    var res = Curry._1(pred, xs[0]);
+    var res = Curry._1(pred, xs.hd);
     if (res !== undefined) {
       return res;
     }
-    _xs = xs[1];
+    _xs = xs.tl;
     continue ;
   };
 }
@@ -1449,6 +1527,12 @@ export {
   maximumBy ,
   minimumBy ,
   countBy ,
+  lengthMin ,
+  countMinBy ,
+  countMin ,
+  lengthMax ,
+  countMaxBy ,
+  countMax ,
   intersecting ,
   listToArray ,
   arrayToList ,

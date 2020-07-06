@@ -33,7 +33,7 @@ function getEntries(staticData, mp) {
   return Ley_Option$OptolithClient.mapOption((function (trad) {
                 if (isActiveTradition(staticData, trad)) {
                   return Ley_Option$OptolithClient.Monad.liftM2((function (staticEntry, traditionEntry) {
-                                return /* tuple */[
+                                return [
                                         staticEntry,
                                         trad,
                                         traditionEntry
@@ -88,7 +88,7 @@ function getStaticEntry(staticData, mp) {
 function getEntry(staticData, mp) {
   return Ley_Option$OptolithClient.Monad.$great$great$eq(getHeroEntry(staticData, mp), (function (trad) {
                 return Ley_Option$OptolithClient.Monad.liftM2((function (staticEntry, traditionEntry) {
-                              return /* tuple */[
+                              return [
                                       staticEntry,
                                       trad,
                                       traditionEntry

@@ -69,17 +69,17 @@ function mapM(f, xs) {
   if (!xs) {
     return /* [] */0;
   }
-  var z = Curry._1(f, xs[0]);
+  var z = Curry._1(f, xs.hd);
   if (z === undefined) {
     return ;
   }
   var z$1 = Caml_option.valFromOption(z);
   return $less$$great((function (zs) {
-                return /* :: */[
-                        z$1,
-                        zs
-                      ];
-              }), mapM(f, xs[1]));
+                return {
+                        hd: z$1,
+                        tl: zs
+                      };
+              }), mapM(f, xs.tl));
 }
 
 function $great$eq$great(f, g, x) {
@@ -144,10 +144,10 @@ function foldl(f, init, mx) {
 
 function toList(mx) {
   if (mx !== undefined) {
-    return /* :: */[
-            Caml_option.valFromOption(mx),
-            /* [] */0
-          ];
+    return {
+            hd: Caml_option.valFromOption(mx),
+            tl: /* [] */0
+          };
   } else {
     return /* [] */0;
   }
@@ -294,7 +294,7 @@ function option(def, f, mx) {
 
 function listToOption(xs) {
   if (xs) {
-    return Caml_option.some(xs[0]);
+    return Caml_option.some(xs.hd);
   }
   
 }
@@ -302,10 +302,10 @@ function listToOption(xs) {
 function catOptions(xs) {
   return List.fold_right((function (param) {
                 return option(Ley_Function$OptolithClient.id, (function (x, xs) {
-                              return /* :: */[
-                                      x,
-                                      xs
-                                    ];
+                              return {
+                                      hd: x,
+                                      tl: xs
+                                    };
                             }), param);
               }), xs, /* [] */0);
 }
@@ -314,10 +314,10 @@ function mapOption(f, xs) {
   return List.fold_right((function (param) {
                 return Ley_Function$OptolithClient.$less$neg((function (param) {
                               return option(Ley_Function$OptolithClient.id, (function (x, xs) {
-                                            return /* :: */[
-                                                    x,
-                                                    xs
-                                                  ];
+                                            return {
+                                                    hd: x,
+                                                    tl: xs
+                                                  };
                                           }), param);
                             }), f, param);
               }), xs, /* [] */0);
@@ -337,13 +337,13 @@ function imapOptionAux(f, _index, _xs) {
     if (!xs) {
       return /* [] */0;
     }
-    var xs$1 = xs[1];
-    var y = Curry._2(f, index, xs[0]);
+    var xs$1 = xs.tl;
+    var y = Curry._2(f, index, xs.hd);
     if (y !== undefined) {
-      return /* :: */[
-              Caml_option.valFromOption(y),
-              imapOptionAux(f, index + 1 | 0, xs$1)
-            ];
+      return {
+              hd: Caml_option.valFromOption(y),
+              tl: imapOptionAux(f, index + 1 | 0, xs$1)
+            };
     }
     _xs = xs$1;
     _index = index + 1 | 0;

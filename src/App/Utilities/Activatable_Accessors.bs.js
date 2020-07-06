@@ -12,38 +12,38 @@ function isActiveM(param) {
 }
 
 function name(x) {
-  return x[0].name;
+  return x._0.name;
 }
 
 function selectOptions(x) {
-  switch (x.tag | 0) {
+  switch (x.TAG | 0) {
     case /* Advantage */0 :
     case /* Disadvantage */1 :
-        return x[0].selectOptions;
+        return x._0.selectOptions;
     case /* SpecialAbility */2 :
-        return x[0].selectOptions;
+        return x._0.selectOptions;
     
   }
 }
 
 function input(x) {
-  switch (x.tag | 0) {
+  switch (x.TAG | 0) {
     case /* Advantage */0 :
     case /* Disadvantage */1 :
-        return x[0].input;
+        return x._0.input;
     case /* SpecialAbility */2 :
-        return x[0].input;
+        return x._0.input;
     
   }
 }
 
 function apValue(x) {
-  switch (x.tag | 0) {
+  switch (x.TAG | 0) {
     case /* Advantage */0 :
     case /* Disadvantage */1 :
-        return x[0].apValue;
+        return x._0.apValue;
     case /* SpecialAbility */2 :
-        return x[0].apValue;
+        return x._0.apValue;
     
   }
 }

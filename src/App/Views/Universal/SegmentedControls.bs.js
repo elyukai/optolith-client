@@ -27,16 +27,16 @@ function SegmentedControls$Item(Props) {
   var isActive = Caml_obj.caml_equal(active, value);
   var combinedName = groupName + ("-" + name);
   return React.createElement("li", {
-              className: ClassNames$OptolithClient.fold(/* :: */[
-                    "segmented-controls-list-item",
-                    /* :: */[
-                      ClassNames$OptolithClient.cond("active", isActive),
-                      /* :: */[
-                        ClassNames$OptolithClient.cond("disabled", disabled),
-                        /* [] */0
-                      ]
-                    ]
-                  ])
+              className: ClassNames$OptolithClient.fold({
+                    hd: "segmented-controls-list-item",
+                    tl: {
+                      hd: ClassNames$OptolithClient.cond("active", isActive),
+                      tl: {
+                        hd: ClassNames$OptolithClient.cond("disabled", disabled),
+                        tl: /* [] */0
+                      }
+                    }
+                  })
             }, React.createElement("input", {
                   id: combinedName,
                   checked: isActive,
@@ -63,13 +63,13 @@ function SegmentedControls(Props) {
   var onClickSafe = Props.onClickSafe;
   var disabled = disabledOpt !== undefined ? disabledOpt : false;
   return React.createElement("div", {
-              className: ClassNames$OptolithClient.fold(/* :: */[
-                    "segmented-controls",
-                    /* :: */[
-                      ClassNames$OptolithClient.cond("disabled", disabled),
-                      /* [] */0
-                    ]
-                  ])
+              className: ClassNames$OptolithClient.fold({
+                    hd: "segmented-controls",
+                    tl: {
+                      hd: ClassNames$OptolithClient.cond("disabled", disabled),
+                      tl: /* [] */0
+                    }
+                  })
             }, Ley_Option$OptolithClient.option(null, (function (str) {
                     return React.createElement("label", undefined, str);
                   }), label), React.createElement("ul", {

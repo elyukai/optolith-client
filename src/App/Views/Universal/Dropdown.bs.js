@@ -3,7 +3,6 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
-import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
 import * as Label$OptolithClient from "./Label.bs.js";
 import * as Ley_Int$OptolithClient from "../../../Data/Ley_Int.bs.js";
@@ -24,17 +23,17 @@ function Dropdown$Item(Props) {
             return Curry._1(onChange, option.value);
           }
           
-        }), /* tuple */[
+        }), [
         isActive,
         option,
         onChange,
         disabled
       ]);
   return React.createElement("div", {
-              className: ClassNames$OptolithClient.fold(/* :: */[
-                    ClassNames$OptolithClient.cond("active", isActive),
-                    /* [] */0
-                  ]),
+              className: ClassNames$OptolithClient.fold({
+                    hd: ClassNames$OptolithClient.cond("active", isActive),
+                    tl: /* [] */0
+                  }),
               onClick: handleClick
             }, ReactUtils$OptolithClient.s(option.label));
 }
@@ -52,21 +51,21 @@ function Dropdown(Props) {
   var disabled = Props.disabled;
   var active = Props.active;
   var placeholder = Props.placeholder;
-  var match = React.useState((function () {
-          return false;
-        }));
+  var match = React.useState(function () {
+        return false;
+      });
   var setIsOpen = match[1];
   var isOpen = match[0];
-  var match$1 = React.useState((function () {
-          return /* Bottom */1;
-        }));
+  var match$1 = React.useState(function () {
+        return /* Bottom */1;
+      });
   var setPosition = match$1[1];
   var position = match$1[0];
   var containerRef = React.useRef(null);
   var handleSwitch = React.useCallback((function (param) {
           var maybeRef = containerRef.current;
           if (!(maybeRef == null) && !isOpen) {
-            var height = Ley_Int$OptolithClient.min(166, Caml_int32.imul(Ley_List$OptolithClient.Foldable.length(options), 33) + 1 | 0);
+            var height = Ley_Int$OptolithClient.min(166, Math.imul(Ley_List$OptolithClient.Foldable.length(options), 33) + 1 | 0);
             var rect = maybeRef.getBoundingClientRect();
             Curry._1(setPosition, (function (param) {
                     if (window.innerHeight - 32.0 - rect.top < height) {
@@ -79,7 +78,7 @@ function Dropdown(Props) {
           return Curry._1(setIsOpen, (function (prim) {
                         return !prim;
                       }));
-        }), /* tuple */[
+        }), [
         isOpen,
         options
       ]);
@@ -88,7 +87,7 @@ function Dropdown(Props) {
                   return false;
                 }));
           return Curry._1(onChange, option);
-        }), /* tuple */[
+        }), [
         setIsOpen,
         onChange
       ]);
@@ -141,27 +140,27 @@ function Dropdown(Props) {
       });
   return React.createElement("div", {
               ref: containerRef,
-              className: ClassNames$OptolithClient.fold(/* :: */[
-                    ClassNames$OptolithClient.safe("dropdown"),
-                    /* :: */[
-                      ClassNames$OptolithClient.safe(position ? "dropdown--bottom" : "dropdown--top"),
-                      /* :: */[
-                        ClassNames$OptolithClient.cond("disabled", disabled),
-                        /* [] */0
-                      ]
-                    ]
-                  ])
+              className: ClassNames$OptolithClient.fold({
+                    hd: ClassNames$OptolithClient.safe("dropdown"),
+                    tl: {
+                      hd: ClassNames$OptolithClient.safe(position ? "dropdown--bottom" : "dropdown--top"),
+                      tl: {
+                        hd: ClassNames$OptolithClient.cond("disabled", disabled),
+                        tl: /* [] */0
+                      }
+                    }
+                  })
             }, React.createElement(Label$OptolithClient.make, {
                   name: name,
                   labelText: label
                 }), React.createElement("div", undefined, position || !isOpen ? placeholderElement : overlayElement, React.createElement("div", {
-                      className: ClassNames$OptolithClient.fold(/* :: */[
-                            ClassNames$OptolithClient.safe("value"),
-                            /* :: */[
-                              ClassNames$OptolithClient.cond("placeholder", Ley_Option$OptolithClient.isNone(activeOption)),
-                              /* [] */0
-                            ]
-                          ]),
+                      className: ClassNames$OptolithClient.fold({
+                            hd: ClassNames$OptolithClient.safe("value"),
+                            tl: {
+                              hd: ClassNames$OptolithClient.cond("placeholder", Ley_Option$OptolithClient.isNone(activeOption)),
+                              tl: /* [] */0
+                            }
+                          }),
                       onClick: handleSwitch
                     }, ReactUtils$OptolithClient.s(activetext)), position && isOpen ? overlayElement : placeholderElement));
 }

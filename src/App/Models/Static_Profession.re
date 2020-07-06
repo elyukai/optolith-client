@@ -19,7 +19,7 @@ type variantOverride('a) =
 
 [@genType]
 [@genType.as "SkillSpecializationOption"]
-type skillSpecializationOption = GenericHelpers.oneOrMany(int);
+type skillSpecializationOption = OneOrMany.t(int);
 
 [@genType]
 [@genType.as "VariantSkillSpecializationOption"]
@@ -120,8 +120,8 @@ type variant = {
   specialAbilities: list(Static_Prerequisites.activatable),
   combatTechniques: Ley_IntMap.t(int),
   skills: Ley_IntMap.t(int),
-  spells: Ley_IntMap.t(GenericHelpers.oneOrMany(int)),
-  liturgicalChants: Ley_IntMap.t(GenericHelpers.oneOrMany(int)),
+  spells: Ley_IntMap.t(OneOrMany.t(int)),
+  liturgicalChants: Ley_IntMap.t(OneOrMany.t(int)),
   blessings: list(int),
   precedingText: option(string),
   fullText: option(string),
@@ -142,8 +142,8 @@ type t = {
   specialAbilities: list(Static_Prerequisites.activatable),
   combatTechniques: Ley_IntMap.t(int),
   skills: Ley_IntMap.t(int),
-  spells: Ley_IntMap.t(GenericHelpers.oneOrMany(int)),
-  liturgicalChants: Ley_IntMap.t(GenericHelpers.oneOrMany(int)),
+  spells: Ley_IntMap.t(OneOrMany.t(int)),
+  liturgicalChants: Ley_IntMap.t(OneOrMany.t(int)),
   blessings: list(int),
   suggestedAdvantages: list(int),
   suggestedAdvantagesText: option(string),
@@ -271,8 +271,8 @@ module Decode = {
     specialAbilities: option(list(Static_Prerequisites.activatable)),
     combatTechniques: option(list((int, int))),
     skills: option(list((int, int))),
-    spells: option(list((int, GenericHelpers.oneOrMany(int)))),
-    liturgicalChants: option(list((int, GenericHelpers.oneOrMany(int)))),
+    spells: option(list((int, OneOrMany.t(int)))),
+    liturgicalChants: option(list((int, OneOrMany.t(int)))),
     blessings: option(list(int)),
   };
 
@@ -492,8 +492,8 @@ module Decode = {
     specialAbilities: option(list(Static_Prerequisites.activatable)),
     combatTechniques: option(list((int, int))),
     skills: option(list((int, int))),
-    spells: option(list((int, GenericHelpers.oneOrMany(int)))),
-    liturgicalChants: option(list((int, GenericHelpers.oneOrMany(int)))),
+    spells: option(list((int, OneOrMany.t(int)))),
+    liturgicalChants: option(list((int, OneOrMany.t(int)))),
     blessings: option(list(int)),
     suggestedAdvantages: option(list(int)),
     suggestedDisadvantages: option(list(int)),

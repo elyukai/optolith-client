@@ -3,11 +3,9 @@
 import * as $$Map from "bs-platform/lib/es6/map.js";
 import * as List from "bs-platform/lib/es6/list.js";
 import * as $$Array from "bs-platform/lib/es6/array.js";
-import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Js_int from "bs-platform/lib/es6/js_int.js";
 import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
-import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
 import * as Ley_Int$OptolithClient from "./Ley_Int.bs.js";
 import * as Ley_List$OptolithClient from "./Ley_List.bs.js";
@@ -42,7 +40,9 @@ function Make(funarg) {
                 }), 0, mp);
   };
   var product = function (mp) {
-    return foldr(Caml_int32.imul, 1, mp);
+    return foldr((function (prim, prim$1) {
+                  return Math.imul(prim, prim$1);
+                }), 1, mp);
   };
   var maximum = function (mp) {
     return foldr((function (prim, prim$1) {
@@ -144,7 +144,7 @@ function Make(funarg) {
   };
   var insertLookupWithKey = function (f, key, value, mp) {
     var old = lookup(key, mp);
-    return /* tuple */[
+    return [
             old,
             Curry._3(insert, key, Ley_Option$OptolithClient.option(value, Curry._2(f, key, value), old), mp)
           ];
@@ -183,7 +183,7 @@ function Make(funarg) {
   };
   var updateLookupWithKey = function (f, key, mp) {
     var old = lookup(key, mp);
-    return /* tuple */[
+    return [
             old,
             Curry._3(TypedMap.update, key, (function (mx) {
                     if (mx !== undefined) {
@@ -257,59 +257,71 @@ function Make(funarg) {
   var countBy = function (f, xs) {
     return Ley_List$OptolithClient.Foldable.foldr((function (x) {
                   var partial_arg = Curry._1(f, x);
-                  return (function (param) {
-                      return alter((function (acc) {
-                                    return Ley_Option$OptolithClient.option(1, Ley_Int$OptolithClient.inc, acc);
-                                  }), partial_arg, param);
-                    });
+                  return function (param) {
+                    return alter((function (acc) {
+                                  return Ley_Option$OptolithClient.option(1, Ley_Int$OptolithClient.inc, acc);
+                                }), partial_arg, param);
+                  };
                 }), empty, xs);
   };
   var countByM = function (f, xs) {
     return Ley_List$OptolithClient.Foldable.foldr((function (x) {
                   return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (key) {
-                                return (function (param) {
-                                    return alter((function (acc) {
-                                                  return Ley_Option$OptolithClient.option(1, Ley_Int$OptolithClient.inc, acc);
-                                                }), key, param);
-                                  });
+                                return function (param) {
+                                  return alter((function (acc) {
+                                                return Ley_Option$OptolithClient.option(1, Ley_Int$OptolithClient.inc, acc);
+                                              }), key, param);
+                                };
                               }), Curry._1(f, x));
                 }), empty, xs);
   };
   var groupBy = function (f, xs) {
     return Ley_List$OptolithClient.Foldable.foldr((function (x) {
                   var partial_arg = Curry._1(f, x);
-                  return (function (param) {
-                      return alter((function (acc) {
-                                    return Ley_Option$OptolithClient.option(/* :: */[
-                                                x,
-                                                /* [] */0
-                                              ], (function (param) {
-                                                  return Ley_List$OptolithClient.$less$plus$great(x, param);
-                                                }), acc);
-                                  }), partial_arg, param);
-                    });
+                  return function (param) {
+                    return alter((function (acc) {
+                                  return Ley_Option$OptolithClient.option({
+                                              hd: x,
+                                              tl: /* [] */0
+                                            }, (function (param) {
+                                                return Ley_List$OptolithClient.$less$plus$great(x, param);
+                                              }), acc);
+                                }), partial_arg, param);
+                  };
                 }), empty, xs);
   };
   var mapMEitherHelper = function (f, xs) {
     if (!xs) {
-      return /* Ok */Block.__(0, [/* [] */0]);
+      return {
+              TAG: /* Ok */0,
+              _0: /* [] */0
+            };
     }
-    var match = xs[0];
+    var match = xs.hd;
     var new_value = Curry._1(f, match[1]);
-    if (new_value.tag) {
-      return /* Error */Block.__(1, [new_value[0]]);
+    if (new_value.TAG) {
+      return {
+              TAG: /* Error */1,
+              _0: new_value._0
+            };
     }
-    var zs = mapMEitherHelper(f, xs[1]);
-    if (zs.tag) {
-      return /* Error */Block.__(1, [zs[0]]);
+    var zs = mapMEitherHelper(f, xs.tl);
+    if (zs.TAG) {
+      return {
+              TAG: /* Error */1,
+              _0: zs._0
+            };
     } else {
-      return /* Ok */Block.__(0, [/* :: */[
-                  /* tuple */[
-                    match[0],
-                    new_value[0]
-                  ],
-                  zs[0]
-                ]]);
+      return {
+              TAG: /* Ok */0,
+              _0: {
+                hd: [
+                  match[0],
+                  new_value._0
+                ],
+                tl: zs._0
+              }
+            };
     }
   };
   var mapMEither = function (f, mp) {

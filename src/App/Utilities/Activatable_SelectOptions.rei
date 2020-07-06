@@ -23,21 +23,34 @@ let getSelectOptionName:
   (Static.activatable, Hero.Activatable.optionId) => option(string);
 
 /**
- * Get a select option's cost with the given id from given static entry.
- * Returns `Nothing` if not found.
+ * Get a option's cost with the given id from given static entry. Returns
+ * `Nothing` if not found.
  */
 let getSelectOptionCost:
   (Static.activatable, Hero.Activatable.optionId) => option(int);
 
 /**
- * Get all first select option IDs from the given entry.
+ * Get all first option IDs from the given entry.
  */
 let getActiveOptions1: Hero.Activatable.t => list(Hero.Activatable.optionId);
 
 /**
- * Get all second select option IDs from the given entry.
+ * Get all first select option IDs from the given entry.
+ */
+let getActiveSelectOptions1: Hero.Activatable.t => list(Id.selectOption);
+
+/**
+ * Get all second option IDs from the given entry.
  */
 let getActiveOptions2: Hero.Activatable.t => list(Hero.Activatable.optionId);
+
+/**
+ * Get all second option ids from the given entry, sorted by their first option
+ * id in a map.
+ */
+let getActiveOptions2Map:
+  Hero.Activatable.t =>
+  Static_SelectOption.SelectOptionMap.t(list(Hero.Activatable.optionId));
 
 let getOption: (int, singleWithId) => option(Hero.Activatable.optionId);
 

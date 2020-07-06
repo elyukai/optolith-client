@@ -4,9 +4,9 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Ley_Int$OptolithClient from "../../Data/Ley_Int.bs.js";
 import * as Yaml_Zip$OptolithClient from "../Utilities/Yaml_Zip.bs.js";
+import * as OneOrMany$OptolithClient from "../Utilities/OneOrMany.bs.js";
 import * as JsonStrict$OptolithClient from "../Utilities/JsonStrict.bs.js";
 import * as Ley_IntMap$OptolithClient from "../../Data/Ley_IntMap.bs.js";
-import * as GenericHelpers$OptolithClient from "../Utilities/GenericHelpers.bs.js";
 import * as Static_Erratum$OptolithClient from "./Static_Erratum.bs.js";
 import * as Static_Advantage$OptolithClient from "./Static_Advantage.bs.js";
 import * as Static_SourceRef$OptolithClient from "./Static_SourceRef.bs.js";
@@ -45,36 +45,39 @@ function tL10n(json) {
 
 var cost = Static_Advantage$OptolithClient.Decode.cost;
 
-function partial_arg_000(json) {
-  return /* List */[Json_decode.list(Json_decode.$$int, json)];
+function partial_arg_0(json) {
+  return /* List */{
+          _0: Json_decode.list(Json_decode.$$int, json)
+        };
 }
 
-var partial_arg_001 = /* :: */[
-  (function (json) {
+var partial_arg_1 = {
+  hd: (function (json) {
       var x = Json_decode.$$int(json);
       var switcher = x - 1 | 0;
       if (switcher > 4 || switcher < 0) {
-        throw [
-              Json_decode.DecodeError,
-              "Unknown combat technique category: " + Ley_Int$OptolithClient.show(x)
-            ];
+        throw {
+              RE_EXN_ID: Json_decode.DecodeError,
+              _1: "Unknown combat technique category: " + Ley_Int$OptolithClient.show(x),
+              Error: new Error()
+            };
       }
       return switcher;
     }),
-  /* [] */0
-];
+  tl: /* [] */0
+};
 
-var partial_arg = /* :: */[
-  partial_arg_000,
-  partial_arg_001
-];
+var partial_arg = {
+  hd: partial_arg_0,
+  tl: partial_arg_1
+};
 
 function combatTechniques(param) {
   return Json_decode.oneOf(partial_arg, param);
 }
 
 function tUniv(json) {
-  var partial_arg = GenericHelpers$OptolithClient.Decode.oneOrMany(Json_decode.$$int);
+  var partial_arg = OneOrMany$OptolithClient.Decode.t(Json_decode.$$int);
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           cost: JsonStrict$OptolithClient.optionalField("cost", cost, json),
@@ -101,7 +104,7 @@ function tUniv(json) {
 }
 
 function t(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, univ, l10n) {
-  return /* tuple */[
+  return [
           univ.id,
           {
             id: univ.id,

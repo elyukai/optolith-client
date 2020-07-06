@@ -20,7 +20,7 @@ function tL10n(json) {
 }
 
 function item(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           JsonStrict$OptolithClient.optionalField("amount", Json_decode.$$int, json)
         ];
@@ -36,7 +36,7 @@ function tUniv(json) {
 }
 
 function t(univ, l10n) {
-  return /* tuple */[
+  return [
           univ.id,
           {
             id: univ.id,

@@ -27,6 +27,8 @@ var StrMap;
 
 var StrSet;
 
+var Transducer;
+
 var Tuple;
 
 export {
@@ -43,6 +45,7 @@ export {
   Result ,
   StrMap ,
   StrSet ,
+  Transducer ,
   Tuple ,
   
 }

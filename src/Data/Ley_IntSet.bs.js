@@ -3,7 +3,6 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Js_int from "bs-platform/lib/es6/js_int.js";
 import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
-import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Ley_Set$OptolithClient from "./Ley_Set.bs.js";
 
 var compare = Caml_obj.caml_compare;
@@ -20,7 +19,9 @@ var sum = Curry._2(foldr, (function (prim, prim$1) {
         return prim + prim$1 | 0;
       }), 0);
 
-var product = Curry._2(foldr, Caml_int32.imul, 1);
+var product = Curry._2(foldr, (function (prim, prim$1) {
+        return Math.imul(prim, prim$1);
+      }), 1);
 
 var maximum = Curry._2(foldr, (function (prim, prim$1) {
         return Math.max(prim, prim$1);

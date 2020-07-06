@@ -11,7 +11,7 @@ import * as Static_Erratum$OptolithClient from "./Static_Erratum.bs.js";
 import * as Static_SourceRef$OptolithClient from "./Static_SourceRef.bs.js";
 
 function nameByTradition(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -49,13 +49,13 @@ function tUniv(json) {
 }
 
 function t(univ, l10n) {
-  return /* tuple */[
+  return [
           univ.id,
           {
             id: univ.id,
             name: l10n.name,
             nameByTradition: Curry._1(Ley_IntMap$OptolithClient.fromList, l10n.nameByTradition),
-            check: /* tuple */[
+            check: [
               univ.check1,
               univ.check2,
               univ.check3

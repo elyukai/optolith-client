@@ -15,14 +15,14 @@ import * as Static_SourceRef$OptolithClient from "./Static_SourceRef.bs.js";
 import * as Static_Prerequisites$OptolithClient from "./Static_Prerequisites.bs.js";
 
 function applicationL10n(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
 }
 
 function useL10n(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -51,14 +51,14 @@ function tL10n(json) {
 }
 
 function applicationUniv(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("prerequisite", Static_Prerequisites$OptolithClient.Decode.activatable, json)
         ];
 }
 
 function useUniv(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("prerequisite", Static_Prerequisites$OptolithClient.Decode.activatable, json)
         ];
@@ -77,10 +77,11 @@ function encumbranceUniv(json) {
         Json_decode.$$int(json);
         return /* True */0;
     default:
-      throw [
-            Json_decode.DecodeError,
-            "Unknown encumbrance: " + str
-          ];
+      throw {
+            RE_EXN_ID: Json_decode.DecodeError,
+            _1: "Unknown encumbrance: " + str,
+            Error: new Error()
+          };
   }
 }
 
@@ -103,7 +104,7 @@ function tUniv(json) {
 }
 
 function newApplication(univ, l10n) {
-  return /* tuple */[
+  return [
           univ[0],
           {
             id: univ[0],
@@ -114,7 +115,7 @@ function newApplication(univ, l10n) {
 }
 
 function application(l10n) {
-  return /* tuple */[
+  return [
           l10n[0],
           {
             id: l10n[0],
@@ -125,7 +126,7 @@ function application(l10n) {
 }
 
 function use(univ, l10n) {
-  return /* tuple */[
+  return [
           univ[0],
           {
             id: univ[0],
@@ -146,7 +147,9 @@ function t(univ, l10n) {
         tmp = /* False */1;
         break;
     case /* Maybe */2 :
-        tmp = /* Maybe */[l10n.encDescription];
+        tmp = /* Maybe */{
+          _0: l10n.encDescription
+        };
         break;
     
   }
@@ -155,12 +158,12 @@ function t(univ, l10n) {
         }), (function (prim) {
           return prim[0];
         }), Ley_Option$OptolithClient.fromOption(/* [] */0, univ.applications), l10n.applications);
-  return /* tuple */[
+  return [
           univ.id,
           {
             id: univ.id,
             name: l10n.name,
-            check: /* tuple */[
+            check: [
               univ.check1,
               univ.check2,
               univ.check3
@@ -204,7 +207,7 @@ function group(json) {
 
 function groups(yamlData) {
   return Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_List$OptolithClient.map((function (x) {
-                    return /* tuple */[
+                    return [
                             x.id,
                             x
                           ];

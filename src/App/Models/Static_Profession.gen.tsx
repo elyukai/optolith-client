@@ -6,11 +6,11 @@ import {activatable as Static_Prerequisites_activatable} from './Static_Prerequi
 
 import {list} from '../../../src/shims/ReasonPervasives.shim';
 
-import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
-
 import {tProfession as Static_Prerequisites_tProfession} from './Static_Prerequisites.gen';
 
 import {t as Ley_IntMap_t} from '../../../src/Data/Ley_IntMap.gen';
+
+import {t as OneOrMany_t} from '../../../src/App/Utilities/OneOrMany.gen';
 
 import {t as Static_Erratum_t} from './Static_Erratum.gen';
 
@@ -31,7 +31,7 @@ export type variantOverride<a> = "Remove" | { tag: "Override"; value: a };
 export type VariantOverride<a> = variantOverride<a>;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type skillSpecializationOption = GenericHelpers_oneOrMany<number>;
+export type skillSpecializationOption = OneOrMany_t<number>;
 export type SkillSpecializationOption = skillSpecializationOption;
 
 // tslint:disable-next-line:interface-over-type-literal
@@ -115,8 +115,8 @@ export type variant = {
   readonly specialAbilities: list<Static_Prerequisites_activatable>; 
   readonly combatTechniques: Ley_IntMap_t<number>; 
   readonly skills: Ley_IntMap_t<number>; 
-  readonly spells: Ley_IntMap_t<GenericHelpers_oneOrMany<number>>; 
-  readonly liturgicalChants: Ley_IntMap_t<GenericHelpers_oneOrMany<number>>; 
+  readonly spells: Ley_IntMap_t<OneOrMany_t<number>>; 
+  readonly liturgicalChants: Ley_IntMap_t<OneOrMany_t<number>>; 
   readonly blessings: list<number>; 
   readonly precedingText?: string; 
   readonly fullText?: string; 
@@ -137,8 +137,8 @@ export type t = {
   readonly specialAbilities: list<Static_Prerequisites_activatable>; 
   readonly combatTechniques: Ley_IntMap_t<number>; 
   readonly skills: Ley_IntMap_t<number>; 
-  readonly spells: Ley_IntMap_t<GenericHelpers_oneOrMany<number>>; 
-  readonly liturgicalChants: Ley_IntMap_t<GenericHelpers_oneOrMany<number>>; 
+  readonly spells: Ley_IntMap_t<OneOrMany_t<number>>; 
+  readonly liturgicalChants: Ley_IntMap_t<OneOrMany_t<number>>; 
   readonly blessings: list<number>; 
   readonly suggestedAdvantages: list<number>; 
   readonly suggestedAdvantagesText?: string; 

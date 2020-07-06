@@ -23,10 +23,11 @@ function $$const(x, json) {
   if (Caml_obj.caml_equal(json, x)) {
     return x;
   }
-  throw [
-        Json_decode.DecodeError,
-        "Expected \"" + (JSON.stringify(json) + ("\", but received: " + JSON.stringify(json)))
-      ];
+  throw {
+        RE_EXN_ID: Json_decode.DecodeError,
+        _1: "Expected \"" + (JSON.stringify(json) + ("\", but received: " + JSON.stringify(json))),
+        Error: new Error()
+      };
 }
 
 export {

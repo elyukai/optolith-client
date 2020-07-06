@@ -8,11 +8,11 @@ import {list} from '../../../src/shims/ReasonPervasives.shim';
 
 import {map as Static_SelectOption_map} from './Static_SelectOption.gen';
 
-import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
-
 import {tIndexWithLevel as Static_Prerequisites_tIndexWithLevel} from './Static_Prerequisites.gen';
 
 import {tWithLevel as Static_Prerequisites_tWithLevel} from './Static_Prerequisites.gen';
+
+import {t as OneOrMany_t} from '../../../src/App/Utilities/OneOrMany.gen';
 
 import {t as Static_Erratum_t} from './Static_Erratum.gen';
 
@@ -51,7 +51,7 @@ export type t = {
   readonly propertyText?: string; 
   readonly aspect?: number; 
   readonly brew?: number; 
-  readonly extended?: list<GenericHelpers_oneOrMany<number>>; 
+  readonly extended?: list<OneOrMany_t<number>>; 
   readonly prerequisites: Static_Prerequisites_tWithLevel; 
   readonly prerequisitesText?: string; 
   readonly prerequisitesTextIndex: Static_Prerequisites_tIndexWithLevel; 

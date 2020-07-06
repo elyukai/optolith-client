@@ -21,12 +21,12 @@ function min(x, y) {
 
 function minmax(x, y) {
   if (x < y) {
-    return /* tuple */[
+    return [
             x,
             y
           ];
   } else {
-    return /* tuple */[
+    return [
             y,
             x
           ];

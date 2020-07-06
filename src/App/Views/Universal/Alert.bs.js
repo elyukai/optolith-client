@@ -15,15 +15,15 @@ function Alert$Button(Props) {
   var onClick = Props.onClick;
   var handleClick = React.useCallback((function (param) {
           return Curry._1(onClick, value);
-        }), /* tuple */[
+        }), [
         value,
         onClick
       ]);
   return React.createElement("button", {
-              className: ClassNames$OptolithClient.fold(/* :: */[
-                    ClassNames$OptolithClient.cond("primary", primary),
-                    /* [] */0
-                  ]),
+              className: ClassNames$OptolithClient.fold({
+                    hd: ClassNames$OptolithClient.cond("primary", primary),
+                    tl: /* [] */0
+                  }),
               type: "button",
               onClick: handleClick
             }, ReactUtils$OptolithClient.s(label));
@@ -43,9 +43,9 @@ function Alert$StringInput(Props) {
   var onClose = Props.onClose;
   var name = Props.name;
   var placeholder = Props.placeholder;
-  var match = React.useState((function () {
-          return "";
-        }));
+  var match = React.useState(function () {
+        return "";
+      });
   var setInput = match[1];
   var input = match[0];
   var handleSubmit = React.useCallback((function (param) {
@@ -53,7 +53,7 @@ function Alert$StringInput(Props) {
             return Curry._1(onClick, input);
           }
           
-        }), /* tuple */[
+        }), [
         input,
         onClick
       ]);
@@ -62,7 +62,7 @@ function Alert$StringInput(Props) {
             return Curry._1(onClick, input);
           }
           
-        }), /* tuple */[
+        }), [
         input,
         onClick
       ]);
@@ -113,10 +113,10 @@ function Alert(Props) {
   var secondaryButtons = secondaryButtonsOpt !== undefined ? secondaryButtonsOpt : /* [] */0;
   return React.createElement(Overlay$OptolithClient.make, {
               baseClassName: "alert",
-              className: ClassNames$OptolithClient.fold(/* :: */[
-                    ClassNames$OptolithClient.cond("alert-long", Ley_List$OptolithClient.Foldable.length(secondaryButtons) > 2),
-                    /* [] */0
-                  ]),
+              className: ClassNames$OptolithClient.fold({
+                    hd: ClassNames$OptolithClient.cond("alert-long", Ley_List$OptolithClient.Foldable.length(secondaryButtons) > 2),
+                    tl: /* [] */0
+                  }),
               children: null,
               isOpen: isOpen,
               onBackdrop: onClose

@@ -19,15 +19,15 @@ function $neg$pipe(a, b) {
 
 function rollDiceAux(amount, sides) {
   if (Ley_Int$OptolithClient.abs(amount) <= 1) {
-    return /* :: */[
-            rollDie(sides),
-            /* [] */0
-          ];
+    return {
+            hd: rollDie(sides),
+            tl: /* [] */0
+          };
   } else {
-    return /* :: */[
-            rollDie(sides),
-            rollDiceAux($neg$pipe(amount, 1), sides)
-          ];
+    return {
+            hd: rollDie(sides),
+            tl: rollDiceAux($neg$pipe(amount, 1), sides)
+          };
   }
 }
 

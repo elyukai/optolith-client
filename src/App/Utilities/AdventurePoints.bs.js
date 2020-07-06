@@ -3,9 +3,9 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as IC$OptolithClient from "./IC.bs.js";
 import * as Ley_Int$OptolithClient from "../../Data/Ley_Int.bs.js";
+import * as Tradition$OptolithClient from "./Tradition.bs.js";
 import * as Ley_IntMap$OptolithClient from "../../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../../Data/Ley_Option.bs.js";
-import * as Traditions$OptolithClient from "./Traditions.bs.js";
 import * as Ley_Function$OptolithClient from "../../Data/Ley_Function.bs.js";
 
 function getMissingAp(isInCharacterCreation, apAvailable, apCost) {
@@ -23,7 +23,7 @@ function getDisAdvantagesSubtypeMax(staticData, hero, isMagical) {
                   } else {
                     return 50;
                   }
-                }), Ley_Option$OptolithClient.listToOption(Traditions$OptolithClient.Magical.getEntries(staticData, hero.specialAbilities)));
+                }), Ley_Option$OptolithClient.listToOption(Tradition$OptolithClient.Magical.getEntries(staticData, hero.specialAbilities)));
   } else {
     return 50;
   }
@@ -49,8 +49,8 @@ function getDisAdvantageSubtypeApSpent(apCategories, isDisadvantage, isMagical, 
 
 function getMissingApForDisAdvantage(staticData, hero, isInCharacterCreation, apCategories, isMagical, isBlessed, apCost, staticEntry) {
   var isDisadvantage;
-  isDisadvantage = staticEntry.tag ? true : false;
-  var noMaxAPInfluence = staticEntry[0].noMaxAPInfluence;
+  isDisadvantage = staticEntry.TAG ? true : false;
+  var noMaxAPInfluence = staticEntry._0.noMaxAPInfluence;
   var apSpent = isDisadvantage ? apCategories.spentOnDisadvantages : apCategories.spentOnAdvantages;
   var mApSpentSubtype = getDisAdvantageSubtypeApSpent(apCategories, isDisadvantage, isMagical, isBlessed);
   var subtypeMax = getDisAdvantagesSubtypeMax(staticData, hero, isMagical);
@@ -71,22 +71,22 @@ function getMissingApForDisAdvantage(staticData, hero, isInCharacterCreation, ap
         };
 }
 
-var DifferenceTotal = { };
+var DifferenceTotal = {};
 
 var getApSpentOnAttributes = Curry._2(Ley_IntMap$OptolithClient.Foldable.foldr, (function (x) {
         var partial_arg = IC$OptolithClient.getAPForRange(/* E */4, 8, x.value);
-        return (function (param) {
-            return partial_arg + param | 0;
-          });
+        return function (param) {
+          return partial_arg + param | 0;
+        };
       }), 0);
 
 function getApSpentOnSkills(staticData) {
   return Curry._2(Ley_IntMap$OptolithClient.Foldable.foldr, (function (x) {
                 return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (staticEntry) {
                               var partial_arg = IC$OptolithClient.getAPForRange(staticEntry.ic, 0, x.value);
-                              return (function (param) {
-                                  return partial_arg + param | 0;
-                                });
+                              return function (param) {
+                                return partial_arg + param | 0;
+                              };
                             }), Curry._2(Ley_IntMap$OptolithClient.lookup, x.id, staticData.skills));
               }), 0);
 }
@@ -95,9 +95,9 @@ function getApSpentOnCombatTechniques(staticData) {
   return Curry._2(Ley_IntMap$OptolithClient.Foldable.foldr, (function (x) {
                 return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (staticEntry) {
                               var partial_arg = IC$OptolithClient.getAPForRange(staticEntry.ic, 6, x.value);
-                              return (function (param) {
-                                  return partial_arg + param | 0;
-                                });
+                              return function (param) {
+                                return partial_arg + param | 0;
+                              };
                             }), Curry._2(Ley_IntMap$OptolithClient.lookup, x.id, staticData.combatTechniques));
               }), 0);
 }
@@ -108,12 +108,12 @@ function getApSpentOnSpells(staticData) {
                 if (!value) {
                   return Ley_Function$OptolithClient.id;
                 }
-                var value$1 = value[0];
+                var value$1 = value._0;
                 return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (staticEntry) {
                               var partial_arg = IC$OptolithClient.getAPForRange(staticEntry.ic, 0, value$1);
-                              return (function (param) {
-                                  return partial_arg + param | 0;
-                                });
+                              return function (param) {
+                                return partial_arg + param | 0;
+                              };
                             }), Curry._2(Ley_IntMap$OptolithClient.lookup, x.id, staticData.spells));
               }), 0);
 }
@@ -124,12 +124,12 @@ function getApSpentOnLiturgicalChants(staticData) {
                 if (!value) {
                   return Ley_Function$OptolithClient.id;
                 }
-                var value$1 = value[0];
+                var value$1 = value._0;
                 return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (staticEntry) {
                               var partial_arg = IC$OptolithClient.getAPForRange(staticEntry.ic, 0, value$1);
-                              return (function (param) {
-                                  return partial_arg + param | 0;
-                                });
+                              return function (param) {
+                                return partial_arg + param | 0;
+                              };
                             }), Curry._2(Ley_IntMap$OptolithClient.lookup, x.id, staticData.liturgicalChants));
               }), 0);
 }

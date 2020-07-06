@@ -43,7 +43,7 @@ import * as Static_MagicalTradition$OptolithClient from "../Models/Static_Magica
 import * as Static_DerivedCharacteristic$OptolithClient from "../Models/Static_DerivedCharacteristic.bs.js";
 
 function idName(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -52,14 +52,14 @@ function idName(json) {
 function liturgicalChantEnhancements(xs) {
   return Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_List$OptolithClient.Monad.$great$great$eq(xs, (function (x) {
                     var match = x.level3.requirePrevious;
-                    return /* :: */[
-                            /* tuple */[
+                    return {
+                            hd: [
                               x.level1.id,
                               {
-                                id: /* `Generic */[
-                                  61643255,
-                                  x.level1.id
-                                ],
+                                id: {
+                                  HASH: /* Generic */61643255,
+                                  VAL: x.level1.id
+                                },
                                 name: x.level1.name,
                                 cost: x.level1.cost,
                                 prerequisites: Static_Prerequisites$OptolithClient.empty,
@@ -79,14 +79,14 @@ function liturgicalChantEnhancements(xs) {
                                 errata: x.errata
                               }
                             ],
-                            /* :: */[
-                              /* tuple */[
+                            tl: {
+                              hd: [
                                 x.level2.id,
                                 {
-                                  id: /* `Generic */[
-                                    61643255,
-                                    x.level2.id
-                                  ],
+                                  id: {
+                                    HASH: /* Generic */61643255,
+                                    VAL: x.level2.id
+                                  },
                                   name: x.level2.name,
                                   cost: x.level2.cost,
                                   prerequisites: {
@@ -96,22 +96,22 @@ function liturgicalChantEnhancements(xs) {
                                     pact: Static_Prerequisites$OptolithClient.empty.pact,
                                     social: Static_Prerequisites$OptolithClient.empty.social,
                                     primaryAttribute: Static_Prerequisites$OptolithClient.empty.primaryAttribute,
-                                    activatable: x.level2.requireLevel1 ? /* :: */[
-                                        {
-                                          id: /* `SpecialAbility */[
-                                            -789492591,
-                                            Id$OptolithClient.specialAbilityToInt(/* ChantEnhancement */46)
-                                          ],
-                                          active: true,
-                                          sid: /* `Generic */[
-                                            61643255,
-                                            x.level1.id
-                                          ],
-                                          sid2: undefined,
-                                          level: undefined
-                                        },
-                                        /* [] */0
-                                      ] : /* [] */0,
+                                    activatable: x.level2.requireLevel1 ? ({
+                                          hd: {
+                                            id: {
+                                              HASH: /* SpecialAbility */-789492591,
+                                              VAL: Id$OptolithClient.specialAbilityToInt(/* ChantEnhancement */46)
+                                            },
+                                            active: true,
+                                            sid: {
+                                              HASH: /* Generic */61643255,
+                                              VAL: x.level1.id
+                                            },
+                                            sid2: undefined,
+                                            level: undefined
+                                          },
+                                          tl: /* [] */0
+                                        }) : /* [] */0,
                                     activatableMultiEntry: Static_Prerequisites$OptolithClient.empty.activatableMultiEntry,
                                     activatableMultiSelect: Static_Prerequisites$OptolithClient.empty.activatableMultiSelect,
                                     increasable: Static_Prerequisites$OptolithClient.empty.increasable,
@@ -133,14 +133,14 @@ function liturgicalChantEnhancements(xs) {
                                   errata: x.errata
                                 }
                               ],
-                              /* :: */[
-                                /* tuple */[
+                              tl: {
+                                hd: [
                                   x.level3.id,
                                   {
-                                    id: /* `Generic */[
-                                      61643255,
-                                      x.level3.id
-                                    ],
+                                    id: {
+                                      HASH: /* Generic */61643255,
+                                      VAL: x.level3.id
+                                    },
                                     name: x.level3.name,
                                     cost: x.level3.cost,
                                     prerequisites: {
@@ -151,37 +151,37 @@ function liturgicalChantEnhancements(xs) {
                                       social: Static_Prerequisites$OptolithClient.empty.social,
                                       primaryAttribute: Static_Prerequisites$OptolithClient.empty.primaryAttribute,
                                       activatable: match !== undefined ? (
-                                          match ? /* :: */[
-                                              {
-                                                id: /* `SpecialAbility */[
-                                                  -789492591,
-                                                  Id$OptolithClient.specialAbilityToInt(/* ChantEnhancement */46)
-                                                ],
-                                                active: true,
-                                                sid: /* `Generic */[
-                                                  61643255,
-                                                  x.level2.id
-                                                ],
-                                                sid2: undefined,
-                                                level: undefined
-                                              },
-                                              /* [] */0
-                                            ] : /* :: */[
-                                              {
-                                                id: /* `SpecialAbility */[
-                                                  -789492591,
-                                                  Id$OptolithClient.specialAbilityToInt(/* ChantEnhancement */46)
-                                                ],
-                                                active: true,
-                                                sid: /* `Generic */[
-                                                  61643255,
-                                                  x.level1.id
-                                                ],
-                                                sid2: undefined,
-                                                level: undefined
-                                              },
-                                              /* [] */0
-                                            ]
+                                          match ? ({
+                                                hd: {
+                                                  id: {
+                                                    HASH: /* SpecialAbility */-789492591,
+                                                    VAL: Id$OptolithClient.specialAbilityToInt(/* ChantEnhancement */46)
+                                                  },
+                                                  active: true,
+                                                  sid: {
+                                                    HASH: /* Generic */61643255,
+                                                    VAL: x.level2.id
+                                                  },
+                                                  sid2: undefined,
+                                                  level: undefined
+                                                },
+                                                tl: /* [] */0
+                                              }) : ({
+                                                hd: {
+                                                  id: {
+                                                    HASH: /* SpecialAbility */-789492591,
+                                                    VAL: Id$OptolithClient.specialAbilityToInt(/* ChantEnhancement */46)
+                                                  },
+                                                  active: true,
+                                                  sid: {
+                                                    HASH: /* Generic */61643255,
+                                                    VAL: x.level1.id
+                                                  },
+                                                  sid2: undefined,
+                                                  level: undefined
+                                                },
+                                                tl: /* [] */0
+                                              })
                                         ) : /* [] */0,
                                       activatableMultiEntry: Static_Prerequisites$OptolithClient.empty.activatableMultiEntry,
                                       activatableMultiSelect: Static_Prerequisites$OptolithClient.empty.activatableMultiSelect,
@@ -204,24 +204,24 @@ function liturgicalChantEnhancements(xs) {
                                     errata: x.errata
                                   }
                                 ],
-                                /* [] */0
-                              ]
-                            ]
-                          ];
+                                tl: /* [] */0
+                              }
+                            }
+                          };
                   })));
 }
 
 function spellEnhancements(xs) {
   return Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_List$OptolithClient.Monad.$great$great$eq(xs, (function (x) {
                     var match = x.level3.requirePrevious;
-                    return /* :: */[
-                            /* tuple */[
+                    return {
+                            hd: [
                               x.level1.id,
                               {
-                                id: /* `Generic */[
-                                  61643255,
-                                  x.level1.id
-                                ],
+                                id: {
+                                  HASH: /* Generic */61643255,
+                                  VAL: x.level1.id
+                                },
                                 name: x.level1.name,
                                 cost: x.level1.cost,
                                 prerequisites: Static_Prerequisites$OptolithClient.empty,
@@ -241,14 +241,14 @@ function spellEnhancements(xs) {
                                 errata: x.errata
                               }
                             ],
-                            /* :: */[
-                              /* tuple */[
+                            tl: {
+                              hd: [
                                 x.level2.id,
                                 {
-                                  id: /* `Generic */[
-                                    61643255,
-                                    x.level2.id
-                                  ],
+                                  id: {
+                                    HASH: /* Generic */61643255,
+                                    VAL: x.level2.id
+                                  },
                                   name: x.level2.name,
                                   cost: x.level2.cost,
                                   prerequisites: {
@@ -258,22 +258,22 @@ function spellEnhancements(xs) {
                                     pact: Static_Prerequisites$OptolithClient.empty.pact,
                                     social: Static_Prerequisites$OptolithClient.empty.social,
                                     primaryAttribute: Static_Prerequisites$OptolithClient.empty.primaryAttribute,
-                                    activatable: x.level2.requireLevel1 ? /* :: */[
-                                        {
-                                          id: /* `SpecialAbility */[
-                                            -789492591,
-                                            Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
-                                          ],
-                                          active: true,
-                                          sid: /* `Generic */[
-                                            61643255,
-                                            x.level1.id
-                                          ],
-                                          sid2: undefined,
-                                          level: undefined
-                                        },
-                                        /* [] */0
-                                      ] : /* [] */0,
+                                    activatable: x.level2.requireLevel1 ? ({
+                                          hd: {
+                                            id: {
+                                              HASH: /* SpecialAbility */-789492591,
+                                              VAL: Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
+                                            },
+                                            active: true,
+                                            sid: {
+                                              HASH: /* Generic */61643255,
+                                              VAL: x.level1.id
+                                            },
+                                            sid2: undefined,
+                                            level: undefined
+                                          },
+                                          tl: /* [] */0
+                                        }) : /* [] */0,
                                     activatableMultiEntry: Static_Prerequisites$OptolithClient.empty.activatableMultiEntry,
                                     activatableMultiSelect: Static_Prerequisites$OptolithClient.empty.activatableMultiSelect,
                                     increasable: Static_Prerequisites$OptolithClient.empty.increasable,
@@ -295,14 +295,14 @@ function spellEnhancements(xs) {
                                   errata: x.errata
                                 }
                               ],
-                              /* :: */[
-                                /* tuple */[
+                              tl: {
+                                hd: [
                                   x.level3.id,
                                   {
-                                    id: /* `Generic */[
-                                      61643255,
-                                      x.level3.id
-                                    ],
+                                    id: {
+                                      HASH: /* Generic */61643255,
+                                      VAL: x.level3.id
+                                    },
                                     name: x.level3.name,
                                     cost: x.level3.cost,
                                     prerequisites: {
@@ -313,37 +313,37 @@ function spellEnhancements(xs) {
                                       social: Static_Prerequisites$OptolithClient.empty.social,
                                       primaryAttribute: Static_Prerequisites$OptolithClient.empty.primaryAttribute,
                                       activatable: match !== undefined ? (
-                                          match ? /* :: */[
-                                              {
-                                                id: /* `SpecialAbility */[
-                                                  -789492591,
-                                                  Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
-                                                ],
-                                                active: true,
-                                                sid: /* `Generic */[
-                                                  61643255,
-                                                  x.level2.id
-                                                ],
-                                                sid2: undefined,
-                                                level: undefined
-                                              },
-                                              /* [] */0
-                                            ] : /* :: */[
-                                              {
-                                                id: /* `SpecialAbility */[
-                                                  -789492591,
-                                                  Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
-                                                ],
-                                                active: true,
-                                                sid: /* `Generic */[
-                                                  61643255,
-                                                  x.level1.id
-                                                ],
-                                                sid2: undefined,
-                                                level: undefined
-                                              },
-                                              /* [] */0
-                                            ]
+                                          match ? ({
+                                                hd: {
+                                                  id: {
+                                                    HASH: /* SpecialAbility */-789492591,
+                                                    VAL: Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
+                                                  },
+                                                  active: true,
+                                                  sid: {
+                                                    HASH: /* Generic */61643255,
+                                                    VAL: x.level2.id
+                                                  },
+                                                  sid2: undefined,
+                                                  level: undefined
+                                                },
+                                                tl: /* [] */0
+                                              }) : ({
+                                                hd: {
+                                                  id: {
+                                                    HASH: /* SpecialAbility */-789492591,
+                                                    VAL: Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
+                                                  },
+                                                  active: true,
+                                                  sid: {
+                                                    HASH: /* Generic */61643255,
+                                                    VAL: x.level1.id
+                                                  },
+                                                  sid2: undefined,
+                                                  level: undefined
+                                                },
+                                                tl: /* [] */0
+                                              })
                                         ) : /* [] */0,
                                       activatableMultiEntry: Static_Prerequisites$OptolithClient.empty.activatableMultiEntry,
                                       activatableMultiSelect: Static_Prerequisites$OptolithClient.empty.activatableMultiSelect,
@@ -366,10 +366,10 @@ function spellEnhancements(xs) {
                                     errata: x.errata
                                   }
                                 ],
-                                /* [] */0
-                              ]
-                            ]
-                          ];
+                                tl: /* [] */0
+                              }
+                            }
+                          };
                   })));
 }
 

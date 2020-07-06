@@ -59,7 +59,7 @@ function tUniv(json) {
 }
 
 function t(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, univ, l10n) {
-  return /* tuple */[
+  return [
           univ.id,
           {
             id: univ.id,

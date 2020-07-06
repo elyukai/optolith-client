@@ -22,6 +22,8 @@ Tables.zip
 tables/
 deploy/tablesSrc.json
 src/App/Utilities/YAML/Schema/
+/_esy
+/esy.lock
 /lib/bs/
 .merlin
 .bsb.lock

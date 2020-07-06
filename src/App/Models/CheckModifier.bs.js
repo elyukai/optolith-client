@@ -18,10 +18,11 @@ function t(json) {
         Json_decode.$$int(json);
         return /* TOU */2;
     default:
-      throw [
-            Json_decode.DecodeError,
-            "Unknown check modifier: " + scope
-          ];
+      throw {
+            RE_EXN_ID: Json_decode.DecodeError,
+            _1: "Unknown check modifier: " + scope,
+            Error: new Error()
+          };
   }
 }
 

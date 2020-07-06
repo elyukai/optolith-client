@@ -2,7 +2,7 @@
 
 import * as Ley_List$OptolithClient from "../../Data/Ley_List.bs.js";
 
-var Rules = { };
+var Rules = {};
 
 function empty(id) {
   return {
@@ -85,7 +85,7 @@ var Attribute = {
   isUnused: isUnused$1
 };
 
-var Energies = { };
+var Energies = {};
 
 function empty$2(id) {
   return {
@@ -108,11 +108,11 @@ var ActivatableSkill = {
   isUnused: isUnused$2
 };
 
-var Item = { };
+var Item = {};
 
-var Pact = { };
+var Pact = {};
 
-var TransferUnfamiliar = { };
+var TransferUnfamiliar = {};
 
 export {
   Rules ,

@@ -37,12 +37,12 @@ function tUniv(json) {
 }
 
 function t(univ, l10n) {
-  return /* tuple */[
+  return [
           univ.id,
           {
             id: univ.id,
             name: l10n.name,
-            check: /* tuple */[
+            check: [
               univ.check1,
               univ.check2,
               univ.check3

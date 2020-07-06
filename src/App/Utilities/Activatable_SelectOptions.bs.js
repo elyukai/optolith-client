@@ -34,11 +34,27 @@ function getActiveOptions1(x) {
               }), x.active);
 }
 
+function getActiveSelectOptions1(x) {
+  return Ley_Option$OptolithClient.mapOption((function (y) {
+                return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(y.options), Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId);
+              }), x.active);
+}
+
 function getActiveOptions2(param) {
   var index = 1;
   return Ley_Option$OptolithClient.mapOption((function (y) {
                 return Ley_List$OptolithClient.Safe.atMay(y.options, index);
               }), param.active);
+}
+
+function getActiveOptions2Map(x) {
+  return Ley_List$OptolithClient.Foldable.foldr((function (current, mp) {
+                return Ley_Option$OptolithClient.fromOption(mp, Ley_Option$OptolithClient.Monad.liftM2((function (secondOption, option) {
+                                  return Curry._3(Static_SelectOption$OptolithClient.SelectOptionMap.alter, (function (maybeSecondOptions) {
+                                                return Ley_List$OptolithClient.cons(secondOption, Ley_Option$OptolithClient.fromOption(/* [] */0, maybeSecondOptions));
+                                              }), option, mp);
+                                }), Ley_Function$OptolithClient.flip(Ley_List$OptolithClient.Safe.atMay, 1, current.options), Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(current.options), Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId)));
+              }), Static_SelectOption$OptolithClient.SelectOptionMap.empty, x.active);
 }
 
 function getOption(index, heroEntry) {
@@ -58,17 +74,17 @@ function getOption3(param) {
 }
 
 function getCustomInput(option) {
-  if (option[0] >= 931971705) {
-    return option[1];
+  if (option.HASH >= 931971705) {
+    return option.VAL;
   }
   
 }
 
 function getGenericId(option) {
-  if (option[0] !== 61643255) {
+  if (option.HASH !== 61643255) {
     return ;
   } else {
-    return option[1];
+    return option.VAL;
   }
 }
 
@@ -77,10 +93,10 @@ function lookupMap(k, mp, f) {
 }
 
 function getSkillFromOption(staticData, option) {
-  if (option[0] !== 290194801) {
+  if (option.HASH !== 290194801) {
     return ;
   } else {
-    return Curry._2(Ley_IntMap$OptolithClient.lookup, option[1], staticData.skills);
+    return Curry._2(Ley_IntMap$OptolithClient.lookup, option.VAL, staticData.skills);
   }
 }
 
@@ -89,7 +105,9 @@ export {
   getSelectOptionName ,
   getSelectOptionCost ,
   getActiveOptions1 ,
+  getActiveSelectOptions1 ,
   getActiveOptions2 ,
+  getActiveOptions2Map ,
   getOption ,
   getOption1 ,
   getOption2 ,

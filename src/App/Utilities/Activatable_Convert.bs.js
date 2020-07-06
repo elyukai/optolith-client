@@ -23,7 +23,7 @@ function singleToSingleWithId(x, s) {
 }
 
 function activatableOptionToSelectOptionId(id) {
-  if (id[0] >= 931971705) {
+  if (id.HASH >= 931971705) {
     return ;
   } else {
     return id;

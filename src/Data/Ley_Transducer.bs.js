@@ -12,9 +12,9 @@ function $less$$tilde(f, fold, x, acc) {
 }
 
 function $less$amp$tilde(g, f) {
-  return (function (param, param$1) {
-      return Curry._2(g, Curry._1(f, param), param$1);
-    });
+  return function (param, param$1) {
+    return Curry._2(g, Curry._1(f, param), param$1);
+  };
 }
 
 function $tilde$less$less(pred, fold, x, acc) {
@@ -26,9 +26,9 @@ function $tilde$less$less(pred, fold, x, acc) {
 }
 
 function $great$great$tilde(fold, pred) {
-  return (function (param, param$1) {
-      return $tilde$less$less(pred, fold, param, param$1);
-    });
+  return function (param, param$1) {
+    return $tilde$less$less(pred, fold, param, param$1);
+  };
 }
 
 function transduceList(t, xs) {

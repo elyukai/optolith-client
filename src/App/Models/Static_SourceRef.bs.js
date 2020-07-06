@@ -9,11 +9,11 @@ function t(json) {
   var mlast = JsonStrict$OptolithClient.optionalField("lastPage", Json_decode.$$int, json);
   return {
           id: Json_decode.field("id", Json_decode.string, json),
-          page: Ley_Option$OptolithClient.option(/* tuple */[
+          page: Ley_Option$OptolithClient.option([
                 first,
                 first
               ], (function (last) {
-                  return /* tuple */[
+                  return [
                           first,
                           last
                         ];

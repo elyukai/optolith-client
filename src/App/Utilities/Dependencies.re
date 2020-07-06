@@ -1,4 +1,7 @@
-open Ley.Option;
+module L = Ley.List;
+module O = Ley.Option;
+open O.Monad;
+module IM = Ley.IntMap;
 
 module Flatten = {
   /**
@@ -9,17 +12,17 @@ module Flatten = {
    * result is a plain `List` of all non-optional dependencies.
    */
   let flattenSkillDependencies = (getValueForTargetId, id, dependencies) =>
-    mapOption(
+    O.mapOption(
       (dep: Hero.Skill.dependency) =>
         switch (dep.target) {
         | One(_) => Some(dep.value)
         | Many(targets) =>
           targets
-          |> Ley.List.delete(id)
-          |> Ley.List.map(getValueForTargetId)
+          |> L.delete(id)
+          |> L.map(getValueForTargetId)
           // Check if the dependency is met by another entry so that it can be
           // ignored currently
-          |> Ley.List.Foldable.any(value => value >= dep.value)
+          |> L.Foldable.any(value => value >= dep.value)
           |> (
             isMatchedByOtherEntry =>
               if (isMatchedByOtherEntry) {
@@ -33,26 +36,27 @@ module Flatten = {
     );
 
   /**
-   * `flattenSkillDependencies getValueForTargetId id dependencies` flattens the
-   * list of dependencies to usable values. That means, optional dependencies
-   * (objects) will be evaluated and will be included in the resulting list,
-   * depending on whether it has to follow the optional dependency or not. The
-   * result is a plain `List` of all non-optional dependencies.
+   * `flattenActivatableSkillDependencies getValueForTargetId id dependencies`
+   * flattens the list of dependencies to usable values. That means, optional
+   * dependencies (objects) will be evaluated and will be included in the
+   * resulting list, depending on whether it has to follow the optional
+   * dependency or not. The result is a plain `List` of all non-optional
+   * dependencies.
    */
   let flattenActivatableSkillDependencies =
       (getValueForTargetId, id, dependencies) =>
     Hero.ActivatableSkill.(
-      mapOption(
+      O.mapOption(
         (dep: Hero.Skill.dependency) =>
           switch (dep.target) {
           | One(_) => Some(dep.value)
           | Many(targets) =>
             targets
-            |> Ley.List.delete(id)
-            |> Ley.List.map(getValueForTargetId)
+            |> L.delete(id)
+            |> L.map(getValueForTargetId)
             // Check if the dependency is met by another entry so that it can be
             // ignored currently
-            |> Ley.List.Foldable.any(value =>
+            |> L.Foldable.any(value =>
                  switch (value) {
                  // If dependency requires an active entry, the other entry must
                  // have at least the required value
@@ -73,6 +77,94 @@ module Flatten = {
         dependencies,
       )
     );
+
+  /**
+   * `flattenActivatableDependencies getValueForTargetId id dependencies`
+   * flattens the list of dependencies to usable values. That means, optional
+   * dependencies (objects) will be evaluated and will be included in the
+   * resulting list, depending on whether it has to follow the optional
+   * dependency or not. The result is a plain `List` of all non-optional
+   * dependencies.
+   */
+  let flattenActivatableDependencies =
+      (getActiveListForTargetId, id, dependencies) =>
+    Hero.Activatable.(
+      O.mapOption(
+        (dep: Hero.Activatable.dependency) =>
+          switch (dep.target) {
+          | One(_) => Some(dep)
+          | Many(targets) =>
+            targets
+            |> L.delete(id)
+            |> L.Foldable.concatMap(getActiveListForTargetId)
+            // Check if the dependency is met by another entry so that it can be
+            // ignored currently
+            |> L.Foldable.any((active: Hero.Activatable.single)
+                 // Check if level dependency is met
+                 =>
+                   O.option(
+                     // If there is no level dependency, skip
+                     true,
+                     level =>
+                       O.option(
+                         // If there is a level dependency but no actual level,
+                         // skip (this case should not happen at all)
+                         !dep.active,
+                         // The active level must be at least the required level
+                         activeLevel => activeLevel >= level === dep.active,
+                         active.level,
+                       ),
+                     dep.level,
+                   )
+                   // Check if options dependency/-ies is/are met
+                   && L.Index.iall(
+                        (i, option) =>
+                          // Get the active option at the same position as the
+                          // required option
+                          L.Safe.atMay(active.options, i)
+                          >>= Activatable_Convert.activatableOptionToSelectOptionId
+                          |> O.option(false, activeOption =>
+                               switch (option) {
+                               | OneOrMany.One(option) =>
+                                 // If only one option, required and active must
+                                 // be equal
+                                 activeOption == option === dep.active
+                               | OneOrMany.Many(options) =>
+                                 // If multiple options are possible, one must be
+                                 // equal to the active option
+                                 L.elem(activeOption, options) === dep.active
+                               }
+                             ),
+                        dep.options,
+                      )
+                 )
+            |> (
+              isMatchedByOtherEntry =>
+                if (isMatchedByOtherEntry) {
+                  None;
+                } else {
+                  Some(dep);
+                }
+            )
+          },
+        dependencies,
+      )
+    );
+
+  /**
+   * Get all required first select option ids from the given entry.
+   */
+  let getRequiredSelectOptions1 = (otherActivatables, x: Hero.Activatable.t) =>
+    flattenActivatableDependencies(
+      id =>
+        IM.lookup(id, otherActivatables)
+        |> O.option([], (x: Hero.Activatable.t) => x.active),
+      x.id,
+      x.dependencies,
+    )
+    |> O.mapOption((dep: Hero.Activatable.dependency) =>
+         dep.options |> O.listToOption
+       );
 };
 
 module Add = {
@@ -81,10 +173,10 @@ module Add = {
         (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
       ...hero,
       attributes:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
-            |> Ley.Option.fromOption(Hero.Attribute.empty(id))
+            |> O.fromOption(Hero.Attribute.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -100,10 +192,10 @@ module Add = {
     let addSkillDependency = (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
       ...hero,
       skills:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
-            |> Ley.Option.fromOption(Hero.Skill.emptySkill(id))
+            |> O.fromOption(Hero.Skill.emptySkill(id))
             |> (
               heroEntry =>
                 Some({
@@ -120,10 +212,10 @@ module Add = {
         (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
       ...hero,
       combatTechniques:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
-            |> Ley.Option.fromOption(Hero.Skill.emptyCombatTechnique(id))
+            |> O.fromOption(Hero.Skill.emptyCombatTechnique(id))
             |> (
               heroEntry =>
                 Some({
@@ -139,10 +231,10 @@ module Add = {
     let addSpellDependency = (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
       ...hero,
       spells:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
-            |> Ley.Option.fromOption(Hero.ActivatableSkill.empty(id))
+            |> O.fromOption(Hero.ActivatableSkill.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -159,10 +251,10 @@ module Add = {
         (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
       ...hero,
       liturgicalChants:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
-            |> Ley.Option.fromOption(Hero.ActivatableSkill.empty(id))
+            |> O.fromOption(Hero.ActivatableSkill.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -179,10 +271,10 @@ module Add = {
         (dep: Hero.Activatable.dependency, hero: Hero.t, id) => {
       ...hero,
       advantages:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
-            |> Ley.Option.fromOption(Hero.Activatable.empty(id))
+            |> O.fromOption(Hero.Activatable.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -199,10 +291,10 @@ module Add = {
         (dep: Hero.Activatable.dependency, hero: Hero.t, id) => {
       ...hero,
       disadvantages:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
-            |> Ley.Option.fromOption(Hero.Activatable.empty(id))
+            |> O.fromOption(Hero.Activatable.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -219,10 +311,10 @@ module Add = {
         (dep: Hero.Activatable.dependency, hero: Hero.t, id) => {
       ...hero,
       specialAbilities:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
-            |> Ley.Option.fromOption(Hero.Activatable.empty(id))
+            |> O.fromOption(Hero.Activatable.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -240,14 +332,14 @@ module Add = {
     switch (dep.target) {
     | One(id) => Single.addAttributeDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(Single.addAttributeDependency(dep), hero, ids)
+      L.Foldable.foldl(Single.addAttributeDependency(dep), hero, ids)
     };
 
   let addSkillDependency = (dep: Hero.Skill.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.addSkillDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(Single.addSkillDependency(dep), hero, ids)
+      L.Foldable.foldl(Single.addSkillDependency(dep), hero, ids)
     };
 
   let addCombatTechniqueDependency =
@@ -255,18 +347,14 @@ module Add = {
     switch (dep.target) {
     | One(id) => Single.addCombatTechniqueDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(
-        Single.addCombatTechniqueDependency(dep),
-        hero,
-        ids,
-      )
+      L.Foldable.foldl(Single.addCombatTechniqueDependency(dep), hero, ids)
     };
 
   let addSpellDependency = (dep: Hero.Skill.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.addSpellDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(Single.addSpellDependency(dep), hero, ids)
+      L.Foldable.foldl(Single.addSpellDependency(dep), hero, ids)
     };
 
   let addLiturgicalChantDependency =
@@ -274,11 +362,7 @@ module Add = {
     switch (dep.target) {
     | One(id) => Single.addLiturgicalChantDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(
-        Single.addLiturgicalChantDependency(dep),
-        hero,
-        ids,
-      )
+      L.Foldable.foldl(Single.addLiturgicalChantDependency(dep), hero, ids)
     };
 
   let addAdvantageDependency =
@@ -286,7 +370,7 @@ module Add = {
     switch (dep.target) {
     | One(id) => Single.addAdvantageDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(Single.addAdvantageDependency(dep), hero, ids)
+      L.Foldable.foldl(Single.addAdvantageDependency(dep), hero, ids)
     };
 
   let addDisadvantageDependency =
@@ -294,11 +378,7 @@ module Add = {
     switch (dep.target) {
     | One(id) => Single.addDisadvantageDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(
-        Single.addDisadvantageDependency(dep),
-        hero,
-        ids,
-      )
+      L.Foldable.foldl(Single.addDisadvantageDependency(dep), hero, ids)
     };
 
   let addSpecialAbilityDependency =
@@ -306,33 +386,28 @@ module Add = {
     switch (dep.target) {
     | One(id) => Single.addSpecialAbilityDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(
-        Single.addSpecialAbilityDependency(dep),
-        hero,
-        ids,
-      )
+      L.Foldable.foldl(Single.addSpecialAbilityDependency(dep), hero, ids)
     };
 };
 
 module Remove = {
   module Single = {
-    open Ley.Option.Functor;
-    open Ley.Option.Monad;
+    open O.Functor;
 
     let removeAttributeDependency =
         (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
       ...hero,
       attributes:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
             <&> (
               (heroEntry: Hero.Attribute.t) => {
                 ...heroEntry,
-                dependencies: Ley.List.delete(dep, heroEntry.dependencies),
+                dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
-            >>= Ley.Option.ensure(heroEntry =>
+            >>= O.ensure(heroEntry =>
                   heroEntry |> Hero.Attribute.isUnused |> (!)
                 ),
           id,
@@ -343,16 +418,16 @@ module Remove = {
     let removeSkillDependency = (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
       ...hero,
       skills:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
             <&> (
               (heroEntry: Hero.Skill.t) => {
                 ...heroEntry,
-                dependencies: Ley.List.delete(dep, heroEntry.dependencies),
+                dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
-            >>= Ley.Option.ensure(heroEntry =>
+            >>= O.ensure(heroEntry =>
                   heroEntry |> Hero.Skill.isUnusedSkill |> (!)
                 ),
           id,
@@ -364,16 +439,16 @@ module Remove = {
         (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
       ...hero,
       combatTechniques:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
             <&> (
               (heroEntry: Hero.Skill.t) => {
                 ...heroEntry,
-                dependencies: Ley.List.delete(dep, heroEntry.dependencies),
+                dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
-            >>= Ley.Option.ensure(heroEntry =>
+            >>= O.ensure(heroEntry =>
                   heroEntry |> Hero.Skill.isUnusedCombatTechnique |> (!)
                 ),
           id,
@@ -384,16 +459,16 @@ module Remove = {
     let removeSpellDependency = (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
       ...hero,
       spells:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
             <&> (
               (heroEntry: Hero.ActivatableSkill.t) => {
                 ...heroEntry,
-                dependencies: Ley.List.delete(dep, heroEntry.dependencies),
+                dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
-            >>= Ley.Option.ensure(heroEntry =>
+            >>= O.ensure(heroEntry =>
                   heroEntry |> Hero.ActivatableSkill.isUnused |> (!)
                 ),
           id,
@@ -405,16 +480,16 @@ module Remove = {
         (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
       ...hero,
       liturgicalChants:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
             <&> (
               (heroEntry: Hero.ActivatableSkill.t) => {
                 ...heroEntry,
-                dependencies: Ley.List.delete(dep, heroEntry.dependencies),
+                dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
-            >>= Ley.Option.ensure(heroEntry =>
+            >>= O.ensure(heroEntry =>
                   heroEntry |> Hero.ActivatableSkill.isUnused |> (!)
                 ),
           id,
@@ -426,16 +501,16 @@ module Remove = {
         (dep: Hero.Activatable.dependency, hero: Hero.t, id) => {
       ...hero,
       advantages:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
             <&> (
               (heroEntry: Hero.Activatable.t) => {
                 ...heroEntry,
-                dependencies: Ley.List.delete(dep, heroEntry.dependencies),
+                dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
-            >>= Ley.Option.ensure(heroEntry =>
+            >>= O.ensure(heroEntry =>
                   heroEntry |> Hero.Activatable.isUnused |> (!)
                 ),
           id,
@@ -447,16 +522,16 @@ module Remove = {
         (dep: Hero.Activatable.dependency, hero: Hero.t, id) => {
       ...hero,
       disadvantages:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
             <&> (
               (heroEntry: Hero.Activatable.t) => {
                 ...heroEntry,
-                dependencies: Ley.List.delete(dep, heroEntry.dependencies),
+                dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
-            >>= Ley.Option.ensure(heroEntry =>
+            >>= O.ensure(heroEntry =>
                   heroEntry |> Hero.Activatable.isUnused |> (!)
                 ),
           id,
@@ -468,16 +543,16 @@ module Remove = {
         (dep: Hero.Activatable.dependency, hero: Hero.t, id) => {
       ...hero,
       specialAbilities:
-        Ley.IntMap.alter(
+        IM.alter(
           heroEntry =>
             heroEntry
             <&> (
               (heroEntry: Hero.Activatable.t) => {
                 ...heroEntry,
-                dependencies: Ley.List.delete(dep, heroEntry.dependencies),
+                dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
-            >>= Ley.Option.ensure(heroEntry =>
+            >>= O.ensure(heroEntry =>
                   heroEntry |> Hero.Activatable.isUnused |> (!)
                 ),
           id,
@@ -490,18 +565,14 @@ module Remove = {
     switch (dep.target) {
     | One(id) => Single.removeAttributeDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(
-        Single.removeAttributeDependency(dep),
-        hero,
-        ids,
-      )
+      L.Foldable.foldl(Single.removeAttributeDependency(dep), hero, ids)
     };
 
   let removeSkillDependency = (dep: Hero.Skill.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.removeSkillDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(Single.removeSkillDependency(dep), hero, ids)
+      L.Foldable.foldl(Single.removeSkillDependency(dep), hero, ids)
     };
 
   let removeCombatTechniqueDependency =
@@ -509,7 +580,7 @@ module Remove = {
     switch (dep.target) {
     | One(id) => Single.removeCombatTechniqueDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(
+      L.Foldable.foldl(
         Single.removeCombatTechniqueDependency(dep),
         hero,
         ids,
@@ -520,7 +591,7 @@ module Remove = {
     switch (dep.target) {
     | One(id) => Single.removeSpellDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(Single.removeSpellDependency(dep), hero, ids)
+      L.Foldable.foldl(Single.removeSpellDependency(dep), hero, ids)
     };
 
   let removeLiturgicalChantDependency =
@@ -528,7 +599,7 @@ module Remove = {
     switch (dep.target) {
     | One(id) => Single.removeLiturgicalChantDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(
+      L.Foldable.foldl(
         Single.removeLiturgicalChantDependency(dep),
         hero,
         ids,
@@ -540,11 +611,7 @@ module Remove = {
     switch (dep.target) {
     | One(id) => Single.removeAdvantageDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(
-        Single.removeAdvantageDependency(dep),
-        hero,
-        ids,
-      )
+      L.Foldable.foldl(Single.removeAdvantageDependency(dep), hero, ids)
     };
 
   let removeDisadvantageDependency =
@@ -552,11 +619,7 @@ module Remove = {
     switch (dep.target) {
     | One(id) => Single.removeDisadvantageDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(
-        Single.removeDisadvantageDependency(dep),
-        hero,
-        ids,
-      )
+      L.Foldable.foldl(Single.removeDisadvantageDependency(dep), hero, ids)
     };
 
   let removeSpecialAbilityDependency =
@@ -564,22 +627,18 @@ module Remove = {
     switch (dep.target) {
     | One(id) => Single.removeSpecialAbilityDependency(dep, hero, id)
     | Many(ids) =>
-      Ley.List.Foldable.foldl(
-        Single.removeSpecialAbilityDependency(dep),
-        hero,
-        ids,
-      )
+      L.Foldable.foldl(Single.removeSpecialAbilityDependency(dep), hero, ids)
     };
 };
 
 module TransferredUnfamiliar = {
   open Ley.Function;
   open Hero.TransferUnfamiliar;
-  open Traditions.Magical;
+  open Tradition.Magical;
 
   let isUnfamiliarSpell = (transferredUnfamiliar, heroTraditions) => {
     let isIntuitiveMageActive =
-      Ley.List.Foldable.any(
+      L.Foldable.any(
         ((staticSpecialAbility, _, _): fullTradition) =>
           staticSpecialAbility.id
           === Id.specialAbilityToInt(TraditionIntuitiveMage),
@@ -591,20 +650,20 @@ module TransferredUnfamiliar = {
     } else {
       let activeTraditionNumericIds =
         heroTraditions
-        |> Ley.List.Foldable.concatMap(((_, _, trad): fullTradition) =>
+        |> L.Foldable.concatMap(((_, _, trad): fullTradition) =>
              trad.id === Id.specialAbilityToInt(TraditionGuildMages)
                ? trad.numId
-                 |> Ley.Option.optionToList
-                 |> Ley.List.cons(Id.magicalTraditionToInt(Qabalyamagier))
-               : trad.numId |> Ley.Option.optionToList
+                 |> O.optionToList
+                 |> L.cons(Id.magicalTraditionToInt(Qabalyamagier))
+               : trad.numId |> O.optionToList
            )
-        |> Ley.List.cons(Id.magicalTraditionToInt(General));
+        |> L.cons(Id.magicalTraditionToInt(General));
 
       let isNoTraditionActive =
-        Ley.Bool.notP(Ley.List.intersecting(activeTraditionNumericIds));
+        Ley.Bool.notP(L.intersecting(activeTraditionNumericIds));
 
       (staticSpell: Static.Spell.t) =>
-        Ley.List.Foldable.all(
+        L.Foldable.all(
           tu =>
             switch (tu.id) {
             | Spell(id) => id !== staticSpell.id
@@ -618,7 +677,8 @@ module TransferredUnfamiliar = {
     };
   };
 
-  let getTransferredUnfamiliarById = (single: Activatable.singleWithId) =>
+  let getTransferredUnfamiliarById =
+      (single: Activatable_Convert.singleWithId) =>
     switch (Id.specialAbilityFromInt(single.id)) {
     | TraditionGuildMages
     | MadaschwesternStil
@@ -632,8 +692,8 @@ module TransferredUnfamiliar = {
     | ScholarDerHalleDesLebensZuNorburg
     | ScholarDesKreisesDerEinfuehlung =>
       single.options
-      |> Ley.List.take(3)
-      |> Ley.Option.mapOption(
+      |> L.take(3)
+      |> O.mapOption(
            fun
            | `Spell(id) => Some({id: Spell(id), srcId: single.id})
            | _ => None,
@@ -646,7 +706,7 @@ module TransferredUnfamiliar = {
    * transferring unfamiliar spells.
    */
   let addTransferUnfamiliarDependencies =
-      (single: Activatable.singleWithId, hero: Hero.t) =>
+      (single: Activatable_Convert.singleWithId, hero: Hero.t) =>
     single
     |> getTransferredUnfamiliarById
     |> (
@@ -697,13 +757,13 @@ module TransferredUnfamiliar = {
   //   }
 
   let removeTradById = (id, xs) =>
-    Ley.List.filter(((x, _, _): fullTradition) => x.id === id, xs);
+    L.filter(((x, _, _): fullTradition) => x.id === id, xs);
 
   /**
    * Remove all unfamiliar deps by the specified entry.
    */
   let removeUnfamiliarDepsById = (id, xs) =>
-    Ley.List.filter((x: Hero.TransferUnfamiliar.t) => x.srcId === id, xs);
+    L.filter((x: Hero.TransferUnfamiliar.t) => x.srcId === id, xs);
 
   let getUnfamiliarCount =
       (
@@ -712,10 +772,10 @@ module TransferredUnfamiliar = {
         heroTraditions,
         heroSpells,
       ) =>
-    Ley.List.countBy(
+    L.countBy(
       (heroSpell: Hero.ActivatableSkill.t) =>
-        Ley.IntMap.lookup(heroSpell.id, staticData.spells)
-        |> Ley.Option.option(
+        IM.lookup(heroSpell.id, staticData.spells)
+        |> O.option(
              false,
              isUnfamiliarSpell(transferredUnfamiliar, heroTraditions),
            ),
@@ -752,11 +812,11 @@ module TransferredUnfamiliar = {
       open Static.ExperienceLevel;
 
       let heroTraditions =
-        Traditions.Magical.getEntries(staticData, hero.specialAbilities);
+        Tradition.Magical.getEntries(staticData, hero.specialAbilities);
       let transferredUnfamiliar = hero.transferredUnfamiliarSpells;
-      let spells = Ley.IntMap.elems(hero.spells);
+      let spells = IM.elems(hero.spells);
 
-      Ley.Option.option(
+      O.option(
         const(false),
         (el, srcId) =>
           el.maxUnfamiliarSpells
@@ -767,7 +827,7 @@ module TransferredUnfamiliar = {
                srcId,
                spells,
              ),
-        Ley.IntMap.lookup(hero.experienceLevel, staticData.experienceLevels),
+        IM.lookup(hero.experienceLevel, staticData.experienceLevels),
       );
     };
 
@@ -775,15 +835,15 @@ module TransferredUnfamiliar = {
    * From a list of spell select options, only return the **unfamiliar** ones.
    */
   let filterUnfamiliar = (pred, staticData: Static.t, selectOptions) =>
-    Ley.List.filter(
+    L.filter(
       (x: Static.SelectOption.t) =>
         (
           switch (x.id) {
-          | `Spell(id) => Ley.IntMap.lookup(id, staticData.spells)
+          | `Spell(id) => IM.lookup(id, staticData.spells)
           | _ => None
           }
         )
-        |> Ley.Option.option(false, pred),
+        |> O.option(false, pred),
       selectOptions,
     );
 };
@@ -1007,18 +1067,18 @@ let applyPrimaryAttributePrerequisite =
   (
     switch (prerequisite.scope) {
     | Magical =>
-      Traditions.Magical.getPrimaryAttributeId(
+      Tradition.Magical.getPrimaryAttributeId(
         staticData,
         hero.specialAbilities,
       )
     | Blessed =>
-      Traditions.Blessed.getPrimaryAttributeId(
+      Tradition.Blessed.getPrimaryAttributeId(
         staticData,
         hero.specialAbilities,
       )
     }
   )
-  |> Ley.Option.option(
+  |> O.option(
        hero,
        attrId => {
          let dependency: Hero.Skill.dependency = {
@@ -1039,14 +1099,14 @@ let applySocialPrerequisite =
   ...hero,
   socialStatusDependencies:
     switch (mode) {
-    | Add => Ley.List.cons(prerequisite, hero.socialStatusDependencies)
-    | Remove => Ley.List.delete(prerequisite, hero.socialStatusDependencies)
+    | Add => L.cons(prerequisite, hero.socialStatusDependencies)
+    | Remove => L.delete(prerequisite, hero.socialStatusDependencies)
     },
 };
 
 let modifyDependencies =
     (mode, staticData, prerequisites, sourceId: Id.prerequisiteSource, hero) =>
-  Ley.List.Foldable.foldr(
+  L.Foldable.foldr(
     (prerequisite: Prerequisites.prerequisite) =>
       switch (prerequisite, sourceId) {
       | (

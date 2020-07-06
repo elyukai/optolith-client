@@ -41,7 +41,7 @@ let getMissingAp = (~isInCharacterCreation, ~apAvailable, ~apCost) =>
 let getDisAdvantagesSubtypeMax = (staticData, hero: Hero.t, isMagical) =>
   isMagical
     ? hero.specialAbilities
-      |> Traditions.Magical.getEntries(staticData)
+      |> Tradition.Magical.getEntries(staticData)
       |> listToOption
       |> option(
            defaultDisAdvantagesSubtypeMax,

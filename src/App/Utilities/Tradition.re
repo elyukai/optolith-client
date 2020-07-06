@@ -7,7 +7,7 @@ module Magical = {
     member(id, staticData.magicalTraditions);
 
   let isActiveTradition = (staticData, x: Hero.Activatable.t) =>
-    isTraditionId(staticData, x.id) && Activatable.Accessors.isActive(x);
+    isTraditionId(staticData, x.id) && Activatable_Accessors.isActive(x);
 
   let getHeroEntries = (staticData, mp: Ley.IntMap.t(Hero.Activatable.t)) =>
     mp |> Ley.IntMap.elems |> Ley.List.filter(isActiveTradition(staticData));
@@ -74,7 +74,7 @@ module Blessed = {
     Ley.IntMap.member(id, staticData.blessedTraditions);
 
   let isActiveTradition = (staticData, x: Hero.Activatable.t) =>
-    isTraditionId(staticData, x.id) && Activatable.Accessors.isActive(x);
+    isTraditionId(staticData, x.id) && Activatable_Accessors.isActive(x);
 
   let getHeroEntry = (staticData, mp: Ley.IntMap.t(Hero.Activatable.t)) =>
     Ley.IntMap.Foldable.find(isActiveTradition(staticData), mp);

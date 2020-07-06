@@ -19,7 +19,7 @@ function t(json) {
 
 function all(yamlData) {
   return Curry._1(Ley_StrMap$OptolithClient.fromList, Ley_List$OptolithClient.map((function (x) {
-                    return /* tuple */[
+                    return [
                             x.id,
                             x
                           ];

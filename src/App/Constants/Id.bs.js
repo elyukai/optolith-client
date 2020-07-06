@@ -215,17 +215,21 @@ function advantageFromInt(id) {
     case 96 :
     case 97 :
     case 98 :
-        return /* Other */[id];
+        return /* Other */{
+                _0: id
+              };
     case 99 :
         return /* Einkommen */27;
     default:
-      return /* Other */[id];
+      return /* Other */{
+              _0: id
+            };
   }
 }
 
 function advantageToInt(id) {
   if (typeof id !== "number") {
-    return id[0];
+    return id._0;
   }
   switch (id) {
     case /* Aptitude */0 :
@@ -384,19 +388,23 @@ function disadvantageFromInt(id) {
     case 69 :
     case 70 :
     case 71 :
-        return /* Other */[id];
+        return /* Other */{
+                _0: id
+              };
     case 72 :
         return /* WenigePredigten */23;
     case 73 :
         return /* WenigeVisionen */24;
     default:
-      return /* Other */[id];
+      return /* Other */{
+              _0: id
+            };
   }
 }
 
 function disadvantageToInt(id) {
   if (typeof id !== "number") {
-    return id[0];
+    return id._0;
   }
   switch (id) {
     case /* AfraidOf */0 :
@@ -466,6 +474,25 @@ function skillToInt(id) {
   return id + 1 | 0;
 }
 
+function skillGroupFromInt(id) {
+  var switcher = id - 1 | 0;
+  if (switcher > 4 || switcher < 0) {
+    return /* Other */{
+            _0: id
+          };
+  } else {
+    return switcher;
+  }
+}
+
+function skillGroupToInt(id) {
+  if (typeof id === "number") {
+    return id + 1 | 0;
+  } else {
+    return id._0;
+  }
+}
+
 function combatTechniqueFromInt(id) {
   switch (id) {
     case 1 :
@@ -483,7 +510,9 @@ function combatTechniqueFromInt(id) {
     case 7 :
         return /* Lances */6;
     case 8 :
-        return /* Other */[id];
+        return /* Other */{
+                _0: id
+              };
     case 9 :
         return /* Brawling */7;
     case 10 :
@@ -511,13 +540,15 @@ function combatTechniqueFromInt(id) {
     case 21 :
         return /* Spiesswaffen */19;
     default:
-      return /* Other */[id];
+      return /* Other */{
+              _0: id
+            };
   }
 }
 
 function combatTechniqueToInt(id) {
   if (typeof id !== "number") {
-    return id[0];
+    return id._0;
   }
   switch (id) {
     case /* Crossbows */0 :
@@ -587,7 +618,9 @@ function combatTechniqueGroupToInt(id) {
 function magicalTraditionFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 17 || switcher < 0) {
-    return /* Other */[id];
+    return /* Other */{
+            _0: id
+          };
   } else {
     return switcher;
   }
@@ -597,14 +630,16 @@ function magicalTraditionToInt(id) {
   if (typeof id === "number") {
     return id + 1 | 0;
   } else {
-    return id[0];
+    return id._0;
   }
 }
 
 function propertyFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 11 || switcher < 0) {
-    return /* Other */[id];
+    return /* Other */{
+            _0: id
+          };
   } else {
     return switcher;
   }
@@ -614,14 +649,16 @@ function propertyToInt(id) {
   if (typeof id === "number") {
     return id + 1 | 0;
   } else {
-    return id[0];
+    return id._0;
   }
 }
 
 function specialAbilityGroupFromInt(id) {
   var switcher = id - 1 | 0;
   if (switcher > 44 || switcher < 0) {
-    return /* Other */[id];
+    return /* Other */{
+            _0: id
+          };
   } else {
     return switcher;
   }
@@ -631,7 +668,7 @@ function specialAbilityGroupToInt(id) {
   if (typeof id === "number") {
     return id + 1 | 0;
   } else {
-    return id[0];
+    return id._0;
   }
 }
 
@@ -642,7 +679,9 @@ function specialAbilityFromInt(id) {
         if (id >= 1294) {
           if (id !== 1391) {
             if (id !== 1438) {
-              return /* Other */[id];
+              return /* Other */{
+                      _0: id
+                    };
             } else {
               return /* TraditionBrobimGeoden */96;
             }
@@ -653,7 +692,9 @@ function specialAbilityFromInt(id) {
           if (id >= 1293) {
             return /* TraditionZibilijas */94;
           } else {
-            return /* Other */[id];
+            return /* Other */{
+                    _0: id
+                  };
           }
         } else {
           return /* TraditionGeoden */93;
@@ -662,7 +703,9 @@ function specialAbilityFromInt(id) {
       if (id < 1100) {
         if (id !== 1075) {
           if (id >= 1070) {
-            return /* Other */[id];
+            return /* Other */{
+                    _0: id
+                  };
           } else {
             return /* WegDerKuenstlerin */83;
           }
@@ -673,7 +716,9 @@ function specialAbilityFromInt(id) {
       var switcher = id - 1128 | 0;
       if (!(switcher > 92 || switcher < 0)) {
         if (switcher !== 19) {
-          return /* Other */[id];
+          return /* Other */{
+                  _0: id
+                };
         } else {
           return /* ScholarDesMagierkollegsZuHoningen */91;
         }
@@ -714,7 +759,9 @@ function specialAbilityFromInt(id) {
         case 24 :
         case 25 :
         case 26 :
-            return /* Other */[id];
+            return /* Other */{
+                    _0: id
+                  };
         case 27 :
             return /* Universalgenie */90;
         
@@ -724,7 +771,9 @@ function specialAbilityFromInt(id) {
         if (id >= 902) {
           if (id !== 1040) {
             if (id !== 1049) {
-              return /* Other */[id];
+              return /* Other */{
+                      _0: id
+                    };
             } else {
               return /* TraditionCultOfNuminoru */82;
             }
@@ -735,7 +784,9 @@ function specialAbilityFromInt(id) {
           if (id >= 901) {
             return /* GaretherGossenStil */80;
           } else {
-            return /* Other */[id];
+            return /* Other */{
+                    _0: id
+                  };
           }
         } else {
           return /* MadaschwesternStil */79;
@@ -745,7 +796,9 @@ function specialAbilityFromInt(id) {
         var switcher$1 = id - 782 | 0;
         if (!(switcher$1 > 25 || switcher$1 < 0)) {
           if (switcher$1 !== 20) {
-            return /* Other */[id];
+            return /* Other */{
+                    _0: id
+                  };
           } else {
             return /* ScholarDerHalleDesLebensZuNorburg */77;
           }
@@ -765,14 +818,18 @@ function specialAbilityFromInt(id) {
           case 6 :
           case 7 :
           case 8 :
-              return /* Other */[id];
+              return /* Other */{
+                      _0: id
+                    };
           case 9 :
               return /* Kraftliniennutzung */76;
           
         }
       } else if (id >= 663) {
         if (id >= 751) {
-          return /* Other */[id];
+          return /* Other */{
+                  _0: id
+                };
         }
         switch (id - 663 | 0) {
           case 0 :
@@ -889,14 +946,18 @@ function specialAbilityFromInt(id) {
           case 84 :
           case 85 :
           case 86 :
-              return /* Other */[id];
+              return /* Other */{
+                      _0: id
+                    };
           case 87 :
               return /* TraditionZauberalchimisten */73;
           
         }
       } else {
         if (id >= 640) {
-          return /* Other */[id];
+          return /* Other */{
+                  _0: id
+                };
         }
         switch (id - 623 | 0) {
           case 0 :
@@ -918,7 +979,9 @@ function specialAbilityFromInt(id) {
           case 13 :
           case 14 :
           case 15 :
-              return /* Other */[id];
+              return /* Other */{
+                      _0: id
+                    };
           case 16 :
               return /* GebieterDesAspekts */45;
           
@@ -930,7 +993,9 @@ function specialAbilityFromInt(id) {
       if (id < 472) {
         if (id !== 414) {
           if (id >= 347) {
-            return /* Other */[id];
+            return /* Other */{
+                    _0: id
+                  };
           } else {
             return /* TraditionDruids */24;
           }
@@ -997,17 +1062,23 @@ function specialAbilityFromInt(id) {
         case 566 :
         case 567 :
         case 568 :
-            return /* Other */[id];
+            return /* Other */{
+                    _0: id
+                  };
         case 569 :
             return /* Lieblingsliturgie */41;
         default:
-          return /* Other */[id];
+          return /* Other */{
+                  _0: id
+                };
       }
     } else {
       if (id < 296) {
         if (id !== 266) {
           if (id >= 256) {
-            return /* Other */[id];
+            return /* Other */{
+                    _0: id
+                  };
           } else {
             return /* TraditionWitches */19;
           }
@@ -1023,7 +1094,9 @@ function specialAbilityFromInt(id) {
           return /* Harmoniezauberei */21;
         }
       } else if (switcher$2 !== 6) {
-        return /* Other */[id];
+        return /* Other */{
+                _0: id
+              };
       } else {
         return /* Matrixzauberei */22;
       }
@@ -1033,7 +1106,9 @@ function specialAbilityFromInt(id) {
       if (id >= 232) {
         if (id !== 240) {
           if (id !== 250) {
-            return /* Other */[id];
+            return /* Other */{
+                    _0: id
+                  };
           } else {
             return /* FavoriteSpellwork */18;
           }
@@ -1044,7 +1119,9 @@ function specialAbilityFromInt(id) {
         if (id >= 231) {
           return /* AdaptionZauber */16;
         } else {
-          return /* Other */[id];
+          return /* Other */{
+                  _0: id
+                };
         }
       } else {
         return /* CombatStyleCombination */15;
@@ -1055,11 +1132,15 @@ function specialAbilityFromInt(id) {
         if (id >= 109) {
           return /* Feuerschlucker */14;
         } else {
-          return /* Other */[id];
+          return /* Other */{
+                  _0: id
+                };
         }
       }
       if (id < 64) {
-        return /* Other */[id];
+        return /* Other */{
+                _0: id
+              };
       }
       switch (id - 64 | 0) {
         case 0 :
@@ -1088,7 +1169,9 @@ function specialAbilityFromInt(id) {
         case 19 :
         case 20 :
         case 21 :
-            return /* Other */[id];
+            return /* Other */{
+                    _0: id
+                  };
         case 22 :
             return /* TraditionChurchOfPraios */13;
         case 23 :
@@ -1100,11 +1183,15 @@ function specialAbilityFromInt(id) {
         if (id >= 51) {
           return /* CombatReflexes */7;
         } else {
-          return /* Other */[id];
+          return /* Other */{
+                  _0: id
+                };
         }
       }
       if (id < 9) {
-        return /* Other */[id];
+        return /* Other */{
+                _0: id
+              };
       }
       switch (id - 9 | 0) {
         case 0 :
@@ -1133,7 +1220,9 @@ function specialAbilityFromInt(id) {
         case 16 :
         case 17 :
         case 19 :
-            return /* Other */[id];
+            return /* Other */{
+                    _0: id
+                  };
         case 20 :
             return /* Language */6;
         
@@ -1144,7 +1233,7 @@ function specialAbilityFromInt(id) {
 
 function specialAbilityToInt(id) {
   if (typeof id !== "number") {
-    return id[0];
+    return id._0;
   }
   switch (id) {
     case /* SkillSpecialization */0 :
@@ -1360,6 +1449,8 @@ export {
   disadvantageToInt ,
   unsafeSkillFromInt ,
   skillToInt ,
+  skillGroupFromInt ,
+  skillGroupToInt ,
   combatTechniqueFromInt ,
   combatTechniqueToInt ,
   unsafeCombatTechniqueGroupFromInt ,

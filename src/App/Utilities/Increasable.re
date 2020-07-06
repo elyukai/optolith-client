@@ -109,7 +109,7 @@ module Skills = {
         switch (unsafeSkillFromInt(staticEntry.id)) {
         | Woodworking as skillId
         | Metalworking as skillId
-            when Activatable.Accessors.isActiveM(craftInstruments) =>
+            when Activatable_Accessors.isActiveM(craftInstruments) =>
           // Sum of Woodworking and Metalworking must be at least 12.
           let minimumSum = 12;
 
@@ -435,7 +435,7 @@ module Spells = {
   let getMaxSrFromPropertyKnowledge =
       (propertyKnowledge, staticEntry: Static.Spell.t) =>
     propertyKnowledge
-    <&> Activatable.SelectOptions.getActiveOptions1
+    <&> Activatable_SelectOptions.getActiveOptions1
     |> option(
          true,
          Ley.List.Foldable.notElem(`Generic(staticEntry.property)),
@@ -570,7 +570,7 @@ module Spells = {
     let counter =
       getValidSpellsForPropertyKnowledgeCounter(staticSpells, heroSpells);
     let activePropertyKnowledges =
-      Activatable.SelectOptions.getActiveOptions1(propertyKnowledge);
+      Activatable_SelectOptions.getActiveOptions1(propertyKnowledge);
 
     (~staticEntry, ~heroEntry) =>
       [
@@ -633,7 +633,7 @@ module LiturgicalChants = {
   let getMaxSrFromAspectKnowledge =
       (aspectKnowledge, staticEntry: Static.LiturgicalChant.t) =>
     aspectKnowledge
-    <&> Activatable.SelectOptions.getActiveOptions1
+    <&> Activatable_SelectOptions.getActiveOptions1
     |> option(true, actives =>
          Ley.List.Foldable.all(
            aspect => Ley.List.Foldable.notElem(`Generic(aspect), actives),
@@ -791,7 +791,7 @@ module LiturgicalChants = {
         heroLiturgicalChants,
       );
     let activeAspectKnowledges =
-      Activatable.SelectOptions.getActiveOptions1(aspectKnowledge);
+      Activatable_SelectOptions.getActiveOptions1(aspectKnowledge);
 
     (~staticEntry, ~heroEntry) =>
       [

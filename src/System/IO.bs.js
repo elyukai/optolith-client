@@ -4,9 +4,9 @@ import * as Fs from "fs";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 
 function $less$$great(f, m) {
-  return m.then((function (x) {
-                return Promise.resolve(Curry._1(f, x));
-              }));
+  return m.then(function (x) {
+              return Promise.resolve(Curry._1(f, x));
+            });
 }
 
 function $less$amp$great(m, f) {
@@ -29,16 +29,16 @@ function mapM(f, xs) {
   if (!xs) {
     return Promise.resolve(/* [] */0);
   }
-  var ys = xs[1];
-  var mx = Curry._1(f, xs[0]);
-  return mx.then((function (z) {
-                return $less$$great((function (zs) {
-                              return /* :: */[
-                                      z,
-                                      zs
-                                    ];
-                            }), mapM(f, ys));
-              }));
+  var ys = xs.tl;
+  var mx = Curry._1(f, xs.hd);
+  return mx.then(function (z) {
+              return $less$$great((function (zs) {
+                            return {
+                                    hd: z,
+                                    tl: zs
+                                  };
+                          }), mapM(f, ys));
+            });
 }
 
 var Monad = {
@@ -61,11 +61,11 @@ function deleteFile(path) {
 }
 
 function existsFile(path) {
-  return Fs.promises.access(path).then((function (param) {
-                  return Promise.resolve(true);
-                })).catch((function (param) {
-                return Promise.resolve(false);
-              }));
+  return Fs.promises.access(path).then(function (param) {
+                return Promise.resolve(true);
+              }).catch(function (param) {
+              return Promise.resolve(false);
+            });
 }
 
 function copyFile(origin, dest) {

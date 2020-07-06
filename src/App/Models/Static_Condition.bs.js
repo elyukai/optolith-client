@@ -14,7 +14,7 @@ function t(json) {
           name: Json_decode.field("name", Json_decode.string, json),
           description: JsonStrict$OptolithClient.optionalField("description", Json_decode.string, json),
           levelColumnDescription: JsonStrict$OptolithClient.optionalField("levelDescription", Json_decode.string, json),
-          levelDescriptions: /* tuple */[
+          levelDescriptions: [
             Json_decode.field("level1", Json_decode.string, json),
             Json_decode.field("level2", Json_decode.string, json),
             Json_decode.field("level3", Json_decode.string, json),
@@ -27,7 +27,7 @@ function t(json) {
 
 function all(yamlData) {
   return Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_List$OptolithClient.map((function (x) {
-                    return /* tuple */[
+                    return [
                             x.id,
                             x
                           ];

@@ -27,13 +27,13 @@ function Overlay(Props) {
   if (isOpen) {
     return ReactDom.createPortal(React.createElement("div", {
                     ref: backdropRef,
-                    className: ClassNames$OptolithClient.fold(/* :: */[
-                          Ley_Option$OptolithClient.Monad.$$return(baseClassName + "-backdrop"),
-                          /* :: */[
-                            className,
-                            /* [] */0
-                          ]
-                        ]),
+                    className: ClassNames$OptolithClient.fold({
+                          hd: Ley_Option$OptolithClient.Monad.$$return(baseClassName + "-backdrop"),
+                          tl: {
+                            hd: className,
+                            tl: /* [] */0
+                          }
+                        }),
                     onClick: handleBackdropClick
                   }, React.createElement("div", {
                         "aria-modal": true,

@@ -1,27 +1,17 @@
-open GenericHelpers;
-
-[@genType]
-[@genType.as "Sex"]
 type sex =
   | Male
   | Female;
 
-[@genType]
-[@genType.as "BaseOrWithVariant"]
 type baseOrWithVariant =
   | Base(int)
   | WithVariant(int, int);
 
 module Rules = {
-  [@genType]
-  [@genType.as "ActiveRule"]
   type activeRule = {
     id: int,
     options: list(int),
   };
 
-  [@genType]
-  [@genType.as "Rules"]
   type t = {
     areAllPublicationsActive: bool,
     activePublications: Ley_StrSet.t,
@@ -30,8 +20,6 @@ module Rules = {
   };
 };
 
-[@genType]
-[@genType.as "PersonalData"]
 type personalData = {
   family: option(string),
   placeOfBirth: option(string),
@@ -61,26 +49,20 @@ module Activatable = {
     | `CustomInput(string)
   ];
 
-  [@genType]
-  [@genType.as "ActivatableSingle"]
   type single = {
     options: list(optionId),
     level: option(int),
     customCost: option(int),
   };
 
-  [@genType]
-  [@genType.as "ActivatableDependency"]
   type dependency = {
     source: Id.activatable,
-    target: oneOrMany(int),
+    target: OneOrMany.t(int),
     active: bool,
-    options: list(oneOrMany(Id.selectOption)),
+    options: list(OneOrMany.t(Id.selectOption)),
     level: option(int),
   };
 
-  [@genType]
-  [@genType.as "Activatable"]
   type t = {
     id: int,
     active: list(single),
@@ -95,16 +77,12 @@ module Activatable = {
 };
 
 module Skill = {
-  [@genType]
-  [@genType.as "SkillDependency"]
   type dependency = {
     source: Id.activatableAndSkill,
-    target: oneOrMany(int),
+    target: OneOrMany.t(int),
     value: int,
   };
 
-  [@genType]
-  [@genType.as "Skill"]
   type t = {
     id: int,
     value: int,
@@ -123,8 +101,6 @@ module Skill = {
 };
 
 module Attribute = {
-  [@genType]
-  [@genType.as "Attribute"]
   type t = {
     id: int,
     value: int,
@@ -137,19 +113,13 @@ module Attribute = {
 };
 
 module Energies = {
-  [@genType]
-  [@genType.as "PermanentEnergyLoss"]
   type permanentEnergyLoss = {lost: int};
 
-  [@genType]
-  [@genType.as "PermanentEnergyLossAndBoughtBack"]
   type permanentEnergyLossAndBoughtBack = {
     lost: int,
     boughtBack: int,
   };
 
-  [@genType]
-  [@genType.as "Energies"]
   type t = {
     addedLifePoints: int,
     addedArcaneEnergyPoints: int,
@@ -165,8 +135,6 @@ module ActivatableSkill = {
     | Inactive
     | Active(int);
 
-  [@genType]
-  [@genType.as "ActivatableSkill"]
   type t = {
     id: int,
     value,
@@ -180,41 +148,29 @@ module ActivatableSkill = {
 };
 
 module Item = {
-  [@genType]
-  [@genType.as "MundaneItem"]
-  type mundaneItem = {structurePoints: option(oneOrMany(int))};
+  type mundaneItem = {structurePoints: option(OneOrMany.t(int))};
 
-  [@genType]
-  [@genType.as "NewAttribute"]
   type newAttribute = {
     attribute: int,
     threshold: int,
   };
 
-  [@genType]
-  [@genType.as "AgilityStrength"]
   type agilityStrength = {
     agility: int,
     strength: int,
   };
 
-  [@genType]
-  [@genType.as "PrimaryAttributeDamageThreshold"]
   type primaryAttributeDamageThreshold =
     | DefaultAttribute(int)
     | DifferentAttribute(newAttribute)
     | AgilityStrength(agilityStrength);
 
-  [@genType]
-  [@genType.as "Damage"]
   type damage = {
     amount: int,
     sides: int,
     flat: option(int),
   };
 
-  [@genType]
-  [@genType.as "MeleeWeapon"]
   type meleeWeapon = {
     combatTechnique: int,
     damage,
@@ -223,7 +179,7 @@ module Item = {
     pa: option(int),
     reach: option(int),
     length: option(int),
-    structurePoints: option(oneOrMany(int)),
+    structurePoints: option(OneOrMany.t(int)),
     breakingPointRatingMod: option(int),
     isParryingWeapon: bool,
     isTwoHandedWeapon: bool,
@@ -231,21 +187,17 @@ module Item = {
     damaged: option(int),
   };
 
-  [@genType]
-  [@genType.as "RangedWeapon"]
   type rangedWeapon = {
     combatTechnique: int,
     damage: option(damage),
     length: option(int),
     range: (int, int, int),
-    reloadTime: oneOrMany(int),
+    reloadTime: OneOrMany.t(int),
     ammunition: option(int),
     isImprovisedWeapon: bool,
     damaged: option(int),
   };
 
-  [@genType]
-  [@genType.as "Armor"]
   type armor = {
     protection: int,
     encumbrance: int,
@@ -258,8 +210,6 @@ module Item = {
     isHitZoneArmorOnly: option(bool),
   };
 
-  [@genType]
-  [@genType.as "Special"]
   type special =
     | MundaneItem(mundaneItem)
     | MeleeWeapon(meleeWeapon)
@@ -267,8 +217,6 @@ module Item = {
     | CombinedWeapon(meleeWeapon, rangedWeapon)
     | Armor(armor);
 
-  [@genType]
-  [@genType.as "Item"]
   type t = {
     id: int,
     name: string,
@@ -283,8 +231,6 @@ module Item = {
   };
 };
 
-[@genType]
-[@genType.as "HitZoneArmor"]
 type hitZoneArmor = {
   /**
    * The hit zone armor's ID.
@@ -356,8 +302,6 @@ type hitZoneArmor = {
   rightLegWear: option(int),
 };
 
-[@genType]
-[@genType.as "Purse"]
 type purse = {
   ducats: int,
   silverthalers: int,
@@ -365,8 +309,6 @@ type purse = {
   kreutzers: int,
 };
 
-[@genType]
-[@genType.as "Pet"]
 type pet = {
   id: int,
   name: string,
@@ -403,14 +345,10 @@ type pet = {
 };
 
 module Pact = {
-  [@genType]
-  [@genType.as "PactDomain"]
   type domain =
     | Predefined(int)
     | Custom(string);
 
-  [@genType]
-  [@genType.as "Pact"]
   type t = {
     category: int,
     level: int,
@@ -421,13 +359,11 @@ module Pact = {
   };
 };
 
-[@genType]
-[@genType.as "StyleDependency"]
 type styleDependency = {
   /**
    * The extended special ability or list of available special abilities.
    */
-  id: oneOrMany(int),
+  id: OneOrMany.t(int),
   /**
    * If a ability meets a given id, then `Just id`, otherwise `Nothing`.
    */
@@ -439,24 +375,18 @@ type styleDependency = {
 };
 
 module TransferUnfamiliar = {
-  [@genType]
-  [@genType.as "TransferUnfamiliarId"]
   type id =
     | Spell(int)
     | Spells
     | LiturgicalChant(int)
     | LiturgicalChants;
 
-  [@genType]
-  [@genType.as "TransferUnfamiliar"]
   type t = {
     id,
     srcId: int,
   };
 };
 
-[@genType]
-[@genType.as "Hero"]
 type t = {
   id: int,
   name: string,

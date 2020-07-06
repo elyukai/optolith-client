@@ -653,6 +653,34 @@ let skillToInt = id =>
   | Clothworking => 59
   };
 
+type skillGroup =
+  | Physical
+  | Social
+  | Nature
+  | Knowledge
+  | Craft
+  | Other(int);
+
+let skillGroupFromInt = id =>
+  switch (id) {
+  | 1 => Physical
+  | 2 => Social
+  | 3 => Nature
+  | 4 => Knowledge
+  | 5 => Craft
+  | x => Other(x)
+  };
+
+let skillGroupToInt = id =>
+  switch (id) {
+  | Physical => 1
+  | Social => 2
+  | Nature => 3
+  | Knowledge => 4
+  | Craft => 5
+  | Other(x) => x
+  };
+
 [@genType]
 [@genType.as "CombatTechnique"]
 type combatTechnique =

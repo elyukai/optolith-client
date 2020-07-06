@@ -54,7 +54,7 @@ function tUniv(json) {
 }
 
 function t(univ, l10n) {
-  return /* tuple */[
+  return [
           univ.id,
           {
             id: univ.id,

@@ -4,175 +4,175 @@ import * as Jest from "@glennsl/bs-jest/src/jest.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Ley_IntMap$OptolithClient from "../Ley_IntMap.bs.js";
 
-var from1to5 = Curry._1(Ley_IntMap$OptolithClient.fromList, /* :: */[
-      /* tuple */[
+var from1to5 = Curry._1(Ley_IntMap$OptolithClient.fromList, {
+      hd: [
         1,
         "a"
       ],
-      /* :: */[
-        /* tuple */[
+      tl: {
+        hd: [
           2,
           "b"
         ],
-        /* :: */[
-          /* tuple */[
+        tl: {
+          hd: [
             4,
             "d"
           ],
-          /* :: */[
-            /* tuple */[
+          tl: {
+            hd: [
               3,
               "c"
             ],
-            /* :: */[
-              /* tuple */[
+            tl: {
+              hd: [
                 5,
                 "e"
               ],
-              /* [] */0
-            ]
-          ]
-        ]
-      ]
-    ]);
+              tl: /* [] */0
+            }
+          }
+        }
+      }
+    });
 
-var from1to11 = Curry._1(Ley_IntMap$OptolithClient.fromList, /* :: */[
-      /* tuple */[
+var from1to11 = Curry._1(Ley_IntMap$OptolithClient.fromList, {
+      hd: [
         9,
         "i"
       ],
-      /* :: */[
-        /* tuple */[
+      tl: {
+        hd: [
           5,
           "e"
         ],
-        /* :: */[
-          /* tuple */[
+        tl: {
+          hd: [
             8,
             "h"
           ],
-          /* :: */[
-            /* tuple */[
+          tl: {
+            hd: [
               2,
               "b"
             ],
-            /* :: */[
-              /* tuple */[
+            tl: {
+              hd: [
                 11,
                 "k"
               ],
-              /* :: */[
-                /* tuple */[
+              tl: {
+                hd: [
                   4,
                   "d"
                 ],
-                /* :: */[
-                  /* tuple */[
+                tl: {
+                  hd: [
                     10,
                     "j"
                   ],
-                  /* :: */[
-                    /* tuple */[
+                  tl: {
+                    hd: [
                       1,
                       "a"
                     ],
-                    /* :: */[
-                      /* tuple */[
+                    tl: {
+                      hd: [
                         6,
                         "f"
                       ],
-                      /* :: */[
-                        /* tuple */[
+                      tl: {
+                        hd: [
                           3,
                           "c"
                         ],
-                        /* :: */[
-                          /* tuple */[
+                        tl: {
+                          hd: [
                             7,
                             "g"
                           ],
-                          /* [] */0
-                        ]
-                      ]
-                    ]
-                  ]
-                ]
-              ]
-            ]
-          ]
-        ]
-      ]
-    ]);
+                          tl: /* [] */0
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
 
 Jest.describe("Foldable", (function (param) {
         Jest.test("toList", (function (param) {
-                return Jest.Expect.toEqual(/* :: */[
-                            /* tuple */[
+                return Jest.Expect.toEqual({
+                            hd: [
                               1,
                               "a"
                             ],
-                            /* :: */[
-                              /* tuple */[
+                            tl: {
+                              hd: [
                                 2,
                                 "b"
                               ],
-                              /* :: */[
-                                /* tuple */[
+                              tl: {
+                                hd: [
                                   3,
                                   "c"
                                 ],
-                                /* :: */[
-                                  /* tuple */[
+                                tl: {
+                                  hd: [
                                     4,
                                     "d"
                                   ],
-                                  /* :: */[
-                                    /* tuple */[
+                                  tl: {
+                                    hd: [
                                       5,
                                       "e"
                                     ],
-                                    /* :: */[
-                                      /* tuple */[
+                                    tl: {
+                                      hd: [
                                         6,
                                         "f"
                                       ],
-                                      /* :: */[
-                                        /* tuple */[
+                                      tl: {
+                                        hd: [
                                           7,
                                           "g"
                                         ],
-                                        /* :: */[
-                                          /* tuple */[
+                                        tl: {
+                                          hd: [
                                             8,
                                             "h"
                                           ],
-                                          /* :: */[
-                                            /* tuple */[
+                                          tl: {
+                                            hd: [
                                               9,
                                               "i"
                                             ],
-                                            /* :: */[
-                                              /* tuple */[
+                                            tl: {
+                                              hd: [
                                                 10,
                                                 "j"
                                               ],
-                                              /* :: */[
-                                                /* tuple */[
+                                              tl: {
+                                                hd: [
                                                   11,
                                                   "k"
                                                 ],
-                                                /* [] */0
-                                              ]
-                                            ]
-                                          ]
-                                        ]
-                                      ]
-                                    ]
-                                  ]
-                                ]
-                              ]
-                            ]
-                          ], Jest.Expect.expect(Curry._1(Ley_IntMap$OptolithClient.Foldable.toList, from1to11)));
+                                                tl: /* [] */0
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }, Jest.Expect.expect(Curry._1(Ley_IntMap$OptolithClient.Foldable.toList, from1to11)));
               }));
         return Jest.describe("all", (function (param) {
                       Jest.test("returns true if the predicate matches all elements in the map", (function (param) {

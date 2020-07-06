@@ -10,13 +10,13 @@ function Button(Props) {
   var onClick = Props.onClick;
   var disabled = disabledOpt !== undefined ? disabledOpt : false;
   return React.createElement("button", {
-              className: ClassNames$OptolithClient.fold(/* :: */[
-                    className,
-                    /* :: */[
-                      ClassNames$OptolithClient.cond("disabled", disabled),
-                      /* [] */0
-                    ]
-                  ]),
+              className: ClassNames$OptolithClient.fold({
+                    hd: className,
+                    tl: {
+                      hd: ClassNames$OptolithClient.cond("disabled", disabled),
+                      tl: /* [] */0
+                    }
+                  }),
               onClick: onClick
             }, label);
 }

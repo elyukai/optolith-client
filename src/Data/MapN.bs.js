@@ -2,11 +2,9 @@
 
 import * as List from "bs-platform/lib/es6/list.js";
 import * as $$Array from "bs-platform/lib/es6/array.js";
-import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Js_int from "bs-platform/lib/es6/js_int.js";
 import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
-import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
 import * as Ley_Option$OptolithClient from "./Ley_Option.bs.js";
 import * as Ley_Result$OptolithClient from "./Ley_Result.bs.js";
@@ -55,9 +53,9 @@ function length(prim) {
 }
 
 function elem(e, mp) {
-  return Array.from(mp.values()).some((function (x) {
-                return Caml_obj.caml_equal(x, e);
-              }));
+  return Array.from(mp.values()).some(function (x) {
+              return Caml_obj.caml_equal(x, e);
+            });
 }
 
 function sum(mp) {
@@ -67,7 +65,9 @@ function sum(mp) {
 }
 
 function product(mp) {
-  return foldr(Caml_int32.imul, 1, mp);
+  return foldr((function (prim, prim$1) {
+                return Math.imul(prim, prim$1);
+              }), 1, mp);
 }
 
 function maximum(mp) {
@@ -140,24 +140,36 @@ var Foldable = {
 
 function mapMEitherHelper(f, xs) {
   if (!xs) {
-    return /* Ok */Block.__(0, [/* [] */0]);
+    return {
+            TAG: /* Ok */0,
+            _0: /* [] */0
+          };
   }
-  var match = xs[0];
+  var match = xs.hd;
   var new_value = Curry._1(f, match[1]);
-  if (new_value.tag) {
-    return /* Error */Block.__(1, [new_value[0]]);
+  if (new_value.TAG) {
+    return {
+            TAG: /* Error */1,
+            _0: new_value._0
+          };
   }
-  var zs = mapMEitherHelper(f, xs[1]);
-  if (zs.tag) {
-    return /* Error */Block.__(1, [zs[0]]);
+  var zs = mapMEitherHelper(f, xs.tl);
+  if (zs.TAG) {
+    return {
+            TAG: /* Error */1,
+            _0: zs._0
+          };
   } else {
-    return /* Ok */Block.__(0, [/* :: */[
-                /* tuple */[
-                  match[0],
-                  new_value[0]
-                ],
-                zs[0]
-              ]]);
+    return {
+            TAG: /* Ok */0,
+            _0: {
+              hd: [
+                match[0],
+                new_value._0
+              ],
+              tl: zs._0
+            }
+          };
   }
 }
 
@@ -176,23 +188,23 @@ function size(prim) {
 }
 
 function member(key, mp) {
-  return Array.from(mp.keys()).some((function (k) {
-                return Caml_obj.caml_equal(k, key);
-              }));
+  return Array.from(mp.keys()).some(function (k) {
+              return Caml_obj.caml_equal(k, key);
+            });
 }
 
 function notMember(key, mp) {
-  return !Array.from(mp.keys()).some((function (k) {
-                return Caml_obj.caml_equal(k, key);
-              }));
+  return !Array.from(mp.keys()).some(function (k) {
+              return Caml_obj.caml_equal(k, key);
+            });
 }
 
 function lookup(key, mp) {
   return Ley_Option$OptolithClient.Functor.$less$$great((function (prim) {
                 return prim[1];
-              }), Caml_option.undefined_to_opt(Array.from(mp.entries()).find((function (param) {
-                        return Caml_obj.caml_equal(param[0], key);
-                      }))));
+              }), Caml_option.undefined_to_opt(Array.from(mp.entries()).find(function (param) {
+                      return Caml_obj.caml_equal(param[0], key);
+                    })));
 }
 
 function findWithDefault(def, key, mp) {

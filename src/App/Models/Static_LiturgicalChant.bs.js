@@ -43,10 +43,11 @@ function level3Prerequisite(json) {
   if (x === 1) {
     return 1;
   }
-  throw [
-        Json_decode.DecodeError,
-        "Unknown level 2 prerequisite: " + Ley_Int$OptolithClient.show(x)
-      ];
+  throw {
+        RE_EXN_ID: Json_decode.DecodeError,
+        _1: "Unknown level 2 prerequisite: " + Ley_Int$OptolithClient.show(x),
+        Error: new Error()
+      };
 }
 
 function enhancementLevel2Univ(json) {
@@ -65,10 +66,11 @@ function level3Prerequisite$1(json) {
   if (x === 2) {
     return /* Second */1;
   }
-  throw [
-        Json_decode.DecodeError,
-        "Unknown level 3 prerequisite: " + Ley_Int$OptolithClient.show(x)
-      ];
+  throw {
+        RE_EXN_ID: Json_decode.DecodeError,
+        _1: "Unknown level 3 prerequisite: " + Ley_Int$OptolithClient.show(x),
+        Error: new Error()
+      };
 }
 
 function enhancementLevel3Univ(json) {
@@ -166,12 +168,12 @@ function tUniv(json) {
 }
 
 function t(univ, l10n) {
-  return /* tuple */[
+  return [
           univ.id,
           {
             id: univ.id,
             name: l10n.name,
-            check: /* tuple */[
+            check: [
               univ.check1,
               univ.check2,
               univ.check3

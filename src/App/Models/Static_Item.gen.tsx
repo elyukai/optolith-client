@@ -4,7 +4,7 @@
 
 import {list} from '../../../src/shims/ReasonPervasives.shim';
 
-import {oneOrMany as GenericHelpers_oneOrMany} from '../../../src/App/Utilities/GenericHelpers.gen';
+import {t as OneOrMany_t} from '../../../src/App/Utilities/OneOrMany.gen';
 
 import {t as Static_Erratum_t} from './Static_Erratum.gen';
 
@@ -22,7 +22,7 @@ export type info = {
 export type ItemInfo = info;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type mundaneItem = { readonly structurePoints?: GenericHelpers_oneOrMany<number> };
+export type mundaneItem = { readonly structurePoints?: OneOrMany_t<number> };
 export type MundaneItem = mundaneItem;
 
 // tslint:disable-next-line:interface-over-type-literal
@@ -57,7 +57,7 @@ export type meleeWeapon = {
   readonly pa?: number; 
   readonly reach?: number; 
   readonly length?: number; 
-  readonly structurePoints?: GenericHelpers_oneOrMany<number>; 
+  readonly structurePoints?: OneOrMany_t<number>; 
   readonly isParryingWeapon: boolean; 
   readonly isTwoHandedWeapon: boolean; 
   readonly isImprovisedWeapon: boolean
@@ -70,7 +70,7 @@ export type rangedWeapon = {
   readonly damage?: damage; 
   readonly length?: number; 
   readonly range: [number, number, number]; 
-  readonly reloadTime: GenericHelpers_oneOrMany<number>; 
+  readonly reloadTime: OneOrMany_t<number>; 
   readonly ammunition?: number; 
   readonly isImprovisedWeapon: boolean
 };

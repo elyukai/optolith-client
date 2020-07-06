@@ -3,28 +3,28 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 
 function pair(x, y) {
-  return /* tuple */[
+  return [
           x,
           y
         ];
 }
 
 function bimap(f, g, param) {
-  return /* tuple */[
+  return [
           Curry._1(f, param[0]),
           Curry._1(g, param[1])
         ];
 }
 
 function first(f, param) {
-  return /* tuple */[
+  return [
           Curry._1(f, param[0]),
           param[1]
         ];
 }
 
 function second(f, param) {
-  return /* tuple */[
+  return [
           param[0],
           Curry._1(f, param[1])
         ];
@@ -45,7 +45,7 @@ function snd(param) {
 }
 
 function swap(param) {
-  return /* tuple */[
+  return [
           param[1],
           param[0]
         ];

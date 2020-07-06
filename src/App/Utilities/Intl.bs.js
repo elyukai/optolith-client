@@ -14,14 +14,14 @@ function getSeparator(type_, staticData) {
 
 function format(type_, staticData, xs) {
   if (xs) {
-    if (xs[1]) {
+    if (xs.tl) {
       return Ley_Option$OptolithClient.option("", (function (param) {
                     var lastStr = param[1];
                     var initStr = Ley_List$OptolithClient.intercalate(", ", param[0]);
                     return initStr + (" " + (getSeparator(type_, staticData) + (" " + lastStr)));
                   }), Ley_List$OptolithClient.Extra.unsnoc(xs));
     } else {
-      return xs[0];
+      return xs.hd;
     }
   } else {
     return "";

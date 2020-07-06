@@ -3,10 +3,10 @@
 
 function isDomainValid(pact) {
   var domain = pact.domain;
-  if (domain.tag) {
-    return domain[0].length !== 0;
+  if (domain.TAG) {
+    return domain._0.length !== 0;
   } else {
-    return domain[0] > 0;
+    return domain._0 > 0;
   }
 }
 
@@ -20,19 +20,19 @@ function isNameValid(pact) {
 
 function isArchdemonicDomain(pact) {
   var domain = pact.domain;
-  if (domain.tag) {
+  if (domain.TAG) {
     return false;
   } else {
-    return domain[0] < 13;
+    return domain._0 < 13;
   }
 }
 
 function isFreeDemonDomain(pact) {
   var domain = pact.domain;
-  if (domain.tag) {
+  if (domain.TAG) {
     return false;
   } else {
-    return domain[0] >= 13;
+    return domain._0 >= 13;
   }
 }
 

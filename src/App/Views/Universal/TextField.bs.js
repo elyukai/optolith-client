@@ -11,14 +11,14 @@ import * as ClassNames$OptolithClient from "../../Utilities/ClassNames.bs.js";
 import * as Ley_Option$OptolithClient from "../../../Data/Ley_Option.bs.js";
 
 function isValueInvalid(value) {
-  return (function (param) {
-      return Ley_List$OptolithClient.Extra.firstJust((function (param) {
-                    if (Curry._1(param[0], value)) {
-                      return param[1];
-                    }
-                    
-                  }), param);
-    });
+  return function (param) {
+    return Ley_List$OptolithClient.Extra.firstJust((function (param) {
+                  if (Curry._1(param[0], value)) {
+                    return param[1];
+                  }
+                  
+                }), param);
+  };
 }
 
 function TextField$Invalid(Props) {
@@ -43,12 +43,12 @@ function isRoughlyValid(param) {
 
 function isValid(min, max, invalidChecks, convertedValue) {
   var invalidMsg = isValueInvalid(convertedValue)(invalidChecks);
-  return Ley_Option$OptolithClient.option(/* tuple */[
+  return Ley_Option$OptolithClient.option([
               false,
               invalidMsg
             ], (function ($$int) {
-                return /* tuple */[
-                        Ley_Ix$OptolithClient.inRange(/* tuple */[
+                return [
+                        Ley_Ix$OptolithClient.inRange([
                               Ley_Option$OptolithClient.fromOption(Js_int.min, min),
                               Ley_Option$OptolithClient.fromOption(Js_int.max, max)
                             ], $$int) && Ley_Option$OptolithClient.isNone(invalidMsg),
@@ -73,17 +73,17 @@ function TextField$Integer(Props) {
   var invalidChecks = invalidChecksOpt !== undefined ? invalidChecksOpt : /* [] */0;
   var isLazy = isLazyOpt !== undefined ? isLazyOpt : false;
   var disabled = disabledOpt !== undefined ? disabledOpt : false;
-  var match = React.useState((function () {
-          return value;
-        }));
-  var match$1 = React.useState((function () {
-          return Ley_Int$OptolithClient.show(value);
-        }));
+  var match = React.useState(function () {
+        return value;
+      });
+  var match$1 = React.useState(function () {
+        return Ley_Int$OptolithClient.show(value);
+      });
   var setInternalValue = match$1[1];
   var internalValue = match$1[0];
-  var match$2 = React.useState((function () {
-          return isValid(min, max, invalidChecks, Ley_Option$OptolithClient.Monad.$$return(value));
-        }));
+  var match$2 = React.useState(function () {
+        return isValid(min, max, invalidChecks, Ley_Option$OptolithClient.Monad.$$return(value));
+      });
   var setValid = match$2[1];
   var match$3 = match$2[0];
   var valid = match$3[0];
@@ -112,7 +112,7 @@ function TextField$Integer(Props) {
           var invalidMsg = match[1];
           var isNewValueValid = match[0];
           Curry._1(setValid, (function (param) {
-                  return /* tuple */[
+                  return [
                           isNewValueValid,
                           invalidMsg
                         ];
@@ -121,7 +121,7 @@ function TextField$Integer(Props) {
             return Curry._1(onChange, Ley_Option$OptolithClient.fromSome(convertedValue));
           }
           
-        }), /* tuple */[
+        }), [
         onChange,
         min,
         max
@@ -151,26 +151,26 @@ function TextField$Integer(Props) {
                   }));
           }
           return Curry._1(setValid, (function (param) {
-                        return /* tuple */[
+                        return [
                                 true,
                                 undefined
                               ];
                       }));
-        }), /* tuple */[
+        }), [
         value,
         internalValue
       ]);
   return React.createElement("div", {
-              className: ClassNames$OptolithClient.fold(/* :: */[
-                    "textfield",
-                    /* :: */[
-                      ClassNames$OptolithClient.cond("disabled", disabled),
-                      /* :: */[
-                        ClassNames$OptolithClient.cond("invalid", valid),
-                        /* [] */0
-                      ]
-                    ]
-                  ])
+              className: ClassNames$OptolithClient.fold({
+                    hd: "textfield",
+                    tl: {
+                      hd: ClassNames$OptolithClient.cond("disabled", disabled),
+                      tl: {
+                        hd: ClassNames$OptolithClient.cond("invalid", valid),
+                        tl: /* [] */0
+                      }
+                    }
+                  })
             }, React.createElement(Label$OptolithClient.make, {
                   name: name,
                   labelText: label
@@ -215,17 +215,17 @@ function TextField$String(Props) {
   var isLazy = isLazyOpt !== undefined ? isLazyOpt : false;
   var required = requiredOpt !== undefined ? requiredOpt : false;
   var disabled = disabledOpt !== undefined ? disabledOpt : false;
-  var match = React.useState((function () {
-          return value;
-        }));
-  var match$1 = React.useState((function () {
-          return value;
-        }));
+  var match = React.useState(function () {
+        return value;
+      });
+  var match$1 = React.useState(function () {
+        return value;
+      });
   var setInternalValue = match$1[1];
   var internalValue = match$1[0];
-  var match$2 = React.useState((function () {
-          return isValid$1(required, value);
-        }));
+  var match$2 = React.useState(function () {
+        return isValid$1(required, value);
+      });
   var setValid = match$2[1];
   var valid = match$2[0];
   if (match[0] !== value) {
@@ -253,7 +253,7 @@ function TextField$String(Props) {
             return Curry._1(onChange, newValue);
           }
           
-        }), /* tuple */[
+        }), [
         onChange,
         required
       ]);
@@ -270,16 +270,16 @@ function TextField$String(Props) {
           }
         }), [value]);
   return React.createElement("div", {
-              className: ClassNames$OptolithClient.fold(/* :: */[
-                    "textfield",
-                    /* :: */[
-                      ClassNames$OptolithClient.cond("disabled", disabled),
-                      /* :: */[
-                        ClassNames$OptolithClient.cond("invalid", valid),
-                        /* [] */0
-                      ]
-                    ]
-                  ])
+              className: ClassNames$OptolithClient.fold({
+                    hd: "textfield",
+                    tl: {
+                      hd: ClassNames$OptolithClient.cond("disabled", disabled),
+                      tl: {
+                        hd: ClassNames$OptolithClient.cond("invalid", valid),
+                        tl: /* [] */0
+                      }
+                    }
+                  })
             }, React.createElement(Label$OptolithClient.make, {
                   name: name,
                   labelText: label

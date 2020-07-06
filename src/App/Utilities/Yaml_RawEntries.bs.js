@@ -3,7 +3,7 @@
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 
 function l10n(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -18,7 +18,7 @@ var ArcaneBardTraditionsL10n = {
 };
 
 function l10n$1(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -33,7 +33,7 @@ var ArcaneDancerTraditionsL10n = {
 };
 
 function l10n$2(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -48,7 +48,7 @@ var ArmorTypesL10n = {
 };
 
 function l10n$3(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -63,7 +63,7 @@ var AspectsL10n = {
 };
 
 function l10n$4(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -78,7 +78,7 @@ var CombatSpecialAbilityGroupsL10n = {
 };
 
 function l10n$5(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -93,7 +93,7 @@ var CombatTechniqueGroupsL10n = {
 };
 
 function l10n$6(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -108,7 +108,7 @@ var EquipmentGroupsL10n = {
 };
 
 function l10n$7(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -123,7 +123,7 @@ var EyeColorsL10n = {
 };
 
 function l10n$8(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -138,7 +138,7 @@ var HairColorsL10n = {
 };
 
 function l10n$9(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -153,7 +153,7 @@ var LiturgicalChantGroupsL10n = {
 };
 
 function l10n$10(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -168,7 +168,7 @@ var PropertiesL10n = {
 };
 
 function l10n$11(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -183,7 +183,7 @@ var ReachesL10n = {
 };
 
 function l10n$12(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -198,7 +198,7 @@ var SocialStatusesL10n = {
 };
 
 function l10n$13(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -213,7 +213,7 @@ var SpecialAbilityGroupsL10n = {
 };
 
 function l10n$14(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -228,7 +228,7 @@ var SpellGroupsL10n = {
 };
 
 function l10n$15(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -243,7 +243,7 @@ var SubjectsL10n = {
 };
 
 function l10n$16(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.string, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
@@ -258,7 +258,7 @@ var SupportedLanguagesL10n = {
 };
 
 function l10n$17(json) {
-  return /* tuple */[
+  return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];

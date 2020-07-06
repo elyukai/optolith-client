@@ -1,5 +1,3 @@
-open GenericHelpers;
-
 [@genType]
 [@genType.as "ApplicableCombatTechniques"]
 type combatTechniques =
@@ -34,7 +32,7 @@ type t = {
   propertyText: option(string),
   aspect: option(int),
   brew: option(int),
-  extended: option(list(oneOrMany(int))),
+  extended: option(list(OneOrMany.t(int))),
   prerequisites: Static_Prerequisites.tWithLevel,
   prerequisitesText: option(string),
   prerequisitesTextIndex: Static_Prerequisites.tIndexWithLevel,
@@ -52,7 +50,7 @@ type t = {
 module Decode = {
   open Json.Decode;
   open JsonStrict;
-  open GenericHelpers.Decode;
+  open OneOrMany.Decode;
 
   type tL10n = {
     id: int,
@@ -127,7 +125,7 @@ module Decode = {
     selectOptionCategories:
       option(list(Static_SelectOption.Decode.categoryWithGroups)),
     selectOptions: option(list(Static_SelectOption.Decode.tUniv)),
-    extended: option(list(oneOrMany(int))),
+    extended: option(list(OneOrMany.t(int))),
     combatTechniques: option(combatTechniques),
     property: option(int),
     aspect: option(int),
@@ -180,7 +178,8 @@ module Decode = {
            "selectOptions",
            list(Static_SelectOption.Decode.tUniv),
          ),
-    extended: json |> optionalField("extended", list(oneOrMany(int))),
+    extended:
+      json |> optionalField("extended", list(OneOrMany.Decode.t(int))),
     combatTechniques:
       json |> optionalField("combatTechniques", combatTechniques),
     property: json |> optionalField("property", int),

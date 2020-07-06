@@ -9,12 +9,12 @@ function searchByMulti(searchAccessors, filterText, xs) {
   if (searchAccessors) {
     return Ley_List$OptolithClient.filter((function (x) {
                   return Ley_List$OptolithClient.Foldable.any((function (pred) {
-                                if (pred.tag) {
+                                if (pred.TAG) {
                                   return Ley_List$OptolithClient.Foldable.any((function (x$prime) {
                                                 return Ley_List$OptolithClient.isInfixOf(Ley_List$OptolithClient.Extra.lower(filterText), Ley_List$OptolithClient.Extra.lower(x$prime));
-                                              }), Curry._1(pred[0], x));
+                                              }), Curry._1(pred._0, x));
                                 } else {
-                                  return Ley_List$OptolithClient.isInfixOf(Ley_List$OptolithClient.Extra.lower(filterText), Ley_List$OptolithClient.Extra.lower(Curry._1(pred[0], x)));
+                                  return Ley_List$OptolithClient.isInfixOf(Ley_List$OptolithClient.Extra.lower(filterText), Ley_List$OptolithClient.Extra.lower(Curry._1(pred._0, x)));
                                 }
                               }), searchAccessors);
                 }), xs);
@@ -32,34 +32,34 @@ function sortByMulti(sortOptions, xs) {
             return x.compare;
           }
           var partial_arg = x.compare;
-          return (function (param, param$1) {
-              return Ley_Function$OptolithClient.flip(partial_arg, param, param$1);
-            });
+          return function (param, param$1) {
+            return Ley_Function$OptolithClient.flip(partial_arg, param, param$1);
+          };
         }), sortOptions);
-  return Ley_List$OptolithClient.sortBy((function (param, param$1) {
-                  var _sortFunctions = sortFunctions;
-                  while(true) {
-                    var sortFunctions$1 = _sortFunctions;
-                    if (!sortFunctions$1) {
-                      return /* EQ */1;
-                    }
-                    var match = Curry._2(sortFunctions$1[0], param, param$1);
-                    if (match !== 1) {
-                      return match;
-                    }
-                    _sortFunctions = sortFunctions$1[1];
-                    continue ;
-                  };
-                }))(xs);
+  return Ley_List$OptolithClient.sortBy(function (param, param$1) {
+                var _sortFunctions = sortFunctions;
+                while(true) {
+                  var sortFunctions$1 = _sortFunctions;
+                  if (!sortFunctions$1) {
+                    return /* EQ */1;
+                  }
+                  var match = Curry._2(sortFunctions$1.hd, param, param$1);
+                  if (match !== 1) {
+                    return match;
+                  }
+                  _sortFunctions = sortFunctions$1.tl;
+                  continue ;
+                };
+              })(xs);
 }
 
 function compareLocale(staticData) {
   var partial_arg = Intl$OptolithClient.Collator.createWithOptions(staticData.messages.id, {
         numeric: true
       });
-  return (function (param, param$1) {
-      return Intl$OptolithClient.Collator.compare(partial_arg, param, param$1);
-    });
+  return function (param, param$1) {
+    return Intl$OptolithClient.Collator.compare(partial_arg, param, param$1);
+  };
 }
 
 function sortStrings(staticData, xs) {

@@ -8,18 +8,18 @@ function range(param) {
   if (l > u) {
     return /* [] */0;
   } else if (l === u) {
-    return /* :: */[
-            u,
-            /* [] */0
-          ];
+    return {
+            hd: u,
+            tl: /* [] */0
+          };
   } else {
-    return /* :: */[
-            l,
-            range(/* tuple */[
+    return {
+            hd: l,
+            tl: range([
                   l + 1 | 0,
                   u
                 ])
-          ];
+          };
   }
 }
 

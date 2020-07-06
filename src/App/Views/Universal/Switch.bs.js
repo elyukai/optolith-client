@@ -9,13 +9,13 @@ function Switch(Props) {
   var disabled = Props.disabled;
   var onChange = Props.onChange;
   return React.createElement("div", {
-              className: ClassNames$OptolithClient.fold(/* :: */[
-                    "switch",
-                    /* :: */[
-                      ClassNames$OptolithClient.cond("disabled", disabled),
-                      /* [] */0
-                    ]
-                  ])
+              className: ClassNames$OptolithClient.fold({
+                    hd: "switch",
+                    tl: {
+                      hd: ClassNames$OptolithClient.cond("disabled", disabled),
+                      tl: /* [] */0
+                    }
+                  })
             }, React.createElement("input", {
                   id: name,
                   checked: checked,
