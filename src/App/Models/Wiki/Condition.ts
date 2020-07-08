@@ -1,1 +1,1 @@
-export { Condition } from "../Static_Condition.gen"
+export { Condition } from "../Condition.gen";

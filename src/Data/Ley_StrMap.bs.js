@@ -84,6 +84,7 @@ var countByM = StrMap.countByM;
 var groupBy = StrMap.groupBy;
 
 export {
+  StrMap ,
   Foldable ,
   Traversable ,
   $$null ,

@@ -83,13 +83,10 @@ var Extra = {
   fromOk: fromOk,
   fromResult: fromResult,
   fromError$prime: fromError$prime,
-  fromError_: fromError$prime,
   fromOk$prime: fromOk$prime,
-  fromOk_: fromOk$prime,
   resultToOption: resultToOption,
   optionToResult: optionToResult,
-  optionToResult$prime: optionToResult$prime,
-  optionToResult_: optionToResult$prime
+  optionToResult$prime: optionToResult$prime
 };
 
 function $less$$great(f, x) {
@@ -239,13 +236,9 @@ function liftM4(f, mx, my, mz, ma) {
 
 var Monad = {
   $great$great$eq: $great$great$eq,
-  bind: $great$great$eq,
   $eq$less$less: $eq$less$less,
-  bindF: $eq$less$less,
   $great$great: $great$great,
-  then_: $great$great,
   $great$eq$great: $great$eq$great,
-  kleisli: $great$eq$great,
   join: join,
   mapM: mapM,
   liftM2: liftM2,

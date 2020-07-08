@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List"
 import { MagicalGroup, MagicalTradition } from "../../Constants/Groups"
-import { GeodeRitual } from "../Static_GeodeRitual.gen"
+import { GeodeRitual } from "../GeodeRitual.gen"
 import { Spell } from "./Spell"
 
 export { GeodeRitual }

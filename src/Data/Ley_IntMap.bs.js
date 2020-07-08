@@ -86,6 +86,7 @@ var countByM = IntMap.countByM;
 var groupBy = IntMap.groupBy;
 
 export {
+  IntMap ,
   Foldable ,
   Traversable ,
   $$null ,

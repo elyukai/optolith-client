@@ -3,7 +3,7 @@
 import * as React from "react";
 import * as Ley_List$OptolithClient from "../../../Data/Ley_List.bs.js";
 import * as Ley_Option$OptolithClient from "../../../Data/Ley_Option.bs.js";
-import * as ReactUtils$OptolithClient from "../../Utilities/ReactUtils.bs.js";
+import * as ReactUtils$OptolithClient from "../../../Utilities/ReactUtils.bs.js";
 
 function Label(Props) {
   var name = Props.name;

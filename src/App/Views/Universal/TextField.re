@@ -4,20 +4,20 @@ module Invalid = {
    * the current value in the
    */
   let isValueInvalid = value =>
-    Ley.List.Extra.firstJust(((isInvalid, msg: string)) =>
+    Ley_List.Extra.firstJust(((isInvalid, msg: string)) =>
       isInvalid(value) ? Some(msg) : None
     );
 
   [@react.component]
   let make = (~invalidMsg) =>
     invalidMsg
-    |> Ley.Option.option(React.null, msg => {
+    |> Ley_Option.option(React.null, msg => {
          <p className="error"> {React.string(msg)} </p>
        });
 };
 
 module Integer = {
-  open Ley.Option;
+  open Ley_Option;
 
   /**
    * Checks if the input string is roughly valid, so that only valid characters
@@ -36,7 +36,7 @@ module Integer = {
       (false, invalidMsg),
       int =>
         (
-          Ley.Ix.inRange(
+          Ley_Ix.inRange(
             (fromOption(Js.Int.min, min), fromOption(Js.Int.max, max)),
             int,
           )
@@ -64,7 +64,7 @@ module Integer = {
     let (prevValue, setPrevValue) = React.useState(() => value);
 
     let (internalValue, setInternalValue) =
-      React.useState(() => Ley.Int.show(value));
+      React.useState(() => Ley_Int.show(value));
 
     let ((valid, invalidMsg), setValid) =
       React.useState(() =>
@@ -73,7 +73,7 @@ module Integer = {
 
     // Reset internal value if valid value from outside changed
     if (prevValue !== value) {
-      setInternalValue(_ => Ley.Int.show(value));
+      setInternalValue(_ => Ley_Int.show(value));
       setPrevValue(_ => value);
       setValid(_ => isValid(~min, ~max, ~invalidChecks, Some(value)));
     };
@@ -91,7 +91,7 @@ module Integer = {
                   if (isRoughlyValid(newValue)) {
                     setInternalValue(_ => newValue);
 
-                    let convertedValue = Ley.Int.readOption(newValue);
+                    let convertedValue = Ley_Int.readOption(newValue);
 
                     let (isNewValueValid, invalidMsg) =
                       isValid(~min, ~max, ~invalidChecks, convertedValue);
@@ -110,7 +110,7 @@ module Integer = {
     let handleBlur =
       React.useCallback2(
         _ => {
-          let internalInt = Ley.Int.readOption(internalValue);
+          let internalInt = Ley_Int.readOption(internalValue);
 
           // If current input is valid, check for given bounds
           if (isSome(internalInt)) {
@@ -119,14 +119,14 @@ module Integer = {
             if (isLazy && valid) {
               onChange(internalSafe);
             } else if (isSome(min) && internalSafe < fromSome(min)) {
-              setInternalValue(_ => Ley.Int.show(fromSome(min)));
+              setInternalValue(_ => Ley_Int.show(fromSome(min)));
             } else if (isSome(max) && internalSafe > fromSome(max)) {
-              setInternalValue(_ => Ley.Int.show(fromSome(max)));
+              setInternalValue(_ => Ley_Int.show(fromSome(max)));
             } else {
-              setInternalValue(_ => Ley.Int.show(value));
+              setInternalValue(_ => Ley_Int.show(value));
             };
           } else {
-            setInternalValue(_ => Ley.Int.show(value));
+            setInternalValue(_ => Ley_Int.show(value));
           };
 
           setValid(_ => (true, None));
@@ -157,7 +157,7 @@ module Integer = {
 
 module String = {
   let isValid = (~required, value) =>
-    !required || Ley.List.Extra.notNullStr(value);
+    !required || Ley_List.Extra.notNullStr(value);
 
   [@react.component]
   let make =

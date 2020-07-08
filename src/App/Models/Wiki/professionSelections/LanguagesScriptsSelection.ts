@@ -1,1 +1,1 @@
-export { LanguageAndScriptOption as LanguagesScriptsSelection } from "../../Static_Profession.gen"
+export { LanguageAndScriptOption as LanguagesScriptsSelection } from "../../Profession.gen";

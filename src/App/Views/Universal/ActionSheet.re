@@ -1,4 +1,4 @@
-open Ley.List;
+open Ley_List;
 open ReactUtils;
 
 type actionSheetButtonStyle =

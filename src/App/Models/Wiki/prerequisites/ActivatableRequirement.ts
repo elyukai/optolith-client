@@ -1,4 +1,4 @@
-import * as RePrerequisites from "../../Static_Prerequisites.gen"
+import * as RePrerequisites from "../../Prerequisites.gen"
 
 export type ActivatablePrerequisite = RePrerequisites.ActivatablePrerequisite
 export type ActivatableMultiEntryPrerequisite = RePrerequisites.ActivatableMultiEntryPrerequisite

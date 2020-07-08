@@ -1,6 +1,6 @@
 import { assertNever } from "../../../Utilities/Variant"
 import { Sex } from "../../Hero.gen"
-import { NameBySex, ProfessionName } from "../../Static_Profession.gen"
+import { NameBySex, ProfessionName } from "../../Profession.gen"
 
 export { NameBySex }
 

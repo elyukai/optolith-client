@@ -1,1 +1,1 @@
-export { EquipmentPackage } from "../Static_EquipmentPackage.gen"
+export { EquipmentPackage } from "../EquipmentPackage.gen";

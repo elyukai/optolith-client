@@ -355,6 +355,15 @@ function imapOption(f, xs) {
   return imapOptionAux(f, 0, xs);
 }
 
+function liftDef(f, x) {
+  var y = Curry._1(f, x);
+  if (y !== undefined) {
+    return Caml_option.valFromOption(y);
+  } else {
+    return x;
+  }
+}
+
 var Functor = {
   $less$$great: $less$$great,
   $less$amp$great: $less$amp$great
@@ -417,6 +426,7 @@ export {
   mapOption ,
   ensure ,
   imapOption ,
+  liftDef ,
   
 }
 /* No side effect */

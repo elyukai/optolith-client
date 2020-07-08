@@ -1,1 +1,1 @@
-export { CulturePrerequisite as CultureRequirement } from "../../Static_Prerequisites.gen"
+export { CulturePrerequisite as CultureRequirement } from "../../Prerequisites.gen";

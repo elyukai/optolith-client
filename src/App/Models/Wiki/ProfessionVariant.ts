@@ -1,1 +1,1 @@
-export { ProfessionVariant } from "../Static_Profession.gen"
+export { ProfessionVariant } from "../Profession.gen";

@@ -7,7 +7,7 @@ import { ndash } from "../../Utilities/Chars"
 import { localizeOrList } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { sortStrings } from "../../Utilities/sortBy"
-import { ElvenMagicalSong } from "../Static_ElvenMagicalSong.gen"
+import { ElvenMagicalSong } from "../ElvenMagicalSong.gen"
 import { Spell } from "./Spell"
 import { StaticData } from "./WikiModel"
 

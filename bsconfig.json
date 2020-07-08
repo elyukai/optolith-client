@@ -5,6 +5,7 @@
   "sources": [
     { "dir": "deploy" },
     { "dir": "src" },
+    { "dir": "src/Activatable" },
     { "dir": "src/App/Actions" },
     { "dir": "src/App/Constants" },
     { "dir": "src/App/Containers" },
@@ -20,8 +21,15 @@
     { "dir": "src/Data" },
     { "dir": "src/Data/__tests__", "type": "dev" },
     { "dir": "src/Debug" },
+    { "dir": "src/Equipment" },
+    { "dir": "src/Increasable" },
+    { "dir": "src/Misc" },
+    { "dir": "src/Prerequisites" },
+    { "dir": "src/RaceCultureProfession" },
+    { "dir": "src/Rules" },
+    { "dir": "src/Sources" },
     { "dir": "src/System" },
-    { "dir": "src/shims" }
+    { "dir": "src/Utilities" }
   ],
   "package-specs": {
     "module": "es6",

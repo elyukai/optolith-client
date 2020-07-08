@@ -1,1 +1,1 @@
-export { BlessedTradition } from "../Static_BlessedTradition.gen"
+export { BlessedTradition } from "../BlessedTradition.gen";

@@ -1,1 +1,1 @@
-export { Blessing } from "../Static_Blessing.gen"
+export { Blessing } from "../Blessing.gen";

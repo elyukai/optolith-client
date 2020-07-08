@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List"
 import { MagicalGroup, MagicalTradition } from "../../Constants/Groups"
-import { ZibiljaRitual } from "../Static_ZibiljaRitual.gen"
+import { ZibiljaRitual } from "../ZibiljaRitual.gen"
 import { Spell } from "./Spell"
 
 export { ZibiljaRitual }

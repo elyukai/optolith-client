@@ -5,7 +5,7 @@ import * as React from "react";
 import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
 import * as Ley_List$OptolithClient from "../../../Data/Ley_List.bs.js";
-import * as ClassNames$OptolithClient from "../../Utilities/ClassNames.bs.js";
+import * as ClassNames$OptolithClient from "../../../Utilities/ClassNames.bs.js";
 import * as Ley_Option$OptolithClient from "../../../Data/Ley_Option.bs.js";
 
 function SegmentedControls$Item(Props) {

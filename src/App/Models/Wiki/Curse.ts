@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List"
 import { IC, MagicalGroup, MagicalTradition } from "../../Constants/Groups"
 import { ndash } from "../../Utilities/Chars"
-import { Curse } from "../Static_Curse.gen"
+import { Curse } from "../Curse.gen"
 import { Spell } from "./Spell"
 
 export const CurseIC = IC.B

@@ -1,1 +1,1 @@
-export { OptionalRule } from "../Static_OptionalRule.gen"
+export { OptionalRule } from "../OptionalRule.gen";

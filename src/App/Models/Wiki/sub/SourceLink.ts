@@ -1,1 +1,1 @@
-export { SourceRef as SourceLink } from "../../Static_SourceRef.gen"
+export { SourceRef as SourceLink } from "../../SourceRef.gen";

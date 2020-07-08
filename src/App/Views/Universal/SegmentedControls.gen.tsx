@@ -7,7 +7,7 @@ import * as React from 'react';
 // tslint:disable-next-line:no-var-requires
 const SegmentedControlsBS = require('./SegmentedControls.bs');
 
-import {list} from '../../../../src/shims/ReasonPervasives.shim';
+import {list} from './ReasonPervasives.shim';
 
 // tslint:disable-next-line:interface-over-type-literal
 export type segment<a> = {

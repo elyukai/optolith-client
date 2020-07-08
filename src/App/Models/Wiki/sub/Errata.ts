@@ -1,1 +1,1 @@
-export { Erratum } from "../../Static_Erratum.gen"
+export { Erratum } from "../../Erratum.gen";

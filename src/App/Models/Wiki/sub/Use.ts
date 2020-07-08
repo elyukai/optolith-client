@@ -1,1 +1,1 @@
-export { Use } from "../../Static_Skill.gen"
+export { Use } from "../../Skill.gen";

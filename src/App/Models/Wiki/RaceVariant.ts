@@ -1,1 +1,1 @@
-export { RaceVariant } from "../Static_Race.gen"
+export { RaceVariant } from "../Race.gen";

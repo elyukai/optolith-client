@@ -15,7 +15,7 @@ type transducer('a, 'b, 'c) = fold('b, 'c) => fold('a, 'c);
  * The identity transducer. Useful if you need to return a transducer from a
  * function but the transducer is based on conditions.
  */
-let (~~): transducer('a, 'a, 'b);
+let idT: transducer('a, 'a, 'b);
 
 /**
  * The transducer version of `map`. Transforms every element using the passed
@@ -50,6 +50,6 @@ let (~<<): ('a => bool) => transducer('a, 'a, 'b);
 let (>>~): (fold('a, 'b), 'a => bool) => fold('a, 'b);
 
 /**
- * Applies a transducer to a list.
+ * `transduceList t xs` applies the transducer `t` to the list `xs`.
  */
 let transduceList: (transducer('a, 'b, list('b)), list('a)) => list('b);

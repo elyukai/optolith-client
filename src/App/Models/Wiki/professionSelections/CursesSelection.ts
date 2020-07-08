@@ -1,1 +1,1 @@
-export { CurseOption as CursesSelection } from "../../Static_Profession.gen"
+export { CurseOption as CursesSelection } from "../../Profession.gen";

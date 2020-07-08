@@ -1,6 +1,6 @@
-open Ley.List;
-open Ley.Option.Functor;
-open Ley.Option.Alternative;
+open Ley_List;
+open Ley_Option.Functor;
+open Ley_Option.Alternative;
 open ReactUtils;
 open Webapi.Dom;
 
@@ -61,7 +61,7 @@ let make =
         | Some(ref) when !isOpen =>
           let height =
             Js.Int.toFloat(
-              Ley.Int.min(166, Foldable.length(options) * 33 + 1),
+              Ley_Int.min(166, Foldable.length(options) * 33 + 1),
             );
 
           let rect = Element.getBoundingClientRect(ref);
@@ -148,7 +148,7 @@ let make =
     activeOption
     <&> (x => x.label)
     <|> placeholder
-    |> Ley.Option.fromOption("");
+    |> Ley_Option.fromOption("");
 
   let overlayElement =
     <div className="dropdown-overlay">
@@ -192,7 +192,7 @@ let make =
         onClick=handleSwitch
         className={ClassNames.fold([
           ClassNames.safe("value"),
-          ClassNames.cond("placeholder", Ley.Option.isNone(activeOption)),
+          ClassNames.cond("placeholder", Ley_Option.isNone(activeOption)),
         ])}>
         {s(activetext)}
       </div>

@@ -38,6 +38,7 @@ var map = StrSet.map;
 var elems = StrSet.elems;
 
 export {
+  StrSet ,
   Foldable ,
   empty ,
   singleton ,

@@ -1,1 +1,1 @@
-export { VariantSkillSpecializationOption as VariantSpecializationSelection } from "../../Static_Profession.gen"
+export { VariantSkillSpecializationOption as VariantSpecializationSelection } from "../../Profession.gen";

@@ -1,1 +1,1 @@
-export { LiturgicalChant } from "../Static_LiturgicalChant.gen"
+export { LiturgicalChant } from "../LiturgicalChant.gen";

@@ -1,4 +1,4 @@
-open Ley.List;
+open Ley_List;
 open ReactUtils;
 
 type alertButtonStyle =
@@ -139,7 +139,7 @@ let make =
     className={ClassNames.fold([
       ClassNames.cond(
         "alert-long",
-        Ley.List.Foldable.length(secondaryButtons) > 2,
+        Ley_List.Foldable.length(secondaryButtons) > 2,
       ),
     ])}
     isOpen

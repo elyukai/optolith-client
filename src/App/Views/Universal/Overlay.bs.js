@@ -4,9 +4,9 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as ReactDom from "react-dom";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
-import * as ClassNames$OptolithClient from "../../Utilities/ClassNames.bs.js";
+import * as ClassNames$OptolithClient from "../../../Utilities/ClassNames.bs.js";
 import * as Ley_Option$OptolithClient from "../../../Data/Ley_Option.bs.js";
-import * as ReactUtils$OptolithClient from "../../Utilities/ReactUtils.bs.js";
+import * as ReactUtils$OptolithClient from "../../../Utilities/ReactUtils.bs.js";
 
 function Overlay(Props) {
   var baseClassName = Props.baseClassName;

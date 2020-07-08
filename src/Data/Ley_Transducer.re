@@ -4,7 +4,7 @@ type fold('a, 'b) = ('a, 'b) => 'b;
 
 type transducer('a, 'b, 'c) = fold('b, 'c) => fold('a, 'c);
 
-let (~~) = (f, x) => f(x);
+let idT = (f, x) => f(x);
 
 let (<$~) = (f, fold, x, acc) => fold(f(x), acc);
 

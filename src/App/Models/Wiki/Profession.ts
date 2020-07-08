@@ -1,7 +1,7 @@
 import * as IntMap from "../../../Data/IntMap"
 import * as List from "../../../Data/List"
 import { translate } from "../../Utilities/I18n"
-import { Profession } from "../Static_Profession.gen"
+import { Profession } from "../Profession.gen"
 import { StaticData } from "./WikiModel"
 
 export { Profession }

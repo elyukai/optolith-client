@@ -1,4 +1,4 @@
-import { Item as ItemTemplate } from "../Static_Item.gen"
+import { Item as ItemTemplate } from "../Item.gen"
 import { DropdownOption } from "../View/DropdownOption"
 
 export { ItemTemplate }

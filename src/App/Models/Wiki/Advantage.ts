@@ -1,1 +1,1 @@
-export { Advantage } from "../Static_Advantage.gen"
+export { Advantage } from "../Advantage.gen";

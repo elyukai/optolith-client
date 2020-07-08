@@ -1,1 +1,1 @@
-export { SkillOption as SkillsSelection } from "../../Static_Profession.gen"
+export { SkillOption as SkillsSelection } from "../../Profession.gen";

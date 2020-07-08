@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List"
 import { MagicalGroup, MagicalTradition } from "../../Constants/Groups"
 import { ndash } from "../../Utilities/Chars"
-import { DominationRitual } from "../Static_DominationRitual.gen"
+import { DominationRitual } from "../DominationRitual.gen"
 import { Spell } from "./Spell"
 
 export { DominationRitual }

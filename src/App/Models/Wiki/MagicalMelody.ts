@@ -7,7 +7,7 @@ import { ndash } from "../../Utilities/Chars"
 import { localizeOrList } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { sortStrings } from "../../Utilities/sortBy"
-import { MagicalMelody } from "../Static_MagicalMelody.gen"
+import { MagicalMelody } from "../MagicalMelody.gen"
 import { Spell } from "./Spell"
 import { StaticData } from "./WikiModel"
 

@@ -1,1 +1,1 @@
-export { PrimaryAttributePrerequisite, primaryAttributeType as PrimaryAttributeType } from "../../Static_Prerequisites.gen"
+export { PrimaryAttributePrerequisite, primaryAttributeType as PrimaryAttributeType } from "../../Prerequisites.gen";

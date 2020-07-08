@@ -5,5 +5,3 @@ module IntMap =
   });
 
 include IntMap;
-
-type intmap('a) = t('a);

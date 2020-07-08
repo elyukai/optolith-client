@@ -4,7 +4,6 @@
  * The first argument `(l,u)` is a pair specifying the lower and upper bounds of
  * a contiguous subrange of values.
  */
-[@genType]
 let rec range = ((l, u)) =>
   l > u ? [] : l === u ? [u] : [l, ...range((l + 1, u))];
 
@@ -15,7 +14,6 @@ let rec range = ((l, u)) =>
  * The first argument `(l,u)` is a pair specifying the lower and upper bounds of
  * a contiguous subrange of values.
  */
-[@genType]
 let inRange = ((l, u), x: int) => l <= x && x <= u;
 
 /**
@@ -26,7 +24,6 @@ let inRange = ((l, u), x: int) => l <= x && x <= u;
  *
  * @raise [Invalid_argument] if index out of range.
  */
-[@genType]
 let index = (p, x) =>
   inRange(p, x)
     ? x - fst(p) : raise(invalid_arg("Ix.index: Index out of range."));
@@ -37,5 +34,4 @@ let index = (p, x) =>
  * The first argument `(l,u)` is a pair specifying the lower and upper bounds of
  * a contiguous subrange of values.
  */
-[@genType]
 let rangeSize = ((l, u)) => l <= u ? u - l + 1 : 0;

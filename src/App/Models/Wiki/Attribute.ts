@@ -1,1 +1,1 @@
-export { Attribute } from "../Static_Attribute.gen"
+export { Attribute } from "../Attribute.gen";

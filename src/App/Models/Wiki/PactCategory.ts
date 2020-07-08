@@ -1,1 +1,1 @@
-export { PactCategory } from "../Static_Pact.gen"
+export { PactCategory } from "../Pact.gen";

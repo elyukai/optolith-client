@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List"
 import { MagicalGroup, MagicalTradition } from "../../Constants/Groups"
-import { RogueSpell } from "../Static_RogueSpell.gen"
+import { RogueSpell } from "../RogueSpell.gen"
 import { Spell } from "./Spell"
 
 export { RogueSpell }

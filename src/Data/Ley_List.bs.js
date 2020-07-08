@@ -32,8 +32,7 @@ function $less$amp$great(xs, f) {
 var Functor = {
   $less$$great: $less$$great,
   fmap: $less$$great,
-  $less$amp$great: $less$amp$great,
-  fmapF: $less$amp$great
+  $less$amp$great: $less$amp$great
 };
 
 function $less$star$great(fs, xs) {
@@ -131,11 +130,8 @@ function liftM4(f, mx, my, mz, ma) {
 
 var Monad = {
   $great$great$eq: $great$great$eq,
-  bind: $great$great$eq,
   $eq$less$less: $eq$less$less,
-  bindF: $eq$less$less,
   $great$great: $great$great,
-  then_: $great$great,
   $great$eq$great: $great$eq$great,
   kleisli: $great$eq$great,
   join: join,
@@ -1163,6 +1159,23 @@ function intersect(xs, ys) {
               }), xs);
 }
 
+function disjoint(xs, _ys) {
+  while(true) {
+    var ys = _ys;
+    if (!xs) {
+      return true;
+    }
+    if (!ys) {
+      return true;
+    }
+    if (!notElem(ys.hd, xs)) {
+      return false;
+    }
+    _ys = ys.tl;
+    continue ;
+  };
+}
+
 function sortBy(f) {
   return function (param) {
     return List.sort((function (a, b) {
@@ -1523,6 +1536,7 @@ export {
   nub ,
   $$delete ,
   intersect ,
+  disjoint ,
   sortBy ,
   maximumBy ,
   minimumBy ,

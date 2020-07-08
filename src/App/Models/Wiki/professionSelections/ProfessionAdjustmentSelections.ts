@@ -1,1 +1,1 @@
-export { ProfessionOptions as ProfessionSelections } from "../../Static_Profession.gen"
+export { ProfessionOptions as ProfessionSelections } from "../../Profession.gen";

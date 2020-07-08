@@ -1,5 +1,5 @@
 import { NumIdName } from "../NumIdName"
-import { SkillGroup } from "../Static_Skill.gen"
+import { SkillGroup } from "../Skill.gen"
 
 export { SkillGroup }
 

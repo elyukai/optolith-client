@@ -1,1 +1,1 @@
-export { Disadvantage } from "../Static_Disadvantage.gen"
+export { Disadvantage } from "../Disadvantage.gen";

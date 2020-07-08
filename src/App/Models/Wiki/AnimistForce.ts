@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List"
 import { MagicalGroup, MagicalTradition } from "../../Constants/Groups"
 import { ndash } from "../../Utilities/Chars"
-import { AnimistForce } from "../Static_AnimistForce.gen"
+import { AnimistForce } from "../AnimistForce.gen"
 import { Spell } from "./Spell"
 
 export { AnimistForce }

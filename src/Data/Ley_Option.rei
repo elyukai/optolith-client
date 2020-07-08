@@ -1,4 +1,3 @@
-[@genType.ignoreInterface]
 type t('a) = option('a);
 
 module Functor: {
@@ -268,3 +267,9 @@ let ensure: ('a => bool, 'a) => t('a);
  * element as well.
  */
 let imapOption: ((int, 'a) => t('b), list('a)) => list('b);
+
+/**
+ * `liftDef f x` applies the function `f` to `x`. If `f` returns a `Some`, it's
+ * inner value is returned. If `f` returns `None`, `x` is returned unchanged.
+ */
+let liftDef: ('a => t('a), 'a) => 'a;

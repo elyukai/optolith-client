@@ -7,9 +7,9 @@ import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
 import * as Label$OptolithClient from "./Label.bs.js";
 import * as Ley_Int$OptolithClient from "../../../Data/Ley_Int.bs.js";
 import * as Ley_List$OptolithClient from "../../../Data/Ley_List.bs.js";
-import * as ClassNames$OptolithClient from "../../Utilities/ClassNames.bs.js";
+import * as ClassNames$OptolithClient from "../../../Utilities/ClassNames.bs.js";
 import * as Ley_Option$OptolithClient from "../../../Data/Ley_Option.bs.js";
-import * as ReactUtils$OptolithClient from "../../Utilities/ReactUtils.bs.js";
+import * as ReactUtils$OptolithClient from "../../../Utilities/ReactUtils.bs.js";
 import * as ScrollView$OptolithClient from "./ScrollView.bs.js";
 
 function Dropdown$Item(Props) {

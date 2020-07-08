@@ -1,5 +1,5 @@
 open Webapi.Dom;
-open Ley.Option.Functor;
+open Ley_Option.Functor;
 open ReactUtils;
 
 [@bs.scope "document"] [@bs.val] external body: Dom.element = "body";
@@ -31,7 +31,7 @@ let make = (~baseClassName, ~className=?, ~children, ~isOpen, ~onBackdrop) => {
     ? ReactDOMRe.createPortal(
         <div
           className={ClassNames.fold([
-            Ley.Option.Monad.return(baseClassName ++ "-backdrop"),
+            Ley_Option.Monad.return(baseClassName ++ "-backdrop"),
             className,
           ])}
           onClick=handleBackdropClick

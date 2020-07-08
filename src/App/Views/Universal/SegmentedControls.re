@@ -72,14 +72,14 @@ let make =
       Some("segmented-controls"),
       ClassNames.cond("disabled", disabled),
     ])}>
-    {Ley.Option.option(
+    {Ley_Option.option(
        React.null,
        str => <label> {React.string(str)} </label>,
        label,
      )}
     <ul className="segmented-controls-list">
       {options
-       |> Ley.List.map(option =>
+       |> Ley_List.map(option =>
             <Item
               active
               groupName=name
@@ -91,7 +91,7 @@ let make =
               onClickSafe
             />
           )
-       |> Ley.List.listToArray
+       |> Ley_List.listToArray
        |> React.array}
     </ul>
   </div>;

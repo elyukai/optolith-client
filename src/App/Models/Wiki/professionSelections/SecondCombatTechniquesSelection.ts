@@ -1,1 +1,1 @@
-export { CombatTechniqueSecondOption as CombatTechniquesSecondSelection } from "../../Static_Profession.gen"
+export { CombatTechniqueSecondOption as CombatTechniquesSecondSelection } from "../../Profession.gen";

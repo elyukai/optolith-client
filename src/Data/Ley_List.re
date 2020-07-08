@@ -5,13 +5,9 @@ module Functor = {
     | [y, ...ys] => [f(y), ...f <$> ys]
     };
 
-  [@genType]
   let fmap = (<$>);
 
   let (<&>) = (xs, f) => f <$> xs;
-
-  [@genType]
-  let fmapF = (<&>);
 };
 
 module Applicative = {
@@ -27,7 +23,6 @@ module Applicative = {
       }
     };
 
-  [@genType]
   let ap = (<*>);
 };
 
@@ -38,10 +33,8 @@ module Alternative = {
     | xs => xs
     };
 
-  [@genType]
   let alt = (<|>);
 
-  [@genType]
   let guard = pred => pred ? [()] : [];
 };
 
@@ -55,35 +48,20 @@ module Monad = {
     | [y, ...ys] => f(y) @ (ys >>= f)
     };
 
-  [@genType]
-  let bind = (>>=);
-
   let (=<<) = (f, mx) => mx >>= f;
-
-  [@genType]
-  let bindF = (=<<);
 
   let (>>) = (x, y) => x >>= const(y);
 
-  [@genType]
-  [@genType.as "then"]
-  let then_ = (>>);
-
   let (>=>) = (f, g, x) => x->f >>= g;
 
-  [@genType]
   let kleisli = (>=>);
 
-  [@genType]
   let join = x => x >>= id;
 
-  [@genType]
   let liftM2 = (f, mx, my) => mx >>= (x => f(x) <$> my);
 
-  [@genType]
   let liftM3 = (f, mx, my, mz) => mx >>= (x => my >>= (y => f(x, y) <$> mz));
 
-  [@genType]
   let liftM4 = (f, mx, my, mz, ma) =>
     mx >>= (x => my >>= (y => mz >>= (z => f(x, y, z) <$> ma)));
 };
@@ -100,7 +78,6 @@ module Foldable = {
    *
    * ```foldr f z [x1, x2, ..., xn] == x1 `f` (x2 `f` ... (xn `f` z)...)```
    */
-  [@genType]
   let rec foldr = (f, initial, xs) =>
     switch (xs) {
     | [] => initial
@@ -113,7 +90,6 @@ module Foldable = {
    *
    * `foldr1 f = foldr1 f . toList`
    */
-  [@genType]
   let foldr1 = (f, xs) =>
     switch (xs) {
     | [] => invalid_arg("Cannot apply foldr1 to an empty list.")
@@ -129,7 +105,6 @@ module Foldable = {
    *
    * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
    */
-  [@genType]
   let rec foldl = (f, initial, xs) =>
     switch (xs) {
     | [] => initial
@@ -144,83 +119,62 @@ module Foldable = {
    *
    * `foldl1 f = foldl1 f . toList`
    */
-  [@genType]
   let foldl1 = (f, xs) =>
     switch (xs) {
     | [] => invalid_arg("Cannot apply foldl1 to an empty list.")
     | [y, ...ys] => foldl(f, y, ys)
     };
 
-  [@genType]
   let toList = (xs): list('a) => xs;
 
-  [@genType]
-  [@genType.as "fnull"]
   let null = xs =>
     switch (xs) {
     | [] => true
     | _ => false
     };
 
-  [@genType]
-  [@genType.as "flength"]
   let length = xs => List.length(xs);
 
-  [@genType]
   let elem = (e, xs) => List.exists(x => e == x, xs);
 
-  [@genType]
   let sum = xs => foldr((+), 0, xs);
 
-  [@genType]
   let product = xs => foldr(( * ), 1, xs);
 
-  [@genType]
   let maximum = xs => foldr(Js.Math.max_int, Js.Int.min, xs);
 
-  [@genType]
   let minimum = xs => foldr(Js.Math.min_int, Js.Int.max, xs);
 
-  [@genType]
   let concat = xss => join(xss);
 
-  [@genType]
   let concatMap = (f, xs) => xs >>= f;
 
-  [@genType]
-  [@genType.as "and"]
   let rec con = xs =>
     switch (xs) {
     | [] => true
     | [y, ...ys] => y && con(ys)
     };
 
-  [@genType]
-  [@genType.as "or"]
   let rec dis = xs =>
     switch (xs) {
     | [] => false
     | [y, ...ys] => y || dis(ys)
     };
 
-  [@genType]
   let rec any = (f, xs) =>
     switch (xs) {
     | [] => false
     | [y, ...ys] => f(y) || any(f, ys)
     };
 
-  [@genType]
   let rec all = (f, xs) =>
     switch (xs) {
     | [] => true
     | [y, ...ys] => f(y) && all(f, ys)
     };
 
-  [@genType]
   let notElem = (e, xs) => !elem(e, xs);
 
-  [@genType]
   let rec find = (f, xs) =>
     switch (xs) {
     | [] => None
@@ -243,7 +197,6 @@ module Index = {
    * [(0,'h'),(1,'e'),(2,'l'),(3,'l'),(4,'o')]
    * ```
    */
-  [@genType]
   let indexed = xs => indexedAux(0, xs);
 
   /**
@@ -252,7 +205,6 @@ module Index = {
    * If the index is negative or exceeds list length, the original list will be
    * returned.
    */
-  [@genType]
   let rec deleteAt = (index, xs) =>
     index < 0
       ? xs
@@ -271,7 +223,6 @@ module Index = {
    * If the index is negative or exceeds list length, the original list will be
    * returned, together with `Nothing` representing no deleted element.
    */
-  [@genType]
   let rec deleteAtPair = (index, xs) =>
     index < 0
       ? (None, xs)
@@ -291,7 +242,6 @@ module Index = {
    * If the index is negative or exceeds list length, the original list will be
    * returned.
    */
-  [@genType]
   let rec setAt = (index, e, xs) =>
     index < 0
       ? xs
@@ -309,7 +259,6 @@ module Index = {
    * If the index is negative or exceeds list length, the original list will be
    * returned.
    */
-  [@genType]
   let rec modifyAt = (index, f, xs) =>
     index < 0
       ? xs
@@ -329,7 +278,6 @@ module Index = {
    * If the index is negative or exceeds list length, the original list will be
    * returned.
    */
-  [@genType]
   let rec updateAt = (index, f, xs) =>
     index < 0
       ? xs
@@ -351,7 +299,6 @@ module Index = {
    * returned. (If the index is equal to the list length, the insertion can be
    * carried out.)
    */
-  [@genType]
   let rec insertAt = (index, e, xs) =>
     index < 0
       ? xs
@@ -374,7 +321,6 @@ module Index = {
   /**
    * `imap f xs` is the list obtained by applying `f` to each element of `xs`.
    */
-  [@genType]
   let imap = (f, xs) => imapAux(f, 0, xs);
 
   // Folds
@@ -388,7 +334,6 @@ module Index = {
   /**
    * Right-associative fold of a structure.
    */
-  [@genType]
   let ifoldr = (f, initial, xs) => ifoldrAux(f, 0, initial, xs);
 
   let rec ifoldlAux = (f, index, acc, xs) =>
@@ -400,7 +345,6 @@ module Index = {
   /**
    * Left-associative fold of a structure.
    */
-  [@genType]
   let ifoldl = (f, initial, xs) => ifoldlAux(f, 0, initial, xs);
 
   let rec iallAux = (f, index, xs) =>
@@ -412,7 +356,6 @@ module Index = {
   /**
    * Determines whether all elements of the structure satisfy the predicate.
    */
-  [@genType]
   let iall = (f, xs) => iallAux(f, 0, xs);
 
   let rec ianyAux = (f, index, xs) =>
@@ -424,7 +367,6 @@ module Index = {
   /**
    * Determines whether any element of the structure satisfies the predicate.
    */
-  [@genType]
   let iany = (f, xs) => ianyAux(f, 0, xs);
 
   let rec iconcatMapAux = (f, index, xs) =>
@@ -433,14 +375,12 @@ module Index = {
     | [x, ...xs] => f(index, x) @ iconcatMapAux(f, index + 1, xs)
     };
 
-  [@genType]
   let iconcatMap = (f, xs) => iconcatMapAux(f, 0, xs);
 
   /**
    * `ifilter`, applied to a predicate and a list, returns the list of those
    * elements that satisfy the predicate.
    */
-  [@genType]
   let ifilter = (pred, xs) =>
     ifoldr((i, x, acc) => pred(i, x) ? [x, ...acc] : acc, [], xs);
 
@@ -453,7 +393,6 @@ module Index = {
    * ("eoo","Hll Wrld!")
    * ```
    */
-  [@genType]
   let ipartition = (pred, xs) =>
     ifoldr(
       (i, x) =>
@@ -478,7 +417,6 @@ module Index = {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  [@genType]
   let ifind = (pred, xs) => ifindAux(pred, 0, xs);
 
   let rec ifindIndexAux = (pred, index, xs) =>
@@ -493,7 +431,6 @@ module Index = {
    * index of the first element in the list satisfying the predicate, or
    * `Nothing` if there is no such element.
    */
-  [@genType]
   let ifindIndex = (pred, xs) => ifindIndexAux(pred, 0, xs);
 
   let rec ifindIndicesAux = (pred, i, xs) =>
@@ -509,7 +446,6 @@ module Index = {
    * The `findIndices` function extends `findIndex`, by returning the indices of
    * all elements satisfying the predicate, in ascending order.
    */
-  [@genType]
   let ifindIndices = (pred, xs) => ifindIndicesAux(pred, 0, xs);
 };
 
@@ -520,7 +456,6 @@ module Index = {
  */
 let (<+>) = (x, xs) => [x, ...xs];
 
-[@genType]
 let cons = (<+>);
 
 /**
@@ -528,13 +463,11 @@ let cons = (<+>);
  */
 let (++) = Pervasives.(@);
 
-[@genType]
 let append = (++);
 
 /**
  * Extract the first element of a list, which must be non-empty.
  */
-[@genType]
 let head =
   fun
   | [] =>
@@ -546,7 +479,6 @@ let head =
 /**
  * Extract the last element of a list, which must be finite and non-empty.
  */
-[@genType]
 let rec last =
   fun
   | [] => invalid_arg("last does only work on non-empty lists.")
@@ -559,7 +491,6 @@ let rec last =
 /**
  * Extract the elements after the head of a list, which must be non-empty.
  */
-[@genType]
 let tail =
   fun
   | [] => invalid_arg("tail does only work on non-empty lists.")
@@ -569,7 +500,6 @@ let tail =
  * Return all the elements of a list except the last one. The list must be
  * non-empty.
  */
-[@genType]
 let rec init =
   fun
   | [] => invalid_arg("init does only work on non-empty lists.")
@@ -584,7 +514,6 @@ let rec init =
  * `Nothing`. If the list is non-empty, returns `Just (x, xs)`, where `x` is
  * the head of the list and `xs` its tail.
  */
-[@genType]
 let uncons =
   fun
   | [] => None
@@ -595,14 +524,12 @@ let uncons =
 /**
  * `map f xs` is the list obtained by applying `f` to each element of `xs`.
  */
-[@genType]
 let map = Functor.(<$>);
 
 /**
  * `reverse xs` returns the elements of `xs` in reverse order. `xs` must be
  * finite.
  */
-[@genType]
 let reverse = xs => Foldable.foldl(Ley_Function.flip((<+>)), [], xs);
 
 /**
@@ -613,7 +540,6 @@ let reverse = xs => Foldable.foldl(Ley_Function.flip((<+>)), [], xs);
  * intersperse ',' "abcde" == "a,b,c,d,e"
  * ```
  */
-[@genType]
 let rec intersperse = (sep, xs) =>
   switch (xs) {
   | [] => []
@@ -626,7 +552,6 @@ let rec intersperse = (sep, xs) =>
  * inserts the list `xs` in between the lists in `xss` and concatenates the
  * result.
  */
-[@genType]
 let rec intercalate = (separator, xs) =>
   switch (xs) {
   | [] => ""
@@ -651,7 +576,6 @@ let%private permutationsPick = xs =>
  *
  * If the given list is empty, an empty list is returned by this function.
  */
-[@genType]
 let rec permutations = xs =>
   switch (xs) {
   | [] => []
@@ -678,7 +602,6 @@ let rec permutations = xs =>
  *
  * ```last (scanl f z xs) == foldl f z xs.```
  */
-[@genType]
 let rec scanl = (f, initial, xs) =>
   initial
   <+> (
@@ -696,7 +619,6 @@ let rec scanl = (f, initial, xs) =>
  * accumulating parameter from left to right, and returning a final value of
  * this accumulator together with the new structure.
  */
-[@genType]
 let rec mapAccumL = (f, initial, ls) =>
   switch (ls) {
   | [] => (initial, [])
@@ -712,7 +634,6 @@ let rec mapAccumL = (f, initial, ls) =>
  * accumulating parameter from right to left, and returning a final value of
  * this accumulator together with the new structure.
  */
-[@genType]
 let rec mapAccumR = (f, initial, ls) =>
   switch (ls) {
   | [] => (initial, [])
@@ -729,7 +650,6 @@ let rec mapAccumR = (f, initial, ls) =>
  * It is an instance of the more general `genericReplicate`, in which `n` may be
  * of any integral type.
  */
-[@genType]
 let rec replicate = (len, x) => len > 0 ? x <+> replicate(len - 1, x) : [];
 
 // Unfolding
@@ -765,7 +685,6 @@ let rec replicate = (len, x) => len > 0 ? x <+> replicate(len - 1, x) : [];
  * [10,9,8,7,6,5,4,3,2,1]
  * ```
  */
-[@genType]
 let rec unfoldr = (f, seed) =>
   seed
   |> f
@@ -781,7 +700,6 @@ let rec unfoldr = (f, seed) =>
  * `take n`, applied to a list `xs`, returns the prefix of `xs` of length `n`,
  * or `xs` itself if `n > length xs`.
  */
-[@genType]
 let rec take = (n, xs) =>
   n <= 0
     ? []
@@ -796,7 +714,6 @@ let rec take = (n, xs) =>
  * `drop n xs` returns the suffix of `xs` after the first `n` elements, or
  * `[]` if `n > length x`.
  */
-[@genType]
 let rec drop = (n, xs) =>
   n <= 0
     ? xs
@@ -811,7 +728,6 @@ let rec drop = (n, xs) =>
  * `splitAt n xs` returns a tuple where first element is `xs` prefix of length
  * `n` and second element is the remainder of the list.
  */
-[@genType]
 let rec splitAt = (n, xs) =>
   n <= 0
     ? ([], xs)
@@ -841,21 +757,17 @@ let rec splitAt = (n, xs) =>
  * ```
  *
  */
-[@genType]
 let isInfixOf = (x: string, y: string) => Js.String.includes(y, x);
 
 // Searching by equality
 
-[@genType]
 let elem = Foldable.elem;
 
-[@genType]
 let notElem = Foldable.notElem;
 
 /**
  * `lookup key assocs` looks up a key in an association list.
  */
-[@genType]
 let lookup = (k, xs) =>
   Ley_Option.Functor.(Foldable.find(((k', _)) => k == k', xs) <&> snd);
 
@@ -865,7 +777,6 @@ let lookup = (k, xs) =>
  * `filter`, applied to a predicate and a list, returns the list of those
  * elements that satisfy the predicate.
  */
-[@genType]
 let filter = (pred, xs) =>
   Foldable.foldr(x => pred(x) ? (<+>)(x) : Ley_Function.id, [], xs);
 
@@ -878,7 +789,6 @@ let filter = (pred, xs) =>
  * ("eoo","Hll Wrld!")
  * ```
  */
-[@genType]
 let partition = (pred, xs) =>
   Foldable.foldr(
     x =>
@@ -897,7 +807,6 @@ let partition = (pred, xs) =>
  */
 let (!!) = List.nth;
 
-[@genType]
 let subscript = (!!);
 
 /**
@@ -905,7 +814,6 @@ let subscript = (!!);
  * given list which is equal (by `==`) to the query element, or `Nothing` if
  * there is no such element.
  */
-[@genType]
 let rec elemIndex = (e, xs) =>
   switch (xs) {
   | [] => None
@@ -926,7 +834,6 @@ let rec elemIndicesAux = (e, i, xs) =>
  * The `elemIndices` function extends `elemIndex`, by returning the indices of
  * all elements equal to the query element, in ascending order.
  */
-[@genType]
 let elemIndices = (e, xs) => elemIndicesAux(e, 0, xs);
 
 /**
@@ -934,7 +841,6 @@ let elemIndices = (e, xs) => elemIndicesAux(e, 0, xs);
  * of the first element in the list satisfying the predicate, or `Nothing` if
  * there is no such element.
  */
-[@genType]
 let rec findIndex = (pred, xs) =>
   switch (xs) {
   | [] => None
@@ -956,7 +862,6 @@ let rec findIndicesAux = (pred, i, xs) =>
  * The `findIndices` function extends `findIndex`, by returning the indices of
  * all elements satisfying the predicate, in ascending order.
  */
-[@genType]
 let findIndices = (pred, xs) => findIndicesAux(pred, 0, xs);
 
 // Zipping and unzipping lists
@@ -965,7 +870,6 @@ let findIndices = (pred, xs) => findIndicesAux(pred, 0, xs);
  * `zip` takes two lists and returns a list of corresponding pairs. If one
  * input list is short, excess elements of the longer list are discarded.
  */
-[@genType]
 let rec zip = (xs, ys) =>
   switch (xs, ys) {
   | ([x, ...xs], [y, ...ys]) => [(x, y), ...zip(xs, ys)]
@@ -977,7 +881,6 @@ let rec zip = (xs, ys) =>
  * argument, instead of a tupling function. For example, `zipWith (+)` is
  * applied to two lists to produce the list of corresponding sums.
  */
-[@genType]
 let rec zipWith = (f, xs, ys) =>
   switch (xs, ys) {
   | ([x, ...xs], [y, ...ys]) => [f(x, y), ...zipWith(f, xs, ys)]
@@ -1033,7 +936,6 @@ let rec zipWith = (f, xs, ys) =>
  *
  * Thus `lines s` contains at least as many elements as newlines in `s`.
  */
-[@genType]
 let lines = x =>
   Js.String.length(x) === 0
     ? []
@@ -1051,15 +953,12 @@ let lines = x =>
  * 'essence'.) It is a special case of `nubBy`, which allows the programmer to
  * supply their own equality test.
  */
-[@genType]
 let nub = xs =>
   Foldable.foldr((x, acc) => notElem(x, acc) ? x <+> acc : acc, [], xs);
 
 /**
  * `delete x` removes the first occurrence of `x` from its list argument.
  */
-[@genType]
-[@genType.as "sdelete"]
 let rec delete = (e, xs) =>
   switch (xs) {
   | [] => []
@@ -1086,8 +985,18 @@ let rec delete = (e, xs) =>
  * their own equality test. If the element is found in both the first and the
  * second list, the element from the first list will be used.
  */
-[@genType]
 let intersect = (xs, ys) => filter(Ley_Function.flip(elem, ys), xs);
+
+/**
+ * `disjoint xs ys` checks if the lists `xs` and `ys` are disjoint (i.e., their
+ * intersection is empty).
+ */
+let rec disjoint = (xs, ys) =>
+  switch (xs, ys) {
+  | ([], _)
+  | (_, []) => true
+  | (xs, [y, ...ys]) => notElem(y, xs) && disjoint(xs, ys)
+  };
 
 // Ordered lists
 
@@ -1095,14 +1004,12 @@ let intersect = (xs, ys) => filter(Ley_Function.flip(elem, ys), xs);
  * The `sortBy` function sorts all elements in the passed list using the passed
  * comparison function.
  */
-[@genType]
 let sortBy = f => List.sort((a, b) => f(a, b) |> Ley_Ord.fromOrdering);
 
 /**
  * The largest element of a non-empty structure with respect to the given
  * comparison function.
  */
-[@genType]
 let maximumBy = (f, xs) =>
   Foldable.foldr1(
     (x, acc) =>
@@ -1120,7 +1027,6 @@ let maximumBy = (f, xs) =>
  * The least element of a non-empty structure with respect to the given
  * comparison function.
  */
-[@genType]
 let minimumBy = (f, xs) =>
   Foldable.foldr1(
     (x, acc) =>
@@ -1136,7 +1042,6 @@ let minimumBy = (f, xs) =>
 
 // Count by predicate
 
-[@genType]
 let countBy = (f, xs) =>
   Foldable.foldr(
     x =>
@@ -1214,29 +1119,24 @@ let intersecting = (xs, ys) => Foldable.any(x => Foldable.elem(x, ys), xs);
 
 // Lists and arrays
 
-[@genType]
 let listToArray = Array.of_list;
 
-[@genType]
 let arrayToList = Array.to_list;
 
 module Extra = {
   /**
    * Convert a string to lower case.
    */
-  [@genType]
   let lower = str => String.lowercase_ascii(str);
 
   /**
    * Remove spaces from the start of a string, see `trim`.
    */
-  [@genType]
   let trimStart = str => str |> Js.String.replaceByRe([%re "/^\\s+/u"], "");
 
   /**
    * Remove spaces from the end of a string, see `trim`.
    */
-  [@genType]
   let trimEnd = str => str |> Js.String.replaceByRe([%re "/\\s+$/u"], "");
 
   /**
@@ -1248,7 +1148,6 @@ module Extra = {
    * escapeRegex "This (or that)." == "This \(or that\)\."
    * ```
    */
-  [@genType]
   let escapeRegex =
     // $& means the whole matched string
     Js.String.replaceByRe([%re "/[.*+?^${}()|[\\]\\\\]/gu"], "\\$&");
@@ -1262,7 +1161,6 @@ module Extra = {
    * the delimiter. An empty delimiter is invalid, and will cause an error to be
    * raised.
    */
-  [@genType]
   let splitOn = (del, x) => Js.String.split(del, x) |> Array.to_list;
 
   // Basics
@@ -1271,13 +1169,11 @@ module Extra = {
    * A composition of `not` and `null`: Checks if a list has at least one
    * element.
    */
-  [@genType]
   let notNull = xs => xs |> Foldable.null |> (!);
 
   /**
    * A composition of `not` and `null`: Checks if a string is not empty.
    */
-  [@genType]
   let notNullStr = xs => xs |> Js.String.length |> (<)(0);
 
   /**
@@ -1289,7 +1185,6 @@ module Extra = {
    * nil cons xs -> maybe nil (uncurry cons) (uncons xs) == list nil cons xs
    * ```
    */
-  [@genType]
   let list = (def, f, xs) =>
     switch (xs) {
     | [] => def
@@ -1300,7 +1195,6 @@ module Extra = {
    * If the list is empty returns `Nothing`, otherwise returns the `init` and
    * the `last`.
    */
-  [@genType]
   let rec unsnoc = xs =>
     switch (xs) {
     | [] => None
@@ -1315,7 +1209,6 @@ module Extra = {
   /**
    * Append an element to the end of a list, takes *O(n)* time.
    */
-  [@genType]
   let rec snoc = (xs, x) =>
     switch (xs) {
     | [] => [x]
@@ -1361,7 +1254,6 @@ module Extra = {
    * firstJust id [Nothing,Nothing] == Nothing
    * ```
    */
-  [@genType]
   let rec firstJust = (pred, xs) =>
     switch (xs) {
     | [] => None
@@ -1376,7 +1268,6 @@ module Extra = {
    * Replace a subsequence everywhere it occurs. The first argument must not be
    * the empty string.
    */
-  [@genType]
   let replaceStr = (old_subseq: string, new_subseq: string, x: string) =>
     Js.String.replaceByRe(
       Js.Re.fromStringWithFlags(escapeRegex(old_subseq), ~flags="gu"),
@@ -1390,7 +1281,6 @@ module Extra = {
    * Replace a subsequence. Use the `g` flag on the `RegExp` to replace all
    * occurrences.
    */
-  [@genType]
   let replaceStrRe = (old_subseq_rx, new_subseq: string, x: string) =>
     Js.String.replaceByRe(old_subseq_rx, new_subseq, x);
 };
@@ -1401,6 +1291,5 @@ module Safe = {
    * negative or index >= list length), `Nothing` is returned, otherwise a
    * `Just` of the found element.
    */
-  [@genType]
   let atMay = (xs, i) => i < 0 ? None : List.nth_opt(xs, i);
 };

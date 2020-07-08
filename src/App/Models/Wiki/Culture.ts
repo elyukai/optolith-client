@@ -1,1 +1,1 @@
-export { Culture } from "../Static_Culture.gen"
+export { Culture } from "../Culture.gen";

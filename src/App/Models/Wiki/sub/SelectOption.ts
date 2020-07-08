@@ -1,5 +1,5 @@
 import { SelectOptionId } from "../../../Constants/Id.gen"
-import { SelectOption } from "../../Static_SelectOption.gen"
+import { SelectOption } from "../../SelectOption.gen"
 import { DropdownOption } from "../../View/DropdownOption"
 
 export { SelectOption }

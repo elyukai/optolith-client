@@ -1,5 +1,3 @@
-[@genType]
-[@genType.as "Ordering"]
 type ordering =
   | LT
   | EQ

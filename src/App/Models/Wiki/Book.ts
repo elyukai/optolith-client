@@ -1,1 +1,1 @@
-export { Publication as Book } from "../Static_Publication.gen"
+export { Publication as Book } from "../Publication.gen";

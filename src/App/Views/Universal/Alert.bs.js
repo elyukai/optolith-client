@@ -5,8 +5,8 @@ import * as React from "react";
 import * as Overlay$OptolithClient from "./Overlay.bs.js";
 import * as Ley_List$OptolithClient from "../../../Data/Ley_List.bs.js";
 import * as TextField$OptolithClient from "./TextField.bs.js";
-import * as ClassNames$OptolithClient from "../../Utilities/ClassNames.bs.js";
-import * as ReactUtils$OptolithClient from "../../Utilities/ReactUtils.bs.js";
+import * as ClassNames$OptolithClient from "../../../Utilities/ClassNames.bs.js";
+import * as ReactUtils$OptolithClient from "../../../Utilities/ReactUtils.bs.js";
 
 function Alert$Button(Props) {
   var label = Props.label;

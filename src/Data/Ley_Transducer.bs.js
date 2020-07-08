@@ -3,7 +3,7 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Ley_List$OptolithClient from "./Ley_List.bs.js";
 
-function $tilde$tilde(f, x) {
+function idT(f, x) {
   return Curry._1(f, x);
 }
 
@@ -36,7 +36,7 @@ function transduceList(t, xs) {
 }
 
 export {
-  $tilde$tilde ,
+  idT ,
   $less$$tilde ,
   $less$amp$tilde ,
   $tilde$less$less ,
