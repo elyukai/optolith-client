@@ -10,7 +10,7 @@ import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as Prerequisite$OptolithClient from "../Prerequisites/Prerequisite.bs.js";
-import * as SelectOption$OptolithClient from "../Misc/SelectOption.bs.js";
+import * as SelectOption$OptolithClient from "./SelectOption.bs.js";
 
 function tL10n(json) {
   return {

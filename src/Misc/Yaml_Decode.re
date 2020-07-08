@@ -4,270 +4,6 @@ let%private idName = json =>
 let%private idNames = json =>
   Json.Decode.(json |> list(idName)) |> Ley_IntMap.fromList;
 
-let%private liturgicalChantEnhancements = xs =>
-  Ley_List.Monad.(
-    xs
-    >>= (
-      (x: LiturgicalChant.enhancement) => (
-        [
-          (
-            x.level1.id,
-            {
-              id: `Generic(x.level1.id),
-              name: x.level1.name,
-              cost: Some(x.level1.cost),
-              prerequisites: Prerequisite.empty,
-              description: Some(x.level1.effect),
-              isSecret: None,
-              languages: None,
-              continent: None,
-              isExtinct: None,
-              specializations: None,
-              specializationInput: None,
-              animalGr: None,
-              animalLevel: None,
-              enhancementTarget: Some(x.target),
-              enhancementLevel: Some(1),
-              wikiEntry: None,
-              applications: None,
-              src: x.src,
-              errata: x.errata,
-            },
-          ),
-          (
-            x.level2.id,
-            {
-              id: `Generic(x.level2.id),
-              name: x.level2.name,
-              cost: Some(x.level2.cost),
-              prerequisites: {
-                ...Prerequisite.empty,
-                activatable:
-                  x.level2.requireLevel1
-                    ? [
-                      {
-                        id:
-                          `SpecialAbility(
-                            Id.specialAbilityToInt(ChantEnhancement),
-                          ),
-                        active: true,
-                        sid: Some(`Generic(x.level1.id)),
-                        sid2: None,
-                        level: None,
-                      },
-                    ]
-                    : [],
-              },
-              description: Some(x.level2.effect),
-              isSecret: None,
-              languages: None,
-              continent: None,
-              isExtinct: None,
-              specializations: None,
-              specializationInput: None,
-              animalGr: None,
-              animalLevel: None,
-              enhancementTarget: Some(x.target),
-              enhancementLevel: Some(2),
-              wikiEntry: None,
-              applications: None,
-              src: x.src,
-              errata: x.errata,
-            },
-          ),
-          (
-            x.level3.id,
-            {
-              id: `Generic(x.level3.id),
-              name: x.level3.name,
-              cost: Some(x.level3.cost),
-              prerequisites: {
-                ...Prerequisite.empty,
-                activatable:
-                  switch (x.level3.requirePrevious) {
-                  | Some(First) => [
-                      {
-                        id:
-                          `SpecialAbility(
-                            Id.specialAbilityToInt(ChantEnhancement),
-                          ),
-                        active: true,
-                        sid: Some(`Generic(x.level1.id)),
-                        sid2: None,
-                        level: None,
-                      },
-                    ]
-                  | Some(Second) => [
-                      {
-                        id:
-                          `SpecialAbility(
-                            Id.specialAbilityToInt(ChantEnhancement),
-                          ),
-                        active: true,
-                        sid: Some(`Generic(x.level2.id)),
-                        sid2: None,
-                        level: None,
-                      },
-                    ]
-                  | None => []
-                  },
-              },
-              description: Some(x.level3.effect),
-              isSecret: None,
-              languages: None,
-              continent: None,
-              isExtinct: None,
-              specializations: None,
-              specializationInput: None,
-              animalGr: None,
-              animalLevel: None,
-              enhancementTarget: Some(x.target),
-              enhancementLevel: Some(3),
-              wikiEntry: None,
-              applications: None,
-              src: x.src,
-              errata: x.errata,
-            },
-          ),
-        ]:
-          list((int, SelectOption.t))
-      )
-    )
-    |> Ley_IntMap.fromList
-  );
-
-let%private spellEnhancements = xs =>
-  Ley_List.Monad.(
-    xs
-    >>= (
-      (x: Spell.enhancement) => (
-        [
-          (
-            x.level1.id,
-            {
-              id: `Generic(x.level1.id),
-              name: x.level1.name,
-              cost: Some(x.level1.cost),
-              prerequisites: Prerequisite.empty,
-              description: Some(x.level1.effect),
-              isSecret: None,
-              languages: None,
-              continent: None,
-              isExtinct: None,
-              specializations: None,
-              specializationInput: None,
-              animalGr: None,
-              animalLevel: None,
-              enhancementTarget: Some(x.target),
-              enhancementLevel: Some(1),
-              wikiEntry: None,
-              applications: None,
-              src: x.src,
-              errata: x.errata,
-            },
-          ),
-          (
-            x.level2.id,
-            {
-              id: `Generic(x.level2.id),
-              name: x.level2.name,
-              cost: Some(x.level2.cost),
-              prerequisites: {
-                ...Prerequisite.empty,
-                activatable:
-                  x.level2.requireLevel1
-                    ? [
-                      {
-                        id:
-                          `SpecialAbility(
-                            Id.specialAbilityToInt(SpellEnhancement),
-                          ),
-                        active: true,
-                        sid: Some(`Generic(x.level1.id)),
-                        sid2: None,
-                        level: None,
-                      },
-                    ]
-                    : [],
-              },
-              description: Some(x.level2.effect),
-              isSecret: None,
-              languages: None,
-              continent: None,
-              isExtinct: None,
-              specializations: None,
-              specializationInput: None,
-              animalGr: None,
-              animalLevel: None,
-              enhancementTarget: Some(x.target),
-              enhancementLevel: Some(2),
-              wikiEntry: None,
-              applications: None,
-              src: x.src,
-              errata: x.errata,
-            },
-          ),
-          (
-            x.level3.id,
-            {
-              id: `Generic(x.level3.id),
-              name: x.level3.name,
-              cost: Some(x.level3.cost),
-              prerequisites: {
-                ...Prerequisite.empty,
-                activatable:
-                  switch (x.level3.requirePrevious) {
-                  | Some(First) => [
-                      {
-                        id:
-                          `SpecialAbility(
-                            Id.specialAbilityToInt(SpellEnhancement),
-                          ),
-                        active: true,
-                        sid: Some(`Generic(x.level1.id)),
-                        sid2: None,
-                        level: None,
-                      },
-                    ]
-                  | Some(Second) => [
-                      {
-                        id:
-                          `SpecialAbility(
-                            Id.specialAbilityToInt(SpellEnhancement),
-                          ),
-                        active: true,
-                        sid: Some(`Generic(x.level2.id)),
-                        sid2: None,
-                        level: None,
-                      },
-                    ]
-                  | None => []
-                  },
-              },
-              description: Some(x.level3.effect),
-              isSecret: None,
-              languages: None,
-              continent: None,
-              isExtinct: None,
-              specializations: None,
-              specializationInput: None,
-              animalGr: None,
-              animalLevel: None,
-              enhancementTarget: Some(x.target),
-              enhancementLevel: Some(3),
-              wikiEntry: None,
-              applications: None,
-              src: x.src,
-              errata: x.errata,
-            },
-          ),
-        ]:
-          list((int, SelectOption.t))
-      )
-    )
-    |> Ley_IntMap.fromList
-  );
-
 let decode = (locale, yamlData: Yaml_Raw.yamlData): Static.t => {
   let animistForces = AnimistForce.Decode.all(yamlData);
   let arcaneBardTraditions = idNames(yamlData.arcaneBardTraditionsL10n);
@@ -297,12 +33,14 @@ let decode = (locale, yamlData: Yaml_Raw.yamlData): Static.t => {
   let focusRules = FocusRule.Decode.all(yamlData);
   let geodeRituals = GeodeRitual.Decode.all(yamlData);
   let hairColors = idNames(yamlData.hairColorsL10n);
+  let liturgicalChantGroups = idNames(yamlData.liturgicalChantGroupsL10n);
+  let liturgicalChants = LiturgicalChant.Decode.all(yamlData);
   let liturgicalChantEnhancements =
     yamlData
     |> LiturgicalChant.Decode.enhancements
-    |> liturgicalChantEnhancements;
-  let liturgicalChantGroups = idNames(yamlData.liturgicalChantGroupsL10n);
-  let liturgicalChants = LiturgicalChant.Decode.all(yamlData);
+    |> LiturgicalChantEnhancements.Decode.liturgicalChantEnhancements(
+         liturgicalChants,
+       );
   let magicalDances = MagicalDance.Decode.all(yamlData);
   let magicalMelodies = MagicalMelody.Decode.all(yamlData);
   let magicalTraditions = MagicalTradition.Decode.all(yamlData);
@@ -319,10 +57,12 @@ let decode = (locale, yamlData: Yaml_Raw.yamlData): Static.t => {
   let skills = Skill.Decode.all(yamlData);
   let socialStatuses = idNames(yamlData.socialStatusesL10n);
   let specialAbilityGroups = idNames(yamlData.specialAbilityGroupsL10n);
-  let spellEnhancements =
-    yamlData |> Spell.Decode.enhancements |> spellEnhancements;
   let spellGroups = idNames(yamlData.spellGroupsL10n);
   let spells = Spell.Decode.all(yamlData);
+  let spellEnhancements =
+    yamlData
+    |> Spell.Decode.enhancements
+    |> SpellEnhancements.Decode.spellEnhancements(spells);
   let states = State.Decode.all(yamlData);
   let subjects = idNames(yamlData.subjectsL10n);
   let tribes = idNames(yamlData.tribesL10n);
@@ -360,6 +100,9 @@ let decode = (locale, yamlData: Yaml_Raw.yamlData): Static.t => {
       spells,
       yamlData,
     );
+
+  let modifiedSpecialAbilities =
+    SpecialAbility.Decode.modifyParsed(specialAbilities);
 
   {
     advantages,
@@ -409,7 +152,7 @@ let decode = (locale, yamlData: Yaml_Raw.yamlData): Static.t => {
     skillGroups,
     skills,
     socialStatuses,
-    specialAbilities,
+    specialAbilities: modifiedSpecialAbilities,
     specialAbilityGroups,
     spellEnhancements,
     spellGroups,

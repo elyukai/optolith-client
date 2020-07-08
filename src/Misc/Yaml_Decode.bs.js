@@ -2,7 +2,6 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
-import * as Id$OptolithClient from "./Id.bs.js";
 import * as Item$OptolithClient from "../Equipment/Item.bs.js";
 import * as Pact$OptolithClient from "./Pact.bs.js";
 import * as Race$OptolithClient from "../RaceCultureProfession/Race.bs.js";
@@ -13,7 +12,6 @@ import * as State$OptolithClient from "./State.bs.js";
 import * as Cantrip$OptolithClient from "../Activatable/Cantrip.bs.js";
 import * as Culture$OptolithClient from "../RaceCultureProfession/Culture.bs.js";
 import * as Blessing$OptolithClient from "../Activatable/Blessing.bs.js";
-import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 import * as Messages$OptolithClient from "./Messages.bs.js";
 import * as Advantage$OptolithClient from "../Activatable/Advantage.bs.js";
 import * as Attribute$OptolithClient from "../Increasable/Attribute.bs.js";
@@ -28,7 +26,6 @@ import * as AnimistForce$OptolithClient from "../Increasable/AnimistForce.bs.js"
 import * as Disadvantage$OptolithClient from "../Activatable/Disadvantage.bs.js";
 import * as MagicalDance$OptolithClient from "../Increasable/MagicalDance.bs.js";
 import * as OptionalRule$OptolithClient from "../Rules/OptionalRule.bs.js";
-import * as Prerequisite$OptolithClient from "../Prerequisites/Prerequisite.bs.js";
 import * as MagicalMelody$OptolithClient from "../Increasable/MagicalMelody.bs.js";
 import * as ZibiljaRitual$OptolithClient from "../Increasable/ZibiljaRitual.bs.js";
 import * as SpecialAbility$OptolithClient from "../Activatable/SpecialAbility.bs.js";
@@ -40,343 +37,15 @@ import * as DominationRitual$OptolithClient from "../Increasable/DominationRitua
 import * as ElvenMagicalSong$OptolithClient from "../Increasable/ElvenMagicalSong.bs.js";
 import * as EquipmentPackage$OptolithClient from "../Equipment/EquipmentPackage.bs.js";
 import * as MagicalTradition$OptolithClient from "../Activatable/MagicalTradition.bs.js";
+import * as SpellEnhancements$OptolithClient from "../Increasable/SpellEnhancements.bs.js";
 import * as DerivedCharacteristic$OptolithClient from "./DerivedCharacteristic.bs.js";
+import * as LiturgicalChantEnhancements$OptolithClient from "../Increasable/LiturgicalChantEnhancements.bs.js";
 
 function idName(json) {
   return [
           Json_decode.field("id", Json_decode.$$int, json),
           Json_decode.field("name", Json_decode.string, json)
         ];
-}
-
-function liturgicalChantEnhancements(xs) {
-  return Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_List$OptolithClient.Monad.$great$great$eq(xs, (function (x) {
-                    var match = x.level3.requirePrevious;
-                    return {
-                            hd: [
-                              x.level1.id,
-                              {
-                                id: {
-                                  HASH: /* Generic */61643255,
-                                  VAL: x.level1.id
-                                },
-                                name: x.level1.name,
-                                cost: x.level1.cost,
-                                prerequisites: Prerequisite$OptolithClient.empty,
-                                description: x.level1.effect,
-                                isSecret: undefined,
-                                languages: undefined,
-                                continent: undefined,
-                                isExtinct: undefined,
-                                specializations: undefined,
-                                specializationInput: undefined,
-                                animalGr: undefined,
-                                animalLevel: undefined,
-                                enhancementTarget: x.target,
-                                enhancementLevel: 1,
-                                wikiEntry: undefined,
-                                applications: undefined,
-                                src: x.src,
-                                errata: x.errata
-                              }
-                            ],
-                            tl: {
-                              hd: [
-                                x.level2.id,
-                                {
-                                  id: {
-                                    HASH: /* Generic */61643255,
-                                    VAL: x.level2.id
-                                  },
-                                  name: x.level2.name,
-                                  cost: x.level2.cost,
-                                  prerequisites: {
-                                    sex: Prerequisite$OptolithClient.empty.sex,
-                                    race: Prerequisite$OptolithClient.empty.race,
-                                    culture: Prerequisite$OptolithClient.empty.culture,
-                                    pact: Prerequisite$OptolithClient.empty.pact,
-                                    social: Prerequisite$OptolithClient.empty.social,
-                                    primaryAttribute: Prerequisite$OptolithClient.empty.primaryAttribute,
-                                    activatable: x.level2.requireLevel1 ? ({
-                                          hd: {
-                                            id: {
-                                              HASH: /* SpecialAbility */-789492591,
-                                              VAL: Id$OptolithClient.specialAbilityToInt(/* ChantEnhancement */46)
-                                            },
-                                            active: true,
-                                            sid: {
-                                              HASH: /* Generic */61643255,
-                                              VAL: x.level1.id
-                                            },
-                                            sid2: undefined,
-                                            level: undefined
-                                          },
-                                          tl: /* [] */0
-                                        }) : /* [] */0,
-                                    activatableMultiEntry: Prerequisite$OptolithClient.empty.activatableMultiEntry,
-                                    activatableMultiSelect: Prerequisite$OptolithClient.empty.activatableMultiSelect,
-                                    increasable: Prerequisite$OptolithClient.empty.increasable,
-                                    increasableMultiEntry: Prerequisite$OptolithClient.empty.increasableMultiEntry
-                                  },
-                                  description: x.level2.effect,
-                                  isSecret: undefined,
-                                  languages: undefined,
-                                  continent: undefined,
-                                  isExtinct: undefined,
-                                  specializations: undefined,
-                                  specializationInput: undefined,
-                                  animalGr: undefined,
-                                  animalLevel: undefined,
-                                  enhancementTarget: x.target,
-                                  enhancementLevel: 2,
-                                  wikiEntry: undefined,
-                                  applications: undefined,
-                                  src: x.src,
-                                  errata: x.errata
-                                }
-                              ],
-                              tl: {
-                                hd: [
-                                  x.level3.id,
-                                  {
-                                    id: {
-                                      HASH: /* Generic */61643255,
-                                      VAL: x.level3.id
-                                    },
-                                    name: x.level3.name,
-                                    cost: x.level3.cost,
-                                    prerequisites: {
-                                      sex: Prerequisite$OptolithClient.empty.sex,
-                                      race: Prerequisite$OptolithClient.empty.race,
-                                      culture: Prerequisite$OptolithClient.empty.culture,
-                                      pact: Prerequisite$OptolithClient.empty.pact,
-                                      social: Prerequisite$OptolithClient.empty.social,
-                                      primaryAttribute: Prerequisite$OptolithClient.empty.primaryAttribute,
-                                      activatable: match !== undefined ? (
-                                          match ? ({
-                                                hd: {
-                                                  id: {
-                                                    HASH: /* SpecialAbility */-789492591,
-                                                    VAL: Id$OptolithClient.specialAbilityToInt(/* ChantEnhancement */46)
-                                                  },
-                                                  active: true,
-                                                  sid: {
-                                                    HASH: /* Generic */61643255,
-                                                    VAL: x.level2.id
-                                                  },
-                                                  sid2: undefined,
-                                                  level: undefined
-                                                },
-                                                tl: /* [] */0
-                                              }) : ({
-                                                hd: {
-                                                  id: {
-                                                    HASH: /* SpecialAbility */-789492591,
-                                                    VAL: Id$OptolithClient.specialAbilityToInt(/* ChantEnhancement */46)
-                                                  },
-                                                  active: true,
-                                                  sid: {
-                                                    HASH: /* Generic */61643255,
-                                                    VAL: x.level1.id
-                                                  },
-                                                  sid2: undefined,
-                                                  level: undefined
-                                                },
-                                                tl: /* [] */0
-                                              })
-                                        ) : /* [] */0,
-                                      activatableMultiEntry: Prerequisite$OptolithClient.empty.activatableMultiEntry,
-                                      activatableMultiSelect: Prerequisite$OptolithClient.empty.activatableMultiSelect,
-                                      increasable: Prerequisite$OptolithClient.empty.increasable,
-                                      increasableMultiEntry: Prerequisite$OptolithClient.empty.increasableMultiEntry
-                                    },
-                                    description: x.level3.effect,
-                                    isSecret: undefined,
-                                    languages: undefined,
-                                    continent: undefined,
-                                    isExtinct: undefined,
-                                    specializations: undefined,
-                                    specializationInput: undefined,
-                                    animalGr: undefined,
-                                    animalLevel: undefined,
-                                    enhancementTarget: x.target,
-                                    enhancementLevel: 3,
-                                    wikiEntry: undefined,
-                                    applications: undefined,
-                                    src: x.src,
-                                    errata: x.errata
-                                  }
-                                ],
-                                tl: /* [] */0
-                              }
-                            }
-                          };
-                  })));
-}
-
-function spellEnhancements(xs) {
-  return Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_List$OptolithClient.Monad.$great$great$eq(xs, (function (x) {
-                    var match = x.level3.requirePrevious;
-                    return {
-                            hd: [
-                              x.level1.id,
-                              {
-                                id: {
-                                  HASH: /* Generic */61643255,
-                                  VAL: x.level1.id
-                                },
-                                name: x.level1.name,
-                                cost: x.level1.cost,
-                                prerequisites: Prerequisite$OptolithClient.empty,
-                                description: x.level1.effect,
-                                isSecret: undefined,
-                                languages: undefined,
-                                continent: undefined,
-                                isExtinct: undefined,
-                                specializations: undefined,
-                                specializationInput: undefined,
-                                animalGr: undefined,
-                                animalLevel: undefined,
-                                enhancementTarget: x.target,
-                                enhancementLevel: 1,
-                                wikiEntry: undefined,
-                                applications: undefined,
-                                src: x.src,
-                                errata: x.errata
-                              }
-                            ],
-                            tl: {
-                              hd: [
-                                x.level2.id,
-                                {
-                                  id: {
-                                    HASH: /* Generic */61643255,
-                                    VAL: x.level2.id
-                                  },
-                                  name: x.level2.name,
-                                  cost: x.level2.cost,
-                                  prerequisites: {
-                                    sex: Prerequisite$OptolithClient.empty.sex,
-                                    race: Prerequisite$OptolithClient.empty.race,
-                                    culture: Prerequisite$OptolithClient.empty.culture,
-                                    pact: Prerequisite$OptolithClient.empty.pact,
-                                    social: Prerequisite$OptolithClient.empty.social,
-                                    primaryAttribute: Prerequisite$OptolithClient.empty.primaryAttribute,
-                                    activatable: x.level2.requireLevel1 ? ({
-                                          hd: {
-                                            id: {
-                                              HASH: /* SpecialAbility */-789492591,
-                                              VAL: Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
-                                            },
-                                            active: true,
-                                            sid: {
-                                              HASH: /* Generic */61643255,
-                                              VAL: x.level1.id
-                                            },
-                                            sid2: undefined,
-                                            level: undefined
-                                          },
-                                          tl: /* [] */0
-                                        }) : /* [] */0,
-                                    activatableMultiEntry: Prerequisite$OptolithClient.empty.activatableMultiEntry,
-                                    activatableMultiSelect: Prerequisite$OptolithClient.empty.activatableMultiSelect,
-                                    increasable: Prerequisite$OptolithClient.empty.increasable,
-                                    increasableMultiEntry: Prerequisite$OptolithClient.empty.increasableMultiEntry
-                                  },
-                                  description: x.level2.effect,
-                                  isSecret: undefined,
-                                  languages: undefined,
-                                  continent: undefined,
-                                  isExtinct: undefined,
-                                  specializations: undefined,
-                                  specializationInput: undefined,
-                                  animalGr: undefined,
-                                  animalLevel: undefined,
-                                  enhancementTarget: x.target,
-                                  enhancementLevel: 2,
-                                  wikiEntry: undefined,
-                                  applications: undefined,
-                                  src: x.src,
-                                  errata: x.errata
-                                }
-                              ],
-                              tl: {
-                                hd: [
-                                  x.level3.id,
-                                  {
-                                    id: {
-                                      HASH: /* Generic */61643255,
-                                      VAL: x.level3.id
-                                    },
-                                    name: x.level3.name,
-                                    cost: x.level3.cost,
-                                    prerequisites: {
-                                      sex: Prerequisite$OptolithClient.empty.sex,
-                                      race: Prerequisite$OptolithClient.empty.race,
-                                      culture: Prerequisite$OptolithClient.empty.culture,
-                                      pact: Prerequisite$OptolithClient.empty.pact,
-                                      social: Prerequisite$OptolithClient.empty.social,
-                                      primaryAttribute: Prerequisite$OptolithClient.empty.primaryAttribute,
-                                      activatable: match !== undefined ? (
-                                          match ? ({
-                                                hd: {
-                                                  id: {
-                                                    HASH: /* SpecialAbility */-789492591,
-                                                    VAL: Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
-                                                  },
-                                                  active: true,
-                                                  sid: {
-                                                    HASH: /* Generic */61643255,
-                                                    VAL: x.level2.id
-                                                  },
-                                                  sid2: undefined,
-                                                  level: undefined
-                                                },
-                                                tl: /* [] */0
-                                              }) : ({
-                                                hd: {
-                                                  id: {
-                                                    HASH: /* SpecialAbility */-789492591,
-                                                    VAL: Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
-                                                  },
-                                                  active: true,
-                                                  sid: {
-                                                    HASH: /* Generic */61643255,
-                                                    VAL: x.level1.id
-                                                  },
-                                                  sid2: undefined,
-                                                  level: undefined
-                                                },
-                                                tl: /* [] */0
-                                              })
-                                        ) : /* [] */0,
-                                      activatableMultiEntry: Prerequisite$OptolithClient.empty.activatableMultiEntry,
-                                      activatableMultiSelect: Prerequisite$OptolithClient.empty.activatableMultiSelect,
-                                      increasable: Prerequisite$OptolithClient.empty.increasable,
-                                      increasableMultiEntry: Prerequisite$OptolithClient.empty.increasableMultiEntry
-                                    },
-                                    description: x.level3.effect,
-                                    isSecret: undefined,
-                                    languages: undefined,
-                                    continent: undefined,
-                                    isExtinct: undefined,
-                                    specializations: undefined,
-                                    specializationInput: undefined,
-                                    animalGr: undefined,
-                                    animalLevel: undefined,
-                                    enhancementTarget: x.target,
-                                    enhancementLevel: 3,
-                                    wikiEntry: undefined,
-                                    applications: undefined,
-                                    src: x.src,
-                                    errata: x.errata
-                                  }
-                                ],
-                                tl: /* [] */0
-                              }
-                            }
-                          };
-                  })));
 }
 
 function decode(locale, yamlData) {
@@ -407,9 +76,9 @@ function decode(locale, yamlData) {
   var focusRules = FocusRule$OptolithClient.Decode.all(yamlData);
   var geodeRituals = GeodeRitual$OptolithClient.Decode.all(yamlData);
   var hairColors = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.hairColorsL10n));
-  var liturgicalChantEnhancements$1 = liturgicalChantEnhancements(LiturgicalChant$OptolithClient.Decode.enhancements(yamlData));
   var liturgicalChantGroups = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.liturgicalChantGroupsL10n));
   var liturgicalChants = LiturgicalChant$OptolithClient.Decode.all(yamlData);
+  var liturgicalChantEnhancements = LiturgicalChantEnhancements$OptolithClient.Decode.liturgicalChantEnhancements(liturgicalChants, LiturgicalChant$OptolithClient.Decode.enhancements(yamlData));
   var magicalDances = MagicalDance$OptolithClient.Decode.all(yamlData);
   var magicalMelodies = MagicalMelody$OptolithClient.Decode.all(yamlData);
   var magicalTraditions = MagicalTradition$OptolithClient.Decode.all(yamlData);
@@ -426,9 +95,9 @@ function decode(locale, yamlData) {
   var skills = Skill$OptolithClient.Decode.all(yamlData);
   var socialStatuses = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.socialStatusesL10n));
   var specialAbilityGroups = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.specialAbilityGroupsL10n));
-  var spellEnhancements$1 = spellEnhancements(Spell$OptolithClient.Decode.enhancements(yamlData));
   var spellGroups = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.spellGroupsL10n));
   var spells = Spell$OptolithClient.Decode.all(yamlData);
+  var spellEnhancements = SpellEnhancements$OptolithClient.Decode.spellEnhancements(spells, Spell$OptolithClient.Decode.enhancements(yamlData));
   var states = State$OptolithClient.Decode.all(yamlData);
   var subjects = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.subjectsL10n));
   var tribes = Curry._1(Ley_IntMap$OptolithClient.fromList, Json_decode.list(idName, yamlData.tribesL10n));
@@ -436,6 +105,7 @@ function decode(locale, yamlData) {
   var advantages = Advantage$OptolithClient.Decode.all(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, yamlData);
   var disadvantages = Disadvantage$OptolithClient.Decode.all(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, yamlData);
   var specialAbilities = SpecialAbility$OptolithClient.Decode.all(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, yamlData);
+  var modifiedSpecialAbilities = SpecialAbility$OptolithClient.Decode.modifyParsed(specialAbilities);
   return {
           advantages: advantages,
           animistForces: animistForces,
@@ -466,7 +136,7 @@ function decode(locale, yamlData) {
           focusRules: focusRules,
           geodeRituals: geodeRituals,
           hairColors: hairColors,
-          liturgicalChantEnhancements: liturgicalChantEnhancements$1,
+          liturgicalChantEnhancements: liturgicalChantEnhancements,
           liturgicalChantGroups: liturgicalChantGroups,
           liturgicalChants: liturgicalChants,
           magicalDances: magicalDances,
@@ -484,9 +154,9 @@ function decode(locale, yamlData) {
           skillGroups: skillGroups,
           skills: skills,
           socialStatuses: socialStatuses,
-          specialAbilities: specialAbilities,
+          specialAbilities: modifiedSpecialAbilities,
           specialAbilityGroups: specialAbilityGroups,
-          spellEnhancements: spellEnhancements$1,
+          spellEnhancements: spellEnhancements,
           spellGroups: spellGroups,
           spells: spells,
           states: states,

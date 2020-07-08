@@ -1153,6 +1153,12 @@ function $$delete(e, _xs) {
   };
 }
 
+function $unknown$slash(xs, ys) {
+  return filter((function (param) {
+                return Ley_Function$OptolithClient.flip(notElem, ys, param);
+              }), xs);
+}
+
 function intersect(xs, ys) {
   return filter((function (param) {
                 return Ley_Function$OptolithClient.flip(elem, ys, param);
@@ -1535,6 +1541,7 @@ export {
   lines ,
   nub ,
   $$delete ,
+  $unknown$slash ,
   intersect ,
   disjoint ,
   sortBy ,

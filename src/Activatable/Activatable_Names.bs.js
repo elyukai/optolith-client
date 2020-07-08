@@ -10,7 +10,7 @@ import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as Ley_Function$OptolithClient from "../Data/Ley_Function.bs.js";
-import * as SelectOption$OptolithClient from "../Misc/SelectOption.bs.js";
+import * as SelectOption$OptolithClient from "./SelectOption.bs.js";
 import * as AdvancedFiltering$OptolithClient from "../Utilities/AdvancedFiltering.bs.js";
 import * as Activatable_Accessors$OptolithClient from "./Activatable_Accessors.bs.js";
 import * as Activatable_SelectOptions$OptolithClient from "./Activatable_SelectOptions.bs.js";

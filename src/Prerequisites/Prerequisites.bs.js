@@ -13,7 +13,7 @@ import * as Tradition$OptolithClient from "../Misc/Tradition.bs.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as Ley_Function$OptolithClient from "../Data/Ley_Function.bs.js";
-import * as SelectOption$OptolithClient from "../Misc/SelectOption.bs.js";
+import * as SelectOption$OptolithClient from "../Activatable/SelectOption.bs.js";
 import * as Activatable_Convert$OptolithClient from "../Activatable/Activatable_Convert.bs.js";
 import * as Activatable_SelectOptions$OptolithClient from "../Activatable/Activatable_SelectOptions.bs.js";
 

@@ -50,6 +50,16 @@ let (~<<): ('a => bool) => transducer('a, 'a, 'b);
 let (>>~): (fold('a, 'b), 'a => bool) => fold('a, 'b);
 
 /**
+ * The transducer version of `mapOption`. Applies the given function to every
+ * element in the structure. If the function returns a `Some`, it's value
+ * replaces the previous value (`map`). If the function returns `None`, the
+ * value is removed from the list (`filter`).
+ *
+ * Used for left-to-right composition of transducers.
+ */
+let mapOptionT: ('a => option('b)) => transducer('a, 'b, 'c);
+
+/**
  * `transduceList t xs` applies the transducer `t` to the list `xs`.
  */
 let transduceList: (transducer('a, 'b, list('b)), list('a)) => list('b);

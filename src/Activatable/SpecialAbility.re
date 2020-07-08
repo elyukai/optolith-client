@@ -47,6 +47,9 @@ module Decode = {
   open Json.Decode;
   open JsonStrict;
 
+  module IM = Ley_IntMap;
+  module O = Ley_Option;
+
   type tL10n = {
     id: int,
     name: string,
@@ -273,5 +276,16 @@ module Decode = {
       yamlData.specialAbilitiesUniv |> list(tUniv),
       yamlData.specialAbilitiesL10n |> list(tL10n),
     )
-    |> Ley_IntMap.fromList;
+    |> IM.fromList;
+
+  let modifyParsed = specialAbilities =>
+    specialAbilities
+    |> IM.adjust(
+         (specialAbility: t) =>
+           IM.lookup(Id.specialAbilityToInt(Language), specialAbilities)
+           |> O.option(specialAbility, (language: t) =>
+                {...specialAbility, selectOptions: language.selectOptions}
+              ),
+         Id.specialAbilityToInt(LanguageSpecializations),
+       );
 };

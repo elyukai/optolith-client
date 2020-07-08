@@ -14,4 +14,10 @@ let (~<<) = (pred, fold, x, acc) => pred(x) ? fold(x, acc) : acc;
 
 let (>>~) = (fold, pred) => (~<<)(pred, fold);
 
+let mapOptionT = (f, fold, x, acc) =>
+  switch (f(x)) {
+  | Some(y) => fold(y, acc)
+  | None => acc
+  };
+
 let transduceList = (t, xs) => L.Foldable.foldr(t(L.cons), [], xs);

@@ -1,7 +1,6 @@
 open SelectOption;
 open Ley_Option.Functor;
 open Ley_Option.Monad;
-open Activatable_Convert;
 open Activatable_Accessors;
 open Activatable_SelectOptions;
 
@@ -118,13 +117,13 @@ let isNoGenericRequiredSelection =
  * From a list of spell select options, only return the ones that match the
  * predicate.
  */
-let filterSpellSelectOptions = (pred, staticData: Static.t, fold) =>
+let filterSpellSelectOptions = (pred, fold) =>
   fold
   >>~ (
     (x: SelectOption.t) =>
       (
-        switch (x.id) {
-        | `Spell(id) => IM.lookup(id, staticData.spells)
+        switch (x.wikiEntry) {
+        | Some(Spell(spell)) => Some(spell)
         | _ => None
         }
       )
@@ -409,14 +408,12 @@ let getAvailableSelectOptionsTransducer =
       // Filter all spells so that only spells are included that cant be
       // familiar spells
       Some(
-        filterSpellSelectOptions(
-          spell =>
-            spell.traditions
-            |> L.disjoint([
-                 Id.magicalTraditionToInt(General),
-                 Id.magicalTraditionToInt(GuildMages),
-               ]),
-          staticData,
+        filterSpellSelectOptions(spell =>
+          spell.traditions
+          |> L.disjoint([
+               Id.magicalTraditionToInt(General),
+               Id.magicalTraditionToInt(GuildMages),
+             ])
         ),
       )
     | PropertyKnowledge as id
@@ -459,15 +456,9 @@ let getAvailableSelectOptionsTransducer =
           fold |> isNoRequiredOrActiveSelection >>~ hasActivePropertyKnowledge,
       );
     | AdaptionZauber =>
-      let checkUnfamiliar =
-        Dependencies.TransferredUnfamiliar.isUnfamiliarSpell(
-          hero.transferredUnfamiliarSpells,
-          magicalTraditions,
-        );
-
       let minimumSkillRating = 10;
 
-      let isSpellMinimum = (selectOption: SO.t) =>
+      let hasSpellMinimumSr = (selectOption: SO.t) =>
         switch (selectOption.id) {
         | `Spell(id) =>
           IM.lookup(id, hero.spells)
@@ -479,224 +470,175 @@ let getAvailableSelectOptionsTransducer =
              )
         | _ => false
         };
-      let activePropertyKnowledges =
-        maybeHeroEntry |> O.option([], getActiveSelectOptions1);
 
-      let hasActivePropertyKnowledge = (selectOption: SO.t) =>
+      let isUnfamiliarSpell = (selectOption: SO.t) =>
         switch (selectOption.id) {
-        | `Generic(_) as id => L.elem(id, activePropertyKnowledges)
+        | `Spell(id) =>
+          IM.lookup(id, staticData.spells)
+          |> O.option(
+               false,
+               Dependencies.TransferredUnfamiliar.isUnfamiliarSpell(
+                 hero.transferredUnfamiliarSpells,
+                 magicalTraditions,
+               ),
+             )
         | _ => false
         };
 
       Some(
         fold =>
-          fold |> isNoRequiredOrActiveSelection >>~ hasActivePropertyKnowledge,
+          fold
+          |> isNoRequiredOrActiveSelection
+          >>~ hasSpellMinimumSr
+          >>~ isUnfamiliarSpell,
       );
-    //         const isWikiEntryFromUnfamiliarTrad =
-    //           isUnfamiliarSpell (HA.transferredUnfamiliarSpells (hero))
-    //                             (hero_magical_traditions)
-    //         const isSpellAbove10 =
-    //           pipe (
-    //             SOA.id,
-    //             ensure (isString),
-    //             bindF (lookupF (HA.spells (hero))),
-    //             maybe (false) (pipe (ASDA.value, gte (10)))
-    //           )
-    //         const isFromUnfamiliarTrad =
-    //           pipe (
-    //             SOA.id,
-    //             ensure (isString),
-    //             bindF (lookupF (SDA.spells (staticData))),
-    //             maybe (false) (isWikiEntryFromUnfamiliarTrad)
-    //           )
-    //         return fmap (filterMapListT (composeT (
-    //                                       isNoRequiredOrActiveSelection,
-    //                                       filterT (isSpellAbove10),
-    //                                       filterT (isFromUnfamiliarTrad)
-    //                                     )))
+    | SpellEnhancement as id
+    | ChantEnhancement as id =>
+      let getTargetHeroEntry =
+        switch (id) {
+        | SpellEnhancement => (id => IM.lookup(id, hero.spells))
+        | ChantEnhancement => (id => IM.lookup(id, hero.liturgicalChants))
+        | _ => (_ => None)
+        };
+
+      let isNotUnfamiliar =
+        Ley_Bool.notP(
+          Dependencies.TransferredUnfamiliar.isUnfamiliarSpell(
+            hero.transferredUnfamiliarSpells,
+            magicalTraditions,
+          ),
+        );
+
+      let isValueValid = (maybeLevel, heroEntry: Hero.ActivatableSkill.t) =>
+        switch (maybeLevel, heroEntry.value) {
+        | (Some(level), Active(value)) => value >= level * 4 + 4
+        | (None, Active(_))
+        | (None, Inactive)
+        | (Some(_), Inactive) => false
+        };
+
+      Some(
+        fold =>
+          fold
+          |> isNoRequiredOrActiveSelection
+          >>~ (
+            (selectOption: SO.t) =>
+              switch (
+                selectOption.wikiEntry,
+                selectOption.enhancementTarget >>= getTargetHeroEntry,
+              ) {
+              | (Some(Spell(staticSpell)), Some(heroSpell)) =>
+                isNotUnfamiliar(staticSpell)
+                && isValueValid(selectOption.enhancementLevel, heroSpell)
+              | (Some(LiturgicalChant(_)), Some(heroChant)) =>
+                isValueValid(selectOption.enhancementLevel, heroChant)
+              | _ => false
+              }
+          ),
+      );
+    | LanguageSpecializations =>
+      // Pair: fst = sid, snd = current_level
+      let availableLanguages =
+        hero.specialAbilities
+        |> IM.lookup(Id.specialAbilityToInt(Language))
+        |> O.option([], (heroLanguage: Hero.Activatable.t) =>
+             heroLanguage.active
+             |> O.mapOption((active: Hero.Activatable.single) =>
+                  active.level
+                  >>= (
+                    level =>
+                      switch (level, active.options |> O.listToOption) {
+                      | (3 | 4, Some(`Generic(sid))) => Some((sid, level))
+                      | _ => None
+                      }
+                  )
+                )
+           );
+
+      Some(
+        fold =>
+          fold
+          |> isNoRequiredOrActiveSelection
+          |> mapOptionT((selectOption: SO.t) =>
+               switch (selectOption.id) {
+               | `Generic(sid) =>
+                 switch (L.lookup(sid, availableLanguages)) {
+                 | Some(4) => Some({...selectOption, cost: Some(0)})
+                 | Some(3) => Some(selectOption)
+                 | Some(_)
+                 | None => None
+                 }
+               | _ => None
+               }
+             ),
+      );
+    | MadaschwesternStil =>
+      Some(
+        filterSpellSelectOptions(spell =>
+          spell.traditions
+          |> L.disjoint([
+               Id.magicalTraditionToInt(General),
+               Id.magicalTraditionToInt(Witches),
+             ])
+        ),
+      )
+    | ScholarDesMagierkollegsZuHoningen =>
+      let allowedTraditions = [
+        Id.magicalTraditionToInt(Druids),
+        Id.magicalTraditionToInt(Elves),
+        Id.magicalTraditionToInt(Witches),
+      ];
+
+      let maybeTransferredSpellFromTradition =
+        hero.specialAbilities
+        |> IM.lookup(Id.specialAbilityToInt(TraditionGuildMages))
+        >>= (
+          specialAbility =>
+            specialAbility.active
+            |> O.listToOption
+            >>= (
+              active =>
+                (
+                  switch (active.options |> O.listToOption) {
+                  | Some(`Spell(id)) => Some(id)
+                  | Some(_)
+                  | None => None
+                  }
+                )
+                >>= F.flip(IM.lookup, staticData.spells)
+                <&> (spell => spell.traditions)
+            )
+        );
+
+      maybeTransferredSpellFromTradition
+      |> O.option(
+           idT,
+           transferredSpellFromTradition => {
+             // Contains all allowed trads the first spell does not have
+             let traditionDiff =
+               L.(allowedTraditions \/ transferredSpellFromTradition);
+
+             let hasTransferredSpellAllAllowedTraditions =
+               L.Foldable.null(traditionDiff);
+
+             filterSpellSelectOptions(spell =>
+               L.notElem(Id.magicalTraditionToInt(General), spell.traditions)
+               && L.Foldable.any(
+                    F.flip(
+                      L.elem,
+                      hasTransferredSpellAllAllowedTraditions
+                        ? allowedTraditions : traditionDiff,
+                    ),
+                    spell.traditions,
+                  )
+             );
+           },
+         )
+      |> O.Monad.return;
     | _ => Some(isNoRequiredOrActiveSelection)
     };
   };
 };
-//
-// /**
-//  * Modifies the select options of specific entries to match current conditions.
-//  */
-// const modifySelectOptions =
-//   (staticData: StaticDataRecord) =>
-//   (hero: HeroModelRecord) =>
-//   (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
-//   (wiki_entry: Activatable) =>
-//   (mhero_entry: Maybe<Record<ActivatableDependent>>): ident<Maybe<List<Record<SelectOption>>>> => {
-//     switch (current_id) {
-//       case SpecialAbilityId.adaptionZauber: {
-//         const isWikiEntryFromUnfamiliarTrad =
-//           isUnfamiliarSpell (HA.transferredUnfamiliarSpells (hero))
-//                             (hero_magical_traditions)
-//         const isSpellAbove10 =
-//           pipe (
-//             SOA.id,
-//             ensure (isString),
-//             bindF (lookupF (HA.spells (hero))),
-//             maybe (false) (pipe (ASDA.value, gte (10)))
-//           )
-//         const isFromUnfamiliarTrad =
-//           pipe (
-//             SOA.id,
-//             ensure (isString),
-//             bindF (lookupF (SDA.spells (staticData))),
-//             maybe (false) (isWikiEntryFromUnfamiliarTrad)
-//           )
-//         return fmap (filterMapListT (composeT (
-//                                       isNoRequiredOrActiveSelection,
-//                                       filterT (isSpellAbove10),
-//                                       filterT (isFromUnfamiliarTrad)
-//                                     )))
-//       }
-//       case prefixSA (SpecialAbilityId.spellEnhancement):
-//       case prefixSA (SpecialAbilityId.chantEnhancement): {
-//         const getTargetHeroEntry = current_id === prefixSA (SpecialAbilityId.spellEnhancement)
-//           ? bindF (lookupF (HA.spells (hero)))
-//           : bindF (lookupF (HA.liturgicalChants (hero)))
-//         const getTargetWikiEntry:
-//           ((x: Maybe<string>) => Maybe<Record<Spell> | Record<LiturgicalChant>>) =
-//           current_id === prefixSA (SpecialAbilityId.spellEnhancement)
-//             ? bindF (lookupF (SDA.spells (staticData)))
-//             : bindF (lookupF (SDA.liturgicalChants (staticData)))
-//         const isNotUnfamiliar =
-//           (x: Record<Spell> | Record<LiturgicalChant>) =>
-//             LiturgicalChant.is (x)
-//             || !isUnfamiliarSpell (HA.transferredUnfamiliarSpells (hero))
-//                                   (hero_magical_traditions)
-//                                   (x)
-//         return fmap (foldr (isNoRequiredOrActiveSelection (e => {
-//                              const mtarget_hero_entry = getTargetHeroEntry (SOA.target (e))
-//                              const mtarget_wiki_entry = getTargetWikiEntry (SOA.target (e))
-//                              if (
-//                                isJust (mtarget_wiki_entry)
-//                                && isJust (mtarget_hero_entry)
-//                                && isNotUnfamiliar (fromJust (mtarget_wiki_entry))
-//                                && ASDA.value (fromJust (mtarget_hero_entry))
-//                                   >= maybe (0)
-//                                            (pipe (multiply (4), add (4)))
-//                                            (SOA.level (e))
-//                              ) {
-//                                const target_wiki_entry = fromJust (mtarget_wiki_entry)
-//                                return consF (
-//                                  set (SOL.name)
-//                                      (`${SpAL.name (target_wiki_entry)}: ${SOA.name (e)}`)
-//                                      (e)
-//                                )
-//                              }
-//                              return ident as ident<List<Record<SelectOption>>>
-//                            }))
-//                            (List ()))
-//       }
-//       case SpecialAbilityId.languageSpecializations: {
-//         return pipe_ (
-//           staticData,
-//           SDA.specialAbilities,
-//           lookup<string> (SpecialAbilityId.language),
-//           bindF (AAL.select),
-//           maybe (cnst (Nothing) as ident<Maybe<List<Record<SelectOption>>>>)
-//                 (current_select => {
-//                   const available_langs =
-//                           // Pair: fst = sid, snd = current_level
-//                     maybe (List<Pair<number, number>> ())
-//                           (pipe (
-//                             ADA.active,
-//                             foldr ((obj: Record<ActiveObject>) =>
-//                                     pipe_ (
-//                                       obj,
-//                                       AOA.tier,
-//                                       bindF (current_level =>
-//                                               pipe_ (
-//                                                 guard (is3or4 (current_level)),
-//                                                 thenF (AOA.sid (obj)),
-//                                                 misNumberM,
-//                                                 fmap (current_sid =>
-//                                                        consF (Pair (
-//                                                                current_sid,
-//                                                                current_level
-//                                                              )))
-//                                               )),
-//                                       fromMaybe (
-//                                         ident as ident<List<Pair<number, number>>>
-//                                       )
-//                                     ))
-//                                   (List ())
-//                           ))
-//                           (pipe_ (
-//                             hero,
-//                             HA.specialAbilities,
-//                             lookup<string> (SpecialAbilityId.language)
-//                           ))
-//                   const filterLanguages =
-//                     foldr (isNoRequiredOrActiveSelection
-//                           (e => {
-//                             const lang =
-//                               find ((l: Pair<number, number>) =>
-//                                      fst (l) === SOA.id (e))
-//                                    (available_langs)
-//                             if (isJust (lang)) {
-//                               const isMotherTongue =
-//                                 snd (fromJust (lang)) === 4
-//                               if (isMotherTongue) {
-//                                 return consF (set (SOL.cost) (Just (0)) (e))
-//                               }
-//                               return consF (e)
-//                             }
-//                             return ident as ident<List<Record<SelectOption>>>
-//                           }))
-//                           (List ())
-//                   return cnst (Just (filterLanguages (current_select)))
-//                 })
-//         )
-//       }
-//       case SpecialAbilityId.madaschwesternStil: {
-//         return fmap (filterUnfamiliar (pipe (
-//                                         SpA.tradition,
-//                                         trads => notElem (MagicalTradition.General) (trads)
-//                                                  && notElem (MagicalTradition.Witches) (trads)
-//                                       ))
-//                                       (staticData))
-//       }
-//       case SpecialAbilityId.scholarDesMagierkollegsZuHoningen: {
-//         const allowed_traditions = List (
-//                                      MagicalTradition.Druids,
-//                                      MagicalTradition.Elves,
-//                                      MagicalTradition.Witches
-//                                    )
-//         const mtransferred_spell_trads = pipe_ (
-//                                            HA.specialAbilities (hero),
-//                                            lookup (prefixSA (SpecialAbilityId.traditionGuildMages)),
-//                                            bindF (pipe (ADA.active, listToMaybe)),
-//                                            bindF (pipe (AOA.sid, isStringM)),
-//                                            bindF (lookupF (SDA.spells (staticData))),
-//                                            fmap (SpA.tradition)
-//                                          )
-//         if (isNothing (mtransferred_spell_trads)) {
-//           return ident
-//         }
-//         const transferred_spell_trads = fromJust (mtransferred_spell_trads)
-//         // Contains all allowed trads the first spell does not have
-//         const trad_diff = filter (notElemF (transferred_spell_trads))
-//                                  (allowed_traditions)
-//         const has_transferred_all_traditions_allowed = fnull (trad_diff)
-//         return fmap (filterUnfamiliar (pipe (
-//                                         SpA.tradition,
-//                                         has_transferred_all_traditions_allowed
-//                                           ? trads =>
-//                                               notElem (MagicalTradition.General) (trads)
-//                                               && List.any (elemF (allowed_traditions)) (trads)
-//                                           : trads =>
-//                                               notElem (MagicalTradition.General) (trads)
-//                                               && List.any (elemF (trad_diff)) (trads)
-//                                       ))
-//                                       (staticData))
-//       }
-//       default:
-//         return fmap (filterMapListT (isNoRequiredOrActiveSelection))
 
 let getAvailableSelectOptions =
     (

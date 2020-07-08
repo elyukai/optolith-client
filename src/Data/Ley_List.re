@@ -966,6 +966,11 @@ let rec delete = (e, xs) =>
   };
 
 /**
+ * `xs \/ ys` returns the list `xs` with all elements in `ys` removed from `xs`.
+ */
+let (\/) = (xs, ys) => filter(Ley_Function.flip(notElem, ys), xs);
+
+/**
  * The `intersect` function takes the list intersection of two lists. For
  * example,
  *

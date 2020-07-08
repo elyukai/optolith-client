@@ -7,7 +7,7 @@ import * as Ley_Int$OptolithClient from "../Data/Ley_Int.bs.js";
 import * as Ley_Map$OptolithClient from "../Data/Ley_Map.bs.js";
 import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 import * as SourceRef$OptolithClient from "../Sources/SourceRef.bs.js";
-import * as JsonStrict$OptolithClient from "./JsonStrict.bs.js";
+import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as Ley_Function$OptolithClient from "../Data/Ley_Function.bs.js";
