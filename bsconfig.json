@@ -23,6 +23,7 @@
     { "dir": "src/Debug" },
     { "dir": "src/Equipment" },
     { "dir": "src/Increasable" },
+    { "dir": "src/Increasable/__tests__", "type": "dev" },
     { "dir": "src/Misc" },
     { "dir": "src/Prerequisites" },
     { "dir": "src/RaceCultureProfession" },
@@ -51,13 +52,5 @@
     "error" : "+101"
   },
   "namespace": true,
-  "refmt": 3,
-  "gentypeconfig": {
-    "module": "es6",
-    "language": "typescript",
-    "shims": {
-      "Js": "Js",
-      "ReasonPervasives": "ReasonPervasives"
-    }
-  }
+  "refmt": 3
 }

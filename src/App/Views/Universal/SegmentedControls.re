@@ -1,4 +1,3 @@
-[@genType]
 type segment('a) = {
   name: string,
   label: string,
@@ -55,7 +54,6 @@ module Item = {
   };
 };
 
-[@genType]
 [@react.component]
 let make =
     (

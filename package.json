@@ -63,7 +63,6 @@
     "eslint-plugin-react": "7.19.0",
     "eslint-plugin-react-hooks": "4.0.0",
     "fs-extra": "9.0.0",
-    "gentype": "3.22.0",
     "jest": "26.0.1",
     "sass": "1.26.5",
     "ts-jest": "25.5.0",

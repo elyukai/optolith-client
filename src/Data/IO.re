@@ -49,13 +49,9 @@ module Functor = {
   let (<$>) = (f, m) =>
     Js.Promise.then_(x => f(x) |> Js.Promise.resolve, m);
 
-  [@genType]
   let fmap = (<$>);
 
   let (<&>) = (m, f) => f <$> m;
-
-  [@genType]
-  let fmapF = (<&>);
 };
 
 module Monad = {
