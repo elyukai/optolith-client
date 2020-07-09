@@ -9,27 +9,6 @@ module L = Ley_List;
 module O = Ley_Option;
 
 /**
- * Takes a spell's hero entry that might not exist and returns the
- * value of that spell. Note: If the spell is not yet
- * defined, it's value is `None`.
- */
-let getValueDef = option(Inactive, (x: Hero.ActivatableSkill.t) => x.value);
-
-let valueToInt = value =>
-  switch (value) {
-  | Active(sr) => sr
-  | Inactive => 0
-  };
-
-let isActive =
-  option(false, (x: Hero.ActivatableSkill.t) =>
-    switch (x.value) {
-    | Active(_) => true
-    | Inactive => false
-    }
-  );
-
-/**
  * Returns the SR maximum if there is no property knowledge active for the passed
  * spell.
  */
@@ -78,7 +57,7 @@ let isIncreasable =
       ~staticEntry,
       ~heroEntry: Hero.ActivatableSkill.t,
     ) =>
-  valueToInt(heroEntry.value)
+  ActivatableSkills.valueToInt(heroEntry.value)
   < getMax(
       ~startEl,
       ~phase,
@@ -159,7 +138,8 @@ module PropertyKnowledge = {
             |> Ley_IntMap.lookup(staticEntry.property)
             >>= (
               count =>
-                valueToInt(heroEntry.value) >= 10 && count <= 3
+                ActivatableSkills.valueToInt(heroEntry.value) >= 10
+                && count <= 3
                   ? Some(10) : None
             )
           : None
@@ -172,7 +152,8 @@ module PropertyKnowledge = {
 let getMinSrByDeps = (heroSpells, heroEntry: Hero.ActivatableSkill.t) =>
   heroEntry.dependencies
   |> Dependencies.Flatten.flattenActivatableSkillDependencies(
-       id => heroSpells |> Ley_IntMap.lookup(id) |> getValueDef,
+       id =>
+         heroSpells |> Ley_IntMap.lookup(id) |> ActivatableSkills.getValueDef,
        heroEntry.id,
      )
   |> ensure(Ley_List.Extra.notNull)
@@ -216,6 +197,6 @@ let isDecreasable = (~propertyKnowledge, ~staticSpells, ~heroSpells) => {
   let getMinCached = getMin(~propertyKnowledge, ~staticSpells, ~heroSpells);
 
   (~staticEntry, ~heroEntry: Hero.ActivatableSkill.t) =>
-    valueToInt(heroEntry.value)
+    ActivatableSkills.valueToInt(heroEntry.value)
     > (getMinCached(~staticEntry, ~heroEntry) |> fromOption(0));
 };

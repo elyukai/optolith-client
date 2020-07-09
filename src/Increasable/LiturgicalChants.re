@@ -9,27 +9,6 @@ module L = Ley_List;
 module O = Ley_Option;
 
 /**
- * Takes a liturgical chant's hero entry that might not exist and returns the
- * value of that liturgical chant. Note: If the liturgical chant is not yet
- * defined, it's value is `None`.
- */
-let getValueDef = option(Inactive, (x: Hero.ActivatableSkill.t) => x.value);
-
-let valueToInt = value =>
-  switch (value) {
-  | Active(sr) => sr
-  | Inactive => 0
-  };
-
-let isActive =
-  option(false, (x: Hero.ActivatableSkill.t) =>
-    switch (x.value) {
-    | Active(_) => true
-    | Inactive => false
-    }
-  );
-
-/**
  * Returns the SR maximum if there is no aspect knowledge active for the
  * passed spell.
  */
@@ -84,7 +63,7 @@ let isIncreasable =
       ~staticEntry,
       ~heroEntry: Hero.ActivatableSkill.t,
     ) =>
-  valueToInt(heroEntry.value)
+  ActivatableSkills.valueToInt(heroEntry.value)
   < getMax(
       ~startEl,
       ~phase,
@@ -168,7 +147,8 @@ module AspectKnowledge = {
             |> L.Foldable.any(aspect =>
                  IM.lookup(aspect, counter)
                  |> option(false, count =>
-                      valueToInt(heroEntry.value) >= 10 && count <= 3
+                      ActivatableSkills.valueToInt(heroEntry.value) >= 10
+                      && count <= 3
                     )
                )
             |> (isRequired => isRequired ? Some(10) : None)
@@ -183,7 +163,10 @@ let getMinSrByDeps =
     (heroLiturgicalChants, heroEntry: Hero.ActivatableSkill.t) =>
   heroEntry.dependencies
   |> Dependencies.Flatten.flattenActivatableSkillDependencies(
-       id => heroLiturgicalChants |> Ley_IntMap.lookup(id) |> getValueDef,
+       id =>
+         heroLiturgicalChants
+         |> Ley_IntMap.lookup(id)
+         |> ActivatableSkills.getValueDef,
        heroEntry.id,
      )
   |> ensure(Ley_List.Extra.notNull)
@@ -234,6 +217,6 @@ let isDecreasable =
     getMin(~aspectKnowledge, ~staticLiturgicalChants, ~heroLiturgicalChants);
 
   (~staticEntry, ~heroEntry: Hero.ActivatableSkill.t) =>
-    valueToInt(heroEntry.value)
+    ActivatableSkills.valueToInt(heroEntry.value)
     > (getMinCached(~staticEntry, ~heroEntry) |> fromOption(0));
 };

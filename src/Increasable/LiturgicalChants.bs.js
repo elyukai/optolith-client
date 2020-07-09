@@ -8,32 +8,8 @@ import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as Dependencies$OptolithClient from "../Prerequisites/Dependencies.bs.js";
 import * as Ley_Function$OptolithClient from "../Data/Ley_Function.bs.js";
+import * as ActivatableSkills$OptolithClient from "./ActivatableSkills.bs.js";
 import * as Activatable_SelectOptions$OptolithClient from "../Activatable/Activatable_SelectOptions.bs.js";
-
-function getValueDef(param) {
-  return Ley_Option$OptolithClient.option(/* Inactive */0, (function (x) {
-                return x.value;
-              }), param);
-}
-
-function valueToInt(value) {
-  if (value) {
-    return value._0;
-  } else {
-    return 0;
-  }
-}
-
-function isActive(param) {
-  return Ley_Option$OptolithClient.option(false, (function (x) {
-                var match = x.value;
-                if (match) {
-                  return true;
-                } else {
-                  return false;
-                }
-              }), param);
-}
 
 function getMaxSrFromAspectKnowledge(aspectKnowledge, staticEntry) {
   var hasRestriction = Ley_Option$OptolithClient.option(true, (function (actives) {
@@ -67,7 +43,7 @@ function getMax(startEl, phase, heroAttrs, exceptionalSkill, aspectKnowledge, st
 }
 
 function isIncreasable(startEl, phase, heroAttrs, exceptionalSkill, aspectKnowledge, staticEntry, heroEntry) {
-  return valueToInt(heroEntry.value) < getMax(startEl, phase, heroAttrs, exceptionalSkill, aspectKnowledge, staticEntry);
+  return ActivatableSkills$OptolithClient.valueToInt(heroEntry.value) < getMax(startEl, phase, heroAttrs, exceptionalSkill, aspectKnowledge, staticEntry);
 }
 
 function isOnMinimum(spell) {
@@ -124,7 +100,7 @@ function getMinSr(counter, activeAspectKnowledges, staticEntry, heroEntry) {
   }
   var isRequired = Ley_List$OptolithClient.Foldable.any((function (aspect) {
           return Ley_Option$OptolithClient.option(false, (function (count) {
-                        if (valueToInt(heroEntry.value) >= 10) {
+                        if (ActivatableSkills$OptolithClient.valueToInt(heroEntry.value) >= 10) {
                           return count <= 3;
                         } else {
                           return false;
@@ -139,7 +115,7 @@ function getMinSr(counter, activeAspectKnowledges, staticEntry, heroEntry) {
 
 function getMinSrByDeps(heroLiturgicalChants, heroEntry) {
   return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Dependencies$OptolithClient.Flatten.flattenActivatableSkillDependencies((function (id) {
-                        return getValueDef(Curry._2(Ley_IntMap$OptolithClient.lookup, id, heroLiturgicalChants));
+                        return ActivatableSkills$OptolithClient.getValueDef(Curry._2(Ley_IntMap$OptolithClient.lookup, id, heroLiturgicalChants));
                       }), heroEntry.id, heroEntry.dependencies)), (function (param) {
                 return Ley_List$OptolithClient.Foldable.foldr((function (d, acc) {
                               return Ley_Option$OptolithClient.option(d, (function (prev) {
@@ -166,7 +142,7 @@ function getMin(aspectKnowledge, staticLiturgicalChants, heroLiturgicalChants) {
 function isDecreasable(aspectKnowledge, staticLiturgicalChants, heroLiturgicalChants) {
   var getMinCached = getMin(aspectKnowledge, staticLiturgicalChants, heroLiturgicalChants);
   return function (staticEntry, heroEntry) {
-    return valueToInt(heroEntry.value) > Ley_Option$OptolithClient.fromOption(0, Curry._2(getMinCached, staticEntry, heroEntry));
+    return ActivatableSkills$OptolithClient.valueToInt(heroEntry.value) > Ley_Option$OptolithClient.fromOption(0, Curry._2(getMinCached, staticEntry, heroEntry));
   };
 }
 
@@ -175,9 +151,6 @@ var AspectKnowledge = {
 };
 
 export {
-  getValueDef ,
-  valueToInt ,
-  isActive ,
   getMax ,
   isIncreasable ,
   getMin ,

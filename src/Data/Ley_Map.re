@@ -239,7 +239,39 @@ module Make = (Key: Comparable) => {
       empty,
     );
 
+  // Zipping
+
+  /**
+   * `zip mp1 mp2` merges the maps `mp1` and `mp2` so that the resulting map
+   * contains only keys that are in both source maps and their values are a pair
+   * of the values from the source maps.
+   */
+  let zip = (mp1, mp2) =>
+    mapMaybeWithKey(
+      (k, v1) => Ley_Option.Functor.(Ley_Tuple.pair(v1) <$> lookup(k, mp2)),
+      mp1,
+    );
+
+  /**
+   * `zipOption mp1 mp2` merges the maps `mp1` and `mp2` so that the resulting
+   * map contains only keys that are in `mp1` and their values are a pair
+   * of the values from `mp1` and the optional value from `mp2`, since the key
+   * does not need to exist in `mp2`.
+   */
+  let zipOption = (mp1, mp2) =>
+    mapWithKey((k, v1) => (v1, lookup(k, mp2)), mp1);
+
   // Counting
+
+  let countWith = (pred, mp) =>
+    Foldable.foldr(x => pred(x) ? Ley_Int.inc : Ley_Function.id, 0, mp);
+
+  let countWithKey = (pred, mp) =>
+    foldrWithKey(
+      (key, x) => pred(key, x) ? Ley_Int.inc : Ley_Function.id,
+      0,
+      mp,
+    );
 
   let countBy = (f, xs) =>
     Ley_List.Foldable.foldr(

@@ -661,7 +661,11 @@ let getAvailableSelectOptions =
   )
   |> (
     fun
-    | Some(transducer) => transduceList(transducer, allSelectOptions)
-    | None => allSelectOptions
+    | Some(transducer) =>
+      switch (transduceList(transducer, allSelectOptions)) {
+      | [] => L.Foldable.null(allSelectOptions) ? Some([]) : None
+      | xs => Some(xs)
+      }
+    | None => Some(allSelectOptions)
   );
 };

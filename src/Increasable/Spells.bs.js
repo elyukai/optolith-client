@@ -8,32 +8,8 @@ import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as Dependencies$OptolithClient from "../Prerequisites/Dependencies.bs.js";
 import * as Ley_Function$OptolithClient from "../Data/Ley_Function.bs.js";
+import * as ActivatableSkills$OptolithClient from "./ActivatableSkills.bs.js";
 import * as Activatable_SelectOptions$OptolithClient from "../Activatable/Activatable_SelectOptions.bs.js";
-
-function getValueDef(param) {
-  return Ley_Option$OptolithClient.option(/* Inactive */0, (function (x) {
-                return x.value;
-              }), param);
-}
-
-function valueToInt(value) {
-  if (value) {
-    return value._0;
-  } else {
-    return 0;
-  }
-}
-
-function isActive(param) {
-  return Ley_Option$OptolithClient.option(false, (function (x) {
-                var match = x.value;
-                if (match) {
-                  return true;
-                } else {
-                  return false;
-                }
-              }), param);
-}
 
 function getMaxSrFromPropertyKnowledge(propertyKnowledge, staticEntry) {
   var partial_arg_1 = staticEntry.property;
@@ -67,7 +43,7 @@ function getMax(startEl, phase, heroAttrs, exceptionalSkill, propertyKnowledge, 
 }
 
 function isIncreasable(startEl, phase, heroAttrs, exceptionalSkill, propertyKnowledge, staticEntry, heroEntry) {
-  return valueToInt(heroEntry.value) < getMax(startEl, phase, heroAttrs, exceptionalSkill, propertyKnowledge, staticEntry);
+  return ActivatableSkills$OptolithClient.valueToInt(heroEntry.value) < getMax(startEl, phase, heroAttrs, exceptionalSkill, propertyKnowledge, staticEntry);
 }
 
 function isOnMinimum(spell) {
@@ -119,7 +95,7 @@ function getMinSr(counter, activePropertyKnowledges, staticEntry, heroEntry) {
         }), activePropertyKnowledges);
   if (hasActivePropertyKnowledge) {
     return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, staticEntry.property, counter), (function (count) {
-                  if (valueToInt(heroEntry.value) >= 10 && count <= 3) {
+                  if (ActivatableSkills$OptolithClient.valueToInt(heroEntry.value) >= 10 && count <= 3) {
                     return 10;
                   }
                   
@@ -130,7 +106,7 @@ function getMinSr(counter, activePropertyKnowledges, staticEntry, heroEntry) {
 
 function getMinSrByDeps(heroSpells, heroEntry) {
   return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Dependencies$OptolithClient.Flatten.flattenActivatableSkillDependencies((function (id) {
-                        return getValueDef(Curry._2(Ley_IntMap$OptolithClient.lookup, id, heroSpells));
+                        return ActivatableSkills$OptolithClient.getValueDef(Curry._2(Ley_IntMap$OptolithClient.lookup, id, heroSpells));
                       }), heroEntry.id, heroEntry.dependencies)), (function (param) {
                 return Ley_List$OptolithClient.Foldable.foldr((function (d, acc) {
                               return Ley_Option$OptolithClient.option(d, (function (prev) {
@@ -157,7 +133,7 @@ function getMin(propertyKnowledge, staticSpells, heroSpells) {
 function isDecreasable(propertyKnowledge, staticSpells, heroSpells) {
   var getMinCached = getMin(propertyKnowledge, staticSpells, heroSpells);
   return function (staticEntry, heroEntry) {
-    return valueToInt(heroEntry.value) > Ley_Option$OptolithClient.fromOption(0, Curry._2(getMinCached, staticEntry, heroEntry));
+    return ActivatableSkills$OptolithClient.valueToInt(heroEntry.value) > Ley_Option$OptolithClient.fromOption(0, Curry._2(getMinCached, staticEntry, heroEntry));
   };
 }
 
@@ -166,9 +142,6 @@ var PropertyKnowledge = {
 };
 
 export {
-  getValueDef ,
-  valueToInt ,
-  isActive ,
   getMax ,
   isIncreasable ,
   getMin ,

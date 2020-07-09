@@ -9,6 +9,7 @@ import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
 import * as Ley_Int$OptolithClient from "./Ley_Int.bs.js";
 import * as Ley_List$OptolithClient from "./Ley_List.bs.js";
+import * as Ley_Tuple$OptolithClient from "./Ley_Tuple.bs.js";
 import * as Ley_Option$OptolithClient from "./Ley_Option.bs.js";
 import * as Ley_Result$OptolithClient from "./Ley_Result.bs.js";
 import * as Ley_Function$OptolithClient from "./Ley_Function.bs.js";
@@ -201,6 +202,7 @@ function Make(funarg) {
                   return Caml_option.some(x);
                 }), mp1, mp2);
   };
+  var mapWithKey = TypedMap.mapi;
   var foldrWithKey = function (f, initial, mp) {
     return Curry._3(TypedMap.fold, Curry.__3(f), mp, initial);
   };
@@ -253,6 +255,39 @@ function Make(funarg) {
                     return acc;
                   }
                 }), mp, empty);
+  };
+  var zip = function (mp1, mp2) {
+    return mapMaybeWithKey((function (k, v1) {
+                  return Ley_Option$OptolithClient.Functor.$less$$great((function (param) {
+                                return Ley_Tuple$OptolithClient.pair(v1, param);
+                              }), lookup(k, mp2));
+                }), mp1);
+  };
+  var zipOption = function (mp1, mp2) {
+    return Curry._2(mapWithKey, (function (k, v1) {
+                  return [
+                          v1,
+                          lookup(k, mp2)
+                        ];
+                }), mp1);
+  };
+  var countWith = function (pred, mp) {
+    return foldr((function (x) {
+                  if (Curry._1(pred, x)) {
+                    return Ley_Int$OptolithClient.inc;
+                  } else {
+                    return Ley_Function$OptolithClient.id;
+                  }
+                }), 0, mp);
+  };
+  var countWithKey = function (pred, mp) {
+    return foldrWithKey((function (key, x) {
+                  if (Curry._2(pred, key, x)) {
+                    return Ley_Int$OptolithClient.inc;
+                  } else {
+                    return Ley_Function$OptolithClient.id;
+                  }
+                }), 0, mp);
   };
   var countBy = function (f, xs) {
     return Ley_List$OptolithClient.Foldable.foldr((function (x) {
@@ -354,7 +389,7 @@ function Make(funarg) {
           alter: alter,
           union: union,
           map: TypedMap.map,
-          mapWithKey: TypedMap.mapi,
+          mapWithKey: mapWithKey,
           foldrWithKey: foldrWithKey,
           foldlWithKey: foldlWithKey,
           elems: elems,
@@ -366,6 +401,10 @@ function Make(funarg) {
           filterWithKey: TypedMap.filter,
           mapMaybe: mapMaybe,
           mapMaybeWithKey: mapMaybeWithKey,
+          zip: zip,
+          zipOption: zipOption,
+          countWith: countWith,
+          countWithKey: countWithKey,
           countBy: countBy,
           countByM: countByM,
           groupBy: groupBy

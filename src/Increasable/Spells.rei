@@ -1,21 +1,4 @@
 /**
- * Takes a spell's hero entry that might not exist and returns the value of that
- * spell. Note: If the spell is not yet defined, it's value is `None`.
- */
-let getValueDef:
-  option(Hero.ActivatableSkill.t) => Hero.ActivatableSkill.value;
-
-/**
- * Converts the spell value to an int, where `Inactive` results in `0`.
- */
-let valueToInt: Hero.ActivatableSkill.value => int;
-
-/**
- * Checks if the spell is active.
- */
-let isActive: option(Hero.ActivatableSkill.t) => bool;
-
-/**
  * Returns the maximum skill rating for the passed spell.
  */
 let getMax:

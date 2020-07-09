@@ -79,6 +79,14 @@ var mapMaybe = IntMap.mapMaybe;
 
 var mapMaybeWithKey = IntMap.mapMaybeWithKey;
 
+var zip = IntMap.zip;
+
+var zipOption = IntMap.zipOption;
+
+var countWith = IntMap.countWith;
+
+var countWithKey = IntMap.countWithKey;
+
 var countBy = IntMap.countBy;
 
 var countByM = IntMap.countByM;
@@ -122,6 +130,10 @@ export {
   filterWithKey ,
   mapMaybe ,
   mapMaybeWithKey ,
+  zip ,
+  zipOption ,
+  countWith ,
+  countWithKey ,
   countBy ,
   countByM ,
   groupBy ,

@@ -120,6 +120,38 @@ module Make:
 
     let mapMaybeWithKey: ((key, 'a) => option('b), t('a)) => t('b);
 
+    // Zipping
+
+    /**
+     * `zip mp1 mp2` merges the maps `mp1` and `mp2` so that the resulting map
+     * contains only keys that are in both source maps and their values are a pair
+     * of the values from the source maps.
+     */
+    let zip: (t('a), t('b)) => t(('a, 'b));
+
+    /**
+     * `zipOption mp1 mp2` merges the maps `mp1` and `mp2` so that the resulting
+     * map contains only keys that are in `mp1` and their values are a pair
+     * of the values from `mp1` and the optional value from `mp2`, since the key
+     * does not need to exist in `mp2`.
+     */
+    let zipOption: (t('a), t('b)) => t(('a, option('b)));
+
+    // Counting
+
+    /**
+     * `countWith pred mp` takes a predicate function and a map. The predicate
+     * is used to count elements based on if the predicate returns `true`.
+     */
+    let countWith: ('a => bool, t('a)) => int;
+
+    /**
+     * `countWithKey pred mp` takes a predicate function and a map. The
+     * predicate is used to count elements based on if the predicate returns
+     * `true`.
+     */
+    let countWithKey: ((key, 'a) => bool, t('a)) => int;
+
     /**
      * Takes a function and a list. The function is mapped over the list and the
      * return value is used as the key which's value is increased by one every
