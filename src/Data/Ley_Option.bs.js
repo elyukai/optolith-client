@@ -375,6 +375,8 @@ var Alternative = {
 };
 
 var Monad = {
+  $less$$great: $less$$great,
+  $less$amp$great: $less$amp$great,
   $$return: $$return,
   $great$great$eq: $great$great$eq,
   $eq$less$less: $eq$less$less,

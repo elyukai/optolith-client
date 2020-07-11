@@ -152,10 +152,6 @@ module Decode = {
 
   type withVariantsUniv = {variants: list(variantUniv)};
 
-  let withVariantsUniv = json => {
-    variants: json |> field("variants", list(variantUniv)),
-  };
-
   type withoutVariantsUniv = {
     commonCultures: list(int),
     hairColors: list(int),
@@ -164,22 +160,26 @@ module Decode = {
     sizeRandom: list(Dice.t),
   };
 
-  let withoutVariantsUniv = json => {
-    commonCultures: json |> field("commonCultures", list(int)),
-    hairColors: json |> field("hairColors", list(int)),
-    eyeColors: json |> field("eyeColors", list(int)),
-    sizeBase: json |> field("sizeBase", int),
-    sizeRandom: json |> field("sizeRandom", list(Dice.Decode.t)),
-  };
-
   type variantOptionsUniv =
     | WithVariants(withVariantsUniv)
     | WithoutVariants(withoutVariantsUniv);
 
+  let withVariantsUniv = (json): variantOptionsUniv =>
+    WithVariants({variants: json |> field("variants", list(variantUniv))});
+
+  let withoutVariantsUniv = (json): variantOptionsUniv =>
+    WithoutVariants({
+      commonCultures: json |> field("commonCultures", list(int)),
+      hairColors: json |> field("hairColors", list(int)),
+      eyeColors: json |> field("eyeColors", list(int)),
+      sizeBase: json |> field("sizeBase", int),
+      sizeRandom: json |> field("sizeRandom", list(Dice.Decode.t)),
+    });
+
   let variantOptionsUniv =
     oneOf([
-      json => json |> withVariantsUniv |> (x => WithVariants(x)),
-      json => json |> withoutVariantsUniv |> (x => WithoutVariants(x)),
+      json => json |> withVariantsUniv,
+      json => json |> withoutVariantsUniv,
     ]);
 
   type tUniv = {
@@ -259,7 +259,7 @@ module Decode = {
     },
   );
 
-  let t = (univ, l10n) => (
+  let t = (univ: tUniv, l10n: tL10n) => (
     univ.id,
     {
       id: univ.id,

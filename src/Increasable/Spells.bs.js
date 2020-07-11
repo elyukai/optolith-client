@@ -19,7 +19,7 @@ function getMaxSrFromPropertyKnowledge(propertyKnowledge, staticEntry) {
   };
   var hasRestriction = Ley_Option$OptolithClient.option(true, (function (param) {
           return Ley_List$OptolithClient.Foldable.notElem(partial_arg, param);
-        }), Ley_Option$OptolithClient.Functor.$less$amp$great(propertyKnowledge, Activatable_SelectOptions$OptolithClient.getActiveOptions1));
+        }), Ley_Option$OptolithClient.Monad.$less$amp$great(propertyKnowledge, Activatable_SelectOptions$OptolithClient.getActiveOptions1));
   if (hasRestriction) {
     return 14;
   }
@@ -120,7 +120,7 @@ function getMin(propertyKnowledge, staticSpells, heroSpells) {
   var counter = countApplicable(staticSpells, heroSpells);
   var activePropertyKnowledges = Activatable_SelectOptions$OptolithClient.getActiveOptions1(propertyKnowledge);
   return function (staticEntry, heroEntry) {
-    return Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Ley_Option$OptolithClient.catOptions({
+    return Ley_Option$OptolithClient.Monad.$less$amp$great(Ley_Option$OptolithClient.ensure(Ley_List$OptolithClient.Extra.notNull, Ley_Option$OptolithClient.catOptions({
                         hd: getMinSrByDeps(heroSpells, heroEntry),
                         tl: {
                           hd: getMinSr(counter, activePropertyKnowledges, staticEntry, heroEntry),

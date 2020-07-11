@@ -2,7 +2,6 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
-import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
 import * as Label$OptolithClient from "./Label.bs.js";
 import * as Ley_Int$OptolithClient from "../../../Data/Ley_Int.bs.js";
@@ -14,10 +13,11 @@ import * as ScrollView$OptolithClient from "./ScrollView.bs.js";
 
 function Dropdown$Item(Props) {
   var active = Props.active;
+  var equals = Props.equals;
   var option = Props.option;
   var onChange = Props.onChange;
   var disabled = Props.disabled;
-  var isActive = Caml_obj.caml_equal(active, option.value);
+  var isActive = Curry._2(equals, active, option.value);
   var handleClick = React.useCallback((function (param) {
           if (!disabled && !isActive) {
             return Curry._1(onChange, option.value);
@@ -50,7 +50,11 @@ function Dropdown(Props) {
   var onChange = Props.onChange;
   var disabled = Props.disabled;
   var active = Props.active;
+  var equalsOpt = Props.equals;
   var placeholder = Props.placeholder;
+  var equals = equalsOpt !== undefined ? equalsOpt : (function (prim, prim$1) {
+        return prim === prim$1;
+      });
   var match = React.useState(function () {
         return false;
       });
@@ -115,7 +119,7 @@ function Dropdown(Props) {
                   });
         }), [handleOutsideClick]);
   var activeOption = Ley_List$OptolithClient.Foldable.find((function (option) {
-          return Caml_obj.caml_equal(option.value, active);
+          return Curry._2(equals, active, option.value);
         }), options);
   var activetext = Ley_Option$OptolithClient.fromOption("", Ley_Option$OptolithClient.Alternative.$less$pipe$great(Ley_Option$OptolithClient.Functor.$less$amp$great(activeOption, (function (x) {
                   return x.label;
@@ -126,6 +130,7 @@ function Dropdown(Props) {
             children: ReactUtils$OptolithClient.list(Ley_List$OptolithClient.map((function (option) {
                         return React.createElement(Dropdown$Item, {
                                     active: active,
+                                    equals: equals,
                                     option: option,
                                     onChange: handleChange,
                                     disabled: disabled,

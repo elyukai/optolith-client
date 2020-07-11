@@ -552,7 +552,7 @@ function tIndexUniv(json) {
 }
 
 function mergeSingleOverride(univ, l10n) {
-  return Ley_Option$OptolithClient.Alternative.$less$pipe$great(Ley_Option$OptolithClient.Functor.$less$amp$great(l10n, (function (x) {
+  return Ley_Option$OptolithClient.Alternative.$less$pipe$great(Ley_Option$OptolithClient.Monad.$less$amp$great(l10n, (function (x) {
                     return /* ReplaceWith */{
                             _0: x
                           };

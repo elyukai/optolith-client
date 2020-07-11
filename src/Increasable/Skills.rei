@@ -9,7 +9,7 @@ let getValueDef: option(Hero.Skill.t) => int;
  * bonus from an active Exceptional Skill advantage for the passed skill id.
  */
 let getExceptionalSkillBonus:
-  (option(Hero.Activatable.t), Hero.Activatable.optionId) => int;
+  (option(Hero.Activatable.t), Id.Activatable.Option.t) => int;
 
 /**
  * `getMaxSrByCheckAttrs heroAttrs check` creates the base for a list for
@@ -24,7 +24,7 @@ let getMaxSrByCheckAttrs:
  * `getMaxSrFromEl el phase` returns the maximum SR defined in the selected
  * experience levele `el`, if applicable.
  */
-let getMaxSrFromEl: (ExperienceLevel.t, Id.phase) => option(int);
+let getMaxSrFromEl: (ExperienceLevel.t, Id.Phase.t) => option(int);
 
 /**
  * Returns the maximum skill rating for the passed skill.
@@ -32,7 +32,7 @@ let getMaxSrFromEl: (ExperienceLevel.t, Id.phase) => option(int);
 let getMax:
   (
     ~startEl: ExperienceLevel.t,
-    ~phase: Id.phase,
+    ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
     ~exceptionalSkill: option(Hero.Activatable.t),
     ~staticEntry: Skill.t
@@ -45,7 +45,7 @@ let getMax:
 let isIncreasable:
   (
     ~startEl: ExperienceLevel.t,
-    ~phase: Id.phase,
+    ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
     ~exceptionalSkill: option(Hero.Activatable.t),
     ~staticEntry: Skill.t,

@@ -65,7 +65,10 @@ function isIncreasable(startEl, phase, heroAttrs, exceptionalSkill, staticEntry,
 }
 
 function getMinSrByCraftInstruments(craftInstruments, skills, staticEntry) {
-  var match = Id$OptolithClient.unsafeSkillFromInt(staticEntry.id);
+  var match = Id$OptolithClient.Skill.fromInt(staticEntry.id);
+  if (typeof match !== "number") {
+    return ;
+  }
   if (match !== 50 && match !== 54) {
     return ;
   }
@@ -73,23 +76,35 @@ function getMinSrByCraftInstruments(craftInstruments, skills, staticEntry) {
     return ;
   }
   var otherSkillId;
-  if (match !== 50) {
-    if (match !== 54) {
-      throw {
-            RE_EXN_ID: "Match_failure",
-            _1: [
-              "Skills.re",
-              87,
-              10
-            ],
-            Error: new Error()
-          };
+  if (typeof match === "number") {
+    if (match !== 50) {
+      if (match !== 54) {
+        throw {
+              RE_EXN_ID: "Match_failure",
+              _1: [
+                "Skills.re",
+                90,
+                10
+              ],
+              Error: new Error()
+            };
+      }
+      otherSkillId = /* Woodworking */50;
+    } else {
+      otherSkillId = /* Metalworking */54;
     }
-    otherSkillId = /* Woodworking */50;
   } else {
-    otherSkillId = /* Metalworking */54;
+    throw {
+          RE_EXN_ID: "Match_failure",
+          _1: [
+            "Skills.re",
+            90,
+            10
+          ],
+          Error: new Error()
+        };
   }
-  var otherSkillRating = getValueDef(Curry._2(Ley_IntMap$OptolithClient.lookup, Id$OptolithClient.skillToInt(otherSkillId), skills));
+  var otherSkillRating = getValueDef(Curry._2(Ley_IntMap$OptolithClient.lookup, Id$OptolithClient.Skill.toInt(otherSkillId), skills));
   return 12 - otherSkillRating | 0;
 }
 

@@ -1,5 +1,7 @@
 open Prerequisite;
 
+module O = Ley_Option;
+
 type prerequisite =
   | CommonSuggestedByRCP
   | Sex(sex)
@@ -134,7 +136,6 @@ module Flatten = {
 module Dynamic = {
   open Static;
   open Ley_Function;
-  open Ley_Option.Functor;
   open Ley_Option.Monad;
 
   let getEntrySpecificDynamicPrerequisites =
@@ -150,184 +151,206 @@ module Dynamic = {
 
     switch (staticEntry) {
     | Advantage(entry) =>
-      switch (Id.advantageFromInt(entry.id)) {
-      | Aptitude
-      | ExceptionalSkill => [
-          Activatable({
-            id: `Disadvantage(Id.disadvantageToInt(Incompetent)),
-            active: false,
-            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-            sid2: None,
-            level: None,
-          }),
-        ]
-      | MagicalAttunement => [
-          Activatable({
-            id: `Disadvantage(Id.disadvantageToInt(MagicalRestriction)),
-            active: false,
-            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-            sid2: None,
-            level: None,
-          }),
-        ]
-      | _ => []
-      }
+      [@warning "-4"]
+      (
+        switch (Id.Advantage.fromInt(entry.id)) {
+        | Aptitude
+        | ExceptionalSkill => [
+            Activatable({
+              id: `Disadvantage(Id.Disadvantage.toInt(Incompetent)),
+              active: false,
+              sid:
+                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
+              sid2: None,
+              level: None,
+            }),
+          ]
+        | MagicalAttunement => [
+            Activatable({
+              id: `Disadvantage(Id.Disadvantage.toInt(MagicalRestriction)),
+              active: false,
+              sid:
+                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
+              sid2: None,
+              level: None,
+            }),
+          ]
+        | _ => []
+        }
+      )
     | Disadvantage(entry) =>
-      switch (Id.disadvantageFromInt(entry.id)) {
-      | MagicalRestriction => [
-          Activatable({
-            id: `Advantage(Id.advantageToInt(MagicalAttunement)),
-            active: false,
-            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-            sid2: None,
-            level: None,
-          }),
-        ]
-      | Incompetent => [
-          Activatable({
-            id: `Advantage(Id.advantageToInt(Aptitude)),
-            active: false,
-            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-            sid2: None,
-            level: None,
-          }),
-          Activatable({
-            id: `Advantage(Id.advantageToInt(ExceptionalSkill)),
-            active: false,
-            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-            sid2: None,
-            level: None,
-          }),
-        ]
-      | _ => []
-      }
+      [@warning "-4"]
+      (
+        switch (Id.Disadvantage.fromInt(entry.id)) {
+        | MagicalRestriction => [
+            Activatable({
+              id: `Advantage(Id.Advantage.toInt(MagicalAttunement)),
+              active: false,
+              sid:
+                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
+              sid2: None,
+              level: None,
+            }),
+          ]
+        | Incompetent => [
+            Activatable({
+              id: `Advantage(Id.Advantage.toInt(Aptitude)),
+              active: false,
+              sid:
+                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
+              sid2: None,
+              level: None,
+            }),
+            Activatable({
+              id: `Advantage(Id.Advantage.toInt(ExceptionalSkill)),
+              active: false,
+              sid:
+                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
+              sid2: None,
+              level: None,
+            }),
+          ]
+        | _ => []
+        }
+      )
     | SpecialAbility(entry) =>
-      switch (Id.specialAbilityFromInt(entry.id)) {
-      | SkillSpecialization =>
-        let sameSkillActiveCount =
-          Ley_Option.option(
-            0,
-            (heroEntry: Hero.Activatable.t) =>
-              heroEntry.active
-              |> Ley_List.countBy((x: Hero.Activatable.single) =>
-                   Ley_Option.listToOption(x.options) == sid
-                 ),
-            heroEntry,
-          );
+      [@warning "-4"]
+      (
+        switch (Id.SpecialAbility.fromInt(entry.id)) {
+        | SkillSpecialization =>
+          let sameSkillActiveCount =
+            Ley_Option.option(
+              0,
+              (heroEntry: Hero.Activatable.t) =>
+                heroEntry.active
+                |> Ley_List.countBy((x: Hero.Activatable.single) =>
+                     switch (sid, O.listToOption(x.options)) {
+                     | (None, _)
+                     | (_, None) => false
+                     | (Some(sid), Some(option)) =>
+                       Id.Activatable.Option.(sid == option)
+                     }
+                   ),
+              heroEntry,
+            );
 
-        let sameSkillDependency =
+          let sameSkillDependency =
+            switch (sid) {
+            | Some(`Skill(_) as id) =>
+              Some(
+                Increasable({
+                  id,
+                  value: (sameSkillActiveCount + (isEntryToAdd ? 1 : 0)) * 6,
+                }),
+              )
+            | _ => None
+            };
+
+          sid
+          >>= Activatable_SelectOptions.getSelectOption(staticEntry)
+          >>= (
+            option =>
+              (
+                switch (option.wikiEntry) {
+                | Some(Skill(skill)) => Some(skill.applications)
+                | _ => None
+                }
+              )
+              >>= (
+                appMp =>
+                  (
+                    switch (sid2) {
+                    | Some(`Generic(id)) =>
+                      Ley_IntMap.Foldable.find(
+                        (app: Skill.application) => app.id === id,
+                        appMp,
+                      )
+                    | _ => None
+                    }
+                  )
+                  >>= (
+                    app =>
+                      app.prerequisite
+                      <&> (prerequisite => Activatable(prerequisite))
+                  )
+              )
+          )
+          |> Ley_Option.optionToList
+          |> Ley_List.append(Ley_Option.optionToList(sameSkillDependency));
+        | PropertyFocus => [
+            Activatable({
+              id:
+                `SpecialAbility(Id.SpecialAbility.toInt(PropertyKnowledge)),
+              active: true,
+              sid:
+                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
+              sid2: None,
+              level: None,
+            }),
+          ]
+        | AdaptionZauber =>
           switch (sid) {
-          | Some(`Skill(_) as id) =>
-            Some(
-              Increasable({
-                id,
-                value: (sameSkillActiveCount + (isEntryToAdd ? 1 : 0)) * 6,
-              }),
-            )
-          | _ => None
-          };
-
-        sid
-        >>= Activatable_SelectOptions.getSelectOption(staticEntry)
-        >>= (
-          option =>
-            (
-              switch (option.wikiEntry) {
-              | Some(Skill(skill)) => Some(skill.applications)
-              | _ => None
-              }
-            )
-            >>= (
-              appMp =>
-                (
-                  switch (sid2) {
-                  | Some(`Generic(id)) =>
-                    Ley_IntMap.Foldable.find(
-                      (app: Skill.application) => app.id === id,
-                      appMp,
-                    )
-                  | _ => None
-                  }
-                )
-                >>= (
-                  app =>
-                    app.prerequisite
-                    <&> (prerequisite => Activatable(prerequisite))
-                )
-            )
-        )
-        |> Ley_Option.optionToList
-        |> Ley_List.append(Ley_Option.optionToList(sameSkillDependency));
-      | PropertyFocus => [
-          Activatable({
-            id: `SpecialAbility(Id.specialAbilityToInt(PropertyKnowledge)),
-            active: true,
-            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-            sid2: None,
-            level: None,
-          }),
-        ]
-      | AdaptionZauber =>
-        switch (sid) {
-        | Some(`Spell(_) as id) => [Increasable({id, value: 10})]
+          | Some(`Spell(_) as id) => [Increasable({id, value: 10})]
+          | _ => []
+          }
+        | FavoriteSpellwork =>
+          switch (sid) {
+          | Some(`Spell(_) as id) => [Increasable({id, value: 0})]
+          | _ => []
+          }
+        | SpellEnhancement as id
+        | ChantEnhancement as id =>
+          sid
+          >>= Activatable_SelectOptions.getSelectOption(staticEntry)
+          >>= (
+            option =>
+              liftM2(
+                (target, level) =>
+                  [
+                    Increasable({
+                      id:
+                        id === SpellEnhancement
+                          ? `Spell(target) : `LiturgicalChant(target),
+                      value: level * 4 + 4,
+                    }),
+                  ],
+                option.enhancementTarget,
+                option.enhancementLevel,
+              )
+          )
+          |> Ley_Option.fromOption([])
+        | LanguageSpecializations => [
+            Activatable({
+              id: `SpecialAbility(Id.SpecialAbility.toInt(Language)),
+              active: true,
+              sid:
+                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
+              sid2: None,
+              level: Some(3),
+            }),
+          ]
+        | Kraftliniennutzung =>
+          staticData.magicalTraditions
+          |> Ley_IntMap.Foldable.foldr(
+               (x: MagicalTradition.t) =>
+                 x.canLearnRituals ? Ley_List.cons(x.id) : id,
+               [],
+             )
+          |> Ley_Option.ensure(Ley_List.Extra.notNull)
+          |> Ley_Option.option([], ids =>
+               [
+                 ActivatableMultiEntry({
+                   id: SpecialAbilities(ids),
+                   active: true,
+                   sid: None,
+                   sid2: None,
+                   level: None,
+                 }),
+               ]
+             )
         | _ => []
         }
-      | FavoriteSpellwork =>
-        switch (sid) {
-        | Some(`Spell(_) as id) => [Increasable({id, value: 0})]
-        | _ => []
-        }
-      | SpellEnhancement as id
-      | ChantEnhancement as id =>
-        sid
-        >>= Activatable_SelectOptions.getSelectOption(staticEntry)
-        >>= (
-          option =>
-            liftM2(
-              (target, level) =>
-                [
-                  Increasable({
-                    id:
-                      id === SpellEnhancement
-                        ? `Spell(target) : `LiturgicalChant(target),
-                    value: level * 4 + 4,
-                  }),
-                ],
-              option.enhancementTarget,
-              option.enhancementLevel,
-            )
-        )
-        |> Ley_Option.fromOption([])
-      | LanguageSpecializations => [
-          Activatable({
-            id: `SpecialAbility(Id.specialAbilityToInt(Language)),
-            active: true,
-            sid: sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-            sid2: None,
-            level: Some(3),
-          }),
-        ]
-      | Kraftliniennutzung =>
-        staticData.magicalTraditions
-        |> Ley_IntMap.Foldable.foldr(
-             (x: MagicalTradition.t) =>
-               x.canLearnRituals ? Ley_List.cons(x.id) : id,
-             [],
-           )
-        |> Ley_Option.ensure(Ley_List.Extra.notNull)
-        |> Ley_Option.option([], ids =>
-             [
-               ActivatableMultiEntry({
-                 id: SpecialAbilities(ids),
-                 active: true,
-                 sid: None,
-                 sid2: None,
-                 level: None,
-               }),
-             ]
-           )
-      | _ => []
-      }
+      )
     };
   };
 

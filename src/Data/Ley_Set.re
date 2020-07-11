@@ -22,7 +22,7 @@ module Make = (Key: Comparable) => {
 
     let length = TypedSet.cardinal;
 
-    let elem = x => TypedSet.exists((==)(x));
+    let elem = x => TypedSet.exists(y => Key.compare(x, y) === 0);
 
     let concatMap = (f, s) =>
       TypedSet.fold(

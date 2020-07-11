@@ -131,8 +131,8 @@ module Decode = {
         liturgicalChants,
         skills,
         spells,
-        univ,
-        l10n,
+        univ: tUniv,
+        l10n: tL10n,
       ) => (
     univ.id,
     {

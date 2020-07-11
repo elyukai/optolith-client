@@ -7,7 +7,7 @@ type wikiEntry =
   | Spell(Spell.t);
 
 type t = {
-  id: Id.selectOption,
+  id: Id.SelectOption.t,
   name: string,
   cost: option(int),
   prerequisites: Prerequisite.t,
@@ -30,50 +30,7 @@ type t = {
   errata: list(Erratum.t),
 };
 
-module Ord = {
-  type t = Id.selectOption;
-
-  let%private outerToInt = (id: Id.selectOption) =>
-    switch (id) {
-    | `Generic(_) => 1
-    | `Skill(_) => 2
-    | `CombatTechnique(_) => 3
-    | `Spell(_) => 4
-    | `Cantrip(_) => 5
-    | `LiturgicalChant(_) => 6
-    | `Blessing(_) => 7
-    | `SpecialAbility(_) => 8
-    };
-
-  let%private innerToInt = (id: Id.selectOption) =>
-    switch (id) {
-    | `Generic(x)
-    | `Skill(x)
-    | `CombatTechnique(x)
-    | `Spell(x)
-    | `Cantrip(x)
-    | `LiturgicalChant(x)
-    | `Blessing(x)
-    | `SpecialAbility(x) => x
-    };
-
-  /**
-   * `compare x y` returns `0` if `x` is equal to `y`, a negative integer if `x`
-   * is less than `y`, and a positive integer if `x` is greater than `y`.
-   */
-  let compare = (x, y) => {
-    let x' = outerToInt(x);
-    let y' = outerToInt(y);
-
-    if (x' === y') {
-      innerToInt(x) - innerToInt(y);
-    } else {
-      x' - y';
-    };
-  };
-};
-
-let showId = (id: Id.selectOption) =>
+let showId = (id: Id.SelectOption.t) =>
   switch (id) {
   | `Generic(x) => "Generic(" ++ Ley_Int.show(x) ++ ")"
   | `Skill(x) => "Skill(" ++ Ley_Int.show(x) ++ ")"
@@ -85,7 +42,7 @@ let showId = (id: Id.selectOption) =>
   | `SpecialAbility(x) => "SpecialAbility(" ++ Ley_Int.show(x) ++ ")"
   };
 
-module SelectOptionMap = Ley_Map.Make(Ord);
+module SelectOptionMap = Ley_Map.Make(Id.SelectOption);
 
 type map = SelectOptionMap.t(t);
 
@@ -94,7 +51,7 @@ module Decode = {
   open JsonStrict;
 
   type tL10n = {
-    id: Id.selectOption,
+    id: Id.SelectOption.t,
     name: string,
     description: option(string),
     specializations: option(list(string)),
@@ -114,7 +71,7 @@ module Decode = {
   };
 
   type tUniv = {
-    id: Id.selectOption,
+    id: Id.SelectOption.t,
     cost: option(int),
     prerequisites: Prerequisite.t,
     isSecret: option(bool),
@@ -137,7 +94,7 @@ module Decode = {
     animalLevel: json |> optionalField("animalLevel", int),
   };
 
-  let t = (univ, l10n) => {
+  let t = (univ: tUniv, l10n: tL10n) => {
     id: univ.id,
     name: l10n.name,
     cost: univ.cost,

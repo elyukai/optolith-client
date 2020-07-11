@@ -1,14 +1,11 @@
 open Static;
 open SelectOption;
-open Ley_Option.Functor;
 open Ley_Option.Monad;
 open Activatable_Convert;
 open Activatable_Accessors;
 
-module SO = SelectOption;
 module L = Ley_List;
 module O = Ley_Option;
-module IM = Ley_IntMap;
 module SOM = SelectOption.SelectOptionMap;
 module F = Ley_Function;
 
@@ -100,7 +97,7 @@ let getOption2 = getOption(1);
 
 let getOption3 = getOption(2);
 
-let getCustomInput = (option: Hero.Activatable.optionId) =>
+let getCustomInput = (option: Id.Activatable.Option.t) =>
   switch (option) {
   | `CustomInput(x) => Some(x)
   | `Generic(_)
@@ -113,7 +110,7 @@ let getCustomInput = (option: Hero.Activatable.optionId) =>
   | `SpecialAbility(_) => None
   };
 
-let getGenericId = (option: Hero.Activatable.optionId) =>
+let getGenericId = (option: Id.Activatable.Option.t) =>
   switch (option) {
   | `Generic(x) => Some(x)
   | `Skill(_)
@@ -129,7 +126,7 @@ let getGenericId = (option: Hero.Activatable.optionId) =>
 let lookupMap = (k, mp, f) => f <$> Ley_IntMap.lookup(k, mp);
 
 let getSkillFromOption =
-    (staticData: Static.t, option: Hero.Activatable.optionId) =>
+    (staticData: Static.t, option: Id.Activatable.Option.t) =>
   switch (option) {
   | `Skill(id) => Ley_IntMap.lookup(id, staticData.skills)
   | `Generic(_)

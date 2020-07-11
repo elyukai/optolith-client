@@ -63,7 +63,8 @@ module Decode = {
           x.level2.requireLevel1
             ? [
               {
-                id: `SpecialAbility(Id.specialAbilityToInt(SpellEnhancement)),
+                id:
+                  `SpecialAbility(Id.SpecialAbility.toInt(SpellEnhancement)),
                 active: true,
                 sid: Some(`Generic(x.level1.id)),
                 sid2: None,
@@ -88,7 +89,8 @@ module Decode = {
           switch (x.level3.requirePrevious) {
           | Some(First) => [
               {
-                id: `SpecialAbility(Id.specialAbilityToInt(SpellEnhancement)),
+                id:
+                  `SpecialAbility(Id.SpecialAbility.toInt(SpellEnhancement)),
                 active: true,
                 sid: Some(`Generic(x.level1.id)),
                 sid2: None,
@@ -97,7 +99,8 @@ module Decode = {
             ]
           | Some(Second) => [
               {
-                id: `SpecialAbility(Id.specialAbilityToInt(SpellEnhancement)),
+                id:
+                  `SpecialAbility(Id.SpecialAbility.toInt(SpellEnhancement)),
                 active: true,
                 sid: Some(`Generic(x.level2.id)),
                 sid2: None,

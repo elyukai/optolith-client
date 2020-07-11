@@ -1,5 +1,4 @@
 open Ley_Option;
-open Ley_Option.Functor;
 open Ley_Option.Monad;
 open Hero.ActivatableSkill;
 
@@ -132,7 +131,7 @@ module AspectKnowledge = {
       ) =>
     activeAspectKnowledges
     // Is liturgical chant part of dependencies of any active Aspect Knowledge?
-    |> L.Foldable.any((sid: Hero.Activatable.optionId) =>
+    |> L.Foldable.any((sid: Id.Activatable.Option.t) =>
          switch (sid) {
          | `Generic(x) => L.Foldable.elem(x, staticEntry.aspects)
          | _ => false

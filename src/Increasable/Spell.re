@@ -88,7 +88,7 @@ module Decode = {
     errata: list(Erratum.t),
   };
 
-  let enhancementL10n = json => {
+  let enhancementL10n = (json): enhancementL10n => {
     target: json |> field("target", int),
     level1: json |> field("level1", enhancementLevelL10n),
     level2: json |> field("level2", enhancementLevelL10n),
@@ -178,7 +178,8 @@ module Decode = {
     level3: json |> field("level3", enhancementLevel3Univ),
   };
 
-  let enhancement = (univ, l10n: enhancementL10n): enhancement => {
+  let enhancement =
+      (univ: enhancementUniv, l10n: enhancementL10n): enhancement => {
     target: univ.target,
     level1: {
       id: univ.level1.id,
@@ -294,7 +295,7 @@ module Decode = {
     gr: json |> field("gr", int),
   };
 
-  let t = (univ, l10n) => (
+  let t = (univ: tUniv, l10n: tL10n) => (
     univ.id,
     {
       id: univ.id,

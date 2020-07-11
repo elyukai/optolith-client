@@ -1,5 +1,4 @@
 open Ley_Option;
-open Ley_Option.Functor;
 open Ley_Option.Monad;
 open Static;
 open Ley_Function;
@@ -59,287 +58,296 @@ let getDefaultNameAddition = (staticEntry, heroEntry) => {
 let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
   switch (staticEntry) {
   | Advantage(entry) =>
-    switch (Id.advantageFromInt(entry.id)) {
-    | Aptitude
-    | ExceptionalSkill =>
-      heroEntry
-      |> getOption1
-      >>= (
-        sid =>
-          switch (sid) {
-          | `Skill(id) => lookupMap(id, staticData.skills, x => x.name)
-          | `Spell(id) => lookupMap(id, staticData.spells, x => x.name)
-          | `LiturgicalChant(id) =>
-            lookupMap(id, staticData.liturgicalChants, x => x.name)
-          | `Generic(_)
-          | `CombatTechnique(_)
-          | `Cantrip(_)
-          | `Blessing(_)
-          | `SpecialAbility(_)
-          | `CustomInput(_) => None
-          }
-      )
-    | ExceptionalCombatTechnique
-    | WeaponAptitude =>
-      heroEntry
-      |> getOption1
-      >>= (
-        sid =>
-          switch (sid) {
-          | `CombatTechnique(id) =>
-            lookupMap(id, staticData.combatTechniques, x => x.name)
-          | `Generic(_)
-          | `Skill(_)
-          | `Spell(_)
-          | `LiturgicalChant(_)
-          | `Cantrip(_)
-          | `Blessing(_)
-          | `SpecialAbility(_)
-          | `CustomInput(_) => None
-          }
-      )
-    | HatredFor =>
-      heroEntry
-      |> getOption1
-      >>= getSelectOption(staticEntry)
-      |> liftM2(
-           (type_, frequency: SelectOption.t) =>
-             type_ ++ " (" ++ frequency.name ++ ")",
-           getOption2(heroEntry) >>= getCustomInput,
-         )
-    | _ => getDefaultNameAddition(staticEntry, heroEntry)
-    }
-  | Disadvantage(entry) =>
-    switch (Id.disadvantageFromInt(entry.id)) {
-    | Incompetent =>
-      heroEntry
-      |> getOption1
-      >>= getSkillFromOption(staticData)
-      <&> (x => x.name)
-    | PersonalityFlaw =>
-      heroEntry
-      |> getOption1
-      >>= getSelectOption(staticEntry)
-      <&> (
-        option1 =>
-          (
-            switch (option1.id) {
-            // Get the input if Prejudice or Unworldly is selected
-            | `Generic(7 | 8) => heroEntry |> getOption2 >>= getCustomInput
-            // Otherwise ignore any additional options
+    [@warning "-4"]
+    (
+      switch (Id.Advantage.fromInt(entry.id)) {
+      | Aptitude
+      | ExceptionalSkill =>
+        heroEntry
+        |> getOption1
+        >>= (
+          sid =>
+            switch (sid) {
+            | `Skill(id) => lookupMap(id, staticData.skills, x => x.name)
+            | `Spell(id) => lookupMap(id, staticData.spells, x => x.name)
+            | `LiturgicalChant(id) =>
+              lookupMap(id, staticData.liturgicalChants, x => x.name)
+            | `Generic(_)
+            | `CombatTechnique(_)
+            | `Cantrip(_)
+            | `Blessing(_)
+            | `SpecialAbility(_)
+            | `CustomInput(_) => None
+            }
+        )
+      | ExceptionalCombatTechnique
+      | WeaponAptitude =>
+        heroEntry
+        |> getOption1
+        >>= (
+          sid =>
+            switch (sid) {
+            | `CombatTechnique(id) =>
+              lookupMap(id, staticData.combatTechniques, x => x.name)
             | `Generic(_)
             | `Skill(_)
-            | `CombatTechnique(_)
             | `Spell(_)
             | `LiturgicalChant(_)
             | `Cantrip(_)
             | `Blessing(_)
-            | `SpecialAbility(_) => None
+            | `SpecialAbility(_)
+            | `CustomInput(_) => None
             }
-          )
-          |> option(option1.name, specialInput =>
-               option1.name ++ ": " ++ specialInput
-             )
-      )
-    | _ => getDefaultNameAddition(staticEntry, heroEntry)
-    }
-  | SpecialAbility(entry) =>
-    switch (Id.specialAbilityFromInt(entry.id)) {
-    | AdaptionZauber
-    | FavoriteSpellwork =>
-      heroEntry
-      |> getOption1
-      >>= (
-        sid =>
-          switch (sid) {
-          | `Spell(id) => lookupMap(id, staticData.spells, x => x.name)
-          | `Generic(_)
-          | `Skill(_)
-          | `CombatTechnique(_)
-          | `LiturgicalChant(_)
-          | `Cantrip(_)
-          | `Blessing(_)
-          | `SpecialAbility(_)
-          | `CustomInput(_) => None
-          }
-      )
-    | TraditionSavant
-    | Forschungsgebiet
-    | Expertenwissen
-    | Wissensdurst
-    | Recherchegespuer =>
-      heroEntry
-      |> getOption1
-      >>= getSkillFromOption(staticData)
-      <&> (x => x.name)
-    | Lieblingsliturgie =>
-      heroEntry
-      |> getOption1
-      >>= (
-        sid =>
-          switch (sid) {
-          | `LiturgicalChant(id) =>
-            lookupMap(id, staticData.liturgicalChants, x => x.name)
-          | `Generic(_)
-          | `Skill(_)
-          | `CombatTechnique(_)
-          | `Spell(_)
-          | `Cantrip(_)
-          | `Blessing(_)
-          | `SpecialAbility(_)
-          | `CustomInput(_) => None
-          }
-      )
-    | SkillSpecialization =>
-      heroEntry
-      |> getOption1
-      >>= getSkillFromOption(staticData)
-      >>= (
-        skill =>
-          heroEntry
-          |> getOption2
-          >>= (
-            option2 =>
-              (
-                switch (option2) {
-                // If input string use input
-                | `CustomInput(x) => Some(x)
-                // Otherwise lookup application name
-                | `Generic(id) =>
-                  skill.applications
-                  |> Ley_IntMap.Foldable.find((a: Skill.application) =>
-                       a.id === id
-                     )
-                  <&> (a => a.name)
-                | `Skill(_)
-                | `CombatTechnique(_)
-                | `Spell(_)
-                | `LiturgicalChant(_)
-                | `Cantrip(_)
-                | `Blessing(_)
-                | `SpecialAbility(_) => None
-                }
-              )
-              // Merge skill name and application name
-              <&> (appName => skill.name ++ ": " ++ appName)
-          )
-      )
-    | Exorzist =>
-      switch (heroEntry.level) {
-      | Some(1) =>
-        heroEntry |> getOption1 >>= getSelectOptionName(staticEntry)
-      | _ => None
-      }
-    | SpellEnhancement as entryId
-    | ChantEnhancement as entryId =>
-      heroEntry
-      |> getOption1
-      >>= getSelectOption(staticEntry)
-      >>= (
-        enhancement =>
-          enhancement.enhancementTarget
-          >>= (
-            id =>
-              (
-                switch (entryId) {
-                | SpellEnhancement =>
-                  Ley_IntMap.lookup(id, staticData.spells) <&> (x => x.name)
-                | _ =>
-                  Ley_IntMap.lookup(id, staticData.liturgicalChants)
-                  <&> (x => x.name)
-                }
-              )
-              <&> (targetName => targetName ++ ": " ++ enhancement.name)
-          )
-      )
-    | TraditionArcaneBard =>
-      heroEntry
-      |> getOption1
-      >>= getGenericId
-      >>= flip(Ley_IntMap.lookup, staticData.arcaneBardTraditions)
-    | TraditionArcaneDancer =>
-      heroEntry
-      |> getOption1
-      >>= getGenericId
-      >>= flip(Ley_IntMap.lookup, staticData.arcaneDancerTraditions)
-    | LanguageSpecializations =>
-      liftM2(
-        getSelectOption,
-        Ley_IntMap.lookup(
-          Id.specialAbilityToInt(Language),
-          staticData.specialAbilities,
         )
-        <&> (specialAbility => SpecialAbility(specialAbility)),
-        getOption1(heroEntry),
-      )
-      |> join
-      >>= (
-        language =>
-          heroEntry
-          |> getOption2
-          >>= (
-            option2 =>
-              (
-                switch (option2) {
-                | `CustomInput(str) => Some(str)
-                | `Generic(specializationId) =>
-                  language.specializations
-                  >>= (
-                    specializations =>
-                      Ley_List.Safe.atMay(
-                        specializations,
-                        specializationId - 1,
-                      )
-                  )
-                | `Skill(_)
-                | `CombatTechnique(_)
-                | `Spell(_)
-                | `LiturgicalChant(_)
-                | `Cantrip(_)
-                | `Blessing(_)
-                | `SpecialAbility(_) => None
-                }
-              )
-              <&> (specialization => language.name ++ ": " ++ specialization)
-          )
-      )
-    | Fachwissen =>
-      heroEntry
-      |> getOption1
-      >>= getSkillFromOption(staticData)
-      >>= (
-        skill => {
-          let applications =
-            skill.applications
-            |> Ley_IntMap.filter((app: Skill.application) =>
-                 app.prerequisite |> isNone
-               );
-
-          [heroEntry |> getOption2, heroEntry |> getOption3]
-          |> mapOption(option =>
-               option
-               >>= getGenericId
-               >>= (
-                 opt =>
-                   applications
-                   |> Ley_IntMap.Foldable.find((app: Skill.application) =>
-                        app.id === opt
-                      )
-                   <&> (app => app.name)
+      | HatredFor =>
+        heroEntry
+        |> getOption1
+        >>= getSelectOption(staticEntry)
+        |> liftM2(
+             (type_, frequency: SelectOption.t) =>
+               type_ ++ " (" ++ frequency.name ++ ")",
+             getOption2(heroEntry) >>= getCustomInput,
+           )
+      | _ => getDefaultNameAddition(staticEntry, heroEntry)
+      }
+    )
+  | Disadvantage(entry) =>
+    [@warning "-4"]
+    (
+      switch (Id.Disadvantage.fromInt(entry.id)) {
+      | Incompetent =>
+        heroEntry
+        |> getOption1
+        >>= getSkillFromOption(staticData)
+        <&> (x => x.name)
+      | PersonalityFlaw =>
+        heroEntry
+        |> getOption1
+        >>= getSelectOption(staticEntry)
+        <&> (
+          option1 =>
+            (
+              switch (option1.id) {
+              // Get the input if Prejudice or Unworldly is selected
+              | `Generic(7 | 8) => heroEntry |> getOption2 >>= getCustomInput
+              // Otherwise ignore any additional options
+              | `Generic(_)
+              | `Skill(_)
+              | `CombatTechnique(_)
+              | `Spell(_)
+              | `LiturgicalChant(_)
+              | `Cantrip(_)
+              | `Blessing(_)
+              | `SpecialAbility(_) => None
+              }
+            )
+            |> option(option1.name, specialInput =>
+                 option1.name ++ ": " ++ specialInput
                )
-             )
-          |> ensure(apps => apps |> Ley_List.Foldable.length |> (===)(2))
-          <&> (
-            apps =>
-              apps
-              |> AdvancedFiltering.sortStrings(staticData)
-              |> Intl.ListFormat.format(Conjunction, staticData)
-              |> (appsStr => skill.name ++ ": " ++ appsStr)
-          );
+        )
+      | _ => getDefaultNameAddition(staticEntry, heroEntry)
+      }
+    )
+  | SpecialAbility(entry) =>
+    [@warning "-4"]
+    (
+      switch (Id.SpecialAbility.fromInt(entry.id)) {
+      | AdaptionZauber
+      | FavoriteSpellwork =>
+        heroEntry
+        |> getOption1
+        >>= (
+          sid =>
+            switch (sid) {
+            | `Spell(id) => lookupMap(id, staticData.spells, x => x.name)
+            | `Generic(_)
+            | `Skill(_)
+            | `CombatTechnique(_)
+            | `LiturgicalChant(_)
+            | `Cantrip(_)
+            | `Blessing(_)
+            | `SpecialAbility(_)
+            | `CustomInput(_) => None
+            }
+        )
+      | TraditionSavant
+      | Forschungsgebiet
+      | Expertenwissen
+      | Wissensdurst
+      | Recherchegespuer =>
+        heroEntry
+        |> getOption1
+        >>= getSkillFromOption(staticData)
+        <&> (x => x.name)
+      | Lieblingsliturgie =>
+        heroEntry
+        |> getOption1
+        >>= (
+          sid =>
+            switch (sid) {
+            | `LiturgicalChant(id) =>
+              lookupMap(id, staticData.liturgicalChants, x => x.name)
+            | `Generic(_)
+            | `Skill(_)
+            | `CombatTechnique(_)
+            | `Spell(_)
+            | `Cantrip(_)
+            | `Blessing(_)
+            | `SpecialAbility(_)
+            | `CustomInput(_) => None
+            }
+        )
+      | SkillSpecialization =>
+        heroEntry
+        |> getOption1
+        >>= getSkillFromOption(staticData)
+        >>= (
+          skill =>
+            heroEntry
+            |> getOption2
+            >>= (
+              option2 =>
+                (
+                  switch (option2) {
+                  // If input string use input
+                  | `CustomInput(x) => Some(x)
+                  // Otherwise lookup application name
+                  | `Generic(id) =>
+                    skill.applications
+                    |> Ley_IntMap.Foldable.find((a: Skill.application) =>
+                         a.id === id
+                       )
+                    <&> (a => a.name)
+                  | `Skill(_)
+                  | `CombatTechnique(_)
+                  | `Spell(_)
+                  | `LiturgicalChant(_)
+                  | `Cantrip(_)
+                  | `Blessing(_)
+                  | `SpecialAbility(_) => None
+                  }
+                )
+                // Merge skill name and application name
+                <&> (appName => skill.name ++ ": " ++ appName)
+            )
+        )
+      | Exorzist =>
+        switch (heroEntry.level) {
+        | Some(1) =>
+          heroEntry |> getOption1 >>= getSelectOptionName(staticEntry)
+        | _ => None
         }
-      )
-    | _ => getDefaultNameAddition(staticEntry, heroEntry)
-    }
+      | SpellEnhancement as entryId
+      | ChantEnhancement as entryId =>
+        heroEntry
+        |> getOption1
+        >>= getSelectOption(staticEntry)
+        >>= (
+          enhancement =>
+            enhancement.enhancementTarget
+            >>= (
+              id =>
+                (
+                  switch (entryId) {
+                  | SpellEnhancement =>
+                    Ley_IntMap.lookup(id, staticData.spells) <&> (x => x.name)
+                  | _ =>
+                    Ley_IntMap.lookup(id, staticData.liturgicalChants)
+                    <&> (x => x.name)
+                  }
+                )
+                <&> (targetName => targetName ++ ": " ++ enhancement.name)
+            )
+        )
+      | TraditionArcaneBard =>
+        heroEntry
+        |> getOption1
+        >>= getGenericId
+        >>= flip(Ley_IntMap.lookup, staticData.arcaneBardTraditions)
+      | TraditionArcaneDancer =>
+        heroEntry
+        |> getOption1
+        >>= getGenericId
+        >>= flip(Ley_IntMap.lookup, staticData.arcaneDancerTraditions)
+      | LanguageSpecializations =>
+        liftM2(
+          getSelectOption,
+          Ley_IntMap.lookup(
+            Id.SpecialAbility.toInt(Language),
+            staticData.specialAbilities,
+          )
+          <&> (specialAbility => SpecialAbility(specialAbility)),
+          getOption1(heroEntry),
+        )
+        |> join
+        >>= (
+          language =>
+            heroEntry
+            |> getOption2
+            >>= (
+              option2 =>
+                (
+                  switch (option2) {
+                  | `CustomInput(str) => Some(str)
+                  | `Generic(specializationId) =>
+                    language.specializations
+                    >>= (
+                      specializations =>
+                        Ley_List.Safe.atMay(
+                          specializations,
+                          specializationId - 1,
+                        )
+                    )
+                  | `Skill(_)
+                  | `CombatTechnique(_)
+                  | `Spell(_)
+                  | `LiturgicalChant(_)
+                  | `Cantrip(_)
+                  | `Blessing(_)
+                  | `SpecialAbility(_) => None
+                  }
+                )
+                <&> (specialization => language.name ++ ": " ++ specialization)
+            )
+        )
+      | Fachwissen =>
+        heroEntry
+        |> getOption1
+        >>= getSkillFromOption(staticData)
+        >>= (
+          skill => {
+            let applications =
+              skill.applications
+              |> Ley_IntMap.filter((app: Skill.application) =>
+                   app.prerequisite |> isNone
+                 );
+
+            [heroEntry |> getOption2, heroEntry |> getOption3]
+            |> mapOption(option =>
+                 option
+                 >>= getGenericId
+                 >>= (
+                   opt =>
+                     applications
+                     |> Ley_IntMap.Foldable.find((app: Skill.application) =>
+                          app.id === opt
+                        )
+                     <&> (app => app.name)
+                 )
+               )
+            |> ensure(apps => apps |> Ley_List.Foldable.length |> (===)(2))
+            <&> (
+              apps =>
+                apps
+                |> AdvancedFiltering.sortStrings(staticData)
+                |> Intl.ListFormat.format(Conjunction, staticData)
+                |> (appsStr => skill.name ++ ": " ++ appsStr)
+            );
+          }
+        )
+      | _ => getDefaultNameAddition(staticEntry, heroEntry)
+      }
+    )
   };
 
 let getDisAdvLevelStr = level =>
@@ -360,13 +368,16 @@ let getLevelName = (staticData, staticEntry, singleHeroEntry) =>
   | (Advantage(_), Some(level))
   | (Disadvantage(_), Some(level)) => Some(getDisAdvLevelStr(level))
   | (SpecialAbility(staticEntry), Some(level)) =>
-    switch (Id.specialAbilityFromInt(staticEntry.id)) {
-    // Language level 4 = Native Tongue and thus needs a special name
-    | Language when level === 4 =>
-      Some(staticData.messages.specialabilities_nativetonguelevel)
-    | _ => Some(getSpecialAbilityLevelStr(level))
-    }
-  | _ => None
+    [@warning "-4"]
+    (
+      switch (Id.SpecialAbility.fromInt(staticEntry.id)) {
+      // Language level 4 = Native Tongue and thus needs a special name
+      | Language when level === 4 =>
+        Some(staticData.messages.specialabilities_nativetonguelevel)
+      | _ => Some(getSpecialAbilityLevelStr(level))
+      }
+    )
+  | (Advantage(_) | Disadvantage(_) | SpecialAbility(_), None) => None
   };
 
 /**
@@ -395,32 +406,41 @@ let getEntrySpecificNameReplacements =
 
   switch (staticEntry) {
   | Advantage(entry) =>
-    switch (Id.advantageFromInt(entry.id)) {
-    | ImmunityToPoison
-    | ImmunityToDisease
-    | HatredFor => mapDefaultWithoutParens()
-    | _ => mapDefaultWithParens() ++ flatLevelName
-    }
+    [@warning "-4"]
+    (
+      switch (Id.Advantage.fromInt(entry.id)) {
+      | ImmunityToPoison
+      | ImmunityToDisease
+      | HatredFor => mapDefaultWithoutParens()
+      | _ => mapDefaultWithParens() ++ flatLevelName
+      }
+    )
   | Disadvantage(entry) =>
-    switch (Id.disadvantageFromInt(entry.id)) {
-    | AfraidOf => mapDefaultWithoutParens() ++ flatLevelName
-    | Principles
-    | Obligations =>
-      option(
-        name ++ flatLevelName,
-        nameAddition => name ++ flatLevelName ++ " (" ++ nameAddition ++ ")",
-        nameAddition,
-      )
-    | _ => mapDefaultWithParens() ++ flatLevelName
-    }
+    [@warning "-4"]
+    (
+      switch (Id.Disadvantage.fromInt(entry.id)) {
+      | AfraidOf => mapDefaultWithoutParens() ++ flatLevelName
+      | Principles
+      | Obligations =>
+        option(
+          name ++ flatLevelName,
+          nameAddition => name ++ flatLevelName ++ " (" ++ nameAddition ++ ")",
+          nameAddition,
+        )
+      | _ => mapDefaultWithParens() ++ flatLevelName
+      }
+    )
   | SpecialAbility(entry) =>
-    switch (Id.specialAbilityFromInt(entry.id)) {
-    | GebieterDesAspekts => mapDefaultWithoutParens()
-    | TraditionArcaneBard
-    | TraditionArcaneDancer
-    | TraditionSavant => mapNameAddition(flip(addSndInParens, name))
-    | _ => mapDefaultWithParens() ++ flatLevelName
-    }
+    [@warning "-4"]
+    (
+      switch (Id.SpecialAbility.fromInt(entry.id)) {
+      | GebieterDesAspekts => mapDefaultWithoutParens()
+      | TraditionArcaneBard
+      | TraditionArcaneDancer
+      | TraditionSavant => mapNameAddition(flip(addSndInParens, name))
+      | _ => mapDefaultWithParens() ++ flatLevelName
+      }
+    )
   };
 };
 

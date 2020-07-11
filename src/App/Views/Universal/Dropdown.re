@@ -11,8 +11,9 @@ type dropdownOption('a) = {
 
 module Item = {
   [@react.component]
-  let make = (~active, ~option, ~onChange, ~disabled) => {
-    let isActive = active == option.value;
+  let make =
+      (~active, ~equals: ('a, 'a) => bool, ~option, ~onChange, ~disabled) => {
+    let isActive = equals(active, option.value);
 
     let handleClick =
       React.useCallback4(
@@ -45,6 +46,7 @@ let make =
       ~onChange,
       ~disabled,
       ~active,
+      ~equals=(===),
       ~placeholder=?,
     ) => {
   let (isOpen, setIsOpen) = React.useState(() => false);
@@ -72,7 +74,8 @@ let make =
             -. DomRect.top(rect) < height
               ? Top : Bottom
           );
-        | _ => ()
+        | Some(_)
+        | None => ()
         };
 
         setIsOpen((!));
@@ -142,7 +145,8 @@ let make =
     [|handleOutsideClick|],
   );
 
-  let activeOption = Foldable.find(option => option.value == active, options);
+  let activeOption =
+    Foldable.find(option => equals(active, option.value), options);
 
   let activetext =
     activeOption
@@ -158,6 +162,7 @@ let make =
               <Item
                 key={option.value |> valueToKey}
                 active
+                equals
                 disabled
                 option
                 onChange=handleChange
@@ -186,7 +191,8 @@ let make =
     <div>
       {switch (position) {
        | Top when isOpen => overlayElement
-       | _ => placeholderElement
+       | Top
+       | Bottom => placeholderElement
        }}
       <div
         onClick=handleSwitch
@@ -198,7 +204,8 @@ let make =
       </div>
       {switch (position) {
        | Bottom when isOpen => overlayElement
-       | _ => placeholderElement
+       | Top
+       | Bottom => placeholderElement
        }}
     </div>
   </div>;

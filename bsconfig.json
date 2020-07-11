@@ -48,8 +48,8 @@
     "react-jsx": 3
   },
   "warnings": {
-    "number" : "+102",
-    "error" : "+101"
+    "number" : "+A-42-48",
+    "error" : "+A-3-4-27-32-41-44-102"
   },
   "namespace": true,
   "refmt": 3

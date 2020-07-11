@@ -1,6 +1,4 @@
-module IM = Ley_IntMap;
 module I = Ley_Int;
-module O = Ley_Option;
 
 // const hasRequiredMinimumLevel =
 //   (min_level: Maybe<number>) => (max_level: Maybe<number>): boolean =>
@@ -381,20 +379,6 @@ let getMinLevelForIncreaseEntry = (defaultAmount, currentAmount) =>
  */
 let getMaxLevelForDecreaseEntry = (maxDecrease, current) =>
   I.max(0, maxDecrease - current);
-
-/**
- * `countActiveFromGroup specialAbilityPairs group` counts active special
- * abilities from a certain `group`.
- */
-let countActiveFromGroup = (specialAbilityPairs, group) =>
-  IM.countWith(
-    fun
-    | ({SpecialAbility.gr}, Some(heroEntry)) =>
-      gr === Id.specialAbilityGroupToInt(group)
-      && Activatable_Accessors.isActive(heroEntry)
-    | _ => false,
-    specialAbilityPairs,
-  );
 
 //
 // const getEntrySpecificMinimumLevel =

@@ -39,7 +39,7 @@ module Alternative = {
 };
 
 module Monad = {
-  open Functor;
+  include Functor;
 
   let return = x => Some(x);
 

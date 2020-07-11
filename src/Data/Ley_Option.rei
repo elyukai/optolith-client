@@ -29,6 +29,8 @@ module Alternative: {
 };
 
 module Monad: {
+  include (module type of Functor);
+
   /**
    * Lift a value.
    */

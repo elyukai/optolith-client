@@ -41,7 +41,7 @@ module Flatten: {
    */
   let getRequiredSelectOptions1:
     (Ley_IntMap.t(Hero.Activatable.t), Hero.Activatable.t) =>
-    list(OneOrMany.t(Id.selectOption));
+    list(OneOrMany.t(Id.SelectOption.t));
 };
 
 module TransferredUnfamiliar: {
@@ -81,7 +81,7 @@ let addDependencies:
   (
     Static.t,
     list(Prerequisites.prerequisite),
-    Id.prerequisiteSource,
+    Id.PrerequisiteSource.t,
     Hero.t
   ) =>
   Hero.t;
@@ -93,7 +93,7 @@ let removeDependencies:
   (
     Static.t,
     list(Prerequisites.prerequisite),
-    Id.prerequisiteSource,
+    Id.PrerequisiteSource.t,
     Hero.t
   ) =>
   Hero.t;

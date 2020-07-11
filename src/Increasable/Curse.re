@@ -59,7 +59,7 @@ module Decode = {
     property: json |> field("property", int),
   };
 
-  let t = (univ, l10n) => (
+  let t = (univ: tUniv, l10n: tL10n) => (
     univ.id,
     {
       id: univ.id,

@@ -164,8 +164,8 @@ function modifyParsed(specialAbilities) {
                               var newrecord = Caml_obj.caml_obj_dup(specialAbility);
                               newrecord.selectOptions = language.selectOptions;
                               return newrecord;
-                            }), Curry._2(Ley_IntMap$OptolithClient.lookup, Id$OptolithClient.specialAbilityToInt(/* Language */6), specialAbilities));
-              }), Id$OptolithClient.specialAbilityToInt(/* LanguageSpecializations */71), specialAbilities);
+                            }), Curry._2(Ley_IntMap$OptolithClient.lookup, Id$OptolithClient.SpecialAbility.toInt(/* Language */6), specialAbilities));
+              }), Id$OptolithClient.SpecialAbility.toInt(/* LanguageSpecializations */71), specialAbilities);
 }
 
 var Decode = {

@@ -27,14 +27,14 @@ let getAttack = (heroAttrs, staticEntry: CombatTechnique.t, heroEntry) =>
        getPrimaryAttributeMod(
          heroAttrs,
          staticEntry.gr === 1
-           ? [Id.attributeToInt(Courage)] : staticEntry.primary,
+           ? [Id.Attribute.toInt(Courage)] : staticEntry.primary,
        ),
      );
 
 let getParry = (heroAttrs, staticEntry: CombatTechnique.t, heroEntry) =>
-  staticEntry.gr === Id.combatTechniqueGroupToInt(Melee)
-  && staticEntry.id !== Id.combatTechniqueToInt(ChainWeapons)
-  && staticEntry.id !== Id.combatTechniqueToInt(Brawling)
+  staticEntry.gr === Id.CombatTechnique.Group.toInt(Melee)
+  && staticEntry.id !== Id.CombatTechnique.toInt(ChainWeapons)
+  && staticEntry.id !== Id.CombatTechnique.toInt(Brawling)
     ? Some(
         heroEntry
         |> getValueDef
@@ -67,12 +67,14 @@ let getExceptionalCombatTechniqueBonus = (exceptionalCombatTechnique, id) =>
     exceptionalCombatTechnique,
   );
 
-let getMaxCtrFromEl = (el: ExperienceLevel.t, phase: Id.phase) =>
-  switch (phase) {
-  | Outline
-  | Definition => Some(el.maxCombatTechniqueRating)
-  | Advancement => None
-  };
+let getMaxCtrFromEl = (el: ExperienceLevel.t, phase) =>
+  Id.Phase.(
+    switch (phase) {
+    | Outline
+    | Definition => Some(el.maxCombatTechniqueRating)
+    | Advancement => None
+    }
+  );
 
 /**
  * Returns the maximum combat technique rating for the passed combat
@@ -124,7 +126,7 @@ let isIncreasable =
 let getMinCtrByHunter =
     (onlyOneCombatTechniqueForHunter, staticEntry: CombatTechnique.t) =>
   onlyOneCombatTechniqueForHunter
-  && staticEntry.gr === Id.combatTechniqueGroupToInt(Ranged)
+  && staticEntry.gr === Id.CombatTechnique.Group.toInt(Ranged)
     ? Some(10) : None;
 
 /**

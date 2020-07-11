@@ -12,36 +12,36 @@ open Activatable_Convert;
  * `Nothing` if not found.
  */
 let getSelectOption:
-  (Static.activatable, Hero.Activatable.optionId) => option(SelectOption.t);
+  (Static.activatable, Id.Activatable.Option.t) => option(SelectOption.t);
 
 /**
  * Get a select option's name with the given id from given static entry.
  * Returns `Nothing` if not found.
  */
 let getSelectOptionName:
-  (Static.activatable, Hero.Activatable.optionId) => option(string);
+  (Static.activatable, Id.Activatable.Option.t) => option(string);
 
 /**
  * Get a option's cost with the given id from given static entry. Returns
  * `Nothing` if not found.
  */
 let getSelectOptionCost:
-  (Static.activatable, Hero.Activatable.optionId) => option(int);
+  (Static.activatable, Id.Activatable.Option.t) => option(int);
 
 /**
  * Get all first option IDs from the given entry.
  */
-let getActiveOptions1: Hero.Activatable.t => list(Hero.Activatable.optionId);
+let getActiveOptions1: Hero.Activatable.t => list(Id.Activatable.Option.t);
 
 /**
  * Get all first select option IDs from the given entry.
  */
-let getActiveSelectOptions1: Hero.Activatable.t => list(Id.selectOption);
+let getActiveSelectOptions1: Hero.Activatable.t => list(Id.SelectOption.t);
 
 /**
  * Get all second option IDs from the given entry.
  */
-let getActiveOptions2: Hero.Activatable.t => list(Hero.Activatable.optionId);
+let getActiveOptions2: Hero.Activatable.t => list(Id.Activatable.Option.t);
 
 /**
  * Get all second option ids from the given entry, sorted by their first option
@@ -49,21 +49,21 @@ let getActiveOptions2: Hero.Activatable.t => list(Hero.Activatable.optionId);
  */
 let getActiveOptions2Map:
   Hero.Activatable.t =>
-  SelectOption.SelectOptionMap.t(list(Hero.Activatable.optionId));
+  SelectOption.SelectOptionMap.t(list(Id.Activatable.Option.t));
 
-let getOption: (int, singleWithId) => option(Hero.Activatable.optionId);
+let getOption: (int, singleWithId) => option(Id.Activatable.Option.t);
 
-let getOption1: singleWithId => option(Hero.Activatable.optionId);
+let getOption1: singleWithId => option(Id.Activatable.Option.t);
 
-let getOption2: singleWithId => option(Hero.Activatable.optionId);
+let getOption2: singleWithId => option(Id.Activatable.Option.t);
 
-let getOption3: singleWithId => option(Hero.Activatable.optionId);
+let getOption3: singleWithId => option(Id.Activatable.Option.t);
 
-let getCustomInput: Hero.Activatable.optionId => option(string);
+let getCustomInput: Id.Activatable.Option.t => option(string);
 
-let getGenericId: Hero.Activatable.optionId => option(int);
+let getGenericId: Id.Activatable.Option.t => option(int);
 
 let lookupMap: (Ley_IntMap.key, Ley_IntMap.t('b), 'b => 'a) => option('a);
 
 let getSkillFromOption:
-  (Static.t, Hero.Activatable.optionId) => option(Skill.t);
+  (Static.t, Id.Activatable.Option.t) => option(Skill.t);

@@ -68,7 +68,7 @@ function flattenActivatableDependencies(getActiveListForTargetId, id, dependenci
                                                       if (option.TAG) {
                                                         return Ley_List$OptolithClient.elem(activeOption, option._0) === dep.active;
                                                       } else {
-                                                        return Caml_obj.caml_equal(activeOption, option._0) === dep.active;
+                                                        return Id$OptolithClient.SelectOption.$eq(activeOption, option._0) === dep.active;
                                                       }
                                                     }), Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_List$OptolithClient.Safe.atMay(active.options, i), Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId));
                                       }), dep.options);
@@ -397,17 +397,17 @@ function removeAttributeDependency$1(dep, hero) {
 
 function isUnfamiliarSpell(transferredUnfamiliar, heroTraditions) {
   var isIntuitiveMageActive = Ley_List$OptolithClient.Foldable.any((function (param) {
-          return param[0].id === Id$OptolithClient.specialAbilityToInt(/* TraditionIntuitiveMage */51);
+          return param[0].id === Id$OptolithClient.SpecialAbility.toInt(/* TraditionIntuitiveMage */51);
         }), heroTraditions);
   if (isIntuitiveMageActive) {
     return function (param) {
       return Ley_Function$OptolithClient.$$const(false, param);
     };
   }
-  var activeTraditionNumericIds = Ley_List$OptolithClient.cons(Id$OptolithClient.magicalTraditionToInt(/* General */0), Ley_List$OptolithClient.Foldable.concatMap((function (param) {
+  var activeTraditionNumericIds = Ley_List$OptolithClient.cons(Id$OptolithClient.MagicalTradition.toInt(/* General */0), Ley_List$OptolithClient.Foldable.concatMap((function (param) {
               var trad = param[2];
-              if (trad.id === Id$OptolithClient.specialAbilityToInt(/* TraditionGuildMages */9)) {
-                return Ley_List$OptolithClient.cons(Id$OptolithClient.magicalTraditionToInt(/* Qabalyamagier */10), Ley_Option$OptolithClient.optionToList(trad.numId));
+              if (trad.id === Id$OptolithClient.SpecialAbility.toInt(/* TraditionGuildMages */9)) {
+                return Ley_List$OptolithClient.cons(Id$OptolithClient.MagicalTradition.toInt(/* Qabalyamagier */10), Ley_Option$OptolithClient.optionToList(trad.numId));
               } else {
                 return Ley_Option$OptolithClient.optionToList(trad.numId);
               }
@@ -432,7 +432,7 @@ function isUnfamiliarSpell(transferredUnfamiliar, heroTraditions) {
 }
 
 function getTransferredUnfamiliarById(single) {
-  var match = Id$OptolithClient.specialAbilityFromInt(single.id);
+  var match = Id$OptolithClient.SpecialAbility.fromInt(single.id);
   if (typeof match !== "number") {
     return /* [] */0;
   }

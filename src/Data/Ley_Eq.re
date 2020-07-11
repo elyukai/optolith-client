@@ -1,3 +1,0 @@
-let equals = (==);
-
-let notEquals = (!=);

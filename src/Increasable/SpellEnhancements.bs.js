@@ -58,7 +58,7 @@ function spellEnhancements(spells, xs) {
                                                         hd: {
                                                           id: {
                                                             HASH: /* SpecialAbility */-789492591,
-                                                            VAL: Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
+                                                            VAL: Id$OptolithClient.SpecialAbility.toInt(/* SpellEnhancement */25)
                                                           },
                                                           active: true,
                                                           sid: {
@@ -88,7 +88,7 @@ function spellEnhancements(spells, xs) {
                                                               hd: {
                                                                 id: {
                                                                   HASH: /* SpecialAbility */-789492591,
-                                                                  VAL: Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
+                                                                  VAL: Id$OptolithClient.SpecialAbility.toInt(/* SpellEnhancement */25)
                                                                 },
                                                                 active: true,
                                                                 sid: {
@@ -103,7 +103,7 @@ function spellEnhancements(spells, xs) {
                                                               hd: {
                                                                 id: {
                                                                   HASH: /* SpecialAbility */-789492591,
-                                                                  VAL: Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
+                                                                  VAL: Id$OptolithClient.SpecialAbility.toInt(/* SpellEnhancement */25)
                                                                 },
                                                                 active: true,
                                                                 sid: {

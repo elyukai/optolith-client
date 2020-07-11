@@ -37,29 +37,17 @@ type personalData = {
 };
 
 module Activatable = {
-  type optionId = [
-    | `Generic(int)
-    | `Skill(int)
-    | `CombatTechnique(int)
-    | `Spell(int)
-    | `Cantrip(int)
-    | `LiturgicalChant(int)
-    | `Blessing(int)
-    | `SpecialAbility(int)
-    | `CustomInput(string)
-  ];
-
   type single = {
-    options: list(optionId),
+    options: list(Id.Activatable.Option.t),
     level: option(int),
     customCost: option(int),
   };
 
   type dependency = {
-    source: Id.activatable,
+    source: Id.Activatable.t,
     target: OneOrMany.t(int),
     active: bool,
-    options: list(OneOrMany.t(Id.selectOption)),
+    options: list(OneOrMany.t(Id.SelectOption.t)),
     level: option(int),
   };
 
@@ -71,14 +59,14 @@ module Activatable = {
 
   let empty = id => {id, active: [], dependencies: []};
 
-  let isUnused = x =>
+  let isUnused = (x: t) =>
     Ley_List.Foldable.null(x.active)
     && Ley_List.Foldable.null(x.dependencies);
 };
 
 module Skill = {
   type dependency = {
-    source: Id.activatableAndSkill,
+    source: Id.ActivatableAndSkill.t,
     target: OneOrMany.t(int),
     value: int,
   };
@@ -93,10 +81,10 @@ module Skill = {
 
   let emptyCombatTechnique = id => {id, value: 6, dependencies: []};
 
-  let isUnusedSkill = x =>
+  let isUnusedSkill = (x: t) =>
     x.value <= 0 && Ley_List.Foldable.null(x.dependencies);
 
-  let isUnusedCombatTechnique = x =>
+  let isUnusedCombatTechnique = (x: t) =>
     x.value <= 6 && Ley_List.Foldable.null(x.dependencies);
 };
 
@@ -244,7 +232,7 @@ type hitZoneArmor = {
    * ID of the armor at zone *head*. Can be either a template ID or the ID of an
    * armor from `items`.
    */
-  head: option(Id.hitZoneArmorZoneItem),
+  head: option(Id.HitZoneArmorZoneItem.t),
   /**
    * The level of wear at zone *head*, if any. Ignores `wear` if custom armor is
    * used, even if `headWear` is not defined.
@@ -254,7 +242,7 @@ type hitZoneArmor = {
    * ID of the armor at zone *left arm*. Can be either a template ID or the ID
    * of an armor from `items`.
    */
-  leftArm: option(Id.hitZoneArmorZoneItem),
+  leftArm: option(Id.HitZoneArmorZoneItem.t),
   /**
    * The level of wear at zone *left arm*, if any. Ignores `wear` if custom
    * armor is used, even if `leftArmWear` is not defined.
@@ -264,7 +252,7 @@ type hitZoneArmor = {
    * ID of the armor at zone *right arm*. Can be either a template ID or the ID
    * of an item from `items`.
    */
-  rightArm: option(Id.hitZoneArmorZoneItem),
+  rightArm: option(Id.HitZoneArmorZoneItem.t),
   /**
    * The level of wear at zone *right arm*, if any. Ignores `wear` if custom
    * armor is used, even if `rightArmWear` is not defined.
@@ -274,7 +262,7 @@ type hitZoneArmor = {
    * ID of the armor at zone *torso*. Can be either a template ID or the ID of
    * an armor from `items`.
    */
-  torso: option(Id.hitZoneArmorZoneItem),
+  torso: option(Id.HitZoneArmorZoneItem.t),
   /**
    * The level of wear at zone *torso*, if any. Ignores `wear` if custom armor
    * is used, even if `torsoWear` is not defined.
@@ -284,7 +272,7 @@ type hitZoneArmor = {
    * ID of the armor at zone *left leg*. Can be either a template ID or the ID
    * of an armor from `items`.
    */
-  leftLeg: option(Id.hitZoneArmorZoneItem),
+  leftLeg: option(Id.HitZoneArmorZoneItem.t),
   /**
    * The level of wear at zone *left leg*, if any. Ignores `wear` if custom
    * armor is used, even if `leftLegWear` is not defined.
@@ -294,7 +282,7 @@ type hitZoneArmor = {
    * ID of the armor at zone *right leg*. Can be either a template ID or the ID
    * of an armor from `items`.
    */
-  rightLeg: option(Id.hitZoneArmorZoneItem),
+  rightLeg: option(Id.HitZoneArmorZoneItem.t),
   /**
    * The level of wear at zone *right leg*, if any. Ignores `wear` if custom
    * armor is used, even if `rightLegWear` is not defined.
@@ -395,7 +383,7 @@ type t = {
   adventurePointsTotal: int,
   experienceLevel: int,
   sex,
-  phase: Id.phase,
+  phase: Id.Phase.t,
   locale: string,
   avatar: option(string),
   race: option(baseOrWithVariant),

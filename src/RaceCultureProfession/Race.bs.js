@@ -92,44 +92,40 @@ function variantUniv(json) {
 
 function withVariantsUniv(json) {
   return {
-          variants: Json_decode.field("variants", (function (param) {
-                  return Json_decode.list(variantUniv, param);
-                }), json)
+          TAG: /* WithVariants */0,
+          _0: {
+            variants: Json_decode.field("variants", (function (param) {
+                    return Json_decode.list(variantUniv, param);
+                  }), json)
+          }
         };
 }
 
 function withoutVariantsUniv(json) {
   return {
-          commonCultures: Json_decode.field("commonCultures", (function (param) {
-                  return Json_decode.list(Json_decode.$$int, param);
-                }), json),
-          hairColors: Json_decode.field("hairColors", (function (param) {
-                  return Json_decode.list(Json_decode.$$int, param);
-                }), json),
-          eyeColors: Json_decode.field("eyeColors", (function (param) {
-                  return Json_decode.list(Json_decode.$$int, param);
-                }), json),
-          sizeBase: Json_decode.field("sizeBase", Json_decode.$$int, json),
-          sizeRandom: Json_decode.field("sizeRandom", (function (param) {
-                  return Json_decode.list(Dice$OptolithClient.Decode.t, param);
-                }), json)
+          TAG: /* WithoutVariants */1,
+          _0: {
+            commonCultures: Json_decode.field("commonCultures", (function (param) {
+                    return Json_decode.list(Json_decode.$$int, param);
+                  }), json),
+            hairColors: Json_decode.field("hairColors", (function (param) {
+                    return Json_decode.list(Json_decode.$$int, param);
+                  }), json),
+            eyeColors: Json_decode.field("eyeColors", (function (param) {
+                    return Json_decode.list(Json_decode.$$int, param);
+                  }), json),
+            sizeBase: Json_decode.field("sizeBase", Json_decode.$$int, json),
+            sizeRandom: Json_decode.field("sizeRandom", (function (param) {
+                    return Json_decode.list(Dice$OptolithClient.Decode.t, param);
+                  }), json)
+          }
         };
 }
 
-function partial_arg_0(json) {
-  return {
-          TAG: /* WithVariants */0,
-          _0: withVariantsUniv(json)
-        };
-}
+var partial_arg_0 = withVariantsUniv;
 
 var partial_arg_1 = {
-  hd: (function (json) {
-      return {
-              TAG: /* WithoutVariants */1,
-              _0: withoutVariantsUniv(json)
-            };
-    }),
+  hd: withoutVariantsUniv,
   tl: /* [] */0
 };
 

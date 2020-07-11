@@ -2,7 +2,6 @@
 
 import * as $$Set from "bs-platform/lib/es6/set.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
-import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Ley_Function$OptolithClient from "./Ley_Function.bs.js";
 
 function Make(funarg) {
@@ -18,8 +17,8 @@ function Make(funarg) {
   var toList = TypedSet.elements;
   var length = TypedSet.cardinal;
   var elem = function (x) {
-    return Curry._1(TypedSet.exists, (function (param) {
-                  return Caml_obj.caml_equal(x, param);
+    return Curry._1(TypedSet.exists, (function (y) {
+                  return Curry._2(funarg.compare, x, y) === 0;
                 }));
   };
   var concatMap = function (f, s) {
@@ -36,9 +35,7 @@ function Make(funarg) {
     return Curry._1(TypedSet.for_all, Curry.__1(pred));
   };
   var notElem = function (x, s) {
-    return !Curry._2(TypedSet.exists, (function (param) {
-                  return Caml_obj.caml_equal(x, param);
-                }), s);
+    return !Curry._1(elem(x), s);
   };
   var find = function (pred, s) {
     return Curry._2(TypedSet.find_first_opt, pred, s);
@@ -60,9 +57,7 @@ function Make(funarg) {
   var insert = TypedSet.add;
   var $$delete = TypedSet.remove;
   var toggle = function (x, s) {
-    if (Curry._2(TypedSet.exists, (function (param) {
-              return Caml_obj.caml_equal(x, param);
-            }), s)) {
+    if (Curry._1(elem(x), s)) {
       return Curry._2($$delete, x, s);
     } else {
       return Curry._2(insert, x, s);

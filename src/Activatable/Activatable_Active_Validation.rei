@@ -15,14 +15,3 @@ let getMinLevelForIncreaseEntry: (int, int) => option(int);
  * amount allowed.
  */
 let getMaxLevelForDecreaseEntry: (int, int) => int;
-
-/**
- * `countActiveFromGroup specialAbilityPairs group` counts active special
- * abilities from a certain `group`.
- */
-let countActiveFromGroup:
-  (
-    Ley_IntMap.t((SpecialAbility.t, option(Hero.Activatable.t))),
-    Id.specialAbilityGroup
-  ) =>
-  int;

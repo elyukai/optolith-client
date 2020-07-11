@@ -338,7 +338,7 @@ module Decode = {
     blessings: json |> optionalField("blessings", list(int)),
   };
 
-  let variant = (univ, l10n) => (
+  let variant = (univ: variantUniv, l10n: variantL10n) => (
     univ.id,
     {
       id: univ.id,
@@ -365,8 +365,12 @@ module Decode = {
           Ley_Option.option(
             false,
             Ley_List.Foldable.any((x: Prerequisite.activatable) =>
-              x.id
-              == `SpecialAbility(Id.specialAbilityToInt(TraditionGuildMages))
+              Id.Activatable.(
+                x.id
+                == `SpecialAbility(
+                     Id.SpecialAbility.toInt(TraditionGuildMages),
+                   )
+              )
               && x.active
             ),
             univ.activatablePrerequisites,
@@ -566,7 +570,7 @@ module Decode = {
     sgr: json |> field("sgr", int),
   };
 
-  let t = (univ, l10n) => (
+  let t = (univ: tUniv, l10n: tL10n) => (
     univ.id,
     {
       id: univ.id,
@@ -595,8 +599,12 @@ module Decode = {
           Ley_Option.option(
             false,
             Ley_List.Foldable.any((x: Prerequisite.activatable) =>
-              x.id
-              == `SpecialAbility(Id.specialAbilityToInt(TraditionGuildMages))
+              Id.Activatable.(
+                x.id
+                == `SpecialAbility(
+                     Id.SpecialAbility.toInt(TraditionGuildMages),
+                   )
+              )
               && x.active
             ),
             univ.activatablePrerequisites,

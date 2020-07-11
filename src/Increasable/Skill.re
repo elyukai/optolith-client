@@ -107,9 +107,9 @@ module Decode = {
     |> (
       str =>
         switch (str) {
-        | "true" => json |> int |> (_ => True)
-        | "false" => json |> int |> (_ => False)
-        | "maybe" => json |> int |> (_ => Maybe)
+        | "true" => json |> int |> (_ => (True: encumbranceUniv))
+        | "false" => json |> int |> (_ => (False: encumbranceUniv))
+        | "maybe" => json |> int |> (_ => (Maybe: encumbranceUniv))
         | _ => raise(DecodeError("Unknown encumbrance: " ++ str))
         }
     );
@@ -154,7 +154,7 @@ module Decode = {
     {id: fst(univ), name: snd(l10n), prerequisite: snd(univ)}: use,
   );
 
-  let t = (univ, l10n) => (
+  let t = (univ: tUniv, l10n: tL10n) => (
     univ.id,
     {
       id: univ.id,

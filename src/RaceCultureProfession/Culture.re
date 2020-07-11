@@ -148,7 +148,7 @@ module Decode = {
       json |> field("culturalPackageSkills", list(pair(int, int))),
   };
 
-  let t = (univ, l10n) => (
+  let t = (univ: tUniv, l10n: tL10n) => (
     univ.id,
     {
       id: univ.id,

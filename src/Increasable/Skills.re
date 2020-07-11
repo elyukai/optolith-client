@@ -37,12 +37,14 @@ let getMaxSrByCheckAttrs = (mp, check) =>
  * list created by `getInitialMaximumList` if the hero is in character
  * creation phase.
  */
-let getMaxSrFromEl = (startEl: ExperienceLevel.t, phase: Id.phase) =>
-  switch (phase) {
-  | Outline
-  | Definition => Some(startEl.maxSkillRating)
-  | Advancement => None
-  };
+let getMaxSrFromEl = (startEl: ExperienceLevel.t, phase) =>
+  Id.Phase.(
+    switch (phase) {
+    | Outline
+    | Definition => Some(startEl.maxSkillRating)
+    | Advancement => None
+    }
+  );
 
 /**
  * Returns the maximum skill rating for the passed skill.
@@ -74,9 +76,10 @@ let isIncreasable =
 
 let getMinSrByCraftInstruments =
     (craftInstruments, skills, staticEntry: Skill.t) =>
-  Id.(
+  Id.Skill.(
+    [@warning "-4"]
     {
-      switch (unsafeSkillFromInt(staticEntry.id)) {
+      switch (fromInt(staticEntry.id)) {
       | Woodworking as skillId
       | Metalworking as skillId
           when Activatable_Accessors.isActiveM(craftInstruments) =>
@@ -93,9 +96,7 @@ let getMinSrByCraftInstruments =
           );
 
         let otherSkillRating =
-          skills
-          |> Ley_IntMap.lookup(skillToInt(otherSkillId))
-          |> getValueDef;
+          skills |> Ley_IntMap.lookup(toInt(otherSkillId)) |> getValueDef;
 
         Some(minimumSum - otherSkillRating);
       | _ => None

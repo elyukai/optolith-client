@@ -62,7 +62,7 @@ module Flatten = {
                  // have at least the required value
                  | Active(value) => value >= dep.value
                  // Otherwise the dependency is not met by the other entry
-                 | _ => false
+                 | Inactive => false
                  }
                )
             |> (
@@ -128,7 +128,8 @@ module Flatten = {
                                | OneOrMany.One(option) =>
                                  // If only one option, required and active must
                                  // be equal
-                                 activeOption == option === dep.active
+                                 Id.SelectOption.(activeOption == option)
+                                 === dep.active
                                | OneOrMany.Many(options) =>
                                  // If multiple options are possible, one must be
                                  // equal to the active option
@@ -641,7 +642,7 @@ module TransferredUnfamiliar = {
       L.Foldable.any(
         ((staticSpecialAbility, _, _): fullTradition) =>
           staticSpecialAbility.id
-          === Id.specialAbilityToInt(TraditionIntuitiveMage),
+          === Id.SpecialAbility.toInt(TraditionIntuitiveMage),
         heroTraditions,
       );
 
@@ -651,13 +652,13 @@ module TransferredUnfamiliar = {
       let activeTraditionNumericIds =
         heroTraditions
         |> L.Foldable.concatMap(((_, _, trad): fullTradition) =>
-             trad.id === Id.specialAbilityToInt(TraditionGuildMages)
+             trad.id === Id.SpecialAbility.toInt(TraditionGuildMages)
                ? trad.numId
                  |> O.optionToList
-                 |> L.cons(Id.magicalTraditionToInt(Qabalyamagier))
+                 |> L.cons(Id.MagicalTradition.toInt(Qabalyamagier))
                : trad.numId |> O.optionToList
            )
-        |> L.cons(Id.magicalTraditionToInt(General));
+        |> L.cons(Id.MagicalTradition.toInt(General));
 
       let isNoTraditionActive =
         Ley_Bool.notP(L.intersecting(activeTraditionNumericIds));
@@ -679,27 +680,30 @@ module TransferredUnfamiliar = {
 
   let getTransferredUnfamiliarById =
       (single: Activatable_Convert.singleWithId) =>
-    switch (Id.specialAbilityFromInt(single.id)) {
-    | TraditionGuildMages
-    | MadaschwesternStil
-    | ScholarDesMagierkollegsZuHoningen =>
-      switch (single.options) {
-      | [`Spell(id), ..._] => [{id: Spell(id), srcId: single.id}]
-      | [_, ..._]
-      | [] => []
+    [@warning "-4"]
+    (
+      switch (Id.SpecialAbility.fromInt(single.id)) {
+      | TraditionGuildMages
+      | MadaschwesternStil
+      | ScholarDesMagierkollegsZuHoningen =>
+        switch (single.options) {
+        | [`Spell(id), ..._] => [{id: Spell(id), srcId: single.id}]
+        | [_, ..._]
+        | [] => []
+        }
+      | Zaubervariabilitaet => [{id: Spells, srcId: single.id}]
+      | ScholarDerHalleDesLebensZuNorburg
+      | ScholarDesKreisesDerEinfuehlung =>
+        single.options
+        |> L.take(3)
+        |> O.mapOption(
+             fun
+             | `Spell(id) => Some({id: Spell(id), srcId: single.id})
+             | _ => None,
+           )
+      | _ => []
       }
-    | Zaubervariabilitaet => [{id: Spells, srcId: single.id}]
-    | ScholarDerHalleDesLebensZuNorburg
-    | ScholarDesKreisesDerEinfuehlung =>
-      single.options
-      |> L.take(3)
-      |> O.mapOption(
-           fun
-           | `Spell(id) => Some({id: Spell(id), srcId: single.id})
-           | _ => None,
-         )
-    | _ => []
-    };
+    );
 
   /**
    * Adds new transferred unfamiliar spells if the entry to activate allows
@@ -1074,54 +1078,57 @@ let applySocialPrerequisite =
 };
 
 let modifyDependencies =
-    (mode, staticData, prerequisites, sourceId: Id.prerequisiteSource, hero) =>
+    (mode, staticData, prerequisites, sourceId: Id.PrerequisiteSource.t, hero) =>
   L.Foldable.foldr(
     (prerequisite: Prerequisites.prerequisite) =>
-      switch (prerequisite, sourceId) {
-      | (
-          PrimaryAttribute(options),
-          `Advantage(_) as id | `Disadvantage(_) as id |
-          `SpecialAbility(_) as id |
-          `Spell(_) as id |
-          `LiturgicalChant(_) as id,
-        ) =>
-        applyPrimaryAttributePrerequisite(mode, id, staticData, options)
-      | (
-          Activatable(options),
-          `Advantage(_) as id | `Disadvantage(_) as id |
-          `SpecialAbility(_) as id,
-        ) =>
-        applyActivatablePrerequisite(mode, id, options)
-      | (
-          ActivatableMultiEntry(options),
-          `Advantage(_) as id | `Disadvantage(_) as id |
-          `SpecialAbility(_) as id,
-        ) =>
-        applyActivatableMultiEntryPrerequisite(mode, id, options)
-      | (
-          ActivatableMultiSelect(options),
-          `Advantage(_) as id | `Disadvantage(_) as id |
-          `SpecialAbility(_) as id,
-        ) =>
-        applyActivatableMultiSelectPrerequisite(mode, id, options)
-      | (
-          Increasable(options),
-          `Advantage(_) as id | `Disadvantage(_) as id |
-          `SpecialAbility(_) as id |
-          `Spell(_) as id |
-          `LiturgicalChant(_) as id,
-        ) =>
-        applyIncreasablePrerequisite(mode, id, options)
-      | (
-          IncreasableMultiEntry(options),
-          `Advantage(_) as id | `Disadvantage(_) as id |
-          `SpecialAbility(_) as id |
-          `Spell(_) as id |
-          `LiturgicalChant(_) as id,
-        ) =>
-        applyIncreasableMultiEntryPrerequisite(mode, id, options)
-      | _ => Ley_Function.id
-      },
+      [@warning "-4"]
+      (
+        switch (prerequisite, sourceId) {
+        | (
+            PrimaryAttribute(options),
+            `Advantage(_) as id | `Disadvantage(_) as id |
+            `SpecialAbility(_) as id |
+            `Spell(_) as id |
+            `LiturgicalChant(_) as id,
+          ) =>
+          applyPrimaryAttributePrerequisite(mode, id, staticData, options)
+        | (
+            Activatable(options),
+            `Advantage(_) as id | `Disadvantage(_) as id |
+            `SpecialAbility(_) as id,
+          ) =>
+          applyActivatablePrerequisite(mode, id, options)
+        | (
+            ActivatableMultiEntry(options),
+            `Advantage(_) as id | `Disadvantage(_) as id |
+            `SpecialAbility(_) as id,
+          ) =>
+          applyActivatableMultiEntryPrerequisite(mode, id, options)
+        | (
+            ActivatableMultiSelect(options),
+            `Advantage(_) as id | `Disadvantage(_) as id |
+            `SpecialAbility(_) as id,
+          ) =>
+          applyActivatableMultiSelectPrerequisite(mode, id, options)
+        | (
+            Increasable(options),
+            `Advantage(_) as id | `Disadvantage(_) as id |
+            `SpecialAbility(_) as id |
+            `Spell(_) as id |
+            `LiturgicalChant(_) as id,
+          ) =>
+          applyIncreasablePrerequisite(mode, id, options)
+        | (
+            IncreasableMultiEntry(options),
+            `Advantage(_) as id | `Disadvantage(_) as id |
+            `SpecialAbility(_) as id |
+            `Spell(_) as id |
+            `LiturgicalChant(_) as id,
+          ) =>
+          applyIncreasableMultiEntryPrerequisite(mode, id, options)
+        | _ => Ley_Function.id
+        }
+      ),
     hero,
     prerequisites,
   );

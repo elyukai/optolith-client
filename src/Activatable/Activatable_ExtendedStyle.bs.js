@@ -9,7 +9,7 @@ import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 
 function getStyleDependenciesAcc(style) {
-  var match = Id$OptolithClient.specialAbilityGroupFromInt(style.gr);
+  var match = Curry._1(Id$OptolithClient.SpecialAbility.Group.fromInt, style.gr);
   if (typeof match === "number") {
     if (match >= 14) {
       if (match >= 26) {
@@ -121,7 +121,7 @@ function moveActiveInListToNew(newxs, x) {
 }
 
 function generateStyleDependencies(heroSpecialAbilities, styleSpecialAbility) {
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(styleSpecialAbility.extended, (function (extended) {
+  return Ley_Option$OptolithClient.Monad.$less$amp$great(styleSpecialAbility.extended, (function (extended) {
                 var xs = Ley_List$OptolithClient.map((function (extendedId) {
                         return {
                                 id: extendedId,
@@ -129,7 +129,7 @@ function generateStyleDependencies(heroSpecialAbilities, styleSpecialAbility) {
                                 origin: styleSpecialAbility.id
                               };
                       }), extended);
-                var match = Id$OptolithClient.specialAbilityFromInt(styleSpecialAbility.id);
+                var match = Id$OptolithClient.SpecialAbility.fromInt(styleSpecialAbility.id);
                 if (typeof match !== "number") {
                   return xs;
                 }

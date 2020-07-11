@@ -39,7 +39,7 @@ module Decode = {
     items: json |> field("items", list(item)),
   };
 
-  let t = (univ, l10n) => (
+  let t = (univ: tUniv, l10n: tL10n) => (
     univ.id,
     {
       id: univ.id,

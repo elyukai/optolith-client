@@ -3,7 +3,7 @@
  */
 type singleWithId = {
   id: int,
-  options: list(Hero.Activatable.optionId),
+  options: list(Id.Activatable.Option.t),
   level: option(int),
   customCost: option(int),
 };
@@ -103,7 +103,7 @@ let singleToSingleWithId = (x: Hero.Activatable.t, s: Hero.Activatable.single) =
  } */
 
 let activatableOptionToSelectOptionId =
-    (id: Hero.Activatable.optionId): option(Id.selectOption) =>
+    (id: Id.Activatable.Option.t): option(Id.SelectOption.t) =>
   switch (id) {
   | `Generic(_) as id
   | `Skill(_) as id

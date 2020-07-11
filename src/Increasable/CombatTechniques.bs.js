@@ -28,14 +28,14 @@ function getValueDef(param) {
 
 function getAttack(heroAttrs, staticEntry, heroEntry) {
   var ps = staticEntry.gr === 1 ? ({
-        hd: Id$OptolithClient.attributeToInt(/* Courage */0),
+        hd: Id$OptolithClient.Attribute.toInt(/* Courage */0),
         tl: /* [] */0
       }) : staticEntry.primary;
   return attributeValueToMod(getMaxPrimaryAttributeValueById(heroAttrs, ps)) + getValueDef(heroEntry) | 0;
 }
 
 function getParry(heroAttrs, staticEntry, heroEntry) {
-  if (staticEntry.gr === Id$OptolithClient.combatTechniqueGroupToInt(/* Melee */0) && staticEntry.id !== Id$OptolithClient.combatTechniqueToInt(/* ChainWeapons */5) && staticEntry.id !== Id$OptolithClient.combatTechniqueToInt(/* Brawling */7)) {
+  if (staticEntry.gr === Curry._1(Id$OptolithClient.CombatTechnique.Group.toInt, /* Melee */0) && staticEntry.id !== Id$OptolithClient.CombatTechnique.toInt(/* ChainWeapons */5) && staticEntry.id !== Id$OptolithClient.CombatTechnique.toInt(/* Brawling */7)) {
     return attributeValueToMod(getMaxPrimaryAttributeValueById(heroAttrs, staticEntry.primary)) + Js_math.floor(Math.round(2.0 / getValueDef(heroEntry))) | 0;
   }
   
@@ -80,7 +80,7 @@ function isIncreasable(startEl, phase, heroAttrs, exceptionalCombatTechnique, st
 }
 
 function getMinCtrByHunter(onlyOneCombatTechniqueForHunter, staticEntry) {
-  if (onlyOneCombatTechniqueForHunter && staticEntry.gr === Id$OptolithClient.combatTechniqueGroupToInt(/* Ranged */1)) {
+  if (onlyOneCombatTechniqueForHunter && staticEntry.gr === Curry._1(Id$OptolithClient.CombatTechnique.Group.toInt, /* Ranged */1)) {
     return 10;
   }
   

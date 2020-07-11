@@ -1,5 +1,4 @@
 open Ley_Option;
-open Ley_Option.Functor;
 open Ley_Option.Monad;
 open Hero.ActivatableSkill;
 
@@ -123,7 +122,7 @@ module PropertyKnowledge = {
     activePropertyKnowledges
     // Is spell part of dependencies of any active Property
     // Knowledge?
-    |> Ley_List.Foldable.any((sid: Hero.Activatable.optionId) =>
+    |> Ley_List.Foldable.any((sid: Id.Activatable.Option.t) =>
          switch (sid) {
          | `Generic(x) => x === staticEntry.property
          | _ => false

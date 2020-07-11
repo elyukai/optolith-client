@@ -63,7 +63,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
       }, Activatable_Accessors$OptolithClient.apValue(staticEntry));
   switch (staticEntry.TAG | 0) {
     case /* Advantage */0 :
-        var match = Id$OptolithClient.advantageFromInt(staticEntry._0.id);
+        var match = Id$OptolithClient.Advantage.fromInt(staticEntry._0.id);
         var exit = 0;
         if (typeof match !== "number") {
           return getDefaultEntryCost(staticEntry, singleHeroEntry);
@@ -145,7 +145,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
         }
         break;
     case /* Disadvantage */1 :
-        var match$1 = Id$OptolithClient.disadvantageFromInt(staticEntry._0.id);
+        var match$1 = Id$OptolithClient.Disadvantage.fromInt(staticEntry._0.id);
         if (typeof match$1 !== "number") {
           return getDefaultEntryCost(staticEntry, singleHeroEntry);
         }
@@ -261,12 +261,12 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                         return ;
                       }
                       var partial_arg = level - match[1] | 0;
-                      return Ley_Option$OptolithClient.Functor.$less$amp$great(ensureFlat(apValue), (function (param) {
+                      return Ley_Option$OptolithClient.Monad.$less$amp$great(ensureFlat(apValue), (function (param) {
                                     return Math.imul(partial_arg, param);
                                   }));
                     }));
     case /* SpecialAbility */2 :
-        var match$2 = Id$OptolithClient.specialAbilityFromInt(staticEntry._0.id);
+        var match$2 = Id$OptolithClient.SpecialAbility.fromInt(staticEntry._0.id);
         var exit$1 = 0;
         if (typeof match$2 !== "number") {
           return getDefaultEntryCost(staticEntry, singleHeroEntry);
@@ -279,11 +279,11 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
             } else {
               return Ley_Option$OptolithClient.Monad.$great$great$eq(ensureFlat(apValue), (function (flatAp) {
                             return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.Monad.$great$great$eq(sid1, Activatable_SelectOptions$OptolithClient.getGenericId), (function (languageId) {
-                                          return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, Id$OptolithClient.specialAbilityToInt(/* Language */6), hero.specialAbilities), (function (language) {
+                                          return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, Id$OptolithClient.SpecialAbility.toInt(/* Language */6), hero.specialAbilities), (function (language) {
                                                         return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_List$OptolithClient.Foldable.find((function (e) {
                                                                           return Ley_Option$OptolithClient.Foldable.elem(languageId, Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(e.options), Activatable_SelectOptions$OptolithClient.getGenericId));
                                                                         }), language.active), (function (selectedLanguage) {
-                                                                      return Ley_Option$OptolithClient.Functor.$less$amp$great(selectedLanguage.level, (function (param) {
+                                                                      return Ley_Option$OptolithClient.Monad.$less$amp$great(selectedLanguage.level, (function (param) {
                                                                                     if (param !== 4) {
                                                                                       return flatAp;
                                                                                     } else {
@@ -301,7 +301,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
           } else {
             switch (switcher + 42 | 0) {
               case /* SkillSpecialization */0 :
-                  return Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.Monad.$great$great$eq(sid1, (function (param) {
+                  return Ley_Option$OptolithClient.Monad.$less$amp$great(Ley_Option$OptolithClient.Monad.$great$great$eq(sid1, (function (param) {
                                     return Activatable_SelectOptions$OptolithClient.getSkillFromOption(staticData, param);
                                   })), (function (skill) {
                                 return Math.imul(Ley_List$OptolithClient.countBy((function (e) {
@@ -320,7 +320,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
               case /* Language */6 :
                   return Ley_Option$OptolithClient.Monad.$great$great$eq(level, (function (level) {
                                 if (level !== 4) {
-                                  return Ley_Option$OptolithClient.Functor.$less$amp$great(ensureFlat(apValue), (function (param) {
+                                  return Ley_Option$OptolithClient.Monad.$less$amp$great(ensureFlat(apValue), (function (param) {
                                                 return Math.imul(level, param);
                                               }));
                                 } else {
@@ -343,8 +343,8 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                       return cost;
                     }
                   };
-                  return Ley_Option$OptolithClient.Functor.$less$amp$great(ensureFlat(apValue), (function (flatAp) {
-                                return decreaseCost(Id$OptolithClient.disadvantageToInt(/* NoFamiliar */4), decreaseCost(Id$OptolithClient.disadvantageToInt(/* NoFlyingBalm */3), flatAp));
+                  return Ley_Option$OptolithClient.Monad.$less$amp$great(ensureFlat(apValue), (function (flatAp) {
+                                return decreaseCost(Id$OptolithClient.Disadvantage.toInt(/* NoFamiliar */4), decreaseCost(Id$OptolithClient.Disadvantage.toInt(/* NoFlyingBalm */3), flatAp));
                               }));
               case /* Forschungsgebiet */26 :
               case /* Expertenwissen */27 :
@@ -352,7 +352,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                   exit$1 = 3;
                   break;
               case /* Recherchegespuer */29 :
-                  return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, Id$OptolithClient.specialAbilityToInt(/* Wissensdurst */28), hero.specialAbilities), (function (wissensdurst) {
+                  return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, Id$OptolithClient.SpecialAbility.toInt(/* Wissensdurst */28), hero.specialAbilities), (function (wissensdurst) {
                                 return Ley_Option$OptolithClient.Monad.$great$great$eq(ensurePerLevel(apValue), (function (apPerLevel) {
                                               var getCostFromHeroEntry = function (entry) {
                                                 return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption1(entry), (function (param) {

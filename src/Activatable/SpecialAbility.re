@@ -192,8 +192,8 @@ module Decode = {
         liturgicalChants,
         skills,
         spells,
-        univ,
-        l10n,
+        univ: tUniv,
+        l10n: tL10n,
       ) => (
     univ.id,
     {
@@ -282,10 +282,10 @@ module Decode = {
     specialAbilities
     |> IM.adjust(
          (specialAbility: t) =>
-           IM.lookup(Id.specialAbilityToInt(Language), specialAbilities)
+           IM.lookup(Id.SpecialAbility.toInt(Language), specialAbilities)
            |> O.option(specialAbility, (language: t) =>
                 {...specialAbility, selectOptions: language.selectOptions}
               ),
-         Id.specialAbilityToInt(LanguageSpecializations),
+         Id.SpecialAbility.toInt(LanguageSpecializations),
        );
 };

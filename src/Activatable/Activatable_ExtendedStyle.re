@@ -1,4 +1,3 @@
-open Ley_Option.Functor;
 open Ley_Option.Monad;
 open Ley_Option.Alternative;
 
@@ -7,54 +6,57 @@ open Ley_Option.Alternative;
  * passed style special ability or extended special ability.
  */
 let getStyleDependenciesAcc = (style: SpecialAbility.t) =>
-  switch (Id.specialAbilityGroupFromInt(style.gr)) {
-  | CombatStylesArmed
-  | CombatStylesUnarmed
-  | CombatExtended =>
-    Some((
-      ((hero: Hero.t) => hero.combatStyleDependencies),
-      (
-        (hero: Hero.t, dependencies) => {
-          ...hero,
-          combatStyleDependencies: dependencies,
-        }
-      ),
-    ))
-  | MagicalStyles
-  | MagicalExtended =>
-    Some((
-      ((hero: Hero.t) => hero.magicalStyleDependencies),
-      (
-        (hero: Hero.t, dependencies) => {
-          ...hero,
-          magicalStyleDependencies: dependencies,
-        }
-      ),
-    ))
-  | BlessedStyles
-  | KarmaExtended =>
-    Some((
-      ((hero: Hero.t) => hero.blessedStyleDependencies),
-      (
-        (hero: Hero.t, dependencies) => {
-          ...hero,
-          blessedStyleDependencies: dependencies,
-        }
-      ),
-    ))
-  | SkillStyles
-  | SkillExtended =>
-    Some((
-      ((hero: Hero.t) => hero.skillStyleDependencies),
-      (
-        (hero: Hero.t, dependencies) => {
-          ...hero,
-          skillStyleDependencies: dependencies,
-        }
-      ),
-    ))
-  | _ => None
-  };
+  [@warning "-4"]
+  (
+    switch (Id.SpecialAbility.Group.fromInt(style.gr)) {
+    | CombatStylesArmed
+    | CombatStylesUnarmed
+    | CombatExtended =>
+      Some((
+        ((hero: Hero.t) => hero.combatStyleDependencies),
+        (
+          (hero: Hero.t, dependencies) => {
+            ...hero,
+            combatStyleDependencies: dependencies,
+          }
+        ),
+      ))
+    | MagicalStyles
+    | MagicalExtended =>
+      Some((
+        ((hero: Hero.t) => hero.magicalStyleDependencies),
+        (
+          (hero: Hero.t, dependencies) => {
+            ...hero,
+            magicalStyleDependencies: dependencies,
+          }
+        ),
+      ))
+    | BlessedStyles
+    | KarmaExtended =>
+      Some((
+        ((hero: Hero.t) => hero.blessedStyleDependencies),
+        (
+          (hero: Hero.t, dependencies) => {
+            ...hero,
+            blessedStyleDependencies: dependencies,
+          }
+        ),
+      ))
+    | SkillStyles
+    | SkillExtended =>
+      Some((
+        ((hero: Hero.t) => hero.skillStyleDependencies),
+        (
+          (hero: Hero.t, dependencies) => {
+            ...hero,
+            skillStyleDependencies: dependencies,
+          }
+        ),
+      ))
+    | _ => None
+    }
+  );
 
 /**
  * If a style has multiple possible extended special abilities in one slot,
@@ -92,7 +94,8 @@ let moveActiveInListToNew = (newxs, x: Hero.styleDependency) =>
       )
     | None => (newxs, x)
     };
-  | _ => (newxs, x)
+  | (Many(_), None)
+  | (One(_), _) => (newxs, x)
   };
 
 /**
@@ -112,30 +115,33 @@ let generateStyleDependencies =
          )
       |> (
         xs =>
-          switch (Id.specialAbilityFromInt(styleSpecialAbility.id)) {
-          // For this style, the user must choose between two special
-          // abilities to be an extended special ability.
-          | ScholarDesMagierkollegsZuHoningen =>
-            Ley_IntMap.lookup(styleSpecialAbility.id, heroSpecialAbilities)
-            >>= (
-              (x: Hero.Activatable.t) => x.active |> Ley_Option.listToOption
-            )
-            >>= (x => Ley_List.Safe.atMay(x.options, 1))
-            |> (
-              fun
-              | Some(`SpecialAbility(id)) => [
-                  {
-                    Hero.id: One(id),
-                    active: None,
-                    origin: styleSpecialAbility.id,
-                  },
-                  ...xs,
-                ]
-              | Some(_)
-              | None => xs
-            )
-          | _ => xs
-          }
+          [@warning "-4"]
+          (
+            switch (Id.SpecialAbility.fromInt(styleSpecialAbility.id)) {
+            // For this style, the user must choose between two special
+            // abilities to be an extended special ability.
+            | ScholarDesMagierkollegsZuHoningen =>
+              Ley_IntMap.lookup(styleSpecialAbility.id, heroSpecialAbilities)
+              >>= (
+                (x: Hero.Activatable.t) => x.active |> Ley_Option.listToOption
+              )
+              >>= (x => Ley_List.Safe.atMay(x.options, 1))
+              |> (
+                fun
+                | Some(`SpecialAbility(id)) => [
+                    {
+                      Hero.id: One(id),
+                      active: None,
+                      origin: styleSpecialAbility.id,
+                    },
+                    ...xs,
+                  ]
+                | Some(_)
+                | None => xs
+              )
+            | _ => xs
+            }
+          )
       )
   );
 

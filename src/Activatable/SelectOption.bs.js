@@ -2,6 +2,7 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
+import * as Id$OptolithClient from "../Misc/Id.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
 import * as Ley_Int$OptolithClient from "../Data/Ley_Int.bs.js";
 import * as Ley_Map$OptolithClient from "../Data/Ley_Map.bs.js";
@@ -12,47 +13,6 @@ import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as Ley_Function$OptolithClient from "../Data/Ley_Function.bs.js";
 import * as Prerequisite$OptolithClient from "../Prerequisites/Prerequisite.bs.js";
-
-function outerToInt(id) {
-  var variant = id.HASH;
-  if (variant >= 61643255) {
-    if (variant >= 345443720) {
-      if (variant >= 797131559) {
-        return 7;
-      } else {
-        return 4;
-      }
-    } else if (variant >= 290194801) {
-      return 2;
-    } else {
-      return 1;
-    }
-  } else if (variant >= -789492591) {
-    if (variant >= -384382742) {
-      return 6;
-    } else {
-      return 8;
-    }
-  } else if (variant >= -841776939) {
-    return 5;
-  } else {
-    return 3;
-  }
-}
-
-function compare(x, y) {
-  var x$prime = outerToInt(x);
-  var y$prime = outerToInt(y);
-  if (x$prime === y$prime) {
-    return x.VAL - y.VAL | 0;
-  } else {
-    return x$prime - y$prime | 0;
-  }
-}
-
-var Ord = {
-  compare: compare
-};
 
 function showId(id) {
   var variant = id.HASH;
@@ -81,7 +41,7 @@ function showId(id) {
   }
 }
 
-var SelectOptionMap = Ley_Map$OptolithClient.Make(Ord);
+var SelectOptionMap = Ley_Map$OptolithClient.Make(Id$OptolithClient.SelectOption);
 
 function tL10n(json) {
   return {
@@ -474,7 +434,6 @@ var Decode = {
 };
 
 export {
-  Ord ,
   showId ,
   SelectOptionMap ,
   Decode ,

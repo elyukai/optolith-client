@@ -58,7 +58,7 @@ function liturgicalChantEnhancements(liturgicalChants, xs) {
                                                         hd: {
                                                           id: {
                                                             HASH: /* SpecialAbility */-789492591,
-                                                            VAL: Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
+                                                            VAL: Id$OptolithClient.SpecialAbility.toInt(/* ChantEnhancement */46)
                                                           },
                                                           active: true,
                                                           sid: {
@@ -88,7 +88,7 @@ function liturgicalChantEnhancements(liturgicalChants, xs) {
                                                               hd: {
                                                                 id: {
                                                                   HASH: /* SpecialAbility */-789492591,
-                                                                  VAL: Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
+                                                                  VAL: Id$OptolithClient.SpecialAbility.toInt(/* ChantEnhancement */46)
                                                                 },
                                                                 active: true,
                                                                 sid: {
@@ -103,7 +103,7 @@ function liturgicalChantEnhancements(liturgicalChants, xs) {
                                                               hd: {
                                                                 id: {
                                                                   HASH: /* SpecialAbility */-789492591,
-                                                                  VAL: Id$OptolithClient.specialAbilityToInt(/* SpellEnhancement */25)
+                                                                  VAL: Id$OptolithClient.SpecialAbility.toInt(/* ChantEnhancement */46)
                                                                 },
                                                                 active: true,
                                                                 sid: {

@@ -35,7 +35,7 @@ let isPublicationActive = (staticPublications, rules: Hero.Rules.t, id) =>
 let isAvailable = (acc, staticPublications, rules, x) =>
   x
   |> acc
-  |> L.Foldable.any(({id}) =>
+  |> L.Foldable.any(({id, _}) =>
        isPublicationActive(staticPublications, rules, id)
      );
 
@@ -51,7 +51,7 @@ let isAvailableNull = (acc, staticPublications, rules, x) =>
     | [] => true
     | refs =>
       L.Foldable.any(
-        ({id}) => isPublicationActive(staticPublications, rules, id),
+        ({id, _}) => isPublicationActive(staticPublications, rules, id),
         refs,
       )
   );
@@ -71,7 +71,8 @@ let isAvailableNullPred = (acc, pred, staticPublications, rules, x) =>
       | refs =>
         pred(x)
         || L.Foldable.any(
-             ({id}) => isPublicationActive(staticPublications, rules, id),
+             ({id, _}) =>
+               isPublicationActive(staticPublications, rules, id),
              refs,
            )
       }
@@ -85,7 +86,7 @@ let isAvailableNullPred = (acc, pred, staticPublications, rules, x) =>
 let isFromCore = (acc, staticPublications, x) =>
   x
   |> acc
-  |> L.Foldable.any(({id}) =>
+  |> L.Foldable.any(({id, _}) =>
        SM.lookup(id, staticPublications)
        |> O.Foldable.any((p: Publication.t) => p.isCore)
      );
@@ -207,7 +208,7 @@ module Grouping = {
    */
   let showGroupedRefs = (staticData, srcs) =>
     srcs
-    |> O.mapOption(src =>
+    |> O.mapOption((src: groupedSourceRef) =>
          O.Functor.(
            SM.lookup(src.id, staticData.publications)
            <&> (book => (book.name, showPages(src.pages)))

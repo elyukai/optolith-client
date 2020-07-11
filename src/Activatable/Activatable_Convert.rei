@@ -11,7 +11,7 @@
  */
 type singleWithId = {
   id: int,
-  options: list(Hero.Activatable.optionId),
+  options: list(Id.Activatable.Option.t),
   level: option(int),
   customCost: option(int),
 };
@@ -26,4 +26,4 @@ let singleToSingleWithId:
   (Hero.Activatable.t, Hero.Activatable.single) => singleWithId;
 
 let activatableOptionToSelectOptionId:
-  Hero.Activatable.optionId => option(Id.selectOption);
+  Id.Activatable.Option.t => option(Id.SelectOption.t);

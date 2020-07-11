@@ -37,7 +37,7 @@ module Decode = {
     primaryPatronCultures: json |> field("primaryPatronCultures", list(int)),
   };
 
-  let category = (univ, l10n) => {
+  let category = (univ: categoryUniv, l10n: categoryL10n) => {
     id: univ.id,
     name: l10n.name,
     primaryPatronCultures: univ.primaryPatronCultures,
@@ -48,7 +48,7 @@ module Decode = {
     name: string,
   };
 
-  let tL10n = json => {
+  let tL10n = (json): tL10n => {
     id: json |> field("id", int),
     name: json |> field("name", string),
   };
@@ -70,7 +70,7 @@ module Decode = {
       json |> optionalField("isLimitedToCulturesReverse", bool),
   };
 
-  let t = (univ, l10n) => (
+  let t = (univ: tUniv, l10n: tL10n) => (
     univ.id,
     {
       id: univ.id,

@@ -17,7 +17,7 @@ function getSelectOption(x, id) {
 }
 
 function getSelectOptionName(x, id) {
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(getSelectOption(x, id), (function (y) {
+  return Ley_Option$OptolithClient.Monad.$less$amp$great(getSelectOption(x, id), (function (y) {
                 return y.name;
               }));
 }
@@ -89,7 +89,7 @@ function getGenericId(option) {
 }
 
 function lookupMap(k, mp, f) {
-  return Ley_Option$OptolithClient.Functor.$less$$great(f, Curry._2(Ley_IntMap$OptolithClient.lookup, k, mp));
+  return Ley_Option$OptolithClient.Monad.$less$$great(f, Curry._2(Ley_IntMap$OptolithClient.lookup, k, mp));
 }
 
 function getSkillFromOption(staticData, option) {

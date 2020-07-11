@@ -4,7 +4,7 @@
 let getMax:
   (
     ~startEl: ExperienceLevel.t,
-    ~phase: Id.phase,
+    ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
     ~exceptionalSkill: option(Hero.Activatable.t),
     ~aspectKnowledge: option(Hero.Activatable.t),
@@ -18,7 +18,7 @@ let getMax:
 let isIncreasable:
   (
     ~startEl: ExperienceLevel.t,
-    ~phase: Id.phase,
+    ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
     ~exceptionalSkill: option(Hero.Activatable.t),
     ~aspectKnowledge: option(Hero.Activatable.t),

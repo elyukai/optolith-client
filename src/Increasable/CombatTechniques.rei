@@ -35,7 +35,7 @@ let getParry:
 let getMax:
   (
     ~startEl: ExperienceLevel.t,
-    ~phase: Id.phase,
+    ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
     ~exceptionalCombatTechnique: option(Hero.Activatable.t),
     ~staticEntry: CombatTechnique.t
@@ -49,7 +49,7 @@ let getMax:
 let isIncreasable:
   (
     ~startEl: ExperienceLevel.t,
-    ~phase: Id.phase,
+    ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
     ~exceptionalCombatTechnique: option(Hero.Activatable.t),
     ~staticEntry: CombatTechnique.t,

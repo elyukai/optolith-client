@@ -25,10 +25,10 @@ type primaryAttribute = {
 };
 
 type activatable = {
-  id: Id.activatable,
+  id: Id.Activatable.t,
   active: bool,
-  sid: option(Id.selectOption),
-  sid2: option(Id.selectOption),
+  sid: option(Id.SelectOption.t),
+  sid2: option(Id.SelectOption.t),
   level: option(int),
 };
 
@@ -40,21 +40,21 @@ type activatableIds =
 type activatableMultiEntry = {
   id: activatableIds,
   active: bool,
-  sid: option(Id.selectOption),
-  sid2: option(Id.selectOption),
+  sid: option(Id.SelectOption.t),
+  sid2: option(Id.SelectOption.t),
   level: option(int),
 };
 
 type activatableMultiSelect = {
-  id: Id.activatable,
+  id: Id.Activatable.t,
   active: bool,
-  sid: list(Id.selectOption),
-  sid2: option(Id.selectOption),
+  sid: list(Id.SelectOption.t),
+  sid2: option(Id.SelectOption.t),
   level: option(int),
 };
 
 type increasable = {
-  id: Id.increasable,
+  id: Id.Increasable.t,
   value: int,
 };
 
@@ -173,7 +173,6 @@ type tIndexWithLevel = {
 module Decode = {
   open Json.Decode;
   open JsonStrict;
-  open Ley_Option.Functor;
   open Ley_Option.Monad;
   open Ley_Option.Alternative;
 
@@ -265,7 +264,7 @@ module Decode = {
         }
     );
 
-  let scopedSelectOptionId = (json): Id.selectOption =>
+  let scopedSelectOptionId = (json): Id.SelectOption.t =>
     json
     |> field("scope", string)
     |> (
@@ -286,7 +285,7 @@ module Decode = {
         }
     );
 
-  let selectOptionId = (json): Id.selectOption =>
+  let selectOptionId = (json): Id.SelectOption.t =>
     json |> oneOf([map(x => `Generic(x), int), scopedSelectOptionId]);
 
   let activatable = (json): activatable => {
@@ -522,7 +521,7 @@ module Decode = {
     increasableMultiEntry: option(list((int, string))),
   };
 
-  let tIndexL10n = json => {
+  let tIndexL10n = (json): tIndexL10n => {
     sex: json |> optionalField("sexPrerequisite", string),
     race: json |> optionalField("racePrerequisite", string),
     culture: json |> optionalField("culturePrerequisite", string),
@@ -570,7 +569,7 @@ module Decode = {
     increasableMultiEntry: option(list(int)),
   };
 
-  let tIndexUniv = json => {
+  let tIndexUniv = (json): tIndexUniv => {
     sex: json |> optionalField("sexPrerequisite", bool),
     race: json |> optionalField("racePrerequisite", bool),
     culture: json |> optionalField("culturePrerequisite", bool),
@@ -615,7 +614,7 @@ module Decode = {
         )
     );
 
-  let tIndex = (univ, l10n: option(tIndexL10n)): tIndex => {
+  let tIndex = (univ: option(tIndexUniv), l10n: option(tIndexL10n)): tIndex => {
     sex: mergeSingleOverride(univ >>= (x => x.sex), l10n >>= (x => x.sex)),
     race: mergeSingleOverride(univ >>= (x => x.race), l10n >>= (x => x.race)),
     culture:
@@ -678,7 +677,7 @@ module Decode = {
     levels: option(list((int, tIndexL10n))),
   };
 
-  let tIndexWithLevelL10n = json => {
+  let tIndexWithLevelL10n = (json): tIndexWithLevelL10n => {
     sex: json |> optionalField("sexPrerequisite", string),
     race: json |> optionalField("racePrerequisite", string),
     culture: json |> optionalField("culturePrerequisite", string),
@@ -733,7 +732,7 @@ module Decode = {
     levels: option(list((int, tIndexUniv))),
   };
 
-  let tIndexWithLevelUniv = json => {
+  let tIndexWithLevelUniv = (json): tIndexWithLevelUniv => {
     sex: json |> optionalField("sexPrerequisite", bool),
     race: json |> optionalField("racePrerequisite", bool),
     culture: json |> optionalField("culturePrerequisite", bool),
@@ -790,7 +789,8 @@ module Decode = {
     );
 
   let tIndexWithLevel =
-      (univ, l10n: option(tIndexWithLevelL10n)): tIndexWithLevel => {
+      (univ: option(tIndexWithLevelUniv), l10n: option(tIndexWithLevelL10n))
+      : tIndexWithLevel => {
     sex: mergeSingleOverride(univ >>= (x => x.sex), l10n >>= (x => x.sex)),
     race: mergeSingleOverride(univ >>= (x => x.race), l10n >>= (x => x.race)),
     culture:
