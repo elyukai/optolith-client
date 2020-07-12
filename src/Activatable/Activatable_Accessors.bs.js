@@ -32,6 +32,10 @@ function id(x) {
   }
 }
 
+function id$prime(x) {
+  return x._0.id;
+}
+
 function name(x) {
   return x._0.name;
 }
@@ -69,6 +73,24 @@ function apValue(x) {
   }
 }
 
+function apValue$prime(x) {
+  var match = apValue(x);
+  if (match !== undefined) {
+    if (match.TAG) {
+      return {
+              TAG: /* Many */1,
+              _0: match._0
+            };
+    } else {
+      return {
+              TAG: /* One */0,
+              _0: match._0
+            };
+    }
+  }
+  
+}
+
 function max(x) {
   switch (x.TAG | 0) {
     case /* Advantage */0 :
@@ -84,10 +106,12 @@ export {
   isActive ,
   isActiveM ,
   id ,
+  id$prime ,
   name ,
   selectOptions ,
   input ,
   apValue ,
+  apValue$prime ,
   max ,
   
 }

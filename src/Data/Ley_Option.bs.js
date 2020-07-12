@@ -17,7 +17,7 @@ function $less$amp$great(mx, f) {
   return $less$$great(f, mx);
 }
 
-function $less$star$great(mf, mx) {
+function $less$star$great(mx, mf) {
   if (mf !== undefined) {
     return $less$$great(mf, mx);
   }

@@ -2,9 +2,12 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Id$OptolithClient from "../Misc/Id.bs.js";
+import * as Ley_Int$OptolithClient from "../Data/Ley_Int.bs.js";
 import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
+import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as EntryGroups$OptolithClient from "../Misc/EntryGroups.bs.js";
+import * as Dependencies$OptolithClient from "../Prerequisites/Dependencies.bs.js";
 import * as Ley_Function$OptolithClient from "../Data/Ley_Function.bs.js";
 import * as Prerequisites$OptolithClient from "../Prerequisites/Prerequisites.bs.js";
 import * as Activatable_Accessors$OptolithClient from "./Activatable_Accessors.bs.js";
@@ -40,7 +43,9 @@ function getActivePactGiftsCount(specialAbilityPairs) {
 function isSpecialAbilitySpecificAdditionEnabled(rules, maybePact, param, specialAbility) {
   var matchingLanguagesScripts = param.matchingLanguagesScripts;
   var activePactGiftsCount = param.activePactGiftsCount;
-  var specialAbilityPairs = param.specialAbilityPairs;
+  var magicalStylesCount = param.magicalStylesCount;
+  var unarmedCombatStylesCount = param.unarmedCombatStylesCount;
+  var armedCombatStylesCount = param.armedCombatStylesCount;
   var match = Id$OptolithClient.SpecialAbility.fromInt(specialAbility.id);
   var match$1 = Curry._1(Id$OptolithClient.SpecialAbility.Group.fromInt, specialAbility.gr);
   var exit = 0;
@@ -49,34 +54,31 @@ function isSpecialAbilitySpecificAdditionEnabled(rules, maybePact, param, specia
   if (typeof match$1 === "number") {
     if (match$1 >= 13) {
       if (match$1 === 24) {
-        return !EntryGroups$OptolithClient.SpecialAbility.hasActiveFromGroup(match$1, specialAbilityPairs);
+        return !param.isBlessedStyleActive;
       }
       if (match$1 === 32) {
-        return !EntryGroups$OptolithClient.SpecialAbility.hasActiveFromGroup(match$1, specialAbilityPairs);
+        return !param.isSkillStyleActive;
       }
       exit$2 = 4;
     } else if (match$1 >= 10) {
       if (match$1 >= 12) {
-        var totalActive = EntryGroups$OptolithClient.SpecialAbility.countActiveFromGroup(/* MagicalStyles */12, specialAbilityPairs);
-        return totalActive < (
+        return magicalStylesCount < (
                 Activatable_Accessors$OptolithClient.isActiveM(param.magicalStyleCombination) ? 2 : 1
               );
       }
       exit$2 = 4;
     } else {
       if (match$1 >= 8) {
+        var equalTypeStylesActive = typeof match$1 === "number" ? (
+            match$1 !== 8 ? (
+                match$1 !== 9 ? 0 : unarmedCombatStylesCount
+              ) : armedCombatStylesCount
+          ) : 0;
         if (!Activatable_Accessors$OptolithClient.isActiveM(param.combatStyleCombination)) {
-          return !EntryGroups$OptolithClient.SpecialAbility.hasActiveFromGroup(Curry._1(Id$OptolithClient.SpecialAbility.Group.fromInt, specialAbility.gr), specialAbilityPairs);
+          return equalTypeStylesActive === 0;
         }
-        var totalActive$1 = EntryGroups$OptolithClient.SpecialAbility.countActiveFromGroups({
-              hd: /* CombatStylesArmed */8,
-              tl: {
-                hd: /* CombatStylesUnarmed */9,
-                tl: /* [] */0
-              }
-            }, specialAbilityPairs);
-        var equalTypeStylesActive = EntryGroups$OptolithClient.SpecialAbility.countActiveFromGroup(Curry._1(Id$OptolithClient.SpecialAbility.Group.fromInt, specialAbility.gr), specialAbilityPairs);
-        if (totalActive$1 < 3) {
+        var totalActive = armedCombatStylesCount + unarmedCombatStylesCount | 0;
+        if (totalActive < 3) {
           return true;
         } else {
           return equalTypeStylesActive < 2;
@@ -91,7 +93,7 @@ function isSpecialAbilitySpecificAdditionEnabled(rules, maybePact, param, specia
     if (typeof match === "number") {
       if (match >= 21) {
         if (match === 47) {
-          return !EntryGroups$OptolithClient.SpecialAbility.hasActiveFromGroup(/* Paktgeschenke */29, specialAbilityPairs);
+          return activePactGiftsCount === 0;
         }
         if (match === 84) {
           if (Ley_List$OptolithClient.Foldable.length(matchingLanguagesScripts.languagesWithMatchingScripts) >= 1) {
@@ -103,16 +105,10 @@ function isSpecialAbilitySpecificAdditionEnabled(rules, maybePact, param, specia
         exit$1 = 3;
       } else {
         if (match === 15) {
-          return !EntryGroups$OptolithClient.SpecialAbility.hasActiveFromGroups({
-                      hd: /* CombatStylesArmed */8,
-                      tl: {
-                        hd: /* CombatStylesUnarmed */9,
-                        tl: /* [] */0
-                      }
-                    }, specialAbilityPairs);
+          return (armedCombatStylesCount + unarmedCombatStylesCount | 0) > 0;
         }
         if (match >= 20) {
-          return !EntryGroups$OptolithClient.SpecialAbility.hasActiveFromGroup(/* MagicalStyles */12, specialAbilityPairs);
+          return magicalStylesCount > 0;
         }
         exit$1 = 3;
       }
@@ -154,17 +150,6 @@ function isSpecialAbilitySpecificAdditionEnabled(rules, maybePact, param, specia
   }
 }
 
-function getFlatFirstPrerequisites(staticAdvantage) {
-  switch (staticAdvantage.TAG | 0) {
-    case /* Advantage */0 :
-    case /* Disadvantage */1 :
-        return Prerequisites$OptolithClient.Flatten.getFirstDisAdvLevelPrerequisites(staticAdvantage._0.prerequisites);
-    case /* SpecialAbility */2 :
-        return Prerequisites$OptolithClient.Flatten.getFirstLevelPrerequisites(staticAdvantage._0.prerequisites);
-    
-  }
-}
-
 function isEntrySpecificAdditionEnabled(cache, staticData, hero, staticEntry) {
   var tmp;
   switch (staticEntry.TAG | 0) {
@@ -178,7 +163,7 @@ function isEntrySpecificAdditionEnabled(cache, staticData, hero, staticEntry) {
     
   }
   if (tmp) {
-    return Prerequisites$OptolithClient.Validation.arePrerequisitesMet(staticData, hero, Id$OptolithClient.Activatable.generalize(Activatable_Accessors$OptolithClient.id(staticEntry)), getFlatFirstPrerequisites(staticEntry));
+    return Prerequisites$OptolithClient.Validation.arePrerequisitesMet(staticData, hero, Id$OptolithClient.Activatable.generalize(Activatable_Accessors$OptolithClient.id(staticEntry)), Prerequisites$OptolithClient.Activatable.getFlatFirstPrerequisites(staticEntry));
   } else {
     return false;
   }
@@ -198,12 +183,11 @@ function hasNoGenerallyRestrictingDependency(param) {
   }
 }
 
-function hasNotReachedMaximumEntries(staticEntry, maybeHeroEntry) {
-  var match = Activatable_Accessors$OptolithClient.max(staticEntry);
-  if (match !== undefined) {
-    if (match !== 0) {
+function hasNotReachedMaximumEntries(maxLevel, maybeHeroEntry) {
+  if (maxLevel !== undefined) {
+    if (maxLevel !== 0) {
       if (maybeHeroEntry !== undefined) {
-        return match > Ley_List$OptolithClient.Foldable.length(maybeHeroEntry.active);
+        return maxLevel > Ley_List$OptolithClient.Foldable.length(maybeHeroEntry.active);
       } else {
         return true;
       }
@@ -243,8 +227,8 @@ function isValidExtendedSpecialAbility(param, staticEntry) {
   }
 }
 
-function isAdditionValid(cache, staticData, hero, staticEntry, maybeHeroEntry) {
-  if (isEntrySpecificAdditionEnabled(cache, staticData, hero, staticEntry) && hasNoGenerallyRestrictingDependency(maybeHeroEntry) && hasNotReachedMaximumEntries(staticEntry, maybeHeroEntry) && isValidExtendedSpecialAbility(cache, staticEntry)) {
+function isAdditionValid(cache, staticData, hero, maxLevel, staticEntry, maybeHeroEntry) {
+  if (isEntrySpecificAdditionEnabled(cache, staticData, hero, staticEntry) && hasNoGenerallyRestrictingDependency(maybeHeroEntry) && hasNotReachedMaximumEntries(maxLevel, maybeHeroEntry) && isValidExtendedSpecialAbility(cache, staticEntry)) {
     switch (staticEntry.TAG | 0) {
       case /* Advantage */0 :
       case /* Disadvantage */1 :
@@ -263,9 +247,28 @@ function isAdditionValid(cache, staticData, hero, staticEntry, maybeHeroEntry) {
   }
 }
 
+function getMaxLevel(staticData, hero, staticEntry, maybeHeroEntry) {
+  var computedMax = Dependencies$OptolithClient.getMaxLevel(staticData, hero, Id$OptolithClient.Activatable.generalize(Activatable_Accessors$OptolithClient.id(staticEntry)), Ley_Option$OptolithClient.option(/* [] */0, (function (param) {
+              return param.dependencies;
+            }), maybeHeroEntry), Prerequisites$OptolithClient.Activatable.getLevelPrerequisites(staticEntry));
+  var match = Activatable_Accessors$OptolithClient.max(staticEntry);
+  if (computedMax !== undefined) {
+    if (match !== undefined) {
+      return Ley_Int$OptolithClient.min(computedMax, match);
+    } else {
+      return computedMax;
+    }
+  } else if (match !== undefined) {
+    return match;
+  } else {
+    return ;
+  }
+}
+
 export {
   getActivePactGiftsCount ,
   isAdditionValid ,
+  getMaxLevel ,
   
 }
 /* Ley_IntMap-OptolithClient Not a pure module */

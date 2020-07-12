@@ -1,26 +1,10 @@
 module F = Ley_Function;
+module I = Ley_Int;
 module IM = Ley_IntMap;
 module L = Ley_List;
+module O = Ley_Option;
 
-type matchingLanguagesScripts = {
-  // `true` if an entry that requires to have matching languages and scripts
-  // is active
-  isEntryActiveRequiringMatch: bool,
-  languagesWithMatchingScripts: list(int),
-  scriptsWithMatchingLanguages: list(int),
-};
-
-type inactiveValidationCache = {
-  specialAbilityPairs:
-    Ley_IntMap.t((SpecialAbility.t, option(Hero.Activatable.t))),
-  combatStyleCombination: option(Hero.Activatable.t),
-  magicalStyleCombination: option(Hero.Activatable.t),
-  dunklesAbbild: option(Hero.Activatable.t),
-  activePactGiftsCount: int,
-  matchingLanguagesScripts,
-  validExtendedSpecialAbilities: list(int),
-  requiredApplyToMagicalActions: bool,
-};
+open Activatable_Inactive_Cache;
 
 let getActivePactGiftsCount = specialAbilityPairs =>
   specialAbilityPairs
@@ -64,9 +48,13 @@ let isSpecialAbilitySpecificAdditionEnabled =
       ~rules: Hero.Rules.t,
       ~maybePact,
       {
-        specialAbilityPairs,
         combatStyleCombination,
+        armedCombatStylesCount,
+        unarmedCombatStylesCount,
         magicalStyleCombination,
+        magicalStylesCount,
+        isBlessedStyleActive,
+        isSkillStyleActive,
         dunklesAbbild,
         activePactGiftsCount,
         matchingLanguagesScripts,
@@ -77,69 +65,39 @@ let isSpecialAbilitySpecificAdditionEnabled =
   [@warning "-4"]
   Id.SpecialAbility.(
     switch (fromInt(specialAbility.id), Group.fromInt(specialAbility.gr)) {
-    | (_, CombatStylesArmed | CombatStylesUnarmed) =>
+    | (_, CombatStylesArmed as gr | CombatStylesUnarmed as gr) =>
+      let equalTypeStylesActive =
+        switch (gr) {
+        | CombatStylesArmed => armedCombatStylesCount
+        | CombatStylesUnarmed => unarmedCombatStylesCount
+        | _ => 0
+        };
+
       // Combination-SA is active, which allows 3 styles to be active, but only a
       // maximum of 2 from one type (armed/unarmed).
       if (Activatable_Accessors.isActiveM(combatStyleCombination)) {
-        let totalActive =
-          EntryGroups.SpecialAbility.countActiveFromGroups(
-            [CombatStylesArmed, CombatStylesUnarmed],
-            specialAbilityPairs,
-          );
-
-        let equalTypeStylesActive =
-          EntryGroups.SpecialAbility.countActiveFromGroup(
-            Id.SpecialAbility.Group.fromInt(specialAbility.gr),
-            specialAbilityPairs,
-          );
+        let totalActive = armedCombatStylesCount + unarmedCombatStylesCount;
 
         totalActive < 3 || equalTypeStylesActive < 2;
       } else {
-        !
-          EntryGroups.SpecialAbility.hasActiveFromGroup(
-            Id.SpecialAbility.Group.fromInt(specialAbility.gr),
-            specialAbilityPairs,
-          );
-          // Otherwise, only one of each type can be active.
-      }
+        // Otherwise, only one of each type can be active.
+        equalTypeStylesActive === 0;
+      };
 
     | (_, MagicalStyles) =>
-      let totalActive =
-        EntryGroups.SpecialAbility.countActiveFromGroup(
-          MagicalStyles,
-          specialAbilityPairs,
-        );
+      magicalStylesCount
+      < (Activatable_Accessors.isActiveM(magicalStyleCombination) ? 2 : 1)
 
-      totalActive
-      < (Activatable_Accessors.isActiveM(magicalStyleCombination) ? 2 : 1);
+    | (_, BlessedStyles) => !isBlessedStyleActive
 
-    | (_, BlessedStyles as group | SkillStyles as group) =>
-      !
-        EntryGroups.SpecialAbility.hasActiveFromGroup(
-          group,
-          specialAbilityPairs,
-        )
+    | (_, SkillStyles) => !isSkillStyleActive
 
     | (CombatStyleCombination, _) =>
-      !
-        EntryGroups.SpecialAbility.hasActiveFromGroups(
-          [CombatStylesArmed, CombatStylesUnarmed],
-          specialAbilityPairs,
-        )
+      armedCombatStylesCount + unarmedCombatStylesCount > 0
 
-    | (MagicStyleCombination, _) =>
-      !
-        EntryGroups.SpecialAbility.hasActiveFromGroup(
-          MagicalStyles,
-          specialAbilityPairs,
-        )
+    | (MagicStyleCombination, _) => magicalStylesCount > 0
 
-    | (DunklesAbbildDerBuendnisgabe, _) =>
-      !
-        EntryGroups.SpecialAbility.hasActiveFromGroup(
-          Paktgeschenke,
-          specialAbilityPairs,
-        )
+    | (DunklesAbbildDerBuendnisgabe, _) => activePactGiftsCount === 0
 
     | (WegDerSchreiberin, _) =>
       L.Foldable.length(matchingLanguagesScripts.languagesWithMatchingScripts)
@@ -183,21 +141,6 @@ let isSpecialAbilitySpecificAdditionEnabled =
     }
   );
 
-let getFlatFirstPrerequisites =
-  fun
-  | Static.Advantage(staticAdvantage) =>
-    Prerequisites.Flatten.getFirstDisAdvLevelPrerequisites(
-      staticAdvantage.prerequisites,
-    )
-  | Disadvantage(staticDisadvantage) =>
-    Prerequisites.Flatten.getFirstDisAdvLevelPrerequisites(
-      staticDisadvantage.prerequisites,
-    )
-  | SpecialAbility(staticSpecialAbility) =>
-    Prerequisites.Flatten.getFirstLevelPrerequisites(
-      staticSpecialAbility.prerequisites,
-    );
-
 let isEntrySpecificAdditionEnabled =
     (cache, staticData, hero: Hero.t, staticEntry) =>
   (
@@ -217,7 +160,7 @@ let isEntrySpecificAdditionEnabled =
        staticData,
        hero,
        Id.Activatable.generalize(Activatable_Accessors.id(staticEntry)),
-       getFlatFirstPrerequisites(staticEntry),
+       Prerequisites.Activatable.getFlatFirstPrerequisites(staticEntry),
      );
 
 let hasNoGenerallyRestrictingDependency =
@@ -241,8 +184,8 @@ let hasNoGenerallyRestrictingDependency =
     )
   | _ => true;
 
-let hasNotReachedMaximumEntries = (staticEntry, maybeHeroEntry) =>
-  switch (Activatable_Accessors.max(staticEntry), maybeHeroEntry) {
+let hasNotReachedMaximumEntries = (maxLevel, maybeHeroEntry) =>
+  switch (maxLevel, maybeHeroEntry) {
   // Impossible maximum level, thus no addition possible
   | (Some(0), _) => false
   | (Some(max), Some(({active, _}: Hero.Activatable.t))) =>
@@ -282,9 +225,33 @@ let appliesToMagicalActionsIfRequired =
   | SpecialAbility(_) => true
   };
 
-let isAdditionValid = (cache, staticData, hero, staticEntry, maybeHeroEntry) =>
+let isAdditionValid =
+    (cache, staticData, hero, maxLevel, staticEntry, maybeHeroEntry) =>
   isEntrySpecificAdditionEnabled(cache, staticData, hero, staticEntry)
   && hasNoGenerallyRestrictingDependency(maybeHeroEntry)
-  && hasNotReachedMaximumEntries(staticEntry, maybeHeroEntry)
+  && hasNotReachedMaximumEntries(maxLevel, maybeHeroEntry)
   && isValidExtendedSpecialAbility(cache, staticEntry)
   && appliesToMagicalActionsIfRequired(cache, staticEntry);
+
+let getMaxLevel = (staticData, hero, staticEntry, maybeHeroEntry) =>
+  staticEntry
+  |> Prerequisites.Activatable.getLevelPrerequisites
+  |> Dependencies.getMaxLevel(
+       staticData,
+       hero,
+       Id.Activatable.generalize(Activatable_Accessors.id(staticEntry)),
+       O.option(
+         [],
+         ({Hero.Activatable.dependencies, _}) => dependencies,
+         maybeHeroEntry,
+       ),
+     )
+  |> (
+    computedMax =>
+      switch (computedMax, Activatable_Accessors.max(staticEntry)) {
+      | (Some(max1), Some(max2)) => Some(I.min(max1, max2))
+      | (Some(max), None)
+      | (None, Some(max)) => Some(max)
+      | (None, None) => None
+      }
+  );

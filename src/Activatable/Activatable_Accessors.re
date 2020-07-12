@@ -11,6 +11,13 @@ let id = x =>
   | SpecialAbility(y) => `SpecialAbility(y.id)
   };
 
+let id' = x =>
+  switch (x) {
+  | Advantage(y) => y.id
+  | Disadvantage(y) => y.id
+  | SpecialAbility(y) => y.id
+  };
+
 let name = x =>
   switch (x) {
   | Advantage(y) => y.name
@@ -37,6 +44,13 @@ let apValue = x =>
   | Advantage(y) => y.apValue
   | Disadvantage(y) => y.apValue
   | SpecialAbility(y) => y.apValue
+  };
+
+let apValue' = x =>
+  switch (apValue(x)) {
+  | Some(Flat(y)) => Some(OneOrMany.One(y))
+  | Some(PerLevel(ys)) => Some(Many(ys))
+  | None => None
   };
 
 let max = x =>

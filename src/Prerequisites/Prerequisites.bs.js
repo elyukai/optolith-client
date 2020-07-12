@@ -912,6 +912,46 @@ function arePrerequisitesMet(staticData, hero, sourceId, prerequisites) {
               }), prerequisites);
 }
 
+function getMaxLevel(staticData, hero, sourceId, prerequisites) {
+  return Curry._3(Ley_IntMap$OptolithClient.foldlWithKey, (function (max, level, prerequisites) {
+                if (max !== undefined && max <= level) {
+                  return max;
+                }
+                if (arePrerequisitesMet(staticData, hero, sourceId, flattenPrerequisites(prerequisites, /* [] */0))) {
+                  return max;
+                } else {
+                  return level;
+                }
+              }), undefined, prerequisites);
+}
+
+function getFlatFirstPrerequisites(staticAdvantage) {
+  switch (staticAdvantage.TAG | 0) {
+    case /* Advantage */0 :
+    case /* Disadvantage */1 :
+        return getFirstDisAdvLevelPrerequisites(staticAdvantage._0.prerequisites);
+    case /* SpecialAbility */2 :
+        return getFirstLevelPrerequisites(staticAdvantage._0.prerequisites);
+    
+  }
+}
+
+function getLevelPrerequisites(staticAdvantage) {
+  switch (staticAdvantage.TAG | 0) {
+    case /* Advantage */0 :
+    case /* Disadvantage */1 :
+        return staticAdvantage._0.prerequisites.levels;
+    case /* SpecialAbility */2 :
+        return staticAdvantage._0.prerequisites.levels;
+    
+  }
+}
+
+var Activatable = {
+  getFlatFirstPrerequisites: getFlatFirstPrerequisites,
+  getLevelPrerequisites: getLevelPrerequisites
+};
+
 var Flatten = {
   flattenPrerequisites: flattenPrerequisites,
   getFirstLevelPrerequisites: getFirstLevelPrerequisites,
@@ -925,13 +965,15 @@ var Dynamic = {
 
 var Validation = {
   isPrerequisiteMet: isPrerequisiteMet,
-  arePrerequisitesMet: arePrerequisitesMet
+  arePrerequisitesMet: arePrerequisitesMet,
+  getMaxLevel: getMaxLevel
 };
 
 export {
   Flatten ,
   Dynamic ,
   Validation ,
+  Activatable ,
   
 }
 /* Tradition-OptolithClient Not a pure module */

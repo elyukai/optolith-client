@@ -5,12 +5,14 @@ import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as Id$OptolithClient from "../Misc/Id.bs.js";
 import * as Hero$OptolithClient from "../Misc/Hero.bs.js";
+import * as Ley_Int$OptolithClient from "../Data/Ley_Int.bs.js";
 import * as Ley_Bool$OptolithClient from "../Data/Ley_Bool.bs.js";
 import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 import * as Tradition$OptolithClient from "../Misc/Tradition.bs.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as Ley_Function$OptolithClient from "../Data/Ley_Function.bs.js";
+import * as Prerequisites$OptolithClient from "./Prerequisites.bs.js";
 import * as Activatable_Convert$OptolithClient from "../Activatable/Activatable_Convert.bs.js";
 
 function flattenSkillDependencies(getValueForTargetId, id, dependencies) {
@@ -990,6 +992,27 @@ function removeDependencies(param, param$1, param$2, param$3) {
   return modifyDependencies(/* Remove */1, param, param$1, param$2, param$3);
 }
 
+function getMaxLevel(staticData, hero, sourceId, dependencies, prerequisites) {
+  return Ley_Function$OptolithClient.flip((function (param, param$1) {
+                return Ley_List$OptolithClient.Foldable.foldl((function (prevMax, param) {
+                              var level = param.level;
+                              if (param.active) {
+                                return prevMax;
+                              } else if (prevMax !== undefined) {
+                                if (level !== undefined) {
+                                  return Ley_Int$OptolithClient.min(prevMax, level - 1 | 0);
+                                } else {
+                                  return prevMax;
+                                }
+                              } else if (level !== undefined) {
+                                return level - 1 | 0;
+                              } else {
+                                return ;
+                              }
+                            }), param, param$1);
+              }), dependencies, Prerequisites$OptolithClient.Validation.getMaxLevel(staticData, hero, sourceId, prerequisites));
+}
+
 var TransferredUnfamiliar = {
   isUnfamiliarSpell: isUnfamiliarSpell,
   addTransferUnfamiliarDependencies: addTransferUnfamiliarDependencies,
@@ -1001,6 +1024,7 @@ export {
   TransferredUnfamiliar ,
   addDependencies ,
   removeDependencies ,
+  getMaxLevel ,
   
 }
 /* Tradition-OptolithClient Not a pure module */

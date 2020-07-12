@@ -1,3 +1,5 @@
+module F = Ley_Function;
+module I = Ley_Int;
 module L = Ley_List;
 module O = Ley_Option;
 open O.Monad;
@@ -1142,3 +1144,35 @@ let addDependencies = modifyDependencies(Add);
  * Removes dependencies from all required entries to ensure rule validity.
  */
 let removeDependencies = modifyDependencies(Remove);
+
+/**
+ * Return the max level based on prerequisites and dependencies.
+ */
+let getMaxLevel = (staticData, hero, sourceId, dependencies, prerequisites) =>
+  Prerequisites.Validation.getMaxLevel(
+    staticData,
+    hero,
+    sourceId,
+    prerequisites,
+  )
+  |> F.flip(
+       L.Foldable.foldl((prevMax, {Hero.Activatable.active, level, _}) =>
+         switch (active, prevMax, level) {
+         // active must be always false because it needs to *prohibit* a certain
+         // level
+         //
+         // also, if there is both a previous max and an prohibited level in the
+         // dependency, take the minimum value
+         //
+         // the prohibited level is reduced by 1 since this level should not be
+         // reached, thus the maximum level must be lower
+         | (false, Some(prev), Some(notAllowed)) =>
+           Some(I.min(prev, notAllowed - 1))
+         | (false, Some(prev), None) => Some(prev)
+         | (false, None, Some(notAllowed)) => Some(notAllowed - 1)
+         | (false, None, None) => None
+         | (true, _, _) => prevMax
+         }
+       ),
+       dependencies,
+     );

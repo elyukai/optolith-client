@@ -2,18 +2,24 @@ module IM = Ley_IntMap;
 module L = Ley_List;
 module O = Ley_Option;
 
-type t = {
-  id: string,
+open Activatable_Inactive_Cache;
+
+type valid = {
+  id: int,
   name: string,
-  cost: option(OneOrMany.t(int)),
+  apValue: option(OneOrMany.t(int)),
   minLevel: option(int),
   maxLevel: option(int),
-  selectOptions: option(list(SelectOption.t)),
+  selectOptions: list(SelectOption.t),
   heroEntry: option(Hero.Activatable.t),
   staticEntry: Static.activatable,
   customCostDisabled: bool,
   isAutomatic: bool,
 };
+
+type t =
+  | Valid(valid)
+  | Invalid(Static.activatable);
 
 let getSermonOrVisionCountMax = (hero: Hero.t, advantageId, disadvantageId) =>
   Activatable_Modifier.modifyByLevel(
@@ -23,18 +29,7 @@ let getSermonOrVisionCountMax = (hero: Hero.t, advantageId, disadvantageId) =>
   );
 
 let modifyOtherOptions =
-    (
-      ~staticData: Static.t,
-      ~hero,
-      ~specialAbilityPairs,
-      ~combatTechniquePairs,
-      ~adventurePoints: AdventurePoints.categories,
-      ~magicalTraditions,
-      ~blessedTradition,
-      ~staticEntry,
-      ~maybeHeroEntry,
-      ~base,
-    ) =>
+    (cache, staticData: Static.t, hero, staticEntry, maybeHeroEntry, base) =>
   switch (staticEntry) {
   | Static.Advantage(_) => Some(base)
   | Disadvantage(staticDisadvantage) =>
@@ -46,26 +41,24 @@ let modifyOtherOptions =
         Some({
           ...base,
           maxLevel:
-            Some(
-              EntryGroups.SpecialAbility.countActiveFromGroup(
-                switch (id) {
-                | WenigePredigten => Predigten
-                | _ => Visionen
-                },
-                specialAbilityPairs,
-              )
-              |> Activatable_Active_Validation.getMaxLevelForDecreaseEntry(3),
-            ),
+            EntryGroups.SpecialAbility.countActiveFromGroup(
+              switch (id) {
+              | WenigePredigten => Predigten
+              | _ => Visionen
+              },
+              cache.specialAbilityPairs,
+            )
+            |> Activatable_Active_Validation.getMaxLevelForDecreaseEntry(3)
+            |> O.ensure((<)(0)),
         })
 
       | SmallSpellSelection =>
         Some({
           ...base,
           maxLevel:
-            Some(
-              ActivatableSkills.countActiveSkillEntries(Spells, hero)
-              |> Activatable_Active_Validation.getMaxLevelForDecreaseEntry(3),
-            ),
+            ActivatableSkills.countActiveSkillEntries(Spells, hero)
+            |> Activatable_Active_Validation.getMaxLevelForDecreaseEntry(3)
+            |> O.ensure((<)(0)),
         })
 
       | _ => Some(base)
@@ -86,7 +79,10 @@ let modifyOtherOptions =
           ? Some(base) : None;
 
       | Hunter =>
-        EntryGroups.CombatTechnique.getFromGroup(Ranged, combatTechniquePairs)
+        EntryGroups.CombatTechnique.getFromGroup(
+          Ranged,
+          cache.combatTechniquePairs,
+        )
         |> IM.Foldable.any(
              fun
              // At least one ranged combat technique must be on CtR 10 or higher
@@ -106,7 +102,7 @@ let modifyOtherOptions =
       | TraditionSchelme
       | TraditionBrobimGeoden =>
         // Only one tradition allowed
-        L.Foldable.null(magicalTraditions) ? Some(base) : None
+        L.Foldable.null(cache.magicalTraditions) ? Some(base) : None
 
       | PropertyKnowledge
       | AspectKnowledge =>
@@ -122,7 +118,7 @@ let modifyOtherOptions =
 
           O.Functor.(
             L.Safe.atMay(values, index)
-            <&> (apValue => {...base, cost: Some(One(apValue))})
+            <&> (apValue => {...base, apValue: Some(One(apValue))})
           );
         | Some(Flat(_))
         | None => None
@@ -148,7 +144,7 @@ let modifyOtherOptions =
       | TraditionChurchOfSwafnir
       | TraditionCultOfNuminoru =>
         // Only one tradition allowed
-        O.isNone(blessedTradition) ? Some(base) : None
+        O.isNone(cache.blessedTradition) ? Some(base) : None
 
       | Recherchegespuer =>
         O.Monad.(
@@ -170,7 +166,7 @@ let modifyOtherOptions =
                 |> L.map((+)(IC.getAPForActivatation(ic)))
                 |> (
                   sumValues =>
-                    {...base, cost: Some(Many(sumValues))} |> return
+                    {...base, apValue: Some(Many(sumValues))} |> return
                 )
               | Some(Flat(_))
               | None => None
@@ -197,7 +193,7 @@ let modifyOtherOptions =
         let isLessThanMax =
           EntryGroups.SpecialAbility.countActiveFromGroup(
             Predigten,
-            specialAbilityPairs,
+            cache.specialAbilityPairs,
           )
           < max;
 
@@ -219,7 +215,7 @@ let modifyOtherOptions =
         let isLessThanMax =
           EntryGroups.SpecialAbility.countActiveFromGroup(
             Visionen,
-            specialAbilityPairs,
+            cache.specialAbilityPairs,
           )
           < max;
 
@@ -227,8 +223,12 @@ let modifyOtherOptions =
           ? Some(base) : None;
 
       | DunklesAbbildDerBuendnisgabe =>
-        O.Functor.(
-          hero.pact <&> (({level, _}) => {...base, maxLevel: Some(level)})
+        O.Monad.(
+          hero.pact
+          >>= (
+            ({level, _}) =>
+              level > 0 ? Some({...base, maxLevel: Some(level)}) : None
+          )
         )
 
       | TraditionArcaneBard
@@ -236,84 +236,77 @@ let modifyOtherOptions =
       | TraditionIntuitiveMage
       | TraditionSavant
       | TraditionAnimisten =>
-        adventurePoints.spentOnMagicalAdvantages <= 25
-        && adventurePoints.spentOnMagicalDisadvantages <= 25
-        && L.Foldable.null(magicalTraditions)
+        cache.adventurePoints.spentOnMagicalAdvantages <= 25
+        && cache.adventurePoints.spentOnMagicalDisadvantages <= 25
+        && L.Foldable.null(cache.magicalTraditions)
           ? Some(base) : None
 
       | _ => Some(base)
       }
     )
   };
-//
-// /**
-//  * Calculates whether an Activatable is valid to add or not and, if valid,
-//  * calculates and filters necessary properties and selection lists. Returns a
-//  * Maybe of the result or `undefined` if invalid.
-//  */
-// export const getInactiveView =
-//   (staticData: StaticDataRecord) =>
-//   (hero: HeroModelRecord) =>
-//   (automatic_advantages: List<string>) =>
-//   (required_apply_to_mag_actions: boolean) =>
-//   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
-//   (adventure_points: Record<AdventurePointsCategories>) =>
-//   (validExtendedSpecialAbilities: List<string>) =>
-//   (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
-//   (wiki_entry: Activatable) =>
-//   (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<Record<InactiveActivatable>> => {
-//     const current_id = AAL.id (wiki_entry)
-//     const current_prerequisites = AAL.prerequisites (wiki_entry)
-//
-//     const max_level = isOrderedMap (current_prerequisites)
-//       ? validateLevel (staticData)
-//                       (hero)
-//                       (current_prerequisites)
-//                       (maybe<ActivatableDependent["dependencies"]> (List ())
-//                                                                    (ADA.dependencies)
-//                                                                    (mhero_entry))
-//                       (current_id)
-//       : Nothing
-//
-//     const isNotValid = isAdditionDisabled (staticData)
-//                                           (hero)
-//                                           (required_apply_to_mag_actions)
-//                                           (validExtendedSpecialAbilities)
-//                                           (matching_script_and_lang_related)
-//                                           (wiki_entry)
-//                                           (mhero_entry)
-//                                           (max_level)
-//
-//     if (!isNotValid) {
-//       return pipe_ (
-//         wiki_entry,
-//         AAL.select,
-//         modifySelectOptions (staticData)
-//                             (hero)
-//                             (hero_magical_traditions)
-//                             (wiki_entry)
-//                             (mhero_entry),
-//         ensure (maybe (true) (notNull)),
-//         fmap (select_options => InactiveActivatable ({
-//                                   id: current_id,
-//                                   name: SpAL.name (wiki_entry),
-//                                   cost: AAL.cost (wiki_entry),
-//                                   maxLevel: max_level,
-//                                   heroEntry: mhero_entry,
-//                                   wikiEntry: wiki_entry as Record<RecordI<Activatable>>,
-//                                   selectOptions: fmapF (select_options)
-//                                                        (sortRecordsByName (staticData)),
-//                                   isAutomatic: List.elem (AAL.id (wiki_entry))
-//                                                          (automatic_advantages),
-//                                 })),
-//         ap (modifyOtherOptions (staticData)
-//                                (hero)
-//                                (adventure_points)
-//                                (wiki_entry)
-//                                (mhero_entry)),
-//         bindF (ensure (pipe (IAA.maxLevel, maybe (true) (notEquals (0)))))
-//       )
-//     }
-//
-//     return Nothing
-/*   */
+
+let getInactive = (cache, staticData, hero, staticEntry, maybeHeroEntry) => {
+  let maxLevel =
+    Activatable_Inactive_Validation.getMaxLevel(
+      staticData,
+      hero,
+      staticEntry,
+      maybeHeroEntry,
+    );
+
+  let isAdditionValid =
+    Activatable_Inactive_Validation.isAdditionValid(
+      cache,
+      staticData,
+      hero,
+      maxLevel,
+      staticEntry,
+      maybeHeroEntry,
+    );
+
+  if (isAdditionValid) {
+    O.Monad.(
+      Activatable_Inactive_SelectOptions.getAvailableSelectOptions(
+        staticData,
+        hero,
+        cache.magicalTraditions,
+        staticEntry,
+        maybeHeroEntry,
+      )
+      <&> (
+        selectOptions => {
+          id: Activatable_Accessors.id'(staticEntry),
+          name: Activatable_Accessors.name(staticEntry),
+          apValue: Activatable_Accessors.apValue'(staticEntry),
+          minLevel: None,
+          maxLevel,
+          selectOptions,
+          heroEntry: maybeHeroEntry,
+          staticEntry,
+          customCostDisabled: true,
+          isAutomatic:
+            switch (staticEntry) {
+            | Advantage({id, _}) => L.elem(id, cache.automaticAdvantages)
+            | Disadvantage(_)
+            | SpecialAbility(_) => false
+            },
+        }
+      )
+      >>= (
+        base =>
+          modifyOtherOptions(
+            cache,
+            staticData,
+            hero,
+            staticEntry,
+            maybeHeroEntry,
+            base,
+          )
+      )
+      |> O.option(Invalid(staticEntry), base => Valid(base))
+    );
+  } else {
+    Invalid(staticEntry);
+  };
+};

@@ -1,5 +1,6 @@
 open Prerequisite;
 
+module IM = Ley_IntMap;
 module O = Ley_Option;
 
 type prerequisite =
@@ -769,6 +770,20 @@ module Validation = {
       isPrerequisiteMet(staticData, hero, sourceId),
       prerequisites,
     );
+
+  let getMaxLevel = (staticData, hero, sourceId, prerequisites) =>
+    IM.foldlWithKey(
+      (max, level, prerequisites) =>
+        switch (max) {
+        | Some(max) when max <= level => Some(max)
+        | max =>
+          Flatten.flattenPrerequisites(prerequisites, [])
+          |> arePrerequisitesMet(staticData, hero, sourceId)
+            ? max : Some(level)
+        },
+      None,
+      prerequisites,
+    );
 };
 
 //
@@ -785,84 +800,6 @@ module Validation = {
 //     : RequireIncreasable.is (req)
 //     ? set (ri_id) (id) (req)
 //     : req
-//
-//
-// /**
-//  * Returns if the current index can be skipped because there is already a lower
-//  * level which prerequisites are not met.
-//  *
-//  * This is for performance reasons to not check the prerequisites of higher levels.
-//  */
-// const skipLevelCheck =
-//   (current_req: Pair<number, List<AllRequirements>>) =>
-//   (mmax: Maybe<number>) =>
-//     isJust (mmax) && pipe_ (current_req, fst, gt (fromJust (mmax)))
-//
-// /**
-//  * Get maximum valid level.
-//  * @param state The current hero data.
-//  * @param requirements A Map of tier prereqisite arrays.
-//  * @param sourceId The id of the entry the requirement objects belong to.
-//  */
-// export const validateLevel =
-//   (wiki: StaticDataRecord) =>
-//   (state: HeroModelRecord) =>
-//   (requirements: OrderedMap<number, List<AllRequirements>>) =>
-//   (dependencies: List<ActivatableDependency>) =>
-//   (sourceId: string): Maybe<number> =>
-//     pipe_ (
-//       requirements,
-//       toList,
-//       sortBy (on (compare) (fst)),
-//
-//       // first check the prerequisites:
-//       foldl ((max: Maybe<number>) => (entry: Pair<number, List<AllRequirements>>) =>
-//
-//               // if `max` is lower than the current level (from `entry`), just
-//               // skip the prerequisite validation
-//               !skipLevelCheck (entry) (max)
-//
-//               // otherwise, validate them
-//               && !validatePrerequisites (wiki) (state) (snd (entry)) (sourceId)
-//
-//                 // if *not* valid, set the max to be lower than the actual
-//                 // current level (because it must not be reached)
-//                 ? Just (fst (entry) - 1)
-//
-//                 // otherwise, just pass the previous max value
-//                 : max)
-//             (Nothing),
-//
-//       // then, check the dependencies
-//       flip (foldl ((max: Maybe<number>) => (dep: ActivatableDependency) =>
-//
-//                     // If `dep` prohibits higher level:
-//                     // - it can only be contained in a record
-//                     Record.isRecord (dep)
-//
-//                     // - and it must be *prohibited*, so `active` must be `false`
-//                     && Maybe.elem (false) (DOA.active (dep))
-//                       ? pipe_ (
-//                           dep,
-//
-//                           // get the current prohibited level
-//                           DOA.tier,
-//
-//                                 // - if its a Nothing, do nothing
-//                           maybe (max)
-//
-//                                 // - otherwise decrease the level by one (the
-//                                 // actual level must not be reached) and then
-//                                 // take the lower one, if both the current and
-//                                 // the previous are Justs, otherwise the
-//                                 // current.
-//                                 (pipe (dec, level => Just (maybe (level) (min (level)) (max))))
-//                         )
-//
-//                       // otherwise, dont do anything
-//                       : max))
-//            (dependencies)
-//     )
 //
 // /**
 //  * Checks if all profession prerequisites are fulfilled.
@@ -882,3 +819,25 @@ module Validation = {
 //                                 ? isCultureValid (current_culture_id) (req)
 //                                 : false)
 //                               (prerequisites)
+
+module Activatable = {
+  let getFlatFirstPrerequisites =
+    fun
+    | Static.Advantage(staticAdvantage) =>
+      Flatten.getFirstDisAdvLevelPrerequisites(staticAdvantage.prerequisites)
+    | Disadvantage(staticDisadvantage) =>
+      Flatten.getFirstDisAdvLevelPrerequisites(
+        staticDisadvantage.prerequisites,
+      )
+    | SpecialAbility(staticSpecialAbility) =>
+      Flatten.getFirstLevelPrerequisites(staticSpecialAbility.prerequisites);
+
+  let getLevelPrerequisites =
+    fun
+    | Static.Advantage(staticAdvantage) =>
+      staticAdvantage.prerequisites.levels
+    | Disadvantage(staticDisadvantage) =>
+      staticDisadvantage.prerequisites.levels
+    | SpecialAbility(staticSpecialAbility) =>
+      staticSpecialAbility.prerequisites.levels;
+};

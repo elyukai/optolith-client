@@ -97,3 +97,24 @@ let removeDependencies:
     Hero.t
   ) =>
   Hero.t;
+
+/**
+ * `getMaxLevel staticData hero sourceId dependencies levelPrerequisites`
+ * returns the maximum level based on the map of prerequisites
+ * `levelPrerequisites` where the key is the level and the value the
+ * prerequisites that need to be met for the respective level as well as based
+ * on the registered `dependencies` of the entry.
+ *
+ * The return value is based on prerequisites *and* entry dependencies. To get
+ * the max level only based on prerequisites, use
+ * `Prerequisites.Validation.getMaxLevel`.
+ */
+let getMaxLevel:
+  (
+    Static.t,
+    Hero.t,
+    Id.t,
+    list(Hero.Activatable.dependency),
+    Ley_IntMap.t(Prerequisite.t)
+  ) =>
+  option(int);

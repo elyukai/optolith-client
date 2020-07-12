@@ -20,6 +20,8 @@ let isActiveM: option(Hero.Activatable.t) => bool;
 
 let id: Static.activatable => Id.Activatable.t;
 
+let id': Static.activatable => int;
+
 let name: Static.activatable => string;
 
 let selectOptions: Static.activatable => SelectOption.map;
@@ -27,5 +29,7 @@ let selectOptions: Static.activatable => SelectOption.map;
 let input: Static.activatable => option(string);
 
 let apValue: Static.activatable => option(Advantage.cost);
+
+let apValue': Static.activatable => option(OneOrMany.t(int));
 
 let max: Static.activatable => option(int);

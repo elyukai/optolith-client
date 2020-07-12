@@ -13,7 +13,7 @@ module Applicative: {
   /**
    * Apply a wrapped function to a wrapped value.
    */
-  let (<*>): (t('a => 'b), t('a)) => t('b);
+  let (<*>): (t('a), t('a => 'b)) => t('b);
 };
 
 module Alternative: {

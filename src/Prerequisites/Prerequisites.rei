@@ -80,4 +80,24 @@ module Validation: {
    */
   let arePrerequisitesMet:
     (Static.t, Hero.t, Id.t, list(prerequisite)) => bool;
+
+  /**
+   * `getMaxLevel staticData hero sourceId levelPrerequisites` returns the
+   * maximum level based on the map of prerequisites `levelPrerequisites` where
+   * the key is the level and the value the prerequisites that need to be met
+   * for the respective level.
+   *
+   * The return value is purely based on prerequisites, entry dependencies are
+   * not taken into account. To get the max level based on prerequisites *and*
+   * dependencies, use `Dependencies.getMaxLevel`.
+   */
+  let getMaxLevel:
+    (Static.t, Hero.t, Id.t, Ley_IntMap.t(Prerequisite.t)) => option(int);
+};
+
+module Activatable: {
+  let getFlatFirstPrerequisites: Static.activatable => list(prerequisite);
+
+  let getLevelPrerequisites:
+    Static.activatable => Ley_IntMap.t(Prerequisite.t);
 };

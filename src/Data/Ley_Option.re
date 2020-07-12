@@ -17,7 +17,7 @@ module Functor = {
 module Applicative = {
   open Functor;
 
-  let (<*>) = (mf, mx) =>
+  let (<*>) = (mx, mf) =>
     switch (mf) {
     | Some(f) => f <$> mx
     | None => None
