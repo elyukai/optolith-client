@@ -33,6 +33,8 @@ type t = [
   | `State(int)
 ];
 
+type all = t;
+
 /**
  * `compare x y` returns `0` if `x` and `y` are equal, a negative integer if
  * `x` is smaller than `y`, and a positive integer if `x` is greater than
@@ -46,6 +48,8 @@ module Activatable: {
   type t = [ | `Advantage(int) | `Disadvantage(int) | `SpecialAbility(int)];
 
   let (==): (t, t) => bool;
+
+  let generalize: t => all;
 
   module Option: {
     type t = [

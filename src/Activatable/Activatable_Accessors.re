@@ -4,6 +4,13 @@ let isActive = (x: Hero.Activatable.t) => Ley_List.Extra.notNull(x.active);
 
 let isActiveM = Ley_Option.option(false, isActive);
 
+let id = x =>
+  switch (x) {
+  | Advantage(y) => `Advantage(y.id)
+  | Disadvantage(y) => `Disadvantage(y.id)
+  | SpecialAbility(y) => `SpecialAbility(y.id)
+  };
+
 let name = x =>
   switch (x) {
   | Advantage(y) => y.name
@@ -30,4 +37,11 @@ let apValue = x =>
   | Advantage(y) => y.apValue
   | Disadvantage(y) => y.apValue
   | SpecialAbility(y) => y.apValue
+  };
+
+let max = x =>
+  switch (x) {
+  | Advantage(y) => y.max
+  | Disadvantage(y) => y.max
+  | SpecialAbility(y) => y.max
   };

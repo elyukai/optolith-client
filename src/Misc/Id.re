@@ -33,6 +33,8 @@ type t = [
   | `State(int)
 ];
 
+type all = t;
+
 let outerToInt = id =>
   switch (id) {
   | `ExperienceLevel(_) => 1
@@ -127,6 +129,13 @@ module Activatable = {
     | (`Disadvantage(x), `Disadvantage(y))
     | (`SpecialAbility(x), `SpecialAbility(y)) => x === y
     | _ => false
+    };
+
+  let generalize = (id: t): all =>
+    switch (id) {
+    | `Advantage(id) => `Advantage(id)
+    | `Disadvantage(id) => `Disadvantage(id)
+    | `SpecialAbility(id) => `SpecialAbility(id)
     };
 
   module Option = {

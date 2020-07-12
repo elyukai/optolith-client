@@ -3,7 +3,6 @@ open Ley_Option.Monad;
 open Static;
 open Ley_Function;
 open Activatable_Convert;
-open Activatable_Accessors;
 open Activatable_SelectOptions;
 
 type combinedApValue = {
@@ -72,7 +71,10 @@ let getEntrySpecificCost =
 
   let sid1 = singleHeroEntry |> getOption1;
   let level = singleHeroEntry.level;
-  let apValue = staticEntry |> apValue |> fromOption(Advantage.Flat(0));
+  let apValue =
+    staticEntry
+    |> Activatable_Accessors.apValue
+    |> fromOption(Advantage.Flat(0));
 
   switch (staticEntry) {
   | Advantage(entry) =>
@@ -294,7 +296,9 @@ let getEntrySpecificCost =
         // There are two disadvantages that, when active, decrease the cost of
         // this tradition by 10 AP each
         let decreaseCost = (id, cost) =>
-          hero.disadvantages |> Ley_IntMap.lookup(id) |> isActiveM
+          hero.disadvantages
+          |> Ley_IntMap.lookup(id)
+          |> Activatable_Accessors.isActiveM
             ? cost - 10 : cost;
 
         apValue

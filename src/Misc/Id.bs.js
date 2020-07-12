@@ -138,6 +138,28 @@ function $eq$1(x, y) {
   }
 }
 
+function generalize(id) {
+  var variant = id.HASH;
+  if (variant !== -41058677) {
+    if (variant >= 255955901) {
+      return {
+              HASH: /* Disadvantage */255955901,
+              VAL: id.VAL
+            };
+    } else {
+      return {
+              HASH: /* SpecialAbility */-789492591,
+              VAL: id.VAL
+            };
+    }
+  } else {
+    return {
+            HASH: /* Advantage */-41058677,
+            VAL: id.VAL
+          };
+  }
+}
+
 function $eq$2(x, y) {
   if (typeof x === "number") {
     return false;
@@ -204,6 +226,7 @@ var $$Option = {
 
 var Activatable = {
   $eq: $eq$1,
+  generalize: generalize,
   $$Option: $$Option
 };
 

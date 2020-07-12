@@ -1,8 +1,6 @@
 module F = Ley_Function;
 module IM = Ley_IntMap;
 module L = Ley_List;
-module O = Ley_Option;
-module SM = Ley_StrMap;
 
 type matchingLanguagesScripts = {
   // `true` if an entry that requires to have matching languages and scripts
@@ -10,6 +8,18 @@ type matchingLanguagesScripts = {
   isEntryActiveRequiringMatch: bool,
   languagesWithMatchingScripts: list(int),
   scriptsWithMatchingLanguages: list(int),
+};
+
+type inactiveValidationCache = {
+  specialAbilityPairs:
+    Ley_IntMap.t((SpecialAbility.t, option(Hero.Activatable.t))),
+  combatStyleCombination: option(Hero.Activatable.t),
+  magicalStyleCombination: option(Hero.Activatable.t),
+  dunklesAbbild: option(Hero.Activatable.t),
+  activePactGiftsCount: int,
+  matchingLanguagesScripts,
+  validExtendedSpecialAbilities: list(int),
+  requiredApplyToMagicalActions: bool,
 };
 
 let getActivePactGiftsCount = specialAbilityPairs =>
@@ -52,13 +62,16 @@ let getActivePactGiftsCount = specialAbilityPairs =>
 let isSpecialAbilitySpecificAdditionEnabled =
     (
       ~rules: Hero.Rules.t,
-      ~specialAbilityPairs,
-      ~combatStyleCombination,
-      ~magicalStyleCombination,
-      ~dunklesAbbild,
-      ~activePactGiftsCount,
       ~maybePact,
-      ~matchingLanguagesScripts,
+      {
+        specialAbilityPairs,
+        combatStyleCombination,
+        magicalStyleCombination,
+        dunklesAbbild,
+        activePactGiftsCount,
+        matchingLanguagesScripts,
+        _,
+      },
       specialAbility: SpecialAbility.t,
     ) =>
   [@warning "-4"]
@@ -169,73 +182,109 @@ let isSpecialAbilitySpecificAdditionEnabled =
     | _ => true
     }
   );
-//
-// /**
-//  * Checks if you can somehow add an ActiveObject to the given entry.
-//  * @param state The present state of the current hero.
-//  * @param instance The entry.
-//  */
-// const isAdditionDisabledEntrySpecific =
-//   (wiki: StaticDataRecord) =>
-//   (hero: HeroModelRecord) =>
-//   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
-//   (wiki_entry: Activatable): boolean =>
-//     (
-//       SpecialAbility.is (wiki_entry)
-//       && isAdditionDisabledSpecialAbilitySpecific (wiki)
-//                                                   (hero)
-//                                                   (matching_script_and_lang_related)
-//                                                   (wiki_entry)
-//     )
-//     || !validatePrerequisites (wiki)
-//                               (hero)
-//                               (getFirstLevelPrerequisites (AAL.prerequisites (wiki_entry)))
-//                               (AAL.id (wiki_entry))
-//
-// const hasGeneralRestrictionToAdd =
-//   any (pipe (ADA.dependencies, elem<ActivatableDependency> (false)))
-//
-// const hasReachedMaximumEntries =
-//   (wiki_entry: Activatable) =>
-//   (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
-//     any (lte (fromMaybe (0)
-//                         (fmap (pipe (ADA.active, flength))
-//                               (mhero_entry))))
-//         (AAL.max (wiki_entry))
-//
-// const hasReachedImpossibleMaximumLevel = Maybe.elem (0)
-//
-// const isInvalidExtendedSpecialAbility =
-//   (wiki_entry: Activatable) =>
-//   (validExtendedSpecialAbilities: List<string>) =>
-//     CheckStyleUtils.isExtendedSpecialAbility (wiki_entry)
-//     && notElem (AAL.id (wiki_entry)) (validExtendedSpecialAbilities)
-//
-// const doesNotApplyToMagActionsThoughRequired =
-//   (required_apply_to_mag_actions: boolean) =>
-//   (wiki_entry: Activatable): boolean =>
-//     SpecialAbility.is (wiki_entry)
-//     ? false
-//     : required_apply_to_mag_actions && Advantage.AL.isExclusiveToArcaneSpellworks (wiki_entry)
-//
-// /**
-//  * Checks if the given entry can be added.
-//  * @param obj
-//  * @param state The current hero's state.
-//  */
-// export const isAdditionDisabled =
-//   (wiki: StaticDataRecord) =>
-//   (hero: HeroModelRecord) =>
-//   (required_apply_to_mag_actions: boolean) =>
-//   (validExtendedSpecialAbilities: List<string>) =>
-//   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
-//   (wiki_entry: Activatable) =>
-//   (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
-//   (max_level: Maybe<number>): boolean =>
-//     isAdditionDisabledEntrySpecific (wiki) (hero) (matching_script_and_lang_related) (wiki_entry)
-//     || hasGeneralRestrictionToAdd (mhero_entry)
-//     || hasReachedMaximumEntries (wiki_entry) (mhero_entry)
-//     || hasReachedImpossibleMaximumLevel (max_level)
-//     || isInvalidExtendedSpecialAbility (wiki_entry) (validExtendedSpecialAbilities)
-//     || doesNotApplyToMagActionsThoughRequired (required_apply_to_mag_actions) (wiki_entry)
-//
+
+let getFlatFirstPrerequisites =
+  fun
+  | Static.Advantage(staticAdvantage) =>
+    Prerequisites.Flatten.getFirstDisAdvLevelPrerequisites(
+      staticAdvantage.prerequisites,
+    )
+  | Disadvantage(staticDisadvantage) =>
+    Prerequisites.Flatten.getFirstDisAdvLevelPrerequisites(
+      staticDisadvantage.prerequisites,
+    )
+  | SpecialAbility(staticSpecialAbility) =>
+    Prerequisites.Flatten.getFirstLevelPrerequisites(
+      staticSpecialAbility.prerequisites,
+    );
+
+let isEntrySpecificAdditionEnabled =
+    (cache, staticData, hero: Hero.t, staticEntry) =>
+  (
+    switch (staticEntry) {
+    | Static.Advantage(_)
+    | Disadvantage(_) => true
+    | SpecialAbility(staticSpecialAbility) =>
+      isSpecialAbilitySpecificAdditionEnabled(
+        ~rules=hero.rules,
+        ~maybePact=hero.pact,
+        cache,
+        staticSpecialAbility,
+      )
+    }
+  )
+  && Prerequisites.Validation.arePrerequisitesMet(
+       staticData,
+       hero,
+       Id.Activatable.generalize(Activatable_Accessors.id(staticEntry)),
+       getFlatFirstPrerequisites(staticEntry),
+     );
+
+let hasNoGenerallyRestrictingDependency =
+  fun
+  | Some({Hero.Activatable.dependencies, _}) =>
+    L.Foldable.all(
+      [@warning "-4"]
+      (
+        fun
+        | {
+            Hero.Activatable.target: One(_),
+            options: [],
+            level: None,
+            active: false,
+            _,
+          } =>
+          false
+        | _ => true
+      ),
+      dependencies,
+    )
+  | _ => true;
+
+let hasNotReachedMaximumEntries = (staticEntry, maybeHeroEntry) =>
+  switch (Activatable_Accessors.max(staticEntry), maybeHeroEntry) {
+  // Impossible maximum level, thus no addition possible
+  | (Some(0), _) => false
+  | (Some(max), Some(({active, _}: Hero.Activatable.t))) =>
+    max > L.Foldable.length(active)
+  | (Some(_), None)
+  | (None, _) => true
+  };
+
+let isValidExtendedSpecialAbility =
+    ({validExtendedSpecialAbilities, _}, staticEntry) =>
+  switch (staticEntry) {
+  | Static.Advantage(_)
+  | Disadvantage(_) => true
+  | SpecialAbility(staticSpecialAbility) =>
+    [@warning "-4"]
+    Id.SpecialAbility.Group.(
+      switch (fromInt(staticSpecialAbility.gr)) {
+      | CombatExtended
+      | MagicalExtended
+      | KarmaExtended
+      | SkillExtended =>
+        L.elem(staticSpecialAbility.id, validExtendedSpecialAbilities)
+      | _ => true
+      }
+    )
+  };
+
+let appliesToMagicalActionsIfRequired =
+    ({requiredApplyToMagicalActions, _}, staticEntry) =>
+  switch (staticEntry) {
+  | Static.Advantage(staticAdvantage) =>
+    !requiredApplyToMagicalActions
+    || !staticAdvantage.isExclusiveToArcaneSpellworks
+  | Disadvantage(staticDisadvantage) =>
+    !requiredApplyToMagicalActions
+    || !staticDisadvantage.isExclusiveToArcaneSpellworks
+  | SpecialAbility(_) => true
+  };
+
+let isAdditionValid = (cache, staticData, hero, staticEntry, maybeHeroEntry) =>
+  isEntrySpecificAdditionEnabled(cache, staticData, hero, staticEntry)
+  && hasNoGenerallyRestrictingDependency(maybeHeroEntry)
+  && hasNotReachedMaximumEntries(staticEntry, maybeHeroEntry)
+  && isValidExtendedSpecialAbility(cache, staticEntry)
+  && appliesToMagicalActionsIfRequired(cache, staticEntry);

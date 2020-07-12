@@ -11,6 +11,27 @@ function isActiveM(param) {
   return Ley_Option$OptolithClient.option(false, isActive, param);
 }
 
+function id(x) {
+  switch (x.TAG | 0) {
+    case /* Advantage */0 :
+        return {
+                HASH: /* Advantage */-41058677,
+                VAL: x._0.id
+              };
+    case /* Disadvantage */1 :
+        return {
+                HASH: /* Disadvantage */255955901,
+                VAL: x._0.id
+              };
+    case /* SpecialAbility */2 :
+        return {
+                HASH: /* SpecialAbility */-789492591,
+                VAL: x._0.id
+              };
+    
+  }
+}
+
 function name(x) {
   return x._0.name;
 }
@@ -48,13 +69,26 @@ function apValue(x) {
   }
 }
 
+function max(x) {
+  switch (x.TAG | 0) {
+    case /* Advantage */0 :
+    case /* Disadvantage */1 :
+        return x._0.max;
+    case /* SpecialAbility */2 :
+        return x._0.max;
+    
+  }
+}
+
 export {
   isActive ,
   isActiveM ,
+  id ,
   name ,
   selectOptions ,
   input ,
   apValue ,
+  max ,
   
 }
 /* No side effect */

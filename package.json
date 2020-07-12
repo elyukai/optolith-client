@@ -13,6 +13,8 @@
   "dependencies": {
     "@glennsl/bs-json": "5.0.2",
     "ajv": "6.12.0",
+    "bs-bastet": "1.2.5",
+    "bs-decode": "0.11.2",
     "bs-platform": "8.0.3",
     "bs-webapi": "0.17.0",
     "electron-devtools-installer": "3.0.0",
@@ -34,6 +36,7 @@
     "redux": "4.0.5",
     "redux-devtools-extension": "2.13.8",
     "redux-thunk": "2.3.0",
+    "relude": "0.63.1",
     "remark-breaks": "1.0.5",
     "reselect": "4.0.0",
     "semver": "7.3.2",
