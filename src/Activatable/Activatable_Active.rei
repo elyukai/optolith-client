@@ -8,19 +8,20 @@ type t = {
   heroEntry: Hero.Activatable.t,
 } /*   t*/;
 
-// /**
-//  * `getActive cache staticData hero staticEntry maybeHeroEntry` validates an
-//  * inactive entry, filters possible options and then either returns a valid
-//  * entry with additional and filtered options or an invalid entry.
-//  *
-//  * This can be used to display valid as well as invalid entries in a single
-//  * list.
-//  */
-// let getActive:
-//   (
-//     Activatable_Inactive_Cache.t,
-//     Static.t,
-//     Hero.t,
-//     Static.activatable,
-//     option(Hero.Activatable.t)
-//   ) =>
+/**
+ * `getActive cache staticData hero staticEntry maybeHeroEntry` adds display
+ * options to an active entry, such as calculated AP, combined/generated name or
+ * if it's valid to remove it.
+ */
+let getActive:
+  (
+    ~isEntryToAdd: bool,
+    ~addLevelToName: bool,
+    Activatable_Cache.t,
+    Static.t,
+    Hero.t,
+    Static.activatable,
+    Hero.Activatable.t,
+    Activatable_Convert.singleWithId
+  ) =>
+  t;

@@ -11,8 +11,8 @@ type t = {
 let getActive =
     (
       ~isEntryToAdd,
-      ~automaticAdvantages,
       ~addLevelToName,
+      cache,
       staticData,
       hero,
       staticEntry,
@@ -27,24 +27,34 @@ let getActive =
       singleEntry,
     );
 
-  let {Activatable_Active_AdventurePointValue.apValue, isAutomatic} =
-    Activatable_Active_AdventurePointValue.getApValue(
-      ~isEntryToAdd,
-      ~automaticAdvantages,
+  let validation =
+    Activatable_Active_Validation.isRemovalOrModificationValid(
+      cache,
       staticData,
       hero,
       staticEntry,
       heroEntry,
       singleEntry,
     );
-  ();
-  // {
-  //   naming,
-  //   active: singleEntry,
-  //   apValue,
-  //   isAutomatic,
-  //   validation: ,
-  //   staticEntry,
-  //   heroEntry,
-  // };
+
+  let {Activatable_Active_AdventurePointValue.apValue, isAutomatic} =
+    Activatable_Active_AdventurePointValue.getApValue(
+      ~isEntryToAdd,
+      ~automaticAdvantages=cache.automaticAdvantages,
+      staticData,
+      hero,
+      staticEntry,
+      heroEntry,
+      singleEntry,
+    );
+
+  {
+    naming,
+    active: singleEntry,
+    apValue,
+    isAutomatic,
+    validation,
+    staticEntry,
+    heroEntry,
+  };
 };
