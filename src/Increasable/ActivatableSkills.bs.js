@@ -53,6 +53,17 @@ function countActiveSkillEntries(domain, hero) {
               }), domain ? hero.liturgicalChants : hero.spells);
 }
 
+function hasActiveSkillEntries(domain, hero) {
+  return Curry._2(Ley_IntMap$OptolithClient.IntMap.Foldable.any, (function (entry) {
+                var match = entry.value;
+                if (match) {
+                  return true;
+                } else {
+                  return false;
+                }
+              }), domain ? hero.liturgicalChants : hero.spells);
+}
+
 export {
   getValueDef ,
   valueToInt ,
@@ -60,6 +71,7 @@ export {
   isActiveM ,
   getActiveSkillEntries ,
   countActiveSkillEntries ,
+  hasActiveSkillEntries ,
   
 }
 /* Ley_IntMap-OptolithClient Not a pure module */

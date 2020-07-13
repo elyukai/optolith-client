@@ -20,7 +20,7 @@ let getActivePactGiftsCount:
  */
 let isAdditionValid:
   (
-    Activatable_Inactive_Cache.t,
+    Activatable_Cache.t,
     Static.t,
     Hero.t,
     option(int),

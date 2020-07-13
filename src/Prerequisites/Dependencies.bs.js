@@ -15,6 +15,36 @@ import * as Ley_Function$OptolithClient from "../Data/Ley_Function.bs.js";
 import * as Prerequisites$OptolithClient from "./Prerequisites.bs.js";
 import * as Activatable_Convert$OptolithClient from "../Activatable/Activatable_Convert.bs.js";
 
+function isLevelDependencyMatched(dependency, active) {
+  var match = dependency.level;
+  var match$1 = active.level;
+  if (match !== undefined) {
+    if (match$1 !== undefined) {
+      return match$1 >= match === dependency.active;
+    } else {
+      return !dependency.active;
+    }
+  } else {
+    return true;
+  }
+}
+
+function areOptionDependenciesMatched(dependency, active) {
+  return Ley_List$OptolithClient.Index.iall((function (i, option) {
+                return Ley_Option$OptolithClient.option(false, (function (activeOption) {
+                              if (option.TAG) {
+                                return Ley_List$OptolithClient.elem(activeOption, option._0) === dependency.active;
+                              } else {
+                                return Id$OptolithClient.SelectOption.$eq(activeOption, option._0) === dependency.active;
+                              }
+                            }), Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_List$OptolithClient.Safe.atMay(active.options, i), Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId));
+              }), dependency.options);
+}
+
+function isDependencyMatched(dependency, active) {
+  return (isLevelDependencyMatched(dependency, active) && areOptionDependenciesMatched(dependency, active)) === dependency.active;
+}
+
 function flattenSkillDependencies(getValueForTargetId, id, dependencies) {
   return Ley_Option$OptolithClient.mapOption((function (dep) {
                 var targets = dep.target;
@@ -59,24 +89,8 @@ function flattenActivatableDependencies(getActiveListForTargetId, id, dependenci
                 if (!targets.TAG) {
                   return dep;
                 }
-                var isMatchedByOtherEntry = Ley_List$OptolithClient.Foldable.any((function (active) {
-                        if (Ley_Option$OptolithClient.option(true, (function (level) {
-                                  return Ley_Option$OptolithClient.option(!dep.active, (function (activeLevel) {
-                                                return activeLevel >= level === dep.active;
-                                              }), active.level);
-                                }), dep.level)) {
-                          return Ley_List$OptolithClient.Index.iall((function (i, option) {
-                                        return Ley_Option$OptolithClient.option(false, (function (activeOption) {
-                                                      if (option.TAG) {
-                                                        return Ley_List$OptolithClient.elem(activeOption, option._0) === dep.active;
-                                                      } else {
-                                                        return Id$OptolithClient.SelectOption.$eq(activeOption, option._0) === dep.active;
-                                                      }
-                                                    }), Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_List$OptolithClient.Safe.atMay(active.options, i), Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId));
-                                      }), dep.options);
-                        } else {
-                          return false;
-                        }
+                var isMatchedByOtherEntry = Ley_List$OptolithClient.Foldable.any((function (param) {
+                        return isDependencyMatched(dep, param);
                       }), Ley_List$OptolithClient.Foldable.concatMap(getActiveListForTargetId, Ley_List$OptolithClient.$$delete(id, targets._0)));
                 if (isMatchedByOtherEntry) {
                   return ;
@@ -1019,12 +1033,18 @@ var TransferredUnfamiliar = {
   isEntryAllowingTransferUnfamiliarRemovable: isEntryAllowingTransferUnfamiliarRemovable
 };
 
+var Activatable = {
+  areOptionDependenciesMatched: areOptionDependenciesMatched,
+  isDependencyMatched: isDependencyMatched
+};
+
 export {
   Flatten ,
   TransferredUnfamiliar ,
   addDependencies ,
   removeDependencies ,
   getMaxLevel ,
+  Activatable ,
   
 }
 /* Tradition-OptolithClient Not a pure module */

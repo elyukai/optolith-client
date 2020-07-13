@@ -56,3 +56,20 @@ let countActiveSkillEntries = (domain, hero: Hero.t) =>
        | Inactive => false
        }
      );
+
+/**
+ * Has active skill(s) from the specified domain.
+ */
+let hasActiveSkillEntries = (domain, hero: Hero.t) =>
+  (
+    switch (domain) {
+    | Spells => hero.spells
+    | LiturgicalChants => hero.liturgicalChants
+    }
+  )
+  |> IM.Foldable.any((entry: Hero.ActivatableSkill.t) =>
+       switch (entry.value) {
+       | Active(_) => true
+       | Inactive => false
+       }
+     );

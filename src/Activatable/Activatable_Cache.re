@@ -8,9 +8,11 @@ type matchingLanguagesScripts = {
 };
 
 /**
- * The cache of computed values to optimize performance of `isAdditionValid`.
+ * The cache of computed values to optimize performance of activatable list
+ * generation.
  */
 type t = {
+  startExperienceLevel: ExperienceLevel.t,
   combatStyleCombination: option(Hero.Activatable.t),
   armedCombatStylesCount: int,
   unarmedCombatStylesCount: int,

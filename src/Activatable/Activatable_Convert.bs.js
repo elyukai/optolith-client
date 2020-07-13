@@ -2,20 +2,24 @@
 
 import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 
+function singleToSingleWithId(x, index, s) {
+  return {
+          id: x.id,
+          index: index,
+          options: s.options,
+          level: s.level,
+          customCost: s.customCost
+        };
+}
+
 function heroEntryToSingles(x) {
-  return Ley_List$OptolithClient.map((function (s) {
-                return {
-                        id: x.id,
-                        options: s.options,
-                        level: s.level,
-                        customCost: s.customCost
-                      };
+  return Ley_List$OptolithClient.Index.imap((function (param, param$1) {
+                return singleToSingleWithId(x, param, param$1);
               }), x.active);
 }
 
-function singleToSingleWithId(x, s) {
+function singleWithIdToSingle(s) {
   return {
-          id: x.id,
           options: s.options,
           level: s.level,
           customCost: s.customCost
@@ -34,6 +38,7 @@ export {
   heroEntryToSingles ,
   singleToSingleWithId ,
   activatableOptionToSelectOptionId ,
+  singleWithIdToSingle ,
   
 }
 /* No side effect */

@@ -4,7 +4,7 @@ module IM = Ley_IntMap;
 module L = Ley_List;
 module O = Ley_Option;
 
-open Activatable_Inactive_Cache;
+open Activatable_Cache;
 
 let getActivePactGiftsCount = specialAbilityPairs =>
   specialAbilityPairs

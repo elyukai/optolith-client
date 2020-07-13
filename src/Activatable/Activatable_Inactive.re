@@ -2,9 +2,9 @@ module IM = Ley_IntMap;
 module L = Ley_List;
 module O = Ley_Option;
 
-open Activatable_Inactive_Cache;
+open Activatable_Cache;
 
-type valid = {
+type t = {
   id: int,
   name: string,
   apValue: option(OneOrMany.t(int)),
@@ -17,8 +17,8 @@ type valid = {
   isAutomatic: bool,
 };
 
-type t =
-  | Valid(valid)
+type result =
+  | Valid(t)
   | Invalid(Static.activatable);
 
 let getSermonOrVisionCountMax = (hero: Hero.t, advantageId, disadvantageId) =>

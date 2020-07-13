@@ -1,4 +1,4 @@
-type valid = {
+type t = {
   id: int,
   name: string,
   apValue: option(OneOrMany.t(int)),
@@ -11,8 +11,8 @@ type valid = {
   isAutomatic: bool,
 };
 
-type t =
-  | Valid(valid)
+type result =
+  | Valid(t)
   | Invalid(Static.activatable);
 
 /**
@@ -25,10 +25,10 @@ type t =
  */
 let getInactive:
   (
-    Activatable_Inactive_Cache.t,
+    Activatable_Cache.t,
     Static.t,
     Hero.t,
     Static.activatable,
     option(Hero.Activatable.t)
   ) =>
-  t;
+  result;

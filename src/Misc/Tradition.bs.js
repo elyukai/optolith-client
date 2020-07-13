@@ -6,6 +6,10 @@ import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as Activatable_Accessors$OptolithClient from "../Activatable/Activatable_Accessors.bs.js";
 
+function isTraditionId(staticData, id) {
+  return Curry._2(Ley_IntMap$OptolithClient.member, id, staticData.magicalTraditions);
+}
+
 function isActiveTradition(staticData, x) {
   if (Curry._2(Ley_IntMap$OptolithClient.member, x.id, staticData.magicalTraditions)) {
     return Activatable_Accessors$OptolithClient.isActive(x);
@@ -69,6 +73,10 @@ function getPrimaryAttributeId(staticData, mp) {
               }));
 }
 
+function isTraditionId$1(staticData, id) {
+  return Curry._2(Ley_IntMap$OptolithClient.member, id, staticData.blessedTraditions);
+}
+
 function getHeroEntry(staticData, mp) {
   return Curry._2(Ley_IntMap$OptolithClient.IntMap.Foldable.find, (function (param) {
                 if (Curry._2(Ley_IntMap$OptolithClient.member, param.id, staticData.blessedTraditions)) {
@@ -120,6 +128,7 @@ function getPrimaryAttributeId$1(staticData, mp) {
 }
 
 var Magical = {
+  isTraditionId: isTraditionId,
   getHeroEntries: getHeroEntries,
   getStaticEntries: getStaticEntries,
   getEntries: getEntries,
@@ -129,6 +138,7 @@ var Magical = {
 };
 
 var Blessed = {
+  isTraditionId: isTraditionId$1,
   getHeroEntry: getHeroEntry,
   getStaticEntry: getStaticEntry,
   getEntry: getEntry,

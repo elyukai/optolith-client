@@ -454,6 +454,18 @@ module MagicalTradition: {
   let toInt: t => int;
 };
 
+module Spell: {
+  module Group: {
+    type t =
+      | Spells
+      | Rituals;
+
+    let fromInt: int => result(t, int);
+
+    let toInt: t => int;
+  };
+};
+
 module Property: {
   type t =
     | AntiMagic

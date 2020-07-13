@@ -34,6 +34,14 @@ let getSelectOptionCost:
 let getActiveOptions1: Hero.Activatable.t => list(Id.Activatable.Option.t);
 
 /**
+ * `mapActiveOptions1 f entry` takes all first option ids from the given entry
+ * and returns all values where the passed function, applied to each id,
+ * returned a `Some`, which is then unwrapped.
+ */
+let mapActiveOptions1:
+  (Id.Activatable.Option.t => option('a), Hero.Activatable.t) => list('a);
+
+/**
  * Get all first select option IDs from the given entry.
  */
 let getActiveSelectOptions1: Hero.Activatable.t => list(Id.SelectOption.t);

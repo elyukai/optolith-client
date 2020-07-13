@@ -364,7 +364,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                                               return Ley_Option$OptolithClient.Monad.liftM2((function (prim, prim$1) {
                                                             return prim + prim$1 | 0;
                                                           }), getCostFromHeroEntry(singleHeroEntry), Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(wissensdurst.active), (function (fst) {
-                                                                return getCostFromHeroEntry(Activatable_Convert$OptolithClient.singleToSingleWithId(heroEntry, fst));
+                                                                return getCostFromHeroEntry(Activatable_Convert$OptolithClient.singleToSingleWithId(heroEntry, 0, fst));
                                                               })));
                                             }));
                               }));

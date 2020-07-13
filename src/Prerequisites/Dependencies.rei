@@ -118,3 +118,22 @@ let getMaxLevel:
     Ley_IntMap.t(Prerequisite.t)
   ) =>
   option(int);
+
+module Activatable: {
+  /**
+   * `areOptionDependenciesMatched dependency single` takes an activatable
+   * `dependency` and a `single` activatable activation and returns if that
+   * activation matches the options defined in the dependency. Other values from
+   * the dependency are not validated.
+   */
+  let areOptionDependenciesMatched:
+    (Hero.Activatable.dependency, Hero.Activatable.single) => bool;
+
+  /**
+   * `isDependencyMatched dependency single` takes an activatable `dependency`
+   * and a `single` activatable activation and returns if that activation
+   * matches the dependency.
+   */
+  let isDependencyMatched:
+    (Hero.Activatable.dependency, Hero.Activatable.single) => bool;
+};

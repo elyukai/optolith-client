@@ -135,6 +135,20 @@ module ActivatableSkill = {
     x.value === Inactive && Ley_List.Foldable.null(x.dependencies);
 };
 
+module MagicalActions = {
+  type t = {
+    curses: Ley_IntMap.t(ActivatableSkill.t),
+    elvenMagicalSongs: Ley_IntMap.t(ActivatableSkill.t),
+    dominationRituals: Ley_IntMap.t(ActivatableSkill.t),
+    magicalDances: Ley_IntMap.t(ActivatableSkill.t),
+    magicalMelodies: Ley_IntMap.t(ActivatableSkill.t),
+    rogueSpells: Ley_IntMap.t(ActivatableSkill.t),
+    animistForces: Ley_IntMap.t(ActivatableSkill.t),
+    geodeRituals: Ley_IntMap.t(ActivatableSkill.t),
+    zibiljaRituals: Ley_IntMap.t(ActivatableSkill.t),
+  };
+};
+
 module Item = {
   type mundaneItem = {structurePoints: option(OneOrMany.t(int))};
 
@@ -402,6 +416,7 @@ type t = {
   skills: Ley_IntMap.t(Skill.t),
   combatTechniques: Ley_IntMap.t(Skill.t),
   spells: Ley_IntMap.t(ActivatableSkill.t),
+  magicalActions: MagicalActions.t,
   liturgicalChants: Ley_IntMap.t(ActivatableSkill.t),
   cantrips: Ley_IntSet.t,
   blessings: Ley_IntSet.t,

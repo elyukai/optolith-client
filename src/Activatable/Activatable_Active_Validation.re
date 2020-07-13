@@ -1,364 +1,248 @@
 module I = Ley_Int;
+module IM = Ley_IntMap;
+module IS = Ley_IntSet;
+module L = Ley_List;
+module O = Ley_Option;
+
+open Activatable_Cache;
+
+type t = {
+  minLevel: option(int),
+  maxLevel: option(int),
+  disabled: bool,
+};
 
 // const hasRequiredMinimumLevel =
 //   (min_level: Maybe<number>) => (max_level: Maybe<number>): boolean =>
 //     isJust (max_level) && isJust (min_level)
-//
-// const isRequiredByOthers =
-//   (current_active: Record<ActiveObjectWithId>) =>
-//   (state_entry: Record<ActivatableDependent>): boolean =>
-//     pipe (
-//            ADA.dependencies,
-//            any (
-//              ifElse<ActivatableDependency, boolean>
-//                (isBoolean)
-//                (e => e && flength (ADA.active (state_entry)) === 1)
-//                (e => (
-//                    equals (DOA.sid (e)) (AOWIA.sid (current_active))
-//                    && equals (AOWIA.sid2 (current_active)) (DOA.sid2 (e))
-//                    && equals (AOWIA.tier (current_active)) (DOA.tier (e))
-//                  )
-//                  || (
-//                    isJust (DOA.tier (e))
-//                    && isJust (AOWIA.tier (current_active))
-//                    && or (fmap (equals (Maybe.gte (DOA.tier (e))
-//                                                   (AOWIA.tier (current_active))))
-//                                (DOA.active (e)))
-//                  ))
-//            )
-//          )
-//          (state_entry)
-//
-// /**
-//  * Checks if you can somehow remove an ActiveObject from the given entry.
-//  */
-// const isRemovalDisabledEntrySpecific =
-//   (wiki: StaticDataRecord) =>
-//   (hero: HeroModelRecord) =>
-//   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
-//   (wiki_entry: Activatable) =>
-//   (hero_entry: Record<ActivatableDependent>) =>
-//
-//   // tslint:disable-next-line: cyclomatic-complexity
-//   (active: Record<ActiveObjectWithId>): boolean => {
-//     const mstart_el =
-//       lookupF (SDA.experienceLevels (wiki))
-//               (HA.experienceLevel (hero))
-//
-//     if (isMagicalTradId (AAL.id (wiki_entry))) {
-//       // All active tradition entries
-//       const traditions =
-//         getMagicalTraditionsHeroEntries (HA.specialAbilities (hero))
-//
-//       const multiple_traditions = flength (traditions) > 1
-//
-//       // multiple traditions are currently not supported and there must be no
-//       // active spell or cantrip
-//       return multiple_traditions
-//         || countActiveSkillEntries ("spells") (hero) > 0
-//         || size (HA.cantrips (hero)) > 0
-//     }
-//     else if (isBlessedTradId (AAL.id (wiki_entry))) {
-//       // there must be no active liturgical chant or blessing
-//       return countActiveSkillEntries ("liturgicalChants") (hero) > 0
-//         || size (HA.blessings (hero)) > 0
-//     }
-//
-//     switch (AAL.id (wiki_entry)) {
-//       case AdvantageId.exceptionalSkill: {
-//         // value of target skill
-//         const mvalue =
-//           pipe_ (
-//             active,
-//             AOWIA.sid,
-//             misStringM,
-//             bindF (lookupF (HA.skills (hero))),
-//             fmap (SkillDependent.AL.value)
-//           )
-//
-//         // amount of active Exceptional Skill advantages for the same skill
-//         const counter = countWith (pipe (AOA.sid, equals (AOWIA.sid (active))))
-//                                   (ADA.active (hero_entry))
-//
-//         // if the maximum value is reached removal needs to be disabled
-//         return or (liftM2 (gte)
-//                           (mvalue)
-//                           (fmap (pipe (ELA.maxSkillRating, add (counter)))
-//                                 (mstart_el)))
-//       }
-//
-//       case AdvantageId.exceptionalCombatTechnique: {
-//         // value of target combat technique
-//         const value =
-//           pipe_ (
-//             active,
-//             AOWIA.sid,
-//             misStringM,
-//             bindF (lookupF (HeroModel.A.combatTechniques (hero))),
-//             maybe (6) (SkillDependent.A.value)
-//           )
-//
-//         // if the maximum value is reached removal needs to be disabled
-//         return maybe (true) (pipe (ELA.maxCombatTechniqueRating, inc, lte (value))) (mstart_el)
-//       }
-//
-//       case SpecialAbilityId.literacy: {
-//         if (sel1 (matching_script_and_lang_related)) {
-//           const active_matching_scripts = sel2 (matching_script_and_lang_related)
-//
-//           return flength (active_matching_scripts) === 1
-//             && pipe_ (
-//               AOWIA.sid (active),
-//               misNumberM,
-//               maybe (false) (elemF (active_matching_scripts))
-//             )
-//         }
-//         else {
-//           return false
-//         }
-//       }
-//
-//       case SpecialAbilityId.language: {
-//         if (sel1 (matching_script_and_lang_related)) {
-//           const active_matching_languages = sel3 (matching_script_and_lang_related)
-//
-//           return flength (active_matching_languages) === 1
-//             && pipe_ (
-//               AOWIA.sid (active),
-//               misNumberM,
-//               maybe (false) (elemF (active_matching_languages))
-//             )
-//         }
-//         else {
-//           return false
-//         }
-//       }
-//
-//       case SpecialAbilityId.propertyKnowledge:
-//         return pipe_ (
-//           active,
-//           AOWIA.sid,
-//           misNumberM,
-//           maybe (false)
-//                 (prop_id => OrderedMap.any ((spell: Record<ActivatableSkillDependent>) =>
-//                                              ASDA.value (spell) > 14
-//                                              && pipe_ (
-//                                                   spell,
-//                                                   ASDA.id,
-//                                                   lookupF (SDA.spells (wiki)),
-//                                                   maybe (true)
-//                                                         (pipe (SA.property, equals (prop_id)))
-//                                                 ))
-//                                            (HA.spells (hero)))
-//         )
-//
-//       case SpecialAbilityId.aspectKnowledge: {
-//         const all_aspcs = getActiveSelections (hero_entry)
-//
-//         return pipe_ (
-//           active,
-//           AOWIA.sid,
-//           misNumberM,
-//           maybe (false)
-//                 (aspc_id => {
-//                   const other_aspcs = sdelete<string | number> (aspc_id) (all_aspcs)
-//
-//                   return OrderedMap.any ((chant: Record<ActivatableSkillDependent>) =>
-//                                           ASDA.value (chant) > 14
-//                                           && pipe_ (
-//                                                chant,
-//                                                ASDA.id,
-//                                                lookupF (SDA.liturgicalChants (wiki)),
-//                                                maybe (true)
-//                                                      (pipe (
-//                                                        LCA.aspects,
-//                                                        aspcs => elem (aspc_id) (aspcs)
-//                                                                 && all (notElemF (other_aspcs))
-//                                                                        (aspcs)
-//                                                      ))
-//                                              ))
-//                                         (HA.liturgicalChants (hero))
-//                 })
-//         )
-//       }
-//
-//       case SpecialAbilityId.combatStyleCombination: {
-//         const armedStyleActive = countActiveGroupEntries (wiki)
-//                                                          (hero)
-//                                                          (SpecialAbilityGroup.CombatStylesArmed)
-//
-//         const unarmedStyleActive = countActiveGroupEntries (wiki)
-//                                                            (hero)
-//                                                            (SpecialAbilityGroup.CombatStylesUnarmed)
-//
-//         const totalActive = armedStyleActive + unarmedStyleActive
-//
-//         // default is 1 per group (armed/unarmed), but with this SA 1 more in
-//         // one group: maximum of 3, but max 2 per group. If max is reached, this
-//         // SA cannot be removed
-//         return totalActive >= 3
-//           || armedStyleActive >= 2
-//           || unarmedStyleActive >= 2
-//       }
-//
-//       case SpecialAbilityId.magicStyleCombination: {
-//         const totalActive = countActiveGroupEntries (wiki) (hero) (13)
-//
-//         // default is 1, but with this SA its 2. If it's 2 this SA is neccessary
-//         // and cannot be removed
-//         return totalActive >= 2
-//       }
-//
-//       // Extended Blessed Special Abilities that allow to learn liturgical
-//       // chants of different traditions
-//       case SpecialAbilityId.zugvoegel:
-//       case SpecialAbilityId.jaegerinnenDerWeissenMaid:
-//       case SpecialAbilityId.anhaengerDesGueldenen: {
-//         const mblessed_tradition =
-//           getBlessedTraditionFromWiki (SDA.specialAbilities (wiki))
-//                                       (HA.specialAbilities (hero))
-//
-//         // Wiki entries for all active liturgical chants
-//         const active_chants =
-//           pipe_ (
-//             hero,
-//             HA.liturgicalChants,
-//             elems,
-//             filter<Record<ActivatableSkillDependent>> (ASDA.active),
-//             mapByIdKeyMap (SDA.liturgicalChants (wiki))
-//           )
-//
-//         // If there are chants active that do not belong to the own tradition
-//         const mactive_unfamiliar_chants =
-//           fmap (pipe (isOwnTradition, notP, any, thrush (active_chants)))
-//                (mblessed_tradition)
-//
-//         return or (mactive_unfamiliar_chants)
-//       }
-//
-//       default:
-//         return false
-//     }
-//   }
-//
-// const isEntryDisabledByDependencies =
-//   (wiki: StaticDataRecord) =>
-//   (hero: HeroModelRecord) =>
-//   (wiki_entry: Activatable) =>
-//   (hero_entry: Record<ActivatableDependent>) =>
-//   (active: Record<ActiveObjectWithId>) =>
-//
-//     // if there is any dependency that disables the possibility to remove
-//     // the entry
-//     any ((dep: ActivatableDependency) => {
-//       // If there is a top-level dependency for the whole entry,
-//       // it must be `true` because `false` would have prevented
-//       // the entry from being added.
-//       if (isBoolean (dep)) {
-//         return true
-//       }
-//
-//       // A Just if the depedency exists because of a list of ids
-//       // in a prerequiste. Contains the source id of the object
-//       // where the prerequisite is from.
-//       const current_origin = DOA.origin (dep)
-//
-//       if (isJust (current_origin)) {
-//         return pipe_ (
-//           fromJust (current_origin),
-//           getWikiEntry (wiki),
-//           bindF<EntryWithCategory, Activatable>
-//             (ensure (isActivatableWikiEntry)),
-//
-//           // Get flat prerequisites for origin entry
-//           fmap (origin_entry =>
-//             flattenPrerequisites (Nothing)
-//                                  (alt (AAL.tiers (origin_entry)) (Just (1)))
-//                                  (AAL.prerequisites (origin_entry))),
-//
-//           // Get the prerequisite that matches this entry
-//           // to get all other options from list
-//           bindF (find ((req): req is PrerequisitesWithIds => {
-//                         if (typeof req === "string" || SocialPrerequisite.is (req)) {
-//                           return false
-//                         }
-//
-//                         const current_id = RAAL.id (req)
-//
-//                         // the id must be a list of ids
-//                         // because otherwise no options in
-//                         // terms of fulfilling the
-//                         // prerequisite would be possible
-//                         return isList (current_id)
-//
-//                           // check if the current entry's
-//                           // id is actually a member of
-//                           // the prerequisite
-//                           && elem (AAL.id (wiki_entry))
-//                                   (current_id)
-//                       })),
-//
-//           // Check if there are other entries that would
-//           // match the prerequisite so that this entry
-//           // could be removed
-//           fmap (req =>
-//            !any ((x: string) =>
-//                   validateObject (wiki)
-//                                   (hero)
-//                                   (setPrerequisiteId (x) (req))
-//                                   (AAL.id (wiki_entry)))
-//                 (sdelete (AAL.id (wiki_entry))
-//                          (RAAL.id (req) as List<string>))),
-//           or
-//         )
-//       }
-//
-//       // sid of the current dependency
-//       const current_dep_sid = DOA.sid (dep)
-//       const mcurrent_sid = AOWIA.sid (active)
-//
-//       if (Maybe.any (isList) (current_dep_sid) && isJust (mcurrent_sid)) {
-//         // list of possible sids to fulfill the prerequisite
-//         // and thus to fulfill the dependency
-//         const xs = fromJust (current_dep_sid)
-//         const current_sid = fromJust (mcurrent_sid)
-//
-//         if (notElem (current_sid) (xs)) {
-//           return false
-//         }
-//
-//         const current_active_selections = getActiveSelections (hero_entry)
-//
-//         // there must be at least two active sids being contained
-//         // in the list of possible sids so that one of them can
-//         // be removed
-//         const multiple_valid_for_dependency =
-//           flength (intersect (current_active_selections) (xs)) > 1
-//
-//         // must be negated because it must return `false` if
-//         // the dependency says it can be removed
-//         return !multiple_valid_for_dependency
-//       }
-//
-//       return false
-//     })
-//     (ADA.dependencies (hero_entry))
-//
-// const isStyleSpecialAbilityRemovalDisabled =
-//   (hero: HeroModelRecord) =>
-//   (wiki_entry: Activatable): boolean =>
-//     SpecialAbility.is (wiki_entry)
-//     && !isStyleValidToRemove (hero)
-//                              (Just (wiki_entry))
-//
-//
-// export const getMaxLevelForDecreaseEntry: (def: number) => (count: number) => Maybe<number> =
-//
-//   // the more entries the user buys, the less levels are
-//   // possible. If the user has 3 or more entries, the decrease entry cannot
-//   // be used at all. In those cases (which should not happen), the maximum
-//   // will be 0.
-//   def => pipe (subtract (def), max (0), Just)
+
+let getActivesById = (mp, id) =>
+  IM.lookup(id, mp)
+  |> O.option([], ({active, _}: Hero.Activatable.t) => active);
+
+let isNotRequiredByDependencies =
+    (
+      hero: Hero.t,
+      staticEntry,
+      heroEntry: Hero.Activatable.t,
+      singleEntry: Activatable_Convert.singleWithId,
+    ) =>
+  heroEntry.dependencies
+  // Filter out every dependency that can be matched by another entry
+  |> Dependencies.Flatten.flattenActivatableDependencies(
+       switch (staticEntry) {
+       | Static.Advantage(_) => getActivesById(hero.advantages)
+       | Disadvantage(_) => getActivesById(hero.disadvantages)
+       | SpecialAbility(_) => getActivesById(hero.specialAbilities)
+       },
+       singleEntry.id,
+     )
+  |> L.Foldable.all((dep: Hero.Activatable.dependency) =>
+       !
+         Dependencies.Activatable.isDependencyMatched(
+           dep,
+           Activatable_Convert.singleWithIdToSingle(singleEntry),
+         )
+       // If the entry matched the dependency, try if other activations of the
+       // same entry may still satisfy the dependency, so that it can still be
+       // removed
+       || L.Index.deleteAt(singleEntry.index, heroEntry.active)
+       |> L.Foldable.any(Dependencies.Activatable.isDependencyMatched(dep))
+     );
+
+let isEntrySpecificRemovalValid =
+    (
+      cache,
+      staticData,
+      hero,
+      staticEntry,
+      heroEntry: Hero.Activatable.t,
+      singleEntry: Activatable_Convert.singleWithId,
+    ) =>
+  if (Tradition.Magical.isTraditionId(staticData, singleEntry.id)) {
+    let activeTraditions = cache.magicalTraditions;
+
+    let hasMultipleTraditions = L.Foldable.length(activeTraditions) > 1;
+
+    hasMultipleTraditions
+    || !ActivatableSkills.hasActiveSkillEntries(Spells, hero)
+    && IS.Foldable.null(hero.cantrips);
+  } else if (Tradition.Blessed.isTraditionId(staticData, singleEntry.id)) {
+    !ActivatableSkills.hasActiveSkillEntries(LiturgicalChants, hero)
+    && IS.Foldable.null(hero.blessings);
+  } else {
+    switch (staticEntry) {
+    | Static.Advantage(staticAdvantage) =>
+      [@warning "-4"]
+      Id.Advantage.(
+        switch (fromInt(staticAdvantage.id)) {
+        | ExceptionalSkill =>
+          switch (singleEntry.options) {
+          | [`Skill(id), ..._] =>
+            // value of target skill
+            let value = IM.lookup(id, hero.skills) |> Skills.getValueDef;
+
+            // amount of active Exceptional Skill advantages for the same skill
+            let countSameSkill =
+              L.countBy(
+                (active: Hero.Activatable.single) =>
+                  switch (active.options) {
+                  | [`Skill(otherId), ..._] => otherId === id
+                  | _ => false
+                  },
+                heroEntry.active,
+              );
+
+            // if the maximum skill rating is reached removal needs to be
+            // disabled
+            value >= cache.startExperienceLevel.maxSkillRating + countSameSkill;
+          | _ => true
+          }
+        | ExceptionalCombatTechnique =>
+          switch (singleEntry.options) {
+          | [`CombatTechnique(id), ..._] =>
+            // value of target combat technique
+            let value =
+              IM.lookup(id, hero.combatTechniques)
+              |> CombatTechniques.getValueDef;
+
+            // if the maximum combat technique rating is reached removal needs
+            // to be disabled
+            value >= cache.startExperienceLevel.maxCombatTechniqueRating + 1;
+          | _ => true
+          }
+        | _ => true
+        }
+      )
+    | Disadvantage(_) => true
+    | SpecialAbility(staticSpecialAbility) =>
+      [@warning "-4"]
+      Id.SpecialAbility.(
+        switch (fromInt(staticSpecialAbility.id)) {
+        | Literacy =>
+          switch (
+            cache.matchingLanguagesScripts.isEntryActiveRequiringMatch,
+            cache.matchingLanguagesScripts.scriptsWithMatchingLanguages,
+            singleEntry.options,
+          ) {
+          // requiring entry must be active, the list of scripts must contain
+          // only one element and that element has to match the current script
+          // to prohibit removing the entry
+          | (true, [onlyScriptWithLanguage], [`Generic(scriptId), ..._]) =>
+            onlyScriptWithLanguage !== scriptId
+          | _ => true
+          }
+        | Language =>
+          switch (
+            cache.matchingLanguagesScripts.isEntryActiveRequiringMatch,
+            cache.matchingLanguagesScripts.languagesWithMatchingScripts,
+            singleEntry.options,
+          ) {
+          // requiring entry must be active, the list of languages must contain
+          // only one element and that element has to match the current language
+          // to prohibit removing the entry
+          | (true, [onlyLanguageWithScript], [`Generic(languageId), ..._]) =>
+            onlyLanguageWithScript !== languageId
+          | _ => true
+          }
+        | PropertyKnowledge =>
+          switch (singleEntry.options) {
+          | [`Generic(propertyId), ..._] =>
+            hero.spells
+            // If there is any spell with matching property above SR 14...
+            |> IM.Foldable.any((heroSpell: Hero.ActivatableSkill.t) =>
+                 ActivatableSkills.valueToInt(heroSpell.value) > 14
+                 && IM.lookup(heroSpell.id, staticData.spells)
+                 |> O.option(true, ({Spell.property, _}) =>
+                      property === propertyId
+                    )
+               )
+            // ...prohibit removal
+            |> (!)
+          | _ => true
+          }
+        | AspectKnowledge =>
+          let activeAspects =
+            Activatable_SelectOptions.mapActiveOptions1(
+              fun
+              | `Generic(aspectId) => Some(aspectId)
+              | _ => None,
+              heroEntry,
+            );
+
+          switch (singleEntry.options) {
+          | [`Generic(aspectId), ..._] =>
+            let otherAspects = L.delete(aspectId, activeAspects);
+
+            hero.liturgicalChants
+            // If there is any liturgical chant with matching aspect
+            // above SR 14 and no other aspect knowledges for that entry...
+            |> IM.Foldable.any((heroLiturgicalChant: Hero.ActivatableSkill.t) =>
+                 ActivatableSkills.valueToInt(heroLiturgicalChant.value) > 14
+                 && IM.lookup(
+                      heroLiturgicalChant.id,
+                      staticData.liturgicalChants,
+                    )
+                 |> O.option(true, ({LiturgicalChant.aspects, _}) =>
+                      L.elem(aspectId, aspects)
+                      && L.disjoint(otherAspects, aspects)
+                    )
+               )
+            // ...prohibit removal
+            |> (!);
+          | _ => true
+          };
+        | CombatStyleCombination =>
+          let activeArmedStyles = cache.armedCombatStylesCount;
+          let activeUnarmedStyles = cache.unarmedCombatStylesCount;
+
+          let totalActive = activeArmedStyles + activeUnarmedStyles;
+
+          // default is 1 per group (armed/unarmed), but with this SA 1 more in
+          // one group: maximum of 3, but max 2 per group. If max is reached,
+          // this SA cannot be removed
+          totalActive < 3 && (activeArmedStyles < 2 || activeUnarmedStyles < 2);
+        | MagicStyleCombination =>
+          // default is 1, but with this SA its 2. If it's 2 this SA is
+          // neccessary and cannot be removed
+          cache.magicalStylesCount < 2
+        | Zugvoegel
+        | JaegerinnenDerWeissenMaid
+        | AnhaengerDesGueldenen =>
+          switch (cache.blessedTradition) {
+          | Some((_, _, blessedTradition)) =>
+            hero.liturgicalChants
+            // Filter liturgical chants...
+            |> IM.mapMaybe(
+                 fun
+                 // ...so that only the active ones remain...
+                 | {Hero.ActivatableSkill.id, value: Active(_), _} =>
+                   // ...and replace with their static entry.
+                   IM.lookup(id, staticData.liturgicalChants)
+                 | _ => None,
+               )
+            // Check if there is any active entry that does not belong to the
+            // active tradition...
+            |> IM.Foldable.any(({LiturgicalChant.traditions, _}) =>
+                 L.notElem(blessedTradition.numId, traditions)
+               )
+            // ...which would prohibit removal
+            |> (!)
+          | None => true
+          }
+        | _ => true
+        }
+      )
+    };
+  };
+
+let isStyleSpecialAbilityRemovalValid = (hero, staticEntry) =>
+  switch (staticEntry) {
+  | Static.Advantage(_)
+  | Disadvantage(_) => true
+  | SpecialAbility(specialAbility) =>
+    Activatable_ExtendedStyle.isStyleValidToRemove(hero, specialAbility)
+  };
 
 /**
  * `getMinLevelForIncreaseEntry defaultAmount currentAmount` returns the minimum
@@ -380,218 +264,173 @@ let getMinLevelForIncreaseEntry = (defaultAmount, currentAmount) =>
 let getMaxLevelForDecreaseEntry = (maxDecrease, current) =>
   I.max(0, maxDecrease - current);
 
-//
-// const getEntrySpecificMinimumLevel =
-//   (staticData: StaticDataRecord) =>
-//   (hero: HeroModelRecord) =>
-//   (x: Record<ActiveObjectWithId>): Maybe<number> => {
-//     switch (AOWIA.id (x)) {
-//       case AdvantageId.largeSpellSelection:
-//         return pipe_ (
-//           hero,
-//           countActiveSkillEntries ("spells"),
-//           getMinLevelForIncreaseEntry (3)
-//         )
-//
-//       case AdvantageId.zahlreichePredigten:
-//         return pipe_ (
-//           24,
-//           getSermonsAndVisionsCount (staticData) (hero),
-//           getMinLevelForIncreaseEntry (3)
-//         )
-//
-//       case AdvantageId.zahlreicheVisionen:
-//         return pipe_ (
-//           27,
-//           getSermonsAndVisionsCount (staticData) (hero),
-//           getMinLevelForIncreaseEntry (3)
-//         )
-//
-//       case SpecialAbilityId.imitationszauberei:
-//         return pipe_ (
-//           hero,
-//           HA.spells,
-//           elems,
-//           countWith (pipe (
-//                       ASDA.id,
-//                       lookupF (SDA.spells (staticData)),
-//                       maybe (false)
-//                             (pipe (SA.gr, gr => gr === MagicalGroup.Spells))
-//                     )),
-//           ensure (gt (0))
-//         )
-//
-//       default:
-//         return Nothing
-//     }
-//   }
-//
-// const getEntrySpecificMaximumLevel =
-//   (wiki: StaticDataRecord) =>
-//   (hero: HeroModelRecord) =>
-//   (entry_id: string): Maybe<number> => {
-//     switch (entry_id) {
-//       case DisadvantageId.smallSpellSelection:
-//         return pipe_ (hero, countActiveSkillEntries ("spells"), getMaxLevelForDecreaseEntry (3))
-//
-//       case DisadvantageId.wenigePredigten:
-//         return pipe_ (24, getSermonsAndVisionsCount (wiki) (hero), getMaxLevelForDecreaseEntry (3))
-//
-//       case DisadvantageId.wenigeVisionen:
-//         return pipe_ (27, getSermonsAndVisionsCount (wiki) (hero), getMaxLevelForDecreaseEntry (3))
-//
-//       case SpecialAbilityId.dunklesAbbildDerBuendnisgabe:
-//         return pipe_ (hero, HA.pact, fmap (PA.level))
-//
-//       default:
-//         return Nothing
-//     }
-//   }
-//
-// type MinLevelDepSid = string | number | List<number>
-//
-// const adjustMinimumLevelByDependencies =
-//   (entry: Record<ActiveObjectWithId>) =>
-//     flip (foldl ((min_level: Maybe<number>): (dep: ActivatableDependency) => Maybe<number> =>
-//                   pipe (
-//
-//                     // dependency must include a minimum level, which only occurs
-//                     // in a DependencyObject
-//                     ensure (DependencyObject.is),
-//
-//                     // get the level dependency from the object and ensure it's
-//                     // greater than the current minimum level and that
-//                     bindF (dep => bind (DOA.tier (dep))
-//
-//                                                              // new min must be lower than current
-//                                                              // min level
-//                                        (ensure (dep_level => sum (min_level) < dep_level
-//
-//                                                              // if the DependencyObject defines a
-//                                                              // sid, too, the entry must match the
-//                                                              // sid as well. A DependencyObject
-//                                                              // without a sid is valid for all
-//                                                              // entries (in case of calculating a
-//                                                              // minimum level)
-//                                                              && maybe (true)
-//                                                                       (flip (Maybe.elem)
-//                                                                             <MinLevelDepSid>
-//                                                                             (AOWIA.sid (entry)))
-//                                                                       (DOA.sid (dep))))),
-//
-//                     // if the current dependency's level is not valid, return
-//                     // the current minimum
-//                     flip (alt) (min_level)
-//                   )))
-//
-// /**
-//  * Get minimum valid tier.
-//  */
-// export const getMinTier =
-//   (wiki: StaticDataRecord) =>
-//   (hero: HeroModelRecord) =>
-//   (entry: Record<ActiveObjectWithId>) =>
-//   (entry_dependencies: List<ActivatableDependency>): Maybe<number> =>
-//     adjustMinimumLevelByDependencies (entry)
-//                                      (entry_dependencies)
-//                                      (getEntrySpecificMinimumLevel (wiki)
-//                                                                    (hero)
-//                                                                    (entry))
-//
-// const minMaybe: (mx: Maybe<number>) => (my: Maybe<number>) => Maybe<number> =
-//   mx => my => isNothing (mx) ? my : isNothing (my) ? mx : Just (min (fromJust (mx)) (fromJust (my)))
-//
-// /**
-//  * Get maximum valid tier.
-//  */
-// export const getMaxTier =
-//   (wiki: StaticDataRecord) =>
-//   (hero: HeroModelRecord) =>
-//   (entry_prerequisites: LevelAwarePrerequisites) =>
-//   (entry_dependencies: List<ActivatableDependency>) =>
-//   (entry_id: string): Maybe<number> => {
-//     const entry_specific_max_level = getEntrySpecificMaximumLevel (wiki) (hero) (entry_id)
-//
-//     if (isOrderedMap (entry_prerequisites)) {
-//       return minMaybe (entry_specific_max_level)
-//                       (validateLevel (wiki)
-//                                      (hero)
-//                                      (entry_prerequisites)
-//                                      (entry_dependencies)
-//                                      (entry_id))
-//     }
-//
-//     return entry_specific_max_level
-//   }
-//
-// /**
-//  * Checks if the given ActiveObject can be removed or changed in tier.
-//  * @param obj The ActiveObject with origin id.
-//  * @param state The current hero's state.
-//  */
-// export const getIsRemovalOrChangeDisabled =
-//   (wiki: StaticDataRecord) =>
-//   (hero: HeroModelRecord) =>
-//   (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
-//   (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableActivationValidation>> =>
-//     pipe (
-//            getWikiEntry (wiki),
-//            bindF<EntryWithCategory, Activatable> (ensure (isActivatableWikiEntry)),
-//            bindF (
-//              wiki_entry =>
-//                pipe_ (
-//                  entry,
-//                  AOWIA.id,
-//                  getHeroStateItem (hero),
-//                  bindF<Dependent, Record<ActivatableDependent>>
-//                    (ensure (isActivatableDependent)),
-//                  fmap (hero_entry => {
-//                    const minimum_level = getMinTier (wiki)
-//                                                     (hero)
-//                                                     (entry)
-//                                                     (ADA.dependencies (hero_entry))
-//
-//                    return ActivatableActivationValidation ({
-//                      disabled:
-//
-//                        // Disable if a minimum level is required
-//                        hasRequiredMinimumLevel (minimum_level)
-//                                                (AAL.tiers (wiki_entry))
-//
-//                        // Disable if other entries depend on this entry
-//                        || isRequiredByOthers (entry)
-//                                              (hero_entry)
-//
-//                        // Disable if style special ability is required for
-//                        // extended special abilities
-//                        || isStyleSpecialAbilityRemovalDisabled (hero)
-//                                                                (wiki_entry)
-//
-//                        // Disable if dependencies disable remove
-//                        // (overlap with `isRequiredByOther`? => merge?)
-//                        || isEntryDisabledByDependencies (wiki)
-//                                                         (hero)
-//                                                         (wiki_entry)
-//                                                         (hero_entry)
-//                                                         (entry)
-//
-//                        // Disable if specific entry conditions disallow
-//                        // remove
-//                        || isRemovalDisabledEntrySpecific (wiki)
-//                                                          (hero)
-//                                                          (matching_script_and_lang_related)
-//                                                          (wiki_entry)
-//                                                          (hero_entry)
-//                                                          (entry),
-//                      minLevel: minimum_level,
-//                      maxLevel: getMaxTier (wiki)
-//                                           (hero)
-//                                           (AAL.prerequisites (wiki_entry))
-//                                           (ADA.dependencies (hero_entry))
-//                                           (AOWIA.id (entry)),
-//                    })
-//                  })
-//                )
-//            )
-//          )
-/*          (AOWIA.id (entry)*/
+let getEntrySpecificMinLevel =
+    (cache, staticData: Static.t, hero, staticEntry) =>
+  switch (staticEntry) {
+  | Static.Advantage(staticAdvantage) =>
+    [@warning "-4"]
+    Id.Advantage.(
+      switch (fromInt(staticAdvantage.id)) {
+      | LargeSpellSelection =>
+        hero
+        |> ActivatableSkills.countActiveSkillEntries(Spells)
+        |> getMinLevelForIncreaseEntry(3)
+      | ZahlreichePredigten =>
+        EntryGroups.SpecialAbility.countActiveFromGroup(
+          Predigten,
+          cache.specialAbilityPairs,
+        )
+        |> getMinLevelForIncreaseEntry(3)
+      | ZahlreicheVisionen =>
+        EntryGroups.SpecialAbility.countActiveFromGroup(
+          Visionen,
+          cache.specialAbilityPairs,
+        )
+        |> getMinLevelForIncreaseEntry(3)
+      | _ => None
+      }
+    )
+  | Disadvantage(_) => None
+  | SpecialAbility(staticSpecialAbility) =>
+    [@warning "-4"]
+    Id.SpecialAbility.(
+      switch (fromInt(staticSpecialAbility.id)) {
+      | Imitationszauberei =>
+        hero.spells
+        |> IM.countWith(({Hero.ActivatableSkill.id, _}) =>
+             IM.lookup(id, staticData.spells)
+             |> O.option(false, ({Spell.gr, _}) =>
+                  gr === Id.Spell.Group.toInt(Spells)
+                )
+           )
+        // Minimum level must be the number of active spells, if there are any
+        |> O.ensure(count => count > 0)
+      | _ => None
+      }
+    )
+  };
+
+let getEntrySpecificMaxLevel = (cache, hero, staticEntry) =>
+  switch (staticEntry) {
+  | Static.Advantage(_) => None
+  | Disadvantage(staticDisadvantage) =>
+    [@warning "-4"]
+    Id.Disadvantage.(
+      switch (fromInt(staticDisadvantage.id)) {
+      | SmallSpellSelection =>
+        hero
+        |> ActivatableSkills.countActiveSkillEntries(Spells)
+        |> getMaxLevelForDecreaseEntry(3)
+        |> O.Monad.return
+      | WenigePredigten =>
+        EntryGroups.SpecialAbility.countActiveFromGroup(
+          Predigten,
+          cache.specialAbilityPairs,
+        )
+        |> getMaxLevelForDecreaseEntry(3)
+        |> O.Monad.return
+      | WenigeVisionen =>
+        EntryGroups.SpecialAbility.countActiveFromGroup(
+          Visionen,
+          cache.specialAbilityPairs,
+        )
+        |> getMaxLevelForDecreaseEntry(3)
+        |> O.Monad.return
+      | _ => None
+      }
+    )
+  | SpecialAbility(staticSpecialAbility) =>
+    [@warning "-4"]
+    Id.SpecialAbility.(
+      switch (fromInt(staticSpecialAbility.id)) {
+      | DunklesAbbildDerBuendnisgabe =>
+        O.Functor.(hero.pact <&> (pact => pact.level))
+      | _ => None
+      }
+    )
+  };
+
+let adjustMinLevelByDependencies =
+    ({Hero.Activatable.dependencies, _}, singleEntry, maybeMinLevel) =>
+  L.Foldable.foldr(
+    (dependency: Hero.Activatable.dependency, maybeMinLevel) =>
+      switch (dependency.level) {
+      | Some(definedLevel) =>
+        // get the level dependency from the object and ensure it's
+        // greater than the current minimum level and that...
+        definedLevel > O.Foldable.sum(maybeMinLevel)
+        // ...if the dependency defines options, too, the entry must match them
+        // as well. A dependency without options is valid for all entries (in
+        // case of calculating a minimum level)
+        && Dependencies.Activatable.areOptionDependenciesMatched(
+             dependency,
+             Activatable_Convert.singleWithIdToSingle(singleEntry),
+           )
+          ? Some(definedLevel) : maybeMinLevel
+      | None => maybeMinLevel
+      },
+    maybeMinLevel,
+    dependencies,
+  );
+
+/**
+ * Get minimum valid level.
+ */
+let getMinLevel =
+    (cache, staticData, hero, staticEntry, heroEntry, singleEntry) =>
+  getEntrySpecificMinLevel(cache, staticData, hero, staticEntry)
+  |> adjustMinLevelByDependencies(heroEntry, singleEntry);
+
+let getMaxLevel = (cache, staticData, hero, staticEntry) => {
+  let entrySpecificMaxLevel =
+    getEntrySpecificMaxLevel(cache, hero, staticEntry);
+
+  let maxPossibleWithPrerequisites =
+    Prerequisites.Validation.getMaxLevel(
+      staticData,
+      hero,
+      staticEntry |> Activatable_Accessors.id |> Id.Activatable.generalize,
+      Prerequisites.Activatable.getLevelPrerequisites(staticEntry),
+    );
+
+  O.Alternative.(
+    O.Monad.liftM2(I.min, entrySpecificMaxLevel, maxPossibleWithPrerequisites)
+    <|> entrySpecificMaxLevel
+    <|> maxPossibleWithPrerequisites
+  );
+};
+
+/**
+ * Checks if the given active entry can be removed or changed in level.
+ */
+let isRemovalOrModificationValid =
+    (cache, staticData, hero, staticEntry, heroEntry, singleEntry) => {
+  let minLevel =
+    getMinLevel(cache, staticData, hero, staticEntry, heroEntry, singleEntry);
+
+  let maxLevel = getMaxLevel(cache, staticData, hero, staticEntry);
+
+  {
+    disabled:
+      O.isSome(minLevel)
+      || !
+           isNotRequiredByDependencies(
+             hero,
+             staticEntry,
+             heroEntry,
+             singleEntry,
+           )
+      || !isStyleSpecialAbilityRemovalValid(hero, staticEntry)
+      || !
+           isEntrySpecificRemovalValid(
+             cache,
+             staticData,
+             hero,
+             staticEntry,
+             heroEntry,
+             singleEntry,
+           ),
+    maxLevel,
+    minLevel,
+  };
+};

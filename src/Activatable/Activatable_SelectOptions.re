@@ -37,6 +37,12 @@ let getActiveOptions = (index, x: Hero.Activatable.t) =>
        Ley_List.Safe.atMay(y.options, index)
      );
 
+let mapActiveOptions = (f, index, x: Hero.Activatable.t) =>
+  x.active
+  |> O.mapOption((y: Hero.Activatable.single) =>
+       Ley_List.Safe.atMay(y.options, index) >>= f
+     );
+
 /**
  * Get all first option IDs from the given entry.
  */
@@ -44,16 +50,17 @@ let getActiveOptions1 = (x: Hero.Activatable.t) =>
   x.active
   |> O.mapOption((y: Hero.Activatable.single) => y.options |> O.listToOption);
 
+let mapActiveOptions1 = (f, x: Hero.Activatable.t) =>
+  x.active
+  |> O.mapOption((y: Hero.Activatable.single) =>
+       y.options |> O.listToOption >>= f
+     );
+
 /**
  * Get all first select option IDs from the given entry.
  */
-let getActiveSelectOptions1 = (x: Hero.Activatable.t) =>
-  x.active
-  |> O.mapOption((y: Hero.Activatable.single) =>
-       y.options
-       |> O.listToOption
-       >>= Activatable_Convert.activatableOptionToSelectOptionId
-     );
+let getActiveSelectOptions1 =
+  mapActiveOptions1(Activatable_Convert.activatableOptionToSelectOptionId);
 
 /**
  * Get all second option IDs from the given entry.

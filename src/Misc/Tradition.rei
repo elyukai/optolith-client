@@ -1,5 +1,11 @@
 module Magical: {
   /**
+   * `isTraditionId staticData id` checks if `id` is the special ability id of
+   * a magical tradition.
+   */
+  let isTraditionId: (Static.t, int) => bool;
+
+  /**
    * `getHeroEntries` returns active special ability entries for all active
    * magical traditions.
    */
@@ -46,6 +52,12 @@ module Magical: {
     (Static.t, Ley_IntMap.t(Hero.Activatable.t)) => option(int);
 };
 module Blessed: {
+  /**
+   * `isTraditionId staticData id` checks if `id` is the special ability id of
+   * a blessed tradition.
+   */
+  let isTraditionId: (Static.t, int) => bool;
+
   /**
    * `getHeroEntry` returns the active special ability entry for the active
    * blessed traditions.

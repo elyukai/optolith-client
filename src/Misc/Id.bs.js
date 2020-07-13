@@ -1254,6 +1254,44 @@ var MagicalTradition = {
 };
 
 function fromInt$13(id) {
+  if (id !== 1) {
+    if (id !== 2) {
+      return {
+              TAG: /* Error */1,
+              _0: id
+            };
+    } else {
+      return {
+              TAG: /* Ok */0,
+              _0: /* Rituals */1
+            };
+    }
+  } else {
+    return {
+            TAG: /* Ok */0,
+            _0: /* Spells */0
+          };
+  }
+}
+
+function toInt$13(id) {
+  if (id) {
+    return 2;
+  } else {
+    return 1;
+  }
+}
+
+var Group$2 = {
+  fromInt: fromInt$13,
+  toInt: toInt$13
+};
+
+var Spell = {
+  Group: Group$2
+};
+
+function fromInt$14(id) {
   var switcher = id - 1 | 0;
   if (switcher > 11 || switcher < 0) {
     return /* Other */{
@@ -1264,7 +1302,7 @@ function fromInt$13(id) {
   }
 }
 
-function toInt$13(id) {
+function toInt$14(id) {
   if (typeof id === "number") {
     return id + 1 | 0;
   } else {
@@ -1273,11 +1311,11 @@ function toInt$13(id) {
 }
 
 var Property = {
-  fromInt: fromInt$13,
-  toInt: toInt$13
+  fromInt: fromInt$14,
+  toInt: toInt$14
 };
 
-function fromInt$14(id) {
+function fromInt$15(id) {
   if (id >= 623) {
     if (id >= 1069) {
       if (id >= 1222) {
@@ -1836,7 +1874,7 @@ function fromInt$14(id) {
   }
 }
 
-function toInt$14(id) {
+function toInt$15(id) {
   if (typeof id !== "number") {
     return id._0;
   }
@@ -2039,7 +2077,7 @@ function toInt$14(id) {
   }
 }
 
-function fromInt$15(id) {
+function fromInt$16(id) {
   var switcher = id - 1 | 0;
   if (switcher > 44 || switcher < 0) {
     return /* Other */{
@@ -2050,7 +2088,7 @@ function fromInt$15(id) {
   }
 }
 
-function toInt$15(id) {
+function toInt$16(id) {
   if (typeof id === "number") {
     return id + 1 | 0;
   } else {
@@ -2058,15 +2096,15 @@ function toInt$15(id) {
   }
 }
 
-var Group$2 = {
-  fromInt: fromInt$15,
-  toInt: toInt$15
+var Group$3 = {
+  fromInt: fromInt$16,
+  toInt: toInt$16
 };
 
 var SpecialAbility = {
-  fromInt: fromInt$14,
-  toInt: toInt$14,
-  Group: Group$2
+  fromInt: fromInt$15,
+  toInt: toInt$15,
+  Group: Group$3
 };
 
 var SelectOption = {
@@ -2098,6 +2136,7 @@ export {
   Skill ,
   CombatTechnique ,
   MagicalTradition ,
+  Spell ,
   Property ,
   SpecialAbility ,
   

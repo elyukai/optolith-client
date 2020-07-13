@@ -394,7 +394,7 @@ let getEntrySpecificCost =
                   >>= (
                     fst =>
                       fst
-                      |> singleToSingleWithId(heroEntry)
+                      |> singleToSingleWithId(heroEntry, 0)
                       |> getCostFromHeroEntry
                   ),
                 );

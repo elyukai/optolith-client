@@ -108,6 +108,8 @@ var ActivatableSkill = {
   isUnused: isUnused$2
 };
 
+var MagicalActions = {};
+
 var Item = {};
 
 var Pact = {};
@@ -121,6 +123,7 @@ export {
   Attribute ,
   Energies ,
   ActivatableSkill ,
+  MagicalActions ,
   Item ,
   Pact ,
   TransferUnfamiliar ,

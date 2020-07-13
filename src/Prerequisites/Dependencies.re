@@ -5,6 +5,63 @@ module O = Ley_Option;
 open O.Monad;
 module IM = Ley_IntMap;
 
+module Activatable = {
+  let isLevelDependencyMatched =
+      (
+        dependency: Hero.Activatable.dependency,
+        active: Hero.Activatable.single,
+      ) =>
+    switch (dependency.level, active.level) {
+    // If there is no level dependency, skip
+    | (None, _) => true
+    // If there is a level dependency but no actual level, skip (this case
+    // should not happen at all)
+    | (Some(_), None) => !dependency.active
+    // The active level must be at least the required level, if required. If
+    // prohibited, the level must be lower than the level specified in the
+    // dependency
+    | (Some(dependencyLevel), Some(activeLevel)) =>
+      activeLevel >= dependencyLevel === dependency.active
+    };
+
+  let areOptionDependenciesMatched =
+      (
+        dependency: Hero.Activatable.dependency,
+        active: Hero.Activatable.single,
+      ) =>
+    L.Index.iall(
+      (i, option) =>
+        // Get the active option at the same position as the
+        // required option
+        L.Safe.atMay(active.options, i)
+        >>= Activatable_Convert.activatableOptionToSelectOptionId
+        |> O.option(false, activeOption =>
+             switch (option) {
+             | OneOrMany.One(option) =>
+               // If only one option, required and active must
+               // be equal
+               Id.SelectOption.(activeOption == option) === dependency.active
+             | OneOrMany.Many(options) =>
+               // If multiple options are possible, one must be
+               // equal to the active option
+               L.elem(activeOption, options) === dependency.active
+             }
+           ),
+      dependency.options,
+    );
+
+  let isDependencyMatched = (dependency, active) =>
+    (
+      isLevelDependencyMatched(dependency, active)
+      && areOptionDependenciesMatched(dependency, active)
+    )
+    // Prohibiting instead of requiring a specific entry configuration is a
+    // logical inversion, which means that we can compare with the value if it
+    // should be required (true) or prohibited (false) to implement this
+    // inversion
+    === dependency.active;
+};
+
 module Flatten = {
   /**
    * `flattenSkillDependencies getValueForTargetId id dependencies` flattens the
@@ -101,46 +158,7 @@ module Flatten = {
             |> L.Foldable.concatMap(getActiveListForTargetId)
             // Check if the dependency is met by another entry so that it can be
             // ignored currently
-            |> L.Foldable.any((active: Hero.Activatable.single)
-                 // Check if level dependency is met
-                 =>
-                   O.option(
-                     // If there is no level dependency, skip
-                     true,
-                     level =>
-                       O.option(
-                         // If there is a level dependency but no actual level,
-                         // skip (this case should not happen at all)
-                         !dep.active,
-                         // The active level must be at least the required level
-                         activeLevel => activeLevel >= level === dep.active,
-                         active.level,
-                       ),
-                     dep.level,
-                   )
-                   // Check if options dependency/-ies is/are met
-                   && L.Index.iall(
-                        (i, option) =>
-                          // Get the active option at the same position as the
-                          // required option
-                          L.Safe.atMay(active.options, i)
-                          >>= Activatable_Convert.activatableOptionToSelectOptionId
-                          |> O.option(false, activeOption =>
-                               switch (option) {
-                               | OneOrMany.One(option) =>
-                                 // If only one option, required and active must
-                                 // be equal
-                                 Id.SelectOption.(activeOption == option)
-                                 === dep.active
-                               | OneOrMany.Many(options) =>
-                                 // If multiple options are possible, one must be
-                                 // equal to the active option
-                                 L.elem(activeOption, options) === dep.active
-                               }
-                             ),
-                        dep.options,
-                      )
-                 )
+            |> L.Foldable.any(Activatable.isDependencyMatched(dep))
             |> (
               isMatchedByOtherEntry =>
                 if (isMatchedByOtherEntry) {

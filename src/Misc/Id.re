@@ -1049,6 +1049,27 @@ module MagicalTradition = {
     };
 };
 
+module Spell = {
+  module Group = {
+    type t =
+      | Spells
+      | Rituals;
+
+    let fromInt = id =>
+      switch (id) {
+      | 1 => Ok(Spells)
+      | 2 => Ok(Rituals)
+      | x => Error(x)
+      };
+
+    let toInt = id =>
+      switch (id) {
+      | Spells => 1
+      | Rituals => 2
+      };
+  };
+};
+
 module Property = {
   type t =
     | AntiMagic

@@ -3,25 +3,26 @@
  */
 type singleWithId = {
   id: int,
+  index: int,
   options: list(Id.Activatable.Option.t),
   level: option(int),
   customCost: option(int),
 };
 
-let heroEntryToSingles = (x: Hero.Activatable.t) =>
-  x.active
-  |> Ley_List.map((s: Hero.Activatable.single) =>
-       {
-         id: x.id,
-         options: s.options,
-         level: s.level,
-         customCost: s.customCost,
-       }
-     );
-
-let singleToSingleWithId = (x: Hero.Activatable.t, s: Hero.Activatable.single) => {
+let singleToSingleWithId =
+    (x: Hero.Activatable.t, index, s: Hero.Activatable.single) => {
   id: x.id,
+  index,
   options: s.options,
+  level: s.level,
+  customCost: s.customCost,
+};
+
+let heroEntryToSingles = (x: Hero.Activatable.t) =>
+  x.active |> Ley_List.Index.imap(singleToSingleWithId(x));
+
+let singleWithIdToSingle = s => {
+  Hero.Activatable.options: s.options,
   level: s.level,
   customCost: s.customCost,
 };

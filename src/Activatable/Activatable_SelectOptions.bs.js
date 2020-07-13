@@ -34,10 +34,14 @@ function getActiveOptions1(x) {
               }), x.active);
 }
 
-function getActiveSelectOptions1(x) {
+function mapActiveOptions1(f, x) {
   return Ley_Option$OptolithClient.mapOption((function (y) {
-                return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(y.options), Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId);
+                return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(y.options), f);
               }), x.active);
+}
+
+function getActiveSelectOptions1(param) {
+  return mapActiveOptions1(Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId, param);
 }
 
 function getActiveOptions2(param) {
@@ -105,6 +109,7 @@ export {
   getSelectOptionName ,
   getSelectOptionCost ,
   getActiveOptions1 ,
+  mapActiveOptions1 ,
   getActiveSelectOptions1 ,
   getActiveOptions2 ,
   getActiveOptions2Map ,
