@@ -1,3 +1,5 @@
+module L = Ley_List;
+
 open Ley_Option;
 open Ley_Option.Monad;
 open Static;
@@ -50,6 +52,25 @@ let getDefaultEntryCost = (staticEntry, singleHeroEntry) => {
     }
   };
 };
+
+let getPrinciplesObligationsMaxLevels = ({active, _}: Hero.Activatable.t) =>
+  active
+  |> Ley_List.Foldable.foldr(
+       (active: Hero.Activatable.single, (prevMax, prevSndMax)) =>
+         switch (active.level, active.customCost) {
+         // Only get the maximum from the current and the previous level, if
+         // the current has no custom cost
+         | (Some(activeLevel), None) =>
+           if (activeLevel > prevMax) {
+             (activeLevel, prevMax);
+           } else {
+             (prevMax, prevSndMax);
+           }
+         // Otherwise always return the previous max
+         | _ => (prevMax, prevSndMax)
+         },
+       (0, 0),
+     );
 
 /**
  * Returns the value(s) how the spent AP value would change after removing the
@@ -174,23 +195,7 @@ let getEntrySpecificCost =
             // This is the highest and the second-highest level of this entry at the
             // moment.
             let (maxLevel, sndMaxLevel) =
-              heroEntry.active
-              |> Ley_List.Foldable.foldr(
-                   (active: Hero.Activatable.single, (prevMax, prevSndMax)) =>
-                     switch (active.level, active.customCost) {
-                     // Only get the maximum from the current and the previous level, if
-                     // the current has no custom cost
-                     | (Some(activeLevel), None) =>
-                       if (activeLevel > prevMax) {
-                         (activeLevel, prevMax);
-                       } else {
-                         (prevMax, prevSndMax);
-                       }
-                     // Otherwise always return the previous max
-                     | _ => (prevMax, prevSndMax)
-                     },
-                   (0, 0),
-                 );
+              getPrinciplesObligationsMaxLevels(heroEntry);
 
             // If there is more than one entry on the same level if this entry is
             // active, it won't affect AP spent at all. Thus, if the entry is to
@@ -440,12 +445,12 @@ let getEntrySpecificCost =
 };
 
 /**
- * Returns the AP you get when removing the ActiveObject.
+ * Returns the AP you get when addiing or removing the entry.
  *
  * @param isEntryToAdd If `entry` has not been added to the list of active
  * entries yet, this must be `true`, otherwise `false`.
  */
-let getApValue =
+let getApValueDifferenceOnChange =
     (
       ~isEntryToAdd,
       ~automaticAdvantages,
@@ -480,3 +485,235 @@ let getApValue =
     |> (apValue => {apValue, isAutomatic})
   };
 };
+
+/**
+ * Returns the difference to the value from `getApValueDifferenceOnChange` to be
+ * able to calculate the correct AP spent.
+ *
+ * A positive return value means that the entry uses *more* AP than what
+ * `getApValueDifferenceOnChange` returned for all activations, so that both
+ * return values can be added to form the final AP spent.
+ *
+ * Note, that disadvantages still return positive values if they actually cost
+ * AP.
+ */
+let getApSpentDifference = (staticEntry, heroEntry: Hero.Activatable.t) =>
+  switch (staticEntry) {
+  | Static.Advantage(_) => 0
+  | Disadvantage(staticDisadvantage) =>
+    [@warning "-4"]
+    Id.Disadvantage.(
+      switch (fromInt(staticDisadvantage.id)) {
+      | Principles
+      | Obligations =>
+        let (maxLevel, sndMaxLevel) =
+          getPrinciplesObligationsMaxLevels(heroEntry);
+
+        let singlesAtMaxLevel =
+          L.countBy(
+            fun
+            | ({level: Some(level), _}: Hero.Activatable.single) =>
+              level === maxLevel
+            | _ => false,
+            heroEntry.active,
+          );
+
+        let baseApValue =
+          switch (staticDisadvantage.apValue) {
+          | Some(Flat(value)) => value
+          | Some(PerLevel(_))
+          | None => 0
+          };
+
+        singlesAtMaxLevel > 1
+          // In this case, all max level entries would be 0, so this needs to be
+          // the full value for the max level
+          ? baseApValue * maxLevel
+          // otherwise, the max level entry costs the difference between max and
+          // second max, so we need to fill to actual value so that
+          // currentDifference + baseApValue * sndMaxLevel = total AP value
+          : baseApValue * sndMaxLevel;
+      | PersonalityFlaw => 0
+      | BadHabit => 0
+      | _ => 0
+      }
+    )
+  | SpecialAbility(staticSpecialAbility) =>
+    [@warning "-4"]
+    Id.SpecialAbility.(
+      switch (fromInt(staticSpecialAbility.id)) {
+      | SkillSpecialization => 0
+      | PropertyKnowledge => 0
+      | AspectKnowledge => 0
+      | _ => 0
+      }
+    )
+  };
+// /**
+//  * `getSinglePersFlawDiff :: Int -> Int -> ActiveActivatable -> SID -> Int -> Int`
+//  *
+//  * `getSinglePersFlawDiff sid paid_entries entry current_sid current_entries`
+//  *
+//  * @param sid SID the diff is for.
+//  * @param paid_entries Amount of active entries of the same SID that you get AP
+//  * for.
+//  * @param entry An entry of Personality Flaw.
+//  * @param current_sid The current SID to check.
+//  * @param current_entries The current amount of active entries of the current
+//  * SID.
+//  */
+// const getSinglePersFlawDiff =
+//   (sid: number) =>
+//   (paid_entries: number) =>
+//   (entry: Record<ActiveActivatable>) =>
+//   (current_sid: number | string) =>
+//   (current_entries: number): number =>
+//     current_sid === sid && current_entries > paid_entries
+//     ? maybe (0)
+//             (pipe (multiply (paid_entries), negate))
+//             (getSelectOptionCost (AAA.wikiEntry (entry) as Activatable)
+//                                 (Just (sid)))
+//     : 0
+// const getPersonalityFlawsDiff =
+//   (entries: List<Record<ActiveActivatable>>): number =>
+//     pipe_ (
+//       entries,
+//       // Find any Personality Flaw entry, as all of them have the same list of
+//       // active objects
+//       find (pipe (ActiveActivatableA_.id, equals<string> (DisadvantageId.PersonalityFlaw))),
+//       fmap (entry => pipe_ (
+//         entry,
+//         ActiveActivatableA_.active,
+//         countWithByKeyMaybe (e => then (guard (isNothing (AOA.cost (e))))
+//                                       (AOA.sid (e))),
+//         OrderedMap.foldrWithKey ((sid: string | number) => (val: number) =>
+//                                   pipe_ (
+//                                     List (
+//                                       getSinglePersFlawDiff (7) (1) (entry) (sid) (val),
+//                                       getSinglePersFlawDiff (8) (2) (entry) (sid) (val)
+//                                     ),
+//                                     List.sum,
+//                                     add
+//                                   ))
+//                                 (0)
+//       )),
+//       // If no Personality Flaw was found, there's no diff.
+//       Maybe.sum
+//     )
+// const getBadHabitsDiff =
+//   (staticData: StaticDataRecord) =>
+//   (hero_slice: StrMap<Record<ActivatableDependent>>) =>
+//   (entries: List<Record<ActiveActivatable>>): number =>
+//     any (pipe (ActiveActivatableAL_.id, equals<string> (DisadvantageId.BadHabit))) (entries)
+//       ? sum (pipe_ (
+//         hero_slice,
+//         lookup<string> (DisadvantageId.PersonalityFlaw),
+//         fmap (pipe (
+//           // get current active
+//           ActivatableDependent.A.active,
+//           getActiveWithNoCustomCost,
+//           flength,
+//           gt (3),
+//           bool_ (() => 0)
+//                 (() => pipe_ (
+//                   staticData,
+//                   SDA.disadvantages,
+//                   lookup<string> (DisadvantageId.BadHabit),
+//                   bindF (Disadvantage.A.cost),
+//                   misNumberM,
+//                   fmap (multiply (-3)),
+//                   sum
+//                 ))
+//         ))
+//       ))
+//       : 0
+// const getSkillSpecializationsDiff =
+//   (staticData: StaticDataRecord) =>
+//   (hero_slice: StrMap<Record<ActivatableDependent>>) =>
+//   (entries: List<Record<ActiveActivatable>>): number => {
+//     if (any (pipe (ActiveActivatableAL_.id, equals<string> (SpecialAbilityId.SkillSpecialization)))
+//             (entries)) {
+//       return sum (pipe_ (
+//         hero_slice,
+//         lookup<string> (SpecialAbilityId.SkillSpecialization),
+//         fmap (entry => {
+//           const current_active = ActivatableDependent.A.active (entry)
+//           // Count how many specializations are for the same skill
+//           const sameSkill =
+//             countWithByKeyMaybe (pipe (ActiveObject.A.sid, misStringM))
+//                                 (current_active)
+//           // Return the accumulated value, otherwise 0.
+//           const getFlatSkillDone = findWithDefault (0)
+//           // Calculates the diff for a single skill specialization
+//           const getSingleDiff =
+//             (accMap: StrMap<number>) =>
+//             (sid: string) =>
+//             (counter: number) =>
+//             (skill: Record<Skill>) =>
+//               Skill.A.ic (skill) * (getFlatSkillDone (sid) (accMap) + 1 - counter)
+//           type TrackingPair = Pair<number, StrMap<number>>
+//           // Iterates through the counter and sums up all cost differences for
+//           // each specialization.
+//           //
+//           // It keeps track of how many specializations have been already
+//           // taken into account.
+//           const skillDone =
+//             foldr (pipe (
+//                     ActiveObject.A.sid,
+//                     misStringM,
+//                     bindF (current_sid =>
+//                             fmapF (lookup (current_sid) (sameSkill))
+//                                   (count => (p: TrackingPair) => {
+//                                     const m = snd (p)
+//                                     // Check if the value in the map is either
+//                                     // Nothing or a Just of a lower number than
+//                                     // the complete counter
+//                                     // => which means there are still actions to
+//                                     // be done
+//                                     if (all (lt (count)) (lookup (current_sid) (m))) {
+//                                       const mskill =
+//                                         pipe_ (staticData, SDA.skills, lookup (current_sid))
+//                                       return Pair (
+//                                         fst (p) + sum (fmap (getSingleDiff (m)
+//                                                                           (current_sid)
+//                                                                           (count))
+//                                                             (mskill)),
+//                                         alter (pipe (altF (Just (0)), fmap (inc)))
+//                                               (current_sid)
+//                                               (m)
+//                                       )
+//                                     }
+//                                     return p
+//                                   })),
+//                     fromMaybe<ident<TrackingPair>> (ident)
+//                   ))
+//                   (Pair (0, empty))
+//                   (current_active)
+//           return fst (skillDone)
+//         })
+//       ))
+//     }
+//     return 0
+//   }
+// const getPropertyKnowledgeDiff =
+//   getPropertyOrAspectKnowledgeDiff (SpecialAbilityId.PropertyKnowledge)
+// const getAspectKnowledgeDiff =
+//   getPropertyOrAspectKnowledgeDiff (SpecialAbilityId.AspectKnowledge)
+// /**
+//  * The returned number modifies the current AP spent.
+//  */
+// export const getAdventurePointsSpentDifference =
+//   (staticData: StaticDataRecord) =>
+//   (hero_slice: StrMap<Record<ActivatableDependent>>) =>
+//   (entries: List<Record<ActiveActivatable>>): number => {
+//     const adventurePointsSpentDifferences = List (
+//       getPrinciplesObligationsDiff (DisadvantageId.Principles) (staticData) (hero_slice) (entries),
+//       getPrinciplesObligationsDiff (DisadvantageId.Obligations) (staticData) (hero_slice) (entries),
+//       getPersonalityFlawsDiff (entries),
+//       getBadHabitsDiff (staticData) (hero_slice) (entries),
+//       getSkillSpecializationsDiff (staticData) (hero_slice) (entries),
+//       getPropertyKnowledgeDiff (entries),
+//       getAspectKnowledgeDiff (entries)
+//     )
+//     return List.sum (adventurePointsSpentDifferences)
+//   }
