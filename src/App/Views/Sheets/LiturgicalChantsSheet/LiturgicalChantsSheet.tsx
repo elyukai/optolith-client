@@ -16,8 +16,6 @@ import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { DerivedCharacteristicId } from "../../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
-import { Checkbox } from "../../Universal/Checkbox"
-import { Options } from "../../Universal/Options"
 import { AttributeMods } from "../AttributeMods"
 import { Sheet } from "../Sheet"
 import { HeaderValue } from "../SheetHeader"
@@ -55,7 +53,6 @@ export const LiturgicalChantsSheet: React.FC<Props> = props => {
     derivedCharacteristics,
     liturgicalChants,
     staticData,
-    switchAttributeValueVisibility,
   } = props
 
   const addHeader = List<Record<HeaderValue>> (
@@ -81,14 +78,6 @@ export const LiturgicalChantsSheet: React.FC<Props> = props => {
 
   return (
     <SheetWrapper>
-      <Options>
-        <Checkbox
-          checked={checkAttributeValueVisibility}
-          onClick={switchAttributeValueVisibility}
-          >
-          {translate (staticData) ("sheets.showattributevalues")}
-        </Checkbox>
-      </Options>
       <Sheet
         id="liturgies-sheet"
         title={translate (staticData) ("sheets.chantssheet.title")}

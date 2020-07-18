@@ -1,7 +1,7 @@
 #sheets {
   .options {
     margin-left: 0;
-    margin-right: 24px;
+    margin: 24px;
     padding-top: 0;
     flex: none;
   }
@@ -29,87 +29,143 @@ table {
   &:not(:first-child) {
     margin-top: 24px;
   }
+
+  &.zoom-100 {
+    .sheet-wrapper {
+      width: 21cm;
+      height: 29.7cm;
+
+      .sheet {
+        transform: scale(1);
+      }
+    }
+  }
+
+  &.zoom-125 {
+    .sheet-wrapper {
+      width: 26.25cm;
+      height: 37.125cm;
+
+      .sheet {
+        transform: scale(1.25);
+      }
+    }
+  }
+
+  &.zoom-150 {
+    .sheet-wrapper {
+      width: 31.5cm;
+      height: 44.55cm;
+
+      .sheet {
+        transform: scale(1.5);
+      }
+    }
+  }
+
+  &.zoom-175 {
+    .sheet-wrapper {
+      width: 31.5cm;
+      height: 51.975cm;
+
+      .sheet {
+        transform: scale(1.75);
+      }
+    }
+  }
+
+  &.zoom-200 {
+    .sheet-wrapper {
+      width: 42cm;
+      height: 58.74cm;
+
+      .sheet {
+        transform: scale(2);
+      }
+    }
+  }
+
+  .sheet {
+    transform-origin: top left;
+    flex: none;
+    width: 21cm;
+    height: 29.7cm;
+    background: white;
+    text-align: left;
+    padding: 8.5mm;
+    font: 11px/16px Alegreya;
+    color: black;
+    letter-spacing: 0;
+    display: flex;
+    flex-direction: column;
+    user-select: text;
+  
+    * {
+      user-select: text;
+    }
+  
+    ::selection {
+      background: var(--selection-color);
+      color: var(--headings-color);
+    }
+  
+    > div {
+      display: flex;
+      justify-content: space-between;
+    }
+  
+    h1, h2, h3 {
+      color: black;
+      margin: 0;
+    }
+  
+    h1 {
+      font: italic bold 18pt/0.9 Alegreya;
+    }
+  
+    h2 {
+      font: 17px/13px "Alegreya SC";
+      text-transform: none;
+      letter-spacing: 0;
+    }
+  
+    h3 {
+      font: bold 16px Alegreya;
+      letter-spacing: 0;
+      width: 100%;
+    }
+  
+    th, td {
+      border-style: solid;
+      border-color: #c8c8c8;
+      border-width: 0;
+      padding: 0;
+    }
+  
+    th {
+      height: 5mm;
+      border-width: 0.75pt 0;
+      font: bold 10px/1 "Alegreya SC";
+      border-color: grey;
+    }
+  
+    td {
+      height: 4.5mm;
+      border-width: 0 0 0.25pt;
+      font: 500 11px/4.35mm Alegreya Sans;
+    }
+  
+    .activatable-list > div {
+      font: 400 16px Alegreya Sans;
+      letter-spacing: 0;
+      padding-top: 8px;
+    }
+  }
 }
 
 .sheet-options {
   flex: none;
   margin-right: 24px;
-}
-
-.sheet {
-  flex: none;
-  width: 21cm;
-  height: 29.7cm;
-  background: white;
-  text-align: left;
-  padding: 8.5mm;
-  font: 11px/16px Alegreya;
-  color: black;
-  letter-spacing: 0;
-  display: flex;
-  flex-direction: column;
-  user-select: text;
-
-  * {
-    user-select: text;
-  }
-
-  ::selection {
-    background: var(--selection-color);
-    color: var(--headings-color);
-  }
-
-  > div {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  h1, h2, h3 {
-    color: black;
-    margin: 0;
-  }
-
-  h1 {
-    font: italic bold 18pt/0.9 Alegreya;
-  }
-
-  h2 {
-    font: 17px/13px "Alegreya SC";
-    text-transform: none;
-    letter-spacing: 0;
-  }
-
-  h3 {
-    font: bold 16px Alegreya;
-    letter-spacing: 0;
-    width: 100%;
-  }
-
-  th, td {
-    border-style: solid;
-    border-color: #c8c8c8;
-    border-width: 0;
-    padding: 0;
-  }
-
-  th {
-    height: 5mm;
-    border-width: 0.75pt 0;
-    font: bold 10px/1 "Alegreya SC";
-    border-color: grey;
-  }
-
-  td {
-    height: 4.5mm;
-    border-width: 0 0 0.25pt;
-    font: 500 11px/4.35mm Alegreya Sans;
-  }
-
-  .activatable-list > div {
-    font: 400 16px Alegreya Sans;
-    letter-spacing: 0;
-    padding-top: 8px;
-  }
 }
 
 .sheet.paper {

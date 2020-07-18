@@ -109,5 +109,17 @@
     &:not(:first-child) {
       margin-top: 0;
     }
+
+    &.zoom-100,
+    &.zoom-125,
+    &.zoom-150,
+    &.zoom-175,
+    &.zoom-200 {
+      .sheet-wrapper {
+        .sheet {
+          transform: scale(1);
+        }
+      }
+    }
   }
 }

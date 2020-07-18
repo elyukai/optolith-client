@@ -16,7 +16,6 @@ import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I1
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybe } from "../../../Utilities/ReactUtils"
 import { LabelBox } from "../../Universal/LabelBox"
-import { Options } from "../../Universal/Options"
 import { TextBox } from "../../Universal/TextBox"
 import { Sheet } from "../Sheet"
 import { SheetWrapper } from "../SheetWrapper"
@@ -70,7 +69,6 @@ export const BelongingsSheet: React.FC<Props> = props => {
 
   return (
     <SheetWrapper>
-      <Options />
       <Sheet
         id="belongings"
         title={translate (staticData) ("sheets.belongingssheet.title")}

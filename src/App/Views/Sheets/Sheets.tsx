@@ -2,7 +2,7 @@ import * as React from "react"
 import { equals } from "../../../Data/Eq"
 import { fmapF } from "../../../Data/Functor"
 import { find, flength, List } from "../../../Data/List"
-import { bindF, Maybe, maybeRNull } from "../../../Data/Maybe"
+import { bindF, Just, Maybe, maybeRNull } from "../../../Data/Maybe"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd } from "../../../Data/Tuple"
@@ -41,6 +41,7 @@ import { State } from "../../Models/Wiki/State"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { DCPair } from "../../Selectors/derivedCharacteristicsSelectors"
 import { pipe, pipe_ } from "../../Utilities/pipe"
+import { classListMaybe } from "../../Utilities/CSS"
 import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { Page } from "../Universal/Page"
 import { Scroll } from "../Universal/Scroll"
@@ -51,6 +52,12 @@ import { LiturgicalChantsSheet } from "./LiturgicalChantsSheet/LiturgicalChantsS
 import { MainSheet } from "./MainSheet/MainSheet"
 import { SkillsSheet } from "./SkillsSheet/SkillsSheet"
 import { SpellsSheet } from "./SpellsSheet/SpellsSheet"
+import { Checkbox } from "../Universal/Checkbox"
+import { Options } from "../Universal/Options"
+import { BorderButton } from "../Universal/BorderButton"
+import { translate } from "../../Utilities/I18n"
+import { DropdownOption } from "../../Models/View/DropdownOption"
+import { Dropdown } from "../Universal/Dropdown"
 
 export interface SheetsOwnProps {
   staticData: StaticDataRecord
@@ -77,6 +84,7 @@ export interface SheetsStateProps {
   name: Maybe<string>
   professionName: Maybe<string>
   useParchment: boolean
+  zoomFactor: string
 
   // profession: Maybe<Record<Profession>>
   // professionVariant: Maybe<Record<ProfessionVariant>>
@@ -118,6 +126,7 @@ export interface SheetsDispatchProps {
   printToPDF (): void
   switchAttributeValueVisibility (): void
   switchUseParchment (): void
+  setSheetZoomFactor (zoomFactor: string): void
 }
 
 type Props = SheetsStateProps & SheetsDispatchProps & SheetsOwnProps
@@ -153,7 +162,9 @@ export const Sheets: React.FC<Props> = props => {
     skillGroupPages,
     switchAttributeValueVisibility,
     switchUseParchment,
+    setSheetZoomFactor,
     useParchment,
+    zoomFactor,
 
     armors,
     combatSpecialAbilities,
@@ -198,9 +209,61 @@ export const Sheets: React.FC<Props> = props => {
   const nArmorZones = Maybe.sum (fmapF (armorZones) (flength))
   const nArmors = Maybe.sum (fmapF (armors) (flength))
 
+  // console.log(zoomFactor)
+
   return (
     <Page id="sheets">
-      <Scroll className="sheet-wrapper">
+      <Options>
+        <BorderButton
+          className="print-document"
+          label={translate (staticData) ("sheets.printtopdfbtn")}
+          onClick={printToPDF}
+          />
+        <Checkbox
+          checked={useParchment}
+          onClick={switchUseParchment}
+          >
+          {translate (staticData) ("sheets.useparchment")}
+        </Checkbox>
+        <Checkbox
+          checked={checkAttributeValueVisibility}
+          onClick={switchAttributeValueVisibility}
+          >
+          {translate (staticData) ("sheets.showattributevalues")}
+        </Checkbox>
+        <Dropdown
+          label="Zoom"
+          value={Just (zoomFactor)}
+          onChangeJust={setSheetZoomFactor}
+          options={List (
+            DropdownOption ({
+              id: Just ('zoom-100'),
+              name: "100%",
+            }),
+            DropdownOption ({
+              id: Just ('zoom-125'),
+              name: "125%",
+            }),
+            DropdownOption ({
+              id: Just ('zoom-150'),
+              name: "150%",
+            }),
+            DropdownOption ({
+              id: Just ('zoom-175'),
+              name: "175%",
+            }),
+            DropdownOption ({
+              id: Just ('zoom-200'),
+              name: "200%",
+            }),
+          )}
+          fullWidth
+          />
+      </Options>
+      <Scroll className={classListMaybe (List (
+            Just ('sheet-wrapper'),
+            Just (zoomFactor)
+          ))}>
         <MainSheet
           advantagesActive={advantagesActive}
           ap={ap}

@@ -157,6 +157,7 @@ export interface Config {
   equipmentGroupVisibilityFilter: EquipmentGroup
   sheetCheckAttributeValueVisibility: Maybe<boolean>
   sheetUseParchment: Maybe<boolean>
+  sheetZoomFactor: Maybe<string>
   enableActiveItemHints: boolean
   locale: Maybe<string>
   fallbackLocale: Maybe<string>
@@ -190,6 +191,7 @@ export const Config =
                 equipmentGroupVisibilityFilter: EquipmentGroup.MeleeWeapons,
                 sheetCheckAttributeValueVisibility: Just (false),
                 sheetUseParchment: Just (false),
+                sheetZoomFactor: Just ("zoom-100"),
                 enableActiveItemHints: false,
                 locale: Nothing,
                 fallbackLocale: Nothing,
