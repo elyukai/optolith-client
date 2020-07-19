@@ -54,6 +54,29 @@ function getDefaultEntryCost(staticEntry, singleHeroEntry) {
   }
 }
 
+function getPrinciplesObligationsMaxLevels(param) {
+  return Ley_List$OptolithClient.Foldable.foldr((function (active, param) {
+                var prevSndMax = param[1];
+                var prevMax = param[0];
+                var match = active.level;
+                var match$1 = active.customCost;
+                if (match !== undefined && !(match$1 !== undefined || match <= prevMax)) {
+                  return [
+                          match,
+                          prevMax
+                        ];
+                } else {
+                  return [
+                          prevMax,
+                          prevSndMax
+                        ];
+                }
+              }), [
+              0,
+              0
+            ], param.active);
+}
+
 function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroEntry, singleHeroEntry) {
   var sid1 = Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry);
   var level = singleHeroEntry.level;
@@ -233,26 +256,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
           
         }
         return Ley_Option$OptolithClient.Monad.$great$great$eq(level, (function (level) {
-                      var match = Ley_List$OptolithClient.Foldable.foldr((function (active, param) {
-                              var prevSndMax = param[1];
-                              var prevMax = param[0];
-                              var match = active.level;
-                              var match$1 = active.customCost;
-                              if (match !== undefined && !(match$1 !== undefined || match <= prevMax)) {
-                                return [
-                                        match,
-                                        prevMax
-                                      ];
-                              } else {
-                                return [
-                                        prevMax,
-                                        prevSndMax
-                                      ];
-                              }
-                            }), [
-                            0,
-                            0
-                          ], heroEntry.active);
+                      var match = getPrinciplesObligationsMaxLevels(heroEntry);
                       if (match[0] > level || Ley_List$OptolithClient.countBy((function (e) {
                                 return Ley_Option$OptolithClient.Foldable.elem(level, e.level);
                               }), heroEntry.active) > (
@@ -479,7 +483,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
   }
 }
 
-function getApValue(isEntryToAdd, automaticAdvantages, staticData, hero, staticEntry, heroEntry, singleHeroEntry) {
+function getApValueDifferenceOnChange(isEntryToAdd, automaticAdvantages, staticData, hero, staticEntry, heroEntry, singleHeroEntry) {
   var isAutomatic = Ley_List$OptolithClient.elem(singleHeroEntry.id, automaticAdvantages);
   var modifyAbs;
   switch (staticEntry.TAG | 0) {
@@ -507,7 +511,7 @@ function getApValue(isEntryToAdd, automaticAdvantages, staticData, hero, staticE
 }
 
 export {
-  getApValue ,
+  getApValueDifferenceOnChange ,
   
 }
 /* Ley_IntMap-OptolithClient Not a pure module */

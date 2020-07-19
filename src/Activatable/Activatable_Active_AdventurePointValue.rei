@@ -28,7 +28,7 @@ type combinedApValue = {
  * to the list of active entries yet, otherwise `false`. `automaticAdvantages`
  * is the list of automatic advantage IDs.
  */
-let getApValue:
+let getApValueDifferenceOnChange:
   (
     ~isEntryToAdd: bool,
     ~automaticAdvantages: list(int),

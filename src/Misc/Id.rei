@@ -1,37 +1,39 @@
-type t = [
-  | `ExperienceLevel(int)
-  | `Race(int)
-  | `Culture(int)
-  | `Profession(int)
-  | `Attribute(int)
-  | `Advantage(int)
-  | `Disadvantage(int)
-  | `Skill(int)
-  | `CombatTechnique(int)
-  | `Spell(int)
-  | `Curse(int)
-  | `ElvenMagicalSong(int)
-  | `DominationRitual(int)
-  | `MagicalMelody(int)
-  | `MagicalDance(int)
-  | `RogueSpell(int)
-  | `AnimistForce(int)
-  | `GeodeRitual(int)
-  | `ZibiljaRitual(int)
-  | `Cantrip(int)
-  | `LiturgicalChant(int)
-  | `Blessing(int)
-  | `SpecialAbility(int)
-  | `Item(int)
-  | `EquipmentPackage(int)
-  | `HitZoneArmor(int)
-  | `Familiar(int)
-  | `Animal(int)
-  | `FocusRule(int)
-  | `OptionalRule(int)
-  | `Condition(int)
-  | `State(int)
+type category = [
+  | `ExperienceLevel
+  | `Race
+  | `Culture
+  | `Profession
+  | `Attribute
+  | `Advantage
+  | `Disadvantage
+  | `Skill
+  | `CombatTechnique
+  | `Spell
+  | `Curse
+  | `ElvenMagicalSong
+  | `DominationRitual
+  | `MagicalMelody
+  | `MagicalDance
+  | `RogueSpell
+  | `AnimistForce
+  | `GeodeRitual
+  | `ZibiljaRitual
+  | `Cantrip
+  | `LiturgicalChant
+  | `Blessing
+  | `SpecialAbility
+  | `Item
+  | `EquipmentPackage
+  | `HitZoneArmor
+  | `Familiar
+  | `Animal
+  | `FocusRule
+  | `OptionalRule
+  | `Condition
+  | `State
 ];
+
+type t = (category, int);
 
 type all = t;
 
@@ -45,89 +47,96 @@ let compare: (t, t) => int;
 let (==): (t, t) => bool;
 
 module Activatable: {
-  type t = [ | `Advantage(int) | `Disadvantage(int) | `SpecialAbility(int)];
+  type category = [ | `Advantage | `Disadvantage | `SpecialAbility];
+
+  type t = (category, int);
 
   let (==): (t, t) => bool;
 
-  let generalize: t => all;
+  module SelectOption: {
+    type category = [
+      | `Generic
+      | `Skill
+      | `CombatTechnique
+      | `Spell
+      | `Cantrip
+      | `LiturgicalChant
+      | `Blessing
+      | `SpecialAbility
+    ];
+
+    type t = (category, int);
+
+    /**
+     * `compare x y` returns `0` if `x` and `y` are equal, a negative integer if
+     * `x` is smaller than `y`, and a positive integer if `x` is greater than
+     * `y`.
+     */
+    let compare: (t, t) => int;
+
+    let (==): (t, t) => bool;
+
+    let (!=): (t, t) => bool;
+  };
 
   module Option: {
-    type t = [
-      | `Generic(int)
-      | `Skill(int)
-      | `CombatTechnique(int)
-      | `Spell(int)
-      | `Cantrip(int)
-      | `LiturgicalChant(int)
-      | `Blessing(int)
-      | `SpecialAbility(int)
-      | `CustomInput(string)
-    ];
+    type t =
+      | Preset(SelectOption.t)
+      | CustomInput(string);
 
     let (==): (t, t) => bool;
   };
 };
 
 module ActivatableAndSkill: {
-  type t = [
-    | `Advantage(int)
-    | `Disadvantage(int)
-    | `SpecialAbility(int)
-    | `Spell(int)
-    | `LiturgicalChant(int)
+  type category = [
+    | `Advantage
+    | `Disadvantage
+    | `SpecialAbility
+    | `Spell
+    | `LiturgicalChant
   ];
+
+  type t = (category, int);
 };
 
-module ActivatableSkill: {type t = [ | `Spell(int) | `LiturgicalChant(int)];
+module ActivatableSkill: {
+  type category = [ | `Spell | `LiturgicalChant];
+
+  type t = (category, int);
 };
 
-module PermanentSkill: {type t = [ | `Skill(int) | `CombatTechnique(int)];};
+module PermanentSkill: {
+  type category = [ | `Skill | `CombatTechnique];
+
+  type t = (category, int);
+};
 
 module Increasable: {
-  type t = [
-    | `Attribute(int)
-    | `Skill(int)
-    | `CombatTechnique(int)
-    | `Spell(int)
-    | `LiturgicalChant(int)
+  type category = [
+    | `Attribute
+    | `Skill
+    | `CombatTechnique
+    | `Spell
+    | `LiturgicalChant
   ];
+
+  type t = (category, int);
 };
 
 module PrerequisiteSource: {
-  type t = [
-    | `Advantage(int)
-    | `Disadvantage(int)
-    | `SpecialAbility(int)
-    | `Attribute(int)
-    | `Skill(int)
-    | `CombatTechnique(int)
-    | `Spell(int)
-    | `LiturgicalChant(int)
-  ];
-};
-
-module SelectOption: {
-  type t = [
-    | `Generic(int)
-    | `Skill(int)
-    | `CombatTechnique(int)
-    | `Spell(int)
-    | `Cantrip(int)
-    | `LiturgicalChant(int)
-    | `Blessing(int)
-    | `SpecialAbility(int)
+  type category = [
+    | `Advantage
+    | `Disadvantage
+    | `SpecialAbility
+    | `Attribute
+    | `Skill
+    | `CombatTechnique
+    | `Spell
+    | `LiturgicalChant
   ];
 
-  /**
-   * `compare x y` returns `0` if `x` and `y` are equal, a negative integer if
-   * `x` is smaller than `y`, and a positive integer if `x` is greater than
-   * `y`.
-   */
-  let compare: (t, t) => int;
-
-  let (==): (t, t) => bool;
-
-  let (!=): (t, t) => bool;
+  type t = (category, int);
 };
 
 module HitZoneArmorZoneItem: {

@@ -6,7 +6,7 @@ type t = {
   validation: Activatable_Active_Validation.t,
   staticEntry: Static.activatable,
   heroEntry: Hero.Activatable.t,
-} /*   t*/;
+};
 
 /**
  * `getActive cache staticData hero staticEntry maybeHeroEntry` adds display

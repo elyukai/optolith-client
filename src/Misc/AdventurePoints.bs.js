@@ -71,8 +71,6 @@ function getMissingApForDisAdvantage(staticData, hero, isInCharacterCreation, ap
         };
 }
 
-var DifferenceTotal = {};
-
 var getApSpentOnAttributes = Curry._2(Ley_IntMap$OptolithClient.IntMap.Foldable.foldr, (function (x) {
         var partial_arg = IC$OptolithClient.getAPForRange(/* E */4, 8, x.value);
         return function (param) {
@@ -148,7 +146,6 @@ export {
   getMissingAp ,
   getDisAdvantagesSubtypeMax ,
   getMissingApForDisAdvantage ,
-  DifferenceTotal ,
   Sum ,
   
 }

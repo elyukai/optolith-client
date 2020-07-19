@@ -27,6 +27,6 @@ let singleToSingleWithId:
   (Hero.Activatable.t, int, Hero.Activatable.single) => singleWithId;
 
 let activatableOptionToSelectOptionId:
-  Id.Activatable.Option.t => option(Id.SelectOption.t);
+  Id.Activatable.Option.t => option(Id.Activatable.SelectOption.t);
 
 let singleWithIdToSingle: singleWithId => Hero.Activatable.single;

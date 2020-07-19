@@ -38,7 +38,7 @@ let getActive =
     );
 
   let {Activatable_Active_AdventurePointValue.apValue, isAutomatic} =
-    Activatable_Active_AdventurePointValue.getApValue(
+    Activatable_Active_AdventurePointValue.getApValueDifferenceOnChange(
       ~isEntryToAdd,
       ~automaticAdvantages=cache.automaticAdvantages,
       staticData,

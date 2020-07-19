@@ -47,7 +47,7 @@ module Activatable = {
     source: Id.Activatable.t,
     target: OneOrMany.t(int),
     active: bool,
-    options: list(OneOrMany.t(Id.SelectOption.t)),
+    options: list(OneOrMany.t(Id.Activatable.SelectOption.t)),
     level: option(int),
   };
 

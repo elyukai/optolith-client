@@ -1,118 +1,84 @@
-type t = [
-  | `ExperienceLevel(int)
-  | `Race(int)
-  | `Culture(int)
-  | `Profession(int)
-  | `Attribute(int)
-  | `Advantage(int)
-  | `Disadvantage(int)
-  | `Skill(int)
-  | `CombatTechnique(int)
-  | `Spell(int)
-  | `Curse(int)
-  | `ElvenMagicalSong(int)
-  | `DominationRitual(int)
-  | `MagicalMelody(int)
-  | `MagicalDance(int)
-  | `RogueSpell(int)
-  | `AnimistForce(int)
-  | `GeodeRitual(int)
-  | `ZibiljaRitual(int)
-  | `Cantrip(int)
-  | `LiturgicalChant(int)
-  | `Blessing(int)
-  | `SpecialAbility(int)
-  | `Item(int)
-  | `EquipmentPackage(int)
-  | `HitZoneArmor(int)
-  | `Familiar(int)
-  | `Animal(int)
-  | `FocusRule(int)
-  | `OptionalRule(int)
-  | `Condition(int)
-  | `State(int)
+type category = [
+  | `ExperienceLevel
+  | `Race
+  | `Culture
+  | `Profession
+  | `Attribute
+  | `Advantage
+  | `Disadvantage
+  | `Skill
+  | `CombatTechnique
+  | `Spell
+  | `Curse
+  | `ElvenMagicalSong
+  | `DominationRitual
+  | `MagicalMelody
+  | `MagicalDance
+  | `RogueSpell
+  | `AnimistForce
+  | `GeodeRitual
+  | `ZibiljaRitual
+  | `Cantrip
+  | `LiturgicalChant
+  | `Blessing
+  | `SpecialAbility
+  | `Item
+  | `EquipmentPackage
+  | `HitZoneArmor
+  | `Familiar
+  | `Animal
+  | `FocusRule
+  | `OptionalRule
+  | `Condition
+  | `State
 ];
+
+let toInt = (cat: category) =>
+  switch (cat) {
+  | `ExperienceLevel => 1
+  | `Race => 2
+  | `Culture => 3
+  | `Profession => 4
+  | `Attribute => 5
+  | `Advantage => 6
+  | `Disadvantage => 7
+  | `Skill => 8
+  | `CombatTechnique => 9
+  | `Spell => 10
+  | `Curse => 11
+  | `ElvenMagicalSong => 12
+  | `DominationRitual => 13
+  | `MagicalMelody => 14
+  | `MagicalDance => 15
+  | `RogueSpell => 16
+  | `AnimistForce => 17
+  | `GeodeRitual => 18
+  | `ZibiljaRitual => 19
+  | `Cantrip => 20
+  | `LiturgicalChant => 21
+  | `Blessing => 22
+  | `SpecialAbility => 23
+  | `Item => 24
+  | `EquipmentPackage => 25
+  | `HitZoneArmor => 26
+  | `Familiar => 27
+  | `Animal => 28
+  | `FocusRule => 29
+  | `OptionalRule => 30
+  | `Condition => 31
+  | `State => 32
+  };
+
+type t = (category, int);
 
 type all = t;
 
-let outerToInt = id =>
-  switch (id) {
-  | `ExperienceLevel(_) => 1
-  | `Race(_) => 2
-  | `Culture(_) => 3
-  | `Profession(_) => 4
-  | `Attribute(_) => 5
-  | `Advantage(_) => 6
-  | `Disadvantage(_) => 7
-  | `Skill(_) => 8
-  | `CombatTechnique(_) => 9
-  | `Spell(_) => 10
-  | `Curse(_) => 11
-  | `ElvenMagicalSong(_) => 12
-  | `DominationRitual(_) => 13
-  | `MagicalMelody(_) => 14
-  | `MagicalDance(_) => 15
-  | `RogueSpell(_) => 16
-  | `AnimistForce(_) => 17
-  | `GeodeRitual(_) => 18
-  | `ZibiljaRitual(_) => 19
-  | `Cantrip(_) => 20
-  | `LiturgicalChant(_) => 21
-  | `Blessing(_) => 22
-  | `SpecialAbility(_) => 23
-  | `Item(_) => 24
-  | `EquipmentPackage(_) => 25
-  | `HitZoneArmor(_) => 26
-  | `Familiar(_) => 27
-  | `Animal(_) => 28
-  | `FocusRule(_) => 29
-  | `OptionalRule(_) => 30
-  | `Condition(_) => 31
-  | `State(_) => 32
-  };
-
-let innerToInt = id =>
-  switch (id) {
-  | `ExperienceLevel(x)
-  | `Race(x)
-  | `Culture(x)
-  | `Profession(x)
-  | `Attribute(x)
-  | `Advantage(x)
-  | `Disadvantage(x)
-  | `Skill(x)
-  | `CombatTechnique(x)
-  | `Spell(x)
-  | `Curse(x)
-  | `ElvenMagicalSong(x)
-  | `DominationRitual(x)
-  | `MagicalMelody(x)
-  | `MagicalDance(x)
-  | `RogueSpell(x)
-  | `AnimistForce(x)
-  | `GeodeRitual(x)
-  | `ZibiljaRitual(x)
-  | `Cantrip(x)
-  | `LiturgicalChant(x)
-  | `Blessing(x)
-  | `SpecialAbility(x)
-  | `Item(x)
-  | `EquipmentPackage(x)
-  | `HitZoneArmor(x)
-  | `Familiar(x)
-  | `Animal(x)
-  | `FocusRule(x)
-  | `OptionalRule(x)
-  | `Condition(x)
-  | `State(x) => x
-  };
-
-let compare = (x: t, y: t) => {
-  let x' = outerToInt(x);
-  let y' = outerToInt(y);
+let compare = ((xCategory, xInt), (yCategory, yInt)) => {
+  let x' = toInt(xCategory);
+  let y' = toInt(yCategory);
 
   if (x' === y') {
-    innerToInt(x) - innerToInt(y);
+    xInt - yInt;
   } else {
     x' - y';
   };
@@ -121,143 +87,137 @@ let compare = (x: t, y: t) => {
 let (==) = (x, y) => compare(x, y) === 0;
 
 module Activatable = {
-  type t = [ | `Advantage(int) | `Disadvantage(int) | `SpecialAbility(int)];
+  type category = [ | `Advantage | `Disadvantage | `SpecialAbility];
+
+  type t = (category, int);
 
   let (==) = (x, y) =>
-    switch (x, y) {
-    | (`Advantage(x), `Advantage(y))
-    | (`Disadvantage(x), `Disadvantage(y))
-    | (`SpecialAbility(x), `SpecialAbility(y)) => x === y
-    | _ => false
-    };
+    [@warning "-4"]
+    (
+      switch (x: t, y: t) {
+      | ((`Advantage, x), (`Advantage, y))
+      | ((`Disadvantage, x), (`Disadvantage, y))
+      | ((`SpecialAbility, x), (`SpecialAbility, y)) => x === y
+      | _ => false
+      }
+    );
 
-  let generalize = (id: t): all =>
-    switch (id) {
-    | `Advantage(id) => `Advantage(id)
-    | `Disadvantage(id) => `Disadvantage(id)
-    | `SpecialAbility(id) => `SpecialAbility(id)
-    };
-
-  module Option = {
-    type t = [
-      | `Generic(int)
-      | `Skill(int)
-      | `CombatTechnique(int)
-      | `Spell(int)
-      | `Cantrip(int)
-      | `LiturgicalChant(int)
-      | `Blessing(int)
-      | `SpecialAbility(int)
-      | `CustomInput(string)
+  module SelectOption = {
+    type category = [
+      | `Generic
+      | `Skill
+      | `CombatTechnique
+      | `Spell
+      | `Cantrip
+      | `LiturgicalChant
+      | `Blessing
+      | `SpecialAbility
     ];
 
-    let (==) = (x, y) =>
-      switch (x, y) {
-      | (`Generic(x), `Generic(y))
-      | (`Skill(x), `Skill(y))
-      | (`CombatTechnique(x), `CombatTechnique(y))
-      | (`Spell(x), `Spell(y))
-      | (`Cantrip(x), `Cantrip(y))
-      | (`LiturgicalChant(x), `LiturgicalChant(y))
-      | (`Blessing(x), `Blessing(y))
-      | (`SpecialAbility(x), `SpecialAbility(y)) => x === y
-      | (`CustomInput(x), `CustomInput(y)) => x === y
-      | _ => false
+    let toInt = (cat: category) =>
+      switch (cat) {
+      | `Generic => 1
+      | `Skill => 2
+      | `CombatTechnique => 3
+      | `Spell => 4
+      | `Cantrip => 5
+      | `LiturgicalChant => 6
+      | `Blessing => 7
+      | `SpecialAbility => 8
       };
+
+    type t = (category, int);
+
+    let compare = ((xCategory, xInt), (yCategory, yInt)) => {
+      let x' = toInt(xCategory);
+      let y' = toInt(yCategory);
+
+      if (x' === y') {
+        xInt - yInt;
+      } else {
+        x' - y';
+      };
+    };
+
+    let (==) = (x, y) => compare(x, y) === 0;
+
+    let (!=) = (x, y) => compare(x, y) !== 0;
+  };
+
+  module Option = {
+    type t =
+      | Preset(SelectOption.t)
+      | CustomInput(string);
+
+    let (==) = (x, y) =>
+      [@warning "-4"]
+      (
+        switch (x, y) {
+        | (Preset((`Generic, x)), Preset((`Generic, y)))
+        | (Preset((`Skill, x)), Preset((`Skill, y)))
+        | (Preset((`CombatTechnique, x)), Preset((`CombatTechnique, y)))
+        | (Preset((`Spell, x)), Preset((`Spell, y)))
+        | (Preset((`Cantrip, x)), Preset((`Cantrip, y)))
+        | (Preset((`LiturgicalChant, x)), Preset((`LiturgicalChant, y)))
+        | (Preset((`Blessing, x)), Preset((`Blessing, y)))
+        | (Preset((`SpecialAbility, x)), Preset((`SpecialAbility, y))) =>
+          x === y
+        | (CustomInput(x), CustomInput(y)) => x === y
+        | _ => false
+        }
+      );
   };
 };
 
 module ActivatableAndSkill = {
-  type t = [
-    | `Advantage(int)
-    | `Disadvantage(int)
-    | `SpecialAbility(int)
-    | `Spell(int)
-    | `LiturgicalChant(int)
+  type category = [
+    | `Advantage
+    | `Disadvantage
+    | `SpecialAbility
+    | `Spell
+    | `LiturgicalChant
   ];
+
+  type t = (category, int);
 };
 
 module ActivatableSkill = {
-  type t = [ | `Spell(int) | `LiturgicalChant(int)];
+  type category = [ | `Spell | `LiturgicalChant];
+
+  type t = (category, int);
 };
 
 module PermanentSkill = {
-  type t = [ | `Skill(int) | `CombatTechnique(int)];
+  type category = [ | `Skill | `CombatTechnique];
+
+  type t = (category, int);
 };
 
 module Increasable = {
-  type t = [
-    | `Attribute(int)
-    | `Skill(int)
-    | `CombatTechnique(int)
-    | `Spell(int)
-    | `LiturgicalChant(int)
+  type category = [
+    | `Attribute
+    | `Skill
+    | `CombatTechnique
+    | `Spell
+    | `LiturgicalChant
   ];
+
+  type t = (category, int);
 };
 
 module PrerequisiteSource = {
-  type t = [
-    | `Advantage(int)
-    | `Disadvantage(int)
-    | `SpecialAbility(int)
-    | `Attribute(int)
-    | `Skill(int)
-    | `CombatTechnique(int)
-    | `Spell(int)
-    | `LiturgicalChant(int)
-  ];
-};
-
-module SelectOption = {
-  type t = [
-    | `Generic(int)
-    | `Skill(int)
-    | `CombatTechnique(int)
-    | `Spell(int)
-    | `Cantrip(int)
-    | `LiturgicalChant(int)
-    | `Blessing(int)
-    | `SpecialAbility(int)
+  type category = [
+    | `Advantage
+    | `Disadvantage
+    | `SpecialAbility
+    | `Attribute
+    | `Skill
+    | `CombatTechnique
+    | `Spell
+    | `LiturgicalChant
   ];
 
-  let outerToInt = id =>
-    switch (id) {
-    | `Generic(_) => 1
-    | `Skill(_) => 2
-    | `CombatTechnique(_) => 3
-    | `Spell(_) => 4
-    | `Cantrip(_) => 5
-    | `LiturgicalChant(_) => 6
-    | `Blessing(_) => 7
-    | `SpecialAbility(_) => 8
-    };
-
-  let innerToInt = id =>
-    switch (id) {
-    | `Generic(x)
-    | `Skill(x)
-    | `CombatTechnique(x)
-    | `Spell(x)
-    | `Cantrip(x)
-    | `LiturgicalChant(x)
-    | `Blessing(x)
-    | `SpecialAbility(x) => x
-    };
-
-  let compare = (x, y) => {
-    let x' = outerToInt(x);
-    let y' = outerToInt(y);
-
-    if (x' === y') {
-      innerToInt(x) - innerToInt(y);
-    } else {
-      x' - y';
-    };
-  };
-
-  let (==) = (x, y) => compare(x, y) === 0;
-
-  let (!=) = (x, y) => compare(x, y) !== 0;
+  type t = (category, int);
 };
 
 module HitZoneArmorZoneItem = {

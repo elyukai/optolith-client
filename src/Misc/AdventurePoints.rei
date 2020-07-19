@@ -88,8 +88,6 @@ let getMissingApForDisAdvantage:
   ) =>
   missingApForDisAdvantage;
 
-module DifferenceTotal: {};
-
 module Sum: {
   let getApSpentOnAttributes: Ley_IntMap.t(Hero.Attribute.t) => int;
 

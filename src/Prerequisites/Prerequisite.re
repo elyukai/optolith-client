@@ -27,8 +27,8 @@ type primaryAttribute = {
 type activatable = {
   id: Id.Activatable.t,
   active: bool,
-  sid: option(Id.SelectOption.t),
-  sid2: option(Id.SelectOption.t),
+  sid: option(Id.Activatable.SelectOption.t),
+  sid2: option(Id.Activatable.SelectOption.t),
   level: option(int),
 };
 
@@ -40,16 +40,16 @@ type activatableIds =
 type activatableMultiEntry = {
   id: activatableIds,
   active: bool,
-  sid: option(Id.SelectOption.t),
-  sid2: option(Id.SelectOption.t),
+  sid: option(Id.Activatable.SelectOption.t),
+  sid2: option(Id.Activatable.SelectOption.t),
   level: option(int),
 };
 
 type activatableMultiSelect = {
   id: Id.Activatable.t,
   active: bool,
-  sid: list(Id.SelectOption.t),
-  sid2: option(Id.SelectOption.t),
+  sid: list(Id.Activatable.SelectOption.t),
+  sid2: option(Id.Activatable.SelectOption.t),
   level: option(int),
 };
 
@@ -264,29 +264,27 @@ module Decode = {
         }
     );
 
-  let scopedSelectOptionId = (json): Id.SelectOption.t =>
+  let scopedSelectOptionId = (json): Id.Activatable.SelectOption.t =>
     json
     |> field("scope", string)
     |> (
       scope =>
         switch (scope) {
-        | "Skill" => json |> field("value", int) |> (x => `Skill(x))
-        | "CombatTechnique" =>
-          json |> field("value", int) |> (x => `CombatTechnique(x))
-        | "Spell" => json |> field("value", int) |> (x => `Spell(x))
-        | "Cantrip" => json |> field("value", int) |> (x => `Cantrip(x))
-        | "LiturgicalChant" =>
-          json |> field("value", int) |> (x => `LiturgicalChant(x))
-        | "Blessing" => json |> field("value", int) |> (x => `Blessing(x))
-        | "SpecialAbility" =>
-          json |> field("value", int) |> (x => `SpecialAbility(x))
+        | "Skill" => `Skill
+        | "CombatTechnique" => `CombatTechnique
+        | "Spell" => `Spell
+        | "Cantrip" => `Cantrip
+        | "LiturgicalChant" => `LiturgicalChant
+        | "Blessing" => `Blessing
+        | "SpecialAbility" => `SpecialAbility
         | _ =>
           raise(DecodeError("Unknown select option ID scope: " ++ scope))
         }
-    );
+    )
+    |> (category => (category, json |> field("value", int)));
 
-  let selectOptionId = (json): Id.SelectOption.t =>
-    json |> oneOf([map(x => `Generic(x), int), scopedSelectOptionId]);
+  let selectOptionId = (json): Id.Activatable.SelectOption.t =>
+    json |> oneOf([map(x => (`Generic, x), int), scopedSelectOptionId]);
 
   let activatable = (json): activatable => {
     id: json |> field("id", activatableId),

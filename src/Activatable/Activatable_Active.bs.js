@@ -7,7 +7,7 @@ import * as Activatable_Active_AdventurePointValue$OptolithClient from "./Activa
 function getActive(isEntryToAdd, addLevelToName, cache, staticData, hero, staticEntry, heroEntry, singleEntry) {
   var naming = Activatable_Active_Name$OptolithClient.getName(addLevelToName, staticData, staticEntry, singleEntry);
   var validation = Activatable_Active_Validation$OptolithClient.isRemovalOrModificationValid(cache, staticData, hero, staticEntry, heroEntry, singleEntry);
-  var match = Activatable_Active_AdventurePointValue$OptolithClient.getApValue(isEntryToAdd, cache.automaticAdvantages, staticData, hero, staticEntry, heroEntry, singleEntry);
+  var match = Activatable_Active_AdventurePointValue$OptolithClient.getApValueDifferenceOnChange(isEntryToAdd, cache.automaticAdvantages, staticData, hero, staticEntry, heroEntry, singleEntry);
   return {
           naming: naming,
           active: singleEntry,
