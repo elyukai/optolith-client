@@ -209,8 +209,6 @@ export const Sheets: React.FC<Props> = props => {
   const nArmorZones = Maybe.sum (fmapF (armorZones) (flength))
   const nArmors = Maybe.sum (fmapF (armors) (flength))
 
-  // console.log(zoomFactor)
-
   return (
     <Page id="sheets">
       <Options>
