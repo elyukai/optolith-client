@@ -235,23 +235,23 @@ export const Sheets: React.FC<Props> = props => {
           onChangeJust={setSheetZoomFactor}
           options={List (
             DropdownOption ({
-              id: Just ('zoom-100'),
+              id: Just ("zoom-100"),
               name: "100%",
             }),
             DropdownOption ({
-              id: Just ('zoom-125'),
+              id: Just ("zoom-125"),
               name: "125%",
             }),
             DropdownOption ({
-              id: Just ('zoom-150'),
+              id: Just ("zoom-150"),
               name: "150%",
             }),
             DropdownOption ({
-              id: Just ('zoom-175'),
+              id: Just ("zoom-175"),
               name: "175%",
             }),
             DropdownOption ({
-              id: Just ('zoom-200'),
+              id: Just ("zoom-200"),
               name: "200%",
             }),
           )}
@@ -259,9 +259,10 @@ export const Sheets: React.FC<Props> = props => {
           />
       </Options>
       <Scroll className={classListMaybe (List (
-            Just ('sheet-wrapper'),
-            Just (zoomFactor)
-          ))}>
+                  Just ("sheet-wrapper"),
+                  Just (zoomFactor)
+                ))}
+              >
         <MainSheet
           advantagesActive={advantagesActive}
           ap={ap}

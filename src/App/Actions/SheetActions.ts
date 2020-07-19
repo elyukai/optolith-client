@@ -17,15 +17,15 @@ export const switchUseParchment = (): SwitchSheetUseParchmentAction => ({
 })
 
 export interface SetSheetZoomFactor {
-  type: SET_SHEET_ZOOM_FACTOR,
+  type: SET_SHEET_ZOOM_FACTOR
   payload: {
     zoomFactor: string
   }
 }
 
-export const setSheetZoomFactor = (zoomFactor : string): SetSheetZoomFactor => ({
+export const setSheetZoomFactor = (zoomFactor: string): SetSheetZoomFactor => ({
   type: SET_SHEET_ZOOM_FACTOR,
   payload: {
-    zoomFactor
+    zoomFactor,
   },
 })
