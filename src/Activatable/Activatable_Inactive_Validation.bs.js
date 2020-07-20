@@ -163,7 +163,7 @@ function isEntrySpecificAdditionEnabled(cache, staticData, hero, staticEntry) {
     
   }
   if (tmp) {
-    return Prerequisites$OptolithClient.Validation.arePrerequisitesMet(staticData, hero, Id$OptolithClient.Activatable.generalize(Activatable_Accessors$OptolithClient.id(staticEntry)), Prerequisites$OptolithClient.Activatable.getFlatFirstPrerequisites(staticEntry));
+    return Prerequisites$OptolithClient.Validation.arePrerequisitesMet(staticData, hero, Id$OptolithClient.Activatable.toAll(Activatable_Accessors$OptolithClient.id(staticEntry)), Prerequisites$OptolithClient.Activatable.getFlatFirstPrerequisites(staticEntry));
   } else {
     return false;
   }
@@ -248,7 +248,7 @@ function isAdditionValid(cache, staticData, hero, maxLevel, staticEntry, maybeHe
 }
 
 function getMaxLevel(staticData, hero, staticEntry, maybeHeroEntry) {
-  var computedMax = Dependencies$OptolithClient.getMaxLevel(staticData, hero, Id$OptolithClient.Activatable.generalize(Activatable_Accessors$OptolithClient.id(staticEntry)), Ley_Option$OptolithClient.option(/* [] */0, (function (param) {
+  var computedMax = Dependencies$OptolithClient.getMaxLevel(staticData, hero, Id$OptolithClient.Activatable.toAll(Activatable_Accessors$OptolithClient.id(staticEntry)), Ley_Option$OptolithClient.option(/* [] */0, (function (param) {
               return param.dependencies;
             }), maybeHeroEntry), Prerequisites$OptolithClient.Activatable.getLevelPrerequisites(staticEntry));
   var match = Activatable_Accessors$OptolithClient.max(staticEntry);

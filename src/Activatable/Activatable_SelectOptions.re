@@ -106,42 +106,27 @@ let getOption3 = getOption(2);
 
 let getCustomInput = (option: Id.Activatable.Option.t) =>
   switch (option) {
-  | `CustomInput(x) => Some(x)
-  | `Generic(_)
-  | `Skill(_)
-  | `CombatTechnique(_)
-  | `Spell(_)
-  | `LiturgicalChant(_)
-  | `Cantrip(_)
-  | `Blessing(_)
-  | `SpecialAbility(_) => None
+  | CustomInput(x) => Some(x)
+  | Preset(_) => None
   };
 
 let getGenericId = (option: Id.Activatable.Option.t) =>
-  switch (option) {
-  | `Generic(x) => Some(x)
-  | `Skill(_)
-  | `CombatTechnique(_)
-  | `Spell(_)
-  | `LiturgicalChant(_)
-  | `Cantrip(_)
-  | `Blessing(_)
-  | `SpecialAbility(_)
-  | `CustomInput(_) => None
-  };
+  [@warning "-4"]
+  (
+    switch (option) {
+    | Preset((Generic, x)) => Some(x)
+    | _ => None
+    }
+  );
 
 let lookupMap = (k, mp, f) => f <$> Ley_IntMap.lookup(k, mp);
 
 let getSkillFromOption =
     (staticData: Static.t, option: Id.Activatable.Option.t) =>
-  switch (option) {
-  | `Skill(id) => Ley_IntMap.lookup(id, staticData.skills)
-  | `Generic(_)
-  | `CombatTechnique(_)
-  | `Spell(_)
-  | `LiturgicalChant(_)
-  | `Cantrip(_)
-  | `Blessing(_)
-  | `SpecialAbility(_)
-  | `CustomInput(_) => None
-  };
+  [@warning "-4"]
+  (
+    switch (option) {
+    | Preset((Skill, id)) => Ley_IntMap.lookup(id, staticData.skills)
+    | _ => None
+    }
+  );

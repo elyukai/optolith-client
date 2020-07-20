@@ -35,7 +35,7 @@ function areOptionDependenciesMatched(dependency, active) {
                               if (option.TAG) {
                                 return Ley_List$OptolithClient.elem(activeOption, option._0) === dependency.active;
                               } else {
-                                return Id$OptolithClient.SelectOption.$eq(activeOption, option._0) === dependency.active;
+                                return Curry._2(Id$OptolithClient.Activatable.SelectOption.$eq, activeOption, option._0) === dependency.active;
                               }
                             }), Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_List$OptolithClient.Safe.atMay(active.options, i), Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId));
               }), dependency.options);
@@ -470,13 +470,17 @@ function getTransferredUnfamiliarById(single) {
   } else if (match >= 77) {
     if (match < 79) {
       return Ley_Option$OptolithClient.mapOption((function (param) {
-                    if (typeof param === "number" || param.HASH !== 345443720) {
+                    if (param.TAG) {
+                      return ;
+                    }
+                    var match = param._0;
+                    if (match[0] !== 3) {
                       return ;
                     } else {
                       return {
                               id: {
                                 TAG: /* Spell */0,
-                                _0: param.VAL
+                                _0: match[1]
                               },
                               srcId: single.id
                             };
@@ -492,14 +496,18 @@ function getTransferredUnfamiliarById(single) {
     return /* [] */0;
   }
   var match$2 = match$1.hd;
-  if (typeof match$2 === "number" || match$2.HASH !== 345443720) {
+  if (match$2.TAG) {
+    return /* [] */0;
+  }
+  var match$3 = match$2._0;
+  if (match$3[0] !== 3) {
     return /* [] */0;
   } else {
     return {
             hd: {
               id: {
                 TAG: /* Spell */0,
-                _0: match$2.VAL
+                _0: match$3[1]
               },
               srcId: single.id
             },
@@ -621,6 +629,161 @@ function putActivatableDependency(mode, category, dependency, hero) {
   }
 }
 
+function applyActivatablePrerequisite(mode, sourceId, prerequisite, hero) {
+  var match = prerequisite.id;
+  var tmp;
+  switch (match[0]) {
+    case /* Advantage */0 :
+        tmp = /* Advantages */0;
+        break;
+    case /* Disadvantage */1 :
+        tmp = /* Disadvantages */1;
+        break;
+    case /* SpecialAbility */2 :
+        tmp = /* SpecialAbilities */2;
+        break;
+    
+  }
+  var match$1 = prerequisite.id;
+  var sid = prerequisite.sid;
+  var tmp$1;
+  if (sid !== undefined) {
+    var sid2 = prerequisite.sid2;
+    tmp$1 = sid2 !== undefined ? ({
+          hd: {
+            TAG: /* One */0,
+            _0: sid
+          },
+          tl: {
+            hd: {
+              TAG: /* One */0,
+              _0: sid2
+            },
+            tl: /* [] */0
+          }
+        }) : ({
+          hd: {
+            TAG: /* One */0,
+            _0: sid
+          },
+          tl: /* [] */0
+        });
+  } else {
+    tmp$1 = /* [] */0;
+  }
+  return putActivatableDependency(mode, tmp, {
+              source: sourceId,
+              target: {
+                TAG: /* One */0,
+                _0: match$1[1]
+              },
+              active: prerequisite.active,
+              options: tmp$1,
+              level: prerequisite.level
+            }, hero);
+}
+
+function applyActivatableMultiEntryPrerequisite(mode, sourceId, prerequisite, hero) {
+  var match = prerequisite.id;
+  var tmp;
+  switch (match.TAG | 0) {
+    case /* Advantages */0 :
+        tmp = /* Advantages */0;
+        break;
+    case /* Disadvantages */1 :
+        tmp = /* Disadvantages */1;
+        break;
+    case /* SpecialAbilities */2 :
+        tmp = /* SpecialAbilities */2;
+        break;
+    
+  }
+  var match$1 = prerequisite.id;
+  var sid = prerequisite.sid;
+  var tmp$1;
+  if (sid !== undefined) {
+    var sid2 = prerequisite.sid2;
+    tmp$1 = sid2 !== undefined ? ({
+          hd: {
+            TAG: /* One */0,
+            _0: sid
+          },
+          tl: {
+            hd: {
+              TAG: /* One */0,
+              _0: sid2
+            },
+            tl: /* [] */0
+          }
+        }) : ({
+          hd: {
+            TAG: /* One */0,
+            _0: sid
+          },
+          tl: /* [] */0
+        });
+  } else {
+    tmp$1 = /* [] */0;
+  }
+  return putActivatableDependency(mode, tmp, {
+              source: sourceId,
+              target: {
+                TAG: /* Many */1,
+                _0: match$1._0
+              },
+              active: prerequisite.active,
+              options: tmp$1,
+              level: prerequisite.level
+            }, hero);
+}
+
+function applyActivatableMultiSelectPrerequisite(mode, sourceId, prerequisite, hero) {
+  var match = prerequisite.id;
+  var tmp;
+  switch (match[0]) {
+    case /* Advantage */0 :
+        tmp = /* Advantages */0;
+        break;
+    case /* Disadvantage */1 :
+        tmp = /* Disadvantages */1;
+        break;
+    case /* SpecialAbility */2 :
+        tmp = /* SpecialAbilities */2;
+        break;
+    
+  }
+  var match$1 = prerequisite.id;
+  var sid2 = prerequisite.sid2;
+  return putActivatableDependency(mode, tmp, {
+              source: sourceId,
+              target: {
+                TAG: /* One */0,
+                _0: match$1[1]
+              },
+              active: prerequisite.active,
+              options: sid2 !== undefined ? ({
+                    hd: {
+                      TAG: /* Many */1,
+                      _0: prerequisite.sid
+                    },
+                    tl: {
+                      hd: {
+                        TAG: /* One */0,
+                        _0: sid2
+                      },
+                      tl: /* [] */0
+                    }
+                  }) : ({
+                    hd: {
+                      TAG: /* Many */1,
+                      _0: prerequisite.sid
+                    },
+                    tl: /* [] */0
+                  }),
+              level: prerequisite.level
+            }, hero);
+}
+
 function putIncreasableDependency(mode, category, dependency, hero) {
   if (mode) {
     switch (category) {
@@ -709,6 +872,91 @@ function putIncreasableDependency(mode, category, dependency, hero) {
   }
 }
 
+function applyIncreasablePrerequisite(mode, sourceId, prerequisite, hero) {
+  var match = prerequisite.id;
+  var tmp;
+  switch (match[0]) {
+    case /* Attribute */0 :
+        tmp = /* Attributes */0;
+        break;
+    case /* Skill */1 :
+        tmp = /* Skills */1;
+        break;
+    case /* CombatTechnique */2 :
+        tmp = /* CombatTechniques */2;
+        break;
+    case /* Spell */3 :
+        tmp = /* Spells */3;
+        break;
+    case /* LiturgicalChant */4 :
+        tmp = /* LiturgicalChants */4;
+        break;
+    
+  }
+  var match$1 = prerequisite.id;
+  return putIncreasableDependency(mode, tmp, {
+              source: sourceId,
+              target: {
+                TAG: /* One */0,
+                _0: match$1[1]
+              },
+              value: prerequisite.value
+            }, hero);
+}
+
+function applyIncreasableMultiEntryPrerequisite(mode, sourceId, prerequisite, hero) {
+  var match = prerequisite.id;
+  var tmp;
+  switch (match.TAG | 0) {
+    case /* Attributes */0 :
+        tmp = /* Attributes */0;
+        break;
+    case /* Skills */1 :
+        tmp = /* Skills */1;
+        break;
+    case /* CombatTechniques */2 :
+        tmp = /* CombatTechniques */2;
+        break;
+    case /* Spells */3 :
+        tmp = /* Spells */3;
+        break;
+    case /* LiturgicalChants */4 :
+        tmp = /* LiturgicalChants */4;
+        break;
+    
+  }
+  var match$1 = prerequisite.id;
+  return putIncreasableDependency(mode, tmp, {
+              source: sourceId,
+              target: {
+                TAG: /* Many */1,
+                _0: match$1._0
+              },
+              value: prerequisite.value
+            }, hero);
+}
+
+function applyPrimaryAttributePrerequisite(mode, sourceId, staticData, prerequisite, hero) {
+  var match = prerequisite.scope;
+  return Ley_Option$OptolithClient.option(hero, (function (attrId) {
+                var dependency_target = {
+                  TAG: /* One */0,
+                  _0: attrId
+                };
+                var dependency_value = prerequisite.value;
+                var dependency = {
+                  source: sourceId,
+                  target: dependency_target,
+                  value: dependency_value
+                };
+                if (mode) {
+                  return removeAttributeDependency$1(dependency, hero);
+                } else {
+                  return addAttributeDependency$1(dependency, hero);
+                }
+              }), match ? Tradition$OptolithClient.Blessed.getPrimaryAttributeId(staticData, hero.specialAbilities) : Tradition$OptolithClient.Magical.getPrimaryAttributeId(staticData, hero.specialAbilities));
+}
+
 function modifyDependencies(mode, staticData, prerequisites, sourceId, hero) {
   return Ley_List$OptolithClient.Foldable.foldr((function (prerequisite) {
                 if (typeof prerequisite === "number") {
@@ -717,281 +965,280 @@ function modifyDependencies(mode, staticData, prerequisites, sourceId, hero) {
                 switch (prerequisite.TAG | 0) {
                   case /* PrimaryAttribute */5 :
                       var options = prerequisite._0;
-                      if (typeof sourceId === "number") {
-                        return Ley_Function$OptolithClient.id;
-                      }
-                      var variant = sourceId.HASH;
-                      if (variant >= -41058677) {
-                        if (variant !== 255955901 && variant !== 345443720 && variant >= -41058676) {
-                          return Ley_Function$OptolithClient.id;
-                        }
+                      switch (sourceId[0]) {
+                        case /* Advantage */0 :
+                            var partial_arg_1 = sourceId[1];
+                            var partial_arg = [
+                              /* Advantage */0,
+                              partial_arg_1
+                            ];
+                            return function (param) {
+                              return applyPrimaryAttributePrerequisite(mode, partial_arg, staticData, options, param);
+                            };
+                        case /* Disadvantage */1 :
+                            var partial_arg_1$1 = sourceId[1];
+                            var partial_arg$1 = [
+                              /* Disadvantage */1,
+                              partial_arg_1$1
+                            ];
+                            return function (param) {
+                              return applyPrimaryAttributePrerequisite(mode, partial_arg$1, staticData, options, param);
+                            };
+                        case /* SpecialAbility */2 :
+                            var partial_arg_1$2 = sourceId[1];
+                            var partial_arg$2 = [
+                              /* SpecialAbility */2,
+                              partial_arg_1$2
+                            ];
+                            return function (param) {
+                              return applyPrimaryAttributePrerequisite(mode, partial_arg$2, staticData, options, param);
+                            };
+                        case /* Attribute */3 :
+                        case /* Skill */4 :
+                        case /* CombatTechnique */5 :
+                            return Ley_Function$OptolithClient.id;
+                        case /* Spell */6 :
+                            var partial_arg_1$3 = sourceId[1];
+                            var partial_arg$3 = [
+                              /* Spell */3,
+                              partial_arg_1$3
+                            ];
+                            return function (param) {
+                              return applyPrimaryAttributePrerequisite(mode, partial_arg$3, staticData, options, param);
+                            };
+                        case /* LiturgicalChant */7 :
+                            var partial_arg_1$4 = sourceId[1];
+                            var partial_arg$4 = [
+                              /* LiturgicalChant */4,
+                              partial_arg_1$4
+                            ];
+                            return function (param) {
+                              return applyPrimaryAttributePrerequisite(mode, partial_arg$4, staticData, options, param);
+                            };
                         
-                      } else if (variant !== -789492591 && variant !== -384382742) {
-                        return Ley_Function$OptolithClient.id;
                       }
-                      return function (param) {
-                        var match = options.scope;
-                        return Ley_Option$OptolithClient.option(param, (function (attrId) {
-                                      var dependency_target = {
-                                        TAG: /* One */0,
-                                        _0: attrId
-                                      };
-                                      var dependency_value = options.value;
-                                      var dependency = {
-                                        source: sourceId,
-                                        target: dependency_target,
-                                        value: dependency_value
-                                      };
-                                      if (mode) {
-                                        return removeAttributeDependency$1(dependency, param);
-                                      } else {
-                                        return addAttributeDependency$1(dependency, param);
-                                      }
-                                    }), match ? Tradition$OptolithClient.Blessed.getPrimaryAttributeId(staticData, param.specialAbilities) : Tradition$OptolithClient.Magical.getPrimaryAttributeId(staticData, param.specialAbilities));
-                      };
-                      break;
                   case /* Activatable */6 :
                       var options$1 = prerequisite._0;
-                      if (typeof sourceId === "number") {
-                        return Ley_Function$OptolithClient.id;
+                      switch (sourceId[0]) {
+                        case /* Advantage */0 :
+                            var partial_arg_1$5 = sourceId[1];
+                            var partial_arg$5 = [
+                              /* Advantage */0,
+                              partial_arg_1$5
+                            ];
+                            return function (param) {
+                              return applyActivatablePrerequisite(mode, partial_arg$5, options$1, param);
+                            };
+                        case /* Disadvantage */1 :
+                            var partial_arg_1$6 = sourceId[1];
+                            var partial_arg$6 = [
+                              /* Disadvantage */1,
+                              partial_arg_1$6
+                            ];
+                            return function (param) {
+                              return applyActivatablePrerequisite(mode, partial_arg$6, options$1, param);
+                            };
+                        case /* SpecialAbility */2 :
+                            var partial_arg_1$7 = sourceId[1];
+                            var partial_arg$7 = [
+                              /* SpecialAbility */2,
+                              partial_arg_1$7
+                            ];
+                            return function (param) {
+                              return applyActivatablePrerequisite(mode, partial_arg$7, options$1, param);
+                            };
+                        case /* Attribute */3 :
+                        case /* Skill */4 :
+                        case /* CombatTechnique */5 :
+                        case /* Spell */6 :
+                        case /* LiturgicalChant */7 :
+                            return Ley_Function$OptolithClient.id;
+                        
                       }
-                      var variant$1 = sourceId.HASH;
-                      if (variant$1 !== -789492591 && variant$1 !== -41058677 && variant$1 !== 255955901) {
-                        return Ley_Function$OptolithClient.id;
-                      }
-                      return function (param) {
-                        var match = options$1.id;
-                        var variant = match.HASH;
-                        var match$1 = options$1.id;
-                        var sid = options$1.sid;
-                        var tmp;
-                        if (sid !== undefined) {
-                          var sid2 = options$1.sid2;
-                          tmp = sid2 !== undefined ? ({
-                                hd: {
-                                  TAG: /* One */0,
-                                  _0: sid
-                                },
-                                tl: {
-                                  hd: {
-                                    TAG: /* One */0,
-                                    _0: sid2
-                                  },
-                                  tl: /* [] */0
-                                }
-                              }) : ({
-                                hd: {
-                                  TAG: /* One */0,
-                                  _0: sid
-                                },
-                                tl: /* [] */0
-                              });
-                        } else {
-                          tmp = /* [] */0;
-                        }
-                        return putActivatableDependency(mode, variant !== -41058677 ? (
-                                      variant >= 255955901 ? /* Disadvantages */1 : /* SpecialAbilities */2
-                                    ) : /* Advantages */0, {
-                                    source: sourceId,
-                                    target: {
-                                      TAG: /* One */0,
-                                      _0: match$1.VAL
-                                    },
-                                    active: options$1.active,
-                                    options: tmp,
-                                    level: options$1.level
-                                  }, param);
-                      };
-                      break;
                   case /* ActivatableMultiEntry */7 :
                       var options$2 = prerequisite._0;
-                      if (typeof sourceId === "number") {
-                        return Ley_Function$OptolithClient.id;
+                      switch (sourceId[0]) {
+                        case /* Advantage */0 :
+                            var partial_arg_1$8 = sourceId[1];
+                            var partial_arg$8 = [
+                              /* Advantage */0,
+                              partial_arg_1$8
+                            ];
+                            return function (param) {
+                              return applyActivatableMultiEntryPrerequisite(mode, partial_arg$8, options$2, param);
+                            };
+                        case /* Disadvantage */1 :
+                            var partial_arg_1$9 = sourceId[1];
+                            var partial_arg$9 = [
+                              /* Disadvantage */1,
+                              partial_arg_1$9
+                            ];
+                            return function (param) {
+                              return applyActivatableMultiEntryPrerequisite(mode, partial_arg$9, options$2, param);
+                            };
+                        case /* SpecialAbility */2 :
+                            var partial_arg_1$10 = sourceId[1];
+                            var partial_arg$10 = [
+                              /* SpecialAbility */2,
+                              partial_arg_1$10
+                            ];
+                            return function (param) {
+                              return applyActivatableMultiEntryPrerequisite(mode, partial_arg$10, options$2, param);
+                            };
+                        case /* Attribute */3 :
+                        case /* Skill */4 :
+                        case /* CombatTechnique */5 :
+                        case /* Spell */6 :
+                        case /* LiturgicalChant */7 :
+                            return Ley_Function$OptolithClient.id;
+                        
                       }
-                      var variant$2 = sourceId.HASH;
-                      if (variant$2 !== -789492591 && variant$2 !== -41058677 && variant$2 !== 255955901) {
-                        return Ley_Function$OptolithClient.id;
-                      }
-                      return function (param) {
-                        var match = options$2.id;
-                        var tmp;
-                        switch (match.TAG | 0) {
-                          case /* Advantages */0 :
-                              tmp = /* Advantages */0;
-                              break;
-                          case /* Disadvantages */1 :
-                              tmp = /* Disadvantages */1;
-                              break;
-                          case /* SpecialAbilities */2 :
-                              tmp = /* SpecialAbilities */2;
-                              break;
-                          
-                        }
-                        var match$1 = options$2.id;
-                        var sid = options$2.sid;
-                        var tmp$1;
-                        if (sid !== undefined) {
-                          var sid2 = options$2.sid2;
-                          tmp$1 = sid2 !== undefined ? ({
-                                hd: {
-                                  TAG: /* One */0,
-                                  _0: sid
-                                },
-                                tl: {
-                                  hd: {
-                                    TAG: /* One */0,
-                                    _0: sid2
-                                  },
-                                  tl: /* [] */0
-                                }
-                              }) : ({
-                                hd: {
-                                  TAG: /* One */0,
-                                  _0: sid
-                                },
-                                tl: /* [] */0
-                              });
-                        } else {
-                          tmp$1 = /* [] */0;
-                        }
-                        return putActivatableDependency(mode, tmp, {
-                                    source: sourceId,
-                                    target: {
-                                      TAG: /* Many */1,
-                                      _0: match$1._0
-                                    },
-                                    active: options$2.active,
-                                    options: tmp$1,
-                                    level: options$2.level
-                                  }, param);
-                      };
-                      break;
                   case /* ActivatableMultiSelect */8 :
                       var options$3 = prerequisite._0;
-                      if (typeof sourceId === "number") {
-                        return Ley_Function$OptolithClient.id;
+                      switch (sourceId[0]) {
+                        case /* Advantage */0 :
+                            var partial_arg_1$11 = sourceId[1];
+                            var partial_arg$11 = [
+                              /* Advantage */0,
+                              partial_arg_1$11
+                            ];
+                            return function (param) {
+                              return applyActivatableMultiSelectPrerequisite(mode, partial_arg$11, options$3, param);
+                            };
+                        case /* Disadvantage */1 :
+                            var partial_arg_1$12 = sourceId[1];
+                            var partial_arg$12 = [
+                              /* Disadvantage */1,
+                              partial_arg_1$12
+                            ];
+                            return function (param) {
+                              return applyActivatableMultiSelectPrerequisite(mode, partial_arg$12, options$3, param);
+                            };
+                        case /* SpecialAbility */2 :
+                            var partial_arg_1$13 = sourceId[1];
+                            var partial_arg$13 = [
+                              /* SpecialAbility */2,
+                              partial_arg_1$13
+                            ];
+                            return function (param) {
+                              return applyActivatableMultiSelectPrerequisite(mode, partial_arg$13, options$3, param);
+                            };
+                        case /* Attribute */3 :
+                        case /* Skill */4 :
+                        case /* CombatTechnique */5 :
+                        case /* Spell */6 :
+                        case /* LiturgicalChant */7 :
+                            return Ley_Function$OptolithClient.id;
+                        
                       }
-                      var variant$3 = sourceId.HASH;
-                      if (variant$3 !== -789492591 && variant$3 !== -41058677 && variant$3 !== 255955901) {
-                        return Ley_Function$OptolithClient.id;
-                      }
-                      return function (param) {
-                        var match = options$3.id;
-                        var variant = match.HASH;
-                        var match$1 = options$3.id;
-                        var sid2 = options$3.sid2;
-                        return putActivatableDependency(mode, variant !== -41058677 ? (
-                                      variant >= 255955901 ? /* Disadvantages */1 : /* SpecialAbilities */2
-                                    ) : /* Advantages */0, {
-                                    source: sourceId,
-                                    target: {
-                                      TAG: /* One */0,
-                                      _0: match$1.VAL
-                                    },
-                                    active: options$3.active,
-                                    options: sid2 !== undefined ? ({
-                                          hd: {
-                                            TAG: /* Many */1,
-                                            _0: options$3.sid
-                                          },
-                                          tl: {
-                                            hd: {
-                                              TAG: /* One */0,
-                                              _0: sid2
-                                            },
-                                            tl: /* [] */0
-                                          }
-                                        }) : ({
-                                          hd: {
-                                            TAG: /* Many */1,
-                                            _0: options$3.sid
-                                          },
-                                          tl: /* [] */0
-                                        }),
-                                    level: options$3.level
-                                  }, param);
-                      };
-                      break;
                   case /* Increasable */9 :
                       var options$4 = prerequisite._0;
-                      if (typeof sourceId === "number") {
-                        return Ley_Function$OptolithClient.id;
-                      }
-                      var variant$4 = sourceId.HASH;
-                      if (variant$4 >= -41058677) {
-                        if (variant$4 !== 255955901 && variant$4 !== 345443720 && variant$4 >= -41058676) {
-                          return Ley_Function$OptolithClient.id;
-                        }
+                      switch (sourceId[0]) {
+                        case /* Advantage */0 :
+                            var partial_arg_1$14 = sourceId[1];
+                            var partial_arg$14 = [
+                              /* Advantage */0,
+                              partial_arg_1$14
+                            ];
+                            return function (param) {
+                              return applyIncreasablePrerequisite(mode, partial_arg$14, options$4, param);
+                            };
+                        case /* Disadvantage */1 :
+                            var partial_arg_1$15 = sourceId[1];
+                            var partial_arg$15 = [
+                              /* Disadvantage */1,
+                              partial_arg_1$15
+                            ];
+                            return function (param) {
+                              return applyIncreasablePrerequisite(mode, partial_arg$15, options$4, param);
+                            };
+                        case /* SpecialAbility */2 :
+                            var partial_arg_1$16 = sourceId[1];
+                            var partial_arg$16 = [
+                              /* SpecialAbility */2,
+                              partial_arg_1$16
+                            ];
+                            return function (param) {
+                              return applyIncreasablePrerequisite(mode, partial_arg$16, options$4, param);
+                            };
+                        case /* Attribute */3 :
+                        case /* Skill */4 :
+                        case /* CombatTechnique */5 :
+                            return Ley_Function$OptolithClient.id;
+                        case /* Spell */6 :
+                            var partial_arg_1$17 = sourceId[1];
+                            var partial_arg$17 = [
+                              /* Spell */3,
+                              partial_arg_1$17
+                            ];
+                            return function (param) {
+                              return applyIncreasablePrerequisite(mode, partial_arg$17, options$4, param);
+                            };
+                        case /* LiturgicalChant */7 :
+                            var partial_arg_1$18 = sourceId[1];
+                            var partial_arg$18 = [
+                              /* LiturgicalChant */4,
+                              partial_arg_1$18
+                            ];
+                            return function (param) {
+                              return applyIncreasablePrerequisite(mode, partial_arg$18, options$4, param);
+                            };
                         
-                      } else if (variant$4 !== -789492591 && variant$4 !== -384382742) {
-                        return Ley_Function$OptolithClient.id;
                       }
-                      return function (param) {
-                        var match = options$4.id;
-                        var variant = match.HASH;
-                        var match$1 = options$4.id;
-                        return putIncreasableDependency(mode, variant !== -384382742 ? (
-                                      variant >= 345443720 ? (
-                                          variant >= 482562044 ? /* Attributes */0 : /* Spells */3
-                                        ) : (
-                                          variant >= 290194801 ? /* Skills */1 : /* CombatTechniques */2
-                                        )
-                                    ) : /* LiturgicalChants */4, {
-                                    source: sourceId,
-                                    target: {
-                                      TAG: /* One */0,
-                                      _0: match$1.VAL
-                                    },
-                                    value: options$4.value
-                                  }, param);
-                      };
-                      break;
                   case /* IncreasableMultiEntry */10 :
                       var options$5 = prerequisite._0;
-                      if (typeof sourceId === "number") {
-                        return Ley_Function$OptolithClient.id;
-                      }
-                      var variant$5 = sourceId.HASH;
-                      if (variant$5 >= -41058677) {
-                        if (variant$5 !== 255955901 && variant$5 !== 345443720 && variant$5 >= -41058676) {
-                          return Ley_Function$OptolithClient.id;
-                        }
+                      switch (sourceId[0]) {
+                        case /* Advantage */0 :
+                            var partial_arg_1$19 = sourceId[1];
+                            var partial_arg$19 = [
+                              /* Advantage */0,
+                              partial_arg_1$19
+                            ];
+                            return function (param) {
+                              return applyIncreasableMultiEntryPrerequisite(mode, partial_arg$19, options$5, param);
+                            };
+                        case /* Disadvantage */1 :
+                            var partial_arg_1$20 = sourceId[1];
+                            var partial_arg$20 = [
+                              /* Disadvantage */1,
+                              partial_arg_1$20
+                            ];
+                            return function (param) {
+                              return applyIncreasableMultiEntryPrerequisite(mode, partial_arg$20, options$5, param);
+                            };
+                        case /* SpecialAbility */2 :
+                            var partial_arg_1$21 = sourceId[1];
+                            var partial_arg$21 = [
+                              /* SpecialAbility */2,
+                              partial_arg_1$21
+                            ];
+                            return function (param) {
+                              return applyIncreasableMultiEntryPrerequisite(mode, partial_arg$21, options$5, param);
+                            };
+                        case /* Attribute */3 :
+                        case /* Skill */4 :
+                        case /* CombatTechnique */5 :
+                            return Ley_Function$OptolithClient.id;
+                        case /* Spell */6 :
+                            var partial_arg_1$22 = sourceId[1];
+                            var partial_arg$22 = [
+                              /* Spell */3,
+                              partial_arg_1$22
+                            ];
+                            return function (param) {
+                              return applyIncreasableMultiEntryPrerequisite(mode, partial_arg$22, options$5, param);
+                            };
+                        case /* LiturgicalChant */7 :
+                            var partial_arg_1$23 = sourceId[1];
+                            var partial_arg$23 = [
+                              /* LiturgicalChant */4,
+                              partial_arg_1$23
+                            ];
+                            return function (param) {
+                              return applyIncreasableMultiEntryPrerequisite(mode, partial_arg$23, options$5, param);
+                            };
                         
-                      } else if (variant$5 !== -789492591 && variant$5 !== -384382742) {
-                        return Ley_Function$OptolithClient.id;
                       }
-                      return function (param) {
-                        var match = options$5.id;
-                        var tmp;
-                        switch (match.TAG | 0) {
-                          case /* Attributes */0 :
-                              tmp = /* Attributes */0;
-                              break;
-                          case /* Skills */1 :
-                              tmp = /* Skills */1;
-                              break;
-                          case /* CombatTechniques */2 :
-                              tmp = /* CombatTechniques */2;
-                              break;
-                          case /* Spells */3 :
-                              tmp = /* Spells */3;
-                              break;
-                          case /* LiturgicalChants */4 :
-                              tmp = /* LiturgicalChants */4;
-                              break;
-                          
-                        }
-                        var match$1 = options$5.id;
-                        return putIncreasableDependency(mode, tmp, {
-                                    source: sourceId,
-                                    target: {
-                                      TAG: /* Many */1,
-                                      _0: match$1._0
-                                    },
-                                    value: options$5.value
-                                  }, param);
-                      };
-                      break;
                   default:
                     return Ley_Function$OptolithClient.id;
                 }

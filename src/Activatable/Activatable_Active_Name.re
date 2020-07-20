@@ -12,42 +12,29 @@ let getDefaultNameAddition = (staticEntry, heroEntry) => {
   let sid = heroEntry |> getOption1;
   let sid2 = heroEntry |> getOption2;
 
-  switch (input, sid, sid2) {
-  // Text input
-  | (Some(_), Some(`CustomInput(str)), None) => Some(str)
-  // Select option and text input
-  | (
-      Some(_),
+  [@warning "-4"]
+  (
+    switch (input, sid, sid2) {
+    // Text input
+    | (Some(_), Some(CustomInput(str)), None) => Some(str)
+    // Select option and text input
+    | (Some(_), Some(Preset(id)), Some(CustomInput(str)))
+        when SelectOption.SelectOptionMap.size(selectOptions) > 0 =>
       Some(
-        `Generic(_) as id | `Skill(_) as id | `CombatTechnique(_) as id |
-        `Spell(_) as id |
-        `LiturgicalChant(_) as id |
-        `Cantrip(_) as id |
-        `Blessing(_) as id,
-      ),
-      Some(`CustomInput(str)),
-    )
-      when SelectOption.SelectOptionMap.size(selectOptions) > 0 =>
-    Some(
-      (id |> getSelectOptionName(staticEntry) |> fromOption(""))
-      ++ ": "
-      ++ str,
-    )
-  // Plain select option
-  | (
-      None,
-      Some(
-        `Generic(_) as id | `Skill(_) as id | `CombatTechnique(_) as id |
-        `Spell(_) as id |
-        `LiturgicalChant(_) as id |
-        `Cantrip(_) as id |
-        `Blessing(_) as id,
-      ),
-      None,
-    ) =>
-    getSelectOptionName(staticEntry, id)
-  | _ => None
-  };
+        (
+          Id.Activatable.Option.Preset(id)
+          |> getSelectOptionName(staticEntry)
+          |> fromOption("")
+        )
+        ++ ": "
+        ++ str,
+      )
+    // Plain select option
+    | (None, Some(Preset(id)), None) =>
+      getSelectOptionName(staticEntry, Id.Activatable.Option.Preset(id))
+    | _ => None
+    }
+  );
 };
 
 /**
@@ -68,16 +55,18 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
         >>= (
           sid =>
             switch (sid) {
-            | `Skill(id) => lookupMap(id, staticData.skills, x => x.name)
-            | `Spell(id) => lookupMap(id, staticData.spells, x => x.name)
-            | `LiturgicalChant(id) =>
+            | Preset((Skill, id)) =>
+              lookupMap(id, staticData.skills, x => x.name)
+            | Preset((Spell, id)) =>
+              lookupMap(id, staticData.spells, x => x.name)
+            | Preset((LiturgicalChant, id)) =>
               lookupMap(id, staticData.liturgicalChants, x => x.name)
-            | `Generic(_)
-            | `CombatTechnique(_)
-            | `Cantrip(_)
-            | `Blessing(_)
-            | `SpecialAbility(_)
-            | `CustomInput(_) => None
+            | Preset((Generic, _))
+            | Preset((CombatTechnique, _))
+            | Preset((Cantrip, _))
+            | Preset((Blessing, _))
+            | Preset((SpecialAbility, _))
+            | CustomInput(_) => None
             }
         )
       | ExceptionalCombatTechnique
@@ -87,16 +76,16 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
         >>= (
           sid =>
             switch (sid) {
-            | `CombatTechnique(id) =>
+            | Preset((CombatTechnique, id)) =>
               lookupMap(id, staticData.combatTechniques, x => x.name)
-            | `Generic(_)
-            | `Skill(_)
-            | `Spell(_)
-            | `LiturgicalChant(_)
-            | `Cantrip(_)
-            | `Blessing(_)
-            | `SpecialAbility(_)
-            | `CustomInput(_) => None
+            | Preset((Generic, _))
+            | Preset((Skill, _))
+            | Preset((Spell, _))
+            | Preset((LiturgicalChant, _))
+            | Preset((Cantrip, _))
+            | Preset((Blessing, _))
+            | Preset((SpecialAbility, _))
+            | CustomInput(_) => None
             }
         )
       | HatredFor =>
@@ -129,16 +118,16 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
             (
               switch (option1.id) {
               // Get the input if Prejudice or Unworldly is selected
-              | `Generic(7 | 8) => heroEntry |> getOption2 >>= getCustomInput
+              | (Generic, 7 | 8) => heroEntry |> getOption2 >>= getCustomInput
               // Otherwise ignore any additional options
-              | `Generic(_)
-              | `Skill(_)
-              | `CombatTechnique(_)
-              | `Spell(_)
-              | `LiturgicalChant(_)
-              | `Cantrip(_)
-              | `Blessing(_)
-              | `SpecialAbility(_) => None
+              | (Generic, _)
+              | (Skill, _)
+              | (CombatTechnique, _)
+              | (Spell, _)
+              | (LiturgicalChant, _)
+              | (Cantrip, _)
+              | (Blessing, _)
+              | (SpecialAbility, _) => None
               }
             )
             |> option(option1.name, specialInput =>
@@ -159,15 +148,16 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
         >>= (
           sid =>
             switch (sid) {
-            | `Spell(id) => lookupMap(id, staticData.spells, x => x.name)
-            | `Generic(_)
-            | `Skill(_)
-            | `CombatTechnique(_)
-            | `LiturgicalChant(_)
-            | `Cantrip(_)
-            | `Blessing(_)
-            | `SpecialAbility(_)
-            | `CustomInput(_) => None
+            | Preset((Spell, id)) =>
+              lookupMap(id, staticData.spells, x => x.name)
+            | Preset((Generic, _))
+            | Preset((Skill, _))
+            | Preset((CombatTechnique, _))
+            | Preset((LiturgicalChant, _))
+            | Preset((Cantrip, _))
+            | Preset((Blessing, _))
+            | Preset((SpecialAbility, _))
+            | CustomInput(_) => None
             }
         )
       | TraditionSavant
@@ -185,16 +175,16 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
         >>= (
           sid =>
             switch (sid) {
-            | `LiturgicalChant(id) =>
+            | Preset((LiturgicalChant, id)) =>
               lookupMap(id, staticData.liturgicalChants, x => x.name)
-            | `Generic(_)
-            | `Skill(_)
-            | `CombatTechnique(_)
-            | `Spell(_)
-            | `Cantrip(_)
-            | `Blessing(_)
-            | `SpecialAbility(_)
-            | `CustomInput(_) => None
+            | Preset((Generic, _))
+            | Preset((Skill, _))
+            | Preset((CombatTechnique, _))
+            | Preset((Spell, _))
+            | Preset((Cantrip, _))
+            | Preset((Blessing, _))
+            | Preset((SpecialAbility, _))
+            | CustomInput(_) => None
             }
         )
       | SkillSpecialization =>
@@ -210,21 +200,21 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
                 (
                   switch (option2) {
                   // If input string use input
-                  | `CustomInput(x) => Some(x)
+                  | CustomInput(x) => Some(x)
                   // Otherwise lookup application name
-                  | `Generic(id) =>
+                  | Preset((Generic, id)) =>
                     skill.applications
                     |> Ley_IntMap.Foldable.find((a: Skill.application) =>
                          a.id === id
                        )
                     <&> (a => a.name)
-                  | `Skill(_)
-                  | `CombatTechnique(_)
-                  | `Spell(_)
-                  | `LiturgicalChant(_)
-                  | `Cantrip(_)
-                  | `Blessing(_)
-                  | `SpecialAbility(_) => None
+                  | Preset((Skill, _))
+                  | Preset((CombatTechnique, _))
+                  | Preset((Spell, _))
+                  | Preset((LiturgicalChant, _))
+                  | Preset((Cantrip, _))
+                  | Preset((Blessing, _))
+                  | Preset((SpecialAbility, _)) => None
                   }
                 )
                 // Merge skill name and application name
@@ -288,8 +278,8 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
               option2 =>
                 (
                   switch (option2) {
-                  | `CustomInput(str) => Some(str)
-                  | `Generic(specializationId) =>
+                  | CustomInput(str) => Some(str)
+                  | Preset((Generic, specializationId)) =>
                     language.specializations
                     >>= (
                       specializations =>
@@ -298,13 +288,13 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
                           specializationId - 1,
                         )
                     )
-                  | `Skill(_)
-                  | `CombatTechnique(_)
-                  | `Spell(_)
-                  | `LiturgicalChant(_)
-                  | `Cantrip(_)
-                  | `Blessing(_)
-                  | `SpecialAbility(_) => None
+                  | Preset((Skill, _))
+                  | Preset((CombatTechnique, _))
+                  | Preset((Spell, _))
+                  | Preset((LiturgicalChant, _))
+                  | Preset((Cantrip, _))
+                  | Preset((Blessing, _))
+                  | Preset((SpecialAbility, _)) => None
                   }
                 )
                 <&> (specialization => language.name ++ ": " ++ specialization)

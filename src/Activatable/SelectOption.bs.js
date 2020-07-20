@@ -15,37 +15,32 @@ import * as Ley_Function$OptolithClient from "../Data/Ley_Function.bs.js";
 import * as Prerequisite$OptolithClient from "../Prerequisites/Prerequisite.bs.js";
 
 function showId(id) {
-  var variant = id.HASH;
-  if (variant >= 61643255) {
-    if (variant >= 345443720) {
-      if (variant >= 797131559) {
-        return "Blessing(" + (Ley_Int$OptolithClient.show(id.VAL) + ")");
-      } else {
-        return "Spell(" + (Ley_Int$OptolithClient.show(id.VAL) + ")");
-      }
-    } else if (variant >= 290194801) {
-      return "Skill(" + (Ley_Int$OptolithClient.show(id.VAL) + ")");
-    } else {
-      return "Generic(" + (Ley_Int$OptolithClient.show(id.VAL) + ")");
-    }
-  } else if (variant >= -789492591) {
-    if (variant >= -384382742) {
-      return "LiturgicalChant(" + (Ley_Int$OptolithClient.show(id.VAL) + ")");
-    } else {
-      return "SpecialAbility(" + (Ley_Int$OptolithClient.show(id.VAL) + ")");
-    }
-  } else if (variant >= -841776939) {
-    return "Cantrip(" + (Ley_Int$OptolithClient.show(id.VAL) + ")");
-  } else {
-    return "CombatTechnique(" + (Ley_Int$OptolithClient.show(id.VAL) + ")");
+  switch (id[0]) {
+    case /* Generic */0 :
+        return "Generic(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+    case /* Skill */1 :
+        return "Skill(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+    case /* CombatTechnique */2 :
+        return "CombatTechnique(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+    case /* Spell */3 :
+        return "Spell(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+    case /* Cantrip */4 :
+        return "Cantrip(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+    case /* LiturgicalChant */5 :
+        return "LiturgicalChant(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+    case /* Blessing */6 :
+        return "Blessing(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+    case /* SpecialAbility */7 :
+        return "SpecialAbility(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+    
   }
 }
 
-var SelectOptionMap = Ley_Map$OptolithClient.Make(Id$OptolithClient.SelectOption);
+var SelectOptionMap = Ley_Map$OptolithClient.Make(Id$OptolithClient.Activatable.SelectOption);
 
 function tL10n(json) {
   return {
-          id: Json_decode.field("id", Prerequisite$OptolithClient.Decode.selectOptionId, json),
+          id: Json_decode.field("id", Id$OptolithClient.Activatable.SelectOption.Decode.t, json),
           name: Json_decode.field("name", Json_decode.string, json),
           description: JsonStrict$OptolithClient.optionalField("description", Json_decode.string, json),
           specializations: JsonStrict$OptolithClient.optionalField("specializations", (function (param) {
@@ -59,7 +54,7 @@ function tL10n(json) {
 
 function tUniv(json) {
   return {
-          id: Json_decode.field("id", Prerequisite$OptolithClient.Decode.selectOptionId, json),
+          id: Json_decode.field("id", Id$OptolithClient.Activatable.SelectOption.Decode.t, json),
           cost: JsonStrict$OptolithClient.optionalField("cost", Json_decode.$$int, json),
           prerequisites: Prerequisite$OptolithClient.Decode.t(json),
           isSecret: JsonStrict$OptolithClient.optionalField("isSecret", Json_decode.bool, json),
@@ -176,10 +171,10 @@ function resolveGroups(f, g, grs, mp, xs) {
 }
 
 function blessingToSelectOption(x) {
-  return entryToSelectOption({
-              HASH: /* Blessing */797131559,
-              VAL: x.id
-            }, x.name, {
+  return entryToSelectOption([
+              /* Blessing */6,
+              x.id
+            ], x.name, {
               TAG: /* Blessing */0,
               _0: x
             }, x.src, x.errata);
@@ -190,10 +185,10 @@ function resolveBlessings(param, param$1) {
 }
 
 function cantripToSelectOption(x) {
-  return entryToSelectOption({
-              HASH: /* Cantrip */-841776939,
-              VAL: x.id
-            }, x.name, {
+  return entryToSelectOption([
+              /* Cantrip */4,
+              x.id
+            ], x.name, {
               TAG: /* Cantrip */1,
               _0: x
             }, x.src, x.errata);
@@ -204,10 +199,10 @@ function resolveCantrips(param, param$1) {
 }
 
 function combatTechniqueToSelectOption(x) {
-  return entryToSelectOption({
-              HASH: /* CombatTechnique */-920806756,
-              VAL: x.id
-            }, x.name, {
+  return entryToSelectOption([
+              /* CombatTechnique */2,
+              x.id
+            ], x.name, {
               TAG: /* CombatTechnique */2,
               _0: x
             }, x.src, x.errata);
@@ -228,10 +223,10 @@ function resolveCombatTechniques(mgrs) {
 }
 
 function liturgicalChantToSelectOption(x) {
-  return entryToSelectOption({
-              HASH: /* LiturgicalChant */-384382742,
-              VAL: x.id
-            }, x.name, {
+  return entryToSelectOption([
+              /* LiturgicalChant */5,
+              x.id
+            ], x.name, {
               TAG: /* LiturgicalChant */3,
               _0: x
             }, x.src, x.errata);
@@ -252,10 +247,10 @@ function resolveLiturgicalChants(mgrs) {
 }
 
 function skillToSelectOption(x) {
-  return entryToSelectOption({
-              HASH: /* Skill */290194801,
-              VAL: x.id
-            }, x.name, {
+  return entryToSelectOption([
+              /* Skill */1,
+              x.id
+            ], x.name, {
               TAG: /* Skill */4,
               _0: x
             }, x.src, x.errata);
@@ -276,10 +271,10 @@ function resolveSkills(mgrs) {
 }
 
 function spellToSelectOption(x) {
-  return entryToSelectOption({
-              HASH: /* Spell */345443720,
-              VAL: x.id
-            }, x.name, {
+  return entryToSelectOption([
+              /* Spell */3,
+              x.id
+            ], x.name, {
               TAG: /* Spell */5,
               _0: x
             }, x.src, x.errata);

@@ -2,6 +2,7 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
+import * as Id$OptolithClient from "../Misc/Id.bs.js";
 import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
@@ -116,33 +117,6 @@ function pact(json) {
         };
 }
 
-function activatableId(json) {
-  var scope = Json_decode.field("scope", Json_decode.string, json);
-  switch (scope) {
-    case "Advantage" :
-        return {
-                HASH: /* Advantage */-41058677,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    case "Disadvantage" :
-        return {
-                HASH: /* Disadvantage */255955901,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    case "SpecialAbility" :
-        return {
-                HASH: /* SpecialAbility */-789492591,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    default:
-      throw {
-            RE_EXN_ID: Json_decode.DecodeError,
-            _1: "Unknown activatable ID scope: " + scope,
-            Error: new Error()
-          };
-  }
-}
-
 function activatableIds(json) {
   var scope = Json_decode.field("scope", Json_decode.string, json);
   switch (scope) {
@@ -176,79 +150,15 @@ function activatableIds(json) {
   }
 }
 
-function scopedSelectOptionId(json) {
-  var scope = Json_decode.field("scope", Json_decode.string, json);
-  switch (scope) {
-    case "Blessing" :
-        return {
-                HASH: /* Blessing */797131559,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    case "Cantrip" :
-        return {
-                HASH: /* Cantrip */-841776939,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    case "CombatTechnique" :
-        return {
-                HASH: /* CombatTechnique */-920806756,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    case "LiturgicalChant" :
-        return {
-                HASH: /* LiturgicalChant */-384382742,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    case "Skill" :
-        return {
-                HASH: /* Skill */290194801,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    case "SpecialAbility" :
-        return {
-                HASH: /* SpecialAbility */-789492591,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    case "Spell" :
-        return {
-                HASH: /* Spell */345443720,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    default:
-      throw {
-            RE_EXN_ID: Json_decode.DecodeError,
-            _1: "Unknown select option ID scope: " + scope,
-            Error: new Error()
-          };
-  }
-}
-
-function selectOptionId(json) {
-  return Json_decode.oneOf({
-              hd: (function (param) {
-                  return Json_decode.map((function (x) {
-                                return {
-                                        HASH: /* Generic */61643255,
-                                        VAL: x
-                                      };
-                              }), Json_decode.$$int, param);
-                }),
-              tl: {
-                hd: scopedSelectOptionId,
-                tl: /* [] */0
-              }
-            }, json);
-}
-
 function activatable(json) {
   return {
-          id: Json_decode.field("id", activatableId, json),
+          id: Json_decode.field("id", Id$OptolithClient.Activatable.Decode.t, json),
           active: Json_decode.field("active", Json_decode.bool, json),
           sid: Json_decode.field("sid", (function (param) {
-                  return JsonStrict$OptolithClient.maybe(selectOptionId, param);
+                  return JsonStrict$OptolithClient.maybe(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
                 }), json),
           sid2: Json_decode.field("sid2", (function (param) {
-                  return JsonStrict$OptolithClient.maybe(selectOptionId, param);
+                  return JsonStrict$OptolithClient.maybe(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
                 }), json),
           level: Json_decode.field("level", (function (param) {
                   return JsonStrict$OptolithClient.maybe(Json_decode.$$int, param);
@@ -261,10 +171,10 @@ function activatableMultiEntry(json) {
           id: Json_decode.field("id", activatableIds, json),
           active: Json_decode.field("active", Json_decode.bool, json),
           sid: Json_decode.field("sid", (function (param) {
-                  return JsonStrict$OptolithClient.maybe(selectOptionId, param);
+                  return JsonStrict$OptolithClient.maybe(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
                 }), json),
           sid2: Json_decode.field("sid2", (function (param) {
-                  return JsonStrict$OptolithClient.maybe(selectOptionId, param);
+                  return JsonStrict$OptolithClient.maybe(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
                 }), json),
           level: Json_decode.field("level", (function (param) {
                   return JsonStrict$OptolithClient.maybe(Json_decode.$$int, param);
@@ -274,55 +184,18 @@ function activatableMultiEntry(json) {
 
 function activatableMultiSelect(json) {
   return {
-          id: Json_decode.field("id", activatableId, json),
+          id: Json_decode.field("id", Id$OptolithClient.Activatable.Decode.t, json),
           active: Json_decode.field("active", Json_decode.bool, json),
           sid: Json_decode.field("sid", (function (param) {
-                  return Json_decode.list(selectOptionId, param);
+                  return Json_decode.list(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
                 }), json),
           sid2: Json_decode.field("sid2", (function (param) {
-                  return JsonStrict$OptolithClient.maybe(selectOptionId, param);
+                  return JsonStrict$OptolithClient.maybe(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
                 }), json),
           level: Json_decode.field("tier", (function (param) {
                   return JsonStrict$OptolithClient.maybe(Json_decode.$$int, param);
                 }), json)
         };
-}
-
-function increasableId(json) {
-  var scope = Json_decode.field("scope", Json_decode.string, json);
-  switch (scope) {
-    case "Attribute" :
-        return {
-                HASH: /* Attribute */482562044,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    case "CombatTechnique" :
-        return {
-                HASH: /* CombatTechnique */-920806756,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    case "LiturgicalChant" :
-        return {
-                HASH: /* LiturgicalChant */-384382742,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    case "Skill" :
-        return {
-                HASH: /* Skill */290194801,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    case "Spell" :
-        return {
-                HASH: /* Spell */345443720,
-                VAL: Json_decode.field("value", Json_decode.$$int, json)
-              };
-    default:
-      throw {
-            RE_EXN_ID: Json_decode.DecodeError,
-            _1: "Unknown increasable ID scope: " + scope,
-            Error: new Error()
-          };
-  }
 }
 
 function increasableIds(json) {
@@ -374,7 +247,7 @@ function increasableIds(json) {
 
 function increasable(json) {
   return {
-          id: Json_decode.field("id", increasableId, json),
+          id: Json_decode.field("id", Id$OptolithClient.Increasable.Decode.t, json),
           value: Json_decode.field("value", Json_decode.$$int, json)
         };
 }
@@ -805,14 +678,10 @@ var Decode = {
   primaryAttribute: primaryAttribute,
   pact: pact,
   socialStatus: Json_decode.$$int,
-  activatableId: activatableId,
   activatableIds: activatableIds,
-  scopedSelectOptionId: scopedSelectOptionId,
-  selectOptionId: selectOptionId,
   activatable: activatable,
   activatableMultiEntry: activatableMultiEntry,
   activatableMultiSelect: activatableMultiSelect,
-  increasableId: increasableId,
   increasableIds: increasableIds,
   increasable: increasable,
   increasableMultiEntry: increasableMultiEntry,

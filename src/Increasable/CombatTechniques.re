@@ -60,7 +60,9 @@ let getExceptionalCombatTechniqueBonus = (exceptionalCombatTechnique, id) =>
         a =>
           a.options
           |> listToOption
-          |> Ley_Option.Foldable.elem(`CombatTechnique(id))
+          |> Ley_Option.Foldable.elem(
+               Id.Activatable.Option.Preset((CombatTechnique, id)),
+             )
           |> (hasBonus => hasBonus ? 1 : 0)
       )
       |> fromOption(0),

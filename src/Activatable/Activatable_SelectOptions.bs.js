@@ -78,17 +78,21 @@ function getOption3(param) {
 }
 
 function getCustomInput(option) {
-  if (option.HASH >= 931971705) {
-    return option.VAL;
+  if (option.TAG) {
+    return option._0;
   }
   
 }
 
 function getGenericId(option) {
-  if (option.HASH !== 61643255) {
+  if (option.TAG) {
+    return ;
+  }
+  var match = option._0;
+  if (match[0] !== 0) {
     return ;
   } else {
-    return option.VAL;
+    return match[1];
   }
 }
 
@@ -97,10 +101,14 @@ function lookupMap(k, mp, f) {
 }
 
 function getSkillFromOption(staticData, option) {
-  if (option.HASH !== 290194801) {
+  if (option.TAG) {
+    return ;
+  }
+  var match = option._0;
+  if (match[0] !== 1) {
     return ;
   } else {
-    return Curry._2(Ley_IntMap$OptolithClient.lookup, option.VAL, staticData.skills);
+    return Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.skills);
   }
 }
 

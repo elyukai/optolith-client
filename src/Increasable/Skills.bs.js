@@ -20,7 +20,10 @@ function getValueDef(param) {
 function getExceptionalSkillBonus(exceptionalSkill, id) {
   return Ley_Option$OptolithClient.option(0, (function (x) {
                 return Ley_List$OptolithClient.countBy((function (a) {
-                              return Ley_Option$OptolithClient.Foldable.elem(id, Ley_Option$OptolithClient.listToOption(a.options));
+                              return Ley_Option$OptolithClient.Foldable.elem({
+                                          TAG: /* Preset */0,
+                                          _0: id
+                                        }, Ley_Option$OptolithClient.listToOption(a.options));
                             }), x.active);
               }), exceptionalSkill);
 }
@@ -48,10 +51,10 @@ function getMaxSrFromEl(startEl, phase) {
 }
 
 function getMax(startEl, phase, heroAttrs, exceptionalSkill, staticEntry) {
-  return getExceptionalSkillBonus(exceptionalSkill, {
-              HASH: /* Skill */290194801,
-              VAL: staticEntry.id
-            }) + Ley_List$OptolithClient.Foldable.minimum(Ley_Option$OptolithClient.catOptions({
+  return getExceptionalSkillBonus(exceptionalSkill, [
+              /* Skill */1,
+              staticEntry.id
+            ]) + Ley_List$OptolithClient.Foldable.minimum(Ley_Option$OptolithClient.catOptions({
                   hd: getMaxSrByCheckAttrs(heroAttrs, staticEntry.check),
                   tl: {
                     hd: getMaxSrFromEl(startEl, phase),
@@ -83,7 +86,7 @@ function getMinSrByCraftInstruments(craftInstruments, skills, staticEntry) {
               RE_EXN_ID: "Match_failure",
               _1: [
                 "Skills.re",
-                90,
+                94,
                 10
               ],
               Error: new Error()
@@ -98,7 +101,7 @@ function getMinSrByCraftInstruments(craftInstruments, skills, staticEntry) {
           RE_EXN_ID: "Match_failure",
           _1: [
             "Skills.re",
-            90,
+            94,
             10
           ],
           Error: new Error()

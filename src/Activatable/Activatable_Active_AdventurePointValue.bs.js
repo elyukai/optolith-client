@@ -115,52 +115,58 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
         switch (exit) {
           case 1 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (sid) {
-                            if (typeof sid === "number") {
+                            if (sid.TAG) {
                               return ;
                             }
-                            var variant = sid.HASH;
-                            if (variant !== -384382742) {
-                              if (variant !== 290194801) {
-                                if (variant !== 345443720) {
+                            var match = sid._0;
+                            switch (match[0]) {
+                              case /* Skill */1 :
+                                  if (!apValue.TAG) {
+                                    return ;
+                                  }
+                                  var apValues = apValue._0;
+                                  return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.skills), (function ($$static) {
+                                                return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
+                                              }));
+                              case /* Spell */3 :
+                                  if (!apValue.TAG) {
+                                    return ;
+                                  }
+                                  var apValues$1 = apValue._0;
+                                  return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.spells), (function ($$static) {
+                                                return Ley_List$OptolithClient.Safe.atMay(apValues$1, IC$OptolithClient.icToIx($$static.ic));
+                                              }));
+                              case /* LiturgicalChant */5 :
+                                  if (!apValue.TAG) {
+                                    return ;
+                                  }
+                                  var apValues$2 = apValue._0;
+                                  return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.liturgicalChants), (function ($$static) {
+                                                return Ley_List$OptolithClient.Safe.atMay(apValues$2, IC$OptolithClient.icToIx($$static.ic));
+                                              }));
+                              case /* Generic */0 :
+                              case /* CombatTechnique */2 :
+                              case /* Cantrip */4 :
+                              case /* Blessing */6 :
+                              case /* SpecialAbility */7 :
                                   return ;
-                                }
-                                if (!apValue.TAG) {
-                                  return ;
-                                }
-                                var apValues = apValue._0;
-                                return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, sid.VAL, staticData.spells), (function ($$static) {
-                                              return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
-                                            }));
-                              }
-                              if (!apValue.TAG) {
-                                return ;
-                              }
-                              var apValues$1 = apValue._0;
-                              return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, sid.VAL, staticData.skills), (function ($$static) {
-                                            return Ley_List$OptolithClient.Safe.atMay(apValues$1, IC$OptolithClient.icToIx($$static.ic));
-                                          }));
+                              
                             }
-                            if (!apValue.TAG) {
-                              return ;
-                            }
-                            var apValues$2 = apValue._0;
-                            return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, sid.VAL, staticData.liturgicalChants), (function ($$static) {
-                                          return Ley_List$OptolithClient.Safe.atMay(apValues$2, IC$OptolithClient.icToIx($$static.ic));
-                                        }));
                           }));
           case 2 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (sid) {
-                            if (typeof sid === "number") {
+                            if (sid.TAG) {
                               return ;
                             }
-                            if (sid.HASH !== -920806756) {
+                            var match = sid._0;
+                            if (match[0] !== 2) {
                               return ;
                             }
                             if (!apValue.TAG) {
                               return ;
                             }
                             var apValues = apValue._0;
-                            return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, sid.VAL, staticData.combatTechniques), (function ($$static) {
+                            return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.combatTechniques), (function ($$static) {
                                           return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
                                         }));
                           }));
@@ -180,18 +186,26 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
               if (sid1 === undefined) {
                 return ;
               }
-              if (typeof sid1 === "number") {
+              if (sid1.TAG) {
                 return ;
               }
-              if (sid1.HASH !== 61643255) {
+              var match$2 = sid1._0;
+              if (match$2[0] !== 0) {
                 return ;
               }
-              var selected_option = sid1.VAL;
+              var selected_option = match$2[1];
               var matchOption = function (target_option, current) {
-                if (current !== undefined && !(typeof current === "number" || current.HASH !== 61643255)) {
-                  return current.VAL === target_option;
-                } else {
+                if (current === undefined) {
                   return false;
+                }
+                if (current.TAG) {
+                  return false;
+                }
+                var match = current._0;
+                if (match[0] !== 0) {
+                  return false;
+                } else {
+                  return match[1] === target_option;
                 }
               };
               var isPersonalityFlawNotPaid = function (target_option, paid_entries_max) {
@@ -213,8 +227,11 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                 return 0;
               } else {
                 return Activatable_SelectOptions$OptolithClient.getSelectOptionCost(staticEntry, {
-                            HASH: /* Generic */61643255,
-                            VAL: selected_option
+                            TAG: /* Preset */0,
+                            _0: [
+                              /* Generic */0,
+                              selected_option
+                            ]
                           });
               }
           case /* Slow */2 :
@@ -227,17 +244,18 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                           }), ensureFlat(apValue));
           case /* DecreasedArcanePower */6 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (sid) {
-                            if (typeof sid === "number") {
+                            if (sid.TAG) {
                               return ;
                             }
-                            if (sid.HASH !== 290194801) {
+                            var match = sid._0;
+                            if (match[0] !== 1) {
                               return ;
                             }
                             if (!apValue.TAG) {
                               return ;
                             }
                             var apValues = apValue._0;
-                            return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, sid.VAL, staticData.skills), (function ($$static) {
+                            return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.skills), (function ($$static) {
                                           return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
                                         }));
                           }));
@@ -270,13 +288,13 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                                   }));
                     }));
     case /* SpecialAbility */2 :
-        var match$2 = Id$OptolithClient.SpecialAbility.fromInt(staticEntry._0.id);
+        var match$3 = Id$OptolithClient.SpecialAbility.fromInt(staticEntry._0.id);
         var exit$1 = 0;
-        if (typeof match$2 !== "number") {
+        if (typeof match$3 !== "number") {
           return getDefaultEntryCost(staticEntry, singleHeroEntry);
         }
-        if (match$2 < 82) {
-          var switcher = match$2 - 42 | 0;
+        if (match$3 < 82) {
+          var switcher = match$3 - 42 | 0;
           if (!(switcher > 38 || switcher < 0)) {
             if (switcher !== 29) {
               return getDefaultEntryCost(staticEntry, singleHeroEntry);
@@ -310,8 +328,11 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                                   })), (function (skill) {
                                 return Math.imul(Ley_List$OptolithClient.countBy((function (e) {
                                                   if (Ley_Option$OptolithClient.Foldable.elem({
-                                                          HASH: /* Skill */290194801,
-                                                          VAL: skill.id
+                                                          TAG: /* Preset */0,
+                                                          _0: [
+                                                            /* Skill */1,
+                                                            skill.id
+                                                          ]
                                                         }, Ley_Option$OptolithClient.listToOption(e.options))) {
                                                     return Ley_Option$OptolithClient.isNone(e.customCost);
                                                   } else {
@@ -405,30 +426,31 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                   return getDefaultEntryCost(staticEntry, singleHeroEntry);
               case /* Lieblingsliturgie */41 :
                   return Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (sid) {
-                                if (typeof sid === "number") {
+                                if (sid.TAG) {
                                   return ;
                                 }
-                                if (sid.HASH !== -384382742) {
+                                var match = sid._0;
+                                if (match[0] !== 5) {
                                   return ;
                                 }
                                 if (!apValue.TAG) {
                                   return ;
                                 }
                                 var apValues = apValue._0;
-                                return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, sid.VAL, staticData.liturgicalChants), (function ($$static) {
+                                return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.liturgicalChants), (function ($$static) {
                                               return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
                                             }));
                               }));
               
             }
           }
-        } else if (match$2 >= 85) {
-          if (match$2 >= 91) {
+        } else if (match$3 >= 85) {
+          if (match$3 >= 91) {
             return getDefaultEntryCost(staticEntry, singleHeroEntry);
           }
           exit$1 = 3;
         } else {
-          if (match$2 !== 83) {
+          if (match$3 !== 83) {
             return getDefaultEntryCost(staticEntry, singleHeroEntry);
           }
           exit$1 = 3;
@@ -446,33 +468,35 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                           }));
           case 2 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (sid) {
-                            if (typeof sid === "number") {
+                            if (sid.TAG) {
                               return ;
                             }
-                            if (sid.HASH !== 345443720) {
+                            var match = sid._0;
+                            if (match[0] !== 3) {
                               return ;
                             }
                             if (!apValue.TAG) {
                               return ;
                             }
                             var apValues = apValue._0;
-                            return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, sid.VAL, staticData.spells), (function ($$static) {
+                            return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.spells), (function ($$static) {
                                           return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
                                         }));
                           }));
           case 3 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (sid) {
-                            if (typeof sid === "number") {
+                            if (sid.TAG) {
                               return ;
                             }
-                            if (sid.HASH !== 290194801) {
+                            var match = sid._0;
+                            if (match[0] !== 1) {
                               return ;
                             }
                             if (!apValue.TAG) {
                               return ;
                             }
                             var apValues = apValue._0;
-                            return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, sid.VAL, staticData.skills), (function ($$static) {
+                            return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.skills), (function ($$static) {
                                           return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
                                         }));
                           }));

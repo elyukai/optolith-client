@@ -12,14 +12,22 @@ import * as ActivatableSkills$OptolithClient from "./ActivatableSkills.bs.js";
 import * as Activatable_SelectOptions$OptolithClient from "../Activatable/Activatable_SelectOptions.bs.js";
 
 function getMaxSrFromPropertyKnowledge(propertyKnowledge, staticEntry) {
-  var partial_arg_1 = staticEntry.property;
-  var partial_arg = {
-    HASH: /* Generic */61643255,
-    VAL: partial_arg_1
-  };
+  var partial_arg = staticEntry.property;
   var hasRestriction = Ley_Option$OptolithClient.option(true, (function (param) {
           return Ley_List$OptolithClient.Foldable.notElem(partial_arg, param);
-        }), Ley_Option$OptolithClient.Monad.$less$amp$great(propertyKnowledge, Activatable_SelectOptions$OptolithClient.getActiveOptions1));
+        }), Ley_Option$OptolithClient.Monad.$less$amp$great(propertyKnowledge, (function (param) {
+              return Activatable_SelectOptions$OptolithClient.mapActiveOptions1((function (param) {
+                            if (param.TAG) {
+                              return ;
+                            }
+                            var match = param._0;
+                            if (match[0] !== 0) {
+                              return ;
+                            } else {
+                              return match[1];
+                            }
+                          }), param);
+            })));
   if (hasRestriction) {
     return 14;
   }
@@ -27,10 +35,10 @@ function getMaxSrFromPropertyKnowledge(propertyKnowledge, staticEntry) {
 }
 
 function getMax(startEl, phase, heroAttrs, exceptionalSkill, propertyKnowledge, staticEntry) {
-  return Skills$OptolithClient.getExceptionalSkillBonus(exceptionalSkill, {
-              HASH: /* Spell */345443720,
-              VAL: staticEntry.id
-            }) + Ley_List$OptolithClient.Foldable.minimum(Ley_Option$OptolithClient.catOptions({
+  return Skills$OptolithClient.getExceptionalSkillBonus(exceptionalSkill, [
+              /* Spell */3,
+              staticEntry.id
+            ]) + Ley_List$OptolithClient.Foldable.minimum(Ley_Option$OptolithClient.catOptions({
                   hd: Skills$OptolithClient.getMaxSrByCheckAttrs(heroAttrs, staticEntry.check),
                   tl: {
                     hd: Skills$OptolithClient.getMaxSrFromEl(startEl, phase),
@@ -87,10 +95,14 @@ function getAvailableProperties(staticSpells, heroSpells) {
 
 function getMinSr(counter, activePropertyKnowledges, staticEntry, heroEntry) {
   var hasActivePropertyKnowledge = Ley_List$OptolithClient.Foldable.any((function (sid) {
-          if (typeof sid === "number" || sid.HASH !== 61643255) {
+          if (sid.TAG) {
+            return false;
+          }
+          var match = sid._0;
+          if (match[0] !== 0) {
             return false;
           } else {
-            return sid.VAL === staticEntry.property;
+            return match[1] === staticEntry.property;
           }
         }), activePropertyKnowledges);
   if (hasActivePropertyKnowledge) {

@@ -21,65 +21,31 @@ function getDefaultNameAddition(staticEntry, heroEntry) {
   var sid = Activatable_SelectOptions$OptolithClient.getOption1(heroEntry);
   var sid2 = Activatable_SelectOptions$OptolithClient.getOption2(heroEntry);
   if (input !== undefined) {
-    if (sid === undefined) {
-      return ;
-    }
-    if (typeof sid === "number") {
-      return ;
-    }
-    var variant = sid.HASH;
-    if (variant >= 61643256) {
-      if (variant >= 345443721) {
-        if (variant !== 797131559) {
-          if (variant !== 931971705 || sid2 !== undefined) {
-            return ;
-          } else {
-            return sid.VAL;
-          }
+    if (sid !== undefined) {
+      if (sid.TAG) {
+        if (sid2 !== undefined) {
+          return ;
+        } else {
+          return sid._0;
         }
-        
-      } else if (variant !== 290194801 && variant < 345443720) {
+      } else if (sid2 !== undefined && sid2.TAG && Curry._1(SelectOption$OptolithClient.SelectOptionMap.size, selectOptions) > 0) {
+        return Ley_Option$OptolithClient.fromOption("", Activatable_SelectOptions$OptolithClient.getSelectOptionName(staticEntry, {
+                        TAG: /* Preset */0,
+                        _0: sid._0
+                      })) + (": " + sid2._0);
+      } else {
         return ;
       }
-      
-    } else if (variant >= -841776938) {
-      if (variant !== -384382742 && variant < 61643255) {
-        return ;
-      }
-      
-    } else if (variant !== -920806756 && variant < -841776939) {
-      return ;
-    }
-    if (sid2 !== undefined && !(typeof sid2 === "number" || sid2.HASH !== 931971705 || Curry._1(SelectOption$OptolithClient.SelectOptionMap.size, selectOptions) <= 0)) {
-      return Ley_Option$OptolithClient.fromOption("", Activatable_SelectOptions$OptolithClient.getSelectOptionName(staticEntry, sid)) + (": " + sid2.VAL);
     } else {
       return ;
     }
-  }
-  if (sid === undefined) {
-    return ;
-  }
-  if (typeof sid === "number") {
-    return ;
-  }
-  var variant$1 = sid.HASH;
-  if (variant$1 >= 61643255) {
-    if (variant$1 >= 345443720) {
-      if (variant$1 !== 797131559 && variant$1 >= 345443721) {
-        return ;
-      }
-      
-    } else if (variant$1 !== 290194801 && variant$1 >= 61643256) {
-      return ;
-    }
-    
-  } else if (variant$1 !== -920806756 && variant$1 !== -841776939 && variant$1 !== -384382742) {
-    return ;
-  }
-  if (sid2 !== undefined) {
-    return ;
+  } else if (sid !== undefined && !(sid.TAG || sid2 !== undefined)) {
+    return Activatable_SelectOptions$OptolithClient.getSelectOptionName(staticEntry, {
+                TAG: /* Preset */0,
+                _0: sid._0
+              });
   } else {
-    return Activatable_SelectOptions$OptolithClient.getSelectOptionName(staticEntry, sid);
+    return ;
   }
 }
 
@@ -132,33 +98,42 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
         switch (exit) {
           case 1 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption1(heroEntry), (function (sid) {
-                            var variant = sid.HASH;
-                            if (variant !== -384382742) {
-                              if (variant !== 290194801) {
-                                if (variant !== 345443720) {
-                                  return ;
-                                } else {
-                                  return Activatable_SelectOptions$OptolithClient.lookupMap(sid.VAL, staticData.spells, (function (x) {
+                            if (sid.TAG) {
+                              return ;
+                            }
+                            var match = sid._0;
+                            switch (match[0]) {
+                              case /* Skill */1 :
+                                  return Activatable_SelectOptions$OptolithClient.lookupMap(match[1], staticData.skills, (function (x) {
                                                 return x.name;
                                               }));
-                                }
-                              } else {
-                                return Activatable_SelectOptions$OptolithClient.lookupMap(sid.VAL, staticData.skills, (function (x) {
-                                              return x.name;
-                                            }));
-                              }
-                            } else {
-                              return Activatable_SelectOptions$OptolithClient.lookupMap(sid.VAL, staticData.liturgicalChants, (function (x) {
-                                            return x.name;
-                                          }));
+                              case /* Spell */3 :
+                                  return Activatable_SelectOptions$OptolithClient.lookupMap(match[1], staticData.spells, (function (x) {
+                                                return x.name;
+                                              }));
+                              case /* LiturgicalChant */5 :
+                                  return Activatable_SelectOptions$OptolithClient.lookupMap(match[1], staticData.liturgicalChants, (function (x) {
+                                                return x.name;
+                                              }));
+                              case /* Generic */0 :
+                              case /* CombatTechnique */2 :
+                              case /* Cantrip */4 :
+                              case /* Blessing */6 :
+                              case /* SpecialAbility */7 :
+                                  return ;
+                              
                             }
                           }));
           case 2 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption1(heroEntry), (function (sid) {
-                            if (sid.HASH >= -841776939) {
+                            if (sid.TAG) {
+                              return ;
+                            }
+                            var match = sid._0;
+                            if (match[0] !== 2) {
                               return ;
                             } else {
-                              return Activatable_SelectOptions$OptolithClient.lookupMap(sid.VAL, staticData.combatTechniques, (function (x) {
+                              return Activatable_SelectOptions$OptolithClient.lookupMap(match[1], staticData.combatTechniques, (function (x) {
                                             return x.name;
                                           }));
                             }
@@ -186,7 +161,7 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                           var match = option1.id;
                           return Ley_Option$OptolithClient.option(option1.name, (function (specialInput) {
                                         return option1.name + (": " + specialInput);
-                                      }), match.HASH !== 61643255 || (match.VAL - 7 >>> 0) > 1 ? undefined : Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption2(heroEntry), Activatable_SelectOptions$OptolithClient.getCustomInput));
+                                      }), match[0] !== 0 || (match[1] - 7 >>> 0) > 1 ? undefined : Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption2(heroEntry), Activatable_SelectOptions$OptolithClient.getCustomInput));
                         }));
           }
         } else {
@@ -211,15 +186,19 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                                               };
                                       })), Activatable_SelectOptions$OptolithClient.getOption1(heroEntry))), (function (language) {
                             return Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption2(heroEntry), (function (option2) {
-                                          var variant = option2.HASH;
                                           var tmp;
-                                          if (variant !== 61643255) {
-                                            tmp = variant >= 931971705 ? option2.VAL : undefined;
+                                          if (option2.TAG) {
+                                            tmp = option2._0;
                                           } else {
-                                            var specializationId = option2.VAL;
-                                            tmp = Ley_Option$OptolithClient.Monad.$great$great$eq(language.specializations, (function (specializations) {
-                                                    return Ley_List$OptolithClient.Safe.atMay(specializations, specializationId - 1 | 0);
-                                                  }));
+                                            var match = option2._0;
+                                            if (match[0] !== 0) {
+                                              tmp = undefined;
+                                            } else {
+                                              var specializationId = match[1];
+                                              tmp = Ley_Option$OptolithClient.Monad.$great$great$eq(language.specializations, (function (specializations) {
+                                                      return Ley_List$OptolithClient.Safe.atMay(specializations, specializationId - 1 | 0);
+                                                    }));
+                                            }
                                           }
                                           return Ley_Option$OptolithClient.Monad.$less$amp$great(tmp, (function (specialization) {
                                                         return language.name + (": " + specialization);
@@ -265,17 +244,21 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                               return Activatable_SelectOptions$OptolithClient.getSkillFromOption(staticData, param);
                             })), (function (skill) {
                           return Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption2(heroEntry), (function (option2) {
-                                        var variant = option2.HASH;
                                         var tmp;
-                                        if (variant !== 61643255) {
-                                          tmp = variant >= 931971705 ? option2.VAL : undefined;
+                                        if (option2.TAG) {
+                                          tmp = option2._0;
                                         } else {
-                                          var id = option2.VAL;
-                                          tmp = Ley_Option$OptolithClient.Monad.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.IntMap.Foldable.find, (function (a) {
-                                                      return a.id === id;
-                                                    }), skill.applications), (function (a) {
-                                                  return a.name;
-                                                }));
+                                          var match = option2._0;
+                                          if (match[0] !== 0) {
+                                            tmp = undefined;
+                                          } else {
+                                            var id = match[1];
+                                            tmp = Ley_Option$OptolithClient.Monad.$less$amp$great(Curry._2(Ley_IntMap$OptolithClient.IntMap.Foldable.find, (function (a) {
+                                                        return a.id === id;
+                                                      }), skill.applications), (function (a) {
+                                                    return a.name;
+                                                  }));
+                                          }
                                         }
                                         return Ley_Option$OptolithClient.Monad.$less$amp$great(tmp, (function (appName) {
                                                       return skill.name + (": " + appName);
@@ -303,10 +286,14 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
               break;
           case /* SpellEnhancement */25 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption1(heroEntry), (function (sid) {
-                            if (sid.HASH !== -384382742) {
+                            if (sid.TAG) {
+                              return ;
+                            }
+                            var match = sid._0;
+                            if (match[0] !== 5) {
                               return ;
                             } else {
-                              return Activatable_SelectOptions$OptolithClient.lookupMap(sid.VAL, staticData.liturgicalChants, (function (x) {
+                              return Activatable_SelectOptions$OptolithClient.lookupMap(match[1], staticData.liturgicalChants, (function (x) {
                                             return x.name;
                                           }));
                             }
@@ -387,10 +374,14 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
         switch (exit$1) {
           case 1 :
               return Ley_Option$OptolithClient.Monad.$great$great$eq(Activatable_SelectOptions$OptolithClient.getOption1(heroEntry), (function (sid) {
-                            if (sid.HASH !== 345443720) {
+                            if (sid.TAG) {
+                              return ;
+                            }
+                            var match = sid._0;
+                            if (match[0] !== 3) {
                               return ;
                             } else {
-                              return Activatable_SelectOptions$OptolithClient.lookupMap(sid.VAL, staticData.spells, (function (x) {
+                              return Activatable_SelectOptions$OptolithClient.lookupMap(match[1], staticData.spells, (function (x) {
                                             return x.name;
                                           }));
                             }

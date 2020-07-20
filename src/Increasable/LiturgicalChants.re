@@ -17,7 +17,11 @@ let getMaxSrFromAspectKnowledge =
   <&> Activatable_SelectOptions.getActiveOptions1
   |> option(true, actives =>
        Ley_List.Foldable.all(
-         aspect => Ley_List.Foldable.notElem(`Generic(aspect), actives),
+         aspect =>
+           Ley_List.Foldable.notElem(
+             Id.Activatable.Option.Preset((Generic, aspect)),
+             actives,
+           ),
          staticEntry.aspects,
        )
      )
@@ -45,7 +49,7 @@ let getMax =
   |> (+)(
        Skills.getExceptionalSkillBonus(
          exceptionalSkill,
-         `Spell(staticEntry.id),
+         (Spell, staticEntry.id),
        ),
      );
 
@@ -132,10 +136,13 @@ module AspectKnowledge = {
     activeAspectKnowledges
     // Is liturgical chant part of dependencies of any active Aspect Knowledge?
     |> L.Foldable.any((sid: Id.Activatable.Option.t) =>
-         switch (sid) {
-         | `Generic(x) => L.Foldable.elem(x, staticEntry.aspects)
-         | _ => false
-         }
+         [@warning "-4"]
+         (
+           switch (sid) {
+           | Preset((Generic, x)) => L.Foldable.elem(x, staticEntry.aspects)
+           | _ => false
+           }
+         )
        )
     // If yes, check if spell is above 10 and if there are not enough spells
     // above 10 to allow a decrease below 10

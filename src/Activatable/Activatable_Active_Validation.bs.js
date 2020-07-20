@@ -93,27 +93,29 @@ function isEntrySpecificRemovalValid(cache, staticData, hero, staticEntry, heroE
             return true;
           }
           var match$2 = match$1.hd;
-          if (typeof match$2 === "number") {
+          if (match$2.TAG) {
             return true;
           }
-          if (match$2.HASH !== -920806756) {
+          var match$3 = match$2._0;
+          if (match$3[0] !== 2) {
             return true;
           }
-          var value = CombatTechniques$OptolithClient.getValueDef(Curry._2(Ley_IntMap$OptolithClient.lookup, match$2.VAL, hero.combatTechniques));
+          var value = CombatTechniques$OptolithClient.getValueDef(Curry._2(Ley_IntMap$OptolithClient.lookup, match$3[1], hero.combatTechniques));
           return value >= (cache.startExperienceLevel.maxCombatTechniqueRating + 1 | 0);
         }
-        var match$3 = singleEntry.options;
-        if (!match$3) {
+        var match$4 = singleEntry.options;
+        if (!match$4) {
           return true;
         }
-        var match$4 = match$3.hd;
-        if (typeof match$4 === "number") {
+        var match$5 = match$4.hd;
+        if (match$5.TAG) {
           return true;
         }
-        if (match$4.HASH !== 290194801) {
+        var match$6 = match$5._0;
+        if (match$6[0] !== 1) {
           return true;
         }
-        var id = match$4.VAL;
+        var id = match$6[1];
         var value$1 = Skills$OptolithClient.getValueDef(Curry._2(Ley_IntMap$OptolithClient.lookup, id, hero.skills));
         var countSameSkill = Ley_List$OptolithClient.countBy((function (active) {
                 var match = active.options;
@@ -121,29 +123,33 @@ function isEntrySpecificRemovalValid(cache, staticData, hero, staticEntry, heroE
                   return false;
                 }
                 var match$1 = match.hd;
-                if (typeof match$1 === "number" || match$1.HASH !== 290194801) {
+                if (match$1.TAG) {
+                  return false;
+                }
+                var match$2 = match$1._0;
+                if (match$2[0] !== 1) {
                   return false;
                 } else {
-                  return match$1.VAL === id;
+                  return match$2[1] === id;
                 }
               }), heroEntry.active);
         return value$1 >= (cache.startExperienceLevel.maxSkillRating + countSameSkill | 0);
     case /* Disadvantage */1 :
         return true;
     case /* SpecialAbility */2 :
-        var match$5 = Id$OptolithClient.SpecialAbility.fromInt(staticEntry._0.id);
-        if (typeof match$5 !== "number") {
+        var match$7 = Id$OptolithClient.SpecialAbility.fromInt(staticEntry._0.id);
+        if (typeof match$7 !== "number") {
           return true;
         }
-        if (match$5 >= 42) {
-          if (match$5 >= 45) {
+        if (match$7 >= 42) {
+          if (match$7 >= 45) {
             return true;
           }
-          var match$6 = cache.blessedTradition;
-          if (match$6 === undefined) {
+          var match$8 = cache.blessedTradition;
+          if (match$8 === undefined) {
             return true;
           }
-          var blessedTradition = match$6[2];
+          var blessedTradition = match$8[2];
           return !Curry._2(Ley_IntMap$OptolithClient.IntMap.Foldable.any, (function (param) {
                         return Ley_List$OptolithClient.notElem(blessedTradition.numId, param.traditions);
                       }), Curry._2(Ley_IntMap$OptolithClient.mapMaybe, (function (param) {
@@ -153,67 +159,76 @@ function isEntrySpecificRemovalValid(cache, staticData, hero, staticEntry, heroE
                             
                           }), hero.liturgicalChants));
         }
-        if (match$5 >= 21) {
+        if (match$7 >= 21) {
           return true;
         }
-        switch (match$5) {
+        switch (match$7) {
           case /* Literacy */5 :
-              var match$7 = cache.matchingLanguagesScripts.isEntryActiveRequiringMatch;
-              var match$8 = cache.matchingLanguagesScripts.scriptsWithMatchingLanguages;
-              var match$9 = singleEntry.options;
-              if (!match$7) {
-                return true;
-              }
-              if (!match$8) {
-                return true;
-              }
-              if (match$8.tl) {
-                return true;
-              }
+              var match$9 = cache.matchingLanguagesScripts.isEntryActiveRequiringMatch;
+              var match$10 = cache.matchingLanguagesScripts.scriptsWithMatchingLanguages;
+              var match$11 = singleEntry.options;
               if (!match$9) {
                 return true;
               }
-              var match$10 = match$9.hd;
-              if (typeof match$10 === "number" || match$10.HASH !== 61643255) {
+              if (!match$10) {
                 return true;
-              } else {
-                return match$8.hd !== match$10.VAL;
               }
-          case /* Language */6 :
-              var match$11 = cache.matchingLanguagesScripts.isEntryActiveRequiringMatch;
-              var match$12 = cache.matchingLanguagesScripts.languagesWithMatchingScripts;
-              var match$13 = singleEntry.options;
+              if (match$10.tl) {
+                return true;
+              }
               if (!match$11) {
                 return true;
               }
-              if (!match$12) {
+              var match$12 = match$11.hd;
+              if (match$12.TAG) {
                 return true;
               }
-              if (match$12.tl) {
-                return true;
-              }
-              if (!match$13) {
-                return true;
-              }
-              var match$14 = match$13.hd;
-              if (typeof match$14 === "number" || match$14.HASH !== 61643255) {
+              var match$13 = match$12._0;
+              if (match$13[0] !== 0) {
                 return true;
               } else {
-                return match$12.hd !== match$14.VAL;
+                return match$10.hd !== match$13[1];
               }
-          case /* PropertyKnowledge */10 :
-              var match$15 = singleEntry.options;
+          case /* Language */6 :
+              var match$14 = cache.matchingLanguagesScripts.isEntryActiveRequiringMatch;
+              var match$15 = cache.matchingLanguagesScripts.languagesWithMatchingScripts;
+              var match$16 = singleEntry.options;
+              if (!match$14) {
+                return true;
+              }
               if (!match$15) {
                 return true;
               }
-              var match$16 = match$15.hd;
-              if (typeof match$16 === "number") {
+              if (match$15.tl) {
                 return true;
               }
-              if (match$16.HASH !== 61643255) {
+              if (!match$16) {
                 return true;
               }
-              var propertyId = match$16.VAL;
+              var match$17 = match$16.hd;
+              if (match$17.TAG) {
+                return true;
+              }
+              var match$18 = match$17._0;
+              if (match$18[0] !== 0) {
+                return true;
+              } else {
+                return match$15.hd !== match$18[1];
+              }
+          case /* PropertyKnowledge */10 :
+              var match$19 = singleEntry.options;
+              if (!match$19) {
+                return true;
+              }
+              var match$20 = match$19.hd;
+              if (match$20.TAG) {
+                return true;
+              }
+              var match$21 = match$20._0;
+              if (match$21[0] !== 0) {
+                return true;
+              }
+              var propertyId = match$21[1];
               return !Curry._2(Ley_IntMap$OptolithClient.IntMap.Foldable.any, (function (heroSpell) {
                             if (ActivatableSkills$OptolithClient.valueToInt(heroSpell.value) > 14) {
                               return Ley_Option$OptolithClient.option(true, (function (param) {
@@ -225,24 +240,29 @@ function isEntrySpecificRemovalValid(cache, staticData, hero, staticEntry, heroE
                           }), hero.spells);
           case /* AspectKnowledge */12 :
               var activeAspects = Activatable_SelectOptions$OptolithClient.mapActiveOptions1((function (param) {
-                      if (typeof param === "number" || param.HASH !== 61643255) {
+                      if (param.TAG) {
+                        return ;
+                      }
+                      var match = param._0;
+                      if (match[0] !== 0) {
                         return ;
                       } else {
-                        return param.VAL;
+                        return match[1];
                       }
                     }), heroEntry);
-              var match$17 = singleEntry.options;
-              if (!match$17) {
+              var match$22 = singleEntry.options;
+              if (!match$22) {
                 return true;
               }
-              var match$18 = match$17.hd;
-              if (typeof match$18 === "number") {
+              var match$23 = match$22.hd;
+              if (match$23.TAG) {
                 return true;
               }
-              if (match$18.HASH !== 61643255) {
+              var match$24 = match$23._0;
+              if (match$24[0] !== 0) {
                 return true;
               }
-              var aspectId = match$18.VAL;
+              var aspectId = match$24[1];
               var otherAspects = Ley_List$OptolithClient.$$delete(aspectId, activeAspects);
               return !Curry._2(Ley_IntMap$OptolithClient.IntMap.Foldable.any, (function (heroLiturgicalChant) {
                             if (ActivatableSkills$OptolithClient.valueToInt(heroLiturgicalChant.value) > 14) {
@@ -409,7 +429,7 @@ function getMinLevel(cache, staticData, hero, staticEntry, heroEntry, singleEntr
 
 function getMaxLevel(cache, staticData, hero, staticEntry) {
   var entrySpecificMaxLevel = getEntrySpecificMaxLevel(cache, hero, staticEntry);
-  var maxPossibleWithPrerequisites = Prerequisites$OptolithClient.Validation.getMaxLevel(staticData, hero, Id$OptolithClient.Activatable.generalize(Activatable_Accessors$OptolithClient.id(staticEntry)), Prerequisites$OptolithClient.Activatable.getLevelPrerequisites(staticEntry));
+  var maxPossibleWithPrerequisites = Prerequisites$OptolithClient.Validation.getMaxLevel(staticData, hero, Id$OptolithClient.Activatable.toAll(Activatable_Accessors$OptolithClient.id(staticEntry)), Prerequisites$OptolithClient.Activatable.getLevelPrerequisites(staticEntry));
   return Ley_Option$OptolithClient.Alternative.$less$pipe$great(Ley_Option$OptolithClient.Alternative.$less$pipe$great(Ley_Option$OptolithClient.Monad.liftM2(Ley_Int$OptolithClient.min, entrySpecificMaxLevel, maxPossibleWithPrerequisites), entrySpecificMaxLevel), maxPossibleWithPrerequisites);
 }
 

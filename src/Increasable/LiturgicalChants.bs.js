@@ -15,8 +15,11 @@ function getMaxSrFromAspectKnowledge(aspectKnowledge, staticEntry) {
   var hasRestriction = Ley_Option$OptolithClient.option(true, (function (actives) {
           return Ley_List$OptolithClient.Foldable.all((function (aspect) {
                         return Ley_List$OptolithClient.Foldable.notElem({
-                                    HASH: /* Generic */61643255,
-                                    VAL: aspect
+                                    TAG: /* Preset */0,
+                                    _0: [
+                                      /* Generic */0,
+                                      aspect
+                                    ]
                                   }, actives);
                       }), staticEntry.aspects);
         }), Ley_Option$OptolithClient.Monad.$less$amp$great(aspectKnowledge, Activatable_SelectOptions$OptolithClient.getActiveOptions1));
@@ -27,10 +30,10 @@ function getMaxSrFromAspectKnowledge(aspectKnowledge, staticEntry) {
 }
 
 function getMax(startEl, phase, heroAttrs, exceptionalSkill, aspectKnowledge, staticEntry) {
-  return Skills$OptolithClient.getExceptionalSkillBonus(exceptionalSkill, {
-              HASH: /* Spell */345443720,
-              VAL: staticEntry.id
-            }) + Ley_List$OptolithClient.Foldable.minimum(Ley_Option$OptolithClient.catOptions({
+  return Skills$OptolithClient.getExceptionalSkillBonus(exceptionalSkill, [
+              /* Spell */3,
+              staticEntry.id
+            ]) + Ley_List$OptolithClient.Foldable.minimum(Ley_Option$OptolithClient.catOptions({
                   hd: Skills$OptolithClient.getMaxSrByCheckAttrs(heroAttrs, staticEntry.check),
                   tl: {
                     hd: Skills$OptolithClient.getMaxSrFromEl(startEl, phase),
@@ -89,10 +92,14 @@ function getAvailableAspects(staticChants, heroChants) {
 
 function getMinSr(counter, activeAspectKnowledges, staticEntry, heroEntry) {
   var hasActiveAspectKnowledge = Ley_List$OptolithClient.Foldable.any((function (sid) {
-          if (typeof sid === "number" || sid.HASH !== 61643255) {
+          if (sid.TAG) {
+            return false;
+          }
+          var match = sid._0;
+          if (match[0] !== 0) {
             return false;
           } else {
-            return Ley_List$OptolithClient.Foldable.elem(sid.VAL, staticEntry.aspects);
+            return Ley_List$OptolithClient.Foldable.elem(match[1], staticEntry.aspects);
           }
         }), activeAspectKnowledges);
   if (!hasActiveAspectKnowledge) {

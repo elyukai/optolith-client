@@ -18,7 +18,9 @@ let getExceptionalSkillBonus = (exceptionalSkill, id) =>
     (x: Hero.Activatable.t) =>
       x.active
       |> countBy((a: Hero.Activatable.single) =>
-           a.options |> listToOption |> Ley_Option.Foldable.elem(id)
+           a.options
+           |> listToOption
+           |> Ley_Option.Foldable.elem(Id.Activatable.Option.Preset(id))
          ),
     exceptionalSkill,
   );
@@ -57,7 +59,9 @@ let getMax =
   ]
   |> catOptions
   |> Ley_List.Foldable.minimum
-  |> (+)(getExceptionalSkillBonus(exceptionalSkill, `Skill(staticEntry.id)));
+  |> (+)(
+       getExceptionalSkillBonus(exceptionalSkill, (Skill, staticEntry.id)),
+     );
 
 /**
  * Returns if the passed skill's skill rating can be increased.

@@ -30,7 +30,10 @@ function $$const(x, json) {
       };
 }
 
+var idTagName = "tag";
+
 export {
+  idTagName ,
   maybe ,
   optionalField ,
   $$const ,

@@ -7,7 +7,7 @@ type wikiEntry =
   | Spell(Spell.t);
 
 type t = {
-  id: Id.SelectOption.t,
+  id: Id.Activatable.SelectOption.t,
   name: string,
   cost: option(int),
   prerequisites: Prerequisite.t,
@@ -30,19 +30,19 @@ type t = {
   errata: list(Erratum.t),
 };
 
-let showId = (id: Id.SelectOption.t) =>
+let showId = (id: Id.Activatable.SelectOption.t) =>
   switch (id) {
-  | `Generic(x) => "Generic(" ++ Ley_Int.show(x) ++ ")"
-  | `Skill(x) => "Skill(" ++ Ley_Int.show(x) ++ ")"
-  | `CombatTechnique(x) => "CombatTechnique(" ++ Ley_Int.show(x) ++ ")"
-  | `Spell(x) => "Spell(" ++ Ley_Int.show(x) ++ ")"
-  | `Cantrip(x) => "Cantrip(" ++ Ley_Int.show(x) ++ ")"
-  | `LiturgicalChant(x) => "LiturgicalChant(" ++ Ley_Int.show(x) ++ ")"
-  | `Blessing(x) => "Blessing(" ++ Ley_Int.show(x) ++ ")"
-  | `SpecialAbility(x) => "SpecialAbility(" ++ Ley_Int.show(x) ++ ")"
+  | (Generic, x) => "Generic(" ++ Ley_Int.show(x) ++ ")"
+  | (Skill, x) => "Skill(" ++ Ley_Int.show(x) ++ ")"
+  | (CombatTechnique, x) => "CombatTechnique(" ++ Ley_Int.show(x) ++ ")"
+  | (Spell, x) => "Spell(" ++ Ley_Int.show(x) ++ ")"
+  | (Cantrip, x) => "Cantrip(" ++ Ley_Int.show(x) ++ ")"
+  | (LiturgicalChant, x) => "LiturgicalChant(" ++ Ley_Int.show(x) ++ ")"
+  | (Blessing, x) => "Blessing(" ++ Ley_Int.show(x) ++ ")"
+  | (SpecialAbility, x) => "SpecialAbility(" ++ Ley_Int.show(x) ++ ")"
   };
 
-module SelectOptionMap = Ley_Map.Make(Id.SelectOption);
+module SelectOptionMap = Ley_Map.Make(Id.Activatable.SelectOption);
 
 type map = SelectOptionMap.t(t);
 
@@ -51,7 +51,7 @@ module Decode = {
   open JsonStrict;
 
   type tL10n = {
-    id: Id.SelectOption.t,
+    id: Id.Activatable.SelectOption.t,
     name: string,
     description: option(string),
     specializations: option(list(string)),
@@ -61,7 +61,7 @@ module Decode = {
   };
 
   let tL10n = json => {
-    id: json |> field("id", Prerequisite.Decode.selectOptionId),
+    id: json |> field("id", Id.Activatable.SelectOption.Decode.t),
     name: json |> field("name", string),
     description: json |> optionalField("description", string),
     specializations: json |> optionalField("specializations", list(string)),
@@ -71,7 +71,7 @@ module Decode = {
   };
 
   type tUniv = {
-    id: Id.SelectOption.t,
+    id: Id.Activatable.SelectOption.t,
     cost: option(int),
     prerequisites: Prerequisite.t,
     isSecret: option(bool),
@@ -83,7 +83,7 @@ module Decode = {
   };
 
   let tUniv = json => {
-    id: json |> field("id", Prerequisite.Decode.selectOptionId),
+    id: json |> field("id", Id.Activatable.SelectOption.Decode.t),
     cost: json |> optionalField("cost", int),
     prerequisites: json |> Prerequisite.Decode.t,
     isSecret: json |> optionalField("isSecret", bool),
@@ -188,7 +188,7 @@ module Decode = {
 
   let blessingToSelectOption = (x: Blessing.t) =>
     entryToSelectOption(
-      ~id=`Blessing(x.id),
+      ~id=(Blessing, x.id),
       ~name=x.name,
       ~wikiEntry=Blessing(x),
       ~src=x.src,
@@ -199,7 +199,7 @@ module Decode = {
 
   let cantripToSelectOption = (x: Cantrip.t) =>
     entryToSelectOption(
-      ~id=`Cantrip(x.id),
+      ~id=(Cantrip, x.id),
       ~name=x.name,
       ~wikiEntry=Cantrip(x),
       ~src=x.src,
@@ -210,7 +210,7 @@ module Decode = {
 
   let combatTechniqueToSelectOption = (x: CombatTechnique.t) =>
     entryToSelectOption(
-      ~id=`CombatTechnique(x.id),
+      ~id=(CombatTechnique, x.id),
       ~name=x.name,
       ~wikiEntry=CombatTechnique(x),
       ~src=x.src,
@@ -226,7 +226,7 @@ module Decode = {
 
   let liturgicalChantToSelectOption = (x: LiturgicalChant.t) =>
     entryToSelectOption(
-      ~id=`LiturgicalChant(x.id),
+      ~id=(LiturgicalChant, x.id),
       ~name=x.name,
       ~wikiEntry=LiturgicalChant(x),
       ~src=x.src,
@@ -242,7 +242,7 @@ module Decode = {
 
   let skillToSelectOption = (x: Skill.t) =>
     entryToSelectOption(
-      ~id=`Skill(x.id),
+      ~id=(Skill, x.id),
       ~name=x.name,
       ~wikiEntry=Skill(x),
       ~src=x.src,
@@ -257,7 +257,7 @@ module Decode = {
 
   let spellToSelectOption = (x: Spell.t) =>
     entryToSelectOption(
-      ~id=`Spell(x.id),
+      ~id=(Spell, x.id),
       ~name=x.name,
       ~wikiEntry=Spell(x),
       ~src=x.src,

@@ -159,7 +159,7 @@ let isEntrySpecificAdditionEnabled =
   && Prerequisites.Validation.arePrerequisitesMet(
        staticData,
        hero,
-       Id.Activatable.generalize(Activatable_Accessors.id(staticEntry)),
+       Id.Activatable.toAll(Activatable_Accessors.id(staticEntry)),
        Prerequisites.Activatable.getFlatFirstPrerequisites(staticEntry),
      );
 
@@ -239,7 +239,7 @@ let getMaxLevel = (staticData, hero, staticEntry, maybeHeroEntry) =>
   |> Dependencies.getMaxLevel(
        staticData,
        hero,
-       Id.Activatable.generalize(Activatable_Accessors.id(staticEntry)),
+       Id.Activatable.toAll(Activatable_Accessors.id(staticEntry)),
        O.option(
          [],
          ({Hero.Activatable.dependencies, _}) => dependencies,

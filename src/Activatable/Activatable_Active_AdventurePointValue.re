@@ -109,17 +109,17 @@ let getEntrySpecificCost =
         >>= (
           sid =>
             switch (sid, apValue) {
-            | (`Skill(id), PerLevel(apValues)) =>
+            | (Preset((Skill, id)), PerLevel(apValues)) =>
               Ley_IntMap.lookup(id, staticData.skills)
               >>= (
                 static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
               )
-            | (`Spell(id), PerLevel(apValues)) =>
+            | (Preset((Spell, id)), PerLevel(apValues)) =>
               Ley_IntMap.lookup(id, staticData.spells)
               >>= (
                 static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
               )
-            | (`LiturgicalChant(id), PerLevel(apValues)) =>
+            | (Preset((LiturgicalChant, id)), PerLevel(apValues)) =>
               Ley_IntMap.lookup(id, staticData.liturgicalChants)
               >>= (
                 static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
@@ -134,7 +134,7 @@ let getEntrySpecificCost =
         >>= (
           sid =>
             switch (sid, apValue) {
-            | (`CombatTechnique(id), PerLevel(apValues)) =>
+            | (Preset((CombatTechnique, id)), PerLevel(apValues)) =>
               Ley_IntMap.lookup(id, staticData.combatTechniques)
               >>= (
                 static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
@@ -151,10 +151,10 @@ let getEntrySpecificCost =
       switch (Id.Disadvantage.fromInt(entry.id)) {
       | PersonalityFlaw =>
         switch (sid1) {
-        | Some(`Generic(selected_option)) =>
+        | Some(Preset((Generic, selected_option))) =>
           let matchOption = (target_option, current) =>
-            switch (current) {
-            | Some(`Generic(x)) => x === target_option
+            switch ((current: option(Id.Activatable.Option.t))) {
+            | Some(Preset((Generic, x))) => x === target_option
             | _ => false
             };
 
@@ -183,7 +183,10 @@ let getEntrySpecificCost =
               || isPersonalityFlawNotPaid(8, 2)) {
             Some(0);
           } else {
-            getSelectOptionCost(staticEntry, `Generic(selected_option));
+            getSelectOptionCost(
+              staticEntry,
+              Preset((Generic, selected_option)),
+            );
           };
         | _ => None
         }
@@ -234,7 +237,7 @@ let getEntrySpecificCost =
         >>= (
           sid =>
             switch (sid, apValue) {
-            | (`Skill(id), PerLevel(apValues)) =>
+            | (Preset((Skill, id)), PerLevel(apValues)) =>
               Ley_IntMap.lookup(id, staticData.skills)
               >>= (
                 static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
@@ -261,7 +264,9 @@ let getEntrySpecificCost =
                 (e: Hero.Activatable.single) =>
                   e.options
                   |> listToOption
-                  |> Ley_Option.Foldable.elem(`Skill(skill.id))
+                  |> Ley_Option.Foldable.elem(
+                       Id.Activatable.Option.Preset((Skill, skill.id)),
+                     )
                   // Entries with custom cost are ignored for the rule
                   && isNone(e.customCost),
                 heroEntry.active,
@@ -321,7 +326,7 @@ let getEntrySpecificCost =
         >>= (
           sid =>
             switch (sid, apValue) {
-            | (`Spell(id), PerLevel(apValues)) =>
+            | (Preset((Spell, id)), PerLevel(apValues)) =>
               Ley_IntMap.lookup(id, staticData.spells)
               >>= (
                 static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
@@ -335,7 +340,7 @@ let getEntrySpecificCost =
         >>= (
           sid =>
             switch (sid, apValue) {
-            | (`LiturgicalChant(id), PerLevel(apValues)) =>
+            | (Preset((LiturgicalChant, id)), PerLevel(apValues)) =>
               Ley_IntMap.lookup(id, staticData.liturgicalChants)
               >>= (
                 static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
@@ -359,7 +364,7 @@ let getEntrySpecificCost =
         >>= (
           sid =>
             switch (sid, apValue) {
-            | (`Skill(id), PerLevel(apValues)) =>
+            | (Preset((Skill, id)), PerLevel(apValues)) =>
               Ley_IntMap.lookup(id, staticData.skills)
               >>= (
                 static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))

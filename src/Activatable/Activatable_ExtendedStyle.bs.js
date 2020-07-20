@@ -141,12 +141,19 @@ function generateStyleDependencies(heroSpecialAbilities, styleSpecialAbility) {
                           })), (function (x) {
                         return Ley_List$OptolithClient.Safe.atMay(x.options, 1);
                       }));
-                if (param !== undefined && !(typeof param === "number" || param.HASH !== -789492591)) {
+                if (param === undefined) {
+                  return xs;
+                }
+                if (param.TAG) {
+                  return xs;
+                }
+                var match$1 = param._0;
+                if (match$1[0] >= 7) {
                   return {
                           hd: {
                             id: {
                               TAG: /* One */0,
-                              _0: param.VAL
+                              _0: match$1[1]
                             },
                             active: undefined,
                             origin: styleSpecialAbility.id

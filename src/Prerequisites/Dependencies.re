@@ -40,7 +40,8 @@ module Activatable = {
              | OneOrMany.One(option) =>
                // If only one option, required and active must
                // be equal
-               Id.SelectOption.(activeOption == option) === dependency.active
+               Id.Activatable.SelectOption.(activeOption == option)
+               === dependency.active
              | OneOrMany.Many(options) =>
                // If multiple options are possible, one must be
                // equal to the active option
@@ -707,7 +708,9 @@ module TransferredUnfamiliar = {
       | MadaschwesternStil
       | ScholarDesMagierkollegsZuHoningen =>
         switch (single.options) {
-        | [`Spell(id), ..._] => [{id: Spell(id), srcId: single.id}]
+        | [Preset((Spell, id)), ..._] => [
+            {id: Spell(id), srcId: single.id},
+          ]
         | [_, ..._]
         | [] => []
         }
@@ -718,7 +721,8 @@ module TransferredUnfamiliar = {
         |> L.take(3)
         |> O.mapOption(
              fun
-             | `Spell(id) => Some({id: Spell(id), srcId: single.id})
+             | Id.Activatable.Option.Preset((Spell, id)) =>
+               Some({id: Spell(id), srcId: single.id})
              | _ => None,
            )
       | _ => []
@@ -884,17 +888,15 @@ let applyActivatablePrerequisite =
   putActivatableDependency(
     mode,
     switch (prerequisite.id) {
-    | `Advantage(_) => Advantages
-    | `Disadvantage(_) => Disadvantages
-    | `SpecialAbility(_) => SpecialAbilities
+    | (Advantage, _) => Advantages
+    | (Disadvantage, _) => Disadvantages
+    | (SpecialAbility, _) => SpecialAbilities
     },
     {
       source: sourceId,
       target:
         switch (prerequisite.id) {
-        | `Advantage(id)
-        | `Disadvantage(id)
-        | `SpecialAbility(id) => One(id)
+        | (_, id) => One(id)
         },
       active: prerequisite.active,
       options:
@@ -948,17 +950,15 @@ let applyActivatableMultiSelectPrerequisite =
   putActivatableDependency(
     mode,
     switch (prerequisite.id) {
-    | `Advantage(_) => Advantages
-    | `Disadvantage(_) => Disadvantages
-    | `SpecialAbility(_) => SpecialAbilities
+    | (Advantage, _) => Advantages
+    | (Disadvantage, _) => Disadvantages
+    | (SpecialAbility, _) => SpecialAbilities
     },
     {
       source: sourceId,
       target:
         switch (prerequisite.id) {
-        | `Advantage(id)
-        | `Disadvantage(id)
-        | `SpecialAbility(id) => One(id)
+        | (_, id) => One(id)
         },
       active: prerequisite.active,
       options:
@@ -1002,21 +1002,17 @@ let applyIncreasablePrerequisite =
   putIncreasableDependency(
     mode,
     switch (prerequisite.id) {
-    | `Attribute(_) => Attributes
-    | `Skill(_) => Skills
-    | `CombatTechnique(_) => CombatTechniques
-    | `Spell(_) => Spells
-    | `LiturgicalChant(_) => LiturgicalChants
+    | (Attribute, _) => Attributes
+    | (Skill, _) => Skills
+    | (CombatTechnique, _) => CombatTechniques
+    | (Spell, _) => Spells
+    | (LiturgicalChant, _) => LiturgicalChants
     },
     {
       source: sourceId,
       target:
         switch (prerequisite.id) {
-        | `Attribute(id)
-        | `Skill(id)
-        | `CombatTechnique(id)
-        | `Spell(id)
-        | `LiturgicalChant(id) => One(id)
+        | (_, id) => One(id)
         },
       value: prerequisite.value,
     },
@@ -1104,48 +1100,119 @@ let modifyDependencies =
       [@warning "-4"]
       (
         switch (prerequisite, sourceId) {
-        | (
-            PrimaryAttribute(options),
-            `Advantage(_) as id | `Disadvantage(_) as id |
-            `SpecialAbility(_) as id |
-            `Spell(_) as id |
-            `LiturgicalChant(_) as id,
-          ) =>
-          applyPrimaryAttributePrerequisite(mode, id, staticData, options)
-        | (
-            Activatable(options),
-            `Advantage(_) as id | `Disadvantage(_) as id |
-            `SpecialAbility(_) as id,
-          ) =>
-          applyActivatablePrerequisite(mode, id, options)
-        | (
-            ActivatableMultiEntry(options),
-            `Advantage(_) as id | `Disadvantage(_) as id |
-            `SpecialAbility(_) as id,
-          ) =>
-          applyActivatableMultiEntryPrerequisite(mode, id, options)
-        | (
-            ActivatableMultiSelect(options),
-            `Advantage(_) as id | `Disadvantage(_) as id |
-            `SpecialAbility(_) as id,
-          ) =>
-          applyActivatableMultiSelectPrerequisite(mode, id, options)
-        | (
-            Increasable(options),
-            `Advantage(_) as id | `Disadvantage(_) as id |
-            `SpecialAbility(_) as id |
-            `Spell(_) as id |
-            `LiturgicalChant(_) as id,
-          ) =>
-          applyIncreasablePrerequisite(mode, id, options)
-        | (
-            IncreasableMultiEntry(options),
-            `Advantage(_) as id | `Disadvantage(_) as id |
-            `SpecialAbility(_) as id |
-            `Spell(_) as id |
-            `LiturgicalChant(_) as id,
-          ) =>
-          applyIncreasableMultiEntryPrerequisite(mode, id, options)
+        | (PrimaryAttribute(options), (Advantage, id)) =>
+          applyPrimaryAttributePrerequisite(
+            mode,
+            (Advantage, id),
+            staticData,
+            options,
+          )
+        | (PrimaryAttribute(options), (Disadvantage, id)) =>
+          applyPrimaryAttributePrerequisite(
+            mode,
+            (Disadvantage, id),
+            staticData,
+            options,
+          )
+        | (PrimaryAttribute(options), (SpecialAbility, id)) =>
+          applyPrimaryAttributePrerequisite(
+            mode,
+            (SpecialAbility, id),
+            staticData,
+            options,
+          )
+        | (PrimaryAttribute(options), (Spell, id)) =>
+          applyPrimaryAttributePrerequisite(
+            mode,
+            (Spell, id),
+            staticData,
+            options,
+          )
+        | (PrimaryAttribute(options), (LiturgicalChant, id)) =>
+          applyPrimaryAttributePrerequisite(
+            mode,
+            (LiturgicalChant, id),
+            staticData,
+            options,
+          )
+        | (Activatable(options), (Advantage, id)) =>
+          applyActivatablePrerequisite(mode, (Advantage, id), options)
+        | (Activatable(options), (Disadvantage, id)) =>
+          applyActivatablePrerequisite(mode, (Disadvantage, id), options)
+        | (Activatable(options), (SpecialAbility, id)) =>
+          applyActivatablePrerequisite(mode, (SpecialAbility, id), options)
+        | (ActivatableMultiEntry(options), (Advantage, id)) =>
+          applyActivatableMultiEntryPrerequisite(
+            mode,
+            (Advantage, id),
+            options,
+          )
+        | (ActivatableMultiEntry(options), (Disadvantage, id)) =>
+          applyActivatableMultiEntryPrerequisite(
+            mode,
+            (Disadvantage, id),
+            options,
+          )
+        | (ActivatableMultiEntry(options), (SpecialAbility, id)) =>
+          applyActivatableMultiEntryPrerequisite(
+            mode,
+            (SpecialAbility, id),
+            options,
+          )
+        | (ActivatableMultiSelect(options), (Advantage, id)) =>
+          applyActivatableMultiSelectPrerequisite(
+            mode,
+            (Advantage, id),
+            options,
+          )
+        | (ActivatableMultiSelect(options), (Disadvantage, id)) =>
+          applyActivatableMultiSelectPrerequisite(
+            mode,
+            (Disadvantage, id),
+            options,
+          )
+        | (ActivatableMultiSelect(options), (SpecialAbility, id)) =>
+          applyActivatableMultiSelectPrerequisite(
+            mode,
+            (SpecialAbility, id),
+            options,
+          )
+        | (Increasable(options), (Advantage, id)) =>
+          applyIncreasablePrerequisite(mode, (Advantage, id), options)
+        | (Increasable(options), (Disadvantage, id)) =>
+          applyIncreasablePrerequisite(mode, (Disadvantage, id), options)
+        | (Increasable(options), (SpecialAbility, id)) =>
+          applyIncreasablePrerequisite(mode, (SpecialAbility, id), options)
+        | (Increasable(options), (Spell, id)) =>
+          applyIncreasablePrerequisite(mode, (Spell, id), options)
+        | (Increasable(options), (LiturgicalChant, id)) =>
+          applyIncreasablePrerequisite(mode, (LiturgicalChant, id), options)
+        | (IncreasableMultiEntry(options), (Advantage, id)) =>
+          applyIncreasableMultiEntryPrerequisite(
+            mode,
+            (Advantage, id),
+            options,
+          )
+        | (IncreasableMultiEntry(options), (Disadvantage, id)) =>
+          applyIncreasableMultiEntryPrerequisite(
+            mode,
+            (Disadvantage, id),
+            options,
+          )
+        | (IncreasableMultiEntry(options), (SpecialAbility, id)) =>
+          applyIncreasableMultiEntryPrerequisite(
+            mode,
+            (SpecialAbility, id),
+            options,
+          )
+        | (IncreasableMultiEntry(options), (Spell, id)) =>
+          applyIncreasableMultiEntryPrerequisite(mode, (Spell, id), options)
+        | (IncreasableMultiEntry(options), (LiturgicalChant, id)) =>
+          applyIncreasableMultiEntryPrerequisite(
+            mode,
+            (LiturgicalChant, id),
+            options,
+          )
         | _ => Ley_Function.id
         }
       ),

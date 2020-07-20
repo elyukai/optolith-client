@@ -44,7 +44,8 @@ let mapActiveOptions1:
 /**
  * Get all first select option IDs from the given entry.
  */
-let getActiveSelectOptions1: Hero.Activatable.t => list(Id.SelectOption.t);
+let getActiveSelectOptions1:
+  Hero.Activatable.t => list(Id.Activatable.SelectOption.t);
 
 /**
  * Get all second option IDs from the given entry.

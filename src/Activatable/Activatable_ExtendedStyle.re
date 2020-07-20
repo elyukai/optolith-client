@@ -128,7 +128,7 @@ let generateStyleDependencies =
               >>= (x => Ley_List.Safe.atMay(x.options, 1))
               |> (
                 fun
-                | Some(`SpecialAbility(id)) => [
+                | Some(Preset((SpecialAbility, id))) => [
                     {
                       Hero.id: One(id),
                       active: None,

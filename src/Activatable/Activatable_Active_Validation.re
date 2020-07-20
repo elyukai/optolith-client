@@ -78,7 +78,7 @@ let isEntrySpecificRemovalValid =
         switch (fromInt(staticAdvantage.id)) {
         | ExceptionalSkill =>
           switch (singleEntry.options) {
-          | [`Skill(id), ..._] =>
+          | [Preset((Skill, id)), ..._] =>
             // value of target skill
             let value = IM.lookup(id, hero.skills) |> Skills.getValueDef;
 
@@ -87,7 +87,7 @@ let isEntrySpecificRemovalValid =
               L.countBy(
                 (active: Hero.Activatable.single) =>
                   switch (active.options) {
-                  | [`Skill(otherId), ..._] => otherId === id
+                  | [Preset((Skill, otherId)), ..._] => otherId === id
                   | _ => false
                   },
                 heroEntry.active,
@@ -100,7 +100,7 @@ let isEntrySpecificRemovalValid =
           }
         | ExceptionalCombatTechnique =>
           switch (singleEntry.options) {
-          | [`CombatTechnique(id), ..._] =>
+          | [Preset((CombatTechnique, id)), ..._] =>
             // value of target combat technique
             let value =
               IM.lookup(id, hero.combatTechniques)
@@ -128,7 +128,11 @@ let isEntrySpecificRemovalValid =
           // requiring entry must be active, the list of scripts must contain
           // only one element and that element has to match the current script
           // to prohibit removing the entry
-          | (true, [onlyScriptWithLanguage], [`Generic(scriptId), ..._]) =>
+          | (
+              true,
+              [onlyScriptWithLanguage],
+              [Preset((Generic, scriptId)), ..._],
+            ) =>
             onlyScriptWithLanguage !== scriptId
           | _ => true
           }
@@ -141,13 +145,17 @@ let isEntrySpecificRemovalValid =
           // requiring entry must be active, the list of languages must contain
           // only one element and that element has to match the current language
           // to prohibit removing the entry
-          | (true, [onlyLanguageWithScript], [`Generic(languageId), ..._]) =>
+          | (
+              true,
+              [onlyLanguageWithScript],
+              [Preset((Generic, languageId)), ..._],
+            ) =>
             onlyLanguageWithScript !== languageId
           | _ => true
           }
         | PropertyKnowledge =>
           switch (singleEntry.options) {
-          | [`Generic(propertyId), ..._] =>
+          | [Preset((Generic, propertyId)), ..._] =>
             hero.spells
             // If there is any spell with matching property above SR 14...
             |> IM.Foldable.any((heroSpell: Hero.ActivatableSkill.t) =>
@@ -165,13 +173,13 @@ let isEntrySpecificRemovalValid =
           let activeAspects =
             Activatable_SelectOptions.mapActiveOptions1(
               fun
-              | `Generic(aspectId) => Some(aspectId)
+              | Preset((Generic, aspectId)) => Some(aspectId)
               | _ => None,
               heroEntry,
             );
 
           switch (singleEntry.options) {
-          | [`Generic(aspectId), ..._] =>
+          | [Preset((Generic, aspectId)), ..._] =>
             let otherAspects = L.delete(aspectId, activeAspects);
 
             hero.liturgicalChants
@@ -389,7 +397,7 @@ let getMaxLevel = (cache, staticData, hero, staticEntry) => {
     Prerequisites.Validation.getMaxLevel(
       staticData,
       hero,
-      staticEntry |> Activatable_Accessors.id |> Id.Activatable.generalize,
+      staticEntry |> Activatable_Accessors.id |> Id.Activatable.toAll,
       Prerequisites.Activatable.getLevelPrerequisites(staticEntry),
     );
 

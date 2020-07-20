@@ -13,8 +13,15 @@ module O = Ley_Option;
  */
 let getMaxSrFromPropertyKnowledge = (propertyKnowledge, staticEntry: Spell.t) =>
   propertyKnowledge
-  <&> Activatable_SelectOptions.getActiveOptions1
-  |> option(true, L.Foldable.notElem(`Generic(staticEntry.property)))
+  <&> Activatable_SelectOptions.mapActiveOptions1(
+        [@warning "-4"]
+        (
+          fun
+          | Preset((Generic, id)) => Some(id)
+          | _ => None
+        ),
+      )
+  |> option(true, L.Foldable.notElem(staticEntry.property))
   |> (hasRestriction => hasRestriction ? Some(14) : None);
 
 /**
@@ -39,7 +46,7 @@ let getMax =
   |> (+)(
        Skills.getExceptionalSkillBonus(
          exceptionalSkill,
-         `Spell(staticEntry.id),
+         (Spell, staticEntry.id),
        ),
      );
 
@@ -123,10 +130,13 @@ module PropertyKnowledge = {
     // Is spell part of dependencies of any active Property
     // Knowledge?
     |> Ley_List.Foldable.any((sid: Id.Activatable.Option.t) =>
-         switch (sid) {
-         | `Generic(x) => x === staticEntry.property
-         | _ => false
-         }
+         [@warning "-4"]
+         (
+           switch (sid) {
+           | Preset((Generic, x)) => x === staticEntry.property
+           | _ => false
+           }
+         )
        )
     // If yes, check if spell is above 10 and if there are not
     // enough spells above 10 to allow a decrease below 10

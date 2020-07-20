@@ -1,136 +1,70 @@
-type category = [
-  | `ExperienceLevel
-  | `Race
-  | `Culture
-  | `Profession
-  | `Attribute
-  | `Advantage
-  | `Disadvantage
-  | `Skill
-  | `CombatTechnique
-  | `Spell
-  | `Curse
-  | `ElvenMagicalSong
-  | `DominationRitual
-  | `MagicalMelody
-  | `MagicalDance
-  | `RogueSpell
-  | `AnimistForce
-  | `GeodeRitual
-  | `ZibiljaRitual
-  | `Cantrip
-  | `LiturgicalChant
-  | `Blessing
-  | `SpecialAbility
-  | `Item
-  | `EquipmentPackage
-  | `HitZoneArmor
-  | `Familiar
-  | `Animal
-  | `FocusRule
-  | `OptionalRule
-  | `Condition
-  | `State
-];
+module All = {
+  type entryType = EntryType.All.t;
 
-let toInt = (cat: category) =>
-  switch (cat) {
-  | `ExperienceLevel => 1
-  | `Race => 2
-  | `Culture => 3
-  | `Profession => 4
-  | `Attribute => 5
-  | `Advantage => 6
-  | `Disadvantage => 7
-  | `Skill => 8
-  | `CombatTechnique => 9
-  | `Spell => 10
-  | `Curse => 11
-  | `ElvenMagicalSong => 12
-  | `DominationRitual => 13
-  | `MagicalMelody => 14
-  | `MagicalDance => 15
-  | `RogueSpell => 16
-  | `AnimistForce => 17
-  | `GeodeRitual => 18
-  | `ZibiljaRitual => 19
-  | `Cantrip => 20
-  | `LiturgicalChant => 21
-  | `Blessing => 22
-  | `SpecialAbility => 23
-  | `Item => 24
-  | `EquipmentPackage => 25
-  | `HitZoneArmor => 26
-  | `Familiar => 27
-  | `Animal => 28
-  | `FocusRule => 29
-  | `OptionalRule => 30
-  | `Condition => 31
-  | `State => 32
+  type t = (entryType, int);
+
+  let compare = ((xCategory, xInt), (yCategory, yInt)) => {
+    let x' = EntryType.All.toInt(xCategory);
+    let y' = EntryType.All.toInt(yCategory);
+
+    if (x' === y') {
+      xInt - yInt;
+    } else {
+      x' - y';
+    };
   };
 
-type t = (category, int);
-
-type all = t;
-
-let compare = ((xCategory, xInt), (yCategory, yInt)) => {
-  let x' = toInt(xCategory);
-  let y' = toInt(yCategory);
-
-  if (x' === y') {
-    xInt - yInt;
-  } else {
-    x' - y';
-  };
+  let (==) = (x, y) => compare(x, y) === 0;
 };
 
-let (==) = (x, y) => compare(x, y) === 0;
-
 module Activatable = {
-  type category = [ | `Advantage | `Disadvantage | `SpecialAbility];
+  type entryType = EntryType.Activatable.t;
 
-  type t = (category, int);
+  type t = (entryType, int);
+
+  let toAll = ((entryType, id)) => (
+    EntryType.Activatable.toAll(entryType),
+    id,
+  );
 
   let (==) = (x, y) =>
     [@warning "-4"]
     (
       switch (x: t, y: t) {
-      | ((`Advantage, x), (`Advantage, y))
-      | ((`Disadvantage, x), (`Disadvantage, y))
-      | ((`SpecialAbility, x), (`SpecialAbility, y)) => x === y
+      | ((Advantage, x), (Advantage, y))
+      | ((Disadvantage, x), (Disadvantage, y))
+      | ((SpecialAbility, x), (SpecialAbility, y)) => x === y
       | _ => false
       }
     );
 
+  module Decode = {
+    open Json.Decode;
+
+    let t = (json): t =>
+      json
+      |> field(JsonStrict.idTagName, string)
+      |> (
+        scope => (
+          switch (scope) {
+          | "Advantage" => EntryType.Activatable.Advantage
+          | "Disadvantage" => Disadvantage
+          | "SpecialAbility" => SpecialAbility
+          | _ => raise(DecodeError("Unknown activatable id tag: " ++ scope))
+          },
+          json |> field("value", int),
+        )
+      );
+  };
+
   module SelectOption = {
-    type category = [
-      | `Generic
-      | `Skill
-      | `CombatTechnique
-      | `Spell
-      | `Cantrip
-      | `LiturgicalChant
-      | `Blessing
-      | `SpecialAbility
-    ];
+    type entryType = EntryType.Activatable.SelectOption.t;
 
-    let toInt = (cat: category) =>
-      switch (cat) {
-      | `Generic => 1
-      | `Skill => 2
-      | `CombatTechnique => 3
-      | `Spell => 4
-      | `Cantrip => 5
-      | `LiturgicalChant => 6
-      | `Blessing => 7
-      | `SpecialAbility => 8
-      };
-
-    type t = (category, int);
+    type t = (entryType, int);
 
     let compare = ((xCategory, xInt), (yCategory, yInt)) => {
-      let x' = toInt(xCategory);
-      let y' = toInt(yCategory);
+      let x' = EntryType.Activatable.SelectOption.toInt(xCategory);
+      let y' = EntryType.Activatable.SelectOption.toInt(yCategory);
 
       if (x' === y') {
         xInt - yInt;
@@ -142,6 +76,37 @@ module Activatable = {
     let (==) = (x, y) => compare(x, y) === 0;
 
     let (!=) = (x, y) => compare(x, y) !== 0;
+
+    module Decode = {
+      open Json.Decode;
+
+      let scoped = (json): t =>
+        json
+        |> field(JsonStrict.idTagName, string)
+        |> (
+          scope => (
+            switch (scope) {
+            | "Skill" => EntryType.Activatable.SelectOption.Skill
+            | "CombatTechnique" => CombatTechnique
+            | "Spell" => Spell
+            | "Cantrip" => Cantrip
+            | "LiturgicalChant" => LiturgicalChant
+            | "Blessing" => Blessing
+            | "SpecialAbility" => SpecialAbility
+            | _ =>
+              raise(DecodeError("Unknown activatable id tag: " ++ scope))
+            },
+            json |> field("value", int),
+          )
+        );
+
+      let t = (json): t =>
+        json
+        |> oneOf([
+             map(x => (EntryType.Activatable.SelectOption.Generic, x), int),
+             scoped,
+           ]);
+    };
   };
 
   module Option = {
@@ -153,14 +118,14 @@ module Activatable = {
       [@warning "-4"]
       (
         switch (x, y) {
-        | (Preset((`Generic, x)), Preset((`Generic, y)))
-        | (Preset((`Skill, x)), Preset((`Skill, y)))
-        | (Preset((`CombatTechnique, x)), Preset((`CombatTechnique, y)))
-        | (Preset((`Spell, x)), Preset((`Spell, y)))
-        | (Preset((`Cantrip, x)), Preset((`Cantrip, y)))
-        | (Preset((`LiturgicalChant, x)), Preset((`LiturgicalChant, y)))
-        | (Preset((`Blessing, x)), Preset((`Blessing, y)))
-        | (Preset((`SpecialAbility, x)), Preset((`SpecialAbility, y))) =>
+        | (Preset((Generic, x)), Preset((Generic, y)))
+        | (Preset((Skill, x)), Preset((Skill, y)))
+        | (Preset((CombatTechnique, x)), Preset((CombatTechnique, y)))
+        | (Preset((Spell, x)), Preset((Spell, y)))
+        | (Preset((Cantrip, x)), Preset((Cantrip, y)))
+        | (Preset((LiturgicalChant, x)), Preset((LiturgicalChant, y)))
+        | (Preset((Blessing, x)), Preset((Blessing, y)))
+        | (Preset((SpecialAbility, x)), Preset((SpecialAbility, y))) =>
           x === y
         | (CustomInput(x), CustomInput(y)) => x === y
         | _ => false
@@ -170,54 +135,55 @@ module Activatable = {
 };
 
 module ActivatableAndSkill = {
-  type category = [
-    | `Advantage
-    | `Disadvantage
-    | `SpecialAbility
-    | `Spell
-    | `LiturgicalChant
-  ];
+  type entryType = EntryType.ActivatableAndSkill.t;
 
-  type t = (category, int);
+  type t = (entryType, int);
 };
 
 module ActivatableSkill = {
-  type category = [ | `Spell | `LiturgicalChant];
+  type entryType = EntryType.ActivatableSkill.t;
 
-  type t = (category, int);
+  type t = (entryType, int);
 };
 
 module PermanentSkill = {
-  type category = [ | `Skill | `CombatTechnique];
+  type entryType = EntryType.PermanentSkill.t;
 
-  type t = (category, int);
+  type t = (entryType, int);
 };
 
 module Increasable = {
-  type category = [
-    | `Attribute
-    | `Skill
-    | `CombatTechnique
-    | `Spell
-    | `LiturgicalChant
-  ];
+  type entryType = EntryType.Increasable.t;
 
-  type t = (category, int);
+  type t = (entryType, int);
+
+  module Decode = {
+    open Json.Decode;
+
+    let t = (json): t =>
+      json
+      |> field(JsonStrict.idTagName, string)
+      |> (
+        scope => (
+          switch (scope) {
+          | "Attribute" => EntryType.Increasable.Attribute
+          | "Skill" => Skill
+          | "CombatTechnique" => CombatTechnique
+          | "Spell" => Spell
+          | "LiturgicalChant" => LiturgicalChant
+          | _ =>
+            raise(DecodeError("Unknown increasable ID scope: " ++ scope))
+          },
+          json |> field("value", int),
+        )
+      );
+  };
 };
 
 module PrerequisiteSource = {
-  type category = [
-    | `Advantage
-    | `Disadvantage
-    | `SpecialAbility
-    | `Attribute
-    | `Skill
-    | `CombatTechnique
-    | `Spell
-    | `LiturgicalChant
-  ];
+  type entryType = EntryType.PrerequisiteSource.t;
 
-  type t = (category, int);
+  type t = (entryType, int);
 };
 
 module HitZoneArmorZoneItem = {

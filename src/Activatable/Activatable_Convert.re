@@ -104,15 +104,8 @@ let singleWithIdToSingle = s => {
  } */
 
 let activatableOptionToSelectOptionId =
-    (id: Id.Activatable.Option.t): option(Id.SelectOption.t) =>
+    (id: Id.Activatable.Option.t): option(Id.Activatable.SelectOption.t) =>
   switch (id) {
-  | `Generic(_) as id
-  | `Skill(_) as id
-  | `CombatTechnique(_) as id
-  | `Spell(_) as id
-  | `Cantrip(_) as id
-  | `LiturgicalChant(_) as id
-  | `Blessing(_) as id
-  | `SpecialAbility(_) as id => Some(id)
-  | `CustomInput(_) => None
+  | Preset(id) => Some(id)
+  | CustomInput(_) => None
   };

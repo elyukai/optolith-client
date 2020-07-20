@@ -214,10 +214,10 @@ function variant(univ, l10n) {
               skill: univ.skillSelectOptions,
               guildMageUnfamiliarSpell: Ley_Option$OptolithClient.option(false, (function (param) {
                       return Ley_List$OptolithClient.Foldable.any((function (x) {
-                                    if (Id$OptolithClient.Activatable.$eq(x.id, {
-                                            HASH: /* SpecialAbility */-789492591,
-                                            VAL: Id$OptolithClient.SpecialAbility.toInt(/* TraditionGuildMages */9)
-                                          })) {
+                                    if (Id$OptolithClient.Activatable.$eq(x.id, [
+                                            /* SpecialAbility */2,
+                                            Id$OptolithClient.SpecialAbility.toInt(/* TraditionGuildMages */9)
+                                          ])) {
                                       return x.active;
                                     } else {
                                       return false;
@@ -365,10 +365,10 @@ function t(univ, l10n) {
               skill: univ.skillSelectOptions,
               guildMageUnfamiliarSpell: Ley_Option$OptolithClient.option(false, (function (param) {
                       return Ley_List$OptolithClient.Foldable.any((function (x) {
-                                    if (Id$OptolithClient.Activatable.$eq(x.id, {
-                                            HASH: /* SpecialAbility */-789492591,
-                                            VAL: Id$OptolithClient.SpecialAbility.toInt(/* TraditionGuildMages */9)
-                                          })) {
+                                    if (Id$OptolithClient.Activatable.$eq(x.id, [
+                                            /* SpecialAbility */2,
+                                            Id$OptolithClient.SpecialAbility.toInt(/* TraditionGuildMages */9)
+                                          ])) {
                                       return x.active;
                                     } else {
                                       return false;

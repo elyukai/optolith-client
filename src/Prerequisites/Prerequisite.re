@@ -233,21 +233,6 @@ module Decode = {
 
   let socialStatus = int;
 
-  let activatableId = json =>
-    json
-    |> field("scope", string)
-    |> (
-      scope =>
-        switch (scope) {
-        | "Advantage" => json |> field("value", int) |> (x => `Advantage(x))
-        | "Disadvantage" =>
-          json |> field("value", int) |> (x => `Disadvantage(x))
-        | "SpecialAbility" =>
-          json |> field("value", int) |> (x => `SpecialAbility(x))
-        | _ => raise(DecodeError("Unknown activatable ID scope: " ++ scope))
-        }
-    );
-
   let activatableIds = json =>
     json
     |> field("scope", string)
@@ -264,68 +249,29 @@ module Decode = {
         }
     );
 
-  let scopedSelectOptionId = (json): Id.Activatable.SelectOption.t =>
-    json
-    |> field("scope", string)
-    |> (
-      scope =>
-        switch (scope) {
-        | "Skill" => `Skill
-        | "CombatTechnique" => `CombatTechnique
-        | "Spell" => `Spell
-        | "Cantrip" => `Cantrip
-        | "LiturgicalChant" => `LiturgicalChant
-        | "Blessing" => `Blessing
-        | "SpecialAbility" => `SpecialAbility
-        | _ =>
-          raise(DecodeError("Unknown select option ID scope: " ++ scope))
-        }
-    )
-    |> (category => (category, json |> field("value", int)));
-
-  let selectOptionId = (json): Id.Activatable.SelectOption.t =>
-    json |> oneOf([map(x => (`Generic, x), int), scopedSelectOptionId]);
-
   let activatable = (json): activatable => {
-    id: json |> field("id", activatableId),
+    id: json |> field("id", Id.Activatable.Decode.t),
     active: json |> field("active", bool),
-    sid: json |> field("sid", maybe(selectOptionId)),
-    sid2: json |> field("sid2", maybe(selectOptionId)),
+    sid: json |> field("sid", maybe(Id.Activatable.SelectOption.Decode.t)),
+    sid2: json |> field("sid2", maybe(Id.Activatable.SelectOption.Decode.t)),
     level: json |> field("level", maybe(int)),
   };
 
   let activatableMultiEntry = (json): activatableMultiEntry => {
     id: json |> field("id", activatableIds),
     active: json |> field("active", bool),
-    sid: json |> field("sid", maybe(selectOptionId)),
-    sid2: json |> field("sid2", maybe(selectOptionId)),
+    sid: json |> field("sid", maybe(Id.Activatable.SelectOption.Decode.t)),
+    sid2: json |> field("sid2", maybe(Id.Activatable.SelectOption.Decode.t)),
     level: json |> field("level", maybe(int)),
   };
 
   let activatableMultiSelect = (json): activatableMultiSelect => {
-    id: json |> field("id", activatableId),
+    id: json |> field("id", Id.Activatable.Decode.t),
     active: json |> field("active", bool),
-    sid: json |> field("sid", list(selectOptionId)),
-    sid2: json |> field("sid2", maybe(selectOptionId)),
+    sid: json |> field("sid", list(Id.Activatable.SelectOption.Decode.t)),
+    sid2: json |> field("sid2", maybe(Id.Activatable.SelectOption.Decode.t)),
     level: json |> field("tier", maybe(int)),
   };
-
-  let increasableId = json =>
-    json
-    |> field("scope", string)
-    |> (
-      scope =>
-        switch (scope) {
-        | "Attribute" => json |> field("value", int) |> (x => `Attribute(x))
-        | "Skill" => json |> field("value", int) |> (x => `Skill(x))
-        | "CombatTechnique" =>
-          json |> field("value", int) |> (x => `CombatTechnique(x))
-        | "Spell" => json |> field("value", int) |> (x => `Spell(x))
-        | "LiturgicalChant" =>
-          json |> field("value", int) |> (x => `LiturgicalChant(x))
-        | _ => raise(DecodeError("Unknown increasable ID scope: " ++ scope))
-        }
-    );
 
   let increasableIds = json =>
     json
@@ -346,7 +292,7 @@ module Decode = {
     );
 
   let increasable = (json): increasable => {
-    id: json |> field("id", increasableId),
+    id: json |> field("id", Id.Increasable.Decode.t),
     value: json |> field("value", int),
   };
 

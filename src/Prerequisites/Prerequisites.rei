@@ -73,13 +73,13 @@ module Validation: {
   /**
    * `isPrerequisiteMet` returns if the passed prerequisite is met.
    */
-  let isPrerequisiteMet: (Static.t, Hero.t, Id.t, prerequisite) => bool;
+  let isPrerequisiteMet: (Static.t, Hero.t, Id.All.t, prerequisite) => bool;
 
   /**
    * `arePrerequisitesMet` returns if all passed prerequisites are met.
    */
   let arePrerequisitesMet:
-    (Static.t, Hero.t, Id.t, list(prerequisite)) => bool;
+    (Static.t, Hero.t, Id.All.t, list(prerequisite)) => bool;
 
   /**
    * `getMaxLevel staticData hero sourceId levelPrerequisites` returns the
@@ -92,7 +92,7 @@ module Validation: {
    * dependencies, use `Dependencies.getMaxLevel`.
    */
   let getMaxLevel:
-    (Static.t, Hero.t, Id.t, Ley_IntMap.t(Prerequisite.t)) => option(int);
+    (Static.t, Hero.t, Id.All.t, Ley_IntMap.t(Prerequisite.t)) => option(int);
 };
 
 module Activatable: {

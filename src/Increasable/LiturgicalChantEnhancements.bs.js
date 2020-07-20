@@ -11,10 +11,10 @@ function getSingle(target, level, id, name, cost, description, prerequisites, sr
   return [
           id,
           {
-            id: {
-              HASH: /* Generic */61643255,
-              VAL: id
-            },
+            id: [
+              /* Generic */0,
+              id
+            ],
             name: target.name + (": " + name),
             cost: cost,
             prerequisites: prerequisites,
@@ -56,15 +56,15 @@ function liturgicalChantEnhancements(liturgicalChants, xs) {
                                                   primaryAttribute: Prerequisite$OptolithClient.empty.primaryAttribute,
                                                   activatable: enhancement.level2.requireLevel1 ? ({
                                                         hd: {
-                                                          id: {
-                                                            HASH: /* SpecialAbility */-789492591,
-                                                            VAL: Id$OptolithClient.SpecialAbility.toInt(/* ChantEnhancement */46)
-                                                          },
+                                                          id: [
+                                                            /* SpecialAbility */2,
+                                                            Id$OptolithClient.SpecialAbility.toInt(/* ChantEnhancement */46)
+                                                          ],
                                                           active: true,
-                                                          sid: {
-                                                            HASH: /* Generic */61643255,
-                                                            VAL: enhancement.level1.id
-                                                          },
+                                                          sid: [
+                                                            /* Generic */0,
+                                                            enhancement.level1.id
+                                                          ],
                                                           sid2: undefined,
                                                           level: undefined
                                                         },
@@ -86,30 +86,30 @@ function liturgicalChantEnhancements(liturgicalChants, xs) {
                                                     activatable: match !== undefined ? (
                                                         match ? ({
                                                               hd: {
-                                                                id: {
-                                                                  HASH: /* SpecialAbility */-789492591,
-                                                                  VAL: Id$OptolithClient.SpecialAbility.toInt(/* ChantEnhancement */46)
-                                                                },
+                                                                id: [
+                                                                  /* SpecialAbility */2,
+                                                                  Id$OptolithClient.SpecialAbility.toInt(/* ChantEnhancement */46)
+                                                                ],
                                                                 active: true,
-                                                                sid: {
-                                                                  HASH: /* Generic */61643255,
-                                                                  VAL: enhancement.level2.id
-                                                                },
+                                                                sid: [
+                                                                  /* Generic */0,
+                                                                  enhancement.level2.id
+                                                                ],
                                                                 sid2: undefined,
                                                                 level: undefined
                                                               },
                                                               tl: /* [] */0
                                                             }) : ({
                                                               hd: {
-                                                                id: {
-                                                                  HASH: /* SpecialAbility */-789492591,
-                                                                  VAL: Id$OptolithClient.SpecialAbility.toInt(/* ChantEnhancement */46)
-                                                                },
+                                                                id: [
+                                                                  /* SpecialAbility */2,
+                                                                  Id$OptolithClient.SpecialAbility.toInt(/* ChantEnhancement */46)
+                                                                ],
                                                                 active: true,
-                                                                sid: {
-                                                                  HASH: /* Generic */61643255,
-                                                                  VAL: enhancement.level1.id
-                                                                },
+                                                                sid: [
+                                                                  /* Generic */0,
+                                                                  enhancement.level1.id
+                                                                ],
                                                                 sid2: undefined,
                                                                 level: undefined
                                                               },

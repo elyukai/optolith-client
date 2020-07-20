@@ -14,20 +14,20 @@ function isActiveM(param) {
 function id(x) {
   switch (x.TAG | 0) {
     case /* Advantage */0 :
-        return {
-                HASH: /* Advantage */-41058677,
-                VAL: x._0.id
-              };
+        return [
+                /* Advantage */0,
+                x._0.id
+              ];
     case /* Disadvantage */1 :
-        return {
-                HASH: /* Disadvantage */255955901,
-                VAL: x._0.id
-              };
+        return [
+                /* Disadvantage */1,
+                x._0.id
+              ];
     case /* SpecialAbility */2 :
-        return {
-                HASH: /* SpecialAbility */-789492591,
-                VAL: x._0.id
-              };
+        return [
+                /* SpecialAbility */2,
+                x._0.id
+              ];
     
   }
 }

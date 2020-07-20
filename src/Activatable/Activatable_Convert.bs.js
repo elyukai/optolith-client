@@ -27,10 +27,10 @@ function singleWithIdToSingle(s) {
 }
 
 function activatableOptionToSelectOptionId(id) {
-  if (id.HASH >= 931971705) {
+  if (id.TAG) {
     return ;
   } else {
-    return id;
+    return id._0;
   }
 }
 

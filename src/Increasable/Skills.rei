@@ -9,7 +9,7 @@ let getValueDef: option(Hero.Skill.t) => int;
  * bonus from an active Exceptional Skill advantage for the passed skill id.
  */
 let getExceptionalSkillBonus:
-  (option(Hero.Activatable.t), Id.Activatable.Option.t) => int;
+  (option(Hero.Activatable.t), Id.Activatable.SelectOption.t) => int;
 
 /**
  * `getMaxSrByCheckAttrs heroAttrs check` creates the base for a list for

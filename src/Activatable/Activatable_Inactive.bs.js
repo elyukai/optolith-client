@@ -181,10 +181,14 @@ function getInactive(cache, staticData, hero, staticEntry, maybeHeroEntry) {
                                                                 })), Ley_Option$OptolithClient.listToOption), (function (param) {
                                                           return Ley_Option$OptolithClient.listToOption(param.options);
                                                         })), (function (param) {
-                                                      if (typeof param === "number" || param.HASH !== 290194801) {
+                                                      if (param.TAG) {
+                                                        return ;
+                                                      }
+                                                      var match = param._0;
+                                                      if (match[0] !== 1) {
                                                         return ;
                                                       } else {
-                                                        return Curry._2(Ley_IntMap$OptolithClient.lookup, param.VAL, staticData.skills);
+                                                        return Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.skills);
                                                       }
                                                     })), (function (param) {
                                                   var match = staticSpecialAbility.apValue;

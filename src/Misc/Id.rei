@@ -1,71 +1,33 @@
-type category = [
-  | `ExperienceLevel
-  | `Race
-  | `Culture
-  | `Profession
-  | `Attribute
-  | `Advantage
-  | `Disadvantage
-  | `Skill
-  | `CombatTechnique
-  | `Spell
-  | `Curse
-  | `ElvenMagicalSong
-  | `DominationRitual
-  | `MagicalMelody
-  | `MagicalDance
-  | `RogueSpell
-  | `AnimistForce
-  | `GeodeRitual
-  | `ZibiljaRitual
-  | `Cantrip
-  | `LiturgicalChant
-  | `Blessing
-  | `SpecialAbility
-  | `Item
-  | `EquipmentPackage
-  | `HitZoneArmor
-  | `Familiar
-  | `Animal
-  | `FocusRule
-  | `OptionalRule
-  | `Condition
-  | `State
-];
+module All: {
+  type entryType = EntryType.All.t;
 
-type t = (category, int);
+  type t = (entryType, int);
 
-type all = t;
+  /**
+   * `compare x y` returns `0` if `x` and `y` are equal, a negative integer if
+   * `x` is smaller than `y`, and a positive integer if `x` is greater than
+   * `y`.
+   */
+  let compare: (t, t) => int;
 
-/**
- * `compare x y` returns `0` if `x` and `y` are equal, a negative integer if
- * `x` is smaller than `y`, and a positive integer if `x` is greater than
- * `y`.
- */
-let compare: (t, t) => int;
-
-let (==): (t, t) => bool;
+  let (==): (t, t) => bool;
+};
 
 module Activatable: {
-  type category = [ | `Advantage | `Disadvantage | `SpecialAbility];
+  type entryType = EntryType.Activatable.t;
 
-  type t = (category, int);
+  type t = (entryType, int);
+
+  let toAll: t => All.t;
 
   let (==): (t, t) => bool;
 
-  module SelectOption: {
-    type category = [
-      | `Generic
-      | `Skill
-      | `CombatTechnique
-      | `Spell
-      | `Cantrip
-      | `LiturgicalChant
-      | `Blessing
-      | `SpecialAbility
-    ];
+  module Decode: {let t: Js.Json.t => t;};
 
-    type t = (category, int);
+  module SelectOption: {
+    type entryType = EntryType.Activatable.SelectOption.t;
+
+    type t = (entryType, int);
 
     /**
      * `compare x y` returns `0` if `x` and `y` are equal, a negative integer if
@@ -77,6 +39,8 @@ module Activatable: {
     let (==): (t, t) => bool;
 
     let (!=): (t, t) => bool;
+
+    module Decode: {let t: Js.Json.t => t;};
   };
 
   module Option: {
@@ -89,54 +53,35 @@ module Activatable: {
 };
 
 module ActivatableAndSkill: {
-  type category = [
-    | `Advantage
-    | `Disadvantage
-    | `SpecialAbility
-    | `Spell
-    | `LiturgicalChant
-  ];
+  type entryType = EntryType.ActivatableAndSkill.t;
 
-  type t = (category, int);
+  type t = (entryType, int);
 };
 
 module ActivatableSkill: {
-  type category = [ | `Spell | `LiturgicalChant];
+  type entryType = EntryType.ActivatableSkill.t;
 
-  type t = (category, int);
+  type t = (entryType, int);
 };
 
 module PermanentSkill: {
-  type category = [ | `Skill | `CombatTechnique];
+  type entryType = EntryType.PermanentSkill.t;
 
-  type t = (category, int);
+  type t = (entryType, int);
 };
 
 module Increasable: {
-  type category = [
-    | `Attribute
-    | `Skill
-    | `CombatTechnique
-    | `Spell
-    | `LiturgicalChant
-  ];
+  type entryType = EntryType.Increasable.t;
 
-  type t = (category, int);
+  type t = (entryType, int);
+
+  module Decode: {let t: Js.Json.t => t;};
 };
 
 module PrerequisiteSource: {
-  type category = [
-    | `Advantage
-    | `Disadvantage
-    | `SpecialAbility
-    | `Attribute
-    | `Skill
-    | `CombatTechnique
-    | `Spell
-    | `LiturgicalChant
-  ];
+  type entryType = EntryType.PrerequisiteSource.t;
 
-  type t = (category, int);
+  type t = (entryType, int);
 };
 
 module HitZoneArmorZoneItem: {

@@ -42,7 +42,7 @@ function isNotRequired(otherActivatables, maybeHeroEntry) {
                   if (option.TAG) {
                     return Ley_List$OptolithClient.Foldable.notElem(id, option._0);
                   } else {
-                    return Id$OptolithClient.SelectOption.$less$great(option._0, id);
+                    return Curry._2(Id$OptolithClient.Activatable.SelectOption.$less$great, option._0, id);
                   }
                 }), partial_arg);
   };
@@ -95,10 +95,10 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
     case /* Advantage */0 :
         var staticAdvantage = staticEntry._0;
         var id_1 = staticAdvantage.id;
-        var id = {
-          HASH: /* Advantage */-41058677,
-          VAL: id_1
-        };
+        var id = [
+          /* Advantage */5,
+          id_1
+        ];
         var partial_arg = hero.advantages;
         var isNoRequiredOrActiveSelection = function (param) {
           return isNoGenericRequiredOrActiveSelectionShort(partial_arg, id, param);
@@ -118,10 +118,10 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
     case /* Disadvantage */1 :
         var staticDisadvantage = staticEntry._0;
         var id_1$1 = staticDisadvantage.id;
-        var id$1 = {
-          HASH: /* Disadvantage */255955901,
-          VAL: id_1$1
-        };
+        var id$1 = [
+          /* Disadvantage */6,
+          id_1$1
+        ];
         var partial_arg$2 = hero.disadvantages;
         var isNoRequiredOrActiveSelection$1 = function (param) {
           return isNoGenericRequiredOrActiveSelectionShort(partial_arg$2, id$1, param);
@@ -141,12 +141,12 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
                     return Ley_Transducer$OptolithClient.$great$great$tilde(Curry._1(isNoRequiredOrActiveSelection$1, fold), (function (x) {
                                   if (isAdvActive(/* SociallyAdaptable */15) || isAdvActive(/* InspireConfidence */16)) {
                                     var match = x.id;
-                                    if (typeof match === "number" || match.HASH !== 290194801) {
+                                    if (match[0] !== 1) {
                                       return true;
                                     } else {
                                       return !Ley_Option$OptolithClient.Foldable.any((function (skill) {
                                                     return skill.gr === Curry._1(Id$OptolithClient.Skill.Group.toInt, /* Social */1);
-                                                  }), Curry._2(Ley_IntMap$OptolithClient.lookup, match.VAL, staticData.skills));
+                                                  }), Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.skills));
                                     }
                                   } else {
                                     return true;
@@ -155,41 +155,34 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
                   });
         }
         var uniqueSelections = Ley_Option$OptolithClient.option(/* [] */0, (function (heroEntry) {
-                return Ley_Option$OptolithClient.mapOption((function (param) {
-                              if (typeof param === "number" || param.HASH !== 61643255) {
+                return Activatable_SelectOptions$OptolithClient.mapActiveOptions1((function (param) {
+                              if (param.TAG) {
+                                return ;
+                              }
+                              var match = param._0;
+                              if (match[0] !== 0) {
                                 return ;
                               } else {
-                                return param.VAL;
+                                return match[1];
                               }
-                            }), Activatable_SelectOptions$OptolithClient.getActiveOptions1(heroEntry));
+                            }), heroEntry);
               }), maybeHeroEntry);
         var isInfiniteActive = function (id, selectOption) {
-          if (selectOption.id === id && !(typeof id === "number" || id.HASH !== 61643255)) {
-            return Ley_List$OptolithClient.elem(id.VAL, uniqueSelections);
+          if (selectOption.id === [
+              /* Generic */0,
+              id
+            ]) {
+            return Ley_List$OptolithClient.elem(id, uniqueSelections);
           } else {
             return false;
           }
         };
-        var partial_arg$3 = {
-          HASH: /* Generic */61643255,
-          VAL: 7
-        };
-        var isPrejudiceAndActive = function (param) {
-          return isInfiniteActive(partial_arg$3, param);
-        };
-        var partial_arg$4 = {
-          HASH: /* Generic */61643255,
-          VAL: 8
-        };
-        var isUnworldlyAndActive = function (param) {
-          return isInfiniteActive(partial_arg$4, param);
-        };
         return (function (fold) {
-                  return Ley_Transducer$OptolithClient.$great$great$tilde(isValidShort({
-                                  HASH: /* Disadvantage */255955901,
-                                  VAL: staticDisadvantage.id
-                                }, fold), (function (x) {
-                                if (Curry._1(isPrejudiceAndActive, x) || Curry._1(isUnworldlyAndActive, x)) {
+                  return Ley_Transducer$OptolithClient.$great$great$tilde(isValidShort([
+                                  /* Disadvantage */6,
+                                  staticDisadvantage.id
+                                ], fold), (function (x) {
+                                if (isInfiniteActive(7, x) || isInfiniteActive(8, x)) {
                                   return true;
                                 } else if (isNotRequiredNotActive(hero.disadvantages, maybeHeroEntry)(x)) {
                                   return Ley_List$OptolithClient.lengthMax(1, uniqueSelections);
@@ -201,17 +194,17 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
     case /* SpecialAbility */2 :
         var staticSpecialAbility = staticEntry._0;
         var id_1$2 = staticSpecialAbility.id;
-        var id$2 = {
-          HASH: /* SpecialAbility */-789492591,
-          VAL: id_1$2
-        };
-        var partial_arg$5 = hero.specialAbilities;
+        var id$2 = [
+          /* SpecialAbility */22,
+          id_1$2
+        ];
+        var partial_arg$3 = hero.specialAbilities;
         var isNoRequiredOrActiveSelection$2 = function (param) {
-          return isNoGenericRequiredOrActiveSelectionShort(partial_arg$5, id$2, param);
+          return isNoGenericRequiredOrActiveSelectionShort(partial_arg$3, id$2, param);
         };
-        var partial_arg$6 = hero.specialAbilities;
+        var partial_arg$4 = hero.specialAbilities;
         var isNoRequiredSelection$1 = function (param) {
-          return isNoGenericRequiredSelectionShort(partial_arg$6, id$2, param);
+          return isNoGenericRequiredSelectionShort(partial_arg$4, id$2, param);
         };
         var match$2 = Id$OptolithClient.SpecialAbility.fromInt(staticSpecialAbility.id);
         if (typeof match$2 !== "number") {
@@ -226,11 +219,21 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
                       return Ley_Option$OptolithClient.mapOption((function (active) {
                                     return Ley_Option$OptolithClient.Monad.$great$great$eq(active.level, (function (level) {
                                                   var match = Ley_Option$OptolithClient.listToOption(active.options);
-                                                  if (!(level === 4 || level === 3) || !(match !== undefined && !(typeof match === "number" || match.HASH !== 61643255))) {
+                                                  if (!(level === 4 || level === 3)) {
+                                                    return ;
+                                                  }
+                                                  if (match === undefined) {
+                                                    return ;
+                                                  }
+                                                  if (match.TAG) {
+                                                    return ;
+                                                  }
+                                                  var match$1 = match._0;
+                                                  if (match$1[0] !== 0) {
                                                     return ;
                                                   } else {
                                                     return [
-                                                            match.VAL,
+                                                            match$1[1],
                                                             level
                                                           ];
                                                   }
@@ -242,13 +245,10 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
                         return function (param, param$1) {
                           return Ley_Transducer$OptolithClient.mapOptionT((function (selectOption) {
                                         var match = selectOption.id;
-                                        if (typeof match === "number") {
+                                        if (match[0] !== 0) {
                                           return ;
                                         }
-                                        if (match.HASH !== 61643255) {
-                                          return ;
-                                        }
-                                        var match$1 = Ley_List$OptolithClient.lookup(match.VAL, availableLanguages);
+                                        var match$1 = Ley_List$OptolithClient.lookup(match[1], availableLanguages);
                                         if (match$1 !== undefined) {
                                           if (match$1 !== 3) {
                                             if (match$1 !== 4) {
@@ -299,13 +299,10 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
                               var counter$1 = Caml_option.valFromOption(counter);
                               tmp = (function (selectOption) {
                                   var match = selectOption.id;
-                                  if (typeof match === "number") {
+                                  if (match[0] !== 1) {
                                     return true;
                                   }
-                                  if (match.HASH !== 290194801) {
-                                    return true;
-                                  }
-                                  var id = match.VAL;
+                                  var id = match[1];
                                   if (Curry._2(SelectOption$OptolithClient.SelectOptionMap.member, selectOption.id, counter$1)) {
                                     return Ley_Option$OptolithClient.Foldable.dis(Ley_Option$OptolithClient.Monad.liftM2((function (skill, activeApps) {
                                                       if (Ley_List$OptolithClient.lengthMax(2, activeApps)) {
@@ -321,10 +318,10 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
                             } else {
                               tmp = (function (selectOption) {
                                   var match = selectOption.id;
-                                  if (typeof match === "number" || match.HASH !== 290194801) {
+                                  if (match[0] !== 1) {
                                     return true;
                                   } else {
-                                    return isFirstSpecializationValid(match.VAL);
+                                    return isFirstSpecializationValid(match[1]);
                                   }
                                 });
                             }
@@ -336,10 +333,12 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
                                                         tmp = match !== undefined && match.TAG === /* Skill */4 ? match._0 : undefined;
                                                         return Ley_Option$OptolithClient.Monad.$less$amp$great(tmp, (function (skill) {
                                                                       var applications = Ley_List$OptolithClient.filter((function (application) {
-                                                                              var partial_arg_1 = application.id;
                                                                               var partial_arg = {
-                                                                                HASH: /* Generic */61643255,
-                                                                                VAL: partial_arg_1
+                                                                                TAG: /* Preset */0,
+                                                                                _0: [
+                                                                                  /* Generic */0,
+                                                                                  application.id
+                                                                                ]
                                                                               };
                                                                               var isInactive = Ley_Option$OptolithClient.Foldable.all((function (param) {
                                                                                       return Ley_List$OptolithClient.notElem(partial_arg, param);
@@ -423,7 +422,7 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
                   var activePropertyKnowledges = Ley_Option$OptolithClient.option(/* [] */0, Activatable_SelectOptions$OptolithClient.getActiveSelectOptions1, maybeHeroEntry);
                   var hasActivePropertyKnowledge = function (selectOption) {
                     var id = selectOption.id;
-                    if (typeof id === "number" || id.HASH !== 61643255) {
+                    if (id[0] !== 0) {
                       return false;
                     } else {
                       return Ley_List$OptolithClient.elem(id, activePropertyKnowledges);
@@ -439,7 +438,7 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
               case /* AdaptionZauber */16 :
                   var hasSpellMinimumSr = function (selectOption) {
                     var match = selectOption.id;
-                    if (typeof match === "number" || match.HASH !== 345443720) {
+                    if (match[0] !== 3) {
                       return false;
                     } else {
                       return Ley_Option$OptolithClient.option(false, (function (spell) {
@@ -449,15 +448,15 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
                                     } else {
                                       return false;
                                     }
-                                  }), Curry._2(Ley_IntMap$OptolithClient.lookup, match.VAL, hero.spells));
+                                  }), Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], hero.spells));
                     }
                   };
                   var isUnfamiliarSpell = function (selectOption) {
                     var match = selectOption.id;
-                    if (typeof match === "number" || match.HASH !== 345443720) {
+                    if (match[0] !== 3) {
                       return false;
                     } else {
-                      return Ley_Option$OptolithClient.option(false, Dependencies$OptolithClient.TransferredUnfamiliar.isUnfamiliarSpell(hero.transferredUnfamiliarSpells, magicalTraditions), Curry._2(Ley_IntMap$OptolithClient.lookup, match.VAL, staticData.spells));
+                      return Ley_Option$OptolithClient.option(false, Dependencies$OptolithClient.TransferredUnfamiliar.isUnfamiliarSpell(hero.transferredUnfamiliarSpells, magicalTraditions), Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.spells));
                     }
                   };
                   return (function (fold) {
@@ -526,8 +525,15 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
           var maybeTransferredSpellFromTradition = Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(Ley_IntMap$OptolithClient.lookup, Id$OptolithClient.SpecialAbility.toInt(/* TraditionGuildMages */9), hero.specialAbilities), (function (specialAbility) {
                   return Ley_Option$OptolithClient.Monad.$great$great$eq(Ley_Option$OptolithClient.listToOption(specialAbility.active), (function (active) {
                                 var match = Ley_Option$OptolithClient.listToOption(active.options);
+                                var tmp;
+                                if (match !== undefined && !match.TAG) {
+                                  var match$1 = match._0;
+                                  tmp = match$1[0] !== 3 ? undefined : match$1[1];
+                                } else {
+                                  tmp = undefined;
+                                }
                                 var partial_arg = staticData.spells;
-                                return Ley_Option$OptolithClient.Monad.$less$amp$great(Ley_Option$OptolithClient.Monad.$great$great$eq(match !== undefined && !(typeof match === "number" || match.HASH !== 345443720) ? match.VAL : undefined, (function (param) {
+                                return Ley_Option$OptolithClient.Monad.$less$amp$great(Ley_Option$OptolithClient.Monad.$great$great$eq(tmp, (function (param) {
                                                   return Ley_Function$OptolithClient.flip(Ley_IntMap$OptolithClient.lookup, partial_arg, param);
                                                 })), (function (spell) {
                                               return spell.traditions;
@@ -572,10 +578,10 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
               }
               var isValidId = function (selectOption) {
                 var match = selectOption.id;
-                if (typeof match === "number" || match.HASH !== 61643255) {
+                if (match[0] !== 0) {
                   return false;
                 } else {
-                  return Ley_List$OptolithClient.elem(match.VAL, availableIds);
+                  return Ley_List$OptolithClient.elem(match[1], availableIds);
                 }
               };
               return (function (fold) {
@@ -606,9 +612,9 @@ function getAvailableSelectOptionsTransducer(staticData, hero, magicalTraditions
                     
                   });
               }
-              var partial_arg$7 = Dependencies$OptolithClient.TransferredUnfamiliar.isUnfamiliarSpell(hero.transferredUnfamiliarSpells, magicalTraditions);
+              var partial_arg$5 = Dependencies$OptolithClient.TransferredUnfamiliar.isUnfamiliarSpell(hero.transferredUnfamiliarSpells, magicalTraditions);
               var isNotUnfamiliar = function (param) {
-                return Ley_Bool$OptolithClient.notP(partial_arg$7, param);
+                return Ley_Bool$OptolithClient.notP(partial_arg$5, param);
               };
               var isValueValid = function (maybeLevel, heroEntry) {
                 var match = heroEntry.value;

@@ -45,8 +45,11 @@ function getExceptionalCombatTechniqueBonus(exceptionalCombatTechnique, id) {
   return Ley_Option$OptolithClient.option(0, (function (x) {
                 return Ley_Option$OptolithClient.fromOption(0, Ley_Option$OptolithClient.Functor.$less$amp$great(Ley_Option$OptolithClient.listToOption(x.active), (function (a) {
                                   var hasBonus = Ley_Option$OptolithClient.Foldable.elem({
-                                        HASH: /* CombatTechnique */-920806756,
-                                        VAL: id
+                                        TAG: /* Preset */0,
+                                        _0: [
+                                          /* CombatTechnique */2,
+                                          id
+                                        ]
                                       }, Ley_Option$OptolithClient.listToOption(a.options));
                                   if (hasBonus) {
                                     return 1;

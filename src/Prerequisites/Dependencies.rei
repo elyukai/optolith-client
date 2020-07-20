@@ -41,7 +41,7 @@ module Flatten: {
    */
   let getRequiredSelectOptions1:
     (Ley_IntMap.t(Hero.Activatable.t), Hero.Activatable.t) =>
-    list(OneOrMany.t(Id.SelectOption.t));
+    list(OneOrMany.t(Id.Activatable.SelectOption.t));
 };
 
 module TransferredUnfamiliar: {
@@ -113,7 +113,7 @@ let getMaxLevel:
   (
     Static.t,
     Hero.t,
-    Id.t,
+    Id.All.t,
     list(Hero.Activatable.dependency),
     Ley_IntMap.t(Prerequisite.t)
   ) =>
