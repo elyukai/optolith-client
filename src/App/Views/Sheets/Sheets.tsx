@@ -230,7 +230,7 @@ export const Sheets: React.FC<Props> = props => {
           {translate (staticData) ("sheets.showattributevalues")}
         </Checkbox>
         <Dropdown
-          label="Zoom"
+          label={translate (staticData) ("sheets.zoomfactor")}
           value={Just (zoomFactor)}
           onChangeJust={setSheetZoomFactor}
           options={List (
