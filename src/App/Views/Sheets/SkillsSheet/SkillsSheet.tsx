@@ -10,8 +10,6 @@ import { SkillCombined } from "../../../Models/View/SkillCombined"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
-import { Checkbox } from "../../Universal/Checkbox"
-import { Options } from "../../Universal/Options"
 import { AttributeMods } from "../AttributeMods"
 import { Sheet } from "../Sheet"
 import { SheetWrapper } from "../SheetWrapper"
@@ -46,20 +44,11 @@ export const SkillsSheet: React.FC<Props> = props => {
     scriptsWikiEntry,
     skillsByGroup,
     skillGroupPages,
-    switchAttributeValueVisibility,
     useParchment,
   } = props
 
   return (
     <SheetWrapper>
-      <Options>
-        <Checkbox
-          checked={checkAttributeValueVisibility}
-          onClick={switchAttributeValueVisibility}
-          >
-          {translate (staticData) ("sheets.showattributevalues")}
-        </Checkbox>
-      </Options>
       <Sheet
         id="skills-sheet"
         title={translate (staticData) ("sheets.gamestatssheet.title")}

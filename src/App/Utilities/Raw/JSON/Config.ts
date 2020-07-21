@@ -154,6 +154,8 @@ export const parseConfig = async () => {
                                  Maybe (validated_data.sheetCheckAttributeValueVisibility),
                               sheetUseParchment:
                                  Maybe (validated_data.sheetUseParchment),
+                              sheetZoomFactor:
+                                 validated_data.sheetZoomFactor ?? 100,
                                enableActiveItemHints:
                                  validated_data.enableActiveItemHints,
                                locale:
@@ -190,6 +192,7 @@ export const writeConfig = (x: Record<Config>): string => {
     ...obj,
     sheetCheckAttributeValueVisibility: maybeToUndefined (obj.sheetCheckAttributeValueVisibility),
     sheetUseParchment: maybeToUndefined (obj.sheetUseParchment),
+    sheetZoomFactor: obj.sheetZoomFactor,
     locale: maybeToUndefined (obj.locale),
     fallbackLocale: maybeToUndefined (obj.fallbackLocale),
     theme: maybeToUndefined (obj.theme),

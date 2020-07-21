@@ -76,6 +76,9 @@
         "sheetUseParchment": {
           "type": "boolean"
         },
+        "sheetZoomFactor": {
+          "type": "number"
+        },
         "enableActiveItemHints": {
           "type": "boolean"
         },

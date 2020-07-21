@@ -28,6 +28,7 @@ export interface UISettingsState {
   enableActiveItemHints: boolean
   sheetCheckAttributeValueVisibility: boolean
   sheetUseParchment: boolean
+  sheetZoomFactor: number
   theme: Theme
   enableEditingHeroAfterCreationPhase: boolean
   meleeItemTemplatesCombatTechniqueFilter: Maybe<MeleeCombatTechniqueId>
@@ -59,6 +60,7 @@ export const UISettingsState =
                 enableActiveItemHints: false,
                 sheetCheckAttributeValueVisibility: false,
                 sheetUseParchment: false,
+                sheetZoomFactor: 100,
                 theme: Theme.Dark,
                 enableEditingHeroAfterCreationPhase: false,
                 meleeItemTemplatesCombatTechniqueFilter: Nothing,

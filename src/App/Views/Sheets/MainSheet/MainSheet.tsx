@@ -19,14 +19,11 @@ import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { compressList } from "../../../Utilities/Activatable/activatableNameUtils"
 import { translate } from "../../../Utilities/I18n"
 import { pipe_ } from "../../../Utilities/pipe"
-import { BorderButton } from "../../Universal/BorderButton"
-import { Options } from "../../Universal/Options"
 import { TextBox } from "../../Universal/TextBox"
 import { Sheet } from "../Sheet"
 import { SheetWrapper } from "../SheetWrapper"
 import { MainSheetAttributes } from "./MainSheetAttributes"
 import { MainSheetPersonalData } from "./MainSheetPersonalData"
-import { Checkbox } from "../../Universal/Checkbox"
 
 interface Props {
   advantagesActive: Maybe<List<Record<ActiveActivatable<Advantage>>>>
@@ -66,28 +63,13 @@ export const MainSheet: React.FC<Props> = props => {
     professionName,
     profile,
     staticData,
-    printToPDF,
     race,
     sex,
-    switchUseParchment,
     useParchment,
   } = props
 
   return (
     <SheetWrapper>
-      <Options>
-        <BorderButton
-          className="print-document"
-          label={translate (staticData) ("sheets.printtopdfbtn")}
-          onClick={printToPDF}
-          />
-        <Checkbox
-          checked={useParchment}
-          onClick={switchUseParchment}
-          >
-          {translate (staticData) ("sheets.useparchment")}
-        </Checkbox>
-      </Options>
       <Sheet
         id="main-sheet"
         title={translate (staticData) ("sheets.mainsheet.title")}
