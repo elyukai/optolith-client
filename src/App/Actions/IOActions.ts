@@ -53,7 +53,7 @@ export const requestConfigSave: ReduxAction<Promise<boolean>> =
       sheetUseParchment:
         Just (UISSA.sheetUseParchment (uiSettingsState)),
       sheetZoomFactor:
-        Just (UISSA.sheetZoomFactor (uiSettingsState)),
+        UISSA.sheetZoomFactor (uiSettingsState),
       theme: Just (UISSA.theme (uiSettingsState)),
       enableEditingHeroAfterCreationPhase:
         Just (UISSA.enableEditingHeroAfterCreationPhase (uiSettingsState)),

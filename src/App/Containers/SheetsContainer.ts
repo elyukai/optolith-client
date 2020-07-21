@@ -97,7 +97,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
   switchUseParchment () {
     dispatch (SheetActions.switchUseParchment ())
   },
-  setSheetZoomFactor (zoomFactor: string) {
+  setSheetZoomFactor (zoomFactor: number) {
     dispatch (SheetActions.setSheetZoomFactor (zoomFactor))
   },
   async printToPDF () {

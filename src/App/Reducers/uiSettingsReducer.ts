@@ -121,7 +121,7 @@ export const uiSettingsReducer =
             sheetUseParchment:
               fromMaybe (false) (CA.sheetUseParchment (config)),
             sheetZoomFactor:
-              fromMaybe ("zoom-100") (CA.sheetZoomFactor (config)),
+              CA.sheetZoomFactor (config),
             theme: fromMaybe (Theme.Dark) (CA.theme (config)),
             enableEditingHeroAfterCreationPhase:
               fromMaybe (false) (CA.enableEditingHeroAfterCreationPhase (config)),

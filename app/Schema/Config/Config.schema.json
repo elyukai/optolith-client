@@ -77,7 +77,7 @@
           "type": "boolean"
         },
         "sheetZoomFactor": {
-          "type": "string"
+          "type": "number"
         },
         "enableActiveItemHints": {
           "type": "boolean"

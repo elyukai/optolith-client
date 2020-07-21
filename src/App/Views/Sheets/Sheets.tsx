@@ -84,7 +84,7 @@ export interface SheetsStateProps {
   name: Maybe<string>
   professionName: Maybe<string>
   useParchment: boolean
-  zoomFactor: string
+  zoomFactor: number
 
   // profession: Maybe<Record<Profession>>
   // professionVariant: Maybe<Record<ProfessionVariant>>
@@ -126,7 +126,7 @@ export interface SheetsDispatchProps {
   printToPDF (): void
   switchAttributeValueVisibility (): void
   switchUseParchment (): void
-  setSheetZoomFactor (zoomFactor: string): void
+  setSheetZoomFactor (zoomFactor: number): void
 }
 
 type Props = SheetsStateProps & SheetsDispatchProps & SheetsOwnProps
@@ -235,23 +235,23 @@ export const Sheets: React.FC<Props> = props => {
           onChangeJust={setSheetZoomFactor}
           options={List (
             DropdownOption ({
-              id: Just ("zoom-100"),
+              id: Just (100),
               name: "100%",
             }),
             DropdownOption ({
-              id: Just ("zoom-125"),
+              id: Just (125),
               name: "125%",
             }),
             DropdownOption ({
-              id: Just ("zoom-150"),
+              id: Just (150),
               name: "150%",
             }),
             DropdownOption ({
-              id: Just ("zoom-175"),
+              id: Just (175),
               name: "175%",
             }),
             DropdownOption ({
-              id: Just ("zoom-200"),
+              id: Just (200),
               name: "200%",
             }),
           )}
@@ -260,7 +260,7 @@ export const Sheets: React.FC<Props> = props => {
       </Options>
       <Scroll className={classListMaybe (List (
                   Just ("sheet-wrapper"),
-                  Just (zoomFactor)
+                  Just (`zoom-${zoomFactor}`)
                 ))}
               >
         <MainSheet
