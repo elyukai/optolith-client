@@ -1,3 +1,38 @@
+## 1.4.0
+
+### Nieuwe features
+
+- Italian translation
+- Optional paper-style background for character sheet. [#36](https://github.com/elyukai/optolith-client/issues/36)
+
+### Verbeteringen
+
+- Weight is now shown in an own column in equipment tab. [#305](https://github.com/elyukai/optolith-client/issues/305)
+- Unnecessary combat sheets are not used anymore, it now depends on which armor the character has. It defaults to the normal armor if no armor is present. [#407](https://github.com/elyukai/optolith-client/issues/407)
+- You can now click on entry names as well to show it's rules text. [#556](https://github.com/elyukai/optolith-client/issues/556)
+
+### Probleemoplossingen
+
+- Variants of profession *Blessed One of Boron* had wrong skill modifications. [#548](https://github.com/elyukai/optolith-client/issues/548)
+- Profession *White Mage (Sword & Staff)* had a wrong AP value and an additional skill modification. [#568](https://github.com/elyukai/optolith-client/issues/568)
+- Fixed common professions of a culture will now be shown even if they are not from the **Core Rules**. [#563](https://github.com/elyukai/optolith-client/issues/563)
+
+### API
+
+There are important and breaking changes coming with the next release, so if you use the Optolith source or save data, I'd recommend to come over to [Discord](https://discord.gg/wfdgB9g) so that I can tell you what is going to be changed in detail. Since more and more people depend on Optolith's data I will now follow semantic versioning strictly so that you can rely on the compatibility of source files just by checking out the version number. There will be a new format for heroes as well as for the source data. You can also give feedback on the changes, since they are not *completely* done yet &ndash; but I still think it would make sense to check out the changes as early as possible. The next major version is still a bit away, so you'll have plenty of time to adjust your software.
+
+### Thank you
+
+Last but definitely not least a big **Thank You** to the following people on GitHub who contributed to this release!
+
+- [Jonas (@Rahjenaos)](https://github.com/Rahjenaos)
+- [Jordok (@Jordok)](https://github.com/Jordok)
+- [JoveToo (@JoveToo)](https://github.com/JoveToo)
+- [Lorenz Cuno Klopfenstein (@LorenzCK)](https://github.com/LorenzCK)
+- [manuelstengelberger (@manuelstengelberger)](https://github.com/manuelstengelberger)
+- [Philipp A. (@flying-sheep)](https://github.com/flying-sheep)
+- [ZeSandman (@ZeSandman)](https://github.com/ZeSandman)
+
 ## 1.3.2
 
 ### Probleemoplossingen

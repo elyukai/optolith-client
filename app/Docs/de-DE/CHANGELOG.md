@@ -1,3 +1,56 @@
+## 1.4.0
+
+### Features
+
+- **Havena &ndash; Versunkene Geheimnisse**
+- **Unendlichkeit & Tiefenrausch**
+- **Katakomben & Ruinen**
+- Italienische Übersetzung
+- Optionaler Charakterbogenhintergrund in Papieroptik. [#36](https://github.com/elyukai/optolith-client/issues/36)
+
+### Verbesserungen
+
+- Im Ausrüstungstab wird das Gewicht nun in einer eigenen Spalte angezeigt. [#305](https://github.com/elyukai/optolith-client/issues/305)
+- Unnötige Kampfbögen werden jetzt nicht mehr angezeigt und exportiert, stattdessen basiert die Anzeige nun darauf, welche Rüstungen der jeweilige Charakter besitzt. Der Kampfbogen für Komplettrüstungen wird angezeigt, wenn der Charakter keine Rüstung besitzt. [#407](https://github.com/elyukai/optolith-client/issues/407)
+- Der Name eines Eintrags zeigt nun, wie der Info-Button am Ende, den Regeltext des Eintrags an. [#556](https://github.com/elyukai/optolith-client/issues/556)
+
+### Fehlerbehebungen
+
+- Waffen aus **Aventurische Magie I** wurden nicht angezeigt. [#617](https://github.com/elyukai/optolith-client/issues/617)
+- Gegenstände aus **Aventurische Magie II** wurden nicht angezeigt. [#659](https://github.com/elyukai/optolith-client/issues/659)
+- In der Beschreibung der SF *Metessa Galora-Stil* war ein Schreibfehler. [#635](https://github.com/elyukai/optolith-client/issues/635)
+- SF *Tannhaus-Stil* hatte eine falsche Kampftechniken-Angabe. [#634](https://github.com/elyukai/optolith-client/issues/634)
+- SF *Sippenkrieger-Stil* hatte falsche erweiterte Sonderfertigkeiten. [#587](https://github.com/elyukai/optolith-client/issues/587)
+- Bei der Profession *Golgarit* und dessen Variante *Untotenjäger* fehlte die SF *Berittener Kampf*. [#597](https://github.com/elyukai/optolith-client/issues/597)
+- Die Profession *Ingerimmgeweihter* hatte falsche AP-Kosten und ihr fehlte eine Liturgie. [#574](https://github.com/elyukai/optolith-client/issues/574)
+- Die Varianten der Profession *Borongeweihter* hatten falsche Talentmodifikationen. [#548](https://github.com/elyukai/optolith-client/issues/548)
+- SF *Rabenschwestern (Seherin von Heute und Morgen)* hatte falsche erweiterte Sonderfertigkeiten. [#639](https://github.com/elyukai/optolith-client/issues/639)
+- Profession *Kammerdiener (Zofe)* hatte einen Bonus auf das falsche Talent. [#614](https://github.com/elyukai/optolith-client/issues/614)
+- SF *Elfenfreund* hatte Errata, die aber noch nicht eingepflegt waren. [#621](https://github.com/elyukai/optolith-client/issues/621)
+- Profession *Weißmagier (Schwert & Stab zu Gareth)* hatte einen falschen AP-Wert und eine zusätzliche Talentmodifikation. [#568](https://github.com/elyukai/optolith-client/issues/568)
+- Der Name der Variante *Pfad der Wächterin* der Profession *Gildenlose Magierin (Bannakademie von Fasar)* hatte einen Schreibfehler. [#566](https://github.com/elyukai/optolith-client/issues/566)
+- Zauber *Skelettarius* hatte die Zauberweiterung *Längere Dienste* statt *Längerer Dienst* und auch einen falschen Beschreibungstext. [#602](https://github.com/elyukai/optolith-client/issues/602)
+- Spezifisch definierte übliche Professionen einer Kultur werden nun auch dann angezeigt, wenn sie nicht aus dem **Regelwerk** stammen. [#563](https://github.com/elyukai/optolith-client/issues/563)
+- SF *Balboram-Stil* hatte Lanzenangriff I statt Beidhändiger Kampf I als Voraussetzung. [#563](https://github.com/elyukai/optolith-client/issues/563)
+- Der Erfahrungsgrad *Brillant* wurde zuvor Brilliant geschrieben. Das gleiche Problem gab es auch bei anderen Einträgen. [#567](https://github.com/elyukai/optolith-client/issues/567)
+- Zauber *Halluzination* hatte als Verbreitung Elfen, obwohl es Druiden hätte sein müssen. [#564](https://github.com/elyukai/optolith-client/issues/564)
+
+### API
+
+Die nächste Release wird wichtige und mit vorherigen Versionen inkompatible Änderungen mit sich bringen, wenn du also Optolith-Quelldateien oder -Speicherdateien nutzt, würde ich dir empfehlen, mal auf [Discord](https://discord.gg/wfdgB9g) vorbeizuschauen, da kann ich dir dann alles im Detail erläutern. Da mehr und mehr Menschen von der Optolith-Datenbasis abhängen, werde ich ab jetzt Semantic Versioning strikt folgen, sodass du dich allein auf Basis der Version darauf verlassen kannst, dass du mit deiner Software immer noch damit arbeiten kannst. Es wird ein neues Format für Charaktere, aber auch für sämtliche Wikieinträge geben. Du kannst mir auch immer noch Feedback zukommen lassen, da noch nicht alles bis ins letzte Detail fertig ist &ndash; aber ich denke, es macht immer noch Sinn, sich diese Änderungen recht früh anzusehen. Die nächste major Version ist immer noch ein gutes Stück entfernt, sodass noch mehr als genug Zeit ist, um deine Software anzupassen.
+
+### Danke
+
+Zu guter Letzt ein großes **Danke** an die folgenden Menschen auf GitHub, die an dieser Version mitgewirkt haben!
+
+- [Jonas (@Rahjenaos)](https://github.com/Rahjenaos)
+- [Jordok (@Jordok)](https://github.com/Jordok)
+- [JoveToo (@JoveToo)](https://github.com/JoveToo)
+- [Lorenz Cuno Klopfenstein (@LorenzCK)](https://github.com/LorenzCK)
+- [manuelstengelberger (@manuelstengelberger)](https://github.com/manuelstengelberger)
+- [Philipp A. (@flying-sheep)](https://github.com/flying-sheep)
+- [ZeSandman (@ZeSandman)](https://github.com/ZeSandman)
+
 ## 1.3.2
 
 ### Fehlerbehebungen
