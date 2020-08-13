@@ -1,53 +1,51 @@
-## Is there a character sheet and where can I find it?
+## Is er een heldendocument en waar vind ik het?
 
-Yes, there is a character sheet you can export as a PDF! To do that, you have to end hero creation in the character's profile first. To do *that*, you need to have a maximum of 10 AP left &ndash; and you can't have too much AP spent, obviously. If you end it, you'll see the new tab *Character Sheet* above. In that tab you'll get a preview of your sheet and then you can export it via the button in the top left corner!
+Ja, er is een heldendocument en je kan het exporteren als PDF! Om dat te doen, moet je eerst je held creatie afmaken. Daarvoor mag je maximum 10 AP overhouden &ndash; en je kan natuurlijk ook niet te veel AP hebben uitgegeven. Als je de helden creatie succesvol beëindigd hebt, zie je een nieuwe tab "Heldendocument" bovenaan. In die tab vind je een preview van je heldendocument en je kan dat exporteren met de knop in de linker boven hoek, "Als PDF bewaren".
 
-Might be relevant: There's only an DIN A4 version available!
+Er is enkel een DIN A4 formaat beschikbaar!
 
-## I can't add spells or liturgical chants!
+## Ik kan geen spreuken of liturgieën toevoegen!
 
-It's likely you do not meet the prerequisites for adding spells or liturgical chants:
+Je mist waarschijnlijk de vereisten om spreuken of liturgieën toe te voegen:
 
-### Spells:
+### Spreuken:
 
-- Buy advantage *Spellcaster*.
-- Buy the magical special ability *Tradition*.
+- Koop het voordeel *Tovenaar*.
+- Koop de magische Competentie *Traditie*
 
-### Liturgical Chants:
+### Liturgieën:
 
-* Buy advantage *Blessed One*.
-* Buy the blessed special ability *Tradition*.
+* Koop het voordeel *Gewijde*.
+* Koop de gewijde Competentie *Tradition*.
 
-## I can't buy stronger invocations!
+## Ik kan geen hogere invocaties kopen!
 
-Stronger invocation rituals have prerequisites that you can find in the **Core Rules** on page **263**:
+Hogere invocatie rituelen hebben vereisten die je in de **Basis regels** kan vinden op pagina **263**:
 
 * Invocatio Minor: Invocatio Minima 10
 * Invocatio Maior: Invocatio Minor 12
-* Elemental Servant: Manifesto 10
-* Call Djinn: Elemental Servant 12
+* Elementale Dienaar: Manifesto 10
+* Djinnenroep: Elementale Dienaar 12
 
-## Why do I have the combat sheet twice?!
+## Hoe kan ik extra LP/AE/KP kopen?
 
-The first lists the default armor from the CR below *Armor* on the sheet. The second lists the hit zone armor with their different PRO values per hit zone there instead. If you have both sheets it's likely you have both default armor and hit zone armor for your character.
+Dat hangt er vanaf of je nog in de creatie fase bent of die al beeindigd hebt:
 
-## How can I buy additional LP/AE/KP?
+* *Tijdens helden creatie* kan je extra LP/AE/KP kopen via de voordelen *Hoge Levenskracht/Astrale Kracht/Karmale Kracht I-VII*. Als je daarin geïnteresseerd bent, kan je die best nu nemen want je kan normaal geen Voordelen bijkopen als deze fase beëindigd is.
+* *Na de helden creatie*, om extra LP/AE/KP toe te voegen, gebruik je de &raquo;+&laquo; knop onder de respectivelijk energie in the *Eigenschappen* tab. De maximale waarden hiervoor worden berekend volgens de regels van de **Basis Regels** p. **350&ndash;352**.
 
-That depends on whether you are still in hero creation phase or have completed that.
+## Waar vind ik mijn opgeslagen helden?
 
-* *During hero creation* you can add additional LP/AE/KP via the advantages *Increased Life Points/Arcane Power/Karma Points I-VII*. You should use them if you are interested in higher values because you can usually not buy advantages afterwards!
-* *After hero creation*, to add additional LP/AE/KP, use the &raquo;+&laquo; button below the respective energy in the *Attributes* tab. The maximum values for these are calculated by using the rules from the **Core Rules** p. **350&ndash;352**.
+Helden en andere files zoals de configuratie kan je vinden in de volgende locatie, afhankelijk van je OS:
 
-## Where do I find my saved characters?
-
-Characters and other files such as the application configuration can be found at the following locations, depending on the OS you use:
-
-- *Windows:* `C:/Users/<User>/AppData/Roaming/Optolith`, where `<User>` is the name of your user folder
-- *Linux:* `$XDG_CONFIG_HOME/Optolith` or `~/.config/Optolith`
+- *Windows:* `C:/Users/<User>/AppData/Roaming/Optolith`, met `<User>` de naam van je gebruiker
+- *Linux:* `$XDG_CONFIG_HOME/Optolith` of `~/.config/Optolith`
 - *macOS:* `~/Library/Application Support/Optolith`
 
-A list of relevant files:
+Een lijst met relevante files:
 
-- `heroes.json ` contains all heroes saved in Optolith
-- `config.json` contains the configuration of your Optolith. It does not contain critical data but things like color theme, language (only if you selected a specific one) and alike.
-  *A note on Windows:* `AppData` is a *hidden* folder. To be able to see it, check out the Windows Explorer, go to the *View* tab and activate the setting *Hidden elements*.
+- `heroes.json ` bevat alle helden opgeslagen in Optolith
+- `config.json` bevat de configuratie van Optolith. Het bevat geen kritieke data maar dingen zoals theme, taal (alleen als je een specifieke taal gekozen hebt) en zoverder.
+  *Een noot voor Windows:* `AppData` is een *verborgen* folder. Om die te kunnen zien, open Windows Explorere, ga naar de  "View" tab en activeer de setting "Hidden elements".
+
+  
