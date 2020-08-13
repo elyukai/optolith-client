@@ -27,10 +27,6 @@ Hogere invocatie rituelen hebben vereisten die je in de **Basis regels** kan vin
 * Elementale Dienaar: Manifesto 10
 * Djinnenroep: Elementale Dienaar 12
 
-## Waarom heb ik de gevechtspagina twee keer?!
-
-The first lists the default armor from the CR below *Armor* on the sheet. The second lists the hit zone armor with their different PRO values per hit zone there instead. If you have both sheets it's likely you have both default armor and hit zone armor for your character.
-
 ## Hoe kan ik extra LP/AE/KP kopen?
 
 Dat hangt er vanaf of je nog in de creatie fase bent of die al beeindigd hebt:
