@@ -2,11 +2,13 @@
 
 ### Features
 
-- **Havena &ndash; Versunkene Geheimnisse**
-- **Unendlichkeit & Tiefenrausch**
-- **Katakomben & Ruinen**
-- Italienische Übersetzung
+- **Havena &ndash; Versunkene Geheimnisse** [#460](https://github.com/elyukai/optolith-client/issues/460)
+- **Unendlichkeit & Tiefenrausch** [#461](https://github.com/elyukai/optolith-client/issues/461)
+- **Katakomben & Ruinen** [#462](https://github.com/elyukai/optolith-client/issues/462)
+- Italienische Übersetzung [#667](https://github.com/elyukai/optolith-client/issues/667) [#610](https://github.com/elyukai/optolith-client/issues/610)
 - Optionaler Charakterbogenhintergrund in Papieroptik. [#36](https://github.com/elyukai/optolith-client/issues/36)
+- Zoom-Option für Charakterbogen-Ansicht. [#665](https://github.com/elyukai/optolith-client/issues/665)
+- Geld zum Geldbeutel hinzufügen oder davon abziehen. [#666](https://github.com/elyukai/optolith-client/issues/666)
 
 ### Verbesserungen
 

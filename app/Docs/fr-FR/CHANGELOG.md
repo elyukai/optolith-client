@@ -2,8 +2,10 @@
 
 ### Features
 
-- Italian translation
+- Italian translation [#667](https://github.com/elyukai/optolith-client/issues/667) [#610](https://github.com/elyukai/optolith-client/issues/610)
 - Optional paper-style background for character sheet. [#36](https://github.com/elyukai/optolith-client/issues/36)
+- Character Sheet view zoom option. [#665](https://github.com/elyukai/optolith-client/issues/665)
+- Add/Subtract money from purse. [#666](https://github.com/elyukai/optolith-client/issues/666)
 
 ### Enhancements
 
