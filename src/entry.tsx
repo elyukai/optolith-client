@@ -29,8 +29,8 @@ import { Just } from "./Data/Maybe"
 import { uncurryN } from "./Data/Tuple/Curry"
 import { Unit } from "./Data/Unit"
 
-webFrame.setZoomFactor(1)
-webFrame.setVisualZoomLevelLimits(1, 1)
+webFrame.setZoomFactor (1)
+webFrame.setVisualZoomLevelLimits (1, 1)
 
 const nativeAppReducer =
   uncurryN (pipe ((x: AppStateRecord | undefined) => x === undefined ? AppState.default : x,
