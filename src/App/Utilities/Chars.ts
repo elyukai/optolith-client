@@ -8,6 +8,15 @@
 export const ndash = "–"
 
 /**
+ * `mdash :: Char`
+ *
+ * &mdash;
+ *
+ * The em dash.
+ */
+export const mdash = "—"
+
+/**
  * `minus :: Char`
  *
  * &minus;
