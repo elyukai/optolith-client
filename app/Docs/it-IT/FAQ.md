@@ -27,10 +27,6 @@ Stronger invocation rituals have prerequisites that you can find in the **Core R
 * Elemental Servant: Manifesto 10
 * Call Djinn: Elemental Servant 12
 
-## Why do I have the combat sheet twice?!
-
-The first lists the default armor from the CR below *Armor* on the sheet. The second lists the hit zone armor with their different PRO values per hit zone there instead. If you have both sheets it's likely you have both default armor and hit zone armor for your character.
-
 ## How can I buy additional LP/AE/KP?
 
 That depends on whether you are still in hero creation phase or have completed that.
