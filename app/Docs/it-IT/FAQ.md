@@ -1,49 +1,51 @@
-## Is there a character sheet and where can I find it?
+## C’è una scheda del personaggio e dove posso trovarla?
 
-Yes, there is a character sheet you can export as a PDF! To do that, you have to end hero creation in the character's profile first. To do *that*, you need to have a maximum of 10 AP left &ndash; and you can't have too much AP spent, obviously. If you end it, you'll see the new tab *Character Sheet* above. In that tab you'll get a preview of your sheet and then you can export it via the button in the top left corner!
+Sì, c’è un Foglio d’Identità pronto da esportare come PDF!
+Per farlo dovrai prima terminare la fase di creazione del personaggio del tuo eroe. Per poterlo fare, dovrai innanzitutto accertarti di avere *al più* 10 Punti Avventura rimasti e di non averne spesi troppi per il tuo livello di esperienza. Una volta terminata la creazione del personaggio, comparirà la scheda *Foglio d’identità* in alto, che ti permetterà di accedere all’anteprima del foglio e di esportarlo come PDF usando il pulsante in alto a sinistra.
 
-Might be relevant: There's only an DIN A4 version available!
+Al momento il PDF è disponibile soltanto in formato DIN A4.
 
-## I can't add spells or liturgical chants!
+## Non riesco ad aggiungere incantesimi e liturgie!
 
-It's likely you do not meet the prerequisites for adding spells or liturgical chants:
+Niente paura, è probabile che semplicemente il tuo eroe non soddisfi i prerequisiti per avere accesso a magia e opere divine.
 
-### Spells:
+### Magia:
 
-- Buy advantage *Spellcaster*.
-- Buy the magical special ability *Tradition*.
+- Acquista il vantaggio *Dono della magia*.
+- Acquista una qualsiasi *Tradizione* di magia come abilità speciale.
 
-### Liturgical Chants:
+### Opere divine:
 
-* Buy advantage *Blessed One*.
-* Buy the blessed special ability *Tradition*.
+* Acquista il vantaggio *Grazia divina*.
+* Acquista una qualsiasi *Tradizione* divina come abilità speciale.
 
-## I can't buy stronger invocations!
+## Non riesco ad acquistare incantesimi di invocazione/evocazione più forti!
 
-Stronger invocation rituals have prerequisites that you can find in the **Core Rules** on page **263**:
+Incantesimi e rituali di invocazione/evocazione più forti hanno dei prerequisiti speciali, come indicati nel **Regolamento** a pagina **263**:
 
 * Invocatio Minor: Invocatio Minima 10
 * Invocatio Maior: Invocatio Minor 12
-* Elemental Servant: Manifesto 10
-* Call Djinn: Elemental Servant 12
+* Servitore elementale: Manifesto 10
+* Richiamo del genio: Servitore elementale 12
 
-## How can I buy additional LP/AE/KP?
+## Come posso acquistare altri PV/PA/PK?
 
-That depends on whether you are still in hero creation phase or have completed that.
+Dipende. Il meccanismo cambia se sei ancora nella fase di creazione del personaggio oppure se il personaggio è già stato creato.
 
-* *During hero creation* you can add additional LP/AE/KP via the advantages *Increased Life Points/Arcane Power/Karma Points I-VII*. You should use them if you are interested in higher values because you can usually not buy advantages afterwards!
-* *After hero creation*, to add additional LP/AE/KP, use the &raquo;+&laquo; button below the respective energy in the *Attributes* tab. The maximum values for these are calculated by using the rules from the **Core Rules** p. **350&ndash;352**.
+* *Durante la fase di creazione* è possibile acquistare altri PV/PA/PK tramite i vantaggi *Elevata energia vitale/astrale/karmica* (con livello da I a VII). È bene sceglierli in questa fase se si punta ad avere un numero elevato di PV/PA/PK, perché non è possibile acquistare vantaggi dopo aver creato l’eroe!
+* *Dopo la fase di creazione*, è possibile acquistare PV/PA/PK aggiuntivi usando il pulsante **&raquo;+&laquo;** sotto al rispettivo indicatore dei punti nella scheda degli *Attributi*. Il valore massimo impostabile in questo modo è calcolato usando le regole del **Regolamento** a pag. **350–352**.
 
-## Where do I find my saved characters?
+## Dove trovo i miei personaggi memorizzati?
 
-Characters and other files such as the application configuration can be found at the following locations, depending on the OS you use:
+Personaggi ed altri file, come la configurazione dell’applicazione, si trovano ai seguenti percorsi in base al sistema operativo utilizzato:
 
-- *Windows:* `C:/Users/<User>/AppData/Roaming/Optolith`, where `<User>` is the name of your user folder
-- *Linux:* `$XDG_CONFIG_HOME/Optolith` or `~/.config/Optolith`
-- *macOS:* `~/Library/Application Support/Optolith`
+- *Windows:* `C:/Users/<User>/AppData/Roaming/Optolith`, dove `<User>` è il tuo nome utente.
+- *Linux:* `$XDG_CONFIG_HOME/Optolith` oppure `~/.config/Optolith`.
+- *macOS:* `~/Library/Application Support/Optolith`.
 
-A list of relevant files:
+Una lista dei file che possono essere rilevanti:
 
-- `heroes.json ` contains all heroes saved in Optolith
-- `config.json` contains the configuration of your Optolith. It does not contain critical data but things like color theme, language (only if you selected a specific one) and alike.
-  *A note on Windows:* `AppData` is a *hidden* folder. To be able to see it, check out the Windows Explorer, go to the *View* tab and activate the setting *Hidden elements*.
+- `heroes.json` contiene tutti gli eroi memorizzati da Optolith.
+- `config.json` contiene la configurazione utilizzata dall’applicazione. Non contiene dati di natura critica, ma informazioni come il colore del tema, la lingua attiva e così via.
+
+*Nota bene per utenti Windows:* `AppData` è una cartella *nascosta*. Per visualizzarla in Esplora Risorse, è necessario accedere alla scheda *Visualizza* e attivare la visualizzazione degli *Elementi nascosti*.
