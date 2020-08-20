@@ -1,14 +1,17 @@
 ## 1.4.0
 
-Initial Italian release.
+Primo rilascio della versione italiana.
 
 ### API
 
-There are important and breaking changes coming with the next release, so if you use the Optolith source or save data, I'd recommend to come over to [Discord](https://discord.gg/wfdgB9g) so that I can tell you what is going to be changed in detail. Since more and more people depend on Optolith's data I will now follow semantic versioning strictly so that you can rely on the compatibility of source files just by checking out the version number. There will be a new format for heroes as well as for the source data. You can also give feedback on the changes, since they are not *completely* done yet &ndash; but I still think it would make sense to check out the changes as early as possible. The next major version is still a bit away, so you'll have plenty of time to adjust your software.
+Ci sono importanti modifiche in questa nuova versione, che cambiano anche il modo in cui sono memorizzati i dati. Se fai uso dei file memorizzati da Optolith, è possibile fare un salto su [Discord](https://discord.gg/wfdgB9g) in modo da avere più informazioni sulle modifiche nel dettaglio.
+Siccome sempre più persone fanno uso dei dati di Optolith, da questa versione in poi seguiremo le regole del *versionamento semantico*, in modo da permettere agli utenti di fare affidamento alla compatibilità dei file sorgente e dei file dei dati, verificandone soltanto il numero di versione.
+Ci sarà un nuovo formato di dati sia per gli eroi memorizzati che per i dati sorgente.
+Le modifiche non sono ancora finalizzate e la nuova versione maggiore è ancora lontana, ma è consigliato aggiornarsi al nuovo formato di dati il prima possibile.
 
 ### Thank you
 
-Last but definitely not least a big **Thank You** to the following people on GitHub who contributed to this release!
+Come ultimo punto, ma non per importanza, un grandissimo **grazie** alle seguenti persone su GitHub che hanno contribuito a questa versione!
 
 - [Jonas (@Rahjenaos)](https://github.com/Rahjenaos)
 - [Jordok (@Jordok)](https://github.com/Jordok)
