@@ -209,6 +209,10 @@ export const equals = <A> (x1: A) => (x2: A): boolean => {
       return x2 instanceof Date && x1 .toISOString () === x2 .toISOString ()
     }
 
+    if (typeof x1 === "object" && typeof x2 === "object") {
+      return Object.entries (x1) .every (([ k1, v1 ]) => equals ((x2 as any)[k1]) (v1))
+    }
+
     return x1 === x2
   }
 
