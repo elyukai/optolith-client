@@ -1,8 +1,7 @@
-// @ts-check
-const { sortByMulti, comparingR, sortRecordsByName, sortStrings } = require ("../sortBy")
-const { compare } = require ("../../../Data/Num")
-const { List } = require ("../../../Data/List")
-const { fromDefault } = require ("../../../Data/Record")
+import { List } from "../../../Data/List"
+import { compare } from "../../../Data/Num"
+import { fromDefault } from "../../../Data/Record"
+import { comparingR, sortByMulti } from "../sortBy"
 
 describe ("sortByMulti", () => {
   it ("sorts a list of record by one comparing factor", () => {

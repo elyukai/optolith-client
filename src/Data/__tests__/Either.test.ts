@@ -1,24 +1,20 @@
-// @ts-check
-const { Internals } = require('../Internals');
-const { List } = require('../List')
-const { Pair } = require('../Tuple')
-const { Either } = require('../Either')
-const { add } = require('../Num')
+import { Either } from "../Either"
+import { Internals } from "../Internals"
+import { List } from "../List"
+import { add } from "../Num"
+import { Pair } from "../Tuple"
 
-const Just = Internals.Just
-const Nothing = Internals.Nothing
-const Left = Internals.Left
-const Right = Internals.Right
+const { Just, Nothing, Left, Right } = Internals
 
 // CONSTRUCTORS
 
-test ('Right', () => {
+test ("Right", () => {
   expect (Right (3) .value) .toEqual (3)
   expect (Right (3) .isRight) .toEqual (true)
   expect (Right (3) .isLeft) .toEqual (false)
 })
 
-test ('Left', () => {
+test ("Left", () => {
   expect (Left (3) .value) .toEqual (3)
   expect (Left (3) .isRight) .toEqual (false)
   expect (Left (3) .isLeft) .toEqual (true)
@@ -26,79 +22,79 @@ test ('Left', () => {
 
 // EITHER.EXTRA
 
-test ('fromLeft', () => {
+test ("fromLeft", () => {
   expect (Either.fromLeft (0) (Left (3)))
     .toEqual (3)
   expect (Either.fromLeft (0) (Right (3)))
     .toEqual (0)
 })
 
-test ('fromRight', () => {
+test ("fromRight", () => {
   expect (Either.fromRight (0) (Right (3)))
     .toEqual (3)
   expect (Either.fromRight (0) (Left (3)))
     .toEqual (0)
 })
 
-test ('fromEither', () => {
+test ("fromEither", () => {
   expect (Either.fromEither (Right (3)))
     .toEqual (3)
   expect (Either.fromEither (Left (0)))
     .toEqual (0)
 })
 
-test ('fromLeft_', () => {
+test ("fromLeft_", () => {
   expect (Either.fromLeft_ (Left (3)))
     .toEqual (3)
-  expect (() => Either.fromLeft_ (Right (3)))
+  expect (() => Either.fromLeft_ (Right (3) as any))
     .toThrow ()
 })
 
-test ('fromRight_', () => {
+test ("fromRight_", () => {
   expect (Either.fromRight_ (Right (3)))
     .toEqual (3)
-  expect (() => Either.fromRight_ (Left (3)))
+  expect (() => Either.fromRight_ (Left (3) as any))
     .toThrow ()
 })
 
-test ('eitherToMaybe', () => {
+test ("eitherToMaybe", () => {
   expect (Either.eitherToMaybe (Left (3)))
     .toEqual (Nothing)
   expect (Either.eitherToMaybe (Right (3)))
     .toEqual (Just (3))
 })
 
-test ('maybeToEither', () => {
-  expect (Either.maybeToEither ('test') (Just (3)))
+test ("maybeToEither", () => {
+  expect (Either.maybeToEither ("test") (Just (3)))
     .toEqual (Right (3))
-  expect (Either.maybeToEither ('test') (Nothing))
-    .toEqual (Left ('test'))
+  expect (Either.maybeToEither ("test") (Nothing))
+    .toEqual (Left ("test"))
 })
 
-test ('maybeToEither_', () => {
-  expect (Either.maybeToEither_ (() => 'test') (Just (3)))
+test ("maybeToEither_", () => {
+  expect (Either.maybeToEither_ (() => "test") (Just (3)))
     .toEqual (Right (3))
-  expect (Either.maybeToEither_ (() => 'test') (Nothing))
-    .toEqual (Left ('test'))
+  expect (Either.maybeToEither_ (() => "test") (Nothing))
+    .toEqual (Left ("test"))
 })
 
 // BIFUNCTOR
 
-test ('bimap', () => {
+test ("bimap", () => {
   expect (Either.bimap (add (5)) (add (10)) (Left (3)))
     .toEqual (Left (8))
   expect (Either.bimap (add (5)) (add (10)) (Right (3)))
     .toEqual (Right (13))
 })
 
-test ('first', () => {
+test ("first", () => {
   expect (Either.first (add (5)) (Left (3)))
     .toEqual (Left (8))
   expect (Either.first (add (5)) (Right (3)))
     .toEqual (Right (3))
 })
 
-test ('second', () => {
+test ("second", () => {
   expect (Either.second (add (10)) (Left (3)))
     .toEqual (Left (3))
   expect (Either.second (add (10)) (Right (3)))
@@ -107,148 +103,152 @@ test ('second', () => {
 
 // APPLICATIVE
 
-test ('pure', () => {
+test ("pure", () => {
   expect (Either.pure (2)) .toEqual (Right (2))
 })
 
-test ('ap', () => {
-  expect (Either.ap (Right (x => x * 2)) (Right (3)))
+test ("ap", () => {
+  expect (Either.ap (Right ((x: number) => x * 2)) (Right (3)))
     .toEqual (Right (6))
-  expect (Either.ap (Right (x => x * 2)) (Left ('b')))
-    .toEqual (Left ('b'))
-  expect (Either.ap (Left ('a')) (Right (3)))
-    .toEqual (Left ('a'))
-  expect (Either.ap (Left ('a')) (Left ('b')))
-    .toEqual (Left ('a'))
+  expect (Either.ap (Right ((x: number) => x * 2)) (Left ("b")))
+    .toEqual (Left ("b"))
+  expect (Either.ap (Left ("a")) (Right (3)))
+    .toEqual (Left ("a"))
+  expect (Either.ap (Left ("a")) (Left ("b")))
+    .toEqual (Left ("a"))
 })
 
 // MONAD
 
-test ('bind', () => {
-  expect (Either.bind (Left (3))
-                      (x => Right (x * 2)))
+test ("bind", () => {
+  expect (Either.bind<number, number> (Left (3))
+                                      (x => Right (x * 2)))
     .toEqual (Left (3))
   expect (Either.bind (Right (2))
-                      (x => Right (x * 2)))
+                      ((x: number) => Right (x * 2)))
     .toEqual (Right (4))
   expect (Either.bind (Right (2))
-                      (x => Left (x * 2)))
+                      ((x: number) => Left (x * 2)))
     .toEqual (Left (4))
 })
 
-test ('bindF', () => {
-  expect (Either.bindF (x => Right (x * 2))
+test ("bindF", () => {
+  expect (Either.bindF ((x: number) => Right (x * 2))
                        (Left (3)))
     .toEqual (Left (3))
-  expect (Either.bindF (x => Right (x * 2))
+  expect (Either.bindF ((x: number) => Right (x * 2))
                        (Right (2)))
     .toEqual (Right (4))
-  expect (Either.bindF (x => Left (x * 2))
+  expect (Either.bindF ((x: number) => Left (x * 2))
                        (Right (2)))
     .toEqual (Left (4))
 })
 
-test ('then', () => {
+test ("then", () => {
   expect (Either.then (Right (3)) (Right (2)))
     .toEqual (Right (2))
-  expect (Either.then (Left ('a')) (Right (2)))
-    .toEqual (Left ('a'))
-  expect (Either.then (Right (3)) (Left ('b')))
-    .toEqual (Left ('b'))
-  expect (Either.then (Left ('a')) (Left ('b')))
-    .toEqual (Left ('a'))
+  expect (Either.then (Left ("a")) (Right (2)))
+    .toEqual (Left ("a"))
+  expect (Either.then (Right (3)) (Left ("b")))
+    .toEqual (Left ("b"))
+  expect (Either.then (Left ("a")) (Left ("b")))
+    .toEqual (Left ("a"))
 })
 
-test ('kleisli', () => {
-  expect (Either.kleisli (x => x > 5 ? Left ('too large') : Right (x))
-                         (x => x < 0 ? Left ('too low') : Right (x))
+test ("kleisli", () => {
+  expect (Either.kleisli ((x: number) => x > 5 ? Left ("too large") : Right (x))
+                         ((x: number) => x < 0 ? Left ("too low") : Right (x))
                          (2))
     .toEqual (Right (2))
-  expect (Either.kleisli (x => x > 5 ? Left ('too large') : Right (x))
-                         (x => x < 0 ? Left ('too low') : Right (x))
+  expect (Either.kleisli ((x: number) => x > 5 ? Left ("too large") : Right (x))
+                         ((x: number) => x < 0 ? Left ("too low") : Right (x))
                          (6))
-    .toEqual (Left ('too large'))
-  expect (Either.kleisli (x => x > 5 ? Left ('too large') : Right (x))
-                         (x => x < 0 ? Left ('too low') : Right (x))
+    .toEqual (Left ("too large"))
+  expect (Either.kleisli ((x: number) => x > 5 ? Left ("too large") : Right (x))
+                         ((x: number) => x < 0 ? Left ("too low") : Right (x))
                          (-1))
-    .toEqual (Left ('too low'))
+    .toEqual (Left ("too low"))
 })
 
-test ('join', () => {
+test ("join", () => {
   expect (Either.join (Right (Right (3))))
     .toEqual (Right (3))
-  expect (Either.join (Right (Left ('test'))))
-    .toEqual (Left ('test'))
-  expect (Either.join (Left (Left ('test'))))
-    .toEqual (Left (Left ('test')))
+  expect (Either.join (Right (Left ("test"))))
+    .toEqual (Left ("test"))
+  expect (Either.join (Left (Left ("test"))))
+    .toEqual (Left (Left ("test")))
 })
 
-test ('mapM', () => {
+test ("mapM", () => {
   expect (
-    Either.mapM (x => x === 2 ? Left ("test") : Right (x + 1))
+    Either.mapM ((x: number) => x === 2 ? Left ("test") : Right (x + 1))
                 (List.empty)
   )
     .toEqual (Right (List.empty))
 
   expect (
-    Either.mapM (x => x === 2 ? Left ("test") : Right (x + 1))
+    Either.mapM ((x: number) => x === 2 ? Left ("test") : Right (x + 1))
                 (List (1, 3))
   )
     .toEqual (Right (List (2, 4)))
 
   expect (
-    Either.mapM (x => x === 2 ? Left ("test") : Right (x + 1))
+    Either.mapM ((x: number) => x === 2 ? Left ("test") : Right (x + 1))
                 (List (1, 2, 3))
   )
     .toEqual (Left ("test"))
 })
 
-test ('liftM2', () => {
-  expect (Either.liftM2 (x => y => x + y) (Right (1)) (Right (2))) .toEqual (Right (3))
-  expect (Either.liftM2 (x => y => x + y) (Left ("x")) (Right (2))) .toEqual (Left ("x"))
-  expect (Either.liftM2 (x => y => x + y) (Right (1)) (Left ("y"))) .toEqual (Left ("y"))
-  expect (Either.liftM2 (x => y => x + y) (Left ("x")) (Left ("y"))) .toEqual (Left ("x"))
+test ("liftM2", () => {
+  expect (Either.liftM2 ((x: number) => (y: number) => x + y) (Right (1)) (Right (2)))
+    .toEqual (Right (3))
+  expect (Either.liftM2 ((x: number) => (y: number) => x + y) (Left ("x")) (Right (2)))
+    .toEqual (Left ("x"))
+  expect (Either.liftM2 ((x: number) => (y: number) => x + y) (Right (1)) (Left ("y")))
+    .toEqual (Left ("y"))
+  expect (Either.liftM2 ((x: number) => (y: number) => x + y) (Left ("x")) (Left ("y")))
+    .toEqual (Left ("x"))
 })
 
 // FOLDABLE
 
-test ('foldr', () => {
-  expect (Either.foldr (x => acc => x * 2 + acc) (2) (Right (3)))
+test ("foldr", () => {
+  expect (Either.foldr ((x: number) => (acc: number) => x * 2 + acc) (2) (Right (3)))
     .toEqual (8)
-  expect (Either.foldr (x => acc => x * 2 + acc) (2) (Left ('a')))
+  expect (Either.foldr ((x: number) => (acc: number) => x * 2 + acc) (2) (Left ("a")))
     .toEqual (2)
 })
 
-test ('foldl', () => {
-  expect (Either.foldl (acc => x => x * 2 + acc) (2) (Right (3)))
+test ("foldl", () => {
+  expect (Either.foldl ((acc: number) => (x: number) => x * 2 + acc) (2) (Right (3)))
     .toEqual (8)
-  expect (Either.foldl (acc => x => x * 2 + acc) (2) (Left ('a')))
+  expect (Either.foldl ((acc: number) => (x: number) => x * 2 + acc) (2) (Left ("a")))
     .toEqual (2)
 })
 
-test ('toList', () => {
+test ("toList", () => {
   expect (Either.toList (Right (3)))
     .toEqual (List (3))
-  expect (Either.toList (Left ('a')))
+  expect (Either.toList (Left ("a")))
     .toEqual (List ())
 })
 
-test ('fnull', () => {
+test ("fnull", () => {
   expect (Either.fnull (Right (3)))
     .toEqual (false)
-  expect (Either.fnull (Left ('a')))
+  expect (Either.fnull (Left ("a")))
     .toEqual (true)
 })
 
-test ('flength', () => {
+test ("flength", () => {
   expect (Either.flength (Right (3)))
     .toEqual (1)
-  expect (Either.flength (Left ('a')))
+  expect (Either.flength (Left ("a")))
     .toEqual (0)
 })
 
-test ('elem', () => {
-  expect (Either.elem (3) (Left ('a')))
+test ("elem", () => {
+  expect (Either.elem (3) (Left ("a")))
     .toBeFalsy ()
   expect (Either.elem (3) (Right (2)))
     .toBeFalsy ()
@@ -256,8 +256,8 @@ test ('elem', () => {
     .toBeTruthy ()
 })
 
-test ('elemF', () => {
-  expect (Either.elemF (Left ('a')) (3))
+test ("elemF", () => {
+  expect (Either.elemF<string | number> (Left ("a")) (3))
     .toBeFalsy ()
   expect (Either.elemF (Right (2)) (3))
     .toBeFalsy ()
@@ -265,72 +265,72 @@ test ('elemF', () => {
     .toBeTruthy ()
 })
 
-test ('sum', () => {
+test ("sum", () => {
   expect (Either.sum (Right (3)))
     .toEqual (3)
-  expect (Either.sum (Left ('a')))
+  expect (Either.sum (Left ("a")))
     .toEqual (0)
 })
 
-test ('product', () => {
+test ("product", () => {
   expect (Either.product (Right (3)))
     .toEqual (3)
-  expect (Either.product (Left ('a')))
+  expect (Either.product (Left ("a")))
     .toEqual (1)
 })
 
-test ('concat', () => {
+test ("concat", () => {
   expect (Either.concat (Right (List (1, 2, 3))))
     .toEqual (List (1, 2, 3))
-  expect (Either.concat (Left ('a')))
+  expect (Either.concat (Left ("a")))
     .toEqual (List ())
 })
 
-test ('concatMap', () => {
+test ("concatMap", () => {
   expect (Either.concatMap (e => List (e, e)) (Right (3)))
     .toEqual (List (3, 3))
-  expect (Either.concatMap (e => List (e, e)) (Left ('a')))
+  expect (Either.concatMap (e => List (e, e)) (Left ("a")))
     .toEqual (List ())
 })
 
-test ('and', () => {
+test ("and", () => {
   expect (Either.and (Right (true)))
     .toEqual (true)
   expect (Either.and (Right (false)))
     .toEqual (false)
-  expect (Either.and (Left ('a')))
+  expect (Either.and (Left ("a")))
     .toEqual (true)
 })
 
-test ('or', () => {
+test ("or", () => {
   expect (Either.or (Right (true)))
     .toEqual (true)
   expect (Either.or (Right (false)))
     .toEqual (false)
-  expect (Either.or (Left ('a')))
+  expect (Either.or (Left ("a")))
     .toEqual (false)
 })
 
-test ('any', () => {
-  expect (Either.any (e => e > 3) (Right (5)))
+test ("any", () => {
+  expect (Either.any ((e: number) => e > 3) (Right (5)))
     .toEqual (true)
-  expect (Either.any (e => e > 3) (Right (3)))
+  expect (Either.any ((e: number) => e > 3) (Right (3)))
     .toEqual (false)
-  expect (Either.any (e => e > 3) (Left ('a')))
+  expect (Either.any ((e: number) => e > 3) (Left ("a")))
     .toEqual (false)
 })
 
-test ('all', () => {
-  expect (Either.all (e => e > 3) (Right (5)))
+test ("all", () => {
+  expect (Either.all ((e: number) => e > 3) (Right (5)))
     .toEqual (true)
-  expect (Either.all (e => e > 3) (Right (3)))
+  expect (Either.all ((e: number) => e > 3) (Right (3)))
     .toEqual (false)
-  expect (Either.all (e => e > 3) (Left ('a')))
+  expect (Either.all ((e: number) => e > 3) (Left ("a")))
     .toEqual (true)
 })
 
-test ('notElem', () => {
-  expect (Either.notElem (3) (Left ('a')))
+test ("notElem", () => {
+  expect (Either.notElem (3) (Left ("a")))
     .toBeTruthy ()
   expect (Either.notElem (3) (Right (2)))
     .toBeTruthy ()
@@ -338,12 +338,12 @@ test ('notElem', () => {
     .toBeFalsy ()
 })
 
-test ('find', () => {
-  expect (Either.find (e => e > 3) (Right (5)))
+test ("find", () => {
+  expect (Either.find ((e: number) => e > 3) (Right (5)))
     .toEqual (Just (5))
-  expect (Either.find (e => e > 3) (Right (3)))
+  expect (Either.find ((e: number) => e > 3) (Right (3)))
     .toEqual (Nothing)
-  expect (Either.find (e => e > 3) (Left ('a')))
+  expect (Either.find ((e: number) => e > 3) (Left ("a")))
     .toEqual (Nothing)
 })
 
@@ -381,7 +381,7 @@ test ('find', () => {
 
 // ORD
 
-test ('gt', () => {
+test ("gt", () => {
   expect (Either.gt (Right (1)) (Right (2)))
     .toBeTruthy ()
   expect (Either.gt (Right (1)) (Right (1)))
@@ -396,7 +396,7 @@ test ('gt', () => {
     .toBeFalsy ()
 })
 
-test ('lt', () => {
+test ("lt", () => {
   expect (Either.lt (Right (3)) (Right (2)))
     .toBeTruthy ()
   expect (Either.lt (Right (1)) (Right (1)))
@@ -411,7 +411,7 @@ test ('lt', () => {
     .toBeFalsy ()
 })
 
-test ('gte', () => {
+test ("gte", () => {
   expect (Either.gte (Right (1)) (Right (2)))
     .toBeTruthy ()
   expect (Either.gte (Right (2)) (Right (2)))
@@ -438,7 +438,7 @@ test ('gte', () => {
     .toBeFalsy ()
 })
 
-test ('lte', () => {
+test ("lte", () => {
   expect (Either.lte (Right (3)) (Right (2)))
     .toBeTruthy ()
   expect (Either.lte (Right (2)) (Right (2)))
@@ -480,77 +480,98 @@ test ('lte', () => {
 
 // EITHER FUNCTIONS
 
-test ('isLeft', () => {
+test ("isLeft", () => {
   expect (Either.isLeft (Left (3)))
     .toBeTruthy ()
   expect (Either.isLeft (Right (3)))
     .toBeFalsy ()
 })
 
-test ('isRight', () => {
+test ("isRight", () => {
   expect (Either.isRight (Left (3)))
     .toBeFalsy ()
   expect (Either.isRight (Right (3)))
     .toBeTruthy ()
 })
 
-test ('either', () => {
+test ("either", () => {
   expect (Either.either (add (10)) (add (1)) (Right (3)))
     .toEqual (4)
   expect (Either.either (add (10)) (add (1)) (Left (3)))
     .toEqual (13)
 })
 
-test ('lefts', () => {
-  expect (Either.lefts (List (Left (3), Left (2), Right (2), Right (3), Left (4), Right (4))))
+test ("lefts", () => {
+  expect (Either.lefts (List<Either<number, number>> (
+    Left (3),
+    Left (2),
+    Right (2),
+    Right (3),
+    Left (4),
+    Right (4)
+  )))
     .toEqual (List (3, 2, 4))
 })
 
-test ('rights', () => {
-  expect (Either.rights (List (Left (3), Left (2), Right (2), Right (3), Left (4), Right (4))))
+test ("rights", () => {
+  expect (Either.rights (List<Either<number, number>> (
+    Left (3),
+    Left (2),
+    Right (2),
+    Right (3),
+    Left (4),
+    Right (4)
+  )))
     .toEqual (List (2, 3, 4))
 })
 
-test ('partitionEithers', () => {
-  expect (Either.partitionEithers (List (Left (3), Left (2), Right (2), Right (3), Left (4), Right (4))))
+test ("partitionEithers", () => {
+  expect (Either.partitionEithers (List<Either<number, number>> (
+    Left (3),
+    Left (2),
+    Right (2),
+    Right (3),
+    Left (4),
+    Right (4)
+  )))
     .toEqual (Pair (List (3, 2, 4), List (2, 3, 4)))
 })
 
 // CUSTOM EITHER FUNCTIONS
 
-test ('isEither', () => {
+test ("isEither", () => {
   expect (Either.isEither (4)) .toEqual (false)
   expect (Either.isEither (Right (4))) .toEqual (true)
-  expect (Either.isEither (Left ('test'))) .toEqual (true)
+  expect (Either.isEither (Left ("test"))) .toEqual (true)
 })
 
-test ('imapM', () => {
+test ("imapM", () => {
   expect (
-    Either.imapM (i => x => x === 2 ? Left ("test") : Right (x + 1 + i))
+    Either.imapM (i => (x: number) => x === 2 ? Left ("test") : Right (x + 1 + i))
                  (List.empty)
   )
     .toEqual (Right (List.empty))
 
   expect (
-    Either.imapM (i => x => x === 2 ? Left ("test") : Right (x + 1 + i))
+    Either.imapM (i => (x: number) => x === 2 ? Left ("test") : Right (x + 1 + i))
                  (List (1, 3))
   )
     .toEqual (Right (List (2, 5)))
 
   expect (
-    Either.imapM (i => x => x === 2 ? Left ("test") : Right (x + 1 + i))
+    Either.imapM (i => (x: number) => x === 2 ? Left ("test") : Right (x + 1 + i))
                  (List (1, 3, 4, 5))
   )
     .toEqual (Right (List (2, 5, 7, 9)))
 
   expect (
-    Either.imapM (i => x => x === 2 ? Left ("test") : Right (x + 1 + i))
+    Either.imapM (i => (x: number) => x === 2 ? Left ("test") : Right (x + 1 + i))
                  (List (1, 2, 3))
   )
     .toEqual (Left ("test"))
 })
 
-test ('invertEither', () => {
+test ("invertEither", () => {
   expect (Either.invertEither (Left ("test"))) .toEqual (Right ("test"))
   expect (Either.invertEither (Right (4))) .toEqual (Left (4))
 })

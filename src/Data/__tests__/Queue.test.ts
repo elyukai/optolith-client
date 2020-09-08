@@ -1,8 +1,7 @@
-// @ts-check
-const { empty, singleton, peek, peekFst, size, enqueue, dequeue } = require('../Queue');
-const { List } = require('../List')
-const { Pair } = require('../Tuple')
-const { Nothing, Just } = require('../Maybe')
+import { List } from "../List"
+import { Just, Nothing } from "../Maybe"
+import { dequeue, empty, enqueue, peek, peekFst, singleton, size } from "../Queue"
+import { Pair } from "../Tuple"
 
 const filledQueue1 = enqueue (2) (enqueue (3) (singleton (1)))
 
@@ -15,7 +14,7 @@ describe ("Construction", () => {
 
   describe ("singleton", () => {
     it ("returns a queue of size 1 with the passed parameter", () => {
-      expect (singleton (1)) .toEqual ({ values: [1] })
+      expect (singleton (1)) .toEqual ({ values: [ 1 ] })
     })
   })
 })
@@ -49,11 +48,11 @@ describe ("Lookup", () => {
 describe ("Insertion", () => {
   describe ("enqueue", () => {
     it ("inserts the first element in an empty queue", () => {
-      expect (enqueue (1) (empty)) .toEqual ({ values: [1] })
+      expect (enqueue (1) (empty)) .toEqual ({ values: [ 1 ] })
     })
 
     it ("inserts an element at the end of an existing queue", () => {
-      expect (enqueue (1) (filledQueue1)) .toEqual ({ values: [1, 3, 2, 1] })
+      expect (enqueue (1) (filledQueue1)) .toEqual ({ values: [ 1, 3, 2, 1 ] })
     })
   })
 })
@@ -65,7 +64,7 @@ describe ("Deletion", () => {
     })
 
     it ("inserts an element at the end of an existing queue", () => {
-      expect (dequeue (filledQueue1)) .toEqual (Pair (Just (1), { values: [3, 2] }))
+      expect (dequeue (filledQueue1)) .toEqual (Pair (Just (1), { values: [ 3, 2 ] }))
     })
   })
 })

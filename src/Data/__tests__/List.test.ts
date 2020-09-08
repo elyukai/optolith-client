@@ -1,41 +1,38 @@
 
-// @ts-check
-const { ident } = require('../Function');
-const { Internals } = require('../Internals');
-const L = require('../List')
-const { Pair } = require('../Tuple')
-const { Num } = require('../Num')
-const { OrderedMap } = require('../OrderedMap')
-const { fromDefault } = require('../Record')
-const { show } = require('../Show')
+import { ident } from "../Function"
+import { Internals } from "../Internals"
+import * as L from "../List"
+import { Num } from "../Num"
+import { OrderedMap } from "../OrderedMap"
+import { fromDefault } from "../Record"
+import { Pair } from "../Tuple"
 
 const { List } = L
 
-const Just = Internals.Just
-const Nothing = Internals.Nothing
+const { Just, Nothing } = Internals
 
 // [Symbol.iterator]
 
-test ('[Symbol.iterator]', () => {
-  expect ([...List ()]) .toEqual ([])
-  expect ([...List (1, 2, 3)]) .toEqual ([1, 2, 3])
+test ("[Symbol.iterator]", () => {
+  expect ([ ...List () ]) .toEqual ([])
+  expect ([ ...List (1, 2, 3) ]) .toEqual ([ 1, 2, 3 ])
 })
 
 // APPLICATIVE
 
-test ('pure', () => {
+test ("pure", () => {
   expect (List.pure (3)) .toEqual (List (3))
 })
 
-test ('ap', () => {
-  expect(List.ap (List (x => x * 3, x => x * 2))
+test ("ap", () => {
+  expect (List.ap (List ((x: number) => x * 3, (x: number) => x * 2))
                  (List (1, 2, 3, 4, 5)))
     .toEqual (List (3, 6, 9, 12, 15, 2, 4, 6, 8, 10))
 })
 
 // ALTERNATIVE
 
-test ('alt', () => {
+test ("alt", () => {
   expect (List.alt (List (3)) (List (2)))
     .toEqual (List (3))
   expect (List.alt (List (3)) (List ()))
@@ -46,7 +43,7 @@ test ('alt', () => {
     .toEqual (List ())
 })
 
-test ('altF', () => {
+test ("altF", () => {
   expect (List.altF (List (2)) (List (3)))
     .toEqual (List (3))
   expect (List.altF (List ()) (List (3)))
@@ -57,11 +54,11 @@ test ('altF', () => {
     .toEqual (List ())
 })
 
-test ('empty', () => {
+test ("empty", () => {
   expect (List.empty) .toEqual (List ())
 })
 
-test ('guard', () => {
+test ("guard", () => {
   expect (List.guard (true))
     .toEqual (List (true))
   expect (List.guard (false))
@@ -70,36 +67,36 @@ test ('guard', () => {
 
 // MONAD
 
-test ('bind', () => {
+test ("bind", () => {
   expect (List.bind (List (1, 2, 3, 4, 5))
                     (e => List (e, e)))
     .toEqual (List (1, 1, 2, 2, 3, 3, 4, 4, 5, 5))
 })
 
-test ('bindF', () => {
+test ("bindF", () => {
   expect (List.bindF (e => List (e, e))
                      (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 1, 2, 2, 3, 3, 4, 4, 5, 5))
 })
 
-test ('then', () => {
+test ("then", () => {
   expect (List.then (List (1, 2, 3, 4, 5))
-                    (List ('a', 'c')))
+                    (List ("a", "c")))
     .toEqual (
-      List ('a', 'c', 'a', 'c', 'a', 'c', 'a', 'c', 'a', 'c')
+      List ("a", "c", "a", "c", "a", "c", "a", "c", "a", "c")
     )
-  expect (List.then (List ()) (List ('a', 'c')))
+  expect (List.then (List ()) (List ("a", "c")))
     .toEqual (List ())
 })
 
-test ('kleisli', () => {
-  expect (List.kleisli (e => List (e, e))
+test ("kleisli", () => {
+  expect (List.kleisli ((e: number) => List (e, e))
                        (e => List (e, e * 2))
                        (2))
     .toEqual (List (2, 4, 2, 4))
 })
 
-test ('join', () => {
+test ("join", () => {
   expect (List.join (
     List (
       List (3),
@@ -112,84 +109,84 @@ test ('join', () => {
 
 // FOLDABLE
 
-test ('foldr', () => {
-  expect (List.foldr (e => acc => e + acc) ('0') (List (3, 2, 1)))
-    .toEqual ('3210')
+test ("foldr", () => {
+  expect (List.foldr<string, string> (e => acc => e + acc) ("0") (List ("3", "2", "1")))
+    .toEqual ("3210")
 })
 
-test ('foldl', () => {
-  expect (List.foldl (acc => e => acc + e) ('0') (List (1, 2, 3)))
-    .toEqual ('0123')
+test ("foldl", () => {
+  expect (List.foldl<string, string> (acc => e => acc + e) ("0") (List ("1", "2", "3")))
+    .toEqual ("0123")
 })
 
-test ('foldr1', () => {
-  expect (List.foldr1 (e => acc => e + acc) (List (3, 2, 1)))
+test ("foldr1", () => {
+  expect (List.foldr1<number> (e => acc => e + acc) (List (3, 2, 1)))
     .toEqual (6)
 })
 
-test ('foldl1', () => {
-  expect (List.foldl1 (acc => e => e + acc) (List (3, 2, 1)))
+test ("foldl1", () => {
+  expect (List.foldl1<number> (acc => e => e + acc) (List (3, 2, 1)))
     .toEqual (6)
 })
 
-test ('toList', () => {
+test ("toList", () => {
   expect (List.toList (List (3, 2, 1)))
     .toEqual (List (3, 2, 1))
 })
 
-test ('fnull', () => {
+test ("fnull", () => {
   expect (List.fnull (List (3, 2, 1))) .toBeFalsy ()
   expect (List.fnull (List ())) .toBeTruthy ()
 })
 
-test ('fnullStr', () => {
+test ("fnullStr", () => {
   expect (List.fnullStr ("List (3, 2, 1)")) .toBeFalsy ()
   expect (List.fnullStr ("")) .toBeTruthy ()
 })
 
-test ('flength', () => {
+test ("flength", () => {
   expect (List.flength (List (3, 2, 1))) .toEqual (3)
   expect (List.flength (List ())) .toEqual (0)
 })
 
-test ('flengthStr', () => {
+test ("flengthStr", () => {
   expect (List.flengthStr ("List (3, 2, 1)")) .toEqual (14)
   expect (List.flengthStr ("List ()")) .toEqual (7)
 })
 
-test ('elem', () => {
+test ("elem", () => {
   expect (List.elem (3) (List (1, 2, 3, 4, 5)))
     .toBeTruthy ()
   expect (List.elem (6) (List (1, 2, 3, 4, 5)))
     .toBeFalsy ()
 })
 
-test ('elemF', () => {
+test ("elemF", () => {
   expect (List.elemF (List (1, 2, 3, 4, 5)) (3))
     .toBeTruthy ()
   expect (List.elemF (List (1, 2, 3, 4, 5)) (6))
     .toBeFalsy ()
 })
 
-test ('sum', () => {
+test ("sum", () => {
   expect (List.sum (List (3, 2, 1))) .toEqual (6)
 })
 
-test ('product', () => {
+test ("product", () => {
   expect (List.product (List (3, 2, 2))) .toEqual (12)
 })
 
-test ('maximum', () => {
-  expect(List.maximum (List (3, 2, 1))) .toEqual (3)
-  expect(List.maximum (List ())) .toEqual (-Infinity)
+test ("maximum", () => {
+  expect (List.maximum (List (3, 2, 1))) .toEqual (3)
+  expect (List.maximum (List ())) .toEqual (-Infinity)
 })
 
-test ('minimum', () => {
+test ("minimum", () => {
   expect (List.minimum (List (3, 2, 1))) .toEqual (1)
   expect (List.minimum (List ())) .toEqual (Infinity)
 })
 
-test ('concat', () => {
+test ("concat", () => {
   expect (List.concat (
     List (
       List (3),
@@ -200,13 +197,13 @@ test ('concat', () => {
     .toEqual (List (3, 2, 1))
 })
 
-test ('concatMap', () => {
+test ("concatMap", () => {
   expect (List.concatMap (e => List (e, e))
                     (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 1, 2, 2, 3, 3, 4, 4, 5, 5))
 })
 
-test ('and', () => {
+test ("and", () => {
   expect (List.and (List (true, true, true)))
     .toBeTruthy ()
   expect (List.and (List (true, true, false)))
@@ -215,7 +212,7 @@ test ('and', () => {
     .toBeFalsy ()
 })
 
-test ('or', () => {
+test ("or", () => {
   expect (List.or (List (true, true, true)))
     .toBeTruthy ()
   expect (List.or (List (true, true, false)))
@@ -224,84 +221,84 @@ test ('or', () => {
     .toBeFalsy ()
 })
 
-test ('any', () => {
-  expect (List.any (x => x > 2) (List (3, 2, 1)))
+test ("any", () => {
+  expect (List.any ((x: number) => x > 2) (List (3, 2, 1)))
     .toBeTruthy ()
-  expect (List.any (x => x > 3) (List (3, 2, 1)))
+  expect (List.any ((x: number) => x > 3) (List (3, 2, 1)))
     .toBeFalsy ()
 })
 
-test ('all', () => {
-  expect (List.all (x => x >= 1) (List (3, 2, 1)))
+test ("all", () => {
+  expect (List.all ((x: number) => x >= 1) (List (3, 2, 1)))
     .toBeTruthy ()
-  expect (List.all (x => x >= 2) (List (3, 2, 1)))
+  expect (List.all ((x: number) => x >= 2) (List (3, 2, 1)))
     .toBeFalsy ()
 })
 
-test ('notElem', () => {
+test ("notElem", () => {
   expect (List.notElem (3) (List (1, 2, 3, 4, 5)))
     .toBeFalsy ()
   expect (List.notElem (6) (List (1, 2, 3, 4, 5)))
     .toBeTruthy ()
 })
 
-test ('notElemF', () => {
+test ("notElemF", () => {
   expect (List.notElemF (List (1, 2, 3, 4, 5)) (3))
     .toBeFalsy ()
   expect (List.notElemF (List (1, 2, 3, 4, 5)) (6))
     .toBeTruthy ()
 })
 
-test ('find', () => {
-  expect (List.find (e => /t/.test (e))
-                    (List ('one', 'two', 'three')))
-    .toEqual (Just ('two'))
-  expect (List.find (e => /tr/.test (e))
-                    (List ('one', 'two', 'three')))
+test ("find", () => {
+  expect (List.find ((e: string) => e.includes ("t"))
+                    (List ("one", "two", "three")))
+    .toEqual (Just ("two"))
+  expect (List.find ((e: string) => e.includes ("tr"))
+                    (List ("one", "two", "three")))
     .toEqual (Nothing)
 })
 
 // BASIC FUNCTIONS
 
-test ('append', () => {
+test ("append", () => {
   expect (List.append (List (3, 2, 1))
                       (List (3, 2, 1)))
     .toEqual (List (3, 2, 1, 3, 2, 1))
 })
 
-test ('appendStr', () => {
+test ("appendStr", () => {
   expect (List.appendStr ("abc") ("def")) .toEqual ("abcdef")
 })
 
-test ('cons', () => {
+test ("cons", () => {
   expect (List.cons (List (3, 2, 1)) (4))
     .toEqual (List (4, 3, 2, 1))
 })
 
-test ('head', () => {
-  expect (List.head (List (3, 2, 1))) .toEqual (3)
-  expect (() => List.head (List ())) .toThrow ()
+test ("head", () => {
+  expect (List.head (List (3, 2, 1) as L.Cons<number>)) .toEqual (3)
+  expect (() => List.head (List () as L.Cons<void>)) .toThrow ()
 })
 
-test ('last', () => {
-  expect (List.last (List (3, 2, 1))) .toEqual (1)
-  expect (() => List.last (List ())) .toThrow ()
+test ("last", () => {
+  expect (List.last (List (3, 2, 1) as L.Cons<number>)) .toEqual (1)
+  expect (() => List.last (List () as L.Cons<void>)) .toThrow ()
 })
 
-test ('lastS', () => {
+test ("lastS", () => {
   expect (List.lastS (List (3, 2, 1))) .toEqual (Just (1))
   expect (List.lastS (List ())) .toEqual (Nothing)
 })
 
-test ('tail', () => {
-  expect (List.tail (List (3, 2, 1)))
+test ("tail", () => {
+  expect (List.tail (List (3, 2, 1) as L.Cons<number>))
     .toEqual (List (2, 1))
-  expect (List.tail (List (1)))
+  expect (List.tail (List (1) as L.Cons<number>))
     .toEqual (List ())
-  expect (() => List.tail (List ())) .toThrow ()
+  expect (() => List.tail (List () as L.Cons<void>)) .toThrow ()
 })
 
-test ('tailS', () => {
+test ("tailS", () => {
   expect (List.tailS (List (3, 2, 1)))
     .toEqual (Just (List (2, 1)))
   expect (List.tailS (List (1)))
@@ -309,15 +306,15 @@ test ('tailS', () => {
   expect (List.tailS (List ())) .toEqual (Nothing)
 })
 
-test ('init', () => {
-  expect (List.init (List (3, 2, 1)))
+test ("init", () => {
+  expect (List.init (List (3, 2, 1) as L.Cons<number>))
     .toEqual (List (3, 2))
-  expect (List.init (List (1)))
+  expect (List.init (List (1) as L.Cons<number>))
     .toEqual (List ())
-  expect (() => List.init (List ())) .toThrow ()
+  expect (() => List.init (List () as L.Cons<void>)) .toThrow ()
 })
 
-test ('initS', () => {
+test ("initS", () => {
   expect (List.initS (List (3, 2, 1)))
     .toEqual (Just (List (3, 2)))
   expect (List.initS (List (1)))
@@ -325,7 +322,7 @@ test ('initS', () => {
   expect (List.initS (List ())) .toEqual (Nothing)
 })
 
-test ('uncons', () => {
+test ("uncons", () => {
   expect (List.uncons (List (3, 2, 1)))
     .toEqual (Just (Pair (3, List (2, 1))))
   expect (List.uncons (List (1)))
@@ -335,28 +332,28 @@ test ('uncons', () => {
 
 // LIST TRANSFORMATIONS
 
-test ('map', () => {
-  expect (List.map (x => x * 2) (List (3, 2, 1)))
+test ("map", () => {
+  expect (List.map ((x: number) => x * 2) (List (3, 2, 1)))
     .toEqual (List (6, 4, 2))
 })
 
-test ('reverse', () => {
+test ("reverse", () => {
   expect (List.reverse (List (3, 2, 1)))
     .toEqual (List (1, 2, 3))
 
   const original = List (3, 2, 1)
   const result = List.reverse (original)
-  expect (original === result) .toBeFalsy()
+  expect (original === result) .toBeFalsy ()
 })
 
-test ('intersperse', () => {
+test ("intersperse", () => {
   expect (List.intersperse (0) (List (3, 2, 1)))
     .toEqual (List (3, 0, 2, 0, 1))
 })
 
-test ('intercalate', () => {
-  expect (List.intercalate (', ') (List (3, 2, 1)))
-    .toEqual ('3, 2, 1')
+test ("intercalate", () => {
+  expect (List.intercalate (", ") (List (3, 2, 1)))
+    .toEqual ("3, 2, 1")
 })
 
 describe ("permutations", () => {
@@ -424,25 +421,27 @@ describe ("permutations", () => {
 
 // SCANS
 
-test ('scanl', () => {
-  expect (List.scanl (acc => x => acc * x) (1) (List(2, 3, 4)))
+test ("scanl", () => {
+  expect (List.scanl<number, number> (acc => x => acc * x) (1) (List (2, 3, 4)))
     .toEqual (List (1, 2, 6, 24))
 })
 
 // ACCUMULATING MAPS
 
-test ('mapAccumL', () => {
+test ("mapAccumL", () => {
   expect (
-    List.mapAccumL (acc => current => Pair (acc + current) (current * 2))
+    List.mapAccumL ((acc: string) => (current: number) =>
+                     Pair (acc + current.toString (10), current * 2))
                    ("0")
                    (List (1, 2, 3))
   )
     .toEqual (Pair ("0123", List (2, 4, 6)))
 })
 
-test ('mapAccumR', () => {
+test ("mapAccumR", () => {
   expect (
-    List.mapAccumR (acc => current => Pair (acc + current) (current * 2))
+    List.mapAccumR ((acc: string) => (current: number) =>
+                     Pair (acc + current.toString (10), current * 2))
                    ("0")
                    (List (1, 2, 3))
   )
@@ -451,7 +450,7 @@ test ('mapAccumR', () => {
 
 // INFINITE LISTS
 
-describe ('replicate', () => {
+describe ("replicate", () => {
   it ("creates a list with 0 elements", () => {
     expect (List.replicate (0) ("test"))
       .toEqual (List ())
@@ -473,7 +472,7 @@ describe ('replicate', () => {
   })
 })
 
-describe ('replicateR', () => {
+describe ("replicateR", () => {
   it ("creates a list with 0 elements", () => {
     expect (List.replicateR (0) (ident))
       .toEqual (List ())
@@ -497,29 +496,29 @@ describe ('replicateR', () => {
 
 // UNFOLDING
 
-test ('unfoldr', () => {
-  expect (List.unfoldr (x => x < 11 ? Just (Pair (x) (x + 1)) : Nothing)
+test ("unfoldr", () => {
+  expect (List.unfoldr ((x: number) => x < 11 ? Just (Pair (x, x + 1)) : Nothing)
                        (1))
     .toEqual (List (1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 })
 
 // EXTRACTING SUBLIST
 
-test ('take', () => {
+test ("take", () => {
   expect (List.take (3) (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 2, 3))
   expect (List.take (6) (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 2, 3, 4, 5))
 })
 
-test ('drop', () => {
+test ("drop", () => {
   expect (List.drop (3) (List (1, 2, 3, 4, 5)))
     .toEqual (List (4, 5))
   expect (List.drop (6) (List (1, 2, 3, 4, 5)))
     .toEqual (List ())
 })
 
-test ('splitAt', () => {
+test ("splitAt", () => {
   expect (List.splitAt (3) (List (1, 2, 3, 4, 5)))
     .toEqual (Pair (List (1, 2, 3))
                        (List (4, 5)))
@@ -530,46 +529,46 @@ test ('splitAt', () => {
 
 // PREDICATES
 
-test ('isInfixOf', () => {
-  expect (List.isInfixOf ('test') ('das asd  dsad   ad teste f as'))
+test ("isInfixOf", () => {
+  expect (List.isInfixOf ("test") ("das asd  dsad   ad teste f as"))
     .toEqual (true)
-  expect (List.isInfixOf ('test') ('das asd  dsad   ad tese f as'))
+  expect (List.isInfixOf ("test") ("das asd  dsad   ad tese f as"))
     .toEqual (false)
-  expect (List.isInfixOf ('') ('das asd  dsad   ad tese f as'))
+  expect (List.isInfixOf ("") ("das asd  dsad   ad tese f as"))
     .toEqual (true)
-  expect (List.isInfixOf ('') (''))
+  expect (List.isInfixOf ("") (""))
     .toEqual (true)
 })
 
 // SEARCHING BY EQUALITY
 
-test ('lookup', () => {
+test ("lookup", () => {
   expect (List.lookup (1)
-                      (List (Pair (1) ('a')
-                                         ,Pair (2) ('b'))))
-    .toEqual (Just ('a'))
+                      (List (Pair (1) ("a")
+                                         , Pair (2) ("b"))))
+    .toEqual (Just ("a"))
   expect (List.lookup (3)
-                      (List (Pair (1) ('a')
-                                         ,Pair (2) ('b'))))
+                      (List (Pair (1) ("a")
+                                         , Pair (2) ("b"))))
     .toEqual (Nothing)
 })
 
 // SEARCHING WITH A PREDICATE
 
-test ('filter', () => {
-  expect (List.filter (x => x > 2) (List (1, 2, 3, 4, 5)))
+test ("filter", () => {
+  expect (List.filter ((x: number) => x > 2) (List (1, 2, 3, 4, 5)))
     .toEqual (List (3, 4, 5))
 })
 
-test ('partition', () => {
-  expect (List.partition (x => x > 2) (List (1, 2, 3, 4, 5)))
+test ("partition", () => {
+  expect (List.partition ((x: number) => x > 2) (List (1, 2, 3, 4, 5)))
     .toEqual (Pair (List (3, 4, 5))
                        (List (1, 2)))
 })
 
 // INDEXING LISTS
 
-test ('subscript', () => {
+test ("subscript", () => {
   expect (List.subscript (List (3, 2, 1)) (2))
     .toEqual (Just (1))
   expect (List.subscript (List (3, 2, 1)) (4))
@@ -578,7 +577,7 @@ test ('subscript', () => {
     .toEqual (Nothing)
 })
 
-test ('subscriptF', () => {
+test ("subscriptF", () => {
   expect (List.subscriptF (2) (List (3, 2, 1)))
     .toEqual (Just (1))
   expect (List.subscriptF (4) (List (3, 2, 1)))
@@ -587,14 +586,14 @@ test ('subscriptF', () => {
     .toEqual (Nothing)
 })
 
-test ('elemIndex', () => {
+test ("elemIndex", () => {
   expect (List.elemIndex (3) (List (1, 2, 3, 4, 5)))
     .toEqual (Just (2))
   expect (List.elemIndex (8) (List (1, 2, 3, 4, 5)))
     .toEqual (Nothing)
 })
 
-test ('elemIndices', () => {
+test ("elemIndices", () => {
   expect (List.elemIndices (3) (List (1, 2, 3, 4, 5, 3)))
     .toEqual (List (2, 5))
   expect (List.elemIndices (4) (List (1, 2, 3, 4, 5, 3)))
@@ -603,77 +602,77 @@ test ('elemIndices', () => {
     .toEqual (List ())
 })
 
-test ('findIndex', () => {
-  expect (List.findIndex (x => x > 2) (List (1, 2, 3, 4, 5)))
+test ("findIndex", () => {
+  expect (List.findIndex ((x: number) => x > 2) (List (1, 2, 3, 4, 5)))
     .toEqual (Just (2))
-  expect (List.findIndex (x => x > 8) (List (1, 2, 3, 4, 5)))
+  expect (List.findIndex ((x: number) => x > 8) (List (1, 2, 3, 4, 5)))
     .toEqual (Nothing)
 })
 
-test ('findIndices', () => {
-  expect (List.findIndices (x => x === 3)
+test ("findIndices", () => {
+  expect (List.findIndices ((x: number) => x === 3)
                            (List (1, 2, 3, 4, 5, 3)))
     .toEqual (List (2, 5))
-  expect (List.findIndices (x => x > 3) (List (1, 2, 3, 4, 5, 3)))
+  expect (List.findIndices ((x: number) => x > 3) (List (1, 2, 3, 4, 5, 3)))
     .toEqual (List (3, 4))
-  expect (List.findIndices (x => x > 8) (List (1, 2, 3, 4, 5, 3)))
+  expect (List.findIndices ((x: number) => x > 8) (List (1, 2, 3, 4, 5, 3)))
     .toEqual (List ())
 })
 
 // ZIPPING AND UNZIPPING LISTS
 
-test ('zip', () => {
-  expect (List.zip (List ('A', 'B', 'C'))
+test ("zip", () => {
+  expect (List.zip (List ("A", "B", "C"))
                    (List (1, 2, 3)))
     .toEqual (List (
-      Pair ('A') (1),
-      Pair ('B') (2),
-      Pair ('C') (3)
+      Pair ("A") (1),
+      Pair ("B") (2),
+      Pair ("C") (3)
     ))
 
-  expect (List.zip (List ('A', 'B', 'C', 'D'))
+  expect (List.zip (List ("A", "B", "C", "D"))
                    (List (1, 2, 3)))
     .toEqual (List (
-      Pair ('A') (1),
-      Pair ('B') (2),
-      Pair ('C') (3)
+      Pair ("A") (1),
+      Pair ("B") (2),
+      Pair ("C") (3)
     ))
 
-  expect (List.zip (List ('A', 'B', 'C'))
+  expect (List.zip (List ("A", "B", "C"))
                    (List (1, 2, 3, 4)))
     .toEqual (List (
-      Pair ('A') (1),
-      Pair ('B') (2),
-      Pair ('C') (3)
+      Pair ("A") (1),
+      Pair ("B") (2),
+      Pair ("C") (3)
     ))
 })
 
-test ('zipWith', () => {
+test ("zipWith", () => {
   expect (List.zipWith (Pair)
-                       (List ('A', 'B', 'C'))
+                       (List ("A", "B", "C"))
                        (List (1, 2, 3)))
     .toEqual (List (
-      Pair ('A') (1),
-      Pair ('B') (2),
-      Pair ('C') (3)
+      Pair ("A") (1),
+      Pair ("B") (2),
+      Pair ("C") (3)
     ))
 
   expect (List.zipWith (Pair)
-                       (List ('A', 'B', 'C', 'D'))
+                       (List ("A", "B", "C", "D"))
                        (List (1, 2, 3)))
     .toEqual (List (
-      Pair ('A') (1),
-      Pair ('B') (2),
-      Pair ('C') (3)
+      Pair ("A") (1),
+      Pair ("B") (2),
+      Pair ("C") (3)
     ))
 
   expect (List.zipWith (Pair)
-                       (List ('A', 'B', 'C'))
+                       (List ("A", "B", "C"))
                        (List (1, 2, 3, 4)))
     .toEqual (List (
-      Pair ('A') (1),
-      Pair ('B') (2),
-      Pair ('C') (3)
+      Pair ("A") (1),
+      Pair ("B") (2),
+      Pair ("C") (3)
     ))
 })
 
@@ -681,7 +680,7 @@ test ('zipWith', () => {
 
 // Functions on strings
 
-test ('lines', () => {
+test ("lines", () => {
   expect (List.lines (""))
     .toEqual (List ())
 
@@ -706,14 +705,14 @@ test ('lines', () => {
 
 // "SET" OPERATIONS
 
-test ('sdelete', () => {
+test ("sdelete", () => {
   expect (List.sdelete (3) (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 2, 4, 5))
   expect (List.sdelete (6) (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 2, 3, 4, 5))
 })
 
-test ('intersect', () => {
+test ("intersect", () => {
   expect (List.intersect (List (1, 2, 3, 4))
                          (List (2, 4, 6, 8)))
     .toEqual (List (2, 4))
@@ -725,113 +724,115 @@ test ('intersect', () => {
 
 // ORDERED LISTS
 
-test ('sortBy', () => {
+test ("sortBy", () => {
   expect (List.sortBy (Num.compare) (List (2, 3, 1, 5, 4)))
     .toEqual (List (1, 2, 3, 4, 5))
 })
 
-test ('maximumBy', () => {
-  expect (List.maximumBy (Num.compare) (List (2, 3, 1, 5, 4))) .toEqual (5)
+test ("maximumBy", () => {
+  expect (List.maximumBy (Num.compare) (List (2, 3, 1, 5, 4) as L.NonEmptyList<number>))
+    .toEqual (5)
 })
 
-test ('minimumBy', () => {
-  expect (List.minimumBy (Num.compare) (List (2, 3, 1, 5, 4))) .toEqual (1)
+test ("minimumBy", () => {
+  expect (List.minimumBy (Num.compare) (List (2, 3, 1, 5, 4) as L.NonEmptyList<number>))
+    .toEqual (1)
 })
 
 // LIST.INDEX
 
 // Original functions
 
-test ('indexed', () => {
-  expect (List.indexed (List ('a', 'b')))
+test ("indexed", () => {
+  expect (List.indexed (List ("a", "b")))
     .toEqual (List (
-      Pair (0) ('a'),
-      Pair (1) ('b')
+      Pair (0) ("a"),
+      Pair (1) ("b")
     ))
 })
 
-test ('deleteAt', () => {
+test ("deleteAt", () => {
   expect (List.deleteAt (1) (List (1, 2, 3, 4, 5)))
-    .toEqual(List(1, 3, 4, 5))
+    .toEqual (List (1, 3, 4, 5))
 })
 
-test ('setAt', () => {
-  expect (List.setAt(2) (4) (List (1, 2, 3, 4, 5)))
+test ("setAt", () => {
+  expect (List.setAt (2) (4) (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 2, 4, 4, 5))
 })
 
-test ('modifyAt', () => {
-  expect(List.modifyAt (2) (x => x * 3) (List (1, 2, 3, 4, 5)))
-    .toEqual(List (1, 2, 9, 4, 5))
+test ("modifyAt", () => {
+  expect (List.modifyAt (2) ((x: number) => x * 3) (List (1, 2, 3, 4, 5)))
+    .toEqual (List (1, 2, 9, 4, 5))
 })
 
-test ('updateAt', () => {
-  expect (List.updateAt (2) (x => Just(x * 3)) (List (1, 2, 3, 4, 5)))
+test ("updateAt", () => {
+  expect (List.updateAt (2) ((x: number) => Just (x * 3)) (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 2, 9, 4, 5))
-  expect (List.updateAt (2) (x => Nothing) (List (1, 2, 3, 4, 5)))
+  expect (List.updateAt (2) ((_: number) => Nothing) (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 2, 4, 5))
 })
 
-test ('insertAt', () => {
+test ("insertAt", () => {
   expect (List.insertAt (2) (6) (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 2, 6, 3, 4, 5))
 })
 
 // Maps
 
-test ('imap', () => {
-  expect (List.imap (i => x => x * 2 + i) (List (3, 2, 1)))
+test ("imap", () => {
+  expect (List.imap (i => (x: number) => x * 2 + i) (List (3, 2, 1)))
     .toEqual (List (6, 5, 4))
 })
 
 // Folds
 
-test ('ifoldr', () => {
-  expect (List.ifoldr (i => x => acc => acc + x + i)
+test ("ifoldr", () => {
+  expect (List.ifoldr (i => (x: number) => (acc: number) => acc + x + i)
                       (0)
                       (List (3, 2, 1)))
     .toEqual (9)
 })
 
-test ('ifoldl', () => {
-  expect (List.ifoldl (acc => i => x => acc + x + i)
+test ("ifoldl", () => {
+  expect (List.ifoldl ((acc: number) => i => (x: number) => acc + x + i)
                       (0)
                       (List (3, 2, 1)))
     .toEqual (9)
 })
 
-test ('iall', () => {
-  expect (List.iall (i => x => x >= 1 && i < 5) (List (3, 2, 1)))
+test ("iall", () => {
+  expect (List.iall (i => (x: number) => x >= 1 && i < 5) (List (3, 2, 1)))
     .toBeTruthy ()
-  expect (List.iall (i => x => x >= 2 && i < 5) (List (3, 2, 1)))
+  expect (List.iall (i => (x: number) => x >= 2 && i < 5) (List (3, 2, 1)))
     .toBeFalsy ()
-  expect (List.iall (i => x => x >= 1 && i > 0) (List (3, 2, 1)))
+  expect (List.iall (i => (x: number) => x >= 1 && i > 0) (List (3, 2, 1)))
     .toBeFalsy ()
 })
 
-test ('iany', () => {
-  expect (List.iany (i => x => x > 2 && i < 5) (List (3, 2, 1)))
+test ("iany", () => {
+  expect (List.iany (i => (x: number) => x > 2 && i < 5) (List (3, 2, 1)))
     .toBeTruthy ()
-  expect (List.iany (i => x => x > 3 && i < 5) (List (3, 2, 1)))
+  expect (List.iany (i => (x: number) => x > 3 && i < 5) (List (3, 2, 1)))
     .toBeFalsy ()
-  expect (List.iany (i => x => x > 2 && i > 0) (List (3, 2, 1)))
+  expect (List.iany (i => (x: number) => x > 2 && i > 0) (List (3, 2, 1)))
     .toBeFalsy ()
 })
 
-test ('iconcatMap', () => {
-  expect (List.iconcatMap (i => e => List (e, e + i))
+test ("iconcatMap", () => {
+  expect (List.iconcatMap (i => (e: number) => List (e, e + i))
                           (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 1, 2, 3, 3, 5, 4, 7, 5, 9))
 })
 
-test ('ifilter', () => {
-  expect (List.ifilter (i => x => x > 2 || i === 0)
+test ("ifilter", () => {
+  expect (List.ifilter (i => (x: number) => x > 2 || i === 0)
                        (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 3, 4, 5))
 })
 
-test ('ipartition', () => {
-  expect (List.ipartition (i => x => x > 2 || i === 0)
+test ("ipartition", () => {
+  expect (List.ipartition (i => (x: number) => x > 2 || i === 0)
                           (List (1, 2, 3, 4, 5)))
     .toEqual (Pair (List (1, 3, 4, 5))
                        (List (2)))
@@ -839,35 +840,35 @@ test ('ipartition', () => {
 
 // Search
 
-test ('ifind', () => {
-  expect (List.ifind (i => e => /t/.test (e) || i === 2)
-                     (List ('one', 'two', 'three')))
-    .toEqual (Just ('two'))
-  expect (List.ifind (i => e => /tr/.test (e) || i === 2)
-                     (List ('one', 'two', 'three')))
-    .toEqual (Just ('three'))
-  expect (List.ifind (i => e => /tr/.test (e) || i === 5)
-                     (List ('one', 'two', 'three')))
+test ("ifind", () => {
+  expect (List.ifind (i => (e: string) => e.includes ("t") || i === 2)
+                     (List ("one", "two", "three")))
+    .toEqual (Just ("two"))
+  expect (List.ifind (i => (e: string) => e.includes ("tr") || i === 2)
+                     (List ("one", "two", "three")))
+    .toEqual (Just ("three"))
+  expect (List.ifind (i => (e: string) => e.includes ("tr") || i === 5)
+                     (List ("one", "two", "three")))
     .toEqual (Nothing)
 })
 
-test ('ifindIndex', () => {
-  expect (List.ifindIndex (i => x => x > 2 && i > 2)
+test ("ifindIndex", () => {
+  expect (List.ifindIndex (i => (x: number) => x > 2 && i > 2)
                           (List (1, 2, 3, 4, 5)))
     .toEqual (Just (3))
-  expect (List.ifindIndex (i => x => x > 8 && i > 2)
+  expect (List.ifindIndex (i => (x: number) => x > 8 && i > 2)
                           (List (1, 2, 3, 4, 5)))
     .toEqual (Nothing)
 })
 
-test ('ifindIndices', () => {
-  expect (List.ifindIndices (i => x => x === 3 && i > 2)
+test ("ifindIndices", () => {
+  expect (List.ifindIndices (i => (x: number) => x === 3 && i > 2)
                             (List (1, 2, 3, 4, 5, 3)))
     .toEqual (List (5))
-  expect (List.ifindIndices (i => x => x > 4 && i > 3)
+  expect (List.ifindIndices (i => (x: number) => x > 4 && i > 3)
                             (List (1, 2, 3, 4, 5, 3)))
     .toEqual (List (4))
-  expect (List.ifindIndices (i => x => x > 8 && i > 2)
+  expect (List.ifindIndices (i => (x: number) => x > 8 && i > 2)
                             (List (1, 2, 3, 4, 5, 3)))
     .toEqual (List ())
 })
@@ -876,43 +877,43 @@ test ('ifindIndices', () => {
 
 // String operations
 
-test ('lower', () => {
-  expect (List.lower ('Test')) .toEqual ('test')
-  expect (List.lower ('TEst')) .toEqual ('test')
+test ("lower", () => {
+  expect (List.lower ("Test")) .toEqual ("test")
+  expect (List.lower ("TEst")) .toEqual ("test")
 })
 
-test ('trimStart', () => {
+test ("trimStart", () => {
   expect (List.trimStart ("    test\ntest2  ")) .toEqual ("test\ntest2  ")
 })
 
-test ('trimEnd', () => {
+test ("trimEnd", () => {
   expect (List.trimEnd ("    test\ntest2  ")) .toEqual ("    test\ntest2")
 })
 
 // Splitting
 
-test ('splitOn', () => {
+test ("splitOn", () => {
   expect (List.splitOn (";;") ("x;;y;;z;;"))
     .toEqual (List ("x", "y", "z", ""))
 })
 
 // Basics
 
-test ('notNull', () => {
+test ("notNull", () => {
   expect (List.notNull (List (3, 2, 1))) .toEqual (true)
   expect (List.notNull (List ())) .toEqual (false)
 })
 
-test ('notNullStr', () => {
+test ("notNullStr", () => {
   expect (List.notNullStr ("1")) .toEqual (true)
   expect (List.notNullStr ("")) .toEqual (false)
 })
 
-test ('list', () => {
-  expect (List.list (1) (v => _ => v - 2) (List (5, 6, 7)))
+test ("list", () => {
+  expect (List.list (1) ((v: number) => _ => v - 2) (List (5, 6, 7)))
     .toEqual (3)
 
-  expect (List.list (1) (v => _ => v - 2) (List ()))
+  expect (List.list (1) ((v: number) => _ => v - 2) (List ()))
     .toEqual (1)
 })
 
@@ -930,114 +931,115 @@ describe ("unsnoc", () => {
   })
 })
 
-test ('consF', () => {
+test ("consF", () => {
   expect (List.consF (4) (List (3, 2, 1)))
     .toEqual (List (4, 3, 2, 1))
 })
 
-test ('snoc', () => {
+test ("snoc", () => {
   expect (List.snoc (List (3, 2, 1)) (4))
     .toEqual (List (3, 2, 1, 4))
 })
 
-test ('snocF', () => {
+test ("snocF", () => {
   expect (List.snocF (4) (List (3, 2, 1)))
     .toEqual (List (3, 2, 1, 4))
 })
 
 // List operations
 
-test ('maximumOn', () => {
-  expect (List.maximumOn (x => x.a)
-                         (List ({ a: 1 } , { a: 3 }, { a: 2 })))
+test ("maximumOn", () => {
+  expect (List.maximumOn ((x: { a: number }) => x.a)
+                         (List ({ a: 1 }, { a: 3 }, { a: 2 })))
     .toEqual (Just ({ a: 3 }))
 
-  expect (List.maximumOn (x => x.a)
+  expect (List.maximumOn ((x: { a: number }) => x.a)
                          (List ()))
     .toEqual (Nothing)
 })
 
-test ('minimumOn', () => {
-  expect (List.minimumOn (x => x.a)
-                         (List ({ a: 1 } , { a: 3 }, { a: 2 })))
+test ("minimumOn", () => {
+  expect (List.minimumOn ((x: { a: number }) => x.a)
+                         (List ({ a: 1 }, { a: 3 }, { a: 2 })))
     .toEqual (Just ({ a: 1 }))
 
-  expect (List.minimumOn (x => x.a)
+  expect (List.minimumOn ((x: { a: number }) => x.a)
                          (List ()))
     .toEqual (Nothing)
 })
 
-test ('firstJust', () => {
-  expect (List.firstJust (x => x.a >= 2 ? Just (x.a) : Nothing)
-                         (List ({ a: 1 } , { a: 3 }, { a: 2 })))
+test ("firstJust", () => {
+  expect (List.firstJust ((x: { a: number }) => x.a >= 2 ? Just (x.a) : Nothing)
+                         (List ({ a: 1 }, { a: 3 }, { a: 2 })))
     .toEqual (Just (3))
 
-  expect (List.firstJust (x => x.a >= 2 ? Just (x.a) : Nothing)
+  expect (List.firstJust ((x: { a: number }) => x.a >= 2 ? Just (x.a) : Nothing)
                          (List ()))
     .toEqual (Nothing)
 })
 
-test ('replaceStr', () => {
+test ("replaceStr", () => {
   expect (List.replaceStr ("{}") ("nice") ("Hello, this is a {} test! It's {}, huh?"))
     .toEqual ("Hello, this is a nice test! It's nice, huh?")
 })
 
 // OWN METHODS
 
-test ('unsafeIndex', () => {
+test ("unsafeIndex", () => {
   expect (List.unsafeIndex (List (1, 2, 3, 4, 5)) (1))
     .toEqual (2)
   expect (() => List.unsafeIndex (List (1, 2, 3, 4, 5)) (5))
     .toThrow ()
 })
 
-test ('fromArray', () => {
-  expect (List.fromArray ([3, 2, 1]))
+test ("fromArray", () => {
+  expect (List.fromArray ([ 3, 2, 1 ]))
     .toEqual (List (3, 2, 1))
 })
 
-test ('toArray', () => {
+test ("toArray", () => {
   expect (List.toArray (List (1, 2, 3, 4, 5)))
-    .toEqual ([1, 2, 3, 4, 5])
+    .toEqual ([ 1, 2, 3, 4, 5 ])
 })
 
-test ('isList', () => {
+test ("isList", () => {
   expect (List.isList (List (1, 2, 3, 4, 5)))
     .toBeTruthy ()
   expect (List.isList (4))
     .toBeFalsy ()
 })
 
-test ('countWith', () => {
-  expect (List.countWith (x => x > 2) (List (1, 2, 3, 4, 5)))
+test ("countWith", () => {
+  expect (List.countWith ((x: number) => x > 2) (List (1, 2, 3, 4, 5)))
     .toEqual (3)
 })
 
-test ('countWithByKey', () => {
-  expect (List.countWithByKey (x => x % 2) (List (1, 2, 3, 4, 5)))
+test ("countWithByKey", () => {
+  expect (List.countWithByKey ((x: number) => x % 2) (List (1, 2, 3, 4, 5)))
     .toEqual (
       OrderedMap.fromArray (
         [
-          [1, 3],
-          [0, 2],
+          [ 1, 3 ],
+          [ 0, 2 ],
         ]
       )
     )
 })
 
-test ('countWithByKeyMaybe', () => {
-  expect (List.countWithByKeyMaybe (x => x > 3 ? Nothing : Just (x % 2)) (List (1, 2, 3, 4, 5)))
+test ("countWithByKeyMaybe", () => {
+  expect (List.countWithByKeyMaybe ((x: number) => x > 3 ? Nothing : Just (x % 2))
+                                   (List (1, 2, 3, 4, 5)))
     .toEqual (
       OrderedMap.fromArray (
         [
-          [1, 2],
-          [0, 1],
+          [ 1, 2 ],
+          [ 0, 1 ],
         ]
       )
     )
 })
 
-test ('maximumNonNegative', () => {
+test ("maximumNonNegative", () => {
   expect (List.maximumNonNegative (List (1, 2, 3, 4, 5)))
     .toEqual (5)
 
@@ -1051,41 +1053,43 @@ test ('maximumNonNegative', () => {
     .toEqual (0)
 })
 
-test ('groupByKey', () => {
-  expect (List.groupByKey (x => x % 2) (List (1, 2, 3, 4, 5)))
+test ("groupByKey", () => {
+  expect (List.groupByKey ((x: number) => x % 2) (List (1, 2, 3, 4, 5)))
     .toEqual (
       OrderedMap.fromArray (
         [
-          [1, List (1, 3, 5)],
-          [0, List (2, 4)],
+          [ 1, List (1, 3, 5) ],
+          [ 0, List (2, 4) ],
         ]
       )
     )
 })
 
-test ('mapByIdKeyMap', () => {
+test ("mapByIdKeyMap", () => {
   const R = fromDefault ("R") ({ id: "" })
 
-  const m = OrderedMap.fromArray ([["a", 1], ["b", 2], ["c", 3], ["d", 4], ["e", 5]])
+  const m = OrderedMap.fromArray ([ [ "a", 1 ], [ "b", 2 ], [ "c", 3 ], [ "d", 4 ], [ "e", 5 ] ])
 
   expect (List.mapByIdKeyMap (m)
                              (List (R ({ id: "d" }), R ({ id: "b" }), R ({ id: "a" }))))
     .toEqual (List (4, 2, 1))
 })
 
-test ('intersecting', () => {
+test ("intersecting", () => {
   expect (List.intersecting (List (1, 2, 3)) (List (4, 5, 6))) .toEqual (false)
   expect (List.intersecting (List (1, 2, 3)) (List (3, 5, 6))) .toEqual (true)
 })
 
-test ('filterMulti', () => {
-  expect (List.filterMulti (List (a => a > 2, a => a < 5)) (List (1, 2, 3, 4, 5)))
+test ("filterMulti", () => {
+  expect (List.filterMulti (List ((a: number) => a > 2, (a: number) => a < 5))
+                           (List (1, 2, 3, 4, 5)))
     .toEqual (List (3, 4))
-  expect (List.filterMulti (List (a => a > 2, a => a < 5)) (List (2, 5, 6, 7)))
+  expect (List.filterMulti (List ((a: number) => a > 2, (a: number) => a < 5))
+                           (List (2, 5, 6, 7)))
     .toEqual (List ())
 })
 
-test ('lengthAtLeast', () => {
+test ("lengthAtLeast", () => {
   expect (List.lengthAtLeast (3) (List (1, 2, 3, 4, 5)))
     .toEqual (true)
   expect (List.lengthAtLeast (3) (List (1, 2, 3, 4)))
@@ -1098,7 +1102,7 @@ test ('lengthAtLeast', () => {
     .toThrow ()
 })
 
-test ('lengthAtMost', () => {
+test ("lengthAtMost", () => {
   expect (List.lengthAtMost (3) (List (1)))
     .toEqual (true)
   expect (List.lengthAtMost (3) (List (1, 2)))

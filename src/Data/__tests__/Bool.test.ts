@@ -1,6 +1,4 @@
-// @ts-check
-
-const Bool = require ("../Bool")
+import * as Bool from "../Bool"
 
 describe ("and", () => {
   it ("returns False if at least one parameter is False", () => {
@@ -62,11 +60,11 @@ describe ("not", () => {
 
 describe ("notP", () => {
   it ("returns True if it returns False", () => {
-    expect (Bool.notP (() => false) ()) .toBe (true)
+    expect (Bool.notP<void> (() => false) ()) .toBe (true)
   })
 
   it ("returns False if it returns True", () => {
-    expect (Bool.notP (() => true) ()) .toBe (false)
+    expect (Bool.notP<void> (() => true) ()) .toBe (false)
   })
 })
 

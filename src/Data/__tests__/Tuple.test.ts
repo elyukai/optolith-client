@@ -1,5 +1,4 @@
-// @ts-check
-const { Tuple, Pair, bimap, first, second, fst, snd, curry, uncurry, swap, toArray, fromArray, isTuple } = require('../Tuple')
+import { bimap, curry, first, fromArray, fst, isTuple, Pair, second, snd, swap, toArray, Tuple, uncurry } from "../Tuple"
 
 // CONSTRUCTOR
 
@@ -22,7 +21,7 @@ describe ("Tuple ()", () => {
   })
 })
 
-describe ('Pair x y', () => {
+describe ("Pair x y", () => {
   it ("returns a Pair when curried", () => {
     const pair = Pair (3) (1)
     expect (pair .values [0]) .toEqual (3)
@@ -42,35 +41,35 @@ describe ('Pair x y', () => {
 
 describe ("bimap", () => {
   it ("returns a Pair", () => {
-    expect (bimap (a => a + 2) (b => b + 3) (Tuple (3, 1)))
+    expect (bimap ((a: number) => a + 2) ((b: number) => b + 3) (Tuple (3, 1)))
       .toEqual (Tuple (5, 4))
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-ignore
-    expect (() => bimap (a => a + 2) (b => b + 3) (Tuple (3, 1, 2))) .toThrow ()
+    // @ts-expect-error
+    expect (() => bimap ((a: number) => a + 2) ((b: number) => b + 3) (Tuple (3, 1, 2))) .toThrow ()
   })
 })
 
 describe ("first", () => {
   it ("returns a Pair", () => {
-    expect (first (a => a + 2) (Tuple (3, 1))) .toEqual (Tuple (5, 1))
+    expect (first ((a: number) => a + 2) (Tuple (3, 1))) .toEqual (Tuple (5, 1))
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-ignore
-    expect (() => first (a => a + 2) (Tuple (3, 1, 2))) .toThrow ()
+    // @ts-expect-error
+    expect (() => first ((a: number) => a + 2) (Tuple (3, 1, 2))) .toThrow ()
   })
 })
 
 describe ("second", () => {
   it ("returns a Pair", () => {
-    expect (second (b => b + 3) (Tuple (3, 1))) .toEqual (Tuple (3, 4))
+    expect (second ((b: number) => b + 3) (Tuple (3, 1))) .toEqual (Tuple (3, 4))
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-ignore
-    expect (() => second (b => b + 3) (Tuple (3, 1, 2))) .toThrow ()
+    // @ts-expect-error
+    expect (() => second ((b: number) => b + 3) (Tuple (3, 1, 2))) .toThrow ()
   })
 })
 
@@ -82,7 +81,7 @@ describe ("fst", () => {
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-ignore
+    // @ts-expect-error
     expect (() => fst (Tuple (3, 1, 2))) .toThrow ()
   })
 })
@@ -93,25 +92,25 @@ describe ("snd", () => {
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-ignore
+    // @ts-expect-error
     expect (() => snd (Tuple (3, 1, 2))) .toThrow ()
   })
 })
 
 describe ("curry", () => {
   it ("returns a Pair", () => {
-    expect (curry (p => fst (p) + snd (p)) (2) (3)) .toEqual (5)
+    expect (curry ((p: Pair<number, number>) => fst (p) + snd (p)) (2) (3)) .toEqual (5)
   })
 })
 
 describe ("uncurry", () => {
   it ("returns a Pair", () => {
-    expect (uncurry (a => b => a + b) (Tuple (2, 3))) .toEqual (5)
+    expect (uncurry ((a: number) => (b: number) => a + b) (Tuple (2, 3))) .toEqual (5)
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-ignore
-    expect (() => uncurry (a => b => a + b) (Tuple (2, 3, 4))) .toThrow ()
+    // @ts-expect-error
+    expect (() => uncurry ((a: number) => (b: number) => a + b) (Tuple (2, 3, 4))) .toThrow ()
   })
 })
 
@@ -121,22 +120,22 @@ describe ("swap", () => {
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-ignore
+    // @ts-expect-error
     expect (() => swap (Tuple (3, 1, 2))) .toThrow ()
   })
 })
 
 // CUSTOM FUNCTIONS
 
-test ('toArray', () => {
-  expect (toArray (Tuple (3, 1))) .toEqual ([3, 1])
+test ("toArray", () => {
+  expect (toArray (Tuple (3, 1))) .toEqual ([ 3, 1 ])
 })
 
-test ('fromArray', () => {
-  expect (fromArray ([3, 1])) .toEqual (Tuple (3, 1))
+test ("fromArray", () => {
+  expect (fromArray ([ 3, 1 ])) .toEqual (Tuple (3, 1))
 })
 
-test ('isTuple', () => {
+test ("isTuple", () => {
   expect (isTuple (Tuple (3, 1))) .toEqual (true)
   expect (isTuple (2)) .toEqual (false)
 })
