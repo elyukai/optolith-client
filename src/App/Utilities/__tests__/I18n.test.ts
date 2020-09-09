@@ -1,11 +1,10 @@
-// @ts-check
-const { pipe_ } = require ('../pipe')
-const { L10n } = require ('../../Models/Wiki/L10n')
-const { StaticData, StaticDataL } = require ('../../Models/Wiki/WikiModel')
-const { set } = require ('../../../Data/Lens')
-const { makeLenses } = require ('../../../Data/Record')
-const { List } = require ('../../../Data/List')
-const I18n = require ('../I18n')
+import { set } from "../../../Data/Lens"
+import { List } from "../../../Data/List"
+import { makeLenses } from "../../../Data/Record"
+import { L10n } from "../../Models/Wiki/L10n"
+import { StaticData, StaticDataL } from "../../Models/Wiki/WikiModel"
+import * as I18n from "../I18n"
+import { pipe_ } from "../pipe"
 
 const L10nL = makeLenses (L10n)
 
@@ -36,6 +35,7 @@ describe ("localizeOrList", () => {
   })
 
   it ("returns 4 concatenated items", () => {
-    expect (I18n.localizeOrList (staticData) (List (13, 15, 24, 45))) .toEqual ("13, 15, 24 oder 45")
+    expect (I18n.localizeOrList (staticData) (List (13, 15, 24, 45)))
+      .toEqual ("13, 15, 24 oder 45")
   })
 })

@@ -1,6 +1,5 @@
-// @ts-check
-const { Tuple } = require('../../Tuple')
-const Update = require('../Update')
+import { Tuple } from "../../Tuple"
+import * as Update from "../Update"
 
 describe ("upd1", () => {
   it ("sets the first element", () => {
@@ -28,7 +27,7 @@ describe ("upd2", () => {
 
 describe ("upd3", () => {
   it ("sets the third element", () => {
-    expect (Update.upd3 ("abc") (Tuple (3, "test", [1, 2, 3])))
+    expect (Update.upd3 ("abc") (Tuple (3, "test", [ 1, 2, 3 ])))
       .toEqual (Tuple (3, "test", "abc"))
   })
 
@@ -40,12 +39,12 @@ describe ("upd3", () => {
 
 describe ("upd4", () => {
   it ("sets the 4th element", () => {
-    expect (Update.upd4 ("abc") (Tuple (3, "test", [1, 2, 3], true)))
-      .toEqual (Tuple (3, "test", [1, 2, 3], "abc"))
+    expect (Update.upd4 ("abc") (Tuple (3, "test", [ 1, 2, 3 ], true)))
+      .toEqual (Tuple (3, "test", [ 1, 2, 3 ], "abc"))
   })
 
   it ("throws if input Tuple does not contain the required index", () => {
     // @ts-ignore
-    expect (() => Update.upd4 ("abc") (Tuple (3, "test", [1, 2, 3]))) .toThrow ()
+    expect (() => Update.upd4 ("abc") (Tuple (3, "test", [ 1, 2, 3 ]))) .toThrow ()
   })
 })

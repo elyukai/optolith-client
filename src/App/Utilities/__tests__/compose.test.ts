@@ -1,9 +1,8 @@
-// @ts-check
-const { composeL } = require ('../compose')
-const { view } = require ('../../../Data/Lens')
-const { fromDefault, makeLenses } = require ('../../../Data/Record')
+import { view } from "../../../Data/Lens"
+import { fromDefault, makeLenses } from "../../../Data/Record"
+import { composeL } from "../compose"
 
-test ('composeL', () => {
+test ("composeL", () => {
   const b = fromDefault ("A") ({ x: 1, y: "test" })
   const a = fromDefault ("B") ({ z: 1, q: b .default })
 

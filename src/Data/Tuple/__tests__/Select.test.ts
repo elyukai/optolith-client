@@ -1,6 +1,5 @@
-// @ts-check
-const { Tuple } = require('../../Tuple')
-const Select = require('../Select')
+import { Tuple } from "../../Tuple"
+import * as Select from "../Select"
 
 describe ("sel1", () => {
   it ("returns the first element", () => {
@@ -26,7 +25,7 @@ describe ("sel2", () => {
 
 describe ("sel3", () => {
   it ("returns the third element", () => {
-    expect (Select.sel3 (Tuple (3, "test", [1, 2, 3]))) .toEqual ([1, 2, 3])
+    expect (Select.sel3 (Tuple (3, "test", [ 1, 2, 3 ]))) .toEqual ([ 1, 2, 3 ])
   })
 
   it ("throws if input Tuple does not contain the required index", () => {
@@ -37,11 +36,11 @@ describe ("sel3", () => {
 
 describe ("sel4", () => {
   it ("returns the 4th element", () => {
-    expect (Select.sel4 (Tuple (3, "test", [1, 2, 3], true))) .toEqual (true)
+    expect (Select.sel4 (Tuple (3, "test", [ 1, 2, 3 ], true))) .toEqual (true)
   })
 
   it ("throws if input Tuple does not contain the required index", () => {
     // @ts-ignore
-    expect (() => Select.sel4 (Tuple (3, "test", [1, 2, 3]))) .toThrow ()
+    expect (() => Select.sel4 (Tuple (3, "test", [ 1, 2, 3 ]))) .toThrow ()
   })
 })

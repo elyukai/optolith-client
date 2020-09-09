@@ -1,7 +1,6 @@
-// @ts-check
-const RegexUtils = require ('../RegexUtils')
+import * as RegexUtils from "../RegexUtils"
 
-describe ('isNatural', () => {
+describe ("isNatural", () => {
   it ("returns true on natural number", () => {
     expect (RegexUtils.isNaturalNumber ("2681")) .toBe (true)
   })
@@ -15,7 +14,7 @@ describe ('isNatural', () => {
   })
 })
 
-describe ('isInteger', () => {
+describe ("isInteger", () => {
   it ("returns true on natural number", () => {
     expect (RegexUtils.isInteger ("2681")) .toBe (true)
   })

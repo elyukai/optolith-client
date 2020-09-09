@@ -1,20 +1,19 @@
-// @ts-check
-const { Identity, isIdentity, runIdentity } = require ('../Identity');
+import { Identity, isIdentity, runIdentity } from "../Identity"
 
 // CONSTRUCTORS
 
-test ('Identity', () => {
+test ("Identity", () => {
   expect (Identity (3) .value) .toEqual (3)
   expect (Identity (3) .isIdentity) .toEqual (true)
 })
 
-test ('runIdentity', () => {
+test ("runIdentity", () => {
   expect (runIdentity (Identity (3))) .toEqual (3)
 })
 
 // CUSTOM IDENTITY FUNCTIONS
 
-test ('isIdentity', () => {
+test ("isIdentity", () => {
   expect (isIdentity (Identity (4))) .toEqual (true)
   expect (isIdentity (4)) .toEqual (false)
 })
