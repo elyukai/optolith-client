@@ -41,10 +41,10 @@ Due to licensing, the YAML files containing the crunch elements from the books a
 
 ### Prepare the repo
 
-Clone the repo.
+Clone the repo, including the private submodule.
 
 ```sh
-git clone https://github.com/elyukai/optolith-client.git
+git clone --recurse-submodules https://github.com/elyukai/optolith-client.git
 ```
 
 Make sure Node.js (lastest version) is installed and run
@@ -55,31 +55,7 @@ npm i
 
 This installs all necessary packages.
 
-Create a `tablesSrc.json` in the `/deploy` folder. The JSON consists of an object that has the following interface:
-
-```ts
-{
-  repository: string[];
-}
-```
-
-The array is consumed by `path.join` from Node.js and represents the relative path from the optolith client root folder to the root folder of the private repo with the YAMl database.
-
-Example:
-
-```json
-{
-  "repository": ["..", "optolith-data"]
-}
-```
-
 ### First run
-
-Import YAML files.
-
-```sh
-npm run getstatic
-```
 
 Compile the source code. `ts:` is for TypeScript, `re:` for Reason/OCaml.
 
