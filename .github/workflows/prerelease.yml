@@ -2,8 +2,9 @@ name: Build Prerelease
 
 on:
   push:
-    tags: v[0-9]+.[0-9]+.[0-9]+-[a-z]+.[0-9]+
-    branches: 
+    tags:
+    - v[0-9]+.[0-9]+.[0-9]+-[a-z]+.[0-9]+
+    branches:
     - develop
 
 jobs:
@@ -12,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: 
+        os:
         - ubuntu-latest
         - windows-latest
         - macOS-latest
@@ -38,5 +39,5 @@ jobs:
       run: npm run re:build
     - name: Build TypeScript files
       run: npm run ts:build
-    - name: Build 
+    - name: Build
       run: npm run ${{ matrix.command }}
