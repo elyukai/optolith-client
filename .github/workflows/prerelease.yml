@@ -17,13 +17,10 @@ jobs:
         - macOS-latest
         include:
         - os: ubuntu-latest
-          command: prerelease:linux
           osName: Linux
         - os: windows-latest
-          command: prerelease:win
           osName: Windows
         - os: macOS-latest
-          command: prerelease:mac
           osName: macOS
     steps:
     - uses: actions/checkout@v2
@@ -41,9 +38,13 @@ jobs:
     - name: Build TypeScript files
       run: npm run ts:build
     - name: Build
-      run: npm run ${{ matrix.command }}
+      run: node ./deploy/buildPrerelease.js prerelease
+      env:
+        UPDATE_URL: ${{ secrets.PUBLISH_URL_INSIDER }}
+    - name: Deploy
+      run: node ./deploy/deploy.js prerelease
       env:
         HOST: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         PASSWORD: ${{ secrets.PASSWORD }}
-        PUBLISH_URL_INSIDER: ${{ secrets.PUBLISH_URL_INSIDER }}
+        ROOT: ${{ secrets.ROOT_PRERELEASE }}
