@@ -172,6 +172,8 @@ ipcRenderer.addListener ("auto-updater-error", (_event: Event, err: Error | {}) 
 
   dispatch (setUpdateDownloadProgress ())
 
+  console.error (err)
+
   if (isError (err)) {
     dispatch (addErrorAlert (AlertOptions ({
                               title: Just (`${err.name} during update`),
