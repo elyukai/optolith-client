@@ -4,12 +4,10 @@ on:
   push:
     tags:
     - v[0-9]+.[0-9]+.[0-9]+
-    branches:
-    - master
 
 jobs:
   build:
-    name: Build release on ${{ matrix.os }}
+    name: Build ${{ matrix.osName }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -20,10 +18,13 @@ jobs:
         include:
         - os: ubuntu-latest
           command: stable:linux
+          osName: Linux
         - os: windows-latest
           command: stable:win
+          osName: Windows
         - os: macOS-latest
           command: stable:mac
+          osName: macOS
     steps:
     - uses: actions/checkout@v2
       with:

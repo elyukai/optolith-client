@@ -4,12 +4,10 @@ on:
   push:
     tags:
     - v[0-9]+.[0-9]+.[0-9]+-[a-z]+.[0-9]+
-    branches:
-    - develop
 
 jobs:
   build:
-    name: Build prerelease on ${{ matrix.os }}
+    name: Build ${{ matrix.osName }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -20,10 +18,13 @@ jobs:
         include:
         - os: ubuntu-latest
           command: prerelease:linux
+          osName: Linux
         - os: windows-latest
           command: prerelease:win
+          osName: Windows
         - os: macOS-latest
           command: prerelease:mac
+          osName: macOS
     steps:
     - uses: actions/checkout@v2
       with:
