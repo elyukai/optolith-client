@@ -38,7 +38,7 @@ jobs:
     - name: Build TypeScript files
       run: npm run ts:build
     - name: Build
-      run: node ./deploy/buildPrerelease.js prerelease
+      run: node ./deploy/build.js prerelease
       env:
         UPDATE_URL: ${{ secrets.PUBLISH_URL_INSIDER }}
     - name: Deploy
