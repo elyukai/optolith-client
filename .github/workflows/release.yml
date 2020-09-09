@@ -1,0 +1,42 @@
+name: Build Release
+
+on:
+  push:
+    tags: ^v\d+.\d+.\d+$
+    branches: 
+    - master
+
+jobs:
+  build:
+    name: Build release on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: 
+        - ubuntu-latest
+        - windows-latest
+        - macOS-latest
+        include:
+        - os: ubuntu-latest
+          command: stable:linux
+        - os: windows-latest
+          command: stable:win
+        - os: macOS-latest
+          command: stable:mac
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.ACCESS_TOKEN }}
+        submodules: true
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install Node.js dependencies
+      run: npm ci
+    - name: Build ReasonML files
+      run: npm run re:build
+    - name: Build TypeScript files
+      run: npm run ts:build
+    - name: Build 
+      run: npm run ${{ matrix.command }}
