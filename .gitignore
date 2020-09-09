@@ -13,7 +13,6 @@ app/**/*.js.map
 /installer/
 electron-builder.env
 *.map
-app/Database
 publishSettings.json
 
 .env*
