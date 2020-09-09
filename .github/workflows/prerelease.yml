@@ -1,4 +1,4 @@
-name: Build Prerelease
+name: Prerelease Builds
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.osName }}
+    name: Build ${{ matrix.osName }} Prerelease
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

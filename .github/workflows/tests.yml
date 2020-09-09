@@ -1,8 +1,8 @@
-name: TS/RE Tests
+name: Integration
 
 on:
   push:
-    branches: 
+    branches:
     - develop
   pull_request:
     branches:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Run tests
+    name: Test
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +30,7 @@ jobs:
       env:
         CI: true
   lint:
-    name: Run ESLint
+    name: Lint
     runs-on: ubuntu-latest
 
     steps:
