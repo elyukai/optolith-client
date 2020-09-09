@@ -2,7 +2,7 @@ name: Build Prerelease
 
 on:
   push:
-    tags: ^v\d+.\d+.\d+$
+    tags: ^v\d+.\d+.\d+-\w+.\d+$
     branches: 
     - develop
 
