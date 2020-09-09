@@ -36,6 +36,10 @@
 - SF *Balboram-Stil* hatte Lanzenangriff I statt Beidhändiger Kampf I als Voraussetzung. [#563](https://github.com/elyukai/optolith-client/issues/563)
 - Der Erfahrungsgrad *Brillant* wurde zuvor Brilliant geschrieben. Das gleiche Problem gab es auch bei anderen Einträgen. [#567](https://github.com/elyukai/optolith-client/issues/567)
 - Zauber *Halluzination* hatte als Verbreitung Elfen, obwohl es Druiden hätte sein müssen. [#564](https://github.com/elyukai/optolith-client/issues/564)
+- Das Interface konnte kleiner skaliert werden. [#487](https://github.com/elyukai/optolith-client/issues/487)
+- Schelmenstreiche zeigten keine Wirkungsdauer an, obwohl sie eine besitzen. [#663](https://github.com/elyukai/optolith-client/issues/663)
+- Waffen der Kampftechnik *Lanzen* wurden nicht auf dem Heldenbogen abgezeigt. [#662](https://github.com/elyukai/optolith-client/issues/662)
+- Eigenschaften ignorierten das Minimum, welches durch höhere Fertigkeitswerte entsteht. Das Maximum für Fertigkeitswerte ist die höchste an der Probe beteiligte Eigenschaft&thinsp;+&thinsp;2, wodurch die höchste Eigenschaft mindestens FW&thinsp;&minus;&thinsp;2 sein muss. [#630](https://github.com/elyukai/optolith-client/issues/630)
 
 ### API
 
