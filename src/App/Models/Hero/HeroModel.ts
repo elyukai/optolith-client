@@ -5,6 +5,7 @@ import { OrderedSet } from "../../../Data/OrderedSet"
 import { fromDefault, makeLenses, Record, RecordCreator } from "../../../Data/Record"
 import { SocialStatusId } from "../../Constants/Ids"
 import { current_version } from "../../Selectors/envSelectors"
+import { AttributeSkillCheckMinimumCache as SkillCheckAttributeCache } from "../../Utilities/Increasable/AttributeSkillCheckMinimum"
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent"
 import { AttributeDependent } from "../ActiveEntries/AttributeDependent"
@@ -71,6 +72,7 @@ export interface HeroModel {
   skillStyleDependencies: List<Record<StyleDependency>>
   socialStatusDependencies: List<SocialStatusId>
   transferredUnfamiliarSpells: List<Record<TransferUnfamiliar>>
+  skillCheckAttributeCache: SkillCheckAttributeCache
 }
 
 /**
@@ -124,6 +126,7 @@ export const HeroModel: RecordCreator<HeroModel> =
                 skillStyleDependencies: List (),
                 socialStatusDependencies: List (),
                 transferredUnfamiliarSpells: List (),
+                skillCheckAttributeCache: OrderedMap.empty,
               })
 
 export const HeroModelL = makeLenses (HeroModel)
@@ -182,4 +185,5 @@ export const getInitialHeroObject =
       skillStyleDependencies: Nothing,
       socialStatusDependencies: Nothing,
       transferredUnfamiliarSpells: Nothing,
+      skillCheckAttributeCache: Nothing,
     })

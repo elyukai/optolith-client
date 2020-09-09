@@ -2127,7 +2127,7 @@ List.notNullStr = notNullStr
  * ```
  */
 export const list =
-  <A, B> (def: B) => (f: (x: A) => (xs: List<A>) => B) => (xs: List<A>): B =>
+  <B> (def: B) => <A> (f: (x: A) => (xs: List<A>) => B) => (xs: List<A>): B =>
     isNil (xs) ? def : f (xs .x) (xs .xs)
 
 List.list = list

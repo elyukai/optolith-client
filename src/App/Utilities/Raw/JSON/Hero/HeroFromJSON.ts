@@ -1,6 +1,6 @@
 import { flip, ident } from "../../../../../Data/Function"
 import { fmap, fmapF } from "../../../../../Data/Functor"
-import { over } from "../../../../../Data/Lens"
+import { over, set } from "../../../../../Data/Lens"
 import { consF, foldr, fromArray, List } from "../../../../../Data/List"
 import { elem, fromJust, fromMaybe, isNothing, Just, Maybe, maybe, maybe_, Nothing } from "../../../../../Data/Maybe"
 import { alter, lookup, OrderedMap } from "../../../../../Data/OrderedMap"
@@ -37,6 +37,7 @@ import { getCombinedPrerequisites } from "../../../Activatable/activatableActiva
 import { addOtherSpecialAbilityDependenciesOnHeroInit } from "../../../Activatable/SpecialAbilityUtils"
 import { addDependencies } from "../../../Dependencies/dependencyUtils"
 import { getCategoryById } from "../../../IDUtils"
+import { initializeCache } from "../../../Increasable/AttributeSkillCheckMinimum"
 import { pipe, pipe_ } from "../../../pipe"
 import * as Raw from "../../RawData"
 
@@ -300,6 +301,7 @@ const createHeroObject = (staticData: StaticDataRecord) => (hero: Raw.RawHero): 
     skillStyleDependencies: Nothing,
     socialStatusDependencies: Nothing,
     transferredUnfamiliarSpells: Nothing,
+    skillCheckAttributeCache: Nothing,
   })
 
 const getActiveObjectsFromRaw = (x: StringKeyObject<Raw.RawActiveObject[]>) =>
@@ -410,6 +412,17 @@ export const convertFromRawHero =
                                maybe (ident as ident<HeroModelRecord>)
                                      (pipe (Cantrip.A.prerequisites, addDependencies (id)))
                                      (lookup (id) (StaticData.A.cantrips (staticData)))))
-           (activeCantrips)
+           (activeCantrips),
+
+      intermediateHero =>
+        set (HL.skillCheckAttributeCache)
+            (initializeCache (
+              SDA.skills (staticData),
+              SDA.spells (staticData),
+              SDA.liturgicalChants (staticData),
+              HA.spells (intermediateHero),
+              HA.liturgicalChants (intermediateHero),
+            ))
+            (intermediateHero)
     )
   }

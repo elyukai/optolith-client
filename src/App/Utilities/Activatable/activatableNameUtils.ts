@@ -119,25 +119,26 @@ const getEntrySpecificNameAddition =
         return pipe (
                       AOWIA.sid,
                       getSelectOptionName (wiki_entry),
-                      fmap (option_name => maybe (option_name)
+                      fmap ((option_name: string) =>
+                              maybe (option_name)
 
-                                                 // if there is additional input, add to name
-                                                 ((specialInput: string | number) =>
-                                                   `${option_name}: ${specialInput}`)
-                                                 (pipe (
-                                                         AOWIA.sid,
+                              // if there is additional input, add to name
+                              ((specialInput: string | number) =>
+                                `${option_name}: ${specialInput}`)
+                              (pipe (
+                                      AOWIA.sid,
 
-                                                         // Check if the select option allows
-                                                         // additional input
-                                                         bindF<SID, number> (
-                                                           ensure (
-                                                             (x): x is number => isNumber (x)
-                                                               && elem (x) (List (7, 8))
-                                                           )
-                                                         ),
-                                                         bindF (() => AOWIA.sid2 (hero_entry))
-                                                       )
-                                                       (hero_entry)))
+                                      // Check if the select option allows
+                                      // additional input
+                                      bindF<SID, number> (
+                                        ensure (
+                                          (x): x is number => isNumber (x)
+                                            && elem (x) (List (7, 8))
+                                        )
+                                      ),
+                                      bindF (() => AOWIA.sid2 (hero_entry))
+                                    )
+                                    (hero_entry)))
                     )
                     (hero_entry)
 
@@ -199,7 +200,7 @@ const getEntrySpecificNameAddition =
                                                (target_id)
                                            }),
                                            fmap (
-                                             target_entry =>
+                                             (target_entry: ActivatableSkillEntry) =>
                                                `${SAL.name (target_entry)}: ${SOA.name (ext)}`
                                            )
                                          )

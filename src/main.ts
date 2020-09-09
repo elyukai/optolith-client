@@ -1,14 +1,15 @@
 import { app, BrowserWindow, ipcMain } from "electron"
 import * as log from "electron-log"
 import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater"
+import windowStateKeeper from "electron-window-state"
 import { promises } from "fs"
 import * as path from "path"
 import { prerelease } from "semver"
 import * as url from "url"
 import { existsFile } from "./System/IO"
-import windowStateKeeper from "electron-window-state"
 
 app.setAppUserModelId ("lukasobermann.optolith")
+app.allowRendererProcessReuse = false
 
 const setDerivedUserDataPath = async () => {
   const isPrerelease = prerelease (app.getVersion ()) !== null
