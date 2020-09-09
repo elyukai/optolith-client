@@ -1,6 +1,6 @@
+import { DerivedCharacteristicId } from "../../../../app/Database/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { isJust, Just, Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record"
-import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 
 type DCId = DerivedCharacteristicId
 

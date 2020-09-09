@@ -1,4 +1,5 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { CantripSelectOptions, CombatTechniqueSelectOptions, CurseSelectOptions, LanguageScriptSelectOptions, SkillSelectOptions, SkillSpecializationSelectOptions, TerrainKnowledgeSelectOptions, VariantCombatTechniqueSelectOptions, VariantSkillSpecializationSelectOptions } from "../../../../../app/Database/Schema/ProfessionSelectOptions/ProfessionSelectOptions"
 import { fromArray } from "../../../../Data/List"
 import { Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
@@ -12,7 +13,6 @@ import { CombatTechniquesSecondSelection } from "../../../Models/Wiki/profession
 import { SkillsSelection } from "../../../Models/Wiki/professionSelections/SkillsSelection"
 import { SpecializationSelection } from "../../../Models/Wiki/professionSelections/SpecializationSelection"
 import { TerrainKnowledgeSelection } from "../../../Models/Wiki/professionSelections/TerrainKnowledgeSelection"
-import { CantripSelectOptions, CombatTechniqueSelectOptions, CurseSelectOptions, LanguageScriptSelectOptions, SkillSelectOptions, SkillSpecializationSelectOptions, TerrainKnowledgeSelectOptions, VariantCombatTechniqueSelectOptions, VariantSkillSpecializationSelectOptions } from "../Schema/ProfessionSelectOptions/ProfessionSelectOptions"
 
 
 export const toSkillSpecializationSO : (x : SkillSpecializationSelectOptions)

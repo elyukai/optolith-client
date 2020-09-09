@@ -1,4 +1,5 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { ConditionL10n } from "../../../../../app/Database/Schema/Conditions/Conditions.l10n"
 import { second } from "../../../../Data/Either"
 import { Maybe } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
@@ -8,7 +9,6 @@ import { Condition } from "../../../Models/Wiki/Condition"
 import { pipe } from "../../pipe"
 import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { ConditionL10n } from "../Schema/Conditions/Conditions.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { mergeBy } from "../ZipById"
 import { toErrata } from "./ToErrata"

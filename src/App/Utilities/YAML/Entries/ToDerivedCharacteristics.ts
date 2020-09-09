@@ -1,4 +1,5 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { DerivedCharacteristicId, DerivedCharacteristicL10n } from "../../../../../app/Database/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { second } from "../../../../Data/Either"
 import { Maybe } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
@@ -7,7 +8,6 @@ import { DerivedCharacteristic } from "../../../Models/Wiki/DerivedCharacteristi
 import { pipe } from "../../pipe"
 import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { DerivedCharacteristicId, DerivedCharacteristicL10n } from "../Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { mergeBy } from "../ZipById"
 

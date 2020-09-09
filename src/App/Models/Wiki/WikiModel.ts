@@ -1,6 +1,6 @@
+import { DerivedCharacteristicId } from "../../../../app/Database/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { fromDefault, makeLenses, Record, RecordCreator } from "../../../Data/Record"
-import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { NumIdName } from "../NumIdName"
 import { Advantage } from "./Advantage"
 import { AnimistForce } from "./AnimistForce"
