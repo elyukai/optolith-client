@@ -1,6 +1,6 @@
+import { DerivedCharacteristicId } from "../../../../app/Database/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault } from "../../../Data/Record"
-import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 
 export interface DerivedCharacteristic {
   "@@name": "DerivedCharacteristic"

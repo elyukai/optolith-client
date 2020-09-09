@@ -1,4 +1,5 @@
 import * as React from "react"
+import { DerivedCharacteristicId } from "../../../../app/Database/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { equals } from "../../../Data/Eq"
 import { find, List } from "../../../Data/List"
 import { bindF, ensure, isJust, Maybe, maybe } from "../../../Data/Maybe"
@@ -11,7 +12,6 @@ import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { DCPair } from "../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
-import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { AttributesPermanentListItem } from "./AttributesPermanentListItem"
 
 type EWLPair = Pair<Record<DerivedCharacteristic>, Record<EnergyWithLoss>>

@@ -1,4 +1,5 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { SkillGroupL10n } from "../../../../../app/Database/Schema/SkillGroups/SkillGroups.l10n"
 import { second } from "../../../../Data/Either"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
@@ -6,7 +7,6 @@ import { SkillGroup } from "../../../Models/Wiki/SkillGroup"
 import { pipe } from "../../pipe"
 import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { SkillGroupL10n } from "../Schema/SkillGroups/SkillGroups.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { mergeBy } from "../ZipById"
 

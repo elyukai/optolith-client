@@ -1,5 +1,5 @@
+import { UIL10n } from "../../../../app/Database/Schema/UI/UI.l10n"
 import { fromDefault, OmitName, Record } from "../../../Data/Record"
-import { UIL10n } from "../../Utilities/YAML/Schema/UI/UI.l10n"
 
 export interface L10n extends UIL10n {
   "@@name": "L10n"

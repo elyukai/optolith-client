@@ -13,7 +13,6 @@ app/**/*.js.map
 /installer/
 electron-builder.env
 *.map
-app/Database
 publishSettings.json
 
 .env*
@@ -21,7 +20,6 @@ publishSettings.json
 Tables.zip
 tables/
 deploy/tablesSrc.json
-src/App/Utilities/YAML/Schema/
 /lib/bs/
 .merlin
 .bsb.lock

@@ -1,4 +1,5 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { OptionalRuleL10n } from "../../../../../app/Database/Schema/OptionalRules/OptionalRules.l10n"
 import { second } from "../../../../Data/Either"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
@@ -6,7 +7,6 @@ import { OptionalRule } from "../../../Models/Wiki/OptionalRule"
 import { pipe } from "../../pipe"
 import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { OptionalRuleL10n } from "../Schema/OptionalRules/OptionalRules.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { mergeBy } from "../ZipById"
 import { toErrata } from "./ToErrata"
