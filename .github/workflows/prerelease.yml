@@ -42,3 +42,8 @@ jobs:
       run: npm run ts:build
     - name: Build
       run: npm run ${{ matrix.command }}
+      env:
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+        PUBLISH_URL_INSIDER: ${{ secrets.PUBLISH_URL_INSIDER }}
