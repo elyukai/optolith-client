@@ -1,5 +1,7 @@
 ## 1.4.0
 
+Please checkout the characters for which you've added SA *intuition tactique* or SA *détection des embuscades*. You'll notice it does not have it's previous name. This is due to an error (mentioned below) where the names of those two special abilities were swapped. The internal representation cannot change so the entries have to be "renamed". This should also fix the "incorrect" prerequisites of both entries.
+
 ### Features
 
 - Italian translation [#667](https://github.com/elyukai/optolith-client/issues/667) [#610](https://github.com/elyukai/optolith-client/issues/610)
@@ -21,6 +23,7 @@
 - The interface could be scaled down. [#487](https://github.com/elyukai/optolith-client/issues/487)
 - Weapons of the combat technique *Lances* were not shown on character sheet. [#662](https://github.com/elyukai/optolith-client/issues/662)
 - Attributes ignored the minimum caused by high skill ratings. The maximum of skill rating is the highest linked attribute&thinsp;+&thinsp;2, so the highest attribute is required to have a minimum value of SR&thinsp;&minus;&thinsp;2. [#630](https://github.com/elyukai/optolith-client/issues/630)
+- The names for SA *intuition tactique* and SA *détection des embuscades* were swapped. [#636](https://github.com/elyukai/optolith-client/issues/636)
 
 ### API
 
