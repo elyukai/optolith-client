@@ -12,9 +12,11 @@ import { isAttributeDependentUnused } from "../Models/ActiveEntries/AttributeDep
 import { isCombatTechniqueSkillDependentUnused, isSkillDependentUnused } from "../Models/ActiveEntries/SkillDependent"
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { Cantrip } from "../Models/Wiki/Cantrip"
+import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
 import { Spell } from "../Models/Wiki/Spell"
 import { addDependencies, removeDependencies } from "../Utilities/Dependencies/dependencyUtils"
 import { adjustEntryDef, adjustRemoveEntryDef } from "../Utilities/heroStateUtils"
+import { addEntryToCache, removeEntryFromCache } from "../Utilities/Increasable/AttributeSkillCheckMinimum"
 import { addPoint, removePoint } from "../Utilities/Increasable/increasableUtils"
 import { pipe } from "../Utilities/pipe"
 
@@ -45,7 +47,15 @@ export const increasableReducer =
           adjustEntryDef (set (ActivatableSkillDependentL.active) (true))
                          (action.payload.id),
           addDependencies (action.payload.id)
-                          (Spell.A.prerequisites (action.payload.wikiEntry))
+                          (Spell.A.prerequisites (action.payload.staticEntry)),
+          over (HeroModelL.skillCheckAttributeCache)
+               (cache => addEntryToCache (
+                           Spell.A.id,
+                           Spell.A.check,
+                           "Spell",
+                           action.payload.staticEntry,
+                           cache,
+                         ))
         )
       }
 
@@ -53,13 +63,23 @@ export const increasableReducer =
         return pipe (
           over (HeroModelL.cantrips) (insert (action.payload.id)),
           addDependencies (action.payload.id)
-                          (Cantrip.A.prerequisites (action.payload.wikiEntry))
+                          (Cantrip.A.prerequisites (action.payload.staticEntry))
         )
       }
 
       case ActionTypes.ACTIVATE_LITURGY: {
-        return adjustEntryDef (set (ActivatableSkillDependentL.active) (true))
-                              (action.payload.id)
+        return pipe (
+          adjustEntryDef (set (ActivatableSkillDependentL.active) (true))
+                         (action.payload.id),
+          over (HeroModelL.skillCheckAttributeCache)
+               (cache => addEntryToCache (
+                           LiturgicalChant.A.id,
+                           LiturgicalChant.A.check,
+                           "LiturgicalChant",
+                           action.payload.staticEntry,
+                           cache,
+                         ))
+        )
       }
 
       case ActionTypes.ACTIVATE_BLESSING: {
@@ -72,7 +92,15 @@ export const increasableReducer =
                                (set (ActivatableSkillDependentL.active) (false))
                                (action.payload.id),
           removeDependencies (action.payload.id)
-                             (Spell.A.prerequisites (action.payload.wikiEntry))
+                             (Spell.A.prerequisites (action.payload.staticEntry)),
+          over (HeroModelL.skillCheckAttributeCache)
+               (cache => removeEntryFromCache (
+                           Spell.A.id,
+                           Spell.A.check,
+                           "Spell",
+                           action.payload.staticEntry,
+                           cache,
+                         ))
         )
       }
 
@@ -80,14 +108,24 @@ export const increasableReducer =
         return pipe (
           over (HeroModelL.cantrips) (sdelete (action.payload.id)),
           removeDependencies (action.payload.id)
-                             (Cantrip.A.prerequisites (action.payload.wikiEntry))
+                             (Cantrip.A.prerequisites (action.payload.staticEntry))
         )
       }
 
       case ActionTypes.DEACTIVATE_LITURGY: {
-        return adjustRemoveEntryDef (isActivatableSkillDependentUnused)
-                                    (set (ActivatableSkillDependentL.active) (false))
-                                    (action.payload.id)
+        return pipe (
+          adjustRemoveEntryDef (isActivatableSkillDependentUnused)
+                               (set (ActivatableSkillDependentL.active) (false))
+                               (action.payload.id),
+          over (HeroModelL.skillCheckAttributeCache)
+               (cache => addEntryToCache (
+                           LiturgicalChant.A.id,
+                           LiturgicalChant.A.check,
+                           "LiturgicalChant",
+                           action.payload.staticEntry,
+                           cache,
+                         ))
+        )
       }
 
       case ActionTypes.DEACTIVATE_BLESSING: {

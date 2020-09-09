@@ -1,6 +1,6 @@
-import { fmapF } from "../../Data/Functor"
-import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe"
+import { bind, bindF, fromJust, isJust, isNothing, join, liftM2 } from "../../Data/Maybe"
 import { lookup } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { icFromJs } from "../Constants/Groups"
 import { ChantsSortOptions } from "../Models/Config"
@@ -12,7 +12,7 @@ import { getCurrentHeroPresent, getLiturgicalChants, getWikiLiturgicalChants } f
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
 import { getAPForActivatation } from "../Utilities/IC.gen"
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
-import { pipe, pipe_ } from "../Utilities/pipe"
+import { pipe_ } from "../Utilities/pipe"
 import { ReduxAction } from "./Actions"
 import { addNotEnoughAPAlert } from "./AlertActions"
 
@@ -20,6 +20,7 @@ export interface ActivateLiturgicalChantAction {
   type: ActionTypes.ACTIVATE_LITURGY
   payload: {
     id: string
+    staticEntry: Record<LiturgicalChant>
   }
 }
 
@@ -30,27 +31,37 @@ export const addLiturgicalChant =
     const wiki_liturgical_chants = getWikiLiturgicalChants (state)
     const mhero = getCurrentHeroPresent (state)
 
-    const missingAPForInc =
-      pipe_ (
-        mhero,
-        bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero })),
-        join,
-        liftM2 (getMissingAP (getIsInCharacterCreation (state)))
-               (fmapF (lookup (id) (wiki_liturgical_chants))
-                      (pipe (LiturgicalChant.A.ic, icFromJs, getAPForActivatation))),
-        join
-      )
+    const maybeStaticLiturgicalChant = lookup (id) (wiki_liturgical_chants)
 
-    if (isNothing (missingAPForInc)) {
-      dispatch<ActivateLiturgicalChantAction> ({
-        type: ActionTypes.ACTIVATE_LITURGY,
-        payload: {
-          id,
-        },
-      })
-    }
-    else {
-      await dispatch (addNotEnoughAPAlert (fromJust (missingAPForInc)))
+    if (isJust (maybeStaticLiturgicalChant)) {
+      const staticLiturgicalChant = fromJust (maybeStaticLiturgicalChant)
+
+      const missingAPForInc =
+        pipe_ (
+          mhero,
+          bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero })),
+          join,
+          bindF (getMissingAP (getIsInCharacterCreation (state))
+                              (pipe_ (
+                                staticLiturgicalChant,
+                                LiturgicalChant.A.ic,
+                                icFromJs,
+                                getAPForActivatation
+                              )))
+        )
+
+      if (isNothing (missingAPForInc)) {
+        dispatch<ActivateLiturgicalChantAction> ({
+          type: ActionTypes.ACTIVATE_LITURGY,
+          payload: {
+            id,
+            staticEntry: staticLiturgicalChant,
+          },
+        })
+      }
+      else {
+        await dispatch (addNotEnoughAPAlert (fromJust (missingAPForInc)))
+      }
     }
   }
 
@@ -93,15 +104,30 @@ export interface DeactivateLiturgyAction {
   type: ActionTypes.DEACTIVATE_LITURGY
   payload: {
     id: string
+    staticEntry: Record<LiturgicalChant>
   }
 }
 
-export const removeLiturgicalChant = (id: string): DeactivateLiturgyAction => ({
-  type: ActionTypes.DEACTIVATE_LITURGY,
-  payload: {
-    id,
-  },
-})
+export const removeLiturgicalChant =
+  (id: string): ReduxAction =>
+  (dispatch, getState) => {
+    const state = getState ()
+    const staticLiturgicalChants = getWikiLiturgicalChants (state)
+
+    const maybeStaticLiturgicalChant = lookup (id) (staticLiturgicalChants)
+
+    if (isJust (maybeStaticLiturgicalChant)) {
+      const staticLiturgicalChant = fromJust (maybeStaticLiturgicalChant)
+
+      dispatch<DeactivateLiturgyAction> ({
+        type: ActionTypes.DEACTIVATE_LITURGY,
+        payload: {
+          id,
+          staticEntry: staticLiturgicalChant,
+        },
+      })
+    }
+  }
 
 export interface DeactivateBlessingAction {
   type: ActionTypes.DEACTIVATE_BLESSING
