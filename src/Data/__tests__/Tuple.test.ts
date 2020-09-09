@@ -46,7 +46,7 @@ describe ("bimap", () => {
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-expect-error
+    // @ts-ignore
     expect (() => bimap ((a: number) => a + 2) ((b: number) => b + 3) (Tuple (3, 1, 2))) .toThrow ()
   })
 })
@@ -57,7 +57,7 @@ describe ("first", () => {
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-expect-error
+    // @ts-ignore
     expect (() => first ((a: number) => a + 2) (Tuple (3, 1, 2))) .toThrow ()
   })
 })
@@ -68,7 +68,7 @@ describe ("second", () => {
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-expect-error
+    // @ts-ignore
     expect (() => second ((b: number) => b + 3) (Tuple (3, 1, 2))) .toThrow ()
   })
 })
@@ -81,7 +81,7 @@ describe ("fst", () => {
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-expect-error
+    // @ts-ignore
     expect (() => fst (Tuple (3, 1, 2))) .toThrow ()
   })
 })
@@ -92,7 +92,7 @@ describe ("snd", () => {
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-expect-error
+    // @ts-ignore
     expect (() => snd (Tuple (3, 1, 2))) .toThrow ()
   })
 })
@@ -109,7 +109,7 @@ describe ("uncurry", () => {
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-expect-error
+    // @ts-ignore
     expect (() => uncurry ((a: number) => (b: number) => a + b) (Tuple (2, 3, 4))) .toThrow ()
   })
 })
@@ -120,7 +120,7 @@ describe ("swap", () => {
   })
 
   it ("throws if input is not a Pair", () => {
-    // @ts-expect-error
+    // @ts-ignore
     expect (() => swap (Tuple (3, 1, 2))) .toThrow ()
   })
 })
