@@ -67,7 +67,7 @@ module.exports = {
   },
   publish: {
     "provider": "generic",
-    "url": process.env.UPDATE_URL,
+    "url": `${process.env.UPDATE_URL}/insider`,
     "channel": "latest"
   },
   // afterSign: notarize,

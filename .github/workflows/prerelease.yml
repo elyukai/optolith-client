@@ -40,11 +40,11 @@ jobs:
     - name: Build
       run: node ./deploy/build.js prerelease
       env:
-        UPDATE_URL: ${{ secrets.PUBLISH_URL_INSIDER }}
+        UPDATE_URL: ${{ secrets.UPDATE_URL }}
     - name: Deploy
       run: node ./deploy/deploy.js prerelease
       env:
         HOST: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         PASSWORD: ${{ secrets.PASSWORD }}
-        ROOT: ${{ secrets.ROOT_PRERELEASE }}
+        ROOT: ${{ secrets.ROOT }}

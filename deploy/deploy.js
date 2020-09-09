@@ -39,7 +39,7 @@ const uploadToServer = async () => {
 
   const distPath = channel === "prerelease" ? ["dist", "insider"] : ["dist"]
 
-  const serverPath = `${process.env.ROOT}/${subFolder}`
+  const serverPath = `${process.env.ROOT}${channel === "prerelease" ? "/insider" : ""}/${subFolder}`
 
   const regex =
     channel === "prerelease"

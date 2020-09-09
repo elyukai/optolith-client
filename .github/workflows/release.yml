@@ -40,7 +40,7 @@ jobs:
     - name: Build
       run: node ./deploy/build.js stable
       env:
-        UPDATE_URL: ${{ secrets.PUBLISH_URL }}
+        UPDATE_URL: ${{ secrets.UPDATE_URL }}
     - name: Deploy
       run: node ./deploy/deploy.js stable
       env:
