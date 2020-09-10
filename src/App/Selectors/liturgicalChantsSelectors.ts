@@ -268,13 +268,15 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
         }
 
         if (isMaybeActive (jaegerinnen_der_weissen_maid)) {
+          const isFirun = isTrad (BlessedTradition.ChurchOfFirun)
+
                         // Firun Liturgical Chant
-          return append (additionalInactiveListFilter (e => isTrad (10) (e) && isGr (1) (e))
+          return append (additionalInactiveListFilter (e => isFirun (e) && isGr (1) (e))
                                                       (inactives)
                                                       (actives))
 
                         // Firun Ceremony
-                        (additionalInactiveListFilter (e => isTrad (10) (e) && isGr (2) (e))
+                        (additionalInactiveListFilter (e => isFirun (e) && isGr (2) (e))
                                                       (inactives)
                                                       (actives))
         }
