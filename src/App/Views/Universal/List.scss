@@ -211,12 +211,15 @@ ul.list-wrapper {
       margin-right: 12px;
       text-align: right;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 0 2 auto;
 
       span:not(:last-child)::after {
         content: " / ";
       }
     }
-    
+
     .weight {
       margin-left: 4px;
       width: 54px;
