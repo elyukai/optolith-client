@@ -6,6 +6,7 @@ npm-debug.log*
 /dist/
 .rpt2_cache
 .esm-cache
+app/main.css
 app/**/*.js
 app/**/*.js.map
 !app/index.js

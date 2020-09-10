@@ -37,6 +37,8 @@ jobs:
       run: npm run re:build
     - name: Build TypeScript files
       run: npm run ts:build
+    - name: Build Sass files
+      run: npm run css:build
     - name: Build
       run: node ./deploy/build.js stable
       env:
