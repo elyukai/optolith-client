@@ -11,9 +11,9 @@
 import { cnst, flip, ident } from "../../../Data/Function"
 import { fmap, fmapF } from "../../../Data/Functor"
 import { over, set } from "../../../Data/Lens"
-import { appendStr, countWith, filter, find, foldl, ifoldr, isList, List, map, notElem, notNull, subscript, subscriptF } from "../../../Data/List"
-import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe"
-import { add, dec, multiply, negate } from "../../../Data/Num"
+import { appendStr, countWith, filter, find, foldl, ifoldr, isList, List, map, notElem, notNull, subscript, subscriptF, sum } from "../../../Data/List"
+import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe"
+import { add, dec, gt, multiply, negate } from "../../../Data/Num"
 import { lookup, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
@@ -152,6 +152,8 @@ const getEntrySpecificCost =
   (entry: Record<ActiveObjectWithId>): Maybe<number | List<number>> => {
     const current_id = AOWIA.id (entry)
     const mcurrent_sid = AOWIA.sid (entry)
+    const mcurrent_sid2 = AOWIA.sid2 (entry)
+    const mcurrent_sid3 = AOWIA.sid3 (entry)
     const mcurrent_level = AOWIA.tier (entry)
 
     const mcurrent_cost = AAL.cost (wiki_entry)
@@ -173,12 +175,7 @@ const getEntrySpecificCost =
       case SpecialAbilityId.Lieblingsliturgie:
       case SpecialAbilityId.WegDerGelehrten:
       case SpecialAbilityId.WegDerKuenstlerin:
-      case SpecialAbilityId.Fachwissen:
-      case SpecialAbilityId.Handwerkskunst:
-      case SpecialAbilityId.KindDerNatur:
-      case SpecialAbilityId.KoerperlichesGeschick:
-      case SpecialAbilityId.SozialeKompetenz:
-      case SpecialAbilityId.Universalgenie: {
+      case SpecialAbilityId.Fachwissen: {
         return getCostForEntryWithSkillSel (misStringM)
                                            (wiki)
                                            (mcurrent_sid)
@@ -380,6 +377,22 @@ const getEntrySpecificCost =
                       bindF (level => level === 4 ? Nothing : misNumberM (mcurrent_cost))
                     )
                     (hero)
+      }
+
+      case SpecialAbilityId.Handwerkskunst:
+      case SpecialAbilityId.KindDerNatur:
+      case SpecialAbilityId.KoerperlichesGeschick:
+      case SpecialAbilityId.SozialeKompetenz:
+      case SpecialAbilityId.Universalgenie: {
+        return pipe_ (
+          List (mcurrent_sid, mcurrent_sid2, mcurrent_sid3),
+          mapMaybe (sid => getCostForEntryWithSkillSel (misStringM)
+                                                       (wiki)
+                                                       (sid)
+                                                       (mcurrent_cost)),
+          sum,
+          ensure (gt (0))
+        )
       }
 
       default: {
