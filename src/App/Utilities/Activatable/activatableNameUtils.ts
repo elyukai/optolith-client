@@ -291,6 +291,21 @@ const getEntrySpecificNameAddition =
         )
       }
 
+      case SpecialAbilityId.handwerkskunst:
+      case SpecialAbilityId.kindDerNatur:
+      case SpecialAbilityId.koerperlichesGeschick:
+      case SpecialAbilityId.sozialeKompetenz:
+      case SpecialAbilityId.universalgenie: {
+        return pipe_ (
+          List (AOWIA.sid (hero_entry), AOWIA.sid2 (hero_entry), AOWIA.sid3 (hero_entry)),
+          map (getSelectOptionName (wiki_entry)),
+          catMaybes,
+          sortStrings (staticData),
+          intercalate (", "),
+          Just
+        )
+      }
+
       default: {
         const current_sid = AOWIA.sid (hero_entry)
         const current_sid2 = AOWIA.sid2 (hero_entry)
