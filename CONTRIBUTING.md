@@ -57,20 +57,28 @@ This installs all necessary packages.
 
 ### First run
 
-Compile the source code. `ts:` is for TypeScript, `re:` for Reason/OCaml.
+Compile the source code. `ts:` is for TypeScript, `re:` for Reason/OCaml and `css:` for CSS/Sass.
 
-You have to run the Reason build first as it generates TypeScript files.
+You have to run the Reason build first as it generates TypeScript files...
 
 ```sh
 npm run re:build
 npm run ts:build
+npm run css:build
 ```
 
-&hellip;or watch it for better performance for subsequent compiling on save.
+(There's also a shorthand for that:)
+
+```sh
+npm run build
+```
+
+&hellip;or watch it for better performance for subsequent compiling on save (you need to use separate terminal instances then). There is no watcher for CSS/Sass currently.
 
 ```sh
 npm run re:watch
 npm run ts:watch
+npm run css:build
 ```
 
 Run the app:
@@ -89,7 +97,7 @@ npm run css:build
 
 ### Miscellaneous
 
-Clean the files built by the Reason compiler.
+Clean the files built by the Reason compiler, if there are any issue with it.
 
 ```sh
 npm run re:clean

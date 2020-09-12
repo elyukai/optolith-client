@@ -78,6 +78,7 @@
     "stable:linux": "NODE_ENV=production node ./deploy/buildLinux.js",
     "stable:mac": "NODE_ENV=production node ./deploy/buildMac.js",
     "css:build": "node --experimental-modules ./deploy/buildSass.mjs",
+    "build": "npm run re:build && npm run css:build && npm run ts:build",
     "ts:build": "tsc",
     "ts:watch": "tsc --watch",
     "re:build": "bsb -make-world",
