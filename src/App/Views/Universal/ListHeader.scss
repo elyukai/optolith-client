@@ -17,25 +17,24 @@
     display: flex;
     align-items: center;
     height: 32px;
+    justify-content: center;
+    flex: none;
+    margin-right: 12px;
 
     &.name {
       flex: 1 1 auto;
-    }
-
-    &:not(.name) {
-      flex: none;
-      margin-right: 12px;
-      justify-content: flex-end;
+      justify-content: flex-start;
     }
 
     &.group {
       margin-left: 4px;
+      justify-content: flex-end;
     }
 
     &.weight {
       width: 54px;
       margin-left: 4px;
-      text-align: right;
+      justify-content: flex-end;
     }
 
     &.value, &.ic, &.cost, &.primary, &.at, &.pa, &.mod {
