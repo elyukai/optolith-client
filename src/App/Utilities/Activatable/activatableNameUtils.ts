@@ -285,7 +285,7 @@ const getEntrySpecificNameAddition =
                             fmap (pipe (
                               sortStrings (staticData),
                               formatList ("conjunction") (staticData),
-                              apps => `${SA.name (skill)}: ${apps}}`
+                              apps => `${SA.name (skill)}: ${apps}`
                             ))
                           ))
         )
