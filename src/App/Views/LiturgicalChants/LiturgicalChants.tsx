@@ -11,6 +11,8 @@ import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { AttributeCombined } from "../../Models/View/AttributeCombined"
 import { BlessingCombined } from "../../Models/View/BlessingCombined"
 import { LiturgicalChantWithRequirements } from "../../Models/View/LiturgicalChantWithRequirements"
+import { Blessing } from "../../Models/Wiki/Blessing"
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { LCBCA } from "../../Utilities/Increasable/liturgicalChantUtils"
@@ -211,6 +213,19 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
                                 Just (curr),
                                 (
                                   <LiturgicalChantsListItemInactive
+                                    key={
+                                      LiturgicalChantWithRequirements.is (curr)
+                                      ? pipe_ (
+                                          curr,
+                                          LiturgicalChantWithRequirements.A.wikiEntry,
+                                          LiturgicalChant.A.id
+                                        )
+                                      : pipe_ (
+                                          curr,
+                                          BlessingCombined.A.wikiEntry,
+                                          Blessing.A.id
+                                        )
+                                    }
                                     staticData={staticData}
                                     addChantsDisabled={addChantsDisabled}
                                     attributes={attributes}
@@ -311,6 +326,19 @@ export const LiturgicalChants: React.FC<LiturgicalChantsProps> = props => {
                               Just (curr),
                               (
                                 <LiturgicalChantsListItemActive
+                                  key={
+                                    LiturgicalChantWithRequirements.is (curr)
+                                    ? pipe_ (
+                                        curr,
+                                        LiturgicalChantWithRequirements.A.wikiEntry,
+                                        LiturgicalChant.A.id
+                                      )
+                                    : pipe_ (
+                                        curr,
+                                        BlessingCombined.A.wikiEntry,
+                                        Blessing.A.id
+                                      )
+                                  }
                                   staticData={staticData}
                                   attributes={attributes}
                                   currentInfoId={currentId}

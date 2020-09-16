@@ -22,6 +22,7 @@ import { Record, RecordI } from "../../../Data/Record"
 import { filterMapListT, filterT, mapT } from "../../../Data/Transducer"
 import { fst, Pair, snd, Tuple } from "../../../Data/Tuple"
 import { curryN4, uncurryN } from "../../../Data/Tuple/All"
+import { traceShowId } from "../../../Debug/Trace"
 import { CombatTechniqueGroupId, MagicalTradition, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
 import { AdvantageId, DisadvantageId, SkillId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -438,6 +439,8 @@ const modifySelectOptions =
 
       case SpecialAbilityId.aspectKnowledge: {
         const valid_aspects = getAspectsWith3Gte10 (staticData) (hero)
+
+        traceShowId (valid_aspects)
 
         const isAspectValid = pipe (SOA.id, elemF<string | number> (valid_aspects))
 
