@@ -7,7 +7,6 @@ import { abs } from "../../Data/Num"
 import { elems, lookupF } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry"
-import { traceShowId } from "../../Debug/Trace"
 import { RaceId } from "../Constants/Ids"
 import { RaceCombined } from "../Models/View/RaceCombined"
 import { Culture } from "../Models/Wiki/Culture"
@@ -70,7 +69,6 @@ export const getAllRaces = createMaybeSelector (
 
                return pipe (
                  elems,
-                 traceShowId,
                  map (race =>
                        RaceCombined ({
                          mappedVariants:
