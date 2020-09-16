@@ -9,10 +9,8 @@
 
 import { notP } from "../../../Data/Bool"
 import { equals, notEquals } from "../../../Data/Eq"
-import { cnst, flip, ident } from "../../../Data/Function"
+import { cnst, ident } from "../../../Data/Function"
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor"
-import * as IntMapJS from "../../../Data/IntMap.bs"
-import * as IntMap from "../../../Data/IntMap.gen"
 import { over, set } from "../../../Data/Lens"
 import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, notElem, notElemF, notNull, nub, subscript } from "../../../Data/List"
 import { all, ap, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, Just, liftM2, listToMaybe, Maybe, maybe, maybeToList, Nothing, or, thenF } from "../../../Data/Maybe"
@@ -21,9 +19,8 @@ import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, Orde
 import { Record, RecordI } from "../../../Data/Record"
 import { filterMapListT, filterT, mapT } from "../../../Data/Transducer"
 import { fst, Pair, snd, Tuple } from "../../../Data/Tuple"
-import { curryN4, uncurryN } from "../../../Data/Tuple/All"
 import { traceShowId } from "../../../Debug/Trace"
-import { CombatTechniqueGroupId, MagicalTradition, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
+import { Aspect, CombatTechniqueGroupId, MagicalTradition, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
 import { AdvantageId, DisadvantageId, SkillId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
@@ -154,10 +151,10 @@ const incMapVal = alter (pipe (maybe (1) (inc), Just))
 
 const addChantToCounter =
   (chant: Record<LiturgicalChant>) =>
-    flip (foldr (flip <number, number, (d: IntMap.t<number>) => IntMap.t<number>>
-                      (curryN4 (IntMap.insertWith) (uncurryN (add)))
-                      (1)))
-         (LCA.aspects (chant))
+  (mp: OrderedMap<number, number>) =>
+    foldr ((aspect: Aspect) => OrderedMap.insertWith (add) <number> (aspect) (1))
+          (mp)
+          (LCA.aspects (chant))
 
 const addSpellToCounter = pipe (SpA.property, incMapVal)
 
@@ -196,13 +193,15 @@ const getAspectsWith3Gte10 =
       HA.liturgicalChants,
       elems,
       filterSkillsGte10,
+      traceShowId,
       mapByIdKeyMap (SDA.liturgicalChants (staticData)),
-      foldr (addChantToCounter) (IntMapJS.empty),
-      mp => IntMap.foldrWithKey<number, List<number>> (
-        (k, x, xs) => x >= 3 ? consF (k) (xs) : xs,
-        List.empty,
-        mp
-      )
+      traceShowId,
+      foldr (addChantToCounter) (OrderedMap.empty),
+      traceShowId,
+      OrderedMap.foldrWithKey ((k: number) => (x: number) => (xs: List<number>) =>
+                                x >= 3 ? consF (k) (xs) : xs)
+                              (List.empty),
+      traceShowId,
     )
 
 const isSocialSkill =
