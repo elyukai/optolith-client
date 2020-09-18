@@ -30,6 +30,7 @@ export interface SettingsStateProps {
   isEditingHeroAfterCreationPhaseEnabled: boolean
   areAnimationsEnabled: boolean
   languages: List<Record<DropdownOption<string>>>
+  isCheckForUpdatesDisabled: boolean
 }
 
 export interface SettingsDispatchProps {
@@ -64,6 +65,7 @@ export const Settings: React.FC<Props> = props => {
     platform,
     checkForUpdates,
     languages,
+    isCheckForUpdatesDisabled,
   } = props
 
   return (
@@ -135,6 +137,7 @@ export const Settings: React.FC<Props> = props => {
             label={translate (staticData) ("settings.checkforupdatesbtn")}
             onClick={checkForUpdates}
             autoWidth
+            disabled={isCheckForUpdatesDisabled}
             />
         )
         : null}
