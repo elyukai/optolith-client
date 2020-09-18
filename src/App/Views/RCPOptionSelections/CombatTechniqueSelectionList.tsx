@@ -1,6 +1,6 @@
 import * as React from "react"
 import { elemF, filter, List, map, toArray } from "../../../Data/List"
-import { fromJust, isJust, Just, Nothing } from "../../../Data/Maybe"
+import { fromJust, isJust, Just } from "../../../Data/Maybe"
 import { elems } from "../../../Data/OrderedMap"
 import { fnull, OrderedSet } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
@@ -127,7 +127,7 @@ export const CombatTechniqueSelectionList: React.FC<Props> = props => {
                 active={activeSecond}
                 amount={CTSSA.amount (second)}
                 combatTechnique={e}
-                disabled={Nothing}
+                disabled={Just (activeFirst)}
                 toggleCombatTechniqueId={setCombatTechniqueSecondId}
                 />
             )),
