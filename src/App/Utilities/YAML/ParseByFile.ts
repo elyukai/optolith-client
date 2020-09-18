@@ -36,6 +36,8 @@ export const parseByFile =
         ),
       ArcaneBardTraditionsL10nDefault:
         defaultParser ("Schema/ArcaneBardTraditions/ArcaneBardTraditions.l10n.schema.json"),
+      ArcaneBardTraditionsUniv:
+        univParser ("Schema/ArcaneBardTraditions/ArcaneBardTraditions.univ.schema.json"),
       ArcaneDancerTraditionsL10nOverride:
         handleOverrideParser (
           l10nParser,
@@ -43,6 +45,8 @@ export const parseByFile =
         ),
       ArcaneDancerTraditionsL10nDefault:
         defaultParser ("Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.l10n.schema.json"),
+      ArcaneDancerTraditionsUniv:
+        univParser ("Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.univ.schema.json"),
       ArmorTypesL10nOverride:
         handleOverrideParser (l10nParser, "Schema/ArmorTypes/ArmorTypes.l10n.schema.json"),
       ArmorTypesL10nDefault:

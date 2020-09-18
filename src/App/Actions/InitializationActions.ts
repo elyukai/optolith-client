@@ -150,8 +150,10 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
   const available_langs = fromRight_ (eavailable_langs)
 
   const estatic_data =
-    await parseStaticData (fromMaybe (defaultLocale) (Config.A.locale (config)))
-                          (Config.A.fallbackLocale (config))
+    await parseStaticData (
+      fromMaybe (defaultLocale) (Config.A.locale (config)),
+      Config.A.fallbackLocale (config)
+    )
 
   if (isLeft (estatic_data)) {
     return pipe_ (
