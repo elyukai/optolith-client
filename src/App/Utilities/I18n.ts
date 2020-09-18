@@ -86,6 +86,8 @@ export const localizeNumber =
     return (num: number) => num .toLocaleString (locale)
   }
 
+const floorUnit = (x: number) => Math.floor (x * 1000) / 1000
+
 /**
  * If the selected language is English centimeters it will be converted to
  * inches.
@@ -99,7 +101,8 @@ export const localizeSize =
       fmap ((size: number) => L10n.A.id (SDA.ui (staticData)) === "en-US"
                               ? size * 0.4
                               : size),
-      sum
+      sum,
+      floorUnit
     )
 
 /**
@@ -114,7 +117,8 @@ export const localizeWeight =
       fmap ((weight: number) => L10n.A.id (SDA.ui (staticData)) === "en-US"
                                 ? weight * 2
                                 : weight),
-      sum
+      sum,
+      floorUnit
     )
 
 /**
