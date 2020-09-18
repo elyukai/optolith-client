@@ -139,7 +139,7 @@ store
 
     return Unit
   })
-  .catch (() => undefined)
+  .catch (console.error)
 
 render (
   <Provider store={store}>
@@ -179,13 +179,13 @@ ipcRenderer.addListener ("auto-updater-error", (_event: Event, err: Error | {}) 
                               title: Just (`${err.name} during update`),
                               message: `An error occured during auto-update:\n${err.message}`,
                             })))
-      .catch (() => undefined)
+      .catch (console.error)
   }
   else {
     dispatch (addAlert (AlertOptions ({
                          title: Just ("Server Error"),
                          message: `The server does not respond.`,
                        })))
-      .catch (() => undefined)
+      .catch (console.error)
   }
 })

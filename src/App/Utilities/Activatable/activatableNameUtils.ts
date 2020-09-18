@@ -17,7 +17,6 @@ import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
-import { NumIdName } from "../../Models/NumIdName"
 import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName"
 import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
 import { Advantage } from "../../Models/Wiki/Advantage"
@@ -32,7 +31,7 @@ import { ifElse } from "../ifElse"
 import { toRoman } from "../NumberUtils"
 import { pipe, pipe_ } from "../pipe"
 import { sortStrings } from "../sortBy"
-import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils"
+import { isNumber, isString, misStringM } from "../typeCheckUtils"
 import { getWikiEntry, isActivatableWikiEntry, isSkillishWikiEntry } from "../WikiUtils"
 import { findSelectOption, getSelectOptionName } from "./selectionUtils"
 
@@ -207,26 +206,6 @@ const getEntrySpecificNameAddition =
                                          (SOA.target (ext)))
                     )
                     (hero_entry)
-
-      case SpecialAbilityId.traditionArcaneBard: {
-        return pipe (
-                      AOWIA.sid2,
-                      misNumberM,
-                      bindF (lookupF (SDA.arcaneBardTraditions (staticData))),
-                      fmap (NumIdName.A.name)
-                    )
-                    (hero_entry)
-      }
-
-      case SpecialAbilityId.traditionArcaneDancer: {
-        return pipe (
-                      AOWIA.sid2,
-                      misNumberM,
-                      bindF (lookupF (SDA.arcaneDancerTraditions (staticData))),
-                      fmap (NumIdName.A.name)
-                    )
-                    (hero_entry)
-      }
 
       case SpecialAbilityId.traditionSavant:
         return pipe (

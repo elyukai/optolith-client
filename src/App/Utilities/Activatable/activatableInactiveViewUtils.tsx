@@ -7,7 +7,7 @@ import { over, set } from "../../../Data/Lens"
 import { cons, countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscriptF, sum, take } from "../../../Data/List"
 import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, maybeToUndefined, Nothing, or, then, thenF } from "../../../Data/Maybe"
 import { dec, gt, gte, max, min, multiply, negate } from "../../../Data/Num"
-import { elems, lookupF } from "../../../Data/OrderedMap"
+import { lookupF } from "../../../Data/OrderedMap"
 import { fromDefault, makeLenses, Record } from "../../../Data/Record"
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple"
 import { Category } from "../../Constants/Categories"
@@ -15,7 +15,6 @@ import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/I
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
-import { NumIdName } from "../../Models/NumIdName"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { InactiveActivatable, InactiveActivatableA_ } from "../../Models/View/InactiveActivatable"
 import { Disadvantage } from "../../Models/Wiki/Disadvantage"
@@ -102,7 +101,6 @@ const AAOL = ActivatableActivationOptionsL
 const PABYA = PropertiesAffectedByState.A
 const PABYL = PropertiesAffectedByStateL
 const IACEL = InactiveActivatableControlElementsL
-const NINA = NumIdName.A
 const SAA = SpecialAbility.A
 
 /**
@@ -471,56 +469,6 @@ export const getIdSpecificAffectedAndDispatchProps =
                               (mselected_level)
                               (getPlainCostFromEntry (entry)))
               ),
-          })
-        )
-      }
-
-      case SpecialAbilityId.traditionArcaneBard: {
-        return Pair (
-          ActivatableActivationOptions ({
-            id: IAA.id (entry),
-            selectOptionId1: mselected,
-            cost: Nothing,
-          }),
-          PropertiesAffectedByState ({
-            currentCost: getPlainCostFromEntry (entry),
-            firstSelectOptions: pipe_ (
-              staticData,
-              SDA.arcaneBardTraditions,
-              elems,
-              map (x => SelectOption ({
-                          id: NINA.id (x),
-                          name: NINA.name (x),
-                          src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
-                          errata: Nothing,
-                        })),
-              Just
-            ),
-          })
-        )
-      }
-
-      case SpecialAbilityId.traditionArcaneDancer: {
-        return Pair (
-          ActivatableActivationOptions ({
-            id: IAA.id (entry),
-            selectOptionId1: mselected,
-            cost: Nothing,
-          }),
-          PropertiesAffectedByState ({
-            currentCost: getPlainCostFromEntry (entry),
-            firstSelectOptions: pipe_ (
-              staticData,
-              SDA.arcaneDancerTraditions,
-              elems,
-              map (x => SelectOption ({
-                          id: NINA.id (x),
-                          name: NINA.name (x),
-                          src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
-                          errata: Nothing,
-                        })),
-              Just
-            ),
           })
         )
       }

@@ -5,7 +5,9 @@ import { AdvantagesUniv } from "../../../../app/Database/Schema/Advantages/Advan
 import { AnimistForcesL10n } from "../../../../app/Database/Schema/AnimistForces/AnimistForces.l10n"
 import { AnimistForcesUniv } from "../../../../app/Database/Schema/AnimistForces/AnimistForces.univ"
 import { ArcaneBardTraditionsL10n } from "../../../../app/Database/Schema/ArcaneBardTraditions/ArcaneBardTraditions.l10n"
+import { ArcaneBardTraditionsUniv } from "../../../../app/Database/Schema/ArcaneBardTraditions/ArcaneBardTraditions.univ"
 import { ArcaneDancerTraditionsL10n } from "../../../../app/Database/Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.l10n"
+import { ArcaneDancerTraditionsUniv } from "../../../../app/Database/Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.univ"
 import { ArmorTypesL10n } from "../../../../app/Database/Schema/ArmorTypes/ArmorTypes.l10n"
 import { AspectsL10n } from "../../../../app/Database/Schema/Aspects/Aspects.l10n"
 import { AttributesL10n } from "../../../../app/Database/Schema/Attributes/Attributes.l10n"
@@ -97,7 +99,9 @@ export interface YamlSchemaMap {
   "Schema/AnimistForces/AnimistForces.l10n.schema.json" : AnimistForcesL10n
   "Schema/AnimistForces/AnimistForces.univ.schema.json" : AnimistForcesUniv
   "Schema/ArcaneBardTraditions/ArcaneBardTraditions.l10n.schema.json" : ArcaneBardTraditionsL10n
+  "Schema/ArcaneBardTraditions/ArcaneBardTraditions.univ.schema.json" : ArcaneBardTraditionsUniv
   "Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.l10n.schema.json" : ArcaneDancerTraditionsL10n
+  "Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.univ.schema.json" : ArcaneDancerTraditionsUniv
   "Schema/ArmorTypes/ArmorTypes.l10n.schema.json" : ArmorTypesL10n
   "Schema/Aspects/Aspects.l10n.schema.json" : AspectsL10n
   "Schema/Attributes/Attributes.l10n.schema.json" : AttributesL10n
@@ -200,8 +204,10 @@ export interface YamlNameMap {
   AnimistForcesUniv : AnimistForcesUniv
   ArcaneBardTraditionsL10nOverride : ArcaneBardTraditionsL10n|undefined
   ArcaneBardTraditionsL10nDefault : ArcaneBardTraditionsL10n
+  ArcaneBardTraditionsUniv : ArcaneBardTraditionsUniv
   ArcaneDancerTraditionsL10nOverride : ArcaneDancerTraditionsL10n|undefined
   ArcaneDancerTraditionsL10nDefault : ArcaneDancerTraditionsL10n
+  ArcaneDancerTraditionsUniv : ArcaneDancerTraditionsUniv
   ArmorTypesL10nOverride : ArmorTypesL10n|undefined
   ArmorTypesL10nDefault : ArmorTypesL10n
   AspectsL10nOverride : AspectsL10n|undefined
@@ -349,7 +355,9 @@ export const name_to_schema = {
   AnimistForcesL10n: "Schema/AnimistForces/AnimistForces.l10n.schema.json",
   AnimistForcesUniv: "Schema/AnimistForces/AnimistForces.univ.schema.json",
   ArcaneBardTraditionsL10n: "Schema/ArcaneBardTraditions/ArcaneBardTraditions.l10n.schema.json",
+  ArcaneBardTraditionsUniv: "Schema/ArcaneBardTraditions/ArcaneBardTraditions.univ.schema.json",
   ArcaneDancerTraditionsL10n: "Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.l10n.schema.json",
+  ArcaneDancerTraditionsUniv: "Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.univ.schema.json",
   ArmorTypesL10n: "Schema/ArmorTypes/ArmorTypes.l10n.schema.json",
   AspectsL10n: "Schema/Aspects/Aspects.l10n.schema.json",
   AttributesL10n: "Schema/Attributes/Attributes.l10n.schema.json",
@@ -442,7 +450,9 @@ export const schema_to_data : { [K in keyof YamlSchemaMap] : string } = {
   "Schema/AnimistForces/AnimistForces.l10n.schema.json": "AnimistForces.yaml",
   "Schema/AnimistForces/AnimistForces.univ.schema.json": "AnimistForces.yaml",
   "Schema/ArcaneBardTraditions/ArcaneBardTraditions.l10n.schema.json": "ArcaneBardTraditions.yaml",
+  "Schema/ArcaneBardTraditions/ArcaneBardTraditions.univ.schema.json": "ArcaneBardTraditions.yaml",
   "Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.l10n.schema.json": "ArcaneDancerTraditions.yaml",
+  "Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.univ.schema.json": "ArcaneDancerTraditions.yaml",
   "Schema/ArmorTypes/ArmorTypes.l10n.schema.json": "ArmorTypes.yaml",
   "Schema/Aspects/Aspects.l10n.schema.json": "Aspects.yaml",
   "Schema/Attributes/Attributes.l10n.schema.json": "Attributes.yaml",

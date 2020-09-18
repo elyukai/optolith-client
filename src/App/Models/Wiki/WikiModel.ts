@@ -4,6 +4,8 @@ import { fromDefault, makeLenses, Record, RecordCreator } from "../../../Data/Re
 import { NumIdName } from "../NumIdName"
 import { Advantage } from "./Advantage"
 import { AnimistForce } from "./AnimistForce"
+import { ArcaneBardTradition } from "./ArcaneBardTradition"
+import { ArcaneDancerTradition } from "./ArcaneDancerTradition"
 import { Attribute } from "./Attribute"
 import { BlessedTradition } from "./BlessedTradition"
 import { Blessing } from "./Blessing"
@@ -48,8 +50,8 @@ export interface StaticData {
   "@@name": "StaticData"
   advantages: OrderedMap<string, Record<Advantage>>
   animistForces: OrderedMap<string, Record<AnimistForce>>
-  arcaneBardTraditions: OrderedMap<number, Record<NumIdName>>
-  arcaneDancerTraditions: OrderedMap<number, Record<NumIdName>>
+  arcaneBardTraditions: OrderedMap<number, Record<ArcaneBardTradition>>
+  arcaneDancerTraditions: OrderedMap<number, Record<ArcaneDancerTradition>>
   armorTypes: OrderedMap<number, Record<NumIdName>>
   aspects: OrderedMap<number, Record<NumIdName>>
   attributes: OrderedMap<string, Record<Attribute>>
