@@ -131,16 +131,12 @@ export const Settings: React.FC<Props> = props => {
         label={translate (staticData) ("settings.showanimations")}
         onClick={switchEnableAnimations}
         />
-      {(platform === "win32" || platform === "darwin")
-        ? (
-          <BorderButton
-            label={translate (staticData) ("settings.checkforupdatesbtn")}
-            onClick={checkForUpdates}
-            autoWidth
-            disabled={isCheckForUpdatesDisabled}
-            />
-        )
-        : null}
+      <BorderButton
+        label={translate (staticData) ("settings.checkforupdatesbtn")}
+        onClick={checkForUpdates}
+        autoWidth
+        disabled={isCheckForUpdatesDisabled}
+        />
     </Dialog>
   )
 }
