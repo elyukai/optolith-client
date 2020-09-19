@@ -16,7 +16,6 @@ import { SegmentedControls } from "../Universal/SegmentedControls"
 export interface SettingsOwnProps {
   staticData: StaticDataRecord
   isSettingsOpen: boolean
-  platform: string
   close (): void
   checkForUpdates (): void
 }
@@ -62,7 +61,6 @@ export const Settings: React.FC<Props> = props => {
     switchEnableEditingHeroAfterCreationPhase,
     switchEnableAnimations,
     areAnimationsEnabled,
-    platform,
     checkForUpdates,
     languages,
     isCheckForUpdatesDisabled,
