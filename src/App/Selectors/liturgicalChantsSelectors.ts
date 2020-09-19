@@ -4,7 +4,7 @@ import { flip, ident, thrush } from "../../Data/Function"
 import { fmap, fmapF, mapReplace } from "../../Data/Functor"
 import { over } from "../../Data/Lens"
 import { any, append, consF, elem, filter, flength, foldr, List, map, notElem, notNull, partition } from "../../Data/List"
-import { all, and, bind, bindF, ensure, fromMaybe_, guard, isJust, liftM2, liftM3, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe"
+import { all, and, bind, bindF, ensure, fromJust, fromMaybe_, guard, isJust, liftM2, liftM3, mapMaybe, Maybe, Nothing, or } from "../../Data/Maybe"
 import { lt, lte } from "../../Data/Num"
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { insert, member, OrderedSet } from "../../Data/OrderedSet"
@@ -214,27 +214,34 @@ export const getInactiveLiturgicalChants = createMaybeSelector (
   )
 )
 
-const additionalInactiveListFilter =
-  (check: (e: Record<LiturgicalChantWithRequirements>) => boolean) =>
-  (inactives: List<Record<LiturgicalChantWithRequirements>>) =>
-  (actives: List<Record<LiturgicalChantWithRequirements>>): List<string> => {
-    if (!any (check) (actives)) {
-      return mapMaybe ((chant: Record<LiturgicalChantWithRequirements>) => {
-                        const wiki_entry = LCWRA.wikiEntry (chant)
+const additionalInactiveListFilter = (
+  check: (e: Record<LiturgicalChantWithRequirements>) => boolean,
+  activeTraditionId: number,
+  inactives: List<Record<LiturgicalChantWithRequirements>>,
+  actives: List<Record<LiturgicalChantWithRequirements>>
+): List<string> => {
+  const fullCheck = (x: Record<LiturgicalChantWithRequirements>) =>
+    notElem (activeTraditionId) (LCA.tradition (LCWRA.wikiEntry (x)))
+    && check (x)
 
-                        const isTraditionValid = notElem (1) (LCA.tradition (wiki_entry))
-                          && check (chant)
+  if (!any (fullCheck) (actives)) {
+    return mapMaybe ((chant: Record<LiturgicalChantWithRequirements>) => {
+                      const wiki_entry = LCWRA.wikiEntry (chant)
 
-                        const isICValid = LCA.ic (wiki_entry) <= IC.C
+                      const isTraditionValid =
+                        notElem (1) (LCA.tradition (wiki_entry))
+                        && fullCheck (chant)
 
-                        return mapReplace (LCA.id (wiki_entry))
-                                          (guard (isTraditionValid && isICValid))
-                      })
-                      (inactives)
-    }
+                      const isICValid = LCA.ic (wiki_entry) <= IC.C
 
-    return List ()
+                      return mapReplace (LCA.id (wiki_entry))
+                                        (guard (isTraditionValid && isICValid))
+                    })
+                    (inactives)
   }
+
+  return List ()
+}
 
 const isTrad =
   (trad_id: number) => pipe (LCWRA.wikiEntry, LCA.tradition, elem (trad_id))
@@ -257,58 +264,76 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
     liftM2 (
       inactives =>
       actives => {
-        if (isMaybeActive (zugvoegel)) {
-          return append (additionalInactiveListFilter (isTrad (BlessedTradition.ChurchOfPhex))
-                                                      (inactives)
-                                                      (actives))
+        if (isJust (mcurrent_trad)) {
+          const tradition = fromJust (mcurrent_trad)
+          const maybeTraditionId = mapBlessedTradIdToNumId (SpecialAbility.A.id (tradition))
 
-                        (additionalInactiveListFilter (isTrad (BlessedTradition.ChurchOfRahja))
-                                                      (inactives)
-                                                      (actives))
-        }
+          if (isJust (maybeTraditionId)) {
+            const traditionId = fromJust (maybeTraditionId)
 
-        if (isMaybeActive (jaegerinnen_der_weissen_maid)) {
-          const isFirun = isTrad (BlessedTradition.ChurchOfFirun)
+            if (isMaybeActive (zugvoegel)) {
+              return append (additionalInactiveListFilter (
+                                                            isTrad (BlessedTradition.ChurchOfPhex),
+                                                            traditionId,
+                                                            inactives,
+                                                            actives
+                                                          ))
 
-                        // Firun Liturgical Chant
-          return append (additionalInactiveListFilter (e => isFirun (e) && isGr (1) (e))
-                                                      (inactives)
-                                                      (actives))
+                            (additionalInactiveListFilter (
+                                                            isTrad (BlessedTradition.ChurchOfRahja),
+                                                            traditionId,
+                                                            inactives,
+                                                            actives
+                                                          ))
+            }
 
-                        // Firun Ceremony
-                        (additionalInactiveListFilter (e => isFirun (e) && isGr (2) (e))
-                                                      (inactives)
-                                                      (actives))
-        }
+            if (isMaybeActive (jaegerinnen_der_weissen_maid)) {
+              const isFirun = isTrad (BlessedTradition.ChurchOfFirun)
 
-        if (isMaybeActive (anhaenger_des_gueldenen)) {
-          const unfamiliar_chants =
-            maybe (actives)
-                  ((current_trad: Record<SpecialAbility>) =>
-                    filter ((active: Record<LiturgicalChantWithRequirements>) =>
-                             !isOwnTradition (current_trad)
-                                             (LCWRA.wikiEntry (active)))
-                           (actives))
-                  (mcurrent_trad)
+                            // Firun Liturgical Chant
+              return append (additionalInactiveListFilter (
+                                                            e => isFirun (e) && isGr (1) (e),
+                                                            traditionId,
+                                                            inactives,
+                                                            actives
+                                                          ))
 
-          const inactive_with_valid_IC = filter (pipe (LCWRA.wikiEntry, LCA.ic, lte (3)))
-                                                (inactives)
-
-          if (notNull (unfamiliar_chants)) {
-            const other_trads =
-              foldr (pipe (LCWRA.wikiEntry, LCA.tradition, flip (foldr (insert))))
-                    (OrderedSet.empty)
-                    (unfamiliar_chants)
-
-            return pipe_ (
-              inactive_with_valid_IC,
-              filter (pipe (LCWRA.wikiEntry, LCA.tradition, any (flip (member) (other_trads)))),
-              map (pipe (LCWRA.wikiEntry, LCA.id))
-            )
+                            // Firun Ceremony
+                            (additionalInactiveListFilter (
+                                                            e => isFirun (e) && isGr (2) (e),
+                                                            traditionId,
+                                                            inactives,
+                                                            actives
+                                                          ))
+            }
           }
 
-          return map (pipe (LCWRA.wikiEntry, LCA.id))
-                     (inactive_with_valid_IC)
+          if (isMaybeActive (anhaenger_des_gueldenen)) {
+            const unfamiliar_chants =
+              filter ((active: Record<LiturgicalChantWithRequirements>) =>
+                       !isOwnTradition (tradition)
+                                       (LCWRA.wikiEntry (active)))
+                     (actives)
+
+            const inactive_with_valid_IC = filter (pipe (LCWRA.wikiEntry, LCA.ic, lte (3)))
+                                                  (inactives)
+
+            if (notNull (unfamiliar_chants)) {
+              const other_trads =
+                foldr (pipe (LCWRA.wikiEntry, LCA.tradition, flip (foldr (insert))))
+                      (OrderedSet.empty)
+                      (unfamiliar_chants)
+
+              return pipe_ (
+                inactive_with_valid_IC,
+                filter (pipe (LCWRA.wikiEntry, LCA.tradition, any (flip (member) (other_trads)))),
+                map (pipe (LCWRA.wikiEntry, LCA.id))
+              )
+            }
+
+            return map (pipe (LCWRA.wikiEntry, LCA.id))
+                       (inactive_with_valid_IC)
+          }
         }
 
         return List.empty
