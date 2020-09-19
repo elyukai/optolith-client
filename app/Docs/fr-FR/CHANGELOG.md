@@ -24,6 +24,15 @@ Please checkout the characters for which you've added SA *intuition tactique* or
 - Weapons of the combat technique *Lances* were not shown on character sheet. [#662](https://github.com/elyukai/optolith-client/issues/662)
 - Attributes ignored the minimum caused by high skill ratings. The maximum of skill rating is the highest linked attribute&thinsp;+&thinsp;2, so the highest attribute is required to have a minimum value of SR&thinsp;&minus;&thinsp;2. [#630](https://github.com/elyukai/optolith-client/issues/630)
 - The names for SA *intuition tactique* and SA *détection des embuscades* were swapped. [#636](https://github.com/elyukai/optolith-client/issues/636)
+- The new application *Professional Publications* for skill *Law* had a wrong special ability prerequisite. [#680](https://github.com/elyukai/optolith-client/issues/680)
+- Some list items were wider than the actual list. [#683](https://github.com/elyukai/optolith-client/pull/683)
+- List headers were not centered by default. [#637](https://github.com/elyukai/optolith-client/issues/637)
+- Permanently spent LP did not allow additional LP to be bought. [#606](https://github.com/elyukai/optolith-client/issues/606)
+- Additional LP could not be added if CON is 8 and nothing depends on it. [#694](https://github.com/elyukai/optolith-client/issues/694)
+- SA *Aspect Knowledge* did not show up even with three chants on SR 10 or higher. [#591](https://github.com/elyukai/optolith-client/issues/591)
+- Cantrip Witch's Gaze was selectable by all spell casters. [#377](https://github.com/elyukai/optolith-client/issues/377)
+- Updater checks and the check for updates button are now disabled on macOS since updates are not possible on macOS currently. [#589](https://github.com/elyukai/optolith-client/issues/589)
+- Wrong applicable combat techniques for SA *Enemy Sense*. [#658](https://github.com/elyukai/optolith-client/issues/658)
 
 ### API
 

@@ -40,6 +40,23 @@
 - Schelmenstreiche zeigten keine Wirkungsdauer an, obwohl sie eine besitzen. [#663](https://github.com/elyukai/optolith-client/issues/663)
 - Waffen der Kampftechnik *Lanzen* wurden nicht auf dem Heldenbogen abgezeigt. [#662](https://github.com/elyukai/optolith-client/issues/662)
 - Eigenschaften ignorierten das Minimum, welches durch höhere Fertigkeitswerte entsteht. Das Maximum für Fertigkeitswerte ist die höchste an der Probe beteiligte Eigenschaft&thinsp;+&thinsp;2, wodurch die höchste Eigenschaft mindestens FW&thinsp;&minus;&thinsp;2 sein muss. [#630](https://github.com/elyukai/optolith-client/issues/630)
+- Das neue Anwendungsgebiet *Fachpublikationen* für das Talent *Rechtskunde* hatte eine falsche Sonderfertigkeitsvoraussetzung. [#680](https://github.com/elyukai/optolith-client/issues/680)
+- Geweihte des Namenlosen konnten keine Segnungen kaufen. [#657](https://github.com/elyukai/optolith-client/issues/657)
+- Einige Listeneinträge waren breiter als die eigentliche Liste. [#683](https://github.com/elyukai/optolith-client/pull/683)
+- SF *Kind der Natur* und ähnliche SFs erlaubten nur ein Talent. [#649](https://github.com/elyukai/optolith-client/issues/649)
+- Listenüberschriften waren standardmäßig nicht zentriert. [#637](https://github.com/elyukai/optolith-client/issues/637)
+- SF *Fachwissen* hatte unerwartete Zeichen im generierten Namen. [#611](https://github.com/elyukai/optolith-client/issues/611)
+- Permanent ausgegebene LE verbot den Kauf weiterer LeP. [#606](https://github.com/elyukai/optolith-client/issues/606)
+- Wenn KO auf 8 war und keine Einträge von ihr abhingen, konnten keine weiteren LeP gekauft werden. [#694](https://github.com/elyukai/optolith-client/issues/694)
+- *Aspektkenntnis*-SFs konnten trotz des Minimums von mindestens drei Liturgien des Aspekts auf FW 10 oder höher nicht gekauft werden. [#591](https://github.com/elyukai/optolith-client/issues/591)
+- Der Zaubertrick *Hexenblick* konnte von allen Zauberern gekauft werden. [#377](https://github.com/elyukai/optolith-client/issues/377)
+- Zaubertänzer konnten keine Zaubertänze kaufen. [#594](https://github.com/elyukai/optolith-client/issues/594)
+- Die Varianten der Zaubertänzer und -barden berücksichtigten ihre jeweiligen Kultur- und ggf. Geschlechtsvoraussetzungen nicht. [#565](https://github.com/elyukai/optolith-client/issues/565)
+- Wenn bei einer Profession neben der Auswahl einer oder mehrerer Kampftechniken für einen bestimmten KtW eine oder mehrere weitere Kampftechniken für einen niedrigeren KtW ausgewählt werden sollen (z. B. bei der Profession *Soldat*), war dies nicht möglich. [#647](https://github.com/elyukai/optolith-client/issues/647)
+- Die SFs *Gift melken (...)* beschrieben ein neues Einsatzgebiet, gemeint ist eine *Einsatzmöglichkeit*. [#651](https://github.com/elyukai/optolith-client/issues/651)
+- Die Beschreibung des Zaubers *Gletscherform* entsprach nicht dem Text aus **Aventurische Magie II**. [#654](https://github.com/elyukai/optolith-client/issues/654)
+- Meldungen des Updaters sowie der Suche-nach-Updates-Button sind nun auf macOS deaktiviert, da dort aktuell keine automatischen Updates möglich sind. [#589](https://github.com/elyukai/optolith-client/issues/589)
+- Die SF *Feindgespür* nannte falsche Kampftechniken, für die die SF gilt. [#658](https://github.com/elyukai/optolith-client/issues/658)
 
 ### API
 

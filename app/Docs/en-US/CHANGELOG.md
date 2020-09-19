@@ -22,6 +22,21 @@
 - The interface could be scaled down. [#487](https://github.com/elyukai/optolith-client/issues/487)
 - Weapons of the combat technique *Lances* were not shown on character sheet. [#662](https://github.com/elyukai/optolith-client/issues/662)
 - Attributes ignored the minimum caused by high skill ratings. The maximum of skill rating is the highest linked attribute&thinsp;+&thinsp;2, so the highest attribute is required to have a minimum value of SR&thinsp;&minus;&thinsp;2. [#630](https://github.com/elyukai/optolith-client/issues/630)
+- The new application *Professional Publications* for skill *Law* had a wrong special ability prerequisite. [#680](https://github.com/elyukai/optolith-client/issues/680)
+- Some list items were wider than the actual list. [#683](https://github.com/elyukai/optolith-client/pull/683)
+- List headers were not centered by default. [#637](https://github.com/elyukai/optolith-client/issues/637)
+- Permanently spent LP did not allow additional LP to be bought. [#606](https://github.com/elyukai/optolith-client/issues/606)
+- Additional LP could not be added if CON is 8 and nothing depends on it. [#694](https://github.com/elyukai/optolith-client/issues/694)
+- SA *Aspect Knowledge* did not show up even with three chants on SR 10 or higher. [#591](https://github.com/elyukai/optolith-client/issues/591)
+- Cantrip Witch's Gaze was selectable by all spell casters. [#377](https://github.com/elyukai/optolith-client/issues/377)
+- Arcane Dancers could not add magical dances. [#594](https://github.com/elyukai/optolith-client/issues/594)
+- Select options of traditions Arcane Bard and Arcane Dancer did not require their respective culture and possible sex. [#565](https://github.com/elyukai/optolith-client/issues/565)
+- If, in addition to the selection of one or more fighting techniques for a certain CtR, one or more other fighting techniques should be selected for a lower CtR (e.g. in the profession *Soldier*), it was not possible. [#647](https://github.com/elyukai/optolith-client/issues/647)
+- Certain values on character sheet were not floored. [#655](https://github.com/elyukai/optolith-client/issues/655)
+- Chain Mail was available twice. [#570](https://github.com/elyukai/optolith-client/issues/570)
+- Scale Mail was available twice and had a typo. [#569](https://github.com/elyukai/optolith-client/issues/569)
+- Updater checks and the check for updates button are now disabled on macOS since updates are not possible on macOS currently. [#589](https://github.com/elyukai/optolith-client/issues/589)
+- Wrong applicable combat techniques for SA *Enemy Sense*. [#658](https://github.com/elyukai/optolith-client/issues/658)
 
 ### API
 
