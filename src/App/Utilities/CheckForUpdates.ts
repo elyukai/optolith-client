@@ -4,9 +4,9 @@ export const isUpdaterEnabled = (app: Electron.App) => {
   const os = platform ()
 
   switch (os) {
-    case "darwin":
-      return false
-    default:
+    case "win32":
       return app.isPackaged
+    default:
+      return false
   }
 }
