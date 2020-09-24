@@ -7,7 +7,7 @@
 - Optionele papier-stijl achtergrond voor helden document. [#36](https://github.com/elyukai/optolith-client/issues/36)
 - helden document zoom optie. [#665](https://github.com/elyukai/optolith-client/issues/665)
 - Geld toevoegen/aftrekken. [#666](https://github.com/elyukai/optolith-client/issues/666)
-- Create custom advantages, disadvantages and special abilities with custom name and AP value (temporary solution). [#632](https://github.com/elyukai/optolith-client/issues/632)
+- Voeg Voordelen, Nadelen en Competenties op maat toe met gekozen naam en AP waarde (tijdelijke oplossing) [#632](https://github.com/elyukai/optolith-client/issues/632)
 
 
 ### Verbeteringen
@@ -33,7 +33,7 @@
 - Tovertruuk Heksenblik kon worden geselecteerd door alle Tovenaars. [#377](https://github.com/elyukai/optolith-client/issues/377)
 - Updater tests en de test voor de update knop zijn nu uitgeschakeld op MacOS want updates zijn momenteel niet mogelijk op MacOS. [#589](https://github.com/elyukai/optolith-client/issues/589)
 - Verkeerde toegepaste gevechtscompetentie voor Competentie Vijand Waarnemen. [#658](https://github.com/elyukai/optolith-client/issues/658)
-- Auto-update alerts were enabled on Linux even when there were no direct auto-updates available. [#573](https://github.com/elyukai/optolith-client/issues/573)
+- Auto-update waarschuwingen werden aangezet op Linux, zelfs al was er geen direct auto-update beschikbaar. [#573](https://github.com/elyukai/optolith-client/issues/573)
 
 ### API
 
