@@ -7,6 +7,7 @@
 - Optional paper-style background for character sheet. [#36](https://github.com/elyukai/optolith-client/issues/36)
 - Character Sheet view zoom option. [#665](https://github.com/elyukai/optolith-client/issues/665)
 - Add/Subtract money from purse. [#666](https://github.com/elyukai/optolith-client/issues/666)
+- Create custom advantages, disadvantages and special abilities with custom name and AP value (temporary solution). [#632](https://github.com/elyukai/optolith-client/issues/632)
 
 ### Enhancements
 
@@ -37,6 +38,7 @@
 - Scale Mail was available twice and had a typo. [#569](https://github.com/elyukai/optolith-client/issues/569)
 - Updater checks and the check for updates button are now disabled on macOS since updates are not possible on macOS currently. [#589](https://github.com/elyukai/optolith-client/issues/589)
 - Wrong applicable combat techniques for SA *Enemy Sense*. [#658](https://github.com/elyukai/optolith-client/issues/658)
+- Auto-update alerts were enabled on Linux even when there were no direct auto-updates available. [#573](https://github.com/elyukai/optolith-client/issues/573)
 
 ### API
 
