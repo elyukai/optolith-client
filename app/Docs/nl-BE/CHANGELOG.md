@@ -2,44 +2,46 @@
 
 ### Nieuwe features
 
-- Italian translation [#667](https://github.com/elyukai/optolith-client/issues/667) [#610](https://github.com/elyukai/optolith-client/issues/610)
-- Optional paper-style background for character sheet. [#36](https://github.com/elyukai/optolith-client/issues/36)
-- Character Sheet view zoom option. [#665](https://github.com/elyukai/optolith-client/issues/665)
-- Add/Subtract money from purse. [#666](https://github.com/elyukai/optolith-client/issues/666)
-- Create custom advantages, disadvantages and special abilities with custom name and AP value (temporary solution). [#632](https://github.com/elyukai/optolith-client/issues/632)
+
+- Italiaanse vertaling [#667](https://github.com/elyukai/optolith-client/issues/667) [#610](https://github.com/elyukai/optolith-client/issues/610)
+- Optionele papier-stijl achtergrond voor helden document. [#36](https://github.com/elyukai/optolith-client/issues/36)
+- helden document zoom optie. [#665](https://github.com/elyukai/optolith-client/issues/665)
+- Geld toevoegen/aftrekken. [#666](https://github.com/elyukai/optolith-client/issues/666)
+- Voeg Voordelen, Nadelen en Competenties op maat toe met gekozen naam en AP waarde (tijdelijke oplossing) [#632](https://github.com/elyukai/optolith-client/issues/632)
+
 
 ### Verbeteringen
 
-- Weight is now shown in an own column in equipment tab. [#305](https://github.com/elyukai/optolith-client/issues/305)
-- Unnecessary combat sheets are not used anymore, it now depends on which armor the character has. It defaults to the normal armor if no armor is present. [#407](https://github.com/elyukai/optolith-client/issues/407)
-- You can now click on entry names as well to show it's rules text. [#556](https://github.com/elyukai/optolith-client/issues/556)
+- Gewicht wordt nu in zijn eigen kolom getoond in de uitrusting tab. [#305](https://github.com/elyukai/optolith-client/issues/305)
+- Onnodige gevechtsdocumenten worden niet meer gebruikt, het hangt nu af van welke wapenrusting de held heeft. Het gaat standaard naar de normale wapenrusting als er geen wapenrusting aanwezig is. [#407](https://github.com/elyukai/optolith-client/issues/407)
+- Je kan nu ook klikken op namen om de regeltekst te zien. [#556](https://github.com/elyukai/optolith-client/issues/556)
 
 ### Probleemoplossingen
 
-- Variants of profession *Blessed One of Boron* had wrong skill modifications. [#548](https://github.com/elyukai/optolith-client/issues/548)
-- Profession *White Mage (Sword & Staff)* had a wrong AP value and an additional skill modification. [#568](https://github.com/elyukai/optolith-client/issues/568)
-- Fixed common professions of a culture will now be shown even if they are not from the **Core Rules**. [#563](https://github.com/elyukai/optolith-client/issues/563)
-- The interface could be scaled down. [#487](https://github.com/elyukai/optolith-client/issues/487)
-- Weapons of the combat technique *Lances* were not shown on character sheet. [#662](https://github.com/elyukai/optolith-client/issues/662)
-- Attributes ignored the minimum caused by high skill ratings. The maximum of skill rating is the highest linked attribute&thinsp;+&thinsp;2, so the highest attribute is required to have a minimum value of SR&thinsp;&minus;&thinsp;2. [#630](https://github.com/elyukai/optolith-client/issues/630)
-- The new application *Professional Publications* for skill *Law* had a wrong special ability prerequisite. [#680](https://github.com/elyukai/optolith-client/issues/680)
-- Some list items were wider than the actual list. [#683](https://github.com/elyukai/optolith-client/pull/683)
-- List headers were not centered by default. [#637](https://github.com/elyukai/optolith-client/issues/637)
-- Permanently spent LP did not allow additional LP to be bought. [#606](https://github.com/elyukai/optolith-client/issues/606)
-- Additional LP could not be added if CON is 8 and nothing depends on it. [#694](https://github.com/elyukai/optolith-client/issues/694)
-- SA *Aspect Knowledge* did not show up even with three chants on SR 10 or higher. [#591](https://github.com/elyukai/optolith-client/issues/591)
-- Cantrip Witch's Gaze was selectable by all spell casters. [#377](https://github.com/elyukai/optolith-client/issues/377)
-- Updater checks and the check for updates button are now disabled on macOS since updates are not possible on macOS currently. [#589](https://github.com/elyukai/optolith-client/issues/589)
-- Wrong applicable combat techniques for SA *Enemy Sense*. [#658](https://github.com/elyukai/optolith-client/issues/658)
-- Auto-update alerts were enabled on Linux even when there were no direct auto-updates available. [#573](https://github.com/elyukai/optolith-client/issues/573)
+- Varianten van het beroep *Gewijde van Boron* had verkeerde talent aanpassingen. [#548](https://github.com/elyukai/optolith-client/issues/548)
+- Beroep *Witte Tovenaar (Zwaard & Staf)* had een verkeerde AP waarde and een extra talent aanpassing. [#568](https://github.com/elyukai/optolith-client/issues/568)
+- Vaste veelvoorkomende beroepen van een kultuur zullen nu getoond worden zelfs al zijn de ze niet van de **Basis Regels**. [#563](https://github.com/elyukai/optolith-client/issues/563)
+- The interface kon kleiner gemaakt worden. [#487](https://github.com/elyukai/optolith-client/issues/487)
+- Wapens van de gevechtscompetentie *Lans* werden niet getoond op het helden document. [#662](https://github.com/elyukai/optolith-client/issues/662)
+- Goede Eigenschappen negeerden het minimum veroorzaakt door hoge talent waarden. De maximum van een talent waarde is het hoogste gerelateerde goede eigenschap&thinsp;+&thinsp;2, dus een goede eigenschap moet een minimum waarde hebben van de hoogste talent waarde &thinsp;&minus;&thinsp;2. [#630](https://github.com/elyukai/optolith-client/issues/630)
+- Het nieuwe toepassingsgebeird *Professionele Publicaties* voor het talent *Wet* had een verkeerde Competentie vereiste. [#680](https://github.com/elyukai/optolith-client/issues/680)
+- Sommige lijst elementen werden breder dan de eigenlijke lijst.  [#683](https://github.com/elyukai/optolith-client/pull/683)
+- Lijst hoofdingen werden niet automatisch gecentreerd. [#637](https://github.com/elyukai/optolith-client/issues/637)
+- Permantent gespendeerde LP lieten niet toe om extra LP te kopen. [#606](https://github.com/elyukai/optolith-client/issues/606)
+- Extra LP konden niet worden gekocht als CO 8 was en er niets van afhing. [#694](https://github.com/elyukai/optolith-client/issues/694)
+- Competentie *Aspect Kennis* verscheen niet, zelfs met drie liturgieen op talent waarde 10 of hoger. [#591](https://github.com/elyukai/optolith-client/issues/591)
+- Tovertruuk Heksenblik kon worden geselecteerd door alle Tovenaars. [#377](https://github.com/elyukai/optolith-client/issues/377)
+- Updater tests en de test voor de update knop zijn nu uitgeschakeld op MacOS want updates zijn momenteel niet mogelijk op MacOS. [#589](https://github.com/elyukai/optolith-client/issues/589)
+- Verkeerde toegepaste gevechtscompetentie voor Competentie Vijand Waarnemen. [#658](https://github.com/elyukai/optolith-client/issues/658)
+- Auto-update waarschuwingen werden aangezet op Linux, zelfs al was er geen direct auto-update beschikbaar. [#573](https://github.com/elyukai/optolith-client/issues/573)
 
 ### API
 
-There are important and breaking changes coming with the next release, so if you use the Optolith source or save data, I'd recommend to come over to [Discord](https://discord.gg/wfdgB9g) so that I can tell you what is going to be changed in detail. Since more and more people depend on Optolith's data I will now follow semantic versioning strictly so that you can rely on the compatibility of source files just by checking out the version number. There will be a new format for heroes as well as for the source data. You can also give feedback on the changes, since they are not *completely* done yet &ndash; but I still think it would make sense to check out the changes as early as possible. The next major version is still a bit away, so you'll have plenty of time to adjust your software.
+Er komen belangijke en brekende veranderingen aan met de volgende release, dus als je Optolith source of data gebruikt, raad ik je aan om naar de [Discord](https://discord.gg/wfdgB9g) te komen zodat ik je in detail kan uitleggen wat er gaat veranderen. Vermits meer en meer mensen afhankelijk zijn van Optolith's data zal ik nu strict versiebeheer volgen zodat je op de compatibiliteit van de sources kan rekenen door het versie nummer te controleren. Er zal een nieuw formaat komen voor de helden en de bron data. Je kan ook feedback geven op de veranderingen, vermits ze nog niet *helemaal* volledig zijn &ndash; maar ik denk dat het zinnig zou zijn om de verandering zo snel mogelijk na te kijken. De volgende versie duurt nog wel even, zodat je voldoende tijd hebt om je software aan te passen.
 
 ### Thank you
 
-Last but definitely not least a big **Thank You** to the following people on GitHub who contributed to this release!
+Tenslotte, maar zeker niet tenminste, een dikke **Dankuwel** voor de volgende mensen op GitHub die bijgedragen hebben tot deze release!
 
 - [Jonas (@Rahjenaos)](https://github.com/Rahjenaos)
 - [Jordok (@Jordok)](https://github.com/Jordok)
