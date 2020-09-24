@@ -1,5 +1,5 @@
 import { List } from "../../../Data/List"
-import { fromDefault, makeLenses, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record"
+import { fromDefault, Lenses, makeLenses, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record"
 import { composeL } from "../../Utilities/compose"
 import { pipe } from "../../Utilities/pipe"
 import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId"
@@ -44,6 +44,9 @@ export const ActivatableNameCostA_ = {
 }
 
 export const ActivatableNameCostL = makeLenses (ActivatableNameCost)
+
+export const ActivatableNameCostSafeCostL =
+  ActivatableNameCostL as Lenses<ActivatableNameCostSafeCost>
 
 export const ActivatableNameCostL_ = {
   name: composeL (ActivatableNameCostL.naming, ActivatableCombinedNameL.name),

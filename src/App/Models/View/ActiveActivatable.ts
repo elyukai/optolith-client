@@ -1,5 +1,5 @@
 import { Maybe } from "../../../Data/Maybe"
-import { fromDefault, Record, RecordI, StrictAccessor } from "../../../Data/Record"
+import { fromDefault, makeLenses, Record, RecordI, StrictAccessor } from "../../../Data/Record"
 import { pipe } from "../../Utilities/pipe"
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent"
 import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId"
@@ -69,3 +69,5 @@ export const ActiveActivatableA_ = {
 export const ActiveActivatableAL_ = {
   id: pipe (AAAL.wikiEntry, Advantage.AL.id),
 }
+
+export const ActiveActivatableL = makeLenses (ActiveActivatable)
