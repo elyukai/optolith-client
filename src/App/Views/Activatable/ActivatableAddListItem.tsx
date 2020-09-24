@@ -4,16 +4,18 @@ import { any, ensure, fromMaybe, guardReplace, isJust, isNothing, Just, Maybe, m
 import { lookup } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, snd } from "../../../Data/Tuple"
-import { AdvantageId, DisadvantageId } from "../../Constants/Ids"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
 import { HeroModel } from "../../Models/Hero/HeroModel"
 import { NumIdName } from "../../Models/NumIdName"
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
+import { Advantage } from "../../Models/Wiki/Advantage"
+import { Disadvantage } from "../../Models/Wiki/Disadvantage"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, InactiveActivatableControlElements, insertFinalCurrentCost, PropertiesAffectedByState } from "../../Utilities/Activatable/activatableInactiveViewUtils"
 import { classListMaybe } from "../../Utilities/CSS"
-import { translate } from "../../Utilities/I18n"
+import { translate, translateP } from "../../Utilities/I18n"
 import { pipe_ } from "../../Utilities/pipe"
 import { renderMaybeWith } from "../../Utilities/ReactUtils"
 import { BasicInputDialog } from "../Universal/BasicInputDialog"
@@ -88,6 +90,17 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
   const [ mcustom_cost_preview, setCustomCostPreview ] = React.useState<Maybe<string>> (Nothing)
   const [ showCustomCostDialog, setShowCustomCostDialog ] = React.useState<boolean> (false)
 
+  const isCustomCostAvailable = React.useMemo (
+    () => {
+      const staticEntry = IAA.wikiEntry (item)
+
+      return Advantage.is (staticEntry)
+        || Disadvantage.is (staticEntry)
+        || id === SpecialAbilityId.CustomSpecialAbility
+    },
+    [ item, id ]
+  )
+
   const handleSelect =
     React.useCallback (
       (nextSelected: Maybe<string | number>) => {
@@ -123,10 +136,12 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
   const handleShowCustomCostDialog =
     React.useCallback (
       () => {
-        setShowCustomCostDialog (orN (hideGroup))
-        setCustomCostPreview (mcustom_cost)
+        if (isCustomCostAvailable) {
+          setShowCustomCostDialog (true)
+          setCustomCostPreview (mcustom_cost)
+        }
       },
-      [ setShowCustomCostDialog, setCustomCostPreview, hideGroup, mcustom_cost ]
+      [ setShowCustomCostDialog, setCustomCostPreview, isCustomCostAvailable, mcustom_cost ]
     )
 
   const handleCloseCustomCostDialog =
@@ -281,7 +296,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
         <div
           className={classListMaybe (List (
             Just ("cost"),
-            guardReplace (orN (hideGroup)) ("value-btn"),
+            guardReplace (isCustomCostAvailable) ("value-btn"),
             guardReplace (isJust (mcustom_cost)) ("custom-cost")
           ))}
           onClick={handleShowCustomCostDialog}
@@ -294,7 +309,9 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
         isOpen={showCustomCostDialog}
         title={translate (staticData) ("advantagesdisadvantages.dialogs.customcost.title")}
         description={
-          `${translate (staticData) ("advantagesdisadvantages.dialogs.customcost.for")} ${IAA.name (item)}`
+          translateP (staticData)
+                     ("advantagesdisadvantages.dialogs.customcost.for")
+                     (List (IAA.name (item)))
         }
         value={maybeToUndefined (mcustom_cost_preview)}
         acceptLabel={translate (staticData) ("general.dialogs.donebtn")}

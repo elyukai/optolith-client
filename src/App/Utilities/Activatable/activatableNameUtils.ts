@@ -11,20 +11,25 @@
 import { equals } from "../../../Data/Eq"
 import { flip, thrush } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
-import { appendStr, elem, filter, find, flength, groupByKey, intercalate, List, map, replaceStr, subscriptF } from "../../../Data/List"
+import { set } from "../../../Data/Lens"
+import { append, appendStr, elem, filter, find, flength, groupByKey, intercalate, List, map, replaceStr, subscriptF } from "../../../Data/List"
 import { altF_, any, bind, bindF, catMaybes, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, listToMaybe, maybe, Maybe, Nothing, thenF } from "../../../Data/Maybe"
-import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
+import { elems, lookup, lookupF, OrderedMap, sdelete } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
+import { AdvantageId as AdvantageIdEnum, DisadvantageId as DisadvantageIdEnum, SpecialAbilityId as SpecialAbilityIdEnum } from "../../Constants/Ids"
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
-import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName"
-import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable"
+import { ActivatableCombinedName, ActivatableCombinedNameL } from "../../Models/View/ActivatableCombinedName"
+import { ActivatableNameCostSafeCostL } from "../../Models/View/ActivatableNameCost"
+import { ActiveActivatable, ActiveActivatableA_, ActiveActivatableL } from "../../Models/View/ActiveActivatable"
 import { Advantage } from "../../Models/Wiki/Advantage"
 import { Skill } from "../../Models/Wiki/Skill"
 import { Application } from "../../Models/Wiki/sub/Application"
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable, ActivatableSkillEntry, EntryWithCategory, SID, SkillishEntry } from "../../Models/Wiki/wikiTypeHelpers"
+import { mdash } from "../Chars"
+import { composeL } from "../compose"
 import { formatList, translate } from "../I18n"
 import { prefixSA } from "../IDUtils"
 import { ifElse } from "../ifElse"
@@ -405,6 +410,23 @@ export const getName =
          )
          (hero_entry)
 
+const extractCustom = (
+  id: string,
+  groupedEntries: OrderedMap<string, List<Record<ActiveActivatable>>>
+) =>
+  pipe_ (
+    groupedEntries,
+    lookup (id),
+    maybe (List<List<Record<ActiveActivatable>>> ())
+          (map (active => List (set (composeL (
+                                      ActiveActivatableL.nameAndCost,
+                                      ActivatableNameCostSafeCostL.naming,
+                                      ActivatableCombinedNameL.name
+                                    ))
+                                    (fromMaybe (mdash) (AAA_.addName (active)))
+                                    (active))))
+  )
+
 /**
  * `compressList :: L10n -> [ActiveActivatable] -> String`
  *
@@ -414,8 +436,28 @@ export const getName =
 export const compressList =
   (staticData: StaticDataRecord) =>
   (xs: List<Record<ActiveActivatable>>): string => {
+    const groupedEntries = groupByKey<Record<ActiveActivatable>, string> (AAA_.id) (xs)
+
+    const customAdvantages =
+      extractCustom (AdvantageIdEnum.CustomAdvantage, groupedEntries)
+
+    const customDisadvantages =
+      extractCustom (DisadvantageIdEnum.CustomDisadvantage, groupedEntries)
+
+    const customSpecialAbilities =
+      extractCustom (SpecialAbilityIdEnum.CustomSpecialAbility, groupedEntries)
+
     const grouped_xs =
-      elems (groupByKey<Record<ActiveActivatable>, string> (AAA_.id) (xs))
+      pipe_ (
+        groupedEntries,
+        sdelete <string> (AdvantageIdEnum.CustomAdvantage),
+        sdelete <string> (DisadvantageIdEnum.CustomDisadvantage),
+        sdelete <string> (SpecialAbilityIdEnum.CustomSpecialAbility),
+        elems,
+        append (customAdvantages),
+        append (customDisadvantages),
+        append (customSpecialAbilities),
+      )
 
     return pipe (
                   map (
