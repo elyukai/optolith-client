@@ -9,6 +9,7 @@
 - Optionaler Charakterbogenhintergrund in Papieroptik. [#36](https://github.com/elyukai/optolith-client/issues/36)
 - Zoom-Option für Charakterbogen-Ansicht. [#665](https://github.com/elyukai/optolith-client/issues/665)
 - Geld zum Geldbeutel hinzufügen oder davon abziehen. [#666](https://github.com/elyukai/optolith-client/issues/666)
+- Eigene Vorteile, Nachteile und Sonderfertigkeiten mit eigenem Namen und AP-Wert erstellen (temporäre Lösung). [#632](https://github.com/elyukai/optolith-client/issues/632)
 
 ### Verbesserungen
 
@@ -57,6 +58,9 @@
 - Die Beschreibung des Zaubers *Gletscherform* entsprach nicht dem Text aus **Aventurische Magie II**. [#654](https://github.com/elyukai/optolith-client/issues/654)
 - Meldungen des Updaters sowie der Suche-nach-Updates-Button sind nun auf macOS deaktiviert, da dort aktuell keine automatischen Updates möglich sind. [#589](https://github.com/elyukai/optolith-client/issues/589)
 - Die SF *Feindgespür* nannte falsche Kampftechniken, für die die SF gilt. [#658](https://github.com/elyukai/optolith-client/issues/658)
+- Auto-Update-Warnungen wurden auf Linux gezeigt selbst wenn keine direkten Auto-Updates möglich waren. [#573](https://github.com/elyukai/optolith-client/issues/573)
+- Bei der SF *Zugvögel* und SFs mit vergleichbaren Effekten wurden die zusätzlich ermöglichten Liturgieplätze durch passende aktive Liturgien, die allerdings auch für die eigentliche Tradition der Geweihten verfügbar waren, blockiert. [#677](https://github.com/elyukai/optolith-client/issues/677)
+- Die SF *Giftverstärkung* hatte einen falschen Regeltext. [#713](https://github.com/elyukai/optolith-client/issues/713)
 
 ### API
 
