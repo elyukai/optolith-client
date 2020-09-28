@@ -34,6 +34,7 @@
 - Updater tests en de test voor de update knop zijn nu uitgeschakeld op MacOS want updates zijn momenteel niet mogelijk op MacOS. [#589](https://github.com/elyukai/optolith-client/issues/589)
 - Verkeerde toegepaste gevechtscompetentie voor Competentie Vijand Waarnemen. [#658](https://github.com/elyukai/optolith-client/issues/658)
 - Auto-update waarschuwingen werden aangezet op Linux, zelfs al was er geen direct auto-update beschikbaar. [#573](https://github.com/elyukai/optolith-client/issues/573)
+- Het dialoogvenster voor het exporteren van een teken, omdat JSON de bestandsextensie niet heeft toegevoegd aan de voorgestelde bestandsnaam. [#718](https://github.com/elyukai/optolith-client/issues/718)
 
 ### API
 

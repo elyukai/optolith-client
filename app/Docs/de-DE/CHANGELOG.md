@@ -61,6 +61,7 @@
 - Auto-Update-Warnungen wurden auf Linux gezeigt selbst wenn keine direkten Auto-Updates möglich waren. [#573](https://github.com/elyukai/optolith-client/issues/573)
 - Bei der SF *Zugvögel* und SFs mit vergleichbaren Effekten wurden die zusätzlich ermöglichten Liturgieplätze durch passende aktive Liturgien, die allerdings auch für die eigentliche Tradition der Geweihten verfügbar waren, blockiert. [#677](https://github.com/elyukai/optolith-client/issues/677)
 - Die SF *Giftverstärkung* hatte einen falschen Regeltext. [#713](https://github.com/elyukai/optolith-client/issues/713)
+- Beim Exportieren eines Charakters als JSON wurde im Speichern-Dialog die Dateiendung nicht an den vorgeschlagenen Dateinamen angefügt. [#718](https://github.com/elyukai/optolith-client/issues/718)
 
 ### API
 

@@ -34,6 +34,7 @@ Veuillez vérifier les personnages pour lesquels vous avez ajouté la CS *intuit
 - La vérification des mises à jour et le bouton de vérification des mises à jour sont maintenant désactivés sur macOS, car les mises à jour ne sont pas possibles sur macOS actuellement. [#589](https://github.com/elyukai/optolith-client/issues/589)
 - Techniques de combat mal applicables pour la CS *détection des embuscades*. [#658](https://github.com/elyukai/optolith-client/issues/658)
 - Les alertes de mise à jour automatique étaient activées sur Linux même lorsqu'il n'y avait pas de mises à jour automatiques directes disponibles. [#573](https://github.com/elyukai/optolith-client/issues/573)
+- Le dialogue de sauvegarde pour l'exportation d'un caractère en JSON n'a pas ajouté l'extension de fichier au nom de fichier suggéré. [#718](https://github.com/elyukai/optolith-client/issues/718)
 
 ### API
 

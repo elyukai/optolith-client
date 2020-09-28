@@ -39,6 +39,7 @@
 - Updater checks and the check for updates button are now disabled on macOS since updates are not possible on macOS currently. [#589](https://github.com/elyukai/optolith-client/issues/589)
 - Wrong applicable combat techniques for SA *Enemy Sense*. [#658](https://github.com/elyukai/optolith-client/issues/658)
 - Auto-update alerts were enabled on Linux even when there were no direct auto-updates available. [#573](https://github.com/elyukai/optolith-client/issues/573)
+- The save dialog for exporting a character as JSON did not add the file extension to the suggested file name. [#718](https://github.com/elyukai/optolith-client/issues/718)
 
 ### API
 
