@@ -2,15 +2,16 @@ import * as React from "react"
 import { fmap } from "../../../Data/Functor"
 import { List } from "../../../Data/List"
 import { fromMaybe, isJust, Maybe, maybeToUndefined } from "../../../Data/Maybe"
+import { abs } from "../../../Data/Num"
 import { Record } from "../../../Data/Record"
 import { Purse } from "../../Models/Hero/Purse"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../Utilities/I18n"
-import { pipe, pipe_ } from "../../Utilities/pipe"
-import { TextFieldLazy } from "../Universal/TextFieldLazy"
-import { Button } from "../Universal/Button"
 import { toInt } from "../../Utilities/NumberUtils"
-import { abs } from "../../../Data/Num"
+import { pipe, pipe_ } from "../../Utilities/pipe"
+import { isEmptyOr, isNaturalNumber } from "../../Utilities/RegexUtils"
+import { Button } from "../Universal/Button"
+import { TextFieldLazy } from "../Universal/TextFieldLazy"
 
 export interface PurseAndTotalsProps {
   carryingCapacity: number
@@ -111,6 +112,7 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
               type="number"
               min="0"
               onChange={setDucatesSafe}
+              checkDirectInput={isEmptyOr (isNaturalNumber)}
               />
             <TextFieldLazy
               label={translate (staticData) ("equipment.purse.silverthalers")}
@@ -118,6 +120,7 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
               type="number"
               min="0"
               onChange={setSilverthalersSafe}
+              checkDirectInput={isEmptyOr (isNaturalNumber)}
               />
             <TextFieldLazy
               label={translate (staticData) ("equipment.purse.halers")}
@@ -125,6 +128,7 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
               type="number"
               min="0"
               onChange={setHellersSafe}
+              checkDirectInput={isEmptyOr (isNaturalNumber)}
               />
             <TextFieldLazy
               label={translate (staticData) ("equipment.purse.kreutzers")}
@@ -132,6 +136,7 @@ export const PurseAndTotals: React.FC<PurseAndTotalsProps> = props => {
               min="0"
               value={pipe_ (purse, fmap (PA.k), maybeToUndefined)}
               onChange={setKreutzersSafe}
+              checkDirectInput={isEmptyOr (isNaturalNumber)}
               />
           </div>
         </div>
