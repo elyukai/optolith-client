@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { GeodeRitualL10n } from "../../../../../app/Database/Schema/GeodeRituals/GeodeRituals.l10n"
+import { GeodeRitualUniv } from "../../../../../app/Database/Schema/GeodeRituals/GeodeRituals.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromArray } from "../../../../Data/List"
 import { Maybe } from "../../../../Data/Maybe"
@@ -10,8 +12,6 @@ import { ndash } from "../../Chars"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { GeodeRitualL10n } from "../Schema/GeodeRituals/GeodeRituals.l10n"
-import { GeodeRitualUniv } from "../Schema/GeodeRituals/GeodeRituals.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -54,7 +54,8 @@ export const toGeodeRituals : YamlFileConverter<string, Record<GeodeRitual>>
                             = pipe (
                                 (yaml_mp : YamlNameMap) => zipBy ("id")
                                                                  (yaml_mp.GeodeRitualsUniv)
-                                                                 (yaml_mp.GeodeRitualsL10n),
+                                                                 (yaml_mp.GeodeRitualsL10nDefault)
+                                                                 (yaml_mp.GeodeRitualsL10nOverride),
                                 bindF (pipe (
                                   mapM (toGeodeRitual),
                                   bindF (toMapIntegrity),

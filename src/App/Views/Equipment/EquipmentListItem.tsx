@@ -13,6 +13,7 @@ import { ListItemButtons } from "../Universal/ListItemButtons"
 import { ListItemGroup } from "../Universal/ListItemGroup"
 import { ListItemName } from "../Universal/ListItemName"
 import { ListItemSeparator } from "../Universal/ListItemSeparator"
+import { ListItemWeight } from "../Universal/ListItemWeight"
 
 export interface EquipmentListItemProps {
   add?: boolean
@@ -94,6 +95,10 @@ export const EquipmentListItem: React.FC<EquipmentListItemProps> = props => {
           lookupF (StaticData.A.equipmentGroups (staticData)),
           maybe ("") (NumIdName.A.name)
         )}
+        />
+      <ListItemWeight
+        weight={IA.weight (data)}
+        staticData={staticData}
         />
       <ListItemButtons>
         <IconButton

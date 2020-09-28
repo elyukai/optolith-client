@@ -23,7 +23,7 @@ import { UISettingsState } from "../Models/UISettingsState"
 import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { heroReducer } from "../Reducers/heroReducer"
 import { user_data_path } from "../Selectors/envSelectors"
-import { getCurrentHeroId, getHeroes, getLocaleId, getWiki } from "../Selectors/stateSelectors"
+import { getCurrentHeroId, getFallbackLocaleId, getHeroes, getLocaleId, getWiki } from "../Selectors/stateSelectors"
 import { getUISettingsState } from "../Selectors/uisettingsSelectors"
 import { prepareAPCache, prepareAPCacheForHero, writeCache } from "../Utilities/Cache"
 import { translate } from "../Utilities/I18n"
@@ -50,11 +50,16 @@ export const requestConfigSave: ReduxAction<Promise<boolean>> =
       ...toObject (uiSettingsState),
       sheetCheckAttributeValueVisibility:
         Just (UISSA.sheetCheckAttributeValueVisibility (uiSettingsState)),
+      sheetUseParchment:
+        Just (UISSA.sheetUseParchment (uiSettingsState)),
+      sheetZoomFactor:
+        UISSA.sheetZoomFactor (uiSettingsState),
       theme: Just (UISSA.theme (uiSettingsState)),
       enableEditingHeroAfterCreationPhase:
         Just (UISSA.enableEditingHeroAfterCreationPhase (uiSettingsState)),
       enableAnimations: Just (UISSA.enableAnimations (uiSettingsState)),
       locale: getLocaleId (state),
+      fallbackLocale: getFallbackLocaleId (state),
     })
 
     return pipe_ (
@@ -325,7 +330,7 @@ export const requestHeroExport =
         filters: [
           { name: "JSON", extensions: [ "json" ] },
         ],
-        defaultPath: hero.name.replace (/\//u, "/"),
+        defaultPath: `${hero.name.replace (/\//u, "/")}.json`,
       })
 
       if (isJust (pmfilepath)) {

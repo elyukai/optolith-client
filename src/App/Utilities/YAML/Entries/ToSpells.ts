@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { SpellL10n } from "../../../../../app/Database/Schema/Spells/Spells.l10n"
+import { SpellUniv } from "../../../../../app/Database/Schema/Spells/Spells.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromArray, List } from "../../../../Data/List"
 import { Maybe, Nothing } from "../../../../Data/Maybe"
@@ -10,8 +12,6 @@ import { AllRequirementObjects } from "../../../Models/Wiki/wikiTypeHelpers"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { SpellL10n } from "../Schema/Spells/Spells.l10n"
-import { SpellUniv } from "../Schema/Spells/Spells.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -65,7 +65,8 @@ export const toSpells : YamlFileConverter<string, Record<Spell>>
                       = pipe (
                           (yaml_mp : YamlNameMap) => zipBy ("id")
                                                            (yaml_mp.SpellsUniv)
-                                                           (yaml_mp.SpellsL10n),
+                                                           (yaml_mp.SpellsL10nDefault)
+                                                           (yaml_mp.SpellsL10nOverride),
                           bindF (pipe (
                             mapM (toSpell),
                             bindF (toMapIntegrity),

@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { CultureL10n } from "../../../../../app/Database/Schema/Cultures/Cultures.l10n"
+import { CultureUniv } from "../../../../../app/Database/Schema/Cultures/Cultures.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromArray, List } from "../../../../Data/List"
 import { Maybe, Nothing } from "../../../../Data/Maybe"
@@ -10,8 +12,6 @@ import { IncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { CultureL10n } from "../Schema/Cultures/Cultures.l10n"
-import { CultureUniv } from "../Schema/Cultures/Cultures.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -79,7 +79,8 @@ export const toCultures : YamlFileConverter<string, Record<Culture>>
                             (yaml_mp : YamlNameMap) =>
                               zipBy ("id")
                                     (yaml_mp.CulturesUniv)
-                                    (yaml_mp.CulturesL10n),
+                                    (yaml_mp.CulturesL10nDefault)
+                                    (yaml_mp.CulturesL10nOverride),
                             bindF (pipe (
                               mapM (toCulture),
                               bindF (toMapIntegrity),

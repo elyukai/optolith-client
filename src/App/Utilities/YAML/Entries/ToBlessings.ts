@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { BlessingL10n } from "../../../../../app/Database/Schema/Blessings/Blessings.l10n"
+import { BlessingUniv } from "../../../../../app/Database/Schema/Blessings/Blessings.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromArray } from "../../../../Data/List"
 import { Nothing } from "../../../../Data/Maybe"
@@ -8,8 +10,6 @@ import { Blessing } from "../../../Models/Wiki/Blessing"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { BlessingL10n } from "../Schema/Blessings/Blessings.l10n"
-import { BlessingUniv } from "../Schema/Blessings/Blessings.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -38,9 +38,11 @@ const toBlessing : YamlPairConverterE<BlessingUniv, BlessingL10n, string, Blessi
 
 export const toBlessings : YamlFileConverter<string, Record<Blessing>>
                                 = pipe (
-                                    (yaml_mp : YamlNameMap) => zipBy ("id")
-                                                                     (yaml_mp.BlessingsUniv)
-                                                                     (yaml_mp.BlessingsL10n),
+                                    (yaml_mp : YamlNameMap) =>
+                                      zipBy ("id")
+                                            (yaml_mp.BlessingsUniv)
+                                            (yaml_mp.BlessingsL10nDefault)
+                                            (yaml_mp.BlessingsL10nOverride),
                                     bindF (pipe (
                                       mapM (toBlessing),
                                       bindF (toMapIntegrity),

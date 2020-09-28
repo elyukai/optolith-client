@@ -38,6 +38,8 @@ export const getCurrentTab = pipe (ASA.ui, UIA.location)
 export const getLocaleMessages = pipe (ASA.l10n, LSA.messages)
 export const getLocaleId = pipe (ASA.l10n, LSA.id)
 export const getLocaleType = pipe (ASA.l10n, LSA.type)
+export const getFallbackLocaleId = pipe (ASA.l10n, LSA.fallbackId)
+export const getFallbackLocaleType = pipe (ASA.l10n, LSA.fallbackType)
 export const getAvailableLanguages = pipe (ASA.l10n, LSA.availableLangs)
 
 export const getLocaleAsProp =
@@ -330,6 +332,8 @@ export const getIsEditCharacterAvatarOpen =
 export const getIsEditPetAvatarOpen =
   pipe (ASA.ui, UIA.subwindows, SubW.isEditPetAvatarOpen)
 
+export const getIsAddRemoveMoneyOpen =
+  pipe (ASA.ui, UIA.subwindows, SubW.isAddRemoveMoneyOpen)
 
 export const getAdvantagesFilterText =
   pipe (ASA.ui, UIA.filters, Filt.advantagesFilterText)

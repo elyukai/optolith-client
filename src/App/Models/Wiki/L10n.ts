@@ -1,5 +1,5 @@
+import { UIL10n } from "../../../../app/Database/Schema/UI/UI.l10n"
 import { fromDefault, OmitName, Record } from "../../../Data/Record"
-import { UIL10n } from "../../Utilities/YAML/Schema/UI/UI.l10n"
 
 export interface L10n extends UIL10n {
   "@@name": "L10n"
@@ -136,6 +136,7 @@ export const L10n =
 
                 "settings.title": "",
                 "settings.language": "",
+                "settings.fallbacklanguage": "",
                 "settings.systemlanguage": "",
                 "settings.languagehint": "",
                 "settings.theme": "",
@@ -245,6 +246,8 @@ export const L10n =
                 "sheets.dialogs.pdfcreationerror.title": "",
                 "sheets.dialogs.pdfcreationerror.message": "",
                 "sheets.showattributevalues": "",
+                "sheets.useparchment": "",
+                "sheets.zoomfactor": "",
                 "sheets.charactersheet": "",
                 "sheets.attributemodifiers.title": "",
 
@@ -782,6 +785,13 @@ export const L10n =
                 "equipment.purse.kreutzers": "",
                 "equipment.purse.carryingcapacity": "",
                 "equipment.purse.initialstartingwealthandcarryingcapacity": "",
+                "equipment.purse.earnpay": "",
+                "equipment.purse.earn": "",
+                "equipment.purse.pay": "",
+                "equipment.purse.notefirst": "",
+                "equipment.purse.notesecond": "",
+                "equipment.purse.currentcredit": "",
+                "equipment.purse.amount": "",
 
                 "equipment.dialogs.addedit.damage": "",
                 "equipment.dialogs.addedit.length": "",

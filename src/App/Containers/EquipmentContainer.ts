@@ -2,6 +2,7 @@ import { connect } from "react-redux"
 import { Maybe } from "../../Data/Maybe"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as EquipmentActions from "../Actions/EquipmentActions"
+import * as SubwindowsActions from "../Actions/SubwindowsActions"
 import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids"
 import { AppStateRecord } from "../Models/AppState"
 import { EquipmentSortOptions } from "../Models/Config"
@@ -10,7 +11,7 @@ import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors"
 import { getCarryingCapacity } from "../Selectors/attributeSelectors"
 import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelectors"
 import { getAvailableSortedEquipmentGroups, getFilteredItems, getFilteredItemTemplates, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors"
-import { getEquipmentFilterText, getItemTemplatesFilterText, getPurse } from "../Selectors/stateSelectors"
+import { getEquipmentFilterText, getItemTemplatesFilterText, getPurse, getIsAddRemoveMoneyOpen } from "../Selectors/stateSelectors"
 import { getEquipmentSortOrder, getMeleeItemTemplateCombatTechniqueFilter, getRangedItemTemplateCombatTechniqueFilter } from "../Selectors/uisettingsSelectors"
 import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from "../Views/Equipment/Equipment"
 
@@ -31,6 +32,7 @@ const mapStateToProps =
     filterText: getEquipmentFilterText (state),
     templatesFilterText: getItemTemplatesFilterText (state),
     filteredEquipmentGroups: getAvailableSortedEquipmentGroups (state, ownProps),
+    isAddRemoveMoneyOpen: getIsAddRemoveMoneyOpen (state),
   })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): EquipmentDispatchProps => ({
@@ -60,6 +62,15 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): EquipmentDispatchProps => 
   },
   setKreutzers (value: string) {
     dispatch (EquipmentActions.setKreutzers (value))
+  },
+  setMoney (d: number, s: number, h: number, k: number) {
+    dispatch (EquipmentActions.setMoney (d, s, h, k))
+  },
+  openAddRemoveMoney () {
+    dispatch (SubwindowsActions.openAddRemoveMoney ())
+  },
+  closeAddRemoveMoney () {
+    dispatch (SubwindowsActions.closeAddRemoveMoney ())
   },
   setMeleeItemTemplatesCombatTechniqueFilter (filterOption: Maybe<MeleeCombatTechniqueId>) {
     dispatch (EquipmentActions.setMeleeItemTemplatesCombatTechniqueFilter (filterOption))

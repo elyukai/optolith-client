@@ -41,10 +41,10 @@ Due to licensing, the YAML files containing the crunch elements from the books a
 
 ### Prepare the repo
 
-Clone the repo.
+Clone the repo, including the private submodule.
 
 ```sh
-git clone https://github.com/elyukai/optolith-client.git
+git clone --recurse-submodules https://github.com/elyukai/optolith-client.git
 ```
 
 Make sure Node.js (lastest version) is installed and run
@@ -55,46 +55,30 @@ npm i
 
 This installs all necessary packages.
 
-Create a `tablesSrc.json` in the `/deploy` folder. The JSON consists of an object that has the following interface:
-
-```ts
-{
-  repository: string[];
-}
-```
-
-The array is consumed by `path.join` from Node.js and represents the relative path from the optolith client root folder to the root folder of the private repo with the YAMl database.
-
-Example:
-
-```json
-{
-  "repository": ["..", "optolith-data"]
-}
-```
-
 ### First run
 
-Import YAML files.
+Compile the source code. `ts:` is for TypeScript, `re:` for Reason/OCaml and `css:` for CSS/Sass.
 
-```sh
-npm run getstatic
-```
-
-Compile the source code. `ts:` is for TypeScript, `re:` for Reason/OCaml.
-
-You have to run the Reason build first as it generates TypeScript files.
+You have to run the Reason build first as it generates TypeScript files...
 
 ```sh
 npm run re:build
 npm run ts:build
+npm run css:build
 ```
 
-&hellip;or watch it for better performance for subsequent compiling on save.
+(There's also a shorthand for that:)
+
+```sh
+npm run build
+```
+
+&hellip;or watch it for better performance for subsequent compiling on save (you need to use separate terminal instances then). There is no watcher for CSS/Sass currently.
 
 ```sh
 npm run re:watch
 npm run ts:watch
+npm run css:build
 ```
 
 Run the app:
@@ -113,7 +97,7 @@ npm run css:build
 
 ### Miscellaneous
 
-Clean the files built by the Reason compiler.
+Clean the files built by the Reason compiler, if there are any issue with it.
 
 ```sh
 npm run re:clean

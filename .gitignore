@@ -6,13 +6,14 @@ npm-debug.log*
 /dist/
 .rpt2_cache
 .esm-cache
+app/main.css
 app/**/*.js
 app/**/*.js.map
 !app/index.js
+!app/esmPreload.js
 /installer/
 electron-builder.env
 *.map
-app/Database
 publishSettings.json
 
 .env*
@@ -20,7 +21,6 @@ publishSettings.json
 Tables.zip
 tables/
 deploy/tablesSrc.json
-src/App/Utilities/YAML/Schema/
 /lib/bs/
 .merlin
 .bsb.lock

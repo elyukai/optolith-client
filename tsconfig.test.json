@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "jsx": "react",
+    "lib": ["esnext", "dom"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmitHelpers": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "outDir": "test/",
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "rootDir": "src/",
+    "inlineSourceMap": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "target": "es2019"
+  },
+  "include": [
+    "src/**/*",
+    "src/*",
+    "app/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

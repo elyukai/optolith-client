@@ -16,7 +16,6 @@ import { SegmentedControls } from "../Universal/SegmentedControls"
 export interface SettingsOwnProps {
   staticData: StaticDataRecord
   isSettingsOpen: boolean
-  platform: string
   close (): void
   checkForUpdates (): void
 }
@@ -24,15 +23,19 @@ export interface SettingsOwnProps {
 export interface SettingsStateProps {
   localeString: Maybe<string>
   localeType: "default" | "set"
+  fallbackLocaleString: Maybe<string>
+  fallbackLocaleType: "default" | "set"
   theme: Theme
   isEditingHeroAfterCreationPhaseEnabled: boolean
   areAnimationsEnabled: boolean
   languages: List<Record<DropdownOption<string>>>
+  isCheckForUpdatesDisabled: boolean
 }
 
 export interface SettingsDispatchProps {
   saveConfig (): void
   setLocale (id: Maybe<string>): void
+  setFallbackLocale (id: Maybe<string>): void
   setTheme (id: Maybe<string>): void
   switchEnableEditingHeroAfterCreationPhase (): void
   switchEnableAnimations (): void
@@ -48,6 +51,9 @@ export const Settings: React.FC<Props> = props => {
     localeString,
     localeType,
     setLocale,
+    fallbackLocaleString,
+    fallbackLocaleType,
+    setFallbackLocale,
     setTheme,
     saveConfig,
     isSettingsOpen,
@@ -55,9 +61,9 @@ export const Settings: React.FC<Props> = props => {
     switchEnableEditingHeroAfterCreationPhase,
     switchEnableAnimations,
     areAnimationsEnabled,
-    platform,
     checkForUpdates,
     languages,
+    isCheckForUpdatesDisabled,
   } = props
 
   return (
@@ -83,6 +89,17 @@ export const Settings: React.FC<Props> = props => {
         value={localeType === "default" ? Nothing : localeString}
         label={translate (staticData) ("settings.language")}
         onChange={setLocale}
+        />
+      <Dropdown
+        options={List (
+          DropdownOption ({
+            name: translate (staticData) ("general.none"),
+          }),
+          ...languages
+        )}
+        value={fallbackLocaleType === "default" ? Nothing : fallbackLocaleString}
+        label={translate (staticData) ("settings.fallbacklanguage")}
+        onChange={setFallbackLocale}
         />
       <p>{translate (staticData) ("settings.languagehint")}</p>
       <SegmentedControls
@@ -112,15 +129,12 @@ export const Settings: React.FC<Props> = props => {
         label={translate (staticData) ("settings.showanimations")}
         onClick={switchEnableAnimations}
         />
-      {(platform === "win32" || platform === "darwin")
-        ? (
-          <BorderButton
-            label={translate (staticData) ("settings.checkforupdatesbtn")}
-            onClick={checkForUpdates}
-            autoWidth
-            />
-        )
-        : null}
+      <BorderButton
+        label={translate (staticData) ("settings.checkforupdatesbtn")}
+        onClick={checkForUpdates}
+        autoWidth
+        disabled={isCheckForUpdatesDisabled}
+        />
     </Dialog>
   )
 }

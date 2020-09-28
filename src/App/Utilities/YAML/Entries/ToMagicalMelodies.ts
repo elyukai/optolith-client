@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { MagicalMelodyL10n } from "../../../../../app/Database/Schema/MagicalMelodies/MagicalMelodies.l10n"
+import { MagicalMelodyUniv } from "../../../../../app/Database/Schema/MagicalMelodies/MagicalMelodies.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromArray, List } from "../../../../Data/List"
 import { fromMap, insert, OrderedMap } from "../../../../Data/OrderedMap"
@@ -10,8 +12,6 @@ import { MagicalMelody as MM } from "../../../Models/Wiki/MagicalMelody"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { MagicalMelodyL10n } from "../Schema/MagicalMelodies/MagicalMelodies.l10n"
-import { MagicalMelodyUniv } from "../Schema/MagicalMelodies/MagicalMelodies.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -51,9 +51,11 @@ const toMagicalMelody : YamlPairConverterE<MagicalMelodyUniv, MagicalMelodyL10n,
 
 export const toMagicalMelodies : YamlFileConverter<string, Record<MM>>
                                = pipe (
-                                   (yaml_mp : YamlNameMap) => zipBy ("id")
-                                                                    (yaml_mp.MagicalMelodiesUniv)
-                                                                    (yaml_mp.MagicalMelodiesL10n),
+                                   (yaml_mp : YamlNameMap) =>
+                                     zipBy ("id")
+                                           (yaml_mp.MagicalMelodiesUniv)
+                                           (yaml_mp.MagicalMelodiesL10nDefault)
+                                           (yaml_mp.MagicalMelodiesL10nOverride),
                                    bindF (pipe (
                                      mapM (toMagicalMelody),
                                      bindF (toMapIntegrity),

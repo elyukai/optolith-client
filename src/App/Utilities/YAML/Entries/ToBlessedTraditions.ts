@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { BlessedTraditionL10n } from "../../../../../app/Database/Schema/BlessedTraditions/BlessedTraditions.l10n"
+import { BlessedTraditionUniv } from "../../../../../app/Database/Schema/BlessedTraditions/BlessedTraditions.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fmapF } from "../../../../Data/Functor"
 import { Maybe } from "../../../../Data/Maybe"
@@ -10,8 +12,6 @@ import { BlessedTradition } from "../../../Models/Wiki/BlessedTradition"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { BlessedTraditionL10n } from "../Schema/BlessedTraditions/BlessedTraditions.l10n"
-import { BlessedTraditionUniv } from "../Schema/BlessedTraditions/BlessedTraditions.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -36,7 +36,8 @@ export const toBlessedTraditions : YamlFileConverter<string, Record<BlessedTradi
                                      (yaml_mp : YamlNameMap) =>
                                        zipBy ("id")
                                              (yaml_mp.BlessedTraditionsUniv)
-                                             (yaml_mp.BlessedTraditionsL10n),
+                                             (yaml_mp.BlessedTraditionsL10nDefault)
+                                             (yaml_mp.BlessedTraditionsL10nOverride),
                                      bindF (pipe (
                                        mapM (toBT),
                                        bindF (toMapIntegrity),

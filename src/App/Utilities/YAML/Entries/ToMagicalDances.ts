@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { MagicalDanceL10n } from "../../../../../app/Database/Schema/MagicalDances/MagicalDances.l10n"
+import { MagicalDanceUniv } from "../../../../../app/Database/Schema/MagicalDances/MagicalDances.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromArray } from "../../../../Data/List"
 import { fromMap, insert, OrderedMap } from "../../../../Data/OrderedMap"
@@ -9,8 +11,6 @@ import { MagicalDance } from "../../../Models/Wiki/MagicalDance"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { MagicalDanceL10n } from "../Schema/MagicalDances/MagicalDances.l10n"
-import { MagicalDanceUniv } from "../Schema/MagicalDances/MagicalDances.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -47,9 +47,11 @@ const toMagicalDance : YamlPairConverterE<MagicalDanceUniv, MagicalDanceL10n, st
 
 export const toMagicalDances : YamlFileConverter<string, Record<MagicalDance>>
                              = pipe (
-                                 (yaml_mp : YamlNameMap) => zipBy ("id")
-                                                                  (yaml_mp.MagicalDancesUniv)
-                                                                  (yaml_mp.MagicalDancesL10n),
+                                 (yaml_mp : YamlNameMap) =>
+                                   zipBy ("id")
+                                         (yaml_mp.MagicalDancesUniv)
+                                         (yaml_mp.MagicalDancesL10nDefault)
+                                         (yaml_mp.MagicalDancesL10nOverride),
                                  bindF (pipe (
                                    mapM (toMagicalDance),
                                    bindF (toMapIntegrity),

@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { CombatTechniqueL10n } from "../../../../../app/Database/Schema/CombatTechniques/CombatTechniques.l10n"
+import { CombatTechniqueUniv } from "../../../../../app/Database/Schema/CombatTechniques/CombatTechniques.univ"
 import { bindF, second } from "../../../../Data/Either"
 import { fromArray } from "../../../../Data/List"
 import { Maybe, Nothing } from "../../../../Data/Maybe"
@@ -9,8 +11,6 @@ import { CombatTechnique } from "../../../Models/Wiki/CombatTechnique"
 import { pipe } from "../../pipe"
 import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { CombatTechniqueL10n } from "../Schema/CombatTechniques/CombatTechniques.l10n"
-import { CombatTechniqueUniv } from "../Schema/CombatTechniques/CombatTechniques.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverter } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -42,7 +42,8 @@ export const toCombatTechniques : YamlFileConverter<string, Record<CombatTechniq
                                     (yaml_mp : YamlNameMap) =>
                                       zipBy ("id")
                                             (yaml_mp.CombatTechniquesUniv)
-                                            (yaml_mp.CombatTechniquesL10n),
+                                            (yaml_mp.CombatTechniquesL10nDefault)
+                                            (yaml_mp.CombatTechniquesL10nOverride),
                                     bindF (pipe (
                                       map (toCT),
                                       toMapIntegrity,

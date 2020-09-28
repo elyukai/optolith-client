@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { DominationRitualL10n } from "../../../../../app/Database/Schema/DominationRituals/DominationRituals.l10n"
+import { DominationRitualUniv } from "../../../../../app/Database/Schema/DominationRituals/DominationRituals.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { Maybe } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
@@ -8,8 +10,6 @@ import { DominationRitual as DR } from "../../../Models/Wiki/DominationRitual"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { DominationRitualL10n } from "../Schema/DominationRituals/DominationRituals.l10n"
-import { DominationRitualUniv } from "../Schema/DominationRituals/DominationRituals.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -43,7 +43,8 @@ export const toDominationRituals : YamlFileConverter<string, Record<DR>>
                                      (yaml_mp : YamlNameMap) =>
                                        zipBy ("id")
                                              (yaml_mp.DominationRitualsUniv)
-                                             (yaml_mp.DominationRitualsL10n),
+                                             (yaml_mp.DominationRitualsL10nDefault)
+                                             (yaml_mp.DominationRitualsL10nOverride),
                                      bindF (pipe (
                                        mapM (toDR),
                                        bindF (toMapIntegrity),

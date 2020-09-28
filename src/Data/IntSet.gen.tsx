@@ -142,21 +142,3 @@ export const map: (_1:((_1:key) => key), _2:t) => t = function (Arg1: any, Arg2:
 };
 
 export const elems: (_1:t) => list<key> = IntSetBS.elems;
-
-export const Foldable: {
-  minimum: (_1:t) => number; 
-  foldl: <a>(_1:((_1:a, _2:key) => a), _2:a, _3:t) => a; 
-  length: (_1:t) => number; 
-  product: (_1:t) => number; 
-  elem: (_1:key, _2:t) => boolean; 
-  concatMap: (_1:((_1:key) => t), _2:t) => t; 
-  sum: (_1:t) => number; 
-  notElem: (_1:key, _2:t) => boolean; 
-  toList: (_1:t) => list<key>; 
-  any: (_1:((_1:key) => boolean), _2:t) => boolean; 
-  maximum: (_1:t) => number; 
-  null: (_1:t) => boolean; 
-  find: (_1:((_1:key) => boolean), _2:t) => Maybe_t<key>; 
-  foldr: <a>(_1:((_1:key, _2:a) => a), _2:a, _3:t) => a; 
-  all: (_1:((_1:key) => boolean), _2:t) => boolean
-} = IntSetBS.Foldable

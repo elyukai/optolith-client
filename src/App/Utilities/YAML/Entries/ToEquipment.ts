@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { ItemInfo, ItemL10n } from "../../../../../app/Database/Schema/Equipment/Equipment.l10n"
+import { Armor, CombinedWeapon, ItemUniv, MeleeWeapon, MundaneItem, RangedWeapon } from "../../../../../app/Database/Schema/Equipment/Equipment.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromArray, List } from "../../../../Data/List"
 import { Just, Maybe, Nothing } from "../../../../Data/Maybe"
@@ -13,8 +15,6 @@ import { hasOwnProperty } from "../../Object"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { ItemInfo, ItemL10n } from "../Schema/Equipment/Equipment.l10n"
-import { Armor, CombinedWeapon, ItemUniv, MeleeWeapon, MundaneItem, RangedWeapon } from "../Schema/Equipment/Equipment.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -202,7 +202,8 @@ export const toItemTemplates : YamlFileConverter<string, Record<ItemTemplate>>
                                  (yaml_mp : YamlNameMap) =>
                                    zipBy ("id")
                                          (yaml_mp.EquipmentUniv)
-                                         (yaml_mp.EquipmentL10n),
+                                         (yaml_mp.EquipmentL10nDefault)
+                                         (yaml_mp.EquipmentL10nOverride),
                                  bindF (pipe (
                                    mapM (toItemTemplate),
                                    bindF (toMapIntegrity),

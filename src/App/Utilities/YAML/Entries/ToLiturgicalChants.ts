@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { LiturgicalChantL10n } from "../../../../../app/Database/Schema/LiturgicalChants/LiturgicalChants.l10n"
+import { LiturgicalChantUniv } from "../../../../../app/Database/Schema/LiturgicalChants/LiturgicalChants.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromArray, List } from "../../../../Data/List"
 import { Maybe, Nothing } from "../../../../Data/Maybe"
@@ -9,8 +11,6 @@ import { LiturgicalChant } from "../../../Models/Wiki/LiturgicalChant"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { LiturgicalChantL10n } from "../Schema/LiturgicalChants/LiturgicalChants.l10n"
-import { LiturgicalChantUniv } from "../Schema/LiturgicalChants/LiturgicalChants.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -58,7 +58,8 @@ export const toLiturgicalChants : YamlFileConverter<string, Record<LiturgicalCha
                                     (yaml_mp : YamlNameMap) =>
                                       zipBy ("id")
                                             (yaml_mp.LiturgicalChantsUniv)
-                                            (yaml_mp.LiturgicalChantsL10n),
+                                            (yaml_mp.LiturgicalChantsL10nDefault)
+                                            (yaml_mp.LiturgicalChantsL10nOverride),
                                     bindF (pipe (
                                       mapM (toLC),
                                       bindF (toMapIntegrity),

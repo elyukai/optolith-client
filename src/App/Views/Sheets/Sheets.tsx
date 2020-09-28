@@ -1,18 +1,19 @@
 import * as React from "react"
+import { DerivedCharacteristicId } from "../../../../app/Database/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { equals } from "../../../Data/Eq"
-import { find, List } from "../../../Data/List"
-import { bindF, Maybe, maybeRNull } from "../../../Data/Maybe"
+import { fmapF } from "../../../Data/Functor"
+import { find, flength, List } from "../../../Data/List"
+import { bindF, Just, Maybe, maybeRNull } from "../../../Data/Maybe"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd } from "../../../Data/Tuple"
 import { DCId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { Sex } from "../../Models/Hero/heroTypeHelpers"
 import { PersonalData } from "../../Models/Hero/PersonalData"
 import { Pet } from "../../Models/Hero/Pet"
 import { Purse } from "../../Models/Hero/Purse"
-import { Rules } from "../../Models/Hero/Rules"
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories"
 import { Armor } from "../../Models/View/Armor"
@@ -21,6 +22,7 @@ import { BlessingCombined } from "../../Models/View/BlessingCombined"
 import { CantripCombined } from "../../Models/View/CantripCombined"
 import { CombatTechniqueWithAttackParryBase } from "../../Models/View/CombatTechniqueWithAttackParryBase"
 import { DerivedCharacteristicValues } from "../../Models/View/DerivedCharacteristicCombined"
+import { DropdownOption } from "../../Models/View/DropdownOption"
 import { HitZoneArmorForView } from "../../Models/View/HitZoneArmorForView"
 import { ItemForView } from "../../Models/View/ItemForView"
 import { LiturgicalChantWithRequirements } from "../../Models/View/LiturgicalChantWithRequirements"
@@ -40,9 +42,13 @@ import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { State } from "../../Models/Wiki/State"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { DCPair } from "../../Selectors/derivedCharacteristicsSelectors"
+import { classListMaybe } from "../../Utilities/CSS"
+import { translate } from "../../Utilities/I18n"
 import { pipe, pipe_ } from "../../Utilities/pipe"
-import { isBookEnabled } from "../../Utilities/RulesUtils"
-import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
+import { BorderButton } from "../Universal/BorderButton"
+import { Checkbox } from "../Universal/Checkbox"
+import { Dropdown } from "../Universal/Dropdown"
+import { Options } from "../Universal/Options"
 import { Page } from "../Universal/Page"
 import { Scroll } from "../Universal/Scroll"
 import { BelongingsSheet } from "./BelongingsSheet/BelongingsSheet"
@@ -77,6 +83,8 @@ export interface SheetsStateProps {
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
   name: Maybe<string>
   professionName: Maybe<string>
+  useParchment: boolean
+  zoomFactor: number
 
   // profession: Maybe<Record<Profession>>
   // professionVariant: Maybe<Record<ProfessionVariant>>
@@ -117,18 +125,16 @@ export interface SheetsStateProps {
 export interface SheetsDispatchProps {
   printToPDF (): void
   switchAttributeValueVisibility (): void
+  switchUseParchment (): void
+  setSheetZoomFactor (zoomFactor: number): void
 }
 
 type Props = SheetsStateProps & SheetsDispatchProps & SheetsOwnProps
 
-const HA = HeroModel.A
-const RA = Rules.A
 
 export const Sheets: React.FC<Props> = props => {
   const {
     derivedCharacteristics,
-    books,
-    hero,
 
     advantagesActive,
     ap,
@@ -155,6 +161,10 @@ export const Sheets: React.FC<Props> = props => {
     skillsByGroup,
     skillGroupPages,
     switchAttributeValueVisibility,
+    switchUseParchment,
+    setSheetZoomFactor,
+    useParchment,
+    zoomFactor,
 
     armors,
     combatSpecialAbilities,
@@ -196,9 +206,63 @@ export const Sheets: React.FC<Props> = props => {
     find<DCPair> (pipe (fst, DerivedCharacteristic.A.id, equals<DerivedCharacteristicId> (DCId.KP)))
                  (derivedCharacteristics)
 
+  const nArmorZones = Maybe.sum (fmapF (armorZones) (flength))
+  const nArmors = Maybe.sum (fmapF (armors) (flength))
+
   return (
     <Page id="sheets">
-      <Scroll className="sheet-wrapper">
+      <Options>
+        <BorderButton
+          className="print-document"
+          label={translate (staticData) ("sheets.printtopdfbtn")}
+          onClick={printToPDF}
+          />
+        <Checkbox
+          checked={useParchment}
+          onClick={switchUseParchment}
+          >
+          {translate (staticData) ("sheets.useparchment")}
+        </Checkbox>
+        <Checkbox
+          checked={checkAttributeValueVisibility}
+          onClick={switchAttributeValueVisibility}
+          >
+          {translate (staticData) ("sheets.showattributevalues")}
+        </Checkbox>
+        <Dropdown
+          label={translate (staticData) ("sheets.zoomfactor")}
+          value={Just (zoomFactor)}
+          onChangeJust={setSheetZoomFactor}
+          options={List (
+            DropdownOption ({
+              id: Just (100),
+              name: "100%",
+            }),
+            DropdownOption ({
+              id: Just (125),
+              name: "125%",
+            }),
+            DropdownOption ({
+              id: Just (150),
+              name: "150%",
+            }),
+            DropdownOption ({
+              id: Just (175),
+              name: "175%",
+            }),
+            DropdownOption ({
+              id: Just (200),
+              name: "200%",
+            }),
+          )}
+          fullWidth
+          />
+      </Options>
+      <Scroll className={classListMaybe (List (
+                  Just ("sheet-wrapper"),
+                  Just (`zoom-${zoomFactor}`)
+                ))}
+              >
         <MainSheet
           advantagesActive={advantagesActive}
           ap={ap}
@@ -217,6 +281,8 @@ export const Sheets: React.FC<Props> = props => {
           race={race}
           sex={sex}
           printToPDF={printToPDF}
+          switchUseParchment={switchUseParchment}
+          useParchment={useParchment}
           />
         <SkillsSheet
           attributes={attributes}
@@ -229,38 +295,40 @@ export const Sheets: React.FC<Props> = props => {
           skillsByGroup={skillsByGroup}
           skillGroupPages={skillGroupPages}
           switchAttributeValueVisibility={switchAttributeValueVisibility}
+          useParchment={useParchment}
           />
-        <CombatSheet
-          armors={armors}
-          attributes={attributes}
-          combatSpecialAbilities={combatSpecialAbilities}
-          combatTechniques={combatTechniques}
-          derivedCharacteristics={derivedCharacteristics}
-          staticData={staticData}
-          meleeWeapons={meleeWeapons}
-          rangedWeapons={rangedWeapons}
-          shieldsAndParryingWeapons={shieldsAndParryingWeapons}
-          conditions={conditions}
-          states={states}
-          />
-        {isBookEnabled (books)
-                       (RA.enabledRuleBooks (HA.rules (hero)))
-                       (RA.enableAllRuleBooks (HA.rules (hero)))
-                       ("US25208")
-          ? (
-            <CombatSheetZones
-              armorZones={armorZones}
-              attributes={attributes}
-              combatSpecialAbilities={combatSpecialAbilities}
-              combatTechniques={combatTechniques}
-              derivedCharacteristics={derivedCharacteristics}
-              staticData={staticData}
-              meleeWeapons={meleeWeapons}
-              rangedWeapons={rangedWeapons}
-              shieldsAndParryingWeapons={shieldsAndParryingWeapons}
-              conditions={conditions}
-              states={states}
-              />
+        {(nArmorZones === 0 || nArmors > 0) ? (
+          <CombatSheet
+            armors={armors}
+            attributes={attributes}
+            combatSpecialAbilities={combatSpecialAbilities}
+            combatTechniques={combatTechniques}
+            derivedCharacteristics={derivedCharacteristics}
+            staticData={staticData}
+            meleeWeapons={meleeWeapons}
+            rangedWeapons={rangedWeapons}
+            shieldsAndParryingWeapons={shieldsAndParryingWeapons}
+            conditions={conditions}
+            states={states}
+            useParchment={useParchment}
+            />
+            )
+            : null}
+        {nArmorZones > 0 ? (
+          <CombatSheetZones
+            armorZones={armorZones}
+            attributes={attributes}
+            combatSpecialAbilities={combatSpecialAbilities}
+            combatTechniques={combatTechniques}
+            derivedCharacteristics={derivedCharacteristics}
+            staticData={staticData}
+            meleeWeapons={meleeWeapons}
+            rangedWeapons={rangedWeapons}
+            shieldsAndParryingWeapons={shieldsAndParryingWeapons}
+            conditions={conditions}
+            states={states}
+            useParchment={useParchment}
+            />
           )
           : null}
         <BelongingsSheet
@@ -271,6 +339,7 @@ export const Sheets: React.FC<Props> = props => {
           purse={purse}
           totalPrice={totalPrice}
           totalWeight={totalWeight}
+          useParchment={useParchment}
           />
         {pipe_ (
           maybeArcaneEnergy,
@@ -288,6 +357,7 @@ export const Sheets: React.FC<Props> = props => {
                          properties={properties}
                          spells={spells}
                          switchAttributeValueVisibility={switchAttributeValueVisibility}
+                         useParchment={useParchment}
                          />
                      ))
         )}
@@ -307,6 +377,7 @@ export const Sheets: React.FC<Props> = props => {
                          liturgicalChants={liturgicalChants}
                          staticData={staticData}
                          switchAttributeValueVisibility={switchAttributeValueVisibility}
+                         useParchment={useParchment}
                          />
                      ))
         )}

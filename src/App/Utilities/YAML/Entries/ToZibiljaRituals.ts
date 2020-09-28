@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { ZibiljaRitualL10n } from "../../../../../app/Database/Schema/ZibiljaRituals/ZibiljaRituals.l10n"
+import { ZibiljaRitualUniv } from "../../../../../app/Database/Schema/ZibiljaRituals/ZibiljaRituals.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { Maybe } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
@@ -9,8 +11,6 @@ import { ndash } from "../../Chars"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { ZibiljaRitualL10n } from "../Schema/ZibiljaRituals/ZibiljaRituals.l10n"
-import { ZibiljaRitualUniv } from "../Schema/ZibiljaRituals/ZibiljaRituals.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -51,9 +51,11 @@ const toZibiljaRitual : YamlPairConverterE<ZibiljaRitualUniv, ZibiljaRitualL10n,
 
 export const toZibiljaRituals : YamlFileConverter<string, Record<ZR>>
                               = pipe (
-                                  (yaml_mp : YamlNameMap) => zipBy ("id")
-                                                                   (yaml_mp.ZibiljaRitualsUniv)
-                                                                   (yaml_mp.ZibiljaRitualsL10n),
+                                  (yaml_mp : YamlNameMap) =>
+                                    zipBy ("id")
+                                          (yaml_mp.ZibiljaRitualsUniv)
+                                          (yaml_mp.ZibiljaRitualsL10nDefault)
+                                          (yaml_mp.ZibiljaRitualsL10nOverride),
                                   bindF (pipe (
                                     mapM (toZibiljaRitual),
                                     bindF (toMapIntegrity),

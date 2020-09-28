@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { ExperienceLevelL10n } from "../../../../../app/Database/Schema/ExperienceLevels/ExperienceLevels.l10n"
+import { ExperienceLevelUniv } from "../../../../../app/Database/Schema/ExperienceLevels/ExperienceLevels.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
@@ -6,8 +8,6 @@ import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { ExperienceLevelL10n } from "../Schema/ExperienceLevels/ExperienceLevels.l10n"
-import { ExperienceLevelUniv } from "../Schema/ExperienceLevels/ExperienceLevels.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -35,7 +35,8 @@ export const toExperienceLevels : YamlFileConverter<string, Record<ExperienceLev
                                     (yaml_mp : YamlNameMap) =>
                                       zipBy ("id")
                                             (yaml_mp.ExperienceLevelsUniv)
-                                            (yaml_mp.ExperienceLevelsL10n),
+                                            (yaml_mp.ExperienceLevelsL10nDefault)
+                                            (yaml_mp.ExperienceLevelsL10nOverride),
                                     bindF (pipe (
                                       mapM (toEL),
                                       bindF (toMapIntegrity),

@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { ElvenMagicalSongL10n } from "../../../../../app/Database/Schema/ElvenMagicalSongs/ElvenMagicalSongs.l10n"
+import { ElvenMagicalSongUniv } from "../../../../../app/Database/Schema/ElvenMagicalSongs/ElvenMagicalSongs.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { List } from "../../../../Data/List"
 import { Maybe } from "../../../../Data/Maybe"
@@ -10,8 +12,6 @@ import { ElvenMagicalSong as EMS } from "../../../Models/Wiki/ElvenMagicalSong"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { ElvenMagicalSongL10n } from "../Schema/ElvenMagicalSongs/ElvenMagicalSongs.l10n"
-import { ElvenMagicalSongUniv } from "../Schema/ElvenMagicalSongs/ElvenMagicalSongs.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -47,7 +47,8 @@ export const toElvenMagicalSongs : YamlFileConverter<string, Record<EMS>>
                                      (yaml_mp : YamlNameMap) =>
                                        zipBy ("id")
                                              (yaml_mp.ElvenMagicalSongsUniv)
-                                             (yaml_mp.ElvenMagicalSongsL10n),
+                                             (yaml_mp.ElvenMagicalSongsL10nDefault)
+                                             (yaml_mp.ElvenMagicalSongsL10nOverride),
                                      bindF (pipe (
                                        mapM (toEMS),
                                        bindF (toMapIntegrity),

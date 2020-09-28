@@ -70,6 +70,12 @@ export const getEnableActiveItemHints =
 export const getSheetCheckAttributeValueVisibility =
   pipe (ASA.ui, UISA.settings, UISSA.sheetCheckAttributeValueVisibility)
 
+export const getSheetUseParchment =
+  pipe (ASA.ui, UISA.settings, UISSA.sheetUseParchment)
+
+export const getSheetZoomFactor =
+  pipe (ASA.ui, UISA.settings, UISSA.sheetZoomFactor)
+
 export const getTheme =
   pipe (ASA.ui, UISA.settings, UISSA.theme)
 

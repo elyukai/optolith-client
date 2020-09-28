@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { SpellEnhancementL10n, SpellEnhancementLevelL10n } from "../../../../../app/Database/Schema/SpellEnhancements/SpellEnhancements.l10n"
+import { SpellEnhancementLevelUniv, SpellEnhancementUniv } from "../../../../../app/Database/Schema/SpellEnhancements/SpellEnhancements.univ"
 import { bindF, Either, Right, second } from "../../../../Data/Either"
 import { List } from "../../../../Data/List"
 import { Just, Nothing } from "../../../../Data/Maybe"
@@ -12,8 +14,6 @@ import { SourceLink } from "../../../Models/Wiki/sub/SourceLink"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { SpellEnhancementL10n, SpellEnhancementLevelL10n } from "../Schema/SpellEnhancements/SpellEnhancements.l10n"
-import { SpellEnhancementLevelUniv, SpellEnhancementUniv } from "../Schema/SpellEnhancements/SpellEnhancements.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -101,7 +101,8 @@ export const toSpellEnhancements : YamlFileConverter<number, Record<SelectOption
                                      (yaml_mp : YamlNameMap) =>
                                        zipBy ("target")
                                              (yaml_mp.SpellEnhancementsUniv)
-                                             (yaml_mp.SpellEnhancementsL10n),
+                                             (yaml_mp.SpellEnhancementsL10nDefault)
+                                             (yaml_mp.SpellEnhancementsL10nOverride),
                                      bindF (pipe (
                                        mapM (toSE),
                                        bindF (pipe (

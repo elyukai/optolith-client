@@ -1,4 +1,5 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { SupportedLanguage, SupportedLanguages } from "../../../../../app/Database/Schema/SupportedLanguages"
 import { Either, second } from "../../../../Data/Either"
 import { fromMap, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
@@ -6,7 +7,6 @@ import { Locale } from "../../../Models/Locale"
 import { pipe } from "../../pipe"
 import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { SupportedLanguage, SupportedLanguages } from "../Schema/SupportedLanguages"
 
 
 const toLang : (x : SupportedLanguage) => [string, Record<Locale>]

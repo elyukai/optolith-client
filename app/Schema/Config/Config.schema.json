@@ -73,10 +73,19 @@
         "sheetCheckAttributeValueVisibility": {
           "type": "boolean"
         },
+        "sheetUseParchment": {
+          "type": "boolean"
+        },
+        "sheetZoomFactor": {
+          "type": "number"
+        },
         "enableActiveItemHints": {
           "type": "boolean"
         },
         "locale": {
+          "type": "string"
+        },
+        "fallbackLocale": {
           "type": "string"
         },
         "theme": {

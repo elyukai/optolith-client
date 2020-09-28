@@ -140,27 +140,25 @@ var Foldable = {
 };
 
 function mapMEitherHelper(f, xs) {
-  if (xs) {
-    var match = xs[0];
-    var new_value = Curry._1(f, match[1]);
-    if (new_value.tag) {
-      var match$1 = mapMEitherHelper(f, xs[1]);
-      if (match$1.tag) {
-        return /* Right */Block.__(1, [/* :: */[
-                    /* tuple */[
-                      match[0],
-                      new_value[0]
-                    ],
-                    match$1[0]
-                  ]]);
-      } else {
-        return /* Left */Block.__(0, [match$1[0]]);
-      }
-    } else {
-      return /* Left */Block.__(0, [new_value[0]]);
-    }
-  } else {
+  if (!xs) {
     return /* Right */Block.__(1, [/* [] */0]);
+  }
+  var match = xs[0];
+  var new_value = Curry._1(f, match[1]);
+  if (!new_value.tag) {
+    return /* Left */Block.__(0, [new_value[0]]);
+  }
+  var zs = mapMEitherHelper(f, xs[1]);
+  if (zs.tag) {
+    return /* Right */Block.__(1, [/* :: */[
+                /* tuple */[
+                  match[0],
+                  new_value[0]
+                ],
+                zs[0]
+              ]]);
+  } else {
+    return /* Left */Block.__(0, [zs[0]]);
   }
 }
 

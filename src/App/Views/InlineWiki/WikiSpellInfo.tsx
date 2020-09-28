@@ -196,6 +196,8 @@ export const WikiSpellInfo: React.FC<WikiSpellInfoProps> = props => {
           <WikiEffect staticData={staticData} x={x} acc={SpA} />
           <WikiCastingTime staticData={staticData} x={x} acc={SpA} />
           <WikiCost staticData={staticData} x={x} acc={SpA} />
+          <WikiRange staticData={staticData} x={x} acc={SpA} />
+          <WikiDuration staticData={staticData} x={x} acc={SpA} />
           <WikiSpellProperty staticData={staticData} x={x} acc={SpA} />
           <WikiSpellTraditions staticData={staticData} x={x} acc={SpA} />
           <WikiImprovementCost staticData={staticData} x={x} acc={SpA} />

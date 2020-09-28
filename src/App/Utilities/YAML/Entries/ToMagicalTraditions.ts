@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { MagicalTraditionL10n } from "../../../../../app/Database/Schema/MagicalTraditions/MagicalTraditions.l10n"
+import { MagicalTraditionUniv } from "../../../../../app/Database/Schema/MagicalTraditions/MagicalTraditions.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { Maybe } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
@@ -8,8 +10,6 @@ import { MagicalTradition } from "../../../Models/Wiki/MagicalTradition"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { MagicalTraditionL10n } from "../Schema/MagicalTraditions/MagicalTraditions.l10n"
-import { MagicalTraditionUniv } from "../Schema/MagicalTraditions/MagicalTraditions.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -41,7 +41,8 @@ export const toMagicalTraditions : YamlFileConverter<string, Record<MagicalTradi
                                      (yaml_mp : YamlNameMap) =>
                                        zipBy ("id")
                                              (yaml_mp.MagicalTraditionsUniv)
-                                             (yaml_mp.MagicalTraditionsL10n),
+                                             (yaml_mp.MagicalTraditionsL10nDefault)
+                                             (yaml_mp.MagicalTraditionsL10nOverride),
                                      bindF (pipe (
                                        mapM (toMT),
                                        bindF (toMapIntegrity),

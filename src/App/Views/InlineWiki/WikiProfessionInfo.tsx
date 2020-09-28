@@ -181,7 +181,6 @@ const getCombatTechniquesSelection =
     const selections = PCA.mappedSelections (profession)
 
     const msel = PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES] (selections)
-    const msecond_sel = PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND] (selections)
 
     return fmapF (msel)
                  (sel => {
@@ -228,7 +227,7 @@ const getCombatTechniquesSelection =
                                                   entryList
                                                 ))
                                  })
-                                 (msecond_sel)
+                                 (CTSA.second (sel))
                  })
   }
 

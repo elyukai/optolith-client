@@ -6,16 +6,15 @@ var Maybe$OptolithClient = require("../../Data/Maybe.bs.js");
 
 function flattenSkill(getValueForTargetId, id, dependencies) {
   return Maybe$OptolithClient.mapMaybe((function (dep) {
-                var match = dep.target;
-                if (match.tag) {
-                  var isMatchedByOtherEntry = ListH$OptolithClient.Foldable.any((function (value) {
-                          return value >= dep.value;
-                        }), ListH$OptolithClient.map(getValueForTargetId, ListH$OptolithClient.$$delete(id, match[0])));
-                  if (isMatchedByOtherEntry) {
-                    return /* Nothing */0;
-                  } else {
-                    return /* Just */[dep.value];
-                  }
+                var targets = dep.target;
+                if (!targets.tag) {
+                  return /* Just */[dep.value];
+                }
+                var isMatchedByOtherEntry = ListH$OptolithClient.Foldable.any((function (value) {
+                        return value >= dep.value;
+                      }), ListH$OptolithClient.map(getValueForTargetId, ListH$OptolithClient.$$delete(id, targets[0])));
+                if (isMatchedByOtherEntry) {
+                  return /* Nothing */0;
                 } else {
                   return /* Just */[dep.value];
                 }
@@ -24,27 +23,26 @@ function flattenSkill(getValueForTargetId, id, dependencies) {
 
 function flattenActivatableSkill(getValueForTargetId, id, dependencies) {
   return Maybe$OptolithClient.mapMaybe((function (dep) {
-                var match = dep.target;
-                if (match.tag) {
-                  var isMatchedByOtherEntry = ListH$OptolithClient.Foldable.any((function (value) {
-                          var match = dep.value;
-                          if (value) {
-                            if (match) {
-                              return value[0] >= match[0];
-                            } else {
-                              return false;
-                            }
-                          } else if (match) {
-                            return false;
+                var targets = dep.target;
+                if (!targets.tag) {
+                  return /* Just */[dep.value];
+                }
+                var isMatchedByOtherEntry = ListH$OptolithClient.Foldable.any((function (value) {
+                        var match = dep.value;
+                        if (value) {
+                          if (match) {
+                            return value[0] >= match[0];
                           } else {
-                            return true;
+                            return false;
                           }
-                        }), ListH$OptolithClient.map(getValueForTargetId, ListH$OptolithClient.$$delete(id, match[0])));
-                  if (isMatchedByOtherEntry) {
-                    return /* Nothing */0;
-                  } else {
-                    return /* Just */[dep.value];
-                  }
+                        } else if (match) {
+                          return false;
+                        } else {
+                          return true;
+                        }
+                      }), ListH$OptolithClient.map(getValueForTargetId, ListH$OptolithClient.$$delete(id, targets[0])));
+                if (isMatchedByOtherEntry) {
+                  return /* Nothing */0;
                 } else {
                   return /* Just */[dep.value];
                 }

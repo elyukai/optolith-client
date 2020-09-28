@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { AnimistForceL10n } from "../../../../../app/Database/Schema/AnimistForces/AnimistForces.l10n"
+import { AnimistForceUniv } from "../../../../../app/Database/Schema/AnimistForces/AnimistForces.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromArray } from "../../../../Data/List"
 import { fromMap } from "../../../../Data/OrderedMap"
@@ -8,8 +10,6 @@ import { AnimistForce } from "../../../Models/Wiki/AnimistForce"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { AnimistForceL10n } from "../Schema/AnimistForces/AnimistForces.l10n"
-import { AnimistForceUniv } from "../Schema/AnimistForces/AnimistForces.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -41,9 +41,11 @@ const toAnimistForce : YamlPairConverterE<AnimistForceUniv, AnimistForceL10n, st
 
 export const toAnimistForces : YamlFileConverter<string, Record<AnimistForce>>
                              = pipe (
-                                 (yaml_mp : YamlNameMap) => zipBy ("id")
-                                                                  (yaml_mp.AnimistForcesUniv)
-                                                                  (yaml_mp.AnimistForcesL10n),
+                                 (yaml_mp : YamlNameMap) =>
+                                   zipBy ("id")
+                                         (yaml_mp.AnimistForcesUniv)
+                                         (yaml_mp.AnimistForcesL10nDefault)
+                                         (yaml_mp.AnimistForcesL10nOverride),
                                  bindF (pipe (
                                    mapM (toAnimistForce),
                                    bindF (toMapIntegrity),

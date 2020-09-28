@@ -1,4 +1,5 @@
 import * as React from "react"
+import { DerivedCharacteristicId } from "../../../../../app/Database/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { equals } from "../../../../Data/Eq"
 import { find, List } from "../../../../Data/List"
 import { bindF, Maybe } from "../../../../Data/Maybe"
@@ -16,9 +17,6 @@ import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../../Utilities/I18n"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
-import { DerivedCharacteristicId } from "../../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
-import { Checkbox } from "../../Universal/Checkbox"
-import { Options } from "../../Universal/Options"
 import { AttributeMods } from "../AttributeMods"
 import { Sheet } from "../Sheet"
 import { HeaderValue } from "../SheetHeader"
@@ -40,6 +38,7 @@ export interface SpellsSheetProps {
   properties: Maybe<string>
   spells: Maybe<List<Record<SpellWithRequirements>>>
   switchAttributeValueVisibility (): void
+  useParchment: boolean
 }
 
 export function SpellsSheet (props: SpellsSheetProps) {
@@ -54,7 +53,7 @@ export function SpellsSheet (props: SpellsSheetProps) {
     magicalTradition,
     properties,
     spells,
-    switchAttributeValueVisibility,
+    useParchment,
   } = props
 
   const addHeader = List<Record<HeaderValue>> (
@@ -80,20 +79,13 @@ export function SpellsSheet (props: SpellsSheetProps) {
 
   return (
     <SheetWrapper>
-      <Options>
-        <Checkbox
-          checked={checkAttributeValueVisibility}
-          onClick={switchAttributeValueVisibility}
-          >
-          {translate (staticData) ("sheets.showattributevalues")}
-        </Checkbox>
-      </Options>
       <Sheet
         id="spells-sheet"
         title={translate (staticData) ("sheets.spellssheet.title")}
         addHeaderInfo={addHeader}
         staticData={staticData}
         attributes={attributes}
+        useParchment={useParchment}
         >
         <div className="all">
           <SpellsSheetSpells

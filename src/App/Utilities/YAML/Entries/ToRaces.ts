@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { RaceL10n } from "../../../../../app/Database/Schema/Races/Races.l10n"
+import { RaceUniv, RaceWithVariantsUniv } from "../../../../../app/Database/Schema/Races/Races.univ"
 import { bindF, second } from "../../../../Data/Either"
 import { fromArray, List } from "../../../../Data/List"
 import { Just, Maybe, Nothing } from "../../../../Data/Maybe"
@@ -11,8 +13,6 @@ import { hasOwnProperty } from "../../Object"
 import { pipe } from "../../pipe"
 import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { RaceL10n } from "../Schema/Races/Races.l10n"
-import { RaceUniv, RaceWithVariantsUniv } from "../Schema/Races/Races.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverter } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -181,7 +181,8 @@ export const toRaces : YamlFileConverter<string, Record<Race>>
                          (yaml_mp : YamlNameMap) =>
                            zipBy ("id")
                                  (yaml_mp.RacesUniv)
-                                 (yaml_mp.RacesL10n),
+                                 (yaml_mp.RacesL10nDefault)
+                                 (yaml_mp.RacesL10nOverride),
                          bindF (pipe (
                            map (toRace),
                            toMapIntegrity,

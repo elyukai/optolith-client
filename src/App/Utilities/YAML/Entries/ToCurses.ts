@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { CurseL10n } from "../../../../../app/Database/Schema/Curses/Curses.l10n"
+import { CurseUniv } from "../../../../../app/Database/Schema/Curses/Curses.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { Maybe } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
@@ -8,8 +10,6 @@ import { Curse } from "../../../Models/Wiki/Curse"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { CurseL10n } from "../Schema/Curses/Curses.l10n"
-import { CurseUniv } from "../Schema/Curses/Curses.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -42,7 +42,8 @@ export const toCurses : YamlFileConverter<string, Record<Curse>>
                       = pipe (
                           (yaml_mp : YamlNameMap) => zipBy ("id")
                                                            (yaml_mp.CursesUniv)
-                                                           (yaml_mp.CursesL10n),
+                                                           (yaml_mp.CursesL10nDefault)
+                                                           (yaml_mp.CursesL10nOverride),
                           bindF (pipe (
                             mapM (toCurse),
                             bindF (toMapIntegrity),

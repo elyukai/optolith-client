@@ -156,8 +156,11 @@ export interface Config {
   equipmentSortOrder: EquipmentSortOptions
   equipmentGroupVisibilityFilter: EquipmentGroup
   sheetCheckAttributeValueVisibility: Maybe<boolean>
+  sheetUseParchment: Maybe<boolean>
+  sheetZoomFactor: number
   enableActiveItemHints: boolean
   locale: Maybe<string>
+  fallbackLocale: Maybe<string>
   theme: Maybe<Theme>
   enableEditingHeroAfterCreationPhase: Maybe<boolean>
   meleeItemTemplatesCombatTechniqueFilter: Maybe<MeleeCombatTechniqueId>
@@ -187,8 +190,11 @@ export const Config =
                 equipmentSortOrder: SortNames.Name,
                 equipmentGroupVisibilityFilter: EquipmentGroup.MeleeWeapons,
                 sheetCheckAttributeValueVisibility: Just (false),
+                sheetUseParchment: Just (false),
+                sheetZoomFactor: 100,
                 enableActiveItemHints: false,
                 locale: Nothing,
+                fallbackLocale: Nothing,
                 theme: Just (Theme.Dark),
                 enableEditingHeroAfterCreationPhase: Just (false),
                 meleeItemTemplatesCombatTechniqueFilter: Nothing,

@@ -1,0 +1,52 @@
+name: Stable Builds
+
+on:
+  push:
+    tags:
+    - v[0-9]+.[0-9]+.[0-9]+
+
+jobs:
+  build:
+    name: Build ${{ matrix.osName }} Stable
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+        - ubuntu-latest
+        - windows-latest
+        - macOS-latest
+        include:
+        - os: ubuntu-latest
+          osName: Linux
+        - os: windows-latest
+          osName: Windows
+        - os: macOS-latest
+          osName: macOS
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.ACCESS_TOKEN }}
+        submodules: true
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install Node.js dependencies
+      run: npm ci
+    - name: Build ReasonML files
+      run: npm run re:build
+    - name: Build TypeScript files
+      run: npm run ts:build
+    - name: Build Sass files
+      run: npm run css:build
+    - name: Build
+      run: node ./deploy/build.js stable
+      env:
+        UPDATE_URL: ${{ secrets.UPDATE_URL }}
+    - name: Deploy
+      run: node ./deploy/deploy.js stable
+      env:
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+        ROOT: ${{ secrets.ROOT }}

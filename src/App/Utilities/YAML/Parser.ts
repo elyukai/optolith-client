@@ -77,7 +77,14 @@ export const validateJson : (validator : Ajv.Ajv)
  */
 export const readYaml : (pathToDir : string) => (validator : Ajv.Ajv) => YamlParser
                       = pathToDir => validator => async ref => pipe_ (
-                          join (app_path, "app", "Database", pathToDir, schema_to_data [ref]),
+                          join (
+                            app_path,
+                            "app",
+                            "Database",
+                            "Data",
+                            pathToDir,
+                            schema_to_data [ref]
+                          ),
                           parseYamlFile,
                           handleE,
                           fmap (either ((err : Error) : YamlParserResult<typeof ref> =>

@@ -21,6 +21,7 @@ import { Race } from "../Models/Wiki/Race"
 import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies"
+import { getSkillCheckAttributeMinimum } from "../Utilities/Increasable/AttributeSkillCheckMinimum"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { mapTradHeroEntryToAttrCombined } from "../Utilities/primaryAttributeUtils"
 import { getCurrentEl, getStartEl } from "./elSelectors"
@@ -29,6 +30,7 @@ import { getRace } from "./raceSelectors"
 import { getMagicalTraditionsFromHero } from "./spellsSelectors"
 import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getCurrentPhase, getHeroProp, getWiki, getWikiAttributes } from "./stateSelectors"
 
+const SDA = StaticData.A
 const HA = HeroModel.A
 const EA = Energies.A
 const ACA = AttributeCombined.A
@@ -124,7 +126,18 @@ const getAttributeMinimum =
               ...(Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mblessed_primary_attr))
                 ? List (sel3 (added))
                 : List<number> ()),
-              8
+              fromMaybe (8)
+                        (getSkillCheckAttributeMinimum (
+                          SDA.skills (wiki),
+                          SDA.spells (wiki),
+                          SDA.liturgicalChants (wiki),
+                          HA.attributes (hero),
+                          HA.skills (hero),
+                          HA.spells (hero),
+                          HA.liturgicalChants (hero),
+                          HA.skillCheckAttributeCache (hero),
+                          AtDA.id (hero_entry),
+                        ))
             ))
 
 const getAddedEnergies = createMaybeSelector (

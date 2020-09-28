@@ -1,1 +1,0 @@
-require ("./buildInsider.js") .buildMac ()

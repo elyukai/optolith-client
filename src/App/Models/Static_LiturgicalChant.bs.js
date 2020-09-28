@@ -41,14 +41,13 @@ function enhancementLevel1Univ(json) {
 
 function level3Prerequisite(json) {
   var x = Json_decode.$$int(json);
-  if (x !== 1) {
-    throw [
-          Json_decode.DecodeError,
-          "Unknown level 2 prerequisite: " + Int$OptolithClient.show(x)
-        ];
-  } else {
+  if (x === 1) {
     return 1;
   }
+  throw [
+        Json_decode.DecodeError,
+        "Unknown level 2 prerequisite: " + Int$OptolithClient.show(x)
+      ];
 }
 
 function enhancementLevel2Univ(json) {
@@ -61,18 +60,16 @@ function enhancementLevel2Univ(json) {
 
 function level3Prerequisite$1(json) {
   var x = Json_decode.$$int(json);
-  if (x !== 1) {
-    if (x !== 2) {
-      throw [
-            Json_decode.DecodeError,
-            "Unknown level 3 prerequisite: " + Int$OptolithClient.show(x)
-          ];
-    } else {
-      return /* Second */1;
-    }
-  } else {
+  if (x === 1) {
     return /* First */0;
   }
+  if (x === 2) {
+    return /* Second */1;
+  }
+  throw [
+        Json_decode.DecodeError,
+        "Unknown level 3 prerequisite: " + Int$OptolithClient.show(x)
+      ];
 }
 
 function enhancementLevel3Univ(json) {

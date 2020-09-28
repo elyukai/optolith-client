@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { SkillL10n, UseL10n } from "../../../../../app/Database/Schema/Skills/Skills.l10n"
+import { SkillUniv, UseUniv } from "../../../../../app/Database/Schema/Skills/Skills.univ"
 import { bindF, Either, fromRight_, isLeft, Left, Right, RightI, second } from "../../../../Data/Either"
 import { on } from "../../../../Data/Function"
 import { fmap } from "../../../../Data/Functor"
@@ -15,8 +17,6 @@ import { pipe, pipe_ } from "../../pipe"
 import { map } from "../Array"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { SkillL10n, UseL10n } from "../Schema/Skills/Skills.l10n"
-import { SkillUniv, UseUniv } from "../Schema/Skills/Skills.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy, zipByIdLoose } from "../ZipById"
@@ -60,7 +60,8 @@ const toUses : (x : [SkillUniv, SkillL10n]) => Either<Error[], List<Record<Use>>
                    : pipe_ (
                        zipBy ("id")
                              (univ.uses)
-                             (l10n.uses),
+                             (l10n.uses)
+                             (undefined),
                        second (Just)
                      ),
                  second (pipe (
@@ -122,7 +123,8 @@ export const toSkills : YamlFileConverter<string, Record<Skill>>
                       = pipe (
                           (yaml_mp : YamlNameMap) => zipBy ("id")
                                                            (yaml_mp.SkillsUniv)
-                                                           (yaml_mp.SkillsL10n),
+                                                           (yaml_mp.SkillsL10nDefault)
+                                                           (yaml_mp.SkillsL10nOverride),
                           bindF (pipe (
                             mapM (toSkill),
                             bindF (toMapIntegrity),

@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { NameBySex as RawNameBySex, ProfessionL10n } from "../../../../../app/Database/Schema/Professions/Professions.l10n"
+import { ProfessionCombatTechnique, ProfessionLiturgicalChant, ProfessionSkill, ProfessionSpell, ProfessionUniv } from "../../../../../app/Database/Schema/Professions/Professions.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromArray, List } from "../../../../Data/List"
 import { catMaybes, Just, Maybe, Nothing } from "../../../../Data/Maybe"
@@ -13,8 +15,6 @@ import { ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } 
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { NameBySex as RawNameBySex, ProfessionL10n } from "../Schema/Professions/Professions.l10n"
-import { ProfessionCombatTechnique, ProfessionLiturgicalChant, ProfessionSkill, ProfessionSpell, ProfessionUniv } from "../Schema/Professions/Professions.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -171,7 +171,8 @@ export const toProfessions : YamlFileConverter<string, Record<Profession>>
                                (yaml_mp : YamlNameMap) =>
                                  zipBy ("id")
                                        (yaml_mp.ProfessionsUniv)
-                                       (yaml_mp.ProfessionsL10n),
+                                       (yaml_mp.ProfessionsL10nDefault)
+                                       (yaml_mp.ProfessionsL10nOverride),
                                bindF (pipe (
                                  mapM (toProfession),
                                  bindF (toMapIntegrity),

@@ -1,10 +1,11 @@
 import { ProgressInfo } from "builder-util-runtime"
-import { ipcRenderer, remote } from "electron"
+import { ipcRenderer, remote, webFrame } from "electron"
 import { UpdateInfo } from "electron-updater"
 import * as React from "react"
 import { render } from "react-dom"
 import { Provider } from "react-redux"
 import { Action, applyMiddleware, createStore, Store } from "redux"
+import { composeWithDevTools } from "redux-devtools-extension"
 import thunk from "redux-thunk"
 import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from "./App/Actions/AcceleratorActions"
 import { ReduxDispatch } from "./App/Actions/Actions"
@@ -28,12 +29,15 @@ import { Just } from "./Data/Maybe"
 import { uncurryN } from "./Data/Tuple/Curry"
 import { Unit } from "./Data/Unit"
 
+webFrame.setZoomFactor (1)
+webFrame.setVisualZoomLevelLimits (1, 1)
+
 const nativeAppReducer =
   uncurryN (pipe ((x: AppStateRecord | undefined) => x === undefined ? AppState.default : x,
                   flip (appReducer)))
 
 const store: Store<AppStateRecord, Action> & { dispatch: ReduxDispatch<Action> } =
-  createStore (nativeAppReducer, applyMiddleware (thunk))
+  createStore (nativeAppReducer, composeWithDevTools (applyMiddleware (thunk)))
 
 store
   .dispatch (requestInitialData)
@@ -135,7 +139,7 @@ store
 
     return Unit
   })
-  .catch (() => undefined)
+  .catch (console.error)
 
 render (
   <Provider store={store}>
@@ -168,18 +172,20 @@ ipcRenderer.addListener ("auto-updater-error", (_event: Event, err: Error | {}) 
 
   dispatch (setUpdateDownloadProgress ())
 
+  console.error (err)
+
   if (isError (err)) {
     dispatch (addErrorAlert (AlertOptions ({
                               title: Just (`${err.name} during update`),
                               message: `An error occured during auto-update:\n${err.message}`,
                             })))
-      .catch (() => undefined)
+      .catch (console.error)
   }
   else {
     dispatch (addAlert (AlertOptions ({
                          title: Just ("Server Error"),
                          message: `The server does not respond.`,
                        })))
-      .catch (() => undefined)
+      .catch (console.error)
   }
 })

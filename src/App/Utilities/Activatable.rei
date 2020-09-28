@@ -79,5 +79,28 @@ module Names: {
    * Returns name, splitted and combined, of advantage/disadvantage/special
    * ability as a Maybe (in case the wiki entry does not exist).
    */
-  let getName: (Static.t, Static.activatable, singleWithId) => combinedName;
+  let getName:
+    (~addLevelToName: bool, Static.t, Static.activatable, singleWithId) =>
+    combinedName;
+};
+
+module AdventurePoints: {
+  /**
+   * Returns the AP you get when removing the passed entry.
+   *
+   * @param isEntryToAdd `true` if `entry` has not been added to the list of
+   * active entries yet, otherwise `false`.
+   * @param automaticAdvantages List of automatic advantage IDs.
+   */
+  let getCost:
+    (
+      ~isEntryToAdd: bool,
+      ~automaticAdvantages: list(int),
+      Static.t,
+      Hero.t,
+      Static.activatable,
+      Hero.Activatable.t,
+      singleWithId
+    ) =>
+    (int, bool);
 };

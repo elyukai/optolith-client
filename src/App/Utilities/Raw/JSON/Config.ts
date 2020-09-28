@@ -152,10 +152,16 @@ export const parseConfig = async () => {
                                  validated_data.equipmentGroupVisibilityFilter,
                                sheetCheckAttributeValueVisibility:
                                  Maybe (validated_data.sheetCheckAttributeValueVisibility),
+                              sheetUseParchment:
+                                 Maybe (validated_data.sheetUseParchment),
+                              sheetZoomFactor:
+                                 validated_data.sheetZoomFactor ?? 100,
                                enableActiveItemHints:
                                  validated_data.enableActiveItemHints,
                                locale:
                                  Maybe (validated_data.locale),
+                               fallbackLocale:
+                                 Maybe (validated_data.fallbackLocale),
                                theme:
                                  validated_data.theme === "dark"
                                  ? Just (Theme.Dark)
@@ -185,7 +191,10 @@ export const writeConfig = (x: Record<Config>): string => {
   const serialized_obj: RawConfig = {
     ...obj,
     sheetCheckAttributeValueVisibility: maybeToUndefined (obj.sheetCheckAttributeValueVisibility),
+    sheetUseParchment: maybeToUndefined (obj.sheetUseParchment),
+    sheetZoomFactor: obj.sheetZoomFactor,
     locale: maybeToUndefined (obj.locale),
+    fallbackLocale: maybeToUndefined (obj.fallbackLocale),
     theme: maybeToUndefined (obj.theme),
     enableEditingHeroAfterCreationPhase: maybeToUndefined (obj.enableEditingHeroAfterCreationPhase),
     enableAnimations: maybeToUndefined (obj.enableAnimations),

@@ -21,8 +21,11 @@ export interface RawConfig {
   equipmentSortOrder: "name" | "groupname" | "where" | "weight"
   equipmentGroupVisibilityFilter: number
   sheetCheckAttributeValueVisibility?: boolean
+  sheetUseParchment?: boolean
+  sheetZoomFactor?: number
   enableActiveItemHints: boolean
   locale?: string
+  fallbackLocale?: string
   theme?: "light" | "dark"
   enableEditingHeroAfterCreationPhase?: boolean
   meleeItemTemplatesCombatTechniqueFilter?: string

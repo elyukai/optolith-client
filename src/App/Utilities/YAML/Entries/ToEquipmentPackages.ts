@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { EquipmentPackageL10n } from "../../../../../app/Database/Schema/EquipmentPackages/EquipmentPackages.l10n"
+import { EquipmentPackageUniv } from "../../../../../app/Database/Schema/EquipmentPackages/EquipmentPackages.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromMap, insert, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
@@ -6,8 +8,6 @@ import { EquipmentPackage } from "../../../Models/Wiki/EquipmentPackage"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { EquipmentPackageL10n } from "../Schema/EquipmentPackages/EquipmentPackages.l10n"
-import { EquipmentPackageUniv } from "../Schema/EquipmentPackages/EquipmentPackages.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -33,7 +33,8 @@ export const toEquipmentPackages : YamlFileConverter<string, Record<EquipmentPac
                                      (yaml_mp : YamlNameMap) =>
                                        zipBy ("id")
                                              (yaml_mp.EquipmentPackagesUniv)
-                                             (yaml_mp.EquipmentPackagesL10n),
+                                             (yaml_mp.EquipmentPackagesL10nDefault)
+                                             (yaml_mp.EquipmentPackagesL10nOverride),
                                      bindF (pipe (
                                        mapM (toEPKG),
                                        bindF (toMapIntegrity),

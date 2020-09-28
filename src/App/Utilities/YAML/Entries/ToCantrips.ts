@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { CantripL10n } from "../../../../../app/Database/Schema/Cantrips/Cantrips.l10n"
+import { CantripUniv } from "../../../../../app/Database/Schema/Cantrips/Cantrips.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { fromArray, List } from "../../../../Data/List"
 import { Maybe, Nothing } from "../../../../Data/Maybe"
@@ -9,8 +11,6 @@ import { RequireActivatable } from "../../../Models/Wiki/prerequisites/Activatab
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { CantripL10n } from "../Schema/Cantrips/Cantrips.l10n"
-import { CantripUniv } from "../Schema/Cantrips/Cantrips.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -48,7 +48,8 @@ export const toCantrips : YamlFileConverter<string, Record<Cantrip>>
                       = pipe (
                           (yaml_mp : YamlNameMap) => zipBy ("id")
                                                            (yaml_mp.CantripsUniv)
-                                                           (yaml_mp.CantripsL10n),
+                                                           (yaml_mp.CantripsL10nDefault)
+                                                           (yaml_mp.CantripsL10nOverride),
                           bindF (pipe (
                             mapM (toCantrip),
                             bindF (toMapIntegrity),

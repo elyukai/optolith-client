@@ -26,6 +26,7 @@ import { Scroll } from "../Universal/Scroll"
 import { SearchField } from "../Universal/SearchField"
 import { HitZoneArmorEditor } from "./HitZoneArmorEditor"
 import { HitZoneArmorsListItem } from "./HitZoneArmorsListItem"
+import { PurseAddRemoveMoney } from "../Equipment/PurseAddRemoveMoney"
 
 export interface HitZoneArmorsOwnProps {
   staticData: StaticDataRecord
@@ -45,6 +46,7 @@ export interface HitZoneArmorsStateProps {
   totalPrice: Maybe<number>
   totalWeight: Maybe<number>
   filterText: string
+  isAddRemoveMoneyOpen: boolean
 }
 
 export interface HitZoneArmorsDispatchProps {
@@ -72,6 +74,9 @@ export interface HitZoneArmorsDispatchProps {
   setRightLeg (id: Maybe<string>): void
   setRightLegLoss (id: Maybe<number>): void
   setFilterText (filterText: string): void
+  setMoney (d: number, s: number, h: number, k: number): void
+  openAddRemoveMoney (): void
+  closeAddRemoveMoney (): void
 }
 
 export type HitZoneArmorsProps =
@@ -88,6 +93,7 @@ export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
     carryingCapacity,
     initialStartingWealth,
     items,
+    isAddRemoveMoneyOpen,
     isInHitZoneArmorCreation,
     armorZonesEditor,
     hasNoAddedAP,
@@ -106,6 +112,9 @@ export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
     setSilverthalers,
     setHellers,
     setKreutzers,
+    openAddRemoveMoney,
+    closeAddRemoveMoney,
+    setMoney,
     setName,
     setHead,
     setHeadLoss,
@@ -189,8 +198,16 @@ export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
           setSilverthalers={setSilverthalers}
           setHellers={setHellers}
           setKreutzers={setKreutzers}
+          openAddRemoveMoney={openAddRemoveMoney}
           />
       </Aside>
+      <PurseAddRemoveMoney
+        close={closeAddRemoveMoney}
+        isOpen={isAddRemoveMoneyOpen}
+        purse={purse}
+        setMoney={setMoney}
+        staticData={staticData}
+        />
       {
         isJust (armorZonesEditor)
           ? (

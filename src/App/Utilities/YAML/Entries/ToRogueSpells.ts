@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { RogueSpellL10n } from "../../../../../app/Database/Schema/RogueSpells/RogueSpells.l10n"
+import { RogueSpellUniv } from "../../../../../app/Database/Schema/RogueSpells/RogueSpells.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
 import { Maybe } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
@@ -8,8 +10,6 @@ import { RogueSpell } from "../../../Models/Wiki/RogueSpell"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { RogueSpellL10n } from "../Schema/RogueSpells/RogueSpells.l10n"
-import { RogueSpellUniv } from "../Schema/RogueSpells/RogueSpells.univ"
 import { YamlNameMap } from "../SchemaMap"
 import { YamlFileConverter, YamlPairConverterE } from "../ToRecordsByFile"
 import { zipBy } from "../ZipById"
@@ -48,7 +48,8 @@ export const toRogueSpells : YamlFileConverter<string, Record<RogueSpell>>
                            = pipe (
                                (yaml_mp : YamlNameMap) => zipBy ("id")
                                                                 (yaml_mp.RogueSpellsUniv)
-                                                                (yaml_mp.RogueSpellsL10n),
+                                                                (yaml_mp.RogueSpellsL10nDefault)
+                                                                (yaml_mp.RogueSpellsL10nOverride),
                                bindF (pipe (
                                  mapM (toRogueSpell),
                                  bindF (toMapIntegrity),
