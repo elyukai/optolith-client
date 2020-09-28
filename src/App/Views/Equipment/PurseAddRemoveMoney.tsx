@@ -1,14 +1,14 @@
 import * as React from "react"
-import { maybeToUndefined, Maybe, fromMaybe, bindF } from "../../../Data/Maybe"
+import { fmap } from "../../../Data/Functor"
+import { bindF, fromMaybe, Maybe, maybeToUndefined } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { Purse } from "../../Models/Hero/Purse"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { toInt } from "../../Utilities/NumberUtils"
-import { Dialog } from "../Universal/Dialog"
-import { fmap } from "../../../Data/Functor"
 import { pipe_ } from "../../Utilities/pipe"
-import { Record } from "../../../Data/Record"
-import { Purse } from "../../Models/Hero/Purse"
-import { isNaturalNumber, isEmptyOr } from "../../Utilities/RegexUtils"
+import { isEmptyOr, isNaturalNumber } from "../../Utilities/RegexUtils"
+import { Dialog } from "../Universal/Dialog"
 import { TextField } from "../Universal/TextField"
 
 interface PurseAddRemoveMoneyProps {
@@ -22,6 +22,10 @@ interface PurseAddRemoveMoneyProps {
 const PA = Purse.A
 
 const getCurrentValueAsInt = (s: string) => pipe_ (s, toInt, fromMaybe (0))
+
+const setValueSafe = (setValue: (x: string) => void, currentValue: string, value: string) => {
+  setValue (isEmptyOr (isNaturalNumber) (value) ? value : currentValue)
+}
 
 export const PurseAddRemoveMoney: React.FC<PurseAddRemoveMoneyProps> = props => {
   const { setMoney, purse, staticData, isOpen, close } = props
@@ -42,28 +46,28 @@ export const PurseAddRemoveMoney: React.FC<PurseAddRemoveMoneyProps> = props => 
 
   const setValueDSafe = React.useCallback (
     (value: string) => {
-      setValueD (isEmptyOr (isNaturalNumber) (value) ? value : valueD)
+      setValueSafe (setValueD, valueD, value)
     },
     [ setValueD, valueD ]
   )
 
   const setValueSSafe = React.useCallback (
     (value: string) => {
-      setValueS (isEmptyOr (isNaturalNumber) (value) ? value : valueS)
+      setValueSafe (setValueS, valueS, value)
     },
     [ setValueS, valueS ]
   )
 
   const setValueHSafe = React.useCallback (
     (value: string) => {
-      setValueH (isEmptyOr (isNaturalNumber) (value) ? value : valueH)
+      setValueSafe (setValueH, valueH, value)
     },
     [ setValueH, valueH ]
   )
 
   const setValueKSafe = React.useCallback (
     (value: string) => {
-      setValueK (isEmptyOr (isNaturalNumber) (value) ? value : valueK)
+      setValueSafe (setValueK, valueK, value)
     },
     [ setValueK, valueK ]
   )
