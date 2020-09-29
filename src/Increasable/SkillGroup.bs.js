@@ -2,36 +2,14 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
-import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
+import * as SkillCheck$OptolithClient from "./SkillCheck.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
-
-function empty(id) {
-  return {
-          id: id,
-          value: 8,
-          dependencies: /* [] */0
-        };
-}
-
-function isEmpty(x) {
-  if (x.value <= 8) {
-    return Ley_List$OptolithClient.Foldable.$$null(x.dependencies);
-  } else {
-    return false;
-  }
-}
-
-function getValueDef(param) {
-  return Ley_Option$OptolithClient.option(8, (function (x) {
-                return x.value;
-              }), param);
-}
 
 function decode(json) {
   return {
           name: Json_decode.field("name", Json_decode.string, json),
-          short: Json_decode.field("short", Json_decode.string, json)
+          fullName: Json_decode.field("fullName", Json_decode.string, json)
         };
 }
 
@@ -44,6 +22,7 @@ var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
 function decodeFull(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
+          check: Json_decode.field("check", SkillCheck$OptolithClient.decode, json),
           translations: Json_decode.field("translations", TranslationMap.decode, json)
         };
 }
@@ -53,25 +32,15 @@ function decode$1(langs, json) {
   return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
+                        check: x.check,
                         name: translation.name,
-                        short: translation.short
+                        fullName: translation.fullName
                       };
               }));
 }
 
-var Dynamic = {
-  empty: empty,
-  isEmpty: isEmpty,
-  getValueDef: getValueDef
-};
-
-var Static = {
-  decode: decode$1
-};
-
 export {
-  Dynamic ,
-  Static ,
+  decode$1 as decode,
   
 }
 /* TranslationMap Not a pure module */

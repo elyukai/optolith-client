@@ -15,7 +15,7 @@
     "ajv": "6.12.0",
     "bs-bastet": "1.2.5",
     "bs-decode": "0.11.2",
-    "bs-platform": "8.0.3",
+    "bs-platform": "8.2.0",
     "bs-webapi": "0.17.0",
     "electron-devtools-installer": "3.0.0",
     "electron-log": "4.1.2",
