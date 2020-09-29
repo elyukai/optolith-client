@@ -60,7 +60,7 @@ export const getPreparedRaces = createMaybeSelector (
   uncurryN3 (filterWiki => filter_text =>
               pipe (
                 filterRecordsByA ([ RaceCombinedA_.name ]) (filter_text),
-                filterWiki (RaceCombinedA_.src)
+                filterWiki (RaceCombinedA_.src),
               ))
 )
 

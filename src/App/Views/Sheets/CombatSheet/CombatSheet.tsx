@@ -18,7 +18,6 @@ import { State } from "../../../Models/Wiki/State"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../../Utilities/I18n"
-import { Options } from "../../Universal/Options"
 import { Sheet } from "../Sheet"
 import { HeaderValue } from "../SheetHeader"
 import { SheetWrapper } from "../SheetWrapper"
@@ -58,6 +57,7 @@ interface Props {
   shieldsAndParryingWeapons: Maybe<List<Record<ShieldOrParryingWeapon>>>
   conditions: List<Record<Condition>>
   states: List<Record<State>>
+  useParchment: boolean
 }
 
 export const CombatSheet: React.FC<Props> = props => {
@@ -73,19 +73,20 @@ export const CombatSheet: React.FC<Props> = props => {
     shieldsAndParryingWeapons,
     conditions,
     states,
+    useParchment,
   } = props
 
   const addHeader = getAddCombatHeaderVals (derivedCharacteristics)
 
   return (
     <SheetWrapper>
-      <Options />
       <Sheet
         id="combat-sheet"
         title={translate (staticData) ("sheets.combatsheet.title")}
         addHeaderInfo={addHeader}
         attributes={attributes}
         staticData={staticData}
+        useParchment={useParchment}
         >
         <div className="upper">
           <CombatSheetTechniques

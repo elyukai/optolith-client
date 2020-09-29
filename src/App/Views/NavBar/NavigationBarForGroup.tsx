@@ -17,7 +17,6 @@ import { NavigationBarWrapper } from "./NavigationBarWrapper"
 interface Props {
   staticData: StaticDataRecord
   groupName: string
-  platform: string
   isSettingsOpen: boolean
   closeSettings (): void
   openSettings (): void
@@ -31,7 +30,6 @@ export const NavigationBarForGroup: React.FC<Props> = props => {
   const {
     staticData,
     groupName,
-    platform,
     isSettingsOpen,
     closeSettings,
     openSettings,
@@ -64,7 +62,6 @@ export const NavigationBarForGroup: React.FC<Props> = props => {
         <SettingsContainer
           staticData={staticData}
           isSettingsOpen={isSettingsOpen}
-          platform={platform}
           close={closeSettings}
           checkForUpdates={checkForUpdates}
           />

@@ -193,7 +193,6 @@ export class App extends React.Component<AppProps, AppState> {
             staticData={staticData}
             checkForUpdates={checkForUpdates}
             mhero={mhero}
-            platform={platform}
             />
           <Router
             key={currentTab}

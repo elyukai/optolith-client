@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Textfit } from "react-textfit"
 import { fmap, fmapF } from "../../../../Data/Functor"
-import { flength, intercalate, List, map, replicateR, subscriptF, toArray } from "../../../../Data/List"
+import { flength, fnull, intercalate, List, map, replicateR, subscriptF, toArray } from "../../../../Data/List"
 import { bindF, fromMaybe, Just, Maybe } from "../../../../Data/Maybe"
 import { lookupF } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
@@ -9,7 +9,7 @@ import { bimap, fst, isTuple, snd } from "../../../../Data/Tuple"
 import { NumIdName } from "../../../Models/NumIdName"
 import { MeleeWeapon } from "../../../Models/View/MeleeWeapon"
 import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
-import { ndash } from "../../../Utilities/Chars"
+import { mdash, ndash } from "../../../Utilities/Chars"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
 import { getDamageStr } from "../../../Utilities/ItemUtils"
 import { sign, toRoman } from "../../../Utilities/NumberUtils"
@@ -91,7 +91,9 @@ export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
                     </td>
                     <td className="combat-technique">{MWA.combatTechnique (e)}</td>
                     <td className="damage-bonus">
-                      {isTuple (primaryBonus)
+                      {fnull (MWA.primary (e))
+                        ? mdash
+                        : isTuple (primaryBonus)
                         ? pipe_ (
                             primaryBonus,
                             bimap (first => `${getPrimaryAtIndex (0) (e)} ${first}`)

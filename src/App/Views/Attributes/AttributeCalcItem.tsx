@@ -44,9 +44,11 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
     removeKarmaPoint,
   } = props
 
+  const id = DCA.id (fst (attribute))
+
   const handleAddMaxEnergyPoint = React.useCallback (
     () => {
-      switch (DCA.id (fst (attribute))) {
+      switch (id) {
         case "LP":
           addLifePoint ()
           break
@@ -63,12 +65,12 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
           break
       }
     },
-    [ addArcaneEnergyPoint, addKarmaPoint, addLifePoint, attribute ]
+    [ addArcaneEnergyPoint, addKarmaPoint, addLifePoint, id ]
   )
 
   const handleRemoveMaxEnergyPoint = React.useCallback (
     () => {
-      switch (DCA.id (fst (attribute))) {
+      switch (id) {
         case "LP":
             removeLifePoint ()
           break
@@ -85,7 +87,7 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
           break
       }
     },
-    [ removeArcaneEnergyPoint, removeKarmaPoint, removeLifePoint, attribute ]
+    [ removeArcaneEnergyPoint, removeKarmaPoint, removeLifePoint, id ]
   )
 
   const base = DCVA.base (snd (attribute))
@@ -162,11 +164,14 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
                                   onClick={handleAddMaxEnergyPoint}
                                   disabled={
                                     current_add >= max_add
-                                    || or (fmapF (mpermanent_lost)
-                                                  (pipe (
-                                                    subtractBy (Maybe.sum (mpermanent_redeemed)),
-                                                    gt (0)
-                                                  )))
+                                    || (
+                                      id !== "LP"
+                                      && or (fmapF (mpermanent_lost)
+                                                   (pipe (
+                                                     subtractBy (Maybe.sum (mpermanent_redeemed)),
+                                                     gt (0)
+                                                   )))
+                                    )
                                   }
                                   />
                               ))
@@ -187,11 +192,14 @@ export const AttributeCalcItem: React.FC<AttributeCalcItemProps> = props => {
                       onClick={handleRemoveMaxEnergyPoint}
                       disabled={
                         current_add <= 0
-                        || or (fmapF (mpermanent_lost)
-                                      (pipe (
-                                        subtractBy (Maybe.sum (mpermanent_redeemed)),
-                                        gt (0)
-                                      )))
+                        || (
+                          id !== "LP"
+                          && or (fmapF (mpermanent_lost)
+                                       (pipe (
+                                         subtractBy (Maybe.sum (mpermanent_redeemed)),
+                                         gt (0)
+                                       )))
+                        )
                       }
                       />
                   ))

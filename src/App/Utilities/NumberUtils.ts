@@ -118,7 +118,7 @@ export const toNatural =
   (e: string): Maybe<number> =>
     e.length > 0 && isNaturalNumber (e) ? Just (unsafeToInt (e)) : Nothing
 
-const isNotNaN = pipe (Number.isNaN, not)
+const isNotNaN = pipe<[number], boolean, boolean> (Number.isNaN, not)
 
 const misNotNaN = bindF<number, number> (ensure (isNotNaN))
 

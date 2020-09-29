@@ -1,4 +1,6 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { PrerequisiteIndexReplacement } from "../../../../../app/Database/Schema/Advantages/Advantages.l10n"
+import * as RawPrerequisites from "../../../../../app/Database/Schema/Prerequisites/Prerequisites"
 import { flip, ident } from "../../../../Data/Function"
 import { fmapF } from "../../../../Data/Functor"
 import { flength, fnull, foldr, fromArray, head, List, map, NonEmptyList, notNull } from "../../../../Data/List"
@@ -18,8 +20,6 @@ import { SexRequirement } from "../../../Models/Wiki/prerequisites/SexRequiremen
 import { SocialPrerequisite } from "../../../Models/Wiki/prerequisites/SocialPrerequisite"
 import { AllRequirementObjects, PrerequisitesIndex } from "../../../Models/Wiki/wikiTypeHelpers"
 import { pipe, pipe_ } from "../../pipe"
-import { PrerequisiteIndexReplacement } from "../Schema/Advantages/Advantages.l10n"
-import * as RawPrerequisites from "../Schema/Prerequisites/Prerequisites"
 
 
 export const toSocialPrerequisite : (x : RawPrerequisites.SocialStatusRequirement)

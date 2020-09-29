@@ -1,71 +1,76 @@
 .list-header {
-	flex: none;
-	height: 32px;
-	padding: 0 37px 0 13px;
-	display: flex;
-	font: 500 12px Alegreya Sans;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
-	color: var(--secondary-text-color);
-	margin-top: 12px;
+  flex: none;
+  height: 32px;
+  padding: 0 37px 0 13px;
+  display: flex;
+  font: 500 12px Alegreya Sans;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--secondary-text-color);
+  margin-top: 12px;
 
-	+ .scroll {
-		flex: 1 1 auto;
-	}
+  + .scroll {
+    flex: 1 1 auto;
+  }
 
-	> div {
-		display: flex;
-		align-items: center;
-		height: 32px;
+  > div {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    justify-content: center;
+    flex: none;
+    margin-right: 12px;
 
-		&.name {
-			flex: 1 1 auto;
-		}
+    &.name {
+      flex: 1 1 auto;
+      justify-content: flex-start;
+    }
 
-		&:not(.name) {
-			flex: none;
-			margin-right: 12px;
-			justify-content: center;
-		}
+    &.group {
+      margin-left: 4px;
+      justify-content: flex-end;
+    }
 
-		&.group {
-			margin-left: 4px;
-		}
+    &.weight {
+      width: 54px;
+      margin-left: 4px;
+      justify-content: flex-end;
+    }
 
-		&.value, &.ic, &.cost, &.primary, &.at, &.pa, &.mod {
-			width: 32px;
-		}
+    &.value, &.ic, &.cost, &.primary, &.at, &.pa, &.mod {
+      width: 32px;
+    }
 
-		&.primary, &.at, &.pa, &.mod {
-			margin-right: 8px;
-		}
+    &.primary, &.at, &.pa, &.mod {
+      margin-right: 8px;
+    }
 
-		&.ic {
-			margin-left: 4px;
-		}
+    &.ic {
+      margin-left: 4px;
+    }
 
-		&.check {
-			width: 112px;
-			margin-right: 8px;
-		}
+    &.check {
+      width: 112px;
+      margin-right: 8px;
+    }
 
-		&.btn-placeholder {
-			width: 32px;
-			margin-right: 0;
+    &.btn-placeholder {
+      width: 32px;
+      margin-right: 0;
 
-			+ div.btn-placeholder.has-border {
-				margin-left: 5px;
-			}
-		}
+      + div.btn-placeholder.has-border {
+        margin-left: 5px;
+      }
+    }
 
-		&.has-hint:hover {
-			cursor: pointer;
-		}
-	}
+    &.has-hint:hover {
+      cursor: pointer;
+    }
+  }
 }
 
 section > .page, .slidein-backdrop > .slidein > .slidein-content {
-	> .main-content > .list-header + .scroll .scroll-inner {
-		padding-top: 0;
-	}
+  > .main-content > .list-header + .scroll .scroll-inner {
+    padding-top: 0;
+  }
 }

@@ -1,95 +1,97 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
 /* eslint-disable max-len */
-import { AdvantagesL10n } from "./Schema/Advantages/Advantages.l10n"
-import { AdvantagesUniv } from "./Schema/Advantages/Advantages.univ"
-import { AnimistForcesL10n } from "./Schema/AnimistForces/AnimistForces.l10n"
-import { AnimistForcesUniv } from "./Schema/AnimistForces/AnimistForces.univ"
-import { ArcaneBardTraditionsL10n } from "./Schema/ArcaneBardTraditions/ArcaneBardTraditions.l10n"
-import { ArcaneDancerTraditionsL10n } from "./Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.l10n"
-import { ArmorTypesL10n } from "./Schema/ArmorTypes/ArmorTypes.l10n"
-import { AspectsL10n } from "./Schema/Aspects/Aspects.l10n"
-import { AttributesL10n } from "./Schema/Attributes/Attributes.l10n"
-import { BlessedTraditionsL10n } from "./Schema/BlessedTraditions/BlessedTraditions.l10n"
-import { BlessedTraditionsUniv } from "./Schema/BlessedTraditions/BlessedTraditions.univ"
-import { BlessingsL10n } from "./Schema/Blessings/Blessings.l10n"
-import { BlessingsUniv } from "./Schema/Blessings/Blessings.univ"
-import { BooksL10n } from "./Schema/Books/Books.l10n"
-import { BrewsL10n } from "./Schema/Brews/Brews.l10n"
-import { CantripsL10n } from "./Schema/Cantrips/Cantrips.l10n"
-import { CantripsUniv } from "./Schema/Cantrips/Cantrips.univ"
-import { CombatSpecialAbilityGroupsL10n } from "./Schema/CombatSpecialAbilityGroups/CombatSpecialAbilityGroups.l10n"
-import { CombatTechniqueGroupsL10n } from "./Schema/CombatTechniqueGroups/CombatTechniqueGroups.l10n"
-import { CombatTechniquesL10n } from "./Schema/CombatTechniques/CombatTechniques.l10n"
-import { CombatTechniquesUniv } from "./Schema/CombatTechniques/CombatTechniques.univ"
-import { ConditionsL10n } from "./Schema/Conditions/Conditions.l10n"
-import { CulturesL10n } from "./Schema/Cultures/Cultures.l10n"
-import { CulturesUniv } from "./Schema/Cultures/Cultures.univ"
-import { CursesL10n } from "./Schema/Curses/Curses.l10n"
-import { CursesUniv } from "./Schema/Curses/Curses.univ"
-import { DerivedCharacteristicsL10n } from "./Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
-import { DisadvantagesL10n } from "./Schema/Disadvantages/Disadvantages.l10n"
-import { DisadvantagesUniv } from "./Schema/Disadvantages/Disadvantages.univ"
-import { DominationRitualsL10n } from "./Schema/DominationRituals/DominationRituals.l10n"
-import { DominationRitualsUniv } from "./Schema/DominationRituals/DominationRituals.univ"
-import { ElvenMagicalSongsL10n } from "./Schema/ElvenMagicalSongs/ElvenMagicalSongs.l10n"
-import { ElvenMagicalSongsUniv } from "./Schema/ElvenMagicalSongs/ElvenMagicalSongs.univ"
-import { EquipmentL10n } from "./Schema/Equipment/Equipment.l10n"
-import { EquipmentUniv } from "./Schema/Equipment/Equipment.univ"
-import { EquipmentGroupsL10n } from "./Schema/EquipmentGroups/EquipmentGroups.l10n"
-import { EquipmentPackagesL10n } from "./Schema/EquipmentPackages/EquipmentPackages.l10n"
-import { EquipmentPackagesUniv } from "./Schema/EquipmentPackages/EquipmentPackages.univ"
-import { ExperienceLevelsL10n } from "./Schema/ExperienceLevels/ExperienceLevels.l10n"
-import { ExperienceLevelsUniv } from "./Schema/ExperienceLevels/ExperienceLevels.univ"
-import { EyeColorsL10n } from "./Schema/EyeColors/EyeColors.l10n"
-import { FocusRulesL10n } from "./Schema/FocusRules/FocusRules.l10n"
-import { FocusRulesUniv } from "./Schema/FocusRules/FocusRules.univ"
-import { GeodeRitualsL10n } from "./Schema/GeodeRituals/GeodeRituals.l10n"
-import { GeodeRitualsUniv } from "./Schema/GeodeRituals/GeodeRituals.univ"
-import { HairColorsL10n } from "./Schema/HairColors/HairColors.l10n"
-import { LiturgicalChantEnhancementsL10n } from "./Schema/LiturgicalChantEnhancements/LiturgicalChantEnhancements.l10n"
-import { LiturgicalChantEnhancementsUniv } from "./Schema/LiturgicalChantEnhancements/LiturgicalChantEnhancements.univ"
-import { LiturgicalChantGroupsL10n } from "./Schema/LiturgicalChantGroups/LiturgicalChantGroups.l10n"
-import { LiturgicalChantsL10n } from "./Schema/LiturgicalChants/LiturgicalChants.l10n"
-import { LiturgicalChantsUniv } from "./Schema/LiturgicalChants/LiturgicalChants.univ"
-import { MagicalDancesL10n } from "./Schema/MagicalDances/MagicalDances.l10n"
-import { MagicalDancesUniv } from "./Schema/MagicalDances/MagicalDances.univ"
-import { MagicalMelodiesL10n } from "./Schema/MagicalMelodies/MagicalMelodies.l10n"
-import { MagicalMelodiesUniv } from "./Schema/MagicalMelodies/MagicalMelodies.univ"
-import { MagicalTraditionsL10n } from "./Schema/MagicalTraditions/MagicalTraditions.l10n"
-import { MagicalTraditionsUniv } from "./Schema/MagicalTraditions/MagicalTraditions.univ"
-import { OptionalRulesL10n } from "./Schema/OptionalRules/OptionalRules.l10n"
-import { PactsL10n } from "./Schema/Pacts/Pacts.l10n"
-import { ProfessionsL10n } from "./Schema/Professions/Professions.l10n"
-import { ProfessionsUniv } from "./Schema/Professions/Professions.univ"
-import { ProfessionVariantsL10n } from "./Schema/ProfessionVariants/ProfessionVariants.l10n"
-import { ProfessionVariantsUniv } from "./Schema/ProfessionVariants/ProfessionVariants.univ"
-import { PropertiesL10n } from "./Schema/Properties/Properties.l10n"
-import { RacesL10n } from "./Schema/Races/Races.l10n"
-import { RacesUniv } from "./Schema/Races/Races.univ"
-import { RaceVariantsL10n } from "./Schema/RaceVariants/RaceVariants.l10n"
-import { RaceVariantsUniv } from "./Schema/RaceVariants/RaceVariants.univ"
-import { ReachesL10n } from "./Schema/Reaches/Reaches.l10n"
-import { RogueSpellsL10n } from "./Schema/RogueSpells/RogueSpells.l10n"
-import { RogueSpellsUniv } from "./Schema/RogueSpells/RogueSpells.univ"
-import { SkillGroupsL10n } from "./Schema/SkillGroups/SkillGroups.l10n"
-import { SkillsL10n } from "./Schema/Skills/Skills.l10n"
-import { SkillsUniv } from "./Schema/Skills/Skills.univ"
-import { SocialStatusesL10n } from "./Schema/SocialStatuses/SocialStatuses.l10n"
-import { SpecialAbilitiesL10n } from "./Schema/SpecialAbilities/SpecialAbilities.l10n"
-import { SpecialAbilitiesUniv } from "./Schema/SpecialAbilities/SpecialAbilities.univ"
-import { SpecialAbilityGroupsL10n } from "./Schema/SpecialAbilityGroups/SpecialAbilityGroups.l10n"
-import { SpellEnhancementsL10n } from "./Schema/SpellEnhancements/SpellEnhancements.l10n"
-import { SpellEnhancementsUniv } from "./Schema/SpellEnhancements/SpellEnhancements.univ"
-import { SpellGroupsL10n } from "./Schema/SpellGroups/SpellGroups.l10n"
-import { SpellsL10n } from "./Schema/Spells/Spells.l10n"
-import { SpellsUniv } from "./Schema/Spells/Spells.univ"
-import { StatesL10n } from "./Schema/States/States.l10n"
-import { SubjectsL10n } from "./Schema/Subjects/Subjects.l10n"
-import { SupportedLanguages } from "./Schema/SupportedLanguages"
-import { TribesL10n } from "./Schema/Tribes/Tribes.l10n"
-import { UIL10n } from "./Schema/UI/UI.l10n"
-import { ZibiljaRitualsL10n } from "./Schema/ZibiljaRituals/ZibiljaRituals.l10n"
-import { ZibiljaRitualsUniv } from "./Schema/ZibiljaRituals/ZibiljaRituals.univ"
+import { AdvantagesL10n } from "../../../../app/Database/Schema/Advantages/Advantages.l10n"
+import { AdvantagesUniv } from "../../../../app/Database/Schema/Advantages/Advantages.univ"
+import { AnimistForcesL10n } from "../../../../app/Database/Schema/AnimistForces/AnimistForces.l10n"
+import { AnimistForcesUniv } from "../../../../app/Database/Schema/AnimistForces/AnimistForces.univ"
+import { ArcaneBardTraditionsL10n } from "../../../../app/Database/Schema/ArcaneBardTraditions/ArcaneBardTraditions.l10n"
+import { ArcaneBardTraditionsUniv } from "../../../../app/Database/Schema/ArcaneBardTraditions/ArcaneBardTraditions.univ"
+import { ArcaneDancerTraditionsL10n } from "../../../../app/Database/Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.l10n"
+import { ArcaneDancerTraditionsUniv } from "../../../../app/Database/Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.univ"
+import { ArmorTypesL10n } from "../../../../app/Database/Schema/ArmorTypes/ArmorTypes.l10n"
+import { AspectsL10n } from "../../../../app/Database/Schema/Aspects/Aspects.l10n"
+import { AttributesL10n } from "../../../../app/Database/Schema/Attributes/Attributes.l10n"
+import { BlessedTraditionsL10n } from "../../../../app/Database/Schema/BlessedTraditions/BlessedTraditions.l10n"
+import { BlessedTraditionsUniv } from "../../../../app/Database/Schema/BlessedTraditions/BlessedTraditions.univ"
+import { BlessingsL10n } from "../../../../app/Database/Schema/Blessings/Blessings.l10n"
+import { BlessingsUniv } from "../../../../app/Database/Schema/Blessings/Blessings.univ"
+import { BooksL10n } from "../../../../app/Database/Schema/Books/Books.l10n"
+import { BrewsL10n } from "../../../../app/Database/Schema/Brews/Brews.l10n"
+import { CantripsL10n } from "../../../../app/Database/Schema/Cantrips/Cantrips.l10n"
+import { CantripsUniv } from "../../../../app/Database/Schema/Cantrips/Cantrips.univ"
+import { CombatSpecialAbilityGroupsL10n } from "../../../../app/Database/Schema/CombatSpecialAbilityGroups/CombatSpecialAbilityGroups.l10n"
+import { CombatTechniqueGroupsL10n } from "../../../../app/Database/Schema/CombatTechniqueGroups/CombatTechniqueGroups.l10n"
+import { CombatTechniquesL10n } from "../../../../app/Database/Schema/CombatTechniques/CombatTechniques.l10n"
+import { CombatTechniquesUniv } from "../../../../app/Database/Schema/CombatTechniques/CombatTechniques.univ"
+import { ConditionsL10n } from "../../../../app/Database/Schema/Conditions/Conditions.l10n"
+import { CulturesL10n } from "../../../../app/Database/Schema/Cultures/Cultures.l10n"
+import { CulturesUniv } from "../../../../app/Database/Schema/Cultures/Cultures.univ"
+import { CursesL10n } from "../../../../app/Database/Schema/Curses/Curses.l10n"
+import { CursesUniv } from "../../../../app/Database/Schema/Curses/Curses.univ"
+import { DerivedCharacteristicsL10n } from "../../../../app/Database/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
+import { DisadvantagesL10n } from "../../../../app/Database/Schema/Disadvantages/Disadvantages.l10n"
+import { DisadvantagesUniv } from "../../../../app/Database/Schema/Disadvantages/Disadvantages.univ"
+import { DominationRitualsL10n } from "../../../../app/Database/Schema/DominationRituals/DominationRituals.l10n"
+import { DominationRitualsUniv } from "../../../../app/Database/Schema/DominationRituals/DominationRituals.univ"
+import { ElvenMagicalSongsL10n } from "../../../../app/Database/Schema/ElvenMagicalSongs/ElvenMagicalSongs.l10n"
+import { ElvenMagicalSongsUniv } from "../../../../app/Database/Schema/ElvenMagicalSongs/ElvenMagicalSongs.univ"
+import { EquipmentL10n } from "../../../../app/Database/Schema/Equipment/Equipment.l10n"
+import { EquipmentUniv } from "../../../../app/Database/Schema/Equipment/Equipment.univ"
+import { EquipmentGroupsL10n } from "../../../../app/Database/Schema/EquipmentGroups/EquipmentGroups.l10n"
+import { EquipmentPackagesL10n } from "../../../../app/Database/Schema/EquipmentPackages/EquipmentPackages.l10n"
+import { EquipmentPackagesUniv } from "../../../../app/Database/Schema/EquipmentPackages/EquipmentPackages.univ"
+import { ExperienceLevelsL10n } from "../../../../app/Database/Schema/ExperienceLevels/ExperienceLevels.l10n"
+import { ExperienceLevelsUniv } from "../../../../app/Database/Schema/ExperienceLevels/ExperienceLevels.univ"
+import { EyeColorsL10n } from "../../../../app/Database/Schema/EyeColors/EyeColors.l10n"
+import { FocusRulesL10n } from "../../../../app/Database/Schema/FocusRules/FocusRules.l10n"
+import { FocusRulesUniv } from "../../../../app/Database/Schema/FocusRules/FocusRules.univ"
+import { GeodeRitualsL10n } from "../../../../app/Database/Schema/GeodeRituals/GeodeRituals.l10n"
+import { GeodeRitualsUniv } from "../../../../app/Database/Schema/GeodeRituals/GeodeRituals.univ"
+import { HairColorsL10n } from "../../../../app/Database/Schema/HairColors/HairColors.l10n"
+import { LiturgicalChantEnhancementsL10n } from "../../../../app/Database/Schema/LiturgicalChantEnhancements/LiturgicalChantEnhancements.l10n"
+import { LiturgicalChantEnhancementsUniv } from "../../../../app/Database/Schema/LiturgicalChantEnhancements/LiturgicalChantEnhancements.univ"
+import { LiturgicalChantGroupsL10n } from "../../../../app/Database/Schema/LiturgicalChantGroups/LiturgicalChantGroups.l10n"
+import { LiturgicalChantsL10n } from "../../../../app/Database/Schema/LiturgicalChants/LiturgicalChants.l10n"
+import { LiturgicalChantsUniv } from "../../../../app/Database/Schema/LiturgicalChants/LiturgicalChants.univ"
+import { MagicalDancesL10n } from "../../../../app/Database/Schema/MagicalDances/MagicalDances.l10n"
+import { MagicalDancesUniv } from "../../../../app/Database/Schema/MagicalDances/MagicalDances.univ"
+import { MagicalMelodiesL10n } from "../../../../app/Database/Schema/MagicalMelodies/MagicalMelodies.l10n"
+import { MagicalMelodiesUniv } from "../../../../app/Database/Schema/MagicalMelodies/MagicalMelodies.univ"
+import { MagicalTraditionsL10n } from "../../../../app/Database/Schema/MagicalTraditions/MagicalTraditions.l10n"
+import { MagicalTraditionsUniv } from "../../../../app/Database/Schema/MagicalTraditions/MagicalTraditions.univ"
+import { OptionalRulesL10n } from "../../../../app/Database/Schema/OptionalRules/OptionalRules.l10n"
+import { PactsL10n } from "../../../../app/Database/Schema/Pacts/Pacts.l10n"
+import { ProfessionsL10n } from "../../../../app/Database/Schema/Professions/Professions.l10n"
+import { ProfessionsUniv } from "../../../../app/Database/Schema/Professions/Professions.univ"
+import { ProfessionVariantsL10n } from "../../../../app/Database/Schema/ProfessionVariants/ProfessionVariants.l10n"
+import { ProfessionVariantsUniv } from "../../../../app/Database/Schema/ProfessionVariants/ProfessionVariants.univ"
+import { PropertiesL10n } from "../../../../app/Database/Schema/Properties/Properties.l10n"
+import { RacesL10n } from "../../../../app/Database/Schema/Races/Races.l10n"
+import { RacesUniv } from "../../../../app/Database/Schema/Races/Races.univ"
+import { RaceVariantsL10n } from "../../../../app/Database/Schema/RaceVariants/RaceVariants.l10n"
+import { RaceVariantsUniv } from "../../../../app/Database/Schema/RaceVariants/RaceVariants.univ"
+import { ReachesL10n } from "../../../../app/Database/Schema/Reaches/Reaches.l10n"
+import { RogueSpellsL10n } from "../../../../app/Database/Schema/RogueSpells/RogueSpells.l10n"
+import { RogueSpellsUniv } from "../../../../app/Database/Schema/RogueSpells/RogueSpells.univ"
+import { SkillGroupsL10n } from "../../../../app/Database/Schema/SkillGroups/SkillGroups.l10n"
+import { SkillsL10n } from "../../../../app/Database/Schema/Skills/Skills.l10n"
+import { SkillsUniv } from "../../../../app/Database/Schema/Skills/Skills.univ"
+import { SocialStatusesL10n } from "../../../../app/Database/Schema/SocialStatuses/SocialStatuses.l10n"
+import { SpecialAbilitiesL10n } from "../../../../app/Database/Schema/SpecialAbilities/SpecialAbilities.l10n"
+import { SpecialAbilitiesUniv } from "../../../../app/Database/Schema/SpecialAbilities/SpecialAbilities.univ"
+import { SpecialAbilityGroupsL10n } from "../../../../app/Database/Schema/SpecialAbilityGroups/SpecialAbilityGroups.l10n"
+import { SpellEnhancementsL10n } from "../../../../app/Database/Schema/SpellEnhancements/SpellEnhancements.l10n"
+import { SpellEnhancementsUniv } from "../../../../app/Database/Schema/SpellEnhancements/SpellEnhancements.univ"
+import { SpellGroupsL10n } from "../../../../app/Database/Schema/SpellGroups/SpellGroups.l10n"
+import { SpellsL10n } from "../../../../app/Database/Schema/Spells/Spells.l10n"
+import { SpellsUniv } from "../../../../app/Database/Schema/Spells/Spells.univ"
+import { StatesL10n } from "../../../../app/Database/Schema/States/States.l10n"
+import { SubjectsL10n } from "../../../../app/Database/Schema/Subjects/Subjects.l10n"
+import { SupportedLanguages } from "../../../../app/Database/Schema/SupportedLanguages"
+import { TribesL10n } from "../../../../app/Database/Schema/Tribes/Tribes.l10n"
+import { UIL10n } from "../../../../app/Database/Schema/UI/UI.l10n"
+import { ZibiljaRitualsL10n } from "../../../../app/Database/Schema/ZibiljaRituals/ZibiljaRituals.l10n"
+import { ZibiljaRitualsUniv } from "../../../../app/Database/Schema/ZibiljaRituals/ZibiljaRituals.univ"
 
 export interface YamlSchemaMap {
   "Schema/Advantages/Advantages.l10n.schema.json" : AdvantagesL10n
@@ -97,7 +99,9 @@ export interface YamlSchemaMap {
   "Schema/AnimistForces/AnimistForces.l10n.schema.json" : AnimistForcesL10n
   "Schema/AnimistForces/AnimistForces.univ.schema.json" : AnimistForcesUniv
   "Schema/ArcaneBardTraditions/ArcaneBardTraditions.l10n.schema.json" : ArcaneBardTraditionsL10n
+  "Schema/ArcaneBardTraditions/ArcaneBardTraditions.univ.schema.json" : ArcaneBardTraditionsUniv
   "Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.l10n.schema.json" : ArcaneDancerTraditionsL10n
+  "Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.univ.schema.json" : ArcaneDancerTraditionsUniv
   "Schema/ArmorTypes/ArmorTypes.l10n.schema.json" : ArmorTypesL10n
   "Schema/Aspects/Aspects.l10n.schema.json" : AspectsL10n
   "Schema/Attributes/Attributes.l10n.schema.json" : AttributesL10n
@@ -200,8 +204,10 @@ export interface YamlNameMap {
   AnimistForcesUniv : AnimistForcesUniv
   ArcaneBardTraditionsL10nOverride : ArcaneBardTraditionsL10n|undefined
   ArcaneBardTraditionsL10nDefault : ArcaneBardTraditionsL10n
+  ArcaneBardTraditionsUniv : ArcaneBardTraditionsUniv
   ArcaneDancerTraditionsL10nOverride : ArcaneDancerTraditionsL10n|undefined
   ArcaneDancerTraditionsL10nDefault : ArcaneDancerTraditionsL10n
+  ArcaneDancerTraditionsUniv : ArcaneDancerTraditionsUniv
   ArmorTypesL10nOverride : ArmorTypesL10n|undefined
   ArmorTypesL10nDefault : ArmorTypesL10n
   AspectsL10nOverride : AspectsL10n|undefined
@@ -349,7 +355,9 @@ export const name_to_schema = {
   AnimistForcesL10n: "Schema/AnimistForces/AnimistForces.l10n.schema.json",
   AnimistForcesUniv: "Schema/AnimistForces/AnimistForces.univ.schema.json",
   ArcaneBardTraditionsL10n: "Schema/ArcaneBardTraditions/ArcaneBardTraditions.l10n.schema.json",
+  ArcaneBardTraditionsUniv: "Schema/ArcaneBardTraditions/ArcaneBardTraditions.univ.schema.json",
   ArcaneDancerTraditionsL10n: "Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.l10n.schema.json",
+  ArcaneDancerTraditionsUniv: "Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.univ.schema.json",
   ArmorTypesL10n: "Schema/ArmorTypes/ArmorTypes.l10n.schema.json",
   AspectsL10n: "Schema/Aspects/Aspects.l10n.schema.json",
   AttributesL10n: "Schema/Attributes/Attributes.l10n.schema.json",
@@ -442,7 +450,9 @@ export const schema_to_data : { [K in keyof YamlSchemaMap] : string } = {
   "Schema/AnimistForces/AnimistForces.l10n.schema.json": "AnimistForces.yaml",
   "Schema/AnimistForces/AnimistForces.univ.schema.json": "AnimistForces.yaml",
   "Schema/ArcaneBardTraditions/ArcaneBardTraditions.l10n.schema.json": "ArcaneBardTraditions.yaml",
+  "Schema/ArcaneBardTraditions/ArcaneBardTraditions.univ.schema.json": "ArcaneBardTraditions.yaml",
   "Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.l10n.schema.json": "ArcaneDancerTraditions.yaml",
+  "Schema/ArcaneDancerTraditions/ArcaneDancerTraditions.univ.schema.json": "ArcaneDancerTraditions.yaml",
   "Schema/ArmorTypes/ArmorTypes.l10n.schema.json": "ArmorTypes.yaml",
   "Schema/Aspects/Aspects.l10n.schema.json": "Aspects.yaml",
   "Schema/Attributes/Attributes.l10n.schema.json": "Attributes.yaml",

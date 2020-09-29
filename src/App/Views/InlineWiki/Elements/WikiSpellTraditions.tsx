@@ -7,6 +7,8 @@ import { find, lookupF } from "../../../../Data/OrderedMap"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { MagicalTradition } from "../../../Constants/Groups"
 import { NumIdName } from "../../../Models/NumIdName"
+import { ArcaneBardTradition } from "../../../Models/Wiki/ArcaneBardTradition"
+import { ArcaneDancerTradition } from "../../../Models/Wiki/ArcaneDancerTradition"
 import { MagicalTradition as MagicalTraditionR } from "../../../Models/Wiki/MagicalTradition"
 import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
@@ -17,6 +19,8 @@ import { WikiProperty } from "../WikiProperty"
 const SDA = StaticData.A
 const NINA = NumIdName.A
 const MTA = MagicalTraditionR.A
+const ABTA = ArcaneBardTradition.A
+const ADTA = ArcaneDancerTradition.A
 
 interface Accessors<A extends RecordIBase<any>> {
   subtradition: (r: Record<A>) => List<number>
@@ -59,7 +63,7 @@ export const WikiSpellTraditions: FC = props => {
       <WikiProperty staticData={staticData} title="inlinewiki.musictradition">
         {pipe_ (
           subtrad,
-          mapMaybe (pipe (lookupF (SDA.arcaneBardTraditions (staticData)), fmap (NINA.name))),
+          mapMaybe (pipe (lookupF (SDA.arcaneBardTraditions (staticData)), fmap (ABTA.name))),
           sortStrings (staticData),
           intercalate (", ")
         )}
@@ -72,7 +76,7 @@ export const WikiSpellTraditions: FC = props => {
       <WikiProperty staticData={staticData} title="inlinewiki.musictradition">
         {pipe_ (
           subtrad,
-          mapMaybe (pipe (lookupF (SDA.arcaneDancerTraditions (staticData)), fmap (NINA.name))),
+          mapMaybe (pipe (lookupF (SDA.arcaneDancerTraditions (staticData)), fmap (ADTA.name))),
           sortStrings (staticData),
           intercalate (", ")
         )}

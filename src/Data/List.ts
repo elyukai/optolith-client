@@ -1681,7 +1681,7 @@ List.notNullStr = notNullStr
  * ```
  */
 export const list =
-  <A, B> (def: B) => (f: (x: A) => (xs: List<A>) => B) => (xs: List<A>): B =>
+  <B> (def: B) => <A> (f: (x: A) => (xs: List<A>) => B) => (xs: List<A>): B =>
     ReList.Extra_list (def, uncurryN (f), xs)
 
 List.list = list

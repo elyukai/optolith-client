@@ -1,3 +1,57 @@
+## 1.4.0
+
+Veuillez vérifier les personnages pour lesquels vous avez ajouté la CS *intuition tactique* ou la CS *détection des embuscades*. Vous remarquerez qu'elle n'a pas son ancien nom. Ceci est dû à une erreur (mentionnée ci-dessous) où les noms de ces deux capacités spéciales ont été échangés. La représentation interne ne peut pas être modifiée et les entrées doivent donc être "renommées". Cela devrait également corriger les prérequis "incorrects" des deux entrées.
+
+### Fonctionnalités
+
+- Traduction italienne [#667](https://github.com/elyukai/optolith-client/issues/667) [#610](https://github.com/elyukai/optolith-client/issues/610)
+- Fond de papier facultatif pour la feuille de personnages. [#36](https://github.com/elyukai/optolith-client/issues/36)
+- Option de zoom de la vue sur la feuille de personnages. [#665](https://github.com/elyukai/optolith-client/issues/665)
+- Ajouter/Soustraire de l'argent du porte-monnaie. [#666](https://github.com/elyukai/optolith-client/issues/666)
+- Créez des avantages, des inconvénients et des capacités spéciales sur mesure avec un nom et une valeur en PAV (solution temporaire). [#632](https://github.com/elyukai/optolith-client/issues/632)
+
+### Améliorations
+
+- Le poids est maintenant indiqué dans une colonne spécifique dans l'onglet équipement. [#305](https://github.com/elyukai/optolith-client/issues/305)
+- Les feuilles de combat inutiles ne sont plus utilisées, cela dépend maintenant de l'armure dont dispose le personnage. Par défaut, l'armure normale est utilisée si aucune armure n'est présente. [#407](https://github.com/elyukai/optolith-client/issues/407)
+- Vous pouvez maintenant cliquer sur les noms des entrées pour afficher le texte de leurs règles. [#556](https://github.com/elyukai/optolith-client/issues/556)
+
+### Bugs rectifiés
+
+- Les variantes de la profession de *Prêtre de Boron* ont eu de mauvaises modifications de compétences. [#548](https://github.com/elyukai/optolith-client/issues/548)
+- La profession *Magicien blanc (Epée & Bâton)* avait une valeur en PAV erronée et une modification de compétence supplémentaire. [#568](https://github.com/elyukai/optolith-client/issues/568)
+- Les professions communes fixes d'une culture seront désormais affichées même si elles ne sont pas issues des **règles de base**. [#563](https://github.com/elyukai/optolith-client/issues/563)
+- L'interface peut être réduite. [#487](https://github.com/elyukai/optolith-client/issues/487)
+- Les armes de la technique de combat *Lances* n'étaient pas indiquées sur la fiche de personnage. [#662](https://github.com/elyukai/optolith-client/issues/662)
+- Les valeurs d'attributs minimum étaient ignorées pour les valeurs de compétence élevées. Le maximum de la valeur de compétence est l'attribut lié le plus élevé&thinsp;+&thinsp;2, donc l'attribut le plus élevé doit avoir une valeur minimale de VC&thinsp;&minus;&thinsp;2. [#630](https://github.com/elyukai/optolith-client/issues/630)
+- Les noms des CS *Intuition tactique* et *Détection des embuscades* ont été échangés. [#636](https://github.com/elyukai/optolith-client/issues/636)
+- Le nouveau domaine d'application *Publications professionnelles* pour le talent *Droit* avait un prérequis de capacité spéciale erronée. [#680](https://github.com/elyukai/optolith-client/issues/680)
+- Certains éléments de la liste étaient plus larges que la liste actuelle. [#683](https://github.com/elyukai/optolith-client/pull/683)
+- Les en-têtes de liste n'étaient pas centrés par défaut. [#637](https://github.com/elyukai/optolith-client/issues/637)
+- Les PV dépensés de façon permanente ne permettaient pas d'acheter des PV supplémentaires. [#606](https://github.com/elyukai/optolith-client/issues/606)
+- On ne pouvait pas ajouter de PV supplémentaire si la CON est de 8 et que rien n'en dépend. [#694](https://github.com/elyukai/optolith-client/issues/694)
+- La CS *Maîtrise de l'aspect* n'apparait pas même avec trois liturgies de VC 10 ou plus. [#591](https://github.com/elyukai/optolith-client/issues/591)
+- La vérification des mises à jour et le bouton de vérification des mises à jour sont maintenant désactivés sur macOS, car les mises à jour ne sont pas possibles sur macOS actuellement. [#589](https://github.com/elyukai/optolith-client/issues/589)
+- Techniques de combat mal applicables pour la CS *détection des embuscades*. [#658](https://github.com/elyukai/optolith-client/issues/658)
+- Les alertes de mise à jour automatique étaient activées sur Linux même lorsqu'il n'y avait pas de mises à jour automatiques directes disponibles. [#573](https://github.com/elyukai/optolith-client/issues/573)
+- Le dialogue de sauvegarde pour l'exportation d'un caractère en JSON n'a pas ajouté l'extension de fichier au nom de fichier suggéré. [#718](https://github.com/elyukai/optolith-client/issues/718)
+
+### API
+
+Il y a des changements importants et radicaux à venir avec la prochaine version, donc si vous utilisez la source Optolith ou enregistrez des données, je vous recommande de venir sur [Discord](https://discord.gg/wfdgB9g) afin que je puisse vous dire ce qui va être changé en détail. Puisque de plus en plus de personnes dépendent des données d'Optolith, je vais maintenant suivre strictement le versionnement sémantique afin que vous puissiez vous fier à la compatibilité des fichiers sources en vérifiant simplement le numéro de version. Il y aura un nouveau format pour les héros ainsi que pour les données sources. Vous pouvez également donner votre avis sur les changements, puisqu'ils ne sont pas encore complètement terminés &ndash; mais je pense qu'il serait quand même judicieux de vérifier les changements le plus tôt possible. La prochaine version majeure est encore un peu loin, vous aurez donc tout le temps d'ajuster votre logiciel.
+
+### Remerciements
+
+Enfin, un grand **merci** aux personnes suivantes sur GitHub qui ont contribué à cette publication !
+
+- [Jonas (@Rahjenaos)](https://github.com/Rahjenaos)
+- [Jordok (@Jordok)](https://github.com/Jordok)
+- [JoveToo (@JoveToo)](https://github.com/JoveToo)
+- [Lorenz Cuno Klopfenstein (@LorenzCK)](https://github.com/LorenzCK)
+- [manuelstengelberger (@manuelstengelberger)](https://github.com/manuelstengelberger)
+- [Philipp A. (@flying-sheep)](https://github.com/flying-sheep)
+- [ZeSandman (@ZeSandman)](https://github.com/ZeSandman)
+
 ## 1.3.2
 
 ### Bugs rectifiés

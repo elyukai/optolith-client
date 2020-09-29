@@ -15,9 +15,12 @@ interface Props {
   fullWidth?: boolean
   hint?: Maybe<string> | string
   label?: Maybe<string> | string
+  max?: string
+  min?: string
   type?: string
   value?: string
   valid?: boolean
+  checkDirectInput?: (text: string) => boolean
   onChange (newText: string): void
   onKeyDown? (event: InputKeyEvent): void
   onKeyUp? (event: InputKeyEvent): void
@@ -34,6 +37,9 @@ export const TextFieldLazy: React.FC<Props> = props => {
     fullWidth,
     hint,
     label,
+    max,
+    min,
+    checkDirectInput,
     onChange,
     onKeyDown,
     onKeyUp,
@@ -64,11 +70,14 @@ export const TextFieldLazy: React.FC<Props> = props => {
   const handleChange =
     React.useCallback (
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!orN (disabled)) {
+        if (
+          !orN (disabled)
+          && (typeof checkDirectInput !== "function" || checkDirectInput (e.target.value))
+        ) {
           setValue (e.target.value)
         }
       },
-      [ disabled ]
+      [ disabled, checkDirectInput ]
     )
 
   const handleBlur =
@@ -96,6 +105,8 @@ export const TextFieldLazy: React.FC<Props> = props => {
       >
       <input
         type={type}
+        min={min}
+        max={max}
         value={value}
         onChange={handleChange}
         onKeyPress={orN (disabled) ? undefined : onKeyDown}

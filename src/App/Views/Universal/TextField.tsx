@@ -15,6 +15,8 @@ export interface TextFieldProps {
   fullWidth?: boolean
   hint?: Maybe<string> | string
   label?: Maybe<string> | string
+  max?: string
+  min?: string
   type?: string
   value?: string
   valid?: boolean
@@ -33,6 +35,8 @@ export const TextField: React.FC<TextFieldProps> = props => {
     error,
     fullWidth,
     label,
+    max,
+    min,
     onChange,
     onKeyDown,
     onKeyUp,
@@ -78,6 +82,8 @@ export const TextField: React.FC<TextFieldProps> = props => {
       >
       <input
         type={type}
+        min={min}
+        max={max}
         value={value}
         onChange={handleChange}
         onKeyPress={orN (disabled) ? undefined : onKeyDown}

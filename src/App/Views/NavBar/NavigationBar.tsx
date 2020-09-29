@@ -34,7 +34,6 @@ const toggleDevtools = () => {
 export interface NavigationBarOwnProps {
   mhero: Maybe<HeroModelRecord>
   staticData: StaticDataRecord
-  platform: string
   checkForUpdates (): void
 }
 
@@ -88,7 +87,6 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
     isSpellcaster,
     isBlessedOne,
     isSettingsOpen,
-    platform,
     checkForUpdates,
   } = props
 
@@ -176,7 +174,6 @@ export const NavigationBar: React.FC<NavigationBarProps> = props => {
           <SettingsContainer
             staticData={staticData}
             isSettingsOpen={isSettingsOpen}
-            platform={platform}
             close={closeSettings}
             checkForUpdates={checkForUpdates}
             />

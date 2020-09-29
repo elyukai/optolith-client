@@ -16,7 +16,6 @@ import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I1
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybe } from "../../../Utilities/ReactUtils"
 import { LabelBox } from "../../Universal/LabelBox"
-import { Options } from "../../Universal/Options"
 import { TextBox } from "../../Universal/TextBox"
 import { Sheet } from "../Sheet"
 import { SheetWrapper } from "../SheetWrapper"
@@ -31,6 +30,7 @@ interface Props {
   purse: Maybe<Record<Purse>>
   totalPrice: Maybe<number>
   totalWeight: Maybe<number>
+  useParchment: boolean
 }
 
 export const BelongingsSheet: React.FC<Props> = props => {
@@ -42,6 +42,7 @@ export const BelongingsSheet: React.FC<Props> = props => {
     totalPrice: maybeTotalPrice,
     totalWeight: maybeTotalWeight,
     pet,
+    useParchment,
   } = props
 
   const strength =
@@ -68,12 +69,12 @@ export const BelongingsSheet: React.FC<Props> = props => {
 
   return (
     <SheetWrapper>
-      <Options />
       <Sheet
         id="belongings"
         title={translate (staticData) ("sheets.belongingssheet.title")}
         attributes={attributes}
         staticData={staticData}
+        useParchment={useParchment}
         >
         <div className="upper">
           <TextBox

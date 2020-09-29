@@ -1,5 +1,5 @@
 import { ProgressInfo } from "builder-util-runtime"
-import { ipcRenderer, remote } from "electron"
+import { ipcRenderer, remote, webFrame } from "electron"
 import { UpdateInfo } from "electron-updater"
 import * as React from "react"
 import { render } from "react-dom"
@@ -28,6 +28,9 @@ import { List } from "./Data/List"
 import { Just } from "./Data/Maybe"
 import { uncurryN } from "./Data/Tuple/Curry"
 import { Unit } from "./Data/Unit"
+
+webFrame.setZoomFactor (1)
+webFrame.setVisualZoomLevelLimits (1, 1)
 
 const nativeAppReducer =
   uncurryN (pipe ((x: AppStateRecord | undefined) => x === undefined ? AppState.default : x,
@@ -136,7 +139,7 @@ store
 
     return Unit
   })
-  .catch (() => undefined)
+  .catch (console.error)
 
 render (
   <Provider store={store}>
@@ -169,18 +172,20 @@ ipcRenderer.addListener ("auto-updater-error", (_event: Event, err: Error | {}) 
 
   dispatch (setUpdateDownloadProgress ())
 
+  console.error (err)
+
   if (isError (err)) {
     dispatch (addErrorAlert (AlertOptions ({
                               title: Just (`${err.name} during update`),
                               message: `An error occured during auto-update:\n${err.message}`,
                             })))
-      .catch (() => undefined)
+      .catch (console.error)
   }
   else {
     dispatch (addAlert (AlertOptions ({
                          title: Just ("Server Error"),
                          message: `The server does not respond.`,
                        })))
-      .catch (() => undefined)
+      .catch (console.error)
   }
 })

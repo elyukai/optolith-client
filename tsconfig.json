@@ -3,11 +3,10 @@
     "allowJs": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "incremental": true,
     "importHelpers": true,
     "jsx": "react",
     "lib": ["esnext", "dom"],
-    "module": "ES2015",
+    "module": "ES2020",
     "moduleResolution": "node",
     "noEmitHelpers": true,
     "noFallthroughCasesInSwitch": true,
@@ -29,7 +28,6 @@
     "app/**/*.d.ts"
   ],
   "exclude": [
-    "node_modules",
-    "**/__tests__/**"
+    "node_modules"
   ]
 }

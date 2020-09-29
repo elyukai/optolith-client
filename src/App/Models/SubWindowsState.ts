@@ -11,4 +11,5 @@ export interface SubWindowsState {
   isSettingsOpen: boolean
   isEditCharacterAvatarOpen: boolean
   isEditPetAvatarOpen: boolean
+  isAddRemoveMoneyOpen: boolean
 }

@@ -1,4 +1,5 @@
 /* eslint "@typescript-eslint/type-annotation-spacing": [2, { "before": true, "after": true }] */
+import { PactL10n } from "../../../../../app/Database/Schema/Pacts/Pacts.l10n"
 import { second } from "../../../../Data/Either"
 import { fromArray } from "../../../../Data/List"
 import { fromMap } from "../../../../Data/OrderedMap"
@@ -9,7 +10,6 @@ import { PactType } from "../../../Models/Wiki/PactType"
 import { pipe } from "../../pipe"
 import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
-import { PactL10n } from "../Schema/Pacts/Pacts.l10n"
 import { YamlFileConverter } from "../ToRecordsByFile"
 import { mergeBy } from "../ZipById"
 

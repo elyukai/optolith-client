@@ -19,8 +19,6 @@ import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { compressList } from "../../../Utilities/Activatable/activatableNameUtils"
 import { translate } from "../../../Utilities/I18n"
 import { pipe_ } from "../../../Utilities/pipe"
-import { BorderButton } from "../../Universal/BorderButton"
-import { Options } from "../../Universal/Options"
 import { TextBox } from "../../Universal/TextBox"
 import { Sheet } from "../Sheet"
 import { SheetWrapper } from "../SheetWrapper"
@@ -44,7 +42,9 @@ interface Props {
   profile: Record<PersonalData>
   race: Maybe<Record<Race>>
   sex: Maybe<Sex>
+  useParchment: boolean
   printToPDF (): void
+  switchUseParchment (): void
 }
 
 export const MainSheet: React.FC<Props> = props => {
@@ -63,25 +63,19 @@ export const MainSheet: React.FC<Props> = props => {
     professionName,
     profile,
     staticData,
-    printToPDF,
     race,
     sex,
+    useParchment,
   } = props
 
   return (
     <SheetWrapper>
-      <Options>
-        <BorderButton
-          className="print-document"
-          label={translate (staticData) ("sheets.printtopdfbtn")}
-          onClick={printToPDF}
-          />
-      </Options>
       <Sheet
         id="main-sheet"
         title={translate (staticData) ("sheets.mainsheet.title")}
         attributes={attributes}
         staticData={staticData}
+        useParchment={useParchment}
         >
         <MainSheetPersonalData
           ap={ap}

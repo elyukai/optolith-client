@@ -16,7 +16,6 @@ import { SegmentedControls } from "../Universal/SegmentedControls"
 export interface SettingsOwnProps {
   staticData: StaticDataRecord
   isSettingsOpen: boolean
-  platform: string
   close (): void
   checkForUpdates (): void
 }
@@ -30,6 +29,7 @@ export interface SettingsStateProps {
   isEditingHeroAfterCreationPhaseEnabled: boolean
   areAnimationsEnabled: boolean
   languages: List<Record<DropdownOption<string>>>
+  isCheckForUpdatesDisabled: boolean
 }
 
 export interface SettingsDispatchProps {
@@ -61,9 +61,9 @@ export const Settings: React.FC<Props> = props => {
     switchEnableEditingHeroAfterCreationPhase,
     switchEnableAnimations,
     areAnimationsEnabled,
-    platform,
     checkForUpdates,
     languages,
+    isCheckForUpdatesDisabled,
   } = props
 
   return (
@@ -129,15 +129,12 @@ export const Settings: React.FC<Props> = props => {
         label={translate (staticData) ("settings.showanimations")}
         onClick={switchEnableAnimations}
         />
-      {(platform === "win32" || platform === "darwin")
-        ? (
-          <BorderButton
-            label={translate (staticData) ("settings.checkforupdatesbtn")}
-            onClick={checkForUpdates}
-            autoWidth
-            />
-        )
-        : null}
+      <BorderButton
+        label={translate (staticData) ("settings.checkforupdatesbtn")}
+        onClick={checkForUpdates}
+        autoWidth
+        disabled={isCheckForUpdatesDisabled}
+        />
     </Dialog>
   )
 }

@@ -154,6 +154,8 @@ export interface Config {
   equipmentSortOrder: EquipmentSortOptions
   equipmentGroupVisibilityFilter: EquipmentGroup
   sheetCheckAttributeValueVisibility: Maybe<boolean>
+  sheetUseParchment: Maybe<boolean>
+  sheetZoomFactor: number
   enableActiveItemHints: boolean
   locale: Maybe<string>
   fallbackLocale: Maybe<string>

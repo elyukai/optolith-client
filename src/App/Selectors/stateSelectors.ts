@@ -297,6 +297,8 @@ export const getIsEditCharacterAvatarOpen =
 export const getIsEditPetAvatarOpen =
   (state: AppState) => state.ui.subwindows.isEditPetAvatarOpen
 
+export const getIsAddRemoveMoneyOpen =
+  pipe (ASA.ui, UIA.subwindows, SubW.isAddRemoveMoneyOpen)
 
 export const getAdvantagesFilterText =
   (state: AppState) => state.ui.filters.advantagesFilterText

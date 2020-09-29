@@ -1,1 +1,1 @@
-export { DerivedCharacteristic } from "../DerivedCharacteristic.gen";
+export { DerivedCharacteristic } from "../DerivedCharacteristic.gen"

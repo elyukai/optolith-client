@@ -1,5 +1,5 @@
+import { DerivedCharacteristicId } from "../../../../app/Database/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { isJust } from "../../../Data/Maybe"
-import { DerivedCharacteristicId } from "../../Utilities/YAML/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 
 type DCId = DerivedCharacteristicId
 

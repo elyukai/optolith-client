@@ -1,14 +1,16 @@
 import { app, BrowserWindow, ipcMain } from "electron"
 import * as log from "electron-log"
 import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater"
+import windowStateKeeper from "electron-window-state"
 import { promises } from "fs"
 import * as path from "path"
 import { prerelease } from "semver"
 import * as url from "url"
+import { isUpdaterEnabled } from "./App/Utilities/CheckForUpdatesMain"
 import { existsFile } from "./System/IO"
-import windowStateKeeper from "electron-window-state"
 
 app.setAppUserModelId ("lukasobermann.optolith")
+app.allowRendererProcessReuse = false
 
 const setDerivedUserDataPath = async () => {
   const isPrerelease = prerelease (app.getVersion ()) !== null
@@ -71,56 +73,58 @@ const createWindow = async () => {
     ipcMain.addListener ("loading-done", () => {
       let cancellationToken: CancellationToken | undefined = undefined
 
-      autoUpdater
-        .checkForUpdates ()
-        .then (res => {
-          if (res.cancellationToken !== undefined) {
-            const { cancellationToken: token } = res
-            cancellationToken = token
-            mainWindow.webContents.send ("update-available", res.updateInfo)
-          }
-        })
-        .catch (() => {})
-
-      autoUpdater.addListener ("update-available", (info: UpdateInfo) => {
-        mainWindow.webContents.send ("update-available", info)
-        autoUpdater.removeAllListeners ("update-not-available")
-      })
-
-      ipcMain.addListener ("download-update", () => {
-        autoUpdater
-          .downloadUpdate (cancellationToken)
-          .catch (() => {})
-      })
-
-      ipcMain.addListener ("check-for-updates", () => {
+      if (isUpdaterEnabled ()) {
         autoUpdater
           .checkForUpdates ()
           .then (res => {
-            const { cancellationToken: token } = res
-
-            if (token === undefined) {
-              mainWindow.webContents.send ("update-not-available")
-            }
-            else {
+            if (res.cancellationToken !== undefined) {
+              const { cancellationToken: token } = res
               cancellationToken = token
               mainWindow.webContents.send ("update-available", res.updateInfo)
             }
           })
           .catch (() => {})
-      })
 
-      autoUpdater.signals.progress (progressObj => {
-        mainWindow.webContents.send ("download-progress", progressObj)
-      })
+        autoUpdater.addListener ("update-available", (info: UpdateInfo) => {
+          mainWindow.webContents.send ("update-available", info)
+          autoUpdater.removeAllListeners ("update-not-available")
+        })
 
-      autoUpdater.addListener ("error", (err: Error) => {
-        mainWindow.webContents.send ("auto-updater-error", err)
-      })
+        ipcMain.addListener ("download-update", () => {
+          autoUpdater
+            .downloadUpdate (cancellationToken)
+            .catch (() => {})
+        })
 
-      autoUpdater.signals.updateDownloaded (() => {
-        autoUpdater.quitAndInstall ()
-      })
+        ipcMain.addListener ("check-for-updates", () => {
+          autoUpdater
+            .checkForUpdates ()
+            .then (res => {
+              const { cancellationToken: token } = res
+
+              if (token === undefined) {
+                mainWindow.webContents.send ("update-not-available")
+              }
+              else {
+                cancellationToken = token
+                mainWindow.webContents.send ("update-available", res.updateInfo)
+              }
+            })
+            .catch (() => {})
+        })
+
+        autoUpdater.signals.progress (progressObj => {
+          mainWindow.webContents.send ("download-progress", progressObj)
+        })
+
+        autoUpdater.addListener ("error", (err: Error) => {
+          mainWindow.webContents.send ("auto-updater-error", err)
+        })
+
+        autoUpdater.signals.updateDownloaded (() => {
+          autoUpdater.quitAndInstall ()
+        })
+      }
     })
   }
   catch (err) {

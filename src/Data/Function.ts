@@ -16,7 +16,7 @@ export type ident<A> = (x: A) => A
  *
  * The K combinator.
  */
-export const cnst = <A> (x: A) => (): A => x
+export const cnst = <A> (x: A) => (_?: any): A => x
 
 /**
  * `(&) :: a -> (a -> b) -> b`

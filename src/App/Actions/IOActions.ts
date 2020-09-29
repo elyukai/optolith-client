@@ -50,6 +50,10 @@ export const requestConfigSave: ReduxAction<Promise<boolean>> =
       ...toObject (uiSettingsState),
       sheetCheckAttributeValueVisibility:
         Just (UISSA.sheetCheckAttributeValueVisibility (uiSettingsState)),
+      sheetUseParchment:
+        Just (UISSA.sheetUseParchment (uiSettingsState)),
+      sheetZoomFactor:
+        UISSA.sheetZoomFactor (uiSettingsState),
       theme: Just (UISSA.theme (uiSettingsState)),
       enableEditingHeroAfterCreationPhase:
         Just (UISSA.enableEditingHeroAfterCreationPhase (uiSettingsState)),
@@ -326,7 +330,7 @@ export const requestHeroExport =
         filters: [
           { name: "JSON", extensions: [ "json" ] },
         ],
-        defaultPath: hero.name.replace (/\//u, "/"),
+        defaultPath: `${hero.name.replace (/\//u, "/")}.json`,
       })
 
       if (isJust (pmfilepath)) {

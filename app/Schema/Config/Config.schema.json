@@ -73,6 +73,12 @@
         "sheetCheckAttributeValueVisibility": {
           "type": "boolean"
         },
+        "sheetUseParchment": {
+          "type": "boolean"
+        },
+        "sheetZoomFactor": {
+          "type": "number"
+        },
         "enableActiveItemHints": {
           "type": "boolean"
         },

@@ -24,6 +24,8 @@ export interface UISettingsState {
   equipmentGroupVisibilityFilter: EquipmentGroup
   enableActiveItemHints: boolean
   sheetCheckAttributeValueVisibility: boolean
+  sheetUseParchment: boolean
+  sheetZoomFactor: number
   theme: Theme
   enableEditingHeroAfterCreationPhase: boolean
   meleeItemTemplatesCombatTechniqueFilter: Maybe<MeleeCombatTechniqueId>

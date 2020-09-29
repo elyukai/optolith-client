@@ -3,7 +3,7 @@ import { flip, ident, thrush } from "../../Data/Function"
 import { fmap, fmapF } from "../../Data/Functor"
 import { set } from "../../Data/Lens"
 import { any, append, consF, filter, foldr, ifilter, imap, List, map, maximum, subscript, sum } from "../../Data/List"
-import { altF_, bind, bindF, fromMaybe, guard, isJust, Just, liftM2, mapMaybe, Maybe, maybe, thenF } from "../../Data/Maybe"
+import { altF_, bind, bindF, fromMaybe, guard, isJust, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, thenF } from "../../Data/Maybe"
 import { add, dec, multiply, subtractBy } from "../../Data/Num"
 import { elems, lookup, lookupF } from "../../Data/OrderedMap"
 import { OmitName, Record } from "../../Data/Record"
@@ -442,30 +442,33 @@ export const getMeleeWeapons = createMaybeSelector (
                         const damageFlat =
                           Maybe.sum (liftM2 (add) (IA.damageFlat (full_item)) (damage_flat_bonus))
 
-                        return fmapF (mprimary_attrs)
-                                     (primary_attrs =>
-                                       MeleeWeapon ({
-                                         id: IA.id (full_item),
-                                         name: IA.name (full_item),
-                                         combatTechnique: CTA.name (wiki_entry),
-                                         primary: map (AA.short) (primary_attrs),
-                                         primaryBonus: damage_thresholds,
-                                         damageDiceNumber: IA.damageDiceNumber (full_item),
-                                         damageDiceSides: IA.damageDiceSides (full_item),
-                                         damageFlat,
-                                         atMod: IA.at (full_item),
-                                         at,
-                                         paMod: IA.pa (full_item),
-                                         pa,
-                                         reach: IA.reach (full_item),
-                                         bf: CTA.bpr (wiki_entry)
-                                           + Maybe.sum (IA.stabilityMod (full_item)),
-                                         loss: IA.loss (full_item),
-                                         weight: IA.weight (full_item),
-                                         isImprovisedWeapon:
-                                           isJust (IA.improvisedWeaponGroup (full_item)),
-                                         isTwoHandedWeapon: IA.isTwoHandedWeapon (full_item),
-                                       }))
+                        return isJust (mprimary_attrs)
+                          || CTA.id (wiki_entry) === CombatTechniqueId.Lances
+                          ? Just (MeleeWeapon ({
+                              id: IA.id (full_item),
+                              name: IA.name (full_item),
+                              combatTechnique: CTA.name (wiki_entry),
+                              primary: maybe (List<string> ())
+                                             (map (AA.short))
+                                             (mprimary_attrs),
+                              primaryBonus: damage_thresholds,
+                              damageDiceNumber: IA.damageDiceNumber (full_item),
+                              damageDiceSides: IA.damageDiceSides (full_item),
+                              damageFlat,
+                              atMod: IA.at (full_item),
+                              at,
+                              paMod: IA.pa (full_item),
+                              pa,
+                              reach: IA.reach (full_item),
+                              bf: CTA.bpr (wiki_entry)
+                                + Maybe.sum (IA.stabilityMod (full_item)),
+                              loss: IA.loss (full_item),
+                              weight: IA.weight (full_item),
+                              isImprovisedWeapon:
+                                isJust (IA.improvisedWeaponGroup (full_item)),
+                              isTwoHandedWeapon: IA.isTwoHandedWeapon (full_item),
+                            }))
+                          : Nothing
                       }
                     )
                   )

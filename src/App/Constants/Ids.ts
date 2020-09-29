@@ -68,6 +68,7 @@ export enum EnergyId {
 }
 
 export enum AdvantageId {
+  CustomAdvantage = "ADV_0",
 
   // Begabung
   Aptitude = "ADV_4",
@@ -110,6 +111,7 @@ export enum AdvantageId {
 export const AdvantageIdsNoMaxInfl = List<AdvantageId> (AdvantageId.Einkommen)
 
 export enum DisadvantageId {
+  CustomDisadvantage = "DISADV_0",
   AfraidOf = "DISADV_1",
   Poor = "DISADV_2",
   Slow = "DISADV_4",
@@ -259,6 +261,7 @@ export enum RangedCombatTechniqueId {
 }
 
 export enum SpecialAbilityId {
+  CustomSpecialAbility = "SA_0",
   SkillSpecialization = "SA_9",
   TerrainKnowledge = "SA_12",
   CraftInstruments = "SA_17",

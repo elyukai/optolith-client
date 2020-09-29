@@ -24,6 +24,8 @@ type Action = SetTabAction
             | SubwindowsActions.OpenEditPetAvatarAction
             | SubwindowsActions.CloseEditCharacterAvatarAction
             | SubwindowsActions.CloseEditPetAvatarAction
+            | SubwindowsActions.OpenAddRemoveMoneyAction
+            | SubwindowsActions.CloseAddRemoveMoneyAction
 
 export const subwindowsReducer =
   (action: Action): ident<Record<SubWindowsState>> => {
@@ -90,6 +92,14 @@ export const subwindowsReducer =
       case ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS:
         return set (SubWindowsStateL.updateDownloadProgress)
                    (Maybe (action.payload))
+
+      case ActionTypes.OPEN_ADD_REMOVE_MONEY:
+        return set (SubWindowsStateL.isAddRemoveMoneyOpen)
+                   (true)
+
+      case ActionTypes.CLOSE_ADD_REMOVE_MONEY:
+        return set (SubWindowsStateL.isAddRemoveMoneyOpen)
+                   (false)
 
       default:
         return ident

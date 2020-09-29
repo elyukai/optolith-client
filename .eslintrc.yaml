@@ -192,7 +192,7 @@ rules:
     - code: 100
       ignoreComments: true
       ignoreTemplateLiterals: true
-      ignorePattern: "^import |^export \\{(.*?)\\}|^ \\* "
+      ignorePattern: "^import |^export \\{(.*?)\\}|^ \\* |^ *it ?\\(\"\\w+"
   max-statements-per-line: [2, { max: 2 }]
   multiline-ternary:
     - 2

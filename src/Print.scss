@@ -69,10 +69,10 @@
           padding: 0;
 
           .sheet {
-            height: 287.1mm;
+            height: 296.8mm;
             width: 210mm;
             margin: 0;
-            padding: 8.9mm 8.9mm 0;
+            padding: 8.9mm 8.9mm 8.9mm;
             -webkit-print-color-adjust: exact;
             page-break-inside: avoid;
             overflow: hidden;
@@ -105,9 +105,21 @@
 
   .sheet-wrapper {
     display: block;
+    margin-top: 0 !important;
 
-    &:not(:first-child) {
-      margin-top: 0;
+    &.zoom-100,
+    &.zoom-125,
+    &.zoom-150,
+    &.zoom-175,
+    &.zoom-200 {
+      .sheet-wrapper {
+        height: 296.8mm;
+        width: 210mm;
+  
+        .sheet {
+          transform: scale(1);
+        }
+      }
     }
   }
 }

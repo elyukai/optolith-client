@@ -6,8 +6,8 @@ import { fmap, fmapF } from "../../../Data/Functor"
 import { over, set } from "../../../Data/Lens"
 import { cons, countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscriptF, sum, take } from "../../../Data/List"
 import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, maybeToUndefined, Nothing, or, then, thenF } from "../../../Data/Maybe"
-import { dec, gte, max, min, multiply, negate } from "../../../Data/Num"
-import { elems, lookupF } from "../../../Data/OrderedMap"
+import { dec, gt, gte, max, min, multiply, negate } from "../../../Data/Num"
+import { lookupF } from "../../../Data/OrderedMap"
 import { fromDefault, makeLenses, Record } from "../../../Data/Record"
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple"
 import { Category } from "../../Constants/Categories"
@@ -15,7 +15,6 @@ import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/I
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
-import { NumIdName } from "../../Models/NumIdName"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { InactiveActivatable, InactiveActivatableA_ } from "../../Models/View/InactiveActivatable"
 import { Disadvantage } from "../../Models/Wiki/Disadvantage"
@@ -29,11 +28,12 @@ import { ActivatableAddListItemSelectedOptions } from "../../Views/Activatable/A
 import { Dropdown } from "../../Views/Universal/Dropdown"
 import { TextField } from "../../Views/Universal/TextField"
 import { getActiveWithNoCustomCost } from "../AdventurePoints/activatableCostUtils"
+import { mdash } from "../Chars"
 import { translate } from "../I18n"
 import { getLevelElementsWithMin } from "../levelUtils"
 import { toInt } from "../NumberUtils"
 import { pipe, pipe_ } from "../pipe"
-import { isNumber, misNumberM, misStringM } from "../typeCheckUtils"
+import { isNumber, isStringM, misNumberM, misStringM } from "../typeCheckUtils"
 import { getWikiEntry, isSkillishWikiEntry } from "../WikiUtils"
 import { getActiveSelectionsMaybe, getSelectOptionCost, getSelectOptionName } from "./selectionUtils"
 
@@ -101,7 +101,6 @@ const AAOL = ActivatableActivationOptionsL
 const PABYA = PropertiesAffectedByState.A
 const PABYL = PropertiesAffectedByStateL
 const IACEL = InactiveActivatableControlElementsL
-const NINA = NumIdName.A
 const SAA = SpecialAbility.A
 
 /**
@@ -164,6 +163,23 @@ const getPropsForEntryWithSkillSel =
       })
     )
 
+/**
+ * Takes the select options from an entry and removes the entries with a from
+ * all `Just`s extracted ids in `excludeIds`.
+ */
+const excludeSelectOptionsByMaybeId = (
+  excludeIds: List<Maybe<string | number>>,
+  entry: Record<InactiveActivatable>
+) => {
+  const safeExcludeIds = mapMaybe (bindF (isStringM)) (excludeIds)
+
+  return pipe_ (
+    entry,
+    IAA.selectOptions,
+    fmap (filter (selectOption => notElem (SOA.id (selectOption)) (safeExcludeIds)))
+  )
+}
+
 interface IdSpecificAffectedAndDispatchPropsInputHandlers {
   handleSelect (option: Maybe<string | number>): void
   handleInput (text: string): void
@@ -198,12 +214,7 @@ export const getIdSpecificAffectedAndDispatchProps =
       case SpecialAbilityId.wissensdurst:
       case SpecialAbilityId.lieblingsliturgie:
       case SpecialAbilityId.wegDerGelehrten:
-      case SpecialAbilityId.wegDerKuenstlerin:
-      case SpecialAbilityId.handwerkskunst:
-      case SpecialAbilityId.kindDerNatur:
-      case SpecialAbilityId.koerperlichesGeschick:
-      case SpecialAbilityId.sozialeKompetenz:
-      case SpecialAbilityId.universalgenie: {
+      case SpecialAbilityId.wegDerKuenstlerin: {
         return getPropsForEntryWithSkillSel (misStringM)
                                             (staticData)
                                             (mselected)
@@ -462,56 +473,6 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.traditionArcaneBard: {
-        return Pair (
-          ActivatableActivationOptions ({
-            id: IAA.id (entry),
-            selectOptionId1: mselected,
-            cost: Nothing,
-          }),
-          PropertiesAffectedByState ({
-            currentCost: getPlainCostFromEntry (entry),
-            firstSelectOptions: pipe_ (
-              staticData,
-              SDA.arcaneBardTraditions,
-              elems,
-              map (x => SelectOption ({
-                          id: NINA.id (x),
-                          name: NINA.name (x),
-                          src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
-                          errata: Nothing,
-                        })),
-              Just
-            ),
-          })
-        )
-      }
-
-      case SpecialAbilityId.traditionArcaneDancer: {
-        return Pair (
-          ActivatableActivationOptions ({
-            id: IAA.id (entry),
-            selectOptionId1: mselected,
-            cost: Nothing,
-          }),
-          PropertiesAffectedByState ({
-            currentCost: getPlainCostFromEntry (entry),
-            firstSelectOptions: pipe_ (
-              staticData,
-              SDA.arcaneDancerTraditions,
-              elems,
-              map (x => SelectOption ({
-                          id: NINA.id (x),
-                          name: NINA.name (x),
-                          src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
-                          errata: Nothing,
-                        })),
-              Just
-            ),
-          })
-        )
-      }
-
       case SpecialAbilityId.languageSpecializations: {
         const moption = getCurrentSelectOption (entry) (mselected)
 
@@ -585,6 +546,39 @@ export const getIdSpecificAffectedAndDispatchProps =
             // *other* select option to filter
             secondSelectOptions: getApps (mselected3),
             thirdSelectOptions: getApps (mselected2),
+          })
+        )
+      }
+
+      case SpecialAbilityId.handwerkskunst:
+      case SpecialAbilityId.kindDerNatur:
+      case SpecialAbilityId.koerperlichesGeschick:
+      case SpecialAbilityId.sozialeKompetenz:
+      case SpecialAbilityId.universalgenie: {
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            selectOptionId2: mselected2,
+            selectOptionId3: mselected3,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost:
+              pipe_ (
+                List (mselected, mselected2, mselected3),
+                mapMaybe (getCostForEntryWithSkillSel (misStringM)
+                                                      (staticData)
+                                                      (entry)),
+                sum,
+                ensure (gt (0))
+              ),
+            firstSelectOptions:
+              excludeSelectOptionsByMaybeId (List (mselected2, mselected3), entry),
+            secondSelectOptions:
+              excludeSelectOptionsByMaybeId (List (mselected, mselected3), entry),
+            thirdSelectOptions:
+              excludeSelectOptionsByMaybeId (List (mselected, mselected2), entry),
           })
         )
       }
@@ -928,16 +922,48 @@ export const getInactiveActivatableControlElements =
                     sels2 =>
                       set (IACEL.secondSelectElement)
                           (Just (
-                            <Dropdown
-                              value={mselected2}
-                              onChange={inputHandlers.handleSecondSelect}
-                              options={sels2}
-                              disabled={isNothing (mselected)}
-                              />
+                            [
+                              SpecialAbilityId.handwerkskunst,
+                              SpecialAbilityId.kindDerNatur,
+                              SpecialAbilityId.koerperlichesGeschick,
+                              SpecialAbilityId.sozialeKompetenz,
+                              SpecialAbilityId.universalgenie,
+                            ].includes (IAA.id (entry))
+                            ? (
+                              <Dropdown
+                                value={mselected2}
+                                onChange={inputHandlers.handleSecondSelect}
+                                options={cons (sels2)
+                                              (DropdownOption ({
+                                                id: Nothing,
+                                                name: mdash,
+                                                disabled: Just (isJust (mselected3)),
+                                              }))}
+                                disabled={isNothing (mselected)}
+                                />
+                            )
+                            : (
+                              <Dropdown
+                                value={mselected2}
+                                onChange={inputHandlers.handleSecondSelect}
+                                options={sels2}
+                                disabled={isNothing (mselected)}
+                                />
+                            )
                           )),
                     f => pipe (
                       f,
-                      isNothing (mselected2)
+                      (
+                        [
+                          SpecialAbilityId.handwerkskunst,
+                          SpecialAbilityId.kindDerNatur,
+                          SpecialAbilityId.koerperlichesGeschick,
+                          SpecialAbilityId.sozialeKompetenz,
+                          SpecialAbilityId.universalgenie,
+                        ].includes (IAA.id (entry))
+                          ? isNothing (mselected2) && isJust (mselected3)
+                          : isNothing (mselected2)
+                      )
                         ? set (IACEL.disabled) (Just (true))
                         : ident
                     )
@@ -949,16 +975,47 @@ export const getInactiveActivatableControlElements =
                     sels3 =>
                       set (IACEL.thirdSelectElement)
                           (Just (
-                            <Dropdown
-                              value={mselected3}
-                              onChange={inputHandlers.handleThirdSelect}
-                              options={sels3}
-                              disabled={isNothing (mselected)}
-                              />
+                            [
+                              SpecialAbilityId.handwerkskunst,
+                              SpecialAbilityId.kindDerNatur,
+                              SpecialAbilityId.koerperlichesGeschick,
+                              SpecialAbilityId.sozialeKompetenz,
+                              SpecialAbilityId.universalgenie,
+                            ].includes (IAA.id (entry))
+                            ? (
+                              <Dropdown
+                                value={mselected3}
+                                onChange={inputHandlers.handleThirdSelect}
+                                options={cons (sels3)
+                                              (DropdownOption ({
+                                                id: Nothing,
+                                                name: mdash,
+                                              }))}
+                                disabled={isNothing (mselected2)}
+                                />
+                            )
+                            : (
+                              <Dropdown
+                                value={mselected3}
+                                onChange={inputHandlers.handleThirdSelect}
+                                options={sels3}
+                                disabled={isNothing (mselected)}
+                                />
+                            )
                           )),
                     f => pipe (
                       f,
-                      isNothing (mselected3)
+                      (
+                        [
+                          SpecialAbilityId.handwerkskunst,
+                          SpecialAbilityId.kindDerNatur,
+                          SpecialAbilityId.koerperlichesGeschick,
+                          SpecialAbilityId.sozialeKompetenz,
+                          SpecialAbilityId.universalgenie,
+                        ].includes (IAA.id (entry))
+                          ? false
+                          : isNothing (mselected3)
+                      )
                         ? set (IACEL.disabled) (Just (true))
                         : ident
                     )

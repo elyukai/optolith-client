@@ -20,7 +20,7 @@ export interface ActivateSpellAction {
   type: ActionTypes.ACTIVATE_SPELL
   payload: {
     id: string
-    wikiEntry: Record<Spell>
+    staticEntry: Record<Spell>
   }
 }
 
@@ -31,10 +31,10 @@ export const addSpell =
     const wiki_spells = getWikiSpells (state)
     const mhero = getCurrentHeroPresent (state)
 
-    const mwiki_spell = lookup (id) (wiki_spells)
+    const maybeStaticSpell = lookup (id) (wiki_spells)
 
-    if (isJust (mwiki_spell)) {
-      const wiki_entry = fromJust (mwiki_spell)
+    if (isJust (maybeStaticSpell)) {
+      const staticSpell = fromJust (maybeStaticSpell)
 
       const missingAPForInc =
         pipe_ (
@@ -42,7 +42,7 @@ export const addSpell =
           bindF (hero => getAvailableAPMap (HeroModel.A.id (hero)) (state, { hero })),
           join,
           bindF (getMissingAP (getIsInCharacterCreation (state))
-                              (pipe_ (wiki_entry, Spell.A.ic, icFromJs, getAPForActivatation)))
+                              (pipe_ (staticSpell, Spell.A.ic, icFromJs, getAPForActivatation)))
         )
 
       if (isNothing (missingAPForInc)) {
@@ -50,7 +50,7 @@ export const addSpell =
           type: ActionTypes.ACTIVATE_SPELL,
           payload: {
             id,
-            wikiEntry: wiki_entry,
+            staticEntry: staticSpell,
           },
         })
       }
@@ -64,7 +64,7 @@ export interface ActivateCantripAction {
   type: ActionTypes.ACTIVATE_CANTRIP
   payload: {
     id: string
-    wikiEntry: Record<Cantrip>
+    staticEntry: Record<Cantrip>
   }
 }
 
@@ -92,7 +92,7 @@ export const addCantrip =
           type: ActionTypes.ACTIVATE_CANTRIP,
           payload: {
             id,
-            wikiEntry: fromJust (mwiki_cantrip),
+            staticEntry: fromJust (mwiki_cantrip),
           },
         })
       }
@@ -106,7 +106,7 @@ export interface DeactivateSpellAction {
   type: ActionTypes.DEACTIVATE_SPELL
   payload: {
     id: string
-    wikiEntry: Record<Spell>
+    staticEntry: Record<Spell>
   }
 }
 
@@ -125,7 +125,7 @@ export const removeSpell =
         type: ActionTypes.DEACTIVATE_SPELL,
         payload: {
           id,
-          wikiEntry: wiki_entry,
+          staticEntry: wiki_entry,
         },
       })
     }
@@ -135,7 +135,7 @@ export interface DeactivateCantripAction {
   type: ActionTypes.DEACTIVATE_CANTRIP
   payload: {
     id: string
-    wikiEntry: Record<Cantrip>
+    staticEntry: Record<Cantrip>
   }
 }
 
@@ -154,7 +154,7 @@ export const removeCantrip =
         type: ActionTypes.DEACTIVATE_CANTRIP,
         payload: {
           id,
-          wikiEntry: wiki_entry,
+          staticEntry: wiki_entry,
         },
       })
     }
