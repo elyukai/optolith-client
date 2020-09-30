@@ -19,7 +19,7 @@ var Translations = {
 
 var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
 
-function decodeFull(json) {
+function decodeMultilingual(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           check: Json_decode.field("check", SkillCheck$OptolithClient.decode, json),
@@ -28,7 +28,7 @@ function decodeFull(json) {
 }
 
 function decode$1(langs, json) {
-  var x = decodeFull(json);
+  var x = decodeMultilingual(json);
   return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,

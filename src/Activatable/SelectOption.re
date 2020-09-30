@@ -26,7 +26,7 @@ type t = {
   // needed to be able to filter valid applications without altering the static
   // entry
   applications: option(list(Skill.application)),
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -56,7 +56,7 @@ module Decode = {
     description: option(string),
     specializations: option(list(string)),
     specializationInput: option(string),
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
@@ -66,7 +66,7 @@ module Decode = {
     description: json |> optionalField("description", string),
     specializations: json |> optionalField("specializations", list(string)),
     specializationInput: json |> optionalField("specializationInput", string),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

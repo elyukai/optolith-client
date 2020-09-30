@@ -3,7 +3,7 @@ type t = {
   name: string,
   types: Ley_IntMap.t(string),
   domains: Ley_IntMap.t(string),
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -25,7 +25,7 @@ module Decode = {
     name: json |> field("name", string),
     types: json |> field("types", list(type_)) |> Ley_IntMap.fromList,
     domains: json |> field("domains", list(domain)) |> Ley_IntMap.fromList,
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

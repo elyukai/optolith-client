@@ -20,7 +20,7 @@ type t = {
   apValueText: option(string),
   apValueTextAppend: option(string),
   gr: int,
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -43,7 +43,7 @@ module Decode = {
     prerequisitesEnd: option(string),
     apValue: option(string),
     apValueAppend: option(string),
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
@@ -68,7 +68,7 @@ module Decode = {
     prerequisitesEnd: json |> optionalField("prerequisitesEnd", string),
     apValue: json |> optionalField("apValue", string),
     apValueAppend: json |> optionalField("apValueAppend", string),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

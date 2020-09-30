@@ -10,7 +10,7 @@ type t = {
   tribes: list(int),
   property: int,
   ic: IC.t,
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -26,7 +26,7 @@ module Decode = {
     aeCostShort: string,
     duration: string,
     durationShort: string,
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
@@ -38,7 +38,7 @@ module Decode = {
     aeCostShort: json |> field("aeCostShort", string),
     duration: json |> field("duration", string),
     durationShort: json |> field("durationShort", string),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

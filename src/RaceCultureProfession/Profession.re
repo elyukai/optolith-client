@@ -125,7 +125,7 @@ type t = {
    * Twelve Gods" or "Fighter".
    */
   sgr: int,
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -166,7 +166,7 @@ module Decode = {
     precedingText: json |> optionalField("precedingText", string),
     fullText: json |> optionalField("fullText", string),
     concludingText: json |> optionalField("concludingText", string),
-    errata: json |> field("errata", Erratum.Decode.list),
+    errata: json |> field("errata", Erratum.decodeList),
   };
 
   let variantOverride = (decoder, json) =>
@@ -409,7 +409,7 @@ module Decode = {
     unsuitableAdvantages: option(string),
     unsuitableDisadvantages: option(string),
     variants: option(list(variantL10n)),
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
@@ -432,7 +432,7 @@ module Decode = {
     unsuitableDisadvantages:
       json |> optionalField("unsuitableDisadvantages", string),
     variants: json |> optionalField("variants", list(variantL10n)),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

@@ -4,7 +4,9 @@ open Ley_Option.Functor;
 
 let getMaxPrimaryAttributeValueById = (heroAttrs, ps) =>
   ps
-  |> map(p => Ley_IntMap.lookup(p, heroAttrs) |> Attributes.getValueDef)
+  |> map(p =>
+       Ley_IntMap.lookup(p, heroAttrs) |> Attribute.Dynamic.getValueDef
+     )
   |> (<+>)(0)
   |> Ley_List.Foldable.maximum;
 
@@ -13,16 +15,9 @@ let attributeValueToMod = value => Ley_Int.max(0, (value - 8) / 3);
 let getPrimaryAttributeMod = (heroAttrs, ps) =>
   ps |> getMaxPrimaryAttributeValueById(heroAttrs) |> attributeValueToMod;
 
-/**
- * Takes a combat technique's hero entry that might not exist and returns the
- * value of that combat technique. Note: If the combat technique is not yet
- * defined, it's value is `6`.
- */
-let getValueDef = option(6, (x: Hero.Skill.t) => x.value);
-
-let getAttack = (heroAttrs, staticEntry: CombatTechnique.t, heroEntry) =>
+let getAttack = (heroAttrs, staticEntry: CombatTechnique.Static.t, heroEntry) =>
   heroEntry
-  |> getValueDef
+  |> CombatTechnique.Dynamic.getValueDef
   |> (+)(
        getPrimaryAttributeMod(
          heroAttrs,
@@ -31,13 +26,13 @@ let getAttack = (heroAttrs, staticEntry: CombatTechnique.t, heroEntry) =>
        ),
      );
 
-let getParry = (heroAttrs, staticEntry: CombatTechnique.t, heroEntry) =>
+let getParry = (heroAttrs, staticEntry: CombatTechnique.Static.t, heroEntry) =>
   staticEntry.gr === Id.CombatTechnique.Group.toInt(Melee)
   && staticEntry.id !== Id.CombatTechnique.toInt(ChainWeapons)
   && staticEntry.id !== Id.CombatTechnique.toInt(Brawling)
     ? Some(
         heroEntry
-        |> getValueDef
+        |> CombatTechnique.Dynamic.getValueDef
         |> Js.Int.toFloat
         |> (/.)(2.0)
         |> Js.Math.round
@@ -88,7 +83,7 @@ let getMax =
       ~phase,
       ~heroAttrs,
       ~exceptionalCombatTechnique,
-      ~staticEntry: CombatTechnique.t,
+      ~staticEntry: CombatTechnique.Static.t,
     ) =>
   [
     Some(getMaxPrimaryAttributeValueById(heroAttrs, staticEntry.primary)),
@@ -114,7 +109,7 @@ let isIncreasable =
       ~heroAttrs,
       ~exceptionalCombatTechnique,
       ~staticEntry,
-      ~heroEntry: Hero.Skill.t,
+      ~heroEntry: Skill.Dynamic.t,
     ) =>
   heroEntry.value
   < getMax(
@@ -126,7 +121,7 @@ let isIncreasable =
     );
 
 let getMinCtrByHunter =
-    (onlyOneCombatTechniqueForHunter, staticEntry: CombatTechnique.t) =>
+    (onlyOneCombatTechniqueForHunter, staticEntry: CombatTechnique.Static.t) =>
   onlyOneCombatTechniqueForHunter
   && staticEntry.gr === Id.CombatTechnique.Group.toInt(Ranged)
     ? Some(10) : None;
@@ -134,7 +129,7 @@ let getMinCtrByHunter =
 /**
  * Check if the dependencies allow the passed combat technique to be decreased.
  */
-let getMinCtrByDeps = (heroCombatTechniques, heroEntry: Hero.Skill.t) =>
+let getMinCtrByDeps = (heroCombatTechniques, heroEntry: Skill.Dynamic.t) =>
   heroEntry.dependencies
   |> Dependencies.Flatten.flattenSkillDependencies(
        id => heroCombatTechniques |> Ley_IntMap.lookup(id) |> getValueDef,
@@ -171,7 +166,7 @@ let isDecreasable =
       ~onlyOneCombatTechniqueForHunter,
       ~heroCombatTechniques,
       ~staticEntry,
-      ~heroEntry: Hero.Skill.t,
+      ~heroEntry: Skill.Dynamic.t,
     ) =>
   heroEntry.value
   > (

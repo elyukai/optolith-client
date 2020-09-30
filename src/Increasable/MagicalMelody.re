@@ -12,7 +12,7 @@ type t = {
   musictraditions: Ley_IntSet.t,
   property: int,
   ic: IC.t,
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -34,7 +34,7 @@ module Decode = {
     durationShort: string,
     aeCost: string,
     aeCostShort: string,
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
@@ -47,7 +47,7 @@ module Decode = {
     durationShort: json |> field("durationShort", string),
     aeCost: json |> field("aeCost", string),
     aeCostShort: json |> field("aeCostShort", string),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

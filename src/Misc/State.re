@@ -2,7 +2,7 @@ type t = {
   id: int,
   name: string,
   description: option(string),
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -14,7 +14,7 @@ module Decode = {
     id: json |> field("id", int),
     name: json |> field("name", string),
     description: json |> optionalField("description", string),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

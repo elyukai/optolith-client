@@ -1,19 +1,7 @@
-module Dynamic = {
-  type t = {
-    id: int,
-    value: int,
-    dependencies: list(Increasable.dependency),
-  };
-
-  let minValue = 8;
-
-  let empty = id => {id, value: minValue, dependencies: []};
-
-  let isEmpty = (x: t) =>
-    x.value <= minValue && Ley_List.Foldable.null(x.dependencies);
-
-  let getValueDef = Ley_Option.option(minValue, (x: t) => x.value);
-};
+module Dynamic =
+  Increasable.Dynamic({
+    let minValue = 8;
+  });
 
 module Static = {
   type t = {

@@ -15,7 +15,7 @@ type t = {
   target: string,
   property: int,
   activatablePrerequisites: option(list(Prerequisite.activatable)),
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -36,7 +36,7 @@ module Decode = {
     duration: string,
     durationShort: string,
     target: string,
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
@@ -53,7 +53,7 @@ module Decode = {
     duration: json |> field("duration", string),
     durationShort: json |> field("durationShort", string),
     target: json |> field("target", string),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

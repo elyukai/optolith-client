@@ -91,10 +91,10 @@ let getMissingApForDisAdvantage:
 module Sum: {
   let getApSpentOnAttributes: Ley_IntMap.t(Hero.Attribute.t) => int;
 
-  let getApSpentOnSkills: (Static.t, Ley_IntMap.t(Hero.Skill.t)) => int;
+  let getApSpentOnSkills: (Static.t, Ley_IntMap.t(Skill.Dynamic.t)) => int;
 
   let getApSpentOnCombatTechniques:
-    (Static.t, Ley_IntMap.t(Hero.Skill.t)) => int;
+    (Static.t, Ley_IntMap.t(Skill.Dynamic.t)) => int;
 
   let getApSpentOnSpells:
     (Static.t, Ley_IntMap.t(Hero.ActivatableSkill.t)) => int;

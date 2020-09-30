@@ -9,23 +9,23 @@ import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 
 function tL10n(json) {
   return {
-          id: Json_decode.field("id", Json_decode.$$int, json),
-          name: Json_decode.field("name", Json_decode.string, json)
+          id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
+          name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json)
         };
 }
 
 function tUniv(json) {
   return {
-          id: Json_decode.field("id", Json_decode.$$int, json),
-          numId: JsonStrict$OptolithClient.optionalField("numId", Json_decode.$$int, json),
-          primary: JsonStrict$OptolithClient.optionalField("primary", Json_decode.$$int, json),
+          id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
+          numId: JsonStrict$OptolithClient.optionalField("numId", JsonStrict$OptolithClient.$$int, json),
+          primary: JsonStrict$OptolithClient.optionalField("primary", JsonStrict$OptolithClient.$$int, json),
           aeMod: JsonStrict$OptolithClient.optionalField("aeMod", Json_decode.$$float, json),
-          canLearnCantrips: Json_decode.field("canLearnCantrips", Json_decode.bool, json),
-          canLearnSpells: Json_decode.field("canLearnSpells", Json_decode.bool, json),
-          canLearnRituals: Json_decode.field("canLearnRituals", Json_decode.bool, json),
-          allowMultipleTraditions: Json_decode.field("allowMultipleTraditions", Json_decode.bool, json),
-          isDisAdvAPMaxHalved: Json_decode.field("isDisAdvAPMaxHalved", Json_decode.bool, json),
-          areDisAdvRequiredApplyToMagActionsOrApps: Json_decode.field("areDisAdvRequiredApplyToMagActionsOrApps", Json_decode.bool, json)
+          canLearnCantrips: JsonStrict$OptolithClient.field("canLearnCantrips", JsonStrict$OptolithClient.bool, json),
+          canLearnSpells: JsonStrict$OptolithClient.field("canLearnSpells", JsonStrict$OptolithClient.bool, json),
+          canLearnRituals: JsonStrict$OptolithClient.field("canLearnRituals", JsonStrict$OptolithClient.bool, json),
+          allowMultipleTraditions: JsonStrict$OptolithClient.field("allowMultipleTraditions", JsonStrict$OptolithClient.bool, json),
+          isDisAdvAPMaxHalved: JsonStrict$OptolithClient.field("isDisAdvAPMaxHalved", JsonStrict$OptolithClient.bool, json),
+          areDisAdvRequiredApplyToMagActionsOrApps: JsonStrict$OptolithClient.field("areDisAdvRequiredApplyToMagActionsOrApps", JsonStrict$OptolithClient.bool, json)
         };
 }
 
@@ -53,7 +53,7 @@ function all(yamlData) {
                     return x.id;
                   }), (function (x) {
                     return x.id;
-                  }), Json_decode.list(tUniv, yamlData.magicalTraditionsUniv), Json_decode.list(tL10n, yamlData.magicalTraditionsL10n)));
+                  }), JsonStrict$OptolithClient.list(tUniv, yamlData.magicalTraditionsUniv), JsonStrict$OptolithClient.list(tL10n, yamlData.magicalTraditionsL10n)));
 }
 
 var Decode = {

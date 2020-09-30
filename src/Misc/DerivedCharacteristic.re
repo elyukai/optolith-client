@@ -8,7 +8,6 @@ type t = {
 };
 
 module Decode = {
-  open Json.Decode;
   open JsonStrict;
 
   let t = json => {

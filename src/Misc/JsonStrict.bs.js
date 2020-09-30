@@ -30,9 +30,84 @@ function $$const(x, json) {
       };
 }
 
+var DecodeError = Json_decode.DecodeError;
+
+var id = Json_decode.id;
+
+var bool = Json_decode.bool;
+
+var $$float = Json_decode.$$float;
+
+var $$int = Json_decode.$$int;
+
+var string = Json_decode.string;
+
+var $$char = Json_decode.$$char;
+
+var date = Json_decode.date;
+
+var nullable = Json_decode.nullable;
+
+var nullAs = Json_decode.nullAs;
+
+var array = Json_decode.array;
+
+var list = Json_decode.list;
+
+var pair = Json_decode.pair;
+
+var tuple2 = Json_decode.tuple2;
+
+var tuple3 = Json_decode.tuple3;
+
+var tuple4 = Json_decode.tuple4;
+
+var dict = Json_decode.dict;
+
+var field = Json_decode.field;
+
+var at = Json_decode.at;
+
+var optional = Json_decode.optional;
+
+var oneOf = Json_decode.oneOf;
+
+var either = Json_decode.either;
+
+var withDefault = Json_decode.withDefault;
+
+var map = Json_decode.map;
+
+var andThen = Json_decode.andThen;
+
 var idTagName = "tag";
 
 export {
+  DecodeError ,
+  id ,
+  bool ,
+  $$float ,
+  $$int ,
+  string ,
+  $$char ,
+  date ,
+  nullable ,
+  nullAs ,
+  array ,
+  list ,
+  pair ,
+  tuple2 ,
+  tuple3 ,
+  tuple4 ,
+  dict ,
+  field ,
+  at ,
+  optional ,
+  oneOf ,
+  either ,
+  withDefault ,
+  map ,
+  andThen ,
   idTagName ,
   maybe ,
   optionalField ,

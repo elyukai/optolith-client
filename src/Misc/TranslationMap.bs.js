@@ -7,11 +7,11 @@ import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 
 function Make(Decodable) {
   var decode = function (param) {
-    return Json_decode.dict(Decodable.decode, param);
+    return Json_decode.dict(Json_decode.id, param);
   };
   var getFromLanguageOrder = function (langs, x) {
     return Ley_List$OptolithClient.Foldable.foldl((function (acc, lang) {
-                  return Ley_Option$OptolithClient.Alternative.$less$pipe$great(acc, Js_dict.get(x, lang));
+                  return Ley_Option$OptolithClient.Alternative.$less$pipe$great(acc, Ley_Option$OptolithClient.Functor.$less$amp$great(Js_dict.get(x, lang), Decodable.decode));
                 }), undefined, langs);
   };
   return {

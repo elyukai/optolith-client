@@ -3,7 +3,7 @@ type info = {
   rules: option(string),
   advantage: option(string),
   disadvantage: option(string),
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -87,7 +87,7 @@ module Decode = {
     rules: json |> optionalField("rules", string),
     advantage: json |> optionalField("advantage", string),
     disadvantage: json |> optionalField("disadvantage", string),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

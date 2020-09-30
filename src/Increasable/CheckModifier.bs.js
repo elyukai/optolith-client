@@ -2,21 +2,21 @@
 
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 
-function t(json) {
+function decode(json) {
   var scope = Json_decode.string(json);
   switch (scope) {
     case "SPI" :
         Json_decode.$$int(json);
-        return /* SPI */0;
+        return /* Spirit */0;
     case "SPI/2" :
         Json_decode.$$int(json);
-        return /* DOUBLE_SPI */1;
+        return /* HalfOfSpirit */1;
     case "SPI/TOU" :
         Json_decode.$$int(json);
-        return /* MAX_SPI_TOU */3;
+        return /* GreaterOfBoth */3;
     case "TOU" :
         Json_decode.$$int(json);
-        return /* TOU */2;
+        return /* Toughness */2;
     default:
       throw {
             RE_EXN_ID: Json_decode.DecodeError,
@@ -26,12 +26,8 @@ function t(json) {
   }
 }
 
-var Decode = {
-  t: t
-};
-
 export {
-  Decode ,
+  decode ,
   
 }
 /* No side effect */

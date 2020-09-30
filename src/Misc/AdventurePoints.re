@@ -171,7 +171,7 @@ module Sum = {
 
   let getApSpentOnSkills = staticData =>
     foldr(
-      (x: Hero.Skill.t) =>
+      (x: Skill.Dynamic.t) =>
         lookup(x.id, staticData.skills)
         |> option(id, (staticEntry: Skill.t) =>
              x.value |> IC.getAPForRange(staticEntry.ic, 0) |> (+)
@@ -181,7 +181,7 @@ module Sum = {
 
   let getApSpentOnCombatTechniques = staticData =>
     foldr(
-      (x: Hero.Skill.t) =>
+      (x: Skill.Dynamic.t) =>
         lookup(x.id, staticData.combatTechniques)
         |> option(id, (staticEntry: CombatTechnique.t) =>
              x.value |> IC.getAPForRange(staticEntry.ic, 6) |> (+)

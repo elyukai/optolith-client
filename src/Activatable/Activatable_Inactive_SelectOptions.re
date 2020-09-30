@@ -287,14 +287,14 @@ let getAvailableSelectOptionsTransducer =
       | SkillSpecialization =>
         let isFirstSpecializationValid = id =>
           IM.lookup(id, hero.skills)
-          |> O.option(false, (skill: Hero.Skill.t)
+          |> O.option(false, (skill: Skill.Dynamic.t)
                // Skill Rating must be at least 6 for 1st specialization
                => skill.value >= 6);
 
         let isAdditionalSpecializationValid =
             (counter, selectOption: SO.t, id) =>
           liftM2(
-            (skill: Hero.Skill.t, activeApps) =>
+            (skill: Skill.Dynamic.t, activeApps) =>
               // Maximum of three is allowed
               L.lengthMax(2, activeApps)
               // Skill Rating must be at least 6/12/18 for 1st/2nd/3rd specialization

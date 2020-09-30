@@ -14,7 +14,6 @@ type t = {
 };
 
 module Decode = {
-  open Json.Decode;
   open JsonStrict;
 
   type categoryL10n = {

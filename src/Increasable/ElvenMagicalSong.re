@@ -9,12 +9,11 @@ type t = {
   skill: option(int),
   property: int,
   ic: IC.t,
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
 module Decode = {
-  open Json.Decode;
   open JsonStrict;
 
   type tL10n = {
@@ -23,7 +22,7 @@ module Decode = {
     effect: string,
     aeCost: string,
     aeCostShort: string,
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
@@ -33,7 +32,7 @@ module Decode = {
     effect: json |> field("effect", string),
     aeCost: json |> field("aeCost", string),
     aeCostShort: json |> field("aeCostShort", string),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

@@ -20,13 +20,13 @@ module Translations = {
 
 module TranslationMap = TranslationMap.Make(Translations);
 
-type full = {
+type multilingual = {
   id: int,
   check: SkillCheck.t,
   translations: TranslationMap.t,
 };
 
-let decodeFull = json =>
+let decodeMultilingual = json =>
   Json.Decode.{
     id: json |> field("id", int),
     check: json |> field("check", SkillCheck.decode),
@@ -48,4 +48,4 @@ let resolveTranslations = (langs, x) =>
   );
 
 let decode = (langs, json) =>
-  json |> decodeFull |> resolveTranslations(langs);
+  json |> decodeMultilingual |> resolveTranslations(langs);

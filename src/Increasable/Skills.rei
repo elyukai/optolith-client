@@ -2,7 +2,7 @@
  * Takes a skill's hero entry that might not exist and returns the value of
  * that skill. Note: If the skill is not yet defined, it's value is `0`.
  */
-let getValueDef: option(Hero.Skill.t) => int;
+let getValueDef: option(Skill.Dynamic.t) => int;
 
 /**
  * `getExceptionalSkillBonus exceptionalSkill skillId` return the SR maximum
@@ -18,7 +18,7 @@ let getExceptionalSkillBonus:
  * attribute ids `check`.
  */
 let getMaxSrByCheckAttrs:
-  (Ley_IntMap.t(Hero.Attribute.t), (int, int, int)) => int;
+  (Ley_IntMap.t(Attribute.Dynamic.t), (int, int, int)) => int;
 
 /**
  * `getMaxSrFromEl el phase` returns the maximum SR defined in the selected
@@ -35,7 +35,7 @@ let getMax:
     ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
     ~exceptionalSkill: option(Hero.Activatable.t),
-    ~staticEntry: Skill.t
+    ~staticEntry: Skill.Static.t
   ) =>
   int;
 
@@ -48,8 +48,8 @@ let isIncreasable:
     ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
     ~exceptionalSkill: option(Hero.Activatable.t),
-    ~staticEntry: Skill.t,
-    ~heroEntry: Hero.Skill.t
+    ~staticEntry: Skill.Static.t,
+    ~heroEntry: Skill.Dynamic.t
   ) =>
   bool;
 
@@ -59,9 +59,9 @@ let isIncreasable:
 let getMin:
   (
     ~craftInstruments: option(Hero.Activatable.t),
-    ~heroSkills: Ley_IntMap.t(Hero.Skill.t),
-    ~staticEntry: Skill.t,
-    ~heroEntry: Hero.Skill.t
+    ~heroSkills: Ley_IntMap.t(Skill.Dynamic.t),
+    ~staticEntry: Skill.Static.t,
+    ~heroEntry: Skill.Dynamic.t
   ) =>
   option(int);
 
@@ -71,9 +71,9 @@ let getMin:
 let isDecreasable:
   (
     ~craftInstruments: option(Hero.Activatable.t),
-    ~heroSkills: Ley_IntMap.t(Hero.Skill.t),
-    ~staticEntry: Skill.t,
-    ~heroEntry: Hero.Skill.t
+    ~heroSkills: Ley_IntMap.t(Skill.Dynamic.t),
+    ~staticEntry: Skill.Static.t,
+    ~heroEntry: Skill.Dynamic.t
   ) =>
   bool;
 

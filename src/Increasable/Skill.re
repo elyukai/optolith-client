@@ -1,19 +1,7 @@
-module Dynamic = {
-  type t = {
-    id: int,
-    value: int,
-    dependencies: list(Increasable.dependency),
-  };
-
-  let minValue = 0;
-
-  let empty = id => {id, value: minValue, dependencies: []};
-
-  let isEmpty = (x: t) =>
-    x.value <= minValue && Ley_List.Foldable.null(x.dependencies);
-
-  let getValueDef = Ley_Option.option(minValue, (x: t) => x.value);
-};
+module Dynamic =
+  Increasable.Dynamic({
+    let minValue = 0;
+  });
 
 module Static = {
   module Application = {
@@ -125,13 +113,12 @@ module Static = {
     failed: string,
     critical: string,
     botch: string,
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
   module Translations = {
     type t = {
-      id: int,
       name: string,
       applicationsInput: option(string),
       encDescription: option(string),
@@ -140,25 +127,20 @@ module Static = {
       failed: string,
       critical: string,
       botch: string,
-      src: list(SourceRef.t),
       errata: list(Erratum.t),
     };
 
     let decode = json =>
-      Json.Decode.{
-        id: json |> field("id", int),
+      JsonStrict.{
         name: json |> field("name", string),
-        applicationsInput:
-          JsonStrict.(json |> optionalField("applicationsInput", string)),
-        encDescription:
-          JsonStrict.(json |> optionalField("encDescription", string)),
-        tools: JsonStrict.(json |> optionalField("tools", string)),
+        applicationsInput: json |> optionalField("applicationsInput", string),
+        encDescription: json |> optionalField("encDescription", string),
+        tools: json |> optionalField("tools", string),
         quality: json |> field("quality", string),
         failed: json |> field("failed", string),
         critical: json |> field("critical", string),
         botch: json |> field("botch", string),
-        src: json |> field("src", SourceRef.Decode.list),
-        errata: json |> field("errata", Erratum.Decode.list),
+        errata: json |> field("errata", Erratum.decodeList),
       };
   };
 
@@ -184,7 +166,7 @@ module Static = {
       )
     );
 
-  type full = {
+  type multilingual = {
     id: int,
     check: SkillCheck.t,
     applications: option(list(Application.full)),
@@ -192,22 +174,21 @@ module Static = {
     ic: IC.t,
     enc: encumbranceUniv,
     gr: int,
+    src: list(PublicationRef.multilingual),
     translations: TranslationMap.t,
   };
 
-  let decodeFull = json =>
-    Json.Decode.{
+  let decodeMultilingual = json =>
+    JsonStrict.{
       id: json |> field("id", int),
       applications:
-        json
-        |> JsonStrict.(
-             optionalField("applications", list(Application.decodeFull))
-           ),
-      uses: json |> JsonStrict.(optionalField("uses", list(Use.decodeFull))),
+        json |> optionalField("applications", list(Application.decodeFull)),
+      uses: json |> optionalField("uses", list(Use.decodeFull)),
       check: json |> field("check", SkillCheck.decode),
       ic: json |> field("ic", IC.Decode.t),
       enc: json |> field("enc", encumbranceUniv),
       gr: json |> field("gr", int),
+      src: json |> field("src", PublicationRef.decodeMultilingualList),
       translations: json |> field("translations", TranslationMap.decode),
     };
 
@@ -264,12 +245,12 @@ module Static = {
           failed: translation.failed,
           critical: translation.critical,
           botch: translation.botch,
-          src: translation.src,
+          src: PublicationRef.resolveTranslationsList(langs, x.src),
           errata: translation.errata,
         }
       )
     );
 
   let decode = (langs, json) =>
-    json |> decodeFull |> resolveTranslations(langs);
+    json |> decodeMultilingual |> resolveTranslations(langs);
 };

@@ -41,7 +41,7 @@ type t = {
   pacts: IM.t(Pact.t),
   professions: IM.t(Profession.t),
   properties: IM.t(string),
-  publications: Ley_StrMap.t(Publication.t),
+  publications: IM.t(Publication.t),
   races: IM.t(Race.t),
   reaches: IM.t(string),
   rogueSpells: IM.t(RogueSpell.t),

@@ -171,7 +171,6 @@ type tIndexWithLevel = {
 };
 
 module Decode = {
-  open Json.Decode;
   open JsonStrict;
   open Ley_Option.Monad;
   open Ley_Option.Alternative;

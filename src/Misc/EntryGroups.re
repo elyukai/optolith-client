@@ -51,7 +51,7 @@ let hasActiveFromGroups = (isActive, getGroup, groups: list(int), pairs) =>
 
 module CombatTechnique = {
   let getFromGroup =
-      (group, pairs: IM.t((CombatTechnique.t, option(Hero.Skill.t)))) =>
+      (group, pairs: IM.t((CombatTechnique.t, option(Skill.Dynamic.t)))) =>
     getFromGroup(
       ({CombatTechnique.gr, _}) => gr,
       Id.CombatTechnique.Group.toInt(group),

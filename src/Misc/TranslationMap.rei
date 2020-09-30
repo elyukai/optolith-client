@@ -1,3 +1,4 @@
+type partialTranslations('a);
 type translations('a);
 
 module type Decodable = {
@@ -8,7 +9,7 @@ module type Decodable = {
 module Make:
   (Decodable: Decodable) =>
    {
-    type t = translations(Decodable.t);
+    type t = partialTranslations(Decodable.t);
 
     /**
      * Decodes a set of `Decodable` values.
@@ -26,5 +27,5 @@ module Make:
      * entry is not available in English, take the one in German) and you have
      * an English and a German entry, the English one is returned.
      */
-    let getFromLanguageOrder: (list(string), t) => Ley_Option.t(Decodable.t);
+    let getFromLanguageOrder: (list(string), t) => option(Decodable.t);
   };

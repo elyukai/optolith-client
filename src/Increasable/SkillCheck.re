@@ -7,9 +7,9 @@ type t = (int, int, int);
  * Takes a skill check and returns it's values.
  */
 let getValues = (mp, (a1, a2, a3)) => (
-  IM.lookup(a1, mp) |> Attributes.getValueDef,
-  IM.lookup(a2, mp) |> Attributes.getValueDef,
-  IM.lookup(a3, mp) |> Attributes.getValueDef,
+  IM.lookup(a1, mp) |> Attribute.Dynamic.getValueDef,
+  IM.lookup(a2, mp) |> Attribute.Dynamic.getValueDef,
+  IM.lookup(a3, mp) |> Attribute.Dynamic.getValueDef,
 );
 
 /**

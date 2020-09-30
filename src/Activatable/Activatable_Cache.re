@@ -28,7 +28,7 @@ type t = {
   specialAbilityPairs:
     Ley_IntMap.t((SpecialAbility.t, option(Hero.Activatable.t))),
   combatTechniquePairs:
-    Ley_IntMap.t((CombatTechnique.t, option(Hero.Skill.t))),
+    Ley_IntMap.t((CombatTechnique.t, option(Skill.Dynamic.t))),
   adventurePoints: AdventurePoints.categories,
   magicalTraditions: list(Tradition.Magical.fullTradition),
   blessedTradition: option(Tradition.Blessed.fullTradition),

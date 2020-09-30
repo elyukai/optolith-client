@@ -3,61 +3,51 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
-import * as Ley_Int$OptolithClient from "../Data/Ley_Int.bs.js";
-import * as Yaml_Zip$OptolithClient from "../Misc/Yaml_Zip.bs.js";
-import * as SourceRef$OptolithClient from "../Sources/SourceRef.bs.js";
-import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
+import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
+import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
+import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-function tL10n(json) {
+function decode(json) {
   return {
-          id: Json_decode.field("id", Json_decode.$$int, json),
           name: Json_decode.field("name", Json_decode.string, json),
           description: Json_decode.field("description", Json_decode.string, json),
-          src: Json_decode.field("src", SourceRef$OptolithClient.Decode.list, json),
-          errata: Json_decode.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: Json_decode.field("errata", Erratum$OptolithClient.decodeList, json)
         };
 }
 
-function tUniv(json) {
+var Translations = {
+  decode: decode
+};
+
+var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+
+function decodeMultilingual(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           level: Json_decode.field("level", Json_decode.$$int, json),
-          subject: Json_decode.field("subject", Json_decode.$$int, json)
+          subject: Json_decode.field("subject", Json_decode.$$int, json),
+          src: Json_decode.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json),
+          translations: Json_decode.field("translations", TranslationMap.decode, json)
         };
 }
 
-function t(univ, l10n) {
-  return [
-          univ.id,
-          {
-            id: univ.id,
-            name: l10n.name,
-            level: univ.level,
-            subject: univ.subject,
-            description: l10n.description,
-            src: l10n.src,
-            errata: l10n.errata
-          }
-        ];
+function decode$1(langs, json) {
+  var x = decodeMultilingual(json);
+  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+                return {
+                        id: x.id,
+                        name: translation.name,
+                        level: x.level,
+                        subject: x.subject,
+                        description: translation.description,
+                        src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                        errata: translation.errata
+                      };
+              }));
 }
-
-function all(yamlData) {
-  return Curry._1(Ley_IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, t, (function (x) {
-                    return x.id;
-                  }), (function (x) {
-                    return x.id;
-                  }), Json_decode.list(tUniv, yamlData.focusRulesUniv), Json_decode.list(tL10n, yamlData.focusRulesL10n)));
-}
-
-var Decode = {
-  tL10n: tL10n,
-  tUniv: tUniv,
-  t: t,
-  all: all
-};
 
 export {
-  Decode ,
+  decode$1 as decode,
   
 }
-/* Ley_IntMap-OptolithClient Not a pure module */
+/* TranslationMap Not a pure module */

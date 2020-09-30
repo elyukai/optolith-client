@@ -2,34 +2,6 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
-import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
-
-function getValueDef(param) {
-  return Ley_Option$OptolithClient.option(/* Inactive */0, (function (x) {
-                return x.value;
-              }), param);
-}
-
-function valueToInt(value) {
-  if (value) {
-    return value._0;
-  } else {
-    return 0;
-  }
-}
-
-function isActive(x) {
-  var match = x.value;
-  if (match) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function isActiveM(param) {
-  return Ley_Option$OptolithClient.option(false, isActive, param);
-}
 
 function getActiveSkillEntries(domain, hero) {
   return Curry._2(Ley_IntMap$OptolithClient.filter, (function (entry) {
@@ -65,10 +37,6 @@ function hasActiveSkillEntries(domain, hero) {
 }
 
 export {
-  getValueDef ,
-  valueToInt ,
-  isActive ,
-  isActiveM ,
   getActiveSkillEntries ,
   countActiveSkillEntries ,
   hasActiveSkillEntries ,

@@ -59,7 +59,7 @@ type t = {
   weightBase: int,
   weightRandom: list(Dice.t),
   variantOptions,
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -98,7 +98,7 @@ module Decode = {
     uncommonAdvantages: option(string),
     uncommonDisadvantages: option(string),
     variants: option(list(variantL10n)),
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
@@ -117,7 +117,7 @@ module Decode = {
     uncommonDisadvantages:
       json |> optionalField("uncommonDisadvantages", string),
     variants: json |> optionalField("variants", list(variantL10n)),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

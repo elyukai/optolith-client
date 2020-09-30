@@ -4,71 +4,82 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as IC$OptolithClient from "./IC.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
-import * as Ley_Int$OptolithClient from "../Data/Ley_Int.bs.js";
-import * as Yaml_Zip$OptolithClient from "../Misc/Yaml_Zip.bs.js";
-import * as SourceRef$OptolithClient from "../Sources/SourceRef.bs.js";
 import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
-import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
+import * as Increasable$OptolithClient from "./Increasable.bs.js";
+import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
+import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-function tL10n(json) {
+var Dynamic = Increasable$OptolithClient.Dynamic({
+      minValue: 6
+    });
+
+function decode(json) {
   return {
-          id: Json_decode.field("id", Json_decode.$$int, json),
-          name: Json_decode.field("name", Json_decode.string, json),
-          special: JsonStrict$OptolithClient.optionalField("special", Json_decode.string, json),
-          src: Json_decode.field("src", SourceRef$OptolithClient.Decode.list, json),
-          errata: Json_decode.field("errata", Erratum$OptolithClient.Decode.list, json)
+          name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
+          special: JsonStrict$OptolithClient.optionalField("special", JsonStrict$OptolithClient.string, json),
+          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.decodeList, json)
         };
 }
 
-function tUniv(json) {
+var Translations = {
+  decode: decode
+};
+
+var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+
+function decodeFull(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           ic: Json_decode.field("ic", IC$OptolithClient.Decode.t, json),
           primary: Json_decode.field("primary", (function (param) {
                   return Json_decode.list(Json_decode.$$int, param);
                 }), json),
+          hasNoParry: Json_decode.field("hasNoParry", Json_decode.bool, json),
           bpr: Json_decode.field("bpr", Json_decode.$$int, json),
-          hasNoParry: JsonStrict$OptolithClient.optionalField("hasNoParry", Json_decode.bool, json),
-          gr: Json_decode.field("gr", Json_decode.$$int, json)
+          gr: Json_decode.field("gr", Json_decode.$$int, json),
+          src: Json_decode.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json),
+          translations: Json_decode.field("translations", TranslationMap.decode, json)
         };
 }
 
-function t(univ, l10n) {
-  return [
-          univ.id,
-          {
-            id: univ.id,
-            name: l10n.name,
-            ic: univ.ic,
-            primary: univ.primary,
-            special: l10n.special,
-            hasNoParry: Ley_Option$OptolithClient.fromOption(false, univ.hasNoParry),
-            bpr: univ.bpr,
-            gr: univ.gr,
-            src: l10n.src,
-            errata: l10n.errata
-          }
-        ];
+function decode$1(langs, json) {
+  var x = decodeFull(json);
+  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+                return {
+                        id: x.id,
+                        name: translation.name,
+                        ic: x.ic,
+                        primary: x.primary,
+                        special: translation.special,
+                        hasNoParry: x.hasNoParry,
+                        bpr: x.bpr,
+                        gr: x.gr,
+                        src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                        errata: translation.errata
+                      };
+              }));
 }
 
-function all(yamlData) {
-  return Curry._1(Ley_IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, t, (function (x) {
-                    return x.id;
-                  }), (function (x) {
-                    return x.id;
-                  }), Json_decode.list(tUniv, yamlData.combatTechniquesUniv), Json_decode.list(tL10n, yamlData.combatTechniquesL10n)));
-}
+var Dynamic_empty = Dynamic.empty;
 
-var Decode = {
-  tL10n: tL10n,
-  tUniv: tUniv,
-  t: t,
-  all: all
+var Dynamic_isEmpty = Dynamic.isEmpty;
+
+var Dynamic_getValueDef = Dynamic.getValueDef;
+
+var Dynamic$1 = {
+  empty: Dynamic_empty,
+  isEmpty: Dynamic_isEmpty,
+  getValueDef: Dynamic_getValueDef
+};
+
+var Static = {
+  decode: decode$1
 };
 
 export {
-  Decode ,
+  Dynamic$1 as Dynamic,
+  Static ,
   
 }
-/* Ley_IntMap-OptolithClient Not a pure module */
+/* Dynamic Not a pure module */

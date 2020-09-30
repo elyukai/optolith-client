@@ -1,4 +1,4 @@
-open Json.Decode;
+include Json.Decode;
 
 [@bs.val] external _stringify: Js.Json.t => string = "JSON.stringify";
 

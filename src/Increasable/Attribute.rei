@@ -25,7 +25,7 @@ module Dynamic: {
    * exist and returns the value of that attribute. If the attribute is not yet
    * defined, it's value is `8`.
    */
-  let getValueDef: Ley_Option.t(t) => int;
+  let getValueDef: option(t) => int;
 };
 
 module Static: {
@@ -35,5 +35,5 @@ module Static: {
     short: string,
   };
 
-  let decode: (list(string), Js.Json.t) => Ley_Option.t(t);
+  let decode: (list(string), Js.Json.t) => option(t);
 };

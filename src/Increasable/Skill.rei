@@ -25,7 +25,7 @@ module Dynamic: {
    * exist and returns the value of that skill. If the skill is not yet defined,
    * it's value is `0`.
    */
-  let getValueDef: Ley_Option.t(t) => int;
+  let getValueDef: option(t) => int;
 };
 
 module Static: {
@@ -45,11 +45,29 @@ module Static: {
     };
   };
 
+  type encumbrance =
+    | True
+    | False
+    | Maybe(option(string));
+
   type t = {
     id: int,
     name: string,
-    prerequisite: Prerequisite.activatable,
+    check: SkillCheck.t,
+    encumbrance,
+    gr: int,
+    ic: IC.t,
+    applications: Ley_IntMap.t(Application.t),
+    applicationsInput: option(string),
+    uses: Ley_IntMap.t(Use.t),
+    tools: option(string),
+    quality: string,
+    failed: string,
+    critical: string,
+    botch: string,
+    src: list(PublicationRef.t),
+    errata: list(Erratum.t),
   };
 
-  let decode: (list(string), Js.Json.t) => Ley_Option.t(t);
+  let decode: list(string) => Json.Decode.decoder(option(t));
 };

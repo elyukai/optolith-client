@@ -3,36 +3,47 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
-import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
-import * as SourceRef$OptolithClient from "../Sources/SourceRef.bs.js";
-import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
+import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
+import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
+import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-function t(json) {
+function decode(json) {
   return {
-          id: Json_decode.field("id", Json_decode.$$int, json),
           name: Json_decode.field("name", Json_decode.string, json),
           description: Json_decode.field("description", Json_decode.string, json),
-          src: Json_decode.field("src", SourceRef$OptolithClient.Decode.list, json),
-          errata: Json_decode.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: Json_decode.field("errata", Erratum$OptolithClient.decodeList, json)
         };
 }
 
-function all(yamlData) {
-  return Curry._1(Ley_IntMap$OptolithClient.fromList, Ley_List$OptolithClient.map((function (x) {
-                    return [
-                            x.id,
-                            x
-                          ];
-                  }), Json_decode.list(t, yamlData.optionalRulesL10n)));
-}
-
-var Decode = {
-  t: t,
-  all: all
+var Translations = {
+  decode: decode
 };
 
+var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+
+function decodeMultilingual(json) {
+  return {
+          id: Json_decode.field("id", Json_decode.$$int, json),
+          src: Json_decode.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json),
+          translations: Json_decode.field("translations", TranslationMap.decode, json)
+        };
+}
+
+function decode$1(langs, json) {
+  var x = decodeMultilingual(json);
+  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+                return {
+                        id: x.id,
+                        name: translation.name,
+                        description: translation.description,
+                        src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                        errata: translation.errata
+                      };
+              }));
+}
+
 export {
-  Decode ,
+  decode$1 as decode,
   
 }
-/* Ley_IntMap-OptolithClient Not a pure module */
+/* TranslationMap Not a pure module */

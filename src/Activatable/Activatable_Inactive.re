@@ -86,7 +86,7 @@ let modifyOtherOptions =
         |> IM.Foldable.any(
              fun
              // At least one ranged combat technique must be on CtR 10 or higher
-             | (_, Some((heroEntry: Hero.Skill.t))) => heroEntry.value >= 10
+             | (_, Some((heroEntry: Skill.Dynamic.t))) => heroEntry.value >= 10
              | _ => false,
            )
           ? Some(base) : None

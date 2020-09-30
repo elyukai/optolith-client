@@ -444,7 +444,7 @@ module Remove = {
           heroEntry =>
             heroEntry
             <&> (
-              (heroEntry: Hero.Skill.t) => {
+              (heroEntry: Skill.Dynamic.t) => {
                 ...heroEntry,
                 dependencies: L.delete(dep, heroEntry.dependencies),
               }
@@ -465,7 +465,7 @@ module Remove = {
           heroEntry =>
             heroEntry
             <&> (
-              (heroEntry: Hero.Skill.t) => {
+              (heroEntry: Skill.Dynamic.t) => {
                 ...heroEntry,
                 dependencies: L.delete(dep, heroEntry.dependencies),
               }

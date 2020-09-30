@@ -1,23 +1,21 @@
 type t =
-  | SPI
-  | DOUBLE_SPI
-  | TOU
-  | MAX_SPI_TOU;
+  | Spirit
+  | HalfOfSpirit
+  | Toughness
+  | GreaterOfBoth;
 
-module Decode = {
-  open Json.Decode;
-
-  let t = json =>
+let decode = json =>
+  Json.Decode.(
     json
     |> string
     |> (
       scope =>
         switch (scope) {
-        | "SPI" => json |> int |> (_ => SPI)
-        | "SPI/2" => json |> int |> (_ => DOUBLE_SPI)
-        | "TOU" => json |> int |> (_ => TOU)
-        | "SPI/TOU" => json |> int |> (_ => MAX_SPI_TOU)
+        | "SPI" => json |> int |> (_ => Spirit)
+        | "SPI/2" => json |> int |> (_ => HalfOfSpirit)
+        | "TOU" => json |> int |> (_ => Toughness)
+        | "SPI/TOU" => json |> int |> (_ => GreaterOfBoth)
         | _ => raise(DecodeError("Unknown check modifier: " ++ scope))
         }
-    );
-};
+    )
+  );

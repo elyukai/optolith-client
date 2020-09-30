@@ -2,7 +2,7 @@ type t = {
   id: int,
   name: string,
   items: Ley_IntMap.t(int),
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -13,14 +13,14 @@ module Decode = {
   type tL10n = {
     id: int,
     name: string,
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
   let tL10n = json => {
     id: json |> field("id", int),
     name: json |> field("name", string),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

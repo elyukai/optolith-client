@@ -2,31 +2,13 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
-import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
+import * as Increasable$OptolithClient from "./Increasable.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-function empty(id) {
-  return {
-          id: id,
-          value: 8,
-          dependencies: /* [] */0
-        };
-}
-
-function isEmpty(x) {
-  if (x.value <= 8) {
-    return Ley_List$OptolithClient.Foldable.$$null(x.dependencies);
-  } else {
-    return false;
-  }
-}
-
-function getValueDef(param) {
-  return Ley_Option$OptolithClient.option(8, (function (x) {
-                return x.value;
-              }), param);
-}
+var Dynamic = Increasable$OptolithClient.Dynamic({
+      minValue: 8
+    });
 
 function decode(json) {
   return {
@@ -59,10 +41,16 @@ function decode$1(langs, json) {
               }));
 }
 
-var Dynamic = {
-  empty: empty,
-  isEmpty: isEmpty,
-  getValueDef: getValueDef
+var Dynamic_empty = Dynamic.empty;
+
+var Dynamic_isEmpty = Dynamic.isEmpty;
+
+var Dynamic_getValueDef = Dynamic.getValueDef;
+
+var Dynamic$1 = {
+  empty: Dynamic_empty,
+  isEmpty: Dynamic_isEmpty,
+  getValueDef: Dynamic_getValueDef
 };
 
 var Static = {
@@ -70,8 +58,8 @@ var Static = {
 };
 
 export {
-  Dynamic ,
+  Dynamic$1 as Dynamic,
   Static ,
   
 }
-/* TranslationMap Not a pure module */
+/* Dynamic Not a pure module */

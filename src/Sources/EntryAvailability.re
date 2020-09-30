@@ -1,13 +1,10 @@
-open Static;
-open SourceRef;
 open Ley_Function;
 
 module B = Ley_Bool;
 module I = Ley_Int;
 module L = Ley_List;
 module O = Ley_Option;
-module SM = Ley_StrMap;
-module SS = Ley_StrSet;
+module IM = Ley_IntMap;
 module IS = Ley_IntSet;
 
 /**
@@ -16,14 +13,14 @@ module IS = Ley_IntSet;
  */
 let isPublicationActive = (staticPublications, rules: Hero.Rules.t, id) =>
   staticPublications
-  |> SM.lookup(id)
+  |> IM.lookup(id)
   |> (
     fun
     | Some((p: Publication.t)) =>
       p.isCore
       || rules.areAllPublicationsActive
       && !p.isAdultContent
-      || SS.member(id, rules.activePublications)
+      || IS.member(id, rules.activePublications)
     | None => false
   );
 
@@ -35,7 +32,7 @@ let isPublicationActive = (staticPublications, rules: Hero.Rules.t, id) =>
 let isAvailable = (acc, staticPublications, rules, x) =>
   x
   |> acc
-  |> L.Foldable.any(({id, _}) =>
+  |> L.Foldable.any(({Publication.id, _}) =>
        isPublicationActive(staticPublications, rules, id)
      );
 
@@ -51,7 +48,8 @@ let isAvailableNull = (acc, staticPublications, rules, x) =>
     | [] => true
     | refs =>
       L.Foldable.any(
-        ({id, _}) => isPublicationActive(staticPublications, rules, id),
+        ({Publication.id, _}) =>
+          isPublicationActive(staticPublications, rules, id),
         refs,
       )
   );
@@ -71,7 +69,7 @@ let isAvailableNullPred = (acc, pred, staticPublications, rules, x) =>
       | refs =>
         pred(x)
         || L.Foldable.any(
-             ({id, _}) =>
+             ({Publication.id, _}) =>
                isPublicationActive(staticPublications, rules, id),
              refs,
            )
@@ -86,110 +84,12 @@ let isAvailableNullPred = (acc, pred, staticPublications, rules, x) =>
 let isFromCore = (acc, staticPublications, x) =>
   x
   |> acc
-  |> L.Foldable.any(({id, _}) =>
-       SM.lookup(id, staticPublications)
+  |> L.Foldable.any(({Publication.id, _}) =>
+       IM.lookup(id, staticPublications)
        |> O.Foldable.any((p: Publication.t) => p.isCore)
      );
 
 module Grouping = {
-  type page =
-    | Single(int)
-    | Range(int, int);
-
-  type groupedSourceRef = {
-    id: string,
-    pages: list(page),
-  };
-
-  /**
-   * `insertPages p s` inserts all pages derived from the ref's page definition
-   * `p` into the passed set `s`.
-   */
-  let insertPages = ((fst, lst)) =>
-    fst === lst
-      ? IS.insert(fst)
-      : flip(L.Foldable.foldr(IS.insert), Ley_Ix.range((fst, lst)));
-
-  /**
-   * `insertPagesByPublication ref mp` inserts the unfolded pages from the passed
-   * ref `ref` into the passed map `mp` by the ref's id.
-   */
-  let insertPagesByPublication = ({id, page}) =>
-    SM.alter(
-      maybeExistingPages =>
-        maybeExistingPages
-        |> O.fromOption(IS.empty)
-        |> insertPages(page)
-        |> (s => Some(s)),
-      id,
-    );
-
-  /**
-   * Combines adjacent integers into ranges. Leaves the other ints as they are.
-   * The result is sorted in ascending order.
-   *
-   * ```reason
-   * groupRanges([1, 3, 4, 5, 7, 9, 10, 12])
-   * == [Single(1), Range(3, 5), Single(7), Range(9, 10), Single(12)]
-   * ```
-   */
-  let groupRanges = pages =>
-    Ley_List.Foldable.foldr(
-      (page, groupedReversedPages) =>
-        switch (groupedReversedPages) {
-        | [] => [Single(page)]
-        | [Single(prevPage), ...previousGrouped] =>
-          // if current page is equal to previous page, don't change anything
-          page === prevPage
-            ? groupedReversedPages
-            // if the current page is the page directly after the previous page,
-            // create a range from both pages
-            : page === prevPage + 1
-                ? [Range(prevPage, page), ...previousGrouped]
-                // Otherwise just add as a separate page
-                : [Single(page), ...groupedReversedPages]
-        | [Range(prevFirstPage, prevLastPage), ...previousGrouped] =>
-          // if current page is equal to last page in the previous range, don't
-          // change anything
-          page === prevLastPage
-            ? groupedReversedPages
-            // if the current page is the page directly after the last page in
-            // the previous range, expand the range to include the current page
-            : page === prevLastPage + 1
-                ? [Range(prevFirstPage, page), ...previousGrouped]
-                // Otherwise just add as a separate page
-                : [Single(page), ...groupedReversedPages]
-        },
-      [],
-      pages,
-    )
-    |> Ley_List.reverse;
-
-  /**
-   * Group unique pages from a list of list of source refs by publication id.
-   */
-  let getGroupedUniquePagesFromPublicationLists =
-    L.Foldable.foldr(
-      flip(L.Foldable.foldr(insertPagesByPublication)),
-      SM.empty,
-    );
-
-  /**
-   * Creates a list of grouped source refs from a map with the publication id as
-   * the key and the set of pages as it's value.
-   */
-  let getGroupedRefsFromGroupedUniquePages =
-    SM.foldrWithKey(
-      (id, uniquePages) =>
-        L.cons({
-          id,
-          // `uniquePages` doesnt need to be sorted since the IntSet already
-          // output sorted values
-          pages: uniquePages |> IS.Foldable.toList |> groupRanges,
-        }),
-      [],
-    );
-
   /**
    * Converts a list of pages into a string.
    */
@@ -197,7 +97,7 @@ module Grouping = {
     pages
     |> L.map(
          fun
-         | Single(page) => I.show(page)
+         | PublicationRef.Single(page) => I.show(page)
          | Range(first, last) =>
            I.show(first) ++ Chars.ndash ++ I.show(last),
        )
@@ -206,11 +106,11 @@ module Grouping = {
   /**
    * Converts a list of source refs into a string.
    */
-  let showGroupedRefs = (staticData, srcs) =>
+  let showGroupedRefs = (staticData: Static.t, srcs) =>
     srcs
-    |> O.mapOption((src: groupedSourceRef) =>
+    |> O.mapOption((src: PublicationRef.t) =>
          O.Functor.(
-           SM.lookup(src.id, staticData.publications)
+           IM.lookup(src.id, staticData.publications)
            <&> (book => (book.name, showPages(src.pages)))
          )
        )

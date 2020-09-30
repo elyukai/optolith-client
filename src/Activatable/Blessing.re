@@ -6,7 +6,7 @@ type t = {
   duration: string,
   target: string,
   traditions: Ley_IntSet.t,
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -20,7 +20,7 @@ module Decode = {
     range: string,
     duration: string,
     target: string,
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
@@ -31,7 +31,7 @@ module Decode = {
     range: json |> field("range", string),
     duration: json |> field("duration", string),
     target: json |> field("target", string),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

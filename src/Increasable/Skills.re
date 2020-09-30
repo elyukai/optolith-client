@@ -4,12 +4,6 @@ open Ley_List;
 open Hero.Activatable;
 
 /**
- * Takes a skill's hero entry that might not exist and returns the value of
- * that skill. Note: If the skill is not yet defined, it's value is `0`.
- */
-let getValueDef = option(8, (x: Hero.Skill.t) => x.value);
-
-/**
  * Get the SR maximum bonus from an active Exceptional Skill advantage.
  */
 let getExceptionalSkillBonus = (exceptionalSkill, id) =>
@@ -31,7 +25,7 @@ let getExceptionalSkillBonus = (exceptionalSkill, id) =>
  */
 let getMaxSrByCheckAttrs = (mp, check) =>
   check
-  |> Attributes.getSkillCheckValues(mp)
+  |> SkillCheck.getValues(mp)
   |> (((a1, a2, a3)) => Ley_List.Foldable.maximum([a1, a2, a3]) + 2);
 
 /**
@@ -52,7 +46,13 @@ let getMaxSrFromEl = (startEl: ExperienceLevel.t, phase) =>
  * Returns the maximum skill rating for the passed skill.
  */
 let getMax =
-    (~startEl, ~phase, ~heroAttrs, ~exceptionalSkill, ~staticEntry: Skill.t) =>
+    (
+      ~startEl,
+      ~phase,
+      ~heroAttrs,
+      ~exceptionalSkill,
+      ~staticEntry: Skill.Static.t,
+    ) =>
   [
     Some(getMaxSrByCheckAttrs(heroAttrs, staticEntry.check)),
     getMaxSrFromEl(startEl, phase),
@@ -73,13 +73,13 @@ let isIncreasable =
       ~heroAttrs,
       ~exceptionalSkill,
       ~staticEntry,
-      ~heroEntry: Hero.Skill.t,
+      ~heroEntry: Skill.Dynamic.t,
     ) =>
   heroEntry.value
   < getMax(~startEl, ~phase, ~heroAttrs, ~exceptionalSkill, ~staticEntry);
 
 let getMinSrByCraftInstruments =
-    (craftInstruments, skills, staticEntry: Skill.t) =>
+    (craftInstruments, skills, staticEntry: Skill.Static.t) =>
   Id.Skill.(
     [@warning "-4"]
     {
@@ -111,7 +111,7 @@ let getMinSrByCraftInstruments =
 /**
  * Check if the dependencies allow the passed skill to be decreased.
  */
-let getMinSrByDeps = (heroSkills, heroEntry: Hero.Skill.t) =>
+let getMinSrByDeps = (heroSkills, heroEntry: Skill.Dynamic.t) =>
   heroEntry.dependencies
   |> Dependencies.Flatten.flattenSkillDependencies(
        id => heroSkills |> Ley_IntMap.lookup(id) |> getValueDef,
@@ -136,7 +136,12 @@ let getMin = (~craftInstruments, ~heroSkills, ~staticEntry, ~heroEntry) =>
  * Returns if the passed skill's skill rating can be decreased.
  */
 let isDecreasable =
-    (~craftInstruments, ~heroSkills, ~staticEntry, ~heroEntry: Hero.Skill.t) =>
+    (
+      ~craftInstruments,
+      ~heroSkills,
+      ~staticEntry,
+      ~heroEntry: Skill.Dynamic.t,
+    ) =>
   heroEntry.value
   > (
       getMin(~craftInstruments, ~heroSkills, ~staticEntry, ~heroEntry)

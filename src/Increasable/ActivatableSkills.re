@@ -1,23 +1,6 @@
 module IM = Ley_IntMap;
-module O = Ley_Option;
 
 open Hero.ActivatableSkill;
-
-let getValueDef = O.option(Inactive, (x: Hero.ActivatableSkill.t) => x.value);
-
-let valueToInt = value =>
-  switch (value) {
-  | Active(sr) => sr
-  | Inactive => 0
-  };
-
-let isActive = (x: Hero.ActivatableSkill.t) =>
-  switch (x.value) {
-  | Active(_) => true
-  | Inactive => false
-  };
-
-let isActiveM = O.option(false, isActive);
 
 type t =
   | Spells

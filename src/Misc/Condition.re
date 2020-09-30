@@ -4,7 +4,7 @@ type t = {
   description: option(string),
   levelColumnDescription: option(string),
   levelDescriptions: (string, string, string, string),
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -23,7 +23,7 @@ module Decode = {
       json |> field("level4", string),
     ),
     levelColumnDescription: json |> optionalField("levelDescription", string),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

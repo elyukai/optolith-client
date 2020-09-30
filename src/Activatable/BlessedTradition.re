@@ -7,7 +7,6 @@ type t = {
 };
 
 module Decode = {
-  open Json.Decode;
   open JsonStrict;
 
   type tL10n = {

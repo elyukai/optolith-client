@@ -30,7 +30,7 @@ type enhancement = {
   level1: enhancementLevel1,
   level2: enhancementLevel2,
   level3: enhancementLevel3,
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -57,7 +57,7 @@ type t = {
   aspects: list(int),
   ic: IC.t,
   gr: int,
-  src: list(SourceRef.t),
+  src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
 
@@ -82,7 +82,7 @@ module Decode = {
     level1: enhancementLevelL10n,
     level2: enhancementLevelL10n,
     level3: enhancementLevelL10n,
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
@@ -91,7 +91,7 @@ module Decode = {
     level1: json |> field("level1", enhancementLevelL10n),
     level2: json |> field("level2", enhancementLevelL10n),
     level3: json |> field("level3", enhancementLevelL10n),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 
@@ -226,7 +226,7 @@ module Decode = {
     duration: string,
     durationShort: string,
     target: string,
-    src: list(SourceRef.t),
+    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
@@ -243,7 +243,7 @@ module Decode = {
     duration: json |> field("duration", string),
     durationShort: json |> field("durationShort", string),
     target: json |> field("target", string),
-    src: json |> field("src", SourceRef.Decode.list),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
     errata: json |> field("errata", Erratum.Decode.list),
   };
 

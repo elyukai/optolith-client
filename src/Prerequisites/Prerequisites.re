@@ -605,11 +605,11 @@ module Validation = {
     | (Skill, id) =>
       current.skills
       |> Ley_IntMap.lookup(id)
-      |> Ley_Option.option(false, (x: Hero.Skill.t) => x.value >= minValue)
+      |> Ley_Option.option(false, (x: Skill.Dynamic.t) => x.value >= minValue)
     | (CombatTechnique, id) =>
       current.combatTechniques
       |> Ley_IntMap.lookup(id)
-      |> Ley_Option.option(false, (x: Hero.Skill.t) => x.value >= minValue)
+      |> Ley_Option.option(false, (x: Skill.Dynamic.t) => x.value >= minValue)
     | (Spell, id) =>
       current.spells
       |> Ley_IntMap.lookup(id)

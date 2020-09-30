@@ -3,7 +3,7 @@
  * value of that combat technique. Note: If the combat technique is not yet
  * defined, it's value is `6`.
  */
-let getValueDef: option(Hero.Skill.t) => int;
+let getValueDef: option(Skill.Dynamic.t) => int;
 
 /**
  * `getAttack heroAttrs staticCt heroCt` returns the attack base value for the
@@ -12,8 +12,8 @@ let getValueDef: option(Hero.Skill.t) => int;
 let getAttack:
   (
     Ley_IntMap.t(Hero.Attribute.t),
-    CombatTechnique.t,
-    option(Hero.Skill.t)
+    CombatTechnique.Static.t,
+    option(Skill.Dynamic.t)
   ) =>
   int;
 
@@ -24,8 +24,8 @@ let getAttack:
 let getParry:
   (
     Ley_IntMap.t(Hero.Attribute.t),
-    CombatTechnique.t,
-    option(Hero.Skill.t)
+    CombatTechnique.Static.t,
+    option(Skill.Dynamic.t)
   ) =>
   option(int);
 
@@ -38,7 +38,7 @@ let getMax:
     ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
     ~exceptionalCombatTechnique: option(Hero.Activatable.t),
-    ~staticEntry: CombatTechnique.t
+    ~staticEntry: CombatTechnique.Static.t
   ) =>
   int;
 
@@ -52,8 +52,8 @@ let isIncreasable:
     ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
     ~exceptionalCombatTechnique: option(Hero.Activatable.t),
-    ~staticEntry: CombatTechnique.t,
-    ~heroEntry: Hero.Skill.t
+    ~staticEntry: CombatTechnique.Static.t,
+    ~heroEntry: Skill.Dynamic.t
   ) =>
   bool;
 
@@ -63,9 +63,9 @@ let isIncreasable:
 let getMin:
   (
     ~onlyOneCombatTechniqueForHunter: bool,
-    ~heroCombatTechniques: Ley_IntMap.t(Hero.Skill.t),
-    ~staticEntry: CombatTechnique.t,
-    ~heroEntry: Hero.Skill.t
+    ~heroCombatTechniques: Ley_IntMap.t(Skill.Dynamic.t),
+    ~staticEntry: CombatTechnique.Static.t,
+    ~heroEntry: Skill.Dynamic.t
   ) =>
   option(int);
 
@@ -76,8 +76,8 @@ let getMin:
 let isDecreasable:
   (
     ~onlyOneCombatTechniqueForHunter: bool,
-    ~heroCombatTechniques: Ley_IntMap.t(Hero.Skill.t),
-    ~staticEntry: CombatTechnique.t,
-    ~heroEntry: Hero.Skill.t
+    ~heroCombatTechniques: Ley_IntMap.t(Skill.Dynamic.t),
+    ~staticEntry: CombatTechnique.Static.t,
+    ~heroEntry: Skill.Dynamic.t
   ) =>
   bool;

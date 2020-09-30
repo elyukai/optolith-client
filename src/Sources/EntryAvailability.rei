@@ -12,7 +12,12 @@
  * accessor function `acc` returns all source refs for the entry.
  */
 let isAvailable:
-  ('a => list(SourceRef.t), Ley_StrMap.t(Publication.t), Hero.Rules.t, 'a) =>
+  (
+    'a => list(PublicationRef.t),
+    Ley_StrMap.t(Publication.t),
+    Hero.Rules.t,
+    'a
+  ) =>
   bool;
 
 /**
@@ -20,7 +25,12 @@ let isAvailable:
  * has no source refs.
  */
 let isAvailableNull:
-  ('a => list(SourceRef.t), Ley_StrMap.t(Publication.t), Hero.Rules.t, 'a) =>
+  (
+    'a => list(PublicationRef.t),
+    Ley_StrMap.t(Publication.t),
+    Hero.Rules.t,
+    'a
+  ) =>
   bool;
 
 /**
@@ -30,7 +40,7 @@ let isAvailableNull:
  */
 let isAvailableNullPred:
   (
-    'a => list(SourceRef.t),
+    'a => list(PublicationRef.t),
     'a => bool,
     Ley_StrMap.t(Publication.t),
     Hero.Rules.t,
@@ -44,7 +54,7 @@ let isAvailableNullPred:
  * refs for the entry.
  */
 let isFromCore:
-  ('a => list(SourceRef.t), Ley_StrMap.t(Publication.t), 'a) => bool;
+  ('a => list(PublicationRef.t), Ley_StrMap.t(Publication.t), 'a) => bool;
 
 module Grouping: {
   /**
@@ -53,5 +63,10 @@ module Grouping: {
    * list with source refs, their referenced pages are excluded from the result.
    */
   let showGroupedSources:
-    (Static.t, list(list(SourceRef.t)), list(list(SourceRef.t))) => string;
+    (
+      Static.t,
+      list(list(PublicationRef.t)),
+      list(list(PublicationRef.t))
+    ) =>
+    string;
 };

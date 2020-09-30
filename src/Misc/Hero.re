@@ -14,7 +14,7 @@ module Rules = {
 
   type t = {
     areAllPublicationsActive: bool,
-    activePublications: Ley_StrSet.t,
+    activePublications: Ley_IntSet.t,
     activeFocusRules: Ley_IntMap.t(activeRule),
     activeOptionalRules: Ley_IntMap.t(activeRule),
   };
