@@ -13,11 +13,7 @@ module Static: {
     duration: ActivatableSkill.MainParameter.t,
     target: string,
     property: int,
-    traditions: Ley_IntSet.t,
     ic: IC.t,
-    increasablePrerequisites: option(list(Prerequisite.increasable)),
-    gr: int,
-    enhancements: option(Enhancements.t),
     src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };

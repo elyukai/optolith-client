@@ -72,9 +72,9 @@ module CombatTechnique: {
   let getFromGroup:
     (
       Id.CombatTechnique.Group.t,
-      Ley_IntMap.t((CombatTechnique.t, option(Skill.Dynamic.t)))
+      Ley_IntMap.t((CombatTechnique.Static.t, option(Skill.Dynamic.t)))
     ) =>
-    Ley_IntMap.t((CombatTechnique.t, option(Skill.Dynamic.t)));
+    Ley_IntMap.t((CombatTechnique.Static.t, option(Skill.Dynamic.t)));
 };
 
 module SpecialAbility: {

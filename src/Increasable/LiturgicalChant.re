@@ -1,322 +1,138 @@
-type enhancementLevel1 = {
-  id: int,
-  name: string,
-  effect: string,
-  cost: int,
-};
+module Dynamic = ActivatableSkill.Dynamic;
 
-type enhancementLevel2 = {
-  id: int,
-  name: string,
-  effect: string,
-  cost: int,
-  requireLevel1: bool,
-};
-
-type level3Prerequisite =
-  | First
-  | Second;
-
-type enhancementLevel3 = {
-  id: int,
-  name: string,
-  effect: string,
-  cost: int,
-  requirePrevious: option(level3Prerequisite),
-};
-
-type enhancement = {
-  target: int,
-  level1: enhancementLevel1,
-  level2: enhancementLevel2,
-  level3: enhancementLevel3,
-  src: list(PublicationRef.t),
-  errata: list(Erratum.t),
-};
-
-type t = {
-  id: int,
-  name: string,
-  check: (int, int, int),
-  checkMod: option(CheckModifier.t),
-  effect: string,
-  castingTime: string,
-  castingTimeShort: string,
-  castingTimeNoMod: bool,
-  kpCost: string,
-  kpCostShort: string,
-  kpCostNoMod: bool,
-  range: string,
-  rangeShort: string,
-  rangeNoMod: bool,
-  duration: string,
-  durationShort: string,
-  durationNoMod: bool,
-  target: string,
-  traditions: list(int),
-  aspects: list(int),
-  ic: IC.t,
-  gr: int,
-  src: list(PublicationRef.t),
-  errata: list(Erratum.t),
-};
-
-module Decode = {
-  open Json.Decode;
-  open JsonStrict;
-
-  type enhancementLevelL10n = {
+module Static = {
+  type t = {
     id: int,
     name: string,
-    effect: string,
-  };
-
-  let enhancementLevelL10n = json => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-    effect: json |> field("effect", string),
-  };
-
-  type enhancementL10n = {
-    target: int,
-    level1: enhancementLevelL10n,
-    level2: enhancementLevelL10n,
-    level3: enhancementLevelL10n,
-    src: list(PublicationRef.t),
-    errata: list(Erratum.t),
-  };
-
-  let enhancementL10n = (json): enhancementL10n => {
-    target: json |> field("target", int),
-    level1: json |> field("level1", enhancementLevelL10n),
-    level2: json |> field("level2", enhancementLevelL10n),
-    level3: json |> field("level3", enhancementLevelL10n),
-    src: json |> field("src", PublicationRef.decodeMultilingualList),
-    errata: json |> field("errata", Erratum.Decode.list),
-  };
-
-  type enhancementLevel1Univ = {
-    id: int,
-    cost: int,
-  };
-
-  let enhancementLevel1Univ = json => {
-    id: json |> field("id", int),
-    cost: json |> field("cost", int),
-  };
-
-  type enhancementLevel2Univ = {
-    id: int,
-    cost: int,
-    requireLevel1: bool,
-  };
-
-  let level3Prerequisite = json =>
-    json
-    |> int
-    |> (
-      x =>
-        switch (x) {
-        | 1 => 1
-        | y =>
-          raise(
-            DecodeError("Unknown level 2 prerequisite: " ++ Ley_Int.show(y)),
-          )
-        }
-    );
-
-  let enhancementLevel2Univ = json => {
-    id: json |> field("id", int),
-    cost: json |> field("cost", int),
-    requireLevel1:
-      json
-      |> optionalField("previousRequirement", level3Prerequisite)
-      |> Ley_Option.isSome,
-  };
-
-  type enhancementLevel3Univ = {
-    id: int,
-    cost: int,
-    requirePrevious: option(level3Prerequisite),
-  };
-
-  let level3Prerequisite = json =>
-    json
-    |> int
-    |> (
-      x =>
-        switch (x) {
-        | 1 => First
-        | 2 => Second
-        | y =>
-          raise(
-            DecodeError("Unknown level 3 prerequisite: " ++ Ley_Int.show(y)),
-          )
-        }
-    );
-
-  let enhancementLevel3Univ = json => {
-    id: json |> field("id", int),
-    cost: json |> field("cost", int),
-    requirePrevious:
-      json |> optionalField("previousRequirement", level3Prerequisite),
-  };
-
-  type enhancementUniv = {
-    target: int,
-    level1: enhancementLevel1Univ,
-    level2: enhancementLevel2Univ,
-    level3: enhancementLevel3Univ,
-  };
-
-  let enhancementUniv = json => {
-    target: json |> field("target", int),
-    level1: json |> field("level1", enhancementLevel1Univ),
-    level2: json |> field("level2", enhancementLevel2Univ),
-    level3: json |> field("level3", enhancementLevel3Univ),
-  };
-
-  let enhancement =
-      (univ: enhancementUniv, l10n: enhancementL10n): enhancement => {
-    target: univ.target,
-    level1: {
-      id: univ.level1.id,
-      name: l10n.level1.name,
-      effect: l10n.level1.effect,
-      cost: univ.level1.cost,
-    },
-    level2: {
-      id: univ.level2.id,
-      name: l10n.level2.name,
-      effect: l10n.level2.effect,
-      cost: univ.level2.cost,
-      requireLevel1: univ.level2.requireLevel1,
-    },
-    level3: {
-      id: univ.level3.id,
-      name: l10n.level3.name,
-      effect: l10n.level3.effect,
-      cost: univ.level3.cost,
-      requirePrevious: univ.level3.requirePrevious,
-    },
-    src: l10n.src,
-    errata: l10n.errata,
-  };
-
-  let enhancements = (yamlData: Yaml_Raw.yamlData) =>
-    Yaml_Zip.zipBy(
-      Ley_Int.show,
-      enhancement,
-      x => x.target,
-      x => x.target,
-      yamlData.liturgicalChantEnhancementsUniv |> list(enhancementUniv),
-      yamlData.liturgicalChantEnhancementsL10n |> list(enhancementL10n),
-    );
-
-  type tL10n = {
-    id: int,
-    name: string,
-    effect: string,
-    castingTime: string,
-    castingTimeShort: string,
-    kpCost: string,
-    kpCostShort: string,
-    range: string,
-    rangeShort: string,
-    duration: string,
-    durationShort: string,
-    target: string,
-    src: list(PublicationRef.t),
-    errata: list(Erratum.t),
-  };
-
-  let tL10n = json => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-    effect: json |> field("effect", string),
-    castingTime: json |> field("castingTime", string),
-    castingTimeShort: json |> field("castingTimeShort", string),
-    kpCost: json |> field("kpCost", string),
-    kpCostShort: json |> field("kpCostShort", string),
-    range: json |> field("range", string),
-    rangeShort: json |> field("rangeShort", string),
-    duration: json |> field("duration", string),
-    durationShort: json |> field("durationShort", string),
-    target: json |> field("target", string),
-    src: json |> field("src", PublicationRef.decodeMultilingualList),
-    errata: json |> field("errata", Erratum.Decode.list),
-  };
-
-  type tUniv = {
-    id: int,
-    check1: int,
-    check2: int,
-    check3: int,
+    check: SkillCheck.t,
     checkMod: option(CheckModifier.t),
-    castingTimeNoMod: bool,
-    kpCostNoMod: bool,
-    rangeNoMod: bool,
-    durationNoMod: bool,
-    traditions: list(int),
-    aspects: option(list(int)),
+    effect: string,
+    castingTime: ActivatableSkill.MainParameter.t,
+    cost: ActivatableSkill.MainParameter.t,
+    range: ActivatableSkill.MainParameter.t,
+    duration: ActivatableSkill.MainParameter.t,
+    target: string,
+    traditions: Ley_IntSet.t,
+    aspects: Ley_IntSet.t,
     ic: IC.t,
     gr: int,
+    enhancements: option(Enhancements.t),
+    src: list(PublicationRef.t),
+    errata: list(Erratum.t),
   };
 
-  let tUniv = json => {
-    id: json |> field("id", int),
-    check1: json |> field("check1", int),
-    check2: json |> field("check2", int),
-    check3: json |> field("check3", int),
-    checkMod: json |> optionalField("checkMod", CheckModifier.Decode.t),
-    castingTimeNoMod: json |> field("castingTimeNoMod", bool),
-    kpCostNoMod: json |> field("kpCostNoMod", bool),
-    rangeNoMod: json |> field("rangeNoMod", bool),
-    durationNoMod: json |> field("durationNoMod", bool),
-    traditions: json |> field("traditions", list(int)),
-    aspects: json |> optionalField("traditions", list(int)),
-    ic: json |> field("ic", IC.Decode.t),
-    gr: json |> field("gr", int),
+  module Translations = {
+    type t = {
+      name: string,
+      effect: string,
+      castingTime: ActivatableSkill.MainParameter.translation,
+      cost: ActivatableSkill.MainParameter.translation,
+      range: ActivatableSkill.MainParameter.translation,
+      duration: ActivatableSkill.MainParameter.translation,
+      target: string,
+      errata: list(Erratum.t),
+    };
+
+    let decode = json =>
+      JsonStrict.{
+        name: json |> field("name", string),
+        effect: json |> field("effect", string),
+        castingTime:
+          json |> field("castingTime", ActivatableSkill.MainParameter.decode),
+        cost: json |> field("cost", ActivatableSkill.MainParameter.decode),
+        range: json |> field("range", ActivatableSkill.MainParameter.decode),
+        duration:
+          json |> field("duration", ActivatableSkill.MainParameter.decode),
+        target: json |> field("target", string),
+        errata: json |> field("errata", Erratum.decodeList),
+      };
   };
 
-  let t = (univ: tUniv, l10n: tL10n) => (
-    univ.id,
-    {
-      id: univ.id,
-      name: l10n.name,
-      check: (univ.check1, univ.check2, univ.check3),
-      checkMod: univ.checkMod,
-      effect: l10n.effect,
-      castingTime: l10n.castingTime,
-      castingTimeShort: l10n.castingTimeShort,
-      castingTimeNoMod: univ.castingTimeNoMod,
-      kpCost: l10n.kpCost,
-      kpCostShort: l10n.kpCostShort,
-      kpCostNoMod: univ.kpCostNoMod,
-      range: l10n.range,
-      rangeShort: l10n.rangeShort,
-      rangeNoMod: univ.rangeNoMod,
-      duration: l10n.duration,
-      durationShort: l10n.durationShort,
-      durationNoMod: univ.durationNoMod,
-      target: l10n.target,
-      traditions: univ.traditions,
-      aspects: univ.aspects |> Ley_Option.fromOption([]),
-      ic: univ.ic,
-      gr: univ.gr,
-      src: l10n.src,
-      errata: l10n.errata,
-    },
-  );
+  module TranslationMap = TranslationMap.Make(Translations);
 
-  let all = (yamlData: Yaml_Raw.yamlData) =>
-    Yaml_Zip.zipBy(
-      Ley_Int.show,
-      t,
-      x => x.id,
-      x => x.id,
-      yamlData.liturgicalChantsUniv |> list(tUniv),
-      yamlData.liturgicalChantsL10n |> list(tL10n),
-    )
-    |> Ley_IntMap.fromList;
+  type multilingual = {
+    id: int,
+    check: SkillCheck.t,
+    checkMod: option(CheckModifier.t),
+    castingTimeNoMod: bool,
+    costNoMod: bool,
+    rangeNoMod: bool,
+    durationNoMod: bool,
+    traditions: Ley_IntSet.t,
+    aspects: Ley_IntSet.t,
+    ic: IC.t,
+    gr: int,
+    enhancements: option(Enhancements.multilingual),
+    src: list(PublicationRef.multilingual),
+    translations: TranslationMap.t,
+  };
+
+  let decodeMultilingual = json =>
+    JsonStrict.{
+      id: json |> field("id", int),
+      check: json |> field("check", SkillCheck.decode),
+      checkMod: json |> optionalField("checkMod", CheckModifier.decode),
+      castingTimeNoMod: json |> field("castingTimeNoMod", bool),
+      costNoMod: json |> field("costNoMod", bool),
+      rangeNoMod: json |> field("rangeNoMod", bool),
+      durationNoMod: json |> field("durationNoMod", bool),
+      traditions:
+        json |> field("traditions", list(int)) |> Ley_IntSet.fromList,
+      aspects: json |> field("aspects", list(int)) |> Ley_IntSet.fromList,
+      ic: json |> field("ic", IC.Decode.t),
+      gr: json |> field("gr", int),
+      enhancements:
+        json |> optionalField("enhancements", Enhancements.decodeMultilingual),
+      src: json |> field("src", PublicationRef.decodeMultilingualList),
+      translations: json |> field("translations", TranslationMap.decode),
+    };
+
+  let resolveTranslations = (langs, x) =>
+    Ley_Option.Functor.(
+      x.translations
+      |> TranslationMap.getFromLanguageOrder(langs)
+      <&> (
+        translation => {
+          id: x.id,
+          name: translation.name,
+          check: x.check,
+          checkMod: x.checkMod,
+          effect: translation.effect,
+          castingTime:
+            ActivatableSkill.MainParameter.make(
+              x.castingTimeNoMod,
+              translation.castingTime,
+            ),
+          cost:
+            ActivatableSkill.MainParameter.make(
+              x.costNoMod,
+              translation.cost,
+            ),
+          range:
+            ActivatableSkill.MainParameter.make(
+              x.rangeNoMod,
+              translation.range,
+            ),
+          duration:
+            ActivatableSkill.MainParameter.make(
+              x.durationNoMod,
+              translation.duration,
+            ),
+          target: translation.target,
+          traditions: x.traditions,
+          aspects: x.aspects,
+          ic: x.ic,
+          gr: x.gr,
+          enhancements:
+            Ley_Option.Monad.(
+              x.enhancements >>= Enhancements.resolveTranslations(langs)
+            ),
+          src: PublicationRef.resolveTranslationsList(langs, x.src),
+          errata: translation.errata,
+        }
+      )
+    );
+
+  let decode = (langs, json) =>
+    json |> decodeMultilingual |> resolveTranslations(langs);
 };

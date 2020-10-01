@@ -1,90 +1,83 @@
-type t = {
-  id: int,
-  name: string,
-  check: (int, int, int),
-  checkMod: option(CheckModifier.t),
-  effect: string,
-  aeCost: string,
-  aeCostShort: string,
-  duration: string,
-  durationShort: string,
-  property: int,
-  src: list(PublicationRef.t),
-  errata: list(Erratum.t),
-};
+module Dynamic = ActivatableSkill.Dynamic;
 
-module Decode = {
-  open Json.Decode;
-  open JsonStrict;
-
-  type tL10n = {
+module Static = {
+  type t = {
     id: int,
     name: string,
+    check: SkillCheck.t,
+    checkMod: option(CheckModifier.t),
     effect: string,
-    aeCost: string,
-    aeCostShort: string,
-    duration: string,
-    durationShort: string,
+    cost: ActivatableSkill.MainParameter.t,
+    duration: ActivatableSkill.MainParameter.t,
+    property: int,
     src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
-  let tL10n = json => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-    effect: json |> field("effect", string),
-    aeCost: json |> field("aeCost", string),
-    aeCostShort: json |> field("aeCostShort", string),
-    duration: json |> field("duration", string),
-    durationShort: json |> field("durationShort", string),
-    src: json |> field("src", PublicationRef.decodeMultilingualList),
-    errata: json |> field("errata", Erratum.Decode.list),
+  module Translations = {
+    type t = {
+      name: string,
+      effect: string,
+      cost: ActivatableSkill.MainParameter.translation,
+      duration: ActivatableSkill.MainParameter.translation,
+      target: string,
+      errata: list(Erratum.t),
+    };
+
+    let decode = json =>
+      JsonStrict.{
+        name: json |> field("name", string),
+        effect: json |> field("effect", string),
+        cost: json |> field("cost", ActivatableSkill.MainParameter.decode),
+        duration:
+          json |> field("duration", ActivatableSkill.MainParameter.decode),
+        target: json |> field("target", string),
+        errata: json |> field("errata", Erratum.decodeList),
+      };
   };
 
-  type tUniv = {
+  module TranslationMap = TranslationMap.Make(Translations);
+
+  type multilingual = {
     id: int,
-    check1: int,
-    check2: int,
-    check3: int,
+    check: SkillCheck.t,
     checkMod: option(CheckModifier.t),
     property: int,
+    src: list(PublicationRef.multilingual),
+    translations: TranslationMap.t,
   };
 
-  let tUniv = json => {
-    id: json |> field("id", int),
-    check1: json |> field("check1", int),
-    check2: json |> field("check2", int),
-    check3: json |> field("check3", int),
-    checkMod: json |> optionalField("checkMod", CheckModifier.Decode.t),
-    property: json |> field("property", int),
-  };
+  let decodeMultilingual = json =>
+    JsonStrict.{
+      id: json |> field("id", int),
+      check: json |> field("check", SkillCheck.decode),
+      checkMod: json |> optionalField("checkMod", CheckModifier.decode),
+      property: json |> field("property", int),
+      src: json |> field("src", PublicationRef.decodeMultilingualList),
+      translations: json |> field("translations", TranslationMap.decode),
+    };
 
-  let t = (univ: tUniv, l10n: tL10n) => (
-    univ.id,
-    {
-      id: univ.id,
-      name: l10n.name,
-      check: (univ.check1, univ.check2, univ.check3),
-      checkMod: univ.checkMod,
-      effect: l10n.effect,
-      aeCost: l10n.aeCost,
-      aeCostShort: l10n.aeCostShort,
-      duration: l10n.duration,
-      durationShort: l10n.durationShort,
-      property: univ.property,
-      src: l10n.src,
-      errata: l10n.errata,
-    },
-  );
+  let resolveTranslations = (langs, x) =>
+    Ley_Option.Functor.(
+      x.translations
+      |> TranslationMap.getFromLanguageOrder(langs)
+      <&> (
+        translation => {
+          id: x.id,
+          name: translation.name,
+          check: x.check,
+          checkMod: x.checkMod,
+          effect: translation.effect,
+          cost: ActivatableSkill.MainParameter.make(false, translation.cost),
+          duration:
+            ActivatableSkill.MainParameter.make(false, translation.duration),
+          property: x.property,
+          src: PublicationRef.resolveTranslationsList(langs, x.src),
+          errata: translation.errata,
+        }
+      )
+    );
 
-  let all = (yamlData: Yaml_Raw.yamlData) =>
-    Yaml_Zip.zipBy(
-      Ley_Int.show,
-      t,
-      x => x.id,
-      x => x.id,
-      yamlData.cursesUniv |> list(tUniv),
-      yamlData.cursesL10n |> list(tL10n),
-    )
-    |> Ley_IntMap.fromList;
+  let decode = (langs, json) =>
+    json |> decodeMultilingual |> resolveTranslations(langs);
 };

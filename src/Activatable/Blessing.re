@@ -10,64 +10,63 @@ type t = {
   errata: list(Erratum.t),
 };
 
-module Decode = {
-  open Json.Decode;
-
-  type tL10n = {
-    id: int,
+module Translations = {
+  type t = {
     name: string,
     effect: string,
     range: string,
     duration: string,
     target: string,
-    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
-  let tL10n = json => {
+  let decode = json =>
+    JsonStrict.{
+      name: json |> field("name", string),
+      effect: json |> field("effect", string),
+      range: json |> field("range", string),
+      duration: json |> field("duration", string),
+      target: json |> field("target", string),
+      errata: json |> field("errata", Erratum.decodeList),
+    };
+};
+
+module TranslationMap = TranslationMap.Make(Translations);
+
+type multilingual = {
+  id: int,
+  traditions: Ley_IntSet.t,
+  src: list(PublicationRef.multilingual),
+  translations: TranslationMap.t,
+};
+
+let decodeMultilingual = json =>
+  JsonStrict.{
     id: json |> field("id", int),
-    name: json |> field("name", string),
-    effect: json |> field("effect", string),
-    range: json |> field("range", string),
-    duration: json |> field("duration", string),
-    target: json |> field("target", string),
+    traditions:
+      json |> field("traditions", list(int)) |> Ley_IntSet.fromList,
     src: json |> field("src", PublicationRef.decodeMultilingualList),
-    errata: json |> field("errata", Erratum.Decode.list),
+    translations: json |> field("translations", TranslationMap.decode),
   };
 
-  type tUniv = {
-    id: int,
-    traditions: list(int),
-  };
-
-  let tUniv = json => {
-    id: json |> field("id", int),
-    traditions: json |> field("traditions", list(int)),
-  };
-
-  let t = (univ: tUniv, l10n: tL10n) => (
-    univ.id,
-    {
-      id: univ.id,
-      name: l10n.name,
-      effect: l10n.effect,
-      range: l10n.range,
-      duration: l10n.duration,
-      target: l10n.target,
-      traditions: Ley_IntSet.fromList(univ.traditions),
-      src: l10n.src,
-      errata: l10n.errata,
-    },
+let resolveTranslations = (langs, x) =>
+  Ley_Option.Functor.(
+    x.translations
+    |> TranslationMap.getFromLanguageOrder(langs)
+    <&> (
+      translation => {
+        id: x.id,
+        name: translation.name,
+        effect: translation.effect,
+        range: translation.range,
+        duration: translation.duration,
+        target: translation.target,
+        traditions: x.traditions,
+        src: PublicationRef.resolveTranslationsList(langs, x.src),
+        errata: translation.errata,
+      }
+    )
   );
 
-  let all = (yamlData: Yaml_Raw.yamlData) =>
-    Yaml_Zip.zipBy(
-      Ley_Int.show,
-      t,
-      x => x.id,
-      x => x.id,
-      yamlData.blessingsUniv |> list(tUniv),
-      yamlData.blessingsL10n |> list(tL10n),
-    )
-    |> Ley_IntMap.fromList;
-};
+let decode = (langs, json) =>
+  json |> decodeMultilingual |> resolveTranslations(langs);

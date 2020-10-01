@@ -1,7 +1,7 @@
 type t = {
   id: int,
-  numId: option(int),
   name: string,
+  numId: option(int),
   primary: option(int),
   aeMod: option(float),
   canLearnCantrips: bool,
@@ -12,33 +12,30 @@ type t = {
   areDisAdvRequiredApplyToMagActionsOrApps: bool,
 };
 
-module Decode = {
-  open JsonStrict;
+module Translations = {
+  type t = {name: string};
 
-  type tL10n = {
-    id: int,
-    name: string,
-  };
+  let decode = json => JsonStrict.{name: json |> field("name", string)};
+};
 
-  let tL10n = json => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-  };
+module TranslationMap = TranslationMap.Make(Translations);
 
-  type tUniv = {
-    id: int,
-    numId: option(int),
-    primary: option(int),
-    aeMod: option(float),
-    canLearnCantrips: bool,
-    canLearnSpells: bool,
-    canLearnRituals: bool,
-    allowMultipleTraditions: bool,
-    isDisAdvAPMaxHalved: bool,
-    areDisAdvRequiredApplyToMagActionsOrApps: bool,
-  };
+type multilingual = {
+  id: int,
+  numId: option(int),
+  primary: option(int),
+  aeMod: option(float),
+  canLearnCantrips: bool,
+  canLearnSpells: bool,
+  canLearnRituals: bool,
+  allowMultipleTraditions: bool,
+  isDisAdvAPMaxHalved: bool,
+  areDisAdvRequiredApplyToMagActionsOrApps: bool,
+  translations: TranslationMap.t,
+};
 
-  let tUniv = json => {
+let decodeMultilingual = json =>
+  JsonStrict.{
     id: json |> field("id", int),
     numId: json |> optionalField("numId", int),
     primary: json |> optionalField("primary", int),
@@ -50,34 +47,30 @@ module Decode = {
     isDisAdvAPMaxHalved: json |> field("isDisAdvAPMaxHalved", bool),
     areDisAdvRequiredApplyToMagActionsOrApps:
       json |> field("areDisAdvRequiredApplyToMagActionsOrApps", bool),
+    translations: json |> field("translations", TranslationMap.decode),
   };
 
-  let t = (univ: tUniv, l10n: tL10n) => (
-    univ.id,
-    {
-      id: univ.id,
-      numId: univ.numId,
-      name: l10n.name,
-      primary: univ.primary,
-      aeMod: univ.aeMod,
-      canLearnCantrips: univ.canLearnCantrips,
-      canLearnSpells: univ.canLearnSpells,
-      canLearnRituals: univ.canLearnRituals,
-      allowMultipleTraditions: univ.allowMultipleTraditions,
-      isDisAdvAPMaxHalved: univ.isDisAdvAPMaxHalved,
-      areDisAdvRequiredApplyToMagActionsOrApps:
-        univ.areDisAdvRequiredApplyToMagActionsOrApps,
-    },
+let resolveTranslations = (langs, x) =>
+  Ley_Option.Functor.(
+    x.translations
+    |> TranslationMap.getFromLanguageOrder(langs)
+    <&> (
+      translation => {
+        id: x.id,
+        name: translation.name,
+        numId: x.numId,
+        primary: x.primary,
+        aeMod: x.aeMod,
+        canLearnCantrips: x.canLearnCantrips,
+        canLearnSpells: x.canLearnSpells,
+        canLearnRituals: x.canLearnRituals,
+        allowMultipleTraditions: x.allowMultipleTraditions,
+        isDisAdvAPMaxHalved: x.isDisAdvAPMaxHalved,
+        areDisAdvRequiredApplyToMagActionsOrApps:
+          x.areDisAdvRequiredApplyToMagActionsOrApps,
+      }
+    )
   );
 
-  let all = (yamlData: Yaml_Raw.yamlData) =>
-    Yaml_Zip.zipBy(
-      Ley_Int.show,
-      t,
-      x => x.id,
-      x => x.id,
-      yamlData.magicalTraditionsUniv |> list(tUniv),
-      yamlData.magicalTraditionsL10n |> list(tL10n),
-    )
-    |> Ley_IntMap.fromList;
-};
+let decode = (langs, json) =>
+  json |> decodeMultilingual |> resolveTranslations(langs);

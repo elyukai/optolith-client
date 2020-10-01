@@ -64,42 +64,6 @@ module Activatable = {
     && Ley_List.Foldable.null(x.dependencies);
 };
 
-module Skill = {
-  type dependency = {
-    source: Id.ActivatableAndSkill.t,
-    target: OneOrMany.t(int),
-    value: int,
-  };
-
-  type t = {
-    id: int,
-    value: int,
-    dependencies: list(dependency),
-  };
-
-  let emptySkill = id => {id, value: 0, dependencies: []};
-
-  let emptyCombatTechnique = id => {id, value: 6, dependencies: []};
-
-  let isUnusedSkill = (x: t) =>
-    x.value <= 0 && Ley_List.Foldable.null(x.dependencies);
-
-  let isUnusedCombatTechnique = (x: t) =>
-    x.value <= 6 && Ley_List.Foldable.null(x.dependencies);
-};
-
-module Attribute = {
-  type t = {
-    id: int,
-    value: int,
-    dependencies: list(Skill.dependency),
-  };
-
-  let empty = id => {id, value: 8, dependencies: []};
-
-  let isUnused = x => x.value <= 8 && Ley_List.Foldable.null(x.dependencies);
-};
-
 module Energies = {
   type permanentEnergyLoss = {lost: int};
 
@@ -118,34 +82,17 @@ module Energies = {
   };
 };
 
-module ActivatableSkill = {
-  type value =
-    | Inactive
-    | Active(int);
-
-  type t = {
-    id: int,
-    value,
-    dependencies: list(Skill.dependency),
-  };
-
-  let empty = id => {id, value: Inactive, dependencies: []};
-
-  let isUnused = x =>
-    x.value === Inactive && Ley_List.Foldable.null(x.dependencies);
-};
-
 module MagicalActions = {
   type t = {
-    curses: Ley_IntMap.t(ActivatableSkill.t),
-    elvenMagicalSongs: Ley_IntMap.t(ActivatableSkill.t),
-    dominationRituals: Ley_IntMap.t(ActivatableSkill.t),
-    magicalDances: Ley_IntMap.t(ActivatableSkill.t),
-    magicalMelodies: Ley_IntMap.t(ActivatableSkill.t),
-    rogueSpells: Ley_IntMap.t(ActivatableSkill.t),
-    animistForces: Ley_IntMap.t(ActivatableSkill.t),
-    geodeRituals: Ley_IntMap.t(ActivatableSkill.t),
-    zibiljaRituals: Ley_IntMap.t(ActivatableSkill.t),
+    curses: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
+    elvenMagicalSongs: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
+    dominationRituals: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
+    magicalDances: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
+    magicalMelodies: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
+    rogueSpells: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
+    animistForces: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
+    geodeRituals: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
+    zibiljaRituals: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
   };
 };
 
@@ -410,14 +357,14 @@ type t = {
   advantages: Ley_IntMap.t(Activatable.t),
   disadvantages: Ley_IntMap.t(Activatable.t),
   specialAbilities: Ley_IntMap.t(Activatable.t),
-  attributes: Ley_IntMap.t(Attribute.t),
+  attributes: Ley_IntMap.t(Attribute.Dynamic.t),
   attributeAdjustmentSelected: int,
   energies: Energies.t,
-  skills: Ley_IntMap.t(Skill.t),
-  combatTechniques: Ley_IntMap.t(Skill.t),
-  spells: Ley_IntMap.t(ActivatableSkill.t),
+  skills: Ley_IntMap.t(Skill.Dynamic.t),
+  combatTechniques: Ley_IntMap.t(Skill.Dynamic.t),
+  spells: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
   magicalActions: MagicalActions.t,
-  liturgicalChants: Ley_IntMap.t(ActivatableSkill.t),
+  liturgicalChants: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
   cantrips: Ley_IntSet.t,
   blessings: Ley_IntSet.t,
   items: Ley_IntMap.t(Item.t),

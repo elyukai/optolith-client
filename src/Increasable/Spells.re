@@ -11,7 +11,7 @@ module O = Ley_Option;
  * Returns the SR maximum if there is no property knowledge active for the passed
  * spell.
  */
-let getMaxSrFromPropertyKnowledge = (propertyKnowledge, staticEntry: Spell.t) =>
+let getMaxSrFromPropertyKnowledge = (propertyKnowledge, staticEntry: Spell.Static.t) =>
   propertyKnowledge
   <&> Activatable_SelectOptions.mapActiveOptions1(
         [@warning "-4"]
@@ -34,7 +34,7 @@ let getMax =
       ~heroAttrs,
       ~exceptionalSkill,
       ~propertyKnowledge,
-      ~staticEntry: Spell.t,
+      ~staticEntry: Spell.Static.t,
     ) =>
   [
     Some(Skills.getMaxSrByCheckAttrs(heroAttrs, staticEntry.check)),
@@ -84,7 +84,7 @@ module PropertyKnowledge = {
     | Inactive => false
     };
 
-  let addToCounter = (spell: Spell.t) =>
+  let addToCounter = (spell: Spell.Static.t) =>
     IM.insertWith((+), spell.property, 1);
 
   /**
@@ -123,7 +123,7 @@ module PropertyKnowledge = {
       (
         counter,
         activePropertyKnowledges,
-        staticEntry: Spell.t,
+        staticEntry: Spell.Static.t,
         heroEntry: Hero.ActivatableSkill.t,
       ) =>
     activePropertyKnowledges

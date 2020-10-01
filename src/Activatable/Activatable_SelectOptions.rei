@@ -57,8 +57,7 @@ let getActiveOptions2: Hero.Activatable.t => list(Id.Activatable.Option.t);
  * id in a map.
  */
 let getActiveOptions2Map:
-  Hero.Activatable.t =>
-  SelectOption.SelectOptionMap.t(list(Id.Activatable.Option.t));
+  Hero.Activatable.t => SelectOption.Map.t(list(Id.Activatable.Option.t));
 
 let getOption: (int, singleWithId) => option(Id.Activatable.Option.t);
 
@@ -75,4 +74,4 @@ let getGenericId: Id.Activatable.Option.t => option(int);
 let lookupMap: (Ley_IntMap.key, Ley_IntMap.t('b), 'b => 'a) => option('a);
 
 let getSkillFromOption:
-  (Static.t, Id.Activatable.Option.t) => option(Skill.t);
+  (Static.t, Id.Activatable.Option.t) => option(Skill.Static.t);

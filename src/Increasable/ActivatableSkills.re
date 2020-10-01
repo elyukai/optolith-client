@@ -1,7 +1,5 @@
 module IM = Ley_IntMap;
 
-open Hero.ActivatableSkill;
-
 type t =
   | Spells
   | LiturgicalChants;

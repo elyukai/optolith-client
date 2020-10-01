@@ -231,7 +231,7 @@ let isEntrySpecificRemovalValid =
                )
             // Check if there is any active entry that does not belong to the
             // active tradition...
-            |> IM.Foldable.any(({LiturgicalChant.traditions, _}) =>
+            |> IM.Foldable.any(({LiturgicalChant.Static.traditions, _}) =>
                  L.notElem(blessedTradition.numId, traditions)
                )
             // ...which would prohibit removal

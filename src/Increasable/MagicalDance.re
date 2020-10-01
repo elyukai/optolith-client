@@ -1,102 +1,98 @@
-type t = {
-  id: int,
-  name: string,
-  nameByTradition: Ley_IntMap.t(string),
-  check: (int, int, int),
-  effect: string,
-  duration: string,
-  durationShort: string,
-  aeCost: string,
-  aeCostShort: string,
-  musictraditions: Ley_IntSet.t,
-  property: int,
-  ic: IC.t,
-  src: list(PublicationRef.t),
-  errata: list(Erratum.t),
-};
+module Dynamic = ActivatableSkill.Dynamic;
 
-module Decode = {
-  open Json.Decode;
-
-  let nameByTradition = json => (
-    json |> field("id", int),
-    json |> field("name", string),
-  );
-
-  type tL10n = {
+module Static = {
+  type t = {
     id: int,
     name: string,
-    nameByTradition: list((int, string)),
+    nameByTradition: Ley_IntMap.t(string),
+    check: SkillCheck.t,
     effect: string,
-    duration: string,
-    durationShort: string,
-    aeCost: string,
-    aeCostShort: string,
+    duration: ActivatableSkill.MainParameter.t,
+    cost: ActivatableSkill.MainParameter.t,
+    musicTraditions: Ley_IntSet.t,
+    property: int,
+    ic: IC.t,
     src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
-  let tL10n = json => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-    nameByTradition: json |> field("nameByTradition", list(nameByTradition)),
-    effect: json |> field("effect", string),
-    duration: json |> field("duration", string),
-    durationShort: json |> field("durationShort", string),
-    aeCost: json |> field("aeCost", string),
-    aeCostShort: json |> field("aeCostShort", string),
-    src: json |> field("src", PublicationRef.decodeMultilingualList),
-    errata: json |> field("errata", Erratum.Decode.list),
+  module Translations = {
+    type t = {
+      name: string,
+      nameByTradition: Ley_IntMap.t(string),
+      effect: string,
+      duration: ActivatableSkill.MainParameter.translation,
+      cost: ActivatableSkill.MainParameter.translation,
+      target: string,
+      errata: list(Erratum.t),
+    };
+
+    let nameByTradition = json =>
+      JsonStrict.(json |> field("id", int), json |> field("name", string));
+
+    let decode = json =>
+      JsonStrict.{
+        name: json |> field("name", string),
+        nameByTradition:
+          json
+          |> field("nameByTradition", list(nameByTradition))
+          |> Ley_IntMap.fromList,
+        effect: json |> field("effect", string),
+        duration:
+          json |> field("duration", ActivatableSkill.MainParameter.decode),
+        cost: json |> field("cost", ActivatableSkill.MainParameter.decode),
+        target: json |> field("target", string),
+        errata: json |> field("errata", Erratum.decodeList),
+      };
   };
 
-  type tUniv = {
+  module TranslationMap = TranslationMap.Make(Translations);
+
+  type multilingual = {
     id: int,
-    check1: int,
-    check2: int,
-    check3: int,
-    musictraditions: list(int),
+    check: SkillCheck.t,
+    musicTraditions: Ley_IntSet.t,
     property: int,
     ic: IC.t,
+    src: list(PublicationRef.multilingual),
+    translations: TranslationMap.t,
   };
 
-  let tUniv = json => {
-    id: json |> field("id", int),
-    check1: json |> field("check1", int),
-    check2: json |> field("check2", int),
-    check3: json |> field("check3", int),
-    musictraditions: json |> field("musictraditions", list(int)),
-    property: json |> field("property", int),
-    ic: json |> field("ic", IC.Decode.t),
-  };
+  let decodeMultilingual = json =>
+    JsonStrict.{
+      id: json |> field("id", int),
+      check: json |> field("check", SkillCheck.decode),
+      property: json |> field("property", int),
+      musicTraditions:
+        json |> field("musicTraditions", list(int)) |> Ley_IntSet.fromList,
+      ic: json |> field("ic", IC.Decode.t),
+      src: json |> field("src", PublicationRef.decodeMultilingualList),
+      translations: json |> field("translations", TranslationMap.decode),
+    };
 
-  let t = (univ: tUniv, l10n: tL10n) => (
-    univ.id,
-    {
-      id: univ.id,
-      name: l10n.name,
-      nameByTradition: l10n.nameByTradition |> Ley_IntMap.fromList,
-      check: (univ.check1, univ.check2, univ.check3),
-      effect: l10n.effect,
-      duration: l10n.duration,
-      durationShort: l10n.durationShort,
-      aeCost: l10n.aeCost,
-      aeCostShort: l10n.aeCostShort,
-      musictraditions: univ.musictraditions |> Ley_IntSet.fromList,
-      property: univ.property,
-      ic: univ.ic,
-      src: l10n.src,
-      errata: l10n.errata,
-    },
-  );
+  let resolveTranslations = (langs, x) =>
+    Ley_Option.Functor.(
+      x.translations
+      |> TranslationMap.getFromLanguageOrder(langs)
+      <&> (
+        translation => {
+          id: x.id,
+          name: translation.name,
+          nameByTradition: translation.nameByTradition,
+          check: x.check,
+          effect: translation.effect,
+          duration:
+            ActivatableSkill.MainParameter.make(false, translation.duration),
+          cost: ActivatableSkill.MainParameter.make(false, translation.cost),
+          musicTraditions: x.musicTraditions,
+          property: x.property,
+          ic: x.ic,
+          src: PublicationRef.resolveTranslationsList(langs, x.src),
+          errata: translation.errata,
+        }
+      )
+    );
 
-  let all = (yamlData: Yaml_Raw.yamlData) =>
-    Yaml_Zip.zipBy(
-      Ley_Int.show,
-      t,
-      x => x.id,
-      x => x.id,
-      yamlData.magicalDancesUniv |> list(tUniv),
-      yamlData.magicalDancesL10n |> list(tL10n),
-    )
-    |> Ley_IntMap.fromList;
+  let decode = (langs, json) =>
+    json |> decodeMultilingual |> resolveTranslations(langs);
 };

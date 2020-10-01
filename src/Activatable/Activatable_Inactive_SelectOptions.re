@@ -5,7 +5,7 @@ open Activatable_SelectOptions;
 
 module F = Ley_Function;
 module SO = SelectOption;
-module SOM = SelectOption.SelectOptionMap;
+module SOM = SelectOption.Map;
 module L = Ley_List;
 module O = Ley_Option;
 module T = Ley_Transducer;
@@ -249,7 +249,7 @@ let getAvailableSelectOptionsTransducer =
           switch (so.id) {
           | (Skill, id) =>
             IM.lookup(id, staticData.skills)
-            |> O.Foldable.any((skill: Skill.t) =>
+            |> O.Foldable.any((skill: Skill.Static.t) =>
                  skill.gr === Id.Skill.Group.toInt(Social)
                )
             |> (!)
@@ -419,7 +419,7 @@ let getAvailableSelectOptionsTransducer =
         // familiar spells
         Some(
           filterSpellSelectOptions(spell =>
-            spell.traditions
+            Spell.Static.traditions
             |> L.disjoint([
                  Id.MagicalTradition.toInt(General),
                  Id.MagicalTradition.toInt(GuildMages),
@@ -588,7 +588,7 @@ let getAvailableSelectOptionsTransducer =
       | MadaschwesternStil =>
         Some(
           filterSpellSelectOptions(spell =>
-            spell.traditions
+            Spell.Static.traditions
             |> L.disjoint([
                  Id.MagicalTradition.toInt(General),
                  Id.MagicalTradition.toInt(Witches),
@@ -619,7 +619,7 @@ let getAvailableSelectOptionsTransducer =
                     }
                   )
                   >>= F.flip(IM.lookup, staticData.spells)
-                  <&> (spell => spell.traditions)
+                  <&> (spell => Spell.Static.traditions)
               )
           );
 
@@ -637,7 +637,7 @@ let getAvailableSelectOptionsTransducer =
                filterSpellSelectOptions(spell =>
                  L.notElem(
                    Id.MagicalTradition.toInt(General),
-                   spell.traditions,
+                   Spell.Static.traditions,
                  )
                  && L.Foldable.any(
                       F.flip(
@@ -645,7 +645,7 @@ let getAvailableSelectOptionsTransducer =
                         hasTransferredSpellAllAllowedTraditions
                           ? allowedTraditions : traditionDiff,
                       ),
-                      spell.traditions,
+                      Spell.Static.traditions,
                     )
                );
              },
@@ -666,8 +666,7 @@ let getAvailableSelectOptions =
       maybeHeroEntry,
     ) => {
   let allSelectOptions =
-    Activatable_Accessors.selectOptions(staticEntry)
-    |> SO.SelectOptionMap.elems;
+    Activatable_Accessors.selectOptions(staticEntry) |> SO.Map.elems;
 
   getAvailableSelectOptionsTransducer(
     staticData,

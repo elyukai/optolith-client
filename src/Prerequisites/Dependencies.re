@@ -684,7 +684,7 @@ module TransferredUnfamiliar = {
       let isNoTraditionActive =
         Ley_Bool.notP(L.intersecting(activeTraditionNumericIds));
 
-      (staticSpell: Spell.t) =>
+      (staticSpell: Spell.Static.t) =>
         L.Foldable.all(
           tu =>
             switch (tu.id) {
@@ -695,7 +695,7 @@ module TransferredUnfamiliar = {
             },
           transferredUnfamiliar,
         )
-        && isNoTraditionActive(staticSpell.traditions);
+        && isNoTraditionActive(staticSpell.Static.traditions);
     };
   };
 

@@ -19,13 +19,13 @@ module Static = {
 
     module TranslationMap = TranslationMap.Make(Translations);
 
-    type full = {
+    type multilingual = {
       id: int,
       prerequisite: option(Prerequisite.activatable),
       translations: TranslationMap.t,
     };
 
-    let decodeFull = json =>
+    let decodeMultilingual = json =>
       Json.Decode.{
         id: json |> field("id", int),
         prerequisite:
@@ -65,13 +65,13 @@ module Static = {
 
     module TranslationMap = TranslationMap.Make(Translations);
 
-    type full = {
+    type multilingual = {
       id: int,
       prerequisite: Prerequisite.activatable,
       translations: TranslationMap.t,
     };
 
-    let decodeFull = json =>
+    let decodeMultilingual = json =>
       Json.Decode.{
         id: json |> field("id", int),
         prerequisite:
@@ -169,8 +169,8 @@ module Static = {
   type multilingual = {
     id: int,
     check: SkillCheck.t,
-    applications: option(list(Application.full)),
-    uses: option(list(Use.full)),
+    applications: option(list(Application.multilingual)),
+    uses: option(list(Use.multilingual)),
     ic: IC.t,
     enc: encumbranceUniv,
     gr: int,
@@ -182,8 +182,12 @@ module Static = {
     JsonStrict.{
       id: json |> field("id", int),
       applications:
-        json |> optionalField("applications", list(Application.decodeFull)),
-      uses: json |> optionalField("uses", list(Use.decodeFull)),
+        json
+        |> optionalField(
+             "applications",
+             list(Application.decodeMultilingual),
+           ),
+      uses: json |> optionalField("uses", list(Use.decodeMultilingual)),
       check: json |> field("check", SkillCheck.decode),
       ic: json |> field("ic", IC.Decode.t),
       enc: json |> field("enc", encumbranceUniv),

@@ -12,7 +12,7 @@ module O = Ley_Option;
  * passed spell.
  */
 let getMaxSrFromAspectKnowledge =
-    (aspectKnowledge, staticEntry: LiturgicalChant.t) =>
+    (aspectKnowledge, staticEntry: LiturgicalChant.Static.t) =>
   aspectKnowledge
   <&> Activatable_SelectOptions.getActiveOptions1
   |> option(true, actives =>
@@ -37,7 +37,7 @@ let getMax =
       ~heroAttrs,
       ~exceptionalSkill,
       ~aspectKnowledge,
-      ~staticEntry: LiturgicalChant.t,
+      ~staticEntry: LiturgicalChant.Static.t,
     ) =>
   [
     Some(Skills.getMaxSrByCheckAttrs(heroAttrs, staticEntry.check)),
@@ -87,7 +87,7 @@ module AspectKnowledge = {
     | Inactive => false
     };
 
-  let addToCounter = (chant: LiturgicalChant.t, counter) =>
+  let addToCounter = (chant: LiturgicalChant.Static.t, counter) =>
     L.Foldable.foldr(
       aspect => IM.insertWith((+), aspect, 1),
       counter,
@@ -130,7 +130,7 @@ module AspectKnowledge = {
       (
         counter,
         activeAspectKnowledges,
-        staticEntry: LiturgicalChant.t,
+        staticEntry: LiturgicalChant.Static.t,
         heroEntry: Hero.ActivatableSkill.t,
       ) =>
     activeAspectKnowledges

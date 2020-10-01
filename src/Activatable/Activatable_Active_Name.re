@@ -19,7 +19,7 @@ let getDefaultNameAddition = (staticEntry, heroEntry) => {
     | (Some(_), Some(CustomInput(str)), None) => Some(str)
     // Select option and text input
     | (Some(_), Some(Preset(id)), Some(CustomInput(str)))
-        when SelectOption.SelectOptionMap.size(selectOptions) > 0 =>
+        when SelectOption.Map.size(selectOptions) > 0 =>
       Some(
         (
           Id.Activatable.Option.Preset(id)

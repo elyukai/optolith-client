@@ -25,12 +25,12 @@ module Static = {
 
   module TranslationMap = TranslationMap.Make(Translations);
 
-  type full = {
+  type multilingual = {
     id: int,
     translations: TranslationMap.t,
   };
 
-  let decodeFull = json =>
+  let decodeMultilingual = json =>
     Json.Decode.{
       id: json |> field("id", int),
       translations: json |> field("translations", TranslationMap.decode),
@@ -50,5 +50,5 @@ module Static = {
     );
 
   let decode = (langs, json) =>
-    json |> decodeFull |> resolveTranslations(langs);
+    json |> decodeMultilingual |> resolveTranslations(langs);
 };

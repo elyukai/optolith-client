@@ -183,7 +183,7 @@ module Sum = {
     foldr(
       (x: Skill.Dynamic.t) =>
         lookup(x.id, staticData.combatTechniques)
-        |> option(id, (staticEntry: CombatTechnique.t) =>
+        |> option(id, (staticEntry: CombatTechnique.Static.t) =>
              x.value |> IC.getAPForRange(staticEntry.ic, 6) |> (+)
            ),
       0,
@@ -195,7 +195,7 @@ module Sum = {
         switch (x.value) {
         | Active(value) =>
           lookup(x.id, staticData.spells)
-          |> option(id, (staticEntry: Spell.t) =>
+          |> option(id, (staticEntry: Spell.Static.t) =>
                value |> IC.getAPForRange(staticEntry.ic, 0) |> (+)
              )
         | Inactive => id
@@ -209,7 +209,7 @@ module Sum = {
         switch (x.value) {
         | Active(value) =>
           lookup(x.id, staticData.liturgicalChants)
-          |> option(id, (staticEntry: LiturgicalChant.t) =>
+          |> option(id, (staticEntry: LiturgicalChant.Static.t) =>
                value |> IC.getAPForRange(staticEntry.ic, 0) |> (+)
              )
         | Inactive => id

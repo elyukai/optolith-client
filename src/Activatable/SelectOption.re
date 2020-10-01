@@ -1,10 +1,10 @@
 type wikiEntry =
   | Blessing(Blessing.t)
   | Cantrip(Cantrip.t)
-  | CombatTechnique(CombatTechnique.t)
-  | LiturgicalChant(LiturgicalChant.t)
-  | Skill(Skill.t)
-  | Spell(Spell.t);
+  | CombatTechnique(CombatTechnique.Static.t)
+  | LiturgicalChant(LiturgicalChant.Static.t)
+  | Skill(Skill.Static.t)
+  | Spell(Spell.Static.t);
 
 type t = {
   id: Id.Activatable.SelectOption.t,
@@ -42,9 +42,9 @@ let showId = (id: Id.Activatable.SelectOption.t) =>
   | (SpecialAbility, x) => "SpecialAbility(" ++ Ley_Int.show(x) ++ ")"
   };
 
-module SelectOptionMap = Ley_Map.Make(Id.Activatable.SelectOption);
+module Map = Ley_Map.Make(Id.Activatable.SelectOption);
 
-type map = SelectOptionMap.t(t);
+type map = Map.t(t);
 
 module Decode = {
   open Json.Decode;
@@ -172,7 +172,7 @@ module Decode = {
     errata,
   };
 
-  let insertEntry = (s: t) => SelectOptionMap.insert(s.id, s);
+  let insertEntry = (s: t) => Map.insert(s.id, s);
 
   let resolveWithoutGroups = (f, mp, xs) =>
     Ley_IntMap.Foldable.foldr(x => x |> f |> insertEntry, xs, mp);
@@ -208,7 +208,7 @@ module Decode = {
 
   let resolveCantrips = resolveWithoutGroups(cantripToSelectOption);
 
-  let combatTechniqueToSelectOption = (x: CombatTechnique.t) =>
+  let combatTechniqueToSelectOption = (x: CombatTechnique.Static.t) =>
     entryToSelectOption(
       ~id=(CombatTechnique, x.id),
       ~name=x.name,
@@ -224,7 +224,7 @@ module Decode = {
     | None => resolveWithoutGroups(combatTechniqueToSelectOption)
     };
 
-  let liturgicalChantToSelectOption = (x: LiturgicalChant.t) =>
+  let liturgicalChantToSelectOption = (x: LiturgicalChant.Static.t) =>
     entryToSelectOption(
       ~id=(LiturgicalChant, x.id),
       ~name=x.name,
@@ -240,7 +240,7 @@ module Decode = {
     | None => resolveWithoutGroups(liturgicalChantToSelectOption)
     };
 
-  let skillToSelectOption = (x: Skill.t) =>
+  let skillToSelectOption = (x: Skill.Static.t) =>
     entryToSelectOption(
       ~id=(Skill, x.id),
       ~name=x.name,
@@ -255,7 +255,7 @@ module Decode = {
     | None => resolveWithoutGroups(skillToSelectOption)
     };
 
-  let spellToSelectOption = (x: Spell.t) =>
+  let spellToSelectOption = (x: Spell.Static.t) =>
     entryToSelectOption(
       ~id=(Spell, x.id),
       ~name=x.name,
@@ -298,7 +298,7 @@ module Decode = {
            | Skills => resolveSkills(cat.groups, skills)
            | Spells => resolveSpells(cat.groups, spells)
            },
-         SelectOptionMap.empty,
+         Map.empty,
        );
 
   let l10nToSelectOption = (l10n: tL10n) => {
@@ -353,7 +353,7 @@ module Decode = {
          (l10ns, mp) =>
            Ley_List.Foldable.foldr(
              (l10n: tL10n, mp') =>
-               if (SelectOptionMap.member(l10n.id, mp')) {
+               if (Map.member(l10n.id, mp')) {
                  raise(
                    DecodeError(
                      "mergeSelectOptions: Key "
@@ -362,11 +362,7 @@ module Decode = {
                    ),
                  );
                } else {
-                 SelectOptionMap.insert(
-                   l10n.id,
-                   l10nToSelectOption(l10n),
-                   mp',
-                 );
+                 Map.insert(l10n.id, l10nToSelectOption(l10n), mp');
                },
              mp,
              l10ns,
@@ -378,11 +374,7 @@ module Decode = {
          (univs, mp) =>
            Ley_List.Foldable.foldr(
              (univ: tUniv, mp') =>
-               SelectOptionMap.adjust(
-                 mergeUnivIntoSelectOption(univ),
-                 univ.id,
-                 mp',
-               ),
+               Map.adjust(mergeUnivIntoSelectOption(univ), univ.id, mp'),
              mp,
              univs,
            ),

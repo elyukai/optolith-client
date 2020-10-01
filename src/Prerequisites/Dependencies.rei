@@ -53,7 +53,7 @@ module TransferredUnfamiliar: {
     (
       list(Hero.TransferUnfamiliar.t),
       list(Tradition.Magical.fullTradition),
-      Spell.t
+      Spell.Static.t
     ) =>
     bool;
 

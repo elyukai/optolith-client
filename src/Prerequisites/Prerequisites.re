@@ -369,7 +369,7 @@ module Dynamic = {
       | SpecialAbility(entry) => entry.selectOptions
       }
     )
-    |> SelectOption.SelectOptionMap.lookup(sid)
+    |> SelectOption.Map.lookup(sid)
     |> Ley_Option.option([], (option: SelectOption.t) =>
          Flatten.flattenPrerequisites(option.prerequisites, [])
        );

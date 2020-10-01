@@ -31,7 +31,7 @@ var Translations = {
 
 var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
 
-function decodeFull(json) {
+function decodeMultilingual(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           prerequisite: JsonStrict$OptolithClient.optionalField("prerequisite", Prerequisite$OptolithClient.Decode.activatable, json),
@@ -61,7 +61,7 @@ var Translations$1 = {
 
 var TranslationMap$1 = TranslationMap$OptolithClient.Make(Translations$1);
 
-function decodeFull$1(json) {
+function decodeMultilingual$1(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
           prerequisite: Json_decode.field("prerequisite", Prerequisite$OptolithClient.Decode.activatable, json),
@@ -120,15 +120,15 @@ function encumbranceUniv(json) {
   }
 }
 
-function decodeMultilingual(json) {
+function decodeMultilingual$2(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.decode, json),
           applications: JsonStrict$OptolithClient.optionalField("applications", (function (param) {
-                  return JsonStrict$OptolithClient.list(decodeFull, param);
+                  return JsonStrict$OptolithClient.list(decodeMultilingual, param);
                 }), json),
           uses: JsonStrict$OptolithClient.optionalField("uses", (function (param) {
-                  return JsonStrict$OptolithClient.list(decodeFull$1, param);
+                  return JsonStrict$OptolithClient.list(decodeMultilingual$1, param);
                 }), json),
           ic: JsonStrict$OptolithClient.field("ic", IC$OptolithClient.Decode.t, json),
           enc: JsonStrict$OptolithClient.field("enc", encumbranceUniv, json),
@@ -139,7 +139,7 @@ function decodeMultilingual(json) {
 }
 
 function decode$3(langs, json) {
-  var x = decodeMultilingual(json);
+  var x = decodeMultilingual$2(json);
   return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap$2.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 var match = x.enc;
                 var tmp;

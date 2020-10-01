@@ -1,57 +1,50 @@
 type t = {
   id: int,
-  numId: int,
   name: string,
+  numId: int,
   primary: int,
   aspects: option((int, int)),
 };
 
-module Decode = {
-  open JsonStrict;
+module Translations = {
+  type t = {name: string};
 
-  type tL10n = {
-    id: int,
-    name: string,
-  };
+  let decode = json => JsonStrict.{name: json |> field("name", string)};
+};
 
-  let tL10n = json => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-  };
+module TranslationMap = TranslationMap.Make(Translations);
 
-  type tUniv = {
-    id: int,
-    numId: int,
-    primary: int,
-    aspects: option((int, int)),
-  };
+type multilingual = {
+  id: int,
+  numId: int,
+  primary: int,
+  aspects: option((int, int)),
+  translations: TranslationMap.t,
+};
 
-  let tUniv = json => {
+let decodeMultilingual = json =>
+  JsonStrict.{
     id: json |> field("id", int),
     numId: json |> field("numId", int),
     primary: json |> field("primary", int),
-    aspects: json |> optionalField("aspects", pair(int, int)),
+    aspects: json |> optionalField("aspects", tuple2(int, int)),
+    translations: json |> field("translations", TranslationMap.decode),
   };
 
-  let t = (univ: tUniv, l10n: tL10n) => (
-    univ.id,
-    {
-      id: univ.id,
-      numId: univ.numId,
-      name: l10n.name,
-      primary: univ.primary,
-      aspects: univ.aspects,
-    },
+let resolveTranslations = (langs, x) =>
+  Ley_Option.Functor.(
+    x.translations
+    |> TranslationMap.getFromLanguageOrder(langs)
+    <&> (
+      translation => {
+        id: x.id,
+        name: translation.name,
+        numId: x.numId,
+        primary: x.primary,
+        aspects: x.aspects,
+      }
+    )
   );
 
-  let all = (yamlData: Yaml_Raw.yamlData) =>
-    Yaml_Zip.zipBy(
-      Ley_Int.show,
-      t,
-      x => x.id,
-      x => x.id,
-      yamlData.blessedTraditionsUniv |> list(tUniv),
-      yamlData.blessedTraditionsL10n |> list(tL10n),
-    )
-    |> Ley_IntMap.fromList;
-};
+let decode = (langs, json) =>
+  json |> decodeMultilingual |> resolveTranslations(langs);
