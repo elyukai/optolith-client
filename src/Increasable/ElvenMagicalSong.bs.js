@@ -4,10 +4,8 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as IC$OptolithClient from "./IC.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
 import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
-import * as Ley_IntSet$OptolithClient from "../Data/Ley_IntSet.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as SkillCheck$OptolithClient from "./SkillCheck.bs.js";
-import * as Enhancements$OptolithClient from "./Enhancements.bs.js";
 import * as CheckModifier$OptolithClient from "./CheckModifier.bs.js";
 import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
@@ -17,11 +15,7 @@ function decode(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
           effect: JsonStrict$OptolithClient.field("effect", JsonStrict$OptolithClient.string, json),
-          castingTime: JsonStrict$OptolithClient.field("castingTime", ActivatableSkill$OptolithClient.MainParameter.decode, json),
           cost: JsonStrict$OptolithClient.field("cost", ActivatableSkill$OptolithClient.MainParameter.decode, json),
-          range: JsonStrict$OptolithClient.field("range", ActivatableSkill$OptolithClient.MainParameter.decode, json),
-          duration: JsonStrict$OptolithClient.field("duration", ActivatableSkill$OptolithClient.MainParameter.decode, json),
-          target: JsonStrict$OptolithClient.field("target", JsonStrict$OptolithClient.string, json),
           errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.decodeList, json)
         };
 }
@@ -37,19 +31,9 @@ function decodeMultilingual(json) {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.decode, json),
           checkMod: JsonStrict$OptolithClient.optionalField("checkMod", CheckModifier$OptolithClient.decode, json),
-          castingTimeNoMod: JsonStrict$OptolithClient.field("castingTimeNoMod", JsonStrict$OptolithClient.bool, json),
-          costNoMod: JsonStrict$OptolithClient.field("costNoMod", JsonStrict$OptolithClient.bool, json),
-          rangeNoMod: JsonStrict$OptolithClient.field("rangeNoMod", JsonStrict$OptolithClient.bool, json),
-          durationNoMod: JsonStrict$OptolithClient.field("durationNoMod", JsonStrict$OptolithClient.bool, json),
-          traditions: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("traditions", (function (param) {
-                      return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
-                    }), json)),
-          aspects: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("aspects", (function (param) {
-                      return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
-                    }), json)),
+          skill: JsonStrict$OptolithClient.optionalField("skill", JsonStrict$OptolithClient.$$int, json),
+          property: JsonStrict$OptolithClient.field("property", JsonStrict$OptolithClient.$$int, json),
           ic: JsonStrict$OptolithClient.field("ic", IC$OptolithClient.Decode.t, json),
-          gr: JsonStrict$OptolithClient.field("gr", JsonStrict$OptolithClient.$$int, json),
-          enhancements: JsonStrict$OptolithClient.optionalField("enhancements", Enhancements$OptolithClient.decodeMultilingual, json),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json),
           translations: JsonStrict$OptolithClient.field("translations", TranslationMap.decode, json)
         };
@@ -64,18 +48,10 @@ function decode$1(langs, json) {
                         check: x.check,
                         checkMod: x.checkMod,
                         effect: translation.effect,
-                        castingTime: ActivatableSkill$OptolithClient.MainParameter.make(x.castingTimeNoMod, translation.castingTime),
-                        cost: ActivatableSkill$OptolithClient.MainParameter.make(x.costNoMod, translation.cost),
-                        range: ActivatableSkill$OptolithClient.MainParameter.make(x.rangeNoMod, translation.range),
-                        duration: ActivatableSkill$OptolithClient.MainParameter.make(x.durationNoMod, translation.duration),
-                        target: translation.target,
-                        traditions: x.traditions,
-                        aspects: x.aspects,
+                        cost: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.cost),
+                        skill: x.skill,
+                        property: x.property,
                         ic: x.ic,
-                        gr: x.gr,
-                        enhancements: Ley_Option$OptolithClient.Monad.$great$great$eq(x.enhancements, (function (param) {
-                                return Enhancements$OptolithClient.resolveTranslations(langs, param);
-                              })),
                         src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
                         errata: translation.errata
                       };

@@ -1,21 +1,5 @@
-open Prerequisite;
-
 module IM = Ley_IntMap;
 module O = Ley_Option;
-
-type prerequisite =
-  | CommonSuggestedByRCP
-  | Sex(sex)
-  | Race(race)
-  | Culture(culture)
-  | Pact(pact)
-  | Social(socialStatus)
-  | PrimaryAttribute(primaryAttribute)
-  | Activatable(activatable)
-  | ActivatableMultiEntry(activatableMultiEntry)
-  | ActivatableMultiSelect(activatableMultiSelect)
-  | Increasable(increasable)
-  | IncreasableMultiEntry(increasableMultiEntry);
 
 module Flatten = {
   open Ley_Function;
@@ -38,69 +22,11 @@ module Flatten = {
     Ley_IntMap.filterWithKey((k, _) => pred(k), mp);
   };
 
-  let flattenPrerequisites = (p: t, xs) =>
-    xs
-    |> Ley_Option.option(id, x => Sex(x) |> Ley_List.cons, p.sex)
-    |> Ley_Option.option(id, x => Race(x) |> Ley_List.cons, p.race)
-    |> Ley_Option.option(id, x => Culture(x) |> Ley_List.cons, p.culture)
-    |> Ley_Option.option(id, x => Pact(x) |> Ley_List.cons, p.pact)
-    |> Ley_Option.option(
-         id,
-         x => PrimaryAttribute(x) |> Ley_List.cons,
-         p.primaryAttribute,
-       )
-    |> (
-      xs =>
-        p.activatable
-        |> Ley_List.Foldable.foldr(x => Activatable(x) |> Ley_List.cons, xs)
-    )
-    |> (
-      xs =>
-        p.activatableMultiEntry
-        |> Ley_List.Foldable.foldr(
-             x => ActivatableMultiEntry(x) |> Ley_List.cons,
-             xs,
-           )
-    )
-    |> (
-      xs =>
-        p.activatableMultiSelect
-        |> Ley_List.Foldable.foldr(
-             x => ActivatableMultiSelect(x) |> Ley_List.cons,
-             xs,
-           )
-    )
-    |> (
-      xs =>
-        p.increasable
-        |> Ley_List.Foldable.foldr(x => Increasable(x) |> Ley_List.cons, xs)
-    )
-    |> (
-      xs =>
-        p.increasableMultiEntry
-        |> Ley_List.Foldable.foldr(
-             x => IncreasableMultiEntry(x) |> Ley_List.cons,
-             xs,
-           )
-    );
-
-  let getFirstLevelPrerequisites = (prerequisites: tWithLevel) =>
-    flattenPrerequisites(
-      {
-        sex: prerequisites.sex,
-        race: prerequisites.race,
-        culture: prerequisites.culture,
-        pact: prerequisites.pact,
-        social: prerequisites.social,
-        primaryAttribute: prerequisites.primaryAttribute,
-        activatable: prerequisites.activatable,
-        activatableMultiEntry: prerequisites.activatableMultiEntry,
-        activatableMultiSelect: prerequisites.activatableMultiSelect,
-        increasable: prerequisites.increasable,
-        increasableMultiEntry: prerequisites.increasableMultiEntry,
-      },
-      [],
-    );
+  let getFirstLevelPrerequisites = (prerequisites: Prerequisite.all) =>
+    switch (prerequisites) {
+    | Plain(xs) => xs
+    | ByLevel(mp) => mp |> Ley_IntMap.lookup(1) |> Ley_Option.fromOption([])
+    };
 
   let getFirstDisAdvLevelPrerequisites = (p: tWithLevelDisAdv) =>
     flattenPrerequisites(

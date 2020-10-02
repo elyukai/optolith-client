@@ -3,8 +3,8 @@
 import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 
-function Dynamic(Type) {
-  var minValue = Type.minValue;
+function Dynamic(Config) {
+  var minValue = Config.minValue;
   var empty = function (id) {
     return {
             id: id,

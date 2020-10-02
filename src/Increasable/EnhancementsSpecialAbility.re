@@ -146,3 +146,10 @@ let spellsToSpecialAbilityOptions =
     x => x.name,
     x => x.enhancements,
   );
+
+let liturgicalChantsToSpecialAbilityOptions =
+  toSpecialAbilityOptions(
+    (x: LiturgicalChant.Static.t) => x.id,
+    x => x.name,
+    x => x.enhancements,
+  );

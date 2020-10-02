@@ -7,7 +7,7 @@ type t = {
   target: string,
   property: int,
   traditions: Ley_IntSet.t,
-  activatablePrerequisites: option(list(Prerequisite.activatable)),
+  activatablePrerequisites: option(list(Prerequisite.Activatable.t)),
   src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };

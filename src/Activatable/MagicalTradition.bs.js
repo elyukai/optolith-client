@@ -2,19 +2,23 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
-import * as Ley_Int$OptolithClient from "../Data/Ley_Int.bs.js";
-import * as Yaml_Zip$OptolithClient from "../Misc/Yaml_Zip.bs.js";
 import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
-import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
+import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
+import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-function tL10n(json) {
+function decode(json) {
   return {
-          id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json)
         };
 }
 
-function tUniv(json) {
+var Translations = {
+  decode: decode
+};
+
+var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+
+function decodeMultilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           numId: JsonStrict$OptolithClient.optionalField("numId", JsonStrict$OptolithClient.$$int, json),
@@ -25,46 +29,32 @@ function tUniv(json) {
           canLearnRituals: JsonStrict$OptolithClient.field("canLearnRituals", JsonStrict$OptolithClient.bool, json),
           allowMultipleTraditions: JsonStrict$OptolithClient.field("allowMultipleTraditions", JsonStrict$OptolithClient.bool, json),
           isDisAdvAPMaxHalved: JsonStrict$OptolithClient.field("isDisAdvAPMaxHalved", JsonStrict$OptolithClient.bool, json),
-          areDisAdvRequiredApplyToMagActionsOrApps: JsonStrict$OptolithClient.field("areDisAdvRequiredApplyToMagActionsOrApps", JsonStrict$OptolithClient.bool, json)
+          areDisAdvRequiredApplyToMagActionsOrApps: JsonStrict$OptolithClient.field("areDisAdvRequiredApplyToMagActionsOrApps", JsonStrict$OptolithClient.bool, json),
+          translations: JsonStrict$OptolithClient.field("translations", TranslationMap.decode, json)
         };
 }
 
-function t(univ, l10n) {
-  return [
-          univ.id,
-          {
-            id: univ.id,
-            numId: univ.numId,
-            name: l10n.name,
-            primary: univ.primary,
-            aeMod: univ.aeMod,
-            canLearnCantrips: univ.canLearnCantrips,
-            canLearnSpells: univ.canLearnSpells,
-            canLearnRituals: univ.canLearnRituals,
-            allowMultipleTraditions: univ.allowMultipleTraditions,
-            isDisAdvAPMaxHalved: univ.isDisAdvAPMaxHalved,
-            areDisAdvRequiredApplyToMagActionsOrApps: univ.areDisAdvRequiredApplyToMagActionsOrApps
-          }
-        ];
+function decode$1(langs, json) {
+  var x = decodeMultilingual(json);
+  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+                return {
+                        id: x.id,
+                        name: translation.name,
+                        numId: x.numId,
+                        primary: x.primary,
+                        aeMod: x.aeMod,
+                        canLearnCantrips: x.canLearnCantrips,
+                        canLearnSpells: x.canLearnSpells,
+                        canLearnRituals: x.canLearnRituals,
+                        allowMultipleTraditions: x.allowMultipleTraditions,
+                        isDisAdvAPMaxHalved: x.isDisAdvAPMaxHalved,
+                        areDisAdvRequiredApplyToMagActionsOrApps: x.areDisAdvRequiredApplyToMagActionsOrApps
+                      };
+              }));
 }
-
-function all(yamlData) {
-  return Curry._1(Ley_IntMap$OptolithClient.fromList, Yaml_Zip$OptolithClient.zipBy(Ley_Int$OptolithClient.show, t, (function (x) {
-                    return x.id;
-                  }), (function (x) {
-                    return x.id;
-                  }), JsonStrict$OptolithClient.list(tUniv, yamlData.magicalTraditionsUniv), JsonStrict$OptolithClient.list(tL10n, yamlData.magicalTraditionsL10n)));
-}
-
-var Decode = {
-  tL10n: tL10n,
-  tUniv: tUniv,
-  t: t,
-  all: all
-};
 
 export {
-  Decode ,
+  decode$1 as decode,
   
 }
-/* Ley_IntMap-OptolithClient Not a pure module */
+/* TranslationMap Not a pure module */

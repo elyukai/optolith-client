@@ -4,52 +4,48 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as IC$OptolithClient from "./IC.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
 import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
+import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_IntSet$OptolithClient from "../Data/Ley_IntSet.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as SkillCheck$OptolithClient from "./SkillCheck.bs.js";
-import * as Enhancements$OptolithClient from "./Enhancements.bs.js";
-import * as CheckModifier$OptolithClient from "./CheckModifier.bs.js";
 import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 import * as ActivatableSkill$OptolithClient from "./ActivatableSkill.bs.js";
 
+function nameByTradition(json) {
+  return [
+          JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
+          JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json)
+        ];
+}
+
 function decode(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
+          nameByTradition: Curry._1(Ley_IntMap$OptolithClient.fromList, JsonStrict$OptolithClient.field("nameByTradition", (function (param) {
+                      return JsonStrict$OptolithClient.list(nameByTradition, param);
+                    }), json)),
           effect: JsonStrict$OptolithClient.field("effect", JsonStrict$OptolithClient.string, json),
-          castingTime: JsonStrict$OptolithClient.field("castingTime", ActivatableSkill$OptolithClient.MainParameter.decode, json),
-          cost: JsonStrict$OptolithClient.field("cost", ActivatableSkill$OptolithClient.MainParameter.decode, json),
-          range: JsonStrict$OptolithClient.field("range", ActivatableSkill$OptolithClient.MainParameter.decode, json),
           duration: JsonStrict$OptolithClient.field("duration", ActivatableSkill$OptolithClient.MainParameter.decode, json),
+          cost: JsonStrict$OptolithClient.field("cost", ActivatableSkill$OptolithClient.MainParameter.decode, json),
           target: JsonStrict$OptolithClient.field("target", JsonStrict$OptolithClient.string, json),
           errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.decodeList, json)
         };
 }
 
-var Translations = {
-  decode: decode
-};
-
-var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+var TranslationMap = TranslationMap$OptolithClient.Make({
+      decode: decode
+    });
 
 function decodeMultilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.decode, json),
-          checkMod: JsonStrict$OptolithClient.optionalField("checkMod", CheckModifier$OptolithClient.decode, json),
-          castingTimeNoMod: JsonStrict$OptolithClient.field("castingTimeNoMod", JsonStrict$OptolithClient.bool, json),
-          costNoMod: JsonStrict$OptolithClient.field("costNoMod", JsonStrict$OptolithClient.bool, json),
-          rangeNoMod: JsonStrict$OptolithClient.field("rangeNoMod", JsonStrict$OptolithClient.bool, json),
-          durationNoMod: JsonStrict$OptolithClient.field("durationNoMod", JsonStrict$OptolithClient.bool, json),
-          traditions: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("traditions", (function (param) {
+          musicTraditions: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("musicTraditions", (function (param) {
                       return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
                     }), json)),
-          aspects: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("aspects", (function (param) {
-                      return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
-                    }), json)),
+          property: JsonStrict$OptolithClient.field("property", JsonStrict$OptolithClient.$$int, json),
           ic: JsonStrict$OptolithClient.field("ic", IC$OptolithClient.Decode.t, json),
-          gr: JsonStrict$OptolithClient.field("gr", JsonStrict$OptolithClient.$$int, json),
-          enhancements: JsonStrict$OptolithClient.optionalField("enhancements", Enhancements$OptolithClient.decodeMultilingual, json),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json),
           translations: JsonStrict$OptolithClient.field("translations", TranslationMap.decode, json)
         };
@@ -61,21 +57,14 @@ function decode$1(langs, json) {
                 return {
                         id: x.id,
                         name: translation.name,
+                        nameByTradition: translation.nameByTradition,
                         check: x.check,
-                        checkMod: x.checkMod,
                         effect: translation.effect,
-                        castingTime: ActivatableSkill$OptolithClient.MainParameter.make(x.castingTimeNoMod, translation.castingTime),
-                        cost: ActivatableSkill$OptolithClient.MainParameter.make(x.costNoMod, translation.cost),
-                        range: ActivatableSkill$OptolithClient.MainParameter.make(x.rangeNoMod, translation.range),
-                        duration: ActivatableSkill$OptolithClient.MainParameter.make(x.durationNoMod, translation.duration),
-                        target: translation.target,
-                        traditions: x.traditions,
-                        aspects: x.aspects,
+                        duration: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.duration),
+                        cost: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.cost),
+                        musicTraditions: x.musicTraditions,
+                        property: x.property,
                         ic: x.ic,
-                        gr: x.gr,
-                        enhancements: Ley_Option$OptolithClient.Monad.$great$great$eq(x.enhancements, (function (param) {
-                                return Enhancements$OptolithClient.resolveTranslations(langs, param);
-                              })),
                         src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
                         errata: translation.errata
                       };

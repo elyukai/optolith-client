@@ -8,7 +8,7 @@ module Static = {
     type t = {
       id: int,
       name: string,
-      prerequisite: option(Prerequisite.activatable),
+      prerequisite: option(Prerequisite.Activatable.t),
     };
 
     module Translations = {
@@ -21,7 +21,7 @@ module Static = {
 
     type multilingual = {
       id: int,
-      prerequisite: option(Prerequisite.activatable),
+      prerequisite: option(Prerequisite.Activatable.t),
       translations: TranslationMap.t,
     };
 
@@ -31,7 +31,7 @@ module Static = {
         prerequisite:
           JsonStrict.(
             json
-            |> optionalField("prerequisite", Prerequisite.Decode.activatable)
+            |> optionalField("prerequisite", Prerequisite.Activatable.decode)
           ),
         translations: json |> field("translations", TranslationMap.decode),
       };
@@ -54,7 +54,7 @@ module Static = {
     type t = {
       id: int,
       name: string,
-      prerequisite: Prerequisite.activatable,
+      prerequisite: Prerequisite.Activatable.t,
     };
 
     module Translations = {
@@ -67,7 +67,7 @@ module Static = {
 
     type multilingual = {
       id: int,
-      prerequisite: Prerequisite.activatable,
+      prerequisite: Prerequisite.Activatable.t,
       translations: TranslationMap.t,
     };
 
@@ -75,7 +75,7 @@ module Static = {
       Json.Decode.{
         id: json |> field("id", int),
         prerequisite:
-          json |> field("prerequisite", Prerequisite.Decode.activatable),
+          json |> field("prerequisite", Prerequisite.Activatable.decode),
         translations: json |> field("translations", TranslationMap.decode),
       };
 

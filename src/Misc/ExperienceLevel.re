@@ -10,31 +10,28 @@ type t = {
   maxUnfamiliarSpells: int,
 };
 
-module Decode = {
-  open Json.Decode;
+module Translations = {
+  type t = {name: string};
 
-  type tL10n = {
-    id: int,
-    name: string,
-  };
+  let decode = json => JsonStrict.{name: json |> field("name", string)};
+};
 
-  let tL10n = json => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-  };
+module TranslationMap = TranslationMap.Make(Translations);
 
-  type tUniv = {
-    id: int,
-    ap: int,
-    maxAttributeValue: int,
-    maxSkillRating: int,
-    maxCombatTechniqueRating: int,
-    maxTotalAttributeValues: int,
-    maxSpellsLiturgicalChants: int,
-    maxUnfamiliarSpells: int,
-  };
+type multilingual = {
+  id: int,
+  ap: int,
+  maxAttributeValue: int,
+  maxSkillRating: int,
+  maxCombatTechniqueRating: int,
+  maxTotalAttributeValues: int,
+  maxSpellsLiturgicalChants: int,
+  maxUnfamiliarSpells: int,
+  translations: TranslationMap.t,
+};
 
-  let tUniv = json => {
+let decodeMultilingual = json =>
+  JsonStrict.{
     id: json |> field("id", int),
     ap: json |> field("ap", int),
     maxAttributeValue: json |> field("maxAttributeValue", int),
@@ -44,31 +41,27 @@ module Decode = {
     maxSpellsLiturgicalChants:
       json |> field("maxSpellsLiturgicalChants", int),
     maxUnfamiliarSpells: json |> field("maxUnfamiliarSpells", int),
+    translations: json |> field("translations", TranslationMap.decode),
   };
 
-  let t = (univ: tUniv, l10n: tL10n) => (
-    univ.id,
-    {
-      id: univ.id,
-      name: l10n.name,
-      ap: univ.ap,
-      maxAttributeValue: univ.maxAttributeValue,
-      maxSkillRating: univ.maxSkillRating,
-      maxCombatTechniqueRating: univ.maxCombatTechniqueRating,
-      maxTotalAttributeValues: univ.maxTotalAttributeValues,
-      maxSpellsLiturgicalChants: univ.maxSpellsLiturgicalChants,
-      maxUnfamiliarSpells: univ.maxUnfamiliarSpells,
-    },
+let resolveTranslations = (langs, x) =>
+  Ley_Option.Functor.(
+    x.translations
+    |> TranslationMap.getFromLanguageOrder(langs)
+    <&> (
+      translation => {
+        id: x.id,
+        name: translation.name,
+        ap: x.ap,
+        maxAttributeValue: x.maxAttributeValue,
+        maxSkillRating: x.maxSkillRating,
+        maxCombatTechniqueRating: x.maxCombatTechniqueRating,
+        maxTotalAttributeValues: x.maxTotalAttributeValues,
+        maxSpellsLiturgicalChants: x.maxSpellsLiturgicalChants,
+        maxUnfamiliarSpells: x.maxUnfamiliarSpells,
+      }
+    )
   );
 
-  let all = (yamlData: Yaml_Raw.yamlData) =>
-    Yaml_Zip.zipBy(
-      Ley_Int.show,
-      t,
-      x => x.id,
-      x => x.id,
-      yamlData.experienceLevelsUniv |> list(tUniv),
-      yamlData.experienceLevelsL10n |> list(tL10n),
-    )
-    |> Ley_IntMap.fromList;
-};
+let decode = (langs, json) =>
+  json |> decodeMultilingual |> resolveTranslations(langs);

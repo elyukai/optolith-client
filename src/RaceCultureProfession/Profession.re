@@ -1,80 +1,544 @@
-type nameBySex = {
-  m: string,
-  f: string,
+module Dynamic = {
+  type t =
+    | Base(int)
+    | WithVariant(int, int);
 };
 
-type name =
-  | Const(string)
-  | BySex(nameBySex);
+module Static = {
+  module Options = {
+    type variantOverride('a) =
+      | Remove
+      | Override('a);
 
-type variantOverride('a) =
-  | Remove
-  | Override('a);
+    let decodeVariantOverride = (decoder, json) =>
+      JsonStrict.(
+        oneOf(
+          [
+            json => json |> const(false) |> (_ => Remove),
+            json => json |> decoder |> (x => Override(x)),
+          ],
+          json,
+        )
+      );
 
-type skillSpecializationOption = OneOrMany.t(int);
+    type skillSpecializationOption = OneOrMany.t(int);
 
-type variantSkillSpecializationOption =
-  variantOverride(skillSpecializationOption);
+    let decodeSkillSpecializationOption = Prerequisite.oneOrManyInt;
 
-type languageAndScriptOption = int;
+    type variantSkillSpecializationOption =
+      variantOverride(skillSpecializationOption);
 
-type variantLanguageAndScriptOption =
-  variantOverride(languageAndScriptOption);
+    let decodeVariantSkillSpecializationOption =
+      decodeVariantOverride(decodeSkillSpecializationOption);
 
-type combatTechniqueSecondOption = {
-  amount: int,
-  value: int,
-};
+    type languageAndScriptOption = int;
 
-type combatTechniqueOption = {
-  amount: int,
-  value: int,
-  second: option(combatTechniqueSecondOption),
-  sid: list(int),
-};
+    let decodeLanguageAndScriptOption = JsonStrict.int;
 
-type variantCombatTechniqueOption = variantOverride(combatTechniqueOption);
+    type variantLanguageAndScriptOption =
+      variantOverride(languageAndScriptOption);
 
-type cantripOption = {
-  amount: int,
-  sid: list(int),
-};
+    let decodeVariantLanguageAndScriptOption =
+      decodeVariantOverride(decodeLanguageAndScriptOption);
 
-type curseOption = int;
+    type combatTechniqueSecondOption = {
+      amount: int,
+      value: int,
+    };
 
-type terrainKnowledgeOption = list(int);
+    let decodeCombatTechniqueSecondOption = json =>
+      JsonStrict.{
+        amount: json |> field("amount", int),
+        value: json |> field("value", int),
+      };
 
-type skillOption = {
-  /**
-   * If specified, only choose from skills of the specified group.
-   */
-  gr: option(int),
-  /**
-   * The AP value the user can spend.
-   */
-  value: int,
-};
+    type combatTechniqueOption = {
+      amount: int,
+      value: int,
+      second: option(combatTechniqueSecondOption),
+      sid: list(int),
+    };
 
-type options = {
-  skillSpecialization: option(skillSpecializationOption),
-  languageScript: option(languageAndScriptOption),
-  combatTechnique: option(combatTechniqueOption),
-  cantrip: option(cantripOption),
-  curse: option(curseOption),
-  terrainKnowledge: option(terrainKnowledgeOption),
-  skill: option(skillOption),
-  guildMageUnfamiliarSpell: bool,
-};
+    let decodeCombatTechniqueOption = json =>
+      JsonStrict.{
+        amount: json |> field("amount", int),
+        value: json |> field("value", int),
+        second:
+          json |> optionalField("second", decodeCombatTechniqueSecondOption),
+        sid: json |> field("sid", list(int)),
+      };
 
-type variantOptions = {
-  skillSpecialization: option(variantSkillSpecializationOption),
-  languageScript: option(variantLanguageAndScriptOption),
-  combatTechnique: option(variantCombatTechniqueOption),
-  cantrip: option(cantripOption),
-  curse: option(curseOption),
-  terrainKnowledge: option(terrainKnowledgeOption),
-  skill: option(skillOption),
-  guildMageUnfamiliarSpell: bool,
+    type variantCombatTechniqueOption =
+      variantOverride(combatTechniqueOption);
+
+    let decodeVariantCombatTechniqueOption =
+      decodeVariantOverride(decodeCombatTechniqueOption);
+
+    type cantripOption = {
+      amount: int,
+      sid: list(int),
+    };
+
+    let decodeCantripOption = json =>
+      JsonStrict.{
+        amount: json |> field("amount", int),
+        sid: json |> field("sid", list(int)),
+      };
+
+    type curseOption = int;
+
+    let decodeCurseOption = JsonStrict.int;
+
+    type terrainKnowledgeOption = list(int);
+
+    let decodeTerrainKnowledgeOption = JsonStrict.(list(int));
+
+    type skillOption = {
+      /**
+       * If specified, only choose from skills of the specified group.
+       */
+      gr: option(int),
+      /**
+       * The AP value the user can spend.
+       */
+      value: int,
+    };
+
+    let decodeSkillOption = json =>
+      JsonStrict.{
+        gr: json |> optionalField("gr", int),
+        value: json |> field("value", int),
+      };
+  };
+
+  type name =
+    | Const(string)
+    | BySex({
+        m: string,
+        f: string,
+      });
+
+  let decodeName =
+    JsonStrict.(
+      oneOf([
+        json => json |> string |> (x => Const(x)),
+        json =>
+          BySex({
+            m: json |> field("m", string),
+            f: json |> field("f", string),
+          }),
+      ])
+    );
+
+  module Variant = {
+    type variantOptions = {
+      skillSpecialization: option(Options.variantSkillSpecializationOption),
+      languageScript: option(Options.variantLanguageAndScriptOption),
+      combatTechnique: option(Options.variantCombatTechniqueOption),
+      cantrip: option(Options.cantripOption),
+      curse: option(Options.curseOption),
+      terrainKnowledge: option(Options.terrainKnowledgeOption),
+      skill: option(Options.skillOption),
+      guildMageUnfamiliarSpell: bool,
+    };
+
+    type t = {
+      id: int,
+      name,
+      cost: int,
+      prerequisites: Prerequisite.Profession.all,
+      options: variantOptions,
+      specialAbilities: list(Prerequisite.Activatable.t),
+      combatTechniques: Ley_IntMap.t(int),
+      skills: Ley_IntMap.t(int),
+      spells: Ley_IntMap.t(OneOrMany.t(int)),
+      liturgicalChants: Ley_IntMap.t(OneOrMany.t(int)),
+      blessings: list(int),
+      precedingText: option(string),
+      fullText: option(string),
+      concludingText: option(string),
+      errata: list(Erratum.t),
+    };
+
+    module Translations = {
+      type t = {
+        name,
+        precedingText: option(string),
+        fullText: option(string),
+        concludingText: option(string),
+        errata: list(Erratum.t),
+      };
+
+      let decode = json =>
+        JsonStrict.{
+          name: json |> field("name", decodeName),
+          precedingText: json |> optionalField("precedingText", string),
+          fullText: json |> optionalField("fullText", string),
+          concludingText: json |> optionalField("concludingText", string),
+          errata: json |> field("errata", Erratum.decodeList),
+        };
+    };
+
+    module TranslationMap = TranslationMap.Make(Translations);
+
+    type multilingual = {
+      id: int,
+      apValue: int,
+      sexDependency: option(Prerequisite.sex),
+      raceDependency: option(Prerequisite.race),
+      cultureDependency: option(Prerequisite.culture),
+      activatablePrerequisites: option(list(Prerequisite.activatable)),
+      increasablePrerequisites: option(list(Prerequisite.increasable)),
+      skillSpecializationSelectOptions:
+        option(Options.variantSkillSpecializationOption),
+      languageScriptSelectOptions:
+        option(Options.variantLanguageAndScriptOption),
+      combatTechniqueSelectOptions:
+        option(Options.variantCombatTechniqueOption),
+      cantripSelectOptions: option(Options.cantripOption),
+      curseSelectOptions: option(Options.curseOption),
+      terrainKnowledgeSelectOptions: option(Options.terrainKnowledgeOption),
+      skillSelectOptions: option(Options.skillOption),
+      specialAbilities: option(list(Prerequisite.activatable)),
+      combatTechniques: option(list((int, int))),
+      skills: option(list((int, int))),
+      spells: option(list((int, OneOrMany.t(int)))),
+      liturgicalChants: option(list((int, OneOrMany.t(int)))),
+      blessings: option(list(int)),
+      translations: TranslationMap.t,
+    };
+
+    let decodeMultilingual = json =>
+      JsonStrict.{
+        id: json |> field("id", int),
+        commonCultures:
+          json |> field("commonCultures", list(int)) |> Ley_IntSet.fromList,
+        commonAdvantages:
+          json
+          |> optionalField("commonAdvantages", list(int))
+          |> Ley_Option.fromOption([]),
+        commonDisadvantages:
+          json
+          |> optionalField("commonDisadvantages", list(int))
+          |> Ley_Option.fromOption([]),
+        uncommonAdvantages:
+          json
+          |> optionalField("uncommonAdvantages", list(int))
+          |> Ley_Option.fromOption([]),
+        uncommonDisadvantages:
+          json
+          |> optionalField("uncommonDisadvantages", list(int))
+          |> Ley_Option.fromOption([]),
+        hairColors: json |> field("hairColors", list(int)),
+        eyeColors: json |> field("eyeColors", list(int)),
+        sizeBase: json |> field("sizeBase", int),
+        sizeRandom: json |> field("sizeRandom", list(Dice.Decode.t)),
+        translations: json |> field("translations", TranslationMap.decode),
+      };
+
+    let decodeMultilingualPair = json =>
+      json |> decodeMultilingual |> (variant => (variant.id, variant));
+
+    let resolveTranslations = (langs, x) =>
+      Ley_Option.Functor.(
+        x.translations
+        |> TranslationMap.getFromLanguageOrder(langs)
+        <&> (
+          translation => {
+            id: x.id,
+            name: translation.name,
+            commonCultures: x.commonCultures,
+            commonAdvantages: x.commonAdvantages,
+            commonAdvantagesText: translation.commonAdvantages,
+            commonDisadvantages: x.commonDisadvantages,
+            commonDisadvantagesText: translation.commonDisadvantages,
+            uncommonAdvantages: x.uncommonAdvantages,
+            uncommonAdvantagesText: translation.uncommonAdvantages,
+            uncommonDisadvantages: x.uncommonDisadvantages,
+            uncommonDisadvantagesText: translation.uncommonDisadvantages,
+            hairColors: x.hairColors,
+            eyeColors: x.eyeColors,
+            sizeBase: x.sizeBase,
+            sizeRandom: x.sizeRandom,
+          }
+        )
+      );
+  };
+
+  type options = {
+    skillSpecialization: option(Options.skillSpecializationOption),
+    languageScript: option(Options.languageAndScriptOption),
+    combatTechnique: option(Options.combatTechniqueOption),
+    cantrip: option(Options.cantripOption),
+    curse: option(Options.curseOption),
+    terrainKnowledge: option(Options.terrainKnowledgeOption),
+    skill: option(Options.skillOption),
+    guildMageUnfamiliarSpell: bool,
+  };
+
+  type t = {
+    id: int,
+    name: string,
+    apValue: int,
+    lp: int,
+    spi: int,
+    tou: int,
+    mov: int,
+    attributeAdjustments: Ley_IntMap.t(int),
+    attributeAdjustmentsSelectionValue: int,
+    attributeAdjustmentsSelectionList: Ley_IntSet.t,
+    attributeAdjustmentsText: string,
+    automaticAdvantages: list(int),
+    automaticAdvantagesText: option(string),
+    stronglyRecommendedAdvantages: list(int),
+    stronglyRecommendedAdvantagesText: option(string),
+    stronglyRecommendedDisadvantages: list(int),
+    stronglyRecommendedDisadvantagesText: option(string),
+    commonAdvantages: list(int),
+    commonAdvantagesText: option(string),
+    commonDisadvantages: list(int),
+    commonDisadvantagesText: option(string),
+    uncommonAdvantages: list(int),
+    uncommonAdvantagesText: option(string),
+    uncommonDisadvantages: list(int),
+    uncommonDisadvantagesText: option(string),
+    weightBase: int,
+    weightRandom: list(Dice.t),
+    variantOptions,
+    src: list(PublicationRef.t),
+    errata: list(Erratum.t),
+  };
+
+  module Translations = {
+    type t = {
+      name: string,
+      attributeAdjustments: string,
+      automaticAdvantages: option(string),
+      stronglyRecommendedAdvantages: option(string),
+      stronglyRecommendedDisadvantages: option(string),
+      commonAdvantages: option(string),
+      commonDisadvantages: option(string),
+      uncommonAdvantages: option(string),
+      uncommonDisadvantages: option(string),
+      errata: list(Erratum.t),
+    };
+
+    let decode = json =>
+      JsonStrict.{
+        name: json |> field("name", string),
+        attributeAdjustments: json |> field("attributeAdjustments", string),
+        automaticAdvantages:
+          json |> optionalField("automaticAdvantages", string),
+        stronglyRecommendedAdvantages:
+          json |> optionalField("stronglyRecommendedAdvantages", string),
+        stronglyRecommendedDisadvantages:
+          json |> optionalField("stronglyRecommendedDisadvantages", string),
+        commonAdvantages: json |> optionalField("commonAdvantages", string),
+        commonDisadvantages:
+          json |> optionalField("commonDisadvantages", string),
+        uncommonAdvantages:
+          json |> optionalField("uncommonAdvantages", string),
+        uncommonDisadvantages:
+          json |> optionalField("uncommonDisadvantages", string),
+        errata: json |> field("errata", Erratum.decodeList),
+      };
+  };
+
+  module TranslationMap = TranslationMap.Make(Translations);
+
+  type variantOptionsMultilingual =
+    | WithVariants({variants: Ley_IntMap.t(Variant.multilingual)})
+    | WithoutVariants({
+        commonCultures: Ley_IntSet.t,
+        hairColors: list(int),
+        eyeColors: list(int),
+        sizeBase: int,
+        sizeRandom: list(Dice.t),
+      });
+
+  type multilingual = {
+    id: int,
+    apValue: int,
+    lp: int,
+    spi: int,
+    tou: int,
+    mov: int,
+    attributeAdjustments: Ley_IntMap.t(int),
+    attributeAdjustmentsSelectionValue: int,
+    attributeAdjustmentsSelectionList: Ley_IntSet.t,
+    automaticAdvantages: list(int),
+    stronglyRecommendedAdvantages: list(int),
+    stronglyRecommendedDisadvantages: list(int),
+    commonAdvantages: list(int),
+    commonDisadvantages: list(int),
+    uncommonAdvantages: list(int),
+    uncommonDisadvantages: list(int),
+    weightBase: int,
+    weightRandom: list(Dice.t),
+    variantOptions: variantOptionsMultilingual,
+    src: list(PublicationRef.multilingual),
+    translations: TranslationMap.t,
+  };
+
+  let decodeVariantOptions =
+    JsonStrict.(
+      field("type", string)
+      |> andThen(
+           fun
+           | "WithVariants" => (
+               (json) => (
+                 WithVariants({
+                   variants:
+                     json
+                     |> field(
+                          "variants",
+                          list(Variant.decodeMultilingualPair),
+                        )
+                     |> Ley_IntMap.fromList,
+                 }): variantOptionsMultilingual
+               )
+             )
+           | "WithoutVariants" => (
+               json =>
+                 WithoutVariants({
+                   commonCultures:
+                     json
+                     |> field("commonCultures", list(int))
+                     |> Ley_IntSet.fromList,
+                   hairColors: json |> field("hairColors", list(int)),
+                   eyeColors: json |> field("eyeColors", list(int)),
+                   sizeBase: json |> field("sizeBase", int),
+                   sizeRandom:
+                     json |> field("sizeRandom", list(Dice.Decode.t)),
+                 })
+             )
+           | _ => failwith("unknown node type"),
+         )
+    );
+
+  let decodeMultilingual = json =>
+    JsonStrict.{
+      id: json |> field("id", int),
+      apValue: json |> field("apValue", int),
+      lp: json |> field("lp", int),
+      spi: json |> field("spi", int),
+      tou: json |> field("tou", int),
+      mov: json |> field("mov", int),
+      attributeAdjustments:
+        json
+        |> optionalField("attributeAdjustments", list(pair(int, int)))
+        |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
+      attributeAdjustmentsSelectionValue:
+        json |> field("attributeAdjustmentsSelectionValue", int),
+      attributeAdjustmentsSelectionList:
+        json
+        |> field("attributeAdjustmentsSelectionList", list(int))
+        |> Ley_IntSet.fromList,
+      automaticAdvantages:
+        json
+        |> optionalField("automaticAdvantages", list(int))
+        |> Ley_Option.fromOption([]),
+      stronglyRecommendedAdvantages:
+        json
+        |> optionalField("stronglyRecommendedAdvantages", list(int))
+        |> Ley_Option.fromOption([]),
+      stronglyRecommendedDisadvantages:
+        json
+        |> optionalField("stronglyRecommendedDisadvantages", list(int))
+        |> Ley_Option.fromOption([]),
+      commonAdvantages:
+        json
+        |> optionalField("commonAdvantages", list(int))
+        |> Ley_Option.fromOption([]),
+      commonDisadvantages:
+        json
+        |> optionalField("commonDisadvantages", list(int))
+        |> Ley_Option.fromOption([]),
+      uncommonAdvantages:
+        json
+        |> optionalField("uncommonAdvantages", list(int))
+        |> Ley_Option.fromOption([]),
+      uncommonDisadvantages:
+        json
+        |> optionalField("uncommonDisadvantages", list(int))
+        |> Ley_Option.fromOption([]),
+      weightBase: json |> field("weightBase", int),
+      weightRandom: json |> field("weightRandom", list(Dice.Decode.t)),
+      variantOptions: json |> field("typeSpecific", decodeVariantOptions),
+      src: json |> field("src", PublicationRef.decodeMultilingualList),
+      translations: json |> field("translations", TranslationMap.decode),
+    };
+
+  let resolveTranslations = (langs, x) =>
+    Ley_Option.Functor.(
+      x.translations
+      |> TranslationMap.getFromLanguageOrder(langs)
+      <&> (
+        translation => {
+          id: x.id,
+          name: translation.name,
+          apValue: x.apValue,
+          lp: x.lp,
+          spi: x.spi,
+          tou: x.tou,
+          mov: x.mov,
+          attributeAdjustments: x.attributeAdjustments,
+          attributeAdjustmentsSelectionValue:
+            x.attributeAdjustmentsSelectionValue,
+          attributeAdjustmentsSelectionList:
+            x.attributeAdjustmentsSelectionList,
+          attributeAdjustmentsText: translation.attributeAdjustments,
+          automaticAdvantages: x.automaticAdvantages,
+          automaticAdvantagesText: translation.automaticAdvantages,
+          stronglyRecommendedAdvantages: x.stronglyRecommendedAdvantages,
+          stronglyRecommendedAdvantagesText:
+            translation.stronglyRecommendedAdvantages,
+          stronglyRecommendedDisadvantages: x.stronglyRecommendedDisadvantages,
+          stronglyRecommendedDisadvantagesText:
+            translation.stronglyRecommendedDisadvantages,
+          commonAdvantages: x.commonAdvantages,
+          commonAdvantagesText: translation.commonAdvantages,
+          commonDisadvantages: x.commonDisadvantages,
+          commonDisadvantagesText: translation.commonDisadvantages,
+          uncommonAdvantages: x.uncommonAdvantages,
+          uncommonAdvantagesText: translation.uncommonDisadvantages,
+          uncommonDisadvantages: x.uncommonDisadvantages,
+          uncommonDisadvantagesText: translation.uncommonDisadvantages,
+          weightBase: x.weightBase,
+          weightRandom: x.weightRandom,
+          variantOptions:
+            switch (x.variantOptions) {
+            | WithVariants(options) =>
+              WithVariants({
+                variants:
+                  Ley_IntMap.mapMaybe(
+                    Variant.resolveTranslations(langs),
+                    options.variants,
+                  ),
+              })
+            | WithoutVariants({
+                commonCultures,
+                hairColors,
+                eyeColors,
+                sizeBase,
+                sizeRandom,
+              }) =>
+              WithoutVariants({
+                commonCultures,
+                hairColors,
+                eyeColors,
+                sizeBase,
+                sizeRandom,
+              })
+            },
+          src: PublicationRef.resolveTranslationsList(langs, x.src),
+          errata: translation.errata,
+        }
+      )
+    );
+
+  let decode = (langs, json) =>
+    json |> decodeMultilingual |> resolveTranslations(langs);
 };
 
 type variant = {
@@ -167,53 +631,6 @@ module Decode = {
     fullText: json |> optionalField("fullText", string),
     concludingText: json |> optionalField("concludingText", string),
     errata: json |> field("errata", Erratum.decodeList),
-  };
-
-  let variantOverride = (decoder, json) =>
-    oneOf(
-      [
-        json => json |> const(false) |> (_ => Remove),
-        json => json |> decoder |> (x => Override(x)),
-      ],
-      json,
-    );
-
-  let skillSpecializationOption = Prerequisite.Decode.oneOrManyInt;
-
-  let variantSkillSpecializationOption =
-    variantOverride(skillSpecializationOption);
-
-  let languageAndScriptOption = int;
-
-  let variantLanguageAndScriptOption =
-    variantOverride(languageAndScriptOption);
-
-  let combatTechniqueSecondOption = json => {
-    amount: json |> field("amount", int),
-    value: json |> field("value", int),
-  };
-
-  let combatTechniqueOption = json => {
-    amount: json |> field("amount", int),
-    value: json |> field("value", int),
-    second: json |> optionalField("second", combatTechniqueSecondOption),
-    sid: json |> field("sid", list(int)),
-  };
-
-  let variantCombatTechniqueOption = variantOverride(combatTechniqueOption);
-
-  let cantripOption = json => {
-    amount: json |> field("amount", int),
-    sid: json |> field("sid", list(int)),
-  };
-
-  let curseOption = int;
-
-  let terrainKnowledgeOption = list(int);
-
-  let skillOption = json => {
-    gr: json |> optionalField("gr", int),
-    value: json |> field("value", int),
   };
 
   type variantUniv = {

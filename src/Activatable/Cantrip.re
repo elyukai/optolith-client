@@ -7,7 +7,7 @@ type t = {
   target: string,
   property: int,
   traditions: Ley_IntSet.t,
-  activatablePrerequisites: option(list(Prerequisite.activatable)),
+  activatablePrerequisites: option(list(Prerequisite.Activatable.t)),
   src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
@@ -39,7 +39,7 @@ type multilingual = {
   id: int,
   property: int,
   traditions: Ley_IntSet.t,
-  activatablePrerequisites: option(list(Prerequisite.activatable)),
+  activatablePrerequisites: option(list(Prerequisite.Activatable.t)),
   src: list(PublicationRef.multilingual),
   translations: TranslationMap.t,
 };
@@ -54,7 +54,7 @@ let decodeMultilingual = json =>
       json
       |> optionalField(
            "activatablePrerequisites",
-           list(Prerequisite.Decode.activatable),
+           list(Prerequisite.Activatable.decode),
          ),
     src: json |> field("src", PublicationRef.decodeMultilingualList),
     translations: json |> field("translations", TranslationMap.decode),

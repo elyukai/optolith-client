@@ -1,7 +1,49 @@
-type category = {
-  id: int,
-  name: string,
-  primaryPatronCultures: list(int),
+module Category = {
+  type t = {
+    id: int,
+    name: string,
+    primaryPatronCultures: Ley_IntSet.t,
+  };
+
+  module Translations = {
+    type t = {name: string};
+
+    let decode = json => JsonStrict.{name: json |> field("name", string)};
+  };
+
+  module TranslationMap = TranslationMap.Make(Translations);
+
+  type multilingual = {
+    id: int,
+    primaryPatronCultures: Ley_IntSet.t,
+    translations: TranslationMap.t,
+  };
+
+  let decodeMultilingual = json =>
+    JsonStrict.{
+      id: json |> field("id", int),
+      primaryPatronCultures:
+        json
+        |> field("primaryPatronCultures", list(int))
+        |> Ley_IntSet.fromList,
+      translations: json |> field("translations", TranslationMap.decode),
+    };
+
+  let resolveTranslations = (langs, x) =>
+    Ley_Option.Functor.(
+      x.translations
+      |> TranslationMap.getFromLanguageOrder(langs)
+      <&> (
+        translation => {
+          id: x.id,
+          name: translation.name,
+          primaryPatronCultures: x.primaryPatronCultures,
+        }
+      )
+    );
+
+  let decode = (langs, json) =>
+    json |> decodeMultilingual |> resolveTranslations(langs);
 };
 
 type t = {
@@ -9,87 +51,54 @@ type t = {
   name: string,
   category: int,
   skills: (int, int, int),
-  limitedToCultures: list(int),
+  limitedToCultures: Ley_IntSet.t,
   isLimitedToCulturesReverse: bool,
 };
 
-module Decode = {
-  open JsonStrict;
+module Translations = {
+  type t = {name: string};
 
-  type categoryL10n = {
-    id: int,
-    name: string,
-  };
+  let decode = json => JsonStrict.{name: json |> field("name", string)};
+};
 
-  let categoryL10n = json => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-  };
+module TranslationMap = TranslationMap.Make(Translations);
 
-  type categoryUniv = {
-    id: int,
-    primaryPatronCultures: list(int),
-  };
+type multilingual = {
+  id: int,
+  category: int,
+  skills: (int, int, int),
+  limitedToCultures: Ley_IntSet.t,
+  isLimitedToCulturesReverse: bool,
+  translations: TranslationMap.t,
+};
 
-  let categoryUniv = json => {
-    id: json |> field("id", int),
-    primaryPatronCultures: json |> field("primaryPatronCultures", list(int)),
-  };
-
-  let category = (univ: categoryUniv, l10n: categoryL10n) => {
-    id: univ.id,
-    name: l10n.name,
-    primaryPatronCultures: univ.primaryPatronCultures,
-  };
-
-  type tL10n = {
-    id: int,
-    name: string,
-  };
-
-  let tL10n = (json): tL10n => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-  };
-
-  type tUniv = {
-    id: int,
-    category: int,
-    skills: (int, int, int),
-    limitedToCultures: list(int),
-    isLimitedToCulturesReverse: option(bool),
-  };
-
-  let tUniv = json => {
+let decodeMultilingual = json =>
+  JsonStrict.{
     id: json |> field("id", int),
     category: json |> field("category", int),
     skills: json |> field("skills", tuple3(int, int, int)),
-    limitedToCultures: json |> field("limitedToCultures", list(int)),
+    limitedToCultures:
+      json |> field("limitedToCultures", list(int)) |> Ley_IntSet.fromList,
     isLimitedToCulturesReverse:
-      json |> optionalField("isLimitedToCulturesReverse", bool),
+      json |> field("isLimitedToCulturesReverse", bool),
+    translations: json |> field("translations", TranslationMap.decode),
   };
 
-  let t = (univ: tUniv, l10n: tL10n) => (
-    univ.id,
-    {
-      id: univ.id,
-      name: l10n.name,
-      category: univ.category,
-      skills: univ.skills,
-      limitedToCultures: univ.limitedToCultures,
-      isLimitedToCulturesReverse:
-        univ.isLimitedToCulturesReverse |> Ley_Option.fromOption(false),
-    },
+let resolveTranslations = (langs, x) =>
+  Ley_Option.Functor.(
+    x.translations
+    |> TranslationMap.getFromLanguageOrder(langs)
+    <&> (
+      translation => {
+        id: x.id,
+        name: translation.name,
+        category: x.category,
+        skills: x.skills,
+        limitedToCultures: x.limitedToCultures,
+        isLimitedToCulturesReverse: x.isLimitedToCulturesReverse,
+      }
+    )
   );
 
-  let all = (yamlData: Yaml_Raw.yamlData) =>
-    Yaml_Zip.zipBy(
-      Ley_Int.show,
-      t,
-      x => x.id,
-      x => x.id,
-      yamlData.patronsUniv |> list(tUniv),
-      yamlData.patronsL10n |> list(tL10n),
-    )
-    |> Ley_IntMap.fromList;
-};
+let decode = (langs, json) =>
+  json |> decodeMultilingual |> resolveTranslations(langs);

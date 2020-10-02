@@ -1,7 +1,3 @@
-type sex =
-  | Male
-  | Female;
-
 type baseOrWithVariant =
   | Base(int)
   | WithVariant(int, int);
@@ -343,7 +339,7 @@ type t = {
   dateModified: Js.Date.t,
   adventurePointsTotal: int,
   experienceLevel: int,
-  sex,
+  sex: Sex.t,
   phase: Id.Phase.t,
   locale: string,
   avatar: option(string),
@@ -361,7 +357,7 @@ type t = {
   attributeAdjustmentSelected: int,
   energies: Energies.t,
   skills: Ley_IntMap.t(Skill.Dynamic.t),
-  combatTechniques: Ley_IntMap.t(Skill.Dynamic.t),
+  combatTechniques: Ley_IntMap.t(CombatTechnique.Dynamic.t),
   spells: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
   magicalActions: MagicalActions.t,
   liturgicalChants: Ley_IntMap.t(ActivatableSkill.Dynamic.t),

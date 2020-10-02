@@ -1,343 +1,395 @@
-type variant = {
-  id: int,
-  name: string,
-  commonCultures: Ley_IntSet.t,
-  commonAdvantages: list(int),
-  commonAdvantagesText: option(string),
-  commonDisadvantages: list(int),
-  commonDisadvantagesText: option(string),
-  uncommonAdvantages: list(int),
-  uncommonAdvantagesText: option(string),
-  uncommonDisadvantages: list(int),
-  uncommonDisadvantagesText: option(string),
-  hairColors: list(int),
-  eyeColors: list(int),
-  sizeBase: int,
-  sizeRandom: list(Dice.t),
+module Dynamic = {
+  type t =
+    | Base(int)
+    | WithVariant(int, int);
 };
 
-type withVariants = {variants: Ley_IntMap.t(variant)};
+module Static = {
+  module Variant = {
+    type t = {
+      id: int,
+      name: string,
+      commonCultures: Ley_IntSet.t,
+      commonAdvantages: list(int),
+      commonAdvantagesText: option(string),
+      commonDisadvantages: list(int),
+      commonDisadvantagesText: option(string),
+      uncommonAdvantages: list(int),
+      uncommonAdvantagesText: option(string),
+      uncommonDisadvantages: list(int),
+      uncommonDisadvantagesText: option(string),
+      hairColors: list(int),
+      eyeColors: list(int),
+      sizeBase: int,
+      sizeRandom: list(Dice.t),
+    };
 
-type withoutVariants = {
-  commonCultures: Ley_IntSet.t,
-  hairColors: list(int),
-  eyeColors: list(int),
-  sizeBase: int,
-  sizeRandom: list(Dice.t),
-};
+    module Translations = {
+      type t = {
+        name: string,
+        commonAdvantages: option(string),
+        commonDisadvantages: option(string),
+        uncommonAdvantages: option(string),
+        uncommonDisadvantages: option(string),
+      };
 
-type variantOptions =
-  | WithVariants(withVariants)
-  | WithoutVariants(withoutVariants);
+      let decode = json =>
+        JsonStrict.{
+          name: json |> field("name", string),
+          commonAdvantages: json |> optionalField("commonAdvantages", string),
+          commonDisadvantages:
+            json |> optionalField("commonDisadvantages", string),
+          uncommonAdvantages:
+            json |> optionalField("uncommonAdvantages", string),
+          uncommonDisadvantages:
+            json |> optionalField("uncommonDisadvantages", string),
+        };
+    };
 
-type t = {
-  id: int,
-  name: string,
-  cost: int,
-  lp: int,
-  spi: int,
-  tou: int,
-  mov: int,
-  attributeAdjustments: Ley_IntMap.t(int),
-  attributeAdjustmentsSelectionValue: int,
-  attributeAdjustmentsSelectionList: Ley_IntSet.t,
-  attributeAdjustmentsText: string,
-  automaticAdvantages: list(int),
-  automaticAdvantagesText: option(string),
-  stronglyRecommendedAdvantages: list(int),
-  stronglyRecommendedAdvantagesText: option(string),
-  stronglyRecommendedDisadvantages: list(int),
-  stronglyRecommendedDisadvantagesText: option(string),
-  commonAdvantages: list(int),
-  commonAdvantagesText: option(string),
-  commonDisadvantages: list(int),
-  commonDisadvantagesText: option(string),
-  uncommonAdvantages: list(int),
-  uncommonAdvantagesText: option(string),
-  uncommonDisadvantages: list(int),
-  uncommonDisadvantagesText: option(string),
-  weightBase: int,
-  weightRandom: list(Dice.t),
-  variantOptions,
-  src: list(PublicationRef.t),
-  errata: list(Erratum.t),
-};
+    module TranslationMap = TranslationMap.Make(Translations);
 
-module Decode = {
-  open Json.Decode;
-  open JsonStrict;
+    type multilingual = {
+      id: int,
+      commonCultures: Ley_IntSet.t,
+      commonAdvantages: list(int),
+      commonDisadvantages: list(int),
+      uncommonAdvantages: list(int),
+      uncommonDisadvantages: list(int),
+      hairColors: list(int),
+      eyeColors: list(int),
+      sizeBase: int,
+      sizeRandom: list(Dice.t),
+      translations: TranslationMap.t,
+    };
 
-  type variantL10n = {
+    let decodeMultilingual = json =>
+      JsonStrict.{
+        id: json |> field("id", int),
+        commonCultures:
+          json |> field("commonCultures", list(int)) |> Ley_IntSet.fromList,
+        commonAdvantages:
+          json
+          |> optionalField("commonAdvantages", list(int))
+          |> Ley_Option.fromOption([]),
+        commonDisadvantages:
+          json
+          |> optionalField("commonDisadvantages", list(int))
+          |> Ley_Option.fromOption([]),
+        uncommonAdvantages:
+          json
+          |> optionalField("uncommonAdvantages", list(int))
+          |> Ley_Option.fromOption([]),
+        uncommonDisadvantages:
+          json
+          |> optionalField("uncommonDisadvantages", list(int))
+          |> Ley_Option.fromOption([]),
+        hairColors: json |> field("hairColors", list(int)),
+        eyeColors: json |> field("eyeColors", list(int)),
+        sizeBase: json |> field("sizeBase", int),
+        sizeRandom: json |> field("sizeRandom", list(Dice.Decode.t)),
+        translations: json |> field("translations", TranslationMap.decode),
+      };
+
+    let decodeMultilingualPair = json =>
+      json |> decodeMultilingual |> (variant => (variant.id, variant));
+
+    let resolveTranslations = (langs, x) =>
+      Ley_Option.Functor.(
+        x.translations
+        |> TranslationMap.getFromLanguageOrder(langs)
+        <&> (
+          translation => {
+            id: x.id,
+            name: translation.name,
+            commonCultures: x.commonCultures,
+            commonAdvantages: x.commonAdvantages,
+            commonAdvantagesText: translation.commonAdvantages,
+            commonDisadvantages: x.commonDisadvantages,
+            commonDisadvantagesText: translation.commonDisadvantages,
+            uncommonAdvantages: x.uncommonAdvantages,
+            uncommonAdvantagesText: translation.uncommonAdvantages,
+            uncommonDisadvantages: x.uncommonDisadvantages,
+            uncommonDisadvantagesText: translation.uncommonDisadvantages,
+            hairColors: x.hairColors,
+            eyeColors: x.eyeColors,
+            sizeBase: x.sizeBase,
+            sizeRandom: x.sizeRandom,
+          }
+        )
+      );
+  };
+
+  type variantOptions =
+    | WithVariants({variants: Ley_IntMap.t(Variant.t)})
+    | WithoutVariants({
+        commonCultures: Ley_IntSet.t,
+        hairColors: list(int),
+        eyeColors: list(int),
+        sizeBase: int,
+        sizeRandom: list(Dice.t),
+      });
+
+  type t = {
     id: int,
     name: string,
-    commonAdvantages: option(string),
-    commonDisadvantages: option(string),
-    uncommonAdvantages: option(string),
-    uncommonDisadvantages: option(string),
-  };
-
-  let variantL10n = json => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-    commonAdvantages: json |> field("commonAdvantages", maybe(string)),
-    commonDisadvantages: json |> field("commonDisadvantages", maybe(string)),
-    uncommonAdvantages: json |> field("uncommonAdvantages", maybe(string)),
-    uncommonDisadvantages:
-      json |> field("uncommonDisadvantages", maybe(string)),
-  };
-
-  type tL10n = {
-    id: int,
-    name: string,
-    attributeAdjustments: string,
-    automaticAdvantages: option(string),
-    stronglyRecommendedAdvantages: option(string),
-    stronglyRecommendedDisadvantages: option(string),
-    commonAdvantages: option(string),
-    commonDisadvantages: option(string),
-    uncommonAdvantages: option(string),
-    uncommonDisadvantages: option(string),
-    variants: option(list(variantL10n)),
-    src: list(PublicationRef.t),
-    errata: list(Erratum.t),
-  };
-
-  let tL10n = json => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-    attributeAdjustments: json |> field("attributeAdjustments", string),
-    automaticAdvantages: json |> optionalField("automaticAdvantages", string),
-    stronglyRecommendedAdvantages:
-      json |> optionalField("stronglyRecommendedAdvantages", string),
-    stronglyRecommendedDisadvantages:
-      json |> optionalField("stronglyRecommendedDisadvantages", string),
-    commonAdvantages: json |> optionalField("commonAdvantages", string),
-    commonDisadvantages: json |> optionalField("commonDisadvantages", string),
-    uncommonAdvantages: json |> optionalField("uncommonAdvantages", string),
-    uncommonDisadvantages:
-      json |> optionalField("uncommonDisadvantages", string),
-    variants: json |> optionalField("variants", list(variantL10n)),
-    src: json |> field("src", PublicationRef.decodeMultilingualList),
-    errata: json |> field("errata", Erratum.Decode.list),
-  };
-
-  type variantUniv = {
-    id: int,
-    commonCultures: list(int),
-    commonAdvantages: option(list(int)),
-    commonDisadvantages: option(list(int)),
-    uncommonAdvantages: option(list(int)),
-    uncommonDisadvantages: option(list(int)),
-    hairColors: list(int),
-    eyeColors: list(int),
-    sizeBase: int,
-    sizeRandom: list(Dice.t),
-  };
-
-  let variantUniv = json => {
-    id: json |> field("id", int),
-    commonCultures: json |> field("commonCultures", list(int)),
-    commonAdvantages: json |> field("commonAdvantages", maybe(list(int))),
-    commonDisadvantages:
-      json |> field("commonDisadvantages", maybe(list(int))),
-    uncommonAdvantages:
-      json |> field("uncommonAdvantages", maybe(list(int))),
-    uncommonDisadvantages:
-      json |> field("uncommonDisadvantages", maybe(list(int))),
-    hairColors: json |> field("hairColors", list(int)),
-    eyeColors: json |> field("eyeColors", list(int)),
-    sizeBase: json |> field("sizeBase", int),
-    sizeRandom: json |> field("sizeRandom", list(Dice.Decode.t)),
-  };
-
-  type withVariantsUniv = {variants: list(variantUniv)};
-
-  type withoutVariantsUniv = {
-    commonCultures: list(int),
-    hairColors: list(int),
-    eyeColors: list(int),
-    sizeBase: int,
-    sizeRandom: list(Dice.t),
-  };
-
-  type variantOptionsUniv =
-    | WithVariants(withVariantsUniv)
-    | WithoutVariants(withoutVariantsUniv);
-
-  let withVariantsUniv = (json): variantOptionsUniv =>
-    WithVariants({variants: json |> field("variants", list(variantUniv))});
-
-  let withoutVariantsUniv = (json): variantOptionsUniv =>
-    WithoutVariants({
-      commonCultures: json |> field("commonCultures", list(int)),
-      hairColors: json |> field("hairColors", list(int)),
-      eyeColors: json |> field("eyeColors", list(int)),
-      sizeBase: json |> field("sizeBase", int),
-      sizeRandom: json |> field("sizeRandom", list(Dice.Decode.t)),
-    });
-
-  let variantOptionsUniv =
-    oneOf([
-      json => json |> withVariantsUniv,
-      json => json |> withoutVariantsUniv,
-    ]);
-
-  type tUniv = {
-    id: int,
-    cost: int,
+    apValue: int,
     lp: int,
     spi: int,
     tou: int,
     mov: int,
-    attributeAdjustments: option(list((int, int))),
+    attributeAdjustments: Ley_IntMap.t(int),
     attributeAdjustmentsSelectionValue: int,
-    attributeAdjustmentsSelectionList: list(int),
-    automaticAdvantages: option(list(int)),
-    stronglyRecommendedAdvantages: option(list(int)),
-    stronglyRecommendedDisadvantages: option(list(int)),
-    commonAdvantages: option(list(int)),
-    commonDisadvantages: option(list(int)),
-    uncommonAdvantages: option(list(int)),
-    uncommonDisadvantages: option(list(int)),
+    attributeAdjustmentsSelectionList: Ley_IntSet.t,
+    attributeAdjustmentsText: string,
+    automaticAdvantages: list(int),
+    automaticAdvantagesText: option(string),
+    stronglyRecommendedAdvantages: list(int),
+    stronglyRecommendedAdvantagesText: option(string),
+    stronglyRecommendedDisadvantages: list(int),
+    stronglyRecommendedDisadvantagesText: option(string),
+    commonAdvantages: list(int),
+    commonAdvantagesText: option(string),
+    commonDisadvantages: list(int),
+    commonDisadvantagesText: option(string),
+    uncommonAdvantages: list(int),
+    uncommonAdvantagesText: option(string),
+    uncommonDisadvantages: list(int),
+    uncommonDisadvantagesText: option(string),
     weightBase: int,
     weightRandom: list(Dice.t),
-    variantOptions: variantOptionsUniv,
+    variantOptions,
+    src: list(PublicationRef.t),
+    errata: list(Erratum.t),
   };
 
-  let tUniv = json => {
-    id: json |> field("id", int),
-    cost: json |> field("cost", int),
-    lp: json |> field("lp", int),
-    spi: json |> field("spi", int),
-    tou: json |> field("tou", int),
-    mov: json |> field("mov", int),
-    attributeAdjustments:
-      json |> field("attributeAdjustments", maybe(list(pair(int, int)))),
-    attributeAdjustmentsSelectionValue:
-      json |> field("attributeAdjustmentsSelectionValue", int),
-    attributeAdjustmentsSelectionList:
-      json |> field("attributeAdjustmentsSelectionList", list(int)),
-    automaticAdvantages:
-      json |> field("automaticAdvantages", maybe(list(int))),
-    stronglyRecommendedAdvantages:
-      json |> field("stronglyRecommendedAdvantages", maybe(list(int))),
-    stronglyRecommendedDisadvantages:
-      json |> field("stronglyRecommendedDisadvantages", maybe(list(int))),
-    commonAdvantages: json |> field("commonAdvantages", maybe(list(int))),
-    commonDisadvantages:
-      json |> field("commonDisadvantages", maybe(list(int))),
-    uncommonAdvantages:
-      json |> field("uncommonAdvantages", maybe(list(int))),
-    uncommonDisadvantages:
-      json |> field("uncommonDisadvantages", maybe(list(int))),
-    weightBase: json |> field("weightBase", int),
-    weightRandom: json |> field("weightRandom", list(Dice.Decode.t)),
-    variantOptions: json |> variantOptionsUniv,
+  module Translations = {
+    type t = {
+      name: string,
+      attributeAdjustments: string,
+      automaticAdvantages: option(string),
+      stronglyRecommendedAdvantages: option(string),
+      stronglyRecommendedDisadvantages: option(string),
+      commonAdvantages: option(string),
+      commonDisadvantages: option(string),
+      uncommonAdvantages: option(string),
+      uncommonDisadvantages: option(string),
+      errata: list(Erratum.t),
+    };
+
+    let decode = json =>
+      JsonStrict.{
+        name: json |> field("name", string),
+        attributeAdjustments: json |> field("attributeAdjustments", string),
+        automaticAdvantages:
+          json |> optionalField("automaticAdvantages", string),
+        stronglyRecommendedAdvantages:
+          json |> optionalField("stronglyRecommendedAdvantages", string),
+        stronglyRecommendedDisadvantages:
+          json |> optionalField("stronglyRecommendedDisadvantages", string),
+        commonAdvantages: json |> optionalField("commonAdvantages", string),
+        commonDisadvantages:
+          json |> optionalField("commonDisadvantages", string),
+        uncommonAdvantages:
+          json |> optionalField("uncommonAdvantages", string),
+        uncommonDisadvantages:
+          json |> optionalField("uncommonDisadvantages", string),
+        errata: json |> field("errata", Erratum.decodeList),
+      };
   };
 
-  let variant = (univ: variantUniv, l10n: variantL10n) => (
-    univ.id,
-    {
-      id: univ.id,
-      name: l10n.name,
-      commonCultures: univ.commonCultures |> Ley_IntSet.fromList,
-      commonAdvantages: univ.commonAdvantages |> Ley_Option.fromOption([]),
-      commonAdvantagesText: l10n.commonAdvantages,
-      commonDisadvantages:
-        univ.commonDisadvantages |> Ley_Option.fromOption([]),
-      commonDisadvantagesText: l10n.commonDisadvantages,
-      uncommonAdvantages:
-        univ.uncommonAdvantages |> Ley_Option.fromOption([]),
-      uncommonAdvantagesText: l10n.uncommonAdvantages,
-      uncommonDisadvantages:
-        univ.uncommonDisadvantages |> Ley_Option.fromOption([]),
-      uncommonDisadvantagesText: l10n.uncommonDisadvantages,
-      hairColors: univ.hairColors,
-      eyeColors: univ.eyeColors,
-      sizeBase: univ.sizeBase,
-      sizeRandom: univ.sizeRandom,
-    },
-  );
+  module TranslationMap = TranslationMap.Make(Translations);
 
-  let t = (univ: tUniv, l10n: tL10n) => (
-    univ.id,
-    {
-      id: univ.id,
-      name: l10n.name,
-      cost: univ.cost,
-      lp: univ.lp,
-      spi: univ.spi,
-      tou: univ.tou,
-      mov: univ.mov,
+  type variantOptionsMultilingual =
+    | WithVariants({variants: Ley_IntMap.t(Variant.multilingual)})
+    | WithoutVariants({
+        commonCultures: Ley_IntSet.t,
+        hairColors: list(int),
+        eyeColors: list(int),
+        sizeBase: int,
+        sizeRandom: list(Dice.t),
+      });
+
+  type multilingual = {
+    id: int,
+    apValue: int,
+    lp: int,
+    spi: int,
+    tou: int,
+    mov: int,
+    attributeAdjustments: Ley_IntMap.t(int),
+    attributeAdjustmentsSelectionValue: int,
+    attributeAdjustmentsSelectionList: Ley_IntSet.t,
+    automaticAdvantages: list(int),
+    stronglyRecommendedAdvantages: list(int),
+    stronglyRecommendedDisadvantages: list(int),
+    commonAdvantages: list(int),
+    commonDisadvantages: list(int),
+    uncommonAdvantages: list(int),
+    uncommonDisadvantages: list(int),
+    weightBase: int,
+    weightRandom: list(Dice.t),
+    variantOptions: variantOptionsMultilingual,
+    src: list(PublicationRef.multilingual),
+    translations: TranslationMap.t,
+  };
+
+  let decodeVariantOptions =
+    JsonStrict.(
+      field("type", string)
+      |> andThen(
+           fun
+           | "WithVariants" => (
+               (json) => (
+                 WithVariants({
+                   variants:
+                     json
+                     |> field(
+                          "variants",
+                          list(Variant.decodeMultilingualPair),
+                        )
+                     |> Ley_IntMap.fromList,
+                 }): variantOptionsMultilingual
+               )
+             )
+           | "WithoutVariants" => (
+               json =>
+                 WithoutVariants({
+                   commonCultures:
+                     json
+                     |> field("commonCultures", list(int))
+                     |> Ley_IntSet.fromList,
+                   hairColors: json |> field("hairColors", list(int)),
+                   eyeColors: json |> field("eyeColors", list(int)),
+                   sizeBase: json |> field("sizeBase", int),
+                   sizeRandom:
+                     json |> field("sizeRandom", list(Dice.Decode.t)),
+                 })
+             )
+           | str => raise(DecodeError("Unknown variant options: " ++ str)),
+         )
+    );
+
+  let decodeMultilingual = json =>
+    JsonStrict.{
+      id: json |> field("id", int),
+      apValue: json |> field("apValue", int),
+      lp: json |> field("lp", int),
+      spi: json |> field("spi", int),
+      tou: json |> field("tou", int),
+      mov: json |> field("mov", int),
       attributeAdjustments:
-        univ.attributeAdjustments
+        json
+        |> optionalField("attributeAdjustments", list(pair(int, int)))
         |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
       attributeAdjustmentsSelectionValue:
-        univ.attributeAdjustmentsSelectionValue,
+        json |> field("attributeAdjustmentsSelectionValue", int),
       attributeAdjustmentsSelectionList:
-        univ.attributeAdjustmentsSelectionList |> Ley_IntSet.fromList,
-      attributeAdjustmentsText: l10n.attributeAdjustments,
+        json
+        |> field("attributeAdjustmentsSelectionList", list(int))
+        |> Ley_IntSet.fromList,
       automaticAdvantages:
-        univ.automaticAdvantages |> Ley_Option.fromOption([]),
-      automaticAdvantagesText: l10n.automaticAdvantages,
+        json
+        |> optionalField("automaticAdvantages", list(int))
+        |> Ley_Option.fromOption([]),
       stronglyRecommendedAdvantages:
-        univ.stronglyRecommendedAdvantages |> Ley_Option.fromOption([]),
-      stronglyRecommendedAdvantagesText: l10n.stronglyRecommendedAdvantages,
+        json
+        |> optionalField("stronglyRecommendedAdvantages", list(int))
+        |> Ley_Option.fromOption([]),
       stronglyRecommendedDisadvantages:
-        univ.stronglyRecommendedDisadvantages |> Ley_Option.fromOption([]),
-      stronglyRecommendedDisadvantagesText:
-        l10n.stronglyRecommendedDisadvantages,
-      commonAdvantages: univ.commonAdvantages |> Ley_Option.fromOption([]),
-      commonAdvantagesText: l10n.commonAdvantages,
+        json
+        |> optionalField("stronglyRecommendedDisadvantages", list(int))
+        |> Ley_Option.fromOption([]),
+      commonAdvantages:
+        json
+        |> optionalField("commonAdvantages", list(int))
+        |> Ley_Option.fromOption([]),
       commonDisadvantages:
-        univ.commonDisadvantages |> Ley_Option.fromOption([]),
-      commonDisadvantagesText: l10n.commonDisadvantages,
+        json
+        |> optionalField("commonDisadvantages", list(int))
+        |> Ley_Option.fromOption([]),
       uncommonAdvantages:
-        univ.uncommonAdvantages |> Ley_Option.fromOption([]),
-      uncommonAdvantagesText: l10n.uncommonDisadvantages,
+        json
+        |> optionalField("uncommonAdvantages", list(int))
+        |> Ley_Option.fromOption([]),
       uncommonDisadvantages:
-        univ.uncommonDisadvantages |> Ley_Option.fromOption([]),
-      uncommonDisadvantagesText: l10n.uncommonDisadvantages,
-      weightBase: univ.weightBase,
-      weightRandom: univ.weightRandom,
-      variantOptions:
-        switch (univ.variantOptions) {
-        | WithVariants(withVariants) =>
-          WithVariants({
-            variants:
-              Yaml_Zip.zipBy(
-                Ley_Int.show,
-                variant,
-                x => x.id,
-                x => x.id,
-                withVariants.variants,
-                l10n.variants |> Ley_Option.fromOption([]),
-              )
-              |> Ley_IntMap.fromList,
-          })
-        | WithoutVariants(withoutVariants) =>
-          WithoutVariants({
-            commonCultures:
-              withoutVariants.commonCultures |> Ley_IntSet.fromList,
-            hairColors: withoutVariants.hairColors,
-            eyeColors: withoutVariants.eyeColors,
-            sizeBase: withoutVariants.sizeBase,
-            sizeRandom: withoutVariants.sizeRandom,
-          })
-        },
-      src: l10n.src,
-      errata: l10n.errata,
-    },
-  );
+        json
+        |> optionalField("uncommonDisadvantages", list(int))
+        |> Ley_Option.fromOption([]),
+      weightBase: json |> field("weightBase", int),
+      weightRandom: json |> field("weightRandom", list(Dice.Decode.t)),
+      variantOptions: json |> field("typeSpecific", decodeVariantOptions),
+      src: json |> field("src", PublicationRef.decodeMultilingualList),
+      translations: json |> field("translations", TranslationMap.decode),
+    };
 
-  let all = (yamlData: Yaml_Raw.yamlData) =>
-    Yaml_Zip.zipBy(
-      Ley_Int.show,
-      t,
-      x => x.id,
-      x => x.id,
-      yamlData.racesUniv |> list(tUniv),
-      yamlData.racesL10n |> list(tL10n),
-    )
-    |> Ley_IntMap.fromList;
+  let resolveTranslations = (langs, x) =>
+    Ley_Option.Functor.(
+      x.translations
+      |> TranslationMap.getFromLanguageOrder(langs)
+      <&> (
+        translation => {
+          id: x.id,
+          name: translation.name,
+          apValue: x.apValue,
+          lp: x.lp,
+          spi: x.spi,
+          tou: x.tou,
+          mov: x.mov,
+          attributeAdjustments: x.attributeAdjustments,
+          attributeAdjustmentsSelectionValue:
+            x.attributeAdjustmentsSelectionValue,
+          attributeAdjustmentsSelectionList:
+            x.attributeAdjustmentsSelectionList,
+          attributeAdjustmentsText: translation.attributeAdjustments,
+          automaticAdvantages: x.automaticAdvantages,
+          automaticAdvantagesText: translation.automaticAdvantages,
+          stronglyRecommendedAdvantages: x.stronglyRecommendedAdvantages,
+          stronglyRecommendedAdvantagesText:
+            translation.stronglyRecommendedAdvantages,
+          stronglyRecommendedDisadvantages: x.stronglyRecommendedDisadvantages,
+          stronglyRecommendedDisadvantagesText:
+            translation.stronglyRecommendedDisadvantages,
+          commonAdvantages: x.commonAdvantages,
+          commonAdvantagesText: translation.commonAdvantages,
+          commonDisadvantages: x.commonDisadvantages,
+          commonDisadvantagesText: translation.commonDisadvantages,
+          uncommonAdvantages: x.uncommonAdvantages,
+          uncommonAdvantagesText: translation.uncommonDisadvantages,
+          uncommonDisadvantages: x.uncommonDisadvantages,
+          uncommonDisadvantagesText: translation.uncommonDisadvantages,
+          weightBase: x.weightBase,
+          weightRandom: x.weightRandom,
+          variantOptions:
+            switch (x.variantOptions) {
+            | WithVariants(options) =>
+              WithVariants({
+                variants:
+                  Ley_IntMap.mapMaybe(
+                    Variant.resolveTranslations(langs),
+                    options.variants,
+                  ),
+              })
+            | WithoutVariants({
+                commonCultures,
+                hairColors,
+                eyeColors,
+                sizeBase,
+                sizeRandom,
+              }) =>
+              WithoutVariants({
+                commonCultures,
+                hairColors,
+                eyeColors,
+                sizeBase,
+                sizeRandom,
+              })
+            },
+          src: PublicationRef.resolveTranslationsList(langs, x.src),
+          errata: translation.errata,
+        }
+      )
+    );
+
+  let decode = (langs, json) =>
+    json |> decodeMultilingual |> resolveTranslations(langs);
 };

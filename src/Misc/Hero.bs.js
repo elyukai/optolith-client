@@ -25,88 +25,7 @@ var Activatable = {
   isUnused: isUnused
 };
 
-function emptySkill(id) {
-  return {
-          id: id,
-          value: 0,
-          dependencies: /* [] */0
-        };
-}
-
-function emptyCombatTechnique(id) {
-  return {
-          id: id,
-          value: 6,
-          dependencies: /* [] */0
-        };
-}
-
-function isUnusedSkill(x) {
-  if (x.value <= 0) {
-    return Ley_List$OptolithClient.Foldable.$$null(x.dependencies);
-  } else {
-    return false;
-  }
-}
-
-function isUnusedCombatTechnique(x) {
-  if (x.value <= 6) {
-    return Ley_List$OptolithClient.Foldable.$$null(x.dependencies);
-  } else {
-    return false;
-  }
-}
-
-var Skill = {
-  emptySkill: emptySkill,
-  emptyCombatTechnique: emptyCombatTechnique,
-  isUnusedSkill: isUnusedSkill,
-  isUnusedCombatTechnique: isUnusedCombatTechnique
-};
-
-function empty$1(id) {
-  return {
-          id: id,
-          value: 8,
-          dependencies: /* [] */0
-        };
-}
-
-function isUnused$1(x) {
-  if (x.value <= 8) {
-    return Ley_List$OptolithClient.Foldable.$$null(x.dependencies);
-  } else {
-    return false;
-  }
-}
-
-var Attribute = {
-  empty: empty$1,
-  isUnused: isUnused$1
-};
-
 var Energies = {};
-
-function empty$2(id) {
-  return {
-          id: id,
-          value: /* Inactive */0,
-          dependencies: /* [] */0
-        };
-}
-
-function isUnused$2(x) {
-  if (x.value === /* Inactive */0) {
-    return Ley_List$OptolithClient.Foldable.$$null(x.dependencies);
-  } else {
-    return false;
-  }
-}
-
-var ActivatableSkill = {
-  empty: empty$2,
-  isUnused: isUnused$2
-};
 
 var MagicalActions = {};
 
@@ -119,10 +38,7 @@ var TransferUnfamiliar = {};
 export {
   Rules ,
   Activatable ,
-  Skill ,
-  Attribute ,
   Energies ,
-  ActivatableSkill ,
   MagicalActions ,
   Item ,
   Pact ,

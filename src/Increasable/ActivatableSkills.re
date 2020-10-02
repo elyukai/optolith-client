@@ -14,7 +14,7 @@ let getActiveSkillEntries = (domain, hero: Hero.t) =>
     | LiturgicalChants => hero.liturgicalChants
     }
   )
-  |> IM.filter((entry: Hero.ActivatableSkill.t) =>
+  |> IM.filter((entry: ActivatableSkill.Dynamic.t) =>
        switch (entry.value) {
        | Active(_) => true
        | Inactive => false
@@ -31,7 +31,7 @@ let countActiveSkillEntries = (domain, hero: Hero.t) =>
     | LiturgicalChants => hero.liturgicalChants
     }
   )
-  |> IM.countWith((entry: Hero.ActivatableSkill.t) =>
+  |> IM.countWith((entry: ActivatableSkill.Dynamic.t) =>
        switch (entry.value) {
        | Active(_) => true
        | Inactive => false
@@ -48,7 +48,7 @@ let hasActiveSkillEntries = (domain, hero: Hero.t) =>
     | LiturgicalChants => hero.liturgicalChants
     }
   )
-  |> IM.Foldable.any((entry: Hero.ActivatableSkill.t) =>
+  |> IM.Foldable.any((entry: ActivatableSkill.Dynamic.t) =>
        switch (entry.value) {
        | Active(_) => true
        | Inactive => false

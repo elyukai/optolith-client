@@ -1,780 +1,461 @@
-type sex = Hero.sex;
-
-type race = {
-  id: OneOrMany.t(int),
-  active: bool,
-};
-
-type culture = OneOrMany.t(int);
-
-type socialStatus = int;
-
-type pact = {
-  category: int,
-  domain: option(OneOrMany.t(int)),
-  level: option(int),
-};
-
-type primaryAttributeType =
-  | Magical
-  | Blessed;
-
-type primaryAttribute = {
-  value: int,
-  scope: primaryAttributeType,
-};
-
-type activatable = {
-  id: Id.Activatable.t,
-  active: bool,
-  sid: option(Id.Activatable.SelectOption.t),
-  sid2: option(Id.Activatable.SelectOption.t),
-  level: option(int),
-};
-
-type activatableIds =
-  | Advantages(list(int))
-  | Disadvantages(list(int))
-  | SpecialAbilities(list(int));
-
-type activatableMultiEntry = {
-  id: activatableIds,
-  active: bool,
-  sid: option(Id.Activatable.SelectOption.t),
-  sid2: option(Id.Activatable.SelectOption.t),
-  level: option(int),
-};
-
-type activatableMultiSelect = {
-  id: Id.Activatable.t,
-  active: bool,
-  sid: list(Id.Activatable.SelectOption.t),
-  sid2: option(Id.Activatable.SelectOption.t),
-  level: option(int),
-};
-
-type increasable = {
-  id: Id.Increasable.t,
-  value: int,
-};
-
-type increasableIds =
-  | Attributes(list(int))
-  | Skills(list(int))
-  | CombatTechniques(list(int))
-  | Spells(list(int))
-  | LiturgicalChants(list(int));
-
-type increasableMultiEntry = {
-  id: increasableIds,
-  value: int,
-};
-
-type tProfession = {
-  sex: option(sex),
-  race: option(race),
-  culture: option(culture),
-  activatable: list(activatable),
-  increasable: list(increasable),
-};
-
-type t = {
-  sex: option(sex),
-  race: option(race),
-  culture: option(culture),
-  pact: option(pact),
-  social: option(socialStatus),
-  primaryAttribute: option(primaryAttribute),
-  activatable: list(activatable),
-  activatableMultiEntry: list(activatableMultiEntry),
-  activatableMultiSelect: list(activatableMultiSelect),
-  increasable: list(increasable),
-  increasableMultiEntry: list(increasableMultiEntry),
-};
-
-let empty = {
-  sex: None,
-  race: None,
-  culture: None,
-  pact: None,
-  social: None,
-  primaryAttribute: None,
-  activatable: [],
-  activatableMultiEntry: [],
-  activatableMultiSelect: [],
-  increasable: [],
-  increasableMultiEntry: [],
-};
-
-type tWithLevel = {
-  sex: option(sex),
-  race: option(race),
-  culture: option(culture),
-  pact: option(pact),
-  social: option(socialStatus),
-  primaryAttribute: option(primaryAttribute),
-  activatable: list(activatable),
-  activatableMultiEntry: list(activatableMultiEntry),
-  activatableMultiSelect: list(activatableMultiSelect),
-  increasable: list(increasable),
-  increasableMultiEntry: list(increasableMultiEntry),
-  levels: Ley_IntMap.t(t),
-};
-
-type tWithLevelDisAdv = {
-  commonSuggestedByRCP: bool,
-  sex: option(sex),
-  race: option(race),
-  culture: option(culture),
-  pact: option(pact),
-  social: option(socialStatus),
-  primaryAttribute: option(primaryAttribute),
-  activatable: list(activatable),
-  activatableMultiEntry: list(activatableMultiEntry),
-  activatableMultiSelect: list(activatableMultiSelect),
-  increasable: list(increasable),
-  increasableMultiEntry: list(increasableMultiEntry),
-  levels: Ley_IntMap.t(t),
-};
-
-type overridePrerequisite =
-  | Hide
-  | ReplaceWith(string);
-
-type tIndex = {
-  sex: option(overridePrerequisite),
-  race: option(overridePrerequisite),
-  culture: option(overridePrerequisite),
-  pact: option(overridePrerequisite),
-  social: option(overridePrerequisite),
-  primaryAttribute: option(overridePrerequisite),
-  activatable: Ley_IntMap.t(overridePrerequisite),
-  activatableMultiEntry: Ley_IntMap.t(overridePrerequisite),
-  activatableMultiSelect: Ley_IntMap.t(overridePrerequisite),
-  increasable: Ley_IntMap.t(overridePrerequisite),
-  increasableMultiEntry: Ley_IntMap.t(overridePrerequisite),
-};
-
-type tIndexWithLevel = {
-  sex: option(overridePrerequisite),
-  race: option(overridePrerequisite),
-  culture: option(overridePrerequisite),
-  pact: option(overridePrerequisite),
-  social: option(overridePrerequisite),
-  primaryAttribute: option(overridePrerequisite),
-  activatable: Ley_IntMap.t(overridePrerequisite),
-  activatableMultiEntry: Ley_IntMap.t(overridePrerequisite),
-  activatableMultiSelect: Ley_IntMap.t(overridePrerequisite),
-  increasable: Ley_IntMap.t(overridePrerequisite),
-  increasableMultiEntry: Ley_IntMap.t(overridePrerequisite),
-  levels: Ley_IntMap.t(tIndex),
-};
-
-module Decode = {
-  open JsonStrict;
-  open Ley_Option.Monad;
-  open Ley_Option.Alternative;
-
-  let oneOrManyInt =
+let oneOrManyInt =
+  Json.Decode.(
     oneOf([
       map((id): OneOrMany.t(int) => One(id), int),
       map((id): OneOrMany.t(int) => Many(id), list(int)),
-    ]);
+    ])
+  );
 
-  let sex = json =>
-    json
-    |> string
-    |> (
-      (str) => (
-        switch (str) {
+module Sex = {
+  include Sex;
+
+  let decode = json =>
+    Json.Decode.(
+      json
+      |> string
+      |> (
+        fun
         | "m" => Male
         | "f" => Female
-        | _ => raise(DecodeError("Unknown sex prerequisite: " ++ str))
-        }: sex
+        | str => raise(DecodeError("Unknown sex prerequisite: " ++ str))
       )
     );
+};
 
-  let race =
-    oneOf([
-      (json) => ({id: json |> oneOrManyInt, active: true}: race),
-      (json) => (
-        {
+module Race = {
+  type t = {
+    id: OneOrMany.t(int),
+    active: bool,
+  };
+
+  let decode =
+    Json.Decode.(
+      oneOf([
+        json => {id: json |> oneOrManyInt, active: true},
+        json => {
           id: json |> field("id", oneOrManyInt),
           active: json |> field("active", bool),
-        }: race
-      ),
-    ]);
+        },
+      ])
+    );
+};
 
-  let culture = oneOrManyInt;
+module Culture = {
+  type t = OneOrMany.t(int);
 
-  let primaryAttribute = json => {
-    scope:
-      json
-      |> field("type", string)
-      |> (
-        (str) => (
-          switch (str) {
+  let decode = oneOrManyInt;
+};
+
+module SocialStatus = {
+  type t = int;
+
+  let decode = Json.Decode.int;
+};
+
+module Pact = {
+  type t = {
+    category: int,
+    domain: option(OneOrMany.t(int)),
+    level: option(int),
+  };
+
+  let decode = json =>
+    JsonStrict.{
+      category: json |> field("category", int),
+      domain: json |> optionalField("domain", oneOrManyInt),
+      level: json |> optionalField("level", int),
+    };
+};
+
+module PrimaryAttribute = {
+  type primaryAttributeType =
+    | Magical
+    | Blessed;
+
+  type t = {
+    value: int,
+    scope: primaryAttributeType,
+  };
+
+  let decode = json =>
+    Json.Decode.{
+      scope:
+        json
+        |> field("type", string)
+        |> (
+          fun
           | "blessed" => Blessed
           | "magical" => Magical
-          | _ =>
+          | str =>
             raise(DecodeError("Unknown primary attribute type: " ++ str))
-          }: primaryAttributeType
-        )
-      ),
-    value: json |> field("value", int),
-  };
-
-  let pact = json => {
-    category: json |> field("category", int),
-    domain: json |> field("domain", maybe(oneOrManyInt)),
-    level: json |> field("level", maybe(int)),
-  };
-
-  let socialStatus = int;
-
-  let activatableIds = json =>
-    json
-    |> field("scope", string)
-    |> (
-      scope =>
-        switch (scope) {
-        | "Advantage" =>
-          json |> field("value", list(int)) |> (xs => Advantages(xs))
-        | "Disadvantage" =>
-          json |> field("value", list(int)) |> (xs => Disadvantages(xs))
-        | "SpecialAbility" =>
-          json |> field("value", list(int)) |> (xs => SpecialAbilities(xs))
-        | _ => raise(DecodeError("Unknown activatable ID scope: " ++ scope))
-        }
-    );
-
-  let activatable = (json): activatable => {
-    id: json |> field("id", Id.Activatable.Decode.t),
-    active: json |> field("active", bool),
-    sid: json |> field("sid", maybe(Id.Activatable.SelectOption.Decode.t)),
-    sid2: json |> field("sid2", maybe(Id.Activatable.SelectOption.Decode.t)),
-    level: json |> field("level", maybe(int)),
-  };
-
-  let activatableMultiEntry = (json): activatableMultiEntry => {
-    id: json |> field("id", activatableIds),
-    active: json |> field("active", bool),
-    sid: json |> field("sid", maybe(Id.Activatable.SelectOption.Decode.t)),
-    sid2: json |> field("sid2", maybe(Id.Activatable.SelectOption.Decode.t)),
-    level: json |> field("level", maybe(int)),
-  };
-
-  let activatableMultiSelect = (json): activatableMultiSelect => {
-    id: json |> field("id", Id.Activatable.Decode.t),
-    active: json |> field("active", bool),
-    sid: json |> field("sid", list(Id.Activatable.SelectOption.Decode.t)),
-    sid2: json |> field("sid2", maybe(Id.Activatable.SelectOption.Decode.t)),
-    level: json |> field("tier", maybe(int)),
-  };
-
-  let increasableIds = json =>
-    json
-    |> field("scope", string)
-    |> (
-      scope =>
-        switch (scope) {
-        | "Attribute" =>
-          json |> field("value", list(int)) |> (xs => Attributes(xs))
-        | "Skill" => json |> field("value", list(int)) |> (xs => Skills(xs))
-        | "CombatTechnique" =>
-          json |> field("value", list(int)) |> (xs => CombatTechniques(xs))
-        | "Spell" => json |> field("value", list(int)) |> (xs => Spells(xs))
-        | "LiturgicalChant" =>
-          json |> field("value", list(int)) |> (xs => LiturgicalChants(xs))
-        | _ => raise(DecodeError("Unknown increasable ID scope: " ++ scope))
-        }
-    );
-
-  let increasable = (json): increasable => {
-    id: json |> field("id", Id.Increasable.Decode.t),
-    value: json |> field("value", int),
-  };
-
-  let increasableMultiEntry = (json): increasableMultiEntry => {
-    id: json |> field("id", increasableIds),
-    value: json |> field("value", int),
-  };
-
-  let tProfession = json => {
-    sex: json |> optionalField("sexPrerequisite", sex),
-    race: json |> optionalField("racePrerequisite", race),
-    culture: json |> optionalField("culturePrerequisite", culture),
-    activatable:
-      json
-      |> optionalField("activatablePrerequisites", list(activatable))
-      |> Ley_Option.fromOption([]),
-    increasable:
-      json
-      |> optionalField("increasablePrerequisites", list(increasable))
-      |> Ley_Option.fromOption([]),
-  };
-
-  let t = (json): t => {
-    sex: json |> optionalField("sexPrerequisite", sex),
-    race: json |> optionalField("racePrerequisite", race),
-    culture: json |> optionalField("culturePrerequisite", culture),
-    pact: json |> optionalField("pactPrerequisite", pact),
-    social: json |> optionalField("socialStatusPrerequisite", socialStatus),
-    primaryAttribute:
-      json |> optionalField("primaryAttributePrerequisite", primaryAttribute),
-    activatable:
-      json
-      |> optionalField("activatablePrerequisites", list(activatable))
-      |> Ley_Option.fromOption([]),
-    activatableMultiEntry:
-      json
-      |> optionalField(
-           "activatableMultiEntryPrerequisites",
-           list(activatableMultiEntry),
-         )
-      |> Ley_Option.fromOption([]),
-    activatableMultiSelect:
-      json
-      |> optionalField(
-           "activatableMultiSelectPrerequisites",
-           list(activatableMultiSelect),
-         )
-      |> Ley_Option.fromOption([]),
-    increasable:
-      json
-      |> optionalField("increasablePrerequisites", list(increasable))
-      |> Ley_Option.fromOption([]),
-    increasableMultiEntry:
-      json
-      |> optionalField(
-           "increasableMultiEntryPrerequisites",
-           list(increasableMultiEntry),
-         )
-      |> Ley_Option.fromOption([]),
-  };
-
-  let level = json => (json |> field("level", int), json |> t);
-
-  let tWithLevel = (json): tWithLevel => {
-    sex: json |> optionalField("sexPrerequisite", sex),
-    race: json |> optionalField("racePrerequisite", race),
-    culture: json |> optionalField("culturePrerequisite", culture),
-    pact: json |> optionalField("pactPrerequisite", pact),
-    social: json |> optionalField("socialStatusPrerequisite", socialStatus),
-    primaryAttribute:
-      json |> optionalField("primaryAttributePrerequisite", primaryAttribute),
-    activatable:
-      json
-      |> optionalField("activatablePrerequisites", list(activatable))
-      |> Ley_Option.fromOption([]),
-    activatableMultiEntry:
-      json
-      |> optionalField(
-           "activatableMultiEntryPrerequisites",
-           list(activatableMultiEntry),
-         )
-      |> Ley_Option.fromOption([]),
-    activatableMultiSelect:
-      json
-      |> optionalField(
-           "activatableMultiSelectPrerequisites",
-           list(activatableMultiSelect),
-         )
-      |> Ley_Option.fromOption([]),
-    increasable:
-      json
-      |> optionalField("increasablePrerequisites", list(increasable))
-      |> Ley_Option.fromOption([]),
-    increasableMultiEntry:
-      json
-      |> optionalField(
-           "increasableMultiEntryPrerequisites",
-           list(increasableMultiEntry),
-         )
-      |> Ley_Option.fromOption([]),
-    levels:
-      json
-      |> optionalField("levelPrerequisites", list(level))
-      |> Ley_Option.fromOption([])
-      |> Ley_IntMap.fromList,
-  };
-
-  let tWithLevelDisAdv = json => {
-    commonSuggestedByRCP:
-      json |> field("hasToBeCommonOrSuggestedByRCP", bool),
-    sex: json |> optionalField("sexPrerequisite", sex),
-    race: json |> optionalField("racePrerequisite", race),
-    culture: json |> optionalField("culturePrerequisite", culture),
-    pact: json |> optionalField("pactPrerequisite", pact),
-    social: json |> optionalField("socialStatusPrerequisite", socialStatus),
-    primaryAttribute:
-      json |> optionalField("primaryAttributePrerequisite", primaryAttribute),
-    activatable:
-      json
-      |> optionalField("activatablePrerequisites", list(activatable))
-      |> Ley_Option.fromOption([]),
-    activatableMultiEntry:
-      json
-      |> optionalField(
-           "activatableMultiEntryPrerequisites",
-           list(activatableMultiEntry),
-         )
-      |> Ley_Option.fromOption([]),
-    activatableMultiSelect:
-      json
-      |> optionalField(
-           "activatableMultiSelectPrerequisites",
-           list(activatableMultiSelect),
-         )
-      |> Ley_Option.fromOption([]),
-    increasable:
-      json
-      |> optionalField("increasablePrerequisites", list(increasable))
-      |> Ley_Option.fromOption([]),
-    increasableMultiEntry:
-      json
-      |> optionalField(
-           "increasableMultiEntryPrerequisites",
-           list(increasableMultiEntry),
-         )
-      |> Ley_Option.fromOption([]),
-    levels:
-      json
-      |> optionalField("levelPrerequisites", list(level))
-      |> Ley_Option.fromOption([])
-      |> Ley_IntMap.fromList,
-  };
-
-  let replacementAtIndex = json => (
-    json |> field("index", int),
-    json |> field("replacement", string),
-  );
-
-  type tIndexL10n = {
-    sex: option(string),
-    race: option(string),
-    culture: option(string),
-    pact: option(string),
-    social: option(string),
-    primaryAttribute: option(string),
-    activatable: option(list((int, string))),
-    activatableMultiEntry: option(list((int, string))),
-    activatableMultiSelect: option(list((int, string))),
-    increasable: option(list((int, string))),
-    increasableMultiEntry: option(list((int, string))),
-  };
-
-  let tIndexL10n = (json): tIndexL10n => {
-    sex: json |> optionalField("sexPrerequisite", string),
-    race: json |> optionalField("racePrerequisite", string),
-    culture: json |> optionalField("culturePrerequisite", string),
-    pact: json |> optionalField("pactPrerequisite", string),
-    social: json |> optionalField("socialStatusPrerequisite", string),
-    primaryAttribute:
-      json |> optionalField("primaryAttributePrerequisite", string),
-    activatable:
-      json
-      |> optionalField("activatablePrerequisites", list(replacementAtIndex)),
-    activatableMultiEntry:
-      json
-      |> optionalField(
-           "activatableMultiEntryPrerequisites",
-           list(replacementAtIndex),
-         ),
-    activatableMultiSelect:
-      json
-      |> optionalField(
-           "activatableMultiSelectPrerequisites",
-           list(replacementAtIndex),
-         ),
-    increasable:
-      json
-      |> optionalField("increasablePrerequisites", list(replacementAtIndex)),
-    increasableMultiEntry:
-      json
-      |> optionalField(
-           "increasableMultiEntryPrerequisites",
-           list(replacementAtIndex),
-         ),
-  };
-
-  type tIndexUniv = {
-    sex: option(bool),
-    race: option(bool),
-    culture: option(bool),
-    pact: option(bool),
-    social: option(bool),
-    primaryAttribute: option(bool),
-    activatable: option(list(int)),
-    activatableMultiEntry: option(list(int)),
-    activatableMultiSelect: option(list(int)),
-    increasable: option(list(int)),
-    increasableMultiEntry: option(list(int)),
-  };
-
-  let tIndexUniv = (json): tIndexUniv => {
-    sex: json |> optionalField("sexPrerequisite", bool),
-    race: json |> optionalField("racePrerequisite", bool),
-    culture: json |> optionalField("culturePrerequisite", bool),
-    pact: json |> optionalField("pactPrerequisite", bool),
-    social: json |> optionalField("socialStatusPrerequisite", bool),
-    primaryAttribute:
-      json |> optionalField("primaryAttributePrerequisite", bool),
-    activatable:
-      json |> optionalField("activatablePrerequisites", list(int)),
-    activatableMultiEntry:
-      json |> optionalField("activatableMultiEntryPrerequisites", list(int)),
-    activatableMultiSelect:
-      json |> optionalField("activatableMultiSelectPrerequisites", list(int)),
-    increasable:
-      json |> optionalField("increasablePrerequisites", list(int)),
-    increasableMultiEntry:
-      json |> optionalField("increasableMultiEntryPrerequisites", list(int)),
-  };
-
-  let mergeSingleOverride = (univ, l10n) =>
-    l10n
-    <&> (x => ReplaceWith(x))
-    <|> (univ >>= (x => x ? Some(Hide) : None));
-
-  let mergeMapOverride = (univ, l10n) =>
-    Ley_IntMap.empty
-    |> (
-      mp =>
-        Ley_List.Foldable.foldr(
-          x => Ley_IntMap.insert(x, Hide),
-          mp,
-          univ |> Ley_Option.fromOption([]),
-        )
-        |> (
-          mp =>
-            Ley_List.Foldable.foldr(
-              ((k, replacement)) =>
-                Ley_IntMap.insert(k, ReplaceWith(replacement)),
-              mp,
-              l10n |> Ley_Option.fromOption([]),
-            )
-        )
-    );
-
-  let tIndex = (univ: option(tIndexUniv), l10n: option(tIndexL10n)): tIndex => {
-    sex: mergeSingleOverride(univ >>= (x => x.sex), l10n >>= (x => x.sex)),
-    race: mergeSingleOverride(univ >>= (x => x.race), l10n >>= (x => x.race)),
-    culture:
-      mergeSingleOverride(
-        univ >>= (x => x.culture),
-        l10n >>= (x => x.culture),
-      ),
-    pact: mergeSingleOverride(univ >>= (x => x.pact), l10n >>= (x => x.pact)),
-    social:
-      mergeSingleOverride(univ >>= (x => x.social), l10n >>= (x => x.social)),
-    primaryAttribute:
-      mergeSingleOverride(
-        univ >>= (x => x.primaryAttribute),
-        l10n >>= (x => x.primaryAttribute),
-      ),
-    activatable:
-      mergeMapOverride(
-        univ >>= (x => x.activatable),
-        l10n >>= (x => x.activatable),
-      ),
-    activatableMultiEntry:
-      mergeMapOverride(
-        univ >>= (x => x.activatableMultiEntry),
-        l10n >>= (x => x.activatableMultiEntry),
-      ),
-    activatableMultiSelect:
-      mergeMapOverride(
-        univ >>= (x => x.activatableMultiSelect),
-        l10n >>= (x => x.activatableMultiSelect),
-      ),
-    increasable:
-      mergeMapOverride(
-        univ >>= (x => x.increasable),
-        l10n >>= (x => x.increasable),
-      ),
-    increasableMultiEntry:
-      mergeMapOverride(
-        univ >>= (x => x.increasableMultiEntry),
-        l10n >>= (x => x.increasableMultiEntry),
-      ),
-  };
-
-  let tIndexL10nAtLevel = json => (
-    json |> field("level", int),
-    json |> field("hide", tIndexL10n),
-  );
-
-  type tIndexWithLevelL10n = {
-    sex: option(string),
-    race: option(string),
-    culture: option(string),
-    pact: option(string),
-    social: option(string),
-    primaryAttribute: option(string),
-    activatable: option(list((int, string))),
-    activatableMultiEntry: option(list((int, string))),
-    activatableMultiSelect: option(list((int, string))),
-    increasable: option(list((int, string))),
-    increasableMultiEntry: option(list((int, string))),
-    levels: option(list((int, tIndexL10n))),
-  };
-
-  let tIndexWithLevelL10n = (json): tIndexWithLevelL10n => {
-    sex: json |> optionalField("sexPrerequisite", string),
-    race: json |> optionalField("racePrerequisite", string),
-    culture: json |> optionalField("culturePrerequisite", string),
-    pact: json |> optionalField("pactPrerequisite", string),
-    social: json |> optionalField("socialStatusPrerequisite", string),
-    primaryAttribute:
-      json |> optionalField("primaryAttributePrerequisite", string),
-    activatable:
-      json
-      |> optionalField("activatablePrerequisites", list(replacementAtIndex)),
-    activatableMultiEntry:
-      json
-      |> optionalField(
-           "activatableMultiEntryPrerequisites",
-           list(replacementAtIndex),
-         ),
-    activatableMultiSelect:
-      json
-      |> optionalField(
-           "activatableMultiSelectPrerequisites",
-           list(replacementAtIndex),
-         ),
-    increasable:
-      json
-      |> optionalField("increasablePrerequisites", list(replacementAtIndex)),
-    increasableMultiEntry:
-      json
-      |> optionalField(
-           "increasableMultiEntryPrerequisites",
-           list(replacementAtIndex),
-         ),
-    levels: json |> optionalField("levels", list(tIndexL10nAtLevel)),
-  };
-
-  let tIndexUnivAtLevel = json => (
-    json |> field("level", int),
-    json |> field("hide", tIndexUniv),
-  );
-
-  type tIndexWithLevelUniv = {
-    sex: option(bool),
-    race: option(bool),
-    culture: option(bool),
-    pact: option(bool),
-    social: option(bool),
-    primaryAttribute: option(bool),
-    activatable: option(list(int)),
-    activatableMultiEntry: option(list(int)),
-    activatableMultiSelect: option(list(int)),
-    increasable: option(list(int)),
-    increasableMultiEntry: option(list(int)),
-    levels: option(list((int, tIndexUniv))),
-  };
-
-  let tIndexWithLevelUniv = (json): tIndexWithLevelUniv => {
-    sex: json |> optionalField("sexPrerequisite", bool),
-    race: json |> optionalField("racePrerequisite", bool),
-    culture: json |> optionalField("culturePrerequisite", bool),
-    pact: json |> optionalField("pactPrerequisite", bool),
-    social: json |> optionalField("socialStatusPrerequisite", bool),
-    primaryAttribute:
-      json |> optionalField("primaryAttributePrerequisite", bool),
-    activatable:
-      json |> optionalField("activatablePrerequisites", list(int)),
-    activatableMultiEntry:
-      json |> optionalField("activatableMultiEntryPrerequisites", list(int)),
-    activatableMultiSelect:
-      json |> optionalField("activatableMultiSelectPrerequisites", list(int)),
-    increasable:
-      json |> optionalField("increasablePrerequisites", list(int)),
-    increasableMultiEntry:
-      json |> optionalField("increasableMultiEntryPrerequisites", list(int)),
-    levels: json |> optionalField("levels", list(tIndexUnivAtLevel)),
-  };
-
-  /**
-   * Merge all univ and l10n overrides.
-   *
-   * Inserts all univs first, then adds the l10ns and finally merges them.
-   */
-  let mergeIndexLevels = (univ, l10n) =>
-    Ley_IntMap.empty
-    |> (
-      mp =>
-        Ley_List.Foldable.foldr(
-          ((k, x)) => Ley_IntMap.insert(k, (Some(x), None)),
-          mp,
-          univ |> Ley_Option.fromOption([]),
-        )
-        |> (
-          mp =>
-            Ley_List.Foldable.foldr(
-              ((k, x)) =>
-                Ley_IntMap.alter(
-                  my =>
-                    Ley_Option.option(
-                      (None, Some(x)),
-                      y => (fst(y), Some(x)),
-                      my,
-                    )
-                    |> (y => Some(y)),
-                  k,
-                ),
-              mp,
-              l10n |> Ley_Option.fromOption([]),
-            )
-            |> Ley_IntMap.map(((muniv, ml10n)) => tIndex(muniv, ml10n))
-        )
-    );
-
-  let tIndexWithLevel =
-      (univ: option(tIndexWithLevelUniv), l10n: option(tIndexWithLevelL10n))
-      : tIndexWithLevel => {
-    sex: mergeSingleOverride(univ >>= (x => x.sex), l10n >>= (x => x.sex)),
-    race: mergeSingleOverride(univ >>= (x => x.race), l10n >>= (x => x.race)),
-    culture:
-      mergeSingleOverride(
-        univ >>= (x => x.culture),
-        l10n >>= (x => x.culture),
-      ),
-    pact: mergeSingleOverride(univ >>= (x => x.pact), l10n >>= (x => x.pact)),
-    social:
-      mergeSingleOverride(univ >>= (x => x.social), l10n >>= (x => x.social)),
-    primaryAttribute:
-      mergeSingleOverride(
-        univ >>= (x => x.primaryAttribute),
-        l10n >>= (x => x.primaryAttribute),
-      ),
-    activatable:
-      mergeMapOverride(
-        univ >>= (x => x.activatable),
-        l10n >>= (x => x.activatable),
-      ),
-    activatableMultiEntry:
-      mergeMapOverride(
-        univ >>= (x => x.activatableMultiEntry),
-        l10n >>= (x => x.activatableMultiEntry),
-      ),
-    activatableMultiSelect:
-      mergeMapOverride(
-        univ >>= (x => x.activatableMultiSelect),
-        l10n >>= (x => x.activatableMultiSelect),
-      ),
-    increasable:
-      mergeMapOverride(
-        univ >>= (x => x.increasable),
-        l10n >>= (x => x.increasable),
-      ),
-    increasableMultiEntry:
-      mergeMapOverride(
-        univ >>= (x => x.increasableMultiEntry),
-        l10n >>= (x => x.increasableMultiEntry),
-      ),
-    levels:
-      mergeIndexLevels(univ >>= (x => x.levels), l10n >>= (x => x.levels)),
-  };
+        ),
+      value: json |> field("value", int),
+    };
 };
+
+module Activatable = {
+  type t = {
+    id: Id.Activatable.t,
+    active: bool,
+    options: list(Id.Activatable.SelectOption.t),
+    level: option(int),
+  };
+
+  let decode = json =>
+    JsonStrict.{
+      id: json |> field("id", Id.Activatable.Decode.t),
+      active: json |> field("active", bool),
+      options:
+        json |> field("options", list(Id.Activatable.SelectOption.Decode.t)),
+      level: json |> optionalField("level", int),
+    };
+};
+
+module ActivatableMultiEntry = {
+  type activatableIds =
+    | Advantages(list(int))
+    | Disadvantages(list(int))
+    | SpecialAbilities(list(int));
+
+  let decodeList = (f, json): activatableIds =>
+    Json.Decode.(json |> field("value", list(int)) |> f);
+
+  let decodeIds =
+    Json.Decode.(
+      field("scope", string)
+      |> andThen(
+           fun
+           | "Advantage" => decodeList(xs => Advantages(xs))
+           | "Disadvantage" => decodeList(xs => Disadvantages(xs))
+           | "SpecialAbility" => decodeList(xs => SpecialAbilities(xs))
+           | str =>
+             raise(DecodeError("Unknown activatable ID scope: " ++ str)),
+         )
+    );
+
+  type t = {
+    id: activatableIds,
+    active: bool,
+    options: list(Id.Activatable.SelectOption.t),
+    level: option(int),
+  };
+
+  let decode = json =>
+    JsonStrict.{
+      id: json |> field("id", decodeIds),
+      active: json |> field("active", bool),
+      options:
+        json |> field("options", list(Id.Activatable.SelectOption.Decode.t)),
+      level: json |> optionalField("level", int),
+    };
+};
+
+module ActivatableMultiSelect = {
+  type t = {
+    id: Id.Activatable.t,
+    active: bool,
+    firstOption: list(Id.Activatable.SelectOption.t),
+    otherOptions: list(Id.Activatable.SelectOption.t),
+    level: option(int),
+  };
+
+  let decode = json =>
+    JsonStrict.{
+      id: json |> field("id", Id.Activatable.Decode.t),
+      active: json |> field("active", bool),
+      firstOption:
+        json
+        |> field("firstOption", list(Id.Activatable.SelectOption.Decode.t)),
+      otherOptions:
+        json
+        |> field("otherOptions", list(Id.Activatable.SelectOption.Decode.t)),
+      level: json |> optionalField("level", int),
+    };
+};
+
+module Increasable = {
+  type t = {
+    id: Id.Increasable.t,
+    value: int,
+  };
+
+  let decode = json =>
+    Json.Decode.{
+      id: json |> field("id", Id.Increasable.Decode.t),
+      value: json |> field("value", int),
+    };
+};
+
+module IncreasableMultiEntry = {
+  type increasableIds =
+    | Attributes(list(int))
+    | Skills(list(int))
+    | CombatTechniques(list(int))
+    | Spells(list(int))
+    | LiturgicalChants(list(int));
+
+  let decodeList = (f, json): increasableIds =>
+    Json.Decode.(json |> field("value", list(int)) |> f);
+
+  let decodeIds =
+    Json.Decode.(
+      field("scope", string)
+      |> andThen(
+           fun
+           | "Attribute" => decodeList(xs => Attributes(xs))
+           | "Skill" => decodeList(xs => Skills(xs))
+           | "CombatTechnique" => decodeList(xs => CombatTechniques(xs))
+           | "Spell" => decodeList(xs => Spells(xs))
+           | "LiturgicalChant" => decodeList(xs => LiturgicalChants(xs))
+           | str =>
+             raise(DecodeError("Unknown increasable ID scope: " ++ str)),
+         )
+    );
+
+  type t = {
+    id: increasableIds,
+    value: int,
+  };
+
+  let decode = json =>
+    Json.Decode.{
+      id: json |> field("id", decodeIds),
+      value: json |> field("value", int),
+    };
+};
+
+module All = {
+  type t('a) =
+    | Plain(list('a))
+    | ByLevel(Ley_IntMap.t(list('a)));
+
+  let decode = decoder =>
+    Json.Decode.(
+      field("type", string)
+      |> andThen(
+           fun
+           | "Plain" => (json => json |> list(decoder) |> (xs => Plain(xs)))
+           | "ByLevel" => (
+               json =>
+                 json
+                 |> list(json =>
+                      (
+                        json |> field("level", int),
+                        json |> field("prerequisites", list(decoder)),
+                      )
+                    )
+                 |> (xs => ByLevel(Ley_IntMap.fromList(xs)))
+             )
+           | str =>
+             raise(DecodeError("Unknown prerequisite list type: " ++ str)),
+         )
+    );
+};
+
+module DisplayOption = {
+  type t =
+    | Generate
+    | Hide
+    | ReplaceWith(string);
+
+  module Translation = {
+    type t = string;
+
+    let decode = Json.Decode.string;
+  };
+
+  module TranslationMap = TranslationMap.Make(Translation);
+
+  let decode = (langs, json) =>
+    JsonStrict.(
+      json
+      |> optionalField(
+           "displayOption",
+           field("type", string)
+           |> andThen(
+                fun
+                | "Hide" => (_ => Hide)
+                | "ByLevel" => (
+                    json =>
+                      json
+                      |> field("value", TranslationMap.decode)
+                      |> TranslationMap.getFromLanguageOrder(langs)
+                      |> Ley_Option.fromOption(Chars.mdash)
+                      |> (str => ReplaceWith(str))
+                  )
+                | str =>
+                  raise(DecodeError("Unknown display option type: " ++ str)),
+              ),
+         )
+      |> Ley_Option.fromOption(Generate)
+    );
+};
+
+let decodeSingle = (langs, decoder, wrap, json) =>
+  Json.Decode.(
+    wrap(
+      json |> field("value", decoder),
+      json |> DisplayOption.decode(langs),
+    )
+  );
+
+module Profession = {
+  type t =
+    | Sex(Sex.t, DisplayOption.t)
+    | Race(Race.t, DisplayOption.t)
+    | Culture(Culture.t, DisplayOption.t)
+    | Activatable(Activatable.t, DisplayOption.t)
+    | Increasable(Increasable.t, DisplayOption.t);
+
+  type all = list(t);
+
+  let decode = langs =>
+    All.decode(
+      Json.Decode.(
+        field("type", string)
+        |> andThen(
+             fun
+             | "Sex" => decodeSingle(langs, Sex.decode, (v, d) => Sex(v, d))
+             | "Race" =>
+               decodeSingle(langs, Race.decode, (v, d) => Race(v, d))
+             | "Culture" =>
+               decodeSingle(langs, Culture.decode, (v, d) => Culture(v, d))
+             | "Activatable" =>
+               decodeSingle(langs, Activatable.decode, (v, d) =>
+                 Activatable(v, d)
+               )
+             | "Increasable" =>
+               decodeSingle(langs, Increasable.decode, (v, d) =>
+                 Increasable(v, d)
+               )
+             | str =>
+               raise(DecodeError("Unknown prerequisite type: " ++ str)),
+           )
+      ),
+    );
+};
+
+module AdvantageDisadvantage = {
+  type t =
+    | CommonSuggestedByRCP
+    | Sex(Sex.t, DisplayOption.t)
+    | Race(Race.t, DisplayOption.t)
+    | Culture(Culture.t, DisplayOption.t)
+    | Pact(Pact.t, DisplayOption.t)
+    | SocialStatus(SocialStatus.t, DisplayOption.t)
+    | PrimaryAttribute(PrimaryAttribute.t, DisplayOption.t)
+    | Activatable(Activatable.t, DisplayOption.t)
+    | ActivatableMultiEntry(ActivatableMultiEntry.t, DisplayOption.t)
+    | ActivatableMultiSelect(ActivatableMultiSelect.t, DisplayOption.t)
+    | Increasable(Increasable.t, DisplayOption.t)
+    | IncreasableMultiEntry(IncreasableMultiEntry.t, DisplayOption.t);
+
+  type all = All.t(t);
+
+  let decode = langs =>
+    All.decode(
+      Json.Decode.(
+        field("type", string)
+        |> andThen(
+             fun
+             | "CommonSuggestedByRCP" => (_ => CommonSuggestedByRCP)
+             | "Sex" => decodeSingle(langs, Sex.decode, (v, d) => Sex(v, d))
+             | "Race" =>
+               decodeSingle(langs, Race.decode, (v, d) => Race(v, d))
+             | "Culture" =>
+               decodeSingle(langs, Culture.decode, (v, d) => Culture(v, d))
+             | "Pact" =>
+               decodeSingle(langs, Pact.decode, (v, d) => Pact(v, d))
+             | "SocialStatus" =>
+               decodeSingle(langs, SocialStatus.decode, (v, d) =>
+                 SocialStatus(v, d)
+               )
+             | "PrimaryAttribute" =>
+               decodeSingle(langs, PrimaryAttribute.decode, (v, d) =>
+                 PrimaryAttribute(v, d)
+               )
+             | "Activatable" =>
+               decodeSingle(langs, Activatable.decode, (v, d) =>
+                 Activatable(v, d)
+               )
+             | "ActivatableMultiEntry" =>
+               decodeSingle(langs, ActivatableMultiEntry.decode, (v, d) =>
+                 ActivatableMultiEntry(v, d)
+               )
+             | "ActivatableMultiSelect" =>
+               decodeSingle(langs, ActivatableMultiSelect.decode, (v, d) =>
+                 ActivatableMultiSelect(v, d)
+               )
+             | "Increasable" =>
+               decodeSingle(langs, Increasable.decode, (v, d) =>
+                 Increasable(v, d)
+               )
+             | "IncreasableMultiEntry" =>
+               decodeSingle(langs, IncreasableMultiEntry.decode, (v, d) =>
+                 IncreasableMultiEntry(v, d)
+               )
+             | str =>
+               raise(DecodeError("Unknown prerequisite type: " ++ str)),
+           )
+      ),
+    );
+};
+
+type t =
+  | Sex(Sex.t, DisplayOption.t)
+  | Race(Race.t, DisplayOption.t)
+  | Culture(Culture.t, DisplayOption.t)
+  | Pact(Pact.t, DisplayOption.t)
+  | SocialStatus(SocialStatus.t, DisplayOption.t)
+  | PrimaryAttribute(PrimaryAttribute.t, DisplayOption.t)
+  | Activatable(Activatable.t, DisplayOption.t)
+  | ActivatableMultiEntry(ActivatableMultiEntry.t, DisplayOption.t)
+  | ActivatableMultiSelect(ActivatableMultiSelect.t, DisplayOption.t)
+  | Increasable(Increasable.t, DisplayOption.t)
+  | IncreasableMultiEntry(IncreasableMultiEntry.t, DisplayOption.t);
+
+type all = All.t(t);
+
+let decode = langs =>
+  All.decode(
+    Json.Decode.(
+      field("type", string)
+      |> andThen(
+           fun
+           | "Sex" => decodeSingle(langs, Sex.decode, (v, d) => Sex(v, d))
+           | "Race" => decodeSingle(langs, Race.decode, (v, d) => Race(v, d))
+           | "Culture" =>
+             decodeSingle(langs, Culture.decode, (v, d) => Culture(v, d))
+           | "Pact" => decodeSingle(langs, Pact.decode, (v, d) => Pact(v, d))
+           | "SocialStatus" =>
+             decodeSingle(langs, SocialStatus.decode, (v, d) =>
+               SocialStatus(v, d)
+             )
+           | "PrimaryAttribute" =>
+             decodeSingle(langs, PrimaryAttribute.decode, (v, d) =>
+               PrimaryAttribute(v, d)
+             )
+           | "Activatable" =>
+             decodeSingle(langs, Activatable.decode, (v, d) =>
+               Activatable(v, d)
+             )
+           | "ActivatableMultiEntry" =>
+             decodeSingle(langs, ActivatableMultiEntry.decode, (v, d) =>
+               ActivatableMultiEntry(v, d)
+             )
+           | "ActivatableMultiSelect" =>
+             decodeSingle(langs, ActivatableMultiSelect.decode, (v, d) =>
+               ActivatableMultiSelect(v, d)
+             )
+           | "Increasable" =>
+             decodeSingle(langs, Increasable.decode, (v, d) =>
+               Increasable(v, d)
+             )
+           | "IncreasableMultiEntry" =>
+             decodeSingle(langs, IncreasableMultiEntry.decode, (v, d) =>
+               IncreasableMultiEntry(v, d)
+             )
+           | str => raise(DecodeError("Unknown prerequisite type: " ++ str)),
+         )
+    ),
+  );
