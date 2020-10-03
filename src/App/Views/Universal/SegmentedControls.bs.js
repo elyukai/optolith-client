@@ -74,7 +74,7 @@ function SegmentedControls(Props) {
                     return React.createElement("label", undefined, str);
                   }), label), React.createElement("ul", {
                   className: "segmented-controls-list"
-                }, Ley_List$OptolithClient.listToArray(Ley_List$OptolithClient.map((function (option) {
+                }, Ley_List$OptolithClient.listToArray(Curry._2(Ley_List$OptolithClient.map, (function (option) {
                             return React.createElement(SegmentedControls$Item, {
                                         active: active,
                                         groupName: name,

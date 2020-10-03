@@ -10,7 +10,7 @@ module Static: {
     type t = {
       id: int,
       name: string,
-      prerequisite: option(Prerequisite.activatable),
+      prerequisite: option(Prerequisite.Activatable.t),
     };
   };
 
@@ -18,7 +18,7 @@ module Static: {
     type t = {
       id: int,
       name: string,
-      prerequisite: Prerequisite.activatable,
+      prerequisite: Prerequisite.Activatable.t,
     };
   };
 

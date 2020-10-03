@@ -48,7 +48,7 @@ function decodeMultilingual(json) {
                     }), json)),
           ic: JsonStrict$OptolithClient.field("ic", IC$OptolithClient.Decode.t, json),
           increasablePrerequisites: JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
-                  return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Decode.increasable, param);
+                  return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Increasable.decode, param);
                 }), json),
           gr: JsonStrict$OptolithClient.field("gr", JsonStrict$OptolithClient.$$int, json),
           enhancements: JsonStrict$OptolithClient.optionalField("enhancements", Enhancements$OptolithClient.decodeMultilingual, json),
@@ -59,7 +59,7 @@ function decodeMultilingual(json) {
 
 function decode$1(langs, json) {
   var x = decodeMultilingual(json);
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,
@@ -76,7 +76,7 @@ function decode$1(langs, json) {
                         ic: x.ic,
                         increasablePrerequisites: x.increasablePrerequisites,
                         gr: x.gr,
-                        enhancements: Ley_Option$OptolithClient.Monad.$great$great$eq(x.enhancements, (function (param) {
+                        enhancements: Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, x.enhancements, (function (param) {
                                 return Enhancements$OptolithClient.resolveTranslations(langs, param);
                               })),
                         src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),

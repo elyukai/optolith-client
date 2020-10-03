@@ -14,4 +14,4 @@ let cond = (className: string, condition) =>
  * A helper function to add a safe class (that cannot be optional) to the list
  * of classes.
  */
-let safe = Ley_Option.Monad.return;
+let safe = Ley_Option.return;

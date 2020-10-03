@@ -45,7 +45,7 @@ function decodeFull(json) {
 
 function decode$1(langs, json) {
   var x = decodeFull(json);
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,

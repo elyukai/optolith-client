@@ -44,7 +44,7 @@ module Dynamic = (Config: DynamicConfig) => {
   let empty = id => {id, value: minValue, dependencies: []};
 
   let isEmpty = (x: t) =>
-    x.value <= minValue && Ley_List.Foldable.null(x.dependencies);
+    x.value <= minValue && Ley_List.null(x.dependencies);
 
   let getValueDef = Ley_Option.option(minValue, (x: t) => x.value);
 };

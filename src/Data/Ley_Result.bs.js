@@ -404,7 +404,7 @@ function result(fError, fOk, x) {
 }
 
 function errors(xs) {
-  return Ley_List$OptolithClient.Foldable.foldr((function (x, acc) {
+  return Curry._3(Ley_List$OptolithClient.foldr, (function (x, acc) {
                 if (x.TAG) {
                   return {
                           hd: x._0,
@@ -417,7 +417,7 @@ function errors(xs) {
 }
 
 function oks(xs) {
-  return Ley_List$OptolithClient.Foldable.foldr((function (x, acc) {
+  return Curry._3(Ley_List$OptolithClient.foldr, (function (x, acc) {
                 if (x.TAG) {
                   return acc;
                 } else {
@@ -430,7 +430,7 @@ function oks(xs) {
 }
 
 function partitionResults(xs) {
-  return Ley_List$OptolithClient.Foldable.foldr((function (x, param) {
+  return Curry._3(Ley_List$OptolithClient.foldr, (function (x, param) {
                 var rs = param[1];
                 var ls = param[0];
                 if (x.TAG) {
@@ -484,4 +484,4 @@ export {
   swap ,
   
 }
-/* No side effect */
+/* Ley_List-OptolithClient Not a pure module */

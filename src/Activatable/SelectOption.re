@@ -9,8 +9,8 @@ type wikiEntry =
 type t = {
   id: Id.Activatable.SelectOption.t,
   name: string,
-  cost: option(int),
-  prerequisites: Prerequisite.t,
+  apValue: option(int),
+  prerequisites: Prerequisite.Collection.General.t,
   description: option(string),
   isSecret: option(bool),
   languages: option(list(int)),
@@ -25,7 +25,7 @@ type t = {
   wikiEntry: option(wikiEntry),
   // needed to be able to filter valid applications without altering the static
   // entry
-  applications: option(list(Skill.application)),
+  applications: option(list(Skill.Static.Application.t)),
   src: list(PublicationRef.t),
   errata: list(Erratum.t),
 };
@@ -46,76 +46,82 @@ module Map = Ley_Map.Make(Id.Activatable.SelectOption);
 
 type map = Map.t(t);
 
-module Decode = {
-  open Json.Decode;
-  open JsonStrict;
-
-  type tL10n = {
-    id: Id.Activatable.SelectOption.t,
+module Translations = {
+  type t = {
     name: string,
     description: option(string),
-    specializations: option(list(string)),
-    specializationInput: option(string),
-    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
-  let tL10n = json => {
-    id: json |> field("id", Id.Activatable.SelectOption.Decode.t),
-    name: json |> field("name", string),
-    description: json |> optionalField("description", string),
-    specializations: json |> optionalField("specializations", list(string)),
-    specializationInput: json |> optionalField("specializationInput", string),
+  let decode = json =>
+    JsonStrict.{
+      name: json |> field("name", string),
+      description: json |> optionalField("description", string),
+      errata: json |> field("errata", Erratum.decodeList),
+    };
+};
+
+module TranslationMap = TranslationMap.Make(Translations);
+
+type multilingual = {
+  id: int,
+  apValue: option(int),
+  prerequisites: Prerequisite.Collection.General.multilingual,
+  src: list(PublicationRef.multilingual),
+  translations: TranslationMap.t,
+};
+
+let decodeMultilingual = json =>
+  JsonStrict.{
+    id: json |> field("id", int),
+    apValue: json |> optionalField("apValue", int),
+    prerequisites:
+      json
+      |> field(
+           "prerequisites",
+           Prerequisite.Collection.General.decodeMultilingual,
+         ),
     src: json |> field("src", PublicationRef.decodeMultilingualList),
-    errata: json |> field("errata", Erratum.Decode.list),
+    translations: json |> field("translations", TranslationMap.decode),
   };
 
-  type tUniv = {
-    id: Id.Activatable.SelectOption.t,
-    cost: option(int),
-    prerequisites: Prerequisite.t,
-    isSecret: option(bool),
-    languages: option(list(int)),
-    continent: option(int),
-    isExtinct: option(bool),
-    animalGr: option(int),
-    animalLevel: option(int),
-  };
+let resolveTranslations = (langs, x) =>
+  Ley_Option.Infix.(
+    x.translations
+    |> TranslationMap.getFromLanguageOrder(langs)
+    <&> (
+      translation => {
+        id: (Generic, x.id),
+        name: translation.name,
+        description: translation.description,
+        apValue: x.apValue,
+        prerequisites:
+          Prerequisite.Collection.General.resolveTranslations(
+            langs,
+            x.prerequisites,
+          ),
+        isSecret: None,
+        languages: None,
+        continent: None,
+        isExtinct: None,
+        specializations: None,
+        specializationInput: None,
+        animalGr: None,
+        animalLevel: None,
+        enhancementTarget: None,
+        enhancementLevel: None,
+        wikiEntry: None,
+        applications: None,
+        src: PublicationRef.resolveTranslationsList(langs, x.src),
+        errata: translation.errata,
+      }
+    )
+  );
 
-  let tUniv = json => {
-    id: json |> field("id", Id.Activatable.SelectOption.Decode.t),
-    cost: json |> optionalField("cost", int),
-    prerequisites: json |> Prerequisite.Decode.t,
-    isSecret: json |> optionalField("isSecret", bool),
-    languages: json |> optionalField("languages", list(int)),
-    continent: json |> optionalField("continent", int),
-    isExtinct: json |> optionalField("isExtinct", bool),
-    animalGr: json |> optionalField("animalGr", int),
-    animalLevel: json |> optionalField("animalLevel", int),
-  };
+let decode = (langs, json) =>
+  json |> decodeMultilingual |> resolveTranslations(langs);
 
-  let t = (univ: tUniv, l10n: tL10n) => {
-    id: univ.id,
-    name: l10n.name,
-    cost: univ.cost,
-    prerequisites: univ.prerequisites,
-    description: l10n.description,
-    isSecret: univ.isSecret,
-    languages: univ.languages,
-    continent: univ.continent,
-    isExtinct: univ.isExtinct,
-    specializations: l10n.specializations,
-    specializationInput: l10n.specializationInput,
-    animalGr: univ.animalGr,
-    animalLevel: univ.animalLevel,
-    enhancementTarget: None,
-    enhancementLevel: None,
-    wikiEntry: None,
-    applications: None,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
-
+module ResolveCategories = {
   type category =
     | Blessings
     | Cantrips
@@ -125,19 +131,20 @@ module Decode = {
     | Spells;
 
   let category = json =>
-    json
-    |> string
-    |> (
-      str =>
-        switch (str) {
+    Json.Decode.(
+      json
+      |> string
+      |> (
+        fun
         | "BLESSINGS" => Blessings
         | "CANTRIPS" => Cantrips
         | "COMBAT_TECHNIQUES" => CombatTechniques
         | "LITURGICAL_CHANTS" => LiturgicalChants
         | "SKILLS" => Skills
         | "SPELLS" => Spells
-        | _ => raise(DecodeError("Unknown select option category: " ++ str))
-        }
+        | str =>
+          raise(DecodeError("Unknown select option category: " ++ str))
+      )
     );
 
   type categoryWithGroups = {
@@ -145,16 +152,17 @@ module Decode = {
     groups: option(list(int)),
   };
 
-  let categoryWithGroups = json => {
-    category: json |> field("category", category),
-    groups: json |> optionalField("groups", list(int)),
-  };
+  let categoryWithGroups = json =>
+    JsonStrict.{
+      category: json |> field("category", category),
+      groups: json |> optionalField("groups", list(int)),
+    };
 
   let entryToSelectOption = (~id, ~name, ~wikiEntry, ~src, ~errata) => {
     id,
     name,
-    cost: None,
-    prerequisites: Prerequisite.empty,
+    apValue: None,
+    prerequisites: Plain([]),
     description: None,
     isSecret: None,
     languages: None,
@@ -180,8 +188,7 @@ module Decode = {
   let resolveGroups = (f, g, grs, mp, xs) =>
     Ley_IntMap.Foldable.foldr(
       x =>
-        Ley_List.Foldable.elem(g(x), grs)
-          ? x |> f |> insertEntry : Ley_Function.id,
+        Ley_List.elem(g(x), grs) ? x |> f |> insertEntry : Ley_Function.id,
       xs,
       mp,
     );
@@ -286,7 +293,7 @@ module Decode = {
       ) =>
     categories
     |> Ley_Option.fromOption([])
-    |> Ley_List.Foldable.foldr(
+    |> Ley_List.foldr(
          cat =>
            switch (cat.category) {
            | Blessings => resolveBlessings(blessings)
@@ -300,84 +307,81 @@ module Decode = {
            },
          Map.empty,
        );
-
-  let l10nToSelectOption = (l10n: tL10n) => {
-    id: l10n.id,
-    name: l10n.name,
-    cost: None,
-    prerequisites: Prerequisite.empty,
-    description: l10n.description,
-    isSecret: None,
-    languages: None,
-    continent: None,
-    isExtinct: None,
-    specializations: l10n.specializations,
-    specializationInput: l10n.specializationInput,
-    animalGr: None,
-    animalLevel: None,
-    enhancementTarget: None,
-    enhancementLevel: None,
-    wikiEntry: None,
-    applications: None,
-    src: l10n.src,
-    errata: l10n.errata,
-  };
-
-  let mergeUnivIntoSelectOption = (univ: tUniv, x: t) =>
-    Ley_Option.Alternative.{
-      id: x.id,
-      name: x.name,
-      cost: univ.cost <|> x.cost,
-      prerequisites: univ.prerequisites,
-      description: x.description,
-      isSecret: univ.isSecret <|> x.isSecret,
-      languages: univ.languages <|> x.languages,
-      continent: univ.continent <|> x.continent,
-      isExtinct: univ.isExtinct <|> x.isExtinct,
-      specializations: x.specializations,
-      specializationInput: x.specializationInput,
-      animalGr: univ.animalGr <|> x.animalGr,
-      animalLevel: univ.animalLevel <|> x.animalLevel,
-      enhancementTarget: x.enhancementTarget,
-      enhancementLevel: x.enhancementLevel,
-      wikiEntry: x.wikiEntry,
-      applications: None,
-      src: x.src,
-      errata: x.errata,
-    };
-
-  let mergeSelectOptions = (ml10ns, munivs, fromCategories) =>
-    fromCategories
-    |> Ley_Option.option(
-         Ley_Function.id,
-         (l10ns, mp) =>
-           Ley_List.Foldable.foldr(
-             (l10n: tL10n, mp') =>
-               if (Map.member(l10n.id, mp')) {
-                 raise(
-                   DecodeError(
-                     "mergeSelectOptions: Key "
-                     ++ showId(l10n.id)
-                     ++ "already in use",
-                   ),
-                 );
-               } else {
-                 Map.insert(l10n.id, l10nToSelectOption(l10n), mp');
-               },
-             mp,
-             l10ns,
-           ),
-         ml10ns,
-       )
-    |> Ley_Option.option(
-         Ley_Function.id,
-         (univs, mp) =>
-           Ley_List.Foldable.foldr(
-             (univ: tUniv, mp') =>
-               Map.adjust(mergeUnivIntoSelectOption(univ), univ.id, mp'),
-             mp,
-             univs,
-           ),
-         munivs,
-       );
+  // let l10nToSelectOption = (l10n: tL10n) => {
+  //   id: l10n.id,
+  //   name: l10n.name,
+  //   cost: None,
+  //   prerequisites: Prerequisite.empty,
+  //   description: l10n.description,
+  //   isSecret: None,
+  //   languages: None,
+  //   continent: None,
+  //   isExtinct: None,
+  //   specializations: l10n.specializations,
+  //   specializationInput: l10n.specializationInput,
+  //   animalGr: None,
+  //   animalLevel: None,
+  //   enhancementTarget: None,
+  //   enhancementLevel: None,
+  //   wikiEntry: None,
+  //   applications: None,
+  //   src: l10n.src,
+  //   errata: l10n.errata,
+  // };
+  // let mergeUnivIntoSelectOption = (univ: tUniv, x: t) =>
+  //   Ley_Option.Alternative.{
+  //     id: x.id,
+  //     name: x.name,
+  //     cost: univ.cost <|> x.cost,
+  //     prerequisites: univ.prerequisites,
+  //     description: x.description,
+  //     isSecret: univ.isSecret <|> x.isSecret,
+  //     languages: univ.languages <|> x.languages,
+  //     continent: univ.continent <|> x.continent,
+  //     isExtinct: univ.isExtinct <|> x.isExtinct,
+  //     specializations: x.specializations,
+  //     specializationInput: x.specializationInput,
+  //     animalGr: univ.animalGr <|> x.animalGr,
+  //     animalLevel: univ.animalLevel <|> x.animalLevel,
+  //     enhancementTarget: x.enhancementTarget,
+  //     enhancementLevel: x.enhancementLevel,
+  //     wikiEntry: x.wikiEntry,
+  //     applications: None,
+  //     src: x.src,
+  //     errata: x.errata,
+  //   };
+  // let mergeSelectOptions = (ml10ns, munivs, fromCategories) =>
+  //   fromCategories
+  //   |> Ley_Option.option(
+  //        Ley_Function.id,
+  //        (l10ns, mp) =>
+  //          Ley_List.Foldable.foldr(
+  //            (l10n: tL10n, mp') =>
+  //              if (Map.member(l10n.id, mp')) {
+  //                raise(
+  //                  DecodeError(
+  //                    "mergeSelectOptions: Key "
+  //                    ++ showId(l10n.id)
+  //                    ++ "already in use",
+  //                  ),
+  //                );
+  //              } else {
+  //                Map.insert(l10n.id, l10nToSelectOption(l10n), mp');
+  //              },
+  //            mp,
+  //            l10ns,
+  //          ),
+  //        ml10ns,
+  //      )
+  //   |> Ley_Option.option(
+  //        Ley_Function.id,
+  //        (univs, mp) =>
+  //          Ley_List.Foldable.foldr(
+  //            (univ: tUniv, mp') =>
+  //              Map.adjust(mergeUnivIntoSelectOption(univ), univ.id, mp'),
+  //            mp,
+  //            univs,
+  //          ),
+  //        munivs,
+  //      );
 };

@@ -21,4 +21,4 @@ export {
   decodeList ,
   
 }
-/* No side effect */
+/* Ley_Option-OptolithClient Not a pure module */

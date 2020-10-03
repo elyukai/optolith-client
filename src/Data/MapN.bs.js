@@ -200,7 +200,7 @@ function notMember(key, mp) {
 }
 
 function lookup(key, mp) {
-  return Ley_Option$OptolithClient.Functor.$less$$great((function (prim) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$$great, (function (prim) {
                 return prim[1];
               }), Caml_option.undefined_to_opt(Array.from(mp.entries()).find(function (param) {
                       return Caml_obj.caml_equal(param[0], key);
@@ -222,4 +222,4 @@ export {
   findWithDefault ,
   
 }
-/* No side effect */
+/* Ley_Option-OptolithClient Not a pure module */

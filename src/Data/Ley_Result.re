@@ -305,7 +305,7 @@ let result = (fError, fOk, x) =>
  * elements are extracted in order.
  */
 let errors = xs =>
-  Ley_List.Foldable.foldr(
+  Ley_List.foldr(
     (x, acc) =>
       switch (x) {
       | Error(l) => [l, ...acc]
@@ -320,7 +320,7 @@ let errors = xs =>
  * elements are extracted in order.
  */
 let oks = xs =>
-  Ley_List.Foldable.foldr(
+  Ley_List.foldr(
     (x, acc) =>
       switch (x) {
       | Error(_) => acc
@@ -336,7 +336,7 @@ let oks = xs =>
  * `Ok` elements are extracted to the second component of the output.
  */
 let partitionResults = xs =>
-  Ley_List.Foldable.foldr(
+  Ley_List.foldr(
     (x, (ls, rs)) =>
       switch (x) {
       | Error(l) => ([l, ...ls], rs)

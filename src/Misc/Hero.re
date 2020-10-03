@@ -56,8 +56,7 @@ module Activatable = {
   let empty = id => {id, active: [], dependencies: []};
 
   let isUnused = (x: t) =>
-    Ley_List.Foldable.null(x.active)
-    && Ley_List.Foldable.null(x.dependencies);
+    Ley_List.null(x.active) && Ley_List.null(x.dependencies);
 };
 
 module Energies = {

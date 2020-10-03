@@ -33,7 +33,7 @@ let getMax:
   (
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
-    ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
+    ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
     ~exceptionalSkill: option(Hero.Activatable.t),
     ~staticEntry: Skill.Static.t
   ) =>
@@ -46,7 +46,7 @@ let isIncreasable:
   (
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
-    ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
+    ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
     ~exceptionalSkill: option(Hero.Activatable.t),
     ~staticEntry: Skill.Static.t,
     ~heroEntry: Skill.Dynamic.t

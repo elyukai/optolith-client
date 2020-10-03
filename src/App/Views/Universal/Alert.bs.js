@@ -114,7 +114,7 @@ function Alert(Props) {
   return React.createElement(Overlay$OptolithClient.make, {
               baseClassName: "alert",
               className: ClassNames$OptolithClient.fold({
-                    hd: ClassNames$OptolithClient.cond("alert-long", Ley_List$OptolithClient.Foldable.length(secondaryButtons) > 2),
+                    hd: ClassNames$OptolithClient.cond("alert-long", Curry._1(Ley_List$OptolithClient.length, secondaryButtons) > 2),
                     tl: /* [] */0
                   }),
               children: null,
@@ -129,7 +129,7 @@ function Alert(Props) {
                       value: primaryButton.value,
                       primary: true,
                       onClick: onClick
-                    }), Ley_List$OptolithClient.listToArray(Ley_List$OptolithClient.map((function (button) {
+                    }), Ley_List$OptolithClient.listToArray(Curry._2(Ley_List$OptolithClient.map, (function (button) {
                             return React.createElement(Alert$Button, {
                                         label: button.label,
                                         value: button.value,

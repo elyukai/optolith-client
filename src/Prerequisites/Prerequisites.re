@@ -1,69 +1,10 @@
 module IM = Ley_IntMap;
 module O = Ley_Option;
 
-module Flatten = {
-  open Ley_Function;
-
-  let applicablePred = (oldLevel, newLevel) =>
-    switch (oldLevel, newLevel) {
-    // Used for changing level
-    | (Some(oldLevel), Some(newLevel)) =>
-      let (min, max) = Ley_Int.minmax(oldLevel, newLevel);
-      Ley_Ix.inRange((min + 1, max));
-    // Used for deactivating an entry
-    | (Some(level), None)
-    // Used for activating an entry
-    | (None, Some(level)) => (>=)(level)
-    | (None, None) => const(true)
-    };
-
-  let filterApplicableLevels = (oldLevel, newLevel, mp) => {
-    let pred = applicablePred(oldLevel, newLevel);
-    Ley_IntMap.filterWithKey((k, _) => pred(k), mp);
-  };
-
-  let getFirstLevelPrerequisites = (prerequisites: Prerequisite.all) =>
-    switch (prerequisites) {
-    | Plain(xs) => xs
-    | ByLevel(mp) => mp |> Ley_IntMap.lookup(1) |> Ley_Option.fromOption([])
-    };
-
-  let getFirstDisAdvLevelPrerequisites = (p: tWithLevelDisAdv) =>
-    flattenPrerequisites(
-      {
-        sex: p.sex,
-        race: p.race,
-        culture: p.culture,
-        pact: p.pact,
-        social: p.social,
-        primaryAttribute: p.primaryAttribute,
-        activatable: p.activatable,
-        activatableMultiEntry: p.activatableMultiEntry,
-        activatableMultiSelect: p.activatableMultiSelect,
-        increasable: p.increasable,
-        increasableMultiEntry: p.increasableMultiEntry,
-      },
-      [],
-    )
-    |> (p.commonSuggestedByRCP ? Ley_List.cons(CommonSuggestedByRCP) : id);
-
-  let flattenPrerequisitesRange =
-      (oldLevel, newLevel, prerequisites: tWithLevel) =>
-    if (Ley_IntMap.null(prerequisites.levels)) {
-      getFirstLevelPrerequisites(prerequisites);
-    } else {
-      filterApplicableLevels(oldLevel, newLevel, prerequisites.levels)
-      |> Ley_IntMap.Foldable.foldr(
-           flattenPrerequisites,
-           getFirstLevelPrerequisites(prerequisites),
-         );
-    };
-};
-
 module Dynamic = {
   open Static;
   open Ley_Function;
-  open Ley_Option.Monad;
+  open Ley_Option;
 
   let getEntrySpecificDynamicPrerequisites =
       (
@@ -342,7 +283,7 @@ module Dynamic = {
 
 module Validation = {
   open Ley_Function;
-  open Ley_Option.Monad;
+  open Ley_Option;
 
   let getRaceCultureProfession = (staticData: Static.t, hero: Hero.t) => (
     (

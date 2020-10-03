@@ -1,5 +1,5 @@
 open Ley_Option;
-open Ley_Option.Monad;
+open Ley_Option;
 open Hero.ActivatableSkill;
 
 module F = Ley_Function;
@@ -11,7 +11,8 @@ module O = Ley_Option;
  * Returns the SR maximum if there is no property knowledge active for the passed
  * spell.
  */
-let getMaxSrFromPropertyKnowledge = (propertyKnowledge, staticEntry: Spell.Static.t) =>
+let getMaxSrFromPropertyKnowledge =
+    (propertyKnowledge, staticEntry: Spell.Static.t) =>
   propertyKnowledge
   <&> Activatable_SelectOptions.mapActiveOptions1(
         [@warning "-4"]

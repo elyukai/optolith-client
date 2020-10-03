@@ -50,7 +50,7 @@ let decodeMultilingual = json =>
 let decodeMultilingualList = Json.Decode.list(decodeMultilingual);
 
 let resolveTranslations = (langs, x) =>
-  Ley_Option.Functor.(
+  Ley_Option.Infix.(
     x.translations
     |> TranslationMap.getFromLanguageOrder(langs)
     <&> (translation => {id: x.id, occurrences: translation})

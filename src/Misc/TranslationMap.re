@@ -13,12 +13,10 @@ module Make = (Decodable: Decodable) => {
 
   let getFromLanguageOrder = (langs, x: t) =>
     langs
-    |> Ley_List.Foldable.foldl(
+    |> Ley_List.foldl(
          (acc, lang) =>
-           Ley_Option.Alternative.(
-             Ley_Option.Functor.(
-               acc <|> (Js.Dict.get(x, lang) <&> Decodable.decode)
-             )
+           Ley_Option.Infix.(
+             acc <|> (Js.Dict.get(x, lang) <&> Decodable.decode)
            ),
          None,
        );

@@ -16,7 +16,7 @@ function Overlay(Props) {
   var onBackdrop = Props.onBackdrop;
   var backdropRef = React.useRef(null);
   var handleBackdropClick = React.useCallback((function ($$event) {
-          Ley_Option$OptolithClient.Functor.$less$amp$great(Caml_option.nullable_to_opt(backdropRef.current), (function (currentRef) {
+          Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Caml_option.nullable_to_opt(backdropRef.current), (function (currentRef) {
                   if (!currentRef.contains(ReactUtils$OptolithClient.eventTargetToDom($$event.target))) {
                     return Curry._1(onBackdrop, $$event);
                   }
@@ -28,7 +28,7 @@ function Overlay(Props) {
     return ReactDom.createPortal(React.createElement("div", {
                     ref: backdropRef,
                     className: ClassNames$OptolithClient.fold({
-                          hd: Ley_Option$OptolithClient.Monad.$$return(baseClassName + "-backdrop"),
+                          hd: Curry._1(Ley_Option$OptolithClient.$$return, baseClassName + "-backdrop"),
                           tl: {
                             hd: className,
                             tl: /* [] */0

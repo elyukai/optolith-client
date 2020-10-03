@@ -1,7 +1,7 @@
 module L = Ley_List;
 
 open Ley_Option;
-open Ley_Option.Monad;
+open Ley_Option;
 open Static;
 open Ley_Function;
 open Activatable_Convert;

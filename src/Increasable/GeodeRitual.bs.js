@@ -37,7 +37,7 @@ function decodeMultilingual(json) {
           checkMod: JsonStrict$OptolithClient.optionalField("checkMod", CheckModifier$OptolithClient.decode, json),
           property: JsonStrict$OptolithClient.field("property", JsonStrict$OptolithClient.$$int, json),
           activatablePrerequisites: JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
-                  return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Decode.activatable, param);
+                  return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.decode, param);
                 }), json),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json),
           translations: JsonStrict$OptolithClient.field("translations", TranslationMap.decode, json)
@@ -46,7 +46,7 @@ function decodeMultilingual(json) {
 
 function decode$1(langs, json) {
   var x = decodeMultilingual(json);
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,

@@ -82,7 +82,7 @@ function TextField$Integer(Props) {
   var setInternalValue = match$1[1];
   var internalValue = match$1[0];
   var match$2 = React.useState(function () {
-        return isValid(min, max, invalidChecks, Ley_Option$OptolithClient.Monad.$$return(value));
+        return isValid(min, max, invalidChecks, Curry._1(Ley_Option$OptolithClient.$$return, value));
       });
   var setValid = match$2[1];
   var match$3 = match$2[0];

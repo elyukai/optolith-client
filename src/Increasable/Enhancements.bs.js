@@ -29,7 +29,7 @@ function decodeMultilingual(json) {
 }
 
 function resolveTranslations(langs, x) {
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(LevelTranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(LevelTranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,
@@ -59,7 +59,7 @@ function decodeMultilingual$1(json) {
 }
 
 function resolveTranslations$1(langs, x) {
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(LevelTranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(LevelTranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,
@@ -93,7 +93,7 @@ function decodeMultilingual$2(json) {
 }
 
 function resolveTranslations$2(langs, x) {
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(LevelTranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(LevelTranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,
@@ -126,9 +126,9 @@ function decodeMultilingual$3(json) {
 }
 
 function resolveTranslations$3(langs, x) {
-  return Ley_Option$OptolithClient.Monad.$great$great$eq(Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 var match = x.levels;
-                return Ley_Option$OptolithClient.Monad.liftM3((function (level1, level2, level3) {
+                return Curry._4(Ley_Option$OptolithClient.liftM3, (function (level1, level2, level3) {
                               return {
                                       levels: [
                                         level1,

@@ -6,7 +6,7 @@ type t =
  * Get all active hero entries from the specified domain.
  */
 let getActiveSkillEntries:
-  (t, Hero.t) => Ley_IntMap.t(Hero.ActivatableSkill.t);
+  (t, Hero.t) => Ley_IntMap.t(ActivatableSkill.Dynamic.t);
 
 /**
  * Count all active skills from the specified domain.

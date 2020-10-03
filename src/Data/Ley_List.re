@@ -1,186 +1,89 @@
-module Functor = {
-  let rec (<$>) = (f, xs) =>
-    switch (xs) {
-    | [] => []
-    | [y, ...ys] => [f(y), ...f <$> ys]
-    };
+type t('a) = list('a);
 
-  let fmap = (<$>);
+include (
+          Ley_Functor.Make({
+            type nonrec t('a) = t('a);
 
-  let (<&>) = (xs, f) => f <$> xs;
-};
+            let rec fmap = (f, xs) =>
+              switch (xs) {
+              | [] => []
+              | [y, ...ys] => [f(y), ...fmap(f, ys)]
+              };
+          }):
+            Ley_Functor.T with type t('a) := t('a)
+        );
 
-module Applicative = {
-  open Functor;
+include (
+          Ley_Applicative.Make({
+            type nonrec t('a) = t('a);
 
-  let rec (<*>) = (fs, xs) =>
-    switch (fs) {
-    | [] => []
-    | gs =>
-      switch (xs) {
-      | [] => []
-      | [x, ...ys] => ((f => f(x)) <$> gs) @ (fs <*> ys)
-      }
-    };
+            let pure = x => [x];
 
-  let ap = (<*>);
-};
+            let fmap = fmap;
 
-module Alternative = {
-  let (<|>) = (xs, ys) =>
-    switch (xs) {
-    | [] => ys
-    | xs => xs
-    };
+            let rec ap = (fs, xs) =>
+              switch (fs) {
+              | [] => []
+              | gs =>
+                switch (xs) {
+                | [] => []
+                | [x, ...ys] => fmap(f => f(x), gs) @ ap(fs, ys)
+                }
+              };
+          }):
+            Ley_Applicative.T with type t('a) := t('a)
+        );
 
-  let alt = (<|>);
+include (
+          Ley_Applicative.Alternative.Make({
+            type nonrec t('a) = t('a);
 
-  let guard = pred => pred ? [()] : [];
-};
+            let empty = [];
 
-module Monad = {
-  open Functor;
-  open Ley_Function;
+            let alt = (xs, ys) =>
+              switch (xs) {
+              | [] => ys
+              | xs => xs
+              };
+          }):
+            Ley_Applicative.Alternative.T with type t('a) := t('a)
+        );
 
-  let rec (>>=) = (xs, f) =>
-    switch (xs) {
-    | [] => []
-    | [y, ...ys] => f(y) @ (ys >>= f)
-    };
+include (
+          Ley_Monad.Make({
+            type nonrec t('a) = t('a);
 
-  let (=<<) = (f, mx) => mx >>= f;
+            let pure = pure;
 
-  let (>>) = (x, y) => x >>= const(y);
+            let fmap = fmap;
 
-  let (>=>) = (f, g, x) => x->f >>= g;
+            let rec bind = (f, xs) =>
+              switch (xs) {
+              | [] => []
+              | [y, ...ys] => f(y) @ bind(f, ys)
+              };
+          }):
+            Ley_Monad.T with type t('a) := t('a)
+        );
 
-  let kleisli = (>=>);
+include (
+          Ley_Foldable.Make({
+            type nonrec t('a) = t('a);
 
-  let join = x => x >>= id;
+            let rec foldr = (f, initial, xs) =>
+              switch (xs) {
+              | [] => initial
+              | [y, ...ys] => f(y, foldr(f, initial, ys))
+              };
 
-  let liftM2 = (f, mx, my) => mx >>= (x => f(x) <$> my);
-
-  let liftM3 = (f, mx, my, mz) => mx >>= (x => my >>= (y => f(x, y) <$> mz));
-
-  let liftM4 = (f, mx, my, mz, ma) =>
-    mx >>= (x => my >>= (y => mz >>= (z => f(x, y, z) <$> ma)));
-};
-
-module Foldable = {
-  open Monad;
-
-  /**
-   * Right-associative fold of a structure.
-   *
-   * In the case of lists, `foldr`, when applied to a binary operator, a
-   * starting value (typically the right-identity of the operator), and a list,
-   * reduces the list using the binary operator, from right to left:
-   *
-   * ```foldr f z [x1, x2, ..., xn] == x1 `f` (x2 `f` ... (xn `f` z)...)```
-   */
-  let rec foldr = (f, initial, xs) =>
-    switch (xs) {
-    | [] => initial
-    | [y, ...ys] => f(y, foldr(f, initial, ys))
-    };
-
-  /**
-   * A variant of `foldr` that has no base case, and thus may only be applied to
-   * non-empty structures.
-   *
-   * `foldr1 f = foldr1 f . toList`
-   */
-  let foldr1 = (f, xs) =>
-    switch (xs) {
-    | [] => invalid_arg("Cannot apply foldr1 to an empty list.")
-    | [y, ...ys] => foldr(f, y, ys)
-    };
-
-  /**
-   * Left-associative fold of a structure.
-   *
-   * In the case of lists, foldl, when applied to a binary operator, a starting
-   * value (typically the left-identity of the operator), and a list, reduces
-   * the list using the binary operator, from left to right:
-   *
-   * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
-   */
-  let rec foldl = (f, initial, xs) =>
-    switch (xs) {
-    | [] => initial
-    | [y, ...ys] => foldl(f, f(initial, y), ys)
-    };
-
-  /**
-   * `foldl1 :: (a -> a -> a) -> [a] -> a`
-   *
-   * A variant of `foldl` that has no base case, and thus may only be applied to
-   * non-empty structures.
-   *
-   * `foldl1 f = foldl1 f . toList`
-   */
-  let foldl1 = (f, xs) =>
-    switch (xs) {
-    | [] => invalid_arg("Cannot apply foldl1 to an empty list.")
-    | [y, ...ys] => foldl(f, y, ys)
-    };
-
-  let toList = (xs): list('a) => xs;
-
-  let null = xs =>
-    switch (xs) {
-    | [] => true
-    | _ => false
-    };
-
-  let length = xs => List.length(xs);
-
-  let elem = (e, xs) => List.exists(x => e == x, xs);
-
-  let sum = xs => foldr((+), 0, xs);
-
-  let product = xs => foldr(( * ), 1, xs);
-
-  let maximum = xs => foldr(Js.Math.max_int, Js.Int.min, xs);
-
-  let minimum = xs => foldr(Js.Math.min_int, Js.Int.max, xs);
-
-  let concat = xss => join(xss);
-
-  let concatMap = (f, xs) => xs >>= f;
-
-  let rec con = xs =>
-    switch (xs) {
-    | [] => true
-    | [y, ...ys] => y && con(ys)
-    };
-
-  let rec dis = xs =>
-    switch (xs) {
-    | [] => false
-    | [y, ...ys] => y || dis(ys)
-    };
-
-  let rec any = (f, xs) =>
-    switch (xs) {
-    | [] => false
-    | [y, ...ys] => f(y) || any(f, ys)
-    };
-
-  let rec all = (f, xs) =>
-    switch (xs) {
-    | [] => true
-    | [y, ...ys] => f(y) && all(f, ys)
-    };
-
-  let notElem = (e, xs) => !elem(e, xs);
-
-  let rec find = (f, xs) =>
-    switch (xs) {
-    | [] => None
-    | [y, ...ys] => f(y) ? Some(y) : find(f, ys)
-    };
-};
+            let rec foldl = (f, initial, xs) =>
+              switch (xs) {
+              | [] => initial
+              | [y, ...ys] => foldl(f, f(initial, y), ys)
+              };
+          }):
+            Ley_Foldable.T with type t('a) := t('a)
+        );
 
 module Index = {
   let%private rec indexedAux = (i, xs) =>
@@ -524,13 +427,13 @@ let uncons =
 /**
  * `map f xs` is the list obtained by applying `f` to each element of `xs`.
  */
-let map = Functor.(<$>);
+let map = fmap;
 
 /**
  * `reverse xs` returns the elements of `xs` in reverse order. `xs` must be
  * finite.
  */
-let reverse = xs => Foldable.foldl(Ley_Function.flip((<+>)), [], xs);
+let reverse = xs => foldl(Ley_Function.flip((<+>)), [], xs);
 
 /**
  * The intersperse function takes an element and a list and 'intersperses' that
@@ -583,9 +486,7 @@ let rec permutations = xs =>
   | xs =>
     xs
     |> permutationsPick
-    |> Foldable.concatMap(((x', xs')) =>
-         map((<+>)(x'), permutations(xs'))
-       )
+    |> concatMap(((x', xs')) => map((<+>)(x'), permutations(xs')))
   };
 
 // Scans
@@ -761,15 +662,15 @@ let isInfixOf = (x: string, y: string) => Js.String.includes(y, x);
 
 // Searching by equality
 
-let elem = Foldable.elem;
+let elem = elem;
 
-let notElem = Foldable.notElem;
+let notElem = notElem;
 
 /**
  * `lookup key assocs` looks up a key in an association list.
  */
 let lookup = (k, xs) =>
-  Ley_Option.Functor.(Foldable.find(((k', _)) => k == k', xs) <&> snd);
+  Ley_Option.Infix.(find(((k', _)) => k == k', xs) <&> snd);
 
 // Searching with a predicate
 
@@ -778,7 +679,7 @@ let lookup = (k, xs) =>
  * elements that satisfy the predicate.
  */
 let filter = (pred, xs) =>
-  Foldable.foldr(x => pred(x) ? (<+>)(x) : Ley_Function.id, [], xs);
+  foldr(x => pred(x) ? (<+>)(x) : Ley_Function.id, [], xs);
 
 /**
  * The `partition` function takes a predicate a list and returns the pair of
@@ -790,7 +691,7 @@ let filter = (pred, xs) =>
  * ```
  */
 let partition = (pred, xs) =>
-  Foldable.foldr(
+  foldr(
     x =>
       pred(x)
         ? Ley_Tuple.Bifunctor.first((<+>)(x))
@@ -818,8 +719,7 @@ let rec elemIndex = (e, xs) =>
   switch (xs) {
   | [] => None
   | [x, ...xs] =>
-    e == x
-      ? Some(0) : Ley_Option.Functor.(<$>)(Ley_Int.inc, elemIndex(e, xs))
+    e == x ? Some(0) : Ley_Option.Infix.(<$>)(Ley_Int.inc, elemIndex(e, xs))
   };
 
 let rec elemIndicesAux = (e, i, xs) =>
@@ -846,7 +746,7 @@ let rec findIndex = (pred, xs) =>
   | [] => None
   | [x, ...xs] =>
     pred(x)
-      ? Some(0) : Ley_Option.Functor.(<$>)(Ley_Int.inc, findIndex(pred, xs))
+      ? Some(0) : Ley_Option.Infix.(<$>)(Ley_Int.inc, findIndex(pred, xs))
   };
 
 let rec findIndicesAux = (pred, i, xs) =>
@@ -954,7 +854,7 @@ let lines = x =>
  * supply their own equality test.
  */
 let nub = xs =>
-  Foldable.foldr((x, acc) => notElem(x, acc) ? x <+> acc : acc, [], xs);
+  foldr((x, acc) => notElem(x, acc) ? x <+> acc : acc, [], xs);
 
 /**
  * `delete x` removes the first occurrence of `x` from its list argument.
@@ -1011,44 +911,44 @@ let rec disjoint = (xs, ys) =>
  */
 let sortBy = f => List.sort((a, b) => f(a, b) |> Ley_Ord.fromOrdering);
 
-/**
- * The largest element of a non-empty structure with respect to the given
- * comparison function.
- */
-let maximumBy = (f, xs) =>
-  Foldable.foldr1(
-    (x, acc) =>
-      f(x, acc)
-      |> (
-        fun
-        | Ley_Ord.GT => x
-        | EQ
-        | LT => acc
-      ),
-    xs,
-  );
+// /**
+//  * The largest element of a non-empty structure with respect to the given
+//  * comparison function.
+//  */
+// let maximumBy = (f, xs) =>
+//   foldr1(
+//     (x, acc) =>
+//       f(x, acc)
+//       |> (
+//         fun
+//         | Ley_Ord.GT => x
+//         | EQ
+//         | LT => acc
+//       ),
+//     xs,
+//   );
 
-/**
- * The least element of a non-empty structure with respect to the given
- * comparison function.
- */
-let minimumBy = (f, xs) =>
-  Foldable.foldr1(
-    (x, acc) =>
-      f(x, acc)
-      |> (
-        fun
-        | Ley_Ord.LT => x
-        | EQ
-        | GT => acc
-      ),
-    xs,
-  );
+// /**
+//  * The least element of a non-empty structure with respect to the given
+//  * comparison function.
+//  */
+// let minimumBy = (f, xs) =>
+//   Foldable.foldr1(
+//     (x, acc) =>
+//       f(x, acc)
+//       |> (
+//         fun
+//         | Ley_Ord.LT => x
+//         | EQ
+//         | GT => acc
+//       ),
+//     xs,
+//   );
 
 // Count by predicate
 
 let countBy = (f, xs) =>
-  Foldable.foldr(
+  foldr(
     x =>
       if (f(x)) {
         Ley_Int.inc;
@@ -1120,7 +1020,7 @@ let countMax = e => countMaxBy((==)(e));
 /**
  * Returns if the passed lists have at least one value in common.
  */
-let intersecting = (xs, ys) => Foldable.any(x => Foldable.elem(x, ys), xs);
+let intersecting = (xs, ys) => any(x => elem(x, ys), xs);
 
 // Lists and arrays
 
@@ -1174,7 +1074,7 @@ module Extra = {
    * A composition of `not` and `null`: Checks if a list has at least one
    * element.
    */
-  let notNull = xs => xs |> Foldable.null |> (!);
+  let notNull = xs => xs |> null |> (!);
 
   /**
    * A composition of `not` and `null`: Checks if a string is not empty.
@@ -1227,7 +1127,7 @@ module Extra = {
    * value.
    */
   let maximumOn = (f, xs) =>
-    Foldable.foldr(
+    foldr(
       (x, (m, max)) =>
         x |> f |> (res => res > max ? (Some(x), res) : (m, max)),
       (None, Js.Int.min),
@@ -1240,7 +1140,7 @@ module Extra = {
    * value.
    */
   let minimumOn = (f, xs) =>
-    Foldable.foldr(
+    foldr(
       (x, (m, min)) =>
         x |> f |> (res => res < min ? (Some(x), res) : (m, min)),
       (None, Js.Int.max),
@@ -1297,4 +1197,68 @@ module Safe = {
    * `Just` of the found element.
    */
   let atMay = (xs, i) => i < 0 ? None : List.nth_opt(xs, i);
+};
+
+module Infix = {
+  include (
+            Ley_Functor.MakeInfix({
+              type nonrec t('a) = t('a);
+
+              let fmap = fmap;
+            }):
+              Ley_Functor.Infix with type t('a) := t('a)
+          );
+
+  include (
+            Ley_Applicative.MakeInfix({
+              type nonrec t('a) = t('a);
+
+              let pure = pure;
+
+              let fmap = fmap;
+
+              let rec ap = (fs, xs) =>
+                switch (fs) {
+                | [] => []
+                | gs =>
+                  switch (xs) {
+                  | [] => []
+                  | [x, ...ys] => fmap(f => f(x), gs) @ ap(fs, ys)
+                  }
+                };
+            }):
+              Ley_Applicative.Infix with type t('a) := t('a)
+          );
+
+  include (
+            Ley_Applicative.Alternative.MakeInfix({
+              type nonrec t('a) = t('a);
+
+              let empty = [];
+
+              let alt = (xs, ys) =>
+                switch (xs) {
+                | [] => ys
+                | xs => xs
+                };
+            }):
+              Ley_Applicative.Alternative.Infix with type t('a) := t('a)
+          );
+
+  include (
+            Ley_Monad.MakeInfix({
+              type nonrec t('a) = t('a);
+
+              let pure = pure;
+
+              let fmap = fmap;
+
+              let rec bind = (f, xs) =>
+                switch (xs) {
+                | [] => []
+                | [y, ...ys] => f(y) @ bind(f, ys)
+                };
+            }):
+              Ley_Monad.Infix with type t('a) := t('a)
+          );
 };

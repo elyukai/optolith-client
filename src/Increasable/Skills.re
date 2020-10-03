@@ -1,5 +1,5 @@
 open Ley_Option;
-open Ley_Option.Functor;
+open Ley_Option.Infix;
 open Ley_List;
 open Hero.Activatable;
 
@@ -149,7 +149,7 @@ let isDecreasable =
     );
 
 module Routine = {
-  open Ley_Option.Monad;
+  open Ley_Option;
 
   let attributeThreshold = 13;
 

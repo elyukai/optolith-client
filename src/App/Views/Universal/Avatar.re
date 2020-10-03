@@ -2,7 +2,7 @@
 let make = (~className, ~overlay=?, ~src, ~onClick, ~alt) =>
   <div
     className={ClassNames.fold([
-      Ley_Option.Monad.return("avatar-wrapper"),
+      Ley_Option.return("avatar-wrapper"),
       className,
     ])}
     onClick>

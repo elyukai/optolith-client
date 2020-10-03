@@ -114,12 +114,6 @@ module IncreasableMultiEntry: {
   let decode: Json.Decode.decoder(t);
 };
 
-module All: {
-  type t('a) =
-    | Plain(list('a))
-    | ByLevel(Ley_IntMap.t(list('a)));
-};
-
 module DisplayOption: {
   type t =
     | Generate
@@ -127,52 +121,123 @@ module DisplayOption: {
     | ReplaceWith(string);
 };
 
+module Config: {
+  type t('a) = {
+    value: 'a,
+    displayOption: DisplayOption.t,
+  };
+};
+
+module General: {
+  type value =
+    | Sex(Sex.t)
+    | Race(Race.t)
+    | Culture(Culture.t)
+    | Pact(Pact.t)
+    | SocialStatus(SocialStatus.t)
+    | PrimaryAttribute(PrimaryAttribute.t)
+    | Activatable(Activatable.t)
+    | ActivatableMultiEntry(ActivatableMultiEntry.t)
+    | ActivatableMultiSelect(ActivatableMultiSelect.t)
+    | Increasable(Increasable.t)
+    | IncreasableMultiEntry(IncreasableMultiEntry.t);
+
+  type t = Config.t(value);
+
+  type multilingual;
+
+  let decodeMultilingual: Json.Decode.decoder(multilingual);
+
+  let resolveTranslations: (list(string), multilingual) => t;
+};
+
 module Profession: {
-  type t =
-    | Sex(Sex.t, DisplayOption.t)
-    | Race(Race.t, DisplayOption.t)
-    | Culture(Culture.t, DisplayOption.t)
-    | Activatable(Activatable.t, DisplayOption.t)
-    | Increasable(Increasable.t, DisplayOption.t);
+  type value =
+    | Sex(Sex.t)
+    | Race(Race.t)
+    | Culture(Culture.t)
+    | Activatable(Activatable.t)
+    | Increasable(Increasable.t);
 
-  type all = All.t(t);
+  type t = Config.t(value);
 
-  let decode: Json.Decode.decoder(all);
+  type multilingual;
+
+  let decodeMultilingual: Json.Decode.decoder(multilingual);
+
+  let resolveTranslations: (list(string), multilingual) => t;
 };
 
 module AdvantageDisadvantage: {
-  type t =
+  type value =
     | CommonSuggestedByRCP
-    | Sex(Sex.t, DisplayOption.t)
-    | Race(Race.t, DisplayOption.t)
-    | Culture(Culture.t, DisplayOption.t)
-    | Pact(Pact.t, DisplayOption.t)
-    | SocialStatus(SocialStatus.t, DisplayOption.t)
-    | PrimaryAttribute(PrimaryAttribute.t, DisplayOption.t)
-    | Activatable(Activatable.t, DisplayOption.t)
-    | ActivatableMultiEntry(ActivatableMultiEntry.t, DisplayOption.t)
-    | ActivatableMultiSelect(ActivatableMultiSelect.t, DisplayOption.t)
-    | Increasable(Increasable.t, DisplayOption.t)
-    | IncreasableMultiEntry(IncreasableMultiEntry.t, DisplayOption.t);
+    | Sex(Sex.t)
+    | Race(Race.t)
+    | Culture(Culture.t)
+    | Pact(Pact.t)
+    | SocialStatus(SocialStatus.t)
+    | PrimaryAttribute(PrimaryAttribute.t)
+    | Activatable(Activatable.t)
+    | ActivatableMultiEntry(ActivatableMultiEntry.t)
+    | ActivatableMultiSelect(ActivatableMultiSelect.t)
+    | Increasable(Increasable.t)
+    | IncreasableMultiEntry(IncreasableMultiEntry.t);
 
-  type all = All.t(t);
+  type t = Config.t(value);
 
-  let decode: Json.Decode.decoder(all);
+  type multilingual;
+
+  let decodeMultilingual: Json.Decode.decoder(multilingual);
+
+  let resolveTranslations: (list(string), multilingual) => t;
 };
 
-type t =
-  | Sex(Sex.t, DisplayOption.t)
-  | Race(Race.t, DisplayOption.t)
-  | Culture(Culture.t, DisplayOption.t)
-  | Pact(Pact.t, DisplayOption.t)
-  | SocialStatus(SocialStatus.t, DisplayOption.t)
-  | PrimaryAttribute(PrimaryAttribute.t, DisplayOption.t)
-  | Activatable(Activatable.t, DisplayOption.t)
-  | ActivatableMultiEntry(ActivatableMultiEntry.t, DisplayOption.t)
-  | ActivatableMultiSelect(ActivatableMultiSelect.t, DisplayOption.t)
-  | Increasable(Increasable.t, DisplayOption.t)
-  | IncreasableMultiEntry(IncreasableMultiEntry.t, DisplayOption.t);
+module Collection: {
+  module ByLevel: {
+    type t('a) =
+      | Plain(list('a))
+      | ByLevel(Ley_IntMap.t(list('a)));
 
-type all = All.t(t);
+    /**
+     * `getFirstLevel prerequisites` returns a list of the prerequisites that
+     * must always be met to activate the associated entry.
+     */
+    let getFirstLevel: t('a) => list('a);
 
-let decode: Json.Decode.decoder(all);
+    /**
+     * `concatRange oldLevel newLevel prerequisites` returns a list of the
+     * prerequisites of the matching levels of the passed prerequisites.
+     */
+    let concatRange: (option(int), option(int), t('a)) => list('a);
+  };
+
+  module General: {
+    type t = ByLevel.t(General.t);
+
+    type multilingual;
+
+    let decodeMultilingual: Json.Decode.decoder(multilingual);
+
+    let resolveTranslations: (list(string), multilingual) => t;
+  };
+
+  module Profession: {
+    type t = list(Profession.t);
+
+    type multilingual;
+
+    let decodeMultilingual: Json.Decode.decoder(multilingual);
+
+    let resolveTranslations: (list(string), multilingual) => t;
+  };
+
+  module AdvantageDisadvantage: {
+    type t = ByLevel.t(AdvantageDisadvantage.t);
+
+    type multilingual;
+
+    let decodeMultilingual: Json.Decode.decoder(multilingual);
+
+    let resolveTranslations: (list(string), multilingual) => t;
+  };
+};

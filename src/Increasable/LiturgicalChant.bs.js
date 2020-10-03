@@ -57,7 +57,7 @@ function decodeMultilingual(json) {
 
 function decode$1(langs, json) {
   var x = decodeMultilingual(json);
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,
@@ -73,7 +73,7 @@ function decode$1(langs, json) {
                         aspects: x.aspects,
                         ic: x.ic,
                         gr: x.gr,
-                        enhancements: Ley_Option$OptolithClient.Monad.$great$great$eq(x.enhancements, (function (param) {
+                        enhancements: Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, x.enhancements, (function (param) {
                                 return Enhancements$OptolithClient.resolveTranslations(langs, param);
                               })),
                         src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),

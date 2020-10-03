@@ -114,7 +114,7 @@ let lookup = (key, mp) =>
   mp
   |> Native.entries
   |> Js.Array.find(((k, _)) => k == key)
-  |> Ley_Option.Functor.(<$>)(snd);
+  |> Ley_Option.Infix.(<$>)(snd);
 
 let findWithDefault = (def, key, mp) =>
   mp |> lookup(key) |> Ley_Option.fromOption(def);

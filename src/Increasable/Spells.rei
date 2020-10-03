@@ -5,7 +5,7 @@ let getMax:
   (
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
-    ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
+    ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
     ~exceptionalSkill: option(Hero.Activatable.t),
     ~propertyKnowledge: option(Hero.Activatable.t),
     ~staticEntry: Spell.Static.t
@@ -19,11 +19,11 @@ let isIncreasable:
   (
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
-    ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
+    ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
     ~exceptionalSkill: option(Hero.Activatable.t),
     ~propertyKnowledge: option(Hero.Activatable.t),
     ~staticEntry: Spell.Static.t,
-    ~heroEntry: Hero.ActivatableSkill.t
+    ~heroEntry: ActivatableSkill.Dynamic.t
   ) =>
   bool;
 
@@ -37,9 +37,9 @@ let getMin:
   (
     ~propertyKnowledge: Hero.Activatable.t,
     ~staticSpells: Ley_IntMap.t(Spell.Static.t),
-    ~heroSpells: Ley_IntMap.t(Hero.ActivatableSkill.t),
+    ~heroSpells: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
     ~staticEntry: Spell.Static.t,
-    ~heroEntry: Hero.ActivatableSkill.t
+    ~heroEntry: ActivatableSkill.Dynamic.t
   ) =>
   option(int);
 
@@ -50,9 +50,9 @@ let isDecreasable:
   (
     ~propertyKnowledge: Hero.Activatable.t,
     ~staticSpells: Ley_IntMap.t(Spell.Static.t),
-    ~heroSpells: Ley_IntMap.t(Hero.ActivatableSkill.t),
+    ~heroSpells: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
     ~staticEntry: Spell.Static.t,
-    ~heroEntry: Hero.ActivatableSkill.t
+    ~heroEntry: ActivatableSkill.Dynamic.t
   ) =>
   bool;
 
@@ -62,6 +62,9 @@ module PropertyKnowledge: {
    * all property ids of which at least 3 spells are on SR 10 or higher.
    */
   let getAvailableProperties:
-    (Ley_IntMap.t(Spell.Static.t), Ley_IntMap.t(Hero.ActivatableSkill.t)) =>
+    (
+      Ley_IntMap.t(Spell.Static.t),
+      Ley_IntMap.t(ActivatableSkill.Dynamic.t)
+    ) =>
     list(int);
 };

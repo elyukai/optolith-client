@@ -34,13 +34,13 @@ var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
 function decodeMultilingual(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          prerequisite: JsonStrict$OptolithClient.optionalField("prerequisite", Prerequisite$OptolithClient.Decode.activatable, json),
+          prerequisite: JsonStrict$OptolithClient.optionalField("prerequisite", Prerequisite$OptolithClient.Activatable.decode, json),
           translations: Json_decode.field("translations", TranslationMap.decode, json)
         };
 }
 
 function resolveTranslations(langs, x) {
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,
@@ -64,13 +64,13 @@ var TranslationMap$1 = TranslationMap$OptolithClient.Make(Translations$1);
 function decodeMultilingual$1(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          prerequisite: Json_decode.field("prerequisite", Prerequisite$OptolithClient.Decode.activatable, json),
+          prerequisite: Json_decode.field("prerequisite", Prerequisite$OptolithClient.Activatable.decode, json),
           translations: Json_decode.field("translations", TranslationMap$1.decode, json)
         };
 }
 
 function resolveTranslations$1(langs, x) {
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap$1.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap$1.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,
@@ -140,7 +140,7 @@ function decodeMultilingual$2(json) {
 
 function decode$3(langs, json) {
   var x = decodeMultilingual$2(json);
-  return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap$2.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap$2.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 var match = x.enc;
                 var tmp;
                 switch (match) {
@@ -165,13 +165,13 @@ function decode$3(langs, json) {
                         gr: x.gr,
                         ic: x.ic,
                         applications: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, (function (applications) {
-                                return Ley_List$OptolithClient.Foldable.foldr((function (application) {
+                                return Curry._3(Ley_List$OptolithClient.foldr, (function (application) {
                                               return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, Curry._1(Ley_IntMap$OptolithClient.insert, application.id), resolveTranslations(langs, application));
                                             }), Ley_IntMap$OptolithClient.empty, applications);
                               }), x.applications),
                         applicationsInput: translation.applicationsInput,
                         uses: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, (function (uses) {
-                                return Ley_List$OptolithClient.Foldable.foldr((function (use) {
+                                return Curry._3(Ley_List$OptolithClient.foldr, (function (use) {
                                               return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, Curry._1(Ley_IntMap$OptolithClient.insert, use.id), resolveTranslations$1(langs, use));
                                             }), Ley_IntMap$OptolithClient.empty, uses);
                               }), x.uses),

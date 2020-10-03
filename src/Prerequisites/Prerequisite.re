@@ -224,34 +224,6 @@ module IncreasableMultiEntry = {
     };
 };
 
-module All = {
-  type t('a) =
-    | Plain(list('a))
-    | ByLevel(Ley_IntMap.t(list('a)));
-
-  let decode = decoder =>
-    Json.Decode.(
-      field("type", string)
-      |> andThen(
-           fun
-           | "Plain" => (json => json |> list(decoder) |> (xs => Plain(xs)))
-           | "ByLevel" => (
-               json =>
-                 json
-                 |> list(json =>
-                      (
-                        json |> field("level", int),
-                        json |> field("prerequisites", list(decoder)),
-                      )
-                    )
-                 |> (xs => ByLevel(Ley_IntMap.fromList(xs)))
-             )
-           | str =>
-             raise(DecodeError("Unknown prerequisite list type: " ++ str)),
-         )
-    );
-};
-
 module DisplayOption = {
   type t =
     | Generate
@@ -266,7 +238,12 @@ module DisplayOption = {
 
   module TranslationMap = TranslationMap.Make(Translation);
 
-  let decode = (langs, json) =>
+  type multilingual =
+    | MultilingualGenerate
+    | MultilingualHide
+    | MultilingualReplaceWith(TranslationMap.t);
+
+  let decodeMultilingual = json =>
     JsonStrict.(
       json
       |> optionalField(
@@ -274,188 +251,327 @@ module DisplayOption = {
            field("type", string)
            |> andThen(
                 fun
-                | "Hide" => (_ => Hide)
+                | "Hide" => (_ => MultilingualHide)
                 | "ByLevel" => (
                     json =>
                       json
                       |> field("value", TranslationMap.decode)
-                      |> TranslationMap.getFromLanguageOrder(langs)
-                      |> Ley_Option.fromOption(Chars.mdash)
-                      |> (str => ReplaceWith(str))
+                      |> (mp => MultilingualReplaceWith(mp))
                   )
                 | str =>
                   raise(DecodeError("Unknown display option type: " ++ str)),
               ),
          )
-      |> Ley_Option.fromOption(Generate)
+      |> Ley_Option.fromOption(MultilingualGenerate)
     );
+
+  let resolveTranslations = (langs, x) =>
+    switch (x) {
+    | MultilingualGenerate => Generate
+    | MultilingualHide => Hide
+    | MultilingualReplaceWith(mp) =>
+      mp
+      |> TranslationMap.getFromLanguageOrder(langs)
+      |> Ley_Option.fromOption(Chars.mdash)
+      |> (str => ReplaceWith(str))
+    };
 };
 
-let decodeSingle = (langs, decoder, wrap, json) =>
-  Json.Decode.(
-    wrap(
-      json |> field("value", decoder),
-      json |> DisplayOption.decode(langs),
-    )
-  );
+module Config = {
+  type t('a) = {
+    value: 'a,
+    displayOption: DisplayOption.t,
+  };
 
-module Profession = {
-  type t =
-    | Sex(Sex.t, DisplayOption.t)
-    | Race(Race.t, DisplayOption.t)
-    | Culture(Culture.t, DisplayOption.t)
-    | Activatable(Activatable.t, DisplayOption.t)
-    | Increasable(Increasable.t, DisplayOption.t);
+  type multilingual('a) = {
+    value: 'a,
+    displayOption: DisplayOption.multilingual,
+  };
 
-  type all = list(t);
-
-  let decode = langs =>
-    All.decode(
-      Json.Decode.(
-        field("type", string)
-        |> andThen(
-             fun
-             | "Sex" => decodeSingle(langs, Sex.decode, (v, d) => Sex(v, d))
-             | "Race" =>
-               decodeSingle(langs, Race.decode, (v, d) => Race(v, d))
-             | "Culture" =>
-               decodeSingle(langs, Culture.decode, (v, d) => Culture(v, d))
-             | "Activatable" =>
-               decodeSingle(langs, Activatable.decode, (v, d) =>
-                 Activatable(v, d)
-               )
-             | "Increasable" =>
-               decodeSingle(langs, Increasable.decode, (v, d) =>
-                 Increasable(v, d)
-               )
-             | str =>
-               raise(DecodeError("Unknown prerequisite type: " ++ str)),
-           )
-      ),
+  let decodeMultilingual = (decoder, wrap: 'a => 'b, json) =>
+    Json.Decode.(
+      (
+        {
+          value: json |> field("value", decoder) |> wrap,
+          displayOption: json |> DisplayOption.decodeMultilingual,
+        }:
+          multilingual('b)
+      )
     );
+
+  let resolveTranslations =
+      (langs, {value, displayOption}: multilingual('a)): t('a) => {
+    value,
+    displayOption: DisplayOption.resolveTranslations(langs, displayOption),
+  };
 };
 
-module AdvantageDisadvantage = {
-  type t =
-    | CommonSuggestedByRCP
-    | Sex(Sex.t, DisplayOption.t)
-    | Race(Race.t, DisplayOption.t)
-    | Culture(Culture.t, DisplayOption.t)
-    | Pact(Pact.t, DisplayOption.t)
-    | SocialStatus(SocialStatus.t, DisplayOption.t)
-    | PrimaryAttribute(PrimaryAttribute.t, DisplayOption.t)
-    | Activatable(Activatable.t, DisplayOption.t)
-    | ActivatableMultiEntry(ActivatableMultiEntry.t, DisplayOption.t)
-    | ActivatableMultiSelect(ActivatableMultiSelect.t, DisplayOption.t)
-    | Increasable(Increasable.t, DisplayOption.t)
-    | IncreasableMultiEntry(IncreasableMultiEntry.t, DisplayOption.t);
+module General = {
+  type value =
+    | Sex(Sex.t)
+    | Race(Race.t)
+    | Culture(Culture.t)
+    | Pact(Pact.t)
+    | SocialStatus(SocialStatus.t)
+    | PrimaryAttribute(PrimaryAttribute.t)
+    | Activatable(Activatable.t)
+    | ActivatableMultiEntry(ActivatableMultiEntry.t)
+    | ActivatableMultiSelect(ActivatableMultiSelect.t)
+    | Increasable(Increasable.t)
+    | IncreasableMultiEntry(IncreasableMultiEntry.t);
 
-  type all = All.t(t);
+  type t = Config.t(value);
 
-  let decode = langs =>
-    All.decode(
-      Json.Decode.(
-        field("type", string)
-        |> andThen(
-             fun
-             | "CommonSuggestedByRCP" => (_ => CommonSuggestedByRCP)
-             | "Sex" => decodeSingle(langs, Sex.decode, (v, d) => Sex(v, d))
-             | "Race" =>
-               decodeSingle(langs, Race.decode, (v, d) => Race(v, d))
-             | "Culture" =>
-               decodeSingle(langs, Culture.decode, (v, d) => Culture(v, d))
-             | "Pact" =>
-               decodeSingle(langs, Pact.decode, (v, d) => Pact(v, d))
-             | "SocialStatus" =>
-               decodeSingle(langs, SocialStatus.decode, (v, d) =>
-                 SocialStatus(v, d)
-               )
-             | "PrimaryAttribute" =>
-               decodeSingle(langs, PrimaryAttribute.decode, (v, d) =>
-                 PrimaryAttribute(v, d)
-               )
-             | "Activatable" =>
-               decodeSingle(langs, Activatable.decode, (v, d) =>
-                 Activatable(v, d)
-               )
-             | "ActivatableMultiEntry" =>
-               decodeSingle(langs, ActivatableMultiEntry.decode, (v, d) =>
-                 ActivatableMultiEntry(v, d)
-               )
-             | "ActivatableMultiSelect" =>
-               decodeSingle(langs, ActivatableMultiSelect.decode, (v, d) =>
-                 ActivatableMultiSelect(v, d)
-               )
-             | "Increasable" =>
-               decodeSingle(langs, Increasable.decode, (v, d) =>
-                 Increasable(v, d)
-               )
-             | "IncreasableMultiEntry" =>
-               decodeSingle(langs, IncreasableMultiEntry.decode, (v, d) =>
-                 IncreasableMultiEntry(v, d)
-               )
-             | str =>
-               raise(DecodeError("Unknown prerequisite type: " ++ str)),
-           )
-      ),
-    );
-};
+  type multilingual = Config.multilingual(value);
 
-type t =
-  | Sex(Sex.t, DisplayOption.t)
-  | Race(Race.t, DisplayOption.t)
-  | Culture(Culture.t, DisplayOption.t)
-  | Pact(Pact.t, DisplayOption.t)
-  | SocialStatus(SocialStatus.t, DisplayOption.t)
-  | PrimaryAttribute(PrimaryAttribute.t, DisplayOption.t)
-  | Activatable(Activatable.t, DisplayOption.t)
-  | ActivatableMultiEntry(ActivatableMultiEntry.t, DisplayOption.t)
-  | ActivatableMultiSelect(ActivatableMultiSelect.t, DisplayOption.t)
-  | Increasable(Increasable.t, DisplayOption.t)
-  | IncreasableMultiEntry(IncreasableMultiEntry.t, DisplayOption.t);
-
-type all = All.t(t);
-
-let decode = langs =>
-  All.decode(
+  let decodeMultilingual =
     Json.Decode.(
       field("type", string)
       |> andThen(
            fun
-           | "Sex" => decodeSingle(langs, Sex.decode, (v, d) => Sex(v, d))
-           | "Race" => decodeSingle(langs, Race.decode, (v, d) => Race(v, d))
+           | "Sex" => Config.decodeMultilingual(Sex.decode, v => Sex(v))
+           | "Race" => Config.decodeMultilingual(Race.decode, v => Race(v))
            | "Culture" =>
-             decodeSingle(langs, Culture.decode, (v, d) => Culture(v, d))
-           | "Pact" => decodeSingle(langs, Pact.decode, (v, d) => Pact(v, d))
+             Config.decodeMultilingual(Culture.decode, v => Culture(v))
+           | "Pact" => Config.decodeMultilingual(Pact.decode, v => Pact(v))
            | "SocialStatus" =>
-             decodeSingle(langs, SocialStatus.decode, (v, d) =>
-               SocialStatus(v, d)
+             Config.decodeMultilingual(SocialStatus.decode, v =>
+               SocialStatus(v)
              )
            | "PrimaryAttribute" =>
-             decodeSingle(langs, PrimaryAttribute.decode, (v, d) =>
-               PrimaryAttribute(v, d)
+             Config.decodeMultilingual(PrimaryAttribute.decode, v =>
+               PrimaryAttribute(v)
              )
            | "Activatable" =>
-             decodeSingle(langs, Activatable.decode, (v, d) =>
-               Activatable(v, d)
+             Config.decodeMultilingual(Activatable.decode, v =>
+               Activatable(v)
              )
            | "ActivatableMultiEntry" =>
-             decodeSingle(langs, ActivatableMultiEntry.decode, (v, d) =>
-               ActivatableMultiEntry(v, d)
+             Config.decodeMultilingual(ActivatableMultiEntry.decode, v =>
+               ActivatableMultiEntry(v)
              )
            | "ActivatableMultiSelect" =>
-             decodeSingle(langs, ActivatableMultiSelect.decode, (v, d) =>
-               ActivatableMultiSelect(v, d)
+             Config.decodeMultilingual(ActivatableMultiSelect.decode, v =>
+               ActivatableMultiSelect(v)
              )
            | "Increasable" =>
-             decodeSingle(langs, Increasable.decode, (v, d) =>
-               Increasable(v, d)
+             Config.decodeMultilingual(Increasable.decode, v =>
+               Increasable(v)
              )
            | "IncreasableMultiEntry" =>
-             decodeSingle(langs, IncreasableMultiEntry.decode, (v, d) =>
-               IncreasableMultiEntry(v, d)
+             Config.decodeMultilingual(IncreasableMultiEntry.decode, v =>
+               IncreasableMultiEntry(v)
              )
            | str => raise(DecodeError("Unknown prerequisite type: " ++ str)),
          )
-    ),
-  );
+    );
+
+  let resolveTranslations = Config.resolveTranslations;
+};
+
+module Profession = {
+  type value =
+    | Sex(Sex.t)
+    | Race(Race.t)
+    | Culture(Culture.t)
+    | Activatable(Activatable.t)
+    | Increasable(Increasable.t);
+
+  type t = Config.t(value);
+
+  type multilingual = Config.multilingual(value);
+
+  let decodeMultilingual =
+    Json.Decode.(
+      field("type", string)
+      |> andThen(
+           fun
+           | "Sex" => Config.decodeMultilingual(Sex.decode, v => Sex(v))
+           | "Race" => Config.decodeMultilingual(Race.decode, v => Race(v))
+           | "Culture" =>
+             Config.decodeMultilingual(Culture.decode, v => Culture(v))
+           | "Activatable" =>
+             Config.decodeMultilingual(Activatable.decode, v =>
+               Activatable(v)
+             )
+           | "Increasable" =>
+             Config.decodeMultilingual(Increasable.decode, v =>
+               Increasable(v)
+             )
+           | str => raise(DecodeError("Unknown prerequisite type: " ++ str)),
+         )
+    );
+
+  let resolveTranslations = Config.resolveTranslations;
+};
+
+module AdvantageDisadvantage = {
+  type value =
+    | CommonSuggestedByRCP
+    | Sex(Sex.t)
+    | Race(Race.t)
+    | Culture(Culture.t)
+    | Pact(Pact.t)
+    | SocialStatus(SocialStatus.t)
+    | PrimaryAttribute(PrimaryAttribute.t)
+    | Activatable(Activatable.t)
+    | ActivatableMultiEntry(ActivatableMultiEntry.t)
+    | ActivatableMultiSelect(ActivatableMultiSelect.t)
+    | Increasable(Increasable.t)
+    | IncreasableMultiEntry(IncreasableMultiEntry.t);
+
+  type t = Config.t(value);
+
+  type multilingual = Config.multilingual(value);
+
+  let decodeMultilingual =
+    Json.Decode.(
+      field("type", string)
+      |> andThen(
+           fun
+           | "CommonSuggestedByRCP" => (
+               _ => (
+                 {
+                   value: CommonSuggestedByRCP,
+                   displayOption: MultilingualGenerate,
+                 }: multilingual
+               )
+             )
+           | "Sex" => Config.decodeMultilingual(Sex.decode, v => Sex(v))
+           | "Race" => Config.decodeMultilingual(Race.decode, v => Race(v))
+           | "Culture" =>
+             Config.decodeMultilingual(Culture.decode, v => Culture(v))
+           | "Pact" => Config.decodeMultilingual(Pact.decode, v => Pact(v))
+           | "SocialStatus" =>
+             Config.decodeMultilingual(SocialStatus.decode, v =>
+               SocialStatus(v)
+             )
+           | "PrimaryAttribute" =>
+             Config.decodeMultilingual(PrimaryAttribute.decode, v =>
+               PrimaryAttribute(v)
+             )
+           | "Activatable" =>
+             Config.decodeMultilingual(Activatable.decode, v =>
+               Activatable(v)
+             )
+           | "ActivatableMultiEntry" =>
+             Config.decodeMultilingual(ActivatableMultiEntry.decode, v =>
+               ActivatableMultiEntry(v)
+             )
+           | "ActivatableMultiSelect" =>
+             Config.decodeMultilingual(ActivatableMultiSelect.decode, v =>
+               ActivatableMultiSelect(v)
+             )
+           | "Increasable" =>
+             Config.decodeMultilingual(Increasable.decode, v =>
+               Increasable(v)
+             )
+           | "IncreasableMultiEntry" =>
+             Config.decodeMultilingual(IncreasableMultiEntry.decode, v =>
+               IncreasableMultiEntry(v)
+             )
+           | str => raise(DecodeError("Unknown prerequisite type: " ++ str)),
+         )
+    );
+
+  let resolveTranslations = Config.resolveTranslations;
+};
+
+module Collection = {
+  module Plain = {
+    type t('a) = list('a);
+
+    let decodeMultilingual = Json.Decode.list;
+
+    let resolveTranslations = (langs, f, xs) =>
+      xs |> Ley_List.map(f(langs));
+  };
+
+  module ByLevel = {
+    type t('a) =
+      | Plain(list('a))
+      | ByLevel(Ley_IntMap.t(list('a)));
+
+    let decodeMultilingual = decoder =>
+      Json.Decode.(
+        field("type", string)
+        |> andThen(
+             fun
+             | "Plain" => (
+                 json => json |> list(decoder) |> (xs => Plain(xs))
+               )
+             | "ByLevel" => (
+                 json =>
+                   json
+                   |> list(json =>
+                        (
+                          json |> field("level", int),
+                          json |> field("prerequisites", list(decoder)),
+                        )
+                      )
+                   |> (xs => ByLevel(Ley_IntMap.fromList(xs)))
+               )
+             | str =>
+               raise(DecodeError("Unknown prerequisite list type: " ++ str)),
+           )
+      );
+
+    let resolveTranslations = (langs, f, x) =>
+      switch (x) {
+      | Plain(xs) => xs |> Ley_List.map(f(langs)) |> (xs => Plain(xs))
+      | ByLevel(mp) =>
+        mp |> Ley_IntMap.map(Ley_List.map(f(langs))) |> (mp => ByLevel(mp))
+      };
+
+    let getFirstLevel = prerequisites =>
+      switch (prerequisites) {
+      | Plain(xs) => xs
+      | ByLevel(mp) =>
+        mp |> Ley_IntMap.lookup(1) |> Ley_Option.fromOption([])
+      };
+
+    let makeRangePredicate = (oldLevel, newLevel) =>
+      switch (oldLevel, newLevel) {
+      // Used for changing level
+      | (Some(oldLevel), Some(newLevel)) =>
+        let (min, max) = Ley_Int.minmax(oldLevel, newLevel);
+        Ley_Ix.inRange((min + 1, max));
+      // Used for deactivating an entry
+      | (Some(level), None)
+      // Used for activating an entry
+      | (None, Some(level)) => (>=)(level)
+      | (None, None) => Ley_Function.const(true)
+      };
+
+    let filterByLevel = (pred, mp) => {
+      Ley_IntMap.filterWithKey((k, _) => pred(k), mp);
+    };
+
+    let concatRange = (oldLevel, newLevel, prerequisites) => {
+      let pred = makeRangePredicate(oldLevel, newLevel);
+
+      switch (prerequisites) {
+      | Plain(xs) => pred(1) ? xs : []
+      | ByLevel(mp) => mp |> filterByLevel(pred) |> Ley_IntMap.Foldable.concat
+      };
+    };
+  };
+
+  module Make = (Wrapper: Decoder.SubTypeWrapper, Main: Decoder.SubType) => {
+    type t = Wrapper.t(Main.t);
+
+    type multilingual = Wrapper.t(Main.multilingual);
+
+    let decodeMultilingual =
+      Wrapper.decodeMultilingual(Main.decodeMultilingual);
+
+    let resolveTranslations = (langs, x) =>
+      Wrapper.resolveTranslations(langs, Main.resolveTranslations, x);
+  };
+
+  module General = Make(ByLevel, General);
+
+  module Profession = Make(Plain, Profession);
+
+  module AdvantageDisadvantage = Make(ByLevel, AdvantageDisadvantage);
+};

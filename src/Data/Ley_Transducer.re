@@ -1,5 +1,3 @@
-module L = Ley_List;
-
 type fold('a, 'b) = ('a, 'b) => 'b;
 
 type transducer('a, 'b, 'c) = fold('b, 'c) => fold('a, 'c);
@@ -20,4 +18,4 @@ let mapOptionT = (f, fold, x, acc) =>
   | None => acc
   };
 
-let transduceList = (t, xs) => L.Foldable.foldr(t(L.cons), [], xs);
+let transduceList = (t, xs) => Ley_List.foldr(t(Ley_List.cons), [], xs);

@@ -58,7 +58,7 @@ function ActionSheet(Props) {
                         return React.createElement("p", {
                                     className: "description"
                                   }, ReactUtils$OptolithClient.s(str));
-                      }), description), Ley_List$OptolithClient.listToArray(Ley_List$OptolithClient.map((function (button) {
+                      }), description), Ley_List$OptolithClient.listToArray(Curry._2(Ley_List$OptolithClient.map, (function (button) {
                             return React.createElement(ActionSheet$Button, {
                                         label: button.label,
                                         value: button.value,

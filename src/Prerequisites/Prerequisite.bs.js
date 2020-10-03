@@ -3,9 +3,15 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Id$OptolithClient from "../Misc/Id.bs.js";
+import * as Chars$OptolithClient from "../Utilities/Chars.bs.js";
+import * as Ley_Ix$OptolithClient from "../Data/Ley_Ix.bs.js";
+import * as Ley_Int$OptolithClient from "../Data/Ley_Int.bs.js";
+import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
+import * as Ley_Function$OptolithClient from "../Data/Ley_Function.bs.js";
+import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
 function partial_arg_0(param) {
   return Json_decode.map((function (id) {
@@ -312,7 +318,378 @@ function decode$8(json) {
         };
 }
 
-function decode$9(decoder) {
+var Translation = {
+  decode: Json_decode.string
+};
+
+var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
+
+function decodeMultilingual(json) {
+  return Ley_Option$OptolithClient.fromOption(/* MultilingualGenerate */0, JsonStrict$OptolithClient.optionalField("displayOption", (function (param) {
+                    return JsonStrict$OptolithClient.andThen((function (str) {
+                                  switch (str) {
+                                    case "ByLevel" :
+                                        return function (json) {
+                                          return /* MultilingualReplaceWith */{
+                                                  _0: JsonStrict$OptolithClient.field("value", TranslationMap.decode, json)
+                                                };
+                                        };
+                                    case "Hide" :
+                                        return function (param) {
+                                          return /* MultilingualHide */1;
+                                        };
+                                    default:
+                                      throw {
+                                            RE_EXN_ID: JsonStrict$OptolithClient.DecodeError,
+                                            _1: "Unknown display option type: " + str,
+                                            Error: new Error()
+                                          };
+                                  }
+                                }), (function (param) {
+                                  return JsonStrict$OptolithClient.field("type", JsonStrict$OptolithClient.string, param);
+                                }), param);
+                  }), json));
+}
+
+function resolveTranslations(langs, x) {
+  if (typeof x === "number") {
+    if (x !== 0) {
+      return /* Hide */1;
+    } else {
+      return /* Generate */0;
+    }
+  } else {
+    return /* ReplaceWith */{
+            _0: Ley_Option$OptolithClient.fromOption(Chars$OptolithClient.mdash, Curry._2(TranslationMap.getFromLanguageOrder, langs, x._0))
+          };
+  }
+}
+
+function decodeMultilingual$1(decoder, wrap, json) {
+  return {
+          value: Curry._1(wrap, Json_decode.field("value", decoder, json)),
+          displayOption: decodeMultilingual(json)
+        };
+}
+
+function resolveTranslations$1(langs, param) {
+  return {
+          value: param.value,
+          displayOption: resolveTranslations(langs, param.displayOption)
+        };
+}
+
+function decodeMultilingual$2(param) {
+  return Json_decode.andThen((function (str) {
+                switch (str) {
+                  case "Activatable" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$4, (function (v) {
+                                      return {
+                                              TAG: /* Activatable */6,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "ActivatableMultiEntry" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$5, (function (v) {
+                                      return {
+                                              TAG: /* ActivatableMultiEntry */7,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "ActivatableMultiSelect" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$6, (function (v) {
+                                      return {
+                                              TAG: /* ActivatableMultiSelect */8,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Culture" :
+                      return function (param) {
+                        return decodeMultilingual$1(oneOrManyInt, (function (v) {
+                                      return {
+                                              TAG: /* Culture */2,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Increasable" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$7, (function (v) {
+                                      return {
+                                              TAG: /* Increasable */9,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "IncreasableMultiEntry" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$8, (function (v) {
+                                      return {
+                                              TAG: /* IncreasableMultiEntry */10,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Pact" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$2, (function (v) {
+                                      return {
+                                              TAG: /* Pact */3,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "PrimaryAttribute" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$3, (function (v) {
+                                      return {
+                                              TAG: /* PrimaryAttribute */5,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Race" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$1, (function (v) {
+                                      return {
+                                              TAG: /* Race */1,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Sex" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode, (function (v) {
+                                      return {
+                                              TAG: /* Sex */0,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "SocialStatus" :
+                      return function (param) {
+                        return decodeMultilingual$1(Json_decode.$$int, (function (v) {
+                                      return {
+                                              TAG: /* SocialStatus */4,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  default:
+                    throw {
+                          RE_EXN_ID: Json_decode.DecodeError,
+                          _1: "Unknown prerequisite type: " + str,
+                          Error: new Error()
+                        };
+                }
+              }), (function (param) {
+                return Json_decode.field("type", Json_decode.string, param);
+              }), param);
+}
+
+var General = {
+  decodeMultilingual: decodeMultilingual$2,
+  resolveTranslations: resolveTranslations$1
+};
+
+function decodeMultilingual$3(param) {
+  return Json_decode.andThen((function (str) {
+                switch (str) {
+                  case "Activatable" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$4, (function (v) {
+                                      return {
+                                              TAG: /* Activatable */3,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Culture" :
+                      return function (param) {
+                        return decodeMultilingual$1(oneOrManyInt, (function (v) {
+                                      return {
+                                              TAG: /* Culture */2,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Increasable" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$7, (function (v) {
+                                      return {
+                                              TAG: /* Increasable */4,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Race" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$1, (function (v) {
+                                      return {
+                                              TAG: /* Race */1,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Sex" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode, (function (v) {
+                                      return {
+                                              TAG: /* Sex */0,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  default:
+                    throw {
+                          RE_EXN_ID: Json_decode.DecodeError,
+                          _1: "Unknown prerequisite type: " + str,
+                          Error: new Error()
+                        };
+                }
+              }), (function (param) {
+                return Json_decode.field("type", Json_decode.string, param);
+              }), param);
+}
+
+var Profession = {
+  decodeMultilingual: decodeMultilingual$3,
+  resolveTranslations: resolveTranslations$1
+};
+
+function decodeMultilingual$4(param) {
+  return Json_decode.andThen((function (str) {
+                switch (str) {
+                  case "Activatable" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$4, (function (v) {
+                                      return {
+                                              TAG: /* Activatable */6,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "ActivatableMultiEntry" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$5, (function (v) {
+                                      return {
+                                              TAG: /* ActivatableMultiEntry */7,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "ActivatableMultiSelect" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$6, (function (v) {
+                                      return {
+                                              TAG: /* ActivatableMultiSelect */8,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "CommonSuggestedByRCP" :
+                      return function (param) {
+                        return {
+                                value: /* CommonSuggestedByRCP */0,
+                                displayOption: /* MultilingualGenerate */0
+                              };
+                      };
+                  case "Culture" :
+                      return function (param) {
+                        return decodeMultilingual$1(oneOrManyInt, (function (v) {
+                                      return {
+                                              TAG: /* Culture */2,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Increasable" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$7, (function (v) {
+                                      return {
+                                              TAG: /* Increasable */9,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "IncreasableMultiEntry" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$8, (function (v) {
+                                      return {
+                                              TAG: /* IncreasableMultiEntry */10,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Pact" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$2, (function (v) {
+                                      return {
+                                              TAG: /* Pact */3,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "PrimaryAttribute" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$3, (function (v) {
+                                      return {
+                                              TAG: /* PrimaryAttribute */5,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Race" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode$1, (function (v) {
+                                      return {
+                                              TAG: /* Race */1,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Sex" :
+                      return function (param) {
+                        return decodeMultilingual$1(decode, (function (v) {
+                                      return {
+                                              TAG: /* Sex */0,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "SocialStatus" :
+                      return function (param) {
+                        return decodeMultilingual$1(Json_decode.$$int, (function (v) {
+                                      return {
+                                              TAG: /* SocialStatus */4,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  default:
+                    throw {
+                          RE_EXN_ID: Json_decode.DecodeError,
+                          _1: "Unknown prerequisite type: " + str,
+                          Error: new Error()
+                        };
+                }
+              }), (function (param) {
+                return Json_decode.field("type", Json_decode.string, param);
+              }), param);
+}
+
+var AdvantageDisadvantage = {
+  decodeMultilingual: decodeMultilingual$4,
+  resolveTranslations: resolveTranslations$1
+};
+
+function decodeMultilingual$5(decoder) {
   return function (param) {
     return Json_decode.andThen((function (str) {
                   switch (str) {
@@ -351,363 +728,104 @@ function decode$9(decoder) {
   };
 }
 
-function decode$10(json) {
-  return Ley_Option$OptolithClient.fromOption(/* Generate */0, JsonStrict$OptolithClient.optionalField("displayOption", (function (param) {
-                    return JsonStrict$OptolithClient.andThen((function (str) {
-                                  switch (str) {
-                                    case "ByLevel" :
-                                        return function (json) {
-                                          return /* ReplaceWith */{
-                                                  _0: JsonStrict$OptolithClient.field("value", JsonStrict$OptolithClient.string, json)
-                                                };
-                                        };
-                                    case "Hide" :
-                                        return function (param) {
-                                          return /* Hide */1;
-                                        };
-                                    default:
-                                      throw {
-                                            RE_EXN_ID: JsonStrict$OptolithClient.DecodeError,
-                                            _1: "Unknown display option type: " + str,
-                                            Error: new Error()
-                                          };
-                                  }
-                                }), (function (param) {
-                                  return JsonStrict$OptolithClient.field("type", JsonStrict$OptolithClient.string, param);
-                                }), param);
-                  }), json));
+function resolveTranslations$2(langs, f, x) {
+  if (x.TAG) {
+    return {
+            TAG: /* ByLevel */1,
+            _0: Curry._2(Ley_IntMap$OptolithClient.map, Curry._1(Ley_List$OptolithClient.map, Curry._1(f, langs)), x._0)
+          };
+  } else {
+    return {
+            TAG: /* Plain */0,
+            _0: Curry._2(Ley_List$OptolithClient.map, Curry._1(f, langs), x._0)
+          };
+  }
 }
 
-function decodeSingle(decoder, wrap, json) {
-  return Curry._2(wrap, Json_decode.field("value", decoder, json), decode$10(json));
+function getFirstLevel(prerequisites) {
+  if (prerequisites.TAG) {
+    return Ley_Option$OptolithClient.fromOption(/* [] */0, Curry._2(Ley_IntMap$OptolithClient.lookup, 1, prerequisites._0));
+  } else {
+    return prerequisites._0;
+  }
 }
 
-var decode$11 = decode$9(function (param) {
-      return Json_decode.andThen((function (str) {
-                    switch (str) {
-                      case "Activatable" :
-                          return function (param) {
-                            return decodeSingle(decode$4, (function (v, d) {
-                                          return {
-                                                  TAG: /* Activatable */3,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Culture" :
-                          return function (param) {
-                            return decodeSingle(oneOrManyInt, (function (v, d) {
-                                          return {
-                                                  TAG: /* Culture */2,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Increasable" :
-                          return function (param) {
-                            return decodeSingle(decode$7, (function (v, d) {
-                                          return {
-                                                  TAG: /* Increasable */4,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Race" :
-                          return function (param) {
-                            return decodeSingle(decode$1, (function (v, d) {
-                                          return {
-                                                  TAG: /* Race */1,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Sex" :
-                          return function (param) {
-                            return decodeSingle(decode, (function (v, d) {
-                                          return {
-                                                  TAG: /* Sex */0,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      default:
-                        throw {
-                              RE_EXN_ID: Json_decode.DecodeError,
-                              _1: "Unknown prerequisite type: " + str,
-                              Error: new Error()
-                            };
-                    }
-                  }), (function (param) {
-                    return Json_decode.field("type", Json_decode.string, param);
-                  }), param);
-    });
+function makeRangePredicate(oldLevel, newLevel) {
+  var level;
+  if (oldLevel !== undefined) {
+    if (newLevel !== undefined) {
+      var match = Ley_Int$OptolithClient.minmax(oldLevel, newLevel);
+      var partial_arg_0 = match[0] + 1 | 0;
+      var partial_arg_1 = match[1];
+      var partial_arg = [
+        partial_arg_0,
+        partial_arg_1
+      ];
+      return function (param) {
+        return Ley_Ix$OptolithClient.inRange(partial_arg, param);
+      };
+    }
+    level = oldLevel;
+  } else {
+    if (newLevel === undefined) {
+      return function (param) {
+        return Ley_Function$OptolithClient.$$const(true, param);
+      };
+    }
+    level = newLevel;
+  }
+  return function (param) {
+    return level >= param;
+  };
+}
 
-var Profession = {
-  decode: decode$11
+function concatRange(oldLevel, newLevel, prerequisites) {
+  var pred = makeRangePredicate(oldLevel, newLevel);
+  if (prerequisites.TAG) {
+    return Curry._1(Ley_IntMap$OptolithClient.IntMap.Foldable.concat, Curry._2(Ley_IntMap$OptolithClient.filterWithKey, (function (k, param) {
+                      return Curry._1(pred, k);
+                    }), prerequisites._0));
+  } else if (Curry._1(pred, 1)) {
+    return prerequisites._0;
+  } else {
+    return /* [] */0;
+  }
+}
+
+var decodeMultilingual$6 = decodeMultilingual$5(decodeMultilingual$2);
+
+function resolveTranslations$3(langs, x) {
+  return resolveTranslations$2(langs, resolveTranslations$1, x);
+}
+
+var General$1 = {
+  decodeMultilingual: decodeMultilingual$6,
+  resolveTranslations: resolveTranslations$3
 };
 
-var decode$12 = decode$9(function (param) {
-      return Json_decode.andThen((function (str) {
-                    switch (str) {
-                      case "Activatable" :
-                          return function (param) {
-                            return decodeSingle(decode$4, (function (v, d) {
-                                          return {
-                                                  TAG: /* Activatable */6,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "ActivatableMultiEntry" :
-                          return function (param) {
-                            return decodeSingle(decode$5, (function (v, d) {
-                                          return {
-                                                  TAG: /* ActivatableMultiEntry */7,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "ActivatableMultiSelect" :
-                          return function (param) {
-                            return decodeSingle(decode$6, (function (v, d) {
-                                          return {
-                                                  TAG: /* ActivatableMultiSelect */8,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "CommonSuggestedByRCP" :
-                          return function (param) {
-                            return /* CommonSuggestedByRCP */0;
-                          };
-                      case "Culture" :
-                          return function (param) {
-                            return decodeSingle(oneOrManyInt, (function (v, d) {
-                                          return {
-                                                  TAG: /* Culture */2,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Increasable" :
-                          return function (param) {
-                            return decodeSingle(decode$7, (function (v, d) {
-                                          return {
-                                                  TAG: /* Increasable */9,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "IncreasableMultiEntry" :
-                          return function (param) {
-                            return decodeSingle(decode$8, (function (v, d) {
-                                          return {
-                                                  TAG: /* IncreasableMultiEntry */10,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Pact" :
-                          return function (param) {
-                            return decodeSingle(decode$2, (function (v, d) {
-                                          return {
-                                                  TAG: /* Pact */3,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "PrimaryAttribute" :
-                          return function (param) {
-                            return decodeSingle(decode$3, (function (v, d) {
-                                          return {
-                                                  TAG: /* PrimaryAttribute */5,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Race" :
-                          return function (param) {
-                            return decodeSingle(decode$1, (function (v, d) {
-                                          return {
-                                                  TAG: /* Race */1,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Sex" :
-                          return function (param) {
-                            return decodeSingle(decode, (function (v, d) {
-                                          return {
-                                                  TAG: /* Sex */0,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "SocialStatus" :
-                          return function (param) {
-                            return decodeSingle(Json_decode.$$int, (function (v, d) {
-                                          return {
-                                                  TAG: /* SocialStatus */4,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      default:
-                        throw {
-                              RE_EXN_ID: Json_decode.DecodeError,
-                              _1: "Unknown prerequisite type: " + str,
-                              Error: new Error()
-                            };
-                    }
-                  }), (function (param) {
-                    return Json_decode.field("type", Json_decode.string, param);
-                  }), param);
-    });
+function decodeMultilingual$7(param) {
+  return Json_decode.list(decodeMultilingual$3, param);
+}
 
-var AdvantageDisadvantage = {
-  decode: decode$12
+function resolveTranslations$4(langs, x) {
+  return Curry._2(Ley_List$OptolithClient.map, Curry._1(resolveTranslations$1, langs), x);
+}
+
+var Profession$1 = {
+  decodeMultilingual: decodeMultilingual$7,
+  resolveTranslations: resolveTranslations$4
 };
 
-var decode$13 = decode$9(function (param) {
-      return Json_decode.andThen((function (str) {
-                    switch (str) {
-                      case "Activatable" :
-                          return function (param) {
-                            return decodeSingle(decode$4, (function (v, d) {
-                                          return {
-                                                  TAG: /* Activatable */6,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "ActivatableMultiEntry" :
-                          return function (param) {
-                            return decodeSingle(decode$5, (function (v, d) {
-                                          return {
-                                                  TAG: /* ActivatableMultiEntry */7,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "ActivatableMultiSelect" :
-                          return function (param) {
-                            return decodeSingle(decode$6, (function (v, d) {
-                                          return {
-                                                  TAG: /* ActivatableMultiSelect */8,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Culture" :
-                          return function (param) {
-                            return decodeSingle(oneOrManyInt, (function (v, d) {
-                                          return {
-                                                  TAG: /* Culture */2,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Increasable" :
-                          return function (param) {
-                            return decodeSingle(decode$7, (function (v, d) {
-                                          return {
-                                                  TAG: /* Increasable */9,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "IncreasableMultiEntry" :
-                          return function (param) {
-                            return decodeSingle(decode$8, (function (v, d) {
-                                          return {
-                                                  TAG: /* IncreasableMultiEntry */10,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Pact" :
-                          return function (param) {
-                            return decodeSingle(decode$2, (function (v, d) {
-                                          return {
-                                                  TAG: /* Pact */3,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "PrimaryAttribute" :
-                          return function (param) {
-                            return decodeSingle(decode$3, (function (v, d) {
-                                          return {
-                                                  TAG: /* PrimaryAttribute */5,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Race" :
-                          return function (param) {
-                            return decodeSingle(decode$1, (function (v, d) {
-                                          return {
-                                                  TAG: /* Race */1,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "Sex" :
-                          return function (param) {
-                            return decodeSingle(decode, (function (v, d) {
-                                          return {
-                                                  TAG: /* Sex */0,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      case "SocialStatus" :
-                          return function (param) {
-                            return decodeSingle(Json_decode.$$int, (function (v, d) {
-                                          return {
-                                                  TAG: /* SocialStatus */4,
-                                                  _0: v,
-                                                  _1: d
-                                                };
-                                        }), param);
-                          };
-                      default:
-                        throw {
-                              RE_EXN_ID: Json_decode.DecodeError,
-                              _1: "Unknown prerequisite type: " + str,
-                              Error: new Error()
-                            };
-                    }
-                  }), (function (param) {
-                    return Json_decode.field("type", Json_decode.string, param);
-                  }), param);
-    });
+var decodeMultilingual$8 = decodeMultilingual$5(decodeMultilingual$4);
+
+function resolveTranslations$5(langs, x) {
+  return resolveTranslations$2(langs, resolveTranslations$1, x);
+}
+
+var AdvantageDisadvantage$1 = {
+  decodeMultilingual: decodeMultilingual$8,
+  resolveTranslations: resolveTranslations$5
+};
 
 var ActivatableMultiEntry = {
   decode: decode$5
@@ -717,9 +835,21 @@ var IncreasableMultiEntry = {
   decode: decode$8
 };
 
-var All = {};
-
 var DisplayOption = {};
+
+var Config = {};
+
+var Collection_ByLevel = {
+  getFirstLevel: getFirstLevel,
+  concatRange: concatRange
+};
+
+var Collection = {
+  ByLevel: Collection_ByLevel,
+  General: General$1,
+  Profession: Profession$1,
+  AdvantageDisadvantage: AdvantageDisadvantage$1
+};
 
 export {
   oneOrManyInt ,
@@ -734,11 +864,12 @@ export {
   ActivatableMultiSelect ,
   Increasable ,
   IncreasableMultiEntry ,
-  All ,
   DisplayOption ,
+  Config ,
+  General ,
   Profession ,
   AdvantageDisadvantage ,
-  decode$13 as decode,
+  Collection ,
   
 }
-/* decode Not a pure module */
+/* TranslationMap Not a pure module */

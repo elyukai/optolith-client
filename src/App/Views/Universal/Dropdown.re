@@ -1,6 +1,4 @@
-open Ley_List;
-open Ley_Option.Functor;
-open Ley_Option.Alternative;
+open Ley_Option.Infix;
 open ReactUtils;
 open Webapi.Dom;
 
@@ -63,7 +61,7 @@ let make =
         | Some(ref) when !isOpen =>
           let height =
             Js.Int.toFloat(
-              Ley_Int.min(166, Foldable.length(options) * 33 + 1),
+              Ley_Int.min(166, Ley_List.length(options) * 33 + 1),
             );
 
           let rect = Element.getBoundingClientRect(ref);
@@ -146,7 +144,7 @@ let make =
   );
 
   let activeOption =
-    Foldable.find(option => equals(active, option.value), options);
+    Ley_List.find(option => equals(active, option.value), options);
 
   let activetext =
     activeOption
@@ -158,7 +156,7 @@ let make =
     <div className="dropdown-overlay">
       <ScrollView>
         {options
-         |> map(option =>
+         |> Ley_List.map(option =>
               <Item
                 key={option.value |> valueToKey}
                 active

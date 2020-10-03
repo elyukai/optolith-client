@@ -42,7 +42,7 @@ function mapOptionT(f, fold, x, acc) {
 }
 
 function transduceList(t, xs) {
-  return Ley_List$OptolithClient.Foldable.foldr(Curry._1(t, Ley_List$OptolithClient.cons), /* [] */0, xs);
+  return Curry._3(Ley_List$OptolithClient.foldr, Curry._1(t, Ley_List$OptolithClient.cons), /* [] */0, xs);
 }
 
 export {
@@ -55,4 +55,4 @@ export {
   transduceList ,
   
 }
-/* No side effect */
+/* Ley_List-OptolithClient Not a pure module */

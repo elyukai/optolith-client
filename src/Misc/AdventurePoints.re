@@ -120,7 +120,7 @@ let getMissingApForDisAdvantage =
   let missingApForSubtype =
     isInCharacterCreation && !noMaxAPInfluence
       // (current + spent) - max > 0 => invalid
-      ? Ley_Option.Monad.(
+      ? Ley_Option.(
           mApSpentSubtype
           >>= (
             apSpentSubtype =>

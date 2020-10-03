@@ -56,7 +56,9 @@ function Make(funarg) {
                 }), Js_int.max, mp);
   };
   var concat = function (mp) {
-    return foldl(List.append, /* [] */0, mp);
+    return foldr((function (param, param$1) {
+                  return Ley_Function$OptolithClient.flip(List.append, param, param$1);
+                }), /* [] */0, mp);
   };
   var concatMap = function (f, mp) {
     return Curry._3(TypedMap.fold, (function (param, v, acc) {
@@ -91,7 +93,7 @@ function Make(funarg) {
     return !elem(e, mp);
   };
   var find = function (pred, mp) {
-    return Ley_Option$OptolithClient.Functor.$less$$great((function (prim) {
+    return Curry._2(Ley_Option$OptolithClient.Infix.$less$$great, (function (prim) {
                   return prim[1];
                 }), Curry._2(TypedMap.find_first_opt, (function (key) {
                       return Curry._1(pred, Ley_Function$OptolithClient.flip(TypedMap.find, mp, key));
@@ -126,7 +128,7 @@ function Make(funarg) {
     return !Curry._2(member, key, mp);
   };
   var lookup = function (key, mp) {
-    return Ley_Option$OptolithClient.Functor.$less$$great((function (prim) {
+    return Curry._2(Ley_Option$OptolithClient.Infix.$less$$great, (function (prim) {
                   return prim[1];
                 }), Curry._2(TypedMap.find_first_opt, (function (k) {
                       return Curry._2(funarg.compare, k, key) === 0;
@@ -258,7 +260,7 @@ function Make(funarg) {
   };
   var zip = function (mp1, mp2) {
     return mapMaybeWithKey((function (k, v1) {
-                  return Ley_Option$OptolithClient.Functor.$less$$great((function (param) {
+                  return Curry._2(Ley_Option$OptolithClient.Infix.$less$$great, (function (param) {
                                 return Ley_Tuple$OptolithClient.pair(v1, param);
                               }), lookup(k, mp2));
                 }), mp1);
@@ -290,7 +292,7 @@ function Make(funarg) {
                 }), 0, mp);
   };
   var countBy = function (f, xs) {
-    return Ley_List$OptolithClient.Foldable.foldr((function (x) {
+    return Curry._3(Ley_List$OptolithClient.foldr, (function (x) {
                   var partial_arg = Curry._1(f, x);
                   return function (param) {
                     return alter((function (acc) {
@@ -300,7 +302,7 @@ function Make(funarg) {
                 }), empty, xs);
   };
   var countByM = function (f, xs) {
-    return Ley_List$OptolithClient.Foldable.foldr((function (x) {
+    return Curry._3(Ley_List$OptolithClient.foldr, (function (x) {
                   return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (key) {
                                 return function (param) {
                                   return alter((function (acc) {
@@ -311,7 +313,7 @@ function Make(funarg) {
                 }), empty, xs);
   };
   var groupBy = function (f, xs) {
-    return Ley_List$OptolithClient.Foldable.foldr((function (x) {
+    return Curry._3(Ley_List$OptolithClient.foldr, (function (x) {
                   var partial_arg = Curry._1(f, x);
                   return function (param) {
                     return alter((function (acc) {
@@ -415,4 +417,4 @@ export {
   Make ,
   
 }
-/* No side effect */
+/* Ley_List-OptolithClient Not a pure module */

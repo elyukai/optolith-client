@@ -94,7 +94,7 @@ module Static = {
       json |> decodeMultilingual |> (variant => (variant.id, variant));
 
     let resolveTranslations = (langs, x) =>
-      Ley_Option.Functor.(
+      Ley_Option.Infix.(
         x.translations
         |> TranslationMap.getFromLanguageOrder(langs)
         <&> (
@@ -323,7 +323,7 @@ module Static = {
     };
 
   let resolveTranslations = (langs, x) =>
-    Ley_Option.Functor.(
+    Ley_Option.Infix.(
       x.translations
       |> TranslationMap.getFromLanguageOrder(langs)
       <&> (

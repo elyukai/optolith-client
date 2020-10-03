@@ -1,190 +1,17 @@
 type t('a) = option('a);
 
-module Functor: {
-  /**
-   * Lift a function to apply to the wrapped value.
-   */
-  let (<$>): ('a => 'b, t('a)) => t('b);
+include Ley_Functor.T with type t('a) := t('a);
+include Ley_Applicative.T with type t('a) := t('a);
+include Ley_Applicative.Alternative.T with type t('a) := t('a);
+include Ley_Monad.T with type t('a) := t('a);
+include Ley_Foldable.T with type t('a) := t('a);
 
-  let (<&>): (t('a), 'a => 'b) => t('b);
-};
-
-module Applicative: {
-  /**
-   * Apply a wrapped function to a wrapped value.
-   */
-  let (<*>): (t('a), t('a => 'b)) => t('b);
-};
-
-module Alternative: {
-  /**
-   * Take the first if its a `Just`, otherwise the second.
-   */
-  let (<|>): (t('a), t('a)) => t('a);
-
-  /**
-   * Returns a `Nothing` on `false`, otherwise an empty `Just`.
-   */
-  let guard: bool => t(unit);
-};
-
-module Monad: {
-  include (module type of Functor);
-
-  /**
-   * Lift a value.
-   */
-  let return: 'a => t('a);
-
-  /**
-   * Applies the function to the wrapped value and returns the return value.
-   */
-  let (>>=): (t('a), 'a => t('b)) => t('b);
-
-  /**
-   * Applies the function to the wrapped value and returns the return value.
-   */
-  let (=<<): ('a => t('b), t('a)) => t('b);
-
-  /**
-   * Returns the second if the first is a `Just`, otherwise `Nothing`.
-   */
-  let (>>): (t('a), t('b)) => t('b);
-
-  /**
-   * Maps a function over all values of the list. Returns a `Just` of the
-   * results, if the function returned `Just`s for all elements. Otherwise
-   * returns `Nothing`.
-   */
-  let mapM: ('b => t('a), list('b)) => t(list('a));
-
-  /**
-   * Takes a value and applies two functions that may fail (return `Nothing`).
-   * Returns a `Just` of the result value or a `Nothing` if one of the functions
-   * failed.
-   */
-  let (>=>): ('a => t('b), 'b => t('c), 'a) => t('c);
-
-  /**
-   * Removes one level of monadic structure.
-   */
-  let join: t(t('a)) => t('a);
-
-  /**
-   * Lift a function to be applied to two wrapped values and returns a `Just` of
-   * the result if all values are `Just`s, otherwise `Nothing`.
-   */
-  let liftM2: (('a, 'b) => 'c, t('a), t('b)) => t('c);
-
-  /**
-   * Lift a function to be applied to three wrapped values and returns a `Just`
-   * of the result if all values are `Just`s, otherwise `Nothing`.
-   */
-  let liftM3: (('a, 'b, 'c) => 'd, t('a), t('b), t('c)) => t('d);
-
-  /**
-   * Lift a function to be applied to four wrapped values and returns a `Just`
-   * of the result if all values are `Just`s, otherwise `Nothing`.
-   */
-  let liftM4:
-    (('a, 'b, 'c, 'd) => 'e, t('a), t('b), t('c), t('d)) => t('e);
-
-  /**
-   * Lift a function to be applied to five wrapped values and returns a `Just`
-   * of the result if all values are `Just`s, otherwise `Nothing`.
-   */
-  let liftM5:
-    (('a, 'b, 'c, 'd, 'e) => 'f, t('a), t('b), t('c), t('d), t('e)) =>
-    t('f);
-};
-
-module Foldable: {
-  /**
-   *
-   */
-  let foldr: (('a, 'b) => 'b, 'b, t('a)) => 'b;
-
-  /**
-   *
-   */
-  let foldl: (('a, 'b) => 'a, 'a, t('b)) => 'a;
-
-  /**
-   *
-   */
-  let toList: t('a) => list('a);
-
-  /**
-   *
-   */
-  let length: t('a) => int;
-
-  /**
-   *
-   */
-  let elem: ('a, t('a)) => bool;
-
-  /**
-   *
-   */
-  let sum: t(int) => int;
-
-  /**
-   *
-   */
-  let product: t(int) => int;
-
-  /**
-   *
-   */
-  let concat: t(list('a)) => list('a);
-
-  /**
-   *
-   */
-  let concatMap: ('a => list('b), t('a)) => list('b);
-
-  /**
-   * If the value is a `Some`, returns the contained value, otherwise `true`.
-   */
-  let con: t(bool) => bool;
-
-  /**
-   * If the value is a `Some`, returns the contained value, otherwise `false`.
-   */
-  let dis: t(bool) => bool;
-
-  /**
-   * If the passed `option` is a `Some`, returns the return value of the
-   * predicate function applied to the contained value, otherwise `false`;
-   */
-  let any: ('a => bool, t('a)) => bool;
-
-  /**
-   * If the passed `option` is a `Some`, returns the return value of the
-   * predicate function applied to the contained value, otherwise `true`;
-   */
-  let all: ('a => bool, t('a)) => bool;
-
-  /**
-   *
-   */
-  let notElem: ('a, t('a)) => bool;
-
-  /**
-   *
-   */
-  let find: ('a => bool, t('a)) => t('a);
-};
-
-module Semigroup: {
-  /**
-   * Concatenates the lists contained in the two `Maybe`s, if both are of
-   * type `Just a`. If at least one of them is `Nothing`, it returns the first
-   * element.
-   */
-  let sappend: (t(list('a)), t(list('a))) => t(list('a));
-};
+/**
+ * Concatenates the lists contained in the two `Maybe`s, if both are of
+ * type `Just a`. If at least one of them is `Nothing`, it returns the first
+ * element.
+ */
+let sappend: (t(list('a)), t(list('a))) => t(list('a));
 
 /**
  * Checks if the passed value is a `Just`.
@@ -275,3 +102,10 @@ let imapOption: ((int, 'a) => t('b), list('a)) => list('b);
  * inner value is returned. If `f` returns `None`, `x` is returned unchanged.
  */
 let liftDef: ('a => t('a), 'a) => 'a;
+
+module Infix: {
+  include Ley_Functor.Infix with type t('a) := t('a);
+  include Ley_Applicative.Infix with type t('a) := t('a);
+  include Ley_Applicative.Alternative.Infix with type t('a) := t('a);
+  include Ley_Monad.Infix with type t('a) := t('a);
+};

@@ -68,7 +68,7 @@ module Integer = {
 
     let ((valid, invalidMsg), setValid) =
       React.useState(() =>
-        value |> Monad.return |> isValid(~min, ~max, ~invalidChecks)
+        value |> Ley_Option.return |> isValid(~min, ~max, ~invalidChecks)
       );
 
     // Reset internal value if valid value from outside changed

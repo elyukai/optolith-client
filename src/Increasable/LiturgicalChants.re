@@ -1,5 +1,5 @@
 open Ley_Option;
-open Ley_Option.Monad;
+open Ley_Option;
 open Hero.ActivatableSkill;
 
 module F = Ley_Function;

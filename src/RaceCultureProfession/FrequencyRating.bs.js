@@ -5,7 +5,7 @@ import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 
 function hasFrequencyRating(currentEntryRating, ratingMap, id) {
-  return Ley_Option$OptolithClient.Foldable.elem(currentEntryRating, Curry._2(Ley_IntMap$OptolithClient.lookup, id, ratingMap));
+  return Curry._2(Ley_Option$OptolithClient.elem, currentEntryRating, Curry._2(Ley_IntMap$OptolithClient.lookup, id, ratingMap));
 }
 
 function isCommon(param, param$1) {

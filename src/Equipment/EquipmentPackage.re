@@ -6,60 +6,60 @@ type t = {
   errata: list(Erratum.t),
 };
 
-module Decode = {
-  open Json.Decode;
-  open JsonStrict;
-
-  type tL10n = {
-    id: int,
+module Translations = {
+  type t = {
     name: string,
-    src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
 
-  let tL10n = json => {
-    id: json |> field("id", int),
-    name: json |> field("name", string),
-    src: json |> field("src", PublicationRef.decodeMultilingualList),
-    errata: json |> field("errata", Erratum.Decode.list),
-  };
+  let decode = json =>
+    Json.Decode.{
+      name: json |> field("name", string),
+      errata: json |> field("errata", Erratum.decodeList),
+    };
+};
 
-  let%private item = json => (
+module TranslationMap = TranslationMap.Make(Translations);
+
+type multilingual = {
+  id: int,
+  items: Ley_IntMap.t(int),
+  src: list(PublicationRef.multilingual),
+  translations: TranslationMap.t,
+};
+
+let decodeItem = json =>
+  JsonStrict.(
     json |> field("id", int),
     json |> optionalField("amount", int),
   );
 
-  type tUniv = {
-    id: int,
-    items: list((int, option(int))),
-  };
-
-  let tUniv = json => {
+let decodeMultilingual = json =>
+  Json.Decode.{
     id: json |> field("id", int),
-    items: json |> field("items", list(item)),
+    items:
+      json
+      |> field("items", list(decodeItem))
+      |> Ley_IntMap.fromList
+      |> Ley_IntMap.map(Ley_Option.fromOption(1)),
+    src: json |> field("src", PublicationRef.decodeMultilingualList),
+    translations: json |> field("translations", TranslationMap.decode),
   };
 
-  let t = (univ: tUniv, l10n: tL10n) => (
-    univ.id,
-    {
-      id: univ.id,
-      name: l10n.name,
-      items:
-        Ley_IntMap.fromList(univ.items)
-        |> Ley_IntMap.map(Ley_Option.fromOption(1)),
-      src: l10n.src,
-      errata: l10n.errata,
-    },
+let resolveTranslations = (langs, x) =>
+  Ley_Option.Infix.(
+    x.translations
+    |> TranslationMap.getFromLanguageOrder(langs)
+    <&> (
+      translation => {
+        id: x.id,
+        name: translation.name,
+        items: x.items,
+        src: PublicationRef.resolveTranslationsList(langs, x.src),
+        errata: translation.errata,
+      }
+    )
   );
 
-  let all = (yamlData: Yaml_Raw.yamlData) =>
-    Yaml_Zip.zipBy(
-      Ley_Int.show,
-      t,
-      x => x.id,
-      x => x.id,
-      yamlData.equipmentPackagesUniv |> list(tUniv),
-      yamlData.equipmentPackagesL10n |> list(tL10n),
-    )
-    |> Ley_IntMap.fromList;
-};
+let decode = (langs, json) =>
+  json |> decodeMultilingual |> resolveTranslations(langs);

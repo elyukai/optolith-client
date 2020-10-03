@@ -4,6 +4,7 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Attribute$OptolithClient from "./Attribute.bs.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
+import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 
 function getValues(mp, param) {
   return [

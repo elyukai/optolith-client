@@ -2,191 +2,96 @@ open Ley_Function;
 
 type t('a) = option('a);
 
-module Functor = {
-  let (<$>) = (f, mx) =>
-    switch (mx) {
-    | Some(x) => x->f->Some
-    | None => None
-    };
+include (
+          Ley_Functor.Make({
+            type nonrec t('a) = t('a);
 
-  let fmap = (<$>);
+            let fmap = (f, mx) =>
+              switch (mx) {
+              | Some(x) => x->f->Some
+              | None => None
+              };
+          }):
+            Ley_Functor.T with type t('a) := t('a)
+        );
 
-  let (<&>) = (mx, f) => f <$> mx;
-};
+include (
+          Ley_Applicative.Make({
+            type nonrec t('a) = t('a);
 
-module Applicative = {
-  open Functor;
+            let pure = x => Some(x);
 
-  let (<*>) = (mx, mf) =>
-    switch (mf) {
-    | Some(f) => f <$> mx
-    | None => None
-    };
+            let fmap = fmap;
 
-  let ap = (<*>);
-};
+            let ap = (mf, mx) =>
+              switch (mf) {
+              | Some(f) => fmap(f, mx)
+              | None => None
+              };
+          }):
+            Ley_Applicative.T with type t('a) := t('a)
+        );
 
-module Alternative = {
-  let (<|>) = (mx, my) =>
-    switch (mx) {
-    | None => my
-    | x => x
-    };
+include (
+          Ley_Applicative.Alternative.Make({
+            type nonrec t('a) = t('a);
 
-  let alt = (<|>);
+            let empty = None;
 
-  let guard = pred => pred ? Some() : None;
-};
+            let alt = (mx, my) =>
+              switch (mx) {
+              | None => my
+              | x => x
+              };
+          }):
+            Ley_Applicative.Alternative.T with type t('a) := t('a)
+        );
 
-module Monad = {
-  include Functor;
+include (
+          Ley_Monad.Make({
+            type nonrec t('a) = t('a);
 
-  let return = x => Some(x);
+            let pure = pure;
 
-  let (>>=) = (mx, f) =>
-    switch (mx) {
-    | Some(x) => f(x)
-    | None => None
-    };
+            let fmap = fmap;
 
-  let (=<<) = (f, mx) => mx >>= f;
+            let bind = (f, mx) =>
+              switch (mx) {
+              | Some(x) => f(x)
+              | None => None
+              };
+          }):
+            Ley_Monad.T with type t('a) := t('a)
+        );
 
-  let (>>) = (x, y) => x >>= const(y);
+include (
+          Ley_Foldable.Make({
+            type nonrec t('a) = t('a);
 
-  let (<<) = (x, y) => const(x) =<< y;
+            let foldr = (f, init, mx) =>
+              switch (mx) {
+              | Some(x) => f(x, init)
+              | None => init
+              };
 
-  let rec mapM = (f, xs) =>
-    switch (xs) {
-    | [] => Some([])
-    | [x, ...ys] =>
-      switch (f(x)) {
-      | None => None
-      | Some(z) => (zs => [z, ...zs]) <$> mapM(f, ys)
-      }
-    };
+            let foldl = (f, init, mx) =>
+              switch (mx) {
+              | Some(x) => f(init, x)
+              | None => init
+              };
+          }):
+            Ley_Foldable.T with type t('a) := t('a)
+        );
 
-  let (>=>) = (f, g, x) => x |> f >>= g;
-
-  let kleisli = (>=>);
-
-  let join = x => x >>= id;
-
-  let liftM2 = (f, mx, my) => mx >>= (x => f(x) <$> my);
-
-  let liftM3 = (f, mx, my, mz) => mx >>= (x => my >>= (y => f(x, y) <$> mz));
-
-  let liftM4 = (f, mx, my, mz, ma) =>
-    mx >>= (x => my >>= (y => mz >>= (z => ma <&> f(x, y, z))));
-
-  let liftM5 = (f, mx, my, mz, ma, mb) =>
-    mx
-    >>= (x => my >>= (y => mz >>= (z => ma >>= (a => mb <&> f(x, y, z, a)))));
-};
-
-module Foldable = {
-  let foldr = (f, init, mx) =>
-    switch (mx) {
-    | Some(x) => f(x, init)
-    | None => init
-    };
-
-  let foldl = (f, init, mx) =>
-    switch (mx) {
-    | Some(x) => f(init, x)
-    | None => init
-    };
-
-  let toList = mx =>
-    switch (mx) {
-    | Some(x) => [x]
-    | None => []
-    };
-
-  let null =
-    fun
-    | None => true
-    | Some(_) => false;
-
-  let length = mx =>
-    switch (mx) {
-    | Some(_) => 1
-    | None => 0
-    };
-
-  let elem = (e, mx) =>
-    switch (mx) {
-    | Some(x) => e === x
-    | None => false
-    };
-
-  let sum = mx =>
-    switch (mx) {
-    | Some(x) => x
-    | None => 0
-    };
-
-  let product = mx =>
-    switch (mx) {
-    | Some(x) => x
-    | None => 1
-    };
-
-  let concat = mxs =>
-    switch (mxs) {
-    | Some(xs) => xs
-    | None => []
-    };
-
-  let concatMap = (f, mx) =>
-    switch (mx) {
-    | Some(x) => f(x)
-    | None => []
-    };
-
-  let con = mx =>
-    switch (mx) {
-    | Some(x) => x
-    | None => true
-    };
-
-  let dis = mx =>
-    switch (mx) {
-    | Some(x) => x
-    | None => false
-    };
-
-  let any = (pred, mx) =>
-    switch (mx) {
-    | Some(x) => pred(x)
-    | None => false
-    };
-
-  let all = (pred, mx) =>
-    switch (mx) {
-    | Some(x) => pred(x)
-    | None => true
-    };
-
-  let notElem = (e, mx) => !elem(e, mx);
-
-  let find = (pred, mx) =>
-    switch (mx) {
-    | Some(x) => pred(x) ? Some(x) : None
-    | None => None
-    };
-};
-
-module Semigroup = {
-  let sappend = (mxs, mys) =>
-    switch (mxs) {
-    | Some(xs) =>
-      switch (mys) {
-      | Some(ys) => Some(List.append(xs, ys))
-      | None => mxs
-      }
+let sappend = (mxs, mys) =>
+  switch (mxs) {
+  | Some(xs) =>
+    switch (mys) {
+    | Some(ys) => Some(List.append(xs, ys))
     | None => mxs
-    };
-};
+    }
+  | None => mxs
+  };
 
 let isSome = m =>
   switch (m) {
@@ -223,7 +128,7 @@ let listToOption = xs =>
   | [] => None
   };
 
-let optionToList = Foldable.toList;
+let optionToList = toList;
 
 let catOptions = xs =>
   List.fold_right(option(id, (x, xs) => [x, ...xs]), xs, []);
@@ -250,3 +155,63 @@ let liftDef = (f, x) =>
   | Some(y) => y
   | None => x
   };
+
+module Infix = {
+  include (
+            Ley_Functor.MakeInfix({
+              type nonrec t('a) = t('a);
+
+              let fmap = fmap;
+            }):
+              Ley_Functor.Infix with type t('a) := t('a)
+          );
+
+  include (
+            Ley_Applicative.MakeInfix({
+              type nonrec t('a) = t('a);
+
+              let pure = x => Some(x);
+
+              let fmap = (<$>);
+
+              let ap = (mf, mx) =>
+                switch (mf) {
+                | Some(f) => f <$> mx
+                | None => None
+                };
+            }):
+              Ley_Applicative.Infix with type t('a) := t('a)
+          );
+
+  include (
+            Ley_Applicative.Alternative.MakeInfix({
+              type nonrec t('a) = t('a);
+
+              let empty = None;
+
+              let alt = (mx, my) =>
+                switch (mx) {
+                | None => my
+                | x => x
+                };
+            }):
+              Ley_Applicative.Alternative.Infix with type t('a) := t('a)
+          );
+
+  include (
+            Ley_Monad.MakeInfix({
+              type nonrec t('a) = t('a);
+
+              let pure = pure;
+
+              let fmap = fmap;
+
+              let bind = (f, mx) =>
+                switch (mx) {
+                | Some(x) => f(x)
+                | None => None
+                };
+            }):
+              Ley_Monad.Infix with type t('a) := t('a)
+          );
+};

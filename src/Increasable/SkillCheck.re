@@ -16,7 +16,7 @@ let getValues = (mp, (a1, a2, a3)) => (
  * Takes a skill check and returns it's attributes' names.
  */
 let getAttributes = (mp: IM.t(Attribute.Static.t), (a1, a2, a3)) =>
-  O.Monad.liftM3(
+  O.liftM3(
     (a1, a2, a3) => (a1, a2, a3),
     IM.lookup(a1, mp),
     IM.lookup(a2, mp),

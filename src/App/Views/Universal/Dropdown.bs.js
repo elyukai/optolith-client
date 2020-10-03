@@ -69,7 +69,7 @@ function Dropdown(Props) {
   var handleSwitch = React.useCallback((function (param) {
           var maybeRef = containerRef.current;
           if (!(maybeRef == null) && !isOpen) {
-            var height = Ley_Int$OptolithClient.min(166, Math.imul(Ley_List$OptolithClient.Foldable.length(options), 33) + 1 | 0);
+            var height = Ley_Int$OptolithClient.min(166, Math.imul(Curry._1(Ley_List$OptolithClient.length, options), 33) + 1 | 0);
             var rect = maybeRef.getBoundingClientRect();
             Curry._1(setPosition, (function (param) {
                     if (window.innerHeight - 32.0 - rect.top < height) {
@@ -97,7 +97,7 @@ function Dropdown(Props) {
       ]);
   var handleOutsideClick = React.useCallback((function ($$event) {
           if (isOpen) {
-            Ley_Option$OptolithClient.Functor.$less$amp$great(Caml_option.nullable_to_opt(containerRef.current), (function (currentRef) {
+            Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Caml_option.nullable_to_opt(containerRef.current), (function (currentRef) {
                     if (!currentRef.contains($$event.target)) {
                       return Curry._1(setIsOpen, (function (param) {
                                     return false;
@@ -118,16 +118,16 @@ function Dropdown(Props) {
                     
                   });
         }), [handleOutsideClick]);
-  var activeOption = Ley_List$OptolithClient.Foldable.find((function (option) {
+  var activeOption = Curry._2(Ley_List$OptolithClient.find, (function (option) {
           return Curry._2(equals, active, option.value);
         }), options);
-  var activetext = Ley_Option$OptolithClient.fromOption("", Ley_Option$OptolithClient.Alternative.$less$pipe$great(Ley_Option$OptolithClient.Functor.$less$amp$great(activeOption, (function (x) {
+  var activetext = Ley_Option$OptolithClient.fromOption("", Curry._2(Ley_Option$OptolithClient.Infix.$less$pipe$great, Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, activeOption, (function (x) {
                   return x.label;
                 })), placeholder));
   var overlayElement = React.createElement("div", {
         className: "dropdown-overlay"
       }, React.createElement(ScrollView$OptolithClient.make, {
-            children: ReactUtils$OptolithClient.list(Ley_List$OptolithClient.map((function (option) {
+            children: ReactUtils$OptolithClient.list(Curry._2(Ley_List$OptolithClient.map, (function (option) {
                         return React.createElement(Dropdown$Item, {
                                     active: active,
                                     equals: equals,
@@ -146,9 +146,9 @@ function Dropdown(Props) {
   return React.createElement("div", {
               ref: containerRef,
               className: ClassNames$OptolithClient.fold({
-                    hd: ClassNames$OptolithClient.safe("dropdown"),
+                    hd: Curry._1(ClassNames$OptolithClient.safe, "dropdown"),
                     tl: {
-                      hd: ClassNames$OptolithClient.safe(position ? "dropdown--bottom" : "dropdown--top"),
+                      hd: Curry._1(ClassNames$OptolithClient.safe, position ? "dropdown--bottom" : "dropdown--top"),
                       tl: {
                         hd: ClassNames$OptolithClient.cond("disabled", disabled),
                         tl: /* [] */0
@@ -160,7 +160,7 @@ function Dropdown(Props) {
                   labelText: label
                 }), React.createElement("div", undefined, position || !isOpen ? placeholderElement : overlayElement, React.createElement("div", {
                       className: ClassNames$OptolithClient.fold({
-                            hd: ClassNames$OptolithClient.safe("value"),
+                            hd: Curry._1(ClassNames$OptolithClient.safe, "value"),
                             tl: {
                               hd: ClassNames$OptolithClient.cond("placeholder", Ley_Option$OptolithClient.isNone(activeOption)),
                               tl: /* [] */0

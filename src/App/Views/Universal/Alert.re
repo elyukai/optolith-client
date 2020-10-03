@@ -137,10 +137,7 @@ let make =
   <Overlay
     baseClassName="alert"
     className={ClassNames.fold([
-      ClassNames.cond(
-        "alert-long",
-        Ley_List.Foldable.length(secondaryButtons) > 2,
-      ),
+      ClassNames.cond("alert-long", Ley_List.length(secondaryButtons) > 2),
     ])}
     isOpen
     onBackdrop=onClose>

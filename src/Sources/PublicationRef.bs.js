@@ -51,7 +51,7 @@ function decodeMultilingualList(param) {
 
 function resolveTranslationsList(langs, xs) {
   return Ley_Option$OptolithClient.mapOption((function (param) {
-                return Ley_Option$OptolithClient.Functor.$less$amp$great(Curry._2(TranslationMap.getFromLanguageOrder, langs, param.translations), (function (translation) {
+                return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, param.translations), (function (translation) {
                               return {
                                       id: param.id,
                                       occurrences: translation

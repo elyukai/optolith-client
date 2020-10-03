@@ -5,7 +5,7 @@ let getMax:
   (
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
-    ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
+    ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
     ~exceptionalSkill: option(Hero.Activatable.t),
     ~aspectKnowledge: option(Hero.Activatable.t),
     ~staticEntry: LiturgicalChant.Static.t
@@ -19,11 +19,11 @@ let isIncreasable:
   (
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
-    ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
+    ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
     ~exceptionalSkill: option(Hero.Activatable.t),
     ~aspectKnowledge: option(Hero.Activatable.t),
     ~staticEntry: LiturgicalChant.Static.t,
-    ~heroEntry: Hero.ActivatableSkill.t
+    ~heroEntry: ActivatableSkill.Dynamic.t
   ) =>
   bool;
 
@@ -37,9 +37,9 @@ let getMin:
   (
     ~aspectKnowledge: Hero.Activatable.t,
     ~staticLiturgicalChants: Ley_IntMap.t(LiturgicalChant.Static.t),
-    ~heroLiturgicalChants: Ley_IntMap.t(Hero.ActivatableSkill.t),
+    ~heroLiturgicalChants: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
     ~staticEntry: LiturgicalChant.Static.t,
-    ~heroEntry: Hero.ActivatableSkill.t
+    ~heroEntry: ActivatableSkill.Dynamic.t
   ) =>
   option(int);
 
@@ -50,9 +50,9 @@ let isDecreasable:
   (
     ~aspectKnowledge: Hero.Activatable.t,
     ~staticLiturgicalChants: Ley_IntMap.t(LiturgicalChant.Static.t),
-    ~heroLiturgicalChants: Ley_IntMap.t(Hero.ActivatableSkill.t),
+    ~heroLiturgicalChants: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
     ~staticEntry: LiturgicalChant.Static.t,
-    ~heroEntry: Hero.ActivatableSkill.t
+    ~heroEntry: ActivatableSkill.Dynamic.t
   ) =>
   bool;
 
@@ -64,7 +64,7 @@ module AspectKnowledge: {
   let getAvailableAspects:
     (
       Ley_IntMap.t(LiturgicalChant.Static.t),
-      Ley_IntMap.t(Hero.ActivatableSkill.t)
+      Ley_IntMap.t(ActivatableSkill.Dynamic.t)
     ) =>
     list(int);
 };

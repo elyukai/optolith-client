@@ -4,32 +4,45 @@ import * as List from "bs-platform/lib/es6/list.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
+import * as Ley_Monad$OptolithClient from "./Ley_Monad.bs.js";
+import * as Ley_Functor$OptolithClient from "./Ley_Functor.bs.js";
+import * as Ley_Foldable$OptolithClient from "./Ley_Foldable.bs.js";
 import * as Ley_Function$OptolithClient from "./Ley_Function.bs.js";
+import * as Ley_Applicative$OptolithClient from "./Ley_Applicative.bs.js";
 
-function $less$$great(f, mx) {
+function fmap(f, mx) {
   if (mx !== undefined) {
     return Caml_option.some(Curry._1(f, Caml_option.valFromOption(mx)));
   }
   
 }
 
-function $less$amp$great(mx, f) {
-  return $less$$great(f, mx);
+var include = Ley_Functor$OptolithClient.Make({
+      fmap: fmap
+    });
+
+var fmap$1 = include.fmap;
+
+function pure(x) {
+  return Caml_option.some(x);
 }
 
-function $less$star$great(mx, mf) {
+function ap(mf, mx) {
   if (mf !== undefined) {
-    return $less$$great(mf, mx);
+    return Curry._2(fmap$1, mf, mx);
   }
   
 }
 
-var Applicative = {
-  $less$star$great: $less$star$great,
-  ap: $less$star$great
-};
+var include$1 = Ley_Applicative$OptolithClient.Make({
+      fmap: fmap$1,
+      pure: pure,
+      ap: ap
+    });
 
-function $less$pipe$great(mx, my) {
+var pure$1 = include$1.pure;
+
+function alt(mx, my) {
   if (mx !== undefined) {
     return mx;
   } else {
@@ -37,94 +50,23 @@ function $less$pipe$great(mx, my) {
   }
 }
 
-function guard(pred) {
-  if (pred) {
-    return Caml_option.some(undefined);
-  }
-  
-}
+var include$2 = Ley_Applicative$OptolithClient.Alternative.Make({
+      empty: undefined,
+      alt: alt
+    });
 
-function $$return(x) {
-  return Caml_option.some(x);
-}
-
-function $great$great$eq(mx, f) {
+function bind(f, mx) {
   if (mx !== undefined) {
     return Curry._1(f, Caml_option.valFromOption(mx));
   }
   
 }
 
-function $eq$less$less(f, mx) {
-  return $great$great$eq(mx, f);
-}
-
-function $great$great(x, y) {
-  return $great$great$eq(x, (function (param) {
-                return Ley_Function$OptolithClient.$$const(y, param);
-              }));
-}
-
-function mapM(f, xs) {
-  if (!xs) {
-    return /* [] */0;
-  }
-  var z = Curry._1(f, xs.hd);
-  if (z === undefined) {
-    return ;
-  }
-  var z$1 = Caml_option.valFromOption(z);
-  return $less$$great((function (zs) {
-                return {
-                        hd: z$1,
-                        tl: zs
-                      };
-              }), mapM(f, xs.tl));
-}
-
-function $great$eq$great(f, g, x) {
-  return $great$great$eq(Curry._1(f, x), g);
-}
-
-function join(x) {
-  return $great$great$eq(x, Ley_Function$OptolithClient.id);
-}
-
-function liftM2(f, mx, my) {
-  return $great$great$eq(mx, (function (x) {
-                return $less$$great(Curry._1(f, x), my);
-              }));
-}
-
-function liftM3(f, mx, my, mz) {
-  return $great$great$eq(mx, (function (x) {
-                return $great$great$eq(my, (function (y) {
-                              return $less$$great(Curry._2(f, x, y), mz);
-                            }));
-              }));
-}
-
-function liftM4(f, mx, my, mz, ma) {
-  return $great$great$eq(mx, (function (x) {
-                return $great$great$eq(my, (function (y) {
-                              return $great$great$eq(mz, (function (z) {
-                                            return $less$$great(Curry._3(f, x, y, z), ma);
-                                          }));
-                            }));
-              }));
-}
-
-function liftM5(f, mx, my, mz, ma, mb) {
-  return $great$great$eq(mx, (function (x) {
-                return $great$great$eq(my, (function (y) {
-                              return $great$great$eq(mz, (function (z) {
-                                            return $great$great$eq(ma, (function (a) {
-                                                          return $less$$great(Curry._4(f, x, y, z, a), mb);
-                                                        }));
-                                          }));
-                            }));
-              }));
-}
+var include$3 = Ley_Monad$OptolithClient.Make({
+      pure: pure$1,
+      fmap: fmap$1,
+      bind: bind
+    });
 
 function foldr(f, init, mx) {
   if (mx !== undefined) {
@@ -142,111 +84,12 @@ function foldl(f, init, mx) {
   }
 }
 
-function toList(mx) {
-  if (mx !== undefined) {
-    return {
-            hd: Caml_option.valFromOption(mx),
-            tl: /* [] */0
-          };
-  } else {
-    return /* [] */0;
-  }
-}
+var include$4 = Ley_Foldable$OptolithClient.Make({
+      foldr: foldr,
+      foldl: foldl
+    });
 
-function length(mx) {
-  if (mx !== undefined) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-function elem(e, mx) {
-  if (mx !== undefined) {
-    return e === Caml_option.valFromOption(mx);
-  } else {
-    return false;
-  }
-}
-
-function sum(mx) {
-  if (mx !== undefined) {
-    return mx;
-  } else {
-    return 0;
-  }
-}
-
-function product(mx) {
-  if (mx !== undefined) {
-    return mx;
-  } else {
-    return 1;
-  }
-}
-
-function concat(mxs) {
-  if (mxs !== undefined) {
-    return mxs;
-  } else {
-    return /* [] */0;
-  }
-}
-
-function concatMap(f, mx) {
-  if (mx !== undefined) {
-    return Curry._1(f, Caml_option.valFromOption(mx));
-  } else {
-    return /* [] */0;
-  }
-}
-
-function con(mx) {
-  if (mx !== undefined) {
-    return mx;
-  } else {
-    return true;
-  }
-}
-
-function dis(mx) {
-  if (mx !== undefined) {
-    return mx;
-  } else {
-    return false;
-  }
-}
-
-function any(pred, mx) {
-  if (mx !== undefined) {
-    return Curry._1(pred, Caml_option.valFromOption(mx));
-  } else {
-    return false;
-  }
-}
-
-function all(pred, mx) {
-  if (mx !== undefined) {
-    return Curry._1(pred, Caml_option.valFromOption(mx));
-  } else {
-    return true;
-  }
-}
-
-function notElem(e, mx) {
-  return !elem(e, mx);
-}
-
-function find(pred, mx) {
-  if (mx === undefined) {
-    return ;
-  }
-  var x = Caml_option.valFromOption(mx);
-  if (Curry._1(pred, x)) {
-    return Caml_option.some(x);
-  }
-  
-}
+var toList = include$4.toList;
 
 function sappend(mxs, mys) {
   if (mxs !== undefined && mys !== undefined) {
@@ -255,10 +98,6 @@ function sappend(mxs, mys) {
     return mxs;
   }
 }
-
-var Semigroup = {
-  sappend: sappend
-};
 
 function isSome(m) {
   return m !== undefined;
@@ -364,59 +203,162 @@ function liftDef(f, x) {
   }
 }
 
-var Functor = {
+var include$5 = Ley_Functor$OptolithClient.MakeInfix({
+      fmap: fmap$1
+    });
+
+var $less$$great = include$5.$less$$great;
+
+function pure$2(x) {
+  return Caml_option.some(x);
+}
+
+function ap$1(mf, mx) {
+  if (mf !== undefined) {
+    return Curry._2($less$$great, mf, mx);
+  }
+  
+}
+
+var include$6 = Ley_Applicative$OptolithClient.MakeInfix({
+      fmap: $less$$great,
+      pure: pure$2,
+      ap: ap$1
+    });
+
+function alt$1(mx, my) {
+  if (mx !== undefined) {
+    return mx;
+  } else {
+    return my;
+  }
+}
+
+var include$7 = Ley_Applicative$OptolithClient.Alternative.MakeInfix({
+      empty: undefined,
+      alt: alt$1
+    });
+
+function bind$1(f, mx) {
+  if (mx !== undefined) {
+    return Curry._1(f, Caml_option.valFromOption(mx));
+  }
+  
+}
+
+var include$8 = Ley_Monad$OptolithClient.MakeInfix({
+      pure: pure$1,
+      fmap: fmap$1,
+      bind: bind$1
+    });
+
+var Infix_$less$amp$great = include$5.$less$amp$great;
+
+var Infix_$less$dollar = include$5.$less$;
+
+var Infix_$$great = include$5.$$great;
+
+var Infix_$less$star$great = include$6.$less$star$great;
+
+var Infix_$less$star$star$great = include$6.$less$star$star$great;
+
+var Infix_$less$pipe$great = include$7.$less$pipe$great;
+
+var Infix_$great$great$eq = include$8.$great$great$eq;
+
+var Infix_$eq$less$less = include$8.$eq$less$less;
+
+var Infix_$great$eq$great = include$8.$great$eq$great;
+
+var Infix_$less$eq$less = include$8.$less$eq$less;
+
+var Infix = {
   $less$$great: $less$$great,
-  $less$amp$great: $less$amp$great
+  $less$amp$great: Infix_$less$amp$great,
+  $less$: Infix_$less$dollar,
+  $$great: Infix_$$great,
+  $less$star$great: Infix_$less$star$great,
+  $less$star$star$great: Infix_$less$star$star$great,
+  $less$pipe$great: Infix_$less$pipe$great,
+  $great$great$eq: Infix_$great$great$eq,
+  $eq$less$less: Infix_$eq$less$less,
+  $great$eq$great: Infix_$great$eq$great,
+  $less$eq$less: Infix_$less$eq$less
 };
 
-var Alternative = {
-  $less$pipe$great: $less$pipe$great,
-  guard: guard
-};
+var liftA2 = include$1.liftA2;
 
-var Monad = {
-  $less$$great: $less$$great,
-  $less$amp$great: $less$amp$great,
-  $$return: $$return,
-  $great$great$eq: $great$great$eq,
-  $eq$less$less: $eq$less$less,
-  $great$great: $great$great,
-  mapM: mapM,
-  $great$eq$great: $great$eq$great,
-  join: join,
-  liftM2: liftM2,
-  liftM3: liftM3,
-  liftM4: liftM4,
-  liftM5: liftM5
-};
+var empty = include$2.empty;
 
-var Foldable = {
-  foldr: foldr,
-  foldl: foldl,
-  toList: toList,
-  length: length,
-  elem: elem,
-  sum: sum,
-  product: product,
-  concat: concat,
-  concatMap: concatMap,
-  con: con,
-  dis: dis,
-  any: any,
-  all: all,
-  notElem: notElem,
-  find: find
-};
+var $$return = include$3.$$return;
+
+var join = include$3.join;
+
+var liftM2 = include$3.liftM2;
+
+var liftM3 = include$3.liftM3;
+
+var liftM4 = include$3.liftM4;
+
+var liftM5 = include$3.liftM5;
+
+var foldr$1 = include$4.foldr;
+
+var foldl$1 = include$4.foldl;
+
+var $$null = include$4.$$null;
+
+var length = include$4.length;
+
+var elem = include$4.elem;
+
+var sum = include$4.sum;
+
+var maximum = include$4.maximum;
+
+var minimum = include$4.minimum;
+
+var concat = include$4.concat;
+
+var concatMap = include$4.concatMap;
+
+var any = include$4.any;
+
+var all = include$4.all;
+
+var notElem = include$4.notElem;
+
+var find = include$4.find;
 
 var optionToList = toList;
 
 export {
-  Functor ,
-  Applicative ,
-  Alternative ,
-  Monad ,
-  Foldable ,
-  Semigroup ,
+  fmap$1 as fmap,
+  pure$1 as pure,
+  liftA2 ,
+  empty ,
+  $$return ,
+  join ,
+  liftM2 ,
+  liftM3 ,
+  liftM4 ,
+  liftM5 ,
+  foldr$1 as foldr,
+  foldl$1 as foldl,
+  toList ,
+  $$null ,
+  length ,
+  elem ,
+  sum ,
+  maximum ,
+  minimum ,
+  concat ,
+  concatMap ,
+  any ,
+  all ,
+  notElem ,
+  find ,
+  sappend ,
   isSome ,
   isNone ,
   fromSome ,
@@ -429,6 +371,7 @@ export {
   ensure ,
   imapOption ,
   liftDef ,
+  Infix ,
   
 }
-/* No side effect */
+/* include Not a pure module */

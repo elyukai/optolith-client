@@ -32,7 +32,7 @@ module Level1 = {
     };
 
   let resolveTranslations = (langs, x) =>
-    Ley_Option.Functor.(
+    Ley_Option.Infix.(
       x.translations
       |> LevelTranslationMap.getFromLanguageOrder(langs)
       <&> (
@@ -91,7 +91,7 @@ module Level2 = {
     };
 
   let resolveTranslations = (langs, x) =>
-    Ley_Option.Functor.(
+    Ley_Option.Infix.(
       x.translations
       |> LevelTranslationMap.getFromLanguageOrder(langs)
       <&> (
@@ -154,7 +154,7 @@ module Level3 = {
     };
 
   let resolveTranslations = (langs, x) =>
-    Ley_Option.Functor.(
+    Ley_Option.Infix.(
       x.translations
       |> LevelTranslationMap.getFromLanguageOrder(langs)
       <&> (
@@ -209,14 +209,14 @@ let decodeMultilingual = json =>
   };
 
 let resolveTranslations = (langs, x) =>
-  Ley_Option.Monad.(
+  Ley_Option.Infix.(
     x.translations
     |> TranslationMap.getFromLanguageOrder(langs)
     >>= (
       translation => {
         let (level1, level2, level3) = x.levels;
 
-        liftM3(
+        Ley_Option.liftM3(
           (level1, level2, level3) =>
             {
               levels: (level1, level2, level3),

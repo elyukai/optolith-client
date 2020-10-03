@@ -11,7 +11,7 @@ let getValueDef: option(Skill.Dynamic.t) => int;
  */
 let getAttack:
   (
-    Ley_IntMap.t(Hero.Attribute.t),
+    Ley_IntMap.t(Attribute.Dynamic.t),
     CombatTechnique.Static.t,
     option(Skill.Dynamic.t)
   ) =>
@@ -23,7 +23,7 @@ let getAttack:
  */
 let getParry:
   (
-    Ley_IntMap.t(Hero.Attribute.t),
+    Ley_IntMap.t(Attribute.Dynamic.t),
     CombatTechnique.Static.t,
     option(Skill.Dynamic.t)
   ) =>
@@ -36,7 +36,7 @@ let getMax:
   (
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
-    ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
+    ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
     ~exceptionalCombatTechnique: option(Hero.Activatable.t),
     ~staticEntry: CombatTechnique.Static.t
   ) =>
@@ -50,7 +50,7 @@ let isIncreasable:
   (
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
-    ~heroAttrs: Ley_IntMap.t(Hero.Attribute.t),
+    ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
     ~exceptionalCombatTechnique: option(Hero.Activatable.t),
     ~staticEntry: CombatTechnique.Static.t,
     ~heroEntry: Skill.Dynamic.t

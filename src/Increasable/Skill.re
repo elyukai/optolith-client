@@ -37,7 +37,7 @@ module Static = {
       };
 
     let resolveTranslations = (langs, x) =>
-      Ley_Option.Functor.(
+      Ley_Option.Infix.(
         x.translations
         |> TranslationMap.getFromLanguageOrder(langs)
         <&> (
@@ -80,7 +80,7 @@ module Static = {
       };
 
     let resolveTranslations = (langs, x) =>
-      Ley_Option.Functor.(
+      Ley_Option.Infix.(
         x.translations
         |> TranslationMap.getFromLanguageOrder(langs)
         <&> (
@@ -197,7 +197,7 @@ module Static = {
     };
 
   let resolveTranslations = (langs, x) =>
-    Ley_Option.Functor.(
+    Ley_Option.Infix.(
       x.translations
       |> TranslationMap.getFromLanguageOrder(langs)
       <&> (
@@ -215,7 +215,7 @@ module Static = {
             x.applications
             |> Ley_Option.option(Ley_IntMap.empty, applications =>
                  applications
-                 |> Ley_List.Foldable.foldr(
+                 |> Ley_List.foldr(
                       application =>
                         application
                         |> Application.resolveTranslations(langs)
@@ -231,7 +231,7 @@ module Static = {
             x.uses
             |> Ley_Option.option(Ley_IntMap.empty, uses =>
                  uses
-                 |> Ley_List.Foldable.foldr(
+                 |> Ley_List.foldr(
                       use =>
                         use
                         |> Use.resolveTranslations(langs)

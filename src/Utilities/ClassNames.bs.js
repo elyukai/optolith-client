@@ -14,7 +14,7 @@ function cond(className, condition) {
   
 }
 
-var safe = Ley_Option$OptolithClient.Monad.$$return;
+var safe = Ley_Option$OptolithClient.$$return;
 
 export {
   fold ,
@@ -22,4 +22,4 @@ export {
   safe ,
   
 }
-/* No side effect */
+/* Ley_List-OptolithClient Not a pure module */

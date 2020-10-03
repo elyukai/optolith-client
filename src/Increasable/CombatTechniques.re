@@ -1,6 +1,6 @@
 open Ley_List;
 open Ley_Option;
-open Ley_Option.Functor;
+open Ley_Option.Infix;
 
 let getMaxPrimaryAttributeValueById = (heroAttrs, ps) =>
   ps
@@ -8,7 +8,7 @@ let getMaxPrimaryAttributeValueById = (heroAttrs, ps) =>
        Ley_IntMap.lookup(p, heroAttrs) |> Attribute.Dynamic.getValueDef
      )
   |> (<+>)(0)
-  |> Ley_List.Foldable.maximum;
+  |> Ley_List.maximum;
 
 let attributeValueToMod = value => Ley_Int.max(0, (value - 8) / 3);
 
@@ -55,7 +55,7 @@ let getExceptionalCombatTechniqueBonus = (exceptionalCombatTechnique, id) =>
         a =>
           a.options
           |> listToOption
-          |> Ley_Option.Foldable.elem(
+          |> Ley_Option.elem(
                Id.Activatable.Option.Preset((CombatTechnique, id)),
              )
           |> (hasBonus => hasBonus ? 1 : 0)
@@ -90,7 +90,7 @@ let getMax =
     getMaxCtrFromEl(startEl, phase),
   ]
   |> catOptions
-  |> Ley_List.Foldable.minimum
+  |> Ley_List.minimum
   |> (+)(
        getExceptionalCombatTechniqueBonus(
          exceptionalCombatTechnique,

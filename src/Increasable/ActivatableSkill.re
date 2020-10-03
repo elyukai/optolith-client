@@ -36,7 +36,7 @@ module Dynamic: Dynamic = {
   let empty = id => {id, value: Inactive, dependencies: []};
 
   let isEmpty = (x: t) =>
-    x.value === Inactive && Ley_List.Foldable.null(x.dependencies);
+    x.value === Inactive && Ley_List.null(x.dependencies);
 
   let getValueDef = Ley_Option.option(Inactive, (x: t) => x.value);
 

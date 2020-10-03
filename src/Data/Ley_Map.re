@@ -35,7 +35,7 @@ module Make = (Key: Comparable) => {
 
     let minimum = mp => foldr(Js.Math.min_int, Js.Int.max, mp);
 
-    let concat = mp => foldl(List.append, [], mp);
+    let concat = mp => foldr(flip(List.append), [], mp);
 
     let concatMap = (f, mp) =>
       TypedMap.fold(
@@ -60,7 +60,7 @@ module Make = (Key: Comparable) => {
         key => key |> flip(TypedMap.find, mp) |> pred,
         mp,
       )
-      |> Ley_Option.Functor.(<$>)(snd);
+      |> Ley_Option.Infix.(<$>)(snd);
   };
 
   // QUERY
@@ -75,7 +75,7 @@ module Make = (Key: Comparable) => {
 
   let lookup = (key, mp) =>
     TypedMap.find_first_opt(k => Key.compare(k, key) === 0, mp)
-    |> Ley_Option.Functor.(<$>)(snd);
+    |> Ley_Option.Infix.(<$>)(snd);
 
   let findWithDefault = (def, key, mp) =>
     mp |> lookup(key) |> Ley_Option.fromOption(def);
@@ -248,7 +248,7 @@ module Make = (Key: Comparable) => {
    */
   let zip = (mp1, mp2) =>
     mapMaybeWithKey(
-      (k, v1) => Ley_Option.Functor.(Ley_Tuple.pair(v1) <$> lookup(k, mp2)),
+      (k, v1) => Ley_Option.Infix.(Ley_Tuple.pair(v1) <$> lookup(k, mp2)),
       mp1,
     );
 
@@ -274,7 +274,7 @@ module Make = (Key: Comparable) => {
     );
 
   let countBy = (f, xs) =>
-    Ley_List.Foldable.foldr(
+    Ley_List.foldr(
       x =>
         x
         |> f
@@ -286,7 +286,7 @@ module Make = (Key: Comparable) => {
     );
 
   let countByM = (f, xs) =>
-    Ley_List.Foldable.foldr(
+    Ley_List.foldr(
       x =>
         x
         |> f
@@ -302,7 +302,7 @@ module Make = (Key: Comparable) => {
     );
 
   let groupBy = (f, xs) =>
-    Ley_List.Foldable.foldr(
+    Ley_List.foldr(
       x =>
         x
         |> f
