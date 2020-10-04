@@ -1,25 +1,30 @@
-open IO.Functor;
+open IO.Infix;
 
 module Decode = Yaml_Decode;
-module Integrity = Yaml_Integrity;
 module Raw = Yaml_Raw;
-module Zip = Yaml_Zip;
 
-let parseStaticData = locale => {
+let parseStaticData = (~onProgress, langs) => {
   Js.Console.timeStart("parseStaticData");
 
-  locale
-  |> Yaml_Raw.getStaticData
-  <&> (
-    yamlData => {
-      let res = Yaml_Decode.decode(locale, yamlData);
+  let preferredLocale = langs |> List.hd;
 
-      Js.Console.log("Parsing static data done!");
+  Raw.parseUI(preferredLocale)
+  <&> Decode.decodeUI(preferredLocale)
+  >>= (
+    ui =>
+      Raw.parseFiles(~onProgress)
+      <&> (
+        Decode.decodeFiles(langs, ui)
+        |> (
+          static => {
+            Js.Console.log("Parsing static data done!");
 
-      Js.Console.timeEnd("parseStaticData");
+            Js.Console.timeEnd("parseStaticData");
 
-      res;
-    }
+            static;
+          }
+        )
+      )
   )
   |> Exception.handleE;
 };

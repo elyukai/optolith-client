@@ -41,10 +41,10 @@ function isPactFromStateValid(pact) {
     if (pact.category === 1) {
       return true;
     } else if (pact.category === 2) {
-      if (isArchdemonicDomain(pact) && pact.type === 1) {
+      if (isArchdemonicDomain(pact) && pact.type_ === 1) {
         return true;
       } else if (isFreeDemonDomain(pact)) {
-        return pact.type === 2;
+        return pact.type_ === 2;
       } else {
         return false;
       }

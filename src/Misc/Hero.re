@@ -32,33 +32,6 @@ type personalData = {
   cultureAreaKnowledge: option(string),
 };
 
-module Activatable = {
-  type single = {
-    options: list(Id.Activatable.Option.t),
-    level: option(int),
-    customCost: option(int),
-  };
-
-  type dependency = {
-    source: Id.Activatable.t,
-    target: OneOrMany.t(int),
-    active: bool,
-    options: list(OneOrMany.t(Id.Activatable.SelectOption.t)),
-    level: option(int),
-  };
-
-  type t = {
-    id: int,
-    active: list(single),
-    dependencies: list(dependency),
-  };
-
-  let empty = id => {id, active: [], dependencies: []};
-
-  let isUnused = (x: t) =>
-    Ley_List.null(x.active) && Ley_List.null(x.dependencies);
-};
-
 module Energies = {
   type permanentEnergyLoss = {lost: int};
 
@@ -288,21 +261,6 @@ type pet = {
   pa: option(string),
 };
 
-module Pact = {
-  type domain =
-    | Predefined(int)
-    | Custom(string);
-
-  type t = {
-    category: int,
-    level: int,
-    [@bs.as "type"]
-    type_: int,
-    domain,
-    name: string,
-  };
-};
-
 type styleDependency = {
   /**
    * The extended special ability or list of available special abilities.
@@ -349,9 +307,9 @@ type t = {
   professionName: option(string),
   rules: Rules.t,
   personalData,
-  advantages: Ley_IntMap.t(Activatable.t),
-  disadvantages: Ley_IntMap.t(Activatable.t),
-  specialAbilities: Ley_IntMap.t(Activatable.t),
+  advantages: Ley_IntMap.t(Activatable_Dynamic.t),
+  disadvantages: Ley_IntMap.t(Activatable_Dynamic.t),
+  specialAbilities: Ley_IntMap.t(Activatable_Dynamic.t),
   attributes: Ley_IntMap.t(Attribute.Dynamic.t),
   attributeAdjustmentSelected: int,
   energies: Energies.t,
@@ -366,7 +324,7 @@ type t = {
   hitZoneArmors: Ley_IntMap.t(hitZoneArmor),
   purse,
   pets: Ley_IntMap.t(pet),
-  pact: option(Pact.t),
+  pact: option(Pact.Dynamic.t),
   combatStyleDependencies: list(styleDependency),
   magicalStyleDependencies: list(styleDependency),
   blessedStyleDependencies: list(styleDependency),

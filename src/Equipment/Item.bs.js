@@ -291,17 +291,20 @@ function decodeMultilingual$1(json) {
 
 function resolveTranslations$1(langs, x) {
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap$1.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                return {
-                        id: x.id,
-                        name: translation.name,
-                        price: x.price,
-                        weight: x.weight,
-                        special: x.special,
-                        info: Ley_Option$OptolithClient.mapOption((function (param) {
-                                return resolveTranslations(langs, param);
-                              }), translation.info),
-                        gr: x.gr
-                      };
+                return [
+                        x.id,
+                        {
+                          id: x.id,
+                          name: translation.name,
+                          price: x.price,
+                          weight: x.weight,
+                          special: x.special,
+                          info: Ley_Option$OptolithClient.mapOption((function (param) {
+                                  return resolveTranslations(langs, param);
+                                }), translation.info),
+                          gr: x.gr
+                        }
+                      ];
               }));
 }
 

@@ -3,7 +3,7 @@
  * dynamic and the static parts of a combat technique.
  */
 
-module Dynamic: Increasable.Dynamic;
+module Dynamic: Increasable.Dynamic.T;
 
 module Static: {
   type t = {
@@ -19,5 +19,5 @@ module Static: {
     errata: list(Erratum.t),
   };
 
-  let decode: (list(string), Js.Json.t) => option(t);
+  let decode: (list(string), Js.Json.t) => option((int, t));
 };

@@ -6,7 +6,7 @@ import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as Increasable$OptolithClient from "./Increasable.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-var Dynamic = Increasable$OptolithClient.Dynamic({
+var Dynamic = Increasable$OptolithClient.Dynamic.Make({
       minValue: 8
     });
 
@@ -33,11 +33,14 @@ function decodeMultilingual(json) {
 function decode$1(langs, json) {
   var x = decodeMultilingual(json);
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                return {
-                        id: x.id,
-                        name: translation.name,
-                        short: translation.short
-                      };
+                return [
+                        x.id,
+                        {
+                          id: x.id,
+                          name: translation.name,
+                          short: translation.short
+                        }
+                      ];
               }));
 }
 

@@ -38,12 +38,15 @@ let resolveTranslations = (langs, x) =>
     x.translations
     |> TranslationMap.getFromLanguageOrder(langs)
     <&> (
-      translation => {
-        id: x.id,
-        check: x.check,
-        name: translation.name,
-        fullName: translation.fullName,
-      }
+      translation => (
+        x.id,
+        {
+          id: x.id,
+          check: x.check,
+          name: translation.name,
+          fullName: translation.fullName,
+        },
+      )
     )
   );
 

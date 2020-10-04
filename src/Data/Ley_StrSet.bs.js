@@ -7,7 +7,27 @@ var StrSet = Ley_Set$OptolithClient.Make({
       compare: $$String.compare
     });
 
-var Foldable = StrSet.Foldable;
+var foldr = StrSet.foldr;
+
+var foldl = StrSet.foldl;
+
+var toList = StrSet.toList;
+
+var $$null = StrSet.$$null;
+
+var length = StrSet.length;
+
+var elem = StrSet.elem;
+
+var concatMap = StrSet.concatMap;
+
+var any = StrSet.any;
+
+var all = StrSet.all;
+
+var notElem = StrSet.notElem;
+
+var find = StrSet.find;
 
 var empty = StrSet.empty;
 
@@ -27,6 +47,8 @@ var notMember = StrSet.notMember;
 
 var size = StrSet.size;
 
+var disjoint = StrSet.disjoint;
+
 var union = StrSet.union;
 
 var difference = StrSet.difference;
@@ -37,9 +59,21 @@ var map = StrSet.map;
 
 var elems = StrSet.elems;
 
+var Infix = StrSet.Infix;
+
 export {
   StrSet ,
-  Foldable ,
+  foldr ,
+  foldl ,
+  toList ,
+  $$null ,
+  length ,
+  elem ,
+  concatMap ,
+  any ,
+  all ,
+  notElem ,
+  find ,
   empty ,
   singleton ,
   fromList ,
@@ -49,11 +83,13 @@ export {
   member ,
   notMember ,
   size ,
+  disjoint ,
   union ,
   difference ,
   filter ,
   map ,
   elems ,
+  Infix ,
   
 }
 /* StrSet Not a pure module */

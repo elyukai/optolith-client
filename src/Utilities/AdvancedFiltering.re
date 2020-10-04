@@ -17,7 +17,7 @@ let searchByMulti = (searchAccessors, filterText, xs) =>
   | searchAccessors =>
     filter(
       x =>
-        Foldable.any(
+        Ley_List.any(
           pred =>
             switch (pred) {
             | Flat(f) =>
@@ -25,7 +25,7 @@ let searchByMulti = (searchAccessors, filterText, xs) =>
             | Multi(f) =>
               x
               |> f
-              |> Foldable.any(x' =>
+              |> Ley_List.any(x' =>
                    x' |> Extra.lower |> isInfixOf(Extra.lower(filterText))
                  )
             },
@@ -58,7 +58,7 @@ let%private rec combinedCompare = (sortFunctions, a, b) =>
  * second sort option and so on.
  */
 let sortByMulti = (sortOptions, xs) =>
-  if (Foldable.length(xs) < 2 || Foldable.null(sortOptions)) {
+  if (Ley_List.length(xs) < 2 || Ley_List.null(sortOptions)) {
     xs;
   } else {
     let sortFunctions =

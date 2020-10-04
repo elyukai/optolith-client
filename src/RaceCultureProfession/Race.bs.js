@@ -216,38 +216,41 @@ function decode$2(langs, json) {
                                           }));
                             }), options.variants)
                     });
-                return {
-                        id: x.id,
-                        name: translation.name,
-                        apValue: x.apValue,
-                        lp: x.lp,
-                        spi: x.spi,
-                        tou: x.tou,
-                        mov: x.mov,
-                        attributeAdjustments: x.attributeAdjustments,
-                        attributeAdjustmentsSelectionValue: x.attributeAdjustmentsSelectionValue,
-                        attributeAdjustmentsSelectionList: x.attributeAdjustmentsSelectionList,
-                        attributeAdjustmentsText: translation.attributeAdjustments,
-                        automaticAdvantages: x.automaticAdvantages,
-                        automaticAdvantagesText: translation.automaticAdvantages,
-                        stronglyRecommendedAdvantages: x.stronglyRecommendedAdvantages,
-                        stronglyRecommendedAdvantagesText: translation.stronglyRecommendedAdvantages,
-                        stronglyRecommendedDisadvantages: x.stronglyRecommendedDisadvantages,
-                        stronglyRecommendedDisadvantagesText: translation.stronglyRecommendedDisadvantages,
-                        commonAdvantages: x.commonAdvantages,
-                        commonAdvantagesText: translation.commonAdvantages,
-                        commonDisadvantages: x.commonDisadvantages,
-                        commonDisadvantagesText: translation.commonDisadvantages,
-                        uncommonAdvantages: x.uncommonAdvantages,
-                        uncommonAdvantagesText: translation.uncommonDisadvantages,
-                        uncommonDisadvantages: x.uncommonDisadvantages,
-                        uncommonDisadvantagesText: translation.uncommonDisadvantages,
-                        weightBase: x.weightBase,
-                        weightRandom: x.weightRandom,
-                        variantOptions: tmp,
-                        src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
-                      };
+                return [
+                        x.id,
+                        {
+                          id: x.id,
+                          name: translation.name,
+                          apValue: x.apValue,
+                          lp: x.lp,
+                          spi: x.spi,
+                          tou: x.tou,
+                          mov: x.mov,
+                          attributeAdjustments: x.attributeAdjustments,
+                          attributeAdjustmentsSelectionValue: x.attributeAdjustmentsSelectionValue,
+                          attributeAdjustmentsSelectionList: x.attributeAdjustmentsSelectionList,
+                          attributeAdjustmentsText: translation.attributeAdjustments,
+                          automaticAdvantages: x.automaticAdvantages,
+                          automaticAdvantagesText: translation.automaticAdvantages,
+                          stronglyRecommendedAdvantages: x.stronglyRecommendedAdvantages,
+                          stronglyRecommendedAdvantagesText: translation.stronglyRecommendedAdvantages,
+                          stronglyRecommendedDisadvantages: x.stronglyRecommendedDisadvantages,
+                          stronglyRecommendedDisadvantagesText: translation.stronglyRecommendedDisadvantages,
+                          commonAdvantages: x.commonAdvantages,
+                          commonAdvantagesText: translation.commonAdvantages,
+                          commonDisadvantages: x.commonDisadvantages,
+                          commonDisadvantagesText: translation.commonDisadvantages,
+                          uncommonAdvantages: x.uncommonAdvantages,
+                          uncommonAdvantagesText: translation.uncommonDisadvantages,
+                          uncommonDisadvantages: x.uncommonDisadvantages,
+                          uncommonDisadvantagesText: translation.uncommonDisadvantages,
+                          weightBase: x.weightBase,
+                          weightRandom: x.weightRandom,
+                          variantOptions: tmp,
+                          src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                          errata: translation.errata
+                        }
+                      ];
               }));
 }
 

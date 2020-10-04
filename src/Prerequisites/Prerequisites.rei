@@ -13,23 +13,24 @@ module Dynamic: {
       ~isEntryToAdd: bool,
       Static.t,
       Static.activatable,
-      option(Hero.Activatable.t),
+      option(Activatable_Dynamic.t),
       Activatable_Convert.singleWithId
     ) =>
-    list(prerequisite);
+    list(Prerequisite.Unified.t);
 };
 
 module Validation: {
   /**
    * `isPrerequisiteMet` returns if the passed prerequisite is met.
    */
-  let isPrerequisiteMet: (Static.t, Hero.t, Id.All.t, prerequisite) => bool;
+  let isPrerequisiteMet:
+    (Static.t, Hero.t, Id.All.t, Prerequisite.Unified.t) => bool;
 
   /**
    * `arePrerequisitesMet` returns if all passed prerequisites are met.
    */
   let arePrerequisitesMet:
-    (Static.t, Hero.t, Id.All.t, list(prerequisite)) => bool;
+    (Static.t, Hero.t, Id.All.t, list(Prerequisite.Unified.t)) => bool;
 
   /**
    * `getMaxLevel staticData hero sourceId levelPrerequisites` returns the
@@ -42,12 +43,19 @@ module Validation: {
    * dependencies, use `Dependencies.getMaxLevel`.
    */
   let getMaxLevel:
-    (Static.t, Hero.t, Id.All.t, Ley_IntMap.t(Prerequisite.t)) => option(int);
+    (
+      Static.t,
+      Hero.t,
+      Id.All.t,
+      Ley_IntMap.t(list(Prerequisite.Unified.t))
+    ) =>
+    option(int);
 };
 
 module Activatable: {
-  let getFlatFirstPrerequisites: Static.activatable => list(prerequisite);
+  let getFlatFirstPrerequisites:
+    Static.activatable => list(Prerequisite.Unified.t);
 
   let getLevelPrerequisites:
-    Static.activatable => Ley_IntMap.t(Prerequisite.t);
+    Static.activatable => Ley_IntMap.t(list(Prerequisite.Unified.t));
 };

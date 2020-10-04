@@ -13,20 +13,20 @@ type matchingLanguagesScripts = {
  */
 type t = {
   startExperienceLevel: ExperienceLevel.t,
-  combatStyleCombination: option(Hero.Activatable.t),
+  combatStyleCombination: option(Activatable_Dynamic.t),
   armedCombatStylesCount: int,
   unarmedCombatStylesCount: int,
   magicalStylesCount: int,
   isBlessedStyleActive: bool,
   isSkillStyleActive: bool,
-  magicalStyleCombination: option(Hero.Activatable.t),
-  dunklesAbbild: option(Hero.Activatable.t),
+  magicalStyleCombination: option(Activatable_Dynamic.t),
+  dunklesAbbild: option(Activatable_Dynamic.t),
   activePactGiftsCount: int,
   matchingLanguagesScripts,
   validExtendedSpecialAbilities: list(int),
   requiredApplyToMagicalActions: bool,
   specialAbilityPairs:
-    Ley_IntMap.t((SpecialAbility.t, option(Hero.Activatable.t))),
+    Ley_IntMap.t((SpecialAbility.Static.t, option(Activatable_Dynamic.t))),
   combatTechniquePairs:
     Ley_IntMap.t((CombatTechnique.Static.t, option(Skill.Dynamic.t))),
   adventurePoints: AdventurePoints.categories,

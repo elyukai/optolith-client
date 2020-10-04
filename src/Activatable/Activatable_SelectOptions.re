@@ -1,6 +1,6 @@
 open Static;
 open SelectOption;
-open Ley_Option;
+open Ley_Option.Infix;
 open Activatable_Convert;
 open Activatable_Accessors;
 
@@ -26,33 +26,35 @@ let getSelectOptionName = (x, id) =>
  * Returns `None` if not found.
  */
 let getSelectOptionCost = (x, id) =>
-  id |> getSelectOption(x) >>= (y => y.cost);
+  id |> getSelectOption(x) >>= (y => y.apValue);
 
 /**
  * Get all option IDs from the given entry at the passed index.
  */
-let getActiveOptions = (index, x: Hero.Activatable.t) =>
+let getActiveOptions = (index, x: Activatable_Dynamic.t) =>
   x.active
-  |> O.mapOption((y: Hero.Activatable.single) =>
+  |> O.mapOption((y: Activatable_Dynamic.single) =>
        Ley_List.Safe.atMay(y.options, index)
      );
 
-let mapActiveOptions = (f, index, x: Hero.Activatable.t) =>
+let mapActiveOptions = (f, index, x: Activatable_Dynamic.t) =>
   x.active
-  |> O.mapOption((y: Hero.Activatable.single) =>
+  |> O.mapOption((y: Activatable_Dynamic.single) =>
        Ley_List.Safe.atMay(y.options, index) >>= f
      );
 
 /**
  * Get all first option IDs from the given entry.
  */
-let getActiveOptions1 = (x: Hero.Activatable.t) =>
+let getActiveOptions1 = (x: Activatable_Dynamic.t) =>
   x.active
-  |> O.mapOption((y: Hero.Activatable.single) => y.options |> O.listToOption);
+  |> O.mapOption((y: Activatable_Dynamic.single) =>
+       y.options |> O.listToOption
+     );
 
-let mapActiveOptions1 = (f, x: Hero.Activatable.t) =>
+let mapActiveOptions1 = (f, x: Activatable_Dynamic.t) =>
   x.active
-  |> O.mapOption((y: Hero.Activatable.single) =>
+  |> O.mapOption((y: Activatable_Dynamic.single) =>
        y.options |> O.listToOption >>= f
      );
 
@@ -71,13 +73,13 @@ let getActiveOptions2 = getActiveOptions(1);
  * Get all second option ids from the given entry, sorted by their first option
  * id in a map.
  */
-let getActiveOptions2Map = (x: Hero.Activatable.t) =>
-  L.Foldable.foldr(
-    (current: Hero.Activatable.single, mp) =>
+let getActiveOptions2Map = (x: Activatable_Dynamic.t) =>
+  L.foldr(
+    (current: Activatable_Dynamic.single, mp) =>
       current.options
       |> O.listToOption
       >>= Activatable_Convert.activatableOptionToSelectOptionId
-      |> O.Monad.liftM2(
+      |> O.liftM2(
            (secondOption, option) =>
              SOM.alter(
                maybeSecondOptions =>

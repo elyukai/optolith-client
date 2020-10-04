@@ -379,6 +379,8 @@ function resolveTranslations$1(langs, param) {
         };
 }
 
+var Unified = {};
+
 function decodeMultilingual$2(param) {
   return Json_decode.andThen((function (str) {
                 switch (str) {
@@ -493,9 +495,88 @@ function decodeMultilingual$2(param) {
               }), param);
 }
 
+function unify(x) {
+  var x$1 = x.value;
+  var tmp;
+  switch (x$1.TAG | 0) {
+    case /* Sex */0 :
+        tmp = {
+          TAG: /* Sex */0,
+          _0: x$1._0
+        };
+        break;
+    case /* Race */1 :
+        tmp = {
+          TAG: /* Race */1,
+          _0: x$1._0
+        };
+        break;
+    case /* Culture */2 :
+        tmp = {
+          TAG: /* Culture */2,
+          _0: x$1._0
+        };
+        break;
+    case /* Pact */3 :
+        tmp = {
+          TAG: /* Pact */3,
+          _0: x$1._0
+        };
+        break;
+    case /* SocialStatus */4 :
+        tmp = {
+          TAG: /* SocialStatus */4,
+          _0: x$1._0
+        };
+        break;
+    case /* PrimaryAttribute */5 :
+        tmp = {
+          TAG: /* PrimaryAttribute */5,
+          _0: x$1._0
+        };
+        break;
+    case /* Activatable */6 :
+        tmp = {
+          TAG: /* Activatable */6,
+          _0: x$1._0
+        };
+        break;
+    case /* ActivatableMultiEntry */7 :
+        tmp = {
+          TAG: /* ActivatableMultiEntry */7,
+          _0: x$1._0
+        };
+        break;
+    case /* ActivatableMultiSelect */8 :
+        tmp = {
+          TAG: /* ActivatableMultiSelect */8,
+          _0: x$1._0
+        };
+        break;
+    case /* Increasable */9 :
+        tmp = {
+          TAG: /* Increasable */9,
+          _0: x$1._0
+        };
+        break;
+    case /* IncreasableMultiEntry */10 :
+        tmp = {
+          TAG: /* IncreasableMultiEntry */10,
+          _0: x$1._0
+        };
+        break;
+    
+  }
+  return {
+          value: tmp,
+          displayOption: x.displayOption
+        };
+}
+
 var General = {
   decodeMultilingual: decodeMultilingual$2,
-  resolveTranslations: resolveTranslations$1
+  resolveTranslations: resolveTranslations$1,
+  unify: unify
 };
 
 function decodeMultilingual$3(param) {
@@ -558,9 +639,52 @@ function decodeMultilingual$3(param) {
               }), param);
 }
 
+function unify$1(x) {
+  var x$1 = x.value;
+  var tmp;
+  switch (x$1.TAG | 0) {
+    case /* Sex */0 :
+        tmp = {
+          TAG: /* Sex */0,
+          _0: x$1._0
+        };
+        break;
+    case /* Race */1 :
+        tmp = {
+          TAG: /* Race */1,
+          _0: x$1._0
+        };
+        break;
+    case /* Culture */2 :
+        tmp = {
+          TAG: /* Culture */2,
+          _0: x$1._0
+        };
+        break;
+    case /* Activatable */3 :
+        tmp = {
+          TAG: /* Activatable */6,
+          _0: x$1._0
+        };
+        break;
+    case /* Increasable */4 :
+        tmp = {
+          TAG: /* Increasable */9,
+          _0: x$1._0
+        };
+        break;
+    
+  }
+  return {
+          value: tmp,
+          displayOption: x.displayOption
+        };
+}
+
 var Profession = {
   decodeMultilingual: decodeMultilingual$3,
-  resolveTranslations: resolveTranslations$1
+  resolveTranslations: resolveTranslations$1,
+  unify: unify$1
 };
 
 function decodeMultilingual$4(param) {
@@ -684,9 +808,92 @@ function decodeMultilingual$4(param) {
               }), param);
 }
 
+function unify$2(x) {
+  var x$1 = x.value;
+  var tmp;
+  if (typeof x$1 === "number") {
+    tmp = /* CommonSuggestedByRCP */0;
+  } else {
+    switch (x$1.TAG | 0) {
+      case /* Sex */0 :
+          tmp = {
+            TAG: /* Sex */0,
+            _0: x$1._0
+          };
+          break;
+      case /* Race */1 :
+          tmp = {
+            TAG: /* Race */1,
+            _0: x$1._0
+          };
+          break;
+      case /* Culture */2 :
+          tmp = {
+            TAG: /* Culture */2,
+            _0: x$1._0
+          };
+          break;
+      case /* Pact */3 :
+          tmp = {
+            TAG: /* Pact */3,
+            _0: x$1._0
+          };
+          break;
+      case /* SocialStatus */4 :
+          tmp = {
+            TAG: /* SocialStatus */4,
+            _0: x$1._0
+          };
+          break;
+      case /* PrimaryAttribute */5 :
+          tmp = {
+            TAG: /* PrimaryAttribute */5,
+            _0: x$1._0
+          };
+          break;
+      case /* Activatable */6 :
+          tmp = {
+            TAG: /* Activatable */6,
+            _0: x$1._0
+          };
+          break;
+      case /* ActivatableMultiEntry */7 :
+          tmp = {
+            TAG: /* ActivatableMultiEntry */7,
+            _0: x$1._0
+          };
+          break;
+      case /* ActivatableMultiSelect */8 :
+          tmp = {
+            TAG: /* ActivatableMultiSelect */8,
+            _0: x$1._0
+          };
+          break;
+      case /* Increasable */9 :
+          tmp = {
+            TAG: /* Increasable */9,
+            _0: x$1._0
+          };
+          break;
+      case /* IncreasableMultiEntry */10 :
+          tmp = {
+            TAG: /* IncreasableMultiEntry */10,
+            _0: x$1._0
+          };
+          break;
+      
+    }
+  }
+  return {
+          value: tmp,
+          displayOption: x.displayOption
+        };
+}
+
 var AdvantageDisadvantage = {
   decodeMultilingual: decodeMultilingual$4,
-  resolveTranslations: resolveTranslations$1
+  resolveTranslations: resolveTranslations$1,
+  unify: unify$2
 };
 
 function decodeMultilingual$5(decoder) {
@@ -782,7 +989,7 @@ function makeRangePredicate(oldLevel, newLevel) {
 function concatRange(oldLevel, newLevel, prerequisites) {
   var pred = makeRangePredicate(oldLevel, newLevel);
   if (prerequisites.TAG) {
-    return Curry._1(Ley_IntMap$OptolithClient.IntMap.Foldable.concat, Curry._2(Ley_IntMap$OptolithClient.filterWithKey, (function (k, param) {
+    return Curry._1(Ley_IntMap$OptolithClient.concat, Curry._2(Ley_IntMap$OptolithClient.filterWithKey, (function (k, param) {
                       return Curry._1(pred, k);
                     }), prerequisites._0));
   } else if (Curry._1(pred, 1)) {
@@ -866,6 +1073,7 @@ export {
   IncreasableMultiEntry ,
   DisplayOption ,
   Config ,
+  Unified ,
   General ,
   Profession ,
   AdvantageDisadvantage ,

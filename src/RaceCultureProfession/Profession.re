@@ -598,41 +598,44 @@ module Static = {
               x.prerequisites,
             );
 
-          {
-            id: x.id,
-            name: translation.name,
-            subname: translation.subname,
-            apValue: x.apValue,
-            prerequisites,
-            prerequisitesStart: translation.prerequisitesStart,
-            options: {
-              ...x.options,
-              guildMageUnfamiliarSpell:
-                Options.getGuildMageUnfamiliarSpell(prerequisites),
+          (
+            x.id,
+            {
+              id: x.id,
+              name: translation.name,
+              subname: translation.subname,
+              apValue: x.apValue,
+              prerequisites,
+              prerequisitesStart: translation.prerequisitesStart,
+              options: {
+                ...x.options,
+                guildMageUnfamiliarSpell:
+                  Options.getGuildMageUnfamiliarSpell(prerequisites),
+              },
+              specialAbilities: x.specialAbilities,
+              combatTechniques: x.combatTechniques,
+              skills: x.skills,
+              spells: x.spells,
+              liturgicalChants: x.liturgicalChants,
+              blessings: x.blessings,
+              suggestedAdvantages: x.suggestedAdvantages,
+              suggestedAdvantagesText: translation.suggestedAdvantages,
+              suggestedDisadvantages: x.suggestedDisadvantages,
+              suggestedDisadvantagesText: translation.suggestedDisadvantages,
+              unsuitableAdvantages: x.unsuitableAdvantages,
+              unsuitableAdvantagesText: translation.unsuitableAdvantages,
+              unsuitableDisadvantages: x.unsuitableDisadvantages,
+              unsuitableDisadvantagesText: translation.unsuitableDisadvantages,
+              variants:
+                x.variants
+                |> Ley_IntMap.mapMaybe(Variant.resolveTranslations(langs)),
+              isVariantRequired: x.isVariantRequired,
+              gr: x.gr,
+              sgr: x.sgr,
+              src: PublicationRef.resolveTranslationsList(langs, x.src),
+              errata: translation.errata,
             },
-            specialAbilities: x.specialAbilities,
-            combatTechniques: x.combatTechniques,
-            skills: x.skills,
-            spells: x.spells,
-            liturgicalChants: x.liturgicalChants,
-            blessings: x.blessings,
-            suggestedAdvantages: x.suggestedAdvantages,
-            suggestedAdvantagesText: translation.suggestedAdvantages,
-            suggestedDisadvantages: x.suggestedDisadvantages,
-            suggestedDisadvantagesText: translation.suggestedDisadvantages,
-            unsuitableAdvantages: x.unsuitableAdvantages,
-            unsuitableAdvantagesText: translation.unsuitableAdvantages,
-            unsuitableDisadvantages: x.unsuitableDisadvantages,
-            unsuitableDisadvantagesText: translation.unsuitableDisadvantages,
-            variants:
-              x.variants
-              |> Ley_IntMap.mapMaybe(Variant.resolveTranslations(langs)),
-            isVariantRequired: x.isVariantRequired,
-            gr: x.gr,
-            sgr: x.sgr,
-            src: PublicationRef.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
-          };
+          );
         }
       )
     );

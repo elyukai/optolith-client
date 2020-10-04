@@ -31,7 +31,7 @@ let getSelectOptionCost:
 /**
  * Get all first option IDs from the given entry.
  */
-let getActiveOptions1: Hero.Activatable.t => list(Id.Activatable.Option.t);
+let getActiveOptions1: Activatable_Dynamic.t => list(Id.Activatable.Option.t);
 
 /**
  * `mapActiveOptions1 f entry` takes all first option ids from the given entry
@@ -39,25 +39,25 @@ let getActiveOptions1: Hero.Activatable.t => list(Id.Activatable.Option.t);
  * returned a `Some`, which is then unwrapped.
  */
 let mapActiveOptions1:
-  (Id.Activatable.Option.t => option('a), Hero.Activatable.t) => list('a);
+  (Id.Activatable.Option.t => option('a), Activatable_Dynamic.t) => list('a);
 
 /**
  * Get all first select option IDs from the given entry.
  */
 let getActiveSelectOptions1:
-  Hero.Activatable.t => list(Id.Activatable.SelectOption.t);
+  Activatable_Dynamic.t => list(Id.Activatable.SelectOption.t);
 
 /**
  * Get all second option IDs from the given entry.
  */
-let getActiveOptions2: Hero.Activatable.t => list(Id.Activatable.Option.t);
+let getActiveOptions2: Activatable_Dynamic.t => list(Id.Activatable.Option.t);
 
 /**
  * Get all second option ids from the given entry, sorted by their first option
  * id in a map.
  */
 let getActiveOptions2Map:
-  Hero.Activatable.t => SelectOption.Map.t(list(Id.Activatable.Option.t));
+  Activatable_Dynamic.t => SelectOption.Map.t(list(Id.Activatable.Option.t));
 
 let getOption: (int, singleWithId) => option(Id.Activatable.Option.t);
 

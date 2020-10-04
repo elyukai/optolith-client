@@ -62,19 +62,23 @@ module Static = {
       x.translations
       |> TranslationMap.getFromLanguageOrder(langs)
       <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          check: x.check,
-          checkMod: x.checkMod,
-          effect: translation.effect,
-          cost: ActivatableSkill.MainParameter.make(false, translation.cost),
-          skill: x.skill,
-          property: x.property,
-          ic: x.ic,
-          src: PublicationRef.resolveTranslationsList(langs, x.src),
-          errata: translation.errata,
-        }
+        translation => (
+          x.id,
+          {
+            id: x.id,
+            name: translation.name,
+            check: x.check,
+            checkMod: x.checkMod,
+            effect: translation.effect,
+            cost:
+              ActivatableSkill.MainParameter.make(false, translation.cost),
+            skill: x.skill,
+            property: x.property,
+            ic: x.ic,
+            src: PublicationRef.resolveTranslationsList(langs, x.src),
+            errata: translation.errata,
+          },
+        )
       )
     );
 

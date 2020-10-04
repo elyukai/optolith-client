@@ -1,12 +1,12 @@
 module L = Ley_List;
 module O = Ley_Option;
 
-let getLevel = (maybeEntry: option(Hero.Activatable.t)) =>
-  O.Monad.(
+let getLevel = (maybeEntry: option(Activatable_Dynamic.t)) =>
+  O.Infix.(
     maybeEntry
     >>= (entry => entry.active |> O.listToOption)
     >>= (active => active.level)
-    |> O.Foldable.sum
+    |> O.sum
   );
 
 /**

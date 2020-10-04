@@ -6,8 +6,8 @@ let getMax:
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
-    ~exceptionalSkill: option(Hero.Activatable.t),
-    ~aspectKnowledge: option(Hero.Activatable.t),
+    ~exceptionalSkill: option(Activatable_Dynamic.t),
+    ~aspectKnowledge: option(Activatable_Dynamic.t),
     ~staticEntry: LiturgicalChant.Static.t
   ) =>
   int;
@@ -20,8 +20,8 @@ let isIncreasable:
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
-    ~exceptionalSkill: option(Hero.Activatable.t),
-    ~aspectKnowledge: option(Hero.Activatable.t),
+    ~exceptionalSkill: option(Activatable_Dynamic.t),
+    ~aspectKnowledge: option(Activatable_Dynamic.t),
     ~staticEntry: LiturgicalChant.Static.t,
     ~heroEntry: ActivatableSkill.Dynamic.t
   ) =>
@@ -35,7 +35,7 @@ let isIncreasable:
  */
 let getMin:
   (
-    ~aspectKnowledge: Hero.Activatable.t,
+    ~aspectKnowledge: Activatable_Dynamic.t,
     ~staticLiturgicalChants: Ley_IntMap.t(LiturgicalChant.Static.t),
     ~heroLiturgicalChants: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
     ~staticEntry: LiturgicalChant.Static.t,
@@ -48,7 +48,7 @@ let getMin:
  */
 let isDecreasable:
   (
-    ~aspectKnowledge: Hero.Activatable.t,
+    ~aspectKnowledge: Activatable_Dynamic.t,
     ~staticLiturgicalChants: Ley_IntMap.t(LiturgicalChant.Static.t),
     ~heroLiturgicalChants: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
     ~staticEntry: LiturgicalChant.Static.t,

@@ -15,7 +15,7 @@ import * as Prerequisite$OptolithClient from "../Prerequisites/Prerequisite.bs.j
 import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-var Dynamic = Increasable$OptolithClient.Dynamic({
+var Dynamic = Increasable$OptolithClient.Dynamic.Make({
       minValue: 0
     });
 
@@ -157,32 +157,35 @@ function decode$3(langs, json) {
                       break;
                   
                 }
-                return {
-                        id: x.id,
-                        name: translation.name,
-                        check: x.check,
-                        encumbrance: tmp,
-                        gr: x.gr,
-                        ic: x.ic,
-                        applications: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, (function (applications) {
-                                return Curry._3(Ley_List$OptolithClient.foldr, (function (application) {
-                                              return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, Curry._1(Ley_IntMap$OptolithClient.insert, application.id), resolveTranslations(langs, application));
-                                            }), Ley_IntMap$OptolithClient.empty, applications);
-                              }), x.applications),
-                        applicationsInput: translation.applicationsInput,
-                        uses: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, (function (uses) {
-                                return Curry._3(Ley_List$OptolithClient.foldr, (function (use) {
-                                              return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, Curry._1(Ley_IntMap$OptolithClient.insert, use.id), resolveTranslations$1(langs, use));
-                                            }), Ley_IntMap$OptolithClient.empty, uses);
-                              }), x.uses),
-                        tools: translation.tools,
-                        quality: translation.quality,
-                        failed: translation.failed,
-                        critical: translation.critical,
-                        botch: translation.botch,
-                        src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
-                      };
+                return [
+                        x.id,
+                        {
+                          id: x.id,
+                          name: translation.name,
+                          check: x.check,
+                          encumbrance: tmp,
+                          gr: x.gr,
+                          ic: x.ic,
+                          applications: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, (function (applications) {
+                                  return Curry._3(Ley_List$OptolithClient.foldr, (function (application) {
+                                                return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, Curry._1(Ley_IntMap$OptolithClient.insert, application.id), resolveTranslations(langs, application));
+                                              }), Ley_IntMap$OptolithClient.empty, applications);
+                                }), x.applications),
+                          applicationsInput: translation.applicationsInput,
+                          uses: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, (function (uses) {
+                                  return Curry._3(Ley_List$OptolithClient.foldr, (function (use) {
+                                                return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, Curry._1(Ley_IntMap$OptolithClient.insert, use.id), resolveTranslations$1(langs, use));
+                                              }), Ley_IntMap$OptolithClient.empty, uses);
+                                }), x.uses),
+                          tools: translation.tools,
+                          quality: translation.quality,
+                          failed: translation.failed,
+                          critical: translation.critical,
+                          botch: translation.botch,
+                          src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                          errata: translation.errata
+                        }
+                      ];
               }));
 }
 

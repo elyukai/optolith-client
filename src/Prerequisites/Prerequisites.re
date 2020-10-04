@@ -4,228 +4,253 @@ module O = Ley_Option;
 module Dynamic = {
   open Static;
   open Ley_Function;
-  open Ley_Option;
+  open Ley_Option.Infix;
 
   let getEntrySpecificDynamicPrerequisites =
       (
         ~isEntryToAdd,
         staticData,
         staticEntry,
-        heroEntry: option(Hero.Activatable.t),
+        heroEntry: option(Activatable_Dynamic.t),
         singleEntry: Activatable_Convert.singleWithId,
-      ) => {
+      )
+      : list(Prerequisite.Unified.t) => {
     let sid = Activatable_SelectOptions.getOption1(singleEntry);
     let sid2 = Activatable_SelectOptions.getOption2(singleEntry);
 
-    switch (staticEntry) {
-    | Advantage(entry) =>
-      [@warning "-4"]
-      (
-        switch (Id.Advantage.fromInt(entry.id)) {
-        | Aptitude
-        | ExceptionalSkill => [
-            Activatable({
-              id: (Disadvantage, Id.Disadvantage.toInt(Incompetent)),
-              active: false,
-              sid:
-                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-              sid2: None,
-              level: None,
-            }),
-          ]
-        | MagicalAttunement => [
-            Activatable({
-              id: (Disadvantage, Id.Disadvantage.toInt(MagicalRestriction)),
-              active: false,
-              sid:
-                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-              sid2: None,
-              level: None,
-            }),
-          ]
-        | _ => []
-        }
-      )
-    | Disadvantage(entry) =>
-      [@warning "-4"]
-      (
-        switch (Id.Disadvantage.fromInt(entry.id)) {
-        | MagicalRestriction => [
-            Activatable({
-              id: (Advantage, Id.Advantage.toInt(MagicalAttunement)),
-              active: false,
-              sid:
-                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-              sid2: None,
-              level: None,
-            }),
-          ]
-        | Incompetent => [
-            Activatable({
-              id: (Advantage, Id.Advantage.toInt(Aptitude)),
-              active: false,
-              sid:
-                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-              sid2: None,
-              level: None,
-            }),
-            Activatable({
-              id: (Advantage, Id.Advantage.toInt(ExceptionalSkill)),
-              active: false,
-              sid:
-                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-              sid2: None,
-              level: None,
-            }),
-          ]
-        | _ => []
-        }
-      )
-    | SpecialAbility(entry) =>
-      [@warning "-4"]
-      (
-        switch (Id.SpecialAbility.fromInt(entry.id)) {
-        | SkillSpecialization =>
-          let sameSkillActiveCount =
-            Ley_Option.option(
-              0,
-              (heroEntry: Hero.Activatable.t) =>
-                heroEntry.active
-                |> Ley_List.countBy((x: Hero.Activatable.single) =>
-                     switch (sid, O.listToOption(x.options)) {
-                     | (None, _)
-                     | (_, None) => false
-                     | (Some(sid), Some(option)) =>
-                       Id.Activatable.Option.(sid == option)
-                     }
-                   ),
-              heroEntry,
-            );
+    (
+      switch (staticEntry) {
+      | Advantage(entry) =>
+        [@warning "-4"]
+        (
+          switch (Id.Advantage.fromInt(entry.id)) {
+          | Aptitude
+          | ExceptionalSkill => [
+              Prerequisite.Unified.Activatable({
+                id: (Disadvantage, Id.Disadvantage.toInt(Incompetent)),
+                active: false,
+                options:
+                  O.catOptions([
+                    sid
+                    >>= Activatable_Convert.activatableOptionToSelectOptionId,
+                  ]),
+                level: None,
+              }),
+            ]
+          | MagicalAttunement => [
+              Activatable({
+                id: (
+                  Disadvantage,
+                  Id.Disadvantage.toInt(MagicalRestriction),
+                ),
+                active: false,
+                options:
+                  O.catOptions([
+                    sid
+                    >>= Activatable_Convert.activatableOptionToSelectOptionId,
+                  ]),
+                level: None,
+              }),
+            ]
+          | _ => []
+          }
+        )
+      | Disadvantage(entry) =>
+        [@warning "-4"]
+        (
+          switch (Id.Disadvantage.fromInt(entry.id)) {
+          | MagicalRestriction => [
+              Activatable({
+                id: (Advantage, Id.Advantage.toInt(MagicalAttunement)),
+                active: false,
+                options:
+                  O.catOptions([
+                    sid
+                    >>= Activatable_Convert.activatableOptionToSelectOptionId,
+                  ]),
+                level: None,
+              }),
+            ]
+          | Incompetent => [
+              Activatable({
+                id: (Advantage, Id.Advantage.toInt(Aptitude)),
+                active: false,
+                options:
+                  O.catOptions([
+                    sid
+                    >>= Activatable_Convert.activatableOptionToSelectOptionId,
+                  ]),
+                level: None,
+              }),
+              Activatable({
+                id: (Advantage, Id.Advantage.toInt(ExceptionalSkill)),
+                active: false,
+                options:
+                  O.catOptions([
+                    sid
+                    >>= Activatable_Convert.activatableOptionToSelectOptionId,
+                  ]),
+                level: None,
+              }),
+            ]
+          | _ => []
+          }
+        )
+      | SpecialAbility(entry) =>
+        [@warning "-4"]
+        (
+          switch (Id.SpecialAbility.fromInt(entry.id)) {
+          | SkillSpecialization =>
+            let sameSkillActiveCount =
+              Ley_Option.option(
+                0,
+                (heroEntry: Activatable_Dynamic.t) =>
+                  heroEntry.active
+                  |> Ley_List.countBy((x: Activatable_Dynamic.single) =>
+                       switch (sid, O.listToOption(x.options)) {
+                       | (None, _)
+                       | (_, None) => false
+                       | (Some(sid), Some(option)) =>
+                         Id.Activatable.Option.(sid == option)
+                       }
+                     ),
+                heroEntry,
+              );
 
-          let sameSkillDependency =
+            let sameSkillDependency =
+              switch (sid) {
+              | Some(Preset((Skill, id))) =>
+                Some(
+                  Prerequisite.Unified.Increasable({
+                    id: (Skill, id),
+                    value: (sameSkillActiveCount + (isEntryToAdd ? 1 : 0)) * 6,
+                  }),
+                )
+              | _ => None
+              };
+
+            sid
+            >>= Activatable_SelectOptions.getSelectOption(staticEntry)
+            >>= (
+              option =>
+                (
+                  switch (option.staticEntry) {
+                  | Some(Skill(skill)) => Some(skill.applications)
+                  | _ => None
+                  }
+                )
+                >>= (
+                  appMp =>
+                    (
+                      switch (sid2) {
+                      | Some(Preset((Generic, id))) =>
+                        Ley_IntMap.find(
+                          (app: Skill.Static.Application.t) => app.id === id,
+                          appMp,
+                        )
+                      | _ => None
+                      }
+                    )
+                    >>= (
+                      app =>
+                        app.prerequisite
+                        <&> (
+                          prerequisite =>
+                            Prerequisite.Unified.Activatable(prerequisite)
+                        )
+                    )
+                )
+            )
+            |> Ley_Option.optionToList
+            |> Ley_List.append(Ley_Option.optionToList(sameSkillDependency));
+          | PropertyFocus => [
+              Activatable({
+                id: (
+                  SpecialAbility,
+                  Id.SpecialAbility.toInt(PropertyKnowledge),
+                ),
+                active: true,
+                options:
+                  O.catOptions([
+                    sid
+                    >>= Activatable_Convert.activatableOptionToSelectOptionId,
+                  ]),
+                level: None,
+              }),
+            ]
+          | AdaptionZauber =>
             switch (sid) {
-            | Some(Preset((Skill, id))) =>
-              Some(
-                Increasable({
-                  id: (Skill, id),
-                  value: (sameSkillActiveCount + (isEntryToAdd ? 1 : 0)) * 6,
-                }),
-              )
-            | _ => None
-            };
-
-          sid
-          >>= Activatable_SelectOptions.getSelectOption(staticEntry)
-          >>= (
-            option =>
-              (
-                switch (option.wikiEntry) {
-                | Some(Skill(skill)) => Some(skill.applications)
-                | _ => None
-                }
-              )
-              >>= (
-                appMp =>
-                  (
-                    switch (sid2) {
-                    | Some(Preset((Generic, id))) =>
-                      Ley_IntMap.Foldable.find(
-                        (app: Skill.application) => app.id === id,
-                        appMp,
-                      )
-                    | _ => None
-                    }
-                  )
-                  >>= (
-                    app =>
-                      app.prerequisite
-                      <&> (prerequisite => Activatable(prerequisite))
-                  )
-              )
-          )
-          |> Ley_Option.optionToList
-          |> Ley_List.append(Ley_Option.optionToList(sameSkillDependency));
-        | PropertyFocus => [
-            Activatable({
-              id: (
-                SpecialAbility,
-                Id.SpecialAbility.toInt(PropertyKnowledge),
-              ),
-              active: true,
-              sid:
-                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-              sid2: None,
-              level: None,
-            }),
-          ]
-        | AdaptionZauber =>
-          switch (sid) {
-          | Some(Preset((Spell, id))) => [
-              Increasable({id: (Spell, id), value: 10}),
+            | Some(Preset((Spell, id))) => [
+                Increasable({id: (Spell, id), value: 10}),
+              ]
+            | _ => []
+            }
+          | FavoriteSpellwork =>
+            switch (sid) {
+            | Some(Preset((Spell, id))) => [
+                Increasable({id: (Spell, id), value: 0}),
+              ]
+            | _ => []
+            }
+          | SpellEnhancement as id
+          | ChantEnhancement as id =>
+            sid
+            >>= Activatable_SelectOptions.getSelectOption(staticEntry)
+            >>= (
+              option =>
+                O.liftM2(
+                  (target, level) =>
+                    [
+                      Prerequisite.Unified.Increasable({
+                        id:
+                          id === SpellEnhancement
+                            ? (Spell, target) : (LiturgicalChant, target),
+                        value: level * 4 + 4,
+                      }),
+                    ],
+                  option.enhancementTarget,
+                  option.enhancementLevel,
+                )
+            )
+            |> Ley_Option.fromOption([])
+          | LanguageSpecializations => [
+              Activatable({
+                id: (SpecialAbility, Id.SpecialAbility.toInt(Language)),
+                active: true,
+                options:
+                  O.catOptions([
+                    sid
+                    >>= Activatable_Convert.activatableOptionToSelectOptionId,
+                  ]),
+                level: Some(3),
+              }),
             ]
+          | Kraftliniennutzung =>
+            staticData.magicalTraditions
+            |> Ley_IntMap.foldr(
+                 (x: MagicalTradition.t) =>
+                   x.canLearnRituals ? Ley_List.cons(x.id) : id,
+                 [],
+               )
+            |> Ley_Option.ensure(Ley_List.Extra.notNull)
+            |> Ley_Option.option([], ids =>
+                 [
+                   Prerequisite.Unified.ActivatableMultiEntry({
+                     id: SpecialAbilities(ids),
+                     active: true,
+                     options: [],
+                     level: None,
+                   }),
+                 ]
+               )
           | _ => []
           }
-        | FavoriteSpellwork =>
-          switch (sid) {
-          | Some(Preset((Spell, id))) => [
-              Increasable({id: (Spell, id), value: 0}),
-            ]
-          | _ => []
-          }
-        | SpellEnhancement as id
-        | ChantEnhancement as id =>
-          sid
-          >>= Activatable_SelectOptions.getSelectOption(staticEntry)
-          >>= (
-            option =>
-              liftM2(
-                (target, level) =>
-                  [
-                    Increasable({
-                      id:
-                        id === SpellEnhancement
-                          ? (Spell, target) : (LiturgicalChant, target),
-                      value: level * 4 + 4,
-                    }),
-                  ],
-                option.enhancementTarget,
-                option.enhancementLevel,
-              )
-          )
-          |> Ley_Option.fromOption([])
-        | LanguageSpecializations => [
-            Activatable({
-              id: (SpecialAbility, Id.SpecialAbility.toInt(Language)),
-              active: true,
-              sid:
-                sid >>= Activatable_Convert.activatableOptionToSelectOptionId,
-              sid2: None,
-              level: Some(3),
-            }),
-          ]
-        | Kraftliniennutzung =>
-          staticData.magicalTraditions
-          |> Ley_IntMap.Foldable.foldr(
-               (x: MagicalTradition.t) =>
-                 x.canLearnRituals ? Ley_List.cons(x.id) : id,
-               [],
-             )
-          |> Ley_Option.ensure(Ley_List.Extra.notNull)
-          |> Ley_Option.option([], ids =>
-               [
-                 ActivatableMultiEntry({
-                   id: SpecialAbilities(ids),
-                   active: true,
-                   sid: None,
-                   sid2: None,
-                   level: None,
-                 }),
-               ]
-             )
-        | _ => []
-        }
-      )
-    };
+        )
+      }
+    )
+    |> Ley_List.map(value =>
+         Prerequisite.Config.{value, displayOption: Generate}
+       );
   };
 
   let getSelectOptionPrerequisites = (sid, staticEntry) =>
@@ -237,8 +262,11 @@ module Dynamic = {
       }
     )
     |> SelectOption.Map.lookup(sid)
-    |> Ley_Option.option([], (option: SelectOption.t) =>
-         Flatten.flattenPrerequisites(option.prerequisites, [])
+    |> Ley_Option.option(
+         []: list(Prerequisite.Unified.t), (option: SelectOption.t) =>
+         option.prerequisites
+         |> Prerequisite.Collection.ByLevel.getFirstLevel
+         |> Ley_List.map(Prerequisite.General.unify)
        );
 
   /**
@@ -283,31 +311,31 @@ module Dynamic = {
 
 module Validation = {
   open Ley_Function;
-  open Ley_Option;
 
-  let getRaceCultureProfession = (staticData: Static.t, hero: Hero.t) => (
-    (
-      switch (hero.race) {
-      | Some(Base(id) | WithVariant(id, _)) => Some(id)
-      | None => None
-      }
-    )
-    >>= flip(Ley_IntMap.lookup, staticData.races),
-    (
-      switch (hero.culture) {
-      | Some(id) => Some(id)
-      | None => None
-      }
-    )
-    >>= flip(Ley_IntMap.lookup, staticData.cultures),
-    (
-      switch (hero.profession) {
-      | Some(Base(id) | WithVariant(id, _)) => Some(id)
-      | None => None
-      }
-    )
-    >>= flip(Ley_IntMap.lookup, staticData.professions),
-  );
+  let getRaceCultureProfession = (staticData: Static.t, hero: Hero.t) =>
+    Ley_Option.Infix.(
+      (
+        switch (hero.race) {
+        | Some(Base(id) | WithVariant(id, _)) => Some(id)
+        | None => None
+        }
+      )
+      >>= flip(Ley_IntMap.lookup, staticData.races),
+      (
+        switch (hero.culture) {
+        | Some(id) => Some(id)
+        | None => None
+        }
+      )
+      >>= flip(Ley_IntMap.lookup, staticData.cultures),
+      (
+        switch (hero.profession) {
+        | Some(Base(id) | WithVariant(id, _)) => Some(id)
+        | None => None
+        }
+      )
+      >>= flip(Ley_IntMap.lookup, staticData.professions),
+    );
 
   let isCommonSuggestedByRCPValid = (staticData, hero, id: Id.All.t) => {
     let (race, culture, profession) =
@@ -318,7 +346,7 @@ module Validation = {
       | (Advantage, id) =>
         Ley_Option.option(
           false,
-          (race: Race.t) =>
+          (race: Race.Static.t) =>
             Ley_List.elem(id, race.automaticAdvantages)
             || Ley_List.elem(id, race.stronglyRecommendedAdvantages)
             || Ley_List.elem(id, race.commonAdvantages),
@@ -326,33 +354,33 @@ module Validation = {
         )
         || Ley_Option.option(
              false,
-             (culture: Culture.t) =>
+             (culture: Culture.Static.t) =>
                Ley_List.elem(id, culture.commonAdvantages),
              culture,
            )
         || Ley_Option.option(
              false,
-             (profession: Profession.t) =>
+             (profession: Profession.Static.t) =>
                Ley_List.elem(id, profession.suggestedAdvantages),
              profession,
            )
       | (Disadvantage, id) =>
         Ley_Option.option(
           false,
-          (race: Race.t) =>
+          (race: Race.Static.t) =>
             Ley_List.elem(id, race.stronglyRecommendedDisadvantages)
             || Ley_List.elem(id, race.commonDisadvantages),
           race,
         )
         || Ley_Option.option(
              false,
-             (culture: Culture.t) =>
+             (culture: Culture.Static.t) =>
                Ley_List.elem(id, culture.commonDisadvantages),
              culture,
            )
         || Ley_Option.option(
              false,
-             (profession: Profession.t) =>
+             (profession: Profession.Static.t) =>
                Ley_List.elem(id, profession.suggestedDisadvantages),
              profession,
            )
@@ -361,10 +389,10 @@ module Validation = {
     );
   };
 
-  let isSexValid = (current: Hero.t, prerequisite: sex) =>
+  let isSexValid = (current: Hero.t, prerequisite: Prerequisite.Sex.t) =>
     current.sex === prerequisite;
 
-  let isRaceValid = (current: Hero.t, prerequisite: race) =>
+  let isRaceValid = (current: Hero.t, prerequisite: Prerequisite.Race.t) =>
     switch (current.race, prerequisite) {
     | (Some(Base(id) | WithVariant(id, _)), {id: One(requiredId), active}) =>
       requiredId === id === active
@@ -376,24 +404,27 @@ module Validation = {
     | (None, _) => false
     };
 
-  let isCultureValid = (current: Hero.t, prerequisite: culture) =>
+  let isCultureValid = (current: Hero.t, prerequisite: Prerequisite.Culture.t) =>
     switch (current.culture, prerequisite) {
     | (Some(id), One(requiredId)) => requiredId === id
     | (Some(id), Many(requiredIds)) => Ley_List.elem(id, requiredIds)
     | (None, _) => false
     };
 
-  let hasSamePactCategory = (current: Hero.Pact.t, prerequisite: pact) =>
+  let hasSamePactCategory =
+      (current: Pact.Dynamic.t, prerequisite: Prerequisite.Pact.t) =>
     prerequisite.category === current.category;
 
-  let hasNeededPactType = (current: Hero.Pact.t, prerequisite: pact) =>
+  let hasNeededPactType =
+      (current: Pact.Dynamic.t, prerequisite: Prerequisite.Pact.t) =>
     switch (prerequisite.category) {
     // Fairies must be High Fairies to get into a pact
     | 1 => current.type_ === 3
     | _ => true
     };
 
-  let hasNeededPactDomain = (current: Hero.Pact.t, prerequisite: pact) =>
+  let hasNeededPactDomain =
+      (current: Pact.Dynamic.t, prerequisite: Prerequisite.Pact.t) =>
     switch (prerequisite.domain, current.domain) {
     | (None, _) => true
     | (_, Custom(_)) => false
@@ -403,7 +434,8 @@ module Validation = {
       domain === requiredDomain
     };
 
-  let hasNeededPactLevel = (current: Hero.Pact.t, prerequisite: pact) =>
+  let hasNeededPactLevel =
+      (current: Pact.Dynamic.t, prerequisite: Prerequisite.Pact.t) =>
     switch (prerequisite.level) {
     | Some(requiredLevel) =>
       // Fulfills the level requirement
@@ -414,7 +446,7 @@ module Validation = {
     | None => true
     };
 
-  let isPactValid = (current: Hero.t, prerequisite: pact) =>
+  let isPactValid = (current: Hero.t, prerequisite: Prerequisite.Pact.t) =>
     switch (current.pact) {
     | Some(pact) =>
       Pacts.isPactFromStateValid(pact)
@@ -426,7 +458,11 @@ module Validation = {
     };
 
   let getPrimaryAttributeId =
-      (staticData, heroSpecialAbilities, scope: primaryAttributeType) =>
+      (
+        staticData,
+        heroSpecialAbilities,
+        scope: Prerequisite.PrimaryAttribute.primaryAttributeType,
+      ) =>
     switch (scope) {
     | Magical =>
       Tradition.Magical.getPrimaryAttributeId(
@@ -441,32 +477,43 @@ module Validation = {
     };
 
   let isPrimaryAttributeValid =
-      (staticData, current: Hero.t, prerequisite: primaryAttribute) =>
-    getPrimaryAttributeId(
-      staticData,
-      current.specialAbilities,
-      prerequisite.scope,
-    )
-    >>= flip(Ley_IntMap.lookup, current.attributes)
-    |> (
-      attr =>
-        Ley_Option.option(8, (attr: Hero.Attribute.t) => attr.value, attr)
-        >= prerequisite.value
+      (
+        staticData,
+        current: Hero.t,
+        prerequisite: Prerequisite.PrimaryAttribute.t,
+      ) =>
+    Ley_Option.Infix.(
+      getPrimaryAttributeId(
+        staticData,
+        current.specialAbilities,
+        prerequisite.scope,
+      )
+      >>= flip(Ley_IntMap.lookup, current.attributes)
+      |> (
+        attr =>
+          Ley_Option.option(
+            8,
+            (attr: Attribute.Dynamic.t) => attr.value,
+            attr,
+          )
+          >= prerequisite.value
+      )
     );
 
-  let isSocialStatusValid = (current: Hero.t, prerequisite: socialStatus) =>
+  let isSocialStatusValid =
+      (current: Hero.t, prerequisite: Prerequisite.SocialStatus.t) =>
     switch (current.personalData.socialStatus) {
     | Some(socialStatus) => socialStatus >= prerequisite
     | None => false
     };
 
   let hasIncreasableMinValue =
-      (current: Hero.t, {id, value: minValue}: increasable) =>
+      (current: Hero.t, {id, value: minValue}: Prerequisite.Increasable.t) =>
     switch (id) {
     | (Attribute, id) =>
       current.attributes
       |> Ley_IntMap.lookup(id)
-      |> Ley_Option.option(false, (x: Hero.Attribute.t) =>
+      |> Ley_Option.option(false, (x: Attribute.Dynamic.t) =>
            x.value >= minValue
          )
     | (Skill, id) =>
@@ -476,11 +523,13 @@ module Validation = {
     | (CombatTechnique, id) =>
       current.combatTechniques
       |> Ley_IntMap.lookup(id)
-      |> Ley_Option.option(false, (x: Skill.Dynamic.t) => x.value >= minValue)
+      |> Ley_Option.option(false, (x: CombatTechnique.Dynamic.t) =>
+           x.value >= minValue
+         )
     | (Spell, id) =>
       current.spells
       |> Ley_IntMap.lookup(id)
-      |> Ley_Option.option(false, (x: Hero.ActivatableSkill.t) =>
+      |> Ley_Option.option(false, (x: ActivatableSkill.Dynamic.t) =>
            switch (x.value) {
            | Active(value) => value >= minValue
            | Inactive => false
@@ -489,7 +538,7 @@ module Validation = {
     | (LiturgicalChant, id) =>
       current.liturgicalChants
       |> Ley_IntMap.lookup(id)
-      |> Ley_Option.option(false, (x: Hero.ActivatableSkill.t) =>
+      |> Ley_Option.option(false, (x: ActivatableSkill.Dynamic.t) =>
            switch (x.value) {
            | Active(value) => value >= minValue
            | Inactive => false
@@ -497,13 +546,17 @@ module Validation = {
          )
     };
 
-  let isIncreasableValid = (current: Hero.t, prerequisite: increasable) =>
+  let isIncreasableValid =
+      (current: Hero.t, prerequisite: Prerequisite.Increasable.t) =>
     hasIncreasableMinValue(current, prerequisite);
 
   let isIncreasableMultiEntryValid =
-      (current: Hero.t, {id: ids, value}: increasableMultiEntry) =>
+      (
+        current: Hero.t,
+        {id: ids, value}: Prerequisite.IncreasableMultiEntry.t,
+      ) =>
     EntryType.Increasable.(
-      Ley_List.Foldable.any(
+      Ley_List.any(
         id => hasIncreasableMinValue(current, {id, value}),
         switch (ids) {
         | Attributes(ids) => Ley_List.map(id => (Attribute, id), ids)
@@ -517,25 +570,22 @@ module Validation = {
       )
     );
 
-  let isSafeSidValid = (single: Hero.Activatable.single, index, sid) =>
-    Ley_List.Safe.atMay(single.options, index)
-    >>= Activatable_Convert.activatableOptionToSelectOptionId
+  let isSidValid = (single: Id.Activatable.Option.t, sid) =>
+    single
+    |> Activatable_Convert.activatableOptionToSelectOptionId
     |> Ley_Option.option(false, (===)(sid));
 
-  let isSidValid = (single: Hero.Activatable.single, index, sid) =>
-    switch (sid) {
-    | None => true
-    | Some(sid) => isSafeSidValid(single, index, sid)
-    };
-
-  let isLevelValid = (single: Hero.Activatable.single, level) =>
+  let isLevelValid = (single: Activatable_Dynamic.single, level) =>
     switch (level) {
     | None => true
     | Some(level) => Ley_Option.option(false, (===)(level), single.level)
     };
 
   let isSingleActivatableValid =
-      (current: Hero.t, {id, active, sid, sid2, level}: activatable) =>
+      (
+        current: Hero.t,
+        {id, active, options, level}: Prerequisite.Activatable.t,
+      ) =>
     (
       switch (id) {
       | (Advantage, id) => current.advantages |> Ley_IntMap.lookup(id)
@@ -553,10 +603,10 @@ module Validation = {
           // Otherwise search for any entry that matches the entry options. If
           // an entry is found must than match if the entry is required to be
           // active or inactive
-          Ley_List.Foldable.any(
-            single =>
-              isSidValid(single, 0, sid)
-              && isSidValid(single, 1, sid2)
+          Ley_List.any(
+            (single: Activatable_Dynamic.single) =>
+              Ley_List.zip(single.options, options)
+              |> Ley_List.all(((option, sid)) => isSidValid(option, sid))
               && isLevelValid(single, level),
             heroEntry.active,
           )
@@ -564,17 +614,17 @@ module Validation = {
         }
     );
 
-  let isActivatableValid = (current: Hero.t, prerequisite: activatable) =>
+  let isActivatableValid =
+      (current: Hero.t, prerequisite: Prerequisite.Activatable.t) =>
     isSingleActivatableValid(current, prerequisite);
 
   let isActivatableMultiEntryValid =
       (
         current: Hero.t,
-        {id: ids, active, sid, sid2, level}: activatableMultiEntry,
+        {id: ids, active, options, level}: Prerequisite.ActivatableMultiEntry.t,
       ) =>
-    Ley_List.Foldable.any(
-      id =>
-        isSingleActivatableValid(current, {id, active, sid, sid2, level}),
+    Ley_List.any(
+      id => isSingleActivatableValid(current, {id, active, options, level}),
       EntryType.Activatable.(
         switch (ids) {
         | Advantages(ids) => Ley_List.map(id => (Advantage, id), ids)
@@ -588,7 +638,7 @@ module Validation = {
   let isActivatableMultiSelectValid =
       (
         current: Hero.t,
-        {id, active, sid: sids, sid2, level}: activatableMultiSelect,
+        {id, active, firstOption, otherOptions, level}: Prerequisite.ActivatableMultiSelect.t,
       ) =>
     (
       switch (id) {
@@ -607,10 +657,19 @@ module Validation = {
           // Otherwise search for any entry that matches the entry options. If
           // an entry is found must than match if the entry is required to be
           // active or inactive
-          Ley_List.Foldable.any(
-            single =>
-              Ley_List.Foldable.any(isSafeSidValid(single, 0), sids)
-              && isSidValid(single, 1, sid2)
+          Ley_List.any(
+            (single: Activatable_Dynamic.single) =>
+              (
+                switch (Ley_List.uncons(single.options)) {
+                | None => false
+                | Some((x, xs)) =>
+                  Ley_List.any(option => isSidValid(x, option), firstOption)
+                  && Ley_List.zip(xs, otherOptions)
+                  |> Ley_List.all(((option, sid)) =>
+                       isSidValid(option, sid)
+                     )
+                }
+              )
               && isLevelValid(single, level),
             heroEntry.active,
           )
@@ -621,8 +680,9 @@ module Validation = {
   /**
    * Checks if the given prerequisite is met.
    */
-  let isPrerequisiteMet = (staticData, hero, sourceId, prerequisite) =>
-    switch (prerequisite) {
+  let isPrerequisiteMet =
+      (staticData, hero, sourceId, prerequisite: Prerequisite.Unified.t) =>
+    switch (prerequisite.value) {
     | CommonSuggestedByRCP =>
       isCommonSuggestedByRCPValid(staticData, hero, sourceId)
     | Sex(sex) => isSexValid(hero, sex)
@@ -631,7 +691,7 @@ module Validation = {
     | Pact(pact) => isPactValid(hero, pact)
     | PrimaryAttribute(primary) =>
       isPrimaryAttributeValid(staticData, hero, primary)
-    | Social(social) => isSocialStatusValid(hero, social)
+    | SocialStatus(social) => isSocialStatusValid(hero, social)
     | Activatable(activatable) => isActivatableValid(hero, activatable)
     | ActivatableMultiEntry(activatable) =>
       isActivatableMultiEntryValid(hero, activatable)
@@ -647,7 +707,7 @@ module Validation = {
    * met.
    */
   let arePrerequisitesMet = (staticData, hero, sourceId, prerequisites) =>
-    Ley_List.Foldable.all(
+    Ley_List.all(
       isPrerequisiteMet(staticData, hero, sourceId),
       prerequisites,
     );
@@ -658,8 +718,7 @@ module Validation = {
         switch (max) {
         | Some(max) when max <= level => Some(max)
         | max =>
-          Flatten.flattenPrerequisites(prerequisites, [])
-          |> arePrerequisitesMet(staticData, hero, sourceId)
+          prerequisites |> arePrerequisitesMet(staticData, hero, sourceId)
             ? max : Some(level)
         },
       None,
@@ -705,20 +764,49 @@ module Activatable = {
   let getFlatFirstPrerequisites =
     fun
     | Static.Advantage(staticAdvantage) =>
-      Flatten.getFirstDisAdvLevelPrerequisites(staticAdvantage.prerequisites)
+      Prerequisite.Collection.ByLevel.getFirstLevel(
+        staticAdvantage.prerequisites,
+      )
+      |> Ley_List.map(Prerequisite.AdvantageDisadvantage.unify)
     | Disadvantage(staticDisadvantage) =>
-      Flatten.getFirstDisAdvLevelPrerequisites(
+      Prerequisite.Collection.ByLevel.getFirstLevel(
         staticDisadvantage.prerequisites,
       )
+      |> Ley_List.map(Prerequisite.AdvantageDisadvantage.unify)
     | SpecialAbility(staticSpecialAbility) =>
-      Flatten.getFirstLevelPrerequisites(staticSpecialAbility.prerequisites);
+      Prerequisite.Collection.ByLevel.getFirstLevel(
+        staticSpecialAbility.prerequisites,
+      )
+      |> Ley_List.map(Prerequisite.General.unify);
 
   let getLevelPrerequisites =
     fun
     | Static.Advantage(staticAdvantage) =>
-      staticAdvantage.prerequisites.levels
+      switch (staticAdvantage.prerequisites) {
+      | Plain(_) => Ley_IntMap.empty
+      | ByLevel(mp) =>
+        mp
+        |> Ley_IntMap.filterWithKey((k, _) => k > 1)
+        |> Ley_IntMap.map(
+             Ley_List.map(Prerequisite.AdvantageDisadvantage.unify),
+           )
+      }
     | Disadvantage(staticDisadvantage) =>
-      staticDisadvantage.prerequisites.levels
+      switch (staticDisadvantage.prerequisites) {
+      | Plain(_) => Ley_IntMap.empty
+      | ByLevel(mp) =>
+        mp
+        |> Ley_IntMap.filterWithKey((k, _) => k > 1)
+        |> Ley_IntMap.map(
+             Ley_List.map(Prerequisite.AdvantageDisadvantage.unify),
+           )
+      }
     | SpecialAbility(staticSpecialAbility) =>
-      staticSpecialAbility.prerequisites.levels;
+      switch (staticSpecialAbility.prerequisites) {
+      | Plain(_) => Ley_IntMap.empty
+      | ByLevel(mp) =>
+        mp
+        |> Ley_IntMap.filterWithKey((k, _) => k > 1)
+        |> Ley_IntMap.map(Ley_List.map(Prerequisite.General.unify))
+      };
 };

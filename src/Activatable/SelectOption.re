@@ -1,6 +1,6 @@
-type wikiEntry =
-  | Blessing(Blessing.t)
-  | Cantrip(Cantrip.t)
+type staticEntry =
+  | Blessing(Blessing.Static.t)
+  | Cantrip(Cantrip.Static.t)
   | CombatTechnique(CombatTechnique.Static.t)
   | LiturgicalChant(LiturgicalChant.Static.t)
   | Skill(Skill.Static.t)
@@ -22,7 +22,7 @@ type t = {
   animalLevel: option(int),
   enhancementTarget: option(int),
   enhancementLevel: option(int),
-  wikiEntry: option(wikiEntry),
+  staticEntry: option(staticEntry),
   // needed to be able to filter valid applications without altering the static
   // entry
   applications: option(list(Skill.Static.Application.t)),
@@ -71,7 +71,7 @@ type multilingual = {
   translations: TranslationMap.t,
 };
 
-let decodeMultilingual = json =>
+let decodeMultilingualPair = json =>
   JsonStrict.{
     id: json |> field("id", int),
     apValue: json |> optionalField("apValue", int),
@@ -83,7 +83,8 @@ let decodeMultilingual = json =>
          ),
     src: json |> field("src", PublicationRef.decodeMultilingualList),
     translations: json |> field("translations", TranslationMap.decode),
-  };
+  }
+  |> (x => ((Generic, x.id): Id.Activatable.SelectOption.t, x));
 
 let resolveTranslations = (langs, x) =>
   Ley_Option.Infix.(
@@ -110,7 +111,7 @@ let resolveTranslations = (langs, x) =>
         animalLevel: None,
         enhancementTarget: None,
         enhancementLevel: None,
-        wikiEntry: None,
+        staticEntry: None,
         applications: None,
         src: PublicationRef.resolveTranslationsList(langs, x.src),
         errata: translation.errata,
@@ -118,11 +119,8 @@ let resolveTranslations = (langs, x) =>
     )
   );
 
-let decode = (langs, json) =>
-  json |> decodeMultilingual |> resolveTranslations(langs);
-
-module ResolveCategories = {
-  type category =
+module Category = {
+  type t =
     | Blessings
     | Cantrips
     | CombatTechniques
@@ -130,7 +128,7 @@ module ResolveCategories = {
     | Skills
     | Spells;
 
-  let category = json =>
+  let decode = json =>
     Json.Decode.(
       json
       |> string
@@ -147,18 +145,22 @@ module ResolveCategories = {
       )
     );
 
-  type categoryWithGroups = {
-    category,
-    groups: option(list(int)),
-  };
-
-  let categoryWithGroups = json =>
-    JsonStrict.{
-      category: json |> field("category", category),
-      groups: json |> optionalField("groups", list(int)),
+  module WithGroups = {
+    type nonrec t = {
+      category: t,
+      groups: option(list(int)),
     };
 
-  let entryToSelectOption = (~id, ~name, ~wikiEntry, ~src, ~errata) => {
+    let decode = json =>
+      JsonStrict.{
+        category: json |> field("category", decode),
+        groups: json |> optionalField("groups", list(int)),
+      };
+  };
+};
+
+module ResolveCategories = {
+  let entryToSelectOption = (~id, ~name, ~staticEntry, ~src, ~errata) => {
     id,
     name,
     apValue: None,
@@ -174,7 +176,7 @@ module ResolveCategories = {
     animalLevel: None,
     enhancementTarget: None,
     enhancementLevel: None,
-    wikiEntry: Some(wikiEntry),
+    staticEntry: Some(staticEntry),
     applications: None,
     src,
     errata,
@@ -183,32 +185,32 @@ module ResolveCategories = {
   let insertEntry = (s: t) => Map.insert(s.id, s);
 
   let resolveWithoutGroups = (f, mp, xs) =>
-    Ley_IntMap.Foldable.foldr(x => x |> f |> insertEntry, xs, mp);
+    Ley_IntMap.foldr(x => x |> f |> insertEntry, xs, mp);
 
   let resolveGroups = (f, g, grs, mp, xs) =>
-    Ley_IntMap.Foldable.foldr(
+    Ley_IntMap.foldr(
       x =>
         Ley_List.elem(g(x), grs) ? x |> f |> insertEntry : Ley_Function.id,
       xs,
       mp,
     );
 
-  let blessingToSelectOption = (x: Blessing.t) =>
+  let blessingToSelectOption = (x: Blessing.Static.t) =>
     entryToSelectOption(
       ~id=(Blessing, x.id),
       ~name=x.name,
-      ~wikiEntry=Blessing(x),
+      ~staticEntry=Blessing(x),
       ~src=x.src,
       ~errata=x.errata,
     );
 
   let resolveBlessings = resolveWithoutGroups(blessingToSelectOption);
 
-  let cantripToSelectOption = (x: Cantrip.t) =>
+  let cantripToSelectOption = (x: Cantrip.Static.t) =>
     entryToSelectOption(
       ~id=(Cantrip, x.id),
       ~name=x.name,
-      ~wikiEntry=Cantrip(x),
+      ~staticEntry=Cantrip(x),
       ~src=x.src,
       ~errata=x.errata,
     );
@@ -219,7 +221,7 @@ module ResolveCategories = {
     entryToSelectOption(
       ~id=(CombatTechnique, x.id),
       ~name=x.name,
-      ~wikiEntry=CombatTechnique(x),
+      ~staticEntry=CombatTechnique(x),
       ~src=x.src,
       ~errata=x.errata,
     );
@@ -235,7 +237,7 @@ module ResolveCategories = {
     entryToSelectOption(
       ~id=(LiturgicalChant, x.id),
       ~name=x.name,
-      ~wikiEntry=LiturgicalChant(x),
+      ~staticEntry=LiturgicalChant(x),
       ~src=x.src,
       ~errata=x.errata,
     );
@@ -251,7 +253,7 @@ module ResolveCategories = {
     entryToSelectOption(
       ~id=(Skill, x.id),
       ~name=x.name,
-      ~wikiEntry=Skill(x),
+      ~staticEntry=Skill(x),
       ~src=x.src,
       ~errata=x.errata,
     );
@@ -266,7 +268,7 @@ module ResolveCategories = {
     entryToSelectOption(
       ~id=(Spell, x.id),
       ~name=x.name,
-      ~wikiEntry=Spell(x),
+      ~staticEntry=Spell(x),
       ~src=x.src,
       ~errata=x.errata,
     );
@@ -294,7 +296,7 @@ module ResolveCategories = {
     categories
     |> Ley_Option.fromOption([])
     |> Ley_List.foldr(
-         cat =>
+         (cat: Category.WithGroups.t) =>
            switch (cat.category) {
            | Blessings => resolveBlessings(blessings)
            | Cantrips => resolveCantrips(cantrips)
@@ -307,6 +309,7 @@ module ResolveCategories = {
            },
          Map.empty,
        );
+
   // let l10nToSelectOption = (l10n: tL10n) => {
   //   id: l10n.id,
   //   name: l10n.name,
@@ -328,6 +331,7 @@ module ResolveCategories = {
   //   src: l10n.src,
   //   errata: l10n.errata,
   // };
+  //
   // let mergeUnivIntoSelectOption = (univ: tUniv, x: t) =>
   //   Ley_Option.Alternative.{
   //     id: x.id,
@@ -350,38 +354,43 @@ module ResolveCategories = {
   //     src: x.src,
   //     errata: x.errata,
   //   };
-  // let mergeSelectOptions = (ml10ns, munivs, fromCategories) =>
-  //   fromCategories
-  //   |> Ley_Option.option(
-  //        Ley_Function.id,
-  //        (l10ns, mp) =>
-  //          Ley_List.Foldable.foldr(
-  //            (l10n: tL10n, mp') =>
-  //              if (Map.member(l10n.id, mp')) {
-  //                raise(
-  //                  DecodeError(
-  //                    "mergeSelectOptions: Key "
-  //                    ++ showId(l10n.id)
-  //                    ++ "already in use",
-  //                  ),
-  //                );
-  //              } else {
-  //                Map.insert(l10n.id, l10nToSelectOption(l10n), mp');
-  //              },
-  //            mp,
-  //            l10ns,
-  //          ),
-  //        ml10ns,
-  //      )
-  //   |> Ley_Option.option(
-  //        Ley_Function.id,
-  //        (univs, mp) =>
-  //          Ley_List.Foldable.foldr(
-  //            (univ: tUniv, mp') =>
-  //              Map.adjust(mergeUnivIntoSelectOption(univ), univ.id, mp'),
-  //            mp,
-  //            univs,
-  //          ),
-  //        munivs,
-  //      );
+
+  let mergeSelectOptions = (explicits, fromCategories) =>
+    fromCategories
+    |> (
+      prev =>
+        Map.foldl((mp, x: t) => Map.insert(x.id, x, mp), prev, explicits)
+    );
+  // |> Ley_Option.option(
+  //      Ley_Function.id,
+  //      (l10ns, mp) =>
+  //        Ley_List.foldr(
+  //          (l10n: tL10n, mp') =>
+  //            if (Map.member(l10n.id, mp')) {
+  //              raise(
+  //                DecodeError(
+  //                  "mergeSelectOptions: Key "
+  //                  ++ showId(l10n.id)
+  //                  ++ "already in use",
+  //                ),
+  //              );
+  //            } else {
+  //              Map.insert(l10n.id, l10nToSelectOption(l10n), mp');
+  //            },
+  //          mp,
+  //          l10ns,
+  //        ),
+  //      ml10ns,
+  //    )
+  // |> Ley_Option.option(
+  //      Ley_Function.id,
+  //      (univs, mp) =>
+  //        Ley_List.foldr(
+  //          (univ: tUniv, mp') =>
+  //            Map.adjust(mergeUnivIntoSelectOption(univ), univ.id, mp'),
+  //          mp,
+  //          univs,
+  //        ),
+  //      munivs,
+  //    );
 };

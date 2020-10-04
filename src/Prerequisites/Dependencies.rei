@@ -7,7 +7,7 @@ module Flatten: {
    * result is a plain `List` of all non-optional dependencies.
    */
   let flattenSkillDependencies:
-    (int => int, int, list(Hero.Skill.dependency)) => list(int);
+    (int => int, int, list(Increasable.Dynamic.dependency)) => list(int);
 
   /**
    * `flattenSkillDependencies getValueForTargetId id dependencies` flattens the
@@ -17,7 +17,11 @@ module Flatten: {
    * result is a plain `List` of all non-optional dependencies.
    */
   let flattenActivatableSkillDependencies:
-    (int => Hero.ActivatableSkill.value, int, list(Hero.Skill.dependency)) =>
+    (
+      int => ActivatableSkill.Dynamic.value,
+      int,
+      list(Increasable.Dynamic.dependency)
+    ) =>
     list(int);
 
   /**
@@ -30,17 +34,17 @@ module Flatten: {
    */
   let flattenActivatableDependencies:
     (
-      int => list(Hero.Activatable.single),
+      int => list(Activatable_Dynamic.single),
       int,
-      list(Hero.Activatable.dependency)
+      list(Activatable_Dynamic.dependency)
     ) =>
-    list(Hero.Activatable.dependency);
+    list(Activatable_Dynamic.dependency);
 
   /**
    * Get all required first select option ids from the given entry.
    */
   let getRequiredSelectOptions1:
-    (Ley_IntMap.t(Hero.Activatable.t), Hero.Activatable.t) =>
+    (Ley_IntMap.t(Activatable_Dynamic.t), Activatable_Dynamic.t) =>
     list(OneOrMany.t(Id.Activatable.SelectOption.t));
 };
 
@@ -78,24 +82,14 @@ module TransferredUnfamiliar: {
  * Adds dependencies to all required entries to ensure rule validity.
  */
 let addDependencies:
-  (
-    Static.t,
-    list(Prerequisites.prerequisite),
-    Id.PrerequisiteSource.t,
-    Hero.t
-  ) =>
+  (Static.t, list(Prerequisite.Unified.t), Id.PrerequisiteSource.t, Hero.t) =>
   Hero.t;
 
 /**
  * Removes dependencies from all required entries to ensure rule validity.
  */
 let removeDependencies:
-  (
-    Static.t,
-    list(Prerequisites.prerequisite),
-    Id.PrerequisiteSource.t,
-    Hero.t
-  ) =>
+  (Static.t, list(Prerequisite.Unified.t), Id.PrerequisiteSource.t, Hero.t) =>
   Hero.t;
 
 /**
@@ -114,8 +108,8 @@ let getMaxLevel:
     Static.t,
     Hero.t,
     Id.All.t,
-    list(Hero.Activatable.dependency),
-    Ley_IntMap.t(Prerequisite.t)
+    list(Activatable_Dynamic.dependency),
+    Ley_IntMap.t(list(Prerequisite.Unified.t))
   ) =>
   option(int);
 
@@ -127,7 +121,7 @@ module Activatable: {
    * the dependency are not validated.
    */
   let areOptionDependenciesMatched:
-    (Hero.Activatable.dependency, Hero.Activatable.single) => bool;
+    (Activatable_Dynamic.dependency, Activatable_Dynamic.single) => bool;
 
   /**
    * `isDependencyMatched dependency single` takes an activatable `dependency`
@@ -135,5 +129,5 @@ module Activatable: {
    * matches the dependency.
    */
   let isDependencyMatched:
-    (Hero.Activatable.dependency, Hero.Activatable.single) => bool;
+    (Activatable_Dynamic.dependency, Activatable_Dynamic.single) => bool;
 };

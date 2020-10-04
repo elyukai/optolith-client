@@ -2,40 +2,32 @@ type t('a) = Js.Promise.t('a);
 
 type io('a) = t('a);
 
-module Functor: {
-  /**
-   * Maps a function over the result of an IO action.
-   */
-  let (<$>): ('a => 'b, t('a)) => t('b);
+include Ley_Functor.T with type t('a) := t('a);
+include Ley_Monad.T with type t('a) := t('a);
 
-  let (<&>): (t('a), 'a => 'b) => t('b);
-};
+/**
+ * Maps a function over all values of the list. Returns an `IO` of the
+ * results. If one of the `IO`s contains an exception, the first exception
+ * will be returned.
+ */
+let mapM: ('b => Js.Promise.t('a), list('b)) => Js.Promise.t(list('a));
 
-module Monad: {
-  /**
-   * Lift a value to an IO.
-   */
-  let pure: 'a => t('a);
+/**
+ * Maps a function over all values of the list. Returns an `IO` of the
+ * results. If one of the `IO`s contains an exception, the first exception
+ * will be returned.
+ */
+let imapM:
+  ((int, 'b) => Js.Promise.t('a), list('b)) => Js.Promise.t(list('a));
 
-  /**
-   * Maps a function that executes an IO action over the result of another IO
-   * action.
-   */
-  let (>>=): (t('a), 'a => t('b)) => t('b);
-
-  /**
-   * Maps a function that executes an IO action over the result of another IO
-   * action.
-   */
-  let (=<<): ('a => t('b), t('a)) => t('b);
-
-  /**
-   * Maps a function over all values of the list. Returns an `IO` of the
-   * results. If one of the `IO`s contains an exception, the first exception
-   * will be returned.
-   */
-  let mapM: ('b => Js.Promise.t('a), list('b)) => Js.Promise.t(list('a));
-};
+/**
+ * Maps a function over all values of the list. Returns an `IO` of the
+ * results. If one of the `IO`s contains an exception, the first exception
+ * will be returned.
+ */
+let imapOptionM:
+  ((int, 'b) => Js.Promise.t(option('a)), list('b)) =>
+  Js.Promise.t(list('a));
 
 type filePath = string;
 
@@ -66,3 +58,8 @@ let existsFile: filePath => t(bool);
  * `dest`.
  */
 let copyFile: (filePath, filePath) => t(unit);
+
+module Infix: {
+  include Ley_Functor.Infix with type t('a) := t('a);
+  include Ley_Monad.Infix with type t('a) := t('a);
+};

@@ -37,19 +37,22 @@ function decodeMultilingual(json) {
 function decode$1(langs, json) {
   var x = decodeMultilingual(json);
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                return {
-                        id: x.id,
-                        name: translation.name,
-                        numId: x.numId,
-                        primary: x.primary,
-                        aeMod: x.aeMod,
-                        canLearnCantrips: x.canLearnCantrips,
-                        canLearnSpells: x.canLearnSpells,
-                        canLearnRituals: x.canLearnRituals,
-                        allowMultipleTraditions: x.allowMultipleTraditions,
-                        isDisAdvAPMaxHalved: x.isDisAdvAPMaxHalved,
-                        areDisAdvRequiredApplyToMagActionsOrApps: x.areDisAdvRequiredApplyToMagActionsOrApps
-                      };
+                return [
+                        x.id,
+                        {
+                          id: x.id,
+                          name: translation.name,
+                          numId: x.numId,
+                          primary: x.primary,
+                          aeMod: x.aeMod,
+                          canLearnCantrips: x.canLearnCantrips,
+                          canLearnSpells: x.canLearnSpells,
+                          canLearnRituals: x.canLearnRituals,
+                          allowMultipleTraditions: x.allowMultipleTraditions,
+                          isDisAdvAPMaxHalved: x.isDisAdvAPMaxHalved,
+                          areDisAdvRequiredApplyToMagActionsOrApps: x.areDisAdvRequiredApplyToMagActionsOrApps
+                        }
+                      ];
               }));
 }
 

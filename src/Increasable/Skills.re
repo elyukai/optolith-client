@@ -1,7 +1,6 @@
 open Ley_Option;
 open Ley_Option.Infix;
 open Ley_List;
-open Hero.Activatable;
 
 /**
  * Get the SR maximum bonus from an active Exceptional Skill advantage.
@@ -9,12 +8,12 @@ open Hero.Activatable;
 let getExceptionalSkillBonus = (exceptionalSkill, id) =>
   option(
     0,
-    (x: Hero.Activatable.t) =>
+    (x: Activatable_Dynamic.t) =>
       x.active
-      |> countBy((a: Hero.Activatable.single) =>
+      |> countBy((a: Activatable_Dynamic.single) =>
            a.options
            |> listToOption
-           |> Ley_Option.Foldable.elem(Id.Activatable.Option.Preset(id))
+           |> Ley_Option.elem(Id.Activatable.Option.Preset(id))
          ),
     exceptionalSkill,
   );
@@ -26,7 +25,7 @@ let getExceptionalSkillBonus = (exceptionalSkill, id) =>
 let getMaxSrByCheckAttrs = (mp, check) =>
   check
   |> SkillCheck.getValues(mp)
-  |> (((a1, a2, a3)) => Ley_List.Foldable.maximum([a1, a2, a3]) + 2);
+  |> (((a1, a2, a3)) => Ley_List.maximum([a1, a2, a3]) + 2);
 
 /**
  * Adds the maximum skill rating defined by the chosen experience level to the
@@ -58,7 +57,7 @@ let getMax =
     getMaxSrFromEl(startEl, phase),
   ]
   |> catOptions
-  |> Ley_List.Foldable.minimum
+  |> Ley_List.minimum
   |> (+)(
        getExceptionalSkillBonus(exceptionalSkill, (Skill, staticEntry.id)),
      );
@@ -100,7 +99,9 @@ let getMinSrByCraftInstruments =
           );
 
         let otherSkillRating =
-          skills |> Ley_IntMap.lookup(toInt(otherSkillId)) |> getValueDef;
+          skills
+          |> Ley_IntMap.lookup(toInt(otherSkillId))
+          |> Skill.Dynamic.getValueDef;
 
         Some(minimumSum - otherSkillRating);
       | _ => None
@@ -114,11 +115,11 @@ let getMinSrByCraftInstruments =
 let getMinSrByDeps = (heroSkills, heroEntry: Skill.Dynamic.t) =>
   heroEntry.dependencies
   |> Dependencies.Flatten.flattenSkillDependencies(
-       id => heroSkills |> Ley_IntMap.lookup(id) |> getValueDef,
+       id => heroSkills |> Ley_IntMap.lookup(id) |> Skill.Dynamic.getValueDef,
        heroEntry.id,
      )
   |> ensure(Ley_List.Extra.notNull)
-  <&> Ley_List.Foldable.maximum;
+  <&> Ley_List.maximum;
 
 /**
  * Returns the minimum skill rating for the passed skill.
@@ -130,7 +131,7 @@ let getMin = (~craftInstruments, ~heroSkills, ~staticEntry, ~heroEntry) =>
   ]
   |> catOptions
   |> ensure(Ley_List.Extra.notNull)
-  <&> Ley_List.Foldable.maximum;
+  <&> Ley_List.maximum;
 
 /**
  * Returns if the passed skill's skill rating can be decreased.
@@ -149,8 +150,6 @@ let isDecreasable =
     );
 
 module Routine = {
-  open Ley_Option;
-
   let attributeThreshold = 13;
 
   /**
@@ -161,7 +160,7 @@ module Routine = {
   let getMissingPoints = ((a1, a2, a3)) =>
     [a1, a2, a3]
     |> Ley_List.map(a => attributeThreshold - a |> Ley_Int.max(0))
-    |> Ley_List.Foldable.sum;
+    |> Ley_List.sum;
 
   /**
    * Returns the minimum check modifier from which a routine check is possible

@@ -3,65 +3,158 @@ module type Comparable = {
   let compare: (t, t) => int;
 };
 
-module Make = (Key: Comparable) => {
+module type T = {
+  type key;
+
+  type t('a);
+
+  include Ley_Foldable.T with type t('a) := t('a);
+
+  let mapMEither: ('a => result('b, 'c), t('a)) => result(t('b), 'c);
+
+  let null: t('a) => bool;
+
+  let size: t('a) => int;
+
+  let member: (key, t('a)) => bool;
+
+  let notMember: (key, t('a)) => bool;
+
+  let lookup: (key, t('a)) => option('a);
+
+  let findWithDefault: ('a, key, t('a)) => 'a;
+
+  let empty: t('a);
+
+  let singleton: (key, 'a) => t('a);
+
+  let insert: (key, 'a, t('a)) => t('a);
+
+  let insertWith: (('a, 'a) => 'a, key, 'a, t('a)) => t('a);
+
+  let insertWithKey: ((key, 'a, 'a) => 'a, key, 'a, t('a)) => t('a);
+
+  let insertLookupWithKey:
+    ((key, 'a, 'a) => 'a, key, 'a, t('a)) => (option('a), t('a));
+
+  let delete: (key, t('a)) => t('a);
+
+  let adjust: ('a => 'a, key, t('a)) => t('a);
+
+  let adjustWithKey: ((key, 'a) => 'a, key, t('a)) => t('a);
+
+  let update: ('a => option('a), key, t('a)) => t('a);
+
+  let updateWithKey: ((key, 'a) => option('a), key, t('a)) => t('a);
+
+  let updateLookupWithKey:
+    ((key, 'a) => option('a), key, t('a)) => (option('a), t('a));
+
+  let alter: (option('a) => option('a), key, t('a)) => t('a);
+
+  let union: (t('a), t('a)) => t('a);
+
+  let map: ('a => 'b, t('a)) => t('b);
+
+  let mapWithKey: ((key, 'a) => 'b, t('a)) => t('b);
+
+  let foldrWithKey: ((key, 'a, 'b) => 'b, 'b, t('a)) => 'b;
+
+  let foldlWithKey: (('a, key, 'b) => 'a, 'a, t('b)) => 'a;
+
+  let elems: t('a) => list('a);
+
+  let keys: t('a) => list(key);
+
+  let assocs: t('a) => list((key, 'a));
+
+  let fromList: list((key, 'a)) => t('a);
+
+  let fromArray: array((key, 'a)) => t('a);
+
+  let filter: ('a => bool, t('a)) => t('a);
+
+  let filterWithKey: ((key, 'a) => bool, t('a)) => t('a);
+
+  let mapMaybe: ('a => option('b), t('a)) => t('b);
+
+  let mapMaybeWithKey: ((key, 'a) => option('b), t('a)) => t('b);
+
+  // Zipping
+
+  /**
+     * `zip mp1 mp2` merges the maps `mp1` and `mp2` so that the resulting map
+     * contains only keys that are in both source maps and their values are a pair
+     * of the values from the source maps.
+     */
+  let zip: (t('a), t('b)) => t(('a, 'b));
+
+  /**
+     * `zipOption mp1 mp2` merges the maps `mp1` and `mp2` so that the resulting
+     * map contains only keys that are in `mp1` and their values are a pair
+     * of the values from `mp1` and the optional value from `mp2`, since the key
+     * does not need to exist in `mp2`.
+     */
+  let zipOption: (t('a), t('b)) => t(('a, option('b)));
+
+  // Counting
+
+  /**
+     * `countWith pred mp` takes a predicate function and a map. The predicate
+     * is used to count elements based on if the predicate returns `true`.
+     */
+  let countWith: ('a => bool, t('a)) => int;
+
+  /**
+     * `countWithKey pred mp` takes a predicate function and a map. The
+     * predicate is used to count elements based on if the predicate returns
+     * `true`.
+     */
+  let countWithKey: ((key, 'a) => bool, t('a)) => int;
+
+  /**
+     * Takes a function and a list. The function is mapped over the list and the
+     * return value is used as the key which's value is increased by one every
+     * time the value is returned. This way, you can count elements grouped by
+     * the value the mapping function returns.
+     */
+  let countBy: ('a => key, list('a)) => t(int);
+
+  /**
+     * Takes a function and a list. The function is mapped over the list and for
+     * each `Just` it returns, the value at the key contained in the `Just` is
+     * increased by one. This way, you can count elements grouped by the value
+     * the mapping function returns, but you can also ignore values, which is
+     * not possible with `countBy`.
+     */
+  let countByM: ('a => option(key), list('a)) => t(int);
+
+  /**
+     * `groupByKey f xs` groups the elements of the list `xs` by the key
+     * returned by passing the respective element to `f` in a map.
+     */
+  let groupBy: ('a => key, list('a)) => t(list('a));
+};
+
+module Make = (Key: Comparable) : (T with type key = Key.t) => {
   type key = Key.t;
 
   module TypedMap = Map.Make(Key);
 
   type t('a) = TypedMap.t('a);
 
-  module Foldable = {
-    open Ley_Function;
+  include (
+            Ley_Foldable.Make({
+              type nonrec t('a) = t('a);
 
-    let foldr = (f, initial, mp) =>
-      TypedMap.fold((_, v, acc) => f(v, acc), mp, initial);
+              let foldr = (f, initial, mp) =>
+                TypedMap.fold((_, v, acc) => f(v, acc), mp, initial);
 
-    let foldl = (f, initial, mp) =>
-      TypedMap.fold((_, v, acc) => f(acc, v), mp, initial);
-
-    let toList = TypedMap.bindings;
-
-    let null = mp => TypedMap.is_empty(mp);
-
-    let length = TypedMap.cardinal;
-
-    let elem = (e, mp) => TypedMap.exists((_, x) => e == x, mp);
-
-    let sum = mp => foldr((+), 0, mp);
-
-    let product = mp => foldr(( * ), 1, mp);
-
-    let maximum = mp => foldr(Js.Math.max_int, Js.Int.min, mp);
-
-    let minimum = mp => foldr(Js.Math.min_int, Js.Int.max, mp);
-
-    let concat = mp => foldr(flip(List.append), [], mp);
-
-    let concatMap = (f, mp) =>
-      TypedMap.fold(
-        (_, v, acc) => TypedMap.union((_, x, _) => Some(x), acc, f(v)),
-        mp,
-        TypedMap.empty,
-      );
-
-    let con = mp => TypedMap.for_all(const(id), mp);
-
-    let dis = mp => !TypedMap.for_all(const((!)), mp);
-
-    let any = (pred, mp) =>
-      !TypedMap.for_all((_, x) => x |> pred |> (!), mp);
-
-    let all = (pred, mp) => TypedMap.for_all((_, x) => x |> pred, mp);
-
-    let notElem = (e, mp) => !elem(e, mp);
-
-    let find = (pred, mp) =>
-      TypedMap.find_first_opt(
-        key => key |> flip(TypedMap.find, mp) |> pred,
-        mp,
-      )
-      |> Ley_Option.Infix.(<$>)(snd);
-  };
+              let foldl = (f, initial, mp) =>
+                TypedMap.fold((_, v, acc) => f(acc, v), mp, initial);
+            }):
+              Ley_Foldable.T with type t('a) := t('a)
+          );
 
   // QUERY
 
@@ -206,10 +299,10 @@ module Make = (Key: Comparable) => {
   // LISTS
 
   let fromList = ps =>
-    List.fold_right(((k, v)) => insert(k, v), ps, empty);
+    List.fold_left((mp, (k, v)) => insert(k, v, mp), empty, ps);
 
   let fromArray = ps =>
-    Array.fold_right(((k, v)) => insert(k, v), ps, empty);
+    Array.fold_left((mp, (k, v)) => insert(k, v, mp), empty, ps);
 
   // FILTER
 
@@ -264,7 +357,7 @@ module Make = (Key: Comparable) => {
   // Counting
 
   let countWith = (pred, mp) =>
-    Foldable.foldr(x => pred(x) ? Ley_Int.inc : Ley_Function.id, 0, mp);
+    foldr(x => pred(x) ? Ley_Int.inc : Ley_Function.id, 0, mp);
 
   let countWithKey = (pred, mp) =>
     foldrWithKey(
@@ -315,27 +408,22 @@ module Make = (Key: Comparable) => {
       xs,
     );
 
-  module Traversable = {
-    let%private rec mapMEitherHelper = (f, xs) =>
-      switch (xs) {
-      | [] => Ok([])
-      | [(k, v), ...ys] =>
-        let new_value = f(v);
+  let%private rec mapMEitherHelper = (f, xs) =>
+    switch (xs) {
+    | [] => Ok([])
+    | [(k, v), ...ys] =>
+      let new_value = f(v);
 
-        switch (new_value) {
-        | Ok(z) =>
-          switch (mapMEitherHelper(f, ys)) {
-          | Ok(zs) => Ok([(k, z), ...zs])
-          | Error(l) => Error(l)
-          }
+      switch (new_value) {
+      | Ok(z) =>
+        switch (mapMEitherHelper(f, ys)) {
+        | Ok(zs) => Ok([(k, z), ...zs])
         | Error(l) => Error(l)
-        };
+        }
+      | Error(l) => Error(l)
       };
+    };
 
-    let mapMEither = (f, mp) =>
-      mp
-      |> Foldable.toList
-      |> mapMEitherHelper(f)
-      |> Ley_Result.Functor.(<$>)(fromList);
-  };
+  let mapMEither = (f, mp) =>
+    mp |> assocs |> mapMEitherHelper(f) |> Ley_Result.Functor.(<$>)(fromList);
 };

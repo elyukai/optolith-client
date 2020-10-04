@@ -9,24 +9,19 @@ open Activatable_Cache;
 let getActivePactGiftsCount = specialAbilityPairs =>
   specialAbilityPairs
   |> EntryGroups.SpecialAbility.getFromGroup(Paktgeschenke)
-  |> IM.Foldable.foldr(
+  |> IM.foldr(
        fun
        | (
-           {SpecialAbility.prerequisites, apValue, levels, _},
-           Some(({active, _}: Hero.Activatable.t) as heroEntry),
+           {SpecialAbility.Static.prerequisites, apValue, levels, _},
+           Some(({active, _}: Activatable_Dynamic.t) as heroEntry),
          )
            when Activatable_Accessors.isActive(heroEntry) =>
          [@warning "-4"]
          (
-           switch (
-             IM.Foldable.null(prerequisites.levels),
-             apValue,
-             levels,
-             active,
-           ) {
+           switch (prerequisites, apValue, levels, active) {
            | (
                // It must have different prerequisites for each level
-               false,
+               ByLevel(_),
                // It must have different cost per level
                Some(PerLevel(_)),
                // It must have levels
@@ -60,7 +55,7 @@ let isSpecialAbilitySpecificAdditionEnabled =
         matchingLanguagesScripts,
         _,
       },
-      specialAbility: SpecialAbility.t,
+      specialAbility: SpecialAbility.Static.t,
     ) =>
   [@warning "-4"]
   Id.SpecialAbility.(
@@ -100,16 +95,12 @@ let isSpecialAbilitySpecificAdditionEnabled =
     | (DunklesAbbildDerBuendnisgabe, _) => activePactGiftsCount === 0
 
     | (WegDerSchreiberin, _) =>
-      L.Foldable.length(matchingLanguagesScripts.languagesWithMatchingScripts)
-      >= 1
-      && L.Foldable.length(
-           matchingLanguagesScripts.scriptsWithMatchingLanguages,
-         )
-      >= 1
+      L.length(matchingLanguagesScripts.languagesWithMatchingScripts) >= 1
+      && L.length(matchingLanguagesScripts.scriptsWithMatchingLanguages) >= 1
 
     | (_, Paktgeschenke) =>
       switch (maybePact) {
-      | Some((pact: Hero.Pact.t)) =>
+      | Some((pact: Pact.Dynamic.t)) =>
         switch (Id.Pact.fromInt(pact.category)) {
         | Faery =>
           !Activatable_Accessors.isActiveM(dunklesAbbild)
@@ -165,13 +156,13 @@ let isEntrySpecificAdditionEnabled =
 
 let hasNoGenerallyRestrictingDependency =
   fun
-  | Some({Hero.Activatable.dependencies, _}) =>
-    L.Foldable.all(
+  | Some({Activatable_Dynamic.dependencies, _}) =>
+    L.all(
       [@warning "-4"]
       (
         fun
         | {
-            Hero.Activatable.target: One(_),
+            Activatable_Dynamic.target: One(_),
             options: [],
             level: None,
             active: false,
@@ -188,8 +179,8 @@ let hasNotReachedMaximumEntries = (maxLevel, maybeHeroEntry) =>
   switch (maxLevel, maybeHeroEntry) {
   // Impossible maximum level, thus no addition possible
   | (Some(0), _) => false
-  | (Some(max), Some(({active, _}: Hero.Activatable.t))) =>
-    max > L.Foldable.length(active)
+  | (Some(max), Some(({active, _}: Activatable_Dynamic.t))) =>
+    max > L.length(active)
   | (Some(_), None)
   | (None, _) => true
   };
@@ -242,7 +233,7 @@ let getMaxLevel = (staticData, hero, staticEntry, maybeHeroEntry) =>
        Id.Activatable.toAll(Activatable_Accessors.id(staticEntry)),
        O.option(
          [],
-         ({Hero.Activatable.dependencies, _}) => dependencies,
+         ({Activatable_Dynamic.dependencies, _}) => dependencies,
          maybeHeroEntry,
        ),
      )

@@ -322,6 +322,10 @@ var concat = include$4.concat;
 
 var concatMap = include$4.concatMap;
 
+var con = include$4.con;
+
+var dis = include$4.dis;
+
 var any = include$4.any;
 
 var all = include$4.all;
@@ -354,6 +358,8 @@ export {
   minimum ,
   concat ,
   concatMap ,
+  con ,
+  dis ,
   any ,
   all ,
   notElem ,

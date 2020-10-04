@@ -49,17 +49,20 @@ let resolveTranslations = (langs, x) =>
     x.translations
     |> TranslationMap.getFromLanguageOrder(langs)
     <&> (
-      translation => {
-        id: x.id,
-        name: translation.name,
-        ap: x.ap,
-        maxAttributeValue: x.maxAttributeValue,
-        maxSkillRating: x.maxSkillRating,
-        maxCombatTechniqueRating: x.maxCombatTechniqueRating,
-        maxTotalAttributeValues: x.maxTotalAttributeValues,
-        maxSpellsLiturgicalChants: x.maxSpellsLiturgicalChants,
-        maxUnfamiliarSpells: x.maxUnfamiliarSpells,
-      }
+      translation => (
+        x.id,
+        {
+          id: x.id,
+          name: translation.name,
+          ap: x.ap,
+          maxAttributeValue: x.maxAttributeValue,
+          maxSkillRating: x.maxSkillRating,
+          maxCombatTechniqueRating: x.maxCombatTechniqueRating,
+          maxTotalAttributeValues: x.maxTotalAttributeValues,
+          maxSpellsLiturgicalChants: x.maxSpellsLiturgicalChants,
+          maxUnfamiliarSpells: x.maxUnfamiliarSpells,
+        },
+      )
     )
   );
 

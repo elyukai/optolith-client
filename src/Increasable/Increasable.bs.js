@@ -4,7 +4,7 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 
-function Dynamic(Config) {
+function Make(Config) {
   var minValue = Config.minValue;
   var empty = function (id) {
     return {
@@ -32,6 +32,10 @@ function Dynamic(Config) {
           getValueDef: getValueDef
         };
 }
+
+var Dynamic = {
+  Make: Make
+};
 
 export {
   Dynamic ,

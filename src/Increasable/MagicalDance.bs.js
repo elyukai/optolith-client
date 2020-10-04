@@ -54,20 +54,23 @@ function decodeMultilingual(json) {
 function decode$1(langs, json) {
   var x = decodeMultilingual(json);
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                return {
-                        id: x.id,
-                        name: translation.name,
-                        nameByTradition: translation.nameByTradition,
-                        check: x.check,
-                        effect: translation.effect,
-                        duration: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.duration),
-                        cost: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.cost),
-                        musicTraditions: x.musicTraditions,
-                        property: x.property,
-                        ic: x.ic,
-                        src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
-                      };
+                return [
+                        x.id,
+                        {
+                          id: x.id,
+                          name: translation.name,
+                          nameByTradition: translation.nameByTradition,
+                          check: x.check,
+                          effect: translation.effect,
+                          duration: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.duration),
+                          cost: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.cost),
+                          musicTraditions: x.musicTraditions,
+                          property: x.property,
+                          ic: x.ic,
+                          src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                          errata: translation.errata
+                        }
+                      ];
               }));
 }
 

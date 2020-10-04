@@ -66,14 +66,17 @@ module Static = {
       x.translations
       |> TranslationMap.getFromLanguageOrder(langs)
       <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          types: translation.types,
-          domains: translation.domains,
-          src: PublicationRef.resolveTranslationsList(langs, x.src),
-          errata: translation.errata,
-        }
+        translation => (
+          x.id,
+          {
+            id: x.id,
+            name: translation.name,
+            types: translation.types,
+            domains: translation.domains,
+            src: PublicationRef.resolveTranslationsList(langs, x.src),
+            errata: translation.errata,
+          },
+        )
       )
     );
 

@@ -182,42 +182,45 @@ module Static = {
       x.translations
       |> TranslationMap.getFromLanguageOrder(langs)
       <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          language: x.languages,
-          script: x.literacy,
-          areaKnowledge: translation.areaKnowledge,
-          areaKnowledgeShort: translation.areaKnowledgeShort,
-          socialStatus: x.social,
-          commonMundaneProfessionsAll: x.commonMundaneProfessionsAll,
-          commonMundaneProfessionsExceptions:
-            x.commonMundaneProfessionsExceptions,
-          commonMundaneProfessionsText: translation.commonMundaneProfessions,
-          commonMagicProfessionsAll: x.commonMagicalProfessionsAll,
-          commonMagicProfessionsExceptions:
-            x.commonMagicalProfessionsExceptions,
-          commonMagicProfessionsText: translation.commonMagicalProfessions,
-          commonBlessedProfessionsAll: x.commonBlessedProfessionsAll,
-          commonBlessedProfessionsExceptions:
-            x.commonBlessedProfessionsExceptions,
-          commonBlessedProfessionsText: translation.commonBlessedProfessions,
-          commonAdvantages: x.commonAdvantages,
-          commonAdvantagesText: translation.commonAdvantages,
-          commonDisadvantages: x.commonDisadvantages,
-          commonDisadvantagesText: translation.commonDisadvantages,
-          uncommonAdvantages: x.uncommonAdvantages,
-          uncommonAdvantagesText: translation.uncommonAdvantages,
-          uncommonDisadvantages: x.uncommonDisadvantages,
-          uncommonDisadvantagesText: translation.uncommonDisadvantages,
-          commonSkills: x.commonSkills,
-          uncommonSkills: x.uncommonSkills,
-          commonNames: translation.commonNames,
-          culturalPackageApValue: x.culturalPackageApValue,
-          culturalPackageSkills: x.culturalPackageSkills,
-          src: PublicationRef.resolveTranslationsList(langs, x.src),
-          errata: translation.errata,
-        }
+        translation => (
+          x.id,
+          {
+            id: x.id,
+            name: translation.name,
+            language: x.languages,
+            script: x.literacy,
+            areaKnowledge: translation.areaKnowledge,
+            areaKnowledgeShort: translation.areaKnowledgeShort,
+            socialStatus: x.social,
+            commonMundaneProfessionsAll: x.commonMundaneProfessionsAll,
+            commonMundaneProfessionsExceptions:
+              x.commonMundaneProfessionsExceptions,
+            commonMundaneProfessionsText: translation.commonMundaneProfessions,
+            commonMagicProfessionsAll: x.commonMagicalProfessionsAll,
+            commonMagicProfessionsExceptions:
+              x.commonMagicalProfessionsExceptions,
+            commonMagicProfessionsText: translation.commonMagicalProfessions,
+            commonBlessedProfessionsAll: x.commonBlessedProfessionsAll,
+            commonBlessedProfessionsExceptions:
+              x.commonBlessedProfessionsExceptions,
+            commonBlessedProfessionsText: translation.commonBlessedProfessions,
+            commonAdvantages: x.commonAdvantages,
+            commonAdvantagesText: translation.commonAdvantages,
+            commonDisadvantages: x.commonDisadvantages,
+            commonDisadvantagesText: translation.commonDisadvantages,
+            uncommonAdvantages: x.uncommonAdvantages,
+            uncommonAdvantagesText: translation.uncommonAdvantages,
+            uncommonDisadvantages: x.uncommonDisadvantages,
+            uncommonDisadvantagesText: translation.uncommonDisadvantages,
+            commonSkills: x.commonSkills,
+            uncommonSkills: x.uncommonSkills,
+            commonNames: translation.commonNames,
+            culturalPackageApValue: x.culturalPackageApValue,
+            culturalPackageSkills: x.culturalPackageSkills,
+            src: PublicationRef.resolveTranslationsList(langs, x.src),
+            errata: translation.errata,
+          },
+        )
       )
     );
 

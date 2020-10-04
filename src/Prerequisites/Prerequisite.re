@@ -306,6 +306,24 @@ module Config = {
   };
 };
 
+module Unified = {
+  type value =
+    | CommonSuggestedByRCP
+    | Sex(Sex.t)
+    | Race(Race.t)
+    | Culture(Culture.t)
+    | Pact(Pact.t)
+    | SocialStatus(SocialStatus.t)
+    | PrimaryAttribute(PrimaryAttribute.t)
+    | Activatable(Activatable.t)
+    | ActivatableMultiEntry(ActivatableMultiEntry.t)
+    | ActivatableMultiSelect(ActivatableMultiSelect.t)
+    | Increasable(Increasable.t)
+    | IncreasableMultiEntry(IncreasableMultiEntry.t);
+
+  type t = Config.t(value);
+};
+
 module General = {
   type value =
     | Sex(Sex.t)
@@ -367,6 +385,24 @@ module General = {
     );
 
   let resolveTranslations = Config.resolveTranslations;
+
+  let unify = (x: t): Unified.t => {
+    value:
+      switch (x.value) {
+      | Sex(x) => Sex(x)
+      | Race(x) => Race(x)
+      | Culture(x) => Culture(x)
+      | Pact(x) => Pact(x)
+      | SocialStatus(x) => SocialStatus(x)
+      | PrimaryAttribute(x) => PrimaryAttribute(x)
+      | Activatable(x) => Activatable(x)
+      | ActivatableMultiEntry(x) => ActivatableMultiEntry(x)
+      | ActivatableMultiSelect(x) => ActivatableMultiSelect(x)
+      | Increasable(x) => Increasable(x)
+      | IncreasableMultiEntry(x) => IncreasableMultiEntry(x)
+      },
+    displayOption: x.displayOption,
+  };
 };
 
 module Profession = {
@@ -403,6 +439,18 @@ module Profession = {
     );
 
   let resolveTranslations = Config.resolveTranslations;
+
+  let unify = (x: t): Unified.t => {
+    value:
+      switch (x.value) {
+      | Sex(x) => Sex(x)
+      | Race(x) => Race(x)
+      | Culture(x) => Culture(x)
+      | Activatable(x) => Activatable(x)
+      | Increasable(x) => Increasable(x)
+      },
+    displayOption: x.displayOption,
+  };
 };
 
 module AdvantageDisadvantage = {
@@ -475,6 +523,25 @@ module AdvantageDisadvantage = {
     );
 
   let resolveTranslations = Config.resolveTranslations;
+
+  let unify = (x: t): Unified.t => {
+    value:
+      switch (x.value) {
+      | CommonSuggestedByRCP => CommonSuggestedByRCP
+      | Sex(x) => Sex(x)
+      | Race(x) => Race(x)
+      | Culture(x) => Culture(x)
+      | Pact(x) => Pact(x)
+      | SocialStatus(x) => SocialStatus(x)
+      | PrimaryAttribute(x) => PrimaryAttribute(x)
+      | Activatable(x) => Activatable(x)
+      | ActivatableMultiEntry(x) => ActivatableMultiEntry(x)
+      | ActivatableMultiSelect(x) => ActivatableMultiSelect(x)
+      | Increasable(x) => Increasable(x)
+      | IncreasableMultiEntry(x) => IncreasableMultiEntry(x)
+      },
+    displayOption: x.displayOption,
+  };
 };
 
 module Collection = {
@@ -552,7 +619,7 @@ module Collection = {
 
       switch (prerequisites) {
       | Plain(xs) => pred(1) ? xs : []
-      | ByLevel(mp) => mp |> filterByLevel(pred) |> Ley_IntMap.Foldable.concat
+      | ByLevel(mp) => mp |> filterByLevel(pred) |> Ley_IntMap.concat
       };
     };
   };

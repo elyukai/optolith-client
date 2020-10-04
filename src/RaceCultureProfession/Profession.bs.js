@@ -375,46 +375,49 @@ function resolveTranslations$1(langs, x) {
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap$1.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 var prerequisites = Curry._2(Prerequisite$OptolithClient.Collection.Profession.resolveTranslations, langs, x.prerequisites);
                 var init = x.options;
-                return {
-                        id: x.id,
-                        name: translation.name,
-                        subname: translation.subname,
-                        apValue: x.apValue,
-                        prerequisites: prerequisites,
-                        prerequisitesStart: translation.prerequisitesStart,
-                        options: {
-                          skillSpecialization: init.skillSpecialization,
-                          languageScript: init.languageScript,
-                          combatTechnique: init.combatTechnique,
-                          cantrip: init.cantrip,
-                          curse: init.curse,
-                          terrainKnowledge: init.terrainKnowledge,
-                          skill: init.skill,
-                          guildMageUnfamiliarSpell: getGuildMageUnfamiliarSpell(prerequisites)
-                        },
-                        specialAbilities: x.specialAbilities,
-                        combatTechniques: x.combatTechniques,
-                        skills: x.skills,
-                        spells: x.spells,
-                        liturgicalChants: x.liturgicalChants,
-                        blessings: x.blessings,
-                        suggestedAdvantages: x.suggestedAdvantages,
-                        suggestedAdvantagesText: translation.suggestedAdvantages,
-                        suggestedDisadvantages: x.suggestedDisadvantages,
-                        suggestedDisadvantagesText: translation.suggestedDisadvantages,
-                        unsuitableAdvantages: x.unsuitableAdvantages,
-                        unsuitableAdvantagesText: translation.unsuitableAdvantages,
-                        unsuitableDisadvantages: x.unsuitableDisadvantages,
-                        unsuitableDisadvantagesText: translation.unsuitableDisadvantages,
-                        variants: Curry._2(Ley_IntMap$OptolithClient.mapMaybe, (function (param) {
-                                return resolveTranslations(langs, param);
-                              }), x.variants),
-                        isVariantRequired: x.isVariantRequired,
-                        gr: x.gr,
-                        sgr: x.sgr,
-                        src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
-                      };
+                return [
+                        x.id,
+                        {
+                          id: x.id,
+                          name: translation.name,
+                          subname: translation.subname,
+                          apValue: x.apValue,
+                          prerequisites: prerequisites,
+                          prerequisitesStart: translation.prerequisitesStart,
+                          options: {
+                            skillSpecialization: init.skillSpecialization,
+                            languageScript: init.languageScript,
+                            combatTechnique: init.combatTechnique,
+                            cantrip: init.cantrip,
+                            curse: init.curse,
+                            terrainKnowledge: init.terrainKnowledge,
+                            skill: init.skill,
+                            guildMageUnfamiliarSpell: getGuildMageUnfamiliarSpell(prerequisites)
+                          },
+                          specialAbilities: x.specialAbilities,
+                          combatTechniques: x.combatTechniques,
+                          skills: x.skills,
+                          spells: x.spells,
+                          liturgicalChants: x.liturgicalChants,
+                          blessings: x.blessings,
+                          suggestedAdvantages: x.suggestedAdvantages,
+                          suggestedAdvantagesText: translation.suggestedAdvantages,
+                          suggestedDisadvantages: x.suggestedDisadvantages,
+                          suggestedDisadvantagesText: translation.suggestedDisadvantages,
+                          unsuitableAdvantages: x.unsuitableAdvantages,
+                          unsuitableAdvantagesText: translation.unsuitableAdvantages,
+                          unsuitableDisadvantages: x.unsuitableDisadvantages,
+                          unsuitableDisadvantagesText: translation.unsuitableDisadvantages,
+                          variants: Curry._2(Ley_IntMap$OptolithClient.mapMaybe, (function (param) {
+                                  return resolveTranslations(langs, param);
+                                }), x.variants),
+                          isVariantRequired: x.isVariantRequired,
+                          gr: x.gr,
+                          sgr: x.sgr,
+                          src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                          errata: translation.errata
+                        }
+                      ];
               }));
 }
 

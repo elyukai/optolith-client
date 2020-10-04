@@ -68,8 +68,8 @@ type missingApForDisAdvantage = {
 };
 
 type disAdvantageStatic =
-  | Advantage(Advantage.t)
-  | Disadvantage(Disadvantage.t);
+  | Advantage(Advantage.Static.t)
+  | Disadvantage(Disadvantage.Static.t);
 
 /**
  * Checks if there are enough AP available and if the restrictions for
@@ -89,7 +89,7 @@ let getMissingApForDisAdvantage:
   missingApForDisAdvantage;
 
 module Sum: {
-  let getApSpentOnAttributes: Ley_IntMap.t(Hero.Attribute.t) => int;
+  let getApSpentOnAttributes: Ley_IntMap.t(Attribute.Dynamic.t) => int;
 
   let getApSpentOnSkills: (Static.t, Ley_IntMap.t(Skill.Dynamic.t)) => int;
 
@@ -97,10 +97,10 @@ module Sum: {
     (Static.t, Ley_IntMap.t(Skill.Dynamic.t)) => int;
 
   let getApSpentOnSpells:
-    (Static.t, Ley_IntMap.t(Hero.ActivatableSkill.t)) => int;
+    (Static.t, Ley_IntMap.t(ActivatableSkill.Dynamic.t)) => int;
 
   let getApSpentOnLiturgicalChants:
-    (Static.t, Ley_IntMap.t(Hero.ActivatableSkill.t)) => int;
+    (Static.t, Ley_IntMap.t(ActivatableSkill.Dynamic.t)) => int;
 
   let getApSpentOnCantrips: Ley_IntMap.t('a) => int;
 

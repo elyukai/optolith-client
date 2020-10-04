@@ -100,44 +100,47 @@ module Static = {
       x.translations
       |> TranslationMap.getFromLanguageOrder(langs)
       <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          check: x.check,
-          checkMod: x.checkMod,
-          effect: translation.effect,
-          castingTime:
-            ActivatableSkill.MainParameter.make(
-              x.castingTimeNoMod,
-              translation.castingTime,
-            ),
-          cost:
-            ActivatableSkill.MainParameter.make(
-              x.costNoMod,
-              translation.cost,
-            ),
-          range:
-            ActivatableSkill.MainParameter.make(
-              x.rangeNoMod,
-              translation.range,
-            ),
-          duration:
-            ActivatableSkill.MainParameter.make(
-              x.durationNoMod,
-              translation.duration,
-            ),
-          target: translation.target,
-          property: x.property,
-          traditions: x.traditions,
-          ic: x.ic,
-          increasablePrerequisites: x.increasablePrerequisites,
-          gr: x.gr,
-          enhancements:
-            x.enhancements >>= Enhancements.resolveTranslations(langs),
+        translation => (
+          x.id,
+          {
+            id: x.id,
+            name: translation.name,
+            check: x.check,
+            checkMod: x.checkMod,
+            effect: translation.effect,
+            castingTime:
+              ActivatableSkill.MainParameter.make(
+                x.castingTimeNoMod,
+                translation.castingTime,
+              ),
+            cost:
+              ActivatableSkill.MainParameter.make(
+                x.costNoMod,
+                translation.cost,
+              ),
+            range:
+              ActivatableSkill.MainParameter.make(
+                x.rangeNoMod,
+                translation.range,
+              ),
+            duration:
+              ActivatableSkill.MainParameter.make(
+                x.durationNoMod,
+                translation.duration,
+              ),
+            target: translation.target,
+            property: x.property,
+            traditions: x.traditions,
+            ic: x.ic,
+            increasablePrerequisites: x.increasablePrerequisites,
+            gr: x.gr,
+            enhancements:
+              x.enhancements >>= Enhancements.resolveTranslations(langs),
 
-          src: PublicationRef.resolveTranslationsList(langs, x.src),
-          errata: translation.errata,
-        }
+            src: PublicationRef.resolveTranslationsList(langs, x.src),
+            errata: translation.errata,
+          },
+        )
       )
     );
 

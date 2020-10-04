@@ -293,17 +293,20 @@ let resolveTranslations = (langs, x) =>
     x.translations
     |> TranslationMap.getFromLanguageOrder(langs)
     <&> (
-      translation => {
-        id: x.id,
-        name: translation.name,
-        price: x.price,
-        weight: x.weight,
-        special: x.special,
-        gr: x.gr,
-        info:
-          translation.info
-          |> Ley_Option.mapOption(Info.resolveTranslations(langs)),
-      }
+      translation => (
+        x.id,
+        {
+          id: x.id,
+          name: translation.name,
+          price: x.price,
+          weight: x.weight,
+          special: x.special,
+          gr: x.gr,
+          info:
+            translation.info
+            |> Ley_Option.mapOption(Info.resolveTranslations(langs)),
+        },
+      )
     )
   );
 

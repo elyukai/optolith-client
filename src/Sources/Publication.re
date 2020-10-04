@@ -41,13 +41,16 @@ let resolveTranslations = (langs, x) =>
     x.translations
     |> TranslationMap.getFromLanguageOrder(langs)
     <&> (
-      translation => {
-        id: x.id,
-        isCore: x.isCore,
-        isAdultContent: x.isAdultContent,
-        name: translation.name,
-        short: translation.short,
-      }
+      translation => (
+        x.id,
+        {
+          id: x.id,
+          isCore: x.isCore,
+          isAdultContent: x.isAdultContent,
+          name: translation.name,
+          short: translation.short,
+        },
+      )
     )
   );
 

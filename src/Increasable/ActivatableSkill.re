@@ -6,7 +6,7 @@ module type Dynamic = {
   type t = {
     id: int,
     value,
-    dependencies: list(Increasable.dependency),
+    dependencies: list(Increasable.Dynamic.dependency),
   };
 
   let empty: int => t;
@@ -30,7 +30,7 @@ module Dynamic: Dynamic = {
   type t = {
     id: int,
     value,
-    dependencies: list(Increasable.dependency),
+    dependencies: list(Increasable.Dynamic.dependency),
   };
 
   let empty = id => {id, value: Inactive, dependencies: []};

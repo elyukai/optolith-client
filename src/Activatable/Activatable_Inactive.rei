@@ -5,7 +5,7 @@ type t = {
   minLevel: option(int),
   maxLevel: option(int),
   selectOptions: list(SelectOption.t),
-  heroEntry: option(Hero.Activatable.t),
+  heroEntry: option(Activatable_Dynamic.t),
   staticEntry: Static.activatable,
   customCostDisabled: bool,
   isAutomatic: bool,
@@ -29,6 +29,6 @@ let getInactive:
     Static.t,
     Hero.t,
     Static.activatable,
-    option(Hero.Activatable.t)
+    option(Activatable_Dynamic.t)
   ) =>
   result;

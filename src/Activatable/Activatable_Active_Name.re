@@ -1,5 +1,5 @@
 open Ley_Option;
-open Ley_Option;
+open Ley_Option.Infix;
 open Static;
 open Ley_Function;
 open Activatable_Convert;
@@ -204,7 +204,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
                   // Otherwise lookup application name
                   | Preset((Generic, id)) =>
                     skill.applications
-                    |> Ley_IntMap.Foldable.find((a: Skill.application) =>
+                    |> Ley_IntMap.find((a: Skill.Static.Application.t) =>
                          a.id === id
                        )
                     <&> (a => a.name)
@@ -308,7 +308,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
           skill => {
             let applications =
               skill.applications
-              |> Ley_IntMap.filter((app: Skill.application) =>
+              |> Ley_IntMap.filter((app: Skill.Static.Application.t) =>
                    app.prerequisite |> isNone
                  );
 
@@ -319,13 +319,13 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
                  >>= (
                    opt =>
                      applications
-                     |> Ley_IntMap.Foldable.find((app: Skill.application) =>
+                     |> Ley_IntMap.find((app: Skill.Static.Application.t) =>
                           app.id === opt
                         )
                      <&> (app => app.name)
                  )
                )
-            |> ensure(apps => apps |> Ley_List.Foldable.length |> (===)(2))
+            |> ensure(apps => apps |> Ley_List.length |> (===)(2))
             <&> (
               apps =>
                 apps

@@ -7,13 +7,13 @@ module Magical = {
   let isTraditionId = (staticData, id) =>
     IM.member(id, staticData.magicalTraditions);
 
-  let isActiveTradition = (staticData, x: Hero.Activatable.t) =>
+  let isActiveTradition = (staticData, x: Activatable_Dynamic.t) =>
     isTraditionId(staticData, x.id) && Activatable_Accessors.isActive(x);
 
-  let getHeroEntries = (staticData, mp: IM.t(Hero.Activatable.t)) =>
+  let getHeroEntries = (staticData, mp: IM.t(Activatable_Dynamic.t)) =>
     mp |> IM.elems |> L.filter(isActiveTradition(staticData));
 
-  let getStaticEntries = (staticData, mp: IM.t(Hero.Activatable.t)) =>
+  let getStaticEntries = (staticData, mp: IM.t(Activatable_Dynamic.t)) =>
     mp
     |> IM.elems
     |> O.mapOption(trad =>
@@ -22,18 +22,18 @@ module Magical = {
        );
 
   type fullTradition = (
-    SpecialAbility.t,
-    Hero.Activatable.t,
+    SpecialAbility.Static.t,
+    Activatable_Dynamic.t,
     MagicalTradition.t,
   );
 
   let getEntries =
-      (staticData, mp: IM.t(Hero.Activatable.t)): list(fullTradition) =>
+      (staticData, mp: IM.t(Activatable_Dynamic.t)): list(fullTradition) =>
     mp
     |> IM.elems
     |> O.mapOption(trad =>
          isActiveTradition(staticData, trad)
-           ? O.Monad.liftM2(
+           ? O.liftM2(
                (staticEntry, traditionEntry) =>
                  (staticEntry, trad, traditionEntry),
                IM.lookup(trad.id, staticData.specialAbilities),
@@ -43,19 +43,19 @@ module Magical = {
        );
 
   let idToNumId = (staticData, id) =>
-    O.Monad.(IM.lookup(id, staticData.magicalTraditions) >>= (x => x.numId));
+    O.Infix.(IM.lookup(id, staticData.magicalTraditions) >>= (x => x.numId));
 
   let numIdToId = (staticData, id) =>
-    O.Functor.(
-      IM.Foldable.find(
+    O.Infix.(
+      IM.find(
         (trad: MagicalTradition.t) => trad.numId === id,
         staticData.magicalTraditions,
       )
       <&> (x => x.id)
     );
 
-  let getPrimaryAttributeId = (staticData, mp: IM.t(Hero.Activatable.t)) =>
-    O.Monad.(
+  let getPrimaryAttributeId = (staticData, mp: IM.t(Activatable_Dynamic.t)) =>
+    O.Infix.(
       mp
       |> IM.elems
       |> L.Extra.firstJust(trad =>
@@ -70,33 +70,33 @@ module Blessed = {
   let isTraditionId = (staticData, id) =>
     IM.member(id, staticData.blessedTraditions);
 
-  let isActiveTradition = (staticData, x: Hero.Activatable.t) =>
+  let isActiveTradition = (staticData, x: Activatable_Dynamic.t) =>
     isTraditionId(staticData, x.id) && Activatable_Accessors.isActive(x);
 
-  let getHeroEntry = (staticData, mp: IM.t(Hero.Activatable.t)) =>
-    IM.Foldable.find(isActiveTradition(staticData), mp);
+  let getHeroEntry = (staticData, mp: IM.t(Activatable_Dynamic.t)) =>
+    IM.find(isActiveTradition(staticData), mp);
 
-  let getStaticEntry = (staticData, mp: IM.t(Hero.Activatable.t)) =>
-    O.Monad.(
+  let getStaticEntry = (staticData, mp: IM.t(Activatable_Dynamic.t)) =>
+    O.Infix.(
       mp
       |> getHeroEntry(staticData)
       >>= (trad => IM.lookup(trad.id, staticData.specialAbilities))
     );
 
   type fullTradition = (
-    SpecialAbility.t,
-    Hero.Activatable.t,
+    SpecialAbility.Static.t,
+    Activatable_Dynamic.t,
     BlessedTradition.t,
   );
 
   let getEntry =
-      (staticData, mp: IM.t(Hero.Activatable.t)): option(fullTradition) =>
-    O.Monad.(
+      (staticData, mp: IM.t(Activatable_Dynamic.t)): option(fullTradition) =>
+    O.Infix.(
       mp
       |> getHeroEntry(staticData)
       >>= (
         trad =>
-          liftM2(
+          O.liftM2(
             (staticEntry, traditionEntry) =>
               (staticEntry, trad, traditionEntry),
             IM.lookup(trad.id, staticData.specialAbilities),
@@ -106,21 +106,19 @@ module Blessed = {
     );
 
   let idToNumId = (staticData, id) =>
-    O.Functor.(
-      IM.lookup(id, staticData.blessedTraditions) <&> (x => x.numId)
-    );
+    O.Infix.(IM.lookup(id, staticData.blessedTraditions) <&> (x => x.numId));
 
   let numIdToId = (staticData, id) =>
-    O.Functor.(
-      IM.Foldable.find(
+    O.Infix.(
+      IM.find(
         (trad: BlessedTradition.t) => trad.numId === id,
         staticData.blessedTraditions,
       )
       <&> (x => x.id)
     );
 
-  let getPrimaryAttributeId = (staticData, mp: IM.t(Hero.Activatable.t)) =>
-    O.Monad.(
+  let getPrimaryAttributeId = (staticData, mp: IM.t(Activatable_Dynamic.t)) =>
+    O.Infix.(
       mp
       |> getHeroEntry(staticData)
       >>= (trad => IM.lookup(trad.id, staticData.magicalTraditions))

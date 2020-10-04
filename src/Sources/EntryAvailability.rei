@@ -14,7 +14,7 @@
 let isAvailable:
   (
     'a => list(PublicationRef.t),
-    Ley_StrMap.t(Publication.t),
+    Ley_IntMap.t(Publication.t),
     Hero.Rules.t,
     'a
   ) =>
@@ -27,7 +27,7 @@ let isAvailable:
 let isAvailableNull:
   (
     'a => list(PublicationRef.t),
-    Ley_StrMap.t(Publication.t),
+    Ley_IntMap.t(Publication.t),
     Hero.Rules.t,
     'a
   ) =>
@@ -42,7 +42,7 @@ let isAvailableNullPred:
   (
     'a => list(PublicationRef.t),
     'a => bool,
-    Ley_StrMap.t(Publication.t),
+    Ley_IntMap.t(Publication.t),
     Hero.Rules.t,
     'a
   ) =>
@@ -54,19 +54,19 @@ let isAvailableNullPred:
  * refs for the entry.
  */
 let isFromCore:
-  ('a => list(PublicationRef.t), Ley_StrMap.t(Publication.t), 'a) => bool;
+  ('a => list(PublicationRef.t), Ley_IntMap.t(Publication.t), 'a) => bool;
 
-module Grouping: {
-  /**
-   * `showSources staticData excludeSrcss srcss` converts a list of lists of
-   * source refs `srcss` into a displayable string. If `excludeScrss` contains any
-   * list with source refs, their referenced pages are excluded from the result.
-   */
-  let showGroupedSources:
-    (
-      Static.t,
-      list(list(PublicationRef.t)),
-      list(list(PublicationRef.t))
-    ) =>
-    string;
-};
+// module Grouping: {
+//   /**
+//    * `showSources staticData excludeSrcss srcss` converts a list of lists of
+//    * source refs `srcss` into a displayable string. If `excludeScrss` contains any
+//    * list with source refs, their referenced pages are excluded from the result.
+//    */
+//   let showGroupedSources:
+//     (
+//       Static.t,
+//       list(list(PublicationRef.t)),
+//       list(list(PublicationRef.t))
+//     ) =>
+//     string;
+// };

@@ -68,8 +68,8 @@ let%private getDisAdvantageSubtypeApSpent =
         : isBlessed ? Some(apCategories.spentOnBlessedAdvantages) : None;
 
 type disAdvantageStatic =
-  | Advantage(Advantage.t)
-  | Disadvantage(Disadvantage.t);
+  | Advantage(Advantage.Static.t)
+  | Disadvantage(Disadvantage.Static.t);
 
 /**
  * Checks if there are enough AP available and if the restrictions for
@@ -120,7 +120,7 @@ let getMissingApForDisAdvantage =
   let missingApForSubtype =
     isInCharacterCreation && !noMaxAPInfluence
       // (current + spent) - max > 0 => invalid
-      ? Ley_Option.(
+      ? Ley_Option.Infix.(
           mApSpentSubtype
           >>= (
             apSpentSubtype =>
@@ -160,29 +160,27 @@ let getMissingApForDisAdvantage =
 module Sum = {
   open Static;
   open Ley_Function;
-  open Ley_IntMap;
-  open Ley_IntMap.Foldable;
 
   let getApSpentOnAttributes =
-    foldr(
-      (x: Hero.Attribute.t) => x.value |> IC.getAPForRange(E, 8) |> (+),
+    Ley_IntMap.foldr(
+      (x: Attribute.Dynamic.t) => x.value |> IC.getAPForRange(E, 8) |> (+),
       0,
     );
 
   let getApSpentOnSkills = staticData =>
-    foldr(
+    Ley_IntMap.foldr(
       (x: Skill.Dynamic.t) =>
-        lookup(x.id, staticData.skills)
-        |> option(id, (staticEntry: Skill.t) =>
+        Ley_IntMap.lookup(x.id, staticData.skills)
+        |> option(id, (staticEntry: Skill.Static.t) =>
              x.value |> IC.getAPForRange(staticEntry.ic, 0) |> (+)
            ),
       0,
     );
 
   let getApSpentOnCombatTechniques = staticData =>
-    foldr(
+    Ley_IntMap.foldr(
       (x: Skill.Dynamic.t) =>
-        lookup(x.id, staticData.combatTechniques)
+        Ley_IntMap.lookup(x.id, staticData.combatTechniques)
         |> option(id, (staticEntry: CombatTechnique.Static.t) =>
              x.value |> IC.getAPForRange(staticEntry.ic, 6) |> (+)
            ),
@@ -190,11 +188,11 @@ module Sum = {
     );
 
   let getApSpentOnSpells = staticData =>
-    foldr(
-      (x: Hero.ActivatableSkill.t) =>
+    Ley_IntMap.foldr(
+      (x: ActivatableSkill.Dynamic.t) =>
         switch (x.value) {
         | Active(value) =>
-          lookup(x.id, staticData.spells)
+          Ley_IntMap.lookup(x.id, staticData.spells)
           |> option(id, (staticEntry: Spell.Static.t) =>
                value |> IC.getAPForRange(staticEntry.ic, 0) |> (+)
              )
@@ -204,11 +202,11 @@ module Sum = {
     );
 
   let getApSpentOnLiturgicalChants = staticData =>
-    foldr(
-      (x: Hero.ActivatableSkill.t) =>
+    Ley_IntMap.foldr(
+      (x: ActivatableSkill.Dynamic.t) =>
         switch (x.value) {
         | Active(value) =>
-          lookup(x.id, staticData.liturgicalChants)
+          Ley_IntMap.lookup(x.id, staticData.liturgicalChants)
           |> option(id, (staticEntry: LiturgicalChant.Static.t) =>
                value |> IC.getAPForRange(staticEntry.ic, 0) |> (+)
              )
@@ -217,9 +215,9 @@ module Sum = {
       0,
     );
 
-  let getApSpentOnCantrips = size;
+  let getApSpentOnCantrips = Ley_IntMap.size;
 
-  let getAPSpentOnBlessings = size;
+  let getAPSpentOnBlessings = Ley_IntMap.size;
   // // Advantages / Disadvantages / Special Abilities
   //
   // type ActiveAdvantage = Record<ActiveActivatable<Advantage>>

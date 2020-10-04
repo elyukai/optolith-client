@@ -18,13 +18,13 @@ type t = {
 
 let getActivesById = (mp, id) =>
   IM.lookup(id, mp)
-  |> O.option([], ({active, _}: Hero.Activatable.t) => active);
+  |> O.option([], ({active, _}: Activatable_Dynamic.t) => active);
 
 let isNotRequiredByDependencies =
     (
       hero: Hero.t,
       staticEntry,
-      heroEntry: Hero.Activatable.t,
+      heroEntry: Activatable_Dynamic.t,
       singleEntry: Activatable_Convert.singleWithId,
     ) =>
   heroEntry.dependencies
@@ -37,7 +37,7 @@ let isNotRequiredByDependencies =
        },
        singleEntry.id,
      )
-  |> L.Foldable.all((dep: Hero.Activatable.dependency) =>
+  |> L.all((dep: Activatable_Dynamic.dependency) =>
        !
          Dependencies.Activatable.isDependencyMatched(
            dep,
@@ -47,7 +47,7 @@ let isNotRequiredByDependencies =
        // same entry may still satisfy the dependency, so that it can still be
        // removed
        || L.Index.deleteAt(singleEntry.index, heroEntry.active)
-       |> L.Foldable.any(Dependencies.Activatable.isDependencyMatched(dep))
+       |> L.any(Dependencies.Activatable.isDependencyMatched(dep))
      );
 
 let isEntrySpecificRemovalValid =
@@ -56,20 +56,20 @@ let isEntrySpecificRemovalValid =
       staticData,
       hero,
       staticEntry,
-      heroEntry: Hero.Activatable.t,
+      heroEntry: Activatable_Dynamic.t,
       singleEntry: Activatable_Convert.singleWithId,
     ) =>
   if (Tradition.Magical.isTraditionId(staticData, singleEntry.id)) {
     let activeTraditions = cache.magicalTraditions;
 
-    let hasMultipleTraditions = L.Foldable.length(activeTraditions) > 1;
+    let hasMultipleTraditions = L.length(activeTraditions) > 1;
 
     hasMultipleTraditions
     || !ActivatableSkills.hasActiveSkillEntries(Spells, hero)
-    && IS.Foldable.null(hero.cantrips);
+    && IS.null(hero.cantrips);
   } else if (Tradition.Blessed.isTraditionId(staticData, singleEntry.id)) {
     !ActivatableSkills.hasActiveSkillEntries(LiturgicalChants, hero)
-    && IS.Foldable.null(hero.blessings);
+    && IS.null(hero.blessings);
   } else {
     switch (staticEntry) {
     | Static.Advantage(staticAdvantage) =>
@@ -80,12 +80,13 @@ let isEntrySpecificRemovalValid =
           switch (singleEntry.options) {
           | [Preset((Skill, id)), ..._] =>
             // value of target skill
-            let value = IM.lookup(id, hero.skills) |> Skills.getValueDef;
+            let value =
+              IM.lookup(id, hero.skills) |> Skill.Dynamic.getValueDef;
 
             // amount of active Exceptional Skill advantages for the same skill
             let countSameSkill =
               L.countBy(
-                (active: Hero.Activatable.single) =>
+                (active: Activatable_Dynamic.single) =>
                   switch (active.options) {
                   | [Preset((Skill, otherId)), ..._] => otherId === id
                   | _ => false
@@ -104,7 +105,7 @@ let isEntrySpecificRemovalValid =
             // value of target combat technique
             let value =
               IM.lookup(id, hero.combatTechniques)
-              |> CombatTechniques.getValueDef;
+              |> CombatTechnique.Dynamic.getValueDef;
 
             // if the maximum combat technique rating is reached removal needs
             // to be disabled
@@ -158,10 +159,10 @@ let isEntrySpecificRemovalValid =
           | [Preset((Generic, propertyId)), ..._] =>
             hero.spells
             // If there is any spell with matching property above SR 14...
-            |> IM.Foldable.any((heroSpell: Hero.ActivatableSkill.t) =>
-                 ActivatableSkills.valueToInt(heroSpell.value) > 14
+            |> IM.any((heroSpell: ActivatableSkill.Dynamic.t) =>
+                 ActivatableSkill.Dynamic.valueToInt(heroSpell.value) > 14
                  && IM.lookup(heroSpell.id, staticData.spells)
-                 |> O.option(true, ({Spell.property, _}) =>
+                 |> O.option(true, ({Spell.Static.property, _}) =>
                       property === propertyId
                     )
                )
@@ -176,24 +177,28 @@ let isEntrySpecificRemovalValid =
               | Preset((Generic, aspectId)) => Some(aspectId)
               | _ => None,
               heroEntry,
-            );
+            )
+            |> IS.fromList;
 
           switch (singleEntry.options) {
           | [Preset((Generic, aspectId)), ..._] =>
-            let otherAspects = L.delete(aspectId, activeAspects);
+            let otherAspects = IS.delete(aspectId, activeAspects);
 
             hero.liturgicalChants
             // If there is any liturgical chant with matching aspect
             // above SR 14 and no other aspect knowledges for that entry...
-            |> IM.Foldable.any((heroLiturgicalChant: Hero.ActivatableSkill.t) =>
-                 ActivatableSkills.valueToInt(heroLiturgicalChant.value) > 14
+            |> IM.any((heroLiturgicalChant: ActivatableSkill.Dynamic.t) =>
+                 ActivatableSkill.Dynamic.valueToInt(
+                   heroLiturgicalChant.value,
+                 )
+                 > 14
                  && IM.lookup(
                       heroLiturgicalChant.id,
                       staticData.liturgicalChants,
                     )
-                 |> O.option(true, ({LiturgicalChant.aspects, _}) =>
-                      L.elem(aspectId, aspects)
-                      && L.disjoint(otherAspects, aspects)
+                 |> O.option(true, ({LiturgicalChant.Static.aspects, _}) =>
+                      IS.member(aspectId, aspects)
+                      && IS.disjoint(otherAspects, aspects)
                     )
                )
             // ...prohibit removal
@@ -224,15 +229,15 @@ let isEntrySpecificRemovalValid =
             |> IM.mapMaybe(
                  fun
                  // ...so that only the active ones remain...
-                 | {Hero.ActivatableSkill.id, value: Active(_), _} =>
+                 | {ActivatableSkill.Dynamic.id, value: Active(_), _} =>
                    // ...and replace with their static entry.
                    IM.lookup(id, staticData.liturgicalChants)
                  | _ => None,
                )
             // Check if there is any active entry that does not belong to the
             // active tradition...
-            |> IM.Foldable.any(({LiturgicalChant.Static.traditions, _}) =>
-                 L.notElem(blessedTradition.numId, traditions)
+            |> IM.any(({LiturgicalChant.Static.traditions, _}) =>
+                 IS.notElem(blessedTradition.numId, traditions)
                )
             // ...which would prohibit removal
             |> (!)
@@ -305,9 +310,9 @@ let getEntrySpecificMinLevel =
       switch (fromInt(staticSpecialAbility.id)) {
       | Imitationszauberei =>
         hero.spells
-        |> IM.countWith(({Hero.ActivatableSkill.id, _}) =>
+        |> IM.countWith(({ActivatableSkill.Dynamic.id, _}) =>
              IM.lookup(id, staticData.spells)
-             |> O.option(false, ({Spell.gr, _}) =>
+             |> O.option(false, ({Spell.Static.gr, _}) =>
                   gr === Id.Spell.Group.toInt(Spells)
                 )
            )
@@ -329,21 +334,21 @@ let getEntrySpecificMaxLevel = (cache, hero, staticEntry) =>
         hero
         |> ActivatableSkills.countActiveSkillEntries(Spells)
         |> getMaxLevelForDecreaseEntry(3)
-        |> O.Monad.return
+        |> O.return
       | WenigePredigten =>
         EntryGroups.SpecialAbility.countActiveFromGroup(
           Predigten,
           cache.specialAbilityPairs,
         )
         |> getMaxLevelForDecreaseEntry(3)
-        |> O.Monad.return
+        |> O.return
       | WenigeVisionen =>
         EntryGroups.SpecialAbility.countActiveFromGroup(
           Visionen,
           cache.specialAbilityPairs,
         )
         |> getMaxLevelForDecreaseEntry(3)
-        |> O.Monad.return
+        |> O.return
       | _ => None
       }
     )
@@ -352,21 +357,21 @@ let getEntrySpecificMaxLevel = (cache, hero, staticEntry) =>
     Id.SpecialAbility.(
       switch (fromInt(staticSpecialAbility.id)) {
       | DunklesAbbildDerBuendnisgabe =>
-        O.Functor.(hero.pact <&> (pact => pact.level))
+        O.Infix.(hero.pact <&> (pact => pact.level))
       | _ => None
       }
     )
   };
 
 let adjustMinLevelByDependencies =
-    ({Hero.Activatable.dependencies, _}, singleEntry, maybeMinLevel) =>
-  L.Foldable.foldr(
-    (dependency: Hero.Activatable.dependency, maybeMinLevel) =>
+    ({Activatable_Dynamic.dependencies, _}, singleEntry, maybeMinLevel) =>
+  L.foldr(
+    (dependency: Activatable_Dynamic.dependency, maybeMinLevel) =>
       switch (dependency.level) {
       | Some(definedLevel) =>
         // get the level dependency from the object and ensure it's
         // greater than the current minimum level and that...
-        definedLevel > O.Foldable.sum(maybeMinLevel)
+        definedLevel > O.sum(maybeMinLevel)
         // ...if the dependency defines options, too, the entry must match them
         // as well. A dependency without options is valid for all entries (in
         // case of calculating a minimum level)
@@ -401,8 +406,8 @@ let getMaxLevel = (cache, staticData, hero, staticEntry) => {
       Prerequisites.Activatable.getLevelPrerequisites(staticEntry),
     );
 
-  O.Alternative.(
-    O.Monad.liftM2(I.min, entrySpecificMaxLevel, maxPossibleWithPrerequisites)
+  O.Infix.(
+    O.liftM2(I.min, entrySpecificMaxLevel, maxPossibleWithPrerequisites)
     <|> entrySpecificMaxLevel
     <|> maxPossibleWithPrerequisites
   );

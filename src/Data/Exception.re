@@ -14,5 +14,5 @@ let handle = (f: Js.Promise.error => IO.t('a), x: IO.t('a)): IO.t('a) =>
  */
 let handleE = (x: IO.t('a)): IO.t(result('a, Js.Promise.error)) =>
   x
-  |> Js.Promise.then_(x => Ok(x) |> IO.Monad.pure)
-  |> Js.Promise.catch(x => Error(x) |> IO.Monad.pure);
+  |> Js.Promise.then_(x => Ok(x) |> IO.return)
+  |> Js.Promise.catch(x => Error(x) |> IO.return);

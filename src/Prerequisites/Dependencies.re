@@ -2,14 +2,14 @@ module F = Ley_Function;
 module I = Ley_Int;
 module L = Ley_List;
 module O = Ley_Option;
-open O.Monad;
+open O.Infix;
 module IM = Ley_IntMap;
 
 module Activatable = {
   let isLevelDependencyMatched =
       (
-        dependency: Hero.Activatable.dependency,
-        active: Hero.Activatable.single,
+        dependency: Activatable_Dynamic.dependency,
+        active: Activatable_Dynamic.single,
       ) =>
     switch (dependency.level, active.level) {
     // If there is no level dependency, skip
@@ -26,8 +26,8 @@ module Activatable = {
 
   let areOptionDependenciesMatched =
       (
-        dependency: Hero.Activatable.dependency,
-        active: Hero.Activatable.single,
+        dependency: Activatable_Dynamic.dependency,
+        active: Activatable_Dynamic.single,
       ) =>
     L.Index.iall(
       (i, option) =>
@@ -73,7 +73,7 @@ module Flatten = {
    */
   let flattenSkillDependencies = (getValueForTargetId, id, dependencies) =>
     O.mapOption(
-      (dep: Hero.Skill.dependency) =>
+      (dep: Increasable.Dynamic.dependency) =>
         switch (dep.target) {
         | One(_) => Some(dep.value)
         | Many(targets) =>
@@ -82,7 +82,7 @@ module Flatten = {
           |> L.map(getValueForTargetId)
           // Check if the dependency is met by another entry so that it can be
           // ignored currently
-          |> L.Foldable.any(value => value >= dep.value)
+          |> L.any(value => value >= dep.value)
           |> (
             isMatchedByOtherEntry =>
               if (isMatchedByOtherEntry) {
@@ -105,9 +105,9 @@ module Flatten = {
    */
   let flattenActivatableSkillDependencies =
       (getValueForTargetId, id, dependencies) =>
-    Hero.ActivatableSkill.(
+    ActivatableSkill.Dynamic.(
       O.mapOption(
-        (dep: Hero.Skill.dependency) =>
+        (dep: Increasable.Dynamic.dependency) =>
           switch (dep.target) {
           | One(_) => Some(dep.value)
           | Many(targets) =>
@@ -116,7 +116,7 @@ module Flatten = {
             |> L.map(getValueForTargetId)
             // Check if the dependency is met by another entry so that it can be
             // ignored currently
-            |> L.Foldable.any(value =>
+            |> L.any(value =>
                  switch (value) {
                  // If dependency requires an active entry, the other entry must
                  // have at least the required value
@@ -148,18 +148,18 @@ module Flatten = {
    */
   let flattenActivatableDependencies =
       (getActiveListForTargetId, id, dependencies) =>
-    Hero.Activatable.(
+    Activatable_Dynamic.(
       O.mapOption(
-        (dep: Hero.Activatable.dependency) =>
+        (dep: dependency) =>
           switch (dep.target) {
           | One(_) => Some(dep)
           | Many(targets) =>
             targets
             |> L.delete(id)
-            |> L.Foldable.concatMap(getActiveListForTargetId)
+            |> L.concatMap(getActiveListForTargetId)
             // Check if the dependency is met by another entry so that it can be
             // ignored currently
-            |> L.Foldable.any(Activatable.isDependencyMatched(dep))
+            |> L.any(Activatable.isDependencyMatched(dep))
             |> (
               isMatchedByOtherEntry =>
                 if (isMatchedByOtherEntry) {
@@ -176,15 +176,16 @@ module Flatten = {
   /**
    * Get all required first select option ids from the given entry.
    */
-  let getRequiredSelectOptions1 = (otherActivatables, x: Hero.Activatable.t) =>
+  let getRequiredSelectOptions1 =
+      (otherActivatables, x: Activatable_Dynamic.t) =>
     flattenActivatableDependencies(
       id =>
         IM.lookup(id, otherActivatables)
-        |> O.option([], (x: Hero.Activatable.t) => x.active),
+        |> O.option([], (x: Activatable_Dynamic.t) => x.active),
       x.id,
       x.dependencies,
     )
-    |> O.mapOption((dep: Hero.Activatable.dependency) =>
+    |> O.mapOption((dep: Activatable_Dynamic.dependency) =>
          dep.options |> O.listToOption
        );
 };
@@ -192,13 +193,13 @@ module Flatten = {
 module Add = {
   module Single = {
     let addAttributeDependency =
-        (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
+        (dep: Increasable.Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       attributes:
         IM.alter(
           heroEntry =>
             heroEntry
-            |> O.fromOption(Hero.Attribute.empty(id))
+            |> O.fromOption(Attribute.Dynamic.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -211,13 +212,14 @@ module Add = {
         ),
     };
 
-    let addSkillDependency = (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
+    let addSkillDependency =
+        (dep: Increasable.Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       skills:
         IM.alter(
           heroEntry =>
             heroEntry
-            |> O.fromOption(Hero.Skill.emptySkill(id))
+            |> O.fromOption(Skill.Dynamic.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -231,13 +233,13 @@ module Add = {
     };
 
     let addCombatTechniqueDependency =
-        (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
+        (dep: Increasable.Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       combatTechniques:
         IM.alter(
           heroEntry =>
             heroEntry
-            |> O.fromOption(Hero.Skill.emptyCombatTechnique(id))
+            |> O.fromOption(CombatTechnique.Dynamic.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -250,13 +252,14 @@ module Add = {
         ),
     };
 
-    let addSpellDependency = (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
+    let addSpellDependency =
+        (dep: Increasable.Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       spells:
         IM.alter(
           heroEntry =>
             heroEntry
-            |> O.fromOption(Hero.ActivatableSkill.empty(id))
+            |> O.fromOption(ActivatableSkill.Dynamic.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -270,13 +273,13 @@ module Add = {
     };
 
     let addLiturgicalChantDependency =
-        (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
+        (dep: Increasable.Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       liturgicalChants:
         IM.alter(
           heroEntry =>
             heroEntry
-            |> O.fromOption(Hero.ActivatableSkill.empty(id))
+            |> O.fromOption(ActivatableSkill.Dynamic.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -290,13 +293,13 @@ module Add = {
     };
 
     let addAdvantageDependency =
-        (dep: Hero.Activatable.dependency, hero: Hero.t, id) => {
+        (dep: Activatable_Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       advantages:
         IM.alter(
           heroEntry =>
             heroEntry
-            |> O.fromOption(Hero.Activatable.empty(id))
+            |> O.fromOption(Activatable_Dynamic.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -310,13 +313,13 @@ module Add = {
     };
 
     let addDisadvantageDependency =
-        (dep: Hero.Activatable.dependency, hero: Hero.t, id) => {
+        (dep: Activatable_Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       disadvantages:
         IM.alter(
           heroEntry =>
             heroEntry
-            |> O.fromOption(Hero.Activatable.empty(id))
+            |> O.fromOption(Activatable_Dynamic.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -330,13 +333,13 @@ module Add = {
     };
 
     let addSpecialAbilityDependency =
-        (dep: Hero.Activatable.dependency, hero: Hero.t, id) => {
+        (dep: Activatable_Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       specialAbilities:
         IM.alter(
           heroEntry =>
             heroEntry
-            |> O.fromOption(Hero.Activatable.empty(id))
+            |> O.fromOption(Activatable_Dynamic.empty(id))
             |> (
               heroEntry =>
                 Some({
@@ -350,94 +353,91 @@ module Add = {
     };
   };
 
-  let addAttributeDependency = (dep: Hero.Skill.dependency, hero: Hero.t) =>
+  let addAttributeDependency =
+      (dep: Increasable.Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.addAttributeDependency(dep, hero, id)
-    | Many(ids) =>
-      L.Foldable.foldl(Single.addAttributeDependency(dep), hero, ids)
+    | Many(ids) => L.foldl(Single.addAttributeDependency(dep), hero, ids)
     };
 
-  let addSkillDependency = (dep: Hero.Skill.dependency, hero: Hero.t) =>
+  let addSkillDependency = (dep: Increasable.Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.addSkillDependency(dep, hero, id)
-    | Many(ids) =>
-      L.Foldable.foldl(Single.addSkillDependency(dep), hero, ids)
+    | Many(ids) => L.foldl(Single.addSkillDependency(dep), hero, ids)
     };
 
   let addCombatTechniqueDependency =
-      (dep: Hero.Skill.dependency, hero: Hero.t) =>
+      (dep: Increasable.Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.addCombatTechniqueDependency(dep, hero, id)
     | Many(ids) =>
-      L.Foldable.foldl(Single.addCombatTechniqueDependency(dep), hero, ids)
+      L.foldl(Single.addCombatTechniqueDependency(dep), hero, ids)
     };
 
-  let addSpellDependency = (dep: Hero.Skill.dependency, hero: Hero.t) =>
+  let addSpellDependency = (dep: Increasable.Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.addSpellDependency(dep, hero, id)
-    | Many(ids) =>
-      L.Foldable.foldl(Single.addSpellDependency(dep), hero, ids)
+    | Many(ids) => L.foldl(Single.addSpellDependency(dep), hero, ids)
     };
 
   let addLiturgicalChantDependency =
-      (dep: Hero.Skill.dependency, hero: Hero.t) =>
+      (dep: Increasable.Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.addLiturgicalChantDependency(dep, hero, id)
     | Many(ids) =>
-      L.Foldable.foldl(Single.addLiturgicalChantDependency(dep), hero, ids)
+      L.foldl(Single.addLiturgicalChantDependency(dep), hero, ids)
     };
 
   let addAdvantageDependency =
-      (dep: Hero.Activatable.dependency, hero: Hero.t) =>
+      (dep: Activatable_Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.addAdvantageDependency(dep, hero, id)
-    | Many(ids) =>
-      L.Foldable.foldl(Single.addAdvantageDependency(dep), hero, ids)
+    | Many(ids) => L.foldl(Single.addAdvantageDependency(dep), hero, ids)
     };
 
   let addDisadvantageDependency =
-      (dep: Hero.Activatable.dependency, hero: Hero.t) =>
+      (dep: Activatable_Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.addDisadvantageDependency(dep, hero, id)
-    | Many(ids) =>
-      L.Foldable.foldl(Single.addDisadvantageDependency(dep), hero, ids)
+    | Many(ids) => L.foldl(Single.addDisadvantageDependency(dep), hero, ids)
     };
 
   let addSpecialAbilityDependency =
-      (dep: Hero.Activatable.dependency, hero: Hero.t) =>
+      (dep: Activatable_Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.addSpecialAbilityDependency(dep, hero, id)
     | Many(ids) =>
-      L.Foldable.foldl(Single.addSpecialAbilityDependency(dep), hero, ids)
+      L.foldl(Single.addSpecialAbilityDependency(dep), hero, ids)
     };
 };
 
 module Remove = {
   module Single = {
-    open O.Functor;
+    open O.Infix;
 
     let removeAttributeDependency =
-        (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
+        (dep: Increasable.Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       attributes:
         IM.alter(
           heroEntry =>
             heroEntry
             <&> (
-              (heroEntry: Hero.Attribute.t) => {
+              (heroEntry: Attribute.Dynamic.t) => {
                 ...heroEntry,
                 dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
             >>= O.ensure(heroEntry =>
-                  heroEntry |> Hero.Attribute.isUnused |> (!)
+                  heroEntry |> Attribute.Dynamic.isEmpty |> (!)
                 ),
           id,
           hero.attributes,
         ),
     };
 
-    let removeSkillDependency = (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
+    let removeSkillDependency =
+        (dep: Increasable.Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       skills:
         IM.alter(
@@ -450,7 +450,7 @@ module Remove = {
               }
             )
             >>= O.ensure(heroEntry =>
-                  heroEntry |> Hero.Skill.isUnusedSkill |> (!)
+                  heroEntry |> Skill.Dynamic.isEmpty |> (!)
                 ),
           id,
           hero.skills,
@@ -458,40 +458,41 @@ module Remove = {
     };
 
     let removeCombatTechniqueDependency =
-        (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
+        (dep: Increasable.Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       combatTechniques:
         IM.alter(
           heroEntry =>
             heroEntry
             <&> (
-              (heroEntry: Skill.Dynamic.t) => {
+              (heroEntry: CombatTechnique.Dynamic.t) => {
                 ...heroEntry,
                 dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
             >>= O.ensure(heroEntry =>
-                  heroEntry |> Hero.Skill.isUnusedCombatTechnique |> (!)
+                  heroEntry |> CombatTechnique.Dynamic.isEmpty |> (!)
                 ),
           id,
           hero.combatTechniques,
         ),
     };
 
-    let removeSpellDependency = (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
+    let removeSpellDependency =
+        (dep: Increasable.Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       spells:
         IM.alter(
           heroEntry =>
             heroEntry
             <&> (
-              (heroEntry: Hero.ActivatableSkill.t) => {
+              (heroEntry: ActivatableSkill.Dynamic.t) => {
                 ...heroEntry,
                 dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
             >>= O.ensure(heroEntry =>
-                  heroEntry |> Hero.ActivatableSkill.isUnused |> (!)
+                  heroEntry |> ActivatableSkill.Dynamic.isEmpty |> (!)
                 ),
           id,
           hero.spells,
@@ -499,20 +500,20 @@ module Remove = {
     };
 
     let removeLiturgicalChantDependency =
-        (dep: Hero.Skill.dependency, hero: Hero.t, id) => {
+        (dep: Increasable.Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       liturgicalChants:
         IM.alter(
           heroEntry =>
             heroEntry
             <&> (
-              (heroEntry: Hero.ActivatableSkill.t) => {
+              (heroEntry: ActivatableSkill.Dynamic.t) => {
                 ...heroEntry,
                 dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
             >>= O.ensure(heroEntry =>
-                  heroEntry |> Hero.ActivatableSkill.isUnused |> (!)
+                  heroEntry |> ActivatableSkill.Dynamic.isEmpty |> (!)
                 ),
           id,
           hero.liturgicalChants,
@@ -520,20 +521,20 @@ module Remove = {
     };
 
     let removeAdvantageDependency =
-        (dep: Hero.Activatable.dependency, hero: Hero.t, id) => {
+        (dep: Activatable_Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       advantages:
         IM.alter(
           heroEntry =>
             heroEntry
             <&> (
-              (heroEntry: Hero.Activatable.t) => {
+              (heroEntry: Activatable_Dynamic.t) => {
                 ...heroEntry,
                 dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
             >>= O.ensure(heroEntry =>
-                  heroEntry |> Hero.Activatable.isUnused |> (!)
+                  heroEntry |> Activatable_Dynamic.isEmpty |> (!)
                 ),
           id,
           hero.advantages,
@@ -541,20 +542,20 @@ module Remove = {
     };
 
     let removeDisadvantageDependency =
-        (dep: Hero.Activatable.dependency, hero: Hero.t, id) => {
+        (dep: Activatable_Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       disadvantages:
         IM.alter(
           heroEntry =>
             heroEntry
             <&> (
-              (heroEntry: Hero.Activatable.t) => {
+              (heroEntry: Activatable_Dynamic.t) => {
                 ...heroEntry,
                 dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
             >>= O.ensure(heroEntry =>
-                  heroEntry |> Hero.Activatable.isUnused |> (!)
+                  heroEntry |> Activatable_Dynamic.isEmpty |> (!)
                 ),
           id,
           hero.disadvantages,
@@ -562,20 +563,20 @@ module Remove = {
     };
 
     let removeSpecialAbilityDependency =
-        (dep: Hero.Activatable.dependency, hero: Hero.t, id) => {
+        (dep: Activatable_Dynamic.dependency, hero: Hero.t, id) => {
       ...hero,
       specialAbilities:
         IM.alter(
           heroEntry =>
             heroEntry
             <&> (
-              (heroEntry: Hero.Activatable.t) => {
+              (heroEntry: Activatable_Dynamic.t) => {
                 ...heroEntry,
                 dependencies: L.delete(dep, heroEntry.dependencies),
               }
             )
             >>= O.ensure(heroEntry =>
-                  heroEntry |> Hero.Activatable.isUnused |> (!)
+                  heroEntry |> Activatable_Dynamic.isEmpty |> (!)
                 ),
           id,
           hero.specialAbilities,
@@ -583,73 +584,64 @@ module Remove = {
     };
   };
 
-  let removeAttributeDependency = (dep: Hero.Skill.dependency, hero: Hero.t) =>
+  let removeAttributeDependency =
+      (dep: Increasable.Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.removeAttributeDependency(dep, hero, id)
-    | Many(ids) =>
-      L.Foldable.foldl(Single.removeAttributeDependency(dep), hero, ids)
+    | Many(ids) => L.foldl(Single.removeAttributeDependency(dep), hero, ids)
     };
 
-  let removeSkillDependency = (dep: Hero.Skill.dependency, hero: Hero.t) =>
+  let removeSkillDependency =
+      (dep: Increasable.Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.removeSkillDependency(dep, hero, id)
-    | Many(ids) =>
-      L.Foldable.foldl(Single.removeSkillDependency(dep), hero, ids)
+    | Many(ids) => L.foldl(Single.removeSkillDependency(dep), hero, ids)
     };
 
   let removeCombatTechniqueDependency =
-      (dep: Hero.Skill.dependency, hero: Hero.t) =>
+      (dep: Increasable.Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.removeCombatTechniqueDependency(dep, hero, id)
     | Many(ids) =>
-      L.Foldable.foldl(
-        Single.removeCombatTechniqueDependency(dep),
-        hero,
-        ids,
-      )
+      L.foldl(Single.removeCombatTechniqueDependency(dep), hero, ids)
     };
 
-  let removeSpellDependency = (dep: Hero.Skill.dependency, hero: Hero.t) =>
+  let removeSpellDependency =
+      (dep: Increasable.Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.removeSpellDependency(dep, hero, id)
-    | Many(ids) =>
-      L.Foldable.foldl(Single.removeSpellDependency(dep), hero, ids)
+    | Many(ids) => L.foldl(Single.removeSpellDependency(dep), hero, ids)
     };
 
   let removeLiturgicalChantDependency =
-      (dep: Hero.Skill.dependency, hero: Hero.t) =>
+      (dep: Increasable.Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.removeLiturgicalChantDependency(dep, hero, id)
     | Many(ids) =>
-      L.Foldable.foldl(
-        Single.removeLiturgicalChantDependency(dep),
-        hero,
-        ids,
-      )
+      L.foldl(Single.removeLiturgicalChantDependency(dep), hero, ids)
     };
 
   let removeAdvantageDependency =
-      (dep: Hero.Activatable.dependency, hero: Hero.t) =>
+      (dep: Activatable_Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.removeAdvantageDependency(dep, hero, id)
-    | Many(ids) =>
-      L.Foldable.foldl(Single.removeAdvantageDependency(dep), hero, ids)
+    | Many(ids) => L.foldl(Single.removeAdvantageDependency(dep), hero, ids)
     };
 
   let removeDisadvantageDependency =
-      (dep: Hero.Activatable.dependency, hero: Hero.t) =>
+      (dep: Activatable_Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.removeDisadvantageDependency(dep, hero, id)
     | Many(ids) =>
-      L.Foldable.foldl(Single.removeDisadvantageDependency(dep), hero, ids)
+      L.foldl(Single.removeDisadvantageDependency(dep), hero, ids)
     };
 
   let removeSpecialAbilityDependency =
-      (dep: Hero.Activatable.dependency, hero: Hero.t) =>
+      (dep: Activatable_Dynamic.dependency, hero: Hero.t) =>
     switch (dep.target) {
     | One(id) => Single.removeSpecialAbilityDependency(dep, hero, id)
     | Many(ids) =>
-      L.Foldable.foldl(Single.removeSpecialAbilityDependency(dep), hero, ids)
+      L.foldl(Single.removeSpecialAbilityDependency(dep), hero, ids)
     };
 };
 
@@ -660,7 +652,7 @@ module TransferredUnfamiliar = {
 
   let isUnfamiliarSpell = (transferredUnfamiliar, heroTraditions) => {
     let isIntuitiveMageActive =
-      L.Foldable.any(
+      L.any(
         ((staticSpecialAbility, _, _): fullTradition) =>
           staticSpecialAbility.id
           === Id.SpecialAbility.toInt(TraditionIntuitiveMage),
@@ -672,20 +664,21 @@ module TransferredUnfamiliar = {
     } else {
       let activeTraditionNumericIds =
         heroTraditions
-        |> L.Foldable.concatMap(((_, _, trad): fullTradition) =>
+        |> L.concatMap(((_, _, trad): fullTradition) =>
              trad.id === Id.SpecialAbility.toInt(TraditionGuildMages)
                ? trad.numId
                  |> O.optionToList
                  |> L.cons(Id.MagicalTradition.toInt(Qabalyamagier))
                : trad.numId |> O.optionToList
            )
-        |> L.cons(Id.MagicalTradition.toInt(General));
+        |> L.cons(Id.MagicalTradition.toInt(General))
+        |> Ley_IntSet.fromList;
 
       let isNoTraditionActive =
-        Ley_Bool.notP(L.intersecting(activeTraditionNumericIds));
+        Ley_IntSet.disjoint(activeTraditionNumericIds);
 
       (staticSpell: Spell.Static.t) =>
-        L.Foldable.all(
+        L.all(
           tu =>
             switch (tu.id) {
             | Spell(id) => id !== staticSpell.id
@@ -695,7 +688,7 @@ module TransferredUnfamiliar = {
             },
           transferredUnfamiliar,
         )
-        && isNoTraditionActive(staticSpell.Static.traditions);
+        && isNoTraditionActive(staticSpell.traditions);
     };
   };
 
@@ -801,7 +794,7 @@ module TransferredUnfamiliar = {
         heroSpells,
       ) =>
     L.countBy(
-      (heroSpell: Hero.ActivatableSkill.t) =>
+      (heroSpell: ActivatableSkill.Dynamic.t) =>
         IM.lookup(heroSpell.id, staticData.spells)
         |> O.option(
              false,
@@ -884,7 +877,7 @@ let putActivatableDependency = (mode, category, dependency, hero) =>
   };
 
 let applyActivatablePrerequisite =
-    (mode, sourceId, prerequisite: Prerequisite.activatable, hero) =>
+    (mode, sourceId, prerequisite: Prerequisite.Activatable.t, hero) =>
   putActivatableDependency(
     mode,
     switch (prerequisite.id) {
@@ -899,22 +892,14 @@ let applyActivatablePrerequisite =
         | (_, id) => One(id)
         },
       active: prerequisite.active,
-      options:
-        switch (prerequisite.sid) {
-        | Some(sid) =>
-          switch (prerequisite.sid2) {
-          | Some(sid2) => [One(sid), One(sid2)]
-          | None => [One(sid)]
-          }
-        | None => []
-        },
+      options: prerequisite.options |> L.map(x => OneOrMany.One(x)),
       level: prerequisite.level,
     },
     hero,
   );
 
 let applyActivatableMultiEntryPrerequisite =
-    (mode, sourceId, prerequisite: Prerequisite.activatableMultiEntry, hero) =>
+    (mode, sourceId, prerequisite: Prerequisite.ActivatableMultiEntry.t, hero) =>
   putActivatableDependency(
     mode,
     switch (prerequisite.id) {
@@ -931,22 +916,19 @@ let applyActivatableMultiEntryPrerequisite =
         | SpecialAbilities(ids) => Many(ids)
         },
       active: prerequisite.active,
-      options:
-        switch (prerequisite.sid) {
-        | Some(sid) =>
-          switch (prerequisite.sid2) {
-          | Some(sid2) => [One(sid), One(sid2)]
-          | None => [One(sid)]
-          }
-        | None => []
-        },
+      options: prerequisite.options |> L.map(x => OneOrMany.One(x)),
       level: prerequisite.level,
     },
     hero,
   );
 
 let applyActivatableMultiSelectPrerequisite =
-    (mode, sourceId, prerequisite: Prerequisite.activatableMultiSelect, hero) =>
+    (
+      mode,
+      sourceId,
+      prerequisite: Prerequisite.ActivatableMultiSelect.t,
+      hero,
+    ) =>
   putActivatableDependency(
     mode,
     switch (prerequisite.id) {
@@ -961,11 +943,10 @@ let applyActivatableMultiSelectPrerequisite =
         | (_, id) => One(id)
         },
       active: prerequisite.active,
-      options:
-        switch (prerequisite.sid2) {
-        | Some(sid2) => [Many(prerequisite.sid), One(sid2)]
-        | None => [Many(prerequisite.sid)]
-        },
+      options: [
+        OneOrMany.Many(prerequisite.firstOption),
+        ...prerequisite.otherOptions |> L.map(x => OneOrMany.One(x)),
+      ],
       level: prerequisite.level,
     },
     hero,
@@ -998,7 +979,7 @@ let putIncreasableDependency = (mode, category, dependency, hero) =>
   };
 
 let applyIncreasablePrerequisite =
-    (mode, sourceId, prerequisite: Prerequisite.increasable, hero) =>
+    (mode, sourceId, prerequisite: Prerequisite.Increasable.t, hero) =>
   putIncreasableDependency(
     mode,
     switch (prerequisite.id) {
@@ -1020,7 +1001,7 @@ let applyIncreasablePrerequisite =
   );
 
 let applyIncreasableMultiEntryPrerequisite =
-    (mode, sourceId, prerequisite: Prerequisite.increasableMultiEntry, hero) =>
+    (mode, sourceId, prerequisite: Prerequisite.IncreasableMultiEntry.t, hero) =>
   putIncreasableDependency(
     mode,
     switch (prerequisite.id) {
@@ -1050,7 +1031,7 @@ let applyPrimaryAttributePrerequisite =
       mode,
       sourceId,
       staticData,
-      prerequisite: Prerequisite.primaryAttribute,
+      prerequisite: Prerequisite.PrimaryAttribute.t,
       hero: Hero.t,
     ) =>
   (
@@ -1070,7 +1051,7 @@ let applyPrimaryAttributePrerequisite =
   |> O.option(
        hero,
        attrId => {
-         let dependency: Hero.Skill.dependency = {
+         let dependency: Increasable.Dynamic.dependency = {
            source: sourceId,
            target: One(attrId),
            value: prerequisite.value,
@@ -1084,7 +1065,7 @@ let applyPrimaryAttributePrerequisite =
      );
 
 let applySocialPrerequisite =
-    (mode, prerequisite: Prerequisite.socialStatus, hero: Hero.t) => {
+    (mode, prerequisite: Prerequisite.SocialStatus.t, hero: Hero.t) => {
   ...hero,
   socialStatusDependencies:
     switch (mode) {
@@ -1095,11 +1076,11 @@ let applySocialPrerequisite =
 
 let modifyDependencies =
     (mode, staticData, prerequisites, sourceId: Id.PrerequisiteSource.t, hero) =>
-  L.Foldable.foldr(
-    (prerequisite: Prerequisites.prerequisite) =>
+  L.foldr(
+    (prerequisite: Prerequisite.Unified.t) =>
       [@warning "-4"]
       (
-        switch (prerequisite, sourceId) {
+        switch (prerequisite.value, sourceId) {
         | (PrimaryAttribute(options), (Advantage, id)) =>
           applyPrimaryAttributePrerequisite(
             mode,
@@ -1241,7 +1222,7 @@ let getMaxLevel = (staticData, hero, sourceId, dependencies, prerequisites) =>
     prerequisites,
   )
   |> F.flip(
-       L.Foldable.foldl((prevMax, {Hero.Activatable.active, level, _}) =>
+       L.foldl((prevMax, {Activatable_Dynamic.active, level, _}) =>
          switch (active, prevMax, level) {
          // active must be always false because it needs to *prohibit* a certain
          // level

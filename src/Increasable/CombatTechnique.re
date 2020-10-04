@@ -1,5 +1,5 @@
 module Dynamic =
-  Increasable.Dynamic({
+  Increasable.Dynamic.Make({
     let minValue = 6;
   });
 
@@ -62,18 +62,21 @@ module Static = {
       x.translations
       |> TranslationMap.getFromLanguageOrder(langs)
       <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          ic: x.ic,
-          primary: x.primary,
-          special: translation.special,
-          hasNoParry: x.hasNoParry,
-          bpr: x.bpr,
-          gr: x.gr,
-          src: PublicationRef.resolveTranslationsList(langs, x.src),
-          errata: translation.errata,
-        }
+        translation => (
+          x.id,
+          {
+            id: x.id,
+            name: translation.name,
+            ic: x.ic,
+            primary: x.primary,
+            special: translation.special,
+            hasNoParry: x.hasNoParry,
+            bpr: x.bpr,
+            gr: x.gr,
+            src: PublicationRef.resolveTranslationsList(langs, x.src),
+            errata: translation.errata,
+          },
+        )
       )
     );
 

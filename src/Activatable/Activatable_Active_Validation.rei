@@ -33,7 +33,7 @@ let isRemovalOrModificationValid:
     Static.t,
     Hero.t,
     Static.activatable,
-    Hero.Activatable.t,
+    Activatable_Dynamic.t,
     Activatable_Convert.singleWithId
   ) =>
   t;

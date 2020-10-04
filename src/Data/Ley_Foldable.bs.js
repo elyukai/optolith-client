@@ -72,6 +72,24 @@ function Make(Arg) {
                   return Pervasives.$at(Curry._1(f, e), rs);
                 }), /* [] */0, x);
   };
+  var con = function (x) {
+    return Curry._3(foldr, (function (e, acc) {
+                  if (acc) {
+                    return e;
+                  } else {
+                    return false;
+                  }
+                }), true, x);
+  };
+  var dis = function (x) {
+    return Curry._3(foldr, (function (e, acc) {
+                  if (acc) {
+                    return true;
+                  } else {
+                    return e;
+                  }
+                }), false, x);
+  };
   var notElem = function (e, x) {
     return all((function (x$prime) {
                   return Caml_obj.caml_notequal(e, x$prime);
@@ -100,6 +118,8 @@ function Make(Arg) {
           minimum: minimum,
           concat: concat,
           concatMap: concatMap,
+          con: con,
+          dis: dis,
           any: any,
           all: all,
           notElem: notElem,

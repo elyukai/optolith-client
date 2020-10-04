@@ -1,7 +1,6 @@
 module L = Ley_List;
 
-open Ley_Option;
-open Ley_Option;
+open Ley_Option.Infix;
 open Static;
 open Ley_Function;
 open Activatable_Convert;
@@ -14,23 +13,23 @@ type combinedApValue = {
 
 let ensureFlat =
   fun
-  | Advantage.Flat(x) => Some(x)
-  | Advantage.PerLevel(_) => None;
+  | Advantage.Static.Flat(x) => Some(x)
+  | Advantage.Static.PerLevel(_) => None;
 
 let ensurePerLevel =
   fun
-  | Advantage.Flat(_) => None
-  | Advantage.PerLevel(x) => Some(x);
+  | Advantage.Static.Flat(_) => None
+  | Advantage.Static.PerLevel(x) => Some(x);
 
 let getDefaultEntryCost = (staticEntry, singleHeroEntry) => {
   open Ley_List;
 
   let sid1 = singleHeroEntry |> getOption1;
-  let level = fromOption(1, singleHeroEntry.level);
+  let level = Ley_Option.fromOption(1, singleHeroEntry.level);
   let apValue =
     staticEntry
     |> Activatable_Accessors.apValue
-    |> fromOption(Advantage.Flat(0));
+    |> Ley_Option.fromOption(Advantage.Static.Flat(0));
 
   let optionApValue = sid1 >>= getSelectOptionCost(staticEntry);
 
@@ -44,19 +43,16 @@ let getDefaultEntryCost = (staticEntry, singleHeroEntry) => {
       | Advantage(_)
       | Disadvantage(_) => Ley_List.Safe.atMay(xs, level - 1)
       | SpecialAbility(_) =>
-        xs
-        |> take(Ley_Int.max(1, level))
-        |> Ley_List.Foldable.sum
-        |> (x => Some(x))
+        xs |> take(Ley_Int.max(1, level)) |> Ley_List.sum |> (x => Some(x))
       }
     }
   };
 };
 
-let getPrinciplesObligationsMaxLevels = ({active, _}: Hero.Activatable.t) =>
+let getPrinciplesObligationsMaxLevels = ({active, _}: Activatable_Dynamic.t) =>
   active
-  |> Ley_List.Foldable.foldr(
-       (active: Hero.Activatable.single, (prevMax, prevSndMax)) =>
+  |> Ley_List.foldr(
+       (active: Activatable_Dynamic.single, (prevMax, prevSndMax)) =>
          switch (active.level, active.customCost) {
          // Only get the maximum from the current and the previous level, if
          // the current has no custom cost
@@ -85,7 +81,7 @@ let getEntrySpecificCost =
       staticData,
       hero: Hero.t,
       staticEntry,
-      heroEntry: Hero.Activatable.t,
+      heroEntry: Activatable_Dynamic.t,
       singleHeroEntry,
     ) => {
   open Ley_List;
@@ -95,7 +91,7 @@ let getEntrySpecificCost =
   let apValue =
     staticEntry
     |> Activatable_Accessors.apValue
-    |> fromOption(Advantage.Flat(0));
+    |> Ley_Option.fromOption(Advantage.Static.Flat(0));
 
   switch (staticEntry) {
   | Advantage(entry) =>
@@ -161,12 +157,12 @@ let getEntrySpecificCost =
           let isPersonalityFlawNotPaid = (target_option, paid_entries_max) =>
             target_option === selected_option
             && Ley_List.countBy(
-                 (e: Hero.Activatable.single) =>
+                 (e: Activatable_Dynamic.single) =>
                    e.options
-                   |> listToOption
+                   |> Ley_Option.listToOption
                    |> matchOption(target_option)
                    // Entries with custom cost are ignored for the rule
-                   && isNone(e.customCost),
+                   && Ley_Option.isNone(e.customCost),
                  heroEntry.active,
                )
             > (isEntryToAdd ? paid_entries_max - 1 : paid_entries_max);
@@ -209,8 +205,8 @@ let getEntrySpecificCost =
             // removing it won't affect AP spent at all
             if (maxLevel > level
                 || countBy(
-                     (e: Hero.Activatable.single) =>
-                       Ley_Option.Foldable.elem(level, e.level),
+                     (e: Activatable_Dynamic.single) =>
+                       Ley_Option.elem(level, e.level),
                      heroEntry.active,
                    )
                 > (isEntryToAdd ? 0 : 1)) {
@@ -224,9 +220,10 @@ let getEntrySpecificCost =
       | BadHabit =>
         apValue
         |> ensureFlat
-        |> Ley_Option.Foldable.find(_ =>
+        |> Ley_Option.find(_ =>
              countBy(
-               (e: Hero.Activatable.single) => isNone(e.customCost),
+               (e: Activatable_Dynamic.single) =>
+                 Ley_Option.isNone(e.customCost),
                heroEntry.active,
              )
              > (isEntryToAdd ? 2 : 3)
@@ -261,14 +258,14 @@ let getEntrySpecificCost =
             // same skill...
             (
               countBy(
-                (e: Hero.Activatable.single) =>
+                (e: Activatable_Dynamic.single) =>
                   e.options
-                  |> listToOption
-                  |> Ley_Option.Foldable.elem(
+                  |> Ley_Option.listToOption
+                  |> Ley_Option.elem(
                        Id.Activatable.Option.Preset((Skill, skill.id)),
                      )
                   // Entries with custom cost are ignored for the rule
-                  && isNone(e.customCost),
+                  && Ley_Option.isNone(e.customCost),
                 heroEntry.active,
               )
               + (isEntryToAdd ? 1 : 0)
@@ -293,7 +290,8 @@ let getEntrySpecificCost =
             // Ignore custom cost activations in terms of calculated cost
             let amountActive =
               countBy(
-                (e: Hero.Activatable.single) => isNone(e.customCost),
+                (e: Activatable_Dynamic.single) =>
+                  Ley_Option.isNone(e.customCost),
                 heroEntry.active,
               );
 
@@ -394,13 +392,13 @@ let getEntrySpecificCost =
                       Ley_List.Safe.atMay(apPerLevel, IC.icToIx(skill.ic))
                   );
 
-                liftM2(
+                Ley_Option.liftM2(
                   (+),
                   // Cost for side subject
                   getCostFromHeroEntry(singleHeroEntry),
                   // Cost for main subject from Wissensdurst
                   wissensdurst.active
-                  |> listToOption
+                  |> Ley_Option.listToOption
                   >>= (
                     fst =>
                       fst
@@ -425,11 +423,11 @@ let getEntrySpecificCost =
                 >>= (
                   language =>
                     language.active
-                    |> Ley_List.Foldable.find((e: Hero.Activatable.single) =>
+                    |> Ley_List.find((e: Activatable_Dynamic.single) =>
                          e.options
-                         |> listToOption
+                         |> Ley_Option.listToOption
                          >>= getGenericId
-                         |> Ley_Option.Foldable.elem(languageId)
+                         |> Ley_Option.elem(languageId)
                        )
                     >>= (
                       selectedLanguage =>
@@ -462,7 +460,7 @@ let getApValueDifferenceOnChange =
       staticData,
       hero: Hero.t,
       staticEntry,
-      heroEntry: Hero.Activatable.t,
+      heroEntry: Activatable_Dynamic.t,
       singleHeroEntry,
     ) => {
   let isAutomatic = Ley_List.elem(singleHeroEntry.id, automaticAdvantages);
@@ -485,7 +483,7 @@ let getApValueDifferenceOnChange =
       heroEntry,
       singleHeroEntry,
     )
-    |> fromOption(0)
+    |> Ley_Option.fromOption(0)
     |> modifyAbs
     |> (apValue => {apValue, isAutomatic})
   };
@@ -502,7 +500,7 @@ let getApValueDifferenceOnChange =
  * Note, that disadvantages still return positive values if they actually cost
  * AP.
  */
-let getApSpentDifference = (staticEntry, heroEntry: Hero.Activatable.t) =>
+let getApSpentDifference = (staticEntry, heroEntry: Activatable_Dynamic.t) =>
   switch (staticEntry) {
   | Static.Advantage(_) => 0
   | Disadvantage(staticDisadvantage) =>
@@ -517,7 +515,7 @@ let getApSpentDifference = (staticEntry, heroEntry: Hero.Activatable.t) =>
         let singlesAtMaxLevel =
           L.countBy(
             fun
-            | ({level: Some(level), _}: Hero.Activatable.single) =>
+            | ({level: Some(level), _}: Activatable_Dynamic.single) =>
               level === maxLevel
             | _ => false,
             heroEntry.active,

@@ -28,7 +28,7 @@ let getSingle =
   animalLevel: None,
   enhancementTarget: Some(targetId),
   enhancementLevel: Some(level),
-  wikiEntry: Some(target),
+  staticEntry: Some(target),
   applications: None,
   src,
   errata,
@@ -139,7 +139,7 @@ let getAllFromObject =
 
 let toSpecialAbilityOptions =
     (getTarget, getId, getName, getEnhancements, getIC, xs) =>
-  Ley_List.foldr(
+  Ley_IntMap.foldr(
     x =>
       x
       |> getEnhancements

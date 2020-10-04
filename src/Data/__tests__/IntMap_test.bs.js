@@ -107,60 +107,27 @@ var from1to11 = Curry._1(Ley_IntMap$OptolithClient.fromList, {
 Jest.describe("Foldable", (function (param) {
         Jest.test("toList", (function (param) {
                 return Jest.Expect.toEqual({
-                            hd: [
-                              1,
-                              "a"
-                            ],
+                            hd: "a",
                             tl: {
-                              hd: [
-                                2,
-                                "b"
-                              ],
+                              hd: "b",
                               tl: {
-                                hd: [
-                                  3,
-                                  "c"
-                                ],
+                                hd: "c",
                                 tl: {
-                                  hd: [
-                                    4,
-                                    "d"
-                                  ],
+                                  hd: "d",
                                   tl: {
-                                    hd: [
-                                      5,
-                                      "e"
-                                    ],
+                                    hd: "e",
                                     tl: {
-                                      hd: [
-                                        6,
-                                        "f"
-                                      ],
+                                      hd: "f",
                                       tl: {
-                                        hd: [
-                                          7,
-                                          "g"
-                                        ],
+                                        hd: "g",
                                         tl: {
-                                          hd: [
-                                            8,
-                                            "h"
-                                          ],
+                                          hd: "h",
                                           tl: {
-                                            hd: [
-                                              9,
-                                              "i"
-                                            ],
+                                            hd: "i",
                                             tl: {
-                                              hd: [
-                                                10,
-                                                "j"
-                                              ],
+                                              hd: "j",
                                               tl: {
-                                                hd: [
-                                                  11,
-                                                  "k"
-                                                ],
+                                                hd: "k",
                                                 tl: /* [] */0
                                               }
                                             }
@@ -172,16 +139,16 @@ Jest.describe("Foldable", (function (param) {
                                 }
                               }
                             }
-                          }, Jest.Expect.expect(Curry._1(Ley_IntMap$OptolithClient.IntMap.Foldable.toList, from1to11)));
+                          }, Jest.Expect.expect(Curry._1(Ley_IntMap$OptolithClient.toList, from1to11)));
               }));
         return Jest.describe("all", (function (param) {
                       Jest.test("returns true if the predicate matches all elements in the map", (function (param) {
-                              return Jest.Expect.toBe(true, Jest.Expect.expect(Curry._2(Ley_IntMap$OptolithClient.IntMap.Foldable.all, (function (x) {
+                              return Jest.Expect.toBe(true, Jest.Expect.expect(Curry._2(Ley_IntMap$OptolithClient.all, (function (x) {
                                                     return x < "f";
                                                   }), from1to5)));
                             }));
                       return Jest.test("returns false if the predicate does not match at least one element in the map", (function (param) {
-                                    return Jest.Expect.toBe(false, Jest.Expect.expect(Curry._2(Ley_IntMap$OptolithClient.IntMap.Foldable.all, (function (x) {
+                                    return Jest.Expect.toBe(false, Jest.Expect.expect(Curry._2(Ley_IntMap$OptolithClient.all, (function (x) {
                                                           return x < "e";
                                                         }), from1to5)));
                                   }));

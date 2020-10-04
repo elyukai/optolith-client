@@ -6,4 +6,4 @@ type t = {
   isAdultContent: bool,
 };
 
-let decode: list(string) => Json.Decode.decoder(option(t));
+let decode: list(string) => Json.Decode.decoder(option((int, t)));

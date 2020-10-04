@@ -6,8 +6,8 @@ let getMax:
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
-    ~exceptionalSkill: option(Hero.Activatable.t),
-    ~propertyKnowledge: option(Hero.Activatable.t),
+    ~exceptionalSkill: option(Activatable_Dynamic.t),
+    ~propertyKnowledge: option(Activatable_Dynamic.t),
     ~staticEntry: Spell.Static.t
   ) =>
   int;
@@ -20,8 +20,8 @@ let isIncreasable:
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
-    ~exceptionalSkill: option(Hero.Activatable.t),
-    ~propertyKnowledge: option(Hero.Activatable.t),
+    ~exceptionalSkill: option(Activatable_Dynamic.t),
+    ~propertyKnowledge: option(Activatable_Dynamic.t),
     ~staticEntry: Spell.Static.t,
     ~heroEntry: ActivatableSkill.Dynamic.t
   ) =>
@@ -35,7 +35,7 @@ let isIncreasable:
  */
 let getMin:
   (
-    ~propertyKnowledge: Hero.Activatable.t,
+    ~propertyKnowledge: Activatable_Dynamic.t,
     ~staticSpells: Ley_IntMap.t(Spell.Static.t),
     ~heroSpells: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
     ~staticEntry: Spell.Static.t,
@@ -48,7 +48,7 @@ let getMin:
  */
 let isDecreasable:
   (
-    ~propertyKnowledge: Hero.Activatable.t,
+    ~propertyKnowledge: Activatable_Dynamic.t,
     ~staticSpells: Ley_IntMap.t(Spell.Static.t),
     ~heroSpells: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
     ~staticEntry: Spell.Static.t,

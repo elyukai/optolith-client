@@ -21,12 +21,12 @@ type singleWithId = {
  * Converts an Activatable hero entry into a "flattened" list of it's
  * activations.
  */
-let heroEntryToSingles: Hero.Activatable.t => list(singleWithId);
+let heroEntryToSingles: Activatable_Dynamic.t => list(singleWithId);
 
 let singleToSingleWithId:
-  (Hero.Activatable.t, int, Hero.Activatable.single) => singleWithId;
+  (Activatable_Dynamic.t, int, Activatable_Dynamic.single) => singleWithId;
 
 let activatableOptionToSelectOptionId:
   Id.Activatable.Option.t => option(Id.Activatable.SelectOption.t);
 
-let singleWithIdToSingle: singleWithId => Hero.Activatable.single;
+let singleWithIdToSingle: singleWithId => Activatable_Dynamic.single;

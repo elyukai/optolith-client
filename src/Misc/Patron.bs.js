@@ -48,14 +48,17 @@ function decodeMultilingual(json) {
 function decode$2(langs, json) {
   var x = decodeMultilingual(json);
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                return {
-                        id: x.id,
-                        name: translation.name,
-                        category: x.category,
-                        skills: x.skills,
-                        limitedToCultures: x.limitedToCultures,
-                        isLimitedToCulturesReverse: x.isLimitedToCulturesReverse
-                      };
+                return [
+                        x.id,
+                        {
+                          id: x.id,
+                          name: translation.name,
+                          category: x.category,
+                          skills: x.skills,
+                          limitedToCultures: x.limitedToCultures,
+                          isLimitedToCulturesReverse: x.isLimitedToCulturesReverse
+                        }
+                      ];
               }));
 }
 

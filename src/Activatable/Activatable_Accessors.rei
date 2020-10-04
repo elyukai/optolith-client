@@ -11,12 +11,12 @@
 /**
  * Is an Activatable entry active?
  */
-let isActive: Hero.Activatable.t => bool;
+let isActive: Activatable_Dynamic.t => bool;
 
 /**
  * Is an Activatable, where the entry may not have been created, active?
  */
-let isActiveM: option(Hero.Activatable.t) => bool;
+let isActiveM: option(Activatable_Dynamic.t) => bool;
 
 let id: Static.activatable => Id.Activatable.t;
 
@@ -28,7 +28,7 @@ let selectOptions: Static.activatable => SelectOption.map;
 
 let input: Static.activatable => option(string);
 
-let apValue: Static.activatable => option(Advantage.cost);
+let apValue: Static.activatable => option(Advantage.Static.apValue);
 
 let apValue': Static.activatable => option(OneOrMany.t(int));
 

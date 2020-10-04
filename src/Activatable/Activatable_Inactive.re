@@ -11,7 +11,7 @@ type t = {
   minLevel: option(int),
   maxLevel: option(int),
   selectOptions: list(SelectOption.t),
-  heroEntry: option(Hero.Activatable.t),
+  heroEntry: option(Activatable_Dynamic.t),
   staticEntry: Static.activatable,
   customCostDisabled: bool,
   isAutomatic: bool,
@@ -72,7 +72,7 @@ let modifyOtherOptions =
         let getSkillValue = skill =>
           hero.skills
           |> IM.lookup(Id.Skill.toInt(skill))
-          |> Skills.getValueDef;
+          |> Skill.Dynamic.getValueDef;
 
         // Sum of SR of Woodworking and Metalworking must be at least 12
         getSkillValue(Woodworking) + getSkillValue(Metalworking) >= 12
@@ -83,10 +83,11 @@ let modifyOtherOptions =
           Ranged,
           cache.combatTechniquePairs,
         )
-        |> IM.Foldable.any(
+        |> IM.any(
              fun
              // At least one ranged combat technique must be on CtR 10 or higher
-             | (_, Some((heroEntry: Skill.Dynamic.t))) => heroEntry.value >= 10
+             | (_, Some((heroEntry: Skill.Dynamic.t))) =>
+               heroEntry.value >= 10
              | _ => false,
            )
           ? Some(base) : None
@@ -102,7 +103,7 @@ let modifyOtherOptions =
       | TraditionSchelme
       | TraditionBrobimGeoden =>
         // Only one tradition allowed
-        L.Foldable.null(cache.magicalTraditions) ? Some(base) : None
+        L.null(cache.magicalTraditions) ? Some(base) : None
 
       | PropertyKnowledge
       | AspectKnowledge =>
@@ -111,12 +112,11 @@ let modifyOtherOptions =
           let index =
             O.option(
               0,
-              ({active, _}: Hero.Activatable.t) =>
-                active |> L.Foldable.length,
+              ({active, _}: Activatable_Dynamic.t) => active |> L.length,
               maybeHeroEntry,
             );
 
-          O.Functor.(
+          O.Infix.(
             L.Safe.atMay(values, index)
             <&> (apValue => {...base, apValue: Some(One(apValue))})
           );
@@ -147,7 +147,7 @@ let modifyOtherOptions =
         O.isNone(cache.blessedTradition) ? Some(base) : None
 
       | Recherchegespuer =>
-        O.Monad.(
+        O.Infix.(
           hero.specialAbilities
           |> IM.lookup(Id.SpecialAbility.toInt(Wissensdurst))
           <&> (({active, _}) => active)
@@ -167,7 +167,7 @@ let modifyOtherOptions =
                 |> L.map((+)(IC.getAPForActivatation(ic)))
                 |> (
                   sumValues =>
-                    {...base, apValue: Some(Many(sumValues))} |> return
+                    {...base, apValue: Some(Many(sumValues))} |> O.return
                 )
               | Some(Flat(_))
               | None => None
@@ -224,7 +224,7 @@ let modifyOtherOptions =
           ? Some(base) : None;
 
       | DunklesAbbildDerBuendnisgabe =>
-        O.Monad.(
+        O.Infix.(
           hero.pact
           >>= (
             ({level, _}) =>
@@ -239,7 +239,7 @@ let modifyOtherOptions =
       | TraditionAnimisten =>
         cache.adventurePoints.spentOnMagicalAdvantages <= 25
         && cache.adventurePoints.spentOnMagicalDisadvantages <= 25
-        && L.Foldable.null(cache.magicalTraditions)
+        && L.null(cache.magicalTraditions)
           ? Some(base) : None
 
       | _ => Some(base)
@@ -267,7 +267,7 @@ let getInactive = (cache, staticData, hero, staticEntry, maybeHeroEntry) => {
     );
 
   if (isAdditionValid) {
-    O.Monad.(
+    O.Infix.(
       Activatable_Inactive_SelectOptions.getAvailableSelectOptions(
         staticData,
         hero,

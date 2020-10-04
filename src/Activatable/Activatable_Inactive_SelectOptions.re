@@ -10,6 +10,7 @@ module L = Ley_List;
 module O = Ley_Option;
 module T = Ley_Transducer;
 module IM = Ley_IntMap;
+module IS = Ley_IntSet;
 
 open T;
 
@@ -20,10 +21,7 @@ open T;
 let isNotActive = maybeHeroEntry =>
   maybeHeroEntry
   |> O.option([], getActiveSelectOptions1)
-  |> (
-    (activeSelections, {id, _}: SO.t) =>
-      L.Foldable.notElem(id, activeSelections)
-  );
+  |> ((activeSelections, {id, _}: SO.t) => L.notElem(id, activeSelections));
 
 /**
  * Test if a select option is not activated more than once for the passed
@@ -50,10 +48,10 @@ let isNotRequired = (otherActivatables, maybeHeroEntry) =>
      )
   |> (
     (applicableOptions, {id, _}: SO.t) =>
-      L.Foldable.all(
+      L.all(
         fun
         | OneOrMany.One(option) => Id.Activatable.SelectOption.(option != id)
-        | Many(options) => L.Foldable.notElem(id, options),
+        | Many(options) => L.notElem(id, options),
         applicableOptions,
       )
   );
@@ -86,7 +84,8 @@ let isValid = (staticData: Static.t, hero: Hero.t, entryId, fold) =>
   >>~ (
     x =>
       x.prerequisites
-      |> F.flip(Prerequisites.Flatten.flattenPrerequisites, [])
+      |> Prerequisite.Collection.ByLevel.getFirstLevel
+      |> Ley_List.map(Prerequisite.General.unify)
       |> Prerequisites.Validation.arePrerequisitesMet(
            staticData,
            hero,
@@ -124,7 +123,7 @@ let filterSpellSelectOptions = (pred, fold) =>
     (x: SelectOption.t) =>
       [@warning "-4"]
       (
-        switch (x.wikiEntry) {
+        switch (x.staticEntry) {
         | Some(Spell(spell)) => Some(spell)
         | _ => None
         }
@@ -249,7 +248,7 @@ let getAvailableSelectOptionsTransducer =
           switch (so.id) {
           | (Skill, id) =>
             IM.lookup(id, staticData.skills)
-            |> O.Foldable.any((skill: Skill.Static.t) =>
+            |> O.any((skill: Skill.Static.t) =>
                  skill.gr === Id.Skill.Group.toInt(Social)
                )
             |> (!)
@@ -298,14 +297,14 @@ let getAvailableSelectOptionsTransducer =
               // Maximum of three is allowed
               L.lengthMax(2, activeApps)
               // Skill Rating must be at least 6/12/18 for 1st/2nd/3rd specialization
-              && skill.value >= (L.Foldable.length(activeApps) + 1)
+              && skill.value >= (L.length(activeApps) + 1)
               * 6,
             IM.lookup(id, hero.skills),
             SOM.lookup(selectOption.id, counter),
           )
-          |> O.Foldable.dis;
+          |> O.dis;
 
-        let counter = maybeHeroEntry <&> getActiveOptions2Map;
+        let counter = O.Infix.(maybeHeroEntry <&> getActiveOptions2Map);
 
         Some(
           fold =>
@@ -343,72 +342,77 @@ let getAvailableSelectOptionsTransducer =
             <&~ (
               (selectOption: SO.t) => {
                 let maybeCurrentCount =
-                  counter >>= SOM.lookup(selectOption.id);
+                  O.Infix.(counter >>= SOM.lookup(selectOption.id));
 
                 selectOption
                 // Increase cost if there are active specializations
                 // for the same skill
                 |> O.liftDef(selectOption =>
-                     O.Monad.liftM2(
+                     O.liftM2(
                        (currentCount, selectOptionCost) =>
                          {
                            ...selectOption,
-                           cost:
+                           apValue:
                              Some(
-                               selectOptionCost
-                               * (L.Foldable.length(currentCount) + 1),
+                               selectOptionCost * (L.length(currentCount) + 1),
                              ),
                          },
                        maybeCurrentCount,
-                       selectOption.cost,
+                       selectOption.apValue,
                      )
                    )
                 |> O.liftDef((selectOption: SO.t) =>
-                     (
-                       switch (selectOption.wikiEntry) {
-                       | Some(Skill(skill)) => Some(skill)
-                       | _ => None
-                       }
-                     )
-                     <&> (
-                       skill =>
-                         skill.applications
-                         |> IM.elems
-                         |> L.filter((application: Skill.application) => {
-                              // An application can only be selected once
-                              let isInactive =
-                                O.Foldable.all(
-                                  L.notElem(
-                                    Id.Activatable.Option.Preset((
-                                      Generic,
-                                      application.id,
-                                    )),
-                                  ),
-                                  maybeCurrentCount,
-                                );
+                     Ley_Option.Infix.(
+                       (
+                         switch (selectOption.staticEntry) {
+                         | Some(Skill(skill)) => Some(skill)
+                         | _ => None
+                         }
+                       )
+                       <&> (
+                         skill =>
+                           skill.applications
+                           |> IM.elems
+                           |> L.filter(
+                                (application: Skill.Static.Application.t) => {
+                                // An application can only be selected once
+                                let isInactive =
+                                  O.all(
+                                    L.notElem(
+                                      Id.Activatable.Option.Preset((
+                                        Generic,
+                                        application.id,
+                                      )),
+                                    ),
+                                    maybeCurrentCount,
+                                  );
 
-                              // New applications must have valid prerequisites
-                              let hasValidPrerequisites =
-                                Prerequisites.Validation.arePrerequisitesMet(
-                                  staticData,
-                                  hero,
-                                  id,
-                                  switch (application.prerequisite) {
-                                  | Some(prerequisite) => [
-                                      Activatable(prerequisite),
-                                    ]
-                                  | None => []
-                                  },
-                                );
+                                // New applications must have valid prerequisites
+                                let hasValidPrerequisites =
+                                  Prerequisites.Validation.arePrerequisitesMet(
+                                    staticData,
+                                    hero,
+                                    id,
+                                    switch (application.prerequisite) {
+                                    | Some(prerequisite) => [
+                                        {
+                                          value: Activatable(prerequisite),
+                                          displayOption: Generate,
+                                        },
+                                      ]
+                                    | None => []
+                                    },
+                                  );
 
-                              isInactive && hasValidPrerequisites;
-                            })
-                         |> (
-                           applications => {
-                             ...selectOption,
-                             applications: Some(applications),
-                           }
-                         )
+                                isInactive && hasValidPrerequisites;
+                              })
+                           |> (
+                             applications => {
+                               ...selectOption,
+                               applications: Some(applications),
+                             }
+                           )
+                       )
                      )
                    );
               }
@@ -419,11 +423,13 @@ let getAvailableSelectOptionsTransducer =
         // familiar spells
         Some(
           filterSpellSelectOptions(spell =>
-            Spell.Static.traditions
-            |> L.disjoint([
-                 Id.MagicalTradition.toInt(General),
-                 Id.MagicalTradition.toInt(GuildMages),
-               ])
+            Ley_IntSet.disjoint(
+              spell.traditions,
+              Ley_IntSet.fromList([
+                Id.MagicalTradition.toInt(General),
+                Id.MagicalTradition.toInt(GuildMages),
+              ]),
+            )
           ),
         )
       | PropertyKnowledge as id
@@ -474,7 +480,7 @@ let getAvailableSelectOptionsTransducer =
           switch (selectOption.id) {
           | (Spell, id) =>
             IM.lookup(id, hero.spells)
-            |> O.option(false, (spell: Hero.ActivatableSkill.t) =>
+            |> O.option(false, (spell: ActivatableSkill.Dynamic.t) =>
                  switch (spell.value) {
                  | Active(value) => value >= minimumSkillRating
                  | Inactive => false
@@ -521,7 +527,7 @@ let getAvailableSelectOptionsTransducer =
             ),
           );
 
-        let isValueValid = (maybeLevel, heroEntry: Hero.ActivatableSkill.t) =>
+        let isValueValid = (maybeLevel, heroEntry: ActivatableSkill.Dynamic.t) =>
           switch (maybeLevel, heroEntry.value) {
           | (Some(level), Active(value)) => value >= level * 4 + 4
           | (None, Active(_))
@@ -536,8 +542,10 @@ let getAvailableSelectOptionsTransducer =
             >>~ (
               (selectOption: SO.t) =>
                 switch (
-                  selectOption.wikiEntry,
-                  selectOption.enhancementTarget >>= getTargetHeroEntry,
+                  selectOption.staticEntry,
+                  O.Infix.(
+                    selectOption.enhancementTarget >>= getTargetHeroEntry
+                  ),
                 ) {
                 | (Some(Spell(staticSpell)), Some(heroSpell)) =>
                   isNotUnfamiliar(staticSpell)
@@ -553,17 +561,19 @@ let getAvailableSelectOptionsTransducer =
         let availableLanguages =
           hero.specialAbilities
           |> IM.lookup(Id.SpecialAbility.toInt(Language))
-          |> O.option([], (heroLanguage: Hero.Activatable.t) =>
+          |> O.option([], (heroLanguage: Activatable_Dynamic.t) =>
                heroLanguage.active
-               |> O.mapOption((active: Hero.Activatable.single) =>
-                    active.level
-                    >>= (
-                      level =>
-                        switch (level, active.options |> O.listToOption) {
-                        | (3 | 4, Some(Preset((Generic, sid)))) =>
-                          Some((sid, level))
-                        | _ => None
-                        }
+               |> O.mapOption((active: Activatable_Dynamic.single) =>
+                    O.Infix.(
+                      active.level
+                      >>= (
+                        level =>
+                          switch (level, active.options |> O.listToOption) {
+                          | (3 | 4, Some(Preset((Generic, sid)))) =>
+                            Some((sid, level))
+                          | _ => None
+                          }
+                      )
                     )
                   )
              );
@@ -576,7 +586,7 @@ let getAvailableSelectOptionsTransducer =
                  switch (selectOption.id) {
                  | (Generic, sid) =>
                    switch (L.lookup(sid, availableLanguages)) {
-                   | Some(4) => Some({...selectOption, cost: Some(0)})
+                   | Some(4) => Some({...selectOption, apValue: Some(0)})
                    | Some(3) => Some(selectOption)
                    | Some(_)
                    | None => None
@@ -588,39 +598,42 @@ let getAvailableSelectOptionsTransducer =
       | MadaschwesternStil =>
         Some(
           filterSpellSelectOptions(spell =>
-            Spell.Static.traditions
-            |> L.disjoint([
-                 Id.MagicalTradition.toInt(General),
-                 Id.MagicalTradition.toInt(Witches),
-               ])
+            Ley_IntSet.disjoint(
+              spell.traditions,
+              Ley_IntSet.fromList([
+                Id.MagicalTradition.toInt(General),
+                Id.MagicalTradition.toInt(Witches),
+              ]),
+            )
           ),
         )
       | ScholarDesMagierkollegsZuHoningen =>
-        let allowedTraditions = [
-          Id.MagicalTradition.toInt(Druids),
-          Id.MagicalTradition.toInt(Elves),
-          Id.MagicalTradition.toInt(Witches),
-        ];
+        let allowedTraditions =
+          [Id.MagicalTradition.Druids, Elves, Witches]
+          |> L.map(Id.MagicalTradition.toInt)
+          |> IS.fromList;
 
         let maybeTransferredSpellFromTradition =
-          hero.specialAbilities
-          |> IM.lookup(Id.SpecialAbility.toInt(TraditionGuildMages))
-          >>= (
-            specialAbility =>
-              specialAbility.active
-              |> O.listToOption
-              >>= (
-                active =>
-                  (
-                    switch (active.options |> O.listToOption) {
-                    | Some(Preset((Spell, id))) => Some(id)
-                    | Some(_)
-                    | None => None
-                    }
-                  )
-                  >>= F.flip(IM.lookup, staticData.spells)
-                  <&> (spell => Spell.Static.traditions)
-              )
+          O.Infix.(
+            hero.specialAbilities
+            |> IM.lookup(Id.SpecialAbility.toInt(TraditionGuildMages))
+            >>= (
+              specialAbility =>
+                specialAbility.active
+                |> O.listToOption
+                >>= (
+                  active =>
+                    (
+                      switch (active.options |> O.listToOption) {
+                      | Some(Preset((Spell, id))) => Some(id)
+                      | Some(_)
+                      | None => None
+                      }
+                    )
+                    >>= F.flip(IM.lookup, staticData.spells)
+                    <&> (spell => spell.traditions)
+                )
+            )
           );
 
         maybeTransferredSpellFromTradition
@@ -629,28 +642,28 @@ let getAvailableSelectOptionsTransducer =
              transferredSpellFromTradition => {
                // Contains all allowed trads the first spell does not have
                let traditionDiff =
-                 L.(allowedTraditions \/ transferredSpellFromTradition);
+                 IS.Infix.(allowedTraditions \/ transferredSpellFromTradition);
 
                let hasTransferredSpellAllAllowedTraditions =
-                 L.Foldable.null(traditionDiff);
+                 IS.null(traditionDiff);
 
                filterSpellSelectOptions(spell =>
-                 L.notElem(
+                 Ley_IntSet.notElem(
                    Id.MagicalTradition.toInt(General),
-                   Spell.Static.traditions,
+                   spell.traditions,
                  )
-                 && L.Foldable.any(
+                 && Ley_IntSet.any(
                       F.flip(
-                        L.elem,
+                        IS.elem,
                         hasTransferredSpellAllAllowedTraditions
                           ? allowedTraditions : traditionDiff,
                       ),
-                      Spell.Static.traditions,
+                      spell.traditions,
                     )
                );
              },
            )
-        |> O.Monad.return;
+        |> O.return;
       | _ => Some(isNoRequiredOrActiveSelection)
       }
     );
@@ -679,7 +692,7 @@ let getAvailableSelectOptions =
     fun
     | Some(transducer) =>
       switch (transduceList(transducer, allSelectOptions)) {
-      | [] => L.Foldable.null(allSelectOptions) ? Some([]) : None
+      | [] => L.null(allSelectOptions) ? Some([]) : None
       | xs => Some(xs)
       }
     | None => Some(allSelectOptions)

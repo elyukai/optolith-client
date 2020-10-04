@@ -10,7 +10,7 @@ import * as Increasable$OptolithClient from "./Increasable.bs.js";
 import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-var Dynamic = Increasable$OptolithClient.Dynamic({
+var Dynamic = Increasable$OptolithClient.Dynamic.Make({
       minValue: 6
     });
 
@@ -46,18 +46,21 @@ function decodeFull(json) {
 function decode$1(langs, json) {
   var x = decodeFull(json);
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                return {
-                        id: x.id,
-                        name: translation.name,
-                        ic: x.ic,
-                        primary: x.primary,
-                        special: translation.special,
-                        hasNoParry: x.hasNoParry,
-                        bpr: x.bpr,
-                        gr: x.gr,
-                        src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
-                      };
+                return [
+                        x.id,
+                        {
+                          id: x.id,
+                          name: translation.name,
+                          ic: x.ic,
+                          primary: x.primary,
+                          special: translation.special,
+                          hasNoParry: x.hasNoParry,
+                          bpr: x.bpr,
+                          gr: x.gr,
+                          src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                          errata: translation.errata
+                        }
+                      ];
               }));
 }
 

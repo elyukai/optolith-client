@@ -1372,6 +1372,10 @@ var minimum = include$4.minimum;
 
 var concat = include$4.concat;
 
+var con = include$4.con;
+
+var dis = include$4.dis;
+
 var all = include$4.all;
 
 var cons = $less$plus$great;
@@ -1411,6 +1415,8 @@ export {
   minimum ,
   concat ,
   concatMap ,
+  con ,
+  dis ,
   any ,
   all ,
   find ,

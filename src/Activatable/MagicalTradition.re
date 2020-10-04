@@ -55,20 +55,23 @@ let resolveTranslations = (langs, x) =>
     x.translations
     |> TranslationMap.getFromLanguageOrder(langs)
     <&> (
-      translation => {
-        id: x.id,
-        name: translation.name,
-        numId: x.numId,
-        primary: x.primary,
-        aeMod: x.aeMod,
-        canLearnCantrips: x.canLearnCantrips,
-        canLearnSpells: x.canLearnSpells,
-        canLearnRituals: x.canLearnRituals,
-        allowMultipleTraditions: x.allowMultipleTraditions,
-        isDisAdvAPMaxHalved: x.isDisAdvAPMaxHalved,
-        areDisAdvRequiredApplyToMagActionsOrApps:
-          x.areDisAdvRequiredApplyToMagActionsOrApps,
-      }
+      translation => (
+        x.id,
+        {
+          id: x.id,
+          name: translation.name,
+          numId: x.numId,
+          primary: x.primary,
+          aeMod: x.aeMod,
+          canLearnCantrips: x.canLearnCantrips,
+          canLearnSpells: x.canLearnSpells,
+          canLearnRituals: x.canLearnRituals,
+          allowMultipleTraditions: x.allowMultipleTraditions,
+          isDisAdvAPMaxHalved: x.isDisAdvAPMaxHalved,
+          areDisAdvRequiredApplyToMagActionsOrApps:
+            x.areDisAdvRequiredApplyToMagActionsOrApps,
+        },
+      )
     )
   );
 

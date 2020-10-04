@@ -53,14 +53,26 @@ var Translations = {
 
 var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
 
-function decodeMultilingual(json) {
-  return {
-          id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
-          apValue: JsonStrict$OptolithClient.optionalField("apValue", JsonStrict$OptolithClient.$$int, json),
-          prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.General.decodeMultilingual, json),
-          src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json),
-          translations: JsonStrict$OptolithClient.field("translations", TranslationMap.decode, json)
-        };
+function decodeMultilingualPair(json) {
+  var x_id = JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json);
+  var x_apValue = JsonStrict$OptolithClient.optionalField("apValue", JsonStrict$OptolithClient.$$int, json);
+  var x_prerequisites = JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.General.decodeMultilingual, json);
+  var x_src = JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json);
+  var x_translations = JsonStrict$OptolithClient.field("translations", TranslationMap.decode, json);
+  var x = {
+    id: x_id,
+    apValue: x_apValue,
+    prerequisites: x_prerequisites,
+    src: x_src,
+    translations: x_translations
+  };
+  return [
+          [
+            /* Generic */0,
+            x_id
+          ],
+          x
+        ];
 }
 
 function resolveTranslations(langs, x) {
@@ -84,7 +96,7 @@ function resolveTranslations(langs, x) {
                         animalLevel: undefined,
                         enhancementTarget: undefined,
                         enhancementLevel: undefined,
-                        wikiEntry: undefined,
+                        staticEntry: undefined,
                         applications: undefined,
                         src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
                         errata: translation.errata
@@ -92,11 +104,7 @@ function resolveTranslations(langs, x) {
               }));
 }
 
-function decode$1(langs, json) {
-  return resolveTranslations(langs, decodeMultilingual(json));
-}
-
-function category(json) {
+function decode$1(json) {
   var str = Json_decode.string(json);
   switch (str) {
     case "BLESSINGS" :
@@ -120,16 +128,20 @@ function category(json) {
   }
 }
 
-function categoryWithGroups(json) {
+function decode$2(json) {
   return {
-          category: JsonStrict$OptolithClient.field("category", category, json),
+          category: JsonStrict$OptolithClient.field("category", decode$1, json),
           groups: JsonStrict$OptolithClient.optionalField("groups", (function (param) {
                   return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
                 }), json)
         };
 }
 
-function entryToSelectOption(id, name, wikiEntry, src, errata) {
+var WithGroups = {
+  decode: decode$2
+};
+
+function entryToSelectOption(id, name, staticEntry, src, errata) {
   return {
           id: id,
           name: name,
@@ -149,26 +161,22 @@ function entryToSelectOption(id, name, wikiEntry, src, errata) {
           animalLevel: undefined,
           enhancementTarget: undefined,
           enhancementLevel: undefined,
-          wikiEntry: wikiEntry,
+          staticEntry: staticEntry,
           applications: undefined,
           src: src,
           errata: errata
         };
 }
 
-function insertEntry(s) {
-  return Curry._2($$Map.insert, s.id, s);
-}
-
 function resolveWithoutGroups(f, mp, xs) {
-  return Curry._3(Ley_IntMap$OptolithClient.IntMap.Foldable.foldr, (function (x) {
+  return Curry._3(Ley_IntMap$OptolithClient.foldr, (function (x) {
                 var s = Curry._1(f, x);
                 return Curry._2($$Map.insert, s.id, s);
               }), xs, mp);
 }
 
 function resolveGroups(f, g, grs, mp, xs) {
-  return Curry._3(Ley_IntMap$OptolithClient.IntMap.Foldable.foldr, (function (x) {
+  return Curry._3(Ley_IntMap$OptolithClient.foldr, (function (x) {
                 if (!Curry._2(Ley_List$OptolithClient.elem, Curry._1(g, x), grs)) {
                   return Ley_Function$OptolithClient.id;
                 }
@@ -187,10 +195,6 @@ function blessingToSelectOption(x) {
             }, x.src, x.errata);
 }
 
-function resolveBlessings(param, param$1) {
-  return resolveWithoutGroups(blessingToSelectOption, param, param$1);
-}
-
 function cantripToSelectOption(x) {
   return entryToSelectOption([
               /* Cantrip */4,
@@ -199,10 +203,6 @@ function cantripToSelectOption(x) {
               TAG: /* Cantrip */1,
               _0: x
             }, x.src, x.errata);
-}
-
-function resolveCantrips(param, param$1) {
-  return resolveWithoutGroups(cantripToSelectOption, param, param$1);
 }
 
 function combatTechniqueToSelectOption(x) {
@@ -307,11 +307,11 @@ function resolveCategories(blessings, cantrips, combatTechniques, liturgicalChan
                 switch (match) {
                   case /* Blessings */0 :
                       return function (param) {
-                        return resolveBlessings(blessings, param);
+                        return resolveWithoutGroups(blessingToSelectOption, blessings, param);
                       };
                   case /* Cantrips */1 :
                       return function (param) {
-                        return resolveCantrips(cantrips, param);
+                        return resolveWithoutGroups(cantripToSelectOption, cantrips, param);
                       };
                   case /* CombatTechniques */2 :
                       var partial_arg = resolveCombatTechniques(cat.groups);
@@ -338,36 +338,27 @@ function resolveCategories(blessings, cantrips, combatTechniques, liturgicalChan
               }), $$Map.empty, Ley_Option$OptolithClient.fromOption(/* [] */0, categories));
 }
 
+function mergeSelectOptions(explicits, fromCategories) {
+  return Curry._3($$Map.foldl, (function (mp, x) {
+                return Curry._3($$Map.insert, x.id, x, mp);
+              }), fromCategories, explicits);
+}
+
+var Category = {
+  WithGroups: WithGroups
+};
+
 var ResolveCategories = {
-  category: category,
-  categoryWithGroups: categoryWithGroups,
-  entryToSelectOption: entryToSelectOption,
-  insertEntry: insertEntry,
-  resolveWithoutGroups: resolveWithoutGroups,
-  resolveGroups: resolveGroups,
-  blessingToSelectOption: blessingToSelectOption,
-  resolveBlessings: resolveBlessings,
-  cantripToSelectOption: cantripToSelectOption,
-  resolveCantrips: resolveCantrips,
-  combatTechniqueToSelectOption: combatTechniqueToSelectOption,
-  resolveCombatTechniques: resolveCombatTechniques,
-  liturgicalChantToSelectOption: liturgicalChantToSelectOption,
-  resolveLiturgicalChants: resolveLiturgicalChants,
-  skillToSelectOption: skillToSelectOption,
-  resolveSkills: resolveSkills,
-  spellToSelectOption: spellToSelectOption,
-  resolveSpells: resolveSpells,
-  resolveCategories: resolveCategories
+  resolveCategories: resolveCategories,
+  mergeSelectOptions: mergeSelectOptions
 };
 
 export {
   showId ,
   $$Map ,
-  Translations ,
-  TranslationMap ,
-  decodeMultilingual ,
+  decodeMultilingualPair ,
   resolveTranslations ,
-  decode$1 as decode,
+  Category ,
   ResolveCategories ,
   
 }

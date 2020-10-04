@@ -1,6 +1,5 @@
 open Ley_Option;
-open Ley_Option;
-open Hero.ActivatableSkill;
+open Ley_Option.Infix;
 
 module F = Ley_Function;
 module IM = Ley_IntMap;
@@ -16,9 +15,9 @@ let getMaxSrFromAspectKnowledge =
   aspectKnowledge
   <&> Activatable_SelectOptions.getActiveOptions1
   |> option(true, actives =>
-       Ley_List.Foldable.all(
+       Ley_IntSet.all(
          aspect =>
-           Ley_List.Foldable.notElem(
+           Ley_List.notElem(
              Id.Activatable.Option.Preset((Generic, aspect)),
              actives,
            ),
@@ -45,7 +44,7 @@ let getMax =
     getMaxSrFromAspectKnowledge(aspectKnowledge, staticEntry),
   ]
   |> catOptions
-  |> Ley_List.Foldable.minimum
+  |> Ley_List.minimum
   |> (+)(
        Skills.getExceptionalSkillBonus(
          exceptionalSkill,
@@ -64,9 +63,9 @@ let isIncreasable =
       ~exceptionalSkill,
       ~aspectKnowledge,
       ~staticEntry,
-      ~heroEntry: Hero.ActivatableSkill.t,
+      ~heroEntry: ActivatableSkill.Dynamic.t,
     ) =>
-  ActivatableSkills.valueToInt(heroEntry.value)
+  ActivatableSkill.Dynamic.valueToInt(heroEntry.value)
   < getMax(
       ~startEl,
       ~phase,
@@ -81,14 +80,14 @@ module AspectKnowledge = {
 
   let minimumAmount = 3;
 
-  let isOnMinimum = (spell: Hero.ActivatableSkill.t) =>
+  let isOnMinimum = (spell: ActivatableSkill.Dynamic.t) =>
     switch (spell.value) {
     | Active(value) => value >= minimumSkillRating
     | Inactive => false
     };
 
   let addToCounter = (chant: LiturgicalChant.Static.t, counter) =>
-    L.Foldable.foldr(
+    Ley_IntSet.foldr(
       aspect => IM.insertWith((+), aspect, 1),
       counter,
       chant.aspects,
@@ -131,15 +130,15 @@ module AspectKnowledge = {
         counter,
         activeAspectKnowledges,
         staticEntry: LiturgicalChant.Static.t,
-        heroEntry: Hero.ActivatableSkill.t,
+        heroEntry: ActivatableSkill.Dynamic.t,
       ) =>
     activeAspectKnowledges
     // Is liturgical chant part of dependencies of any active Aspect Knowledge?
-    |> L.Foldable.any((sid: Id.Activatable.Option.t) =>
+    |> L.any((sid: Id.Activatable.Option.t) =>
          [@warning "-4"]
          (
            switch (sid) {
-           | Preset((Generic, x)) => L.Foldable.elem(x, staticEntry.aspects)
+           | Preset((Generic, x)) => Ley_IntSet.elem(x, staticEntry.aspects)
            | _ => false
            }
          )
@@ -150,10 +149,11 @@ module AspectKnowledge = {
       hasActiveAspectKnowledge =>
         hasActiveAspectKnowledge
           ? staticEntry.aspects
-            |> L.Foldable.any(aspect =>
+            |> Ley_IntSet.any(aspect =>
                  IM.lookup(aspect, counter)
                  |> option(false, count =>
-                      ActivatableSkills.valueToInt(heroEntry.value) >= 10
+                      ActivatableSkill.Dynamic.valueToInt(heroEntry.value)
+                      >= 10
                       && count <= 3
                     )
                )
@@ -166,17 +166,17 @@ module AspectKnowledge = {
  * Check if the dependencies allow the passed spell to be decreased.
  */
 let getMinSrByDeps =
-    (heroLiturgicalChants, heroEntry: Hero.ActivatableSkill.t) =>
+    (heroLiturgicalChants, heroEntry: ActivatableSkill.Dynamic.t) =>
   heroEntry.dependencies
   |> Dependencies.Flatten.flattenActivatableSkillDependencies(
        id =>
          heroLiturgicalChants
          |> Ley_IntMap.lookup(id)
-         |> ActivatableSkills.getValueDef,
+         |> ActivatableSkill.Dynamic.getValueDef,
        heroEntry.id,
      )
   |> ensure(Ley_List.Extra.notNull)
-  >>= Ley_List.Foldable.foldr(
+  >>= Ley_List.foldr(
         (d, acc) =>
           option(Some(d), prev => Some(Ley_Int.max(prev, d)), acc),
         None,
@@ -211,7 +211,7 @@ let getMin =
     ]
     |> catOptions
     |> ensure(Ley_List.Extra.notNull)
-    <&> Ley_List.Foldable.maximum;
+    <&> Ley_List.maximum;
 };
 
 /**
@@ -222,7 +222,7 @@ let isDecreasable =
   let getMinCached =
     getMin(~aspectKnowledge, ~staticLiturgicalChants, ~heroLiturgicalChants);
 
-  (~staticEntry, ~heroEntry: Hero.ActivatableSkill.t) =>
-    ActivatableSkills.valueToInt(heroEntry.value)
+  (~staticEntry, ~heroEntry: ActivatableSkill.Dynamic.t) =>
+    ActivatableSkill.Dynamic.valueToInt(heroEntry.value)
     > (getMinCached(~staticEntry, ~heroEntry) |> fromOption(0));
 };

@@ -10,18 +10,20 @@ module Magical: {
    * magical traditions.
    */
   let getHeroEntries:
-    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) => list(Hero.Activatable.t);
+    (Static.t, Ley_IntMap.t(Activatable_Dynamic.t)) =>
+    list(Activatable_Dynamic.t);
 
   /**
    * `getStaticEntries` returns static special ability entries for all active
    * magical traditions.
    */
   let getStaticEntries:
-    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) => list(SpecialAbility.t);
+    (Static.t, Ley_IntMap.t(Activatable_Dynamic.t)) =>
+    list(SpecialAbility.Static.t);
 
   type fullTradition = (
-    SpecialAbility.t,
-    Hero.Activatable.t,
+    SpecialAbility.Static.t,
+    Activatable_Dynamic.t,
     MagicalTradition.t,
   );
 
@@ -30,7 +32,7 @@ module Magical: {
    * static tradition entries for active magical traditions.
    */
   let getEntries:
-    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) => list(fullTradition);
+    (Static.t, Ley_IntMap.t(Activatable_Dynamic.t)) => list(fullTradition);
 
   /**
    * `idToNumId staticData id` converts a magical tradition's special ability ID
@@ -49,7 +51,7 @@ module Magical: {
    * tradition.
    */
   let getPrimaryAttributeId:
-    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) => option(int);
+    (Static.t, Ley_IntMap.t(Activatable_Dynamic.t)) => option(int);
 };
 module Blessed: {
   /**
@@ -63,19 +65,20 @@ module Blessed: {
    * blessed traditions.
    */
   let getHeroEntry:
-    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) =>
-    option(Hero.Activatable.t);
+    (Static.t, Ley_IntMap.t(Activatable_Dynamic.t)) =>
+    option(Activatable_Dynamic.t);
 
   /**
    * `getStaticEntry` returns the static special ability entry for the active
    * blessed traditions.
    */
   let getStaticEntry:
-    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) => option(SpecialAbility.t);
+    (Static.t, Ley_IntMap.t(Activatable_Dynamic.t)) =>
+    option(SpecialAbility.Static.t);
 
   type fullTradition = (
-    SpecialAbility.t,
-    Hero.Activatable.t,
+    SpecialAbility.Static.t,
+    Activatable_Dynamic.t,
     BlessedTradition.t,
   );
 
@@ -84,7 +87,7 @@ module Blessed: {
    * the static tradition entry for the active blessed traditions.
    */
   let getEntry:
-    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) => option(fullTradition);
+    (Static.t, Ley_IntMap.t(Activatable_Dynamic.t)) => option(fullTradition);
 
   /**
    * `idToNumId staticData id` converts a blessed tradition's special ability ID
@@ -103,5 +106,5 @@ module Blessed: {
    * tradition.
    */
   let getPrimaryAttributeId:
-    (Static.t, Ley_IntMap.t(Hero.Activatable.t)) => option(int);
+    (Static.t, Ley_IntMap.t(Activatable_Dynamic.t)) => option(int);
 };

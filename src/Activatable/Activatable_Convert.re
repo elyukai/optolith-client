@@ -10,7 +10,7 @@ type singleWithId = {
 };
 
 let singleToSingleWithId =
-    (x: Hero.Activatable.t, index, s: Hero.Activatable.single) => {
+    (x: Activatable_Dynamic.t, index, s: Activatable_Dynamic.single) => {
   id: x.id,
   index,
   options: s.options,
@@ -18,11 +18,11 @@ let singleToSingleWithId =
   customCost: s.customCost,
 };
 
-let heroEntryToSingles = (x: Hero.Activatable.t) =>
+let heroEntryToSingles = (x: Activatable_Dynamic.t) =>
   x.active |> Ley_List.Index.imap(singleToSingleWithId(x));
 
 let singleWithIdToSingle = s => {
-  Hero.Activatable.options: s.options,
+  Activatable_Dynamic.options: s.options,
   level: s.level,
   customCost: s.customCost,
 };

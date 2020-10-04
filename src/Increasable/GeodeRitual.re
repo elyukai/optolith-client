@@ -78,28 +78,35 @@ module Static = {
       x.translations
       |> TranslationMap.getFromLanguageOrder(langs)
       <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          check: x.check,
-          checkMod: x.checkMod,
-          effect: translation.effect,
-          castingTime:
-            ActivatableSkill.MainParameter.make(
-              false,
-              translation.castingTime,
-            ),
-          cost: ActivatableSkill.MainParameter.make(false, translation.cost),
-          range:
-            ActivatableSkill.MainParameter.make(false, translation.range),
-          duration:
-            ActivatableSkill.MainParameter.make(false, translation.duration),
-          target: translation.target,
-          property: x.property,
-          activatablePrerequisites: x.activatablePrerequisites,
-          src: PublicationRef.resolveTranslationsList(langs, x.src),
-          errata: translation.errata,
-        }
+        translation => (
+          x.id,
+          {
+            id: x.id,
+            name: translation.name,
+            check: x.check,
+            checkMod: x.checkMod,
+            effect: translation.effect,
+            castingTime:
+              ActivatableSkill.MainParameter.make(
+                false,
+                translation.castingTime,
+              ),
+            cost:
+              ActivatableSkill.MainParameter.make(false, translation.cost),
+            range:
+              ActivatableSkill.MainParameter.make(false, translation.range),
+            duration:
+              ActivatableSkill.MainParameter.make(
+                false,
+                translation.duration,
+              ),
+            target: translation.target,
+            property: x.property,
+            activatablePrerequisites: x.activatablePrerequisites,
+            src: PublicationRef.resolveTranslationsList(langs, x.src),
+            errata: translation.errata,
+          },
+        )
       )
     );
 

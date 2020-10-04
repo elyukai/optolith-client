@@ -4,18 +4,17 @@ import * as $$Map from "bs-platform/lib/es6/map.js";
 import * as List from "bs-platform/lib/es6/list.js";
 import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
-import * as Js_int from "bs-platform/lib/es6/js_int.js";
-import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
 import * as Ley_Int$OptolithClient from "./Ley_Int.bs.js";
 import * as Ley_List$OptolithClient from "./Ley_List.bs.js";
 import * as Ley_Tuple$OptolithClient from "./Ley_Tuple.bs.js";
 import * as Ley_Option$OptolithClient from "./Ley_Option.bs.js";
 import * as Ley_Result$OptolithClient from "./Ley_Result.bs.js";
+import * as Ley_Foldable$OptolithClient from "./Ley_Foldable.bs.js";
 import * as Ley_Function$OptolithClient from "./Ley_Function.bs.js";
 
-function Make(funarg) {
-  var TypedMap = $$Map.Make(funarg);
+function Make(Key) {
+  var TypedMap = $$Map.Make(Key);
   var foldr = function (f, initial, mp) {
     return Curry._3(TypedMap.fold, (function (param, v, acc) {
                   return Curry._2(f, v, acc);
@@ -26,101 +25,12 @@ function Make(funarg) {
                   return Curry._2(f, acc, v);
                 }), mp, initial);
   };
-  var toList = TypedMap.bindings;
+  var include = Ley_Foldable$OptolithClient.Make({
+        foldr: foldr,
+        foldl: foldl
+      });
+  var foldr$1 = include.foldr;
   var $$null = function (mp) {
-    return Curry._1(TypedMap.is_empty, mp);
-  };
-  var elem = function (e, mp) {
-    return Curry._2(TypedMap.exists, (function (param, x) {
-                  return Caml_obj.caml_equal(e, x);
-                }), mp);
-  };
-  var sum = function (mp) {
-    return foldr((function (prim, prim$1) {
-                  return prim + prim$1 | 0;
-                }), 0, mp);
-  };
-  var product = function (mp) {
-    return foldr((function (prim, prim$1) {
-                  return Math.imul(prim, prim$1);
-                }), 1, mp);
-  };
-  var maximum = function (mp) {
-    return foldr((function (prim, prim$1) {
-                  return Math.max(prim, prim$1);
-                }), Js_int.min, mp);
-  };
-  var minimum = function (mp) {
-    return foldr((function (prim, prim$1) {
-                  return Math.min(prim, prim$1);
-                }), Js_int.max, mp);
-  };
-  var concat = function (mp) {
-    return foldr((function (param, param$1) {
-                  return Ley_Function$OptolithClient.flip(List.append, param, param$1);
-                }), /* [] */0, mp);
-  };
-  var concatMap = function (f, mp) {
-    return Curry._3(TypedMap.fold, (function (param, v, acc) {
-                  return Curry._3(TypedMap.union, (function (param, x, param$1) {
-                                return Caml_option.some(x);
-                              }), acc, Curry._1(f, v));
-                }), mp, TypedMap.empty);
-  };
-  var con = function (mp) {
-    return Curry._2(TypedMap.for_all, (function (param) {
-                  return Ley_Function$OptolithClient.$$const(Ley_Function$OptolithClient.id, param);
-                }), mp);
-  };
-  var dis = function (mp) {
-    return !Curry._2(TypedMap.for_all, (function (param) {
-                  return Ley_Function$OptolithClient.$$const((function (prim) {
-                                return !prim;
-                              }), param);
-                }), mp);
-  };
-  var any = function (pred, mp) {
-    return !Curry._2(TypedMap.for_all, (function (param, x) {
-                  return !Curry._1(pred, x);
-                }), mp);
-  };
-  var all = function (pred, mp) {
-    return Curry._2(TypedMap.for_all, (function (param, x) {
-                  return Curry._1(pred, x);
-                }), mp);
-  };
-  var notElem = function (e, mp) {
-    return !elem(e, mp);
-  };
-  var find = function (pred, mp) {
-    return Curry._2(Ley_Option$OptolithClient.Infix.$less$$great, (function (prim) {
-                  return prim[1];
-                }), Curry._2(TypedMap.find_first_opt, (function (key) {
-                      return Curry._1(pred, Ley_Function$OptolithClient.flip(TypedMap.find, mp, key));
-                    }), mp));
-  };
-  var Foldable_length = TypedMap.cardinal;
-  var Foldable = {
-    foldr: foldr,
-    foldl: foldl,
-    toList: toList,
-    $$null: $$null,
-    length: Foldable_length,
-    elem: elem,
-    sum: sum,
-    product: product,
-    maximum: maximum,
-    minimum: minimum,
-    concat: concat,
-    concatMap: concatMap,
-    con: con,
-    dis: dis,
-    any: any,
-    all: all,
-    notElem: notElem,
-    find: find
-  };
-  var $$null$1 = function (mp) {
     return Curry._1(TypedMap.is_empty, mp);
   };
   var member = TypedMap.mem;
@@ -131,7 +41,7 @@ function Make(funarg) {
     return Curry._2(Ley_Option$OptolithClient.Infix.$less$$great, (function (prim) {
                   return prim[1];
                 }), Curry._2(TypedMap.find_first_opt, (function (k) {
-                      return Curry._2(funarg.compare, k, key) === 0;
+                      return Curry._2(Key.compare, k, key) === 0;
                     }), mp));
   };
   var findWithDefault = function (def, key, mp) {
@@ -223,15 +133,16 @@ function Make(funarg) {
                   return prim[0];
                 }), Curry._1(TypedMap.bindings, mp));
   };
+  var assocs = TypedMap.bindings;
   var fromList = function (ps) {
-    return List.fold_right((function (param) {
-                  return Curry._2(insert, param[0], param[1]);
-                }), ps, empty);
+    return List.fold_left((function (mp, param) {
+                  return Curry._3(insert, param[0], param[1], mp);
+                }), empty, ps);
   };
   var fromArray = function (ps) {
-    return $$Array.fold_right((function (param) {
-                  return Curry._2(insert, param[0], param[1]);
-                }), ps, empty);
+    return $$Array.fold_left((function (mp, param) {
+                  return Curry._3(insert, param[0], param[1], mp);
+                }), empty, ps);
   };
   var filter = function (pred, mp) {
     return Curry._2(TypedMap.filter, (function (param, x) {
@@ -274,7 +185,7 @@ function Make(funarg) {
                 }), mp1);
   };
   var countWith = function (pred, mp) {
-    return foldr((function (x) {
+    return Curry._3(foldr$1, (function (x) {
                   if (Curry._1(pred, x)) {
                     return Ley_Int$OptolithClient.inc;
                   } else {
@@ -362,15 +273,27 @@ function Make(funarg) {
     }
   };
   var mapMEither = function (f, mp) {
-    return Ley_Result$OptolithClient.Functor.$less$$great(fromList, mapMEitherHelper(f, Curry._1(toList, mp)));
-  };
-  var Traversable = {
-    mapMEither: mapMEither
+    return Ley_Result$OptolithClient.Functor.$less$$great(fromList, mapMEitherHelper(f, Curry._1(assocs, mp)));
   };
   return {
-          Foldable: Foldable,
-          Traversable: Traversable,
-          $$null: $$null$1,
+          foldr: foldr$1,
+          foldl: include.foldl,
+          toList: include.toList,
+          length: include.length,
+          elem: include.elem,
+          sum: include.sum,
+          maximum: include.maximum,
+          minimum: include.minimum,
+          concat: include.concat,
+          concatMap: include.concatMap,
+          con: include.con,
+          dis: include.dis,
+          any: include.any,
+          all: include.all,
+          notElem: include.notElem,
+          find: include.find,
+          mapMEither: mapMEither,
+          $$null: $$null,
           size: TypedMap.cardinal,
           member: member,
           notMember: notMember,
@@ -396,7 +319,7 @@ function Make(funarg) {
           foldlWithKey: foldlWithKey,
           elems: elems,
           keys: keys,
-          assocs: TypedMap.bindings,
+          assocs: assocs,
           fromList: fromList,
           fromArray: fromArray,
           filter: filter,

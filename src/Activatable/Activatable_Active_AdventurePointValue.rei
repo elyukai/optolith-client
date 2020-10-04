@@ -35,7 +35,7 @@ let getApValueDifferenceOnChange:
     Static.t,
     Hero.t,
     Static.activatable,
-    Hero.Activatable.t,
+    Activatable_Dynamic.t,
     singleWithId
   ) =>
   combinedApValue;

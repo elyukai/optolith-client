@@ -1,5 +1,5 @@
 module Dynamic =
-  Increasable.Dynamic({
+  Increasable.Dynamic.Make({
     let minValue = 0;
   });
 
@@ -201,57 +201,60 @@ module Static = {
       x.translations
       |> TranslationMap.getFromLanguageOrder(langs)
       <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          check: x.check,
-          encumbrance:
-            switch (x.enc) {
-            | True => True
-            | False => False
-            | Maybe => Maybe(translation.encDescription)
-            },
-          applications:
-            x.applications
-            |> Ley_Option.option(Ley_IntMap.empty, applications =>
-                 applications
-                 |> Ley_List.foldr(
-                      application =>
-                        application
-                        |> Application.resolveTranslations(langs)
-                        |> Ley_Option.option(
-                             Ley_Function.id,
-                             Ley_IntMap.insert(application.id),
-                           ),
-                      Ley_IntMap.empty,
-                    )
-               ),
-          applicationsInput: translation.applicationsInput,
-          uses:
-            x.uses
-            |> Ley_Option.option(Ley_IntMap.empty, uses =>
-                 uses
-                 |> Ley_List.foldr(
-                      use =>
-                        use
-                        |> Use.resolveTranslations(langs)
-                        |> Ley_Option.option(
-                             Ley_Function.id,
-                             Ley_IntMap.insert(use.id),
-                           ),
-                      Ley_IntMap.empty,
-                    )
-               ),
-          ic: x.ic,
-          gr: x.gr,
-          tools: translation.tools,
-          quality: translation.quality,
-          failed: translation.failed,
-          critical: translation.critical,
-          botch: translation.botch,
-          src: PublicationRef.resolveTranslationsList(langs, x.src),
-          errata: translation.errata,
-        }
+        translation => (
+          x.id,
+          {
+            id: x.id,
+            name: translation.name,
+            check: x.check,
+            encumbrance:
+              switch (x.enc) {
+              | True => True
+              | False => False
+              | Maybe => Maybe(translation.encDescription)
+              },
+            applications:
+              x.applications
+              |> Ley_Option.option(Ley_IntMap.empty, applications =>
+                   applications
+                   |> Ley_List.foldr(
+                        application =>
+                          application
+                          |> Application.resolveTranslations(langs)
+                          |> Ley_Option.option(
+                               Ley_Function.id,
+                               Ley_IntMap.insert(application.id),
+                             ),
+                        Ley_IntMap.empty,
+                      )
+                 ),
+            applicationsInput: translation.applicationsInput,
+            uses:
+              x.uses
+              |> Ley_Option.option(Ley_IntMap.empty, uses =>
+                   uses
+                   |> Ley_List.foldr(
+                        use =>
+                          use
+                          |> Use.resolveTranslations(langs)
+                          |> Ley_Option.option(
+                               Ley_Function.id,
+                               Ley_IntMap.insert(use.id),
+                             ),
+                        Ley_IntMap.empty,
+                      )
+                 ),
+            ic: x.ic,
+            gr: x.gr,
+            tools: translation.tools,
+            quality: translation.quality,
+            failed: translation.failed,
+            critical: translation.critical,
+            botch: translation.botch,
+            src: PublicationRef.resolveTranslationsList(langs, x.src),
+            errata: translation.errata,
+          },
+        )
       )
     );
 

@@ -4,8 +4,8 @@ import * as $$Set from "bs-platform/lib/es6/set.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Ley_Function$OptolithClient from "./Ley_Function.bs.js";
 
-function Make(funarg) {
-  var TypedSet = $$Set.Make(funarg);
+function Make(Key) {
+  var TypedSet = $$Set.Make(Key);
   var foldr = function (f, initial, s) {
     return Curry._3(TypedSet.fold, f, s, initial);
   };
@@ -18,7 +18,7 @@ function Make(funarg) {
   var length = TypedSet.cardinal;
   var elem = function (x) {
     return Curry._1(TypedSet.exists, (function (y) {
-                  return Curry._2(funarg.compare, x, y) === 0;
+                  return Curry._2(Key.compare, x, y) === 0;
                 }));
   };
   var concatMap = function (f, s) {
@@ -40,20 +40,6 @@ function Make(funarg) {
   var find = function (pred, s) {
     return Curry._2(TypedSet.find_first_opt, pred, s);
   };
-  var Foldable_null = TypedSet.is_empty;
-  var Foldable = {
-    foldr: foldr,
-    foldl: foldl,
-    toList: toList,
-    $$null: Foldable_null,
-    length: length,
-    elem: elem,
-    concatMap: concatMap,
-    any: any,
-    all: all,
-    notElem: notElem,
-    find: find
-  };
   var insert = TypedSet.add;
   var $$delete = TypedSet.remove;
   var toggle = function (x, s) {
@@ -63,8 +49,25 @@ function Make(funarg) {
       return Curry._2(insert, x, s);
     }
   };
+  var disjoint = function (xs, ys) {
+    return Curry._1(TypedSet.is_empty, Curry._2(TypedSet.inter, xs, ys));
+  };
+  var difference = TypedSet.diff;
+  var Infix = {
+    $unknown$slash: difference
+  };
   return {
-          Foldable: Foldable,
+          foldr: foldr,
+          foldl: foldl,
+          toList: toList,
+          $$null: TypedSet.is_empty,
+          length: length,
+          elem: elem,
+          concatMap: concatMap,
+          any: any,
+          all: all,
+          notElem: notElem,
+          find: find,
           empty: TypedSet.empty,
           singleton: TypedSet.singleton,
           fromList: TypedSet.of_list,
@@ -74,11 +77,13 @@ function Make(funarg) {
           member: elem,
           notMember: notElem,
           size: length,
+          disjoint: disjoint,
           union: TypedSet.union,
-          difference: TypedSet.diff,
+          difference: difference,
           filter: TypedSet.filter,
           map: TypedSet.map,
-          elems: toList
+          elems: toList,
+          Infix: Infix
         };
 }
 

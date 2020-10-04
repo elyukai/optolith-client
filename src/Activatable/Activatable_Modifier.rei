@@ -4,7 +4,7 @@
  * `dec` entry's level decreases the value.
  */
 let modifyByLevel:
-  (int, option(Hero.Activatable.t), option(Hero.Activatable.t)) => int;
+  (int, option(Activatable_Dynamic.t), option(Activatable_Dynamic.t)) => int;
 
 /**
  * `modifyByLevelM value inc dec` modifies a base `value` by the active level of
@@ -13,7 +13,11 @@ let modifyByLevel:
  * function always returns `0`.
  */
 let modifyByLevelM:
-  (option(int), option(Hero.Activatable.t), option(Hero.Activatable.t)) =>
+  (
+    option(int),
+    option(Activatable_Dynamic.t),
+    option(Activatable_Dynamic.t)
+  ) =>
   int;
 
 /**
@@ -24,7 +28,11 @@ let modifyByLevelM:
  * always returns `0`.
  */
 let getModifierByIsActive:
-  (option(int), option(Hero.Activatable.t), option(Hero.Activatable.t)) =>
+  (
+    option(int),
+    option(Activatable_Dynamic.t),
+    option(Activatable_Dynamic.t)
+  ) =>
   int;
 
 /**
@@ -35,7 +43,7 @@ let getModifierByIsActive:
 let getModifierByIsActives:
   (
     option(int),
-    list(option(Hero.Activatable.t)),
-    list(option(Hero.Activatable.t))
+    list(option(Activatable_Dynamic.t)),
+    list(option(Activatable_Dynamic.t))
   ) =>
   int;

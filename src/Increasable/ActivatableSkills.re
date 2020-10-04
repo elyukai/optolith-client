@@ -48,7 +48,7 @@ let hasActiveSkillEntries = (domain, hero: Hero.t) =>
     | LiturgicalChants => hero.liturgicalChants
     }
   )
-  |> IM.Foldable.any((entry: ActivatableSkill.Dynamic.t) =>
+  |> IM.any((entry: ActivatableSkill.Dynamic.t) =>
        switch (entry.value) {
        | Active(_) => true
        | Inactive => false

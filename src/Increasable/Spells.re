@@ -1,6 +1,5 @@
 open Ley_Option;
-open Ley_Option;
-open Hero.ActivatableSkill;
+open Ley_Option.Infix;
 
 module F = Ley_Function;
 module IM = Ley_IntMap;
@@ -22,7 +21,7 @@ let getMaxSrFromPropertyKnowledge =
           | _ => None
         ),
       )
-  |> option(true, L.Foldable.notElem(staticEntry.property))
+  |> option(true, L.notElem(staticEntry.property))
   |> (hasRestriction => hasRestriction ? Some(14) : None);
 
 /**
@@ -43,7 +42,7 @@ let getMax =
     getMaxSrFromPropertyKnowledge(propertyKnowledge, staticEntry),
   ]
   |> catOptions
-  |> L.Foldable.minimum
+  |> L.minimum
   |> (+)(
        Skills.getExceptionalSkillBonus(
          exceptionalSkill,
@@ -62,9 +61,9 @@ let isIncreasable =
       ~exceptionalSkill,
       ~propertyKnowledge,
       ~staticEntry,
-      ~heroEntry: Hero.ActivatableSkill.t,
+      ~heroEntry: ActivatableSkill.Dynamic.t,
     ) =>
-  ActivatableSkills.valueToInt(heroEntry.value)
+  ActivatableSkill.Dynamic.valueToInt(heroEntry.value)
   < getMax(
       ~startEl,
       ~phase,
@@ -79,7 +78,7 @@ module PropertyKnowledge = {
 
   let minimumAmount = 3;
 
-  let isOnMinimum = (spell: Hero.ActivatableSkill.t) =>
+  let isOnMinimum = (spell: ActivatableSkill.Dynamic.t) =>
     switch (spell.value) {
     | Active(value) => value >= minimumSkillRating
     | Inactive => false
@@ -125,12 +124,12 @@ module PropertyKnowledge = {
         counter,
         activePropertyKnowledges,
         staticEntry: Spell.Static.t,
-        heroEntry: Hero.ActivatableSkill.t,
+        heroEntry: ActivatableSkill.Dynamic.t,
       ) =>
     activePropertyKnowledges
     // Is spell part of dependencies of any active Property
     // Knowledge?
-    |> Ley_List.Foldable.any((sid: Id.Activatable.Option.t) =>
+    |> Ley_List.any((sid: Id.Activatable.Option.t) =>
          [@warning "-4"]
          (
            switch (sid) {
@@ -148,7 +147,7 @@ module PropertyKnowledge = {
             |> Ley_IntMap.lookup(staticEntry.property)
             >>= (
               count =>
-                ActivatableSkills.valueToInt(heroEntry.value) >= 10
+                ActivatableSkill.Dynamic.valueToInt(heroEntry.value) >= 10
                 && count <= 3
                   ? Some(10) : None
             )
@@ -159,15 +158,17 @@ module PropertyKnowledge = {
 /**
  * Check if the dependencies allow the passed spell to be decreased.
  */
-let getMinSrByDeps = (heroSpells, heroEntry: Hero.ActivatableSkill.t) =>
+let getMinSrByDeps = (heroSpells, heroEntry: ActivatableSkill.Dynamic.t) =>
   heroEntry.dependencies
   |> Dependencies.Flatten.flattenActivatableSkillDependencies(
        id =>
-         heroSpells |> Ley_IntMap.lookup(id) |> ActivatableSkills.getValueDef,
+         heroSpells
+         |> Ley_IntMap.lookup(id)
+         |> ActivatableSkill.Dynamic.getValueDef,
        heroEntry.id,
      )
   |> ensure(Ley_List.Extra.notNull)
-  >>= Ley_List.Foldable.foldr(
+  >>= Ley_List.foldr(
         (d, acc) =>
           option(Some(d), prev => Some(Ley_Int.max(prev, d)), acc),
         None,
@@ -197,7 +198,7 @@ let getMin = (~propertyKnowledge, ~staticSpells, ~heroSpells) => {
     ]
     |> catOptions
     |> ensure(Ley_List.Extra.notNull)
-    <&> Ley_List.Foldable.maximum;
+    <&> Ley_List.maximum;
 };
 
 /**
@@ -206,7 +207,7 @@ let getMin = (~propertyKnowledge, ~staticSpells, ~heroSpells) => {
 let isDecreasable = (~propertyKnowledge, ~staticSpells, ~heroSpells) => {
   let getMinCached = getMin(~propertyKnowledge, ~staticSpells, ~heroSpells);
 
-  (~staticEntry, ~heroEntry: Hero.ActivatableSkill.t) =>
-    ActivatableSkills.valueToInt(heroEntry.value)
+  (~staticEntry, ~heroEntry: ActivatableSkill.Dynamic.t) =>
+    ActivatableSkill.Dynamic.valueToInt(heroEntry.value)
     > (getMinCached(~staticEntry, ~heroEntry) |> fromOption(0));
 };

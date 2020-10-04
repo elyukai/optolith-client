@@ -39,22 +39,29 @@ function decodeMultilingual(json) {
 function decode$1(langs, json) {
   var x = decodeMultilingual(json);
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                return {
-                        id: x.id,
-                        name: translation.name,
-                        effect: translation.effect,
-                        range: translation.range,
-                        duration: translation.duration,
-                        target: translation.target,
-                        traditions: x.traditions,
-                        src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
-                      };
+                return [
+                        x.id,
+                        {
+                          id: x.id,
+                          name: translation.name,
+                          effect: translation.effect,
+                          range: translation.range,
+                          duration: translation.duration,
+                          target: translation.target,
+                          traditions: x.traditions,
+                          src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                          errata: translation.errata
+                        }
+                      ];
               }));
 }
 
+var Static = {
+  decode: decode$1
+};
+
 export {
-  decode$1 as decode,
+  Static ,
   
 }
 /* TranslationMap Not a pure module */

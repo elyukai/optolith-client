@@ -45,30 +45,84 @@ type t('a) = Js.Promise.t('a);
 
 type io('a) = t('a);
 
-module Functor = {
-  let (<$>) = (f, m) =>
-    Js.Promise.then_(x => f(x) |> Js.Promise.resolve, m);
+include (
+          Ley_Functor.Make({
+            type nonrec t('a) = t('a);
 
-  let fmap = (<$>);
+            let fmap = (f, m) =>
+              Js.Promise.then_(x => f(x) |> Js.Promise.resolve, m);
+          }):
+            Ley_Functor.T with type t('a) := t('a)
+        );
 
-  let (<&>) = (m, f) => f <$> m;
+include (
+          Ley_Monad.Make({
+            type nonrec t('a) = t('a);
+
+            let pure = Js.Promise.resolve;
+
+            let fmap = fmap;
+
+            let bind = Js.Promise.then_;
+          }):
+            Ley_Monad.T with type t('a) := t('a)
+        );
+
+module Infix = {
+  include (
+            Ley_Functor.MakeInfix({
+              type nonrec t('a) = t('a);
+
+              let fmap = fmap;
+            }):
+              Ley_Functor.Infix with type t('a) := t('a)
+          );
+
+  include (
+            Ley_Monad.MakeInfix({
+              type nonrec t('a) = t('a);
+
+              let pure = return;
+
+              let fmap = fmap;
+
+              let bind = Js.Promise.then_;
+            }):
+              Ley_Monad.Infix with type t('a) := t('a)
+          );
 };
 
-module Monad = {
-  open Functor;
+let rec mapM = (f, xs) =>
+  switch (xs) {
+  | [] => return([])
+  | [x, ...ys] =>
+    Infix.(f(x) >>= (z => mapM(f, ys) <&> (zs => [z, ...zs])))
+  };
 
-  let pure = Js.Promise.resolve;
+let rec imapMAux = (i, f, xs) =>
+  switch (xs) {
+  | [] => return([])
+  | [x, ...ys] =>
+    Infix.(f(i, x) >>= (z => imapMAux(i + 1, f, ys) <&> (zs => [z, ...zs])))
+  };
 
-  let (>>=) = (mx, f) => Js.Promise.then_(f, mx);
+let imapM = (f, xs) => imapMAux(0, f, xs);
 
-  let (=<<) = (f, mx) => mx >>= f;
+let rec imapOptionMAux = (i, f, xs) =>
+  switch (xs) {
+  | [] => return([])
+  | [x, ...ys] =>
+    Infix.(
+      f(i, x)
+      >>= (
+        maybeZ =>
+          imapOptionMAux(i + 1, f, ys)
+          <&> (zs => Ley_Option.option(zs, z => [z, ...zs], maybeZ))
+      )
+    )
+  };
 
-  let rec mapM = (f, xs) =>
-    switch (xs) {
-    | [] => pure([])
-    | [x, ...ys] => x |> f >>= (z => (zs => [z, ...zs]) <$> mapM(f, ys))
-    };
-};
+let imapOptionM = (f, xs) => imapOptionMAux(0, f, xs);
 
 type filePath = string;
 
@@ -81,8 +135,8 @@ let deleteFile = (path: filePath) => FileSystem.Promises.unlink(path);
 
 let existsFile = (path: filePath) =>
   FileSystem.Promises.access(path)
-  |> Js.Promise.then_(_ => Monad.pure(true))
-  |> Js.Promise.catch(_ => Monad.pure(false));
+  |> Js.Promise.then_(_ => return(true))
+  |> Js.Promise.catch(_ => return(false));
 
 let copyFile = (origin: filePath, dest: filePath) =>
   FileSystem.Promises.copyFile(origin, dest);

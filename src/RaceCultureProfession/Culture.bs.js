@@ -118,39 +118,42 @@ function decodeMultilingual(json) {
 function decode$1(langs, json) {
   var x = decodeMultilingual(json);
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                return {
-                        id: x.id,
-                        name: translation.name,
-                        language: x.languages,
-                        script: x.literacy,
-                        areaKnowledge: translation.areaKnowledge,
-                        areaKnowledgeShort: translation.areaKnowledgeShort,
-                        socialStatus: x.social,
-                        commonMundaneProfessionsAll: x.commonMundaneProfessionsAll,
-                        commonMundaneProfessionsExceptions: x.commonMundaneProfessionsExceptions,
-                        commonMundaneProfessionsText: translation.commonMundaneProfessions,
-                        commonMagicProfessionsAll: x.commonMagicalProfessionsAll,
-                        commonMagicProfessionsExceptions: x.commonMagicalProfessionsExceptions,
-                        commonMagicProfessionsText: translation.commonMagicalProfessions,
-                        commonBlessedProfessionsAll: x.commonBlessedProfessionsAll,
-                        commonBlessedProfessionsExceptions: x.commonBlessedProfessionsExceptions,
-                        commonBlessedProfessionsText: translation.commonBlessedProfessions,
-                        commonAdvantages: x.commonAdvantages,
-                        commonAdvantagesText: translation.commonAdvantages,
-                        commonDisadvantages: x.commonDisadvantages,
-                        commonDisadvantagesText: translation.commonDisadvantages,
-                        uncommonAdvantages: x.uncommonAdvantages,
-                        uncommonAdvantagesText: translation.uncommonAdvantages,
-                        uncommonDisadvantages: x.uncommonDisadvantages,
-                        uncommonDisadvantagesText: translation.uncommonDisadvantages,
-                        commonSkills: x.commonSkills,
-                        uncommonSkills: x.uncommonSkills,
-                        commonNames: translation.commonNames,
-                        culturalPackageApValue: x.culturalPackageApValue,
-                        culturalPackageSkills: x.culturalPackageSkills,
-                        src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
-                      };
+                return [
+                        x.id,
+                        {
+                          id: x.id,
+                          name: translation.name,
+                          language: x.languages,
+                          script: x.literacy,
+                          areaKnowledge: translation.areaKnowledge,
+                          areaKnowledgeShort: translation.areaKnowledgeShort,
+                          socialStatus: x.social,
+                          commonMundaneProfessionsAll: x.commonMundaneProfessionsAll,
+                          commonMundaneProfessionsExceptions: x.commonMundaneProfessionsExceptions,
+                          commonMundaneProfessionsText: translation.commonMundaneProfessions,
+                          commonMagicProfessionsAll: x.commonMagicalProfessionsAll,
+                          commonMagicProfessionsExceptions: x.commonMagicalProfessionsExceptions,
+                          commonMagicProfessionsText: translation.commonMagicalProfessions,
+                          commonBlessedProfessionsAll: x.commonBlessedProfessionsAll,
+                          commonBlessedProfessionsExceptions: x.commonBlessedProfessionsExceptions,
+                          commonBlessedProfessionsText: translation.commonBlessedProfessions,
+                          commonAdvantages: x.commonAdvantages,
+                          commonAdvantagesText: translation.commonAdvantages,
+                          commonDisadvantages: x.commonDisadvantages,
+                          commonDisadvantagesText: translation.commonDisadvantages,
+                          uncommonAdvantages: x.uncommonAdvantages,
+                          uncommonAdvantagesText: translation.uncommonAdvantages,
+                          uncommonDisadvantages: x.uncommonDisadvantages,
+                          uncommonDisadvantagesText: translation.uncommonDisadvantages,
+                          commonSkills: x.commonSkills,
+                          uncommonSkills: x.uncommonSkills,
+                          commonNames: translation.commonNames,
+                          culturalPackageApValue: x.culturalPackageApValue,
+                          culturalPackageSkills: x.culturalPackageSkills,
+                          src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                          errata: translation.errata
+                        }
+                      ];
               }));
 }
 

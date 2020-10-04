@@ -1,6 +1,7 @@
 open Static;
 
-let isActive = (x: Hero.Activatable.t) => Ley_List.Extra.notNull(x.active);
+let isActive = (x: Activatable_Dynamic.t) =>
+  Ley_List.Extra.notNull(x.active);
 
 let isActiveM = Ley_Option.option(false, isActive);
 

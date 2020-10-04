@@ -1,4 +1,5 @@
-let spellsToSpecialAbilityOptions: list(Spell.Static.t) => SelectOption.map;
+let spellsToSpecialAbilityOptions:
+  Ley_IntMap.t(Spell.Static.t) => SelectOption.map;
 
 let liturgicalChantsToSpecialAbilityOptions:
-  list(LiturgicalChant.Static.t) => SelectOption.map;
+  Ley_IntMap.t(LiturgicalChant.Static.t) => SelectOption.map;

@@ -26,7 +26,7 @@ module Skills = {
   let getExceptionalSkillBonus = (exceptionalSkill, id) =>
     maybe(
       0,
-      (x: Hero.Activatable.t) =>
+      (x: Activatable_Dynamic.t) =>
         x.active
         |> ListH.countBy(a =>
              a.options |> listToMaybe |> Maybe.Foldable.elem(`Skill(id))

@@ -327,66 +327,70 @@ module Static = {
       x.translations
       |> TranslationMap.getFromLanguageOrder(langs)
       <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          apValue: x.apValue,
-          lp: x.lp,
-          spi: x.spi,
-          tou: x.tou,
-          mov: x.mov,
-          attributeAdjustments: x.attributeAdjustments,
-          attributeAdjustmentsSelectionValue:
-            x.attributeAdjustmentsSelectionValue,
-          attributeAdjustmentsSelectionList:
-            x.attributeAdjustmentsSelectionList,
-          attributeAdjustmentsText: translation.attributeAdjustments,
-          automaticAdvantages: x.automaticAdvantages,
-          automaticAdvantagesText: translation.automaticAdvantages,
-          stronglyRecommendedAdvantages: x.stronglyRecommendedAdvantages,
-          stronglyRecommendedAdvantagesText:
-            translation.stronglyRecommendedAdvantages,
-          stronglyRecommendedDisadvantages: x.stronglyRecommendedDisadvantages,
-          stronglyRecommendedDisadvantagesText:
-            translation.stronglyRecommendedDisadvantages,
-          commonAdvantages: x.commonAdvantages,
-          commonAdvantagesText: translation.commonAdvantages,
-          commonDisadvantages: x.commonDisadvantages,
-          commonDisadvantagesText: translation.commonDisadvantages,
-          uncommonAdvantages: x.uncommonAdvantages,
-          uncommonAdvantagesText: translation.uncommonDisadvantages,
-          uncommonDisadvantages: x.uncommonDisadvantages,
-          uncommonDisadvantagesText: translation.uncommonDisadvantages,
-          weightBase: x.weightBase,
-          weightRandom: x.weightRandom,
-          variantOptions:
-            switch (x.variantOptions) {
-            | WithVariants(options) =>
-              WithVariants({
-                variants:
-                  Ley_IntMap.mapMaybe(
-                    Variant.resolveTranslations(langs),
-                    options.variants,
-                  ),
-              })
-            | WithoutVariants({
-                commonCultures,
-                hairColors,
-                eyeColors,
-                sizeBase,
-                sizeRandom,
-              }) =>
-              WithoutVariants({
-                commonCultures,
-                hairColors,
-                eyeColors,
-                sizeBase,
-                sizeRandom,
-              })
-            },
-          src: PublicationRef.resolveTranslationsList(langs, x.src),
-          errata: translation.errata,
-        }
+        translation => (
+          x.id,
+          {
+            id: x.id,
+            name: translation.name,
+            apValue: x.apValue,
+            lp: x.lp,
+            spi: x.spi,
+            tou: x.tou,
+            mov: x.mov,
+            attributeAdjustments: x.attributeAdjustments,
+            attributeAdjustmentsSelectionValue:
+              x.attributeAdjustmentsSelectionValue,
+            attributeAdjustmentsSelectionList:
+              x.attributeAdjustmentsSelectionList,
+            attributeAdjustmentsText: translation.attributeAdjustments,
+            automaticAdvantages: x.automaticAdvantages,
+            automaticAdvantagesText: translation.automaticAdvantages,
+            stronglyRecommendedAdvantages: x.stronglyRecommendedAdvantages,
+            stronglyRecommendedAdvantagesText:
+              translation.stronglyRecommendedAdvantages,
+            stronglyRecommendedDisadvantages:
+              x.stronglyRecommendedDisadvantages,
+            stronglyRecommendedDisadvantagesText:
+              translation.stronglyRecommendedDisadvantages,
+            commonAdvantages: x.commonAdvantages,
+            commonAdvantagesText: translation.commonAdvantages,
+            commonDisadvantages: x.commonDisadvantages,
+            commonDisadvantagesText: translation.commonDisadvantages,
+            uncommonAdvantages: x.uncommonAdvantages,
+            uncommonAdvantagesText: translation.uncommonDisadvantages,
+            uncommonDisadvantages: x.uncommonDisadvantages,
+            uncommonDisadvantagesText: translation.uncommonDisadvantages,
+            weightBase: x.weightBase,
+            weightRandom: x.weightRandom,
+            variantOptions:
+              switch (x.variantOptions) {
+              | WithVariants(options) =>
+                WithVariants({
+                  variants:
+                    Ley_IntMap.mapMaybe(
+                      Variant.resolveTranslations(langs),
+                      options.variants,
+                    ),
+                })
+              | WithoutVariants({
+                  commonCultures,
+                  hairColors,
+                  eyeColors,
+                  sizeBase,
+                  sizeRandom,
+                }) =>
+                WithoutVariants({
+                  commonCultures,
+                  hairColors,
+                  eyeColors,
+                  sizeBase,
+                  sizeRandom,
+                })
+              },
+            src: PublicationRef.resolveTranslationsList(langs, x.src),
+            errata: translation.errata,
+          },
+        )
       )
     );
 

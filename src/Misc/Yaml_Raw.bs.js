@@ -2,335 +2,325 @@
 
 import * as Path from "path";
 import * as Yaml from "yaml";
+import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as IO$OptolithClient from "../Data/IO.bs.js";
+import * as Directory$OptolithClient from "../Data/Directory.bs.js";
 
 var Parser = {};
 
-function readUnivYaml(name) {
-  return IO$OptolithClient.readFile(Path.join(".", "app", "Database", "univ", name + ".yaml"));
+function parseFilesOfEntryType(dir) {
+  return IO$OptolithClient.mapM((function (x) {
+                return Curry._2(IO$OptolithClient.Infix.$less$amp$great, IO$OptolithClient.readFile(x), (function (prim) {
+                              return Yaml.parse(prim);
+                            }));
+              }), Directory$OptolithClient.getDirectoryContents(Path.join(".", "src", "Database", dir)));
 }
 
-function getUnivStaticData(param) {
-  return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                  readUnivYaml("Advantages"),
-                  readUnivYaml("AnimistForces"),
-                  readUnivYaml("BlessedTraditions"),
-                  readUnivYaml("Blessings"),
-                  readUnivYaml("Cantrips"),
-                  readUnivYaml("CombatTechniques")
-                ]), (function (param) {
-                var combatTechniques = param[5];
-                var cantrips = param[4];
-                var blessings = param[3];
-                var blessedTraditions = param[2];
-                var animistForces = param[1];
-                var advantages = param[0];
-                return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                                readUnivYaml("Cultures"),
-                                readUnivYaml("Curses"),
-                                readUnivYaml("Disadvantages"),
-                                readUnivYaml("DominationRituals"),
-                                readUnivYaml("ElvenMagicalSongs"),
-                                readUnivYaml("Equipment")
-                              ]), (function (param) {
-                              var items = param[5];
-                              var elvenMagicalSongs = param[4];
-                              var dominationRituals = param[3];
-                              var disadvantages = param[2];
-                              var curses = param[1];
-                              var cultures = param[0];
-                              return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                                              readUnivYaml("EquipmentPackages"),
-                                              readUnivYaml("ExperienceLevels"),
-                                              readUnivYaml("FocusRules"),
-                                              readUnivYaml("GeodeRituals"),
-                                              readUnivYaml("LiturgicalChantEnhancements"),
-                                              readUnivYaml("LiturgicalChants")
-                                            ]), (function (param) {
-                                            var liturgicalChants = param[5];
-                                            var liturgicalChantEnhancements = param[4];
-                                            var geodeRituals = param[3];
-                                            var focusRules = param[2];
-                                            var experienceLevels = param[1];
-                                            var equipmentPackages = param[0];
-                                            return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                                                            readUnivYaml("MagicalDances"),
-                                                            readUnivYaml("MagicalMelodies"),
-                                                            readUnivYaml("MagicalTraditions"),
-                                                            readUnivYaml("Professions"),
-                                                            readUnivYaml("ProfessionVariants"),
-                                                            readUnivYaml("Races")
-                                                          ]), (function (param) {
-                                                          var races = param[5];
-                                                          var professionVariants = param[4];
-                                                          var professions = param[3];
-                                                          var magicalTraditions = param[2];
-                                                          var magicalMelodies = param[1];
-                                                          var magicalDances = param[0];
-                                                          return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                                                                          readUnivYaml("RaceVariants"),
-                                                                          readUnivYaml("RogueSpells"),
-                                                                          readUnivYaml("Skills"),
-                                                                          readUnivYaml("SpecialAbilities"),
-                                                                          readUnivYaml("SpellEnhancements"),
-                                                                          readUnivYaml("Spells")
-                                                                        ]), (function (param) {
-                                                                        var spells = param[5];
-                                                                        var spellEnhancements = param[4];
-                                                                        var specialAbilities = param[3];
-                                                                        var skills = param[2];
-                                                                        var rogueSpells = param[1];
-                                                                        var raceVariants = param[0];
-                                                                        return IO$OptolithClient.Functor.$less$amp$great(Promise.all([
-                                                                                        readUnivYaml("ZibiljaRituals"),
-                                                                                        readUnivYaml("Patrons")
-                                                                                      ]), (function (param) {
-                                                                                      return {
-                                                                                              advantages: Yaml.parse(advantages),
-                                                                                              animistForces: Yaml.parse(animistForces),
-                                                                                              blessedTraditions: Yaml.parse(blessedTraditions),
-                                                                                              blessings: Yaml.parse(blessings),
-                                                                                              cantrips: Yaml.parse(cantrips),
-                                                                                              combatTechniques: Yaml.parse(combatTechniques),
-                                                                                              cultures: Yaml.parse(cultures),
-                                                                                              curses: Yaml.parse(curses),
-                                                                                              disadvantages: Yaml.parse(disadvantages),
-                                                                                              dominationRituals: Yaml.parse(dominationRituals),
-                                                                                              elvenMagicalSongs: Yaml.parse(elvenMagicalSongs),
-                                                                                              items: Yaml.parse(items),
-                                                                                              equipmentPackages: Yaml.parse(equipmentPackages),
-                                                                                              experienceLevels: Yaml.parse(experienceLevels),
-                                                                                              focusRules: Yaml.parse(focusRules),
-                                                                                              geodeRituals: Yaml.parse(geodeRituals),
-                                                                                              liturgicalChantEnhancements: Yaml.parse(liturgicalChantEnhancements),
-                                                                                              liturgicalChants: Yaml.parse(liturgicalChants),
-                                                                                              magicalDances: Yaml.parse(magicalDances),
-                                                                                              magicalMelodies: Yaml.parse(magicalMelodies),
-                                                                                              magicalTraditions: Yaml.parse(magicalTraditions),
-                                                                                              patrons: Yaml.parse(param[1]),
-                                                                                              professions: Yaml.parse(professions),
-                                                                                              professionVariants: Yaml.parse(professionVariants),
-                                                                                              races: Yaml.parse(races),
-                                                                                              raceVariants: Yaml.parse(raceVariants),
-                                                                                              rogueSpells: Yaml.parse(rogueSpells),
-                                                                                              skills: Yaml.parse(skills),
-                                                                                              specialAbilities: Yaml.parse(specialAbilities),
-                                                                                              spellEnhancements: Yaml.parse(spellEnhancements),
-                                                                                              spells: Yaml.parse(spells),
-                                                                                              zibiljaRituals: Yaml.parse(param[0])
-                                                                                            };
-                                                                                    }));
-                                                                      }));
-                                                        }));
-                                          }));
+function parseFiles1(onProgress, progressStartNum, dir) {
+  return Curry._2(IO$OptolithClient.Infix.$less$amp$great, parseFilesOfEntryType(dir), (function (x) {
+                Curry._1(onProgress, progressStartNum + 1 | 0);
+                return x;
+              }));
+}
+
+function parseFiles2(onProgress, progressStartNum, param) {
+  var dir2 = param[1];
+  return Curry._2(IO$OptolithClient.Infix.$great$great$eq, parseFiles1(onProgress, progressStartNum, param[0]), (function (res1) {
+                return Curry._2(IO$OptolithClient.Infix.$less$amp$great, parseFiles1(onProgress, progressStartNum + 1 | 0, dir2), (function (res2) {
+                              return [
+                                      res1,
+                                      res2
+                                    ];
                             }));
               }));
 }
 
-function readL10nYaml(locale, name) {
-  return IO$OptolithClient.readFile(Path.join(".", "app", "Database", locale, name + ".yaml"));
+function parseFiles4(onProgress, progressStartNum, param) {
+  var dir4 = param[3];
+  var dir3 = param[2];
+  return Curry._2(IO$OptolithClient.Infix.$great$great$eq, parseFiles2(onProgress, progressStartNum, [
+                  param[0],
+                  param[1]
+                ]), (function (param) {
+                var res2 = param[1];
+                var res1 = param[0];
+                return Curry._2(IO$OptolithClient.Infix.$less$amp$great, parseFiles2(onProgress, progressStartNum + 2 | 0, [
+                                dir3,
+                                dir4
+                              ]), (function (param) {
+                              return [
+                                      res1,
+                                      res2,
+                                      param[0],
+                                      param[1]
+                                    ];
+                            }));
+              }));
 }
 
-function getLocaleSpecificStaticData(locale) {
-  return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                  readL10nYaml(locale, "Advantages"),
-                  readL10nYaml(locale, "AnimistForces"),
-                  readL10nYaml(locale, "ArcaneBardTraditions"),
-                  readL10nYaml(locale, "ArcaneDancerTraditions"),
-                  readL10nYaml(locale, "ArmorTypes"),
-                  readL10nYaml(locale, "Aspects")
+function parseFiles8(onProgress, progressStartNum, param) {
+  var dir8 = param[7];
+  var dir7 = param[6];
+  var dir6 = param[5];
+  var dir5 = param[4];
+  return Curry._2(IO$OptolithClient.Infix.$great$great$eq, parseFiles4(onProgress, progressStartNum, [
+                  param[0],
+                  param[1],
+                  param[2],
+                  param[3]
                 ]), (function (param) {
+                var res4 = param[3];
+                var res3 = param[2];
+                var res2 = param[1];
+                var res1 = param[0];
+                return Curry._2(IO$OptolithClient.Infix.$less$amp$great, parseFiles4(onProgress, progressStartNum + 4 | 0, [
+                                dir5,
+                                dir6,
+                                dir7,
+                                dir8
+                              ]), (function (param) {
+                              return [
+                                      res1,
+                                      res2,
+                                      res3,
+                                      res4,
+                                      param[0],
+                                      param[1],
+                                      param[2],
+                                      param[3]
+                                    ];
+                            }));
+              }));
+}
+
+function parseFiles16(onProgress, progressStartNum, param) {
+  var dir16 = param[15];
+  var dir15 = param[14];
+  var dir14 = param[13];
+  var dir13 = param[12];
+  var dir12 = param[11];
+  var dir11 = param[10];
+  var dir10 = param[9];
+  var dir9 = param[8];
+  return Curry._2(IO$OptolithClient.Infix.$great$great$eq, parseFiles8(onProgress, progressStartNum, [
+                  param[0],
+                  param[1],
+                  param[2],
+                  param[3],
+                  param[4],
+                  param[5],
+                  param[6],
+                  param[7]
+                ]), (function (param) {
+                var res8 = param[7];
+                var res7 = param[6];
+                var res6 = param[5];
+                var res5 = param[4];
+                var res4 = param[3];
+                var res3 = param[2];
+                var res2 = param[1];
+                var res1 = param[0];
+                return Curry._2(IO$OptolithClient.Infix.$less$amp$great, parseFiles8(onProgress, progressStartNum + 8 | 0, [
+                                dir9,
+                                dir10,
+                                dir11,
+                                dir12,
+                                dir13,
+                                dir14,
+                                dir15,
+                                dir16
+                              ]), (function (param) {
+                              return [
+                                      res1,
+                                      res2,
+                                      res3,
+                                      res4,
+                                      res5,
+                                      res6,
+                                      res7,
+                                      res8,
+                                      param[0],
+                                      param[1],
+                                      param[2],
+                                      param[3],
+                                      param[4],
+                                      param[5],
+                                      param[6],
+                                      param[7]
+                                    ];
+                            }));
+              }));
+}
+
+function parseFiles(onProgress) {
+  return Curry._2(IO$OptolithClient.Infix.$great$great$eq, parseFiles16(onProgress, 0, [
+                  "Advantages",
+                  "AnimistForces",
+                  "ArcaneBardTraditions",
+                  "ArcaneDancerTraditions",
+                  "ArmorTypes",
+                  "Aspects",
+                  "Attributes",
+                  "BlessedTraditions",
+                  "Blessings",
+                  "Brews",
+                  "Cantrips",
+                  "CombatSpecialAbilityGroups",
+                  "CombatTechniqueGroups",
+                  "CombatTechniques",
+                  "Conditions",
+                  "Cultures"
+                ]), (function (param) {
+                var cultures = param[15];
+                var conditions = param[14];
+                var combatTechniques = param[13];
+                var combatTechniqueGroups = param[12];
+                var combatSpecialAbilityGroups = param[11];
+                var cantrips = param[10];
+                var brews = param[9];
+                var blessings = param[8];
+                var blessedTraditions = param[7];
+                var attributes = param[6];
                 var aspects = param[5];
                 var armorTypes = param[4];
                 var arcaneDancerTraditions = param[3];
                 var arcaneBardTraditions = param[2];
                 var animistForces = param[1];
                 var advantages = param[0];
-                return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                                readL10nYaml(locale, "Attributes"),
-                                readL10nYaml(locale, "BlessedTraditions"),
-                                readL10nYaml(locale, "Blessings"),
-                                readL10nYaml(locale, "Books"),
-                                readL10nYaml(locale, "Brews"),
-                                readL10nYaml(locale, "Cantrips")
+                return Curry._2(IO$OptolithClient.Infix.$great$great$eq, parseFiles16(onProgress, 16, [
+                                "Curses",
+                                "DerivedCharacteristics",
+                                "Disadvantages",
+                                "DominationRituals",
+                                "ElvenMagicalSongs",
+                                "Items",
+                                "EquipmentGroups",
+                                "EquipmentPackages",
+                                "ExperienceLevels",
+                                "EyeColors",
+                                "FocusRules",
+                                "GeodeRituals",
+                                "HairColors",
+                                "LiturgicalChantGroups",
+                                "LiturgicalChants",
+                                "MagicalDances"
                               ]), (function (param) {
-                              var cantrips = param[5];
-                              var brews = param[4];
-                              var books = param[3];
-                              var blessings = param[2];
-                              var blessedTraditions = param[1];
-                              var attributes = param[0];
-                              return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                                              readL10nYaml(locale, "CombatSpecialAbilityGroups"),
-                                              readL10nYaml(locale, "CombatTechniqueGroups"),
-                                              readL10nYaml(locale, "CombatTechniques"),
-                                              readL10nYaml(locale, "Conditions"),
-                                              readL10nYaml(locale, "Cultures"),
-                                              readL10nYaml(locale, "Curses")
+                              var magicalDances = param[15];
+                              var liturgicalChants = param[14];
+                              var liturgicalChantGroups = param[13];
+                              var hairColors = param[12];
+                              var geodeRituals = param[11];
+                              var focusRules = param[10];
+                              var eyeColors = param[9];
+                              var experienceLevels = param[8];
+                              var equipmentPackages = param[7];
+                              var equipmentGroups = param[6];
+                              var items = param[5];
+                              var elvenMagicalSongs = param[4];
+                              var dominationRituals = param[3];
+                              var disadvantages = param[2];
+                              var derivedCharacteristics = param[1];
+                              var curses = param[0];
+                              return Curry._2(IO$OptolithClient.Infix.$great$great$eq, parseFiles16(onProgress, 32, [
+                                              "MagicalMelodies",
+                                              "MagicalTraditions",
+                                              "OptionalRules",
+                                              "Pacts",
+                                              "Professions",
+                                              "Properties",
+                                              "Publications",
+                                              "Races",
+                                              "Reaches",
+                                              "RogueSpells",
+                                              "SkillGroups",
+                                              "Skills",
+                                              "SocialStatuses",
+                                              "SpecialAbilities",
+                                              "SpecialAbilityGroups",
+                                              "SpellGroups"
                                             ]), (function (param) {
-                                            var curses = param[5];
-                                            var cultures = param[4];
-                                            var conditions = param[3];
-                                            var combatTechniques = param[2];
-                                            var combatTechniqueGroups = param[1];
-                                            var combatSpecialAbilityGroups = param[0];
-                                            return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                                                            readL10nYaml(locale, "DerivedCharacteristics"),
-                                                            readL10nYaml(locale, "Disadvantages"),
-                                                            readL10nYaml(locale, "DominationRituals"),
-                                                            readL10nYaml(locale, "ElvenMagicalSongs"),
-                                                            readL10nYaml(locale, "Equipment"),
-                                                            readL10nYaml(locale, "EquipmentGroups")
+                                            var spellGroups = param[15];
+                                            var specialAbilityGroups = param[14];
+                                            var specialAbilities = param[13];
+                                            var socialStatuses = param[12];
+                                            var skills = param[11];
+                                            var skillGroups = param[10];
+                                            var rogueSpells = param[9];
+                                            var reaches = param[8];
+                                            var races = param[7];
+                                            var publications = param[6];
+                                            var properties = param[5];
+                                            var professions = param[4];
+                                            var pacts = param[3];
+                                            var optionalRules = param[2];
+                                            var magicalTraditions = param[1];
+                                            var magicalMelodies = param[0];
+                                            return Curry._2(IO$OptolithClient.Infix.$great$great$eq, parseFiles4(onProgress, 48, [
+                                                            "Spells",
+                                                            "States",
+                                                            "Subjects",
+                                                            "Tribes"
                                                           ]), (function (param) {
-                                                          var equipmentGroups = param[5];
-                                                          var items = param[4];
-                                                          var elvenMagicalSongs = param[3];
-                                                          var dominationRituals = param[2];
-                                                          var disadvantages = param[1];
-                                                          var derivedCharacteristics = param[0];
-                                                          return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                                                                          readL10nYaml(locale, "EquipmentPackages"),
-                                                                          readL10nYaml(locale, "ExperienceLevels"),
-                                                                          readL10nYaml(locale, "EyeColors"),
-                                                                          readL10nYaml(locale, "FocusRules"),
-                                                                          readL10nYaml(locale, "GeodeRituals"),
-                                                                          readL10nYaml(locale, "HairColors")
-                                                                        ]), (function (param) {
-                                                                        var hairColors = param[5];
-                                                                        var geodeRituals = param[4];
-                                                                        var focusRules = param[3];
-                                                                        var eyeColors = param[2];
-                                                                        var experienceLevels = param[1];
-                                                                        var equipmentPackages = param[0];
-                                                                        return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                                                                                        readL10nYaml(locale, "LiturgicalChantEnhancements"),
-                                                                                        readL10nYaml(locale, "LiturgicalChantGroups"),
-                                                                                        readL10nYaml(locale, "LiturgicalChants"),
-                                                                                        readL10nYaml(locale, "MagicalDances"),
-                                                                                        readL10nYaml(locale, "MagicalMelodies"),
-                                                                                        readL10nYaml(locale, "MagicalTraditions")
-                                                                                      ]), (function (param) {
-                                                                                      var magicalTraditions = param[5];
-                                                                                      var magicalMelodies = param[4];
-                                                                                      var magicalDances = param[3];
-                                                                                      var liturgicalChants = param[2];
-                                                                                      var liturgicalChantGroups = param[1];
-                                                                                      var liturgicalChantEnhancements = param[0];
-                                                                                      return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                                                                                                      readL10nYaml(locale, "OptionalRules"),
-                                                                                                      readL10nYaml(locale, "Pacts"),
-                                                                                                      readL10nYaml(locale, "Professions"),
-                                                                                                      readL10nYaml(locale, "ProfessionVariants"),
-                                                                                                      readL10nYaml(locale, "Properties"),
-                                                                                                      readL10nYaml(locale, "Races")
-                                                                                                    ]), (function (param) {
-                                                                                                    var races = param[5];
-                                                                                                    var properties = param[4];
-                                                                                                    var professionVariants = param[3];
-                                                                                                    var professions = param[2];
-                                                                                                    var pacts = param[1];
-                                                                                                    var optionalRules = param[0];
-                                                                                                    return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                                                                                                                    readL10nYaml(locale, "RaceVariants"),
-                                                                                                                    readL10nYaml(locale, "Reaches"),
-                                                                                                                    readL10nYaml(locale, "RogueSpells"),
-                                                                                                                    readL10nYaml(locale, "SkillGroups"),
-                                                                                                                    readL10nYaml(locale, "Skills"),
-                                                                                                                    readL10nYaml(locale, "SocialStatuses")
-                                                                                                                  ]), (function (param) {
-                                                                                                                  var socialStatuses = param[5];
-                                                                                                                  var skills = param[4];
-                                                                                                                  var skillGroups = param[3];
-                                                                                                                  var rogueSpells = param[2];
-                                                                                                                  var reaches = param[1];
-                                                                                                                  var raceVariants = param[0];
-                                                                                                                  return IO$OptolithClient.Monad.$great$great$eq(Promise.all([
-                                                                                                                                  readL10nYaml(locale, "SpecialAbilities"),
-                                                                                                                                  readL10nYaml(locale, "SpecialAbilityGroups"),
-                                                                                                                                  readL10nYaml(locale, "SpellEnhancements"),
-                                                                                                                                  readL10nYaml(locale, "SpellGroups"),
-                                                                                                                                  readL10nYaml(locale, "Spells"),
-                                                                                                                                  readL10nYaml(locale, "States")
-                                                                                                                                ]), (function (param) {
-                                                                                                                                var states = param[5];
-                                                                                                                                var spells = param[4];
-                                                                                                                                var spellGroups = param[3];
-                                                                                                                                var spellEnhancements = param[2];
-                                                                                                                                var specialAbilityGroups = param[1];
-                                                                                                                                var specialAbilities = param[0];
-                                                                                                                                return IO$OptolithClient.Functor.$less$amp$great(Promise.all([
-                                                                                                                                                readL10nYaml(locale, "Subjects"),
-                                                                                                                                                readL10nYaml(locale, "Tribes"),
-                                                                                                                                                readL10nYaml(locale, "UI"),
-                                                                                                                                                readL10nYaml(locale, "ZibiljaRituals"),
-                                                                                                                                                readL10nYaml(locale, "Patrons")
-                                                                                                                                              ]), (function (param) {
-                                                                                                                                              return {
-                                                                                                                                                      advantages: Yaml.parse(advantages),
-                                                                                                                                                      animistForces: Yaml.parse(animistForces),
-                                                                                                                                                      arcaneBardTraditions: Yaml.parse(arcaneBardTraditions),
-                                                                                                                                                      arcaneDancerTraditions: Yaml.parse(arcaneDancerTraditions),
-                                                                                                                                                      armorTypes: Yaml.parse(armorTypes),
-                                                                                                                                                      aspects: Yaml.parse(aspects),
-                                                                                                                                                      attributes: Yaml.parse(attributes),
-                                                                                                                                                      blessedTraditions: Yaml.parse(blessedTraditions),
-                                                                                                                                                      blessings: Yaml.parse(blessings),
-                                                                                                                                                      books: Yaml.parse(books),
-                                                                                                                                                      brews: Yaml.parse(brews),
-                                                                                                                                                      cantrips: Yaml.parse(cantrips),
-                                                                                                                                                      combatSpecialAbilityGroups: Yaml.parse(combatSpecialAbilityGroups),
-                                                                                                                                                      combatTechniqueGroups: Yaml.parse(combatTechniqueGroups),
-                                                                                                                                                      combatTechniques: Yaml.parse(combatTechniques),
-                                                                                                                                                      conditions: Yaml.parse(conditions),
-                                                                                                                                                      cultures: Yaml.parse(cultures),
-                                                                                                                                                      curses: Yaml.parse(curses),
-                                                                                                                                                      derivedCharacteristics: Yaml.parse(derivedCharacteristics),
-                                                                                                                                                      disadvantages: Yaml.parse(disadvantages),
-                                                                                                                                                      dominationRituals: Yaml.parse(dominationRituals),
-                                                                                                                                                      elvenMagicalSongs: Yaml.parse(elvenMagicalSongs),
-                                                                                                                                                      equipmentGroups: Yaml.parse(equipmentGroups),
-                                                                                                                                                      equipmentPackages: Yaml.parse(equipmentPackages),
-                                                                                                                                                      experienceLevels: Yaml.parse(experienceLevels),
-                                                                                                                                                      eyeColors: Yaml.parse(eyeColors),
-                                                                                                                                                      focusRules: Yaml.parse(focusRules),
-                                                                                                                                                      geodeRituals: Yaml.parse(geodeRituals),
-                                                                                                                                                      hairColors: Yaml.parse(hairColors),
-                                                                                                                                                      items: Yaml.parse(items),
-                                                                                                                                                      liturgicalChantEnhancements: Yaml.parse(liturgicalChantEnhancements),
-                                                                                                                                                      liturgicalChantGroups: Yaml.parse(liturgicalChantGroups),
-                                                                                                                                                      liturgicalChants: Yaml.parse(liturgicalChants),
-                                                                                                                                                      magicalDances: Yaml.parse(magicalDances),
-                                                                                                                                                      magicalMelodies: Yaml.parse(magicalMelodies),
-                                                                                                                                                      magicalTraditions: Yaml.parse(magicalTraditions),
-                                                                                                                                                      optionalRules: Yaml.parse(optionalRules),
-                                                                                                                                                      pacts: Yaml.parse(pacts),
-                                                                                                                                                      patrons: Yaml.parse(param[4]),
-                                                                                                                                                      professions: Yaml.parse(professions),
-                                                                                                                                                      professionVariants: Yaml.parse(professionVariants),
-                                                                                                                                                      properties: Yaml.parse(properties),
-                                                                                                                                                      races: Yaml.parse(races),
-                                                                                                                                                      raceVariants: Yaml.parse(raceVariants),
-                                                                                                                                                      reaches: Yaml.parse(reaches),
-                                                                                                                                                      rogueSpells: Yaml.parse(rogueSpells),
-                                                                                                                                                      skillGroups: Yaml.parse(skillGroups),
-                                                                                                                                                      skills: Yaml.parse(skills),
-                                                                                                                                                      socialStatuses: Yaml.parse(socialStatuses),
-                                                                                                                                                      specialAbilities: Yaml.parse(specialAbilities),
-                                                                                                                                                      specialAbilityGroups: Yaml.parse(specialAbilityGroups),
-                                                                                                                                                      spellEnhancements: Yaml.parse(spellEnhancements),
-                                                                                                                                                      spellGroups: Yaml.parse(spellGroups),
-                                                                                                                                                      spells: Yaml.parse(spells),
-                                                                                                                                                      states: Yaml.parse(states),
-                                                                                                                                                      subjects: Yaml.parse(param[0]),
-                                                                                                                                                      tribes: Yaml.parse(param[1]),
-                                                                                                                                                      ui: Yaml.parse(param[2]),
-                                                                                                                                                      zibiljaRituals: Yaml.parse(param[3])
-                                                                                                                                                    };
-                                                                                                                                            }));
-                                                                                                                              }));
-                                                                                                                }));
-                                                                                                  }));
-                                                                                    }));
+                                                          var tribes = param[3];
+                                                          var subjects = param[2];
+                                                          var states = param[1];
+                                                          var spells = param[0];
+                                                          return Curry._2(IO$OptolithClient.Infix.$less$amp$great, parseFiles1(onProgress, 52, "ZibiljaRituals"), (function (zibiljaRituals) {
+                                                                        return {
+                                                                                advantages: advantages,
+                                                                                animistForces: animistForces,
+                                                                                arcaneBardTraditions: arcaneBardTraditions,
+                                                                                arcaneDancerTraditions: arcaneDancerTraditions,
+                                                                                armorTypes: armorTypes,
+                                                                                aspects: aspects,
+                                                                                attributes: attributes,
+                                                                                blessedTraditions: blessedTraditions,
+                                                                                blessings: blessings,
+                                                                                brews: brews,
+                                                                                cantrips: cantrips,
+                                                                                combatSpecialAbilityGroups: combatSpecialAbilityGroups,
+                                                                                combatTechniqueGroups: combatTechniqueGroups,
+                                                                                combatTechniques: combatTechniques,
+                                                                                conditions: conditions,
+                                                                                cultures: cultures,
+                                                                                curses: curses,
+                                                                                derivedCharacteristics: derivedCharacteristics,
+                                                                                disadvantages: disadvantages,
+                                                                                dominationRituals: dominationRituals,
+                                                                                elvenMagicalSongs: elvenMagicalSongs,
+                                                                                items: items,
+                                                                                equipmentGroups: equipmentGroups,
+                                                                                equipmentPackages: equipmentPackages,
+                                                                                experienceLevels: experienceLevels,
+                                                                                eyeColors: eyeColors,
+                                                                                focusRules: focusRules,
+                                                                                geodeRituals: geodeRituals,
+                                                                                hairColors: hairColors,
+                                                                                liturgicalChantGroups: liturgicalChantGroups,
+                                                                                liturgicalChants: liturgicalChants,
+                                                                                magicalDances: magicalDances,
+                                                                                magicalMelodies: magicalMelodies,
+                                                                                magicalTraditions: magicalTraditions,
+                                                                                optionalRules: optionalRules,
+                                                                                pacts: pacts,
+                                                                                professions: professions,
+                                                                                properties: properties,
+                                                                                publications: publications,
+                                                                                races: races,
+                                                                                reaches: reaches,
+                                                                                rogueSpells: rogueSpells,
+                                                                                skillGroups: skillGroups,
+                                                                                skills: skills,
+                                                                                socialStatuses: socialStatuses,
+                                                                                specialAbilities: specialAbilities,
+                                                                                specialAbilityGroups: specialAbilityGroups,
+                                                                                spellGroups: spellGroups,
+                                                                                spells: spells,
+                                                                                states: states,
+                                                                                subjects: subjects,
+                                                                                tribes: tribes,
+                                                                                zibiljaRituals: zibiljaRituals
+                                                                              };
                                                                       }));
                                                         }));
                                           }));
@@ -338,116 +328,25 @@ function getLocaleSpecificStaticData(locale) {
               }));
 }
 
-function getStaticData(locale) {
-  return IO$OptolithClient.Functor.$less$amp$great(Promise.all([
-                  getUnivStaticData(undefined),
-                  getLocaleSpecificStaticData(locale)
-                ]), (function (param) {
-                var l10n = param[1];
-                var univ = param[0];
-                return {
-                        advantagesL10n: l10n.advantages,
-                        advantagesUniv: univ.advantages,
-                        animistForcesL10n: l10n.animistForces,
-                        animistForcesUniv: univ.animistForces,
-                        arcaneBardTraditionsL10n: l10n.arcaneBardTraditions,
-                        arcaneDancerTraditionsL10n: l10n.arcaneDancerTraditions,
-                        armorTypesL10n: l10n.armorTypes,
-                        aspectsL10n: l10n.aspects,
-                        attributesL10n: l10n.attributes,
-                        blessedTraditionsL10n: l10n.blessedTraditions,
-                        blessedTraditionsUniv: univ.blessedTraditions,
-                        blessingsL10n: l10n.blessings,
-                        blessingsUniv: univ.blessings,
-                        booksL10n: l10n.books,
-                        brewsL10n: l10n.brews,
-                        cantripsL10n: l10n.cantrips,
-                        cantripsUniv: univ.cantrips,
-                        combatSpecialAbilityGroupsL10n: l10n.combatSpecialAbilityGroups,
-                        combatTechniqueGroupsL10n: l10n.combatTechniqueGroups,
-                        combatTechniquesL10n: l10n.combatTechniques,
-                        combatTechniquesUniv: univ.combatTechniques,
-                        conditionsL10n: l10n.conditions,
-                        culturesL10n: l10n.cultures,
-                        culturesUniv: univ.cultures,
-                        cursesL10n: l10n.curses,
-                        cursesUniv: univ.curses,
-                        derivedCharacteristicsL10n: l10n.derivedCharacteristics,
-                        disadvantagesL10n: l10n.disadvantages,
-                        disadvantagesUniv: univ.disadvantages,
-                        dominationRitualsL10n: l10n.dominationRituals,
-                        dominationRitualsUniv: univ.dominationRituals,
-                        elvenMagicalSongsL10n: l10n.elvenMagicalSongs,
-                        elvenMagicalSongsUniv: univ.elvenMagicalSongs,
-                        equipmentL10n: l10n.items,
-                        equipmentUniv: univ.items,
-                        equipmentGroupsL10n: l10n.equipmentGroups,
-                        equipmentPackagesL10n: l10n.equipmentPackages,
-                        equipmentPackagesUniv: univ.equipmentPackages,
-                        experienceLevelsL10n: l10n.experienceLevels,
-                        experienceLevelsUniv: univ.experienceLevels,
-                        eyeColorsL10n: l10n.eyeColors,
-                        focusRulesL10n: l10n.focusRules,
-                        focusRulesUniv: univ.focusRules,
-                        geodeRitualsL10n: l10n.geodeRituals,
-                        geodeRitualsUniv: univ.geodeRituals,
-                        hairColorsL10n: l10n.hairColors,
-                        liturgicalChantEnhancementsL10n: l10n.liturgicalChantEnhancements,
-                        liturgicalChantEnhancementsUniv: univ.liturgicalChantEnhancements,
-                        liturgicalChantGroupsL10n: l10n.liturgicalChantGroups,
-                        liturgicalChantsL10n: l10n.liturgicalChants,
-                        liturgicalChantsUniv: univ.liturgicalChants,
-                        magicalDancesL10n: l10n.magicalDances,
-                        magicalDancesUniv: univ.magicalDances,
-                        magicalMelodiesL10n: l10n.magicalMelodies,
-                        magicalMelodiesUniv: univ.magicalMelodies,
-                        magicalTraditionsL10n: l10n.magicalTraditions,
-                        magicalTraditionsUniv: univ.magicalTraditions,
-                        optionalRulesL10n: l10n.optionalRules,
-                        pactsL10n: l10n.pacts,
-                        patronsL10n: l10n.patrons,
-                        patronsUniv: univ.patrons,
-                        professionsL10n: l10n.professions,
-                        professionsUniv: univ.professions,
-                        professionVariantsL10n: l10n.professionVariants,
-                        professionVariantsUniv: univ.professionVariants,
-                        propertiesL10n: l10n.properties,
-                        racesL10n: l10n.races,
-                        racesUniv: univ.races,
-                        raceVariantsL10n: l10n.raceVariants,
-                        raceVariantsUniv: univ.raceVariants,
-                        reachesL10n: l10n.reaches,
-                        rogueSpellsL10n: l10n.rogueSpells,
-                        rogueSpellsUniv: univ.rogueSpells,
-                        skillGroupsL10n: l10n.skillGroups,
-                        skillsL10n: l10n.skills,
-                        skillsUniv: univ.skills,
-                        socialStatusesL10n: l10n.socialStatuses,
-                        specialAbilitiesL10n: l10n.specialAbilities,
-                        specialAbilitiesUniv: univ.specialAbilities,
-                        specialAbilityGroupsL10n: l10n.specialAbilityGroups,
-                        spellEnhancementsL10n: l10n.spellEnhancements,
-                        spellEnhancementsUniv: univ.spellEnhancements,
-                        spellGroupsL10n: l10n.spellGroups,
-                        spellsL10n: l10n.spells,
-                        spellsUniv: univ.spells,
-                        statesL10n: l10n.states,
-                        subjectsL10n: l10n.subjects,
-                        tribesL10n: l10n.tribes,
-                        uiL10n: l10n.ui,
-                        zibiljaRitualsL10n: l10n.zibiljaRituals,
-                        zibiljaRitualsUniv: univ.zibiljaRituals
-                      };
+function parseUI(locale) {
+  return Curry._2(IO$OptolithClient.Infix.$less$amp$great, IO$OptolithClient.readFile(Path.join(".", "src", "Database", "UI", locale + ".yml")), (function (prim) {
+                return Yaml.parse(prim);
               }));
 }
 
+var parsedEntryTypesTotal = 53;
+
 export {
   Parser ,
-  readUnivYaml ,
-  getUnivStaticData ,
-  readL10nYaml ,
-  getLocaleSpecificStaticData ,
-  getStaticData ,
+  parseFilesOfEntryType ,
+  parseFiles1 ,
+  parseFiles2 ,
+  parseFiles4 ,
+  parseFiles8 ,
+  parseFiles16 ,
+  parsedEntryTypesTotal ,
+  parseFiles ,
+  parseUI ,
   
 }
 /* path Not a pure module */

@@ -6,7 +6,7 @@ module type Dynamic = {
   type t = {
     id: int,
     value,
-    dependencies: list(Increasable.dependency),
+    dependencies: list(Increasable.Dynamic.dependency),
   };
 
   /**

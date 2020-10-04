@@ -128,6 +128,24 @@ module Config: {
   };
 };
 
+module Unified: {
+  type value =
+    | CommonSuggestedByRCP
+    | Sex(Sex.t)
+    | Race(Race.t)
+    | Culture(Culture.t)
+    | Pact(Pact.t)
+    | SocialStatus(SocialStatus.t)
+    | PrimaryAttribute(PrimaryAttribute.t)
+    | Activatable(Activatable.t)
+    | ActivatableMultiEntry(ActivatableMultiEntry.t)
+    | ActivatableMultiSelect(ActivatableMultiSelect.t)
+    | Increasable(Increasable.t)
+    | IncreasableMultiEntry(IncreasableMultiEntry.t);
+
+  type t = Config.t(value);
+};
+
 module General: {
   type value =
     | Sex(Sex.t)
@@ -149,6 +167,8 @@ module General: {
   let decodeMultilingual: Json.Decode.decoder(multilingual);
 
   let resolveTranslations: (list(string), multilingual) => t;
+
+  let unify: t => Unified.t;
 };
 
 module Profession: {
@@ -166,6 +186,8 @@ module Profession: {
   let decodeMultilingual: Json.Decode.decoder(multilingual);
 
   let resolveTranslations: (list(string), multilingual) => t;
+
+  let unify: t => Unified.t;
 };
 
 module AdvantageDisadvantage: {
@@ -190,6 +212,8 @@ module AdvantageDisadvantage: {
   let decodeMultilingual: Json.Decode.decoder(multilingual);
 
   let resolveTranslations: (list(string), multilingual) => t;
+
+  let unify: t => Unified.t;
 };
 
 module Collection: {

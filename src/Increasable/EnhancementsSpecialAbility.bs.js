@@ -4,6 +4,7 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as IC$OptolithClient from "./IC.bs.js";
 import * as Id$OptolithClient from "../Misc/Id.bs.js";
 import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
+import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as Ley_Function$OptolithClient from "../Data/Ley_Function.bs.js";
 import * as SelectOption$OptolithClient from "../Activatable/SelectOption.bs.js";
@@ -28,7 +29,7 @@ function getSingle(target, targetId, targetName, level, id, name, cost, descript
           animalLevel: undefined,
           enhancementTarget: targetId,
           enhancementLevel: level,
-          wikiEntry: target,
+          staticEntry: target,
           applications: undefined,
           src: src,
           errata: errata
@@ -142,7 +143,7 @@ function getAllFromObject(target, targetId, targetName, targetIC, param) {
 }
 
 function toSpecialAbilityOptions(getTarget, getId, getName, getEnhancements, getIC, xs) {
-  return Curry._3(Ley_List$OptolithClient.foldr, (function (x) {
+  return Curry._3(Ley_IntMap$OptolithClient.foldr, (function (x) {
                 return Ley_Option$OptolithClient.option(Ley_Function$OptolithClient.id, (function (enhancements) {
                               var partial_arg = getAllFromObject(Curry._1(getTarget, x), Curry._1(getId, x), Curry._1(getName, x), Curry._1(getIC, x), enhancements);
                               var partial_arg$1 = Curry._1(Ley_List$OptolithClient.foldr, (function (selectOption) {

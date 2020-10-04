@@ -9,12 +9,12 @@ function handle(f, x) {
 
 function handleE(x) {
   return x.then(function (x) {
-                return IO$OptolithClient.Monad.pure({
+                return Curry._1(IO$OptolithClient.$$return, {
                             TAG: /* Ok */0,
                             _0: x
                           });
               }).catch(function (x) {
-              return IO$OptolithClient.Monad.pure({
+              return Curry._1(IO$OptolithClient.$$return, {
                           TAG: /* Error */1,
                           _0: x
                         });

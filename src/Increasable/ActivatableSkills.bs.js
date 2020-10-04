@@ -26,7 +26,7 @@ function countActiveSkillEntries(domain, hero) {
 }
 
 function hasActiveSkillEntries(domain, hero) {
-  return Curry._2(Ley_IntMap$OptolithClient.IntMap.Foldable.any, (function (entry) {
+  return Curry._2(Ley_IntMap$OptolithClient.any, (function (entry) {
                 var match = entry.value;
                 if (match) {
                   return true;

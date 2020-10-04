@@ -32,7 +32,7 @@ let countActiveFromGroups = (isActive, getGroup, groups: list(int), pairs) =>
   );
 
 let hasActiveFromGroup = (isActive, getGroup, group: int, pairs) =>
-  IM.Foldable.any(
+  IM.any(
     fun
     | (staticEntry, Some(heroEntry)) =>
       getGroup(staticEntry) === group && isActive(heroEntry)
@@ -41,7 +41,7 @@ let hasActiveFromGroup = (isActive, getGroup, group: int, pairs) =>
   );
 
 let hasActiveFromGroups = (isActive, getGroup, groups: list(int), pairs) =>
-  IM.Foldable.any(
+  IM.any(
     fun
     | (staticEntry, Some(heroEntry)) =>
       L.elem(getGroup(staticEntry), groups) && isActive(heroEntry)
@@ -56,7 +56,7 @@ module CombatTechnique = {
         pairs: IM.t((CombatTechnique.Static.t, option(Skill.Dynamic.t))),
       ) =>
     getFromGroup(
-      ({CombatTechnique.gr, _}) => gr,
+      ({CombatTechnique.Static.gr, _}) => gr,
       Id.CombatTechnique.Group.toInt(group),
       pairs,
     );
@@ -64,9 +64,13 @@ module CombatTechnique = {
 
 module SpecialAbility = {
   let getFromGroup =
-      (group, pairs: IM.t((SpecialAbility.t, option(Hero.Activatable.t)))) =>
+      (
+        group,
+        pairs:
+          IM.t((SpecialAbility.Static.t, option(Activatable_Dynamic.t))),
+      ) =>
     getFromGroup(
-      ({SpecialAbility.gr, _}) => gr,
+      ({SpecialAbility.Static.gr, _}) => gr,
       Id.SpecialAbility.Group.toInt(group),
       pairs,
     );
@@ -74,7 +78,7 @@ module SpecialAbility = {
   let countActiveFromGroup = (group, pairs) =>
     countActiveFromGroup(
       Activatable_Accessors.isActive,
-      ({SpecialAbility.gr, _}) => gr,
+      ({SpecialAbility.Static.gr, _}) => gr,
       Id.SpecialAbility.Group.toInt(group),
       pairs,
     );
@@ -82,7 +86,7 @@ module SpecialAbility = {
   let countActiveFromGroups = (groups, pairs) =>
     countActiveFromGroups(
       Activatable_Accessors.isActive,
-      ({SpecialAbility.gr, _}) => gr,
+      ({SpecialAbility.Static.gr, _}) => gr,
       L.map(Id.SpecialAbility.Group.toInt, groups),
       pairs,
     );
@@ -90,7 +94,7 @@ module SpecialAbility = {
   let hasActiveFromGroup = (group, pairs) =>
     hasActiveFromGroup(
       Activatable_Accessors.isActive,
-      ({SpecialAbility.gr, _}) => gr,
+      ({SpecialAbility.Static.gr, _}) => gr,
       Id.SpecialAbility.Group.toInt(group),
       pairs,
     );
@@ -98,7 +102,7 @@ module SpecialAbility = {
   let hasActiveFromGroups = (groups, pairs) =>
     hasActiveFromGroups(
       Activatable_Accessors.isActive,
-      ({SpecialAbility.gr, _}) => gr,
+      ({SpecialAbility.Static.gr, _}) => gr,
       L.map(Id.SpecialAbility.Group.toInt, groups),
       pairs,
     );

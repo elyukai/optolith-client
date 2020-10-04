@@ -77,14 +77,17 @@ module Static = {
       x.translations
       |> TranslationMap.getFromLanguageOrder(langs)
       <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          short: translation.short,
-          calc: translation.calc,
-          calcHalfPrimary: translation.calcHalfPrimary,
-          calcNoPrimary: translation.calcNoPrimary,
-        }
+        translation => (
+          x.id,
+          {
+            id: x.id,
+            name: translation.name,
+            short: translation.short,
+            calc: translation.calc,
+            calcHalfPrimary: translation.calcHalfPrimary,
+            calcNoPrimary: translation.calcNoPrimary,
+          },
+        )
       )
     );
 

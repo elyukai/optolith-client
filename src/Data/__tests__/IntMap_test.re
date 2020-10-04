@@ -21,8 +21,6 @@ let from1to11 =
   ]);
 
 describe("Foldable", () => {
-  open Foldable;
-
   // test("foldr", () =>
   //   expect(foldr((e, acc) => e ++ acc, "l", from1to11))
   //   |> toBe("abcdefghijkl")
@@ -30,19 +28,7 @@ describe("Foldable", () => {
 
   test("toList", () =>
     expect(toList(from1to11))
-    |> toEqual([
-         (1, "a"),
-         (2, "b"),
-         (3, "c"),
-         (4, "d"),
-         (5, "e"),
-         (6, "f"),
-         (7, "g"),
-         (8, "h"),
-         (9, "i"),
-         (10, "j"),
-         (11, "k"),
-       ])
+    |> toEqual(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"])
   );
 
   describe("all", () => {

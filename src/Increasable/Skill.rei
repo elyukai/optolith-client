@@ -3,7 +3,7 @@
  * dynamic and the static parts of a skill.
  */
 
-module Dynamic: Increasable.Dynamic;
+module Dynamic: Increasable.Dynamic.T;
 
 module Static: {
   module Application: {
@@ -46,5 +46,5 @@ module Static: {
     errata: list(Erratum.t),
   };
 
-  let decode: list(string) => Json.Decode.decoder(option(t));
+  let decode: list(string) => Json.Decode.decoder(option((int, t)));
 };

@@ -85,6 +85,16 @@ module type T = {
   let concatMap: ('a => list('b), t('a)) => list('b);
 
   /**
+   * `con x` is the conjunction (logical AND) of all elements in the container.
+   */
+  let con: t(bool) => bool;
+
+  /**
+   * `dis x` is the disjunction (logical OR) of all elements in the container.
+   */
+  let dis: t(bool) => bool;
+
+  /**
    * `any pred x` returns true if at least one value in the container `x`
    * matches the given predicate `pred`.
    */
@@ -137,6 +147,10 @@ module Make = (Arg: S) : (T with type t('a) = Arg.t('a)) => {
   let concat = x => foldr((@), [], x);
 
   let concatMap = (f, x) => foldr((e, rs) => f(e) @ rs, [], x);
+
+  let con = x => foldr((e, acc) => acc && e, true, x);
+
+  let dis = x => foldr((e, acc) => acc || e, false, x);
 
   let notElem = (e, x) => all(x' => e != x', x);
 

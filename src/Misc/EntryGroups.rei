@@ -84,9 +84,9 @@ module SpecialAbility: {
   let getFromGroup:
     (
       Id.SpecialAbility.Group.t,
-      Ley_IntMap.t((SpecialAbility.t, option(Hero.Activatable.t)))
+      Ley_IntMap.t((SpecialAbility.Static.t, option(Activatable_Dynamic.t)))
     ) =>
-    Ley_IntMap.t((SpecialAbility.t, option(Hero.Activatable.t)));
+    Ley_IntMap.t((SpecialAbility.Static.t, option(Activatable_Dynamic.t)));
 
   /**
    * `countActiveFromGroup`, specialized to special abilities.
@@ -94,7 +94,7 @@ module SpecialAbility: {
   let countActiveFromGroup:
     (
       Id.SpecialAbility.Group.t,
-      Ley_IntMap.t((SpecialAbility.t, option(Hero.Activatable.t)))
+      Ley_IntMap.t((SpecialAbility.Static.t, option(Activatable_Dynamic.t)))
     ) =>
     int;
 
@@ -104,7 +104,7 @@ module SpecialAbility: {
   let countActiveFromGroups:
     (
       list(Id.SpecialAbility.Group.t),
-      Ley_IntMap.t((SpecialAbility.t, option(Hero.Activatable.t)))
+      Ley_IntMap.t((SpecialAbility.Static.t, option(Activatable_Dynamic.t)))
     ) =>
     int;
 
@@ -114,7 +114,7 @@ module SpecialAbility: {
   let hasActiveFromGroup:
     (
       Id.SpecialAbility.Group.t,
-      Ley_IntMap.t((SpecialAbility.t, option(Hero.Activatable.t)))
+      Ley_IntMap.t((SpecialAbility.Static.t, option(Activatable_Dynamic.t)))
     ) =>
     bool;
 
@@ -124,7 +124,7 @@ module SpecialAbility: {
   let hasActiveFromGroups:
     (
       list(Id.SpecialAbility.Group.t),
-      Ley_IntMap.t((SpecialAbility.t, option(Hero.Activatable.t)))
+      Ley_IntMap.t((SpecialAbility.Static.t, option(Activatable_Dynamic.t)))
     ) =>
     bool;
 };

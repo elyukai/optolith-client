@@ -10,7 +10,8 @@
  * on the given set of static/hero special ability entry pairs.
  */
 let getActivePactGiftsCount:
-  Ley_IntMap.t((SpecialAbility.t, option(Hero.Activatable.t))) => int;
+  Ley_IntMap.t((SpecialAbility.Static.t, option(Activatable_Dynamic.t))) =>
+  int;
 
 /**
  * `isAdditionValid cache staticData hero maybeMaxLevel staticEntry
@@ -25,7 +26,7 @@ let isAdditionValid:
     Hero.t,
     option(int),
     Static.activatable,
-    option(Hero.Activatable.t)
+    option(Activatable_Dynamic.t)
   ) =>
   bool;
 
@@ -37,5 +38,5 @@ let isAdditionValid:
  * `Prerequisites.Validation.getMaxLevel`.
  */
 let getMaxLevel:
-  (Static.t, Hero.t, Static.activatable, option(Hero.Activatable.t)) =>
+  (Static.t, Hero.t, Static.activatable, option(Activatable_Dynamic.t)) =>
   option(int);

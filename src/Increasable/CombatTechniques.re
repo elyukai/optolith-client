@@ -48,7 +48,7 @@ let getParry = (heroAttrs, staticEntry: CombatTechnique.Static.t, heroEntry) =>
 let getExceptionalCombatTechniqueBonus = (exceptionalCombatTechnique, id) =>
   option(
     0,
-    (x: Hero.Activatable.t) =>
+    (x: Activatable_Dynamic.t) =>
       x.active
       |> listToOption
       <&> (
@@ -109,7 +109,7 @@ let isIncreasable =
       ~heroAttrs,
       ~exceptionalCombatTechnique,
       ~staticEntry,
-      ~heroEntry: Skill.Dynamic.t,
+      ~heroEntry: CombatTechnique.Dynamic.t,
     ) =>
   heroEntry.value
   < getMax(
@@ -129,14 +129,18 @@ let getMinCtrByHunter =
 /**
  * Check if the dependencies allow the passed combat technique to be decreased.
  */
-let getMinCtrByDeps = (heroCombatTechniques, heroEntry: Skill.Dynamic.t) =>
+let getMinCtrByDeps =
+    (heroCombatTechniques, heroEntry: CombatTechnique.Dynamic.t) =>
   heroEntry.dependencies
   |> Dependencies.Flatten.flattenSkillDependencies(
-       id => heroCombatTechniques |> Ley_IntMap.lookup(id) |> getValueDef,
+       id =>
+         heroCombatTechniques
+         |> Ley_IntMap.lookup(id)
+         |> CombatTechnique.Dynamic.getValueDef,
        heroEntry.id,
      )
   |> ensure(Ley_List.Extra.notNull)
-  <&> Ley_List.Foldable.maximum;
+  <&> Ley_List.maximum;
 
 /**
  * Returns the minimum combat technique rating for the passed combat
@@ -155,7 +159,7 @@ let getMin =
   ]
   |> catOptions
   |> ensure(Ley_List.Extra.notNull)
-  <&> Ley_List.Foldable.maximum;
+  <&> Ley_List.maximum;
 
 /**
  * Returns if the passed combat technique's combat technique rating can be
@@ -166,7 +170,7 @@ let isDecreasable =
       ~onlyOneCombatTechniqueForHunter,
       ~heroCombatTechniques,
       ~staticEntry,
-      ~heroEntry: Skill.Dynamic.t,
+      ~heroEntry: CombatTechnique.Dynamic.t,
     ) =>
   heroEntry.value
   > (

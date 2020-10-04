@@ -1,11 +1,10 @@
 open Ley_Option;
-open Ley_Option.Alternative;
 
 /**
  * Returns a getter and a setter for the appropiate dependency list for the
  * passed style special ability or extended special ability.
  */
-let getStyleDependenciesAcc = (style: SpecialAbility.t) =>
+let getStyleDependenciesAcc = (style: SpecialAbility.Static.t) =>
   [@warning "-4"]
   (
     switch (Id.SpecialAbility.Group.fromInt(style.gr)) {
@@ -103,46 +102,52 @@ let moveActiveInListToNew = (newxs, x: Hero.styleDependency) =>
  * returns generated style dependencies for a style special ability.
  */
 let generateStyleDependencies =
-    (heroSpecialAbilities, styleSpecialAbility: SpecialAbility.t) =>
-  styleSpecialAbility.extended
-  <&> (
-    extended =>
-      extended
-      |> Ley_List.map((extendedId) =>
-           (
-             {id: extendedId, active: None, origin: styleSpecialAbility.id}: Hero.styleDependency
+    (heroSpecialAbilities, styleSpecialAbility: SpecialAbility.Static.t) =>
+  Ley_Option.Infix.(
+    styleSpecialAbility.extended
+    <&> (
+      extended =>
+        extended
+        |> Ley_List.map((extendedId) =>
+             (
+               {id: extendedId, active: None, origin: styleSpecialAbility.id}: Hero.styleDependency
+             )
            )
-         )
-      |> (
-        xs =>
-          [@warning "-4"]
-          (
-            switch (Id.SpecialAbility.fromInt(styleSpecialAbility.id)) {
-            // For this style, the user must choose between two special
-            // abilities to be an extended special ability.
-            | ScholarDesMagierkollegsZuHoningen =>
-              Ley_IntMap.lookup(styleSpecialAbility.id, heroSpecialAbilities)
-              >>= (
-                (x: Hero.Activatable.t) => x.active |> Ley_Option.listToOption
-              )
-              >>= (x => Ley_List.Safe.atMay(x.options, 1))
-              |> (
-                fun
-                | Some(Preset((SpecialAbility, id))) => [
-                    {
-                      Hero.id: One(id),
-                      active: None,
-                      origin: styleSpecialAbility.id,
-                    },
-                    ...xs,
-                  ]
-                | Some(_)
-                | None => xs
-              )
-            | _ => xs
-            }
-          )
-      )
+        |> (
+          xs =>
+            [@warning "-4"]
+            (
+              switch (Id.SpecialAbility.fromInt(styleSpecialAbility.id)) {
+              // For this style, the user must choose between two special
+              // abilities to be an extended special ability.
+              | ScholarDesMagierkollegsZuHoningen =>
+                Ley_IntMap.lookup(
+                  styleSpecialAbility.id,
+                  heroSpecialAbilities,
+                )
+                >>= (
+                  (x: Activatable_Dynamic.t) =>
+                    x.active |> Ley_Option.listToOption
+                )
+                >>= (x => Ley_List.Safe.atMay(x.options, 1))
+                |> (
+                  fun
+                  | Some(Preset((SpecialAbility, id))) => [
+                      {
+                        Hero.id: One(id),
+                        active: None,
+                        origin: styleSpecialAbility.id,
+                      },
+                      ...xs,
+                    ]
+                  | Some(_)
+                  | None => xs
+                )
+              | _ => xs
+              }
+            )
+        )
+    )
   );
 
 /**
@@ -168,29 +173,31 @@ let addStyleExtendedSpecialAbilityDependencies = (styleSpecialAbility, hero) =>
  */
 let getIndexOfFreeDependency =
     (
-      extendedSpecialAbility: SpecialAbility.t,
+      extendedSpecialAbility: SpecialAbility.Static.t,
       xs: list(Hero.styleDependency),
     ) =>
-  // Prefer dependency with fixed option
-  Ley_List.findIndex(
-    (x: Hero.styleDependency) =>
-      switch (x.id) {
-      | One(id) => id === extendedSpecialAbility.id
-      | Many(_) => false
-      },
-    xs,
-  )
-  // Otherwise search for dependency with dynamic option
-  <|> Ley_List.findIndex(
+  Ley_Option.Infix.
+    // Prefer dependency with fixed option
+    (
+      Ley_List.findIndex(
         (x: Hero.styleDependency) =>
           switch (x.id) {
-          | One(_) => false
-          | Many(ids) =>
-            Ley_List.Foldable.elem(extendedSpecialAbility.id, ids)
+          | One(id) => id === extendedSpecialAbility.id
+          | Many(_) => false
           },
         xs,
       )
-  |> Ley_Option.fromOption(-1);
+      // Otherwise search for dependency with dynamic option
+      <|> Ley_List.findIndex(
+            (x: Hero.styleDependency) =>
+              switch (x.id) {
+              | One(_) => false
+              | Many(ids) => Ley_List.elem(extendedSpecialAbility.id, ids)
+              },
+            xs,
+          )
+      |> Ley_Option.fromOption(-1)
+    );
 
 /**
  * Adds the passed extended special ability to a free slot of a style
@@ -247,7 +254,7 @@ let getAlternativeIndex = (toBeRemoved: Hero.styleDependency, remainings) =>
          (
            switch (remaining.id) {
            | One(id) => id === activeId
-           | Many(ids) => Ley_List.Foldable.elem(activeId, ids)
+           | Many(ids) => Ley_List.elem(activeId, ids)
            }
          )
          && Ley_Option.isNone(remaining.active)
@@ -274,7 +281,7 @@ let removeStyleExtendedSpecialAbilityDependencies =
            |> Ley_List.filter((x: Hero.styleDependency) =>
                 Ley_Option.isSome(x.active)
               )
-           |> Ley_List.Foldable.foldr(
+           |> Ley_List.foldr(
                 (toRemove: Hero.styleDependency, remainings) =>
                   Ley_List.Index.modifyAt(
                     getAlternativeIndex(toRemove, remainings),
@@ -294,7 +301,7 @@ let removeStyleExtendedSpecialAbilityDependencies =
  */
 let getIndexOfUsedDependency =
     (
-      extendedSpecialAbility: SpecialAbility.t,
+      extendedSpecialAbility: SpecialAbility.Static.t,
       xs: list(Hero.styleDependency),
     ) =>
   Ley_List.findIndex(
@@ -344,7 +351,7 @@ let removeAllStyleRelatedDependencies = (specialAbility, hero) =>
  */
 let getAvailableExtendedSpecialAbilities = styleDependencies =>
   styleDependencies
-  |> Ley_List.Foldable.concatMap((x: Hero.styleDependency) =>
+  |> Ley_List.concatMap((x: Hero.styleDependency) =>
        switch (x.active, x.id) {
        | (None, One(id)) => [id]
        | (None, Many(ids)) => ids
@@ -358,7 +365,7 @@ let getAvailableExtendedSpecialAbilities = styleDependencies =>
  * to be checked separately.
  */
 let getAllAvailableExtendedSpecialAbilities =
-  Ley_List.Foldable.concatMap(getAvailableExtendedSpecialAbilities);
+  Ley_List.concatMap(getAvailableExtendedSpecialAbilities);
 
 /**
  * Checks if the passed special ability is a style and if it is valid to
@@ -379,7 +386,7 @@ let isStyleValidToRemove = (hero, styleSpecialAbility) =>
                 Ley_Option.isSome(x.active)
               )
            // ...if it can be moved to a different dependency
-           |> Ley_List.Foldable.all(x =>
+           |> Ley_List.all(x =>
                 getAlternativeIndex(x, remainingDependencies) > (-1)
               )
        )

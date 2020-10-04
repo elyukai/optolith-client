@@ -1,11 +1,13 @@
-type t = {
-  id: int,
-  name: string,
-  level: int,
-  subject: int,
-  description: string,
-  src: list(PublicationRef.t),
-  errata: list(Erratum.t),
-};
+module Static: {
+  type t = {
+    id: int,
+    name: string,
+    level: int,
+    subject: int,
+    description: string,
+    src: list(PublicationRef.t),
+    errata: list(Erratum.t),
+  };
 
-let decode: list(string) => Json.Decode.decoder(option(t));
+  let decode: list(string) => Json.Decode.decoder(option((int, t)));
+};

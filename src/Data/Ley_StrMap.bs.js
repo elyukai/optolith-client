@@ -7,9 +7,39 @@ var StrMap = Ley_Map$OptolithClient.Make({
       compare: $$String.compare
     });
 
-var Foldable = StrMap.Foldable;
+var foldr = StrMap.foldr;
 
-var Traversable = StrMap.Traversable;
+var foldl = StrMap.foldl;
+
+var toList = StrMap.toList;
+
+var length = StrMap.length;
+
+var elem = StrMap.elem;
+
+var sum = StrMap.sum;
+
+var maximum = StrMap.maximum;
+
+var minimum = StrMap.minimum;
+
+var concat = StrMap.concat;
+
+var concatMap = StrMap.concatMap;
+
+var con = StrMap.con;
+
+var dis = StrMap.dis;
+
+var any = StrMap.any;
+
+var all = StrMap.all;
+
+var notElem = StrMap.notElem;
+
+var find = StrMap.find;
+
+var mapMEither = StrMap.mapMEither;
 
 var $$null = StrMap.$$null;
 
@@ -93,8 +123,23 @@ var groupBy = StrMap.groupBy;
 
 export {
   StrMap ,
-  Foldable ,
-  Traversable ,
+  foldr ,
+  foldl ,
+  toList ,
+  length ,
+  elem ,
+  sum ,
+  maximum ,
+  minimum ,
+  concat ,
+  concatMap ,
+  con ,
+  dis ,
+  any ,
+  all ,
+  notElem ,
+  find ,
+  mapMEither ,
   $$null ,
   size ,
   member ,

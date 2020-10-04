@@ -10,7 +10,27 @@ var IntSet = Ley_Set$OptolithClient.Make({
       compare: compare
     });
 
-var Foldable = IntSet.Foldable;
+var foldr = IntSet.foldr;
+
+var foldl = IntSet.foldl;
+
+var toList = IntSet.toList;
+
+var $$null = IntSet.$$null;
+
+var length = IntSet.length;
+
+var elem = IntSet.elem;
+
+var concatMap = IntSet.concatMap;
+
+var any = IntSet.any;
+
+var all = IntSet.all;
+
+var notElem = IntSet.notElem;
+
+var find = IntSet.find;
 
 var empty = IntSet.empty;
 
@@ -30,6 +50,8 @@ var notMember = IntSet.notMember;
 
 var size = IntSet.size;
 
+var disjoint = IntSet.disjoint;
+
 var union = IntSet.union;
 
 var difference = IntSet.difference;
@@ -40,9 +62,21 @@ var map = IntSet.map;
 
 var elems = IntSet.elems;
 
+var Infix = IntSet.Infix;
+
 export {
   IntSet ,
-  Foldable ,
+  foldr ,
+  foldl ,
+  toList ,
+  $$null ,
+  length ,
+  elem ,
+  concatMap ,
+  any ,
+  all ,
+  notElem ,
+  find ,
   empty ,
   singleton ,
   fromList ,
@@ -52,11 +86,13 @@ export {
   member ,
   notMember ,
   size ,
+  disjoint ,
   union ,
   difference ,
   filter ,
   map ,
   elems ,
+  Infix ,
   
 }
 /* IntSet Not a pure module */
