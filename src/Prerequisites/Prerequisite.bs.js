@@ -45,7 +45,7 @@ function oneOrManyInt(param) {
   return Json_decode.oneOf(partial_arg, param);
 }
 
-function decode(json) {
+function t(json) {
   var str = Json_decode.string(json);
   switch (str) {
     case "f" :
@@ -61,8 +61,12 @@ function decode(json) {
   }
 }
 
+var Decode = {
+  t: t
+};
+
 var Sex = {
-  decode: decode
+  Decode: Decode
 };
 
 function partial_arg_0$1(json) {
@@ -87,23 +91,35 @@ var partial_arg$1 = {
   tl: partial_arg_1$1
 };
 
-function decode$1(param) {
+function t$1(param) {
   return Json_decode.oneOf(partial_arg$1, param);
 }
 
+var Decode$1 = {
+  t: t$1
+};
+
 var Race = {
-  decode: decode$1
+  Decode: Decode$1
+};
+
+var Decode$2 = {
+  t: oneOrManyInt
 };
 
 var Culture = {
-  decode: oneOrManyInt
+  Decode: Decode$2
+};
+
+var Decode$3 = {
+  t: Json_decode.$$int
 };
 
 var SocialStatus = {
-  decode: Json_decode.$$int
+  Decode: Decode$3
 };
 
-function decode$2(json) {
+function t$2(json) {
   return {
           category: JsonStrict$OptolithClient.field("category", JsonStrict$OptolithClient.$$int, json),
           domain: JsonStrict$OptolithClient.optionalField("domain", oneOrManyInt, json),
@@ -111,11 +127,15 @@ function decode$2(json) {
         };
 }
 
-var Pact = {
-  decode: decode$2
+var Decode$4 = {
+  t: t$2
 };
 
-function decode$3(json) {
+var Pact = {
+  Decode: Decode$4
+};
+
+function t$3(json) {
   var str = Json_decode.field("type", Json_decode.string, json);
   var tmp;
   switch (str) {
@@ -138,11 +158,15 @@ function decode$3(json) {
         };
 }
 
-var PrimaryAttribute = {
-  decode: decode$3
+var Decode$5 = {
+  t: t$3
 };
 
-function decode$4(json) {
+var PrimaryAttribute = {
+  Decode: Decode$5
+};
+
+function t$4(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", Id$OptolithClient.Activatable.Decode.t, json),
           active: JsonStrict$OptolithClient.field("active", JsonStrict$OptolithClient.bool, json),
@@ -153,22 +177,26 @@ function decode$4(json) {
         };
 }
 
-var Activatable = {
-  decode: decode$4
+var Decode$6 = {
+  t: t$4
 };
 
-function decodeList(f, json) {
+var Activatable = {
+  Decode: Decode$6
+};
+
+function activatableIdList(f, json) {
   return Curry._1(f, Json_decode.field("value", (function (param) {
                     return Json_decode.list(Json_decode.$$int, param);
                   }), json));
 }
 
-function decodeIds(param) {
+function activatableIds(param) {
   return Json_decode.andThen((function (str) {
                 switch (str) {
                   case "Advantage" :
                       return function (param) {
-                        return decodeList((function (xs) {
+                        return activatableIdList((function (xs) {
                                       return {
                                               TAG: /* Advantages */0,
                                               _0: xs
@@ -177,7 +205,7 @@ function decodeIds(param) {
                       };
                   case "Disadvantage" :
                       return function (param) {
-                        return decodeList((function (xs) {
+                        return activatableIdList((function (xs) {
                                       return {
                                               TAG: /* Disadvantages */1,
                                               _0: xs
@@ -186,7 +214,7 @@ function decodeIds(param) {
                       };
                   case "SpecialAbility" :
                       return function (param) {
-                        return decodeList((function (xs) {
+                        return activatableIdList((function (xs) {
                                       return {
                                               TAG: /* SpecialAbilities */2,
                                               _0: xs
@@ -205,9 +233,9 @@ function decodeIds(param) {
               }), param);
 }
 
-function decode$5(json) {
+function t$5(json) {
   return {
-          id: JsonStrict$OptolithClient.field("id", decodeIds, json),
+          id: JsonStrict$OptolithClient.field("id", activatableIds, json),
           active: JsonStrict$OptolithClient.field("active", JsonStrict$OptolithClient.bool, json),
           options: JsonStrict$OptolithClient.field("options", (function (param) {
                   return JsonStrict$OptolithClient.list(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
@@ -216,7 +244,7 @@ function decode$5(json) {
         };
 }
 
-function decode$6(json) {
+function t$6(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", Id$OptolithClient.Activatable.Decode.t, json),
           active: JsonStrict$OptolithClient.field("active", JsonStrict$OptolithClient.bool, json),
@@ -230,33 +258,41 @@ function decode$6(json) {
         };
 }
 
-var ActivatableMultiSelect = {
-  decode: decode$6
+var Decode$7 = {
+  t: t$6
 };
 
-function decode$7(json) {
+var ActivatableMultiSelect = {
+  Decode: Decode$7
+};
+
+function t$7(json) {
   return {
           id: Json_decode.field("id", Id$OptolithClient.Increasable.Decode.t, json),
           value: Json_decode.field("value", Json_decode.$$int, json)
         };
 }
 
-var Increasable = {
-  decode: decode$7
+var Decode$8 = {
+  t: t$7
 };
 
-function decodeList$1(f, json) {
+var Increasable = {
+  Decode: Decode$8
+};
+
+function increasableIdList(f, json) {
   return Curry._1(f, Json_decode.field("value", (function (param) {
                     return Json_decode.list(Json_decode.$$int, param);
                   }), json));
 }
 
-function decodeIds$1(param) {
+function increasableIds(param) {
   return Json_decode.andThen((function (str) {
                 switch (str) {
                   case "Attribute" :
                       return function (param) {
-                        return decodeList$1((function (xs) {
+                        return increasableIdList((function (xs) {
                                       return {
                                               TAG: /* Attributes */0,
                                               _0: xs
@@ -265,7 +301,7 @@ function decodeIds$1(param) {
                       };
                   case "CombatTechnique" :
                       return function (param) {
-                        return decodeList$1((function (xs) {
+                        return increasableIdList((function (xs) {
                                       return {
                                               TAG: /* CombatTechniques */2,
                                               _0: xs
@@ -274,7 +310,7 @@ function decodeIds$1(param) {
                       };
                   case "LiturgicalChant" :
                       return function (param) {
-                        return decodeList$1((function (xs) {
+                        return increasableIdList((function (xs) {
                                       return {
                                               TAG: /* LiturgicalChants */4,
                                               _0: xs
@@ -283,7 +319,7 @@ function decodeIds$1(param) {
                       };
                   case "Skill" :
                       return function (param) {
-                        return decodeList$1((function (xs) {
+                        return increasableIdList((function (xs) {
                                       return {
                                               TAG: /* Skills */1,
                                               _0: xs
@@ -292,7 +328,7 @@ function decodeIds$1(param) {
                       };
                   case "Spell" :
                       return function (param) {
-                        return decodeList$1((function (xs) {
+                        return increasableIdList((function (xs) {
                                       return {
                                               TAG: /* Spells */3,
                                               _0: xs
@@ -311,9 +347,9 @@ function decodeIds$1(param) {
               }), param);
 }
 
-function decode$8(json) {
+function t$8(json) {
   return {
-          id: Json_decode.field("id", decodeIds$1, json),
+          id: Json_decode.field("id", increasableIds, json),
           value: Json_decode.field("value", Json_decode.$$int, json)
         };
 }
@@ -324,7 +360,7 @@ var Translation = {
 
 var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 
-function decodeMultilingual(json) {
+function multilingual(json) {
   return Ley_Option$OptolithClient.fromOption(/* MultilingualGenerate */0, JsonStrict$OptolithClient.optionalField("displayOption", (function (param) {
                     return JsonStrict$OptolithClient.andThen((function (str) {
                                   switch (str) {
@@ -365,10 +401,10 @@ function resolveTranslations(langs, x) {
   }
 }
 
-function decodeMultilingual$1(decoder, wrap, json) {
+function multilingual$1(decoder, wrap, json) {
   return {
           value: Curry._1(wrap, Json_decode.field("value", decoder, json)),
-          displayOption: decodeMultilingual(json)
+          displayOption: multilingual(json)
         };
 }
 
@@ -380,120 +416,6 @@ function resolveTranslations$1(langs, param) {
 }
 
 var Unified = {};
-
-function decodeMultilingual$2(param) {
-  return Json_decode.andThen((function (str) {
-                switch (str) {
-                  case "Activatable" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$4, (function (v) {
-                                      return {
-                                              TAG: /* Activatable */6,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "ActivatableMultiEntry" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$5, (function (v) {
-                                      return {
-                                              TAG: /* ActivatableMultiEntry */7,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "ActivatableMultiSelect" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$6, (function (v) {
-                                      return {
-                                              TAG: /* ActivatableMultiSelect */8,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "Culture" :
-                      return function (param) {
-                        return decodeMultilingual$1(oneOrManyInt, (function (v) {
-                                      return {
-                                              TAG: /* Culture */2,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "Increasable" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$7, (function (v) {
-                                      return {
-                                              TAG: /* Increasable */9,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "IncreasableMultiEntry" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$8, (function (v) {
-                                      return {
-                                              TAG: /* IncreasableMultiEntry */10,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "Pact" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$2, (function (v) {
-                                      return {
-                                              TAG: /* Pact */3,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "PrimaryAttribute" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$3, (function (v) {
-                                      return {
-                                              TAG: /* PrimaryAttribute */5,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "Race" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$1, (function (v) {
-                                      return {
-                                              TAG: /* Race */1,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "Sex" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode, (function (v) {
-                                      return {
-                                              TAG: /* Sex */0,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "SocialStatus" :
-                      return function (param) {
-                        return decodeMultilingual$1(Json_decode.$$int, (function (v) {
-                                      return {
-                                              TAG: /* SocialStatus */4,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  default:
-                    throw {
-                          RE_EXN_ID: Json_decode.DecodeError,
-                          _1: "Unknown prerequisite type: " + str,
-                          Error: new Error()
-                        };
-                }
-              }), (function (param) {
-                return Json_decode.field("type", Json_decode.string, param);
-              }), param);
-}
 
 function unify(x) {
   var x$1 = x.value;
@@ -573,27 +495,39 @@ function unify(x) {
         };
 }
 
-var General = {
-  decodeMultilingual: decodeMultilingual$2,
-  resolveTranslations: resolveTranslations$1,
-  unify: unify
-};
-
-function decodeMultilingual$3(param) {
+function multilingual$2(param) {
   return Json_decode.andThen((function (str) {
                 switch (str) {
                   case "Activatable" :
                       return function (param) {
-                        return decodeMultilingual$1(decode$4, (function (v) {
+                        return multilingual$1(t$4, (function (v) {
                                       return {
-                                              TAG: /* Activatable */3,
+                                              TAG: /* Activatable */6,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "ActivatableMultiEntry" :
+                      return function (param) {
+                        return multilingual$1(t$5, (function (v) {
+                                      return {
+                                              TAG: /* ActivatableMultiEntry */7,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "ActivatableMultiSelect" :
+                      return function (param) {
+                        return multilingual$1(t$6, (function (v) {
+                                      return {
+                                              TAG: /* ActivatableMultiSelect */8,
                                               _0: v
                                             };
                                     }), param);
                       };
                   case "Culture" :
                       return function (param) {
-                        return decodeMultilingual$1(oneOrManyInt, (function (v) {
+                        return multilingual$1(oneOrManyInt, (function (v) {
                                       return {
                                               TAG: /* Culture */2,
                                               _0: v
@@ -602,16 +536,43 @@ function decodeMultilingual$3(param) {
                       };
                   case "Increasable" :
                       return function (param) {
-                        return decodeMultilingual$1(decode$7, (function (v) {
+                        return multilingual$1(t$7, (function (v) {
                                       return {
-                                              TAG: /* Increasable */4,
+                                              TAG: /* Increasable */9,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "IncreasableMultiEntry" :
+                      return function (param) {
+                        return multilingual$1(t$8, (function (v) {
+                                      return {
+                                              TAG: /* IncreasableMultiEntry */10,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Pact" :
+                      return function (param) {
+                        return multilingual$1(t$2, (function (v) {
+                                      return {
+                                              TAG: /* Pact */3,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "PrimaryAttribute" :
+                      return function (param) {
+                        return multilingual$1(t$3, (function (v) {
+                                      return {
+                                              TAG: /* PrimaryAttribute */5,
                                               _0: v
                                             };
                                     }), param);
                       };
                   case "Race" :
                       return function (param) {
-                        return decodeMultilingual$1(decode$1, (function (v) {
+                        return multilingual$1(t$1, (function (v) {
                                       return {
                                               TAG: /* Race */1,
                                               _0: v
@@ -620,9 +581,18 @@ function decodeMultilingual$3(param) {
                       };
                   case "Sex" :
                       return function (param) {
-                        return decodeMultilingual$1(decode, (function (v) {
+                        return multilingual$1(t, (function (v) {
                                       return {
                                               TAG: /* Sex */0,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "SocialStatus" :
+                      return function (param) {
+                        return multilingual$1(Json_decode.$$int, (function (v) {
+                                      return {
+                                              TAG: /* SocialStatus */4,
                                               _0: v
                                             };
                                     }), param);
@@ -638,6 +608,16 @@ function decodeMultilingual$3(param) {
                 return Json_decode.field("type", Json_decode.string, param);
               }), param);
 }
+
+var Decode$9 = {
+  multilingual: multilingual$2,
+  resolveTranslations: resolveTranslations$1
+};
+
+var General = {
+  unify: unify,
+  Decode: Decode$9
+};
 
 function unify$1(x) {
   var x$1 = x.value;
@@ -681,52 +661,21 @@ function unify$1(x) {
         };
 }
 
-var Profession = {
-  decodeMultilingual: decodeMultilingual$3,
-  resolveTranslations: resolveTranslations$1,
-  unify: unify$1
-};
-
-function decodeMultilingual$4(param) {
+function multilingual$3(param) {
   return Json_decode.andThen((function (str) {
                 switch (str) {
                   case "Activatable" :
                       return function (param) {
-                        return decodeMultilingual$1(decode$4, (function (v) {
+                        return multilingual$1(t$4, (function (v) {
                                       return {
-                                              TAG: /* Activatable */6,
+                                              TAG: /* Activatable */3,
                                               _0: v
                                             };
                                     }), param);
-                      };
-                  case "ActivatableMultiEntry" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$5, (function (v) {
-                                      return {
-                                              TAG: /* ActivatableMultiEntry */7,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "ActivatableMultiSelect" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$6, (function (v) {
-                                      return {
-                                              TAG: /* ActivatableMultiSelect */8,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "CommonSuggestedByRCP" :
-                      return function (param) {
-                        return {
-                                value: /* CommonSuggestedByRCP */0,
-                                displayOption: /* MultilingualGenerate */0
-                              };
                       };
                   case "Culture" :
                       return function (param) {
-                        return decodeMultilingual$1(oneOrManyInt, (function (v) {
+                        return multilingual$1(oneOrManyInt, (function (v) {
                                       return {
                                               TAG: /* Culture */2,
                                               _0: v
@@ -735,43 +684,16 @@ function decodeMultilingual$4(param) {
                       };
                   case "Increasable" :
                       return function (param) {
-                        return decodeMultilingual$1(decode$7, (function (v) {
+                        return multilingual$1(t$7, (function (v) {
                                       return {
-                                              TAG: /* Increasable */9,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "IncreasableMultiEntry" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$8, (function (v) {
-                                      return {
-                                              TAG: /* IncreasableMultiEntry */10,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "Pact" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$2, (function (v) {
-                                      return {
-                                              TAG: /* Pact */3,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "PrimaryAttribute" :
-                      return function (param) {
-                        return decodeMultilingual$1(decode$3, (function (v) {
-                                      return {
-                                              TAG: /* PrimaryAttribute */5,
+                                              TAG: /* Increasable */4,
                                               _0: v
                                             };
                                     }), param);
                       };
                   case "Race" :
                       return function (param) {
-                        return decodeMultilingual$1(decode$1, (function (v) {
+                        return multilingual$1(t$1, (function (v) {
                                       return {
                                               TAG: /* Race */1,
                                               _0: v
@@ -780,18 +702,9 @@ function decodeMultilingual$4(param) {
                       };
                   case "Sex" :
                       return function (param) {
-                        return decodeMultilingual$1(decode, (function (v) {
+                        return multilingual$1(t, (function (v) {
                                       return {
                                               TAG: /* Sex */0,
-                                              _0: v
-                                            };
-                                    }), param);
-                      };
-                  case "SocialStatus" :
-                      return function (param) {
-                        return decodeMultilingual$1(Json_decode.$$int, (function (v) {
-                                      return {
-                                              TAG: /* SocialStatus */4,
                                               _0: v
                                             };
                                     }), param);
@@ -807,6 +720,16 @@ function decodeMultilingual$4(param) {
                 return Json_decode.field("type", Json_decode.string, param);
               }), param);
 }
+
+var Decode$10 = {
+  multilingual: multilingual$3,
+  resolveTranslations: resolveTranslations$1
+};
+
+var Profession = {
+  unify: unify$1,
+  Decode: Decode$10
+};
 
 function unify$2(x) {
   var x$1 = x.value;
@@ -890,13 +813,188 @@ function unify$2(x) {
         };
 }
 
-var AdvantageDisadvantage = {
-  decodeMultilingual: decodeMultilingual$4,
-  resolveTranslations: resolveTranslations$1,
-  unify: unify$2
+function multilingual$4(param) {
+  return Json_decode.andThen((function (str) {
+                switch (str) {
+                  case "Activatable" :
+                      return function (param) {
+                        return multilingual$1(t$4, (function (v) {
+                                      return {
+                                              TAG: /* Activatable */6,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "ActivatableMultiEntry" :
+                      return function (param) {
+                        return multilingual$1(t$5, (function (v) {
+                                      return {
+                                              TAG: /* ActivatableMultiEntry */7,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "ActivatableMultiSelect" :
+                      return function (param) {
+                        return multilingual$1(t$6, (function (v) {
+                                      return {
+                                              TAG: /* ActivatableMultiSelect */8,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "CommonSuggestedByRCP" :
+                      return function (param) {
+                        return {
+                                value: /* CommonSuggestedByRCP */0,
+                                displayOption: /* MultilingualGenerate */0
+                              };
+                      };
+                  case "Culture" :
+                      return function (param) {
+                        return multilingual$1(oneOrManyInt, (function (v) {
+                                      return {
+                                              TAG: /* Culture */2,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Increasable" :
+                      return function (param) {
+                        return multilingual$1(t$7, (function (v) {
+                                      return {
+                                              TAG: /* Increasable */9,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "IncreasableMultiEntry" :
+                      return function (param) {
+                        return multilingual$1(t$8, (function (v) {
+                                      return {
+                                              TAG: /* IncreasableMultiEntry */10,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Pact" :
+                      return function (param) {
+                        return multilingual$1(t$2, (function (v) {
+                                      return {
+                                              TAG: /* Pact */3,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "PrimaryAttribute" :
+                      return function (param) {
+                        return multilingual$1(t$3, (function (v) {
+                                      return {
+                                              TAG: /* PrimaryAttribute */5,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Race" :
+                      return function (param) {
+                        return multilingual$1(t$1, (function (v) {
+                                      return {
+                                              TAG: /* Race */1,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Sex" :
+                      return function (param) {
+                        return multilingual$1(t, (function (v) {
+                                      return {
+                                              TAG: /* Sex */0,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "SocialStatus" :
+                      return function (param) {
+                        return multilingual$1(Json_decode.$$int, (function (v) {
+                                      return {
+                                              TAG: /* SocialStatus */4,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  default:
+                    throw {
+                          RE_EXN_ID: Json_decode.DecodeError,
+                          _1: "Unknown prerequisite type: " + str,
+                          Error: new Error()
+                        };
+                }
+              }), (function (param) {
+                return Json_decode.field("type", Json_decode.string, param);
+              }), param);
+}
+
+var Decode$11 = {
+  multilingual: multilingual$4,
+  resolveTranslations: resolveTranslations$1
 };
 
-function decodeMultilingual$5(decoder) {
+var AdvantageDisadvantage = {
+  unify: unify$2,
+  Decode: Decode$11
+};
+
+function getFirstLevel(prerequisites) {
+  if (prerequisites.TAG) {
+    return Ley_Option$OptolithClient.fromOption(/* [] */0, Curry._2(Ley_IntMap$OptolithClient.lookup, 1, prerequisites._0));
+  } else {
+    return prerequisites._0;
+  }
+}
+
+function makeRangePredicate(oldLevel, newLevel) {
+  var level;
+  if (oldLevel !== undefined) {
+    if (newLevel !== undefined) {
+      var match = Ley_Int$OptolithClient.minmax(oldLevel, newLevel);
+      var partial_arg_0 = match[0] + 1 | 0;
+      var partial_arg_1 = match[1];
+      var partial_arg = [
+        partial_arg_0,
+        partial_arg_1
+      ];
+      return function (param) {
+        return Ley_Ix$OptolithClient.inRange(partial_arg, param);
+      };
+    }
+    level = oldLevel;
+  } else {
+    if (newLevel === undefined) {
+      return function (param) {
+        return Ley_Function$OptolithClient.$$const(true, param);
+      };
+    }
+    level = newLevel;
+  }
+  return function (param) {
+    return level >= param;
+  };
+}
+
+function concatRange(oldLevel, newLevel, prerequisites) {
+  var pred = makeRangePredicate(oldLevel, newLevel);
+  if (prerequisites.TAG) {
+    return Curry._1(Ley_IntMap$OptolithClient.concat, Curry._2(Ley_IntMap$OptolithClient.filterWithKey, (function (k, param) {
+                      return Curry._1(pred, k);
+                    }), prerequisites._0));
+  } else if (Curry._1(pred, 1)) {
+    return prerequisites._0;
+  } else {
+    return /* [] */0;
+  }
+}
+
+function multilingual$5(decoder) {
   return function (param) {
     return Json_decode.andThen((function (str) {
                   switch (str) {
@@ -949,97 +1047,63 @@ function resolveTranslations$2(langs, f, x) {
   }
 }
 
-function getFirstLevel(prerequisites) {
-  if (prerequisites.TAG) {
-    return Ley_Option$OptolithClient.fromOption(/* [] */0, Curry._2(Ley_IntMap$OptolithClient.lookup, 1, prerequisites._0));
-  } else {
-    return prerequisites._0;
-  }
-}
-
-function makeRangePredicate(oldLevel, newLevel) {
-  var level;
-  if (oldLevel !== undefined) {
-    if (newLevel !== undefined) {
-      var match = Ley_Int$OptolithClient.minmax(oldLevel, newLevel);
-      var partial_arg_0 = match[0] + 1 | 0;
-      var partial_arg_1 = match[1];
-      var partial_arg = [
-        partial_arg_0,
-        partial_arg_1
-      ];
-      return function (param) {
-        return Ley_Ix$OptolithClient.inRange(partial_arg, param);
-      };
-    }
-    level = oldLevel;
-  } else {
-    if (newLevel === undefined) {
-      return function (param) {
-        return Ley_Function$OptolithClient.$$const(true, param);
-      };
-    }
-    level = newLevel;
-  }
-  return function (param) {
-    return level >= param;
-  };
-}
-
-function concatRange(oldLevel, newLevel, prerequisites) {
-  var pred = makeRangePredicate(oldLevel, newLevel);
-  if (prerequisites.TAG) {
-    return Curry._1(Ley_IntMap$OptolithClient.concat, Curry._2(Ley_IntMap$OptolithClient.filterWithKey, (function (k, param) {
-                      return Curry._1(pred, k);
-                    }), prerequisites._0));
-  } else if (Curry._1(pred, 1)) {
-    return prerequisites._0;
-  } else {
-    return /* [] */0;
-  }
-}
-
-var decodeMultilingual$6 = decodeMultilingual$5(decodeMultilingual$2);
+var multilingual$6 = multilingual$5(multilingual$2);
 
 function resolveTranslations$3(langs, x) {
   return resolveTranslations$2(langs, resolveTranslations$1, x);
 }
 
-var General$1 = {
-  decodeMultilingual: decodeMultilingual$6,
+var Decode$12 = {
+  multilingual: multilingual$6,
   resolveTranslations: resolveTranslations$3
 };
 
-function decodeMultilingual$7(param) {
-  return Json_decode.list(decodeMultilingual$3, param);
+var General$1 = {
+  Decode: Decode$12
+};
+
+function multilingual$7(param) {
+  return Json_decode.list(multilingual$3, param);
 }
 
 function resolveTranslations$4(langs, x) {
   return Curry._2(Ley_List$OptolithClient.map, Curry._1(resolveTranslations$1, langs), x);
 }
 
-var Profession$1 = {
-  decodeMultilingual: decodeMultilingual$7,
+var Decode$13 = {
+  multilingual: multilingual$7,
   resolveTranslations: resolveTranslations$4
 };
 
-var decodeMultilingual$8 = decodeMultilingual$5(decodeMultilingual$4);
+var Profession$1 = {
+  Decode: Decode$13
+};
+
+var multilingual$8 = multilingual$5(multilingual$4);
 
 function resolveTranslations$5(langs, x) {
   return resolveTranslations$2(langs, resolveTranslations$1, x);
 }
 
-var AdvantageDisadvantage$1 = {
-  decodeMultilingual: decodeMultilingual$8,
+var Decode$14 = {
+  multilingual: multilingual$8,
   resolveTranslations: resolveTranslations$5
 };
 
+var AdvantageDisadvantage$1 = {
+  Decode: Decode$14
+};
+
 var ActivatableMultiEntry = {
-  decode: decode$5
+  Decode: {
+    t: t$5
+  }
 };
 
 var IncreasableMultiEntry = {
-  decode: decode$8
+  Decode: {
+    t: t$8
+  }
 };
 
 var DisplayOption = {};

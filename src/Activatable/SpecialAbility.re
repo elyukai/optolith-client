@@ -106,7 +106,7 @@ module Static = {
       property: option(int),
       aspect: option(int),
       brew: option(int),
-      prerequisites: Prerequisite.Collection.General.multilingual,
+      prerequisites: Prerequisite.Collection.General.Decode.multilingual,
       apValue: option(Advantage.Static.apValue),
       gr: int,
       subgr: option(int),
@@ -172,7 +172,7 @@ module Static = {
           json
           |> field(
                "prerequisites",
-               Prerequisite.Collection.General.decodeMultilingual,
+               Prerequisite.Collection.General.Decode.multilingual,
              ),
         apValue:
           json |> optionalField("apValue", Advantage.Static.Decode.apValue),
@@ -236,7 +236,7 @@ module Static = {
             brew: x.brew,
             extended: x.extended,
             prerequisites:
-              Prerequisite.Collection.General.resolveTranslations(
+              Prerequisite.Collection.General.Decode.resolveTranslations(
                 langs,
                 x.prerequisites,
               ),

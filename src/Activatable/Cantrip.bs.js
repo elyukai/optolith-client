@@ -35,7 +35,7 @@ function multilingual(json) {
                       return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
                     }), json)),
           activatablePrerequisites: JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
-                  return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.decode, param);
+                  return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.Decode.t, param);
                 }), json),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
           translations: JsonStrict$OptolithClient.field("translations", TranslationMap.Decode.t, json)

@@ -12,4 +12,4 @@ let getValues: (Ley_IntMap.t(Attribute.Dynamic.t), t) => (int, int, int);
 //   (Ley_IntMap.t(Attribute.t), t) =>
 //   option((Attribute.t, Attribute.t, Attribute.t));
 
-let decode: Json.Decode.decoder(t);
+module Decode: {let t: Json.Decode.decoder(t);};

@@ -1,20 +1,17 @@
 open IO.Infix;
 
-module Decode = Yaml_Decode;
-module Raw = Yaml_Raw;
-
 let parseStaticData = (~onProgress, langs) => {
   Js.Console.timeStart("parseStaticData");
 
   let preferredLocale = Locale.getPreferred(langs);
 
-  Raw.parseUI(preferredLocale)
-  <&> Decode.decodeUI(preferredLocale)
+  Yaml_Parse.parseUI(preferredLocale)
+  <&> Yaml_Decode.decodeUI(preferredLocale)
   >>= (
     ui =>
-      Raw.parseFiles(~onProgress)
+      Yaml_Parse.parseFiles(~onProgress)
       <&> (
-        Decode.decodeFiles(langs, ui)
+        Yaml_Decode.decodeFiles(langs, ui)
         |> (
           static => {
             Js.Console.log("Parsing static data done!");

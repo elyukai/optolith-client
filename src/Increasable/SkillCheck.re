@@ -23,4 +23,6 @@ let getAttributes = (mp: IM.t(Attribute.Static.t), (a1, a2, a3)) =>
     IM.lookup(a3, mp),
   );
 
-let decode = Json.Decode.(tuple3(int, int, int));
+module Decode = {
+  let t = Json.Decode.(tuple3(int, int, int));
+};

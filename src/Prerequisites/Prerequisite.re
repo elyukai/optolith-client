@@ -9,17 +9,19 @@ let oneOrManyInt =
 module Sex = {
   include Sex;
 
-  let decode = json =>
-    Json.Decode.(
-      json
-      |> string
-      |> (
-        fun
-        | "m" => Male
-        | "f" => Female
-        | str => raise(DecodeError("Unknown sex prerequisite: " ++ str))
-      )
-    );
+  module Decode = {
+    let t = json =>
+      Json.Decode.(
+        json
+        |> string
+        |> (
+          fun
+          | "m" => Male
+          | "f" => Female
+          | str => raise(DecodeError("Unknown sex prerequisite: " ++ str))
+        )
+      );
+  };
 };
 
 module Race = {
@@ -28,28 +30,34 @@ module Race = {
     active: bool,
   };
 
-  let decode =
-    Json.Decode.(
-      oneOf([
-        json => {id: json |> oneOrManyInt, active: true},
-        json => {
-          id: json |> field("id", oneOrManyInt),
-          active: json |> field("active", bool),
-        },
-      ])
-    );
+  module Decode = {
+    let t =
+      Json.Decode.(
+        oneOf([
+          json => {id: json |> oneOrManyInt, active: true},
+          json => {
+            id: json |> field("id", oneOrManyInt),
+            active: json |> field("active", bool),
+          },
+        ])
+      );
+  };
 };
 
 module Culture = {
   type t = OneOrMany.t(int);
 
-  let decode = oneOrManyInt;
+  module Decode = {
+    let t = oneOrManyInt;
+  };
 };
 
 module SocialStatus = {
   type t = int;
 
-  let decode = Json.Decode.int;
+  module Decode = {
+    let t = Json.Decode.int;
+  };
 };
 
 module Pact = {
@@ -59,12 +67,14 @@ module Pact = {
     level: option(int),
   };
 
-  let decode = json =>
-    JsonStrict.{
-      category: json |> field("category", int),
-      domain: json |> optionalField("domain", oneOrManyInt),
-      level: json |> optionalField("level", int),
-    };
+  module Decode = {
+    let t = json =>
+      JsonStrict.{
+        category: json |> field("category", int),
+        domain: json |> optionalField("domain", oneOrManyInt),
+        level: json |> optionalField("level", int),
+      };
+  };
 };
 
 module PrimaryAttribute = {
@@ -77,20 +87,22 @@ module PrimaryAttribute = {
     scope: primaryAttributeType,
   };
 
-  let decode = json =>
-    Json.Decode.{
-      scope:
-        json
-        |> field("type", string)
-        |> (
-          fun
-          | "blessed" => Blessed
-          | "magical" => Magical
-          | str =>
-            raise(DecodeError("Unknown primary attribute type: " ++ str))
-        ),
-      value: json |> field("value", int),
-    };
+  module Decode = {
+    let t = json =>
+      Json.Decode.{
+        scope:
+          json
+          |> field("type", string)
+          |> (
+            fun
+            | "blessed" => Blessed
+            | "magical" => Magical
+            | str =>
+              raise(DecodeError("Unknown primary attribute type: " ++ str))
+          ),
+        value: json |> field("value", int),
+      };
+  };
 };
 
 module Activatable = {
@@ -101,14 +113,17 @@ module Activatable = {
     level: option(int),
   };
 
-  let decode = json =>
-    JsonStrict.{
-      id: json |> field("id", Id.Activatable.Decode.t),
-      active: json |> field("active", bool),
-      options:
-        json |> field("options", list(Id.Activatable.SelectOption.Decode.t)),
-      level: json |> optionalField("level", int),
-    };
+  module Decode = {
+    let t = json =>
+      JsonStrict.{
+        id: json |> field("id", Id.Activatable.Decode.t),
+        active: json |> field("active", bool),
+        options:
+          json
+          |> field("options", list(Id.Activatable.SelectOption.Decode.t)),
+        level: json |> optionalField("level", int),
+      };
+  };
 };
 
 module ActivatableMultiEntry = {
@@ -117,22 +132,6 @@ module ActivatableMultiEntry = {
     | Disadvantages(list(int))
     | SpecialAbilities(list(int));
 
-  let decodeList = (f, json): activatableIds =>
-    Json.Decode.(json |> field("value", list(int)) |> f);
-
-  let decodeIds =
-    Json.Decode.(
-      field("scope", string)
-      |> andThen(
-           fun
-           | "Advantage" => decodeList(xs => Advantages(xs))
-           | "Disadvantage" => decodeList(xs => Disadvantages(xs))
-           | "SpecialAbility" => decodeList(xs => SpecialAbilities(xs))
-           | str =>
-             raise(DecodeError("Unknown activatable ID scope: " ++ str)),
-         )
-    );
-
   type t = {
     id: activatableIds,
     active: bool,
@@ -140,14 +139,34 @@ module ActivatableMultiEntry = {
     level: option(int),
   };
 
-  let decode = json =>
-    JsonStrict.{
-      id: json |> field("id", decodeIds),
-      active: json |> field("active", bool),
-      options:
-        json |> field("options", list(Id.Activatable.SelectOption.Decode.t)),
-      level: json |> optionalField("level", int),
-    };
+  module Decode = {
+    let activatableIdList = (f, json): activatableIds =>
+      Json.Decode.(json |> field("value", list(int)) |> f);
+
+    let activatableIds =
+      Json.Decode.(
+        field("scope", string)
+        |> andThen(
+             fun
+             | "Advantage" => activatableIdList(xs => Advantages(xs))
+             | "Disadvantage" => activatableIdList(xs => Disadvantages(xs))
+             | "SpecialAbility" =>
+               activatableIdList(xs => SpecialAbilities(xs))
+             | str =>
+               raise(DecodeError("Unknown activatable ID scope: " ++ str)),
+           )
+      );
+
+    let t = json =>
+      JsonStrict.{
+        id: json |> field("id", activatableIds),
+        active: json |> field("active", bool),
+        options:
+          json
+          |> field("options", list(Id.Activatable.SelectOption.Decode.t)),
+        level: json |> optionalField("level", int),
+      };
+  };
 };
 
 module ActivatableMultiSelect = {
@@ -159,18 +178,23 @@ module ActivatableMultiSelect = {
     level: option(int),
   };
 
-  let decode = json =>
-    JsonStrict.{
-      id: json |> field("id", Id.Activatable.Decode.t),
-      active: json |> field("active", bool),
-      firstOption:
-        json
-        |> field("firstOption", list(Id.Activatable.SelectOption.Decode.t)),
-      otherOptions:
-        json
-        |> field("otherOptions", list(Id.Activatable.SelectOption.Decode.t)),
-      level: json |> optionalField("level", int),
-    };
+  module Decode = {
+    let t = json =>
+      JsonStrict.{
+        id: json |> field("id", Id.Activatable.Decode.t),
+        active: json |> field("active", bool),
+        firstOption:
+          json
+          |> field("firstOption", list(Id.Activatable.SelectOption.Decode.t)),
+        otherOptions:
+          json
+          |> field(
+               "otherOptions",
+               list(Id.Activatable.SelectOption.Decode.t),
+             ),
+        level: json |> optionalField("level", int),
+      };
+  };
 };
 
 module Increasable = {
@@ -179,11 +203,13 @@ module Increasable = {
     value: int,
   };
 
-  let decode = json =>
-    Json.Decode.{
-      id: json |> field("id", Id.Increasable.Decode.t),
-      value: json |> field("value", int),
-    };
+  module Decode = {
+    let t = json =>
+      Json.Decode.{
+        id: json |> field("id", Id.Increasable.Decode.t),
+        value: json |> field("value", int),
+      };
+  };
 };
 
 module IncreasableMultiEntry = {
@@ -194,34 +220,38 @@ module IncreasableMultiEntry = {
     | Spells(list(int))
     | LiturgicalChants(list(int));
 
-  let decodeList = (f, json): increasableIds =>
-    Json.Decode.(json |> field("value", list(int)) |> f);
-
-  let decodeIds =
-    Json.Decode.(
-      field("scope", string)
-      |> andThen(
-           fun
-           | "Attribute" => decodeList(xs => Attributes(xs))
-           | "Skill" => decodeList(xs => Skills(xs))
-           | "CombatTechnique" => decodeList(xs => CombatTechniques(xs))
-           | "Spell" => decodeList(xs => Spells(xs))
-           | "LiturgicalChant" => decodeList(xs => LiturgicalChants(xs))
-           | str =>
-             raise(DecodeError("Unknown increasable ID scope: " ++ str)),
-         )
-    );
-
   type t = {
     id: increasableIds,
     value: int,
   };
 
-  let decode = json =>
-    Json.Decode.{
-      id: json |> field("id", decodeIds),
-      value: json |> field("value", int),
-    };
+  module Decode = {
+    let increasableIdList = (f, json): increasableIds =>
+      Json.Decode.(json |> field("value", list(int)) |> f);
+
+    let increasableIds =
+      Json.Decode.(
+        field("scope", string)
+        |> andThen(
+             fun
+             | "Attribute" => increasableIdList(xs => Attributes(xs))
+             | "Skill" => increasableIdList(xs => Skills(xs))
+             | "CombatTechnique" =>
+               increasableIdList(xs => CombatTechniques(xs))
+             | "Spell" => increasableIdList(xs => Spells(xs))
+             | "LiturgicalChant" =>
+               increasableIdList(xs => LiturgicalChants(xs))
+             | str =>
+               raise(DecodeError("Unknown increasable ID scope: " ++ str)),
+           )
+      );
+
+    let t = json =>
+      Json.Decode.{
+        id: json |> field("id", increasableIds),
+        value: json |> field("value", int),
+      };
+  };
 };
 
 module DisplayOption = {
@@ -230,51 +260,55 @@ module DisplayOption = {
     | Hide
     | ReplaceWith(string);
 
-  module Translation = {
-    type t = string;
+  module Decode = {
+    module Translation = {
+      type t = string;
 
-    let t = Json.Decode.string;
-  };
-
-  module TranslationMap = TranslationMap.Make(Translation);
-
-  type multilingual =
-    | MultilingualGenerate
-    | MultilingualHide
-    | MultilingualReplaceWith(TranslationMap.t);
-
-  let decodeMultilingual = json =>
-    JsonStrict.(
-      json
-      |> optionalField(
-           "displayOption",
-           field("type", string)
-           |> andThen(
-                fun
-                | "Hide" => (_ => MultilingualHide)
-                | "ByLevel" => (
-                    json =>
-                      json
-                      |> field("value", TranslationMap.Decode.t)
-                      |> (mp => MultilingualReplaceWith(mp))
-                  )
-                | str =>
-                  raise(DecodeError("Unknown display option type: " ++ str)),
-              ),
-         )
-      |> Ley_Option.fromOption(MultilingualGenerate)
-    );
-
-  let resolveTranslations = (langs, x) =>
-    switch (x) {
-    | MultilingualGenerate => Generate
-    | MultilingualHide => Hide
-    | MultilingualReplaceWith(mp) =>
-      mp
-      |> TranslationMap.Decode.getFromLanguageOrder(langs)
-      |> Ley_Option.fromOption(Chars.mdash)
-      |> (str => ReplaceWith(str))
+      let t = Json.Decode.string;
     };
+
+    module TranslationMap = TranslationMap.Make(Translation);
+
+    type multilingual =
+      | MultilingualGenerate
+      | MultilingualHide
+      | MultilingualReplaceWith(TranslationMap.t);
+
+    let multilingual = json =>
+      JsonStrict.(
+        json
+        |> optionalField(
+             "displayOption",
+             field("type", string)
+             |> andThen(
+                  fun
+                  | "Hide" => (_ => MultilingualHide)
+                  | "ByLevel" => (
+                      json =>
+                        json
+                        |> field("value", TranslationMap.Decode.t)
+                        |> (mp => MultilingualReplaceWith(mp))
+                    )
+                  | str =>
+                    raise(
+                      DecodeError("Unknown display option type: " ++ str),
+                    ),
+                ),
+           )
+        |> Ley_Option.fromOption(MultilingualGenerate)
+      );
+
+    let resolveTranslations = (langs, x) =>
+      switch (x) {
+      | MultilingualGenerate => Generate
+      | MultilingualHide => Hide
+      | MultilingualReplaceWith(mp) =>
+        mp
+        |> TranslationMap.Decode.getFromLanguageOrder(langs)
+        |> Ley_Option.fromOption(Chars.mdash)
+        |> (str => ReplaceWith(str))
+      };
+  };
 };
 
 module Config = {
@@ -283,26 +317,29 @@ module Config = {
     displayOption: DisplayOption.t,
   };
 
-  type multilingual('a) = {
-    value: 'a,
-    displayOption: DisplayOption.multilingual,
-  };
+  module Decode = {
+    type multilingual('a) = {
+      value: 'a,
+      displayOption: DisplayOption.Decode.multilingual,
+    };
 
-  let decodeMultilingual = (decoder, wrap: 'a => 'b, json) =>
-    Json.Decode.(
-      (
-        {
-          value: json |> field("value", decoder) |> wrap,
-          displayOption: json |> DisplayOption.decodeMultilingual,
-        }:
-          multilingual('b)
-      )
-    );
+    let multilingual = (decoder, wrap: 'a => 'b, json) =>
+      Json.Decode.(
+        (
+          {
+            value: json |> field("value", decoder) |> wrap,
+            displayOption: json |> DisplayOption.Decode.multilingual,
+          }:
+            multilingual('b)
+        )
+      );
 
-  let resolveTranslations =
-      (langs, {value, displayOption}: multilingual('a)): t('a) => {
-    value,
-    displayOption: DisplayOption.resolveTranslations(langs, displayOption),
+    let resolveTranslations =
+        (langs, {value, displayOption}: multilingual('a)): t('a) => {
+      value,
+      displayOption:
+        DisplayOption.Decode.resolveTranslations(langs, displayOption),
+    };
   };
 };
 
@@ -340,52 +377,6 @@ module General = {
 
   type t = Config.t(value);
 
-  type multilingual = Config.multilingual(value);
-
-  let decodeMultilingual =
-    Json.Decode.(
-      field("type", string)
-      |> andThen(
-           fun
-           | "Sex" => Config.decodeMultilingual(Sex.decode, v => Sex(v))
-           | "Race" => Config.decodeMultilingual(Race.decode, v => Race(v))
-           | "Culture" =>
-             Config.decodeMultilingual(Culture.decode, v => Culture(v))
-           | "Pact" => Config.decodeMultilingual(Pact.decode, v => Pact(v))
-           | "SocialStatus" =>
-             Config.decodeMultilingual(SocialStatus.decode, v =>
-               SocialStatus(v)
-             )
-           | "PrimaryAttribute" =>
-             Config.decodeMultilingual(PrimaryAttribute.decode, v =>
-               PrimaryAttribute(v)
-             )
-           | "Activatable" =>
-             Config.decodeMultilingual(Activatable.decode, v =>
-               Activatable(v)
-             )
-           | "ActivatableMultiEntry" =>
-             Config.decodeMultilingual(ActivatableMultiEntry.decode, v =>
-               ActivatableMultiEntry(v)
-             )
-           | "ActivatableMultiSelect" =>
-             Config.decodeMultilingual(ActivatableMultiSelect.decode, v =>
-               ActivatableMultiSelect(v)
-             )
-           | "Increasable" =>
-             Config.decodeMultilingual(Increasable.decode, v =>
-               Increasable(v)
-             )
-           | "IncreasableMultiEntry" =>
-             Config.decodeMultilingual(IncreasableMultiEntry.decode, v =>
-               IncreasableMultiEntry(v)
-             )
-           | str => raise(DecodeError("Unknown prerequisite type: " ++ str)),
-         )
-    );
-
-  let resolveTranslations = Config.resolveTranslations;
-
   let unify = (x: t): Unified.t => {
     value:
       switch (x.value) {
@@ -403,6 +394,57 @@ module General = {
       },
     displayOption: x.displayOption,
   };
+
+  module Decode = {
+    type multilingual = Config.Decode.multilingual(value);
+
+    let multilingual =
+      Json.Decode.(
+        field("type", string)
+        |> andThen(
+             fun
+             | "Sex" => Config.Decode.multilingual(Sex.Decode.t, v => Sex(v))
+             | "Race" =>
+               Config.Decode.multilingual(Race.Decode.t, v => Race(v))
+             | "Culture" =>
+               Config.Decode.multilingual(Culture.Decode.t, v => Culture(v))
+             | "Pact" =>
+               Config.Decode.multilingual(Pact.Decode.t, v => Pact(v))
+             | "SocialStatus" =>
+               Config.Decode.multilingual(SocialStatus.Decode.t, v =>
+                 SocialStatus(v)
+               )
+             | "PrimaryAttribute" =>
+               Config.Decode.multilingual(PrimaryAttribute.Decode.t, v =>
+                 PrimaryAttribute(v)
+               )
+             | "Activatable" =>
+               Config.Decode.multilingual(Activatable.Decode.t, v =>
+                 Activatable(v)
+               )
+             | "ActivatableMultiEntry" =>
+               Config.Decode.multilingual(ActivatableMultiEntry.Decode.t, v =>
+                 ActivatableMultiEntry(v)
+               )
+             | "ActivatableMultiSelect" =>
+               Config.Decode.multilingual(ActivatableMultiSelect.Decode.t, v =>
+                 ActivatableMultiSelect(v)
+               )
+             | "Increasable" =>
+               Config.Decode.multilingual(Increasable.Decode.t, v =>
+                 Increasable(v)
+               )
+             | "IncreasableMultiEntry" =>
+               Config.Decode.multilingual(IncreasableMultiEntry.Decode.t, v =>
+                 IncreasableMultiEntry(v)
+               )
+             | str =>
+               raise(DecodeError("Unknown prerequisite type: " ++ str)),
+           )
+      );
+
+    let resolveTranslations = Config.Decode.resolveTranslations;
+  };
 };
 
 module Profession = {
@@ -415,31 +457,6 @@ module Profession = {
 
   type t = Config.t(value);
 
-  type multilingual = Config.multilingual(value);
-
-  let decodeMultilingual =
-    Json.Decode.(
-      field("type", string)
-      |> andThen(
-           fun
-           | "Sex" => Config.decodeMultilingual(Sex.decode, v => Sex(v))
-           | "Race" => Config.decodeMultilingual(Race.decode, v => Race(v))
-           | "Culture" =>
-             Config.decodeMultilingual(Culture.decode, v => Culture(v))
-           | "Activatable" =>
-             Config.decodeMultilingual(Activatable.decode, v =>
-               Activatable(v)
-             )
-           | "Increasable" =>
-             Config.decodeMultilingual(Increasable.decode, v =>
-               Increasable(v)
-             )
-           | str => raise(DecodeError("Unknown prerequisite type: " ++ str)),
-         )
-    );
-
-  let resolveTranslations = Config.resolveTranslations;
-
   let unify = (x: t): Unified.t => {
     value:
       switch (x.value) {
@@ -450,6 +467,35 @@ module Profession = {
       | Increasable(x) => Increasable(x)
       },
     displayOption: x.displayOption,
+  };
+
+  module Decode = {
+    type multilingual = Config.Decode.multilingual(value);
+
+    let multilingual =
+      Json.Decode.(
+        field("type", string)
+        |> andThen(
+             fun
+             | "Sex" => Config.Decode.multilingual(Sex.Decode.t, v => Sex(v))
+             | "Race" =>
+               Config.Decode.multilingual(Race.Decode.t, v => Race(v))
+             | "Culture" =>
+               Config.Decode.multilingual(Culture.Decode.t, v => Culture(v))
+             | "Activatable" =>
+               Config.Decode.multilingual(Activatable.Decode.t, v =>
+                 Activatable(v)
+               )
+             | "Increasable" =>
+               Config.Decode.multilingual(Increasable.Decode.t, v =>
+                 Increasable(v)
+               )
+             | str =>
+               raise(DecodeError("Unknown prerequisite type: " ++ str)),
+           )
+      );
+
+    let resolveTranslations = Config.Decode.resolveTranslations;
   };
 };
 
@@ -470,60 +516,6 @@ module AdvantageDisadvantage = {
 
   type t = Config.t(value);
 
-  type multilingual = Config.multilingual(value);
-
-  let decodeMultilingual =
-    Json.Decode.(
-      field("type", string)
-      |> andThen(
-           fun
-           | "CommonSuggestedByRCP" => (
-               _ => (
-                 {
-                   value: CommonSuggestedByRCP,
-                   displayOption: MultilingualGenerate,
-                 }: multilingual
-               )
-             )
-           | "Sex" => Config.decodeMultilingual(Sex.decode, v => Sex(v))
-           | "Race" => Config.decodeMultilingual(Race.decode, v => Race(v))
-           | "Culture" =>
-             Config.decodeMultilingual(Culture.decode, v => Culture(v))
-           | "Pact" => Config.decodeMultilingual(Pact.decode, v => Pact(v))
-           | "SocialStatus" =>
-             Config.decodeMultilingual(SocialStatus.decode, v =>
-               SocialStatus(v)
-             )
-           | "PrimaryAttribute" =>
-             Config.decodeMultilingual(PrimaryAttribute.decode, v =>
-               PrimaryAttribute(v)
-             )
-           | "Activatable" =>
-             Config.decodeMultilingual(Activatable.decode, v =>
-               Activatable(v)
-             )
-           | "ActivatableMultiEntry" =>
-             Config.decodeMultilingual(ActivatableMultiEntry.decode, v =>
-               ActivatableMultiEntry(v)
-             )
-           | "ActivatableMultiSelect" =>
-             Config.decodeMultilingual(ActivatableMultiSelect.decode, v =>
-               ActivatableMultiSelect(v)
-             )
-           | "Increasable" =>
-             Config.decodeMultilingual(Increasable.decode, v =>
-               Increasable(v)
-             )
-           | "IncreasableMultiEntry" =>
-             Config.decodeMultilingual(IncreasableMultiEntry.decode, v =>
-               IncreasableMultiEntry(v)
-             )
-           | str => raise(DecodeError("Unknown prerequisite type: " ++ str)),
-         )
-    );
-
-  let resolveTranslations = Config.resolveTranslations;
-
   let unify = (x: t): Unified.t => {
     value:
       switch (x.value) {
@@ -542,53 +534,83 @@ module AdvantageDisadvantage = {
       },
     displayOption: x.displayOption,
   };
+
+  module Decode = {
+    type multilingual = Config.Decode.multilingual(value);
+
+    let multilingual =
+      Json.Decode.(
+        field("type", string)
+        |> andThen(
+             fun
+             | "CommonSuggestedByRCP" => (
+                 _ => (
+                   {
+                     value: CommonSuggestedByRCP,
+                     displayOption: MultilingualGenerate,
+                   }: multilingual
+                 )
+               )
+             | "Sex" => Config.Decode.multilingual(Sex.Decode.t, v => Sex(v))
+             | "Race" =>
+               Config.Decode.multilingual(Race.Decode.t, v => Race(v))
+             | "Culture" =>
+               Config.Decode.multilingual(Culture.Decode.t, v => Culture(v))
+             | "Pact" =>
+               Config.Decode.multilingual(Pact.Decode.t, v => Pact(v))
+             | "SocialStatus" =>
+               Config.Decode.multilingual(SocialStatus.Decode.t, v =>
+                 SocialStatus(v)
+               )
+             | "PrimaryAttribute" =>
+               Config.Decode.multilingual(PrimaryAttribute.Decode.t, v =>
+                 PrimaryAttribute(v)
+               )
+             | "Activatable" =>
+               Config.Decode.multilingual(Activatable.Decode.t, v =>
+                 Activatable(v)
+               )
+             | "ActivatableMultiEntry" =>
+               Config.Decode.multilingual(ActivatableMultiEntry.Decode.t, v =>
+                 ActivatableMultiEntry(v)
+               )
+             | "ActivatableMultiSelect" =>
+               Config.Decode.multilingual(ActivatableMultiSelect.Decode.t, v =>
+                 ActivatableMultiSelect(v)
+               )
+             | "Increasable" =>
+               Config.Decode.multilingual(Increasable.Decode.t, v =>
+                 Increasable(v)
+               )
+             | "IncreasableMultiEntry" =>
+               Config.Decode.multilingual(IncreasableMultiEntry.Decode.t, v =>
+                 IncreasableMultiEntry(v)
+               )
+             | str =>
+               raise(DecodeError("Unknown prerequisite type: " ++ str)),
+           )
+      );
+
+    let resolveTranslations = Config.Decode.resolveTranslations;
+  };
 };
 
 module Collection = {
   module Plain = {
     type t('a) = list('a);
 
-    let decodeMultilingual = Json.Decode.list;
+    module Decode = {
+      let multilingual = Json.Decode.list;
 
-    let resolveTranslations = (langs, f, xs) =>
-      xs |> Ley_List.map(f(langs));
+      let resolveTranslations = (langs, f, xs) =>
+        xs |> Ley_List.map(f(langs));
+    };
   };
 
   module ByLevel = {
     type t('a) =
       | Plain(list('a))
       | ByLevel(Ley_IntMap.t(list('a)));
-
-    let decodeMultilingual = decoder =>
-      Json.Decode.(
-        field("type", string)
-        |> andThen(
-             fun
-             | "Plain" => (
-                 json => json |> list(decoder) |> (xs => Plain(xs))
-               )
-             | "ByLevel" => (
-                 json =>
-                   json
-                   |> list(json =>
-                        (
-                          json |> field("level", int),
-                          json |> field("prerequisites", list(decoder)),
-                        )
-                      )
-                   |> (xs => ByLevel(Ley_IntMap.fromList(xs)))
-               )
-             | str =>
-               raise(DecodeError("Unknown prerequisite list type: " ++ str)),
-           )
-      );
-
-    let resolveTranslations = (langs, f, x) =>
-      switch (x) {
-      | Plain(xs) => xs |> Ley_List.map(f(langs)) |> (xs => Plain(xs))
-      | ByLevel(mp) =>
-        mp |> Ley_IntMap.map(Ley_List.map(f(langs))) |> (mp => ByLevel(mp))
-      };
 
     let getFirstLevel = prerequisites =>
       switch (prerequisites) {
@@ -622,18 +644,61 @@ module Collection = {
       | ByLevel(mp) => mp |> filterByLevel(pred) |> Ley_IntMap.concat
       };
     };
+
+    module Decode = {
+      let multilingual = decoder =>
+        Json.Decode.(
+          field("type", string)
+          |> andThen(
+               fun
+               | "Plain" => (
+                   json => json |> list(decoder) |> (xs => Plain(xs))
+                 )
+               | "ByLevel" => (
+                   json =>
+                     json
+                     |> list(json =>
+                          (
+                            json |> field("level", int),
+                            json |> field("prerequisites", list(decoder)),
+                          )
+                        )
+                     |> (xs => ByLevel(Ley_IntMap.fromList(xs)))
+                 )
+               | str =>
+                 raise(
+                   DecodeError("Unknown prerequisite list type: " ++ str),
+                 ),
+             )
+        );
+
+      let resolveTranslations = (langs, f, x) =>
+        switch (x) {
+        | Plain(xs) => xs |> Ley_List.map(f(langs)) |> (xs => Plain(xs))
+        | ByLevel(mp) =>
+          mp
+          |> Ley_IntMap.map(Ley_List.map(f(langs)))
+          |> (mp => ByLevel(mp))
+        };
+    };
   };
 
   module Make = (Wrapper: Decoder.SubTypeWrapper, Main: Decoder.SubType) => {
     type t = Wrapper.t(Main.t);
 
-    type multilingual = Wrapper.t(Main.multilingual);
+    module Decode = {
+      type multilingual = Wrapper.t(Main.Decode.multilingual);
 
-    let decodeMultilingual =
-      Wrapper.decodeMultilingual(Main.decodeMultilingual);
+      let multilingual =
+        Wrapper.Decode.multilingual(Main.Decode.multilingual);
 
-    let resolveTranslations = (langs, x) =>
-      Wrapper.resolveTranslations(langs, Main.resolveTranslations, x);
+      let resolveTranslations = (langs, x) =>
+        Wrapper.Decode.resolveTranslations(
+          langs,
+          Main.Decode.resolveTranslations,
+          x,
+        );
+    };
   };
 
   module General = Make(ByLevel, General);

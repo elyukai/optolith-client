@@ -34,7 +34,7 @@ module Static = {
               json
               |> optionalField(
                    "prerequisite",
-                   Prerequisite.Activatable.decode,
+                   Prerequisite.Activatable.Decode.t,
                  )
             ),
           translations:
@@ -82,7 +82,7 @@ module Static = {
         Json.Decode.{
           id: json |> field("id", int),
           prerequisite:
-            json |> field("prerequisite", Prerequisite.Activatable.decode),
+            json |> field("prerequisite", Prerequisite.Activatable.Decode.t),
           translations:
             json |> field("translations", TranslationMap.Decode.t),
         };
@@ -199,7 +199,7 @@ module Static = {
                list(Application.Decode.multilingual),
              ),
         uses: json |> optionalField("uses", list(Use.Decode.multilingual)),
-        check: json |> field("check", SkillCheck.decode),
+        check: json |> field("check", SkillCheck.Decode.t),
         ic: json |> field("ic", IC.Decode.t),
         enc: json |> field("enc", encumbranceUniv),
         gr: json |> field("gr", int),

@@ -3,7 +3,7 @@ let oneOrManyInt: Json.Decode.decoder(OneOrMany.t(int));
 module Sex: {
   type t = Sex.t;
 
-  let decode: Json.Decode.decoder(t);
+  module Decode: {let t: Json.Decode.decoder(t);};
 };
 
 module Race: {
@@ -12,19 +12,19 @@ module Race: {
     active: bool,
   };
 
-  let decode: Json.Decode.decoder(t);
+  module Decode: {let t: Json.Decode.decoder(t);};
 };
 
 module Culture: {
   type t = OneOrMany.t(int);
 
-  let decode: Json.Decode.decoder(t);
+  module Decode: {let t: Json.Decode.decoder(t);};
 };
 
 module SocialStatus: {
   type t = int;
 
-  let decode: Json.Decode.decoder(t);
+  module Decode: {let t: Json.Decode.decoder(t);};
 };
 
 module Pact: {
@@ -34,7 +34,7 @@ module Pact: {
     level: option(int),
   };
 
-  let decode: Json.Decode.decoder(t);
+  module Decode: {let t: Json.Decode.decoder(t);};
 };
 
 module PrimaryAttribute: {
@@ -47,7 +47,7 @@ module PrimaryAttribute: {
     scope: primaryAttributeType,
   };
 
-  let decode: Json.Decode.decoder(t);
+  module Decode: {let t: Json.Decode.decoder(t);};
 };
 
 module Activatable: {
@@ -58,7 +58,7 @@ module Activatable: {
     level: option(int),
   };
 
-  let decode: Json.Decode.decoder(t);
+  module Decode: {let t: Json.Decode.decoder(t);};
 };
 
 module ActivatableMultiEntry: {
@@ -74,7 +74,7 @@ module ActivatableMultiEntry: {
     level: option(int),
   };
 
-  let decode: Json.Decode.decoder(t);
+  module Decode: {let t: Json.Decode.decoder(t);};
 };
 
 module ActivatableMultiSelect: {
@@ -86,7 +86,7 @@ module ActivatableMultiSelect: {
     level: option(int),
   };
 
-  let decode: Json.Decode.decoder(t);
+  module Decode: {let t: Json.Decode.decoder(t);};
 };
 
 module Increasable: {
@@ -95,7 +95,7 @@ module Increasable: {
     value: int,
   };
 
-  let decode: Json.Decode.decoder(t);
+  module Decode: {let t: Json.Decode.decoder(t);};
 };
 
 module IncreasableMultiEntry: {
@@ -111,7 +111,7 @@ module IncreasableMultiEntry: {
     value: int,
   };
 
-  let decode: Json.Decode.decoder(t);
+  module Decode: {let t: Json.Decode.decoder(t);};
 };
 
 module DisplayOption: {
@@ -162,13 +162,15 @@ module General: {
 
   type t = Config.t(value);
 
-  type multilingual;
-
-  let decodeMultilingual: Json.Decode.decoder(multilingual);
-
-  let resolveTranslations: (Locale.order, multilingual) => t;
-
   let unify: t => Unified.t;
+
+  module Decode: {
+    type multilingual;
+
+    let multilingual: Json.Decode.decoder(multilingual);
+
+    let resolveTranslations: (Locale.order, multilingual) => t;
+  };
 };
 
 module Profession: {
@@ -181,13 +183,15 @@ module Profession: {
 
   type t = Config.t(value);
 
-  type multilingual;
-
-  let decodeMultilingual: Json.Decode.decoder(multilingual);
-
-  let resolveTranslations: (Locale.order, multilingual) => t;
-
   let unify: t => Unified.t;
+
+  module Decode: {
+    type multilingual;
+
+    let multilingual: Json.Decode.decoder(multilingual);
+
+    let resolveTranslations: (Locale.order, multilingual) => t;
+  };
 };
 
 module AdvantageDisadvantage: {
@@ -207,13 +211,15 @@ module AdvantageDisadvantage: {
 
   type t = Config.t(value);
 
-  type multilingual;
-
-  let decodeMultilingual: Json.Decode.decoder(multilingual);
-
-  let resolveTranslations: (Locale.order, multilingual) => t;
-
   let unify: t => Unified.t;
+
+  module Decode: {
+    type multilingual;
+
+    let multilingual: Json.Decode.decoder(multilingual);
+
+    let resolveTranslations: (Locale.order, multilingual) => t;
+  };
 };
 
 module Collection: {
@@ -238,30 +244,36 @@ module Collection: {
   module General: {
     type t = ByLevel.t(General.t);
 
-    type multilingual;
+    module Decode: {
+      type multilingual;
 
-    let decodeMultilingual: Json.Decode.decoder(multilingual);
+      let multilingual: Json.Decode.decoder(multilingual);
 
-    let resolveTranslations: (Locale.order, multilingual) => t;
+      let resolveTranslations: (Locale.order, multilingual) => t;
+    };
   };
 
   module Profession: {
     type t = list(Profession.t);
 
-    type multilingual;
+    module Decode: {
+      type multilingual;
 
-    let decodeMultilingual: Json.Decode.decoder(multilingual);
+      let multilingual: Json.Decode.decoder(multilingual);
 
-    let resolveTranslations: (Locale.order, multilingual) => t;
+      let resolveTranslations: (Locale.order, multilingual) => t;
+    };
   };
 
   module AdvantageDisadvantage: {
     type t = ByLevel.t(AdvantageDisadvantage.t);
 
-    type multilingual;
+    module Decode: {
+      type multilingual;
 
-    let decodeMultilingual: Json.Decode.decoder(multilingual);
+      let multilingual: Json.Decode.decoder(multilingual);
 
-    let resolveTranslations: (Locale.order, multilingual) => t;
+      let resolveTranslations: (Locale.order, multilingual) => t;
+    };
   };
 };

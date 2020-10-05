@@ -67,7 +67,7 @@ module Static = {
     let multilingual = json =>
       JsonStrict.{
         id: json |> field("id", int),
-        check: json |> field("check", SkillCheck.decode),
+        check: json |> field("check", SkillCheck.Decode.t),
         property: json |> field("property", int),
         skill: json |> optionalField("skill", int),
         musicTraditions:

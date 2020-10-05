@@ -31,7 +31,7 @@ var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 function multilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
-          check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.decode, json),
+          check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.Decode.t, json),
           costNoMod: JsonStrict$OptolithClient.field("costNoMod", JsonStrict$OptolithClient.bool, json),
           durationNoMod: JsonStrict$OptolithClient.field("durationNoMod", JsonStrict$OptolithClient.bool, json),
           tribes: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("tribes", (function (param) {

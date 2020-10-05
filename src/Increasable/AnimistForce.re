@@ -53,7 +53,7 @@ module Static = {
     let multilingual = json =>
       JsonStrict.{
         id: json |> field("id", int),
-        check: json |> field("check", SkillCheck.decode),
+        check: json |> field("check", SkillCheck.Decode.t),
         costNoMod: json |> field("costNoMod", bool),
         durationNoMod: json |> field("durationNoMod", bool),
         tribes: json |> field("tribes", list(int)) |> Ley_IntSet.fromList,

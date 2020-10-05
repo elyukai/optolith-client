@@ -57,7 +57,7 @@ function multilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           apValue: JsonStrict$OptolithClient.optionalField("apValue", JsonStrict$OptolithClient.$$int, json),
-          prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.General.decodeMultilingual, json),
+          prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.General.Decode.multilingual, json),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
           translations: JsonStrict$OptolithClient.field("translations", TranslationMap.Decode.t, json)
         };
@@ -83,7 +83,7 @@ function resolveTranslations(langs, x) {
                         ],
                         name: translation.name,
                         apValue: x.apValue,
-                        prerequisites: Curry._2(Prerequisite$OptolithClient.Collection.General.resolveTranslations, langs, x.prerequisites),
+                        prerequisites: Curry._2(Prerequisite$OptolithClient.Collection.General.Decode.resolveTranslations, langs, x.prerequisites),
                         description: translation.description,
                         isSecret: undefined,
                         languages: undefined,

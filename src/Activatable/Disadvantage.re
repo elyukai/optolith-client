@@ -70,7 +70,7 @@ module Static = {
       selectOptionCategories:
         option(list(SelectOption.Decode.Category.WithGroups.t)),
       selectOptions: SelectOption.Map.t(SelectOption.Decode.multilingual),
-      prerequisites: Prerequisite.Collection.AdvantageDisadvantage.multilingual,
+      prerequisites: Prerequisite.Collection.AdvantageDisadvantage.Decode.multilingual,
       apValue: option(Advantage.Static.apValue),
       gr: int,
       src: list(PublicationRef.Decode.multilingual),
@@ -105,7 +105,7 @@ module Static = {
           json
           |> field(
                "prerequisites",
-               Prerequisite.Collection.AdvantageDisadvantage.decodeMultilingual,
+               Prerequisite.Collection.AdvantageDisadvantage.Decode.multilingual,
              ),
         apValue:
           json |> optionalField("apValue", Advantage.Static.Decode.apValue),
@@ -160,7 +160,7 @@ module Static = {
             range: translation.range,
             actions: translation.actions,
             prerequisites:
-              Prerequisite.Collection.AdvantageDisadvantage.resolveTranslations(
+              Prerequisite.Collection.AdvantageDisadvantage.Decode.resolveTranslations(
                 langs,
                 x.prerequisites,
               ),

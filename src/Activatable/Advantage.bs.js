@@ -73,7 +73,7 @@ function multilingual(json) {
           selectOptions: Ley_Option$OptolithClient.option(SelectOption$OptolithClient.$$Map.empty, SelectOption$OptolithClient.$$Map.fromList, JsonStrict$OptolithClient.optionalField("selectOptions", (function (param) {
                       return JsonStrict$OptolithClient.list(SelectOption$OptolithClient.Decode.multilingualAssoc, param);
                     }), json)),
-          prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.AdvantageDisadvantage.decodeMultilingual, json),
+          prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.AdvantageDisadvantage.Decode.multilingual, json),
           apValue: JsonStrict$OptolithClient.optionalField("apValue", apValue, json),
           gr: JsonStrict$OptolithClient.field("gr", JsonStrict$OptolithClient.$$int, json),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
@@ -108,7 +108,7 @@ function assoc(blessings, cantrips, combatTechniques, liturgicalChants, skills, 
                                         input: translation.input,
                                         range: translation.range,
                                         actions: translation.actions,
-                                        prerequisites: Curry._2(Prerequisite$OptolithClient.Collection.AdvantageDisadvantage.resolveTranslations, param, x.prerequisites),
+                                        prerequisites: Curry._2(Prerequisite$OptolithClient.Collection.AdvantageDisadvantage.Decode.resolveTranslations, param, x.prerequisites),
                                         prerequisitesText: translation.prerequisites,
                                         prerequisitesTextStart: translation.prerequisitesStart,
                                         prerequisitesTextEnd: translation.prerequisitesEnd,

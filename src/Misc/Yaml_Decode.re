@@ -19,7 +19,7 @@ let decodeFilesOfEntryType = (decoder, fileContents: list(Js.Json.t)) =>
     fileContents,
   );
 
-let decodeFiles = (langs, messages, parsedData: Yaml_Raw.t): Static.t => {
+let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
   let animistForces =
     decodeFilesOfEntryType(
       AnimistForce.Static.Decode.assoc(langs),

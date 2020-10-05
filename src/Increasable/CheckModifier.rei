@@ -4,4 +4,4 @@ type t =
   | Toughness
   | GreaterOfBoth;
 
-let decode: Json.Decode.decoder(t);
+module Decode: {let t: Json.Decode.decoder(t);};

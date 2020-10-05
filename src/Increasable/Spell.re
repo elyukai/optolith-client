@@ -75,8 +75,8 @@ module Static = {
     let multilingual = json =>
       JsonStrict.{
         id: json |> field("id", int),
-        check: json |> field("check", SkillCheck.decode),
-        checkMod: json |> optionalField("checkMod", CheckModifier.decode),
+        check: json |> field("check", SkillCheck.Decode.t),
+        checkMod: json |> optionalField("checkMod", CheckModifier.Decode.t),
         castingTimeNoMod: json |> field("castingTimeNoMod", bool),
         costNoMod: json |> field("costNoMod", bool),
         rangeNoMod: json |> field("rangeNoMod", bool),
@@ -89,7 +89,7 @@ module Static = {
           json
           |> optionalField(
                "increasablePrerequisites",
-               list(Prerequisite.Increasable.decode),
+               list(Prerequisite.Increasable.Decode.t),
              ),
         gr: json |> field("gr", int),
         enhancements:

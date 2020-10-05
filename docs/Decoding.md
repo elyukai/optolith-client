@@ -2,7 +2,13 @@
 
 Here you'll find some useful information about the design of the YAML decoders.
 
-## Basic decoder structure
+## Overview
+
+Decoding the database is splitted into parsing the YAML files and decoding the result. Parsing is done by the `Yaml_Parse` module and the `Yaml_Decode` module controls the decoding of the various entry types. The `Yaml` module then combines all functions into a single exported function.
+
+## Decode Entry Types
+
+### Basic decoder structure
 
 All decodable types share a common decoder layout. All values only relevant while decoding are inside a `Decode` module at the same level as the type it is the decoder for.
 
@@ -51,11 +57,11 @@ module Decode = {
 };
 ```
 
-## Steps
+### The two steps of decoding
 
 All *static types* (i.e., all data defined in YAML files) share a common structure concerning their decode process.
 
-### 1. Decode a multilingual entry
+#### 1. Decode a multilingual entry
 
 Since language-specific values in the YAML files are always defined in dictionaries, we always split the language-specific and the language-independent parts.
 
@@ -67,7 +73,7 @@ Now we can decode all language-independent values and the `TranslationMap`. Usin
 
 The corresponding function is called `multilingual`.
 
-### 2. Resolve translation maps with language settings
+#### 2. Resolve translation maps with language settings
 
 In the second steps, the translations maps are reduced to one language to form the main type together with the language-independent values.
 
@@ -77,11 +83,11 @@ The corresponding function is called `resolveTranslations`.
 
 Together, `multilingual` and `resolveTranslations` form the `t` decoder function for the main type.
 
-## Main types
+### Main types
 
 In order to be used easier, an `assoc` auxiliary decoder function should be created to return a pair of the entry's id as well as the entry itself, since then it is easier to build a map of them. Some nested types use that, too.
 
-## Nested types
+### Nested types
 
 Some types have nested types that have own translations (like professions and their variants). In those cases, you basically take the same steps mentioned above, although you can skip creating a main `t` decoder since that can't be used.
 
@@ -89,13 +95,13 @@ Instead, the main type's `multilingual` type references the nested type's `multi
 
 In step 2, it is basically the same: `resolveTranslations` of the nested type is called in `resolveTranslations` of the main type.
 
-## Visibility conventions
+### Visibility conventions
 
 For main types, only the main type itself and it's `t` (or `assoc`) function should be exposed. For nested types in the same module (as submodules), you can hide all decode types and functions. For nested types in a different module, you'll need to expose the `multilingual` and `resolveTranslations` functions and thus the `multilingual` type, which should always be abstract, since it should never be changed outside of the module.
 
 As a rule of thumb: Just export what is *really* needed and also always check if a decode type can be made abstract.
 
-## Naming conventions
+### Naming conventions
 
 - The language-specific module is always named `Translation` and contains a type `t` with a corresponding decoder `t` (the latter two are a requirement for the `TranslationMap.Make` functor anyway).
 - The built translation map module is called `TranslationMap`.

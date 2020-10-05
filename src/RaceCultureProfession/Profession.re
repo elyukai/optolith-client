@@ -281,7 +281,7 @@ module Static = {
       type multilingual = {
         id: int,
         apValue: int,
-        prerequisites: Prerequisite.Collection.Profession.multilingual,
+        prerequisites: Prerequisite.Collection.Profession.Decode.multilingual,
         options: Options.variant,
         specialAbilities: list(Prerequisite.Activatable.t),
         combatTechniques: Ley_IntMap.t(int),
@@ -300,14 +300,14 @@ module Static = {
             json
             |> field(
                  "prerequisites",
-                 Prerequisite.Collection.Profession.decodeMultilingual,
+                 Prerequisite.Collection.Profession.Decode.multilingual,
                ),
           options: json |> field("options", Options.decodeVariant),
           specialAbilities:
             json
             |> optionalField(
                  "specialAbilities",
-                 list(Prerequisite.Activatable.decode),
+                 list(Prerequisite.Activatable.Decode.t),
                )
             |> Ley_Option.fromOption([]),
           combatTechniques:
@@ -370,7 +370,7 @@ module Static = {
           <&> (
             translation => {
               let prerequisites =
-                Prerequisite.Collection.Profession.resolveTranslations(
+                Prerequisite.Collection.Profession.Decode.resolveTranslations(
                   langs,
                   x.prerequisites,
                 );
@@ -458,7 +458,7 @@ module Static = {
             json
             |> optionalField(
                  "activatablePrerequisites",
-                 list(Prerequisite.Activatable.decode),
+                 list(Prerequisite.Activatable.Decode.t),
                ),
           prerequisitesStart:
             json |> optionalField("prerequisitesStart", string),
@@ -479,7 +479,7 @@ module Static = {
     type multilingual = {
       id: int,
       apValue: int,
-      prerequisites: Prerequisite.Collection.Profession.multilingual,
+      prerequisites: Prerequisite.Collection.Profession.Decode.multilingual,
       options: Options.t,
       specialAbilities: list(Prerequisite.Activatable.t),
       combatTechniques: Ley_IntMap.t(int),
@@ -507,14 +507,14 @@ module Static = {
           json
           |> field(
                "prerequisites",
-               Prerequisite.Collection.Profession.decodeMultilingual,
+               Prerequisite.Collection.Profession.Decode.multilingual,
              ),
         options: json |> field("options", Options.decode),
         specialAbilities:
           json
           |> optionalField(
                "specialAbilities",
-               list(Prerequisite.Activatable.decode),
+               list(Prerequisite.Activatable.Decode.t),
              )
           |> Ley_Option.fromOption([]),
         combatTechniques:
@@ -600,7 +600,7 @@ module Static = {
         <&> (
           translation => {
             let prerequisites =
-              Prerequisite.Collection.Profession.resolveTranslations(
+              Prerequisite.Collection.Profession.Decode.resolveTranslations(
                 langs,
                 x.prerequisites,
               );

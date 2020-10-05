@@ -14,13 +14,17 @@ function getValues(mp, param) {
         ];
 }
 
-function decode(param) {
+function t(param) {
   return Json_decode.tuple3(Json_decode.$$int, Json_decode.$$int, Json_decode.$$int, param);
 }
 
+var Decode = {
+  t: t
+};
+
 export {
   getValues ,
-  decode ,
+  Decode ,
   
 }
 /* Attribute-OptolithClient Not a pure module */

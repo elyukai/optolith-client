@@ -35,7 +35,7 @@ var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 function multilingual(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          prerequisite: JsonStrict$OptolithClient.optionalField("prerequisite", Prerequisite$OptolithClient.Activatable.decode, json),
+          prerequisite: JsonStrict$OptolithClient.optionalField("prerequisite", Prerequisite$OptolithClient.Activatable.Decode.t, json),
           translations: Json_decode.field("translations", TranslationMap.Decode.t, json)
         };
 }
@@ -65,7 +65,7 @@ var TranslationMap$1 = TranslationMap$OptolithClient.Make(Translation$1);
 function multilingual$1(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          prerequisite: Json_decode.field("prerequisite", Prerequisite$OptolithClient.Activatable.decode, json),
+          prerequisite: Json_decode.field("prerequisite", Prerequisite$OptolithClient.Activatable.Decode.t, json),
           translations: Json_decode.field("translations", TranslationMap$1.Decode.t, json)
         };
 }
@@ -124,7 +124,7 @@ function encumbranceUniv(json) {
 function multilingual$2(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
-          check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.decode, json),
+          check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.Decode.t, json),
           applications: JsonStrict$OptolithClient.optionalField("applications", (function (param) {
                   return JsonStrict$OptolithClient.list(multilingual, param);
                 }), json),

@@ -190,10 +190,10 @@ function multilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           apValue: JsonStrict$OptolithClient.field("apValue", JsonStrict$OptolithClient.$$int, json),
-          prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.Profession.decodeMultilingual, json),
+          prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.Profession.Decode.multilingual, json),
           options: JsonStrict$OptolithClient.field("options", decodeVariant, json),
           specialAbilities: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("specialAbilities", (function (param) {
-                      return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.decode, param);
+                      return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.Decode.t, param);
                     }), json)),
           combatTechniques: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, Ley_IntMap$OptolithClient.fromList, JsonStrict$OptolithClient.optionalField("combatTechniques", (function (param) {
                       return JsonStrict$OptolithClient.list((function (json) {
@@ -244,7 +244,7 @@ function multilingualAssoc(json) {
 
 function resolveTranslations(langs, x) {
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                var prerequisites = Curry._2(Prerequisite$OptolithClient.Collection.Profession.resolveTranslations, langs, x.prerequisites);
+                var prerequisites = Curry._2(Prerequisite$OptolithClient.Collection.Profession.Decode.resolveTranslations, langs, x.prerequisites);
                 var init = x.options;
                 return {
                         id: x.id,
@@ -292,7 +292,7 @@ function t$1(json) {
           name: JsonStrict$OptolithClient.field("name", name, json),
           subname: JsonStrict$OptolithClient.optionalField("subname", name, json),
           activatablePrerequisites: JsonStrict$OptolithClient.optionalField("activatablePrerequisites", (function (param) {
-                  return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.decode, param);
+                  return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.Decode.t, param);
                 }), json),
           prerequisitesStart: JsonStrict$OptolithClient.optionalField("prerequisitesStart", JsonStrict$OptolithClient.string, json),
           suggestedAdvantages: JsonStrict$OptolithClient.optionalField("suggestedAdvantages", JsonStrict$OptolithClient.string, json),
@@ -313,10 +313,10 @@ function multilingual$1(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           apValue: JsonStrict$OptolithClient.field("apValue", JsonStrict$OptolithClient.$$int, json),
-          prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.Profession.decodeMultilingual, json),
+          prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.Profession.Decode.multilingual, json),
           options: JsonStrict$OptolithClient.field("options", decode, json),
           specialAbilities: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("specialAbilities", (function (param) {
-                      return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.decode, param);
+                      return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.Decode.t, param);
                     }), json)),
           combatTechniques: Ley_Option$OptolithClient.option(Ley_IntMap$OptolithClient.empty, Ley_IntMap$OptolithClient.fromList, JsonStrict$OptolithClient.optionalField("combatTechniques", (function (param) {
                       return JsonStrict$OptolithClient.list((function (json) {
@@ -378,7 +378,7 @@ function multilingual$1(json) {
 
 function resolveTranslations$1(langs, x) {
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap$1.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                var prerequisites = Curry._2(Prerequisite$OptolithClient.Collection.Profession.resolveTranslations, langs, x.prerequisites);
+                var prerequisites = Curry._2(Prerequisite$OptolithClient.Collection.Profession.Decode.resolveTranslations, langs, x.prerequisites);
                 var init = x.options;
                 return {
                         id: x.id,

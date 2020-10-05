@@ -67,7 +67,7 @@ module Decode = {
   type multilingual = {
     id: int,
     apValue: option(int),
-    prerequisites: Prerequisite.Collection.General.multilingual,
+    prerequisites: Prerequisite.Collection.General.Decode.multilingual,
     src: list(PublicationRef.Decode.multilingual),
     translations: TranslationMap.t,
   };
@@ -80,7 +80,7 @@ module Decode = {
         json
         |> field(
              "prerequisites",
-             Prerequisite.Collection.General.decodeMultilingual,
+             Prerequisite.Collection.General.Decode.multilingual,
            ),
       src: json |> field("src", PublicationRef.Decode.multilingualList),
       translations: json |> field("translations", TranslationMap.Decode.t),
@@ -102,7 +102,7 @@ module Decode = {
           description: translation.description,
           apValue: x.apValue,
           prerequisites:
-            Prerequisite.Collection.General.resolveTranslations(
+            Prerequisite.Collection.General.Decode.resolveTranslations(
               langs,
               x.prerequisites,
             ),

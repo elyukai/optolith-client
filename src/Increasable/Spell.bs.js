@@ -37,8 +37,8 @@ var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 function multilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
-          check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.decode, json),
-          checkMod: JsonStrict$OptolithClient.optionalField("checkMod", CheckModifier$OptolithClient.decode, json),
+          check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.Decode.t, json),
+          checkMod: JsonStrict$OptolithClient.optionalField("checkMod", CheckModifier$OptolithClient.Decode.t, json),
           castingTimeNoMod: JsonStrict$OptolithClient.field("castingTimeNoMod", JsonStrict$OptolithClient.bool, json),
           costNoMod: JsonStrict$OptolithClient.field("costNoMod", JsonStrict$OptolithClient.bool, json),
           rangeNoMod: JsonStrict$OptolithClient.field("rangeNoMod", JsonStrict$OptolithClient.bool, json),
@@ -49,7 +49,7 @@ function multilingual(json) {
                     }), json)),
           ic: JsonStrict$OptolithClient.field("ic", IC$OptolithClient.Decode.t, json),
           increasablePrerequisites: JsonStrict$OptolithClient.optionalField("increasablePrerequisites", (function (param) {
-                  return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Increasable.decode, param);
+                  return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Increasable.Decode.t, param);
                 }), json),
           gr: JsonStrict$OptolithClient.field("gr", JsonStrict$OptolithClient.$$int, json),
           enhancements: JsonStrict$OptolithClient.optionalField("enhancements", Enhancements$OptolithClient.Decode.multilingual, json),

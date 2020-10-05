@@ -1,6 +1,12 @@
 module Dynamic: {type t = int;};
 
 module Static: {
+  /**
+   * Defines exceptions for how frequent a single profession or group is in that
+   * culture. Depending on the corresponding `...All` property, if `true`,
+   * exceptions are removed from the list, whereas if `false`, only the
+   * exceptions are common.
+   */
   type frequencyException =
     | Single(int)
     | Group(int);

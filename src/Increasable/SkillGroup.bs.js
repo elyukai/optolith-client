@@ -23,7 +23,7 @@ var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 function multilingual(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          check: Json_decode.field("check", SkillCheck$OptolithClient.decode, json),
+          check: Json_decode.field("check", SkillCheck$OptolithClient.Decode.t, json),
           translations: Json_decode.field("translations", TranslationMap.Decode.t, json)
         };
 }

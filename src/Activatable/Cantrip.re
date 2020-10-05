@@ -56,7 +56,7 @@ module Static = {
           json
           |> optionalField(
                "activatablePrerequisites",
-               list(Prerequisite.Activatable.decode),
+               list(Prerequisite.Activatable.Decode.t),
              ),
         src: json |> field("src", PublicationRef.Decode.multilingualList),
         translations: json |> field("translations", TranslationMap.Decode.t),

@@ -2,7 +2,7 @@
 
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 
-function decode(json) {
+function t(json) {
   var scope = Json_decode.string(json);
   switch (scope) {
     case "SPI" :
@@ -26,8 +26,12 @@ function decode(json) {
   }
 }
 
+var Decode = {
+  t: t
+};
+
 export {
-  decode ,
+  Decode ,
   
 }
 /* No side effect */

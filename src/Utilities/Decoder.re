@@ -11,15 +11,23 @@ let decodeAssoc = (decoder, toAssoc, langs, json) =>
 
 module type SubType = {
   type t;
-  type multilingual;
-  let decodeMultilingual: Json.Decode.decoder(multilingual);
-  let resolveTranslations: (Locale.order, multilingual) => t;
+
+  module Decode: {
+    type multilingual;
+
+    let multilingual: Json.Decode.decoder(multilingual);
+
+    let resolveTranslations: (Locale.order, multilingual) => t;
+  };
 };
 
 module type SubTypeWrapper = {
   type t('a);
-  let decodeMultilingual:
-    Json.Decode.decoder('a) => Json.Decode.decoder(t('a));
-  let resolveTranslations:
-    (Locale.order, (Locale.order, 'a) => 'b, t('a)) => t('b);
+
+  module Decode: {
+    let multilingual: Json.Decode.decoder('a) => Json.Decode.decoder(t('a));
+
+    let resolveTranslations:
+      (Locale.order, (Locale.order, 'a) => 'b, t('a)) => t('b);
+  };
 };

@@ -30,7 +30,7 @@ module Decode = {
   let multilingual = json =>
     Json.Decode.{
       id: json |> field("id", int),
-      check: json |> field("check", SkillCheck.decode),
+      check: json |> field("check", SkillCheck.Decode.t),
       translations: json |> field("translations", TranslationMap.Decode.t),
     };
 
