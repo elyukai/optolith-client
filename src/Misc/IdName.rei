@@ -1,1 +1,1 @@
-let decode: Decoder.entryType(string);
+module Decode: {let assoc: Decoder.assocDecoder(string);};

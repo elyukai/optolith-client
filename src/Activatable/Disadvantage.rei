@@ -24,14 +24,16 @@ module Static: {
     errata: list(Erratum.t),
   };
 
-  let decode:
-    (
-      Ley_IntMap.t(Blessing.Static.t),
-      Ley_IntMap.t(Cantrip.Static.t),
-      Ley_IntMap.t(CombatTechnique.Static.t),
-      Ley_IntMap.t(LiturgicalChant.Static.t),
-      Ley_IntMap.t(Skill.Static.t),
-      Ley_IntMap.t(Spell.Static.t)
-    ) =>
-    Decoder.entryType(t);
+  module Decode: {
+    let assoc:
+      (
+        Ley_IntMap.t(Blessing.Static.t),
+        Ley_IntMap.t(Cantrip.Static.t),
+        Ley_IntMap.t(CombatTechnique.Static.t),
+        Ley_IntMap.t(LiturgicalChant.Static.t),
+        Ley_IntMap.t(Skill.Static.t),
+        Ley_IntMap.t(Spell.Static.t)
+      ) =>
+      Decoder.assocDecoder(t);
+  };
 };

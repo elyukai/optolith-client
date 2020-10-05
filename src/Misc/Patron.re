@@ -5,13 +5,13 @@ module Category = {
     primaryPatronCultures: Ley_IntSet.t,
   };
 
-  module Translations = {
+  module Translation = {
     type t = {name: string};
 
-    let decode = json => JsonStrict.{name: json |> field("name", string)};
+    let t = json => JsonStrict.{name: json |> field("name", string)};
   };
 
-  module TranslationMap = TranslationMap.Make(Translations);
+  module TranslationMap = TranslationMap.Make(Translation);
 
   type multilingual = {
     id: int,
@@ -26,13 +26,13 @@ module Category = {
         json
         |> field("primaryPatronCultures", list(int))
         |> Ley_IntSet.fromList,
-      translations: json |> field("translations", TranslationMap.decode),
+      translations: json |> field("translations", TranslationMap.Decode.t),
     };
 
   let resolveTranslations = (langs, x) =>
     Ley_Option.Infix.(
       x.translations
-      |> TranslationMap.getFromLanguageOrder(langs)
+      |> TranslationMap.Decode.getFromLanguageOrder(langs)
       <&> (
         translation => {
           id: x.id,
@@ -55,53 +55,56 @@ type t = {
   isLimitedToCulturesReverse: bool,
 };
 
-module Translations = {
-  type t = {name: string};
+module Decode = {
+  module Translation = {
+    type t = {name: string};
 
-  let decode = json => JsonStrict.{name: json |> field("name", string)};
-};
-
-module TranslationMap = TranslationMap.Make(Translations);
-
-type multilingual = {
-  id: int,
-  category: int,
-  skills: (int, int, int),
-  limitedToCultures: Ley_IntSet.t,
-  isLimitedToCulturesReverse: bool,
-  translations: TranslationMap.t,
-};
-
-let decodeMultilingual = json =>
-  JsonStrict.{
-    id: json |> field("id", int),
-    category: json |> field("category", int),
-    skills: json |> field("skills", tuple3(int, int, int)),
-    limitedToCultures:
-      json |> field("limitedToCultures", list(int)) |> Ley_IntSet.fromList,
-    isLimitedToCulturesReverse:
-      json |> field("isLimitedToCulturesReverse", bool),
-    translations: json |> field("translations", TranslationMap.decode),
+    let t = json => JsonStrict.{name: json |> field("name", string)};
   };
 
-let resolveTranslations = (langs, x) =>
-  Ley_Option.Infix.(
-    x.translations
-    |> TranslationMap.getFromLanguageOrder(langs)
-    <&> (
-      translation => (
-        x.id,
-        {
+  module TranslationMap = TranslationMap.Make(Translation);
+
+  type multilingual = {
+    id: int,
+    category: int,
+    skills: (int, int, int),
+    limitedToCultures: Ley_IntSet.t,
+    isLimitedToCulturesReverse: bool,
+    translations: TranslationMap.t,
+  };
+
+  let multilingual = json =>
+    JsonStrict.{
+      id: json |> field("id", int),
+      category: json |> field("category", int),
+      skills: json |> field("skills", tuple3(int, int, int)),
+      limitedToCultures:
+        json |> field("limitedToCultures", list(int)) |> Ley_IntSet.fromList,
+      isLimitedToCulturesReverse:
+        json |> field("isLimitedToCulturesReverse", bool),
+      translations: json |> field("translations", TranslationMap.Decode.t),
+    };
+
+  let resolveTranslations = (langs, x) =>
+    Ley_Option.Infix.(
+      x.translations
+      |> TranslationMap.Decode.getFromLanguageOrder(langs)
+      <&> (
+        translation => {
           id: x.id,
           name: translation.name,
           category: x.category,
           skills: x.skills,
           limitedToCultures: x.limitedToCultures,
           isLimitedToCulturesReverse: x.isLimitedToCulturesReverse,
-        },
+        }
       )
-    )
-  );
+    );
 
-let decode = (langs, json) =>
-  json |> decodeMultilingual |> resolveTranslations(langs);
+  let t = (langs, json) =>
+    json |> multilingual |> resolveTranslations(langs);
+
+  let toAssoc = (x: t) => (x.id, x);
+
+  let assoc = Decoder.decodeAssoc(t, toAssoc);
+};

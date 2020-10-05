@@ -3,13 +3,15 @@ type t = {
   description: string,
 };
 
-let decode = json =>
-  Json.Decode.{
-    date: json |> field("id", date),
-    description: json |> field("id", string),
-  };
+module Decode = {
+  let t = json =>
+    Json.Decode.{
+      date: json |> field("id", date),
+      description: json |> field("id", string),
+    };
 
-let decodeList = json =>
-  JsonStrict.(
-    json |> maybe(Json.Decode.list(decode)) |> Ley_Option.fromOption([])
-  );
+  let list = json =>
+    JsonStrict.(
+      json |> maybe(Json.Decode.list(t)) |> Ley_Option.fromOption([])
+    );
+};

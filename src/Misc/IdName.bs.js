@@ -2,40 +2,56 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
+import * as Decoder$OptolithClient from "../Utilities/Decoder.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as TranslationMap$OptolithClient from "./TranslationMap.bs.js";
 
-function decode(json) {
+function t(json) {
   return {
           name: Json_decode.field("name", Json_decode.string, json)
         };
 }
 
-var Translations = {
-  decode: decode
+var Translation = {
+  t: t
 };
 
-var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 
-function decodeMultilingual(json) {
+function multilingual(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          translations: Json_decode.field("translations", TranslationMap.decode, json)
+          translations: Json_decode.field("translations", TranslationMap.Decode.t, json)
         };
 }
 
-function decode$1(langs, json) {
-  var x = decodeMultilingual(json);
-  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                return [
-                        x.id,
-                        translation.name
-                      ];
+function t$1(langs, json) {
+  var x = multilingual(json);
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
+                return {
+                        id: x.id,
+                        name: translation.name
+                      };
               }));
 }
 
+function toAssoc(x) {
+  return [
+          x.id,
+          x.name
+        ];
+}
+
+function assoc(param, param$1) {
+  return Decoder$OptolithClient.decodeAssoc(t$1, toAssoc, param, param$1);
+}
+
+var Decode = {
+  assoc: assoc
+};
+
 export {
-  decode$1 as decode,
+  Decode ,
   
 }
 /* TranslationMap Not a pure module */

@@ -319,7 +319,7 @@ function decode$8(json) {
 }
 
 var Translation = {
-  decode: Json_decode.string
+  t: Json_decode.string
 };
 
 var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
@@ -331,7 +331,7 @@ function decodeMultilingual(json) {
                                     case "ByLevel" :
                                         return function (json) {
                                           return /* MultilingualReplaceWith */{
-                                                  _0: JsonStrict$OptolithClient.field("value", TranslationMap.decode, json)
+                                                  _0: JsonStrict$OptolithClient.field("value", TranslationMap.Decode.t, json)
                                                 };
                                         };
                                     case "Hide" :
@@ -360,7 +360,7 @@ function resolveTranslations(langs, x) {
     }
   } else {
     return /* ReplaceWith */{
-            _0: Ley_Option$OptolithClient.fromOption(Chars$OptolithClient.mdash, Curry._2(TranslationMap.getFromLanguageOrder, langs, x._0))
+            _0: Ley_Option$OptolithClient.fromOption(Chars$OptolithClient.mdash, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, x._0))
           };
   }
 }

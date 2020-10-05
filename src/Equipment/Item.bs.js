@@ -2,6 +2,7 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
+import * as Decoder$OptolithClient from "../Utilities/Decoder.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
 import * as OneOrMany$OptolithClient from "../Utilities/OneOrMany.bs.js";
 import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
@@ -9,57 +10,61 @@ import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-function decode(json) {
+function t(json) {
   return {
           note: JsonStrict$OptolithClient.optionalField("note", JsonStrict$OptolithClient.string, json),
           rules: JsonStrict$OptolithClient.optionalField("rules", JsonStrict$OptolithClient.string, json),
           advantage: JsonStrict$OptolithClient.optionalField("advantage", JsonStrict$OptolithClient.string, json),
           disadvantage: JsonStrict$OptolithClient.optionalField("disadvantage", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.decodeList, json)
+          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
-var Translations = {
-  decode: decode
+var Translation = {
+  t: t
 };
 
-var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 
-function decodeMultilingual(json) {
+function multilingual(json) {
   return {
-          src: Json_decode.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json),
-          translations: Json_decode.field("translations", TranslationMap.decode, json)
+          src: Json_decode.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
+          translations: Json_decode.field("translations", TranslationMap.Decode.t, json)
         };
 }
 
 function resolveTranslations(langs, x) {
-  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         note: translation.note,
                         rules: translation.rules,
                         advantage: translation.advantage,
                         disadvantage: translation.disadvantage,
-                        src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                        src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
                         errata: translation.errata
                       };
               }));
 }
 
-var Info = {
-  Translations: Translations,
+var Decode = {
+  Translation: Translation,
   TranslationMap: TranslationMap,
-  decodeMultilingual: decodeMultilingual,
+  multilingual: multilingual,
   resolveTranslations: resolveTranslations
 };
 
-function decode$1(json) {
+var Info = {
+  Decode: Decode
+};
+
+function decode(json) {
   return {
           structurePoints: JsonStrict$OptolithClient.optionalField("structurePoints", OneOrMany$OptolithClient.Decode.t(JsonStrict$OptolithClient.$$int), json)
         };
 }
 
 var MundaneItem = {
-  decode: decode$1
+  decode: decode
 };
 
 function decodeNewAttribute(json) {
@@ -107,17 +112,17 @@ var partial_arg = {
   tl: partial_arg_1
 };
 
-function decode$2(param) {
+function decode$1(param) {
   return Json_decode.oneOf(partial_arg, param);
 }
 
 var PrimaryAttributeDamageThreshold = {
   decodeNewAttribute: decodeNewAttribute,
   decodeAgilityStrength: decodeAgilityStrength,
-  decode: decode$2
+  decode: decode$1
 };
 
-function decode$3(json) {
+function decode$2(json) {
   return {
           amount: JsonStrict$OptolithClient.field("damageDiceNumber", JsonStrict$OptolithClient.$$int, json),
           sides: JsonStrict$OptolithClient.field("damageDiceSides", JsonStrict$OptolithClient.$$int, json),
@@ -126,14 +131,14 @@ function decode$3(json) {
 }
 
 var Damage = {
-  decode: decode$3
+  decode: decode$2
 };
 
-function decode$4(json) {
+function decode$3(json) {
   return {
           combatTechnique: JsonStrict$OptolithClient.field("combatTechnique", JsonStrict$OptolithClient.$$int, json),
-          damage: decode$3(json),
-          primaryAttributeDamageThreshold: JsonStrict$OptolithClient.optionalField("damageThreshold", decode$2, json),
+          damage: decode$2(json),
+          primaryAttributeDamageThreshold: JsonStrict$OptolithClient.optionalField("damageThreshold", decode$1, json),
           at: JsonStrict$OptolithClient.optionalField("at", JsonStrict$OptolithClient.$$int, json),
           pa: JsonStrict$OptolithClient.optionalField("pa", JsonStrict$OptolithClient.$$int, json),
           reach: JsonStrict$OptolithClient.optionalField("reach", JsonStrict$OptolithClient.$$int, json),
@@ -146,10 +151,10 @@ function decode$4(json) {
 }
 
 var MeleeWeapon = {
-  decode: decode$4
+  decode: decode$3
 };
 
-function decode$5(json) {
+function decode$4(json) {
   return {
           combatTechnique: JsonStrict$OptolithClient.field("combatTechnique", JsonStrict$OptolithClient.$$int, json),
           damage: Curry._3(Ley_Option$OptolithClient.liftM2, (function (amount, sides) {
@@ -172,10 +177,10 @@ function decode$5(json) {
 }
 
 var RangedWeapon = {
-  decode: decode$5
+  decode: decode$4
 };
 
-function decode$6(json) {
+function decode$5(json) {
   return {
           protection: Json_decode.field("protection", Json_decode.$$int, json),
           encumbrance: Json_decode.field("encumbrance", Json_decode.$$int, json),
@@ -185,78 +190,19 @@ function decode$6(json) {
 }
 
 var Armor = {
-  decode: decode$6
+  decode: decode$5
 };
 
-function decodeCombinedWeapon(json) {
-  return [
-          Json_decode.field("melee", decode$4, json),
-          Json_decode.field("ranged", decode$5, json)
-        ];
-}
-
-function partial_arg_0$1(json) {
-  return {
-          TAG: /* MundaneItem */0,
-          _0: decode$1(json)
-        };
-}
-
-var partial_arg_1$1 = {
-  hd: (function (json) {
-      return {
-              TAG: /* MeleeWeapon */1,
-              _0: decode$4(json)
-            };
-    }),
-  tl: {
-    hd: (function (json) {
-        return {
-                TAG: /* RangedWeapon */2,
-                _0: decode$5(json)
-              };
-      }),
-    tl: {
-      hd: (function (json) {
-          var param = decodeCombinedWeapon(json);
-          return {
-                  TAG: /* CombinedWeapon */3,
-                  _0: param[0],
-                  _1: param[1]
-                };
-        }),
-      tl: {
-        hd: (function (json) {
-            return {
-                    TAG: /* Armor */4,
-                    _0: decode$6(json)
-                  };
-          }),
-        tl: /* [] */0
-      }
-    }
-  }
-};
-
-var partial_arg$1 = {
-  hd: partial_arg_0$1,
-  tl: partial_arg_1$1
-};
-
-function decodeSpecial(param) {
-  return Json_decode.oneOf(partial_arg$1, param);
-}
-
-function decode$7(json) {
+function t$1(json) {
   var partial_arg_0 = function (json) {
     return {
-            hd: decodeMultilingual(json),
+            hd: multilingual(json),
             tl: /* [] */0
           };
   };
   var partial_arg_1 = {
     hd: (function (json) {
-        return Json_decode.list(decodeMultilingual, json);
+        return Json_decode.list(multilingual, json);
       }),
     tl: /* [] */0
   };
@@ -272,45 +218,124 @@ function decode$7(json) {
         };
 }
 
-var Translations$1 = {
-  decode: decode$7
+var Translation$1 = {
+  t: t$1
 };
 
-var TranslationMap$1 = TranslationMap$OptolithClient.Make(Translations$1);
+var TranslationMap$1 = TranslationMap$OptolithClient.Make(Translation$1);
 
-function decodeMultilingual$1(json) {
+function combinedWeapon(json) {
+  return [
+          Json_decode.field("melee", decode$3, json),
+          Json_decode.field("ranged", decode$4, json)
+        ];
+}
+
+function partial_arg_0$1(json) {
+  return {
+          TAG: /* MundaneItem */0,
+          _0: decode(json)
+        };
+}
+
+var partial_arg_1$1 = {
+  hd: (function (json) {
+      return {
+              TAG: /* MeleeWeapon */1,
+              _0: decode$3(json)
+            };
+    }),
+  tl: {
+    hd: (function (json) {
+        return {
+                TAG: /* RangedWeapon */2,
+                _0: decode$4(json)
+              };
+      }),
+    tl: {
+      hd: (function (json) {
+          var param = combinedWeapon(json);
+          return {
+                  TAG: /* CombinedWeapon */3,
+                  _0: param[0],
+                  _1: param[1]
+                };
+        }),
+      tl: {
+        hd: (function (json) {
+            return {
+                    TAG: /* Armor */4,
+                    _0: decode$5(json)
+                  };
+          }),
+        tl: /* [] */0
+      }
+    }
+  }
+};
+
+var partial_arg$1 = {
+  hd: partial_arg_0$1,
+  tl: partial_arg_1$1
+};
+
+function special(param) {
+  return Json_decode.oneOf(partial_arg$1, param);
+}
+
+function multilingual$1(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           price: JsonStrict$OptolithClient.optionalField("price", JsonStrict$OptolithClient.$$int, json),
           weight: JsonStrict$OptolithClient.optionalField("weight", JsonStrict$OptolithClient.$$int, json),
-          special: JsonStrict$OptolithClient.optionalField("special", decodeSpecial, json),
+          special: JsonStrict$OptolithClient.optionalField("special", special, json),
           gr: JsonStrict$OptolithClient.field("gr", JsonStrict$OptolithClient.$$int, json),
-          translations: JsonStrict$OptolithClient.field("translations", TranslationMap$1.decode, json)
+          translations: JsonStrict$OptolithClient.field("translations", TranslationMap$1.Decode.t, json)
         };
 }
 
 function resolveTranslations$1(langs, x) {
-  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap$1.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                return [
-                        x.id,
-                        {
-                          id: x.id,
-                          name: translation.name,
-                          price: x.price,
-                          weight: x.weight,
-                          special: x.special,
-                          info: Ley_Option$OptolithClient.mapOption((function (param) {
-                                  return resolveTranslations(langs, param);
-                                }), translation.info),
-                          gr: x.gr
-                        }
-                      ];
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap$1.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
+                return {
+                        id: x.id,
+                        name: translation.name,
+                        price: x.price,
+                        weight: x.weight,
+                        special: x.special,
+                        info: Ley_Option$OptolithClient.mapOption((function (param) {
+                                return resolveTranslations(langs, param);
+                              }), translation.info),
+                        gr: x.gr
+                      };
               }));
 }
 
-function decode$8(langs, json) {
-  return resolveTranslations$1(langs, decodeMultilingual$1(json));
+function t$2(langs, json) {
+  return resolveTranslations$1(langs, multilingual$1(json));
 }
+
+function toAssoc(x) {
+  return [
+          x.id,
+          x
+        ];
+}
+
+function assoc(param, param$1) {
+  return Decoder$OptolithClient.decodeAssoc(t$2, toAssoc, param, param$1);
+}
+
+var Decode$1 = {
+  Translation: Translation$1,
+  TranslationMap: TranslationMap$1,
+  combinedWeapon: combinedWeapon,
+  special: special,
+  multilingual: multilingual$1,
+  resolveTranslations: resolveTranslations$1,
+  t: t$2,
+  toAssoc: toAssoc,
+  assoc: assoc
+};
 
 export {
   Info ,
@@ -320,13 +345,7 @@ export {
   MeleeWeapon ,
   RangedWeapon ,
   Armor ,
-  decodeCombinedWeapon ,
-  decodeSpecial ,
-  Translations$1 as Translations,
-  TranslationMap$1 as TranslationMap,
-  decodeMultilingual$1 as decodeMultilingual,
-  resolveTranslations$1 as resolveTranslations,
-  decode$8 as decode,
+  Decode$1 as Decode,
   
 }
 /* TranslationMap Not a pure module */

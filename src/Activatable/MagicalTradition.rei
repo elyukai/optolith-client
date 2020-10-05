@@ -12,4 +12,4 @@ type t = {
   areDisAdvRequiredApplyToMagActionsOrApps: bool,
 };
 
-let decode: Decoder.entryType(t);
+module Decode: {let assoc: Decoder.assocDecoder(t);};

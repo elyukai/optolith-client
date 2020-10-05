@@ -6,4 +6,4 @@ type t = {
   aspects: option((int, int)),
 };
 
-let decode: Decoder.entryType(t);
+module Decode: {let assoc: Decoder.assocDecoder(t);};

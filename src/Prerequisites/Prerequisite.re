@@ -233,7 +233,7 @@ module DisplayOption = {
   module Translation = {
     type t = string;
 
-    let decode = Json.Decode.string;
+    let t = Json.Decode.string;
   };
 
   module TranslationMap = TranslationMap.Make(Translation);
@@ -255,7 +255,7 @@ module DisplayOption = {
                 | "ByLevel" => (
                     json =>
                       json
-                      |> field("value", TranslationMap.decode)
+                      |> field("value", TranslationMap.Decode.t)
                       |> (mp => MultilingualReplaceWith(mp))
                   )
                 | str =>
@@ -271,7 +271,7 @@ module DisplayOption = {
     | MultilingualHide => Hide
     | MultilingualReplaceWith(mp) =>
       mp
-      |> TranslationMap.getFromLanguageOrder(langs)
+      |> TranslationMap.Decode.getFromLanguageOrder(langs)
       |> Ley_Option.fromOption(Chars.mdash)
       |> (str => ReplaceWith(str))
     };

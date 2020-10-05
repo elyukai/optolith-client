@@ -39,44 +39,43 @@ function showId(id) {
 
 var $$Map = Ley_Map$OptolithClient.Make(Id$OptolithClient.Activatable.SelectOption);
 
-function decode(json) {
+function t(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
           description: JsonStrict$OptolithClient.optionalField("description", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.decodeList, json)
+          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
-var Translations = {
-  decode: decode
+var Translation = {
+  t: t
 };
 
-var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 
-function decodeMultilingualPair(json) {
-  var x_id = JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json);
-  var x_apValue = JsonStrict$OptolithClient.optionalField("apValue", JsonStrict$OptolithClient.$$int, json);
-  var x_prerequisites = JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.General.decodeMultilingual, json);
-  var x_src = JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json);
-  var x_translations = JsonStrict$OptolithClient.field("translations", TranslationMap.decode, json);
-  var x = {
-    id: x_id,
-    apValue: x_apValue,
-    prerequisites: x_prerequisites,
-    src: x_src,
-    translations: x_translations
-  };
+function multilingual(json) {
+  return {
+          id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
+          apValue: JsonStrict$OptolithClient.optionalField("apValue", JsonStrict$OptolithClient.$$int, json),
+          prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.General.decodeMultilingual, json),
+          src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
+          translations: JsonStrict$OptolithClient.field("translations", TranslationMap.Decode.t, json)
+        };
+}
+
+function multilingualAssoc(json) {
+  var x = multilingual(json);
   return [
           [
             /* Generic */0,
-            x_id
+            x.id
           ],
           x
         ];
 }
 
 function resolveTranslations(langs, x) {
-  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: [
                           /* Generic */0,
@@ -98,13 +97,13 @@ function resolveTranslations(langs, x) {
                         enhancementLevel: undefined,
                         staticEntry: undefined,
                         applications: undefined,
-                        src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                        src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
                         errata: translation.errata
                       };
               }));
 }
 
-function decode$1(json) {
+function t$1(json) {
   var str = Json_decode.string(json);
   switch (str) {
     case "BLESSINGS" :
@@ -128,9 +127,9 @@ function decode$1(json) {
   }
 }
 
-function decode$2(json) {
+function t$2(json) {
   return {
-          category: JsonStrict$OptolithClient.field("category", decode$1, json),
+          category: JsonStrict$OptolithClient.field("category", t$1, json),
           groups: JsonStrict$OptolithClient.optionalField("groups", (function (param) {
                   return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
                 }), json)
@@ -138,7 +137,7 @@ function decode$2(json) {
 }
 
 var WithGroups = {
-  decode: decode$2
+  t: t$2
 };
 
 function entryToSelectOption(id, name, staticEntry, src, errata) {
@@ -344,22 +343,26 @@ function mergeSelectOptions(explicits, fromCategories) {
               }), fromCategories, explicits);
 }
 
-var Category = {
+var Decode_Category = {
   WithGroups: WithGroups
 };
 
-var ResolveCategories = {
+var Decode_ResolveCategories = {
   resolveCategories: resolveCategories,
   mergeSelectOptions: mergeSelectOptions
+};
+
+var Decode = {
+  multilingualAssoc: multilingualAssoc,
+  resolveTranslations: resolveTranslations,
+  Category: Decode_Category,
+  ResolveCategories: Decode_ResolveCategories
 };
 
 export {
   showId ,
   $$Map ,
-  decodeMultilingualPair ,
-  resolveTranslations ,
-  Category ,
-  ResolveCategories ,
+  Decode ,
   
 }
 /* Map Not a pure module */

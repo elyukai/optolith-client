@@ -1,17 +1,17 @@
-module LevelTranslations = {
+module LevelTranslation = {
   type t = {
     name: string,
     effect: string,
   };
 
-  let decode = json =>
+  let t = json =>
     JsonStrict.{
       name: json |> field("name", string),
       effect: json |> field("effect", string),
     };
 };
 
-module LevelTranslationMap = TranslationMap.Make(LevelTranslations);
+module LevelTranslationMap = TranslationMap.Make(LevelTranslation);
 
 module Level1 = {
   type t = {
@@ -20,32 +20,32 @@ module Level1 = {
     effect: string,
   };
 
-  type multilingual = {
-    id: int,
-    translations: LevelTranslationMap.t,
-  };
-
-  let decodeMultilingual = json =>
-    JsonStrict.{
-      id: json |> field("id", int),
-      translations: json |> field("translations", LevelTranslationMap.decode),
+  module Decode = {
+    type multilingual = {
+      id: int,
+      translations: LevelTranslationMap.t,
     };
 
-  let resolveTranslations = (langs, x) =>
-    Ley_Option.Infix.(
-      x.translations
-      |> LevelTranslationMap.getFromLanguageOrder(langs)
-      <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          effect: translation.effect,
-        }
-      )
-    );
+    let multilingual = json =>
+      JsonStrict.{
+        id: json |> field("id", int),
+        translations:
+          json |> field("translations", LevelTranslationMap.Decode.t),
+      };
 
-  let decode = (langs, json) =>
-    json |> decodeMultilingual |> resolveTranslations(langs);
+    let resolveTranslations = (langs, x) =>
+      Ley_Option.Infix.(
+        x.translations
+        |> LevelTranslationMap.Decode.getFromLanguageOrder(langs)
+        <&> (
+          translation => {
+            id: x.id,
+            name: translation.name,
+            effect: translation.effect,
+          }
+        )
+      );
+  };
 };
 
 module Level2 = {
@@ -56,56 +56,56 @@ module Level2 = {
     requiresLevel1: bool,
   };
 
-  type multilingual = {
-    id: int,
-    requiresLevel1: bool,
-    translations: LevelTranslationMap.t,
-  };
-
-  let decodePrerequisite = json =>
-    JsonStrict.(
-      json
-      |> int
-      |> (
-        x =>
-          switch (x) {
-          | 1 => 1
-          | y =>
-            raise(
-              DecodeError(
-                "Unknown level 2 prerequisite: " ++ Ley_Int.show(y),
-              ),
-            )
-          }
-      )
-    );
-
-  let decodeMultilingual = json =>
-    JsonStrict.{
-      id: json |> field("id", int),
-      requiresLevel1:
-        json
-        |> optionalField("previousRequirement", decodePrerequisite)
-        |> Ley_Option.isSome,
-      translations: json |> field("translations", LevelTranslationMap.decode),
+  module Decode = {
+    type multilingual = {
+      id: int,
+      requiresLevel1: bool,
+      translations: LevelTranslationMap.t,
     };
 
-  let resolveTranslations = (langs, x) =>
-    Ley_Option.Infix.(
-      x.translations
-      |> LevelTranslationMap.getFromLanguageOrder(langs)
-      <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          effect: translation.effect,
-          requiresLevel1: x.requiresLevel1,
-        }
-      )
-    );
+    let prerequisite = json =>
+      JsonStrict.(
+        json
+        |> int
+        |> (
+          x =>
+            switch (x) {
+            | 1 => 1
+            | y =>
+              raise(
+                DecodeError(
+                  "Unknown level 2 prerequisite: " ++ Ley_Int.show(y),
+                ),
+              )
+            }
+        )
+      );
 
-  let decode = (langs, json) =>
-    json |> decodeMultilingual |> resolveTranslations(langs);
+    let multilingual = json =>
+      JsonStrict.{
+        id: json |> field("id", int),
+        requiresLevel1:
+          json
+          |> optionalField("previousRequirement", prerequisite)
+          |> Ley_Option.isSome,
+        translations:
+          json |> field("translations", LevelTranslationMap.Decode.t),
+      };
+
+    let resolveTranslations = (langs, x) =>
+      Ley_Option.Infix.(
+        x.translations
+        |> LevelTranslationMap.Decode.getFromLanguageOrder(langs)
+        <&> (
+          translation => {
+            id: x.id,
+            name: translation.name,
+            effect: translation.effect,
+            requiresLevel1: x.requiresLevel1,
+          }
+        )
+      );
+  };
 };
 
 module Level3 = {
@@ -120,55 +120,55 @@ module Level3 = {
     requiresPrevious: option(prerequisite),
   };
 
-  type multilingual = {
-    id: int,
-    requiresPrevious: option(prerequisite),
-    translations: LevelTranslationMap.t,
-  };
-
-  let decodePrerequisite = json =>
-    JsonStrict.(
-      json
-      |> int
-      |> (
-        x =>
-          switch (x) {
-          | 1 => First
-          | 2 => Second
-          | y =>
-            raise(
-              DecodeError(
-                "Unknown level 3 prerequisite: " ++ Ley_Int.show(y),
-              ),
-            )
-          }
-      )
-    );
-
-  let decodeMultilingual = json =>
-    JsonStrict.{
-      id: json |> field("id", int),
-      requiresPrevious:
-        json |> optionalField("previousRequirement", decodePrerequisite),
-      translations: json |> field("translations", LevelTranslationMap.decode),
+  module Decode = {
+    type multilingual = {
+      id: int,
+      requiresPrevious: option(prerequisite),
+      translations: LevelTranslationMap.t,
     };
 
-  let resolveTranslations = (langs, x) =>
-    Ley_Option.Infix.(
-      x.translations
-      |> LevelTranslationMap.getFromLanguageOrder(langs)
-      <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          effect: translation.effect,
-          requiresPrevious: x.requiresPrevious,
-        }
-      )
-    );
+    let prerequisite = json =>
+      JsonStrict.(
+        json
+        |> int
+        |> (
+          x =>
+            switch (x) {
+            | 1 => First
+            | 2 => Second
+            | y =>
+              raise(
+                DecodeError(
+                  "Unknown level 3 prerequisite: " ++ Ley_Int.show(y),
+                ),
+              )
+            }
+        )
+      );
 
-  let decode = (langs, json) =>
-    json |> decodeMultilingual |> resolveTranslations(langs);
+    let multilingual = json =>
+      JsonStrict.{
+        id: json |> field("id", int),
+        requiresPrevious:
+          json |> optionalField("previousRequirement", prerequisite),
+        translations:
+          json |> field("translations", LevelTranslationMap.Decode.t),
+      };
+
+    let resolveTranslations = (langs, x) =>
+      Ley_Option.Infix.(
+        x.translations
+        |> LevelTranslationMap.Decode.getFromLanguageOrder(langs)
+        <&> (
+          translation => {
+            id: x.id,
+            name: translation.name,
+            effect: translation.effect,
+            requiresPrevious: x.requiresPrevious,
+          }
+        )
+      );
+  };
 };
 
 type t = {
@@ -177,56 +177,63 @@ type t = {
   errata: list(Erratum.t),
 };
 
-module Translations = {
-  type t = {errata: list(Erratum.t)};
+module Decode = {
+  module Translation = {
+    type t = {errata: list(Erratum.t)};
 
-  let decode = json =>
-    JsonStrict.{errata: json |> field("errata", Erratum.decodeList)};
-};
-
-module TranslationMap = TranslationMap.Make(Translations);
-
-type multilingual = {
-  levels: (Level1.multilingual, Level2.multilingual, Level3.multilingual),
-  src: list(PublicationRef.multilingual),
-  translations: TranslationMap.t,
-};
-
-let decodeMultilingual = json =>
-  JsonStrict.{
-    levels:
-      json
-      |> field(
-           "levels",
-           tuple3(
-             Level1.decodeMultilingual,
-             Level2.decodeMultilingual,
-             Level3.decodeMultilingual,
-           ),
-         ),
-    src: json |> field("src", PublicationRef.decodeMultilingualList),
-    translations: json |> field("translations", TranslationMap.decode),
+    let t = json =>
+      JsonStrict.{errata: json |> field("errata", Erratum.Decode.list)};
   };
 
-let resolveTranslations = (langs, x) =>
-  Ley_Option.Infix.(
-    x.translations
-    |> TranslationMap.getFromLanguageOrder(langs)
-    >>= (
-      translation => {
-        let (level1, level2, level3) = x.levels;
+  module TranslationMap = TranslationMap.Make(Translation);
 
-        Ley_Option.liftM3(
-          (level1, level2, level3) =>
-            {
-              levels: (level1, level2, level3),
-              src: PublicationRef.resolveTranslationsList(langs, x.src),
-              errata: translation.errata,
-            },
-          Level1.resolveTranslations(langs, level1),
-          Level2.resolveTranslations(langs, level2),
-          Level3.resolveTranslations(langs, level3),
-        );
-      }
-    )
-  );
+  type multilingual = {
+    levels: (
+      Level1.Decode.multilingual,
+      Level2.Decode.multilingual,
+      Level3.Decode.multilingual,
+    ),
+    src: list(PublicationRef.Decode.multilingual),
+    translations: TranslationMap.t,
+  };
+
+  let multilingual = json =>
+    JsonStrict.{
+      levels:
+        json
+        |> field(
+             "levels",
+             tuple3(
+               Level1.Decode.multilingual,
+               Level2.Decode.multilingual,
+               Level3.Decode.multilingual,
+             ),
+           ),
+      src: json |> field("src", PublicationRef.Decode.multilingualList),
+      translations: json |> field("translations", TranslationMap.Decode.t),
+    };
+
+  let resolveTranslations = (langs, x) =>
+    Ley_Option.Infix.(
+      x.translations
+      |> TranslationMap.Decode.getFromLanguageOrder(langs)
+      >>= (
+        translation => {
+          let (level1, level2, level3) = x.levels;
+
+          Ley_Option.liftM3(
+            (level1, level2, level3) =>
+              {
+                levels: (level1, level2, level3),
+                src:
+                  PublicationRef.Decode.resolveTranslationsList(langs, x.src),
+                errata: translation.errata,
+              },
+            Level1.Decode.resolveTranslations(langs, level1),
+            Level2.Decode.resolveTranslations(langs, level2),
+            Level3.Decode.resolveTranslations(langs, level3),
+          );
+        }
+      )
+    );
+};

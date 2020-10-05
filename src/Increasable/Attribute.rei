@@ -12,5 +12,5 @@ module Static: {
     short: string,
   };
 
-  let decode: Decoder.entryType(t);
+  module Decode: {let assoc: Decoder.assocDecoder(t);};
 };

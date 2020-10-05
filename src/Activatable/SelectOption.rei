@@ -36,48 +36,50 @@ module Map: Ley_Map.T with type key = Id.Activatable.SelectOption.t;
 
 type map = Map.t(t);
 
-type multilingual;
+module Decode: {
+  type multilingual;
 
-let decodeMultilingualPair:
-  Js.Json.t => (Id.Activatable.SelectOption.t, multilingual);
+  let multilingualAssoc:
+    Json.Decode.decoder((Id.Activatable.SelectOption.t, multilingual));
 
-let resolveTranslations: (Locale.order, multilingual) => option(t);
+  let resolveTranslations: (Locale.order, multilingual) => option(t);
 
-module Category: {
-  type t =
-    | Blessings
-    | Cantrips
-    | CombatTechniques
-    | LiturgicalChants
-    | Skills
-    | Spells;
+  module Category: {
+    type t =
+      | Blessings
+      | Cantrips
+      | CombatTechniques
+      | LiturgicalChants
+      | Skills
+      | Spells;
 
-  module WithGroups: {
-    type nonrec t = {
-      category: t,
-      groups: option(list(int)),
+    module WithGroups: {
+      type nonrec t = {
+        category: t,
+        groups: option(list(int)),
+      };
+
+      let t: Json.Decode.decoder(t);
     };
-
-    let decode: Json.Decode.decoder(t);
   };
-};
 
-module ResolveCategories: {
-  /**
-   * Takes an array of select option categories and resolves them into a list of
-   * select options.
-   */
-  let resolveCategories:
-    (
-      Ley_IntMap.t(Blessing.Static.t),
-      Ley_IntMap.t(Cantrip.Static.t),
-      Ley_IntMap.t(CombatTechnique.Static.t),
-      Ley_IntMap.t(LiturgicalChant.Static.t),
-      Ley_IntMap.t(Skill.Static.t),
-      Ley_IntMap.t(Spell.Static.t),
-      Ley_Option.t(Ley_List.t(Category.WithGroups.t))
-    ) =>
-    Map.t(t);
+  module ResolveCategories: {
+    /**
+     * Takes an array of select option categories and resolves them into a list of
+     * select options.
+     */
+    let resolveCategories:
+      (
+        Ley_IntMap.t(Blessing.Static.t),
+        Ley_IntMap.t(Cantrip.Static.t),
+        Ley_IntMap.t(CombatTechnique.Static.t),
+        Ley_IntMap.t(LiturgicalChant.Static.t),
+        Ley_IntMap.t(Skill.Static.t),
+        Ley_IntMap.t(Spell.Static.t),
+        Ley_Option.t(Ley_List.t(Category.WithGroups.t))
+      ) =>
+      Map.t(t);
 
-  let mergeSelectOptions: (Map.t(t), Map.t(t)) => Map.t(t);
+    let mergeSelectOptions: (Map.t(t), Map.t(t)) => Map.t(t);
+  };
 };

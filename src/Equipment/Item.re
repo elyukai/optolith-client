@@ -8,53 +8,55 @@ module Info = {
     errata: list(Erratum.t),
   };
 
-  module Translations = {
-    type t = {
-      note: option(string),
-      rules: option(string),
-      advantage: option(string),
-      disadvantage: option(string),
-      errata: list(Erratum.t),
-    };
-
-    let decode = json =>
-      JsonStrict.{
-        note: json |> optionalField("note", string),
-        rules: json |> optionalField("rules", string),
-        advantage: json |> optionalField("advantage", string),
-        disadvantage: json |> optionalField("disadvantage", string),
-        errata: json |> field("errata", Erratum.decodeList),
+  module Decode = {
+    module Translation = {
+      type t = {
+        note: option(string),
+        rules: option(string),
+        advantage: option(string),
+        disadvantage: option(string),
+        errata: list(Erratum.t),
       };
-  };
 
-  module TranslationMap = TranslationMap.Make(Translations);
-
-  type multilingual = {
-    src: list(PublicationRef.multilingual),
-    translations: TranslationMap.t,
-  };
-
-  let decodeMultilingual = json =>
-    Json.Decode.{
-      src: json |> field("src", PublicationRef.decodeMultilingualList),
-      translations: json |> field("translations", TranslationMap.decode),
+      let t = json =>
+        JsonStrict.{
+          note: json |> optionalField("note", string),
+          rules: json |> optionalField("rules", string),
+          advantage: json |> optionalField("advantage", string),
+          disadvantage: json |> optionalField("disadvantage", string),
+          errata: json |> field("errata", Erratum.Decode.list),
+        };
     };
 
-  let resolveTranslations = (langs, x) =>
-    Ley_Option.Infix.(
-      x.translations
-      |> TranslationMap.getFromLanguageOrder(langs)
-      <&> (
-        translation => {
-          note: translation.note,
-          rules: translation.rules,
-          advantage: translation.advantage,
-          disadvantage: translation.disadvantage,
-          src: PublicationRef.resolveTranslationsList(langs, x.src),
-          errata: translation.errata,
-        }
-      )
-    );
+    module TranslationMap = TranslationMap.Make(Translation);
+
+    type multilingual = {
+      src: list(PublicationRef.Decode.multilingual),
+      translations: TranslationMap.t,
+    };
+
+    let multilingual = json =>
+      Json.Decode.{
+        src: json |> field("src", PublicationRef.Decode.multilingualList),
+        translations: json |> field("translations", TranslationMap.Decode.t),
+      };
+
+    let resolveTranslations = (langs, x) =>
+      Ley_Option.Infix.(
+        x.translations
+        |> TranslationMap.Decode.getFromLanguageOrder(langs)
+        <&> (
+          translation => {
+            note: translation.note,
+            rules: translation.rules,
+            advantage: translation.advantage,
+            disadvantage: translation.disadvantage,
+            src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
+            errata: translation.errata,
+          }
+        )
+      );
+  };
 };
 
 module MundaneItem = {
@@ -213,28 +215,12 @@ module Armor = {
     };
 };
 
-let decodeCombinedWeapon = json =>
-  Json.Decode.(
-    json |> field("melee", MeleeWeapon.decode),
-    json |> field("ranged", RangedWeapon.decode),
-  );
-
 type special =
   | MundaneItem(MundaneItem.t)
   | MeleeWeapon(MeleeWeapon.t)
   | RangedWeapon(RangedWeapon.t)
   | CombinedWeapon(MeleeWeapon.t, RangedWeapon.t)
   | Armor(Armor.t);
-
-let decodeSpecial =
-  Json.Decode.oneOf([
-    json => json |> MundaneItem.decode |> (x => MundaneItem(x)),
-    json => json |> MeleeWeapon.decode |> (x => MeleeWeapon(x)),
-    json => json |> RangedWeapon.decode |> (x => RangedWeapon(x)),
-    json =>
-      json |> decodeCombinedWeapon |> (((m, r)) => CombinedWeapon(m, r)),
-    json => json |> Armor.decode |> (x => Armor(x)),
-  ]);
 
 type t = {
   id: int,
@@ -246,56 +232,70 @@ type t = {
   gr: int,
 };
 
-module Translations = {
-  type t = {
-    name: string,
-    info: list(Info.multilingual),
-  };
-
-  let decode = json =>
-    Json.Decode.{
-      name: json |> field("name", string),
-      info:
-        json
-        |> field(
-             "versions",
-             oneOf([
-               json => json |> Info.decodeMultilingual |> (x => [x]),
-               json => json |> list(Info.decodeMultilingual),
-             ]),
-           ),
+module Decode = {
+  module Translation = {
+    type t = {
+      name: string,
+      info: list(Info.Decode.multilingual),
     };
-};
 
-module TranslationMap = TranslationMap.Make(Translations);
-
-type multilingual = {
-  id: int,
-  price: option(int),
-  weight: option(int),
-  special: option(special),
-  gr: int,
-  translations: TranslationMap.t,
-};
-
-let decodeMultilingual = json =>
-  JsonStrict.{
-    id: json |> field("id", int),
-    price: json |> optionalField("price", int),
-    weight: json |> optionalField("weight", int),
-    special: json |> optionalField("special", decodeSpecial),
-    gr: json |> field("gr", int),
-    translations: json |> field("translations", TranslationMap.decode),
+    let t = json =>
+      Json.Decode.{
+        name: json |> field("name", string),
+        info:
+          json
+          |> field(
+               "versions",
+               oneOf([
+                 json => json |> Info.Decode.multilingual |> (x => [x]),
+                 json => json |> list(Info.Decode.multilingual),
+               ]),
+             ),
+      };
   };
 
-let resolveTranslations = (langs, x) =>
-  Ley_Option.Infix.(
-    x.translations
-    |> TranslationMap.getFromLanguageOrder(langs)
-    <&> (
-      translation => (
-        x.id,
-        {
+  module TranslationMap = TranslationMap.Make(Translation);
+
+  let combinedWeapon = json =>
+    Json.Decode.(
+      json |> field("melee", MeleeWeapon.decode),
+      json |> field("ranged", RangedWeapon.decode),
+    );
+
+  let special =
+    Json.Decode.oneOf([
+      json => json |> MundaneItem.decode |> (x => MundaneItem(x)),
+      json => json |> MeleeWeapon.decode |> (x => MeleeWeapon(x)),
+      json => json |> RangedWeapon.decode |> (x => RangedWeapon(x)),
+      json => json |> combinedWeapon |> (((m, r)) => CombinedWeapon(m, r)),
+      json => json |> Armor.decode |> (x => Armor(x)),
+    ]);
+
+  type multilingual = {
+    id: int,
+    price: option(int),
+    weight: option(int),
+    special: option(special),
+    gr: int,
+    translations: TranslationMap.t,
+  };
+
+  let multilingual = json =>
+    JsonStrict.{
+      id: json |> field("id", int),
+      price: json |> optionalField("price", int),
+      weight: json |> optionalField("weight", int),
+      special: json |> optionalField("special", special),
+      gr: json |> field("gr", int),
+      translations: json |> field("translations", TranslationMap.Decode.t),
+    };
+
+  let resolveTranslations = (langs, x) =>
+    Ley_Option.Infix.(
+      x.translations
+      |> TranslationMap.Decode.getFromLanguageOrder(langs)
+      <&> (
+        translation => {
           id: x.id,
           name: translation.name,
           price: x.price,
@@ -304,11 +304,15 @@ let resolveTranslations = (langs, x) =>
           gr: x.gr,
           info:
             translation.info
-            |> Ley_Option.mapOption(Info.resolveTranslations(langs)),
-        },
+            |> Ley_Option.mapOption(Info.Decode.resolveTranslations(langs)),
+        }
       )
-    )
-  );
+    );
 
-let decode = (langs, json) =>
-  json |> decodeMultilingual |> resolveTranslations(langs);
+  let t = (langs, json) =>
+    json |> multilingual |> resolveTranslations(langs);
+
+  let toAssoc = (x: t) => (x.id, x);
+
+  let assoc = Decoder.decodeAssoc(t, toAssoc);
+};

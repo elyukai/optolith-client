@@ -3,13 +3,11 @@
  * entry with it's associated id to be able to be directly used to be inserted
  * into a map.
  */
-type entryType('a) =
+type assocDecoder('a) =
   Locale.order => Json.Decode.decoder(option((int, 'a)));
 
-module type BaseType = {
-  type t;
-  let decode: Locale.order => Json.Decode.decoder(t);
-};
+let decodeAssoc = (decoder, toAssoc, langs, json) =>
+  Ley_Option.Infix.(decoder(langs, json) <&> toAssoc);
 
 module type SubType = {
   type t;

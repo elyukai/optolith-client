@@ -2,6 +2,7 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Dice$OptolithClient from "../Misc/Dice.bs.js";
+import * as Decoder$OptolithClient from "../Utilities/Decoder.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
 import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
@@ -12,7 +13,7 @@ import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
 var Dynamic = {};
 
-function decode(json) {
+function t(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
           commonAdvantages: JsonStrict$OptolithClient.optionalField("commonAdvantages", JsonStrict$OptolithClient.string, json),
@@ -22,13 +23,13 @@ function decode(json) {
         };
 }
 
-var Translations = {
-  decode: decode
+var Translation = {
+  t: t
 };
 
-var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 
-function decodeMultilingual(json) {
+function multilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           commonCultures: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("commonCultures", (function (param) {
@@ -56,19 +57,19 @@ function decodeMultilingual(json) {
           sizeRandom: JsonStrict$OptolithClient.field("sizeRandom", (function (param) {
                   return JsonStrict$OptolithClient.list(Dice$OptolithClient.Decode.t, param);
                 }), json),
-          translations: JsonStrict$OptolithClient.field("translations", TranslationMap.decode, json)
+          translations: JsonStrict$OptolithClient.field("translations", TranslationMap.Decode.t, json)
         };
 }
 
-function decodeMultilingualPair(json) {
-  var variant = decodeMultilingual(json);
+function multilingualAssoc(json) {
+  var variant = multilingual(json);
   return [
           variant.id,
           variant
         ];
 }
 
-function decode$1(json) {
+function t$1(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
           attributeAdjustments: JsonStrict$OptolithClient.field("attributeAdjustments", JsonStrict$OptolithClient.string, json),
@@ -79,17 +80,17 @@ function decode$1(json) {
           commonDisadvantages: JsonStrict$OptolithClient.optionalField("commonDisadvantages", JsonStrict$OptolithClient.string, json),
           uncommonAdvantages: JsonStrict$OptolithClient.optionalField("uncommonAdvantages", JsonStrict$OptolithClient.string, json),
           uncommonDisadvantages: JsonStrict$OptolithClient.optionalField("uncommonDisadvantages", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.decodeList, json)
+          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
-var Translations$1 = {
-  decode: decode$1
+var Translation$1 = {
+  t: t$1
 };
 
-var TranslationMap$1 = TranslationMap$OptolithClient.Make(Translations$1);
+var TranslationMap$1 = TranslationMap$OptolithClient.Make(Translation$1);
 
-function decodeVariantOptions(param) {
+function variantOptions(param) {
   return JsonStrict$OptolithClient.andThen((function (str) {
                 switch (str) {
                   case "WithVariants" :
@@ -97,7 +98,7 @@ function decodeVariantOptions(param) {
                         return {
                                 TAG: /* WithVariants */0,
                                 variants: Curry._1(Ley_IntMap$OptolithClient.fromList, JsonStrict$OptolithClient.field("variants", (function (param) {
-                                            return JsonStrict$OptolithClient.list(decodeMultilingualPair, param);
+                                            return JsonStrict$OptolithClient.list(multilingualAssoc, param);
                                           }), json))
                               };
                       };
@@ -132,7 +133,7 @@ function decodeVariantOptions(param) {
               }), param);
 }
 
-function decodeMultilingual$1(json) {
+function multilingual$1(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           apValue: JsonStrict$OptolithClient.field("apValue", JsonStrict$OptolithClient.$$int, json),
@@ -174,15 +175,15 @@ function decodeMultilingual$1(json) {
           weightRandom: JsonStrict$OptolithClient.field("weightRandom", (function (param) {
                   return JsonStrict$OptolithClient.list(Dice$OptolithClient.Decode.t, param);
                 }), json),
-          variantOptions: JsonStrict$OptolithClient.field("typeSpecific", decodeVariantOptions, json),
-          src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json),
-          translations: JsonStrict$OptolithClient.field("translations", TranslationMap$1.decode, json)
+          variantOptions: JsonStrict$OptolithClient.field("typeSpecific", variantOptions, json),
+          src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
+          translations: JsonStrict$OptolithClient.field("translations", TranslationMap$1.Decode.t, json)
         };
 }
 
-function decode$2(langs, json) {
-  var x = decodeMultilingual$1(json);
-  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap$1.getFromLanguageOrder, langs, x.translations), (function (translation) {
+function t$2(langs, json) {
+  var x = multilingual$1(json);
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap$1.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 var options = x.variantOptions;
                 var tmp;
                 tmp = options.TAG ? ({
@@ -195,7 +196,7 @@ function decode$2(langs, json) {
                     }) : ({
                       TAG: /* WithVariants */0,
                       variants: Curry._2(Ley_IntMap$OptolithClient.mapMaybe, (function (param) {
-                              return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, param.translations), (function (translation) {
+                              return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, param.translations), (function (translation) {
                                             return {
                                                     id: param.id,
                                                     name: translation.name,
@@ -216,49 +217,61 @@ function decode$2(langs, json) {
                                           }));
                             }), options.variants)
                     });
-                return [
-                        x.id,
-                        {
-                          id: x.id,
-                          name: translation.name,
-                          apValue: x.apValue,
-                          lp: x.lp,
-                          spi: x.spi,
-                          tou: x.tou,
-                          mov: x.mov,
-                          attributeAdjustments: x.attributeAdjustments,
-                          attributeAdjustmentsSelectionValue: x.attributeAdjustmentsSelectionValue,
-                          attributeAdjustmentsSelectionList: x.attributeAdjustmentsSelectionList,
-                          attributeAdjustmentsText: translation.attributeAdjustments,
-                          automaticAdvantages: x.automaticAdvantages,
-                          automaticAdvantagesText: translation.automaticAdvantages,
-                          stronglyRecommendedAdvantages: x.stronglyRecommendedAdvantages,
-                          stronglyRecommendedAdvantagesText: translation.stronglyRecommendedAdvantages,
-                          stronglyRecommendedDisadvantages: x.stronglyRecommendedDisadvantages,
-                          stronglyRecommendedDisadvantagesText: translation.stronglyRecommendedDisadvantages,
-                          commonAdvantages: x.commonAdvantages,
-                          commonAdvantagesText: translation.commonAdvantages,
-                          commonDisadvantages: x.commonDisadvantages,
-                          commonDisadvantagesText: translation.commonDisadvantages,
-                          uncommonAdvantages: x.uncommonAdvantages,
-                          uncommonAdvantagesText: translation.uncommonDisadvantages,
-                          uncommonDisadvantages: x.uncommonDisadvantages,
-                          uncommonDisadvantagesText: translation.uncommonDisadvantages,
-                          weightBase: x.weightBase,
-                          weightRandom: x.weightRandom,
-                          variantOptions: tmp,
-                          src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
-                          errata: translation.errata
-                        }
-                      ];
+                return {
+                        id: x.id,
+                        name: translation.name,
+                        apValue: x.apValue,
+                        lp: x.lp,
+                        spi: x.spi,
+                        tou: x.tou,
+                        mov: x.mov,
+                        attributeAdjustments: x.attributeAdjustments,
+                        attributeAdjustmentsSelectionValue: x.attributeAdjustmentsSelectionValue,
+                        attributeAdjustmentsSelectionList: x.attributeAdjustmentsSelectionList,
+                        attributeAdjustmentsText: translation.attributeAdjustments,
+                        automaticAdvantages: x.automaticAdvantages,
+                        automaticAdvantagesText: translation.automaticAdvantages,
+                        stronglyRecommendedAdvantages: x.stronglyRecommendedAdvantages,
+                        stronglyRecommendedAdvantagesText: translation.stronglyRecommendedAdvantages,
+                        stronglyRecommendedDisadvantages: x.stronglyRecommendedDisadvantages,
+                        stronglyRecommendedDisadvantagesText: translation.stronglyRecommendedDisadvantages,
+                        commonAdvantages: x.commonAdvantages,
+                        commonAdvantagesText: translation.commonAdvantages,
+                        commonDisadvantages: x.commonDisadvantages,
+                        commonDisadvantagesText: translation.commonDisadvantages,
+                        uncommonAdvantages: x.uncommonAdvantages,
+                        uncommonAdvantagesText: translation.uncommonDisadvantages,
+                        uncommonDisadvantages: x.uncommonDisadvantages,
+                        uncommonDisadvantagesText: translation.uncommonDisadvantages,
+                        weightBase: x.weightBase,
+                        weightRandom: x.weightRandom,
+                        variantOptions: tmp,
+                        src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
+                        errata: translation.errata
+                      };
               }));
+}
+
+function toAssoc(x) {
+  return [
+          x.id,
+          x
+        ];
+}
+
+function assoc(param, param$1) {
+  return Decoder$OptolithClient.decodeAssoc(t$2, toAssoc, param, param$1);
 }
 
 var Static_Variant = {};
 
+var Static_Decode = {
+  assoc: assoc
+};
+
 var Static = {
   Variant: Static_Variant,
-  decode: decode$2
+  Decode: Static_Decode
 };
 
 export {

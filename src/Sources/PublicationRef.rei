@@ -2,13 +2,19 @@ type page =
   | Single(int)
   | Range(int, int);
 
+/**
+ * A reference for a static entry it occurs in a certain publication, defined by
+ * `id` on a set of pages.
+ */
 type t = {
   id: int,
   occurrences: list(page),
 };
 
-type multilingual;
+module Decode: {
+  type multilingual;
 
-let decodeMultilingualList: Json.Decode.decoder(list(multilingual));
+  let multilingualList: Json.Decode.decoder(list(multilingual));
 
-let resolveTranslationsList: (Locale.order, list(multilingual)) => list(t);
+  let resolveTranslationsList: (Locale.order, list(multilingual)) => list(t);
+};

@@ -4,6 +4,7 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Id$OptolithClient from "../Misc/Id.bs.js";
+import * as Decoder$OptolithClient from "../Utilities/Decoder.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
 import * as Ley_Int$OptolithClient from "../Data/Ley_Int.bs.js";
 import * as Advantage$OptolithClient from "./Advantage.bs.js";
@@ -16,7 +17,7 @@ import * as SelectOption$OptolithClient from "./SelectOption.bs.js";
 import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-function decode(json) {
+function t(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
           nameInWiki: JsonStrict$OptolithClient.optionalField("nameInWiki", JsonStrict$OptolithClient.string, json),
@@ -36,15 +37,15 @@ function decode(json) {
           prerequisitesEnd: JsonStrict$OptolithClient.optionalField("prerequisitesEnd", JsonStrict$OptolithClient.string, json),
           apValue: JsonStrict$OptolithClient.optionalField("apValue", JsonStrict$OptolithClient.string, json),
           apValueAppend: JsonStrict$OptolithClient.optionalField("apValueAppend", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.decodeList, json)
+          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
-var Translations = {
-  decode: decode
+var Translation = {
+  t: t
 };
 
-var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 
 function partial_arg_0(json) {
   return /* List */{
@@ -73,82 +74,90 @@ var partial_arg = {
   tl: partial_arg_1
 };
 
-function decodeCombatTechniques(param) {
+function combatTechniques(param) {
   return Json_decode.oneOf(partial_arg, param);
 }
 
-function decodeMultilingual(json) {
+function multilingual(json) {
   var partial_arg = OneOrMany$OptolithClient.Decode.t(JsonStrict$OptolithClient.$$int);
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           levels: JsonStrict$OptolithClient.optionalField("levels", JsonStrict$OptolithClient.$$int, json),
           max: JsonStrict$OptolithClient.optionalField("max", JsonStrict$OptolithClient.$$int, json),
           selectOptionCategories: JsonStrict$OptolithClient.optionalField("selectOptionCategories", (function (param) {
-                  return JsonStrict$OptolithClient.list(SelectOption$OptolithClient.Category.WithGroups.decode, param);
+                  return JsonStrict$OptolithClient.list(SelectOption$OptolithClient.Decode.Category.WithGroups.t, param);
                 }), json),
           selectOptions: Ley_Option$OptolithClient.option(SelectOption$OptolithClient.$$Map.empty, SelectOption$OptolithClient.$$Map.fromList, JsonStrict$OptolithClient.optionalField("selectOptions", (function (param) {
-                      return JsonStrict$OptolithClient.list(SelectOption$OptolithClient.decodeMultilingualPair, param);
+                      return JsonStrict$OptolithClient.list(SelectOption$OptolithClient.Decode.multilingualAssoc, param);
                     }), json)),
           extended: JsonStrict$OptolithClient.optionalField("extended", (function (param) {
                   return JsonStrict$OptolithClient.list(partial_arg, param);
                 }), json),
-          combatTechniques: JsonStrict$OptolithClient.optionalField("combatTechniques", decodeCombatTechniques, json),
+          combatTechniques: JsonStrict$OptolithClient.optionalField("combatTechniques", combatTechniques, json),
           property: JsonStrict$OptolithClient.optionalField("property", JsonStrict$OptolithClient.$$int, json),
           aspect: JsonStrict$OptolithClient.optionalField("aspect", JsonStrict$OptolithClient.$$int, json),
           brew: JsonStrict$OptolithClient.optionalField("brew", JsonStrict$OptolithClient.$$int, json),
           prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.General.decodeMultilingual, json),
-          apValue: JsonStrict$OptolithClient.optionalField("apValue", Advantage$OptolithClient.Static.decodeApValue, json),
+          apValue: JsonStrict$OptolithClient.optionalField("apValue", Advantage$OptolithClient.Static.Decode.apValue, json),
           gr: JsonStrict$OptolithClient.field("gr", JsonStrict$OptolithClient.$$int, json),
           subgr: JsonStrict$OptolithClient.optionalField("subgr", JsonStrict$OptolithClient.$$int, json),
-          src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json),
-          translations: JsonStrict$OptolithClient.field("translations", TranslationMap.decode, json)
+          src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
+          translations: JsonStrict$OptolithClient.field("translations", TranslationMap.Decode.t, json)
         };
 }
 
-function decode$1(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs, json) {
-  var x = decodeMultilingual(json);
-  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                return [
-                        x.id,
-                        {
-                          id: x.id,
-                          name: translation.name,
-                          nameInWiki: translation.nameInWiki,
-                          levels: x.levels,
-                          max: x.max,
-                          rules: translation.rules,
-                          effect: translation.effect,
-                          selectOptions: SelectOption$OptolithClient.ResolveCategories.mergeSelectOptions(Curry._2(SelectOption$OptolithClient.$$Map.mapMaybe, (function (param) {
-                                      return SelectOption$OptolithClient.resolveTranslations(langs, param);
-                                    }), x.selectOptions), SelectOption$OptolithClient.ResolveCategories.resolveCategories(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, x.selectOptionCategories)),
-                          input: translation.input,
-                          penalty: translation.penalty,
-                          combatTechniques: x.combatTechniques,
-                          combatTechniquesText: translation.combatTechniques,
-                          aeCost: translation.aeCost,
-                          protectiveCircle: translation.protectiveCircle,
-                          wardingCircle: translation.wardingCircle,
-                          volume: translation.volume,
-                          bindingCost: translation.bindingCost,
-                          property: x.property,
-                          propertyText: translation.property,
-                          aspect: x.aspect,
-                          brew: x.brew,
-                          extended: x.extended,
-                          prerequisites: Curry._2(Prerequisite$OptolithClient.Collection.General.resolveTranslations, langs, x.prerequisites),
-                          prerequisitesText: translation.prerequisites,
-                          prerequisitesTextStart: translation.prerequisitesStart,
-                          prerequisitesTextEnd: translation.prerequisitesEnd,
-                          apValue: x.apValue,
-                          apValueText: translation.apValue,
-                          apValueTextAppend: translation.apValueAppend,
-                          gr: x.gr,
-                          subgr: x.subgr,
-                          src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
-                          errata: translation.errata
-                        }
-                      ];
-              }));
+function toAssoc(x) {
+  return [
+          x.id,
+          x
+        ];
+}
+
+function assoc(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells) {
+  return function (param, param$1) {
+    return Decoder$OptolithClient.decodeAssoc((function (param, param$1) {
+                  var x = multilingual(param$1);
+                  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, param, x.translations), (function (translation) {
+                                return {
+                                        id: x.id,
+                                        name: translation.name,
+                                        nameInWiki: translation.nameInWiki,
+                                        levels: x.levels,
+                                        max: x.max,
+                                        rules: translation.rules,
+                                        effect: translation.effect,
+                                        selectOptions: Curry._2(SelectOption$OptolithClient.Decode.ResolveCategories.mergeSelectOptions, Curry._2(SelectOption$OptolithClient.$$Map.mapMaybe, (function (param$2) {
+                                                    return SelectOption$OptolithClient.Decode.resolveTranslations(param, param$2);
+                                                  }), x.selectOptions), Curry._7(SelectOption$OptolithClient.Decode.ResolveCategories.resolveCategories, blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, x.selectOptionCategories)),
+                                        input: translation.input,
+                                        penalty: translation.penalty,
+                                        combatTechniques: x.combatTechniques,
+                                        combatTechniquesText: translation.combatTechniques,
+                                        aeCost: translation.aeCost,
+                                        protectiveCircle: translation.protectiveCircle,
+                                        wardingCircle: translation.wardingCircle,
+                                        volume: translation.volume,
+                                        bindingCost: translation.bindingCost,
+                                        property: x.property,
+                                        propertyText: translation.property,
+                                        aspect: x.aspect,
+                                        brew: x.brew,
+                                        extended: x.extended,
+                                        prerequisites: Curry._2(Prerequisite$OptolithClient.Collection.General.resolveTranslations, param, x.prerequisites),
+                                        prerequisitesText: translation.prerequisites,
+                                        prerequisitesTextStart: translation.prerequisitesStart,
+                                        prerequisitesTextEnd: translation.prerequisitesEnd,
+                                        apValue: x.apValue,
+                                        apValueText: translation.apValue,
+                                        apValueTextAppend: translation.apValueAppend,
+                                        gr: x.gr,
+                                        subgr: x.subgr,
+                                        src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(param, x.src),
+                                        errata: translation.errata
+                                      };
+                              }));
+                }), toAssoc, param, param$1);
+  };
 }
 
 function modifyParsed(specialAbilities) {
@@ -162,8 +171,10 @@ function modifyParsed(specialAbilities) {
 }
 
 var Static = {
-  decode: decode$1,
-  modifyParsed: modifyParsed
+  Decode: {
+    assoc: assoc,
+    modifyParsed: modifyParsed
+  }
 };
 
 export {

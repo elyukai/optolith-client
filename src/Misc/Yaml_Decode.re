@@ -22,149 +22,163 @@ let decodeFilesOfEntryType = (decoder, fileContents: list(Js.Json.t)) =>
 let decodeFiles = (langs, messages, parsedData: Yaml_Raw.t): Static.t => {
   let animistForces =
     decodeFilesOfEntryType(
-      AnimistForce.Static.decode(langs),
+      AnimistForce.Static.Decode.assoc(langs),
       parsedData.animistForces,
     );
 
   let arcaneBardTraditions =
     decodeFilesOfEntryType(
-      IdName.decode(langs),
+      IdName.Decode.assoc(langs),
       parsedData.arcaneBardTraditions,
     );
 
   let arcaneDancerTraditions =
     decodeFilesOfEntryType(
-      IdName.decode(langs),
+      IdName.Decode.assoc(langs),
       parsedData.arcaneDancerTraditions,
     );
 
   let armorTypes =
-    decodeFilesOfEntryType(IdName.decode(langs), parsedData.armorTypes);
+    decodeFilesOfEntryType(
+      IdName.Decode.assoc(langs),
+      parsedData.armorTypes,
+    );
 
   let aspects =
-    decodeFilesOfEntryType(IdName.decode(langs), parsedData.aspects);
+    decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.aspects);
 
   let attributes =
     decodeFilesOfEntryType(
-      Attribute.Static.decode(langs),
+      Attribute.Static.Decode.assoc(langs),
       parsedData.attributes,
     );
 
   let blessedTraditions =
     decodeFilesOfEntryType(
-      BlessedTradition.decode(langs),
+      BlessedTradition.Decode.assoc(langs),
       parsedData.blessedTraditions,
     );
 
   let blessings =
     decodeFilesOfEntryType(
-      Blessing.Static.decode(langs),
+      Blessing.Static.Decode.assoc(langs),
       parsedData.blessings,
     );
 
-  let brews = decodeFilesOfEntryType(IdName.decode(langs), parsedData.brews);
+  let brews =
+    decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.brews);
 
   let cantrips =
     decodeFilesOfEntryType(
-      Cantrip.Static.decode(langs),
+      Cantrip.Static.Decode.assoc(langs),
       parsedData.cantrips,
     );
 
   let combatSpecialAbilityGroups =
     decodeFilesOfEntryType(
-      IdName.decode(langs),
+      IdName.Decode.assoc(langs),
       parsedData.combatSpecialAbilityGroups,
     );
 
   let combatTechniqueGroups =
     decodeFilesOfEntryType(
-      IdName.decode(langs),
+      IdName.Decode.assoc(langs),
       parsedData.combatTechniqueGroups,
     );
 
   let combatTechniques =
     decodeFilesOfEntryType(
-      CombatTechnique.Static.decode(langs),
+      CombatTechnique.Static.Decode.assoc(langs),
       parsedData.combatTechniques,
     );
 
   let conditions =
     decodeFilesOfEntryType(
-      Condition.Static.decode(langs),
+      Condition.Static.Decode.assoc(langs),
       parsedData.conditions,
     );
 
   let cultures =
     decodeFilesOfEntryType(
-      Culture.Static.decode(langs),
+      Culture.Static.Decode.assoc(langs),
       parsedData.cultures,
     );
 
   let curses =
-    decodeFilesOfEntryType(Curse.Static.decode(langs), parsedData.curses);
+    decodeFilesOfEntryType(
+      Curse.Static.Decode.assoc(langs),
+      parsedData.curses,
+    );
 
   let derivedCharacteristics =
     decodeFilesOfEntryType(
-      DerivedCharacteristic.Static.decode(langs),
+      DerivedCharacteristic.Static.Decode.assoc(langs),
       parsedData.derivedCharacteristics,
     );
 
   let dominationRituals =
     decodeFilesOfEntryType(
-      DominationRitual.Static.decode(langs),
+      DominationRitual.Static.Decode.assoc(langs),
       parsedData.dominationRituals,
     );
 
   let elvenMagicalSongs =
     decodeFilesOfEntryType(
-      ElvenMagicalSong.Static.decode(langs),
+      ElvenMagicalSong.Static.Decode.assoc(langs),
       parsedData.elvenMagicalSongs,
     );
 
-  let items = decodeFilesOfEntryType(Item.decode(langs), parsedData.items);
+  let items =
+    decodeFilesOfEntryType(Item.Decode.assoc(langs), parsedData.items);
 
   let equipmentGroups =
-    decodeFilesOfEntryType(IdName.decode(langs), parsedData.equipmentGroups);
+    decodeFilesOfEntryType(
+      IdName.Decode.assoc(langs),
+      parsedData.equipmentGroups,
+    );
 
   let equipmentPackages =
     decodeFilesOfEntryType(
-      EquipmentPackage.decode(langs),
+      EquipmentPackage.Decode.assoc(langs),
       parsedData.equipmentPackages,
     );
 
   let experienceLevels =
     decodeFilesOfEntryType(
-      ExperienceLevel.decode(langs),
+      ExperienceLevel.Decode.assoc(langs),
       parsedData.experienceLevels,
     );
 
   let eyeColors =
-    decodeFilesOfEntryType(IdName.decode(langs), parsedData.eyeColors);
+    decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.eyeColors);
 
   let focusRules =
     decodeFilesOfEntryType(
-      FocusRule.Static.decode(langs),
+      FocusRule.Static.Decode.assoc(langs),
       parsedData.focusRules,
     );
 
   let geodeRituals =
     decodeFilesOfEntryType(
-      GeodeRitual.Static.decode(langs),
+      GeodeRitual.Static.Decode.assoc(langs),
       parsedData.geodeRituals,
     );
 
   let hairColors =
-    decodeFilesOfEntryType(IdName.decode(langs), parsedData.hairColors);
+    decodeFilesOfEntryType(
+      IdName.Decode.assoc(langs),
+      parsedData.hairColors,
+    );
 
   let liturgicalChantGroups =
     decodeFilesOfEntryType(
-      IdName.decode(langs),
+      IdName.Decode.assoc(langs),
       parsedData.liturgicalChantGroups,
     );
 
   let liturgicalChants =
     decodeFilesOfEntryType(
-      LiturgicalChant.Static.decode(langs),
+      LiturgicalChant.Static.Decode.assoc(langs),
       parsedData.liturgicalChants,
     );
 
@@ -175,100 +189,127 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Raw.t): Static.t => {
 
   let magicalDances =
     decodeFilesOfEntryType(
-      MagicalDance.Static.decode(langs),
+      MagicalDance.Static.Decode.assoc(langs),
       parsedData.magicalDances,
     );
 
   let magicalMelodies =
     decodeFilesOfEntryType(
-      MagicalMelody.Static.decode(langs),
+      MagicalMelody.Static.Decode.assoc(langs),
       parsedData.magicalMelodies,
     );
 
   let magicalTraditions =
     decodeFilesOfEntryType(
-      MagicalTradition.decode(langs),
+      MagicalTradition.Decode.assoc(langs),
       parsedData.magicalTraditions,
     );
 
   let optionalRules =
     decodeFilesOfEntryType(
-      OptionalRule.Static.decode(langs),
+      OptionalRule.Static.Decode.assoc(langs),
       parsedData.optionalRules,
     );
 
   let pacts =
-    decodeFilesOfEntryType(Pact.Static.decode(langs), parsedData.pacts);
+    decodeFilesOfEntryType(
+      Pact.Static.Decode.assoc(langs),
+      parsedData.pacts,
+    );
 
   let professions =
     decodeFilesOfEntryType(
-      Profession.Static.decode(langs),
+      Profession.Static.Decode.assoc(langs),
       parsedData.professions,
     );
 
   let properties =
-    decodeFilesOfEntryType(IdName.decode(langs), parsedData.properties);
+    decodeFilesOfEntryType(
+      IdName.Decode.assoc(langs),
+      parsedData.properties,
+    );
 
   let publications =
     decodeFilesOfEntryType(
-      Publication.decode(langs),
+      Publication.Decode.assoc(langs),
       parsedData.publications,
     );
 
   let races =
-    decodeFilesOfEntryType(Race.Static.decode(langs), parsedData.races);
+    decodeFilesOfEntryType(
+      Race.Static.Decode.assoc(langs),
+      parsedData.races,
+    );
 
   let reaches =
-    decodeFilesOfEntryType(IdName.decode(langs), parsedData.reaches);
+    decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.reaches);
 
   let rogueSpells =
     decodeFilesOfEntryType(
-      RogueSpell.Static.decode(langs),
+      RogueSpell.Static.Decode.assoc(langs),
       parsedData.rogueSpells,
     );
 
   let skillGroups =
-    decodeFilesOfEntryType(SkillGroup.decode(langs), parsedData.skillGroups);
+    decodeFilesOfEntryType(
+      SkillGroup.Decode.assoc(langs),
+      parsedData.skillGroups,
+    );
 
   let skills =
-    decodeFilesOfEntryType(Skill.Static.decode(langs), parsedData.skills);
+    decodeFilesOfEntryType(
+      Skill.Static.Decode.assoc(langs),
+      parsedData.skills,
+    );
 
   let socialStatuses =
-    decodeFilesOfEntryType(IdName.decode(langs), parsedData.socialStatuses);
+    decodeFilesOfEntryType(
+      IdName.Decode.assoc(langs),
+      parsedData.socialStatuses,
+    );
 
   let specialAbilityGroups =
     decodeFilesOfEntryType(
-      IdName.decode(langs),
+      IdName.Decode.assoc(langs),
       parsedData.specialAbilityGroups,
     );
 
   let spellGroups =
-    decodeFilesOfEntryType(IdName.decode(langs), parsedData.spellGroups);
+    decodeFilesOfEntryType(
+      IdName.Decode.assoc(langs),
+      parsedData.spellGroups,
+    );
 
   let spells =
-    decodeFilesOfEntryType(Spell.Static.decode(langs), parsedData.spells);
+    decodeFilesOfEntryType(
+      Spell.Static.Decode.assoc(langs),
+      parsedData.spells,
+    );
 
   let spellEnhancements =
     EnhancementsSpecialAbility.spellsToSpecialAbilityOptions(spells);
 
   let states =
-    decodeFilesOfEntryType(State.Static.decode(langs), parsedData.states);
+    decodeFilesOfEntryType(
+      State.Static.Decode.assoc(langs),
+      parsedData.states,
+    );
 
   let subjects =
-    decodeFilesOfEntryType(IdName.decode(langs), parsedData.subjects);
+    decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.subjects);
 
   let tribes =
-    decodeFilesOfEntryType(IdName.decode(langs), parsedData.tribes);
+    decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.tribes);
 
   let zibiljaRituals =
     decodeFilesOfEntryType(
-      ZibiljaRitual.Static.decode(langs),
+      ZibiljaRitual.Static.Decode.assoc(langs),
       parsedData.zibiljaRituals,
     );
 
   let advantages =
     decodeFilesOfEntryType(
-      Advantage.Static.decode(
+      Advantage.Static.Decode.assoc(
         blessings,
         cantrips,
         combatTechniques,
@@ -282,7 +323,7 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Raw.t): Static.t => {
 
   let disadvantages =
     decodeFilesOfEntryType(
-      Disadvantage.Static.decode(
+      Disadvantage.Static.Decode.assoc(
         blessings,
         cantrips,
         combatTechniques,
@@ -296,7 +337,7 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Raw.t): Static.t => {
 
   let baseSpecialAbilities =
     decodeFilesOfEntryType(
-      SpecialAbility.Static.decode(
+      SpecialAbility.Static.Decode.assoc(
         blessings,
         cantrips,
         combatTechniques,
@@ -309,7 +350,7 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Raw.t): Static.t => {
     );
 
   let specialAbilities =
-    SpecialAbility.Static.modifyParsed(baseSpecialAbilities);
+    SpecialAbility.Static.Decode.modifyParsed(baseSpecialAbilities);
 
   {
     advantages,

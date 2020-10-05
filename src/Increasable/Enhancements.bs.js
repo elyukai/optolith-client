@@ -8,28 +8,28 @@ import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-function decode(json) {
+function t(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
           effect: JsonStrict$OptolithClient.field("effect", JsonStrict$OptolithClient.string, json)
         };
 }
 
-var LevelTranslations = {
-  decode: decode
+var LevelTranslation = {
+  t: t
 };
 
-var LevelTranslationMap = TranslationMap$OptolithClient.Make(LevelTranslations);
+var LevelTranslationMap = TranslationMap$OptolithClient.Make(LevelTranslation);
 
-function decodeMultilingual(json) {
+function multilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
-          translations: JsonStrict$OptolithClient.field("translations", LevelTranslationMap.decode, json)
+          translations: JsonStrict$OptolithClient.field("translations", LevelTranslationMap.Decode.t, json)
         };
 }
 
 function resolveTranslations(langs, x) {
-  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(LevelTranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(LevelTranslationMap.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,
@@ -38,7 +38,7 @@ function resolveTranslations(langs, x) {
               }));
 }
 
-function decodePrerequisite(json) {
+function prerequisite(json) {
   var x = JsonStrict$OptolithClient.$$int(json);
   if (x === 1) {
     return 1;
@@ -50,16 +50,16 @@ function decodePrerequisite(json) {
       };
 }
 
-function decodeMultilingual$1(json) {
+function multilingual$1(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
-          requiresLevel1: Ley_Option$OptolithClient.isSome(JsonStrict$OptolithClient.optionalField("previousRequirement", decodePrerequisite, json)),
-          translations: JsonStrict$OptolithClient.field("translations", LevelTranslationMap.decode, json)
+          requiresLevel1: Ley_Option$OptolithClient.isSome(JsonStrict$OptolithClient.optionalField("previousRequirement", prerequisite, json)),
+          translations: JsonStrict$OptolithClient.field("translations", LevelTranslationMap.Decode.t, json)
         };
 }
 
 function resolveTranslations$1(langs, x) {
-  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(LevelTranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(LevelTranslationMap.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,
@@ -69,7 +69,7 @@ function resolveTranslations$1(langs, x) {
               }));
 }
 
-function decodePrerequisite$1(json) {
+function prerequisite$1(json) {
   var x = JsonStrict$OptolithClient.$$int(json);
   if (x === 1) {
     return /* First */0;
@@ -84,16 +84,16 @@ function decodePrerequisite$1(json) {
       };
 }
 
-function decodeMultilingual$2(json) {
+function multilingual$2(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
-          requiresPrevious: JsonStrict$OptolithClient.optionalField("previousRequirement", decodePrerequisite$1, json),
-          translations: JsonStrict$OptolithClient.field("translations", LevelTranslationMap.decode, json)
+          requiresPrevious: JsonStrict$OptolithClient.optionalField("previousRequirement", prerequisite$1, json),
+          translations: JsonStrict$OptolithClient.field("translations", LevelTranslationMap.Decode.t, json)
         };
 }
 
 function resolveTranslations$2(langs, x) {
-  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(LevelTranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(LevelTranslationMap.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,
@@ -103,30 +103,30 @@ function resolveTranslations$2(langs, x) {
               }));
 }
 
-function decode$1(json) {
+function t$1(json) {
   return {
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.decodeList, json)
+          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
-var Translations = {
-  decode: decode$1
+var Translation = {
+  t: t$1
 };
 
-var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 
-function decodeMultilingual$3(json) {
+function multilingual$3(json) {
   return {
           levels: JsonStrict$OptolithClient.field("levels", (function (param) {
-                  return JsonStrict$OptolithClient.tuple3(decodeMultilingual, decodeMultilingual$1, decodeMultilingual$2, param);
+                  return JsonStrict$OptolithClient.tuple3(multilingual, multilingual$1, multilingual$2, param);
                 }), json),
-          src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json),
-          translations: JsonStrict$OptolithClient.field("translations", TranslationMap.decode, json)
+          src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
+          translations: JsonStrict$OptolithClient.field("translations", TranslationMap.Decode.t, json)
         };
 }
 
 function resolveTranslations$3(langs, x) {
-  return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 var match = x.levels;
                 return Curry._4(Ley_Option$OptolithClient.liftM3, (function (level1, level2, level3) {
                               return {
@@ -135,7 +135,7 @@ function resolveTranslations$3(langs, x) {
                                         level2,
                                         level3
                                       ],
-                                      src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
+                                      src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
                                       errata: translation.errata
                                     };
                             }), resolveTranslations(langs, match[0]), resolveTranslations$1(langs, match[1]), resolveTranslations$2(langs, match[2]));
@@ -148,12 +148,16 @@ var Level2 = {};
 
 var Level3 = {};
 
+var Decode = {
+  multilingual: multilingual$3,
+  resolveTranslations: resolveTranslations$3
+};
+
 export {
   Level1 ,
   Level2 ,
   Level3 ,
-  decodeMultilingual$3 as decodeMultilingual,
-  resolveTranslations$3 as resolveTranslations,
+  Decode ,
   
 }
 /* LevelTranslationMap Not a pure module */

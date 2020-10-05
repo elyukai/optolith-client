@@ -15,4 +15,4 @@ type t = {
   isLimitedToCulturesReverse: bool,
 };
 
-let decode: Decoder.entryType(t);
+module Decode: {let assoc: Decoder.assocDecoder(t);};

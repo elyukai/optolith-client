@@ -22,87 +22,89 @@ module Static = {
     errata: list(Erratum.t),
   };
 
-  module Translations = {
-    type t = {
-      name: string,
-      effect: string,
-      castingTime: ActivatableSkill.MainParameter.translation,
-      cost: ActivatableSkill.MainParameter.translation,
-      range: ActivatableSkill.MainParameter.translation,
-      duration: ActivatableSkill.MainParameter.translation,
-      target: string,
-      errata: list(Erratum.t),
-    };
-
-    let decode = json =>
-      JsonStrict.{
-        name: json |> field("name", string),
-        effect: json |> field("effect", string),
-        castingTime:
-          json |> field("castingTime", ActivatableSkill.MainParameter.decode),
-        cost: json |> field("cost", ActivatableSkill.MainParameter.decode),
-        range: json |> field("range", ActivatableSkill.MainParameter.decode),
-        duration:
-          json |> field("duration", ActivatableSkill.MainParameter.decode),
-        target: json |> field("target", string),
-        errata: json |> field("errata", Erratum.decodeList),
+  module Decode = {
+    module Translation = {
+      type t = {
+        name: string,
+        effect: string,
+        castingTime: ActivatableSkill.MainParameter.translation,
+        cost: ActivatableSkill.MainParameter.translation,
+        range: ActivatableSkill.MainParameter.translation,
+        duration: ActivatableSkill.MainParameter.translation,
+        target: string,
+        errata: list(Erratum.t),
       };
-  };
 
-  module TranslationMap = TranslationMap.Make(Translations);
-
-  type multilingual = {
-    id: int,
-    check: SkillCheck.t,
-    checkMod: option(CheckModifier.t),
-    castingTimeNoMod: bool,
-    costNoMod: bool,
-    rangeNoMod: bool,
-    durationNoMod: bool,
-    property: int,
-    traditions: Ley_IntSet.t,
-    ic: IC.t,
-    increasablePrerequisites: option(list(Prerequisite.Increasable.t)),
-    gr: int,
-    enhancements: option(Enhancements.multilingual),
-    src: list(PublicationRef.multilingual),
-    translations: TranslationMap.t,
-  };
-
-  let decodeMultilingual = json =>
-    JsonStrict.{
-      id: json |> field("id", int),
-      check: json |> field("check", SkillCheck.decode),
-      checkMod: json |> optionalField("checkMod", CheckModifier.decode),
-      castingTimeNoMod: json |> field("castingTimeNoMod", bool),
-      costNoMod: json |> field("costNoMod", bool),
-      rangeNoMod: json |> field("rangeNoMod", bool),
-      durationNoMod: json |> field("durationNoMod", bool),
-      property: json |> field("property", int),
-      traditions:
-        json |> field("traditions", list(int)) |> Ley_IntSet.fromList,
-      ic: json |> field("ic", IC.Decode.t),
-      increasablePrerequisites:
-        json
-        |> optionalField(
-             "increasablePrerequisites",
-             list(Prerequisite.Increasable.decode),
-           ),
-      gr: json |> field("gr", int),
-      enhancements:
-        json |> optionalField("enhancements", Enhancements.decodeMultilingual),
-      src: json |> field("src", PublicationRef.decodeMultilingualList),
-      translations: json |> field("translations", TranslationMap.decode),
+      let t = json =>
+        JsonStrict.{
+          name: json |> field("name", string),
+          effect: json |> field("effect", string),
+          castingTime:
+            json
+            |> field("castingTime", ActivatableSkill.MainParameter.decode),
+          cost: json |> field("cost", ActivatableSkill.MainParameter.decode),
+          range:
+            json |> field("range", ActivatableSkill.MainParameter.decode),
+          duration:
+            json |> field("duration", ActivatableSkill.MainParameter.decode),
+          target: json |> field("target", string),
+          errata: json |> field("errata", Erratum.Decode.list),
+        };
     };
 
-  let resolveTranslations = (langs, x) =>
-    Ley_Option.Infix.(
-      x.translations
-      |> TranslationMap.getFromLanguageOrder(langs)
-      <&> (
-        translation => (
-          x.id,
-          {
+    module TranslationMap = TranslationMap.Make(Translation);
+
+    type multilingual = {
+      id: int,
+      check: SkillCheck.t,
+      checkMod: option(CheckModifier.t),
+      castingTimeNoMod: bool,
+      costNoMod: bool,
+      rangeNoMod: bool,
+      durationNoMod: bool,
+      property: int,
+      traditions: Ley_IntSet.t,
+      ic: IC.t,
+      increasablePrerequisites: option(list(Prerequisite.Increasable.t)),
+      gr: int,
+      enhancements: option(Enhancements.Decode.multilingual),
+      src: list(PublicationRef.Decode.multilingual),
+      translations: TranslationMap.t,
+    };
+
+    let multilingual = json =>
+      JsonStrict.{
+        id: json |> field("id", int),
+        check: json |> field("check", SkillCheck.decode),
+        checkMod: json |> optionalField("checkMod", CheckModifier.decode),
+        castingTimeNoMod: json |> field("castingTimeNoMod", bool),
+        costNoMod: json |> field("costNoMod", bool),
+        rangeNoMod: json |> field("rangeNoMod", bool),
+        durationNoMod: json |> field("durationNoMod", bool),
+        property: json |> field("property", int),
+        traditions:
+          json |> field("traditions", list(int)) |> Ley_IntSet.fromList,
+        ic: json |> field("ic", IC.Decode.t),
+        increasablePrerequisites:
+          json
+          |> optionalField(
+               "increasablePrerequisites",
+               list(Prerequisite.Increasable.decode),
+             ),
+        gr: json |> field("gr", int),
+        enhancements:
+          json
+          |> optionalField("enhancements", Enhancements.Decode.multilingual),
+        src: json |> field("src", PublicationRef.Decode.multilingualList),
+        translations: json |> field("translations", TranslationMap.Decode.t),
+      };
+
+    let resolveTranslations = (langs, x) =>
+      Ley_Option.Infix.(
+        x.translations
+        |> TranslationMap.Decode.getFromLanguageOrder(langs)
+        <&> (
+          translation => {
             id: x.id,
             name: translation.name,
             check: x.check,
@@ -135,15 +137,20 @@ module Static = {
             increasablePrerequisites: x.increasablePrerequisites,
             gr: x.gr,
             enhancements:
-              x.enhancements >>= Enhancements.resolveTranslations(langs),
+              x.enhancements
+              >>= Enhancements.Decode.resolveTranslations(langs),
 
-            src: PublicationRef.resolveTranslationsList(langs, x.src),
+            src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
             errata: translation.errata,
-          },
+          }
         )
-      )
-    );
+      );
 
-  let decode = (langs, json) =>
-    json |> decodeMultilingual |> resolveTranslations(langs);
+    let t = (langs, json) =>
+      json |> multilingual |> resolveTranslations(langs);
+
+    let toAssoc = (x: t) => (x.id, x);
+
+    let assoc = Decoder.decodeAssoc(t, toAssoc);
+  };
 };

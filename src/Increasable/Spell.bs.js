@@ -2,6 +2,7 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as IC$OptolithClient from "./IC.bs.js";
+import * as Decoder$OptolithClient from "../Utilities/Decoder.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
 import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
 import * as Ley_IntSet$OptolithClient from "../Data/Ley_IntSet.bs.js";
@@ -14,7 +15,7 @@ import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js"
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 import * as ActivatableSkill$OptolithClient from "./ActivatableSkill.bs.js";
 
-function decode(json) {
+function t(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
           effect: JsonStrict$OptolithClient.field("effect", JsonStrict$OptolithClient.string, json),
@@ -23,17 +24,17 @@ function decode(json) {
           range: JsonStrict$OptolithClient.field("range", ActivatableSkill$OptolithClient.MainParameter.decode, json),
           duration: JsonStrict$OptolithClient.field("duration", ActivatableSkill$OptolithClient.MainParameter.decode, json),
           target: JsonStrict$OptolithClient.field("target", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.decodeList, json)
+          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
-var Translations = {
-  decode: decode
+var Translation = {
+  t: t
 };
 
-var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 
-function decodeMultilingual(json) {
+function multilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.decode, json),
@@ -51,47 +52,57 @@ function decodeMultilingual(json) {
                   return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Increasable.decode, param);
                 }), json),
           gr: JsonStrict$OptolithClient.field("gr", JsonStrict$OptolithClient.$$int, json),
-          enhancements: JsonStrict$OptolithClient.optionalField("enhancements", Enhancements$OptolithClient.decodeMultilingual, json),
-          src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.decodeMultilingualList, json),
-          translations: JsonStrict$OptolithClient.field("translations", TranslationMap.decode, json)
+          enhancements: JsonStrict$OptolithClient.optionalField("enhancements", Enhancements$OptolithClient.Decode.multilingual, json),
+          src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
+          translations: JsonStrict$OptolithClient.field("translations", TranslationMap.Decode.t, json)
         };
 }
 
-function decode$1(langs, json) {
-  var x = decodeMultilingual(json);
-  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                return [
-                        x.id,
-                        {
-                          id: x.id,
-                          name: translation.name,
-                          check: x.check,
-                          checkMod: x.checkMod,
-                          effect: translation.effect,
-                          castingTime: ActivatableSkill$OptolithClient.MainParameter.make(x.castingTimeNoMod, translation.castingTime),
-                          cost: ActivatableSkill$OptolithClient.MainParameter.make(x.costNoMod, translation.cost),
-                          range: ActivatableSkill$OptolithClient.MainParameter.make(x.rangeNoMod, translation.range),
-                          duration: ActivatableSkill$OptolithClient.MainParameter.make(x.durationNoMod, translation.duration),
-                          target: translation.target,
-                          property: x.property,
-                          traditions: x.traditions,
-                          ic: x.ic,
-                          increasablePrerequisites: x.increasablePrerequisites,
-                          gr: x.gr,
-                          enhancements: Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, x.enhancements, (function (param) {
-                                  return Enhancements$OptolithClient.resolveTranslations(langs, param);
-                                })),
-                          src: PublicationRef$OptolithClient.resolveTranslationsList(langs, x.src),
-                          errata: translation.errata
-                        }
-                      ];
+function t$1(langs, json) {
+  var x = multilingual(json);
+  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
+                return {
+                        id: x.id,
+                        name: translation.name,
+                        check: x.check,
+                        checkMod: x.checkMod,
+                        effect: translation.effect,
+                        castingTime: ActivatableSkill$OptolithClient.MainParameter.make(x.castingTimeNoMod, translation.castingTime),
+                        cost: ActivatableSkill$OptolithClient.MainParameter.make(x.costNoMod, translation.cost),
+                        range: ActivatableSkill$OptolithClient.MainParameter.make(x.rangeNoMod, translation.range),
+                        duration: ActivatableSkill$OptolithClient.MainParameter.make(x.durationNoMod, translation.duration),
+                        target: translation.target,
+                        property: x.property,
+                        traditions: x.traditions,
+                        ic: x.ic,
+                        increasablePrerequisites: x.increasablePrerequisites,
+                        gr: x.gr,
+                        enhancements: Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, x.enhancements, (function (param) {
+                                return Enhancements$OptolithClient.Decode.resolveTranslations(langs, param);
+                              })),
+                        src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
+                        errata: translation.errata
+                      };
               }));
+}
+
+function toAssoc(x) {
+  return [
+          x.id,
+          x
+        ];
+}
+
+function assoc(param, param$1) {
+  return Decoder$OptolithClient.decodeAssoc(t$1, toAssoc, param, param$1);
 }
 
 var Dynamic = ActivatableSkill$OptolithClient.Dynamic;
 
 var Static = {
-  decode: decode$1
+  Decode: {
+    assoc: assoc
+  }
 };
 
 export {

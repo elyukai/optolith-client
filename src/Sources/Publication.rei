@@ -1,3 +1,7 @@
+/**
+ * A publication. It contains the name, the abbreviation and some configuration
+ * options.
+ */
 type t = {
   id: int,
   name: string,
@@ -6,4 +10,4 @@ type t = {
   isAdultContent: bool,
 };
 
-let decode: Decoder.entryType(t);
+module Decode: {let assoc: Decoder.assocDecoder(t);};

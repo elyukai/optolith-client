@@ -9,5 +9,5 @@ module Static: {
     errata: list(Erratum.t),
   };
 
-  let decode: Decoder.entryType(t);
+  module Decode: {let assoc: Decoder.assocDecoder(t);};
 };

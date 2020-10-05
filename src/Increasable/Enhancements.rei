@@ -34,8 +34,10 @@ type t = {
   errata: list(Erratum.t),
 };
 
-type multilingual;
+module Decode: {
+  type multilingual;
 
-let decodeMultilingual: Json.Decode.decoder(multilingual);
+  let multilingual: Json.Decode.decoder(multilingual);
 
-let resolveTranslations: (Locale.order, multilingual) => option(t);
+  let resolveTranslations: (Locale.order, multilingual) => option(t);
+};

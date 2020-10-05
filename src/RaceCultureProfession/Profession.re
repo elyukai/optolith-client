@@ -225,7 +225,7 @@ module Static = {
         f: string,
       });
 
-  let decodeName =
+  let name =
     JsonStrict.(
       oneOf([
         json => json |> string |> (x => Const(x)),
@@ -256,42 +256,250 @@ module Static = {
       errata: list(Erratum.t),
     };
 
-    module Translations = {
+    module Decode = {
+      module Translation = {
+        type t = {
+          name,
+          precedingText: option(string),
+          fullText: option(string),
+          concludingText: option(string),
+          errata: list(Erratum.t),
+        };
+
+        let t = json =>
+          JsonStrict.{
+            name: json |> field("name", name),
+            precedingText: json |> optionalField("precedingText", string),
+            fullText: json |> optionalField("fullText", string),
+            concludingText: json |> optionalField("concludingText", string),
+            errata: json |> field("errata", Erratum.Decode.list),
+          };
+      };
+
+      module TranslationMap = TranslationMap.Make(Translation);
+
+      type multilingual = {
+        id: int,
+        apValue: int,
+        prerequisites: Prerequisite.Collection.Profession.multilingual,
+        options: Options.variant,
+        specialAbilities: list(Prerequisite.Activatable.t),
+        combatTechniques: Ley_IntMap.t(int),
+        skills: Ley_IntMap.t(int),
+        spells: Ley_IntMap.t(OneOrMany.t(int)),
+        liturgicalChants: Ley_IntMap.t(OneOrMany.t(int)),
+        blessings: list(int),
+        translations: TranslationMap.t,
+      };
+
+      let multilingual = json =>
+        JsonStrict.{
+          id: json |> field("id", int),
+          apValue: json |> field("apValue", int),
+          prerequisites:
+            json
+            |> field(
+                 "prerequisites",
+                 Prerequisite.Collection.Profession.decodeMultilingual,
+               ),
+          options: json |> field("options", Options.decodeVariant),
+          specialAbilities:
+            json
+            |> optionalField(
+                 "specialAbilities",
+                 list(Prerequisite.Activatable.decode),
+               )
+            |> Ley_Option.fromOption([]),
+          combatTechniques:
+            json
+            |> optionalField(
+                 "combatTechniques",
+                 list(json =>
+                   (json |> field("id", int), json |> field("value", int))
+                 ),
+               )
+            |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
+          skills:
+            json
+            |> optionalField(
+                 "skills",
+                 list(json =>
+                   (json |> field("id", int), json |> field("value", int))
+                 ),
+               )
+            |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
+          spells:
+            json
+            |> optionalField(
+                 "spells",
+                 list(json =>
+                   (
+                     json |> field("id", int),
+                     json |> field("value", Prerequisite.oneOrManyInt),
+                   )
+                 ),
+               )
+            |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
+          liturgicalChants:
+            json
+            |> optionalField(
+                 "liturgicalChants",
+                 list(json =>
+                   (
+                     json |> field("id", int),
+                     json |> field("value", Prerequisite.oneOrManyInt),
+                   )
+                 ),
+               )
+            |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
+          blessings:
+            json
+            |> optionalField("blessings", list(int))
+            |> Ley_Option.fromOption([]),
+          translations:
+            json |> field("translations", TranslationMap.Decode.t),
+        };
+
+      let multilingualAssoc = json =>
+        json |> multilingual |> (variant => (variant.id, variant));
+
+      let resolveTranslations = (langs, x) =>
+        Ley_Option.Infix.(
+          x.translations
+          |> TranslationMap.Decode.getFromLanguageOrder(langs)
+          <&> (
+            translation => {
+              let prerequisites =
+                Prerequisite.Collection.Profession.resolveTranslations(
+                  langs,
+                  x.prerequisites,
+                );
+
+              {
+                id: x.id,
+                name: translation.name,
+                apValue: x.apValue,
+                prerequisites,
+                options: {
+                  ...x.options,
+                  guildMageUnfamiliarSpell:
+                    Options.getGuildMageUnfamiliarSpell(prerequisites),
+                },
+                specialAbilities: x.specialAbilities,
+                combatTechniques: x.combatTechniques,
+                skills: x.skills,
+                spells: x.spells,
+                liturgicalChants: x.liturgicalChants,
+                blessings: x.blessings,
+                precedingText: translation.precedingText,
+                fullText: translation.fullText,
+                concludingText: translation.concludingText,
+                errata: translation.errata,
+              };
+            }
+          )
+        );
+    };
+  };
+
+  type t = {
+    id: int,
+    name,
+    subname: option(name),
+    apValue: int,
+    prerequisites: Prerequisite.Collection.Profession.t,
+    prerequisitesStart: option(string),
+    options: Options.t,
+    specialAbilities: list(Prerequisite.Activatable.t),
+    combatTechniques: Ley_IntMap.t(int),
+    skills: Ley_IntMap.t(int),
+    spells: Ley_IntMap.t(OneOrMany.t(int)),
+    liturgicalChants: Ley_IntMap.t(OneOrMany.t(int)),
+    blessings: list(int),
+    suggestedAdvantages: list(int),
+    suggestedAdvantagesText: option(string),
+    suggestedDisadvantages: list(int),
+    suggestedDisadvantagesText: option(string),
+    unsuitableAdvantages: list(int),
+    unsuitableAdvantagesText: option(string),
+    unsuitableDisadvantages: list(int),
+    unsuitableDisadvantagesText: option(string),
+    variants: Ley_IntMap.t(Variant.t),
+    isVariantRequired: bool,
+    gr: int,
+    /**
+     * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the
+     * Twelve Gods" or "Fighter".
+     */
+    sgr: int,
+    src: list(PublicationRef.t),
+    errata: list(Erratum.t),
+  };
+
+  module Decode = {
+    module Translation = {
       type t = {
         name,
-        precedingText: option(string),
-        fullText: option(string),
-        concludingText: option(string),
+        subname: option(name),
+        activatablePrerequisites: option(list(Prerequisite.Activatable.t)),
+        prerequisitesStart: option(string),
+        suggestedAdvantages: option(string),
+        suggestedDisadvantages: option(string),
+        unsuitableAdvantages: option(string),
+        unsuitableDisadvantages: option(string),
         errata: list(Erratum.t),
       };
 
-      let decode = json =>
+      let t = json =>
         JsonStrict.{
-          name: json |> field("name", decodeName),
-          precedingText: json |> optionalField("precedingText", string),
-          fullText: json |> optionalField("fullText", string),
-          concludingText: json |> optionalField("concludingText", string),
-          errata: json |> field("errata", Erratum.decodeList),
+          name: json |> field("name", name),
+          subname: json |> optionalField("subname", name),
+          activatablePrerequisites:
+            json
+            |> optionalField(
+                 "activatablePrerequisites",
+                 list(Prerequisite.Activatable.decode),
+               ),
+          prerequisitesStart:
+            json |> optionalField("prerequisitesStart", string),
+          suggestedAdvantages:
+            json |> optionalField("suggestedAdvantages", string),
+          suggestedDisadvantages:
+            json |> optionalField("suggestedDisadvantages", string),
+          unsuitableAdvantages:
+            json |> optionalField("unsuitableAdvantages", string),
+          unsuitableDisadvantages:
+            json |> optionalField("unsuitableDisadvantages", string),
+          errata: json |> field("errata", Erratum.Decode.list),
         };
     };
 
-    module TranslationMap = TranslationMap.Make(Translations);
+    module TranslationMap = TranslationMap.Make(Translation);
 
     type multilingual = {
       id: int,
       apValue: int,
       prerequisites: Prerequisite.Collection.Profession.multilingual,
-      options: Options.variant,
+      options: Options.t,
       specialAbilities: list(Prerequisite.Activatable.t),
       combatTechniques: Ley_IntMap.t(int),
       skills: Ley_IntMap.t(int),
       spells: Ley_IntMap.t(OneOrMany.t(int)),
       liturgicalChants: Ley_IntMap.t(OneOrMany.t(int)),
       blessings: list(int),
+      suggestedAdvantages: list(int),
+      suggestedDisadvantages: list(int),
+      unsuitableAdvantages: list(int),
+      unsuitableDisadvantages: list(int),
+      variants: Ley_IntMap.t(Variant.Decode.multilingual),
+      isVariantRequired: bool,
+      gr: int,
+      sgr: int,
+      src: list(PublicationRef.Decode.multilingual),
       translations: TranslationMap.t,
     };
 
-    let decodeMultilingual = json =>
+    let multilingual = json =>
       JsonStrict.{
         id: json |> field("id", int),
         apValue: json |> field("apValue", int),
@@ -301,7 +509,7 @@ module Static = {
                "prerequisites",
                Prerequisite.Collection.Profession.decodeMultilingual,
              ),
-        options: json |> field("options", Options.decodeVariant),
+        options: json |> field("options", Options.decode),
         specialAbilities:
           json
           |> optionalField(
@@ -355,16 +563,40 @@ module Static = {
           json
           |> optionalField("blessings", list(int))
           |> Ley_Option.fromOption([]),
-        translations: json |> field("translations", TranslationMap.decode),
+        suggestedAdvantages:
+          json
+          |> optionalField("suggestedAdvantages", list(int))
+          |> Ley_Option.fromOption([]),
+        suggestedDisadvantages:
+          json
+          |> optionalField("suggestedDisadvantages", list(int))
+          |> Ley_Option.fromOption([]),
+        unsuitableAdvantages:
+          json
+          |> optionalField("unsuitableAdvantages", list(int))
+          |> Ley_Option.fromOption([]),
+        unsuitableDisadvantages:
+          json
+          |> optionalField("unsuitableDisadvantages", list(int))
+          |> Ley_Option.fromOption([]),
+        variants:
+          json
+          |> optionalField(
+               "variants",
+               list(Variant.Decode.multilingualAssoc),
+             )
+          |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
+        isVariantRequired: json |> field("isVariantRequired", bool),
+        gr: json |> field("gr", int),
+        sgr: json |> field("sgr", int),
+        src: json |> field("src", PublicationRef.Decode.multilingualList),
+        translations: json |> field("translations", TranslationMap.Decode.t),
       };
-
-    let decodeMultilingualPair = json =>
-      json |> decodeMultilingual |> (variant => (variant.id, variant));
 
     let resolveTranslations = (langs, x) =>
       Ley_Option.Infix.(
         x.translations
-        |> TranslationMap.getFromLanguageOrder(langs)
+        |> TranslationMap.Decode.getFromLanguageOrder(langs)
         <&> (
           translation => {
             let prerequisites =
@@ -373,233 +605,6 @@ module Static = {
                 x.prerequisites,
               );
 
-            {
-              id: x.id,
-              name: translation.name,
-              apValue: x.apValue,
-              prerequisites,
-              options: {
-                ...x.options,
-                guildMageUnfamiliarSpell:
-                  Options.getGuildMageUnfamiliarSpell(prerequisites),
-              },
-              specialAbilities: x.specialAbilities,
-              combatTechniques: x.combatTechniques,
-              skills: x.skills,
-              spells: x.spells,
-              liturgicalChants: x.liturgicalChants,
-              blessings: x.blessings,
-              precedingText: translation.precedingText,
-              fullText: translation.fullText,
-              concludingText: translation.concludingText,
-              errata: translation.errata,
-            };
-          }
-        )
-      );
-  };
-
-  type t = {
-    id: int,
-    name,
-    subname: option(name),
-    apValue: int,
-    prerequisites: Prerequisite.Collection.Profession.t,
-    prerequisitesStart: option(string),
-    options: Options.t,
-    specialAbilities: list(Prerequisite.Activatable.t),
-    combatTechniques: Ley_IntMap.t(int),
-    skills: Ley_IntMap.t(int),
-    spells: Ley_IntMap.t(OneOrMany.t(int)),
-    liturgicalChants: Ley_IntMap.t(OneOrMany.t(int)),
-    blessings: list(int),
-    suggestedAdvantages: list(int),
-    suggestedAdvantagesText: option(string),
-    suggestedDisadvantages: list(int),
-    suggestedDisadvantagesText: option(string),
-    unsuitableAdvantages: list(int),
-    unsuitableAdvantagesText: option(string),
-    unsuitableDisadvantages: list(int),
-    unsuitableDisadvantagesText: option(string),
-    variants: Ley_IntMap.t(Variant.t),
-    isVariantRequired: bool,
-    gr: int,
-    /**
-     * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the
-     * Twelve Gods" or "Fighter".
-     */
-    sgr: int,
-    src: list(PublicationRef.t),
-    errata: list(Erratum.t),
-  };
-
-  module Translations = {
-    type t = {
-      name,
-      subname: option(name),
-      activatablePrerequisites: option(list(Prerequisite.Activatable.t)),
-      prerequisitesStart: option(string),
-      suggestedAdvantages: option(string),
-      suggestedDisadvantages: option(string),
-      unsuitableAdvantages: option(string),
-      unsuitableDisadvantages: option(string),
-      errata: list(Erratum.t),
-    };
-
-    let decode = json =>
-      JsonStrict.{
-        name: json |> field("name", decodeName),
-        subname: json |> optionalField("subname", decodeName),
-        activatablePrerequisites:
-          json
-          |> optionalField(
-               "activatablePrerequisites",
-               list(Prerequisite.Activatable.decode),
-             ),
-        prerequisitesStart:
-          json |> optionalField("prerequisitesStart", string),
-        suggestedAdvantages:
-          json |> optionalField("suggestedAdvantages", string),
-        suggestedDisadvantages:
-          json |> optionalField("suggestedDisadvantages", string),
-        unsuitableAdvantages:
-          json |> optionalField("unsuitableAdvantages", string),
-        unsuitableDisadvantages:
-          json |> optionalField("unsuitableDisadvantages", string),
-        errata: json |> field("errata", Erratum.decodeList),
-      };
-  };
-
-  module TranslationMap = TranslationMap.Make(Translations);
-
-  type multilingual = {
-    id: int,
-    apValue: int,
-    prerequisites: Prerequisite.Collection.Profession.multilingual,
-    options: Options.t,
-    specialAbilities: list(Prerequisite.Activatable.t),
-    combatTechniques: Ley_IntMap.t(int),
-    skills: Ley_IntMap.t(int),
-    spells: Ley_IntMap.t(OneOrMany.t(int)),
-    liturgicalChants: Ley_IntMap.t(OneOrMany.t(int)),
-    blessings: list(int),
-    suggestedAdvantages: list(int),
-    suggestedDisadvantages: list(int),
-    unsuitableAdvantages: list(int),
-    unsuitableDisadvantages: list(int),
-    variants: Ley_IntMap.t(Variant.multilingual),
-    isVariantRequired: bool,
-    gr: int,
-    sgr: int,
-    src: list(PublicationRef.multilingual),
-    translations: TranslationMap.t,
-  };
-
-  let decodeMultilingual = json =>
-    JsonStrict.{
-      id: json |> field("id", int),
-      apValue: json |> field("apValue", int),
-      prerequisites:
-        json
-        |> field(
-             "prerequisites",
-             Prerequisite.Collection.Profession.decodeMultilingual,
-           ),
-      options: json |> field("options", Options.decode),
-      specialAbilities:
-        json
-        |> optionalField(
-             "specialAbilities",
-             list(Prerequisite.Activatable.decode),
-           )
-        |> Ley_Option.fromOption([]),
-      combatTechniques:
-        json
-        |> optionalField(
-             "combatTechniques",
-             list(json =>
-               (json |> field("id", int), json |> field("value", int))
-             ),
-           )
-        |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
-      skills:
-        json
-        |> optionalField(
-             "skills",
-             list(json =>
-               (json |> field("id", int), json |> field("value", int))
-             ),
-           )
-        |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
-      spells:
-        json
-        |> optionalField(
-             "spells",
-             list(json =>
-               (
-                 json |> field("id", int),
-                 json |> field("value", Prerequisite.oneOrManyInt),
-               )
-             ),
-           )
-        |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
-      liturgicalChants:
-        json
-        |> optionalField(
-             "liturgicalChants",
-             list(json =>
-               (
-                 json |> field("id", int),
-                 json |> field("value", Prerequisite.oneOrManyInt),
-               )
-             ),
-           )
-        |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
-      blessings:
-        json
-        |> optionalField("blessings", list(int))
-        |> Ley_Option.fromOption([]),
-      suggestedAdvantages:
-        json
-        |> optionalField("suggestedAdvantages", list(int))
-        |> Ley_Option.fromOption([]),
-      suggestedDisadvantages:
-        json
-        |> optionalField("suggestedDisadvantages", list(int))
-        |> Ley_Option.fromOption([]),
-      unsuitableAdvantages:
-        json
-        |> optionalField("unsuitableAdvantages", list(int))
-        |> Ley_Option.fromOption([]),
-      unsuitableDisadvantages:
-        json
-        |> optionalField("unsuitableDisadvantages", list(int))
-        |> Ley_Option.fromOption([]),
-      variants:
-        json
-        |> optionalField("variants", list(Variant.decodeMultilingualPair))
-        |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
-      isVariantRequired: json |> field("isVariantRequired", bool),
-      gr: json |> field("gr", int),
-      sgr: json |> field("sgr", int),
-      src: json |> field("src", PublicationRef.decodeMultilingualList),
-      translations: json |> field("translations", TranslationMap.decode),
-    };
-
-  let resolveTranslations = (langs, x) =>
-    Ley_Option.Infix.(
-      x.translations
-      |> TranslationMap.getFromLanguageOrder(langs)
-      <&> (
-        translation => {
-          let prerequisites =
-            Prerequisite.Collection.Profession.resolveTranslations(
-              langs,
-              x.prerequisites,
-            );
-
-          (
-            x.id,
             {
               id: x.id,
               name: translation.name,
@@ -628,18 +633,25 @@ module Static = {
               unsuitableDisadvantagesText: translation.unsuitableDisadvantages,
               variants:
                 x.variants
-                |> Ley_IntMap.mapMaybe(Variant.resolveTranslations(langs)),
+                |> Ley_IntMap.mapMaybe(
+                     Variant.Decode.resolveTranslations(langs),
+                   ),
               isVariantRequired: x.isVariantRequired,
               gr: x.gr,
               sgr: x.sgr,
-              src: PublicationRef.resolveTranslationsList(langs, x.src),
+              src:
+                PublicationRef.Decode.resolveTranslationsList(langs, x.src),
               errata: translation.errata,
-            },
-          );
-        }
-      )
-    );
+            };
+          }
+        )
+      );
 
-  let decode = (langs, json) =>
-    json |> decodeMultilingual |> resolveTranslations(langs);
+    let t = (langs, json) =>
+      json |> multilingual |> resolveTranslations(langs);
+
+    let toAssoc = (x: t) => (x.id, x);
+
+    let assoc = Decoder.decodeAssoc(t, toAssoc);
+  };
 };

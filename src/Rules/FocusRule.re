@@ -9,60 +9,63 @@ module Static = {
     errata: list(Erratum.t),
   };
 
-  module Translations = {
-    type t = {
-      name: string,
-      description: string,
-      errata: list(Erratum.t),
-    };
-
-    let decode = json =>
-      Json.Decode.{
-        name: json |> field("name", string),
-        description: json |> field("description", string),
-        errata: json |> field("errata", Erratum.decodeList),
+  module Decode = {
+    module Translation = {
+      type t = {
+        name: string,
+        description: string,
+        errata: list(Erratum.t),
       };
-  };
 
-  module TranslationMap = TranslationMap.Make(Translations);
-
-  type multilingual = {
-    id: int,
-    level: int,
-    subject: int,
-    src: list(PublicationRef.multilingual),
-    translations: TranslationMap.t,
-  };
-
-  let decodeMultilingual = json =>
-    Json.Decode.{
-      id: json |> field("id", int),
-      level: json |> field("level", int),
-      subject: json |> field("subject", int),
-      src: json |> field("src", PublicationRef.decodeMultilingualList),
-      translations: json |> field("translations", TranslationMap.decode),
+      let t = json =>
+        Json.Decode.{
+          name: json |> field("name", string),
+          description: json |> field("description", string),
+          errata: json |> field("errata", Erratum.Decode.list),
+        };
     };
 
-  let resolveTranslations = (langs, x) =>
-    Ley_Option.Infix.(
-      x.translations
-      |> TranslationMap.getFromLanguageOrder(langs)
-      <&> (
-        translation => (
-          x.id,
-          {
+    module TranslationMap = TranslationMap.Make(Translation);
+
+    type multilingual = {
+      id: int,
+      level: int,
+      subject: int,
+      src: list(PublicationRef.Decode.multilingual),
+      translations: TranslationMap.t,
+    };
+
+    let multilingual = json =>
+      Json.Decode.{
+        id: json |> field("id", int),
+        level: json |> field("level", int),
+        subject: json |> field("subject", int),
+        src: json |> field("src", PublicationRef.Decode.multilingualList),
+        translations: json |> field("translations", TranslationMap.Decode.t),
+      };
+
+    let resolveTranslations = (langs, x) =>
+      Ley_Option.Infix.(
+        x.translations
+        |> TranslationMap.Decode.getFromLanguageOrder(langs)
+        <&> (
+          translation => {
             id: x.id,
             name: translation.name,
             level: x.level,
             subject: x.subject,
             description: translation.description,
-            src: PublicationRef.resolveTranslationsList(langs, x.src),
+            src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
             errata: translation.errata,
-          },
+          }
         )
-      )
-    );
+      );
 
-  let decode = (langs, json) =>
-    json |> decodeMultilingual |> resolveTranslations(langs);
+    let t = (langs, json) =>
+      json |> multilingual |> resolveTranslations(langs);
+
+    let toAssoc = (x: t) => (x.id, x);
+
+    let assoc = Decoder.decodeAssoc(t, toAssoc);
+  };
 };

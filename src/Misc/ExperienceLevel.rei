@@ -10,4 +10,4 @@ type t = {
   maxUnfamiliarSpells: int,
 };
 
-let decode: Decoder.entryType(t);
+module Decode: {let assoc: Decoder.assocDecoder(t);};

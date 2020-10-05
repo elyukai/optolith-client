@@ -7,7 +7,7 @@ import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-function decode(json) {
+function t(json) {
   var x = JsonStrict$OptolithClient.field("occurrences", OneOrMany$OptolithClient.Decode.t(function (json) {
             var first = JsonStrict$OptolithClient.field("firstPage", JsonStrict$OptolithClient.$$int, json);
             var maybeLast = JsonStrict$OptolithClient.optionalField("lastPage", JsonStrict$OptolithClient.$$int, json);
@@ -32,26 +32,26 @@ function decode(json) {
   }
 }
 
-var Translations = {
-  decode: decode
+var Translation = {
+  t: t
 };
 
-var TranslationMap = TranslationMap$OptolithClient.Make(Translations);
+var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 
-function decodeMultilingual(json) {
+function multilingual(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          translations: Json_decode.field("translations", TranslationMap.decode, json)
+          translations: Json_decode.field("translations", TranslationMap.Decode.t, json)
         };
 }
 
-function decodeMultilingualList(param) {
-  return Json_decode.list(decodeMultilingual, param);
+function multilingualList(param) {
+  return Json_decode.list(multilingual, param);
 }
 
 function resolveTranslationsList(langs, xs) {
   return Ley_Option$OptolithClient.mapOption((function (param) {
-                return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, param.translations), (function (translation) {
+                return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, param.translations), (function (translation) {
                               return {
                                       id: param.id,
                                       occurrences: translation
@@ -60,9 +60,13 @@ function resolveTranslationsList(langs, xs) {
               }), xs);
 }
 
+var Decode = {
+  multilingualList: multilingualList,
+  resolveTranslationsList: resolveTranslationsList
+};
+
 export {
-  decodeMultilingualList ,
-  resolveTranslationsList ,
+  Decode ,
   
 }
 /* TranslationMap Not a pure module */

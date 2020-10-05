@@ -66,168 +66,112 @@ function decodeFilesOfEntryType(decoder, fileContents) {
 }
 
 function decodeFiles(langs, messages, parsedData) {
-  var animistForces = decodeFilesOfEntryType((function (param) {
-          return AnimistForce$OptolithClient.Static.decode(langs, param);
-        }), parsedData.animistForces);
+  var animistForces = decodeFilesOfEntryType(Curry._1(AnimistForce$OptolithClient.Static.Decode.assoc, langs), parsedData.animistForces);
   var arcaneBardTraditions = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.arcaneBardTraditions);
   var arcaneDancerTraditions = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.arcaneDancerTraditions);
   var armorTypes = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.armorTypes);
   var aspects = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.aspects);
-  var attributes = decodeFilesOfEntryType((function (param) {
-          return Attribute$OptolithClient.Static.decode(langs, param);
-        }), parsedData.attributes);
+  var attributes = decodeFilesOfEntryType(Curry._1(Attribute$OptolithClient.Static.Decode.assoc, langs), parsedData.attributes);
   var blessedTraditions = decodeFilesOfEntryType((function (param) {
-          return BlessedTradition$OptolithClient.decode(langs, param);
+          return BlessedTradition$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.blessedTraditions);
-  var blessings = decodeFilesOfEntryType((function (param) {
-          return Blessing$OptolithClient.Static.decode(langs, param);
-        }), parsedData.blessings);
+  var blessings = decodeFilesOfEntryType(Curry._1(Blessing$OptolithClient.Static.Decode.assoc, langs), parsedData.blessings);
   var brews = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.brews);
-  var cantrips = decodeFilesOfEntryType((function (param) {
-          return Cantrip$OptolithClient.Static.decode(langs, param);
-        }), parsedData.cantrips);
+  var cantrips = decodeFilesOfEntryType(Curry._1(Cantrip$OptolithClient.Static.Decode.assoc, langs), parsedData.cantrips);
   var combatSpecialAbilityGroups = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.combatSpecialAbilityGroups);
   var combatTechniqueGroups = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.combatTechniqueGroups);
-  var combatTechniques = decodeFilesOfEntryType((function (param) {
-          return CombatTechnique$OptolithClient.Static.decode(langs, param);
-        }), parsedData.combatTechniques);
-  var conditions = decodeFilesOfEntryType((function (param) {
-          return Condition$OptolithClient.Static.decode(langs, param);
-        }), parsedData.conditions);
-  var cultures = decodeFilesOfEntryType((function (param) {
-          return Culture$OptolithClient.Static.decode(langs, param);
-        }), parsedData.cultures);
-  var curses = decodeFilesOfEntryType((function (param) {
-          return Curse$OptolithClient.Static.decode(langs, param);
-        }), parsedData.curses);
-  var derivedCharacteristics = decodeFilesOfEntryType((function (param) {
-          return DerivedCharacteristic$OptolithClient.Static.decode(langs, param);
-        }), parsedData.derivedCharacteristics);
-  var dominationRituals = decodeFilesOfEntryType((function (param) {
-          return DominationRitual$OptolithClient.Static.decode(langs, param);
-        }), parsedData.dominationRituals);
-  var elvenMagicalSongs = decodeFilesOfEntryType((function (param) {
-          return ElvenMagicalSong$OptolithClient.Static.decode(langs, param);
-        }), parsedData.elvenMagicalSongs);
+  var combatTechniques = decodeFilesOfEntryType(Curry._1(CombatTechnique$OptolithClient.Static.Decode.assoc, langs), parsedData.combatTechniques);
+  var conditions = decodeFilesOfEntryType(Curry._1(Condition$OptolithClient.Static.Decode.assoc, langs), parsedData.conditions);
+  var cultures = decodeFilesOfEntryType(Curry._1(Culture$OptolithClient.Static.Decode.assoc, langs), parsedData.cultures);
+  var curses = decodeFilesOfEntryType(Curry._1(Curse$OptolithClient.Static.Decode.assoc, langs), parsedData.curses);
+  var derivedCharacteristics = decodeFilesOfEntryType(Curry._1(DerivedCharacteristic$OptolithClient.Static.Decode.assoc, langs), parsedData.derivedCharacteristics);
+  var dominationRituals = decodeFilesOfEntryType(Curry._1(DominationRitual$OptolithClient.Static.Decode.assoc, langs), parsedData.dominationRituals);
+  var elvenMagicalSongs = decodeFilesOfEntryType(Curry._1(ElvenMagicalSong$OptolithClient.Static.Decode.assoc, langs), parsedData.elvenMagicalSongs);
   var items = decodeFilesOfEntryType((function (param) {
-          return Item$OptolithClient.decode(langs, param);
+          return Item$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.items);
   var equipmentGroups = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.equipmentGroups);
   var equipmentPackages = decodeFilesOfEntryType((function (param) {
-          return EquipmentPackage$OptolithClient.decode(langs, param);
+          return EquipmentPackage$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.equipmentPackages);
   var experienceLevels = decodeFilesOfEntryType((function (param) {
-          return ExperienceLevel$OptolithClient.decode(langs, param);
+          return ExperienceLevel$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.experienceLevels);
   var eyeColors = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.eyeColors);
-  var focusRules = decodeFilesOfEntryType((function (param) {
-          return FocusRule$OptolithClient.Static.decode(langs, param);
-        }), parsedData.focusRules);
-  var geodeRituals = decodeFilesOfEntryType((function (param) {
-          return GeodeRitual$OptolithClient.Static.decode(langs, param);
-        }), parsedData.geodeRituals);
+  var focusRules = decodeFilesOfEntryType(Curry._1(FocusRule$OptolithClient.Static.Decode.assoc, langs), parsedData.focusRules);
+  var geodeRituals = decodeFilesOfEntryType(Curry._1(GeodeRitual$OptolithClient.Static.Decode.assoc, langs), parsedData.geodeRituals);
   var hairColors = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.hairColors);
   var liturgicalChantGroups = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.liturgicalChantGroups);
-  var liturgicalChants = decodeFilesOfEntryType((function (param) {
-          return LiturgicalChant$OptolithClient.Static.decode(langs, param);
-        }), parsedData.liturgicalChants);
+  var liturgicalChants = decodeFilesOfEntryType(Curry._1(LiturgicalChant$OptolithClient.Static.Decode.assoc, langs), parsedData.liturgicalChants);
   var liturgicalChantEnhancements = EnhancementsSpecialAbility$OptolithClient.liturgicalChantsToSpecialAbilityOptions(liturgicalChants);
-  var magicalDances = decodeFilesOfEntryType((function (param) {
-          return MagicalDance$OptolithClient.Static.decode(langs, param);
-        }), parsedData.magicalDances);
-  var magicalMelodies = decodeFilesOfEntryType((function (param) {
-          return MagicalMelody$OptolithClient.Static.decode(langs, param);
-        }), parsedData.magicalMelodies);
+  var magicalDances = decodeFilesOfEntryType(Curry._1(MagicalDance$OptolithClient.Static.Decode.assoc, langs), parsedData.magicalDances);
+  var magicalMelodies = decodeFilesOfEntryType(Curry._1(MagicalMelody$OptolithClient.Static.Decode.assoc, langs), parsedData.magicalMelodies);
   var magicalTraditions = decodeFilesOfEntryType((function (param) {
-          return MagicalTradition$OptolithClient.decode(langs, param);
+          return MagicalTradition$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.magicalTraditions);
-  var optionalRules = decodeFilesOfEntryType((function (param) {
-          return OptionalRule$OptolithClient.Static.decode(langs, param);
-        }), parsedData.optionalRules);
-  var pacts = decodeFilesOfEntryType((function (param) {
-          return Pact$OptolithClient.Static.decode(langs, param);
-        }), parsedData.pacts);
-  var professions = decodeFilesOfEntryType((function (param) {
-          return Profession$OptolithClient.Static.decode(langs, param);
-        }), parsedData.professions);
+  var optionalRules = decodeFilesOfEntryType(Curry._1(OptionalRule$OptolithClient.Static.Decode.assoc, langs), parsedData.optionalRules);
+  var pacts = decodeFilesOfEntryType(Curry._1(Pact$OptolithClient.Static.Decode.assoc, langs), parsedData.pacts);
+  var professions = decodeFilesOfEntryType(Curry._1(Profession$OptolithClient.Static.Decode.assoc, langs), parsedData.professions);
   var properties = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.properties);
   var publications = decodeFilesOfEntryType((function (param) {
-          return Publication$OptolithClient.decode(langs, param);
+          return Publication$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.publications);
-  var races = decodeFilesOfEntryType((function (param) {
-          return Race$OptolithClient.Static.decode(langs, param);
-        }), parsedData.races);
+  var races = decodeFilesOfEntryType(Curry._1(Race$OptolithClient.Static.Decode.assoc, langs), parsedData.races);
   var reaches = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.reaches);
-  var rogueSpells = decodeFilesOfEntryType((function (param) {
-          return RogueSpell$OptolithClient.Static.decode(langs, param);
-        }), parsedData.rogueSpells);
+  var rogueSpells = decodeFilesOfEntryType(Curry._1(RogueSpell$OptolithClient.Static.Decode.assoc, langs), parsedData.rogueSpells);
   var skillGroups = decodeFilesOfEntryType((function (param) {
-          return SkillGroup$OptolithClient.decode(langs, param);
+          return SkillGroup$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.skillGroups);
-  var skills = decodeFilesOfEntryType((function (param) {
-          return Skill$OptolithClient.Static.decode(langs, param);
-        }), parsedData.skills);
+  var skills = decodeFilesOfEntryType(Curry._1(Skill$OptolithClient.Static.Decode.assoc, langs), parsedData.skills);
   var socialStatuses = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.socialStatuses);
   var specialAbilityGroups = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.specialAbilityGroups);
   var spellGroups = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.spellGroups);
-  var spells = decodeFilesOfEntryType((function (param) {
-          return Spell$OptolithClient.Static.decode(langs, param);
-        }), parsedData.spells);
+  var spells = decodeFilesOfEntryType(Curry._1(Spell$OptolithClient.Static.Decode.assoc, langs), parsedData.spells);
   var spellEnhancements = EnhancementsSpecialAbility$OptolithClient.spellsToSpecialAbilityOptions(spells);
-  var states = decodeFilesOfEntryType((function (param) {
-          return State$OptolithClient.Static.decode(langs, param);
-        }), parsedData.states);
+  var states = decodeFilesOfEntryType(Curry._1(State$OptolithClient.Static.Decode.assoc, langs), parsedData.states);
   var subjects = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.subjects);
   var tribes = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.decode(langs, param);
+          return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.tribes);
-  var zibiljaRituals = decodeFilesOfEntryType((function (param) {
-          return ZibiljaRitual$OptolithClient.Static.decode(langs, param);
-        }), parsedData.zibiljaRituals);
-  var advantages = decodeFilesOfEntryType((function (param) {
-          return Advantage$OptolithClient.Static.decode(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs, param);
-        }), parsedData.advantages);
-  var disadvantages = decodeFilesOfEntryType((function (param) {
-          return Disadvantage$OptolithClient.Static.decode(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs, param);
-        }), parsedData.disadvantages);
-  var baseSpecialAbilities = decodeFilesOfEntryType((function (param) {
-          return SpecialAbility$OptolithClient.Static.decode(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs, param);
-        }), parsedData.specialAbilities);
-  var specialAbilities = SpecialAbility$OptolithClient.Static.modifyParsed(baseSpecialAbilities);
+  var zibiljaRituals = decodeFilesOfEntryType(Curry._1(ZibiljaRitual$OptolithClient.Static.Decode.assoc, langs), parsedData.zibiljaRituals);
+  var advantages = decodeFilesOfEntryType(Curry._7(Advantage$OptolithClient.Static.Decode.assoc, blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs), parsedData.advantages);
+  var disadvantages = decodeFilesOfEntryType(Curry._7(Disadvantage$OptolithClient.Static.Decode.assoc, blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs), parsedData.disadvantages);
+  var baseSpecialAbilities = decodeFilesOfEntryType(Curry._7(SpecialAbility$OptolithClient.Static.Decode.assoc, blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs), parsedData.specialAbilities);
+  var specialAbilities = Curry._1(SpecialAbility$OptolithClient.Static.Decode.modifyParsed, baseSpecialAbilities);
   return {
           advantages: advantages,
           animistForces: animistForces,
