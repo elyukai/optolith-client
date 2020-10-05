@@ -257,13 +257,13 @@ module Static = {
 
   let decode =
       (
-        langs,
         blessings,
         cantrips,
         combatTechniques,
         liturgicalChants,
         skills,
         spells,
+        langs,
         json,
       ) =>
     json

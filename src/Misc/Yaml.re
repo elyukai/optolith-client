@@ -6,7 +6,7 @@ module Raw = Yaml_Raw;
 let parseStaticData = (~onProgress, langs) => {
   Js.Console.timeStart("parseStaticData");
 
-  let preferredLocale = langs |> List.hd;
+  let preferredLocale = Locale.getPreferred(langs);
 
   Raw.parseUI(preferredLocale)
   <&> Decode.decodeUI(preferredLocale)

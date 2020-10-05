@@ -219,13 +219,13 @@ function decodeFiles(langs, messages, parsedData) {
           return ZibiljaRitual$OptolithClient.Static.decode(langs, param);
         }), parsedData.zibiljaRituals);
   var advantages = decodeFilesOfEntryType((function (param) {
-          return Advantage$OptolithClient.Static.decode(langs, blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, param);
+          return Advantage$OptolithClient.Static.decode(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs, param);
         }), parsedData.advantages);
   var disadvantages = decodeFilesOfEntryType((function (param) {
-          return Disadvantage$OptolithClient.Static.decode(langs, blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, param);
+          return Disadvantage$OptolithClient.Static.decode(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs, param);
         }), parsedData.disadvantages);
   var baseSpecialAbilities = decodeFilesOfEntryType((function (param) {
-          return SpecialAbility$OptolithClient.Static.decode(langs, blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, param);
+          return SpecialAbility$OptolithClient.Static.decode(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs, param);
         }), parsedData.specialAbilities);
   var specialAbilities = SpecialAbility$OptolithClient.Static.modifyParsed(baseSpecialAbilities);
   return {

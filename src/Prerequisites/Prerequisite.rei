@@ -166,7 +166,7 @@ module General: {
 
   let decodeMultilingual: Json.Decode.decoder(multilingual);
 
-  let resolveTranslations: (list(string), multilingual) => t;
+  let resolveTranslations: (Locale.order, multilingual) => t;
 
   let unify: t => Unified.t;
 };
@@ -185,7 +185,7 @@ module Profession: {
 
   let decodeMultilingual: Json.Decode.decoder(multilingual);
 
-  let resolveTranslations: (list(string), multilingual) => t;
+  let resolveTranslations: (Locale.order, multilingual) => t;
 
   let unify: t => Unified.t;
 };
@@ -211,7 +211,7 @@ module AdvantageDisadvantage: {
 
   let decodeMultilingual: Json.Decode.decoder(multilingual);
 
-  let resolveTranslations: (list(string), multilingual) => t;
+  let resolveTranslations: (Locale.order, multilingual) => t;
 
   let unify: t => Unified.t;
 };
@@ -242,7 +242,7 @@ module Collection: {
 
     let decodeMultilingual: Json.Decode.decoder(multilingual);
 
-    let resolveTranslations: (list(string), multilingual) => t;
+    let resolveTranslations: (Locale.order, multilingual) => t;
   };
 
   module Profession: {
@@ -252,7 +252,7 @@ module Collection: {
 
     let decodeMultilingual: Json.Decode.decoder(multilingual);
 
-    let resolveTranslations: (list(string), multilingual) => t;
+    let resolveTranslations: (Locale.order, multilingual) => t;
   };
 
   module AdvantageDisadvantage: {
@@ -262,6 +262,6 @@ module Collection: {
 
     let decodeMultilingual: Json.Decode.decoder(multilingual);
 
-    let resolveTranslations: (list(string), multilingual) => t;
+    let resolveTranslations: (Locale.order, multilingual) => t;
   };
 };

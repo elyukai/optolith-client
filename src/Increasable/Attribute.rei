@@ -12,5 +12,5 @@ module Static: {
     short: string,
   };
 
-  let decode: (list(string), Js.Json.t) => option((int, t));
+  let decode: Decoder.entryType(t);
 };

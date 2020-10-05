@@ -19,5 +19,5 @@ module Static: {
     errata: list(Erratum.t),
   };
 
-  let decode: (list(string), Js.Json.t) => option((int, t));
+  let decode: Decoder.entryType(t);
 };

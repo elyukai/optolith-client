@@ -54,7 +54,7 @@ function decodeMultilingual(json) {
         };
 }
 
-function decode$1(langs, blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, json) {
+function decode$1(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs, json) {
   var x = decodeMultilingual(json);
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return [

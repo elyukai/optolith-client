@@ -41,7 +41,7 @@ type multilingual;
 let decodeMultilingualPair:
   Js.Json.t => (Id.Activatable.SelectOption.t, multilingual);
 
-let resolveTranslations: (list(string), multilingual) => option(t);
+let resolveTranslations: (Locale.order, multilingual) => option(t);
 
 module Category: {
   type t =

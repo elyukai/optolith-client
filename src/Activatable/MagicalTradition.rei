@@ -12,4 +12,4 @@ type t = {
   areDisAdvRequiredApplyToMagActionsOrApps: bool,
 };
 
-let decode: list(string) => Json.Decode.decoder(option((int, t)));
+let decode: Decoder.entryType(t);

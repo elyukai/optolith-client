@@ -27,5 +27,5 @@ module Make:
      * entry is not available in English, take the one in German) and you have
      * an English and a German entry, the English one is returned.
      */
-    let getFromLanguageOrder: (list(string), t) => option(Decodable.t);
+    let getFromLanguageOrder: (Locale.order, t) => option(Decodable.t);
   };

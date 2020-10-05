@@ -6,4 +6,4 @@ type t = {
   aspects: option((int, int)),
 };
 
-let decode: list(string) => Json.Decode.decoder(option((int, t)));
+let decode: Decoder.entryType(t);

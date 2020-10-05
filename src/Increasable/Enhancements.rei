@@ -38,4 +38,4 @@ type multilingual;
 
 let decodeMultilingual: Json.Decode.decoder(multilingual);
 
-let resolveTranslations: (list(string), multilingual) => option(t);
+let resolveTranslations: (Locale.order, multilingual) => option(t);

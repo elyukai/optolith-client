@@ -269,13 +269,13 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Raw.t): Static.t => {
   let advantages =
     decodeFilesOfEntryType(
       Advantage.Static.decode(
-        langs,
         blessings,
         cantrips,
         combatTechniques,
         liturgicalChants,
         skills,
         spells,
+        langs,
       ),
       parsedData.advantages,
     );
@@ -283,13 +283,13 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Raw.t): Static.t => {
   let disadvantages =
     decodeFilesOfEntryType(
       Disadvantage.Static.decode(
-        langs,
         blessings,
         cantrips,
         combatTechniques,
         liturgicalChants,
         skills,
         spells,
+        langs,
       ),
       parsedData.disadvantages,
     );
@@ -297,13 +297,13 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Raw.t): Static.t => {
   let baseSpecialAbilities =
     decodeFilesOfEntryType(
       SpecialAbility.Static.decode(
-        langs,
         blessings,
         cantrips,
         combatTechniques,
         liturgicalChants,
         skills,
         spells,
+        langs,
       ),
       parsedData.specialAbilities,
     );

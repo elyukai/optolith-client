@@ -32,7 +32,6 @@ module Static: {
 
   let decode:
     (
-      list(string),
       Ley_IntMap.t(Blessing.Static.t),
       Ley_IntMap.t(Cantrip.Static.t),
       Ley_IntMap.t(CombatTechnique.Static.t),
@@ -40,5 +39,5 @@ module Static: {
       Ley_IntMap.t(Skill.Static.t),
       Ley_IntMap.t(Spell.Static.t)
     ) =>
-    Json.Decode.decoder(option((int, t)));
+    Decoder.entryType(t);
 };

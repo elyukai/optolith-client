@@ -10,4 +10,4 @@ type t = {
   maxUnfamiliarSpells: int,
 };
 
-let decode: list(string) => Json.Decode.decoder(option((int, t)));
+let decode: Decoder.entryType(t);

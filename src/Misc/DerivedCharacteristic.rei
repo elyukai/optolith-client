@@ -50,5 +50,5 @@ module Static: {
     calcNoPrimary: option(string),
   };
 
-  let decode: list(string) => Json.Decode.decoder(option((int, t)));
+  let decode: Decoder.entryType(t);
 };

@@ -1,13 +1,16 @@
+type entryType('a) =
+  Locale.order => Json.Decode.decoder(option((int, 'a)));
+
 module type BaseType = {
   type t;
-  let decode: list(string) => Json.Decode.decoder(t);
+  let decode: Locale.order => Json.Decode.decoder(t);
 };
 
 module type SubType = {
   type t;
   type multilingual;
   let decodeMultilingual: Json.Decode.decoder(multilingual);
-  let resolveTranslations: (list(string), multilingual) => t;
+  let resolveTranslations: (Locale.order, multilingual) => t;
 };
 
 module type SubTypeWrapper = {
@@ -15,5 +18,5 @@ module type SubTypeWrapper = {
   let decodeMultilingual:
     Json.Decode.decoder('a) => Json.Decode.decoder(t('a));
   let resolveTranslations:
-    (list(string), (list(string), 'a) => 'b, t('a)) => t('b);
+    (Locale.order, (Locale.order, 'a) => 'b, t('a)) => t('b);
 };
