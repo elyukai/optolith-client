@@ -4,6 +4,7 @@ module Static: {
   type t = {
     id: int,
     name: string,
+    nameShort: option(string),
     check: SkillCheck.t,
     checkMod: option(CheckModifier.t),
     effect: string,

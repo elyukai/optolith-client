@@ -4,7 +4,6 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Decoder$OptolithClient from "../Utilities/Decoder.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
 import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
-import * as Ley_IntSet$OptolithClient from "../Data/Ley_IntSet.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
@@ -29,9 +28,6 @@ var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 function multilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
-          traditions: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("traditions", (function (param) {
-                      return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
-                    }), json)),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
           translations: JsonStrict$OptolithClient.field("translations", TranslationMap.Decode.t, json)
         };
@@ -47,7 +43,6 @@ function t$1(langs, json) {
                         range: translation.range,
                         duration: translation.duration,
                         target: translation.target,
-                        traditions: x.traditions,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
                         errata: translation.errata
                       };

@@ -8,7 +8,7 @@ module Static: {
     target: string,
     property: int,
     traditions: Ley_IntSet.t,
-    activatablePrerequisites: option(list(Prerequisite.Activatable.t)),
+    prerequisites: list(Prerequisite.Activatable.t),
     src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };

@@ -13,7 +13,7 @@ module Static: {
     primary: list(int),
     special: option(string),
     hasNoParry: bool,
-    bpr: int,
+    breakingPointRating: int,
     gr: int,
     src: list(PublicationRef.t),
     errata: list(Erratum.t),

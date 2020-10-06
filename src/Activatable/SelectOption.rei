@@ -4,7 +4,11 @@ type staticEntry =
   | CombatTechnique(CombatTechnique.Static.t)
   | LiturgicalChant(LiturgicalChant.Static.t)
   | Skill(Skill.Static.t)
-  | Spell(Spell.Static.t);
+  | Spell(Spell.Static.t)
+  | TradeSecret(TradeSecret.t)
+  | Language(Language.t)
+  | Script(Script.t)
+  | AnimalShape(AnimalShape.t);
 
 type t = {
   id: Id.Activatable.SelectOption.t,
@@ -48,19 +52,18 @@ module Decode: {
     type t =
       | Blessings
       | Cantrips
-      | CombatTechniques
-      | LiturgicalChants
-      | Skills
-      | Spells;
+      | CombatTechniques(list(int))
+      | LiturgicalChants(list(int))
+      | Skills(list(int))
+      | Spells(list(int))
+      | TradeSecrets
+      | Languages
+      | Scripts
+      | AnimalShapes
+      | SpellEnhancements
+      | LiturgicalChantEnhancements;
 
-    module WithGroups: {
-      type nonrec t = {
-        category: t,
-        groups: option(list(int)),
-      };
-
-      let t: Json.Decode.decoder(t);
-    };
+    let t: Json.Decode.decoder(t);
   };
 
   module ResolveCategories: {
@@ -70,16 +73,24 @@ module Decode: {
      */
     let resolveCategories:
       (
-        Ley_IntMap.t(Blessing.Static.t),
-        Ley_IntMap.t(Cantrip.Static.t),
-        Ley_IntMap.t(CombatTechnique.Static.t),
-        Ley_IntMap.t(LiturgicalChant.Static.t),
-        Ley_IntMap.t(Skill.Static.t),
-        Ley_IntMap.t(Spell.Static.t),
-        Ley_Option.t(Ley_List.t(Category.WithGroups.t))
+        ~blessings: Ley_IntMap.t(Blessing.Static.t),
+        ~cantrips: Ley_IntMap.t(Cantrip.Static.t),
+        ~combatTechniques: Ley_IntMap.t(CombatTechnique.Static.t),
+        ~liturgicalChants: Ley_IntMap.t(LiturgicalChant.Static.t),
+        ~skills: Ley_IntMap.t(Skill.Static.t),
+        ~spells: Ley_IntMap.t(Spell.Static.t),
+        ~tradeSecrets: Ley_IntMap.t(TradeSecret.t),
+        ~languages: Ley_IntMap.t(Language.t),
+        ~scripts: Ley_IntMap.t(Script.t),
+        ~animalShapes: Ley_IntMap.t(AnimalShape.t),
+        ~spellEnhancements: map,
+        ~liturgicalChantEnhancements: map,
+        ~src: list(PublicationRef.t),
+        ~errata: list(Erratum.t),
+        Ley_Option.t(Ley_List.t(Category.t))
       ) =>
-      Map.t(t);
+      map;
 
-    let mergeSelectOptions: (Map.t(t), Map.t(t)) => Map.t(t);
+    let mergeSelectOptions: (map, map) => map;
   };
 };

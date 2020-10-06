@@ -61,11 +61,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
               lookupMap(id, staticData.spells, x => x.name)
             | Preset((LiturgicalChant, id)) =>
               lookupMap(id, staticData.liturgicalChants, x => x.name)
-            | Preset((Generic, _))
-            | Preset((CombatTechnique, _))
-            | Preset((Cantrip, _))
-            | Preset((Blessing, _))
-            | Preset((SpecialAbility, _))
+            | Preset(_)
             | CustomInput(_) => None
             }
         )
@@ -78,13 +74,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
             switch (sid) {
             | Preset((CombatTechnique, id)) =>
               lookupMap(id, staticData.combatTechniques, x => x.name)
-            | Preset((Generic, _))
-            | Preset((Skill, _))
-            | Preset((Spell, _))
-            | Preset((LiturgicalChant, _))
-            | Preset((Cantrip, _))
-            | Preset((Blessing, _))
-            | Preset((SpecialAbility, _))
+            | Preset(_)
             | CustomInput(_) => None
             }
         )
@@ -120,14 +110,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
               // Get the input if Prejudice or Unworldly is selected
               | (Generic, 7 | 8) => heroEntry |> getOption2 >>= getCustomInput
               // Otherwise ignore any additional options
-              | (Generic, _)
-              | (Skill, _)
-              | (CombatTechnique, _)
-              | (Spell, _)
-              | (LiturgicalChant, _)
-              | (Cantrip, _)
-              | (Blessing, _)
-              | (SpecialAbility, _) => None
+              | _ => None
               }
             )
             |> option(option1.name, specialInput =>
@@ -150,13 +133,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
             switch (sid) {
             | Preset((Spell, id)) =>
               lookupMap(id, staticData.spells, x => x.name)
-            | Preset((Generic, _))
-            | Preset((Skill, _))
-            | Preset((CombatTechnique, _))
-            | Preset((LiturgicalChant, _))
-            | Preset((Cantrip, _))
-            | Preset((Blessing, _))
-            | Preset((SpecialAbility, _))
+            | Preset(_)
             | CustomInput(_) => None
             }
         )
@@ -177,13 +154,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
             switch (sid) {
             | Preset((LiturgicalChant, id)) =>
               lookupMap(id, staticData.liturgicalChants, x => x.name)
-            | Preset((Generic, _))
-            | Preset((Skill, _))
-            | Preset((CombatTechnique, _))
-            | Preset((Spell, _))
-            | Preset((Cantrip, _))
-            | Preset((Blessing, _))
-            | Preset((SpecialAbility, _))
+            | Preset(_)
             | CustomInput(_) => None
             }
         )
@@ -208,13 +179,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
                          a.id === id
                        )
                     <&> (a => a.name)
-                  | Preset((Skill, _))
-                  | Preset((CombatTechnique, _))
-                  | Preset((Spell, _))
-                  | Preset((LiturgicalChant, _))
-                  | Preset((Cantrip, _))
-                  | Preset((Blessing, _))
-                  | Preset((SpecialAbility, _)) => None
+                  | Preset(_) => None
                   }
                 )
                 // Merge skill name and application name
@@ -288,13 +253,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
                           specializationId - 1,
                         )
                     )
-                  | Preset((Skill, _))
-                  | Preset((CombatTechnique, _))
-                  | Preset((Spell, _))
-                  | Preset((LiturgicalChant, _))
-                  | Preset((Cantrip, _))
-                  | Preset((Blessing, _))
-                  | Preset((SpecialAbility, _)) => None
+                  | Preset(_) => None
                   }
                 )
                 <&> (specialization => language.name ++ ": " ++ specialization)

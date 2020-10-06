@@ -34,7 +34,7 @@ module Static = {
   type t = {
     id: int,
     name: string,
-    short: string,
+    nameAbbr: string,
     calc: string,
     calcHalfPrimary: option(string),
     calcNoPrimary: option(string),
@@ -44,7 +44,7 @@ module Static = {
     module Translation = {
       type t = {
         name: string,
-        short: string,
+        nameAbbr: string,
         calc: string,
         calcHalfPrimary: option(string),
         calcNoPrimary: option(string),
@@ -53,7 +53,7 @@ module Static = {
       let t = json =>
         JsonStrict.{
           name: json |> field("name", string),
-          short: json |> field("short", string),
+          nameAbbr: json |> field("nameAbbr", string),
           calc: json |> field("calc", string),
           calcHalfPrimary: json |> optionalField("calcHalfPrimary", string),
           calcNoPrimary: json |> optionalField("calcNoPrimary", string),
@@ -81,7 +81,7 @@ module Static = {
           translation => {
             id: x.id,
             name: translation.name,
-            short: translation.short,
+            nameAbbr: translation.nameAbbr,
             calc: translation.calc,
             calcHalfPrimary: translation.calcHalfPrimary,
             calcNoPrimary: translation.calcNoPrimary,

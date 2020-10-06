@@ -5,8 +5,8 @@ type t = {
   maxAttributeValue: int,
   maxSkillRating: int,
   maxCombatTechniqueRating: int,
-  maxTotalAttributeValues: int,
-  maxSpellsLiturgicalChants: int,
+  maxAttributeTotal: int,
+  maxNumberSpellsLiturgicalChants: int,
   maxUnfamiliarSpells: int,
 };
 

@@ -121,49 +121,73 @@ function moveActiveInListToNew(newxs, x) {
 }
 
 function generateStyleDependencies(heroSpecialAbilities, styleSpecialAbility) {
-  return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, styleSpecialAbility.extended, (function (extended) {
-                var xs = Curry._2(Ley_List$OptolithClient.map, (function (extendedId) {
-                        return {
-                                id: extendedId,
-                                active: undefined,
-                                origin: styleSpecialAbility.id
-                              };
-                      }), extended);
-                var match = Id$OptolithClient.SpecialAbility.fromInt(styleSpecialAbility.id);
-                if (typeof match !== "number") {
-                  return xs;
-                }
-                if (match !== 91) {
-                  return xs;
-                }
-                var param = Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, styleSpecialAbility.id, heroSpecialAbilities), (function (x) {
-                            return Ley_Option$OptolithClient.listToOption(x.active);
-                          })), (function (x) {
-                        return Ley_List$OptolithClient.Safe.atMay(x.options, 1);
-                      }));
-                if (param === undefined) {
-                  return xs;
-                }
-                if (param.TAG) {
-                  return xs;
-                }
-                var match$1 = param._0;
-                if (match$1[0] >= 7) {
-                  return {
-                          hd: {
-                            id: {
-                              TAG: /* One */0,
-                              _0: match$1[1]
-                            },
-                            active: undefined,
-                            origin: styleSpecialAbility.id
-                          },
-                          tl: xs
-                        };
-                } else {
-                  return xs;
-                }
-              }));
+  var match = styleSpecialAbility.groupSpecific;
+  var ext1;
+  var ext2;
+  var ext3;
+  switch (match.TAG | 0) {
+    case /* CombatStyle */3 :
+        var match$1 = match.extended;
+        ext1 = match$1[0];
+        ext2 = match$1[1];
+        ext3 = match$1[2];
+        break;
+    case /* GeneralStyle */4 :
+        var match$2 = match.extended;
+        ext1 = match$2[0];
+        ext2 = match$2[1];
+        ext3 = match$2[2];
+        break;
+    default:
+      return ;
+  }
+  var xs = Curry._2(Ley_List$OptolithClient.map, (function (param) {
+          return {
+                  id: {
+                    TAG: /* One */0,
+                    _0: param.id
+                  },
+                  active: undefined,
+                  origin: styleSpecialAbility.id
+                };
+        }), {
+        hd: ext1,
+        tl: {
+          hd: ext2,
+          tl: {
+            hd: ext3,
+            tl: /* [] */0
+          }
+        }
+      });
+  var match$3 = Id$OptolithClient.SpecialAbility.fromInt(styleSpecialAbility.id);
+  var tmp;
+  if (typeof match$3 === "number" && match$3 === 91) {
+    var param = Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, styleSpecialAbility.id, heroSpecialAbilities), (function (x) {
+                return Ley_Option$OptolithClient.listToOption(x.active);
+              })), (function (x) {
+            return Ley_List$OptolithClient.Safe.atMay(x.options, 1);
+          }));
+    if (param !== undefined && !param.TAG) {
+      var match$4 = param._0;
+      tmp = match$4[0] !== 7 ? xs : ({
+            hd: {
+              id: {
+                TAG: /* One */0,
+                _0: match$4[1]
+              },
+              active: undefined,
+              origin: styleSpecialAbility.id
+            },
+            tl: xs
+          });
+    } else {
+      tmp = xs;
+    }
+  } else {
+    tmp = xs;
+  }
+  return Curry._1(Ley_Option$OptolithClient.$$return, tmp);
 }
 
 function addStyleExtendedSpecialAbilityDependencies(styleSpecialAbility, hero) {

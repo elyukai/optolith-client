@@ -3,6 +3,7 @@ module Static = {
     id: int,
     name: string,
     description: string,
+    isPrerequisite: bool,
     src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
@@ -27,6 +28,7 @@ module Static = {
 
     type multilingual = {
       id: int,
+      isPrerequisite: bool,
       src: list(PublicationRef.Decode.multilingual),
       translations: TranslationMap.t,
     };
@@ -34,6 +36,7 @@ module Static = {
     let multilingual = json =>
       Json.Decode.{
         id: json |> field("id", int),
+        isPrerequisite: json |> field("isPrerequisite", bool),
         src: json |> field("src", PublicationRef.Decode.multilingualList),
         translations: json |> field("translations", TranslationMap.Decode.t),
       };
@@ -47,6 +50,7 @@ module Static = {
             id: x.id,
             name: translation.name,
             description: translation.description,
+            isPrerequisite: x.isPrerequisite,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
             errata: translation.errata,
           }

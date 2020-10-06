@@ -9,7 +9,7 @@ module Static: {
   type t = {
     id: int,
     name: string,
-    short: string,
+    nameAbbr: string,
   };
 
   module Decode: {let assoc: Decoder.assocDecoder(t);};

@@ -33,6 +33,14 @@ function showId(id) {
         return "Blessing(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
     case /* SpecialAbility */7 :
         return "SpecialAbility(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+    case /* TradeSecret */8 :
+        return "TradeSecret(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+    case /* Language */9 :
+        return "Language(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+    case /* Script */10 :
+        return "Script(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+    case /* AnimalShape */11 :
+        return "AnimalShape(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
     
   }
 }
@@ -53,9 +61,49 @@ var Translation = {
 
 var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 
+var selectOptionId = Json_decode.either((function (param) {
+        return Json_decode.map((function (x) {
+                      return [
+                              /* Generic */0,
+                              x
+                            ];
+                    }), Json_decode.$$int, param);
+      }), (function (param) {
+        return Json_decode.andThen((function (str) {
+                      switch (str) {
+                        case "CombatTechnique" :
+                            return function (param) {
+                              return Json_decode.map((function (x) {
+                                            return [
+                                                    /* CombatTechnique */2,
+                                                    x
+                                                  ];
+                                          }), Json_decode.$$int, param);
+                            };
+                        case "Skill" :
+                            return function (param) {
+                              return Json_decode.map((function (x) {
+                                            return [
+                                                    /* Skill */1,
+                                                    x
+                                                  ];
+                                          }), Json_decode.$$int, param);
+                            };
+                        default:
+                          throw {
+                                RE_EXN_ID: Json_decode.DecodeError,
+                                _1: "Unknown select option id scope: " + str,
+                                Error: new Error()
+                              };
+                      }
+                    }), (function (param) {
+                      return Json_decode.field("type", Json_decode.string, param);
+                    }), param);
+      }));
+
 function multilingual(json) {
   return {
-          id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
+          id: JsonStrict$OptolithClient.field("id", selectOptionId, json),
           apValue: JsonStrict$OptolithClient.optionalField("apValue", JsonStrict$OptolithClient.$$int, json),
           prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.General.Decode.multilingual, json),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
@@ -66,10 +114,7 @@ function multilingual(json) {
 function multilingualAssoc(json) {
   var x = multilingual(json);
   return [
-          [
-            /* Generic */0,
-            x.id
-          ],
+          x.id,
           x
         ];
 }
@@ -77,10 +122,7 @@ function multilingualAssoc(json) {
 function resolveTranslations(langs, x) {
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
-                        id: [
-                          /* Generic */0,
-                          x.id
-                        ],
+                        id: x.id,
                         name: translation.name,
                         apValue: x.apValue,
                         prerequisites: Curry._2(Prerequisite$OptolithClient.Collection.General.Decode.resolveTranslations, langs, x.prerequisites),
@@ -103,41 +145,91 @@ function resolveTranslations(langs, x) {
               }));
 }
 
-function t$1(json) {
-  var str = Json_decode.string(json);
-  switch (str) {
-    case "BLESSINGS" :
-        return /* Blessings */0;
-    case "CANTRIPS" :
-        return /* Cantrips */1;
-    case "COMBAT_TECHNIQUES" :
-        return /* CombatTechniques */2;
-    case "LITURGICAL_CHANTS" :
-        return /* LiturgicalChants */3;
-    case "SKILLS" :
-        return /* Skills */4;
-    case "SPELLS" :
-        return /* Spells */5;
-    default:
-      throw {
-            RE_EXN_ID: Json_decode.DecodeError,
-            _1: "Unknown select option category: " + str,
-            Error: new Error()
-          };
-  }
+function t$1(param) {
+  return JsonStrict$OptolithClient.andThen((function (str) {
+                switch (str) {
+                  case "AnimalShapes" :
+                      return function (param) {
+                        return /* AnimalShapes */5;
+                      };
+                  case "Blessings" :
+                      return function (param) {
+                        return /* Blessings */0;
+                      };
+                  case "Cantrips" :
+                      return function (param) {
+                        return /* Cantrips */1;
+                      };
+                  case "CombatTechniques" :
+                      return function (json) {
+                        return {
+                                TAG: /* CombatTechniques */0,
+                                _0: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("groups", (function (param) {
+                                            return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
+                                          }), json))
+                              };
+                      };
+                  case "Languages" :
+                      return function (param) {
+                        return /* Languages */3;
+                      };
+                  case "LiturgicalChantEnhancements" :
+                      return function (param) {
+                        return /* LiturgicalChantEnhancements */7;
+                      };
+                  case "LiturgicalChants" :
+                      return function (json) {
+                        return {
+                                TAG: /* LiturgicalChants */1,
+                                _0: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("groups", (function (param) {
+                                            return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
+                                          }), json))
+                              };
+                      };
+                  case "Scripts" :
+                      return function (param) {
+                        return /* Scripts */4;
+                      };
+                  case "Skills" :
+                      return function (json) {
+                        return {
+                                TAG: /* Skills */2,
+                                _0: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("groups", (function (param) {
+                                            return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
+                                          }), json))
+                              };
+                      };
+                  case "SpellEnhancements" :
+                      return function (param) {
+                        return /* SpellEnhancements */6;
+                      };
+                  case "Spells" :
+                      return function (json) {
+                        return {
+                                TAG: /* Spells */3,
+                                _0: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("groups", (function (param) {
+                                            return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
+                                          }), json))
+                              };
+                      };
+                  case "TradeSecrets" :
+                      return function (param) {
+                        return /* TradeSecrets */2;
+                      };
+                  default:
+                    throw {
+                          RE_EXN_ID: JsonStrict$OptolithClient.DecodeError,
+                          _1: "Unknown select option category: " + str,
+                          Error: new Error()
+                        };
+                }
+              }), (function (param) {
+                return JsonStrict$OptolithClient.field("category", JsonStrict$OptolithClient.string, param);
+              }), param);
 }
 
-function t$2(json) {
-  return {
-          category: JsonStrict$OptolithClient.field("category", t$1, json),
-          groups: JsonStrict$OptolithClient.optionalField("groups", (function (param) {
-                  return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
-                }), json)
-        };
-}
-
-var WithGroups = {
-  t: t$2
+var Category = {
+  t: t$1
 };
 
 function entryToSelectOption(id, name, staticEntry, src, errata) {
@@ -165,6 +257,10 @@ function entryToSelectOption(id, name, staticEntry, src, errata) {
           src: src,
           errata: errata
         };
+}
+
+function insertEntry(s) {
+  return Curry._2($$Map.insert, s.id, s);
 }
 
 function resolveWithoutGroups(f, mp, xs) {
@@ -214,12 +310,12 @@ function combatTechniqueToSelectOption(x) {
             }, x.src, x.errata);
 }
 
-function resolveCombatTechniques(mgrs) {
-  if (mgrs !== undefined) {
+function resolveCombatTechniques(grs) {
+  if (grs) {
     return function (param, param$1) {
       return resolveGroups(combatTechniqueToSelectOption, (function (x) {
                     return x.gr;
-                  }), mgrs, param, param$1);
+                  }), grs, param, param$1);
     };
   } else {
     return function (param, param$1) {
@@ -238,12 +334,12 @@ function liturgicalChantToSelectOption(x) {
             }, x.src, x.errata);
 }
 
-function resolveLiturgicalChants(mgrs) {
-  if (mgrs !== undefined) {
+function resolveLiturgicalChants(grs) {
+  if (grs) {
     return function (param, param$1) {
       return resolveGroups(liturgicalChantToSelectOption, (function (x) {
                     return x.gr;
-                  }), mgrs, param, param$1);
+                  }), grs, param, param$1);
     };
   } else {
     return function (param, param$1) {
@@ -262,12 +358,12 @@ function skillToSelectOption(x) {
             }, x.src, x.errata);
 }
 
-function resolveSkills(mgrs) {
-  if (mgrs !== undefined) {
+function resolveSkills(grs) {
+  if (grs) {
     return function (param, param$1) {
       return resolveGroups(skillToSelectOption, (function (x) {
                     return x.gr;
-                  }), mgrs, param, param$1);
+                  }), grs, param, param$1);
     };
   } else {
     return function (param, param$1) {
@@ -286,12 +382,12 @@ function spellToSelectOption(x) {
             }, x.src, x.errata);
 }
 
-function resolveSpells(mgrs) {
-  if (mgrs !== undefined) {
+function resolveSpells(grs) {
+  if (grs) {
     return function (param, param$1) {
       return resolveGroups(spellToSelectOption, (function (x) {
                     return x.gr;
-                  }), mgrs, param, param$1);
+                  }), grs, param, param$1);
     };
   } else {
     return function (param, param$1) {
@@ -300,39 +396,113 @@ function resolveSpells(mgrs) {
   }
 }
 
-function resolveCategories(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, categories) {
+function tradeSecretToSelectOption(x) {
+  return entryToSelectOption([
+              /* TradeSecret */8,
+              x.id
+            ], x.name, {
+              TAG: /* TradeSecret */6,
+              _0: x
+            }, x.src, x.errata);
+}
+
+function languageToSelectOption(x) {
+  return entryToSelectOption([
+              /* Language */9,
+              x.id
+            ], x.name, {
+              TAG: /* Language */7,
+              _0: x
+            }, x.src, x.errata);
+}
+
+function scriptToSelectOption(x) {
+  return entryToSelectOption([
+              /* Script */10,
+              x.id
+            ], x.name, {
+              TAG: /* Script */8,
+              _0: x
+            }, x.src, x.errata);
+}
+
+function resolveAnimalShapes(src, errata) {
+  return function (param, param$1) {
+    return resolveWithoutGroups((function (param) {
+                  return entryToSelectOption([
+                              /* AnimalShape */11,
+                              param.id
+                            ], param.name, {
+                              TAG: /* AnimalShape */9,
+                              _0: param
+                            }, src, errata);
+                }), param, param$1);
+  };
+}
+
+function resolveCategories(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, tradeSecrets, languages, scripts, animalShapes, spellEnhancements, liturgicalChantEnhancements, src, errata, categories) {
   return Curry._3(Ley_List$OptolithClient.foldr, (function (cat) {
-                var match = cat.category;
-                switch (match) {
-                  case /* Blessings */0 :
-                      return function (param) {
-                        return resolveWithoutGroups(blessingToSelectOption, blessings, param);
-                      };
-                  case /* Cantrips */1 :
-                      return function (param) {
-                        return resolveWithoutGroups(cantripToSelectOption, cantrips, param);
-                      };
-                  case /* CombatTechniques */2 :
-                      var partial_arg = resolveCombatTechniques(cat.groups);
-                      return function (param) {
-                        return partial_arg(combatTechniques, param);
-                      };
-                  case /* LiturgicalChants */3 :
-                      var partial_arg$1 = resolveLiturgicalChants(cat.groups);
-                      return function (param) {
-                        return partial_arg$1(liturgicalChants, param);
-                      };
-                  case /* Skills */4 :
-                      var partial_arg$2 = resolveSkills(cat.groups);
-                      return function (param) {
-                        return partial_arg$2(skills, param);
-                      };
-                  case /* Spells */5 :
-                      var partial_arg$3 = resolveSpells(cat.groups);
-                      return function (param) {
-                        return partial_arg$3(spells, param);
-                      };
-                  
+                if (typeof cat === "number") {
+                  switch (cat) {
+                    case /* Blessings */0 :
+                        return function (param) {
+                          return resolveWithoutGroups(blessingToSelectOption, blessings, param);
+                        };
+                    case /* Cantrips */1 :
+                        return function (param) {
+                          return resolveWithoutGroups(cantripToSelectOption, cantrips, param);
+                        };
+                    case /* TradeSecrets */2 :
+                        return function (param) {
+                          return resolveWithoutGroups(tradeSecretToSelectOption, tradeSecrets, param);
+                        };
+                    case /* Languages */3 :
+                        return function (param) {
+                          return resolveWithoutGroups(languageToSelectOption, languages, param);
+                        };
+                    case /* Scripts */4 :
+                        return function (param) {
+                          return resolveWithoutGroups(scriptToSelectOption, scripts, param);
+                        };
+                    case /* AnimalShapes */5 :
+                        var partial_arg = resolveAnimalShapes(src, errata);
+                        return function (param) {
+                          return partial_arg(animalShapes, param);
+                        };
+                    case /* SpellEnhancements */6 :
+                        return function (param) {
+                          return Curry._3($$Map.foldr, insertEntry, param, spellEnhancements);
+                        };
+                    case /* LiturgicalChantEnhancements */7 :
+                        return function (param) {
+                          return Curry._3($$Map.foldr, insertEntry, param, liturgicalChantEnhancements);
+                        };
+                    
+                  }
+                } else {
+                  switch (cat.TAG | 0) {
+                    case /* CombatTechniques */0 :
+                        var partial_arg$1 = resolveCombatTechniques(cat._0);
+                        return function (param) {
+                          return partial_arg$1(combatTechniques, param);
+                        };
+                    case /* LiturgicalChants */1 :
+                        var partial_arg$2 = resolveLiturgicalChants(cat._0);
+                        return function (param) {
+                          return partial_arg$2(liturgicalChants, param);
+                        };
+                    case /* Skills */2 :
+                        var partial_arg$3 = resolveSkills(cat._0);
+                        return function (param) {
+                          return partial_arg$3(skills, param);
+                        };
+                    case /* Spells */3 :
+                        var partial_arg$4 = resolveSpells(cat._0);
+                        return function (param) {
+                          return partial_arg$4(spells, param);
+                        };
+                    
+                  }
                 }
               }), $$Map.empty, Ley_Option$OptolithClient.fromOption(/* [] */0, categories));
 }
@@ -343,10 +513,6 @@ function mergeSelectOptions(explicits, fromCategories) {
               }), fromCategories, explicits);
 }
 
-var Decode_Category = {
-  WithGroups: WithGroups
-};
-
 var Decode_ResolveCategories = {
   resolveCategories: resolveCategories,
   mergeSelectOptions: mergeSelectOptions
@@ -355,7 +521,7 @@ var Decode_ResolveCategories = {
 var Decode = {
   multilingualAssoc: multilingualAssoc,
   resolveTranslations: resolveTranslations,
-  Category: Decode_Category,
+  Category: Category,
   ResolveCategories: Decode_ResolveCategories
 };
 

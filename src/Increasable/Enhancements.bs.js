@@ -105,7 +105,7 @@ function resolveTranslations$2(langs, x) {
 
 function t$1(json) {
   return {
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json))
         };
 }
 

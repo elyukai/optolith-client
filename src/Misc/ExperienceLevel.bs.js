@@ -25,8 +25,8 @@ function multilingual(json) {
           maxAttributeValue: JsonStrict$OptolithClient.field("maxAttributeValue", JsonStrict$OptolithClient.$$int, json),
           maxSkillRating: JsonStrict$OptolithClient.field("maxSkillRating", JsonStrict$OptolithClient.$$int, json),
           maxCombatTechniqueRating: JsonStrict$OptolithClient.field("maxCombatTechniqueRating", JsonStrict$OptolithClient.$$int, json),
-          maxTotalAttributeValues: JsonStrict$OptolithClient.field("maxTotalAttributeValues", JsonStrict$OptolithClient.$$int, json),
-          maxSpellsLiturgicalChants: JsonStrict$OptolithClient.field("maxSpellsLiturgicalChants", JsonStrict$OptolithClient.$$int, json),
+          maxAttributeTotal: JsonStrict$OptolithClient.field("maxAttributeTotal", JsonStrict$OptolithClient.$$int, json),
+          maxNumberSpellsLiturgicalChants: JsonStrict$OptolithClient.field("maxNumberSpellsLiturgicalChants", JsonStrict$OptolithClient.$$int, json),
           maxUnfamiliarSpells: JsonStrict$OptolithClient.field("maxUnfamiliarSpells", JsonStrict$OptolithClient.$$int, json),
           translations: JsonStrict$OptolithClient.field("translations", TranslationMap.Decode.t, json)
         };
@@ -42,8 +42,8 @@ function t$1(langs, json) {
                         maxAttributeValue: x.maxAttributeValue,
                         maxSkillRating: x.maxSkillRating,
                         maxCombatTechniqueRating: x.maxCombatTechniqueRating,
-                        maxTotalAttributeValues: x.maxTotalAttributeValues,
-                        maxSpellsLiturgicalChants: x.maxSpellsLiturgicalChants,
+                        maxAttributeTotal: x.maxAttributeTotal,
+                        maxNumberSpellsLiturgicalChants: x.maxNumberSpellsLiturgicalChants,
                         maxUnfamiliarSpells: x.maxUnfamiliarSpells
                       };
               }));

@@ -15,7 +15,6 @@ module Static = {
     selectOptions: SelectOption.map,
     input: option(string),
     range: option(string),
-    actions: option(string),
     prerequisites: Prerequisite.Collection.AdvantageDisadvantage.t,
     prerequisitesText: option(string),
     prerequisitesTextStart: option(string),
@@ -36,7 +35,6 @@ module Static = {
         rules: string,
         input: option(string),
         range: option(string),
-        actions: option(string),
         prerequisites: option(string),
         prerequisitesStart: option(string),
         prerequisitesEnd: option(string),
@@ -52,7 +50,6 @@ module Static = {
           rules: json |> field("rules", string),
           input: json |> optionalField("input", string),
           range: json |> optionalField("range", string),
-          actions: json |> optionalField("actions", string),
           prerequisites: json |> optionalField("prerequisites", string),
           prerequisitesStart:
             json |> optionalField("prerequisitesStart", string),
@@ -71,8 +68,7 @@ module Static = {
       isExclusiveToArcaneSpellworks: option(bool),
       levels: option(int),
       max: option(int),
-      selectOptionCategories:
-        option(list(SelectOption.Decode.Category.WithGroups.t)),
+      selectOptionCategories: option(list(SelectOption.Decode.Category.t)),
       selectOptions: SelectOption.Map.t(SelectOption.Decode.multilingual),
       prerequisites: Prerequisite.Collection.AdvantageDisadvantage.Decode.multilingual,
       apValue: option(apValue),
@@ -101,7 +97,7 @@ module Static = {
           json
           |> optionalField(
                "selectOptionCategories",
-               list(SelectOption.Decode.Category.WithGroups.t),
+               list(SelectOption.Decode.Category.t),
              ),
         selectOptions:
           json
@@ -127,13 +123,19 @@ module Static = {
 
     let resolveTranslations =
         (
+          ~blessings,
+          ~cantrips,
+          ~combatTechniques,
+          ~liturgicalChants,
+          ~skills,
+          ~spells,
+          ~tradeSecrets,
+          ~languages,
+          ~scripts,
+          ~animalShapes,
+          ~spellEnhancements,
+          ~liturgicalChantEnhancements,
           langs,
-          blessings,
-          cantrips,
-          combatTechniques,
-          liturgicalChants,
-          skills,
-          spells,
           x,
         ) =>
       Ley_Option.Infix.(
@@ -141,95 +143,133 @@ module Static = {
         |> TranslationMap.Decode.getFromLanguageOrder(langs)
         <&> (
           translation => {
-            id: x.id,
-            name: translation.name,
-            nameInWiki: translation.nameInWiki,
-            noMaxAPInfluence:
-              x.noMaxAPInfluence |> Ley_Option.fromOption(false),
-            isExclusiveToArcaneSpellworks:
-              x.isExclusiveToArcaneSpellworks |> Ley_Option.fromOption(false),
-            levels: x.levels,
-            max: x.max,
-            rules: translation.rules,
-            selectOptions:
-              x.selectOptionCategories
-              |> SelectOption.Decode.ResolveCategories.resolveCategories(
-                   blessings,
-                   cantrips,
-                   combatTechniques,
-                   liturgicalChants,
-                   skills,
-                   spells,
-                 )
-              |> SelectOption.Decode.ResolveCategories.mergeSelectOptions(
-                   SelectOption.Map.mapMaybe(
-                     SelectOption.Decode.resolveTranslations(langs),
-                     x.selectOptions,
+            let src =
+              PublicationRef.Decode.resolveTranslationsList(langs, x.src);
+            let errata = translation.errata;
+
+            {
+              id: x.id,
+              name: translation.name,
+              nameInWiki: translation.nameInWiki,
+              noMaxAPInfluence:
+                x.noMaxAPInfluence |> Ley_Option.fromOption(false),
+              isExclusiveToArcaneSpellworks:
+                x.isExclusiveToArcaneSpellworks
+                |> Ley_Option.fromOption(false),
+              levels: x.levels,
+              max: x.max,
+              rules: translation.rules,
+              selectOptions:
+                x.selectOptionCategories
+                |> SelectOption.Decode.ResolveCategories.resolveCategories(
+                     ~blessings,
+                     ~cantrips,
+                     ~combatTechniques,
+                     ~liturgicalChants,
+                     ~skills,
+                     ~spells,
+                     ~tradeSecrets,
+                     ~languages,
+                     ~scripts,
+                     ~animalShapes,
+                     ~spellEnhancements,
+                     ~liturgicalChantEnhancements,
+                     ~src,
+                     ~errata,
+                   )
+                |> SelectOption.Decode.ResolveCategories.mergeSelectOptions(
+                     SelectOption.Map.mapMaybe(
+                       SelectOption.Decode.resolveTranslations(langs),
+                       x.selectOptions,
+                     ),
                    ),
-                 ),
-            input: translation.input,
-            range: translation.range,
-            actions: translation.actions,
-            prerequisites:
-              Prerequisite.Collection.AdvantageDisadvantage.Decode.resolveTranslations(
-                langs,
-                x.prerequisites,
-              ),
-            prerequisitesText: translation.prerequisites,
-            prerequisitesTextStart: translation.prerequisitesStart,
-            prerequisitesTextEnd: translation.prerequisitesEnd,
-            apValue: x.apValue,
-            apValueText: translation.apValue,
-            apValueTextAppend: translation.apValueAppend,
-            gr: x.gr,
-            src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
+              input: translation.input,
+              range: translation.range,
+              prerequisites:
+                Prerequisite.Collection.AdvantageDisadvantage.Decode.resolveTranslations(
+                  langs,
+                  x.prerequisites,
+                ),
+              prerequisitesText: translation.prerequisites,
+              prerequisitesTextStart: translation.prerequisitesStart,
+              prerequisitesTextEnd: translation.prerequisitesEnd,
+              apValue: x.apValue,
+              apValueText: translation.apValue,
+              apValueTextAppend: translation.apValueAppend,
+              gr: x.gr,
+              src,
+              errata,
+            };
           }
         )
       );
 
     let t =
         (
-          blessings,
-          cantrips,
-          combatTechniques,
-          liturgicalChants,
-          skills,
-          spells,
+          ~blessings,
+          ~cantrips,
+          ~combatTechniques,
+          ~liturgicalChants,
+          ~skills,
+          ~spells,
+          ~tradeSecrets,
+          ~languages,
+          ~scripts,
+          ~animalShapes,
+          ~spellEnhancements,
+          ~liturgicalChantEnhancements,
           langs,
           json,
         ) =>
       json
       |> multilingual
       |> resolveTranslations(
+           ~blessings,
+           ~cantrips,
+           ~combatTechniques,
+           ~liturgicalChants,
+           ~skills,
+           ~spells,
+           ~tradeSecrets,
+           ~languages,
+           ~scripts,
+           ~animalShapes,
+           ~spellEnhancements,
+           ~liturgicalChantEnhancements,
            langs,
-           blessings,
-           cantrips,
-           combatTechniques,
-           liturgicalChants,
-           skills,
-           spells,
          );
 
     let toAssoc = (x: t) => (x.id, x);
 
     let assoc =
         (
-          blessings,
-          cantrips,
-          combatTechniques,
-          liturgicalChants,
-          skills,
-          spells,
+          ~blessings,
+          ~cantrips,
+          ~combatTechniques,
+          ~liturgicalChants,
+          ~skills,
+          ~spells,
+          ~tradeSecrets,
+          ~languages,
+          ~scripts,
+          ~animalShapes,
+          ~spellEnhancements,
+          ~liturgicalChantEnhancements,
         ) =>
       Decoder.decodeAssoc(
         t(
-          blessings,
-          cantrips,
-          combatTechniques,
-          liturgicalChants,
-          skills,
-          spells,
+          ~blessings,
+          ~cantrips,
+          ~combatTechniques,
+          ~liturgicalChants,
+          ~skills,
+          ~spells,
+          ~tradeSecrets,
+          ~languages,
+          ~scripts,
+          ~animalShapes,
+          ~spellEnhancements,
+          ~liturgicalChantEnhancements,
         ),
         toAssoc,
       );

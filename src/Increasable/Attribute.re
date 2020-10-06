@@ -7,20 +7,20 @@ module Static = {
   type t = {
     id: int,
     name: string,
-    short: string,
+    nameAbbr: string,
   };
 
   module Decode = {
     module Translation = {
       type t = {
         name: string,
-        short: string,
+        nameAbbr: string,
       };
 
       let t = json =>
         Json.Decode.{
           name: json |> field("name", string),
-          short: json |> field("short", string),
+          nameAbbr: json |> field("nameAbbr", string),
         };
     };
 
@@ -45,7 +45,7 @@ module Static = {
           translation => {
             id: x.id,
             name: translation.name,
-            short: translation.short,
+            nameAbbr: translation.nameAbbr,
           }
         )
       );

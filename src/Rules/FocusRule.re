@@ -2,9 +2,9 @@ module Static = {
   type t = {
     id: int,
     name: string,
-    level: int,
-    subject: int,
     description: string,
+    subject: int,
+    level: int,
     src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
@@ -29,8 +29,8 @@ module Static = {
 
     type multilingual = {
       id: int,
-      level: int,
       subject: int,
+      level: int,
       src: list(PublicationRef.Decode.multilingual),
       translations: TranslationMap.t,
     };

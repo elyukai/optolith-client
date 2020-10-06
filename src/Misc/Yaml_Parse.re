@@ -6,6 +6,9 @@ module Parser = {
 
 type t = {
   advantages: list(Js.Json.t),
+  animalShapes: list(Js.Json.t),
+  animalShapePaths: list(Js.Json.t),
+  animalShapeSizes: list(Js.Json.t),
   animistForces: list(Js.Json.t),
   arcaneBardTraditions: list(Js.Json.t),
   arcaneDancerTraditions: list(Js.Json.t),
@@ -20,7 +23,9 @@ type t = {
   combatTechniqueGroups: list(Js.Json.t),
   combatTechniques: list(Js.Json.t),
   conditions: list(Js.Json.t),
+  coreRules: list(Js.Json.t),
   cultures: list(Js.Json.t),
+  curricula: list(Js.Json.t),
   curses: list(Js.Json.t),
   derivedCharacteristics: list(Js.Json.t),
   disadvantages: list(Js.Json.t),
@@ -34,6 +39,7 @@ type t = {
   focusRules: list(Js.Json.t),
   geodeRituals: list(Js.Json.t),
   hairColors: list(Js.Json.t),
+  languages: list(Js.Json.t),
   liturgicalChantGroups: list(Js.Json.t),
   liturgicalChants: list(Js.Json.t),
   magicalDances: list(Js.Json.t),
@@ -41,12 +47,15 @@ type t = {
   magicalTraditions: list(Js.Json.t),
   optionalRules: list(Js.Json.t),
   pacts: list(Js.Json.t),
+  patrons: list(Js.Json.t),
+  patronCategories: list(Js.Json.t),
   professions: list(Js.Json.t),
   properties: list(Js.Json.t),
   publications: list(Js.Json.t),
   races: list(Js.Json.t),
   reaches: list(Js.Json.t),
   rogueSpells: list(Js.Json.t),
+  scripts: list(Js.Json.t),
   skillGroups: list(Js.Json.t),
   skills: list(Js.Json.t),
   socialStatuses: list(Js.Json.t),
@@ -56,17 +65,25 @@ type t = {
   spells: list(Js.Json.t),
   states: list(Js.Json.t),
   subjects: list(Js.Json.t),
+  tradeSecrets: list(Js.Json.t),
   tribes: list(Js.Json.t),
   zibiljaRituals: list(Js.Json.t),
 };
 
+let dataRoot = Node.Path.join([|".", "src", "Database", "Data"|]);
+
+let parseSupportedLanguages = () =>
+  Node.Path.join([|dataRoot, "SupportedLanguages.yml"|])
+  |> IO.readFile
+  <&> Parser.parse;
+
 let parseUI = locale =>
-  Node.Path.join([|".", "src", "Database", "UI", locale ++ ".yml"|])
+  Node.Path.join([|dataRoot, "UI", locale ++ ".yml"|])
   |> IO.readFile
   <&> Parser.parse;
 
 let parseFilesOfEntryType = dir =>
-  Node.Path.join([|".", "src", "Database", dir|])
+  Node.Path.join([|dataRoot, dir|])
   |> Directory.getDirectoryContents
   |> IO.mapM(x => x |> IO.readFile <&> Parser.parse);
 
@@ -88,6 +105,9 @@ let parseDirectories = (~onProgress, dirs) => {
 
 let dirs = [
   "Advantages",
+  "AnimalShapes",
+  "AnimalShapePaths",
+  "AnimalShapeSizes",
   "AnimistForces",
   "ArcaneBardTraditions",
   "ArcaneDancerTraditions",
@@ -102,7 +122,9 @@ let dirs = [
   "CombatTechniqueGroups",
   "CombatTechniques",
   "Conditions",
+  "CoreRules",
   "Cultures",
+  "Curricula",
   "Curses",
   "DerivedCharacteristics",
   "Disadvantages",
@@ -116,6 +138,7 @@ let dirs = [
   "FocusRules",
   "GeodeRituals",
   "HairColors",
+  "Languages",
   "LiturgicalChantGroups",
   "LiturgicalChants",
   "MagicalDances",
@@ -123,12 +146,15 @@ let dirs = [
   "MagicalTraditions",
   "OptionalRules",
   "Pacts",
+  "Patrons",
+  "PatronCategories",
   "Professions",
   "Properties",
   "Publications",
   "Races",
   "Reaches",
   "RogueSpells",
+  "Scripts",
   "SkillGroups",
   "Skills",
   "SocialStatuses",
@@ -138,6 +164,7 @@ let dirs = [
   "Spells",
   "States",
   "Subjects",
+  "TradeSecrets",
   "Tribes",
   "ZibiljaRituals",
 ];
@@ -149,6 +176,9 @@ let parseFiles = (~onProgress) =>
     fun
     | [
         advantages,
+        animalShapes,
+        animalShapePaths,
+        animalShapeSizes,
         animistForces,
         arcaneBardTraditions,
         arcaneDancerTraditions,
@@ -163,7 +193,9 @@ let parseFiles = (~onProgress) =>
         combatTechniqueGroups,
         combatTechniques,
         conditions,
+        coreRules,
         cultures,
+        curricula,
         curses,
         derivedCharacteristics,
         disadvantages,
@@ -177,6 +209,7 @@ let parseFiles = (~onProgress) =>
         focusRules,
         geodeRituals,
         hairColors,
+        languages,
         liturgicalChantGroups,
         liturgicalChants,
         magicalDances,
@@ -184,12 +217,15 @@ let parseFiles = (~onProgress) =>
         magicalTraditions,
         optionalRules,
         pacts,
+        patrons,
+        patronCategories,
         professions,
         properties,
         publications,
         races,
         reaches,
         rogueSpells,
+        scripts,
         skillGroups,
         skills,
         socialStatuses,
@@ -199,10 +235,14 @@ let parseFiles = (~onProgress) =>
         spells,
         states,
         subjects,
+        tradeSecrets,
         tribes,
         zibiljaRituals,
       ] => {
         advantages,
+        animalShapes,
+        animalShapePaths,
+        animalShapeSizes,
         animistForces,
         arcaneBardTraditions,
         arcaneDancerTraditions,
@@ -217,7 +257,9 @@ let parseFiles = (~onProgress) =>
         combatTechniqueGroups,
         combatTechniques,
         conditions,
+        coreRules,
         cultures,
+        curricula,
         curses,
         derivedCharacteristics,
         disadvantages,
@@ -231,6 +273,7 @@ let parseFiles = (~onProgress) =>
         focusRules,
         geodeRituals,
         hairColors,
+        languages,
         liturgicalChantGroups,
         liturgicalChants,
         magicalDances,
@@ -238,12 +281,15 @@ let parseFiles = (~onProgress) =>
         magicalTraditions,
         optionalRules,
         pacts,
+        patrons,
+        patronCategories,
         professions,
         properties,
         publications,
         races,
         reaches,
         rogueSpells,
+        scripts,
         skillGroups,
         skills,
         socialStatuses,
@@ -253,6 +299,7 @@ let parseFiles = (~onProgress) =>
         spells,
         states,
         subjects,
+        tradeSecrets,
         tribes,
         zibiljaRituals,
       }

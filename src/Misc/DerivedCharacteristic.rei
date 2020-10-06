@@ -44,7 +44,7 @@ module Static: {
   type t = {
     id: int,
     name: string,
-    short: string,
+    nameAbbr: string,
     calc: string,
     calcHalfPrimary: option(string),
     calcNoPrimary: option(string),

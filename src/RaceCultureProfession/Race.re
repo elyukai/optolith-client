@@ -161,6 +161,7 @@ module Static = {
     uncommonDisadvantagesText: option(string),
     weightBase: int,
     weightRandom: list(Dice.t),
+    startingAge: Ley_IntMap.t((int, Dice.t)),
     variantOptions,
     src: list(PublicationRef.t),
     errata: list(Erratum.t),
@@ -233,12 +234,13 @@ module Static = {
       uncommonDisadvantages: list(int),
       weightBase: int,
       weightRandom: list(Dice.t),
+      startingAge: Ley_IntMap.t((int, Dice.t)),
       variantOptions: variantOptionsMultilingual,
       src: list(PublicationRef.Decode.multilingual),
       translations: TranslationMap.t,
     };
 
-    let variantOptions =
+    let variantOptionsMultilingual =
       JsonStrict.(
         field("type", string)
         |> andThen(
@@ -322,7 +324,23 @@ module Static = {
           |> Ley_Option.fromOption([]),
         weightBase: json |> field("weightBase", int),
         weightRandom: json |> field("weightRandom", list(Dice.Decode.t)),
-        variantOptions: json |> field("typeSpecific", variantOptions),
+        startingAge:
+          json
+          |> field(
+               "startingAge",
+               list(json =>
+                 (
+                   json |> field("experienceLevelId", int),
+                   (
+                     json |> field("base", int),
+                     json |> field("random", Dice.Decode.t),
+                   ),
+                 )
+               ),
+             )
+          |> Ley_IntMap.fromList,
+        variantOptions:
+          json |> field("typeSpecific", variantOptionsMultilingual),
         src: json |> field("src", PublicationRef.Decode.multilingualList),
         translations: json |> field("translations", TranslationMap.Decode.t),
       };
@@ -365,6 +383,7 @@ module Static = {
             uncommonDisadvantagesText: translation.uncommonDisadvantages,
             weightBase: x.weightBase,
             weightRandom: x.weightRandom,
+            startingAge: x.startingAge,
             variantOptions:
               switch (x.variantOptions) {
               | WithVariants(options) =>

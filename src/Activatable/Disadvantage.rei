@@ -11,7 +11,6 @@ module Static: {
     selectOptions: SelectOption.map,
     input: option(string),
     range: option(string),
-    actions: option(string),
     prerequisites: Prerequisite.Collection.AdvantageDisadvantage.t,
     prerequisitesText: option(string),
     prerequisitesTextStart: option(string),
@@ -27,12 +26,18 @@ module Static: {
   module Decode: {
     let assoc:
       (
-        Ley_IntMap.t(Blessing.Static.t),
-        Ley_IntMap.t(Cantrip.Static.t),
-        Ley_IntMap.t(CombatTechnique.Static.t),
-        Ley_IntMap.t(LiturgicalChant.Static.t),
-        Ley_IntMap.t(Skill.Static.t),
-        Ley_IntMap.t(Spell.Static.t)
+        ~blessings: Ley_IntMap.t(Blessing.Static.t),
+        ~cantrips: Ley_IntMap.t(Cantrip.Static.t),
+        ~combatTechniques: Ley_IntMap.t(CombatTechnique.Static.t),
+        ~liturgicalChants: Ley_IntMap.t(LiturgicalChant.Static.t),
+        ~skills: Ley_IntMap.t(Skill.Static.t),
+        ~spells: Ley_IntMap.t(Spell.Static.t),
+        ~tradeSecrets: Ley_IntMap.t(TradeSecret.t),
+        ~languages: Ley_IntMap.t(Language.t),
+        ~scripts: Ley_IntMap.t(Script.t),
+        ~animalShapes: Ley_IntMap.t(AnimalShape.t),
+        ~spellEnhancements: SelectOption.map,
+        ~liturgicalChantEnhancements: SelectOption.map
       ) =>
       Decoder.assocDecoder(t);
   };

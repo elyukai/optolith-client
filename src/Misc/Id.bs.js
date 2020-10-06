@@ -243,11 +243,16 @@ function $eq$3(x, y) {
           return false;
         }
         var match$8 = y._0;
-        if (match$8[0] >= 7) {
-          return match[1] === match$8[1];
-        } else {
+        if (match$8[0] !== 7) {
           return false;
+        } else {
+          return match[1] === match$8[1];
         }
+    case /* TradeSecret */8 :
+    case /* Language */9 :
+    case /* Script */10 :
+    case /* AnimalShape */11 :
+        return false;
     
   }
 }

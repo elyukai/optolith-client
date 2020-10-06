@@ -8,7 +8,7 @@ module Static: {
     checkMod: option(CheckModifier.t),
     effect: string,
     cost: ActivatableSkill.MainParameter.t,
-    skill: option(int),
+    skill: OneOrMany.t(int),
     property: int,
     ic: IC.t,
     src: list(PublicationRef.t),

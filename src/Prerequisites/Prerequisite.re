@@ -36,7 +36,7 @@ module Race = {
         oneOf([
           json => {id: json |> oneOrManyInt, active: true},
           json => {
-            id: json |> field("id", oneOrManyInt),
+            id: json |> field("races", oneOrManyInt),
             active: json |> field("active", bool),
           },
         ])
@@ -49,31 +49,6 @@ module Culture = {
 
   module Decode = {
     let t = oneOrManyInt;
-  };
-};
-
-module SocialStatus = {
-  type t = int;
-
-  module Decode = {
-    let t = Json.Decode.int;
-  };
-};
-
-module Pact = {
-  type t = {
-    category: int,
-    domain: option(OneOrMany.t(int)),
-    level: option(int),
-  };
-
-  module Decode = {
-    let t = json =>
-      JsonStrict.{
-        category: json |> field("category", int),
-        domain: json |> optionalField("domain", oneOrManyInt),
-        level: json |> optionalField("level", int),
-      };
   };
 };
 
@@ -102,6 +77,31 @@ module PrimaryAttribute = {
           ),
         value: json |> field("value", int),
       };
+  };
+};
+
+module Pact = {
+  type t = {
+    category: int,
+    domain: option(OneOrMany.t(int)),
+    level: option(int),
+  };
+
+  module Decode = {
+    let t = json =>
+      JsonStrict.{
+        category: json |> field("category", int),
+        domain: json |> optionalField("domain", oneOrManyInt),
+        level: json |> optionalField("level", int),
+      };
+  };
+};
+
+module SocialStatus = {
+  type t = int;
+
+  module Decode = {
+    let t = Json.Decode.int;
   };
 };
 
@@ -283,7 +283,7 @@ module DisplayOption = {
              |> andThen(
                   fun
                   | "Hide" => (_ => MultilingualHide)
-                  | "ByLevel" => (
+                  | "ReplaceWith" => (
                       json =>
                         json
                         |> field("value", TranslationMap.Decode.t)
@@ -652,16 +652,22 @@ module Collection = {
           |> andThen(
                fun
                | "Plain" => (
-                   json => json |> list(decoder) |> (xs => Plain(xs))
+                   json =>
+                     json
+                     |> field("value", list(decoder))
+                     |> (xs => Plain(xs))
                  )
                | "ByLevel" => (
                    json =>
                      json
-                     |> list(json =>
-                          (
-                            json |> field("level", int),
-                            json |> field("prerequisites", list(decoder)),
-                          )
+                     |> field(
+                          "value",
+                          list(json =>
+                            (
+                              json |> field("level", int),
+                              json |> field("prerequisites", list(decoder)),
+                            )
+                          ),
                         )
                      |> (xs => ByLevel(Ley_IntMap.fromList(xs)))
                  )

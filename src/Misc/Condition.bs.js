@@ -14,13 +14,10 @@ function t(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
           description: JsonStrict$OptolithClient.optionalField("description", JsonStrict$OptolithClient.string, json),
-          levelColumnDescription: JsonStrict$OptolithClient.optionalField("levelDescription", JsonStrict$OptolithClient.string, json),
-          levelDescriptions: [
-            JsonStrict$OptolithClient.field("level1", JsonStrict$OptolithClient.string, json),
-            JsonStrict$OptolithClient.field("level2", JsonStrict$OptolithClient.string, json),
-            JsonStrict$OptolithClient.field("level3", JsonStrict$OptolithClient.string, json),
-            JsonStrict$OptolithClient.field("level4", JsonStrict$OptolithClient.string, json)
-          ],
+          levelDescription: JsonStrict$OptolithClient.optionalField("levelDescription", JsonStrict$OptolithClient.string, json),
+          levels: JsonStrict$OptolithClient.field("levels", (function (param) {
+                  return JsonStrict$OptolithClient.tuple4(JsonStrict$OptolithClient.string, JsonStrict$OptolithClient.string, JsonStrict$OptolithClient.string, JsonStrict$OptolithClient.string, param);
+                }), json),
           errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
@@ -46,8 +43,8 @@ function t$1(langs, json) {
                         id: x.id,
                         name: translation.name,
                         description: translation.description,
-                        levelColumnDescription: translation.levelColumnDescription,
-                        levelDescriptions: translation.levelDescriptions,
+                        levelDescription: translation.levelDescription,
+                        levels: translation.levels,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
                         errata: translation.errata
                       };

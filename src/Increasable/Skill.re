@@ -167,13 +167,11 @@ module Static = {
         json
         |> string
         |> (
-          str =>
-            switch (str) {
-            | "true" => json |> int |> (_ => (True: encumbranceUniv))
-            | "false" => json |> int |> (_ => (False: encumbranceUniv))
-            | "maybe" => json |> int |> (_ => (Maybe: encumbranceUniv))
-            | _ => raise(DecodeError("Unknown encumbrance: " ++ str))
-            }
+          fun
+          | "true" => json |> int |> (_ => (True: encumbranceUniv))
+          | "false" => json |> int |> (_ => (False: encumbranceUniv))
+          | "maybe" => json |> int |> (_ => (Maybe: encumbranceUniv))
+          | str => raise(DecodeError("Unknown encumbrance: " ++ str))
         )
       );
 

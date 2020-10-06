@@ -19,7 +19,7 @@ module Category = {
     translations: TranslationMap.t,
   };
 
-  let decodeMultilingual = json =>
+  let multilingual = json =>
     JsonStrict.{
       id: json |> field("id", int),
       primaryPatronCultures:
@@ -42,8 +42,8 @@ module Category = {
       )
     );
 
-  let decode = (langs, json) =>
-    json |> decodeMultilingual |> resolveTranslations(langs);
+  let t = (langs, json) =>
+    json |> multilingual |> resolveTranslations(langs);
 };
 
 type t = {

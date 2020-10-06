@@ -41,8 +41,6 @@ module Static = {
     type multilingual = {
       id: int,
       check: SkillCheck.t,
-      costNoMod: bool,
-      durationNoMod: bool,
       tribes: Ley_IntSet.t,
       property: int,
       ic: IC.t,
@@ -54,8 +52,6 @@ module Static = {
       JsonStrict.{
         id: json |> field("id", int),
         check: json |> field("check", SkillCheck.Decode.t),
-        costNoMod: json |> field("costNoMod", bool),
-        durationNoMod: json |> field("durationNoMod", bool),
         tribes: json |> field("tribes", list(int)) |> Ley_IntSet.fromList,
         property: json |> field("property", int),
         ic: json |> field("ic", IC.Decode.t),
@@ -74,13 +70,10 @@ module Static = {
             check: x.check,
             effect: translation.effect,
             cost:
-              ActivatableSkill.MainParameter.make(
-                x.costNoMod,
-                translation.cost,
-              ),
+              ActivatableSkill.MainParameter.make(false, translation.cost),
             duration:
               ActivatableSkill.MainParameter.make(
-                x.durationNoMod,
+                false,
                 translation.duration,
               ),
             tribes: x.tribes,

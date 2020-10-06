@@ -12,18 +12,40 @@ module Static = {
 
     let decodeVariantOverride = (decoder, json) =>
       JsonStrict.(
-        oneOf(
-          [
-            json => json |> const(false) |> (_ => Remove),
-            json => json |> decoder |> (x => Override(x)),
-          ],
+        either(
+          json => json |> const(false) |> (_ => Remove),
+          json => json |> decoder |> (x => Override(x)),
           json,
         )
       );
 
-    type skillSpecializationOption = OneOrMany.t(int);
+    type skillSpecializationOption =
+      | Single(OneOrMany.t(int))
+      | Group(OneOrMany.t(int));
 
-    let decodeSkillSpecializationOption = Prerequisite.oneOrManyInt;
+    let decodeSkillSpecializationOption =
+      Json.Decode.(
+        field("type", string)
+        |> andThen(
+             fun
+             | "Single" => (
+                 json =>
+                   json
+                   |> field("value", Prerequisite.oneOrManyInt)
+                   |> (x => Single(x))
+               )
+             | "Group" => (
+                 json =>
+                   json
+                   |> field("value", Prerequisite.oneOrManyInt)
+                   |> (x => Group(x))
+               )
+             | str =>
+               raise(
+                 DecodeError("Unknown skill specialization type: " ++ str),
+               ),
+           )
+      );
 
     type variantSkillSpecializationOption =
       variantOverride(skillSpecializationOption);
@@ -68,11 +90,35 @@ module Static = {
         sid: json |> field("sid", list(int)),
       };
 
+    type combatTechniqueOverrideOption = {
+      amount: int,
+      value: int,
+      second: option(variantOverride(combatTechniqueSecondOption)),
+      sid: list(int),
+    };
+
+    let decodeCombatTechniqueOverrideOption = json =>
+      JsonStrict.(
+        (
+          {
+            amount: json |> field("amount", int),
+            value: json |> field("value", int),
+            second:
+              json
+              |> optionalField(
+                   "second",
+                   decodeVariantOverride(decodeCombatTechniqueSecondOption),
+                 ),
+            sid: json |> field("sid", list(int)),
+          }: combatTechniqueOverrideOption
+        )
+      );
+
     type variantCombatTechniqueOption =
-      variantOverride(combatTechniqueOption);
+      variantOverride(combatTechniqueOverrideOption);
 
     let decodeVariantCombatTechniqueOption =
-      decodeVariantOverride(decodeCombatTechniqueOption);
+      decodeVariantOverride(decodeCombatTechniqueOverrideOption);
 
     type cantripOption = {
       amount: int,
@@ -110,6 +156,17 @@ module Static = {
         value: json |> field("value", int),
       };
 
+    type activatableSkillOption = {
+      id: list(int),
+      value: int,
+    };
+
+    let decodeActivatableSkillOption = json =>
+      JsonStrict.{
+        id: json |> field("id", list(int)),
+        value: json |> field("value", int),
+      };
+
     type variant = {
       skillSpecialization: option(variantSkillSpecializationOption),
       languageScript: option(variantLanguageAndScriptOption),
@@ -118,6 +175,8 @@ module Static = {
       curse: option(curseOption),
       terrainKnowledge: option(terrainKnowledgeOption),
       skill: option(skillOption),
+      spells: option(list(activatableSkillOption)),
+      liturgicalChants: option(list(activatableSkillOption)),
       guildMageUnfamiliarSpell: bool,
     };
 
@@ -147,6 +206,14 @@ module Static = {
           json
           |> optionalField("terrainKnowledge", decodeTerrainKnowledgeOption),
         skill: json |> optionalField("skill", decodeSkillOption),
+        spells:
+          json |> optionalField("spells", list(decodeActivatableSkillOption)),
+        liturgicalChants:
+          json
+          |> optionalField(
+               "liturgicalChants",
+               list(decodeActivatableSkillOption),
+             ),
         guildMageUnfamiliarSpell:
           json
           |> optionalField("guildMageUnfamiliarSpell", bool)
@@ -161,6 +228,8 @@ module Static = {
       curse: option(curseOption),
       terrainKnowledge: option(terrainKnowledgeOption),
       skill: option(skillOption),
+      spells: option(list(activatableSkillOption)),
+      liturgicalChants: option(list(activatableSkillOption)),
       guildMageUnfamiliarSpell: bool,
     };
 
@@ -192,6 +261,15 @@ module Static = {
                    decodeTerrainKnowledgeOption,
                  ),
             skill: json |> optionalField("skill", decodeSkillOption),
+            spells:
+              json
+              |> optionalField("spells", list(decodeActivatableSkillOption)),
+            liturgicalChants:
+              json
+              |> optionalField(
+                   "liturgicalChants",
+                   list(decodeActivatableSkillOption),
+                 ),
             guildMageUnfamiliarSpell: false,
           }: t
         )
@@ -247,13 +325,12 @@ module Static = {
       specialAbilities: list(Prerequisite.Activatable.t),
       combatTechniques: Ley_IntMap.t(int),
       skills: Ley_IntMap.t(int),
-      spells: Ley_IntMap.t(OneOrMany.t(int)),
-      liturgicalChants: Ley_IntMap.t(OneOrMany.t(int)),
+      spells: Ley_IntMap.t(int),
+      liturgicalChants: Ley_IntMap.t(int),
       blessings: list(int),
       precedingText: option(string),
       fullText: option(string),
       concludingText: option(string),
-      errata: list(Erratum.t),
     };
 
     module Decode = {
@@ -263,7 +340,6 @@ module Static = {
           precedingText: option(string),
           fullText: option(string),
           concludingText: option(string),
-          errata: list(Erratum.t),
         };
 
         let t = json =>
@@ -272,7 +348,6 @@ module Static = {
             precedingText: json |> optionalField("precedingText", string),
             fullText: json |> optionalField("fullText", string),
             concludingText: json |> optionalField("concludingText", string),
-            errata: json |> field("errata", Erratum.Decode.list),
           };
       };
 
@@ -286,8 +361,8 @@ module Static = {
         specialAbilities: list(Prerequisite.Activatable.t),
         combatTechniques: Ley_IntMap.t(int),
         skills: Ley_IntMap.t(int),
-        spells: Ley_IntMap.t(OneOrMany.t(int)),
-        liturgicalChants: Ley_IntMap.t(OneOrMany.t(int)),
+        spells: Ley_IntMap.t(int),
+        liturgicalChants: Ley_IntMap.t(int),
         blessings: list(int),
         translations: TranslationMap.t,
       };
@@ -333,10 +408,7 @@ module Static = {
             |> optionalField(
                  "spells",
                  list(json =>
-                   (
-                     json |> field("id", int),
-                     json |> field("value", Prerequisite.oneOrManyInt),
-                   )
+                   (json |> field("id", int), json |> field("value", int))
                  ),
                )
             |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
@@ -345,10 +417,7 @@ module Static = {
             |> optionalField(
                  "liturgicalChants",
                  list(json =>
-                   (
-                     json |> field("id", int),
-                     json |> field("value", Prerequisite.oneOrManyInt),
-                   )
+                   (json |> field("id", int), json |> field("value", int))
                  ),
                )
             |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
@@ -394,7 +463,6 @@ module Static = {
                 precedingText: translation.precedingText,
                 fullText: translation.fullText,
                 concludingText: translation.concludingText,
-                errata: translation.errata,
               };
             }
           )
@@ -413,8 +481,8 @@ module Static = {
     specialAbilities: list(Prerequisite.Activatable.t),
     combatTechniques: Ley_IntMap.t(int),
     skills: Ley_IntMap.t(int),
-    spells: Ley_IntMap.t(OneOrMany.t(int)),
-    liturgicalChants: Ley_IntMap.t(OneOrMany.t(int)),
+    spells: Ley_IntMap.t(int),
+    liturgicalChants: Ley_IntMap.t(int),
     blessings: list(int),
     suggestedAdvantages: list(int),
     suggestedAdvantagesText: option(string),
@@ -426,6 +494,7 @@ module Static = {
     unsuitableDisadvantagesText: option(string),
     variants: Ley_IntMap.t(Variant.t),
     isVariantRequired: bool,
+    curriculum: int,
     gr: int,
     /**
      * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the
@@ -441,7 +510,6 @@ module Static = {
       type t = {
         name,
         subname: option(name),
-        activatablePrerequisites: option(list(Prerequisite.Activatable.t)),
         prerequisitesStart: option(string),
         suggestedAdvantages: option(string),
         suggestedDisadvantages: option(string),
@@ -454,12 +522,6 @@ module Static = {
         JsonStrict.{
           name: json |> field("name", name),
           subname: json |> optionalField("subname", name),
-          activatablePrerequisites:
-            json
-            |> optionalField(
-                 "activatablePrerequisites",
-                 list(Prerequisite.Activatable.Decode.t),
-               ),
           prerequisitesStart:
             json |> optionalField("prerequisitesStart", string),
           suggestedAdvantages:
@@ -484,8 +546,8 @@ module Static = {
       specialAbilities: list(Prerequisite.Activatable.t),
       combatTechniques: Ley_IntMap.t(int),
       skills: Ley_IntMap.t(int),
-      spells: Ley_IntMap.t(OneOrMany.t(int)),
-      liturgicalChants: Ley_IntMap.t(OneOrMany.t(int)),
+      spells: Ley_IntMap.t(int),
+      liturgicalChants: Ley_IntMap.t(int),
       blessings: list(int),
       suggestedAdvantages: list(int),
       suggestedDisadvantages: list(int),
@@ -493,6 +555,7 @@ module Static = {
       unsuitableDisadvantages: list(int),
       variants: Ley_IntMap.t(Variant.Decode.multilingual),
       isVariantRequired: bool,
+      curriculum: int,
       gr: int,
       sgr: int,
       src: list(PublicationRef.Decode.multilingual),
@@ -540,10 +603,7 @@ module Static = {
           |> optionalField(
                "spells",
                list(json =>
-                 (
-                   json |> field("id", int),
-                   json |> field("value", Prerequisite.oneOrManyInt),
-                 )
+                 (json |> field("id", int), json |> field("value", int))
                ),
              )
           |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
@@ -552,10 +612,7 @@ module Static = {
           |> optionalField(
                "liturgicalChants",
                list(json =>
-                 (
-                   json |> field("id", int),
-                   json |> field("value", Prerequisite.oneOrManyInt),
-                 )
+                 (json |> field("id", int), json |> field("value", int))
                ),
              )
           |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
@@ -586,7 +643,11 @@ module Static = {
                list(Variant.Decode.multilingualAssoc),
              )
           |> Ley_Option.option(Ley_IntMap.empty, Ley_IntMap.fromList),
-        isVariantRequired: json |> field("isVariantRequired", bool),
+        isVariantRequired:
+          json
+          |> optionalField("isVariantRequired", bool)
+          |> Ley_Option.fromOption(false),
+        curriculum: json |> field("curriculum", int),
         gr: json |> field("gr", int),
         sgr: json |> field("sgr", int),
         src: json |> field("src", PublicationRef.Decode.multilingualList),
@@ -637,6 +698,7 @@ module Static = {
                      Variant.Decode.resolveTranslations(langs),
                    ),
               isVariantRequired: x.isVariantRequired,
+              curriculum: x.curriculum,
               gr: x.gr,
               sgr: x.sgr,
               src:

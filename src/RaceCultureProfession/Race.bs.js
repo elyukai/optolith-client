@@ -90,7 +90,7 @@ var Translation$1 = {
 
 var TranslationMap$1 = TranslationMap$OptolithClient.Make(Translation$1);
 
-function variantOptions(param) {
+function variantOptionsMultilingual(param) {
   return JsonStrict$OptolithClient.andThen((function (str) {
                 switch (str) {
                   case "WithVariants" :
@@ -175,7 +175,18 @@ function multilingual$1(json) {
           weightRandom: JsonStrict$OptolithClient.field("weightRandom", (function (param) {
                   return JsonStrict$OptolithClient.list(Dice$OptolithClient.Decode.t, param);
                 }), json),
-          variantOptions: JsonStrict$OptolithClient.field("typeSpecific", variantOptions, json),
+          startingAge: Curry._1(Ley_IntMap$OptolithClient.fromList, JsonStrict$OptolithClient.field("startingAge", (function (param) {
+                      return JsonStrict$OptolithClient.list((function (json) {
+                                    return [
+                                            JsonStrict$OptolithClient.field("experienceLevelId", JsonStrict$OptolithClient.$$int, json),
+                                            [
+                                              JsonStrict$OptolithClient.field("base", JsonStrict$OptolithClient.$$int, json),
+                                              JsonStrict$OptolithClient.field("random", Dice$OptolithClient.Decode.t, json)
+                                            ]
+                                          ];
+                                  }), param);
+                    }), json)),
+          variantOptions: JsonStrict$OptolithClient.field("typeSpecific", variantOptionsMultilingual, json),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
           translations: JsonStrict$OptolithClient.field("translations", TranslationMap$1.Decode.t, json)
         };
@@ -245,6 +256,7 @@ function t$2(langs, json) {
                         uncommonDisadvantagesText: translation.uncommonDisadvantages,
                         weightBase: x.weightBase,
                         weightRandom: x.weightRandom,
+                        startingAge: x.startingAge,
                         variantOptions: tmp,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
                         errata: translation.errata

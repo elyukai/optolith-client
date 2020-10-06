@@ -18,7 +18,6 @@ function t(json) {
           rules: JsonStrict$OptolithClient.field("rules", JsonStrict$OptolithClient.string, json),
           input: JsonStrict$OptolithClient.optionalField("input", JsonStrict$OptolithClient.string, json),
           range: JsonStrict$OptolithClient.optionalField("range", JsonStrict$OptolithClient.string, json),
-          actions: JsonStrict$OptolithClient.optionalField("actions", JsonStrict$OptolithClient.string, json),
           prerequisites: JsonStrict$OptolithClient.optionalField("prerequisites", JsonStrict$OptolithClient.string, json),
           prerequisitesStart: JsonStrict$OptolithClient.optionalField("prerequisitesStart", JsonStrict$OptolithClient.string, json),
           prerequisitesEnd: JsonStrict$OptolithClient.optionalField("prerequisitesEnd", JsonStrict$OptolithClient.string, json),
@@ -68,7 +67,7 @@ function multilingual(json) {
           levels: JsonStrict$OptolithClient.optionalField("levels", JsonStrict$OptolithClient.$$int, json),
           max: JsonStrict$OptolithClient.optionalField("max", JsonStrict$OptolithClient.$$int, json),
           selectOptionCategories: JsonStrict$OptolithClient.optionalField("selectOptionCategories", (function (param) {
-                  return JsonStrict$OptolithClient.list(SelectOption$OptolithClient.Decode.Category.WithGroups.t, param);
+                  return JsonStrict$OptolithClient.list(SelectOption$OptolithClient.Decode.Category.t, param);
                 }), json),
           selectOptions: Ley_Option$OptolithClient.option(SelectOption$OptolithClient.$$Map.empty, SelectOption$OptolithClient.$$Map.fromList, JsonStrict$OptolithClient.optionalField("selectOptions", (function (param) {
                       return JsonStrict$OptolithClient.list(SelectOption$OptolithClient.Decode.multilingualAssoc, param);
@@ -88,11 +87,13 @@ function toAssoc(x) {
         ];
 }
 
-function assoc(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells) {
+function assoc(blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, tradeSecrets, languages, scripts, animalShapes, spellEnhancements, liturgicalChantEnhancements) {
   return function (param, param$1) {
     return Decoder$OptolithClient.decodeAssoc((function (param, param$1) {
                   var x = multilingual(param$1);
                   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, param, x.translations), (function (translation) {
+                                var src = PublicationRef$OptolithClient.Decode.resolveTranslationsList(param, x.src);
+                                var errata = translation.errata;
                                 return {
                                         id: x.id,
                                         name: translation.name,
@@ -104,10 +105,25 @@ function assoc(blessings, cantrips, combatTechniques, liturgicalChants, skills, 
                                         rules: translation.rules,
                                         selectOptions: Curry._2(SelectOption$OptolithClient.Decode.ResolveCategories.mergeSelectOptions, Curry._2(SelectOption$OptolithClient.$$Map.mapMaybe, (function (param$2) {
                                                     return SelectOption$OptolithClient.Decode.resolveTranslations(param, param$2);
-                                                  }), x.selectOptions), Curry._7(SelectOption$OptolithClient.Decode.ResolveCategories.resolveCategories, blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, x.selectOptionCategories)),
+                                                  }), x.selectOptions), Curry.app(SelectOption$OptolithClient.Decode.ResolveCategories.resolveCategories, [
+                                                  blessings,
+                                                  cantrips,
+                                                  combatTechniques,
+                                                  liturgicalChants,
+                                                  skills,
+                                                  spells,
+                                                  tradeSecrets,
+                                                  languages,
+                                                  scripts,
+                                                  animalShapes,
+                                                  spellEnhancements,
+                                                  liturgicalChantEnhancements,
+                                                  src,
+                                                  errata,
+                                                  x.selectOptionCategories
+                                                ])),
                                         input: translation.input,
                                         range: translation.range,
-                                        actions: translation.actions,
                                         prerequisites: Curry._2(Prerequisite$OptolithClient.Collection.AdvantageDisadvantage.Decode.resolveTranslations, param, x.prerequisites),
                                         prerequisitesText: translation.prerequisites,
                                         prerequisitesTextStart: translation.prerequisitesStart,
@@ -116,8 +132,8 @@ function assoc(blessings, cantrips, combatTechniques, liturgicalChants, skills, 
                                         apValueText: translation.apValue,
                                         apValueTextAppend: translation.apValueAppend,
                                         gr: x.gr,
-                                        src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(param, x.src),
-                                        errata: translation.errata
+                                        src: src,
+                                        errata: errata
                                       };
                               }));
                 }), toAssoc, param, param$1);

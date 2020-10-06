@@ -11,8 +11,16 @@ import * as Directory$OptolithClient from "../Data/Directory.bs.js";
 
 var Parser = {};
 
+var dataRoot = Path.join(".", "src", "Database", "Data");
+
+function parseSupportedLanguages(param) {
+  return Curry._2(IO$OptolithClient.Infix.$less$amp$great, IO$OptolithClient.readFile(Path.join(dataRoot, "SupportedLanguages.yml")), (function (prim) {
+                return Yaml.parse(prim);
+              }));
+}
+
 function parseUI(locale) {
-  return Curry._2(IO$OptolithClient.Infix.$less$amp$great, IO$OptolithClient.readFile(Path.join(".", "src", "Database", "UI", locale + ".yml")), (function (prim) {
+  return Curry._2(IO$OptolithClient.Infix.$less$amp$great, IO$OptolithClient.readFile(Path.join(dataRoot, "UI", locale + ".yml")), (function (prim) {
                 return Yaml.parse(prim);
               }));
 }
@@ -22,7 +30,7 @@ function parseFilesOfEntryType(dir) {
                 return Curry._2(IO$OptolithClient.Infix.$less$amp$great, IO$OptolithClient.readFile(x), (function (prim) {
                               return Yaml.parse(prim);
                             }));
-              }), Directory$OptolithClient.getDirectoryContents(Path.join(".", "src", "Database", dir)));
+              }), Directory$OptolithClient.getDirectoryContents(Path.join(dataRoot, dir)));
 }
 
 function parseDirectories(onProgress, dirs) {
@@ -38,110 +46,140 @@ function parseDirectories(onProgress, dirs) {
 var dirs = {
   hd: "Advantages",
   tl: {
-    hd: "AnimistForces",
+    hd: "AnimalShapes",
     tl: {
-      hd: "ArcaneBardTraditions",
+      hd: "AnimalShapePaths",
       tl: {
-        hd: "ArcaneDancerTraditions",
+        hd: "AnimalShapeSizes",
         tl: {
-          hd: "ArmorTypes",
+          hd: "AnimistForces",
           tl: {
-            hd: "Aspects",
+            hd: "ArcaneBardTraditions",
             tl: {
-              hd: "Attributes",
+              hd: "ArcaneDancerTraditions",
               tl: {
-                hd: "BlessedTraditions",
+                hd: "ArmorTypes",
                 tl: {
-                  hd: "Blessings",
+                  hd: "Aspects",
                   tl: {
-                    hd: "Brews",
+                    hd: "Attributes",
                     tl: {
-                      hd: "Cantrips",
+                      hd: "BlessedTraditions",
                       tl: {
-                        hd: "CombatSpecialAbilityGroups",
+                        hd: "Blessings",
                         tl: {
-                          hd: "CombatTechniqueGroups",
+                          hd: "Brews",
                           tl: {
-                            hd: "CombatTechniques",
+                            hd: "Cantrips",
                             tl: {
-                              hd: "Conditions",
+                              hd: "CombatSpecialAbilityGroups",
                               tl: {
-                                hd: "Cultures",
+                                hd: "CombatTechniqueGroups",
                                 tl: {
-                                  hd: "Curses",
+                                  hd: "CombatTechniques",
                                   tl: {
-                                    hd: "DerivedCharacteristics",
+                                    hd: "Conditions",
                                     tl: {
-                                      hd: "Disadvantages",
+                                      hd: "CoreRules",
                                       tl: {
-                                        hd: "DominationRituals",
+                                        hd: "Cultures",
                                         tl: {
-                                          hd: "ElvenMagicalSongs",
+                                          hd: "Curricula",
                                           tl: {
-                                            hd: "Items",
+                                            hd: "Curses",
                                             tl: {
-                                              hd: "EquipmentGroups",
+                                              hd: "DerivedCharacteristics",
                                               tl: {
-                                                hd: "EquipmentPackages",
+                                                hd: "Disadvantages",
                                                 tl: {
-                                                  hd: "ExperienceLevels",
+                                                  hd: "DominationRituals",
                                                   tl: {
-                                                    hd: "EyeColors",
+                                                    hd: "ElvenMagicalSongs",
                                                     tl: {
-                                                      hd: "FocusRules",
+                                                      hd: "Items",
                                                       tl: {
-                                                        hd: "GeodeRituals",
+                                                        hd: "EquipmentGroups",
                                                         tl: {
-                                                          hd: "HairColors",
+                                                          hd: "EquipmentPackages",
                                                           tl: {
-                                                            hd: "LiturgicalChantGroups",
+                                                            hd: "ExperienceLevels",
                                                             tl: {
-                                                              hd: "LiturgicalChants",
+                                                              hd: "EyeColors",
                                                               tl: {
-                                                                hd: "MagicalDances",
+                                                                hd: "FocusRules",
                                                                 tl: {
-                                                                  hd: "MagicalMelodies",
+                                                                  hd: "GeodeRituals",
                                                                   tl: {
-                                                                    hd: "MagicalTraditions",
+                                                                    hd: "HairColors",
                                                                     tl: {
-                                                                      hd: "OptionalRules",
+                                                                      hd: "Languages",
                                                                       tl: {
-                                                                        hd: "Pacts",
+                                                                        hd: "LiturgicalChantGroups",
                                                                         tl: {
-                                                                          hd: "Professions",
+                                                                          hd: "LiturgicalChants",
                                                                           tl: {
-                                                                            hd: "Properties",
+                                                                            hd: "MagicalDances",
                                                                             tl: {
-                                                                              hd: "Publications",
+                                                                              hd: "MagicalMelodies",
                                                                               tl: {
-                                                                                hd: "Races",
+                                                                                hd: "MagicalTraditions",
                                                                                 tl: {
-                                                                                  hd: "Reaches",
+                                                                                  hd: "OptionalRules",
                                                                                   tl: {
-                                                                                    hd: "RogueSpells",
+                                                                                    hd: "Pacts",
                                                                                     tl: {
-                                                                                      hd: "SkillGroups",
+                                                                                      hd: "Patrons",
                                                                                       tl: {
-                                                                                        hd: "Skills",
+                                                                                        hd: "PatronCategories",
                                                                                         tl: {
-                                                                                          hd: "SocialStatuses",
+                                                                                          hd: "Professions",
                                                                                           tl: {
-                                                                                            hd: "SpecialAbilities",
+                                                                                            hd: "Properties",
                                                                                             tl: {
-                                                                                              hd: "SpecialAbilityGroups",
+                                                                                              hd: "Publications",
                                                                                               tl: {
-                                                                                                hd: "SpellGroups",
+                                                                                                hd: "Races",
                                                                                                 tl: {
-                                                                                                  hd: "Spells",
+                                                                                                  hd: "Reaches",
                                                                                                   tl: {
-                                                                                                    hd: "States",
+                                                                                                    hd: "RogueSpells",
                                                                                                     tl: {
-                                                                                                      hd: "Subjects",
+                                                                                                      hd: "Scripts",
                                                                                                       tl: {
-                                                                                                        hd: "Tribes",
+                                                                                                        hd: "SkillGroups",
                                                                                                         tl: {
-                                                                                                          hd: "ZibiljaRituals",
-                                                                                                          tl: /* [] */0
+                                                                                                          hd: "Skills",
+                                                                                                          tl: {
+                                                                                                            hd: "SocialStatuses",
+                                                                                                            tl: {
+                                                                                                              hd: "SpecialAbilities",
+                                                                                                              tl: {
+                                                                                                                hd: "SpecialAbilityGroups",
+                                                                                                                tl: {
+                                                                                                                  hd: "SpellGroups",
+                                                                                                                  tl: {
+                                                                                                                    hd: "Spells",
+                                                                                                                    tl: {
+                                                                                                                      hd: "States",
+                                                                                                                      tl: {
+                                                                                                                        hd: "Subjects",
+                                                                                                                        tl: {
+                                                                                                                          hd: "TradeSecrets",
+                                                                                                                          tl: {
+                                                                                                                            hd: "Tribes",
+                                                                                                                            tl: {
+                                                                                                                              hd: "ZibiljaRituals",
+                                                                                                                              tl: /* [] */0
+                                                                                                                            }
+                                                                                                                          }
+                                                                                                                        }
+                                                                                                                      }
+                                                                                                                    }
+                                                                                                                  }
+                                                                                                                }
+                                                                                                              }
+                                                                                                            }
+                                                                                                          }
                                                                                                         }
                                                                                                       }
                                                                                                     }
@@ -302,62 +340,112 @@ function parseFiles(onProgress) {
                                                                                                                       var match$50 = match$49.tl;
                                                                                                                       if (match$50) {
                                                                                                                         var match$51 = match$50.tl;
-                                                                                                                        if (match$51 && !match$51.tl) {
-                                                                                                                          return {
-                                                                                                                                  advantages: xs.hd,
-                                                                                                                                  animistForces: match.hd,
-                                                                                                                                  arcaneBardTraditions: match$1.hd,
-                                                                                                                                  arcaneDancerTraditions: match$2.hd,
-                                                                                                                                  armorTypes: match$3.hd,
-                                                                                                                                  aspects: match$4.hd,
-                                                                                                                                  attributes: match$5.hd,
-                                                                                                                                  blessedTraditions: match$6.hd,
-                                                                                                                                  blessings: match$7.hd,
-                                                                                                                                  brews: match$8.hd,
-                                                                                                                                  cantrips: match$9.hd,
-                                                                                                                                  combatSpecialAbilityGroups: match$10.hd,
-                                                                                                                                  combatTechniqueGroups: match$11.hd,
-                                                                                                                                  combatTechniques: match$12.hd,
-                                                                                                                                  conditions: match$13.hd,
-                                                                                                                                  cultures: match$14.hd,
-                                                                                                                                  curses: match$15.hd,
-                                                                                                                                  derivedCharacteristics: match$16.hd,
-                                                                                                                                  disadvantages: match$17.hd,
-                                                                                                                                  dominationRituals: match$18.hd,
-                                                                                                                                  elvenMagicalSongs: match$19.hd,
-                                                                                                                                  items: match$20.hd,
-                                                                                                                                  equipmentGroups: match$21.hd,
-                                                                                                                                  equipmentPackages: match$22.hd,
-                                                                                                                                  experienceLevels: match$23.hd,
-                                                                                                                                  eyeColors: match$24.hd,
-                                                                                                                                  focusRules: match$25.hd,
-                                                                                                                                  geodeRituals: match$26.hd,
-                                                                                                                                  hairColors: match$27.hd,
-                                                                                                                                  liturgicalChantGroups: match$28.hd,
-                                                                                                                                  liturgicalChants: match$29.hd,
-                                                                                                                                  magicalDances: match$30.hd,
-                                                                                                                                  magicalMelodies: match$31.hd,
-                                                                                                                                  magicalTraditions: match$32.hd,
-                                                                                                                                  optionalRules: match$33.hd,
-                                                                                                                                  pacts: match$34.hd,
-                                                                                                                                  professions: match$35.hd,
-                                                                                                                                  properties: match$36.hd,
-                                                                                                                                  publications: match$37.hd,
-                                                                                                                                  races: match$38.hd,
-                                                                                                                                  reaches: match$39.hd,
-                                                                                                                                  rogueSpells: match$40.hd,
-                                                                                                                                  skillGroups: match$41.hd,
-                                                                                                                                  skills: match$42.hd,
-                                                                                                                                  socialStatuses: match$43.hd,
-                                                                                                                                  specialAbilities: match$44.hd,
-                                                                                                                                  specialAbilityGroups: match$45.hd,
-                                                                                                                                  spellGroups: match$46.hd,
-                                                                                                                                  spells: match$47.hd,
-                                                                                                                                  states: match$48.hd,
-                                                                                                                                  subjects: match$49.hd,
-                                                                                                                                  tribes: match$50.hd,
-                                                                                                                                  zibiljaRituals: match$51.hd
-                                                                                                                                };
+                                                                                                                        if (match$51) {
+                                                                                                                          var match$52 = match$51.tl;
+                                                                                                                          if (match$52) {
+                                                                                                                            var match$53 = match$52.tl;
+                                                                                                                            if (match$53) {
+                                                                                                                              var match$54 = match$53.tl;
+                                                                                                                              if (match$54) {
+                                                                                                                                var match$55 = match$54.tl;
+                                                                                                                                if (match$55) {
+                                                                                                                                  var match$56 = match$55.tl;
+                                                                                                                                  if (match$56) {
+                                                                                                                                    var match$57 = match$56.tl;
+                                                                                                                                    if (match$57) {
+                                                                                                                                      var match$58 = match$57.tl;
+                                                                                                                                      if (match$58) {
+                                                                                                                                        var match$59 = match$58.tl;
+                                                                                                                                        if (match$59) {
+                                                                                                                                          var match$60 = match$59.tl;
+                                                                                                                                          if (match$60) {
+                                                                                                                                            var match$61 = match$60.tl;
+                                                                                                                                            if (match$61 && !match$61.tl) {
+                                                                                                                                              return {
+                                                                                                                                                      advantages: xs.hd,
+                                                                                                                                                      animalShapes: match.hd,
+                                                                                                                                                      animalShapePaths: match$1.hd,
+                                                                                                                                                      animalShapeSizes: match$2.hd,
+                                                                                                                                                      animistForces: match$3.hd,
+                                                                                                                                                      arcaneBardTraditions: match$4.hd,
+                                                                                                                                                      arcaneDancerTraditions: match$5.hd,
+                                                                                                                                                      armorTypes: match$6.hd,
+                                                                                                                                                      aspects: match$7.hd,
+                                                                                                                                                      attributes: match$8.hd,
+                                                                                                                                                      blessedTraditions: match$9.hd,
+                                                                                                                                                      blessings: match$10.hd,
+                                                                                                                                                      brews: match$11.hd,
+                                                                                                                                                      cantrips: match$12.hd,
+                                                                                                                                                      combatSpecialAbilityGroups: match$13.hd,
+                                                                                                                                                      combatTechniqueGroups: match$14.hd,
+                                                                                                                                                      combatTechniques: match$15.hd,
+                                                                                                                                                      conditions: match$16.hd,
+                                                                                                                                                      coreRules: match$17.hd,
+                                                                                                                                                      cultures: match$18.hd,
+                                                                                                                                                      curricula: match$19.hd,
+                                                                                                                                                      curses: match$20.hd,
+                                                                                                                                                      derivedCharacteristics: match$21.hd,
+                                                                                                                                                      disadvantages: match$22.hd,
+                                                                                                                                                      dominationRituals: match$23.hd,
+                                                                                                                                                      elvenMagicalSongs: match$24.hd,
+                                                                                                                                                      items: match$25.hd,
+                                                                                                                                                      equipmentGroups: match$26.hd,
+                                                                                                                                                      equipmentPackages: match$27.hd,
+                                                                                                                                                      experienceLevels: match$28.hd,
+                                                                                                                                                      eyeColors: match$29.hd,
+                                                                                                                                                      focusRules: match$30.hd,
+                                                                                                                                                      geodeRituals: match$31.hd,
+                                                                                                                                                      hairColors: match$32.hd,
+                                                                                                                                                      languages: match$33.hd,
+                                                                                                                                                      liturgicalChantGroups: match$34.hd,
+                                                                                                                                                      liturgicalChants: match$35.hd,
+                                                                                                                                                      magicalDances: match$36.hd,
+                                                                                                                                                      magicalMelodies: match$37.hd,
+                                                                                                                                                      magicalTraditions: match$38.hd,
+                                                                                                                                                      optionalRules: match$39.hd,
+                                                                                                                                                      pacts: match$40.hd,
+                                                                                                                                                      patrons: match$41.hd,
+                                                                                                                                                      patronCategories: match$42.hd,
+                                                                                                                                                      professions: match$43.hd,
+                                                                                                                                                      properties: match$44.hd,
+                                                                                                                                                      publications: match$45.hd,
+                                                                                                                                                      races: match$46.hd,
+                                                                                                                                                      reaches: match$47.hd,
+                                                                                                                                                      rogueSpells: match$48.hd,
+                                                                                                                                                      scripts: match$49.hd,
+                                                                                                                                                      skillGroups: match$50.hd,
+                                                                                                                                                      skills: match$51.hd,
+                                                                                                                                                      socialStatuses: match$52.hd,
+                                                                                                                                                      specialAbilities: match$53.hd,
+                                                                                                                                                      specialAbilityGroups: match$54.hd,
+                                                                                                                                                      spellGroups: match$55.hd,
+                                                                                                                                                      spells: match$56.hd,
+                                                                                                                                                      states: match$57.hd,
+                                                                                                                                                      subjects: match$58.hd,
+                                                                                                                                                      tradeSecrets: match$59.hd,
+                                                                                                                                                      tribes: match$60.hd,
+                                                                                                                                                      zibiljaRituals: match$61.hd
+                                                                                                                                                    };
+                                                                                                                                            }
+                                                                                                                                            
+                                                                                                                                          }
+                                                                                                                                          
+                                                                                                                                        }
+                                                                                                                                        
+                                                                                                                                      }
+                                                                                                                                      
+                                                                                                                                    }
+                                                                                                                                    
+                                                                                                                                  }
+                                                                                                                                  
+                                                                                                                                }
+                                                                                                                                
+                                                                                                                              }
+                                                                                                                              
+                                                                                                                            }
+                                                                                                                            
+                                                                                                                          }
+                                                                                                                          
                                                                                                                         }
                                                                                                                         
                                                                                                                       }
@@ -469,6 +557,8 @@ function parseFiles(onProgress) {
 
 export {
   Parser ,
+  dataRoot ,
+  parseSupportedLanguages ,
   parseUI ,
   parseFilesOfEntryType ,
   parseDirectories ,
@@ -476,4 +566,4 @@ export {
   parseFiles ,
   
 }
-/* path Not a pure module */
+/* dataRoot Not a pure module */

@@ -79,7 +79,7 @@ function partial_arg_0$1(json) {
 var partial_arg_1$1 = {
   hd: (function (json) {
       return {
-              id: Json_decode.field("id", oneOrManyInt, json),
+              id: Json_decode.field("races", oneOrManyInt, json),
               active: Json_decode.field("active", Json_decode.bool, json)
             };
     }),
@@ -111,31 +111,7 @@ var Culture = {
   Decode: Decode$2
 };
 
-var Decode$3 = {
-  t: Json_decode.$$int
-};
-
-var SocialStatus = {
-  Decode: Decode$3
-};
-
 function t$2(json) {
-  return {
-          category: JsonStrict$OptolithClient.field("category", JsonStrict$OptolithClient.$$int, json),
-          domain: JsonStrict$OptolithClient.optionalField("domain", oneOrManyInt, json),
-          level: JsonStrict$OptolithClient.optionalField("level", JsonStrict$OptolithClient.$$int, json)
-        };
-}
-
-var Decode$4 = {
-  t: t$2
-};
-
-var Pact = {
-  Decode: Decode$4
-};
-
-function t$3(json) {
   var str = Json_decode.field("type", Json_decode.string, json);
   var tmp;
   switch (str) {
@@ -158,11 +134,35 @@ function t$3(json) {
         };
 }
 
-var Decode$5 = {
-  t: t$3
+var Decode$3 = {
+  t: t$2
 };
 
 var PrimaryAttribute = {
+  Decode: Decode$3
+};
+
+function t$3(json) {
+  return {
+          category: JsonStrict$OptolithClient.field("category", JsonStrict$OptolithClient.$$int, json),
+          domain: JsonStrict$OptolithClient.optionalField("domain", oneOrManyInt, json),
+          level: JsonStrict$OptolithClient.optionalField("level", JsonStrict$OptolithClient.$$int, json)
+        };
+}
+
+var Decode$4 = {
+  t: t$3
+};
+
+var Pact = {
+  Decode: Decode$4
+};
+
+var Decode$5 = {
+  t: Json_decode.$$int
+};
+
+var SocialStatus = {
   Decode: Decode$5
 };
 
@@ -364,15 +364,15 @@ function multilingual(json) {
   return Ley_Option$OptolithClient.fromOption(/* MultilingualGenerate */0, JsonStrict$OptolithClient.optionalField("displayOption", (function (param) {
                     return JsonStrict$OptolithClient.andThen((function (str) {
                                   switch (str) {
-                                    case "ByLevel" :
+                                    case "Hide" :
+                                        return function (param) {
+                                          return /* MultilingualHide */1;
+                                        };
+                                    case "ReplaceWith" :
                                         return function (json) {
                                           return /* MultilingualReplaceWith */{
                                                   _0: JsonStrict$OptolithClient.field("value", TranslationMap.Decode.t, json)
                                                 };
-                                        };
-                                    case "Hide" :
-                                        return function (param) {
-                                          return /* MultilingualHide */1;
                                         };
                                     default:
                                       throw {
@@ -554,7 +554,7 @@ function multilingual$2(param) {
                       };
                   case "Pact" :
                       return function (param) {
-                        return multilingual$1(t$2, (function (v) {
+                        return multilingual$1(t$3, (function (v) {
                                       return {
                                               TAG: /* Pact */3,
                                               _0: v
@@ -563,7 +563,7 @@ function multilingual$2(param) {
                       };
                   case "PrimaryAttribute" :
                       return function (param) {
-                        return multilingual$1(t$3, (function (v) {
+                        return multilingual$1(t$2, (function (v) {
                                       return {
                                               TAG: /* PrimaryAttribute */5,
                                               _0: v
@@ -879,7 +879,7 @@ function multilingual$4(param) {
                       };
                   case "Pact" :
                       return function (param) {
-                        return multilingual$1(t$2, (function (v) {
+                        return multilingual$1(t$3, (function (v) {
                                       return {
                                               TAG: /* Pact */3,
                                               _0: v
@@ -888,7 +888,7 @@ function multilingual$4(param) {
                       };
                   case "PrimaryAttribute" :
                       return function (param) {
-                        return multilingual$1(t$3, (function (v) {
+                        return multilingual$1(t$2, (function (v) {
                                       return {
                                               TAG: /* PrimaryAttribute */5,
                                               _0: v
@@ -1000,13 +1000,15 @@ function multilingual$5(decoder) {
                   switch (str) {
                     case "ByLevel" :
                         return function (json) {
-                          var xs = Json_decode.list((function (json) {
-                                  return [
-                                          Json_decode.field("level", Json_decode.$$int, json),
-                                          Json_decode.field("prerequisites", (function (param) {
-                                                  return Json_decode.list(decoder, param);
-                                                }), json)
-                                        ];
+                          var xs = Json_decode.field("value", (function (param) {
+                                  return Json_decode.list((function (json) {
+                                                return [
+                                                        Json_decode.field("level", Json_decode.$$int, json),
+                                                        Json_decode.field("prerequisites", (function (param) {
+                                                                return Json_decode.list(decoder, param);
+                                                              }), json)
+                                                      ];
+                                              }), param);
                                 }), json);
                           return {
                                   TAG: /* ByLevel */1,
@@ -1017,7 +1019,9 @@ function multilingual$5(decoder) {
                         return function (json) {
                           return {
                                   TAG: /* Plain */0,
-                                  _0: Json_decode.list(decoder, json)
+                                  _0: Json_decode.field("value", (function (param) {
+                                          return Json_decode.list(decoder, param);
+                                        }), json)
                                 };
                         };
                     default:

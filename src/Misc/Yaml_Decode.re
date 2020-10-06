@@ -20,6 +20,24 @@ let decodeFilesOfEntryType = (decoder, fileContents: list(Js.Json.t)) =>
   );
 
 let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
+  let animalShapes =
+    decodeFilesOfEntryType(
+      AnimalShape.Decode.assoc(langs),
+      parsedData.animalShapes,
+    );
+
+  let animalShapePaths =
+    decodeFilesOfEntryType(
+      IdName.Decode.assoc(langs),
+      parsedData.animalShapePaths,
+    );
+
+  let animalShapeSizes =
+    decodeFilesOfEntryType(
+      AnimalShape.Size.Decode.assoc(langs),
+      parsedData.animalShapeSizes,
+    );
+
   let animistForces =
     decodeFilesOfEntryType(
       AnimistForce.Static.Decode.assoc(langs),
@@ -98,10 +116,22 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.conditions,
     );
 
+  let coreRules =
+    decodeFilesOfEntryType(
+      CoreRule.Decode.assoc(langs),
+      parsedData.coreRules,
+    );
+
   let cultures =
     decodeFilesOfEntryType(
       Culture.Static.Decode.assoc(langs),
       parsedData.cultures,
+    );
+
+  let curricula =
+    decodeFilesOfEntryType(
+      Curriculum.Static.Decode.assoc(langs),
+      parsedData.curricula,
     );
 
   let curses =
@@ -168,6 +198,12 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
     decodeFilesOfEntryType(
       IdName.Decode.assoc(langs),
       parsedData.hairColors,
+    );
+
+  let languages =
+    decodeFilesOfEntryType(
+      Language.Decode.assoc(langs),
+      parsedData.languages,
     );
 
   let liturgicalChantGroups =
@@ -250,6 +286,9 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.rogueSpells,
     );
 
+  let scripts =
+    decodeFilesOfEntryType(Script.Decode.assoc(langs), parsedData.scripts);
+
   let skillGroups =
     decodeFilesOfEntryType(
       SkillGroup.Decode.assoc(langs),
@@ -298,6 +337,12 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
   let subjects =
     decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.subjects);
 
+  let tradeSecrets =
+    decodeFilesOfEntryType(
+      TradeSecret.Decode.assoc(langs),
+      parsedData.tradeSecrets,
+    );
+
   let tribes =
     decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.tribes);
 
@@ -310,12 +355,18 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
   let advantages =
     decodeFilesOfEntryType(
       Advantage.Static.Decode.assoc(
-        blessings,
-        cantrips,
-        combatTechniques,
-        liturgicalChants,
-        skills,
-        spells,
+        ~blessings,
+        ~cantrips,
+        ~combatTechniques,
+        ~liturgicalChants,
+        ~skills,
+        ~spells,
+        ~tradeSecrets,
+        ~languages,
+        ~scripts,
+        ~animalShapes,
+        ~spellEnhancements,
+        ~liturgicalChantEnhancements,
         langs,
       ),
       parsedData.advantages,
@@ -324,12 +375,18 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
   let disadvantages =
     decodeFilesOfEntryType(
       Disadvantage.Static.Decode.assoc(
-        blessings,
-        cantrips,
-        combatTechniques,
-        liturgicalChants,
-        skills,
-        spells,
+        ~blessings,
+        ~cantrips,
+        ~combatTechniques,
+        ~liturgicalChants,
+        ~skills,
+        ~spells,
+        ~tradeSecrets,
+        ~languages,
+        ~scripts,
+        ~animalShapes,
+        ~spellEnhancements,
+        ~liturgicalChantEnhancements,
         langs,
       ),
       parsedData.disadvantages,
@@ -338,12 +395,18 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
   let baseSpecialAbilities =
     decodeFilesOfEntryType(
       SpecialAbility.Static.Decode.assoc(
-        blessings,
-        cantrips,
-        combatTechniques,
-        liturgicalChants,
-        skills,
-        spells,
+        ~blessings,
+        ~cantrips,
+        ~combatTechniques,
+        ~liturgicalChants,
+        ~skills,
+        ~spells,
+        ~tradeSecrets,
+        ~languages,
+        ~scripts,
+        ~animalShapes,
+        ~spellEnhancements,
+        ~liturgicalChantEnhancements,
         langs,
       ),
       parsedData.specialAbilities,
@@ -354,6 +417,9 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
 
   {
     advantages,
+    animalShapes,
+    animalShapePaths,
+    animalShapeSizes,
     animistForces,
     arcaneBardTraditions,
     arcaneDancerTraditions,
@@ -368,7 +434,9 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
     combatTechniqueGroups,
     combatTechniques,
     conditions,
+    coreRules,
     cultures,
+    curricula,
     curses,
     derivedCharacteristics,
     disadvantages,
@@ -382,6 +450,7 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
     focusRules,
     geodeRituals,
     hairColors,
+    languages,
     liturgicalChantEnhancements,
     liturgicalChantGroups,
     liturgicalChants,
@@ -397,6 +466,7 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
     races,
     reaches,
     rogueSpells,
+    scripts,
     skillGroups,
     skills,
     socialStatuses,
@@ -407,6 +477,7 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
     spells,
     states,
     subjects,
+    tradeSecrets,
     tribes,
     zibiljaRituals,
   };

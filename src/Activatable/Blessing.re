@@ -6,7 +6,6 @@ module Static = {
     range: string,
     duration: string,
     target: string,
-    traditions: Ley_IntSet.t,
     src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
@@ -37,7 +36,6 @@ module Static = {
 
     type multilingual = {
       id: int,
-      traditions: Ley_IntSet.t,
       src: list(PublicationRef.Decode.multilingual),
       translations: TranslationMap.t,
     };
@@ -45,8 +43,6 @@ module Static = {
     let multilingual = json =>
       JsonStrict.{
         id: json |> field("id", int),
-        traditions:
-          json |> field("traditions", list(int)) |> Ley_IntSet.fromList,
         src: json |> field("src", PublicationRef.Decode.multilingualList),
         translations: json |> field("translations", TranslationMap.Decode.t),
       };
@@ -63,7 +59,6 @@ module Static = {
             range: translation.range,
             duration: translation.duration,
             target: translation.target,
-            traditions: x.traditions,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
             errata: translation.errata,
           }

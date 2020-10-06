@@ -4,12 +4,11 @@ module Static = {
   type t = {
     id: int,
     name: string,
-    nameByTradition: Ley_IntMap.t(string),
     check: SkillCheck.t,
     effect: string,
     duration: ActivatableSkill.MainParameter.t,
     cost: ActivatableSkill.MainParameter.t,
-    musicTraditions: Ley_IntSet.t,
+    musicTraditions: Ley_IntMap.t(string),
     property: int,
     ic: IC.t,
     src: list(PublicationRef.t),
@@ -17,10 +16,33 @@ module Static = {
   };
 
   module Decode = {
+    module MusicTraditionTranslation = {
+      type t = string;
+
+      let t = json => JsonStrict.(json |> field("name", string));
+    };
+
+    module MusicTraditionTranslationMap =
+      TranslationMap.Make(MusicTraditionTranslation);
+
+    type musicTraditionMultilingual = {
+      id: int,
+      translations: MusicTraditionTranslationMap.t,
+    };
+
+    let musicTraditionMultilingual = json =>
+      JsonStrict.{
+        id: json |> field("id", int),
+        translations:
+          json |> field("translations", MusicTraditionTranslationMap.Decode.t),
+      };
+
+    let musicTraditionMultilingualAssoc = json =>
+      json |> musicTraditionMultilingual |> (x => (x.id, x));
+
     module Translation = {
       type t = {
         name: string,
-        nameByTradition: Ley_IntMap.t(string),
         effect: string,
         duration: ActivatableSkill.MainParameter.translation,
         cost: ActivatableSkill.MainParameter.translation,
@@ -28,19 +50,9 @@ module Static = {
         errata: list(Erratum.t),
       };
 
-      let nameByTradition = json =>
-        JsonStrict.(
-          json |> field("id", int),
-          json |> field("name", string),
-        );
-
       let t = json =>
         JsonStrict.{
           name: json |> field("name", string),
-          nameByTradition:
-            json
-            |> field("nameByTradition", list(nameByTradition))
-            |> Ley_IntMap.fromList,
           effect: json |> field("effect", string),
           duration:
             json |> field("duration", ActivatableSkill.MainParameter.decode),
@@ -55,7 +67,7 @@ module Static = {
     type multilingual = {
       id: int,
       check: SkillCheck.t,
-      musicTraditions: Ley_IntSet.t,
+      musicTraditions: Ley_IntMap.t(musicTraditionMultilingual),
       property: int,
       ic: IC.t,
       src: list(PublicationRef.Decode.multilingual),
@@ -68,13 +80,15 @@ module Static = {
         check: json |> field("check", SkillCheck.Decode.t),
         property: json |> field("property", int),
         musicTraditions:
-          json |> field("musicTraditions", list(int)) |> Ley_IntSet.fromList,
+          json
+          |> field("musicTraditions", list(musicTraditionMultilingualAssoc))
+          |> Ley_IntMap.fromList,
         ic: json |> field("ic", IC.Decode.t),
         src: json |> field("src", PublicationRef.Decode.multilingualList),
         translations: json |> field("translations", TranslationMap.Decode.t),
       };
 
-    let resolveTranslations = (langs, x) =>
+    let resolveTranslations = (langs, x: multilingual) =>
       Ley_Option.Infix.(
         x.translations
         |> TranslationMap.Decode.getFromLanguageOrder(langs)
@@ -82,7 +96,6 @@ module Static = {
           translation => {
             id: x.id,
             name: translation.name,
-            nameByTradition: translation.nameByTradition,
             check: x.check,
             effect: translation.effect,
             duration:
@@ -92,7 +105,15 @@ module Static = {
               ),
             cost:
               ActivatableSkill.MainParameter.make(false, translation.cost),
-            musicTraditions: x.musicTraditions,
+            musicTraditions:
+              x.musicTraditions
+              |> Ley_IntMap.mapMaybe(
+                   (musicTradition: musicTraditionMultilingual) =>
+                   musicTradition.translations
+                   |> MusicTraditionTranslationMap.Decode.getFromLanguageOrder(
+                        langs,
+                      )
+                 ),
             property: x.property,
             ic: x.ic,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),

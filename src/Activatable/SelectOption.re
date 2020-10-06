@@ -4,7 +4,11 @@ type staticEntry =
   | CombatTechnique(CombatTechnique.Static.t)
   | LiturgicalChant(LiturgicalChant.Static.t)
   | Skill(Skill.Static.t)
-  | Spell(Spell.Static.t);
+  | Spell(Spell.Static.t)
+  | TradeSecret(TradeSecret.t)
+  | Language(Language.t)
+  | Script(Script.t)
+  | AnimalShape(AnimalShape.t);
 
 type t = {
   id: Id.Activatable.SelectOption.t,
@@ -40,6 +44,10 @@ let showId = (id: Id.Activatable.SelectOption.t) =>
   | (LiturgicalChant, x) => "LiturgicalChant(" ++ Ley_Int.show(x) ++ ")"
   | (Blessing, x) => "Blessing(" ++ Ley_Int.show(x) ++ ")"
   | (SpecialAbility, x) => "SpecialAbility(" ++ Ley_Int.show(x) ++ ")"
+  | (TradeSecret, x) => "TradeSecret(" ++ Ley_Int.show(x) ++ ")"
+  | (Language, x) => "Language(" ++ Ley_Int.show(x) ++ ")"
+  | (Script, x) => "Script(" ++ Ley_Int.show(x) ++ ")"
+  | (AnimalShape, x) => "AnimalShape(" ++ Ley_Int.show(x) ++ ")"
   };
 
 module Map = Ley_Map.Make(Id.Activatable.SelectOption);
@@ -64,8 +72,28 @@ module Decode = {
 
   module TranslationMap = TranslationMap.Make(Translation);
 
+  let selectOptionId =
+    Json.Decode.(
+      either(
+        int |> map((x) => ((Generic, x): Id.Activatable.SelectOption.t)),
+        field("type", string)
+        |> andThen(
+             fun
+             | "Skill" =>
+               int |> map((x) => ((Skill, x): Id.Activatable.SelectOption.t))
+             | "CombatTechnique" =>
+               int
+               |> map((x) =>
+                    ((CombatTechnique, x): Id.Activatable.SelectOption.t)
+                  )
+             | str =>
+               raise(DecodeError("Unknown select option id scope: " ++ str)),
+           ),
+      )
+    );
+
   type multilingual = {
-    id: int,
+    id: Id.Activatable.SelectOption.t,
     apValue: option(int),
     prerequisites: Prerequisite.Collection.General.Decode.multilingual,
     src: list(PublicationRef.Decode.multilingual),
@@ -74,7 +102,7 @@ module Decode = {
 
   let multilingual = json =>
     JsonStrict.{
-      id: json |> field("id", int),
+      id: json |> field("id", selectOptionId),
       apValue: json |> optionalField("apValue", int),
       prerequisites:
         json
@@ -86,10 +114,7 @@ module Decode = {
       translations: json |> field("translations", TranslationMap.Decode.t),
     };
 
-  let multilingualAssoc = json =>
-    json
-    |> multilingual
-    |> (x => ((Generic, x.id): Id.Activatable.SelectOption.t, x));
+  let multilingualAssoc = json => json |> multilingual |> (x => (x.id, x));
 
   let resolveTranslations = (langs, x) =>
     Ley_Option.Infix.(
@@ -97,7 +122,7 @@ module Decode = {
       |> TranslationMap.Decode.getFromLanguageOrder(langs)
       <&> (
         translation => {
-          id: (Generic, x.id),
+          id: x.id,
           name: translation.name,
           description: translation.description,
           apValue: x.apValue,
@@ -128,40 +153,64 @@ module Decode = {
     type t =
       | Blessings
       | Cantrips
-      | CombatTechniques
-      | LiturgicalChants
-      | Skills
-      | Spells;
+      | CombatTechniques(list(int))
+      | LiturgicalChants(list(int))
+      | Skills(list(int))
+      | Spells(list(int))
+      | TradeSecrets
+      | Languages
+      | Scripts
+      | AnimalShapes
+      | SpellEnhancements
+      | LiturgicalChantEnhancements;
 
-    let t = json =>
-      Json.Decode.(
-        json
-        |> string
-        |> (
-          fun
-          | "BLESSINGS" => Blessings
-          | "CANTRIPS" => Cantrips
-          | "COMBAT_TECHNIQUES" => CombatTechniques
-          | "LITURGICAL_CHANTS" => LiturgicalChants
-          | "SKILLS" => Skills
-          | "SPELLS" => Spells
-          | str =>
-            raise(DecodeError("Unknown select option category: " ++ str))
-        )
+    let t =
+      JsonStrict.(
+        field("category", string)
+        |> andThen(
+             fun
+             | "Blessings" => (_ => Blessings)
+             | "Cantrips" => (_ => Cantrips)
+             | "CombatTechniques" => (
+                 json =>
+                   json
+                   |> optionalField("groups", list(int))
+                   |> Ley_Option.fromOption([])
+                   |> (xs => CombatTechniques(xs))
+               )
+             | "LiturgicalChants" => (
+                 json =>
+                   json
+                   |> optionalField("groups", list(int))
+                   |> Ley_Option.fromOption([])
+                   |> (xs => LiturgicalChants(xs))
+               )
+             | "Skills" => (
+                 json =>
+                   json
+                   |> optionalField("groups", list(int))
+                   |> Ley_Option.fromOption([])
+                   |> (xs => Skills(xs))
+               )
+             | "Spells" => (
+                 json =>
+                   json
+                   |> optionalField("groups", list(int))
+                   |> Ley_Option.fromOption([])
+                   |> (xs => Spells(xs))
+               )
+             | "TradeSecrets" => (_ => TradeSecrets)
+             | "Languages" => (_ => Languages)
+             | "Scripts" => (_ => Scripts)
+             | "AnimalShapes" => (_ => AnimalShapes)
+             | "SpellEnhancements" => (_ => SpellEnhancements)
+             | "LiturgicalChantEnhancements" => (
+                 _ => LiturgicalChantEnhancements
+               )
+             | str =>
+               raise(DecodeError("Unknown select option category: " ++ str)),
+           )
       );
-
-    module WithGroups = {
-      type nonrec t = {
-        category: t,
-        groups: option(list(int)),
-      };
-
-      let t = json =>
-        JsonStrict.{
-          category: json |> field("category", t),
-          groups: json |> optionalField("groups", list(int)),
-        };
-    };
   };
 
   module ResolveCategories = {
@@ -188,6 +237,8 @@ module Decode = {
     };
 
     let insertEntry = (s: t) => Map.insert(s.id, s);
+
+    let mergeMaps = (mp1, mp2) => Map.foldr(insertEntry, mp2, mp1);
 
     let resolveWithoutGroups = (f, mp, xs) =>
       Ley_IntMap.foldr(x => x |> f |> insertEntry, xs, mp);
@@ -231,12 +282,10 @@ module Decode = {
         ~errata=x.errata,
       );
 
-    let resolveCombatTechniques = mgrs =>
-      switch (mgrs) {
-      | Some(grs) =>
-        resolveGroups(combatTechniqueToSelectOption, x => x.gr, grs)
-      | None => resolveWithoutGroups(combatTechniqueToSelectOption)
-      };
+    let resolveCombatTechniques =
+      fun
+      | [] => resolveWithoutGroups(combatTechniqueToSelectOption)
+      | grs => resolveGroups(combatTechniqueToSelectOption, x => x.gr, grs);
 
     let liturgicalChantToSelectOption = (x: LiturgicalChant.Static.t) =>
       entryToSelectOption(
@@ -247,12 +296,10 @@ module Decode = {
         ~errata=x.errata,
       );
 
-    let resolveLiturgicalChants = mgrs =>
-      switch (mgrs) {
-      | Some(grs) =>
-        resolveGroups(liturgicalChantToSelectOption, x => x.gr, grs)
-      | None => resolveWithoutGroups(liturgicalChantToSelectOption)
-      };
+    let resolveLiturgicalChants =
+      fun
+      | [] => resolveWithoutGroups(liturgicalChantToSelectOption)
+      | grs => resolveGroups(liturgicalChantToSelectOption, x => x.gr, grs);
 
     let skillToSelectOption = (x: Skill.Static.t) =>
       entryToSelectOption(
@@ -263,11 +310,10 @@ module Decode = {
         ~errata=x.errata,
       );
 
-    let resolveSkills = mgrs =>
-      switch (mgrs) {
-      | Some(grs) => resolveGroups(skillToSelectOption, x => x.gr, grs)
-      | None => resolveWithoutGroups(skillToSelectOption)
-      };
+    let resolveSkills =
+      fun
+      | [] => resolveWithoutGroups(skillToSelectOption)
+      | grs => resolveGroups(skillToSelectOption, x => x.gr, grs);
 
     let spellToSelectOption = (x: Spell.Static.t) =>
       entryToSelectOption(
@@ -278,11 +324,55 @@ module Decode = {
         ~errata=x.errata,
       );
 
-    let resolveSpells = mgrs =>
-      switch (mgrs) {
-      | Some(grs) => resolveGroups(spellToSelectOption, x => x.gr, grs)
-      | None => resolveWithoutGroups(spellToSelectOption)
-      };
+    let resolveSpells =
+      fun
+      | [] => resolveWithoutGroups(spellToSelectOption)
+      | grs => resolveGroups(spellToSelectOption, x => x.gr, grs);
+
+    let tradeSecretToSelectOption = (x: TradeSecret.t) =>
+      entryToSelectOption(
+        ~id=(TradeSecret, x.id),
+        ~name=x.name,
+        ~staticEntry=TradeSecret(x),
+        ~src=x.src,
+        ~errata=x.errata,
+      );
+
+    let resolveTradeSecrets = resolveWithoutGroups(tradeSecretToSelectOption);
+
+    let languageToSelectOption = (x: Language.t) =>
+      entryToSelectOption(
+        ~id=(Language, x.id),
+        ~name=x.name,
+        ~staticEntry=Language(x),
+        ~src=x.src,
+        ~errata=x.errata,
+      );
+
+    let resolveLanguages = resolveWithoutGroups(languageToSelectOption);
+
+    let scriptToSelectOption = (x: Script.t) =>
+      entryToSelectOption(
+        ~id=(Script, x.id),
+        ~name=x.name,
+        ~staticEntry=Script(x),
+        ~src=x.src,
+        ~errata=x.errata,
+      );
+
+    let resolveScripts = resolveWithoutGroups(scriptToSelectOption);
+
+    let animalShapeToSelectOption = (src, errata, x: AnimalShape.t) =>
+      entryToSelectOption(
+        ~id=(AnimalShape, x.id),
+        ~name=x.name,
+        ~staticEntry=AnimalShape(x),
+        ~src,
+        ~errata,
+      );
+
+    let resolveAnimalShapes = (src, errata) =>
+      resolveWithoutGroups(animalShapeToSelectOption(src, errata));
 
     /**
      * Takes an array of select option categories and resolves them into a list of
@@ -290,27 +380,42 @@ module Decode = {
      */
     let resolveCategories =
         (
-          blessings,
-          cantrips,
-          combatTechniques,
-          liturgicalChants,
-          skills,
-          spells,
+          ~blessings,
+          ~cantrips,
+          ~combatTechniques,
+          ~liturgicalChants,
+          ~skills,
+          ~spells,
+          ~tradeSecrets,
+          ~languages,
+          ~scripts,
+          ~animalShapes,
+          ~spellEnhancements,
+          ~liturgicalChantEnhancements,
+          ~src,
+          ~errata,
           categories,
         ) =>
       categories
       |> Ley_Option.fromOption([])
       |> Ley_List.foldr(
-           (cat: Category.WithGroups.t) =>
-             switch (cat.category) {
+           (cat: Category.t) =>
+             switch (cat) {
              | Blessings => resolveBlessings(blessings)
              | Cantrips => resolveCantrips(cantrips)
-             | CombatTechniques =>
-               resolveCombatTechniques(cat.groups, combatTechniques)
-             | LiturgicalChants =>
-               resolveLiturgicalChants(cat.groups, liturgicalChants)
-             | Skills => resolveSkills(cat.groups, skills)
-             | Spells => resolveSpells(cat.groups, spells)
+             | CombatTechniques(groups) =>
+               resolveCombatTechniques(groups, combatTechniques)
+             | LiturgicalChants(groups) =>
+               resolveLiturgicalChants(groups, liturgicalChants)
+             | Skills(groups) => resolveSkills(groups, skills)
+             | Spells(groups) => resolveSpells(groups, spells)
+             | TradeSecrets => resolveTradeSecrets(tradeSecrets)
+             | Languages => resolveLanguages(languages)
+             | Scripts => resolveScripts(scripts)
+             | AnimalShapes => resolveAnimalShapes(src, errata, animalShapes)
+             | SpellEnhancements => mergeMaps(spellEnhancements)
+             | LiturgicalChantEnhancements =>
+               mergeMaps(liturgicalChantEnhancements)
              },
            Map.empty,
          );

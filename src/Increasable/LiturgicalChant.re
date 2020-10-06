@@ -4,6 +4,7 @@ module Static = {
   type t = {
     id: int,
     name: string,
+    nameShort: option(string),
     check: SkillCheck.t,
     checkMod: option(CheckModifier.t),
     effect: string,
@@ -25,6 +26,7 @@ module Static = {
     module Translation = {
       type t = {
         name: string,
+        nameShort: option(string),
         effect: string,
         castingTime: ActivatableSkill.MainParameter.translation,
         cost: ActivatableSkill.MainParameter.translation,
@@ -37,6 +39,7 @@ module Static = {
       let t = json =>
         JsonStrict.{
           name: json |> field("name", string),
+          nameShort: json |> optionalField("nameShort", string),
           effect: json |> field("effect", string),
           castingTime:
             json
@@ -99,6 +102,7 @@ module Static = {
           translation => {
             id: x.id,
             name: translation.name,
+            nameShort: translation.nameShort,
             check: x.check,
             checkMod: x.checkMod,
             effect: translation.effect,

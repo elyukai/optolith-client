@@ -37,7 +37,7 @@ function multilingual(json) {
                   return Json_decode.list(Json_decode.$$int, param);
                 }), json),
           hasNoParry: Json_decode.field("hasNoParry", Json_decode.bool, json),
-          bpr: Json_decode.field("bpr", Json_decode.$$int, json),
+          breakingPointRating: Json_decode.field("breakingPointRating", Json_decode.$$int, json),
           gr: Json_decode.field("gr", Json_decode.$$int, json),
           src: Json_decode.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
           translations: Json_decode.field("translations", TranslationMap.Decode.t, json)
@@ -54,7 +54,7 @@ function t$1(langs, json) {
                         primary: x.primary,
                         special: translation.special,
                         hasNoParry: x.hasNoParry,
-                        bpr: x.bpr,
+                        breakingPointRating: x.breakingPointRating,
                         gr: x.gr,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
                         errata: translation.errata

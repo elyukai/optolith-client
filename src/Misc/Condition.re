@@ -16,8 +16,8 @@ module Static = {
     id: int,
     name: string,
     description: option(string),
-    levelColumnDescription: option(string),
-    levelDescriptions: (string, string, string, string),
+    levelDescription: option(string),
+    levels: (string, string, string, string),
     src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
@@ -27,8 +27,8 @@ module Static = {
       type t = {
         name: string,
         description: option(string),
-        levelColumnDescription: option(string),
-        levelDescriptions: (string, string, string, string),
+        levelDescription: option(string),
+        levels: (string, string, string, string),
         errata: list(Erratum.t),
       };
 
@@ -36,14 +36,9 @@ module Static = {
         JsonStrict.{
           name: json |> field("name", string),
           description: json |> optionalField("description", string),
-          levelDescriptions: (
-            json |> field("level1", string),
-            json |> field("level2", string),
-            json |> field("level3", string),
-            json |> field("level4", string),
-          ),
-          levelColumnDescription:
-            json |> optionalField("levelDescription", string),
+          levelDescription: json |> optionalField("levelDescription", string),
+          levels:
+            json |> field("levels", tuple4(string, string, string, string)),
           errata: json |> field("errata", Erratum.Decode.list),
         };
     };
@@ -72,8 +67,8 @@ module Static = {
             id: x.id,
             name: translation.name,
             description: translation.description,
-            levelColumnDescription: translation.levelColumnDescription,
-            levelDescriptions: translation.levelDescriptions,
+            levelDescription: translation.levelDescription,
+            levels: translation.levels,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
             errata: translation.errata,
           }

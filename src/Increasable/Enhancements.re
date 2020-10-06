@@ -182,7 +182,12 @@ module Decode = {
     type t = {errata: list(Erratum.t)};
 
     let t = json =>
-      JsonStrict.{errata: json |> field("errata", Erratum.Decode.list)};
+      JsonStrict.{
+        errata:
+          json
+          |> optionalField("errata", Erratum.Decode.list)
+          |> Ley_Option.fromOption([]),
+      };
   };
 
   module TranslationMap = TranslationMap.Make(Translation);

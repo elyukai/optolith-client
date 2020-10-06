@@ -17,7 +17,6 @@ function t(json) {
           effect: JsonStrict$OptolithClient.field("effect", JsonStrict$OptolithClient.string, json),
           cost: JsonStrict$OptolithClient.field("cost", ActivatableSkill$OptolithClient.MainParameter.decode, json),
           duration: JsonStrict$OptolithClient.field("duration", ActivatableSkill$OptolithClient.MainParameter.decode, json),
-          target: JsonStrict$OptolithClient.field("target", JsonStrict$OptolithClient.string, json),
           errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }

@@ -17,6 +17,7 @@ import * as ActivatableSkill$OptolithClient from "./ActivatableSkill.bs.js";
 function t(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
+          nameShort: JsonStrict$OptolithClient.optionalField("nameShort", JsonStrict$OptolithClient.string, json),
           effect: JsonStrict$OptolithClient.field("effect", JsonStrict$OptolithClient.string, json),
           castingTime: JsonStrict$OptolithClient.field("castingTime", ActivatableSkill$OptolithClient.MainParameter.decode, json),
           cost: JsonStrict$OptolithClient.field("cost", ActivatableSkill$OptolithClient.MainParameter.decode, json),
@@ -62,6 +63,7 @@ function t$1(langs, json) {
                 return {
                         id: x.id,
                         name: translation.name,
+                        nameShort: translation.nameShort,
                         check: x.check,
                         checkMod: x.checkMod,
                         effect: translation.effect,

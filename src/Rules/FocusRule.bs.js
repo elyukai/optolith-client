@@ -25,8 +25,8 @@ var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 function multilingual(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          level: Json_decode.field("level", Json_decode.$$int, json),
           subject: Json_decode.field("subject", Json_decode.$$int, json),
+          level: Json_decode.field("level", Json_decode.$$int, json),
           src: Json_decode.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
           translations: Json_decode.field("translations", TranslationMap.Decode.t, json)
         };
@@ -38,9 +38,9 @@ function t$1(langs, json) {
                 return {
                         id: x.id,
                         name: translation.name,
-                        level: x.level,
-                        subject: x.subject,
                         description: translation.description,
+                        subject: x.subject,
+                        level: x.level,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
                         errata: translation.errata
                       };

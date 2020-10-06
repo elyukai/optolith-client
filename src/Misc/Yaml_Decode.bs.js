@@ -10,22 +10,28 @@ import * as Skill$OptolithClient from "../Increasable/Skill.bs.js";
 import * as Spell$OptolithClient from "../Increasable/Spell.bs.js";
 import * as State$OptolithClient from "./State.bs.js";
 import * as IdName$OptolithClient from "./IdName.bs.js";
+import * as Script$OptolithClient from "./Script.bs.js";
 import * as Cantrip$OptolithClient from "../Activatable/Cantrip.bs.js";
 import * as Culture$OptolithClient from "../RaceCultureProfession/Culture.bs.js";
 import * as Blessing$OptolithClient from "../Activatable/Blessing.bs.js";
+import * as CoreRule$OptolithClient from "../Rules/CoreRule.bs.js";
+import * as Language$OptolithClient from "./Language.bs.js";
 import * as Ley_List$OptolithClient from "../Data/Ley_List.bs.js";
 import * as Messages$OptolithClient from "./Messages.bs.js";
 import * as Advantage$OptolithClient from "../Activatable/Advantage.bs.js";
 import * as Attribute$OptolithClient from "../Increasable/Attribute.bs.js";
 import * as Condition$OptolithClient from "./Condition.bs.js";
 import * as FocusRule$OptolithClient from "../Rules/FocusRule.bs.js";
+import * as Curriculum$OptolithClient from "../RaceCultureProfession/Curriculum.bs.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as Profession$OptolithClient from "../RaceCultureProfession/Profession.bs.js";
 import * as RogueSpell$OptolithClient from "../Increasable/RogueSpell.bs.js";
 import * as SkillGroup$OptolithClient from "../Increasable/SkillGroup.bs.js";
+import * as AnimalShape$OptolithClient from "../Activatable/AnimalShape.bs.js";
 import * as GeodeRitual$OptolithClient from "../Increasable/GeodeRitual.bs.js";
 import * as Publication$OptolithClient from "../Sources/Publication.bs.js";
+import * as TradeSecret$OptolithClient from "./TradeSecret.bs.js";
 import * as AnimistForce$OptolithClient from "../Increasable/AnimistForce.bs.js";
 import * as Disadvantage$OptolithClient from "../Activatable/Disadvantage.bs.js";
 import * as MagicalDance$OptolithClient from "../Increasable/MagicalDance.bs.js";
@@ -66,6 +72,13 @@ function decodeFilesOfEntryType(decoder, fileContents) {
 }
 
 function decodeFiles(langs, messages, parsedData) {
+  var animalShapes = decodeFilesOfEntryType((function (param) {
+          return AnimalShape$OptolithClient.Decode.assoc(langs, param);
+        }), parsedData.animalShapes);
+  var animalShapePaths = decodeFilesOfEntryType((function (param) {
+          return IdName$OptolithClient.Decode.assoc(langs, param);
+        }), parsedData.animalShapePaths);
+  var animalShapeSizes = decodeFilesOfEntryType(Curry._1(AnimalShape$OptolithClient.Size.Decode.assoc, langs), parsedData.animalShapeSizes);
   var animistForces = decodeFilesOfEntryType(Curry._1(AnimistForce$OptolithClient.Static.Decode.assoc, langs), parsedData.animistForces);
   var arcaneBardTraditions = decodeFilesOfEntryType((function (param) {
           return IdName$OptolithClient.Decode.assoc(langs, param);
@@ -96,7 +109,11 @@ function decodeFiles(langs, messages, parsedData) {
         }), parsedData.combatTechniqueGroups);
   var combatTechniques = decodeFilesOfEntryType(Curry._1(CombatTechnique$OptolithClient.Static.Decode.assoc, langs), parsedData.combatTechniques);
   var conditions = decodeFilesOfEntryType(Curry._1(Condition$OptolithClient.Static.Decode.assoc, langs), parsedData.conditions);
+  var coreRules = decodeFilesOfEntryType((function (param) {
+          return CoreRule$OptolithClient.Decode.assoc(langs, param);
+        }), parsedData.coreRules);
   var cultures = decodeFilesOfEntryType(Curry._1(Culture$OptolithClient.Static.Decode.assoc, langs), parsedData.cultures);
+  var curricula = decodeFilesOfEntryType(Curry._1(Curriculum$OptolithClient.Static.Decode.assoc, langs), parsedData.curricula);
   var curses = decodeFilesOfEntryType(Curry._1(Curse$OptolithClient.Static.Decode.assoc, langs), parsedData.curses);
   var derivedCharacteristics = decodeFilesOfEntryType(Curry._1(DerivedCharacteristic$OptolithClient.Static.Decode.assoc, langs), parsedData.derivedCharacteristics);
   var dominationRituals = decodeFilesOfEntryType(Curry._1(DominationRitual$OptolithClient.Static.Decode.assoc, langs), parsedData.dominationRituals);
@@ -121,6 +138,9 @@ function decodeFiles(langs, messages, parsedData) {
   var hairColors = decodeFilesOfEntryType((function (param) {
           return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.hairColors);
+  var languages = decodeFilesOfEntryType((function (param) {
+          return Language$OptolithClient.Decode.assoc(langs, param);
+        }), parsedData.languages);
   var liturgicalChantGroups = decodeFilesOfEntryType((function (param) {
           return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.liturgicalChantGroups);
@@ -145,6 +165,9 @@ function decodeFiles(langs, messages, parsedData) {
           return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.reaches);
   var rogueSpells = decodeFilesOfEntryType(Curry._1(RogueSpell$OptolithClient.Static.Decode.assoc, langs), parsedData.rogueSpells);
+  var scripts = decodeFilesOfEntryType((function (param) {
+          return Script$OptolithClient.Decode.assoc(langs, param);
+        }), parsedData.scripts);
   var skillGroups = decodeFilesOfEntryType((function (param) {
           return SkillGroup$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.skillGroups);
@@ -164,16 +187,64 @@ function decodeFiles(langs, messages, parsedData) {
   var subjects = decodeFilesOfEntryType((function (param) {
           return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.subjects);
+  var tradeSecrets = decodeFilesOfEntryType((function (param) {
+          return TradeSecret$OptolithClient.Decode.assoc(langs, param);
+        }), parsedData.tradeSecrets);
   var tribes = decodeFilesOfEntryType((function (param) {
           return IdName$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.tribes);
   var zibiljaRituals = decodeFilesOfEntryType(Curry._1(ZibiljaRitual$OptolithClient.Static.Decode.assoc, langs), parsedData.zibiljaRituals);
-  var advantages = decodeFilesOfEntryType(Curry._7(Advantage$OptolithClient.Static.Decode.assoc, blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs), parsedData.advantages);
-  var disadvantages = decodeFilesOfEntryType(Curry._7(Disadvantage$OptolithClient.Static.Decode.assoc, blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs), parsedData.disadvantages);
-  var baseSpecialAbilities = decodeFilesOfEntryType(Curry._7(SpecialAbility$OptolithClient.Static.Decode.assoc, blessings, cantrips, combatTechniques, liturgicalChants, skills, spells, langs), parsedData.specialAbilities);
+  var advantages = decodeFilesOfEntryType(Curry.app(Advantage$OptolithClient.Static.Decode.assoc, [
+            blessings,
+            cantrips,
+            combatTechniques,
+            liturgicalChants,
+            skills,
+            spells,
+            tradeSecrets,
+            languages,
+            scripts,
+            animalShapes,
+            spellEnhancements,
+            liturgicalChantEnhancements,
+            langs
+          ]), parsedData.advantages);
+  var disadvantages = decodeFilesOfEntryType(Curry.app(Disadvantage$OptolithClient.Static.Decode.assoc, [
+            blessings,
+            cantrips,
+            combatTechniques,
+            liturgicalChants,
+            skills,
+            spells,
+            tradeSecrets,
+            languages,
+            scripts,
+            animalShapes,
+            spellEnhancements,
+            liturgicalChantEnhancements,
+            langs
+          ]), parsedData.disadvantages);
+  var baseSpecialAbilities = decodeFilesOfEntryType(Curry.app(SpecialAbility$OptolithClient.Static.Decode.assoc, [
+            blessings,
+            cantrips,
+            combatTechniques,
+            liturgicalChants,
+            skills,
+            spells,
+            tradeSecrets,
+            languages,
+            scripts,
+            animalShapes,
+            spellEnhancements,
+            liturgicalChantEnhancements,
+            langs
+          ]), parsedData.specialAbilities);
   var specialAbilities = Curry._1(SpecialAbility$OptolithClient.Static.Decode.modifyParsed, baseSpecialAbilities);
   return {
           advantages: advantages,
+          animalShapes: animalShapes,
+          animalShapePaths: animalShapePaths,
+          animalShapeSizes: animalShapeSizes,
           animistForces: animistForces,
           arcaneBardTraditions: arcaneBardTraditions,
           arcaneDancerTraditions: arcaneDancerTraditions,
@@ -188,7 +259,9 @@ function decodeFiles(langs, messages, parsedData) {
           combatTechniqueGroups: combatTechniqueGroups,
           combatTechniques: combatTechniques,
           conditions: conditions,
+          coreRules: coreRules,
           cultures: cultures,
+          curricula: curricula,
           curses: curses,
           derivedCharacteristics: derivedCharacteristics,
           disadvantages: disadvantages,
@@ -202,6 +275,7 @@ function decodeFiles(langs, messages, parsedData) {
           focusRules: focusRules,
           geodeRituals: geodeRituals,
           hairColors: hairColors,
+          languages: languages,
           liturgicalChantEnhancements: liturgicalChantEnhancements,
           liturgicalChantGroups: liturgicalChantGroups,
           liturgicalChants: liturgicalChants,
@@ -217,6 +291,7 @@ function decodeFiles(langs, messages, parsedData) {
           races: races,
           reaches: reaches,
           rogueSpells: rogueSpells,
+          scripts: scripts,
           skillGroups: skillGroups,
           skills: skills,
           socialStatuses: socialStatuses,
@@ -227,6 +302,7 @@ function decodeFiles(langs, messages, parsedData) {
           spells: spells,
           states: states,
           subjects: subjects,
+          tradeSecrets: tradeSecrets,
           tribes: tribes,
           zibiljaRituals: zibiljaRituals
         };

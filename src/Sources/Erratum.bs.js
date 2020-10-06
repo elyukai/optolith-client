@@ -6,8 +6,8 @@ import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 
 function t(json) {
   return {
-          date: Json_decode.field("id", Json_decode.date, json),
-          description: Json_decode.field("id", Json_decode.string, json)
+          date: Json_decode.field("date", Json_decode.date, json),
+          description: Json_decode.field("description", Json_decode.string, json)
         };
 }
 

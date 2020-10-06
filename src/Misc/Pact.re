@@ -23,32 +23,55 @@ module Static = {
   };
 
   module Decode = {
+    module TypeTranslation = {
+      type t = {name: string};
+
+      let t = json => JsonStrict.{name: json |> field("name", string)};
+    };
+
+    module TypeTranslationMap = TranslationMap.Make(TypeTranslation);
+
+    type typeMultilingual = {
+      id: int,
+      translations: TypeTranslationMap.t,
+    };
+
+    let typeMultilingual = json =>
+      JsonStrict.{
+        id: json |> field("id", int),
+        translations:
+          json |> field("translations", TypeTranslationMap.Decode.t),
+      };
+
+    module DomainTranslation = {
+      type t = {name: string};
+
+      let t = json => JsonStrict.{name: json |> field("name", string)};
+    };
+
+    module DomainTranslationMap = TranslationMap.Make(DomainTranslation);
+
+    type domainMultilingual = {
+      id: int,
+      translations: DomainTranslationMap.t,
+    };
+
+    let domainMultilingual = (json): domainMultilingual =>
+      JsonStrict.{
+        id: json |> field("id", int),
+        translations:
+          json |> field("translations", DomainTranslationMap.Decode.t),
+      };
+
     module Translation = {
       type t = {
         name: string,
-        types: Ley_IntMap.t(string),
-        domains: Ley_IntMap.t(string),
         errata: list(Erratum.t),
       };
-
-      let type_ = json =>
-        JsonStrict.(
-          json |> field("id", int),
-          json |> field("name", string),
-        );
-
-      let domain = json =>
-        JsonStrict.(
-          json |> field("id", int),
-          json |> field("name", string),
-        );
 
       let t = json =>
         JsonStrict.{
           name: json |> field("name", string),
-          types: json |> field("types", list(type_)) |> Ley_IntMap.fromList,
-          domains:
-            json |> field("domains", list(domain)) |> Ley_IntMap.fromList,
           errata: json |> field("errata", Erratum.Decode.list),
         };
     };
@@ -57,6 +80,8 @@ module Static = {
 
     type multilingual = {
       id: int,
+      types: list(typeMultilingual),
+      domains: list(domainMultilingual),
       src: list(PublicationRef.Decode.multilingual),
       translations: TranslationMap.t,
     };
@@ -64,11 +89,13 @@ module Static = {
     let multilingual = json =>
       JsonStrict.{
         id: json |> field("id", int),
+        types: json |> field("types", list(typeMultilingual)),
+        domains: json |> field("domains", list(domainMultilingual)),
         src: json |> field("src", PublicationRef.Decode.multilingualList),
         translations: json |> field("translations", TranslationMap.Decode.t),
       };
 
-    let resolveTranslations = (langs, x) =>
+    let resolveTranslations = (langs, x: multilingual) =>
       Ley_Option.Infix.(
         x.translations
         |> TranslationMap.Decode.getFromLanguageOrder(langs)
@@ -76,8 +103,40 @@ module Static = {
           translation => {
             id: x.id,
             name: translation.name,
-            types: translation.types,
-            domains: translation.domains,
+            types:
+              x.types
+              |> Ley_List.foldl(
+                   (mp, type_: typeMultilingual) =>
+                     type_.translations
+                     |> TypeTranslationMap.Decode.getFromLanguageOrder(langs)
+                     |> Ley_Option.option(
+                          mp, (typeTranslation: TypeTranslation.t) =>
+                          Ley_IntMap.insert(
+                            type_.id,
+                            typeTranslation.name,
+                            mp,
+                          )
+                        ),
+                   Ley_IntMap.empty,
+                 ),
+            domains:
+              x.domains
+              |> Ley_List.foldl(
+                   (mp, domain: domainMultilingual) =>
+                     domain.translations
+                     |> DomainTranslationMap.Decode.getFromLanguageOrder(
+                          langs,
+                        )
+                     |> Ley_Option.option(
+                          mp, (domainTranslation: DomainTranslation.t) =>
+                          Ley_IntMap.insert(
+                            domain.id,
+                            domainTranslation.name,
+                            mp,
+                          )
+                        ),
+                   Ley_IntMap.empty,
+                 ),
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
             errata: translation.errata,
           }

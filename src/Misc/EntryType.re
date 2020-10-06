@@ -92,7 +92,11 @@ module Activatable = {
       | Cantrip
       | LiturgicalChant
       | Blessing
-      | SpecialAbility;
+      | SpecialAbility
+      | TradeSecret
+      | Language
+      | Script
+      | AnimalShape;
 
     let toInt = x =>
       switch (x) {
@@ -104,6 +108,10 @@ module Activatable = {
       | LiturgicalChant => 6
       | Blessing => 7
       | SpecialAbility => 8
+      | TradeSecret => 9
+      | Language => 10
+      | Script => 11
+      | AnimalShape => 12
       };
   };
 };

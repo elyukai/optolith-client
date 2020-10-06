@@ -4,6 +4,7 @@ type t = {
   numId: int,
   primary: int,
   aspects: option((int, int)),
+  restrictedBlessings: list(int),
 };
 
 module Decode = {
@@ -20,6 +21,7 @@ module Decode = {
     numId: int,
     primary: int,
     aspects: option((int, int)),
+    restrictedBlessings: list(int),
     translations: TranslationMap.t,
   };
 
@@ -29,6 +31,10 @@ module Decode = {
       numId: json |> field("numId", int),
       primary: json |> field("primary", int),
       aspects: json |> optionalField("aspects", tuple2(int, int)),
+      restrictedBlessings:
+        json
+        |> optionalField("restrictedBlessings", list(int))
+        |> Ley_Option.fromOption([]),
       translations: json |> field("translations", TranslationMap.Decode.t),
     };
 
@@ -43,6 +49,7 @@ module Decode = {
           numId: x.numId,
           primary: x.primary,
           aspects: x.aspects,
+          restrictedBlessings: x.restrictedBlessings,
         }
       )
     );

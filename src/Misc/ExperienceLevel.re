@@ -5,8 +5,8 @@ type t = {
   maxAttributeValue: int,
   maxSkillRating: int,
   maxCombatTechniqueRating: int,
-  maxTotalAttributeValues: int,
-  maxSpellsLiturgicalChants: int,
+  maxAttributeTotal: int,
+  maxNumberSpellsLiturgicalChants: int,
   maxUnfamiliarSpells: int,
 };
 
@@ -25,8 +25,8 @@ module Decode = {
     maxAttributeValue: int,
     maxSkillRating: int,
     maxCombatTechniqueRating: int,
-    maxTotalAttributeValues: int,
-    maxSpellsLiturgicalChants: int,
+    maxAttributeTotal: int,
+    maxNumberSpellsLiturgicalChants: int,
     maxUnfamiliarSpells: int,
     translations: TranslationMap.t,
   };
@@ -39,9 +39,9 @@ module Decode = {
       maxSkillRating: json |> field("maxSkillRating", int),
       maxCombatTechniqueRating:
         json |> field("maxCombatTechniqueRating", int),
-      maxTotalAttributeValues: json |> field("maxTotalAttributeValues", int),
-      maxSpellsLiturgicalChants:
-        json |> field("maxSpellsLiturgicalChants", int),
+      maxAttributeTotal: json |> field("maxAttributeTotal", int),
+      maxNumberSpellsLiturgicalChants:
+        json |> field("maxNumberSpellsLiturgicalChants", int),
       maxUnfamiliarSpells: json |> field("maxUnfamiliarSpells", int),
       translations: json |> field("translations", TranslationMap.Decode.t),
     };
@@ -58,8 +58,8 @@ module Decode = {
           maxAttributeValue: x.maxAttributeValue,
           maxSkillRating: x.maxSkillRating,
           maxCombatTechniqueRating: x.maxCombatTechniqueRating,
-          maxTotalAttributeValues: x.maxTotalAttributeValues,
-          maxSpellsLiturgicalChants: x.maxSpellsLiturgicalChants,
+          maxAttributeTotal: x.maxAttributeTotal,
+          maxNumberSpellsLiturgicalChants: x.maxNumberSpellsLiturgicalChants,
           maxUnfamiliarSpells: x.maxUnfamiliarSpells,
         }
       )

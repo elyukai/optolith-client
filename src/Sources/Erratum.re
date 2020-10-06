@@ -6,8 +6,8 @@ type t = {
 module Decode = {
   let t = json =>
     Json.Decode.{
-      date: json |> field("id", date),
-      description: json |> field("id", string),
+      date: json |> field("date", date),
+      description: json |> field("description", string),
     };
 
   let list = json =>

@@ -120,6 +120,10 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                               case /* Cantrip */4 :
                               case /* Blessing */6 :
                               case /* SpecialAbility */7 :
+                              case /* TradeSecret */8 :
+                              case /* Language */9 :
+                              case /* Script */10 :
+                              case /* AnimalShape */11 :
                                   return ;
                               
                             }

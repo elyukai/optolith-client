@@ -5,7 +5,7 @@
 type t = {
   id: int,
   name: string,
-  short: string,
+  nameAbbr: string,
   isCore: bool,
   isAdultContent: bool,
 };

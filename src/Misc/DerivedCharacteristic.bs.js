@@ -11,7 +11,7 @@ var Dynamic = {};
 function t(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
-          short: JsonStrict$OptolithClient.field("short", JsonStrict$OptolithClient.string, json),
+          nameAbbr: JsonStrict$OptolithClient.field("nameAbbr", JsonStrict$OptolithClient.string, json),
           calc: JsonStrict$OptolithClient.field("calc", JsonStrict$OptolithClient.string, json),
           calcHalfPrimary: JsonStrict$OptolithClient.optionalField("calcHalfPrimary", JsonStrict$OptolithClient.string, json),
           calcNoPrimary: JsonStrict$OptolithClient.optionalField("calcNoPrimary", JsonStrict$OptolithClient.string, json)
@@ -37,7 +37,7 @@ function t$1(langs, json) {
                 return {
                         id: x.id,
                         name: translation.name,
-                        short: translation.short,
+                        nameAbbr: translation.nameAbbr,
                         calc: translation.calc,
                         calcHalfPrimary: translation.calcHalfPrimary,
                         calcNoPrimary: translation.calcNoPrimary

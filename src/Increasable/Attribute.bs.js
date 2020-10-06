@@ -14,7 +14,7 @@ var Dynamic = Increasable$OptolithClient.Dynamic.Make({
 function t(json) {
   return {
           name: Json_decode.field("name", Json_decode.string, json),
-          short: Json_decode.field("short", Json_decode.string, json)
+          nameAbbr: Json_decode.field("nameAbbr", Json_decode.string, json)
         };
 }
 
@@ -37,7 +37,7 @@ function t$1(langs, json) {
                 return {
                         id: x.id,
                         name: translation.name,
-                        short: translation.short
+                        nameAbbr: translation.nameAbbr
                       };
               }));
 }

@@ -13,7 +13,7 @@ module Static = {
     duration: ActivatableSkill.MainParameter.t,
     target: string,
     property: int,
-    activatablePrerequisites: option(list(Prerequisite.Activatable.t)),
+    prerequisites: list(Prerequisite.Activatable.t),
     src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
@@ -55,7 +55,7 @@ module Static = {
       check: SkillCheck.t,
       checkMod: option(CheckModifier.t),
       property: int,
-      activatablePrerequisites: option(list(Prerequisite.Activatable.t)),
+      prerequisites: list(Prerequisite.Activatable.t),
       src: list(PublicationRef.Decode.multilingual),
       translations: TranslationMap.t,
     };
@@ -66,12 +66,13 @@ module Static = {
         check: json |> field("check", SkillCheck.Decode.t),
         checkMod: json |> optionalField("checkMod", CheckModifier.Decode.t),
         property: json |> field("property", int),
-        activatablePrerequisites:
+        prerequisites:
           json
           |> optionalField(
-               "activatablePrerequisites",
+               "prerequisites",
                list(Prerequisite.Activatable.Decode.t),
-             ),
+             )
+          |> Ley_Option.fromOption([]),
         src: json |> field("src", PublicationRef.Decode.multilingualList),
         translations: json |> field("translations", TranslationMap.Decode.t),
       };
@@ -103,7 +104,7 @@ module Static = {
               ),
             target: translation.target,
             property: x.property,
-            activatablePrerequisites: x.activatablePrerequisites,
+            prerequisites: x.prerequisites,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
             errata: translation.errata,
           }

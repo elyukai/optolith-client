@@ -4,6 +4,7 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as IC$OptolithClient from "./IC.bs.js";
 import * as Decoder$OptolithClient from "../Utilities/Decoder.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
+import * as OneOrMany$OptolithClient from "../Utilities/OneOrMany.bs.js";
 import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as SkillCheck$OptolithClient from "./SkillCheck.bs.js";
@@ -32,7 +33,7 @@ function multilingual(json) {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.Decode.t, json),
           checkMod: JsonStrict$OptolithClient.optionalField("checkMod", CheckModifier$OptolithClient.Decode.t, json),
-          skill: JsonStrict$OptolithClient.optionalField("skill", JsonStrict$OptolithClient.$$int, json),
+          skill: JsonStrict$OptolithClient.field("skill", OneOrMany$OptolithClient.Decode.t(JsonStrict$OptolithClient.$$int), json),
           property: JsonStrict$OptolithClient.field("property", JsonStrict$OptolithClient.$$int, json),
           ic: JsonStrict$OptolithClient.field("ic", IC$OptolithClient.Decode.t, json),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),

@@ -103,14 +103,16 @@ let moveActiveInListToNew = (newxs, x: Hero.styleDependency) =>
  */
 let generateStyleDependencies =
     (heroSpecialAbilities, styleSpecialAbility: SpecialAbility.Static.t) =>
-  Ley_Option.Infix.(
-    styleSpecialAbility.extended
-    <&> (
-      extended =>
-        extended
-        |> Ley_List.map((extendedId) =>
+  [@warning "-4"]
+  (
+    switch (styleSpecialAbility.groupSpecific) {
+    | CombatStyle({extended: (ext1, ext2, ext3), _})
+    | GeneralStyle({extended: (ext1, ext2, ext3), _}) =>
+      Ley_Option.Infix.(
+        [ext1, ext2, ext3]
+        |> Ley_List.map(({SpecialAbility.Static.Extended.id, _}) =>
              (
-               {id: extendedId, active: None, origin: styleSpecialAbility.id}: Hero.styleDependency
+               {id: One(id), active: None, origin: styleSpecialAbility.id}: Hero.styleDependency
              )
            )
         |> (
@@ -147,7 +149,10 @@ let generateStyleDependencies =
               }
             )
         )
-    )
+        |> Ley_Option.return
+      )
+    | _ => None
+    }
   );
 
 /**

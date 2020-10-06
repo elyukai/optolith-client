@@ -21,7 +21,6 @@ module Static = {
         effect: string,
         cost: ActivatableSkill.MainParameter.translation,
         duration: ActivatableSkill.MainParameter.translation,
-        target: string,
         errata: list(Erratum.t),
       };
 
@@ -32,7 +31,6 @@ module Static = {
           cost: json |> field("cost", ActivatableSkill.MainParameter.decode),
           duration:
             json |> field("duration", ActivatableSkill.MainParameter.decode),
-          target: json |> field("target", string),
           errata: json |> field("errata", Erratum.Decode.list),
         };
     };

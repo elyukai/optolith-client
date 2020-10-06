@@ -4,12 +4,11 @@ module Static: {
   type t = {
     id: int,
     name: string,
-    nameByTradition: Ley_IntMap.t(string),
     check: SkillCheck.t,
     effect: string,
     duration: ActivatableSkill.MainParameter.t,
     cost: ActivatableSkill.MainParameter.t,
-    musicTraditions: Ley_IntSet.t,
+    musicTraditions: Ley_IntMap.t(string),
     property: int,
     ic: IC.t,
     src: list(PublicationRef.t),

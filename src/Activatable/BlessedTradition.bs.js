@@ -26,6 +26,9 @@ function multilingual(json) {
           aspects: JsonStrict$OptolithClient.optionalField("aspects", (function (param) {
                   return JsonStrict$OptolithClient.tuple2(JsonStrict$OptolithClient.$$int, JsonStrict$OptolithClient.$$int, param);
                 }), json),
+          restrictedBlessings: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("restrictedBlessings", (function (param) {
+                      return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
+                    }), json)),
           translations: JsonStrict$OptolithClient.field("translations", TranslationMap.Decode.t, json)
         };
 }
@@ -38,7 +41,8 @@ function t$1(langs, json) {
                         name: translation.name,
                         numId: x.numId,
                         primary: x.primary,
-                        aspects: x.aspects
+                        aspects: x.aspects,
+                        restrictedBlessings: x.restrictedBlessings
                       };
               }));
 }

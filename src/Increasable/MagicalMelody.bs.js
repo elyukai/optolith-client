@@ -4,28 +4,43 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as IC$OptolithClient from "./IC.bs.js";
 import * as Decoder$OptolithClient from "../Utilities/Decoder.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
+import * as OneOrMany$OptolithClient from "../Utilities/OneOrMany.bs.js";
 import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
 import * as Ley_IntMap$OptolithClient from "../Data/Ley_IntMap.bs.js";
-import * as Ley_IntSet$OptolithClient from "../Data/Ley_IntSet.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as SkillCheck$OptolithClient from "./SkillCheck.bs.js";
 import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 import * as ActivatableSkill$OptolithClient from "./ActivatableSkill.bs.js";
 
-function nameByTradition(json) {
+function t(json) {
+  return JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json);
+}
+
+var MusicTraditionTranslation = {
+  t: t
+};
+
+var MusicTraditionTranslationMap = TranslationMap$OptolithClient.Make(MusicTraditionTranslation);
+
+function musicTraditionMultilingual(json) {
+  return {
+          id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
+          translations: JsonStrict$OptolithClient.field("translations", MusicTraditionTranslationMap.Decode.t, json)
+        };
+}
+
+function musicTraditionMultilingualAssoc(json) {
+  var x = musicTraditionMultilingual(json);
   return [
-          JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
-          JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json)
+          x.id,
+          x
         ];
 }
 
-function t(json) {
+function t$1(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
-          nameByTradition: Curry._1(Ley_IntMap$OptolithClient.fromList, JsonStrict$OptolithClient.field("nameByTradition", (function (param) {
-                      return JsonStrict$OptolithClient.list(nameByTradition, param);
-                    }), json)),
           effect: JsonStrict$OptolithClient.field("effect", JsonStrict$OptolithClient.string, json),
           duration: JsonStrict$OptolithClient.field("duration", ActivatableSkill$OptolithClient.MainParameter.decode, json),
           cost: JsonStrict$OptolithClient.field("cost", ActivatableSkill$OptolithClient.MainParameter.decode, json),
@@ -34,17 +49,19 @@ function t(json) {
         };
 }
 
-var TranslationMap = TranslationMap$OptolithClient.Make({
-      t: t
-    });
+var Translation = {
+  t: t$1
+};
+
+var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 
 function multilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.Decode.t, json),
-          skill: JsonStrict$OptolithClient.optionalField("skill", JsonStrict$OptolithClient.$$int, json),
-          musicTraditions: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("musicTraditions", (function (param) {
-                      return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
+          skill: JsonStrict$OptolithClient.field("skill", OneOrMany$OptolithClient.Decode.t(JsonStrict$OptolithClient.$$int), json),
+          musicTraditions: Curry._1(Ley_IntMap$OptolithClient.fromList, JsonStrict$OptolithClient.field("musicTraditions", (function (param) {
+                      return JsonStrict$OptolithClient.list(musicTraditionMultilingualAssoc, param);
                     }), json)),
           property: JsonStrict$OptolithClient.field("property", JsonStrict$OptolithClient.$$int, json),
           ic: JsonStrict$OptolithClient.field("ic", IC$OptolithClient.Decode.t, json),
@@ -53,19 +70,20 @@ function multilingual(json) {
         };
 }
 
-function t$1(langs, json) {
+function t$2(langs, json) {
   var x = multilingual(json);
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
                 return {
                         id: x.id,
                         name: translation.name,
-                        nameByTradition: translation.nameByTradition,
                         check: x.check,
                         effect: translation.effect,
                         duration: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.duration),
                         cost: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.cost),
                         skill: x.skill,
-                        musicTraditions: x.musicTraditions,
+                        musicTraditions: Curry._2(Ley_IntMap$OptolithClient.mapMaybe, (function (musicTradition) {
+                                return Curry._2(MusicTraditionTranslationMap.Decode.getFromLanguageOrder, langs, musicTradition.translations);
+                              }), x.musicTraditions),
                         property: x.property,
                         ic: x.ic,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
@@ -82,7 +100,7 @@ function toAssoc(x) {
 }
 
 function assoc(param, param$1) {
-  return Decoder$OptolithClient.decodeAssoc(t$1, toAssoc, param, param$1);
+  return Decoder$OptolithClient.decodeAssoc(t$2, toAssoc, param, param$1);
 }
 
 var Dynamic = ActivatableSkill$OptolithClient.Dynamic;
@@ -98,4 +116,4 @@ export {
   Static ,
   
 }
-/* TranslationMap Not a pure module */
+/* MusicTraditionTranslationMap Not a pure module */

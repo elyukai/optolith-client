@@ -63,6 +63,7 @@ module Static: {
     uncommonDisadvantagesText: option(string),
     weightBase: int,
     weightRandom: list(Dice.t),
+    startingAge: Ley_IntMap.t((int, Dice.t)),
     variantOptions,
     src: list(PublicationRef.t),
     errata: list(Erratum.t),

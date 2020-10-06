@@ -32,8 +32,6 @@ function multilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.Decode.t, json),
-          costNoMod: JsonStrict$OptolithClient.field("costNoMod", JsonStrict$OptolithClient.bool, json),
-          durationNoMod: JsonStrict$OptolithClient.field("durationNoMod", JsonStrict$OptolithClient.bool, json),
           tribes: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("tribes", (function (param) {
                       return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
                     }), json)),
@@ -52,8 +50,8 @@ function t$1(langs, json) {
                         name: translation.name,
                         check: x.check,
                         effect: translation.effect,
-                        cost: ActivatableSkill$OptolithClient.MainParameter.make(x.costNoMod, translation.cost),
-                        duration: ActivatableSkill$OptolithClient.MainParameter.make(x.durationNoMod, translation.duration),
+                        cost: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.cost),
+                        duration: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.duration),
                         tribes: x.tribes,
                         property: x.property,
                         ic: x.ic,
