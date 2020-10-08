@@ -46,13 +46,13 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
 
   let arcaneBardTraditions =
     decodeFilesOfEntryType(
-      IdName.Decode.assoc(langs),
+      ArcaneTradition.Decode.assoc(langs),
       parsedData.arcaneBardTraditions,
     );
 
   let arcaneDancerTraditions =
     decodeFilesOfEntryType(
-      IdName.Decode.assoc(langs),
+      ArcaneTradition.Decode.assoc(langs),
       parsedData.arcaneDancerTraditions,
     );
 

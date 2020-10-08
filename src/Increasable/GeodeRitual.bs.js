@@ -37,9 +37,7 @@ function multilingual(json) {
           check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.Decode.t, json),
           checkMod: JsonStrict$OptolithClient.optionalField("checkMod", CheckModifier$OptolithClient.Decode.t, json),
           property: JsonStrict$OptolithClient.field("property", JsonStrict$OptolithClient.$$int, json),
-          prerequisites: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("prerequisites", (function (param) {
-                      return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.Decode.t, param);
-                    }), json)),
+          prerequisites: JsonStrict$OptolithClient.optionalField("prerequisites", Prerequisite$OptolithClient.Collection.Activatable.Decode.multilingual, json),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
           translations: JsonStrict$OptolithClient.field("translations", TranslationMap.Decode.t, json)
         };
@@ -60,7 +58,7 @@ function t$1(langs, json) {
                         duration: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.duration),
                         target: translation.target,
                         property: x.property,
-                        prerequisites: x.prerequisites,
+                        prerequisites: Ley_Option$OptolithClient.option(/* [] */0, Curry._1(Prerequisite$OptolithClient.Collection.Activatable.Decode.resolveTranslations, langs), x.prerequisites),
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
                         errata: translation.errata
                       };

@@ -34,9 +34,7 @@ function multilingual(json) {
           traditions: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("traditions", (function (param) {
                       return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
                     }), json)),
-          prerequisites: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("prerequisites", (function (param) {
-                      return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.Decode.t, param);
-                    }), json)),
+          prerequisites: JsonStrict$OptolithClient.optionalField("prerequisites", Prerequisite$OptolithClient.Collection.Activatable.Decode.multilingual, json),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
           translations: JsonStrict$OptolithClient.field("translations", TranslationMap.Decode.t, json)
         };
@@ -54,7 +52,7 @@ function t$1(langs, json) {
                         target: translation.target,
                         property: x.property,
                         traditions: x.traditions,
-                        prerequisites: x.prerequisites,
+                        prerequisites: Ley_Option$OptolithClient.option(/* [] */0, Curry._1(Prerequisite$OptolithClient.Collection.Activatable.Decode.resolveTranslations, langs), x.prerequisites),
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
                         errata: translation.errata
                       };

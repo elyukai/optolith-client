@@ -15,7 +15,7 @@ module Static: {
     property: int,
     traditions: Ley_IntSet.t,
     ic: IC.t,
-    prerequisites: list(Prerequisite.Increasable.t),
+    prerequisites: Prerequisite.Collection.Increasable.t,
     gr: int,
     enhancements: option(Enhancements.t),
     src: list(PublicationRef.t),

@@ -308,13 +308,17 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
               break;
           case /* PredigtDesWohlgefallens */33 :
               var partial_arg = staticData.arcaneBardTraditions;
-              return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(heroEntry), Activatable_SelectOptions$OptolithClient.getGenericId), (function (param) {
-                            return Ley_Function$OptolithClient.flip(Ley_IntMap$OptolithClient.lookup, partial_arg, param);
+              return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(heroEntry), Activatable_SelectOptions$OptolithClient.getGenericId), (function (param) {
+                                return Ley_Function$OptolithClient.flip(Ley_IntMap$OptolithClient.lookup, partial_arg, param);
+                              })), (function (trad) {
+                            return trad.name;
                           }));
           case /* PredigtWiderMissgeschicke */34 :
               var partial_arg$1 = staticData.arcaneDancerTraditions;
-              return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(heroEntry), Activatable_SelectOptions$OptolithClient.getGenericId), (function (param) {
-                            return Ley_Function$OptolithClient.flip(Ley_IntMap$OptolithClient.lookup, partial_arg$1, param);
+              return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(heroEntry), Activatable_SelectOptions$OptolithClient.getGenericId), (function (param) {
+                                return Ley_Function$OptolithClient.flip(Ley_IntMap$OptolithClient.lookup, partial_arg$1, param);
+                              })), (function (trad) {
+                            return trad.name;
                           }));
           case /* Hunter */3 :
           case /* AreaKnowledge */4 :

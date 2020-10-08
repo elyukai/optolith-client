@@ -13,7 +13,7 @@ module Static: {
     duration: ActivatableSkill.MainParameter.t,
     target: string,
     property: int,
-    prerequisites: list(Prerequisite.Activatable.t),
+    prerequisites: Prerequisite.Collection.Activatable.t,
     src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };

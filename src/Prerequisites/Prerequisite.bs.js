@@ -944,6 +944,142 @@ var AdvantageDisadvantage = {
   Decode: Decode$11
 };
 
+function unify$3(x) {
+  var x$1 = x.value;
+  var tmp;
+  tmp = x$1.TAG ? ({
+        TAG: /* Culture */2,
+        _0: x$1._0
+      }) : ({
+        TAG: /* Sex */0,
+        _0: x$1._0
+      });
+  return {
+          value: tmp,
+          displayOption: x.displayOption
+        };
+}
+
+function multilingual$5(param) {
+  return Json_decode.andThen((function (str) {
+                switch (str) {
+                  case "Culture" :
+                      return function (param) {
+                        return multilingual$1(oneOrManyInt, (function (v) {
+                                      return {
+                                              TAG: /* Culture */1,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  case "Sex" :
+                      return function (param) {
+                        return multilingual$1(t, (function (v) {
+                                      return {
+                                              TAG: /* Sex */0,
+                                              _0: v
+                                            };
+                                    }), param);
+                      };
+                  default:
+                    throw {
+                          RE_EXN_ID: Json_decode.DecodeError,
+                          _1: "Unknown prerequisite type: " + str,
+                          Error: new Error()
+                        };
+                }
+              }), (function (param) {
+                return Json_decode.field("type", Json_decode.string, param);
+              }), param);
+}
+
+var Decode$12 = {
+  multilingual: multilingual$5,
+  resolveTranslations: resolveTranslations$1
+};
+
+var ArcaneTradition = {
+  unify: unify$3,
+  Decode: Decode$12
+};
+
+function unify$4(x) {
+  return {
+          value: {
+            TAG: /* Activatable */6,
+            _0: x.value
+          },
+          displayOption: x.displayOption
+        };
+}
+
+function multilingual$6(param) {
+  return multilingual$1(t$4, (function (v) {
+                return v;
+              }), param);
+}
+
+var Decode$13 = {
+  multilingual: multilingual$6,
+  resolveTranslations: resolveTranslations$1
+};
+
+var ActivatableOnly = {
+  unify: unify$4,
+  Decode: Decode$13
+};
+
+function unify$5(x) {
+  return {
+          value: {
+            TAG: /* Increasable */9,
+            _0: x.value
+          },
+          displayOption: x.displayOption
+        };
+}
+
+function multilingual$7(param) {
+  return multilingual$1(t$7, (function (v) {
+                return v;
+              }), param);
+}
+
+var Decode$14 = {
+  multilingual: multilingual$7,
+  resolveTranslations: resolveTranslations$1
+};
+
+var IncreasableOnly = {
+  unify: unify$5,
+  Decode: Decode$14
+};
+
+function multilingual$8(decoder) {
+  return function (param) {
+    return Json_decode.andThen((function (str) {
+                  if (str === "Plain") {
+                    return function (json) {
+                      return Json_decode.field("value", (function (param) {
+                                    return Json_decode.list(decoder, param);
+                                  }), json);
+                    };
+                  }
+                  throw {
+                        RE_EXN_ID: Json_decode.DecodeError,
+                        _1: "Prerequisite list type has to be set to \"Plain\". Actual: " + str,
+                        Error: new Error()
+                      };
+                }), (function (param) {
+                  return Json_decode.field("type", Json_decode.string, param);
+                }), param);
+  };
+}
+
+function resolveTranslations$2(langs, f, xs) {
+  return Curry._2(Ley_List$OptolithClient.map, Curry._1(f, langs), xs);
+}
+
 function getFirstLevel(prerequisites) {
   if (prerequisites.TAG) {
     return Ley_Option$OptolithClient.fromOption(/* [] */0, Curry._2(Ley_IntMap$OptolithClient.lookup, 1, prerequisites._0));
@@ -994,7 +1130,7 @@ function concatRange(oldLevel, newLevel, prerequisites) {
   }
 }
 
-function multilingual$5(decoder) {
+function multilingual$9(decoder) {
   return function (param) {
     return Json_decode.andThen((function (str) {
                   switch (str) {
@@ -1037,7 +1173,7 @@ function multilingual$5(decoder) {
   };
 }
 
-function resolveTranslations$2(langs, f, x) {
+function resolveTranslations$3(langs, f, x) {
   if (x.TAG) {
     return {
             TAG: /* ByLevel */1,
@@ -1051,51 +1187,94 @@ function resolveTranslations$2(langs, f, x) {
   }
 }
 
-var multilingual$6 = multilingual$5(multilingual$2);
-
-function resolveTranslations$3(langs, x) {
-  return resolveTranslations$2(langs, resolveTranslations$1, x);
-}
-
-var Decode$12 = {
-  multilingual: multilingual$6,
-  resolveTranslations: resolveTranslations$3
-};
-
-var General$1 = {
-  Decode: Decode$12
-};
-
-function multilingual$7(param) {
-  return Json_decode.list(multilingual$3, param);
-}
+var multilingual$10 = multilingual$9(multilingual$2);
 
 function resolveTranslations$4(langs, x) {
-  return Curry._2(Ley_List$OptolithClient.map, Curry._1(resolveTranslations$1, langs), x);
+  return resolveTranslations$3(langs, resolveTranslations$1, x);
 }
 
-var Decode$13 = {
-  multilingual: multilingual$7,
+var Decode$15 = {
+  multilingual: multilingual$10,
   resolveTranslations: resolveTranslations$4
 };
 
-var Profession$1 = {
-  Decode: Decode$13
+var General$1 = {
+  Decode: Decode$15
 };
 
-var multilingual$8 = multilingual$5(multilingual$4);
+var multilingual$11 = multilingual$8(multilingual$3);
 
 function resolveTranslations$5(langs, x) {
   return resolveTranslations$2(langs, resolveTranslations$1, x);
 }
 
-var Decode$14 = {
-  multilingual: multilingual$8,
+var Decode$16 = {
+  multilingual: multilingual$11,
   resolveTranslations: resolveTranslations$5
 };
 
+var Profession$1 = {
+  Decode: Decode$16
+};
+
+var multilingual$12 = multilingual$9(multilingual$4);
+
+function resolveTranslations$6(langs, x) {
+  return resolveTranslations$3(langs, resolveTranslations$1, x);
+}
+
+var Decode$17 = {
+  multilingual: multilingual$12,
+  resolveTranslations: resolveTranslations$6
+};
+
 var AdvantageDisadvantage$1 = {
-  Decode: Decode$14
+  Decode: Decode$17
+};
+
+var multilingual$13 = multilingual$8(multilingual$5);
+
+function resolveTranslations$7(langs, x) {
+  return resolveTranslations$2(langs, resolveTranslations$1, x);
+}
+
+var Decode$18 = {
+  multilingual: multilingual$13,
+  resolveTranslations: resolveTranslations$7
+};
+
+var ArcaneTradition$1 = {
+  Decode: Decode$18
+};
+
+var multilingual$14 = multilingual$8(multilingual$6);
+
+function resolveTranslations$8(langs, x) {
+  return resolveTranslations$2(langs, resolveTranslations$1, x);
+}
+
+var Decode$19 = {
+  multilingual: multilingual$14,
+  resolveTranslations: resolveTranslations$8
+};
+
+var Activatable$1 = {
+  Decode: Decode$19
+};
+
+var multilingual$15 = multilingual$8(multilingual$7);
+
+function resolveTranslations$9(langs, x) {
+  return resolveTranslations$2(langs, resolveTranslations$1, x);
+}
+
+var Decode$20 = {
+  multilingual: multilingual$15,
+  resolveTranslations: resolveTranslations$9
+};
+
+var Increasable$1 = {
+  Decode: Decode$20
 };
 
 var ActivatableMultiEntry = {
@@ -1123,7 +1302,10 @@ var Collection = {
   ByLevel: Collection_ByLevel,
   General: General$1,
   Profession: Profession$1,
-  AdvantageDisadvantage: AdvantageDisadvantage$1
+  AdvantageDisadvantage: AdvantageDisadvantage$1,
+  ArcaneTradition: ArcaneTradition$1,
+  Activatable: Activatable$1,
+  Increasable: Increasable$1
 };
 
 export {
@@ -1145,6 +1327,9 @@ export {
   General ,
   Profession ,
   AdvantageDisadvantage ,
+  ArcaneTradition ,
+  ActivatableOnly ,
+  IncreasableOnly ,
   Collection ,
   
 }

@@ -8,7 +8,7 @@ module Static = {
     target: string,
     property: int,
     traditions: Ley_IntSet.t,
-    prerequisites: list(Prerequisite.Activatable.t),
+    prerequisites: Prerequisite.Collection.Activatable.t,
     src: list(PublicationRef.t),
     errata: list(Erratum.t),
   };
@@ -41,7 +41,8 @@ module Static = {
       id: int,
       property: int,
       traditions: Ley_IntSet.t,
-      prerequisites: list(Prerequisite.Activatable.t),
+      prerequisites:
+        option(Prerequisite.Collection.Activatable.Decode.multilingual),
       src: list(PublicationRef.Decode.multilingual),
       translations: TranslationMap.t,
     };
@@ -56,9 +57,8 @@ module Static = {
           json
           |> optionalField(
                "prerequisites",
-               list(Prerequisite.Activatable.Decode.t),
-             )
-          |> Ley_Option.fromOption([]),
+               Prerequisite.Collection.Activatable.Decode.multilingual,
+             ),
         src: json |> field("src", PublicationRef.Decode.multilingualList),
         translations: json |> field("translations", TranslationMap.Decode.t),
       };
@@ -77,7 +77,14 @@ module Static = {
             target: translation.target,
             property: x.property,
             traditions: x.traditions,
-            prerequisites: x.prerequisites,
+            prerequisites:
+              x.prerequisites
+              |> Ley_Option.option(
+                   [],
+                   Prerequisite.Collection.Activatable.Decode.resolveTranslations(
+                     langs,
+                   ),
+                 ),
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
             errata: translation.errata,
           }

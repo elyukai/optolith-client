@@ -595,12 +595,102 @@ module AdvantageDisadvantage = {
   };
 };
 
+module ArcaneTradition = {
+  type value =
+    | Sex(Sex.t)
+    | Culture(Culture.t);
+
+  type t = Config.t(value);
+
+  let unify = (x: t): Unified.t => {
+    value:
+      switch (x.value) {
+      | Sex(x) => Sex(x)
+      | Culture(x) => Culture(x)
+      },
+    displayOption: x.displayOption,
+  };
+
+  module Decode = {
+    type multilingual = Config.Decode.multilingual(value);
+
+    let multilingual =
+      Json.Decode.(
+        field("type", string)
+        |> andThen(
+             fun
+             | "Sex" => Config.Decode.multilingual(Sex.Decode.t, v => Sex(v))
+             | "Culture" =>
+               Config.Decode.multilingual(Culture.Decode.t, v => Culture(v))
+             | str =>
+               raise(DecodeError("Unknown prerequisite type: " ++ str)),
+           )
+      );
+
+    let resolveTranslations = Config.Decode.resolveTranslations;
+  };
+};
+
+module ActivatableOnly = {
+  type value = Activatable.t;
+
+  type t = Config.t(value);
+
+  let unify = (x: t): Unified.t => {
+    value: Activatable(x.value),
+    displayOption: x.displayOption,
+  };
+
+  module Decode = {
+    type multilingual = Config.Decode.multilingual(value);
+
+    let multilingual =
+      Config.Decode.multilingual(Activatable.Decode.t, v => v);
+
+    let resolveTranslations = Config.Decode.resolveTranslations;
+  };
+};
+
+module IncreasableOnly = {
+  type value = Increasable.t;
+
+  type t = Config.t(value);
+
+  let unify = (x: t): Unified.t => {
+    value: Increasable(x.value),
+    displayOption: x.displayOption,
+  };
+
+  module Decode = {
+    type multilingual = Config.Decode.multilingual(value);
+
+    let multilingual =
+      Config.Decode.multilingual(Increasable.Decode.t, v => v);
+
+    let resolveTranslations = Config.Decode.resolveTranslations;
+  };
+};
+
 module Collection = {
   module Plain = {
     type t('a) = list('a);
 
     module Decode = {
-      let multilingual = Json.Decode.list;
+      let multilingual = decoder =>
+        Json.Decode.(
+          field("type", string)
+          |> andThen(
+               fun
+               | "Plain" => (json => json |> field("value", list(decoder)))
+               | str =>
+                 raise(
+                   DecodeError(
+                     "Prerequisite list type has to be set to \"Plain\". Actual: "
+                     ++ str,
+                   ),
+                 ),
+             )
+        );
 
       let resolveTranslations = (langs, f, xs) =>
         xs |> Ley_List.map(f(langs));
@@ -712,4 +802,10 @@ module Collection = {
   module Profession = Make(Plain, Profession);
 
   module AdvantageDisadvantage = Make(ByLevel, AdvantageDisadvantage);
+
+  module ArcaneTradition = Make(Plain, ArcaneTradition);
+
+  module Activatable = Make(Plain, ActivatableOnly);
+
+  module Increasable = Make(Plain, IncreasableOnly);
 };

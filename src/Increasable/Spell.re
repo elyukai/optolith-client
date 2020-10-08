@@ -15,7 +15,7 @@ module Static = {
     property: int,
     traditions: Ley_IntSet.t,
     ic: IC.t,
-    prerequisites: list(Prerequisite.Increasable.t),
+    prerequisites: Prerequisite.Collection.Increasable.t,
     gr: int,
     enhancements: option(Enhancements.t),
     src: list(PublicationRef.t),
@@ -65,7 +65,8 @@ module Static = {
       property: int,
       traditions: Ley_IntSet.t,
       ic: IC.t,
-      prerequisites: list(Prerequisite.Increasable.t),
+      prerequisites:
+        option(Prerequisite.Collection.Increasable.Decode.multilingual),
       gr: int,
       enhancements: option(Enhancements.Decode.multilingual),
       src: list(PublicationRef.Decode.multilingual),
@@ -89,9 +90,8 @@ module Static = {
           json
           |> optionalField(
                "prerequisites",
-               list(Prerequisite.Increasable.Decode.t),
-             )
-          |> Ley_Option.fromOption([]),
+               Prerequisite.Collection.Increasable.Decode.multilingual,
+             ),
         gr: json |> field("gr", int),
         enhancements:
           json
@@ -135,7 +135,14 @@ module Static = {
             property: x.property,
             traditions: x.traditions,
             ic: x.ic,
-            prerequisites: x.prerequisites,
+            prerequisites:
+              x.prerequisites
+              |> Ley_Option.option(
+                   [],
+                   Prerequisite.Collection.Increasable.Decode.resolveTranslations(
+                     langs,
+                   ),
+                 ),
             gr: x.gr,
             enhancements:
               x.enhancements

@@ -219,11 +219,13 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
         |> getOption1
         >>= getGenericId
         >>= flip(Ley_IntMap.lookup, staticData.arcaneBardTraditions)
+        <&> (trad => trad.name)
       | TraditionArcaneDancer =>
         heroEntry
         |> getOption1
         >>= getGenericId
         >>= flip(Ley_IntMap.lookup, staticData.arcaneDancerTraditions)
+        <&> (trad => trad.name)
       | LanguageSpecializations =>
         liftM2(
           getSelectOption,

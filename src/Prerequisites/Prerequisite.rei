@@ -222,6 +222,56 @@ module AdvantageDisadvantage: {
   };
 };
 
+module ArcaneTradition: {
+  type value =
+    | Sex(Sex.t)
+    | Culture(Culture.t);
+
+  type t = Config.t(value);
+
+  let unify: t => Unified.t;
+
+  module Decode: {
+    type multilingual;
+
+    let multilingual: Json.Decode.decoder(multilingual);
+
+    let resolveTranslations: (Locale.order, multilingual) => t;
+  };
+};
+
+module ActivatableOnly: {
+  type value = Activatable.t;
+
+  type t = Config.t(value);
+
+  let unify: t => Unified.t;
+
+  module Decode: {
+    type multilingual;
+
+    let multilingual: Json.Decode.decoder(multilingual);
+
+    let resolveTranslations: (Locale.order, multilingual) => t;
+  };
+};
+
+module IncreasableOnly: {
+  type value = Increasable.t;
+
+  type t = Config.t(value);
+
+  let unify: t => Unified.t;
+
+  module Decode: {
+    type multilingual;
+
+    let multilingual: Json.Decode.decoder(multilingual);
+
+    let resolveTranslations: (Locale.order, multilingual) => t;
+  };
+};
+
 module Collection: {
   module ByLevel: {
     type t('a) =
@@ -267,6 +317,42 @@ module Collection: {
 
   module AdvantageDisadvantage: {
     type t = ByLevel.t(AdvantageDisadvantage.t);
+
+    module Decode: {
+      type multilingual;
+
+      let multilingual: Json.Decode.decoder(multilingual);
+
+      let resolveTranslations: (Locale.order, multilingual) => t;
+    };
+  };
+
+  module ArcaneTradition: {
+    type t = list(ArcaneTradition.t);
+
+    module Decode: {
+      type multilingual;
+
+      let multilingual: Json.Decode.decoder(multilingual);
+
+      let resolveTranslations: (Locale.order, multilingual) => t;
+    };
+  };
+
+  module Activatable: {
+    type t = list(ActivatableOnly.t);
+
+    module Decode: {
+      type multilingual;
+
+      let multilingual: Json.Decode.decoder(multilingual);
+
+      let resolveTranslations: (Locale.order, multilingual) => t;
+    };
+  };
+
+  module Increasable: {
+    type t = list(IncreasableOnly.t);
 
     module Decode: {
       type multilingual;

@@ -39,6 +39,7 @@ import * as OptionalRule$OptolithClient from "../Rules/OptionalRule.bs.js";
 import * as MagicalMelody$OptolithClient from "../Increasable/MagicalMelody.bs.js";
 import * as ZibiljaRitual$OptolithClient from "../Increasable/ZibiljaRitual.bs.js";
 import * as SpecialAbility$OptolithClient from "../Activatable/SpecialAbility.bs.js";
+import * as ArcaneTradition$OptolithClient from "../Activatable/ArcaneTradition.bs.js";
 import * as CombatTechnique$OptolithClient from "../Increasable/CombatTechnique.bs.js";
 import * as ExperienceLevel$OptolithClient from "./ExperienceLevel.bs.js";
 import * as LiturgicalChant$OptolithClient from "../Increasable/LiturgicalChant.bs.js";
@@ -81,10 +82,10 @@ function decodeFiles(langs, messages, parsedData) {
   var animalShapeSizes = decodeFilesOfEntryType(Curry._1(AnimalShape$OptolithClient.Size.Decode.assoc, langs), parsedData.animalShapeSizes);
   var animistForces = decodeFilesOfEntryType(Curry._1(AnimistForce$OptolithClient.Static.Decode.assoc, langs), parsedData.animistForces);
   var arcaneBardTraditions = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.Decode.assoc(langs, param);
+          return ArcaneTradition$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.arcaneBardTraditions);
   var arcaneDancerTraditions = decodeFilesOfEntryType((function (param) {
-          return IdName$OptolithClient.Decode.assoc(langs, param);
+          return ArcaneTradition$OptolithClient.Decode.assoc(langs, param);
         }), parsedData.arcaneDancerTraditions);
   var armorTypes = decodeFilesOfEntryType((function (param) {
           return IdName$OptolithClient.Decode.assoc(langs, param);
