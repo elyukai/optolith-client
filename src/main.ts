@@ -153,31 +153,39 @@ const createWindow = async () => {
   }
 }
 
-const main = () => {
+const main = async () => {
   autoUpdater.logger = log
   // @ts-ignore
   autoUpdater.logger.transports.file.level = "info"
   autoUpdater.autoDownload = false
 
-  console.log ("main: Install development extensions ...")
-  // install dev extensions
-  const edi = require ("electron-devtools-installer")
-  edi.default ([
-    edi.REACT_DEVELOPER_TOOLS,
-    edi.REDUX_DEVTOOLS,
-  ])
-
   console.log ("main: Set user data path ...")
 
-  setDerivedUserDataPath ()
-    .then (() => console.log ("main: Create Window ..."))
-    .then (createWindow)
-    .then (() => {
-      app.on ("window-all-closed", () => {
-        app.quit ()
-      })
-    })
-    .catch (console.error)
+  await setDerivedUserDataPath ()
+
+  console.log ("main: Install extensions ...")
+
+  const installExtension = require ("electron-devtools-installer")
+
+  const installedExtensions = await installExtension.default ([
+    installExtension.REACT_DEVELOPER_TOOLS,
+    installExtension.REDUX_DEVTOOLS,
+  ])
+
+  console.log (`main: Installed extensions: ${installedExtensions}`)
+
+  console.log ("main: Create Window ...")
+
+  await createWindow ()
+
+  app.on ("window-all-closed", () => {
+    app.quit ()
+  })
 }
 
-app.on ("ready", main)
+// app.on("ready") expects a callback that returns void and not a Promise
+const mainVoid = () => {
+  main () .catch (console.error)
+}
+
+app.on ("ready", mainVoid)

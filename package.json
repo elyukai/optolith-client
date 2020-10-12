@@ -31,7 +31,7 @@
     "reason-react": "0.8.0",
     "reductive": "2.0.1",
     "redux": "4.0.5",
-    "redux-devtools-extension": "^2.13.8",
+    "redux-devtools-extension": "2.13.8",
     "redux-thunk": "2.3.0",
     "remark-breaks": "1.0.5",
     "reselect": "4.0.0",
