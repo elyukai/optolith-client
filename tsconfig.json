@@ -6,7 +6,7 @@
     "importHelpers": true,
     "jsx": "react",
     "lib": ["esnext", "dom"],
-    "module": "ES2020",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "noEmitHelpers": true,
     "noFallthroughCasesInSwitch": true,

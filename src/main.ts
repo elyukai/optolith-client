@@ -10,7 +10,6 @@ import { isUpdaterEnabled } from "./App/Utilities/CheckForUpdatesMain"
 import { existsFile } from "./System/IO"
 
 app.setAppUserModelId ("lukasobermann.optolith")
-app.allowRendererProcessReuse = false
 
 const setDerivedUserDataPath = async () => {
   const isPrerelease = prerelease (app.getVersion ()) !== null
@@ -26,11 +25,15 @@ const setDerivedUserDataPath = async () => {
 }
 
 const createWindow = async () => {
+  console.log ("main (window): Initialize window state keeper")
+
   const mainWindowState = windowStateKeeper ({
     defaultHeight: 720,
     defaultWidth: 1280,
     file: "window.json",
   })
+
+  console.log ("main (window): Initialize browser window")
 
   const mainWindow = new BrowserWindow ({
     x: mainWindowState.x,
@@ -49,13 +52,18 @@ const createWindow = async () => {
     show: false,
     webPreferences: {
       nodeIntegration: true,
-      preload: path.join (app.getAppPath (), "app", "esmPreload.js"),
+      // preload: path.join (app.getAppPath (), "app", "esmPreload.js"),
+      enableRemoteModule: true,
     },
   })
+
+  console.log ("main (window): Manage browser window with state keeper")
 
   mainWindowState.manage (mainWindow)
 
   try {
+    console.log ("main (window): Load url")
+
     await mainWindow.loadURL (url.format ({
       pathname: path.join (__dirname, "index.html"),
       protocol: "file:",
@@ -64,9 +72,13 @@ const createWindow = async () => {
 
     // mainWindow.webContents.openDevTools ()
 
+    console.log ("main (window): Show window")
+
     mainWindow.show ()
 
     if (mainWindowState.isMaximized) {
+      console.log ("main (window): Maximize window ...")
+
       mainWindow.maximize ()
     }
 
@@ -74,12 +86,18 @@ const createWindow = async () => {
       let cancellationToken: CancellationToken | undefined = undefined
 
       if (isUpdaterEnabled ()) {
+        console.log ("main: Updater is enabled, check for updates ...")
+
         autoUpdater
           .checkForUpdates ()
           .then (res => {
-            if (res.cancellationToken !== undefined) {
+            if (res.cancellationToken === undefined) {
+              console.log ("main: No update available")
+            }
+            else {
               const { cancellationToken: token } = res
               cancellationToken = token
+              console.log ("main: Update is available")
               mainWindow.webContents.send ("update-available", res.updateInfo)
             }
           })
@@ -125,6 +143,9 @@ const createWindow = async () => {
           autoUpdater.quitAndInstall ()
         })
       }
+      else {
+        console.log ("main: Updater is not available")
+      }
     })
   }
   catch (err) {
@@ -138,6 +159,7 @@ const main = () => {
   autoUpdater.logger.transports.file.level = "info"
   autoUpdater.autoDownload = false
 
+  console.log ("main: Install development extensions ...")
   // install dev extensions
   const edi = require ("electron-devtools-installer")
   edi.default ([
@@ -145,7 +167,10 @@ const main = () => {
     edi.REDUX_DEVTOOLS,
   ])
 
+  console.log ("main: Set user data path ...")
+
   setDerivedUserDataPath ()
+    .then (() => console.log ("main: Create Window ..."))
     .then (createWindow)
     .then (() => {
       app.on ("window-all-closed", () => {
