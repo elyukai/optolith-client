@@ -1,3 +1,26 @@
+## 1.4.2
+
+### Bug Fixes
+
+- Added some missing UI translations. [#723](https://github.com/elyukai/optolith-client/issues/723)
+- Added missing aspects for **Gods of Aventuria I**. [#724](https://github.com/elyukai/optolith-client/issues/724)
+- Added missing special ability groups for **Gods of Aventuria I**. [#725](https://github.com/elyukai/optolith-client/issues/725)
+- SA *Two Blessings at Once* had the wrong rules text. [#750](https://github.com/elyukai/optolith-client/issues/750)
+- Combat Techniques maximum CtR could be higher that allowed by rules. [#749](https://github.com/elyukai/optolith-client/issues/749)
+- The top margin of overlay windows – like when adding advantages – was too small. [#727](https://github.com/elyukai/optolith-client/issues/727)
+- If a profession allowed to select a second combat technique from a set of combat techniques where the bonus was lower than the bonus for the first combat technique, the selected lower bonus was not applied to the character. [#647](https://github.com/elyukai/optolith-client/issues/647)
+- The *Torch* had P+T STR 15 instead of STR 14. [#752](https://github.com/elyukai/optolith-client/issues/752) [#737](https://github.com/elyukai/optolith-client/issues/737)
+- The P+T damage bonus was not added to weapons without flat damage. [#737](https://github.com/elyukai/optolith-client/issues/737)
+- Profession *White Mage (Gareth Academy of Sword and Staff)* from the **Core Rules** had a wrong AP value and *Astronomy 4* instead of *Alchemy 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
+- Character Sheet view zoom option. [#665](https://github.com/elyukai/optolith-client/issues/665)
+- Character Sheet view zoom option. [#665](https://github.com/elyukai/optolith-client/issues/665)
+
+## 1.4.1
+
+### Bug Fixes
+
+- Italian was not available.
+
 ## 1.4.0
 
 ### Features

@@ -1,3 +1,21 @@
+## 1.4.2
+
+### Fehlerbehebungen
+
+- Das Maximum von Kampftechniken konnte höher sein als es die Regeln eigentlich erlauben. [#749](https://github.com/elyukai/optolith-client/issues/749)https://github.com/elyukai/optolith-client/issues/665)
+- Der Abstand von Overlays – also z. B. wenn Vorteile hinzugefügt werden – nach oben war zu klein. [#727](https://github.com/elyukai/optolith-client/issues/727)
+- Wenn eine Profession es erlaubt hat, aus einer Menge an Kampftechniken eine zweite für einen niedrigeren Bonus als den der ersten auszuwählen, wurde dieser niedrigere Bonus nicht auf den Charakter angewandt. [#647](https://github.com/elyukai/optolith-client/issues/647)
+- Die *Fackel* hatte als L+S KK 15 statt KK 14. [#752](https://github.com/elyukai/optolith-client/issues/752) [#737](https://github.com/elyukai/optolith-client/issues/737)
+- Der Schadensbonus durch L+S wurde bei Waffen, die keinen festen Schaden hatten, nicht berücksichtigt. [#737](https://github.com/elyukai/optolith-client/issues/737)
+- Es konnte nur ein Talentstil zur gleichen Zeit aktiv sein, obwohl es keine Einschränkung diesbezüglich gibt. [#665](https://github.com/elyukai/optolith-client/issues/665)
+- Die Profession *Weißmagier (Akademie Schwert und Stab zu Gareth)* aus dem **Regelwerk** hatte falsche AP-Kosten und *Sternkunde 4* statt *Alchemie 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)https://github.com/elyukai/optolith-client/issues/665)
+
+## 1.4.1
+
+### Fehlerbehebungen
+
+- Italienisch war nicht verfügbar.
+
 ## 1.4.0
 
 ### Features

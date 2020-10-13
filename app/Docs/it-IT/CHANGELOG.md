@@ -1,3 +1,21 @@
+## 1.4.2
+
+### Bug Fixes
+
+- Calculations of derived characteristics took up too much space on character sheet. [#729](https://github.com/elyukai/optolith-client/issues/729)
+- Removed duplicated prerequisites text for some special abilities. [#730](https://github.com/elyukai/optolith-client/issues/730)
+- Fixed minor translation issues. [#731](https://github.com/elyukai/optolith-client/issues/731)
+- Combat Techniques maximum CtR could be higher that allowed by rules. [#749](https://github.com/elyukai/optolith-client/issues/749)https://github.com/elyukai/optolith-client/issues/665)
+- The top margin of overlay windows – like when adding advantages – was too small. [#727](https://github.com/elyukai/optolith-client/issues/727)
+- The P+T damage bonus was not added to weapons without flat damage. [#737](https://github.com/elyukai/optolith-client/issues/737)
+- Profession *White Mage (Gareth Academy of Sword and Staff)* from the **Core Rules** had a wrong AP value and *Astronomy 4* instead of *Alchemy 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
+
+## 1.4.1
+
+### Bug Fixes
+
+- Italian was not available.
+
 ## 1.4.0
 
 Primo rilascio della versione italiana.
