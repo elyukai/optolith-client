@@ -12,14 +12,14 @@
 	justify-content: flex-end;
 	align-items: flex-end;
 	flex-direction: column;
-	background: var(--background-color-transparent08);
+	background: var(--background-color-transparent04);
 	z-index: 1100;
 
 	.slidein {
 		position: relative;
 		background: var(--background-color);
     border-top: 1px solid var(--accent-color);
-    top: var(--navigationbar-height);
+    margin-top: calc(var(--navigationbar-height) + 30px);
 		height: calc(100% - var(--navigationbar-height) + 30px);
 		width: 100%;
 		bottom: 0;

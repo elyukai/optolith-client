@@ -8,8 +8,10 @@
 	--accent-color: #826a3e;
 	--accent-color-intense: #5d4517;
 	--background-color: #111;
-	--background-color-transparent06: transparentize(#111, .4);
-	--background-color-transparent08: transparentize(#111, .2);
+	--background-color-transparent02: rgba(17, 17, 17, 0.2);
+	--background-color-transparent04: rgba(17, 17, 17, 0.4);
+	--background-color-transparent06: rgba(17, 17, 17, 0.6);
+	--background-color-transparent08: rgba(17, 17, 17, 0.8);
 	--headings-color: #f7f4ed;
 	--text-color: #7f7f7f;
 	--titlebar-height: 31px;
@@ -40,8 +42,10 @@
 	--selection-color: #c2ad88;
 	--accent-color-intense: #b6a68a;
 	--background-color: #f0f0f0;
-	--background-color-transparent06: transparentize(#f0f0f0, .4);
-	--background-color-transparent08: transparentize(#f0f0f0, .2);
+	--background-color-transparent02: rgba(240, 240, 240, 0.2);
+	--background-color-transparent04: rgba(240, 240, 240, 0.4);
+	--background-color-transparent06: rgba(240, 240, 240, 0.6);
+	--background-color-transparent08: rgba(240, 240, 240, 0.8);
 	--headings-color: black;
 	--text-color: #3c3c3c;
 	--important-bright-color: #cac158;
