@@ -5,7 +5,6 @@ import { Profession } from "../Models/Wiki/Profession"
 import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection"
 import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
 import { ProfessionVariantSelections } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections"
-import { CombatTechniquesSecondSelection } from "../Models/Wiki/professionSelections/SecondCombatTechniquesSelection"
 import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection"
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
 import { ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers"
@@ -37,14 +36,6 @@ export const getAllAdjustmentSelections =
           bindF (pipe (PVA.selections, PVSA[ProfessionSelectionIds.COMBAT_TECHNIQUES])),
           bindF (ensure (CombatTechniquesSelection.is)),
           maybe (pipe_ (prof, PA.selections, PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES]))
-                (Just)
-        ),
-      [ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND]:
-        pipe_ (
-          mprof_var,
-          bindF (pipe (PVA.selections, PVSA[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND])),
-          bindF (ensure (CombatTechniquesSecondSelection.is)),
-          maybe (pipe_ (prof, PA.selections, PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND]))
                 (Just)
         ),
       [ProfessionSelectionIds.CURSES]:
