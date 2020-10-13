@@ -101,10 +101,6 @@ const isAdditionDisabledSpecialAbilitySpecific =
       return hasActiveGroupEntry (staticData) (hero) (SpecialAbilityGroup.BlessedStyles)
     }
 
-    if (CheckStyleUtils.isSkillStyleSpecialAbility (wiki_entry)) {
-      return hasActiveGroupEntry (staticData) (hero) (SpecialAbilityGroup.SkillStyles)
-    }
-
     if (current_id === SpecialAbilityId.CombatStyleCombination) {
       return !hasActiveGroupEntry (staticData)
                                   (hero)
