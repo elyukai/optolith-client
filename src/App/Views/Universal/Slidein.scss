@@ -18,7 +18,8 @@
 	.slidein {
 		position: relative;
 		background: var(--background-color);
-		border-top: 1px solid var(--accent-color);
+    border-top: 1px solid var(--accent-color);
+    top: var(--navigationbar-height);
 		height: calc(100% - var(--navigationbar-height) + 30px);
 		width: 100%;
 		bottom: 0;
