@@ -14,6 +14,7 @@
 - SF *Anhänger des Güldenen* erlaubte Liturgien bis Steigerungsfaktor C, obwohl nur welche bis B erlaubt sind. [#754](https://github.com/elyukai/optolith-client/issues/754)
 - SF *Scholar des Magierkollegs zu Honingen* fehlte. [#726](https://github.com/elyukai/optolith-client/issues/726)
 - SF *Havena-Stil* fehlte. [#740](https://github.com/elyukai/optolith-client/issues/740)
+- Der Name des Feenpaktgeschenks *Ruf des Waldes* hatte einen Schreibfehler. [#755](https://github.com/elyukai/optolith-client/issues/755)
 
 ### Danke
 
