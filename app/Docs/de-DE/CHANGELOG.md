@@ -2,13 +2,26 @@
 
 ### Fehlerbehebungen
 
-- Das Maximum von Kampftechniken konnte höher sein als es die Regeln eigentlich erlauben. [#749](https://github.com/elyukai/optolith-client/issues/749)https://github.com/elyukai/optolith-client/issues/665)
+- Das Maximum von Kampftechniken konnte höher sein als es die Regeln eigentlich erlauben. [#749](https://github.com/elyukai/optolith-client/issues/749)
 - Der Abstand von Overlays – also z. B. wenn Vorteile hinzugefügt werden – nach oben war zu klein. [#727](https://github.com/elyukai/optolith-client/issues/727)
 - Wenn eine Profession es erlaubt hat, aus einer Menge an Kampftechniken eine zweite für einen niedrigeren Bonus als den der ersten auszuwählen, wurde dieser niedrigere Bonus nicht auf den Charakter angewandt. [#647](https://github.com/elyukai/optolith-client/issues/647)
 - Die *Fackel* hatte als L+S KK 15 statt KK 14. [#752](https://github.com/elyukai/optolith-client/issues/752) [#737](https://github.com/elyukai/optolith-client/issues/737)
 - Der Schadensbonus durch L+S wurde bei Waffen, die keinen festen Schaden hatten, nicht berücksichtigt. [#737](https://github.com/elyukai/optolith-client/issues/737)
 - Es konnte nur ein Talentstil zur gleichen Zeit aktiv sein, obwohl es keine Einschränkung diesbezüglich gibt. [#665](https://github.com/elyukai/optolith-client/issues/665)
-- Die Profession *Weißmagier (Akademie Schwert und Stab zu Gareth)* aus dem **Regelwerk** hatte falsche AP-Kosten und *Sternkunde 4* statt *Alchemie 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)https://github.com/elyukai/optolith-client/issues/665)
+- Die Profession *Weißmagier (Akademie Schwert und Stab zu Gareth)* aus dem **Regelwerk** hatte falsche AP-Kosten und *Sternkunde 4* statt *Alchemie 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
+- Das Talentefeld für Tierbegleiter auf dem Charakterbogen was zu klein, um alle relevanten Talente aufnehmen zu können. [#733](https://github.com/elyukai/optolith-client/issues/733)
+- Im Regeltext für das *Großzelt, 12 Personen* fehlte ein Wort. [#739](https://github.com/elyukai/optolith-client/issues/739)
+- SF *Anhänger des Güldenen* erlaubte Liturgien bis Steigerungsfaktor C, obwohl nur welche bis B erlaubt sind. [#754](https://github.com/elyukai/optolith-client/issues/754)
+- SF *Scholar des Magierkollegs zu Honingen* fehlte. [#726](https://github.com/elyukai/optolith-client/issues/726)
+- SF *Havena-Stil* fehlte. [#740](https://github.com/elyukai/optolith-client/issues/740)
+
+### Danke
+
+Zu guter Letzt ein großes **Danke** an alle, die über verschiedeste Kanäle Feedback geben und helfen, sowie an die folgenden Menschen auf GitHub, die an dieser Version mitgewirkt haben!
+
+- [JoveToo (@JoveToo)](https://github.com/JoveToo)
+- [Lorenz Cuno Klopfenstein (@LorenzCK)](https://github.com/LorenzCK)
+- [ZeSandman (@ZeSandman)](https://github.com/ZeSandman)
 
 ## 1.4.1
 
