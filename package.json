@@ -82,7 +82,7 @@
     "stable:linux": "NODE_ENV=production node ./deploy/buildLinux.js",
     "stable:mac": "NODE_ENV=production node ./deploy/buildMac.js",
     "css:build": "node --experimental-modules ./deploy/buildSass.mjs",
-    "build": "npm run re:build && npm run css:build && npm run ts:build",
+    "build": "npm run re:build && npm run css:build && npm run js:build",
     "js:build": "webpack --config ./webpack.config.js",
     "js:watch": "webpack -w --config ./webpack.config.js",
     "ts:build": "tsc",
