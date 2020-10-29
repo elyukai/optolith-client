@@ -64,11 +64,15 @@
     "eslint-plugin-react-hooks": "4.0.0",
     "fs-extra": "9.0.0",
     "gentype": "3.22.0",
+    "html-webpack-plugin": "4.5.0",
     "jest": "26.4.2",
     "qusly-core": "2.5.2",
     "sass": "1.26.5",
     "ts-jest": "26.3.0",
-    "typescript": "3.8.3"
+    "ts-loader": "8.0.7",
+    "typescript": "3.8.3",
+    "webpack": "5.3.1",
+    "webpack-cli": "4.1.0"
   },
   "scripts": {
     "prerelease:win": "set NODE_ENV=development && node ./deploy/buildInsiderWin.js",
@@ -79,8 +83,10 @@
     "stable:mac": "NODE_ENV=production node ./deploy/buildMac.js",
     "css:build": "node --experimental-modules ./deploy/buildSass.mjs",
     "build": "npm run re:build && npm run css:build && npm run ts:build",
+    "js:build": "webpack --config ./webpack.config.js",
+    "js:watch": "webpack -w --config ./webpack.config.js",
     "ts:build": "tsc",
-    "ts:watch": "tsc --watch",
+    "ts:watch": "tsc -w",
     "re:build": "bsb -make-world",
     "re:watch": "bsb -make-world -w",
     "re:clean": "bsb -clean-world",
