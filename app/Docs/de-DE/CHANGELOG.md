@@ -1,5 +1,9 @@
 ## 1.4.2
 
+### Enhancements
+
+- Start-up was way slower than in 1.3.2. [#751](https://github.com/elyukai/optolith-client/issues/751)
+
 ### Fehlerbehebungen
 
 - Das Maximum von Kampftechniken konnte höher sein als es die Regeln eigentlich erlauben. [#749](https://github.com/elyukai/optolith-client/issues/749)
@@ -15,11 +19,17 @@
 - SF *Scholar des Magierkollegs zu Honingen* fehlte. [#726](https://github.com/elyukai/optolith-client/issues/726)
 - SF *Havena-Stil* fehlte. [#740](https://github.com/elyukai/optolith-client/issues/740)
 - Der Name des Feenpaktgeschenks *Ruf des Waldes* hatte einen Schreibfehler. [#755](https://github.com/elyukai/optolith-client/issues/755)
+- Profession *Gildenloser Magier nach Vadif sal Karim* hatte eine Bonus auf den falschen *Hagelschlag*-Zauber. [#772](https://github.com/elyukai/optolith-client/issues/772)
+- Der Text der dritten Erweiterung des Zaubers *Klarheit des Eises* hatte eine falsche Zeiteinheit in der Zeitangabe. [#766](https://github.com/elyukai/optolith-client/issues/766)
+- Der SF *Spiritualistinnen* hatte falsche erweiterte Sonderfertigkeiten. [#763](https://github.com/elyukai/optolith-client/issues/763)
+- SF *Klingensturm* hatte falsche Kampftechniken angegeben. [#768](https://github.com/elyukai/optolith-client/issues/768)
+- Einigen Büchern fehlte die Gewichtsangabe. [#760](https://github.com/elyukai/optolith-client/issues/760)
 
 ### Danke
 
 Zu guter Letzt ein großes **Danke** an alle, die über verschiedeste Kanäle Feedback geben und helfen, sowie an die folgenden Menschen auf GitHub, die an dieser Version mitgewirkt haben!
 
+- [Jordok (@Jordok)](https://github.com/Jordok)
 - [JoveToo (@JoveToo)](https://github.com/JoveToo)
 - [Lorenz Cuno Klopfenstein (@LorenzCK)](https://github.com/LorenzCK)
 - [ZeSandman (@ZeSandman)](https://github.com/ZeSandman)

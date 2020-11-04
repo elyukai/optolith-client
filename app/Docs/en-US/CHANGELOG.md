@@ -1,5 +1,9 @@
 ## 1.4.2
 
+### Enhancements
+
+- Start-up was way slower than in 1.3.2. [#751](https://github.com/elyukai/optolith-client/issues/751)
+
 ### Bug Fixes
 
 - Added some missing UI translations. [#723](https://github.com/elyukai/optolith-client/issues/723)
@@ -14,11 +18,15 @@
 - Profession *White Mage (Gareth Academy of Sword and Staff)* from the **Core Rules** had a wrong AP value and *Astronomy 4* instead of *Alchemy 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
 - Creature skills text field on PDF export was too short to fit all relevant skills of a creature. [#733](https://github.com/elyukai/optolith-client/issues/733)
 - SA *Followers of the Golden One* allowed liturgical chants up to improvement cost C instead of up to B. [#754](https://github.com/elyukai/optolith-client/issues/754)
+- Profession *Guildless Mage (Vadif sal Karim’s Student)* had a bonus on the wrong *Hailstorm and Roar of Thunder* spellwork. [#772](https://github.com/elyukai/optolith-client/issues/772)
+- SA *Bladestorm* had wrong applicable combat techniques. [#768](https://github.com/elyukai/optolith-client/issues/768)
+- Some books were missing the weight. [#760](https://github.com/elyukai/optolith-client/issues/760)
 
 ### Thank you
 
 Last but definitely not least a big **Thank You** to all of you who give feedback and help out on various channels as well as to the following people on GitHub who contributed to this release!
 
+- [Jordok (@Jordok)](https://github.com/Jordok)
 - [JoveToo (@JoveToo)](https://github.com/JoveToo)
 - [Lorenz Cuno Klopfenstein (@LorenzCK)](https://github.com/LorenzCK)
 - [ZeSandman (@ZeSandman)](https://github.com/ZeSandman)

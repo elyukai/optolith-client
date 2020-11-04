@@ -3,6 +3,7 @@
 ### Améliorations
 
 - Removed *N/D* in spells and liturgical chants tables on character sheet so that they can be added by hand. [#747](https://github.com/elyukai/optolith-client/issues/747)
+- Start-up was way slower than in 1.3.2. [#751](https://github.com/elyukai/optolith-client/issues/751)
 
 ### Bugs rectifiés
 
@@ -11,11 +12,13 @@
 - The P+T damage bonus was not added to weapons without flat damage. [#737](https://github.com/elyukai/optolith-client/issues/737)
 - Profession *White Mage (Gareth Academy of Sword and Staff)* from the **Core Rules** had a wrong AP value and *Astronomy 4* instead of *Alchemy 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
 - Creature skills text field on PDF export was too short to fit all relevant skills of a creature. [#733](https://github.com/elyukai/optolith-client/issues/733)
+- SA *Bladestorm* had wrong applicable combat techniques. [#768](https://github.com/elyukai/optolith-client/issues/768)
 
 ### Remerciements
 
 Last but definitely not least a big **Thank You** to all of you who give feedback and help out on various channels as well as to the following people on GitHub who contributed to this release!
 
+- [Jordok (@Jordok)](https://github.com/Jordok)
 - [JoveToo (@JoveToo)](https://github.com/JoveToo)
 - [Lorenz Cuno Klopfenstein (@LorenzCK)](https://github.com/LorenzCK)
 - [ZeSandman (@ZeSandman)](https://github.com/ZeSandman)
