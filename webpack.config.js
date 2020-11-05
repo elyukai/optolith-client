@@ -13,9 +13,12 @@ const config = [
         {
           test: /\.ts$/,
           include: /src/,
-          use: 'ts-loader',
+          loader: 'ts-loader',
           resolve: {
             extensions: [".ts", ".tsx", ".js"],
+          },
+          options: {
+            configFile: "tsconfig.webpack.json"
           }
         }
       ]
@@ -35,9 +38,12 @@ const config = [
         {
           test: /\.ts(x?)$/,
           include: /src/,
-          use: 'ts-loader',
+          loader: 'ts-loader',
           resolve: {
             extensions: [".ts", ".tsx", ".js"],
+          },
+          options: {
+            configFile: "tsconfig.webpack.json"
           }
         }
       ]
