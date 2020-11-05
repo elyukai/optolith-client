@@ -11,7 +11,6 @@
 - De P+T schade bonus werd niet toegevoegd aan wapens zonder extra schade. [#737](https://github.com/elyukai/optolith-client/issues/737)
 - Beroep *Witte Magier (Gareth Academy van Zwaard en Staf)* van de **Basis regels** had een verkeerde AP waarde en *Astronomie 4* in plaats van *Alchemie 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
 - Dier vaardigheids tekst veld op de PDF export was te kort om alle relevante vaardigheden van een dier te bevatten. [#733](https://github.com/elyukai/optolith-client/issues/733)
-- SV *Bladestorm* had verkeerde toepasselijke gevechtstechnieken. [#768](https://github.com/elyukai/optolith-client/issues/768)
 - Afbeeldingen met uppercase file extensies werden niet aanvaard asl portret afbeeldingen. [#762](https://github.com/elyukai/optolith-client/issues/762)
 - Het upload icon werd getoont in plaats van de portret afbeelding op het helden document als er geen portret opgeven was. [#759](https://github.com/elyukai/optolith-client/issues/759)
 - Op de Mac, als de papier achtergrond aan stond, werden er additionele lege paginas toegevoegd aan de PDF output. [#748](https://github.com/elyukai/optolith-client/issues/748)
