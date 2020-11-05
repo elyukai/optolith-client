@@ -23,7 +23,9 @@
 - Der Text der dritten Erweiterung des Zaubers *Klarheit des Eises* hatte eine falsche Zeiteinheit in der Zeitangabe. [#766](https://github.com/elyukai/optolith-client/issues/766)
 - Der SF *Spiritualistinnen* hatte falsche erweiterte Sonderfertigkeiten. [#763](https://github.com/elyukai/optolith-client/issues/763)
 - SF *Klingensturm* hatte falsche Kampftechniken angegeben. [#768](https://github.com/elyukai/optolith-client/issues/768)
-- Einigen Büchern fehlte die Gewichtsangabe. [#760](https://github.com/elyukai/optolith-client/issues/760)
+- Bilder mit großgeschriebenen Dateiendungen wurden als Portraits nicht akzeptiert. [#762](https://github.com/elyukai/optolith-client/issues/762)
+- Wenn ein Portrait fehlte, wurde auf dem Charakterbogen das Upload-Icon angezeigt. [#759](https://github.com/elyukai/optolith-client/issues/759)
+- Auf dem Mac wurden, wenn eine Papiertextur für den Charakterbogen ausgewählt wurde, zusätzliche leere Seiten generiert. [#748](https://github.com/elyukai/optolith-client/issues/748)
 
 ### Danke
 

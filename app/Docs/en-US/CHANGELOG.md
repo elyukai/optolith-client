@@ -21,6 +21,9 @@
 - Profession *Guildless Mage (Vadif sal Karim’s Student)* had a bonus on the wrong *Hailstorm and Roar of Thunder* spellwork. [#772](https://github.com/elyukai/optolith-client/issues/772)
 - SA *Bladestorm* had wrong applicable combat techniques. [#768](https://github.com/elyukai/optolith-client/issues/768)
 - Some books were missing the weight. [#760](https://github.com/elyukai/optolith-client/issues/760)
+- Images with uppercase file endings have not been accepted as portrait images. [#762](https://github.com/elyukai/optolith-client/issues/762)
+- The upload icon was shown in place of the portrait image on the character sheet if no portrait was defined. [#759](https://github.com/elyukai/optolith-client/issues/759)
+- On the Mac, if paper background was activated, additional blank pages were generated for the PDF output. [#748](https://github.com/elyukai/optolith-client/issues/748)
 
 ### Thank you
 
