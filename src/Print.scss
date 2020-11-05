@@ -69,17 +69,17 @@
           padding: 0;
 
           .sheet {
-            height: 294mm;
+            height: 296.8mm;
             width: 210mm;
             margin: 0;
-            padding: 8.9mm 8.9mm 6mm;
+            padding: 8.9mm;
             -webkit-print-color-adjust: exact;
             page-break-inside: avoid;
             overflow: hidden;
 
-            #body.platform-win32 & {
-              height: 296.8mm;
-              padding: 8.9mm;
+            #body.platform-darwin & {
+              height: 296mm;
+              padding: 8.9mm 8.9mm 6mm;
             }
 
             &:not(:first-child) {
@@ -118,11 +118,11 @@
     &.zoom-175,
     &.zoom-200 {
       .sheet-wrapper {
-        height: 294mm;
+        height: 296.8mm;
         width: 210mm;
 
-        #body.platform-win32 & {
-          height: 296.8mm;
+        #body.platform-darwin & {
+          height: 296mm;
         }
 
         .sheet {
