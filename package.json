@@ -9,7 +9,7 @@
   },
   "homepage": "https://github.com/elyukai/optolith-client",
   "license": "MPL-2.0",
-  "main": "app/index.js",
+  "main": "app/main.js",
   "dependencies": {
     "@glennsl/bs-json": "5.0.2",
     "ajv": "6.12.6",
