@@ -1,27 +1,27 @@
 ## 1.4.2
 
-### Enhancements
+### Migliorie
 
-- Start-up was way slower than in 1.3.2. [#751](https://github.com/elyukai/optolith-client/issues/751)
+- Ridotto il tempo di avvio. [#751](https://github.com/elyukai/optolith-client/issues/751)
 
-### Bug Fixes
+### Correzioni
 
-- Calculations of derived characteristics took up too much space on character sheet. [#729](https://github.com/elyukai/optolith-client/issues/729)
-- Removed duplicated prerequisites text for some special abilities. [#730](https://github.com/elyukai/optolith-client/issues/730)
-- Fixed minor translation issues. [#731](https://github.com/elyukai/optolith-client/issues/731)
-- Combat Techniques maximum CtR could be higher that allowed by rules. [#749](https://github.com/elyukai/optolith-client/issues/749)
-- The top margin of overlay windows – like when adding advantages – was too small. [#727](https://github.com/elyukai/optolith-client/issues/727)
-- The P+T damage bonus was not added to weapons without flat damage. [#737](https://github.com/elyukai/optolith-client/issues/737)
-- Profession *White Mage (Gareth Academy of Sword and Staff)* from the **Core Rules** had a wrong AP value and *Astronomy 4* instead of *Alchemy 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
-- Creature skills text field on PDF export was too short to fit all relevant skills of a creature. [#733](https://github.com/elyukai/optolith-client/issues/733)
-- SA *Bladestorm* had wrong applicable combat techniques. [#768](https://github.com/elyukai/optolith-client/issues/768)
-- Images with uppercase file endings have not been accepted as portrait images. [#762](https://github.com/elyukai/optolith-client/issues/762)
-- The upload icon was shown in place of the portrait image on the character sheet if no portrait was defined. [#759](https://github.com/elyukai/optolith-client/issues/759)
-- On the Mac, if paper background was activated, additional blank pages were generated for the PDF output. [#748](https://github.com/elyukai/optolith-client/issues/748)
+- Le formule della caratteristiche derivate occupano troppo spazio sul foglio d’identità. [#729](https://github.com/elyukai/optolith-client/issues/729)
+- Rimozione dei requisiti doppi in alcune abilità speciali. [#730](https://github.com/elyukai/optolith-client/issues/730)
+- Correzioni minori della localizzazione italiana. [#731](https://github.com/elyukai/optolith-client/issues/731)
+- Alcune tecniche di combattimento possono essere impostate a valori più elevati di quanto ammesso dal regolamento. [#749](https://github.com/elyukai/optolith-client/issues/749)
+- Il margine superiore delle finestre in sovrimpressione, come nell’inserimento dei vantaggi, è troppo stretto. [#727](https://github.com/elyukai/optolith-client/issues/727)
+- Il bonus di impatto non viene calcolato per alcune armi. [#737](https://github.com/elyukai/optolith-client/issues/737)
+- La professione *Mago bianco (Accademia Garetiana di Spada e Bastone)* dal **Regolamento** ha un valore di PAvv sbagliato e *Astronomia&nbsp;4* invece di *Alchimia&nbsp;4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
+- Campo di testo delle abilità degli animali nel foglio d’identità è troppo piccolo per contenere tutte le abilità. [#733](https://github.com/elyukai/optolith-client/issues/733)
+- L’abilità speciale *Bladestorm* si applica alle tecniche di combattimento sbagliate. [#768](https://github.com/elyukai/optolith-client/issues/768)
+- Immagini con estensione in maiuscoletto non vengono accettate come ritratto. [#762](https://github.com/elyukai/optolith-client/issues/762)
+- Viene mostrata l’icona di caricamento invece del ritratto su fogli d’identità di personaggi senza ritratto. [#759](https://github.com/elyukai/optolith-client/issues/759)
+- Su Mac, con lo sfondo pergamenato attivato, vengono generate pagine bianche di troppo nel PDF finale. [#748](https://github.com/elyukai/optolith-client/issues/748)
 
-### Thank you
+### Ringraziamenti
 
-Last but definitely not least a big **Thank You** to all of you who give feedback and help out on various channels as well as to the following people on GitHub who contributed to this release!
+Come ultimo punto, ma non per importanza, un grandissimo **grazie** a tutti coloro che forniscono commenti, suggerimenti e aiuto sui vari canali sociali e un grazie alle seguenti persone su GitHub che hanno contribuito a questa versione!
 
 - [Jordok (@Jordok)](https://github.com/Jordok)
 - [JoveToo (@JoveToo)](https://github.com/JoveToo)
@@ -30,9 +30,9 @@ Last but definitely not least a big **Thank You** to all of you who give feedbac
 
 ## 1.4.1
 
-### Bug Fixes
+### Correzioni
 
-- Italian was not available.
+- La localizzazione italiana non era disponibile.
 
 ## 1.4.0
 
@@ -45,7 +45,7 @@ Siccome sempre più persone fanno uso dei dati di Optolith, da questa versione i
 Ci sarà un nuovo formato di dati sia per gli eroi memorizzati che per i dati sorgente.
 Le modifiche non sono ancora finalizzate e la nuova versione maggiore è ancora lontana, ma è consigliato aggiornarsi al nuovo formato di dati il prima possibile.
 
-### Thank you
+### Ringraziamenti
 
 Come ultimo punto, ma non per importanza, un grandissimo **grazie** alle seguenti persone su GitHub che hanno contribuito a questa versione!
 
