@@ -64,9 +64,9 @@ export const CombatTechniqueListItem: React.FC<CombatTechniqueListItemProps> = p
       ic={CTWRA_.ic (ct)}
       checkDisabled
       addPoint={addPoint}
-      addDisabled={CTWRA_.value (ct) >= CTWRA.max (ct)}
+      addDisabled={!CTWRA.isIncreasable (ct)}
       removePoint={removePoint}
-      removeDisabled={!isRemovingEnabled || CTWRA_.value (ct) <= CTWRA.min (ct)}
+      removeDisabled={!isRemovingEnabled || !CTWRA.isDecreasable (ct)}
       addValues={List (
         { className: primaryClassName, value: primary },
         { className: "at", value: CTWRA.at (ct) },

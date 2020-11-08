@@ -315,7 +315,7 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
                                        (LCWRA.wikiEntry (active)))
                      (actives)
 
-            const inactive_with_valid_IC = filter (pipe (LCWRA.wikiEntry, LCA.ic, lte (3)))
+            const inactive_with_valid_IC = filter (pipe (LCWRA.wikiEntry, LCA.ic, lte (2)))
                                                   (inactives)
 
             if (notNull (unfamiliar_chants)) {

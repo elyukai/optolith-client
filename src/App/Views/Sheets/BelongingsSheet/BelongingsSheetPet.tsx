@@ -263,9 +263,7 @@ export const BelongingsSheetPet: React.FC<Props> = props => {
                   {translate (staticData) ("sheets.belongingssheet.animal.skills")}
                 </span>
                 <span className="value">
-                  <Textfit max={11} min={7} mode="single">
-                    {pipe_ (mpet, bindF (Pet.A.talents), renderMaybe)}
-                  </Textfit>
+                  {pipe_ (mpet, bindF (Pet.A.talents), renderMaybe)}
                 </span>
               </div>
             </div>
@@ -275,9 +273,7 @@ export const BelongingsSheetPet: React.FC<Props> = props => {
                   {translate (staticData) ("sheets.belongingssheet.animal.specialabilities")}
                 </span>
                 <span className="value">
-                  <Textfit max={11} min={7} mode="single">
-                    {pipe_ (mpet, bindF (Pet.A.skills), renderMaybe)}
-                  </Textfit>
+                  {pipe_ (mpet, bindF (Pet.A.skills), renderMaybe)}
                 </span>
               </div>
             </div>
@@ -287,9 +283,7 @@ export const BelongingsSheetPet: React.FC<Props> = props => {
                   {translate (staticData) ("sheets.belongingssheet.animal.notes")}
                 </span>
                 <span className="value">
-                  <Textfit max={11} min={7} mode="single">
-                    {pipe_ (mpet, bindF (Pet.A.notes), renderMaybe)}
-                  </Textfit>
+                  {pipe_ (mpet, bindF (Pet.A.notes), renderMaybe)}
                 </span>
               </div>
             </div>

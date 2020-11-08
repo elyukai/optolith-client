@@ -1,14 +1,44 @@
+## 1.4.2
+
+### Verbeteringen
+
+- Start-up was trager dan in 1.3.2. [#751](https://github.com/elyukai/optolith-client/issues/751)
+
+### Probleemoplossingen
+
+- Gevechtstechnieken maximum GtR kon hoger zijn dan toegelaten. [#749](https://github.com/elyukai/optolith-client/issues/749)
+- The top margin van overlay venters – zoals bij het toevoegen van Voordelen – was te klein. [#727](https://github.com/elyukai/optolith-client/issues/727)
+- De P+T schade bonus werd niet toegevoegd aan wapens zonder extra schade. [#737](https://github.com/elyukai/optolith-client/issues/737)
+- Beroep *Witte Magier (Gareth Academy van Zwaard en Staf)* van de **Basis regels** had een verkeerde AP waarde en *Astronomie 4* in plaats van *Alchemie 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
+- Dier vaardigheids tekst veld op de PDF export was te kort om alle relevante vaardigheden van een dier te bevatten. [#733](https://github.com/elyukai/optolith-client/issues/733)
+- Afbeeldingen met uppercase file extensies werden niet aanvaard asl portret afbeeldingen. [#762](https://github.com/elyukai/optolith-client/issues/762)
+- Het upload icon werd getoont in plaats van de portret afbeelding op het helden document als er geen portret opgeven was. [#759](https://github.com/elyukai/optolith-client/issues/759)
+- Op de Mac, als de papier achtergrond aan stond, werden er additionele lege paginas toegevoegd aan de PDF output. [#748](https://github.com/elyukai/optolith-client/issues/748)
+
+### Thank you
+
+Ten laatste maar zeker niet ten minste een dikke **Dank u** voor iedereen die feedback en help geeft in de verschillende kanalen alsook de volgende mensen op GitHub die bijgedragen hebben tot deze release!
+
+- [Jordok (@Jordok)](https://github.com/Jordok)
+- [JoveToo (@JoveToo)](https://github.com/JoveToo)
+- [Lorenz Cuno Klopfenstein (@LorenzCK)](https://github.com/LorenzCK)
+- [ZeSandman (@ZeSandman)](https://github.com/ZeSandman)
+
+## 1.4.1
+
+### Probleemoplossingen
+
+- Italiaans was niet beschikbaar.
+
 ## 1.4.0
 
 ### Nieuwe features
-
 
 - Italiaanse vertaling [#667](https://github.com/elyukai/optolith-client/issues/667) [#610](https://github.com/elyukai/optolith-client/issues/610)
 - Optionele papier-stijl achtergrond voor helden document. [#36](https://github.com/elyukai/optolith-client/issues/36)
 - helden document zoom optie. [#665](https://github.com/elyukai/optolith-client/issues/665)
 - Geld toevoegen/aftrekken. [#666](https://github.com/elyukai/optolith-client/issues/666)
 - Voeg Voordelen, Nadelen en Competenties op maat toe met gekozen naam en AP waarde (tijdelijke oplossing) [#632](https://github.com/elyukai/optolith-client/issues/632)
-
 
 ### Verbeteringen
 

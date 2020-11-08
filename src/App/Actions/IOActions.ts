@@ -290,7 +290,11 @@ export const imgPathToBase64 =
   (path: string): Maybe<string> => {
     if (path.length > 0 && !isBase64Image (path)) {
       if (fs.existsSync (path)) {
-        const prefix = `data:image/${extname (path).slice (1)};base64,`
+        const ext = extname (path)
+          .slice (1)
+          .toLowerCase ()
+
+        const prefix = `data:image/${ext};base64,`
         const file = fs.readFileSync (path)
         const fileString = file.toString ("base64")
 

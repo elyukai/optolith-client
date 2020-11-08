@@ -1,6 +1,6 @@
 import * as React from "react"
 import { fmap, fmapF } from "../../../../Data/Functor"
-import { bindF, Maybe } from "../../../../Data/Maybe"
+import { bindF, Just, Maybe, maybeRNullF } from "../../../../Data/Maybe"
 import { lookupF } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Sex } from "../../../Models/Hero/heroTypeHelpers"
@@ -38,7 +38,7 @@ interface Props {
 export const MainSheetPersonalData: React.FC<Props> = props => {
   const {
     ap,
-    avatar,
+    avatar: maybeAvatar,
     culture: maybeCulture,
     el: maybeExperienceLevel,
     staticData,
@@ -191,7 +191,7 @@ export const MainSheetPersonalData: React.FC<Props> = props => {
           className="portrait"
           label={translate (staticData) ("sheets.mainsheet.avatarlabel")}
           >
-          <Avatar src={avatar} img />
+          {maybeRNullF (maybeAvatar) (avatar => <Avatar src={Just (avatar)} img />)}
         </LabelBox>
         <LabelBox
           className="ap-available"

@@ -84,6 +84,8 @@ const ISA = IncreaseSkill.A
 const SA = Skill.A
 const ADA = ActivatableDependent.A
 const SDL = SkillDependentL
+const CTSA = CombatTechniquesSelection.A
+const CTSSA = CombatTechniquesSecondSelection.A
 
 type Action = SetSelectionsAction
 
@@ -373,19 +375,19 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
       P.map,
       PSA [ProfessionSelectionIds.COMBAT_TECHNIQUES],
       maybe (ident as ident<Record<ConcatenatedModifications>>)
-            (x => foldIntoSRsFrom (ident as ident<string>)
-                                  (cnst (CombatTechniquesSelection.A.value (x)))
-                                  (OrderedSet.toList (P.combatTechniques)))
-    ),
+            (x => pipe (
+                    foldIntoSRsFrom (ident as ident<string>)
+                                    (cnst (CTSA.value (x)))
+                                    (OrderedSet.toList (P.combatTechniques)),
 
-    // - Second Combat Techniques
-    pipe_ (
-      P.map,
-      PSA [ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND],
-      maybe (ident as ident<Record<ConcatenatedModifications>>)
-            (x => foldIntoSRsFrom (ident as ident<string>)
-                                  (cnst (CombatTechniquesSecondSelection.A.value (x)))
-                                  (OrderedSet.toList (P.combatTechniquesSecond)))
+                    // - Second Combat Techniques
+                    maybe (ident as ident<Record<ConcatenatedModifications>>)
+                          ((second: Record<CombatTechniquesSecondSelection>) =>
+                            foldIntoSRsFrom (ident as ident<string>)
+                                            (cnst (CTSSA.value (second)))
+                                            (OrderedSet.toList (P.combatTechniquesSecond)))
+                          (CTSA.second (x))
+                  ))
     ),
 
     // - Cantrips
