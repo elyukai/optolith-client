@@ -2,23 +2,22 @@
 
 ### Verbeteringen
 
-- Start-up was way slower than in 1.3.2. [#751](https://github.com/elyukai/optolith-client/issues/751)
+- Start-up was trager dan in 1.3.2. [#751](https://github.com/elyukai/optolith-client/issues/751)
 
 ### Probleemoplossingen
 
-- Combat Techniques maximum CtR could be higher that allowed by rules. [#749](https://github.com/elyukai/optolith-client/issues/749)
-- The top margin of overlay windows – like when adding advantages – was too small. [#727](https://github.com/elyukai/optolith-client/issues/727)
-- The P+T damage bonus was not added to weapons without flat damage. [#737](https://github.com/elyukai/optolith-client/issues/737)
-- Profession *White Mage (Gareth Academy of Sword and Staff)* from the **Core Rules** had a wrong AP value and *Astronomy 4* instead of *Alchemy 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
-- Creature skills text field on PDF export was too short to fit all relevant skills of a creature. [#733](https://github.com/elyukai/optolith-client/issues/733)
-- SA *Bladestorm* had wrong applicable combat techniques. [#768](https://github.com/elyukai/optolith-client/issues/768)
-- Images with uppercase file endings have not been accepted as portrait images. [#762](https://github.com/elyukai/optolith-client/issues/762)
-- The upload icon was shown in place of the portrait image on the character sheet if no portrait was defined. [#759](https://github.com/elyukai/optolith-client/issues/759)
-- On the Mac, if paper background was activated, additional blank pages were generated for the PDF output. [#748](https://github.com/elyukai/optolith-client/issues/748)
+- Gevechtstechnieken maximum GtR kon hoger zijn dan toegelaten. [#749](https://github.com/elyukai/optolith-client/issues/749)
+- The top margin van overlay venters – zoals bij het toevoegen van Voordelen – was te klein. [#727](https://github.com/elyukai/optolith-client/issues/727)
+- De P+T schade bonus werd niet toegevoegd aan wapens zonder extra schade. [#737](https://github.com/elyukai/optolith-client/issues/737)
+- Beroep *Witte Magier (Gareth Academy van Zwaard en Staf)* van de **Basis regels** had een verkeerde AP waarde en *Astronomie 4* in plaats van *Alchemie 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
+- Dier vaardigheids tekst veld op de PDF export was te kort om alle relevante vaardigheden van een dier te bevatten. [#733](https://github.com/elyukai/optolith-client/issues/733)
+- Afbeeldingen met uppercase file extensies werden niet aanvaard asl portret afbeeldingen. [#762](https://github.com/elyukai/optolith-client/issues/762)
+- Het upload icon werd getoont in plaats van de portret afbeelding op het helden document als er geen portret opgeven was. [#759](https://github.com/elyukai/optolith-client/issues/759)
+- Op de Mac, als de papier achtergrond aan stond, werden er additionele lege paginas toegevoegd aan de PDF output. [#748](https://github.com/elyukai/optolith-client/issues/748)
 
 ### Thank you
 
-Last but definitely not least a big **Thank You** to all of you who give feedback and help out on various channels as well as to the following people on GitHub who contributed to this release!
+Ten laatste maar zeker niet ten minste een dikke **Dank u** voor iedereen die feedback en help geeft in de verschillende kanalen alsook de volgende mensen op GitHub die bijgedragen hebben tot deze release!
 
 - [Jordok (@Jordok)](https://github.com/Jordok)
 - [JoveToo (@JoveToo)](https://github.com/JoveToo)
@@ -29,7 +28,7 @@ Last but definitely not least a big **Thank You** to all of you who give feedbac
 
 ### Probleemoplossingen
 
-- Italian was not available.
+- Italiaans was niet beschikbaar.
 
 ## 1.4.0
 
