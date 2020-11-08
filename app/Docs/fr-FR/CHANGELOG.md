@@ -2,24 +2,23 @@
 
 ### Améliorations
 
-- Removed *N/D* in spells and liturgical chants tables on character sheet so that they can be added by hand. [#747](https://github.com/elyukai/optolith-client/issues/747)
-- Start-up was way slower than in 1.3.2. [#751](https://github.com/elyukai/optolith-client/issues/751)
+- Suppression des *N/D* dans les tableaux des sorts et des liturgies sur la feuille de personnage afin que les valeurs puissent être ajoutées à la main. [#747](https://github.com/elyukai/optolith-client/issues/747)
+- Le démarrage était beaucoup plus lent qu'en 1.3.2. [#751](https://github.com/elyukai/optolith-client/issues/751)
 
 ### Bugs rectifiés
 
-- Combat Techniques maximum CtR could be higher that allowed by rules. [#749](https://github.com/elyukai/optolith-client/issues/749)
-- The top margin of overlay windows – like when adding advantages – was too small. [#727](https://github.com/elyukai/optolith-client/issues/727)
-- The P+T damage bonus was not added to weapons without flat damage. [#737](https://github.com/elyukai/optolith-client/issues/737)
-- Profession *White Mage (Gareth Academy of Sword and Staff)* from the **Core Rules** had a wrong AP value and *Astronomy 4* instead of *Alchemy 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
-- Creature skills text field on PDF export was too short to fit all relevant skills of a creature. [#733](https://github.com/elyukai/optolith-client/issues/733)
-- SA *Bladestorm* had wrong applicable combat techniques. [#768](https://github.com/elyukai/optolith-client/issues/768)
-- Images with uppercase file endings have not been accepted as portrait images. [#762](https://github.com/elyukai/optolith-client/issues/762)
-- The upload icon was shown in place of the portrait image on the character sheet if no portrait was defined. [#759](https://github.com/elyukai/optolith-client/issues/759)
-- On the Mac, if paper background was activated, additional blank pages were generated for the PDF output. [#748](https://github.com/elyukai/optolith-client/issues/748)
+- La VTC maximale des techniques de combat pourrait être supérieure à celle autorisée par les règles. [#749](https://github.com/elyukai/optolith-client/issues/749)
+- La marge supérieure des fenêtres superposées – comme lors de l'ajout d'avantages – était trop petite. [#727](https://github.com/elyukai/optolith-client/issues/727)
+- Le bonus de dommages Q+SD n'était pas ajouté aux armes sans dommages fixes. [#737](https://github.com/elyukai/optolith-client/issues/737)
+- La profession *Magicien blanc (Académie de Gareth de l'épée et du bâton)* des **règles de base** avait une mauvaise valeur de PAV et *Astronomie 4* au lieu de *l'Alchimie 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
+- La zone de texte "compétences de la créature" sur l'export PDF était trop courte pour correspondre à toutes les compétences pertinentes d'une créature. [#733](https://github.com/elyukai/optolith-client/issues/733)
+- Les images dont la fin de fichier était en majuscules n'étaient pas acceptées comme images de portrait. [#762](https://github.com/elyukai/optolith-client/issues/762)
+- L'icône de téléchargement était affichée à la place de l'image du portrait sur la fiche de personnage si aucun portrait n'était défini. [#759](https://github.com/elyukai/optolith-client/issues/759)
+- Sur Mac, si le fond papier était activé, des pages vierges supplémentaires étaient générées pour la sortie PDF. [#748](https://github.com/elyukai/optolith-client/issues/748)
 
 ### Remerciements
 
-Last but definitely not least a big **Thank You** to all of you who give feedback and help out on various channels as well as to the following people on GitHub who contributed to this release!
+Enfin et surtout, un grand **merci** à tous ceux qui font des retours et donnent leur aide sur les différents canaux ainsi qu'aux personnes ci-dessous sur GitHub qui ont contribué à cette version !
 
 - [Jordok (@Jordok)](https://github.com/Jordok)
 - [JoveToo (@JoveToo)](https://github.com/JoveToo)
@@ -30,7 +29,7 @@ Last but definitely not least a big **Thank You** to all of you who give feedbac
 
 ### Bugs rectifiés
 
-- Italian was not available.
+- L'italien n'était pas disponible.
 
 ## 1.4.0
 
