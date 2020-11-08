@@ -57,14 +57,14 @@ This installs all necessary packages.
 
 ### First run
 
-Compile the source code. `ts:` is for TypeScript, `re:` for Reason/OCaml and `css:` for CSS/Sass.
+Compile the source code. `js:` is for TypeScript/Webpack, `re:` for Reason/OCaml and `css:` for CSS/Sass. Webpack does not check the TypeScript validity, to check this, use `ts:` commands.
 
 You have to run the Reason build first as it generates TypeScript files...
 
 ```sh
 npm run re:build
-npm run ts:build
 npm run css:build
+npm run js:build
 ```
 
 (There's also a shorthand for that:)
@@ -73,12 +73,19 @@ npm run css:build
 npm run build
 ```
 
-&hellip;or watch it for better performance for subsequent compiling on save (you need to use separate terminal instances then). There is no watcher for CSS/Sass currently.
+&hellip;or watch it for better performance for subsequent compiling on save (you need to use separate terminal instances then).
 
 ```sh
 npm run re:watch
+npm run css:watch
+npm run js:watch
+```
+
+To check the TypeScript validity, either check once or watch for changes (I'd always recommend to do the latter one).
+
+```sh
+npm run ts:build
 npm run ts:watch
-npm run css:build
 ```
 
 Run the app:

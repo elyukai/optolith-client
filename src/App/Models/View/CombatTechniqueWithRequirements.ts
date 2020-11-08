@@ -3,15 +3,14 @@ import { fromDefault, Record } from "../../../Data/Record"
 import { pipe } from "../../Utilities/pipe"
 import { SkillDependent } from "../ActiveEntries/SkillDependent"
 import { CombatTechnique } from "../Wiki/CombatTechnique"
+import { IncreasableWithRequirements } from "./viewTypeHelpers"
 
-export interface CombatTechniqueWithRequirements {
+export interface CombatTechniqueWithRequirements extends IncreasableWithRequirements {
   "@@name": "CombatTechniqueWithRequirements"
   wikiEntry: Record<CombatTechnique>
   stateEntry: Record<SkillDependent>
   at: number
   pa: Maybe<number>
-  max: number
-  min: number
 }
 
 export const CombatTechniqueWithRequirements =
@@ -21,8 +20,8 @@ export const CombatTechniqueWithRequirements =
                 stateEntry: SkillDependent .default,
                 at: 0,
                 pa: Nothing,
-                max: 0,
-                min: 0,
+                isIncreasable: false,
+                isDecreasable: false,
               })
 
 export const CombatTechniqueWithRequirementsA_ = {

@@ -5,7 +5,6 @@ import { CantripsSelection } from "./CantripsSelection"
 import { CombatTechniquesSelection } from "./CombatTechniquesSelection"
 import { CursesSelection } from "./CursesSelection"
 import { LanguagesScriptsSelection } from "./LanguagesScriptsSelection"
-import { CombatTechniquesSecondSelection } from "./SecondCombatTechniquesSelection"
 import { SkillsSelection } from "./SkillsSelection"
 import { SpecializationSelection } from "./SpecializationSelection"
 import { TerrainKnowledgeSelection } from "./TerrainKnowledgeSelection"
@@ -14,7 +13,6 @@ export interface ProfessionSelections {
   "@@name": "ProfessionSelections"
   [ProfessionSelectionIds.CANTRIPS]: Maybe<Record<CantripsSelection>>
   [ProfessionSelectionIds.COMBAT_TECHNIQUES]: Maybe<Record<CombatTechniquesSelection>>
-  [ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND]: Maybe<Record<CombatTechniquesSecondSelection>>
   [ProfessionSelectionIds.CURSES]: Maybe<Record<CursesSelection>>
   [ProfessionSelectionIds.LANGUAGES_SCRIPTS]: Maybe<Record<LanguagesScriptsSelection>>
   [ProfessionSelectionIds.SPECIALIZATION]: Maybe<Record<SpecializationSelection>>
@@ -30,7 +28,6 @@ export const ProfessionSelections =
               <ProfessionSelections> ({
                 [ProfessionSelectionIds.CANTRIPS]: Nothing,
                 [ProfessionSelectionIds.COMBAT_TECHNIQUES]: Nothing,
-                [ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND]: Nothing,
                 [ProfessionSelectionIds.CURSES]: Nothing,
                 [ProfessionSelectionIds.LANGUAGES_SCRIPTS]: Nothing,
                 [ProfessionSelectionIds.SPECIALIZATION]: Nothing,
