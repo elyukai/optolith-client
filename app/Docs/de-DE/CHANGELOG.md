@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-- Start-up was way slower than in 1.3.2. [#751](https://github.com/elyukai/optolith-client/issues/751)
+- Der Start der Anwendung war viel langsamer als in Version 1.3.2. [#751](https://github.com/elyukai/optolith-client/issues/751)
 
 ### Fehlerbehebungen
 
@@ -26,6 +26,7 @@
 - Bilder mit großgeschriebenen Dateiendungen wurden als Portraits nicht akzeptiert. [#762](https://github.com/elyukai/optolith-client/issues/762)
 - Wenn ein Portrait fehlte, wurde auf dem Charakterbogen das Upload-Icon angezeigt. [#759](https://github.com/elyukai/optolith-client/issues/759)
 - Auf dem Mac wurden, wenn eine Papiertextur für den Charakterbogen ausgewählt wurde, zusätzliche leere Seiten generiert. [#748](https://github.com/elyukai/optolith-client/issues/748)
+- Der Effekttext der SF *Bindung des Dolches* hatte einen Schreibfehler. [#773](https://github.com/elyukai/optolith-client/issues/773)
 
 ### Danke
 
