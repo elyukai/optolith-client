@@ -47,9 +47,9 @@ export type PrimaryAttributePrerequisite = primaryAttribute;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type activatableId = 
-    { tag: "Advantage"; value: number }
-  | { tag: "Disadvantage"; value: number }
-  | { tag: "SpecialAbility"; value: number };
+    { NAME: "Advantage"; VAL: number }
+  | { NAME: "Disadvantage"; VAL: number }
+  | { NAME: "SpecialAbility"; VAL: number };
 
 // tslint:disable-next-line:interface-over-type-literal
 export type activatable = {
@@ -63,8 +63,8 @@ export type ActivatablePrerequisite = activatable;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type activatableSkillId = 
-    { tag: "Spell"; value: number }
-  | { tag: "LiturgicalChant"; value: number };
+    { NAME: "Spell"; VAL: number }
+  | { NAME: "LiturgicalChant"; VAL: number };
 
 // tslint:disable-next-line:interface-over-type-literal
 export type activatableSkill = { readonly id: activatableSkillId; readonly active: boolean };
@@ -92,11 +92,11 @@ export type ActivatableMultiSelectPrerequisite = activatableMultiSelect;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type increasableId = 
-    { tag: "Attribute"; value: number }
-  | { tag: "Skill"; value: number }
-  | { tag: "CombatTechnique"; value: number }
-  | { tag: "Spell"; value: number }
-  | { tag: "LiturgicalChant"; value: number };
+    { NAME: "Attribute"; VAL: number }
+  | { NAME: "Skill"; VAL: number }
+  | { NAME: "CombatTechnique"; VAL: number }
+  | { NAME: "Spell"; VAL: number }
+  | { NAME: "LiturgicalChant"; VAL: number };
 
 // tslint:disable-next-line:interface-over-type-literal
 export type increasable = { readonly id: increasableId; readonly value: number };

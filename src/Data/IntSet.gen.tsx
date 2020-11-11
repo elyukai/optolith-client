@@ -78,7 +78,7 @@ export const Foldable_notElem: (_1:key, _2:t) => boolean = function (Arg1: any, 
 export const Foldable_find: (_1:((_1:key) => boolean), _2:t) => Maybe_t<key> = function (Arg1: any, Arg2: any) {
   const result = Curry._2(IntSetBS.Foldable.find, Arg1, Arg2);
   return typeof(result) === 'object'
-    ? {tag:"Just", value:result[0]}
+    ? {tag:"Just", value:result._0}
     : $$toJS1024164449[result]
 };
 
