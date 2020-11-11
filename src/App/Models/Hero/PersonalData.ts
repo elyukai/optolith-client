@@ -21,6 +21,7 @@ export interface PersonalData {
 /**
  * Create a new `PersonalData` object.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PersonalData =
   fromDefault ("PersonalData")
               <PersonalData> ({

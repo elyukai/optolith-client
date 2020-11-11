@@ -35,6 +35,7 @@ interface OverlayPosition {
   left: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const OverlayPosition = fromDefault ("OverlayPosition") <OverlayPosition> ({ top: 0, left: 0 })
 
 const OPA = OverlayPosition.A

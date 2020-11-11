@@ -22,6 +22,7 @@ export interface HitZoneArmor extends HitZoneArmorBase {
   id: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const HitZoneArmor =
   fromDefault ("HitZoneArmor")
               <HitZoneArmor> ({

@@ -21,6 +21,7 @@ export interface SpecialAbilityCombatTechniques {
   customText: Maybe<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SpecialAbilityCombatTechniques =
   fromDefault ("SpecialAbilityCombatTechniques")
               <SpecialAbilityCombatTechniques> ({
@@ -50,6 +51,7 @@ export interface SpecialAbility extends ActivatableBase {
   brew: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SpecialAbility =
   fromDefault ("SpecialAbility")
               <SpecialAbility> ({

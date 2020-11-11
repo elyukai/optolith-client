@@ -8,6 +8,7 @@ export interface TerrainKnowledgeSelection {
   sid: List<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TerrainKnowledgeSelection =
   fromDefault ("TerrainKnowledgeSelection")
               <TerrainKnowledgeSelection> ({

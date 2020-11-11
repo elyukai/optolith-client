@@ -8,6 +8,7 @@ export interface RaceRequirement {
   active: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RaceRequirement =
   fromDefault ("RaceRequirement")
               <RaceRequirement> ({

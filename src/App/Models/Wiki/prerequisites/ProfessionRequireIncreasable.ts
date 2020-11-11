@@ -6,6 +6,7 @@ export interface ProfessionRequireIncreasable {
   value: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProfessionRequireIncreasable =
   fromDefault ("ProfessionRequireIncreasable")
               <ProfessionRequireIncreasable> ({

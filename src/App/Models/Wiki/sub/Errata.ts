@@ -6,6 +6,7 @@ export interface Erratum {
   description: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Erratum =
   fromDefault ("Erratum")
               <Erratum> ({

@@ -30,6 +30,7 @@ export interface Skill {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Skill =
   fromDefault ("Skill")
               <Skill> ({

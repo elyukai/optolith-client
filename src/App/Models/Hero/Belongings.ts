@@ -21,6 +21,7 @@ export interface Belongings {
 /**
  * Create a new `Belongings` object.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Belongings =
   fromDefault ("Belongings")
               <Belongings> ({

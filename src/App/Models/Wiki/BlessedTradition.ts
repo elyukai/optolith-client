@@ -12,6 +12,7 @@ export interface BlessedTradition {
   aspects: Maybe<Pair<number, number>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BlessedTradition =
   fromDefault ("BlessedTradition")
               <BlessedTradition> ({

@@ -379,6 +379,7 @@ export const getAvailableInactiveLiturgicalChantsAndBlessings = createMaybeSelec
 type getNameFromChantOrBlessing =
   (x: Record<LiturgicalChantWithRequirements | BlessingCombined>) => string
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const getNameFromChantOrBlessing =
   (x: Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>) =>
     LiturgicalChantWithRequirements.is (x)

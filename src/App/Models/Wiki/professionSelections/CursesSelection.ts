@@ -7,6 +7,7 @@ export interface CursesSelection {
   value: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CursesSelection =
   fromDefault ("CursesSelection")
               <CursesSelection> ({

@@ -25,6 +25,7 @@ export interface MeleeWeapon {
   isTwoHandedWeapon: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MeleeWeapon =
   fromDefault ("MeleeWeapon")
               <MeleeWeapon> ({

@@ -39,6 +39,7 @@ export interface EditPetSafe extends EditPet {
   id: Just<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const EditPet =
   fromDefault ("EditPet")
               <EditPet> ({

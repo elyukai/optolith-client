@@ -9,6 +9,7 @@ export interface SkillOptionalDependency {
 /**
  * Create a new `SkillOptionalDependency` object.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SkillOptionalDependency =
   fromDefault ("SkillOptionalDependency")
               <SkillOptionalDependency> ({

@@ -17,6 +17,7 @@ export interface SkillsSelection {
   value: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SkillsSelection =
   fromDefault ("SkillsSelection")
               <SkillsSelection> ({

@@ -14,6 +14,7 @@ export interface ItemForView {
   gr: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ItemForView =
   fromDefault ("ItemForView")
               <ItemForView> ({

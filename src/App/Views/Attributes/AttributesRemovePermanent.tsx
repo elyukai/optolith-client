@@ -4,7 +4,7 @@ import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { toInt } from "../../Utilities/NumberUtils"
 import { isNaturalNumber } from "../../Utilities/RegexUtils"
-import { BasicInputDialog } from "../Universal/BasicInputDialog"
+import { Props } from "../Universal/BasicInputDialog"
 
 export interface AttributesRemovePermanentProps {
   isOpen: boolean
@@ -34,7 +34,7 @@ export const AttributesRemovePermanent: React.FC<AttributesRemovePermanentProps>
   )
 
   return (
-    <BasicInputDialog
+    <Props
       id="overview-add-ap"
       isOpen={isOpen}
       title={translate (staticData) ("attributes.removeenergypointslostpermanently.message")}

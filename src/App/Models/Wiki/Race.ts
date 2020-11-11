@@ -47,6 +47,7 @@ export interface Race {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Race =
   fromDefault ("Race")
               <Race> ({

@@ -17,6 +17,7 @@ export interface MagicalTradition {
   areDisAdvRequiredApplyToMagActionsOrApps: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MagicalTradition =
   fromDefault ("MagicalTradition")
               <MagicalTradition> ({

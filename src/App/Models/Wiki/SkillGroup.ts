@@ -8,6 +8,7 @@ export interface SkillGroup {
   fullName: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SkillGroup =
   fromDefault ("SkillGroup")
               <SkillGroup> ({

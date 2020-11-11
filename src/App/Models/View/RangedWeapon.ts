@@ -19,6 +19,7 @@ export interface RangedWeapon {
   ammunition: Maybe<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RangedWeapon =
   fromDefault ("RangedWeapon")
               <RangedWeapon> ({

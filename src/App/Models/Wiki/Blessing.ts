@@ -20,6 +20,7 @@ export interface Blessing {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Blessing =
   fromDefault ("Blessing")
               <Blessing> ({

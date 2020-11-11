@@ -18,6 +18,7 @@ export interface ActiveActivatable<A extends RecordI<Activatable> = RecordI<Acti
   heroEntry: Record<ActivatableDependent>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActiveActivatable =
   fromDefault ("ActiveActivatable")
               <ActiveActivatable> ({

@@ -16,6 +16,7 @@ export interface Condition {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Condition =
   fromDefault ("Condition")
               <Condition> ({

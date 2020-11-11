@@ -8,6 +8,7 @@ export interface BlessingCombined extends IsActive {
   wikiEntry: Record<Blessing>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BlessingCombined =
   fromDefault ("BlessingCombined")
               <BlessingCombined> ({

@@ -56,6 +56,7 @@ export interface CategorizedPrerequisites {
   social: Maybe<SocialPrerequisiteObjects>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CategorizedPrerequisites =
   fromDefault ("CategorizedPrerequisites")
               <CategorizedPrerequisites> ({

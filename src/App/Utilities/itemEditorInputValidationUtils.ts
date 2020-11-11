@@ -42,6 +42,7 @@ export interface ItemEditorInputValidation {
   other: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ItemEditorInputValidation =
   fromDefault ("ItemEditorInputValidation")
               <ItemEditorInputValidation> ({

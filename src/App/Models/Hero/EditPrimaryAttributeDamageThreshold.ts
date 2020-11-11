@@ -8,6 +8,7 @@ export interface EditPrimaryAttributeDamageThreshold {
   threshold: string | Pair<string, string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const EditPrimaryAttributeDamageThreshold =
   fromDefault ("EditPrimaryAttributeDamageThreshold")
               <EditPrimaryAttributeDamageThreshold> ({

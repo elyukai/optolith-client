@@ -19,6 +19,7 @@ const _RemoveSpecializationSelection =
                 active: false,
               })
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RemoveSpecializationSelection =
   _RemoveSpecializationSelection ({
     id: ProfessionSelectionIds.SPECIALIZATION,

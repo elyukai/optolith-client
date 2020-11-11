@@ -30,6 +30,7 @@ interface IdNameLevel {
   level: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const IdNameLevel =
   fromDefault ("IdNameLevel") <IdNameLevel> ({
                 id: 0,

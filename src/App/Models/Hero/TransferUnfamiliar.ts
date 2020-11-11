@@ -19,6 +19,7 @@ export enum UnfamiliarGroup {
   Chants,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TransferUnfamiliar =
   fromDefault ("TransferUnfamiliar")
               <TransferUnfamiliar> ({

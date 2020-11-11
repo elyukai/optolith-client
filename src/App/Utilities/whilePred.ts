@@ -1,4 +1,4 @@
-interface whilePred {
+interface WhilePred {
   <A, A1 extends A> (pred: (x: A) => x is A1): (f: (x: A1) => A) => (x: A) => A
   <A> (pred: (x: A) => boolean): (f: (x: A) => A) => (x: A) => A
 }
@@ -13,7 +13,8 @@ interface whilePred {
  * is checked, then it's going to be mapped over, then checked again, mapped
  * over again, and so on. As long as the predicate returns `True`.
  */
-export const whilePred: whilePred =
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const whilePred: WhilePred =
   <A>
   (pred: (x: A) => boolean) =>
   (f: (x: A) => A) =>

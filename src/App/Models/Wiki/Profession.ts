@@ -53,6 +53,7 @@ export interface Profession {
   category: Category
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Profession =
   fromDefault ("Profession")
               <Profession> ({

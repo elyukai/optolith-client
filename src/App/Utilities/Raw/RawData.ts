@@ -15,7 +15,8 @@ export interface RawHeroBase {
   readonly clientVersion: string
 }
 
-export interface RawHero_1_2_0_alpha_11 extends RawHeroBase {
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export interface RawHero120alpha11 extends RawHeroBase {
   readonly locale?: string
   readonly avatar?: string
   readonly ap: {
@@ -74,7 +75,7 @@ export interface RawHero_1_2_0_alpha_11 extends RawHeroBase {
   readonly liturgies: StringKeyObject<number>
   readonly blessings: string[]
   readonly belongings: {
-    items: StringKeyObject<RawCustomItem_1_2_0_alpha_11>
+    items: StringKeyObject<RawCustomItem120alpha11>
     armorZones?: StringKeyObject<RawArmorZone>
     purse: {
       d: string
@@ -87,9 +88,9 @@ export interface RawHero_1_2_0_alpha_11 extends RawHeroBase {
   readonly pact?: RawPact
 }
 
-export interface RawHero_1_3_0_alpha_2 extends Omit<RawHero_1_2_0_alpha_11, "belongings"> {
+export interface RawHero130alpha2 extends Omit<RawHero120alpha11, "belongings"> {
   readonly belongings: {
-    items: StringKeyObject<RawCustomItem_1_3_0_alpha_2>
+    items: StringKeyObject<RawCustomItem130alpha2>
     armorZones?: StringKeyObject<RawArmorZone>
     purse: {
       d: string
@@ -100,7 +101,7 @@ export interface RawHero_1_3_0_alpha_2 extends Omit<RawHero_1_2_0_alpha_11, "bel
   }
 }
 
-export type RawHero = RawHero_1_3_0_alpha_2
+export type RawHero = RawHero130alpha2
 
 export interface RawActiveObject {
   sid?: string | number
@@ -120,7 +121,7 @@ export interface RawRules {
 
 export type RawHerolist = StringKeyObject<RawHero>
 
-export interface RawCustomItem_1_2_0_alpha_11 {
+export interface RawCustomItem120alpha11 {
   id: string
   price?: number
   weight?: number
@@ -131,7 +132,7 @@ export interface RawCustomItem_1_2_0_alpha_11 {
   damageDiceNumber?: number
   damageDiceSides?: number
   damageFlat?: number
-  primaryThreshold?: RawPrimaryAttributeDamageThreshold_1_2_0_alpha_11
+  primaryThreshold?: RawPrimaryAttributeDamageThreshold120alpha11
   at?: number
   pa?: number
   reach?: number
@@ -157,26 +158,26 @@ export interface RawCustomItem_1_2_0_alpha_11 {
   where?: string
 }
 
-export interface RawCustomItem_1_3_0_alpha_2
-  extends Omit<RawCustomItem_1_2_0_alpha_11, "stp" | "reloadTime" | "primaryThreshold"> {
+export interface RawCustomItem130alpha2
+  extends Omit<RawCustomItem120alpha11, "stp" | "reloadTime" | "primaryThreshold"> {
   stp?: number | number[]
   reloadTime?: number | number[]
-  primaryThreshold?: RawPrimaryAttributeDamageThreshold_1_3_0_alpha_2
+  primaryThreshold?: RawPrimaryAttributeDamageThreshold130alpha2
 }
 
-export type RawCustomItem = RawCustomItem_1_3_0_alpha_2
+export type RawCustomItem = RawCustomItem130alpha2
 
-export interface RawPrimaryAttributeDamageThreshold_1_2_0_alpha_11 {
+export interface RawPrimaryAttributeDamageThreshold120alpha11 {
   primary?: string
   threshold: number | readonly number[]
 }
 
-export interface RawPrimaryAttributeDamageThreshold_1_3_0_alpha_2 {
+export interface RawPrimaryAttributeDamageThreshold130alpha2 {
   primary?: string | [string, string]
   threshold: number | readonly number[]
 }
 
-export type RawPrimaryAttributeDamageThreshold = RawPrimaryAttributeDamageThreshold_1_3_0_alpha_2
+export type RawPrimaryAttributeDamageThreshold = RawPrimaryAttributeDamageThreshold130alpha2
 
 export interface RawArmorZone {
   id: string

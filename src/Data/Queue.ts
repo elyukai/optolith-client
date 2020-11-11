@@ -45,6 +45,7 @@ interface QueuePrototype<A> extends Type<TypeName.Queue> {
   [Symbol.iterator] (): IterableIterator<A>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const QueuePrototype =
   Object.freeze<QueuePrototype<any>> ({
     [Symbol.iterator] (this: Queue<any>) {

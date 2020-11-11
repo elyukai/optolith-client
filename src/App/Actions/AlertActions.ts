@@ -25,6 +25,7 @@ interface PromptOptionsCreator extends RecordCreator<PromptOptions<any>> {
   <A> (x: PartialMaybeOrNothing<OmitName<PromptOptions<A>>>): Record<PromptOptions<A>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PromptOptions: PromptOptionsCreator =
   fromDefault ("PromptOptions")
               <PromptOptions<any>> ({
@@ -45,6 +46,7 @@ interface PromptButtonCreator extends RecordCreator<PromptButton<any>> {
   <A> (x: PartialMaybeOrNothing<OmitName<PromptButton<A>>>): Record<PromptButton<A>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PromptButton: PromptButtonCreator =
   fromDefault ("PromptButton")
               <PromptButton<any>> ({
@@ -72,6 +74,7 @@ interface CustomPromptOptionsCreator extends RecordCreator<CustomPromptOptions<a
   <A> (x: PartialMaybeOrNothing<OmitName<CustomPromptOptions<A>>>): Record<CustomPromptOptions<A>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomPromptOptions: CustomPromptOptionsCreator =
   fromDefault ("CustomPromptOptions")
               <CustomPromptOptions<any>> ({
@@ -104,6 +107,7 @@ export interface AlertOptions {
   message: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AlertOptions =
   fromDefault ("AlertOptions")
               <AlertOptions> ({
@@ -212,6 +216,7 @@ export interface ConfirmOptions {
   useYesNo: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ConfirmOptions =
   fromDefault ("ConfirmOptions")
               <ConfirmOptions> ({

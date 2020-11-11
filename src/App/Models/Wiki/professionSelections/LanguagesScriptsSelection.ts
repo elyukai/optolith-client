@@ -7,6 +7,7 @@ export interface LanguagesScriptsSelection {
   value: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LanguagesScriptsSelection =
   fromDefault ("LanguagesScriptsSelection")
               <LanguagesScriptsSelection> ({

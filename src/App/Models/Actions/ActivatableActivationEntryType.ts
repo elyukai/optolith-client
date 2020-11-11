@@ -15,6 +15,7 @@ export interface ActivatableActivationEntryType {
   wikiEntry: Record<Advantage> | Record<Disadvantage>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivatableActivationEntryType =
   fromDefault ("ActivatableActivationEntryType")
               <ActivatableActivationEntryType> ({

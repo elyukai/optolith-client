@@ -28,6 +28,7 @@ export interface DominationRitual {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DominationRitual =
   fromDefault ("DominationRitual")
               <DominationRitual> ({

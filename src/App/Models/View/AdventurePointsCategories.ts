@@ -25,6 +25,7 @@ export interface AdventurePointsCategories {
   spentOnProfession: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdventurePointsCategories =
   fromDefault ("AdventurePointsCategories")
               <AdventurePointsCategories> ({

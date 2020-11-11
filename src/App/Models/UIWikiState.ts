@@ -16,6 +16,7 @@ export interface UIWikiState {
   itemTemplatesGroup: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const UIWikiState =
   fromDefault ("UIWikiState")
               <UIWikiState> ({

@@ -9,6 +9,7 @@ export interface NavigationBarTabOptions {
   subTabs: List<TabId>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const NavigationBarTabOptions =
   fromDefault ("NavigationBarTabOptions")
               <NavigationBarTabOptions> ({

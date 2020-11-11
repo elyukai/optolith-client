@@ -7,6 +7,7 @@ export interface SrcOnly {
   src: List<Record<SourceLink>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SrcOnly =
   fromDefault ("SrcOnly")
               <SrcOnly> ({
