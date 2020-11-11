@@ -7,6 +7,7 @@ export interface CommonProfession {
   reverse: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CommonProfession =
   fromDefault ("CommonProfession")
               <CommonProfession> ({

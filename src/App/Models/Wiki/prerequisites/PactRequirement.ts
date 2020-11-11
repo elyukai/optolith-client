@@ -14,6 +14,7 @@ export interface PactRequirement {
   level: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PactRequirement =
   fromDefault ("PactRequirement")
               <PactRequirement> ({

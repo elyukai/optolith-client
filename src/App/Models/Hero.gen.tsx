@@ -67,14 +67,14 @@ export type PersonalData = personalData;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Activatable_option = 
-    { tag: "Generic"; value: number }
-  | { tag: "Skill"; value: number }
-  | { tag: "CombatTechnique"; value: number }
-  | { tag: "Spell"; value: number }
-  | { tag: "Cantrip"; value: number }
-  | { tag: "LiturgicalChant"; value: number }
-  | { tag: "Blessing"; value: number }
-  | { tag: "CustomInput"; value: string };
+    { NAME: "Generic"; VAL: number }
+  | { NAME: "Skill"; VAL: number }
+  | { NAME: "CombatTechnique"; VAL: number }
+  | { NAME: "Spell"; VAL: number }
+  | { NAME: "Cantrip"; VAL: number }
+  | { NAME: "LiturgicalChant"; VAL: number }
+  | { NAME: "Blessing"; VAL: number }
+  | { NAME: "CustomInput"; VAL: string };
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Activatable_single = {

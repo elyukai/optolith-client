@@ -6,6 +6,7 @@ export interface CombatTechniquesSecondSelection {
   value: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CombatTechniquesSecondSelection =
   fromDefault ("CombatTechniquesSecondSelection")
               <CombatTechniquesSecondSelection> ({

@@ -226,7 +226,7 @@ export const equals = <A> (x1: A) => (x2: A): boolean => {
 //     && equalsMap (mp1 .right) ((mp2 as Bin<any, any>) .right)
 //   )
 
-
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type equals<A> = (x1: A) => (x2: A) => boolean
 
 /**

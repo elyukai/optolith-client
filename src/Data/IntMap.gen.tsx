@@ -7,9 +7,6 @@ const $$toJS1024164449: { [key: string]: any } = {"0": "Nothing"};
 const $$toRE1024164449: { [key: string]: any } = {"Nothing": 0};
 
 // tslint:disable-next-line:no-var-requires
-const CreateBucklescriptBlock = require('bs-platform/lib/js/block.js');
-
-// tslint:disable-next-line:no-var-requires
 const Curry = require('bs-platform/lib/js/curry.js');
 
 // tslint:disable-next-line:no-var-requires
@@ -91,7 +88,7 @@ export const Foldable_notElem: <a>(_1:a, _2:t<a>) => boolean = function <a>(Arg1
 export const Foldable_find: <a>(_1:((_1:a) => boolean), _2:t<a>) => Maybe_t<a> = function <a>(Arg1: any, Arg2: any) {
   const result = Curry._2(IntMapBS.Foldable.find, Arg1, Arg2);
   return typeof(result) === 'object'
-    ? {tag:"Just", value:result[0]}
+    ? {tag:"Just", value:result._0}
     : $$toJS1024164449[result]
 };
 
@@ -99,12 +96,12 @@ export const Traversable_mapMEither: <a,b,c>(_1:((_1:a) => Either_t<b,c>), _2:t<
   const result = Curry._2(IntMapBS.Traversable.mapMEither, function (Arg11: any) {
       const result1 = Arg1(Arg11);
       return result1.tag==="Left"
-        ? CreateBucklescriptBlock.__(0, [result1.value])
-        : CreateBucklescriptBlock.__(1, [result1.value])
+        ? {TAG: 0, _0:result1.value} as any
+        : {TAG: 1, _0:result1.value} as any
     }, Arg2);
-  return result.tag===0
-    ? {tag:"Left", value:result[0]}
-    : {tag:"Right", value:result[0]}
+  return result.TAG===0
+    ? {tag:"Left", value:result._0}
+    : {tag:"Right", value:result._0}
 };
 
 export const fnull: <a>(_1:t<a>) => boolean = IntMapBS.null;
@@ -124,7 +121,7 @@ export const notMember: <a>(_1:key, _2:t<a>) => boolean = function <a>(Arg1: any
 export const lookup: <a>(_1:key, _2:t<a>) => Maybe_t<a> = function <a>(Arg1: any, Arg2: any) {
   const result = Curry._2(IntMapBS.lookup, Arg1, Arg2);
   return typeof(result) === 'object'
-    ? {tag:"Just", value:result[0]}
+    ? {tag:"Just", value:result._0}
     : $$toJS1024164449[result]
 };
 
@@ -156,7 +153,7 @@ export const insertWithKey: <a>(_1:((_1:key, _2:a, _3:a) => a), _2:key, _3:a, _4
 export const insertLookupWithKey: <a>(_1:((_1:key, _2:a, _3:a) => a), _2:key, _3:a, _4:t<a>) => [Maybe_t<a>, t<a>] = function <a>(Arg1: any, Arg2: any, Arg3: any, Arg4: any) {
   const result = Curry._4(IntMapBS.insertLookupWithKey, Arg1, Arg2, Arg3, Arg4);
   return [typeof(result[0]) === 'object'
-    ? {tag:"Just", value:result[0][0]}
+    ? {tag:"Just", value:result[0]._0}
     : $$toJS1024164449[result[0]], result[1]]
 };
 
@@ -179,7 +176,7 @@ export const update: <a>(_1:((_1:a) => Maybe_t<a>), _2:key, _3:t<a>) => t<a> = f
   const result = Curry._3(IntMapBS.update, function (Arg11: any) {
       const result1 = Arg1(Arg11);
       return typeof(result1) === 'object'
-        ? CreateBucklescriptBlock.__(0, [result1.value])
+        ? {TAG: 0, _0:result1.value} as any
         : $$toRE1024164449[result1]
     }, Arg2, Arg3);
   return result
@@ -189,7 +186,7 @@ export const updateWithKey: <a>(_1:((_1:key, _2:a) => Maybe_t<a>), _2:key, _3:t<
   const result = Curry._3(IntMapBS.updateWithKey, function (Arg11: any, Arg2: any) {
       const result1 = Arg1(Arg11, Arg2);
       return typeof(result1) === 'object'
-        ? CreateBucklescriptBlock.__(0, [result1.value])
+        ? {TAG: 0, _0:result1.value} as any
         : $$toRE1024164449[result1]
     }, Arg21, Arg3);
   return result
@@ -199,21 +196,21 @@ export const updateLookupWithKey: <a>(_1:((_1:key, _2:a) => Maybe_t<a>), _2:key,
   const result = Curry._3(IntMapBS.updateLookupWithKey, function (Arg11: any, Arg2: any) {
       const result1 = Arg1(Arg11, Arg2);
       return typeof(result1) === 'object'
-        ? CreateBucklescriptBlock.__(0, [result1.value])
+        ? {TAG: 0, _0:result1.value} as any
         : $$toRE1024164449[result1]
     }, Arg21, Arg3);
   return [typeof(result[0]) === 'object'
-    ? {tag:"Just", value:result[0][0]}
+    ? {tag:"Just", value:result[0]._0}
     : $$toJS1024164449[result[0]], result[1]]
 };
 
 export const alter: <a>(_1:((_1:Maybe_t<a>) => Maybe_t<a>), _2:key, _3:t<a>) => t<a> = function <a>(Arg1: any, Arg2: any, Arg3: any) {
   const result = Curry._3(IntMapBS.alter, function (Arg11: any) {
       const result1 = Arg1(typeof(Arg11) === 'object'
-        ? {tag:"Just", value:Arg11[0]}
+        ? {tag:"Just", value:Arg11._0}
         : $$toJS1024164449[Arg11]);
       return typeof(result1) === 'object'
-        ? CreateBucklescriptBlock.__(0, [result1.value])
+        ? {TAG: 0, _0:result1.value} as any
         : $$toRE1024164449[result1]
     }, Arg2, Arg3);
   return result
@@ -268,7 +265,7 @@ export const mapMaybe: <a,b>(_1:((_1:a) => Maybe_t<b>), _2:t<a>) => t<b> = funct
   const result = Curry._2(IntMapBS.mapMaybe, function (Arg11: any) {
       const result1 = Arg1(Arg11);
       return typeof(result1) === 'object'
-        ? CreateBucklescriptBlock.__(0, [result1.value])
+        ? {TAG: 0, _0:result1.value} as any
         : $$toRE1024164449[result1]
     }, Arg2);
   return result
@@ -278,7 +275,7 @@ export const mapMaybeWithKey: <a,b>(_1:((_1:key, _2:a) => Maybe_t<b>), _2:t<a>) 
   const result = Curry._2(IntMapBS.mapMaybeWithKey, function (Arg11: any, Arg2: any) {
       const result1 = Arg1(Arg11, Arg2);
       return typeof(result1) === 'object'
-        ? CreateBucklescriptBlock.__(0, [result1.value])
+        ? {TAG: 0, _0:result1.value} as any
         : $$toRE1024164449[result1]
     }, Arg21);
   return result

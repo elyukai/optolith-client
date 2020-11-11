@@ -7,6 +7,7 @@ export interface SpellIsActive extends IsActive {
   wikiEntry: Record<Spell>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const SpellIsActive =
   fromDefault ("SpellIsActive")
               <SpellIsActive> ({

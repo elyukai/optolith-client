@@ -15,6 +15,7 @@ export interface Armor {
   where: Maybe<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Armor =
   fromDefault ("Armor")
               <Armor> ({

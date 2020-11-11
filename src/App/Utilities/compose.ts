@@ -1,7 +1,7 @@
 import { Lens_ } from "../../Data/Lens"
 import { Transducer } from "../../Data/Transducer"
 
-interface compose {
+interface Compose {
   <A, B, C> (bc: (b: B) => C, ab: (a: A) => B): (a: A) => C
   <A, B, C, D> (cd: (c: C) => D, bc: (b: B) => C, ab: (a: A) => B): (a: A) => D
 
@@ -89,11 +89,12 @@ interface compose {
  * function invocation, beginning with whatever arguments were passed to the
  * initial invocation.
  */
-export const compose: compose =
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const compose: Compose =
   (...fs: ((x: any) => any)[]) => (x: any): any =>
     fs .reduceRight<any> ((y, f) => f (y), x)
 
-interface composeL {
+interface ComposeL {
   <A, B, C> (ab: Lens_<A, B>, bc: Lens_<B, C>): Lens_<A, C>
   <A, B, C, D> (ab: Lens_<A, B>, bc: Lens_<B, C>, cd: Lens_<C, D>): Lens_<A, D>
 }
@@ -101,9 +102,10 @@ interface composeL {
 /**
  * Combine lenses to focus on deeper parts of an object at once.
  */
-export const composeL: composeL = compose
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const composeL: ComposeL = compose
 
-interface composeT {
+interface ComposeT {
   <A, B, C> (ab: Transducer<A, B>, bc: Transducer<B, C>): Transducer<A, C>
 
   <A, B, C, D>
@@ -128,7 +130,8 @@ interface composeT {
  * function invocation, beginning with whatever arguments were passed to the
  * initial invocation.
  */
-export const composeT: composeT = compose
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const composeT: ComposeT = compose
 
 
 // type LensOrPrism<S, T, A, B> = Lens<S, T, A, B> | ExplA<Prism<S, T, A, B>>

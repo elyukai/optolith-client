@@ -13,6 +13,7 @@ export interface Rules {
 /**
  * Create a new `Rules` object.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Rules =
   fromDefault ("Rules")
               <Rules> ({

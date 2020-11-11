@@ -31,6 +31,7 @@ export interface ProfessionVariant {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProfessionVariant =
   fromDefault ("ProfessionVariant")
               <ProfessionVariant> ({

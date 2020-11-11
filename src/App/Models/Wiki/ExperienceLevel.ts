@@ -13,6 +13,7 @@ export interface ExperienceLevel {
   maxUnfamiliarSpells: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ExperienceLevel =
   fromDefault ("ExperienceLevel")
               <ExperienceLevel> ({

@@ -8,6 +8,7 @@ export interface ActivatableActivationValidation {
   minLevel: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivatableActivationValidation =
   fromDefault ("ActivatableActivationValidation")
               <ActivatableActivationValidation> ({

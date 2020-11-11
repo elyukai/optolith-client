@@ -1,4 +1,4 @@
-interface pipe {
+interface Pipe {
   <A extends any[], B, C> (ab: (...a: A) => B, bc: (b: B) => C): (...a: A) => C
   <A extends any[], B, C, D> (ab: (...a: A) => B, bc: (b: B) => C, cd: (c: C) => D): (...a: A) => D
 
@@ -117,7 +117,7 @@ interface pipe {
  * function invocation, beginning with whatever arguments were passed to the
  * initial invocation.
  */
-export const pipe: pipe =
+export const pipe: Pipe =
   (...fs: ((...x: any[]) => any)[]) => (...x: any[]): any =>
     fs.length === 0
     ? x
@@ -125,7 +125,7 @@ export const pipe: pipe =
     ? fs [0] (...x)
     : fs .slice (1) .reduce<any> ((y, f) => f (y), fs [0] (...x))
 
-interface pipe_ {
+interface Pipe$ {
   <A, B> (a: A, ab: (a: A) => B): B
   <A, B, C> (a: A, ab: (a: A) => B, bc: (b: B) => C): C
   <A, B, C, D> (a: A, ab: (a: A) => B, bc: (b: B) => C, cd: (c: C) => D): D
@@ -237,6 +237,6 @@ interface pipe_ {
  * function invocation, beginning with whatever arguments were passed to the
  * initial invocation.
  */
-export const pipe_: pipe_ =
+export const pipe_: Pipe$ =
   (x: any, ...fs: ((x: any) => any)[]): any =>
     fs .reduce<any> ((y, f) => f (y), x)

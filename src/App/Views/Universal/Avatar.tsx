@@ -27,22 +27,24 @@ export const Avatar: React.FC<Props> = props => {
     guardReplace (hasWrapper !== true && !validPath) ("no-avatar")
   ))
 
-  return orN (img) ? (
-    <img
-      className={className}
-      src={renderMaybe (then (guard (validPath)) (msrc))}
-      onClick={onClick}
-      alt=""
-      />
-  ) : (
-    <div
-      className={className}
-      style={
-        validPath
-          ? { backgroundImage: `url("${renderMaybe (msrc)}")` }
-          : undefined
-      }
-      onClick={onClick}
-      />
-  )
+  return orN (img)
+    ? (
+      <img
+        className={className}
+        src={renderMaybe (then (guard (validPath)) (msrc))}
+        onClick={onClick}
+        alt=""
+        />
+    )
+    : (
+      <div
+        className={className}
+        style={
+          validPath
+            ? { backgroundImage: `url("${renderMaybe (msrc)}")` }
+            : undefined
+        }
+        onClick={onClick}
+        />
+    )
 }

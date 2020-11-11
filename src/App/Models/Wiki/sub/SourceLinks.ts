@@ -8,6 +8,7 @@ export interface SourceLinks {
   pages: List<number | Pair<number, number>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SourceLinks =
   fromDefault ("SourceLinks")
               <SourceLinks> ({

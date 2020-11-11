@@ -64,59 +64,61 @@ export const EquipmentListItem: React.FC<EquipmentListItemProps> = props => {
 
   const numberValue = ensure<number> (gt (1)) (IA.amount (data))
 
-  return orN (add) ? (
-    <ListItem active={Maybe.elem (id) (selectedForInfo)}>
-      <ListItemName name={IA.name (data)} />
-      <ListItemSeparator />
-      <ListItemButtons>
-        <IconButton
-          icon="&#xE916;"
-          onClick={handleAddTemplate}
-          flat
+  return orN (add)
+    ? (
+      <ListItem active={Maybe.elem (id) (selectedForInfo)}>
+        <ListItemName name={IA.name (data)} />
+        <ListItemSeparator />
+        <ListItemButtons>
+          <IconButton
+            icon="&#xE916;"
+            onClick={handleAddTemplate}
+            flat
+            />
+          <IconButton
+            icon="&#xE912;"
+            onClick={handleShowInfo}
+            flat
+            />
+        </ListItemButtons>
+      </ListItem>
+    )
+    : (
+      <ListItem active={Maybe.elem (id) (selectedForInfo)}>
+        <ListItemName
+          name={
+            `${maybe ("") ((value: number) => `${value}x `) (numberValue)}${IA.name (data)}`
+          }
           />
-        <IconButton
-          icon="&#xE912;"
-          onClick={handleShowInfo}
-          flat
+        <ListItemSeparator />
+        <ListItemGroup
+          group={IA.gr (data)}
+          getGroupName={pipe (
+            lookupF (StaticData.A.equipmentGroups (staticData)),
+            maybe ("") (NumIdName.A.name)
+          )}
           />
-      </ListItemButtons>
-    </ListItem>
-  ) : (
-    <ListItem active={Maybe.elem (id) (selectedForInfo)}>
-      <ListItemName
-        name={
-          `${maybe ("") ((value: number) => `${value}x `) (numberValue)}${IA.name (data)}`
-        }
-        />
-      <ListItemSeparator />
-      <ListItemGroup
-        group={IA.gr (data)}
-        getGroupName={pipe (
-          lookupF (StaticData.A.equipmentGroups (staticData)),
-          maybe ("") (NumIdName.A.name)
-        )}
-        />
-      <ListItemWeight
-        weight={IA.weight (data)}
-        staticData={staticData}
-        />
-      <ListItemButtons>
-        <IconButton
-          icon="&#xE90c;"
-          onClick={handleEdit}
-          flat
+        <ListItemWeight
+          weight={IA.weight (data)}
+          staticData={staticData}
           />
-        <IconButton
-          icon="&#xE90b;"
-          onClick={handleDelete}
-          flat
-          />
-        <IconButton
-          icon="&#xE912;"
-          onClick={handleShowInfo}
-          flat
-          />
-      </ListItemButtons>
-    </ListItem>
-  )
+        <ListItemButtons>
+          <IconButton
+            icon="&#xE90c;"
+            onClick={handleEdit}
+            flat
+            />
+          <IconButton
+            icon="&#xE90b;"
+            onClick={handleDelete}
+            flat
+            />
+          <IconButton
+            icon="&#xE912;"
+            onClick={handleShowInfo}
+            flat
+            />
+        </ListItemButtons>
+      </ListItem>
+    )
 }

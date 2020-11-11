@@ -13,6 +13,7 @@ export interface EditItemSafe extends EditItem {
   id: Just<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const EditItem =
   fromDefault ("EditItem")
               <EditItem> ({

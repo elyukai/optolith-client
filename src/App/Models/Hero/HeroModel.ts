@@ -79,6 +79,7 @@ export interface HeroModel {
  * Create a new `Hero` object from scratch. Does not handle special semantic
  * rules, so you need to take of them on your own.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const HeroModel: RecordCreator<HeroModel> =
   fromDefault ("Hero")
               <HeroModel> ({

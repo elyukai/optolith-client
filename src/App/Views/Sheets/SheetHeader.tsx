@@ -15,6 +15,7 @@ export interface HeaderValue {
   value: Maybe<number | string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const HeaderValue =
   fromDefault ("HeaderValue") <HeaderValue> ({
                 id: "",

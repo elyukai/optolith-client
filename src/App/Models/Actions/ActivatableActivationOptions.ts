@@ -13,6 +13,7 @@ export interface ActivatableActivationOptions {
   customCost: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivatableActivationOptions =
   fromDefault ("ActivatableActivationOptions")
               <ActivatableActivationOptions> ({

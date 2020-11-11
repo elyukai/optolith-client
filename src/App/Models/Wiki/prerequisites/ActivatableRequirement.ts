@@ -23,6 +23,7 @@ export interface ProfessionRequireActivatable {
   tier: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RequireActivatable =
   fromDefault ("RequireActivatable")
               <RequireActivatable> ({
@@ -35,6 +36,7 @@ export const RequireActivatable =
 
 export const RequireActivatableL = makeLenses (RequireActivatable)
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProfessionRequireActivatable =
   fromDefault ("ProfessionRequireActivatable")
               <ProfessionRequireActivatable> ({

@@ -36,6 +36,7 @@ export interface UISettingsState {
   enableAnimations: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const UISettingsState =
   fromDefault ("UISettingsState")
               <UISettingsState> ({

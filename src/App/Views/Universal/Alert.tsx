@@ -17,6 +17,19 @@ interface Props {
 export const Alert: React.FC<Props> = props => {
   const { close, options: moptions } = props
 
+  const closeEnhanced = React.useCallback (
+    (canceled: boolean) => {
+      removeKeybinding ("enter")
+
+      if (canceled && Maybe.isJust (moptions)) {
+        POA.resolve (fromJust (moptions)) (Nothing)
+      }
+
+      close ()
+    },
+    [ close, moptions ]
+  )
+
   if (!Maybe.isJust (moptions)) {
     return null
   }
@@ -35,16 +48,6 @@ export const Alert: React.FC<Props> = props => {
           onClick: () => resolve (Just (PBA.response (x))),
         }))
         (buttons)
-
-  const closeEnhanced = (canceled: boolean) => {
-    removeKeybinding ("enter")
-
-    if (canceled) {
-      resolve (Nothing)
-    }
-
-    close ()
-  }
 
   if (flength (buttons) === 1) {
     addKeybinding ("enter", () => {

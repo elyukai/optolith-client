@@ -13,6 +13,7 @@ export interface CombatTechniquesSelection {
   sid: List<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CombatTechniquesSelection =
   fromDefault ("CombatTechniquesSelection")
               <CombatTechniquesSelection> ({

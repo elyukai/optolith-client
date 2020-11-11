@@ -9,6 +9,7 @@ export interface CantripCombined extends IsActive {
   isUnfamiliar: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CantripCombined =
   fromDefault ("CantripCombined")
               <CantripCombined> ({

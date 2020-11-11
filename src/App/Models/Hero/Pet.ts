@@ -39,6 +39,7 @@ export interface Pet extends PetBase {
   pa: Maybe<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Pet =
   fromDefault ("Pet")
               <Pet> ({

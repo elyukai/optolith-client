@@ -7,6 +7,7 @@ export interface SourceLink {
   page: number | Pair<number, number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SourceLink =
   fromDefault ("SourceLink")
               <SourceLink> ({

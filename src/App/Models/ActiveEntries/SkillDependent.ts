@@ -13,6 +13,7 @@ export interface SkillDependent {
   dependencies: List<SkillDependency>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SkillDependent =
   fromDefault ("SkillDependent")
               <SkillDependent> ({

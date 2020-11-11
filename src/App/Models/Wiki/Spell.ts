@@ -38,6 +38,7 @@ export interface Spell {
   category: Category
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Spell =
   fromDefault ("Spell")
               <Spell> ({

@@ -15,6 +15,7 @@ export interface Energies {
 /**
  * Create a new `Energies` object.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Energies =
   fromDefault ("Energies")
               <Energies> ({

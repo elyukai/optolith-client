@@ -17,6 +17,7 @@ export enum PrimaryAttributeType {
   Blessed = 2,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RequirePrimaryAttribute =
   fromDefault ("RequirePrimaryAttribute")
               <RequirePrimaryAttribute> ({

@@ -4,6 +4,7 @@ interface TaggedPrototype {
   readonly isTagged: true
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const TaggedPrototype =
   Object.freeze<TaggedPrototype> ({
     isTagged: true,
@@ -24,6 +25,7 @@ export interface Tagged<S, B> extends TaggedPrototype {
 /**
  * `Tagged :: b -> Tagged s b`
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Tagged =
   <S, B> (x: B): Tagged<S, B> =>
     Object.create (

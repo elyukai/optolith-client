@@ -5,6 +5,7 @@ import type { Just as J } from "../Maybe"
 import { add, multiply } from "../Num"
 
 type Just<A> = J<A>
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const { Just } = Internals
 
 test ("ident", () => {

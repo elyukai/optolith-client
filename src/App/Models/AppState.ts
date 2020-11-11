@@ -18,6 +18,7 @@ export interface AppState {
 
 export type AppStateRecord = Record<AppState>
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AppState =
   fromDefault ("AppState")
               <AppState> ({

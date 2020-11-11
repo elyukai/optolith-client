@@ -11,6 +11,7 @@ export interface EditHitZoneArmorSafe extends EditHitZoneArmor {
   id: Just<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const EditHitZoneArmor =
   fromDefault ("EditHitZoneArmor")
               <EditHitZoneArmor> ({

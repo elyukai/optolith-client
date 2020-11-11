@@ -12,6 +12,7 @@ export interface ActivatableDependent {
   dependencies: List<ActivatableDependency>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivatableDependent =
   fromDefault ("ActivatableDependent")
               <ActivatableDependent> ({

@@ -13,6 +13,7 @@ export interface ActiveObjectWithId {
   cost: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActiveObjectWithId =
   fromDefault ("ActiveObjectWithId")
               <ActiveObjectWithId> ({

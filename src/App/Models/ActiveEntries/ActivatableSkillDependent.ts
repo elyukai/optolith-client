@@ -11,6 +11,7 @@ export interface ActivatableSkillDependent {
   dependencies: List<ExtendedSkillDependency>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivatableSkillDependent =
   fromDefault ("ActivatableSkillDependent")
               <ActivatableSkillDependent> ({

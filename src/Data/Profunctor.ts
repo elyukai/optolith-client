@@ -26,7 +26,7 @@ export type ProfunctorDimap<A, B, C, D> =
   (x: F) =>
     F extends Market<infer A_, infer B_, B, C> ? Market<A_, B_, A, D> :
     F extends Tagged<B, C> ? Tagged<A, D> :
-    F extends ((x: B) => C) ? ((x: A) => D) :
+    F extends ((y: B) => C) ? ((y: A) => D) :
     never
 
 /**
@@ -60,7 +60,7 @@ export type ProfunctorRmap<B, C> =
   (x: F) =>
     F extends Market<infer A_, infer B_, infer A, B> ? Market<A_, B_, A, C> :
     F extends Tagged<infer A1, B> ? Tagged<A1, C> :
-    F extends ((x: infer A2) => B) ? ((x: A2) => C) :
+    F extends ((y: infer A2) => B) ? ((y: A2) => C) :
     never
 
 /**

@@ -12,6 +12,7 @@ export interface State {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const State =
   fromDefault ("State")
               <State> ({

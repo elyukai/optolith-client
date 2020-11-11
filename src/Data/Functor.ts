@@ -151,7 +151,7 @@ export const fmap =
     throw new TypeError (instanceErrorMsg ("fmap") (x))
   }
 
-interface fmapF {
+interface FmapF {
 
   /**
    * `fmap :: Const m a -> (a -> b) -> Const m b`
@@ -207,7 +207,7 @@ interface fmapF {
 /**
  * `fmapF :: f a -> (a -> b) -> f b`
  */
-export const fmapF: fmapF =
+export const fmapF: FmapF =
   (x: any) =>
   (f: (x: any) => any): any =>
     fmap (f) (x)

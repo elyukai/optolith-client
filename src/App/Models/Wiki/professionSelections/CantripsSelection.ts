@@ -9,6 +9,7 @@ export interface CantripsSelection {
   sid: List<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CantripsSelection =
   fromDefault ("CantripsSelection")
               <CantripsSelection> ({

@@ -11,6 +11,7 @@ export interface AttributeDependent {
   dependencies: List<SkillDependency>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AttributeDependent =
   fromDefault ("AttributeDependent")
               <AttributeDependent> ({

@@ -34,6 +34,7 @@ export interface GeodeRitual {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GeodeRitual =
   fromDefault ("GeodeRitual")
               <GeodeRitual> ({

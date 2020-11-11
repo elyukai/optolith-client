@@ -9,6 +9,7 @@ export interface Book {
   isAdultContent: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Book =
   fromDefault ("Book")
               <Book> ({

@@ -38,6 +38,7 @@ export interface ElvenMagicalSong {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ElvenMagicalSong =
   fromDefault ("ElvenMagicalSong")
               <ElvenMagicalSong> ({

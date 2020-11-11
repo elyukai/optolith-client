@@ -31,6 +31,7 @@ export interface AnimistForce {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AnimistForce =
   fromDefault ("AnimistForce")
               <AnimistForce> ({

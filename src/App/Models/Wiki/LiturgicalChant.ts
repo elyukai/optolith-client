@@ -37,6 +37,7 @@ export interface LiturgicalChant {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LiturgicalChant =
   fromDefault ("LiturgicalChant")
               <LiturgicalChant> ({

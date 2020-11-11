@@ -12,6 +12,7 @@ export interface OptionalRule {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const OptionalRule =
   fromDefault ("OptionalRule")
               <OptionalRule> ({

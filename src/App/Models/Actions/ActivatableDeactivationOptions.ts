@@ -7,6 +7,7 @@ export interface ActivatableDeactivationOptions {
   cost: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivatableDeactivationOptions =
   fromDefault ("ActivatableDeactivationOptions")
               <ActivatableDeactivationOptions> ({

@@ -13,6 +13,7 @@ export interface CombatTechniqueWithRequirements extends IncreasableWithRequirem
   pa: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CombatTechniqueWithRequirements =
   fromDefault ("CombatTechniqueWithRequirements")
               <CombatTechniqueWithRequirements> ({
