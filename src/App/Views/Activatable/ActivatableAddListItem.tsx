@@ -18,7 +18,7 @@ import { classListMaybe } from "../../Utilities/CSS"
 import { translate, translateP } from "../../Utilities/I18n"
 import { pipe_ } from "../../Utilities/pipe"
 import { renderMaybeWith } from "../../Utilities/ReactUtils"
-import { Props } from "../Universal/BasicInputDialog"
+import { BasicInputDialog } from "../Universal/BasicInputDialog"
 import { IconButton } from "../Universal/IconButton"
 import { ListItem } from "../Universal/ListItem"
 import { ListItemButtons } from "../Universal/ListItemButtons"
@@ -304,7 +304,7 @@ export const ActivatableAddListItem: React.FC<ActivatableAddListItemProps> = pro
           {renderMaybeWith ((x: number | string) => IAA.isAutomatic (item) ? `(${x})` : x)
                            (PABSA.currentCost (snd (finalProps)))}
         </div>
-      <Props
+      <BasicInputDialog
         id="custom-cost-dialog"
         isOpen={showCustomCostDialog}
         title={translate (staticData) ("advantagesdisadvantages.dialogs.customcost.title")}

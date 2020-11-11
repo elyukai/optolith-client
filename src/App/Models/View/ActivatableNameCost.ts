@@ -1,5 +1,6 @@
 import { List } from "../../../Data/List"
 import { fromDefault, Lenses, makeLenses, OmitName, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record"
+import { composeL } from "../../Utilities/compose"
 import { pipe } from "../../Utilities/pipe"
 import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId"
 import { ActivatableCombinedName, ActivatableCombinedNameL } from "./ActivatableCombinedName"
