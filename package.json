@@ -98,8 +98,8 @@
     "start": "electron .",
     "test": "jest",
     "circ": "madge -c ./src",
-    "release:main": "standard-version --dry-run --skip.commit --skip.tag",
-    "release:pre": "standard-version --prerelease=alpha --dry-run --skip.changelog"
+    "release:main": "standard-version --skip.commit --skip.tag",
+    "release:pre": "standard-version --prerelease=alpha --skip.changelog"
   },
   "repository": "github:elyukai/optolith-client",
   "husky": {
