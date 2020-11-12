@@ -70,6 +70,7 @@
     "jest": "26.4.2",
     "qusly-core": "2.5.2",
     "sass": "1.29.0",
+    "standard-version": "9.0.0",
     "ts-jest": "26.4.4",
     "ts-loader": "8.0.11",
     "typescript": "3.8.3",
