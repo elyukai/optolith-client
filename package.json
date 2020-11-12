@@ -70,6 +70,7 @@
     "jest": "26.4.2",
     "qusly-core": "2.5.2",
     "sass": "1.29.0",
+    "standard-version": "9.0.0",
     "ts-jest": "26.4.4",
     "ts-loader": "8.0.11",
     "typescript": "3.8.3",
@@ -96,7 +97,9 @@
     "lint": "eslint \"src/\" --ext \".ts\" --ext \".tsx\"",
     "start": "electron .",
     "test": "jest",
-    "circ": "madge -c ./src"
+    "circ": "madge -c ./src",
+    "release:main": "standard-version --dry-run --skip.commit --skip.tag",
+    "release:pre": "standard-version --prerelease=alpha --dry-run --skip.changelog"
   },
   "repository": "github:elyukai/optolith-client",
   "husky": {
