@@ -11,12 +11,15 @@ module Decode = {
     type t = {
       name: string,
       nameAbbr: string,
+      isMissingImplementation: option(bool),
     };
 
     let t = json =>
-      Json.Decode.{
+      JsonStrict.{
         name: json |> field("name", string),
         nameAbbr: json |> field("nameAbbr", string),
+        isMissingImplementation:
+          json |> optionalField("isMissingImplementation", bool),
       };
   };
 
@@ -26,21 +29,28 @@ module Decode = {
     id: int,
     isCore: bool,
     isAdultContent: bool,
+    isMissingImplementation: option(bool),
     translations: TranslationMap.t,
   };
 
   let multilingual = json =>
-    Json.Decode.{
+    JsonStrict.{
       id: json |> field("id", int),
       isCore: json |> field("isCore", bool),
       isAdultContent: json |> field("isAdultContent", bool),
+      isMissingImplementation:
+        json |> optionalField("isMissingImplementation", bool),
       translations: json |> field("translations", TranslationMap.Decode.t),
     };
 
   let resolveTranslations = (langs, x) =>
     Ley_Option.Infix.(
       x.translations
-      |> TranslationMap.Decode.getFromLanguageOrder(langs)
+      |> TranslationMap.Decode.getFromLanguageOrderWith(
+           ({isMissingImplementation, _}) =>
+             Ley_Option.dis(isMissingImplementation),
+           langs,
+         )
       <&> (
         translation => {
           id: x.id,
@@ -53,7 +63,13 @@ module Decode = {
     );
 
   let t = (langs, json) =>
-    json |> multilingual |> resolveTranslations(langs);
+    json
+    |> multilingual
+    |> (
+      fun
+      | {isMissingImplementation: Some(true), _} => None
+      | x => resolveTranslations(langs, x)
+    );
 
   let toAssoc = (x: t) => (x.id, x);
 

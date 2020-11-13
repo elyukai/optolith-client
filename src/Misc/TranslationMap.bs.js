@@ -16,9 +16,17 @@ function Make(Decodable) {
                   return Curry._2(Ley_Option$OptolithClient.Infix.$less$pipe$great, acc, Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Js_dict.get(x, lang), Decodable.t));
                 }), undefined, Locale$OptolithClient.toList(langs));
   };
+  var getFromLanguageOrderWith = function (pred, langs, x) {
+    return Curry._3(Ley_List$OptolithClient.foldl, (function (acc, lang) {
+                  return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_Option$OptolithClient.Infix.$less$pipe$great, acc, Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Js_dict.get(x, lang), Decodable.t)), (function (param) {
+                                return Ley_Option$OptolithClient.ensure(pred, param);
+                              }));
+                }), undefined, Locale$OptolithClient.toList(langs));
+  };
   var Decode = {
     t: t,
-    getFromLanguageOrder: getFromLanguageOrder
+    getFromLanguageOrder: getFromLanguageOrder,
+    getFromLanguageOrderWith: getFromLanguageOrderWith
   };
   return {
           Decode: Decode
