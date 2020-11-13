@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.3-alpha.2](https://github.com/elyukai/optolith-client/compare/v1.4.3-alpha.0...v1.4.3-alpha.2) (2020-11-13)
+
+### Bug Fixes
+
+* **sheets:** removed margin of hit zone sheet ([e637136](https://github.com/elyukai/optolith-client/commit/e63713687eff9b825a79d159fb8b44dc26f64ffe)), closes [#788](https://github.com/elyukai/optolith-client/issues/788)
+* adding LE should affect CON ([390dcb6](https://github.com/elyukai/optolith-client/commit/390dcb616aaa68e5b103bb49dd75d1529c4e7e3a)), closes [#787](https://github.com/elyukai/optolith-client/issues/787)
+
 ## [1.4.2](https://github.com/elyukai/optolith-client/compare/v1.4.1...v1.4.2) (2020-11-08)
 
 ### Enhancements
