@@ -1,1 +1,1 @@
-export { SexPrerequisite as SexRequirement } from "../../Prerequisites.gen";
+export { SexPrerequisite as SexRequirement } from "../../Prerequisites.gen"

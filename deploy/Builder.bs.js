@@ -21,7 +21,7 @@ var ElectronBuilder = {
 };
 
 export {
-  ElectronBuilder ,
-  
-}
+  ElectronBuilder,
+
+};
 /* No side effect */

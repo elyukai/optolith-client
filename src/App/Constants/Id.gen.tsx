@@ -57,71 +57,71 @@ const CreateBucklescriptBlock = require('bs-platform/lib/es6/block.js');
 const IdBS = require('./Id.bs');
 
 // tslint:disable-next-line:interface-over-type-literal
-export type t = 
-    { tag: "ExperienceLevel"; value: number }
-  | { tag: "Race"; value: number }
-  | { tag: "Culture"; value: number }
-  | { tag: "Profession"; value: number }
-  | { tag: "Attribute"; value: number }
-  | { tag: "Advantage"; value: number }
-  | { tag: "Disadvantage"; value: number }
-  | { tag: "Skill"; value: number }
-  | { tag: "CombatTechnique"; value: number }
-  | { tag: "Spell"; value: number }
-  | { tag: "Curse"; value: number }
-  | { tag: "ElvenMagicalSong"; value: number }
-  | { tag: "DominationRitual"; value: number }
-  | { tag: "MagicalMelody"; value: number }
-  | { tag: "MagicalDance"; value: number }
-  | { tag: "RogueSpell"; value: number }
-  | { tag: "AnimistForce"; value: number }
-  | { tag: "GeodeRitual"; value: number }
-  | { tag: "ZibiljaRitual"; value: number }
-  | { tag: "Cantrip"; value: number }
-  | { tag: "LiturgicalChant"; value: number }
-  | { tag: "Blessing"; value: number }
-  | { tag: "SpecialAbility"; value: number }
-  | { tag: "Item"; value: number }
-  | { tag: "EquipmentPackage"; value: number }
-  | { tag: "HitZoneArmor"; value: number }
-  | { tag: "Familiar"; value: number }
-  | { tag: "Animal"; value: number }
-  | { tag: "FocusRule"; value: number }
-  | { tag: "OptionalRule"; value: number }
-  | { tag: "Condition"; value: number }
-  | { tag: "State"; value: number };
+export type t =
+    { NAME: "ExperienceLevel"; VAL: number }
+  | { NAME: "Race"; VAL: number }
+  | { NAME: "Culture"; VAL: number }
+  | { NAME: "Profession"; VAL: number }
+  | { NAME: "Attribute"; VAL: number }
+  | { NAME: "Advantage"; VAL: number }
+  | { NAME: "Disadvantage"; VAL: number }
+  | { NAME: "Skill"; VAL: number }
+  | { NAME: "CombatTechnique"; VAL: number }
+  | { NAME: "Spell"; VAL: number }
+  | { NAME: "Curse"; VAL: number }
+  | { NAME: "ElvenMagicalSong"; VAL: number }
+  | { NAME: "DominationRitual"; VAL: number }
+  | { NAME: "MagicalMelody"; VAL: number }
+  | { NAME: "MagicalDance"; VAL: number }
+  | { NAME: "RogueSpell"; VAL: number }
+  | { NAME: "AnimistForce"; VAL: number }
+  | { NAME: "GeodeRitual"; VAL: number }
+  | { NAME: "ZibiljaRitual"; VAL: number }
+  | { NAME: "Cantrip"; VAL: number }
+  | { NAME: "LiturgicalChant"; VAL: number }
+  | { NAME: "Blessing"; VAL: number }
+  | { NAME: "SpecialAbility"; VAL: number }
+  | { NAME: "Item"; VAL: number }
+  | { NAME: "EquipmentPackage"; VAL: number }
+  | { NAME: "HitZoneArmor"; VAL: number }
+  | { NAME: "Familiar"; VAL: number }
+  | { NAME: "Animal"; VAL: number }
+  | { NAME: "FocusRule"; VAL: number }
+  | { NAME: "OptionalRule"; VAL: number }
+  | { NAME: "Condition"; VAL: number }
+  | { NAME: "State"; VAL: number };
 export type Id = t;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type activatable = 
-    { tag: "Advantage"; value: number }
-  | { tag: "Disadvantage"; value: number }
-  | { tag: "SpecialAbility"; value: number };
+export type activatable =
+    { NAME: "Advantage"; VAL: number }
+  | { NAME: "Disadvantage"; VAL: number }
+  | { NAME: "SpecialAbility"; VAL: number };
 export type ActivatableId = activatable;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type activatableAndSkill = 
-    { tag: "Advantage"; value: number }
-  | { tag: "Disadvantage"; value: number }
-  | { tag: "SpecialAbility"; value: number }
-  | { tag: "Spell"; value: number }
-  | { tag: "LiturgicalChant"; value: number };
+export type activatableAndSkill =
+    { NAME: "Advantage"; VAL: number }
+  | { NAME: "Disadvantage"; VAL: number }
+  | { NAME: "SpecialAbility"; VAL: number }
+  | { NAME: "Spell"; VAL: number }
+  | { NAME: "LiturgicalChant"; VAL: number };
 export type ActivatableAndSkillId = activatableAndSkill;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type activatableSkill = 
-    { tag: "Spell"; value: number }
-  | { tag: "LiturgicalChant"; value: number };
+export type activatableSkill =
+    { NAME: "Spell"; VAL: number }
+  | { NAME: "LiturgicalChant"; VAL: number };
 export type ActivatableSkillId = activatableSkill;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type permanentSkill = 
-    { tag: "Skill"; value: number }
-  | { tag: "CombatTechnique"; value: number };
+export type permanentSkill =
+    { NAME: "Skill"; VAL: number }
+  | { NAME: "CombatTechnique"; VAL: number };
 export type PermanentSkillId = permanentSkill;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type increasable = 
+export type increasable =
     { tag: "Attribute"; value: number }
   | { tag: "Skill"; value: number }
   | { tag: "CombatTechnique"; value: number }
@@ -130,7 +130,7 @@ export type increasable =
 export type IncreasableId = increasable;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type selectOption = 
+export type selectOption =
     { tag: "Generic"; value: number }
   | { tag: "Skill"; value: number }
   | { tag: "CombatTechnique"; value: number }
@@ -142,7 +142,7 @@ export type selectOption =
 export type SelectOptionId = selectOption;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type hitZoneArmorZoneItem = 
+export type hitZoneArmorZoneItem =
     { tag: "Template"; value: number }
   | { tag: "Custom"; value: number };
 export type HitZoneArmorZoneItemId = hitZoneArmorZoneItem;
@@ -152,7 +152,7 @@ export type phase = "Outline" | "Definition" | "Advancement";
 export type Phase = phase;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type experienceLevel = 
+export type experienceLevel =
     "Inexperienced"
   | "Ordinary"
   | "Experienced"
@@ -163,7 +163,7 @@ export type experienceLevel =
 export type ExperienceLevel = experienceLevel;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type attribute = 
+export type attribute =
     "Courage"
   | "Sagacity"
   | "Intuition"
@@ -175,7 +175,7 @@ export type attribute =
 export type Attribute = attribute;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type derivedCharacteristic = 
+export type derivedCharacteristic =
     "LifePoints"
   | "ArcaneEnergy"
   | "KarmaPoints"
@@ -188,7 +188,7 @@ export type derivedCharacteristic =
 export type DerivedCharacteristic = derivedCharacteristic;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type advantage = 
+export type advantage =
     "Aptitude"
   | "Nimble"
   | "Blessed"
@@ -221,7 +221,7 @@ export type advantage =
 export type Advantage = advantage;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type disadvantage = 
+export type disadvantage =
     "AfraidOf"
   | "Poor"
   | "Slow"
@@ -251,7 +251,7 @@ export type disadvantage =
 export type Disadvantage = disadvantage;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type skill = 
+export type skill =
     "Flying"
   | "Gaukelei"
   | "Climbing"
@@ -314,7 +314,7 @@ export type skill =
 export type Skill = skill;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type combatTechnique = 
+export type combatTechnique =
     "Crossbows"
   | "Bows"
   | "Daggers"
@@ -343,7 +343,7 @@ export type combatTechniqueGroup = "Melee" | "Ranged";
 export type CombatTechniqueGroup = combatTechniqueGroup;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type magicalTradition = 
+export type magicalTradition =
     "General"
   | "GuildMages"
   | "Witches"
@@ -366,7 +366,7 @@ export type magicalTradition =
 export type MagicalTradition = magicalTradition;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type property = 
+export type property =
     "AntiMagic"
   | "Demonic"
   | "Influence"
@@ -383,7 +383,7 @@ export type property =
 export type Property = property;
 
 // tslint:disable-next-line:interface-over-type-literal
-export type specialAbility = 
+export type specialAbility =
     "SkillSpecialization"
   | "TerrainKnowledge"
   | "CraftInstruments"

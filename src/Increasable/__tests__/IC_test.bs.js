@@ -78,7 +78,5 @@ Jest.describe("icToStr", (function (param) {
                     }));
       }));
 
-export {
-  
-}
+export { };
 /*  Not a pure module */

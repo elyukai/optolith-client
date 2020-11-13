@@ -440,7 +440,12 @@ export const getMeleeWeapons = createMaybeSelector (
                                       ))
 
                         const damageFlat =
-                          Maybe.sum (liftM2 (add) (IA.damageFlat (full_item)) (damage_flat_bonus))
+                          pipe_ (
+                            full_item,
+                            IA.damageFlat,
+                            Maybe.sum,
+                            add (Maybe.sum (damage_flat_bonus))
+                          )
 
                         return isJust (mprimary_attrs)
                           || CTA.id (wiki_entry) === CombatTechniqueId.Lances

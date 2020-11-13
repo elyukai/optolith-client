@@ -49,6 +49,7 @@ interface PropertiesAffectedByState {
   inputDescription: Maybe<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PropertiesAffectedByState =
   fromDefault ("PropertiesAffectedByState") <PropertiesAffectedByState> ({
                 currentCost: Nothing,
@@ -74,6 +75,7 @@ interface InactiveActivatableControlElements {
   levelElementAfter: Maybe<JSX.Element>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const InactiveActivatableControlElements =
   fromDefault ("InactiveActivatableControlElements") <InactiveActivatableControlElements> ({
                 disabled: Nothing,

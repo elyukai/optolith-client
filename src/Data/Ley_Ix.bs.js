@@ -53,6 +53,6 @@ export {
   inRange ,
   index ,
   rangeSize ,
-  
+
 }
 /* No side effect */

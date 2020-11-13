@@ -1,3 +1,36 @@
+## 1.4.2
+
+### Améliorations
+
+- Suppression des *N/D* dans les tableaux des sorts et des liturgies sur la feuille de personnage afin que les valeurs puissent être ajoutées à la main. [#747](https://github.com/elyukai/optolith-client/issues/747)
+- Le démarrage était beaucoup plus lent qu'en 1.3.2. [#751](https://github.com/elyukai/optolith-client/issues/751)
+
+### Bugs rectifiés
+
+- La VTC maximale des techniques de combat pourrait être supérieure à celle autorisée par les règles. [#749](https://github.com/elyukai/optolith-client/issues/749)
+- La marge supérieure des fenêtres superposées – comme lors de l'ajout d'avantages – était trop petite. [#727](https://github.com/elyukai/optolith-client/issues/727)
+- Le bonus de dommages Q+SD n'était pas ajouté aux armes sans dommages fixes. [#737](https://github.com/elyukai/optolith-client/issues/737)
+- La profession *Magicien blanc (Académie de Gareth de l'épée et du bâton)* des **règles de base** avait une mauvaise valeur de PAV et *Astronomie 4* au lieu de *l'Alchimie 4*. [#568](https://github.com/elyukai/optolith-client/issues/568)
+- La zone de texte "compétences de la créature" sur l'export PDF était trop courte pour correspondre à toutes les compétences pertinentes d'une créature. [#733](https://github.com/elyukai/optolith-client/issues/733)
+- Les images dont la fin de fichier était en majuscules n'étaient pas acceptées comme images de portrait. [#762](https://github.com/elyukai/optolith-client/issues/762)
+- L'icône de téléchargement était affichée à la place de l'image du portrait sur la fiche de personnage si aucun portrait n'était défini. [#759](https://github.com/elyukai/optolith-client/issues/759)
+- Sur Mac, si le fond papier était activé, des pages vierges supplémentaires étaient générées pour la sortie PDF. [#748](https://github.com/elyukai/optolith-client/issues/748)
+
+### Remerciements
+
+Enfin et surtout, un grand **merci** à tous ceux qui font des retours et donnent leur aide sur les différents canaux ainsi qu'aux personnes ci-dessous sur GitHub qui ont contribué à cette version !
+
+- [Jordok (@Jordok)](https://github.com/Jordok)
+- [JoveToo (@JoveToo)](https://github.com/JoveToo)
+- [Lorenz Cuno Klopfenstein (@LorenzCK)](https://github.com/LorenzCK)
+- [ZeSandman (@ZeSandman)](https://github.com/ZeSandman)
+
+## 1.4.1
+
+### Bugs rectifiés
+
+- L'italien n'était pas disponible.
+
 ## 1.4.0
 
 Veuillez vérifier les personnages pour lesquels vous avez ajouté la CS *intuition tactique* ou la CS *détection des embuscades*. Vous remarquerez qu'elle n'a pas son ancien nom. Ceci est dû à une erreur (mentionnée ci-dessous) où les noms de ces deux capacités spéciales ont été échangés. La représentation interne ne peut pas être modifiée et les entrées doivent donc être "renommées". Cela devrait également corriger les prérequis "incorrects" des deux entrées.

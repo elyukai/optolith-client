@@ -1,1 +1,1 @@
-export { PrimaryAttributeDamageThreshold } from "../../Item.gen";
+export { PrimaryAttributeDamageThreshold } from "../../Item.gen"

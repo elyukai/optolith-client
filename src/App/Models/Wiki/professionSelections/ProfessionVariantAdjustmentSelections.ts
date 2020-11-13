@@ -1,1 +1,1 @@
-export { ProfessionVariantOptions as ProfessionVariantSelections } from "../../Profession.gen";
+export { ProfessionVariantOptions as ProfessionVariantSelections } from "../../Profession.gen"

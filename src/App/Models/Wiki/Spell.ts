@@ -1,1 +1,1 @@
-export { Spell } from "../Spell.gen";
+export { Spell } from "../Spell.gen"

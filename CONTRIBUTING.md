@@ -32,12 +32,13 @@ Due to licensing, the YAML files containing the crunch elements from the books a
 
 ### Basic development rules
 
-- Branches (mostly) follow Git Flow. Please try to follow Git Flow as well if you edit this repository. But if it's possible, please fork this repo and create PRs.
+- Branches follow Git Flow. Please try to follow Git Flow as well if you edit this repository. But if it's possible, please fork this repo and create PRs.
+- Commits need to follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/), which is enforced by the CI and Git Hooks locally.
 - Please check out the [Style Guide](https://github.com/elyukai/optolith-client/wiki/Code-Style-Guide) for more information on that topic! Sadly, TSLint cannot ensure the whole style so you partially need to take care of that on your own!
 - There is a page covering [Naming Conventions](https://github.com/elyukai/optolith-client/wiki/Naming-Conventions) as well!
 - The key criteria for the project are mentioned in the [README](README.md). They also apply to pull requests. A feature usually does not consist of the technical part only. Much more important is how the feature presents itself to the user. And that must be planned and discussed.
 - Code should follow functional programming practices while maintaining readablilty &ndash; which can be an issue using JavaScript/TypeScript, which is why in certain circumstances imperative/OOP code is allowed. It is also possible to write Reason/OCaml code, which compiles to JS.
-- The contribution has to be easy to understand not only for players using the app, but also for coders trying to further enhance the app: Please document at least module exports!
+- The contribution has to be easy to understand not only for players using the app, but also for coders trying to further enhance the app: Please document *at least* module exports!
 
 ### Prepare the repo
 
@@ -57,14 +58,14 @@ This installs all necessary packages.
 
 ### First run
 
-Compile the source code. `ts:` is for TypeScript, `re:` for Reason/OCaml and `css:` for CSS/Sass.
+Compile the source code. `js:` is for TypeScript/Webpack, `re:` for Reason/OCaml and `css:` for CSS/Sass. Webpack does not check the TypeScript validity, to check this, use `ts:` commands.
 
 You have to run the Reason build first as it generates TypeScript files...
 
 ```sh
 npm run re:build
-npm run ts:build
 npm run css:build
+npm run js:build
 ```
 
 (There's also a shorthand for that:)
@@ -73,12 +74,19 @@ npm run css:build
 npm run build
 ```
 
-&hellip;or watch it for better performance for subsequent compiling on save (you need to use separate terminal instances then). There is no watcher for CSS/Sass currently.
+&hellip;or watch it for better performance for subsequent compiling on save (you need to use separate terminal instances then).
 
 ```sh
 npm run re:watch
+npm run css:watch
+npm run js:watch
+```
+
+To check the TypeScript validity, either check once or watch for changes (I'd always recommend to do the latter one).
+
+```sh
+npm run ts:build
 npm run ts:watch
-npm run css:build
 ```
 
 Run the app:

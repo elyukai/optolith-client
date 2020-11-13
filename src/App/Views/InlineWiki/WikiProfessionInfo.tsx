@@ -12,7 +12,7 @@ import { show } from "../../../Data/Show"
 import { fst, isTuple, Pair, snd } from "../../../Data/Tuple"
 import { SpecialAbilityId } from "../../Constants/Ids"
 import { Sex } from "../../Models/Hero/heroTypeHelpers"
-import { ActivatableNameCostIsActive, ActivatableNameCostIsActiveA_ } from "../../Models/View/ActivatableNameCostIsActive"
+import { ActivatableNameCostIsActiveA_ } from "../../Models/View/ActivatableNameCostIsActive"
 import { IncreasableForView } from "../../Models/View/IncreasableForView"
 import { IncreasableListForView } from "../../Models/View/IncreasableListForView"
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined"
@@ -146,6 +146,7 @@ interface SkillsSelectionJoined {
   text: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const SkillsSelectionJoined =
   fromDefault ("SkillsSelectionJoined") <SkillsSelectionJoined> ({
                 properties: SkillsSelection.default,
@@ -379,46 +380,6 @@ const getLiturgicalChants =
       fmap (intercalate (", "))
     )
 
-interface SkillsListProps {
-  profession: Record<ProfessionCombined>
-  staticData: StaticDataRecord
-  skillsSelection: Maybe<Record<SkillsSelectionJoined>>
-}
-
-function SkillsList (props: SkillsListProps): JSX.Element {
-  const {
-    profession,
-    staticData,
-    skillsSelection,
-  } = props
-
-  const xss = List (
-    PCA.mappedPhysicalSkills (profession),
-    PCA.mappedSocialSkills (profession),
-    PCA.mappedNatureSkills (profession),
-    PCA.mappedKnowledgeSkills (profession),
-    PCA.mappedCraftSkills (profession)
-  )
-
-  return (
-    <>
-      {pipe_ (
-        xss,
-        imap (i => xs => (
-               <Skills
-                 key={i}
-                 groupIndex={i}
-                 list={xs}
-                 staticData={staticData}
-                 skillsSelection={skillsSelection}
-                 />
-             )),
-        toArray
-      )}
-    </>
-  )
-}
-
 interface SkillProps {
   staticData: StaticDataRecord
   groupIndex: number
@@ -472,6 +433,46 @@ function Skills (props: SkillProps) {
     )
 }
 
+interface SkillsListProps {
+  profession: Record<ProfessionCombined>
+  staticData: StaticDataRecord
+  skillsSelection: Maybe<Record<SkillsSelectionJoined>>
+}
+
+function SkillsList (props: SkillsListProps): JSX.Element {
+  const {
+    profession,
+    staticData,
+    skillsSelection,
+  } = props
+
+  const xss = List (
+    PCA.mappedPhysicalSkills (profession),
+    PCA.mappedSocialSkills (profession),
+    PCA.mappedNatureSkills (profession),
+    PCA.mappedKnowledgeSkills (profession),
+    PCA.mappedCraftSkills (profession)
+  )
+
+  return (
+    <>
+      {pipe_ (
+        xss,
+        imap (i => xs => (
+               <Skills
+                 key={i}
+                 groupIndex={i}
+                 list={xs}
+                 staticData={staticData}
+                 skillsSelection={skillsSelection}
+                 />
+             )),
+        toArray
+      )}
+    </>
+  )
+}
+
 interface VariantPrerequisiteIntermediate {
   "@@name": "VariantPrerequisiteIntermediate"
   id: string
@@ -479,6 +480,7 @@ interface VariantPrerequisiteIntermediate {
   active: Maybe<boolean>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const VariantPrerequisiteIntermediate =
   fromDefault ("VariantPrerequisiteIntermediate") <VariantPrerequisiteIntermediate> ({
                 id: "",
@@ -501,6 +503,7 @@ const getVariantPrerequisites =
 
               type wiki_entry = Record<Attribute> | Record<Skill>
 
+              // eslint-disable-next-line @typescript-eslint/no-redeclare
               const wiki_entry =
                 alt_<wiki_entry> (lookup (id) (attributes)) (() => lookup (id) (skills))
 
@@ -1103,6 +1106,67 @@ function Variant (props: VariantProps) {
       </span>
     </li>
   )
+}
+
+interface VariantListProps {
+  attributes: OrderedMap<string, Record<Attribute>>
+  combatTechniquesSelectionString: Maybe<string>
+  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
+  staticData: StaticDataRecord
+  profession: Record<ProfessionCombined>
+  sex: Maybe<Sex>
+  skills: OrderedMap<string, Record<Skill>>
+  specializationSelectionString: Maybe<string>
+  spells: OrderedMap<string, Record<Spell>>
+}
+
+function VariantList (props: VariantListProps): JSX.Element | null {
+  const {
+    attributes,
+    combatTechniquesSelectionString,
+    liturgicalChants,
+    staticData,
+    profession,
+    sex,
+    skills,
+    specializationSelectionString,
+    spells,
+  } = props
+
+  const variants = PCA.mappedVariants (profession)
+
+  if (notNull (variants)) {
+    return (
+      <>
+        <VariantListHeader staticData={staticData} />
+        <ul className="profession-variants">
+          {
+            pipe_ (
+              variants,
+              map (variant => (
+                    <Variant
+                      key={PVCA_.id (variant)}
+                      attributes={attributes}
+                      combatTechniquesSelectionString={combatTechniquesSelectionString}
+                      liturgicalChants={liturgicalChants}
+                      staticData={staticData}
+                      profession={profession}
+                      sex={sex}
+                      skills={skills}
+                      specializationSelectionString={specializationSelectionString}
+                      spells={spells}
+                      variant={variant}
+                      />
+                  )),
+              toArray
+            )
+          }
+        </ul>
+      </>
+    )
+  }
+
+  return null
 }
 
 export interface WikiProfessionInfoProps {

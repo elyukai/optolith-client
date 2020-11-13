@@ -1,1 +1,1 @@
-export { SkillSpecializationOption as SpecializationSelection } from "../../Profession.gen";
+export { SkillSpecializationOption as SpecializationSelection } from "../../Profession.gen"

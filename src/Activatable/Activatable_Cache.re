@@ -18,7 +18,6 @@ type t = {
   unarmedCombatStylesCount: int,
   magicalStylesCount: int,
   isBlessedStyleActive: bool,
-  isSkillStyleActive: bool,
   magicalStyleCombination: option(Activatable_Dynamic.t),
   dunklesAbbild: option(Activatable_Dynamic.t),
   activePactGiftsCount: int,

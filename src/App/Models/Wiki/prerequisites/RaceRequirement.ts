@@ -1,1 +1,1 @@
-export { RacePrerequisite as RaceRequirement } from "../../Prerequisites.gen";
+export { RacePrerequisite as RaceRequirement } from "../../Prerequisites.gen"

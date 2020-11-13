@@ -23,6 +23,7 @@ interface PairConstructor {
   <A, B> (first: A, second: B): Pair<A, B>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Pair =
   ((...args: [any] | [any, any]) => {
     if (args.length === 1) {
@@ -53,7 +54,7 @@ export const bimap =
 */
 export const first =
   <A, B>
-  (f: (first: A) => B) =>
+  (f: (fst: A) => B) =>
   <C>
   (x: Pair<A, C>): Pair<B, C> =>
     ReTuple.Bifunctor_first (f, x)
@@ -63,7 +64,7 @@ export const first =
 */
 export const second =
   <B, C>
-  (f: (second: B) => C) =>
+  (f: (fst: B) => C) =>
   <A>
   (x: Pair<A, B>): Pair<A, C> =>
     ReTuple.Bifunctor_second (f, x)

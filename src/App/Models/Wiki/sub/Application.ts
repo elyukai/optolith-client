@@ -1,1 +1,1 @@
-export { Application } from "../../Skill.gen";
+export { Application } from "../../Skill.gen"

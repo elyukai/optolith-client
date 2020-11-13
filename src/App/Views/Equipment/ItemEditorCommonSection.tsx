@@ -188,18 +188,22 @@ export const ItemEditorCommonSection: React.FC<ItemEditorCommonSectionProps> = p
             onClick={applyTemplate}
             disabled={isNothing (EIA.template (item)) || locked}
             />
-          {locked ? (
-            <IconButton
-              icon="&#xE918;"
-              onClick={unlockTemplate}
-              />
-          ) : (
-            <IconButton
-              icon="&#xE917;"
-              onClick={lockTemplate}
-              disabled={isNothing (EIA.template (item))}
-              />
-          )}
+          {
+            locked
+              ? (
+                <IconButton
+                  icon="&#xE918;"
+                  onClick={unlockTemplate}
+                  />
+              )
+              : (
+                <IconButton
+                  icon="&#xE917;"
+                  onClick={lockTemplate}
+                  disabled={isNothing (EIA.template (item))}
+                  />
+              )
+          }
         </div>
       </div>
     </>

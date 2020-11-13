@@ -346,6 +346,7 @@ type getNameFromSpellOrCantrip =
   (x: Record<SpellWithRequirements | CantripCombined>) => string
 
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const getNameFromSpellOrCantrip =
   (x: Record<SpellWithRequirements> | Record<CantripCombined>) =>
     SpellWithRequirements.is (x)

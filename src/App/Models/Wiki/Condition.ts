@@ -1,1 +1,1 @@
-export { Condition } from "../Condition.gen";
+export { Condition } from "../Condition.gen"

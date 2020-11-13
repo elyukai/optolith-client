@@ -295,40 +295,46 @@ export const Sheets: React.FC<Props> = props => {
           switchAttributeValueVisibility={switchAttributeValueVisibility}
           useParchment={useParchment}
           />
-        {(nArmorZones === 0 || nArmors > 0) ? (
-          <CombatSheet
-            armors={armors}
-            attributes={attributes}
-            combatSpecialAbilities={combatSpecialAbilities}
-            combatTechniques={combatTechniques}
-            derivedCharacteristics={derivedCharacteristics}
-            staticData={staticData}
-            meleeWeapons={meleeWeapons}
-            rangedWeapons={rangedWeapons}
-            shieldsAndParryingWeapons={shieldsAndParryingWeapons}
-            conditions={conditions}
-            states={states}
-            useParchment={useParchment}
-            />
-            )
-            : null}
-        {nArmorZones > 0 ? (
-          <CombatSheetZones
-            armorZones={armorZones}
-            attributes={attributes}
-            combatSpecialAbilities={combatSpecialAbilities}
-            combatTechniques={combatTechniques}
-            derivedCharacteristics={derivedCharacteristics}
-            staticData={staticData}
-            meleeWeapons={meleeWeapons}
-            rangedWeapons={rangedWeapons}
-            shieldsAndParryingWeapons={shieldsAndParryingWeapons}
-            conditions={conditions}
-            states={states}
-            useParchment={useParchment}
-            />
+        {
+          (nArmorZones === 0 || nArmors > 0)
+          ? (
+            <CombatSheet
+              armors={armors}
+              attributes={attributes}
+              combatSpecialAbilities={combatSpecialAbilities}
+              combatTechniques={combatTechniques}
+              derivedCharacteristics={derivedCharacteristics}
+              staticData={staticData}
+              meleeWeapons={meleeWeapons}
+              rangedWeapons={rangedWeapons}
+              shieldsAndParryingWeapons={shieldsAndParryingWeapons}
+              conditions={conditions}
+              states={states}
+              useParchment={useParchment}
+              />
+              )
+          : null
+        }
+        {
+          nArmorZones > 0
+          ? (
+            <CombatSheetZones
+              armorZones={armorZones}
+              attributes={attributes}
+              combatSpecialAbilities={combatSpecialAbilities}
+              combatTechniques={combatTechniques}
+              derivedCharacteristics={derivedCharacteristics}
+              staticData={staticData}
+              meleeWeapons={meleeWeapons}
+              rangedWeapons={rangedWeapons}
+              shieldsAndParryingWeapons={shieldsAndParryingWeapons}
+              conditions={conditions}
+              states={states}
+              useParchment={useParchment}
+              />
           )
-          : null}
+          : null
+        }
         <BelongingsSheet
           attributes={attributes}
           items={items}

@@ -1,1 +1,1 @@
-export { Blessing } from "../Blessing.gen";
+export { Blessing } from "../Blessing.gen"

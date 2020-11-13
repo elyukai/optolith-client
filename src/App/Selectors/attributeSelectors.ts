@@ -118,7 +118,11 @@ const getAttributeMinimum =
   (hero_entry: Record<AttributeDependent>): number =>
     maximum (List<number> (
               ...flattenDependencies (wiki) (hero) (AtDA.dependencies (hero_entry)),
-              ...(AtDA.id (hero_entry) === AttrId.Strength ? List (sel1 (added)) : List<number> ()),
+              ...(
+                AtDA.id (hero_entry) === AttrId.Constitution
+                ? List (sel1 (added))
+                : List<number> ()
+              ),
               ...(Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mhighest_magical_primary_attr))
                 ? List (sel2 (added))
                 : List<number> ()),

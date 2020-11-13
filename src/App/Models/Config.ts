@@ -7,6 +7,7 @@ import { SortNames } from "../Views/Universal/SortOptions"
 export type HeroListSortOptions = SortNames.Name
                                 | SortNames.DateModified
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const HeroListSortOptions = List<HeroListSortOptions> (
   SortNames.Name,
   SortNames.DateModified,
@@ -21,6 +22,7 @@ export enum HeroListVisibilityFilter {
 export type RacesSortOptions = SortNames.Name
                              | SortNames.Cost
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RacesSortOptions = List<RacesSortOptions> (
   SortNames.Name,
   SortNames.Cost,
@@ -29,6 +31,7 @@ export const RacesSortOptions = List<RacesSortOptions> (
 export type CulturesSortOptions = SortNames.Name
                                 | SortNames.Cost
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CulturesSortOptions = List<CulturesSortOptions> (
   SortNames.Name,
   SortNames.Cost,
@@ -42,6 +45,7 @@ export enum CulturesVisibilityFilter {
 export type ProfessionsSortOptions = SortNames.Name
                                    | SortNames.Cost
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProfessionsSortOptions = List<ProfessionsSortOptions> (
   SortNames.Name,
   SortNames.Cost,
@@ -63,6 +67,7 @@ export type SkillsSortOptions = SortNames.Name
                               | SortNames.Group
                               | SortNames.IC
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SkillsSortOptions = List<SkillsSortOptions> (
   SortNames.Name,
   SortNames.Group,
@@ -72,6 +77,7 @@ export const SkillsSortOptions = List<SkillsSortOptions> (
 export type SpecialAbilitiesSortOptions = SortNames.Name
                                         | SortNames.GroupName
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SpecialAbilitiesSortOptions = List<SpecialAbilitiesSortOptions> (
   SortNames.Name,
   SortNames.GroupName,
@@ -81,6 +87,7 @@ export type CombatTechniquesSortOptions = SortNames.Name
                                         | SortNames.Group
                                         | SortNames.IC
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CombatTechniquesSortOptions = List<CombatTechniquesSortOptions> (
   SortNames.Name,
   SortNames.Group,
@@ -92,6 +99,7 @@ export type SpellsSortOptions = SortNames.Name
                               | SortNames.Property
                               | SortNames.IC
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SpellsSortOptions = List<SpellsSortOptions> (
   SortNames.Name,
   SortNames.Group,
@@ -103,6 +111,7 @@ export type ChantsSortOptions = SortNames.Name
                               | SortNames.Group
                               | SortNames.IC
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ChantsSortOptions = List<ChantsSortOptions> (
   SortNames.Name,
   SortNames.Group,
@@ -114,6 +123,7 @@ export type EquipmentSortOptions = SortNames.Name
                                  | SortNames.Where
                                  | SortNames.Weight
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const EquipmentSortOptions = List<EquipmentSortOptions> (
   SortNames.Name,
   SortNames.GroupName,

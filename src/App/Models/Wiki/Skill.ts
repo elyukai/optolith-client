@@ -1,1 +1,1 @@
-export { Skill } from "../Skill.gen";
+export { Skill } from "../Skill.gen"

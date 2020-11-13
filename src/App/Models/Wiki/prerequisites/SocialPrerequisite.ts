@@ -1,1 +1,1 @@
-export { SocialPrerequisite } from "../../Prerequisites.gen";
+export { SocialPrerequisite } from "../../Prerequisites.gen"

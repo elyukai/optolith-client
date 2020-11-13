@@ -1,1 +1,1 @@
-export { PactPrerequisite as PactRequirement } from "../../Prerequisites.gen";
+export { PactPrerequisite as PactRequirement } from "../../Prerequisites.gen"

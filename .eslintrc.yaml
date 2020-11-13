@@ -93,7 +93,7 @@ rules:
   no-octal-escape: 2
   no-param-reassign: 2
   no-proto: 2
-  no-redeclare: 2
+  no-redeclare: 0
   no-return-assign: 2
   no-script-url: 2
   no-self-assign: 2
@@ -120,7 +120,7 @@ rules:
   init-declarations: 2
   no-delete-var: 2
   no-label-var: 2
-  no-shadow: 2
+  no-shadow: 0
   no-shadow-restricted-names: 2
   # no-undef: 2
 
@@ -307,7 +307,6 @@ rules:
   "@typescript-eslint/await-thenable": 2
   # "@typescript-eslint/class-name-casing": 2
   "@typescript-eslint/consistent-type-assertions": 2
-  "@typescript-eslint/interface-name-prefix": 2
   "@typescript-eslint/member-delimiter-style":
     - 2
     - multiline:
@@ -315,6 +314,14 @@ rules:
       singleline:
         delimiter: semi
         requireLast: false
+  "@typescript-eslint/naming-convention":
+    - error
+    - selector: interface
+      format:
+        - PascalCase
+      custom:
+        regex: "^I[A-Z]"
+        match: false
   "@typescript-eslint/no-floating-promises": 2
   "@typescript-eslint/no-for-in-array": 2
   "@typescript-eslint/no-inferrable-types": 2
@@ -361,6 +368,8 @@ rules:
   no-extra-semi: 0
   "@typescript-eslint/no-extra-semi": 2
   no-unused-expressions: 0
+  "@typescript-eslint/no-redeclare": 2
+  "@typescript-eslint/no-shadow": 2
   "@typescript-eslint/no-unused-expressions": 2
   "@typescript-eslint/no-unused-vars-experimental":
     - 2

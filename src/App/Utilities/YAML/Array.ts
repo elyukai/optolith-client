@@ -23,6 +23,28 @@ export const mapM = <A, B> (f: (x: A) => Promise<B>) => async (xs: A[]): Promise
   return ys
 }
 
+/**
+ * `mapMaybe :: (a -> Nullable b) -> [a] -> [NonNullable b]`
+ *
+ * Maps over an array. If `undefined` is returned, the value is filtered out,
+ * otherwise its part of the new array.
+ */
+export const mapMaybe =
+  <A, B> (f: (x: A) => NonNullable<B> | null | undefined) =>
+  (xs: A[]): NonNullable<B>[] => {
+    const ys: NonNullable<B>[] = []
+
+    for (const x of xs) {
+      const y = f (x)
+
+      if (y !== null && y !== undefined) {
+        ys.push (y)
+      }
+    }
+
+    return ys
+  }
+
 
 export type ArrayValue<A> = A extends (infer B)[] ? B : never
 

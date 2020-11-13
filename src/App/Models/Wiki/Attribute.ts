@@ -1,1 +1,1 @@
-export { Attribute } from "../Attribute.gen";
+export { Attribute } from "../Attribute.gen"

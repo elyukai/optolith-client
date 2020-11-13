@@ -1,1 +1,1 @@
-export { IncreasableMultiEntryPrerequisite, IncreasablePrerequisite } from "../../Prerequisites.gen";
+export { IncreasableMultiEntryPrerequisite, IncreasablePrerequisite } from "../../Prerequisites.gen"

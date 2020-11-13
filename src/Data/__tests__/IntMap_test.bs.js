@@ -156,8 +156,8 @@ Jest.describe("Foldable", (function (param) {
       }));
 
 export {
-  from1to5 ,
-  from1to11 ,
-  
-}
+  from1to5,
+  from1to11,
+
+};
 /* from1to5 Not a pure module */

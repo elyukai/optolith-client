@@ -1,33 +1,29 @@
 import { ident, thrush } from "../../Data/Function"
 import { fmap, fmapF } from "../../Data/Functor"
-import { cons, consF, elem, filter, fnull, List, map, maximum } from "../../Data/List"
-import { fromJust, isJust, Just, liftM2, Maybe, maybe, Nothing, or } from "../../Data/Maybe"
+import { consF, filter, fnull, List, map } from "../../Data/List"
+import { Just, liftM2, Maybe, maybe, Nothing } from "../../Data/Maybe"
 import { add, divideBy, gt, max, subtractBy } from "../../Data/Num"
 import { findWithDefault, foldrWithKey, lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { uncurryN, uncurryN5 } from "../../Data/Tuple/Curry"
 import { IdPrefixes } from "../Constants/IdPrefixes"
-import { AdvantageId, CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids.gen"
+import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids.gen"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { createSkillDependentWithValue6, SkillDependent } from "../Models/ActiveEntries/SkillDependent"
 import { Hero, HeroModelRecord } from "../Models/Hero/Hero"
 import { CombatTechniqueWithAttackParryBase, CombatTechniqueWithAttackParryBaseA_ } from "../Models/View/CombatTechniqueWithAttackParryBase"
-import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
-import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
-import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
+import { StaticData } from "../Models/Wiki/WikiModel"
 import { isMaybeActive } from "../Utilities/Activatable/isActive"
-import { getActiveSelections } from "../Utilities/Activatable/selectionUtils"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
-import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
 import { compareLocale } from "../Utilities/I18n"
 import { prefixId } from "../Utilities/IDUtils"
+import { isDecreaseDisabled, isIncreaseDisabled } from "../Utilities/Increasable/combatTechniqueUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { filterByAvailabilityAndPred, isEntryFromCoreBook } from "../Utilities/RulesUtils"
 import { comparingR, sortByMulti } from "../Utilities/sortBy"
 import { getMaxAttributeValueByID } from "./attributeSelectors"
-import { getStartEl } from "./elSelectors"
 import { getRuleBooksEnabled } from "./rulesSelectors"
 import { getCombatTechniquesWithRequirementsSortOptions } from "./sortOptionsSelectors"
 import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getSpecialAbilities, getWiki, getWikiCombatTechniques } from "./stateSelectors"
@@ -132,46 +128,6 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
                                                        (CTWAPBA.wikiEntry (x)))))
 )
 
-const getMaximum =
-  (exceptionalCombatTechnique: Maybe<Record<ActivatableDependent>>) =>
-  (startEl: Maybe<Record<ExperienceLevel>>) =>
-  (attributes: Hero["attributes"]) =>
-  (phase: number) =>
-  (ct: Record<CombatTechniqueWithAttackParryBase>): number => {
-    const curr_id = pipe_ (ct, CTWAPBA.wikiEntry, CTA.id)
-
-    const isBonusValid = or (fmapF (exceptionalCombatTechnique)
-                                   (pipe (getActiveSelections, elem<string | number> (curr_id))))
-
-    const bonus = isBonusValid ? 1 : 0
-
-    if (phase < 3 && isJust (startEl)) {
-      return ExperienceLevel.A.maxCombatTechniqueRating (fromJust (startEl)) + bonus
-    }
-
-    const curr_primary = pipe_ (ct, CTWAPBA.wikiEntry, CTA.primary)
-
-    return getMaxAttributeValueByID (attributes) (curr_primary) + 2 + bonus
-  }
-
-const getMinimum =
-  (hunterRequiresMinimum: boolean) =>
-  (wiki: StaticDataRecord) =>
-  (hero: HeroModelRecord) =>
-  (ct: Record<CombatTechniqueWithAttackParryBase>): number => {
-    const curr_dependencies = pipe_ (ct, CTWAPBA.stateEntry, SDA.dependencies)
-    const curr_gr = pipe_ (ct, CTWAPBA.wikiEntry, CTA.gr)
-
-    const maxList = cons (flattenDependencies (wiki) (hero) (curr_dependencies))
-                         (6)
-
-    if (hunterRequiresMinimum && curr_gr === 2) {
-      return maximum (cons (maxList) (10))
-    }
-
-    return maximum (maxList)
-  }
-
 const getGr = pipe (CTWAPBA.wikiEntry, CTA.gr)
 const getValue = pipe (CTWAPBA.stateEntry, SDA.value)
 type CTWAPB = CombatTechniqueWithAttackParryBase
@@ -179,14 +135,9 @@ type CTWAPB = CombatTechniqueWithAttackParryBase
 export const getAllCombatTechniques = createMaybeSelector (
   getCombatTechniquesForView,
   getCurrentHeroPresent,
-  getStartEl,
   getWiki,
-  (mcombat_techniques, mhero, mstartEl, wiki) =>
+  (mcombat_techniques, mhero, wiki) =>
     liftM2 ((combatTechniques: List<Record<CTWAPB>>) => (hero: HeroModelRecord) => {
-             const exceptionalCombatTechnique =
-              lookup<string> (AdvantageId.exceptionalCombatTechnique)
-                             (HeroModel.A.advantages (hero))
-
              const hunter = lookup<string> (SpecialAbilityId.hunter)
                                            (HeroModel.A.specialAbilities (hero))
 
@@ -199,15 +150,15 @@ export const getAllCombatTechniques = createMaybeSelector (
                              CombatTechniqueWithRequirements ({
                                at: CTWAPBA.at (x),
                                pa: CTWAPBA.pa (x),
-                               min: getMinimum (hunterRequiresMinimum)
-                                               (wiki)
-                                               (hero)
-                                               (x),
-                               max: getMaximum (exceptionalCombatTechnique)
-                                               (mstartEl)
-                                               (HeroModel.A.attributes (hero))
-                                               (HeroModel.A.phase (hero))
-                                               (x),
+                               isDecreasable: !isDecreaseDisabled (wiki)
+                                                                  (hero)
+                                                                  (CTWAPBA.wikiEntry (x))
+                                                                  (CTWAPBA.stateEntry (x))
+                                                                  (hunterRequiresMinimum),
+                               isIncreasable: !isIncreaseDisabled (wiki)
+                                                                  (hero)
+                                                                  (CTWAPBA.wikiEntry (x))
+                                                                  (CTWAPBA.stateEntry (x)),
                                stateEntry: CTWAPBA.stateEntry (x),
                                wikiEntry: CTWAPBA.wikiEntry (x),
                              })))

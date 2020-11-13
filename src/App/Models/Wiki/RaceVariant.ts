@@ -1,1 +1,1 @@
-export { RaceVariant } from "../Race.gen";
+export { RaceVariant } from "../Race.gen"

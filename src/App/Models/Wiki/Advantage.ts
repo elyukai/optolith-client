@@ -1,1 +1,1 @@
-export { Advantage } from "../Advantage.gen";
+export { Advantage } from "../Advantage.gen"

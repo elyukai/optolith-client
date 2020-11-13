@@ -1,1 +1,1 @@
-export { FocusRule } from "../FocusRule.gen";
+export { FocusRule } from "../FocusRule.gen"

@@ -1,1 +1,1 @@
-export { Culture } from "../Culture.gen";
+export { Culture } from "../Culture.gen"

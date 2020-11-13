@@ -1,1 +1,1 @@
-export { CantripOption as CantripsSelection } from "../../Profession.gen";
+export { CantripOption as CantripsSelection } from "../../Profession.gen"

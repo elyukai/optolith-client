@@ -44,6 +44,7 @@ const unconsTail = <A>(xs: Cons<A>): List<A> => (xs as unknown as [A, List<A>])[
  *
  * Creates a new `List` instance from the passed arguments.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const List =
   <A> (...values: A[]): List<A> => {
     let h: List<A> = Nil
@@ -348,6 +349,7 @@ export const elem =
   <A> (x: A) => (xs: List<A>): boolean =>
     ReList.Foldable_elem (x, xs)
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type elem<A> = (x: A) => (xs: List<A>) => boolean
 
 List.elem = elem
@@ -541,6 +543,7 @@ export const append =
   <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
     ReList.append (xs1, xs2)
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type append<A> = (xs1: List<A>) => (xs2: List<A>) => List<A>
 
 List.append = append
@@ -1656,6 +1659,7 @@ List.splitOn = splitOn
  */
 export const notNull = <A> (xs: List<A>) => ReList.Extra_notNull (xs)
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type notNull<A> = (xs: List<A>) => xs is NonEmptyList<A>
 
 List.notNull = notNull
@@ -1903,6 +1907,7 @@ interface RecordBaseWithId extends RecordBase {
   id: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const RecordBaseWithId = fromDefault ("RecordBaseWithId") <RecordBaseWithId> ({ id: "" })
 
 /**

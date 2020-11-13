@@ -1,1 +1,1 @@
-export { VariantCombatTechniqueOption as VariantCombatTechniquesSelection } from "../../Profession.gen";
+export { VariantCombatTechniqueOption as VariantCombatTechniquesSelection } from "../../Profession.gen"

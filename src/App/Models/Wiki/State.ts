@@ -1,1 +1,1 @@
-export { State } from "../State.gen";
+export { State } from "../State.gen"

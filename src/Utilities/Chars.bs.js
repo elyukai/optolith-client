@@ -16,13 +16,13 @@ var plusmn = "\u00B1";
 var closeIcon = "\uE5CD";
 
 export {
-  ndash ,
-  mdash ,
-  minus ,
-  nobr ,
-  nbsp ,
-  plusmn ,
-  closeIcon ,
-  
-}
+    ndash,
+    mdash,
+    minus,
+    nobr,
+    nbsp,
+    plusmn,
+    closeIcon,
+
+};
 /* No side effect */

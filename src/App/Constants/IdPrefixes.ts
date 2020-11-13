@@ -34,6 +34,7 @@ type IdPrefixesByCategory = {
   [K in Category]: IdPrefixes
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const IdPrefixesByCategory = Object.freeze<IdPrefixesByCategory> ({
   [Category.ADVANTAGES]: IdPrefixes.ADVANTAGES,
   [Category.ATTRIBUTES]: IdPrefixes.ATTRIBUTES,

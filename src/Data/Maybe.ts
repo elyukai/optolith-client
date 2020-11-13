@@ -42,6 +42,7 @@ export const isNothing = <A> (x: Maybe<A>): x is Nothing => ReOption.isNone (x)
  *
  * Creates a new `Maybe` from the given nullable value.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Maybe =
   <A> (x: A | Nullable): Maybe<A> =>
     x !== null && x !== undefined ? Just (x) : Nothing
@@ -221,7 +222,7 @@ export const guard_ =
  */
 export const bind =
   <A>
-  (x: Maybe<A>) =>
+  (m: Maybe<A>) =>
   <B>
   (f: (x: A) => Maybe<B>): Maybe<B> =>
     normalize (ReOption.Monad_bind (x, f))
@@ -282,6 +283,7 @@ export const join =
   <A> (x: Maybe<Maybe<A>>): Maybe<A> =>
     normalize (ReOption.Monad_join (x))
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type join<A> = (x: Maybe<Maybe<A>>) => Maybe<A>
 
 /**
@@ -797,8 +799,8 @@ Maybe.maybeRNull = maybeRNull
  * The function `maybeRF x f` maps the function `f` over the inner value of `x`
  * if `x` is a `Just` and then returns the result, otherwise it returns `null`.
  */
-export const maybeRNullF = <A> (x: Maybe<A>) => <B extends ReactNode> (f: (x: A) => B): B | null =>
-  maybe<B | null> (null) (f) (x)
+export const maybeRNullF = <A> (m: Maybe<A>) => <B extends ReactNode> (f: (x: A) => B): B | null =>
+  maybe<B | null> (null) (f) (m)
 
 Maybe.maybeRNullF = maybeRNullF
 

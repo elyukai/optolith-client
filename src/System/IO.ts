@@ -58,7 +58,7 @@ export const fmapF =
 // MONAD
 
 
-export const bind : <A> (x : IO<A>) => <B> (f : (x : A) => IO<B>) => IO<B>
+export const bind : <A> (io : IO<A>) => <B> (f : (x : A) => IO<B>) => IO<B>
                   = x => async f => x .then (f)
 
 

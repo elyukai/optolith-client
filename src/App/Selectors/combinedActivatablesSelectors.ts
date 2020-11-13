@@ -23,6 +23,7 @@ import { getEnableActiveItemHints } from "./uisettingsSelectors"
 
 type getName = <A extends Advantage | Disadvantage | SpecialAbility>
                (r: Record<{ "wikiEntry": Record<A>; "@@name": string }>) => string
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const getName: getName = pipe (InactiveActivatable.AL.wikiEntry, Advantage.AL.name) as getName
 
 const getNameInWiki =

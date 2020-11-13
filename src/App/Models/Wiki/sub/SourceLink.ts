@@ -1,1 +1,1 @@
-export { SourceRef as SourceLink } from "../../SourceRef.gen";
+export { SourceRef as SourceLink } from "../../SourceRef.gen"

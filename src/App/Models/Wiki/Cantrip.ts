@@ -1,1 +1,1 @@
-export { Cantrip } from "../Cantrip.gen";
+export { Cantrip } from "../Cantrip.gen"

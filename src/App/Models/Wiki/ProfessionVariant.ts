@@ -1,1 +1,1 @@
-export { ProfessionVariant } from "../Profession.gen";
+export { ProfessionVariant } from "../Profession.gen"

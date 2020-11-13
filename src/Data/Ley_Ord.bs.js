@@ -18,6 +18,6 @@ function fromOrdering(ord) {
 export {
   toOrdering ,
   fromOrdering ,
-  
+
 }
 /* No side effect */

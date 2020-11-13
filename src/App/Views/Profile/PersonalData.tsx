@@ -192,20 +192,22 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
 
   const isProfessionUndefined = isNothing (profession)
 
-  const nameElement = isEditingName ? (
-    <EditText
-      className="change-name"
-      cancel={handleCancelEditName}
-      submit={handleEditName}
-      text={renderMaybe (name)}
-      autoFocus
-      />
-  ) : (
-    <h1 className="confirm-edit">
-      {renderMaybe (name)}
-      <IconButton icon="&#xE90c;" onClick={handleStartEditName} />
-    </h1>
-  )
+  const nameElement = isEditingName
+    ? (
+      <EditText
+        className="change-name"
+        cancel={handleCancelEditName}
+        submit={handleEditName}
+        text={renderMaybe (name)}
+        autoFocus
+        />
+    )
+    : (
+      <h1 className="confirm-edit">
+        {renderMaybe (name)}
+        <IconButton icon="&#xE90c;" onClick={handleStartEditName} />
+      </h1>
+    )
 
   const professionNameElement =
     any (gt (1)) (phase) && isOwnProfession

@@ -10,7 +10,7 @@ function Aside(Props) {
 var make = Aside;
 
 export {
-  make ,
-  
-}
+  make,
+
+};
 /* react Not a pure module */

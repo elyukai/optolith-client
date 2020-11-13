@@ -21,12 +21,15 @@ export type Ordering = LT | EQ | GT
 export type Compare<A> = (x: A) => (y: A) => Ordering
 
 export const LT = Symbol ("LT")
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type LT = typeof LT
 
 export const EQ = Symbol ("EQ")
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type EQ = typeof EQ
 
 export const GT = Symbol ("GT")
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type GT = typeof GT
 
 export const isLTorEQ = (x: Ordering): x is LT | EQ => x === LT || x === EQ

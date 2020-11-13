@@ -314,7 +314,7 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
                                        (LCWRA.wikiEntry (active)))
                      (actives)
 
-            const inactive_with_valid_IC = filter (pipe (LCWRA.wikiEntry, LCA.ic, lte (3)))
+            const inactive_with_valid_IC = filter (pipe (LCWRA.wikiEntry, LCA.ic, lte (2)))
                                                   (inactives)
 
             if (notNull (unfamiliar_chants)) {
@@ -378,6 +378,7 @@ export const getAvailableInactiveLiturgicalChantsAndBlessings = createMaybeSelec
 type getNameFromChantOrBlessing =
   (x: Record<LiturgicalChantWithRequirements | BlessingCombined>) => string
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const getNameFromChantOrBlessing =
   (x: Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>) =>
     LiturgicalChantWithRequirements.is (x)

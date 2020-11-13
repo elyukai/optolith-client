@@ -1,4 +1,8 @@
-## 1.4.2
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [1.4.2](https://github.com/elyukai/optolith-client/compare/v1.4.1...v1.4.2) (2020-11-08)
 
 ### Enhancements
 
@@ -34,13 +38,13 @@ Last but definitely not least a big **Thank You** to all of you who give feedbac
 - [Lorenz Cuno Klopfenstein (@LorenzCK)](https://github.com/LorenzCK)
 - [ZeSandman (@ZeSandman)](https://github.com/ZeSandman)
 
-## 1.4.1
+## [1.4.1](https://github.com/elyukai/optolith-client/compare/v1.4.0...v1.4.1) (2020-09-28)
 
 ### Bug Fixes
 
 - Italian was not available.
 
-## 1.4.0
+## [1.4.0](https://github.com/elyukai/optolith-client/compare/v1.3.2...v1.4.0) (2020-09-28)
 
 ### Features
 
@@ -99,7 +103,7 @@ Last but definitely not least a big **Thank You** to the following people on Git
 - [Philipp A. (@flying-sheep)](https://github.com/flying-sheep)
 - [ZeSandman (@ZeSandman)](https://github.com/ZeSandman)
 
-## 1.3.2
+## [1.3.2](https://github.com/elyukai/optolith-client/compare/v1.3.1...v1.3.2) (2020-05-06)
 
 ### Bug Fixes
 
@@ -125,7 +129,7 @@ Last but definitely not least a big **Thank You** to the following people on Git
 
 - Some of the entries with more complex prerequisites might *display* them wrong but *handle* them correct.
 
-## 1.3.1
+## [1.3.1](https://github.com/elyukai/optolith-client/compare/v1.3.0...v1.3.1) (2020-03-03)
 
 ### Bug Fixes
 
@@ -133,7 +137,7 @@ Last but definitely not least a big **Thank You** to the following people on Git
 - There was an error thrown by "unknown keys" in the config. #450
 - On character sheet, states were only displayed in one column if the amount of states was even. #448
 
-## 1.3.0
+## [1.3.0](https://github.com/elyukai/optolith-client/compare/v1.2.0...v1.3.0) (2020-03-03)
 
 ### New Features
 
@@ -171,7 +175,7 @@ Last but definitely not least a big **Thank You** to the following people on Git
 
 As of now, there is a simple scheme for validating a hero available on [GitHub](https://github.com/elyukai/optolith-client/tree/master/app/Schema/Hero). A complete schema is in the works; the unfinished version thereof can also be found in the linked folder.
 
-## 1.2.0
+## [1.2.0](https://github.com/elyukai/optolith-client/compare/v1.1.2...v1.2.0) (2019-12-12)
 
 This release marks a big milestone for the English version as it includes all rule books released so far. This includes the **Compendium I**, **Magic of Aventuria** and more. Also, there are quite a few fixes.
 
@@ -220,7 +224,7 @@ This release marks a big milestone for the English version as it includes all ru
 - Primary Attribute maximum for Combat Techniques not working.
 - Weight Ratio of Head and Torso in Hit Zone Armor flipped.
 
-## 1.1.0/1.1.2
+## 1.1.0/[1.1.1](https://github.com/elyukai/optolith-client/compare/v1.0.3...v1.1.1)/[1.1.2](https://github.com/elyukai/optolith-client/compare/v1.1.1...v1.1.2) (2018-08-06)
 
 *The exact version number of the app is 1.1.2.*
 
@@ -316,7 +320,7 @@ But now it’s time for the changelog of this version:
 - *Dog food, Horse feed, Pony feed*: Removed weight.
 - *Rope, climbing* now has a correct price.
 
-## 1.0.3
+## [1.0.3](https://github.com/elyukai/optolith-client/compare/v1.0.2...v1.0.3) (2018-05-05)
 
 - Renamed Optolyth to Optolith to be in line with all other locations where the name occurs.
 
@@ -325,7 +329,7 @@ But now it’s time for the changelog of this version:
 - Fixed glibc-related issue.
 - Moved from tar.gz to AppImage to provide auto-update support.
 
-## 1.0.2
+## [1.0.2](https://github.com/elyukai/optolith-client/compare/v1.0.1...v1.0.2) (2018-04-16)
 
 - Fixed issue with rendering list items of advantages/disadvantages/special abilities.
 - Fixed shortcuts being global.
@@ -345,11 +349,11 @@ But now it’s time for the changelog of this version:
 - Fixed attribute adjustment in attributes tab.
 - Fixed levels of required instances of `Principles` and `Obligations` of `Blessed One of Kor`.
 
-## 1.0.1
+## [1.0.1](https://github.com/elyukai/optolith-client/compare/v1.0.0...v1.0.1) (2018-04-08)
 
 - Fixed special abilities tab.
 
-## 1.0.0
+## [1.0.0](https://github.com/elyukai/optolith-client/compare/v0.51.9...v1.0.0) (2018-04-08)
 
 ### New Features / Breaking Changes
 
@@ -423,7 +427,7 @@ But now it’s time for the changelog of this version:
 - Vor- und Nachteile für *Intuitive Zauberer* können wieder ordnungsgemäß erworben und verkauft werden.
 - Bei einigen Zaubern wurde die druidische oder scharlatanische Tradition ergänzt.
 
-## 0.51.9
+## [0.51.9](https://github.com/elyukai/optolith-client/compare/v0.51.8...v0.51.9) (2017-12-25)
 
 - The AP tooltip (if you hover over the available AP of the currently opened character) now show how many AP you spent on which category of entries - how much you spent on spells, on special abilities, on disadvantages, on cantrips, on energies (LP, AE, KP) and so on.
 - I build a new AP system which dynamically calculates the AP. This means if there were or will be issues with calculated AP they will be fixed automatically by installing the patch that fixes this issue. (You still have to open the character and save it, though).
@@ -443,14 +447,14 @@ But now it’s time for the changelog of this version:
 
 - There are full wiki entries available for *all* currently implemented entries.
 
-## 0.51.8
+## [0.51.8](https://github.com/elyukai/optolith-client/compare/v0.51.7...v0.51.8) (2017-12-19)
 
 - Fixed AP cost for languages.
 - Fixed generating random values for size and weight of a character.
 - Added error binding to content, so that if an error occurs you can still access the navigation bar.
 - Fixed crashes of wiki box in English version.
 
-## 0.51.7
+## [0.51.7](https://github.com/elyukai/optolith-client/compare/v0.51.6...v0.51.7) (2017-12-18)
 
 - Tweaked some colors to improve UI readability.
 - Error messages (the ones that contain "error" and "component stack") can be selected and thus copied.
@@ -471,17 +475,17 @@ But now it’s time for the changelog of this version:
 
 - App will no longer crash all the time.
 
-## 0.51.6
+## [0.51.6](https://github.com/elyukai/optolith-client/compare/v0.51.5...v0.51.6) (2017-12-11)
 
 - Added sort option to inventory to sort by weight (in descending order).
 - *Slow* is now considered when calculating MOV value.
 - Fixed magical and blessed professions.
 
-## 0.51.5
+## [0.51.5](https://github.com/elyukai/optolith-client/compare/v0.51.4...v0.51.5) (2017-12-11)
 
 - Fixed hidden liturgical chants tab.
 
-## 0.51.4
+## [0.51.4](https://github.com/elyukai/optolith-client/compare/v0.51.3...v0.51.4) (2017-12-09)
 
 - Fixed MOV modificators.
 - Splitted tradition special abilties to be able to provide wiki texts for them.
@@ -501,7 +505,7 @@ But now it’s time for the changelog of this version:
 
 - Wiki boxes will show the entries that can be generated safely. Their full functionality will be enabled once the needed texts are added.
 
-## 0.51.3
+## [0.51.3](https://github.com/elyukai/optolith-client/compare/v0.51.2...v0.51.3) (2017-12-01)
 
 - Fixed issues with prerequisites for races.
 - Fixed profession list filter.
@@ -517,7 +521,7 @@ But now it’s time for the changelog of this version:
 - Added filtering by activated rule books and wiki entries for combat techniques, advantages, disadvantages and special abilities. Prerequisite texts for advantages, disadvantages and special abilities are missing, though.
 - Removed special ability *Magischer Gedankenschutz* as this the exact same special ability as *Gedankenschutz*, the only difference is the name and this seems to be a issue with consistent naming.
 
-## 0.51.2
+## [0.51.2](https://github.com/elyukai/optolith-client/compare/v0.51.1...v0.51.2) (2017-11-21)
 
 - Fixed calculating AP for *activated* special ability entries where you have to buy each tier separately (e.g. *Feint I-III*). Previously, only the cost for the highest bought tier were shown.
 - Removing bought energy points now correctly lowers AP spent. Previously, it did not change the current AP spent.
@@ -526,7 +530,7 @@ But now it’s time for the changelog of this version:
 
 - Fixed *Lederüstung* typo.
 
-## 0.51.1
+## [0.51.1](https://github.com/elyukai/optolith-client/compare/v0.51.0...v0.51.1) (2017-11-19)
 
 - Fixed Auto Updater.
 - Added FAQ page.
@@ -548,7 +552,7 @@ But now it’s time for the changelog of this version:
 - Fixed *Visions* and *Sermons* for Blessed Ones.
 - Fixed profession *Graumagier (Schule der Verformungen zu Lowangen)*.
 
-## 0.51.0
+## [0.51.0](https://github.com/elyukai/optolith-client/compare/v0.50.0...v0.51.0) (2017-11-14)
 
 - Auto-Updater for Windows and macOS.
 - Installer for Windows.
@@ -574,13 +578,13 @@ But now it’s time for the changelog of this version:
 
 - Started localization work.
 
-## 0.50.0
+## [0.50.0](https://github.com/elyukai/optolith-client/compare/v0.49.6...v0.50.0) (2017-11-02)
 
 - Custom AP cost possible for advantages and disadvantages.
 - Fixed ItemEditor’s and ArmorZonesEditor’s theming and layout.
 - Slightly brightened the color for disabled elements.
 
-## 0.49.6
+## [0.49.6](https://github.com/elyukai/optolith-client/compare/v0.49.5...v0.49.6) (2017-10-23)
 
 - Fixed dis/advantages from **Aventurian Magic I**.
 - Fixed alerts after selecting RCP.
@@ -591,7 +595,7 @@ But now it’s time for the changelog of this version:
 
 - Added wiki info for cultures.
 
-## 0.49.5
+## [0.49.5](https://github.com/elyukai/optolith-client/compare/v0.49.4...v0.49.5) (2017-10-15)
 
 - Special abilities with tiers do not have separate entries anymore.
 - RCP costs are now entirely calculated by the app.
@@ -616,7 +620,7 @@ But now it’s time for the changelog of this version:
 - Added (missing) wiki info for skills, cantrips, blessings, spells and liturgical chants (excluding extensions).
 - Added special abilities, liturgical chant extensions and dis-/advantages from **Aventurian Work of the Gods**.
 
-## 0.49.4
+## [0.49.4](https://github.com/elyukai/optolith-client/compare/v0.49.3...v0.49.4) (2017-09-10)
 
 - Fixed character portrait selection.
 - Heaps of stuff for the new design.
@@ -632,7 +636,7 @@ But now it’s time for the changelog of this version:
 - Fixed newer items.
 - Fixed combat technique values of newer professions.
 
-## 0.49.3
+## [0.49.3](https://github.com/elyukai/optolith-client/compare/v0.49.2...v0.49.3) (2017-09-04)
 
 - Fixed AP limits for advantages/disadvantages.
 - Removes existing equipment from item templates search results.
@@ -649,7 +653,7 @@ But now it’s time for the changelog of this version:
 - Fixed RCP view issue(s).
 - Fixed Equipment view.
 
-## 0.49.2
+## [0.49.2](https://github.com/elyukai/optolith-client/compare/v0.49.1...v0.49.2) (2017-08-25)
 
 - Fixed the addition of adventure points.
 - Fixed second combat technique selection for professions.
@@ -665,7 +669,7 @@ But now it’s time for the changelog of this version:
 
 - Fixed race/professions list.
 
-## 0.49.1
+## [0.49.1](https://github.com/elyukai/optolith-client/compare/v0.49.0...v0.49.1) (2017-08-14)
 
 - Fixed issue with lists for advantages, disadvantages and special abilities containing skills/spells/liturgical chants.
 - Fixed issue with RCP skill specialization selection.
@@ -677,7 +681,7 @@ But now it’s time for the changelog of this version:
 
 - Added translation for skill name separation in RCP skill specialization selection.
 
-## 0.49.0
+## [0.49.0](https://github.com/elyukai/optolith-client/compare/v0.48.1...v0.49.0) (2017-08-08)
 
 - *Smash* does not require *Rundumschlag I* anymore.
 - Protective/Warding Circles now require *Magical Signs*.
@@ -718,14 +722,14 @@ But now it’s time for the changelog of this version:
 
 - Added info box for selected race in Races tab, but (most of the) texts are still missing.
 
-## 0.48.1
+## [0.48.1](https://github.com/elyukai/optolith-client/compare/v0.48.0...v0.48.1) (2017-06-13)
 
 - Undo function is working again for advantages, disadvantages and special abilities.
 - Spells can now be de/activated as intended.
 - Cantrips/Blessing are now sorted on the character sheet.
 - The total attribute maximum is shown on the attribute page during character creation.
 
-## 0.48.0
+## [0.48.0](https://github.com/elyukai/optolith-client/compare/v0.47.3...v0.48.0)
 
 - Heaps of bugs fixed. I lost sight of all bugs, so I won’t provide a detailed list this time.
 - Added a funtion to duplicate heroes.
@@ -741,21 +745,45 @@ But now it’s time for the changelog of this version:
   - Selecting *Meistertalentierte*, *Zauberbarden* or *Zaubertänzer* as your magical tradition requires a second selection. *Meistertalentierte* choose their *Meistertalent*, *Zauberbarden* or *Zaubertänzer* choose their music/dance tradition (Ceoladir etc). If the affected characters are in character creation phase, you will be able to remove the existing tradition special ability and reactivate it with the correct selection. If character creation is finished, you have to create the respective character(s) again.
   - *Exorzist I* and *Meistertrick I* were missing selection options. Now they are included. The selection options do not affect the AP cost, so you can try to fix it the same way as you did for the magical tradition above.
 
-## 0.47.3
+## [0.47.3](https://github.com/elyukai/optolith-client/compare/v0.47.2...v0.47.3)
 
 - The requirement *Manifesto 10* for Elemental Servant referred to Wall of Fog instead of Manifesto.
 
-## 0.47.2
+## [0.47.2](https://github.com/elyukai/optolith-client/compare/v0.47.1...v0.47.2) (2017-05-24)
 
 - The calculations of total weight and total price in equipment tab should work again. Armor is excluded from the total weight calculation, because armor is excluded from carrying capacity if its in use.
 - Character Sheet is working again.
 - The skills tab contains a pane on the right side. If you click on the "i" buttons, it will show you additional information about the respective skill. Well, it will show you in the future: Currently, there is not much data available to show.
 - The item list now properly resets for every new character.
 
-## 0.47.1
+## [0.47.1](https://github.com/elyukai/optolith-client/compare/v0.47.0...v0.47.1) (2017-05-18)
 
 - Fixed an issue with a race or a culture as a requirement. This issue caused some professions to never appear in the list.
 
-## 0.47.0
+## 0.47.0 (2017-05-15)
 
-Initial English release.
+- Die englische Übersetzung ist nun vollständig. (Jedenfalls hoffe ich, dass ich nichts übersehen habe! ^^)
+- Es gibt den Eintrag "Körpergröße" im Profil nun nicht mehr zweimal.
+- Die Kosten für SF Lieblingszauber sollten wieder passen.
+- Berechnung von Körpergewicht ohne das Vorhandensein der Körpergröße gibt nun nicht mehr NaN aus, sondern berechnet beide Werte entsprechend neu.
+- Die Buttons zur Zufallsgenerierung auf der Profilseite haben nun ein Würfelsymbol.
+- Beim Eintragen von neuen AP nach der Charaktererstellung wird nun überprüft, ob man nur Zahlen eingibt. Ist es nicht der Fall, weil das Textfeld z.B. Text oder Kommata enthält, kann man den Wert nicht hinzufügen.
+- Im Gegenstandseditor wird einem nun angezeigt, wenn ein Feld zur Speicherung gefüllt sein muss oder zur Speicherung keinen kompatiblen Inhalt hat. Was kompatibel ist, sollte jedem eigentlich klar sein (kein Text beim AT-Modifikator etc.), daher habe ich mir die Erläuterungen da gespart.
+- Merkmalsfokus und Varianten funktionieren jetzt aber wirklich.
+- Der Charakterbogen enthält nun auch endlich den Begleiter als Eintrag.
+
+## 0.46.0 (2017-05-02)
+
+- Ein Fehler bei den Profession wurde behoben, durch den diese falsch gefiltert wurden.
+- Der Tooltip für AP funktioniert jetzt wieder.
+- In der Hinzufügen-Liste für Nachteile bleiben jetzt auch die Nachteile; seit dem letzten Patch wurden nach jeder UI-Aktualisierung Vorteile statt Nachteile geladen.
+- Das Kulturpaket ist jetzt standardmäßg deaktiviert, die Kosten stehen bei der Kultur aber immer noch bei. Aktivieren kann man es dann - wie gewohnt - im SKP-Optionsfenster.
+- In den Auswahlfenstern für Vor- und Nachteile werden auch die entsprechenden Grenzen für Gesamt-AP, AP für magische Vor-/Nachteile und AP für karmale Vor-/Nachteile angezeigt.
+- Talente, Zauber und Liturgien werden bei einer Gruppensortierung visuell voneinander getrennt.
+- Die Sortierfunktion nach Gruppe funktioniert bei Zaubern und Liturgien jetzt wieder.
+- Man kann nun Zonenrüstung erstellen.
+- Man kann sich nun einen Begleiter erstellen. Die Integration in den Heldenbogen kommt dazu sehr bald!
+- Einträge aus AMI sind in der PREVIEW enthalten (war auch schon letztes Mal so), d.h. sie enthalten die angegebenen Voraussetzungen, jedoch keine Auswirkungen.
+- Ausgewählte Einträge für SF Variante und SF Merkmalsfokus werden jetzt auch gespeichert.
+- Zaubertricks funktionieren jetzt wieder so wie sie sollen.
+- Ich habe mit einer Übersetzung der UI für den nicht-deutschsprachigen Teil der Community begonnen. Die Sprache wird anhand eures Systems bestimmt und daher auf Deutsch oder Englisch (noch Deutsch+Englisch ^^) eingestellt. Ihr könnt die Sprache festlegen, indem ihr außerhalb der Heldenerstellung oben rechts die Einstellungen öffnet und dann die Sprache auswählt.

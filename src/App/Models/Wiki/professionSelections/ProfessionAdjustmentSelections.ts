@@ -1,1 +1,1 @@
-export { ProfessionOptions as ProfessionSelections } from "../../Profession.gen";
+export { ProfessionOptions as ProfessionSelections } from "../../Profession.gen"

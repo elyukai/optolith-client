@@ -1,1 +1,1 @@
-export { ApplicableCombatTechniques, SpecialAbilities } from "../SpecialAbility.gen";
+export { ApplicableCombatTechniques, SpecialAbilities } from "../SpecialAbility.gen"

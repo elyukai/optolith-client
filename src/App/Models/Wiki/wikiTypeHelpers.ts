@@ -33,9 +33,7 @@ import { CombatTechniquesSelection } from "./professionSelections/CombatTechniqu
 import { CursesSelection } from "./professionSelections/CursesSelection"
 import { LanguagesScriptsSelection } from "./professionSelections/LanguagesScriptsSelection"
 import { VariantCombatTechniquesSelection } from "./professionSelections/RemoveCombatTechniquesSelection"
-import { VariantCombatTechniquesSecondSelection } from "./professionSelections/RemoveSecondCombatTechniquesSelection"
 import { VariantSpecializationSelection } from "./professionSelections/RemoveSpecializationSelection"
-import { CombatTechniquesSecondSelection } from "./professionSelections/SecondCombatTechniquesSelection"
 import { SkillsSelection } from "./professionSelections/SkillsSelection"
 import { SpecializationSelection } from "./professionSelections/SpecializationSelection"
 import { TerrainKnowledgeSelection } from "./professionSelections/TerrainKnowledgeSelection"
@@ -143,7 +141,6 @@ export enum ProfessionSelectionIds {
   SPECIALIZATION = "SPECIALISATION",
   LANGUAGES_SCRIPTS = "LANGUAGES_SCRIPTS",
   COMBAT_TECHNIQUES = "COMBAT_TECHNIQUES",
-  COMBAT_TECHNIQUES_SECOND = "COMBAT_TECHNIQUES_SECOND",
   CANTRIPS = "CANTRIPS",
   CURSES = "CURSES",
   SKILLS = "SKILLS",

@@ -49,7 +49,6 @@ let isSpecialAbilitySpecificAdditionEnabled =
         magicalStyleCombination,
         magicalStylesCount,
         isBlessedStyleActive,
-        isSkillStyleActive,
         dunklesAbbild,
         activePactGiftsCount,
         matchingLanguagesScripts,
@@ -84,8 +83,6 @@ let isSpecialAbilitySpecificAdditionEnabled =
       < (Activatable_Accessors.isActiveM(magicalStyleCombination) ? 2 : 1)
 
     | (_, BlessedStyles) => !isBlessedStyleActive
-
-    | (_, SkillStyles) => !isSkillStyleActive
 
     | (CombatStyleCombination, _) =>
       armedCombatStylesCount + unarmedCombatStylesCount > 0

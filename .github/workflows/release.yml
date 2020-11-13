@@ -36,7 +36,7 @@ jobs:
     - name: Build ReasonML files
       run: npm run re:build
     - name: Build TypeScript files
-      run: npm run ts:build
+      run: npm run js:build
     - name: Build Sass files
       run: npm run css:build
     - name: Build

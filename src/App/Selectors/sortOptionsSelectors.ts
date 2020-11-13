@@ -349,6 +349,7 @@ type getSpellOrCantripFromCombined =
   (x: Record<SpellWithRequirements | CantripCombined>) =>
     Record<Spell> | Record<Cantrip>
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const getSpellOrCantripFromCombined =
   (x: Record<SpellWithRequirements> | Record<CantripCombined>) =>
     SpellWithRequirements.is (x)
@@ -461,6 +462,7 @@ type getChantOrBlessingFromCombined =
   (x: Record<LiturgicalChantWithRequirements | BlessingCombined>) =>
     Record<LiturgicalChant> | Record<Blessing>
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const getChantOrBlessingFromCombined =
   (x: Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>) =>
     LiturgicalChantWithRequirements.is (x)

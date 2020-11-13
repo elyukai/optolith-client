@@ -1,1 +1,1 @@
-export { MagicalTradition } from "../MagicalTradition.gen";
+export { MagicalTradition } from "../MagicalTradition.gen"

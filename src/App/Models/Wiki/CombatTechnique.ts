@@ -1,1 +1,1 @@
-export { CombatTechnique } from "../CombatTechnique.gen";
+export { CombatTechnique } from "../CombatTechnique.gen"

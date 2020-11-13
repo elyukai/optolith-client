@@ -72,10 +72,15 @@
             height: 296.8mm;
             width: 210mm;
             margin: 0;
-            padding: 8.9mm 8.9mm 8.9mm;
+            padding: 8.9mm;
             -webkit-print-color-adjust: exact;
             page-break-inside: avoid;
             overflow: hidden;
+
+            #body.platform-darwin & {
+              height: 296mm;
+              padding: 8.9mm 8.9mm 6mm;
+            }
 
             &:not(:first-child) {
               page-break-before: always;
@@ -115,7 +120,11 @@
       .sheet-wrapper {
         height: 296.8mm;
         width: 210mm;
-  
+
+        #body.platform-darwin & {
+          height: 296mm;
+        }
+
         .sheet {
           transform: scale(1);
         }
