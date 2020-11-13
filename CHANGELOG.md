@@ -762,4 +762,28 @@ But now it’s time for the changelog of this version:
 
 ## 0.47.0 (2017-05-15)
 
-Initial English release.
+- Die englische Übersetzung ist nun vollständig. (Jedenfalls hoffe ich, dass ich nichts übersehen habe! ^^)
+- Es gibt den Eintrag "Körpergröße" im Profil nun nicht mehr zweimal.
+- Die Kosten für SF Lieblingszauber sollten wieder passen.
+- Berechnung von Körpergewicht ohne das Vorhandensein der Körpergröße gibt nun nicht mehr NaN aus, sondern berechnet beide Werte entsprechend neu.
+- Die Buttons zur Zufallsgenerierung auf der Profilseite haben nun ein Würfelsymbol.
+- Beim Eintragen von neuen AP nach der Charaktererstellung wird nun überprüft, ob man nur Zahlen eingibt. Ist es nicht der Fall, weil das Textfeld z.B. Text oder Kommata enthält, kann man den Wert nicht hinzufügen.
+- Im Gegenstandseditor wird einem nun angezeigt, wenn ein Feld zur Speicherung gefüllt sein muss oder zur Speicherung keinen kompatiblen Inhalt hat. Was kompatibel ist, sollte jedem eigentlich klar sein (kein Text beim AT-Modifikator etc.), daher habe ich mir die Erläuterungen da gespart.
+- Merkmalsfokus und Varianten funktionieren jetzt aber wirklich.
+- Der Charakterbogen enthält nun auch endlich den Begleiter als Eintrag.
+
+## 0.46.0 (2017-05-02)
+
+- Ein Fehler bei den Profession wurde behoben, durch den diese falsch gefiltert wurden.
+- Der Tooltip für AP funktioniert jetzt wieder.
+- In der Hinzufügen-Liste für Nachteile bleiben jetzt auch die Nachteile; seit dem letzten Patch wurden nach jeder UI-Aktualisierung Vorteile statt Nachteile geladen.
+- Das Kulturpaket ist jetzt standardmäßg deaktiviert, die Kosten stehen bei der Kultur aber immer noch bei. Aktivieren kann man es dann - wie gewohnt - im SKP-Optionsfenster.
+- In den Auswahlfenstern für Vor- und Nachteile werden auch die entsprechenden Grenzen für Gesamt-AP, AP für magische Vor-/Nachteile und AP für karmale Vor-/Nachteile angezeigt.
+- Talente, Zauber und Liturgien werden bei einer Gruppensortierung visuell voneinander getrennt.
+- Die Sortierfunktion nach Gruppe funktioniert bei Zaubern und Liturgien jetzt wieder.
+- Man kann nun Zonenrüstung erstellen.
+- Man kann sich nun einen Begleiter erstellen. Die Integration in den Heldenbogen kommt dazu sehr bald!
+- Einträge aus AMI sind in der PREVIEW enthalten (war auch schon letztes Mal so), d.h. sie enthalten die angegebenen Voraussetzungen, jedoch keine Auswirkungen.
+- Ausgewählte Einträge für SF Variante und SF Merkmalsfokus werden jetzt auch gespeichert.
+- Zaubertricks funktionieren jetzt wieder so wie sie sollen.
+- Ich habe mit einer Übersetzung der UI für den nicht-deutschsprachigen Teil der Community begonnen. Die Sprache wird anhand eures Systems bestimmt und daher auf Deutsch oder Englisch (noch Deutsch+Englisch ^^) eingestellt. Ihr könnt die Sprache festlegen, indem ihr außerhalb der Heldenerstellung oben rechts die Einstellungen öffnet und dann die Sprache auswählt.
