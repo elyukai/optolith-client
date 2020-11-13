@@ -351,12 +351,7 @@ let getEntrySpecificCost =
       | Wissensdurst
       | WegDerGelehrten
       | WegDerKuenstlerin
-      | Fachwissen
-      | Handwerkskunst
-      | KindDerNatur
-      | KoerperlichesGeschick
-      | SozialeKompetenz
-      | Universalgenie =>
+      | Fachwissen =>
         singleHeroEntry
         |> getOption1
         >>= (
@@ -441,6 +436,26 @@ let getEntrySpecificCost =
                 )
             )
         )
+      | Handwerkskunst
+      | KindDerNatur
+      | KoerperlichesGeschick
+      | SozialeKompetenz
+      | Universalgenie =>
+        singleHeroEntry.options
+        |> Ley_List.take(3)
+        |> Ley_Option.mapOption((sid: Id.Activatable.Option.t) =>
+             switch (sid, apValue) {
+             | (Preset((Skill, id)), PerLevel(apValues)) =>
+               Ley_IntMap.lookup(id, staticData.skills)
+               >>= (
+                 static =>
+                   Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
+               )
+             | _ => None
+             }
+           )
+        |> Ley_List.sum
+        |> Ley_Option.ensure((<)(0))
       | _ => getDefaultEntryCost(staticEntry, singleHeroEntry)
       }
     )
