@@ -24,7 +24,7 @@ const config = [
       ]
     },
     output: {
-      path: __dirname + '/app',
+      path: __dirname + '/dist',
       filename: 'main.js'
     }
   },
@@ -49,7 +49,7 @@ const config = [
       ]
     },
     output: {
-      path: __dirname + '/app',
+      path: __dirname + '/dist',
       filename: 'renderer.js'
     },
     plugins: [

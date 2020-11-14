@@ -43,7 +43,7 @@ const createWindow = async () => {
     minHeight: 720,
     minWidth: 1280,
     resizable: true,
-    icon: path.join (app.getAppPath (), "app", "icon.png"),
+    icon: path.join (app.getAppPath (), "src", "icon.png"),
     frame: false,
     center: true,
     title: "Optolith",
@@ -52,7 +52,6 @@ const createWindow = async () => {
     show: false,
     webPreferences: {
       nodeIntegration: true,
-      // preload: path.join (app.getAppPath (), "app", "esmPreload.js"),
       enableRemoteModule: true,
     },
   })
