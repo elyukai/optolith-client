@@ -97,27 +97,27 @@ function isEntrySpecificRemovalValid(cache, staticData, hero, staticEntry, heroE
           if (match$2.TAG) {
             return true;
           }
-          var match$3 = match$2._0;
-          if (match$3[0] !== 2) {
+          var id = match$2._0;
+          if (id.TAG !== /* CombatTechnique */2) {
             return true;
           }
-          var value = Curry._1(CombatTechnique$OptolithClient.Dynamic.getValueDef, Curry._2(Ley_IntMap$OptolithClient.lookup, match$3[1], hero.combatTechniques));
+          var value = Curry._1(CombatTechnique$OptolithClient.Dynamic.getValueDef, Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, hero.combatTechniques));
           return value >= (cache.startExperienceLevel.maxCombatTechniqueRating + 1 | 0);
         }
-        var match$4 = singleEntry.options;
-        if (!match$4) {
+        var match$3 = singleEntry.options;
+        if (!match$3) {
           return true;
         }
-        var match$5 = match$4.hd;
-        if (match$5.TAG) {
+        var match$4 = match$3.hd;
+        if (match$4.TAG) {
           return true;
         }
-        var match$6 = match$5._0;
-        if (match$6[0] !== 1) {
+        var id$1 = match$4._0;
+        if (id$1.TAG !== /* Skill */1) {
           return true;
         }
-        var id = match$6[1];
-        var value$1 = Curry._1(Skill$OptolithClient.Dynamic.getValueDef, Curry._2(Ley_IntMap$OptolithClient.lookup, id, hero.skills));
+        var id$2 = id$1._0;
+        var value$1 = Curry._1(Skill$OptolithClient.Dynamic.getValueDef, Curry._2(Ley_IntMap$OptolithClient.lookup, id$2, hero.skills));
         var countSameSkill = Ley_List$OptolithClient.countBy((function (active) {
                 var match = active.options;
                 if (!match) {
@@ -127,30 +127,30 @@ function isEntrySpecificRemovalValid(cache, staticData, hero, staticEntry, heroE
                 if (match$1.TAG) {
                   return false;
                 }
-                var match$2 = match$1._0;
-                if (match$2[0] !== 1) {
-                  return false;
+                var otherId = match$1._0;
+                if (otherId.TAG === /* Skill */1) {
+                  return otherId._0 === id$2;
                 } else {
-                  return match$2[1] === id;
+                  return false;
                 }
               }), heroEntry.active);
         return value$1 >= (cache.startExperienceLevel.maxSkillRating + countSameSkill | 0);
     case /* Disadvantage */1 :
         return true;
     case /* SpecialAbility */2 :
-        var match$7 = Id$OptolithClient.SpecialAbility.fromInt(staticEntry._0.id);
-        if (typeof match$7 !== "number") {
+        var match$5 = Id$OptolithClient.SpecialAbility.fromInt(staticEntry._0.id);
+        if (typeof match$5 !== "number") {
           return true;
         }
-        if (match$7 >= 42) {
-          if (match$7 >= 45) {
+        if (match$5 >= 42) {
+          if (match$5 >= 45) {
             return true;
           }
-          var match$8 = cache.blessedTradition;
-          if (match$8 === undefined) {
+          var match$6 = cache.blessedTradition;
+          if (match$6 === undefined) {
             return true;
           }
-          var blessedTradition = match$8[2];
+          var blessedTradition = match$6[2];
           return !Curry._2(Ley_IntMap$OptolithClient.any, (function (param) {
                         return Curry._2(Ley_IntSet$OptolithClient.notElem, blessedTradition.numId, param.traditions);
                       }), Curry._2(Ley_IntMap$OptolithClient.mapMaybe, (function (param) {
@@ -160,80 +160,80 @@ function isEntrySpecificRemovalValid(cache, staticData, hero, staticEntry, heroE
                             
                           }), hero.liturgicalChants));
         }
-        if (match$7 >= 21) {
+        if (match$5 >= 21) {
           return true;
         }
-        switch (match$7) {
+        switch (match$5) {
           case /* Literacy */5 :
-              var match$9 = cache.matchingLanguagesScripts.isEntryActiveRequiringMatch;
-              var match$10 = cache.matchingLanguagesScripts.scriptsWithMatchingLanguages;
-              var match$11 = singleEntry.options;
+              var match$7 = cache.matchingLanguagesScripts.isEntryActiveRequiringMatch;
+              var match$8 = cache.matchingLanguagesScripts.scriptsWithMatchingLanguages;
+              var match$9 = singleEntry.options;
+              if (!match$7) {
+                return true;
+              }
+              if (!match$8) {
+                return true;
+              }
+              if (match$8.tl) {
+                return true;
+              }
               if (!match$9) {
                 return true;
               }
-              if (!match$10) {
+              var match$10 = match$9.hd;
+              if (match$10.TAG) {
                 return true;
               }
-              if (match$10.tl) {
+              var scriptId = match$10._0;
+              if (scriptId.TAG) {
                 return true;
+              } else {
+                return match$8.hd !== scriptId._0;
               }
+          case /* Language */6 :
+              var match$11 = cache.matchingLanguagesScripts.isEntryActiveRequiringMatch;
+              var match$12 = cache.matchingLanguagesScripts.languagesWithMatchingScripts;
+              var match$13 = singleEntry.options;
               if (!match$11) {
                 return true;
               }
-              var match$12 = match$11.hd;
-              if (match$12.TAG) {
+              if (!match$12) {
                 return true;
               }
-              var match$13 = match$12._0;
-              if (match$13[0] !== 0) {
+              if (match$12.tl) {
+                return true;
+              }
+              if (!match$13) {
+                return true;
+              }
+              var match$14 = match$13.hd;
+              if (match$14.TAG) {
+                return true;
+              }
+              var languageId = match$14._0;
+              if (languageId.TAG) {
                 return true;
               } else {
-                return match$10.hd !== match$13[1];
+                return match$12.hd !== languageId._0;
               }
-          case /* Language */6 :
-              var match$14 = cache.matchingLanguagesScripts.isEntryActiveRequiringMatch;
-              var match$15 = cache.matchingLanguagesScripts.languagesWithMatchingScripts;
-              var match$16 = singleEntry.options;
-              if (!match$14) {
-                return true;
-              }
+          case /* PropertyKnowledge */10 :
+              var match$15 = singleEntry.options;
               if (!match$15) {
                 return true;
               }
-              if (match$15.tl) {
+              var match$16 = match$15.hd;
+              if (match$16.TAG) {
                 return true;
               }
-              if (!match$16) {
+              var propertyId = match$16._0;
+              if (propertyId.TAG) {
                 return true;
               }
-              var match$17 = match$16.hd;
-              if (match$17.TAG) {
-                return true;
-              }
-              var match$18 = match$17._0;
-              if (match$18[0] !== 0) {
-                return true;
-              } else {
-                return match$15.hd !== match$18[1];
-              }
-          case /* PropertyKnowledge */10 :
-              var match$19 = singleEntry.options;
-              if (!match$19) {
-                return true;
-              }
-              var match$20 = match$19.hd;
-              if (match$20.TAG) {
-                return true;
-              }
-              var match$21 = match$20._0;
-              if (match$21[0] !== 0) {
-                return true;
-              }
-              var propertyId = match$21[1];
+              var propertyId$1 = propertyId._0;
               return !Curry._2(Ley_IntMap$OptolithClient.any, (function (heroSpell) {
                             if (ActivatableSkill$OptolithClient.Dynamic.valueToInt(heroSpell.value) > 14) {
                               return Ley_Option$OptolithClient.option(true, (function (param) {
-                                            return param.property === propertyId;
+                                            return param.property === propertyId$1;
                                           }), Curry._2(Ley_IntMap$OptolithClient.lookup, heroSpell.id, staticData.spells));
                             } else {
                               return false;
@@ -244,32 +244,32 @@ function isEntrySpecificRemovalValid(cache, staticData, hero, staticEntry, heroE
                           if (param.TAG) {
                             return ;
                           }
-                          var match = param._0;
-                          if (match[0] !== 0) {
+                          var aspectId = param._0;
+                          if (aspectId.TAG) {
                             return ;
                           } else {
-                            return match[1];
+                            return aspectId._0;
                           }
                         }), heroEntry));
-              var match$22 = singleEntry.options;
-              if (!match$22) {
+              var match$17 = singleEntry.options;
+              if (!match$17) {
                 return true;
               }
-              var match$23 = match$22.hd;
-              if (match$23.TAG) {
+              var match$18 = match$17.hd;
+              if (match$18.TAG) {
                 return true;
               }
-              var match$24 = match$23._0;
-              if (match$24[0] !== 0) {
+              var aspectId = match$18._0;
+              if (aspectId.TAG) {
                 return true;
               }
-              var aspectId = match$24[1];
-              var otherAspects = Curry._2(Ley_IntSet$OptolithClient.$$delete, aspectId, activeAspects);
+              var aspectId$1 = aspectId._0;
+              var otherAspects = Curry._2(Ley_IntSet$OptolithClient.$$delete, aspectId$1, activeAspects);
               return !Curry._2(Ley_IntMap$OptolithClient.any, (function (heroLiturgicalChant) {
                             if (ActivatableSkill$OptolithClient.Dynamic.valueToInt(heroLiturgicalChant.value) > 14) {
                               return Ley_Option$OptolithClient.option(true, (function (param) {
                                             var aspects = param.aspects;
-                                            if (Curry._2(Ley_IntSet$OptolithClient.member, aspectId, aspects)) {
+                                            if (Curry._2(Ley_IntSet$OptolithClient.member, aspectId$1, aspects)) {
                                               return Curry._2(Ley_IntSet$OptolithClient.disjoint, otherAspects, aspects);
                                             } else {
                                               return false;
@@ -450,4 +450,4 @@ export {
   isRemovalOrModificationValid ,
   
 }
-/* Skill-OptolithClient Not a pure module */
+/* Id-OptolithClient Not a pure module */

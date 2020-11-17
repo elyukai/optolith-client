@@ -2,97 +2,246 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
-import * as EntryType$OptolithClient from "./EntryType.bs.js";
 import * as JsonStrict$OptolithClient from "./JsonStrict.bs.js";
 
-function compare(param, param$1) {
-  var x$prime = EntryType$OptolithClient.All.toInt(param[0]);
-  var y$prime = EntryType$OptolithClient.All.toInt(param$1[0]);
+function scope(inner) {
+  return function (param) {
+    return Json_decode.andThen(inner, (function (param) {
+                  return Json_decode.field(JsonStrict$OptolithClient.idTagName, Json_decode.string, param);
+                }), param);
+  };
+}
+
+function value(f) {
+  return function (param) {
+    return Json_decode.map(f, (function (param) {
+                  return Json_decode.field("value", Json_decode.$$int, param);
+                }), param);
+  };
+}
+
+function raiseUnknownScope(scopeName, invalidValue) {
+  throw {
+        RE_EXN_ID: Json_decode.DecodeError,
+        _1: "Unknown scope id of scope range \"" + (scopeName + ("\": " + invalidValue)),
+        Error: new Error()
+      };
+}
+
+function makeCompare(outerToInt, innerToInt, x, y) {
+  var x$prime = Curry._1(outerToInt, x);
+  var y$prime = Curry._1(outerToInt, y);
   if (x$prime === y$prime) {
-    return param[1] - param$1[1] | 0;
+    return Curry._1(innerToInt, x) - Curry._1(innerToInt, y) | 0;
   } else {
     return x$prime - y$prime | 0;
   }
+}
+
+function outerToInt(param) {
+  switch (param.TAG | 0) {
+    case /* ExperienceLevel */0 :
+        return 1;
+    case /* Race */1 :
+        return 2;
+    case /* Culture */2 :
+        return 3;
+    case /* Profession */3 :
+        return 4;
+    case /* Attribute */4 :
+        return 5;
+    case /* Advantage */5 :
+        return 6;
+    case /* Disadvantage */6 :
+        return 7;
+    case /* Skill */7 :
+        return 8;
+    case /* CombatTechnique */8 :
+        return 9;
+    case /* Spell */9 :
+        return 10;
+    case /* Curse */10 :
+        return 11;
+    case /* ElvenMagicalSong */11 :
+        return 12;
+    case /* DominationRitual */12 :
+        return 13;
+    case /* MagicalMelody */13 :
+        return 14;
+    case /* MagicalDance */14 :
+        return 15;
+    case /* RogueSpell */15 :
+        return 16;
+    case /* AnimistForce */16 :
+        return 17;
+    case /* GeodeRitual */17 :
+        return 18;
+    case /* ZibiljaRitual */18 :
+        return 19;
+    case /* Cantrip */19 :
+        return 20;
+    case /* LiturgicalChant */20 :
+        return 21;
+    case /* Blessing */21 :
+        return 22;
+    case /* SpecialAbility */22 :
+        return 23;
+    case /* Item */23 :
+        return 24;
+    case /* EquipmentPackage */24 :
+        return 25;
+    case /* HitZoneArmor */25 :
+        return 26;
+    case /* Familiar */26 :
+        return 27;
+    case /* Animal */27 :
+        return 28;
+    case /* FocusRule */28 :
+        return 29;
+    case /* OptionalRule */29 :
+        return 30;
+    case /* Condition */30 :
+        return 31;
+    case /* State */31 :
+        return 32;
+    
+  }
+}
+
+function innerToInt(param) {
+  return param._0;
+}
+
+function compare(param, param$1) {
+  return makeCompare(outerToInt, innerToInt, param, param$1);
 }
 
 function $eq(x, y) {
   return compare(x, y) === 0;
 }
 
-var All = {
-  compare: compare,
-  $eq: $eq
-};
-
-function toAll(param) {
-  return [
-          EntryType$OptolithClient.Activatable.toAll(param[0]),
-          param[1]
-        ];
+function toAll(x) {
+  switch (x.TAG | 0) {
+    case /* Advantage */0 :
+        return {
+                TAG: /* Advantage */5,
+                _0: x._0
+              };
+    case /* Disadvantage */1 :
+        return {
+                TAG: /* Disadvantage */6,
+                _0: x._0
+              };
+    case /* SpecialAbility */2 :
+        return {
+                TAG: /* SpecialAbility */22,
+                _0: x._0
+              };
+    
+  }
 }
 
 function $eq$1(x, y) {
-  switch (x[0]) {
+  switch (x.TAG | 0) {
     case /* Advantage */0 :
-        if (y[0] !== 0) {
-          return false;
-        } else {
-          return x[1] === y[1];
+        switch (y.TAG | 0) {
+          case /* Advantage */0 :
+              return x._0 === y._0;
+          case /* Disadvantage */1 :
+          case /* SpecialAbility */2 :
+              return false;
+          
         }
     case /* Disadvantage */1 :
-        if (y[0] !== 1) {
-          return false;
-        } else {
-          return x[1] === y[1];
+        switch (y.TAG | 0) {
+          case /* Disadvantage */1 :
+              return x._0 === y._0;
+          case /* Advantage */0 :
+          case /* SpecialAbility */2 :
+              return false;
+          
         }
     case /* SpecialAbility */2 :
-        if (y[0] >= 2) {
-          return x[1] === y[1];
-        } else {
-          return false;
+        switch (y.TAG | 0) {
+          case /* Advantage */0 :
+          case /* Disadvantage */1 :
+              return false;
+          case /* SpecialAbility */2 :
+              return x._0 === y._0;
+          
         }
     
   }
 }
 
-function t(json) {
-  var scope = Json_decode.field(JsonStrict$OptolithClient.idTagName, Json_decode.string, json);
-  var tmp;
-  switch (scope) {
-    case "Advantage" :
-        tmp = /* Advantage */0;
-        break;
-    case "Disadvantage" :
-        tmp = /* Disadvantage */1;
-        break;
-    case "SpecialAbility" :
-        tmp = /* SpecialAbility */2;
-        break;
-    default:
-      throw {
-            RE_EXN_ID: Json_decode.DecodeError,
-            _1: "Unknown activatable id tag: " + scope,
-            Error: new Error()
-          };
-  }
-  return [
-          tmp,
-          Json_decode.field("value", Json_decode.$$int, json)
-        ];
-}
+var t = scope(function (scope) {
+      switch (scope) {
+        case "Advantage" :
+            return value(function (x) {
+                        return {
+                                TAG: /* Advantage */0,
+                                _0: x
+                              };
+                      });
+        case "Disadvantage" :
+            return value(function (x) {
+                        return {
+                                TAG: /* Disadvantage */1,
+                                _0: x
+                              };
+                      });
+        case "SpecialAbility" :
+            return value(function (x) {
+                        return {
+                                TAG: /* SpecialAbility */2,
+                                _0: x
+                              };
+                      });
+        default:
+          return raiseUnknownScope("Activatable", scope);
+      }
+    });
 
 var Decode = {
   t: t
 };
 
-function compare$1(param, param$1) {
-  var x$prime = Curry._1(EntryType$OptolithClient.Activatable.SelectOption.toInt, param[0]);
-  var y$prime = Curry._1(EntryType$OptolithClient.Activatable.SelectOption.toInt, param$1[0]);
-  if (x$prime === y$prime) {
-    return param[1] - param$1[1] | 0;
-  } else {
-    return x$prime - y$prime | 0;
+function outerToInt$1(param) {
+  switch (param.TAG | 0) {
+    case /* Generic */0 :
+        return 1;
+    case /* Skill */1 :
+        return 2;
+    case /* CombatTechnique */2 :
+        return 3;
+    case /* Spell */3 :
+        return 4;
+    case /* Cantrip */4 :
+        return 5;
+    case /* LiturgicalChant */5 :
+        return 6;
+    case /* Blessing */6 :
+        return 7;
+    case /* SpecialAbility */7 :
+        return 8;
+    case /* TradeSecret */8 :
+        return 9;
+    case /* Language */9 :
+        return 10;
+    case /* Script */10 :
+        return 11;
+    case /* AnimalShape */11 :
+        return 12;
+    
   }
+}
+
+function innerToInt$1(param) {
+  return param._0;
+}
+
+function compare$1(param, param$1) {
+  return makeCompare(outerToInt$1, innerToInt$1, param, param$1);
 }
 
 function $eq$2(x, y) {
@@ -103,52 +252,70 @@ function $less$great(x, y) {
   return compare$1(x, y) !== 0;
 }
 
-function scoped(json) {
-  var scope = Json_decode.field(JsonStrict$OptolithClient.idTagName, Json_decode.string, json);
-  var tmp;
-  switch (scope) {
-    case "Blessing" :
-        tmp = /* Blessing */6;
-        break;
-    case "Cantrip" :
-        tmp = /* Cantrip */4;
-        break;
-    case "CombatTechnique" :
-        tmp = /* CombatTechnique */2;
-        break;
-    case "LiturgicalChant" :
-        tmp = /* LiturgicalChant */5;
-        break;
-    case "Skill" :
-        tmp = /* Skill */1;
-        break;
-    case "SpecialAbility" :
-        tmp = /* SpecialAbility */7;
-        break;
-    case "Spell" :
-        tmp = /* Spell */3;
-        break;
-    default:
-      throw {
-            RE_EXN_ID: Json_decode.DecodeError,
-            _1: "Unknown activatable id tag: " + scope,
-            Error: new Error()
-          };
-  }
-  return [
-          tmp,
-          Json_decode.field("value", Json_decode.$$int, json)
-        ];
-}
+var scoped = scope(function (scope) {
+      switch (scope) {
+        case "Blessing" :
+            return value(function (x) {
+                        return {
+                                TAG: /* Blessing */6,
+                                _0: x
+                              };
+                      });
+        case "Cantrip" :
+            return value(function (x) {
+                        return {
+                                TAG: /* Cantrip */4,
+                                _0: x
+                              };
+                      });
+        case "CombatTechnique" :
+            return value(function (x) {
+                        return {
+                                TAG: /* CombatTechnique */2,
+                                _0: x
+                              };
+                      });
+        case "LiturgicalChant" :
+            return value(function (x) {
+                        return {
+                                TAG: /* LiturgicalChant */5,
+                                _0: x
+                              };
+                      });
+        case "Skill" :
+            return value(function (x) {
+                        return {
+                                TAG: /* Skill */1,
+                                _0: x
+                              };
+                      });
+        case "SpecialAbility" :
+            return value(function (x) {
+                        return {
+                                TAG: /* SpecialAbility */7,
+                                _0: x
+                              };
+                      });
+        case "Spell" :
+            return value(function (x) {
+                        return {
+                                TAG: /* Spell */3,
+                                _0: x
+                              };
+                      });
+        default:
+          return raiseUnknownScope("SelectOption", scope);
+      }
+    });
 
 function t$1(json) {
   return Json_decode.oneOf({
               hd: (function (param) {
                   return Json_decode.map((function (x) {
-                                return [
-                                        /* Generic */0,
-                                        x
-                                      ];
+                                return {
+                                        TAG: /* Generic */0,
+                                        _0: x
+                                      };
                               }), Json_decode.$$int, param);
                 }),
               tl: {
@@ -165,95 +332,10 @@ function $eq$3(x, y) {
     } else {
       return false;
     }
-  }
-  var match = x._0;
-  switch (match[0]) {
-    case /* Generic */0 :
-        if (y.TAG) {
-          return false;
-        }
-        var match$1 = y._0;
-        if (match$1[0] !== 0) {
-          return false;
-        } else {
-          return match[1] === match$1[1];
-        }
-    case /* Skill */1 :
-        if (y.TAG) {
-          return false;
-        }
-        var match$2 = y._0;
-        if (match$2[0] !== 1) {
-          return false;
-        } else {
-          return match[1] === match$2[1];
-        }
-    case /* CombatTechnique */2 :
-        if (y.TAG) {
-          return false;
-        }
-        var match$3 = y._0;
-        if (match$3[0] !== 2) {
-          return false;
-        } else {
-          return match[1] === match$3[1];
-        }
-    case /* Spell */3 :
-        if (y.TAG) {
-          return false;
-        }
-        var match$4 = y._0;
-        if (match$4[0] !== 3) {
-          return false;
-        } else {
-          return match[1] === match$4[1];
-        }
-    case /* Cantrip */4 :
-        if (y.TAG) {
-          return false;
-        }
-        var match$5 = y._0;
-        if (match$5[0] !== 4) {
-          return false;
-        } else {
-          return match[1] === match$5[1];
-        }
-    case /* LiturgicalChant */5 :
-        if (y.TAG) {
-          return false;
-        }
-        var match$6 = y._0;
-        if (match$6[0] !== 5) {
-          return false;
-        } else {
-          return match[1] === match$6[1];
-        }
-    case /* Blessing */6 :
-        if (y.TAG) {
-          return false;
-        }
-        var match$7 = y._0;
-        if (match$7[0] !== 6) {
-          return false;
-        } else {
-          return match[1] === match$7[1];
-        }
-    case /* SpecialAbility */7 :
-        if (y.TAG) {
-          return false;
-        }
-        var match$8 = y._0;
-        if (match$8[0] !== 7) {
-          return false;
-        } else {
-          return match[1] === match$8[1];
-        }
-    case /* TradeSecret */8 :
-    case /* Language */9 :
-    case /* Script */10 :
-    case /* AnimalShape */11 :
-        return false;
-    
+  } else if (y.TAG) {
+    return false;
+  } else {
+    return $eq$2(x._0, y._0);
   }
 }
 
@@ -267,37 +349,47 @@ var ActivatableSkill = {};
 
 var PermanentSkill = {};
 
-function t$2(json) {
-  var scope = Json_decode.field(JsonStrict$OptolithClient.idTagName, Json_decode.string, json);
-  var tmp;
-  switch (scope) {
-    case "Attribute" :
-        tmp = /* Attribute */0;
-        break;
-    case "CombatTechnique" :
-        tmp = /* CombatTechnique */2;
-        break;
-    case "LiturgicalChant" :
-        tmp = /* LiturgicalChant */4;
-        break;
-    case "Skill" :
-        tmp = /* Skill */1;
-        break;
-    case "Spell" :
-        tmp = /* Spell */3;
-        break;
-    default:
-      throw {
-            RE_EXN_ID: Json_decode.DecodeError,
-            _1: "Unknown increasable ID scope: " + scope,
-            Error: new Error()
-          };
-  }
-  return [
-          tmp,
-          Json_decode.field("value", Json_decode.$$int, json)
-        ];
-}
+var t$2 = scope(function (scope) {
+      switch (scope) {
+        case "Attribute" :
+            return value(function (x) {
+                        return {
+                                TAG: /* Attribute */0,
+                                _0: x
+                              };
+                      });
+        case "CombatTechnique" :
+            return value(function (x) {
+                        return {
+                                TAG: /* CombatTechnique */2,
+                                _0: x
+                              };
+                      });
+        case "LiturgicalChant" :
+            return value(function (x) {
+                        return {
+                                TAG: /* LiturgicalChant */4,
+                                _0: x
+                              };
+                      });
+        case "Skill" :
+            return value(function (x) {
+                        return {
+                                TAG: /* Skill */1,
+                                _0: x
+                              };
+                      });
+        case "Spell" :
+            return value(function (x) {
+                        return {
+                                TAG: /* Spell */3,
+                                _0: x
+                              };
+                      });
+        default:
+          return raiseUnknownScope("Increasable", scope);
+      }
+    });
 
 var Decode$1 = {
   t: t$2
@@ -311,8 +403,8 @@ var PrerequisiteSource = {};
 
 var HitZoneArmorZoneItem = {};
 
-function fromInt(id) {
-  switch (id) {
+function fromInt(x) {
+  switch (x) {
     case 1 :
         return {
                 TAG: /* Ok */0,
@@ -331,13 +423,13 @@ function fromInt(id) {
     default:
       return {
               TAG: /* Error */1,
-              _0: id
+              _0: x
             };
   }
 }
 
-function toInt(id) {
-  return id + 1 | 0;
+function toInt(param) {
+  return param + 1 | 0;
 }
 
 var Phase = {
@@ -345,8 +437,8 @@ var Phase = {
   toInt: toInt
 };
 
-function fromInt$1(id) {
-  switch (id) {
+function fromInt$1(x) {
+  switch (x) {
     case 1 :
         return {
                 TAG: /* Ok */0,
@@ -385,13 +477,13 @@ function fromInt$1(id) {
     default:
       return {
               TAG: /* Error */1,
-              _0: id
+              _0: x
             };
   }
 }
 
-function toInt$1(id) {
-  return id + 1 | 0;
+function toInt$1(param) {
+  return param + 1 | 0;
 }
 
 var ExperienceLevel = {
@@ -399,8 +491,8 @@ var ExperienceLevel = {
   toInt: toInt$1
 };
 
-function fromInt$2(id) {
-  switch (id) {
+function fromInt$2(x) {
+  switch (x) {
     case 1 :
         return {
                 TAG: /* Ok */0,
@@ -444,13 +536,13 @@ function fromInt$2(id) {
     default:
       return {
               TAG: /* Error */1,
-              _0: id
+              _0: x
             };
   }
 }
 
-function toInt$2(id) {
-  return id + 1 | 0;
+function toInt$2(param) {
+  return param + 1 | 0;
 }
 
 var Attribute = {
@@ -458,8 +550,8 @@ var Attribute = {
   toInt: toInt$2
 };
 
-function fromString(id) {
-  switch (id) {
+function fromString(x) {
+  switch (x) {
     case "AE" :
         return {
                 TAG: /* Ok */0,
@@ -508,13 +600,13 @@ function fromString(id) {
     default:
       return {
               TAG: /* Error */1,
-              _0: id
+              _0: x
             };
   }
 }
 
-function toString(id) {
-  switch (id) {
+function toString(param) {
+  switch (param) {
     case /* LifePoints */0 :
         return "LP";
     case /* ArcaneEnergy */1 :
@@ -542,11 +634,11 @@ var DerivedCharacteristic = {
   toString: toString
 };
 
-function fromInt$3(id) {
-  if (id !== 1) {
-    if (id !== 2) {
+function fromInt$3(x) {
+  if (x !== 1) {
+    if (x !== 2) {
       return /* Other */{
-              _0: id
+              _0: x
             };
     } else {
       return /* Demon */1;
@@ -556,15 +648,15 @@ function fromInt$3(id) {
   }
 }
 
-function toInt$3(id) {
-  if (typeof id === "number") {
-    if (id !== 0) {
+function toInt$3(x) {
+  if (typeof x === "number") {
+    if (x !== 0) {
       return 2;
     } else {
       return 1;
     }
   } else {
-    return id._0;
+    return x._0;
   }
 }
 
@@ -573,8 +665,8 @@ var Pact = {
   toInt: toInt$3
 };
 
-function fromInt$4(id) {
-  switch (id) {
+function fromInt$4(x) {
+  switch (x) {
     case 1 :
         return {
                 TAG: /* Ok */0,
@@ -603,13 +695,13 @@ function fromInt$4(id) {
     default:
       return {
               TAG: /* Error */1,
-              _0: id
+              _0: x
             };
   }
 }
 
-function toInt$4(id) {
-  return id + 1 | 0;
+function toInt$4(param) {
+  return param + 1 | 0;
 }
 
 var SocialStatus = {
@@ -617,8 +709,8 @@ var SocialStatus = {
   toInt: toInt$4
 };
 
-function fromInt$5(id) {
-  switch (id) {
+function fromInt$5(x) {
+  switch (x) {
     case 8 :
         return /* MaximumAttributeScores */0;
     case 15 :
@@ -631,22 +723,22 @@ function fromInt$5(id) {
     case 14 :
     case 16 :
         return /* Other */{
-                _0: id
+                _0: x
               };
     case 17 :
         return /* HigherDefenseStats */2;
     default:
       return /* Other */{
-              _0: id
+              _0: x
             };
   }
 }
 
-function toInt$5(id) {
-  if (typeof id !== "number") {
-    return id._0;
+function toInt$5(x) {
+  if (typeof x !== "number") {
+    return x._0;
   }
-  switch (id) {
+  switch (x) {
     case /* MaximumAttributeScores */0 :
         return 8;
     case /* LanguageSpecialization */1 :
@@ -662,8 +754,8 @@ var OptionalRule = {
   toInt: toInt$5
 };
 
-function fromInt$6(id) {
-  switch (id) {
+function fromInt$6(x) {
+  switch (x) {
     case 4 :
         return /* Aptitude */0;
     case 9 :
@@ -787,22 +879,22 @@ function fromInt$6(id) {
     case 97 :
     case 98 :
         return /* Other */{
-                _0: id
+                _0: x
               };
     case 99 :
         return /* Einkommen */27;
     default:
       return /* Other */{
-              _0: id
+              _0: x
             };
   }
 }
 
-function toInt$6(id) {
-  if (typeof id !== "number") {
-    return id._0;
+function toInt$6(x) {
+  if (typeof x !== "number") {
+    return x._0;
   }
-  switch (id) {
+  switch (x) {
     case /* Aptitude */0 :
         return 4;
     case /* Nimble */1 :
@@ -868,8 +960,8 @@ var Advantage = {
   toInt: toInt$6
 };
 
-function fromInt$7(id) {
-  switch (id) {
+function fromInt$7(x) {
+  switch (x) {
     case 1 :
         return /* AfraidOf */0;
     case 2 :
@@ -965,7 +1057,7 @@ function fromInt$7(id) {
     case 70 :
     case 71 :
         return /* Other */{
-                _0: id
+                _0: x
               };
     case 72 :
         return /* WenigePredigten */23;
@@ -973,16 +1065,16 @@ function fromInt$7(id) {
         return /* WenigeVisionen */24;
     default:
       return /* Other */{
-              _0: id
+              _0: x
             };
   }
 }
 
-function toInt$7(id) {
-  if (typeof id !== "number") {
-    return id._0;
+function toInt$7(x) {
+  if (typeof x !== "number") {
+    return x._0;
   }
-  switch (id) {
+  switch (x) {
     case /* AfraidOf */0 :
         return 1;
     case /* Poor */1 :
@@ -1042,27 +1134,27 @@ var Disadvantage = {
   toInt: toInt$7
 };
 
-function fromInt$8(id) {
-  var switcher = id - 1 | 0;
+function fromInt$8(x) {
+  var switcher = x - 1 | 0;
   if (switcher > 58 || switcher < 0) {
     return /* Other */{
-            _0: id
+            _0: x
           };
   } else {
     return switcher;
   }
 }
 
-function toInt$8(id) {
-  if (typeof id === "number") {
-    return id + 1 | 0;
+function toInt$8(x) {
+  if (typeof x === "number") {
+    return x + 1 | 0;
   } else {
-    return id._0;
+    return x._0;
   }
 }
 
-function fromInt$9(id) {
-  switch (id) {
+function fromInt$9(x) {
+  switch (x) {
     case 1 :
         return {
                 TAG: /* Ok */0,
@@ -1091,13 +1183,13 @@ function fromInt$9(id) {
     default:
       return {
               TAG: /* Error */1,
-              _0: id
+              _0: x
             };
   }
 }
 
-function toInt$9(id) {
-  return id + 1 | 0;
+function toInt$9(param) {
+  return param + 1 | 0;
 }
 
 var Group = {
@@ -1111,8 +1203,8 @@ var Skill = {
   Group: Group
 };
 
-function fromInt$10(id) {
-  switch (id) {
+function fromInt$10(x) {
+  switch (x) {
     case 1 :
         return /* Crossbows */0;
     case 2 :
@@ -1129,7 +1221,7 @@ function fromInt$10(id) {
         return /* Lances */6;
     case 8 :
         return /* Other */{
-                _0: id
+                _0: x
               };
     case 9 :
         return /* Brawling */7;
@@ -1159,16 +1251,16 @@ function fromInt$10(id) {
         return /* Spiesswaffen */19;
     default:
       return /* Other */{
-              _0: id
+              _0: x
             };
   }
 }
 
-function toInt$10(id) {
-  if (typeof id !== "number") {
-    return id._0;
+function toInt$10(x) {
+  if (typeof x !== "number") {
+    return x._0;
   }
-  switch (id) {
+  switch (x) {
     case /* Crossbows */0 :
         return 1;
     case /* Bows */1 :
@@ -1213,12 +1305,12 @@ function toInt$10(id) {
   }
 }
 
-function fromInt$11(id) {
-  if (id !== 1) {
-    if (id !== 2) {
+function fromInt$11(x) {
+  if (x !== 1) {
+    if (x !== 2) {
       return {
               TAG: /* Error */1,
-              _0: id
+              _0: x
             };
     } else {
       return {
@@ -1234,8 +1326,8 @@ function fromInt$11(id) {
   }
 }
 
-function toInt$11(id) {
-  if (id) {
+function toInt$11(param) {
+  if (param) {
     return 2;
   } else {
     return 1;
@@ -1253,22 +1345,22 @@ var CombatTechnique = {
   Group: Group$1
 };
 
-function fromInt$12(id) {
-  var switcher = id - 1 | 0;
+function fromInt$12(x) {
+  var switcher = x - 1 | 0;
   if (switcher > 17 || switcher < 0) {
     return /* Other */{
-            _0: id
+            _0: x
           };
   } else {
     return switcher;
   }
 }
 
-function toInt$12(id) {
-  if (typeof id === "number") {
-    return id + 1 | 0;
+function toInt$12(x) {
+  if (typeof x === "number") {
+    return x + 1 | 0;
   } else {
-    return id._0;
+    return x._0;
   }
 }
 
@@ -1277,12 +1369,12 @@ var MagicalTradition = {
   toInt: toInt$12
 };
 
-function fromInt$13(id) {
-  if (id !== 1) {
-    if (id !== 2) {
+function fromInt$13(x) {
+  if (x !== 1) {
+    if (x !== 2) {
       return {
               TAG: /* Error */1,
-              _0: id
+              _0: x
             };
     } else {
       return {
@@ -1298,8 +1390,8 @@ function fromInt$13(id) {
   }
 }
 
-function toInt$13(id) {
-  if (id) {
+function toInt$13(param) {
+  if (param) {
     return 2;
   } else {
     return 1;
@@ -1315,22 +1407,22 @@ var Spell = {
   Group: Group$2
 };
 
-function fromInt$14(id) {
-  var switcher = id - 1 | 0;
+function fromInt$14(x) {
+  var switcher = x - 1 | 0;
   if (switcher > 11 || switcher < 0) {
     return /* Other */{
-            _0: id
+            _0: x
           };
   } else {
     return switcher;
   }
 }
 
-function toInt$14(id) {
-  if (typeof id === "number") {
-    return id + 1 | 0;
+function toInt$14(x) {
+  if (typeof x === "number") {
+    return x + 1 | 0;
   } else {
-    return id._0;
+    return x._0;
   }
 }
 
@@ -1339,15 +1431,15 @@ var Property = {
   toInt: toInt$14
 };
 
-function fromInt$15(id) {
-  if (id >= 623) {
-    if (id >= 1069) {
-      if (id >= 1222) {
-        if (id >= 1294) {
-          if (id !== 1391) {
-            if (id !== 1438) {
+function fromInt$15(x) {
+  if (x >= 623) {
+    if (x >= 1069) {
+      if (x >= 1222) {
+        if (x >= 1294) {
+          if (x !== 1391) {
+            if (x !== 1438) {
               return /* Other */{
-                      _0: id
+                      _0: x
                     };
             } else {
               return /* TraditionBrobimGeoden */96;
@@ -1355,23 +1447,23 @@ function fromInt$15(id) {
           } else {
             return /* Zaubervariabilitaet */95;
           }
-        } else if (id !== 1255) {
-          if (id >= 1293) {
+        } else if (x !== 1255) {
+          if (x >= 1293) {
             return /* TraditionZibilijas */94;
           } else {
             return /* Other */{
-                    _0: id
+                    _0: x
                   };
           }
         } else {
           return /* TraditionGeoden */93;
         }
       }
-      if (id < 1100) {
-        if (id !== 1075) {
-          if (id >= 1070) {
+      if (x < 1100) {
+        if (x !== 1075) {
+          if (x >= 1070) {
             return /* Other */{
-                    _0: id
+                    _0: x
                   };
           } else {
             return /* WegDerKuenstlerin */83;
@@ -1380,11 +1472,11 @@ function fromInt$15(id) {
           return /* WegDerSchreiberin */84;
         }
       }
-      var switcher = id - 1128 | 0;
+      var switcher = x - 1128 | 0;
       if (!(switcher > 92 || switcher < 0)) {
         if (switcher !== 19) {
           return /* Other */{
-                  _0: id
+                  _0: x
                 };
         } else {
           return /* ScholarDesMagierkollegsZuHoningen */91;
@@ -1427,19 +1519,19 @@ function fromInt$15(id) {
         case 25 :
         case 26 :
             return /* Other */{
-                    _0: id
+                    _0: x
                   };
         case 27 :
             return /* Universalgenie */90;
         
       }
     } else {
-      if (id >= 809) {
-        if (id >= 902) {
-          if (id !== 1040) {
-            if (id !== 1049) {
+      if (x >= 809) {
+        if (x >= 902) {
+          if (x !== 1040) {
+            if (x !== 1049) {
               return /* Other */{
-                      _0: id
+                      _0: x
                     };
             } else {
               return /* TraditionCultOfNuminoru */82;
@@ -1447,24 +1539,24 @@ function fromInt$15(id) {
           } else {
             return /* WegDerGelehrten */81;
           }
-        } else if (id !== 821) {
-          if (id >= 901) {
+        } else if (x !== 821) {
+          if (x >= 901) {
             return /* GaretherGossenStil */80;
           } else {
             return /* Other */{
-                    _0: id
+                    _0: x
                   };
           }
         } else {
           return /* MadaschwesternStil */79;
         }
       }
-      if (id >= 772) {
-        var switcher$1 = id - 782 | 0;
+      if (x >= 772) {
+        var switcher$1 = x - 782 | 0;
         if (!(switcher$1 > 25 || switcher$1 < 0)) {
           if (switcher$1 !== 20) {
             return /* Other */{
-                    _0: id
+                    _0: x
                   };
           } else {
             return /* ScholarDerHalleDesLebensZuNorburg */77;
@@ -1486,19 +1578,19 @@ function fromInt$15(id) {
           case 7 :
           case 8 :
               return /* Other */{
-                      _0: id
+                      _0: x
                     };
           case 9 :
               return /* Kraftliniennutzung */76;
           
         }
-      } else if (id >= 663) {
-        if (id >= 751) {
+      } else if (x >= 663) {
+        if (x >= 751) {
           return /* Other */{
-                  _0: id
+                  _0: x
                 };
         }
-        switch (id - 663 | 0) {
+        switch (x - 663 | 0) {
           case 0 :
               return /* ChantEnhancement */46;
           case 4 :
@@ -1614,19 +1706,19 @@ function fromInt$15(id) {
           case 85 :
           case 86 :
               return /* Other */{
-                      _0: id
+                      _0: x
                     };
           case 87 :
               return /* TraditionZauberalchimisten */73;
           
         }
       } else {
-        if (id >= 640) {
+        if (x >= 640) {
           return /* Other */{
-                  _0: id
+                  _0: x
                 };
         }
-        switch (id - 623 | 0) {
+        switch (x - 623 | 0) {
           case 0 :
               return /* Zugvoegel */42;
           case 2 :
@@ -1647,7 +1739,7 @@ function fromInt$15(id) {
           case 14 :
           case 15 :
               return /* Other */{
-                      _0: id
+                      _0: x
                     };
           case 16 :
               return /* GebieterDesAspekts */45;
@@ -1655,13 +1747,13 @@ function fromInt$15(id) {
         }
       }
     }
-  } else if (id >= 255) {
-    if (id >= 346) {
-      if (id < 472) {
-        if (id !== 414) {
-          if (id >= 347) {
+  } else if (x >= 255) {
+    if (x >= 346) {
+      if (x < 472) {
+        if (x !== 414) {
+          if (x >= 347) {
             return /* Other */{
-                    _0: id
+                    _0: x
                   };
           } else {
             return /* TraditionDruids */24;
@@ -1670,14 +1762,14 @@ function fromInt$15(id) {
           return /* SpellEnhancement */25;
         }
       }
-      if (id < 474) {
-        if (id >= 473) {
+      if (x < 474) {
+        if (x >= 473) {
           return /* Expertenwissen */27;
         } else {
           return /* Forschungsgebiet */26;
         }
       }
-      switch (id) {
+      switch (x) {
         case 531 :
             return /* Wissensdurst */28;
         case 533 :
@@ -1730,21 +1822,21 @@ function fromInt$15(id) {
         case 567 :
         case 568 :
             return /* Other */{
-                    _0: id
+                    _0: x
                   };
         case 569 :
             return /* Lieblingsliturgie */41;
         default:
           return /* Other */{
-                  _0: id
+                  _0: x
                 };
       }
     } else {
-      if (id < 296) {
-        if (id !== 266) {
-          if (id >= 256) {
+      if (x < 296) {
+        if (x !== 266) {
+          if (x >= 256) {
             return /* Other */{
-                    _0: id
+                    _0: x
                   };
           } else {
             return /* TraditionWitches */19;
@@ -1753,7 +1845,7 @@ function fromInt$15(id) {
           return /* MagicStyleCombination */20;
         }
       }
-      var switcher$2 = id - 297 | 0;
+      var switcher$2 = x - 297 | 0;
       if (switcher$2 > 47 || switcher$2 < 0) {
         if (switcher$2 >= 48) {
           return /* TraditionElves */23;
@@ -1762,19 +1854,19 @@ function fromInt$15(id) {
         }
       } else if (switcher$2 !== 6) {
         return /* Other */{
-                _0: id
+                _0: x
               };
       } else {
         return /* Matrixzauberei */22;
       }
     }
   } else {
-    if (id >= 110) {
-      if (id >= 232) {
-        if (id !== 240) {
-          if (id !== 250) {
+    if (x >= 110) {
+      if (x >= 232) {
+        if (x !== 240) {
+          if (x !== 250) {
             return /* Other */{
-                    _0: id
+                    _0: x
                   };
           } else {
             return /* FavoriteSpellwork */18;
@@ -1782,34 +1874,34 @@ function fromInt$15(id) {
         } else {
           return /* Exorzist */17;
         }
-      } else if (id !== 164) {
-        if (id >= 231) {
+      } else if (x !== 164) {
+        if (x >= 231) {
           return /* AdaptionZauber */16;
         } else {
           return /* Other */{
-                  _0: id
+                  _0: x
                 };
         }
       } else {
         return /* CombatStyleCombination */15;
       }
     }
-    if (id >= 52) {
-      if (id >= 88) {
-        if (id >= 109) {
+    if (x >= 52) {
+      if (x >= 88) {
+        if (x >= 109) {
           return /* Feuerschlucker */14;
         } else {
           return /* Other */{
-                  _0: id
+                  _0: x
                 };
         }
       }
-      if (id < 64) {
+      if (x < 64) {
         return /* Other */{
-                _0: id
+                _0: x
               };
       }
-      switch (id - 64 | 0) {
+      switch (x - 64 | 0) {
         case 0 :
             return /* ImprovedDodge */8;
         case 6 :
@@ -1837,7 +1929,7 @@ function fromInt$15(id) {
         case 20 :
         case 21 :
             return /* Other */{
-                    _0: id
+                    _0: x
                   };
         case 22 :
             return /* TraditionChurchOfPraios */13;
@@ -1846,21 +1938,21 @@ function fromInt$15(id) {
         
       }
     } else {
-      if (id >= 30) {
-        if (id >= 51) {
+      if (x >= 30) {
+        if (x >= 51) {
           return /* CombatReflexes */7;
         } else {
           return /* Other */{
-                  _0: id
+                  _0: x
                 };
         }
       }
-      if (id < 9) {
+      if (x < 9) {
         return /* Other */{
-                _0: id
+                _0: x
               };
       }
-      switch (id - 9 | 0) {
+      switch (x - 9 | 0) {
         case 0 :
             return /* SkillSpecialization */0;
         case 3 :
@@ -1888,7 +1980,7 @@ function fromInt$15(id) {
         case 17 :
         case 19 :
             return /* Other */{
-                    _0: id
+                    _0: x
                   };
         case 20 :
             return /* Language */6;
@@ -1898,11 +1990,11 @@ function fromInt$15(id) {
   }
 }
 
-function toInt$15(id) {
-  if (typeof id !== "number") {
-    return id._0;
+function toInt$15(x) {
+  if (typeof x !== "number") {
+    return x._0;
   }
-  switch (id) {
+  switch (x) {
     case /* SkillSpecialization */0 :
         return 9;
     case /* TerrainKnowledge */1 :
@@ -2101,22 +2193,22 @@ function toInt$15(id) {
   }
 }
 
-function fromInt$16(id) {
-  var switcher = id - 1 | 0;
+function fromInt$16(x) {
+  var switcher = x - 1 | 0;
   if (switcher > 44 || switcher < 0) {
     return /* Other */{
-            _0: id
+            _0: x
           };
   } else {
     return switcher;
   }
 }
 
-function toInt$16(id) {
-  if (typeof id === "number") {
-    return id + 1 | 0;
+function toInt$16(x) {
+  if (typeof x === "number") {
+    return x + 1 | 0;
   } else {
-    return id._0;
+    return x._0;
   }
 }
 
@@ -2129,6 +2221,11 @@ var SpecialAbility = {
   fromInt: fromInt$15,
   toInt: toInt$15,
   Group: Group$3
+};
+
+var All = {
+  compare: compare,
+  $eq: $eq
 };
 
 var Activatable_SelectOption = {
@@ -2174,4 +2271,4 @@ export {
   SpecialAbility ,
   
 }
-/* No side effect */
+/* t Not a pure module */

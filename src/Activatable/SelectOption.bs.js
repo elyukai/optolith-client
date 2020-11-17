@@ -16,31 +16,31 @@ import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js"
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
 function showId(id) {
-  switch (id[0]) {
+  switch (id.TAG | 0) {
     case /* Generic */0 :
-        return "Generic(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+        return "Generic(" + (Ley_Int$OptolithClient.show(id._0) + ")");
     case /* Skill */1 :
-        return "Skill(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+        return "Skill(" + (Ley_Int$OptolithClient.show(id._0) + ")");
     case /* CombatTechnique */2 :
-        return "CombatTechnique(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+        return "CombatTechnique(" + (Ley_Int$OptolithClient.show(id._0) + ")");
     case /* Spell */3 :
-        return "Spell(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+        return "Spell(" + (Ley_Int$OptolithClient.show(id._0) + ")");
     case /* Cantrip */4 :
-        return "Cantrip(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+        return "Cantrip(" + (Ley_Int$OptolithClient.show(id._0) + ")");
     case /* LiturgicalChant */5 :
-        return "LiturgicalChant(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+        return "LiturgicalChant(" + (Ley_Int$OptolithClient.show(id._0) + ")");
     case /* Blessing */6 :
-        return "Blessing(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+        return "Blessing(" + (Ley_Int$OptolithClient.show(id._0) + ")");
     case /* SpecialAbility */7 :
-        return "SpecialAbility(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+        return "SpecialAbility(" + (Ley_Int$OptolithClient.show(id._0) + ")");
     case /* TradeSecret */8 :
-        return "TradeSecret(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+        return "TradeSecret(" + (Ley_Int$OptolithClient.show(id._0) + ")");
     case /* Language */9 :
-        return "Language(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+        return "Language(" + (Ley_Int$OptolithClient.show(id._0) + ")");
     case /* Script */10 :
-        return "Script(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+        return "Script(" + (Ley_Int$OptolithClient.show(id._0) + ")");
     case /* AnimalShape */11 :
-        return "AnimalShape(" + (Ley_Int$OptolithClient.show(id[1]) + ")");
+        return "AnimalShape(" + (Ley_Int$OptolithClient.show(id._0) + ")");
     
   }
 }
@@ -61,45 +61,14 @@ var Translation = {
 
 var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 
-var selectOptionId = Json_decode.either((function (param) {
-        return Json_decode.map((function (x) {
-                      return [
-                              /* Generic */0,
-                              x
-                            ];
-                    }), Json_decode.$$int, param);
-      }), (function (param) {
-        return Json_decode.andThen((function (str) {
-                      switch (str) {
-                        case "CombatTechnique" :
-                            return function (param) {
-                              return Json_decode.map((function (x) {
-                                            return [
-                                                    /* CombatTechnique */2,
-                                                    x
-                                                  ];
-                                          }), Json_decode.$$int, param);
-                            };
-                        case "Skill" :
-                            return function (param) {
-                              return Json_decode.map((function (x) {
-                                            return [
-                                                    /* Skill */1,
-                                                    x
-                                                  ];
-                                          }), Json_decode.$$int, param);
-                            };
-                        default:
-                          throw {
-                                RE_EXN_ID: Json_decode.DecodeError,
-                                _1: "Unknown select option id scope: " + str,
-                                Error: new Error()
-                              };
-                      }
-                    }), (function (param) {
-                      return Json_decode.field("type", Json_decode.string, param);
-                    }), param);
-      }));
+function selectOptionId(param) {
+  return Json_decode.map((function (x) {
+                return {
+                        TAG: /* Generic */0,
+                        _0: x
+                      };
+              }), Json_decode.$$int, param);
+}
 
 function multilingual(json) {
   return {
@@ -281,30 +250,30 @@ function resolveGroups(f, g, grs, mp, xs) {
 }
 
 function blessingToSelectOption(x) {
-  return entryToSelectOption([
-              /* Blessing */6,
-              x.id
-            ], x.name, {
+  return entryToSelectOption({
+              TAG: /* Blessing */6,
+              _0: x.id
+            }, x.name, {
               TAG: /* Blessing */0,
               _0: x
             }, x.src, x.errata);
 }
 
 function cantripToSelectOption(x) {
-  return entryToSelectOption([
-              /* Cantrip */4,
-              x.id
-            ], x.name, {
+  return entryToSelectOption({
+              TAG: /* Cantrip */4,
+              _0: x.id
+            }, x.name, {
               TAG: /* Cantrip */1,
               _0: x
             }, x.src, x.errata);
 }
 
 function combatTechniqueToSelectOption(x) {
-  return entryToSelectOption([
-              /* CombatTechnique */2,
-              x.id
-            ], x.name, {
+  return entryToSelectOption({
+              TAG: /* CombatTechnique */2,
+              _0: x.id
+            }, x.name, {
               TAG: /* CombatTechnique */2,
               _0: x
             }, x.src, x.errata);
@@ -325,10 +294,10 @@ function resolveCombatTechniques(grs) {
 }
 
 function liturgicalChantToSelectOption(x) {
-  return entryToSelectOption([
-              /* LiturgicalChant */5,
-              x.id
-            ], x.name, {
+  return entryToSelectOption({
+              TAG: /* LiturgicalChant */5,
+              _0: x.id
+            }, x.name, {
               TAG: /* LiturgicalChant */3,
               _0: x
             }, x.src, x.errata);
@@ -349,10 +318,10 @@ function resolveLiturgicalChants(grs) {
 }
 
 function skillToSelectOption(x) {
-  return entryToSelectOption([
-              /* Skill */1,
-              x.id
-            ], x.name, {
+  return entryToSelectOption({
+              TAG: /* Skill */1,
+              _0: x.id
+            }, x.name, {
               TAG: /* Skill */4,
               _0: x
             }, x.src, x.errata);
@@ -373,10 +342,10 @@ function resolveSkills(grs) {
 }
 
 function spellToSelectOption(x) {
-  return entryToSelectOption([
-              /* Spell */3,
-              x.id
-            ], x.name, {
+  return entryToSelectOption({
+              TAG: /* Spell */3,
+              _0: x.id
+            }, x.name, {
               TAG: /* Spell */5,
               _0: x
             }, x.src, x.errata);
@@ -397,30 +366,30 @@ function resolveSpells(grs) {
 }
 
 function tradeSecretToSelectOption(x) {
-  return entryToSelectOption([
-              /* TradeSecret */8,
-              x.id
-            ], x.name, {
+  return entryToSelectOption({
+              TAG: /* TradeSecret */8,
+              _0: x.id
+            }, x.name, {
               TAG: /* TradeSecret */6,
               _0: x
             }, x.src, x.errata);
 }
 
 function languageToSelectOption(x) {
-  return entryToSelectOption([
-              /* Language */9,
-              x.id
-            ], x.name, {
+  return entryToSelectOption({
+              TAG: /* Language */9,
+              _0: x.id
+            }, x.name, {
               TAG: /* Language */7,
               _0: x
             }, x.src, x.errata);
 }
 
 function scriptToSelectOption(x) {
-  return entryToSelectOption([
-              /* Script */10,
-              x.id
-            ], x.name, {
+  return entryToSelectOption({
+              TAG: /* Script */10,
+              _0: x.id
+            }, x.name, {
               TAG: /* Script */8,
               _0: x
             }, x.src, x.errata);
@@ -429,10 +398,10 @@ function scriptToSelectOption(x) {
 function resolveAnimalShapes(src, errata) {
   return function (param, param$1) {
     return resolveWithoutGroups((function (param) {
-                  return entryToSelectOption([
-                              /* AnimalShape */11,
-                              param.id
-                            ], param.name, {
+                  return entryToSelectOption({
+                              TAG: /* AnimalShape */11,
+                              _0: param.id
+                            }, param.name, {
                               TAG: /* AnimalShape */9,
                               _0: param
                             }, src, errata);

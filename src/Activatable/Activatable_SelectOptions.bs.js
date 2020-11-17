@@ -88,11 +88,11 @@ function getGenericId(option) {
   if (option.TAG) {
     return ;
   }
-  var match = option._0;
-  if (match[0] !== 0) {
+  var x = option._0;
+  if (x.TAG) {
     return ;
   } else {
-    return match[1];
+    return x._0;
   }
 }
 
@@ -104,12 +104,11 @@ function getSkillFromOption(staticData, option) {
   if (option.TAG) {
     return ;
   }
-  var match = option._0;
-  if (match[0] !== 1) {
-    return ;
-  } else {
-    return Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.skills);
+  var id = option._0;
+  if (id.TAG === /* Skill */1) {
+    return Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, staticData.skills);
   }
+  
 }
 
 export {

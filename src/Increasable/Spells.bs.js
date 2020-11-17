@@ -17,11 +17,11 @@ function getMaxSrFromPropertyKnowledge(propertyKnowledge, staticEntry) {
                             if (param.TAG) {
                               return ;
                             }
-                            var match = param._0;
-                            if (match[0] !== 0) {
+                            var id = param._0;
+                            if (id.TAG) {
                               return ;
                             } else {
-                              return match[1];
+                              return id._0;
                             }
                           }), param);
             })));
@@ -32,10 +32,10 @@ function getMaxSrFromPropertyKnowledge(propertyKnowledge, staticEntry) {
 }
 
 function getMax(startEl, phase, heroAttrs, exceptionalSkill, propertyKnowledge, staticEntry) {
-  return Skills$OptolithClient.getExceptionalSkillBonus(exceptionalSkill, [
-              /* Spell */3,
-              staticEntry.id
-            ]) + Curry._1(Ley_List$OptolithClient.minimum, Ley_Option$OptolithClient.catOptions({
+  return Skills$OptolithClient.getExceptionalSkillBonus(exceptionalSkill, {
+              TAG: /* Spell */3,
+              _0: staticEntry.id
+            }) + Curry._1(Ley_List$OptolithClient.minimum, Ley_Option$OptolithClient.catOptions({
                   hd: Skills$OptolithClient.getMaxSrByCheckAttrs(heroAttrs, staticEntry.check),
                   tl: {
                     hd: Skills$OptolithClient.getMaxSrFromEl(startEl, phase),
@@ -95,11 +95,11 @@ function getMinSr(counter, activePropertyKnowledges, staticEntry, heroEntry) {
           if (sid.TAG) {
             return false;
           }
-          var match = sid._0;
-          if (match[0] !== 0) {
+          var x = sid._0;
+          if (x.TAG) {
             return false;
           } else {
-            return match[1] === staticEntry.property;
+            return x._0 === staticEntry.property;
           }
         }), activePropertyKnowledges);
   if (hasActivePropertyKnowledge) {

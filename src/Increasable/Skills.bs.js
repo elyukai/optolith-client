@@ -46,10 +46,10 @@ function getMaxSrFromEl(startEl, phase) {
 }
 
 function getMax(startEl, phase, heroAttrs, exceptionalSkill, staticEntry) {
-  return getExceptionalSkillBonus(exceptionalSkill, [
-              /* Skill */1,
-              staticEntry.id
-            ]) + Curry._1(Ley_List$OptolithClient.minimum, Ley_Option$OptolithClient.catOptions({
+  return getExceptionalSkillBonus(exceptionalSkill, {
+              TAG: /* Skill */1,
+              _0: staticEntry.id
+            }) + Curry._1(Ley_List$OptolithClient.minimum, Ley_Option$OptolithClient.catOptions({
                   hd: getMaxSrByCheckAttrs(heroAttrs, staticEntry.check),
                   tl: {
                     hd: getMaxSrFromEl(startEl, phase),
@@ -81,7 +81,7 @@ function getMinSrByCraftInstruments(craftInstruments, skills, staticEntry) {
               RE_EXN_ID: "Match_failure",
               _1: [
                 "Skills.re",
-                93,
+                91,
                 10
               ],
               Error: new Error()
@@ -96,7 +96,7 @@ function getMinSrByCraftInstruments(craftInstruments, skills, staticEntry) {
           RE_EXN_ID: "Match_failure",
           _1: [
             "Skills.re",
-            93,
+            91,
             10
           ],
           Error: new Error()
@@ -177,4 +177,4 @@ export {
   Routine ,
   
 }
-/* Skill-OptolithClient Not a pure module */
+/* Id-OptolithClient Not a pure module */

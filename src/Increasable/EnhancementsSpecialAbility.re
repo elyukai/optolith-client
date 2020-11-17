@@ -13,7 +13,7 @@ let getSingle =
       ~errata,
     )
     : SelectOption.t => {
-  id: (Generic, id),
+  id: Generic(id),
   name: targetName ++ ": " ++ name,
   apValue: Some(cost),
   prerequisites,
@@ -71,12 +71,12 @@ let getAllFromObject =
             {
               value:
                 Activatable({
-                  id: (
-                    SpecialAbility,
-                    Id.SpecialAbility.toInt(SpellEnhancement),
-                  ),
+                  id:
+                    SpecialAbility(
+                      Id.SpecialAbility.toInt(SpellEnhancement),
+                    ),
                   active: true,
-                  options: [(Generic, level1.id)],
+                  options: [Generic(level1.id)],
                   level: None,
                 }),
               displayOption: Generate,
@@ -103,12 +103,10 @@ let getAllFromObject =
           {
             value:
               Activatable({
-                id: (
-                  SpecialAbility,
-                  Id.SpecialAbility.toInt(SpellEnhancement),
-                ),
+                id:
+                  SpecialAbility(Id.SpecialAbility.toInt(SpellEnhancement)),
                 active: true,
-                options: [(Generic, level1.id)],
+                options: [Generic(level1.id)],
                 level: None,
               }),
             displayOption: Generate,
@@ -119,12 +117,10 @@ let getAllFromObject =
           {
             value:
               Activatable({
-                id: (
-                  SpecialAbility,
-                  Id.SpecialAbility.toInt(SpellEnhancement),
-                ),
+                id:
+                  SpecialAbility(Id.SpecialAbility.toInt(SpellEnhancement)),
                 active: true,
-                options: [(Generic, level2.id)],
+                options: [Generic(level2.id)],
                 level: None,
               }),
             displayOption: Generate,

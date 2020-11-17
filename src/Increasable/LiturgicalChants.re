@@ -18,7 +18,7 @@ let getMaxSrFromAspectKnowledge =
        Ley_IntSet.all(
          aspect =>
            Ley_List.notElem(
-             Id.Activatable.Option.Preset((Generic, aspect)),
+             Id.Activatable.Option.Preset(Generic(aspect)),
              actives,
            ),
          staticEntry.aspects,
@@ -48,7 +48,7 @@ let getMax =
   |> (+)(
        Skills.getExceptionalSkillBonus(
          exceptionalSkill,
-         (Spell, staticEntry.id),
+         LiturgicalChant(staticEntry.id),
        ),
      );
 
@@ -138,7 +138,7 @@ module AspectKnowledge = {
          [@warning "-4"]
          (
            switch (sid) {
-           | Preset((Generic, x)) => Ley_IntSet.elem(x, staticEntry.aspects)
+           | Preset(Generic(x)) => Ley_IntSet.elem(x, staticEntry.aspects)
            | _ => false
            }
          )

@@ -55,11 +55,11 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
         >>= (
           sid =>
             switch (sid) {
-            | Preset((Skill, id)) =>
+            | Preset(Skill(id)) =>
               lookupMap(id, staticData.skills, x => x.name)
-            | Preset((Spell, id)) =>
+            | Preset(Spell(id)) =>
               lookupMap(id, staticData.spells, x => x.name)
-            | Preset((LiturgicalChant, id)) =>
+            | Preset(LiturgicalChant(id)) =>
               lookupMap(id, staticData.liturgicalChants, x => x.name)
             | Preset(_)
             | CustomInput(_) => None
@@ -72,7 +72,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
         >>= (
           sid =>
             switch (sid) {
-            | Preset((CombatTechnique, id)) =>
+            | Preset(CombatTechnique(id)) =>
               lookupMap(id, staticData.combatTechniques, x => x.name)
             | Preset(_)
             | CustomInput(_) => None
@@ -108,7 +108,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
             (
               switch (option1.id) {
               // Get the input if Prejudice or Unworldly is selected
-              | (Generic, 7 | 8) => heroEntry |> getOption2 >>= getCustomInput
+              | Generic(7 | 8) => heroEntry |> getOption2 >>= getCustomInput
               // Otherwise ignore any additional options
               | _ => None
               }
@@ -131,7 +131,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
         >>= (
           sid =>
             switch (sid) {
-            | Preset((Spell, id)) =>
+            | Preset(Spell(id)) =>
               lookupMap(id, staticData.spells, x => x.name)
             | Preset(_)
             | CustomInput(_) => None
@@ -152,7 +152,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
         >>= (
           sid =>
             switch (sid) {
-            | Preset((LiturgicalChant, id)) =>
+            | Preset(LiturgicalChant(id)) =>
               lookupMap(id, staticData.liturgicalChants, x => x.name)
             | Preset(_)
             | CustomInput(_) => None
@@ -173,7 +173,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
                   // If input string use input
                   | CustomInput(x) => Some(x)
                   // Otherwise lookup application name
-                  | Preset((Generic, id)) =>
+                  | Preset(Generic(id)) =>
                     skill.applications
                     |> Ley_IntMap.find((a: Skill.Static.Application.t) =>
                          a.id === id
@@ -246,7 +246,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
                 (
                   switch (option2) {
                   | CustomInput(str) => Some(str)
-                  | Preset((Generic, specializationId)) =>
+                  | Preset(Generic(specializationId)) =>
                     language.specializations
                     >>= (
                       specializations =>

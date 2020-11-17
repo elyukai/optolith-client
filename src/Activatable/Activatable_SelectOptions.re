@@ -116,7 +116,7 @@ let getGenericId = (option: Id.Activatable.Option.t) =>
   [@warning "-4"]
   (
     switch (option) {
-    | Preset((Generic, x)) => Some(x)
+    | Preset(Generic(x)) => Some(x)
     | _ => None
     }
   );
@@ -128,7 +128,7 @@ let getSkillFromOption =
   [@warning "-4"]
   (
     switch (option) {
-    | Preset((Skill, id)) => Ley_IntMap.lookup(id, staticData.skills)
+    | Preset(Skill(id)) => Ley_IntMap.lookup(id, staticData.skills)
     | _ => None
     }
   );

@@ -155,7 +155,7 @@ let modifyOtherOptions =
           >>= (({options, _}) => O.listToOption(options))
           >>= (
             fun
-            | Preset((Skill, skillId)) =>
+            | Preset(Skill(skillId)) =>
               IM.lookup(skillId, staticData.skills)
             | _ => None
           )

@@ -78,7 +78,7 @@ let isEntrySpecificRemovalValid =
         switch (fromInt(staticAdvantage.id)) {
         | ExceptionalSkill =>
           switch (singleEntry.options) {
-          | [Preset((Skill, id)), ..._] =>
+          | [Preset(Skill(id)), ..._] =>
             // value of target skill
             let value =
               IM.lookup(id, hero.skills) |> Skill.Dynamic.getValueDef;
@@ -88,7 +88,7 @@ let isEntrySpecificRemovalValid =
               L.countBy(
                 (active: Activatable_Dynamic.single) =>
                   switch (active.options) {
-                  | [Preset((Skill, otherId)), ..._] => otherId === id
+                  | [Preset(Skill(otherId)), ..._] => otherId === id
                   | _ => false
                   },
                 heroEntry.active,
@@ -101,7 +101,7 @@ let isEntrySpecificRemovalValid =
           }
         | ExceptionalCombatTechnique =>
           switch (singleEntry.options) {
-          | [Preset((CombatTechnique, id)), ..._] =>
+          | [Preset(CombatTechnique(id)), ..._] =>
             // value of target combat technique
             let value =
               IM.lookup(id, hero.combatTechniques)
@@ -132,7 +132,7 @@ let isEntrySpecificRemovalValid =
           | (
               true,
               [onlyScriptWithLanguage],
-              [Preset((Generic, scriptId)), ..._],
+              [Preset(Generic(scriptId)), ..._],
             ) =>
             onlyScriptWithLanguage !== scriptId
           | _ => true
@@ -149,14 +149,14 @@ let isEntrySpecificRemovalValid =
           | (
               true,
               [onlyLanguageWithScript],
-              [Preset((Generic, languageId)), ..._],
+              [Preset(Generic(languageId)), ..._],
             ) =>
             onlyLanguageWithScript !== languageId
           | _ => true
           }
         | PropertyKnowledge =>
           switch (singleEntry.options) {
-          | [Preset((Generic, propertyId)), ..._] =>
+          | [Preset(Generic(propertyId)), ..._] =>
             hero.spells
             // If there is any spell with matching property above SR 14...
             |> IM.any((heroSpell: ActivatableSkill.Dynamic.t) =>
@@ -174,14 +174,14 @@ let isEntrySpecificRemovalValid =
           let activeAspects =
             Activatable_SelectOptions.mapActiveOptions1(
               fun
-              | Preset((Generic, aspectId)) => Some(aspectId)
+              | Preset(Generic(aspectId)) => Some(aspectId)
               | _ => None,
               heroEntry,
             )
             |> IS.fromList;
 
           switch (singleEntry.options) {
-          | [Preset((Generic, aspectId)), ..._] =>
+          | [Preset(Generic(aspectId)), ..._] =>
             let otherAspects = IS.delete(aspectId, activeAspects);
 
             hero.liturgicalChants

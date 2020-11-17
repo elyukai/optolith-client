@@ -17,7 +17,7 @@ let getMaxSrFromPropertyKnowledge =
         [@warning "-4"]
         (
           fun
-          | Preset((Generic, id)) => Some(id)
+          | Preset(Generic(id)) => Some(id)
           | _ => None
         ),
       )
@@ -46,7 +46,7 @@ let getMax =
   |> (+)(
        Skills.getExceptionalSkillBonus(
          exceptionalSkill,
-         (Spell, staticEntry.id),
+         Spell(staticEntry.id),
        ),
      );
 
@@ -133,7 +133,7 @@ module PropertyKnowledge = {
          [@warning "-4"]
          (
            switch (sid) {
-           | Preset((Generic, x)) => x === staticEntry.property
+           | Preset(Generic(x)) => x === staticEntry.property
            | _ => false
            }
          )

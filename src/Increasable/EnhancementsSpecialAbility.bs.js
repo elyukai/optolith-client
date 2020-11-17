@@ -11,10 +11,10 @@ import * as SelectOption$OptolithClient from "../Activatable/SelectOption.bs.js"
 
 function getSingle(target, targetId, targetName, level, id, name, cost, description, prerequisites, src, errata) {
   return {
-          id: [
-            /* Generic */0,
-            id
-          ],
+          id: {
+            TAG: /* Generic */0,
+            _0: id
+          },
           name: targetName + (": " + name),
           apValue: cost,
           prerequisites: prerequisites,
@@ -57,16 +57,16 @@ function getAllFromObject(target, targetId, targetName, targetIC, param) {
                           value: {
                             TAG: /* Activatable */6,
                             _0: {
-                              id: [
-                                /* SpecialAbility */2,
-                                Id$OptolithClient.SpecialAbility.toInt(/* SpellEnhancement */25)
-                              ],
+                              id: {
+                                TAG: /* SpecialAbility */2,
+                                _0: Id$OptolithClient.SpecialAbility.toInt(/* SpellEnhancement */25)
+                              },
                               active: true,
                               options: {
-                                hd: [
-                                  /* Generic */0,
-                                  level1.id
-                                ],
+                                hd: {
+                                  TAG: /* Generic */0,
+                                  _0: level1.id
+                                },
                                 tl: /* [] */0
                               },
                               level: undefined
@@ -86,16 +86,16 @@ function getAllFromObject(target, targetId, targetName, targetIC, param) {
                                 value: {
                                   TAG: /* Activatable */6,
                                   _0: {
-                                    id: [
-                                      /* SpecialAbility */2,
-                                      Id$OptolithClient.SpecialAbility.toInt(/* SpellEnhancement */25)
-                                    ],
+                                    id: {
+                                      TAG: /* SpecialAbility */2,
+                                      _0: Id$OptolithClient.SpecialAbility.toInt(/* SpellEnhancement */25)
+                                    },
                                     active: true,
                                     options: {
-                                      hd: [
-                                        /* Generic */0,
-                                        level2.id
-                                      ],
+                                      hd: {
+                                        TAG: /* Generic */0,
+                                        _0: level2.id
+                                      },
                                       tl: /* [] */0
                                     },
                                     level: undefined
@@ -112,16 +112,16 @@ function getAllFromObject(target, targetId, targetName, targetIC, param) {
                                 value: {
                                   TAG: /* Activatable */6,
                                   _0: {
-                                    id: [
-                                      /* SpecialAbility */2,
-                                      Id$OptolithClient.SpecialAbility.toInt(/* SpellEnhancement */25)
-                                    ],
+                                    id: {
+                                      TAG: /* SpecialAbility */2,
+                                      _0: Id$OptolithClient.SpecialAbility.toInt(/* SpellEnhancement */25)
+                                    },
                                     active: true,
                                     options: {
-                                      hd: [
-                                        /* Generic */0,
-                                        level1.id
-                                      ],
+                                      hd: {
+                                        TAG: /* Generic */0,
+                                        _0: level1.id
+                                      },
                                       tl: /* [] */0
                                     },
                                     level: undefined
@@ -195,4 +195,4 @@ export {
   liturgicalChantsToSpecialAbilityOptions ,
   
 }
-/* Ley_List-OptolithClient Not a pure module */
+/* Id-OptolithClient Not a pure module */

@@ -28,10 +28,10 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                       hd: {
                         TAG: /* Activatable */6,
                         _0: {
-                          id: [
-                            /* Disadvantage */1,
-                            Id$OptolithClient.Disadvantage.toInt(/* Incompetent */18)
-                          ],
+                          id: {
+                            TAG: /* Disadvantage */1,
+                            _0: Id$OptolithClient.Disadvantage.toInt(/* Incompetent */18)
+                          },
                           active: false,
                           options: Ley_Option$OptolithClient.catOptions({
                                 hd: Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
@@ -47,10 +47,10 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                       hd: {
                         TAG: /* Activatable */6,
                         _0: {
-                          id: [
-                            /* Disadvantage */1,
-                            Id$OptolithClient.Disadvantage.toInt(/* MagicalRestriction */5)
-                          ],
+                          id: {
+                            TAG: /* Disadvantage */1,
+                            _0: Id$OptolithClient.Disadvantage.toInt(/* MagicalRestriction */5)
+                          },
                           active: false,
                           options: Ley_Option$OptolithClient.catOptions({
                                 hd: Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
@@ -72,10 +72,10 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                       hd: {
                         TAG: /* Activatable */6,
                         _0: {
-                          id: [
-                            /* Advantage */0,
-                            Id$OptolithClient.Advantage.toInt(/* Aptitude */0)
-                          ],
+                          id: {
+                            TAG: /* Advantage */0,
+                            _0: Id$OptolithClient.Advantage.toInt(/* Aptitude */0)
+                          },
                           active: false,
                           options: Ley_Option$OptolithClient.catOptions({
                                 hd: Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
@@ -88,10 +88,10 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                         hd: {
                           TAG: /* Activatable */6,
                           _0: {
-                            id: [
-                              /* Advantage */0,
-                              Id$OptolithClient.Advantage.toInt(/* ExceptionalSkill */4)
-                            ],
+                            id: {
+                              TAG: /* Advantage */0,
+                              _0: Id$OptolithClient.Advantage.toInt(/* ExceptionalSkill */4)
+                            },
                             active: false,
                             options: Ley_Option$OptolithClient.catOptions({
                                   hd: Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
@@ -107,10 +107,10 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                   hd: {
                     TAG: /* Activatable */6,
                     _0: {
-                      id: [
-                        /* Advantage */0,
-                        Id$OptolithClient.Advantage.toInt(/* MagicalAttunement */13)
-                      ],
+                      id: {
+                        TAG: /* Advantage */0,
+                        _0: Id$OptolithClient.Advantage.toInt(/* MagicalAttunement */13)
+                      },
                       active: false,
                       options: Ley_Option$OptolithClient.catOptions({
                             hd: Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
@@ -133,10 +133,10 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                       hd: {
                         TAG: /* Activatable */6,
                         _0: {
-                          id: [
-                            /* SpecialAbility */2,
-                            Id$OptolithClient.SpecialAbility.toInt(/* Language */6)
-                          ],
+                          id: {
+                            TAG: /* SpecialAbility */2,
+                            _0: Id$OptolithClient.SpecialAbility.toInt(/* Language */6)
+                          },
                           active: true,
                           options: Ley_Option$OptolithClient.catOptions({
                                 hd: Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
@@ -190,19 +190,19 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                           }), heroEntry);
                     var sameSkillDependency;
                     if (sid !== undefined && !sid.TAG) {
-                      var match$3 = sid._0;
-                      sameSkillDependency = match$3[0] !== 1 ? undefined : ({
+                      var id = sid._0;
+                      sameSkillDependency = id.TAG === /* Skill */1 ? ({
                             TAG: /* Increasable */9,
                             _0: {
-                              id: [
-                                /* Skill */1,
-                                match$3[1]
-                              ],
+                              id: {
+                                TAG: /* Skill */1,
+                                _0: id._0
+                              },
                               value: Math.imul(sameSkillActiveCount + (
                                     isEntryToAdd ? 1 : 0
                                   ) | 0, 6)
                             }
-                          });
+                          }) : undefined;
                     } else {
                       sameSkillDependency = undefined;
                     }
@@ -215,13 +215,13 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                                     return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, tmp, (function (appMp) {
                                                   var tmp;
                                                   if (sid2 !== undefined && !sid2.TAG) {
-                                                    var match = sid2._0;
-                                                    if (match[0] !== 0) {
+                                                    var id = sid2._0;
+                                                    if (id.TAG) {
                                                       tmp = undefined;
                                                     } else {
-                                                      var id = match[1];
+                                                      var id$1 = id._0;
                                                       tmp = Curry._2(Ley_IntMap$OptolithClient.find, (function (app) {
-                                                              return app.id === id;
+                                                              return app.id === id$1;
                                                             }), appMp);
                                                     }
                                                   } else {
@@ -243,10 +243,10 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                       hd: {
                         TAG: /* Activatable */6,
                         _0: {
-                          id: [
-                            /* SpecialAbility */2,
-                            Id$OptolithClient.SpecialAbility.toInt(/* PropertyKnowledge */10)
-                          ],
+                          id: {
+                            TAG: /* SpecialAbility */2,
+                            _0: Id$OptolithClient.SpecialAbility.toInt(/* PropertyKnowledge */10)
+                          },
                           active: true,
                           options: Ley_Option$OptolithClient.catOptions({
                                 hd: Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, sid, Activatable_Convert$OptolithClient.activatableOptionToSelectOptionId),
@@ -260,40 +260,40 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                     break;
                 case /* AdaptionZauber */16 :
                     if (sid !== undefined && !sid.TAG) {
-                      var match$4 = sid._0;
-                      tmp = match$4[0] !== 3 ? /* [] */0 : ({
+                      var id$1 = sid._0;
+                      tmp = id$1.TAG === /* Spell */3 ? ({
                             hd: {
                               TAG: /* Increasable */9,
                               _0: {
-                                id: [
-                                  /* Spell */3,
-                                  match$4[1]
-                                ],
+                                id: {
+                                  TAG: /* Spell */3,
+                                  _0: id$1._0
+                                },
                                 value: 10
                               }
                             },
                             tl: /* [] */0
-                          });
+                          }) : /* [] */0;
                     } else {
                       tmp = /* [] */0;
                     }
                     break;
                 case /* FavoriteSpellwork */18 :
                     if (sid !== undefined && !sid.TAG) {
-                      var match$5 = sid._0;
-                      tmp = match$5[0] !== 3 ? /* [] */0 : ({
+                      var id$2 = sid._0;
+                      tmp = id$2.TAG === /* Spell */3 ? ({
                             hd: {
                               TAG: /* Increasable */9,
                               _0: {
-                                id: [
-                                  /* Spell */3,
-                                  match$5[1]
-                                ],
+                                id: {
+                                  TAG: /* Spell */3,
+                                  _0: id$2._0
+                                },
                                 value: 0
                               }
                             },
                             tl: /* [] */0
-                          });
+                          }) : /* [] */0;
                     } else {
                       tmp = /* [] */0;
                     }
@@ -339,13 +339,13 @@ function getEntrySpecificDynamicPrerequisites(isEntryToAdd, staticData, staticEn
                                               hd: {
                                                 TAG: /* Increasable */9,
                                                 _0: {
-                                                  id: match$2 === /* SpellEnhancement */25 ? [
-                                                      /* Spell */3,
-                                                      target
-                                                    ] : [
-                                                      /* LiturgicalChant */4,
-                                                      target
-                                                    ],
+                                                  id: match$2 === /* SpellEnhancement */25 ? ({
+                                                        TAG: /* Spell */3,
+                                                        _0: target
+                                                      }) : ({
+                                                        TAG: /* LiturgicalChant */4,
+                                                        _0: target
+                                                      }),
                                                   value: (level << 2) + 4 | 0
                                                 }
                                               },
@@ -453,21 +453,21 @@ function getPrimaryAttributeId(staticData, heroSpecialAbilities, scope) {
 }
 
 function hasIncreasableMinValue(current, param) {
-  var id = param.id;
   var minValue = param.value;
-  switch (id[0]) {
+  var id = param.id;
+  switch (id.TAG | 0) {
     case /* Attribute */0 :
         return Ley_Option$OptolithClient.option(false, (function (x) {
                       return x.value >= minValue;
-                    }), Curry._2(Ley_IntMap$OptolithClient.lookup, id[1], current.attributes));
+                    }), Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, current.attributes));
     case /* Skill */1 :
         return Ley_Option$OptolithClient.option(false, (function (x) {
                       return x.value >= minValue;
-                    }), Curry._2(Ley_IntMap$OptolithClient.lookup, id[1], current.skills));
+                    }), Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, current.skills));
     case /* CombatTechnique */2 :
         return Ley_Option$OptolithClient.option(false, (function (x) {
                       return x.value >= minValue;
-                    }), Curry._2(Ley_IntMap$OptolithClient.lookup, id[1], current.combatTechniques));
+                    }), Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, current.combatTechniques));
     case /* Spell */3 :
         return Ley_Option$OptolithClient.option(false, (function (x) {
                       var value = x.value;
@@ -476,7 +476,7 @@ function hasIncreasableMinValue(current, param) {
                       } else {
                         return false;
                       }
-                    }), Curry._2(Ley_IntMap$OptolithClient.lookup, id[1], current.spells));
+                    }), Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, current.spells));
     case /* LiturgicalChant */4 :
         return Ley_Option$OptolithClient.option(false, (function (x) {
                       var value = x.value;
@@ -485,7 +485,7 @@ function hasIncreasableMinValue(current, param) {
                       } else {
                         return false;
                       }
-                    }), Curry._2(Ley_IntMap$OptolithClient.lookup, id[1], current.liturgicalChants));
+                    }), Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, current.liturgicalChants));
     
   }
 }
@@ -512,15 +512,15 @@ function isSingleActivatableValid(current, param) {
   var active = param.active;
   var id = param.id;
   var heroEntry;
-  switch (id[0]) {
+  switch (id.TAG | 0) {
     case /* Advantage */0 :
-        heroEntry = Curry._2(Ley_IntMap$OptolithClient.lookup, id[1], current.advantages);
+        heroEntry = Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, current.advantages);
         break;
     case /* Disadvantage */1 :
-        heroEntry = Curry._2(Ley_IntMap$OptolithClient.lookup, id[1], current.disadvantages);
+        heroEntry = Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, current.disadvantages);
         break;
     case /* SpecialAbility */2 :
-        heroEntry = Curry._2(Ley_IntMap$OptolithClient.lookup, id[1], current.specialAbilities);
+        heroEntry = Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, current.specialAbilities);
         break;
     
   }
@@ -543,38 +543,38 @@ function isPrerequisiteMet(staticData, hero, sourceId, prerequisite) {
   var sex = prerequisite.value;
   if (typeof sex === "number") {
     var match = getRaceCultureProfession(staticData, hero);
-    var match$1 = sourceId[0];
     var profession = match[2];
     var culture = match[1];
     var race = match[0];
-    if (match$1 !== 5) {
-      if (match$1 !== 6) {
+    switch (sourceId.TAG | 0) {
+      case /* Advantage */5 :
+          var id = sourceId._0;
+          if (Ley_Option$OptolithClient.option(false, (function (race) {
+                    return Curry._2(Ley_List$OptolithClient.elem, id, race.automaticAdvantages) || Curry._2(Ley_List$OptolithClient.elem, id, race.stronglyRecommendedAdvantages) ? true : Curry._2(Ley_List$OptolithClient.elem, id, race.commonAdvantages);
+                  }), race) || Ley_Option$OptolithClient.option(false, (function (culture) {
+                    return Curry._2(Ley_List$OptolithClient.elem, id, culture.commonAdvantages);
+                  }), culture)) {
+            return true;
+          } else {
+            return Ley_Option$OptolithClient.option(false, (function (profession) {
+                          return Curry._2(Ley_List$OptolithClient.elem, id, profession.suggestedAdvantages);
+                        }), profession);
+          }
+      case /* Disadvantage */6 :
+          var id$1 = sourceId._0;
+          if (Ley_Option$OptolithClient.option(false, (function (race) {
+                    return Curry._2(Ley_List$OptolithClient.elem, id$1, race.stronglyRecommendedDisadvantages) ? true : Curry._2(Ley_List$OptolithClient.elem, id$1, race.commonDisadvantages);
+                  }), race) || Ley_Option$OptolithClient.option(false, (function (culture) {
+                    return Curry._2(Ley_List$OptolithClient.elem, id$1, culture.commonDisadvantages);
+                  }), culture)) {
+            return true;
+          } else {
+            return Ley_Option$OptolithClient.option(false, (function (profession) {
+                          return Curry._2(Ley_List$OptolithClient.elem, id$1, profession.suggestedDisadvantages);
+                        }), profession);
+          }
+      default:
         return false;
-      }
-      var id = sourceId[1];
-      if (Ley_Option$OptolithClient.option(false, (function (race) {
-                return Curry._2(Ley_List$OptolithClient.elem, id, race.stronglyRecommendedDisadvantages) ? true : Curry._2(Ley_List$OptolithClient.elem, id, race.commonDisadvantages);
-              }), race) || Ley_Option$OptolithClient.option(false, (function (culture) {
-                return Curry._2(Ley_List$OptolithClient.elem, id, culture.commonDisadvantages);
-              }), culture)) {
-        return true;
-      } else {
-        return Ley_Option$OptolithClient.option(false, (function (profession) {
-                      return Curry._2(Ley_List$OptolithClient.elem, id, profession.suggestedDisadvantages);
-                    }), profession);
-      }
-    }
-    var id$1 = sourceId[1];
-    if (Ley_Option$OptolithClient.option(false, (function (race) {
-              return Curry._2(Ley_List$OptolithClient.elem, id$1, race.automaticAdvantages) || Curry._2(Ley_List$OptolithClient.elem, id$1, race.stronglyRecommendedAdvantages) ? true : Curry._2(Ley_List$OptolithClient.elem, id$1, race.commonAdvantages);
-            }), race) || Ley_Option$OptolithClient.option(false, (function (culture) {
-              return Curry._2(Ley_List$OptolithClient.elem, id$1, culture.commonAdvantages);
-            }), culture)) {
-      return true;
-    } else {
-      return Ley_Option$OptolithClient.option(false, (function (profession) {
-                    return Curry._2(Ley_List$OptolithClient.elem, id$1, profession.suggestedAdvantages);
-                  }), profession);
     }
   }
   switch (sex.TAG | 0) {
@@ -582,24 +582,24 @@ function isPrerequisiteMet(staticData, hero, sourceId, prerequisite) {
         return hero.sex === sex._0;
     case /* Race */1 :
         var prerequisite$1 = sex._0;
-        var match$2 = hero.race;
-        if (match$2 === undefined) {
+        var match$1 = hero.race;
+        if (match$1 === undefined) {
           return false;
         }
         var requiredId = prerequisite$1.id;
         if (requiredId.TAG) {
-          return Curry._2(Ley_List$OptolithClient.elem, match$2._0, prerequisite$1.id._0) === prerequisite$1.active;
+          return Curry._2(Ley_List$OptolithClient.elem, match$1._0, prerequisite$1.id._0) === prerequisite$1.active;
         } else {
-          return requiredId._0 === match$2._0 === prerequisite$1.active;
+          return requiredId._0 === match$1._0 === prerequisite$1.active;
         }
     case /* Culture */2 :
         var prerequisite$2 = sex._0;
-        var match$3 = hero.culture;
-        if (match$3 !== undefined) {
+        var match$2 = hero.culture;
+        if (match$2 !== undefined) {
           if (prerequisite$2.TAG) {
-            return Curry._2(Ley_List$OptolithClient.elem, match$3, prerequisite$2._0);
+            return Curry._2(Ley_List$OptolithClient.elem, match$2, prerequisite$2._0);
           } else {
-            return prerequisite$2._0 === match$3;
+            return prerequisite$2._0 === match$2;
           }
         } else {
           return false;
@@ -650,26 +650,26 @@ function isPrerequisiteMet(staticData, hero, sourceId, prerequisite) {
         switch (ids.TAG | 0) {
           case /* Advantages */0 :
               tmp = Curry._2(Ley_List$OptolithClient.map, (function (id) {
-                      return [
-                              /* Advantage */0,
-                              id
-                            ];
+                      return {
+                              TAG: /* Advantage */0,
+                              _0: id
+                            };
                     }), ids._0);
               break;
           case /* Disadvantages */1 :
               tmp = Curry._2(Ley_List$OptolithClient.map, (function (id) {
-                      return [
-                              /* Disadvantage */1,
-                              id
-                            ];
+                      return {
+                              TAG: /* Disadvantage */1,
+                              _0: id
+                            };
                     }), ids._0);
               break;
           case /* SpecialAbilities */2 :
               tmp = Curry._2(Ley_List$OptolithClient.map, (function (id) {
-                      return [
-                              /* SpecialAbility */2,
-                              id
-                            ];
+                      return {
+                              TAG: /* SpecialAbility */2,
+                              _0: id
+                            };
                     }), ids._0);
               break;
           
@@ -690,15 +690,15 @@ function isPrerequisiteMet(staticData, hero, sourceId, prerequisite) {
         var active$1 = param$1.active;
         var id$2 = param$1.id;
         var heroEntry;
-        switch (id$2[0]) {
+        switch (id$2.TAG | 0) {
           case /* Advantage */0 :
-              heroEntry = Curry._2(Ley_IntMap$OptolithClient.lookup, id$2[1], hero.advantages);
+              heroEntry = Curry._2(Ley_IntMap$OptolithClient.lookup, id$2._0, hero.advantages);
               break;
           case /* Disadvantage */1 :
-              heroEntry = Curry._2(Ley_IntMap$OptolithClient.lookup, id$2[1], hero.disadvantages);
+              heroEntry = Curry._2(Ley_IntMap$OptolithClient.lookup, id$2._0, hero.disadvantages);
               break;
           case /* SpecialAbility */2 :
-              heroEntry = Curry._2(Ley_IntMap$OptolithClient.lookup, id$2[1], hero.specialAbilities);
+              heroEntry = Curry._2(Ley_IntMap$OptolithClient.lookup, id$2._0, hero.specialAbilities);
               break;
           
         }
@@ -735,42 +735,42 @@ function isPrerequisiteMet(staticData, hero, sourceId, prerequisite) {
         switch (ids$1.TAG | 0) {
           case /* Attributes */0 :
               tmp$1 = Curry._2(Ley_List$OptolithClient.map, (function (id) {
-                      return [
-                              /* Attribute */0,
-                              id
-                            ];
+                      return {
+                              TAG: /* Attribute */0,
+                              _0: id
+                            };
                     }), ids$1._0);
               break;
           case /* Skills */1 :
               tmp$1 = Curry._2(Ley_List$OptolithClient.map, (function (id) {
-                      return [
-                              /* Skill */1,
-                              id
-                            ];
+                      return {
+                              TAG: /* Skill */1,
+                              _0: id
+                            };
                     }), ids$1._0);
               break;
           case /* CombatTechniques */2 :
               tmp$1 = Curry._2(Ley_List$OptolithClient.map, (function (id) {
-                      return [
-                              /* CombatTechnique */2,
-                              id
-                            ];
+                      return {
+                              TAG: /* CombatTechnique */2,
+                              _0: id
+                            };
                     }), ids$1._0);
               break;
           case /* Spells */3 :
               tmp$1 = Curry._2(Ley_List$OptolithClient.map, (function (id) {
-                      return [
-                              /* Spell */3,
-                              id
-                            ];
+                      return {
+                              TAG: /* Spell */3,
+                              _0: id
+                            };
                     }), ids$1._0);
               break;
           case /* LiturgicalChants */4 :
               tmp$1 = Curry._2(Ley_List$OptolithClient.map, (function (id) {
-                      return [
-                              /* LiturgicalChant */4,
-                              id
-                            ];
+                      return {
+                              TAG: /* LiturgicalChant */4,
+                              _0: id
+                            };
                     }), ids$1._0);
               break;
           
@@ -870,4 +870,4 @@ export {
   Activatable ,
   
 }
-/* Ley_List-OptolithClient Not a pure module */
+/* Id-OptolithClient Not a pure module */

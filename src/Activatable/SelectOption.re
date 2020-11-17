@@ -36,18 +36,18 @@ type t = {
 
 let showId = (id: Id.Activatable.SelectOption.t) =>
   switch (id) {
-  | (Generic, x) => "Generic(" ++ Ley_Int.show(x) ++ ")"
-  | (Skill, x) => "Skill(" ++ Ley_Int.show(x) ++ ")"
-  | (CombatTechnique, x) => "CombatTechnique(" ++ Ley_Int.show(x) ++ ")"
-  | (Spell, x) => "Spell(" ++ Ley_Int.show(x) ++ ")"
-  | (Cantrip, x) => "Cantrip(" ++ Ley_Int.show(x) ++ ")"
-  | (LiturgicalChant, x) => "LiturgicalChant(" ++ Ley_Int.show(x) ++ ")"
-  | (Blessing, x) => "Blessing(" ++ Ley_Int.show(x) ++ ")"
-  | (SpecialAbility, x) => "SpecialAbility(" ++ Ley_Int.show(x) ++ ")"
-  | (TradeSecret, x) => "TradeSecret(" ++ Ley_Int.show(x) ++ ")"
-  | (Language, x) => "Language(" ++ Ley_Int.show(x) ++ ")"
-  | (Script, x) => "Script(" ++ Ley_Int.show(x) ++ ")"
-  | (AnimalShape, x) => "AnimalShape(" ++ Ley_Int.show(x) ++ ")"
+  | Generic(x) => "Generic(" ++ Ley_Int.show(x) ++ ")"
+  | Skill(x) => "Skill(" ++ Ley_Int.show(x) ++ ")"
+  | CombatTechnique(x) => "CombatTechnique(" ++ Ley_Int.show(x) ++ ")"
+  | Spell(x) => "Spell(" ++ Ley_Int.show(x) ++ ")"
+  | Cantrip(x) => "Cantrip(" ++ Ley_Int.show(x) ++ ")"
+  | LiturgicalChant(x) => "LiturgicalChant(" ++ Ley_Int.show(x) ++ ")"
+  | Blessing(x) => "Blessing(" ++ Ley_Int.show(x) ++ ")"
+  | SpecialAbility(x) => "SpecialAbility(" ++ Ley_Int.show(x) ++ ")"
+  | TradeSecret(x) => "TradeSecret(" ++ Ley_Int.show(x) ++ ")"
+  | Language(x) => "Language(" ++ Ley_Int.show(x) ++ ")"
+  | Script(x) => "Script(" ++ Ley_Int.show(x) ++ ")"
+  | AnimalShape(x) => "AnimalShape(" ++ Ley_Int.show(x) ++ ")"
   };
 
 module Map = Ley_Map.Make(Id.Activatable.SelectOption);
@@ -73,24 +73,7 @@ module Decode = {
   module TranslationMap = TranslationMap.Make(Translation);
 
   let selectOptionId =
-    Json.Decode.(
-      either(
-        int |> map((x) => ((Generic, x): Id.Activatable.SelectOption.t)),
-        field("type", string)
-        |> andThen(
-             fun
-             | "Skill" =>
-               int |> map((x) => ((Skill, x): Id.Activatable.SelectOption.t))
-             | "CombatTechnique" =>
-               int
-               |> map((x) =>
-                    ((CombatTechnique, x): Id.Activatable.SelectOption.t)
-                  )
-             | str =>
-               raise(DecodeError("Unknown select option id scope: " ++ str)),
-           ),
-      )
-    );
+    Json.Decode.(int |> map(x => Id.Activatable.SelectOption.Generic(x)));
 
   type multilingual = {
     id: Id.Activatable.SelectOption.t,
@@ -253,7 +236,7 @@ module Decode = {
 
     let blessingToSelectOption = (x: Blessing.Static.t) =>
       entryToSelectOption(
-        ~id=(Blessing, x.id),
+        ~id=Blessing(x.id),
         ~name=x.name,
         ~staticEntry=Blessing(x),
         ~src=x.src,
@@ -264,7 +247,7 @@ module Decode = {
 
     let cantripToSelectOption = (x: Cantrip.Static.t) =>
       entryToSelectOption(
-        ~id=(Cantrip, x.id),
+        ~id=Cantrip(x.id),
         ~name=x.name,
         ~staticEntry=Cantrip(x),
         ~src=x.src,
@@ -275,7 +258,7 @@ module Decode = {
 
     let combatTechniqueToSelectOption = (x: CombatTechnique.Static.t) =>
       entryToSelectOption(
-        ~id=(CombatTechnique, x.id),
+        ~id=CombatTechnique(x.id),
         ~name=x.name,
         ~staticEntry=CombatTechnique(x),
         ~src=x.src,
@@ -289,7 +272,7 @@ module Decode = {
 
     let liturgicalChantToSelectOption = (x: LiturgicalChant.Static.t) =>
       entryToSelectOption(
-        ~id=(LiturgicalChant, x.id),
+        ~id=LiturgicalChant(x.id),
         ~name=x.name,
         ~staticEntry=LiturgicalChant(x),
         ~src=x.src,
@@ -303,7 +286,7 @@ module Decode = {
 
     let skillToSelectOption = (x: Skill.Static.t) =>
       entryToSelectOption(
-        ~id=(Skill, x.id),
+        ~id=Skill(x.id),
         ~name=x.name,
         ~staticEntry=Skill(x),
         ~src=x.src,
@@ -317,7 +300,7 @@ module Decode = {
 
     let spellToSelectOption = (x: Spell.Static.t) =>
       entryToSelectOption(
-        ~id=(Spell, x.id),
+        ~id=Spell(x.id),
         ~name=x.name,
         ~staticEntry=Spell(x),
         ~src=x.src,
@@ -331,7 +314,7 @@ module Decode = {
 
     let tradeSecretToSelectOption = (x: TradeSecret.t) =>
       entryToSelectOption(
-        ~id=(TradeSecret, x.id),
+        ~id=TradeSecret(x.id),
         ~name=x.name,
         ~staticEntry=TradeSecret(x),
         ~src=x.src,
@@ -342,7 +325,7 @@ module Decode = {
 
     let languageToSelectOption = (x: Language.t) =>
       entryToSelectOption(
-        ~id=(Language, x.id),
+        ~id=Language(x.id),
         ~name=x.name,
         ~staticEntry=Language(x),
         ~src=x.src,
@@ -353,7 +336,7 @@ module Decode = {
 
     let scriptToSelectOption = (x: Script.t) =>
       entryToSelectOption(
-        ~id=(Script, x.id),
+        ~id=Script(x.id),
         ~name=x.name,
         ~staticEntry=Script(x),
         ~src=x.src,
@@ -364,7 +347,7 @@ module Decode = {
 
     let animalShapeToSelectOption = (src, errata, x: AnimalShape.t) =>
       entryToSelectOption(
-        ~id=(AnimalShape, x.id),
+        ~id=AnimalShape(x.id),
         ~name=x.name,
         ~staticEntry=AnimalShape(x),
         ~src,

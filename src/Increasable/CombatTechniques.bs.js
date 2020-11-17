@@ -41,10 +41,10 @@ function getExceptionalCombatTechniqueBonus(exceptionalCombatTechnique, id) {
                 return Ley_Option$OptolithClient.fromOption(0, Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Ley_Option$OptolithClient.listToOption(x.active), (function (a) {
                                   var hasBonus = Curry._2(Ley_Option$OptolithClient.elem, {
                                         TAG: /* Preset */0,
-                                        _0: [
-                                          /* CombatTechnique */2,
-                                          id
-                                        ]
+                                        _0: {
+                                          TAG: /* CombatTechnique */2,
+                                          _0: id
+                                        }
                                       }, Ley_Option$OptolithClient.listToOption(a.options));
                                   if (hasBonus) {
                                     return 1;
@@ -113,4 +113,4 @@ export {
   isDecreasable ,
   
 }
-/* Ley_List-OptolithClient Not a pure module */
+/* Id-OptolithClient Not a pure module */

@@ -58,9 +58,7 @@ let getMax =
   ]
   |> catOptions
   |> Ley_List.minimum
-  |> (+)(
-       getExceptionalSkillBonus(exceptionalSkill, (Skill, staticEntry.id)),
-     );
+  |> (+)(getExceptionalSkillBonus(exceptionalSkill, Skill(staticEntry.id)));
 
 /**
  * Returns if the passed skill's skill rating can be increased.

@@ -1,77 +1,226 @@
-module All = {
-  type entryType = EntryType.All.t;
+module DecodeUtils = {
+  let scope = inner =>
+    Json.Decode.(field(JsonStrict.idTagName, string) |> andThen(inner));
 
-  type t = (entryType, int);
+  let value = f => Json.Decode.(field("value", int) |> map(f));
 
-  let compare = ((xCategory, xInt), (yCategory, yInt)) => {
-    let x' = EntryType.All.toInt(xCategory);
-    let y' = EntryType.All.toInt(yCategory);
+  let raiseUnknownScope = (~scopeName, ~invalidValue) =>
+    raise(
+      Json.Decode.DecodeError(
+        "Unknown scope id of scope range \""
+        ++ scopeName
+        ++ "\": "
+        ++ invalidValue,
+      ),
+    );
+};
+
+module OrdUtils = {
+  let makeCompare = (outerToInt, innerToInt, x, y) => {
+    let x' = outerToInt(x);
+    let y' = outerToInt(y);
 
     if (x' === y') {
-      xInt - yInt;
+      innerToInt(x) - innerToInt(y);
     } else {
       x' - y';
     };
   };
+};
+
+module All = {
+  type t =
+    | ExperienceLevel(int)
+    | Race(int)
+    | Culture(int)
+    | Profession(int)
+    | Attribute(int)
+    | Advantage(int)
+    | Disadvantage(int)
+    | Skill(int)
+    | CombatTechnique(int)
+    | Spell(int)
+    | Curse(int)
+    | ElvenMagicalSong(int)
+    | DominationRitual(int)
+    | MagicalMelody(int)
+    | MagicalDance(int)
+    | RogueSpell(int)
+    | AnimistForce(int)
+    | GeodeRitual(int)
+    | ZibiljaRitual(int)
+    | Cantrip(int)
+    | LiturgicalChant(int)
+    | Blessing(int)
+    | SpecialAbility(int)
+    | Item(int)
+    | EquipmentPackage(int)
+    | HitZoneArmor(int)
+    | Familiar(int)
+    | Animal(int)
+    | FocusRule(int)
+    | OptionalRule(int)
+    | Condition(int)
+    | State(int);
+
+  let outerToInt =
+    fun
+    | ExperienceLevel(_) => 1
+    | Race(_) => 2
+    | Culture(_) => 3
+    | Profession(_) => 4
+    | Attribute(_) => 5
+    | Advantage(_) => 6
+    | Disadvantage(_) => 7
+    | Skill(_) => 8
+    | CombatTechnique(_) => 9
+    | Spell(_) => 10
+    | Curse(_) => 11
+    | ElvenMagicalSong(_) => 12
+    | DominationRitual(_) => 13
+    | MagicalMelody(_) => 14
+    | MagicalDance(_) => 15
+    | RogueSpell(_) => 16
+    | AnimistForce(_) => 17
+    | GeodeRitual(_) => 18
+    | ZibiljaRitual(_) => 19
+    | Cantrip(_) => 20
+    | LiturgicalChant(_) => 21
+    | Blessing(_) => 22
+    | SpecialAbility(_) => 23
+    | Item(_) => 24
+    | EquipmentPackage(_) => 25
+    | HitZoneArmor(_) => 26
+    | Familiar(_) => 27
+    | Animal(_) => 28
+    | FocusRule(_) => 29
+    | OptionalRule(_) => 30
+    | Condition(_) => 31
+    | State(_) => 32;
+
+  let innerToInt =
+    fun
+    | ExperienceLevel(x)
+    | Race(x)
+    | Culture(x)
+    | Profession(x)
+    | Attribute(x)
+    | Advantage(x)
+    | Disadvantage(x)
+    | Skill(x)
+    | CombatTechnique(x)
+    | Spell(x)
+    | Curse(x)
+    | ElvenMagicalSong(x)
+    | DominationRitual(x)
+    | MagicalMelody(x)
+    | MagicalDance(x)
+    | RogueSpell(x)
+    | AnimistForce(x)
+    | GeodeRitual(x)
+    | ZibiljaRitual(x)
+    | Cantrip(x)
+    | LiturgicalChant(x)
+    | Blessing(x)
+    | SpecialAbility(x)
+    | Item(x)
+    | EquipmentPackage(x)
+    | HitZoneArmor(x)
+    | Familiar(x)
+    | Animal(x)
+    | FocusRule(x)
+    | OptionalRule(x)
+    | Condition(x)
+    | State(x) => x;
+
+  let compare = OrdUtils.makeCompare(outerToInt, innerToInt);
 
   let (==) = (x, y) => compare(x, y) === 0;
 };
 
 module Activatable = {
-  type entryType = EntryType.Activatable.t;
+  type t =
+    | Advantage(int)
+    | Disadvantage(int)
+    | SpecialAbility(int);
 
-  type t = (entryType, int);
-
-  let toAll = ((entryType, id)) => (
-    EntryType.Activatable.toAll(entryType),
-    id,
-  );
+  let toAll =
+    fun
+    | Advantage(x) => All.Advantage(x)
+    | Disadvantage(x) => All.Disadvantage(x)
+    | SpecialAbility(x) => All.SpecialAbility(x);
 
   let (==) = (x, y) =>
     [@warning "-4"]
     (
       switch (x: t, y: t) {
-      | ((Advantage, x), (Advantage, y))
-      | ((Disadvantage, x), (Disadvantage, y))
-      | ((SpecialAbility, x), (SpecialAbility, y)) => x === y
+      | (Advantage(x), Advantage(y))
+      | (Disadvantage(x), Disadvantage(y))
+      | (SpecialAbility(x), SpecialAbility(y)) => x === y
       | _ => false
       }
     );
 
   module Decode = {
-    open Json.Decode;
-
-    let t = (json): t =>
-      json
-      |> field(JsonStrict.idTagName, string)
-      |> (
-        scope => (
-          switch (scope) {
-          | "Advantage" => EntryType.Activatable.Advantage
-          | "Disadvantage" => Disadvantage
-          | "SpecialAbility" => SpecialAbility
-          | _ => raise(DecodeError("Unknown activatable id tag: " ++ scope))
-          },
-          json |> field("value", int),
+    let t =
+      DecodeUtils.(
+        scope(
+          fun
+          | "Advantage" => value(x => Advantage(x))
+          | "Disadvantage" => value(x => Disadvantage(x))
+          | "SpecialAbility" => value(x => SpecialAbility(x))
+          | scope =>
+            raiseUnknownScope(~scopeName="Activatable", ~invalidValue=scope),
         )
       );
   };
 
   module SelectOption = {
-    type entryType = EntryType.Activatable.SelectOption.t;
+    type t =
+      | Generic(int)
+      | Skill(int)
+      | CombatTechnique(int)
+      | Spell(int)
+      | Cantrip(int)
+      | LiturgicalChant(int)
+      | Blessing(int)
+      | SpecialAbility(int)
+      | TradeSecret(int)
+      | Language(int)
+      | Script(int)
+      | AnimalShape(int);
 
-    type t = (entryType, int);
+    let outerToInt =
+      fun
+      | Generic(_) => 1
+      | Skill(_) => 2
+      | CombatTechnique(_) => 3
+      | Spell(_) => 4
+      | Cantrip(_) => 5
+      | LiturgicalChant(_) => 6
+      | Blessing(_) => 7
+      | SpecialAbility(_) => 8
+      | TradeSecret(_) => 9
+      | Language(_) => 10
+      | Script(_) => 11
+      | AnimalShape(_) => 12;
 
-    let compare = ((xCategory, xInt), (yCategory, yInt)) => {
-      let x' = EntryType.Activatable.SelectOption.toInt(xCategory);
-      let y' = EntryType.Activatable.SelectOption.toInt(yCategory);
+    let innerToInt =
+      fun
+      | Generic(x)
+      | Skill(x)
+      | CombatTechnique(x)
+      | Spell(x)
+      | Cantrip(x)
+      | LiturgicalChant(x)
+      | Blessing(x)
+      | SpecialAbility(x)
+      | TradeSecret(x)
+      | Language(x)
+      | Script(x)
+      | AnimalShape(x) => x;
 
-      if (x' === y') {
-        xInt - yInt;
-      } else {
-        x' - y';
-      };
-    };
+    let compare = OrdUtils.makeCompare(outerToInt, innerToInt);
 
     let (==) = (x, y) => compare(x, y) === 0;
 
@@ -80,32 +229,27 @@ module Activatable = {
     module Decode = {
       open Json.Decode;
 
-      let scoped = (json): t =>
-        json
-        |> field(JsonStrict.idTagName, string)
-        |> (
-          scope => (
-            switch (scope) {
-            | "Skill" => EntryType.Activatable.SelectOption.Skill
-            | "CombatTechnique" => CombatTechnique
-            | "Spell" => Spell
-            | "Cantrip" => Cantrip
-            | "LiturgicalChant" => LiturgicalChant
-            | "Blessing" => Blessing
-            | "SpecialAbility" => SpecialAbility
-            | _ =>
-              raise(DecodeError("Unknown activatable id tag: " ++ scope))
-            },
-            json |> field("value", int),
+      let scoped =
+        DecodeUtils.(
+          scope(
+            fun
+            | "Skill" => value(x => Skill(x))
+            | "CombatTechnique" => value(x => CombatTechnique(x))
+            | "Spell" => value(x => Spell(x))
+            | "Cantrip" => value(x => Cantrip(x))
+            | "LiturgicalChant" => value(x => LiturgicalChant(x))
+            | "Blessing" => value(x => Blessing(x))
+            | "SpecialAbility" => value(x => SpecialAbility(x))
+            | scope =>
+              raiseUnknownScope(
+                ~scopeName="SelectOption",
+                ~invalidValue=scope,
+              ),
           )
         );
 
       let t = (json): t =>
-        json
-        |> oneOf([
-             map(x => (EntryType.Activatable.SelectOption.Generic, x), int),
-             scoped,
-           ]);
+        json |> oneOf([int |> map(x => Generic(x)), scoped]);
     };
   };
 
@@ -118,15 +262,7 @@ module Activatable = {
       [@warning "-4"]
       (
         switch (x, y) {
-        | (Preset((Generic, x)), Preset((Generic, y)))
-        | (Preset((Skill, x)), Preset((Skill, y)))
-        | (Preset((CombatTechnique, x)), Preset((CombatTechnique, y)))
-        | (Preset((Spell, x)), Preset((Spell, y)))
-        | (Preset((Cantrip, x)), Preset((Cantrip, y)))
-        | (Preset((LiturgicalChant, x)), Preset((LiturgicalChant, y)))
-        | (Preset((Blessing, x)), Preset((Blessing, y)))
-        | (Preset((SpecialAbility, x)), Preset((SpecialAbility, y))) =>
-          x === y
+        | (Preset(x), Preset(y)) => SelectOption.(==)(x, y)
         | (CustomInput(x), CustomInput(y)) => x === y
         | _ => false
         }
@@ -135,55 +271,61 @@ module Activatable = {
 };
 
 module ActivatableAndSkill = {
-  type entryType = EntryType.ActivatableAndSkill.t;
-
-  type t = (entryType, int);
+  type t =
+    | Advantage(int)
+    | Disadvantage(int)
+    | SpecialAbility(int)
+    | Spell(int)
+    | LiturgicalChant(int);
 };
 
 module ActivatableSkill = {
-  type entryType = EntryType.ActivatableSkill.t;
-
-  type t = (entryType, int);
+  type t =
+    | Spell(int)
+    | LiturgicalChant(int);
 };
 
 module PermanentSkill = {
-  type entryType = EntryType.PermanentSkill.t;
-
-  type t = (entryType, int);
+  type t =
+    | Skill(int)
+    | CombatTechnique(int);
 };
 
 module Increasable = {
-  type entryType = EntryType.Increasable.t;
-
-  type t = (entryType, int);
+  type t =
+    | Attribute(int)
+    | Skill(int)
+    | CombatTechnique(int)
+    | Spell(int)
+    | LiturgicalChant(int);
 
   module Decode = {
-    open Json.Decode;
-
-    let t = (json): t =>
-      json
-      |> field(JsonStrict.idTagName, string)
-      |> (
-        scope => (
-          switch (scope) {
-          | "Attribute" => EntryType.Increasable.Attribute
-          | "Skill" => Skill
-          | "CombatTechnique" => CombatTechnique
-          | "Spell" => Spell
-          | "LiturgicalChant" => LiturgicalChant
-          | _ =>
-            raise(DecodeError("Unknown increasable ID scope: " ++ scope))
-          },
-          json |> field("value", int),
+    let t =
+      DecodeUtils.(
+        scope(
+          fun
+          | "Attribute" => value(x => Attribute(x))
+          | "Skill" => value(x => Skill(x))
+          | "CombatTechnique" => value(x => CombatTechnique(x))
+          | "Spell" => value(x => Spell(x))
+          | "LiturgicalChant" => value(x => LiturgicalChant(x))
+          | scope =>
+            raiseUnknownScope(~scopeName="Increasable", ~invalidValue=scope),
         )
       );
   };
 };
 
 module PrerequisiteSource = {
-  type entryType = EntryType.PrerequisiteSource.t;
-
-  type t = (entryType, int);
+  type t =
+    | Advantage(int)
+    | Disadvantage(int)
+    | SpecialAbility(int)
+    | Attribute(int)
+    | Skill(int)
+    | CombatTechnique(int)
+    | Spell(int)
+    | LiturgicalChant(int);
 };
 
 module HitZoneArmorZoneItem = {
@@ -198,20 +340,18 @@ module Phase = {
     | Definition
     | Advancement;
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 1 => Ok(Outline)
     | 2 => Ok(Definition)
     | 3 => Ok(Advancement)
-    | x => Error(x)
-    };
+    | x => Error(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | Outline => 1
     | Definition => 2
-    | Advancement => 3
-    };
+    | Advancement => 3;
 };
 
 module ExperienceLevel = {
@@ -224,8 +364,8 @@ module ExperienceLevel = {
     | Brilliant
     | Legendary;
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 1 => Ok(Inexperienced)
     | 2 => Ok(Ordinary)
     | 3 => Ok(Experienced)
@@ -233,19 +373,17 @@ module ExperienceLevel = {
     | 5 => Ok(Masterly)
     | 6 => Ok(Brilliant)
     | 7 => Ok(Legendary)
-    | x => Error(x)
-    };
+    | x => Error(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | Inexperienced => 1
     | Ordinary => 2
     | Experienced => 3
     | Competent => 4
     | Masterly => 5
     | Brilliant => 6
-    | Legendary => 7
-    };
+    | Legendary => 7;
 };
 
 module Attribute = {
@@ -259,8 +397,8 @@ module Attribute = {
     | Constitution
     | Strength;
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 1 => Ok(Courage)
     | 2 => Ok(Sagacity)
     | 3 => Ok(Intuition)
@@ -269,11 +407,10 @@ module Attribute = {
     | 6 => Ok(Agility)
     | 7 => Ok(Constitution)
     | 8 => Ok(Strength)
-    | x => Error(x)
-    };
+    | x => Error(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | Courage => 1
     | Sagacity => 2
     | Intuition => 3
@@ -281,8 +418,7 @@ module Attribute = {
     | Dexterity => 5
     | Agility => 6
     | Constitution => 7
-    | Strength => 8
-    };
+    | Strength => 8;
 };
 
 module DerivedCharacteristic = {
@@ -297,8 +433,8 @@ module DerivedCharacteristic = {
     | Movement
     | WoundThreshold;
 
-  let fromString = id =>
-    switch (id) {
+  let fromString =
+    fun
     | "LP" => Ok(LifePoints)
     | "AE" => Ok(ArcaneEnergy)
     | "KP" => Ok(KarmaPoints)
@@ -308,11 +444,10 @@ module DerivedCharacteristic = {
     | "INI" => Ok(Initiative)
     | "MOV" => Ok(Movement)
     | "WT" => Ok(WoundThreshold)
-    | x => Error(x)
-    };
+    | x => Error(x);
 
-  let toString = id =>
-    switch (id) {
+  let toString =
+    fun
     | LifePoints => "LP"
     | ArcaneEnergy => "AE"
     | KarmaPoints => "KP"
@@ -321,8 +456,7 @@ module DerivedCharacteristic = {
     | Dodge => "DO"
     | Initiative => "INI"
     | Movement => "MOV"
-    | WoundThreshold => "WT"
-    };
+    | WoundThreshold => "WT";
 };
 
 module Pact = {
@@ -331,19 +465,17 @@ module Pact = {
     | Demon
     | Other(int);
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 1 => Faery
     | 2 => Demon
-    | x => Other(x)
-    };
+    | x => Other(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | Faery => 1
     | Demon => 2
-    | Other(x) => x
-    };
+    | Other(x) => x;
 };
 
 module SocialStatus = {
@@ -354,24 +486,22 @@ module SocialStatus = {
     | Noble
     | Aristocracy;
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 1 => Ok(NotFree)
     | 2 => Ok(Free)
     | 3 => Ok(LesserNoble)
     | 4 => Ok(Noble)
     | 5 => Ok(Aristocracy)
-    | x => Error(x)
-    };
+    | x => Error(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | NotFree => 1
     | Free => 2
     | LesserNoble => 3
     | Noble => 4
-    | Aristocracy => 5
-    };
+    | Aristocracy => 5;
 };
 
 module OptionalRule = {
@@ -381,21 +511,19 @@ module OptionalRule = {
     | HigherDefenseStats
     | Other(int);
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 8 => MaximumAttributeScores
     | 15 => LanguageSpecialization
     | 17 => HigherDefenseStats
-    | x => Other(x)
-    };
+    | x => Other(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | MaximumAttributeScores => 8
     | LanguageSpecialization => 15
     | HigherDefenseStats => 17
-    | Other(x) => x
-    };
+    | Other(x) => x;
 };
 
 module Advantage = {
@@ -430,8 +558,8 @@ module Advantage = {
     | Einkommen
     | Other(int);
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 4 => Aptitude
     | 9 => Nimble
     | 12 => Blessed
@@ -460,11 +588,10 @@ module Advantage = {
     | 80 => ZahlreicheVisionen
     | 92 => LeichterGang
     | 99 => Einkommen
-    | x => Other(x)
-    };
+    | x => Other(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | Aptitude => 4
     | Nimble => 9
     | Blessed => 12
@@ -493,8 +620,7 @@ module Advantage = {
     | ZahlreicheVisionen => 80
     | LeichterGang => 92
     | Einkommen => 99
-    | Other(x) => x
-    };
+    | Other(x) => x;
 };
 
 module Disadvantage = {
@@ -526,8 +652,8 @@ module Disadvantage = {
     | WenigeVisionen
     | Other(int);
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 1 => AfraidOf
     | 2 => Poor
     | 4 => Slow
@@ -553,11 +679,10 @@ module Disadvantage = {
     | 59 => SmallSpellSelection
     | 72 => WenigePredigten
     | 73 => WenigeVisionen
-    | x => Other(x)
-    };
+    | x => Other(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | AfraidOf => 1
     | Poor => 2
     | Slow => 4
@@ -583,8 +708,7 @@ module Disadvantage = {
     | SmallSpellSelection => 59
     | WenigePredigten => 72
     | WenigeVisionen => 73
-    | Other(x) => x
-    };
+    | Other(x) => x;
 };
 
 module Skill = {
@@ -655,8 +779,8 @@ module Skill = {
     | Clothworking
     | Other(int);
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 1 => Flying
     | 2 => Gaukelei
     | 3 => Climbing
@@ -716,11 +840,10 @@ module Skill = {
     | 57 => PickLocks
     | 58 => Earthencraft
     | 59 => Clothworking
-    | x => Other(x)
-    };
+    | x => Other(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | Flying => 1
     | Gaukelei => 2
     | Climbing => 3
@@ -780,8 +903,7 @@ module Skill = {
     | PickLocks => 57
     | Earthencraft => 58
     | Clothworking => 59
-    | Other(x) => x
-    };
+    | Other(x) => x;
 
   module Group = {
     type t =
@@ -791,24 +913,22 @@ module Skill = {
       | Knowledge
       | Craft;
 
-    let fromInt = id =>
-      switch (id) {
+    let fromInt =
+      fun
       | 1 => Ok(Physical)
       | 2 => Ok(Social)
       | 3 => Ok(Nature)
       | 4 => Ok(Knowledge)
       | 5 => Ok(Craft)
-      | x => Error(x)
-      };
+      | x => Error(x);
 
-    let toInt = id =>
-      switch (id) {
+    let toInt =
+      fun
       | Physical => 1
       | Social => 2
       | Nature => 3
       | Knowledge => 4
-      | Craft => 5
-      };
+      | Craft => 5;
   };
 };
 
@@ -836,8 +956,8 @@ module CombatTechnique = {
     | Spiesswaffen
     | Other(int);
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 1 => Crossbows
     | 2 => Bows
     | 3 => Daggers
@@ -858,11 +978,10 @@ module CombatTechnique = {
     | 19 => Discuses
     | 20 => Faecher
     | 21 => Spiesswaffen
-    | x => Other(x)
-    };
+    | x => Other(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | Crossbows => 1
     | Bows => 2
     | Daggers => 3
@@ -883,26 +1002,23 @@ module CombatTechnique = {
     | Discuses => 19
     | Faecher => 20
     | Spiesswaffen => 21
-    | Other(x) => x
-    };
+    | Other(x) => x;
 
   module Group = {
     type t =
       | Melee
       | Ranged;
 
-    let fromInt = id =>
-      switch (id) {
+    let fromInt =
+      fun
       | 1 => Ok(Melee)
       | 2 => Ok(Ranged)
-      | x => Error(x)
-      };
+      | x => Error(x);
 
-    let toInt = id =>
-      switch (id) {
+    let toInt =
+      fun
       | Melee => 1
-      | Ranged => 2
-      };
+      | Ranged => 2;
   };
 };
 
@@ -928,8 +1044,8 @@ module MagicalTradition = {
     | BrobimGeoden
     | Other(int);
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 1 => General
     | 2 => GuildMages
     | 3 => Witches
@@ -948,11 +1064,10 @@ module MagicalTradition = {
     | 16 => Animists
     | 17 => Zibilija
     | 18 => BrobimGeoden
-    | x => Other(x)
-    };
+    | x => Other(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | General => 1
     | GuildMages => 2
     | Witches => 3
@@ -971,8 +1086,7 @@ module MagicalTradition = {
     | Animists => 16
     | Zibilija => 17
     | BrobimGeoden => 18
-    | Other(x) => x
-    };
+    | Other(x) => x;
 };
 
 module Spell = {
@@ -981,18 +1095,16 @@ module Spell = {
       | Spells
       | Rituals;
 
-    let fromInt = id =>
-      switch (id) {
+    let fromInt =
+      fun
       | 1 => Ok(Spells)
       | 2 => Ok(Rituals)
-      | x => Error(x)
-      };
+      | x => Error(x);
 
-    let toInt = id =>
-      switch (id) {
+    let toInt =
+      fun
       | Spells => 1
-      | Rituals => 2
-      };
+      | Rituals => 2;
   };
 };
 
@@ -1012,8 +1124,8 @@ module Property = {
     | Temporal
     | Other(int);
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 1 => AntiMagic
     | 2 => Demonic
     | 3 => Influence
@@ -1026,11 +1138,10 @@ module Property = {
     | 10 => Telekinesis
     | 11 => Transformation
     | 12 => Temporal
-    | x => Other(x)
-    };
+    | x => Other(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | AntiMagic => 1
     | Demonic => 2
     | Influence => 3
@@ -1043,8 +1154,7 @@ module Property = {
     | Telekinesis => 10
     | Transformation => 11
     | Temporal => 12
-    | Other(x) => x
-    };
+    | Other(x) => x;
 };
 
 module SpecialAbility = {
@@ -1148,8 +1258,8 @@ module SpecialAbility = {
     | TraditionBrobimGeoden
     | Other(int);
 
-  let fromInt = id =>
-    switch (id) {
+  let fromInt =
+    fun
     | 9 => SkillSpecialization
     | 12 => TerrainKnowledge
     | 17 => CraftInstruments
@@ -1247,11 +1357,10 @@ module SpecialAbility = {
     | 1293 => TraditionZibilijas
     | 1391 => Zaubervariabilitaet
     | 1438 => TraditionBrobimGeoden
-    | x => Other(x)
-    };
+    | x => Other(x);
 
-  let toInt = id =>
-    switch (id) {
+  let toInt =
+    fun
     | SkillSpecialization => 9
     | TerrainKnowledge => 12
     | CraftInstruments => 17
@@ -1349,8 +1458,7 @@ module SpecialAbility = {
     | TraditionZibilijas => 1293
     | Zaubervariabilitaet => 1391
     | TraditionBrobimGeoden => 1438
-    | Other(x) => x
-    };
+    | Other(x) => x;
 
   module Group = {
     type t =
@@ -1401,8 +1509,8 @@ module SpecialAbility = {
       | Chronikzauber
       | Other(int);
 
-    let fromInt = id =>
-      switch (id) {
+    let fromInt =
+      fun
       | 1 => General
       | 2 => Fate
       | 3 => Combat
@@ -1448,11 +1556,10 @@ module SpecialAbility = {
       | 43 => Sichelrituale
       | 44 => Ringzauber
       | 45 => Chronikzauber
-      | x => Other(x)
-      };
+      | x => Other(x);
 
-    let toInt = id =>
-      switch (id) {
+    let toInt =
+      fun
       | General => 1
       | Fate => 2
       | Combat => 3
@@ -1498,7 +1605,6 @@ module SpecialAbility = {
       | Sichelrituale => 43
       | Ringzauber => 44
       | Chronikzauber => 45
-      | Other(x) => x
-      };
+      | Other(x) => x;
   };
 };

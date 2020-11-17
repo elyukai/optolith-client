@@ -152,7 +152,7 @@ let getAvailableSelectOptionsTransducer =
 
   switch ((staticEntry: Static.activatable)) {
   | Advantage(staticAdvantage) =>
-    let id = (EntryType.All.Advantage, staticAdvantage.id);
+    let id = Id.All.Advantage(staticAdvantage.id);
 
     let isNoRequiredOrActiveSelection =
       isNoGenericRequiredOrActiveSelectionShort(hero.advantages, id);
@@ -173,7 +173,7 @@ let getAvailableSelectOptionsTransducer =
       }
     );
   | Disadvantage(staticDisadvantage) =>
-    let id = (EntryType.All.Disadvantage, staticDisadvantage.id);
+    let id = Id.All.Disadvantage(staticDisadvantage.id);
 
     let isNoRequiredOrActiveSelection =
       isNoGenericRequiredOrActiveSelectionShort(hero.disadvantages, id);
@@ -190,7 +190,7 @@ let getAvailableSelectOptionsTransducer =
               heroEntry
               |> mapActiveOptions1(
                    fun
-                   | Preset((Generic, id)) => Some(id)
+                   | Preset(Generic(id)) => Some(id)
                    | _ => None,
                  ),
             maybeHeroEntry,
@@ -199,7 +199,7 @@ let getAvailableSelectOptionsTransducer =
         // Checks if the passed id either matches the passed select option's id
         // and is already active.
         let isInfiniteActive = (id, selectOption: SO.t) =>
-          selectOption.id === (Generic, id) && L.elem(id, uniqueSelections);
+          selectOption.id == Generic(id) && L.elem(id, uniqueSelections);
 
         // Checks if the passed select option is Prejudice and if Prejudice is
         // already active.
@@ -223,7 +223,7 @@ let getAvailableSelectOptionsTransducer =
         Some(
           fold =>
             fold
-            |> isValidShort((Disadvantage, staticDisadvantage.id))
+            |> isValidShort(Disadvantage(staticDisadvantage.id))
             >>~ (
               x =>
                 // If Prejudice is active, it can be activated multiple times
@@ -246,7 +246,7 @@ let getAvailableSelectOptionsTransducer =
         // Checks if the passed select option does not represent a social skill
         let isNotSocialSkill = (so: SO.t) =>
           switch (so.id) {
-          | (Skill, id) =>
+          | Skill(id) =>
             IM.lookup(id, staticData.skills)
             |> O.any((skill: Skill.Static.t) =>
                  skill.gr === Id.Skill.Group.toInt(Social)
@@ -272,7 +272,7 @@ let getAvailableSelectOptionsTransducer =
       }
     );
   | SpecialAbility(staticSpecialAbility) =>
-    let id = (EntryType.All.SpecialAbility, staticSpecialAbility.id);
+    let id = Id.All.SpecialAbility(staticSpecialAbility.id);
 
     let isNoRequiredOrActiveSelection =
       isNoGenericRequiredOrActiveSelectionShort(hero.specialAbilities, id);
@@ -317,7 +317,7 @@ let getAvailableSelectOptionsTransducer =
               | Some(counter) => (
                   selectOption =>
                     switch (selectOption.id) {
-                    | (Skill, id) =>
+                    | Skill(id) =>
                       SOM.member(selectOption.id, counter)
                         ? isAdditionalSpecializationValid(
                             counter,
@@ -333,7 +333,7 @@ let getAvailableSelectOptionsTransducer =
               | None => (
                   selectOption =>
                     switch (selectOption.id) {
-                    | (Skill, id) => isFirstSpecializationValid(id)
+                    | Skill(id) => isFirstSpecializationValid(id)
                     | _ => true
                     }
                 )
@@ -379,10 +379,9 @@ let getAvailableSelectOptionsTransducer =
                                 let isInactive =
                                   O.all(
                                     L.notElem(
-                                      Id.Activatable.Option.Preset((
-                                        Generic,
-                                        application.id,
-                                      )),
+                                      Id.Activatable.Option.Preset(
+                                        Generic(application.id),
+                                      ),
                                     ),
                                     maybeCurrentCount,
                                   );
@@ -452,7 +451,7 @@ let getAvailableSelectOptionsTransducer =
 
         let isValidId = (selectOption: SO.t) =>
           switch (selectOption.id) {
-          | (Generic, id) => L.elem(id, availableIds)
+          | Generic(id) => L.elem(id, availableIds)
           | _ => false
           };
 
@@ -463,7 +462,7 @@ let getAvailableSelectOptionsTransducer =
 
         let hasActivePropertyKnowledge = (selectOption: SO.t) =>
           switch (selectOption.id) {
-          | (Generic, _) as id => L.elem(id, activePropertyKnowledges)
+          | Generic(_) as id => L.elem(id, activePropertyKnowledges)
           | _ => false
           };
 
@@ -478,7 +477,7 @@ let getAvailableSelectOptionsTransducer =
 
         let hasSpellMinimumSr = (selectOption: SO.t) =>
           switch (selectOption.id) {
-          | (Spell, id) =>
+          | Spell(id) =>
             IM.lookup(id, hero.spells)
             |> O.option(false, (spell: ActivatableSkill.Dynamic.t) =>
                  switch (spell.value) {
@@ -491,7 +490,7 @@ let getAvailableSelectOptionsTransducer =
 
         let isUnfamiliarSpell = (selectOption: SO.t) =>
           switch (selectOption.id) {
-          | (Spell, id) =>
+          | Spell(id) =>
             IM.lookup(id, staticData.spells)
             |> O.option(
                  false,
@@ -569,7 +568,7 @@ let getAvailableSelectOptionsTransducer =
                       >>= (
                         level =>
                           switch (level, active.options |> O.listToOption) {
-                          | (3 | 4, Some(Preset((Generic, sid)))) =>
+                          | (3 | 4, Some(Preset(Generic(sid)))) =>
                             Some((sid, level))
                           | _ => None
                           }
@@ -584,7 +583,7 @@ let getAvailableSelectOptionsTransducer =
             |> isNoRequiredOrActiveSelection
             |> mapOptionT((selectOption: SO.t) =>
                  switch (selectOption.id) {
-                 | (Generic, sid) =>
+                 | Generic(sid) =>
                    switch (L.lookup(sid, availableLanguages)) {
                    | Some(4) => Some({...selectOption, apValue: Some(0)})
                    | Some(3) => Some(selectOption)
@@ -625,7 +624,7 @@ let getAvailableSelectOptionsTransducer =
                   active =>
                     (
                       switch (active.options |> O.listToOption) {
-                      | Some(Preset((Spell, id))) => Some(id)
+                      | Some(Preset(Spell(id))) => Some(id)
                       | Some(_)
                       | None => None
                       }

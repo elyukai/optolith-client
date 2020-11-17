@@ -101,31 +101,22 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                             if (sid.TAG) {
                               return ;
                             }
-                            var match = sid._0;
-                            switch (match[0]) {
+                            var id = sid._0;
+                            switch (id.TAG | 0) {
                               case /* Skill */1 :
-                                  return Activatable_SelectOptions$OptolithClient.lookupMap(match[1], staticData.skills, (function (x) {
+                                  return Activatable_SelectOptions$OptolithClient.lookupMap(id._0, staticData.skills, (function (x) {
                                                 return x.name;
                                               }));
                               case /* Spell */3 :
-                                  return Activatable_SelectOptions$OptolithClient.lookupMap(match[1], staticData.spells, (function (x) {
+                                  return Activatable_SelectOptions$OptolithClient.lookupMap(id._0, staticData.spells, (function (x) {
                                                 return x.name;
                                               }));
                               case /* LiturgicalChant */5 :
-                                  return Activatable_SelectOptions$OptolithClient.lookupMap(match[1], staticData.liturgicalChants, (function (x) {
+                                  return Activatable_SelectOptions$OptolithClient.lookupMap(id._0, staticData.liturgicalChants, (function (x) {
                                                 return x.name;
                                               }));
-                              case /* Generic */0 :
-                              case /* CombatTechnique */2 :
-                              case /* Cantrip */4 :
-                              case /* Blessing */6 :
-                              case /* SpecialAbility */7 :
-                              case /* TradeSecret */8 :
-                              case /* Language */9 :
-                              case /* Script */10 :
-                              case /* AnimalShape */11 :
-                                  return ;
-                              
+                              default:
+                                return ;
                             }
                           }));
           case 2 :
@@ -133,14 +124,13 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                             if (sid.TAG) {
                               return ;
                             }
-                            var match = sid._0;
-                            if (match[0] !== 2) {
-                              return ;
-                            } else {
-                              return Activatable_SelectOptions$OptolithClient.lookupMap(match[1], staticData.combatTechniques, (function (x) {
+                            var id = sid._0;
+                            if (id.TAG === /* CombatTechnique */2) {
+                              return Activatable_SelectOptions$OptolithClient.lookupMap(id._0, staticData.combatTechniques, (function (x) {
                                             return x.name;
                                           }));
                             }
+                            
                           }));
           
         }
@@ -163,9 +153,11 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                               return Activatable_SelectOptions$OptolithClient.getSelectOption(staticEntry, param);
                             })), (function (option1) {
                           var match = option1.id;
+                          var tmp;
+                          tmp = match.TAG || (match._0 - 7 >>> 0) > 1 ? undefined : Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption2(heroEntry), Activatable_SelectOptions$OptolithClient.getCustomInput);
                           return Ley_Option$OptolithClient.option(option1.name, (function (specialInput) {
                                         return option1.name + (": " + specialInput);
-                                      }), match[0] !== 0 || (match[1] - 7 >>> 0) > 1 ? undefined : Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption2(heroEntry), Activatable_SelectOptions$OptolithClient.getCustomInput));
+                                      }), tmp);
                         }));
           }
         } else {
@@ -194,13 +186,13 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                                           if (option2.TAG) {
                                             tmp = option2._0;
                                           } else {
-                                            var match = option2._0;
-                                            if (match[0] !== 0) {
+                                            var specializationId = option2._0;
+                                            if (specializationId.TAG) {
                                               tmp = undefined;
                                             } else {
-                                              var specializationId = match[1];
+                                              var specializationId$1 = specializationId._0;
                                               tmp = Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, language.specializations, (function (specializations) {
-                                                      return Ley_List$OptolithClient.Safe.atMay(specializations, specializationId - 1 | 0);
+                                                      return Ley_List$OptolithClient.Safe.atMay(specializations, specializationId$1 - 1 | 0);
                                                     }));
                                             }
                                           }
@@ -252,13 +244,13 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                                         if (option2.TAG) {
                                           tmp = option2._0;
                                         } else {
-                                          var match = option2._0;
-                                          if (match[0] !== 0) {
+                                          var id = option2._0;
+                                          if (id.TAG) {
                                             tmp = undefined;
                                           } else {
-                                            var id = match[1];
+                                            var id$1 = id._0;
                                             tmp = Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(Ley_IntMap$OptolithClient.find, (function (a) {
-                                                        return a.id === id;
+                                                        return a.id === id$1;
                                                       }), skill.applications), (function (a) {
                                                     return a.name;
                                                   }));
@@ -293,14 +285,13 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                             if (sid.TAG) {
                               return ;
                             }
-                            var match = sid._0;
-                            if (match[0] !== 5) {
-                              return ;
-                            } else {
-                              return Activatable_SelectOptions$OptolithClient.lookupMap(match[1], staticData.liturgicalChants, (function (x) {
+                            var id = sid._0;
+                            if (id.TAG === /* LiturgicalChant */5) {
+                              return Activatable_SelectOptions$OptolithClient.lookupMap(id._0, staticData.liturgicalChants, (function (x) {
                                             return x.name;
                                           }));
                             }
+                            
                           }));
           case /* TraditionGuildMages */9 :
           case /* PredigtDerGemeinschaft */30 :
@@ -385,14 +376,13 @@ function getEntrySpecificNameAddition(staticData, staticEntry, heroEntry) {
                             if (sid.TAG) {
                               return ;
                             }
-                            var match = sid._0;
-                            if (match[0] !== 3) {
-                              return ;
-                            } else {
-                              return Activatable_SelectOptions$OptolithClient.lookupMap(match[1], staticData.spells, (function (x) {
+                            var id = sid._0;
+                            if (id.TAG === /* Spell */3) {
+                              return Activatable_SelectOptions$OptolithClient.lookupMap(id._0, staticData.spells, (function (x) {
                                             return x.name;
                                           }));
                             }
+                            
                           }));
           case 2 :
               return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(heroEntry), (function (param) {
@@ -547,4 +537,4 @@ export {
   getName ,
   
 }
-/* Intl-OptolithClient Not a pure module */
+/* Id-OptolithClient Not a pure module */

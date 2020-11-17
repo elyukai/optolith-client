@@ -56,7 +56,7 @@ let getExceptionalCombatTechniqueBonus = (exceptionalCombatTechnique, id) =>
           a.options
           |> listToOption
           |> Ley_Option.elem(
-               Id.Activatable.Option.Preset((CombatTechnique, id)),
+               Id.Activatable.Option.Preset(CombatTechnique(id)),
              )
           |> (hasBonus => hasBonus ? 1 : 0)
       )

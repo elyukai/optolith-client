@@ -17,10 +17,10 @@ function getMaxSrFromAspectKnowledge(aspectKnowledge, staticEntry) {
           return Curry._2(Ley_IntSet$OptolithClient.all, (function (aspect) {
                         return Curry._2(Ley_List$OptolithClient.notElem, {
                                     TAG: /* Preset */0,
-                                    _0: [
-                                      /* Generic */0,
-                                      aspect
-                                    ]
+                                    _0: {
+                                      TAG: /* Generic */0,
+                                      _0: aspect
+                                    }
                                   }, actives);
                       }), staticEntry.aspects);
         }), Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, aspectKnowledge, Activatable_SelectOptions$OptolithClient.getActiveOptions1));
@@ -31,10 +31,10 @@ function getMaxSrFromAspectKnowledge(aspectKnowledge, staticEntry) {
 }
 
 function getMax(startEl, phase, heroAttrs, exceptionalSkill, aspectKnowledge, staticEntry) {
-  return Skills$OptolithClient.getExceptionalSkillBonus(exceptionalSkill, [
-              /* Spell */3,
-              staticEntry.id
-            ]) + Curry._1(Ley_List$OptolithClient.minimum, Ley_Option$OptolithClient.catOptions({
+  return Skills$OptolithClient.getExceptionalSkillBonus(exceptionalSkill, {
+              TAG: /* LiturgicalChant */5,
+              _0: staticEntry.id
+            }) + Curry._1(Ley_List$OptolithClient.minimum, Ley_Option$OptolithClient.catOptions({
                   hd: Skills$OptolithClient.getMaxSrByCheckAttrs(heroAttrs, staticEntry.check),
                   tl: {
                     hd: Skills$OptolithClient.getMaxSrFromEl(startEl, phase),
@@ -96,11 +96,11 @@ function getMinSr(counter, activeAspectKnowledges, staticEntry, heroEntry) {
           if (sid.TAG) {
             return false;
           }
-          var match = sid._0;
-          if (match[0] !== 0) {
+          var x = sid._0;
+          if (x.TAG) {
             return false;
           } else {
-            return Curry._2(Ley_IntSet$OptolithClient.elem, match[1], staticEntry.aspects);
+            return Curry._2(Ley_IntSet$OptolithClient.elem, x._0, staticEntry.aspects);
           }
         }), activeAspectKnowledges);
   if (!hasActiveAspectKnowledge) {

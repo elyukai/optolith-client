@@ -173,10 +173,10 @@ function getGuildMageUnfamiliarSpell(prerequisites) {
                 }
                 var match$1 = match._0;
                 if (match$1.active) {
-                  return Id$OptolithClient.Activatable.$eq(match$1.id, [
-                              /* SpecialAbility */2,
-                              Id$OptolithClient.SpecialAbility.toInt(/* TraditionGuildMages */9)
-                            ]);
+                  return Id$OptolithClient.Activatable.$eq(match$1.id, {
+                              TAG: /* SpecialAbility */2,
+                              _0: Id$OptolithClient.SpecialAbility.toInt(/* TraditionGuildMages */9)
+                            });
                 } else {
                   return false;
                 }

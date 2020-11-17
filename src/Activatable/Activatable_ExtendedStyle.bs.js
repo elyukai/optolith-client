@@ -169,18 +169,18 @@ function generateStyleDependencies(heroSpecialAbilities, styleSpecialAbility) {
             return Ley_List$OptolithClient.Safe.atMay(x.options, 1);
           }));
     if (param !== undefined && !param.TAG) {
-      var match$4 = param._0;
-      tmp = match$4[0] !== 7 ? xs : ({
+      var id = param._0;
+      tmp = id.TAG === /* SpecialAbility */7 ? ({
             hd: {
               id: {
                 TAG: /* One */0,
-                _0: match$4[1]
+                _0: id._0
               },
               active: undefined,
               origin: styleSpecialAbility.id
             },
             tl: xs
-          });
+          }) : xs;
     } else {
       tmp = xs;
     }

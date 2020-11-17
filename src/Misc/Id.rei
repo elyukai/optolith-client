@@ -1,7 +1,37 @@
 module All: {
-  type entryType = EntryType.All.t;
-
-  type t = (entryType, int);
+  type t =
+    | ExperienceLevel(int)
+    | Race(int)
+    | Culture(int)
+    | Profession(int)
+    | Attribute(int)
+    | Advantage(int)
+    | Disadvantage(int)
+    | Skill(int)
+    | CombatTechnique(int)
+    | Spell(int)
+    | Curse(int)
+    | ElvenMagicalSong(int)
+    | DominationRitual(int)
+    | MagicalMelody(int)
+    | MagicalDance(int)
+    | RogueSpell(int)
+    | AnimistForce(int)
+    | GeodeRitual(int)
+    | ZibiljaRitual(int)
+    | Cantrip(int)
+    | LiturgicalChant(int)
+    | Blessing(int)
+    | SpecialAbility(int)
+    | Item(int)
+    | EquipmentPackage(int)
+    | HitZoneArmor(int)
+    | Familiar(int)
+    | Animal(int)
+    | FocusRule(int)
+    | OptionalRule(int)
+    | Condition(int)
+    | State(int);
 
   /**
    * `compare x y` returns `0` if `x` and `y` are equal, a negative integer if
@@ -14,9 +44,10 @@ module All: {
 };
 
 module Activatable: {
-  type entryType = EntryType.Activatable.t;
-
-  type t = (entryType, int);
+  type t =
+    | Advantage(int)
+    | Disadvantage(int)
+    | SpecialAbility(int);
 
   let toAll: t => All.t;
 
@@ -25,9 +56,19 @@ module Activatable: {
   module Decode: {let t: Js.Json.t => t;};
 
   module SelectOption: {
-    type entryType = EntryType.Activatable.SelectOption.t;
-
-    type t = (entryType, int);
+    type t =
+      | Generic(int)
+      | Skill(int)
+      | CombatTechnique(int)
+      | Spell(int)
+      | Cantrip(int)
+      | LiturgicalChant(int)
+      | Blessing(int)
+      | SpecialAbility(int)
+      | TradeSecret(int)
+      | Language(int)
+      | Script(int)
+      | AnimalShape(int);
 
     /**
      * `compare x y` returns `0` if `x` and `y` are equal, a negative integer if
@@ -53,35 +94,47 @@ module Activatable: {
 };
 
 module ActivatableAndSkill: {
-  type entryType = EntryType.ActivatableAndSkill.t;
-
-  type t = (entryType, int);
+  type t =
+    | Advantage(int)
+    | Disadvantage(int)
+    | SpecialAbility(int)
+    | Spell(int)
+    | LiturgicalChant(int);
 };
 
 module ActivatableSkill: {
-  type entryType = EntryType.ActivatableSkill.t;
-
-  type t = (entryType, int);
+  type t =
+    | Spell(int)
+    | LiturgicalChant(int);
 };
 
 module PermanentSkill: {
-  type entryType = EntryType.PermanentSkill.t;
-
-  type t = (entryType, int);
+  type t =
+    | Skill(int)
+    | CombatTechnique(int);
 };
 
 module Increasable: {
-  type entryType = EntryType.Increasable.t;
-
-  type t = (entryType, int);
+  type t =
+    | Attribute(int)
+    | Skill(int)
+    | CombatTechnique(int)
+    | Spell(int)
+    | LiturgicalChant(int);
 
   module Decode: {let t: Js.Json.t => t;};
 };
 
 module PrerequisiteSource: {
-  type entryType = EntryType.PrerequisiteSource.t;
-
-  type t = (entryType, int);
+  type t =
+    | Advantage(int)
+    | Disadvantage(int)
+    | SpecialAbility(int)
+    | Attribute(int)
+    | Skill(int)
+    | CombatTechnique(int)
+    | Spell(int)
+    | LiturgicalChant(int);
 };
 
 module HitZoneArmorZoneItem: {

@@ -184,12 +184,11 @@ function getInactive(cache, staticData, hero, staticEntry, maybeHeroEntry) {
                                                       if (param.TAG) {
                                                         return ;
                                                       }
-                                                      var match = param._0;
-                                                      if (match[0] !== 1) {
-                                                        return ;
-                                                      } else {
-                                                        return Curry._2(Ley_IntMap$OptolithClient.lookup, match[1], staticData.skills);
+                                                      var skillId = param._0;
+                                                      if (skillId.TAG === /* Skill */1) {
+                                                        return Curry._2(Ley_IntMap$OptolithClient.lookup, skillId._0, staticData.skills);
                                                       }
+                                                      
                                                     })), (function (param) {
                                                   var match = staticSpecialAbility.apValue;
                                                   if (match === undefined) {
@@ -383,4 +382,4 @@ export {
   getInactive ,
   
 }
-/* Skill-OptolithClient Not a pure module */
+/* Id-OptolithClient Not a pure module */

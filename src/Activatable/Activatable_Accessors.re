@@ -7,9 +7,9 @@ let isActiveM = Ley_Option.option(false, isActive);
 
 let id = x =>
   switch (x) {
-  | Advantage(y) => (EntryType.Activatable.Advantage, y.id)
-  | Disadvantage(y) => (Disadvantage, y.id)
-  | SpecialAbility(y) => (SpecialAbility, y.id)
+  | Advantage(y) => Id.Activatable.Advantage(y.id)
+  | Disadvantage(y) => Disadvantage(y.id)
+  | SpecialAbility(y) => SpecialAbility(y.id)
   };
 
 let id' = x =>

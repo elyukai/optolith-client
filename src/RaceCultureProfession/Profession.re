@@ -285,8 +285,7 @@ module Static = {
                [@warning "-44"]
                Id.Activatable.(
                  id
-                 == (
-                      SpecialAbility,
+                 == SpecialAbility(
                       Id.SpecialAbility.toInt(TraditionGuildMages),
                     )
                )
