@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "AppConfig.schema.json",
+  "$ref": "#/definitions/Config",
+  "definitions": {
+    "Config": {
+      "title": "Config",
+      "type": "object",
+      "properties": {
+        "characterListSortOrder": {
+          "enum": ["name", "dateModified"]
+        },
+        "characterListVisibilityFilter": {
+          "enum": ["all", "own", "shared"]
+        },
+        "raceListSortOrder": {
+          "enum": ["name", "apValue"]
+        },
+        "cultureListSortOrder": {
+          "enum": ["name", "apValue"]
+        },
+        "cultureListVisibilityFilter": {
+          "enum": ["all", "common"]
+        },
+        "professionListSortOrder": {
+          "enum": ["name", "apValue"]
+        },
+        "professionListVisibilityFilter": {
+          "enum": ["all", "common"]
+        },
+        "professionListGroupVisibilityFilter": {
+          "enum": ["all", "mundane", "magical", "blessed"]
+        },
+        "advantageDisadvantageListCultureRatingVisibility": {
+          "type": "boolean"
+        },
+        "skillListSortOrder": {
+          "enum": ["name", "group", "ic"]
+        },
+        "skillListCultureRatingVisibility": {
+          "type": "boolean"
+        },
+        "combatTechniqueListSortOrder": {
+          "enum": ["name", "group", "ic"]
+        },
+        "specialAbilityListSortOrder": {
+          "enum": ["name", "group"]
+        },
+        "spellListSortOrder": {
+          "enum": ["name", "group", "property", "ic"]
+        },
+        "spellListUnfamiliarVisibility": {
+          "type": "boolean"
+        },
+        "liturgicalChantListSortOrder": {
+          "enum": ["name", "group", "ic"]
+        },
+        "equipmentListSortOrder": {
+          "enum": ["name", "group", "where", "weight"]
+        },
+        "equipmentListGroupVisibilityFilter": {
+          "type": "integer"
+        },
+        "sheetShowCheckAttributeValues": {
+          "type": "boolean"
+        },
+        "sheetUseParchment": {
+          "type": "boolean"
+        },
+        "sheetZoomFactor": {
+          "type": "number"
+        },
+        "enableActiveEntryHints": {
+          "type": "boolean"
+        },
+        "locales": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "theme": {
+          "enum": ["light", "dark"]
+        },
+        "enableEditingHeroAfterCreationPhase": {
+          "type": "boolean"
+        },
+        "meleeItemTemplatesCombatTechniqueFilter": {
+          "type": "string"
+        },
+        "rangedItemTemplatesCombatTechniqueFilter": {
+          "type": "string"
+        },
+        "enableAnimations": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "characterListSortOrder",
+        "characterListVisibilityFilter",
+        "raceListSortOrder",
+        "cultureListSortOrder",
+        "cultureListVisibilityFilter",
+        "professionListSortOrder",
+        "professionListVisibilityFilter",
+        "professionListGroupVisibilityFilter",
+        "advantageDisadvantageListCultureRatingVisibility",
+        "skillListSortOrder",
+        "skillListCultureRatingVisibility",
+        "combatTechniqueListSortOrder",
+        "specialAbilityListSortOrder",
+        "spellListSortOrder",
+        "spellListUnfamiliarVisibility",
+        "liturgicalChantListSortOrder",
+        "equipmentListSortOrder",
+        "equipmentListGroupVisibilityFilter",
+        "sheetShowCheckAttributeValues",
+        "sheetUseParchment",
+        "sheetZoomFactor",
+        "enableActiveEntryHints",
+        "locales",
+        "theme",
+        "enableEditingHeroAfterCreationPhase",
+        "enableAnimations"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
