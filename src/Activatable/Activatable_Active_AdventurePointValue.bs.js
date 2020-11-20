@@ -27,7 +27,7 @@ function ensurePerLevel(x) {
   
 }
 
-function getDefaultEntryCost(staticEntry, singleHeroEntry) {
+function getDefaultApValue(staticEntry, singleHeroEntry) {
   var sid1 = Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry);
   var level = Ley_Option$OptolithClient.fromOption(1, singleHeroEntry.level);
   var apValue = Ley_Option$OptolithClient.fromOption({
@@ -77,7 +77,84 @@ function getPrinciplesObligationsMaxLevels(param) {
             ], param.active);
 }
 
-function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroEntry, singleHeroEntry) {
+function getApValueByIcAsIndexAux(mp, getIc, id, apValues) {
+  return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, id, mp), (function ($$static) {
+                return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx(Curry._1(getIc, $$static)));
+              }));
+}
+
+function getApValueFromSkillsMapByIc(staticData) {
+  var partial_arg = staticData.skills;
+  return function (param, param$1) {
+    return getApValueByIcAsIndexAux(partial_arg, (function (skill) {
+                  return skill.ic;
+                }), param, param$1);
+  };
+}
+
+function getApValueFromCombatTechniquesMapByIc(staticData) {
+  var partial_arg = staticData.combatTechniques;
+  return function (param, param$1) {
+    return getApValueByIcAsIndexAux(partial_arg, (function (skill) {
+                  return skill.ic;
+                }), param, param$1);
+  };
+}
+
+function getApValueFromSpellsMapByIc(staticData) {
+  var partial_arg = staticData.spells;
+  return function (param, param$1) {
+    return getApValueByIcAsIndexAux(partial_arg, (function (skill) {
+                  return skill.ic;
+                }), param, param$1);
+  };
+}
+
+function getApValueFromLiturgicalChantsMapByIc(staticData) {
+  var partial_arg = staticData.liturgicalChants;
+  return function (param, param$1) {
+    return getApValueByIcAsIndexAux(partial_arg, (function (skill) {
+                  return skill.ic;
+                }), param, param$1);
+  };
+}
+
+function getApValueByIcAsIndex(staticData, apValue, sid) {
+  if (sid.TAG) {
+    return ;
+  }
+  var id = sid._0;
+  switch (id.TAG | 0) {
+    case /* Skill */1 :
+        if (apValue.TAG) {
+          return getApValueFromSkillsMapByIc(staticData)(id._0, apValue._0);
+        } else {
+          return ;
+        }
+    case /* CombatTechnique */2 :
+        if (apValue.TAG) {
+          return getApValueFromCombatTechniquesMapByIc(staticData)(id._0, apValue._0);
+        } else {
+          return ;
+        }
+    case /* Spell */3 :
+        if (apValue.TAG) {
+          return getApValueFromSpellsMapByIc(staticData)(id._0, apValue._0);
+        } else {
+          return ;
+        }
+    case /* LiturgicalChant */5 :
+        if (apValue.TAG) {
+          return getApValueFromLiturgicalChantsMapByIc(staticData)(id._0, apValue._0);
+        } else {
+          return ;
+        }
+    default:
+      return ;
+  }
+}
+
+function getEntrySpecificApValue(isEntryToAdd, staticData, hero, staticEntry, heroEntry, singleHeroEntry) {
   var sid1 = Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry);
   var level = singleHeroEntry.level;
   var apValue = Ley_Option$OptolithClient.fromOption({
@@ -87,94 +164,27 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
   switch (staticEntry.TAG | 0) {
     case /* Advantage */0 :
         var match = Id$OptolithClient.Advantage.fromInt(staticEntry._0.id);
-        var exit = 0;
         if (typeof match !== "number") {
-          return getDefaultEntryCost(staticEntry, singleHeroEntry);
+          return getDefaultApValue(staticEntry, singleHeroEntry);
         }
-        if (match !== 17) {
-          if (match >= 6) {
-            return getDefaultEntryCost(staticEntry, singleHeroEntry);
+        if (match < 6) {
+          if (!(match > 3 || match < 1)) {
+            return getDefaultApValue(staticEntry, singleHeroEntry);
           }
-          switch (match) {
-            case /* Nimble */1 :
-            case /* Blessed */2 :
-            case /* Luck */3 :
-                return getDefaultEntryCost(staticEntry, singleHeroEntry);
-            case /* Aptitude */0 :
-            case /* ExceptionalSkill */4 :
-                exit = 1;
-                break;
-            case /* ExceptionalCombatTechnique */5 :
-                exit = 2;
-                break;
-            
-          }
-        } else {
-          exit = 2;
-        }
-        switch (exit) {
-          case 1 :
-              return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (sid) {
-                            if (sid.TAG) {
-                              return ;
-                            }
-                            var id = sid._0;
-                            switch (id.TAG | 0) {
-                              case /* Skill */1 :
-                                  if (!apValue.TAG) {
-                                    return ;
-                                  }
-                                  var apValues = apValue._0;
-                                  return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, staticData.skills), (function ($$static) {
-                                                return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
-                                              }));
-                              case /* Spell */3 :
-                                  if (!apValue.TAG) {
-                                    return ;
-                                  }
-                                  var apValues$1 = apValue._0;
-                                  return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, staticData.spells), (function ($$static) {
-                                                return Ley_List$OptolithClient.Safe.atMay(apValues$1, IC$OptolithClient.icToIx($$static.ic));
-                                              }));
-                              case /* LiturgicalChant */5 :
-                                  if (!apValue.TAG) {
-                                    return ;
-                                  }
-                                  var apValues$2 = apValue._0;
-                                  return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, staticData.liturgicalChants), (function ($$static) {
-                                                return Ley_List$OptolithClient.Safe.atMay(apValues$2, IC$OptolithClient.icToIx($$static.ic));
-                                              }));
-                              default:
-                                return ;
-                            }
-                          }));
-          case 2 :
-              return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (sid) {
-                            if (sid.TAG) {
-                              return ;
-                            }
-                            var id = sid._0;
-                            if (id.TAG !== /* CombatTechnique */2) {
-                              return ;
-                            }
-                            if (!apValue.TAG) {
-                              return ;
-                            }
-                            var apValues = apValue._0;
-                            return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, staticData.combatTechniques), (function ($$static) {
-                                          return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
-                                        }));
-                          }));
           
+        } else if (match !== 17) {
+          return getDefaultApValue(staticEntry, singleHeroEntry);
         }
-        break;
+        return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (param) {
+                      return getApValueByIcAsIndex(staticData, apValue, param);
+                    }));
     case /* Disadvantage */1 :
         var match$1 = Id$OptolithClient.Disadvantage.fromInt(staticEntry._0.id);
         if (typeof match$1 !== "number") {
-          return getDefaultEntryCost(staticEntry, singleHeroEntry);
+          return getDefaultApValue(staticEntry, singleHeroEntry);
         }
         if (match$1 < 12) {
-          return getDefaultEntryCost(staticEntry, singleHeroEntry);
+          return getDefaultApValue(staticEntry, singleHeroEntry);
         }
         switch (match$1 - 12 | 0) {
           case /* AfraidOf */0 :
@@ -238,21 +248,8 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                                   );
                           }), ensureFlat(apValue));
           case /* DecreasedArcanePower */6 :
-              return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (sid) {
-                            if (sid.TAG) {
-                              return ;
-                            }
-                            var id = sid._0;
-                            if (id.TAG !== /* Skill */1) {
-                              return ;
-                            }
-                            if (!apValue.TAG) {
-                              return ;
-                            }
-                            var apValues = apValue._0;
-                            return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, staticData.skills), (function ($$static) {
-                                          return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
-                                        }));
+              return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (param) {
+                            return getApValueByIcAsIndex(staticData, apValue, param);
                           }));
           case /* Poor */1 :
           case /* DecreasedKarmaPoints */7 :
@@ -265,7 +262,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
           case /* DecreasedToughness */10 :
           case /* BadLuck */11 :
           case /* PersonalityFlaw */12 :
-              return getDefaultEntryCost(staticEntry, singleHeroEntry);
+              return getDefaultApValue(staticEntry, singleHeroEntry);
           
         }
         return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, level, (function (level) {
@@ -284,13 +281,13 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                     }));
     case /* SpecialAbility */2 :
         var match$2 = Id$OptolithClient.SpecialAbility.fromInt(staticEntry._0.id);
-        var exit$1 = 0;
+        var exit = 0;
         if (typeof match$2 !== "number") {
-          return getDefaultEntryCost(staticEntry, singleHeroEntry);
+          return getDefaultApValue(staticEntry, singleHeroEntry);
         }
         if (match$2 >= 42) {
           if (match$2 < 71) {
-            return getDefaultEntryCost(staticEntry, singleHeroEntry);
+            return getDefaultApValue(staticEntry, singleHeroEntry);
           }
           switch (match$2 - 71 | 0) {
             case /* SkillSpecialization */0 :
@@ -314,14 +311,14 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
             case /* PropertyKnowledge */10 :
             case /* AspectKnowledge */12 :
             case /* Feuerschlucker */14 :
-                exit$1 = 3;
+                exit = 2;
                 break;
             case /* CombatStyleCombination */15 :
             case /* AdaptionZauber */16 :
             case /* Exorzist */17 :
             case /* FavoriteSpellwork */18 :
             case /* TraditionWitches */19 :
-                exit$1 = 4;
+                exit = 3;
                 break;
             case /* TerrainKnowledge */1 :
             case /* CraftInstruments */2 :
@@ -340,7 +337,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
             case /* TraditionElves */23 :
             case /* TraditionDruids */24 :
             case /* SpellEnhancement */25 :
-                return getDefaultEntryCost(staticEntry, singleHeroEntry);
+                return getDefaultApValue(staticEntry, singleHeroEntry);
             
           }
         } else {
@@ -377,11 +374,7 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                             }));
             case /* PropertyKnowledge */10 :
             case /* AspectKnowledge */12 :
-                exit$1 = 1;
-                break;
-            case /* AdaptionZauber */16 :
-            case /* FavoriteSpellwork */18 :
-                exit$1 = 2;
+                exit = 1;
                 break;
             case /* TraditionWitches */19 :
                 var decreaseCost = function (id, cost) {
@@ -394,19 +387,16 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                 return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, ensureFlat(apValue), (function (flatAp) {
                               return decreaseCost(Id$OptolithClient.Disadvantage.toInt(/* NoFamiliar */4), decreaseCost(Id$OptolithClient.Disadvantage.toInt(/* NoFlyingBalm */3), flatAp));
                             }));
-            case /* Forschungsgebiet */26 :
-            case /* Expertenwissen */27 :
-            case /* Wissensdurst */28 :
-                exit$1 = 3;
-                break;
             case /* Recherchegespuer */29 :
                 return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, Id$OptolithClient.SpecialAbility.toInt(/* Wissensdurst */28), hero.specialAbilities), (function (wissensdurst) {
                               return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, ensurePerLevel(apValue), (function (apPerLevel) {
                                             var getCostFromHeroEntry = function (entry) {
-                                              return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(entry), (function (param) {
-                                                                return Activatable_SelectOptions$OptolithClient.getSkillFromOption(staticData, param);
-                                                              })), (function (skill) {
-                                                            return Ley_List$OptolithClient.Safe.atMay(apPerLevel, IC$OptolithClient.icToIx(skill.ic));
+                                              var partial_arg = {
+                                                TAG: /* PerLevel */1,
+                                                _0: apPerLevel
+                                              };
+                                              return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(entry), (function (param) {
+                                                            return getApValueByIcAsIndex(staticData, partial_arg, param);
                                                           }));
                                             };
                                             return Curry._3(Ley_Option$OptolithClient.liftM2, (function (prim, prim$1) {
@@ -446,28 +436,19 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
             case /* VisionDesSchicksals */38 :
             case /* VisionDesWahrenGlaubens */39 :
             case /* HoheWeihe */40 :
-                return getDefaultEntryCost(staticEntry, singleHeroEntry);
+                return getDefaultApValue(staticEntry, singleHeroEntry);
+            case /* AdaptionZauber */16 :
+            case /* FavoriteSpellwork */18 :
+            case /* Forschungsgebiet */26 :
+            case /* Expertenwissen */27 :
+            case /* Wissensdurst */28 :
             case /* Lieblingsliturgie */41 :
-                return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (sid) {
-                              if (sid.TAG) {
-                                return ;
-                              }
-                              var id = sid._0;
-                              if (id.TAG !== /* LiturgicalChant */5) {
-                                return ;
-                              }
-                              if (!apValue.TAG) {
-                                return ;
-                              }
-                              var apValues = apValue._0;
-                              return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, staticData.liturgicalChants), (function ($$static) {
-                                            return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
-                                          }));
-                            }));
+                exit = 2;
+                break;
             
           }
         }
-        switch (exit$1) {
+        switch (exit) {
           case 1 :
               return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, ensurePerLevel(apValue), (function (apPerLevel) {
                             var amountActive = Ley_List$OptolithClient.countBy((function (e) {
@@ -479,57 +460,14 @@ function getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroE
                             return Ley_List$OptolithClient.Safe.atMay(apPerLevel, index);
                           }));
           case 2 :
-              return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (sid) {
-                            if (sid.TAG) {
-                              return ;
-                            }
-                            var id = sid._0;
-                            if (id.TAG !== /* Spell */3) {
-                              return ;
-                            }
-                            if (!apValue.TAG) {
-                              return ;
-                            }
-                            var apValues = apValue._0;
-                            return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, staticData.spells), (function ($$static) {
-                                          return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
-                                        }));
+              return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (param) {
+                            return getApValueByIcAsIndex(staticData, apValue, param);
                           }));
           case 3 :
-              return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Activatable_SelectOptions$OptolithClient.getOption1(singleHeroEntry), (function (sid) {
-                            if (sid.TAG) {
-                              return ;
-                            }
-                            var id = sid._0;
-                            if (id.TAG !== /* Skill */1) {
-                              return ;
-                            }
-                            if (!apValue.TAG) {
-                              return ;
-                            }
-                            var apValues = apValue._0;
-                            return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, staticData.skills), (function ($$static) {
-                                          return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
-                                        }));
-                          }));
-          case 4 :
               return Ley_Option$OptolithClient.ensure((function (param) {
                             return 0 < param;
-                          }), Curry._1(Ley_List$OptolithClient.sum, Ley_Option$OptolithClient.mapOption((function (sid) {
-                                    if (sid.TAG) {
-                                      return ;
-                                    }
-                                    var id = sid._0;
-                                    if (id.TAG !== /* Skill */1) {
-                                      return ;
-                                    }
-                                    if (!apValue.TAG) {
-                                      return ;
-                                    }
-                                    var apValues = apValue._0;
-                                    return Curry._2(Ley_Option$OptolithClient.Infix.$great$great$eq, Curry._2(Ley_IntMap$OptolithClient.lookup, id._0, staticData.skills), (function ($$static) {
-                                                  return Ley_List$OptolithClient.Safe.atMay(apValues, IC$OptolithClient.icToIx($$static.ic));
-                                                }));
+                          }), Curry._1(Ley_List$OptolithClient.sum, Ley_Option$OptolithClient.mapOption((function (param) {
+                                    return getApValueByIcAsIndex(staticData, apValue, param);
                                   }), Ley_List$OptolithClient.take(3, singleHeroEntry.options))));
           
         }
@@ -559,7 +497,7 @@ function getApValueDifferenceOnChange(isEntryToAdd, automaticAdvantages, staticD
           };
   } else {
     return {
-            apValue: Curry._1(modifyAbs, Ley_Option$OptolithClient.fromOption(0, getEntrySpecificCost(isEntryToAdd, staticData, hero, staticEntry, heroEntry, singleHeroEntry))),
+            apValue: Curry._1(modifyAbs, Ley_Option$OptolithClient.fromOption(0, getEntrySpecificApValue(isEntryToAdd, staticData, hero, staticEntry, heroEntry, singleHeroEntry))),
             isAutomatic: isAutomatic
           };
   }

@@ -59,6 +59,11 @@ let existsFile: filePath => t(bool);
  */
 let copyFile: (filePath, filePath) => t(unit);
 
+/**
+ * `mkdir path` creates the directory at the specified path.
+ */
+let mkdir: filePath => t(unit);
+
 module Infix: {
   include Ley_Functor.Infix with type t('a) := t('a);
   include Ley_Monad.Infix with type t('a) := t('a);

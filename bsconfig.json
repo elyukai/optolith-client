@@ -22,6 +22,7 @@
     { "dir": "src/Data/__tests__", "type": "dev" },
     { "dir": "src/Debug" },
     { "dir": "src/Equipment" },
+    { "dir": "src/ExternalBindings" },
     { "dir": "src/Increasable" },
     { "dir": "src/Increasable/__tests__", "type": "dev" },
     { "dir": "src/Misc" },

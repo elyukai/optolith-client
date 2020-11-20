@@ -38,6 +38,9 @@ module FileSystem = {
 
     [@bs.module "fs"] [@bs.scope "promises"]
     external copyFile: (string, string) => Js.Promise.t(unit) = "copyFile";
+
+    [@bs.module "fs"] [@bs.scope "promises"]
+    external mkdir: string => Js.Promise.t(unit) = "mkdir";
   };
 };
 
@@ -140,3 +143,5 @@ let existsFile = (path: filePath) =>
 
 let copyFile = (origin: filePath, dest: filePath) =>
   FileSystem.Promises.copyFile(origin, dest);
+
+let mkdir = (path: filePath) => FileSystem.Promises.mkdir(path);

@@ -6,23 +6,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const config = [
   {
     mode: 'development',
-    entry: './src/main.ts',
+    entry: './src/main.bs.js',
     target: 'electron-main',
-    module: {
-      rules: [
-        {
-          test: /\.ts$/,
-          include: /src/,
-          loader: 'ts-loader',
-          resolve: {
-            extensions: [".ts", ".tsx", ".js"],
-          },
-          options: {
-            configFile: "tsconfig.webpack.json"
-          }
-        }
-      ]
-    },
     output: {
       path: __dirname + '/dist',
       filename: 'main.js'

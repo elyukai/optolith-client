@@ -20,8 +20,7 @@
     "inlineSourceMap": true,
     "strict": true,
     "skipLibCheck": true,
-    "target": "es2019",
-    "noEmit": true
+    "target": "es2019"
   },
   "include": [
     "src/**/*",

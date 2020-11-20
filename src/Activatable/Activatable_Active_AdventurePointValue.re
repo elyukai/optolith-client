@@ -1,7 +1,6 @@
 module L = Ley_List;
 
 open Ley_Option.Infix;
-open Static;
 open Ley_Function;
 open Activatable_Convert;
 open Activatable_SelectOptions;
@@ -21,7 +20,7 @@ let ensurePerLevel =
   | Advantage.Static.Flat(_) => None
   | Advantage.Static.PerLevel(x) => Some(x);
 
-let getDefaultEntryCost = (staticEntry, singleHeroEntry) => {
+let getDefaultApValue = (staticEntry, singleHeroEntry) => {
   open Ley_List;
 
   let sid1 = singleHeroEntry |> getOption1;
@@ -68,6 +67,61 @@ let getPrinciplesObligationsMaxLevels = ({active, _}: Activatable_Dynamic.t) =>
        (0, 0),
      );
 
+module IcAsIndex = {
+  // Helper function to lookup entry, it's IC, converting it to an index and get
+  // the correct value from the list of AP values
+  let%private getApValueByIcAsIndexAux = (mp, getIc, id, apValues) =>
+    Ley_IntMap.lookup(id, mp)
+    >>= (
+      static => static |> getIc |> IC.icToIx |> Ley_List.Safe.atMay(apValues)
+    );
+
+  // Shortcut function for skills
+  let%private getApValueFromSkillsMapByIc = (staticData: Static.t) =>
+    getApValueByIcAsIndexAux(staticData.skills, skill => skill.ic);
+
+  // Shortcut function for combat techniques
+  let%private getApValueFromCombatTechniquesMapByIc = (staticData: Static.t) =>
+    getApValueByIcAsIndexAux(staticData.combatTechniques, skill => skill.ic);
+
+  // Shortcut function for spells
+  let%private getApValueFromSpellsMapByIc = (staticData: Static.t) =>
+    getApValueByIcAsIndexAux(staticData.spells, skill => skill.ic);
+
+  // Shortcut function for liturgical chants
+  let%private getApValueFromLiturgicalChantsMapByIc = (staticData: Static.t) =>
+    getApValueByIcAsIndexAux(staticData.liturgicalChants, skill => skill.ic);
+
+  /**
+   * `getApValueByIcAsIndex staticData apValue sid` takes the static data, the
+   * AP value of the current entry and it's first option. It uses the IC of the
+   * entry defined by the option as an index to retrieve the AP value from the
+   * list of AP values defined for the entry. If the selected entry is not
+   * present or if the entry does not define a list of AP values, `None` is
+   * returned.
+   */
+  let getApValueByIcAsIndex =
+      (
+        staticData: Static.t,
+        apValue: Advantage.Static.apValue,
+        sid: Id.Activatable.Option.t,
+      ) =>
+    [@warning "-4"]
+    (
+      switch (sid, apValue) {
+      | (Preset(Skill(id)), PerLevel(apValues)) =>
+        getApValueFromSkillsMapByIc(staticData, id, apValues)
+      | (Preset(CombatTechnique(id)), PerLevel(apValues)) =>
+        getApValueFromCombatTechniquesMapByIc(staticData, id, apValues)
+      | (Preset(Spell(id)), PerLevel(apValues)) =>
+        getApValueFromSpellsMapByIc(staticData, id, apValues)
+      | (Preset(LiturgicalChant(id)), PerLevel(apValues)) =>
+        getApValueFromLiturgicalChantsMapByIc(staticData, id, apValues)
+      | _ => None
+      }
+    );
+};
+
 /**
  * Returns the value(s) how the spent AP value would change after removing the
  * respective entry.
@@ -75,10 +129,10 @@ let getPrinciplesObligationsMaxLevels = ({active, _}: Activatable_Dynamic.t) =>
  * @param isEntryToAdd If `entry` has not been added to the list of active
  * entries yet, this must be `true`, otherwise `false`.
  */
-let getEntrySpecificCost =
+let getEntrySpecificApValue =
     (
       ~isEntryToAdd,
-      staticData,
+      staticData: Static.t,
       hero: Hero.t,
       staticEntry,
       heroEntry: Activatable_Dynamic.t,
@@ -99,46 +153,13 @@ let getEntrySpecificCost =
     (
       switch (Id.Advantage.fromInt(entry.id)) {
       | Aptitude
-      | ExceptionalSkill =>
-        singleHeroEntry
-        |> getOption1
-        >>= (
-          sid =>
-            switch (sid, apValue) {
-            | (Preset(Skill(id)), PerLevel(apValues)) =>
-              Ley_IntMap.lookup(id, staticData.skills)
-              >>= (
-                static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
-              )
-            | (Preset(Spell(id)), PerLevel(apValues)) =>
-              Ley_IntMap.lookup(id, staticData.spells)
-              >>= (
-                static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
-              )
-            | (Preset(LiturgicalChant(id)), PerLevel(apValues)) =>
-              Ley_IntMap.lookup(id, staticData.liturgicalChants)
-              >>= (
-                static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
-              )
-            | _ => None
-            }
-        )
+      | ExceptionalSkill
       | ExceptionalCombatTechnique
       | WeaponAptitude =>
         singleHeroEntry
         |> getOption1
-        >>= (
-          sid =>
-            switch (sid, apValue) {
-            | (Preset(CombatTechnique(id)), PerLevel(apValues)) =>
-              Ley_IntMap.lookup(id, staticData.combatTechniques)
-              >>= (
-                static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
-              )
-            | _ => None
-            }
-        )
-      | _ => getDefaultEntryCost(staticEntry, singleHeroEntry)
+        >>= IcAsIndex.getApValueByIcAsIndex(staticData, apValue)
+      | _ => getDefaultApValue(staticEntry, singleHeroEntry)
       }
     )
   | Disadvantage(entry) =>
@@ -231,18 +252,8 @@ let getEntrySpecificCost =
       | Incompetent =>
         singleHeroEntry
         |> getOption1
-        >>= (
-          sid =>
-            switch (sid, apValue) {
-            | (Preset(Skill(id)), PerLevel(apValues)) =>
-              Ley_IntMap.lookup(id, staticData.skills)
-              >>= (
-                static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
-              )
-            | _ => None
-            }
-        )
-      | _ => getDefaultEntryCost(staticEntry, singleHeroEntry)
+        >>= IcAsIndex.getApValueByIcAsIndex(staticData, apValue)
+      | _ => getDefaultApValue(staticEntry, singleHeroEntry)
       }
     )
   | SpecialAbility(entry) =>
@@ -318,34 +329,8 @@ let getEntrySpecificCost =
             |> decreaseCost(Id.Disadvantage.toInt(NoFamiliar))
         );
       | AdaptionZauber
-      | FavoriteSpellwork =>
-        singleHeroEntry
-        |> getOption1
-        >>= (
-          sid =>
-            switch (sid, apValue) {
-            | (Preset(Spell(id)), PerLevel(apValues)) =>
-              Ley_IntMap.lookup(id, staticData.spells)
-              >>= (
-                static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
-              )
-            | _ => None
-            }
-        )
-      | Lieblingsliturgie =>
-        singleHeroEntry
-        |> getOption1
-        >>= (
-          sid =>
-            switch (sid, apValue) {
-            | (Preset(LiturgicalChant(id)), PerLevel(apValues)) =>
-              Ley_IntMap.lookup(id, staticData.liturgicalChants)
-              >>= (
-                static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
-              )
-            | _ => None
-            }
-        )
+      | FavoriteSpellwork
+      | Lieblingsliturgie
       | Forschungsgebiet
       | Expertenwissen
       | Wissensdurst
@@ -354,17 +339,7 @@ let getEntrySpecificCost =
       | Fachwissen =>
         singleHeroEntry
         |> getOption1
-        >>= (
-          sid =>
-            switch (sid, apValue) {
-            | (Preset(Skill(id)), PerLevel(apValues)) =>
-              Ley_IntMap.lookup(id, staticData.skills)
-              >>= (
-                static => Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
-              )
-            | _ => None
-            }
-        )
+        >>= IcAsIndex.getApValueByIcAsIndex(staticData, apValue)
       | Recherchegespuer =>
         // The AP cost for this SA consist of two parts: AP based on the IC of
         // the main subject (from "SA_531"/Wissensdurst) in addition to AP based
@@ -381,11 +356,10 @@ let getEntrySpecificCost =
                 let getCostFromHeroEntry = entry =>
                   entry
                   |> getOption1
-                  >>= getSkillFromOption(staticData)
-                  >>= (
-                    skill =>
-                      Ley_List.Safe.atMay(apPerLevel, IC.icToIx(skill.ic))
-                  );
+                  >>= IcAsIndex.getApValueByIcAsIndex(
+                        staticData,
+                        PerLevel(apPerLevel),
+                      );
 
                 Ley_Option.liftM2(
                   (+),
@@ -443,20 +417,12 @@ let getEntrySpecificCost =
       | Universalgenie =>
         singleHeroEntry.options
         |> Ley_List.take(3)
-        |> Ley_Option.mapOption((sid: Id.Activatable.Option.t) =>
-             switch (sid, apValue) {
-             | (Preset(Skill(id)), PerLevel(apValues)) =>
-               Ley_IntMap.lookup(id, staticData.skills)
-               >>= (
-                 static =>
-                   Ley_List.Safe.atMay(apValues, IC.icToIx(static.ic))
-               )
-             | _ => None
-             }
+        |> Ley_Option.mapOption(
+             IcAsIndex.getApValueByIcAsIndex(staticData, apValue),
            )
         |> Ley_List.sum
         |> Ley_Option.ensure((<)(0))
-      | _ => getDefaultEntryCost(staticEntry, singleHeroEntry)
+      | _ => getDefaultApValue(staticEntry, singleHeroEntry)
       }
     )
   };
@@ -482,7 +448,7 @@ let getApValueDifferenceOnChange =
 
   let modifyAbs =
     switch (staticEntry) {
-    | Disadvantage(_) => Ley_Int.negate
+    | Static.Disadvantage(_) => Ley_Int.negate
     | Advantage(_)
     | SpecialAbility(_) => id
     };
@@ -490,7 +456,7 @@ let getApValueDifferenceOnChange =
   switch (singleHeroEntry.customCost) {
   | Some(customCost) => {apValue: modifyAbs(customCost), isAutomatic}
   | None =>
-    getEntrySpecificCost(
+    getEntrySpecificApValue(
       ~isEntryToAdd,
       staticData,
       hero,

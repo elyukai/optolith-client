@@ -154,6 +154,10 @@ function copyFile(origin, dest) {
   return Fs.promises.copyFile(origin, dest);
 }
 
+function mkdir(path) {
+  return Fs.promises.mkdir(path);
+}
+
 var join = include$1.join;
 
 var liftM2 = include$1.liftM2;
@@ -180,6 +184,7 @@ export {
   deleteFile ,
   existsFile ,
   copyFile ,
+  mkdir ,
   Infix ,
   
 }
