@@ -80,7 +80,7 @@ let createWindow = () => {
     )
     <&> (
       _ => {
-        Electron.BrowserWindow.WebContents.openDevTools(mainWindow);
+        // Electron.BrowserWindow.WebContents.openDevTools(mainWindow);
 
         Js.Console.log("main (window): Show window");
 
