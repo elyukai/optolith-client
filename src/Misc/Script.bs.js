@@ -4,14 +4,15 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Decoder$OptolithClient from "../Utilities/Decoder.bs.js";
 import * as Erratum$OptolithClient from "../Sources/Erratum.bs.js";
+import * as JsonStrict$OptolithClient from "./JsonStrict.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as PublicationRef$OptolithClient from "../Sources/PublicationRef.bs.js";
 import * as TranslationMap$OptolithClient from "./TranslationMap.bs.js";
 
 function t(json) {
   return {
-          name: Json_decode.field("name", Json_decode.string, json),
-          errata: Json_decode.field("errata", Erratum$OptolithClient.Decode.list, json)
+          name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -45,7 +46,7 @@ function resolveTranslations(langs, x) {
                         continent: x.continent,
                         isExtinct: x.isExtinct,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

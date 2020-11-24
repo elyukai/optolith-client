@@ -6,26 +6,29 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Semver from "semver";
 import * as Electron from "electron";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
-import * as ElectronLog from "electron-log";
-import * as ElectronUpdater from "electron-updater";
 import * as IO$OptolithClient from "./Data/IO.bs.js";
+import * as Ipc$OptolithClient from "./Init/Ipc.bs.js";
+import * as Init$OptolithClient from "./Init/Init.bs.js";
 import ElectronWindowState from "electron-window-state";
 import * as Electron$OptolithClient from "./ExternalBindings/Electron.bs.js";
 import * as Ley_Option$OptolithClient from "./Data/Ley_Option.bs.js";
+import * as AutoUpdates$OptolithClient from "./Init/AutoUpdates.bs.js";
 import * as ElectronDevtoolsInstaller from "electron-devtools-installer";
 import ElectronDevtoolsInstaller$1 from "electron-devtools-installer";
-import * as CheckForUpdates$OptolithClient from "./Misc/CheckForUpdates.bs.js";
 
 Electron.app.setAppUserModelId("lukasobermann.optolith");
 
 function setDerivedUserDataPath(param) {
+  console.log("main: Set user data path ...");
   var isPrerelease = Ley_Option$OptolithClient.isNone(Caml_option.null_to_opt(Semver.prerelease(Electron.app.getVersion())));
+  console.log(isPrerelease);
   var userDataPath = Path.join(Electron.app.getPath("appData"), isPrerelease ? "Optolith Insider" : "Optolith");
+  console.log(userDataPath);
   return Curry._2(IO$OptolithClient.Infix.$less$amp$great, Curry._2(IO$OptolithClient.Infix.$great$great$eq, IO$OptolithClient.existsFile(userDataPath), (function (exists) {
                     if (exists) {
-                      return IO$OptolithClient.mkdir(userDataPath);
-                    } else {
                       return Curry._1(IO$OptolithClient.$$return, undefined);
+                    } else {
+                      return IO$OptolithClient.mkdir(userDataPath);
                     }
                   })), (function (param) {
                 Electron.app.setPath("userData", userDataPath);
@@ -33,7 +36,19 @@ function setDerivedUserDataPath(param) {
               }));
 }
 
+function installDevelopmentExtensions(param) {
+  console.log("main: Install extensions ...");
+  return Curry._2(IO$OptolithClient.Infix.$less$amp$great, ElectronDevtoolsInstaller$1([
+                  ElectronDevtoolsInstaller.REACT_DEVELOPER_TOOLS,
+                  ElectronDevtoolsInstaller.REDUX_DEVTOOLS
+                ]), (function (installedExtensions) {
+                console.log("main: Installed extensions: " + installedExtensions);
+                
+              }));
+}
+
 function createWindow(param) {
+  console.log("main: Create Window ...");
   console.log("main (window): Initialize window state keeper");
   var mainWindowState = ElectronWindowState({
         defaultHeight: 720,
@@ -69,121 +84,53 @@ function createWindow(param) {
                       protocol: "file:",
                       slashes: true
                     })), (function (param) {
-                mainWindow.webContents.openDevTools();
                 console.log("main (window): Show window");
                 mainWindow.show();
                 if (mainWindowState.isMaximized) {
                   console.log("main (window): Maximize window ...");
                   mainWindow.maximize();
                 }
-                return Curry._1(Electron$OptolithClient.IpcMain.addListener, {
-                            NAME: "loadingDone",
-                            VAL: (function (param) {
-                                var cancellationToken = {
-                                  contents: undefined
-                                };
-                                if (CheckForUpdates$OptolithClient.isUpdaterEnabled(undefined)) {
-                                  console.log("main: Updater is enabled, check for updates ...");
-                                  ElectronUpdater.autoUpdater.on("update-available", (function (info) {
-                                          Curry._2(Electron$OptolithClient.BrowserWindow.WebContents.send, {
-                                                NAME: "updateAvailable",
-                                                VAL: info
-                                              }, mainWindow);
-                                          ElectronUpdater.autoUpdater.removeAllListeners("update-not-available");
-                                          
-                                        }));
-                                  Curry._1(Electron$OptolithClient.IpcMain.addListener, {
-                                        NAME: "downloadUpdate",
-                                        VAL: (function (param) {
-                                            ElectronUpdater.autoUpdater.downloadUpdate(cancellationToken.contents);
-                                            
-                                          })
-                                      });
-                                  Curry._1(Electron$OptolithClient.IpcMain.addListener, {
-                                        NAME: "checkForUpdates",
-                                        VAL: (function (param) {
-                                            Curry._2(IO$OptolithClient.Infix.$less$amp$great, ElectronUpdater.autoUpdater.checkForUpdates(), (function (res) {
-                                                    var token = res.cancellationToken;
-                                                    if (token !== undefined) {
-                                                      cancellationToken.contents = Caml_option.some(Caml_option.valFromOption(token));
-                                                      return Curry._2(Electron$OptolithClient.BrowserWindow.WebContents.send, {
-                                                                  NAME: "updateAvailable",
-                                                                  VAL: res.updateInfo
-                                                                }, mainWindow);
-                                                    } else {
-                                                      return Curry._2(Electron$OptolithClient.BrowserWindow.WebContents.send, {
-                                                                  NAME: "updateNotAvailable",
-                                                                  VAL: undefined
-                                                                }, mainWindow);
-                                                    }
-                                                  }));
-                                            
-                                          })
-                                      });
-                                  ElectronUpdater.autoUpdater.signals.progress(function (progressObj) {
-                                        return Curry._2(Electron$OptolithClient.BrowserWindow.WebContents.send, {
-                                                    NAME: "downloadProgress",
-                                                    VAL: progressObj
-                                                  }, mainWindow);
-                                      });
-                                  ElectronUpdater.autoUpdater.on("error", (function (err) {
-                                          return Curry._2(Electron$OptolithClient.BrowserWindow.WebContents.send, {
-                                                      NAME: "autoUpdaterError",
-                                                      VAL: err
-                                                    }, mainWindow);
-                                        }));
-                                  ElectronUpdater.autoUpdater.signals.updateDownloaded(function (param) {
-                                        ElectronUpdater.autoUpdater.quitAndInstall();
-                                        
-                                      });
-                                  Curry._2(IO$OptolithClient.Infix.$less$amp$great, ElectronUpdater.autoUpdater.checkForUpdates(), (function (res) {
-                                          var token = res.cancellationToken;
-                                          if (token !== undefined) {
-                                            cancellationToken.contents = Caml_option.some(Caml_option.valFromOption(token));
-                                            console.log("main: Update is available");
-                                            return Curry._2(Electron$OptolithClient.BrowserWindow.WebContents.send, {
-                                                        NAME: "updateAvailable",
-                                                        VAL: res.updateInfo
-                                                      }, mainWindow);
-                                          } else {
-                                            console.log("main: No update available");
-                                            return ;
-                                          }
-                                        }));
-                                } else {
-                                  console.log("main: Updater is not available");
-                                }
-                                
-                              })
+                return mainWindow;
+              }));
+}
+
+function initializeData(mainWindow) {
+  console.time("parseStaticData");
+  return Curry._2(IO$OptolithClient.Infix.$less$amp$great, Init$OptolithClient.getInitialData((function (supportedLanguages, localeOrder, config, uiMessages) {
+                    return Ipc$OptolithClient.FromMain.send(mainWindow, {
+                                TAG: /* InitMinimal */0,
+                                _0: supportedLanguages,
+                                _1: localeOrder,
+                                _2: config,
+                                _3: uiMessages
+                              });
+                  }), Path.join(__dirname, "initWorker.js"), (function (progress) {
+                    return Ipc$OptolithClient.FromMain.send(mainWindow, {
+                                TAG: /* InitProgress */1,
+                                _0: progress
+                              });
+                  })), (function (staticData) {
+                console.timeEnd("parseStaticData");
+                return Ipc$OptolithClient.FromMain.send(mainWindow, {
+                            TAG: /* InitDone */2,
+                            _0: staticData
                           });
               }));
 }
 
 function main(param) {
-  ElectronUpdater.autoUpdater.logger = ElectronLog;
-  ElectronUpdater.autoUpdater.logger.transports.file.level = "info";
-  ElectronUpdater.autoUpdater.autoDownload = false;
-  console.log("main: Set user data path ...");
-  return Curry._2(IO$OptolithClient.Infix.$great$great$eq, setDerivedUserDataPath(undefined), (function (param) {
-                return Curry._2(IO$OptolithClient.Infix.$great$great$eq, (console.log("main: Install extensions ..."), ElectronDevtoolsInstaller$1([
-                                  ElectronDevtoolsInstaller.REACT_DEVELOPER_TOOLS,
-                                  ElectronDevtoolsInstaller.REDUX_DEVTOOLS
-                                ])), (function (installedExtensions) {
-                              return Curry._2(IO$OptolithClient.Infix.$less$amp$great, (console.log("main: Installed extensions: " + installedExtensions), console.log("main: Create Window ..."), createWindow(undefined)), (function (param) {
-                                            return Curry._1(Electron$OptolithClient.App.on, {
-                                                        NAME: "windowAllClosed",
-                                                        VAL: (function (param) {
-                                                            Electron.app.quit();
-                                                            
-                                                          })
-                                                      });
-                                          }));
-                            }));
-              }));
-}
-
-function mainVoid(param) {
-  main(undefined).catch(function (err) {
+  Curry._2(IO$OptolithClient.Infix.$great$great$eq, Curry._2(IO$OptolithClient.Infix.$great$great$eq, Curry._2(IO$OptolithClient.Infix.$great$great$eq, setDerivedUserDataPath(undefined), installDevelopmentExtensions), createWindow), (function (mainWindow) {
+            return Curry._2(IO$OptolithClient.Infix.$less$amp$great, initializeData(mainWindow), (function (param) {
+                          AutoUpdates$OptolithClient.listenAndRun(mainWindow);
+                          return Curry._1(Electron$OptolithClient.App.on, {
+                                      NAME: "windowAllClosed",
+                                      VAL: (function (param) {
+                                          Electron.app.quit();
+                                          
+                                        })
+                                    });
+                        }));
+          })).catch(function (err) {
         console.error(err);
         return Curry._1(IO$OptolithClient.$$return, undefined);
       });
@@ -192,14 +139,15 @@ function mainVoid(param) {
 
 Curry._1(Electron$OptolithClient.App.on, {
       NAME: "ready",
-      VAL: mainVoid
+      VAL: main
     });
 
 export {
   setDerivedUserDataPath ,
+  installDevelopmentExtensions ,
   createWindow ,
+  initializeData ,
   main ,
-  mainVoid ,
   
 }
 /*  Not a pure module */

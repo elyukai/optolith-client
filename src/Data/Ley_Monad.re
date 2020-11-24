@@ -32,6 +32,18 @@ module type Infix = {
   let (=<<): ('a => t('b), t('a)) => t('b);
 
   /**
+   * `x >> y` applies `y` to all values in `x` without using them and unwraps
+   * the results.
+   */
+  let (>>): (t('a), t('b)) => t('b);
+
+  /**
+   * `y << x` applies `<` to all values in `x` without using them and unwraps
+   * the results.
+   */
+  let (<<): (t('a), t('b)) => t('a);
+
+  /**
    * `(f >=> g) x` composes `f` and `g`, both returning a wrapped value. `x` is
    * applied to `f` and then the unwrapped value is applied to `g`.
    */
@@ -50,6 +62,10 @@ module MakeInfix = (Arg: S) : (Infix with type t('a) = Arg.t('a)) => {
   let (>>=) = (x, f) => Arg.bind(f, x);
 
   let (=<<) = (x, f) => f >>= x;
+
+  let (>>) = (x, y) => x >>= (_ => y);
+
+  let (<<) = (y, x) => x >>= (_ => y);
 
   let (>=>) = (f, g, x) => x |> f >>= g;
 

@@ -25,6 +25,7 @@
     { "dir": "src/ExternalBindings" },
     { "dir": "src/Increasable" },
     { "dir": "src/Increasable/__tests__", "type": "dev" },
+    { "dir": "src/Init" },
     { "dir": "src/Misc" },
     { "dir": "src/Prerequisites" },
     { "dir": "src/RaceCultureProfession" },

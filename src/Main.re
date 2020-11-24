@@ -7,20 +7,41 @@ Electron.App.setAppUserModelId("lukasobermann.optolith");
  * running.
  */
 let setDerivedUserDataPath = () => {
+  Js.Console.log("main: Set user data path ...");
+
   let isPrerelease =
     Ley_Option.isNone(Semver.prerelease(Electron.App.getVersion()));
+
+  Js.Console.log(isPrerelease);
 
   let userDataPath =
     Node.Path.join2(
       Electron.App.getPath(`appData),
       isPrerelease ? "Optolith Insider" : "Optolith",
     );
+  Js.Console.log(userDataPath);
 
   IO.Infix.(
     userDataPath
     |> IO.existsFile
-    >>= (exists => exists ? IO.mkdir(userDataPath) : IO.return())
+    >>= (exists => exists ? IO.return() : IO.mkdir(userDataPath))
     <&> (_ => Electron.App.setPath(`userData, userDataPath))
+  );
+};
+
+let installDevelopmentExtensions = () => {
+  open IO.Infix;
+
+  Js.Console.log("main: Install extensions ...");
+
+  ElectronDevtoolsInstaller.install([|
+    ElectronDevtoolsInstaller.reactDeveloperTools,
+    ElectronDevtoolsInstaller.reduxDevtools,
+  |])
+  <&> (
+    installedExtensions => {
+      Js.Console.log("main: Installed extensions: " ++ installedExtensions);
+    }
   );
 };
 
@@ -28,6 +49,8 @@ let setDerivedUserDataPath = () => {
  * Create and show the main application window.
  */
 let createWindow = () => {
+  Js.Console.log("main: Create Window ...");
+
   Js.Console.log("main (window): Initialize window state keeper");
 
   let mainWindowState =
@@ -66,7 +89,6 @@ let createWindow = () => {
   ElectronWindowState.manage(mainWindowState, mainWindow);
 
   Js.Console.log("main (window): Load url");
-
   IO.Infix.(
     mainWindow->Electron.BrowserWindow.loadUrl(
       Url.formatObject(
@@ -92,171 +114,58 @@ let createWindow = () => {
           Electron.BrowserWindow.maximize(mainWindow);
         };
 
-        Electron.IpcMain.addListener(
-          `loadingDone(
-            () => {
-              let cancellationToken:
-                ref(option(ElectronUpdater.cancellationToken)) =
-                ref(None);
+        mainWindow;
+      }
+    )
+  );
+};
 
-              if (CheckForUpdates.isUpdaterEnabled()) {
-                Js.Console.log(
-                  "main: Updater is enabled, check for updates ...",
-                );
+let initializeData = mainWindow => {
+  Js.Console.timeStart("parseStaticData");
 
-                ElectronUpdater.autoUpdater->ElectronUpdater.addListener(
-                  `updateAvailable(
-                    info => {
-                      mainWindow
-                      |> Electron.BrowserWindow.WebContents.send(
-                           `updateAvailable(info),
-                         );
-                      ElectronUpdater.autoUpdater->ElectronUpdater.removeAllListenersOfEvent(
-                        `updateNotAvailable,
-                      );
-                    },
-                  ),
-                );
+  IO.Infix.(
+    Init.getInitialData(
+      ~onMinimalDataReceived=
+        (~supportedLanguages, ~localeOrder, ~config, ~uiMessages) => {
+          mainWindow->Ipc.FromMain.send(
+            InitMinimal(supportedLanguages, localeOrder, config, uiMessages),
+          )
+        },
+      ~initWorkerPath=Node.Path.join2(__dirname, "initWorker.js"),
+      ~onProgress=
+        progress => mainWindow->Ipc.FromMain.send(InitProgress(progress)),
+    )
+    <&> (
+      staticData => {
+        Js.Console.timeEnd("parseStaticData");
 
-                Electron.IpcMain.addListener(
-                  `downloadUpdate(
-                    () => {
-                      ElectronUpdater.autoUpdater->ElectronUpdater.downloadUpdate(
-                        cancellationToken.contents,
-                      )
-                    },
-                  ),
-                );
-
-                Electron.IpcMain.addListener(
-                  `checkForUpdates(
-                    () => {
-                      ElectronUpdater.autoUpdater->ElectronUpdater.checkForUpdates
-                      <&> (
-                        res => {
-                          switch (res.cancellationToken) {
-                          | None =>
-                            mainWindow
-                            |> Electron.BrowserWindow.WebContents.send(
-                                 `updateNotAvailable(),
-                               )
-                          | Some(token) =>
-                            cancellationToken := Some(token);
-
-                            mainWindow
-                            |> Electron.BrowserWindow.WebContents.send(
-                                 `updateAvailable(res.updateInfo),
-                               );
-                          };
-                        }
-                      )
-                      |> ignore
-                    },
-                  ),
-                );
-
-                ElectronUpdater.autoUpdater->ElectronUpdater.progress(
-                  progressObj => {
-                  mainWindow
-                  |> Electron.BrowserWindow.WebContents.send(
-                       `downloadProgress(progressObj),
-                     )
-                });
-
-                ElectronUpdater.autoUpdater->ElectronUpdater.addListener(
-                  `error(
-                    err => {
-                      mainWindow
-                      |> Electron.BrowserWindow.WebContents.send(
-                           `autoUpdaterError(err),
-                         )
-                    },
-                  ),
-                );
-
-                ElectronUpdater.autoUpdater->ElectronUpdater.updateDownloaded(
-                  () => {
-                  ElectronUpdater.autoUpdater->ElectronUpdater.quitAndInstall
-                });
-
-                ElectronUpdater.autoUpdater->ElectronUpdater.checkForUpdates
-                <&> (
-                  res => {
-                    switch (res.cancellationToken) {
-                    | None => Js.Console.log("main: No update available")
-                    | Some(token) =>
-                      cancellationToken := Some(token);
-                      Js.Console.log("main: Update is available");
-
-                      mainWindow
-                      |> Electron.BrowserWindow.WebContents.send(
-                           `updateAvailable(res.updateInfo),
-                         );
-                    };
-                  }
-                )
-                |> ignore;
-              } else {
-                Js.Console.log("main: Updater is not available");
-              };
-            },
-          ),
-        );
+        mainWindow->Ipc.FromMain.send(InitDone(staticData));
       }
     )
   );
 };
 
 let main = () => {
-  ElectronUpdater.config.logger = ElectronLog.log;
-  ElectronUpdater.loggerFileConfig.level = "info";
-  ElectronUpdater.config.autoDownload = false;
-
-  Js.Console.log("main: Set user data path ...");
-
   IO.Infix.(
     setDerivedUserDataPath()
+    >>= installDevelopmentExtensions
+    >>= createWindow
     >>= (
-      () =>
-        {
-          Js.Console.log("main: Install extensions ...");
-
-          ElectronDevtoolsInstaller.install([|
-            ElectronDevtoolsInstaller.reactDeveloperTools,
-            ElectronDevtoolsInstaller.reduxDevtools,
-          |]);
-        }
-        >>= (
-          installedExtensions =>
-            {
-              Js.Console.log(
-                "main: Installed extensions: " ++ installedExtensions,
-              );
-
-              Js.Console.log("main: Create Window ...");
-
-              createWindow();
-            }
-            <&> (
-              () => {
-                Electron.App.on(
-                  `windowAllClosed(() => {Electron.App.quit()}),
-                );
-              }
-            )
+      mainWindow =>
+        initializeData(mainWindow)
+        <&> (
+          _ => {
+            AutoUpdates.listenAndRun(mainWindow);
+            Electron.App.on(`windowAllClosed(() => {Electron.App.quit()}));
+          }
         )
     )
+    |> Js.Promise.catch(err => {
+         Js.Console.error(err);
+         IO.return();
+       })
+    |> ignore
   );
 };
-//
-// app.on("ready") expects a callback that returns void and not a Promise
-let mainVoid = () => {
-  main()
-  |> Js.Promise.catch(err => {
-       Js.Console.error(err);
-       IO.return();
-     })
-  |> ignore;
-};
 
-Electron.App.on(`ready(mainVoid));
+Electron.App.on(`ready(main));

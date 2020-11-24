@@ -11,27 +11,23 @@ module Decode = {
   module Translation = {
     type t = list(page);
 
-    let t = json =>
+    let t =
       JsonStrict.(
-        json
-        |> field(
-             "occurrences",
-             OneOrMany.Decode.t(json => {
-               let first = json |> field("firstPage", int);
-               let maybeLast = json |> optionalField("lastPage", int);
+        OneOrMany.Decode.t(json => {
+          let first = json |> field("firstPage", int);
+          let maybeLast = json |> optionalField("lastPage", int);
 
-               Ley_Option.option(
-                 Single(first),
-                 last => Range(first, last),
-                 maybeLast,
-               );
-             }),
+          Ley_Option.option(
+            Single(first),
+            last => Range(first, last),
+            maybeLast,
+          );
+        })
+        |> map(
+             fun
+             | OneOrMany.One(x) => [x]
+             | Many(xs) => xs,
            )
-        |> (
-          fun
-          | One(x) => [x]
-          | Many(xs) => xs
-        )
       );
   };
 
@@ -39,22 +35,22 @@ module Decode = {
 
   type multilingual = {
     id: int,
-    translations: TranslationMap.t,
+    occurrences: TranslationMap.t,
   };
 
-  let multilingual = json =>
+  let multilingual = (json): multilingual =>
     Json.Decode.{
       id: json |> field("id", int),
-      translations: json |> field("translations", TranslationMap.Decode.t),
+      occurrences: json |> field("occurrences", TranslationMap.Decode.t),
     };
 
   let multilingualList = Json.Decode.list(multilingual);
 
-  let resolveTranslations = (langs, x) =>
+  let resolveTranslations = (langs, x: multilingual) =>
     Ley_Option.Infix.(
-      x.translations
+      x.occurrences
       |> TranslationMap.Decode.getFromLanguageOrder(langs)
-      <&> (translation => {id: x.id, occurrences: translation})
+      <&> ((occurrences) => ({id: x.id, occurrences}: t))
     );
 
   let resolveTranslationsList = (langs, xs) =>

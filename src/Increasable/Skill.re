@@ -137,7 +137,7 @@ module Static = {
         failed: string,
         critical: string,
         botch: string,
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
@@ -151,7 +151,7 @@ module Static = {
           failed: json |> field("failed", string),
           critical: json |> field("critical", string),
           botch: json |> field("botch", string),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -162,17 +162,16 @@ module Static = {
       | False
       | Maybe;
 
-    let encumbranceUniv = json =>
+    let encumbranceUniv =
       Json.Decode.(
-        json
-        |> string
-        |> (
-          fun
-          | "true" => json |> int |> (_ => (True: encumbranceUniv))
-          | "false" => json |> int |> (_ => (False: encumbranceUniv))
-          | "maybe" => json |> int |> (_ => (Maybe: encumbranceUniv))
-          | str => raise(DecodeError("Unknown encumbrance: " ++ str))
-        )
+        string
+        |> map(
+             fun
+             | "true" => (True: encumbranceUniv)
+             | "false" => (False: encumbranceUniv)
+             | "maybe" => (Maybe: encumbranceUniv)
+             | str => raise(DecodeError("Unknown encumbrance: " ++ str)),
+           )
       );
 
     type multilingual = {
@@ -259,7 +258,7 @@ module Static = {
             critical: translation.critical,
             botch: translation.botch,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
+            errata: translation.errata |> Ley_Option.fromOption([]),
           }
         )
       );

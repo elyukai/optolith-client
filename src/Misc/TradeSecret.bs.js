@@ -13,7 +13,7 @@ function t(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
           description: JsonStrict$OptolithClient.optionalField("description", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -44,7 +44,7 @@ function resolveTranslations(langs, x) {
                         isSecretKnowledge: x.isSecretKnowledge,
                         prerequisites: Ley_Option$OptolithClient.option(/* [] */0, Curry._1(Prerequisite$OptolithClient.Collection.Profession.Decode.resolveTranslations, langs), x.prerequisites),
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

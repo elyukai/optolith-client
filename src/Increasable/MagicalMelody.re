@@ -47,8 +47,7 @@ module Static = {
         effect: string,
         duration: ActivatableSkill.MainParameter.translation,
         cost: ActivatableSkill.MainParameter.translation,
-        target: string,
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
@@ -58,8 +57,7 @@ module Static = {
           duration:
             json |> field("duration", ActivatableSkill.MainParameter.decode),
           cost: json |> field("cost", ActivatableSkill.MainParameter.decode),
-          target: json |> field("target", string),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -69,7 +67,7 @@ module Static = {
       id: int,
       check: SkillCheck.t,
       skill: OneOrMany.t(int),
-      musicTraditions: Ley_IntMap.t(musicTraditionMultilingual),
+      musicTradition: Ley_IntMap.t(musicTraditionMultilingual),
       property: int,
       ic: IC.t,
       src: list(PublicationRef.Decode.multilingual),
@@ -82,9 +80,9 @@ module Static = {
         check: json |> field("check", SkillCheck.Decode.t),
         property: json |> field("property", int),
         skill: json |> field("skill", OneOrMany.Decode.t(int)),
-        musicTraditions:
+        musicTradition:
           json
-          |> field("musicTraditions", list(musicTraditionMultilingualAssoc))
+          |> field("musicTradition", list(musicTraditionMultilingualAssoc))
           |> Ley_IntMap.fromList,
         ic: json |> field("ic", IC.Decode.t),
         src: json |> field("src", PublicationRef.Decode.multilingualList),
@@ -110,7 +108,7 @@ module Static = {
               ActivatableSkill.MainParameter.make(false, translation.cost),
             skill: x.skill,
             musicTraditions:
-              x.musicTraditions
+              x.musicTradition
               |> Ley_IntMap.mapMaybe(
                    (musicTradition: musicTraditionMultilingual) =>
                    musicTradition.translations
@@ -121,7 +119,7 @@ module Static = {
             property: x.property,
             ic: x.ic,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
+            errata: translation.errata |> Ley_Option.fromOption([]),
           }
         )
       );

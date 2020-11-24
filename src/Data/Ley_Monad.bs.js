@@ -9,6 +9,16 @@ function MakeInfix(Arg) {
   var $eq$less$less = function (x, f) {
     return Curry._2(Arg.bind, x, f);
   };
+  var $great$great = function (x, y) {
+    return Curry._2(Arg.bind, (function (param) {
+                  return y;
+                }), x);
+  };
+  var $less$less = function (y, x) {
+    return Curry._2(Arg.bind, (function (param) {
+                  return y;
+                }), x);
+  };
   var $great$eq$great = function (f, g, x) {
     var x$1 = Curry._1(f, x);
     return Curry._2(Arg.bind, g, x$1);
@@ -20,6 +30,8 @@ function MakeInfix(Arg) {
   return {
           $great$great$eq: $great$great$eq,
           $eq$less$less: $eq$less$less,
+          $great$great: $great$great,
+          $less$less: $less$less,
           $great$eq$great: $great$eq$great,
           $less$eq$less: $less$eq$less
         };

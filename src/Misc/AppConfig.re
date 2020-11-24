@@ -99,7 +99,7 @@ type t = {
   enableAnimations: bool,
 };
 
-let initialConfig = {
+let default = {
   characterListSortOrder: DateModified,
   characterListVisibilityFilter: All,
   raceListSortOrder: Name,
@@ -459,4 +459,323 @@ module Decode = {
           |> Ley_Option.fromOption(false),
       };
   };
+
+  let characterListSortOrder =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "name" => (Name: characterListSortOrder)
+           | "dateModified" => DateModified
+           | str =>
+             raiseUnknownOption(
+               ~optionName="characterListSortOrder",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let characterListVisibilityFilter =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "all" => (All: characterListVisibilityFilter)
+           | "own" => Own
+           | "shared" => Shared
+           | str =>
+             raiseUnknownOption(
+               ~optionName="characterListVisibilityFilter",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let raceListSortOrder =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "name" => (Name: raceListSortOrder)
+           | "apValue" => ApValue
+           | str =>
+             raiseUnknownOption(
+               ~optionName="raceListSortOrder",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let cultureListSortOrder =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "name" => (Name: cultureListSortOrder)
+           | "apValue" => ApValue
+           | str =>
+             raiseUnknownOption(
+               ~optionName="cultureListSortOrder",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let cultureListVisibilityFilter =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "all" => (All: cultureListVisibilityFilter)
+           | "common" => Common
+           | str =>
+             raiseUnknownOption(
+               ~optionName="cultureListVisibilityFilter",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let professionListSortOrder =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "name" => (Name: professionListSortOrder)
+           | "apValue" => ApValue
+           | str =>
+             raiseUnknownOption(
+               ~optionName="professionListSortOrder",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let professionListVisibilityFilter =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "all" => (All: professionListVisibilityFilter)
+           | "common" => Common
+           | str =>
+             raiseUnknownOption(
+               ~optionName="professionListVisibilityFilter",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let professionListGroupVisibilityFilter =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "all" => (All: professionListGroupVisibilityFilter)
+           | "mundane" => Mundane
+           | "magical" => Magical
+           | "blessed" => Blessed
+           | str =>
+             raiseUnknownOption(
+               ~optionName="professionListGroupVisibilityFilter",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let skillListSortOrder =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "name" => (Name: skillListSortOrder)
+           | "group" => Group
+           | "ic" => IC
+           | str =>
+             raiseUnknownOption(
+               ~optionName="skillListSortOrder",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let combatTechniqueListSortOrder =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "name" => (Name: combatTechniqueListSortOrder)
+           | "group" => Group
+           | "ic" => IC
+           | str =>
+             raiseUnknownOption(
+               ~optionName="combatTechniqueListSortOrder",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let specialAbilityListSortOrder =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "name" => (Name: specialAbilityListSortOrder)
+           | "group" => Group
+           | str =>
+             raiseUnknownOption(
+               ~optionName="specialAbilityListSortOrder",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let spellListSortOrder =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "name" => (Name: spellListSortOrder)
+           | "group" => Group
+           | "property" => Property
+           | "ic" => IC
+           | str =>
+             raiseUnknownOption(
+               ~optionName="spellListSortOrder",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let liturgicalChantListSortOrder =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "name" => (Name: liturgicalChantListSortOrder)
+           | "group" => Group
+           | "ic" => IC
+           | str =>
+             raiseUnknownOption(
+               ~optionName="liturgicalChantListSortOrder",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let equipmentListSortOrder =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "name" => (Name: equipmentListSortOrder)
+           | "group" => Group
+           | "where" => Where
+           | "weight" => Weight
+           | str =>
+             raiseUnknownOption(
+               ~optionName="equipmentListSortOrder",
+               ~invalidValue=str,
+             ),
+         )
+    );
+
+  let theme =
+    Json.Decode.(
+      string
+      |> map(
+           fun
+           | "dark" => (Dark: theme)
+           | "light" => Light
+           | str =>
+             raiseUnknownOption(~optionName="theme", ~invalidValue=str),
+         )
+    );
+
+  let t = json =>
+    JsonStrict.{
+      characterListSortOrder:
+        json |> field("characterListSortOrder", characterListSortOrder),
+      characterListVisibilityFilter:
+        json
+        |> field(
+             "characterListVisibilityFilter",
+             characterListVisibilityFilter,
+           ),
+      raceListSortOrder:
+        json |> field("raceListSortOrder", raceListSortOrder),
+      cultureListSortOrder:
+        json |> field("cultureListSortOrder", cultureListSortOrder),
+      cultureListVisibilityFilter:
+        json
+        |> field("cultureListVisibilityFilter", cultureListVisibilityFilter),
+      professionListSortOrder:
+        json |> field("professionListSortOrder", professionListSortOrder),
+      professionListVisibilityFilter:
+        json
+        |> field(
+             "professionListVisibilityFilter",
+             professionListVisibilityFilter,
+           ),
+      professionListGroupVisibilityFilter:
+        json
+        |> field(
+             "professionListGroupVisibilityFilter",
+             professionListGroupVisibilityFilter,
+           ),
+      advantageDisadvantageListCultureRatingVisibility:
+        json
+        |> field("advantageDisadvantageListCultureRatingVisibility", bool),
+      skillListSortOrder:
+        json |> field("skillListSortOrder", skillListSortOrder),
+      skillListCultureRatingVisibility:
+        json |> field("skillListCultureRatingVisibility", bool),
+      combatTechniqueListSortOrder:
+        json
+        |> field("combatTechniqueListSortOrder", combatTechniqueListSortOrder),
+      specialAbilityListSortOrder:
+        json
+        |> field("specialAbilityListSortOrder", specialAbilityListSortOrder),
+      spellListSortOrder:
+        json |> field("spellListSortOrder", spellListSortOrder),
+      spellListUnfamiliarVisibility:
+        json |> field("spellListUnfamiliarVisibility", bool),
+      liturgicalChantListSortOrder:
+        json
+        |> field("liturgicalChantListSortOrder", liturgicalChantListSortOrder),
+      equipmentListSortOrder:
+        json |> field("equipmentListSortOrder", equipmentListSortOrder),
+      equipmentListGroupVisibilityFilter:
+        json |> field("equipmentListGroupVisibilityFilter", int),
+      sheetShowCheckAttributeValues:
+        json
+        |> optionalField("sheetShowCheckAttributeValues", bool)
+        |> Ley_Option.fromOption(false),
+      sheetUseParchment:
+        json
+        |> optionalField("sheetUseParchment", bool)
+        |> Ley_Option.fromOption(false),
+      sheetZoomFactor: json |> field("sheetZoomFactor", int),
+      enableActiveEntryHints: json |> field("enableActiveEntryHints", bool),
+      locales:
+        json
+        |> optionalField("locales", list(string))
+        |> Ley_Option.fromOption([]),
+      theme:
+        json |> optionalField("theme", theme) |> Ley_Option.fromOption(Dark),
+      enableEditingHeroAfterCreationPhase:
+        json
+        |> optionalField("enableEditingHeroAfterCreationPhase", bool)
+        |> Ley_Option.fromOption(false),
+      meleeItemTemplatesCombatTechniqueFilter:
+        json
+        |> optionalField("meleeItemTemplatesCombatTechniqueFilter", string),
+      rangedItemTemplatesCombatTechniqueFilter:
+        json
+        |> optionalField("rangedItemTemplatesCombatTechniqueFilter", string),
+      enableAnimations:
+        json
+        |> optionalField("enableAnimations", bool)
+        |> Ley_Option.fromOption(false),
+    };
 };

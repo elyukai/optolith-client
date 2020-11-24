@@ -7,29 +7,32 @@ import * as JsonStrict$OptolithClient from "../Misc/JsonStrict.bs.js";
 import * as Ley_Option$OptolithClient from "../Data/Ley_Option.bs.js";
 import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
-function t(json) {
-  var x = JsonStrict$OptolithClient.field("occurrences", OneOrMany$OptolithClient.Decode.t(function (json) {
-            var first = JsonStrict$OptolithClient.field("firstPage", JsonStrict$OptolithClient.$$int, json);
-            var maybeLast = JsonStrict$OptolithClient.optionalField("lastPage", JsonStrict$OptolithClient.$$int, json);
-            return Ley_Option$OptolithClient.option({
-                        TAG: /* Single */0,
-                        _0: first
-                      }, (function (last) {
-                          return {
-                                  TAG: /* Range */1,
-                                  _0: first,
-                                  _1: last
-                                };
-                        }), maybeLast);
-          }), json);
-  if (x.TAG) {
-    return x._0;
-  } else {
-    return {
-            hd: x._0,
-            tl: /* [] */0
-          };
-  }
+var partial_arg = OneOrMany$OptolithClient.Decode.t(function (json) {
+      var first = JsonStrict$OptolithClient.field("firstPage", JsonStrict$OptolithClient.$$int, json);
+      var maybeLast = JsonStrict$OptolithClient.optionalField("lastPage", JsonStrict$OptolithClient.$$int, json);
+      return Ley_Option$OptolithClient.option({
+                  TAG: /* Single */0,
+                  _0: first
+                }, (function (last) {
+                    return {
+                            TAG: /* Range */1,
+                            _0: first,
+                            _1: last
+                          };
+                  }), maybeLast);
+    });
+
+function t(param) {
+  return JsonStrict$OptolithClient.map((function (x) {
+                if (x.TAG) {
+                  return x._0;
+                } else {
+                  return {
+                          hd: x._0,
+                          tl: /* [] */0
+                        };
+                }
+              }), partial_arg, param);
 }
 
 var Translation = {
@@ -41,7 +44,7 @@ var TranslationMap = TranslationMap$OptolithClient.Make(Translation);
 function multilingual(json) {
   return {
           id: Json_decode.field("id", Json_decode.$$int, json),
-          translations: Json_decode.field("translations", TranslationMap.Decode.t, json)
+          occurrences: Json_decode.field("occurrences", TranslationMap.Decode.t, json)
         };
 }
 
@@ -51,10 +54,10 @@ function multilingualList(param) {
 
 function resolveTranslationsList(langs, xs) {
   return Ley_Option$OptolithClient.mapOption((function (param) {
-                return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, param.translations), (function (translation) {
+                return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, param.occurrences), (function (occurrences) {
                               return {
                                       id: param.id,
-                                      occurrences: translation
+                                      occurrences: occurrences
                                     };
                             }));
               }), xs);
@@ -69,4 +72,4 @@ export {
   Decode ,
   
 }
-/* TranslationMap Not a pure module */
+/* partial_arg Not a pure module */

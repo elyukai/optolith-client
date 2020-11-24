@@ -55,7 +55,7 @@ module Static = {
         uncommonAdvantages: option(string),
         uncommonDisadvantages: option(string),
         commonNames: string,
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
@@ -77,7 +77,7 @@ module Static = {
           uncommonDisadvantages:
             json |> optionalField("uncommonDisadvantages", string),
           commonNames: json |> field("commonNames", string),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -172,7 +172,12 @@ module Static = {
         culturalPackageApValue: json |> field("culturalPackageApValue", int),
         culturalPackageSkills:
           json
-          |> field("culturalPackageSkills", list(pair(int, int)))
+          |> field(
+               "culturalPackageSkills",
+               list(json =>
+                 (json |> field("id", int), json |> field("value", int))
+               ),
+             )
           |> Ley_IntMap.fromList,
         src: json |> field("src", PublicationRef.Decode.multilingualList),
         translations: json |> field("translations", TranslationMap.Decode.t),
@@ -217,7 +222,7 @@ module Static = {
             culturalPackageApValue: x.culturalPackageApValue,
             culturalPackageSkills: x.culturalPackageSkills,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
+            errata: translation.errata |> Ley_Option.fromOption([]),
           }
         )
       );

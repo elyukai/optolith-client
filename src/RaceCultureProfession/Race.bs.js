@@ -80,7 +80,7 @@ function t$1(json) {
           commonDisadvantages: JsonStrict$OptolithClient.optionalField("commonDisadvantages", JsonStrict$OptolithClient.string, json),
           uncommonAdvantages: JsonStrict$OptolithClient.optionalField("uncommonAdvantages", JsonStrict$OptolithClient.string, json),
           uncommonDisadvantages: JsonStrict$OptolithClient.optionalField("uncommonDisadvantages", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -94,32 +94,36 @@ function variantOptionsMultilingual(param) {
   return JsonStrict$OptolithClient.andThen((function (str) {
                 switch (str) {
                   case "WithVariants" :
-                      return function (json) {
-                        return {
-                                TAG: /* WithVariants */0,
-                                variants: Curry._1(Ley_IntMap$OptolithClient.fromList, JsonStrict$OptolithClient.field("variants", (function (param) {
-                                            return JsonStrict$OptolithClient.list(multilingualAssoc, param);
-                                          }), json))
-                              };
+                      return function (param) {
+                        return JsonStrict$OptolithClient.field("value", (function (json) {
+                                      return {
+                                              TAG: /* WithVariants */0,
+                                              variants: Curry._1(Ley_IntMap$OptolithClient.fromList, JsonStrict$OptolithClient.field("variants", (function (param) {
+                                                          return JsonStrict$OptolithClient.list(multilingualAssoc, param);
+                                                        }), json))
+                                            };
+                                    }), param);
                       };
                   case "WithoutVariants" :
-                      return function (json) {
-                        return {
-                                TAG: /* WithoutVariants */1,
-                                commonCultures: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("commonCultures", (function (param) {
-                                            return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
-                                          }), json)),
-                                hairColors: JsonStrict$OptolithClient.field("hairColors", (function (param) {
-                                        return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
-                                      }), json),
-                                eyeColors: JsonStrict$OptolithClient.field("eyeColors", (function (param) {
-                                        return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
-                                      }), json),
-                                sizeBase: JsonStrict$OptolithClient.field("sizeBase", JsonStrict$OptolithClient.$$int, json),
-                                sizeRandom: JsonStrict$OptolithClient.field("sizeRandom", (function (param) {
-                                        return JsonStrict$OptolithClient.list(Dice$OptolithClient.Decode.t, param);
-                                      }), json)
-                              };
+                      return function (param) {
+                        return JsonStrict$OptolithClient.field("value", (function (json) {
+                                      return {
+                                              TAG: /* WithoutVariants */1,
+                                              commonCultures: Curry._1(Ley_IntSet$OptolithClient.fromList, JsonStrict$OptolithClient.field("commonCultures", (function (param) {
+                                                          return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
+                                                        }), json)),
+                                              hairColors: JsonStrict$OptolithClient.field("hairColors", (function (param) {
+                                                      return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
+                                                    }), json),
+                                              eyeColors: JsonStrict$OptolithClient.field("eyeColors", (function (param) {
+                                                      return JsonStrict$OptolithClient.list(JsonStrict$OptolithClient.$$int, param);
+                                                    }), json),
+                                              sizeBase: JsonStrict$OptolithClient.field("sizeBase", JsonStrict$OptolithClient.$$int, json),
+                                              sizeRandom: JsonStrict$OptolithClient.field("sizeRandom", (function (param) {
+                                                      return JsonStrict$OptolithClient.list(Dice$OptolithClient.Decode.t, param);
+                                                    }), json)
+                                            };
+                                    }), param);
                       };
                   default:
                     throw {
@@ -259,7 +263,7 @@ function t$2(langs, json) {
                         startingAge: x.startingAge,
                         variantOptions: tmp,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

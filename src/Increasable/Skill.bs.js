@@ -90,7 +90,7 @@ function t$2(json) {
           failed: JsonStrict$OptolithClient.field("failed", JsonStrict$OptolithClient.string, json),
           critical: JsonStrict$OptolithClient.field("critical", JsonStrict$OptolithClient.string, json),
           botch: JsonStrict$OptolithClient.field("botch", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -100,25 +100,23 @@ var Translation$2 = {
 
 var TranslationMap$2 = TranslationMap$OptolithClient.Make(Translation$2);
 
-function encumbranceUniv(json) {
-  var str = Json_decode.string(json);
-  switch (str) {
-    case "false" :
-        Json_decode.$$int(json);
-        return /* False */1;
-    case "maybe" :
-        Json_decode.$$int(json);
-        return /* Maybe */2;
-    case "true" :
-        Json_decode.$$int(json);
-        return /* True */0;
-    default:
-      throw {
-            RE_EXN_ID: Json_decode.DecodeError,
-            _1: "Unknown encumbrance: " + str,
-            Error: new Error()
-          };
-  }
+function encumbranceUniv(param) {
+  return Json_decode.map((function (str) {
+                switch (str) {
+                  case "false" :
+                      return /* False */1;
+                  case "maybe" :
+                      return /* Maybe */2;
+                  case "true" :
+                      return /* True */0;
+                  default:
+                    throw {
+                          RE_EXN_ID: Json_decode.DecodeError,
+                          _1: "Unknown encumbrance: " + str,
+                          Error: new Error()
+                        };
+                }
+              }), Json_decode.string, param);
 }
 
 function multilingual$2(json) {
@@ -182,7 +180,7 @@ function t$3(langs, json) {
                         critical: translation.critical,
                         botch: translation.botch,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

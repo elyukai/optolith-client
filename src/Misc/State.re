@@ -22,14 +22,14 @@ module Static = {
       type t = {
         name: string,
         description: option(string),
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
         JsonStrict.{
           name: json |> field("name", string),
           description: json |> optionalField("description", string),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -61,7 +61,7 @@ module Static = {
             description: translation.description,
             isPrerequisite: x.isPrerequisite,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
+            errata: translation.errata |> Ley_Option.fromOption([]),
           }
         )
       );

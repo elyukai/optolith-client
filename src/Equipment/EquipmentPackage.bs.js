@@ -12,8 +12,8 @@ import * as TranslationMap$OptolithClient from "../Misc/TranslationMap.bs.js";
 
 function t(json) {
   return {
-          name: Json_decode.field("name", Json_decode.string, json),
-          errata: Json_decode.field("errata", Erratum$OptolithClient.Decode.list, json)
+          name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -50,7 +50,7 @@ function resolveTranslations(langs, x) {
                         name: translation.name,
                         items: x.items,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

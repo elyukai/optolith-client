@@ -1326,6 +1326,10 @@ var Infix_$great$great$eq = include$8.$great$great$eq;
 
 var Infix_$eq$less$less = include$8.$eq$less$less;
 
+var Infix_$great$great = include$8.$great$great;
+
+var Infix_$less$less = include$8.$less$less;
+
 var Infix_$great$eq$great = include$8.$great$eq$great;
 
 var Infix_$less$eq$less = include$8.$less$eq$less;
@@ -1340,6 +1344,8 @@ var Infix = {
   $less$pipe$great: Infix_$less$pipe$great,
   $great$great$eq: Infix_$great$great$eq,
   $eq$less$less: Infix_$eq$less$less,
+  $great$great: Infix_$great$great,
+  $less$less: Infix_$less$less,
   $great$eq$great: Infix_$great$eq$great,
   $less$eq$less: Infix_$less$eq$less
 };

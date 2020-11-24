@@ -1,99 +1,87 @@
 open IO.Infix;
 
-module Parser = {
-  [@bs.module "yaml"] external parse: string => Js.Json.t = "parse";
-};
-
 type t = {
-  advantages: list(Js.Json.t),
-  animalShapes: list(Js.Json.t),
-  animalShapePaths: list(Js.Json.t),
-  animalShapeSizes: list(Js.Json.t),
-  animistForces: list(Js.Json.t),
-  arcaneBardTraditions: list(Js.Json.t),
-  arcaneDancerTraditions: list(Js.Json.t),
-  armorTypes: list(Js.Json.t),
-  aspects: list(Js.Json.t),
-  attributes: list(Js.Json.t),
-  blessedTraditions: list(Js.Json.t),
-  blessings: list(Js.Json.t),
-  brews: list(Js.Json.t),
-  cantrips: list(Js.Json.t),
-  combatSpecialAbilityGroups: list(Js.Json.t),
-  combatTechniqueGroups: list(Js.Json.t),
-  combatTechniques: list(Js.Json.t),
-  conditions: list(Js.Json.t),
-  coreRules: list(Js.Json.t),
-  cultures: list(Js.Json.t),
-  curricula: list(Js.Json.t),
-  curses: list(Js.Json.t),
-  derivedCharacteristics: list(Js.Json.t),
-  disadvantages: list(Js.Json.t),
-  dominationRituals: list(Js.Json.t),
-  elvenMagicalSongs: list(Js.Json.t),
-  items: list(Js.Json.t),
-  equipmentGroups: list(Js.Json.t),
-  equipmentPackages: list(Js.Json.t),
-  experienceLevels: list(Js.Json.t),
-  eyeColors: list(Js.Json.t),
-  focusRules: list(Js.Json.t),
-  geodeRituals: list(Js.Json.t),
-  hairColors: list(Js.Json.t),
-  languages: list(Js.Json.t),
-  liturgicalChantGroups: list(Js.Json.t),
-  liturgicalChants: list(Js.Json.t),
-  magicalDances: list(Js.Json.t),
-  magicalMelodies: list(Js.Json.t),
-  magicalTraditions: list(Js.Json.t),
-  optionalRules: list(Js.Json.t),
-  pacts: list(Js.Json.t),
-  patrons: list(Js.Json.t),
-  patronCategories: list(Js.Json.t),
-  professions: list(Js.Json.t),
-  properties: list(Js.Json.t),
-  publications: list(Js.Json.t),
-  races: list(Js.Json.t),
-  reaches: list(Js.Json.t),
-  rogueSpells: list(Js.Json.t),
-  scripts: list(Js.Json.t),
-  skillGroups: list(Js.Json.t),
-  skills: list(Js.Json.t),
-  socialStatuses: list(Js.Json.t),
-  specialAbilities: list(Js.Json.t),
-  specialAbilityGroups: list(Js.Json.t),
-  spellGroups: list(Js.Json.t),
-  spells: list(Js.Json.t),
-  states: list(Js.Json.t),
-  subjects: list(Js.Json.t),
-  tradeSecrets: list(Js.Json.t),
-  tribes: list(Js.Json.t),
-  zibiljaRituals: list(Js.Json.t),
+  advantages: list(string),
+  animalShapes: list(string),
+  animalShapePaths: list(string),
+  animalShapeSizes: list(string),
+  animistForces: list(string),
+  arcaneBardTraditions: list(string),
+  arcaneDancerTraditions: list(string),
+  armorTypes: list(string),
+  aspects: list(string),
+  attributes: list(string),
+  blessedTraditions: list(string),
+  blessings: list(string),
+  brews: list(string),
+  cantrips: list(string),
+  combatSpecialAbilityGroups: list(string),
+  combatTechniqueGroups: list(string),
+  combatTechniques: list(string),
+  conditions: list(string),
+  coreRules: list(string),
+  cultures: list(string),
+  curricula: list(string),
+  curses: list(string),
+  derivedCharacteristics: list(string),
+  disadvantages: list(string),
+  dominationRituals: list(string),
+  elvenMagicalSongs: list(string),
+  items: list(string),
+  equipmentGroups: list(string),
+  equipmentPackages: list(string),
+  experienceLevels: list(string),
+  eyeColors: list(string),
+  focusRules: list(string),
+  geodeRituals: list(string),
+  hairColors: list(string),
+  languages: list(string),
+  liturgicalChantGroups: list(string),
+  liturgicalChants: list(string),
+  magicalDances: list(string),
+  magicalMelodies: list(string),
+  magicalTraditions: list(string),
+  optionalRules: list(string),
+  pacts: list(string),
+  patrons: list(string),
+  patronCategories: list(string),
+  professions: list(string),
+  properties: list(string),
+  publications: list(string),
+  races: list(string),
+  reaches: list(string),
+  rogueSpells: list(string),
+  scripts: list(string),
+  skillGroups: list(string),
+  skills: list(string),
+  socialStatuses: list(string),
+  specialAbilities: list(string),
+  specialAbilityGroups: list(string),
+  spellGroups: list(string),
+  spells: list(string),
+  states: list(string),
+  subjects: list(string),
+  tradeSecrets: list(string),
+  tribes: list(string),
+  zibiljaRituals: list(string),
 };
 
 let dataRoot = Node.Path.join([|".", "src", "Database", "Data"|]);
 
-let parseSupportedLanguages = () =>
-  Node.Path.join([|dataRoot, "SupportedLanguages.yml"|])
-  |> IO.readFile
-  <&> Parser.parse;
-
-let parseUI = locale =>
-  Node.Path.join([|dataRoot, "UI", locale ++ ".yml"|])
-  |> IO.readFile
-  <&> Parser.parse;
-
-let parseFilesOfEntryType = dir =>
-  Node.Path.join([|dataRoot, dir|])
+let readFilesOfEntryType = dir =>
+  Node.Path.join2(dataRoot, dir)
   |> Directory.getDirectoryContents
-  |> IO.mapM(x => x |> IO.readFile <&> Parser.parse);
+  |> IO.mapM(fileName =>
+       Node.Path.join([|dataRoot, dir, fileName|]) |> IO.readFile
+     );
 
-let parseDirectories = (~onProgress, dirs) => {
+let readDirectories = (~onProgress, dirs) => {
   let max = dirs |> Ley_List.length |> Js.Int.toFloat;
 
   dirs
   |> IO.imapM((i, dir) =>
        dir
-       |> parseFilesOfEntryType
+       |> readFilesOfEntryType
        <&> (
          res => {
            onProgress((Js.Int.toFloat(i) +. 1.) /. max);
@@ -145,7 +133,7 @@ let dirs = [
   "MagicalMelodies",
   "MagicalTraditions",
   "OptionalRules",
-  "Pacts",
+  "PactCategories",
   "Patrons",
   "PatronCategories",
   "Professions",
@@ -169,9 +157,9 @@ let dirs = [
   "ZibiljaRituals",
 ];
 
-let parseFiles = (~onProgress) =>
+let readFiles = (~onProgress) =>
   dirs
-  |> parseDirectories(~onProgress)
+  |> readDirectories(~onProgress)
   <&> (
     fun
     | [

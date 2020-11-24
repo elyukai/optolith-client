@@ -170,9 +170,9 @@ function t$4(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", Id$OptolithClient.Activatable.Decode.t, json),
           active: JsonStrict$OptolithClient.field("active", JsonStrict$OptolithClient.bool, json),
-          options: JsonStrict$OptolithClient.field("options", (function (param) {
-                  return JsonStrict$OptolithClient.list(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
-                }), json),
+          options: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("options", (function (param) {
+                      return JsonStrict$OptolithClient.list(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
+                    }), json)),
           level: JsonStrict$OptolithClient.optionalField("level", JsonStrict$OptolithClient.$$int, json)
         };
 }
@@ -237,9 +237,9 @@ function t$5(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", activatableIds, json),
           active: JsonStrict$OptolithClient.field("active", JsonStrict$OptolithClient.bool, json),
-          options: JsonStrict$OptolithClient.field("options", (function (param) {
-                  return JsonStrict$OptolithClient.list(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
-                }), json),
+          options: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("options", (function (param) {
+                      return JsonStrict$OptolithClient.list(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
+                    }), json)),
           level: JsonStrict$OptolithClient.optionalField("level", JsonStrict$OptolithClient.$$int, json)
         };
 }
@@ -251,9 +251,9 @@ function t$6(json) {
           firstOption: JsonStrict$OptolithClient.field("firstOption", (function (param) {
                   return JsonStrict$OptolithClient.list(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
                 }), json),
-          otherOptions: JsonStrict$OptolithClient.field("otherOptions", (function (param) {
-                  return JsonStrict$OptolithClient.list(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
-                }), json),
+          otherOptions: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("otherOptions", (function (param) {
+                      return JsonStrict$OptolithClient.list(Id$OptolithClient.Activatable.SelectOption.Decode.t, param);
+                    }), json)),
           level: JsonStrict$OptolithClient.optionalField("level", JsonStrict$OptolithClient.$$int, json)
         };
 }

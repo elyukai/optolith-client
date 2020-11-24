@@ -18,7 +18,7 @@ module Static = {
         range: string,
         duration: string,
         target: string,
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
@@ -28,7 +28,7 @@ module Static = {
           range: json |> field("range", string),
           duration: json |> field("duration", string),
           target: json |> field("target", string),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -60,7 +60,7 @@ module Static = {
             duration: translation.duration,
             target: translation.target,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
+            errata: translation.errata |> Ley_Option.fromOption([]),
           }
         )
       );

@@ -28,7 +28,7 @@ module Static = {
         range: ActivatableSkill.MainParameter.translation,
         duration: ActivatableSkill.MainParameter.translation,
         target: string,
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
@@ -44,7 +44,7 @@ module Static = {
           duration:
             json |> field("duration", ActivatableSkill.MainParameter.decode),
           target: json |> field("target", string),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -100,7 +100,7 @@ module Static = {
             property: x.property,
             ic: x.ic,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
+            errata: translation.errata |> Ley_Option.fromOption([]),
           }
         )
       );

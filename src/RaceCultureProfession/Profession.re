@@ -180,6 +180,19 @@ module Static = {
       guildMageUnfamiliarSpell: bool,
     };
 
+    let defaultVariant: variant = {
+      skillSpecialization: None,
+      languageScript: None,
+      combatTechnique: None,
+      cantrip: None,
+      curse: None,
+      terrainKnowledge: None,
+      skill: None,
+      spells: None,
+      liturgicalChants: None,
+      guildMageUnfamiliarSpell: false,
+    };
+
     let decodeVariant = json =>
       JsonStrict.{
         skillSpecialization:
@@ -231,6 +244,19 @@ module Static = {
       spells: option(list(activatableSkillOption)),
       liturgicalChants: option(list(activatableSkillOption)),
       guildMageUnfamiliarSpell: bool,
+    };
+
+    let default: t = {
+      skillSpecialization: None,
+      languageScript: None,
+      combatTechnique: None,
+      cantrip: None,
+      curse: None,
+      terrainKnowledge: None,
+      skill: None,
+      spells: None,
+      liturgicalChants: None,
+      guildMageUnfamiliarSpell: false,
     };
 
     let decode = json =>
@@ -355,8 +381,9 @@ module Static = {
       type multilingual = {
         id: int,
         apValue: int,
-        prerequisites: Prerequisite.Collection.Profession.Decode.multilingual,
-        options: Options.variant,
+        prerequisites:
+          option(Prerequisite.Collection.Profession.Decode.multilingual),
+        options: option(Options.variant),
         specialAbilities: list(Prerequisite.Activatable.t),
         combatTechniques: Ley_IntMap.t(int),
         skills: Ley_IntMap.t(int),
@@ -372,11 +399,11 @@ module Static = {
           apValue: json |> field("apValue", int),
           prerequisites:
             json
-            |> field(
+            |> optionalField(
                  "prerequisites",
                  Prerequisite.Collection.Profession.Decode.multilingual,
                ),
-          options: json |> field("options", Options.decodeVariant),
+          options: json |> optionalField("options", Options.decodeVariant),
           specialAbilities:
             json
             |> optionalField(
@@ -438,10 +465,13 @@ module Static = {
           <&> (
             translation => {
               let prerequisites =
-                Prerequisite.Collection.Profession.Decode.resolveTranslations(
-                  langs,
-                  x.prerequisites,
-                );
+                x.prerequisites
+                |> Ley_Option.option(
+                     [],
+                     Prerequisite.Collection.Profession.Decode.resolveTranslations(
+                       langs,
+                     ),
+                   );
 
               {
                 id: x.id,
@@ -449,7 +479,8 @@ module Static = {
                 apValue: x.apValue,
                 prerequisites,
                 options: {
-                  ...x.options,
+                  ...
+                    x.options |> Ley_Option.fromOption(Options.defaultVariant),
                   guildMageUnfamiliarSpell:
                     Options.getGuildMageUnfamiliarSpell(prerequisites),
                 },
@@ -493,7 +524,7 @@ module Static = {
     unsuitableDisadvantagesText: option(string),
     variants: Ley_IntMap.t(Variant.t),
     isVariantRequired: bool,
-    curriculum: int,
+    curriculum: option(int),
     gr: int,
     /**
      * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the
@@ -514,7 +545,7 @@ module Static = {
         suggestedDisadvantages: option(string),
         unsuitableAdvantages: option(string),
         unsuitableDisadvantages: option(string),
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
@@ -531,7 +562,7 @@ module Static = {
             json |> optionalField("unsuitableAdvantages", string),
           unsuitableDisadvantages:
             json |> optionalField("unsuitableDisadvantages", string),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -540,8 +571,9 @@ module Static = {
     type multilingual = {
       id: int,
       apValue: int,
-      prerequisites: Prerequisite.Collection.Profession.Decode.multilingual,
-      options: Options.t,
+      prerequisites:
+        option(Prerequisite.Collection.Profession.Decode.multilingual),
+      options: option(Options.t),
       specialAbilities: list(Prerequisite.Activatable.t),
       combatTechniques: Ley_IntMap.t(int),
       skills: Ley_IntMap.t(int),
@@ -554,7 +586,7 @@ module Static = {
       unsuitableDisadvantages: list(int),
       variants: Ley_IntMap.t(Variant.Decode.multilingual),
       isVariantRequired: bool,
-      curriculum: int,
+      curriculum: option(int),
       gr: int,
       sgr: int,
       src: list(PublicationRef.Decode.multilingual),
@@ -567,11 +599,11 @@ module Static = {
         apValue: json |> field("apValue", int),
         prerequisites:
           json
-          |> field(
+          |> optionalField(
                "prerequisites",
                Prerequisite.Collection.Profession.Decode.multilingual,
              ),
-        options: json |> field("options", Options.decode),
+        options: json |> optionalField("options", Options.decode),
         specialAbilities:
           json
           |> optionalField(
@@ -646,7 +678,7 @@ module Static = {
           json
           |> optionalField("isVariantRequired", bool)
           |> Ley_Option.fromOption(false),
-        curriculum: json |> field("curriculum", int),
+        curriculum: json |> optionalField("curriculum", int),
         gr: json |> field("gr", int),
         sgr: json |> field("sgr", int),
         src: json |> field("src", PublicationRef.Decode.multilingualList),
@@ -660,10 +692,13 @@ module Static = {
         <&> (
           translation => {
             let prerequisites =
-              Prerequisite.Collection.Profession.Decode.resolveTranslations(
-                langs,
-                x.prerequisites,
-              );
+              x.prerequisites
+              |> Ley_Option.option(
+                   [],
+                   Prerequisite.Collection.Profession.Decode.resolveTranslations(
+                     langs,
+                   ),
+                 );
 
             {
               id: x.id,
@@ -673,7 +708,7 @@ module Static = {
               prerequisites,
               prerequisitesStart: translation.prerequisitesStart,
               options: {
-                ...x.options,
+                ...x.options |> Ley_Option.fromOption(Options.default),
                 guildMageUnfamiliarSpell:
                   Options.getGuildMageUnfamiliarSpell(prerequisites),
               },
@@ -702,7 +737,7 @@ module Static = {
               sgr: x.sgr,
               src:
                 PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-              errata: translation.errata,
+              errata: translation.errata |> Ley_Option.fromOption([]),
             };
           }
         )

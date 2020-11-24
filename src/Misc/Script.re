@@ -13,13 +13,13 @@ module Decode = {
   module Translation = {
     type t = {
       name: string,
-      errata: list(Erratum.t),
+      errata: option(list(Erratum.t)),
     };
 
     let t = json =>
-      Json.Decode.{
+      JsonStrict.{
         name: json |> field("name", string),
-        errata: json |> field("errata", Erratum.Decode.list),
+        errata: json |> optionalField("errata", Erratum.Decode.list),
       };
   };
 
@@ -59,7 +59,7 @@ module Decode = {
           continent: x.continent,
           isExtinct: x.isExtinct,
           src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-          errata: translation.errata,
+          errata: translation.errata |> Ley_Option.fromOption([]),
         }
       )
     );

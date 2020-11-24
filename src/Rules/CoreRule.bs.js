@@ -209,9 +209,9 @@ function nodeType(param) {
 
 function t(json) {
   return {
-          name: Json_decode.field("name", Json_decode.string, json),
-          description: Json_decode.field("description", Json_decode.string, json),
-          errata: Json_decode.field("errata", Erratum$OptolithClient.Decode.list, json)
+          name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
+          description: JsonStrict$OptolithClient.field("description", JsonStrict$OptolithClient.string, json),
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -238,7 +238,7 @@ function resolveTranslations(langs, x) {
                         description: translation.description,
                         nodeType: x.nodeType,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

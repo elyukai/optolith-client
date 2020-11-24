@@ -17,7 +17,7 @@ function t(json) {
           range: JsonStrict$OptolithClient.field("range", JsonStrict$OptolithClient.string, json),
           duration: JsonStrict$OptolithClient.field("duration", JsonStrict$OptolithClient.string, json),
           target: JsonStrict$OptolithClient.field("target", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -54,7 +54,7 @@ function t$1(langs, json) {
                         traditions: x.traditions,
                         prerequisites: Ley_Option$OptolithClient.option(/* [] */0, Curry._1(Prerequisite$OptolithClient.Collection.Activatable.Decode.resolveTranslations, langs), x.prerequisites),
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

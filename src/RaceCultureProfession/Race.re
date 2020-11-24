@@ -179,7 +179,7 @@ module Static = {
         commonDisadvantages: option(string),
         uncommonAdvantages: option(string),
         uncommonDisadvantages: option(string),
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
@@ -199,7 +199,7 @@ module Static = {
             json |> optionalField("uncommonAdvantages", string),
           uncommonDisadvantages:
             json |> optionalField("uncommonDisadvantages", string),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -245,8 +245,9 @@ module Static = {
         field("type", string)
         |> andThen(
              fun
-             | "WithVariants" => (
-                 (json) => (
+             | "WithVariants" =>
+               field("value", (json) =>
+                 (
                    WithVariants({
                      variants:
                        json
@@ -258,19 +259,19 @@ module Static = {
                    }): variantOptionsMultilingual
                  )
                )
-             | "WithoutVariants" => (
-                 json =>
-                   WithoutVariants({
-                     commonCultures:
-                       json
-                       |> field("commonCultures", list(int))
-                       |> Ley_IntSet.fromList,
-                     hairColors: json |> field("hairColors", list(int)),
-                     eyeColors: json |> field("eyeColors", list(int)),
-                     sizeBase: json |> field("sizeBase", int),
-                     sizeRandom:
-                       json |> field("sizeRandom", list(Dice.Decode.t)),
-                   })
+             | "WithoutVariants" =>
+               field("value", json =>
+                 WithoutVariants({
+                   commonCultures:
+                     json
+                     |> field("commonCultures", list(int))
+                     |> Ley_IntSet.fromList,
+                   hairColors: json |> field("hairColors", list(int)),
+                   eyeColors: json |> field("eyeColors", list(int)),
+                   sizeBase: json |> field("sizeBase", int),
+                   sizeRandom:
+                     json |> field("sizeRandom", list(Dice.Decode.t)),
+                 })
                )
              | str => raise(DecodeError("Unknown variant options: " ++ str)),
            )
@@ -410,7 +411,7 @@ module Static = {
                 })
               },
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
+            errata: translation.errata |> Ley_Option.fromOption([]),
           }
         )
       );

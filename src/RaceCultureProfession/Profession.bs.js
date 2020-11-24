@@ -127,6 +127,19 @@ function decodeActivatableSkillOption(json) {
         };
 }
 
+var defaultVariant = {
+  skillSpecialization: undefined,
+  languageScript: undefined,
+  combatTechnique: undefined,
+  cantrip: undefined,
+  curse: undefined,
+  terrainKnowledge: undefined,
+  skill: undefined,
+  spells: undefined,
+  liturgicalChants: undefined,
+  guildMageUnfamiliarSpell: false
+};
+
 function decodeVariant(json) {
   return {
           skillSpecialization: JsonStrict$OptolithClient.optionalField("skillSpecialization", decodeVariantSkillSpecializationOption, json),
@@ -145,6 +158,19 @@ function decodeVariant(json) {
           guildMageUnfamiliarSpell: Ley_Option$OptolithClient.fromOption(false, JsonStrict$OptolithClient.optionalField("guildMageUnfamiliarSpell", JsonStrict$OptolithClient.bool, json))
         };
 }
+
+var $$default = {
+  skillSpecialization: undefined,
+  languageScript: undefined,
+  combatTechnique: undefined,
+  cantrip: undefined,
+  curse: undefined,
+  terrainKnowledge: undefined,
+  skill: undefined,
+  spells: undefined,
+  liturgicalChants: undefined,
+  guildMageUnfamiliarSpell: false
+};
 
 function decode(json) {
   return {
@@ -198,7 +224,9 @@ var Options = {
   decodeTerrainKnowledgeOption: decodeTerrainKnowledgeOption,
   decodeSkillOption: decodeSkillOption,
   decodeActivatableSkillOption: decodeActivatableSkillOption,
+  defaultVariant: defaultVariant,
   decodeVariant: decodeVariant,
+  $$default: $$default,
   decode: decode,
   getGuildMageUnfamiliarSpell: getGuildMageUnfamiliarSpell
 };
@@ -249,8 +277,8 @@ function multilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           apValue: JsonStrict$OptolithClient.field("apValue", JsonStrict$OptolithClient.$$int, json),
-          prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.Profession.Decode.multilingual, json),
-          options: JsonStrict$OptolithClient.field("options", decodeVariant, json),
+          prerequisites: JsonStrict$OptolithClient.optionalField("prerequisites", Prerequisite$OptolithClient.Collection.Profession.Decode.multilingual, json),
+          options: JsonStrict$OptolithClient.optionalField("options", decodeVariant, json),
           specialAbilities: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("specialAbilities", (function (param) {
                       return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.Decode.t, param);
                     }), json)),
@@ -303,8 +331,8 @@ function multilingualAssoc(json) {
 
 function resolveTranslations(langs, x) {
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                var prerequisites = Curry._2(Prerequisite$OptolithClient.Collection.Profession.Decode.resolveTranslations, langs, x.prerequisites);
-                var init = x.options;
+                var prerequisites = Ley_Option$OptolithClient.option(/* [] */0, Curry._1(Prerequisite$OptolithClient.Collection.Profession.Decode.resolveTranslations, langs), x.prerequisites);
+                var init = Ley_Option$OptolithClient.fromOption(defaultVariant, x.options);
                 return {
                         id: x.id,
                         name: translation.name,
@@ -356,7 +384,7 @@ function t$1(json) {
           suggestedDisadvantages: JsonStrict$OptolithClient.optionalField("suggestedDisadvantages", JsonStrict$OptolithClient.string, json),
           unsuitableAdvantages: JsonStrict$OptolithClient.optionalField("unsuitableAdvantages", JsonStrict$OptolithClient.string, json),
           unsuitableDisadvantages: JsonStrict$OptolithClient.optionalField("unsuitableDisadvantages", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -370,8 +398,8 @@ function multilingual$1(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           apValue: JsonStrict$OptolithClient.field("apValue", JsonStrict$OptolithClient.$$int, json),
-          prerequisites: JsonStrict$OptolithClient.field("prerequisites", Prerequisite$OptolithClient.Collection.Profession.Decode.multilingual, json),
-          options: JsonStrict$OptolithClient.field("options", decode, json),
+          prerequisites: JsonStrict$OptolithClient.optionalField("prerequisites", Prerequisite$OptolithClient.Collection.Profession.Decode.multilingual, json),
+          options: JsonStrict$OptolithClient.optionalField("options", decode, json),
           specialAbilities: Ley_Option$OptolithClient.fromOption(/* [] */0, JsonStrict$OptolithClient.optionalField("specialAbilities", (function (param) {
                       return JsonStrict$OptolithClient.list(Prerequisite$OptolithClient.Activatable.Decode.t, param);
                     }), json)),
@@ -426,7 +454,7 @@ function multilingual$1(json) {
                       return JsonStrict$OptolithClient.list(multilingualAssoc, param);
                     }), json)),
           isVariantRequired: Ley_Option$OptolithClient.fromOption(false, JsonStrict$OptolithClient.optionalField("isVariantRequired", JsonStrict$OptolithClient.bool, json)),
-          curriculum: JsonStrict$OptolithClient.field("curriculum", JsonStrict$OptolithClient.$$int, json),
+          curriculum: JsonStrict$OptolithClient.optionalField("curriculum", JsonStrict$OptolithClient.$$int, json),
           gr: JsonStrict$OptolithClient.field("gr", JsonStrict$OptolithClient.$$int, json),
           sgr: JsonStrict$OptolithClient.field("sgr", JsonStrict$OptolithClient.$$int, json),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
@@ -436,8 +464,8 @@ function multilingual$1(json) {
 
 function resolveTranslations$1(langs, x) {
   return Curry._2(Ley_Option$OptolithClient.Infix.$less$amp$great, Curry._2(TranslationMap$1.Decode.getFromLanguageOrder, langs, x.translations), (function (translation) {
-                var prerequisites = Curry._2(Prerequisite$OptolithClient.Collection.Profession.Decode.resolveTranslations, langs, x.prerequisites);
-                var init = x.options;
+                var prerequisites = Ley_Option$OptolithClient.option(/* [] */0, Curry._1(Prerequisite$OptolithClient.Collection.Profession.Decode.resolveTranslations, langs), x.prerequisites);
+                var init = Ley_Option$OptolithClient.fromOption($$default, x.options);
                 return {
                         id: x.id,
                         name: translation.name,
@@ -479,7 +507,7 @@ function resolveTranslations$1(langs, x) {
                         gr: x.gr,
                         sgr: x.sgr,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

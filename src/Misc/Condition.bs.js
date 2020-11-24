@@ -18,7 +18,7 @@ function t(json) {
           levels: JsonStrict$OptolithClient.field("levels", (function (param) {
                   return JsonStrict$OptolithClient.tuple4(JsonStrict$OptolithClient.string, JsonStrict$OptolithClient.string, JsonStrict$OptolithClient.string, JsonStrict$OptolithClient.string, param);
                 }), json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -46,7 +46,7 @@ function t$1(langs, json) {
                         levelDescription: translation.levelDescription,
                         levels: translation.levels,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

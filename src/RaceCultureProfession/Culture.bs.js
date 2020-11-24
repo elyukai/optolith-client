@@ -24,7 +24,7 @@ function t(json) {
           uncommonAdvantages: JsonStrict$OptolithClient.optionalField("uncommonAdvantages", JsonStrict$OptolithClient.string, json),
           uncommonDisadvantages: JsonStrict$OptolithClient.optionalField("uncommonDisadvantages", JsonStrict$OptolithClient.string, json),
           commonNames: JsonStrict$OptolithClient.field("commonNames", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -107,8 +107,11 @@ function multilingual(json) {
                     }), json)),
           culturalPackageApValue: JsonStrict$OptolithClient.field("culturalPackageApValue", JsonStrict$OptolithClient.$$int, json),
           culturalPackageSkills: Curry._1(Ley_IntMap$OptolithClient.fromList, JsonStrict$OptolithClient.field("culturalPackageSkills", (function (param) {
-                      return JsonStrict$OptolithClient.list((function (param) {
-                                    return JsonStrict$OptolithClient.pair(JsonStrict$OptolithClient.$$int, JsonStrict$OptolithClient.$$int, param);
+                      return JsonStrict$OptolithClient.list((function (json) {
+                                    return [
+                                            JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
+                                            JsonStrict$OptolithClient.field("value", JsonStrict$OptolithClient.$$int, json)
+                                          ];
                                   }), param);
                     }), json)),
           src: JsonStrict$OptolithClient.field("src", PublicationRef$OptolithClient.Decode.multilingualList, json),
@@ -150,7 +153,7 @@ function t$1(langs, json) {
                         culturalPackageApValue: x.culturalPackageApValue,
                         culturalPackageSkills: x.culturalPackageSkills,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

@@ -21,7 +21,7 @@ module Static = {
         name: string,
         effect: string,
         cost: ActivatableSkill.MainParameter.translation,
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
@@ -29,7 +29,7 @@ module Static = {
           name: json |> field("name", string),
           effect: json |> field("effect", string),
           cost: json |> field("cost", ActivatableSkill.MainParameter.decode),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -75,7 +75,7 @@ module Static = {
             property: x.property,
             ic: x.ic,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
+            errata: translation.errata |> Ley_Option.fromOption([]),
           }
         )
       );

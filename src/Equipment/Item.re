@@ -15,7 +15,7 @@ module Info = {
         rules: option(string),
         advantage: option(string),
         disadvantage: option(string),
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
@@ -24,7 +24,7 @@ module Info = {
           rules: json |> optionalField("rules", string),
           advantage: json |> optionalField("advantage", string),
           disadvantage: json |> optionalField("disadvantage", string),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -52,7 +52,7 @@ module Info = {
             advantage: translation.advantage,
             disadvantage: translation.disadvantage,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
+            errata: translation.errata |> Ley_Option.fromOption([]),
           }
         )
       );

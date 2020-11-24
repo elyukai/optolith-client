@@ -2,28 +2,25 @@
 
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 
-function t(json) {
-  var scope = Json_decode.string(json);
-  switch (scope) {
-    case "SPI" :
-        Json_decode.$$int(json);
-        return /* Spirit */0;
-    case "SPI/2" :
-        Json_decode.$$int(json);
-        return /* HalfOfSpirit */1;
-    case "SPI/TOU" :
-        Json_decode.$$int(json);
-        return /* GreaterOfBoth */3;
-    case "TOU" :
-        Json_decode.$$int(json);
-        return /* Toughness */2;
-    default:
-      throw {
-            RE_EXN_ID: Json_decode.DecodeError,
-            _1: "Unknown check modifier: " + scope,
-            Error: new Error()
-          };
-  }
+function t(param) {
+  return Json_decode.map((function (scope) {
+                switch (scope) {
+                  case "SPI" :
+                      return /* Spirit */0;
+                  case "SPI/2" :
+                      return /* HalfOfSpirit */1;
+                  case "SPI/TOU" :
+                      return /* GreaterOfBoth */3;
+                  case "TOU" :
+                      return /* Toughness */2;
+                  default:
+                    throw {
+                          RE_EXN_ID: Json_decode.DecodeError,
+                          _1: "Unknown check modifier: " + scope,
+                          Error: new Error()
+                        };
+                }
+              }), Json_decode.string, param);
 }
 
 var Decode = {

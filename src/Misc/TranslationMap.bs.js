@@ -37,4 +37,4 @@ export {
   Make ,
   
 }
-/* Ley_List-OptolithClient Not a pure module */
+/* Locale-OptolithClient Not a pure module */

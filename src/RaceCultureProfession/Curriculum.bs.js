@@ -139,8 +139,8 @@ function restrictedSpellwork(param) {
 
 function t$1(json) {
   return {
-          name: Json_decode.field("name", Json_decode.string, json),
-          errata: Json_decode.field("errata", Erratum$OptolithClient.Decode.list, json)
+          name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -180,7 +180,7 @@ function resolveTranslations(langs, x) {
                                 return resolveLessonPackageTranslations(langs, param);
                               }), x.lessonPackages),
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

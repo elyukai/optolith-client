@@ -53,7 +53,7 @@ function domainMultilingual(json) {
 function t$2(json) {
   return {
           name: JsonStrict$OptolithClient.field("name", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -94,7 +94,7 @@ function t$3(langs, json) {
                                             }), Curry._2(DomainTranslationMap.Decode.getFromLanguageOrder, langs, domain.translations));
                               }), Ley_IntMap$OptolithClient.empty, x.domains),
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

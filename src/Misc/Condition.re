@@ -29,7 +29,7 @@ module Static = {
         description: option(string),
         levelDescription: option(string),
         levels: (string, string, string, string),
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
@@ -39,7 +39,7 @@ module Static = {
           levelDescription: json |> optionalField("levelDescription", string),
           levels:
             json |> field("levels", tuple4(string, string, string, string)),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -70,7 +70,7 @@ module Static = {
             levelDescription: translation.levelDescription,
             levels: translation.levels,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
+            errata: translation.errata |> Ley_Option.fromOption([]),
           }
         )
       );

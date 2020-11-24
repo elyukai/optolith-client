@@ -43,8 +43,7 @@ function t$1(json) {
           effect: JsonStrict$OptolithClient.field("effect", JsonStrict$OptolithClient.string, json),
           duration: JsonStrict$OptolithClient.field("duration", ActivatableSkill$OptolithClient.MainParameter.decode, json),
           cost: JsonStrict$OptolithClient.field("cost", ActivatableSkill$OptolithClient.MainParameter.decode, json),
-          target: JsonStrict$OptolithClient.field("target", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -58,7 +57,7 @@ function multilingual(json) {
   return {
           id: JsonStrict$OptolithClient.field("id", JsonStrict$OptolithClient.$$int, json),
           check: JsonStrict$OptolithClient.field("check", SkillCheck$OptolithClient.Decode.t, json),
-          musicTraditions: Curry._1(Ley_IntMap$OptolithClient.fromList, JsonStrict$OptolithClient.field("musicTraditions", (function (param) {
+          musicTradition: Curry._1(Ley_IntMap$OptolithClient.fromList, JsonStrict$OptolithClient.field("musicTradition", (function (param) {
                       return JsonStrict$OptolithClient.list(musicTraditionMultilingualAssoc, param);
                     }), json)),
           property: JsonStrict$OptolithClient.field("property", JsonStrict$OptolithClient.$$int, json),
@@ -80,11 +79,11 @@ function t$2(langs, json) {
                         cost: ActivatableSkill$OptolithClient.MainParameter.make(false, translation.cost),
                         musicTraditions: Curry._2(Ley_IntMap$OptolithClient.mapMaybe, (function (musicTradition) {
                                 return Curry._2(MusicTraditionTranslationMap.Decode.getFromLanguageOrder, langs, musicTradition.translations);
-                              }), x.musicTraditions),
+                              }), x.musicTradition),
                         property: x.property,
                         ic: x.ic,
                         src: PublicationRef$OptolithClient.Decode.resolveTranslationsList(langs, x.src),
-                        errata: translation.errata
+                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, translation.errata)
                       };
               }));
 }

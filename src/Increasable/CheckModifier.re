@@ -5,19 +5,17 @@ type t =
   | GreaterOfBoth;
 
 module Decode = {
-  let t = json =>
+  let t =
     Json.Decode.(
-      json
-      |> string
-      |> (
-        scope =>
-          switch (scope) {
-          | "SPI" => json |> int |> (_ => Spirit)
-          | "SPI/2" => json |> int |> (_ => HalfOfSpirit)
-          | "TOU" => json |> int |> (_ => Toughness)
-          | "SPI/TOU" => json |> int |> (_ => GreaterOfBoth)
-          | _ => raise(DecodeError("Unknown check modifier: " ++ scope))
-          }
-      )
+      string
+      |> map(
+           fun
+           | "SPI" => Spirit
+           | "SPI/2" => HalfOfSpirit
+           | "TOU" => Toughness
+           | "SPI/TOU" => GreaterOfBoth
+           | scope =>
+             raise(DecodeError("Unknown check modifier: " ++ scope)),
+         )
     );
 };

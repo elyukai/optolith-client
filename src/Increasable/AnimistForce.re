@@ -22,7 +22,7 @@ module Static = {
         effect: string,
         cost: ActivatableSkill.MainParameter.translation,
         duration: ActivatableSkill.MainParameter.translation,
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
@@ -32,7 +32,7 @@ module Static = {
           cost: json |> field("cost", ActivatableSkill.MainParameter.decode),
           duration:
             json |> field("duration", ActivatableSkill.MainParameter.decode),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -80,7 +80,7 @@ module Static = {
             property: x.property,
             ic: x.ic,
             src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata,
+            errata: translation.errata |> Ley_Option.fromOption([]),
           }
         )
       );

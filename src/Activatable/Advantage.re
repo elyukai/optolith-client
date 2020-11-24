@@ -40,7 +40,7 @@ module Static = {
         prerequisitesEnd: option(string),
         apValue: option(string),
         apValueAppend: option(string),
-        errata: list(Erratum.t),
+        errata: option(list(Erratum.t)),
       };
 
       let t = json =>
@@ -56,7 +56,7 @@ module Static = {
           prerequisitesEnd: json |> optionalField("prerequisitesEnd", string),
           apValue: json |> optionalField("apValue", string),
           apValueAppend: json |> optionalField("apValueAppend", string),
-          errata: json |> field("errata", Erratum.Decode.list),
+          errata: json |> optionalField("errata", Erratum.Decode.list),
         };
     };
 
@@ -175,7 +175,7 @@ module Static = {
                      ~spellEnhancements,
                      ~liturgicalChantEnhancements,
                      ~src,
-                     ~errata,
+                     ~errata=errata |> Ley_Option.fromOption([]),
                    )
                 |> SelectOption.Decode.ResolveCategories.mergeSelectOptions(
                      SelectOption.Map.mapMaybe(
@@ -198,7 +198,7 @@ module Static = {
               apValueTextAppend: translation.apValueAppend,
               gr: x.gr,
               src,
-              errata,
+              errata: errata |> Ley_Option.fromOption([]),
             };
           }
         )

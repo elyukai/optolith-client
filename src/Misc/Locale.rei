@@ -23,3 +23,30 @@ let toList: order => list(string);
  * order of possible locales.
  */
 let getPreferred: order => string;
+
+module Supported: {
+  /**
+   * A language supported in Optolith. It's id is it's IETF language tag
+   * (BCP47), and it features the languages name as well as the region name
+   * defined in the standard.
+   */
+  type t = {
+    id: string,
+    name: string,
+    region: string,
+  };
+
+  /**
+   * Derive the default locale's id from the system locale's id.
+   */
+  let systemLocaleToId: (Ley_StrMap.t(t), string) => string;
+
+  module Decode: {let map: Js.Json.t => Ley_StrMap.t(t);};
+};
+
+/**
+ * `filterBySupported defaultLocale supportedLocales localeOrder` filters the
+ * order of locales set by the user by the locales that are supported. If this
+ * causes the order to be empty, a default locale will be used.
+ */
+let filterBySupported: (string, Ley_StrMap.t(Supported.t), order) => order;

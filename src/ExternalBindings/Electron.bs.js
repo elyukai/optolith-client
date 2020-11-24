@@ -21,56 +21,24 @@ var App = {
   on: on
 };
 
-function send(payload, $$window) {
-  $$window.webContents.send((function () {
-            switch (payload.NAME) {
-              case "updateNotAvailable" :
-                  return "update-not-available";
-              case "updateAvailable" :
-                  return "update-available";
-              case "downloadProgress" :
-                  return "download-progress";
-              case "autoUpdaterError" :
-                  return "auto-updater-error";
-              
-            }
-          })(), payload.VAL);
-  
-}
-
-var WebContents = {
-  send: send
-};
+var WebContents = {};
 
 var BrowserWindow = {
   WebContents: WebContents
 };
 
-var partial_arg$1 = Electron.ipcMain;
+var IpcMain = {};
 
-function addListener(param) {
-  partial_arg$1.addListener((function () {
-            switch (param.NAME) {
-              case "loadingDone" :
-                  return "loading-done";
-              case "downloadUpdate" :
-                  return "download-update";
-              case "checkForUpdates" :
-                  return "check-for-updates";
-              
-            }
-          })(), param.VAL);
-  
-}
+var IpcRenderer = {};
 
-var IpcMain = {
-  addListener: addListener
-};
+var WebFrame = {};
 
 export {
   App ,
   BrowserWindow ,
   IpcMain ,
+  IpcRenderer ,
+  WebFrame ,
   
 }
 /* partial_arg Not a pure module */

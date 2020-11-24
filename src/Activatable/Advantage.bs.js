@@ -23,7 +23,7 @@ function t(json) {
           prerequisitesEnd: JsonStrict$OptolithClient.optionalField("prerequisitesEnd", JsonStrict$OptolithClient.string, json),
           apValue: JsonStrict$OptolithClient.optionalField("apValue", JsonStrict$OptolithClient.string, json),
           apValueAppend: JsonStrict$OptolithClient.optionalField("apValueAppend", JsonStrict$OptolithClient.string, json),
-          errata: JsonStrict$OptolithClient.field("errata", Erratum$OptolithClient.Decode.list, json)
+          errata: JsonStrict$OptolithClient.optionalField("errata", Erratum$OptolithClient.Decode.list, json)
         };
 }
 
@@ -119,7 +119,7 @@ function assoc(blessings, cantrips, combatTechniques, liturgicalChants, skills, 
                                                   spellEnhancements,
                                                   liturgicalChantEnhancements,
                                                   src,
-                                                  errata,
+                                                  Ley_Option$OptolithClient.fromOption(/* [] */0, errata),
                                                   x.selectOptionCategories
                                                 ])),
                                         input: translation.input,
@@ -133,7 +133,7 @@ function assoc(blessings, cantrips, combatTechniques, liturgicalChants, skills, 
                                         apValueTextAppend: translation.apValueAppend,
                                         gr: x.gr,
                                         src: src,
-                                        errata: errata
+                                        errata: Ley_Option$OptolithClient.fromOption(/* [] */0, errata)
                                       };
                               }));
                 }), toAssoc, param, param$1);

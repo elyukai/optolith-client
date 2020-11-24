@@ -15,7 +15,16 @@ const config = [
   },
   {
     mode: 'development',
-    entry: './src/entry.tsx',
+    entry: './src/Init/InitWorker.bs.js',
+    target: 'electron-main',
+    output: {
+      path: __dirname + '/dist',
+      filename: 'initWorker.js'
+    }
+  },
+  {
+    mode: 'development',
+    entry: './src/Renderer.bs.js',
     target: 'node',
     devtool: 'source-map',
     module: {

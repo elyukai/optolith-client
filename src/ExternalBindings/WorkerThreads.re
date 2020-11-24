@@ -7,6 +7,11 @@ module Outside = {
   [@bs.module "worker_threads"] [@bs.new]
   external create: string => worker = "Worker";
 
+  type options('a) = {workerData: 'a};
+
+  [@bs.module "worker_threads"] [@bs.new]
+  external createWithOptions: (string, options('a)) => worker = "Worker";
+
   [@bs.send] external postMessage: (worker, 'a) => unit = "postMessage";
 
   [@bs.send]
@@ -16,7 +21,7 @@ module Outside = {
       [@bs.string] [
         | `online(unit => unit)
         | `message('a => unit)
-        | `error(Js.Exn.t => unit)
+        | `error(exn => unit)
         | `exit(int => unit)
       ]
     ) =>

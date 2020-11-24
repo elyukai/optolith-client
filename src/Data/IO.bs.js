@@ -60,6 +60,10 @@ var Infix_$$great = include$2.$$great;
 
 var Infix_$eq$less$less = include$3.$eq$less$less;
 
+var Infix_$great$great = include$3.$great$great;
+
+var Infix_$less$less = include$3.$less$less;
+
 var Infix_$great$eq$great = include$3.$great$eq$great;
 
 var Infix_$less$eq$less = include$3.$less$eq$less;
@@ -71,6 +75,8 @@ var Infix = {
   $$great: Infix_$$great,
   $great$great$eq: $great$great$eq,
   $eq$less$less: Infix_$eq$less$less,
+  $great$great: Infix_$great$great,
+  $less$less: Infix_$less$less,
   $great$eq$great: Infix_$great$eq$great,
   $less$eq$less: Infix_$less$eq$less
 };

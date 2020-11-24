@@ -122,6 +122,22 @@ module App = {
 
   [@bs.module "electron"] [@bs.scope "app"]
   external quit: unit => unit = "quit";
+
+  /**
+   * The current application locale. Possible return values are documented
+   * [here](https://www.electronjs.org/docs/api/locales).
+   *
+   * To set the locale, you'll want to use a command line switch at app startup,
+   * which may be found here.
+   *
+   * **Note:** When distributing your packaged app, you have to also ship the
+   * `locales` folder.
+   *
+   * **Note:** On Windows, you have to call it after the ready events gets
+   * emitted.
+   */
+  [@bs.module "electron"] [@bs.scope "app"]
+  external getLocale: unit => string = "getLocale";
 };
 
 module BrowserWindow = {
@@ -185,26 +201,6 @@ module BrowserWindow = {
   module WebContents = {
     [@bs.send] [@bs.scope "webContents"]
     external openDevTools: t => unit = "openDevTools";
-
-    [@bs.send] [@bs.scope "webContents"]
-    external send:
-      (
-        t,
-        [@bs.string] [
-          | [@bs.as "update-not-available"] `updateNotAvailable(unit)
-          | [@bs.as "update-available"] `updateAvailable(
-              ElectronUpdater.updateInfo,
-            )
-          | [@bs.as "download-progress"] `downloadProgress(
-              ElectronUpdater.progressInfo,
-            )
-          | [@bs.as "auto-updater-error"] `autoUpdaterError(Js.Exn.t)
-        ]
-      ) =>
-      unit =
-      "send";
-
-    let send = (payload, window) => send(window, payload);
   };
 };
 
@@ -212,19 +208,30 @@ module IpcMain = {
   type t;
 
   [@bs.module "electron"] external t: t = "ipcMain";
+};
 
-  [@bs.send]
-  external addListener:
-    (
-      t,
-      [@bs.string] [
-        | [@bs.as "loading-done"] `loadingDone(unit => unit)
-        | [@bs.as "download-update"] `downloadUpdate(unit => unit)
-        | [@bs.as "check-for-updates"] `checkForUpdates(unit => unit)
-      ]
-    ) =>
-    unit =
-    "addListener";
+module IpcRenderer = {
+  type t;
 
-  let addListener = addListener(t);
+  [@bs.module "electron"] external t: t = "ipcRenderer";
+};
+
+module WebFrame = {
+  /**
+   * Changes the zoom factor to the specified factor. Zoom factor is zoom
+   * percent divided by 100, so 300% = 3.0.
+   *
+   * The factor must be greater than 0.0.
+   */
+  [@bs.module "electron"] [@bs.scope "webFrame"]
+  external setZoomFactor: float => unit = "setZoomFactor";
+
+  /**
+   * Sets the maximum and minimum pinch-to-zoom level.
+   *
+   * **Note:** Visual zoom is disabled by default in Electron.
+   */
+  [@bs.module "electron"] [@bs.scope "webFrame"]
+  external setVisualZoomLevelLimits: (float, float) => unit =
+    "setVisualZoomLevelLimits";
 };

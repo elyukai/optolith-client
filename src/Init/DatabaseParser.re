@@ -1,6 +1,8 @@
 module IM = Ley_IntMap;
 
-let decodeUI = Messages.Decode.t;
+module Parser = {
+  [@bs.module "yaml"] external parse: string => Js.Json.t = "parse";
+};
 
 let idName = json =>
   Json.Decode.(json |> field("id", int), json |> field("name", string));
@@ -8,10 +10,10 @@ let idName = json =>
 let idNames = json =>
   Json.Decode.(json |> list(idName)) |> Ley_IntMap.fromList;
 
-let decodeFilesOfEntryType = (decoder, fileContents: list(Js.Json.t)) =>
+let decodeFilesOfEntryType = (decoder, fileContents: list(string)) =>
   Ley_List.foldl(
     (mp, fileContent) =>
-      decoder(fileContent)
+      decoder(Parser.parse(fileContent))
       |> Ley_Option.option(mp, ((parsedKey, parsedValue)) =>
            Ley_IntMap.insert(parsedKey, parsedValue, mp)
          ),
@@ -19,12 +21,19 @@ let decodeFilesOfEntryType = (decoder, fileContents: list(Js.Json.t)) =>
     fileContents,
   );
 
-let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
+let categoriesTotal = DatabaseReader.dirs |> Ley_List.length |> Js.Int.toFloat;
+
+let percentPerCategory = 1.0 /. categoriesTotal;
+
+let decodeFiles =
+    (~onProgress, langs, messages, parsedData: DatabaseReader.t): Static.t => {
   let animalShapes =
     decodeFilesOfEntryType(
       AnimalShape.Decode.assoc(langs),
       parsedData.animalShapes,
     );
+
+  onProgress(percentPerCategory);
 
   let animalShapePaths =
     decodeFilesOfEntryType(
@@ -32,11 +41,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.animalShapePaths,
     );
 
+  onProgress(percentPerCategory *. 2.0);
+
   let animalShapeSizes =
     decodeFilesOfEntryType(
       AnimalShape.Size.Decode.assoc(langs),
       parsedData.animalShapeSizes,
     );
+
+  onProgress(percentPerCategory *. 3.0);
 
   let animistForces =
     decodeFilesOfEntryType(
@@ -44,11 +57,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.animistForces,
     );
 
+  onProgress(percentPerCategory *. 4.0);
+
   let arcaneBardTraditions =
     decodeFilesOfEntryType(
       ArcaneTradition.Decode.assoc(langs),
       parsedData.arcaneBardTraditions,
     );
+
+  onProgress(percentPerCategory *. 5.0);
 
   let arcaneDancerTraditions =
     decodeFilesOfEntryType(
@@ -56,14 +73,20 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.arcaneDancerTraditions,
     );
 
+  onProgress(percentPerCategory *. 6.0);
+
   let armorTypes =
     decodeFilesOfEntryType(
       IdName.Decode.assoc(langs),
       parsedData.armorTypes,
     );
 
+  onProgress(percentPerCategory *. 7.0);
+
   let aspects =
     decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.aspects);
+
+  onProgress(percentPerCategory *. 8.0);
 
   let attributes =
     decodeFilesOfEntryType(
@@ -71,11 +94,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.attributes,
     );
 
+  onProgress(percentPerCategory *. 9.0);
+
   let blessedTraditions =
     decodeFilesOfEntryType(
       BlessedTradition.Decode.assoc(langs),
       parsedData.blessedTraditions,
     );
+
+  onProgress(percentPerCategory *. 10.0);
 
   let blessings =
     decodeFilesOfEntryType(
@@ -83,8 +110,12 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.blessings,
     );
 
+  onProgress(percentPerCategory *. 11.0);
+
   let brews =
     decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.brews);
+
+  onProgress(percentPerCategory *. 12.0);
 
   let cantrips =
     decodeFilesOfEntryType(
@@ -92,11 +123,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.cantrips,
     );
 
+  onProgress(percentPerCategory *. 13.0);
+
   let combatSpecialAbilityGroups =
     decodeFilesOfEntryType(
       IdName.Decode.assoc(langs),
       parsedData.combatSpecialAbilityGroups,
     );
+
+  onProgress(percentPerCategory *. 14.0);
 
   let combatTechniqueGroups =
     decodeFilesOfEntryType(
@@ -104,11 +139,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.combatTechniqueGroups,
     );
 
+  onProgress(percentPerCategory *. 15.0);
+
   let combatTechniques =
     decodeFilesOfEntryType(
       CombatTechnique.Static.Decode.assoc(langs),
       parsedData.combatTechniques,
     );
+
+  onProgress(percentPerCategory *. 16.0);
 
   let conditions =
     decodeFilesOfEntryType(
@@ -116,11 +155,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.conditions,
     );
 
+  onProgress(percentPerCategory *. 17.0);
+
   let coreRules =
     decodeFilesOfEntryType(
       CoreRule.Decode.assoc(langs),
       parsedData.coreRules,
     );
+
+  onProgress(percentPerCategory *. 18.0);
 
   let cultures =
     decodeFilesOfEntryType(
@@ -128,11 +171,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.cultures,
     );
 
+  onProgress(percentPerCategory *. 19.0);
+
   let curricula =
     decodeFilesOfEntryType(
       Curriculum.Static.Decode.assoc(langs),
       parsedData.curricula,
     );
+
+  onProgress(percentPerCategory *. 20.0);
 
   let curses =
     decodeFilesOfEntryType(
@@ -140,11 +187,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.curses,
     );
 
+  onProgress(percentPerCategory *. 21.0);
+
   let derivedCharacteristics =
     decodeFilesOfEntryType(
       DerivedCharacteristic.Static.Decode.assoc(langs),
       parsedData.derivedCharacteristics,
     );
+
+  onProgress(percentPerCategory *. 22.0);
 
   let dominationRituals =
     decodeFilesOfEntryType(
@@ -152,14 +203,20 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.dominationRituals,
     );
 
+  onProgress(percentPerCategory *. 23.0);
+
   let elvenMagicalSongs =
     decodeFilesOfEntryType(
       ElvenMagicalSong.Static.Decode.assoc(langs),
       parsedData.elvenMagicalSongs,
     );
 
+  onProgress(percentPerCategory *. 24.0);
+
   let items =
     decodeFilesOfEntryType(Item.Decode.assoc(langs), parsedData.items);
+
+  onProgress(percentPerCategory *. 25.0);
 
   let equipmentGroups =
     decodeFilesOfEntryType(
@@ -167,11 +224,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.equipmentGroups,
     );
 
+  onProgress(percentPerCategory *. 26.0);
+
   let equipmentPackages =
     decodeFilesOfEntryType(
       EquipmentPackage.Decode.assoc(langs),
       parsedData.equipmentPackages,
     );
+
+  onProgress(percentPerCategory *. 27.0);
 
   let experienceLevels =
     decodeFilesOfEntryType(
@@ -179,8 +240,12 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.experienceLevels,
     );
 
+  onProgress(percentPerCategory *. 28.0);
+
   let eyeColors =
     decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.eyeColors);
+
+  onProgress(percentPerCategory *. 29.0);
 
   let focusRules =
     decodeFilesOfEntryType(
@@ -188,11 +253,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.focusRules,
     );
 
+  onProgress(percentPerCategory *. 30.0);
+
   let geodeRituals =
     decodeFilesOfEntryType(
       GeodeRitual.Static.Decode.assoc(langs),
       parsedData.geodeRituals,
     );
+
+  onProgress(percentPerCategory *. 31.0);
 
   let hairColors =
     decodeFilesOfEntryType(
@@ -200,11 +269,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.hairColors,
     );
 
+  onProgress(percentPerCategory *. 32.0);
+
   let languages =
     decodeFilesOfEntryType(
       Language.Decode.assoc(langs),
       parsedData.languages,
     );
+
+  onProgress(percentPerCategory *. 33.0);
 
   let liturgicalChantGroups =
     decodeFilesOfEntryType(
@@ -212,16 +285,22 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.liturgicalChantGroups,
     );
 
+  onProgress(percentPerCategory *. 34.0);
+
   let liturgicalChants =
     decodeFilesOfEntryType(
       LiturgicalChant.Static.Decode.assoc(langs),
       parsedData.liturgicalChants,
     );
 
+  onProgress(percentPerCategory *. 35.0);
+
   let liturgicalChantEnhancements =
     EnhancementsSpecialAbility.liturgicalChantsToSpecialAbilityOptions(
       liturgicalChants,
     );
+
+  onProgress(percentPerCategory *. 36.0);
 
   let magicalDances =
     decodeFilesOfEntryType(
@@ -229,11 +308,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.magicalDances,
     );
 
+  onProgress(percentPerCategory *. 37.0);
+
   let magicalMelodies =
     decodeFilesOfEntryType(
       MagicalMelody.Static.Decode.assoc(langs),
       parsedData.magicalMelodies,
     );
+
+  onProgress(percentPerCategory *. 38.0);
 
   let magicalTraditions =
     decodeFilesOfEntryType(
@@ -241,11 +324,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.magicalTraditions,
     );
 
+  onProgress(percentPerCategory *. 39.0);
+
   let optionalRules =
     decodeFilesOfEntryType(
       OptionalRule.Static.Decode.assoc(langs),
       parsedData.optionalRules,
     );
+
+  onProgress(percentPerCategory *. 40.0);
 
   let pacts =
     decodeFilesOfEntryType(
@@ -253,11 +340,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.pacts,
     );
 
+  onProgress(percentPerCategory *. 41.0);
+
   let professions =
     decodeFilesOfEntryType(
       Profession.Static.Decode.assoc(langs),
       parsedData.professions,
     );
+
+  onProgress(percentPerCategory *. 42.0);
 
   let properties =
     decodeFilesOfEntryType(
@@ -265,11 +356,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.properties,
     );
 
+  onProgress(percentPerCategory *. 43.0);
+
   let publications =
     decodeFilesOfEntryType(
       Publication.Decode.assoc(langs),
       parsedData.publications,
     );
+
+  onProgress(percentPerCategory *. 44.0);
 
   let races =
     decodeFilesOfEntryType(
@@ -277,8 +372,12 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.races,
     );
 
+  onProgress(percentPerCategory *. 45.0);
+
   let reaches =
     decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.reaches);
+
+  onProgress(percentPerCategory *. 46.0);
 
   let rogueSpells =
     decodeFilesOfEntryType(
@@ -286,8 +385,12 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.rogueSpells,
     );
 
+  onProgress(percentPerCategory *. 47.0);
+
   let scripts =
     decodeFilesOfEntryType(Script.Decode.assoc(langs), parsedData.scripts);
+
+  onProgress(percentPerCategory *. 48.0);
 
   let skillGroups =
     decodeFilesOfEntryType(
@@ -295,11 +398,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.skillGroups,
     );
 
+  onProgress(percentPerCategory *. 49.0);
+
   let skills =
     decodeFilesOfEntryType(
       Skill.Static.Decode.assoc(langs),
       parsedData.skills,
     );
+
+  onProgress(percentPerCategory *. 50.0);
 
   let socialStatuses =
     decodeFilesOfEntryType(
@@ -307,11 +414,15 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.socialStatuses,
     );
 
+  onProgress(percentPerCategory *. 51.0);
+
   let specialAbilityGroups =
     decodeFilesOfEntryType(
       IdName.Decode.assoc(langs),
       parsedData.specialAbilityGroups,
     );
+
+  onProgress(percentPerCategory *. 52.0);
 
   let spellGroups =
     decodeFilesOfEntryType(
@@ -319,14 +430,20 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.spellGroups,
     );
 
+  onProgress(percentPerCategory *. 53.0);
+
   let spells =
     decodeFilesOfEntryType(
       Spell.Static.Decode.assoc(langs),
       parsedData.spells,
     );
 
+  onProgress(percentPerCategory *. 54.0);
+
   let spellEnhancements =
     EnhancementsSpecialAbility.spellsToSpecialAbilityOptions(spells);
+
+  onProgress(percentPerCategory *. 55.0);
 
   let states =
     decodeFilesOfEntryType(
@@ -334,8 +451,12 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.states,
     );
 
+  onProgress(percentPerCategory *. 56.0);
+
   let subjects =
     decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.subjects);
+
+  onProgress(percentPerCategory *. 57.0);
 
   let tradeSecrets =
     decodeFilesOfEntryType(
@@ -343,14 +464,20 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.tradeSecrets,
     );
 
+  onProgress(percentPerCategory *. 58.0);
+
   let tribes =
     decodeFilesOfEntryType(IdName.Decode.assoc(langs), parsedData.tribes);
+
+  onProgress(percentPerCategory *. 59.0);
 
   let zibiljaRituals =
     decodeFilesOfEntryType(
       ZibiljaRitual.Static.Decode.assoc(langs),
       parsedData.zibiljaRituals,
     );
+
+  onProgress(percentPerCategory *. 60.0);
 
   let advantages =
     decodeFilesOfEntryType(
@@ -372,6 +499,8 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       parsedData.advantages,
     );
 
+  onProgress(percentPerCategory *. 61.0);
+
   let disadvantages =
     decodeFilesOfEntryType(
       Disadvantage.Static.Decode.assoc(
@@ -391,6 +520,8 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
       ),
       parsedData.disadvantages,
     );
+
+  onProgress(percentPerCategory *. 62.0);
 
   let baseSpecialAbilities =
     decodeFilesOfEntryType(
@@ -414,6 +545,8 @@ let decodeFiles = (langs, messages, parsedData: Yaml_Parse.t): Static.t => {
 
   let specialAbilities =
     SpecialAbility.Static.Decode.modifyParsed(baseSpecialAbilities);
+
+  onProgress(percentPerCategory *. 63.0);
 
   {
     advantages,

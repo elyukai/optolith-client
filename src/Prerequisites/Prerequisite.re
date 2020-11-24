@@ -120,7 +120,11 @@ module Activatable = {
         active: json |> field("active", bool),
         options:
           json
-          |> field("options", list(Id.Activatable.SelectOption.Decode.t)),
+          |> optionalField(
+               "options",
+               list(Id.Activatable.SelectOption.Decode.t),
+             )
+          |> Ley_Option.fromOption([]),
         level: json |> optionalField("level", int),
       };
   };
@@ -163,7 +167,11 @@ module ActivatableMultiEntry = {
         active: json |> field("active", bool),
         options:
           json
-          |> field("options", list(Id.Activatable.SelectOption.Decode.t)),
+          |> optionalField(
+               "options",
+               list(Id.Activatable.SelectOption.Decode.t),
+             )
+          |> Ley_Option.fromOption([]),
         level: json |> optionalField("level", int),
       };
   };
@@ -188,10 +196,11 @@ module ActivatableMultiSelect = {
           |> field("firstOption", list(Id.Activatable.SelectOption.Decode.t)),
         otherOptions:
           json
-          |> field(
+          |> optionalField(
                "otherOptions",
                list(Id.Activatable.SelectOption.Decode.t),
-             ),
+             )
+          |> Ley_Option.fromOption([]),
         level: json |> optionalField("level", int),
       };
   };
