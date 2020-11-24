@@ -84,6 +84,7 @@ function createWindow(param) {
                       protocol: "file:",
                       slashes: true
                     })), (function (param) {
+                mainWindow.webContents.openDevTools();
                 console.log("main (window): Show window");
                 mainWindow.show();
                 if (mainWindowState.isMaximized) {

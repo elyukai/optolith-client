@@ -80,25 +80,6 @@ function parseAndDecodeDatabase(workerPath, workerData, onProgress) {
               }));
 }
 
-function getAbsoluteProgress(percent) {
-  if (typeof percent === "number") {
-    return 0.0;
-  }
-  if (!percent.TAG) {
-    return percent._0 * 0.5;
-  }
-  var percent$1 = percent._0;
-  if (percent$1 !== 1.0) {
-    return 0.5 + percent$1 * 0.5;
-  } else {
-    return 1.0;
-  }
-}
-
-var Progress = {
-  getAbsoluteProgress: getAbsoluteProgress
-};
-
 function getInitialData(onMinimalDataReceived, initWorkerPath, onProgress) {
   return Curry._2(IO$OptolithClient.Infix.$great$great$eq, getSupportedLanguages(undefined), (function (supportedLanguages) {
                 return Curry._2(IO$OptolithClient.Infix.$great$great$eq, getConfig(undefined), (function (config) {
@@ -137,7 +118,6 @@ export {
   readDatabase ,
   WorkerError ,
   parseAndDecodeDatabase ,
-  Progress ,
   getInitialData ,
   
 }

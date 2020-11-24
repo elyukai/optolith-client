@@ -7,23 +7,77 @@ import * as ReactDom from "react-dom";
 import * as Caml_option from "bs-platform/lib/es6/caml_option.js";
 import * as Ipc$OptolithClient from "./Init/Ipc.bs.js";
 import * as Ley_Option$OptolithClient from "./Data/Ley_Option.bs.js";
+import * as InitProgress$OptolithClient from "./Init/InitProgress.bs.js";
 
 Electron.webFrame.setZoomFactor(1.0);
 
 Electron.webFrame.setVisualZoomLevelLimits(1.0, 1.0);
 
-var partial_arg = React.createElement("div", undefined, "Test");
+function Renderer$Test(Props) {
+  var match = React.useState(function () {
+        return 0.0;
+      });
+  var setProgress = match[1];
+  React.useEffect(function () {
+        var listener = function ($$event, progress) {
+          if (typeof progress === "number") {
+            return ;
+          }
+          switch (progress.TAG | 0) {
+            case /* InitMinimal */0 :
+                Curry._1(setProgress, (function (param) {
+                        return 0.0;
+                      }));
+                console.log("InitMinimal");
+                return ;
+            case /* InitProgress */1 :
+                var progress$1 = progress._0;
+                Curry._1(setProgress, (function (param) {
+                        return InitProgress$OptolithClient.getAbsoluteProgress(progress$1);
+                      }));
+                if (typeof progress$1 === "number") {
+                  console.log("InitProgress.UILoaded");
+                  return ;
+                }
+                if (progress$1.TAG) {
+                  console.log("InitProgress.DatabaseParsed: " + progress$1._0.toString());
+                  return ;
+                }
+                console.log("InitProgress.DatabaseLoaded: " + progress$1._0.toString());
+                return ;
+            case /* InitDone */2 :
+                Curry._1(setProgress, (function (param) {
+                        return 1.0;
+                      }));
+                console.log("InitDone");
+                return ;
+            default:
+              return ;
+          }
+        };
+        Ipc$OptolithClient.FromMain.addListener(Electron.ipcRenderer, listener);
+        return (function (param) {
+                  return Ipc$OptolithClient.FromMain.removeListener(Electron.ipcRenderer, listener);
+                });
+      });
+  return React.createElement("div", undefined, React.createElement("h2", undefined, "Test"), React.createElement("p", {
+                  className: "featured"
+                }, "Progress: " + match[0].toString()));
+}
+
+var Test = {
+  make: Renderer$Test
+};
+
+var partial_arg = React.createElement(Renderer$Test, {});
 
 Curry._2(Ley_Option$OptolithClient.fmap, (function (param) {
         ReactDom.render(partial_arg, param);
         
       }), Caml_option.nullable_to_opt(document.querySelector("#bodywrapper")));
 
-Ipc$OptolithClient.FromMain.addListener(Electron.ipcRenderer, (function ($$event, progress) {
-        
-      }));
-
 export {
+  Test ,
   
 }
 /*  Not a pure module */

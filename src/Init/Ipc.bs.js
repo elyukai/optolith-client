@@ -11,6 +11,11 @@ function addListener(emitter, callback) {
   
 }
 
+function removeListener(emitter, callback) {
+  emitter.removeListener("messageFromMain", callback);
+  
+}
+
 function reply(emitter, message) {
   emitter.sender.send("messageFromRenderer", message);
   
@@ -19,6 +24,7 @@ function reply(emitter, message) {
 var FromMain = {
   send: send,
   addListener: addListener,
+  removeListener: removeListener,
   reply: reply
 };
 
@@ -32,6 +38,11 @@ function addListener$1(emitter, callback) {
   
 }
 
+function removeListener$1(emitter, callback) {
+  emitter.removeListener("messageFromRenderer", callback);
+  
+}
+
 function reply$1(emitter, message) {
   emitter.sender.send("messageFromMain", message);
   
@@ -40,6 +51,7 @@ function reply$1(emitter, message) {
 var FromRenderer = {
   send: send$1,
   addListener: addListener$1,
+  removeListener: removeListener$1,
   reply: reply$1
 };
 

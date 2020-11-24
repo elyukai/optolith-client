@@ -5,7 +5,7 @@ type messageFromMain =
       AppConfig.t,
       Messages.t,
     )
-  | InitProgress(Init.Progress.t)
+  | InitProgress(InitProgress.t)
   | InitDone(Static.t)
   | UpdateNotAvailable
   | UpdateAvailable(ElectronUpdater.updateInfo)
@@ -46,6 +46,18 @@ module FromMain = {
    */
   let addListener = (emitter, callback) =>
     addListener(emitter, `messageFromMain(callback));
+
+  [@bs.send]
+  external removeListener:
+    (
+      Electron.IpcRenderer.t,
+      [@bs.string] [ | `messageFromMain((event, message) => unit)]
+    ) =>
+    unit =
+    "removeListener";
+
+  let removeListener = (emitter, callback) =>
+    removeListener(emitter, `messageFromMain(callback));
 
   [@bs.send] [@bs.scope "sender"]
   external reply:
@@ -95,6 +107,18 @@ module FromRenderer = {
    */
   let addListener = (emitter, callback) =>
     addListener(emitter, `messageFromRenderer(callback));
+
+  [@bs.send]
+  external removeListener:
+    (
+      Electron.IpcMain.t,
+      [@bs.string] [ | `messageFromRenderer((event, message) => unit)]
+    ) =>
+    unit =
+    "removeListener";
+
+  let removeListener = (emitter, callback) =>
+    removeListener(emitter, `messageFromRenderer(callback));
 
   [@bs.send] [@bs.scope "sender"]
   external reply:

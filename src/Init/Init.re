@@ -111,22 +111,12 @@ let parseAndDecodeDatabase =
   });
 };
 
-module Progress = {
-  type t =
-    | UILoaded
-    | DatabaseLoaded(float)
-    | DatabaseParsed(float);
-
-  let getAbsoluteProgress =
-    fun
-    | UILoaded => 0.0
-    | DatabaseLoaded(percent) => percent *. 0.5
-    | DatabaseParsed(1.0) => 1.0
-    | DatabaseParsed(percent) => 0.5 +. percent *. 0.5;
-};
-
 let getInitialData =
-    (~onMinimalDataReceived, ~initWorkerPath, ~onProgress: Progress.t => unit) => {
+    (
+      ~onMinimalDataReceived,
+      ~initWorkerPath,
+      ~onProgress: InitProgress.t => unit,
+    ) => {
   IO.Infix.(
     getSupportedLanguages()
     >>= (
