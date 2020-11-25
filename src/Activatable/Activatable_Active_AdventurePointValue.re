@@ -13,12 +13,12 @@ type combinedApValue = {
 let ensureFlat =
   fun
   | Advantage.Static.Flat(x) => Some(x)
-  | Advantage.Static.PerLevel(_) => None;
+  | PerLevel(_) => None;
 
 let ensurePerLevel =
   fun
   | Advantage.Static.Flat(_) => None
-  | Advantage.Static.PerLevel(x) => Some(x);
+  | PerLevel(x) => Some(x);
 
 let getDefaultApValue = (staticEntry, singleHeroEntry) => {
   open Ley_List;
@@ -30,7 +30,10 @@ let getDefaultApValue = (staticEntry, singleHeroEntry) => {
     |> Activatable_Accessors.apValue
     |> Ley_Option.fromOption(Advantage.Static.Flat(0));
 
-  let optionApValue = sid1 >>= getSelectOptionCost(staticEntry);
+  let optionApValue =
+    sid1
+    >>= Activatable_Convert.activatableOptionToSelectOptionId
+    >>= getSelectOptionCost(staticEntry);
 
   switch (optionApValue) {
   | Some(x) => Some(x)
@@ -129,7 +132,7 @@ module IcAsIndex = {
  * @param isEntryToAdd If `entry` has not been added to the list of active
  * entries yet, this must be `true`, otherwise `false`.
  */
-let getEntrySpecificApValue =
+let getApValueDifferenceOnChangeByEntry =
     (
       ~isEntryToAdd,
       staticData: Static.t,
@@ -147,285 +150,258 @@ let getEntrySpecificApValue =
     |> Activatable_Accessors.apValue
     |> Ley_Option.fromOption(Advantage.Static.Flat(0));
 
-  switch (staticEntry) {
-  | Advantage(entry) =>
-    [@warning "-4"]
-    (
-      switch (Id.Advantage.fromInt(entry.id)) {
-      | Aptitude
-      | ExceptionalSkill
-      | ExceptionalCombatTechnique
-      | WeaponAptitude =>
-        singleHeroEntry
-        |> getOption1
-        >>= IcAsIndex.getApValueByIcAsIndex(staticData, apValue)
-      | _ => getDefaultApValue(staticEntry, singleHeroEntry)
-      }
-    )
-  | Disadvantage(entry) =>
-    [@warning "-4"]
-    (
-      switch (Id.Disadvantage.fromInt(entry.id)) {
-      | PersonalityFlaw =>
-        switch (sid1) {
-        | Some(Preset(Generic(selected_option))) =>
-          let matchOption = (target_option, current) =>
-            switch ((current: option(Id.Activatable.Option.t))) {
-            | Some(Preset(Generic(x))) => x === target_option
-            | _ => false
-            };
-
-          let isPersonalityFlawNotPaid = (target_option, paid_entries_max) =>
-            target_option === selected_option
-            && Ley_List.countBy(
-                 (e: Activatable_Dynamic.single) =>
-                   e.options
-                   |> Ley_Option.listToOption
-                   |> matchOption(target_option)
-                   // Entries with custom cost are ignored for the rule
-                   && Ley_Option.isNone(e.customCost),
-                 heroEntry.active,
-               )
-            > (isEntryToAdd ? paid_entries_max - 1 : paid_entries_max);
-
-          // 7 = "Prejudice" => more than one entry possible
-          // more than one entry of Prejudice does not contribute to AP spent
-          //
-          // 8 = "Unworldly" => more than one entry possible
-          // more than two entries of Unworldly do not contribute to AP spent
-          //
-          // In both cases, removing the entry would not change AP so it has to
-          // return 0.
-          if (isPersonalityFlawNotPaid(7, 1)
-              || isPersonalityFlawNotPaid(8, 2)) {
-            Some(0);
-          } else {
-            getSelectOptionCost(
-              staticEntry,
-              Preset(Generic(selected_option)),
-            );
+  [@warning "-4"]
+  (
+    switch (Activatable_Accessors.idDeepVariant(staticEntry)) {
+    | Advantage(Aptitude)
+    | Advantage(ExceptionalSkill)
+    | Advantage(ExceptionalCombatTechnique)
+    | Advantage(WeaponAptitude)
+    | Disadvantage(Incompetent)
+    | SpecialAbility(AdaptionZauber)
+    | SpecialAbility(FavoriteSpellwork)
+    | SpecialAbility(Lieblingsliturgie)
+    | SpecialAbility(Forschungsgebiet)
+    | SpecialAbility(Expertenwissen)
+    | SpecialAbility(Wissensdurst)
+    | SpecialAbility(WegDerGelehrten)
+    | SpecialAbility(WegDerKuenstlerin)
+    | SpecialAbility(Fachwissen) =>
+      singleHeroEntry
+      |> getOption1
+      >>= IcAsIndex.getApValueByIcAsIndex(staticData, apValue)
+    | Disadvantage(PersonalityFlaw) =>
+      switch (sid1) {
+      | Some(Preset(Generic(selected_option))) =>
+        let matchOption = (target_option, current) =>
+          switch ((current: option(Id.Activatable.Option.t))) {
+          | Some(Preset(Generic(x))) => x === target_option
+          | _ => false
           };
-        | _ => None
-        }
-      | Principles
-      | Obligations =>
-        level
-        >>= (
-          level => {
-            // This is the highest and the second-highest level of this entry at the
-            // moment.
-            let (maxLevel, sndMaxLevel) =
-              getPrinciplesObligationsMaxLevels(heroEntry);
 
-            // If there is more than one entry on the same level if this entry is
-            // active, it won't affect AP spent at all. Thus, if the entry is to
-            // be added, there must be at least one (> 0) entry for this rule to
-            // take effect.
-            //
-            // If the entry is not the one with the highest level, adding or
-            // removing it won't affect AP spent at all
-            if (maxLevel > level
-                || countBy(
-                     (e: Activatable_Dynamic.single) =>
-                       Ley_Option.elem(level, e.level),
-                     heroEntry.active,
-                   )
-                > (isEntryToAdd ? 0 : 1)) {
-              None;
-            } else {
-              // Otherwise, the level difference results in the cost.
-              apValue |> ensureFlat <&> ( * )(level - sndMaxLevel);
-            };
-          }
-        )
-      | BadHabit =>
-        apValue
-        |> ensureFlat
-        |> Ley_Option.find(_ =>
-             countBy(
+        let isPersonalityFlawNotPaid = (target_option, paid_entries_max) =>
+          target_option === selected_option
+          && Ley_List.countBy(
                (e: Activatable_Dynamic.single) =>
-                 Ley_Option.isNone(e.customCost),
+                 e.options
+                 |> Ley_Option.listToOption
+                 |> matchOption(target_option)
+                 // Entries with custom cost are ignored for the rule
+                 && Ley_Option.isNone(e.customCost),
                heroEntry.active,
              )
-             > (isEntryToAdd ? 2 : 3)
-           )
-      | Incompetent =>
-        singleHeroEntry
-        |> getOption1
-        >>= IcAsIndex.getApValueByIcAsIndex(staticData, apValue)
-      | _ => getDefaultApValue(staticEntry, singleHeroEntry)
+          > (isEntryToAdd ? paid_entries_max - 1 : paid_entries_max);
+
+        // 7 = "Prejudice" => more than one entry possible
+        // more than one entry of Prejudice does not contribute to AP spent
+        //
+        // 8 = "Unworldly" => more than one entry possible
+        // more than two entries of Unworldly do not contribute to AP spent
+        //
+        // In both cases, removing the entry would not change AP so it has to
+        // return 0.
+        if (isPersonalityFlawNotPaid(7, 1) || isPersonalityFlawNotPaid(8, 2)) {
+          Some(0);
+        } else {
+          getSelectOptionCost(staticEntry, Generic(selected_option));
+        };
+      | _ => None
       }
-    )
-  | SpecialAbility(entry) =>
-    [@warning "-4"]
-    (
-      switch (Id.SpecialAbility.fromInt(entry.id)) {
-      | SkillSpecialization =>
-        sid1
-        >>= getSkillFromOption(staticData)
-        <&> (
-          skill =>
-            // Multiply number of final occurences of the
-            // same skill...
-            (
-              countBy(
-                (e: Activatable_Dynamic.single) =>
-                  e.options
-                  |> Ley_Option.listToOption
-                  |> Ley_Option.elem(
-                       Id.Activatable.Option.Preset(Skill(skill.id)),
-                     )
-                  // Entries with custom cost are ignored for the rule
-                  && Ley_Option.isNone(e.customCost),
-                heroEntry.active,
-              )
-              + (isEntryToAdd ? 1 : 0)
+    | Disadvantage(Principles)
+    | Disadvantage(Obligations) =>
+      level
+      >>= (
+        level => {
+          // This is the highest and the second-highest level of this entry at the
+          // moment.
+          let (maxLevel, sndMaxLevel) =
+            getPrinciplesObligationsMaxLevels(heroEntry);
+
+          // If there is more than one entry on the same level if this entry is
+          // active, it won't affect AP spent at all. Thus, if the entry is to
+          // be added, there must be at least one (> 0) entry for this rule to
+          // take effect.
+          //
+          // If the entry is not the one with the highest level, adding or
+          // removing it won't affect AP spent at all
+          if (maxLevel > level
+              || countBy(
+                   (e: Activatable_Dynamic.single) =>
+                     Ley_Option.elem(level, e.level),
+                   heroEntry.active,
+                 )
+              > (isEntryToAdd ? 0 : 1)) {
+            None;
+          } else {
+            // Otherwise, the level difference results in the cost.
+            apValue |> ensureFlat <&> ( * )(level - sndMaxLevel);
+          };
+        }
+      )
+    | Disadvantage(BadHabit) =>
+      apValue
+      |> ensureFlat
+      |> Ley_Option.find(_ =>
+           countBy(
+             (e: Activatable_Dynamic.single) =>
+               Ley_Option.isNone(e.customCost),
+             heroEntry.active,
+           )
+           > (isEntryToAdd ? 2 : 3)
+         )
+    | SpecialAbility(SkillSpecialization) =>
+      sid1
+      >>= getSkillFromOption(staticData)
+      <&> (
+        skill =>
+          // Multiply number of final occurences of the
+          // same skill...
+          (
+            countBy(
+              (e: Activatable_Dynamic.single) =>
+                e.options
+                |> Ley_Option.listToOption
+                |> Ley_Option.elem(
+                     Id.Activatable.Option.Preset(Skill(skill.id)),
+                   )
+                // Entries with custom cost are ignored for the rule
+                && Ley_Option.isNone(e.customCost),
+              heroEntry.active,
             )
-            // ...with the skill's IC
-            * IC.getAPForActivatation(skill.ic)
-        )
-      | Language =>
-        level
-        >>= (
-          fun
-          // Native Tongue (level 4) does not cost anything
-          | 4 => Some(0)
-          | level => apValue |> ensureFlat <&> ( * )(level)
-        )
-      | PropertyKnowledge
-      | AspectKnowledge =>
-        apValue
-        |> ensurePerLevel
-        >>= (
-          apPerLevel => {
-            // Ignore custom cost activations in terms of calculated cost
-            let amountActive =
-              countBy(
-                (e: Activatable_Dynamic.single) =>
-                  Ley_Option.isNone(e.customCost),
-                heroEntry.active,
-              );
+            + (isEntryToAdd ? 1 : 0)
+          )
+          // ...with the skill's IC
+          * IC.getAPForActivatation(skill.ic)
+      )
+    | SpecialAbility(Language) =>
+      level
+      >>= (
+        fun
+        // Native Tongue (level 4) does not cost anything
+        | 4 => Some(0)
+        | level => apValue |> ensureFlat <&> ( * )(level)
+      )
+    | SpecialAbility(PropertyKnowledge)
+    | SpecialAbility(AspectKnowledge) =>
+      apValue
+      |> ensurePerLevel
+      >>= (
+        apPerLevel => {
+          // Ignore custom cost activations in terms of calculated cost
+          let amountActive =
+            countBy(
+              (e: Activatable_Dynamic.single) =>
+                Ley_Option.isNone(e.customCost),
+              heroEntry.active,
+            );
 
-            let index = amountActive + (isEntryToAdd ? 0 : (-1));
+          let index = amountActive + (isEntryToAdd ? 0 : (-1));
 
-            Ley_List.Safe.atMay(apPerLevel, index);
-          }
-        )
-      | TraditionWitches =>
-        // There are two disadvantages that, when active, decrease the cost of
-        // this tradition by 10 AP each
-        let decreaseCost = (id, cost) =>
-          hero.disadvantages
-          |> Ley_IntMap.lookup(id)
-          |> Activatable_Accessors.isActiveM
-            ? cost - 10 : cost;
+          Ley_List.Safe.atMay(apPerLevel, index);
+        }
+      )
+    | SpecialAbility(TraditionWitches) =>
+      // There are two disadvantages that, when active, decrease the cost of
+      // this tradition by 10 AP each
+      let decreaseCost = (id, cost) =>
+        hero.disadvantages
+        |> Ley_IntMap.lookup(id)
+        |> Activatable_Accessors.isActiveM
+          ? cost - 10 : cost;
 
-        apValue
-        |> ensureFlat
-        <&> (
-          flatAp =>
-            flatAp
-            |> decreaseCost(Id.Disadvantage.toInt(NoFlyingBalm))
-            |> decreaseCost(Id.Disadvantage.toInt(NoFamiliar))
-        );
-      | AdaptionZauber
-      | FavoriteSpellwork
-      | Lieblingsliturgie
-      | Forschungsgebiet
-      | Expertenwissen
-      | Wissensdurst
-      | WegDerGelehrten
-      | WegDerKuenstlerin
-      | Fachwissen =>
-        singleHeroEntry
-        |> getOption1
-        >>= IcAsIndex.getApValueByIcAsIndex(staticData, apValue)
-      | Recherchegespuer =>
-        // The AP cost for this SA consist of two parts: AP based on the IC of
-        // the main subject (from "SA_531"/Wissensdurst) in addition to AP based
-        // on the IC of the side subject selected in this SA.
+      apValue
+      |> ensureFlat
+      <&> (
+        flatAp =>
+          flatAp
+          |> decreaseCost(Id.Disadvantage.toInt(NoFlyingBalm))
+          |> decreaseCost(Id.Disadvantage.toInt(NoFamiliar))
+      );
+    | SpecialAbility(Recherchegespuer) =>
+      // The AP cost for this SA consist of two parts: AP based on the IC of
+      // the main subject (from "SA_531"/Wissensdurst) in addition to AP based
+      // on the IC of the side subject selected in this SA.
 
-        hero.specialAbilities
-        |> Ley_IntMap.lookup(Id.SpecialAbility.toInt(Wissensdurst))
-        >>= (
-          wissensdurst =>
-            apValue
-            |> ensurePerLevel
-            >>= (
-              apPerLevel => {
-                let getCostFromHeroEntry = entry =>
-                  entry
-                  |> getOption1
-                  >>= IcAsIndex.getApValueByIcAsIndex(
-                        staticData,
-                        PerLevel(apPerLevel),
-                      );
+      hero.specialAbilities
+      |> Ley_IntMap.lookup(Id.SpecialAbility.toInt(Wissensdurst))
+      >>= (
+        wissensdurst =>
+          apValue
+          |> ensurePerLevel
+          >>= (
+            apPerLevel => {
+              let getCostFromHeroEntry = entry =>
+                entry
+                |> getOption1
+                >>= IcAsIndex.getApValueByIcAsIndex(
+                      staticData,
+                      PerLevel(apPerLevel),
+                    );
 
-                Ley_Option.liftM2(
-                  (+),
-                  // Cost for side subject
-                  getCostFromHeroEntry(singleHeroEntry),
-                  // Cost for main subject from Wissensdurst
-                  wissensdurst.active
-                  |> Ley_Option.listToOption
-                  >>= (
-                    fst =>
-                      fst
-                      |> singleToSingleWithId(heroEntry, 0)
-                      |> getCostFromHeroEntry
-                  ),
-                );
-              }
-            )
-        )
-      | LanguageSpecializations =>
-        apValue
-        |> ensureFlat
-        >>= (
-          flatAp =>
-            sid1
-            >>= getGenericId
-            >>= (
-              languageId =>
-                hero.specialAbilities
-                |> Ley_IntMap.lookup(Id.SpecialAbility.toInt(Language))
+              Ley_Option.liftM2(
+                (+),
+                // Cost for side subject
+                getCostFromHeroEntry(singleHeroEntry),
+                // Cost for main subject from Wissensdurst
+                wissensdurst.active
+                |> Ley_Option.listToOption
                 >>= (
-                  language =>
-                    language.active
-                    |> Ley_List.find((e: Activatable_Dynamic.single) =>
-                         e.options
-                         |> Ley_Option.listToOption
-                         >>= getGenericId
-                         |> Ley_Option.elem(languageId)
-                       )
-                    >>= (
-                      selectedLanguage =>
-                        selectedLanguage.level
-                        <&> (
-                          fun
-                          | 4 => 0
-                          | _ => flatAp
-                        )
-                    )
-                )
-            )
-        )
-      | Handwerkskunst
-      | KindDerNatur
-      | KoerperlichesGeschick
-      | SozialeKompetenz
-      | Universalgenie =>
-        singleHeroEntry.options
-        |> Ley_List.take(3)
-        |> Ley_Option.mapOption(
-             IcAsIndex.getApValueByIcAsIndex(staticData, apValue),
-           )
-        |> Ley_List.sum
-        |> Ley_Option.ensure((<)(0))
-      | _ => getDefaultApValue(staticEntry, singleHeroEntry)
-      }
-    )
-  };
+                  fst =>
+                    fst
+                    |> singleToSingleWithId(heroEntry, 0)
+                    |> getCostFromHeroEntry
+                ),
+              );
+            }
+          )
+      )
+    | SpecialAbility(LanguageSpecializations) =>
+      apValue
+      |> ensureFlat
+      >>= (
+        flatAp =>
+          sid1
+          >>= getGenericId
+          >>= (
+            languageId =>
+              hero.specialAbilities
+              |> Ley_IntMap.lookup(Id.SpecialAbility.toInt(Language))
+              >>= (
+                language =>
+                  language.active
+                  |> Ley_List.find((e: Activatable_Dynamic.single) =>
+                       e.options
+                       |> Ley_Option.listToOption
+                       >>= getGenericId
+                       |> Ley_Option.elem(languageId)
+                     )
+                  >>= (
+                    selectedLanguage =>
+                      selectedLanguage.level
+                      <&> (
+                        fun
+                        | 4 => 0
+                        | _ => flatAp
+                      )
+                  )
+              )
+          )
+      )
+    | SpecialAbility(Handwerkskunst)
+    | SpecialAbility(KindDerNatur)
+    | SpecialAbility(KoerperlichesGeschick)
+    | SpecialAbility(SozialeKompetenz)
+    | SpecialAbility(Universalgenie) =>
+      singleHeroEntry.options
+      |> Ley_List.take(3)
+      |> Ley_Option.mapOption(
+           IcAsIndex.getApValueByIcAsIndex(staticData, apValue),
+         )
+      |> Ley_List.sum
+      |> Ley_Option.ensure((<)(0))
+    | _ => getDefaultApValue(staticEntry, singleHeroEntry)
+    }
+  );
 };
 
 /**
@@ -456,7 +432,7 @@ let getApValueDifferenceOnChange =
   switch (singleHeroEntry.customCost) {
   | Some(customCost) => {apValue: modifyAbs(customCost), isAutomatic}
   | None =>
-    getEntrySpecificApValue(
+    getApValueDifferenceOnChangeByEntry(
       ~isEntryToAdd,
       staticData,
       hero,
@@ -481,223 +457,133 @@ let getApValueDifferenceOnChange =
  * Note, that disadvantages still return positive values if they actually cost
  * AP.
  */
-let getApSpentDifference = (staticEntry, heroEntry: Activatable_Dynamic.t) =>
-  switch (staticEntry) {
-  | Activatable.Advantage(_) => 0
-  | Disadvantage(staticDisadvantage) =>
-    [@warning "-4"]
-    Id.Disadvantage.(
-      switch (fromInt(staticDisadvantage.id)) {
-      | Principles
-      | Obligations =>
-        let (maxLevel, sndMaxLevel) =
-          getPrinciplesObligationsMaxLevels(heroEntry);
+let getApSpentDifference = (staticEntry, heroEntry: Activatable_Dynamic.t) => {
+  let apValue = staticEntry |> Activatable_Accessors.apValue;
 
-        let singlesAtMaxLevel =
-          L.countBy(
-            fun
-            | ({level: Some(level), _}: Activatable_Dynamic.single) =>
-              level === maxLevel
-            | _ => false,
-            heroEntry.active,
-          );
+  [@warning "-4"]
+  (
+    switch (Activatable_Accessors.idDeepVariant(staticEntry)) {
+    | Disadvantage(Principles)
+    | Disadvantage(Obligations) =>
+      let (maxLevel, sndMaxLevel) =
+        getPrinciplesObligationsMaxLevels(heroEntry);
 
-        let baseApValue =
-          switch (staticDisadvantage.apValue) {
-          | Some(Flat(value)) => value
-          | Some(PerLevel(_))
-          | None => 0
-          };
+      let singlesAtMaxLevel =
+        L.countBy(
+          fun
+          | ({level: Some(level), _}: Activatable_Dynamic.single) =>
+            level === maxLevel
+          | _ => false,
+          heroEntry.active,
+        );
 
-        singlesAtMaxLevel > 1
-          // In this case, all max level entries would be 0, so this needs to be
-          // the full value for the max level
-          ? baseApValue * maxLevel
-          // otherwise, the max level entry costs the difference between max and
-          // second max, so we need to fill to actual value so that
-          // currentDifference + baseApValue * sndMaxLevel = total AP value
-          : baseApValue * sndMaxLevel;
-      | PersonalityFlaw => 0
-      | BadHabit => 0
+      let baseApValue =
+        switch (apValue) {
+        | Some(Flat(value)) => value
+        | Some(PerLevel(_))
+        | None => 0
+        };
+
+      singlesAtMaxLevel > 1
+        // In this case, all max level entries would be 0, so this needs to be
+        // the full value for the max level
+        ? baseApValue * maxLevel
+        // otherwise, the max level entry costs the difference between max and
+        // second max, so we need to fill to actual value so that
+        // currentDifference + baseApValue * sndMaxLevel = total AP value
+        : baseApValue * sndMaxLevel;
+    | Disadvantage(PersonalityFlaw) =>
+      let counterBySelectOption =
+        heroEntry.active
+        |> SelectOption.Map.countByM(
+             fun
+             | (
+                 {options: [Preset(id)], customCost: None, _}: Activatable_Dynamic.single
+               ) =>
+               Some(id)
+             | _ => None,
+           );
+
+      let getDiffBySelectOption = (selectOptionId, paidEntries, counter) => {
+        counter
+        |> SelectOption.Map.lookup(Generic(selectOptionId))
+        |> Ley_Option.fromOption(0) > paidEntries
+          ? Activatable_SelectOptions.getSelectOptionCost(
+              staticEntry,
+              Generic(selectOptionId),
+            )
+            |> Ley_Option.option(0, apValue =>
+                 apValue * paidEntries |> Ley_Int.negate
+               )
+          : 0;
+      };
+
+      getDiffBySelectOption(7, 1, counterBySelectOption)
+      + getDiffBySelectOption(8, 2, counterBySelectOption);
+    | Disadvantage(BadHabit) =>
+      heroEntry.active
+      // Ignore entries with custom cost
+      |> Ley_List.countBy(
+           fun
+           | ({customCost: None, _}: Activatable_Dynamic.single) => true
+           | _ => false,
+         )
+      > 3
+        // if more than three entries are active, a 0 is displayed, so we need to
+        // keep the AP value for three entries.
+        ? switch (apValue) {
+          | Some(Flat(flatApValue)) => flatApValue * (-3)
+          | _ => 0
+          }
+        : 0
+    | SpecialAbility(SkillSpecialization) =>
+      let counterBySelectOption =
+        heroEntry.active
+        |> SelectOption.Map.countByM(
+             fun
+             | (
+                 {options: [Preset(id)], customCost: None, _}: Activatable_Dynamic.single
+               ) =>
+               Some(id)
+             | _ => None,
+           );
+
+      counterBySelectOption
+      |> SelectOption.Map.foldrWithKey(
+           (id, count, accDiff) => {
+             switch (
+               Activatable_SelectOptions.getSelectOption(staticEntry, id)
+             ) {
+             | Some({staticEntry: Some(Skill(skill)), _}) =>
+               // The sum of displayed AP values without taking IC into account.
+               let currentIcFactorForSkill = count * count;
+               // The sum of actual AP values without taking IC into account.
+               let actualIcFactorForSkill = Math.gsum(1, count);
+
+               // Apply IC multiplier to get final AP value
+               IC.getAPForActivatation(skill.ic)
+               * (actualIcFactorForSkill - currentIcFactorForSkill)
+               + accDiff;
+             | _ => accDiff
+             }
+           },
+           0,
+         );
+    | SpecialAbility(PropertyKnowledge)
+    | SpecialAbility(AspectKnowledge) =>
+      let entryCount = heroEntry.active |> Ley_List.length;
+
+      switch (apValue) {
+      | Some(PerLevel(apValues)) =>
+        let currentSum =
+          Ley_List.Safe.atMay(apValues, entryCount)
+          |> Ley_Option.option(0, ( * )(entryCount));
+        let actualSum = apValues |> Ley_List.take(entryCount) |> Ley_List.sum;
+
+        actualSum - currentSum;
       | _ => 0
-      }
-    )
-  | SpecialAbility(staticSpecialAbility) =>
-    [@warning "-4"]
-    Id.SpecialAbility.(
-      switch (fromInt(staticSpecialAbility.id)) {
-      | SkillSpecialization => 0
-      | PropertyKnowledge => 0
-      | AspectKnowledge => 0
-      | _ => 0
-      }
-    )
-  };
-// /**
-//  * `getSinglePersFlawDiff :: Int -> Int -> ActiveActivatable -> SID -> Int -> Int`
-//  *
-//  * `getSinglePersFlawDiff sid paid_entries entry current_sid current_entries`
-//  *
-//  * @param sid SID the diff is for.
-//  * @param paid_entries Amount of active entries of the same SID that you get AP
-//  * for.
-//  * @param entry An entry of Personality Flaw.
-//  * @param current_sid The current SID to check.
-//  * @param current_entries The current amount of active entries of the current
-//  * SID.
-//  */
-// const getSinglePersFlawDiff =
-//   (sid: number) =>
-//   (paid_entries: number) =>
-//   (entry: Record<ActiveActivatable>) =>
-//   (current_sid: number | string) =>
-//   (current_entries: number): number =>
-//     current_sid === sid && current_entries > paid_entries
-//     ? maybe (0)
-//             (pipe (multiply (paid_entries), negate))
-//             (getSelectOptionCost (AAA.wikiEntry (entry) as Activatable)
-//                                 (Just (sid)))
-//     : 0
-// const getPersonalityFlawsDiff =
-//   (entries: List<Record<ActiveActivatable>>): number =>
-//     pipe_ (
-//       entries,
-//       // Find any Personality Flaw entry, as all of them have the same list of
-//       // active objects
-//       find (pipe (ActiveActivatableA_.id, equals<string> (DisadvantageId.PersonalityFlaw))),
-//       fmap (entry => pipe_ (
-//         entry,
-//         ActiveActivatableA_.active,
-//         countWithByKeyMaybe (e => then (guard (isNothing (AOA.cost (e))))
-//                                       (AOA.sid (e))),
-//         OrderedMap.foldrWithKey ((sid: string | number) => (val: number) =>
-//                                   pipe_ (
-//                                     List (
-//                                       getSinglePersFlawDiff (7) (1) (entry) (sid) (val),
-//                                       getSinglePersFlawDiff (8) (2) (entry) (sid) (val)
-//                                     ),
-//                                     List.sum,
-//                                     add
-//                                   ))
-//                                 (0)
-//       )),
-//       // If no Personality Flaw was found, there's no diff.
-//       Maybe.sum
-//     )
-// const getBadHabitsDiff =
-//   (staticData: StaticDataRecord) =>
-//   (hero_slice: StrMap<Record<ActivatableDependent>>) =>
-//   (entries: List<Record<ActiveActivatable>>): number =>
-//     any (pipe (ActiveActivatableAL_.id, equals<string> (DisadvantageId.BadHabit))) (entries)
-//       ? sum (pipe_ (
-//         hero_slice,
-//         lookup<string> (DisadvantageId.PersonalityFlaw),
-//         fmap (pipe (
-//           // get current active
-//           ActivatableDependent.A.active,
-//           getActiveWithNoCustomCost,
-//           flength,
-//           gt (3),
-//           bool_ (() => 0)
-//                 (() => pipe_ (
-//                   staticData,
-//                   SDA.disadvantages,
-//                   lookup<string> (DisadvantageId.BadHabit),
-//                   bindF (Disadvantage.A.cost),
-//                   misNumberM,
-//                   fmap (multiply (-3)),
-//                   sum
-//                 ))
-//         ))
-//       ))
-//       : 0
-// const getSkillSpecializationsDiff =
-//   (staticData: StaticDataRecord) =>
-//   (hero_slice: StrMap<Record<ActivatableDependent>>) =>
-//   (entries: List<Record<ActiveActivatable>>): number => {
-//     if (any (pipe (ActiveActivatableAL_.id, equals<string> (SpecialAbilityId.SkillSpecialization)))
-//             (entries)) {
-//       return sum (pipe_ (
-//         hero_slice,
-//         lookup<string> (SpecialAbilityId.SkillSpecialization),
-//         fmap (entry => {
-//           const current_active = ActivatableDependent.A.active (entry)
-//           // Count how many specializations are for the same skill
-//           const sameSkill =
-//             countWithByKeyMaybe (pipe (ActiveObject.A.sid, misStringM))
-//                                 (current_active)
-//           // Return the accumulated value, otherwise 0.
-//           const getFlatSkillDone = findWithDefault (0)
-//           // Calculates the diff for a single skill specialization
-//           const getSingleDiff =
-//             (accMap: StrMap<number>) =>
-//             (sid: string) =>
-//             (counter: number) =>
-//             (skill: Record<Skill>) =>
-//               Skill.A.ic (skill) * (getFlatSkillDone (sid) (accMap) + 1 - counter)
-//           type TrackingPair = Pair<number, StrMap<number>>
-//           // Iterates through the counter and sums up all cost differences for
-//           // each specialization.
-//           //
-//           // It keeps track of how many specializations have been already
-//           // taken into account.
-//           const skillDone =
-//             foldr (pipe (
-//                     ActiveObject.A.sid,
-//                     misStringM,
-//                     bindF (current_sid =>
-//                             fmapF (lookup (current_sid) (sameSkill))
-//                                   (count => (p: TrackingPair) => {
-//                                     const m = snd (p)
-//                                     // Check if the value in the map is either
-//                                     // Nothing or a Just of a lower number than
-//                                     // the complete counter
-//                                     // => which means there are still actions to
-//                                     // be done
-//                                     if (all (lt (count)) (lookup (current_sid) (m))) {
-//                                       const mskill =
-//                                         pipe_ (staticData, SDA.skills, lookup (current_sid))
-//                                       return Pair (
-//                                         fst (p) + sum (fmap (getSingleDiff (m)
-//                                                                           (current_sid)
-//                                                                           (count))
-//                                                             (mskill)),
-//                                         alter (pipe (altF (Just (0)), fmap (inc)))
-//                                               (current_sid)
-//                                               (m)
-//                                       )
-//                                     }
-//                                     return p
-//                                   })),
-//                     fromMaybe<ident<TrackingPair>> (ident)
-//                   ))
-//                   (Pair (0, empty))
-//                   (current_active)
-//           return fst (skillDone)
-//         })
-//       ))
-//     }
-//     return 0
-//   }
-// const getPropertyKnowledgeDiff =
-//   getPropertyOrAspectKnowledgeDiff (SpecialAbilityId.PropertyKnowledge)
-// const getAspectKnowledgeDiff =
-//   getPropertyOrAspectKnowledgeDiff (SpecialAbilityId.AspectKnowledge)
-// /**
-//  * The returned number modifies the current AP spent.
-//  */
-// export const getAdventurePointsSpentDifference =
-//   (staticData: StaticDataRecord) =>
-//   (hero_slice: StrMap<Record<ActivatableDependent>>) =>
-//   (entries: List<Record<ActiveActivatable>>): number => {
-//     const adventurePointsSpentDifferences = List (
-//       getPrinciplesObligationsDiff (DisadvantageId.Principles) (staticData) (hero_slice) (entries),
-//       getPrinciplesObligationsDiff (DisadvantageId.Obligations) (staticData) (hero_slice) (entries),
-//       getPersonalityFlawsDiff (entries),
-//       getBadHabitsDiff (staticData) (hero_slice) (entries),
-//       getSkillSpecializationsDiff (staticData) (hero_slice) (entries),
-//       getPropertyKnowledgeDiff (entries),
-//       getAspectKnowledgeDiff (entries)
-//     )
-//     return List.sum (adventurePointsSpentDifferences)
-//   }
+      };
+    | _ => 0
+    }
+  );
+};

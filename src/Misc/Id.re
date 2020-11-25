@@ -138,138 +138,6 @@ module All = {
   let (==) = (x, y) => compare(x, y) === 0;
 };
 
-module Activatable = {
-  type t =
-    | Advantage(int)
-    | Disadvantage(int)
-    | SpecialAbility(int);
-
-  let toAll =
-    fun
-    | Advantage(x) => All.Advantage(x)
-    | Disadvantage(x) => All.Disadvantage(x)
-    | SpecialAbility(x) => All.SpecialAbility(x);
-
-  let (==) = (x, y) =>
-    [@warning "-4"]
-    (
-      switch (x: t, y: t) {
-      | (Advantage(x), Advantage(y))
-      | (Disadvantage(x), Disadvantage(y))
-      | (SpecialAbility(x), SpecialAbility(y)) => x === y
-      | _ => false
-      }
-    );
-
-  module Decode = {
-    let t =
-      DecodeUtils.(
-        scope(
-          fun
-          | "Advantage" => value(x => Advantage(x))
-          | "Disadvantage" => value(x => Disadvantage(x))
-          | "SpecialAbility" => value(x => SpecialAbility(x))
-          | scope =>
-            raiseUnknownScope(~scopeName="Activatable", ~invalidValue=scope),
-        )
-      );
-  };
-
-  module SelectOption = {
-    type t =
-      | Generic(int)
-      | Skill(int)
-      | CombatTechnique(int)
-      | Spell(int)
-      | Cantrip(int)
-      | LiturgicalChant(int)
-      | Blessing(int)
-      | SpecialAbility(int)
-      | TradeSecret(int)
-      | Language(int)
-      | Script(int)
-      | AnimalShape(int);
-
-    let outerToInt =
-      fun
-      | Generic(_) => 1
-      | Skill(_) => 2
-      | CombatTechnique(_) => 3
-      | Spell(_) => 4
-      | Cantrip(_) => 5
-      | LiturgicalChant(_) => 6
-      | Blessing(_) => 7
-      | SpecialAbility(_) => 8
-      | TradeSecret(_) => 9
-      | Language(_) => 10
-      | Script(_) => 11
-      | AnimalShape(_) => 12;
-
-    let innerToInt =
-      fun
-      | Generic(x)
-      | Skill(x)
-      | CombatTechnique(x)
-      | Spell(x)
-      | Cantrip(x)
-      | LiturgicalChant(x)
-      | Blessing(x)
-      | SpecialAbility(x)
-      | TradeSecret(x)
-      | Language(x)
-      | Script(x)
-      | AnimalShape(x) => x;
-
-    let compare = OrdUtils.makeCompare(outerToInt, innerToInt);
-
-    let (==) = (x, y) => compare(x, y) === 0;
-
-    let (!=) = (x, y) => compare(x, y) !== 0;
-
-    module Decode = {
-      open Json.Decode;
-
-      let scoped =
-        DecodeUtils.(
-          scope(
-            fun
-            | "Skill" => value(x => Skill(x))
-            | "CombatTechnique" => value(x => CombatTechnique(x))
-            | "Spell" => value(x => Spell(x))
-            | "Cantrip" => value(x => Cantrip(x))
-            | "LiturgicalChant" => value(x => LiturgicalChant(x))
-            | "Blessing" => value(x => Blessing(x))
-            | "SpecialAbility" => value(x => SpecialAbility(x))
-            | scope =>
-              raiseUnknownScope(
-                ~scopeName="SelectOption",
-                ~invalidValue=scope,
-              ),
-          )
-        );
-
-      let t = (json): t =>
-        json |> oneOf([int |> map(x => Generic(x)), scoped]);
-    };
-  };
-
-  module Option = {
-    type t =
-      | Preset(SelectOption.t)
-      | CustomInput(string);
-
-    let (==) = (x, y) =>
-      [@warning "-4"]
-      (
-        switch (x, y) {
-        | (Preset(x), Preset(y)) => SelectOption.(==)(x, y)
-        | (CustomInput(x), CustomInput(y)) => x === y
-        | _ => false
-        }
-      );
-  };
-};
-
 module ActivatableAndSkill = {
   type t =
     | Advantage(int)
@@ -1606,5 +1474,144 @@ module SpecialAbility = {
       | Ringzauber => 44
       | Chronikzauber => 45
       | Other(x) => x;
+  };
+};
+
+module Activatable = {
+  type t =
+    | Advantage(int)
+    | Disadvantage(int)
+    | SpecialAbility(int);
+
+  let toAll =
+    fun
+    | Advantage(x) => All.Advantage(x)
+    | Disadvantage(x) => All.Disadvantage(x)
+    | SpecialAbility(x) => All.SpecialAbility(x);
+
+  let (==) = (x, y) =>
+    [@warning "-4"]
+    (
+      switch (x: t, y: t) {
+      | (Advantage(x), Advantage(y))
+      | (Disadvantage(x), Disadvantage(y))
+      | (SpecialAbility(x), SpecialAbility(y)) => x === y
+      | _ => false
+      }
+    );
+
+  module Decode = {
+    let t =
+      DecodeUtils.(
+        scope(
+          fun
+          | "Advantage" => value(x => Advantage(x))
+          | "Disadvantage" => value(x => Disadvantage(x))
+          | "SpecialAbility" => value(x => SpecialAbility(x))
+          | scope =>
+            raiseUnknownScope(~scopeName="Activatable", ~invalidValue=scope),
+        )
+      );
+  };
+
+  module SelectOption = {
+    type t =
+      | Generic(int)
+      | Skill(int)
+      | CombatTechnique(int)
+      | Spell(int)
+      | Cantrip(int)
+      | LiturgicalChant(int)
+      | Blessing(int)
+      | SpecialAbility(int)
+      | TradeSecret(int)
+      | Language(int)
+      | Script(int)
+      | AnimalShape(int);
+
+    let outerToInt =
+      fun
+      | Generic(_) => 1
+      | Skill(_) => 2
+      | CombatTechnique(_) => 3
+      | Spell(_) => 4
+      | Cantrip(_) => 5
+      | LiturgicalChant(_) => 6
+      | Blessing(_) => 7
+      | SpecialAbility(_) => 8
+      | TradeSecret(_) => 9
+      | Language(_) => 10
+      | Script(_) => 11
+      | AnimalShape(_) => 12;
+
+    let innerToInt =
+      fun
+      | Generic(x)
+      | Skill(x)
+      | CombatTechnique(x)
+      | Spell(x)
+      | Cantrip(x)
+      | LiturgicalChant(x)
+      | Blessing(x)
+      | SpecialAbility(x)
+      | TradeSecret(x)
+      | Language(x)
+      | Script(x)
+      | AnimalShape(x) => x;
+
+    let compare = OrdUtils.makeCompare(outerToInt, innerToInt);
+
+    let (==) = (x, y) => compare(x, y) === 0;
+
+    let (!=) = (x, y) => compare(x, y) !== 0;
+
+    module Decode = {
+      open Json.Decode;
+
+      let scoped =
+        DecodeUtils.(
+          scope(
+            fun
+            | "Skill" => value(x => Skill(x))
+            | "CombatTechnique" => value(x => CombatTechnique(x))
+            | "Spell" => value(x => Spell(x))
+            | "Cantrip" => value(x => Cantrip(x))
+            | "LiturgicalChant" => value(x => LiturgicalChant(x))
+            | "Blessing" => value(x => Blessing(x))
+            | "SpecialAbility" => value(x => SpecialAbility(x))
+            | scope =>
+              raiseUnknownScope(
+                ~scopeName="SelectOption",
+                ~invalidValue=scope,
+              ),
+          )
+        );
+
+      let t = (json): t =>
+        json |> oneOf([int |> map(x => Generic(x)), scoped]);
+    };
+  };
+
+  module Option = {
+    type t =
+      | Preset(SelectOption.t)
+      | CustomInput(string);
+
+    let (==) = (x, y) =>
+      [@warning "-4"]
+      (
+        switch (x, y) {
+        | (Preset(x), Preset(y)) => SelectOption.(==)(x, y)
+        | (CustomInput(x), CustomInput(y)) => x === y
+        | _ => false
+        }
+      );
+  };
+
+  module DeepVariant = {
+    type t =
+      | Advantage(Advantage.t)
+      | Disadvantage(Disadvantage.t)
+      | SpecialAbility(SpecialAbility.t);
   };
 };

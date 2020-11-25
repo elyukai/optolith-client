@@ -27,6 +27,7 @@
     { "dir": "src/Increasable/__tests__", "type": "dev" },
     { "dir": "src/Init" },
     { "dir": "src/Misc" },
+    { "dir": "src/Misc/__tests__", "type": "dev" },
     { "dir": "src/Prerequisites" },
     { "dir": "src/RaceCultureProfession" },
     { "dir": "src/Rules" },
@@ -34,7 +35,7 @@
     { "dir": "src/Utilities" }
   ],
   "package-specs": {
-    "module": "es6",
+    "module": "commonjs",
     "in-source": true
   },
   "suffix": ".bs.js",

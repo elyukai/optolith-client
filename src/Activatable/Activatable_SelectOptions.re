@@ -8,10 +8,7 @@ module O = Ley_Option;
 module SOM = SelectOption.Map;
 module F = Ley_Function;
 
-let getSelectOption = (x, id) =>
-  id
-  |> activatableOptionToSelectOptionId
-  >>= Ley_Function.flip(Map.lookup, selectOptions(x));
+let getSelectOption = (x, id) => Map.lookup(id, selectOptions(x));
 
 /**
  * Get a selection option's name with the given id from given wiki entry.

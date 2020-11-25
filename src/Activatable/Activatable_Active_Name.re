@@ -20,17 +20,12 @@ let getDefaultNameAddition = (staticEntry, heroEntry) => {
     | (Some(_), Some(Preset(id)), Some(CustomInput(str)))
         when SelectOption.Map.size(selectOptions) > 0 =>
       Some(
-        (
-          Id.Activatable.Option.Preset(id)
-          |> getSelectOptionName(staticEntry)
-          |> fromOption("")
-        )
+        (id |> getSelectOptionName(staticEntry) |> fromOption(""))
         ++ ": "
         ++ str,
       )
     // Plain select option
-    | (None, Some(Preset(id)), None) =>
-      getSelectOptionName(staticEntry, Id.Activatable.Option.Preset(id))
+    | (None, Some(Preset(id)), None) => getSelectOptionName(staticEntry, id)
     | _ => None
     }
   );
@@ -81,6 +76,7 @@ let getEntrySpecificNameAddition =
       | HatredFor =>
         heroEntry
         |> getOption1
+        >>= Activatable_Convert.activatableOptionToSelectOptionId
         >>= getSelectOption(staticEntry)
         |> liftM2(
              (type_, frequency: SelectOption.t) =>
@@ -102,6 +98,7 @@ let getEntrySpecificNameAddition =
       | PersonalityFlaw =>
         heroEntry
         |> getOption1
+        >>= Activatable_Convert.activatableOptionToSelectOptionId
         >>= getSelectOption(staticEntry)
         <&> (
           option1 =>
@@ -189,13 +186,17 @@ let getEntrySpecificNameAddition =
       | Exorzist =>
         switch (heroEntry.level) {
         | Some(1) =>
-          heroEntry |> getOption1 >>= getSelectOptionName(staticEntry)
+          heroEntry
+          |> getOption1
+          >>= Activatable_Convert.activatableOptionToSelectOptionId
+          >>= getSelectOptionName(staticEntry)
         | _ => None
         }
       | SpellEnhancement as entryId
       | ChantEnhancement as entryId =>
         heroEntry
         |> getOption1
+        >>= Activatable_Convert.activatableOptionToSelectOptionId
         >>= getSelectOption(staticEntry)
         >>= (
           enhancement =>
@@ -234,7 +235,8 @@ let getEntrySpecificNameAddition =
             staticData.specialAbilities,
           )
           <&> (specialAbility => Activatable.SpecialAbility(specialAbility)),
-          getOption1(heroEntry),
+          getOption1(heroEntry)
+          >>= Activatable_Convert.activatableOptionToSelectOptionId,
         )
         |> join
         >>= (

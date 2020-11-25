@@ -43,56 +43,6 @@ module All: {
   let (==): (t, t) => bool;
 };
 
-module Activatable: {
-  type t =
-    | Advantage(int)
-    | Disadvantage(int)
-    | SpecialAbility(int);
-
-  let toAll: t => All.t;
-
-  let (==): (t, t) => bool;
-
-  module Decode: {let t: Js.Json.t => t;};
-
-  module SelectOption: {
-    type t =
-      | Generic(int)
-      | Skill(int)
-      | CombatTechnique(int)
-      | Spell(int)
-      | Cantrip(int)
-      | LiturgicalChant(int)
-      | Blessing(int)
-      | SpecialAbility(int)
-      | TradeSecret(int)
-      | Language(int)
-      | Script(int)
-      | AnimalShape(int);
-
-    /**
-     * `compare x y` returns `0` if `x` and `y` are equal, a negative integer if
-     * `x` is smaller than `y`, and a positive integer if `x` is greater than
-     * `y`.
-     */
-    let compare: (t, t) => int;
-
-    let (==): (t, t) => bool;
-
-    let (!=): (t, t) => bool;
-
-    module Decode: {let t: Js.Json.t => t;};
-  };
-
-  module Option: {
-    type t =
-      | Preset(SelectOption.t)
-      | CustomInput(string);
-
-    let (==): (t, t) => bool;
-  };
-};
-
 module ActivatableAndSkill: {
   type t =
     | Advantage(int)
@@ -651,5 +601,62 @@ module SpecialAbility: {
     let fromInt: int => t;
 
     let toInt: t => int;
+  };
+};
+
+module Activatable: {
+  type t =
+    | Advantage(int)
+    | Disadvantage(int)
+    | SpecialAbility(int);
+
+  let toAll: t => All.t;
+
+  let (==): (t, t) => bool;
+
+  module Decode: {let t: Js.Json.t => t;};
+
+  module SelectOption: {
+    type t =
+      | Generic(int)
+      | Skill(int)
+      | CombatTechnique(int)
+      | Spell(int)
+      | Cantrip(int)
+      | LiturgicalChant(int)
+      | Blessing(int)
+      | SpecialAbility(int)
+      | TradeSecret(int)
+      | Language(int)
+      | Script(int)
+      | AnimalShape(int);
+
+    /**
+     * `compare x y` returns `0` if `x` and `y` are equal, a negative integer if
+     * `x` is smaller than `y`, and a positive integer if `x` is greater than
+     * `y`.
+     */
+    let compare: (t, t) => int;
+
+    let (==): (t, t) => bool;
+
+    let (!=): (t, t) => bool;
+
+    module Decode: {let t: Js.Json.t => t;};
+  };
+
+  module Option: {
+    type t =
+      | Preset(SelectOption.t)
+      | CustomInput(string);
+
+    let (==): (t, t) => bool;
+  };
+
+  module DeepVariant: {
+    type t =
+      | Advantage(Advantage.t)
+      | Disadvantage(Disadvantage.t)
+      | SpecialAbility(SpecialAbility.t);
   };
 };

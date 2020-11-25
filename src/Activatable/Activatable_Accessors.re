@@ -17,6 +17,14 @@ let id' = x =>
   | SpecialAbility(y) => y.id
   };
 
+let idDeepVariant = x =>
+  switch (x) {
+  | Activatable.Advantage(y) =>
+    Id.Activatable.DeepVariant.Advantage(Id.Advantage.fromInt(y.id))
+  | Disadvantage(y) => Disadvantage(Id.Disadvantage.fromInt(y.id))
+  | SpecialAbility(y) => SpecialAbility(Id.SpecialAbility.fromInt(y.id))
+  };
+
 let name = x =>
   switch (x) {
   | Activatable.Advantage(y) => y.name

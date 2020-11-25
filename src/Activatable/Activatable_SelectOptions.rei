@@ -12,21 +12,21 @@ open Activatable_Convert;
  * `Nothing` if not found.
  */
 let getSelectOption:
-  (Activatable.t, Id.Activatable.Option.t) => option(SelectOption.t);
+  (Activatable.t, Id.Activatable.SelectOption.t) => option(SelectOption.t);
 
 /**
  * Get a select option's name with the given id from given static entry.
  * Returns `Nothing` if not found.
  */
 let getSelectOptionName:
-  (Activatable.t, Id.Activatable.Option.t) => option(string);
+  (Activatable.t, Id.Activatable.SelectOption.t) => option(string);
 
 /**
  * Get a option's cost with the given id from given static entry. Returns
  * `Nothing` if not found.
  */
 let getSelectOptionCost:
-  (Activatable.t, Id.Activatable.Option.t) => option(int);
+  (Activatable.t, Id.Activatable.SelectOption.t) => option(int);
 
 /**
  * Get all first option IDs from the given entry.

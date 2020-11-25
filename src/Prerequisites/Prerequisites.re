@@ -127,6 +127,7 @@ module Dynamic = {
               };
 
             sid
+            >>= Activatable_Convert.activatableOptionToSelectOptionId
             >>= Activatable_SelectOptions.getSelectOption(staticEntry)
             >>= (
               option =>
@@ -190,6 +191,7 @@ module Dynamic = {
           | SpellEnhancement as id
           | ChantEnhancement as id =>
             sid
+            >>= Activatable_Convert.activatableOptionToSelectOptionId
             >>= Activatable_SelectOptions.getSelectOption(staticEntry)
             >>= (
               option =>

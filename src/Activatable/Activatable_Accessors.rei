@@ -22,6 +22,8 @@ let id: Activatable.t => Id.Activatable.t;
 
 let id': Activatable.t => int;
 
+let idDeepVariant: Activatable.t => Id.Activatable.DeepVariant.t;
+
 let name: Activatable.t => string;
 
 let selectOptions: Activatable.t => SelectOption.map;
