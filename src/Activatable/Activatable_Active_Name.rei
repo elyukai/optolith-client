@@ -24,5 +24,5 @@ type combinedName = {
  * the name, splitted and combined, of the passed `singleEntry`.
  */
 let getName:
-  (~addLevelToName: bool, Static.t, Static.activatable, singleWithId) =>
+  (~addLevelToName: bool, Static.t, Activatable.t, singleWithId) =>
   combinedName;

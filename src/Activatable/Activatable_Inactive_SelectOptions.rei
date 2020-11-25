@@ -10,7 +10,7 @@ let getAvailableSelectOptions:
     Static.t,
     Hero.t,
     list(Tradition.Magical.fullTradition),
-    Static.activatable,
+    Activatable.t,
     option(Activatable_Dynamic.t)
   ) =>
   option(list(SelectOption.t));

@@ -1,6 +1,5 @@
 open Ley_Option;
 open Ley_Option.Infix;
-open Static;
 open Ley_Function;
 open Activatable_Convert;
 open Activatable_SelectOptions;
@@ -42,9 +41,10 @@ let getDefaultNameAddition = (staticEntry, heroEntry) => {
  * both. This function creates a string that can be appended to the `name`
  * property of the respective record to create the full active name.
  */
-let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
+let getEntrySpecificNameAddition =
+    (staticData: Static.t, staticEntry, heroEntry) =>
   switch (staticEntry) {
-  | Advantage(entry) =>
+  | Activatable.Advantage(entry) =>
     [@warning "-4"]
     (
       switch (Id.Advantage.fromInt(entry.id)) {
@@ -233,7 +233,7 @@ let getEntrySpecificNameAddition = (staticData, staticEntry, heroEntry) =>
             Id.SpecialAbility.toInt(Language),
             staticData.specialAbilities,
           )
-          <&> (specialAbility => SpecialAbility(specialAbility)),
+          <&> (specialAbility => Activatable.SpecialAbility(specialAbility)),
           getOption1(heroEntry),
         )
         |> join
@@ -314,9 +314,9 @@ let getSpecialAbilityLevelStr = level =>
  *  special abilties as well as it handles the Native Tongue level for
  * languages.
  */
-let getLevelName = (staticData, staticEntry, singleHeroEntry) =>
+let getLevelName = (staticData: Static.t, staticEntry, singleHeroEntry) =>
   switch (staticEntry, singleHeroEntry.level) {
-  | (Advantage(_), Some(level))
+  | (Activatable.Advantage(_), Some(level))
   | (Disadvantage(_), Some(level)) => Some(getDisAdvLevelStr(level))
   | (SpecialAbility(staticEntry), Some(level)) =>
     [@warning "-4"]

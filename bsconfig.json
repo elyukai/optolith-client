@@ -31,7 +31,6 @@
     { "dir": "src/RaceCultureProfession" },
     { "dir": "src/Rules" },
     { "dir": "src/Sources" },
-    { "dir": "src/System" },
     { "dir": "src/Utilities" }
   ],
   "package-specs": {

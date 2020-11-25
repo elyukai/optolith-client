@@ -4,7 +4,7 @@ type t = {
   apValue: int,
   isAutomatic: bool,
   validation: Activatable_Active_Validation.t,
-  staticEntry: Static.activatable,
+  staticEntry: Activatable.t,
   heroEntry: Activatable_Dynamic.t,
 };
 

@@ -150,7 +150,7 @@ let getAvailableSelectOptionsTransducer =
   let isNoGenericRequiredSelectionShort =
     isNoGenericRequiredSelection(staticData, hero, maybeHeroEntry);
 
-  switch ((staticEntry: Static.activatable)) {
+  switch ((staticEntry: Activatable.t)) {
   | Advantage(staticAdvantage) =>
     let id = Id.All.Advantage(staticAdvantage.id);
 

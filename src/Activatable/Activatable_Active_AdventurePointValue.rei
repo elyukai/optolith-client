@@ -34,7 +34,7 @@ let getApValueDifferenceOnChange:
     ~automaticAdvantages: list(int),
     Static.t,
     Hero.t,
-    Static.activatable,
+    Activatable.t,
     Activatable_Dynamic.t,
     singleWithId
   ) =>

@@ -32,7 +32,7 @@ let isRemovalOrModificationValid:
     Activatable_Cache.t,
     Static.t,
     Hero.t,
-    Static.activatable,
+    Activatable.t,
     Activatable_Dynamic.t,
     Activatable_Convert.singleWithId
   ) =>

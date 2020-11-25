@@ -133,7 +133,7 @@ let isEntrySpecificAdditionEnabled =
     (cache, staticData, hero: Hero.t, staticEntry) =>
   (
     switch (staticEntry) {
-    | Static.Advantage(_)
+    | Activatable.Advantage(_)
     | Disadvantage(_) => true
     | SpecialAbility(staticSpecialAbility) =>
       isSpecialAbilitySpecificAdditionEnabled(
@@ -185,7 +185,7 @@ let hasNotReachedMaximumEntries = (maxLevel, maybeHeroEntry) =>
 let isValidExtendedSpecialAbility =
     ({validExtendedSpecialAbilities, _}, staticEntry) =>
   switch (staticEntry) {
-  | Static.Advantage(_)
+  | Activatable.Advantage(_)
   | Disadvantage(_) => true
   | SpecialAbility(staticSpecialAbility) =>
     [@warning "-4"]
@@ -204,7 +204,7 @@ let isValidExtendedSpecialAbility =
 let appliesToMagicalActionsIfRequired =
     ({requiredApplyToMagicalActions, _}, staticEntry) =>
   switch (staticEntry) {
-  | Static.Advantage(staticAdvantage) =>
+  | Activatable.Advantage(staticAdvantage) =>
     !requiredApplyToMagicalActions
     || !staticAdvantage.isExclusiveToArcaneSpellworks
   | Disadvantage(staticDisadvantage) =>

@@ -1,4 +1,3 @@
-open Static;
 open SelectOption;
 open Ley_Option.Infix;
 open Activatable_Convert;

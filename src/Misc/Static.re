@@ -66,8 +66,3 @@ type t = {
   tribes: IM.t(string),
   zibiljaRituals: IM.t(ZibiljaRitual.Static.t),
 };
-
-type activatable =
-  | Advantage(Advantage.Static.t)
-  | Disadvantage(Disadvantage.Static.t)
-  | SpecialAbility(SpecialAbility.Static.t);

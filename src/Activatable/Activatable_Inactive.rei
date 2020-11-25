@@ -6,14 +6,14 @@ type t = {
   maxLevel: option(int),
   selectOptions: list(SelectOption.t),
   heroEntry: option(Activatable_Dynamic.t),
-  staticEntry: Static.activatable,
+  staticEntry: Activatable.t,
   customCostDisabled: bool,
   isAutomatic: bool,
 };
 
 type result =
   | Valid(t)
-  | Invalid(Static.activatable);
+  | Invalid(Activatable.t);
 
 /**
  * `getInactive cache staticData hero staticEntry maybeHeroEntry` validates an
@@ -28,7 +28,7 @@ let getInactive:
     Activatable_Cache.t,
     Static.t,
     Hero.t,
-    Static.activatable,
+    Activatable.t,
     option(Activatable_Dynamic.t)
   ) =>
   result;

@@ -20,7 +20,7 @@ module Dynamic = {
 
     (
       switch (staticEntry) {
-      | Advantage(entry) =>
+      | Activatable.Advantage(entry) =>
         [@warning "-4"]
         (
           switch (Id.Advantage.fromInt(entry.id)) {
@@ -251,7 +251,7 @@ module Dynamic = {
   let getSelectOptionPrerequisites = (sid, staticEntry) =>
     (
       switch (staticEntry) {
-      | Advantage(entry) => entry.selectOptions
+      | Activatable.Advantage(entry) => entry.selectOptions
       | Disadvantage(entry) => entry.selectOptions
       | SpecialAbility(entry) => entry.selectOptions
       }
@@ -758,7 +758,7 @@ module Validation = {
 module Activatable = {
   let getFlatFirstPrerequisites =
     fun
-    | Static.Advantage(staticAdvantage) =>
+    | Activatable.Advantage(staticAdvantage) =>
       Prerequisite.Collection.ByLevel.getFirstLevel(
         staticAdvantage.prerequisites,
       )
@@ -776,7 +776,7 @@ module Activatable = {
 
   let getLevelPrerequisites =
     fun
-    | Static.Advantage(staticAdvantage) =>
+    | Activatable.Advantage(staticAdvantage) =>
       switch (staticAdvantage.prerequisites) {
       | Plain(_) => Ley_IntMap.empty
       | ByLevel(mp) =>

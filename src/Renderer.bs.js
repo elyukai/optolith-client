@@ -62,7 +62,7 @@ function Renderer$Test(Props) {
       });
   return React.createElement("div", undefined, React.createElement("h2", undefined, "Test"), React.createElement("p", {
                   className: "featured"
-                }, "Progress: " + match[0].toString()));
+                }, "Progress: " + (Math.floor(match[0] * 10.0) / 10.0).toString()));
 }
 
 var Test = {

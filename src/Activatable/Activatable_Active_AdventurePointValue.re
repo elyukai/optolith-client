@@ -448,7 +448,7 @@ let getApValueDifferenceOnChange =
 
   let modifyAbs =
     switch (staticEntry) {
-    | Static.Disadvantage(_) => Ley_Int.negate
+    | Activatable.Disadvantage(_) => Ley_Int.negate
     | Advantage(_)
     | SpecialAbility(_) => id
     };
@@ -483,7 +483,7 @@ let getApValueDifferenceOnChange =
  */
 let getApSpentDifference = (staticEntry, heroEntry: Activatable_Dynamic.t) =>
   switch (staticEntry) {
-  | Static.Advantage(_) => 0
+  | Activatable.Advantage(_) => 0
   | Disadvantage(staticDisadvantage) =>
     [@warning "-4"]
     Id.Disadvantage.(

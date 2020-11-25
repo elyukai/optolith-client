@@ -12,7 +12,7 @@ module Dynamic: {
     (
       ~isEntryToAdd: bool,
       Static.t,
-      Static.activatable,
+      Activatable.t,
       option(Activatable_Dynamic.t),
       Activatable_Convert.singleWithId
     ) =>
@@ -54,8 +54,8 @@ module Validation: {
 
 module Activatable: {
   let getFlatFirstPrerequisites:
-    Static.activatable => list(Prerequisite.Unified.t);
+    Activatable.t => list(Prerequisite.Unified.t);
 
   let getLevelPrerequisites:
-    Static.activatable => Ley_IntMap.t(list(Prerequisite.Unified.t));
+    Activatable.t => Ley_IntMap.t(list(Prerequisite.Unified.t));
 };

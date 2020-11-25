@@ -21,9 +21,7 @@ Electron.app.setAppUserModelId("lukasobermann.optolith");
 function setDerivedUserDataPath(param) {
   console.log("main: Set user data path ...");
   var isPrerelease = Ley_Option$OptolithClient.isNone(Caml_option.null_to_opt(Semver.prerelease(Electron.app.getVersion())));
-  console.log(isPrerelease);
   var userDataPath = Path.join(Electron.app.getPath("appData"), isPrerelease ? "Optolith Insider" : "Optolith");
-  console.log(userDataPath);
   return Curry._2(IO$OptolithClient.Infix.$less$amp$great, Curry._2(IO$OptolithClient.Infix.$great$great$eq, IO$OptolithClient.existsFile(userDataPath), (function (exists) {
                     if (exists) {
                       return Curry._1(IO$OptolithClient.$$return, undefined);
@@ -32,6 +30,7 @@ function setDerivedUserDataPath(param) {
                     }
                   })), (function (param) {
                 Electron.app.setPath("userData", userDataPath);
+                console.log("main: User data path set to \"" + (userDataPath + "\""));
                 
               }));
 }

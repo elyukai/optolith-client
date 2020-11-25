@@ -31,7 +31,7 @@ let isNotRequiredByDependencies =
   // Filter out every dependency that can be matched by another entry
   |> Dependencies.Flatten.flattenActivatableDependencies(
        switch (staticEntry) {
-       | Static.Advantage(_) => getActivesById(hero.advantages)
+       | Activatable.Advantage(_) => getActivesById(hero.advantages)
        | Disadvantage(_) => getActivesById(hero.disadvantages)
        | SpecialAbility(_) => getActivesById(hero.specialAbilities)
        },
@@ -72,7 +72,7 @@ let isEntrySpecificRemovalValid =
     && IS.null(hero.blessings);
   } else {
     switch (staticEntry) {
-    | Static.Advantage(staticAdvantage) =>
+    | Activatable.Advantage(staticAdvantage) =>
       [@warning "-4"]
       Id.Advantage.(
         switch (fromInt(staticAdvantage.id)) {
@@ -251,7 +251,7 @@ let isEntrySpecificRemovalValid =
 
 let isStyleSpecialAbilityRemovalValid = (hero, staticEntry) =>
   switch (staticEntry) {
-  | Static.Advantage(_)
+  | Activatable.Advantage(_)
   | Disadvantage(_) => true
   | SpecialAbility(specialAbility) =>
     Activatable_ExtendedStyle.isStyleValidToRemove(hero, specialAbility)
@@ -280,7 +280,7 @@ let getMaxLevelForDecreaseEntry = (maxDecrease, current) =>
 let getEntrySpecificMinLevel =
     (cache, staticData: Static.t, hero, staticEntry) =>
   switch (staticEntry) {
-  | Static.Advantage(staticAdvantage) =>
+  | Activatable.Advantage(staticAdvantage) =>
     [@warning "-4"]
     Id.Advantage.(
       switch (fromInt(staticAdvantage.id)) {
@@ -325,7 +325,7 @@ let getEntrySpecificMinLevel =
 
 let getEntrySpecificMaxLevel = (cache, hero, staticEntry) =>
   switch (staticEntry) {
-  | Static.Advantage(_) => None
+  | Activatable.Advantage(_) => None
   | Disadvantage(staticDisadvantage) =>
     [@warning "-4"]
     Id.Disadvantage.(

@@ -12,14 +12,14 @@ type t = {
   maxLevel: option(int),
   selectOptions: list(SelectOption.t),
   heroEntry: option(Activatable_Dynamic.t),
-  staticEntry: Static.activatable,
+  staticEntry: Activatable.t,
   customCostDisabled: bool,
   isAutomatic: bool,
 };
 
 type result =
   | Valid(t)
-  | Invalid(Static.activatable);
+  | Invalid(Activatable.t);
 
 let getSermonOrVisionCountMax = (hero: Hero.t, advantageId, disadvantageId) =>
   Activatable_Modifier.modifyByLevel(
@@ -31,7 +31,7 @@ let getSermonOrVisionCountMax = (hero: Hero.t, advantageId, disadvantageId) =>
 let modifyOtherOptions =
     (cache, staticData: Static.t, hero, staticEntry, maybeHeroEntry, base) =>
   switch (staticEntry) {
-  | Static.Advantage(_) => Some(base)
+  | Activatable.Advantage(_) => Some(base)
   | Disadvantage(staticDisadvantage) =>
     [@warning "-4"]
     Id.Disadvantage.(

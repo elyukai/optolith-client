@@ -4,7 +4,7 @@ type t = {
   apValue: int,
   isAutomatic: bool,
   validation: Activatable_Active_Validation.t,
-  staticEntry: Static.activatable,
+  staticEntry: Activatable.t,
   heroEntry: Activatable_Dynamic.t,
 };
 
@@ -20,7 +20,7 @@ let getActive:
     Activatable_Cache.t,
     Static.t,
     Hero.t,
-    Static.activatable,
+    Activatable.t,
     Activatable_Dynamic.t,
     Activatable_Convert.singleWithId
   ) =>

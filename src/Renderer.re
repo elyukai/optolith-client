@@ -54,7 +54,12 @@ module Test = {
     <div>
       <h2> {React.string("Test")} </h2>
       <p className="featured">
-        {React.string("Progress: " ++ Js.Float.toString(progress))}
+        {React.string(
+           "Progress: "
+           ++ Js.Float.toString(
+                Js.Math.floor_float(progress *. 10.0) /. 10.0,
+              ),
+         )}
       </p>
     </div>;
   };

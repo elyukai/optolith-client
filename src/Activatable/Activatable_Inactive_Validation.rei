@@ -25,7 +25,7 @@ let isAdditionValid:
     Static.t,
     Hero.t,
     option(int),
-    Static.activatable,
+    Activatable.t,
     option(Activatable_Dynamic.t)
   ) =>
   bool;
@@ -38,5 +38,5 @@ let isAdditionValid:
  * `Prerequisites.Validation.getMaxLevel`.
  */
 let getMaxLevel:
-  (Static.t, Hero.t, Static.activatable, option(Activatable_Dynamic.t)) =>
+  (Static.t, Hero.t, Activatable.t, option(Activatable_Dynamic.t)) =>
   option(int);

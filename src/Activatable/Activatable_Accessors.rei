@@ -18,18 +18,18 @@ let isActive: Activatable_Dynamic.t => bool;
  */
 let isActiveM: option(Activatable_Dynamic.t) => bool;
 
-let id: Static.activatable => Id.Activatable.t;
+let id: Activatable.t => Id.Activatable.t;
 
-let id': Static.activatable => int;
+let id': Activatable.t => int;
 
-let name: Static.activatable => string;
+let name: Activatable.t => string;
 
-let selectOptions: Static.activatable => SelectOption.map;
+let selectOptions: Activatable.t => SelectOption.map;
 
-let input: Static.activatable => option(string);
+let input: Activatable.t => option(string);
 
-let apValue: Static.activatable => option(Advantage.Static.apValue);
+let apValue: Activatable.t => option(Advantage.Static.apValue);
 
-let apValue': Static.activatable => option(OneOrMany.t(int));
+let apValue': Activatable.t => option(OneOrMany.t(int));
 
-let max: Static.activatable => option(int);
+let max: Activatable.t => option(int);

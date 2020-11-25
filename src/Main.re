@@ -12,20 +12,24 @@ let setDerivedUserDataPath = () => {
   let isPrerelease =
     Ley_Option.isNone(Semver.prerelease(Electron.App.getVersion()));
 
-  Js.Console.log(isPrerelease);
-
   let userDataPath =
     Node.Path.join2(
       Electron.App.getPath(`appData),
       isPrerelease ? "Optolith Insider" : "Optolith",
     );
-  Js.Console.log(userDataPath);
 
   IO.Infix.(
     userDataPath
     |> IO.existsFile
     >>= (exists => exists ? IO.return() : IO.mkdir(userDataPath))
-    <&> (_ => Electron.App.setPath(`userData, userDataPath))
+    <&> (
+      _ => {
+        Electron.App.setPath(`userData, userDataPath);
+        Js.Console.log(
+          "main: User data path set to \"" ++ userDataPath ++ "\"",
+        );
+      }
+    )
   );
 };
 
