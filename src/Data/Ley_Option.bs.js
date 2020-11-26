@@ -151,15 +151,13 @@ function catOptions(xs) {
 }
 
 function mapOption(f, xs) {
-  return List.fold_right((function (param) {
-                return Ley_Function$OptolithClient.$less$neg((function (param) {
-                              return option(Ley_Function$OptolithClient.id, (function (x, xs) {
-                                            return {
-                                                    hd: x,
-                                                    tl: xs
-                                                  };
-                                          }), param);
-                            }), f, param);
+  return List.fold_right((function (x) {
+                return option(Ley_Function$OptolithClient.id, (function (x, xs) {
+                              return {
+                                      hd: x,
+                                      tl: xs
+                                    };
+                            }), Curry._1(f, x));
               }), xs, /* [] */0);
 }
 

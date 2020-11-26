@@ -26,20 +26,8 @@ function $$const(x, param) {
   return x;
 }
 
-function $less$neg(f, g, x) {
-  return Curry._1(f, Curry._1(g, x));
-}
-
 function flip(f, x, y) {
   return Curry._2(f, y, x);
-}
-
-function $(f, x) {
-  return Curry._1(f, x);
-}
-
-function $amp(x, f) {
-  return Curry._1(f, x);
 }
 
 function on(b, u, x, y) {
@@ -49,9 +37,6 @@ function on(b, u, x, y) {
 exports.Functor = Functor;
 exports.id = id;
 exports.$$const = $$const;
-exports.$less$neg = $less$neg;
 exports.flip = flip;
-exports.$ = $;
-exports.$amp = $amp;
 exports.on = on;
 /* No side effect */

@@ -134,7 +134,7 @@ let catOptions = xs =>
   List.fold_right(option(id, (x, xs) => [x, ...xs]), xs, []);
 
 let mapOption = (f, xs) =>
-  List.fold_right(option(id, (x, xs) => [x, ...xs]) <- f, xs, []);
+  List.fold_right(x => x |> f |> option(id, (x, xs) => [x, ...xs]), xs, []);
 
 let ensure = (pred, x) => pred(x) ? Some(x) : None;
 
