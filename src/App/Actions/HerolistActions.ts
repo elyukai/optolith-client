@@ -16,7 +16,7 @@ import { getNewIdByDate } from "../Utilities/IDUtils"
 import { pipe_ } from "../Utilities/pipe"
 import { ReduxAction } from "./Actions"
 import { addAlert, addConfirm, addErrorAlert, AlertOptions, ConfirmOptions, ConfirmResponse } from "./AlertActions"
-import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHeroSave } from "./IOActions"
+import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHeroExportAsRptok, requestHeroSave } from "./IOActions"
 
 export interface SetHerolistSortOrderAction {
   type: ActionTypes.SET_HEROLIST_SORT_ORDER
@@ -167,6 +167,11 @@ export const saveHero =
                    }
                  })
     }
+
+export const exportHeroAsRptok =
+  (id: string): ReduxAction =>
+  dispatch =>
+    dispatch (requestHeroExportAsRptok (id))
 
 export const exportHeroValidate =
   (id: string): ReduxAction =>

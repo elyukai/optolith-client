@@ -12,6 +12,7 @@ import { any, lookup, OrderedMap } from "../../Data/OrderedMap"
 import { toObject } from "../../Data/Record"
 import * as IO from "../../System/IO"
 import * as ActionTypes from "../Constants/ActionTypes"
+
 import { APCache } from "../Models/Cache"
 import { Config } from "../Models/Config"
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
@@ -28,6 +29,7 @@ import { getUISettingsState } from "../Selectors/uisettingsSelectors"
 import { prepareAPCache, prepareAPCacheForHero, writeCache } from "../Utilities/Cache"
 import { translate } from "../Utilities/I18n"
 import { showOpenDialog, showSaveDialog } from "../Utilities/IOUtils"
+import { getContentXML, getPropertiesXML } from "../Utilities/MapToolExporter"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { writeConfig } from "../Utilities/Raw/JSON/Config"
 import { parseHero } from "../Utilities/Raw/JSON/Hero"
@@ -306,6 +308,68 @@ export const imgPathToBase64 =
 
     return Just (path)
   }
+
+export const requestHeroExportAsRptok =
+  (id: string): ReduxAction =>
+  async (dispatch, getState) => {
+    const state = getState ()
+    const staticData = getWiki (state)
+    const heroes = getHeroes (state)
+
+    const mhero =
+      pipe_ (
+        heroes,
+        lookup (id),
+        fmap (pipe (
+          heroReducer.A.present,
+          over (HeroModelL.avatar) (bindF (imgPathToBase64)),
+          over (HeroModelL.pets) (OrderedMap.map (over (PetL.avatar) (bindF (imgPathToBase64)))),
+        ))
+      )
+
+    if (isJust (mhero)) {
+      const hero = fromJust (mhero).values
+
+      const pmfilepath = await showSaveDialog ({
+        title: "Held als rptok für maptools exportieren",
+        filters: [
+          { name: "rptok", extensions: [ "rptok" ] },
+        ],
+        defaultPath: `${hero.name.replace (/\//u, "/")}.rptok`,
+      })
+
+      if (isJust (pmfilepath)) {
+
+        var contentXml:string = getContentXML(hero)
+        const propertiesXml:String = getPropertiesXML()
+
+        //TODO: Hier ein Zip-File mit den beiden XML-Files und den Avatarbildern als rptok speichern.
+        const res = await handleE (maybe (Promise.resolve ())
+                                         (flip (IO.writeFile) (contentXml))
+                                         (pmfilepath))
+
+        if (isRight (res)) {
+          await dispatch (addAlert (AlertOptions ({
+                                     message: translate (staticData) ("heroes.dialogs.herosaved"),
+                                   })))
+        }
+        else {
+          const title = Just (translate (staticData) ("header.dialogs.saveheroeserror.title"))
+
+          const message = getErrorMsg (staticData)
+                                      (translate (staticData)
+                                                 ("header.dialogs.saveheroeserror.message"))
+                                      (res)
+
+          await dispatch (addErrorAlert (AlertOptions ({
+                                          title,
+                                          message,
+                                        })))
+        }
+      }
+    }
+  }
+
 
 export const requestHeroExport =
   (id: string): ReduxAction =>

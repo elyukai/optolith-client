@@ -45,6 +45,7 @@ export interface HerolistItemDispatchProps {
   loadHero (): void
   showHero (): void
   saveHero (): void
+  exportHeroAsRptok (): void
   saveHeroAsJSON (): void
   deleteHero (): void
   duplicateHero (): void
@@ -63,6 +64,7 @@ export const HerolistItem: React.FC<HerolistItemProps> = props => {
     unsavedHeroesById,
     loadHero,
     saveHero,
+    exportHeroAsRptok,
     saveHeroAsJSON,
     deleteHero,
     duplicateHero,
@@ -139,6 +141,11 @@ export const HerolistItem: React.FC<HerolistItemProps> = props => {
           icon="&#xE907;"
           onClick={duplicateHero}
           hint={Just (translate (staticData) ("heroes.duplicateherobtn"))}
+          />
+        <IconButton
+          icon="&#xE914;"
+          onClick={exportHeroAsRptok}
+          hint={Just ("Als *.rptok für maptools exportieren")}
           />
         <IconButton
           icon="&#xE914;"
