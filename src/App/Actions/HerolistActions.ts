@@ -168,11 +168,7 @@ export const saveHero =
                  })
     }
 
-export const exportHeroAsRptok =
-  (id: string): ReduxAction =>
-  dispatch =>
-    dispatch (requestHeroExportAsRptok (id))
-
+export const exportHeroAsRptok = requestHeroExportAsRptok
 export const exportHeroValidate =
   (id: string): ReduxAction =>
   dispatch =>
