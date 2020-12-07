@@ -467,10 +467,12 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
   id = 0
   const ranged = `[${
    pipe_ (
-    //Wie gehe ich hier mit dem Maybe um???
     getRangedWeapons (state, { hero }),
-    Maybe.mapMaybe (rangedWeaponForXML),
-    List.intercalate (", ")
+    maybe ("")
+          (pipe (
+            fmap (rangedWeaponForXML),
+            List.intercalate (", ")
+          ))
    )
   }]`
 
