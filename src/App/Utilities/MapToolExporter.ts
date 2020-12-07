@@ -125,17 +125,20 @@ function getStaticDataXML (hero: HeroModelRecord): string {
 
 function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string {
 
-  // Hier werden die Attribute bestückt
-  // Irgendwas funktioniert aber noch nicht
-  let xml: string = pipe_ (state.values.wiki.values.attributes,
+  let xml: string = pipe_ (
+    state.values.wiki.values.attributes,
     OrderedMap.elems,
-    fmap ((attr: Record<Attribute>) => entry ({
-      key: Attribute.A.short (attr),
-      value: pipe_ (attr,
+    mapMaybe ((attr: Record<Attribute>) => 
+      pipe_ (
+        attr,
         Attribute.A.id,
-        OrderedMap.lookupF (hero.values.attributes)),
-    })),
-    entry,
+        OrderedMap.lookupF (hero.values.attributes),
+        fmap (stateEntry => entry ({
+          key: Attribute.A.short (attr),
+          value: AttributeDependent.A.value (stateEntry),
+        }))
+      )
+    ),
     List.intercalate (""))
 
   const leP: number = fromMaybe (0, getLP (state, { hero }).values.value)
