@@ -23,6 +23,7 @@ export interface MeleeWeapon {
   weight: Maybe<number>
   isImprovisedWeapon: boolean
   isTwoHandedWeapon: boolean
+  isParryingWeapon: boolean
 }
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -47,4 +48,5 @@ export const MeleeWeapon =
                 weight: Nothing,
                 isImprovisedWeapon: false,
                 isTwoHandedWeapon: false,
+                isParryingWeapon: false,
               })
