@@ -310,25 +310,10 @@ export const imgPathToBase64 =
   }
 
 export const requestHeroExportAsRptok =
-  (id: string): ReduxAction =>
+  (hero: HeroModelRecord): ReduxAction =>
   async (dispatch, getState) => {
     const state = getState ()
     const staticData = getWiki (state)
-    const heroes = getHeroes (state)
-
-    const mhero =
-      pipe_ (
-        heroes,
-        lookup (id),
-        fmap (pipe (
-          heroReducer.A.present,
-          over (HeroModelL.avatar) (bindF (imgPathToBase64)),
-          over (HeroModelL.pets) (OrderedMap.map (over (PetL.avatar) (bindF (imgPathToBase64)))),
-        ))
-      )
-
-    if (isJust (mhero)) {
-      const hero = fromJust (mhero).values
 
       const pmfilepath = await showSaveDialog ({
         title: "Held als rptok für maptools exportieren",
@@ -339,9 +324,8 @@ export const requestHeroExportAsRptok =
       })
 
       if (isJust (pmfilepath)) {
-
-        var contentXml:string = getContentXML(hero)
-        const propertiesXml:String = getPropertiesXML()
+        const contentXml: string = getContentXML (hero, state)
+        const propertiesXml: string = getPropertiesXML ()
 
         //TODO: Hier ein Zip-File mit den beiden XML-Files und den Avatarbildern als rptok speichern.
         const res = await handleE (maybe (Promise.resolve ())

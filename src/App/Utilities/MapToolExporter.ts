@@ -1,113 +1,151 @@
 import { OrderedMap } from "../../Data/OrderedMap"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
-import { HeroModel } from "../Models/Hero/HeroModel"
+import { HeroModelRecord } from "../Models/Hero/HeroModel"
 import { Record } from "../../Data/Record"
+import { pipe, pipe_ } from "./pipe"
+import { Maybe } from "../../Data/Maybe"
+import { fmap } from "../../Data/Functor"
+import { getAE, getDO, getINI, getKP, getLP, getMOV, getSPI, getTOU } from "../Selectors/derivedCharacteristicsSelectors"
+import { AppStateRecord } from "../Models/AppState"
+import { fromMaybe } from "../../Data/Maybe.bs"
+import { getFatePointsModifier } from "../Selectors/activatableSelectors"
+import { getArmors, getArmorZones, getFullItem, getMeleeWeapons, getRangedWeapons } from "../Selectors/equipmentSelectors"
+import { MeleeWeapon } from "../Models/View/MeleeWeapon"
+import { List } from "../../Data/List"
+import { RangedWeapon } from "../Models/View/RangedWeapon"
+import { getAllCombatTechniques } from "../Selectors/combatTechniquesSelectors"
+import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
+import { getWikiAdvantages, getWikiDisadvantages, getWikiItemTemplates } from "../Selectors/stateSelectors"
+import { Item } from "../Models/Hero/Item"
+import { Advantage } from "../Models/Wiki/Advantage"
+import { Disadvantage } from "../Models/Wiki/Disadvantage"
+import { Skill } from "../Models/Wiki/Skill"
+import { NumIdName } from "../Models/NumIdName"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { SkillGroup } from "../Models/Wiki/SkillGroup"
+import { SkillDependent } from "../Models/ActiveEntries/SkillDependent"
+import { Attribute } from "../Models/Wiki/Attribute"
+import { Armor } from "../Models/View/Armor"
+
+type MaptoolsEntry = {
+  key: string
+  value: string
+}
+
+enum MaptoolsAttribute {
+  MU, KL, IN, CH, FF, GE, KO, KK
+}
+
+type MaptoolsSkill = {
+  name: string
+  value: number
+  attr1: MaptoolsAttribute
+  attr2: MaptoolsAttribute
+  attr3: MaptoolsAttribute
+}
+
+type MapToolsSkillGroup = {
+  groupName: String
+  skills: List<MaptoolsSkill>
+}
 
 export function getPropertiesXML (): string {
   return "<?xml version=\"1.0\"?><map><entry><string>version</string><string>1.7.0</string></entry>"
   + "<entry><string>herolab</string><boolean>false</boolean></entry></map>"
 }
 
-function separateValuesByComma (map: OrderedMap<string, Record<ActivatableDependent>>): string {
-  let text = ""
-  map.value.forEach ((value, key, map) => {
-    text += ` ${value.name},`
-  })
-
 function entry (mtentry: MaptoolsEntry): string {
-  let xml = ""
-  xml += "<entry>"
-  xml += `<string>${mtentry.key.toLowerCase ()}</string>`
-  xml += "<net.rptools.CaseInsensitiveHashMap_-KeyValue>"
-  xml += `<key>${mtentry.key}</key>`
-  xml += `<value class="string">${mtentry.value}</value>`
-  xml += "<outer-class reference=\"../../../..\"/>"
-  xml += "</net.rptools.CaseInsensitiveHashMap_-KeyValue>"
-  xml += "</entry>"
-
-  return xml
+  return "<entry>"
+  + `<string>${mtentry.key.toLowerCase ()}</string>`
+  + "<net.rptools.CaseInsensitiveHashMap_-KeyValue>"
+  + `<key>${mtentry.key}</key>`
+  + `<value class="string">${mtentry.value}</value>`
+  + "<outer-class reference=\"../../../..\"/>"
+  + "</net.rptools.CaseInsensitiveHashMap_-KeyValue>"
+  + "</entry>"
 }
 
-function getStaticDataXML (hero: Readonly<Required<HeroModel>>): string {
-  let xml = ""
-  xml += "<id>"
-  xml += "<baGUID>eIj9Afv6STWmcKmhxyfaJQ==</baGUID>"
-  xml += "</id>"
-  xml += "<beingImpersonated>false</beingImpersonated>"
-  xml += "<exposedAreaGUID>"
-  xml += "<baGUID>CgAADK1LundsAAAAAgAADA==</baGUID>"
-  xml += "</exposedAreaGUID>"
-  xml += "<imageAssetMap>"
-  xml += "<entry>"
-  xml += "<null/>"
-  xml += "<net.rptools.lib.MD5Key>"
-  xml += "<id>f427aa49b28500217ac46ba37c2998a4</id>"
-  xml += "</net.rptools.lib.MD5Key>"
-  xml += "</entry>"
-  xml += "</imageAssetMap>"
-  xml += "<anchorX>0</anchorX>"
-  xml += "<anchorY>0</anchorY>"
-  xml += "<sizeScale>1.0</sizeScale>"
-  xml += "<snapToScale>true</snapToScale>"
-  xml += "<width>50</width>"
-  xml += "<height>50</height>"
-  xml += "<isoWidth>50</isoWidth>"
-  xml += "<isoHeight>50</isoHeight>"
-  xml += "<scaleX>1.0</scaleX>"
-  xml += "<scaleY>1.0</scaleY>"
-  xml += "<sizeMap>"
-  xml += "<entry>"
-  xml += "<java-class>net.rptools.maptool.model.SquareGrid</java-class>"
-  xml += "<net.rptools.maptool.model.GUID>"
-  xml += "<baGUID>CgAADK1LundsAAAAAgAADA==</baGUID>"
-  xml += "</net.rptools.maptool.model.GUID>"
-  xml += "</entry>"
-  xml += "</sizeMap>"
-  xml += "<snapToGrid>false</snapToGrid>"
-  xml += "<isVisible>true</isVisible>"
-  xml += "<visibleOnlyToOwner>false</visibleOnlyToOwner>"
-  xml += "<vblColorSensitivity>0</vblColorSensitivity>"
-  xml += "<alwaysVisibleTolerance>0</alwaysVisibleTolerance>"
-  xml += "<isAlwaysVisible>false</isAlwaysVisible>"
-  xml += `<name>${hero.name}</name>`
-  xml += "<ownerType>0</ownerType>"
-  xml += "<tokenShape>CIRCLE</tokenShape>"
-  xml += "<tokenType>PC</tokenType>"
-  xml += "<layer>TOKEN</layer>"
-  xml += "<propertyType>Basic</propertyType>"
-  xml += "<tokenOpacity>1.0</tokenOpacity>"
-  xml += "<terrainModifier>0.0</terrainModifier>"
-  xml += "<terrainModifiersIgnored>"
-  xml += "<net.rptools.maptool.model.Token_-TerrainModifierOperation>NONE</net.rptools.maptool.model.Token_-TerrainModifierOperation>"
-  xml += "</terrainModifiersIgnored>"
-  xml += "<isFlippedX>false</isFlippedX>"
-  xml += "<isFlippedY>false</isFlippedY>"
-  xml += "<hasSight>false</hasSight>"
-  xml += "<state/>"
-
-  return xml
+function getStaticDataXML (hero: HeroModelRecord): string {
+  return "<id>"
+  + "<baGUID>eIj9Afv6STWmcKmhxyfaJQ==</baGUID>"
+  + "</id>"
+  + "<beingImpersonated>false</beingImpersonated>"
+  + "<exposedAreaGUID>"
+  + "<baGUID>CgAADK1LundsAAAAAgAADA==</baGUID>"
+  + "</exposedAreaGUID>"
+  + "<imageAssetMap>"
+  + "<entry>"
+  + "<null/>"
+  + "<net.rptools.lib.MD5Key>"
+  + "<id>f427aa49b28500217ac46ba37c2998a4</id>"
+  + "</net.rptools.lib.MD5Key>"
+  + "</entry>"
+  + "</imageAssetMap>"
+  + "<anchorX>0</anchorX>"
+  + "<anchorY>0</anchorY>"
+  + "<sizeScale>1.0</sizeScale>"
+  + "<snapToScale>true</snapToScale>"
+  + "<width>50</width>"
+  + "<height>50</height>"
+  + "<isoWidth>50</isoWidth>"
+  + "<isoHeight>50</isoHeight>"
+  + "<scaleX>1.0</scaleX>"
+  + "<scaleY>1.0</scaleY>"
+  + "<sizeMap>"
+  + "<entry>"
+  + "<java-class>net.rptools.maptool.model.SquareGrid</java-class>"
+  + "<net.rptools.maptool.model.GUID>"
+  + "<baGUID>CgAADK1LundsAAAAAgAADA==</baGUID>"
+  + "</net.rptools.maptool.model.GUID>"
+  + "</entry>"
+  + "</sizeMap>"
+  + "<snapToGrid>false</snapToGrid>"
+  + "<isVisible>true</isVisible>"
+  + "<visibleOnlyToOwner>false</visibleOnlyToOwner>"
+  + "<vblColorSensitivity>0</vblColorSensitivity>"
+  + "<alwaysVisibleTolerance>0</alwaysVisibleTolerance>"
+  + "<isAlwaysVisible>false</isAlwaysVisible>"
+  + `<name>${hero.values.name}</name>`
+  + "<ownerType>0</ownerType>"
+  + "<tokenShape>CIRCLE</tokenShape>"
+  + "<tokenType>PC</tokenType>"
+  + "<layer>TOKEN</layer>"
+  + "<propertyType>Basic</propertyType>"
+  + "<tokenOpacity>1.0</tokenOpacity>"
+  + "<terrainModifier>0.0</terrainModifier>"
+  + "<terrainModifiersIgnored>"
+  + "<net.rptools.maptool.model.Token_-TerrainModifierOperation>NONE"
+  + "</net.rptools.maptool.model.Token_-TerrainModifierOperation>"
+  + "</terrainModifiersIgnored>"
+  + "<isFlippedX>false</isFlippedX>"
+  + "<isFlippedY>false</isFlippedY>"
+  + "<hasSight>false</hasSight>"
+  + "<state/>"
 }
 
-function getAttributesXML (hero: Readonly<Required<HeroModel>>): string {
-  // Attribute auf Minimalwert werden nicht exportiert. Liegt wohl daran dass nur Änderungen gespeichert werden
-  // Das muss anders gemacht werden
-  let xml = ""
-  const attr: string[] = [ "MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK" ]
-  hero.attributes.value.forEach ((value, key, map) => {
-    const index: number = Number (key.substring (key.length - 1, key.length)) - 1
-    if (index >= 0 && index < 8) {
-      xml += entry ({ key: attr[index], value: value.values.value.toString () })
-  }
-})
+function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string {
 
-  // TODO: folgende Werte irgendwie ausrechnen und entries machen
-  // const leP:number = Maybe.sum (fmapF (hero.race) (Race.A.lp))
-  // da hero.race ein string ist funktioniert das so nicht
-  const leP = 30, asp = 0, kap = 0
-  const schips = 3
-  const sk = 1, zk = 1
-  const ini = 12
-  const gs = 8
+  // Hier werden die Attribute bestückt
+  // Irgendwas funktioniert aber noch nicht
+  let xml: string = pipe_ (state.values.wiki.values.attributes,
+    OrderedMap.elems,
+    fmap ((attr: Record<Attribute>) => entry ({
+      key: Attribute.A.short (attr),
+      value: pipe_ (attr,
+        Attribute.A.id,
+        OrderedMap.lookupF (hero.values.attributes)),
+    })),
+    entry,
+    List.intercalate (""))
+
+  const leP: number = fromMaybe (0, getLP (state, { hero }).values.value)
+  const asp: number = fromMaybe (0, getAE (state, { hero }))
+  const kap: number = fromMaybe (0, getKP (state, { hero }).values.value)
+  const schips: number = 3 + getFatePointsModifier (state)
+  const sk: number = fromMaybe (0, getSPI (state, { hero }).values.value)
+  const zk: number = fromMaybe (0, getTOU (state, { hero }).values.value)
+  const ini = fromMaybe (0, getINI (state, { hero }).values.value)
+  const gs = fromMaybe (0, getMOV (state, { hero }).values.value)
 
   xml += entry ({ key: "LeP", value: leP.toString () })
   xml += entry ({ key: "MaxLeP", value: leP.toString () })
@@ -138,99 +176,334 @@ function getAttributesXML (hero: Readonly<Required<HeroModel>>): string {
   return xml
 }
 
-function getTalentsXML (hero: Readonly<Required<HeroModel>>): string {
-  let xml = ""
-  // TODO: Folgende Kategorien an 3W20-Proben herausfinden
-  const groups: string[] = [ "Koerper", "Gesellschaft", "Natur", "Wissen", "Handwerk", "Zauber", "Rituale", "Liturgien", "Zeremonien" ]
-  for (let i = 0; i < groups.length; i++) {
- xml += entry ({ key: groups[i], value: /* getTalentJSON( ... )*/"[]" })
+function skillGroupNameForMapTool (group: Record<SkillGroup>): string {
+  switch (group.values.name) {
+    case "Körper":
+      return "Koerper"
+    case "Gesellschaft":
+      return "Gesellschaft"
+    case "Natur":
+      return "Natur"
+    case "Wissens":
+      return "Wissen"
+    case "Handwerk":
+      return "Handwerk"
+    default:
+      return "Gaben"
+  }
 }
+
+function buildSkill (skillFromWiki: Record<Skill>):
+(skillFromHero: Maybe<Record<SkillDependent>>) => MaptoolsSkill {
+  return skillFromHero => {
+    const skillHero: Record<SkillDependent> = fromMaybe (null, skillFromHero)
+    if (skillHero === null) {
+      return {
+        name: Skill.A.name (skillFromWiki),
+        value: SkillDependent.A.value (skillHero),
+        attr1: Skill.A.check (skillFromWiki)[0], // Wie kann ich auf die einzelnen Elemente der List zugreifen?
+        attr2: Skill.A.check (skillFromWiki)[1],
+        attr3: Skill.A.check (skillFromWiki)[2]
+      }
+    }
+    else {
+      return {
+        name: Skill.A.name (skillFromWiki),
+        value: 0,
+        attr1: Skill.A.check (skillFromWiki)[0],
+        attr2: Skill.A.check (skillFromWiki)[1],
+        attr3: Skill.A.check (skillFromWiki)[2]
+      }
+    }
+  }
+}
+
+function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
+
+  // soll eine List<MapToolsSkill> liefern
+  // liefert aber void. Warum?
+  const buildSkillList =
+  pipe (
+    SkillGroup.A.id,
+    grid => {
+      pipe_ (state.values.wiki.values.skills,
+        OrderedMap.filter (skill => Skill.A.gr (skill) === grid),
+        OrderedMap.elems,
+        fmap ((skill: Record<Skill>) => pipe_ (skill,
+          Skill.A.id,
+          OrderedMap.lookupF (hero.values.skills),
+          buildSkill (skill))))
+    }
+  )
+
+  const skills: List<MapToolsSkillGroup> =
+  pipe_ (state.values.wiki.values.skillGroups,
+    OrderedMap.elems,
+    fmap (
+      (g: Record<SkillGroup>) => ({
+        groupName: skillGroupNameForMapTool (g),
+        skills: buildSkillList (g),
+      })
+  ))
+
+  let xml = `[${
+   pipe_ (skills,
+      fmap ((sg: MapToolsSkillGroup) => ({
+        key: sg.groupName,
+        value: pipe_ (sg.skills,
+          fmap ((skill: MaptoolsSkill) =>
+            `{"Talent":"${skill.name}","Talentwert":${skill.value}},"Probe":{`
+            + `"Eigenschaft1":"${skill.attr1}",`
+            + `"Eigenschaft2":"${skill.attr2}",`
+            + `"Eigenschaft3":"${skill.attr3}"}}`)),
+      })))
+   }]`
+
+  // TODO: Zauber/Rituale und Liturgien/Zeremonien noch herausfinden
+  // erstmal muss aber der code weiter oben funktionieren. Das wird dann ja so ähnlich ablaufen
 
   return xml
 }
 
-function getAdvantagesXML (hero: Readonly<Required<HeroModel>>): string {
+function getAdvantagesXML (hero: HeroModelRecord, state: AppStateRecord): string {
   let xml = ""
-  // Hier werden zwar die Vor- und Nachteile ausgelesen aber in der Ausgabe steht nur "ActivatableDependent"
-  xml += entry ({ key: "Vorteile", value: separateValuesByComma (hero.advantages) })
-  xml += entry ({ key: "Nachteile", value: separateValuesByComma (hero.disadvantages) })
+
+  const getAdvantageName = pipe (
+    ActivatableDependent.A.id,
+    OrderedMap.lookupF (getWikiAdvantages (state)),
+    fmap (Advantage.A.name)
+  )
+
+  xml += entry ({
+    key: "Vorteile",
+    value: pipe_ (
+      hero.values.advantages,
+      OrderedMap.elems,
+      Maybe.mapMaybe (getAdvantageName),
+      List.intercalate (", ")
+    ) })
+
+  const getDisadvantageName = pipe (
+    ActivatableDependent.A.id,
+    OrderedMap.lookupF (getWikiDisadvantages (state)),
+    fmap (Disadvantage.A.name)
+  )
+
+  xml += entry ({
+    key: "Nachteile",
+    value: pipe_ (
+      hero.values.disadvantages,
+      OrderedMap.elems,
+      Maybe.mapMaybe (getDisadvantageName),
+      List.intercalate (", ")
+    ) })
 
   return xml
 }
 
-function getSpecialAbilitiesXML (hero: Readonly<Required<HeroModel>>): string {
-  // TODO: Sonderfertigkeiten nach Kategorien gruppieren und in die xml schreiben
-  // Kategorien als DSA4.1 waren:
-  // "AllgemeineSF", "KampfSF", "NahkampfSF", "FernkampfSF", "Hand2HandStyles", "Hand2HandSF", "MagieSF", "KlerikaleSF"
-  return ""
+function specialAbilityGroupForMapTool (group: Maybe<Record<NumIdName>>) : string {
+  const g = fromMaybe (null, group)
+  if (g === null) {
+    return "AllgemeineSF"
+  }
+
+  switch (g.values.name) {
+    case "Allgemein":
+    case "Befehle":
+    case "Lykanthropie":
+    case "Paktgeschenke":
+    case "Schicksal":
+    case "Sex":
+    case "Sex-Schicksal":
+    case "Talent (erweitert)":
+    case "Talentstile":
+    case "Vampirismus":
+      return "AllgemeineSF"
+    case "Ahnenzeichen":
+    case "Bann-/Schutzkreise":
+    case "Bannschwert":
+    case "Chronikzauber":
+    case "Dolchrituale":
+    case "Gewandzauber":
+    case "Gildenmagische Kugelzauber":
+    case "Hexe":
+    case "Instrumentzauber":
+    case "Kappenzauber":
+    case "Kesselzauber":
+    case "Magisch":
+    case "Magisch (erweitert)":
+    case "Magische Traditionen":
+    case "Ringzauber":
+    case "Schalenzauber":
+    case "Scharlatanische Kugelzauber":
+    case "Sichelrituale":
+    case "Spielzeugzauber":
+    case "Stabzauber":
+    case "Steckenzauber":
+    case "Waffenzauber (Animisten)":
+    case "Zauberstile":
+      return "MagieSF"
+    case "Kampf":
+    case "Kampf (erweitert)":
+    case "Kampfstile (bewaffnet)":
+    case "Kampfstile (unbewaffnet)":
+    case "Prügel":
+      return "KampfSF"
+    case "Karmal":
+    case "Karmal (erweitert)":
+    case "Karmale Traditionen":
+    case "Liturgiestile":
+    case "Predigten":
+    case "Visionen":
+    case "Zeremonialgegenstände":
+      return "KlerikaleSF"
+    default:
+      return "AllgemeineSF"
+  }
 }
 
-function getCombatXML (hero: Readonly<Required<HeroModel>>): string {
+function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): string {
+
+  const ungrouped: List<MaptoolsEntry> = pipe_ (
+    hero.values.specialAbilities,
+    OrderedMap.keys,
+    Maybe.mapMaybe (OrderedMap.lookupF (state.values.wiki.values.specialAbilities)),
+    fmap ((x: Record<SpecialAbility>) =>
+      ({ key: pipe_ (x.values.gr,
+                    OrderedMap.lookupF (state.values.wiki.values.specialAbilityGroups),
+                    specialAbilityGroupForMapTool),
+        value: x.values.name,
+      }))
+  )
+
+  const groups: string[] = [ "AllgemeineSF", "MagieSF", "KampfSF", "KlerikaleSF" ]
+
+  //Das hier funktioniert noch nicht.
+  //Irgendein Typfehler. Keine Ahnung woran das liegt
+  return pipe_ (groups,
+    fmap ((group: string) => ({
+      key: group,
+      value: `[${
+         pipe_ (
+          ungrouped,
+          List.filter ((entry: MaptoolsEntry) => entry.key === group),
+          List.intercalate (", ")
+        )
+         }]`,
+    })),
+    entry,
+    List.intercalate(""))
+}
+
+type MapToolWeaponBase = {
+  name: string
+  isImprovisedWeapon: boolean
+  combatTechnique: string
+  damageDiceNumber: Maybe<number>
+  damageDiceSides: Maybe<number>
+  damageFlat: number
+}
+
+let id = 0
+
+function weaponForXML (weapon: MapToolWeaponBase): string {
+  return `"ID":${id++},`
+  + `"Name":"${weapon.name}",`
+  + `"Improvisiert":"${weapon.isImprovisedWeapon ? "1" : "0"},`
+  + `"Technik":"${weapon.combatTechnique}",`
+  + `"TP":"${weapon.damageDiceNumber}d${weapon.damageDiceSides}+${weapon.damageFlat}",`
+}
+
+function meleeWeaponForXML (weapon: Record<MeleeWeapon>): string {
+  return `{${
+   weaponForXML (weapon.values)
+   }"RW":"${weapon.values.reach}",` //Reach ist eine Number. Hier soll "Kurz, Mittel, Lang" stehen, je nachdem. Wie bekomme ich das heraus?
+  + `"AT":${fromMaybe (0, weapon.values.atMod)},`
+  + `"PA":${fromMaybe (0, weapon.values.paMod)},`
+  + `"S":${fromMaybe (0, weapon.values.schadensschwelle)},` //Wie bekomme ich die Schadensschwelle?
+  + `"Parierwaffe":${weapon.values.parryWeaponBonus}}` //Dieses Feld fehlt ja noch
+}
+
+function rangedWeaponForXML (weapon: Record<RangedWeapon>): string {
+  return `{${
+   weaponForXML (weapon.values) // geht nicht weil rangeWeapon kein isImprovised-Feld hat
+   }"RW1":${fromMaybe (0, weapon.values.range)[0]},`
+  + `"RW2":${fromMaybe (0, weapon.values.range)[1]},`
+  + `"RW3":${fromMaybe (0, weapon.values.range)[2]},`
+  + `"Ladezeit":${fromMaybe (0, weapon.values.reloadTime)}}`
+}
+
+function combatTechniqueForXML (technique: Record<CombatTechniqueWithRequirements>): string {
+
+  return "{"
+  + `"Name":"${technique.values.wikiEntry.values.name}",`
+  + `"FW":${technique.values.stateEntry.values.value},`
+  + `"L":${List.intercalate (", ") (technique.values.wikiEntry.values.primary)},`
+}
+
+function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
   let xml = ""
-  // TODO: Kampftalente eintragen
-  hero.combatTechniques.value.forEach ((value, key, map) => {
-    // Ob die Bonuspunkte aus MU/GE/KK in maptools oder hier eingerechnet werden ist noch nicht entschieden.
-    // Tendenz zu maptools weil es komfortabel wäre bei einem Attributo nicht nachrechnen zu müssen.
-    // Die Leiteigenschaften müssen dann auch hier oder bei den Waffen ermittelt werden
-    // Wir brauchen hier auch ALLE Kampftechniken, auch wenn keine AP darin investiert wurden
-  })
 
-  // TODO: Nahkampfwaffen eintragen
-  // Für jede Waffe brauchen wir auch das zugehörige Kampftalent ODER die Leiteigenschaften
-  let text = "WaffenLaufIndex=1;"
-  // Für jede Waffe
-  text += "Waffe1bezeichnung=Waffenlos;"
-  text += "Waffe1RW=kurz;"
-  text += "Waffe1TP=1W6;"
-  // text += "Waffe1VERZ=P;"
-  // text += "Waffe1AT=14;"
-  // text += "Waffe1PA=8;"
-  text += "Waffe1Talent=Raufen;"
-  text += "Waffe1Schild=0;" // Ist die Waffe ein Schild?
-  text += "Waffe1Parierbonus=0;" // Bonus als Parierwaffe
-  // Schadensschwelle
-  text += "Waffe1S=14;"
-  text += "Waffe1ATMod=0;"
-  text += "Waffe1PAMod=0;"
-  text += "Waffe1BF=12;"
-  text += "Waffe1ID=1"
-  xml += entry ({ key: "Nahkampfwaffen", value: text })
+  const techniques: string = pipe_ (
+    fromMaybe (List.empty, getAllCombatTechniques (state, { hero })),
+    fmap (combatTechniqueForXML),
+    List.intercalate (", ")
+  )
 
-  // TODO: Fernkampfwaffen eintragen
-  // Wir brauchen hier den Namen, Kampftalent, Ladezeit, Entfernungen und TP
+  xml += entry ({ key: "Kampftechniken", value: techniques })
 
-  // TODO: Ausweichen eintragen
-  // Verbessertes Ausweichen sollte bereits eingerechnet sein. Belastung aber nicht.
-  xml += entry ({ key: "AW", value: "6" })
+  id = 0
+  const melee = `[${
+   pipe_ (
+    fromMaybe (List.empty, getMeleeWeapons (state, { hero })),
+    fmap (meleeWeaponForXML),
+    List.intercalate (", ")
+   )
+  }]`
+
+  id = 0
+  const ranged = `[${
+   pipe_ (
+    //Wie gehe ich hier mit dem Maybe um???
+    getRangedWeapons (state, { hero }),
+    Maybe.mapMaybe (rangedWeaponForXML),
+    List.intercalate (", ")
+   )
+  }]`
+
+  xml += entry ({ key: "Nahkampfwaffen", value: melee })
+  xml += entry ({ key: "Fernkampfwaffen", value: ranged })
+
+  xml += entry ({ key: "AW", value: `${getDO (state, { hero }).values.value}` })
 
   // TODO: Rüstung eintragen
-  // Wie findet man die angelegt Rüstung heraus?
-  // Was wenn mehrere Rüstungen im Inventar sind? Welche ist aktiv?
-  // Evtl. müssen wir hier nochmal umbauen und alle "Rüstungssets" separat exportieren und in maptools eine auswählbar machen
-  // Wir brauchen hier dann auch noch die BE + INI- und GS-Malus
-  xml += entry ({ key: "RS", value: "0" })
-  xml += entry ({ key: "RSKopf", value: "0" })
-  xml += entry ({ key: "RSTorso", value: "0" })
-  xml += entry ({ key: "RSBeinLinks", value: "0" })
-  xml += entry ({ key: "RSBeinRechts", value: "0" })
-  xml += entry ({ key: "RSArmLinks", value: "0" })
-  xml += entry ({ key: "RSArmRechts", value: "0" })
+  // Wie unterscheide ich zwischen Armors und ArmorZones?
+  // Ich würde das gerne so machen dass ich jedes mögliche Rüstungsset exportiere
+  // In maptools kann man dann anklicken ob man die Plattenrüstung oder die Winterkleidung trägt
+
+  const armors: List<Record<Armor>> = fromMaybe (List.empty, getArmors (state))
+  xml += pipe_ (armors,
+    fmap ((armor: Armor) => `{hier ist noch nichts fertig}` ),
+    List.intercalate (", "))
 
   return xml
 }
 
-function getBelongingsXML (hero: Readonly<Required<HeroModel>>): string {
+function getBelongingsXML (hero: HeroModelRecord, state: AppStateRecord): string {
   let xml = ""
-  const purse = hero.belongings.values.purse.values
+  const purse = hero.values.belongings.values.purse.values
   const imisc = `{"behaelter1":"Rucksack","behaelter2":"Guerteltasche","behaelter3":"Beutel","behaelter4":"Am Koerper getragen","behaelter5":"Satteltaschen","dukaten":${purse.d},"silbertaler":${purse.s},"heller":${purse.h},"kreuzer":${purse.k}}`
   xml += entry ({ key: "InventarMisc", value: imisc })
-  const items: string[] = new Array (hero.belongings.values.items.value.size)
+  const items: string[] = new Array (hero.values.belongings.values.items.value.size)
   let i = 0
-  hero.belongings.values.items.value.forEach ((value, key, map) => {
+
+  const getItem = getFullItem (hero.values.belongings.values.items) (getWikiItemTemplates (state))
+  hero.values.belongings.values.items.value.forEach (value => {
+    const item: Record<Item> = fromMaybe (0, getItem (value.values.id))
     items[i] = "{"
-    items[i] += `"gegenstand":"${value.values.name}",`
+    items[i] += `"gegenstand":"${item.values.name}",`
     items[i] += `"anzahl":${value.values.amount},`
-    items[i] += `"gewicht":${value.values.weight},` // <- Hier wird das Gewicht nicht ausgegeben. Wie bekomme ich das heraus?
+    items[i] += `"gewicht":${value.values.weight},`
     items[i] += "\"beschreibung\":\"Keine Beschreibung vorhanden\","
     items[i] += "\"behaelter\":1}"
     i++
@@ -240,52 +513,17 @@ function getBelongingsXML (hero: Readonly<Required<HeroModel>>): string {
   return xml
 }
 
-  return text.substr (1, text.length - 2)
-}
-
-type MaptoolsEntry = {
-  key: string
-  value: string
-}
-
-enum MaptoolsAttribute {
-  MU, KL, IN, CH, FF, GE, KO, KK
-}
-
-type MaptoolsSkill = {
-  name: string
-  value: number
-  attr1: MaptoolsAttribute
-  attr2: MaptoolsAttribute
-  attr3: MaptoolsAttribute
-}
-
-function getTalentJSON (skills: MaptoolsSkill[]): string {
-  let json = "["
-  skills.forEach ((skill, index, array) => {
-    json += `{"Talentwert":${skill.value},`
-    json += "\"Anzeigen\":\"checked\",\"Spezialisierungen\":\"\","
-    json += `"Probe":{"Eigenschaft1":"${skill.attr1.toString ()}","Eigenschaft2":"${skill.attr2.toString ()}","Eigenschaft3":"${skill.attr3.toString ()}",`
-    json += `"Talent":"${skill.name}"}`
-    if (index < array.length - 1) {
- json += ","
-}
-  })
-
-  return `${json}]`
-}
-
-export function getContentXML (hero: Readonly<Required<HeroModel>>): string {
+export function getContentXML (hero: HeroModelRecord, state: AppStateRecord): string {
   let contentXml = "<?xml version=\"1.0\"?>"
   contentXml += "<net.rptools.maptool.model.Token>"
   contentXml += getStaticDataXML (hero)
   contentXml += "<propertyMapCI><store>"
-  contentXml += getAttributesXML (hero)
-  contentXml += getTalentsXML (hero)
-  contentXml += getAdvantagesXML (hero)
-  contentXml += getSpecialAbilitiesXML (hero)
-  contentXml += getCombatXML (hero)
-  contentXml += getBelongingsXML (hero)
+  contentXml += getAttributesXML (hero, state)
+  contentXml += getTalentsXML (hero, state)
+  contentXml += getAdvantagesXML (hero, state)
+  contentXml += getSpecialAbilitiesXML (hero, state)
+  contentXml += getCombatXML (hero, state)
+  contentXml += getBelongingsXML (hero, state)
   contentXml += "</store></propertyMapCI>"
   contentXml += "</net.rptools.maptool.model.Token>"
 
