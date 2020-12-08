@@ -3,7 +3,7 @@ import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDepende
 import { HeroModelRecord } from "../Models/Hero/HeroModel"
 import { Record } from "../../Data/Record"
 import { pipe, pipe_ } from "./pipe"
-import { Maybe } from "../../Data/Maybe"
+import { mapMaybe, maybe, Maybe } from "../../Data/Maybe"
 import { fmap } from "../../Data/Functor"
 import { getAE, getDO, getINI, getKP, getLP, getMOV, getSPI, getTOU } from "../Selectors/derivedCharacteristicsSelectors"
 import { AppStateRecord } from "../Models/AppState"
@@ -26,6 +26,8 @@ import { SkillGroup } from "../Models/Wiki/SkillGroup"
 import { SkillDependent } from "../Models/ActiveEntries/SkillDependent"
 import { Attribute } from "../Models/Wiki/Attribute"
 import { Armor } from "../Models/View/Armor"
+import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
+import { StaticData } from "../Models/Wiki/WikiModel"
 
 type MaptoolsEntry = {
   key: string
@@ -128,18 +130,18 @@ function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string
   let xml: string = pipe_ (
     state.values.wiki.values.attributes,
     OrderedMap.elems,
-    mapMaybe ((attr: Record<Attribute>) => 
+    mapMaybe ((attr: Record<Attribute>) =>
       pipe_ (
         attr,
         Attribute.A.id,
         OrderedMap.lookupF (hero.values.attributes),
-        fmap (stateEntry => entry ({
+        fmap ((stateEntry: Record<AttributeDependent>) => entry ({
           key: Attribute.A.short (attr),
-          value: AttributeDependent.A.value (stateEntry),
+          value: AttributeDependent.A.value (stateEntry).toString (),
         }))
-      )
-    ),
-    List.intercalate (""))
+      )),
+    List.intercalate ("")
+  )
 
   const leP: number = fromMaybe (0, getLP (state, { hero }).values.value)
   const asp: number = fromMaybe (0, getAE (state, { hero }))
@@ -222,13 +224,10 @@ function buildSkill (skillFromWiki: Record<Skill>):
 }
 
 function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
-
-  // soll eine List<MapToolsSkill> liefern
-  // liefert aber void. Warum?
   const buildSkillList =
   pipe (
     SkillGroup.A.id,
-    grid => {
+    grid =>
       pipe_ (state.values.wiki.values.skills,
         OrderedMap.filter (skill => Skill.A.gr (skill) === grid),
         OrderedMap.elems,
@@ -236,7 +235,6 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
           Skill.A.id,
           OrderedMap.lookupF (hero.values.skills),
           buildSkill (skill))))
-    }
   )
 
   const skills: List<MapToolsSkillGroup> =
@@ -384,17 +382,16 @@ function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): 
   //Das hier funktioniert noch nicht.
   //Irgendein Typfehler. Keine Ahnung woran das liegt
   return pipe_ (groups,
-    fmap ((group: string) => ({
+    fmap ((group: string) => entry ({
       key: group,
       value: `[${
-         pipe_ (
+        pipe_ (
           ungrouped,
           List.filter ((entry: MaptoolsEntry) => entry.key === group),
           List.intercalate (", ")
         )
-         }]`,
+      }]`,
     })),
-    entry,
     List.intercalate(""))
 }
 
@@ -417,14 +414,21 @@ function weaponForXML (weapon: MapToolWeaponBase): string {
   + `"TP":"${weapon.damageDiceNumber}d${weapon.damageDiceSides}+${weapon.damageFlat}",`
 }
 
-function meleeWeaponForXML (weapon: Record<MeleeWeapon>): string {
-  return `{${
-   weaponForXML (weapon.values)
-   }"RW":"${weapon.values.reach}",` //Reach ist eine Number. Hier soll "Kurz, Mittel, Lang" stehen, je nachdem. Wie bekomme ich das heraus?
-  + `"AT":${fromMaybe (0, weapon.values.atMod)},`
-  + `"PA":${fromMaybe (0, weapon.values.paMod)},`
-  + `"S":${fromMaybe (0, weapon.values.schadensschwelle)},` //Wie bekomme ich die Schadensschwelle?
-  + `"Parierwaffe":${weapon.values.parryWeaponBonus}}` //Dieses Feld fehlt ja noch
+function getReachText (reach: Maybe<number>, state: AppStateRecord): string {
+  const reaches = StaticData.A.reaches(state.values.wiki)
+  const x: Record<NumIdName> = fromMaybe (null, OrderedMap.lookupF (reaches) (fromMaybe(-1, reach)))
+  return x.values.name
+}
+
+function meleeWeaponForXML (state: AppStateRecord) : (weapon: Record<MeleeWeapon>) => string {
+  return weapon =>
+    `{${
+    weaponForXML (weapon.values)
+    }"RW":"${getReachText(weapon.values.reach, state)}",` //Reach ist eine Number. Hier soll "Kurz, Mittel, Lang" stehen, je nachdem. Wie bekomme ich das heraus?
+    + `"AT":${fromMaybe (0, weapon.values.atMod)},`
+    + `"PA":${fromMaybe (0, weapon.values.paMod)},`
+    + `"S":${fromMaybe (0, weapon.values.primaryBonus)},` //Wie bekomme ich die Schadensschwelle?
+    + `"Parierwaffe":${weapon.values.}}` //Dieses Feld fehlt ja noch
 }
 
 function rangedWeaponForXML (weapon: Record<RangedWeapon>): string {
@@ -459,7 +463,7 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
   const melee = `[${
    pipe_ (
     fromMaybe (List.empty, getMeleeWeapons (state, { hero })),
-    fmap (meleeWeaponForXML),
+    fmap (meleeWeaponForXML (state)),
     List.intercalate (", ")
    )
   }]`
@@ -467,7 +471,7 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
   id = 0
   const ranged = `[${
    pipe_ (
-    getRangedWeapons (state, { hero }),
+    getRangedWeapons (state),
     maybe ("")
           (pipe (
             fmap (rangedWeaponForXML),
