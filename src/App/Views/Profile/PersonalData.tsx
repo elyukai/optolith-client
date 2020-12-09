@@ -1,9 +1,10 @@
 import * as React from "react"
 import { fmap } from "../../../Data/Functor"
 import { List } from "../../../Data/List"
-import { any, isNothing, Maybe, maybe, maybeRNull } from "../../../Data/Maybe"
+import { any, isNothing, Just, Maybe, maybe, maybeRNull } from "../../../Data/Maybe"
 import { gt, lt } from "../../../Data/Num"
 import { Record } from "../../../Data/Record"
+import { exportHeroAsRptok } from "../../Actions/HerolistActions"
 import { ProfessionId, SocialStatusId } from "../../Constants/Ids"
 import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { Sex } from "../../Models/Hero/heroTypeHelpers"
@@ -204,6 +205,11 @@ export const PersonalDataView: React.FC<PersonalDataProps> = props => {
     <h1 className="confirm-edit">
       {renderMaybe (name)}
       <IconButton icon="&#xE90c;" onClick={handleStartEditName} />
+      <IconButton
+        icon="&#xE914;"
+        onClick={exportHeroAsRptok}
+        hint={Just ("Als *.rptok für maptools exportieren")}
+        />
     </h1>
   )
 

@@ -29,7 +29,7 @@ import { getUISettingsState } from "../Selectors/uisettingsSelectors"
 import { prepareAPCache, prepareAPCacheForHero, writeCache } from "../Utilities/Cache"
 import { translate } from "../Utilities/I18n"
 import { showOpenDialog, showSaveDialog } from "../Utilities/IOUtils"
-import { getContentXML, getPropertiesXML } from "../Utilities/MapToolExporter"
+import { getContentXML, getPropertiesXML, getRptok } from "../Utilities/MapToolExporter"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { writeConfig } from "../Utilities/Raw/JSON/Config"
 import { parseHero } from "../Utilities/Raw/JSON/Hero"
@@ -324,12 +324,10 @@ export const requestHeroExportAsRptok =
       })
 
       if (isJust (pmfilepath)) {
-        const contentXml: string = getContentXML (hero, state)
-        const propertiesXml: string = getPropertiesXML ()
+        const buffer: Buffer = getRptok (hero, state)
 
-        //TODO: Hier ein Zip-File mit den beiden XML-Files und den Avatarbildern als rptok speichern.
         const res = await handleE (maybe (Promise.resolve ())
-                                         (flip (IO.writeFile) (contentXml))
+                                         (flip (IO.writeFile) (buffer))
                                          (pmfilepath))
 
         if (isRight (res)) {

@@ -28,6 +28,7 @@ import { Attribute } from "../Models/Wiki/Attribute"
 import { Armor } from "../Models/View/Armor"
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
 import { StaticData } from "../Models/Wiki/WikiModel"
+import { HitZoneArmorForView } from "../Models/View/HitZoneArmorForView"
 
 type MaptoolsEntry = {
   key: string
@@ -182,16 +183,16 @@ function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string
 }
 
 function skillGroupNameForMapTool (group: Record<SkillGroup>): string {
-  switch (group.values.name) {
-    case "Körper":
+  switch (group.values.id) {
+    case 1:
       return "Koerper"
-    case "Gesellschaft":
+    case 2:
       return "Gesellschaft"
-    case "Natur":
+    case 3:
       return "Natur"
-    case "Wissens":
+    case 4:
       return "Wissen"
-    case "Handwerk":
+    case 5:
       return "Handwerk"
     default:
       return "Gaben"
@@ -303,60 +304,60 @@ function getAdvantagesXML (hero: HeroModelRecord, state: AppStateRecord): string
 }
 
 function specialAbilityGroupForMapTool (group: Maybe<Record<NumIdName>>) : string {
-  const g = fromMaybe (null, group)
+  const g:Record<NumIdName> = fromMaybe (null, group)
   if (g === null) {
     return "AllgemeineSF"
   }
 
-  switch (g.values.name) {
-    case "Allgemein":
-    case "Befehle":
-    case "Lykanthropie":
-    case "Paktgeschenke":
-    case "Schicksal":
-    case "Sex":
-    case "Sex-Schicksal":
-    case "Talent (erweitert)":
-    case "Talentstile":
-    case "Vampirismus":
+  switch (g.values.id) {
+    case 1:
+    case 2:
+    case 30:
+    case 31:
+    case 32:
+    case 33:
+    case 34:
+    case 40:
+    case 41:
       return "AllgemeineSF"
-    case "Ahnenzeichen":
-    case "Bann-/Schutzkreise":
-    case "Bannschwert":
-    case "Chronikzauber":
-    case "Dolchrituale":
-    case "Gewandzauber":
-    case "Gildenmagische Kugelzauber":
-    case "Hexe":
-    case "Instrumentzauber":
-    case "Kappenzauber":
-    case "Kesselzauber":
-    case "Magisch":
-    case "Magisch (erweitert)":
-    case "Magische Traditionen":
-    case "Ringzauber":
-    case "Schalenzauber":
-    case "Scharlatanische Kugelzauber":
-    case "Sichelrituale":
-    case "Spielzeugzauber":
-    case "Stabzauber":
-    case "Steckenzauber":
-    case "Waffenzauber (Animisten)":
-    case "Zauberstile":
+    case 4:
+    case 5:
+    case 6:
+    case 8:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+    case 22:
+    case 28:
+    case 35:
+    case 36:
+    case 37:
+    case 38:
+    case 39:
+    case 42:
+    case 43:
+    case 44:
+    case 45:
       return "MagieSF"
-    case "Kampf":
-    case "Kampf (erweitert)":
-    case "Kampfstile (bewaffnet)":
-    case "Kampfstile (unbewaffnet)":
-    case "Prügel":
+    case 3:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+    case 21:
       return "KampfSF"
-    case "Karmal":
-    case "Karmal (erweitert)":
-    case "Karmale Traditionen":
-    case "Liturgiestile":
-    case "Predigten":
-    case "Visionen":
-    case "Zeremonialgegenstände":
+    case 7:
+    case 23:
+    case 24:
+    case 25:
+    case 26:
+    case 27:
+    case 29:
       return "KlerikaleSF"
     default:
       return "AllgemeineSF"
@@ -377,10 +378,8 @@ function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): 
       }))
   )
 
-  const groups: string[] = [ "AllgemeineSF", "MagieSF", "KampfSF", "KlerikaleSF" ]
+  const groups: List<string> = List<string> ("AllgemeineSF", "MagieSF", "KampfSF", "KlerikaleSF")
 
-  //Das hier funktioniert noch nicht.
-  //Irgendein Typfehler. Keine Ahnung woran das liegt
   return pipe_ (groups,
     fmap ((group: string) => entry ({
       key: group,
@@ -388,6 +387,7 @@ function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): 
         pipe_ (
           ungrouped,
           List.filter ((entry: MaptoolsEntry) => entry.key === group),
+          fmap((entry:MaptoolsEntry) => entry.value),
           List.intercalate (", ")
         )
       }]`,
@@ -416,19 +416,30 @@ function weaponForXML (weapon: MapToolWeaponBase): string {
 
 function getReachText (reach: Maybe<number>, state: AppStateRecord): string {
   const reaches = StaticData.A.reaches(state.values.wiki)
-  const x: Record<NumIdName> = fromMaybe (null, OrderedMap.lookupF (reaches) (fromMaybe(-1, reach)))
-  return x.values.name
+  const x: Record<NumIdName> = fromMaybe (null, OrderedMap.lookupF (reaches) (fromMaybe(2, reach)))
+  switch (x.values.id) {
+    case 1:
+      return "Kurz";
+    case 2:
+      return "Mittel";
+    case 3:
+      return "Lang";
+    case 4:
+      return "Ueberlang";
+    default:
+      return "Mittel";
+  }
 }
 
 function meleeWeaponForXML (state: AppStateRecord) : (weapon: Record<MeleeWeapon>) => string {
   return weapon =>
     `{${
     weaponForXML (weapon.values)
-    }"RW":"${getReachText(weapon.values.reach, state)}",` //Reach ist eine Number. Hier soll "Kurz, Mittel, Lang" stehen, je nachdem. Wie bekomme ich das heraus?
+    }"RW":"${getReachText (weapon.values.reach, state)}",`
     + `"AT":${fromMaybe (0, weapon.values.atMod)},`
     + `"PA":${fromMaybe (0, weapon.values.paMod)},`
     + `"S":${fromMaybe (0, weapon.values.primaryBonus)},` //Wie bekomme ich die Schadensschwelle?
-    + `"Parierwaffe":${weapon.values.}}` //Dieses Feld fehlt ja noch
+    + `"Parierwaffe":0}` //Dieses Feld fehlt ja noch
 }
 
 function rangedWeaponForXML (weapon: Record<RangedWeapon>): string {
@@ -441,11 +452,41 @@ function rangedWeaponForXML (weapon: Record<RangedWeapon>): string {
 }
 
 function combatTechniqueForXML (technique: Record<CombatTechniqueWithRequirements>): string {
-
   return "{"
   + `"Name":"${technique.values.wikiEntry.values.name}",`
   + `"FW":${technique.values.stateEntry.values.value},`
   + `"L":${List.intercalate (", ") (technique.values.wikiEntry.values.primary)},`
+}
+
+function armorForXML (rshead: Maybe<Number>, rstorso: Maybe<number>,
+                      rsarmleft: Maybe<number>, rsarmright: Maybe<number>,
+                      rslegleft: Maybe<number>, rslegright: Maybe<number>,
+                      ini: number, mov: number, enc: number): string {
+  const head: number = fromMaybe (0, rshead)
+  const torso: number = fromMaybe (0, rstorso)
+  const armleft: number = fromMaybe (0, rsarmleft)
+  const armright: number = fromMaybe (0, rsarmright)
+  const legleft: number = fromMaybe (0, rslegleft)
+  const legright: number = fromMaybe (0, rslegright)
+  const rs: number =
+    Math.round ((head + armleft + armright + legleft + legright + torso * 5) / 10.0)
+
+  return `{"RS":${rs}, "RSKopf":${head}, "RSTorso":${torso},`
+  + `"RSArmLinks":${armleft}, "RSArmRechts":${armright},`
+  + `"RSBeinLinks":${legleft}, "RSBeinRechts":${legright},`
+  + `"GS":${mov}, "INI":${ini}, "Belastung":${enc}}`
+}
+
+//Bei den 3 Funktionen scheint überladung nicht zu funktionieren
+function armorForXML (armor: Armor): string {
+  return armorForXML (armor.pro, armor.pro, armor.pro, armor.pro, armor.pro,
+    armor.pro, armor.ini, armor.mov, fromMaybe (0, armor.enc))
+}
+
+function armorForXML (armorZones: HitZoneArmorForView): string {
+  //INI und GS-Abzug muss ich hier noch wissen
+  return armorForXML (armorZones.head, armorZones.torso, armorZones.leftArm, armorZones.rightArm,
+    armorZones.leftLeg, armorZones.rightLeg, 0, 0, armorZones.enc)
 }
 
 function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
@@ -485,15 +526,21 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
 
   xml += entry ({ key: "AW", value: `${getDO (state, { hero }).values.value}` })
 
-  // TODO: Rüstung eintragen
-  // Wie unterscheide ich zwischen Armors und ArmorZones?
-  // Ich würde das gerne so machen dass ich jedes mögliche Rüstungsset exportiere
-  // In maptools kann man dann anklicken ob man die Plattenrüstung oder die Winterkleidung trägt
-
   const armors: List<Record<Armor>> = fromMaybe (List.empty, getArmors (state))
-  xml += pipe_ (armors,
-    fmap ((armor: Armor) => `{hier ist noch nichts fertig}` ),
-    List.intercalate (", "))
+  const armorZones: List<Record<HitZoneArmorForView>> =
+    fromMaybe (List.empty, getArmorZones (state))
+
+  //Hier gibts noch ein Typproblem
+  //Ich will hier alle Rüstungen und Rüstungszonen gleich behandeln
+  xml += entry ({ key: "Ruestungen",
+    value: `[${
+      pipe_ (List<string> (
+        pipe_ (armors, fmap ((armor: Armor) => armorForXML (armor))),
+        pipe_ (armorZones, fmap ((armorZones: HitZoneArmorForView) => armorForXML(armorZones)))
+      ),
+      List.join,
+      List.intercalate (", "))
+     }]` })
 
   return xml
 }
@@ -537,4 +584,17 @@ export function getContentXML (hero: HeroModelRecord, state: AppStateRecord): st
   contentXml += "</net.rptools.maptool.model.Token>"
 
   return contentXml
+}
+
+export function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer {
+  const AdmZip = require ("adm-zip")
+  const zip = new AdmZip ()
+  zip.addFile ("content.xml", Buffer.from (getContentXML (hero, state)), "Content of the hero")
+  zip.addFile ("properties.xml", Buffer.from (getPropertiesXML ()), "Properties")
+
+  //TODO: Charakterbild noch exportieren und in die Zip-Datei packen
+  //passend wäre es wenn wir das komplette Bild als Portrait und Handout setzen
+  //als Token wäre ein kleines runden Thumbnail passend, so wie es in der Heldenliste angezeigt wird
+
+  return zip.toBuffer ()
 }
