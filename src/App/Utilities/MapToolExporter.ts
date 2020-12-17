@@ -127,7 +127,6 @@ function getStaticDataXML (hero: HeroModelRecord): string {
 }
 
 function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string {
-
   let xml: string = pipe_ (
     state.values.wiki.values.attributes,
     OrderedMap.elems,
@@ -303,8 +302,8 @@ function getAdvantagesXML (hero: HeroModelRecord, state: AppStateRecord): string
   return xml
 }
 
-function specialAbilityGroupForMapTool (group: Maybe<Record<NumIdName>>) : string {
-  const g:Record<NumIdName> = fromMaybe (null, group)
+function specialAbilityGroupForMapTool (group: Maybe<Record<NumIdName>>): string {
+  const g: Record<NumIdName> = fromMaybe (null, group)
   if (g === null) {
     return "AllgemeineSF"
   }
@@ -386,8 +385,8 @@ function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): 
       value: `[${
         pipe_ (
           ungrouped,
-          List.filter ((entry: MaptoolsEntry) => entry.key === group),
-          fmap((entry:MaptoolsEntry) => entry.value),
+          List.filter ((e: MaptoolsEntry) => e.key === group),
+          fmap ((e: MaptoolsEntry) => e.value),
           List.intercalate (", ")
         )
       }]`,
@@ -415,23 +414,23 @@ function weaponForXML (weapon: MapToolWeaponBase): string {
 }
 
 function getReachText (reach: Maybe<number>, state: AppStateRecord): string {
-  const reaches = StaticData.A.reaches(state.values.wiki)
-  const x: Record<NumIdName> = fromMaybe (null, OrderedMap.lookupF (reaches) (fromMaybe(2, reach)))
+  const reaches = StaticData.A.reaches (state.values.wiki)
+  const x: Record<NumIdName> = fromMaybe (null, OrderedMap.lookupF (reaches) (fromMaybe (2, reach)))
   switch (x.values.id) {
     case 1:
-      return "Kurz";
+      return "Kurz"
     case 2:
-      return "Mittel";
+      return "Mittel"
     case 3:
-      return "Lang";
+      return "Lang"
     case 4:
-      return "Ueberlang";
+      return "Ueberlang"
     default:
-      return "Mittel";
+      return "Mittel"
   }
 }
 
-function meleeWeaponForXML (state: AppStateRecord) : (weapon: Record<MeleeWeapon>) => string {
+function meleeWeaponForXML (state: AppStateRecord): (weapon: Record<MeleeWeapon>) => string {
   return weapon =>
     `{${
     weaponForXML (weapon.values)
@@ -458,10 +457,10 @@ function combatTechniqueForXML (technique: Record<CombatTechniqueWithRequirement
   + `"L":${List.intercalate (", ") (technique.values.wikiEntry.values.primary)},`
 }
 
-function armorForXML (rshead: Maybe<Number>, rstorso: Maybe<number>,
+function armorForXML (name: string, rshead: Maybe<number>, rstorso: Maybe<number>,
                       rsarmleft: Maybe<number>, rsarmright: Maybe<number>,
                       rslegleft: Maybe<number>, rslegright: Maybe<number>,
-                      ini: number, mov: number, enc: number): string {
+                      ini: number, mov: number, enc: number, type: string): string {
   const head: number = fromMaybe (0, rshead)
   const torso: number = fromMaybe (0, rstorso)
   const armleft: number = fromMaybe (0, rsarmleft)
@@ -469,24 +468,25 @@ function armorForXML (rshead: Maybe<Number>, rstorso: Maybe<number>,
   const legleft: number = fromMaybe (0, rslegleft)
   const legright: number = fromMaybe (0, rslegright)
   const rs: number =
-    Math.round ((head + armleft + armright + legleft + legright + torso * 5) / 10.0)
+    Math.round ((head + armleft * 2 + armright * 2 + legleft * 2 + legright * 2 + torso * 5) / 14.0)
 
-  return `{"RS":${rs}, "RSKopf":${head}, "RSTorso":${torso},`
+  return `{"ID":${id++},"Name":"${name}","RS":${rs}, "RSKopf":${head}, "RSTorso":${torso},`
   + `"RSArmLinks":${armleft}, "RSArmRechts":${armright},`
   + `"RSBeinLinks":${legleft}, "RSBeinRechts":${legright},`
-  + `"GS":${mov}, "INI":${ini}, "Belastung":${enc}}`
+  + `"GS":${mov}, "INI":${ini}, "Belastung":${enc}, "Typ":"${type}"}`
 }
 
-//Bei den 3 Funktionen scheint überladung nicht zu funktionieren
-function armorForXML (armor: Armor): string {
-  return armorForXML (armor.pro, armor.pro, armor.pro, armor.pro, armor.pro,
-    armor.pro, armor.ini, armor.mov, fromMaybe (0, armor.enc))
+
+function totalArmorForXML (armor: Armor): string {
+  return armorForXML (armor.name, armor.pro, armor.pro, armor.pro, armor.pro, armor.pro,
+    armor.pro, armor.ini, armor.mov, fromMaybe (0, armor.enc), "gesamt")
 }
 
-function armorForXML (armorZones: HitZoneArmorForView): string {
-  //INI und GS-Abzug muss ich hier noch wissen
-  return armorForXML (armorZones.head, armorZones.torso, armorZones.leftArm, armorZones.rightArm,
-    armorZones.leftLeg, armorZones.rightLeg, 0, 0, armorZones.enc)
+function zoneArmorForXML (armorZones: HitZoneArmorForView): string {
+  const penalty: number = armorZones.addPenalties ? 1 : 0
+
+  return armorForXML (armorZones.name, armorZones.head, armorZones.torso, armorZones.leftArm, armorZones.rightArm,
+    armorZones.leftLeg, armorZones.rightLeg, penalty, penalty, armorZones.enc, "zone")
 }
 
 function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
@@ -530,13 +530,16 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
   const armorZones: List<Record<HitZoneArmorForView>> =
     fromMaybe (List.empty, getArmorZones (state))
 
+  id = 0
   //Hier gibts noch ein Typproblem
   //Ich will hier alle Rüstungen und Rüstungszonen gleich behandeln
   xml += entry ({ key: "Ruestungen",
     value: `[${
-      pipe_ (List<string> (
-        pipe_ (armors, fmap ((armor: Armor) => armorForXML (armor))),
-        pipe_ (armorZones, fmap ((armorZones: HitZoneArmorForView) => armorForXML(armorZones)))
+      pipe_ (List<List<string>> (
+        List<string> (armorForXML ("Keine Rüstung", Maybe<number> (0), Maybe<number> (0), Maybe<number> (0), Maybe<number> (0),
+                                   Maybe<number> (0), Maybe<number> (0), 0, 0, 0, "gesamt")),
+        pipe_ (armors, fmap ((armor: Armor) => totalArmorForXML (armor))),
+        pipe_ (armorZones, fmap ((armorZones: HitZoneArmorForView) => zoneArmorForXML(armorZones)))
       ),
       List.join,
       List.intercalate (", "))
