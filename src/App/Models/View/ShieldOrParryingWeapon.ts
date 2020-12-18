@@ -14,6 +14,7 @@ export interface ShieldOrParryingWeapon {
   weight: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ShieldOrParryingWeapon =
   fromDefault ("ShieldOrParryingWeapon")
               <ShieldOrParryingWeapon> ({

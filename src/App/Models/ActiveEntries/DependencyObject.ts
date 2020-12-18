@@ -11,6 +11,7 @@ export interface DependencyObject {
   tier: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DependencyObject =
   fromDefault ("DependencyObject")
               <DependencyObject> ({

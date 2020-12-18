@@ -7,6 +7,7 @@
  */
 export const ident = <A> (x: A): A => x
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type ident<A> = (x: A) => A
 
 /**

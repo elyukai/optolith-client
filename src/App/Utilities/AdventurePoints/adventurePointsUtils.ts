@@ -88,6 +88,7 @@ export interface MissingAPForDisAdvantage {
   subMissing: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MissingAPForDisAdvantage =
   fromDefault ("MissingAPForDisAdvantage")
               <MissingAPForDisAdvantage> ({

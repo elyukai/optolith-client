@@ -17,6 +17,7 @@ export interface UIState {
   wiki: Record<UIWikiState>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const UIState =
   fromDefault ("UIState")
               <UIState> ({

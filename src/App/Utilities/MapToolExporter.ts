@@ -3,7 +3,7 @@ import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDepende
 import { HeroModelRecord } from "../Models/Hero/HeroModel"
 import { Record } from "../../Data/Record"
 import { pipe, pipe_ } from "./pipe"
-import { mapMaybe, maybe, Maybe } from "../../Data/Maybe"
+import { isJust, isNothing, mapMaybe, Maybe } from "../../Data/Maybe"
 import { fmap } from "../../Data/Functor"
 import { getAE, getDO, getINI, getKP, getLP, getMOV, getSPI, getTOU } from "../Selectors/derivedCharacteristicsSelectors"
 import { AppStateRecord } from "../Models/AppState"
@@ -29,6 +29,9 @@ import { Armor } from "../Models/View/Armor"
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
 import { StaticData } from "../Models/Wiki/WikiModel"
 import { HitZoneArmorForView } from "../Models/View/HitZoneArmorForView"
+import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
+import { isTuple, Pair } from "../../Data/Tuple"
+import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
 
 type MaptoolsEntry = {
   key: string
@@ -174,7 +177,8 @@ function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string
   xml += entry ({ key: "INI", value: ini.toString () })
   xml += entry ({ key: "GS", value: gs.toString () })
 
-  xml += entry ({ key: "APgesamt", value: "1150" })
+  //Die ausgegebenen bzw. verfügbaren AP hätte ich noch gerne
+  xml += entry ({ key: "APgesamt", value: hero.values.adventurePointsTotal.toString () })
   xml += entry ({ key: "APausgegeben", value: "1100" })
   xml += entry ({ key: "APverfuegbar", value: "50" })
 
@@ -247,7 +251,7 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
       })
   ))
 
-  let xml = `[${
+  const xml = `[${
    pipe_ (skills,
       fmap ((sg: MapToolsSkillGroup) => ({
         key: sg.groupName,
@@ -364,7 +368,6 @@ function specialAbilityGroupForMapTool (group: Maybe<Record<NumIdName>>): string
 }
 
 function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): string {
-
   const ungrouped: List<MaptoolsEntry> = pipe_ (
     hero.values.specialAbilities,
     OrderedMap.keys,
@@ -391,29 +394,20 @@ function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): 
         )
       }]`,
     })),
-    List.intercalate(""))
-}
-
-type MapToolWeaponBase = {
-  name: string
-  isImprovisedWeapon: boolean
-  combatTechnique: string
-  damageDiceNumber: Maybe<number>
-  damageDiceSides: Maybe<number>
-  damageFlat: number
+    List.intercalate (""))
 }
 
 let id = 0
 
-function weaponForXML (weapon: MapToolWeaponBase): string {
+function weaponForXML (weapon: Record<Item>): string {
   return `"ID":${id++},`
-  + `"Name":"${weapon.name}",`
-  + `"Improvisiert":"${weapon.isImprovisedWeapon ? "1" : "0"},`
-  + `"Technik":"${weapon.combatTechnique}",`
-  + `"TP":"${weapon.damageDiceNumber}d${weapon.damageDiceSides}+${weapon.damageFlat}",`
+  + `"Name":"${weapon.values.name}",`
+  + `"Improvisiert":"${isNothing (weapon.values.improvisedWeaponGroup) ? "0" : "1"},`
+  + `"Technik":"${fromMaybe ("", weapon.values.combatTechnique)}",`
+  + `"TP":"${fromMaybe (1, weapon.values.damageDiceNumber)}d${fromMaybe (6, weapon.values.damageDiceSides)}+${fromMaybe (0, weapon.values.damageFlat)}"`
 }
 
-function getReachText (reach: Maybe<number>, state: AppStateRecord): string {
+/* function getReachText (reach: Maybe<number>, state: AppStateRecord): string {
   const reaches = StaticData.A.reaches (state.values.wiki)
   const x: Record<NumIdName> = fromMaybe (null, OrderedMap.lookupF (reaches) (fromMaybe (2, reach)))
   switch (x.values.id) {
@@ -424,27 +418,59 @@ function getReachText (reach: Maybe<number>, state: AppStateRecord): string {
     case 3:
       return "Lang"
     case 4:
-      return "Ueberlang"
+      return "Überlang"
     default:
       return "Mittel"
   }
+}*/
+
+function LSPair (s: number): (l: string) => string {
+  return l => `{"L":"${l}", "S":${s}}`
 }
 
-function meleeWeaponForXML (state: AppStateRecord): (weapon: Record<MeleeWeapon>) => string {
-  return weapon =>
-    `{${
-    weaponForXML (weapon.values)
-    }"RW":"${getReachText (weapon.values.reach, state)}",`
-    + `"AT":${fromMaybe (0, weapon.values.atMod)},`
-    + `"PA":${fromMaybe (0, weapon.values.paMod)},`
-    + `"S":${fromMaybe (0, weapon.values.primaryBonus)},` //Wie bekomme ich die Schadensschwelle?
-    + `"Parierwaffe":0}` //Dieses Feld fehlt ja noch
+function getLS (state: AppStateRecord, weapon: Record<Item>): string {
+  const damageBonus: PrimaryAttributeDamageThreshold =
+    fromMaybe (null, weapon.values.damageBonus).values
+  if (isJust (damageBonus.primary)) {
+    if (damageBonus.primary.value === "string") {
+      return `[${LSPair (damageBonus.threshold as number) (damageBonus.primary.value)}]`
+    }
+    else {
+      return `[${LSPair ((damageBonus.threshold as Pair<number, number>).values[0]) ((damageBonus.primary.value as Pair<string, string>).values[0])}, `
+      + `${LSPair ((damageBonus.threshold as Pair<number, number>).values[1]) ((damageBonus.primary.value as Pair<string, string>).values[1])}]`
+    }
+  }
+  else {
+    const technique: Record<CombatTechnique> = fromMaybe (null, OrderedMap.lookupF
+      (state.values.wiki.values.combatTechniques)
+      (fromMaybe ("", weapon.values.combatTechnique)))
+
+    let i = 0
+
+    const getThreshold =
+      (num: number) =>
+        isTuple (damageBonus.threshold)
+          ? (damageBonus.threshold).values[num]
+          : damageBonus.threshold
+
+    return `[${pipe_ (technique.values.primary,
+                fmap (LSPair (getThreshold (i++))),
+                List.intercalate (", "))}]`
+  }
 }
 
-function rangedWeaponForXML (weapon: Record<RangedWeapon>): string {
-  return `{${
-   weaponForXML (weapon.values) // geht nicht weil rangeWeapon kein isImprovised-Feld hat
-   }"RW1":${fromMaybe (0, weapon.values.range)[0]},`
+function meleeWeaponForXML (state: AppStateRecord): (weapon: Record<Item>) => string {
+  return weapon => `{${weaponForXML (weapon)},`
+    + `"RW":"${fromMaybe (2, weapon.values.reach)}",`
+    + `"AT":${fromMaybe (0, weapon.values.at)},`
+    + `"PA":${fromMaybe (0, weapon.values.pa)},`
+    + `"LS":${getLS (state, weapon)},`
+    + `"Parierwaffe":${weapon.values.isParryingWeapon ? 1 : 0}}`
+}
+
+function rangedWeaponForXML (weapon: Record<Item>): string {
+  return `{${weaponForXML (weapon)},`
+  + `"RW1":${fromMaybe (0, weapon.values.range)[0]},`
   + `"RW2":${fromMaybe (0, weapon.values.range)[1]},`
   + `"RW3":${fromMaybe (0, weapon.values.range)[2]},`
   + `"Ladezeit":${fromMaybe (0, weapon.values.reloadTime)}}`
@@ -454,7 +480,7 @@ function combatTechniqueForXML (technique: Record<CombatTechniqueWithRequirement
   return "{"
   + `"Name":"${technique.values.wikiEntry.values.name}",`
   + `"FW":${technique.values.stateEntry.values.value},`
-  + `"L":${List.intercalate (", ") (technique.values.wikiEntry.values.primary)},`
+  + `"L":${List.intercalate (", ") (technique.values.wikiEntry.values.primary)}}`
 }
 
 function armorForXML (name: string, rshead: Maybe<number>, rstorso: Maybe<number>,
@@ -478,15 +504,33 @@ function armorForXML (name: string, rshead: Maybe<number>, rstorso: Maybe<number
 
 
 function totalArmorForXML (armor: Armor): string {
-  return armorForXML (armor.name, armor.pro, armor.pro, armor.pro, armor.pro, armor.pro,
-    armor.pro, armor.ini, armor.mov, fromMaybe (0, armor.enc), "gesamt")
+  return armorForXML (armor.name,
+    armor.pro,
+    armor.pro,
+    armor.pro,
+    armor.pro,
+    armor.pro,
+    armor.pro,
+    armor.ini,
+    armor.mov,
+    fromMaybe (0, armor.enc),
+    "gesamt")
 }
 
 function zoneArmorForXML (armorZones: HitZoneArmorForView): string {
   const penalty: number = armorZones.addPenalties ? 1 : 0
 
-  return armorForXML (armorZones.name, armorZones.head, armorZones.torso, armorZones.leftArm, armorZones.rightArm,
-    armorZones.leftLeg, armorZones.rightLeg, penalty, penalty, armorZones.enc, "zone")
+  return armorForXML (armorZones.name,
+    armorZones.head,
+    armorZones.torso,
+    armorZones.leftArm,
+    armorZones.rightArm,
+    armorZones.leftLeg,
+    armorZones.rightLeg,
+    penalty,
+    penalty,
+    armorZones.enc,
+    "zone")
 }
 
 function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
@@ -500,10 +544,16 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
 
   xml += entry ({ key: "Kampftechniken", value: techniques })
 
+  const getItem = getFullItem
+    (hero.values.belongings.values.items)
+    (state.values.wiki.values.itemTemplates)
+
   id = 0
   const melee = `[${
    pipe_ (
     fromMaybe (List.empty, getMeleeWeapons (state, { hero })),
+    fmap (MeleeWeapon.A.id),
+    Maybe.mapMaybe (getItem),
     fmap (meleeWeaponForXML (state)),
     List.intercalate (", ")
    )
@@ -512,12 +562,11 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
   id = 0
   const ranged = `[${
    pipe_ (
-    getRangedWeapons (state),
-    maybe ("")
-          (pipe (
-            fmap (rangedWeaponForXML),
-            List.intercalate (", ")
-          ))
+    fromMaybe (List.empty, getRangedWeapons (state)),
+    fmap (RangedWeapon.A.id),
+    Maybe.mapMaybe (getItem),
+    fmap (rangedWeaponForXML),
+    List.intercalate (", ")
    )
   }]`
 
@@ -574,6 +623,7 @@ function getBelongingsXML (hero: HeroModelRecord, state: AppStateRecord): string
 
 export function getContentXML (hero: HeroModelRecord, state: AppStateRecord): string {
   let contentXml = "<?xml version=\"1.0\"?>"
+
   contentXml += "<net.rptools.maptool.model.Token>"
   contentXml += getStaticDataXML (hero)
   contentXml += "<propertyMapCI><store>"

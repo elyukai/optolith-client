@@ -19,6 +19,7 @@ const _RemoveCombatTechniquesSelection =
                 active: false,
               })
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RemoveCombatTechniquesSelection =
   _RemoveCombatTechniquesSelection ({
     id: ProfessionSelectionIds.COMBAT_TECHNIQUES,

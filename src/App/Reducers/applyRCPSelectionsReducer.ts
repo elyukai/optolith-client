@@ -55,6 +55,7 @@ interface ConcatenatedModifications {
   professionPrerequisites: List<ProfessionPrerequisite>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const ConcatenatedModifications =
   fromDefault ("ConcatenatedModifications")
               <ConcatenatedModifications> ({

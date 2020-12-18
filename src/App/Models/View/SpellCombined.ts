@@ -11,6 +11,7 @@ export interface SpellCombined {
   stateEntry: Record<ActivatableSkillDependent>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SpellCombined =
   fromDefault ("SpellCombined")
               <SpellCombined> ({

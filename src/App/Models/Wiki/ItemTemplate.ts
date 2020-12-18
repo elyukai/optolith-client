@@ -49,6 +49,7 @@ export interface ItemTemplate {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ItemTemplate =
   fromDefault ("ItemTemplate")
               <ItemTemplate> ({

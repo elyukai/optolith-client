@@ -10,6 +10,7 @@ export interface ActivatableNameCostIsActive {
   isActive: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivatableNameCostIsActive =
   fromDefault ("ActivatableNameCostIsActive")
               <ActivatableNameCostIsActive> ({

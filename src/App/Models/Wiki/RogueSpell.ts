@@ -32,6 +32,7 @@ export interface RogueSpell {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RogueSpell =
   fromDefault ("RogueSpell")
               <RogueSpell> ({

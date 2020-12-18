@@ -10,6 +10,7 @@ export interface LiturgicalChantWithRequirements extends IncreasableWithRequirem
     stateEntry: Record<ActivatableSkillDependent>
   }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LiturgicalChantWithRequirements =
   fromDefault ("LiturgicalChantWithRequirements")
               <LiturgicalChantWithRequirements> ({

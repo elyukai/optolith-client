@@ -12,6 +12,7 @@ export interface DerivedCharacteristic {
   calcNoPrimary: Maybe<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DerivedCharacteristic =
   fromDefault ("DerivedCharacteristic")
               <DerivedCharacteristic> ({

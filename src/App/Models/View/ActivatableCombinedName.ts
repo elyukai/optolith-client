@@ -9,6 +9,7 @@ export interface ActivatableCombinedName {
   levelName: Maybe<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivatableCombinedName =
   fromDefault ("ActivatableCombinedName")
               <ActivatableCombinedName> ({

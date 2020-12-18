@@ -14,6 +14,7 @@ export interface FocusRule {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const FocusRule =
   fromDefault ("FocusRule")
               <FocusRule> ({

@@ -751,6 +751,7 @@ export type RightI<A> = A extends Right<infer I> ? I : never
 
 // NAMESPACED FUNCTIONS
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Either = {
   Left,
   Right,

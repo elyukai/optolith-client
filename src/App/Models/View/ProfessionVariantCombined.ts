@@ -23,6 +23,7 @@ export interface ProfessionVariantCombined {
   mappedLiturgicalChants: List<Record<IncreasableForView> | Record<IncreasableListForView>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProfessionVariantCombined =
   fromDefault ("ProfessionVariantCombined")
               <ProfessionVariantCombined> ({

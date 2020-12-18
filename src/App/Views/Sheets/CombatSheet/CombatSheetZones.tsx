@@ -15,7 +15,6 @@ import { State } from "../../../Models/Wiki/State"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../../Utilities/I18n"
-import { Options } from "../../Universal/Options"
 import { Sheet } from "../Sheet"
 import { SheetWrapper } from "../SheetWrapper"
 import { getAddCombatHeaderVals } from "./CombatSheet"
@@ -63,7 +62,6 @@ export const CombatSheetZones: React.FC<Props> = props => {
 
   return (
     <SheetWrapper>
-      <Options />
       <Sheet
         id="combat-sheet-zones"
         title={translate (staticData) ("sheets.combatsheet.title")}

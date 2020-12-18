@@ -10,6 +10,7 @@ export interface RaceCombined {
   mappedVariants: List<Record<RaceVariant>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RaceCombined =
   fromDefault ("RaceCombined")
               <RaceCombined> ({

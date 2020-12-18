@@ -8,6 +8,7 @@ export interface CombatTechniqueCombined {
   stateEntry: Record<SkillDependent>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CombatTechniqueCombined =
   fromDefault ("CombatTechniqueCombined")
               <CombatTechniqueCombined> ({

@@ -108,6 +108,7 @@ export interface StaticData {
   zibiljaRituals: OrderedMap<string, Record<ZibiljaRitual>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StaticData: RecordCreator<StaticData> =
   fromDefault ("StaticData")
               <StaticData> ({

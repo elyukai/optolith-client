@@ -9,6 +9,7 @@ export interface PermanentEnergyLossAndBoughtBack {
 /**
  * Create a new `PermanentEnergyLossAndBoughtBack` object.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PermanentEnergyLossAndBoughtBack =
   fromDefault ("PermanentEnergyLossAndBoughtBack")
               <PermanentEnergyLossAndBoughtBack> ({

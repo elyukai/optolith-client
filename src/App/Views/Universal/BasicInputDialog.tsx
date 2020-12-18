@@ -7,7 +7,7 @@ import { pipe_ } from "../../Utilities/pipe"
 import { Dialog } from "../Universal/Dialog"
 import { TextField } from "../Universal/TextField"
 
-interface Dialog {
+interface Props {
   id: string
   isOpen: boolean
   title: string
@@ -23,7 +23,7 @@ interface Dialog {
   onChange: (new_text: string) => void
 }
 
-export const BasicInputDialog: React.FC<Dialog> = props => {
+export const BasicInputDialog: React.FC<Props> = props => {
   const {
     id,
     isOpen,

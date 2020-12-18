@@ -53,6 +53,7 @@ export interface Item extends ItemBase {
   src: Maybe<List<Record<SourceLink>>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Item =
   fromDefault ("Item")
               <Item> ({

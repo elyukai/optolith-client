@@ -17,8 +17,10 @@ export interface RangedWeapon {
   loss: Maybe<number>
   weight: Maybe<number>
   ammunition: Maybe<string>
+  isImprovisedWeapon: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RangedWeapon =
   fromDefault ("RangedWeapon")
               <RangedWeapon> ({
@@ -35,4 +37,5 @@ export const RangedWeapon =
                 loss: Nothing,
                 weight: Nothing,
                 ammunition: Nothing,
+                isImprovisedWeapon: false,
               })

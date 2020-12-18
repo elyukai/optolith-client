@@ -247,6 +247,7 @@ export import isRecord = Internals.isRecord
 
 // NAMESPACED FUNCTIONS
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Record = {
   fromDefault,
 

@@ -9,6 +9,7 @@ export interface Pact {
   name: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Pact =
   fromDefault ("Pact")
               <Pact> ({

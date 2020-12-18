@@ -9,6 +9,7 @@ export interface ArcaneBardTradition {
   prerequisites: List<AllRequirementObjects>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ArcaneBardTradition =
   fromDefault ("ArcaneBardTradition")
               <ArcaneBardTradition> ({

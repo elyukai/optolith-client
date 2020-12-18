@@ -7,6 +7,7 @@ export interface LiturgicalChantIsActive extends IsActive {
   wikiEntry: Record<LiturgicalChant>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LiturgicalChantIsActive =
   fromDefault ("LiturgicalChantIsActive")
               <LiturgicalChantIsActive> ({

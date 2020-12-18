@@ -11,6 +11,7 @@ export interface CultureRequirement {
   value: string | List<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CultureRequirement =
   fromDefault ("CultureRequirement")
               <CultureRequirement> ({

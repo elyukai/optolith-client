@@ -10,6 +10,7 @@ export interface IncreasableListForView {
   previous: Maybe<number>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const IncreasableListForView =
   fromDefault ("IncreasableListForView")
               <IncreasableListForView> ({

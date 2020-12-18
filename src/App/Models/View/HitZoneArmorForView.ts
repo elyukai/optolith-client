@@ -16,6 +16,7 @@ export interface HitZoneArmorForView {
   weight: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const HitZoneArmorForView =
   fromDefault ("HitZoneArmorForView")
               <HitZoneArmorForView> ({

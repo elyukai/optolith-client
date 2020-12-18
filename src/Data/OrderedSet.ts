@@ -363,6 +363,7 @@ export const insert =
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fromArray ([ ...xs .value, x ])
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type insert<A> = (x: A) => (s: OrderedSet<A>) => OrderedSet<A>
 
 
@@ -541,6 +542,7 @@ export const fromArray = setFromArray (show)
 
 // NAMESPACED FUNCTIONS
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const OrderedSet = {
   fromUniqueElements,
   fromArray,

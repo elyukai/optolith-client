@@ -7,6 +7,7 @@ export interface NameBySex {
   f: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const NameBySex =
   fromDefault ("NameBySex")
               <NameBySex> ({

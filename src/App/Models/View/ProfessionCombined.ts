@@ -31,6 +31,7 @@ export interface ProfessionCombined {
   mappedVariants: List<Record<ProfessionVariantCombined>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProfessionCombined =
   fromDefault ("ProfessionCombined")
               <ProfessionCombined> ({

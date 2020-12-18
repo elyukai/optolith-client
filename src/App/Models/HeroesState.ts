@@ -12,6 +12,7 @@ export interface HeroesState {
   currentId: Maybe<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const HeroesState =
   fromDefault ("HeroesState")
               <HeroesState> ({

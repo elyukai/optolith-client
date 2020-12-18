@@ -474,6 +474,7 @@ export const getMeleeWeapons = createMaybeSelector (
                               isImprovisedWeapon:
                                 isJust (IA.improvisedWeaponGroup (full_item)),
                               isTwoHandedWeapon: IA.isTwoHandedWeapon (full_item),
+                              isParryingWeapon: IA.isParryingWeapon (full_item),
                             }))
                           : Nothing
                       }
@@ -539,6 +540,8 @@ export const getRangedWeapons = createMaybeSelector (
                           loss: IA.loss (full_item),
                           weight: IA.weight (full_item),
                           ammunition,
+                          isImprovisedWeapon:
+                            isJust (IA.improvisedWeaponGroup (full_item)),
                         })
                       }
                     )

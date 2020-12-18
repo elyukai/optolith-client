@@ -24,6 +24,7 @@ export interface StyleDependency {
 /**
  * Create a new `StyleDependency` object.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StyleDependency =
   fromDefault ("StyleDependency")
               <StyleDependency> ({

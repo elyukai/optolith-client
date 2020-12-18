@@ -30,6 +30,7 @@ interface DropdownOptionCreator extends RecordCreator<DropdownOption> {
     <B, A extends DropdownKey> (x: B | Record<DropdownOption<A>>) => x is Record<DropdownOption<A>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DropdownOption: DropdownOptionCreator =
   fromDefault ("DropdownOption") <DropdownOption<any>> ({
                 id: Nothing,
