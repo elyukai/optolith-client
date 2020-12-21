@@ -27,11 +27,11 @@ import { SkillDependent } from "../Models/ActiveEntries/SkillDependent"
 import { Attribute } from "../Models/Wiki/Attribute"
 import { Armor } from "../Models/View/Armor"
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
-import { StaticData } from "../Models/Wiki/WikiModel"
 import { HitZoneArmorForView } from "../Models/View/HitZoneArmorForView"
 import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
 import { isTuple, Pair } from "../../Data/Tuple"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
+import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
 
 type MaptoolsEntry = {
   key: string
@@ -178,9 +178,15 @@ function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string
   xml += entry ({ key: "GS", value: gs.toString () })
 
   //Die ausgegebenen bzw. verfügbaren AP hätte ich noch gerne
-  xml += entry ({ key: "APgesamt", value: hero.values.adventurePointsTotal.toString () })
-  xml += entry ({ key: "APausgegeben", value: "1100" })
-  xml += entry ({ key: "APverfuegbar", value: "50" })
+  const ap = getAPObjectMap (hero.values.id) (state, { hero })
+  if (isJust (ap)) {
+    const ap2 = ap.value
+    if (isJust (ap2)) {
+      xml += entry ({ key: "APgesamt", value: hero.values.adventurePointsTotal.toString () })
+      xml += entry ({ key: "APausgegeben", value: ap2.value.values.spent.toString () })
+      xml += entry ({ key: "APverfuegbar", value: ap2.value.values.available.toString () })
+    }
+  }
 
   return xml
 }
@@ -204,27 +210,13 @@ function skillGroupNameForMapTool (group: Record<SkillGroup>): string {
 
 function buildSkill (skillFromWiki: Record<Skill>):
 (skillFromHero: Maybe<Record<SkillDependent>>) => MaptoolsSkill {
-  return skillFromHero => {
-    const skillHero: Record<SkillDependent> = fromMaybe (null, skillFromHero)
-    if (skillHero === null) {
-      return {
-        name: Skill.A.name (skillFromWiki),
-        value: SkillDependent.A.value (skillHero),
-        attr1: Skill.A.check (skillFromWiki)[0], // Wie kann ich auf die einzelnen Elemente der List zugreifen?
-        attr2: Skill.A.check (skillFromWiki)[1],
-        attr3: Skill.A.check (skillFromWiki)[2]
-      }
-    }
-    else {
-      return {
-        name: Skill.A.name (skillFromWiki),
-        value: 0,
-        attr1: Skill.A.check (skillFromWiki)[0],
-        attr2: Skill.A.check (skillFromWiki)[1],
-        attr3: Skill.A.check (skillFromWiki)[2]
-      }
-    }
-  }
+  return skillFromHero => ({
+    name: Skill.A.name (skillFromWiki),
+    value: isJust (skillFromHero) ? SkillDependent.A.value (skillFromHero.value) : 0,
+    attr1: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (0)) as MaptoolsAttribute),
+    attr2: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (1)) as MaptoolsAttribute),
+    attr3: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (2)) as MaptoolsAttribute)
+  })
 }
 
 function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
@@ -585,10 +577,10 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
   xml += entry ({ key: "Ruestungen",
     value: `[${
       pipe_ (List<List<string>> (
-        List<string> (armorForXML ("Keine Rüstung", Maybe<number> (0), Maybe<number> (0), Maybe<number> (0), Maybe<number> (0),
-                                   Maybe<number> (0), Maybe<number> (0), 0, 0, 0, "gesamt")),
-        pipe_ (armors, fmap ((armor: Armor) => totalArmorForXML (armor))),
-        pipe_ (armorZones, fmap ((armorZones: HitZoneArmorForView) => zoneArmorForXML(armorZones)))
+        List<string> (armorForXML
+          ("Keine Rüstung", Maybe (0), Maybe (0), Maybe (0), Maybe (0), Maybe (0), Maybe (0), 0, 0, 0, "gesamt")),
+        pipe_ (armors, fmap ((armor: Record<Armor>) => totalArmorForXML (armor.values))),
+        pipe_ (armorZones, fmap ((armorZones: Record<HitZoneArmorForView>) => zoneArmorForXML(armorZones.values)))
       ),
       List.join,
       List.intercalate (", "))

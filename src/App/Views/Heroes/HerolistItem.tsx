@@ -46,6 +46,7 @@ export interface HerolistItemDispatchProps {
   showHero (): void
   saveHero (): void
   saveHeroAsJSON (): void
+  exportHeroAsRptok (): void
   deleteHero (): void
   duplicateHero (): void
 }

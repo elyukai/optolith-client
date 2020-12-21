@@ -29,7 +29,7 @@ import { getUISettingsState } from "../Selectors/uisettingsSelectors"
 import { prepareAPCache, prepareAPCacheForHero, writeCache } from "../Utilities/Cache"
 import { translate } from "../Utilities/I18n"
 import { showOpenDialog, showSaveDialog } from "../Utilities/IOUtils"
-import { getContentXML, getPropertiesXML, getRptok } from "../Utilities/MapToolExporter"
+import { getRptok } from "../Utilities/MapToolExporter"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { writeConfig } from "../Utilities/Raw/JSON/Config"
 import { parseHero } from "../Utilities/Raw/JSON/Hero"
@@ -350,7 +350,6 @@ export const requestHeroExportAsRptok =
         }
       }
     }
-  }
 
 
 export const requestHeroExport =
