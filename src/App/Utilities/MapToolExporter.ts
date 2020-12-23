@@ -32,6 +32,7 @@ import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttri
 import { isTuple, Pair } from "../../Data/Tuple"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
+import { Spell } from "../Models/Wiki/Spell"
 
 type MaptoolsEntry = {
   key: string
@@ -177,7 +178,6 @@ function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string
   xml += entry ({ key: "INI", value: ini.toString () })
   xml += entry ({ key: "GS", value: gs.toString () })
 
-  //Die ausgegebenen bzw. verfügbaren AP hätte ich noch gerne
   const ap = getAPObjectMap (hero.values.id) (state, { hero })
   if (isJust (ap)) {
     const ap2 = ap.value
@@ -215,7 +215,18 @@ function buildSkill (skillFromWiki: Record<Skill>):
     value: isJust (skillFromHero) ? SkillDependent.A.value (skillFromHero.value) : 0,
     attr1: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (0)) as MaptoolsAttribute),
     attr2: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (1)) as MaptoolsAttribute),
-    attr3: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (2)) as MaptoolsAttribute)
+    attr3: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (2)) as MaptoolsAttribute),
+  })
+}
+
+function buildSpell (spellFromWiki: Record<Spell>):
+(spellFromHero: Maybe<Record<SkillDependent>>) => MaptoolsSkill {
+  return spellFromHero => ({
+    name: Spell.A.name (spellFromWiki),
+    value: isJust (spellFromHero) ? SkillDependent.A.value (spellFromHero.value) : 0,
+    attr1: (fromMaybe ("MU", List.subscript (Spell.A.check (spellFromWiki)) (0)) as MaptoolsAttribute),
+    attr2: (fromMaybe ("MU", List.subscript (Spell.A.check (spellFromWiki)) (1)) as MaptoolsAttribute),
+    attr3: (fromMaybe ("MU", List.subscript (Spell.A.check (spellFromWiki)) (2)) as MaptoolsAttribute),
   })
 }
 
@@ -258,6 +269,14 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
 
   // TODO: Zauber/Rituale und Liturgien/Zeremonien noch herausfinden
   // erstmal muss aber der code weiter oben funktionieren. Das wird dann ja so ähnlich ablaufen
+
+  /* const spells =
+    pipe_ (state.values.wiki.values.spells,
+      OrderedMap.elems,
+      fmap ((spell: Record<Spell>) => pipe_ (spell,
+        Spell.A.id,
+        OrderedMap.lookupF (hero.values.spells),
+        buildSpell (spell))))*/
 
   return xml
 }
@@ -541,6 +560,7 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
     (state.values.wiki.values.itemTemplates)
 
   id = 0
+
   const melee = `[${
    pipe_ (
     fromMaybe (List.empty, getMeleeWeapons (state, { hero })),
@@ -572,15 +592,15 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
     fromMaybe (List.empty, getArmorZones (state))
 
   id = 0
-  //Hier gibts noch ein Typproblem
-  //Ich will hier alle Rüstungen und Rüstungszonen gleich behandeln
+
   xml += entry ({ key: "Ruestungen",
     value: `[${
       pipe_ (List<List<string>> (
         List<string> (armorForXML
           ("Keine Rüstung", Maybe (0), Maybe (0), Maybe (0), Maybe (0), Maybe (0), Maybe (0), 0, 0, 0, "gesamt")),
         pipe_ (armors, fmap ((armor: Record<Armor>) => totalArmorForXML (armor.values))),
-        pipe_ (armorZones, fmap ((armorZones: Record<HitZoneArmorForView>) => zoneArmorForXML(armorZones.values)))
+        pipe_ (armorZones, fmap ((armorZones: Record<HitZoneArmorForView>) =>
+          zoneArmorForXML (armorZones.values)))
       ),
       List.join,
       List.intercalate (", "))
@@ -640,6 +660,12 @@ export function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer 
   //TODO: Charakterbild noch exportieren und in die Zip-Datei packen
   //passend wäre es wenn wir das komplette Bild als Portrait und Handout setzen
   //als Token wäre ein kleines runden Thumbnail passend, so wie es in der Heldenliste angezeigt wird
+
+  if (isJust (hero.values.avatar)) {
+    const binaryAvatar = atob (hero.values.avatar.value)
+    zip.addFile ("assets/", Buffer.from (""))
+    zip.addFile ("assets/thumbkeyhashthing", Buffer.from (binaryAvatar))
+  }
 
   return zip.toBuffer ()
 }

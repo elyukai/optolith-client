@@ -34,9 +34,6 @@ const mapDispatchToProps = (
   async saveHero () {
     await dispatch (HerolistActions.saveHero (Just (HA.id (hero))))
   },
-  exportHeroAsRptok () {
-    dispatch (HerolistActions.exportHeroAsRptok (hero))
-  },
   saveHeroAsJSON () {
     dispatch (HerolistActions.exportHeroValidate (HA.id (hero)))
   },
