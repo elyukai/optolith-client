@@ -76,7 +76,8 @@ module IcAsIndex = {
   let%private getApValueByIcAsIndexAux = (mp, getIc, id, apValues) =>
     Ley_IntMap.lookup(id, mp)
     >>= (
-      static => static |> getIc |> IC.icToIx |> Ley_List.Safe.atMay(apValues)
+      static =>
+        static |> getIc |> IC.icToIndex |> Ley_List.Safe.atMay(apValues)
     );
 
   // Shortcut function for skills
@@ -271,7 +272,7 @@ let getApValueDifferenceOnChangeByEntry =
             + (isEntryToAdd ? 1 : 0)
           )
           // ...with the skill's IC
-          * IC.getAPForActivatation(skill.ic)
+          * IC.getApForActivatation(skill.ic)
       )
     | SpecialAbility(Language) =>
       level
@@ -561,7 +562,7 @@ let getApSpentDifference = (staticEntry, heroEntry: Activatable_Dynamic.t) => {
                let actualIcFactorForSkill = Math.gsum(1, count);
 
                // Apply IC multiplier to get final AP value
-               IC.getAPForActivatation(skill.ic)
+               IC.getApForActivatation(skill.ic)
                * (actualIcFactorForSkill - currentIcFactorForSkill)
                + accDiff;
              | _ => accDiff

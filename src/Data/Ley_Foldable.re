@@ -39,6 +39,14 @@ module type T = {
   let foldl: (('a, 'b) => 'a, 'a, t('b)) => 'a;
 
   /**
+   * `foldl' f init x` reduces the container `x` from left to right by
+   * accumulating it's values with the function `f`, which takes the current
+   * value in the container and the current accumulated value. `init` is the
+   * accumulated value at the beginning.
+   */
+  let foldl': (('a, 'b) => 'b, t('a), 'b) => 'b;
+
+  /**
    * `toList x` converts the container `x` to a list.
    */
   let toList: t('a) => list('a);
@@ -125,6 +133,8 @@ module Make = (Arg: S) : (T with type t('a) = Arg.t('a)) => {
   let foldr = Arg.foldr;
 
   let foldl = Arg.foldl;
+
+  let foldl' = (f, x, init) => foldl((acc, e) => f(e, acc), init, x);
 
   let toList = x => foldr((e, xs) => [e, ...xs], [], x);
 

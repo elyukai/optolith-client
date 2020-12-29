@@ -1,0 +1,2 @@
+break-infix-before-func = true
+break-collection-expressions = wrap

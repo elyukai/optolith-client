@@ -303,8 +303,7 @@ let getEntrySpecificNameAddition =
     )
   };
 
-let getDisAdvLevelStr = level =>
-  level |> Integers.intToRoman |> fromOption(Ley_Int.show(level));
+let getDisAdvLevelStr = RomanInt.intToRoman;
 
 let getSpecialAbilityLevelStr = level =>
   (level > 1 ? "I" ++ Chars.nobr ++ "–" ++ Chars.nobr : "")

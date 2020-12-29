@@ -8,8 +8,7 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        "**/*.js.map": true,
-        "**/*.bs.js": true
+        "**/*.js.map": true
     },
     "eslint.validate": [
         "typescript",

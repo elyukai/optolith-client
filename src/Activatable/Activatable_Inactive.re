@@ -164,7 +164,7 @@ let modifyOtherOptions =
               switch (staticSpecialAbility.apValue) {
               | Some(PerLevel(values)) =>
                 values
-                |> L.map((+)(IC.getAPForActivatation(ic)))
+                |> L.map((+)(IC.getApForActivatation(ic)))
                 |> (
                   sumValues =>
                     {...base, apValue: Some(Many(sumValues))} |> O.return

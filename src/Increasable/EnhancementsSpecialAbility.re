@@ -49,7 +49,7 @@ let getAllFromObject =
     ~level=1,
     ~id=level1.id,
     ~name=level1.name,
-    ~cost=IC.getAPForActivatation(targetIC),
+    ~cost=IC.getApForActivatation(targetIC),
     ~description=level1.effect,
     ~prerequisites=Plain([]),
     ~src,
@@ -62,7 +62,7 @@ let getAllFromObject =
     ~level=2,
     ~id=level2.id,
     ~name=level2.name,
-    ~cost=IC.getAPForActivatation(targetIC) * 2,
+    ~cost=IC.getApForActivatation(targetIC) * 2,
     ~description=level2.effect,
     ~prerequisites=
       Plain(
@@ -94,7 +94,7 @@ let getAllFromObject =
     ~level=3,
     ~id=level3.id,
     ~name=level3.name,
-    ~cost=IC.getAPForActivatation(targetIC) * 3,
+    ~cost=IC.getApForActivatation(targetIC) * 3,
     ~description=level3.effect,
     ~prerequisites=
       switch (level3.requiresPrevious) {
