@@ -35,7 +35,7 @@ module Static = {
         };
 
         let t = json =>
-          JsonStrict.{
+          Json_Decode_Strict.{
             name: json |> field("name", string),
             commonAdvantages:
               json |> optionalField("commonAdvantages", string),
@@ -65,7 +65,7 @@ module Static = {
       };
 
       let multilingual = json =>
-        JsonStrict.{
+        Json_Decode_Strict.{
           id: json |> field("id", int),
           commonCultures:
             json |> field("commonCultures", list(int)) |> Ley_IntSet.fromList,
@@ -183,7 +183,7 @@ module Static = {
       };
 
       let t = json =>
-        JsonStrict.{
+        Json_Decode_Strict.{
           name: json |> field("name", string),
           attributeAdjustments: json |> field("attributeAdjustments", string),
           automaticAdvantages:
@@ -241,7 +241,7 @@ module Static = {
     };
 
     let variantOptionsMultilingual =
-      JsonStrict.(
+      Json_Decode_Strict.(
         field("type", string)
         |> andThen(
              fun
@@ -278,7 +278,7 @@ module Static = {
       );
 
     let multilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         apValue: json |> field("apValue", int),
         lp: json |> field("lp", int),

@@ -59,7 +59,7 @@ module Static = {
       };
 
       let t = json =>
-        JsonStrict.{
+        Json_Decode_Strict.{
           name: json |> field("name", string),
           areaKnowledge: json |> field("areaKnowledge", string),
           areaKnowledgeShort: json |> field("areaKnowledgeShort", string),
@@ -107,7 +107,7 @@ module Static = {
     };
 
     let frequencyException =
-      JsonStrict.(
+      Json_Decode_Strict.(
         field("scope", string)
         |> andThen(
              fun
@@ -119,7 +119,7 @@ module Static = {
       );
 
     let multilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         languages: json |> field("languages", list(int)),
         literacy: json |> optionalField("literacy", list(int)),

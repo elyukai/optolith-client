@@ -78,7 +78,7 @@ exception WorkerError(int, string);
 let parseAndDecodeDatabase =
     (
       ~workerPath,
-      ~workerData: (Locale.order, Messages.t, DatabaseReader.t),
+      ~workerData: (Locale.Order.t, Messages.t, DatabaseReader.t),
       ~onProgress: float => unit,
     )
     : IO.t(Static.t) => {

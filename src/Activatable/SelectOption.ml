@@ -78,7 +78,7 @@ module Decode = {
     };
 
     let t = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         name: json |> field("name", string),
         description: json |> optionalField("description", string),
         errata: json |> optionalField("errata", Erratum.Decode.list),
@@ -99,7 +99,7 @@ module Decode = {
   };
 
   let multilingual = json =>
-    JsonStrict.{
+    Json_Decode_Strict.{
       id: json |> field("id", selectOptionId),
       apValue: json |> optionalField("apValue", int),
       prerequisites:
@@ -163,7 +163,7 @@ module Decode = {
       | LiturgicalChantEnhancements;
 
     let t =
-      JsonStrict.(
+      Json_Decode_Strict.(
         field("category", string)
         |> andThen(
              fun

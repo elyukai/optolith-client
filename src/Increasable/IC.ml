@@ -3,7 +3,7 @@ type t = A | B | C | D | E
 let show ic =
   match ic with A -> "A" | B -> "B" | C -> "C" | D -> "D" | E -> "E"
 
-let icToIndex ic = match ic with A -> 0 | B -> 1 | C -> 2 | D -> 3 | E -> 4
+let toIndex ic = match ic with A -> 0 | B -> 1 | C -> 2 | D -> 3 | E -> 4
 
 let getApBase ic = match ic with A -> 1 | B -> 2 | C -> 3 | D -> 4 | E -> 15
 

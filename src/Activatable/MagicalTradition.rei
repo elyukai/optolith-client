@@ -12,4 +12,4 @@ type t = {
   areDisAdvRequiredApplyToMagActionsOrApps: bool,
 };
 
-module Decode: {let assoc: Decoder.assocDecoder(t);};
+module Decode: {let assoc: Json_Decode_Static.decodeAssoc(t);};

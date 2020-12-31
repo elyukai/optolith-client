@@ -6,8 +6,8 @@ module DecodeUtils = struct
   let raiseUnknownScope ~scopeName ~invalidValue =
     raise
       (Json.Decode.DecodeError
-         ("Unknown scope id of scope range \"" ^ scopeName ^ "\": "
-        ^ invalidValue))
+         ( "Unknown scope id of scope range \"" ^ scopeName ^ "\": "
+         ^ invalidValue ))
 end
 
 module OrdUtils = struct
@@ -148,9 +148,12 @@ module Increasable = struct
   type t =
     | Attribute of int
     | Skill of int
-    | CombatTechnique of int
+    | MeleeCombatTechnique of int
+    | RangedCombatTechnique of int
     | Spell of int
+    | Ritual of int
     | LiturgicalChant of int
+    | Ceremony of int
 
   module Decode = struct
     let t =
@@ -158,11 +161,56 @@ module Increasable = struct
         tag (function
           | "Attribute" -> value (fun x -> Attribute x)
           | "Skill" -> value (fun x -> Skill x)
-          | "CombatTechnique" -> value (fun x -> CombatTechnique x)
+          | "MeleeCombatTechnique" -> value (fun x -> MeleeCombatTechnique x)
+          | "RangedCombatTechnique" -> value (fun x -> RangedCombatTechnique x)
           | "Spell" -> value (fun x -> Spell x)
+          | "Ritual" -> value (fun x -> Ritual x)
           | "LiturgicalChant" -> value (fun x -> LiturgicalChant x)
+          | "Ceremony" -> value (fun x -> Ceremony x)
           | scope ->
               raiseUnknownScope ~scopeName:"Increasable" ~invalidValue:scope))
+  end
+end
+
+module CombatTechnique = struct
+  type t = MeleeCombatTechnique of int | RangedCombatTechnique of int
+
+  module Decode = struct
+    let t =
+      DecodeUtils.(
+        tag (function
+          | "MeleeCombatTechnique" -> value (fun x -> MeleeCombatTechnique x)
+          | "RangedCombatTechnique" -> value (fun x -> RangedCombatTechnique x)
+          | scope ->
+              raiseUnknownScope ~scopeName:"CombatTechnique" ~invalidValue:scope))
+  end
+end
+
+module Spellwork = struct
+  type t = Spell of int | Ritual of int
+
+  module Decode = struct
+    let t =
+      DecodeUtils.(
+        tag (function
+          | "Spell" -> value (fun x -> Spell x)
+          | "Ritual" -> value (fun x -> Ritual x)
+          | scope ->
+              raiseUnknownScope ~scopeName:"Spellwork" ~invalidValue:scope))
+  end
+end
+
+module LiturgicalChant = struct
+  type t = LiturgicalChant of int | Ceremony of int
+
+  module Decode = struct
+    let t =
+      DecodeUtils.(
+        tag (function
+          | "LiturgicalChant" -> value (fun x -> LiturgicalChant x)
+          | "Ceremony" -> value (fun x -> Ceremony x)
+          | scope ->
+              raiseUnknownScope ~scopeName:"LiturgicalChant" ~invalidValue:scope))
   end
 end
 
@@ -733,10 +781,8 @@ module Skill = struct
   end
 end
 
-module CombatTechnique = struct
+module MeleeCombatTechnique = struct
   type t =
-    | Crossbows
-    | Bows
     | Daggers
     | FencingWeapons
     | ImpactWeapons
@@ -744,22 +790,15 @@ module CombatTechnique = struct
     | Lances
     | Brawling
     | Shields
-    | Slings
     | Swords
     | Polearms
-    | ThrownWeapons
     | TwoHandedImpactWeapons
     | TwoHandedSwords
-    | SpittingFire
-    | Blowguns
-    | Discuses
     | Faecher
     | Spiesswaffen
     | Other of int
 
   let fromInt = function
-    | 1 -> Crossbows
-    | 2 -> Bows
     | 3 -> Daggers
     | 4 -> FencingWeapons
     | 5 -> ImpactWeapons
@@ -767,22 +806,15 @@ module CombatTechnique = struct
     | 7 -> Lances
     | 9 -> Brawling
     | 10 -> Shields
-    | 11 -> Slings
     | 12 -> Swords
     | 13 -> Polearms
-    | 14 -> ThrownWeapons
     | 15 -> TwoHandedImpactWeapons
     | 16 -> TwoHandedSwords
-    | 17 -> SpittingFire
-    | 18 -> Blowguns
-    | 19 -> Discuses
     | 20 -> Faecher
     | 21 -> Spiesswaffen
     | x -> Other x
 
   let toInt = function
-    | Crossbows -> 1
-    | Bows -> 2
     | Daggers -> 3
     | FencingWeapons -> 4
     | ImpactWeapons -> 5
@@ -790,26 +822,45 @@ module CombatTechnique = struct
     | Lances -> 7
     | Brawling -> 9
     | Shields -> 10
-    | Slings -> 11
     | Swords -> 12
     | Polearms -> 13
-    | ThrownWeapons -> 14
     | TwoHandedImpactWeapons -> 15
     | TwoHandedSwords -> 16
-    | SpittingFire -> 17
-    | Blowguns -> 18
-    | Discuses -> 19
     | Faecher -> 20
     | Spiesswaffen -> 21
     | Other x -> x
+end
 
-  module Group = struct
-    type t = Melee | Ranged
+module RangedCombatTechnique = struct
+  type t =
+    | Crossbows
+    | Bows
+    | Slings
+    | ThrownWeapons
+    | SpittingFire
+    | Blowguns
+    | Discuses
+    | Other of int
 
-    let fromInt = function 1 -> Ok Melee | 2 -> Ok Ranged | x -> Error x
+  let fromInt = function
+    | 1 -> Crossbows
+    | 2 -> Bows
+    | 11 -> Slings
+    | 14 -> ThrownWeapons
+    | 17 -> SpittingFire
+    | 18 -> Blowguns
+    | 19 -> Discuses
+    | x -> Other x
 
-    let toInt = function Melee -> 1 | Ranged -> 2
-  end
+  let toInt = function
+    | Crossbows -> 1
+    | Bows -> 2
+    | Slings -> 11
+    | ThrownWeapons -> 14
+    | SpittingFire -> 17
+    | Blowguns -> 18
+    | Discuses -> 19
+    | Other x -> x
 end
 
 module MagicalTradition = struct

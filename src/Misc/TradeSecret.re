@@ -18,7 +18,7 @@ module Decode = {
     };
 
     let t = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         name: json |> field("name", string),
         description: json |> optionalField("description", string),
         errata: json |> optionalField("errata", Erratum.Decode.list),
@@ -38,7 +38,7 @@ module Decode = {
   };
 
   let multilingual = json =>
-    JsonStrict.{
+    Json_Decode_Strict.{
       id: json |> field("id", int),
       apValue: json |> field("apValue", int),
       isSecretKnowledge: json |> field("isSecretKnowledge", bool),

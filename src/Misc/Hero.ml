@@ -230,7 +230,8 @@ type t = {
   attributeAdjustmentSelected : int;
   energies : Energies.t;
   skills : Skill.Dynamic.t Ley_IntMap.t;
-  combatTechniques : CombatTechnique.Dynamic.t Ley_IntMap.t;
+  meleeCombatTechniques : CombatTechnique.Melee.Dynamic.t Ley_IntMap.t;
+  rangedCombatTechniques : CombatTechnique.Ranged.Dynamic.t Ley_IntMap.t;
   spells : Spell.Dynamic.t Ley_IntMap.t;
   magicalActions : MagicalActions.t;
   liturgicalChants : LiturgicalChant.Dynamic.t Ley_IntMap.t;

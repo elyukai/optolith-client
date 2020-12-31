@@ -270,7 +270,7 @@ module Static = {
       include Extended;
 
       let entry = json =>
-        JsonStrict.{
+        Json_Decode_Strict.{
           id: json |> field("id", int),
           option: json |> optionalField("option", OneOrMany.Decode.t(int)),
         };
@@ -314,7 +314,7 @@ module Static = {
           };
 
           let t = json =>
-            JsonStrict.{
+            Json_Decode_Strict.{
               rules: json |> field("rules", string),
               penalty: json |> optionalField("penalty", string),
             };
@@ -348,7 +348,7 @@ module Static = {
           };
 
           let t = json =>
-            JsonStrict.{
+            Json_Decode_Strict.{
               rules: json |> field("rules", string),
               penalty: json |> optionalField("penalty", string),
             };
@@ -378,7 +378,7 @@ module Static = {
           };
 
           let t = json =>
-            JsonStrict.{
+            Json_Decode_Strict.{
               effect: json |> field("effect", string),
               aeCost: json |> optionalField("aeCost", string),
               volume: json |> field("volume", string),
@@ -414,7 +414,7 @@ module Static = {
           };
 
           let t = json =>
-            JsonStrict.{
+            Json_Decode_Strict.{
               rules: json |> field("rules", string),
               aeCost: json |> field("aeCost", string),
             };
@@ -455,7 +455,7 @@ module Static = {
           };
 
           let t = json =>
-            JsonStrict.{
+            Json_Decode_Strict.{
               effect: json |> field("effect", string),
               aeCost: json |> optionalField("aeCost", string),
               volume: json |> optionalField("volume", string),
@@ -535,7 +535,7 @@ module Static = {
         };
 
         let t = json =>
-          JsonStrict.{
+          Json_Decode_Strict.{
             name: json |> field("name", string),
             nameInWiki: json |> optionalField("nameInWiki", string),
             input: json |> optionalField("input", string),
@@ -939,7 +939,7 @@ module Static = {
     };
 
     let multilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         levels: json |> optionalField("levels", int),
         max: json |> optionalField("max", int),

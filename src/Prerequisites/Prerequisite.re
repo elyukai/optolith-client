@@ -89,7 +89,7 @@ module Pact = {
 
   module Decode = {
     let t = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         category: json |> field("category", int),
         domain: json |> optionalField("domain", oneOrManyInt),
         level: json |> optionalField("level", int),
@@ -115,7 +115,7 @@ module Activatable = {
 
   module Decode = {
     let t = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", Id.Activatable.Decode.t),
         active: json |> field("active", bool),
         options:
@@ -162,7 +162,7 @@ module ActivatableMultiEntry = {
       );
 
     let t = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", activatableIds),
         active: json |> field("active", bool),
         options:
@@ -188,7 +188,7 @@ module ActivatableMultiSelect = {
 
   module Decode = {
     let t = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", Id.Activatable.Decode.t),
         active: json |> field("active", bool),
         firstOption:
@@ -284,7 +284,7 @@ module DisplayOption = {
       | MultilingualReplaceWith(TranslationMap.t);
 
     let multilingual = json =>
-      JsonStrict.(
+      Json_Decode_Strict.(
         json
         |> optionalField(
              "displayOption",

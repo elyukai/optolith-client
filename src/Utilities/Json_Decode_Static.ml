@@ -12,7 +12,7 @@ module type Entity = sig
     Js.Json.t ->
     multilingual
 
-  val make : Locale.order -> multilingual -> Translation.t -> t option
+  val make : Locale.Order.t -> multilingual -> Translation.t -> t option
 
   (** Accessors are needed to provide the final translation to [make] as well as
       to get the id of the entry for [toAssoc]. *)
@@ -24,7 +24,7 @@ module type Entity = sig
   end
 end
 
-type 'a decodeAssoc = Locale.order -> Js.Json.t -> (int * 'a) option
+type 'a decodeAssoc = Locale.Order.t -> Js.Json.t -> (int * 'a) option
 
 (** The [Nested] module is for entities nested inside other entities. Decoding
     them requires other and less functions than what a top-level entity needs.
@@ -41,7 +41,7 @@ module Nested = struct
 
       val multilingual : multilingual Json.Decode.decoder
 
-      val resolveTranslations : Locale.order -> multilingual -> t option
+      val resolveTranslations : Locale.Order.t -> multilingual -> t option
     end
   end
 
@@ -56,7 +56,10 @@ module Nested = struct
       val multilingual : 'a Json.Decode.decoder -> 'a t Json.Decode.decoder
 
       val resolveTranslations :
-        Locale.order -> (Locale.order -> 'a -> 'b option) -> 'a t -> 'b t option
+        Locale.Order.t ->
+        (Locale.Order.t -> 'a -> 'b option) ->
+        'a t ->
+        'b t option
     end
   end
 

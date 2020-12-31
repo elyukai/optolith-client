@@ -32,7 +32,7 @@ module Make (E : EntityTranslation) : sig
   val t : t Json.Decode.decoder
   (** Decodes a set of [Decodable] values. *)
 
-  val getFromLanguageOrder : Locale.order -> t -> E.t option
+  val getFromLanguageOrder : Locale.Order.t -> t -> E.t option
   (** [getFromLanguageOrderWith pred langs mp] takes a predicate, an ordered
       list of languages and the language. The languages should be ordered by
       importance in descending order. It returns the [EntityTranslation] value

@@ -169,7 +169,7 @@ module General: {
 
     let multilingual: Json.Decode.decoder(multilingual);
 
-    let resolveTranslations: (Locale.order, multilingual) => t;
+    let resolveTranslations: (Locale.Order.t, multilingual) => t;
   };
 };
 
@@ -190,7 +190,7 @@ module Profession: {
 
     let multilingual: Json.Decode.decoder(multilingual);
 
-    let resolveTranslations: (Locale.order, multilingual) => t;
+    let resolveTranslations: (Locale.Order.t, multilingual) => t;
   };
 };
 
@@ -218,7 +218,7 @@ module AdvantageDisadvantage: {
 
     let multilingual: Json.Decode.decoder(multilingual);
 
-    let resolveTranslations: (Locale.order, multilingual) => t;
+    let resolveTranslations: (Locale.Order.t, multilingual) => t;
   };
 };
 
@@ -236,7 +236,7 @@ module ArcaneTradition: {
 
     let multilingual: Json.Decode.decoder(multilingual);
 
-    let resolveTranslations: (Locale.order, multilingual) => t;
+    let resolveTranslations: (Locale.Order.t, multilingual) => t;
   };
 };
 
@@ -252,7 +252,7 @@ module ActivatableOnly: {
 
     let multilingual: Json.Decode.decoder(multilingual);
 
-    let resolveTranslations: (Locale.order, multilingual) => t;
+    let resolveTranslations: (Locale.Order.t, multilingual) => t;
   };
 };
 
@@ -268,7 +268,7 @@ module IncreasableOnly: {
 
     let multilingual: Json.Decode.decoder(multilingual);
 
-    let resolveTranslations: (Locale.order, multilingual) => t;
+    let resolveTranslations: (Locale.Order.t, multilingual) => t;
   };
 };
 
@@ -299,7 +299,7 @@ module Collection: {
 
       let multilingual: Json.Decode.decoder(multilingual);
 
-      let resolveTranslations: (Locale.order, multilingual) => t;
+      let resolveTranslations: (Locale.Order.t, multilingual) => t;
     };
   };
 
@@ -311,7 +311,7 @@ module Collection: {
 
       let multilingual: Json.Decode.decoder(multilingual);
 
-      let resolveTranslations: (Locale.order, multilingual) => t;
+      let resolveTranslations: (Locale.Order.t, multilingual) => t;
     };
   };
 
@@ -323,7 +323,7 @@ module Collection: {
 
       let multilingual: Json.Decode.decoder(multilingual);
 
-      let resolveTranslations: (Locale.order, multilingual) => t;
+      let resolveTranslations: (Locale.Order.t, multilingual) => t;
     };
   };
 
@@ -335,7 +335,7 @@ module Collection: {
 
       let multilingual: Json.Decode.decoder(multilingual);
 
-      let resolveTranslations: (Locale.order, multilingual) => t;
+      let resolveTranslations: (Locale.Order.t, multilingual) => t;
     };
   };
 
@@ -347,7 +347,7 @@ module Collection: {
 
       let multilingual: Json.Decode.decoder(multilingual);
 
-      let resolveTranslations: (Locale.order, multilingual) => t;
+      let resolveTranslations: (Locale.Order.t, multilingual) => t;
     };
   };
 
@@ -359,7 +359,7 @@ module Collection: {
 
       let multilingual: Json.Decode.decoder(multilingual);
 
-      let resolveTranslations: (Locale.order, multilingual) => t;
+      let resolveTranslations: (Locale.Order.t, multilingual) => t;
     };
   };
 };

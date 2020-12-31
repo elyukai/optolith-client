@@ -1,7 +1,7 @@
 type messageFromMain =
   | InitMinimal(
       Ley_StrMap.t(Locale.Supported.t),
-      Locale.order,
+      Locale.Order.t,
       AppConfig.t,
       Messages.t,
     )

@@ -26,7 +26,7 @@ module Static = {
       };
 
       let t = json =>
-        JsonStrict.{
+        Json_Decode_Strict.{
           name: json |> field("name", string),
           description: json |> optionalField("description", string),
           errata: json |> optionalField("errata", Erratum.Decode.list),
@@ -43,7 +43,7 @@ module Static = {
     };
 
     let multilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         isPrerequisite: json |> field("isPrerequisite", bool),
         src: json |> field("src", PublicationRef.Decode.multilingualList),

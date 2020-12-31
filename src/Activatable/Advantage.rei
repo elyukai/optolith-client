@@ -45,6 +45,6 @@ module Static: {
         ~spellEnhancements: SelectOption.map,
         ~liturgicalChantEnhancements: SelectOption.map
       ) =>
-      Decoder.assocDecoder(t);
+      Json_Decode_Static.decodeAssoc(t);
   };
 };

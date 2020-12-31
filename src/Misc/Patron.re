@@ -8,7 +8,7 @@ module Category = {
   module Translation = {
     type t = {name: string};
 
-    let t = json => JsonStrict.{name: json |> field("name", string)};
+    let t = json => Json_Decode_Strict.{name: json |> field("name", string)};
   };
 
   module TranslationMap = TranslationMap.Make(Translation);
@@ -20,7 +20,7 @@ module Category = {
   };
 
   let multilingual = json =>
-    JsonStrict.{
+    Json_Decode_Strict.{
       id: json |> field("id", int),
       primaryPatronCultures:
         json
@@ -59,7 +59,7 @@ module Decode = {
   module Translation = {
     type t = {name: string};
 
-    let t = json => JsonStrict.{name: json |> field("name", string)};
+    let t = json => Json_Decode_Strict.{name: json |> field("name", string)};
   };
 
   module TranslationMap = TranslationMap.Make(Translation);
@@ -74,7 +74,7 @@ module Decode = {
   };
 
   let multilingual = json =>
-    JsonStrict.{
+    Json_Decode_Strict.{
       id: json |> field("id", int),
       category: json |> field("category", int),
       skills: json |> field("skills", tuple3(int, int, int)),

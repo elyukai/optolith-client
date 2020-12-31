@@ -8,7 +8,7 @@ module Decode = {
   module Translation = {
     type t = {name: string};
 
-    let t = json => JsonStrict.{name: json |> field("name", string)};
+    let t = json => Json_Decode_Strict.{name: json |> field("name", string)};
   };
 
   module TranslationMap = TranslationMap.Make(Translation);

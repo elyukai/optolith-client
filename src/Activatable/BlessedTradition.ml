@@ -11,7 +11,7 @@ module Decode = Json_Decode_Static.Make( struct
   module Translation = struct
     type t = {name: string}
 
-    let t = json => JsonStrict.{name = json |> field("name", string)}
+    let t = json => Json_Decode_Strict.{name = json |> field("name", string)}
   end
 
   module TranslationMap = TranslationMap.Make(Translation)
@@ -28,7 +28,7 @@ module Decode = Json_Decode_Static.Make( struct
   };
 
   let multilingual = json =>
-    JsonStrict.{
+    Json_Decode_Strict.{
       id: json |> field("id", int),
       numId: json |> field("numId", int),
       primary: json |> field("primary", int),

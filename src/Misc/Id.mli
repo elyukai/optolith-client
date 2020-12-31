@@ -62,9 +62,36 @@ module Increasable : sig
   type t =
     | Attribute of int
     | Skill of int
-    | CombatTechnique of int
+    | MeleeCombatTechnique of int
+    | RangedCombatTechnique of int
     | Spell of int
+    | Ritual of int
     | LiturgicalChant of int
+    | Ceremony of int
+
+  module Decode : sig
+    val t : Js.Json.t -> t
+  end
+end
+
+module CombatTechnique : sig
+  type t = MeleeCombatTechnique of int | RangedCombatTechnique of int
+
+  module Decode : sig
+    val t : Js.Json.t -> t
+  end
+end
+
+module Spellwork : sig
+  type t = Spell of int | Ritual of int
+
+  module Decode : sig
+    val t : Js.Json.t -> t
+  end
+end
+
+module LiturgicalChant : sig
+  type t = LiturgicalChant of int | Ceremony of int
 
   module Decode : sig
     val t : Js.Json.t -> t
@@ -318,10 +345,8 @@ module Skill : sig
   end
 end
 
-module CombatTechnique : sig
+module MeleeCombatTechnique : sig
   type t =
-    | Crossbows
-    | Bows
     | Daggers
     | FencingWeapons
     | ImpactWeapons
@@ -329,15 +354,10 @@ module CombatTechnique : sig
     | Lances
     | Brawling
     | Shields
-    | Slings
     | Swords
     | Polearms
-    | ThrownWeapons
     | TwoHandedImpactWeapons
     | TwoHandedSwords
-    | SpittingFire
-    | Blowguns
-    | Discuses
     | Faecher
     | Spiesswaffen
     | Other of int
@@ -345,14 +365,22 @@ module CombatTechnique : sig
   val fromInt : int -> t
 
   val toInt : t -> int
+end
 
-  module Group : sig
-    type t = Melee | Ranged
+module RangedCombatTechnique : sig
+  type t =
+    | Crossbows
+    | Bows
+    | Slings
+    | ThrownWeapons
+    | SpittingFire
+    | Blowguns
+    | Discuses
+    | Other of int
 
-    val fromInt : int -> (t, int) result
+  val fromInt : int -> t
 
-    val toInt : t -> int
-  end
+  val toInt : t -> int
 end
 
 module MagicalTradition : sig

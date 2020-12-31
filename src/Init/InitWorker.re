@@ -1,5 +1,5 @@
 let (localeOrder, uiMessages, database): (
-  Locale.order,
+  Locale.Order.t,
   Messages.t,
   DatabaseReader.t,
 ) = WorkerThreads.Inside.workerData;

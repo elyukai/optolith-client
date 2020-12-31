@@ -25,7 +25,7 @@ module type Entity = sig
 
       @raise [DecodeError] if one decoder did not succeed. *)
 
-  val make : Locale.order -> multilingual -> Translation.t -> t option
+  val make : Locale.Order.t -> multilingual -> Translation.t -> t option
   (** [make langs multilingual translation] merges the multilingual record with
       the record of the most wanted language available and should handle any
       type conversions that differ from the JSON schema for the YAML files. If
@@ -62,7 +62,7 @@ module Nested : sig
 
       val multilingual : multilingual Json.Decode.decoder
 
-      val resolveTranslations : Locale.order -> multilingual -> t option
+      val resolveTranslations : Locale.Order.t -> multilingual -> t option
     end
   end
 
@@ -77,7 +77,10 @@ module Nested : sig
       val multilingual : 'a Json.Decode.decoder -> 'a t Json.Decode.decoder
 
       val resolveTranslations :
-        Locale.order -> (Locale.order -> 'a -> 'b option) -> 'a t -> 'b t option
+        Locale.Order.t ->
+        (Locale.Order.t -> 'a -> 'b option) ->
+        'a t ->
+        'b t option
     end
   end
 
@@ -91,7 +94,7 @@ module Nested : sig
 
         @raise [DecodeError] if one decoder did not succeed. *)
 
-    val resolveTranslations : Locale.order -> multilingual -> E.t option
+    val resolveTranslations : Locale.Order.t -> multilingual -> E.t option
     (** [resolveTranslations locales multilingual] takes the most wanted
         translations of the entry and combines them with the
         language-independent values to form the final entry.
@@ -102,7 +105,7 @@ module Nested : sig
   end
 end
 
-type 'a decodeAssoc = Locale.order -> Js.Json.t -> (int * 'a) option
+type 'a decodeAssoc = Locale.Order.t -> Js.Json.t -> (int * 'a) option
 (** [assoc localeOrder json] decodes the passed JSON into a value of type [t]
     of the passed module. It returns [None] if no matching translation could
     be found. It returns a pair to be used for inserting into a map.
@@ -116,13 +119,13 @@ type 'a decodeAssoc = Locale.order -> Js.Json.t -> (int * 'a) option
 
 (** Create unified decoders using the passed entity module. *)
 module Make (E : Entity) : sig
-  val t : Locale.order -> Js.Json.t -> E.t option
+  val t : Locale.Order.t -> Js.Json.t -> E.t option
   (** [t localeOrder json] decodes the passed JSON into a value of type [t] of
       the passed module. It returns [None] if no matching translation could be found.
 
       @raise [DecodeError] if one decoder did not succeed. *)
 
-  val assoc : Locale.order -> Js.Json.t -> (int * E.t) option
+  val assoc : Locale.Order.t -> Js.Json.t -> (int * E.t) option
   (** [assoc localeOrder json] decodes the passed JSON into a value of type [t]
       of the passed module. It returns [None] if no matching translation could
       be found. It returns a pair to be used for inserting into a map.

@@ -19,7 +19,7 @@ module Info = {
       };
 
       let t = json =>
-        JsonStrict.{
+        Json_Decode_Strict.{
           note: json |> optionalField("note", string),
           rules: json |> optionalField("rules", string),
           advantage: json |> optionalField("advantage", string),
@@ -63,7 +63,7 @@ module MundaneItem = {
   type t = {structurePoints: option(OneOrMany.t(int))};
 
   let decode = json =>
-    JsonStrict.{
+    Json_Decode_Strict.{
       structurePoints:
         json |> optionalField("structurePoints", OneOrMany.Decode.t(int)),
     };
@@ -114,7 +114,7 @@ module Damage = {
   };
 
   let decode = json =>
-    JsonStrict.{
+    Json_Decode_Strict.{
       amount: json |> field("damageDiceNumber", int),
       sides: json |> field("damageDiceSides", int),
       flat: json |> optionalField("damageFlat", int),
@@ -138,7 +138,7 @@ module MeleeWeapon = {
   };
 
   let decode = json =>
-    JsonStrict.{
+    Json_Decode_Strict.{
       combatTechnique: json |> field("combatTechnique", int),
       damage: json |> Damage.decode,
       primaryAttributeDamageThreshold:
@@ -171,7 +171,7 @@ module RangedWeapon = {
   };
 
   let decode = json =>
-    JsonStrict.(
+    Json_Decode_Strict.(
       Ley_Option.{
         combatTechnique: json |> field("combatTechnique", int),
         damage:
@@ -281,7 +281,7 @@ module Decode = {
   };
 
   let multilingual = json =>
-    JsonStrict.{
+    Json_Decode_Strict.{
       id: json |> field("id", int),
       price: json |> optionalField("price", int),
       weight: json |> optionalField("weight", int),

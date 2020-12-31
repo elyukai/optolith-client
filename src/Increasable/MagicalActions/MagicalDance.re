@@ -19,7 +19,7 @@ module Static = {
     module MusicTraditionTranslation = {
       type t = string;
 
-      let t = json => JsonStrict.(json |> field("name", string));
+      let t = json => Json_Decode_Strict.(json |> field("name", string));
     };
 
     module MusicTraditionTranslationMap =
@@ -31,7 +31,7 @@ module Static = {
     };
 
     let musicTraditionMultilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         translations:
           json |> field("translations", MusicTraditionTranslationMap.Decode.t),
@@ -50,7 +50,7 @@ module Static = {
       };
 
       let t = json =>
-        JsonStrict.{
+        Json_Decode_Strict.{
           name: json |> field("name", string),
           effect: json |> field("effect", string),
           duration:
@@ -73,7 +73,7 @@ module Static = {
     };
 
     let multilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         check: json |> field("check", SkillCheck.Decode.t),
         property: json |> field("property", int),

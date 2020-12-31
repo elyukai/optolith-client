@@ -46,7 +46,7 @@ module Decode: {
   let multilingualAssoc:
     Json.Decode.decoder((Id.Activatable.SelectOption.t, multilingual));
 
-  let resolveTranslations: (Locale.order, multilingual) => option(t);
+  let resolveTranslations: (Locale.Order.t, multilingual) => option(t);
 
   module Category: {
     type t =

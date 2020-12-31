@@ -11,7 +11,7 @@ module Decode : sig
 
   val multilingualList : multilingual list Json.Decode.decoder
 
-  val resolveTranslationsList : Locale.order -> multilingual list -> t list
+  val resolveTranslationsList : Locale.Order.t -> multilingual list -> t list
 end
 
 type nonrec list = t list

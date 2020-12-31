@@ -58,15 +58,13 @@ module Static = struct
       let makeMap langs applications =
         (* Insert a value into a map only if it is a Some *)
         let insertMaybe key x =
-          Ley_Option.option Ley_Function.id (Ley_IntMap.insert key) x
+          O.option F.id (fun a -> IM.insert (key a) a) x
         in
         let makeAndInsert x =
-          x |> resolveTranslations langs |> insertMaybe x.id
+          x |> resolveTranslations langs |> insertMaybe (fun a -> a.id)
         in
-        let foldlIntoMap xs =
-          Ley_List.foldl' makeAndInsert xs Ley_IntMap.empty
-        in
-        Ley_Option.option Ley_IntMap.empty foldlIntoMap applications
+        let foldlIntoMap xs = L.foldl' makeAndInsert xs IM.empty in
+        O.option IM.empty foldlIntoMap applications
     end
   end
 
@@ -121,9 +119,11 @@ module Static = struct
 
       let makeMap langs uses =
         (* Insert a value into a map only if it is a Some *)
-        let insertMaybe key x = O.option F.id (IM.insert key) x in
+        let insertMaybe key x =
+          O.option F.id (fun a -> IM.insert (key a) a) x
+        in
         let makeAndInsert x =
-          x |> resolveTranslations langs |> insertMaybe x.id
+          x |> resolveTranslations langs |> insertMaybe (fun a -> a.id)
         in
         let foldlIntoMap xs = L.foldl' makeAndInsert xs IM.empty in
         O.option IM.empty foldlIntoMap uses
@@ -152,6 +152,8 @@ module Static = struct
   }
 
   module Decode = Json_Decode_Static.Make (struct
+    type nonrec t = t
+
     module Translation = struct
       type t = {
         name : string;
@@ -178,6 +180,8 @@ module Static = struct
             botch = json |> field "botch" string;
             errata = json |> optionalField "errata" Erratum.Decode.list;
           }
+
+      let pred _ = true
     end
 
     type encumbranceUniv = True | False | Maybe
@@ -227,10 +231,10 @@ module Static = struct
           name = translation.name;
           check = multilingual.check;
           encumbrance =
-            (match multilingual.enc with
+            ( match multilingual.enc with
             | True -> True
             | False -> False
-            | Maybe -> Maybe translation.encDescription);
+            | Maybe -> Maybe translation.encDescription );
           applications =
             Application.Decode.makeMap langs multilingual.applications;
           applicationsInput = translation.applicationsInput;
@@ -246,6 +250,12 @@ module Static = struct
             PublicationRef.Decode.resolveTranslationsList langs multilingual.src;
           errata = translation.errata |> Ley_Option.fromOption [];
         }
+
+    module Accessors = struct
+      let id (x : t) = x.id
+
+      let translations x = x.translations
+    end
   end)
 end
 

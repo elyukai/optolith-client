@@ -40,7 +40,7 @@ module Static = {
       };
 
       let t = json =>
-        JsonStrict.{
+        Json_Decode_Strict.{
           name: json |> field("name", string),
           nameInWiki: json |> optionalField("nameInWiki", string),
           rules: json |> field("rules", string),
@@ -74,7 +74,7 @@ module Static = {
     };
 
     let multilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         noMaxAPInfluence: json |> optionalField("noMaxAPInfluence", bool),
         isExclusiveToArcaneSpellworks:

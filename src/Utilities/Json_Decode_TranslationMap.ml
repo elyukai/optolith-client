@@ -14,7 +14,7 @@ module Make (E : EntityTranslation) = struct
   let t = Json.Decode.(dict id)
 
   let getFromLanguageOrder langs (x : t) =
-    langs |> Locale.toList
+    langs |> Locale.Order.toList
     |> Ley_List.foldl
          (fun acc lang ->
            Ley_Option.Infix.(

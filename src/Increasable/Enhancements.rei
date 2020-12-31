@@ -39,5 +39,5 @@ module Decode: {
 
   let multilingual: Json.Decode.decoder(multilingual);
 
-  let resolveTranslations: (Locale.order, multilingual) => option(t);
+  let resolveTranslations: (Locale.Order.t, multilingual) => option(t);
 };

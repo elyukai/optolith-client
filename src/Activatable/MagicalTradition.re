@@ -16,7 +16,7 @@ module Decode = {
   module Translation = {
     type t = {name: string};
 
-    let t = json => JsonStrict.{name: json |> field("name", string)};
+    let t = json => Json_Decode_Strict.{name: json |> field("name", string)};
   };
 
   module TranslationMap = TranslationMap.Make(Translation);
@@ -36,7 +36,7 @@ module Decode = {
   };
 
   let multilingual = json =>
-    JsonStrict.{
+    Json_Decode_Strict.{
       id: json |> field("id", int),
       numId: json |> optionalField("numId", int),
       primary: json |> optionalField("primary", int),

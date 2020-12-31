@@ -25,7 +25,7 @@ module Static = {
       };
 
       let t = json =>
-        JsonStrict.{
+        Json_Decode_Strict.{
           name: json |> field("name", string),
           effect: json |> field("effect", string),
           cost: json |> field("cost", ActivatableSkill.MainParameter.decode),
@@ -47,7 +47,7 @@ module Static = {
     };
 
     let multilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         check: json |> field("check", SkillCheck.Decode.t),
         checkMod: json |> optionalField("checkMod", CheckModifier.Decode.t),

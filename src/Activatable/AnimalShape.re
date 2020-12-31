@@ -59,7 +59,7 @@ module Size = {
   };
 
   module Decode = {
-    let t = (_: Locale.order, json) =>
+    let t = (_: Locale.Order.t, json) =>
       Some(
         Json.Decode.{
           id: json |> field("id", int),

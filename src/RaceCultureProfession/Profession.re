@@ -11,7 +11,7 @@ module Static = {
       | Override('a);
 
     let decodeVariantOverride = (decoder, json) =>
-      JsonStrict.(
+      Json_Decode_Strict.(
         either(
           json => json |> const(false) |> (_ => Remove),
           json => json |> decoder |> (x => Override(x)),
@@ -55,7 +55,7 @@ module Static = {
 
     type languageAndScriptOption = int;
 
-    let decodeLanguageAndScriptOption = JsonStrict.int;
+    let decodeLanguageAndScriptOption = Json_Decode_Strict.int;
 
     type variantLanguageAndScriptOption =
       variantOverride(languageAndScriptOption);
@@ -69,7 +69,7 @@ module Static = {
     };
 
     let decodeCombatTechniqueSecondOption = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         amount: json |> field("amount", int),
         value: json |> field("value", int),
       };
@@ -82,7 +82,7 @@ module Static = {
     };
 
     let decodeCombatTechniqueOption = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         amount: json |> field("amount", int),
         value: json |> field("value", int),
         second:
@@ -98,7 +98,7 @@ module Static = {
     };
 
     let decodeCombatTechniqueOverrideOption = json =>
-      JsonStrict.(
+      Json_Decode_Strict.(
         (
           {
             amount: json |> field("amount", int),
@@ -126,18 +126,18 @@ module Static = {
     };
 
     let decodeCantripOption = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         amount: json |> field("amount", int),
         sid: json |> field("sid", list(int)),
       };
 
     type curseOption = int;
 
-    let decodeCurseOption = JsonStrict.int;
+    let decodeCurseOption = Json_Decode_Strict.int;
 
     type terrainKnowledgeOption = list(int);
 
-    let decodeTerrainKnowledgeOption = JsonStrict.(list(int));
+    let decodeTerrainKnowledgeOption = Json_Decode_Strict.(list(int));
 
     type skillOption = {
       /**
@@ -151,7 +151,7 @@ module Static = {
     };
 
     let decodeSkillOption = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         gr: json |> optionalField("gr", int),
         value: json |> field("value", int),
       };
@@ -162,7 +162,7 @@ module Static = {
     };
 
     let decodeActivatableSkillOption = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", list(int)),
         value: json |> field("value", int),
       };
@@ -194,7 +194,7 @@ module Static = {
     };
 
     let decodeVariant = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         skillSpecialization:
           json
           |> optionalField(
@@ -260,7 +260,7 @@ module Static = {
     };
 
     let decode = json =>
-      JsonStrict.(
+      Json_Decode_Strict.(
         (
           {
             skillSpecialization:
@@ -329,7 +329,7 @@ module Static = {
       });
 
   let name =
-    JsonStrict.(
+    Json_Decode_Strict.(
       oneOf([
         json => json |> string |> (x => Const(x)),
         json =>
@@ -368,7 +368,7 @@ module Static = {
         };
 
         let t = json =>
-          JsonStrict.{
+          Json_Decode_Strict.{
             name: json |> field("name", name),
             precedingText: json |> optionalField("precedingText", string),
             fullText: json |> optionalField("fullText", string),
@@ -394,7 +394,7 @@ module Static = {
       };
 
       let multilingual = json =>
-        JsonStrict.{
+        Json_Decode_Strict.{
           id: json |> field("id", int),
           apValue: json |> field("apValue", int),
           prerequisites:
@@ -549,7 +549,7 @@ module Static = {
       };
 
       let t = json =>
-        JsonStrict.{
+        Json_Decode_Strict.{
           name: json |> field("name", name),
           subname: json |> optionalField("subname", name),
           prerequisitesStart:
@@ -594,7 +594,7 @@ module Static = {
     };
 
     let multilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         apValue: json |> field("apValue", int),
         prerequisites:

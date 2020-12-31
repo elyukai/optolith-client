@@ -5,7 +5,7 @@ module LevelTranslation = {
   };
 
   let t = json =>
-    JsonStrict.{
+    Json_Decode_Strict.{
       name: json |> field("name", string),
       effect: json |> field("effect", string),
     };
@@ -27,7 +27,7 @@ module Level1 = {
     };
 
     let multilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         translations:
           json |> field("translations", LevelTranslationMap.Decode.t),
@@ -64,7 +64,7 @@ module Level2 = {
     };
 
     let prerequisite = json =>
-      JsonStrict.(
+      Json_Decode_Strict.(
         json
         |> int
         |> (
@@ -82,7 +82,7 @@ module Level2 = {
       );
 
     let multilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         requiresLevel1:
           json
@@ -128,7 +128,7 @@ module Level3 = {
     };
 
     let prerequisite = json =>
-      JsonStrict.(
+      Json_Decode_Strict.(
         json
         |> int
         |> (
@@ -147,7 +147,7 @@ module Level3 = {
       );
 
     let multilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         requiresPrevious:
           json |> optionalField("previousRequirement", prerequisite),
@@ -182,7 +182,7 @@ module Decode = {
     type t = {errata: list(Erratum.t)};
 
     let t = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         errata:
           json
           |> optionalField("errata", Erratum.Decode.list)
@@ -203,7 +203,7 @@ module Decode = {
   };
 
   let multilingual = json =>
-    JsonStrict.{
+    Json_Decode_Strict.{
       levels:
         json
         |> field(

@@ -26,7 +26,8 @@ module Static = {
     module TypeTranslation = {
       type t = {name: string};
 
-      let t = json => JsonStrict.{name: json |> field("name", string)};
+      let t = json =>
+        Json_Decode_Strict.{name: json |> field("name", string)};
     };
 
     module TypeTranslationMap = TranslationMap.Make(TypeTranslation);
@@ -37,7 +38,7 @@ module Static = {
     };
 
     let typeMultilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         translations:
           json |> field("translations", TypeTranslationMap.Decode.t),
@@ -46,7 +47,8 @@ module Static = {
     module DomainTranslation = {
       type t = {name: string};
 
-      let t = json => JsonStrict.{name: json |> field("name", string)};
+      let t = json =>
+        Json_Decode_Strict.{name: json |> field("name", string)};
     };
 
     module DomainTranslationMap = TranslationMap.Make(DomainTranslation);
@@ -57,7 +59,7 @@ module Static = {
     };
 
     let domainMultilingual = (json): domainMultilingual =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         translations:
           json |> field("translations", DomainTranslationMap.Decode.t),
@@ -70,7 +72,7 @@ module Static = {
       };
 
       let t = json =>
-        JsonStrict.{
+        Json_Decode_Strict.{
           name: json |> field("name", string),
           errata: json |> optionalField("errata", Erratum.Decode.list),
         };
@@ -87,7 +89,7 @@ module Static = {
     };
 
     let multilingual = json =>
-      JsonStrict.{
+      Json_Decode_Strict.{
         id: json |> field("id", int),
         types: json |> field("types", list(typeMultilingual)),
         domains: json |> field("domains", list(domainMultilingual)),
