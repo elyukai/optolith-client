@@ -1,101 +1,84 @@
-let oneOrManyInt =
-  Json.Decode.(
-    oneOf([
-      map((id): OneOrMany.t(int) => One(id), int),
-      map((id): OneOrMany.t(int) => Many(id), list(int)),
-    ])
-  );
+module Sex = struct
+  type t = Sex.t
 
-module Sex = {
-  include Sex;
-
-  module Decode = {
-    let t = json =>
+  module Decode = struct
+    let t =
       Json.Decode.(
-        json
-        |> string
-        |> (
-          fun
-          | "m" => Male
-          | "f" => Female
-          | str => raise(DecodeError("Unknown sex prerequisite: " ++ str))
+        string |> andThen
+        (
+          function
+          | "m" -> Male
+          | "f" -> Female
+          | str -> raise(DecodeError("Unknown sex prerequisite: " ^ str))
         )
-      );
-  };
-};
+      )
+  end
+end
 
-module Race = {
+module Race = struct
   type t = {
-    id: OneOrMany.t(int),
-    active: bool,
-  };
+    id: int NonEmptyList.t;
+    active: bool;
+  }
 
-  module Decode = {
+  module Decode = struct
     let t =
       Json.Decode.(
         oneOf([
-          json => {id: json |> oneOrManyInt, active: true},
-          json => {
-            id: json |> field("races", oneOrManyInt),
-            active: json |> field("active", bool),
-          },
+          fun json -> {id= json |> NonEmptyList.Decode.t int, active= true},
+          fun json -> {
+            id= json |> field "races" (NonEmptyList.Decode.t int);
+            active= json |> field "active" bool
+          }
         ])
-      );
-  };
-};
+      )
+    end
+    end
 
-module Culture = {
-  type t = OneOrMany.t(int);
+module Culture = struct
+  type t = int NonEmptyList.t
 
-  module Decode = {
-    let t = oneOrManyInt;
-  };
-};
+  module Decode = struct
+    let t = NonEmptyList.Decode.t int
+  end
+end
 
-module PrimaryAttribute = {
-  type primaryAttributeType =
-    | Magical
-    | Blessed;
+module PrimaryAttribute = struct
+  type t =
+    | Magical of int
+    | Blessed of int
 
+  module Decode = struct
+    let t =
+      Json.Decode.(
+        field "type" string
+        |> andThen (
+          function
+            | "blessed" -> field "value" int |> map (fun value -> Blessed value)
+            | "magical" -> field "value" int |> map (fun value -> Magical value)
+            | str ->
+              raise(DecodeError("Unknown primary attribute type: " ^ str))
+        )
+      )
+  end
+end
+
+module Pact = struct
   type t = {
-    value: int,
-    scope: primaryAttributeType,
-  };
+    category: int;
+    domain: int NonEmptyList.t option;
+    level: int option;
+  }
 
-  module Decode = {
-    let t = json =>
-      Json.Decode.{
-        scope:
-          json
-          |> field("type", string)
-          |> (
-            fun
-            | "blessed" => Blessed
-            | "magical" => Magical
-            | str =>
-              raise(DecodeError("Unknown primary attribute type: " ++ str))
-          ),
-        value: json |> field("value", int),
-      };
-  };
-};
-
-module Pact = {
-  type t = {
-    category: int,
-    domain: option(OneOrMany.t(int)),
-    level: option(int),
-  };
-
-  module Decode = {
-    let t = json =>
+  module Decode = struct
+    let t json =
       Json_Decode_Strict.{
-        category: json |> field("category", int),
-        domain: json |> optionalField("domain", oneOrManyInt),
-        level: json |> optionalField("level", int),
-      };
-  };
-};
+        category = json |> field "category" int;
+        domain = json |> optionalField "domain" (NonEmptyList.Decode.t int);
+        level = json |> optionalField "level" int;
+      }
+  end
+end
 
 module SocialStatus = {
   type t = int;

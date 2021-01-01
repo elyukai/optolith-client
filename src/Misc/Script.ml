@@ -21,6 +21,8 @@ module Decode = Json_Decode_Static.Make (struct
           name = json |> field "name" string;
           errata = json |> optionalField "errata" Erratum.Decode.list;
         }
+
+    let pred _ = true
   end
 
   type multilingual = {
