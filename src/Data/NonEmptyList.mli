@@ -10,12 +10,21 @@ val to_list : 'a t -> 'a list
 (** Converts a non-empty list to a ordinary list. *)
 
 module Decode : sig
-  val t : 'a Json.Decode.decoder -> Js.Json.t -> 'a t
-  (** Decodes a JSON array into an ['a t] using the given decoder on each
-      element.
+  (* val t : 'a Json.Decode.decoder -> Js.Json.t -> 'a t
+     (** Decodes a JSON array into an ['a t] using the given decoder on each
+         element.
 
-      Returns an ['a t] if the JSON value is a non-empty JSON array and all its
-      elements are successfully decoded.
+         Returns an ['a t] if the JSON value is a non-empty JSON array and all its
+         elements are successfully decoded.
+
+         @raise [DecodeError] if unsuccessful *) *)
+
+  val one_or_many : 'a Json.Decode.decoder -> Js.Json.t -> 'a t
+  (** Decodes a single JSON value or an JSON array into an ['a t] using the
+      given decoder on either the single value or each element.
+
+      Returns an ['a t] if the JSON value itself is successfully decoded or a
+      non-empty JSON array and all its elements are successfully decoded.
 
       @raise [DecodeError] if unsuccessful *)
 end

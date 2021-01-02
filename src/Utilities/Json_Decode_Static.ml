@@ -45,6 +45,21 @@ module Nested = struct
     end
   end
 
+  (** The subtype of a main entity from the YAML database. It needs to provide
+      different decoders in order to be able to be decoded in the main type
+      decoders. *)
+  module type SafeS = sig
+    type t
+
+    module Decode : sig
+      type multilingual
+
+      val multilingual : multilingual Json.Decode.decoder
+
+      val resolveTranslations : Locale.Order.t -> multilingual -> t
+    end
+  end
+
   (** A wrapper type of a subtype of a main entity from the YAML database. It
       needs to provide different decoders in order to be able to be decoded in the
       main type decoders, but it does, in contrast to the actual subtype, not
@@ -60,6 +75,21 @@ module Nested = struct
         (Locale.Order.t -> 'a -> 'b option) ->
         'a t ->
         'b t option
+    end
+  end
+
+  (** A wrapper type of a subtype of a main entity from the YAML database. It
+      needs to provide different decoders in order to be able to be decoded in the
+      main type decoders, but it does, in contrast to the actual subtype, not
+      differenciate between the multilingual and the single-language states. *)
+  module type WrapperSafeS = sig
+    type 'a t
+
+    module Decode : sig
+      val multilingual : 'a Json.Decode.decoder -> 'a t Json.Decode.decoder
+
+      val resolveTranslations :
+        Locale.Order.t -> (Locale.Order.t -> 'a -> 'b) -> 'a t -> 'b t
     end
   end
 

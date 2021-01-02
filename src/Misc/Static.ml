@@ -52,7 +52,7 @@ type t = {
   reaches : string IM.t;
   rogueSpells : RogueSpell.Static.t IM.t;
   scripts : Script.t IM.t;
-  skillGroups : SkillGroup.t IM.t;
+  skillGroups : Skill.Group.t IM.t;
   skills : Skill.Static.t IM.t;
   socialStatuses : string IM.t;
   specialAbilities : SpecialAbility.Static.t IM.t;

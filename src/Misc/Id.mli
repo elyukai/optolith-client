@@ -1055,17 +1055,28 @@ module Activatable : sig
   module SelectOption : sig
     type t =
       | Generic of int
-      | Skill of int
-      | CombatTechnique of int
-      | Spell of int
-      | Cantrip of int
-      | LiturgicalChant of int
       | Blessing of int
-      | SpecialAbility of int
+      | Cantrip of int
       | TradeSecret of int
       | Language of int
       | Script of int
       | AnimalShape of int
+      | SpellEnhancement of int
+      | LiturgicalChantEnhancement of int
+      | ArcaneBardTradition of int
+      | ArcaneDancerTradition of int
+      | Element of int
+      | Property of int
+      | Aspect of int
+      | Disease of int
+      | Poison of int
+      | MeleeCombatTechnique of int
+      | RangedCombatTechnique of int
+      | LiturgicalChant of int
+      | Ceremony of int
+      | Skill of int
+      | Spell of int
+      | Ritual of int
 
     val compare : t -> t -> int
     (** [compare x y] returns [0] if [x] and [y] are equal, a negative integer

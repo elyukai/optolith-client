@@ -1,3 +1,7 @@
+(** Strict extensions for [!Json.Decode]
+
+    This module includes all contents of [!Json.Decode] as well. *)
+
 include module type of Json.Decode
 
 val optionalField : Js.Dict.key -> (Js.Json.t -> 'a) -> Js.Json.t -> 'a option

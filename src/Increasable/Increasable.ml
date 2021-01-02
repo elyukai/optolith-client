@@ -5,7 +5,7 @@ module Dynamic = struct
     value : int;
   }
 
-  module type T = sig
+  module type S = sig
     type static
     (** The static values from the database. *)
 
@@ -39,7 +39,7 @@ module Dynamic = struct
     (** The minimum possible value of the entry. *)
   end
 
-  module Make (Config : Config) : T with type static = Config.static = struct
+  module Make (Config : Config) : S with type static = Config.static = struct
     type static = Config.static
 
     type t = {

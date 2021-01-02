@@ -1869,45 +1869,78 @@ module Activatable = struct
   module SelectOption = struct
     type t =
       | Generic of int
-      | Skill of int
-      | CombatTechnique of int
-      | Spell of int
-      | Cantrip of int
-      | LiturgicalChant of int
       | Blessing of int
-      | SpecialAbility of int
+      | Cantrip of int
       | TradeSecret of int
       | Language of int
       | Script of int
       | AnimalShape of int
+      | SpellEnhancement of int
+      | LiturgicalChantEnhancement of int
+      | ArcaneBardTradition of int
+      | ArcaneDancerTradition of int
+      | Element of int
+      | Property of int
+      | Aspect of int
+      | Disease of int
+      | Poison of int
+      | MeleeCombatTechnique of int
+      | RangedCombatTechnique of int
+      | LiturgicalChant of int
+      | Ceremony of int
+      | Skill of int
+      | Spell of int
+      | Ritual of int
 
     let outerToInt = function
       | Generic _ -> 1
-      | Skill _ -> 2
-      | CombatTechnique _ -> 3
-      | Spell _ -> 4
-      | Cantrip _ -> 5
-      | LiturgicalChant _ -> 6
-      | Blessing _ -> 7
-      | SpecialAbility _ -> 8
-      | TradeSecret _ -> 9
-      | Language _ -> 10
-      | Script _ -> 11
-      | AnimalShape _ -> 12
+      | Blessing _ -> 2
+      | Cantrip _ -> 3
+      | TradeSecret _ -> 4
+      | Language _ -> 5
+      | Script _ -> 6
+      | AnimalShape _ -> 7
+      | SpellEnhancement _ -> 8
+      | LiturgicalChantEnhancement _ -> 9
+      | ArcaneBardTradition _ -> 10
+      | ArcaneDancerTradition _ -> 11
+      | Element _ -> 12
+      | Property _ -> 13
+      | Aspect _ -> 14
+      | Disease _ -> 15
+      | Poison _ -> 16
+      | MeleeCombatTechnique _ -> 17
+      | RangedCombatTechnique _ -> 18
+      | LiturgicalChant _ -> 19
+      | Ceremony _ -> 20
+      | Skill _ -> 21
+      | Spell _ -> 22
+      | Ritual _ -> 23
 
     let innerToInt = function
       | Generic x
-      | Skill x
-      | CombatTechnique x
-      | Spell x
-      | Cantrip x
-      | LiturgicalChant x
       | Blessing x
-      | SpecialAbility x
+      | Cantrip x
       | TradeSecret x
       | Language x
       | Script x
-      | AnimalShape x ->
+      | AnimalShape x
+      | SpellEnhancement x
+      | LiturgicalChantEnhancement x
+      | ArcaneBardTradition x
+      | ArcaneDancerTradition x
+      | Element x
+      | Property x
+      | Aspect x
+      | Disease x
+      | Poison x
+      | MeleeCombatTechnique x
+      | RangedCombatTechnique x
+      | LiturgicalChant x
+      | Ceremony x
+      | Skill x
+      | Spell x
+      | Ritual x ->
           x
 
     let compare = OrdUtils.makeCompare outerToInt innerToInt
@@ -1922,13 +1955,31 @@ module Activatable = struct
       let scoped =
         DecodeUtils.(
           tag (function
-            | "Skill" -> value (fun x -> Skill x)
-            | "CombatTechnique" -> value (fun x -> CombatTechnique x)
-            | "Spell" -> value (fun x -> Spell x)
-            | "Cantrip" -> value (fun x -> Cantrip x)
-            | "LiturgicalChant" -> value (fun x -> LiturgicalChant x)
             | "Blessing" -> value (fun x -> Blessing x)
-            | "SpecialAbility" -> value (fun x -> SpecialAbility x)
+            | "Cantrip" -> value (fun x -> Cantrip x)
+            | "TradeSecret" -> value (fun x -> TradeSecret x)
+            | "Language" -> value (fun x -> Language x)
+            | "Script" -> value (fun x -> Script x)
+            | "AnimalShape" -> value (fun x -> AnimalShape x)
+            | "SpellEnhancement" -> value (fun x -> SpellEnhancement x)
+            | "LiturgicalChantEnhancement" ->
+                value (fun x -> LiturgicalChantEnhancement x)
+            | "ArcaneBardTradition" -> value (fun x -> ArcaneBardTradition x)
+            | "ArcaneDancerTradition" ->
+                value (fun x -> ArcaneDancerTradition x)
+            | "Element" -> value (fun x -> Element x)
+            | "Property" -> value (fun x -> Property x)
+            | "Aspect" -> value (fun x -> Aspect x)
+            | "Disease" -> value (fun x -> Disease x)
+            | "Poison" -> value (fun x -> Poison x)
+            | "MeleeCombatTechnique" -> value (fun x -> MeleeCombatTechnique x)
+            | "RangedCombatTechnique" ->
+                value (fun x -> RangedCombatTechnique x)
+            | "LiturgicalChant" -> value (fun x -> LiturgicalChant x)
+            | "Ceremony" -> value (fun x -> Ceremony x)
+            | "Skill" -> value (fun x -> Skill x)
+            | "Spell" -> value (fun x -> Spell x)
+            | "Ritual" -> value (fun x -> Ritual x)
             | scope ->
                 raiseUnknownScope ~scopeName:"SelectOption" ~invalidValue:scope))
 

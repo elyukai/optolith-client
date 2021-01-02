@@ -394,7 +394,7 @@ let decodeFiles =
 
   let skillGroups =
     decodeFilesOfEntryType(
-      SkillGroup.Decode.assoc(langs),
+      Skill.Group.Decode.assoc(langs),
       parsedData.skillGroups,
     );
 

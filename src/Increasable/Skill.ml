@@ -135,7 +135,7 @@ module Static = struct
   type t = {
     id : int;
     name : string;
-    check : SkillCheck.t;
+    check : Check.t;
     encumbrance : encumbrance;
     gr : int;
     ic : IC.t;
@@ -197,7 +197,7 @@ module Static = struct
 
     type multilingual = {
       id : int;
-      check : SkillCheck.t;
+      check : Check.t;
       applications : Application.Decode.multilingual list option;
       uses : Use.Decode.multilingual list option;
       ic : IC.t;
@@ -216,7 +216,7 @@ module Static = struct
             |> optionalField "applications"
                  (list Application.Decode.multilingual);
           uses = json |> optionalField "uses" (list Use.Decode.multilingual);
-          check = json |> field "check" SkillCheck.Decode.t;
+          check = json |> field "check" Check.Decode.t;
           ic = json |> field "ic" IC.Decode.t;
           enc = json |> field "enc" encumbranceUniv;
           gr = json |> field "gr" int;
@@ -264,3 +264,53 @@ module Dynamic = Increasable.Dynamic.Make (struct
 
   let minValue = 0
 end)
+
+module Group = struct
+  type t = { id : int; check : Check.t; name : string; fullName : string }
+
+  module Decode = Json_Decode_Static.Make (struct
+    type nonrec t = t
+
+    module Translation = struct
+      type t = { name : string; fullName : string }
+
+      let t json =
+        Json.Decode.
+          {
+            name = json |> field "name" string;
+            fullName = json |> field "fullName" string;
+          }
+
+      let pred _ = true
+    end
+
+    type multilingual = {
+      id : int;
+      check : Check.t;
+      translations : Translation.t Json_Decode_TranslationMap.partial;
+    }
+
+    let multilingual decodeTranslations json =
+      Json.Decode.
+        {
+          id = json |> field "id" int;
+          check = json |> field "check" Check.Decode.t;
+          translations = json |> field "translations" decodeTranslations;
+        }
+
+    let make _ (multilingual : multilingual) (translation : Translation.t) =
+      Some
+        {
+          id = multilingual.id;
+          check = multilingual.check;
+          name = translation.name;
+          fullName = translation.fullName;
+        }
+
+    module Accessors = struct
+      let id (x : t) = x.id
+
+      let translations x = x.translations
+    end
+  end)
+end

@@ -1,59 +1,70 @@
 type staticEntry =
   | Blessing of Blessing.Static.t
   | Cantrip of Cantrip.Static.t
-  | CombatTechnique of CombatTechnique.Static.t
-  | LiturgicalChant of LiturgicalChant.Static.t
-  | Skill of Skill.Static.t
-  | Spell of Spell.Static.t
   | TradeSecret of TradeSecret.t
   | Language of Language.t
   | Script of Script.t
   | AnimalShape of AnimalShape.t
+  | SpellEnhancement of Enhancement.t
+  | LiturgicalChantEnhancement of Enhancement.t
+  | ArcaneBardTradition of ArcaneTradition.t
+  | ArcaneDancerTradition of ArcaneTradition.t
+  | Element of int
+  | Property of int
+  | Aspect of int
+  | Disease of Disease.t
+  | Poison of Poison.t
+  | MeleeCombatTechnique of CombatTechnique.Melee.Static.t
+  | RangedCombatTechnique of CombatTechnique.Ranged.Static.t
+  | LiturgicalChant of LiturgicalChant.Static.t
+  | Ceremony of Ceremony.Static.t
+  | Skill of Skill.Static.t
+  | Spell of Spell.Static.t
+  | Ritual of Ritual.Static.t
 
 type t = {
-  id: Id.Activatable.SelectOption.t;
-  name: string;
-  apValue: int option;
-  prerequisites: Prerequisite.Collection.General.t;
-  description: string option;
-  isSecret: bool option;
-  languages: int list option;
-  continent: int option;
-  isExtinct: bool option;
-  specializations: string list option;
-  specializationInput: string option;
-  animalGr: int option;
-  animalLevel: int option;
-  enhancementTarget: int option;
-  enhancementLevel: int option;
-  staticEntry: staticEntry option;
-  (** needed to be able to filter valid applications without altering the static
-      entry *)
-  applications: Skill.Static.Application.t list option;
-  src: PublicationRef.t list;
-  errata: Erratum.t list
+  id : Id.Activatable.SelectOption.t;
+  name : string;
+  apValue : int option;
+  prerequisites : Prerequisite.Collection.General.t;
+  description : string option;
+  isSecret : bool option;
+  languages : int list option;
+  continent : int option;
+  isExtinct : bool option;
+  specializations : string list option;
+  specializationInput : string option;
+  animalGr : int option;
+  animalLevel : int option;
+  enhancementTarget : int option;
+  enhancementLevel : int option;
+  staticEntry : staticEntry option;
+  applications : Skill.Static.Application.t list option;
+      (** needed to be able to filter valid applications without altering the static entry *)
+  src : PublicationRef.t list;
+  errata : Erratum.t list;
 }
 
-let showId (id: Id.Activatable.SelectOption.t) =
-  match (id) with
-  | Generic(x) -> "Generic(" ^ Ley_Int.show(x) ^ ")"
-  | Skill(x) -> "Skill(" ^ Ley_Int.show(x) ^ ")"
-  | CombatTechnique(x) -> "CombatTechnique(" ^ Ley_Int.show(x) ^ ")"
-  | Spell(x) -> "Spell(" ^ Ley_Int.show(x) ^ ")"
-  | Cantrip(x) -> "Cantrip(" ^ Ley_Int.show(x) ^ ")"
-  | LiturgicalChant(x) -> "LiturgicalChant(" ^ Ley_Int.show(x) ^ ")"
-  | Blessing(x) -> "Blessing(" ^ Ley_Int.show(x) ^ ")"
-  | SpecialAbility(x) -> "SpecialAbility(" ^ Ley_Int.show(x) ^ ")"
-  | TradeSecret(x) -> "TradeSecret(" ^ Ley_Int.show(x) ^ ")"
-  | Language(x) -> "Language(" ^ Ley_Int.show(x) ^ ")"
-  | Script(x) -> "Script(" ^ Ley_Int.show(x) ^ ")"
-  | AnimalShape(x) -> "AnimalShape(" ^ Ley_Int.show(x) ^ ")"
+let showId (id : Id.Activatable.SelectOption.t) =
+  match id with
+  | Generic x -> "Generic(" ^ Ley_Int.show x ^ ")"
+  | Skill x -> "Skill(" ^ Ley_Int.show x ^ ")"
+  | CombatTechnique x -> "CombatTechnique(" ^ Ley_Int.show x ^ ")"
+  | Spell x -> "Spell(" ^ Ley_Int.show x ^ ")"
+  | Cantrip x -> "Cantrip(" ^ Ley_Int.show x ^ ")"
+  | LiturgicalChant x -> "LiturgicalChant(" ^ Ley_Int.show x ^ ")"
+  | Blessing x -> "Blessing(" ^ Ley_Int.show x ^ ")"
+  | SpecialAbility x -> "SpecialAbility(" ^ Ley_Int.show x ^ ")"
+  | TradeSecret x -> "TradeSecret(" ^ Ley_Int.show x ^ ")"
+  | Language x -> "Language(" ^ Ley_Int.show x ^ ")"
+  | Script x -> "Script(" ^ Ley_Int.show x ^ ")"
+  | AnimalShape x -> "AnimalShape(" ^ Ley_Int.show x ^ ")"
 
-module Map = Ley_Map.Make(Id.Activatable.SelectOption)
+module Map = Ley_Map.Make (Id.Activatable.SelectOption)
 
 type map = t Map.t
 
-module Decode = {
+(* module Decode = {
   module Preset = struct
 
   end
@@ -502,4 +513,4 @@ module Decode = {
     //      munivs,
     //    );
   };
-};
+}; *)

@@ -9,4 +9,4 @@ module Static : sig
   end
 end
 
-module Dynamic : Increasable.Dynamic.T with type static = Static.t
+module Dynamic : Increasable.Dynamic.S with type static = Static.t

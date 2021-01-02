@@ -1,365 +1,359 @@
-let oneOrManyInt: Json.Decode.decoder(OneOrMany.t(int));
+module Sex : sig
+  type t = Sex.t
 
-module Sex: {
-  type t = Sex.t;
+  module Decode : sig
+    val t : t Json.Decode.decoder
+  end
+end
 
-  module Decode: {let t: Json.Decode.decoder(t);};
-};
+module Race : sig
+  type t = { id : int NonEmptyList.t; active : bool }
 
-module Race: {
+  module Decode : sig
+    val t : t Json.Decode.decoder
+  end
+end
+
+module Culture : sig
+  type t = int NonEmptyList.t
+
+  module Decode : sig
+    val t : t Json.Decode.decoder
+  end
+end
+
+module SocialStatus : sig
+  type t = int
+
+  module Decode : sig
+    val t : t Json.Decode.decoder
+  end
+end
+
+module Pact : sig
   type t = {
-    id: OneOrMany.t(int),
-    active: bool,
-  };
+    category : int;
+    domain : int NonEmptyList.t option;
+    level : int option;
+  }
 
-  module Decode: {let t: Json.Decode.decoder(t);};
-};
+  module Decode : sig
+    val t : t Json.Decode.decoder
+  end
+end
 
-module Culture: {
-  type t = OneOrMany.t(int);
+module PrimaryAttribute : sig
+  type t = Magical of int | Blessed of int
 
-  module Decode: {let t: Json.Decode.decoder(t);};
-};
+  module Decode : sig
+    val t : t Json.Decode.decoder
+  end
+end
 
-module SocialStatus: {
-  type t = int;
-
-  module Decode: {let t: Json.Decode.decoder(t);};
-};
-
-module Pact: {
+module Activatable : sig
   type t = {
-    category: int,
-    domain: option(OneOrMany.t(int)),
-    level: option(int),
-  };
+    id : Id.Activatable.t;
+    active : bool;
+    options : Id.Activatable.SelectOption.t list;
+    level : int option;
+  }
 
-  module Decode: {let t: Json.Decode.decoder(t);};
-};
+  module Decode : sig
+    val t : t Json.Decode.decoder
+  end
+end
 
-module PrimaryAttribute: {
-  type primaryAttributeType =
-    | Magical
-    | Blessed;
-
-  type t = {
-    value: int,
-    scope: primaryAttributeType,
-  };
-
-  module Decode: {let t: Json.Decode.decoder(t);};
-};
-
-module Activatable: {
-  type t = {
-    id: Id.Activatable.t,
-    active: bool,
-    options: list(Id.Activatable.SelectOption.t),
-    level: option(int),
-  };
-
-  module Decode: {let t: Json.Decode.decoder(t);};
-};
-
-module ActivatableMultiEntry: {
+module ActivatableMultiEntry : sig
   type activatableIds =
-    | Advantages(list(int))
-    | Disadvantages(list(int))
-    | SpecialAbilities(list(int));
+    | Advantages of int list
+    | Disadvantages of int list
+    | SpecialAbilities of int list
 
   type t = {
-    id: activatableIds,
-    active: bool,
-    options: list(Id.Activatable.SelectOption.t),
-    level: option(int),
-  };
+    id : activatableIds;
+    active : bool;
+    options : Id.Activatable.SelectOption.t list;
+    level : int option;
+  }
 
-  module Decode: {let t: Json.Decode.decoder(t);};
-};
+  module Decode : sig
+    val t : t Json.Decode.decoder
+  end
+end
 
-module ActivatableMultiSelect: {
+module ActivatableMultiSelect : sig
   type t = {
-    id: Id.Activatable.t,
-    active: bool,
-    firstOption: list(Id.Activatable.SelectOption.t),
-    otherOptions: list(Id.Activatable.SelectOption.t),
-    level: option(int),
-  };
+    id : Id.Activatable.t;
+    active : bool;
+    firstOption : Id.Activatable.SelectOption.t list;
+    otherOptions : Id.Activatable.SelectOption.t list;
+    level : int option;
+  }
 
-  module Decode: {let t: Json.Decode.decoder(t);};
-};
+  module Decode : sig
+    val t : t Json.Decode.decoder
+  end
+end
 
-module Increasable: {
-  type t = {
-    id: Id.Increasable.t,
-    value: int,
-  };
+module Increasable : sig
+  type t = { id : Id.Increasable.t; value : int }
 
-  module Decode: {let t: Json.Decode.decoder(t);};
-};
+  module Decode : sig
+    val t : t Json.Decode.decoder
+  end
+end
 
-module IncreasableMultiEntry: {
+module IncreasableMultiEntry : sig
   type increasableIds =
-    | Attributes(list(int))
-    | Skills(list(int))
-    | CombatTechniques(list(int))
-    | Spells(list(int))
-    | LiturgicalChants(list(int));
+    | Attributes of int list
+    | Skills of int list
+    | CombatTechniques of int list
+    | Spells of int list
+    | LiturgicalChants of int list
 
-  type t = {
-    id: increasableIds,
-    value: int,
-  };
+  type t = { id : increasableIds; value : int }
 
-  module Decode: {let t: Json.Decode.decoder(t);};
-};
+  module Decode : sig
+    val t : t Json.Decode.decoder
+  end
+end
 
-module DisplayOption: {
-  type t =
-    | Generate
-    | Hide
-    | ReplaceWith(string);
-};
+module DisplayOption : sig
+  type t = Generate | Hide | ReplaceWith of string
+end
 
-module Config: {
-  type t('a) = {
-    value: 'a,
-    displayOption: DisplayOption.t,
-  };
-};
+module Config : sig
+  type 'a t = { value : 'a; displayOption : DisplayOption.t }
+end
 
-module Unified: {
+module Unified : sig
   type value =
     | CommonSuggestedByRCP
-    | Sex(Sex.t)
-    | Race(Race.t)
-    | Culture(Culture.t)
-    | Pact(Pact.t)
-    | SocialStatus(SocialStatus.t)
-    | PrimaryAttribute(PrimaryAttribute.t)
-    | Activatable(Activatable.t)
-    | ActivatableMultiEntry(ActivatableMultiEntry.t)
-    | ActivatableMultiSelect(ActivatableMultiSelect.t)
-    | Increasable(Increasable.t)
-    | IncreasableMultiEntry(IncreasableMultiEntry.t);
+    | Sex of Sex.t
+    | Race of Race.t
+    | Culture of Culture.t
+    | Pact of Pact.t
+    | SocialStatus of SocialStatus.t
+    | PrimaryAttribute of PrimaryAttribute.t
+    | Activatable of Activatable.t
+    | ActivatableMultiEntry of ActivatableMultiEntry.t
+    | ActivatableMultiSelect of ActivatableMultiSelect.t
+    | Increasable of Increasable.t
+    | IncreasableMultiEntry of IncreasableMultiEntry.t
 
-  type t = Config.t(value);
-};
+  type t = value Config.t
+end
 
-module General: {
+module General : sig
   type value =
-    | Sex(Sex.t)
-    | Race(Race.t)
-    | Culture(Culture.t)
-    | Pact(Pact.t)
-    | SocialStatus(SocialStatus.t)
-    | PrimaryAttribute(PrimaryAttribute.t)
-    | Activatable(Activatable.t)
-    | ActivatableMultiEntry(ActivatableMultiEntry.t)
-    | ActivatableMultiSelect(ActivatableMultiSelect.t)
-    | Increasable(Increasable.t)
-    | IncreasableMultiEntry(IncreasableMultiEntry.t);
+    | Sex of Sex.t
+    | Race of Race.t
+    | Culture of Culture.t
+    | Pact of Pact.t
+    | SocialStatus of SocialStatus.t
+    | PrimaryAttribute of PrimaryAttribute.t
+    | Activatable of Activatable.t
+    | ActivatableMultiEntry of ActivatableMultiEntry.t
+    | ActivatableMultiSelect of ActivatableMultiSelect.t
+    | Increasable of Increasable.t
+    | IncreasableMultiEntry of IncreasableMultiEntry.t
 
-  type t = Config.t(value);
+  type t = value Config.t
 
-  let unify: t => Unified.t;
+  val unify : t -> Unified.t
 
-  module Decode: {
-    type multilingual;
+  module Decode : sig
+    type multilingual
 
-    let multilingual: Json.Decode.decoder(multilingual);
+    val multilingual : multilingual Json.Decode.decoder
 
-    let resolveTranslations: (Locale.Order.t, multilingual) => t;
-  };
-};
+    val resolveTranslations : Locale.Order.t -> multilingual -> t
+  end
+end
 
-module Profession: {
+module Profession : sig
   type value =
-    | Sex(Sex.t)
-    | Race(Race.t)
-    | Culture(Culture.t)
-    | Activatable(Activatable.t)
-    | Increasable(Increasable.t);
+    | Sex of Sex.t
+    | Race of Race.t
+    | Culture of Culture.t
+    | Activatable of Activatable.t
+    | Increasable of Increasable.t
 
-  type t = Config.t(value);
+  type t = value Config.t
 
-  let unify: t => Unified.t;
+  val unify : t -> Unified.t
 
-  module Decode: {
-    type multilingual;
+  module Decode : sig
+    type multilingual
 
-    let multilingual: Json.Decode.decoder(multilingual);
+    val multilingual : multilingual Json.Decode.decoder
 
-    let resolveTranslations: (Locale.Order.t, multilingual) => t;
-  };
-};
+    val resolveTranslations : Locale.Order.t -> multilingual -> t
+  end
+end
 
-module AdvantageDisadvantage: {
+module AdvantageDisadvantage : sig
   type value =
     | CommonSuggestedByRCP
-    | Sex(Sex.t)
-    | Race(Race.t)
-    | Culture(Culture.t)
-    | Pact(Pact.t)
-    | SocialStatus(SocialStatus.t)
-    | PrimaryAttribute(PrimaryAttribute.t)
-    | Activatable(Activatable.t)
-    | ActivatableMultiEntry(ActivatableMultiEntry.t)
-    | ActivatableMultiSelect(ActivatableMultiSelect.t)
-    | Increasable(Increasable.t)
-    | IncreasableMultiEntry(IncreasableMultiEntry.t);
+    | Sex of Sex.t
+    | Race of Race.t
+    | Culture of Culture.t
+    | Pact of Pact.t
+    | SocialStatus of SocialStatus.t
+    | PrimaryAttribute of PrimaryAttribute.t
+    | Activatable of Activatable.t
+    | ActivatableMultiEntry of ActivatableMultiEntry.t
+    | ActivatableMultiSelect of ActivatableMultiSelect.t
+    | Increasable of Increasable.t
+    | IncreasableMultiEntry of IncreasableMultiEntry.t
 
-  type t = Config.t(value);
+  type t = value Config.t
 
-  let unify: t => Unified.t;
+  val unify : t -> Unified.t
 
-  module Decode: {
-    type multilingual;
+  module Decode : sig
+    type multilingual
 
-    let multilingual: Json.Decode.decoder(multilingual);
+    val multilingual : multilingual Json.Decode.decoder
 
-    let resolveTranslations: (Locale.Order.t, multilingual) => t;
-  };
-};
+    val resolveTranslations : Locale.Order.t -> multilingual -> t
+  end
+end
 
-module ArcaneTradition: {
-  type value =
-    | Sex(Sex.t)
-    | Culture(Culture.t);
+module ArcaneTradition : sig
+  type value = Sex of Sex.t | Culture of Culture.t
 
-  type t = Config.t(value);
+  type t = value Config.t
 
-  let unify: t => Unified.t;
+  val unify : t -> Unified.t
 
-  module Decode: {
-    type multilingual;
+  module Decode : sig
+    type multilingual
 
-    let multilingual: Json.Decode.decoder(multilingual);
+    val multilingual : multilingual Json.Decode.decoder
 
-    let resolveTranslations: (Locale.Order.t, multilingual) => t;
-  };
-};
+    val resolveTranslations : Locale.Order.t -> multilingual -> t
+  end
+end
 
-module ActivatableOnly: {
-  type value = Activatable.t;
+module ActivatableOnly : sig
+  type value = Activatable.t
 
-  type t = Config.t(value);
+  type t = value Config.t
 
-  let unify: t => Unified.t;
+  val unify : t -> Unified.t
 
-  module Decode: {
-    type multilingual;
+  module Decode : sig
+    type multilingual
 
-    let multilingual: Json.Decode.decoder(multilingual);
+    val multilingual : multilingual Json.Decode.decoder
 
-    let resolveTranslations: (Locale.Order.t, multilingual) => t;
-  };
-};
+    val resolveTranslations : Locale.Order.t -> multilingual -> t
+  end
+end
 
-module IncreasableOnly: {
-  type value = Increasable.t;
+module IncreasableOnly : sig
+  type value = Increasable.t
 
-  type t = Config.t(value);
+  type t = value Config.t
 
-  let unify: t => Unified.t;
+  val unify : t -> Unified.t
 
-  module Decode: {
-    type multilingual;
+  module Decode : sig
+    type multilingual
 
-    let multilingual: Json.Decode.decoder(multilingual);
+    val multilingual : multilingual Json.Decode.decoder
 
-    let resolveTranslations: (Locale.Order.t, multilingual) => t;
-  };
-};
+    val resolveTranslations : Locale.Order.t -> multilingual -> t
+  end
+end
 
-module Collection: {
-  module ByLevel: {
-    type t('a) =
-      | Plain(list('a))
-      | ByLevel(Ley_IntMap.t(list('a)));
+module Collection : sig
+  module ByLevel : sig
+    type 'a t = Plain of 'a list | ByLevel of 'a list Ley_IntMap.t
 
-    /**
+    val getFirstLevel : 'a t -> 'a list
+    (**
      * `getFirstLevel prerequisites` returns a list of the prerequisites that
      * must always be met to activate the associated entry.
-     */
-    let getFirstLevel: t('a) => list('a);
+     *)
 
-    /**
+    val concatRange : int option -> int option -> 'a t -> 'a list
+    (**
      * `concatRange oldLevel newLevel prerequisites` returns a list of the
      * prerequisites of the matching levels of the passed prerequisites.
-     */
-    let concatRange: (option(int), option(int), t('a)) => list('a);
-  };
+     *)
+  end
 
-  module General: {
-    type t = ByLevel.t(General.t);
+  module General : sig
+    type t = General.t ByLevel.t
 
-    module Decode: {
-      type multilingual;
+    module Decode : sig
+      type multilingual
 
-      let multilingual: Json.Decode.decoder(multilingual);
+      val multilingual : multilingual Json.Decode.decoder
 
-      let resolveTranslations: (Locale.Order.t, multilingual) => t;
-    };
-  };
+      val resolveTranslations : Locale.Order.t -> multilingual -> t
+    end
+  end
 
-  module Profession: {
-    type t = list(Profession.t);
+  module Profession : sig
+    type t = Profession.t list
 
-    module Decode: {
-      type multilingual;
+    module Decode : sig
+      type multilingual
 
-      let multilingual: Json.Decode.decoder(multilingual);
+      val multilingual : multilingual Json.Decode.decoder
 
-      let resolveTranslations: (Locale.Order.t, multilingual) => t;
-    };
-  };
+      val resolveTranslations : Locale.Order.t -> multilingual -> t
+    end
+  end
 
-  module AdvantageDisadvantage: {
-    type t = ByLevel.t(AdvantageDisadvantage.t);
+  module AdvantageDisadvantage : sig
+    type t = AdvantageDisadvantage.t ByLevel.t
 
-    module Decode: {
-      type multilingual;
+    module Decode : sig
+      type multilingual
 
-      let multilingual: Json.Decode.decoder(multilingual);
+      val multilingual : multilingual Json.Decode.decoder
 
-      let resolveTranslations: (Locale.Order.t, multilingual) => t;
-    };
-  };
+      val resolveTranslations : Locale.Order.t -> multilingual -> t
+    end
+  end
 
-  module ArcaneTradition: {
-    type t = list(ArcaneTradition.t);
+  module ArcaneTradition : sig
+    type t = ArcaneTradition.t list
 
-    module Decode: {
-      type multilingual;
+    module Decode : sig
+      type multilingual
 
-      let multilingual: Json.Decode.decoder(multilingual);
+      val multilingual : multilingual Json.Decode.decoder
 
-      let resolveTranslations: (Locale.Order.t, multilingual) => t;
-    };
-  };
+      val resolveTranslations : Locale.Order.t -> multilingual -> t
+    end
+  end
 
-  module Activatable: {
-    type t = list(ActivatableOnly.t);
+  module Activatable : sig
+    type t = ActivatableOnly.t list
 
-    module Decode: {
-      type multilingual;
+    module Decode : sig
+      type multilingual
 
-      let multilingual: Json.Decode.decoder(multilingual);
+      val multilingual : multilingual Json.Decode.decoder
 
-      let resolveTranslations: (Locale.Order.t, multilingual) => t;
-    };
-  };
+      val resolveTranslations : Locale.Order.t -> multilingual -> t
+    end
+  end
 
-  module Increasable: {
-    type t = list(IncreasableOnly.t);
+  module Increasable : sig
+    type t = IncreasableOnly.t list
 
-    module Decode: {
-      type multilingual;
+    module Decode : sig
+      type multilingual
 
-      let multilingual: Json.Decode.decoder(multilingual);
+      val multilingual : multilingual Json.Decode.decoder
 
-      let resolveTranslations: (Locale.Order.t, multilingual) => t;
-    };
-  };
-};
+      val resolveTranslations : Locale.Order.t -> multilingual -> t
+    end
+  end
+end

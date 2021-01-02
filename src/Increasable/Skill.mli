@@ -25,7 +25,7 @@ module Static : sig
   type t = {
     id : int;
     name : string;
-    check : SkillCheck.t;
+    check : Check.t;
     encumbrance : encumbrance;
     gr : int;
     ic : IC.t;
@@ -46,4 +46,12 @@ module Static : sig
   end
 end
 
-module Dynamic : Increasable.Dynamic.T with type static = Static.t
+module Dynamic : Increasable.Dynamic.S with type static = Static.t
+
+module Group : sig
+  type t = { id : int; check : Check.t; name : string; fullName : string }
+
+  module Decode : sig
+    val assoc : t Json_Decode_Static.decodeAssoc
+  end
+end

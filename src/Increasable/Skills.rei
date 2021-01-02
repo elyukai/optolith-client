@@ -11,8 +11,7 @@ let getExceptionalSkillBonus:
  * values. It takes the map of attribute hero entries and the skill check
  * attribute ids `check`.
  */
-let getMaxSrByCheckAttrs:
-  (Ley_IntMap.t(Attribute.Dynamic.t), SkillCheck.t) => int;
+let getMaxSrByCheckAttrs: (Ley_IntMap.t(Attribute.Dynamic.t), Check.t) => int;
 
 /**
  * `getMaxSrFromEl el phase` returns the maximum SR defined in the selected
