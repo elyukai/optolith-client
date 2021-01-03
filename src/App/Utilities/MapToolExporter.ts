@@ -290,14 +290,17 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
   // AsP- bzw. KaP-Kosten könnte man auch exportieren
 
   const spells =
-    pipe_ (state.values.wiki.values.spells,
+    pipe_ (
+      hero,
+      Hero.A.spells,
       OrderedMap.elems,
-      fmap ((s: Record<Spell>) => pipe_ (
-        s,
-        Spell.A.id, // TODO: Typfehler?
-        Maybe.mapMaybe (OrderedMap.lookupF (hero.values.spells)),
-        buildSpell (s)
-    )))
+      Maybe.mapMaybe (heroSpell => pipe_ (
+        heroSpell,
+        ActivatableSkillDependent.A.id,
+        OrderedMap.lookupF (StaticData.A.spells (wiki)),
+        fmap (staticSpell => buildSpell (staticSpell) (heroSpell))
+      ))
+    )
 
   const chants =
     pipe_ (state.values.wiki.values.liturgicalChants,
