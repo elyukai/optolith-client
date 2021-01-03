@@ -3,7 +3,7 @@ import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDepende
 import { HeroModelRecord } from "../Models/Hero/HeroModel"
 import { Record } from "../../Data/Record"
 import { pipe, pipe_ } from "./pipe"
-import { isJust, isNothing, mapMaybe, Maybe } from "../../Data/Maybe"
+import { isJust, isNothing, mapMaybe, maybe, Maybe } from "../../Data/Maybe"
 import { fmap } from "../../Data/Functor"
 import { getAE, getDO, getINI, getKP, getLP, getMOV, getSPI, getTOU } from "../Selectors/derivedCharacteristicsSelectors"
 import { AppStateRecord } from "../Models/AppState"
@@ -15,7 +15,7 @@ import { List } from "../../Data/List"
 import { RangedWeapon } from "../Models/View/RangedWeapon"
 import { getAllCombatTechniques } from "../Selectors/combatTechniquesSelectors"
 import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
-import { getWikiAdvantages, getWikiDisadvantages, getWikiItemTemplates } from "../Selectors/stateSelectors"
+import { getWiki, getWikiAdvantages, getWikiDisadvantages, getWikiItemTemplates } from "../Selectors/stateSelectors"
 import { Item } from "../Models/Hero/Item"
 import { Advantage } from "../Models/Wiki/Advantage"
 import { Disadvantage } from "../Models/Wiki/Disadvantage"
@@ -33,6 +33,14 @@ import { isTuple, Pair } from "../../Data/Tuple"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
 import { Spell } from "../Models/Wiki/Spell"
+import { ReduxAction } from "../Actions/Actions"
+import { showSaveDialog } from "./IOUtils"
+import { Either, isLeft, isRight, Right } from "../../Data/Either"
+import { flip } from "../../Data/Function"
+import { addAlert, addDefaultErrorAlert, AlertOptions } from "../Actions/AlertActions"
+import { translate } from "./I18n"
+import { handleE } from "../../Control/Exception"
+import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
 
 type MaptoolsEntry = {
   key: string
@@ -230,6 +238,17 @@ function buildSpell (spellFromWiki: Record<Spell>):
   })
 }
 
+function buildChant (chantFromWiki: Record<LiturgicalChant>):
+(chantFromHero: Maybe<Record<SkillDependent>>) => MaptoolsSkill {
+  return chantFromHero => ({
+    name: LiturgicalChant.A.name (chantFromWiki),
+    value: isJust (chantFromHero) ? SkillDependent.A.value (chantFromHero.value) : 0,
+    attr1: (fromMaybe ("MU", List.subscript (LiturgicalChant.A.check (chantFromWiki)) (0)) as MaptoolsAttribute),
+    attr2: (fromMaybe ("MU", List.subscript (LiturgicalChant.A.check (chantFromWiki)) (1)) as MaptoolsAttribute),
+    attr3: (fromMaybe ("MU", List.subscript (LiturgicalChant.A.check (chantFromWiki)) (2)) as MaptoolsAttribute),
+  })
+}
+
 function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
   const buildSkillList =
   pipe (
@@ -255,7 +274,7 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
   ))
 
   const xml = `[${
-   pipe_ (skills,
+    pipe_ (skills,
       fmap ((sg: MapToolsSkillGroup) => ({
         key: sg.groupName,
         value: pipe_ (sg.skills,
@@ -264,19 +283,34 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
             + `"Eigenschaft1":"${skill.attr1}",`
             + `"Eigenschaft2":"${skill.attr2}",`
             + `"Eigenschaft3":"${skill.attr3}"}}`)),
-      })))
+    })))
    }]`
 
   // TODO: Zauber/Rituale und Liturgien/Zeremonien noch herausfinden
-  // erstmal muss aber der code weiter oben funktionieren. Das wird dann ja so ähnlich ablaufen
+  // AsP- bzw. KaP-Kosten könnte man auch exportieren
 
-  /* const spells =
+  const spells =
     pipe_ (state.values.wiki.values.spells,
       OrderedMap.elems,
-      fmap ((spell: Record<Spell>) => pipe_ (spell,
-        Spell.A.id,
-        OrderedMap.lookupF (hero.values.spells),
-        buildSpell (spell))))*/
+      fmap ((s: Record<Spell>) => pipe_ (
+        s,
+        Spell.A.id, // TODO: Typfehler?
+        Maybe.mapMaybe (OrderedMap.lookupF (hero.values.spells)),
+        buildSpell (s)
+    )))
+
+  const chants =
+    pipe_ (state.values.wiki.values.liturgicalChants,
+      OrderedMap.elems,
+      fmap ((c: Record<LiturgicalChant>) => pipe_ (
+        c,
+        LiturgicalChant.A.id, // TODO: Nochmal Typfehler
+        Maybe.mapMaybe (OrderedMap.lookupF (hero.values.liturgicalChants)),
+        buildChant
+    )))
+
+  // TODO: Ich hätte sowohl Zauber und Liturgien als MaptoolsSkillGroup zusammengefasst
+  // wobei Zauber, Rituale, Liturgien und Zeremonien am besten getrennt als SkillGroup erfasst werden sollten
 
   return xml
 }
@@ -560,7 +594,6 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
     (state.values.wiki.values.itemTemplates)
 
   id = 0
-
   const melee = `[${
    pipe_ (
     fromMaybe (List.empty, getMeleeWeapons (state, { hero })),
@@ -651,15 +684,15 @@ export function getContentXML (hero: HeroModelRecord, state: AppStateRecord): st
   return contentXml
 }
 
-export function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer {
+function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer {
   const AdmZip = require ("adm-zip")
   const zip = new AdmZip ()
   zip.addFile ("content.xml", Buffer.from (getContentXML (hero, state)), "Content of the hero")
   zip.addFile ("properties.xml", Buffer.from (getPropertiesXML ()), "Properties")
 
-  //TODO: Charakterbild noch exportieren und in die Zip-Datei packen
-  //passend wäre es wenn wir das komplette Bild als Portrait und Handout setzen
-  //als Token wäre ein kleines runden Thumbnail passend, so wie es in der Heldenliste angezeigt wird
+  // TODO: Charakterbild noch exportieren und in die Zip-Datei packen
+  // passend wäre es wenn wir das komplette Bild als Portrait und Handout setzen
+  // als Token wäre ein kleines runden Thumbnail passend, so wie es in der Heldenliste angezeigt wird
 
   if (isJust (hero.values.avatar)) {
     const binaryAvatar = atob (hero.values.avatar.value)
@@ -669,3 +702,39 @@ export function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer 
 
   return zip.toBuffer ()
 }
+
+// TODO: Das müsste sich mal jemand ansehen. Habe ich als Vorlage kopiert. Async brauche ich hier glaub ich gar nicht?
+// Den aktuellen hero und state müsste ich mir irgendwo holen. Da weis ich noch nicht wie ich rankomme
+// Den Text für den Button und das Export-Fenster müsste ich für die Lokalisierung auch irgendwo eintragen. Wo mache ich das?
+export const requestExportHeroAsRptok = (): ReduxAction<Promise<void>> =>
+
+  async (dispatch, getState) => {
+    const staticData = getWiki (getState ())
+    const hero: HeroModelRecord = ?
+
+    const data = getRptok (hero, getState())
+
+    const path = await showSaveDialog ({
+                   title: translate (staticData) ("sheets.dialogs.pdfexportsavelocation.title"),
+                   defaultPath: `${hero.name}.rptok`,
+                   filters: [
+                     { name: "Rptok", extensions: [ "rptok" ] },
+                   ],
+                 })
+
+    const res = await maybe (Promise.resolve<Either<Error, void>> (Right (undefined)))
+                            (pipe (flip (IO.writeFile) (data), handleE))
+                            (path)
+
+    if (isRight (res) && isJust (path)) {
+      await dispatch (addAlert (AlertOptions ({
+                                 message: translate (staticData) ("sheets.dialogs.pdfsaved"),
+                               })))
+    }
+    else if (isLeft (res)) {
+      await dispatch (addDefaultErrorAlert (staticData)
+                                           (translate (staticData)
+                                                      ("sheets.dialogs.pdfsaveerror.title"))
+                                           (res))
+    }
+  }

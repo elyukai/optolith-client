@@ -124,6 +124,7 @@ export interface SheetsStateProps {
 
 export interface SheetsDispatchProps {
   printToPDF (): void
+  exportAsRptok (): void
   switchAttributeValueVisibility (): void
   switchUseParchment (): void
   setSheetZoomFactor (zoomFactor: number): void
@@ -152,6 +153,7 @@ export const Sheets: React.FC<Props> = props => {
     race,
     sex,
     printToPDF,
+    exportAsRptok,
 
     checkAttributeValueVisibility,
     languagesStateEntry,
@@ -216,6 +218,11 @@ export const Sheets: React.FC<Props> = props => {
           className="print-document"
           label={translate (staticData) ("sheets.printtopdfbtn")}
           onClick={printToPDF}
+          />
+        <BorderButton
+          className="export-rptok"
+          label="Als *.rptok exportieren"
+          onClick={exportHeroAsRptok}
           />
         <Checkbox
           checked={useParchment}
