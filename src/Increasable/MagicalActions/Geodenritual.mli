@@ -3,12 +3,15 @@ module Static : sig
     id : int;
     name : string;
     check : Check.t;
+    checkMod : Check.Modifier.t option;
     effect : string;
-    duration : ActivatableSkill.MainParameter.t;
+    castingTime : ActivatableSkill.MainParameter.t;
     cost : ActivatableSkill.MainParameter.t;
-    musicTradition : string Ley_IntMap.t;
+    range : ActivatableSkill.MainParameter.t;
+    duration : ActivatableSkill.MainParameter.t;
+    target : string;
     property : int;
-    ic : IC.t;
+    prerequisites : Prerequisite.Collection.Activatable.t;
     src : PublicationRef.list;
     errata : Erratum.list;
   }

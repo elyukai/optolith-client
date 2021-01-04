@@ -6,6 +6,7 @@
     { "dir": "deploy" },
     { "dir": "src" },
     { "dir": "src/Activatable" },
+    { "dir": "src/Activatable/SpecialAbilities" },
     { "dir": "src/App/Actions" },
     { "dir": "src/App/Constants" },
     { "dir": "src/App/Containers" },

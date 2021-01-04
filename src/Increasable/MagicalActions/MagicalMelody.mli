@@ -1,20 +1,22 @@
-module Dynamic: ActivatableSkill.Dynamic;
-
-module Static: {
+module Static : sig
   type t = {
-    id: int,
-    name: string,
-    check: Check.t,
-    effect: string,
-    duration: ActivatableSkill.MainParameter.t,
-    cost: ActivatableSkill.MainParameter.t,
-    skill: OneOrMany.t(int),
-    musicTraditions: Ley_IntMap.t(string),
-    property: int,
-    ic: IC.t,
-    src: list(PublicationRef.t),
-    errata: list(Erratum.t),
-  };
+    id : int;
+    name : string;
+    check : Check.t;
+    effect : string;
+    duration : ActivatableSkill.MainParameter.t;
+    cost : ActivatableSkill.MainParameter.t;
+    skill : int NonEmptyList.t;
+    musicTradition : string Ley_IntMap.t;
+    property : int;
+    ic : IC.t;
+    src : PublicationRef.list;
+    errata : Erratum.list;
+  }
 
-  module Decode: {let assoc: Json_Decode_Static.decodeAssoc(t);};
-};
+  module Decode : sig
+    val assoc : t Json_Decode_Static.decodeAssoc
+  end
+end
+
+module Dynamic : ActivatableSkill.Dynamic.S with type static = Static.t

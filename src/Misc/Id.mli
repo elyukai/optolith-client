@@ -443,7 +443,15 @@ end
 
 module SpecialAbility : sig
   module GeneralSpecialAbility : sig
-    type t = Other of int
+    type t =
+      | SkillSpecialization
+      | TerrainKnowledge
+      | CraftInstruments
+      | Hunter
+      | AreaKnowledge
+      | Literacy
+      | Language
+      | Other of int
 
     val fromInt : int -> t
 
@@ -467,7 +475,7 @@ module SpecialAbility : sig
   end
 
   module MagicalSpecialAbility : sig
-    type t = Other of int
+    type t = PropertyKnowledge | Other of int
 
     val fromInt : int -> t
 
@@ -491,7 +499,7 @@ module SpecialAbility : sig
   end
 
   module KarmaSpecialAbility : sig
-    type t = Other of int
+    type t = AspectKnowledge | Other of int
 
     val fromInt : int -> t
 
@@ -891,13 +899,6 @@ module SpecialAbility : sig
   end
 
   type t =
-    | SkillSpecialization
-    | TerrainKnowledge
-    | CraftInstruments
-    | Hunter
-    | AreaKnowledge
-    | Literacy
-    | Language
     | CombatReflexes
     | ImprovedDodge
     | TraditionGuildMages
@@ -1061,8 +1062,6 @@ module Activatable : sig
       | Language of int
       | Script of int
       | AnimalShape of int
-      | SpellEnhancement of int
-      | LiturgicalChantEnhancement of int
       | ArcaneBardTradition of int
       | ArcaneDancerTradition of int
       | Element of int
@@ -1086,6 +1085,8 @@ module Activatable : sig
     val ( = ) : t -> t -> bool
 
     val ( <> ) : t -> t -> bool
+
+    val show : t -> string
 
     module Decode : sig
       val t : Js.Json.t -> t

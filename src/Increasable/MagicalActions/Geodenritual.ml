@@ -3,12 +3,15 @@ module Static = struct
     id : int;
     name : string;
     check : Check.t;
+    checkMod : Check.Modifier.t option;
     effect : string;
-    duration : ActivatableSkill.MainParameter.t;
+    castingTime : ActivatableSkill.MainParameter.t;
     cost : ActivatableSkill.MainParameter.t;
-    musicTradition : string Ley_IntMap.t;
+    range : ActivatableSkill.MainParameter.t;
+    duration : ActivatableSkill.MainParameter.t;
+    target : string;
     property : int;
-    ic : IC.t;
+    prerequisites : Prerequisite.Collection.Activatable.t;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
@@ -16,45 +19,15 @@ module Static = struct
   module Decode = Json_Decode_Static.Make (struct
     type nonrec t = t
 
-    module MusicTradition = Json_Decode_Static.Nested.Make (struct
-      type t = int * string
-
-      module Translation = struct
-        type t = { name : string }
-
-        let t json = Json_Decode_Strict.{ name = json |> field "name" string }
-
-        let pred _ = true
-      end
-
-      type multilingual = {
-        id : int;
-        translations : Translation.t Json_Decode_TranslationMap.partial;
-      }
-
-      let multilingual decodeTranslations json =
-        Json_Decode_Strict.
-          {
-            id = json |> field "id" int;
-            translations = json |> field "translations" decodeTranslations;
-          }
-
-      let make _ (multilingual : multilingual) (translation : Translation.t) =
-        Some (multilingual.id, translation.name)
-
-      module Accessors = struct
-        let id ((id, _) : t) = id
-
-        let translations x = x.translations
-      end
-    end)
-
     module Translation = struct
       type t = {
         name : string;
         effect : string;
-        duration : ActivatableSkill.MainParameter.translation;
+        castingTime : ActivatableSkill.MainParameter.translation;
         cost : ActivatableSkill.MainParameter.translation;
+        range : ActivatableSkill.MainParameter.translation;
+        duration : ActivatableSkill.MainParameter.translation;
+        target : string;
         errata : Erratum.t list option;
       }
 
@@ -63,9 +36,13 @@ module Static = struct
           {
             name = json |> field "name" string;
             effect = json |> field "effect" string;
+            castingTime =
+              json |> field "castingTime" ActivatableSkill.MainParameter.decode;
+            cost = json |> field "cost" ActivatableSkill.MainParameter.decode;
+            range = json |> field "range" ActivatableSkill.MainParameter.decode;
             duration =
               json |> field "duration" ActivatableSkill.MainParameter.decode;
-            cost = json |> field "cost" ActivatableSkill.MainParameter.decode;
+            target = json |> field "target" string;
             errata = json |> optionalField "errata" Erratum.Decode.list;
           }
 
@@ -75,9 +52,10 @@ module Static = struct
     type multilingual = {
       id : int;
       check : Check.t;
-      musicTradition : MusicTradition.multilingual list;
+      checkMod : Check.Modifier.t option;
       property : int;
-      ic : IC.t;
+      prerequisites :
+        Prerequisite.Collection.Activatable.Decode.multilingual option;
       src : PublicationRef.Decode.multilingual list;
       translations : Translation.t Json_Decode_TranslationMap.partial;
     }
@@ -87,10 +65,12 @@ module Static = struct
         {
           id = json |> field "id" int;
           check = json |> field "check" Check.Decode.t;
-          musicTradition =
-            json |> field "musicTradition" (list MusicTradition.multilingual);
+          checkMod = json |> optionalField "checkMod" Check.Modifier.Decode.t;
           property = json |> field "property" int;
-          ic = json |> field "ic" IC.Decode.t;
+          prerequisites =
+            json
+            |> optionalField "prerequisites"
+                 Prerequisite.Collection.Activatable.Decode.multilingual;
           src = json |> field "src" PublicationRef.Decode.multilingualList;
           translations = json |> field "translations" decodeTranslations;
         }
@@ -101,16 +81,21 @@ module Static = struct
           id = multilingual.id;
           name = translation.name;
           check = multilingual.check;
+          checkMod = multilingual.checkMod;
           effect = translation.effect;
+          castingTime =
+            ActivatableSkill.MainParameter.make false translation.castingTime;
+          cost = ActivatableSkill.MainParameter.make false translation.cost;
+          range = ActivatableSkill.MainParameter.make false translation.range;
           duration =
             ActivatableSkill.MainParameter.make false translation.duration;
-          cost = ActivatableSkill.MainParameter.make false translation.cost;
-          musicTradition =
-            multilingual.musicTradition
-            |> Ley_Option.mapOption (MusicTradition.resolveTranslations langs)
-            |> Ley_IntMap.fromList;
+          target = translation.target;
           property = multilingual.property;
-          ic = multilingual.ic;
+          prerequisites =
+            multilingual.prerequisites
+            |> Ley_Option.option []
+                 (Prerequisite.Collection.Activatable.Decode.resolveTranslations
+                    langs);
           src =
             PublicationRef.Decode.resolveTranslationsList langs multilingual.src;
           errata = translation.errata |> Ley_Option.fromOption [];

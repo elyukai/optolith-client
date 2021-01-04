@@ -302,6 +302,9 @@ module Config = struct
   end
 end
 
+let make ?(displayOption = DisplayOption.Generate) value =
+  Config.{ value; displayOption }
+
 module Unified = struct
   type value =
     | CommonSuggestedByRCP

@@ -1,31 +1,23 @@
 type t = {
   id : int;
   name : string;
-  level : int;
-  src : PublicationRef.list;
-  errata : Erratum.list;
+  prerequisites : Prerequisite.Collection.ArcaneTradition.t;
 }
 
 module Decode = Json_Decode_Static.Make (struct
   type nonrec t = t
 
   module Translation = struct
-    type t = { name : string; errata : Erratum.list option }
+    type t = { name : string }
 
-    let t json =
-      Json_Decode_Strict.
-        {
-          name = json |> field "name" string;
-          errata = json |> optionalField "errata" Erratum.Decode.list;
-        }
+    let t json = Json_Decode_Strict.{ name = json |> field "name" string }
 
     let pred _ = true
   end
 
   type multilingual = {
     id : int;
-    level : int;
-    src : PublicationRef.Decode.multilingual list;
+    prerequisites : Prerequisite.Collection.ArcaneTradition.Decode.multilingual;
     translations : Translation.t Json_Decode_TranslationMap.partial;
   }
 
@@ -33,8 +25,10 @@ module Decode = Json_Decode_Static.Make (struct
     Json.Decode.
       {
         id = json |> field "id" int;
-        level = json |> field "level" int;
-        src = json |> field "src" PublicationRef.Decode.multilingualList;
+        prerequisites =
+          json
+          |> field "prerequisites"
+               Prerequisite.Collection.ArcaneTradition.Decode.multilingual;
         translations = json |> field "translations" decodeTranslations;
       }
 
@@ -43,11 +37,9 @@ module Decode = Json_Decode_Static.Make (struct
       {
         id = multilingual.id;
         name = translation.name;
-        level = multilingual.level;
-        src =
-          multilingual.src
-          |> PublicationRef.Decode.resolveTranslationsList langs;
-        errata = translation.errata |> Ley_Option.fromOption [];
+        prerequisites =
+          Prerequisite.Collection.ArcaneTradition.Decode.resolveTranslations
+            langs multilingual.prerequisites;
       }
 
   module Accessors = struct

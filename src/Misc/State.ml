@@ -2,12 +2,8 @@ module Static = struct
   type t = {
     id : int;
     name : string;
-    check : Check.t;
-    checkMod : Check.Modifier.t option;
-    effect : string;
-    cost : ActivatableSkill.MainParameter.t;
-    duration : ActivatableSkill.MainParameter.t;
-    property : int;
+    description : string option;
+    isPrerequisite : bool;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
@@ -18,20 +14,15 @@ module Static = struct
     module Translation = struct
       type t = {
         name : string;
-        effect : string;
-        cost : ActivatableSkill.MainParameter.translation;
-        duration : ActivatableSkill.MainParameter.translation;
-        errata : Erratum.t list option;
+        description : string option;
+        errata : Erratum.list option;
       }
 
       let t json =
         Json_Decode_Strict.
           {
             name = json |> field "name" string;
-            effect = json |> field "effect" string;
-            cost = json |> field "cost" ActivatableSkill.MainParameter.decode;
-            duration =
-              json |> field "duration" ActivatableSkill.MainParameter.decode;
+            description = json |> optionalField "description" string;
             errata = json |> optionalField "errata" Erratum.Decode.list;
           }
 
@@ -40,9 +31,7 @@ module Static = struct
 
     type multilingual = {
       id : int;
-      check : Check.t;
-      checkMod : Check.Modifier.t option;
-      property : int;
+      isPrerequisite : bool;
       src : PublicationRef.Decode.multilingual list;
       translations : Translation.t Json_Decode_TranslationMap.partial;
     }
@@ -51,9 +40,7 @@ module Static = struct
       Json_Decode_Strict.
         {
           id = json |> field "id" int;
-          check = json |> field "check" Check.Decode.t;
-          checkMod = json |> optionalField "checkMod" Check.Modifier.Decode.t;
-          property = json |> field "property" int;
+          isPrerequisite = json |> field "isPrerequisite" bool;
           src = json |> field "src" PublicationRef.Decode.multilingualList;
           translations = json |> field "translations" decodeTranslations;
         }
@@ -63,13 +50,8 @@ module Static = struct
         {
           id = multilingual.id;
           name = translation.name;
-          check = multilingual.check;
-          checkMod = multilingual.checkMod;
-          effect = translation.effect;
-          cost = ActivatableSkill.MainParameter.make false translation.cost;
-          duration =
-            ActivatableSkill.MainParameter.make false translation.duration;
-          property = multilingual.property;
+          description = translation.description;
+          isPrerequisite = multilingual.isPrerequisite;
           src =
             PublicationRef.Decode.resolveTranslationsList langs multilingual.src;
           errata = translation.errata |> Ley_Option.fromOption [];
@@ -83,6 +65,12 @@ module Static = struct
   end)
 end
 
-module Dynamic = ActivatableSkill.Dynamic.Make (struct
-  type static = Static.t
-end)
+module Dynamic = struct
+  type dependency = { source : Id.Activatable.t }
+
+  type t = {
+    id : int;
+    dependencies : dependency list;
+    static : Static.t option;
+  }
+end

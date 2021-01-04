@@ -7,7 +7,7 @@ let isPublicationActive staticPublications (rules : Hero.Rules.t) id =
   staticPublications |> IM.lookup id |> function
   | Some (p : Publication.t) ->
       p.isCore
-      || (rules.areAllPublicationsActive && !p.isAdultContent)
+      || (rules.areAllPublicationsActive && not p.isAdultContent)
       || IS.member id rules.activePublications
   | None -> false
 

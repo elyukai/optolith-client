@@ -126,6 +126,8 @@ module Config : sig
   type 'a t = { value : 'a; displayOption : DisplayOption.t }
 end
 
+val make : ?displayOption:DisplayOption.t -> 'a -> 'a Config.t
+
 module Unified : sig
   type value =
     | CommonSuggestedByRCP

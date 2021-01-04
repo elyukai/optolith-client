@@ -1,41 +1,45 @@
-module O = Ley_Option
+module O = Ley_Option;
 
 type categories = {
-  total: int;
-  spent: int;
-  available: int;
-  spentOnAdvantages: int;
-  spentOnMagicalAdvantages: int;
-  spentOnBlessedAdvantages: int;
-  spentOnDisadvantages: int;
-  spentOnMagicalDisadvantages: int;
-  spentOnBlessedDisadvantages: int;
-  spentOnAttributes: int;
-  spentOnSkills: int;
-  spentOnCombatTechniques: int;
-  spentOnSpells: int;
-  spentOnLiturgicalChants: int;
-  spentOnCantrips: int;
-  spentOnBlessings: int;
-  spentOnSpecialAbilities: int;
-  spentOnEnergies: int;
-  spentOnRace: int;
-  spentOnProfession: int option;
-}
+  total: int,
+  spent: int,
+  available: int,
+  spentOnAdvantages: int,
+  spentOnMagicalAdvantages: int,
+  spentOnBlessedAdvantages: int,
+  spentOnDisadvantages: int,
+  spentOnMagicalDisadvantages: int,
+  spentOnBlessedDisadvantages: int,
+  spentOnAttributes: int,
+  spentOnSkills: int,
+  spentOnCombatTechniques: int,
+  spentOnSpells: int,
+  spentOnLiturgicalChants: int,
+  spentOnCantrips: int,
+  spentOnBlessings: int,
+  spentOnSpecialAbilities: int,
+  spentOnEnergies: int,
+  spentOnRace: int,
+  spentOnProfession: option(int),
+};
 
 let defaultDisAdvantagesMax = 80;
 let defaultDisAdvantagesSubtypeMax = 50;
 
-(** [getMissingAp] returns the amount of missing AP to execute an action
+/** [getMissingAp] returns the amount of missing AP to execute an action
     changing the character. If there are enough AP available, [0] is returned.
-    The return value is never negative. *)
-let getMissingAp ~isInCharacterCreation ~apAvailable ~apCost =
-  if isInCharacterCreation || apCost <= apAvailable || apCost <= 0 then 0 else apCost - apAvailable
+    The return value is never negative. */
+let getMissingAp = (~isInCharacterCreation, ~apAvailable, ~apCost) =>
+  if (isInCharacterCreation || apCost <= apAvailable || apCost <= 0) {
+    0;
+  } else {
+    apCost - apAvailable;
+  };
 
-(**
+/**
  * Returns the maximum AP value you can spend on magical/blessed
  * advantages/disadvantages. Default is 50, but the tradition may only allow 25.
- *)
+ */
 let getDisAdvantagesSubtypeMax = (staticData, hero: Hero.t, isMagical) =>
   isMagical
     ? hero.specialAbilities
@@ -56,7 +60,7 @@ type missingApForDisAdvantage = {
 };
 
 let getDisAdvantageSubtypeApSpent =
-            (~apCategories, ~isDisadvantage, ~isMagical, ~isBlessed) =>
+    (~apCategories, ~isDisadvantage, ~isMagical, ~isBlessed) =>
   isDisadvantage
     ? isMagical
         ? Some(apCategories.spentOnMagicalDisadvantages)

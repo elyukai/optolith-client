@@ -49,10 +49,10 @@ module MagicalActions = struct
     dominationRituals : DominationRitual.Dynamic.t Ley_IntMap.t;
     magicalDances : MagicalDance.Dynamic.t Ley_IntMap.t;
     magicalMelodies : MagicalMelody.Dynamic.t Ley_IntMap.t;
-    rogueSpells : RogueSpell.Dynamic.t Ley_IntMap.t;
-    animistForces : AnimistForce.Dynamic.t Ley_IntMap.t;
-    geodeRituals : GeodeRitual.Dynamic.t Ley_IntMap.t;
-    zibiljaRituals : ZibiljaRitual.Dynamic.t Ley_IntMap.t;
+    schelmenzauber : Schelmenzauber.Dynamic.t Ley_IntMap.t;
+    animistenkraefte : Animistenkraft.Dynamic.t Ley_IntMap.t;
+    geodenrituale : Geodenritual.Dynamic.t Ley_IntMap.t;
+    zibiljarituale : Zibiljaritual.Dynamic.t Ley_IntMap.t;
   }
 end
 

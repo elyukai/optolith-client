@@ -987,11 +987,35 @@ end
 
 module SpecialAbility = struct
   module GeneralSpecialAbility = struct
-    type t = Other of int
+    type t =
+      | SkillSpecialization
+      | TerrainKnowledge
+      | CraftInstruments
+      | Hunter
+      | AreaKnowledge
+      | Literacy
+      | Language
+      | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 9 -> SkillSpecialization
+      | 12 -> TerrainKnowledge
+      | 17 -> CraftInstruments
+      | 18 -> Hunter
+      | 22 -> AreaKnowledge
+      | 27 -> Literacy
+      | 29 -> Language
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | SkillSpecialization -> 9
+      | TerrainKnowledge -> 12
+      | CraftInstruments -> 17
+      | Hunter -> 18
+      | AreaKnowledge -> 22
+      | Literacy -> 27
+      | Language -> 29
+      | Other x -> x
   end
 
   module FatePointSpecialAbility = struct
@@ -1011,11 +1035,11 @@ module SpecialAbility = struct
   end
 
   module MagicalSpecialAbility = struct
-    type t = Other of int
+    type t = PropertyKnowledge | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function 3 -> PropertyKnowledge | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function PropertyKnowledge -> 3 | Other x -> x
   end
 
   module StaffEnchantment = struct
@@ -1035,11 +1059,11 @@ module SpecialAbility = struct
   end
 
   module KarmaSpecialAbility = struct
-    type t = Other of int
+    type t = AspectKnowledge | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function 1 -> AspectKnowledge | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function AspectKnowledge -> 1 | Other x -> x
   end
 
   module ProtectiveWardingCircleSpecialAbility = struct
@@ -1435,13 +1459,6 @@ module SpecialAbility = struct
   end
 
   type t =
-    | SkillSpecialization
-    | TerrainKnowledge
-    | CraftInstruments
-    | Hunter
-    | AreaKnowledge
-    | Literacy
-    | Language
     | CombatReflexes
     | ImprovedDodge
     | TraditionGuildMages
@@ -1535,13 +1552,6 @@ module SpecialAbility = struct
     | Other of int
 
   let fromInt = function
-    | 9 -> SkillSpecialization
-    | 12 -> TerrainKnowledge
-    | 17 -> CraftInstruments
-    | 18 -> Hunter
-    | 22 -> AreaKnowledge
-    | 27 -> Literacy
-    | 29 -> Language
     | 51 -> CombatReflexes
     | 64 -> ImprovedDodge
     | 70 -> TraditionGuildMages
@@ -1635,13 +1645,6 @@ module SpecialAbility = struct
     | x -> Other x
 
   let toInt = function
-    | SkillSpecialization -> 9
-    | TerrainKnowledge -> 12
-    | CraftInstruments -> 17
-    | Hunter -> 18
-    | AreaKnowledge -> 22
-    | Literacy -> 27
-    | Language -> 29
     | CombatReflexes -> 51
     | ImprovedDodge -> 64
     | TraditionGuildMages -> 70
@@ -1875,8 +1878,6 @@ module Activatable = struct
       | Language of int
       | Script of int
       | AnimalShape of int
-      | SpellEnhancement of int
-      | LiturgicalChantEnhancement of int
       | ArcaneBardTradition of int
       | ArcaneDancerTradition of int
       | Element of int
@@ -1900,22 +1901,20 @@ module Activatable = struct
       | Language _ -> 5
       | Script _ -> 6
       | AnimalShape _ -> 7
-      | SpellEnhancement _ -> 8
-      | LiturgicalChantEnhancement _ -> 9
-      | ArcaneBardTradition _ -> 10
-      | ArcaneDancerTradition _ -> 11
-      | Element _ -> 12
-      | Property _ -> 13
-      | Aspect _ -> 14
-      | Disease _ -> 15
-      | Poison _ -> 16
-      | MeleeCombatTechnique _ -> 17
-      | RangedCombatTechnique _ -> 18
-      | LiturgicalChant _ -> 19
-      | Ceremony _ -> 20
-      | Skill _ -> 21
-      | Spell _ -> 22
-      | Ritual _ -> 23
+      | ArcaneBardTradition _ -> 8
+      | ArcaneDancerTradition _ -> 9
+      | Element _ -> 10
+      | Property _ -> 11
+      | Aspect _ -> 12
+      | Disease _ -> 13
+      | Poison _ -> 14
+      | MeleeCombatTechnique _ -> 15
+      | RangedCombatTechnique _ -> 16
+      | LiturgicalChant _ -> 17
+      | Ceremony _ -> 18
+      | Skill _ -> 19
+      | Spell _ -> 20
+      | Ritual _ -> 21
 
     let innerToInt = function
       | Generic x
@@ -1925,8 +1924,6 @@ module Activatable = struct
       | Language x
       | Script x
       | AnimalShape x
-      | SpellEnhancement x
-      | LiturgicalChantEnhancement x
       | ArcaneBardTradition x
       | ArcaneDancerTradition x
       | Element x
@@ -1949,6 +1946,29 @@ module Activatable = struct
 
     let ( <> ) x y = compare x y != 0
 
+    let show = function
+      | Generic x -> "Generic " ^ Ley_Int.show x
+      | Blessing x -> "Blessing " ^ Ley_Int.show x
+      | Cantrip x -> "Cantrip " ^ Ley_Int.show x
+      | TradeSecret x -> "TradeSecret " ^ Ley_Int.show x
+      | Language x -> "Language " ^ Ley_Int.show x
+      | Script x -> "Script " ^ Ley_Int.show x
+      | AnimalShape x -> "AnimalShape " ^ Ley_Int.show x
+      | ArcaneBardTradition x -> "ArcaneBardTradition " ^ Ley_Int.show x
+      | ArcaneDancerTradition x -> "ArcaneDancerTradition " ^ Ley_Int.show x
+      | Element x -> "Element " ^ Ley_Int.show x
+      | Property x -> "Property " ^ Ley_Int.show x
+      | Aspect x -> "Aspect " ^ Ley_Int.show x
+      | Disease x -> "Disease " ^ Ley_Int.show x
+      | Poison x -> "Poison " ^ Ley_Int.show x
+      | MeleeCombatTechnique x -> "MeleeCombatTechnique " ^ Ley_Int.show x
+      | RangedCombatTechnique x -> "RangedCombatTechnique " ^ Ley_Int.show x
+      | LiturgicalChant x -> "LiturgicalChant " ^ Ley_Int.show x
+      | Ceremony x -> "Ceremony " ^ Ley_Int.show x
+      | Skill x -> "Skill " ^ Ley_Int.show x
+      | Spell x -> "Spell " ^ Ley_Int.show x
+      | Ritual x -> "Ritual " ^ Ley_Int.show x
+
     module Decode = struct
       open Json.Decode
 
@@ -1961,9 +1981,6 @@ module Activatable = struct
             | "Language" -> value (fun x -> Language x)
             | "Script" -> value (fun x -> Script x)
             | "AnimalShape" -> value (fun x -> AnimalShape x)
-            | "SpellEnhancement" -> value (fun x -> SpellEnhancement x)
-            | "LiturgicalChantEnhancement" ->
-                value (fun x -> LiturgicalChantEnhancement x)
             | "ArcaneBardTradition" -> value (fun x -> ArcaneBardTradition x)
             | "ArcaneDancerTradition" ->
                 value (fun x -> ArcaneDancerTradition x)
