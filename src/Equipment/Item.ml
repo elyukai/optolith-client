@@ -1,316 +1,308 @@
 module Info = struct
   type t = {
-    note: string option;
-    rules: string option;
-    advantage: string option;
-    disadvantage: string option;
-    src: PublicationRef.list;
-    errata: Erratum.list;
+    note : string option;
+    rules : string option;
+    advantage : string option;
+    disadvantage : string option;
+    src : PublicationRef.list;
+    errata : Erratum.list;
   }
 
-  module Decode = Json_Decode_Static.Nested.Make(struct
+  module Decode = struct
     module Translation = struct
       type t = {
-        note: string option;
-        rules: string option;
-        advantage: string option;
-        disadvantage: string option;
-        errata: Erratum.list option;
+        note : string option;
+        rules : string option;
+        advantage : string option;
+        disadvantage : string option;
+        errata : Erratum.list option;
       }
 
       let t json =
-        Json_Decode_Strict.{
-          note = json |> optionalField "note" string;
-          rules = json |> optionalField "rules" string;
-          advantage = json |> optionalField "advantage" string;
-          disadvantage = json |> optionalField "disadvantage" string;
-          errata = json |> optionalField "errata" Erratum.Decode.list;
-        }
+        Json_Decode_Strict.
+          {
+            note = json |> optionalField "note" string;
+            rules = json |> optionalField "rules" string;
+            advantage = json |> optionalField "advantage" string;
+            disadvantage = json |> optionalField "disadvantage" string;
+            errata = json |> optionalField "errata" Erratum.Decode.list;
+          }
+
+      let pred _ = true
     end
 
+    module TranslationMap = Json_Decode_TranslationMap.Make (Translation)
+
     type multilingual = {
-      src: list(PublicationRef.Decode.multilingual),
-      translations: TranslationMap.t,
-    };
+      src : PublicationRef.Decode.multilingual list;
+      translations : TranslationMap.t;
+    }
 
-    let multilingual = json =>
-      Json.Decode.{
-        src: json |> field("src", PublicationRef.Decode.multilingualList),
-        translations: json |> field("translations", TranslationMap.Decode.t),
-      };
+    let multilingual json =
+      Json.Decode.
+        {
+          src = json |> field "src" PublicationRef.Decode.multilingualList;
+          translations = json |> field "translations" TranslationMap.t;
+        }
 
-    let resolveTranslations = (langs, x) =>
+    let make langs (multilingual : multilingual) (translation : Translation.t) =
+      Some
+        {
+          note = translation.note;
+          rules = translation.rules;
+          advantage = translation.advantage;
+          disadvantage = translation.disadvantage;
+          src =
+            PublicationRef.Decode.resolveTranslationsList langs multilingual.src;
+          errata = translation.errata |> Ley_Option.fromOption [];
+        }
+
+    let resolveTranslations langs x =
       Ley_Option.Infix.(
         x.translations
-        |> TranslationMap.Decode.getFromLanguageOrder(langs)
-        <&> (
-          translation => {
-            note: translation.note,
-            rules: translation.rules,
-            advantage: translation.advantage,
-            disadvantage: translation.disadvantage,
-            src: PublicationRef.Decode.resolveTranslationsList(langs, x.src),
-            errata: translation.errata |> Ley_Option.fromOption([]),
-          }
-        )
-      );
-  end)
+        |> TranslationMap.getFromLanguageOrder langs
+        >>= make langs x)
+  end
 end
 
-module MundaneItem = {
-  type t = {structurePoints: option(OneOrMany.t(int))};
+module MundaneItem = struct
+  type t = { structurePoints : int OneOrMany.t option }
 
-  let decode = json =>
-    Json_Decode_Strict.{
-      structurePoints:
-        json |> optionalField("structurePoints", OneOrMany.Decode.t(int)),
-    };
-};
+  let decode json =
+    Json_Decode_Strict.
+      {
+        structurePoints =
+          json |> optionalField "structurePoints" (OneOrMany.Decode.t int);
+      }
+end
 
-module PrimaryAttributeDamageThreshold = {
-  type newAttribute = {
-    attribute: int,
-    threshold: int,
-  };
+module PrimaryAttributeDamageThreshold = struct
+  type newAttribute = { attribute : int; threshold : int }
 
-  let decodeNewAttribute = json =>
-    Json.Decode.{
-      attribute: json |> field("attribute", int),
-      threshold: json |> field("threshold", int),
-    };
+  let decodeNewAttribute json =
+    Json.Decode.
+      {
+        attribute = json |> field "attribute" int;
+        threshold = json |> field "threshold" int;
+      }
 
-  type agilityStrength = {
-    agility: int,
-    strength: int,
-  };
+  type agilityStrength = { agility : int; strength : int }
 
-  let decodeAgilityStrength = json =>
+  let decodeAgilityStrength =
     Json.Decode.(
-      json |> pair(int, int) |> (x => {agility: fst(x), strength: snd(x)})
-    );
+      pair int int |> map (fun x -> { agility = fst x; strength = snd x }))
 
   type t =
-    | DefaultAttribute(int)
-    | DifferentAttribute(newAttribute)
-    | AgilityStrength(agilityStrength);
+    | DefaultAttribute of int
+    | DifferentAttribute of newAttribute
+    | AgilityStrength of agilityStrength
 
   let decode =
     Json.Decode.(
-      oneOf([
-        json => json |> int |> (x => DefaultAttribute(x)),
-        json => json |> decodeNewAttribute |> (x => DifferentAttribute(x)),
-        json => json |> decodeAgilityStrength |> (x => AgilityStrength(x)),
-      ])
-    );
-};
+      oneOf
+        [
+          int |> map (fun x -> DefaultAttribute x);
+          decodeNewAttribute |> map (fun x -> DifferentAttribute x);
+          decodeAgilityStrength |> map (fun x -> AgilityStrength x);
+        ])
+end
 
-module Damage = {
-  type t = {
-    amount: int,
-    sides: int,
-    flat: option(int),
-  };
+module Damage = struct
+  type t = { amount : int; sides : int; flat : int option }
 
-  let decode = json =>
-    Json_Decode_Strict.{
-      amount: json |> field("damageDiceNumber", int),
-      sides: json |> field("damageDiceSides", int),
-      flat: json |> optionalField("damageFlat", int),
-    };
-};
-
-module MeleeWeapon = {
-  type t = {
-    combatTechnique: int,
-    damage: Damage.t,
-    primaryAttributeDamageThreshold:
-      option(PrimaryAttributeDamageThreshold.t),
-    at: option(int),
-    pa: option(int),
-    reach: option(int),
-    length: option(int),
-    structurePoints: option(OneOrMany.t(int)),
-    isParryingWeapon: bool,
-    isTwoHandedWeapon: bool,
-    isImprovisedWeapon: bool,
-  };
-
-  let decode = json =>
-    Json_Decode_Strict.{
-      combatTechnique: json |> field("combatTechnique", int),
-      damage: json |> Damage.decode,
-      primaryAttributeDamageThreshold:
-        json
-        |> optionalField(
-             "damageThreshold",
-             PrimaryAttributeDamageThreshold.decode,
-           ),
-      at: json |> optionalField("at", int),
-      pa: json |> optionalField("pa", int),
-      reach: json |> optionalField("reach", int),
-      length: json |> optionalField("length", int),
-      structurePoints:
-        json |> optionalField("structurePoints", OneOrMany.Decode.t(int)),
-      isParryingWeapon: json |> field("isParryingWeapon", bool),
-      isTwoHandedWeapon: json |> field("isTwoHandedWeapon", bool),
-      isImprovisedWeapon: json |> field("isImprovisedWeapon", bool),
-    };
-};
-
-module RangedWeapon = {
-  type t = {
-    combatTechnique: int,
-    damage: option(Damage.t),
-    length: option(int),
-    range: (int, int, int),
-    reloadTime: OneOrMany.t(int),
-    ammunition: option(int),
-    isImprovisedWeapon: bool,
-  };
-
-  let decode = json =>
-    Json_Decode_Strict.(
-      Ley_Option.{
-        combatTechnique: json |> field("combatTechnique", int),
-        damage:
-          liftM2(
-            (amount, sides) =>
-              {
-                Damage.amount,
-                sides,
-                flat: json |> optionalField("damageFlat", int),
-              },
-            json |> optionalField("damageDiceNumber", int),
-            json |> optionalField("damageDiceSides", int),
-          ),
-        length: json |> optionalField("length", int),
-        range: (
-          json |> field("closeRange", int),
-          json |> field("mediumRange", int),
-          json |> field("farRange", int),
-        ),
-        reloadTime: json |> field("reloadTime", OneOrMany.Decode.t(int)),
-        ammunition: json |> optionalField("ammunition", int),
-        isImprovisedWeapon: json |> field("isImprovisedWeapon", bool),
+  let decode json =
+    Json_Decode_Strict.
+      {
+        amount = json |> field "damageDiceNumber" int;
+        sides = json |> field "damageDiceSides" int;
+        flat = json |> optionalField "damageFlat" int;
       }
-    );
-};
+end
 
-module Armor = {
+module MeleeWeapon = struct
   type t = {
-    protection: int,
-    encumbrance: int,
-    hasAdditionalPenalties: bool,
-    armorType: int,
-  };
+    combatTechnique : int;
+    damage : Damage.t;
+    primaryAttributeDamageThreshold : PrimaryAttributeDamageThreshold.t option;
+    at : int option;
+    pa : int option;
+    reach : int option;
+    length : int option;
+    structurePoints : int OneOrMany.t option;
+    isParryingWeapon : bool;
+    isTwoHandedWeapon : bool;
+    isImprovisedWeapon : bool;
+  }
 
-  let decode = json =>
-    Json.Decode.{
-      protection: json |> field("protection", int),
-      encumbrance: json |> field("encumbrance", int),
-      hasAdditionalPenalties: json |> field("hasAdditionalPenalties", bool),
-      armorType: json |> field("armorType", int),
-    };
-};
+  let decode json =
+    Json_Decode_Strict.
+      {
+        combatTechnique = json |> field "combatTechnique" int;
+        damage = json |> Damage.decode;
+        primaryAttributeDamageThreshold =
+          json
+          |> optionalField "damageThreshold"
+               PrimaryAttributeDamageThreshold.decode;
+        at = json |> optionalField "at" int;
+        pa = json |> optionalField "pa" int;
+        reach = json |> optionalField "reach" int;
+        length = json |> optionalField "length" int;
+        structurePoints =
+          json |> optionalField "structurePoints" (OneOrMany.Decode.t int);
+        isParryingWeapon = json |> field "isParryingWeapon" bool;
+        isTwoHandedWeapon = json |> field "isTwoHandedWeapon" bool;
+        isImprovisedWeapon = json |> field "isImprovisedWeapon" bool;
+      }
+end
+
+module RangedWeapon = struct
+  type t = {
+    combatTechnique : int;
+    damage : Damage.t option;
+    length : int option;
+    range : int * int * int;
+    reloadTime : int OneOrMany.t;
+    ammunition : int option;
+    isImprovisedWeapon : bool;
+  }
+
+  let decode json =
+    Json_Decode_Strict.(
+      Ley_Option.
+        {
+          combatTechnique = json |> field "combatTechnique" int;
+          damage =
+            liftM2
+              (fun amount sides ->
+                {
+                  Damage.amount;
+                  sides;
+                  flat = json |> optionalField "damageFlat" int;
+                })
+              (json |> optionalField "damageDiceNumber" int)
+              (json |> optionalField "damageDiceSides" int);
+          length = json |> optionalField "length" int;
+          range =
+            ( json |> field "closeRange" int,
+              json |> field "mediumRange" int,
+              json |> field "farRange" int );
+          reloadTime = json |> field "reloadTime" (OneOrMany.Decode.t int);
+          ammunition = json |> optionalField "ammunition" int;
+          isImprovisedWeapon = json |> field "isImprovisedWeapon" bool;
+        })
+end
+
+module Armor = struct
+  type t = {
+    protection : int;
+    encumbrance : int;
+    hasAdditionalPenalties : bool;
+    armorType : int;
+  }
+
+  let decode json =
+    Json.Decode.
+      {
+        protection = json |> field "protection" int;
+        encumbrance = json |> field "encumbrance" int;
+        hasAdditionalPenalties = json |> field "hasAdditionalPenalties" bool;
+        armorType = json |> field "armorType" int;
+      }
+end
 
 type special =
-  | MundaneItem(MundaneItem.t)
-  | MeleeWeapon(MeleeWeapon.t)
-  | RangedWeapon(RangedWeapon.t)
-  | CombinedWeapon(MeleeWeapon.t, RangedWeapon.t)
-  | Armor(Armor.t);
+  | MundaneItem of MundaneItem.t
+  | MeleeWeapon of MeleeWeapon.t
+  | RangedWeapon of RangedWeapon.t
+  | CombinedWeapon of MeleeWeapon.t * RangedWeapon.t
+  | Armor of Armor.t
 
 type t = {
-  id: int,
-  name: string,
-  price: option(int),
-  weight: option(int),
-  special: option(special),
-  info: list(Info.t),
-  gr: int,
-};
+  id : int;
+  name : string;
+  price : int option;
+  weight : int option;
+  special : special option;
+  info : Info.t list;
+  gr : int;
+}
 
-module Decode = {
-  module Translation = {
-    type t = {
-      name: string,
-      info: list(Info.Decode.multilingual),
-    };
+module Decode = Json_Decode_Static.Make (struct
+  type nonrec t = t
 
-    let t = json =>
-      Json.Decode.{
-        name: json |> field("name", string),
-        info:
-          json
-          |> field(
-               "versions",
-               oneOf([
-                 json => json |> Info.Decode.multilingual |> (x => [x]),
-                 json => json |> list(Info.Decode.multilingual),
-               ]),
-             ),
-      };
-  };
+  module Translation = struct
+    type t = { name : string; info : Info.Decode.multilingual list }
 
-  module TranslationMap = TranslationMap.Make(Translation);
+    let t json =
+      Json.Decode.
+        {
+          name = json |> field "name" string;
+          info =
+            json
+            |> field "versions"
+                 (oneOf
+                    [
+                      Info.Decode.multilingual |> map Ley_List.return;
+                      list Info.Decode.multilingual;
+                    ]);
+        }
 
-  let combinedWeapon = json =>
-    Json.Decode.(
-      json |> field("melee", MeleeWeapon.decode),
-      json |> field("ranged", RangedWeapon.decode),
-    );
+    let pred _ = true
+  end
+
+  let combinedWeapon json =
+    Json.Decode.
+      ( json |> field "melee" MeleeWeapon.decode,
+        json |> field "ranged" RangedWeapon.decode )
 
   let special =
-    Json.Decode.oneOf([
-      json => json |> MundaneItem.decode |> (x => MundaneItem(x)),
-      json => json |> MeleeWeapon.decode |> (x => MeleeWeapon(x)),
-      json => json |> RangedWeapon.decode |> (x => RangedWeapon(x)),
-      json => json |> combinedWeapon |> (((m, r)) => CombinedWeapon(m, r)),
-      json => json |> Armor.decode |> (x => Armor(x)),
-    ]);
+    Json.Decode.(
+      oneOf
+        [
+          MundaneItem.decode |> map (fun x -> MundaneItem x);
+          MeleeWeapon.decode |> map (fun x -> MeleeWeapon x);
+          RangedWeapon.decode |> map (fun x -> RangedWeapon x);
+          combinedWeapon |> map (fun (m, r) -> CombinedWeapon (m, r));
+          Armor.decode |> map (fun x -> Armor x);
+        ])
 
   type multilingual = {
-    id: int,
-    price: option(int),
-    weight: option(int),
-    special: option(special),
-    gr: int,
-    translations: TranslationMap.t,
-  };
+    id : int;
+    price : int option;
+    weight : int option;
+    special : special option;
+    gr : int;
+    translations : Translation.t Json_Decode_TranslationMap.partial;
+  }
 
-  let multilingual = json =>
-    Json_Decode_Strict.{
-      id: json |> field("id", int),
-      price: json |> optionalField("price", int),
-      weight: json |> optionalField("weight", int),
-      special: json |> optionalField("special", special),
-      gr: json |> field("gr", int),
-      translations: json |> field("translations", TranslationMap.Decode.t),
-    };
+  let multilingual decodeTranslations json =
+    Json_Decode_Strict.
+      {
+        id = json |> field "id" int;
+        price = json |> optionalField "price" int;
+        weight = json |> optionalField "weight" int;
+        special = json |> optionalField "special" special;
+        gr = json |> field "gr" int;
+        translations = json |> field "translations" decodeTranslations;
+      }
 
-  let resolveTranslations = (langs, x) =>
-    Ley_Option.Infix.(
-      x.translations
-      |> TranslationMap.Decode.getFromLanguageOrder(langs)
-      <&> (
-        translation => {
-          id: x.id,
-          name: translation.name,
-          price: x.price,
-          weight: x.weight,
-          special: x.special,
-          gr: x.gr,
-          info:
-            translation.info
-            |> Ley_Option.mapOption(Info.Decode.resolveTranslations(langs)),
-        }
-      )
-    );
+  let make langs (multilingual : multilingual) (translation : Translation.t) =
+    Some
+      {
+        id = multilingual.id;
+        name = translation.name;
+        price = multilingual.price;
+        weight = multilingual.weight;
+        special = multilingual.special;
+        gr = multilingual.gr;
+        info =
+          translation.info
+          |> Ley_Option.mapOption (Info.Decode.resolveTranslations langs);
+      }
 
-  let t = (langs, json) =>
-    json |> multilingual |> resolveTranslations(langs);
+  module Accessors = struct
+    let id (x : t) = x.id
 
-  let toAssoc = (x: t) => (x.id, x);
-
-  let assoc = Decoder.decodeAssoc(t, toAssoc);
-};
+    let translations x = x.translations
+  end
+end)

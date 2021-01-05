@@ -87,7 +87,7 @@ module Melee = struct
   module Dynamic = Increasable.Dynamic.Make (struct
     type static = Static.t
 
-    let minValue = 6
+    let min_value = 6
   end)
 end
 
@@ -176,6 +176,6 @@ module Ranged = struct
   module Dynamic = Increasable.Dynamic.Make (struct
     type static = Static.t
 
-    let minValue = 6
+    let min_value = 6
   end)
 end

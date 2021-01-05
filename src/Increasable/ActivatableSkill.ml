@@ -1,36 +1,50 @@
 module Dynamic = struct
+  type value = Inactive | Active of int
+
+  type 'static t = {
+    id : int;
+    value : value;
+    dependencies : Increasable.Dynamic.dependency list;
+    static : 'static option;
+  }
+
+  let empty static id = { id; value = Inactive; dependencies = []; static }
+
+  let is_empty x = x.value == Inactive && Ley_List.null x.dependencies
+
+  let get_value_def x = Ley_Option.option Inactive (fun x -> x.value) x
+
+  let value_to_int = function Active sr -> sr | Inactive -> 0
+
+  let is_active x = match x.value with Active _ -> true | Inactive -> false
+
+  let is_active' x = Ley_Option.option false is_active x
+
   module type S = sig
     type static
     (** The static values from the database. *)
 
-    type value = Inactive | Active of int
-
-    type t = {
-      id : int;
-      value : value;
-      dependencies : Increasable.Dynamic.dependency list;
-      static : static option;
-    }
+    type nonrec t = static t
     (** The dynamic values in a character with a reference to the static values
         from the database. *)
 
     val empty : static option -> int -> t
     (** [empty id] creates a new dynamic entry from an id. *)
 
-    val isEmpty : t -> bool
-    (** [isEmpty x] checks if the passed dynamic entry is empty. *)
+    val is_empty : t -> bool
+    (** [is_empty x] checks if the passed dynamic entry is empty. *)
 
-    val getValueDef : t option -> value
-    (** [getValueDef maybe] takes a dynamic entry that might not exist and
+    val get_value_def : t option -> value
+    (** [get_value_def maybe] takes a dynamic entry that might not exist and
         returns the value of that entry. If the entry is not yet defined, it's
         value is the minimum value of the entry type, e.g. 8 for attributes, 0
         for skills and 6 for combat techniques. *)
 
-    val valueToInt : value -> int
+    val value_to_int : value -> int
 
-    val isActive : t -> bool
+    val is_active : t -> bool
 
-    val isActiveM : t option -> bool
+    val is_active' : t option -> bool
   end
 
   module type Config = sig
@@ -41,26 +55,19 @@ module Dynamic = struct
   module Make (Config : Config) : S with type static = Config.static = struct
     type static = Config.static
 
-    type value = Inactive | Active of int
+    type nonrec t = static t
 
-    type t = {
-      id : int;
-      value : value;
-      dependencies : Increasable.Dynamic.dependency list;
-      static : static option;
-    }
+    let empty = empty
 
-    let empty static id = { id; value = Inactive; dependencies = []; static }
+    let is_empty = is_empty
 
-    let isEmpty x = x.value == Inactive && Ley_List.null x.dependencies
+    let get_value_def = get_value_def
 
-    let getValueDef = Ley_Option.option Inactive (fun x -> x.value)
+    let value_to_int = value_to_int
 
-    let valueToInt = function Active sr -> sr | Inactive -> 0
+    let is_active = is_active
 
-    let isActive x = match x.value with Active _ -> true | Inactive -> false
-
-    let isActiveM = Ley_Option.option false isActive
+    let is_active' = is_active'
   end
 end
 

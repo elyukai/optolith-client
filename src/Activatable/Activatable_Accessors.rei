@@ -30,7 +30,7 @@ let selectOptions: Activatable.t => SelectOption.map;
 
 let input: Activatable.t => option(string);
 
-let apValue: Activatable.t => option(Advantage.Static.apValue);
+let apValue: Activatable.t => option(Activatable_Shared.ApValue.t);
 
 let apValue': Activatable.t => option(OneOrMany.t(int));
 

@@ -2,9 +2,11 @@ module IM = Ley_IntMap
 
 type t = int * int * int
 
-let getValues mp (a1, a2, a3) =
-  let lookupValueDef mp id = IM.lookup id mp |> Attribute.Dynamic.getValueDef in
-  (lookupValueDef mp a1, lookupValueDef mp a2, lookupValueDef mp a3)
+let get_values mp (a1, a2, a3) =
+  let lookup_value_def mp id =
+    IM.lookup id mp |> Attribute.Dynamic.get_value_def
+  in
+  (lookup_value_def mp a1, lookup_value_def mp a2, lookup_value_def mp a3)
 
 (* let getAttributes (mp : Attribute.Static.t IM.t) (a1, a2, a3) =
   O.liftM3

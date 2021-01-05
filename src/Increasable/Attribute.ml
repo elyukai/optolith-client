@@ -44,5 +44,5 @@ end
 module Dynamic = Increasable.Dynamic.Make (struct
   type static = Static.t
 
-  let minValue = 8
+  let min_value = 8
 end)

@@ -158,3 +158,7 @@ module Static = struct
     end
   end)
 end
+
+module Dynamic = Activatable_Dynamic.Make (struct
+  type static = Static.t
+end)

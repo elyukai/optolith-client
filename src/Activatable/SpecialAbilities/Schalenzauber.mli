@@ -27,3 +27,5 @@ module Static : sig
     val assoc : t Activatable_Shared.Decode.decodeAssoc
   end
 end
+
+module Dynamic : Activatable_Dynamic.S with type static = Static.t

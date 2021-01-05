@@ -262,7 +262,7 @@ end
 module Dynamic = Increasable.Dynamic.Make (struct
   type static = Static.t
 
-  let minValue = 0
+  let min_value = 0
 end)
 
 module Group = struct

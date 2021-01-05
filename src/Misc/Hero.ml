@@ -1,3 +1,5 @@
+module IM = Ley_IntMap
+
 type baseOrWithVariant = Base of int | WithVariant of int * int
 
 module Rules = struct
@@ -6,8 +8,8 @@ module Rules = struct
   type t = {
     areAllPublicationsActive : bool;
     activePublications : Ley_IntSet.t;
-    activeFocusRules : activeRule Ley_IntMap.t;
-    activeOptionalRules : activeRule Ley_IntMap.t;
+    activeFocusRules : activeRule IM.t;
+    activeOptionalRules : activeRule IM.t;
   }
 end
 
@@ -27,6 +29,80 @@ type personalData = {
   cultureAreaKnowledge : string option;
 }
 
+module SpecialAbilities = struct
+  type t = {
+    advanced_combat_special_abilities :
+      AdvancedCombatSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    advanced_karma_special_abilities :
+      AdvancedKarmaSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    advanced_magical_special_abilities :
+      AdvancedMagicalSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    ancestor_glyphs : AncestorGlyph.Static.t Activatable_Dynamic.t IM.t;
+    attire_enchantments : AttireEnchantment.Static.t Activatable_Dynamic.t IM.t;
+    blessed_traditions : BlessedTradition.Static.t Activatable_Dynamic.t IM.t;
+    brawling_special_abilities :
+      BrawlingSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    ceremonial_item_special_abilities :
+      CeremonialItemSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    chronikzauber : Chronikzauber.Static.t Activatable_Dynamic.t IM.t;
+    combat_special_abilities :
+      CombatSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    combat_style_special_abilities :
+      CombatStyleSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    command_special_abilities :
+      CommandSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    dagger_rituals : DaggerRitual.Static.t Activatable_Dynamic.t IM.t;
+    erweiterte_talentsonderfertigkeiten :
+      ErweiterteTalentsonderfertigkeit.Static.t Activatable_Dynamic.t IM.t;
+    familiar_special_abilities :
+      FamiliarSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    fate_point_special_abilities :
+      FatePointSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    general_special_abilities :
+      GeneralSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    instrument_enchantments :
+      InstrumentEnchantment.Static.t Activatable_Dynamic.t IM.t;
+    kappenzauber : Kappenzauber.Static.t Activatable_Dynamic.t IM.t;
+    karma_special_abilities :
+      KarmaSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    kesselzauber : Kesselzauber.Static.t Activatable_Dynamic.t IM.t;
+    kugelzauber : Kugelzauber.Static.t Activatable_Dynamic.t IM.t;
+    liturgical_style_special_abilities :
+      LiturgicalStyleSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    lykanthropische_gaben :
+      LykanthropischeGabe.Static.t Activatable_Dynamic.t IM.t;
+    magical_special_abilities :
+      MagicalSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    magical_traditions : MagicalTradition.Static.t Activatable_Dynamic.t IM.t;
+    magic_style_special_abilities :
+      MagicStyleSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    orb_enchantments : OrbEnchantment.Static.t Activatable_Dynamic.t IM.t;
+    paktgeschenke : Paktgeschenk.Static.t Activatable_Dynamic.t IM.t;
+    protective_warding_circle_special_abilities :
+      ProtectiveWardingCircleSpecialAbility.Static.t Activatable_Dynamic.t IM.t;
+    ringzauber : Ringzauber.Static.t Activatable_Dynamic.t IM.t;
+    schalenzauber : Schalenzauber.Static.t Activatable_Dynamic.t IM.t;
+    sermons : Sermon.Static.t Activatable_Dynamic.t IM.t;
+    sex_schicksalspunkte_sonderfertigkeiten :
+      SexSchicksalspunkteSonderfertigkeit.Static.t Activatable_Dynamic.t IM.t;
+    sex_sonderfertigkeiten :
+      SexSonderfertigkeit.Static.t Activatable_Dynamic.t IM.t;
+    sichelrituale : Sichelritual.Static.t Activatable_Dynamic.t IM.t;
+    sikaryan_raub_sonderfertigkeiten :
+      SikaryanRaubSonderfertigkeit.Static.t Activatable_Dynamic.t IM.t;
+    spell_sword_enchantments :
+      SpellSwordEnchantment.Static.t Activatable_Dynamic.t IM.t;
+    spielzeugzauber : Spielzeugzauber.Static.t Activatable_Dynamic.t IM.t;
+    staff_enchantments : StaffEnchantment.Static.t Activatable_Dynamic.t IM.t;
+    talentstilsonderfertigkeiten :
+      Talentstilsonderfertigkeit.Static.t Activatable_Dynamic.t IM.t;
+    vampirische_gaben : VampirischeGabe.Static.t Activatable_Dynamic.t IM.t;
+    visions : Vision.Static.t Activatable_Dynamic.t IM.t;
+    waffenzauber : Waffenzauber.Static.t Activatable_Dynamic.t IM.t;
+    wand_enchantments : WandEnchantment.Static.t Activatable_Dynamic.t IM.t;
+  }
+end
+
 module Energies = struct
   type permanentEnergyLoss = { lost : int }
 
@@ -44,15 +120,15 @@ end
 
 module MagicalActions = struct
   type t = {
-    curses : Curse.Dynamic.t Ley_IntMap.t;
-    elvenMagicalSongs : ElvenMagicalSong.Dynamic.t Ley_IntMap.t;
-    dominationRituals : DominationRitual.Dynamic.t Ley_IntMap.t;
-    magicalDances : MagicalDance.Dynamic.t Ley_IntMap.t;
-    magicalMelodies : MagicalMelody.Dynamic.t Ley_IntMap.t;
-    schelmenzauber : Schelmenzauber.Dynamic.t Ley_IntMap.t;
-    animistenkraefte : Animistenkraft.Dynamic.t Ley_IntMap.t;
-    geodenrituale : Geodenritual.Dynamic.t Ley_IntMap.t;
-    zibiljarituale : Zibiljaritual.Dynamic.t Ley_IntMap.t;
+    curses : Curse.Dynamic.t IM.t;
+    elven_magical_songs : ElvenMagicalSong.Dynamic.t IM.t;
+    domination_rituals : DominationRitual.Dynamic.t IM.t;
+    magical_dances : MagicalDance.Dynamic.t IM.t;
+    magical_melodies : MagicalMelody.Dynamic.t IM.t;
+    schelmenzauber : Schelmenzauber.Dynamic.t IM.t;
+    animistenkraefte : Animistenkraft.Dynamic.t IM.t;
+    geodenrituale : Geodenritual.Dynamic.t IM.t;
+    zibiljarituale : Zibiljaritual.Dynamic.t IM.t;
   }
 end
 
@@ -223,24 +299,24 @@ type t = {
   professionName : string option;
   rules : Rules.t;
   personalData : personalData;
-  advantages : Activatable_Dynamic.t Ley_IntMap.t;
-  disadvantages : Activatable_Dynamic.t Ley_IntMap.t;
-  specialAbilities : Activatable_Dynamic.t Ley_IntMap.t;
-  attributes : Attribute.Dynamic.t Ley_IntMap.t;
+  advantages : Activatable_Dynamic.t IM.t;
+  disadvantages : Activatable_Dynamic.t IM.t;
+  specialAbilities : Activatable_Dynamic.t IM.t;
+  attributes : Attribute.Dynamic.t IM.t;
   attributeAdjustmentSelected : int;
   energies : Energies.t;
-  skills : Skill.Dynamic.t Ley_IntMap.t;
-  meleeCombatTechniques : CombatTechnique.Melee.Dynamic.t Ley_IntMap.t;
-  rangedCombatTechniques : CombatTechnique.Ranged.Dynamic.t Ley_IntMap.t;
-  spells : Spell.Dynamic.t Ley_IntMap.t;
+  skills : Skill.Dynamic.t IM.t;
+  meleeCombatTechniques : CombatTechnique.Melee.Dynamic.t IM.t;
+  rangedCombatTechniques : CombatTechnique.Ranged.Dynamic.t IM.t;
+  spells : Spell.Dynamic.t IM.t;
   magicalActions : MagicalActions.t;
-  liturgicalChants : LiturgicalChant.Dynamic.t Ley_IntMap.t;
+  liturgicalChants : LiturgicalChant.Dynamic.t IM.t;
   cantrips : Ley_IntSet.t;
   blessings : Ley_IntSet.t;
-  items : Item.t Ley_IntMap.t;
-  hitZoneArmors : hitZoneArmor Ley_IntMap.t;
+  items : Item.t IM.t;
+  hitZoneArmors : hitZoneArmor IM.t;
   purse : purse;
-  pets : pet Ley_IntMap.t;
+  pets : pet IM.t;
   pact : Pact.Dynamic.t option;
   combatStyleDependencies : styleDependency list;
   magicalStyleDependencies : styleDependency list;
