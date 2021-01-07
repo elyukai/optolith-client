@@ -276,7 +276,15 @@ type styleDependency = {
     special ability's id that created this dependency. *)
 
 module TransferUnfamiliar = struct
-  type id = Spell of int | Spells | LiturgicalChant of int | LiturgicalChants
+  type id =
+    | Spell of int
+    | Spells
+    | Ritual of int
+    | Rituals
+    | LiturgicalChant of int
+    | LiturgicalChants
+    | Ceremony of int
+    | Ceremonies
 
   type t = { id : id; srcId : int }
 end
@@ -299,18 +307,20 @@ type t = {
   professionName : string option;
   rules : Rules.t;
   personalData : personalData;
-  advantages : Activatable_Dynamic.t IM.t;
-  disadvantages : Activatable_Dynamic.t IM.t;
-  specialAbilities : Activatable_Dynamic.t IM.t;
+  advantages : Advantage.Dynamic.t IM.t;
+  disadvantages : Disadvantage.Dynamic.t IM.t;
+  special_abilities : SpecialAbilities.t;
   attributes : Attribute.Dynamic.t IM.t;
   attributeAdjustmentSelected : int;
   energies : Energies.t;
   skills : Skill.Dynamic.t IM.t;
-  meleeCombatTechniques : CombatTechnique.Melee.Dynamic.t IM.t;
-  rangedCombatTechniques : CombatTechnique.Ranged.Dynamic.t IM.t;
+  melee_combat_techniques : CombatTechnique.Melee.Dynamic.t IM.t;
+  ranged_combat_techniques : CombatTechnique.Ranged.Dynamic.t IM.t;
   spells : Spell.Dynamic.t IM.t;
+  rituals : Ritual.Dynamic.t IM.t;
   magicalActions : MagicalActions.t;
-  liturgicalChants : LiturgicalChant.Dynamic.t IM.t;
+  liturgical_chants : LiturgicalChant.Dynamic.t IM.t;
+  ceremonies : Ceremony.Dynamic.t IM.t;
   cantrips : Ley_IntSet.t;
   blessings : Ley_IntSet.t;
   items : Item.t IM.t;

@@ -31,7 +31,7 @@ module Item = {
         [|value|],
       );
 
-    let isActive = active == value;
+    let isActive = Belt.Option.eq(active, value, (===));
 
     let combinedName = groupName ++ "-" ++ name;
 

@@ -1,6 +1,6 @@
 type t
 
-val getValues : Attribute.Dynamic.t Ley_IntMap.t -> t -> int * int * int
+val values : Attribute.Dynamic.t Ley_IntMap.t -> t -> int * int * int
 (**
  * Takes a skill check and returns it's values.
  *)

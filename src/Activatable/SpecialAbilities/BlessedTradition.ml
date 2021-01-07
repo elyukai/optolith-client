@@ -1,3 +1,5 @@
+module IM = Ley_IntMap
+module O = Ley_Option
 module Shared = Activatable_Shared
 
 module Static = struct
@@ -226,3 +228,8 @@ end
 module Dynamic = Activatable_Dynamic.Make (struct
   type static = Static.t
 end)
+
+let primary_attribute mp =
+  O.Infix.(
+    IM.find Dynamic.is_active mp >>= fun trad ->
+    trad.static <&> fun trad -> trad.primary)

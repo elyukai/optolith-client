@@ -23,6 +23,10 @@ let empty static id = { id; active = []; dependencies = []; static }
 
 let is_empty (x : 'a t) = Ley_List.null x.active && Ley_List.null x.dependencies
 
+let is_active (x : 'a t) = Ley_List.Extra.notNull x.active
+
+let is_active' x = Ley_Option.option false is_active x
+
 module type S = sig
   type static
 
@@ -35,12 +39,17 @@ module type S = sig
 
   val is_empty : t -> bool
   (** [is_empty x] checks if the passed dynamic entry is empty. *)
+
+  val is_active : t -> bool
+  (** [is_active x] checks if the passed dynamic entry is active. *)
+
+  val is_active' : t option -> bool
+  (** [is_active' x] checks if the passed optional dynamic entry is active. *)
 end
 
 module Make (S : sig
   type static
-end) =
-struct
+end) : S with type static = S.static = struct
   type static = S.static
 
   type nonrec t = static t
@@ -48,4 +57,8 @@ struct
   let empty = empty
 
   let is_empty = is_empty
+
+  let is_active = is_active
+
+  let is_active' = is_active'
 end

@@ -1,4 +1,3 @@
-open Webapi.Dom;
 open Ley_Option.Infix;
 open ReactUtils;
 
@@ -16,7 +15,7 @@ let make = (~baseClassName, ~className=?, ~children, ~isOpen, ~onBackdrop) => {
         <&> (
           currentRef =>
             currentRef
-            |> Element.contains(
+            |> Webapi.Dom.Element.contains(
                  event |> ReactEvent.Mouse.target |> eventTargetToDom,
                )
             |> (!)

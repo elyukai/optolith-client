@@ -1219,11 +1219,65 @@ module SpecialAbility = struct
   end
 
   module MagicalTradition = struct
-    type t = Other of int
+    type t =
+      | TraditionGuildMages
+      | TraditionWitches
+      | TraditionElves
+      | TraditionDruids
+      | TraditionQabalyaMage
+      | TraditionIntuitiveMage
+      | TraditionSavant
+      | TraditionIllusionist
+      | TraditionArcaneBard
+      | TraditionArcaneDancer
+      | TraditionSchelme
+      | TraditionZauberalchimisten
+      | TraditionTsatuariaAnhaengerinnen
+      | TraditionAnimisten
+      | TraditionGeoden
+      | TraditionZibilijas
+      | TraditionBrobimGeoden
+      | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 1 -> TraditionGuildMages
+      | 2 -> TraditionWitches
+      | 3 -> TraditionElves
+      | 4 -> TraditionDruids
+      | 5 -> TraditionQabalyaMage
+      | 6 -> TraditionIntuitiveMage
+      | 7 -> TraditionSavant
+      | 8 -> TraditionIllusionist
+      | 9 -> TraditionArcaneBard
+      | 10 -> TraditionArcaneDancer
+      | 11 -> TraditionSchelme
+      | 12 -> TraditionZauberalchimisten
+      | 13 -> TraditionTsatuariaAnhaengerinnen
+      | 14 -> TraditionAnimisten
+      | 15 -> TraditionGeoden
+      | 16 -> TraditionZibilijas
+      | 17 -> TraditionBrobimGeoden
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | TraditionGuildMages -> 1
+      | TraditionWitches -> 2
+      | TraditionElves -> 3
+      | TraditionDruids -> 4
+      | TraditionQabalyaMage -> 5
+      | TraditionIntuitiveMage -> 6
+      | TraditionSavant -> 7
+      | TraditionIllusionist -> 8
+      | TraditionArcaneBard -> 9
+      | TraditionArcaneDancer -> 10
+      | TraditionSchelme -> 11
+      | TraditionZauberalchimisten -> 12
+      | TraditionTsatuariaAnhaengerinnen -> 13
+      | TraditionAnimisten -> 14
+      | TraditionGeoden -> 15
+      | TraditionZibilijas -> 16
+      | TraditionBrobimGeoden -> 17
+      | Other x -> x
   end
 
   module BlessedTradition = struct
@@ -1461,7 +1515,6 @@ module SpecialAbility = struct
   type t =
     | CombatReflexes
     | ImprovedDodge
-    | TraditionGuildMages
     | PropertyKnowledge
     | PropertyFocus
     | AspectKnowledge
@@ -1471,12 +1524,9 @@ module SpecialAbility = struct
     | AdaptionZauber
     | Exorzist
     | FavoriteSpellwork (* Lieblingszauber *)
-    | TraditionWitches
     | MagicStyleCombination
     | Harmoniezauberei
     | Matrixzauberei
-    | TraditionElves
-    | TraditionDruids
     | SpellEnhancement
     | Forschungsgebiet
     | Expertenwissen
@@ -1500,12 +1550,6 @@ module SpecialAbility = struct
     | GebieterDesAspekts
     | ChantEnhancement
     | DunklesAbbildDerBuendnisgabe
-    | TraditionIllusionist (* Tradition (Scharlatane) *)
-    | TraditionArcaneBard (* Tradition (Zauberbarden) *)
-    | TraditionArcaneDancer (* Tradition (Zaubertaenzer) *)
-    | TraditionIntuitiveMage
-    | TraditionSavant (* Tradition (Meistertalentierte) *)
-    | TraditionQabalyaMage
     | TraditionChurchOfRondra
     | TraditionChurchOfBoron
     | TraditionChurchOfHesinde
@@ -1524,8 +1568,6 @@ module SpecialAbility = struct
     | TraditionChurchOfNandus
     | TraditionChurchOfSwafnir
     | LanguageSpecializations
-    | TraditionSchelme
-    | TraditionZauberalchimisten
     | GrosseMeditation
     | Imitationszauberei
     | Kraftliniennutzung
@@ -1544,17 +1586,12 @@ module SpecialAbility = struct
     | SozialeKompetenz
     | Universalgenie
     | ScholarDesMagierkollegsZuHoningen
-    | TraditionAnimisten
-    | TraditionGeoden
-    | TraditionZibilijas
     | Zaubervariabilitaet
-    | TraditionBrobimGeoden
     | Other of int
 
   let fromInt = function
     | 51 -> CombatReflexes
     | 64 -> ImprovedDodge
-    | 70 -> TraditionGuildMages
     | 72 -> PropertyKnowledge
     | 81 -> PropertyFocus
     | 87 -> AspectKnowledge
@@ -1564,12 +1601,9 @@ module SpecialAbility = struct
     | 231 -> AdaptionZauber
     | 240 -> Exorzist
     | 250 -> FavoriteSpellwork
-    | 255 -> TraditionWitches
     | 266 -> MagicStyleCombination
     | 296 -> Harmoniezauberei
     | 303 -> Matrixzauberei
-    | 345 -> TraditionElves
-    | 346 -> TraditionDruids
     | 414 -> SpellEnhancement
     | 472 -> Forschungsgebiet
     | 473 -> Expertenwissen
@@ -1593,12 +1627,6 @@ module SpecialAbility = struct
     | 639 -> GebieterDesAspekts
     | 663 -> ChantEnhancement
     | 667 -> DunklesAbbildDerBuendnisgabe
-    | 676 -> TraditionIllusionist
-    | 677 -> TraditionArcaneBard
-    | 678 -> TraditionArcaneDancer
-    | 679 -> TraditionIntuitiveMage
-    | 680 -> TraditionSavant
-    | 681 -> TraditionQabalyaMage
     | 682 -> TraditionChurchOfRondra
     | 683 -> TraditionChurchOfBoron
     | 684 -> TraditionChurchOfHesinde
@@ -1617,8 +1645,6 @@ module SpecialAbility = struct
     | 697 -> TraditionChurchOfNandus
     | 698 -> TraditionChurchOfSwafnir
     | 699 -> LanguageSpecializations
-    | 726 -> TraditionSchelme
-    | 750 -> TraditionZauberalchimisten
     | 772 -> GrosseMeditation
     | 775 -> Imitationszauberei
     | 781 -> Kraftliniennutzung
@@ -1637,17 +1663,12 @@ module SpecialAbility = struct
     | 1123 -> SozialeKompetenz
     | 1127 -> Universalgenie
     | 1147 -> ScholarDesMagierkollegsZuHoningen
-    | 1221 -> TraditionAnimisten
-    | 1255 -> TraditionGeoden
-    | 1293 -> TraditionZibilijas
     | 1391 -> Zaubervariabilitaet
-    | 1438 -> TraditionBrobimGeoden
     | x -> Other x
 
   let toInt = function
     | CombatReflexes -> 51
     | ImprovedDodge -> 64
-    | TraditionGuildMages -> 70
     | PropertyKnowledge -> 72
     | PropertyFocus -> 81
     | AspectKnowledge -> 87
@@ -1657,12 +1678,9 @@ module SpecialAbility = struct
     | AdaptionZauber -> 231
     | Exorzist -> 240
     | FavoriteSpellwork -> 250
-    | TraditionWitches -> 255
     | MagicStyleCombination -> 266
     | Harmoniezauberei -> 296
     | Matrixzauberei -> 303
-    | TraditionElves -> 345
-    | TraditionDruids -> 346
     | SpellEnhancement -> 414
     | Forschungsgebiet -> 472
     | Expertenwissen -> 473
@@ -1686,12 +1704,6 @@ module SpecialAbility = struct
     | GebieterDesAspekts -> 639
     | ChantEnhancement -> 663
     | DunklesAbbildDerBuendnisgabe -> 667
-    | TraditionIllusionist -> 676
-    | TraditionArcaneBard -> 677
-    | TraditionArcaneDancer -> 678
-    | TraditionIntuitiveMage -> 679
-    | TraditionSavant -> 680
-    | TraditionQabalyaMage -> 681
     | TraditionChurchOfRondra -> 682
     | TraditionChurchOfBoron -> 683
     | TraditionChurchOfHesinde -> 684
@@ -1710,8 +1722,6 @@ module SpecialAbility = struct
     | TraditionChurchOfNandus -> 697
     | TraditionChurchOfSwafnir -> 698
     | LanguageSpecializations -> 699
-    | TraditionSchelme -> 726
-    | TraditionZauberalchimisten -> 750
     | GrosseMeditation -> 772
     | Imitationszauberei -> 775
     | Kraftliniennutzung -> 781
@@ -1730,11 +1740,7 @@ module SpecialAbility = struct
     | SozialeKompetenz -> 1123
     | Universalgenie -> 1127
     | ScholarDesMagierkollegsZuHoningen -> 1147
-    | TraditionAnimisten -> 1221
-    | TraditionGeoden -> 1255
-    | TraditionZibilijas -> 1293
     | Zaubervariabilitaet -> 1391
-    | TraditionBrobimGeoden -> 1438
     | Other x -> x
 end
 
@@ -2014,10 +2020,155 @@ module Activatable = struct
       | _ -> false
   end
 
-  module DeepVariant = struct
+  module Nested = struct
     type t =
       | Advantage of Advantage.t
       | Disadvantage of Disadvantage.t
-      | SpecialAbility of SpecialAbility.t
+      | GeneralSpecialAbility of SpecialAbility.GeneralSpecialAbility.t
+      | FatePointSpecialAbility of SpecialAbility.FatePointSpecialAbility.t
+      | CombatSpecialAbility of SpecialAbility.CombatSpecialAbility.t
+      | MagicalSpecialAbility of SpecialAbility.MagicalSpecialAbility.t
+      | StaffEnchantment of SpecialAbility.StaffEnchantment.t
+      | FamiliarSpecialAbility of SpecialAbility.FamiliarSpecialAbility.t
+      | KarmaSpecialAbility of SpecialAbility.KarmaSpecialAbility.t
+      | ProtectiveWardingCircleSpecialAbility of
+          SpecialAbility.ProtectiveWardingCircleSpecialAbility.t
+      | CombatStyleSpecialAbility of SpecialAbility.CombatStyleSpecialAbility.t
+      | AdvancedCombatSpecialAbility of
+          SpecialAbility.AdvancedCombatSpecialAbility.t
+      | CommandSpecialAbility of SpecialAbility.CommandSpecialAbility.t
+      | MagicStyleSpecialAbility of SpecialAbility.MagicStyleSpecialAbility.t
+      | AdvancedMagicalSpecialAbility of
+          SpecialAbility.AdvancedMagicalSpecialAbility.t
+      | SpellSwordEnchantment of SpecialAbility.SpellSwordEnchantment.t
+      | DaggerRitual of SpecialAbility.DaggerRitual.t
+      | InstrumentEnchantment of SpecialAbility.InstrumentEnchantment.t
+      | AttireEnchantment of SpecialAbility.AttireEnchantment.t
+      | OrbEnchantment of SpecialAbility.OrbEnchantment.t
+      | WandEnchantment of SpecialAbility.WandEnchantment.t
+      | BrawlingSpecialAbility of SpecialAbility.BrawlingSpecialAbility.t
+      | AncestorGlyph of SpecialAbility.AncestorGlyph.t
+      | CeremonialItemSpecialAbility of
+          SpecialAbility.CeremonialItemSpecialAbility.t
+      | Sermon of SpecialAbility.Sermon.t
+      | LiturgicalStyleSpecialAbility of
+          SpecialAbility.LiturgicalStyleSpecialAbility.t
+      | AdvancedKarmaSpecialAbility of
+          SpecialAbility.AdvancedKarmaSpecialAbility.t
+      | Vision of SpecialAbility.Vision.t
+      | MagicalTradition of SpecialAbility.MagicalTradition.t
+      | BlessedTradition of SpecialAbility.BlessedTradition.t
+      | Paktgeschenk of SpecialAbility.Paktgeschenk.t
+      | SikaryanRaubSonderfertigkeit of
+          SpecialAbility.SikaryanRaubSonderfertigkeit.t
+      | LykanthropischeGabe of SpecialAbility.LykanthropischeGabe.t
+      | Talentstilsonderfertigkeit of
+          SpecialAbility.Talentstilsonderfertigkeit.t
+      | ErweiterteTalentsonderfertigkeit of
+          SpecialAbility.ErweiterteTalentsonderfertigkeit.t
+      | Kugelzauber of SpecialAbility.Kugelzauber.t
+      | Kesselzauber of SpecialAbility.Kesselzauber.t
+      | Kappenzauber of SpecialAbility.Kappenzauber.t
+      | Spielzeugzauber of SpecialAbility.Spielzeugzauber.t
+      | Schalenzauber of SpecialAbility.Schalenzauber.t
+      | SexSchicksalspunkteSonderfertigkeit of
+          SpecialAbility.SexSchicksalspunkteSonderfertigkeit.t
+      | SexSonderfertigkeit of SpecialAbility.SexSonderfertigkeit.t
+      | Waffenzauber of SpecialAbility.Waffenzauber.t
+      | Sichelritual of SpecialAbility.Sichelritual.t
+      | Ringzauber of SpecialAbility.Ringzauber.t
+      | Chronikzauber of SpecialAbility.Chronikzauber.t
   end
+
+  let to_nested : t -> Nested.t = function
+    | Advantage x -> Advantage (Advantage.fromInt x)
+    | Disadvantage x -> Disadvantage (Disadvantage.fromInt x)
+    | GeneralSpecialAbility x ->
+        GeneralSpecialAbility (SpecialAbility.GeneralSpecialAbility.fromInt x)
+    | FatePointSpecialAbility x ->
+        FatePointSpecialAbility
+          (SpecialAbility.FatePointSpecialAbility.fromInt x)
+    | CombatSpecialAbility x ->
+        CombatSpecialAbility (SpecialAbility.CombatSpecialAbility.fromInt x)
+    | MagicalSpecialAbility x ->
+        MagicalSpecialAbility (SpecialAbility.MagicalSpecialAbility.fromInt x)
+    | StaffEnchantment x ->
+        StaffEnchantment (SpecialAbility.StaffEnchantment.fromInt x)
+    | FamiliarSpecialAbility x ->
+        FamiliarSpecialAbility (SpecialAbility.FamiliarSpecialAbility.fromInt x)
+    | KarmaSpecialAbility x ->
+        KarmaSpecialAbility (SpecialAbility.KarmaSpecialAbility.fromInt x)
+    | ProtectiveWardingCircleSpecialAbility x ->
+        ProtectiveWardingCircleSpecialAbility
+          (SpecialAbility.ProtectiveWardingCircleSpecialAbility.fromInt x)
+    | CombatStyleSpecialAbility x ->
+        CombatStyleSpecialAbility
+          (SpecialAbility.CombatStyleSpecialAbility.fromInt x)
+    | AdvancedCombatSpecialAbility x ->
+        AdvancedCombatSpecialAbility
+          (SpecialAbility.AdvancedCombatSpecialAbility.fromInt x)
+    | CommandSpecialAbility x ->
+        CommandSpecialAbility (SpecialAbility.CommandSpecialAbility.fromInt x)
+    | MagicStyleSpecialAbility x ->
+        MagicStyleSpecialAbility
+          (SpecialAbility.MagicStyleSpecialAbility.fromInt x)
+    | AdvancedMagicalSpecialAbility x ->
+        AdvancedMagicalSpecialAbility
+          (SpecialAbility.AdvancedMagicalSpecialAbility.fromInt x)
+    | SpellSwordEnchantment x ->
+        SpellSwordEnchantment (SpecialAbility.SpellSwordEnchantment.fromInt x)
+    | DaggerRitual x -> DaggerRitual (SpecialAbility.DaggerRitual.fromInt x)
+    | InstrumentEnchantment x ->
+        InstrumentEnchantment (SpecialAbility.InstrumentEnchantment.fromInt x)
+    | AttireEnchantment x ->
+        AttireEnchantment (SpecialAbility.AttireEnchantment.fromInt x)
+    | OrbEnchantment x ->
+        OrbEnchantment (SpecialAbility.OrbEnchantment.fromInt x)
+    | WandEnchantment x ->
+        WandEnchantment (SpecialAbility.WandEnchantment.fromInt x)
+    | BrawlingSpecialAbility x ->
+        BrawlingSpecialAbility (SpecialAbility.BrawlingSpecialAbility.fromInt x)
+    | AncestorGlyph x -> AncestorGlyph (SpecialAbility.AncestorGlyph.fromInt x)
+    | CeremonialItemSpecialAbility x ->
+        CeremonialItemSpecialAbility
+          (SpecialAbility.CeremonialItemSpecialAbility.fromInt x)
+    | Sermon x -> Sermon (SpecialAbility.Sermon.fromInt x)
+    | LiturgicalStyleSpecialAbility x ->
+        LiturgicalStyleSpecialAbility
+          (SpecialAbility.LiturgicalStyleSpecialAbility.fromInt x)
+    | AdvancedKarmaSpecialAbility x ->
+        AdvancedKarmaSpecialAbility
+          (SpecialAbility.AdvancedKarmaSpecialAbility.fromInt x)
+    | Vision x -> Vision (SpecialAbility.Vision.fromInt x)
+    | MagicalTradition x ->
+        MagicalTradition (SpecialAbility.MagicalTradition.fromInt x)
+    | BlessedTradition x ->
+        BlessedTradition (SpecialAbility.BlessedTradition.fromInt x)
+    | Paktgeschenk x -> Paktgeschenk (SpecialAbility.Paktgeschenk.fromInt x)
+    | SikaryanRaubSonderfertigkeit x ->
+        SikaryanRaubSonderfertigkeit
+          (SpecialAbility.SikaryanRaubSonderfertigkeit.fromInt x)
+    | LykanthropischeGabe x ->
+        LykanthropischeGabe (SpecialAbility.LykanthropischeGabe.fromInt x)
+    | Talentstilsonderfertigkeit x ->
+        Talentstilsonderfertigkeit
+          (SpecialAbility.Talentstilsonderfertigkeit.fromInt x)
+    | ErweiterteTalentsonderfertigkeit x ->
+        ErweiterteTalentsonderfertigkeit
+          (SpecialAbility.ErweiterteTalentsonderfertigkeit.fromInt x)
+    | Kugelzauber x -> Kugelzauber (SpecialAbility.Kugelzauber.fromInt x)
+    | Kesselzauber x -> Kesselzauber (SpecialAbility.Kesselzauber.fromInt x)
+    | Kappenzauber x -> Kappenzauber (SpecialAbility.Kappenzauber.fromInt x)
+    | Spielzeugzauber x ->
+        Spielzeugzauber (SpecialAbility.Spielzeugzauber.fromInt x)
+    | Schalenzauber x -> Schalenzauber (SpecialAbility.Schalenzauber.fromInt x)
+    | SexSchicksalspunkteSonderfertigkeit x ->
+        SexSchicksalspunkteSonderfertigkeit
+          (SpecialAbility.SexSchicksalspunkteSonderfertigkeit.fromInt x)
+    | SexSonderfertigkeit x ->
+        SexSonderfertigkeit (SpecialAbility.SexSonderfertigkeit.fromInt x)
+    | Waffenzauber x -> Waffenzauber (SpecialAbility.Waffenzauber.fromInt x)
+    | Sichelritual x -> Sichelritual (SpecialAbility.Sichelritual.fromInt x)
+    | Ringzauber x -> Ringzauber (SpecialAbility.Ringzauber.fromInt x)
+    | Chronikzauber x -> Chronikzauber (SpecialAbility.Chronikzauber.fromInt x)
 end

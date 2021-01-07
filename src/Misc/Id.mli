@@ -659,7 +659,25 @@ module SpecialAbility : sig
   end
 
   module MagicalTradition : sig
-    type t = Other of int
+    type t =
+      | TraditionGuildMages
+      | TraditionWitches
+      | TraditionElves
+      | TraditionDruids
+      | TraditionQabalyaMage
+      | TraditionIntuitiveMage
+      | TraditionSavant (* Tradition (Meistertalentierte) *)
+      | TraditionIllusionist (* Tradition (Scharlatane) *)
+      | TraditionArcaneBard (* Tradition (Zauberbarden) *)
+      | TraditionArcaneDancer (* Tradition (Zaubertaenzer) *)
+      | TraditionSchelme
+      | TraditionZauberalchimisten
+      | TraditionTsatuariaAnhaengerinnen
+      | TraditionAnimisten
+      | TraditionGeoden
+      | TraditionZibilijas
+      | TraditionBrobimGeoden
+      | Other of int
 
     val fromInt : int -> t
 
@@ -901,7 +919,6 @@ module SpecialAbility : sig
   type t =
     | CombatReflexes
     | ImprovedDodge
-    | TraditionGuildMages
     | PropertyKnowledge
     | PropertyFocus
     | AspectKnowledge
@@ -911,12 +928,9 @@ module SpecialAbility : sig
     | AdaptionZauber
     | Exorzist
     | FavoriteSpellwork
-    | TraditionWitches
     | MagicStyleCombination
     | Harmoniezauberei
     | Matrixzauberei
-    | TraditionElves
-    | TraditionDruids
     | SpellEnhancement
     | Forschungsgebiet
     | Expertenwissen
@@ -940,12 +954,6 @@ module SpecialAbility : sig
     | GebieterDesAspekts
     | ChantEnhancement
     | DunklesAbbildDerBuendnisgabe
-    | TraditionIllusionist
-    | TraditionArcaneBard
-    | TraditionArcaneDancer
-    | TraditionIntuitiveMage
-    | TraditionSavant
-    | TraditionQabalyaMage
     | TraditionChurchOfRondra
     | TraditionChurchOfBoron
     | TraditionChurchOfHesinde
@@ -964,8 +972,6 @@ module SpecialAbility : sig
     | TraditionChurchOfNandus
     | TraditionChurchOfSwafnir
     | LanguageSpecializations
-    | TraditionSchelme
-    | TraditionZauberalchimisten
     | GrosseMeditation
     | Imitationszauberei
     | Kraftliniennutzung
@@ -984,11 +990,7 @@ module SpecialAbility : sig
     | SozialeKompetenz
     | Universalgenie
     | ScholarDesMagierkollegsZuHoningen
-    | TraditionAnimisten
-    | TraditionGeoden
-    | TraditionZibilijas
     | Zaubervariabilitaet
-    | TraditionBrobimGeoden
     | Other of int
 
   val fromInt : int -> t
@@ -1099,10 +1101,65 @@ module Activatable : sig
     val ( = ) : t -> t -> bool
   end
 
-  module DeepVariant : sig
+  module Nested : sig
     type t =
       | Advantage of Advantage.t
       | Disadvantage of Disadvantage.t
-      | SpecialAbility of SpecialAbility.t
+      | GeneralSpecialAbility of SpecialAbility.GeneralSpecialAbility.t
+      | FatePointSpecialAbility of SpecialAbility.FatePointSpecialAbility.t
+      | CombatSpecialAbility of SpecialAbility.CombatSpecialAbility.t
+      | MagicalSpecialAbility of SpecialAbility.MagicalSpecialAbility.t
+      | StaffEnchantment of SpecialAbility.StaffEnchantment.t
+      | FamiliarSpecialAbility of SpecialAbility.FamiliarSpecialAbility.t
+      | KarmaSpecialAbility of SpecialAbility.KarmaSpecialAbility.t
+      | ProtectiveWardingCircleSpecialAbility of
+          SpecialAbility.ProtectiveWardingCircleSpecialAbility.t
+      | CombatStyleSpecialAbility of SpecialAbility.CombatStyleSpecialAbility.t
+      | AdvancedCombatSpecialAbility of
+          SpecialAbility.AdvancedCombatSpecialAbility.t
+      | CommandSpecialAbility of SpecialAbility.CommandSpecialAbility.t
+      | MagicStyleSpecialAbility of SpecialAbility.MagicStyleSpecialAbility.t
+      | AdvancedMagicalSpecialAbility of
+          SpecialAbility.AdvancedMagicalSpecialAbility.t
+      | SpellSwordEnchantment of SpecialAbility.SpellSwordEnchantment.t
+      | DaggerRitual of SpecialAbility.DaggerRitual.t
+      | InstrumentEnchantment of SpecialAbility.InstrumentEnchantment.t
+      | AttireEnchantment of SpecialAbility.AttireEnchantment.t
+      | OrbEnchantment of SpecialAbility.OrbEnchantment.t
+      | WandEnchantment of SpecialAbility.WandEnchantment.t
+      | BrawlingSpecialAbility of SpecialAbility.BrawlingSpecialAbility.t
+      | AncestorGlyph of SpecialAbility.AncestorGlyph.t
+      | CeremonialItemSpecialAbility of
+          SpecialAbility.CeremonialItemSpecialAbility.t
+      | Sermon of SpecialAbility.Sermon.t
+      | LiturgicalStyleSpecialAbility of
+          SpecialAbility.LiturgicalStyleSpecialAbility.t
+      | AdvancedKarmaSpecialAbility of
+          SpecialAbility.AdvancedKarmaSpecialAbility.t
+      | Vision of SpecialAbility.Vision.t
+      | MagicalTradition of SpecialAbility.MagicalTradition.t
+      | BlessedTradition of SpecialAbility.BlessedTradition.t
+      | Paktgeschenk of SpecialAbility.Paktgeschenk.t
+      | SikaryanRaubSonderfertigkeit of
+          SpecialAbility.SikaryanRaubSonderfertigkeit.t
+      | LykanthropischeGabe of SpecialAbility.LykanthropischeGabe.t
+      | Talentstilsonderfertigkeit of
+          SpecialAbility.Talentstilsonderfertigkeit.t
+      | ErweiterteTalentsonderfertigkeit of
+          SpecialAbility.ErweiterteTalentsonderfertigkeit.t
+      | Kugelzauber of SpecialAbility.Kugelzauber.t
+      | Kesselzauber of SpecialAbility.Kesselzauber.t
+      | Kappenzauber of SpecialAbility.Kappenzauber.t
+      | Spielzeugzauber of SpecialAbility.Spielzeugzauber.t
+      | Schalenzauber of SpecialAbility.Schalenzauber.t
+      | SexSchicksalspunkteSonderfertigkeit of
+          SpecialAbility.SexSchicksalspunkteSonderfertigkeit.t
+      | SexSonderfertigkeit of SpecialAbility.SexSonderfertigkeit.t
+      | Waffenzauber of SpecialAbility.Waffenzauber.t
+      | Sichelritual of SpecialAbility.Sichelritual.t
+      | Ringzauber of SpecialAbility.Ringzauber.t
+      | Chronikzauber of SpecialAbility.Chronikzauber.t
   end
+
+  val to_nested : t -> Nested.t
 end

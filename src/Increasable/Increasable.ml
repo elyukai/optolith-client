@@ -26,11 +26,11 @@ module Dynamic = struct
     val is_empty : t -> bool
     (** [is_empty x] checks if the passed dynamic entry is empty. *)
 
-    val get_value_def : t option -> int
-    (** [getValueDef maybe] takes a dynamic entry that might not exist and
-        returns the value of that entry. If the entry is not yet defined, it's
-        value is the minimum value of the entry type, e.g. 8 for attributes, 0
-        for skills and 6 for combat techniques. *)
+    val value : t option -> int
+    (** [value x] takes a dynamic entry that might not exist and returns the
+        value of that entry. If the entry is not yet defined, it's value is the
+        minimum value of the entry type, e.g. 8 for attributes, 0 for skills and
+        6 for combat techniques. *)
   end
 
   module type Config = sig
@@ -52,7 +52,7 @@ module Dynamic = struct
 
     let is_empty (x : t) = x.value <= min_value && Ley_List.null x.dependencies
 
-    let get_value_def maybeEntry =
+    let value maybeEntry =
       Ley_Option.option min_value (fun (x : t) -> x.value) maybeEntry
   end
 end

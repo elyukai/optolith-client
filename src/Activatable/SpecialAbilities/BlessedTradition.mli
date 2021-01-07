@@ -45,3 +45,5 @@ module Static : sig
 end
 
 module Dynamic : Activatable_Dynamic.S with type static = Static.t
+
+val primary_attribute : Dynamic.t Ley_IntMap.t -> int option

@@ -70,6 +70,8 @@ module type T = {
 
   let fromList: list((key, 'a)) => t('a);
 
+  let from_list_with: ('a => (key, 'a), list('a)) => t('a);
+
   let fromArray: array((key, 'a)) => t('a);
 
   let filter: ('a => bool, t('a)) => t('a);
@@ -300,6 +302,16 @@ module Make = (Key: Comparable) : (T with type key = Key.t) => {
 
   let fromList = ps =>
     List.fold_left((mp, (k, v)) => insert(k, v, mp), empty, ps);
+
+  let from_list_with = (f, ps) =>
+    List.fold_left(
+      (mp, x) => {
+        let (k, v) = f(x);
+        insert(k, v, mp);
+      },
+      empty,
+      ps,
+    );
 
   let fromArray = ps =>
     Array.fold_left((mp, (k, v)) => insert(k, v, mp), empty, ps);

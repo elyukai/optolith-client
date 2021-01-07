@@ -1,6 +1,5 @@
 open Ley_Option.Infix;
 open ReactUtils;
-open Webapi.Dom;
 
 type dropdownOption('a) = {
   label: string,
@@ -54,7 +53,7 @@ let make =
   let handleSwitch =
     React.useCallback2(
       _ => {
-        let maybeRef: option(Element.t) =
+        let maybeRef: option(Webapi.Dom.Element.t) =
           containerRef.current |> Js.Nullable.toOption;
 
         switch (maybeRef) {
@@ -64,12 +63,12 @@ let make =
               Ley_Int.min(166, Ley_List.length(options) * 33 + 1),
             );
 
-          let rect = Element.getBoundingClientRect(ref);
+          let rect = Webapi.Dom.Element.getBoundingClientRect(ref);
 
           setPosition(_ =>
-            Js.Int.toFloat(Window.innerHeight(window))
+            Js.Int.toFloat(Webapi.Dom.Window.innerHeight(Webapi.Dom.window))
             -. 32.0
-            -. DomRect.top(rect) < height
+            -. Webapi.Dom.DomRect.top(rect) < height
               ? Top : Bottom
           );
         | Some(_)
@@ -99,9 +98,9 @@ let make =
           <&> (
             currentRef =>
               currentRef
-              |> Element.contains(
+              |> Webapi.Dom.Element.contains(
                    event
-                   |> Event.target
+                   |> Webapi.Dom.Event.target
                    |> Webapi.Dom.EventTarget.unsafeAsElement,
                  )
               |> (!)
@@ -117,12 +116,12 @@ let make =
       Webapi.Dom.Window.addEventListener(
         "mousedown",
         handleOutsideClick,
-        window,
+        Webapi.Dom.window,
       );
       Webapi.Dom.Window.addEventListener(
         "ontouchstart",
         handleOutsideClick,
-        window,
+        Webapi.Dom.window,
       );
 
       Some(
@@ -130,12 +129,12 @@ let make =
           Webapi.Dom.Window.removeEventListener(
             "mousedown",
             handleOutsideClick,
-            window,
+            Webapi.Dom.window,
           );
           Webapi.Dom.Window.removeEventListener(
             "ontouchstart",
             handleOutsideClick,
-            window,
+            Webapi.Dom.window,
           );
         },
       );

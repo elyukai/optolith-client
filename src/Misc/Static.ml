@@ -11,7 +11,7 @@ type t = {
   animal_shapes : AnimalShape.t IM.t;
   animal_shape_paths : string IM.t;
   animal_shape_sizes : AnimalShape.Size.t IM.t;
-  animist_forces : AnimistForce.Static.t IM.t;
+  animist_forces : Animistenkraft.Static.t IM.t;
   arcane_bard_traditions : ArcaneTradition.t IM.t;
   arcane_dancer_traditions : ArcaneTradition.t IM.t;
   (* armors : abc IM.t; *)
@@ -72,7 +72,7 @@ type t = {
   magical_dances : MagicalDance.Static.t IM.t;
   magical_melodies : MagicalMelody.Static.t IM.t;
   magical_special_abilities : MagicalSpecialAbility.Static.t IM.t;
-  magical_traditions : MagicalTradition.t IM.t;
+  magical_traditions : MagicalTradition.Static.t IM.t;
   magic_style_special_abilities : MagicStyleSpecialAbility.Static.t IM.t;
   melee_combat_techniques : CombatTechnique.Melee.Static.t IM.t;
   optional_rules : OptionalRule.Static.t IM.t;

@@ -16,10 +16,10 @@ module Dynamic : sig
   val is_empty : 'static t -> bool
   (** [is_empty x] checks if the passed dynamic entry is empty. *)
 
-  val get_value_def : 'static t option -> value
-  (** [get_value_def maybe] takes a dynamic entry that might not exist and
-      returns the value of that entry. If the entry is not yet defined, it's
-      value is [Inactive]. *)
+  val value : 'static t option -> value
+  (** [value x] takes a dynamic entry that might not exist and returns the value
+      of that entry. If the entry is not yet defined, it's value is [Inactive].
+      *)
 
   val value_to_int : value -> int
   (** Converts the entry value to an [int], where [Inactive] results in [0]. *)
@@ -44,10 +44,10 @@ module Dynamic : sig
     val is_empty : t -> bool
     (** [is_empty x] checks if the passed dynamic entry is empty. *)
 
-    val get_value_def : t option -> value
-    (** [get_value_def maybe] takes a dynamic entry that might not exist and
-        returns the value of that entry. If the entry is not yet defined, it's
-        value is [Inactive]. *)
+    val value : t option -> value
+    (** [value x] takes a dynamic entry that might not exist and returns the
+        value of that entry. If the entry is not yet defined, it's value is
+        [Inactive]. *)
 
     val value_to_int : value -> int
     (** Converts the entry value to an [int], where [Inactive] results in [0]. *)

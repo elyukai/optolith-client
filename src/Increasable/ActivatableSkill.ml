@@ -12,7 +12,7 @@ module Dynamic = struct
 
   let is_empty x = x.value == Inactive && Ley_List.null x.dependencies
 
-  let get_value_def x = Ley_Option.option Inactive (fun x -> x.value) x
+  let value x = Ley_Option.option Inactive (fun x -> x.value) x
 
   let value_to_int = function Active sr -> sr | Inactive -> 0
 
@@ -34,11 +34,11 @@ module Dynamic = struct
     val is_empty : t -> bool
     (** [is_empty x] checks if the passed dynamic entry is empty. *)
 
-    val get_value_def : t option -> value
-    (** [get_value_def maybe] takes a dynamic entry that might not exist and
-        returns the value of that entry. If the entry is not yet defined, it's
-        value is the minimum value of the entry type, e.g. 8 for attributes, 0
-        for skills and 6 for combat techniques. *)
+    val value : t option -> value
+    (** [value x] takes a dynamic entry that might not exist and returns the
+        value of that entry. If the entry is not yet defined, it's value is the
+        minimum value of the entry type, e.g. 8 for attributes, 0 for skills and
+        6 for combat techniques. *)
 
     val value_to_int : value -> int
 
@@ -61,7 +61,7 @@ module Dynamic = struct
 
     let is_empty = is_empty
 
-    let get_value_def = get_value_def
+    let value = value
 
     let value_to_int = value_to_int
 
