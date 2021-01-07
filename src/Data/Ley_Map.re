@@ -70,7 +70,7 @@ module type T = {
 
   let fromList: list((key, 'a)) => t('a);
 
-  let from_list_with: ('a => (key, 'a), list('a)) => t('a);
+  let from_list_with: ('a => (key, 'b), list('a)) => t('b);
 
   let fromArray: array((key, 'a)) => t('a);
 

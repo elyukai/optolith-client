@@ -121,5 +121,5 @@ type t = {
   waffenzauber : Waffenzauber.Static.t IM.t;
   wand_enchantments : WandEnchantment.Static.t IM.t;
   (* weapons : abc IM.t; *)
-  zibiljarituale : ZibiljaRitual.Static.t IM.t;
+  zibiljarituale : Zibiljaritual.Static.t IM.t;
 }

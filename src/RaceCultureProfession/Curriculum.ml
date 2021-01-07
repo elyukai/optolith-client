@@ -1,9 +1,5 @@
-module Dynamic = struct
-  type t = { id : int; lessonPackage : int option }
-end
-
 module Static = struct
-  type restrictedSpellwork =
+  type restricted_spellwork =
     | Spell of int
     | Ritual of int
     | Property of int
@@ -12,12 +8,12 @@ module Static = struct
     | Borbaradian
     | DamageIntelligent
 
-  type lessonPackage = {
+  type lesson_package = {
     id : int;
     name : string;
-    apValue : int;
-    meleeCombatTechniques : int Ley_IntMap.t;
-    rangedCombatTechniques : int Ley_IntMap.t;
+    ap_value : int;
+    melee_combat_techniques : int Ley_IntMap.t;
+    ranged_combat_techniques : int Ley_IntMap.t;
     skills : int Ley_IntMap.t;
     spells : int Ley_IntMap.t;
     rituals : int Ley_IntMap.t;
@@ -27,9 +23,9 @@ module Static = struct
     id : int;
     name : string;
     guideline : int;
-    electiveSpellworks : int list;
-    restrictedSpellworks : restrictedSpellwork list;
-    lessonPackages : lessonPackage Ley_IntMap.t;
+    elective_spellworks : int list;
+    restricted_spellworks : restricted_spellwork list;
+    lesson_packages : lesson_package Ley_IntMap.t;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
@@ -37,7 +33,7 @@ module Static = struct
   module Decode = struct
     module LessonPackage = struct
       include Json_Decode_Static.Nested.Make (struct
-        type t = lessonPackage
+        type t = lesson_package
 
         module Translation = struct
           type t = { name : string }
@@ -57,9 +53,9 @@ module Static = struct
 
         type multilingual = {
           id : int;
-          apValue : int;
-          meleeCombatTechniques : skill list option;
-          rangedCombatTechniques : skill list option;
+          ap_value : int;
+          melee_combat_techniques : skill list option;
+          ranged_combat_techniques : skill list option;
           skills : skill list option;
           spells : skill list;
           rituals : skill list option;
@@ -70,10 +66,10 @@ module Static = struct
           Json_Decode_Strict.
             {
               id = json |> field "id" int;
-              apValue = json |> field "apValue" int;
-              meleeCombatTechniques =
+              ap_value = json |> field "apValue" int;
+              melee_combat_techniques =
                 json |> optionalField "meleeCombatTechniques" (list skill);
-              rangedCombatTechniques =
+              ranged_combat_techniques =
                 json |> optionalField "rangedCombatTechniques" (list skill);
               skills =
                 json |> optionalField "rangedCombatTechniques" (list skill);
@@ -87,13 +83,13 @@ module Static = struct
             {
               id = multilingual.id;
               name = translation.name;
-              apValue = multilingual.apValue;
-              meleeCombatTechniques =
-                multilingual.meleeCombatTechniques
+              ap_value = multilingual.ap_value;
+              melee_combat_techniques =
+                multilingual.melee_combat_techniques
                 |> Ley_Option.option [] (Ley_List.map skill_to_pair)
                 |> Ley_IntMap.fromList;
-              rangedCombatTechniques =
-                multilingual.rangedCombatTechniques
+              ranged_combat_techniques =
+                multilingual.ranged_combat_techniques
                 |> Ley_Option.option [] (Ley_List.map skill_to_pair)
                 |> Ley_IntMap.fromList;
               skills =
@@ -116,10 +112,10 @@ module Static = struct
         end
       end)
 
-      let to_pair (x : lessonPackage) = (x.id, x)
+      let to_pair (x : lesson_package) = (x.id, x)
     end
 
-    let restrictedSpellwork =
+    let restricted_spellwork =
       Json.Decode.(
         field "type" string
         |> andThen (function
@@ -154,9 +150,9 @@ module Static = struct
       type multilingual = {
         id : int;
         guideline : int;
-        electiveSpellworks : int list;
-        restrictedSpellworks : restrictedSpellwork list;
-        lessonPackages : LessonPackage.multilingual list;
+        elective_spellworks : int list;
+        restricted_spellworks : restricted_spellwork list;
+        lesson_packages : LessonPackage.multilingual list;
         src : PublicationRef.Decode.multilingual list;
         translations : Translation.t Json_Decode_TranslationMap.partial;
       }
@@ -166,10 +162,10 @@ module Static = struct
           {
             id = json |> field "id" int;
             guideline = json |> field "guideline" int;
-            electiveSpellworks = json |> field "electiveSpellworks" (list int);
-            restrictedSpellworks =
-              json |> field "restrictedSpellworks" (list restrictedSpellwork);
-            lessonPackages =
+            elective_spellworks = json |> field "electiveSpellworks" (list int);
+            restricted_spellworks =
+              json |> field "restrictedSpellworks" (list restricted_spellwork);
+            lesson_packages =
               json |> field "lessonPackages" (list LessonPackage.multilingual);
             src = json |> field "src" PublicationRef.Decode.multilingualList;
             translations = json |> field "translations" decodeTranslations;
@@ -182,11 +178,11 @@ module Static = struct
             id = multilingual.id;
             name = translation.name;
             guideline = multilingual.guideline;
-            electiveSpellworks = multilingual.electiveSpellworks;
-            restrictedSpellworks = multilingual.restrictedSpellworks;
-            lessonPackages =
+            elective_spellworks = multilingual.elective_spellworks;
+            restricted_spellworks = multilingual.restricted_spellworks;
+            lesson_packages =
               Ley_Option.Infix.(
-                multilingual.lessonPackages
+                multilingual.lesson_packages
                 |> Ley_Option.mapOption (fun pkg ->
                        pkg
                        |> LessonPackage.resolveTranslations langs
@@ -205,4 +201,8 @@ module Static = struct
       end
     end)
   end
+end
+
+module Dynamic = struct
+  type t = { id : int; lesson_package : int option; static : Static.t option }
 end
