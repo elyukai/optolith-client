@@ -85,24 +85,28 @@ module Static = struct
             translations = json |> field "translations" decode_translations;
           }
 
-      let make _ (x : multilingual) (translation : Translation.t) =
+      let make _ (multilingual : multilingual) (translation : Translation.t) =
         Some
           {
-            id = x.id;
+            id = multilingual.id;
             name = translation.name;
-            common_cultures = x.common_cultures |> IS.fromList;
-            common_advantages = x.common_advantages |> O.fromOption [];
+            common_cultures = multilingual.common_cultures |> IS.fromList;
+            common_advantages =
+              multilingual.common_advantages |> O.fromOption [];
             common_advantages_text = translation.common_advantages;
-            common_disadvantages = x.common_disadvantages |> O.fromOption [];
+            common_disadvantages =
+              multilingual.common_disadvantages |> O.fromOption [];
             common_disadvantages_text = translation.common_disadvantages;
-            uncommon_advantages = x.uncommon_advantages |> O.fromOption [];
+            uncommon_advantages =
+              multilingual.uncommon_advantages |> O.fromOption [];
             uncommon_advantages_text = translation.uncommon_advantages;
-            uncommon_disadvantages = x.uncommon_disadvantages |> O.fromOption [];
+            uncommon_disadvantages =
+              multilingual.uncommon_disadvantages |> O.fromOption [];
             uncommon_disadvantages_text = translation.uncommon_disadvantages;
-            hair_colors = x.hair_colors;
-            eye_colors = x.eye_colors;
-            size_base = x.size_base;
-            size_random = x.size_random;
+            hair_colors = multilingual.hair_colors;
+            eye_colors = multilingual.eye_colors;
+            size_base = multilingual.size_base;
+            size_random = multilingual.size_random;
           }
 
       module Accessors = struct
