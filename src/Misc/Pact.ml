@@ -1,15 +1,3 @@
-module Dynamic = struct
-  type domain = Predefined of int | Custom of string
-
-  type t = {
-    category : int;
-    level : int;
-    type_ : int;
-    domain : domain;
-    name : string;
-  }
-end
-
 module Static = struct
   type t = {
     id : int;
@@ -148,4 +136,42 @@ module Static = struct
       end
     end)
   end
+end
+
+module Dynamic = struct
+  type domain = Predefined of int | Custom of string
+
+  type t = {
+    category : int;
+    level : int;
+    type_ : int;
+    domain : domain;
+    name : string;
+  }
+
+  let is_domain_valid pact =
+    match pact.domain with
+    | Predefined domain -> domain > 0
+    | Custom domain -> String.length domain > 0
+
+  let is_name_valid pact = pact.category == 2 || String.length pact.name > 0
+
+  let is_archdemonic_domain pact =
+    match pact.domain with
+    | Predefined domain -> domain < 13
+    | Custom _ -> false
+
+  let is_free_demon_domain pact =
+    match pact.domain with
+    | Predefined domain -> domain >= 13
+    | Custom _ -> false
+
+  let is_type_valid pact =
+    pact.category == 1
+    || pact.category == 2
+       && ( (is_archdemonic_domain pact && pact.type_ == 1)
+          || (is_free_demon_domain pact && pact.type_ == 2) )
+
+  let is_valid pact =
+    is_domain_valid pact && is_name_valid pact && is_type_valid pact
 end

@@ -451,6 +451,8 @@ module SpecialAbility : sig
       | AreaKnowledge
       | Literacy
       | Language
+      | FireEater
+      | LanguageSpecialization
       | Other of int
 
     val fromInt : int -> t
@@ -467,7 +469,11 @@ module SpecialAbility : sig
   end
 
   module CombatSpecialAbility : sig
-    type t = Other of int
+    type t =
+      | CombatReflexes
+      | ImprovedDodge
+      | CombatStyleCombination
+      | Other of int
 
     val fromInt : int -> t
 
@@ -475,7 +481,16 @@ module SpecialAbility : sig
   end
 
   module MagicalSpecialAbility : sig
-    type t = PropertyKnowledge | Other of int
+    type t =
+      | PropertyKnowledge
+      | Adaptation
+      | Exorcist
+      | FavoriteSpellwork (* Lieblingszauber *)
+      | MagicStyleCombination
+      | GrosseMeditation
+      | Imitationszauberei
+      | Kraftliniennutzung
+      | Other of int
 
     val fromInt : int -> t
 
@@ -483,7 +498,7 @@ module SpecialAbility : sig
   end
 
   module StaffEnchantment : sig
-    type t = Other of int
+    type t = PropertyFocus | Other of int
 
     val fromInt : int -> t
 
@@ -499,7 +514,11 @@ module SpecialAbility : sig
   end
 
   module KarmaSpecialAbility : sig
-    type t = AspectKnowledge | Other of int
+    type t =
+      | AspectKnowledge
+      | HigherOrdination
+      | FavoriteLiturgicalChant
+      | Other of int
 
     val fromInt : int -> t
 
@@ -515,7 +534,7 @@ module SpecialAbility : sig
   end
 
   module CombatStyleSpecialAbility : sig
-    type t = Other of int
+    type t = GaretherGossenStil | Other of int
 
     val fromInt : int -> t
 
@@ -539,7 +558,12 @@ module SpecialAbility : sig
   end
 
   module MagicStyleSpecialAbility : sig
-    type t = Other of int
+    type t =
+      | ScholarDerHalleDesLebensZuNorburg
+      | ScholarDesKreisesDerEinfuehlung
+      | MadaschwesternStil
+      | ScholarDesMagierkollegsZuHoningen
+      | Other of int
 
     val fromInt : int -> t
 
@@ -547,7 +571,7 @@ module SpecialAbility : sig
   end
 
   module AdvancedMagicalSpecialAbility : sig
-    type t = Other of int
+    type t = HarmoniousMagic | MatrixCasting | Other of int
 
     val fromInt : int -> t
 
@@ -619,7 +643,12 @@ module SpecialAbility : sig
   end
 
   module CeremonialItemSpecialAbility : sig
-    type t = Other of int
+    type t =
+      | FieldOfResearch
+      | ExpertKnowledge
+      | ThirstForKnowledge
+      | ResearchInstinct
+      | Other of int
 
     val fromInt : int -> t
 
@@ -627,7 +656,13 @@ module SpecialAbility : sig
   end
 
   module Sermon : sig
-    type t = Other of int
+    type t =
+      | PredigtDerGemeinschaft
+      | PredigtDerZuversicht
+      | PredigtDesGottvertrauens
+      | PredigtDesWohlgefallens
+      | PredigtWiderMissgeschicke
+      | Other of int
 
     val fromInt : int -> t
 
@@ -635,7 +670,11 @@ module SpecialAbility : sig
   end
 
   module LiturgicalStyleSpecialAbility : sig
-    type t = Other of int
+    type t =
+      | BirdsOfPassage
+      | HuntressesOfTheWhiteMaiden
+      | FollowersOfTheGoldenOne
+      | Other of int
 
     val fromInt : int -> t
 
@@ -643,7 +682,7 @@ module SpecialAbility : sig
   end
 
   module AdvancedKarmaSpecialAbility : sig
-    type t = Other of int
+    type t = MasterOfAspect | Other of int
 
     val fromInt : int -> t
 
@@ -651,7 +690,13 @@ module SpecialAbility : sig
   end
 
   module Vision : sig
-    type t = Other of int
+    type t =
+      | VisionDerBestimmung
+      | VisionDerEntrueckung
+      | VisionDerGottheit
+      | VisionDesSchicksals
+      | VisionDesWahrenGlaubens
+      | Other of int
 
     val fromInt : int -> t
 
@@ -666,10 +711,10 @@ module SpecialAbility : sig
       | TraditionDruids
       | TraditionQabalyaMage
       | TraditionIntuitiveMage
-      | TraditionSavant (* Tradition (Meistertalentierte) *)
-      | TraditionIllusionist (* Tradition (Scharlatane) *)
-      | TraditionArcaneBard (* Tradition (Zauberbarden) *)
-      | TraditionArcaneDancer (* Tradition (Zaubertaenzer) *)
+      | TraditionSavant
+      | TraditionIllusionist
+      | TraditionArcaneBard
+      | TraditionArcaneDancer
       | TraditionSchelme
       | TraditionZauberalchimisten
       | TraditionTsatuariaAnhaengerinnen
@@ -685,7 +730,28 @@ module SpecialAbility : sig
   end
 
   module BlessedTradition : sig
-    type t = Other of int
+    type t =
+      | TraditionChurchOfPraios
+      | TraditionChurchOfRondra
+      | TraditionChurchOfBoron
+      | TraditionChurchOfHesinde
+      | TraditionChurchOfPhex
+      | TraditionChurchOfPeraine
+      | TraditionChurchOfEfferd
+      | TraditionChurchOfTravia
+      | TraditionChurchOfFirun
+      | TraditionChurchOfTsa
+      | TraditionChurchOfIngerimm
+      | TraditionChurchOfRahja
+      | TraditionCultOfTheNamelessOne
+      | TraditionChurchOfAves
+      | TraditionChurchOfIfirn
+      | TraditionChurchOfKor
+      | TraditionChurchOfNandus
+      | TraditionChurchOfSwafnir
+      | TraditionCultOfLevthan
+      | TraditionCultOfNuminoru
+      | Other of int
 
     val fromInt : int -> t
 
@@ -693,7 +759,7 @@ module SpecialAbility : sig
   end
 
   module Paktgeschenk : sig
-    type t = Other of int
+    type t = DunklesAbbildDerBuendnisgabe | Zaubervariabilitaet | Other of int
 
     val fromInt : int -> t
 
@@ -717,7 +783,11 @@ module SpecialAbility : sig
   end
 
   module Talentstilsonderfertigkeit : sig
-    type t = Other of int
+    type t =
+      | WegDerGelehrten
+      | WegDerKuenstlerin
+      | WegDerSchreiberin
+      | Other of int
 
     val fromInt : int -> t
 
@@ -725,7 +795,14 @@ module SpecialAbility : sig
   end
 
   module ErweiterteTalentsonderfertigkeit : sig
-    type t = Other of int
+    type t =
+      | Fachwissen
+      | Handwerkskunst
+      | KindDerNatur
+      | KoerperlichesGeschick
+      | SozialeKompetenz
+      | Universalgenie
+      | Other of int
 
     val fromInt : int -> t
 
@@ -820,51 +897,51 @@ module SpecialAbility : sig
     val toInt : t -> int
   end
 
-  (* type t =
-     | GeneralSpecialAbility of int
-     | FatePointSpecialAbility of int
-     | CombatSpecialAbility of int
-     | MagicalSpecialAbility of int
-     | StaffEnchantment of int
-     | FamiliarSpecialAbility of int
-     | KarmaSpecialAbility of int
-     | ProtectiveWardingCircleSpecialAbility of int
-     | CombatStyleSpecialAbility of int
-     | AdvancedCombatSpecialAbility of int
-     | CommandSpecialAbility of int
-     | MagicStyleSpecialAbility of int
-     | AdvancedMagicalSpecialAbility of int
-     | SpellSwordEnchantment of int
-     | DaggerRitual of int
-     | InstrumentEnchantment of int
-     | AttireEnchantment of int
-     | OrbEnchantment of int
-     | WandEnchantment of int
-     | BrawlingSpecialAbility of int
-     | AncestorGlyph of int
-     | CeremonialItemSpecialAbility of int
-     | Sermon of int
-     | LiturgicalStyleSpecialAbility of int
-     | AdvancedKarmaSpecialAbility of int
-     | Vision of int
-     | MagicalTradition of int
-     | BlessedTradition of int
-     | Paktgeschenk of int
-     | SikaryanRaubSonderfertigkeit of int
-     | LykanthropischeGabe of int
-     | Talentstilsonderfertigkeit of int
-     | ErweiterteTalentsonderfertigkeit of int
-     | Kugelzauber of int
-     | Kesselzauber of int
-     | Kappenzauber of int
-     | Spielzeugzauber of int
-     | Schalenzauber of int
-     | SexSchicksalspunkteSonderfertigkeit of int
-     | SexSonderfertigkeit of int
-     | Waffenzauber of int
-     | Sichelritual of int
-     | Ringzauber of int
-     | Chronikzauber of int *)
+  type t =
+    | GeneralSpecialAbility of int
+    | FatePointSpecialAbility of int
+    | CombatSpecialAbility of int
+    | MagicalSpecialAbility of int
+    | StaffEnchantment of int
+    | FamiliarSpecialAbility of int
+    | KarmaSpecialAbility of int
+    | ProtectiveWardingCircleSpecialAbility of int
+    | CombatStyleSpecialAbility of int
+    | AdvancedCombatSpecialAbility of int
+    | CommandSpecialAbility of int
+    | MagicStyleSpecialAbility of int
+    | AdvancedMagicalSpecialAbility of int
+    | SpellSwordEnchantment of int
+    | DaggerRitual of int
+    | InstrumentEnchantment of int
+    | AttireEnchantment of int
+    | OrbEnchantment of int
+    | WandEnchantment of int
+    | BrawlingSpecialAbility of int
+    | AncestorGlyph of int
+    | CeremonialItemSpecialAbility of int
+    | Sermon of int
+    | LiturgicalStyleSpecialAbility of int
+    | AdvancedKarmaSpecialAbility of int
+    | Vision of int
+    | MagicalTradition of int
+    | BlessedTradition of int
+    | Paktgeschenk of int
+    | SikaryanRaubSonderfertigkeit of int
+    | LykanthropischeGabe of int
+    | Talentstilsonderfertigkeit of int
+    | ErweiterteTalentsonderfertigkeit of int
+    | Kugelzauber of int
+    | Kesselzauber of int
+    | Kappenzauber of int
+    | Spielzeugzauber of int
+    | Schalenzauber of int
+    | SexSchicksalspunkteSonderfertigkeit of int
+    | SexSonderfertigkeit of int
+    | Waffenzauber of int
+    | Sichelritual of int
+    | Ringzauber of int
+    | Chronikzauber of int
 
   module Nested : sig
     type t =
@@ -915,87 +992,6 @@ module SpecialAbility : sig
       | Ringzauber of Ringzauber.t
       | Chronikzauber of Chronikzauber.t
   end
-
-  type t =
-    | CombatReflexes
-    | ImprovedDodge
-    | PropertyKnowledge
-    | PropertyFocus
-    | AspectKnowledge
-    | TraditionChurchOfPraios
-    | Feuerschlucker
-    | CombatStyleCombination
-    | AdaptionZauber
-    | Exorzist
-    | FavoriteSpellwork
-    | MagicStyleCombination
-    | Harmoniezauberei
-    | Matrixzauberei
-    | SpellEnhancement
-    | Forschungsgebiet
-    | Expertenwissen
-    | Wissensdurst
-    | Recherchegespuer
-    | PredigtDerGemeinschaft
-    | PredigtDerZuversicht
-    | PredigtDesGottvertrauens
-    | PredigtDesWohlgefallens
-    | PredigtWiderMissgeschicke
-    | VisionDerBestimmung
-    | VisionDerEntrueckung
-    | VisionDerGottheit
-    | VisionDesSchicksals
-    | VisionDesWahrenGlaubens
-    | HoheWeihe
-    | Lieblingsliturgie
-    | Zugvoegel
-    | JaegerinnenDerWeissenMaid
-    | AnhaengerDesGueldenen
-    | GebieterDesAspekts
-    | ChantEnhancement
-    | DunklesAbbildDerBuendnisgabe
-    | TraditionChurchOfRondra
-    | TraditionChurchOfBoron
-    | TraditionChurchOfHesinde
-    | TraditionChurchOfPhex
-    | TraditionChurchOfPeraine
-    | TraditionChurchOfEfferd
-    | TraditionChurchOfTravia
-    | TraditionChurchOfFirun
-    | TraditionChurchOfTsa
-    | TraditionChurchOfIngerimm
-    | TraditionChurchOfRahja
-    | TraditionCultOfTheNamelessOne
-    | TraditionChurchOfAves
-    | TraditionChurchOfIfirn
-    | TraditionChurchOfKor
-    | TraditionChurchOfNandus
-    | TraditionChurchOfSwafnir
-    | LanguageSpecializations
-    | GrosseMeditation
-    | Imitationszauberei
-    | Kraftliniennutzung
-    | ScholarDerHalleDesLebensZuNorburg
-    | ScholarDesKreisesDerEinfuehlung
-    | MadaschwesternStil
-    | GaretherGossenStil
-    | WegDerGelehrten
-    | TraditionCultOfNuminoru
-    | WegDerKuenstlerin
-    | WegDerSchreiberin
-    | Fachwissen
-    | Handwerkskunst
-    | KindDerNatur
-    | KoerperlichesGeschick
-    | SozialeKompetenz
-    | Universalgenie
-    | ScholarDesMagierkollegsZuHoningen
-    | Zaubervariabilitaet
-    | Other of int
-
-  val fromInt : int -> t
-
-  val toInt : t -> int
 end
 
 module Activatable : sig

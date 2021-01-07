@@ -67,4 +67,5 @@ module Test = {
 
 Webapi.Dom.document
 |> Webapi.Dom.Document.querySelector("#bodywrapper")
-|> Ley_Option.fmap(ReactDOM.render(<Test />));
+|> Ley_Option.fmap(ReactDOM.render(<Test />))
+|> ignore;

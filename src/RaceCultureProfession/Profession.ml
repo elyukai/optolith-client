@@ -30,8 +30,7 @@ module Static = struct
     type skill = {
       gr : int option;
           (** If specified, only choose from skills of the specified group. *)
-      value : int;
-          (** The AP value the user can spend. *)
+      value : int;  (** The AP value the user can spend. *)
     }
 
     type activatable_skill = { id : int list; value : int }
@@ -97,7 +96,8 @@ module Static = struct
           |> andThen (function
                | "Remove" -> F.const Remove
                | "Override" -> decoder |> map (fun x -> Override x)
-               | str -> raise(DecodeError ("Unknown variant override type: " ^ str))))
+               | str ->
+                   raise (DecodeError ("Unknown variant override type: " ^ str))))
 
       let skill_specialization =
         Json.Decode.(
@@ -156,16 +156,19 @@ module Static = struct
             value = json |> field "value" int;
           }
 
-      let variant json: variant =
+      let variant json : variant =
         Json_Decode_Strict.
-          ({
+          {
             skill_specialization =
               json
-              |> optionalField "skillSpecialization" (variant_override skill_specialization);
+              |> optionalField "skillSpecialization"
+                   (variant_override skill_specialization);
             language_script =
               json |> optionalField "languageScript" language_and_script;
             combat_technique =
-              json |> optionalField "combatTechnique" (variant_override combat_technique);
+              json
+              |> optionalField "combatTechnique"
+                   (variant_override combat_technique);
             cantrip = json |> optionalField "cantrip" cantrip;
             curse = json |> optionalField "curse" curse;
             terrain_knowledge =
@@ -175,7 +178,7 @@ module Static = struct
             liturgical_chants =
               json |> optionalField "liturgicalChants" (list activatable_skill);
             guild_mage_unfamiliar_spell = false;
-          })
+          }
 
       let t json =
         Json_Decode_Strict.(
@@ -184,7 +187,8 @@ module Static = struct
                 json |> optionalField "skillSpecialization" skill_specialization;
               language_script =
                 json |> optionalField "languageScript" language_and_script;
-              combat_technique = json |> optionalField "combatTechnique" combat_technique;
+              combat_technique =
+                json |> optionalField "combatTechnique" combat_technique;
               cantrip = json |> optionalField "cantrip" cantrip;
               curse = json |> optionalField "curse" curse;
               terrain_knowledge =
@@ -204,56 +208,53 @@ module Static = struct
       |> Ley_List.any (fun (x : Prerequisite.Profession.t) ->
              match x.value with
              | Activatable { id; active = true; _ } -> (
-                 (
-                   id
-                   == Id.Activatable.MagicalTradition
-                        (Id.SpecialAbility.MagicalTradition.toInt TraditionGuildMages)) [@warning
-                                                                         "-44"]
-                 )
-             | Activatable _ | Sex _ | Race _ | Culture _  | Increasable _ -> false)
+                 match[@warning "-4"] Id.Activatable.to_nested id with
+                 | MagicalTradition TraditionGuildMages -> true
+                 | _ -> false )
+             | Activatable _ | Sex _ | Race _ | Culture _ | Increasable _ ->
+                 false)
   end
 
   type name = Const of string | BySex of { m : string; f : string }
 
   let name =
     Json_Decode_Strict.(
-      either (fun json -> json |> string |> (fun x -> Const x))
-            (fun json -> BySex { m = json |> field "m" string; f = json |> field "f" string })
-        )
+      either
+        (fun json -> json |> string |> fun x -> Const x)
+        (fun json ->
+          BySex { m = json |> field "m" string; f = json |> field "f" string }))
 
-
-        let split_combat_techniques xs =
-          xs |> O.option (IM.empty, IM.empty) (
-          List.fold_left (fun (mp1, mp2) {IdValue.id; value} ->
+  let split_combat_techniques xs =
+    xs
+    |> O.option (IM.empty, IM.empty)
+         (List.fold_left
+            (fun (mp1, mp2) { IdValue.id; value } ->
               match id with
               | Id.CombatTechnique.MeleeCombatTechnique id ->
-                  (IM.insert value id mp1 , mp2)
-              | RangedCombatTechnique id ->
-                  (mp1, IM.insert value id mp2)
-            )
-            (IM.empty, IM.empty) )
+                  (IM.insert value id mp1, mp2)
+              | RangedCombatTechnique id -> (mp1, IM.insert value id mp2))
+            (IM.empty, IM.empty))
 
-        let split_spells xs =
-        xs |> O.option (IM.empty, IM.empty) (
-          List.fold_left (fun (mp1, mp2) {IdValue.id; value} ->
+  let split_spells xs =
+    xs
+    |> O.option (IM.empty, IM.empty)
+         (List.fold_left
+            (fun (mp1, mp2) { IdValue.id; value } ->
               match id with
-              | Id.Spellwork.Spell id ->
-                  (IM.insert value id mp1 , mp2)
-              | Ritual id ->
-                  (mp1, IM.insert value id mp2)
-            )
-            (IM.empty, IM.empty) )
+              | Id.Spellwork.Spell id -> (IM.insert value id mp1, mp2)
+              | Ritual id -> (mp1, IM.insert value id mp2))
+            (IM.empty, IM.empty))
 
-        let split_liturgical_chants xs =
-        xs |> O.option (IM.empty, IM.empty) (
-          List.fold_left (fun (mp1, mp2) {IdValue.id; value} ->
+  let split_liturgical_chants xs =
+    xs
+    |> O.option (IM.empty, IM.empty)
+         (List.fold_left
+            (fun (mp1, mp2) { IdValue.id; value } ->
               match id with
               | Id.LiturgicalChant.LiturgicalChant id ->
-                  (IM.insert value id mp1 , mp2)
-              | Ceremony id ->
-                  (mp1, IM.insert value id mp2)
-            )
-            (IM.empty, IM.empty) )
+                  (IM.insert value id mp1, mp2)
+              | Ceremony id -> (mp1, IM.insert value id mp2))
+            (IM.empty, IM.empty))
 
   module Variant = struct
     type t = {
@@ -287,15 +288,14 @@ module Static = struct
           concluding_text : string option;
         }
 
-        let t
-          json
-          = Json_Decode_Strict.
-               {
-                 name = json |> field "name" name;
-                 preceding_text = json |> optionalField "precedingText" string;
-                 full_text = json |> optionalField "fullText" string;
-                 concluding_text = json |> optionalField "concludingText" string;
-               }
+        let t json =
+          Json_Decode_Strict.
+            {
+              name = json |> field "name" name;
+              preceding_text = json |> optionalField "precedingText" string;
+              full_text = json |> optionalField "fullText" string;
+              concluding_text = json |> optionalField "concludingText" string;
+            }
 
         let pred _ = true
       end
@@ -353,15 +353,15 @@ module Static = struct
           multilingual.prerequisites
           |> O.option []
                (Prerequisite.Collection.Profession.Decode.resolveTranslations
-                  langs) in
-        let melee_combat_techniques, ranged_combat_techniques = split_combat_techniques
-        multilingual.combat_techniques
+                  langs)
         in
-        let spells, rituals = split_spells
-        multilingual.spells in
-        let liturgical_chants, ceremonies = split_liturgical_chants
-        multilingual.liturgical_chants
-      in
+        let melee_combat_techniques, ranged_combat_techniques =
+          split_combat_techniques multilingual.combat_techniques
+        in
+        let spells, rituals = split_spells multilingual.spells in
+        let liturgical_chants, ceremonies =
+          split_liturgical_chants multilingual.liturgical_chants
+        in
         Some
           {
             id = multilingual.id;
@@ -374,12 +374,17 @@ module Static = struct
                 guild_mage_unfamiliar_spell =
                   Options.guild_mage_unfamiliar_spell prerequisites;
               };
-            special_abilities = multilingual.special_abilities |> O.fromOption [];
+            special_abilities =
+              multilingual.special_abilities |> O.fromOption [];
             melee_combat_techniques;
             ranged_combat_techniques;
-            skills = multilingual.skills |> O.option IM.empty (IM.from_list_with IdValue.Decode.to_assoc);
-            spells; rituals;
-            liturgical_chants; ceremonies;
+            skills =
+              multilingual.skills
+              |> O.option IM.empty (IM.from_list_with IdValue.Decode.to_assoc);
+            spells;
+            rituals;
+            liturgical_chants;
+            ceremonies;
             blessings = multilingual.blessings |> O.fromOption [];
             preceding_text = translation.preceding_text;
             full_text = translation.full_text;
@@ -536,20 +541,21 @@ module Static = struct
           translations = json |> field "translations" decode_translations;
         }
 
-    let make langs (multilingual : multilingual) (translation : Translation.t): t option =
+    let make langs (multilingual : multilingual) (translation : Translation.t) :
+        t option =
       let prerequisites =
         multilingual.prerequisites
         |> O.option []
              (Prerequisite.Collection.Profession.Decode.resolveTranslations
                 langs)
       in
-      let melee_combat_techniques, ranged_combat_techniques = split_combat_techniques
-      multilingual.combat_techniques
+      let melee_combat_techniques, ranged_combat_techniques =
+        split_combat_techniques multilingual.combat_techniques
       in
-      let spells, rituals = split_spells
-      multilingual.spells in
-      let liturgical_chants, ceremonies = split_liturgical_chants
-      multilingual.liturgical_chants in
+      let spells, rituals = split_spells multilingual.spells in
+      let liturgical_chants, ceremonies =
+        split_liturgical_chants multilingual.liturgical_chants
+      in
       Some
         {
           id = multilingual.id;
@@ -567,22 +573,31 @@ module Static = struct
           special_abilities = multilingual.special_abilities |> O.fromOption [];
           melee_combat_techniques;
           ranged_combat_techniques;
-          skills = multilingual.skills |> O.option IM.empty (IM.from_list_with IdValue.Decode.to_assoc);
-          spells; rituals;
-          liturgical_chants; ceremonies;
+          skills =
+            multilingual.skills
+            |> O.option IM.empty (IM.from_list_with IdValue.Decode.to_assoc);
+          spells;
+          rituals;
+          liturgical_chants;
+          ceremonies;
           blessings = multilingual.blessings |> O.fromOption [];
-          suggested_advantages = multilingual.suggested_advantages |> O.fromOption [];
+          suggested_advantages =
+            multilingual.suggested_advantages |> O.fromOption [];
           suggested_advantages_text = translation.suggested_advantages;
-          suggested_disadvantages = multilingual.suggested_disadvantages |> O.fromOption [];
+          suggested_disadvantages =
+            multilingual.suggested_disadvantages |> O.fromOption [];
           suggested_disadvantages_text = translation.suggested_disadvantages;
-          unsuitable_advantages = multilingual.unsuitable_advantages |> O.fromOption [];
+          unsuitable_advantages =
+            multilingual.unsuitable_advantages |> O.fromOption [];
           unsuitable_advantages_text = translation.unsuitable_advantages;
-          unsuitable_disadvantages = multilingual.unsuitable_disadvantages |> O.fromOption [];
+          unsuitable_disadvantages =
+            multilingual.unsuitable_disadvantages |> O.fromOption [];
           unsuitable_disadvantages_text = translation.unsuitable_disadvantages;
           variants =
             multilingual.variants
-            |> O.option [] (O.mapOption (Variant.Decode.resolveTranslations langs))
-            |> IM.from_list_with (fun (v: Variant.t) -> (v.id, v));
+            |> O.option []
+                 (O.mapOption (Variant.Decode.resolveTranslations langs))
+            |> IM.from_list_with (fun (v : Variant.t) -> (v.id, v));
           is_variant_required = multilingual.is_variant_required;
           curriculum = multilingual.curriculum;
           gr = multilingual.gr;
@@ -601,5 +616,7 @@ module Static = struct
 end
 
 module Dynamic = struct
-  type t = Base of int | WithVariant of (int * int)
+  type id = Base of int | WithVariant of { base : int; variant : int }
+
+  type t = { id : id; static : Static.t option }
 end

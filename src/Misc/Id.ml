@@ -995,6 +995,8 @@ module SpecialAbility = struct
       | AreaKnowledge
       | Literacy
       | Language
+      | FireEater
+      | LanguageSpecialization
       | Other of int
 
     let fromInt = function
@@ -1005,6 +1007,8 @@ module SpecialAbility = struct
       | 22 -> AreaKnowledge
       | 27 -> Literacy
       | 29 -> Language
+      | 30 -> LanguageSpecialization
+      | 53 -> FireEater
       | x -> Other x
 
     let toInt = function
@@ -1015,6 +1019,8 @@ module SpecialAbility = struct
       | AreaKnowledge -> 22
       | Literacy -> 27
       | Language -> 29
+      | LanguageSpecialization -> 30
+      | FireEater -> 53
       | Other x -> x
   end
 
@@ -1027,27 +1033,66 @@ module SpecialAbility = struct
   end
 
   module CombatSpecialAbility = struct
-    type t = Other of int
+    type t =
+      | CombatReflexes
+      | ImprovedDodge
+      | CombatStyleCombination
+      | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 12 -> CombatReflexes
+      | 25 -> ImprovedDodge
+      | 45 -> CombatStyleCombination
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | CombatReflexes -> 12
+      | ImprovedDodge -> 25
+      | CombatStyleCombination -> 45
+      | Other x -> x
   end
 
   module MagicalSpecialAbility = struct
-    type t = PropertyKnowledge | Other of int
+    type t =
+      | PropertyKnowledge
+      | Adaptation
+      | Exorcist
+      | FavoriteSpellwork (* Lieblingszauber *)
+      | MagicStyleCombination
+      | GrosseMeditation
+      | Imitationszauberei
+      | Kraftliniennutzung
+      | Other of int
 
-    let fromInt = function 3 -> PropertyKnowledge | x -> Other x
+    let fromInt = function
+      | 3 -> PropertyKnowledge
+      | 18 -> Adaptation
+      | 25 -> Exorcist
+      | 31 -> FavoriteSpellwork
+      | 43 -> MagicStyleCombination
+      | 48 -> GrosseMeditation
+      | 51 -> Imitationszauberei
+      | 57 -> Kraftliniennutzung
+      | x -> Other x
 
-    let toInt = function PropertyKnowledge -> 3 | Other x -> x
+    let toInt = function
+      | PropertyKnowledge -> 3
+      | Adaptation -> 18
+      | Exorcist -> 25
+      | FavoriteSpellwork -> 31
+      | MagicStyleCombination -> 43
+      | GrosseMeditation -> 48
+      | Imitationszauberei -> 51
+      | Kraftliniennutzung -> 57
+      | Other x -> x
   end
 
   module StaffEnchantment = struct
-    type t = Other of int
+    type t = PropertyFocus | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function 6 -> PropertyFocus | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function PropertyFocus -> 6 | Other x -> x
   end
 
   module FamiliarSpecialAbility = struct
@@ -1059,11 +1104,23 @@ module SpecialAbility = struct
   end
 
   module KarmaSpecialAbility = struct
-    type t = AspectKnowledge | Other of int
+    type t =
+      | AspectKnowledge
+      | HigherOrdination
+      | FavoriteLiturgicalChant
+      | Other of int
 
-    let fromInt = function 1 -> AspectKnowledge | x -> Other x
+    let fromInt = function
+      | 1 -> AspectKnowledge
+      | 14 -> HigherOrdination
+      | 20 -> FavoriteLiturgicalChant
+      | x -> Other x
 
-    let toInt = function AspectKnowledge -> 1 | Other x -> x
+    let toInt = function
+      | AspectKnowledge -> 1
+      | HigherOrdination -> 14
+      | FavoriteLiturgicalChant -> 20
+      | Other x -> x
   end
 
   module ProtectiveWardingCircleSpecialAbility = struct
@@ -1075,7 +1132,7 @@ module SpecialAbility = struct
   end
 
   module CombatStyleSpecialAbility = struct
-    type t = Other of int
+    type t = GaretherGossenStil | Other of int
 
     let fromInt = function x -> Other x
 
@@ -1099,7 +1156,12 @@ module SpecialAbility = struct
   end
 
   module MagicStyleSpecialAbility = struct
-    type t = Other of int
+    type t =
+      | ScholarDerHalleDesLebensZuNorburg
+      | ScholarDesKreisesDerEinfuehlung
+      | MadaschwesternStil
+      | ScholarDesMagierkollegsZuHoningen
+      | Other of int
 
     let fromInt = function x -> Other x
 
@@ -1107,11 +1169,17 @@ module SpecialAbility = struct
   end
 
   module AdvancedMagicalSpecialAbility = struct
-    type t = Other of int
+    type t = HarmoniousMagic | MatrixCasting | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 12 -> HarmoniousMagic
+      | 19 -> MatrixCasting
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | HarmoniousMagic -> 12
+      | MatrixCasting -> 19
+      | Other x -> x
   end
 
   module SpellSwordEnchantment = struct
@@ -1179,23 +1247,60 @@ module SpecialAbility = struct
   end
 
   module CeremonialItemSpecialAbility = struct
-    type t = Other of int
+    type t =
+      | FieldOfResearch
+      | ExpertKnowledge
+      | ThirstForKnowledge
+      | ResearchInstinct
+      | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 32 -> FieldOfResearch
+      | 33 -> ExpertKnowledge
+      | 91 -> ThirstForKnowledge
+      | 93 -> ResearchInstinct
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | FieldOfResearch -> 32
+      | ExpertKnowledge -> 33
+      | ThirstForKnowledge -> 91
+      | ResearchInstinct -> 93
+      | Other x -> x
   end
 
   module Sermon = struct
-    type t = Other of int
+    type t =
+      | PredigtDerGemeinschaft
+      | PredigtDerZuversicht
+      | PredigtDesGottvertrauens
+      | PredigtDesWohlgefallens
+      | PredigtWiderMissgeschicke
+      | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 1 -> PredigtDerGemeinschaft
+      | 2 -> PredigtDerZuversicht
+      | 3 -> PredigtDesGottvertrauens
+      | 4 -> PredigtDesWohlgefallens
+      | 5 -> PredigtWiderMissgeschicke
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | PredigtDerGemeinschaft -> 1
+      | PredigtDerZuversicht -> 2
+      | PredigtDesGottvertrauens -> 3
+      | PredigtDesWohlgefallens -> 4
+      | PredigtWiderMissgeschicke -> 5
+      | Other x -> x
   end
 
   module LiturgicalStyleSpecialAbility = struct
-    type t = Other of int
+    type t =
+      | BirdsOfPassage
+      | HuntressesOfTheWhiteMaiden
+      | FollowersOfTheGoldenOne
+      | Other of int
 
     let fromInt = function x -> Other x
 
@@ -1203,19 +1308,37 @@ module SpecialAbility = struct
   end
 
   module AdvancedKarmaSpecialAbility = struct
-    type t = Other of int
+    type t = MasterOfAspect | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function 5 -> MasterOfAspect | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function MasterOfAspect -> 5 | Other x -> x
   end
 
   module Vision = struct
-    type t = Other of int
+    type t =
+      | VisionDerBestimmung
+      | VisionDerEntrueckung
+      | VisionDerGottheit
+      | VisionDesSchicksals
+      | VisionDesWahrenGlaubens
+      | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 1 -> VisionDerBestimmung
+      | 2 -> VisionDerEntrueckung
+      | 3 -> VisionDerGottheit
+      | 4 -> VisionDesSchicksals
+      | 5 -> VisionDesWahrenGlaubens
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | VisionDerBestimmung -> 1
+      | VisionDerEntrueckung -> 2
+      | VisionDerGottheit -> 3
+      | VisionDesSchicksals -> 4
+      | VisionDesWahrenGlaubens -> 5
+      | Other x -> x
   end
 
   module MagicalTradition = struct
@@ -1281,19 +1404,88 @@ module SpecialAbility = struct
   end
 
   module BlessedTradition = struct
-    type t = Other of int
+    type t =
+      | TraditionChurchOfPraios
+      | TraditionChurchOfRondra
+      | TraditionChurchOfBoron
+      | TraditionChurchOfHesinde
+      | TraditionChurchOfPhex
+      | TraditionChurchOfPeraine
+      | TraditionChurchOfEfferd
+      | TraditionChurchOfTravia
+      | TraditionChurchOfFirun
+      | TraditionChurchOfTsa
+      | TraditionChurchOfIngerimm
+      | TraditionChurchOfRahja
+      | TraditionCultOfTheNamelessOne
+      | TraditionChurchOfAves
+      | TraditionChurchOfIfirn
+      | TraditionChurchOfKor
+      | TraditionChurchOfNandus
+      | TraditionChurchOfSwafnir
+      | TraditionCultOfLevthan
+      | TraditionCultOfNuminoru
+      | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 1 -> TraditionChurchOfPraios
+      | 2 -> TraditionChurchOfRondra
+      | 3 -> TraditionChurchOfBoron
+      | 4 -> TraditionChurchOfHesinde
+      | 5 -> TraditionChurchOfPhex
+      | 6 -> TraditionChurchOfPeraine
+      | 7 -> TraditionChurchOfEfferd
+      | 8 -> TraditionChurchOfTravia
+      | 9 -> TraditionChurchOfFirun
+      | 10 -> TraditionChurchOfTsa
+      | 11 -> TraditionChurchOfIngerimm
+      | 12 -> TraditionChurchOfRahja
+      | 13 -> TraditionCultOfTheNamelessOne
+      | 14 -> TraditionChurchOfAves
+      | 15 -> TraditionChurchOfIfirn
+      | 16 -> TraditionChurchOfKor
+      | 17 -> TraditionChurchOfNandus
+      | 18 -> TraditionChurchOfSwafnir
+      | 19 -> TraditionCultOfLevthan
+      | 20 -> TraditionCultOfNuminoru
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | TraditionChurchOfPraios -> 1
+      | TraditionChurchOfRondra -> 2
+      | TraditionChurchOfBoron -> 3
+      | TraditionChurchOfHesinde -> 4
+      | TraditionChurchOfPhex -> 5
+      | TraditionChurchOfPeraine -> 6
+      | TraditionChurchOfEfferd -> 7
+      | TraditionChurchOfTravia -> 8
+      | TraditionChurchOfFirun -> 9
+      | TraditionChurchOfTsa -> 10
+      | TraditionChurchOfIngerimm -> 11
+      | TraditionChurchOfRahja -> 12
+      | TraditionCultOfTheNamelessOne -> 13
+      | TraditionChurchOfAves -> 14
+      | TraditionChurchOfIfirn -> 15
+      | TraditionChurchOfKor -> 16
+      | TraditionChurchOfNandus -> 17
+      | TraditionChurchOfSwafnir -> 18
+      | TraditionCultOfLevthan -> 19
+      | TraditionCultOfNuminoru -> 20
+      | Other x -> x
   end
 
   module Paktgeschenk = struct
-    type t = Other of int
+    type t = DunklesAbbildDerBuendnisgabe | Zaubervariabilitaet | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 3 -> DunklesAbbildDerBuendnisgabe
+      | 65 -> Zaubervariabilitaet
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | DunklesAbbildDerBuendnisgabe -> 3
+      | Zaubervariabilitaet -> 65
+      | Other x -> x
   end
 
   module SikaryanRaubSonderfertigkeit = struct
@@ -1313,19 +1505,52 @@ module SpecialAbility = struct
   end
 
   module Talentstilsonderfertigkeit = struct
-    type t = Other of int
+    type t =
+      | WegDerGelehrten
+      | WegDerKuenstlerin
+      | WegDerSchreiberin
+      | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 4 -> WegDerGelehrten
+      | 8 -> WegDerKuenstlerin
+      | 14 -> WegDerSchreiberin
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | WegDerGelehrten -> 4
+      | WegDerKuenstlerin -> 8
+      | WegDerSchreiberin -> 14
+      | Other x -> x
   end
 
   module ErweiterteTalentsonderfertigkeit = struct
-    type t = Other of int
+    type t =
+      | Fachwissen
+      | Handwerkskunst
+      | KindDerNatur
+      | KoerperlichesGeschick
+      | SozialeKompetenz
+      | Universalgenie
+      | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 7 -> Fachwissen
+      | 15 -> Handwerkskunst
+      | 17 -> KindDerNatur
+      | 19 -> KoerperlichesGeschick
+      | 30 -> SozialeKompetenz
+      | 34 -> Universalgenie
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | Fachwissen -> 7
+      | Handwerkskunst -> 15
+      | KindDerNatur -> 17
+      | KoerperlichesGeschick -> 19
+      | SozialeKompetenz -> 30
+      | Universalgenie -> 34
+      | Other x -> x
   end
 
   module Kugelzauber = struct
@@ -1416,51 +1641,51 @@ module SpecialAbility = struct
     let toInt = function Other x -> x
   end
 
-  (* type t =
-     | GeneralSpecialAbility of int
-     | FatePointSpecialAbility of int
-     | CombatSpecialAbility of int
-     | MagicalSpecialAbility of int
-     | StaffEnchantment of int
-     | FamiliarSpecialAbility of int
-     | KarmaSpecialAbility of int
-     | ProtectiveWardingCircleSpecialAbility of int
-     | CombatStyleSpecialAbility of int
-     | AdvancedCombatSpecialAbility of int
-     | CommandSpecialAbility of int
-     | MagicStyleSpecialAbility of int
-     | AdvancedMagicalSpecialAbility of int
-     | SpellSwordEnchantment of int
-     | DaggerRitual of int
-     | InstrumentEnchantment of int
-     | AttireEnchantment of int
-     | OrbEnchantment of int
-     | WandEnchantment of int
-     | BrawlingSpecialAbility of int
-     | AncestorGlyph of int
-     | CeremonialItemSpecialAbility of int
-     | Sermon of int
-     | LiturgicalStyleSpecialAbility of int
-     | AdvancedKarmaSpecialAbility of int
-     | Vision of int
-     | MagicalTradition of int
-     | BlessedTradition of int
-     | Paktgeschenk of int
-     | SikaryanRaubSonderfertigkeit of int
-     | LykanthropischeGabe of int
-     | Talentstilsonderfertigkeit of int
-     | ErweiterteTalentsonderfertigkeit of int
-     | Kugelzauber of int
-     | Kesselzauber of int
-     | Kappenzauber of int
-     | Spielzeugzauber of int
-     | Schalenzauber of int
-     | SexSchicksalspunkteSonderfertigkeit of int
-     | SexSonderfertigkeit of int
-     | Waffenzauber of int
-     | Sichelritual of int
-     | Ringzauber of int
-     | Chronikzauber of int *)
+  type t =
+    | GeneralSpecialAbility of int
+    | FatePointSpecialAbility of int
+    | CombatSpecialAbility of int
+    | MagicalSpecialAbility of int
+    | StaffEnchantment of int
+    | FamiliarSpecialAbility of int
+    | KarmaSpecialAbility of int
+    | ProtectiveWardingCircleSpecialAbility of int
+    | CombatStyleSpecialAbility of int
+    | AdvancedCombatSpecialAbility of int
+    | CommandSpecialAbility of int
+    | MagicStyleSpecialAbility of int
+    | AdvancedMagicalSpecialAbility of int
+    | SpellSwordEnchantment of int
+    | DaggerRitual of int
+    | InstrumentEnchantment of int
+    | AttireEnchantment of int
+    | OrbEnchantment of int
+    | WandEnchantment of int
+    | BrawlingSpecialAbility of int
+    | AncestorGlyph of int
+    | CeremonialItemSpecialAbility of int
+    | Sermon of int
+    | LiturgicalStyleSpecialAbility of int
+    | AdvancedKarmaSpecialAbility of int
+    | Vision of int
+    | MagicalTradition of int
+    | BlessedTradition of int
+    | Paktgeschenk of int
+    | SikaryanRaubSonderfertigkeit of int
+    | LykanthropischeGabe of int
+    | Talentstilsonderfertigkeit of int
+    | ErweiterteTalentsonderfertigkeit of int
+    | Kugelzauber of int
+    | Kesselzauber of int
+    | Kappenzauber of int
+    | Spielzeugzauber of int
+    | Schalenzauber of int
+    | SexSchicksalspunkteSonderfertigkeit of int
+    | SexSonderfertigkeit of int
+    | Waffenzauber of int
+    | Sichelritual of int
+    | Ringzauber of int
+    | Chronikzauber of int
 
   module Nested = struct
     type t =
@@ -1511,237 +1736,6 @@ module SpecialAbility = struct
       | Ringzauber of Ringzauber.t
       | Chronikzauber of Chronikzauber.t
   end
-
-  type t =
-    | CombatReflexes
-    | ImprovedDodge
-    | PropertyKnowledge
-    | PropertyFocus
-    | AspectKnowledge
-    | TraditionChurchOfPraios
-    | Feuerschlucker
-    | CombatStyleCombination
-    | AdaptionZauber
-    | Exorzist
-    | FavoriteSpellwork (* Lieblingszauber *)
-    | MagicStyleCombination
-    | Harmoniezauberei
-    | Matrixzauberei
-    | SpellEnhancement
-    | Forschungsgebiet
-    | Expertenwissen
-    | Wissensdurst
-    | Recherchegespuer
-    | PredigtDerGemeinschaft
-    | PredigtDerZuversicht
-    | PredigtDesGottvertrauens
-    | PredigtDesWohlgefallens
-    | PredigtWiderMissgeschicke
-    | VisionDerBestimmung
-    | VisionDerEntrueckung (* Vision der Entrückung *)
-    | VisionDerGottheit
-    | VisionDesSchicksals
-    | VisionDesWahrenGlaubens
-    | HoheWeihe
-    | Lieblingsliturgie
-    | Zugvoegel
-    | JaegerinnenDerWeissenMaid (* Jägerinnen der Weißen Maid *)
-    | AnhaengerDesGueldenen
-    | GebieterDesAspekts
-    | ChantEnhancement
-    | DunklesAbbildDerBuendnisgabe
-    | TraditionChurchOfRondra
-    | TraditionChurchOfBoron
-    | TraditionChurchOfHesinde
-    | TraditionChurchOfPhex
-    | TraditionChurchOfPeraine
-    | TraditionChurchOfEfferd
-    | TraditionChurchOfTravia
-    | TraditionChurchOfFirun
-    | TraditionChurchOfTsa
-    | TraditionChurchOfIngerimm
-    | TraditionChurchOfRahja
-    | TraditionCultOfTheNamelessOne
-    | TraditionChurchOfAves
-    | TraditionChurchOfIfirn
-    | TraditionChurchOfKor
-    | TraditionChurchOfNandus
-    | TraditionChurchOfSwafnir
-    | LanguageSpecializations
-    | GrosseMeditation
-    | Imitationszauberei
-    | Kraftliniennutzung
-    | ScholarDerHalleDesLebensZuNorburg
-    | ScholarDesKreisesDerEinfuehlung
-    | MadaschwesternStil
-    | GaretherGossenStil
-    | WegDerGelehrten
-    | TraditionCultOfNuminoru
-    | WegDerKuenstlerin
-    | WegDerSchreiberin
-    | Fachwissen
-    | Handwerkskunst
-    | KindDerNatur
-    | KoerperlichesGeschick
-    | SozialeKompetenz
-    | Universalgenie
-    | ScholarDesMagierkollegsZuHoningen
-    | Zaubervariabilitaet
-    | Other of int
-
-  let fromInt = function
-    | 51 -> CombatReflexes
-    | 64 -> ImprovedDodge
-    | 72 -> PropertyKnowledge
-    | 81 -> PropertyFocus
-    | 87 -> AspectKnowledge
-    | 86 -> TraditionChurchOfPraios
-    | 109 -> Feuerschlucker
-    | 164 -> CombatStyleCombination
-    | 231 -> AdaptionZauber
-    | 240 -> Exorzist
-    | 250 -> FavoriteSpellwork
-    | 266 -> MagicStyleCombination
-    | 296 -> Harmoniezauberei
-    | 303 -> Matrixzauberei
-    | 414 -> SpellEnhancement
-    | 472 -> Forschungsgebiet
-    | 473 -> Expertenwissen
-    | 531 -> Wissensdurst
-    | 533 -> Recherchegespuer
-    | 544 -> PredigtDerGemeinschaft
-    | 545 -> PredigtDerZuversicht
-    | 546 -> PredigtDesGottvertrauens
-    | 547 -> PredigtDesWohlgefallens
-    | 548 -> PredigtWiderMissgeschicke
-    | 549 -> VisionDerBestimmung
-    | 550 -> VisionDerEntrueckung
-    | 551 -> VisionDerGottheit
-    | 552 -> VisionDesSchicksals
-    | 553 -> VisionDesWahrenGlaubens
-    | 563 -> HoheWeihe
-    | 569 -> Lieblingsliturgie
-    | 623 -> Zugvoegel
-    | 625 -> JaegerinnenDerWeissenMaid
-    | 632 -> AnhaengerDesGueldenen
-    | 639 -> GebieterDesAspekts
-    | 663 -> ChantEnhancement
-    | 667 -> DunklesAbbildDerBuendnisgabe
-    | 682 -> TraditionChurchOfRondra
-    | 683 -> TraditionChurchOfBoron
-    | 684 -> TraditionChurchOfHesinde
-    | 685 -> TraditionChurchOfPhex
-    | 686 -> TraditionChurchOfPeraine
-    | 687 -> TraditionChurchOfEfferd
-    | 688 -> TraditionChurchOfTravia
-    | 689 -> TraditionChurchOfFirun
-    | 690 -> TraditionChurchOfTsa
-    | 691 -> TraditionChurchOfIngerimm
-    | 692 -> TraditionChurchOfRahja
-    | 693 -> TraditionCultOfTheNamelessOne
-    | 694 -> TraditionChurchOfAves
-    | 695 -> TraditionChurchOfIfirn
-    | 696 -> TraditionChurchOfKor
-    | 697 -> TraditionChurchOfNandus
-    | 698 -> TraditionChurchOfSwafnir
-    | 699 -> LanguageSpecializations
-    | 772 -> GrosseMeditation
-    | 775 -> Imitationszauberei
-    | 781 -> Kraftliniennutzung
-    | 802 -> ScholarDerHalleDesLebensZuNorburg
-    | 808 -> ScholarDesKreisesDerEinfuehlung
-    | 821 -> MadaschwesternStil
-    | 901 -> GaretherGossenStil
-    | 1040 -> WegDerGelehrten
-    | 1049 -> TraditionCultOfNuminoru
-    | 1069 -> WegDerKuenstlerin
-    | 1075 -> WegDerSchreiberin
-    | 1100 -> Fachwissen
-    | 1108 -> Handwerkskunst
-    | 1110 -> KindDerNatur
-    | 1112 -> KoerperlichesGeschick
-    | 1123 -> SozialeKompetenz
-    | 1127 -> Universalgenie
-    | 1147 -> ScholarDesMagierkollegsZuHoningen
-    | 1391 -> Zaubervariabilitaet
-    | x -> Other x
-
-  let toInt = function
-    | CombatReflexes -> 51
-    | ImprovedDodge -> 64
-    | PropertyKnowledge -> 72
-    | PropertyFocus -> 81
-    | AspectKnowledge -> 87
-    | TraditionChurchOfPraios -> 86
-    | Feuerschlucker -> 109
-    | CombatStyleCombination -> 164
-    | AdaptionZauber -> 231
-    | Exorzist -> 240
-    | FavoriteSpellwork -> 250
-    | MagicStyleCombination -> 266
-    | Harmoniezauberei -> 296
-    | Matrixzauberei -> 303
-    | SpellEnhancement -> 414
-    | Forschungsgebiet -> 472
-    | Expertenwissen -> 473
-    | Wissensdurst -> 531
-    | Recherchegespuer -> 533
-    | PredigtDerGemeinschaft -> 544
-    | PredigtDerZuversicht -> 545
-    | PredigtDesGottvertrauens -> 546
-    | PredigtDesWohlgefallens -> 547
-    | PredigtWiderMissgeschicke -> 548
-    | VisionDerBestimmung -> 549
-    | VisionDerEntrueckung -> 550
-    | VisionDerGottheit -> 551
-    | VisionDesSchicksals -> 552
-    | VisionDesWahrenGlaubens -> 553
-    | HoheWeihe -> 563
-    | Lieblingsliturgie -> 569
-    | Zugvoegel -> 623
-    | JaegerinnenDerWeissenMaid -> 625
-    | AnhaengerDesGueldenen -> 632
-    | GebieterDesAspekts -> 639
-    | ChantEnhancement -> 663
-    | DunklesAbbildDerBuendnisgabe -> 667
-    | TraditionChurchOfRondra -> 682
-    | TraditionChurchOfBoron -> 683
-    | TraditionChurchOfHesinde -> 684
-    | TraditionChurchOfPhex -> 685
-    | TraditionChurchOfPeraine -> 686
-    | TraditionChurchOfEfferd -> 687
-    | TraditionChurchOfTravia -> 688
-    | TraditionChurchOfFirun -> 689
-    | TraditionChurchOfTsa -> 690
-    | TraditionChurchOfIngerimm -> 691
-    | TraditionChurchOfRahja -> 692
-    | TraditionCultOfTheNamelessOne -> 693
-    | TraditionChurchOfAves -> 694
-    | TraditionChurchOfIfirn -> 695
-    | TraditionChurchOfKor -> 696
-    | TraditionChurchOfNandus -> 697
-    | TraditionChurchOfSwafnir -> 698
-    | LanguageSpecializations -> 699
-    | GrosseMeditation -> 772
-    | Imitationszauberei -> 775
-    | Kraftliniennutzung -> 781
-    | ScholarDerHalleDesLebensZuNorburg -> 802
-    | ScholarDesKreisesDerEinfuehlung -> 808
-    | MadaschwesternStil -> 821
-    | GaretherGossenStil -> 901
-    | WegDerGelehrten -> 1040
-    | TraditionCultOfNuminoru -> 1049
-    | WegDerKuenstlerin -> 1069
-    | WegDerSchreiberin -> 1075
-    | Fachwissen -> 1100
-    | Handwerkskunst -> 1108
-    | KindDerNatur -> 1110
-    | KoerperlichesGeschick -> 1112
-    | SozialeKompetenz -> 1123
-    | Universalgenie -> 1127
-    | ScholarDesMagierkollegsZuHoningen -> 1147
-    | Zaubervariabilitaet -> 1391
-    | Other x -> x
 end
 
 module Activatable = struct
