@@ -1,6 +1,6 @@
 import { OrderedMap } from "../../Data/OrderedMap"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
-import { HeroModelRecord } from "../Models/Hero/HeroModel"
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { Record } from "../../Data/Record"
 import { pipe, pipe_ } from "./pipe"
 import { isJust, isNothing, mapMaybe, maybe, Maybe } from "../../Data/Maybe"
@@ -41,27 +41,41 @@ import { addAlert, addDefaultErrorAlert, AlertOptions } from "../Actions/AlertAc
 import { translate } from "./I18n"
 import { handleE } from "../../Control/Exception"
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
+import { ActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
+import { StaticData } from "../Models/Wiki/WikiModel"
+import { writeFile } from "../../System/IO"
 
-type MaptoolsEntry = {
+type MapToolsEntry = {
   key: string
   value: string
 }
 
-enum MaptoolsAttribute {
+enum MapToolsAttribute {
   MU, KL, IN, CH, FF, GE, KO, KK
 }
 
-type MaptoolsSkill = {
+type MapToolsSkill = {
   name: string
   value: number
-  attr1: MaptoolsAttribute
-  attr2: MaptoolsAttribute
-  attr3: MaptoolsAttribute
+  attr1: MapToolsAttribute
+  attr2: MapToolsAttribute
+  attr3: MapToolsAttribute
+}
+
+type GroupedMaptoolsSkill = MapToolsSkill & {
+  gr: number
+}
+
+// Die folgeden beiden Typen können erweitert werden um z.B. AsP-Kosten oder Traditionen festzuhalten
+type MapToolsSpell = GroupedMaptoolsSkill & {
+}
+
+type MapToolsChant = GroupedMaptoolsSkill & {
 }
 
 type MapToolsSkillGroup = {
-  groupName: String
-  skills: List<MaptoolsSkill>
+  groupName: string
+  skills: List<MapToolsSkill>
 }
 
 export function getPropertiesXML (): string {
@@ -69,7 +83,7 @@ export function getPropertiesXML (): string {
   + "<entry><string>herolab</string><boolean>false</boolean></entry></map>"
 }
 
-function entry (mtentry: MaptoolsEntry): string {
+function entry (mtentry: MapToolsEntry): string {
   return "<entry>"
   + `<string>${mtentry.key.toLowerCase ()}</string>`
   + "<net.rptools.CaseInsensitiveHashMap_-KeyValue>"
@@ -217,35 +231,37 @@ function skillGroupNameForMapTool (group: Record<SkillGroup>): string {
 }
 
 function buildSkill (skillFromWiki: Record<Skill>):
-(skillFromHero: Maybe<Record<SkillDependent>>) => MaptoolsSkill {
+(skillFromHero: Maybe<Record<SkillDependent>>) => MapToolsSkill {
   return skillFromHero => ({
     name: Skill.A.name (skillFromWiki),
     value: isJust (skillFromHero) ? SkillDependent.A.value (skillFromHero.value) : 0,
-    attr1: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (0)) as MaptoolsAttribute),
-    attr2: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (1)) as MaptoolsAttribute),
-    attr3: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (2)) as MaptoolsAttribute),
+    attr1: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (0)) as MapToolsAttribute),
+    attr2: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (1)) as MapToolsAttribute),
+    attr3: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (2)) as MapToolsAttribute),
   })
 }
 
 function buildSpell (spellFromWiki: Record<Spell>):
-(spellFromHero: Maybe<Record<SkillDependent>>) => MaptoolsSkill {
+(spellFromHero: Record<ActivatableSkillDependent>) => MapToolsSpell {
   return spellFromHero => ({
     name: Spell.A.name (spellFromWiki),
-    value: isJust (spellFromHero) ? SkillDependent.A.value (spellFromHero.value) : 0,
-    attr1: (fromMaybe ("MU", List.subscript (Spell.A.check (spellFromWiki)) (0)) as MaptoolsAttribute),
-    attr2: (fromMaybe ("MU", List.subscript (Spell.A.check (spellFromWiki)) (1)) as MaptoolsAttribute),
-    attr3: (fromMaybe ("MU", List.subscript (Spell.A.check (spellFromWiki)) (2)) as MaptoolsAttribute),
+    value: ActivatableSkillDependent.A.value (spellFromHero),
+    attr1: (fromMaybe ("MU", List.subscript (Spell.A.check (spellFromWiki)) (0)) as MapToolsAttribute),
+    attr2: (fromMaybe ("MU", List.subscript (Spell.A.check (spellFromWiki)) (1)) as MapToolsAttribute),
+    attr3: (fromMaybe ("MU", List.subscript (Spell.A.check (spellFromWiki)) (2)) as MapToolsAttribute),
+    gr: Spell.A.gr (spellFromWiki),
   })
 }
 
 function buildChant (chantFromWiki: Record<LiturgicalChant>):
-(chantFromHero: Maybe<Record<SkillDependent>>) => MaptoolsSkill {
+(chantFromHero: Record<ActivatableSkillDependent>) => MapToolsChant {
   return chantFromHero => ({
     name: LiturgicalChant.A.name (chantFromWiki),
-    value: isJust (chantFromHero) ? SkillDependent.A.value (chantFromHero.value) : 0,
-    attr1: (fromMaybe ("MU", List.subscript (LiturgicalChant.A.check (chantFromWiki)) (0)) as MaptoolsAttribute),
-    attr2: (fromMaybe ("MU", List.subscript (LiturgicalChant.A.check (chantFromWiki)) (1)) as MaptoolsAttribute),
-    attr3: (fromMaybe ("MU", List.subscript (LiturgicalChant.A.check (chantFromWiki)) (2)) as MaptoolsAttribute),
+    value: ActivatableSkillDependent.A.value (chantFromHero),
+    attr1: (fromMaybe ("MU", List.subscript (LiturgicalChant.A.check (chantFromWiki)) (0)) as MapToolsAttribute),
+    attr2: (fromMaybe ("MU", List.subscript (LiturgicalChant.A.check (chantFromWiki)) (1)) as MapToolsAttribute),
+    attr3: (fromMaybe ("MU", List.subscript (LiturgicalChant.A.check (chantFromWiki)) (2)) as MapToolsAttribute),
+    gr: LiturgicalChant.A.gr (chantFromWiki),
   })
 }
 
@@ -255,7 +271,7 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
     SkillGroup.A.id,
     grid =>
       pipe_ (state.values.wiki.values.skills,
-        OrderedMap.filter (skill => Skill.A.gr (skill) === grid),
+        OrderedMap.filter (skill => Skill.A.gr (skill) == grid),
         OrderedMap.elems,
         fmap ((skill: Record<Skill>) => pipe_ (skill,
           Skill.A.id,
@@ -273,47 +289,75 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
       })
   ))
 
-  const xml = `[${
+  let xml: string =
     pipe_ (skills,
-      fmap ((sg: MapToolsSkillGroup) => ({
+      fmap ((sg: MapToolsSkillGroup) => entry({
         key: sg.groupName,
-        value: pipe_ (sg.skills,
-          fmap ((skill: MaptoolsSkill) =>
+        value: `[${pipe_(sg.skills,
+          fmap((skill: MapToolsSkill) =>
             `{"Talent":"${skill.name}","Talentwert":${skill.value}},"Probe":{`
             + `"Eigenschaft1":"${skill.attr1}",`
             + `"Eigenschaft2":"${skill.attr2}",`
-            + `"Eigenschaft3":"${skill.attr3}"}}`)),
-    })))
-   }]`
+            + `"Eigenschaft3":"${skill.attr3}"}}`),
+          List.intercalate(","))}]`,
+      })),
+      List.intercalate("")
+    )
 
   // TODO: Zauber/Rituale und Liturgien/Zeremonien noch herausfinden
   // AsP- bzw. KaP-Kosten könnte man auch exportieren
 
-  const spells =
+  const allSpells =
     pipe_ (
       hero,
-      Hero.A.spells,
+      HeroModel.A.spells,
       OrderedMap.elems,
-      Maybe.mapMaybe (heroSpell => pipe_ (
+      Maybe.mapMaybe ((heroSpell: Record<ActivatableSkillDependent>) => pipe_ (
         heroSpell,
         ActivatableSkillDependent.A.id,
-        OrderedMap.lookupF (StaticData.A.spells (wiki)),
-        fmap (staticSpell => buildSpell (staticSpell) (heroSpell))
-      ))
+        OrderedMap.lookupF (StaticData.A.spells (state.values.wiki)),
+        fmap ((staticSpell: Record<Spell>) => buildSpell (staticSpell) (heroSpell))
+      )),
+      List.partition (skill => skill.gr == 1)
     )
 
-  const chants =
-    pipe_ (state.values.wiki.values.liturgicalChants,
-      OrderedMap.elems,
-      fmap ((c: Record<LiturgicalChant>) => pipe_ (
-        c,
-        LiturgicalChant.A.id, // TODO: Nochmal Typfehler
-        Maybe.mapMaybe (OrderedMap.lookupF (hero.values.liturgicalChants)),
-        buildChant
-    )))
+  const spells = allSpells.values [0]
+  const rituals = allSpells.values [1]
 
-  // TODO: Ich hätte sowohl Zauber und Liturgien als MaptoolsSkillGroup zusammengefasst
-  // wobei Zauber, Rituale, Liturgien und Zeremonien am besten getrennt als SkillGroup erfasst werden sollten
+  const entrySpell = (key: string, spells: List<MapToolsSkill>) => entry({
+    key: key,
+    value: "[" + pipe_ (spells,
+    fmap ((spell: MapToolsSkill) =>
+      `{"Talent":"${spell.name}","Talentwert":${spell.value}},"Probe":{`
+      + `"Eigenschaft1":"${spell.attr1}",`
+      + `"Eigenschaft2":"${spell.attr2}",`
+      + `"Eigenschaft3":"${spell.attr3}"}}`
+    ),
+    List.intercalate(",")) + "]"
+  })
+
+  xml += entrySpell ("Zauber", spells)
+  xml += entrySpell ("Rituale", rituals)
+
+  const allChants =
+    pipe_ (
+      hero,
+      HeroModel.A.liturgicalChants,
+      OrderedMap.elems,
+      Maybe.mapMaybe ((heroChant: Record<ActivatableSkillDependent>) => pipe_ (
+        heroChant,
+        ActivatableSkillDependent.A.id,
+        OrderedMap.lookupF (StaticData.A.liturgicalChants (state.values.wiki)),
+        fmap ((staticChant: Record<LiturgicalChant>) => buildChant (staticChant) (heroChant))
+      )),
+      List.partition (chant => chant.gr == 1)
+    )
+
+  const chants = allChants.values [0]
+  const ceremonies = allChants.values [1]
+  
+  xml += entrySpell ("Liturgien", chants)
+  xml += entrySpell ("Zeremonien", ceremonies)
 
   return xml
 }
@@ -416,7 +460,7 @@ function specialAbilityGroupForMapTool (group: Maybe<Record<NumIdName>>): string
 }
 
 function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): string {
-  const ungrouped: List<MaptoolsEntry> = pipe_ (
+  const ungrouped: List<MapToolsEntry> = pipe_ (
     hero.values.specialAbilities,
     OrderedMap.keys,
     Maybe.mapMaybe (OrderedMap.lookupF (state.values.wiki.values.specialAbilities)),
@@ -436,8 +480,8 @@ function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): 
       value: `[${
         pipe_ (
           ungrouped,
-          List.filter ((e: MaptoolsEntry) => e.key === group),
-          fmap ((e: MaptoolsEntry) => e.value),
+          List.filter ((e: MapToolsEntry) => e.key === group),
+          fmap ((e: MapToolsEntry) => e.value),
           List.intercalate (", ")
         )
       }]`,
@@ -709,35 +753,35 @@ function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer {
 // TODO: Das müsste sich mal jemand ansehen. Habe ich als Vorlage kopiert. Async brauche ich hier glaub ich gar nicht?
 // Den aktuellen hero und state müsste ich mir irgendwo holen. Da weis ich noch nicht wie ich rankomme
 // Den Text für den Button und das Export-Fenster müsste ich für die Lokalisierung auch irgendwo eintragen. Wo mache ich das?
-export const requestExportHeroAsRptok = (): ReduxAction<Promise<void>> =>
-
+export const requestExportHeroAsRptok = (hero: HeroModelRecord, state: AppStateRecord): ReduxAction<Promise<void>> =>
+{
   async (dispatch, getState) => {
-    const staticData = getWiki (getState ())
-    const hero: HeroModelRecord = ?
+    const staticData = getWiki (state)
 
-    const data = getRptok (hero, getState())
+    const data = getRptok (hero, state)
 
-    const path = await showSaveDialog ({
-                   title: translate (staticData) ("sheets.dialogs.pdfexportsavelocation.title"),
-                   defaultPath: `${hero.name}.rptok`,
-                   filters: [
-                     { name: "Rptok", extensions: [ "rptok" ] },
-                   ],
-                 })
+    const path = showSaveDialog ({
+                    title: translate (staticData) ("sheets.dialogs.rptokexportsavelocation.title"),
+                    defaultPath: `${hero.name}.rptok`,
+                    filters: [
+                      { name: "Rptok", extensions: [ "rptok" ] },
+                    ],
+                  })
 
     const res = await maybe (Promise.resolve<Either<Error, void>> (Right (undefined)))
-                            (pipe (flip (IO.writeFile) (data), handleE))
+                            (pipe (flip (writeFile) (data), handleE))
                             (path)
 
     if (isRight (res) && isJust (path)) {
       await dispatch (addAlert (AlertOptions ({
-                                 message: translate (staticData) ("sheets.dialogs.pdfsaved"),
-                               })))
+                                  message: translate (staticData) ("sheets.dialogs.rptoksaved"),
+                                })))
     }
     else if (isLeft (res)) {
       await dispatch (addDefaultErrorAlert (staticData)
-                                           (translate (staticData)
-                                                      ("sheets.dialogs.pdfsaveerror.title"))
-                                           (res))
+                                            (translate (staticData)
+                                                      ("sheets.dialogs.rptoksaveerror.title"))
+                                            (res))
     }
   }
+}

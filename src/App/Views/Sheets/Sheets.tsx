@@ -221,8 +221,8 @@ export const Sheets: React.FC<Props> = props => {
           />
         <BorderButton
           className="export-rptok"
-          label="Als *.rptok exportieren"
-          onClick={exportHeroAsRptok}
+          label={translate (staticData) ("sheets.exportasrptokbtn")}
+          onClick={exportAsRptok}
           />
         <Checkbox
           checked={useParchment}
