@@ -753,9 +753,12 @@ function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer {
 // TODO: Das müsste sich mal jemand ansehen. Habe ich als Vorlage kopiert. Async brauche ich hier glaub ich gar nicht?
 // Den aktuellen hero und state müsste ich mir irgendwo holen. Da weis ich noch nicht wie ich rankomme
 // Den Text für den Button und das Export-Fenster müsste ich für die Lokalisierung auch irgendwo eintragen. Wo mache ich das?
-export const requestExportHeroAsRptok = (hero: HeroModelRecord, state: AppStateRecord): ReduxAction<Promise<void>> =>
+export const requestExportHeroAsRptok = (hero: HeroModelRecord): ReduxAction<Promise<void>> =>
 {
   async (dispatch, getState) => {
+
+    const state = getState ()
+
     const staticData = getWiki (state)
 
     const data = getRptok (hero, state)

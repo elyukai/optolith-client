@@ -105,7 +105,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch, ownProps: SheetsOwnProps) =
     await dispatch (requestPrintHeroToPDF ())
   },
   async exportAsRptok () {
-    await dispatch (requestHeroExportAsRptok (ownProps.hero)) // <- Hier muss ich den Helden und state übergeben
+    await dispatch (requestHeroExportAsRptok (ownProps.hero))
   },
 })
 
