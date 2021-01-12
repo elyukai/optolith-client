@@ -1,7 +1,6 @@
 import { connect } from "react-redux"
 import { join, Just } from "../../Data/Maybe"
 import { ReduxDispatch } from "../Actions/Actions"
-import { requestHeroExportAsRptok } from "../Actions/IOActions"
 import { requestPrintHeroToPDF } from "../Actions/PrintActions"
 import * as SheetActions from "../Actions/SheetActions"
 import { SpecialAbilityId } from "../Constants/Ids"
@@ -24,6 +23,7 @@ import { getAllSkills } from "../Selectors/skillsSelectors"
 import { getCantripsForSheet, getSpellsForSheet } from "../Selectors/spellsSelectors"
 import { getAvatar, getCurrentHeroName, getCurrentSex, getProfile, getPurse, getSpecialAbilities, getWikiBooks, getWikiSpecialAbilities } from "../Selectors/stateSelectors"
 import { getSheetCheckAttributeValueVisibility, getSheetUseParchment, getSheetZoomFactor } from "../Selectors/uisettingsSelectors"
+import { requestExportHeroAsRptok } from "../Utilities/MapToolExporter"
 import { pipe } from "../Utilities/pipe"
 import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils"
 import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from "../Views/Sheets/Sheets"
@@ -105,7 +105,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch, ownProps: SheetsOwnProps) =
     await dispatch (requestPrintHeroToPDF ())
   },
   async exportAsRptok () {
-    await dispatch (requestHeroExportAsRptok (ownProps.hero))
+    await dispatch (requestExportHeroAsRptok (ownProps.hero))
   },
 })
 

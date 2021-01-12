@@ -754,16 +754,14 @@ function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer {
 // Den aktuellen hero und state müsste ich mir irgendwo holen. Da weis ich noch nicht wie ich rankomme
 // Den Text für den Button und das Export-Fenster müsste ich für die Lokalisierung auch irgendwo eintragen. Wo mache ich das?
 export const requestExportHeroAsRptok = (hero: HeroModelRecord): ReduxAction<Promise<void>> =>
-{
   async (dispatch, getState) => {
-
     const state = getState ()
 
     const staticData = getWiki (state)
 
     const data = getRptok (hero, state)
 
-    const path = showSaveDialog ({
+    const path = await showSaveDialog ({
                     title: translate (staticData) ("sheets.dialogs.rptokexportsavelocation.title"),
                     defaultPath: `${hero.name}.rptok`,
                     filters: [
@@ -787,4 +785,3 @@ export const requestExportHeroAsRptok = (hero: HeroModelRecord): ReduxAction<Pro
                                             (res))
     }
   }
-}

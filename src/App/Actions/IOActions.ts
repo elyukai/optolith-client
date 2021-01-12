@@ -29,7 +29,6 @@ import { getUISettingsState } from "../Selectors/uisettingsSelectors"
 import { prepareAPCache, prepareAPCacheForHero, writeCache } from "../Utilities/Cache"
 import { translate } from "../Utilities/I18n"
 import { showOpenDialog, showSaveDialog } from "../Utilities/IOUtils"
-import { getRptok } from "../Utilities/MapToolExporter"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { writeConfig } from "../Utilities/Raw/JSON/Config"
 import { parseHero } from "../Utilities/Raw/JSON/Hero"
@@ -308,48 +307,6 @@ export const imgPathToBase64 =
 
     return Just (path)
   }
-
-export const requestHeroExportAsRptok =
-  (hero: HeroModelRecord): ReduxAction =>
-  async (dispatch, getState) => {
-    const state = getState ()
-    const staticData = getWiki (state)
-
-      const pmfilepath = await showSaveDialog ({
-        title: "Held als rptok für maptools exportieren",
-        filters: [
-          { name: "rptok", extensions: [ "rptok" ] },
-        ],
-        defaultPath: `${hero.name.replace (/\//u, "/")}.rptok`,
-      })
-
-      if (isJust (pmfilepath)) {
-        const buffer: Buffer = getRptok (hero, state)
-
-        const res = await handleE (maybe (Promise.resolve ())
-                                         (flip (IO.writeFile) (buffer))
-                                         (pmfilepath))
-
-        if (isRight (res)) {
-          await dispatch (addAlert (AlertOptions ({
-                                     message: translate (staticData) ("heroes.dialogs.herosaved"),
-                                   })))
-        }
-        else {
-          const title = Just (translate (staticData) ("header.dialogs.saveheroeserror.title"))
-
-          const message = getErrorMsg (staticData)
-                                      (translate (staticData)
-                                                 ("header.dialogs.saveheroeserror.message"))
-                                      (res)
-
-          await dispatch (addErrorAlert (AlertOptions ({
-                                          title,
-                                          message,
-                                        })))
-        }
-      }
-    }
 
 
 export const requestHeroExport =
