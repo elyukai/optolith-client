@@ -1,17 +1,16 @@
-import { OrderedMap } from "../../Data/OrderedMap"
+import { lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { Record } from "../../Data/Record"
 import { pipe, pipe_ } from "./pipe"
-import { isJust, isNothing, mapMaybe, maybe, Maybe } from "../../Data/Maybe"
+import { isJust, isNothing, mapMaybe, maybe, Maybe, fromMaybe } from "../../Data/Maybe"
 import { fmap } from "../../Data/Functor"
 import { getAE, getDO, getINI, getKP, getLP, getMOV, getSPI, getTOU } from "../Selectors/derivedCharacteristicsSelectors"
 import { AppStateRecord } from "../Models/AppState"
-import { fromMaybe } from "../../Data/Maybe.bs"
-import { getFatePointsModifier } from "../Selectors/activatableSelectors"
+import { getActiveForEditView, getActiveForView, getFatePointsModifier } from "../Selectors/activatableSelectors"
 import { getArmors, getArmorZones, getFullItem, getMeleeWeapons, getRangedWeapons } from "../Selectors/equipmentSelectors"
 import { MeleeWeapon } from "../Models/View/MeleeWeapon"
-import { List } from "../../Data/List"
+import { List, sdelete } from "../../Data/List"
 import { RangedWeapon } from "../Models/View/RangedWeapon"
 import { getAllCombatTechniques } from "../Selectors/combatTechniquesSelectors"
 import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
@@ -29,7 +28,7 @@ import { Armor } from "../Models/View/Armor"
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
 import { HitZoneArmorForView } from "../Models/View/HitZoneArmorForView"
 import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
-import { isTuple, Pair } from "../../Data/Tuple"
+import { isTuple, Pair, Tuple } from "../../Data/Tuple"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
 import { Spell } from "../Models/Wiki/Spell"
@@ -44,6 +43,12 @@ import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
 import { ActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
 import { StaticData } from "../Models/Wiki/WikiModel"
 import { writeFile } from "../../System/IO"
+import { traceId, traceShowId } from "../../Debug/Trace"
+import { getName } from "./Activatable/activatableNameUtils"
+import { getAllActiveByCategory } from "./Activatable/activatableActiveUtils"
+import { Category } from "../Constants/Categories"
+import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveActivatable"
+import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids.gen"
 
 type MapToolsEntry = {
   key: string
@@ -51,7 +56,7 @@ type MapToolsEntry = {
 }
 
 enum MapToolsAttribute {
-  MU, KL, IN, CH, FF, GE, KO, KK
+  MU="MU", KL="KL", IN="IN", CH="CH", FF="FF", GE="GE", KO="KO", KK="KK"
 }
 
 type MapToolsSkill = {
@@ -88,7 +93,8 @@ function entry (mtentry: MapToolsEntry): string {
   + `<string>${mtentry.key.toLowerCase ()}</string>`
   + "<net.rptools.CaseInsensitiveHashMap_-KeyValue>"
   + `<key>${mtentry.key}</key>`
-  + `<value class="string">${mtentry.value}</value>`
+  // Das Talent Bekehren & Überzeugen enthält ein Sonderzeichen. Die Inventar-Strings müssen wir auch aufbereiten da sonst kein valides XML entsteht
+  + `<value class="string">${mtentry.value.replaceAll (" & ", " &amp; ").replaceAll ("<br>", "<br/>")}</value>`
   + "<outer-class reference=\"../../../..\"/>"
   + "</net.rptools.CaseInsensitiveHashMap_-KeyValue>"
   + "</entry>"
@@ -153,6 +159,7 @@ function getStaticDataXML (hero: HeroModelRecord): string {
 }
 
 function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string {
+  // TODO: Hier werden Minimaleigenschaften leider noch nicht mit exportiert.
   let xml: string = pipe_ (
     state.values.wiki.values.attributes,
     OrderedMap.elems,
@@ -169,14 +176,18 @@ function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string
     List.intercalate ("")
   )
 
-  const leP: number = fromMaybe (0, getLP (state, { hero }).values.value)
-  const asp: number = fromMaybe (0, getAE (state, { hero }))
-  const kap: number = fromMaybe (0, getKP (state, { hero }).values.value)
+  const leP: number = fromMaybe (0) (getLP (state, { hero }).values.value)
+  const aspContainer = getAE (state, { hero })
+  let asp = 0
+  if (isJust (aspContainer)) {
+    asp = fromMaybe (0) (aspContainer.value.values.value)
+  }
+  const kap: number = fromMaybe (0) (getKP (state, { hero }).values.value)
   const schips: number = 3 + getFatePointsModifier (state)
-  const sk: number = fromMaybe (0, getSPI (state, { hero }).values.value)
-  const zk: number = fromMaybe (0, getTOU (state, { hero }).values.value)
-  const ini = fromMaybe (0, getINI (state, { hero }).values.value)
-  const gs = fromMaybe (0, getMOV (state, { hero }).values.value)
+  const sk: number = fromMaybe (0) (getSPI (state, { hero }).values.value)
+  const zk: number = fromMaybe (0) (getTOU (state, { hero }).values.value)
+  const ini = fromMaybe (0) (getINI (state, { hero }).values.value)
+  const gs = fromMaybe (0) (getMOV (state, { hero }).values.value)
 
   xml += entry ({ key: "LeP", value: leP.toString () })
   xml += entry ({ key: "MaxLeP", value: leP.toString () })
@@ -230,14 +241,37 @@ function skillGroupNameForMapTool (group: Record<SkillGroup>): string {
   }
 }
 
+function attrFromString (attr: string): MapToolsAttribute {
+
+  switch (attr.split ("_")[1]) {
+    case "1": return MapToolsAttribute.MU
+    case "2": return MapToolsAttribute.KL
+    case "3": return MapToolsAttribute.IN
+    case "4": return MapToolsAttribute.CH
+    case "5": return MapToolsAttribute.FF
+    case "6": return MapToolsAttribute.GE
+    case "7": return MapToolsAttribute.KO
+    case "8": return MapToolsAttribute.KK
+    default: return MapToolsAttribute.MU
+  }
+}
+
+function attrFromMaybeString (attr: Maybe<string>): MapToolsAttribute {
+  if (!isJust (attr)) {
+    return MapToolsAttribute.MU
+  }
+
+  return attrFromString (attr.value)
+}
+
 function buildSkill (skillFromWiki: Record<Skill>):
 (skillFromHero: Maybe<Record<SkillDependent>>) => MapToolsSkill {
   return skillFromHero => ({
     name: Skill.A.name (skillFromWiki),
     value: isJust (skillFromHero) ? SkillDependent.A.value (skillFromHero.value) : 0,
-    attr1: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (0)) as MapToolsAttribute),
-    attr2: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (1)) as MapToolsAttribute),
-    attr3: (fromMaybe ("MU", List.subscript (Skill.A.check (skillFromWiki)) (2)) as MapToolsAttribute),
+    attr1: attrFromMaybeString (List.subscript (Skill.A.check (skillFromWiki)) (0)),
+    attr2: attrFromMaybeString (List.subscript (Skill.A.check (skillFromWiki)) (1)),
+    attr3: attrFromMaybeString (List.subscript (Skill.A.check (skillFromWiki)) (2)),
   })
 }
 
@@ -246,9 +280,9 @@ function buildSpell (spellFromWiki: Record<Spell>):
   return spellFromHero => ({
     name: Spell.A.name (spellFromWiki),
     value: ActivatableSkillDependent.A.value (spellFromHero),
-    attr1: (fromMaybe ("MU", List.subscript (Spell.A.check (spellFromWiki)) (0)) as MapToolsAttribute),
-    attr2: (fromMaybe ("MU", List.subscript (Spell.A.check (spellFromWiki)) (1)) as MapToolsAttribute),
-    attr3: (fromMaybe ("MU", List.subscript (Spell.A.check (spellFromWiki)) (2)) as MapToolsAttribute),
+    attr1: attrFromMaybeString (List.subscript (Spell.A.check (spellFromWiki)) (0)),
+    attr2: attrFromMaybeString (List.subscript (Spell.A.check (spellFromWiki)) (1)),
+    attr3: attrFromMaybeString (List.subscript (Spell.A.check (spellFromWiki)) (2)),
     gr: Spell.A.gr (spellFromWiki),
   })
 }
@@ -258,9 +292,9 @@ function buildChant (chantFromWiki: Record<LiturgicalChant>):
   return chantFromHero => ({
     name: LiturgicalChant.A.name (chantFromWiki),
     value: ActivatableSkillDependent.A.value (chantFromHero),
-    attr1: (fromMaybe ("MU", List.subscript (LiturgicalChant.A.check (chantFromWiki)) (0)) as MapToolsAttribute),
-    attr2: (fromMaybe ("MU", List.subscript (LiturgicalChant.A.check (chantFromWiki)) (1)) as MapToolsAttribute),
-    attr3: (fromMaybe ("MU", List.subscript (LiturgicalChant.A.check (chantFromWiki)) (2)) as MapToolsAttribute),
+    attr1: attrFromMaybeString (List.subscript (LiturgicalChant.A.check (chantFromWiki)) (0)),
+    attr2: attrFromMaybeString (List.subscript (LiturgicalChant.A.check (chantFromWiki)) (1)),
+    attr3: attrFromMaybeString (List.subscript (LiturgicalChant.A.check (chantFromWiki)) (2)),
     gr: LiturgicalChant.A.gr (chantFromWiki),
   })
 }
@@ -271,7 +305,7 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
     SkillGroup.A.id,
     grid =>
       pipe_ (state.values.wiki.values.skills,
-        OrderedMap.filter (skill => Skill.A.gr (skill) == grid),
+        OrderedMap.filter (skill => Skill.A.gr (skill) === grid),
         OrderedMap.elems,
         fmap ((skill: Record<Skill>) => pipe_ (skill,
           Skill.A.id,
@@ -291,20 +325,18 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
 
   let xml: string =
     pipe_ (skills,
-      fmap ((sg: MapToolsSkillGroup) => entry({
+      fmap ((sg: MapToolsSkillGroup) => entry ({
         key: sg.groupName,
-        value: `[${pipe_(sg.skills,
-          fmap((skill: MapToolsSkill) =>
-            `{"Talent":"${skill.name}","Talentwert":${skill.value}},"Probe":{`
+        value: `[${pipe_ (sg.skills,
+          fmap ((skill: MapToolsSkill) =>
+            `{"Talent":"${skill.name}","Talentwert":${skill.value},"Probe":{`
             + `"Eigenschaft1":"${skill.attr1}",`
             + `"Eigenschaft2":"${skill.attr2}",`
             + `"Eigenschaft3":"${skill.attr3}"}}`),
-          List.intercalate(","))}]`,
+          List.intercalate (","))}]`,
       })),
-      List.intercalate("")
-    )
+      List.intercalate (""))
 
-  // TODO: Zauber/Rituale und Liturgien/Zeremonien noch herausfinden
   // AsP- bzw. KaP-Kosten könnte man auch exportieren
 
   const allSpells =
@@ -318,22 +350,21 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
         OrderedMap.lookupF (StaticData.A.spells (state.values.wiki)),
         fmap ((staticSpell: Record<Spell>) => buildSpell (staticSpell) (heroSpell))
       )),
-      List.partition (skill => skill.gr == 1)
+      List.partition (skill => skill.gr === 1)
     )
 
   const spells = allSpells.values [0]
   const rituals = allSpells.values [1]
 
-  const entrySpell = (key: string, spells: List<MapToolsSkill>) => entry({
-    key: key,
-    value: "[" + pipe_ (spells,
+  const entrySpell = (key: string, spells: List<MapToolsSkill>) => entry ({
+    key,
+    value: `[${pipe_ (spells,
     fmap ((spell: MapToolsSkill) =>
-      `{"Talent":"${spell.name}","Talentwert":${spell.value}},"Probe":{`
+      `{"Talent":"${spell.name}","Talentwert":${spell.value},"Probe":{`
       + `"Eigenschaft1":"${spell.attr1}",`
       + `"Eigenschaft2":"${spell.attr2}",`
-      + `"Eigenschaft3":"${spell.attr3}"}}`
-    ),
-    List.intercalate(",")) + "]"
+      + `"Eigenschaft3":"${spell.attr3}"}}`),
+    List.intercalate (","))}]`,
   })
 
   xml += entrySpell ("Zauber", spells)
@@ -350,12 +381,12 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
         OrderedMap.lookupF (StaticData.A.liturgicalChants (state.values.wiki)),
         fmap ((staticChant: Record<LiturgicalChant>) => buildChant (staticChant) (heroChant))
       )),
-      List.partition (chant => chant.gr == 1)
+      List.partition (chant => chant.gr === 1)
     )
 
   const chants = allChants.values [0]
   const ceremonies = allChants.values [1]
-  
+
   xml += entrySpell ("Liturgien", chants)
   xml += entrySpell ("Zeremonien", ceremonies)
 
@@ -363,118 +394,116 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
 }
 
 function getAdvantagesXML (hero: HeroModelRecord, state: AppStateRecord): string {
-  let xml = ""
-
-  const getAdvantageName = pipe (
-    ActivatableDependent.A.id,
-    OrderedMap.lookupF (getWikiAdvantages (state)),
-    fmap (Advantage.A.name)
-  )
-
-  xml += entry ({
+  const xml =
+    entry ({
     key: "Vorteile",
-    value: pipe_ (
-      hero.values.advantages,
-      OrderedMap.elems,
-      Maybe.mapMaybe (getAdvantageName),
+    value: `[${pipe_ (
+      getActiveForEditView (Category.ADVANTAGES) (state, { hero }),
+      fromMaybe (List<Record<ActiveActivatable<Advantage>>> ()),
+      fmap ((a: Record<ActiveActivatable<Advantage>>) =>
+        `{"Name":"${a.values.nameAndCost.values.naming.values.name}",`
+        + `"Stufe":${(fromMaybe (0) (ActiveActivatableA_.level (a))).toString ()}}`),
       List.intercalate (", ")
-    ) })
-
-  const getDisadvantageName = pipe (
-    ActivatableDependent.A.id,
-    OrderedMap.lookupF (getWikiDisadvantages (state)),
-    fmap (Disadvantage.A.name)
-  )
-
-  xml += entry ({
+    )}]` })
+    + entry ({
     key: "Nachteile",
-    value: pipe_ (
-      hero.values.disadvantages,
-      OrderedMap.elems,
-      Maybe.mapMaybe (getDisadvantageName),
+    value: `[${pipe_ (
+      getActiveForEditView (Category.DISADVANTAGES) (state, { hero }),
+      fromMaybe (List<Record<ActiveActivatable<Disadvantage>>> ()),
+      fmap ((d: Record<ActiveActivatable<Disadvantage>>) =>
+        `{"Name":"${d.values.nameAndCost.values.naming.values.name}",`
+        + `"Stufe":${(fromMaybe (0) (ActiveActivatableA_.level (d))).toString ()}}`),
       List.intercalate (", ")
-    ) })
+    )}]` })
 
   return xml
 }
 
 function specialAbilityGroupForMapTool (group: Maybe<Record<NumIdName>>): string {
-  const g: Record<NumIdName> = fromMaybe (null, group)
-  if (g === null) {
-    return "AllgemeineSF"
-  }
+  if (isJust (group)) {
+    const g: Record<NumIdName> = group.value
+    if (g === null) {
+      return "AllgemeineSF"
+    }
 
-  switch (g.values.id) {
-    case 1:
-    case 2:
-    case 30:
-    case 31:
-    case 32:
-    case 33:
-    case 34:
-    case 40:
-    case 41:
-      return "AllgemeineSF"
-    case 4:
-    case 5:
-    case 6:
-    case 8:
-    case 13:
-    case 14:
-    case 15:
-    case 16:
-    case 17:
-    case 18:
-    case 19:
-    case 20:
-    case 22:
-    case 28:
-    case 35:
-    case 36:
-    case 37:
-    case 38:
-    case 39:
-    case 42:
-    case 43:
-    case 44:
-    case 45:
-      return "MagieSF"
-    case 3:
-    case 9:
-    case 10:
-    case 11:
-    case 12:
-    case 21:
-      return "KampfSF"
-    case 7:
-    case 23:
-    case 24:
-    case 25:
-    case 26:
-    case 27:
-    case 29:
-      return "KlerikaleSF"
-    default:
-      return "AllgemeineSF"
+    switch (g.values.id) {
+      case 1:
+      case 2:
+      case 30:
+      case 31:
+      case 32:
+      case 33:
+      case 34:
+      case 40:
+      case 41:
+        return "AllgemeineSF"
+      case 4:
+      case 5:
+      case 6:
+      case 8:
+      case 13:
+      case 14:
+      case 15:
+      case 16:
+      case 17:
+      case 18:
+      case 19:
+      case 20:
+      case 22:
+      case 28:
+      case 35:
+      case 36:
+      case 37:
+      case 38:
+      case 39:
+      case 42:
+      case 43:
+      case 44:
+      case 45:
+        return "MagieSF"
+      case 3:
+      case 9:
+      case 10:
+      case 11:
+      case 12:
+      case 21:
+        return "KampfSF"
+      case 7:
+      case 23:
+      case 24:
+      case 25:
+      case 26:
+      case 27:
+      case 29:
+        return "KlerikaleSF"
+      default:
+        return "AllgemeineSF"
+    }
+  }
+  else {
+    return "AllgemeineSF"
   }
 }
 
+// TODO: Hier will ich die Sprachen und Schriften Extra haben
+// soll heißen dass die NICHT unter AllgemeineSFs stehen sollen sondern als 2 separate Listen
 function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): string {
+
   const ungrouped: List<MapToolsEntry> = pipe_ (
-    hero.values.specialAbilities,
-    OrderedMap.keys,
-    Maybe.mapMaybe (OrderedMap.lookupF (state.values.wiki.values.specialAbilities)),
-    fmap ((x: Record<SpecialAbility>) =>
-      ({ key: pipe_ (x.values.gr,
+    getActiveForEditView (Category.SPECIAL_ABILITIES) (state, { hero }),
+    fromMaybe (List<Record<ActiveActivatable<SpecialAbility>>> ()),
+    fmap ((sf: Record<ActiveActivatable<SpecialAbility>>) =>
+      ({ key: pipe_ (sf.values.wikiEntry.values.gr,
                     OrderedMap.lookupF (state.values.wiki.values.specialAbilityGroups),
                     specialAbilityGroupForMapTool),
-        value: x.values.name,
+         value: `{"Name":"${sf.values.nameAndCost.values.naming.values.name}",`
+              + `"Stufe":${(fromMaybe (0) (ActiveActivatableA_.level (sf))).toString ()}}`,
       }))
   )
 
   const groups: List<string> = List<string> ("AllgemeineSF", "MagieSF", "KampfSF", "KlerikaleSF")
 
-  return pipe_ (groups,
+  const xml = pipe_ (groups,
     fmap ((group: string) => entry ({
       key: group,
       value: `[${
@@ -487,111 +516,142 @@ function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): 
       }]`,
     })),
     List.intercalate (""))
+
+  return xml
 }
 
 let id = 0
 
-function weaponForXML (weapon: Record<Item>): string {
-  return `"ID":${id++},`
-  + `"Name":"${weapon.values.name}",`
-  + `"Improvisiert":"${isNothing (weapon.values.improvisedWeaponGroup) ? "0" : "1"},`
-  + `"Technik":"${fromMaybe ("", weapon.values.combatTechnique)}",`
-  + `"TP":"${fromMaybe (1, weapon.values.damageDiceNumber)}d${fromMaybe (6, weapon.values.damageDiceSides)}+${fromMaybe (0, weapon.values.damageFlat)}"`
+function weaponForXML (state: AppStateRecord): (weapon: Record<Item>) => string {
+  return weapon => {
+    let techniqueStr = ""
+    const technique = pipe_ (weapon.values.combatTechnique,
+      fromMaybe (""),
+      lookupF (StaticData.A.combatTechniques (state.values.wiki)))
+    if (isJust (technique)) {
+      techniqueStr = technique.value.values.name
+    }
+
+    return `"ID":${id++},`
+    + `"Name":"${weapon.values.name}",`
+    + `"Improvisiert":${isNothing (weapon.values.improvisedWeaponGroup) ? "0" : "1"},`
+    + `"Technik":"${techniqueStr}",`
+    + `"TP":"${fromMaybe (1) (weapon.values.damageDiceNumber)}d${fromMaybe (6) (weapon.values.damageDiceSides)}+${fromMaybe (0) (weapon.values.damageFlat)}"`
+  }
 }
 
-/* function getReachText (reach: Maybe<number>, state: AppStateRecord): string {
-  const reaches = StaticData.A.reaches (state.values.wiki)
-  const x: Record<NumIdName> = fromMaybe (null, OrderedMap.lookupF (reaches) (fromMaybe (2, reach)))
-  switch (x.values.id) {
-    case 1:
-      return "Kurz"
-    case 2:
-      return "Mittel"
-    case 3:
-      return "Lang"
-    case 4:
-      return "Überlang"
-    default:
-      return "Mittel"
-  }
-}*/
-
 function LSPair (s: number): (l: string) => string {
-  return l => `{"L":"${l}", "S":${s}}`
+  return l => `{"L":"${attrFromString (l).toString ()}", "S":${s}}`
 }
 
 function getLS (state: AppStateRecord, weapon: Record<Item>): string {
-  const damageBonus: PrimaryAttributeDamageThreshold =
-    fromMaybe (null, weapon.values.damageBonus).values
-  if (isJust (damageBonus.primary)) {
-    if (damageBonus.primary.value === "string") {
-      return `[${LSPair (damageBonus.threshold as number) (damageBonus.primary.value)}]`
+  if (isJust (weapon.values.damageBonus)) {
+    const damageBonus: PrimaryAttributeDamageThreshold = weapon.values.damageBonus.value.values
+    if (isJust (damageBonus.primary)) {
+      if (typeof damageBonus.primary.value === "string"
+      && typeof damageBonus.threshold === "number") {
+        return `[${LSPair (damageBonus.threshold) (damageBonus.primary.value)}]`
+      }
+      else {
+        const thresholdPair = damageBonus.threshold as Pair<number, number>
+        const damageBonusPair = damageBonus.primary.value as Pair<string, string>
+
+        return `[${LSPair (Tuple.fst (thresholdPair)) (Tuple.fst (damageBonusPair))}, `
+        + `${LSPair (Tuple.snd (thresholdPair)) (Tuple.snd (damageBonusPair))}]`
+      }
     }
     else {
-      return `[${LSPair ((damageBonus.threshold as Pair<number, number>).values[0]) ((damageBonus.primary.value as Pair<string, string>).values[0])}, `
-      + `${LSPair ((damageBonus.threshold as Pair<number, number>).values[1]) ((damageBonus.primary.value as Pair<string, string>).values[1])}]`
+      const maybeTechnique = OrderedMap.lookupF
+        (state.values.wiki.values.combatTechniques)
+        (fromMaybe ("") (weapon.values.combatTechnique))
+
+      if (isJust (maybeTechnique)) {
+        const technique: Record<CombatTechnique> = maybeTechnique.value
+
+        let i = 0
+
+        const getThreshold =
+          (num: number) =>
+            isTuple (damageBonus.threshold)
+              ? (damageBonus.threshold).values[num]
+              : damageBonus.threshold
+
+        return `[${pipe_ (technique.values.primary,
+                    fmap (LSPair (getThreshold (i++))),
+                    List.intercalate (", "))}]`
+      }
     }
   }
-  else {
-    const technique: Record<CombatTechnique> = fromMaybe (null, OrderedMap.lookupF
-      (state.values.wiki.values.combatTechniques)
-      (fromMaybe ("", weapon.values.combatTechnique)))
 
-    let i = 0
-
-    const getThreshold =
-      (num: number) =>
-        isTuple (damageBonus.threshold)
-          ? (damageBonus.threshold).values[num]
-          : damageBonus.threshold
-
-    return `[${pipe_ (technique.values.primary,
-                fmap (LSPair (getThreshold (i++))),
-                List.intercalate (", "))}]`
-  }
+  return "[]"
 }
 
 function meleeWeaponForXML (state: AppStateRecord): (weapon: Record<Item>) => string {
-  return weapon => `{${weaponForXML (weapon)},`
-    + `"RW":"${fromMaybe (2, weapon.values.reach)}",`
-    + `"AT":${fromMaybe (0, weapon.values.at)},`
-    + `"PA":${fromMaybe (0, weapon.values.pa)},`
+  return weapon => `{${weaponForXML (state) (weapon)},`
+    + `"RW":${fromMaybe (2) (weapon.values.reach)},`
+    + `"AT":${fromMaybe (0) (weapon.values.at)},`
+    + `"PA":${fromMaybe (0) (weapon.values.pa)},`
     + `"LS":${getLS (state, weapon)},`
+    // TODO: isTwoHandedWeapon scheint hier immer 0 zu liefern.
+    // Ich habe das gerade mal im Inventar getestet. Dort scheint es so zu sein dass das Häckchen immer fehlt.
+    // Wenn man jedoch die Sperre aufhebt und wieder reinmacht ist der Haken da.
+    + `"Zweihand":${weapon.values.isTwoHandedWeapon ? 1 : 0},`
     + `"Parierwaffe":${weapon.values.isParryingWeapon ? 1 : 0}}`
 }
 
-function rangedWeaponForXML (weapon: Record<Item>): string {
-  return `{${weaponForXML (weapon)},`
-  + `"RW1":${fromMaybe (0, weapon.values.range)[0]},`
-  + `"RW2":${fromMaybe (0, weapon.values.range)[1]},`
-  + `"RW3":${fromMaybe (0, weapon.values.range)[2]},`
-  + `"Ladezeit":${fromMaybe (0, weapon.values.reloadTime)}}`
+function rangedWeaponForXML (state: AppStateRecord): (weapon: Record<Item>) => string {
+  return weapon => {
+    let rw1 = 0
+    let rw2 = 0
+    let rw3 = 0
+    let reloadTime = 0
+    if (isJust (weapon.values.range)) {
+      rw1 = fromMaybe (0) (List.subscript (weapon.values.range.value) (0))
+      rw2 = fromMaybe (0) (List.subscript (weapon.values.range.value) (1))
+      rw3 = fromMaybe (0) (List.subscript (weapon.values.range.value) (2))
+    }
+    if (isJust (weapon.values.reloadTime)) {
+      // Prinzipiell gibt es Waffen mit mehreren Ladezeiten. Dies ist ein Sonderfall den wir erstmal ignorieren
+      // Solche Waffen werden mit einer Ladezeit von 0 exportiert. Das muss man dann halt manuell nachtragen
+      if (typeof weapon.values.reloadTime.value === "number") {
+        reloadTime = weapon.values.reloadTime.value
+      }
+    }
+
+    return `{${weaponForXML (state) (weapon)},`
+    + `"RW1":${rw1},`
+    + `"RW2":${rw2},`
+    + `"RW3":${rw3},`
+    + `"Ladezeit":${reloadTime}}`
+  }
 }
 
 function combatTechniqueForXML (technique: Record<CombatTechniqueWithRequirements>): string {
   return "{"
   + `"Name":"${technique.values.wikiEntry.values.name}",`
   + `"FW":${technique.values.stateEntry.values.value},`
-  + `"L":${List.intercalate (", ") (technique.values.wikiEntry.values.primary)}}`
+  + `"L":[${pipe_ (technique.values.wikiEntry.values.primary,
+    fmap ((s: string) => `"${attrFromString (s).toString ()}"`),
+    List.intercalate (", "))}]}`
 }
 
 function armorForXML (name: string, rshead: Maybe<number>, rstorso: Maybe<number>,
                       rsarmleft: Maybe<number>, rsarmright: Maybe<number>,
                       rslegleft: Maybe<number>, rslegright: Maybe<number>,
                       ini: number, mov: number, enc: number, type: string): string {
-  const head: number = fromMaybe (0, rshead)
-  const torso: number = fromMaybe (0, rstorso)
-  const armleft: number = fromMaybe (0, rsarmleft)
-  const armright: number = fromMaybe (0, rsarmright)
-  const legleft: number = fromMaybe (0, rslegleft)
-  const legright: number = fromMaybe (0, rslegright)
+  const head: number = fromMaybe (0) (rshead)
+  const torso: number = fromMaybe (0) (rstorso)
+  const armleft: number = fromMaybe (0) (rsarmleft)
+  const armright: number = fromMaybe (0) (rsarmright)
+  const legleft: number = fromMaybe (0) (rslegleft)
+  const legright: number = fromMaybe (0) (rslegright)
   const rs: number =
     Math.round ((head + armleft * 2 + armright * 2 + legleft * 2 + legright * 2 + torso * 5) / 14.0)
 
   return `{"ID":${id++},"Name":"${name}","RS":${rs}, "RSKopf":${head}, "RSTorso":${torso},`
   + `"RSArmLinks":${armleft}, "RSArmRechts":${armright},`
   + `"RSBeinLinks":${legleft}, "RSBeinRechts":${legright},`
-  + `"GS":${mov}, "INI":${ini}, "Belastung":${enc}, "Typ":"${type}"}`
+  + `"GS":${mov}, "INI":${ini}, "BE":${enc}, "Typ":"${type}"}`
 }
 
 
@@ -605,7 +665,7 @@ function totalArmorForXML (armor: Armor): string {
     armor.pro,
     armor.ini,
     armor.mov,
-    fromMaybe (0, armor.enc),
+    fromMaybe (0) (armor.enc),
     "gesamt")
 }
 
@@ -628,56 +688,85 @@ function zoneArmorForXML (armorZones: HitZoneArmorForView): string {
 function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
   let xml = ""
 
-  const techniques: string = pipe_ (
-    fromMaybe (List.empty, getAllCombatTechniques (state, { hero })),
-    fmap (combatTechniqueForXML),
-    List.intercalate (", ")
-  )
-
-  xml += entry ({ key: "Kampftechniken", value: techniques })
+  const techniques = getAllCombatTechniques (state, { hero })
+  let techniquesForXML = "[]"
+  if (isJust (techniques)) {
+    techniquesForXML = `[${pipe_ (
+      techniques.value,
+      fmap (combatTechniqueForXML),
+      List.intercalate (", ")
+    )}]`
+  }
+  xml += entry ({ key: "Kampftechniken", value: techniquesForXML })
 
   const getItem = getFullItem
     (hero.values.belongings.values.items)
     (state.values.wiki.values.itemTemplates)
 
-  id = 0
-  const melee = `[${
-   pipe_ (
-    fromMaybe (List.empty, getMeleeWeapons (state, { hero })),
-    fmap (MeleeWeapon.A.id),
-    Maybe.mapMaybe (getItem),
-    fmap (meleeWeaponForXML (state)),
-    List.intercalate (", ")
-   )
-  }]`
+  id = 1
+  // Waffenlos fügen wir manuell ein
+  const brawlingTechnique =
+    OrderedMap.lookup (CombatTechniqueId.brawling) (state.values.wiki.values.combatTechniques)
+  let naturalWeapon = ""
+  if (isJust (brawlingTechnique)) {
+    naturalWeapon = `{"ID":0,"Name":"Waffenlos","RW":1,"AT":0,"PA":0,"Technik":"${brawlingTechnique.value.values.name}","Parierwaffe":0,"Improvisiert":0,"TP":"1d6","LS":[{"L":"GE","S":14},{"L":"KK","S":14}],"Zweihand":0}`
+  }
+  const meleeWeapons = getMeleeWeapons (state, { hero })
+  let meleeWeaponsForXML = "[]"
+  if (isJust (meleeWeapons)) {
+    meleeWeaponsForXML = `[${
+    pipe_ (
+      List<List<string>> (
+        List<string> (naturalWeapon),
+        pipe_ (
+          meleeWeapons.value,
+          fmap (MeleeWeapon.A.id),
+          Maybe.mapMaybe (getItem),
+          fmap (meleeWeaponForXML (state)),
+        )
+      ),
+      List.join,
+      List.intercalate (", ")
+    )}]`
+  }
+  xml += entry ({ key: "Nahkampfwaffen", value: meleeWeaponsForXML })
 
   id = 0
-  const ranged = `[${
-   pipe_ (
-    fromMaybe (List.empty, getRangedWeapons (state)),
-    fmap (RangedWeapon.A.id),
-    Maybe.mapMaybe (getItem),
-    fmap (rangedWeaponForXML),
-    List.intercalate (", ")
-   )
-  }]`
+  const rangedWeapons = getRangedWeapons (state)
+  let rangedWeaponsForXML = "[]"
+  if (isJust (rangedWeapons)) {
+    rangedWeaponsForXML = `[${
+    pipe_ (
+      rangedWeapons.value,
+      fmap (RangedWeapon.A.id),
+      Maybe.mapMaybe (getItem),
+      fmap (rangedWeaponForXML (state)),
+      List.intercalate (", ")
+    )
+    }]`
+  }
+  xml += entry ({ key: "Fernkampfwaffen", value: rangedWeaponsForXML })
 
-  xml += entry ({ key: "Nahkampfwaffen", value: melee })
-  xml += entry ({ key: "Fernkampfwaffen", value: ranged })
+  xml += entry ({ key: "AW", value: `${fromMaybe (0) (getDO (state, { hero }).values.value)}` })
 
-  xml += entry ({ key: "AW", value: `${getDO (state, { hero }).values.value}` })
-
-  const armors: List<Record<Armor>> = fromMaybe (List.empty, getArmors (state))
-  const armorZones: List<Record<HitZoneArmorForView>> =
-    fromMaybe (List.empty, getArmorZones (state))
+  const armors = fromMaybe (List<Record<Armor>> ()) (getArmors (state))
+  const armorZones = fromMaybe (List<Record<HitZoneArmorForView>> ()) (getArmorZones (state))
 
   id = 0
-
   xml += entry ({ key: "Ruestungen",
     value: `[${
       pipe_ (List<List<string>> (
-        List<string> (armorForXML
-          ("Keine Rüstung", Maybe (0), Maybe (0), Maybe (0), Maybe (0), Maybe (0), Maybe (0), 0, 0, 0, "gesamt")),
+        List<string> (armorForXML ("Keine Rüstung",
+          Maybe (0),
+          Maybe (0),
+          Maybe (0),
+          Maybe (0),
+          Maybe (0),
+          Maybe (0),
+          0,
+          0,
+          0,
+          "gesamt")),
         pipe_ (armors, fmap ((armor: Record<Armor>) => totalArmorForXML (armor.values))),
         pipe_ (armorZones, fmap ((armorZones: Record<HitZoneArmorForView>) =>
           zoneArmorForXML (armorZones.values)))
@@ -699,14 +788,16 @@ function getBelongingsXML (hero: HeroModelRecord, state: AppStateRecord): string
 
   const getItem = getFullItem (hero.values.belongings.values.items) (getWikiItemTemplates (state))
   hero.values.belongings.values.items.value.forEach (value => {
-    const item: Record<Item> = fromMaybe (0, getItem (value.values.id))
-    items[i] = "{"
-    items[i] += `"gegenstand":"${item.values.name}",`
-    items[i] += `"anzahl":${value.values.amount},`
-    items[i] += `"gewicht":${value.values.weight},`
-    items[i] += "\"beschreibung\":\"Keine Beschreibung vorhanden\","
-    items[i] += "\"behaelter\":1}"
-    i++
+    const item = getItem (value.values.id)
+    if (isJust (item)) {
+      items[i] = "{"
+      items[i] += `"gegenstand":"${item.value.values.name}",`
+      items[i] += `"anzahl":${value.values.amount},`
+      items[i] += `"gewicht":${fromMaybe (0) (value.values.weight)},`
+      items[i] += `"beschreibung":"${fromMaybe ("") (item.value.values.rules)}",`
+      items[i] += `"behaelter":1}`
+      i++
+    }
   })
   xml += entry ({ key: "Inventar", value: items.join (",") })
 
@@ -714,19 +805,20 @@ function getBelongingsXML (hero: HeroModelRecord, state: AppStateRecord): string
 }
 
 export function getContentXML (hero: HeroModelRecord, state: AppStateRecord): string {
-  let contentXml = "<?xml version=\"1.0\"?>"
+  const contentXml = `${"<?xml version=\"1.0\"?>"
+  + "<net.rptools.maptool.model.Token>"}${
+   getStaticDataXML (hero)
+   }<propertyMapCI><store>${
+   getAttributesXML (hero, state)
+   }${getTalentsXML (hero, state)
+   }${getAdvantagesXML (hero, state)
+   }${getSpecialAbilitiesXML (hero, state)
+   }${getCombatXML (hero, state)
+   }${getBelongingsXML (hero, state)
+   }</store></propertyMapCI>`
+  + `</net.rptools.maptool.model.Token>`
 
-  contentXml += "<net.rptools.maptool.model.Token>"
-  contentXml += getStaticDataXML (hero)
-  contentXml += "<propertyMapCI><store>"
-  contentXml += getAttributesXML (hero, state)
-  contentXml += getTalentsXML (hero, state)
-  contentXml += getAdvantagesXML (hero, state)
-  contentXml += getSpecialAbilitiesXML (hero, state)
-  contentXml += getCombatXML (hero, state)
-  contentXml += getBelongingsXML (hero, state)
-  contentXml += "</store></propertyMapCI>"
-  contentXml += "</net.rptools.maptool.model.Token>"
+  traceId (contentXml)
 
   return contentXml
 }
@@ -741,18 +833,15 @@ function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer {
   // passend wäre es wenn wir das komplette Bild als Portrait und Handout setzen
   // als Token wäre ein kleines runden Thumbnail passend, so wie es in der Heldenliste angezeigt wird
 
-  if (isJust (hero.values.avatar)) {
+  /* if (isJust (hero.values.avatar)) {
     const binaryAvatar = atob (hero.values.avatar.value)
     zip.addFile ("assets/", Buffer.from (""))
     zip.addFile ("assets/thumbkeyhashthing", Buffer.from (binaryAvatar))
-  }
+  } */
 
   return zip.toBuffer ()
 }
 
-// TODO: Das müsste sich mal jemand ansehen. Habe ich als Vorlage kopiert. Async brauche ich hier glaub ich gar nicht?
-// Den aktuellen hero und state müsste ich mir irgendwo holen. Da weis ich noch nicht wie ich rankomme
-// Den Text für den Button und das Export-Fenster müsste ich für die Lokalisierung auch irgendwo eintragen. Wo mache ich das?
 export const requestExportHeroAsRptok = (hero: HeroModelRecord): ReduxAction<Promise<void>> =>
   async (dispatch, getState) => {
     const state = getState ()
@@ -763,7 +852,7 @@ export const requestExportHeroAsRptok = (hero: HeroModelRecord): ReduxAction<Pro
 
     const path = await showSaveDialog ({
                     title: translate (staticData) ("sheets.dialogs.rptokexportsavelocation.title"),
-                    defaultPath: `${hero.name}.rptok`,
+                    defaultPath: `${hero.values.name}.rptok`,
                     filters: [
                       { name: "Rptok", extensions: [ "rptok" ] },
                     ],
