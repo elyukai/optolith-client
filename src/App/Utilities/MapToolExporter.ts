@@ -49,6 +49,8 @@ import { getAllActiveByCategory } from "./Activatable/activatableActiveUtils"
 import { Category } from "../Constants/Categories"
 import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveActivatable"
 import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids.gen"
+import { getAttributesForView } from "../Selectors/attributeSelectors"
+import { AttributeWithRequirements } from "../Models/View/AttributeWithRequirements"
 
 type MapToolsEntry = {
   key: string
@@ -160,21 +162,21 @@ function getStaticDataXML (hero: HeroModelRecord): string {
 
 function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string {
   // TODO: Hier werden Minimaleigenschaften leider noch nicht mit exportiert.
-  let xml: string = pipe_ (
-    state.values.wiki.values.attributes,
-    OrderedMap.elems,
-    mapMaybe ((attr: Record<Attribute>) =>
+
+  let xml: string = pipe_ (getAttributesForView (state, { hero }),
+    fromMaybe (List<Record<AttributeWithRequirements>> ()),
+    mapMaybe ((attr: Record<AttributeWithRequirements>) =>
       pipe_ (
         attr,
+        AttributeWithRequirements.A.wikiEntry,
         Attribute.A.id,
         OrderedMap.lookupF (hero.values.attributes),
         fmap ((stateEntry: Record<AttributeDependent>) => entry ({
-          key: Attribute.A.short (attr),
+          key: pipe_ (attr, AttributeWithRequirements.A.wikiEntry, Attribute.A.short),
           value: AttributeDependent.A.value (stateEntry).toString (),
         }))
       )),
-    List.intercalate ("")
-  )
+    List.intercalate (""))
 
   const leP: number = fromMaybe (0) (getLP (state, { hero }).values.value)
   const aspContainer = getAE (state, { hero })
@@ -220,6 +222,9 @@ function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string
       xml += entry ({ key: "APverfuegbar", value: ap2.value.values.available.toString () })
     }
   }
+
+  // TODO: Hier die aktuelle Optolith-Version mit exportieren
+  xml += entry ({ key: "Exporter", value: "" })
 
   return xml
 }
@@ -488,7 +493,6 @@ function specialAbilityGroupForMapTool (group: Maybe<Record<NumIdName>>): string
 // TODO: Hier will ich die Sprachen und Schriften Extra haben
 // soll heißen dass die NICHT unter AllgemeineSFs stehen sollen sondern als 2 separate Listen
 function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): string {
-
   const ungrouped: List<MapToolsEntry> = pipe_ (
     getActiveForEditView (Category.SPECIAL_ABILITIES) (state, { hero }),
     fromMaybe (List<Record<ActiveActivatable<SpecialAbility>>> ()),
@@ -778,10 +782,19 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
   return xml
 }
 
+function getCurrencyNumber (value: string): string {
+  if (value === "") {
+    return "0"
+  }
+  else {
+    return value
+  }
+}
+
 function getBelongingsXML (hero: HeroModelRecord, state: AppStateRecord): string {
   let xml = ""
   const purse = hero.values.belongings.values.purse.values
-  const imisc = `{"behaelter1":"Rucksack","behaelter2":"Guerteltasche","behaelter3":"Beutel","behaelter4":"Am Koerper getragen","behaelter5":"Satteltaschen","dukaten":${purse.d},"silbertaler":${purse.s},"heller":${purse.h},"kreuzer":${purse.k}}`
+  const imisc = `{"behaelter1":"Rucksack","behaelter2":"Guerteltasche","behaelter3":"Beutel","behaelter4":"Am Koerper getragen","behaelter5":"Satteltaschen","dukaten":${getCurrencyNumber (purse.d)},"silbertaler":${getCurrencyNumber (purse.s)},"heller":${getCurrencyNumber (purse.h)},"kreuzer":${getCurrencyNumber (purse.k)}}`
   xml += entry ({ key: "InventarMisc", value: imisc })
   const items: string[] = new Array (hero.values.belongings.values.items.value.size)
   let i = 0
@@ -794,12 +807,14 @@ function getBelongingsXML (hero: HeroModelRecord, state: AppStateRecord): string
       items[i] += `"gegenstand":"${item.value.values.name}",`
       items[i] += `"anzahl":${value.values.amount},`
       items[i] += `"gewicht":${fromMaybe (0) (value.values.weight)},`
-      items[i] += `"beschreibung":"${fromMaybe ("") (item.value.values.rules)}",`
+      // TODO: Hier scheint es Probleme mit einigen Gegenständen zu geben. Wir exportieren ja ein JSON Format.
+      // Dort müssen "" in der gleichen Zeile geschlossen werden. Wenn sich in der Beschreibung Zeilenumbrüche befinden macht as Probleme
+      // items[i] += `"beschreibung":"${(fromMaybe ("") (item.value.values.rules)).replace ("/[\r\n]+/gm", "")}",`
       items[i] += `"behaelter":1}`
       i++
     }
   })
-  xml += entry ({ key: "Inventar", value: items.join (",") })
+  xml += entry ({ key: "Inventar", value: `[${items.join (",")}]` })
 
   return xml
 }
