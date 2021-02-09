@@ -8,20 +8,23 @@ assignees: ''
 ---
 
 **Sources**
+
 > List here what is included in this part of the book to implement. E.g., for special abilities, you need to list every source of entries from the book. Example (in German):
->
-> - [ ] S. 133 (Berufsgeheimnisse)
-> - [ ] S. 165-170 (Zauber- und Liturgiestile)
-> - [ ] S. 183 (Stabzauber)
-> - [ ] S. 195 (Zeremonialgegenstand Widderkeule)
+> 
+> - [ ] S. 133–150 (Berufsgeheimnisse)
 
-**Tables**
-> Delete Univ and change locale if necessary. Add specific entries if they could not be resolved.
+- [ ] S. X (Section/Chapter Name)
 
-- [ ] Univ
-- [ ] L10n de-DE
+**Special Notes**
 
-**Code**
-> List here what cannot be solved only using the tables. Example (in German):
+> List here any special hints to implement the sources listed above.
+
+- …
+
+**Special Implementations**
+
+> List here what cannot be solved only using the database. Example (in German):
 >
 > - [ ] Voraussetzungen Vorliebe I-II
+
+- …
