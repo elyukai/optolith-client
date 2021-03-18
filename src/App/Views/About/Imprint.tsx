@@ -26,6 +26,17 @@ export const Imprint = (props: ImprintProps) => {
           <br />
           <a href="mailto:support@optolith.app">{"support@optolith.app"}</a>
         </p>
+
+        <h3>{"Philipp Borucki"}</h3>
+        <p>
+          {"Duburger Straße 13"}
+          <br />
+          {"24939 Flensburg"}
+          <br />
+          {"Germany"}
+          <br />
+          <a href="mailto:support@cloud.optolith.app">{"support@cloud.optolith.app"}</a>
+        </p>
       </Scroll>
     </Page>
   )
