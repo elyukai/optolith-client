@@ -1,6 +1,6 @@
 ---
-name: Question
-about: I have a question.
+name: Publication ambiguity
+about: An ambiguity in an official publication
 title: ''
 labels: 'Ulisses: Question'
 assignees: ''
