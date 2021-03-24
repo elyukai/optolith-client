@@ -37,7 +37,7 @@ import { isBlessedTradId, isMagicalTradId } from "../../Utilities/Activatable/tr
 import { putLevelName } from "../../Utilities/AdventurePoints/activatableCostUtils"
 import { nbsp } from "../../Utilities/Chars"
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n"
-import { getCategoryById, prefixRace } from "../../Utilities/IDUtils"
+import { getCategoryById } from "../../Utilities/IDUtils"
 import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { renderMaybe } from "../../Utilities/ReactUtils"
