@@ -1,69 +1,61 @@
 type t = {
   id : int;
   name : string;
-  nameAbbr : string;
-  isCore : bool;
-  isAdultContent : bool;
+  abbr : string;
+  is_core : bool;
+  is_adult_content : bool;
 }
 
-module Decode = Json_Decode_Static.Make (struct
-  type nonrec t = t
+module Decode = struct
+  open Json.Decode
+  open JsonStrict
 
-  module Translation = struct
-    type t = {
-      name : string;
-      nameAbbr : string;
-      isMissingImplementation : bool option;
+  type translation = {
+    name : string;
+    nameAbbr : string;
+    isMissingImplementation : bool option;
+  }
+
+  let translation json =
+    {
+      name = json |> field "name" string;
+      nameAbbr = json |> field "nameAbbr" string;
+      isMissingImplementation =
+        json |> optionalField "isMissingImplementation" bool;
     }
-
-    let t json =
-      Json_Decode_Strict.
-        {
-          name = json |> field "name" string;
-          nameAbbr = json |> field "nameAbbr" string;
-          isMissingImplementation =
-            json |> optionalField "isMissingImplementation" bool;
-        }
-
-    let pred { isMissingImplementation; _ } =
-      Ley_Option.dis isMissingImplementation
-  end
+    |> Option.ensure (fun { isMissingImplementation; _ } ->
+           Option.dis isMissingImplementation)
 
   type multilingual = {
     id : int;
     isCore : bool;
     isAdultContent : bool;
     isMissingImplementation : bool option;
-    translations : Translation.t Json_Decode_TranslationMap.partial;
+    translations : translation TranslationMap.t;
   }
 
-  let multilingual decodeTranslations json =
-    Json_Decode_Strict.
+  let multilingual json =
+    {
+      id = json |> field "id" int;
+      isCore = json |> field "isCore" bool;
+      isAdultContent = json |> field "isAdultContent" bool;
+      isMissingImplementation =
+        json |> optionalField "isMissingImplementation" bool;
+      translations =
+        json |> field "translations" (TranslationMap.Decode.t_opt translation);
+    }
+
+  let make_assoc locale_order json =
+    let open Option.Infix in
+    json |> multilingual |> fun multilingual ->
+    multilingual.translations |> TranslationMap.preferred locale_order
+    <&> fun translation ->
+    ( multilingual.id,
       {
-        id = json |> field "id" int;
-        isCore = json |> field "isCore" bool;
-        isAdultContent = json |> field "isAdultContent" bool;
-        isMissingImplementation =
-          json |> optionalField "isMissingImplementation" bool;
-        translations = json |> field "translations" decodeTranslations;
-      }
-
-  let make _ multilingual (translation : Translation.t) =
-    match multilingual with
-    | { isMissingImplementation = Some true; _ } -> None
-    | _ ->
-        Some
-          {
-            id = multilingual.id;
-            isCore = multilingual.isCore;
-            isAdultContent = multilingual.isAdultContent;
-            name = translation.name;
-            nameAbbr = translation.nameAbbr;
-          }
-
-  module Accessors = struct
-    let id (x : t) = x.id
-
-    let translations x = x.translations
-  end
-end)
+        id = multilingual.id;
+        is_core = multilingual.isCore;
+        is_adult_content = multilingual.isAdultContent;
+        name = translation.name;
+        abbr = translation.nameAbbr;
+      } )
+end

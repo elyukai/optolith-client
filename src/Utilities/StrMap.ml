@@ -1,0 +1,1 @@
+include MapX.Make (String)

@@ -8,59 +8,52 @@ module Static = struct
     errata : Erratum.list;
   }
 
-  module Decode = Json_Decode_Static.Make (struct
-    type nonrec t = t
+  module Decode = struct
+    open Json.Decode
+    open JsonStrict
 
-    module Translation = struct
-      type t = {
-        name : string;
-        description : string;
-        errata : Erratum.t list option;
+    type translation = {
+      name : string;
+      description : string;
+      errata : Erratum.t list option;
+    }
+
+    let translation json =
+      {
+        name = json |> field "name" string;
+        description = json |> field "description" string;
+        errata = json |> optionalField "errata" Erratum.Decode.list;
       }
-
-      let t json =
-        Json_Decode_Strict.
-          {
-            name = json |> field "name" string;
-            description = json |> field "description" string;
-            errata = json |> optionalField "errata" Erratum.Decode.list;
-          }
-
-      let pred _ = true
-    end
 
     type multilingual = {
       id : int;
       isPrerequisite : bool;
-      src : PublicationRef.Decode.multilingual list;
-      translations : Translation.t Json_Decode_TranslationMap.partial;
+      src : PublicationRef.list;
+      translations : translation TranslationMap.t;
     }
 
-    let multilingual decodeTranslations json =
-      let open Json.Decode in
+    let multilingual locale_order json =
       {
         id = json |> field "id" int;
         isPrerequisite = json |> field "isPrerequisite" bool;
-        src = json |> field "src" PublicationRef.Decode.multilingualList;
-        translations = json |> field "translations" decodeTranslations;
+        src = json |> field "src" (PublicationRef.Decode.make_list locale_order);
+        translations =
+          json |> field "translations" (TranslationMap.Decode.t translation);
       }
 
-    let make langs (multilingual : multilingual) (translation : Translation.t) =
-      Some
+    let make_assoc locale_order json =
+      let open Option.Infix in
+      json |> multilingual locale_order |> fun multilingual ->
+      multilingual.translations |> TranslationMap.preferred locale_order
+      <&> fun translation ->
+      ( multilingual.id,
         {
           id = multilingual.id;
           name = translation.name;
           description = translation.description;
           isPrerequisite = multilingual.isPrerequisite;
-          src =
-            PublicationRef.Decode.resolveTranslationsList langs multilingual.src;
-          errata = translation.errata |> Ley_Option.fromOption [];
-        }
-
-    module Accessors = struct
-      let id (x : t) = x.id
-
-      let translations x = x.translations
-    end
-  end)
+          src = multilingual.src;
+          errata = translation.errata |> Option.fromOption [];
+        } )
+  end
 end

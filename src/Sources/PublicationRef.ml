@@ -3,51 +3,37 @@ type page = Single of int | Range of int * int
 type t = { id : int; occurrences : page list }
 
 module Decode = struct
-  include Json_Decode_Static.Nested.Make (struct
-    type nonrec t = t
+  open Json.Decode
+  open JsonStrict
 
-    module Translation = struct
-      type t = page list
+  type translation = page list
 
-      let t =
-        Json_Decode_Strict.(
-          OneOrMany.Decode.t (fun json ->
-              let first = json |> field "firstPage" int in
-              let maybeLast = json |> optionalField "lastPage" int in
-              Ley_Option.option (Single first)
-                (fun last -> Range (first, last))
-                maybeLast)
-          |> map OneOrMany.to_list)
+  let translation json =
+    let range json =
+      let first = json |> field "firstPage" int in
+      let maybeLast = json |> optionalField "lastPage" int in
+      Option.option (Single first) (fun last -> Range (first, last)) maybeLast
+    in
+    ListX.Decode.one_or_many range json
 
-      let pred _ = true
-    end
+  type multilingual = { id : int; occurrences : translation TranslationMap.t }
 
-    type multilingual = {
-      id : int;
-      occurrences : Translation.t Json_Decode_TranslationMap.partial;
+  let multilingual json : multilingual =
+    {
+      id = json |> field "id" int;
+      occurrences =
+        json |> field "occurrences" (TranslationMap.Decode.t translation);
     }
 
-    let multilingual decodeTranslations json : multilingual =
-      Json.Decode.
-        {
-          id = json |> field "id" int;
-          occurrences = json |> field "occurrences" decodeTranslations;
-        }
+  let make locale_order json =
+    let open Option.Infix in
+    json |> multilingual |> fun multilingual ->
+    multilingual.occurrences |> TranslationMap.preferred locale_order
+    <&> fun translation ->
+    ({ id = multilingual.id; occurrences = translation } : t)
 
-    let make _ (multilingual : multilingual) translation =
-      Some ({ id = multilingual.id; occurrences = translation } : t)
-
-    module Accessors = struct
-      let id (x : t) = x.id
-
-      let translations (x : multilingual) = x.occurrences
-    end
-  end)
-
-  let multilingualList = Json.Decode.list multilingual
-
-  let resolveTranslationsList langs xs =
-    xs |> Ley_Option.mapOption (resolveTranslations langs)
+  let make_list locale_order json =
+    list (make locale_order) json |> Option.catOptions
 end
 
 type nonrec list = t list

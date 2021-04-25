@@ -10,6 +10,6 @@ module Static : sig
   }
 
   module Decode : sig
-    val assoc : t Json_Decode_Static.decodeAssoc
+    val make_assoc : t JsonStatic.make_assoc
   end
 end

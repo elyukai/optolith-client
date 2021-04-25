@@ -8,106 +8,74 @@ Decoding the database is splitted into parsing the YAML files and decoding the r
 
 ## Decode Entry Types
 
-### Basic decoder structure
+### Decoder structure
 
-All decodable types share a common decoder layout. All values only relevant while decoding are inside a `Decode` module at the same level as the type it is the decoder for.
+All decodable main types share a common decoder layout. All values only relevant while decoding are inside a `Decode` module at the same level as the type it is the decoder for.
 
-```re
-// Since this is the actual type, it's not really part of the decoding pipeline
-// but I'll keep it here to make the definitions complete.
+```ml
+(** Since this is the actual type, it's not really part of the decoding pipeline
+    but I'll keep it here to make the definitions complete. *)
 type t = {
-  // ...
-};
+  (* ... *)
+}
 
-module Decode = {
-  module Translation = {
-    type t = {
-      // ... (language-specific properties)
-    };
+module Decode = struct
+  open Json.Decode
+  open JsonStrict
 
-    let t = Json.Decode.{
-      // ... (decode language-specific properties)
-    };
-  }
+  type translation = { (* ... language-specific properties *) }
 
-  module TranslationMap = TranslationMap.Make(Translation);
+  let translation json =
+    {
+      (* ... decode language-specific properties *)
+    }
 
   type multilingual = {
-    // ... (language-independent properties)
-    translations: TranslationMap.t,
+    (* ... language-independent properties *)
+    translations : translation TranslationMap.t;
   }
 
-  let multilingual = json =>
-    Json.Decode.{
-      // ... (decode language-independent properties)
-      translations: json |> field("translations", TranslationMap.Decode.t),
-    };
+  let multilingual json =
+    {
+      (* ... decode language-independent properties *)
+      translations =
+        json |> field "translations" (TranslationMap.Decode.t translation);
+    }
 
-  let resolveTranslations = (langs, x) =>
-    Ley_Option.Infix.(
-      x.translations
-      |> TranslationMap.Decode.getFromLanguageOrder(langs)
-      <&> (translation => {
-        // ... (merge language-independent and language-specific properties)
-      })
-    );
-
-  let t = (langs, json) =>
-    json |> multilingual |> resolveTranslations(langs);
-};
+  let make_assoc locale_order json =
+    let open Option.Infix in
+    json |> multilingual |> fun multilingual ->
+    multilingual.translations |> TranslationMap.preferred locale_order
+    <&> fun (translation : translation) ->
+    ( multilingual.id,
+      {
+        (* ... merge language-independent and language-specific properties *)
+      } )
+end
 ```
 
-### The two steps of decoding
+#### Decoding types
 
-All *static types* (i.e., all data defined in YAML files) share a common structure concerning their decode process.
+Since language-specific values in the YAML files are always defined in dictionaries where the keys map to the locale identifiers, we always split the language-specific and the language-independent parts.
 
-#### 1. Decode a multilingual entry
+The language-specific part of a type is always defined as type `translation`. The corresponding `translation` decoder function is later used to decode the translation dictionary, also called *translation map*.
 
-Since language-specific values in the YAML files are always defined in dictionaries, we always split the language-specific and the language-independent parts.
+The language-independent part of a type is defined as type `multilingual` and usually has the property `translations`, which is the dictionary of all translations. The corresponding `multilingual` decoder function uses the `translation` decoder together with the translation map decoder from the `TranslationMap` module to fully decode the dictionary of translations.
 
-The language-specific part of a type is always defined in a separate module `Translation` as record `t`. The `Translation` module is used for the functor `TranslationMap.Make`, which creates functions to decode the dictionaries and to resolve them later (see next step).
+Using a list of preferred locales, sorted by preference, (`Locale.Order.t`) we can retrieve the most preferred translation using `TranslationMap.preferred` and then combine the translation values and the multilingual values to form the final record type. Following OCaml conventions, this function is called `make`.
 
-The language-independent part of a type is defined as record `multilingual` and always has the property `translations`, which is the `TranslationMap` type created by the `TranslationMap.Make` functor.
+Often, in order to be used more easily, the `make` function returns a pair of the respective entry's identifier and the entry itself to create a `Map` more easily. To hint at this specific use, the function is then called `make_assoc`. If a nested type is only decoded in a context of collection type (like a list), this decoder can be provided using a `make` variant as well (in this case, `make_list`).
 
-Now we can decode all language-independent values and the `TranslationMap`. Using the `Decode.t` function on the `TranslationMap`, it is not completely decoded, but instead only which languages are available, which is important because we need to check whether this entry is available in one of the selected languages. This then almost mirrors the structure of the data in the YAML files.
+If other decodable types are nested withing a type, the `multilingual` function usually takes the list of preferred locales as well to be able to pass it down to the nested types' decoders.
 
-The corresponding function is called `multilingual`.
+### `Decode` module visibility conventions
 
-#### 2. Resolve translation maps with language settings
-
-In the second steps, the translations maps are reduced to one language to form the main type together with the language-independent values.
-
-By making use of the `Decode.getFromLanguageOrder` function on the translation map, we can get the values in the most preferred language and decode them at once. Since it returns an `Option`, we can safely continue only if a matching language has been found. Then we can build the main record based on the decoded language-specific part and the language-independent part.
-
-The corresponding function is called `resolveTranslations`.
-
-Together, `multilingual` and `resolveTranslations` form the `t` decoder function for the main type.
-
-### Main types
-
-In order to be used easier, an `assoc` auxiliary decoder function should be created to return a pair of the entry's id as well as the entry itself, since then it is easier to build a map of them. Some nested types use that, too.
-
-### Nested types
-
-Some types have nested types that have own translations (like professions and their variants). In those cases, you basically take the same steps mentioned above, although you can skip creating a main `t` decoder since that can't be used.
-
-Instead, the main type's `multilingual` type references the nested type's `multilingual` and the `multilingual` decoder uses the nested type's `multilingual` decoder.
-
-In step 2, it is basically the same: `resolveTranslations` of the nested type is called in `resolveTranslations` of the main type.
-
-### Visibility conventions
-
-For main types, only the main type itself and it's `t` (or `assoc`) function should be exposed. For nested types in the same module (as submodules), you can hide all decode types and functions. For nested types in a different module, you'll need to expose the `multilingual` and `resolveTranslations` functions and thus the `multilingual` type, which should always be abstract, since it should never be changed outside of the module.
-
-As a rule of thumb: Just export what is *really* needed and also always check if a decode type can be made abstract.
+Only the `make` function or its variant should be exposed.
 
 ### Naming conventions
 
-- The language-specific module is always named `Translation` and contains a type `t` with a corresponding decoder `t` (the latter two are a requirement for the `TranslationMap.Make` functor anyway).
-- The built translation map module is called `TranslationMap`.
+- The language-specific tyüe is always named `translation`.
 - The record containing all language-independent values as well as the translation map is called `multilingual` and the translation map is at the property `translations` (just like in the source).
 - A decoder for a specific type has the same name as the type.
-- The function resolving the translation map and returning the actual main type is called `resolveTranslations`.
-- The function combining `multilingual` and `resolveTranslations` is called `t`, since it decodes the type `t`.
-
-You can, of course, always create additional helper functions for `multilingual`, `resolveTranslations` and `decode` if your type is usually in a container, then you need to provide a proper suffix for the function as well, so you basically get, for example, `multilingual` and `multilingualList` (if your type is in a list). Exception: If your type is `t`, just use the suffix instead, for example, `t` and `assoc` (if your type is used in a map) then.
+- The function resolving the translation map and returning the actual main type is called `make`.
+- A potential helper function that decodes the type as part of a collection is called `make_c`, where `c` is the name of the collection, e.g. `make_list`.

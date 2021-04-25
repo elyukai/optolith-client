@@ -1,41 +1,13 @@
 {
-  "$schema": "https://bucklescript.github.io/bucklescript/docson/build-schema.json",
   "name": "optolith-client",
   "version": "0.1.0",
   "sources": [
-    { "dir": "deploy" },
     { "dir": "src" },
-    { "dir": "src/Activatable" },
-    { "dir": "src/Activatable/SpecialAbilities" },
-    { "dir": "src/App/Actions" },
-    { "dir": "src/App/Constants" },
-    { "dir": "src/App/Containers" },
-    { "dir": "src/App/Models" },
-    { "dir": "src/App/Reducers" },
-    { "dir": "src/App/Selectors" },
-    { "dir": "src/App/Utilities" },
-    { "dir": "src/App/Utilities/__tests__", "type": "dev" },
-    { "dir": "src/App/Utilities/YAML" },
-    { "dir": "src/App/Views" },
-    { "dir": "src/App/Views/Universal" },
-    { "dir": "src/Control" },
-    { "dir": "src/Data" },
-    { "dir": "src/Data/__tests__", "type": "dev" },
-    { "dir": "src/Debug" },
-    { "dir": "src/Equipment" },
-    { "dir": "src/ExternalBindings" },
-    { "dir": "src/Increasable" },
-    { "dir": "src/Increasable/__tests__", "type": "dev" },
-    { "dir": "src/Increasable/MagicalActions" },
-    { "dir": "src/Init" },
-    { "dir": "src/Misc" },
-    { "dir": "src/Misc/__tests__", "type": "dev" },
-    { "dir": "src/Prerequisites" },
-    { "dir": "src/RaceCultureProfession" },
+    { "dir": "src/Rated" },
     { "dir": "src/Rules" },
     { "dir": "src/Sources" },
     { "dir": "src/Utilities" },
-    { "dir": "src/Utilities/__tests__", "type": "dev" }
+    { "dir": "src/Utilities/Abstractions" }
   ],
   "package-specs": {
     "module": "commonjs",
@@ -45,6 +17,7 @@
   "bs-dependencies": [
     "@glennsl/bs-json",
     "@glennsl/bs-jest",
+    "bs-fetch",
     "bs-webapi",
     "reason-react",
     "reductive"
@@ -56,6 +29,5 @@
     "number": "+A-42-48",
     "error": "+A-3-4-27-32-41-44-102"
   },
-  "namespace": true,
-  "refmt": 3
+  "namespace": true
 }
