@@ -19,21 +19,24 @@ module Order : sig
       order of possible locales. *)
 end
 
-(* module Supported : sig
-  type t = { id : string; name : string; region : string }
-  (** A language supported in Optolith. It's id is it's IETF language tag
-      (BCP47), and it features the languages name as well as the region name
-      defined in the standard. *)
+module Supported : sig
+  type t = {
+    id : string;  (** The IETF language tag (BCP47). *)
+    name : string;
+    region : string;
+  }
+  (** A language supported in Optolith. It features the language's identifier
+      and name as well as the region name defined in the BCP47 standard. *)
 
-  val systemLocaleToId : t Ley_StrMap.t -> string -> string
+  val system_locale_to_id : t StrMap.t -> string -> string
   (** Derive the default locale's id from the system locale's id. *)
 
   module Decode : sig
-    val map : t Ley_StrMap.t Json.Decode.decoder
+    val make_strmap : t StrMap.t Json.Decode.decoder
   end
 end
 
-val filterBySupported : string -> Supported.t Ley_StrMap.t -> Order.t -> Order.t
+(* val filterBySupported : string -> Supported.t Ley_StrMap.t -> Order.t -> Order.t
 (** [filterBySupported defaultLocale supportedLocales localeOrder] filters the
     order of locales set by the user by the locales that are supported. If this
     causes the order to be empty, a default locale will be used. *) *)

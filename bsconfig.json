@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "sources": [
     { "dir": "src" },
+    { "dir": "src/Common" },
+    { "dir": "src/Localization" },
     { "dir": "src/Rated" },
     { "dir": "src/Rules" },
     { "dir": "src/Sources" },
