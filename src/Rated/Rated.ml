@@ -53,8 +53,8 @@ module Dynamic = struct
       <&> IC.ap_for_range ~from_value:min_value ~to_value:value
       |> Option.fromOption 0
 
-    let make ?(value = min_value) ~static ~id =
-      let init_value = Int.max min_value value in
+    let make ?value ~static ~id =
+      let init_value = Option.option min_value (Int.max min_value) value in
       {
         id;
         value = init_value;
