@@ -20,6 +20,6 @@
     "editor.detectIndentation": false,
     "ocaml.sandbox": {
       "kind": "opam",
-      "switch": "${workspaceFolder:optolith-client-rework}"
+      "switch": "/home/elyukai/Repositories/optolith-client-rework"
     }
 }

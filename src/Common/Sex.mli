@@ -23,11 +23,11 @@ val matches : t -> prerequisite -> bool
     character's sex. *)
 
 module Decode : sig
-  val make : t Json.Decode.decoder
+  val t : t Json.Decode.decoder
 
-  val make_prerequisite : prerequisite Json.Decode.decoder
+  val prerequisite : prerequisite Json.Decode.decoder
 end
 
 module Encode : sig
-  val make : t Json.Encode.encoder
+  val t : t Json.Encode.encoder
 end

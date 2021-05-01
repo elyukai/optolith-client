@@ -30,7 +30,7 @@ module Decode = struct
       as_female = json |> field "as_female" bool;
     }
 
-  let make =
+  let t =
     oneOf
       [
         string
@@ -61,7 +61,7 @@ module Decode = struct
                    ~invalid:str);
       ]
 
-  let make_prerequisite =
+  let prerequisite =
     string
     |> map (function
          | "Male" -> (Male : prerequisite)
@@ -76,7 +76,7 @@ module Encode = struct
   let binary_handling { as_male; as_female } =
     object_ [ ("as_male", bool as_male); ("as_female", bool as_female) ]
 
-  let make (sex : t) =
+  let t (sex : t) =
     match sex with
     | Male -> string "Male"
     | Female -> string "Female"

@@ -4,11 +4,13 @@
   "sources": [
     { "dir": "src" },
     { "dir": "src/Common" },
+    { "dir": "src/Dependencies" },
     { "dir": "src/Localization" },
     { "dir": "src/Rated" },
     { "dir": "src/Rules" },
     { "dir": "src/Sources" },
     { "dir": "src/Utilities" },
+    { "dir": "src/Utilities/__tests__", "type": "dev" },
     { "dir": "src/Utilities/Abstractions" }
   ],
   "package-specs": {

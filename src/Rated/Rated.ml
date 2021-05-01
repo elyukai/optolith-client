@@ -2,7 +2,7 @@ module Dynamic = struct
   type dependency_value = Minimum of int | Maximum of int
 
   type dependency = {
-    source : Id.ActivatableAndSkill.t;
+    source : IdGroup.ActivatableAndSkill.t;
     other_targets : int list;
     value : dependency_value;
   }

@@ -1,0 +1,15 @@
+type t = {
+  id : int;
+  name : string;
+  ap : int;
+  max_attribute_value : int;
+  max_skill_rating : int;
+  max_combat_technique_rating : int;
+  max_attribute_total : int;
+  max_number_spells_liturgical_chants : int;
+  max_unfamiliar_spells : int;
+}
+
+module Decode : sig
+  val make_assoc : t JsonStatic.make_assoc
+end

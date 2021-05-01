@@ -7,7 +7,8 @@ module Dynamic : sig
   type dependency_value = Minimum of int | Maximum of int
 
   type dependency = {
-    source : Id.ActivatableAndSkill.t;  (** The source of the dependency. *)
+    source : IdGroup.ActivatableAndSkill.t;
+        (** The source of the dependency. *)
     other_targets : int list;
         (** If the source prerequisite targets multiple entries, the other entries are listed here. *)
     value : dependency_value;  (** The required value. *)
