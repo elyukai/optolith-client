@@ -3,36 +3,36 @@ type t = A | B | C | D | E
 let show ic =
   match ic with A -> "A" | B -> "B" | C -> "C" | D -> "D" | E -> "E"
 
-let toIndex ic = match ic with A -> 0 | B -> 1 | C -> 2 | D -> 3 | E -> 4
+let to_index ic = match ic with A -> 0 | B -> 1 | C -> 2 | D -> 3 | E -> 4
 
-let getApBase ic = match ic with A -> 1 | B -> 2 | C -> 3 | D -> 4 | E -> 15
+let ap_base ic = match ic with A -> 1 | B -> 2 | C -> 3 | D -> 4 | E -> 15
 
 (**
  * Get the value above which the AP values increase linearly. The AP value is
  * constant until the returned value.
  *)
-let getConstantThresholdValue ic = match ic with A | B | C | D -> 12 | E -> 14
+let constant_threshold_value ic = match ic with A | B | C | D -> 12 | E -> 14
 
-let getBaseMultiplier ic value =
-  Js.Math.max_int 1 (value - getConstantThresholdValue ic + 1)
+let base_multiplier ic value =
+  Js.Math.max_int 1 (value - constant_threshold_value ic + 1)
 
-let getApValue ic value = getApBase ic * getBaseMultiplier ic value
+let ap_value ic value = ap_base ic * base_multiplier ic value
 
-let getApForBounds ic (l, u) =
+let ap_for_bounds ic (l, u) =
   Ix.range (l + 1, u)
-  |> List.fold_left (fun sum value -> sum + getApValue ic value) 0
+  |> List.fold_left (fun sum value -> sum + ap_value ic value) 0
 
-let getApForRange ic ~fromValue ~toValue =
-  if fromValue == toValue then 0
+let ap_for_range ic ~from_value ~to_value =
+  if from_value == to_value then 0
   else
-    getApForBounds ic (Int.minmax fromValue toValue)
-    * if fromValue > toValue then -1 else 1
+    ap_for_bounds ic (Int.minmax from_value to_value)
+    * if from_value > to_value then -1 else 1
 
-let getApForIncrease ic fromValue = getApValue ic (fromValue + 1)
+let ap_for_increase ic from_value = ap_value ic (from_value + 1)
 
-let getApForDecrease ic fromValue = -getApValue ic fromValue
+let ap_for_decrease ic from_value = -ap_value ic from_value
 
-let getApForActivatation = getApBase
+let ap_for_activatation = ap_base
 
 module Decode = struct
   open Json.Decode

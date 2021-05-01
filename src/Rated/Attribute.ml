@@ -41,5 +41,7 @@ end
 module Dynamic = Rated.Dynamic.Make (struct
   type static = Static.t
 
+  let ic _ = IC.D
+
   let min_value = 8
 end)

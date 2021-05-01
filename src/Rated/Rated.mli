@@ -18,6 +18,7 @@ module Dynamic : sig
   type 'static t = {
     id : int;  (** The rated entry'd identifier. *)
     value : int;  (** The current value. *)
+    cached_ap : int;  (** The accumulated AP value of all value increases. *)
     dependencies : dependency list;  (** The list of dependencies. *)
     static : 'static option;
         (** The corresponding static data entry for easy access. *)
@@ -32,8 +33,15 @@ module Dynamic : sig
     (** The dynamic values in a character with a reference to the static values
         from the database. *)
 
-    val empty : static option -> int -> t
-    (** [empty id] creates a new dynamic entry from an id. *)
+    val make : ?value:int -> static:static option -> id:int -> t
+    (** [make ~value ~static ~id] creates a new dynamic entry from an id. If a
+        value is provided and a static entry is present, it inserts the value
+        and calculates the initial total AP cache. *)
+
+    val update_value : (int -> int) -> t -> t
+    (** [update_value f x] updates the value of the entry [x] using the function
+        [f] that receives the old value as has to return the new one. It also
+        updates its total AP value if a static entry is present. *)
 
     val is_empty : t -> bool
     (** [is_empty x] checks if the passed dynamic entry is empty. *)
@@ -48,6 +56,9 @@ module Dynamic : sig
   module type Config = sig
     type static
     (** The static values from the database. *)
+
+    val ic : static -> IC.t
+    (** Get the improvement cost from the static entry. *)
 
     val min_value : int
     (** The minimum possible value of the entry. *)
