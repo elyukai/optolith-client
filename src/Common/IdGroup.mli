@@ -2,12 +2,6 @@
     such as if a prerequisite can require both a skill or a spell on a certain
     skill rating.
 
-    In contrast to the [Id] module, we use polymorphic variants to model
-    combinations of identifier types. This is because these combination types
-    are often mapped between and polymorphic types remove the necessity to
-    provide mapping functions for all kinds of combinations in both directions
-    and instead can be handled using easy pattern matching.
-
     Each combination type has an associated [Decode] module where a decoder is
     specified for JSON values of the form [{ type: string; value: int; }].
 
