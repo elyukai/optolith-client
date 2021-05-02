@@ -611,3 +611,20 @@ module ActivatableAndSkill = struct
         ]
   end
 end
+
+module AnimistPower = struct
+  type t = AnimistPower of Id.AnimistPower.t [@@bs.deriving accessors]
+
+  module Decode = struct
+    open Json.Decode
+
+    let t =
+      field "type" string
+      |> andThen (function
+           | "AnimistPower" ->
+               decode_value Id.AnimistPower.from_int animistPower
+           | str ->
+               JsonStatic.raise_unknown_variant ~variant_name:"AnimistPower"
+                 ~invalid:str)
+  end
+end

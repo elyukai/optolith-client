@@ -354,6 +354,16 @@ module Ritual : sig
   val compare : t -> t -> int
 end
 
+module AnimistPower : sig
+  type t = Other of int
+
+  val from_int : int -> t
+
+  val to_int : t -> int
+
+  val compare : t -> t -> int
+end
+
 module Aspect : sig
   type t = Other of int
 

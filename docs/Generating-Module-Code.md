@@ -12,7 +12,13 @@ Using `bsrefmt`, you can convert between syntaxes:
 
 ## Interface files
 
-Using `bsc`, you can generate an interface file in Reason syntax if only the implementation file is present:
+Using `bsc`, you can generate an interface file in OCaml syntax if only the implementation file is present:
+
+```shell
+./node_modules/.bin/bsc ./lib/bs/path/to/file.cmi
+```
+
+To generate in Reason syntax, provide the `-bs-re-out` flag.
 
 ```shell
 ./node_modules/.bin/bsc -bs-re-out ./lib/bs/path/to/file.cmi

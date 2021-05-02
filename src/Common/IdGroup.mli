@@ -234,3 +234,11 @@ module ActivatableAndSkill : sig
     val t : t Json.Decode.decoder
   end
 end
+
+module AnimistPower : sig
+  type t = AnimistPower of Id.AnimistPower.t
+
+  module Decode : sig
+    val t : t Json.Decode.decoder
+  end
+end

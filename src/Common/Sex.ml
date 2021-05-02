@@ -7,20 +7,6 @@ type t =
   | Tsajana of binary_handling
   | Custom of { binary_handling : binary_handling; name : string }
 
-type prerequisite = Male | Female
-
-let matches (sex : t) (prerequisite : prerequisite) =
-  match (prerequisite, sex) with
-  | Male, Male | Female, Female -> true
-  | Male, Female | Female, Male -> false
-  | Male, BalThani { as_male = as_sex; _ }
-  | Male, Tsajana { as_male = as_sex; _ }
-  | Male, Custom { binary_handling = { as_male = as_sex; _ }; _ }
-  | Female, BalThani { as_female = as_sex; _ }
-  | Female, Tsajana { as_female = as_sex; _ }
-  | Female, Custom { binary_handling = { as_female = as_sex; _ }; _ } ->
-      as_sex
-
 module Decode = struct
   open Json.Decode
 
@@ -60,14 +46,6 @@ module Decode = struct
                  JsonStatic.raise_unknown_variant ~variant_name:"Sex"
                    ~invalid:str);
       ]
-
-  let prerequisite =
-    string
-    |> map (function
-         | "Male" -> (Male : prerequisite)
-         | "Female" -> Female
-         | str ->
-             JsonStatic.raise_unknown_variant ~variant_name:"Sex" ~invalid:str)
 end
 
 module Encode = struct

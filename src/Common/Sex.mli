@@ -15,17 +15,8 @@ type t =
   | Tsajana of binary_handling
   | Custom of { binary_handling : binary_handling; name : string }
 
-(** A binary sex prerequisite*)
-type prerequisite = Male | Female
-
-val matches : t -> prerequisite -> bool
-(** [matches sex prerequisite] validates a binary sex prerequisite against a
-    character's sex. *)
-
 module Decode : sig
   val t : t Json.Decode.decoder
-
-  val prerequisite : prerequisite Json.Decode.decoder
 end
 
 module Encode : sig

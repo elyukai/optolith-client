@@ -701,6 +701,16 @@ module Ritual = struct
   let compare = Function.(flip on to_int compare)
 end
 
+module AnimistPower = struct
+  type t = Other of int
+
+  let from_int = function x -> Other x
+
+  let to_int = function Other x -> x
+
+  let compare = Function.(flip on to_int compare)
+end
+
 module Aspect = struct
   type t = Other of int
 
