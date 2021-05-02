@@ -299,7 +299,7 @@ module Config = struct
           when_ =
             json |> optionalField "when" (NonEmptyList.Decode.t When.Decode.t);
         }
-        : 'a multilingual )
+        : 'b multilingual )
 
     let make locale_order decoder (wrap : 'a -> 'b) json =
       json |> multilingual locale_order decoder wrap |> fun multilingual ->
@@ -310,6 +310,355 @@ module Config = struct
             |> Option.fromOption DisplayOption.Generate;
           when_ = multilingual.when_ |> Option.option [] NonEmptyList.to_list;
         }
-        : 'a t )
+        : 'b t )
+  end
+end
+
+module Unified = struct
+  type value =
+    | CommonSuggestedByRCP
+    | Sex of Sex.t
+    | Race of Race.t
+    | Culture of Culture.t
+    | Pact of Pact.t
+    | SocialStatus of SocialStatus.t
+    | PrimaryAttribute of PrimaryAttribute.t
+    | State of State.t
+    | Rule of Rule.t
+    | Activatable of Activatable.t
+    | ActivatableAnyOf of Activatable.AnyOf.t
+    | ActivatableAnyOfSelect of Activatable.AnyOf.Select.t
+    | Rated of Rated.t
+    | RatedAnyOf of Rated.AnyOf.t
+    | Other
+
+  type t = value Config.t
+end
+
+module General = struct
+  type value =
+    | Sex of Sex.t
+    | Race of Race.t
+    | Culture of Culture.t
+    | Pact of Pact.t
+    | SocialStatus of SocialStatus.t
+    | PrimaryAttribute of PrimaryAttribute.t
+    | State of State.t
+    | Rule of Rule.t
+    | Activatable of Activatable.t
+    | ActivatableAnyOf of Activatable.AnyOf.t
+    | ActivatableAnyOfSelect of Activatable.AnyOf.Select.t
+    | Rated of Rated.t
+    | RatedAnyOf of Rated.AnyOf.t
+
+  type t = value Config.t
+
+  let unify (x : t) : Unified.t =
+    {
+      x with
+      value =
+        ( match x.value with
+        | Sex x -> Sex x
+        | Race x -> Race x
+        | Culture x -> Culture x
+        | Pact x -> Pact x
+        | SocialStatus x -> SocialStatus x
+        | PrimaryAttribute x -> PrimaryAttribute x
+        | State x -> State x
+        | Rule x -> Rule x
+        | Activatable x -> Activatable x
+        | ActivatableAnyOf x -> ActivatableAnyOf x
+        | ActivatableAnyOfSelect x -> ActivatableAnyOfSelect x
+        | Rated x -> Rated x
+        | RatedAnyOf x -> RatedAnyOf x );
+    }
+
+  module Decode = struct
+    open Json.Decode
+
+    let make locale_order =
+      field "type" string
+      |> andThen (function
+           | "Sex" ->
+               Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
+           | "Race" ->
+               Config.Decode.make locale_order Race.Decode.t (fun v -> Race v)
+           | "Culture" ->
+               Config.Decode.make locale_order Culture.Decode.t (fun v ->
+                   Culture v)
+           | "Pact" ->
+               Config.Decode.make locale_order Pact.Decode.t (fun v -> Pact v)
+           | "SocialStatus" ->
+               Config.Decode.make locale_order SocialStatus.Decode.t (fun v ->
+                   SocialStatus v)
+           | "PrimaryAttribute" ->
+               Config.Decode.make locale_order PrimaryAttribute.Decode.t
+                 (fun v -> PrimaryAttribute v)
+           | "State" ->
+               Config.Decode.make locale_order State.Decode.t (fun v -> State v)
+           | "Rule" ->
+               Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
+           | "Activatable" ->
+               Config.Decode.make locale_order Activatable.Decode.t (fun v ->
+                   Activatable v)
+           | "ActivatableMultiEntry" ->
+               Config.Decode.make locale_order Activatable.AnyOf.Decode.t
+                 (fun v -> ActivatableAnyOf v)
+           | "ActivatableMultiSelect" ->
+               Config.Decode.make locale_order Activatable.AnyOf.Select.Decode.t
+                 (fun v -> ActivatableAnyOfSelect v)
+           | "Increasable" ->
+               Config.Decode.make locale_order Rated.Decode.t (fun v -> Rated v)
+           | "IncreasableMultiEntry" ->
+               Config.Decode.make locale_order Rated.AnyOf.Decode.t (fun v ->
+                   RatedAnyOf v)
+           | str ->
+               JsonStatic.raise_unknown_variant
+                 ~variant_name:"Prerequisite.General" ~invalid:str)
+  end
+end
+
+module Profession = struct
+  type value =
+    | Sex of Sex.t
+    | Race of Race.t
+    | Culture of Culture.t
+    | Activatable of Activatable.t
+    | Rated of Rated.t
+
+  type t = value Config.t
+
+  let unify (x : t) : Unified.t =
+    {
+      x with
+      value =
+        ( match x.value with
+        | Sex x -> Sex x
+        | Race x -> Race x
+        | Culture x -> Culture x
+        | Activatable x -> Activatable x
+        | Rated x -> Rated x );
+    }
+
+  module Decode = struct
+    open Json.Decode
+
+    let make locale_order =
+      field "type" string
+      |> andThen (function
+           | "Sex" ->
+               Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
+           | "Race" ->
+               Config.Decode.make locale_order Race.Decode.t (fun v -> Race v)
+           | "Culture" ->
+               Config.Decode.make locale_order Culture.Decode.t (fun v ->
+                   Culture v)
+           | "Activatable" ->
+               Config.Decode.make locale_order Activatable.Decode.t (fun v ->
+                   Activatable v)
+           | "Increasable" ->
+               Config.Decode.make locale_order Rated.Decode.t (fun v -> Rated v)
+           | str ->
+               JsonStatic.raise_unknown_variant
+                 ~variant_name:"Prerequisite.Profession" ~invalid:str)
+  end
+end
+
+module AdvantageDisadvantage = struct
+  type value =
+    | CommonSuggestedByRCP
+    | Sex of Sex.t
+    | Race of Race.t
+    | Culture of Culture.t
+    | Pact of Pact.t
+    | SocialStatus of SocialStatus.t
+    | PrimaryAttribute of PrimaryAttribute.t
+    | State of State.t
+    | Rule of Rule.t
+    | Activatable of Activatable.t
+    | ActivatableAnyOf of Activatable.AnyOf.t
+    | ActivatableAnyOfSelect of Activatable.AnyOf.Select.t
+    | Rated of Rated.t
+    | RatedAnyOf of Rated.AnyOf.t
+
+  type t = value Config.t
+
+  let unify (x : t) : Unified.t =
+    {
+      x with
+      value =
+        ( match x.value with
+        | CommonSuggestedByRCP -> CommonSuggestedByRCP
+        | Sex x -> Sex x
+        | Race x -> Race x
+        | Culture x -> Culture x
+        | Pact x -> Pact x
+        | SocialStatus x -> SocialStatus x
+        | PrimaryAttribute x -> PrimaryAttribute x
+        | State x -> State x
+        | Rule x -> Rule x
+        | Activatable x -> Activatable x
+        | ActivatableAnyOf x -> ActivatableAnyOf x
+        | ActivatableAnyOfSelect x -> ActivatableAnyOfSelect x
+        | Rated x -> Rated x
+        | RatedAnyOf x -> RatedAnyOf x );
+    }
+
+  module Decode = struct
+    open Json.Decode
+
+    let make locale_order =
+      field "type" string
+      |> andThen (function
+           | "CommonSuggestedByRCP" ->
+               fun _ ->
+                 ( {
+                     value = CommonSuggestedByRCP;
+                     displayOption = Generate;
+                     when_ = [];
+                   }
+                   : t )
+           | "Sex" ->
+               Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
+           | "Race" ->
+               Config.Decode.make locale_order Race.Decode.t (fun v -> Race v)
+           | "Culture" ->
+               Config.Decode.make locale_order Culture.Decode.t (fun v ->
+                   Culture v)
+           | "Pact" ->
+               Config.Decode.make locale_order Pact.Decode.t (fun v -> Pact v)
+           | "SocialStatus" ->
+               Config.Decode.make locale_order SocialStatus.Decode.t (fun v ->
+                   SocialStatus v)
+           | "PrimaryAttribute" ->
+               Config.Decode.make locale_order PrimaryAttribute.Decode.t
+                 (fun v -> PrimaryAttribute v)
+           | "State" ->
+               Config.Decode.make locale_order State.Decode.t (fun v -> State v)
+           | "Rule" ->
+               Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
+           | "Activatable" ->
+               Config.Decode.make locale_order Activatable.Decode.t (fun v ->
+                   Activatable v)
+           | "ActivatableMultiEntry" ->
+               Config.Decode.make locale_order Activatable.AnyOf.Decode.t
+                 (fun v -> ActivatableAnyOf v)
+           | "ActivatableMultiSelect" ->
+               Config.Decode.make locale_order Activatable.AnyOf.Select.Decode.t
+                 (fun v -> ActivatableAnyOfSelect v)
+           | "Increasable" ->
+               Config.Decode.make locale_order Rated.Decode.t (fun v -> Rated v)
+           | "IncreasableMultiEntry" ->
+               Config.Decode.make locale_order Rated.AnyOf.Decode.t (fun v ->
+                   RatedAnyOf v)
+           | str ->
+               JsonStatic.raise_unknown_variant
+                 ~variant_name:"Prerequisite.AdvantageDisadvantage" ~invalid:str)
+  end
+end
+
+module ArcaneTradition = struct
+  type value = Sex of Sex.t | Culture of Culture.t
+
+  type t = value Config.t
+
+  let unify (x : t) : Unified.t =
+    {
+      x with
+      value = (match x.value with Sex x -> Sex x | Culture x -> Culture x);
+    }
+
+  module Decode = struct
+    open Json.Decode
+
+    let make locale_order =
+      field "type" string
+      |> andThen (function
+           | "Sex" ->
+               Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
+           | "Culture" ->
+               Config.Decode.make locale_order Culture.Decode.t (fun v ->
+                   Culture v)
+           | str ->
+               JsonStatic.raise_unknown_variant
+                 ~variant_name:"Prerequisite.ArcaneTradition" ~invalid:str)
+  end
+end
+
+module PersonalityTrait = struct
+  type value = Culture of Culture.t | Special
+
+  type t = value Config.t
+
+  let unify (x : t) : Unified.t =
+    {
+      x with
+      value = (match x.value with Special -> Other | Culture x -> Culture x);
+    }
+
+  module Decode = struct
+    open Json.Decode
+
+    let make locale_order =
+      field "type" string
+      |> andThen (function
+           | "Special" ->
+               Config.Decode.make locale_order Function.id
+                 (Function.const Special)
+           | "Culture" ->
+               Config.Decode.make locale_order Culture.Decode.t (fun v ->
+                   Culture v)
+           | str ->
+               JsonStatic.raise_unknown_variant
+                 ~variant_name:"Prerequisite.PersonalityTrait" ~invalid:str)
+  end
+end
+
+module Spellwork = struct
+  type value = Rule of Rule.t | Rated of Rated.t
+
+  type t = value Config.t
+
+  let unify (x : t) : Unified.t =
+    {
+      x with
+      value = (match x.value with Rule x -> Rule x | Rated x -> Rated x);
+    }
+
+  module Decode = struct
+    open Json.Decode
+
+    let make locale_order =
+      field "type" string
+      |> andThen (function
+           | "Rule" ->
+               Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
+           | "Culture" ->
+               Config.Decode.make locale_order Rated.Decode.t (fun v -> Rated v)
+           | str ->
+               JsonStatic.raise_unknown_variant
+                 ~variant_name:"Prerequisite.Spellwork" ~invalid:str)
+  end
+end
+
+module Liturgy = struct
+  type value = Rule of Rule.t
+
+  type t = value Config.t
+
+  let unify (x : t) : Unified.t =
+    { x with value = (match x.value with Rule x -> Rule x) }
+
+  module Decode = struct
+    open Json.Decode
+
+    let make locale_order =
+      field "type" string
+      |> andThen (function
+           | "Rule" ->
+               Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
+           | str ->
+               JsonStatic.raise_unknown_variant
+                 ~variant_name:"Prerequisite.Liturgy" ~invalid:str)
   end
 end
