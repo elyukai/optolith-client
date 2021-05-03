@@ -34,7 +34,7 @@ module type T = sig
       value in the container and the current accumulated value. [init] is the
       accumulated value at the beginning. *)
 
-  val foldl' : ('a -> 'b -> 'b) -> 'a t -> 'b -> 'b
+  val foldl' : ('a -> 'b -> 'b) -> 'b -> 'a t -> 'b
   (** [foldl' f init x] reduces the container [x] from left to right by
       accumulating it's values with the function [f], which takes the current
       value in the container and the current accumulated value. [init] is the
@@ -101,7 +101,7 @@ module Make (Arg : S) : T with type 'a t = 'a Arg.t = struct
 
   let foldl = Arg.foldl
 
-  let foldl' f x init = foldl (fun acc e -> f e acc) init x
+  let foldl' f init x = foldl (fun acc e -> f e acc) init x
 
   let toList x = foldr (fun e xs -> e :: xs) [] x
 
