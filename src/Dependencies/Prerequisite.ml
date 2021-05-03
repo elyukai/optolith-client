@@ -264,7 +264,7 @@ module AnimistPower = struct
   end
 end
 
-module DisplayOption = struct
+module DisplayMode = struct
   type t = Generate | Hide | ReplaceWith of string
 
   module Decode = struct
@@ -286,7 +286,7 @@ module DisplayOption = struct
                field "value" (TranslationMap.Decode.t translation)
                |> map (fun mp -> MultilingualReplaceWith mp)
            | str ->
-               JsonStatic.raise_unknown_variant ~variant_name:"DisplayOption"
+               JsonStatic.raise_unknown_variant ~variant_name:"DisplayMode"
                  ~invalid:str)
 
     let make locale_order json =
@@ -320,11 +320,7 @@ module When = struct
 end
 
 module Config = struct
-  type 'a t = {
-    value : 'a;
-    displayOption : DisplayOption.t;
-    when_ : When.t list;
-  }
+  type 'a t = { value : 'a; displayMode : DisplayMode.t; when_ : When.t list }
 
   module Decode = struct
     open Json.Decode
@@ -332,7 +328,7 @@ module Config = struct
 
     type 'a multilingual = {
       value : 'a;
-      displayOption : DisplayOption.t option;
+      displayOption : DisplayMode.t option;
       when_ : When.t NonEmptyList.t option;
     }
 
@@ -342,7 +338,7 @@ module Config = struct
           displayOption =
             json
             |> optionalField "displayOption"
-                 (DisplayOption.Decode.make locale_order);
+                 (DisplayMode.Decode.make locale_order);
           when_ =
             json |> optionalField "when" (NonEmptyList.Decode.t When.Decode.t);
         }
@@ -352,9 +348,8 @@ module Config = struct
       json |> multilingual locale_order decoder wrap |> fun multilingual ->
       ( {
           value = multilingual.value;
-          displayOption =
-            multilingual.displayOption
-            |> Option.fromOption DisplayOption.Generate;
+          displayMode =
+            multilingual.displayOption |> Option.fromOption DisplayMode.Generate;
           when_ = multilingual.when_ |> Option.option [] NonEmptyList.to_list;
         }
         : 'b t )
@@ -385,7 +380,7 @@ module Group = struct
     type t = value Config.t
   end
 
-  module General = struct
+  module SpecialAbility = struct
     type value =
       | Sex of Sex.t
       | Race of Race.t
@@ -568,7 +563,7 @@ module Group = struct
                  fun _ ->
                    ( {
                        value = CommonSuggestedByRCP;
-                       displayOption = Generate;
+                       displayMode = Generate;
                        when_ = [];
                      }
                      : t )
@@ -827,7 +822,7 @@ module Collection = struct
   end
 
   module ByLevel = struct
-    type 'a t = Plain of 'a list | ByLevel of 'a list IntMap.t
+    type 'a t = Plain of 'a Plain.t | ByLevel of 'a Plain.t IntMap.t
     [@@bs.deriving accessors]
 
     let first_level = function
@@ -895,7 +890,7 @@ module Collection = struct
     end
   end
 
-  module General = Make (ByLevel) (Group.General)
+  module SpecialAbility = Make (ByLevel) (Group.SpecialAbility)
   module Profession = Make (Plain) (Group.Profession)
   module AdvantageDisadvantage = Make (ByLevel) (Group.AdvantageDisadvantage)
   module ArcaneTradition = Make (Plain) (Group.ArcaneTradition)
