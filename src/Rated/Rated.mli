@@ -133,21 +133,21 @@ module Dynamic : sig
         *)
     module Make (Config : Config) : S with type static = Config.static
 
-    module ByMagicalTradition : sig
+    module WithEnhancements : sig
+      type enhancement = { id : int; dependencies : int list }
+
       type 'static t = {
         id : int;  (** The rated entry's identifier. *)
-        values : int Id.MagicalTradition.Map.t;
-            (** The current value in each tradition. An entry is considered
-                active for a tradition if its key is present. *)
+        value : value;  (** The current value. *)
+        enhancements : enhancement IntMap.t;
+            (** The currently active enhancements for that entry. *)
         cached_ap : int;
-            (** The accumulated AP value of all value increases for all
-                traditions. *)
+            (** The accumulated AP value of all value increases. *)
         dependencies : dependency list;  (** The list of dependencies. *)
         static : 'static option;
             (** The corresponding static data entry for easy access. *)
       }
-      (** The representation of a activatable entry with ratings for every
-          traditions on a character. *)
+      (** The representation of a activatable rated entry on a character. *)
 
       module type S = sig
         type static
@@ -158,39 +158,40 @@ module Dynamic : sig
             values from the database. *)
 
         val make :
-          ?values:int Id.MagicalTradition.Map.t ->
+          ?enhancements:enhancement IntMap.t ->
+          ?value:value ->
           static:static option ->
           id:int ->
           t
-        (** [make ~values ~static ~id] creates a new dynamic entry from an id.
-            If one or multiple values are provided and a static entry is
-            present, it inserts the value and calculates the initial total AP
-            cache. *)
+        (** [make ~enhancements ~value ~static ~id] creates a new dynamic entry
+            from an id. If a value is provided and a static entry is present, it
+            inserts the value and calculates the initial total AP cache. If
+            enhancements are passed, they are included into the initial total AP
+            cache calculation. *)
 
-        val update_value : (int -> int) -> Id.MagicalTradition.t -> t -> t
-        (** [update_value f key x] updates the value of the entry [x] for the
-            specified tradition [key] using the function [f] that receives the
-            old value as has to return the new one. It also updates its total AP
-            value if a static entry is present. *)
+        val update_value : (value -> value) -> t -> t
+        (** [update_value f x] updates the value of the entry [x] using the
+            function [f] that receives the old value as has to return the new one.
+            It also updates its total AP value if a static entry is present. *)
 
-        val insert_value : ?value:int -> Id.MagicalTradition.t -> t -> t
-        (** [insert_value ?value key x] sets the value of the entry [x] for the
-            specified tradition [key] to [value]. If [value] is [None], the
-            value defaults to [0]. It also updates its total AP value if a
-              static entry is present. *)
-
-        val delete_value : Id.MagicalTradition.t -> t -> t
-        (** [delete_value key x] removes the value of the entry [x] for the
-            specified tradition [key]. It also updates its total AP value if a
-            static entry is present. *)
+        val update_enhancements :
+          (enhancement IntMap.t -> enhancement IntMap.t) -> t -> t
+        (** [update_enhancements f x] updates the enhancements of the entry [x]
+            using the function [f] that receives the old enhancements as has to
+            return the new ones. It also updates its total AP value if a static
+            entry is present. *)
 
         val is_empty : t -> bool
         (** [is_empty x] checks if the passed dynamic entry is empty. *)
 
-        val value : Id.MagicalTradition.t -> t option -> int
-        (** [value key x] takes a dynamic entry that might not exist and returns
-            the value of that entry for the specified tradition [key]. If the
-            entry is not yet defined, it's value is [Inactive]. *)
+        val value : t option -> value
+        (** [value x] takes a dynamic entry that might not exist and returns the
+            value of that entry. If the entry is not yet defined, it's value is
+            [Inactive]. *)
+
+        val value_to_int : value -> int
+        (** Converts the entry value to an [int], where [Inactive] results in [0].
+            *)
 
         val is_active : t -> bool
         (** Is the entry active? *)
@@ -205,11 +206,107 @@ module Dynamic : sig
 
         val ic : static -> IC.t
         (** Get the improvement cost from the static entry. *)
+
+        val enhancements : static -> Enhancement.t IntMap.t
+        (** Get the enhancements from the static entry. *)
       end
 
-      (** Create combined types and utility function for a given rated entry
-          type. *)
+      (** Create combined types and utility function for a given rated entry type.
+          *)
       module Make (Config : Config) : S with type static = Config.static
+
+      module ByMagicalTradition : sig
+        type 'static t = {
+          id : int;  (** The rated entry's identifier. *)
+          values : int Id.MagicalTradition.Map.t;
+              (** The current value in each tradition. An entry is considered
+                  active for a tradition if its key is present. *)
+          enhancements : enhancement IntMap.t;
+              (** The currently active enhancements for that entry. *)
+          cached_ap : int;
+              (** The accumulated AP value of all value increases for all
+                  traditions. *)
+          dependencies : dependency list;  (** The list of dependencies. *)
+          static : 'static option;
+              (** The corresponding static data entry for easy access. *)
+        }
+        (** The representation of a activatable entry with ratings for every
+            traditions on a character. *)
+
+        module type S = sig
+          type static
+          (** The static values from the database. *)
+
+          type nonrec t = static t
+          (** The dynamic values in a character with a reference to the static
+              values from the database. *)
+
+          val make :
+            ?enhancements:enhancement IntMap.t ->
+            ?values:int Id.MagicalTradition.Map.t ->
+            static:static option ->
+            id:int ->
+            t
+          (** [make ~enhancements ~values ~static ~id] creates a new dynamic
+              entry from an id. If one or multiple values are provided and a
+              static entry is present, it inserts the value and calculates the
+              initial total AP cache. If enhancements are passed, they are
+              included into the initial total AP cache calculation. *)
+
+          val update_value : (int -> int) -> Id.MagicalTradition.t -> t -> t
+          (** [update_value f key x] updates the value of the entry [x] for the
+              specified tradition [key] using the function [f] that receives the
+              old value as has to return the new one. It also updates its total AP
+              value if a static entry is present. *)
+
+          val update_enhancements :
+            (enhancement IntMap.t -> enhancement IntMap.t) -> t -> t
+          (** [update_enhancements f x] updates the enhancements of the entry
+              [x] using the function [f] that receives the old enhancements as
+              has to return the new ones. It also updates its total AP value if
+              a static entry is present. *)
+
+          val insert_value : ?value:int -> Id.MagicalTradition.t -> t -> t
+          (** [insert_value ?value key x] sets the value of the entry [x] for the
+              specified tradition [key] to [value]. If [value] is [None], the
+              value defaults to [0]. It also updates its total AP value if a
+                static entry is present. *)
+
+          val delete_value : Id.MagicalTradition.t -> t -> t
+          (** [delete_value key x] removes the value of the entry [x] for the
+              specified tradition [key]. It also updates its total AP value if a
+              static entry is present. *)
+
+          val is_empty : t -> bool
+          (** [is_empty x] checks if the passed dynamic entry is empty. *)
+
+          val value : Id.MagicalTradition.t -> t option -> int
+          (** [value key x] takes a dynamic entry that might not exist and returns
+              the value of that entry for the specified tradition [key]. If the
+              entry is not yet defined, it's value is [Inactive]. *)
+
+          val is_active : t -> bool
+          (** Is the entry active? *)
+
+          val is_active' : t option -> bool
+          (** Is the possibly-not-yet-existing entry active? *)
+        end
+
+        module type Config = sig
+          type static
+          (** The static values from the database. *)
+
+          val ic : static -> IC.t
+          (** Get the improvement cost from the static entry. *)
+
+          val enhancements : static -> Enhancement.t IntMap.t
+          (** Get the enhancements from the static entry. *)
+        end
+
+        (** Create combined types and utility function for a given rated entry
+            type. *)
+        module Make (Config : Config) : S with type static = Config.static
+      end
     end
 
     module ByLevel : sig

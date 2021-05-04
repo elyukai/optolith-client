@@ -264,6 +264,14 @@ module AnimistPower = struct
   end
 end
 
+module Enhancement = struct
+  type t = int
+
+  module Decode = struct
+    let t = Json.Decode.int
+  end
+end
+
 module DisplayMode = struct
   type t = Generate | Hide | ReplaceWith of string
 
@@ -802,6 +810,23 @@ module Group = struct
                    ~variant_name:"Prerequisite.Group.AnimistPower" ~invalid:str)
     end
   end
+
+  module Enhancement = struct
+    type t = Enhancement of Enhancement.t
+
+    module Decode = struct
+      open Json.Decode
+
+      let make _ =
+        field "type" string
+        |> andThen (function
+             | "Enhancement" ->
+                 Enhancement.Decode.t |> map (fun v -> Enhancement v)
+             | str ->
+                 JsonStatic.raise_unknown_variant
+                   ~variant_name:"Prerequisite.Group.Enhancement" ~invalid:str)
+    end
+  end
 end
 
 module Collection = struct
@@ -900,4 +925,5 @@ module Collection = struct
   module Influence = Make (Plain) (Group.Influence)
   module Language = Make (Plain) (Group.Language)
   module AnimistPower = Make (Plain) (Group.AnimistPower)
+  module Enhancement = Make (Plain) (Group.Enhancement)
 end

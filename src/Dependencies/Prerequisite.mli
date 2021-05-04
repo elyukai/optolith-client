@@ -176,6 +176,12 @@ module AnimistPower : sig
   }
 end
 
+(** Spellwork or liturgy enhancement prerequisite. *)
+module Enhancement : sig
+  type t = int
+  (** The identifier of the required enhancement of the associated entry. *)
+end
+
 (** The mode in which the prerequisite's text should be generated. *)
 module DisplayMode : sig
   type t =
@@ -386,6 +392,12 @@ module Group : sig
     val unify : t -> Unified.t
     (** Convert a specialized configuration to a unified configuration. *)
   end
+
+  (** Possible prerequisites of enhancements. *)
+  module Enhancement : sig
+    (** A set of possible prerequisite definitions of enhancements. *)
+    type t = Enhancement of Enhancement.t
+  end
 end
 
 (** Entries may feature multiple prerequisites at once and it depends on the
@@ -506,6 +518,15 @@ module Collection : sig
   (** The collection of prerequisites of animist powers. *)
   module AnimistPower : sig
     type t = Group.AnimistPower.t Plain.t
+
+    module Decode : sig
+      val make : Locale.Order.t -> t Json.Decode.decoder
+    end
+  end
+
+  (** The collection of prerequisites of enhancements. *)
+  module Enhancement : sig
+    type t = Group.Enhancement.t Plain.t
 
     module Decode : sig
       val make : Locale.Order.t -> t Json.Decode.decoder

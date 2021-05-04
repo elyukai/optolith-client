@@ -7,9 +7,17 @@ module type Id = sig
 
   val compare : t -> t -> int
 
-  module Set : SetX.T with type key = t
+  module Set : sig
+    include SetX.T with type key = t
 
-  module Map : MapX.T with type key = t
+    val from_int_list : int list -> t
+  end
+
+  module Map : sig
+    include MapX.T with type key = t
+
+    val from_int_list : (int * 'a) list -> 'a t
+  end
 end
 
 module Make (S : sig
@@ -25,17 +33,25 @@ end) : Id with type t := S.t = struct
 
   let compare = Function.(flip on to_int compare)
 
-  module Set = SetX.Make (struct
-    type nonrec t = S.t
+  module Set = struct
+    include SetX.Make (struct
+      type nonrec t = S.t
 
-    let compare = compare
-  end)
+      let compare = compare
+    end)
 
-  module Map = MapX.Make (struct
-    type nonrec t = S.t
+    let from_int_list xs = xs |> List.map from_int |> fromList
+  end
 
-    let compare = compare
-  end)
+  module Map = struct
+    include MapX.Make (struct
+      type nonrec t = S.t
+
+      let compare = compare
+    end)
+
+    let from_int_list xs = xs |> List.map (Tuple.first from_int) |> fromList
+  end
 end
 
 module FocusRule = struct

@@ -28,11 +28,25 @@ module type Id = sig
       [x] is less than [y], and a positive integer if [x] is greater than [y].
       *)
 
-  module Set : SetX.T with type key = t
   (** A configured [Set] module with the identifier variant as the key. *)
+  module Set : sig
+    include SetX.T with type key = t
 
-  module Map : MapX.T with type key = t
+    val from_int_list : int list -> t
+    (** [from_int_list xs] creates a configured Set from the given list [xs],
+        converting each list item to its corresponding variant representation.
+        *)
+  end
+
   (** A configured [Map] module with the identifier variant as the key. *)
+  module Map : sig
+    include MapX.T with type key = t
+
+    val from_int_list : (int * 'a) list -> 'a t
+    (** [from_int_list xs] creates a configured Map from the given list [xs],
+        converting each list item tuple's first value to its corresponding
+        variant representation. *)
+  end
 end
 
 module FocusRule : sig
