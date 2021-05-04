@@ -51,3 +51,7 @@ A list of relevant files:
 - `heroes.json ` contains all heroes saved in Optolith
 - `config.json` contains the configuration of your Optolith. It does not contain critical data but things like color theme, language (only if you selected a specific one) and alike.
   *A note on Windows:* `AppData` is a *hidden* folder. To be able to see it, check out the Windows Explorer, go to the *View* tab and activate the setting *Hidden elements*.
+
+## How do I scale the UI for Optolith on Linux?
+
+If you have the `tar.gz`, you can go into the extracted folder and then run `GDK_DPI_SCALE=<Scale> ./Optolith`, where `<Scale>` needs to be replaced with the desired scale, e.g. `1.5`.
