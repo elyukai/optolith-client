@@ -12,14 +12,33 @@
     Normal variants are used so that we can be sure we use the correct one if
     multiple occur in one place. *)
 
+module type Id = sig
+  type t
+
+  val from_int : int -> t
+  (** [from_int x] converts the integer [x] to its corresponding variant
+      representation. *)
+
+  val to_int : t -> int
+  (** [from_int x] converts the variant [x] to its corresponding integer
+      representation. *)
+
+  val compare : t -> t -> int
+  (** [compare x y] returns [0] if [x] is equal to [y], a negative integer if
+      [x] is less than [y], and a positive integer if [x] is greater than [y].
+      *)
+
+  module Set : SetX.T with type key = t
+  (** A configured [Set] module with the identifier variant as the key. *)
+
+  module Map : MapX.T with type key = t
+  (** A configured [Map] module with the identifier variant as the key. *)
+end
+
 module FocusRule : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module OptionalRule : sig
@@ -29,11 +48,7 @@ module OptionalRule : sig
     | HigherDefenseStats
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module ExperienceLevel : sig
@@ -47,41 +62,25 @@ module ExperienceLevel : sig
     | Legendary
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Race : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Culture : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Profession : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Attribute : sig
@@ -96,11 +95,7 @@ module Attribute : sig
     | Strength
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Advantage : sig
@@ -135,11 +130,7 @@ module Advantage : sig
     | Einkommen
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Disadvantage : sig
@@ -171,22 +162,14 @@ module Disadvantage : sig
     | WenigeVisionen
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Skill : sig
   module Group : sig
     type t = Physical | Social | Nature | Knowledge | Craft | Other of int
 
-    val from_int : int -> t
-
-    val to_int : t -> int
-
-    val compare : t -> t -> int
+    include Id with type t := t
   end
 
   type t =
@@ -251,11 +234,7 @@ module Skill : sig
     | Clothworking
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module MeleeCombatTechnique : sig
@@ -276,11 +255,7 @@ module MeleeCombatTechnique : sig
     | Spiesswaffen
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module RangedCombatTechnique : sig
@@ -294,11 +269,7 @@ module RangedCombatTechnique : sig
     | Discuses
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Property : sig
@@ -317,91 +288,55 @@ module Property : sig
     | Temporal
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Cantrip : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Spell : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Ritual : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module AnimistPower : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Aspect : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Blessing : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module LiturgicalChant : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Ceremony : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module GeneralSpecialAbility : sig
@@ -417,51 +352,31 @@ module GeneralSpecialAbility : sig
     | LanguageSpecialization
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 
   module TradeSecret : sig
     type t = Other of int
 
-    val from_int : int -> t
-
-    val to_int : t -> int
-
-    val compare : t -> t -> int
+    include Id with type t := t
   end
 end
 
 module Script : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Language : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module FatePointSpecialAbility : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module CombatSpecialAbility : sig
@@ -471,11 +386,7 @@ module CombatSpecialAbility : sig
     | CombatStyleCombination
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module MagicalSpecialAbility : sig
@@ -490,41 +401,25 @@ module MagicalSpecialAbility : sig
     | Kraftliniennutzung
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module StaffEnchantment : sig
   type t = PropertyFocus | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 
   module AnimalShape : sig
     type t = Other of int
 
-    val from_int : int -> t
-
-    val to_int : t -> int
-
-    val compare : t -> t -> int
+    include Id with type t := t
   end
 end
 
 module FamiliarSpecialAbility : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module KarmaSpecialAbility : sig
@@ -534,51 +429,31 @@ module KarmaSpecialAbility : sig
     | FavoriteLiturgicalChant
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module ProtectiveWardingCircleSpecialAbility : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module CombatStyleSpecialAbility : sig
   type t = GaretherGossenStil | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module AdvancedCombatSpecialAbility : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module CommandSpecialAbility : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module MagicStyleSpecialAbility : sig
@@ -589,101 +464,61 @@ module MagicStyleSpecialAbility : sig
     | ScholarDesMagierkollegsZuHoningen
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module AdvancedMagicalSpecialAbility : sig
   type t = HarmoniousMagic | MatrixCasting | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module SpellSwordEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module DaggerRitual : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module InstrumentEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module AttireEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module OrbEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module WandEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module BrawlingSpecialAbility : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module AncestorGlyph : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module CeremonialItemSpecialAbility : sig
@@ -694,11 +529,7 @@ module CeremonialItemSpecialAbility : sig
     | ResearchInstinct
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Sermon : sig
@@ -710,11 +541,7 @@ module Sermon : sig
     | PredigtWiderMissgeschicke
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module LiturgicalStyleSpecialAbility : sig
@@ -724,21 +551,13 @@ module LiturgicalStyleSpecialAbility : sig
     | FollowersOfTheGoldenOne
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module AdvancedKarmaSpecialAbility : sig
   type t = MasterOfAspect | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Vision : sig
@@ -750,11 +569,7 @@ module Vision : sig
     | VisionDesWahrenGlaubens
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module MagicalTradition : sig
@@ -778,32 +593,18 @@ module MagicalTradition : sig
     | TraditionBrobimGeoden
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
-
-  module Map : MapX.T with type key = t
+  include Id with type t := t
 
   module ArcaneBardTradition : sig
     type t = Other of int
 
-    val from_int : int -> t
-
-    val to_int : t -> int
-
-    val compare : t -> t -> int
+    include Id with type t := t
   end
 
   module ArcaneDancerTradition : sig
     type t = Other of int
 
-    val from_int : int -> t
-
-    val to_int : t -> int
-
-    val compare : t -> t -> int
+    include Id with type t := t
   end
 end
 
@@ -831,43 +632,25 @@ module BlessedTradition : sig
     | TraditionCultOfNuminoru
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
-
-  module Map : MapX.T with type key = t
+  include Id with type t := t
 end
 
 module PactGift : sig
   type t = DunklesAbbildDerBuendnisgabe | Zaubervariabilitaet | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module SikaryanDrainSpecialAbility : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module LycantropicGift : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module SkillStyleSpecialAbility : sig
@@ -877,11 +660,7 @@ module SkillStyleSpecialAbility : sig
     | WegDerSchreiberin
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module AdvancedSkillSpecialAbility : sig
@@ -894,159 +673,95 @@ module AdvancedSkillSpecialAbility : sig
     | Universalgenie
     | Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module ArcaneOrbEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module CauldronEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module FoolsHatEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module ToyEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module BowlEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module FatePointSexSpecialAbility : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module SexSpecialAbility : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module WeaponEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module SickleRitual : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module RingEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module ChronicleEnchantment : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Element : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module SexPractice : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Poison : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
 
 module Disease : sig
   type t = Other of int
 
-  val from_int : int -> t
-
-  val to_int : t -> int
-
-  val compare : t -> t -> int
+  include Id with type t := t
 end
