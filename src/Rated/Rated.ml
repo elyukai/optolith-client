@@ -439,6 +439,101 @@ module Dynamic = struct
       static : 'static option;
     }
 
+    module DeriveSecondary = struct
+      module type S = sig
+        type id
+
+        type static
+
+        type static'
+
+        type nonrec t = (id, static) t
+
+        val make :
+          ?value:value ->
+          static':static' option ->
+          static:static option ->
+          id:id ->
+          t
+
+        val update_value : (value -> value) -> static':static' option -> t -> t
+
+        val is_empty : t -> bool
+
+        val value : t option -> value
+
+        val value_to_int : value -> int
+
+        val is_active : t -> bool
+
+        val is_active' : t option -> bool
+      end
+
+      module type Config = sig
+        type id
+
+        type static
+
+        type static'
+
+        val ic : static' -> static -> IC.t
+      end
+
+      module Make (Config : Config) :
+        S
+          with type id = Config.id
+           and type static = Config.static
+           and type static' = Config.static' = struct
+        type id = Config.id
+
+        type static = Config.static
+
+        type static' = Config.static'
+
+        type nonrec t = (id, static) t
+
+        let ap_total static' static value =
+          let ic = Option.liftM2 Config.ic static' static in
+          match (ic, value) with
+          | None, _ | Some _, Inactive -> 0
+          | Some ic, Active value ->
+              IC.ap_for_range ic ~from_value:0 ~to_value:value
+              + IC.ap_for_activatation ic
+
+        let make ?(value = Inactive) ~static' ~static ~id =
+          {
+            id;
+            value;
+            cached_ap = ap_total static' static value;
+            dependencies = [];
+            static;
+          }
+
+        let update_value f ~static' (x : t) =
+          let new_value =
+            match f x.value with
+            | Active value -> Active (Int.max 0 value)
+            | Inactive -> Inactive
+          in
+          {
+            x with
+            value = new_value;
+            cached_ap = ap_total static' x.static new_value;
+          }
+
+        let is_empty (x : t) = x.value == Inactive && ListX.null x.dependencies
+
+        let value x_opt = Option.option Inactive (fun (x : t) -> x.value) x_opt
+
+        let value_to_int = function Active sr -> sr | Inactive -> 0
+
+        let is_active (x : t) =
+          match x.value with Active _ -> true | Inactive -> false
+
+        let is_active' x = Option.option false is_active x
+      end
+    end
+
     module type S = sig
       type id
 

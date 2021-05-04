@@ -175,13 +175,15 @@ module Static = struct
   end
 end
 
-module Dynamic = Rated.Dynamic.Activatable.Make (struct
+module Dynamic = Rated.Dynamic.Activatable.DeriveSecondary.Make (struct
   open Static
 
   type id = Id.AnimistPower.t
 
   type static = t
 
-  (** TODO: DeriveFromPrimaryPatron *)
-  let ic x = match x.ic with Fixed ic -> ic | DeriveFromPrimaryPatron -> D
+  type static' = IC.t
+
+  let ic patron x =
+    match x.ic with Fixed ic -> ic | DeriveFromPrimaryPatron -> patron
 end)

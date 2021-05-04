@@ -428,6 +428,87 @@ module Dynamic : sig
       module Make (Config : Config) :
         S with type id = Config.id and type static = Config.static
     end
+
+    (** Almost identical to the basic [!Rated.Dynamic.Activatable] module except
+        that a secondary static entry can be used for AP calculation. This is
+        used if the primary static entry cannot always define a fixed
+        improvement cost for each entry. *)
+    module DeriveSecondary : sig
+      module type S = sig
+        type id
+        (** The identifier type. *)
+
+        type static
+        (** The static values from the database. *)
+
+        type static'
+        (** The secondary static entry from the database that is used if the
+            primary static entry cannot provide explicit improvement costs. *)
+
+        type nonrec t = (id, static) t
+        (** The dynamic values in a character with a reference to the static
+            values from the database. *)
+
+        val make :
+          ?value:value ->
+          static':static' option ->
+          static:static option ->
+          id:id ->
+          t
+        (** [make ~value ~static' ~static ~id] creates a new dynamic entry from
+            an id. If a value is provided and a static entry and a secondary
+            static entry are present, it inserts the value and calculates the
+            initial total AP cache. *)
+
+        val update_value : (value -> value) -> static':static' option -> t -> t
+        (** [update_value f ~static' x] updates the value of the entry [x] using
+            the function [f] that receives the old value as has to return the
+            new one. It also updates its total AP value if a static entry and a
+            secondary entry [static'] are present. *)
+
+        val is_empty : t -> bool
+        (** [is_empty x] checks if the passed dynamic entry is empty. *)
+
+        val value : t option -> value
+        (** [value x] takes a dynamic entry that might not exist and returns the
+            value of that entry. If the entry is not yet defined, it's value is
+            [Inactive]. *)
+
+        val value_to_int : value -> int
+        (** Converts the entry value to an [int], where [Inactive] results in
+            [0]. *)
+
+        val is_active : t -> bool
+        (** Is the entry active? *)
+
+        val is_active' : t option -> bool
+        (** Is the possibly-not-yet-existing entry active? *)
+      end
+
+      module type Config = sig
+        type id
+        (** The identifier type. *)
+
+        type static
+        (** The static values from the database. *)
+
+        type static'
+        (** The secondary static entry from the database that is used if the
+            primary static entry cannot provide explicit improvement costs. *)
+
+        val ic : static' -> static -> IC.t
+        (** Get the improvement cost from the static entry or the secondary
+            static entry. *)
+      end
+
+      (** Create combined types and utility function for a given rated entry
+          type. *)
+      module Make (Config : Config) :
+        S
+          with type id = Config.id
+           and type static = Config.static
+           and type static' = Config.static'
+    end
   end
 end
 

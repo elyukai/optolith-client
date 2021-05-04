@@ -50,6 +50,7 @@ module Static : sig
 end
 
 module Dynamic :
-  Rated.Dynamic.Activatable.S
+  Rated.Dynamic.Activatable.DeriveSecondary.S
     with type id = Id.AnimistPower.t
      and type static = Static.t
+     and type static' = IC.t
