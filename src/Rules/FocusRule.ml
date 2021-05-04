@@ -1,6 +1,6 @@
 module Static = struct
   type t = {
-    id : int;
+    id : Id.FocusRule.t;
     name : string;
     description : string;
     subject : int;
@@ -27,7 +27,7 @@ module Static = struct
       }
 
     type multilingual = {
-      id : int;
+      id : Id.FocusRule.t;
       subject : int;
       level : int;
       src : PublicationRef.list;
@@ -36,7 +36,7 @@ module Static = struct
 
     let multilingual locale_order json =
       {
-        id = json |> field "id" int;
+        id = json |> field "id" Id.FocusRule.Decode.t;
         level = json |> field "level" int;
         subject = json |> field "subject" int;
         src = json |> field "src" (PublicationRef.Decode.make_list locale_order);

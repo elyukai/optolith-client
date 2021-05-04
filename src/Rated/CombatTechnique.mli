@@ -6,7 +6,7 @@
 module Melee : sig
   module Static : sig
     type t = {
-      id : int;
+      id : Id.MeleeCombatTechnique.t;
       name : string;
       ic : IC.t;
       primary : int list;
@@ -19,7 +19,7 @@ module Melee : sig
     }
 
     module Decode : sig
-      val make_assoc : t JsonStatic.make_assoc
+      val make_assoc : (Id.MeleeCombatTechnique.t, t) JsonStatic.make_assoc
     end
   end
 
@@ -29,7 +29,7 @@ end
 module Ranged : sig
   module Static : sig
     type t = {
-      id : int;
+      id : Id.RangedCombatTechnique.t;
       name : string;
       ic : IC.t;
       primary : int list;
@@ -41,7 +41,7 @@ module Ranged : sig
     }
 
     module Decode : sig
-      val make_assoc : t JsonStatic.make_assoc
+      val make_assoc : (Id.RangedCombatTechnique.t, t) JsonStatic.make_assoc
     end
   end
 

@@ -45,7 +45,7 @@ module Static : sig
             localized string. *)
 
   type t = {
-    id : int;
+    id : Id.Skill.t;
     name : string;
     check : Check.t;
     encumbrance : encumbrance;
@@ -64,7 +64,7 @@ module Static : sig
   }
 
   module Decode : sig
-    val make_assoc : t JsonStatic.make_assoc
+    val make_assoc : (Id.Skill.t, t) JsonStatic.make_assoc
   end
 end
 
@@ -81,6 +81,6 @@ module Group : sig
   }
 
   module Decode : sig
-    val make_assoc : t JsonStatic.make_assoc
+    val make_assoc : (int, t) JsonStatic.make_assoc
   end
 end

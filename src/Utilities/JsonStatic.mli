@@ -4,5 +4,6 @@ val raise_unknown_variant : variant_name:string -> invalid:string -> 'a
 (** Utility function for throwing an exception if a string is not part of a
     variant. *)
 
-type 'a make_assoc = Locale.Order.t -> (int * 'a) option Json.Decode.decoder
+type ('id, 'a) make_assoc =
+  Locale.Order.t -> ('id * 'a) option Json.Decode.decoder
 (** A decoder returning a pair that can be used to build an [IntMap]. *)

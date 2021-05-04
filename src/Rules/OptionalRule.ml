@@ -1,6 +1,6 @@
 module Static = struct
   type t = {
-    id : int;
+    id : Id.OptionalRule.t;
     name : string;
     description : string;
     isPrerequisite : bool;
@@ -26,7 +26,7 @@ module Static = struct
       }
 
     type multilingual = {
-      id : int;
+      id : Id.OptionalRule.t;
       isPrerequisite : bool;
       src : PublicationRef.list;
       translations : translation TranslationMap.t;
@@ -34,7 +34,7 @@ module Static = struct
 
     let multilingual locale_order json =
       {
-        id = json |> field "id" int;
+        id = json |> field "id" Id.OptionalRule.Decode.t;
         isPrerequisite = json |> field "isPrerequisite" bool;
         src = json |> field "src" (PublicationRef.Decode.make_list locale_order);
         translations =

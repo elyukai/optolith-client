@@ -1,5 +1,5 @@
 module Static = struct
-  type t = { id : int; name : string; abbr : string }
+  type t = { id : Id.Attribute.t; name : string; abbr : string }
 
   module Decode = struct
     open Json.Decode
@@ -13,13 +13,13 @@ module Static = struct
       }
 
     type multilingual = {
-      id : int;
+      id : Id.Attribute.t;
       translations : translation TranslationMap.t;
     }
 
     let multilingual json =
       {
-        id = json |> field "id" int;
+        id = json |> field "id" Id.Attribute.Decode.t;
         translations =
           json |> field "translations" (TranslationMap.Decode.t translation);
       }

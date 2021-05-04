@@ -2,16 +2,23 @@
   "name": "optolith-client",
   "version": "0.1.0",
   "sources": [
-    { "dir": "src" },
-    { "dir": "src/Common" },
-    { "dir": "src/Dependencies" },
-    { "dir": "src/Localization" },
-    { "dir": "src/Rated" },
-    { "dir": "src/Rules" },
-    { "dir": "src/Sources" },
-    { "dir": "src/Utilities" },
-    { "dir": "src/Utilities/__tests__", "type": "dev" },
-    { "dir": "src/Utilities/Abstractions" }
+    { "dir": "src", "subdirs": [
+      { "dir": "Common" },
+      { "dir": "Dependencies" },
+      { "dir": "Localization" },
+      { "dir": "Rated", "subdirs": [
+        { "dir": "__tests__", "type": "dev" },
+        { "dir": "ArcaneSpellworks" },
+        { "dir": "Liturgies" },
+        { "dir": "MagicalActions" }
+      ] },
+      { "dir": "Rules" },
+      { "dir": "Sources" },
+      { "dir": "Utilities", "subdirs": [
+        { "dir": "__tests__", "type": "dev" },
+        { "dir": "Abstractions" }
+      ] }
+    ] }
   ],
   "package-specs": {
     "module": "commonjs",

@@ -1,5 +1,5 @@
 type t = {
-  id : int;
+  id : Id.Publication.t;
   name : string;
   abbr : string;
   is_core : bool;
@@ -9,5 +9,5 @@ type t = {
     options. *)
 
 module Decode : sig
-  val make_assoc : t JsonStatic.make_assoc
+  val make_assoc : (Id.Publication.t, t) JsonStatic.make_assoc
 end

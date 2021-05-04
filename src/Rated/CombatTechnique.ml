@@ -1,7 +1,7 @@
 module Melee = struct
   module Static = struct
     type t = {
-      id : int;
+      id : Id.MeleeCombatTechnique.t;
       name : string;
       ic : IC.t;
       primary : int list;
@@ -31,7 +31,7 @@ module Melee = struct
         }
 
       type multilingual = {
-        id : int;
+        id : Id.MeleeCombatTechnique.t;
         ic : IC.t;
         primary : int list;
         hasNoParry : bool;
@@ -43,7 +43,7 @@ module Melee = struct
 
       let multilingual locale_order json =
         {
-          id = json |> field "id" int;
+          id = json |> field "id" Id.MeleeCombatTechnique.Decode.t;
           ic = json |> field "ic" IC.Decode.t;
           primary = json |> field "primary" (list int);
           hasNoParry = json |> field "hasNoParry" bool;
@@ -88,7 +88,7 @@ end
 module Ranged = struct
   module Static = struct
     type t = {
-      id : int;
+      id : Id.RangedCombatTechnique.t;
       name : string;
       ic : IC.t;
       primary : int list;
@@ -117,7 +117,7 @@ module Ranged = struct
         }
 
       type multilingual = {
-        id : int;
+        id : Id.RangedCombatTechnique.t;
         ic : IC.t;
         primary : int list;
         breakingPointRating : int;
@@ -128,7 +128,7 @@ module Ranged = struct
 
       let multilingual locale_order json =
         {
-          id = json |> field "id" int;
+          id = json |> field "id" Id.RangedCombatTechnique.Decode.t;
           ic = json |> field "ic" IC.Decode.t;
           primary = json |> field "primary" (list int);
           breakingPointRating = json |> field "breakingPointRating" int;

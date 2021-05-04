@@ -2,11 +2,11 @@
     dynamic and the static parts of an attribute. *)
 
 module Static : sig
-  type t = { id : int; name : string; abbr : string }
+  type t = { id : Id.Attribute.t; name : string; abbr : string }
   (** The attribute type. *)
 
   module Decode : sig
-    val make_assoc : t JsonStatic.make_assoc
+    val make_assoc : (Id.Attribute.t, t) JsonStatic.make_assoc
   end
 end
 

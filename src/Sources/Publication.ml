@@ -1,5 +1,5 @@
 type t = {
-  id : int;
+  id : Id.Publication.t;
   name : string;
   abbr : string;
   is_core : bool;
@@ -27,7 +27,7 @@ module Decode = struct
            Option.dis isMissingImplementation)
 
   type multilingual = {
-    id : int;
+    id : Id.Publication.t;
     isCore : bool;
     isAdultContent : bool;
     isMissingImplementation : bool option;
@@ -36,7 +36,7 @@ module Decode = struct
 
   let multilingual json =
     {
-      id = json |> field "id" int;
+      id = json |> field "id" Id.Publication.Decode.t;
       isCore = json |> field "isCore" bool;
       isAdultContent = json |> field "isAdultContent" bool;
       isMissingImplementation =

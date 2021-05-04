@@ -1,6 +1,6 @@
 module Static : sig
   type t = {
-    id : int;
+    id : Id.FocusRule.t;
     name : string;
     description : string;
     subject : int;
@@ -10,6 +10,6 @@ module Static : sig
   }
 
   module Decode : sig
-    val make_assoc : t JsonStatic.make_assoc
+    val make_assoc : (Id.FocusRule.t, t) JsonStatic.make_assoc
   end
 end

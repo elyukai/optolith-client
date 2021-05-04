@@ -58,7 +58,7 @@ module Static = struct
   type encumbrance = True | False | Maybe of string option
 
   type t = {
-    id : int;
+    id : Id.Skill.t;
     name : string;
     check : Check.t;
     encumbrance : encumbrance;
@@ -118,7 +118,7 @@ module Static = struct
                  ~invalid:str)
 
     type multilingual = {
-      id : int;
+      id : Id.Skill.t;
       check : Check.t;
       applications : Application.t IntMap.t option;
       ic : IC.t;
@@ -130,7 +130,7 @@ module Static = struct
 
     let multilingual locale_order json =
       {
-        id = json |> field "id" int;
+        id = json |> field "id" Id.Skill.Decode.t;
         applications =
           json
           |> optionalField "applications"

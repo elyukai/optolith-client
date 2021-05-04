@@ -1,20 +1,17 @@
 module Static = struct
   type t = {
-    id : int;
+    id : Id.JesterTrick.t;
     name : string;
     check : Check.t;
-    checkMod : Check.Modifier.t option;
+    check_mod : Check.Modifier.t option;
     effect : string;
-    castingTime : Rated.Static.Activatable.MainParameter.t;
+    casting_time : Rated.Static.Activatable.MainParameter.t;
     cost : Rated.Static.Activatable.MainParameter.t;
     range : Rated.Static.Activatable.MainParameter.t;
     duration : Rated.Static.Activatable.MainParameter.t;
     target : string;
     property : int;
-    traditions : Id.MagicalTradition.Set.t;
     ic : IC.t;
-    prerequisites : Prerequisite.Collection.Spellwork.t;
-    enhancements : Enhancement.t IntMap.t;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
@@ -59,7 +56,7 @@ module Static = struct
       }
 
     type multilingual = {
-      id : int;
+      id : Id.JesterTrick.t;
       check : Check.t;
       checkMod : Check.Modifier.t option;
       castingTimeNoMod : bool;
@@ -67,17 +64,14 @@ module Static = struct
       rangeNoMod : bool;
       durationNoMod : bool;
       property : int;
-      traditions : int list;
       ic : IC.t;
-      prerequisites : Prerequisite.Collection.Spellwork.t option;
-      enhancements : Enhancement.t IntMap.t option;
       src : PublicationRef.list;
       translations : translation TranslationMap.t;
     }
 
     let multilingual locale_order json =
       {
-        id = json |> field "id" int;
+        id = json |> field "id" Id.JesterTrick.Decode.t;
         check = json |> field "check" Check.Decode.t;
         checkMod = json |> optionalField "checkMod" Check.Modifier.Decode.t;
         castingTimeNoMod = json |> field "castingTimeNoMod" bool;
@@ -85,16 +79,7 @@ module Static = struct
         rangeNoMod = json |> field "rangeNoMod" bool;
         durationNoMod = json |> field "durationNoMod" bool;
         property = json |> field "property" int;
-        traditions = json |> field "traditions" (list int);
         ic = json |> field "ic" IC.Decode.t;
-        prerequisites =
-          json
-          |> optionalField "prerequisites"
-               (Prerequisite.Collection.Spellwork.Decode.make locale_order);
-        enhancements =
-          json
-          |> optionalField "enhancements"
-               (Enhancement.Decode.make_map locale_order);
         src = json |> field "src" (PublicationRef.Decode.make_list locale_order);
         translations =
           json |> field "translations" (TranslationMap.Decode.t translation);
@@ -110,9 +95,9 @@ module Static = struct
           id = multilingual.id;
           name = translation.name;
           check = multilingual.check;
-          checkMod = multilingual.checkMod;
+          check_mod = multilingual.checkMod;
           effect = translation.effect;
-          castingTime =
+          casting_time =
             Rated.Static.Activatable.MainParameter.Decode.make
               multilingual.castingTimeNoMod translation.castingTime;
           cost =
@@ -126,23 +111,15 @@ module Static = struct
               multilingual.durationNoMod translation.duration;
           target = translation.target;
           property = multilingual.property;
-          traditions =
-            multilingual.traditions |> Id.MagicalTradition.Set.from_int_list;
           ic = multilingual.ic;
-          prerequisites = multilingual.prerequisites |> Option.fromOption [];
-          enhancements =
-            multilingual.enhancements |> Option.fromOption IntMap.empty;
           src = multilingual.src;
           errata = translation.errata |> Option.fromOption [];
         } )
   end
 end
 
-module Dynamic =
-Rated.Dynamic.Activatable.WithEnhancements.ByMagicalTradition.Make (struct
+module Dynamic = Rated.Dynamic.Activatable.Make (struct
   type static = Static.t
 
   let ic (x : static) = x.ic
-
-  let enhancements (x : static) = x.enhancements
 end)

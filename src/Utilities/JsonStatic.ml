@@ -3,4 +3,5 @@ let raise_unknown_variant ~variant_name ~invalid =
     (Json.Decode.DecodeError
        ("Unknown variant tag of variant \"" ^ variant_name ^ "\": " ^ invalid))
 
-type 'a make_assoc = Locale.Order.t -> (int * 'a) option Json.Decode.decoder
+type ('id, 'a) make_assoc =
+  Locale.Order.t -> ('id * 'a) option Json.Decode.decoder

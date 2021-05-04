@@ -1,6 +1,6 @@
 module Static : sig
   type t = {
-    id : int;
+    id : Id.OptionalRule.t;
     name : string;
     description : string;
     isPrerequisite : bool;
@@ -9,6 +9,6 @@ module Static : sig
   }
 
   module Decode : sig
-    val make_assoc : t JsonStatic.make_assoc
+    val make_assoc : (Id.OptionalRule.t, t) JsonStatic.make_assoc
   end
 end
