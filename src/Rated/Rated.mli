@@ -496,7 +496,7 @@ module Dynamic : sig
         (** The secondary static entry from the database that is used if the
             primary static entry cannot provide explicit improvement costs. *)
 
-        val ic : static' -> static -> IC.t
+        val ic : static' -> static -> IC.t option
         (** Get the improvement cost from the static entry or the secondary
             static entry. *)
       end

@@ -53,4 +53,4 @@ module Dynamic :
   Rated.Dynamic.Activatable.DeriveSecondary.S
     with type id = Id.AnimistPower.t
      and type static = Static.t
-     and type static' = IC.t
+     and type static' = Patron.t

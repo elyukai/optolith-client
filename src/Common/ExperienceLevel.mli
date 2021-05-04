@@ -1,3 +1,6 @@
+(** This module contains definitions and simple utility functions for experience
+    levels. *)
+
 type t = {
   id : Id.ExperienceLevel.t;
   name : string;

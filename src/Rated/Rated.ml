@@ -476,7 +476,7 @@ module Dynamic = struct
 
         type static'
 
-        val ic : static' -> static -> IC.t
+        val ic : static' -> static -> IC.t option
       end
 
       module Make (Config : Config) :
@@ -493,7 +493,7 @@ module Dynamic = struct
         type nonrec t = (id, static) t
 
         let ap_total static' static value =
-          let ic = Option.liftM2 Config.ic static' static in
+          let ic = Option.liftM2 Config.ic static' static |> Option.join in
           match (ic, value) with
           | None, _ | Some _, Inactive -> 0
           | Some ic, Active value ->

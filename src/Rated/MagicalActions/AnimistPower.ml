@@ -182,8 +182,8 @@ module Dynamic = Rated.Dynamic.Activatable.DeriveSecondary.Make (struct
 
   type static = t
 
-  type static' = IC.t
+  type static' = Patron.t
 
-  let ic patron x =
-    match x.ic with Fixed ic -> ic | DeriveFromPrimaryPatron -> patron
+  let ic { Patron.ic = patron_ic; _ } x =
+    match x.ic with Fixed ic -> Some ic | DeriveFromPrimaryPatron -> patron_ic
 end)
