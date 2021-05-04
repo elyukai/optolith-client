@@ -784,6 +784,8 @@ module MagicalTradition : sig
 
   val compare : t -> t -> int
 
+  module Map : MapX.T with type key = t
+
   module ArcaneBardTradition : sig
     type t = Other of int
 
@@ -834,6 +836,8 @@ module BlessedTradition : sig
   val to_int : t -> int
 
   val compare : t -> t -> int
+
+  module Map : MapX.T with type key = t
 end
 
 module PactGift : sig

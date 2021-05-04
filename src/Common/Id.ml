@@ -1298,6 +1298,12 @@ module MagicalTradition = struct
     | Other x -> x
 
   let compare = Function.(flip on to_int compare)
+
+  module Map = MapX.Make (struct
+    type nonrec t = t
+
+    let compare = compare
+  end)
 end
 
 module BlessedTradition = struct
@@ -1371,6 +1377,12 @@ module BlessedTradition = struct
     | Other x -> x
 
   let compare = Function.(flip on to_int compare)
+
+  module Map = MapX.Make (struct
+    type nonrec t = t
+
+    let compare = compare
+  end)
 end
 
 module PactGift = struct
