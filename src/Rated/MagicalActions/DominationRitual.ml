@@ -85,7 +85,11 @@ module Static = struct
 end
 
 module Dynamic = Rated.Dynamic.Activatable.Make (struct
-  type static = Static.t
+  open Static
+
+  type id = Id.DominationRitual.t
+
+  type static = t
 
   let ic _ = IC.B
 end)

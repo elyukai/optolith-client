@@ -21,4 +21,7 @@ module Static : sig
   end
 end
 
-module Dynamic : Rated.Dynamic.Activatable.S with type static = Static.t
+module Dynamic :
+  Rated.Dynamic.Activatable.S
+    with type id = Id.DominationRitual.t
+     and type static = Static.t

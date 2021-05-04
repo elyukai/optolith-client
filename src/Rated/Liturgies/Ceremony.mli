@@ -30,4 +30,6 @@ module Static : sig
 end
 
 module Dynamic :
-  Rated.Dynamic.Activatable.WithEnhancements.S with type static = Static.t
+  Rated.Dynamic.Activatable.WithEnhancements.S
+    with type id = Id.Ceremony.t
+     and type static = Static.t

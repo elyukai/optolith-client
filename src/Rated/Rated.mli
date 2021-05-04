@@ -15,8 +15,8 @@ module Dynamic : sig
   }
   (** Describes a dependency on a certain rated entry. *)
 
-  type 'static t = {
-    id : int;  (** The rated entry's identifier. *)
+  type ('id, 'static) t = {
+    id : 'id;  (** The rated entry's identifier. *)
     value : int;  (** The current value. *)
     cached_ap : int;  (** The accumulated AP value of all value increases. *)
     dependencies : dependency list;  (** The list of dependencies. *)
@@ -26,14 +26,17 @@ module Dynamic : sig
   (** The representation of a rated entry on a character. *)
 
   module type S = sig
+    type id
+    (** The identifier type. *)
+
     type static
     (** The static values from the database. *)
 
-    type nonrec t = static t
+    type nonrec t = (id, static) t
     (** The dynamic values in a character with a reference to the static values
         from the database. *)
 
-    val make : ?value:int -> static:static option -> id:int -> t
+    val make : ?value:int -> static:static option -> id:id -> t
     (** [make ~value ~static ~id] creates a new dynamic entry from an id. If a
         value is provided and a static entry is present, it inserts the value
         and calculates the initial total AP cache. *)
@@ -54,6 +57,9 @@ module Dynamic : sig
   end
 
   module type Config = sig
+    type id
+    (** The identifier type. *)
+
     type static
     (** The static values from the database. *)
 
@@ -66,7 +72,8 @@ module Dynamic : sig
 
   (** Create combined types and utility function for a given rated entry type.
       *)
-  module Make (Config : Config) : S with type static = Config.static
+  module Make (Config : Config) :
+    S with type id = Config.id and type static = Config.static
 
   module Activatable : sig
     (** The current value. *)
@@ -74,8 +81,8 @@ module Dynamic : sig
       | Inactive  (** The entry has not been activated yet. *)
       | Active of int  (** The entry is active and has a defined rating. *)
 
-    type 'static t = {
-      id : int;  (** The rated entry's identifier. *)
+    type ('id, 'static) t = {
+      id : 'id;  (** The rated entry's identifier. *)
       value : value;  (** The current value. *)
       cached_ap : int;  (** The accumulated AP value of all value increases. *)
       dependencies : dependency list;  (** The list of dependencies. *)
@@ -85,14 +92,17 @@ module Dynamic : sig
     (** The representation of a activatable rated entry on a character. *)
 
     module type S = sig
+      type id
+      (** The identifier type. *)
+
       type static
       (** The static values from the database. *)
 
-      type nonrec t = static t
+      type nonrec t = (id, static) t
       (** The dynamic values in a character with a reference to the static
           values from the database. *)
 
-      val make : ?value:value -> static:static option -> id:int -> t
+      val make : ?value:value -> static:static option -> id:id -> t
       (** [make ~value ~static ~id] creates a new dynamic entry from an id. If a
           value is provided and a static entry is present, it inserts the value
           and calculates the initial total AP cache. *)
@@ -122,6 +132,9 @@ module Dynamic : sig
     end
 
     module type Config = sig
+      type id
+      (** The identifier type. *)
+
       type static
       (** The static values from the database. *)
 
@@ -131,13 +144,14 @@ module Dynamic : sig
 
     (** Create combined types and utility function for a given rated entry type.
         *)
-    module Make (Config : Config) : S with type static = Config.static
+    module Make (Config : Config) :
+      S with type id = Config.id and type static = Config.static
 
     module WithEnhancements : sig
       type enhancement = { id : int; dependencies : int list }
 
-      type 'static t = {
-        id : int;  (** The rated entry's identifier. *)
+      type ('id, 'static) t = {
+        id : 'id;  (** The rated entry's identifier. *)
         value : value;  (** The current value. *)
         enhancements : enhancement IntMap.t;
             (** The currently active enhancements for that entry. *)
@@ -150,10 +164,13 @@ module Dynamic : sig
       (** The representation of a activatable rated entry on a character. *)
 
       module type S = sig
+        type id
+        (** The identifier type. *)
+
         type static
         (** The static values from the database. *)
 
-        type nonrec t = static t
+        type nonrec t = (id, static) t
         (** The dynamic values in a character with a reference to the static
             values from the database. *)
 
@@ -161,7 +178,7 @@ module Dynamic : sig
           ?enhancements:enhancement IntMap.t ->
           ?value:value ->
           static:static option ->
-          id:int ->
+          id:id ->
           t
         (** [make ~enhancements ~value ~static ~id] creates a new dynamic entry
             from an id. If a value is provided and a static entry is present, it
@@ -201,6 +218,9 @@ module Dynamic : sig
       end
 
       module type Config = sig
+        type id
+        (** The identifier type. *)
+
         type static
         (** The static values from the database. *)
 
@@ -213,11 +233,12 @@ module Dynamic : sig
 
       (** Create combined types and utility function for a given rated entry type.
           *)
-      module Make (Config : Config) : S with type static = Config.static
+      module Make (Config : Config) :
+        S with type id = Config.id and type static = Config.static
 
       module ByMagicalTradition : sig
-        type 'static t = {
-          id : int;  (** The rated entry's identifier. *)
+        type ('id, 'static) t = {
+          id : 'id;  (** The rated entry's identifier. *)
           values : int Id.MagicalTradition.Map.t;
               (** The current value in each tradition. An entry is considered
                   active for a tradition if its key is present. *)
@@ -234,10 +255,13 @@ module Dynamic : sig
             traditions on a character. *)
 
         module type S = sig
+          type id
+          (** The identifier type. *)
+
           type static
           (** The static values from the database. *)
 
-          type nonrec t = static t
+          type nonrec t = (id, static) t
           (** The dynamic values in a character with a reference to the static
               values from the database. *)
 
@@ -245,7 +269,7 @@ module Dynamic : sig
             ?enhancements:enhancement IntMap.t ->
             ?values:int Id.MagicalTradition.Map.t ->
             static:static option ->
-            id:int ->
+            id:id ->
             t
           (** [make ~enhancements ~values ~static ~id] creates a new dynamic
               entry from an id. If one or multiple values are provided and a
@@ -293,6 +317,9 @@ module Dynamic : sig
         end
 
         module type Config = sig
+          type id
+          (** The identifier type. *)
+
           type static
           (** The static values from the database. *)
 
@@ -305,7 +332,8 @@ module Dynamic : sig
 
         (** Create combined types and utility function for a given rated entry
             type. *)
-        module Make (Config : Config) : S with type static = Config.static
+        module Make (Config : Config) :
+          S with type id = Config.id and type static = Config.static
       end
     end
 
@@ -319,8 +347,8 @@ module Dynamic : sig
                 higher level always requires the previous level on a certain
                 rating. *)
 
-      type 'static t = {
-        id : int;  (** The rated entry's identifier. *)
+      type ('id, 'static) t = {
+        id : 'id;  (** The rated entry's identifier. *)
         values : values;  (** The current values for each level. *)
         cached_ap : int;
             (** The accumulated AP value of all value increases. *)
@@ -331,14 +359,17 @@ module Dynamic : sig
       (** The representation of a activatable rated entry on a character. *)
 
       module type S = sig
+        type id
+        (** The identifier type. *)
+
         type static
         (** The static values from the database. *)
 
-        type nonrec t = static t
+        type nonrec t = (id, static) t
         (** The dynamic values in a character with a reference to the static
             values from the database. *)
 
-        val make : ?values:values -> static:static option -> id:int -> t
+        val make : ?values:values -> static:static option -> id:id -> t
         (** [make ~values ~static ~id] creates a new dynamic entry from an id.
             If one or multiple values are provided and a static entry is
             present, it inserts the value and calculates the initial total AP
@@ -382,6 +413,9 @@ module Dynamic : sig
       end
 
       module type Config = sig
+        type id
+        (** The identifier type. *)
+
         type static
         (** The static values from the database. *)
 
@@ -391,7 +425,8 @@ module Dynamic : sig
 
       (** Create combined types and utility function for a given rated entry
           type. *)
-      module Make (Config : Config) : S with type static = Config.static
+      module Make (Config : Config) :
+        S with type id = Config.id and type static = Config.static
     end
   end
 end

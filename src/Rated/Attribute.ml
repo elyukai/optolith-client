@@ -39,7 +39,11 @@ module Static = struct
 end
 
 module Dynamic = Rated.Dynamic.Make (struct
-  type static = Static.t
+  open Static
+
+  type id = Id.Attribute.t
+
+  type static = t
 
   let ic _ = IC.D
 

@@ -23,7 +23,10 @@ module Melee : sig
     end
   end
 
-  module Dynamic : Rated.Dynamic.S with type static = Static.t
+  module Dynamic :
+    Rated.Dynamic.S
+      with type id = Id.MeleeCombatTechnique.t
+       and type static = Static.t
 end
 
 module Ranged : sig
@@ -45,5 +48,8 @@ module Ranged : sig
     end
   end
 
-  module Dynamic : Rated.Dynamic.S with type static = Static.t
+  module Dynamic :
+    Rated.Dynamic.S
+      with type id = Id.RangedCombatTechnique.t
+       and type static = Static.t
 end

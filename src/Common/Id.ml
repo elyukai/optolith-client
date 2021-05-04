@@ -18,6 +18,12 @@ module type Id = sig
 
     val from_int_list : (int * 'a) list -> 'a t
   end
+
+  module Decode : sig
+    val t : t Json.Decode.decoder
+
+    val set : Set.t Json.Decode.decoder
+  end
 end
 
 module Make (S : sig
@@ -52,6 +58,26 @@ end) : Id with type t := S.t = struct
 
     let from_int_list xs = xs |> List.map (Tuple.first from_int) |> fromList
   end
+
+  module Decode = struct
+    open Json.Decode
+
+    let t = int |> map from_int
+
+    let set = list t |> map Set.fromList
+  end
+end
+
+module Publication = struct
+  type t = Other of int
+
+  include Make (struct
+    type nonrec t = t
+
+    let from_int = function x -> Other x
+
+    let to_int = function Other x -> x
+  end)
 end
 
 module FocusRule = struct
@@ -791,7 +817,103 @@ module Ritual = struct
   end)
 end
 
+module Curse = struct
+  type t = Other of int
+
+  include Make (struct
+    type nonrec t = t
+
+    let from_int = function x -> Other x
+
+    let to_int = function Other x -> x
+  end)
+end
+
+module ElvenMagicalSong = struct
+  type t = Other of int
+
+  include Make (struct
+    type nonrec t = t
+
+    let from_int = function x -> Other x
+
+    let to_int = function Other x -> x
+  end)
+end
+
+module DominationRitual = struct
+  type t = Other of int
+
+  include Make (struct
+    type nonrec t = t
+
+    let from_int = function x -> Other x
+
+    let to_int = function Other x -> x
+  end)
+end
+
+module MagicalMelody = struct
+  type t = Other of int
+
+  include Make (struct
+    type nonrec t = t
+
+    let from_int = function x -> Other x
+
+    let to_int = function Other x -> x
+  end)
+end
+
+module MagicalDance = struct
+  type t = Other of int
+
+  include Make (struct
+    type nonrec t = t
+
+    let from_int = function x -> Other x
+
+    let to_int = function Other x -> x
+  end)
+end
+
+module JesterTrick = struct
+  type t = Other of int
+
+  include Make (struct
+    type nonrec t = t
+
+    let from_int = function x -> Other x
+
+    let to_int = function Other x -> x
+  end)
+end
+
 module AnimistPower = struct
+  type t = Other of int
+
+  include Make (struct
+    type nonrec t = t
+
+    let from_int = function x -> Other x
+
+    let to_int = function Other x -> x
+  end)
+end
+
+module GeodeRitual = struct
+  type t = Other of int
+
+  include Make (struct
+    type nonrec t = t
+
+    let from_int = function x -> Other x
+
+    let to_int = function Other x -> x
+  end)
+end
+
+module ZibiljaRitual = struct
   type t = Other of int
 
   include Make (struct

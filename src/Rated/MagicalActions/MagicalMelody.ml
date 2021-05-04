@@ -131,7 +131,11 @@ module Static = struct
 end
 
 module Dynamic = Rated.Dynamic.Activatable.Make (struct
-  type static = Static.t
+  open Static
 
-  let ic (x : static) = x.ic
+  type id = Id.MagicalMelody.t
+
+  type static = t
+
+  let ic x = x.ic
 end)

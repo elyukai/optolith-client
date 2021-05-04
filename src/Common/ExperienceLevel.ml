@@ -1,5 +1,5 @@
 type t = {
-  id : int;
+  id : Id.ExperienceLevel.t;
   name : string;
   ap : int;
   max_attribute_value : int;
@@ -18,7 +18,7 @@ module Decode = struct
   let translation json = { name = json |> field "name" string }
 
   type multilingual = {
-    id : int;
+    id : Id.ExperienceLevel.t;
     ap : int;
     maxAttributeValue : int;
     maxSkillRating : int;
@@ -31,7 +31,7 @@ module Decode = struct
 
   let multilingual json =
     {
-      id = json |> field "id" int;
+      id = json |> field "id" Id.ExperienceLevel.Decode.t;
       ap = json |> field "ap" int;
       maxAttributeValue = json |> field "maxAttributeValue" int;
       maxSkillRating = json |> field "maxSkillRating" int;

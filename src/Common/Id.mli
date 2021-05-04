@@ -47,6 +47,23 @@ module type Id = sig
         converting each list item tuple's first value to its corresponding
         variant representation. *)
   end
+
+  (** Decode identifier variants directly, which makes it easier to use. *)
+  module Decode : sig
+    val t : t Json.Decode.decoder
+    (** Convert a single integer identifier into it's corresponding variant
+        representation. *)
+
+    val set : Set.t Json.Decode.decoder
+    (** Convert a list of integer identifiers into a set of it's corresponding
+        variant representations. *)
+  end
+end
+
+module Publication : sig
+  type t = Other of int
+
+  include Id with type t := t
 end
 
 module FocusRule : sig
@@ -323,7 +340,55 @@ module Ritual : sig
   include Id with type t := t
 end
 
+module Curse : sig
+  type t = Other of int
+
+  include Id with type t := t
+end
+
+module ElvenMagicalSong : sig
+  type t = Other of int
+
+  include Id with type t := t
+end
+
+module DominationRitual : sig
+  type t = Other of int
+
+  include Id with type t := t
+end
+
+module MagicalMelody : sig
+  type t = Other of int
+
+  include Id with type t := t
+end
+
+module MagicalDance : sig
+  type t = Other of int
+
+  include Id with type t := t
+end
+
+module JesterTrick : sig
+  type t = Other of int
+
+  include Id with type t := t
+end
+
 module AnimistPower : sig
+  type t = Other of int
+
+  include Id with type t := t
+end
+
+module GeodeRitual : sig
+  type t = Other of int
+
+  include Id with type t := t
+end
+
+module ZibiljaRitual : sig
   type t = Other of int
 
   include Id with type t := t

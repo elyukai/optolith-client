@@ -30,4 +30,5 @@ end
 
 module Dynamic :
   Rated.Dynamic.Activatable.WithEnhancements.ByMagicalTradition.S
-    with type static = Static.t
+    with type id = Id.Spell.t
+     and type static = Static.t

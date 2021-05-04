@@ -10,4 +10,5 @@ module Static : sig
   end
 end
 
-module Dynamic : Rated.Dynamic.S with type static = Static.t
+module Dynamic :
+  Rated.Dynamic.S with type id = Id.Attribute.t and type static = Static.t

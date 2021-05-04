@@ -68,7 +68,8 @@ module Static : sig
   end
 end
 
-module Dynamic : Rated.Dynamic.S with type static = Static.t
+module Dynamic :
+  Rated.Dynamic.S with type id = Id.Skill.t and type static = Static.t
 
 (** Skill group definitions. *)
 module Group : sig

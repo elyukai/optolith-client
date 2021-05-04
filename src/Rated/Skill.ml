@@ -179,6 +179,8 @@ end
 module Dynamic = Rated.Dynamic.Make (struct
   open Static
 
+  type id = Id.Skill.t
+
   type static = t
 
   let ic x = x.ic

@@ -140,9 +140,13 @@ end
 
 module Dynamic =
 Rated.Dynamic.Activatable.WithEnhancements.ByMagicalTradition.Make (struct
-  type static = Static.t
+  open Static
 
-  let ic (x : static) = x.ic
+  type id = Id.Ritual.t
 
-  let enhancements (x : static) = x.enhancements
+  type static = t
+
+  let ic x = x.ic
+
+  let enhancements x = x.enhancements
 end)

@@ -14,8 +14,8 @@ module Dynamic = struct
       type enhancement = { id : int; dependencies : int list }
 
       module ByMagicalTradition = struct
-        type 'static t = {
-          id : int;
+        type ('id, 'static) t = {
+          id : 'id;
           values : int Id.MagicalTradition.Map.t;
           enhancements : enhancement IntMap.t;
           cached_ap : int;
@@ -24,15 +24,17 @@ module Dynamic = struct
         }
 
         module type S = sig
+          type id
+
           type static
 
-          type nonrec t = static t
+          type nonrec t = (id, static) t
 
           val make :
             ?enhancements:enhancement IntMap.t ->
             ?values:int Id.MagicalTradition.Map.t ->
             static:static option ->
-            id:int ->
+            id:id ->
             t
 
           val update_value : (int -> int) -> Id.MagicalTradition.t -> t -> t
@@ -54,6 +56,8 @@ module Dynamic = struct
         end
 
         module type Config = sig
+          type id
+
           type static
 
           val ic : static -> IC.t
@@ -61,11 +65,13 @@ module Dynamic = struct
           val enhancements : static -> Enhancement.t IntMap.t
         end
 
-        module Make (Config : Config) : S with type static = Config.static =
-        struct
+        module Make (Config : Config) :
+          S with type id = Config.id and type static = Config.static = struct
+          type id = Config.id
+
           type static = Config.static
 
-          type nonrec t = static t
+          type nonrec t = (id, static) t
 
           let ap_total static_opt values active_enhancements =
             let open Option.Infix in
@@ -155,8 +161,8 @@ module Dynamic = struct
         end
       end
 
-      type 'static t = {
-        id : int;
+      type ('id, 'static) t = {
+        id : 'id;
         value : value;
         enhancements : enhancement IntMap.t;
         cached_ap : int;
@@ -165,15 +171,17 @@ module Dynamic = struct
       }
 
       module type S = sig
+        type id
+
         type static
 
-        type nonrec t = static t
+        type nonrec t = (id, static) t
 
         val make :
           ?enhancements:enhancement IntMap.t ->
           ?value:value ->
           static:static option ->
-          id:int ->
+          id:id ->
           t
 
         val update_value : (value -> value) -> t -> t
@@ -193,6 +201,8 @@ module Dynamic = struct
       end
 
       module type Config = sig
+        type id
+
         type static
 
         val ic : static -> IC.t
@@ -200,11 +210,13 @@ module Dynamic = struct
         val enhancements : static -> Enhancement.t IntMap.t
       end
 
-      module Make (Config : Config) : S with type static = Config.static =
-      struct
+      module Make (Config : Config) :
+        S with type id = Config.id and type static = Config.static = struct
+        type id = Config.id
+
         type static = Config.static
 
-        type nonrec t = static t
+        type nonrec t = (id, static) t
 
         let ap_total static_opt value active_enhancements =
           let open Option.Infix in
@@ -277,8 +289,8 @@ module Dynamic = struct
     module ByLevel = struct
       type values = Inactive | Active of int NonEmptyList.t
 
-      type 'static t = {
-        id : int;
+      type ('id, 'static) t = {
+        id : 'id;
         values : values;
         cached_ap : int;
         dependencies : dependency list;
@@ -286,11 +298,13 @@ module Dynamic = struct
       }
 
       module type S = sig
+        type id
+
         type static
 
-        type nonrec t = static t
+        type nonrec t = (id, static) t
 
-        val make : ?values:values -> static:static option -> id:int -> t
+        val make : ?values:values -> static:static option -> id:id -> t
 
         val update_value : index:int -> (int -> int) -> t -> t
 
@@ -310,16 +324,20 @@ module Dynamic = struct
       end
 
       module type Config = sig
+        type id
+
         type static
 
         val ic : static -> IC.t
       end
 
-      module Make (Config : Config) : S with type static = Config.static =
-      struct
+      module Make (Config : Config) :
+        S with type id = Config.id and type static = Config.static = struct
+        type id = Config.id
+
         type static = Config.static
 
-        type nonrec t = static t
+        type nonrec t = (id, static) t
 
         let ap_total static (values : values) =
           let open Option.Infix in
@@ -413,8 +431,8 @@ module Dynamic = struct
       end
     end
 
-    type 'static t = {
-      id : int;
+    type ('id, 'static) t = {
+      id : 'id;
       value : value;
       cached_ap : int;
       dependencies : dependency list;
@@ -422,11 +440,13 @@ module Dynamic = struct
     }
 
     module type S = sig
+      type id
+
       type static
 
-      type nonrec t = static t
+      type nonrec t = (id, static) t
 
-      val make : ?value:value -> static:static option -> id:int -> t
+      val make : ?value:value -> static:static option -> id:id -> t
 
       val update_value : (value -> value) -> t -> t
 
@@ -442,15 +462,20 @@ module Dynamic = struct
     end
 
     module type Config = sig
+      type id
+
       type static
 
       val ic : static -> IC.t
     end
 
-    module Make (Config : Config) : S with type static = Config.static = struct
+    module Make (Config : Config) :
+      S with type id = Config.id and type static = Config.static = struct
+      type id = Config.id
+
       type static = Config.static
 
-      type nonrec t = static t
+      type nonrec t = (id, static) t
 
       let ap_total static value =
         let open Option.Infix in
@@ -491,8 +516,8 @@ module Dynamic = struct
     end
   end
 
-  type 'static t = {
-    id : int;
+  type ('id, 'static) t = {
+    id : 'id;
     value : int;
     cached_ap : int;
     dependencies : dependency list;
@@ -500,11 +525,13 @@ module Dynamic = struct
   }
 
   module type S = sig
+    type id
+
     type static
 
-    type nonrec t = static t
+    type nonrec t = (id, static) t
 
-    val make : ?value:int -> static:static option -> id:int -> t
+    val make : ?value:int -> static:static option -> id:id -> t
 
     val update_value : (int -> int) -> t -> t
 
@@ -514,6 +541,8 @@ module Dynamic = struct
   end
 
   module type Config = sig
+    type id
+
     type static
 
     val ic : static -> IC.t
@@ -521,10 +550,13 @@ module Dynamic = struct
     val min_value : int
   end
 
-  module Make (Config : Config) : S with type static = Config.static = struct
+  module Make (Config : Config) :
+    S with type id = Config.id and type static = Config.static = struct
+    type id = Config.id
+
     type static = Config.static
 
-    type nonrec t = static t
+    type nonrec t = (id, static) t
 
     let min_value = Config.min_value
 

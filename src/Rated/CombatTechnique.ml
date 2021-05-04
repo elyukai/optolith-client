@@ -77,9 +77,13 @@ module Melee = struct
   end
 
   module Dynamic = Rated.Dynamic.Make (struct
-    type static = Static.t
+    open Static
 
-    let ic (x : static) = x.ic
+    type id = Id.MeleeCombatTechnique.t
+
+    type static = t
+
+    let ic x = x.ic
 
     let min_value = 6
   end)
@@ -160,9 +164,13 @@ module Ranged = struct
   end
 
   module Dynamic = Rated.Dynamic.Make (struct
-    type static = Static.t
+    open Static
 
-    let ic (x : static) = x.ic
+    type id = Id.RangedCombatTechnique.t
+
+    type static = t
+
+    let ic x = x.ic
 
     let min_value = 6
   end)

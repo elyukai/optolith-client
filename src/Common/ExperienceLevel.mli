@@ -1,5 +1,5 @@
 type t = {
-  id : int;
+  id : Id.ExperienceLevel.t;
   name : string;
   ap : int;
   max_attribute_value : int;
@@ -11,5 +11,5 @@ type t = {
 }
 
 module Decode : sig
-  val make_assoc : t JsonStatic.make_assoc
+  val make_assoc : (Id.ExperienceLevel.t, t) JsonStatic.make_assoc
 end
