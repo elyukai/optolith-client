@@ -3,6 +3,8 @@ import { List } from "../../../Data/List"
 import { elem, fromJust, isJust, Maybe, or } from "../../../Data/Maybe"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
+import { AttrId } from "../../Constants/Ids"
 import { EditItem } from "../../Models/Hero/EditItem"
 import { Attribute } from "../../Models/Wiki/Attribute"
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
@@ -43,7 +45,7 @@ export interface ItemEditorDispatchProps {
   setDamageDiceNumber (value: string): void
   setDamageDiceSides (value: number): void
   setDamageFlat (value: string): void
-  setPrimaryAttribute (primary: Maybe<string>): void
+  setPrimaryAttribute (primary: Maybe<AttrId | Pair<AttrId, AttrId>>): void
   setDamageThreshold (value: string): void
   setFirstDamageThreshold (value: string): void
   setSecondDamageThreshold (value: string): void

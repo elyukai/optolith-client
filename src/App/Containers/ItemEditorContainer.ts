@@ -1,7 +1,9 @@
 import { connect } from "react-redux"
 import { Maybe } from "../../Data/Maybe"
+import { Pair } from "../../Data/Tuple"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as EquipmentActions from "../Actions/EquipmentActions"
+import { AttrId } from "../Constants/Ids"
 import { AppStateRecord } from "../Models/AppState"
 import { getSortedTemplates } from "../Selectors/equipmentSelectors"
 import { getIsItemCreation, getItemEditorInstance, getWikiAttributes, getWikiCombatTechniques } from "../Selectors/stateSelectors"
@@ -59,7 +61,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): ItemEditorDispatchProps =>
   setDamageFlat (value: string): void {
     dispatch (EquipmentActions.setDamageFlat (value))
   },
-  setPrimaryAttribute (primary: Maybe<string>): void {
+  setPrimaryAttribute (primary: Maybe<AttrId | Pair<AttrId, AttrId>>): void {
     dispatch (EquipmentActions.setPrimaryAttribute (primary))
   },
   setDamageThreshold (value: string): void {
