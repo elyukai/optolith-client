@@ -32,8 +32,8 @@ import { SearchField } from "../Universal/SearchField"
 import { Slidein } from "../Universal/Slidein"
 import { SortNames, SortOptions } from "../Universal/SortOptions"
 import { EquipmentListItem } from "./EquipmentListItem"
-import { PurseAndTotals } from "./PurseAndTotals"
 import { PurseAddRemoveMoney } from "./PurseAddRemoveMoney"
+import { PurseAndTotals } from "./PurseAndTotals"
 
 export interface EquipmentOwnProps {
   staticData: StaticDataRecord
@@ -134,6 +134,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
 
   const {
     staticData,
+    hero,
     combatTechniques: maybeCombatTechniques,
     carryingCapacity,
     initialStartingWealth,
@@ -375,7 +376,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
           />
         <WikiInfoContainer currentId={infoId} noWrapper />
       </Aside>
-      <ItemEditorContainer staticData={staticData} />
+      <ItemEditorContainer staticData={staticData} hero={hero} />
       <PurseAddRemoveMoney
         close={closeAddRemoveMoney}
         isOpen={isAddRemoveMoneyOpen}

@@ -6,6 +6,7 @@ import { Record } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
 import { AttrId } from "../../Constants/Ids"
 import { EditItem } from "../../Models/Hero/EditItem"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { Attribute } from "../../Models/Wiki/Attribute"
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
@@ -20,6 +21,7 @@ import { ItemEditorRangedSection } from "./ItemEditorRangedSection"
 
 export interface ItemEditorOwnProps {
   staticData: StaticDataRecord
+  hero: HeroModelRecord
 }
 
 export interface ItemEditorStateProps {
