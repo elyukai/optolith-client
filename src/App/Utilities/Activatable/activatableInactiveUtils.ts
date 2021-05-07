@@ -18,7 +18,7 @@ import { add, gt, gte, inc, multiply } from "../../../Data/Num"
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap"
 import { Record, RecordI } from "../../../Data/Record"
 import { filterMapListT, filterT, mapT } from "../../../Data/Transducer"
-import { fst, Pair, snd, Tuple } from "../../../Data/Tuple"
+import { Tuple } from "../../../Data/Tuple"
 import { traceShowId } from "../../../Debug/Trace"
 import { Aspect, CombatTechniqueGroupId, MagicalTradition, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
 import { AdvantageId, DisadvantageId, SkillId, SpecialAbilityId } from "../../Constants/Ids.gen"
@@ -546,7 +546,7 @@ const modifySelectOptions =
                   const available_langs =
 
                           // Pair: fst = sid, snd = current_level
-                    maybe (List<Pair<number, number>> ())
+                    maybe (List<number> ())
                           (pipe (
                             ADA.active,
                             foldr ((obj: Record<ActiveObject>) =>
@@ -558,14 +558,10 @@ const modifySelectOptions =
                                                 guard (is3or4 (current_level)),
                                                 thenF (AOA.sid (obj)),
                                                 misNumberM,
-                                                fmap (current_sid =>
-                                                       consF (Pair (
-                                                               current_sid,
-                                                               current_level
-                                                             )))
+                                                fmap (consF)
                                               )),
                                       fromMaybe (
-                                        ident as ident<List<Pair<number, number>>>
+                                        ident as ident<List<number>>
                                       )
                                     ))
                                   (List ())
@@ -577,21 +573,20 @@ const modifySelectOptions =
                           ))
 
                   const filterLanguages =
-                    foldr (isNoRequiredOrActiveSelection
+                    foldr (isNoRequiredSelection
                           (e => {
                             const lang =
-                              find ((l: Pair<number, number>) =>
-                                     fst (l) === SOA.id (e))
+                              find ((l: number) => l === SOA.id (e))
                                    (available_langs)
 
-                            if (isJust (lang)) {
-                              const isMotherTongue =
-                                snd (fromJust (lang)) === 4
+                            // a language must provide either a set of
+                            // possible specializations or an input where a
+                            // custom specialization can be entered.
+                            const provides_specific_or_input =
+                              Maybe.any (notNull) (SOA.specializations (e))
+                              || isJust (SOA.specializationInput (e))
 
-                              if (isMotherTongue) {
-                                return consF (set (SOL.cost) (Just (0)) (e))
-                              }
-
+                            if (isJust (lang) && provides_specific_or_input) {
                               return consF (e)
                             }
 
