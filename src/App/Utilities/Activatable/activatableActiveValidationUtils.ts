@@ -17,7 +17,6 @@ import { size } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
 import { Tuple } from "../../../Data/Tuple"
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select"
-import { traceShowBoth } from "../../../Debug/Trace"
 import { MagicalGroup, SpecialAbilityGroup } from "../../Constants/Groups"
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -330,7 +329,6 @@ const isRemovalDisabledEntrySpecific =
           hero,
           HA.specialAbilities,
           lookup (prefixSA (SpecialAbilityId.spellEnhancement)),
-          traceShowBoth ("spell enhancements:"),
           liftM2 ((static_spell_enhancements: Record<SpecialAbility>) =>
                     pipe (
                       ADA.active,
@@ -345,9 +343,6 @@ const isRemovalDisabledEntrySpecific =
           fromMaybe (List<string> ())
         )
 
-        traceShowBoth ("id:") (id)
-        traceShowBoth ("active_spell_enhancements:") (active_spell_enhancements)
-
         type Target = string | UnfamiliarGroup
 
         const targets =
@@ -358,8 +353,6 @@ const isRemovalDisabledEntrySpecific =
                 pipe_ (active, AOWIA.sid2, misStringM),
                 pipe_ (active, AOWIA.sid3, misStringM)
               ))
-
-        traceShowBoth ("targets:") (targets)
 
         const target_matches_id =
           (target: Target) =>
@@ -374,8 +367,6 @@ const isRemovalDisabledEntrySpecific =
           active_spell_enhancements,
           filter (spell_id => any (Functn.flip (target_matches_id) (spell_id)) (targets))
         )
-
-        traceShowBoth ("relevant_spell_enhancements:") (relevant_spell_enhancements)
 
         // spell enhancements must exist to possibly be a dependency
         // also, a spell must be selected and it has to have an active spell
@@ -396,8 +387,7 @@ const isRemovalDisabledEntrySpecific =
             )),
             // if all spell enhancement have alternative, it can be safely
             // removed and thus removal is "not" disabled
-            not,
-            traceShowBoth ("is removal disabled:")
+            not
           )
         }
 
