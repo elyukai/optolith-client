@@ -5,18 +5,19 @@
  * @author Lukas Obermann
  */
 
-import { notP } from "../../../Data/Bool"
+import { not, notP } from "../../../Data/Bool"
 import { equals } from "../../../Data/Eq"
-import { flip, thrush } from "../../../Data/Function"
+import { flip, Functn, thrush } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
-import { all, any, countWith, elem, elemF, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, notElem, notElemF, sdelete } from "../../../Data/List"
-import { alt, bind, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2, Maybe, maybe, Nothing, or, sum } from "../../../Data/Maybe"
+import { all, any, countWith, elem, elemF, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, notElem, notElemF, notNull, sdelete } from "../../../Data/List"
+import { alt, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, or, sum } from "../../../Data/Maybe"
 import { add, gt, gte, inc, lte, max, min, subtract, subtractBy } from "../../../Data/Num"
-import { elems, isOrderedMap, lookupF, OrderedMap } from "../../../Data/OrderedMap"
+import { elems, isOrderedMap, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
 import { size } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
 import { Tuple } from "../../../Data/Tuple"
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select"
+import { traceShowBoth } from "../../../Debug/Trace"
 import { MagicalGroup, SpecialAbilityGroup } from "../../Constants/Groups"
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -28,6 +29,7 @@ import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
 import { ActivatableDependency, Dependent } from "../../Models/Hero/heroTypeHelpers"
 import { Pact } from "../../Models/Hero/Pact"
+import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar"
 import { ActivatableActivationValidation } from "../../Models/View/ActivatableActivationValidationObject"
 import { Advantage } from "../../Models/Wiki/Advantage"
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
@@ -36,10 +38,12 @@ import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableR
 import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { Spell } from "../../Models/Wiki/Spell"
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable, EntryWithCategory, LevelAwarePrerequisites, PrerequisitesWithIds } from "../../Models/Wiki/wikiTypeHelpers"
 import { countActiveGroupEntries } from "../entryGroupUtils"
 import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils"
+import { prefixSA } from "../IDUtils"
 import { ifElse } from "../ifElse"
 import { isOwnTradition } from "../Increasable/liturgicalChantUtils"
 import { pipe, pipe_ } from "../pipe"
@@ -51,7 +55,7 @@ import { getWikiEntry, isActivatableWikiEntry } from "../WikiUtils"
 import { countActiveSkillEntries } from "./activatableSkillUtils"
 import { isStyleValidToRemove } from "./ExtendedStyleUtils"
 import { isActive } from "./isActive"
-import { getActiveSelections } from "./selectionUtils"
+import { findSelectOption, getActiveSelections } from "./selectionUtils"
 import { getBlessedTraditionFromWiki, getMagicalTraditionsHeroEntries, isBlessedTradId, isMagicalTradId } from "./traditionUtils"
 
 const hasRequiredMinimumLevel =
@@ -61,6 +65,7 @@ const hasRequiredMinimumLevel =
 const HA = HeroModel.A
 const SDA = StaticData.A
 const ELA = ExperienceLevel.A
+const SOA = SelectOption.A
 const AAL = Advantage.AL
 const ADA = ActivatableDependent.A
 const ASDA = ActivatableSkillDependent.A
@@ -71,6 +76,7 @@ const RAAL = RequireActivatable.AL
 const PA = Pact.A
 const SA = Spell.A
 const LCA = LiturgicalChant.A
+const TUA = TransferUnfamiliar.A
 
 const isRequiredByOthers =
   (current_active: Record<ActiveObjectWithId>) =>
@@ -109,11 +115,13 @@ const isRemovalDisabledEntrySpecific =
 
   // tslint:disable-next-line: cyclomatic-complexity
   (active: Record<ActiveObjectWithId>): boolean => {
+    const id = AAL.id (wiki_entry)
+
     const mstart_el =
       lookupF (SDA.experienceLevels (wiki))
               (HA.experienceLevel (hero))
 
-    if (isMagicalTradId (AAL.id (wiki_entry))) {
+    if (isMagicalTradId (id)) {
       // All active tradition entries
       const traditions =
         getMagicalTraditionsHeroEntries (HA.specialAbilities (hero))
@@ -126,13 +134,13 @@ const isRemovalDisabledEntrySpecific =
         || countActiveSkillEntries ("spells") (hero) > 0
         || size (HA.cantrips (hero)) > 0
     }
-    else if (isBlessedTradId (AAL.id (wiki_entry))) {
+    else if (isBlessedTradId (id)) {
       // there must be no active liturgical chant or blessing
       return countActiveSkillEntries ("liturgicalChants") (hero) > 0
         || size (HA.blessings (hero)) > 0
     }
 
-    switch (AAL.id (wiki_entry)) {
+    switch (id) {
       case AdvantageId.exceptionalSkill: {
         // value of target skill
         const mvalue =
@@ -302,6 +310,98 @@ const isRemovalDisabledEntrySpecific =
                (mblessed_tradition)
 
         return or (mactive_unfamiliar_chants)
+      }
+
+      // entries transferring unfamiliar special abilities (start)
+
+      case prefixSA (SpecialAbilityId.traditionGuildMages):
+      case SpecialAbilityId.madaschwesternStil:
+      case SpecialAbilityId.scholarDesMagierkollegsZuHoningen:
+      case SpecialAbilityId.zaubervariabilitaet:
+      case SpecialAbilityId.scholarDerHalleDesLebensZuNorburg:
+      case SpecialAbilityId.scholarDesKreisesDerEinfuehlung: {
+        const m_static_spell_enhancements = pipe_ (
+          wiki,
+          SDA.specialAbilities,
+          lookup (prefixSA (SpecialAbilityId.spellEnhancement))
+        )
+
+        const active_spell_enhancements = pipe_ (
+          hero,
+          HA.specialAbilities,
+          lookup (prefixSA (SpecialAbilityId.spellEnhancement)),
+          traceShowBoth ("spell enhancements:"),
+          liftM2 ((static_spell_enhancements: Record<SpecialAbility>) =>
+                    pipe (
+                      ADA.active,
+                      mapMaybe (pipe (
+                        AOA.sid,
+                        misNumberM,
+                        findSelectOption (static_spell_enhancements),
+                        bindF (SOA.target)
+                      ))
+                    ))
+                 (m_static_spell_enhancements),
+          fromMaybe (List<string> ())
+        )
+
+        traceShowBoth ("id:") (id)
+        traceShowBoth ("active_spell_enhancements:") (active_spell_enhancements)
+
+        type Target = string | UnfamiliarGroup
+
+        const targets =
+          id === SpecialAbilityId.zaubervariabilitaet
+            ? List<Target> (UnfamiliarGroup.Spells)
+            : catMaybes (List (
+                pipe_ (active, AOWIA.sid, misStringM),
+                pipe_ (active, AOWIA.sid2, misStringM),
+                pipe_ (active, AOWIA.sid3, misStringM)
+              ))
+
+        traceShowBoth ("targets:") (targets)
+
+        const target_matches_id =
+          (target: Target) =>
+          (spell_id: string) =>
+            typeof target === "string"
+              // The target must be the same …
+              ? target === spell_id
+              // … or it must be from the same category
+              : target === UnfamiliarGroup.Spells
+
+        const relevant_spell_enhancements = pipe_ (
+          active_spell_enhancements,
+          filter (spell_id => any (Functn.flip (target_matches_id) (spell_id)) (targets))
+        )
+
+        traceShowBoth ("relevant_spell_enhancements:") (relevant_spell_enhancements)
+
+        // spell enhancements must exist to possibly be a dependency
+        // also, a spell must be selected and it has to have an active spell
+        // enhancement to be relevant
+        if (notNull (active_spell_enhancements)
+            && notNull (targets)
+            && notNull (relevant_spell_enhancements)) {
+          const transferred = HA.transferredUnfamiliarSpells (hero)
+
+          return pipe_ (
+            relevant_spell_enhancements,
+            // check for alternative transferred dependency matches for all
+            // targets that would allow this entry to be removed
+            all (spell_id => pipe_ (
+              transferred,
+              // It cannot be the same entry
+              any (tu => TUA.srcId (tu) !== id && target_matches_id (TUA.id (tu)) (spell_id))
+            )),
+            // if all spell enhancement have alternative, it can be safely
+            // removed and thus removal is "not" disabled
+            not,
+            traceShowBoth ("is removal disabled:")
+          )
+        }
+
+        return false
       }
 
       default:
