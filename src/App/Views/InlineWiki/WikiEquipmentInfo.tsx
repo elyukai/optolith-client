@@ -1,6 +1,6 @@
 import * as React from "react"
 import { fmap, fmapF } from "../../../Data/Functor"
-import { elemF, intercalate, List, notElem, notNull } from "../../../Data/List"
+import { elemF, filter, intercalate, List, map, notElem, notNull } from "../../../Data/List"
 import { alt_, bind, bindF, ensure, fromMaybe, imapMaybe, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, Nothing } from "../../../Data/Maybe"
 import { gt } from "../../../Data/Num"
 import { lookup, lookupF } from "../../../Data/OrderedMap"
@@ -17,7 +17,7 @@ import { DerivedCharacteristic } from "../../Models/Wiki/DerivedCharacteristic"
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
 import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
-import { minus, ndash } from "../../Utilities/Chars"
+import { ndash } from "../../Utilities/Chars"
 import { localizeNumber, localizeSize, localizeWeight, translate, translateP } from "../../Utilities/I18n"
 import { convertPrimaryAttributeToArray, getDamageStr } from "../../Utilities/ItemUtils"
 import { sign } from "../../Utilities/NumberUtils"
@@ -89,12 +89,14 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
   const ammunitionTemplate = bind (ammunition) (lookupF (itemTemplates))
 
   const addPenaltiesArr =
-    addPenalties
-      ? List (
-          `${minus}${Maybe.sum (movMod) + 1} ${getMovName (staticData)}`,
-          `${minus}${Maybe.sum (iniMod) + 1} ${getIniName (staticData)}`
-        )
-      : List<string> ()
+    pipe_ (
+      List (
+        Pair (Maybe.sum (movMod) + (addPenalties ? -1 : 0), getMovName (staticData)),
+        Pair (Maybe.sum (iniMod) + (addPenalties ? -1 : 0), getIniName (staticData))
+      ),
+      filter (p => fst (p) !== 0),
+      map (p => `${sign (fst (p))} ${snd (p)}`)
+    )
 
   const mcombat_technique = bind (combatTechniqueId) (lookupF (combatTechniques))
 
