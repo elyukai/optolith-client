@@ -5,7 +5,7 @@ import { over, set } from "../../Data/Lens"
 import { append, consF, elem, filter, flength, foldr, isList, List, ListI, map } from "../../Data/List"
 import { bind, ensure, fromMaybe, isJust, isNothing, Just, listToMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe"
 import { add, gt, max, min } from "../../Data/Num"
-import { alter, foldrWithKey, insertF, keys, lookup, member, OrderedMap } from "../../Data/OrderedMap"
+import { alter, foldrWithKey, insertF, keys, lookup, lookupF, member, OrderedMap } from "../../Data/OrderedMap"
 import { insert, OrderedSet, sdelete, toList, union } from "../../Data/OrderedSet"
 import { fromDefault, makeLenses, Record } from "../../Data/Record"
 import { SetSelectionsAction } from "../Actions/ProfessionActions"
@@ -31,9 +31,10 @@ import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
 import { Race } from "../Models/Wiki/Race"
 import { Skill } from "../Models/Wiki/Skill"
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { Spell } from "../Models/Wiki/Spell"
 import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill"
 import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
-import { Activatable, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers"
+import { Activatable, AllRequirements, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers"
 import { getCombinedPrerequisites } from "../Utilities/Activatable/activatableActivationUtils"
 import { addOtherSpecialAbilityDependenciesOnRCPApplication } from "../Utilities/Activatable/SpecialAbilityUtils"
 import { composeL } from "../Utilities/compose"
@@ -70,7 +71,7 @@ const ConcatenatedModifications =
 
 const CMA = ConcatenatedModifications.A
 const CML = makeLenses (ConcatenatedModifications)
-const WA = StaticData.A
+const SDA = StaticData.A
 const HA = HeroModel.A
 const HL = HeroModelL
 const ELA = ExperienceLevel.A
@@ -83,6 +84,7 @@ const PRIA = ProfessionRequireIncreasable.A
 const PSA = ProfessionSelections.A
 const ISA = IncreaseSkill.A
 const SA = Skill.A
+const SpA = Spell.A
 const ADA = ActivatableDependent.A
 const SDL = SkillDependentL
 const CTSA = CombatTechniquesSelection.A
@@ -409,7 +411,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
          (flip (foldrWithKey ((id: string) => (value: number) =>
                                maybe (ident as ident<OrderedMap<string, number>>)
                                      ((r: Record<Skill>) => addToSRs (value / SA.ic (r)) (id))
-                                     (lookup (id) (WA.skills (P.wiki)))))
+                                     (lookup (id) (SDA.skills (P.wiki)))))
                              (P.skills)),
 
     // - Tradition (Guild Mage) unfamiliar spell
@@ -454,11 +456,21 @@ const applyModifications =
       // - Skill activations
       join (pipe (
         CMA.skillActivateList,
-        flip (OrderedSet.foldr (updateEntryDef (pipe (
-                                                       ensure (ActivatableSkillDependent.is),
-                                                       fmap (set (ActivatableSkillDependentL.active)
-                                                                 (true))
-                                                     )))),
+        flip (OrderedSet.foldr (skill_id => pipe (
+                                 updateEntryDef (pipe (
+                                                  ensure (ActivatableSkillDependent.is),
+                                                  fmap (set (ActivatableSkillDependentL.active)
+                                                            (true))
+                                                ))
+                                                (skill_id),
+                                 addDependencies (skill_id)
+                                                 (pipe_ (
+                                                   skill_id,
+                                                   lookupF (SDA.spells (action.payload.wiki)),
+                                                   maybe (List<AllRequirements> ())
+                                                         (SpA.prerequisites)
+                                                 ))
+                               ))),
         over (CML.hero)
       )),
 
@@ -635,7 +647,7 @@ const applyModifications =
                                (pipe (min, over (SDL.value), OrderedMap.map))
                                (pipe_ (
                                  action .payload .wiki,
-                                 WA.experienceLevels,
+                                 SDA.experienceLevels,
                                  lookup (HA.experienceLevel (CMA.hero (acc))),
                                  fmap (ELA.maxCombatTechniqueRating)
                                )))),
