@@ -22,7 +22,6 @@ import { Culture } from "../Models/Wiki/Culture"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
 import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement"
-import { RequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement"
 import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/ProfessionRequireIncreasable"
 import { Profession } from "../Models/Wiki/Profession"
 import { CombatTechniquesSelection, CombatTechniquesSelectionL } from "../Models/Wiki/professionSelections/CombatTechniquesSelection"
@@ -486,13 +485,20 @@ const areProfessionOrVariantPrerequisitesValid =
     return isProfessionValid
       && thrush (prerequisites)
                 (all (d => {
-                  if (RequireIncreasable.is (d)) {
-                    const category = getCategoryById (PRIA.id (d))
+                  if (ProfessionRequireIncreasable.is (d)) {
+                    return pipe_ (
+                      getCategoryById (PRIA.id (d)),
+                      maybe (true)
+                            (category => {
+                              switch (category) {
+                                case Category.ATTRIBUTES:
+                                  return PRIA.value (d) <= ELA.maxAttributeValue (start_el)
 
-                    const isAttribute = Maybe.elemF (category) (Category.ATTRIBUTES)
-                    const isGreaterThanMax = PRIA.value (d) > ELA.maxAttributeValue (start_el)
-
-                    return isAttribute && isGreaterThanMax
+                                default:
+                                  return true
+                              }
+                            })
+                    )
                   }
 
                   return true
