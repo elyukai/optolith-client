@@ -1,5 +1,4 @@
 import { lookupF, OrderedMap } from "../../Data/OrderedMap"
-import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
 import { Record } from "../../Data/Record"
 import { pipe, pipe_ } from "./pipe"
@@ -7,14 +6,14 @@ import { isJust, isNothing, mapMaybe, maybe, Maybe, fromMaybe } from "../../Data
 import { fmap } from "../../Data/Functor"
 import { getAE, getDO, getINI, getKP, getLP, getMOV, getSPI, getTOU } from "../Selectors/derivedCharacteristicsSelectors"
 import { AppStateRecord } from "../Models/AppState"
-import { getActiveForEditView, getActiveForView, getFatePointsModifier } from "../Selectors/activatableSelectors"
+import { getActiveForEditView, getFatePointsModifier } from "../Selectors/activatableSelectors"
 import { getArmors, getArmorZones, getFullItem, getMeleeWeapons, getRangedWeapons } from "../Selectors/equipmentSelectors"
 import { MeleeWeapon } from "../Models/View/MeleeWeapon"
-import { List, sdelete } from "../../Data/List"
+import { List } from "../../Data/List"
 import { RangedWeapon } from "../Models/View/RangedWeapon"
 import { getAllCombatTechniques } from "../Selectors/combatTechniquesSelectors"
 import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
-import { getWiki, getWikiAdvantages, getWikiDisadvantages, getWikiItemTemplates } from "../Selectors/stateSelectors"
+import { getWiki, getWikiItemTemplates } from "../Selectors/stateSelectors"
 import { Item } from "../Models/Hero/Item"
 import { Advantage } from "../Models/Wiki/Advantage"
 import { Disadvantage } from "../Models/Wiki/Disadvantage"
@@ -43,14 +42,14 @@ import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
 import { ActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
 import { StaticData } from "../Models/Wiki/WikiModel"
 import { writeFile } from "../../System/IO"
-import { traceId, traceShowId } from "../../Debug/Trace"
-import { getName } from "./Activatable/activatableNameUtils"
-import { getAllActiveByCategory } from "./Activatable/activatableActiveUtils"
 import { Category } from "../Constants/Categories"
 import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveActivatable"
-import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids.gen"
+import { CombatTechniqueId } from "../Constants/Ids.gen"
 import { getAttributesForView } from "../Selectors/attributeSelectors"
 import { AttributeWithRequirements } from "../Models/View/AttributeWithRequirements"
+import { readFileSync } from "fs-extra"
+import { Aspect, Property } from "../Constants/Groups"
+import { current_version } from "../Selectors/envSelectors"
 
 type MapToolsEntry = {
   key: string
@@ -75,6 +74,7 @@ type GroupedMaptoolsSkill = MapToolsSkill & {
 
 // Die folgeden beiden Typen können erweitert werden um z.B. AsP-Kosten oder Traditionen festzuhalten
 type MapToolsSpell = GroupedMaptoolsSkill & {
+  property: string
 }
 
 type MapToolsChant = GroupedMaptoolsSkill & {
@@ -102,7 +102,7 @@ function entry (mtentry: MapToolsEntry): string {
   + "</entry>"
 }
 
-function getStaticDataXML (hero: HeroModelRecord): string {
+function getStaticDataXML (hero: HeroModelRecord, portraitID: string): string {
   return "<id>"
   + "<baGUID>eIj9Afv6STWmcKmhxyfaJQ==</baGUID>"
   + "</id>"
@@ -114,7 +114,7 @@ function getStaticDataXML (hero: HeroModelRecord): string {
   + "<entry>"
   + "<null/>"
   + "<net.rptools.lib.MD5Key>"
-  + "<id>f427aa49b28500217ac46ba37c2998a4</id>"
+  + `<id>${portraitID}</id>`
   + "</net.rptools.lib.MD5Key>"
   + "</entry>"
   + "</imageAssetMap>"
@@ -156,6 +156,12 @@ function getStaticDataXML (hero: HeroModelRecord): string {
   + "</terrainModifiersIgnored>"
   + "<isFlippedX>false</isFlippedX>"
   + "<isFlippedY>false</isFlippedY>"
+  + "<charsheetImage>"
+  + `<id>${portraitID}</id>`
+  + "</charsheetImage>"
+  + "<portraitImage>"
+  + `<id>${portraitID}</id>`
+  + "</portraitImage>"
   + "<hasSight>false</hasSight>"
   + "<state/>"
 }
@@ -224,7 +230,7 @@ function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string
   }
 
   // TODO: Hier die aktuelle Optolith-Version mit exportieren
-  xml += entry ({ key: "Exporter", value: "" })
+  xml += entry ({ key: "Exporter", value: current_version })
 
   return xml
 }
@@ -247,7 +253,6 @@ function skillGroupNameForMapTool (group: Record<SkillGroup>): string {
 }
 
 function attrFromString (attr: string): MapToolsAttribute {
-
   switch (attr.split ("_")[1]) {
     case "1": return MapToolsAttribute.MU
     case "2": return MapToolsAttribute.KL
@@ -280,6 +285,24 @@ function buildSkill (skillFromWiki: Record<Skill>):
   })
 }
 
+function propertyForMapTool (property: Property): string {
+  switch (property) {
+    case Property.AntiMagic: return "Antimagie"
+    case Property.Clairvoyance: return "Hellsicht"
+    case Property.Demonic: return "Dämonisch"
+    case Property.Elemental: return "Elementar"
+    case Property.Healing: return "Heilung"
+    case Property.Illusion: return "Illusion"
+    case Property.Influence: return "Einfluss"
+    case Property.Objekt: return "Objekt"
+    case Property.Spheres: return "Sphären"
+    case Property.Telekinesis: return "Telekinese"
+    case Property.Temporal: return "Temporal"
+    case Property.Transformation: return "Verwandlung"
+    default: return ""
+  }
+}
+
 function buildSpell (spellFromWiki: Record<Spell>):
 (spellFromHero: Record<ActivatableSkillDependent>) => MapToolsSpell {
   return spellFromHero => ({
@@ -289,6 +312,7 @@ function buildSpell (spellFromWiki: Record<Spell>):
     attr2: attrFromMaybeString (List.subscript (Spell.A.check (spellFromWiki)) (1)),
     attr3: attrFromMaybeString (List.subscript (Spell.A.check (spellFromWiki)) (2)),
     gr: Spell.A.gr (spellFromWiki),
+    property: pipe_ (spellFromWiki, Spell.A.property, propertyForMapTool),
   })
 }
 
@@ -361,14 +385,15 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
   const spells = allSpells.values [0]
   const rituals = allSpells.values [1]
 
-  const entrySpell = (key: string, spells: List<MapToolsSkill>) => entry ({
+  const entrySpell = (key: string, spells: List<MapToolsSpell>) => entry ({
     key,
     value: `[${pipe_ (spells,
-    fmap ((spell: MapToolsSkill) =>
+    fmap ((spell: MapToolsSpell) =>
       `{"Talent":"${spell.name}","Talentwert":${spell.value},"Probe":{`
       + `"Eigenschaft1":"${spell.attr1}",`
       + `"Eigenschaft2":"${spell.attr2}",`
-      + `"Eigenschaft3":"${spell.attr3}"}}`),
+      + `"Eigenschaft3":"${spell.attr3}"},`
+      + `"Merkmal": "${spell.property}"}`),
     List.intercalate (","))}]`,
   })
 
@@ -819,10 +844,10 @@ function getBelongingsXML (hero: HeroModelRecord, state: AppStateRecord): string
   return xml
 }
 
-export function getContentXML (hero: HeroModelRecord, state: AppStateRecord): string {
+export function getContentXML (hero: HeroModelRecord, state: AppStateRecord, portraitID: string): string {
   const contentXml = `${"<?xml version=\"1.0\"?>"
   + "<net.rptools.maptool.model.Token>"}${
-   getStaticDataXML (hero)
+   getStaticDataXML (hero, portraitID)
    }<propertyMapCI><store>${
    getAttributesXML (hero, state)
    }${getTalentsXML (hero, state)
@@ -833,26 +858,57 @@ export function getContentXML (hero: HeroModelRecord, state: AppStateRecord): st
    }</store></propertyMapCI>`
   + `</net.rptools.maptool.model.Token>`
 
-  traceId (contentXml)
-
   return contentXml
+}
+
+function getAssetXML (id: string, extension: string): string {
+  const assetXml = "<net.rptools.maptool.model.Asset>"
+  + "<id>"
+  + `<id>${id}</id>`
+  + "</id>"
+  + "<name>Image</name>"
+  + `<extension>${extension}</extension>`
+  + "<type>image</type>"
+  + "<image/>"
+  + "</net.rptools.maptool.model.Asset>"
+
+  return assetXml
 }
 
 function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer {
   const AdmZip = require ("adm-zip")
   const zip = new AdmZip ()
-  zip.addFile ("content.xml", Buffer.from (getContentXML (hero, state)), "Content of the hero")
+  const crypto = require ("crypto")
+  const portraitID = crypto.createHash ("md5")
+    .update (Math.random ().toString ())
+    .digest ("hex")
+  zip.addFile ("content.xml",
+    Buffer.from (getContentXML (hero, state, portraitID)),
+    "Content of the hero")
   zip.addFile ("properties.xml", Buffer.from (getPropertiesXML ()), "Properties")
 
-  // TODO: Charakterbild noch exportieren und in die Zip-Datei packen
-  // passend wäre es wenn wir das komplette Bild als Portrait und Handout setzen
-  // als Token wäre ein kleines runden Thumbnail passend, so wie es in der Heldenliste angezeigt wird
+  if (isJust (hero.values.avatar)) {
+    const avatar = hero.values.avatar.value
+    let binaryAvatar: Buffer = Buffer.from ("")
+    let type = ""
+    const binaryPrefix = "data:image/"
+    if (avatar.startsWith (binaryPrefix)) {
+      const arr1 = avatar.split (",")
+      const prefix = arr1[0]
+      const arr2 = prefix.split ("/")
+      const arr3 = arr2[1].split (";")
+      type = arr3[0]
+      binaryAvatar = Buffer.from (arr1[1], "base64")
+    }
+    else {
+      binaryAvatar = readFileSync (avatar)
+      type = avatar.split (".")[1]
+    }
 
-  /* if (isJust (hero.values.avatar)) {
-    const binaryAvatar = atob (hero.values.avatar.value)
     zip.addFile ("assets/", Buffer.from (""))
-    zip.addFile ("assets/thumbkeyhashthing", Buffer.from (binaryAvatar))
-  } */
+    zip.addFile (`assets/${portraitID}`, getAssetXML (portraitID, type))
+    zip.addFile (`assets/${portraitID}.${type}`, binaryAvatar)
+  }
 
   return zip.toBuffer ()
 }
