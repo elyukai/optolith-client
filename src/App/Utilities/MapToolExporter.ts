@@ -48,8 +48,9 @@ import { CombatTechniqueId } from "../Constants/Ids.gen"
 import { getAttributesForView } from "../Selectors/attributeSelectors"
 import { AttributeWithRequirements } from "../Models/View/AttributeWithRequirements"
 import { readFileSync } from "fs-extra"
-import { Aspect, Property } from "../Constants/Groups"
+import { Property } from "../Constants/Groups"
 import { current_version } from "../Selectors/envSelectors"
+import { getBlessedTradition } from "./Activatable/traditionUtils"
 
 type MapToolsEntry = {
   key: string
@@ -229,7 +230,6 @@ function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string
     }
   }
 
-  // TODO: Hier die aktuelle Optolith-Version mit exportieren
   xml += entry ({ key: "Exporter", value: current_version })
 
   return xml
@@ -302,6 +302,53 @@ function propertyForMapTool (property: Property): string {
     default: return ""
   }
 }
+
+/*
+function aspectForMapTool (aspect: Aspect): string {
+  switch (aspect) {
+    case Aspect.Agriculture: return "Landwirtschaft"
+    case Aspect.AntiMagic: return "Antimagie"
+    case Aspect.Begierde: return "Begierde"
+    case Aspect.Bildung: return "Bildung"
+    case Aspect.Commerce: return "Handel"
+    case Aspect.Death: return "Tod"
+    case Aspect.Dream: return "Traum"
+    case Aspect.Ekstase: return "Ekstase"
+    case Aspect.Erkenntnis: return "Erkenntnis"
+    case Aspect.Feuer: return "Feuer"
+    case Aspect.Freiheit: return "Freiheit"
+    case Aspect.Freundschaft: return "Freundschaft"
+    case Aspect.General: return "Allgemein"
+    case Aspect.GuterKampf: return "Guter Kampf"
+    case Aspect.GutesGold: return "Gutes Gold"
+    case Aspect.Handwerk: return "Handwerk"
+    case Aspect.Harmonie: return "Harmonie"
+    case Aspect.Healing: return "Heilung"
+    case Aspect.Heim: return "Heim"
+    case Aspect.Hilfsbereitschaft: return "Hilfsbereitschaft"
+    case Aspect.Jagd: return "Jagd"
+    case Aspect.Kaelte: return "Kälte"
+    case Aspect.Knowledge: return "Wissen"
+    case Aspect.Kraft: return "Kraft"
+    case Aspect.Magic: return "Magie"
+    case Aspect.Natur: return "Natur"
+    case Aspect.Order: return "Ordnung"
+    case Aspect.Rausch: return "Rausch"
+    case Aspect.Reise: return "Reise"
+    case Aspect.ReissenderStrudel: return "Reißender Strudel"
+    case Aspect.Schicksal: return "Schicksal"
+    case Aspect.Shadow: return "Schatten"
+    case Aspect.Shield: return "Schild"
+    case Aspect.Storm: return "Sturm"
+    case Aspect.Tapferkeit: return "Tapferkeit"
+    case Aspect.UnendlicheTiefe: return "Unendliche Tiefe"
+    case Aspect.Wandel: return "Wandel"
+    case Aspect.Wind: return "Wind"
+    case Aspect.Wogen: return "Wogen"
+    default: return ""
+  }
+}
+*/
 
 function buildSpell (spellFromWiki: Record<Spell>):
 (spellFromHero: Record<ActivatableSkillDependent>) => MapToolsSpell {
@@ -400,25 +447,30 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
   xml += entrySpell ("Zauber", spells)
   xml += entrySpell ("Rituale", rituals)
 
-  const allChants =
-    pipe_ (
-      hero,
-      HeroModel.A.liturgicalChants,
-      OrderedMap.elems,
-      Maybe.mapMaybe ((heroChant: Record<ActivatableSkillDependent>) => pipe_ (
-        heroChant,
-        ActivatableSkillDependent.A.id,
-        OrderedMap.lookupF (StaticData.A.liturgicalChants (state.values.wiki)),
-        fmap ((staticChant: Record<LiturgicalChant>) => buildChant (staticChant) (heroChant))
-      )),
-      List.partition (chant => chant.gr === 1)
-    )
+  const blessedTradition = getBlessedTradition (HeroModel.A.specialAbilities (hero))
+  if (isJust (blessedTradition)) {
 
-  const chants = allChants.values [0]
-  const ceremonies = allChants.values [1]
+    const allChants =
+      pipe_ (
+        hero,
+        HeroModel.A.liturgicalChants,
+        OrderedMap.elems,
+        Maybe.mapMaybe ((heroChant: Record<ActivatableSkillDependent>) => pipe_ (
+          heroChant,
+          ActivatableSkillDependent.A.id,
+          OrderedMap.lookupF (StaticData.A.liturgicalChants (state.values.wiki)),
+          fmap ((staticChant: Record<LiturgicalChant>) => buildChant (staticChant) (heroChant))
+        )),
+        List.partition (chant => chant.gr === 1)
+      )
 
-  xml += entrySpell ("Liturgien", chants)
-  xml += entrySpell ("Zeremonien", ceremonies)
+    const chants = allChants.values [0]
+    const ceremonies = allChants.values [1]
+
+    xml += entrySpell ("Liturgien", chants)
+    xml += entrySpell ("Zeremonien", ceremonies)
+
+  }
 
   return xml
 }
@@ -515,8 +567,6 @@ function specialAbilityGroupForMapTool (group: Maybe<Record<NumIdName>>): string
   }
 }
 
-// TODO: Hier will ich die Sprachen und Schriften Extra haben
-// soll heißen dass die NICHT unter AllgemeineSFs stehen sollen sondern als 2 separate Listen
 function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): string {
   const ungrouped: List<MapToolsEntry> = pipe_ (
     getActiveForEditView (Category.SPECIAL_ABILITIES) (state, { hero }),
@@ -844,7 +894,8 @@ function getBelongingsXML (hero: HeroModelRecord, state: AppStateRecord): string
   return xml
 }
 
-export function getContentXML (hero: HeroModelRecord, state: AppStateRecord, portraitID: string): string {
+export function getContentXML (hero: HeroModelRecord, state: AppStateRecord, portraitID: string):
+string {
   const contentXml = `${"<?xml version=\"1.0\"?>"
   + "<net.rptools.maptool.model.Token>"}${
    getStaticDataXML (hero, portraitID)
