@@ -87,7 +87,7 @@ type MapToolsSkillGroup = {
 }
 
 export function getPropertiesXML (): string {
-  return "<?xml version=\"1.0\"?><map><entry><string>version</string><string>1.7.0</string></entry>"
+  return "<?xml version=\"1.0\"?><map><entry><string>version</string><string>1.8.5</string></entry>"
   + "<entry><string>herolab</string><boolean>false</boolean></entry></map>"
 }
 
@@ -97,21 +97,14 @@ function entry (mtentry: MapToolsEntry): string {
   + "<net.rptools.CaseInsensitiveHashMap_-KeyValue>"
   + `<key>${mtentry.key}</key>`
   // Das Talent Bekehren & Überzeugen enthält ein Sonderzeichen. Die Inventar-Strings müssen wir auch aufbereiten da sonst kein valides XML entsteht
-  + `<value class="string">${mtentry.value.replaceAll (" & ", " &amp; ").replaceAll ("<br>", "<br/>")}</value>`
+  + `<value class="string">${mtentry.value.replace (/ & /gu, " &amp; ").replace (/<br>/gu, "<br/>")}</value>`
   + "<outer-class reference=\"../../../..\"/>"
   + "</net.rptools.CaseInsensitiveHashMap_-KeyValue>"
   + "</entry>"
 }
 
 function getStaticDataXML (hero: HeroModelRecord, portraitID: string): string {
-  return "<id>"
-  + "<baGUID>eIj9Afv6STWmcKmhxyfaJQ==</baGUID>"
-  + "</id>"
-  + "<beingImpersonated>false</beingImpersonated>"
-  + "<exposedAreaGUID>"
-  + "<baGUID>CgAADK1LundsAAAAAgAADA==</baGUID>"
-  + "</exposedAreaGUID>"
-  + "<imageAssetMap>"
+  return "<imageAssetMap>"
   + "<entry>"
   + "<null/>"
   + "<net.rptools.lib.MD5Key>"
@@ -119,52 +112,44 @@ function getStaticDataXML (hero: HeroModelRecord, portraitID: string): string {
   + "</net.rptools.lib.MD5Key>"
   + "</entry>"
   + "</imageAssetMap>"
-  + "<anchorX>0</anchorX>"
-  + "<anchorY>0</anchorY>"
-  + "<sizeScale>1.0</sizeScale>"
-  + "<snapToScale>true</snapToScale>"
-  + "<width>50</width>"
-  + "<height>50</height>"
-  + "<isoWidth>50</isoWidth>"
-  + "<isoHeight>50</isoHeight>"
-  + "<scaleX>1.0</scaleX>"
-  + "<scaleY>1.0</scaleY>"
-  + "<sizeMap>"
-  + "<entry>"
-  + "<java-class>net.rptools.maptool.model.SquareGrid</java-class>"
-  + "<net.rptools.maptool.model.GUID>"
-  + "<baGUID>CgAADK1LundsAAAAAgAADA==</baGUID>"
-  + "</net.rptools.maptool.model.GUID>"
-  + "</entry>"
-  + "</sizeMap>"
-  + "<snapToGrid>false</snapToGrid>"
-  + "<isVisible>true</isVisible>"
-  + "<visibleOnlyToOwner>false</visibleOnlyToOwner>"
-  + "<vblColorSensitivity>0</vblColorSensitivity>"
-  + "<alwaysVisibleTolerance>0</alwaysVisibleTolerance>"
-  + "<isAlwaysVisible>false</isAlwaysVisible>"
+  + `<anchorX>0</anchorX>`
+  + `<anchorY>0</anchorY>`
+  + `<sizeScale>1.0</sizeScale>`
+  + `<snapToScale>true</snapToScale>`
+  + `<width>50</width>`
+  + `<height>50</height>`
+  + `<isoWidth>50</isoWidth>`
+  + `<isoHeight>50</isoHeight>`
+  + `<scaleX>1.0</scaleX>`
+  + `<scaleY>1.0</scaleY>`
+  + `<snapToGrid>false</snapToGrid>`
+  + `<isVisible>true</isVisible>`
+  + `<visibleOnlyToOwner>false</visibleOnlyToOwner>`
+  + `<vblColorSensitivity>0</vblColorSensitivity>`
+  + `<alwaysVisibleTolerance>0</alwaysVisibleTolerance>`
+  + `<isAlwaysVisible>false</isAlwaysVisible>`
   + `<name>${hero.values.name}</name>`
-  + "<ownerType>0</ownerType>"
-  + "<tokenShape>CIRCLE</tokenShape>"
-  + "<tokenType>PC</tokenType>"
-  + "<layer>TOKEN</layer>"
-  + "<propertyType>Basic</propertyType>"
-  + "<tokenOpacity>1.0</tokenOpacity>"
-  + "<terrainModifier>0.0</terrainModifier>"
-  + "<terrainModifiersIgnored>"
-  + "<net.rptools.maptool.model.Token_-TerrainModifierOperation>NONE"
-  + "</net.rptools.maptool.model.Token_-TerrainModifierOperation>"
-  + "</terrainModifiersIgnored>"
-  + "<isFlippedX>false</isFlippedX>"
-  + "<isFlippedY>false</isFlippedY>"
-  + "<charsheetImage>"
+  + `<ownerType>0</ownerType>`
+  + `<tokenShape>CIRCLE</tokenShape>`
+  + `<tokenType>PC</tokenType>`
+  + `<layer>TOKEN</layer>`
+  + `<propertyType>Basic</propertyType>`
+  + `<tokenOpacity>1.0</tokenOpacity>`
+  + `<terrainModifier>0.0</terrainModifier>`
+  + `<terrainModifiersIgnored>`
+  + `<net.rptools.maptool.model.Token_-TerrainModifierOperation>NONE`
+  + `</net.rptools.maptool.model.Token_-TerrainModifierOperation>`
+  + `</terrainModifiersIgnored>`
+  + `<isFlippedX>false</isFlippedX>`
+  + `<isFlippedY>false</isFlippedY>`
+  + `<charsheetImage>`
   + `<id>${portraitID}</id>`
-  + "</charsheetImage>"
-  + "<portraitImage>"
+  + `</charsheetImage>`
+  + `<portraitImage>`
   + `<id>${portraitID}</id>`
-  + "</portraitImage>"
-  + "<hasSight>false</hasSight>"
-  + "<state/>"
+  + `</portraitImage>`
+  + `<hasSight>false</hasSight>`
+  + `<state/>`
 }
 
 function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string {
@@ -449,7 +434,6 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
 
   const blessedTradition = getBlessedTradition (HeroModel.A.specialAbilities (hero))
   if (isJust (blessedTradition)) {
-
     const allChants =
       pipe_ (
         hero,
@@ -469,7 +453,6 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
 
     xml += entrySpell ("Liturgien", chants)
     xml += entrySpell ("Zeremonien", ceremonies)
-
   }
 
   return xml
@@ -929,19 +912,11 @@ function getAssetXML (id: string, extension: string): string {
 function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer {
   const AdmZip = require ("adm-zip")
   const zip = new AdmZip ()
-  const crypto = require ("crypto")
-  const portraitID = crypto.createHash ("md5")
-    .update (Math.random ().toString ())
-    .digest ("hex")
-  zip.addFile ("content.xml",
-    Buffer.from (getContentXML (hero, state, portraitID)),
-    "Content of the hero")
-  zip.addFile ("properties.xml", Buffer.from (getPropertiesXML ()), "Properties")
+  let binaryAvatar: Buffer = Buffer.from ("")
+  let type = ""
 
   if (isJust (hero.values.avatar)) {
     const avatar = hero.values.avatar.value
-    let binaryAvatar: Buffer = Buffer.from ("")
-    let type = ""
     const binaryPrefix = "data:image/"
     if (avatar.startsWith (binaryPrefix)) {
       const arr1 = avatar.split (",")
@@ -955,11 +930,25 @@ function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer {
       binaryAvatar = readFileSync (avatar)
       type = avatar.split (".")[1]
     }
-
-    zip.addFile ("assets/", Buffer.from (""))
-    zip.addFile (`assets/${portraitID}`, getAssetXML (portraitID, type))
-    zip.addFile (`assets/${portraitID}.${type}`, binaryAvatar)
   }
+  else {
+    binaryAvatar = readFileSync ("app/images/default-token.png")
+    type = "png"
+  }
+
+  const crypto = require ("crypto")
+  const portraitID = crypto.createHash ("md5")
+    .update (binaryAvatar)
+    .digest ("hex")
+
+  zip.addFile ("assets/", Buffer.from (""))
+  zip.addFile (`assets/${portraitID}`, getAssetXML (portraitID, type))
+  zip.addFile (`assets/${portraitID}.${type}`, binaryAvatar)
+
+  zip.addFile ("content.xml",
+    Buffer.from (getContentXML (hero, state, portraitID)),
+    "Content of the hero")
+  zip.addFile ("properties.xml", Buffer.from (getPropertiesXML ()), "Properties")
 
   return zip.toBuffer ()
 }
