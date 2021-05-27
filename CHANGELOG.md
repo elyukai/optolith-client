@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0-alpha.1](https://github.com/elyukai/optolith-client/compare/v1.4.3-alpha.1...v1.5.0-alpha.1) (2021-05-27)
+
+
+### Bug Fixes
+
+* 2H and i weapon settings missing on character sheet ([3f9fae3](https://github.com/elyukai/optolith-client/commit/3f9fae30a2291b8e53486a74dae8cc1533741b94)), closes [#797](https://github.com/elyukai/optolith-client/issues/797)
+* brawling weapons have no parry on character sheet ([a02700e](https://github.com/elyukai/optolith-client/commit/a02700eeccbd95a75f778d4d9e78ad7a2447dad8)), closes [#1229](https://github.com/elyukai/optolith-client/issues/1229)
+* cannot remove dependent entry with multiple activations ([092343f](https://github.com/elyukai/optolith-client/commit/092343f45da566a45b13b275899a458fed720a76)), closes [#1097](https://github.com/elyukai/optolith-client/issues/1097)
+* enhancements on transferred unfamiliar spells as dependency ([28f260a](https://github.com/elyukai/optolith-client/commit/28f260a2c4a96adb0d36585a478676f95c304414)), closes [#827](https://github.com/elyukai/optolith-client/issues/827)
+* equipment info crash ([ae2fbad](https://github.com/elyukai/optolith-client/commit/ae2fbad1c738354dd468c1b36b06eda729a879e5))
+* filter professions with CTs higher than EL allows ([c8094f5](https://github.com/elyukai/optolith-client/commit/c8094f5ef15f62f69088386b9fc6c64f7d8bfd02)), closes [#1244](https://github.com/elyukai/optolith-client/issues/1244)
+* include latest database changes ([ccd7dec](https://github.com/elyukai/optolith-client/commit/ccd7decc8314ca476b6a15932ed9b3fb1c22a1f7))
+* ini/mov modifiers on armor are handled as penalties ([eb5a068](https://github.com/elyukai/optolith-client/commit/eb5a06884db1894e1a9f2b4b040b114cb4dc85cb)), closes [#1091](https://github.com/elyukai/optolith-client/issues/1091)
+* language specializations always cost 1 AP and are multi-buyable ([0a59d9e](https://github.com/elyukai/optolith-client/commit/0a59d9e5e571e87525b18d0b25035e73f7cd87bf)), closes [#1082](https://github.com/elyukai/optolith-client/issues/1082)
+* large spell selection and restrictions for Animists ([2ad037e](https://github.com/elyukai/optolith-client/commit/2ad037ecbc2727f360161d6500f2aeaef3c4a67c)), closes [#803](https://github.com/elyukai/optolith-client/issues/803)
+* patch security vulnerabilities ([723e910](https://github.com/elyukai/optolith-client/commit/723e9106ebb178db6a7cccec2a022b3edaed5b98))
+* portraits with transparency have black background ([cc5ecd6](https://github.com/elyukai/optolith-client/commit/cc5ecd6f098ae6c080eeb3b306887727a99c1220)), closes [#800](https://github.com/elyukai/optolith-client/issues/800)
+* previous database fixes ([397abe2](https://github.com/elyukai/optolith-client/commit/397abe2b4a69582dc49422add1700807272c32d6)), closes [#792](https://github.com/elyukai/optolith-client/issues/792) [#824](https://github.com/elyukai/optolith-client/issues/824) [#832](https://github.com/elyukai/optolith-client/issues/832) [#850](https://github.com/elyukai/optolith-client/issues/850) [#851](https://github.com/elyukai/optolith-client/issues/851) [#1139](https://github.com/elyukai/optolith-client/issues/1139) [#1224](https://github.com/elyukai/optolith-client/issues/1224)
+* primary attribute dropdown does not handle data correctly ([6c63ab1](https://github.com/elyukai/optolith-client/commit/6c63ab1b5051882ace71f15740c3a69fff4a267f)), closes [#798](https://github.com/elyukai/optolith-client/issues/798)
+* profession with due to EL impossible attribute values can be selected ([fdde329](https://github.com/elyukai/optolith-client/commit/fdde329de591319df3f6da11404dd7523d800c3e)), closes [#1109](https://github.com/elyukai/optolith-client/issues/1109)
+* spellworks from professions do not register dependencies ([c1b2e26](https://github.com/elyukai/optolith-client/commit/c1b2e267cb3f02d2d18812415c39c58739ad99ec)), closes [#1240](https://github.com/elyukai/optolith-client/issues/1240)
+* typo in effect of Bliksemblind spell (Dutch) ([c58279c](https://github.com/elyukai/optolith-client/commit/c58279cc95aba5506824510d83aa6ffbc410107a)), closes [#805](https://github.com/elyukai/optolith-client/issues/805)
+* weight of Elves is not generated correctly ([3b05e69](https://github.com/elyukai/optolith-client/commit/3b05e69e27f7faa1634b50eb134000fe1a2c3a21)), closes [#813](https://github.com/elyukai/optolith-client/issues/813)
+
 ## [1.4.3-alpha.1](https://github.com/elyukai/optolith-client/compare/v1.4.3-alpha.0...v1.4.3-alpha.1) (2020-11-13)
 
 ### Bug Fixes
