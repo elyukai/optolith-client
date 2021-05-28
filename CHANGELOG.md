@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0-alpha.2](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.1...v1.5.0-alpha.2) (2021-05-28)
+
+
+### Bug Fixes
+
+* "Gaze into the Essence" spell is misspelled as "Gase into the Essence" ([42891f0](https://github.com/elyukai/optolith-client/commit/42891f070c35b74c49bb2c9e16152789cc8cc7df)), closes [#1180](https://github.com/elyukai/optolith-client/issues/1180)
+* "Physiostabilis" name typo ([e40f995](https://github.com/elyukai/optolith-client/commit/e40f995e341dc7fbcb1d9688c4b82a9187c180de)), closes [#1234](https://github.com/elyukai/optolith-client/issues/1234)
+* "Tradition (Druid)" has invalid prerequisite in data ([f8114c2](https://github.com/elyukai/optolith-client/commit/f8114c2f4318967631b71ea3614bf647e7826fa2)), closes [#1237](https://github.com/elyukai/optolith-client/issues/1237)
+* hook dagger is not marked as a parrying weapon ([ed74170](https://github.com/elyukai/optolith-client/commit/ed74170865b2caad8008a345db5c1705e0376bc5)), closes [#1232](https://github.com/elyukai/optolith-client/issues/1232)
+* multiple database fixes ([16bd668](https://github.com/elyukai/optolith-client/commit/16bd668313826ab8df0eeaeb5259a2f30304c134)), closes [#854](https://github.com/elyukai/optolith-client/issues/854) [#855](https://github.com/elyukai/optolith-client/issues/855) [#1136](https://github.com/elyukai/optolith-client/issues/1136) [#1213](https://github.com/elyukai/optolith-client/issues/1213) [#1236](https://github.com/elyukai/optolith-client/issues/1236) [#1242](https://github.com/elyukai/optolith-client/issues/1242)
+* special ability Deadly Thrust has SA Crossblock's rules text ([ec9bd71](https://github.com/elyukai/optolith-client/commit/ec9bd71e101abcaf61e84e3da340890e161896ea)), closes [#841](https://github.com/elyukai/optolith-client/issues/841)
+* weapon advantage of Kriegsbogen has wrong DP bonus ([8297455](https://github.com/elyukai/optolith-client/commit/8297455ddbd360035428a4ed244a684e6f1c7e7a)), closes [#1074](https://github.com/elyukai/optolith-client/issues/1074)
+* wrong English names for spell enhancements of Heptagramma ([a5df7c8](https://github.com/elyukai/optolith-client/commit/a5df7c863cded391609950fa5b8bf8474ffe2dfd)), closes [#848](https://github.com/elyukai/optolith-client/issues/848)
+* wrong negative prerequisite for Aspect Knowledge entry ([21146eb](https://github.com/elyukai/optolith-client/commit/21146eb2abdb16ff84f58d0223810603125ff63a)), closes [#1243](https://github.com/elyukai/optolith-client/issues/1243)
+
 ## [1.5.0-alpha.1](https://github.com/elyukai/optolith-client/compare/v1.4.3-alpha.1...v1.5.0-alpha.1) (2021-05-27)
 
 
