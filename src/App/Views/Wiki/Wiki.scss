@@ -1,9 +1,16 @@
 #wiki {
 	aside {
-		width: 400px;
+		flex-basis: 40em;
+    flex-grow: 10;
+    width: unset;
 	}
 
-	.page > .main-content > .scroll .scroll-inner {
+  .main-content {
+    flex-grow: 1;
+    flex-basis: 30em;
+  }
+
+	.main-content > .scroll .scroll-inner {
 		padding: 24px 16px 16px 0;
 	}
 
