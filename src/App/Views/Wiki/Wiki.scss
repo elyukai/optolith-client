@@ -1,4 +1,8 @@
 #wiki {
+  .options {
+    flex-grow: 0;
+  }
+
 	aside {
 		flex-basis: 40em;
     flex-grow: 10;
