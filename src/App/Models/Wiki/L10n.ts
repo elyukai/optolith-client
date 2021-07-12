@@ -153,6 +153,7 @@ export const L10n =
                 "settings.nonewversionavailable.title": "",
                 "settings.nonewversionavailable.message": "",
                 "settings.downloadingupdate.title": "",
+                "settings.zoomlevel.title": "",
 
                 "heroes.filters.origin.allheroes": "",
                 "heroes.filters.origin.ownheroes": "",

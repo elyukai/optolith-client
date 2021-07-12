@@ -9,7 +9,7 @@ import * as url from "url"
 import { isUpdaterEnabled } from "./App/Utilities/CheckForUpdatesMain"
 import { existsFile } from "./System/IO"
 
-app.setAppUserModelId ("lukasobermann.optolith")
+app.setAppUserModelId ("lukasobermann.optolith");
 
 const setDerivedUserDataPath = async () => {
   const isPrerelease = prerelease (app.getVersion ()) !== null
@@ -171,7 +171,7 @@ const main = async () => {
   const installedExtensions = await installExtension.default ([
     installExtension.REACT_DEVELOPER_TOOLS,
     installExtension.REDUX_DEVTOOLS,
-  ])
+  ], { loadExtensionOptions: { allowFileAccess: true } })
 
   console.log (`main: Installed extensions: ${installedExtensions}`)
 
