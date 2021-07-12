@@ -31,4 +31,5 @@ export interface RawConfig {
   meleeItemTemplatesCombatTechniqueFilter?: string
   rangedItemTemplatesCombatTechniqueFilter?: string
   enableAnimations?: boolean
+  zoomLevel?: number
 }

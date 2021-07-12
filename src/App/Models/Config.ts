@@ -176,6 +176,7 @@ export interface Config {
   meleeItemTemplatesCombatTechniqueFilter: Maybe<MeleeCombatTechniqueId>
   rangedItemTemplatesCombatTechniqueFilter: Maybe<RangedCombatTechniqueId>
   enableAnimations: Maybe<boolean>
+  zoomLevel: number
 }
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -211,4 +212,5 @@ export const Config =
                 meleeItemTemplatesCombatTechniqueFilter: Nothing,
                 rangedItemTemplatesCombatTechniqueFilter: Nothing,
                 enableAnimations: Just (false),
+                zoomLevel: 100,
               })

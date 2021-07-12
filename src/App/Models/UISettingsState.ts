@@ -34,6 +34,7 @@ export interface UISettingsState {
   meleeItemTemplatesCombatTechniqueFilter: Maybe<MeleeCombatTechniqueId>
   rangedItemTemplatesCombatTechniqueFilter: Maybe<RangedCombatTechniqueId>
   enableAnimations: boolean
+  zoomLevel: number
 }
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -67,6 +68,7 @@ export const UISettingsState =
                 meleeItemTemplatesCombatTechniqueFilter: Nothing,
                 rangedItemTemplatesCombatTechniqueFilter: Nothing,
                 enableAnimations: true,
+                zoomLevel: 100,
               })
 
 export const UISettingsStateL = makeLenses (UISettingsState)

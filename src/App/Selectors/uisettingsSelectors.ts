@@ -90,3 +90,6 @@ export const getRangedItemTemplateCombatTechniqueFilter =
 
 export const areAnimationsEnabled =
   pipe (ASA.ui, UISA.settings, UISSA.enableAnimations)
+
+export const getZoomLevel =
+  pipe (ASA.ui, UISA.settings, UISSA.zoomLevel)

@@ -39,3 +39,38 @@ export interface SwitchEnableAnimationsAction {
 export const switchEnableAnimations = (): SwitchEnableAnimationsAction => ({
   type: ActionTypes.SWITCH_ENABLE_ANIMATIONS,
 })
+
+export interface SetZoomLevelAction {
+  type: ActionTypes.SET_ZOOM_LEVEL
+  payload: {
+    zoomLevel: number
+  }
+}
+
+export const setZoomLevel = (zoomLevel: number): SetZoomLevelAction => ({
+  type: ActionTypes.SET_ZOOM_LEVEL,
+  payload: {
+    zoomLevel,
+  },
+})
+
+export interface MoveZoomLevelAction {
+  type: ActionTypes.MOVE_ZOOM_LEVEL
+  payload: {
+    zoom: "in" | "out"
+  }
+}
+
+export const zoomInAction = (): MoveZoomLevelAction => ({
+  type: ActionTypes.MOVE_ZOOM_LEVEL,
+  payload: {
+    zoom: "in",
+  },
+})
+
+export const zoomOutAction = (): MoveZoomLevelAction => ({
+  type: ActionTypes.MOVE_ZOOM_LEVEL,
+  payload: {
+    zoom: "out",
+  },
+})

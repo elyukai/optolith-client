@@ -28,8 +28,10 @@ import { List } from "./Data/List"
 import { Just } from "./Data/Maybe"
 import { uncurryN } from "./Data/Tuple/Curry"
 import { Unit } from "./Data/Unit"
+import * as ConfigActions from "./App/Actions/ConfigActions"
 
 webFrame.setZoomFactor (1)
+// TODO figure out how to properly fetch external zoom level
 webFrame.setVisualZoomLevelLimits (1, 1)
 
 const nativeAppReducer =
@@ -46,56 +48,79 @@ store
 
     const staticData = getWiki (getState ())
 
-    if (remote.process.platform === "darwin") {
-      const menuTemplate: Electron.MenuItemConstructorOptions[] = [
-        {
-          label: remote.app.getName (),
-          submenu: [
-            {
-              label: translateP (staticData)
-                                ("macosmenubar.aboutapp")
-                                (List (remote.app.getName ())),
-              click: () => dispatch (showAbout),
-            },
-            { type: "separator" },
-            { role: "hide" },
-            { role: "hideOthers" },
-            { role: "unhide" },
-            { type: "separator" },
-            {
-              label: translate (staticData) ("macosmenubar.quit"),
-              click: () => dispatch (requestClose (Just (remote.app.quit))),
-            },
-          ],
-        },
-        {
-          label: translate (staticData) ("macosmenubar.edit"),
-          submenu: [
-            { role: "cut" },
-            { role: "copy" },
-            { role: "paste" },
-            { role: "delete" },
-            { role: "selectAll" },
-          ],
-        },
-        {
-          label: translate (staticData) ("macosmenubar.view"),
-          submenu: [
-            { role: "togglefullscreen" },
-          ],
-        },
-        {
-          role: "window",
-          submenu: [
-            { role: "minimize" },
-            { type: "separator" },
-            { role: "front" },
-          ],
-        },
-      ]
+    const isMac = process.platform === 'darwin'
 
-      const menu = remote.Menu.buildFromTemplate (menuTemplate)
-      remote.Menu.setApplicationMenu (menu)
+    const m = function(menu: Electron.MenuItemConstructorOptions[]) { return menu }
+
+    const menuTemplate: Electron.MenuItemConstructorOptions[] = [
+      ...m(isMac ? [{
+        label: remote.app.getName (),
+        submenu: [
+          {
+            label: translateP (staticData)
+                              ("macosmenubar.aboutapp")
+                              (List (remote.app.getName ())),
+            click: () => dispatch (showAbout),
+          },
+          { type: "separator" },
+          { role: "hide" },
+          { role: "hideOthers" },
+          { role: "unhide" },
+          { type: "separator" },
+          {
+            label: translate (staticData) ("macosmenubar.quit"),
+            click: () => dispatch (requestClose (Just (remote.app.quit))),
+          },
+        ],
+      }] : []),
+      {
+        label: translate (staticData) ("macosmenubar.edit"),
+        submenu: [
+          { role: 'cut' },
+          { role: 'copy' },
+          { role: 'paste' },
+          ...m(isMac ? [
+            { role: 'pasteAndMatchStyle' },
+            { role: 'delete' },
+            { role: 'selectAll' },
+            { type: 'separator' },
+          ] : [
+            { role: 'delete' },
+            { type: 'separator' },
+            { role: 'selectAll' }
+          ])
+        ],
+      },
+      {
+        label: translate (staticData) ("macosmenubar.view"),
+        submenu: [
+          { role: "togglefullscreen" },
+          { type: 'separator' },
+          { role: 'resetZoom',
+            click: () => dispatch (ConfigActions.setZoomLevel(100))
+          },
+          { role: 'zoomIn',
+            click: () => dispatch (ConfigActions.zoomInAction())
+          },
+          { role: 'zoomOut',
+            click: () => dispatch (ConfigActions.zoomOutAction())
+          },
+        ],
+      },
+      {
+        role: "window",
+        submenu: [
+          { role: "minimize" },
+          { type: "separator" },
+          { role: "front" },
+        ],
+      },
+    ]
+
+    const menu = remote.Menu.buildFromTemplate (menuTemplate)
+    remote.Menu.setApplicationMenu (menu)
+
+    if (remote.process.platform === "darwin") {
 
       store.subscribe (() => {
         const areSubwindowsOpen = isDialogOpen ()

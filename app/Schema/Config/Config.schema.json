@@ -102,6 +102,9 @@
         },
         "enableAnimations": {
           "type": "boolean"
+        },
+        "zoomLevel": {
+          "type": "number"
         }
       },
       "required": [
@@ -123,7 +126,8 @@
         "liturgiesSortOrder",
         "equipmentSortOrder",
         "equipmentGroupVisibilityFilter",
-        "enableActiveItemHints"
+        "enableActiveItemHints",
+        "zoomLevel"
       ],
       "additionalProperties": false
     }
