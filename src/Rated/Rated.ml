@@ -1,246 +1,238 @@
 module Dynamic = struct
-  type dependency_value = Minimum of int | Maximum of int
+  module ValueRestriction = struct
+    type t = Minimum of int | Maximum of int
+  end
 
-  type dependency = {
-    source : IdGroup.ActivatableAndSkill.t;
-    other_targets : int list;
-    value : dependency_value;
-  }
+  module Dependency = struct
+    type t = {
+      source : IdGroup.ActivatableAndSkill.t;
+      other_targets : IdGroup.ActivatableAndSkill.t list;
+      value : ValueRestriction.t;
+    }
+  end
 
   module Activatable = struct
-    type value = Inactive | Active of int
+    module Value = struct
+      type t = Inactive | Active of int
 
-    module WithEnhancements = struct
-      type enhancement = { id : int; dependencies : int list }
+      let min = 0
 
-      module ByMagicalTradition = struct
-        type ('id, 'static) t = {
-          id : 'id;
-          values : int Id.MagicalTradition.Map.t;
-          enhancements : enhancement IntMap.t;
-          cached_ap : int;
-          dependencies : dependency list;
-          static : 'static option;
-        }
+      let to_int = function Active sr -> sr | Inactive -> min
 
-        module type S = sig
-          type id
+      let is_active = function Active _ -> true | Inactive -> false
 
-          type static
+      let ensure_valid = function
+        | Active value -> Active (Int.max min value)
+        | Inactive -> Inactive
+    end
 
-          type nonrec t = (id, static) t
+    module Main = struct
+      let ap_total ic value =
+        IC.ap_for_range ic ~from_value:Value.min ~to_value:value
+        + IC.ap_for_activation ic
+    end
 
-          val make :
-            ?enhancements:enhancement IntMap.t ->
-            ?values:int Id.MagicalTradition.Map.t ->
-            static:static option ->
-            id:id ->
-            t
+    module Enhancements = struct
+      let ap_total enhancements ic active_enhancements =
+        active_enhancements |> IntMap.keys
+        |> ListX.sum' (fun key ->
+               IntMap.lookup key enhancements
+               |> Option.fold ~none:0 ~some:(Enhancement.Static.ap_value ic))
+    end
 
-          val update_value : (int -> int) -> Id.MagicalTradition.t -> t -> t
-
-          val update_enhancements :
-            (enhancement IntMap.t -> enhancement IntMap.t) -> t -> t
-
-          val insert_value : ?value:int -> Id.MagicalTradition.t -> t -> t
-
-          val delete_value : Id.MagicalTradition.t -> t -> t
-
-          val is_empty : t -> bool
-
-          val value : Id.MagicalTradition.t -> t option -> int
-
-          val is_active : t -> bool
-
-          val is_active' : t option -> bool
-        end
-
-        module type Config = sig
-          type id
-
-          type static
-
-          val ic : static -> IC.t
-
-          val enhancements : static -> Enhancement.t IntMap.t
-        end
-
-        module Make (Config : Config) :
-          S with type id = Config.id and type static = Config.static = struct
-          type id = Config.id
-
-          type static = Config.static
-
-          type nonrec t = (id, static) t
-
-          let ap_total static_opt values active_enhancements =
-            let open Option.Infix in
-            let apply_pair (f, g) x = (f x, g x) in
-            static_opt <&> apply_pair (Config.ic, Config.enhancements)
-            |> function
-            | None -> 0
-            | Some (ic, enhancements) ->
-                let values_by_tradition =
-                  Id.MagicalTradition.Map.foldl'
-                    (fun value acc ->
-                      acc
-                      + IC.ap_for_range ic ~from_value:0 ~to_value:value
-                      + IC.ap_for_activatation ic)
-                    0 values
-                in
-                let enhancements_value =
-                  active_enhancements |> IntMap.keys
-                  |> ListX.foldl'
-                       (fun key ->
-                         IntMap.lookup key enhancements
-                         |> Option.option 0 (Enhancement.ap_value ic)
-                         |> ( + ))
-                       0
-                in
-                values_by_tradition + enhancements_value
-
-          let make ?(enhancements = IntMap.empty)
-              ?(values = Id.MagicalTradition.Map.empty) ~static ~id =
-            {
-              id;
-              values;
-              enhancements;
-              cached_ap = ap_total static values enhancements;
-              dependencies = [];
-              static;
-            }
-
-          let update_value f key x =
-            let map old_value = Int.max 0 (f old_value) in
-            let new_values = Id.MagicalTradition.Map.adjust map key x.values in
-            {
-              x with
-              values = new_values;
-              cached_ap = ap_total x.static new_values x.enhancements;
-            }
-
-          let update_enhancements f (x : t) =
-            let new_enhancements = f x.enhancements in
-            {
-              x with
-              enhancements = new_enhancements;
-              cached_ap = ap_total x.static x.values new_enhancements;
-            }
-
-          let insert_value ?(value = 0) key x =
-            let new_value = Int.max 0 value in
-            let new_values =
-              Id.MagicalTradition.Map.insert key new_value x.values
-            in
-            {
-              x with
-              values = new_values;
-              cached_ap = ap_total x.static new_values x.enhancements;
-            }
-
-          let delete_value key x =
-            let new_values = Id.MagicalTradition.Map.delete key x.values in
-            {
-              x with
-              values = new_values;
-              cached_ap = ap_total x.static new_values x.enhancements;
-            }
-
-          let is_empty x =
-            Id.MagicalTradition.Map.null x.values && ListX.null x.dependencies
-
-          let value key x_opt =
-            let open Option.Infix in
-            x_opt
-            >>= (fun { values; _ } -> Id.MagicalTradition.Map.lookup key values)
-            |> Option.fromOption 0
-
-          let is_active x = Id.MagicalTradition.Map.null x.values |> not
-
-          let is_active' x = Option.option false is_active x
-        end
-      end
-
-      type ('id, 'static) t = {
-        id : 'id;
-        value : value;
-        enhancements : enhancement IntMap.t;
-        cached_ap : int;
-        dependencies : dependency list;
-        static : 'static option;
-      }
-
+    module ByMagicalTradition = struct
       module type S = sig
         type id
 
         type static
 
-        type nonrec t = (id, static) t
+        type t = {
+          id : id;
+          values : int Id.MagicalTradition.Map.t;
+          enhancements : Enhancement.Dynamic.t IntMap.t;
+          cached_ap : int;
+          dependencies : Dependency.t list;
+          static : static option;
+        }
 
         val make :
-          ?enhancements:enhancement IntMap.t ->
-          ?value:value ->
+          ?enhancements:Enhancement.Dynamic.t IntMap.t ->
+          ?values:int Id.MagicalTradition.Map.t ->
           static:static option ->
           id:id ->
           t
 
-        val update_value : (value -> value) -> t -> t
+        val update_value : (int -> int) -> Id.MagicalTradition.t -> t -> t
 
         val update_enhancements :
-          (enhancement IntMap.t -> enhancement IntMap.t) -> t -> t
+          (Enhancement.Dynamic.t IntMap.t -> Enhancement.Dynamic.t IntMap.t) ->
+          t ->
+          t
 
-        val is_empty : t -> bool
+        val insert_value : ?value:int -> Id.MagicalTradition.t -> t -> t
 
-        val value : t option -> value
+        val delete_value : Id.MagicalTradition.t -> t -> t
 
-        val value_to_int : value -> int
+        val value_of_option : Id.MagicalTradition.t -> t option -> int
 
         val is_active : t -> bool
-
-        val is_active' : t option -> bool
       end
 
-      module type Config = sig
+      module Make (Config : sig
         type id
 
         type static
 
         val ic : static -> IC.t
 
-        val enhancements : static -> Enhancement.t IntMap.t
+        val enhancements : static -> Enhancement.Static.t IntMap.t
+      end) : S with type id = Config.id and type static = Config.static = struct
+        include Config
+
+        type t = {
+          id : id;
+          values : int Id.MagicalTradition.Map.t;
+          enhancements : Enhancement.Dynamic.t IntMap.t;
+          cached_ap : int;
+          dependencies : Dependency.t list;
+          static : static option;
+        }
+
+        let ap_total static_opt values active_enhancements =
+          match static_opt with
+          | None -> 0
+          | Some static ->
+              let total_of_by_tradition =
+                Id.MagicalTradition.Map.sum' (Main.ap_total (ic static)) values
+              in
+              let total_of_enhancements =
+                Enhancements.ap_total (enhancements static) (ic static)
+                  active_enhancements
+              in
+              total_of_by_tradition + total_of_enhancements
+
+        let make ?(enhancements = IntMap.empty)
+            ?(values = Id.MagicalTradition.Map.empty) ~static ~id =
+          {
+            id;
+            values;
+            enhancements;
+            cached_ap = ap_total static values enhancements;
+            dependencies = [];
+            static;
+          }
+
+        let update_value f key x =
+          let new_values =
+            Id.MagicalTradition.Map.adjust
+              (fun old_value -> Int.max 0 (f old_value))
+              key x.values
+          in
+          {
+            x with
+            values = new_values;
+            cached_ap = ap_total x.static new_values x.enhancements;
+          }
+
+        let update_enhancements f (x : t) =
+          let new_enhancements = f x.enhancements in
+          {
+            x with
+            enhancements = new_enhancements;
+            cached_ap = ap_total x.static x.values new_enhancements;
+          }
+
+        let insert_value ?(value = 0) key x =
+          let new_values =
+            Id.MagicalTradition.Map.insert key (Int.max 0 value) x.values
+          in
+          {
+            x with
+            values = new_values;
+            cached_ap = ap_total x.static new_values x.enhancements;
+          }
+
+        let delete_value key x =
+          let new_values = Id.MagicalTradition.Map.delete key x.values in
+          {
+            x with
+            values = new_values;
+            cached_ap = ap_total x.static new_values x.enhancements;
+          }
+
+        let value_of_option key x_opt =
+          let open Option.Infix in
+          x_opt
+          >>= (fun { values; _ } -> Id.MagicalTradition.Map.lookup key values)
+          |> Option.value ~default:0
+
+        let is_active x = Id.MagicalTradition.Map.null x.values |> not
+      end
+    end
+
+    module WithEnhancements = struct
+      module type S = sig
+        type id
+
+        type static
+
+        type t = {
+          id : id;
+          value : Value.t;
+          enhancements : Enhancement.Dynamic.t IntMap.t;
+          cached_ap : int;
+          dependencies : Dependency.t list;
+          static : static option;
+        }
+
+        val make :
+          ?enhancements:Enhancement.Dynamic.t IntMap.t ->
+          ?value:Value.t ->
+          static:static option ->
+          id:id ->
+          t
+
+        val update_value : (Value.t -> Value.t) -> t -> t
+
+        val update_enhancements :
+          (Enhancement.Dynamic.t IntMap.t -> Enhancement.Dynamic.t IntMap.t) ->
+          t ->
+          t
+
+        val value_of_option : t option -> Value.t
       end
 
-      module Make (Config : Config) :
-        S with type id = Config.id and type static = Config.static = struct
-        type id = Config.id
+      module Make (Config : sig
+        type id
 
-        type static = Config.static
+        type static
 
-        type nonrec t = (id, static) t
+        val ic : static -> IC.t
+
+        val enhancements : static -> Enhancement.Static.t IntMap.t
+      end) : S with type id = Config.id and type static = Config.static = struct
+        include Config
+        open Value
+
+        type t = {
+          id : id;
+          value : Value.t;
+          enhancements : Enhancement.Dynamic.t IntMap.t;
+          cached_ap : int;
+          dependencies : Dependency.t list;
+          static : static option;
+        }
 
         let ap_total static_opt value active_enhancements =
-          let open Option.Infix in
-          let apply_pair (f, g) x = (f x, g x) in
-          let static =
-            static_opt <&> apply_pair (Config.ic, Config.enhancements)
-          in
-          match (static, value) with
+          match (static_opt, value) with
           | None, _ | Some _, Inactive -> 0
-          | Some (ic, enhancements), Active value ->
-              let activation_value = IC.ap_for_activatation ic in
-              let increase_value =
-                IC.ap_for_range ic ~from_value:0 ~to_value:value
+          | Some static, Active value ->
+              let total_of_rated = Main.ap_total (ic static) value in
+              let total_of_enhancements =
+                Enhancements.ap_total (enhancements static) (ic static)
+                  active_enhancements
               in
-              let enhancements_value =
-                active_enhancements |> IntMap.keys
-                |> ListX.foldl'
-                     (fun key ->
-                       IntMap.lookup key enhancements
-                       |> Option.option 0 (Enhancement.ap_value ic)
-                       |> ( + ))
-                     0
-              in
-              increase_value + activation_value + enhancements_value
+              total_of_rated + total_of_enhancements
 
         let make ?(enhancements = IntMap.empty) ?(value = Inactive) ~static ~id
             =
@@ -254,11 +246,7 @@ module Dynamic = struct
           }
 
         let update_value f (x : t) =
-          let new_value =
-            match f x.value with
-            | Active value -> Active (Int.max 0 value)
-            | Inactive -> Inactive
-          in
+          let new_value = ensure_valid (f x.value) in
           {
             x with
             value = new_value;
@@ -273,36 +261,25 @@ module Dynamic = struct
             cached_ap = ap_total x.static x.value new_enhancements;
           }
 
-        let is_empty (x : t) = x.value == Inactive && ListX.null x.dependencies
-
-        let value x_opt = Option.option Inactive (fun (x : t) -> x.value) x_opt
-
-        let value_to_int = function Active sr -> sr | Inactive -> 0
-
-        let is_active (x : t) =
-          match x.value with Active _ -> true | Inactive -> false
-
-        let is_active' x = Option.option false is_active x
+        let value_of_option = function Some x -> x.value | None -> Inactive
       end
     end
 
     module ByLevel = struct
       type values = Inactive | Active of int NonEmptyList.t
 
-      type ('id, 'static) t = {
-        id : 'id;
-        values : values;
-        cached_ap : int;
-        dependencies : dependency list;
-        static : 'static option;
-      }
-
       module type S = sig
         type id
 
         type static
 
-        type nonrec t = (id, static) t
+        type t = {
+          id : id;
+          values : values;
+          cached_ap : int;
+          dependencies : Dependency.t list;
+          static : static option;
+        }
 
         val make : ?values:values -> static:static option -> id:id -> t
 
@@ -312,43 +289,33 @@ module Dynamic = struct
 
         val delete_value : t -> t
 
-        val is_empty : t -> bool
-
-        val value : index:int -> t option -> value
-
-        val value_to_int : value -> int
+        val value_of_option : index:int -> t option -> Value.t
 
         val is_active : t -> bool
-
-        val is_active' : t option -> bool
       end
 
-      module type Config = sig
+      module Make (Config : sig
         type id
 
         type static
 
         val ic : static -> IC.t
-      end
+      end) : S with type id = Config.id and type static = Config.static = struct
+        include Config
 
-      module Make (Config : Config) :
-        S with type id = Config.id and type static = Config.static = struct
-        type id = Config.id
+        type t = {
+          id : id;
+          values : values;
+          cached_ap : int;
+          dependencies : Dependency.t list;
+          static : static option;
+        }
 
-        type static = Config.static
-
-        type nonrec t = (id, static) t
-
-        let ap_total static (values : values) =
-          let open Option.Infix in
-          match (static <&> Config.ic, values) with
+        let ap_total static values =
+          match (static, values) with
           | None, _ | Some _, Inactive -> 0
-          | Some ic, Active xs ->
-              let for_level value =
-                IC.ap_for_range ic ~from_value:0 ~to_value:value
-                + IC.ap_for_activatation ic
-              in
-              NonEmptyList.foldl' (fun x -> x |> for_level |> ( + )) 0 xs
+          | Some static, Active xs ->
+              NonEmptyList.sum' (Main.ap_total (ic static)) xs
 
         let make ?(values : values = Inactive) ~static ~id =
           {
@@ -363,7 +330,7 @@ module Dynamic = struct
           match x.values with
           | Inactive -> x
           | Active xs ->
-              let for_level x = x |> f |> Int.max 0 in
+              let for_level x = Int.max 0 (f x) in
               let new_values : values =
                 Active (NonEmptyList.Index.modifyAt index for_level xs)
               in
@@ -397,9 +364,7 @@ module Dynamic = struct
                 xs
                 |> NonEmptyList.take (NonEmptyList.length xs - 1)
                 |> NonEmptyList.from_list
-                |> function
-                | None -> (Inactive : values)
-                | Some xs -> Active xs )
+                |> function None -> (Inactive : values) | Some xs -> Active xs)
           in
           {
             x with
@@ -407,37 +372,16 @@ module Dynamic = struct
             cached_ap = ap_total x.static new_values;
           }
 
-        let is_empty x = x.values == Inactive && ListX.null x.dependencies
-
-        let value ~index x_opt =
-          Option.option
-            (Inactive : value)
-            (fun x ->
-              match x.values with
-              | Inactive -> Inactive
-              | Active xs -> (
-                  NonEmptyList.at index xs |> function
-                  | None -> (Inactive : value)
-                  | Some x -> Active x ))
-            x_opt
-
-        let value_to_int (x : value) =
-          match x with Active sr -> sr | Inactive -> 0
+        let value_of_option ~index = function
+          | Some { values = Active xs; _ } -> (
+              NonEmptyList.at index xs
+              |> function None -> Value.Inactive | Some x -> Value.Active x)
+          | None | Some { values = Inactive; _ } -> Value.Inactive
 
         let is_active x =
           match x.values with Active _ -> true | Inactive -> false
-
-        let is_active' x = Option.option false is_active x
       end
     end
-
-    type ('id, 'static) t = {
-      id : 'id;
-      value : value;
-      cached_ap : int;
-      dependencies : dependency list;
-      static : 'static option;
-    }
 
     module DeriveSecondary = struct
       module type S = sig
@@ -447,29 +391,28 @@ module Dynamic = struct
 
         type static'
 
-        type nonrec t = (id, static) t
+        type t = {
+          id : id;
+          value : Value.t;
+          cached_ap : int;
+          dependencies : Dependency.t list;
+          static : static option;
+        }
 
         val make :
-          ?value:value ->
+          ?value:Value.t ->
           static':static' option ->
           static:static option ->
           id:id ->
           t
 
-        val update_value : (value -> value) -> static':static' option -> t -> t
+        val update_value :
+          (Value.t -> Value.t) -> static':static' option -> t -> t
 
-        val is_empty : t -> bool
-
-        val value : t option -> value
-
-        val value_to_int : value -> int
-
-        val is_active : t -> bool
-
-        val is_active' : t option -> bool
+        val value_of_option : t option -> Value.t
       end
 
-      module type Config = sig
+      module Make (Config : sig
         type id
 
         type static
@@ -477,34 +420,40 @@ module Dynamic = struct
         type static'
 
         val ic : static' -> static -> IC.t option
-      end
-
-      module Make (Config : Config) :
+      end) :
         S
           with type id = Config.id
            and type static = Config.static
            and type static' = Config.static' = struct
-        type id = Config.id
+        include Config
+        open Value
 
-        type static = Config.static
+        let min_value = 0
 
-        type static' = Config.static'
-
-        type nonrec t = (id, static) t
+        type t = {
+          id : id;
+          value : Value.t;
+          cached_ap : int;
+          dependencies : Dependency.t list;
+          static : static option;
+        }
 
         let ap_total static' static value =
-          let ic = Option.liftM2 Config.ic static' static |> Option.join in
+          let ic = Option.liftM2 ic static' static |> Option.join in
           match (ic, value) with
+          | Some ic, Active value -> Main.ap_total ic value
           | None, _ | Some _, Inactive -> 0
-          | Some ic, Active value ->
-              IC.ap_for_range ic ~from_value:0 ~to_value:value
-              + IC.ap_for_activatation ic
+
+        let ensure_valid_value = function
+          | Active value -> Active (Int.max min_value value)
+          | Inactive -> Inactive
 
         let make ?(value = Inactive) ~static' ~static ~id =
+          let init_value = ensure_valid_value value in
           {
             id;
-            value;
-            cached_ap = ap_total static' static value;
+            value = init_value;
+            cached_ap = ap_total static' static init_value;
             dependencies = [];
             static;
           }
@@ -521,16 +470,7 @@ module Dynamic = struct
             cached_ap = ap_total static' x.static new_value;
           }
 
-        let is_empty (x : t) = x.value == Inactive && ListX.null x.dependencies
-
-        let value x_opt = Option.option Inactive (fun (x : t) -> x.value) x_opt
-
-        let value_to_int = function Active sr -> sr | Inactive -> 0
-
-        let is_active (x : t) =
-          match x.value with Active _ -> true | Inactive -> false
-
-        let is_active' x = Option.option false is_active x
+        let value_of_option = function Some x -> x.value | None -> Inactive
       end
     end
 
@@ -539,103 +479,83 @@ module Dynamic = struct
 
       type static
 
-      type nonrec t = (id, static) t
+      type t = {
+        id : id;
+        value : Value.t;
+        cached_ap : int;
+        dependencies : Dependency.t list;
+        static : static option;
+      }
 
-      val make : ?value:value -> static:static option -> id:id -> t
+      val make : ?value:Value.t -> static:static option -> id:id -> t
 
-      val update_value : (value -> value) -> t -> t
+      val update_value : (Value.t -> Value.t) -> t -> t
 
-      val is_empty : t -> bool
-
-      val value : t option -> value
-
-      val value_to_int : value -> int
-
-      val is_active : t -> bool
-
-      val is_active' : t option -> bool
+      val value_of_option : t option -> Value.t
     end
 
-    module type Config = sig
+    module Make (Config : sig
       type id
 
       type static
 
       val ic : static -> IC.t
-    end
+    end) : S with type id = Config.id and type static = Config.static = struct
+      include Config
+      open Value
 
-    module Make (Config : Config) :
-      S with type id = Config.id and type static = Config.static = struct
-      type id = Config.id
-
-      type static = Config.static
-
-      type nonrec t = (id, static) t
+      type t = {
+        id : id;
+        value : Value.t;
+        cached_ap : int;
+        dependencies : Dependency.t list;
+        static : static option;
+      }
 
       let ap_total static value =
-        let open Option.Infix in
-        let ic = static <&> Config.ic in
-        match (ic, value) with
+        match (static, value) with
+        | Some static, Active value -> Main.ap_total (ic static) value
         | None, _ | Some _, Inactive -> 0
-        | Some ic, Active value ->
-            IC.ap_for_range ic ~from_value:0 ~to_value:value
-            + IC.ap_for_activatation ic
 
       let make ?(value = Inactive) ~static ~id =
+        let init_value = ensure_valid value in
         {
           id;
-          value;
-          cached_ap = ap_total static value;
+          value = init_value;
+          cached_ap = ap_total static init_value;
           dependencies = [];
           static;
         }
 
-      let update_value f (x : t) =
-        let new_value =
-          match f x.value with
-          | Active value -> Active (Int.max 0 value)
-          | Inactive -> Inactive
-        in
+      let update_value f x =
+        let new_value = ensure_valid (f x.value) in
         { x with value = new_value; cached_ap = ap_total x.static new_value }
 
-      let is_empty (x : t) = x.value == Inactive && ListX.null x.dependencies
-
-      let value x_opt = Option.option Inactive (fun (x : t) -> x.value) x_opt
-
-      let value_to_int = function Active sr -> sr | Inactive -> 0
-
-      let is_active (x : t) =
-        match x.value with Active _ -> true | Inactive -> false
-
-      let is_active' x = Option.option false is_active x
+      let value_of_option = function Some x -> x.value | None -> Inactive
     end
   end
-
-  type ('id, 'static) t = {
-    id : 'id;
-    value : int;
-    cached_ap : int;
-    dependencies : dependency list;
-    static : 'static option;
-  }
 
   module type S = sig
     type id
 
     type static
 
-    type nonrec t = (id, static) t
+    type t = {
+      id : id;
+      value : int;
+      cached_ap : int;
+      dependencies : Dependency.t list;
+      static : static option;
+    }
 
     val make : ?value:int -> static:static option -> id:id -> t
 
     val update_value : (int -> int) -> t -> t
 
-    val is_empty : t -> bool
-
-    val value : t option -> int
+    val value_of_option : t option -> int
   end
 
-  module type Config = sig
+  module Make (C : sig
     type id
 
     type static
@@ -643,26 +563,27 @@ module Dynamic = struct
     val ic : static -> IC.t
 
     val min_value : int
-  end
+  end) : S with type id = C.id and type static = C.static = struct
+    include C
 
-  module Make (Config : Config) :
-    S with type id = Config.id and type static = Config.static = struct
-    type id = Config.id
-
-    type static = Config.static
-
-    type nonrec t = (id, static) t
-
-    let min_value = Config.min_value
+    type t = {
+      id : id;
+      value : int;
+      cached_ap : int;
+      dependencies : Dependency.t list;
+      static : static option;
+    }
 
     let ap_total static value =
-      let open Option.Infix in
-      static <&> Config.ic
-      <&> IC.ap_for_range ~from_value:min_value ~to_value:value
-      |> Option.fromOption 0
+      match static with
+      | Some static ->
+          static |> ic |> IC.ap_for_range ~from_value:min_value ~to_value:value
+      | None -> 0
 
     let make ?value ~static ~id =
-      let init_value = Option.option min_value (Int.max min_value) value in
+      let init_value =
+        Option.fold ~none:min_value ~some:(Int.max min_value) value
+      in
       {
         id;
         value = init_value;
@@ -671,13 +592,11 @@ module Dynamic = struct
         static;
       }
 
-    let update_value f (x : t) =
+    let update_value f x =
       let new_value = Int.max min_value (f x.value) in
       { x with value = new_value; cached_ap = ap_total x.static new_value }
 
-    let is_empty (x : t) = x.value <= min_value && ListX.null x.dependencies
-
-    let value x_opt = Option.option min_value (fun (x : t) -> x.value) x_opt
+    let value_of_option = function Some x -> x.value | None -> min_value
   end
 end
 

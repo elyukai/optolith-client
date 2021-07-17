@@ -12,12 +12,13 @@ module Supported = struct
   type t = { id : string; name : string; region : string }
 
   let system_locale_to_id supported_locales system_locale =
-    (system_locale |> Js.String.split "-" |> fun arr -> arr.(0))
+    system_locale |> Js.String.split "-"
+    |> (fun arr -> arr.(0))
     |> fun systemLocaleStart ->
     StrMap.find
       (fun { id; _ } -> Js.String.startsWith systemLocaleStart id)
       supported_locales
-    |> Option.option "en-US" (fun locale -> locale.id)
+    |> Option.fold ~none:"en-US" ~some:(fun locale -> locale.id)
 
   module Decode = struct
     open Json.Decode
@@ -43,7 +44,8 @@ module Supported = struct
 
     let make_assoc json =
       let open Option.Infix in
-      json |> multilingual <&> fun multilingual ->
+      json |> multilingual
+      <&> fun multilingual ->
       ( multilingual.id,
         {
           id = multilingual.id;

@@ -12,7 +12,9 @@ module Decode = struct
     let range json =
       let first = json |> field "firstPage" int in
       let maybeLast = json |> optionalField "lastPage" int in
-      Option.option (Single first) (fun last -> Range (first, last)) maybeLast
+      Option.fold ~none:(Single first)
+        ~some:(fun last -> Range (first, last))
+        maybeLast
     in
     ListX.Decode.one_or_many range json
 
@@ -27,10 +29,12 @@ module Decode = struct
 
   let make locale_order json =
     let open Option.Infix in
-    json |> multilingual |> fun multilingual ->
-    multilingual.occurrences |> TranslationMap.preferred locale_order
-    <&> fun translation ->
-    ({ id = multilingual.id; occurrences = translation } : t)
+    json |> multilingual
+    |> fun multilingual ->
+    multilingual.occurrences
+    |> TranslationMap.preferred locale_order
+    <&> fun translation : t ->
+    { id = multilingual.id; occurrences = translation }
 
   let make_list locale_order json =
     list (make locale_order) json |> Option.catOptions

@@ -20,8 +20,8 @@ val ap_for_increase : t -> int -> int
 val ap_for_decrease : t -> int -> int
 (** [ap_for_decrease ic sr] returns the AP cost for removing one Skill Point from [sr] with the given [ic]. *)
 
-val ap_for_activatation : t -> int
-(** `ap_for_activatation ic` returns the AP cost for activating an entry with the given [ic]. *)
+val ap_for_activation : t -> int
+(** `ap_for_activation ic` returns the AP cost for activating an entry with the given [ic]. *)
 
 module Decode : sig
   val t : Js.Json.t -> t

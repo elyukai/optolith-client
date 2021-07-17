@@ -166,7 +166,7 @@ module Activatable = struct
               json
               |> optionalField "otherOptions"
                    (list IdGroup.SelectOption.Decode.t)
-              |> Option.fromOption [];
+              |> Option.value ~default:[];
             level = json |> optionalField "level" int;
           }
       end
@@ -190,7 +190,7 @@ module Activatable = struct
           options =
             json
             |> optionalField "options" (list IdGroup.SelectOption.Decode.t)
-            |> Option.fromOption [];
+            |> Option.value ~default:[];
           level = json |> optionalField "level" int;
         }
     end
@@ -214,7 +214,7 @@ module Activatable = struct
         options =
           json
           |> optionalField "options" (list IdGroup.SelectOption.Decode.t)
-          |> Option.fromOption [];
+          |> Option.value ~default:[];
         level = json |> optionalField "level" int;
       }
   end
@@ -298,13 +298,14 @@ module DisplayMode = struct
                  ~invalid:str)
 
     let make locale_order json =
-      json |> multilingual |> fun multilingual ->
+      json |> multilingual
+      |> fun multilingual ->
       match multilingual with
       | MultilingualHide -> Hide
       | MultilingualReplaceWith mp ->
           mp
           |> TranslationMap.preferred locale_order
-          |> Option.fromOption Chars.mdash
+          |> Option.value ~default:Chars.mdash
           |> fun str -> ReplaceWith str
   end
 end
@@ -340,27 +341,30 @@ module Config = struct
       when_ : When.t NonEmptyList.t option;
     }
 
-    let multilingual locale_order decoder (wrap : 'a -> 'b) json =
-      ( {
-          value = json |> field "value" decoder |> wrap;
-          displayOption =
-            json
-            |> optionalField "displayOption"
-                 (DisplayMode.Decode.make locale_order);
-          when_ =
-            json |> optionalField "when" (NonEmptyList.Decode.t When.Decode.t);
-        }
-        : 'b multilingual )
+    let multilingual locale_order decoder (wrap : 'a -> 'b) json :
+        'b multilingual =
+      {
+        value = json |> field "value" decoder |> wrap;
+        displayOption =
+          json
+          |> optionalField "displayOption"
+               (DisplayMode.Decode.make locale_order);
+        when_ =
+          json |> optionalField "when" (NonEmptyList.Decode.t When.Decode.t);
+      }
 
     let make locale_order decoder (wrap : 'a -> 'b) json =
-      json |> multilingual locale_order decoder wrap |> fun multilingual ->
-      ( {
-          value = multilingual.value;
-          displayMode =
-            multilingual.displayOption |> Option.fromOption DisplayMode.Generate;
-          when_ = multilingual.when_ |> Option.option [] NonEmptyList.to_list;
-        }
-        : 'b t )
+      json
+      |> multilingual locale_order decoder wrap
+      |> fun multilingual : 'b t ->
+      {
+        value = multilingual.value;
+        displayMode =
+          multilingual.displayOption
+          |> Option.value ~default:DisplayMode.Generate;
+        when_ =
+          multilingual.when_ |> Option.fold ~none:[] ~some:NonEmptyList.to_list;
+      }
   end
 end
 
@@ -410,7 +414,7 @@ module Group = struct
       {
         x with
         value =
-          ( match x.value with
+          (match x.value with
           | Sex x -> Sex x
           | Race x -> Race x
           | Culture x -> Culture x
@@ -423,7 +427,7 @@ module Group = struct
           | ActivatableAnyOf x -> ActivatableAnyOf x
           | ActivatableAnyOfSelect x -> ActivatableAnyOfSelect x
           | Rated x -> Rated x
-          | RatedAnyOf x -> RatedAnyOf x );
+          | RatedAnyOf x -> RatedAnyOf x);
       }
 
     module Decode = struct
@@ -488,12 +492,12 @@ module Group = struct
       {
         x with
         value =
-          ( match x.value with
+          (match x.value with
           | Sex x -> Sex x
           | Race x -> Race x
           | Culture x -> Culture x
           | Activatable x -> Activatable x
-          | Rated x -> Rated x );
+          | Rated x -> Rated x);
       }
 
     module Decode = struct
@@ -544,7 +548,7 @@ module Group = struct
       {
         x with
         value =
-          ( match x.value with
+          (match x.value with
           | CommonSuggestedByRCP -> CommonSuggestedByRCP
           | Sex x -> Sex x
           | Race x -> Race x
@@ -558,7 +562,7 @@ module Group = struct
           | ActivatableAnyOf x -> ActivatableAnyOf x
           | ActivatableAnyOfSelect x -> ActivatableAnyOfSelect x
           | Rated x -> Rated x
-          | RatedAnyOf x -> RatedAnyOf x );
+          | RatedAnyOf x -> RatedAnyOf x);
       }
 
     module Decode = struct
@@ -568,13 +572,12 @@ module Group = struct
         field "type" string
         |> andThen (function
              | "CommonSuggestedByRCP" ->
-                 fun _ ->
-                   ( {
-                       value = CommonSuggestedByRCP;
-                       displayMode = Generate;
-                       when_ = [];
-                     }
-                     : t )
+                 fun _ : t ->
+                   {
+                     value = CommonSuggestedByRCP;
+                     displayMode = Generate;
+                     when_ = [];
+                   }
              | "Sex" ->
                  Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
              | "Race" ->
@@ -766,9 +769,9 @@ module Group = struct
       {
         x with
         value =
-          ( match x.value with
+          (match x.value with
           | Race x -> Race x
-          | Activatable x -> Activatable x );
+          | Activatable x -> Activatable x);
       }
 
     module Decode = struct
@@ -852,7 +855,7 @@ module Collection = struct
 
     let first_level = function
       | Plain xs -> xs
-      | ByLevel mp -> mp |> IntMap.lookup 1 |> Option.fromOption []
+      | ByLevel mp -> mp |> IntMap.lookup 1 |> Option.value ~default:[]
 
     let concat_range ~old_level ~new_level prerequisites =
       let range_pred =

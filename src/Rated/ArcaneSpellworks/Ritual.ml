@@ -14,7 +14,7 @@ module Static = struct
     traditions : Id.MagicalTradition.Set.t;
     ic : IC.t;
     prerequisites : Prerequisite.Collection.Spellwork.t;
-    enhancements : Enhancement.t IntMap.t;
+    enhancements : Enhancement.Static.t IntMap.t;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
@@ -70,7 +70,7 @@ module Static = struct
       traditions : int list;
       ic : IC.t;
       prerequisites : Prerequisite.Collection.Spellwork.t option;
-      enhancements : Enhancement.t IntMap.t option;
+      enhancements : Enhancement.Static.t IntMap.t option;
       src : PublicationRef.list;
       translations : translation TranslationMap.t;
     }
@@ -94,7 +94,7 @@ module Static = struct
         enhancements =
           json
           |> optionalField "enhancements"
-               (Enhancement.Decode.make_map locale_order);
+               (Enhancement.Static.Decode.make_map locale_order);
         src = json |> field "src" (PublicationRef.Decode.make_list locale_order);
         translations =
           json |> field "translations" (TranslationMap.Decode.t translation);
@@ -102,8 +102,10 @@ module Static = struct
 
     let make_assoc locale_order json =
       let open Option.Infix in
-      json |> multilingual locale_order |> fun multilingual ->
-      multilingual.translations |> TranslationMap.preferred locale_order
+      json |> multilingual locale_order
+      |> fun multilingual ->
+      multilingual.translations
+      |> TranslationMap.preferred locale_order
       <&> fun translation ->
       ( multilingual.id,
         {
@@ -129,17 +131,16 @@ module Static = struct
           traditions =
             multilingual.traditions |> Id.MagicalTradition.Set.from_int_list;
           ic = multilingual.ic;
-          prerequisites = multilingual.prerequisites |> Option.fromOption [];
+          prerequisites = multilingual.prerequisites |> Option.value ~default:[];
           enhancements =
-            multilingual.enhancements |> Option.fromOption IntMap.empty;
+            multilingual.enhancements |> Option.value ~default:IntMap.empty;
           src = multilingual.src;
-          errata = translation.errata |> Option.fromOption [];
+          errata = translation.errata |> Option.value ~default:[];
         } )
   end
 end
 
-module Dynamic =
-Rated.Dynamic.Activatable.WithEnhancements.ByMagicalTradition.Make (struct
+module Dynamic = Rated.Dynamic.Activatable.ByMagicalTradition.Make (struct
   open Static
 
   type id = Id.Ritual.t

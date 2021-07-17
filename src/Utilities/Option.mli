@@ -17,26 +17,22 @@ val sappend : 'a list t -> 'a list t -> 'a list t
     [Just a]. If at least one of them is [Nothing], it returns the first
     element. *)
 
-val isSome : 'a t -> bool
+val is_some : 'a t -> bool
 (** Checks if the passed value is a [Just]. *)
 
-val isNone : 'a t -> bool
+val is_none : 'a t -> bool
 (** Checks if the passed value is [Nothing]. *)
 
 val fromSome : 'a t -> 'a
 (** The [fromJust] function extracts the element out of a [Just] and throws an
     error if its argument is [Nothing]. *)
 
-val fromOption : 'a -> 'a t -> 'a
-(** The [fromMaybe] function takes a default value and and [Maybe] value. If the
-    [Maybe] is [Nothing], it returns the default values otherwise, it returns
-    the value contained in the [Maybe]. *)
+val value : 'a option -> default:'a -> 'a
+(** [value o ~default] is [v] if [o] is [Some v] and [default] otherwise. *)
 
-val option : 'a -> ('b -> 'a) -> 'b t -> 'a
-(** The [maybe] function takes a default value, a function, and a [Maybe] value.
-    If the [Maybe] value is [Nothing], the function returns the default value.
-    Otherwise, it applies the function to the value inside the [Just] and
-    returns the result. *)
+val fold : none:'a -> some:('b -> 'a) -> 'b option -> 'a
+(** [fold ~none ~some o] is [none] if [o] is [None] and [some v] if [o] is
+    [Some v]. *)
 
 val listToOption : 'a list -> 'a t
 (** The [listToMaybe] function returns [Nothing] on an empty list or [Just a]

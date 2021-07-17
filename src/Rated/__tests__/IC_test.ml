@@ -53,15 +53,15 @@ let () =
       test "returns multiplied cost for E" (fun () ->
           expect (ap_for_decrease E 15) |> toBe (-30)));
 
-  describe "ap_for_activatation" (fun () ->
+  describe "ap_for_activation" (fun () ->
       test "returns activation cost for A" (fun () ->
-          expect (ap_for_activatation A) |> toBe 1);
+          expect (ap_for_activation A) |> toBe 1);
 
       test "returns activation cost for C" (fun () ->
-          expect (ap_for_activatation C) |> toBe 3);
+          expect (ap_for_activation C) |> toBe 3);
 
       test "returns activation cost for E" (fun () ->
-          expect (ap_for_activatation E) |> toBe 15));
+          expect (ap_for_activation E) |> toBe 15));
 
   describe "show" (fun () ->
       test "returns name of A" (fun () -> expect (show A) |> toBe "A");

@@ -32,7 +32,7 @@ let ap_for_increase ic from_value = ap_value ic (from_value + 1)
 
 let ap_for_decrease ic from_value = -ap_value ic from_value
 
-let ap_for_activatation = ap_base
+let ap_for_activation = ap_base
 
 module Decode = struct
   open Json.Decode

@@ -14,7 +14,7 @@
           "--remote-debugging-port=9223",
           "."
       ],
-      "outputCapture": "std"
+      "outputCapture": "std",
     },
     {
         "name": "Electron: Attach Renderer",
@@ -33,5 +33,5 @@
               "Electron: Attach Renderer"
           ]
       }
-  ]
+  ],
 }

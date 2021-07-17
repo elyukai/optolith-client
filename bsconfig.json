@@ -5,6 +5,8 @@
     { "dir": "src", "subdirs": [
       { "dir": "Common" },
       { "dir": "Dependencies" },
+      { "dir": "External" },
+      { "dir": "IO" },
       { "dir": "Localization" },
       { "dir": "Rated", "subdirs": [
         { "dir": "__tests__", "type": "dev" },
@@ -13,6 +15,7 @@
         { "dir": "MagicalActions" }
       ] },
       { "dir": "Rules" },
+      { "dir": "Scenes" },
       { "dir": "Sources" },
       { "dir": "Utilities", "subdirs": [
         { "dir": "__tests__", "type": "dev" },
@@ -28,9 +31,7 @@
   "bs-dependencies": [
     "@glennsl/bs-json",
     "@glennsl/bs-jest",
-    "bs-fetch",
-    "bs-webapi",
-    "reason-react",
+    "@rescript/react",
     "reductive"
   ],
   "reason": {

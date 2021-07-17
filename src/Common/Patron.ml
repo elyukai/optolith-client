@@ -28,8 +28,10 @@ module Category = struct
 
     let make_assoc locale_order json =
       let open Option.Infix in
-      json |> multilingual |> fun multilingual ->
-      multilingual.translations |> TranslationMap.preferred locale_order
+      json |> multilingual
+      |> fun multilingual ->
+      multilingual.translations
+      |> TranslationMap.preferred locale_order
       <&> fun translation ->
       ( multilingual.id,
         {
@@ -162,8 +164,10 @@ module Decode = struct
 
   let make_assoc locale_order json =
     let open Option.Infix in
-    json |> multilingual |> fun multilingual ->
-    multilingual.translations |> TranslationMap.preferred locale_order
+    json |> multilingual
+    |> fun multilingual ->
+    multilingual.translations
+    |> TranslationMap.preferred locale_order
     <&> fun translation ->
     ( multilingual.id,
       {
@@ -173,7 +177,8 @@ module Decode = struct
         skills = multilingual.skills;
         limited_to_cultures =
           multilingual.limitedToCultures |> Id.Culture.Set.from_int_list;
-        powers = multilingual.powers |> Option.option [] NonEmptyList.to_list;
+        powers =
+          multilingual.powers |> Option.fold ~none:[] ~some:NonEmptyList.to_list;
         cost = multilingual.cost;
         ic = multilingual.ic;
         is_limited_to_cultures_reverse = multilingual.isLimitedToCulturesReverse;

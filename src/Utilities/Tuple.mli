@@ -11,5 +11,11 @@ val fst : 'a * 'b -> 'a
 val snd : 'a * 'b -> 'b
 (** Return the second component of a pair. *)
 
+val curry : ('a * 'b -> 'c) -> 'a -> 'b -> 'c
+(** [curry] transforms an uncurried function to a curried one. *)
+
+val uncurry : ('a -> 'b -> 'c) -> 'a * 'b -> 'c
+(** [uncurry] transforms a curried function to an uncurried one. *)
+
 val swap : 'a * 'b -> 'b * 'a
 (** Swap the components of a pair. *)

@@ -17,7 +17,7 @@ module Static : sig
     traditions : Id.MagicalTradition.Set.t;
     ic : IC.t;
     prerequisites : Prerequisite.Collection.Spellwork.t;
-    enhancements : Enhancement.t IntMap.t;
+    enhancements : Enhancement.Static.t IntMap.t;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
@@ -29,6 +29,6 @@ module Static : sig
 end
 
 module Dynamic :
-  Rated.Dynamic.Activatable.WithEnhancements.ByMagicalTradition.S
+  Rated.Dynamic.Activatable.ByMagicalTradition.S
     with type id = Id.Spell.t
      and type static = Static.t

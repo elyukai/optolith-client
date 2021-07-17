@@ -139,7 +139,7 @@ module Make (Key : Comparable) : T with type key = Key.t = struct
 
       let equal = ( == )
     end) :
-      Foldable.T with type 'a t := 'a t )
+      Foldable.T with type 'a t := 'a t)
 
   let null mp = TypedMap.is_empty mp
 
@@ -153,7 +153,7 @@ module Make (Key : Comparable) : T with type key = Key.t = struct
     TypedMap.find_first_opt (fun k -> Key.compare k key == 0) mp
     |> Option.Infix.( <$> ) snd
 
-  let findWithDefault def key mp = mp |> lookup key |> Option.fromOption def
+  let findWithDefault default key mp = mp |> lookup key |> Option.value ~default
 
   let empty = TypedMap.empty
 
@@ -162,14 +162,14 @@ module Make (Key : Comparable) : T with type key = Key.t = struct
   let insert = TypedMap.add
 
   let insertWith f key value mp =
-    insert key (Option.option value (f value) (lookup key mp)) mp
+    insert key (Option.fold ~none:value ~some:(f value) (lookup key mp)) mp
 
   let insertWithKey f key value mp =
-    insert key (Option.option value (f key value) (lookup key mp)) mp
+    insert key (Option.fold ~none:value ~some:(f key value) (lookup key mp)) mp
 
   let insertLookupWithKey f key value mp =
     let old = lookup key mp in
-    (old, insert key (Option.option value (f key value) old) mp)
+    (old, insert key (Option.fold ~none:value ~some:(f key value) old) mp)
 
   let delete = TypedMap.remove
 
@@ -268,19 +268,23 @@ module Make (Key : Comparable) : T with type key = Key.t = struct
       0 mp
 
   let countBy f xs =
-    let increment_acc acc = acc |> Option.option 1 Int.succ |> Option.pure in
+    let increment_acc acc =
+      acc |> Option.fold ~none:1 ~some:Int.succ |> Option.pure
+    in
     let count_key mp x = alter increment_acc (f x) mp in
     List.fold_left count_key empty xs
 
   let countByM f xs =
-    let increment_acc acc = acc |> Option.option 1 Int.succ |> Option.pure in
+    let increment_acc acc =
+      acc |> Option.fold ~none:1 ~some:Int.succ |> Option.pure
+    in
     let count_key mp key = alter increment_acc key mp in
-    let ensure_key mp x = f x |> Option.option mp (count_key mp) in
+    let ensure_key mp x = f x |> Option.fold ~none:mp ~some:(count_key mp) in
     List.fold_left ensure_key empty xs
 
   let groupBy f xs =
     let prepend_acc x acc =
-      acc |> Option.option [ x ] (List.cons x) |> Option.pure
+      acc |> Option.fold ~none:[ x ] ~some:(List.cons x) |> Option.pure
     in
     let extend_key mp x = alter (prepend_acc x) (f x) mp in
     List.fold_left extend_key empty xs

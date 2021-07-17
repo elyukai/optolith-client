@@ -6,7 +6,7 @@ include (
 
     let fmap f mx = match mx with Some x -> x |. f |. Some | None -> None
   end) :
-    Functor.T with type 'a t := 'a t )
+    Functor.T with type 'a t := 'a t)
 
 include (
   Applicative.Make (struct
@@ -18,7 +18,7 @@ include (
 
     let ap mf mx = match mf with Some f -> fmap f mx | None -> None
   end) :
-    Applicative.T with type 'a t := 'a t )
+    Applicative.T with type 'a t := 'a t)
 
 include (
   Applicative.Alternative.Make (struct
@@ -28,7 +28,7 @@ include (
 
     let alt mx my = match mx with None -> my | x -> x
   end) :
-    Applicative.Alternative.T with type 'a t := 'a t )
+    Applicative.Alternative.T with type 'a t := 'a t)
 
 include (
   Monad.Make (struct
@@ -40,7 +40,7 @@ include (
 
     let bind f mx = match mx with Some x -> f x | None -> None
   end) :
-    Monad.T with type 'a t := 'a t )
+    Monad.T with type 'a t := 'a t)
 
 include (
   Foldable.Make (struct
@@ -52,36 +52,36 @@ include (
 
     let equal = ( == )
   end) :
-    Foldable.T with type 'a t := 'a t )
+    Foldable.T with type 'a t := 'a t)
 
 let sappend mxs mys =
   match mxs with
   | Some xs -> (
-      match mys with Some ys -> Some (List.append xs ys) | None -> mxs )
+      match mys with Some ys -> Some (List.append xs ys) | None -> mxs)
   | None -> mxs
 
-let isSome m = match m with Some _ -> true | None -> false
+let is_some m = match m with Some _ -> true | None -> false
 
-let isNone m = match m with Some _ -> false | None -> true
+let is_none m = match m with Some _ -> false | None -> true
 
 let fromSome = function
   | Some x -> x
   | None -> invalid_arg "Cannot unwrap None."
 
-let fromOption def mx = match mx with Some x -> x | None -> def
+let value o ~default = match o with Some x -> x | None -> default
 
-let option def f mx = match mx with Some x -> f x | None -> def
+let fold ~none ~some o = match o with Some x -> some x | None -> none
 
 let listToOption xs = match xs with x :: _ -> Some x | [] -> None
 
 let optionToList = toList
 
 let catOptions xs =
-  List.fold_right (option Function.id (fun x xs -> x :: xs)) xs []
+  List.fold_right (fold ~none:Function.id ~some:(fun x xs -> x :: xs)) xs []
 
 let mapOption f xs =
   List.fold_right
-    (fun x -> x |> f |> option Function.id (fun x xs -> x :: xs))
+    (fun x -> x |> f |> fold ~none:Function.id ~some:(fun x xs -> x :: xs))
     xs []
 
 let ensure pred x = match pred x with true -> Some x | false -> None
@@ -92,7 +92,7 @@ let rec imapOptionAux f index xs =
   | x :: xs -> (
       match f index x with
       | Some y -> y :: imapOptionAux f (index + 1) xs
-      | None -> imapOptionAux f (index + 1) xs )
+      | None -> imapOptionAux f (index + 1) xs)
 
 let imapOption f xs = imapOptionAux f 0 xs
 
@@ -105,7 +105,7 @@ module Infix = struct
 
       let fmap = fmap
     end) :
-      Functor.Infix with type 'a t := 'a t )
+      Functor.Infix with type 'a t := 'a t)
 
   include (
     Applicative.MakeInfix (struct
@@ -117,7 +117,7 @@ module Infix = struct
 
       let ap mf mx = match mf with Some f -> f <$> mx | None -> None
     end) :
-      Applicative.Infix with type 'a t := 'a t )
+      Applicative.Infix with type 'a t := 'a t)
 
   include (
     Applicative.Alternative.MakeInfix (struct
@@ -127,7 +127,7 @@ module Infix = struct
 
       let alt mx my = match mx with None -> my | x -> x
     end) :
-      Applicative.Alternative.Infix with type 'a t := 'a t )
+      Applicative.Alternative.Infix with type 'a t := 'a t)
 
   include (
     Monad.MakeInfix (struct
@@ -139,5 +139,5 @@ module Infix = struct
 
       let bind f mx = match mx with Some x -> f x | None -> None
     end) :
-      Monad.Infix with type 'a t := 'a t )
+      Monad.Infix with type 'a t := 'a t)
 end

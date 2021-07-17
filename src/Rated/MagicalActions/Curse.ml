@@ -61,8 +61,10 @@ module Static = struct
 
     let make_assoc locale_order json =
       let open Option.Infix in
-      json |> multilingual locale_order |> fun multilingual ->
-      multilingual.translations |> TranslationMap.preferred locale_order
+      json |> multilingual locale_order
+      |> fun multilingual ->
+      multilingual.translations
+      |> TranslationMap.preferred locale_order
       <&> fun translation ->
       ( multilingual.id,
         {
@@ -79,7 +81,7 @@ module Static = struct
               translation.duration;
           property = multilingual.property;
           src = multilingual.src;
-          errata = translation.errata |> Option.fromOption [];
+          errata = translation.errata |> Option.value ~default:[];
         } )
   end
 end

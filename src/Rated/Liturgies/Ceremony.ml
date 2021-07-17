@@ -15,7 +15,7 @@ module Static = struct
     aspects : Id.Aspect.Set.t;
     ic : IC.t;
     prerequisites : Prerequisite.Collection.Liturgy.t;
-    enhancements : Enhancement.t IntMap.t;
+    enhancements : Enhancement.Static.t IntMap.t;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
@@ -73,7 +73,7 @@ module Static = struct
       aspects : int list;
       ic : IC.t;
       prerequisites : Prerequisite.Collection.Liturgy.t option;
-      enhancements : Enhancement.t IntMap.t option;
+      enhancements : Enhancement.Static.t IntMap.t option;
       src : PublicationRef.list;
       translations : translation TranslationMap.t;
     }
@@ -97,7 +97,7 @@ module Static = struct
         enhancements =
           json
           |> optionalField "enhancements"
-               (Enhancement.Decode.make_map locale_order);
+               (Enhancement.Static.Decode.make_map locale_order);
         src = json |> field "src" (PublicationRef.Decode.make_list locale_order);
         translations =
           json |> field "translations" (TranslationMap.Decode.t translation);
@@ -105,8 +105,10 @@ module Static = struct
 
     let make_assoc locale_order json =
       let open Option.Infix in
-      json |> multilingual locale_order |> fun multilingual ->
-      multilingual.translations |> TranslationMap.preferred locale_order
+      json |> multilingual locale_order
+      |> fun multilingual ->
+      multilingual.translations
+      |> TranslationMap.preferred locale_order
       <&> fun translation ->
       ( multilingual.id,
         {
@@ -133,11 +135,11 @@ module Static = struct
             multilingual.traditions |> Id.BlessedTradition.Set.from_int_list;
           aspects = multilingual.aspects |> Id.Aspect.Set.from_int_list;
           ic = multilingual.ic;
-          prerequisites = multilingual.prerequisites |> Option.fromOption [];
+          prerequisites = multilingual.prerequisites |> Option.value ~default:[];
           enhancements =
-            multilingual.enhancements |> Option.fromOption IntMap.empty;
+            multilingual.enhancements |> Option.value ~default:IntMap.empty;
           src = multilingual.src;
-          errata = translation.errata |> Option.fromOption [];
+          errata = translation.errata |> Option.value ~default:[];
         } )
   end
 end

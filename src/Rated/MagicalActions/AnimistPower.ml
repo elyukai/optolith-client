@@ -39,7 +39,8 @@ module Static = struct
         }
 
       let make locale_order json =
-        json |> multilingual |> fun multilingual ->
+        json |> multilingual
+        |> fun multilingual ->
         multilingual.translations |> TranslationMap.preferred locale_order
     end
 
@@ -65,8 +66,10 @@ module Static = struct
 
       let make_assoc locale_order json =
         let open Option.Infix in
-        json |> multilingual locale_order |> fun multilingual ->
-        multilingual.translations |> TranslationMap.preferred locale_order
+        json |> multilingual locale_order
+        |> fun multilingual ->
+        multilingual.translations
+        |> TranslationMap.preferred locale_order
         <&> fun translation ->
         ( multilingual.level,
           {
@@ -82,7 +85,8 @@ module Static = struct
     end
 
     let ic json =
-      json |> string |> function
+      json |> string
+      |> function
       | "DeriveFromPrimaryPatron" -> DeriveFromPrimaryPatron
       | _ -> json |> IC.Decode.t |> fun x -> Fixed x
 
@@ -147,8 +151,10 @@ module Static = struct
 
     let make_assoc locale_order json =
       let open Option.Infix in
-      json |> multilingual locale_order |> fun multilingual ->
-      multilingual.translations |> TranslationMap.preferred locale_order
+      json |> multilingual locale_order
+      |> fun multilingual ->
+      multilingual.translations
+      |> TranslationMap.preferred locale_order
       <&> fun translation ->
       ( multilingual.id,
         {
@@ -166,11 +172,11 @@ module Static = struct
           tribes = multilingual.tribes |> IntSet.fromList;
           property = multilingual.property;
           ic = multilingual.ic;
-          prerequisites = multilingual.prerequisites |> Option.fromOption [];
+          prerequisites = multilingual.prerequisites |> Option.value ~default:[];
           prerequisites_text = translation.prerequisites;
-          levels = multilingual.levels |> Option.fromOption IntMap.empty;
+          levels = multilingual.levels |> Option.value ~default:IntMap.empty;
           src = multilingual.src;
-          errata = translation.errata |> Option.fromOption [];
+          errata = translation.errata |> Option.value ~default:[];
         } )
   end
 end

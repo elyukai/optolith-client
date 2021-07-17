@@ -6,7 +6,7 @@ include (
 
     let rec fmap f xs = match xs with [] -> [] | y :: ys -> f y :: fmap f ys
   end) :
-    Functor.T with type 'a t := 'a t )
+    Functor.T with type 'a t := 'a t)
 
 include (
   Applicative.Make (struct
@@ -22,9 +22,9 @@ include (
       | gs -> (
           match xs with
           | [] -> []
-          | x :: ys -> fmap (fun f -> f x) gs @ ap fs ys )
+          | x :: ys -> fmap (fun f -> f x) gs @ ap fs ys)
   end) :
-    Applicative.T with type 'a t := 'a t )
+    Applicative.T with type 'a t := 'a t)
 
 include (
   Applicative.Alternative.Make (struct
@@ -34,7 +34,7 @@ include (
 
     let alt xs ys = match xs with [] -> ys | xs -> xs
   end) :
-    Applicative.Alternative.T with type 'a t := 'a t )
+    Applicative.Alternative.T with type 'a t := 'a t)
 
 include (
   Monad.Make (struct
@@ -46,7 +46,7 @@ include (
 
     let rec bind f xs = match xs with [] -> [] | y :: ys -> f y @ bind f ys
   end) :
-    Monad.T with type 'a t := 'a t )
+    Monad.T with type 'a t := 'a t)
 
 include (
   Foldable.Make (struct
@@ -60,7 +60,7 @@ include (
 
     let equal = ( == )
   end) :
-    Foldable.T with type 'a t := 'a t )
+    Foldable.T with type 'a t := 'a t)
 
 module Index = struct
   let%private rec indexedAux i xs =
@@ -75,7 +75,7 @@ module Index = struct
         match xs with
         | [] -> []
         | _ :: xs when index == 0 -> xs
-        | x :: xs -> x :: deleteAt (index - 1) xs )
+        | x :: xs -> x :: deleteAt (index - 1) xs)
 
   let rec deleteAtPair index xs =
     match index < 0 with
@@ -85,7 +85,7 @@ module Index = struct
         | [] -> (None, [])
         | x :: xs when index == 0 -> (Some x, xs)
         | x :: xs ->
-            deleteAtPair (index - 1) xs |> Tuple.second (fun xs -> x :: xs) )
+            deleteAtPair (index - 1) xs |> Tuple.second (fun xs -> x :: xs))
 
   let rec setAt index e xs =
     match index < 0 with
@@ -94,7 +94,7 @@ module Index = struct
         match xs with
         | [] -> []
         | _ :: xs when index == 0 -> e :: xs
-        | x :: xs -> x :: setAt (index - 1) e xs )
+        | x :: xs -> x :: setAt (index - 1) e xs)
 
   let rec modifyAt index f xs =
     match index < 0 with
@@ -103,7 +103,7 @@ module Index = struct
         match xs with
         | [] -> []
         | x :: xs when index == 0 -> f x :: xs
-        | x :: xs -> x :: modifyAt (index - 1) f xs )
+        | x :: xs -> x :: modifyAt (index - 1) f xs)
 
   let rec updateAt index f xs =
     match index < 0 with
@@ -111,8 +111,9 @@ module Index = struct
     | false -> (
         match xs with
         | [] -> []
-        | x :: xs when index == 0 -> Option.option xs (fun x' -> x' :: xs) (f x)
-        | x :: xs -> x :: updateAt (index - 1) f xs )
+        | x :: xs when index == 0 ->
+            Option.fold ~none:xs ~some:(fun x' -> x' :: xs) (f x)
+        | x :: xs -> x :: updateAt (index - 1) f xs)
 
   let rec insertAt index e xs =
     match index < 0 with
@@ -121,7 +122,7 @@ module Index = struct
         match xs with
         | [] -> []
         | xs when index == 0 -> e :: xs
-        | x :: xs -> x :: insertAt (index - 1) e xs )
+        | x :: xs -> x :: insertAt (index - 1) e xs)
 
   let rec imapAux f i xs =
     match xs with [] -> [] | x :: xs -> f i x :: imapAux f (i + 1) xs
@@ -184,7 +185,7 @@ module Index = struct
     | x :: xs -> (
         match pred index x with
         | true -> Some x
-        | false -> ifindAux pred (index + 1) xs )
+        | false -> ifindAux pred (index + 1) xs)
 
   let ifind pred xs = ifindAux pred 0 xs
 
@@ -194,7 +195,7 @@ module Index = struct
     | x :: xs -> (
         match pred index x with
         | true -> Some index
-        | false -> ifindIndexAux pred (index + 1) xs )
+        | false -> ifindIndexAux pred (index + 1) xs)
 
   let ifindIndex pred xs = ifindIndexAux pred 0 xs
 
@@ -204,7 +205,7 @@ module Index = struct
     | x :: xs -> (
         match pred i x with
         | true -> i :: ifindIndicesAux pred (i + 1) xs
-        | false -> ifindIndicesAux pred (i + 1) xs )
+        | false -> ifindIndicesAux pred (i + 1) xs)
 
   let ifindIndices pred xs = ifindIndicesAux pred 0 xs
 end
@@ -224,7 +225,7 @@ let head = function
 
 let rec last = function
   | [] -> invalid_arg "last does only work on non-empty lists."
-  | x :: xs -> ( match xs with [] -> x | _ :: xs -> last xs )
+  | x :: xs -> ( match xs with [] -> x | _ :: xs -> last xs)
 
 let tail = function
   | [] -> invalid_arg "tail does only work on non-empty lists."
@@ -232,7 +233,7 @@ let tail = function
 
 let rec init = function
   | [] -> invalid_arg "init does only work on non-empty lists."
-  | x :: xs -> ( match xs with [] -> [] | _ -> x :: init xs )
+  | x :: xs -> ( match xs with [] -> [] | _ -> x :: init xs)
 
 let uncons = function [] -> None | x :: xs -> Some (x, xs)
 
@@ -288,19 +289,18 @@ let rec replicate len x =
   match len > 0 with true -> x :: replicate (len - 1) x | false -> []
 
 let rec unfoldr f seed =
-  seed |> f |> function
-  | Some (value, newSeed) -> value :: unfoldr f newSeed
-  | None -> []
+  seed |> f
+  |> function Some (value, newSeed) -> value :: unfoldr f newSeed | None -> []
 
 let rec take n xs =
   match n <= 0 with
   | true -> []
-  | false -> ( match xs with [] -> [] | x :: xs -> x :: take (n - 1) xs )
+  | false -> ( match xs with [] -> [] | x :: xs -> x :: take (n - 1) xs)
 
 let rec drop n xs =
   match n <= 0 with
   | true -> xs
-  | false -> ( match xs with [] -> [] | _ :: xs -> drop (n - 1) xs )
+  | false -> ( match xs with [] -> [] | _ :: xs -> drop (n - 1) xs)
 
 let rec splitAt n xs =
   match n <= 0 with
@@ -310,7 +310,7 @@ let rec splitAt n xs =
       | [] -> ([], xs)
       | x :: xs ->
           let fsts, snds = splitAt (n - 1) xs in
-          (x :: fsts, snds) )
+          (x :: fsts, snds))
 
 let isInfixOf (x : string) (y : string) = Js.String.includes y x
 
@@ -345,7 +345,7 @@ let rec elemIndex e xs =
   | x :: xs -> (
       match e == x with
       | true -> Some 0
-      | false -> Option.Infix.( <$> ) Int.succ (elemIndex e xs) )
+      | false -> Option.Infix.( <$> ) Int.succ (elemIndex e xs))
 
 let rec elemIndicesAux e i xs =
   match xs with
@@ -353,7 +353,7 @@ let rec elemIndicesAux e i xs =
   | x :: xs -> (
       match e == x with
       | true -> i :: elemIndicesAux e (i + 1) xs
-      | false -> elemIndicesAux e (i + 1) xs )
+      | false -> elemIndicesAux e (i + 1) xs)
 
 let elemIndices e xs = elemIndicesAux e 0 xs
 
@@ -363,7 +363,7 @@ let rec findIndex pred xs =
   | x :: xs -> (
       match pred x with
       | true -> Some 0
-      | false -> Option.Infix.( <$> ) Int.succ (findIndex pred xs) )
+      | false -> Option.Infix.( <$> ) Int.succ (findIndex pred xs))
 
 let rec findIndicesAux pred i xs =
   match xs with
@@ -371,7 +371,7 @@ let rec findIndicesAux pred i xs =
   | x :: xs -> (
       match pred x with
       | true -> i :: findIndicesAux pred (i + 1) xs
-      | false -> findIndicesAux pred (i + 1) xs )
+      | false -> findIndicesAux pred (i + 1) xs)
 
 let findIndices pred xs = findIndicesAux pred 0 xs
 
@@ -398,7 +398,7 @@ let nub xs =
 let rec delete e xs =
   match xs with
   | [] -> []
-  | x :: xs -> ( match e == x with true -> xs | false -> delete e xs )
+  | x :: xs -> ( match e == x with true -> xs | false -> delete e xs)
 
 let difference xs ys = filter (Function.flip notElem ys) xs
 
@@ -428,7 +428,7 @@ let countMin e = countMinBy (( == ) e)
 let rec lengthMax max xs =
   match max < 0 with
   | true -> false
-  | false -> ( match xs with [] -> true | _ :: xs -> lengthMax (max - 1) xs )
+  | false -> ( match xs with [] -> true | _ :: xs -> lengthMax (max - 1) xs)
 
 let rec countMaxBy pred max xs =
   match max < 0 with
@@ -439,7 +439,7 @@ let rec countMaxBy pred max xs =
       | x :: xs ->
           countMaxBy pred
             (match pred x with true -> max - 1 | false -> max)
-            xs )
+            xs)
 
 let countMax e = countMaxBy (( == ) e)
 
@@ -470,14 +470,15 @@ module Extra = struct
     | [] -> None
     | [ x ] -> Some ([], x)
     | x :: xs -> (
-        match unsnoc xs with Some (a, b) -> Some (x :: a, b) | None -> None )
+        match unsnoc xs with Some (a, b) -> Some (x :: a, b) | None -> None)
 
   let rec snoc xs x = match xs with [] -> [ x ] | x :: xs -> x :: snoc xs x
 
   let maximumOn f xs =
     foldr
       (fun x (m, max) ->
-        x |> f |> fun res ->
+        x |> f
+        |> fun res ->
         match res > max with true -> (Some x, res) | false -> (m, max))
       (None, Js.Int.min) xs
     |> Tuple.fst
@@ -485,7 +486,8 @@ module Extra = struct
   let minimumOn f xs =
     foldr
       (fun x (m, min) ->
-        x |> f |> fun res ->
+        x |> f
+        |> fun res ->
         match res < min with true -> (Some x, res) | false -> (m, min))
       (None, Js.Int.max) xs
     |> Tuple.fst
@@ -494,7 +496,7 @@ module Extra = struct
     match xs with
     | [] -> None
     | x :: xs -> (
-        match pred x with Some _ as res -> res | None -> firstJust pred xs )
+        match pred x with Some _ as res -> res | None -> firstJust pred xs)
 
   let replaceStr (old_subseq : string) (new_subseq : string) (x : string) =
     Js.String.replaceByRe
@@ -522,7 +524,7 @@ module Infix = struct
 
       let fmap = fmap
     end) :
-      Functor.Infix with type 'a t := 'a t )
+      Functor.Infix with type 'a t := 'a t)
 
   include (
     Applicative.MakeInfix (struct
@@ -538,9 +540,9 @@ module Infix = struct
         | gs -> (
             match xs with
             | [] -> []
-            | x :: ys -> fmap (fun f -> f x) gs @ ap fs ys )
+            | x :: ys -> fmap (fun f -> f x) gs @ ap fs ys)
     end) :
-      Applicative.Infix with type 'a t := 'a t )
+      Applicative.Infix with type 'a t := 'a t)
 
   include (
     Applicative.Alternative.MakeInfix (struct
@@ -550,7 +552,7 @@ module Infix = struct
 
       let alt xs ys = match xs with [] -> ys | xs -> xs
     end) :
-      Applicative.Alternative.Infix with type 'a t := 'a t )
+      Applicative.Alternative.Infix with type 'a t := 'a t)
 
   include (
     Monad.MakeInfix (struct
@@ -562,5 +564,5 @@ module Infix = struct
 
       let rec bind f xs = match xs with [] -> [] | y :: ys -> f y @ bind f ys
     end) :
-      Monad.Infix with type 'a t := 'a t )
+      Monad.Infix with type 'a t := 'a t)
 end

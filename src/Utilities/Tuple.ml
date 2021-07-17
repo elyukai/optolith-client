@@ -6,19 +6,14 @@ include (
 
     let bimap f g (x, y) = (f x, g y)
   end) :
-    Bifunctor.T with type ('a, 'b) t := 'a * 'b )
+    Bifunctor.T with type ('a, 'b) t := 'a * 'b)
 
-(**
- * Extract the first component of a pair.
- *)
 let fst (x, _) = x
 
-(**
- * Extract the second component of a pair.
- *)
 let snd (_, y) = y
 
-(**
- * Swap the components of a pair.
- *)
+let curry f a b = f (a, b)
+
+let uncurry f (a, b) = f a b
+
 let swap (x, y) = (y, x)

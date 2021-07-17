@@ -1,6 +1,6 @@
 open Jest
 open Expect
-open Enhancement
+open Enhancement.Static
 
 let x1 =
   {

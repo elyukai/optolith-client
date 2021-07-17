@@ -55,6 +55,9 @@ module type T = sig
   val sum : int t -> int
   (** [sum x] returns the sum of the values in [x]. *)
 
+  val sum' : ('a -> int) -> 'a t -> int
+  (** [sum' f x] returns the sum of the values in [x], each passed to [f]. *)
+
   val maximum : int t -> int
   (** [maximum x] returns the largest integer in [x]. *)
 
@@ -119,6 +122,8 @@ module Make (Arg : S) : T with type 'a t = 'a Arg.t = struct
 
   let sum x = foldl ( + ) 0 x
 
+  let sum' f x = foldl (fun acc value -> acc + f value) 0 x
+
   let maximum xs = foldl Js.Math.max_int Js.Int.min xs
 
   let minimum xs = foldl Js.Math.min_int Js.Int.max xs
@@ -139,8 +144,6 @@ module Make (Arg : S) : T with type 'a t = 'a Arg.t = struct
         match res with
         | Some _ as x -> x
         | None -> (
-            match f e with
-            | true -> ( Some e [@explicit_arity] )
-            | false -> None ))
+            match f e with true -> Some e [@explicit_arity] | false -> None))
       None x
 end

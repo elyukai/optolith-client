@@ -18,7 +18,7 @@ module Static : sig
     aspects : Id.Aspect.Set.t;
     ic : IC.t;
     prerequisites : Prerequisite.Collection.Liturgy.t;
-    enhancements : Enhancement.t IntMap.t;
+    enhancements : Enhancement.Static.t IntMap.t;
     src : PublicationRef.list;
     errata : Erratum.list;
   }

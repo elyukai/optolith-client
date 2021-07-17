@@ -2,7 +2,12 @@
     dynamic and the static parts of an attribute. *)
 
 module Static : sig
-  type t = { id : Id.Attribute.t; name : string; abbr : string }
+  type t = {
+    id : Id.Attribute.t;
+    name : string;
+    abbr : string;
+    description : string;
+  }
   (** The attribute type. *)
 
   module Decode : sig

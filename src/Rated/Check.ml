@@ -1,7 +1,9 @@
 type t = int * int * int
 
 let values mp (a1, a2, a3) =
-  let lookup_value mp id = IntMap.lookup id mp |> Attribute.Dynamic.value in
+  let lookup_value mp id =
+    IntMap.lookup id mp |> Attribute.Dynamic.value_of_option
+  in
   (lookup_value mp a1, lookup_value mp a2, lookup_value mp a3)
 
 module Decode = struct
