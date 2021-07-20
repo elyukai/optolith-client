@@ -50,11 +50,11 @@ module type Id = sig
 
   (** Decode identifier variants directly, which makes it easier to use. *)
   module Decode : sig
-    val t : t Json.Decode.decoder
+    val t : t Decoders_bs.Decode.decoder
     (** Convert a single integer identifier into it's corresponding variant
         representation. *)
 
-    val set : Set.t Json.Decode.decoder
+    val set : Set.t Decoders_bs.Decode.decoder
     (** Convert a list of integer identifiers into a set of it's corresponding
         variant representations. *)
   end

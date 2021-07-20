@@ -16,9 +16,9 @@ type t =
   | Custom of { binary_handling : binary_handling; name : string }
 
 module Decode : sig
-  val t : t Json.Decode.decoder
+  val t : t Decoders_bs.Decode.decoder
 end
 
 module Encode : sig
-  val t : t Json.Encode.encoder
+  val t : t Decoders_bs.Encode.encoder
 end

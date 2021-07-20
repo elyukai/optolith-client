@@ -35,15 +35,15 @@ let ap_for_decrease ic from_value = -ap_value ic from_value
 let ap_for_activation = ap_base
 
 module Decode = struct
-  open Json.Decode
+  open Decoders_bs.Decode
 
   let t =
     string
-    |> map (function
-         | "A" -> A
-         | "B" -> B
-         | "C" -> C
-         | "D" -> D
-         | "E" -> E
-         | str -> raise (DecodeError ("Unknown improvement cost: " ^ str)))
+    >>= function
+    | "A" -> succeed A
+    | "B" -> succeed B
+    | "C" -> succeed C
+    | "D" -> succeed D
+    | "E" -> succeed E
+    | _ -> fail "Expected an improvement cost"
 end

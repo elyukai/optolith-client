@@ -17,7 +17,7 @@ module Static : sig
   (** The curse type. *)
 
   module Decode : sig
-    val make_assoc : (Id.Curse.t, t) JsonStatic.make_assoc
+    val make_assoc : (Id.Curse.t, t) Parsing.make_assoc
   end
 end
 

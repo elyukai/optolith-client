@@ -32,7 +32,7 @@ module Supported : sig
   (** Derive the default locale's id from the system locale's id. *)
 
   module Decode : sig
-    val make_strmap : t StrMap.t Json.Decode.decoder
+    val make_strmap : t StrMap.t Decoders_bs.Decode.decoder
   end
 end
 

@@ -9,6 +9,6 @@ module Static : sig
   }
 
   module Decode : sig
-    val make_assoc : (Id.OptionalRule.t, t) JsonStatic.make_assoc
+    val make_assoc : (Id.OptionalRule.t, t) Parsing.make_assoc
   end
 end

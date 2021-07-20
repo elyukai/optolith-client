@@ -513,8 +513,8 @@ end
 
 module Decode = struct
   let one_or_many decoder =
-    Json.Decode.oneOf
-      [ decoder |> Json.Decode.map pure; Json.Decode.list decoder ]
+    Decoders_bs.Decode.(
+      one_of [ ("One", decoder >|= pure); ("Many", list decoder) ])
 end
 
 module Infix = struct

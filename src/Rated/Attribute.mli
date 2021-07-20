@@ -11,7 +11,7 @@ module Static : sig
   (** The attribute type. *)
 
   module Decode : sig
-    val make_assoc : (Id.Attribute.t, t) JsonStatic.make_assoc
+    val make_assoc : (Id.Attribute.t, t) Parsing.make_assoc
   end
 end
 

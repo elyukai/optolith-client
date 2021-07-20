@@ -21,8 +21,7 @@ module Supported = struct
     |> Option.fold ~none:"en-US" ~some:(fun locale -> locale.id)
 
   module Decode = struct
-    open Json.Decode
-    open JsonStrict
+    open Decoders_bs.Decode
 
     type multilingual = {
       id : string;
@@ -31,30 +30,33 @@ module Supported = struct
       isMissingImplementation : bool option;
     }
 
-    let multilingual json =
-      {
-        id = json |> field "id" string;
-        name = json |> field "name" string;
-        region = json |> field "region" string;
-        isMissingImplementation =
-          json |> optionalField "isMissingImplementation" bool;
-      }
-      |> Option.ensure (fun { isMissingImplementation; _ } ->
-             Option.dis isMissingImplementation)
+    let multilingual =
+      field "id" string
+      >>= fun id ->
+      field "name" string
+      >>= fun name ->
+      field "region" string
+      >>= fun region ->
+      field_opt "isMissingImplementation" bool
+      >>= fun isMissingImplementation ->
+      succeed { id; name; region; isMissingImplementation }
+      >|= Option.ensure (fun { isMissingImplementation; _ } ->
+              Option.dis isMissingImplementation)
 
-    let make_assoc json =
-      let open Option.Infix in
-      json |> multilingual
-      <&> fun multilingual ->
-      ( multilingual.id,
-        {
-          id = multilingual.id;
-          name = multilingual.name;
-          region = multilingual.region;
-        } )
+    let make_assoc =
+      multilingual
+      >|= function
+      | None -> None
+      | Some multilingual ->
+          Some
+            ( multilingual.id,
+              {
+                id = multilingual.id;
+                name = multilingual.name;
+                region = multilingual.region;
+              } )
 
-    let make_strmap json =
-      json |> list make_assoc |> Option.catOptions |> StrMap.fromList
+    let make_strmap = list make_assoc >|= Option.catOptions >|= StrMap.fromList
   end
 end
 

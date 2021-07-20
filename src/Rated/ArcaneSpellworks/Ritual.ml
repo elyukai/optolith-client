@@ -12,7 +12,7 @@ module Static = struct
     target : string;
     property : int;
     traditions : Id.MagicalTradition.Set.t;
-    ic : IC.t;
+    ic : ImprovementCost.t;
     prerequisites : Prerequisite.Collection.Spellwork.t;
     enhancements : Enhancement.Static.t IntMap.t;
     src : PublicationRef.list;
@@ -20,8 +20,7 @@ module Static = struct
   }
 
   module Decode = struct
-    open Json.Decode
-    open JsonStrict
+    open Decoders_bs.Decode
 
     type translation = {
       name : string;
@@ -34,29 +33,26 @@ module Static = struct
       errata : Erratum.list option;
     }
 
-    let translation json =
-      {
-        name = json |> field "name" string;
-        effect = json |> field "effect" string;
-        castingTime =
-          json
-          |> field "castingTime"
-               Rated.Static.Activatable.MainParameter.Decode.translation;
-        cost =
-          json
-          |> field "cost"
-               Rated.Static.Activatable.MainParameter.Decode.translation;
-        range =
-          json
-          |> field "range"
-               Rated.Static.Activatable.MainParameter.Decode.translation;
-        duration =
-          json
-          |> field "duration"
-               Rated.Static.Activatable.MainParameter.Decode.translation;
-        target = json |> field "target" string;
-        errata = json |> optionalField "errata" Erratum.Decode.list;
-      }
+    let translation =
+      field "name" string
+      >>= fun name ->
+      field "effect" string
+      >>= fun effect ->
+      field "castingTime"
+        Rated.Static.Activatable.MainParameter.Decode.translation
+      >>= fun castingTime ->
+      field "cost" Rated.Static.Activatable.MainParameter.Decode.translation
+      >>= fun cost ->
+      field "range" Rated.Static.Activatable.MainParameter.Decode.translation
+      >>= fun range ->
+      field "duration" Rated.Static.Activatable.MainParameter.Decode.translation
+      >>= fun duration ->
+      field "target" string
+      >>= fun target ->
+      field_opt "errata" Erratum.Decode.list
+      >>= fun errata ->
+      succeed
+        { name; effect; castingTime; cost; range; duration; target; errata }
 
     type multilingual = {
       id : Id.Ritual.t;
@@ -68,42 +64,65 @@ module Static = struct
       durationNoMod : bool;
       property : int;
       traditions : int list;
-      ic : IC.t;
+      ic : ImprovementCost.t;
       prerequisites : Prerequisite.Collection.Spellwork.t option;
       enhancements : Enhancement.Static.t IntMap.t option;
       src : PublicationRef.list;
       translations : translation TranslationMap.t;
     }
 
-    let multilingual locale_order json =
-      {
-        id = json |> field "id" Id.Ritual.Decode.t;
-        check = json |> field "check" Check.Decode.t;
-        checkMod = json |> optionalField "checkMod" Check.Modifier.Decode.t;
-        castingTimeNoMod = json |> field "castingTimeNoMod" bool;
-        costNoMod = json |> field "costNoMod" bool;
-        rangeNoMod = json |> field "rangeNoMod" bool;
-        durationNoMod = json |> field "durationNoMod" bool;
-        property = json |> field "property" int;
-        traditions = json |> field "traditions" (list int);
-        ic = json |> field "ic" IC.Decode.t;
-        prerequisites =
-          json
-          |> optionalField "prerequisites"
-               (Prerequisite.Collection.Spellwork.Decode.make locale_order);
-        enhancements =
-          json
-          |> optionalField "enhancements"
-               (Enhancement.Static.Decode.make_map locale_order);
-        src = json |> field "src" (PublicationRef.Decode.make_list locale_order);
-        translations =
-          json |> field "translations" (TranslationMap.Decode.t translation);
-      }
+    let multilingual locale_order =
+      field "id" Id.Ritual.Decode.t
+      >>= fun id ->
+      field "check" Check.Decode.t
+      >>= fun check ->
+      field_opt "checkMod" Check.Modifier.Decode.t
+      >>= fun checkMod ->
+      field "castingTimeNoMod" bool
+      >>= fun castingTimeNoMod ->
+      field "costNoMod" bool
+      >>= fun costNoMod ->
+      field "rangeNoMod" bool
+      >>= fun rangeNoMod ->
+      field "durationNoMod" bool
+      >>= fun durationNoMod ->
+      field "property" int
+      >>= fun property ->
+      field "traditions" (list int)
+      >>= fun traditions ->
+      field "ic" ImprovementCost.Decode.t
+      >>= fun ic ->
+      field_opt "prerequisites"
+        (Prerequisite.Collection.Spellwork.Decode.make locale_order)
+      >>= fun prerequisites ->
+      field_opt "enhancements" (Enhancement.Static.Decode.make_map locale_order)
+      >>= fun enhancements ->
+      field "src" (PublicationRef.Decode.make_list locale_order)
+      >>= fun src ->
+      field "translations" (TranslationMap.Decode.t translation)
+      >>= fun translations ->
+      succeed
+        {
+          id;
+          check;
+          checkMod;
+          castingTimeNoMod;
+          costNoMod;
+          rangeNoMod;
+          durationNoMod;
+          property;
+          traditions;
+          ic;
+          prerequisites;
+          enhancements;
+          src;
+          translations;
+        }
 
-    let make_assoc locale_order json =
+    let make_assoc locale_order =
       let open Option.Infix in
-      json |> multilingual locale_order
-      |> fun multilingual ->
+      multilingual locale_order
+      >|= fun multilingual ->
       multilingual.translations
       |> TranslationMap.preferred locale_order
       <&> fun translation ->

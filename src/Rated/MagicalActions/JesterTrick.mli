@@ -14,14 +14,14 @@ module Static : sig
     duration : Rated.Static.Activatable.MainParameter.t;
     target : string;
     property : int;
-    ic : IC.t;
+    ic : ImprovementCost.t;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
   (** The jester trick type. *)
 
   module Decode : sig
-    val make_assoc : (Id.JesterTrick.t, t) JsonStatic.make_assoc
+    val make_assoc : (Id.JesterTrick.t, t) Parsing.make_assoc
   end
 end
 

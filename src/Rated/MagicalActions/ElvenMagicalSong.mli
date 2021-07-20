@@ -12,14 +12,14 @@ module Static : sig
     skill : Id.Skill.t NonEmptyList.t;
         (** The skill(s) that can be used with this entry. *)
     property : int;
-    ic : IC.t;
+    ic : ImprovementCost.t;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
   (** The Elven magical song type. *)
 
   module Decode : sig
-    val make_assoc : (Id.ElvenMagicalSong.t, t) JsonStatic.make_assoc
+    val make_assoc : (Id.ElvenMagicalSong.t, t) Parsing.make_assoc
   end
 end
 

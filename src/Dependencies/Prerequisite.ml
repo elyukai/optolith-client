@@ -14,15 +14,14 @@ module Sex = struct
         as_sex
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t =
       string
-      |> map (function
-           | "Male" -> (Male : t)
-           | "Female" -> Female
-           | str ->
-               JsonStatic.raise_unknown_variant ~variant_name:"Sex" ~invalid:str)
+      >>= function
+      | "Male" -> succeed Male
+      | "Female" -> succeed Female
+      | _ -> fail "Expected a binary sex"
   end
 end
 
@@ -30,18 +29,18 @@ module Race = struct
   type t = { id : int NonEmptyList.t; active : bool }
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t =
-      oneOf
+      one_of
         [
-          (fun json ->
-            { id = json |> NonEmptyList.Decode.one_or_many int; active = true });
-          (fun json ->
-            {
-              id = json |> field "races" (NonEmptyList.Decode.one_or_many int);
-              active = json |> field "active" bool;
-            });
+          ( "Simple",
+            NonEmptyList.Decode.one_or_many int
+            >>= fun id -> succeed { id; active = true } );
+          ( "Extended",
+            field "races" (NonEmptyList.Decode.one_or_many int)
+            >>= fun id ->
+            field "active" bool >>= fun active -> succeed { id; active } );
         ]
   end
 end
@@ -50,7 +49,7 @@ module Culture = struct
   type t = int NonEmptyList.t
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t = NonEmptyList.Decode.one_or_many int
   end
@@ -60,16 +59,14 @@ module PrimaryAttribute = struct
   type t = Magical of int | Blessed of int
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t =
       field "type" string
-      |> andThen (function
-           | "Blessed" -> field "value" int |> map (fun value -> Blessed value)
-           | "Magical" -> field "value" int |> map (fun value -> Magical value)
-           | str ->
-               JsonStatic.raise_unknown_variant ~variant_name:"PrimaryAtribute"
-                 ~invalid:str)
+      >>= function
+      | "Blessed" -> field "value" int >|= fun value -> Blessed value
+      | "Magical" -> field "value" int >|= fun value -> Magical value
+      | _ -> fail "Expected a primary attribute type"
   end
 end
 
@@ -81,16 +78,14 @@ module Pact = struct
   }
 
   module Decode = struct
-    open Json.Decode
-    open JsonStrict
+    open Decoders_bs.Decode
 
-    let t json =
-      {
-        category = json |> field "category" int;
-        domain =
-          json |> optionalField "domain" (NonEmptyList.Decode.one_or_many int);
-        level = json |> optionalField "level" int;
-      }
+    let t =
+      field "category" int
+      >>= fun category ->
+      field_opt "domain" (NonEmptyList.Decode.one_or_many int)
+      >>= fun domain ->
+      field_opt "level" int >>= fun level -> succeed { category; domain; level }
   end
 end
 
@@ -98,7 +93,7 @@ module SocialStatus = struct
   type t = int
 
   module Decode = struct
-    let t = Json.Decode.int
+    let t = Decoders_bs.Decode.int
   end
 end
 
@@ -106,7 +101,7 @@ module State = struct
   type t = int NonEmptyList.t
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t = NonEmptyList.Decode.one_or_many int
   end
@@ -124,7 +119,7 @@ module Publication = struct
   type t = int
 
   module Decode = struct
-    let t = Json.Decode.int
+    let t = Decoders_bs.Decode.int
   end
 end
 
@@ -132,10 +127,11 @@ module Influence = struct
   type t = { id : int; active : bool }
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
-    let t json =
-      { id = json |> field "id" int; active = json |> field "active" bool }
+    let t =
+      field "id" int
+      >>= fun id -> field "active" bool >>= fun active -> succeed { id; active }
   end
 end
 
@@ -151,24 +147,28 @@ module Activatable = struct
       }
 
       module Decode = struct
-        open Json.Decode
-        open JsonStrict
+        open Decoders_bs.Decode
 
-        let t json =
-          {
-            id = json |> field "id" IdGroup.Activatable.Decode.t;
-            active = json |> field "active" bool;
-            first_option =
-              json
-              |> field "firstOption"
-                   (NonEmptyList.Decode.t IdGroup.SelectOption.Decode.t);
-            other_options =
-              json
-              |> optionalField "otherOptions"
-                   (list IdGroup.SelectOption.Decode.t)
-              |> Option.value ~default:[];
-            level = json |> optionalField "level" int;
-          }
+        let t =
+          field "id" IdGroup.Activatable.Decode.t
+          >>= fun id ->
+          field "active" bool
+          >>= fun active ->
+          field "firstOption"
+            (NonEmptyList.Decode.t IdGroup.SelectOption.Decode.t)
+          >>= fun first_option ->
+          field_opt "otherOptions" (list IdGroup.SelectOption.Decode.t)
+          >>= fun otherOptions ->
+          field_opt "level" int
+          >>= fun level ->
+          succeed
+            {
+              id;
+              active;
+              first_option;
+              other_options = Option.value ~default:[] otherOptions;
+              level;
+            }
       end
     end
 
@@ -180,19 +180,19 @@ module Activatable = struct
     }
 
     module Decode = struct
-      open Json.Decode
-      open JsonStrict
+      open Decoders_bs.Decode
 
-      let t json =
-        {
-          id = json |> field "id" IdGroup.Activatable.Many.Decode.t;
-          active = json |> field "active" bool;
-          options =
-            json
-            |> optionalField "options" (list IdGroup.SelectOption.Decode.t)
-            |> Option.value ~default:[];
-          level = json |> optionalField "level" int;
-        }
+      let t =
+        field "id" IdGroup.Activatable.Many.Decode.t
+        >>= fun id ->
+        field "active" bool
+        >>= fun active ->
+        field_opt "options" (list IdGroup.SelectOption.Decode.t)
+        >>= fun options ->
+        field_opt "level" int
+        >>= fun level ->
+        succeed
+          { id; active; options = options |> Option.value ~default:[]; level }
     end
   end
 
@@ -204,19 +204,19 @@ module Activatable = struct
   }
 
   module Decode = struct
-    open Json.Decode
-    open JsonStrict
+    open Decoders_bs.Decode
 
-    let t json =
-      {
-        id = json |> field "id" IdGroup.Activatable.Decode.t;
-        active = json |> field "active" bool;
-        options =
-          json
-          |> optionalField "options" (list IdGroup.SelectOption.Decode.t)
-          |> Option.value ~default:[];
-        level = json |> optionalField "level" int;
-      }
+    let t =
+      field "id" IdGroup.Activatable.Decode.t
+      >>= fun id ->
+      field "active" bool
+      >>= fun active ->
+      field_opt "options" (list IdGroup.SelectOption.Decode.t)
+      >>= fun options ->
+      field_opt "level" int
+      >>= fun level ->
+      succeed
+        { id; active; options = options |> Option.value ~default:[]; level }
   end
 end
 
@@ -225,26 +225,22 @@ module Rated = struct
     type t = { id : IdGroup.Rated.Many.t; value : int }
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
-      let t json =
-        {
-          id = json |> field "id" IdGroup.Rated.Many.Decode.t;
-          value = json |> field "value" int;
-        }
+      let t =
+        field "id" IdGroup.Rated.Many.Decode.t
+        >>= fun id -> field "value" int >>= fun value -> succeed { id; value }
     end
   end
 
   type t = { id : IdGroup.Rated.t; value : int }
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
-    let t json =
-      {
-        id = json |> field "id" IdGroup.Rated.Decode.t;
-        value = json |> field "value" int;
-      }
+    let t =
+      field "id" IdGroup.Rated.Decode.t
+      >>= fun id -> field "value" int >>= fun value -> succeed { id; value }
   end
 end
 
@@ -252,15 +248,14 @@ module AnimistPower = struct
   type t = { id : IdGroup.AnimistPower.t; level : int option; value : int }
 
   module Decode = struct
-    open Json.Decode
-    open JsonStrict
+    open Decoders_bs.Decode
 
-    let t json =
-      {
-        id = json |> field "id" IdGroup.AnimistPower.Decode.t;
-        level = json |> optionalField "level" int;
-        value = json |> field "value" int;
-      }
+    let t =
+      field "id" IdGroup.AnimistPower.Decode.t
+      >>= fun id ->
+      field_opt "level" int
+      >>= fun level ->
+      field "value" int >>= fun value -> succeed { id; level; value }
   end
 end
 
@@ -268,7 +263,7 @@ module Enhancement = struct
   type t = int
 
   module Decode = struct
-    let t = Json.Decode.int
+    let t = Decoders_bs.Decode.int
   end
 end
 
@@ -276,7 +271,7 @@ module DisplayMode = struct
   type t = Generate | Hide | ReplaceWith of string
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     type translation = string
 
@@ -288,19 +283,16 @@ module DisplayMode = struct
 
     let multilingual =
       field "type" string
-      |> andThen (function
-           | "Hide" -> fun _ -> MultilingualHide
-           | "ReplaceWith" ->
-               field "value" (TranslationMap.Decode.t translation)
-               |> map (fun mp -> MultilingualReplaceWith mp)
-           | str ->
-               JsonStatic.raise_unknown_variant ~variant_name:"DisplayMode"
-                 ~invalid:str)
+      >>= function
+      | "Hide" -> succeed MultilingualHide
+      | "ReplaceWith" ->
+          field "value" (TranslationMap.Decode.t translation)
+          >|= fun mp -> MultilingualReplaceWith mp
+      | _ -> fail "Expected a display mode"
 
-    let make locale_order json =
-      json |> multilingual
-      |> fun multilingual ->
-      match multilingual with
+    let make locale_order =
+      multilingual
+      >|= function
       | MultilingualHide -> Hide
       | MultilingualReplaceWith mp ->
           mp
@@ -314,17 +306,14 @@ module When = struct
   type t = Publication of Publication.t
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t =
       field "type" string
-      |> andThen (function
-           | "Publication" ->
-               field "value" Publication.Decode.t
-               |> map (fun x -> Publication x)
-           | str ->
-               JsonStatic.raise_unknown_variant ~variant_name:"When"
-                 ~invalid:str)
+      >>= function
+      | "Publication" ->
+          field "value" Publication.Decode.t >|= fun x -> Publication x
+      | _ -> fail "Expected a precondition prerequisite type"
   end
 end
 
@@ -332,8 +321,7 @@ module Config = struct
   type 'a t = { value : 'a; displayMode : DisplayMode.t; when_ : When.t list }
 
   module Decode = struct
-    open Json.Decode
-    open JsonStrict
+    open Decoders_bs.Decode
 
     type 'a multilingual = {
       value : 'a;
@@ -341,22 +329,17 @@ module Config = struct
       when_ : When.t NonEmptyList.t option;
     }
 
-    let multilingual locale_order decoder (wrap : 'a -> 'b) json :
-        'b multilingual =
-      {
-        value = json |> field "value" decoder |> wrap;
-        displayOption =
-          json
-          |> optionalField "displayOption"
-               (DisplayMode.Decode.make locale_order);
-        when_ =
-          json |> optionalField "when" (NonEmptyList.Decode.t When.Decode.t);
-      }
+    let multilingual locale_order decoder wrap =
+      field "value" decoder
+      >>= fun value ->
+      field_opt "displayOption" (DisplayMode.Decode.make locale_order)
+      >>= fun displayOption ->
+      field_opt "when" (NonEmptyList.Decode.t When.Decode.t)
+      >>= fun when_ -> succeed { value = value |> wrap; displayOption; when_ }
 
-    let make locale_order decoder (wrap : 'a -> 'b) json =
-      json
-      |> multilingual locale_order decoder wrap
-      |> fun multilingual : 'b t ->
+    let make locale_order decoder wrap =
+      multilingual locale_order decoder wrap
+      >|= fun multilingual : 'b t ->
       {
         value = multilingual.value;
         displayMode =
@@ -431,50 +414,44 @@ module Group = struct
       }
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make locale_order =
         field "type" string
-        |> andThen (function
-             | "Sex" ->
-                 Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
-             | "Race" ->
-                 Config.Decode.make locale_order Race.Decode.t (fun v -> Race v)
-             | "Culture" ->
-                 Config.Decode.make locale_order Culture.Decode.t (fun v ->
-                     Culture v)
-             | "Pact" ->
-                 Config.Decode.make locale_order Pact.Decode.t (fun v -> Pact v)
-             | "SocialStatus" ->
-                 Config.Decode.make locale_order SocialStatus.Decode.t (fun v ->
-                     SocialStatus v)
-             | "PrimaryAttribute" ->
-                 Config.Decode.make locale_order PrimaryAttribute.Decode.t
-                   (fun v -> PrimaryAttribute v)
-             | "State" ->
-                 Config.Decode.make locale_order State.Decode.t (fun v ->
-                     State v)
-             | "Rule" ->
-                 Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
-             | "Activatable" ->
-                 Config.Decode.make locale_order Activatable.Decode.t (fun v ->
-                     Activatable v)
-             | "ActivatableMultiEntry" ->
-                 Config.Decode.make locale_order Activatable.AnyOf.Decode.t
-                   (fun v -> ActivatableAnyOf v)
-             | "ActivatableMultiSelect" ->
-                 Config.Decode.make locale_order
-                   Activatable.AnyOf.Select.Decode.t (fun v ->
-                     ActivatableAnyOfSelect v)
-             | "Increasable" ->
-                 Config.Decode.make locale_order Rated.Decode.t (fun v ->
-                     Rated v)
-             | "IncreasableMultiEntry" ->
-                 Config.Decode.make locale_order Rated.AnyOf.Decode.t (fun v ->
-                     RatedAnyOf v)
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Group.General" ~invalid:str)
+        >>= function
+        | "Sex" -> Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
+        | "Race" ->
+            Config.Decode.make locale_order Race.Decode.t (fun v -> Race v)
+        | "Culture" ->
+            Config.Decode.make locale_order Culture.Decode.t (fun v ->
+                Culture v)
+        | "Pact" ->
+            Config.Decode.make locale_order Pact.Decode.t (fun v -> Pact v)
+        | "SocialStatus" ->
+            Config.Decode.make locale_order SocialStatus.Decode.t (fun v ->
+                SocialStatus v)
+        | "PrimaryAttribute" ->
+            Config.Decode.make locale_order PrimaryAttribute.Decode.t (fun v ->
+                PrimaryAttribute v)
+        | "State" ->
+            Config.Decode.make locale_order State.Decode.t (fun v -> State v)
+        | "Rule" ->
+            Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
+        | "Activatable" ->
+            Config.Decode.make locale_order Activatable.Decode.t (fun v ->
+                Activatable v)
+        | "ActivatableMultiEntry" ->
+            Config.Decode.make locale_order Activatable.AnyOf.Decode.t (fun v ->
+                ActivatableAnyOf v)
+        | "ActivatableMultiSelect" ->
+            Config.Decode.make locale_order Activatable.AnyOf.Select.Decode.t
+              (fun v -> ActivatableAnyOfSelect v)
+        | "Increasable" ->
+            Config.Decode.make locale_order Rated.Decode.t (fun v -> Rated v)
+        | "IncreasableMultiEntry" ->
+            Config.Decode.make locale_order Rated.AnyOf.Decode.t (fun v ->
+                RatedAnyOf v)
+        | _ -> fail "Expected special ability prerequisite type"
     end
   end
 
@@ -501,27 +478,23 @@ module Group = struct
       }
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make locale_order =
         field "type" string
-        |> andThen (function
-             | "Sex" ->
-                 Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
-             | "Race" ->
-                 Config.Decode.make locale_order Race.Decode.t (fun v -> Race v)
-             | "Culture" ->
-                 Config.Decode.make locale_order Culture.Decode.t (fun v ->
-                     Culture v)
-             | "Activatable" ->
-                 Config.Decode.make locale_order Activatable.Decode.t (fun v ->
-                     Activatable v)
-             | "Increasable" ->
-                 Config.Decode.make locale_order Rated.Decode.t (fun v ->
-                     Rated v)
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Group.Profession" ~invalid:str)
+        >>= function
+        | "Sex" -> Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
+        | "Race" ->
+            Config.Decode.make locale_order Race.Decode.t (fun v -> Race v)
+        | "Culture" ->
+            Config.Decode.make locale_order Culture.Decode.t (fun v ->
+                Culture v)
+        | "Activatable" ->
+            Config.Decode.make locale_order Activatable.Decode.t (fun v ->
+                Activatable v)
+        | "Increasable" ->
+            Config.Decode.make locale_order Rated.Decode.t (fun v -> Rated v)
+        | _ -> fail "Expected profession prerequisite type"
     end
   end
 
@@ -566,58 +539,52 @@ module Group = struct
       }
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make locale_order =
         field "type" string
-        |> andThen (function
-             | "CommonSuggestedByRCP" ->
-                 fun _ : t ->
-                   {
-                     value = CommonSuggestedByRCP;
-                     displayMode = Generate;
-                     when_ = [];
-                   }
-             | "Sex" ->
-                 Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
-             | "Race" ->
-                 Config.Decode.make locale_order Race.Decode.t (fun v -> Race v)
-             | "Culture" ->
-                 Config.Decode.make locale_order Culture.Decode.t (fun v ->
-                     Culture v)
-             | "Pact" ->
-                 Config.Decode.make locale_order Pact.Decode.t (fun v -> Pact v)
-             | "SocialStatus" ->
-                 Config.Decode.make locale_order SocialStatus.Decode.t (fun v ->
-                     SocialStatus v)
-             | "PrimaryAttribute" ->
-                 Config.Decode.make locale_order PrimaryAttribute.Decode.t
-                   (fun v -> PrimaryAttribute v)
-             | "State" ->
-                 Config.Decode.make locale_order State.Decode.t (fun v ->
-                     State v)
-             | "Rule" ->
-                 Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
-             | "Activatable" ->
-                 Config.Decode.make locale_order Activatable.Decode.t (fun v ->
-                     Activatable v)
-             | "ActivatableMultiEntry" ->
-                 Config.Decode.make locale_order Activatable.AnyOf.Decode.t
-                   (fun v -> ActivatableAnyOf v)
-             | "ActivatableMultiSelect" ->
-                 Config.Decode.make locale_order
-                   Activatable.AnyOf.Select.Decode.t (fun v ->
-                     ActivatableAnyOfSelect v)
-             | "Increasable" ->
-                 Config.Decode.make locale_order Rated.Decode.t (fun v ->
-                     Rated v)
-             | "IncreasableMultiEntry" ->
-                 Config.Decode.make locale_order Rated.AnyOf.Decode.t (fun v ->
-                     RatedAnyOf v)
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Group.AdvantageDisadvantage"
-                   ~invalid:str)
+        >>= function
+        | "CommonSuggestedByRCP" ->
+            succeed
+              ({
+                 value = CommonSuggestedByRCP;
+                 displayMode = Generate;
+                 when_ = [];
+               }
+                : t)
+        | "Sex" -> Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
+        | "Race" ->
+            Config.Decode.make locale_order Race.Decode.t (fun v -> Race v)
+        | "Culture" ->
+            Config.Decode.make locale_order Culture.Decode.t (fun v ->
+                Culture v)
+        | "Pact" ->
+            Config.Decode.make locale_order Pact.Decode.t (fun v -> Pact v)
+        | "SocialStatus" ->
+            Config.Decode.make locale_order SocialStatus.Decode.t (fun v ->
+                SocialStatus v)
+        | "PrimaryAttribute" ->
+            Config.Decode.make locale_order PrimaryAttribute.Decode.t (fun v ->
+                PrimaryAttribute v)
+        | "State" ->
+            Config.Decode.make locale_order State.Decode.t (fun v -> State v)
+        | "Rule" ->
+            Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
+        | "Activatable" ->
+            Config.Decode.make locale_order Activatable.Decode.t (fun v ->
+                Activatable v)
+        | "ActivatableMultiEntry" ->
+            Config.Decode.make locale_order Activatable.AnyOf.Decode.t (fun v ->
+                ActivatableAnyOf v)
+        | "ActivatableMultiSelect" ->
+            Config.Decode.make locale_order Activatable.AnyOf.Select.Decode.t
+              (fun v -> ActivatableAnyOfSelect v)
+        | "Increasable" ->
+            Config.Decode.make locale_order Rated.Decode.t (fun v -> Rated v)
+        | "IncreasableMultiEntry" ->
+            Config.Decode.make locale_order Rated.AnyOf.Decode.t (fun v ->
+                RatedAnyOf v)
+        | _ -> fail "Expected advantage/disadvantage prerequisite type"
     end
   end
 
@@ -633,20 +600,16 @@ module Group = struct
       }
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make locale_order =
         field "type" string
-        |> andThen (function
-             | "Sex" ->
-                 Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
-             | "Culture" ->
-                 Config.Decode.make locale_order Culture.Decode.t (fun v ->
-                     Culture v)
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Group.ArcaneTradition"
-                   ~invalid:str)
+        >>= function
+        | "Sex" -> Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
+        | "Culture" ->
+            Config.Decode.make locale_order Culture.Decode.t (fun v ->
+                Culture v)
+        | _ -> fail "Expected arcane tradition prerequisite type"
     end
   end
 
@@ -662,21 +625,17 @@ module Group = struct
       }
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make locale_order =
         field "type" string
-        |> andThen (function
-             | "Special" ->
-                 Config.Decode.make locale_order Function.id
-                   (Function.const Special)
-             | "Culture" ->
-                 Config.Decode.make locale_order Culture.Decode.t (fun v ->
-                     Culture v)
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Group.PersonalityTrait"
-                   ~invalid:str)
+        >>= function
+        | "Special" ->
+            Config.Decode.make locale_order value (Function.const Special)
+        | "Culture" ->
+            Config.Decode.make locale_order Culture.Decode.t (fun v ->
+                Culture v)
+        | _ -> fail "Expected personal trait prerequisite type"
     end
   end
 
@@ -692,19 +651,16 @@ module Group = struct
       }
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make locale_order =
         field "type" string
-        |> andThen (function
-             | "Rule" ->
-                 Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
-             | "Culture" ->
-                 Config.Decode.make locale_order Rated.Decode.t (fun v ->
-                     Rated v)
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Group.Spellwork" ~invalid:str)
+        >>= function
+        | "Rule" ->
+            Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
+        | "Culture" ->
+            Config.Decode.make locale_order Rated.Decode.t (fun v -> Rated v)
+        | _ -> fail "Expected spellwork prerequisite type"
     end
   end
 
@@ -717,16 +673,14 @@ module Group = struct
       { x with value = (match x.value with Rule x -> Rule x) }
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make locale_order =
         field "type" string
-        |> andThen (function
-             | "Rule" ->
-                 Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Group.Liturgy" ~invalid:str)
+        >>= function
+        | "Rule" ->
+            Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
+        | _ -> fail "Expected liturgy prerequisite type"
     end
   end
 
@@ -743,20 +697,17 @@ module Group = struct
       }
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make locale_order =
         field "type" string
-        |> andThen (function
-             | "Special" ->
-                 Config.Decode.make locale_order Function.id
-                   (Function.const Special)
-             | "Influence" ->
-                 Config.Decode.make locale_order Influence.Decode.t (fun v ->
-                     Influence v)
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Group.Influence" ~invalid:str)
+        >>= function
+        | "Special" ->
+            Config.Decode.make locale_order value (Function.const Special)
+        | "Influence" ->
+            Config.Decode.make locale_order Influence.Decode.t (fun v ->
+                Influence v)
+        | _ -> fail "Expected influence prerequisite type"
     end
   end
 
@@ -775,19 +726,17 @@ module Group = struct
       }
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make locale_order =
         field "type" string
-        |> andThen (function
-             | "Race" ->
-                 Config.Decode.make locale_order Race.Decode.t (fun v -> Race v)
-             | "Activatable" ->
-                 Config.Decode.make locale_order Activatable.Decode.t (fun v ->
-                     Activatable v)
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Group.Language" ~invalid:str)
+        >>= function
+        | "Race" ->
+            Config.Decode.make locale_order Race.Decode.t (fun v -> Race v)
+        | "Activatable" ->
+            Config.Decode.make locale_order Activatable.Decode.t (fun v ->
+                Activatable v)
+        | _ -> fail "Expected language prerequisite type"
     end
   end
 
@@ -800,17 +749,15 @@ module Group = struct
       { x with value = (match x.value with AnimistPower x -> AnimistPower x) }
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make locale_order =
         field "type" string
-        |> andThen (function
-             | "AnimistPower" ->
-                 Config.Decode.make locale_order AnimistPower.Decode.t (fun v ->
-                     AnimistPower v)
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Group.AnimistPower" ~invalid:str)
+        >>= function
+        | "AnimistPower" ->
+            Config.Decode.make locale_order AnimistPower.Decode.t (fun v ->
+                AnimistPower v)
+        | _ -> fail "Expected animist power prerequisite type"
     end
   end
 
@@ -818,16 +765,13 @@ module Group = struct
     type t = Enhancement of Enhancement.t
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make _ =
         field "type" string
-        |> andThen (function
-             | "Enhancement" ->
-                 Enhancement.Decode.t |> map (fun v -> Enhancement v)
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Group.Enhancement" ~invalid:str)
+        >>= function
+        | "Enhancement" -> Enhancement.Decode.t |> map (fun v -> Enhancement v)
+        | _ -> fail "Expected enhancement prerequisite type"
     end
   end
 end
@@ -837,15 +781,13 @@ module Collection = struct
     type 'a t = 'a list
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make decoder =
         field "type" string
-        |> andThen (function
-             | "Plain" -> field "value" (list decoder)
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Collection.Plain" ~invalid:str)
+        >>= function
+        | "Plain" -> field "value" (list decoder)
+        | _ -> fail "Expected collection type"
     end
   end
 
@@ -877,22 +819,21 @@ module Collection = struct
           mp |> IntMap.filterWithKey (fun k _ -> range_pred k) |> IntMap.concat
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let make decoder =
         field "type" string
-        |> andThen (function
-             | "Plain" -> field "value" (list decoder) |> map plain
-             | "ByLevel" ->
-                 let level json =
-                   ( json |> field "level" int,
-                     json |> field "prerequisites" (list decoder) )
-                 in
-                 field "value" (list level)
-                 |> map IntMap.fromList |> map byLevel
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Prerequisite.Collection.Plain" ~invalid:str)
+        >>= function
+        | "Plain" -> field "value" (list decoder) |> map plain
+        | "ByLevel" ->
+            let level =
+              field "level" int
+              >>= fun level ->
+              field "prerequisites" (list decoder)
+              >>= fun prerequisites -> succeed (level, prerequisites)
+            in
+            field "value" (list level) |> map IntMap.fromList |> map byLevel
+        | _ -> fail "Expected collection type"
     end
   end
 
@@ -900,13 +841,14 @@ module Collection = struct
     type 'a t
 
     module Decode : sig
-      val make : 'a Json.Decode.decoder -> 'a t Json.Decode.decoder
+      val make :
+        'a Decoders_bs.Decode.decoder -> 'a t Decoders_bs.Decode.decoder
     end
   end) (Main : sig
     type t
 
     module Decode : sig
-      val make : Locale.Order.t -> t Json.Decode.decoder
+      val make : Locale.Order.t -> t Decoders_bs.Decode.decoder
     end
   end) =
   struct

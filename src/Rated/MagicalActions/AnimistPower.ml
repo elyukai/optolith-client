@@ -1,5 +1,5 @@
 module Static = struct
-  type ic = DeriveFromPrimaryPatron | Fixed of IC.t
+  type ic = DeriveFromPrimaryPatron | Fixed of ImprovementCost.t
 
   type level = { level : int; effect : string; src : PublicationRef.list }
 
@@ -22,8 +22,7 @@ module Static = struct
   }
 
   module Decode = struct
-    open Json.Decode
-    open JsonStrict
+    open Decoders_bs.Decode
 
     module CostFromPrimaryPatron = struct
       type translation = string
@@ -32,22 +31,21 @@ module Static = struct
 
       type multilingual = { translations : translation TranslationMap.t }
 
-      let multilingual json =
-        {
-          translations =
-            json |> field "translations" (TranslationMap.Decode.t translation);
-        }
+      let multilingual =
+        field "translations" (TranslationMap.Decode.t translation)
+        >>= fun translations -> succeed { translations }
 
-      let make locale_order json =
-        json |> multilingual
-        |> fun multilingual ->
+      let make locale_order =
+        multilingual
+        >|= fun multilingual ->
         multilingual.translations |> TranslationMap.preferred locale_order
     end
 
     module Level = struct
       type translation = { effect : string }
 
-      let translation json = { effect = json |> field "effect" string }
+      let translation =
+        field "effect" string >>= fun effect -> succeed { effect }
 
       type multilingual = {
         level : int;
@@ -55,19 +53,18 @@ module Static = struct
         translations : translation TranslationMap.t;
       }
 
-      let multilingual locale_order json =
-        {
-          level = json |> field "level" int;
-          src =
-            json |> field "src" (PublicationRef.Decode.make_list locale_order);
-          translations =
-            json |> field "translations" (TranslationMap.Decode.t translation);
-        }
+      let multilingual locale_order =
+        field "level" int
+        >>= fun level ->
+        field "src" (PublicationRef.Decode.make_list locale_order)
+        >>= fun src ->
+        field "translations" (TranslationMap.Decode.t translation)
+        >>= fun translations -> succeed { level; src; translations }
 
-      let make_assoc locale_order json =
+      let make_assoc locale_order =
         let open Option.Infix in
-        json |> multilingual locale_order
-        |> fun multilingual ->
+        multilingual locale_order
+        >|= fun multilingual ->
         multilingual.translations
         |> TranslationMap.preferred locale_order
         <&> fun translation ->
@@ -78,17 +75,15 @@ module Static = struct
             src = multilingual.src;
           } )
 
-      let make_map locale_order json =
-        json
-        |> list (make_assoc locale_order)
-        |> Option.catOptions |> IntMap.fromList
+      let make_map locale_order =
+        list (make_assoc locale_order) >|= Option.catOptions >|= IntMap.fromList
     end
 
-    let ic json =
-      json |> string
-      |> function
-      | "DeriveFromPrimaryPatron" -> DeriveFromPrimaryPatron
-      | _ -> json |> IC.Decode.t |> fun x -> Fixed x
+    let ic =
+      string
+      >>= function
+      | "DeriveFromPrimaryPatron" -> succeed DeriveFromPrimaryPatron
+      | _ -> ImprovementCost.Decode.t >|= fun x -> Fixed x
 
     type translation = {
       name : string;
@@ -99,21 +94,20 @@ module Static = struct
       errata : Erratum.list option;
     }
 
-    let translation json =
-      {
-        name = json |> field "name" string;
-        effect = json |> field "effect" string;
-        cost =
-          json
-          |> field "cost"
-               Rated.Static.Activatable.MainParameter.Decode.translation;
-        duration =
-          json
-          |> field "duration"
-               Rated.Static.Activatable.MainParameter.Decode.translation;
-        prerequisites = json |> optionalField "prerequisites" string;
-        errata = json |> optionalField "errata" Erratum.Decode.list;
-      }
+    let translation =
+      field "name" string
+      >>= fun name ->
+      field "effect" string
+      >>= fun effect ->
+      field "cost" Rated.Static.Activatable.MainParameter.Decode.translation
+      >>= fun cost ->
+      field "duration" Rated.Static.Activatable.MainParameter.Decode.translation
+      >>= fun duration ->
+      field_opt "prerequisites" string
+      >>= fun prerequisites ->
+      field_opt "errata" Erratum.Decode.list
+      >>= fun errata ->
+      succeed { name; effect; cost; duration; prerequisites; errata }
 
     type multilingual = {
       id : Id.AnimistPower.t;
@@ -128,31 +122,46 @@ module Static = struct
       translations : translation TranslationMap.t;
     }
 
-    let multilingual locale_order json =
-      {
-        id = json |> field "id" Id.AnimistPower.Decode.t;
-        check = json |> field "check" Check.Decode.t;
-        costFromPrimaryPatron =
-          json
-          |> field "costFromPrimaryPatron"
-               (CostFromPrimaryPatron.make locale_order);
-        tribes = json |> field "tribes" (list int);
-        property = json |> field "property" int;
-        ic = json |> field "ic" ic;
-        prerequisites =
-          json
-          |> optionalField "prerequisites"
-               (Prerequisite.Collection.AnimistPower.Decode.make locale_order);
-        levels = json |> optionalField "levels" (Level.make_map locale_order);
-        src = json |> field "src" (PublicationRef.Decode.make_list locale_order);
-        translations =
-          json |> field "translations" (TranslationMap.Decode.t translation);
-      }
+    let multilingual locale_order =
+      field "id" Id.AnimistPower.Decode.t
+      >>= fun id ->
+      field "check" Check.Decode.t
+      >>= fun check ->
+      field "costFromPrimaryPatron" (CostFromPrimaryPatron.make locale_order)
+      >>= fun costFromPrimaryPatron ->
+      field "tribes" (list int)
+      >>= fun tribes ->
+      field "property" int
+      >>= fun property ->
+      field "ic" ic
+      >>= fun ic ->
+      field_opt "prerequisites"
+        (Prerequisite.Collection.AnimistPower.Decode.make locale_order)
+      >>= fun prerequisites ->
+      field_opt "levels" (Level.make_map locale_order)
+      >>= fun levels ->
+      field "src" (PublicationRef.Decode.make_list locale_order)
+      >>= fun src ->
+      field "translations" (TranslationMap.Decode.t translation)
+      >>= fun translations ->
+      succeed
+        {
+          id;
+          check;
+          costFromPrimaryPatron;
+          tribes;
+          property;
+          ic;
+          prerequisites;
+          levels;
+          src;
+          translations;
+        }
 
-    let make_assoc locale_order json =
+    let make_assoc locale_order =
       let open Option.Infix in
-      json |> multilingual locale_order
-      |> fun multilingual ->
+      multilingual locale_order
+      >|= fun multilingual ->
       multilingual.translations
       |> TranslationMap.preferred locale_order
       <&> fun translation ->

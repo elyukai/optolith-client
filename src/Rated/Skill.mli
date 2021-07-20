@@ -50,7 +50,7 @@ module Static : sig
     check : Check.t;
     encumbrance : encumbrance;
     gr : int;
-    ic : IC.t;
+    ic : ImprovementCost.t;
     applications : Application.t IntMap.t;
     applications_input : string option;
     uses : Use.t IntMap.t;
@@ -64,7 +64,7 @@ module Static : sig
   }
 
   module Decode : sig
-    val make_assoc : (Id.Skill.t, t) JsonStatic.make_assoc
+    val make_assoc : (Id.Skill.t, t) Parsing.make_assoc
   end
 end
 
@@ -82,6 +82,6 @@ module Group : sig
   }
 
   module Decode : sig
-    val make_assoc : (int, t) JsonStatic.make_assoc
+    val make_assoc : (int, t) Parsing.make_assoc
   end
 end

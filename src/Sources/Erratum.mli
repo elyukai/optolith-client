@@ -5,5 +5,5 @@ type t = { date : Js.Date.t; description : string }
 type nonrec list = t list
 
 module Decode : sig
-  val list : list Json.Decode.decoder
+  val list : list Decoders_bs.Decode.decoder
 end

@@ -11,11 +11,11 @@ type t = {
 }
 
 module Decode = struct
-  open Json.Decode
+  open Decoders_bs.Decode
 
   type translation = { name : string }
 
-  let translation json = { name = json |> field "name" string }
+  let translation = field "name" string >>= fun name -> succeed { name }
 
   type multilingual = {
     id : Id.ExperienceLevel.t;
@@ -29,25 +29,44 @@ module Decode = struct
     translations : translation TranslationMap.t;
   }
 
-  let multilingual json =
-    {
-      id = json |> field "id" Id.ExperienceLevel.Decode.t;
-      ap = json |> field "ap" int;
-      maxAttributeValue = json |> field "maxAttributeValue" int;
-      maxSkillRating = json |> field "maxSkillRating" int;
-      maxCombatTechniqueRating = json |> field "maxCombatTechniqueRating" int;
-      maxAttributeTotal = json |> field "maxAttributeTotal" int;
-      maxNumberSpellsLiturgicalChants =
-        json |> field "maxNumberSpellsLiturgicalChants" int;
-      maxUnfamiliarSpells = json |> field "maxUnfamiliarSpells" int;
-      translations =
-        json |> field "translations" (TranslationMap.Decode.t translation);
-    }
+  let multilingual =
+    field "id" Id.ExperienceLevel.Decode.t
+    >>= fun id ->
+    field "ap" int
+    >>= fun ap ->
+    field "maxAttributeValue" int
+    >>= fun maxAttributeValue ->
+    field "maxSkillRating" int
+    >>= fun maxSkillRating ->
+    field "maxCombatTechniqueRating" int
+    >>= fun maxCombatTechniqueRating ->
+    field "maxAttributeTotal" int
+    >>= fun maxAttributeTotal ->
+    field "maxNumberSpellsLiturgicalChants" int
+    >>= fun maxNumberSpellsLiturgicalChants ->
+    field "maxUnfamiliarSpells" int
+    >>= fun maxUnfamiliarSpells ->
+    field "translations" (TranslationMap.Decode.t translation)
+    >>= fun translations ->
+    succeed
+      {
+        id;
+        ap;
+        maxAttributeValue;
+        maxSkillRating;
+        maxCombatTechniqueRating;
+        maxAttributeTotal;
+        maxNumberSpellsLiturgicalChants;
+        maxUnfamiliarSpells;
+        translations;
+      }
 
-  let make_assoc locale_order json =
+  let make_assoc locale_order =
     let open Option.Infix in
-    json |> multilingual |> fun multilingual ->
-    multilingual.translations |> TranslationMap.preferred locale_order
+    multilingual
+    >|= fun multilingual ->
+    multilingual.translations
+    |> TranslationMap.preferred locale_order
     <&> fun translation ->
     ( multilingual.id,
       {

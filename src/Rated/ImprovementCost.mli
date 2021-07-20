@@ -24,5 +24,5 @@ val ap_for_activation : t -> int
 (** `ap_for_activation ic` returns the AP cost for activating an entry with the given [ic]. *)
 
 module Decode : sig
-  val t : Js.Json.t -> t
+  val t : t Decoders_bs.Decode.decoder
 end

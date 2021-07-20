@@ -16,7 +16,7 @@ module Static : sig
     target : string;
     traditions : Id.BlessedTradition.Set.t;
     aspects : Id.Aspect.Set.t;
-    ic : IC.t;
+    ic : ImprovementCost.t;
     prerequisites : Prerequisite.Collection.Liturgy.t;
     enhancements : Enhancement.Static.t IntMap.t;
     src : PublicationRef.list;
@@ -25,7 +25,7 @@ module Static : sig
   (** The ceremony type. *)
 
   module Decode : sig
-    val make_assoc : (Id.Ceremony.t, t) JsonStatic.make_assoc
+    val make_assoc : (Id.Ceremony.t, t) Parsing.make_assoc
   end
 end
 

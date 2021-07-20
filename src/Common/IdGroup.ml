@@ -1,27 +1,22 @@
-let decode_value f g =
-  Json.Decode.(field "value" int |> map (fun x -> x |> f |> g))
+let decode_one f g = Decoders_bs.Decode.(field "value" int >|= f >|= g)
 
-let decode_values f g =
-  Json.Decode.(
-    field "value" (NonEmptyList.Decode.t int)
-    |> map (fun x -> x |> NonEmptyList.fmap f |> g))
+let decode_many f g =
+  Decoders_bs.Decode.(
+    field "value" (NonEmptyList.Decode.t int) >|= NonEmptyList.fmap f >|= g)
 
 module ExtensionRule = struct
   type t = FocusRule of Id.FocusRule.t | OptionalRule of Id.OptionalRule.t
   [@@bs.deriving accessors]
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t =
       field "type" string
-      |> andThen (function
-           | "FocusRule" -> decode_value Id.FocusRule.from_int focusRule
-           | "OptionalRule" ->
-               decode_value Id.OptionalRule.from_int optionalRule
-           | str ->
-               JsonStatic.raise_unknown_variant ~variant_name:"ExtensionRule"
-                 ~invalid:str)
+      >>= function
+      | "FocusRule" -> decode_one Id.FocusRule.from_int focusRule
+      | "OptionalRule" -> decode_one Id.OptionalRule.from_int optionalRule
+      | _ -> fail "Expected a Focus Rule or Optional Rule"
   end
 end
 
@@ -87,128 +82,111 @@ module Activatable = struct
     [@@bs.deriving accessors]
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let t =
         field "type" string
-        |> andThen (function
-             | "Advantage" -> decode_values Id.Advantage.from_int advantage
-             | "Disadvantage" ->
-                 decode_values Id.Disadvantage.from_int disadvantage
-             | "GeneralSpecialAbility" ->
-                 decode_values Id.GeneralSpecialAbility.from_int
-                   generalSpecialAbility
-             | "FatePointSpecialAbility" ->
-                 decode_values Id.FatePointSpecialAbility.from_int
-                   fatePointSpecialAbility
-             | "CombatSpecialAbility" ->
-                 decode_values Id.CombatSpecialAbility.from_int
-                   combatSpecialAbility
-             | "MagicalSpecialAbility" ->
-                 decode_values Id.MagicalSpecialAbility.from_int
-                   magicalSpecialAbility
-             | "StaffEnchantment" ->
-                 decode_values Id.StaffEnchantment.from_int staffEnchantment
-             | "FamiliarSpecialAbility" ->
-                 decode_values Id.FamiliarSpecialAbility.from_int
-                   familiarSpecialAbility
-             | "KarmaSpecialAbility" ->
-                 decode_values Id.KarmaSpecialAbility.from_int
-                   karmaSpecialAbility
-             | "ProtectiveWardingCircleSpecialAbility" ->
-                 decode_values Id.ProtectiveWardingCircleSpecialAbility.from_int
-                   protectiveWardingCircleSpecialAbility
-             | "CombatStyleSpecialAbility" ->
-                 decode_values Id.CombatStyleSpecialAbility.from_int
-                   combatStyleSpecialAbility
-             | "AdvancedCombatSpecialAbility" ->
-                 decode_values Id.AdvancedCombatSpecialAbility.from_int
-                   advancedCombatSpecialAbility
-             | "CommandSpecialAbility" ->
-                 decode_values Id.CommandSpecialAbility.from_int
-                   commandSpecialAbility
-             | "MagicStyleSpecialAbility" ->
-                 decode_values Id.MagicStyleSpecialAbility.from_int
-                   magicStyleSpecialAbility
-             | "AdvancedMagicalSpecialAbility" ->
-                 decode_values Id.AdvancedMagicalSpecialAbility.from_int
-                   advancedMagicalSpecialAbility
-             | "SpellSwordEnchantment" ->
-                 decode_values Id.SpellSwordEnchantment.from_int
-                   spellSwordEnchantment
-             | "DaggerRitual" ->
-                 decode_values Id.DaggerRitual.from_int daggerRitual
-             | "InstrumentEnchantment" ->
-                 decode_values Id.InstrumentEnchantment.from_int
-                   instrumentEnchantment
-             | "AttireEnchantment" ->
-                 decode_values Id.AttireEnchantment.from_int attireEnchantment
-             | "OrbEnchantment" ->
-                 decode_values Id.OrbEnchantment.from_int orbEnchantment
-             | "WandEnchantment" ->
-                 decode_values Id.WandEnchantment.from_int wandEnchantment
-             | "BrawlingSpecialAbility" ->
-                 decode_values Id.BrawlingSpecialAbility.from_int
-                   brawlingSpecialAbility
-             | "AncestorGlyph" ->
-                 decode_values Id.AncestorGlyph.from_int ancestorGlyph
-             | "CeremonialItemSpecialAbility" ->
-                 decode_values Id.CeremonialItemSpecialAbility.from_int
-                   ceremonialItemSpecialAbility
-             | "Sermon" -> decode_values Id.Sermon.from_int sermon
-             | "LiturgicalStyleSpecialAbility" ->
-                 decode_values Id.LiturgicalStyleSpecialAbility.from_int
-                   liturgicalStyleSpecialAbility
-             | "AdvancedKarmaSpecialAbility" ->
-                 decode_values Id.AdvancedKarmaSpecialAbility.from_int
-                   advancedKarmaSpecialAbility
-             | "Vision" -> decode_values Id.Vision.from_int vision
-             | "MagicalTradition" ->
-                 decode_values Id.MagicalTradition.from_int magicalTradition
-             | "BlessedTradition" ->
-                 decode_values Id.BlessedTradition.from_int blessedTradition
-             | "PactGift" -> decode_values Id.PactGift.from_int pactGift
-             | "SikaryanDrainSpecialAbility" ->
-                 decode_values Id.SikaryanDrainSpecialAbility.from_int
-                   sikaryanDrainSpecialAbility
-             | "LycantropicGift" ->
-                 decode_values Id.LycantropicGift.from_int lycantropicGift
-             | "SkillStyleSpecialAbility" ->
-                 decode_values Id.SkillStyleSpecialAbility.from_int
-                   skillStyleSpecialAbility
-             | "AdvancedSkillSpecialAbility" ->
-                 decode_values Id.AdvancedSkillSpecialAbility.from_int
-                   advancedSkillSpecialAbility
-             | "ArcaneOrbEnchantment" ->
-                 decode_values Id.ArcaneOrbEnchantment.from_int
-                   arcaneOrbEnchantment
-             | "CauldronEnchantment" ->
-                 decode_values Id.CauldronEnchantment.from_int
-                   cauldronEnchantment
-             | "FoolsHatEnchantment" ->
-                 decode_values Id.FoolsHatEnchantment.from_int
-                   foolsHatEnchantment
-             | "ToyEnchantment" ->
-                 decode_values Id.ToyEnchantment.from_int toyEnchantment
-             | "BowlEnchantment" ->
-                 decode_values Id.BowlEnchantment.from_int bowlEnchantment
-             | "FatePointSexSpecialAbility" ->
-                 decode_values Id.FatePointSexSpecialAbility.from_int
-                   fatePointSexSpecialAbility
-             | "SexSpecialAbility" ->
-                 decode_values Id.SexSpecialAbility.from_int sexSpecialAbility
-             | "WeaponEnchantment" ->
-                 decode_values Id.WeaponEnchantment.from_int weaponEnchantment
-             | "SickleRitual" ->
-                 decode_values Id.SickleRitual.from_int sickleRitual
-             | "RingEnchantment" ->
-                 decode_values Id.RingEnchantment.from_int ringEnchantment
-             | "ChronicleEnchantment" ->
-                 decode_values Id.ChronicleEnchantment.from_int
-                   chronicleEnchantment
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"Activatable.Many" ~invalid:str)
+        >>= function
+        | "Advantage" -> decode_many Id.Advantage.from_int advantage
+        | "Disadvantage" -> decode_many Id.Disadvantage.from_int disadvantage
+        | "GeneralSpecialAbility" ->
+            decode_many Id.GeneralSpecialAbility.from_int generalSpecialAbility
+        | "FatePointSpecialAbility" ->
+            decode_many Id.FatePointSpecialAbility.from_int
+              fatePointSpecialAbility
+        | "CombatSpecialAbility" ->
+            decode_many Id.CombatSpecialAbility.from_int combatSpecialAbility
+        | "MagicalSpecialAbility" ->
+            decode_many Id.MagicalSpecialAbility.from_int magicalSpecialAbility
+        | "StaffEnchantment" ->
+            decode_many Id.StaffEnchantment.from_int staffEnchantment
+        | "FamiliarSpecialAbility" ->
+            decode_many Id.FamiliarSpecialAbility.from_int
+              familiarSpecialAbility
+        | "KarmaSpecialAbility" ->
+            decode_many Id.KarmaSpecialAbility.from_int karmaSpecialAbility
+        | "ProtectiveWardingCircleSpecialAbility" ->
+            decode_many Id.ProtectiveWardingCircleSpecialAbility.from_int
+              protectiveWardingCircleSpecialAbility
+        | "CombatStyleSpecialAbility" ->
+            decode_many Id.CombatStyleSpecialAbility.from_int
+              combatStyleSpecialAbility
+        | "AdvancedCombatSpecialAbility" ->
+            decode_many Id.AdvancedCombatSpecialAbility.from_int
+              advancedCombatSpecialAbility
+        | "CommandSpecialAbility" ->
+            decode_many Id.CommandSpecialAbility.from_int commandSpecialAbility
+        | "MagicStyleSpecialAbility" ->
+            decode_many Id.MagicStyleSpecialAbility.from_int
+              magicStyleSpecialAbility
+        | "AdvancedMagicalSpecialAbility" ->
+            decode_many Id.AdvancedMagicalSpecialAbility.from_int
+              advancedMagicalSpecialAbility
+        | "SpellSwordEnchantment" ->
+            decode_many Id.SpellSwordEnchantment.from_int spellSwordEnchantment
+        | "DaggerRitual" -> decode_many Id.DaggerRitual.from_int daggerRitual
+        | "InstrumentEnchantment" ->
+            decode_many Id.InstrumentEnchantment.from_int instrumentEnchantment
+        | "AttireEnchantment" ->
+            decode_many Id.AttireEnchantment.from_int attireEnchantment
+        | "OrbEnchantment" ->
+            decode_many Id.OrbEnchantment.from_int orbEnchantment
+        | "WandEnchantment" ->
+            decode_many Id.WandEnchantment.from_int wandEnchantment
+        | "BrawlingSpecialAbility" ->
+            decode_many Id.BrawlingSpecialAbility.from_int
+              brawlingSpecialAbility
+        | "AncestorGlyph" -> decode_many Id.AncestorGlyph.from_int ancestorGlyph
+        | "CeremonialItemSpecialAbility" ->
+            decode_many Id.CeremonialItemSpecialAbility.from_int
+              ceremonialItemSpecialAbility
+        | "Sermon" -> decode_many Id.Sermon.from_int sermon
+        | "LiturgicalStyleSpecialAbility" ->
+            decode_many Id.LiturgicalStyleSpecialAbility.from_int
+              liturgicalStyleSpecialAbility
+        | "AdvancedKarmaSpecialAbility" ->
+            decode_many Id.AdvancedKarmaSpecialAbility.from_int
+              advancedKarmaSpecialAbility
+        | "Vision" -> decode_many Id.Vision.from_int vision
+        | "MagicalTradition" ->
+            decode_many Id.MagicalTradition.from_int magicalTradition
+        | "BlessedTradition" ->
+            decode_many Id.BlessedTradition.from_int blessedTradition
+        | "PactGift" -> decode_many Id.PactGift.from_int pactGift
+        | "SikaryanDrainSpecialAbility" ->
+            decode_many Id.SikaryanDrainSpecialAbility.from_int
+              sikaryanDrainSpecialAbility
+        | "LycantropicGift" ->
+            decode_many Id.LycantropicGift.from_int lycantropicGift
+        | "SkillStyleSpecialAbility" ->
+            decode_many Id.SkillStyleSpecialAbility.from_int
+              skillStyleSpecialAbility
+        | "AdvancedSkillSpecialAbility" ->
+            decode_many Id.AdvancedSkillSpecialAbility.from_int
+              advancedSkillSpecialAbility
+        | "ArcaneOrbEnchantment" ->
+            decode_many Id.ArcaneOrbEnchantment.from_int arcaneOrbEnchantment
+        | "CauldronEnchantment" ->
+            decode_many Id.CauldronEnchantment.from_int cauldronEnchantment
+        | "FoolsHatEnchantment" ->
+            decode_many Id.FoolsHatEnchantment.from_int foolsHatEnchantment
+        | "ToyEnchantment" ->
+            decode_many Id.ToyEnchantment.from_int toyEnchantment
+        | "BowlEnchantment" ->
+            decode_many Id.BowlEnchantment.from_int bowlEnchantment
+        | "FatePointSexSpecialAbility" ->
+            decode_many Id.FatePointSexSpecialAbility.from_int
+              fatePointSexSpecialAbility
+        | "SexSpecialAbility" ->
+            decode_many Id.SexSpecialAbility.from_int sexSpecialAbility
+        | "WeaponEnchantment" ->
+            decode_many Id.WeaponEnchantment.from_int weaponEnchantment
+        | "SickleRitual" -> decode_many Id.SickleRitual.from_int sickleRitual
+        | "RingEnchantment" ->
+            decode_many Id.RingEnchantment.from_int ringEnchantment
+        | "ChronicleEnchantment" ->
+            decode_many Id.ChronicleEnchantment.from_int chronicleEnchantment
+        | _ -> fail "Expected an Activatable category"
     end
   end
 
@@ -263,125 +241,106 @@ module Activatable = struct
   [@@bs.deriving accessors]
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t =
       field "type" string
-      |> andThen (function
-           | "Advantage" -> decode_value Id.Advantage.from_int advantage
-           | "Disadvantage" ->
-               decode_value Id.Disadvantage.from_int disadvantage
-           | "GeneralSpecialAbility" ->
-               decode_value Id.GeneralSpecialAbility.from_int
-                 generalSpecialAbility
-           | "FatePointSpecialAbility" ->
-               decode_value Id.FatePointSpecialAbility.from_int
-                 fatePointSpecialAbility
-           | "CombatSpecialAbility" ->
-               decode_value Id.CombatSpecialAbility.from_int
-                 combatSpecialAbility
-           | "MagicalSpecialAbility" ->
-               decode_value Id.MagicalSpecialAbility.from_int
-                 magicalSpecialAbility
-           | "StaffEnchantment" ->
-               decode_value Id.StaffEnchantment.from_int staffEnchantment
-           | "FamiliarSpecialAbility" ->
-               decode_value Id.FamiliarSpecialAbility.from_int
-                 familiarSpecialAbility
-           | "KarmaSpecialAbility" ->
-               decode_value Id.KarmaSpecialAbility.from_int karmaSpecialAbility
-           | "ProtectiveWardingCircleSpecialAbility" ->
-               decode_value Id.ProtectiveWardingCircleSpecialAbility.from_int
-                 protectiveWardingCircleSpecialAbility
-           | "CombatStyleSpecialAbility" ->
-               decode_value Id.CombatStyleSpecialAbility.from_int
-                 combatStyleSpecialAbility
-           | "AdvancedCombatSpecialAbility" ->
-               decode_value Id.AdvancedCombatSpecialAbility.from_int
-                 advancedCombatSpecialAbility
-           | "CommandSpecialAbility" ->
-               decode_value Id.CommandSpecialAbility.from_int
-                 commandSpecialAbility
-           | "MagicStyleSpecialAbility" ->
-               decode_value Id.MagicStyleSpecialAbility.from_int
-                 magicStyleSpecialAbility
-           | "AdvancedMagicalSpecialAbility" ->
-               decode_value Id.AdvancedMagicalSpecialAbility.from_int
-                 advancedMagicalSpecialAbility
-           | "SpellSwordEnchantment" ->
-               decode_value Id.SpellSwordEnchantment.from_int
-                 spellSwordEnchantment
-           | "DaggerRitual" ->
-               decode_value Id.DaggerRitual.from_int daggerRitual
-           | "InstrumentEnchantment" ->
-               decode_value Id.InstrumentEnchantment.from_int
-                 instrumentEnchantment
-           | "AttireEnchantment" ->
-               decode_value Id.AttireEnchantment.from_int attireEnchantment
-           | "OrbEnchantment" ->
-               decode_value Id.OrbEnchantment.from_int orbEnchantment
-           | "WandEnchantment" ->
-               decode_value Id.WandEnchantment.from_int wandEnchantment
-           | "BrawlingSpecialAbility" ->
-               decode_value Id.BrawlingSpecialAbility.from_int
-                 brawlingSpecialAbility
-           | "AncestorGlyph" ->
-               decode_value Id.AncestorGlyph.from_int ancestorGlyph
-           | "CeremonialItemSpecialAbility" ->
-               decode_value Id.CeremonialItemSpecialAbility.from_int (fun x ->
-                   CeremonialItemSpecialAbility x)
-           | "Sermon" -> decode_value Id.Sermon.from_int sermon
-           | "LiturgicalStyleSpecialAbility" ->
-               decode_value Id.LiturgicalStyleSpecialAbility.from_int
-                 liturgicalStyleSpecialAbility
-           | "AdvancedKarmaSpecialAbility" ->
-               decode_value Id.AdvancedKarmaSpecialAbility.from_int (fun x ->
-                   AdvancedKarmaSpecialAbility x)
-           | "Vision" -> decode_value Id.Vision.from_int vision
-           | "MagicalTradition" ->
-               decode_value Id.MagicalTradition.from_int magicalTradition
-           | "BlessedTradition" ->
-               decode_value Id.BlessedTradition.from_int blessedTradition
-           | "PactGift" -> decode_value Id.PactGift.from_int pactGift
-           | "SikaryanDrainSpecialAbility" ->
-               decode_value Id.SikaryanDrainSpecialAbility.from_int
-                 sikaryanDrainSpecialAbility
-           | "LycantropicGift" ->
-               decode_value Id.LycantropicGift.from_int lycantropicGift
-           | "SkillStyleSpecialAbility" ->
-               decode_value Id.SkillStyleSpecialAbility.from_int
-                 skillStyleSpecialAbility
-           | "AdvancedSkillSpecialAbility" ->
-               decode_value Id.AdvancedSkillSpecialAbility.from_int
-                 advancedSkillSpecialAbility
-           | "ArcaneOrbEnchantment" ->
-               decode_value Id.ArcaneOrbEnchantment.from_int
-                 arcaneOrbEnchantment
-           | "CauldronEnchantment" ->
-               decode_value Id.CauldronEnchantment.from_int cauldronEnchantment
-           | "FoolsHatEnchantment" ->
-               decode_value Id.FoolsHatEnchantment.from_int foolsHatEnchantment
-           | "ToyEnchantment" ->
-               decode_value Id.ToyEnchantment.from_int toyEnchantment
-           | "BowlEnchantment" ->
-               decode_value Id.BowlEnchantment.from_int bowlEnchantment
-           | "FatePointSexSpecialAbility" ->
-               decode_value Id.FatePointSexSpecialAbility.from_int
-                 fatePointSexSpecialAbility
-           | "SexSpecialAbility" ->
-               decode_value Id.SexSpecialAbility.from_int sexSpecialAbility
-           | "WeaponEnchantment" ->
-               decode_value Id.WeaponEnchantment.from_int weaponEnchantment
-           | "SickleRitual" ->
-               decode_value Id.SickleRitual.from_int sickleRitual
-           | "RingEnchantment" ->
-               decode_value Id.RingEnchantment.from_int ringEnchantment
-           | "ChronicleEnchantment" ->
-               decode_value Id.ChronicleEnchantment.from_int
-                 chronicleEnchantment
-           | str ->
-               JsonStatic.raise_unknown_variant ~variant_name:"Activatable"
-                 ~invalid:str)
+      >>= function
+      | "Advantage" -> decode_one Id.Advantage.from_int advantage
+      | "Disadvantage" -> decode_one Id.Disadvantage.from_int disadvantage
+      | "GeneralSpecialAbility" ->
+          decode_one Id.GeneralSpecialAbility.from_int generalSpecialAbility
+      | "FatePointSpecialAbility" ->
+          decode_one Id.FatePointSpecialAbility.from_int fatePointSpecialAbility
+      | "CombatSpecialAbility" ->
+          decode_one Id.CombatSpecialAbility.from_int combatSpecialAbility
+      | "MagicalSpecialAbility" ->
+          decode_one Id.MagicalSpecialAbility.from_int magicalSpecialAbility
+      | "StaffEnchantment" ->
+          decode_one Id.StaffEnchantment.from_int staffEnchantment
+      | "FamiliarSpecialAbility" ->
+          decode_one Id.FamiliarSpecialAbility.from_int familiarSpecialAbility
+      | "KarmaSpecialAbility" ->
+          decode_one Id.KarmaSpecialAbility.from_int karmaSpecialAbility
+      | "ProtectiveWardingCircleSpecialAbility" ->
+          decode_one Id.ProtectiveWardingCircleSpecialAbility.from_int
+            protectiveWardingCircleSpecialAbility
+      | "CombatStyleSpecialAbility" ->
+          decode_one Id.CombatStyleSpecialAbility.from_int
+            combatStyleSpecialAbility
+      | "AdvancedCombatSpecialAbility" ->
+          decode_one Id.AdvancedCombatSpecialAbility.from_int
+            advancedCombatSpecialAbility
+      | "CommandSpecialAbility" ->
+          decode_one Id.CommandSpecialAbility.from_int commandSpecialAbility
+      | "MagicStyleSpecialAbility" ->
+          decode_one Id.MagicStyleSpecialAbility.from_int
+            magicStyleSpecialAbility
+      | "AdvancedMagicalSpecialAbility" ->
+          decode_one Id.AdvancedMagicalSpecialAbility.from_int
+            advancedMagicalSpecialAbility
+      | "SpellSwordEnchantment" ->
+          decode_one Id.SpellSwordEnchantment.from_int spellSwordEnchantment
+      | "DaggerRitual" -> decode_one Id.DaggerRitual.from_int daggerRitual
+      | "InstrumentEnchantment" ->
+          decode_one Id.InstrumentEnchantment.from_int instrumentEnchantment
+      | "AttireEnchantment" ->
+          decode_one Id.AttireEnchantment.from_int attireEnchantment
+      | "OrbEnchantment" -> decode_one Id.OrbEnchantment.from_int orbEnchantment
+      | "WandEnchantment" ->
+          decode_one Id.WandEnchantment.from_int wandEnchantment
+      | "BrawlingSpecialAbility" ->
+          decode_one Id.BrawlingSpecialAbility.from_int brawlingSpecialAbility
+      | "AncestorGlyph" -> decode_one Id.AncestorGlyph.from_int ancestorGlyph
+      | "CeremonialItemSpecialAbility" ->
+          decode_one Id.CeremonialItemSpecialAbility.from_int (fun x ->
+              CeremonialItemSpecialAbility x)
+      | "Sermon" -> decode_one Id.Sermon.from_int sermon
+      | "LiturgicalStyleSpecialAbility" ->
+          decode_one Id.LiturgicalStyleSpecialAbility.from_int
+            liturgicalStyleSpecialAbility
+      | "AdvancedKarmaSpecialAbility" ->
+          decode_one Id.AdvancedKarmaSpecialAbility.from_int (fun x ->
+              AdvancedKarmaSpecialAbility x)
+      | "Vision" -> decode_one Id.Vision.from_int vision
+      | "MagicalTradition" ->
+          decode_one Id.MagicalTradition.from_int magicalTradition
+      | "BlessedTradition" ->
+          decode_one Id.BlessedTradition.from_int blessedTradition
+      | "PactGift" -> decode_one Id.PactGift.from_int pactGift
+      | "SikaryanDrainSpecialAbility" ->
+          decode_one Id.SikaryanDrainSpecialAbility.from_int
+            sikaryanDrainSpecialAbility
+      | "LycantropicGift" ->
+          decode_one Id.LycantropicGift.from_int lycantropicGift
+      | "SkillStyleSpecialAbility" ->
+          decode_one Id.SkillStyleSpecialAbility.from_int
+            skillStyleSpecialAbility
+      | "AdvancedSkillSpecialAbility" ->
+          decode_one Id.AdvancedSkillSpecialAbility.from_int
+            advancedSkillSpecialAbility
+      | "ArcaneOrbEnchantment" ->
+          decode_one Id.ArcaneOrbEnchantment.from_int arcaneOrbEnchantment
+      | "CauldronEnchantment" ->
+          decode_one Id.CauldronEnchantment.from_int cauldronEnchantment
+      | "FoolsHatEnchantment" ->
+          decode_one Id.FoolsHatEnchantment.from_int foolsHatEnchantment
+      | "ToyEnchantment" -> decode_one Id.ToyEnchantment.from_int toyEnchantment
+      | "BowlEnchantment" ->
+          decode_one Id.BowlEnchantment.from_int bowlEnchantment
+      | "FatePointSexSpecialAbility" ->
+          decode_one Id.FatePointSexSpecialAbility.from_int
+            fatePointSexSpecialAbility
+      | "SexSpecialAbility" ->
+          decode_one Id.SexSpecialAbility.from_int sexSpecialAbility
+      | "WeaponEnchantment" ->
+          decode_one Id.WeaponEnchantment.from_int weaponEnchantment
+      | "SickleRitual" -> decode_one Id.SickleRitual.from_int sickleRitual
+      | "RingEnchantment" ->
+          decode_one Id.RingEnchantment.from_int ringEnchantment
+      | "ChronicleEnchantment" ->
+          decode_one Id.ChronicleEnchantment.from_int chronicleEnchantment
+      | _ -> fail "Expected an Activatable category"
   end
 end
 
@@ -415,56 +374,50 @@ module SelectOption = struct
   [@@bs.deriving accessors]
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t =
       let generic = int |> map generic in
       let specific =
         field "type" string
-        |> andThen (function
-             | "Blessing" -> decode_value Id.Blessing.from_int blessing
-             | "Cantrip" -> decode_value Id.Cantrip.from_int cantrip
-             | "TradeSecret" ->
-                 decode_value Id.GeneralSpecialAbility.TradeSecret.from_int
-                   tradeSecret
-             | "Script" -> decode_value Id.Script.from_int script
-             | "AnimalShape" ->
-                 decode_value Id.StaffEnchantment.AnimalShape.from_int
-                   animalShape
-             | "ArcaneBardTradition" ->
-                 decode_value Id.MagicalTradition.ArcaneBardTradition.from_int
-                   arcaneBardTradition
-             | "ArcaneDancerTradition" ->
-                 decode_value Id.MagicalTradition.ArcaneDancerTradition.from_int
-                   arcaneDancerTradition
-             | "SexPractice" -> decode_value Id.SexPractice.from_int sexPractice
-             | "Race" -> decode_value Id.Race.from_int race
-             | "Culture" -> decode_value Id.Culture.from_int culture
-             | "BlessedTradition" ->
-                 decode_value Id.BlessedTradition.from_int blessedTradition
-             | "Element" -> decode_value Id.Element.from_int element
-             | "Property" -> decode_value Id.Property.from_int property
-             | "Aspect" -> decode_value Id.Aspect.from_int aspect
-             | "Disease" -> decode_value Id.Disease.from_int disease
-             | "Poison" -> decode_value Id.Poison.from_int poison
-             | "Language" -> decode_value Id.Language.from_int language
-             | "Skill" -> decode_value Id.Skill.from_int skill
-             | "MeleeCombatTechnique" ->
-                 decode_value Id.MeleeCombatTechnique.from_int
-                   meleeCombatTechnique
-             | "RangedCombatTechnique" ->
-                 decode_value Id.RangedCombatTechnique.from_int
-                   rangedCombatTechnique
-             | "LiturgicalChant" ->
-                 decode_value Id.LiturgicalChant.from_int liturgicalChant
-             | "Ceremony" -> decode_value Id.Ceremony.from_int ceremony
-             | "Spell" -> decode_value Id.Spell.from_int spell
-             | "Ritual" -> decode_value Id.Ritual.from_int ritual
-             | str ->
-                 JsonStatic.raise_unknown_variant ~variant_name:"SelectOption"
-                   ~invalid:str)
+        >>= function
+        | "Blessing" -> decode_one Id.Blessing.from_int blessing
+        | "Cantrip" -> decode_one Id.Cantrip.from_int cantrip
+        | "TradeSecret" ->
+            decode_one Id.GeneralSpecialAbility.TradeSecret.from_int tradeSecret
+        | "Script" -> decode_one Id.Script.from_int script
+        | "AnimalShape" ->
+            decode_one Id.StaffEnchantment.AnimalShape.from_int animalShape
+        | "ArcaneBardTradition" ->
+            decode_one Id.MagicalTradition.ArcaneBardTradition.from_int
+              arcaneBardTradition
+        | "ArcaneDancerTradition" ->
+            decode_one Id.MagicalTradition.ArcaneDancerTradition.from_int
+              arcaneDancerTradition
+        | "SexPractice" -> decode_one Id.SexPractice.from_int sexPractice
+        | "Race" -> decode_one Id.Race.from_int race
+        | "Culture" -> decode_one Id.Culture.from_int culture
+        | "BlessedTradition" ->
+            decode_one Id.BlessedTradition.from_int blessedTradition
+        | "Element" -> decode_one Id.Element.from_int element
+        | "Property" -> decode_one Id.Property.from_int property
+        | "Aspect" -> decode_one Id.Aspect.from_int aspect
+        | "Disease" -> decode_one Id.Disease.from_int disease
+        | "Poison" -> decode_one Id.Poison.from_int poison
+        | "Language" -> decode_one Id.Language.from_int language
+        | "Skill" -> decode_one Id.Skill.from_int skill
+        | "MeleeCombatTechnique" ->
+            decode_one Id.MeleeCombatTechnique.from_int meleeCombatTechnique
+        | "RangedCombatTechnique" ->
+            decode_one Id.RangedCombatTechnique.from_int rangedCombatTechnique
+        | "LiturgicalChant" ->
+            decode_one Id.LiturgicalChant.from_int liturgicalChant
+        | "Ceremony" -> decode_one Id.Ceremony.from_int ceremony
+        | "Spell" -> decode_one Id.Spell.from_int spell
+        | "Ritual" -> decode_one Id.Ritual.from_int ritual
+        | _ -> fail "Expected a select option category"
       in
-      oneOf [ generic; specific ]
+      one_of [ ("Generic", generic); ("Specific", specific) ]
   end
 end
 
@@ -482,27 +435,23 @@ module Rated = struct
     [@@bs.deriving accessors]
 
     module Decode = struct
-      open Json.Decode
+      open Decoders_bs.Decode
 
       let t =
         field "type" string
-        |> andThen (function
-             | "Attribute" -> decode_values Id.Attribute.from_int attribute
-             | "Skill" -> decode_values Id.Skill.from_int skill
-             | "MeleeCombatTechnique" ->
-                 decode_values Id.MeleeCombatTechnique.from_int
-                   meleeCombatTechnique
-             | "RangedCombatTechnique" ->
-                 decode_values Id.RangedCombatTechnique.from_int
-                   rangedCombatTechnique
-             | "Spell" -> decode_values Id.Spell.from_int spell
-             | "Ritual" -> decode_values Id.Ritual.from_int ritual
-             | "LiturgicalChant" ->
-                 decode_values Id.LiturgicalChant.from_int liturgicalChant
-             | "Ceremony" -> decode_values Id.Ceremony.from_int ceremony
-             | str ->
-                 JsonStatic.raise_unknown_variant
-                   ~variant_name:"ActivatableSkill.Many" ~invalid:str)
+        >>= function
+        | "Attribute" -> decode_many Id.Attribute.from_int attribute
+        | "Skill" -> decode_many Id.Skill.from_int skill
+        | "MeleeCombatTechnique" ->
+            decode_many Id.MeleeCombatTechnique.from_int meleeCombatTechnique
+        | "RangedCombatTechnique" ->
+            decode_many Id.RangedCombatTechnique.from_int rangedCombatTechnique
+        | "Spell" -> decode_many Id.Spell.from_int spell
+        | "Ritual" -> decode_many Id.Ritual.from_int ritual
+        | "LiturgicalChant" ->
+            decode_many Id.LiturgicalChant.from_int liturgicalChant
+        | "Ceremony" -> decode_many Id.Ceremony.from_int ceremony
+        | _ -> fail "Expected a rated category"
     end
   end
 
@@ -518,27 +467,23 @@ module Rated = struct
   [@@bs.deriving accessors]
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t =
       field "type" string
-      |> andThen (function
-           | "Attribute" -> decode_value Id.Attribute.from_int attribute
-           | "Skill" -> decode_value Id.Skill.from_int skill
-           | "MeleeCombatTechnique" ->
-               decode_value Id.MeleeCombatTechnique.from_int
-                 meleeCombatTechnique
-           | "RangedCombatTechnique" ->
-               decode_value Id.RangedCombatTechnique.from_int
-                 rangedCombatTechnique
-           | "Spell" -> decode_value Id.Spell.from_int spell
-           | "Ritual" -> decode_value Id.Ritual.from_int ritual
-           | "LiturgicalChant" ->
-               decode_value Id.LiturgicalChant.from_int liturgicalChant
-           | "Ceremony" -> decode_value Id.Ceremony.from_int ceremony
-           | str ->
-               JsonStatic.raise_unknown_variant ~variant_name:"ActivatableSkill"
-                 ~invalid:str)
+      >>= function
+      | "Attribute" -> decode_one Id.Attribute.from_int attribute
+      | "Skill" -> decode_one Id.Skill.from_int skill
+      | "MeleeCombatTechnique" ->
+          decode_one Id.MeleeCombatTechnique.from_int meleeCombatTechnique
+      | "RangedCombatTechnique" ->
+          decode_one Id.RangedCombatTechnique.from_int rangedCombatTechnique
+      | "Spell" -> decode_one Id.Spell.from_int spell
+      | "Ritual" -> decode_one Id.Ritual.from_int ritual
+      | "LiturgicalChant" ->
+          decode_one Id.LiturgicalChant.from_int liturgicalChant
+      | "Ceremony" -> decode_one Id.Ceremony.from_int ceremony
+      | _ -> fail "Expected a rated category"
   end
 end
 
@@ -552,20 +497,18 @@ module Skill = struct
   [@@bs.deriving accessors]
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t =
       field "type" string
-      |> andThen (function
-           | "Skill" -> decode_value Id.Skill.from_int skill
-           | "Spell" -> decode_value Id.Spell.from_int spell
-           | "Ritual" -> decode_value Id.Ritual.from_int ritual
-           | "LiturgicalChant" ->
-               decode_value Id.LiturgicalChant.from_int liturgicalChant
-           | "Ceremony" -> decode_value Id.Ceremony.from_int ceremony
-           | str ->
-               JsonStatic.raise_unknown_variant ~variant_name:"ActivatableSkill"
-                 ~invalid:str)
+      >>= function
+      | "Skill" -> decode_one Id.Skill.from_int skill
+      | "Spell" -> decode_one Id.Spell.from_int spell
+      | "Ritual" -> decode_one Id.Ritual.from_int ritual
+      | "LiturgicalChant" ->
+          decode_one Id.LiturgicalChant.from_int liturgicalChant
+      | "Ceremony" -> decode_one Id.Ceremony.from_int ceremony
+      | _ -> fail "Expected a skill category"
   end
 end
 
@@ -578,19 +521,17 @@ module ActivatableSkill = struct
   [@@bs.deriving accessors]
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t =
       field "type" string
-      |> andThen (function
-           | "Spell" -> decode_value Id.Spell.from_int spell
-           | "Ritual" -> decode_value Id.Ritual.from_int ritual
-           | "LiturgicalChant" ->
-               decode_value Id.LiturgicalChant.from_int liturgicalChant
-           | "Ceremony" -> decode_value Id.Ceremony.from_int ceremony
-           | str ->
-               JsonStatic.raise_unknown_variant ~variant_name:"ActivatableSkill"
-                 ~invalid:str)
+      >>= function
+      | "Spell" -> decode_one Id.Spell.from_int spell
+      | "Ritual" -> decode_one Id.Ritual.from_int ritual
+      | "LiturgicalChant" ->
+          decode_one Id.LiturgicalChant.from_int liturgicalChant
+      | "Ceremony" -> decode_one Id.Ceremony.from_int ceremony
+      | _ -> fail "Expected an activatable skill category"
   end
 end
 
@@ -601,13 +542,14 @@ module ActivatableAndSkill = struct
   [@@bs.deriving accessors]
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t =
-      oneOf
+      one_of
         [
-          Activatable.Decode.t |> map activatable;
-          ActivatableSkill.Decode.t |> map activatableSkill;
+          ("Activatable", Activatable.Decode.t |> map activatable);
+          ( "Activatable Skill",
+            ActivatableSkill.Decode.t |> map activatableSkill );
         ]
   end
 end
@@ -616,15 +558,12 @@ module AnimistPower = struct
   type t = AnimistPower of Id.AnimistPower.t [@@bs.deriving accessors]
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t =
       field "type" string
-      |> andThen (function
-           | "AnimistPower" ->
-               decode_value Id.AnimistPower.from_int animistPower
-           | str ->
-               JsonStatic.raise_unknown_variant ~variant_name:"AnimistPower"
-                 ~invalid:str)
+      >>= function
+      | "AnimistPower" -> decode_one Id.AnimistPower.from_int animistPower
+      | _ -> fail "Expected the animist power category"
   end
 end

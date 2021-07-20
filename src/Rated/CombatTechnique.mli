@@ -8,18 +8,17 @@ module Melee : sig
     type t = {
       id : Id.MeleeCombatTechnique.t;
       name : string;
-      ic : IC.t;
+      ic : ImprovementCost.t;
       primary : int list;
       special : string option;
       hasNoParry : bool;
       breakingPointRating : int;
-      gr : int;
       src : PublicationRef.list;
       errata : Erratum.list;
     }
 
     module Decode : sig
-      val make_assoc : (Id.MeleeCombatTechnique.t, t) JsonStatic.make_assoc
+      val make_assoc : (Id.MeleeCombatTechnique.t, t) Parsing.make_assoc
     end
   end
 
@@ -34,17 +33,16 @@ module Ranged : sig
     type t = {
       id : Id.RangedCombatTechnique.t;
       name : string;
-      ic : IC.t;
+      ic : ImprovementCost.t;
       primary : int list;
       special : string option;
       breakingPointRating : int;
-      gr : int;
       src : PublicationRef.list;
       errata : Erratum.list;
     }
 
     module Decode : sig
-      val make_assoc : (Id.RangedCombatTechnique.t, t) JsonStatic.make_assoc
+      val make_assoc : (Id.RangedCombatTechnique.t, t) Parsing.make_assoc
     end
   end
 

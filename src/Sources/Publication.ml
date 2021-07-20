@@ -7,8 +7,7 @@ type t = {
 }
 
 module Decode = struct
-  open Json.Decode
-  open JsonStrict
+  open Decoders_bs.Decode
 
   type translation = {
     name : string;
@@ -16,15 +15,16 @@ module Decode = struct
     isMissingImplementation : bool option;
   }
 
-  let translation json =
-    {
-      name = json |> field "name" string;
-      nameAbbr = json |> field "nameAbbr" string;
-      isMissingImplementation =
-        json |> optionalField "isMissingImplementation" bool;
-    }
-    |> Option.ensure (fun { isMissingImplementation; _ } ->
-           Option.dis isMissingImplementation)
+  let translation =
+    field "name" string
+    >>= fun name ->
+    field "nameAbbr" string
+    >>= fun nameAbbr ->
+    field_opt "isMissingImplementation" bool
+    >>= fun isMissingImplementation ->
+    succeed { name; nameAbbr; isMissingImplementation }
+    >|= Option.ensure (fun { isMissingImplementation; _ } ->
+            Option.dis isMissingImplementation)
 
   type multilingual = {
     id : Id.Publication.t;
@@ -34,21 +34,26 @@ module Decode = struct
     translations : translation TranslationMap.t;
   }
 
-  let multilingual json =
-    {
-      id = json |> field "id" Id.Publication.Decode.t;
-      isCore = json |> field "isCore" bool;
-      isAdultContent = json |> field "isAdultContent" bool;
-      isMissingImplementation =
-        json |> optionalField "isMissingImplementation" bool;
-      translations =
-        json |> field "translations" (TranslationMap.Decode.t_opt translation);
-    }
+  let multilingual =
+    field "id" Id.Publication.Decode.t
+    >>= fun id ->
+    field "isCore" bool
+    >>= fun isCore ->
+    field "isAdultContent" bool
+    >>= fun isAdultContent ->
+    field_opt "isMissingImplementation" bool
+    >>= fun isMissingImplementation ->
+    field "translations" (TranslationMap.Decode.t_opt translation)
+    >>= fun translations ->
+    succeed
+      { id; isCore; isAdultContent; isMissingImplementation; translations }
 
-  let make_assoc locale_order json =
+  let make_assoc locale_order =
     let open Option.Infix in
-    json |> multilingual |> fun multilingual ->
-    multilingual.translations |> TranslationMap.preferred locale_order
+    multilingual
+    >|= fun multilingual ->
+    multilingual.translations
+    |> TranslationMap.preferred locale_order
     <&> fun translation ->
     ( multilingual.id,
       {

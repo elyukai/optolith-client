@@ -14,5 +14,5 @@ type t = {
 }
 
 module Decode : sig
-  val make_assoc : (Id.ExperienceLevel.t, t) JsonStatic.make_assoc
+  val make_assoc : (Id.ExperienceLevel.t, t) Parsing.make_assoc
 end

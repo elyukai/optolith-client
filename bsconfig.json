@@ -18,7 +18,6 @@
       { "dir": "Scenes" },
       { "dir": "Sources" },
       { "dir": "Utilities", "subdirs": [
-        { "dir": "__tests__", "type": "dev" },
         { "dir": "Abstractions" }
       ] }
     ] }
@@ -29,9 +28,9 @@
   },
   "suffix": ".bs.js",
   "bs-dependencies": [
-    "@glennsl/bs-json",
     "@glennsl/bs-jest",
     "@rescript/react",
+    "bs-decoders",
     "reductive"
   ],
   "reason": {

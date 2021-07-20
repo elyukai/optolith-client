@@ -11,7 +11,7 @@ include (
     let fmap f xs =
       match xs with NonEmpty (x, xs) -> make (f x) (List.map f xs)
   end) :
-    Functor.T with type 'a t := 'a t )
+    Functor.T with type 'a t := 'a t)
 
 include (
   Foldable.Make (struct
@@ -23,7 +23,7 @@ include (
 
     let equal = ( == )
   end) :
-    Foldable.T with type 'a t := 'a t )
+    Foldable.T with type 'a t := 'a t)
 
 let at index (NonEmpty (x, xs)) =
   if index < 0 then None
@@ -46,7 +46,7 @@ let cons x = function NonEmpty (hd, tl) -> NonEmpty (x, hd :: tl)
 
 let uncons = function
   | NonEmpty (hd, tl) -> (
-      (hd, match tl with [] -> None | x :: xs -> Some (NonEmpty (x, xs))) )
+      (hd, match tl with [] -> None | x :: xs -> Some (NonEmpty (x, xs))))
 
 let to_list (NonEmpty (hd, tl)) = hd :: tl
 
@@ -85,26 +85,24 @@ module Index = struct
 end
 
 module Decode = struct
-  let t_safe decoder json = json |> Json.Decode.list decoder |> from_list
+  open Decoders_bs.Decode
 
-  let t decoder json =
-    json |> t_safe decoder |> function
-    | None ->
-        raise
-          (Json.Decode.DecodeError
-             "Non-empty list cannot be created from empty list")
-    | Some xs -> xs
+  let t_safe decoder = list decoder >|= from_list
+
+  let t decoder =
+    t_safe decoder
+    >>= function
+    | None -> fail "Non-empty list cannot be created from empty list"
+    | Some xs -> succeed xs
 
   let one_or_many decoder =
-    Json.Decode.oneOf
-      [ decoder |> Json.Decode.map (Function.flip make []); t decoder ]
+    one_of
+      [ ("Many", decoder |> map (Function.flip make [])); ("One", t decoder) ]
 
   let one_or_many_safe decoder =
-    Json.Decode.oneOf
+    one_of
       [
-        decoder
-        |> Json.Decode.map (Function.flip make [])
-        |> Json.Decode.map Option.pure;
-        t_safe decoder;
+        ("Many", decoder |> map (Function.flip make []) |> map Option.pure);
+        ("One", t_safe decoder);
       ]
 end

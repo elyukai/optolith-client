@@ -3,10 +3,11 @@ module Entities = struct
       (file_contents : DatabaseReader.Entities.raw_collection) =
     ListX.foldl'
       (fun file_content ->
-        file_content |> Yaml.parse |> decoder
-        |> Option.fold ~none:Function.id
-             ~some:(fun (parsed_key, parsed_value) ->
-               insert parsed_key parsed_value))
+        file_content |> Yaml.parse
+        |> Decoders_bs.Decode.decode_value decoder
+        |> function
+        | Ok (Some (parsed_key, parsed_value)) -> insert parsed_key parsed_value
+        | Ok None | Error _ -> Function.id)
       empty file_contents
 
   let categories_total = DatabaseReader.Entities.dirs_number |> Js.Int.toFloat

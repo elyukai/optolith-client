@@ -7,7 +7,7 @@ module Static = struct
   }
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     type translation = {
       name : string;
@@ -15,29 +15,29 @@ module Static = struct
       description : string;
     }
 
-    let translation json =
-      {
-        name = json |> field "name" string;
-        nameAbbr = json |> field "nameAbbr" string;
-        description = json |> field "description" string;
-      }
+    let translation =
+      field "name" string
+      >>= fun name ->
+      field "nameAbbr" string
+      >>= fun nameAbbr ->
+      field "description" string
+      >>= fun description -> succeed { name; nameAbbr; description }
 
     type multilingual = {
       id : Id.Attribute.t;
       translations : translation TranslationMap.t;
     }
 
-    let multilingual json =
-      {
-        id = json |> field "id" Id.Attribute.Decode.t;
-        translations =
-          json |> field "translations" (TranslationMap.Decode.t translation);
-      }
+    let multilingual =
+      field "id" Id.Attribute.Decode.t
+      >>= fun id ->
+      field "translations" (TranslationMap.Decode.t translation)
+      >>= fun translations -> succeed { id; translations }
 
-    let make_assoc locale_order json =
+    let make_assoc locale_order =
       let open Option.Infix in
-      json |> multilingual
-      |> fun multilingual ->
+      multilingual
+      >|= fun multilingual ->
       multilingual.translations
       |> TranslationMap.preferred locale_order
       <&> fun translation ->
@@ -58,7 +58,7 @@ module Dynamic = Rated.Dynamic.Make (struct
 
   type static = t
 
-  let ic _ = IC.D
+  let ic _ = ImprovementCost.D
 
   let min_value = 8
 end)

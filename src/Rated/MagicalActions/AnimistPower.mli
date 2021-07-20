@@ -7,7 +7,7 @@ module Static : sig
   type ic =
     | DeriveFromPrimaryPatron
         (** Derive the improvement cost from the selected primary patron. *)
-    | Fixed of IC.t
+    | Fixed of ImprovementCost.t
         (** The improvement cost no matter which primary patron is selected. *)
 
   type level = {
@@ -45,7 +45,7 @@ module Static : sig
   (** The animist power type. *)
 
   module Decode : sig
-    val make_assoc : (Id.AnimistPower.t, t) JsonStatic.make_assoc
+    val make_assoc : (Id.AnimistPower.t, t) Parsing.make_assoc
   end
 end
 

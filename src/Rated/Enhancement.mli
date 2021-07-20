@@ -17,7 +17,7 @@ module Static : sig
   }
   (** The enhancement type. *)
 
-  val ap_value : IC.t -> t -> int
+  val ap_value : ImprovementCost.t -> t -> int
   (** [ap_value ic enhancement] takes the enhancement as well as the improvement
       cost of it's associated entry and returns the AP value it costs if it is
       activated. *)
@@ -27,7 +27,7 @@ module Static : sig
       skill rating at which it can be learned. *)
 
   module Decode : sig
-    val make_map : Locale.Order.t -> t IntMap.t Json.Decode.decoder
+    val make_map : Locale.Order.t -> t IntMap.t Decoders_bs.Decode.decoder
   end
 end
 

@@ -20,9 +20,9 @@ module type Id = sig
   end
 
   module Decode : sig
-    val t : t Json.Decode.decoder
+    val t : t Decoders_bs.Decode.decoder
 
-    val set : Set.t Json.Decode.decoder
+    val set : Set.t Decoders_bs.Decode.decoder
   end
 end
 
@@ -60,7 +60,7 @@ end) : Id with type t := S.t = struct
   end
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     let t = int |> map from_int
 

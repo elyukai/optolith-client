@@ -19,16 +19,13 @@ val preferred : Locale.Order.t -> 'a t -> 'a option
     *)
 
 module Decode : sig
-  val t : 'a Json.Decode.decoder -> 'a t Json.Decode.decoder
+  val t : 'a Decoders_bs.Decode.decoder -> 'a t Decoders_bs.Decode.decoder
   (** [t decoder json] decodes the passed JSON as the record with
-      language-specific values.
+      language-specific values. *)
 
-      @raise [DecodeError] if one decoder did not succeed. *)
-
-  val t_opt : 'a option Json.Decode.decoder -> 'a t Json.Decode.decoder
+  val t_opt :
+    'a option Decoders_bs.Decode.decoder -> 'a t Decoders_bs.Decode.decoder
   (** [t decoder json] decodes the passed JSON as the record with
       language-specific values. If the passed decoder returns [None], it is
-      handled as if the translation is not present.
-
-      @raise [DecodeError] if one decoder did not succeed. *)
+      handled as if the translation is not present. *)
 end

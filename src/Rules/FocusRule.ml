@@ -10,8 +10,7 @@ module Static = struct
   }
 
   module Decode = struct
-    open Json.Decode
-    open JsonStrict
+    open Decoders_bs.Decode
 
     type translation = {
       name : string;
@@ -19,12 +18,13 @@ module Static = struct
       errata : Erratum.list option;
     }
 
-    let translation json =
-      {
-        name = json |> field "name" string;
-        description = json |> field "description" string;
-        errata = json |> optionalField "errata" Erratum.Decode.list;
-      }
+    let translation =
+      field "name" string
+      >>= fun name ->
+      field "description" string
+      >>= fun description ->
+      field_opt "errata" Erratum.Decode.list
+      >>= fun errata -> succeed { name; description; errata }
 
     type multilingual = {
       id : Id.FocusRule.t;
@@ -34,20 +34,22 @@ module Static = struct
       translations : translation TranslationMap.t;
     }
 
-    let multilingual locale_order json =
-      {
-        id = json |> field "id" Id.FocusRule.Decode.t;
-        level = json |> field "level" int;
-        subject = json |> field "subject" int;
-        src = json |> field "src" (PublicationRef.Decode.make_list locale_order);
-        translations =
-          json |> field "translations" (TranslationMap.Decode.t translation);
-      }
+    let multilingual locale_order =
+      field "id" Id.FocusRule.Decode.t
+      >>= fun id ->
+      field "level" int
+      >>= fun level ->
+      field "subject" int
+      >>= fun subject ->
+      field "src" (PublicationRef.Decode.make_list locale_order)
+      >>= fun src ->
+      field "translations" (TranslationMap.Decode.t translation)
+      >>= fun translations -> succeed { id; level; subject; src; translations }
 
-    let make_assoc locale_order json =
+    let make_assoc locale_order =
       let open Option.Infix in
-      json |> multilingual locale_order
-      |> fun multilingual ->
+      multilingual locale_order
+      >|= fun multilingual ->
       multilingual.translations
       |> TranslationMap.preferred locale_order
       <&> fun translation ->

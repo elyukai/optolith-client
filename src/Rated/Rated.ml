@@ -28,8 +28,8 @@ module Dynamic = struct
 
     module Main = struct
       let ap_total ic value =
-        IC.ap_for_range ic ~from_value:Value.min ~to_value:value
-        + IC.ap_for_activation ic
+        ImprovementCost.ap_for_range ic ~from_value:Value.min ~to_value:value
+        + ImprovementCost.ap_for_activation ic
     end
 
     module Enhancements = struct
@@ -83,7 +83,7 @@ module Dynamic = struct
 
         type static
 
-        val ic : static -> IC.t
+        val ic : static -> ImprovementCost.t
 
         val enhancements : static -> Enhancement.Static.t IntMap.t
       end) : S with type id = Config.id and type static = Config.static = struct
@@ -207,7 +207,7 @@ module Dynamic = struct
 
         type static
 
-        val ic : static -> IC.t
+        val ic : static -> ImprovementCost.t
 
         val enhancements : static -> Enhancement.Static.t IntMap.t
       end) : S with type id = Config.id and type static = Config.static = struct
@@ -299,7 +299,7 @@ module Dynamic = struct
 
         type static
 
-        val ic : static -> IC.t
+        val ic : static -> ImprovementCost.t
       end) : S with type id = Config.id and type static = Config.static = struct
         include Config
 
@@ -419,7 +419,7 @@ module Dynamic = struct
 
         type static'
 
-        val ic : static' -> static -> IC.t option
+        val ic : static' -> static -> ImprovementCost.t option
       end) :
         S
           with type id = Config.id
@@ -499,7 +499,7 @@ module Dynamic = struct
 
       type static
 
-      val ic : static -> IC.t
+      val ic : static -> ImprovementCost.t
     end) : S with type id = Config.id and type static = Config.static = struct
       include Config
       open Value
@@ -560,7 +560,7 @@ module Dynamic = struct
 
     type static
 
-    val ic : static -> IC.t
+    val ic : static -> ImprovementCost.t
 
     val min_value : int
   end) : S with type id = C.id and type static = C.static = struct
@@ -577,7 +577,8 @@ module Dynamic = struct
     let ap_total static value =
       match static with
       | Some static ->
-          static |> ic |> IC.ap_for_range ~from_value:min_value ~to_value:value
+          static |> ic
+          |> ImprovementCost.ap_for_range ~from_value:min_value ~to_value:value
       | None -> 0
 
     let make ?value ~static ~id =
@@ -606,15 +607,14 @@ module Static = struct
       type t = { full : string; abbr : string; isNotModifiable : bool }
 
       module Decode = struct
-        open Json.Decode
+        open Decoders_bs.Decode
 
         type translation = { full : string; abbr : string }
 
-        let translation json =
-          {
-            full = json |> field "full" string;
-            abbr = json |> field "abbr" string;
-          }
+        let translation =
+          field "full" string
+          >>= fun full ->
+          field "abbr" string >>= fun abbr -> succeed { full; abbr }
 
         let make isNotModifiable ({ full; abbr } : translation) =
           { full; abbr; isNotModifiable }

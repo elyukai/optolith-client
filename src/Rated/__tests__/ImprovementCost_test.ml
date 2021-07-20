@@ -1,6 +1,6 @@
 open Jest
 open Expect
-open IC
+open ImprovementCost
 
 let () =
   describe "ap_for_range" (fun () ->

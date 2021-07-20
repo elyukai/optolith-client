@@ -439,7 +439,7 @@ module Collection : sig
     type t = Group.SpecialAbility.t ByLevel.t
 
     module Decode : sig
-      val make : Locale.Order.t -> t Json.Decode.decoder
+      val make : Locale.Order.t -> t Decoders_bs.Decode.decoder
     end
   end
 
@@ -448,7 +448,7 @@ module Collection : sig
     type t = Group.Profession.t Plain.t
 
     module Decode : sig
-      val make : Locale.Order.t -> t Json.Decode.decoder
+      val make : Locale.Order.t -> t Decoders_bs.Decode.decoder
     end
   end
 
@@ -457,7 +457,7 @@ module Collection : sig
     type t = Group.AdvantageDisadvantage.t ByLevel.t
 
     module Decode : sig
-      val make : Locale.Order.t -> t Json.Decode.decoder
+      val make : Locale.Order.t -> t Decoders_bs.Decode.decoder
     end
   end
 
@@ -466,7 +466,7 @@ module Collection : sig
     type t = Group.ArcaneTradition.t Plain.t
 
     module Decode : sig
-      val make : Locale.Order.t -> t Json.Decode.decoder
+      val make : Locale.Order.t -> t Decoders_bs.Decode.decoder
     end
   end
 
@@ -475,7 +475,7 @@ module Collection : sig
     type t = Group.PersonalityTrait.t Plain.t
 
     module Decode : sig
-      val make : Locale.Order.t -> t Json.Decode.decoder
+      val make : Locale.Order.t -> t Decoders_bs.Decode.decoder
     end
   end
 
@@ -484,7 +484,7 @@ module Collection : sig
     type t = Group.Spellwork.t Plain.t
 
     module Decode : sig
-      val make : Locale.Order.t -> t Json.Decode.decoder
+      val make : Locale.Order.t -> t Decoders_bs.Decode.decoder
     end
   end
 
@@ -493,7 +493,7 @@ module Collection : sig
     type t = Group.Liturgy.t Plain.t
 
     module Decode : sig
-      val make : Locale.Order.t -> t Json.Decode.decoder
+      val make : Locale.Order.t -> t Decoders_bs.Decode.decoder
     end
   end
 
@@ -502,7 +502,7 @@ module Collection : sig
     type t = Group.Influence.t Plain.t
 
     module Decode : sig
-      val make : Locale.Order.t -> t Json.Decode.decoder
+      val make : Locale.Order.t -> t Decoders_bs.Decode.decoder
     end
   end
 
@@ -511,7 +511,7 @@ module Collection : sig
     type t = Group.Language.t Plain.t
 
     module Decode : sig
-      val make : Locale.Order.t -> t Json.Decode.decoder
+      val make : Locale.Order.t -> t Decoders_bs.Decode.decoder
     end
   end
 
@@ -520,7 +520,7 @@ module Collection : sig
     type t = Group.AnimistPower.t Plain.t
 
     module Decode : sig
-      val make : Locale.Order.t -> t Json.Decode.decoder
+      val make : Locale.Order.t -> t Decoders_bs.Decode.decoder
     end
   end
 
@@ -529,7 +529,7 @@ module Collection : sig
     type t = Group.Enhancement.t Plain.t
 
     module Decode : sig
-      val make : Locale.Order.t -> t Json.Decode.decoder
+      val make : Locale.Order.t -> t Decoders_bs.Decode.decoder
     end
   end
 end

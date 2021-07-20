@@ -7,7 +7,7 @@ type t = { id : int; occurrences : page list }
  *)
 
 module Decode : sig
-  val make_list : Locale.Order.t -> t list Json.Decode.decoder
+  val make_list : Locale.Order.t -> t list Decoders_bs.Decode.decoder
 end
 
 type nonrec list = t list

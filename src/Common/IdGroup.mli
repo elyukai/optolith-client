@@ -12,7 +12,7 @@ module ExtensionRule : sig
   type t = FocusRule of Id.FocusRule.t | OptionalRule of Id.OptionalRule.t
 
   module Decode : sig
-    val t : t Json.Decode.decoder
+    val t : t Decoders_bs.Decode.decoder
   end
 end
 
@@ -67,7 +67,7 @@ module Activatable : sig
     | ChronicleEnchantment of Id.ChronicleEnchantment.t
 
   module Decode : sig
-    val t : t Json.Decode.decoder
+    val t : t Decoders_bs.Decode.decoder
   end
 
   module Many : sig
@@ -130,7 +130,7 @@ module Activatable : sig
       | ChronicleEnchantment of Id.ChronicleEnchantment.t NonEmptyList.t
 
     module Decode : sig
-      val t : t Json.Decode.decoder
+      val t : t Decoders_bs.Decode.decoder
     end
   end
 end
@@ -164,7 +164,7 @@ module SelectOption : sig
     | Ritual of Id.Ritual.t
 
   module Decode : sig
-    val t : t Json.Decode.decoder
+    val t : t Decoders_bs.Decode.decoder
   end
 end
 
@@ -180,7 +180,7 @@ module Rated : sig
     | Ceremony of Id.Ceremony.t
 
   module Decode : sig
-    val t : t Json.Decode.decoder
+    val t : t Decoders_bs.Decode.decoder
   end
 
   module Many : sig
@@ -195,7 +195,7 @@ module Rated : sig
       | Ceremony of Id.Ceremony.t NonEmptyList.t
 
     module Decode : sig
-      val t : t Json.Decode.decoder
+      val t : t Decoders_bs.Decode.decoder
     end
   end
 end
@@ -209,7 +209,7 @@ module Skill : sig
     | Ceremony of Id.Ceremony.t
 
   module Decode : sig
-    val t : t Json.Decode.decoder
+    val t : t Decoders_bs.Decode.decoder
   end
 end
 
@@ -221,7 +221,7 @@ module ActivatableSkill : sig
     | Ceremony of Id.Ceremony.t
 
   module Decode : sig
-    val t : t Json.Decode.decoder
+    val t : t Decoders_bs.Decode.decoder
   end
 end
 
@@ -231,7 +231,7 @@ module ActivatableAndSkill : sig
     | ActivatableSkill of ActivatableSkill.t
 
   module Decode : sig
-    val t : t Json.Decode.decoder
+    val t : t Decoders_bs.Decode.decoder
   end
 end
 
@@ -239,6 +239,6 @@ module AnimistPower : sig
   type t = AnimistPower of Id.AnimistPower.t
 
   module Decode : sig
-    val t : t Json.Decode.decoder
+    val t : t Decoders_bs.Decode.decoder
   end
 end

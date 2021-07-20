@@ -10,7 +10,7 @@ module Category : sig
   (** The patron category type. *)
 
   module Decode : sig
-    val make_assoc : (int, t) JsonStatic.make_assoc
+    val make_assoc : (int, t) Parsing.make_assoc
   end
 end
 
@@ -48,12 +48,12 @@ type t = {
           on. *)
   cost : int option;
       (** An animal power might derive its cost from the primary patron. *)
-  ic : IC.t option;
+  ic : ImprovementCost.t option;
       (** An animal power might derive its improvement cost from the primary
           patron. *)
 }
 (** The patron type. *)
 
 module Decode : sig
-  val make_assoc : (int, t) JsonStatic.make_assoc
+  val make_assoc : (int, t) Parsing.make_assoc
 end

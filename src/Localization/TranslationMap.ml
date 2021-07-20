@@ -7,10 +7,14 @@ let preferred localeOrder (x : 'a t) =
        None
 
 module Decode = struct
-  let t = Json.Decode.dict
+  open Decoders_bs.Decode
 
-  let t_opt decoder json =
-    t decoder json |> Js.Dict.entries |> Array.to_list
+  let t decoder = key_value_pairs decoder |> map Js.Dict.fromList
+
+  let t_opt decoder =
+    t decoder
+    >|= fun dict ->
+    dict |> Js.Dict.entries |> Array.to_list
     |> Option.mapOption (function
          | key, Some x -> Some (key, x)
          | _, None -> None)

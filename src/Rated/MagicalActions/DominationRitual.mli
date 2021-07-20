@@ -17,7 +17,7 @@ module Static : sig
   (** The domination ritual type. *)
 
   module Decode : sig
-    val make_assoc : (Id.DominationRitual.t, t) JsonStatic.make_assoc
+    val make_assoc : (Id.DominationRitual.t, t) Parsing.make_assoc
   end
 end
 

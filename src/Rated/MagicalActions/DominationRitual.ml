@@ -13,8 +13,7 @@ module Static = struct
   }
 
   module Decode = struct
-    open Json.Decode
-    open JsonStrict
+    open Decoders_bs.Decode
 
     type translation = {
       name : string;
@@ -24,20 +23,17 @@ module Static = struct
       errata : Erratum.list option;
     }
 
-    let translation json =
-      {
-        name = json |> field "name" string;
-        effect = json |> field "effect" string;
-        cost =
-          json
-          |> field "cost"
-               Rated.Static.Activatable.MainParameter.Decode.translation;
-        duration =
-          json
-          |> field "duration"
-               Rated.Static.Activatable.MainParameter.Decode.translation;
-        errata = json |> optionalField "errata" Erratum.Decode.list;
-      }
+    let translation =
+      field "name" string
+      >>= fun name ->
+      field "effect" string
+      >>= fun effect ->
+      field "cost" Rated.Static.Activatable.MainParameter.Decode.translation
+      >>= fun cost ->
+      field "duration" Rated.Static.Activatable.MainParameter.Decode.translation
+      >>= fun duration ->
+      field_opt "errata" Erratum.Decode.list
+      >>= fun errata -> succeed { name; effect; cost; duration; errata }
 
     type multilingual = {
       id : Id.DominationRitual.t;
@@ -48,21 +44,25 @@ module Static = struct
       translations : translation TranslationMap.t;
     }
 
-    let multilingual locale_order json =
-      {
-        id = json |> field "id" Id.DominationRitual.Decode.t;
-        check = json |> field "check" Check.Decode.t;
-        checkMod = json |> optionalField "checkMod" Check.Modifier.Decode.t;
-        property = json |> field "property" int;
-        src = json |> field "src" (PublicationRef.Decode.make_list locale_order);
-        translations =
-          json |> field "translations" (TranslationMap.Decode.t translation);
-      }
+    let multilingual locale_order =
+      field "id" Id.DominationRitual.Decode.t
+      >>= fun id ->
+      field "check" Check.Decode.t
+      >>= fun check ->
+      field_opt "checkMod" Check.Modifier.Decode.t
+      >>= fun checkMod ->
+      field "property" int
+      >>= fun property ->
+      field "src" (PublicationRef.Decode.make_list locale_order)
+      >>= fun src ->
+      field "translations" (TranslationMap.Decode.t translation)
+      >>= fun translations ->
+      succeed { id; check; checkMod; property; src; translations }
 
-    let make_assoc locale_order json =
+    let make_assoc locale_order =
       let open Option.Infix in
-      json |> multilingual locale_order
-      |> fun multilingual ->
+      multilingual locale_order
+      >|= fun multilingual ->
       multilingual.translations
       |> TranslationMap.preferred locale_order
       <&> fun translation ->
@@ -93,5 +93,5 @@ module Dynamic = Rated.Dynamic.Activatable.Make (struct
 
   type static = t
 
-  let ic _ = IC.B
+  let ic _ = ImprovementCost.B
 end)

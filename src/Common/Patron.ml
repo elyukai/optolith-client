@@ -6,11 +6,11 @@ module Category = struct
   }
 
   module Decode = struct
-    open Json.Decode
+    open Decoders_bs.Decode
 
     type translation = { name : string }
 
-    let translation json = { name = json |> field "name" string }
+    let translation = field "name" string >>= fun name -> succeed { name }
 
     type multilingual = {
       id : int;
@@ -18,18 +18,19 @@ module Category = struct
       translations : translation TranslationMap.t;
     }
 
-    let multilingual json =
-      {
-        id = json |> field "id" int;
-        primaryPatronCultures = json |> field "primaryPatronCultures" (list int);
-        translations =
-          json |> field "translations" (TranslationMap.Decode.t translation);
-      }
+    let multilingual =
+      field "id" int
+      >>= fun id ->
+      field "primaryPatronCultures" (list int)
+      >>= fun primaryPatronCultures ->
+      field "translations" (TranslationMap.Decode.t translation)
+      >>= fun translations ->
+      succeed { id; primaryPatronCultures; translations }
 
-    let make_assoc locale_order json =
+    let make_assoc locale_order =
       let open Option.Infix in
-      json |> multilingual
-      |> fun multilingual ->
+      multilingual
+      >|= fun multilingual ->
       multilingual.translations
       |> TranslationMap.preferred locale_order
       <&> fun translation ->
@@ -70,64 +71,55 @@ type t = {
   is_limited_to_cultures_reverse : bool;
   powers : power NonEmptyList.t list;
   cost : int option;
-  ic : IC.t option;
+  ic : ImprovementCost.t option;
 }
 
 module Decode = struct
-  open Json.Decode
-  open JsonStrict
+  open Decoders_bs.Decode
 
   type translation = { name : string }
 
-  let translation json = { name = json |> field "name" string }
+  let translation = field "name" string >>= fun name -> succeed { name }
 
   let combat_value =
     string
-    |> map (function
-         | "Attack" -> Attack
-         | "Parry" -> Parry
-         | "RangedCombat" -> RangedCombat
-         | "Dodge" -> Dodge
-         | "DamagePoints" -> DamagePoints
-         | "Protection" -> Protection
-         | str ->
-             JsonStatic.raise_unknown_variant ~variant_name:"combat_value"
-               ~invalid:str)
+    >>= function
+    | "Attack" -> succeed Attack
+    | "Parry" -> succeed Parry
+    | "RangedCombat" -> succeed RangedCombat
+    | "Dodge" -> succeed Dodge
+    | "DamagePoints" -> succeed DamagePoints
+    | "Protection" -> succeed Protection
+    | _ -> fail "Expected a combat value"
 
   let power =
     field "type" string
-    |> andThen (function
-         | "Advantage" ->
-             field "value" (fun json ->
-                 Advantage
-                   {
-                     id = json |> field "id" Id.Advantage.Decode.t;
-                     level = json |> optionalField "level" int;
-                     option = json |> optionalField "option" int;
-                   })
-         | "Skill" ->
-             field "value" (fun json ->
-                 Skill
-                   {
-                     id = json |> field "id" Id.Skill.Decode.t;
-                     value = json |> field "value" int;
-                   })
-         | "Combat" ->
-             field "value" (fun json ->
-                 Combat
-                   {
-                     combat_value = json |> field "id" combat_value;
-                     value = json |> field "value" int;
-                   })
-         | "Attribute" ->
-             field "value" (fun json ->
-                 Attribute
-                   {
-                     id = json |> field "id" Id.Attribute.Decode.t;
-                     value = json |> field "value" int;
-                   })
-         | str ->
-             JsonStatic.raise_unknown_variant ~variant_name:"power" ~invalid:str)
+    >>= function
+    | "Advantage" ->
+        field "value"
+          (field "id" Id.Advantage.Decode.t
+          >>= fun id ->
+          field_opt "level" int
+          >>= fun level ->
+          field_opt "option" int
+          >>= fun option -> succeed (Advantage { id; level; option }))
+    | "Skill" ->
+        field "value"
+          (field "id" Id.Skill.Decode.t
+          >>= fun id ->
+          field "value" int >>= fun value -> succeed (Skill { id; value }))
+    | "Combat" ->
+        field "value"
+          (field "id" combat_value
+          >>= fun combat_value ->
+          field "value" int
+          >>= fun value -> succeed (Combat { combat_value; value }))
+    | "Attribute" ->
+        field "value"
+          (field "id" Id.Attribute.Decode.t
+          >>= fun id ->
+          field "value" int >>= fun value -> succeed (Attribute { id; value }))
+    | _ -> fail "Expected a power"
 
   type multilingual = {
     id : int;
@@ -137,35 +129,52 @@ module Decode = struct
     isLimitedToCulturesReverse : bool;
     powers : power NonEmptyList.t NonEmptyList.t option;
     cost : int option;
-    ic : IC.t option;
+    ic : ImprovementCost.t option;
     translations : translation TranslationMap.t;
   }
 
-  let multilingual json =
-    {
-      id = json |> field "id" int;
-      category = json |> field "category" int;
-      skills =
-        json
-        |> field "skills"
-             (tuple3 Id.Skill.Decode.t Id.Skill.Decode.t Id.Skill.Decode.t);
-      limitedToCultures = json |> field "limitedToCultures" (list int);
-      powers =
-        json
-        |> optionalField "powers"
-             (NonEmptyList.Decode.t (NonEmptyList.Decode.t power));
-      cost = json |> optionalField "cost" int;
-      ic = json |> optionalField "ic" IC.Decode.t;
-      isLimitedToCulturesReverse =
-        json |> field "isLimitedToCulturesReverse" bool;
-      translations =
-        json |> field "translations" (TranslationMap.Decode.t translation);
-    }
+  let multilingual =
+    field "id" int
+    >>= fun id ->
+    field "category" int
+    >>= fun category ->
+    field "skills"
+      Parsing.Infix.(
+        Id.Skill.Decode.t
+        >>=:: fun id1 ->
+        Id.Skill.Decode.t
+        >>=:: fun id2 ->
+        Id.Skill.Decode.t >>=:: fun id3 -> succeed (id1, id2, id3))
+    >>= fun skills ->
+    field "limitedToCultures" (list int)
+    >>= fun limitedToCultures ->
+    field_opt "powers" (NonEmptyList.Decode.t (NonEmptyList.Decode.t power))
+    >>= fun powers ->
+    field_opt "cost" int
+    >>= fun cost ->
+    field_opt "ic" ImprovementCost.Decode.t
+    >>= fun ic ->
+    field "isLimitedToCulturesReverse" bool
+    >>= fun isLimitedToCulturesReverse ->
+    field "translations" (TranslationMap.Decode.t translation)
+    >>= fun translations ->
+    succeed
+      {
+        id;
+        category;
+        skills;
+        limitedToCultures;
+        powers;
+        cost;
+        ic;
+        isLimitedToCulturesReverse;
+        translations;
+      }
 
-  let make_assoc locale_order json =
+  let make_assoc locale_order =
     let open Option.Infix in
-    json |> multilingual
-    |> fun multilingual ->
+    multilingual
+    >|= fun multilingual ->
     multilingual.translations
     |> TranslationMap.preferred locale_order
     <&> fun translation ->

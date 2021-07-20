@@ -14,14 +14,14 @@ module Static : sig
             and the associated value is the name of this entry used in the
             respective arcane tradition. *)
     property : int;
-    ic : IC.t;
+    ic : ImprovementCost.t;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
   (** The magical dance type. *)
 
   module Decode : sig
-    val make_assoc : (Id.MagicalDance.t, t) JsonStatic.make_assoc
+    val make_assoc : (Id.MagicalDance.t, t) Parsing.make_assoc
   end
 end
 

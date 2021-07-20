@@ -524,14 +524,15 @@ module Safe : sig
 end
 
 module Decode : sig
-  val one_or_many : 'a Json.Decode.decoder -> 'a list Json.Decode.decoder
+  val one_or_many :
+    'a Decoders_bs.Decode.decoder -> 'a list Decoders_bs.Decode.decoder
   (** [one_or_many decoder json] takes a JSON decoder and a JSON value. It
       decodes the JSON as a list where a single-element list can be represented
       as the element itself, which makes it easier to use in the database.
 
       {[
-      one_or_many Json.Decode.int {js|1|js} = [1]
-      one_or_many Json.Decode.int {js|[1, 2, 3]|js} = [1; 2; 3]
+      one_or_many Decoders_bs.Decode.int {js|1|js} = [1]
+      one_or_many Decoders_bs.Decode.int {js|[1, 2, 3]|js} = [1; 2; 3]
       ]} *)
 end
 

@@ -8,52 +8,47 @@ module Static = struct
     cost : Rated.Static.Activatable.MainParameter.t;
     music_tradition : string Id.MagicalTradition.ArcaneDancerTradition.Map.t;
     property : int;
-    ic : IC.t;
+    ic : ImprovementCost.t;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
 
   module Decode = struct
-    open Json.Decode
-    open JsonStrict
+    open Decoders_bs.Decode
 
     module MusicTradition = struct
       type translation = { name : string }
 
-      let translation json = { name = json |> field "name" string }
+      let translation = field "name" string >>= fun name -> succeed { name }
 
       type multilingual = {
         id : Id.MagicalTradition.ArcaneDancerTradition.t;
         translations : translation TranslationMap.t;
       }
 
-      let multilingual json =
-        {
-          id =
-            json
-            |> field "id" Id.MagicalTradition.ArcaneDancerTradition.Decode.t;
-          translations =
-            json |> field "translations" (TranslationMap.Decode.t translation);
-        }
+      let multilingual =
+        field "id" Id.MagicalTradition.ArcaneDancerTradition.Decode.t
+        >>= fun id ->
+        field "translations" (TranslationMap.Decode.t translation)
+        >>= fun translations -> succeed { id; translations }
 
-      let make_assoc locale_order json =
+      let make_assoc locale_order =
         let open Option.Infix in
-        json |> multilingual
-        |> fun multilingual ->
+        multilingual
+        >|= fun multilingual ->
         multilingual.translations
         |> TranslationMap.preferred locale_order
         <&> fun translation -> (multilingual.id, translation.name)
 
-      let make_map locale_order json =
-        json
-        |> list (make_assoc locale_order)
-        |> ListX.foldl'
-             (function
-               | None -> Function.id
-               | Some (key, value) ->
-                   Id.MagicalTradition.ArcaneDancerTradition.Map.insert key
-                     value)
-             Id.MagicalTradition.ArcaneDancerTradition.Map.empty
+      let make_map locale_order =
+        list (make_assoc locale_order)
+        >|= ListX.foldl'
+              (function
+                | None -> Function.id
+                | Some (key, value) ->
+                    Id.MagicalTradition.ArcaneDancerTradition.Map.insert key
+                      value)
+              Id.MagicalTradition.ArcaneDancerTradition.Map.empty
     end
 
     type translation = {
@@ -64,48 +59,49 @@ module Static = struct
       errata : Erratum.list option;
     }
 
-    let translation json =
-      {
-        name = json |> field "name" string;
-        effect = json |> field "effect" string;
-        duration =
-          json
-          |> field "duration"
-               Rated.Static.Activatable.MainParameter.Decode.translation;
-        cost =
-          json
-          |> field "cost"
-               Rated.Static.Activatable.MainParameter.Decode.translation;
-        errata = json |> optionalField "errata" Erratum.Decode.list;
-      }
+    let translation =
+      field "name" string
+      >>= fun name ->
+      field "effect" string
+      >>= fun effect ->
+      field "duration" Rated.Static.Activatable.MainParameter.Decode.translation
+      >>= fun duration ->
+      field "cost" Rated.Static.Activatable.MainParameter.Decode.translation
+      >>= fun cost ->
+      field_opt "errata" Erratum.Decode.list
+      >>= fun errata -> succeed { name; effect; duration; cost; errata }
 
     type multilingual = {
       id : Id.MagicalDance.t;
       check : Check.t;
       musicTradition : string Id.MagicalTradition.ArcaneDancerTradition.Map.t;
       property : int;
-      ic : IC.t;
+      ic : ImprovementCost.t;
       src : PublicationRef.list;
       translations : translation TranslationMap.t;
     }
 
-    let multilingual locale_order json =
-      {
-        id = json |> field "id" Id.MagicalDance.Decode.t;
-        check = json |> field "check" Check.Decode.t;
-        musicTradition =
-          json |> field "musicTradition" (MusicTradition.make_map locale_order);
-        property = json |> field "property" int;
-        ic = json |> field "ic" IC.Decode.t;
-        src = json |> field "src" (PublicationRef.Decode.make_list locale_order);
-        translations =
-          json |> field "translations" (TranslationMap.Decode.t translation);
-      }
+    let multilingual locale_order =
+      field "id" Id.MagicalDance.Decode.t
+      >>= fun id ->
+      field "check" Check.Decode.t
+      >>= fun check ->
+      field "musicTradition" (MusicTradition.make_map locale_order)
+      >>= fun musicTradition ->
+      field "property" int
+      >>= fun property ->
+      field "ic" ImprovementCost.Decode.t
+      >>= fun ic ->
+      field "src" (PublicationRef.Decode.make_list locale_order)
+      >>= fun src ->
+      field "translations" (TranslationMap.Decode.t translation)
+      >>= fun translations ->
+      succeed { id; check; musicTradition; property; ic; src; translations }
 
-    let make_assoc locale_order json =
+    let make_assoc locale_order =
       let open Option.Infix in
-      json |> multilingual locale_order
-      |> fun multilingual ->
+      multilingual locale_order
+      >|= fun multilingual ->
       multilingual.translations
       |> TranslationMap.preferred locale_order
       <&> fun translation ->

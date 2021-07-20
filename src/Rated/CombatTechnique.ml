@@ -3,19 +3,17 @@ module Melee = struct
     type t = {
       id : Id.MeleeCombatTechnique.t;
       name : string;
-      ic : IC.t;
+      ic : ImprovementCost.t;
       primary : int list;
       special : string option;
       hasNoParry : bool;
       breakingPointRating : int;
-      gr : int;
       src : PublicationRef.list;
       errata : Erratum.list;
     }
 
     module Decode = struct
-      open Json.Decode
-      open JsonStrict
+      open Decoders_bs.Decode
 
       type translation = {
         name : string;
@@ -23,42 +21,54 @@ module Melee = struct
         errata : Erratum.list option;
       }
 
-      let translation json =
-        {
-          name = json |> field "name" string;
-          special = json |> optionalField "special" string;
-          errata = json |> optionalField "errata" Erratum.Decode.list;
-        }
+      let translation =
+        field "name" string
+        >>= fun name ->
+        field_opt "special" string
+        >>= fun special ->
+        field_opt "errata" Erratum.Decode.list
+        >>= fun errata -> succeed { name; special; errata }
 
       type multilingual = {
         id : Id.MeleeCombatTechnique.t;
-        ic : IC.t;
+        ic : ImprovementCost.t;
         primary : int list;
         hasNoParry : bool;
         breakingPointRating : int;
-        gr : int;
         src : PublicationRef.list;
         translations : translation TranslationMap.t;
       }
 
-      let multilingual locale_order json =
-        {
-          id = json |> field "id" Id.MeleeCombatTechnique.Decode.t;
-          ic = json |> field "ic" IC.Decode.t;
-          primary = json |> field "primary" (list int);
-          hasNoParry = json |> field "hasNoParry" bool;
-          breakingPointRating = json |> field "breakingPointRating" int;
-          gr = json |> field "gr" int;
-          src =
-            json |> field "src" (PublicationRef.Decode.make_list locale_order);
-          translations =
-            json |> field "translations" (TranslationMap.Decode.t translation);
-        }
+      let multilingual locale_order =
+        field "id" Id.MeleeCombatTechnique.Decode.t
+        >>= fun id ->
+        field "ic" ImprovementCost.Decode.t
+        >>= fun ic ->
+        field "primary" (list int)
+        >>= fun primary ->
+        field "hasNoParry" bool
+        >>= fun hasNoParry ->
+        field "breakingPointRating" int
+        >>= fun breakingPointRating ->
+        field "src" (PublicationRef.Decode.make_list locale_order)
+        >>= fun src ->
+        field "translations" (TranslationMap.Decode.t translation)
+        >>= fun translations ->
+        succeed
+          {
+            id;
+            ic;
+            primary;
+            hasNoParry;
+            breakingPointRating;
+            src;
+            translations;
+          }
 
-      let make_assoc locale_order json =
+      let make_assoc locale_order =
         let open Option.Infix in
-        json |> multilingual locale_order
-        |> fun multilingual ->
+        multilingual locale_order
+        >|= fun multilingual ->
         multilingual.translations
         |> TranslationMap.preferred locale_order
         <&> fun translation ->
@@ -71,7 +81,6 @@ module Melee = struct
             special = translation.special;
             hasNoParry = multilingual.hasNoParry;
             breakingPointRating = multilingual.breakingPointRating;
-            gr = multilingual.gr;
             src = multilingual.src;
             errata = translation.errata |> Option.value ~default:[];
           } )
@@ -96,18 +105,16 @@ module Ranged = struct
     type t = {
       id : Id.RangedCombatTechnique.t;
       name : string;
-      ic : IC.t;
+      ic : ImprovementCost.t;
       primary : int list;
       special : string option;
       breakingPointRating : int;
-      gr : int;
       src : PublicationRef.list;
       errata : Erratum.list;
     }
 
     module Decode = struct
-      open Json.Decode
-      open JsonStrict
+      open Decoders_bs.Decode
 
       type translation = {
         name : string;
@@ -115,40 +122,42 @@ module Ranged = struct
         errata : Erratum.list option;
       }
 
-      let translation json =
-        {
-          name = json |> field "name" string;
-          special = json |> optionalField "special" string;
-          errata = json |> optionalField "errata" Erratum.Decode.list;
-        }
+      let translation =
+        field "name" string
+        >>= fun name ->
+        field_opt "special" string
+        >>= fun special ->
+        field_opt "errata" Erratum.Decode.list
+        >>= fun errata -> succeed { name; special; errata }
 
       type multilingual = {
         id : Id.RangedCombatTechnique.t;
-        ic : IC.t;
+        ic : ImprovementCost.t;
         primary : int list;
         breakingPointRating : int;
-        gr : int;
         src : PublicationRef.list;
         translations : translation TranslationMap.t;
       }
 
-      let multilingual locale_order json =
-        {
-          id = json |> field "id" Id.RangedCombatTechnique.Decode.t;
-          ic = json |> field "ic" IC.Decode.t;
-          primary = json |> field "primary" (list int);
-          breakingPointRating = json |> field "breakingPointRating" int;
-          gr = json |> field "gr" int;
-          src =
-            json |> field "src" (PublicationRef.Decode.make_list locale_order);
-          translations =
-            json |> field "translations" (TranslationMap.Decode.t translation);
-        }
+      let multilingual locale_order =
+        field "id" Id.RangedCombatTechnique.Decode.t
+        >>= fun id ->
+        field "ic" ImprovementCost.Decode.t
+        >>= fun ic ->
+        field "primary" (list int)
+        >>= fun primary ->
+        field "breakingPointRating" int
+        >>= fun breakingPointRating ->
+        field "src" (PublicationRef.Decode.make_list locale_order)
+        >>= fun src ->
+        field "translations" (TranslationMap.Decode.t translation)
+        >>= fun translations ->
+        succeed { id; ic; primary; breakingPointRating; src; translations }
 
-      let make_assoc locale_order json =
+      let make_assoc locale_order =
         let open Option.Infix in
-        json |> multilingual locale_order
-        |> fun multilingual ->
+        multilingual locale_order
+        >|= fun multilingual ->
         multilingual.translations
         |> TranslationMap.preferred locale_order
         <&> fun translation ->
@@ -160,7 +169,6 @@ module Ranged = struct
             primary = multilingual.primary;
             special = translation.special;
             breakingPointRating = multilingual.breakingPointRating;
-            gr = multilingual.gr;
             src = multilingual.src;
             errata = translation.errata |> Option.value ~default:[];
           } )

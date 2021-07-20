@@ -84,12 +84,14 @@ module Index : sig
 end
 
 module Decode : sig
-  val t : 'a Json.Decode.decoder -> 'a t Json.Decode.decoder
+  val t : 'a Decoders_bs.Decode.decoder -> 'a t Decoders_bs.Decode.decoder
 
-  val t_safe : 'a Json.Decode.decoder -> 'a t option Json.Decode.decoder
+  val t_safe :
+    'a Decoders_bs.Decode.decoder -> 'a t option Decoders_bs.Decode.decoder
 
-  val one_or_many : 'a Json.Decode.decoder -> 'a t Json.Decode.decoder
+  val one_or_many :
+    'a Decoders_bs.Decode.decoder -> 'a t Decoders_bs.Decode.decoder
 
   val one_or_many_safe :
-    'a Json.Decode.decoder -> 'a t option Json.Decode.decoder
+    'a Decoders_bs.Decode.decoder -> 'a t option Decoders_bs.Decode.decoder
 end

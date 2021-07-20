@@ -15,7 +15,7 @@ module Static : sig
     target : string;
     property : int;
     traditions : Id.MagicalTradition.Set.t;
-    ic : IC.t;
+    ic : ImprovementCost.t;
     prerequisites : Prerequisite.Collection.Spellwork.t;
     enhancements : Enhancement.Static.t IntMap.t;
     src : PublicationRef.list;
@@ -24,7 +24,7 @@ module Static : sig
   (** The spell type. *)
 
   module Decode : sig
-    val make_assoc : (Id.Spell.t, t) JsonStatic.make_assoc
+    val make_assoc : (Id.Spell.t, t) Parsing.make_assoc
   end
 end
 

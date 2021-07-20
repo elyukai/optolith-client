@@ -68,7 +68,7 @@ module Dynamic : sig
     type static
     (** The static values from the database. *)
 
-    val ic : static -> IC.t
+    val ic : static -> ImprovementCost.t
     (** Get the improvement cost from the static entry. *)
 
     val min_value : int
@@ -135,7 +135,7 @@ module Dynamic : sig
       type static
       (** The static values from the database. *)
 
-      val ic : static -> IC.t
+      val ic : static -> ImprovementCost.t
       (** Get the improvement cost from the static entry. *)
     end) : S with type id = Config.id and type static = Config.static
 
@@ -203,7 +203,7 @@ module Dynamic : sig
         type static
         (** The static values from the database. *)
 
-        val ic : static -> IC.t
+        val ic : static -> ImprovementCost.t
         (** Get the improvement cost from the static entry. *)
 
         val enhancements : static -> Enhancement.Static.t IntMap.t
@@ -293,7 +293,7 @@ module Dynamic : sig
         type static
         (** The static values from the database. *)
 
-        val ic : static -> IC.t
+        val ic : static -> ImprovementCost.t
         (** Get the improvement cost from the static entry. *)
 
         val enhancements : static -> Enhancement.Static.t IntMap.t
@@ -373,7 +373,7 @@ module Dynamic : sig
         type static
         (** The static values from the database. *)
 
-        val ic : static -> IC.t
+        val ic : static -> ImprovementCost.t
         (** Get the improvement cost from the static entry. *)
       end) : S with type id = Config.id and type static = Config.static
     end
@@ -444,7 +444,7 @@ module Dynamic : sig
         (** The secondary static entry from the database that is used if the
             primary static entry cannot provide explicit improvement costs. *)
 
-        val ic : static' -> static -> IC.t option
+        val ic : static' -> static -> ImprovementCost.t option
         (** Get the improvement cost from the static entry or the secondary
             static entry. *)
       end) :
@@ -470,7 +470,7 @@ module Static : sig
       module Decode : sig
         type translation
 
-        val translation : translation Json.Decode.decoder
+        val translation : translation Decoders_bs.Decode.decoder
 
         val make : bool -> translation -> t
       end
