@@ -1,6 +1,7 @@
 module Entities : sig
   val decode_files :
     set_progress:(float -> unit) ->
+    log_err:(Decoders_bs.Decode.error -> unit) ->
     Locale.Order.t ->
     'a ->
     DatabaseReader.Entities.t ->

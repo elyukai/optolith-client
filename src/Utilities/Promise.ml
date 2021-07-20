@@ -34,7 +34,7 @@ module Infix = struct
 
       let pure = resolve
 
-      let fmap f x = x |> then_ (fun x' -> x' |> f |> resolve)
+      let fmap = ( <$> )
 
       let bind f x = x |> then_ f
     end) :

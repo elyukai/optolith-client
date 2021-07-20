@@ -6,6 +6,7 @@
     - [WebContents.send]
     - [WebContents.reply]
     - [IpcRenderer.on]
+    - [IpcRenderer.remove_listener]
 
     For messages to [main] process:
     - [IpcRenderer.send]
@@ -118,8 +119,13 @@ module WebContents = struct
     t = "on"
     [@@bs.send]
 
-  external send : t -> ([ `database_process of float ][@bs.string]) -> unit
-    = "send"
+  external send :
+    t ->
+    ([ `DatabaseProcess of float
+     | `DatabaseProcessed of Static.t
+     | `DatabaseDecodeError of Decoders_bs.Decode.error ]
+    [@bs.string]) ->
+    unit = "send"
     [@@bs.send]
   (** [send web_contents message] sends an asynchronous message to the renderer
       process via ["message"], along with arguments. Arguments will be
@@ -130,8 +136,13 @@ module WebContents = struct
       The renderer process can handle the message by listening to channel with
       the [IpcRenderer] module. *)
 
-  external reply : event -> ([ `database_process of float ][@bs.string]) -> unit
-    = "reply"
+  external reply :
+    event ->
+    ([ `DatabaseProcess of float
+     | `DatabaseProcessed of Static.t
+     | `DatabaseDecodeError of Decoders_bs.Decode.error ]
+    [@bs.string]) ->
+    unit = "reply"
     [@@bs.send]
   (** [reply ipc_main_event message] sends an IPC message to the renderer frame
       that sent the original message that you are currently handling. You should
@@ -233,6 +244,13 @@ module BrowserWindow = struct
 
       To ensure that file URLs are properly formatted, it is recommended to use
       Node's [url.format] method. *)
+
+  external web_contents : t -> WebContents.t = "webContents"
+    [@@bs.get]
+  (** A [WebContents.t] object this window owns. All web page related events and
+      operations will be done via it.
+
+      See the [WebContents] module documentation for its methods and events. *)
 end
 
 module IpcRenderer = struct
@@ -243,8 +261,23 @@ module IpcRenderer = struct
   type event
 
   external on :
-    t -> ([ `database_process of event -> float -> unit ][@bs.string]) -> t
-    = "on"
+    t ->
+    ([ `DatabaseProcess of (event -> float -> unit[@bs])
+     | `DatabaseProcessed of (event -> Static.t -> unit[@bs])
+     | `DatabaseDecodeError of (event -> Decoders_bs.Decode.error -> unit[@bs])
+     ]
+    [@bs.string]) ->
+    t = "on"
+    [@@bs.send]
+
+  external remove_listener :
+    t ->
+    ([ `DatabaseProcess of (event -> float -> unit[@bs])
+     | `DatabaseProcessed of (event -> Static.t -> unit[@bs])
+     | `DatabaseDecodeError of (event -> Decoders_bs.Decode.error -> unit[@bs])
+     ]
+    [@bs.string]) ->
+    t = "removeListener"
     [@@bs.send]
 
   external send : t -> ([ `x of unit ][@bs.string]) -> unit = "send"

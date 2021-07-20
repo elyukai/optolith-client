@@ -23,37 +23,57 @@ let make_window (window_state : ElectronWindowState.t) =
     make ~options ())
 
 let main () =
+  let open Promise.Infix in
   let () = Electron.App.(t |. set_app_user_model_id "lukasobermann.optolith") in
   let window_state = make_window_state () in
   let window = make_window window_state in
   let () = window_state |. ElectronWindowState.manage window in
   install_devtools ()
-  |> Js.Promise.then_ (fun _ ->
-         window
-         |. Electron.BrowserWindow.load_url
-              Node.Url.(
-                path_to_file_url (Node.Path.join2 __dirname "index.html")
-                |> href))
-  |> Js.Promise.then_ (fun _ ->
-         let () = window |. Electron.BrowserWindow.show in
-         let () =
-           if Option.value ~default:false window_state.isMaximized then
-             Electron.BrowserWindow.maximize window
-           else ()
-         in
-         Js.Promise.resolve ())
-  |> Js.Promise.then_ (fun _ ->
-         DatabaseReader.Entities.read_files ~set_progress:(fun _progress -> ()))
-  |> Js.Promise.then_ (fun raw_data ->
-         Js.Promise.make (fun ~resolve ~reject ->
-             Node.WorkerThreads.Worker.(
-               make' "DatabaseWorker.bs.js" (options ~workerData:raw_data)
-               |. on (`online (fun () -> ()))
-               |. on (`message (fun msg -> (resolve msg [@bs])))
-               |. on (`error (fun err -> (reject err [@bs])))
-               |. on (`messageerror (fun err -> (reject err [@bs])))
-               |. on (`exit (fun ~exit_code -> exit_code |> ignore))
-               |> ignore)))
+  >>= (fun _ ->
+        window
+        |. Electron.BrowserWindow.load_url
+             Node.Url.(
+               path_to_file_url (Node.Path.join2 __dirname "index.html") |> href))
+  <&> (fun _ ->
+        let () = window |. Electron.BrowserWindow.show in
+        if Option.value ~default:false window_state.isMaximized then
+          Electron.BrowserWindow.maximize window
+        else ())
+  >>= (fun _ ->
+        DatabaseReader.Entities.read_files ~set_progress:(fun _progress -> ()))
+  >>= (fun raw_data ->
+        Js.Promise.make (fun ~resolve ~reject ->
+            Node.WorkerThreads.Worker.(
+              make' "./src/DatabaseWorker.bs.js"
+                (options
+                   ~workerData:
+                     ((Locale.Order.from_list "de-DE" [ "de-DE" ], raw_data)
+                       : DatabaseWorker.worker_data))
+              |. on
+                   (`online
+                     (fun () ->
+                       let () = Js.Console.log "online" in
+                       Js.Console.timeStart "Database Decoding"))
+              |. on
+                   (`message
+                     (function
+                     | DatabaseWorker.Progress progress ->
+                         window |. Electron.BrowserWindow.web_contents
+                         |. Electron.WebContents.send
+                              (`DatabaseProcess progress)
+                     | Finished data ->
+                         let () = Js.Console.timeEnd "Database Decoding" in
+                         (resolve data [@bs])
+                     | Error err ->
+                         window |. Electron.BrowserWindow.web_contents
+                         |. Electron.WebContents.send (`DatabaseDecodeError err)))
+              |. on (`error (fun err -> (reject err [@bs])))
+              |. on (`messageerror (fun err -> (reject err [@bs])))
+              |. on (`exit (fun ~exit_code -> Js.Console.log exit_code))
+              |> ignore)))
+  <&> (fun data ->
+        window |. Electron.BrowserWindow.web_contents
+        |. Electron.WebContents.send (`DatabaseProcessed data))
   |> Js.Promise.catch (fun err ->
          let () = Js.Console.error err in
          Js.Promise.resolve ())

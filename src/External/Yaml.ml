@@ -1,7 +1,4 @@
-type options
-
-external options : ?mapAsMap:bool -> ?prettyErrors:bool -> unit -> options = ""
-  [@@bs.obj]
+type options = { mapAsMap : bool; prettyErrors : bool } [@@bs.deriving abstract]
 
 external parse : string -> Js.Json.t = "parse"
   [@@bs.module "yaml"]
