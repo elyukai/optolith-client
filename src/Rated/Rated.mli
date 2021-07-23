@@ -462,7 +462,7 @@ module Static : sig
         Casting/ritual/liturgical/ceremonial time, AE/KP cost, range and
         duration. *)
     module MainParameter : sig
-      type t = { full : string; abbr : string; isNotModifiable : bool }
+      type t = { full : string; abbr : string; is_modifiable : bool }
       (** A unified type to store the different values: The full parameter text,
           an abbreviated version for the character sheet and if the value is not
           modifiable. *)
@@ -473,6 +473,23 @@ module Static : sig
         val translation : translation Decoders_bs.Decode.decoder
 
         val make : bool -> translation -> t
+      end
+    end
+
+    module EffectByQualityLevel : sig
+      type t =
+        | PerOne of {
+            ql1 : string;
+            ql2 : string;
+            ql3 : string;
+            ql4 : string;
+            ql5 : string;
+            ql6 : string;
+          }
+        | PerTwo of { ql1 : string; ql3 : string; ql5 : string }
+
+      module Decode : sig
+        val t : t Decoders_bs.Decode.decoder
       end
     end
   end

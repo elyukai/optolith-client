@@ -1,13 +1,13 @@
 type t = {
   id : Id.ExperienceLevel.t;
   name : string;
-  ap : int;
+  adventure_points : int;
   max_attribute_value : int;
   max_skill_rating : int;
   max_combat_technique_rating : int;
   max_attribute_total : int;
-  max_number_spells_liturgical_chants : int;
-  max_unfamiliar_spells : int;
+  max_number_of_spells_liturgical_chants : int;
+  max_number_of_unfamiliar_spells : int;
 }
 
 module Decode = struct
@@ -19,45 +19,45 @@ module Decode = struct
 
   type multilingual = {
     id : Id.ExperienceLevel.t;
-    ap : int;
-    maxAttributeValue : int;
-    maxSkillRating : int;
-    maxCombatTechniqueRating : int;
-    maxAttributeTotal : int;
-    maxNumberSpellsLiturgicalChants : int;
-    maxUnfamiliarSpells : int;
+    adventure_points : int;
+    max_attribute_value : int;
+    max_skill_rating : int;
+    max_combat_technique_rating : int;
+    max_attribute_total : int;
+    max_number_of_spells_liturgical_chants : int;
+    max_number_of_unfamiliar_spells : int;
     translations : translation TranslationMap.t;
   }
 
   let multilingual =
     field "id" Id.ExperienceLevel.Decode.t
     >>= fun id ->
-    field "ap" int
-    >>= fun ap ->
-    field "maxAttributeValue" int
-    >>= fun maxAttributeValue ->
-    field "maxSkillRating" int
-    >>= fun maxSkillRating ->
-    field "maxCombatTechniqueRating" int
-    >>= fun maxCombatTechniqueRating ->
-    field "maxAttributeTotal" int
-    >>= fun maxAttributeTotal ->
-    field "maxNumberSpellsLiturgicalChants" int
-    >>= fun maxNumberSpellsLiturgicalChants ->
-    field "maxUnfamiliarSpells" int
-    >>= fun maxUnfamiliarSpells ->
+    field "adventure_points" int
+    >>= fun adventure_points ->
+    field "max_attribute_value" int
+    >>= fun max_attribute_value ->
+    field "max_skill_rating" int
+    >>= fun max_skill_rating ->
+    field "max_combat_technique_rating" int
+    >>= fun max_combat_technique_rating ->
+    field "max_attribute_total" int
+    >>= fun max_attribute_total ->
+    field "max_number_of_spells_liturgical_chants" int
+    >>= fun max_number_of_spells_liturgical_chants ->
+    field "max_number_of_unfamiliar_spells" int
+    >>= fun max_number_of_unfamiliar_spells ->
     field "translations" (TranslationMap.Decode.t translation)
     >>= fun translations ->
     succeed
       {
         id;
-        ap;
-        maxAttributeValue;
-        maxSkillRating;
-        maxCombatTechniqueRating;
-        maxAttributeTotal;
-        maxNumberSpellsLiturgicalChants;
-        maxUnfamiliarSpells;
+        adventure_points;
+        max_attribute_value;
+        max_skill_rating;
+        max_combat_technique_rating;
+        max_attribute_total;
+        max_number_of_spells_liturgical_chants;
+        max_number_of_unfamiliar_spells;
         translations;
       }
 
@@ -72,13 +72,14 @@ module Decode = struct
       {
         id = multilingual.id;
         name = translation.name;
-        ap = multilingual.ap;
-        max_attribute_value = multilingual.maxAttributeValue;
-        max_skill_rating = multilingual.maxSkillRating;
-        max_combat_technique_rating = multilingual.maxCombatTechniqueRating;
-        max_attribute_total = multilingual.maxAttributeTotal;
-        max_number_spells_liturgical_chants =
-          multilingual.maxNumberSpellsLiturgicalChants;
-        max_unfamiliar_spells = multilingual.maxUnfamiliarSpells;
+        adventure_points = multilingual.adventure_points;
+        max_attribute_value = multilingual.max_attribute_value;
+        max_skill_rating = multilingual.max_skill_rating;
+        max_combat_technique_rating = multilingual.max_combat_technique_rating;
+        max_attribute_total = multilingual.max_attribute_total;
+        max_number_of_spells_liturgical_chants =
+          multilingual.max_number_of_spells_liturgical_chants;
+        max_number_of_unfamiliar_spells =
+          multilingual.max_number_of_unfamiliar_spells;
       } )
 end

@@ -1941,3 +1941,15 @@ module Disease = struct
     let to_int = function Other x -> x
   end)
 end
+
+module Region = struct
+  type t = Other of int
+
+  include Make (struct
+    type nonrec t = t
+
+    let from_int = function x -> Other x
+
+    let to_int = function Other x -> x
+  end)
+end

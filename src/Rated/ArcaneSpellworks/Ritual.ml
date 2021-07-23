@@ -5,14 +5,18 @@ module Static = struct
     check : Check.t;
     check_mod : Check.Modifier.t option;
     effect : string;
+    effect_quality_levels :
+      Rated.Static.Activatable.EffectByQualityLevel.t option;
+    effect_after_quality_levels : string option;
     casting_time : Rated.Static.Activatable.MainParameter.t;
     cost : Rated.Static.Activatable.MainParameter.t;
     range : Rated.Static.Activatable.MainParameter.t;
     duration : Rated.Static.Activatable.MainParameter.t;
     target : string;
-    property : int;
+    property : Id.Property.t;
     traditions : Id.MagicalTradition.Set.t;
-    ic : ImprovementCost.t;
+    tradition_placeholders : int list;
+    improvement_cost : ImprovementCost.t;
     prerequisites : Prerequisite.Collection.Spellwork.t;
     enhancements : Enhancement.Static.t IntMap.t;
     src : PublicationRef.list;
@@ -25,7 +29,10 @@ module Static = struct
     type translation = {
       name : string;
       effect : string;
-      castingTime : Rated.Static.Activatable.MainParameter.Decode.translation;
+      effect_quality_levels :
+        Rated.Static.Activatable.EffectByQualityLevel.t option;
+      effect_after_quality_levels : string option;
+      casting_time : Rated.Static.Activatable.MainParameter.Decode.translation;
       cost : Rated.Static.Activatable.MainParameter.Decode.translation;
       range : Rated.Static.Activatable.MainParameter.Decode.translation;
       duration : Rated.Static.Activatable.MainParameter.Decode.translation;
@@ -38,9 +45,14 @@ module Static = struct
       >>= fun name ->
       field "effect" string
       >>= fun effect ->
-      field "castingTime"
+      field_opt "effect_quality_levels"
+        Rated.Static.Activatable.EffectByQualityLevel.Decode.t
+      >>= fun effect_quality_levels ->
+      field_opt "effect_after_quality_levels" string
+      >>= fun effect_after_quality_levels ->
+      field "casting_time"
         Rated.Static.Activatable.MainParameter.Decode.translation
-      >>= fun castingTime ->
+      >>= fun casting_time ->
       field "cost" Rated.Static.Activatable.MainParameter.Decode.translation
       >>= fun cost ->
       field "range" Rated.Static.Activatable.MainParameter.Decode.translation
@@ -52,19 +64,31 @@ module Static = struct
       field_opt "errata" Erratum.Decode.list
       >>= fun errata ->
       succeed
-        { name; effect; castingTime; cost; range; duration; target; errata }
+        {
+          name;
+          effect;
+          effect_quality_levels;
+          effect_after_quality_levels;
+          casting_time;
+          cost;
+          range;
+          duration;
+          target;
+          errata;
+        }
 
     type multilingual = {
       id : Id.Ritual.t;
       check : Check.t;
-      checkMod : Check.Modifier.t option;
-      castingTimeNoMod : bool;
-      costNoMod : bool;
-      rangeNoMod : bool;
-      durationNoMod : bool;
-      property : int;
-      traditions : int list;
-      ic : ImprovementCost.t;
+      check_mod : Check.Modifier.t option;
+      is_casting_time_modifiable : bool;
+      is_cost_modifiable : bool;
+      is_range_modifiable : bool;
+      is_duration_modifiable : bool;
+      property : Id.Property.t;
+      traditions : Id.MagicalTradition.Set.t;
+      tradition_placeholders : int list;
+      improvement_cost : ImprovementCost.t;
       prerequisites : Prerequisite.Collection.Spellwork.t option;
       enhancements : Enhancement.Static.t IntMap.t option;
       src : PublicationRef.list;
@@ -76,22 +100,24 @@ module Static = struct
       >>= fun id ->
       field "check" Check.Decode.t
       >>= fun check ->
-      field_opt "checkMod" Check.Modifier.Decode.t
-      >>= fun checkMod ->
-      field "castingTimeNoMod" bool
-      >>= fun castingTimeNoMod ->
-      field "costNoMod" bool
-      >>= fun costNoMod ->
-      field "rangeNoMod" bool
-      >>= fun rangeNoMod ->
-      field "durationNoMod" bool
-      >>= fun durationNoMod ->
-      field "property" int
+      field_opt "check_mod" Check.Modifier.Decode.t
+      >>= fun check_mod ->
+      field "is_casting_time_modifiable" bool
+      >>= fun is_casting_time_modifiable ->
+      field "is_cost_modifiable" bool
+      >>= fun is_cost_modifiable ->
+      field "is_range_modifiable" bool
+      >>= fun is_range_modifiable ->
+      field "is_duration_modifiable" bool
+      >>= fun is_duration_modifiable ->
+      field "property" Id.Property.Decode.t
       >>= fun property ->
-      field "traditions" (list int)
+      field "traditions" Id.MagicalTradition.Decode.set
       >>= fun traditions ->
-      field "ic" ImprovementCost.Decode.t
-      >>= fun ic ->
+      field "tradition_placeholders" (list int)
+      >>= fun tradition_placeholders ->
+      field "improvement_cost" ImprovementCost.Decode.t
+      >>= fun improvement_cost ->
       field_opt "prerequisites"
         (Prerequisite.Collection.Spellwork.Decode.make locale_order)
       >>= fun prerequisites ->
@@ -105,14 +131,15 @@ module Static = struct
         {
           id;
           check;
-          checkMod;
-          castingTimeNoMod;
-          costNoMod;
-          rangeNoMod;
-          durationNoMod;
+          check_mod;
+          is_casting_time_modifiable;
+          is_cost_modifiable;
+          is_range_modifiable;
+          is_duration_modifiable;
           property;
           traditions;
-          ic;
+          tradition_placeholders;
+          improvement_cost;
           prerequisites;
           enhancements;
           src;
@@ -131,25 +158,27 @@ module Static = struct
           id = multilingual.id;
           name = translation.name;
           check = multilingual.check;
-          check_mod = multilingual.checkMod;
+          check_mod = multilingual.check_mod;
           effect = translation.effect;
+          effect_quality_levels = translation.effect_quality_levels;
+          effect_after_quality_levels = translation.effect_after_quality_levels;
           casting_time =
             Rated.Static.Activatable.MainParameter.Decode.make
-              multilingual.castingTimeNoMod translation.castingTime;
+              multilingual.is_casting_time_modifiable translation.casting_time;
           cost =
             Rated.Static.Activatable.MainParameter.Decode.make
-              multilingual.costNoMod translation.cost;
+              multilingual.is_cost_modifiable translation.cost;
           range =
             Rated.Static.Activatable.MainParameter.Decode.make
-              multilingual.rangeNoMod translation.range;
+              multilingual.is_range_modifiable translation.range;
           duration =
             Rated.Static.Activatable.MainParameter.Decode.make
-              multilingual.durationNoMod translation.duration;
+              multilingual.is_duration_modifiable translation.duration;
           target = translation.target;
           property = multilingual.property;
-          traditions =
-            multilingual.traditions |> Id.MagicalTradition.Set.from_int_list;
-          ic = multilingual.ic;
+          traditions = multilingual.traditions;
+          tradition_placeholders = multilingual.tradition_placeholders;
+          improvement_cost = multilingual.improvement_cost;
           prerequisites = multilingual.prerequisites |> Option.value ~default:[];
           enhancements =
             multilingual.enhancements |> Option.value ~default:IntMap.empty;
@@ -166,7 +195,7 @@ module Dynamic = Rated.Dynamic.Activatable.ByMagicalTradition.Make (struct
 
   type static = t
 
-  let ic x = x.ic
+  let ic x = x.improvement_cost
 
   let enhancements x = x.enhancements
 end)

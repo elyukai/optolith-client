@@ -146,6 +146,29 @@ module Activatable : sig
   end
 end
 
+(** Magical tradition prerequisite. *)
+module MagicalTradition : sig
+  type t = {
+    can_learn_rituals : bool option;
+        (** If defined, the tradition's ability to learn rituals must equal this
+            prerequisite. *)
+    can_bind_familiars : bool option;
+        (** If defined, the tradition's ability to bind familiars must equal
+            this prerequisite. *)
+  }
+  (** If no options are defined, this prerequisite requires any tradition. *)
+end
+
+(** Blessed tradition prerequisite. *)
+module BlessedTradition : sig
+  type t = {
+    is_shamanistic : bool option;
+        (** If defined, the tradition representing a church or shamanistic
+            tradition must equal this prerequisite. *)
+  }
+  (** If no options are defined, this prerequisite requires any tradition. *)
+end
+
 (** Rated prerequisite. *)
 module Rated : sig
   type t = {
@@ -176,10 +199,48 @@ module AnimistPower : sig
   }
 end
 
+(** Minimum number of skills skill rating prerequisite. *)
+module MinimumSkillRating : sig
+  type targets =
+    | Skills of Id.Skill.t list
+        (** The target set is a list of specific skills. *)
+    | Spellworks of Id.Property.t
+        (** The target set is a list of all spellworks from a property. *)
+    | Liturgies of Id.Aspect.t
+        (** The target set is a list of all liturgies from an aspect. *)
+
+  type t = {
+    number : int;  (** The minimum number of skills. *)
+    value : int;  (** The required value. *)
+    targets : targets;  (** The target set. *)
+  }
+  (** A minimum number of skills from the target set is required to match a
+      minimum value. *)
+end
+
 (** Spellwork or liturgy enhancement prerequisite. *)
 module Enhancement : sig
-  type t = int
-  (** The identifier of the required enhancement of the associated entry. *)
+  type t = {
+    spellwork : IdGroup.Spellwork.t;
+        (** The identifier of the associated entry. *)
+    enhancement : int;
+        (** The identifier of the required enhancement of the associated entry.
+            *)
+  }
+
+  module Internal : sig
+    type t = {
+      id : int;
+          (** The identifier of the required enhancement of the associated
+              entry. *)
+    }
+  end
+end
+
+(** A prerequisite that cannot be ensured by Optolith but rely on roleplay or
+    other background information of the character. *)
+module Special : sig
+  type t = { text : string }
 end
 
 (** The mode in which the prerequisite's text should be generated. *)
@@ -202,7 +263,7 @@ end
 module Config : sig
   type 'a t = {
     value : 'a;  (** The actual prerequisite definition *)
-    displayMode : DisplayMode.t;
+    display_mode : DisplayMode.t;
         (** The display mode for rendering the prerequisite as text. *)
     when_ : When.t list;
         (** If non-empty, the prerequisite only takes effect if all
@@ -230,9 +291,13 @@ module Group : sig
       | Activatable of Activatable.t
       | ActivatableAnyOf of Activatable.AnyOf.t
       | ActivatableAnyOfSelect of Activatable.AnyOf.Select.t
+      | MagicalTradition of MagicalTradition.t
+      | BlessedTradition of BlessedTradition.t
       | Rated of Rated.t
       | RatedAnyOf of Rated.AnyOf.t
+      | MinimumSkillRating of MinimumSkillRating.t
       | AnimistPower of AnimistPower.t
+      | Enhancement of Enhancement.t
       | Other
 
     type t = value Config.t
@@ -254,8 +319,12 @@ module Group : sig
       | Activatable of Activatable.t
       | ActivatableAnyOf of Activatable.AnyOf.t
       | ActivatableAnyOfSelect of Activatable.AnyOf.Select.t
+      | MagicalTradition of MagicalTradition.t
+      | BlessedTradition of BlessedTradition.t
       | Rated of Rated.t
       | RatedAnyOf of Rated.AnyOf.t
+      | MinimumSkillRating of MinimumSkillRating.t
+      | Enhancement of Enhancement.t
 
     type t = value Config.t
     (** Full configuration of a special ability prerequisite definition. *)
@@ -298,8 +367,11 @@ module Group : sig
       | Activatable of Activatable.t
       | ActivatableAnyOf of Activatable.AnyOf.t
       | ActivatableAnyOfSelect of Activatable.AnyOf.Select.t
+      | MagicalTradition of MagicalTradition.t
+      | BlessedTradition of BlessedTradition.t
       | Rated of Rated.t
       | RatedAnyOf of Rated.AnyOf.t
+      | MinimumSkillRating of MinimumSkillRating.t
 
     type t = value Config.t
     (** Full configuration of an advantages or disadvantages prerequisite
@@ -324,7 +396,7 @@ module Group : sig
   (** Possible prerequisites of personality traits. *)
   module PersonalityTrait : sig
     (** A set of possible prerequisite definitions of personality traits. *)
-    type value = Culture of Culture.t | Special
+    type value = Culture of Culture.t | Special of Special.t
 
     type t = value Config.t
     (** Full configuration of a personality trait prerequisite definition. *)
@@ -396,7 +468,7 @@ module Group : sig
   (** Possible prerequisites of enhancements. *)
   module Enhancement : sig
     (** A set of possible prerequisite definitions of enhancements. *)
-    type t = Enhancement of Enhancement.t
+    type t = Enhancement of Enhancement.Internal.t
   end
 end
 

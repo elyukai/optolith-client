@@ -17,7 +17,7 @@ module Static : sig
   (** Application of a skill. *)
   module Application : sig
     type t = {
-      id : int;
+      id : IdGroup.Application.t;
       name : string;
       prerequisite : linked_activatable option;
           (** If a [Some], the entry that needs to be active to enable this
@@ -40,7 +40,7 @@ module Static : sig
   type encumbrance =
     | True  (** Always. *)
     | False  (** Never. *)
-    | Maybe of string option
+    | Maybe of string
         (** Depending on the context, which is explained in the associated
             localized string. *)
 
@@ -48,23 +48,26 @@ module Static : sig
     id : Id.Skill.t;
     name : string;
     check : Check.t;
-    encumbrance : encumbrance;
-    gr : int;
-    ic : ImprovementCost.t;
-    applications : Application.t IntMap.t;
+    applications : Application.t IdGroup.Application.Map.t;
     applications_input : string option;
     uses : Use.t IntMap.t;
+    encumbrance : encumbrance;
     tools : string option;
     quality : string;
     failed : string;
     critical : string;
     botch : string;
+    improvement_cost : ImprovementCost.t;
+    gr : int;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
 
   module Decode : sig
-    val make_assoc : (Id.Skill.t, t) Parsing.make_assoc
+    val make_assoc :
+      regions:Region.t Id.Region.Map.t ->
+      diseases:Disease.t Id.Disease.Map.t ->
+      (Id.Skill.t, t) Parsing.make_assoc
   end
 end
 

@@ -73,6 +73,8 @@ module type T = sig
 
   val fromArray : (key * 'a) array -> 'a t
 
+  val to_array : 'a t -> (key * 'a) array
+
   val filter : ('a -> bool) -> 'a t -> 'a t
 
   val filterWithKey : (key -> 'a -> bool) -> 'a t -> 'a t
@@ -230,6 +232,13 @@ module Make (Key : Comparable) : T with type key = Key.t = struct
     List.fold_left insert_item empty ps
 
   let fromArray ps = Array.fold_left (fun mp (k, v) -> insert k v mp) empty ps
+
+  let to_array mp =
+    foldlWithKey
+      (fun arr key x ->
+        let _ = Js.Array.push (key, x) arr in
+        arr)
+      [||] mp
 
   let filter pred mp = TypedMap.filter (fun _ x -> pred x) mp
 

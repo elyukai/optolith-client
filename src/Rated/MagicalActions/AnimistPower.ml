@@ -113,7 +113,7 @@ module Static = struct
       id : Id.AnimistPower.t;
       check : Check.t;
       costFromPrimaryPatron : string option;
-      tribes : int list;
+      tribes : int list option;
       property : int;
       ic : ic;
       prerequisites : Prerequisite.Collection.AnimistPower.t option;
@@ -127,9 +127,10 @@ module Static = struct
       >>= fun id ->
       field "check" Check.Decode.t
       >>= fun check ->
-      field "costFromPrimaryPatron" (CostFromPrimaryPatron.make locale_order)
+      field_opt "costFromPrimaryPatron"
+        (CostFromPrimaryPatron.make locale_order)
       >>= fun costFromPrimaryPatron ->
-      field "tribes" (list int)
+      field_opt "tribes" (list int)
       >>= fun tribes ->
       field "property" int
       >>= fun property ->
@@ -148,7 +149,7 @@ module Static = struct
         {
           id;
           check;
-          costFromPrimaryPatron;
+          costFromPrimaryPatron = Option.join costFromPrimaryPatron;
           tribes;
           property;
           ic;
@@ -178,7 +179,8 @@ module Static = struct
           duration =
             Rated.Static.Activatable.MainParameter.Decode.make false
               translation.duration;
-          tribes = multilingual.tribes |> IntSet.fromList;
+          tribes =
+            multilingual.tribes |> Option.value ~default:[] |> IntSet.fromList;
           property = multilingual.property;
           ic = multilingual.ic;
           prerequisites = multilingual.prerequisites |> Option.value ~default:[];

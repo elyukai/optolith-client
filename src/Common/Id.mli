@@ -844,3 +844,9 @@ module Disease : sig
 
   include Id with type t := t
 end
+
+module Region : sig
+  type t = Other of int
+
+  include Id with type t := t
+end

@@ -8,6 +8,18 @@
     Each module works exactly the same way, which is outlined above, and why no
     duplicate documentation is present below. *)
 
+module type IdGroup = sig
+  type t
+
+  val compare : t -> t -> int
+  (** [compare x y] returns [0] if [x] is equal to [y], a negative integer if
+      [x] is less than [y], and a positive integer if [x] is greater than [y].
+      *)
+
+  module Map : MapX.T with type key = t
+  (** A configured [Map] module with the identifier variant as the key. *)
+end
+
 module ExtensionRule : sig
   type t = FocusRule of Id.FocusRule.t | OptionalRule of Id.OptionalRule.t
 
@@ -225,6 +237,14 @@ module ActivatableSkill : sig
   end
 end
 
+module Spellwork : sig
+  type t = Spell of Id.Spell.t | Ritual of Id.Ritual.t
+
+  module Decode : sig
+    val t : t Decoders_bs.Decode.decoder
+  end
+end
+
 module ActivatableAndSkill : sig
   type t =
     | Activatable of Activatable.t
@@ -241,4 +261,10 @@ module AnimistPower : sig
   module Decode : sig
     val t : t Decoders_bs.Decode.decoder
   end
+end
+
+module Application : sig
+  type t = Generic of int | Region of Id.Region.t | Disease of Id.Disease.t
+
+  include IdGroup with type t := t
 end

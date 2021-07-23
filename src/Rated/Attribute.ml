@@ -2,7 +2,7 @@ module Static = struct
   type t = {
     id : Id.Attribute.t;
     name : string;
-    abbr : string;
+    abbreviation : string;
     description : string;
   }
 
@@ -11,17 +11,17 @@ module Static = struct
 
     type translation = {
       name : string;
-      nameAbbr : string;
+      abbreviation : string;
       description : string;
     }
 
     let translation =
       field "name" string
       >>= fun name ->
-      field "nameAbbr" string
-      >>= fun nameAbbr ->
+      field "abbreviation" string
+      >>= fun abbreviation ->
       field "description" string
-      >>= fun description -> succeed { name; nameAbbr; description }
+      >>= fun description -> succeed { name; abbreviation; description }
 
     type multilingual = {
       id : Id.Attribute.t;
@@ -45,7 +45,7 @@ module Static = struct
         {
           id = multilingual.id;
           name = translation.name;
-          abbr = translation.nameAbbr;
+          abbreviation = translation.abbreviation;
           description = translation.description;
         } )
   end

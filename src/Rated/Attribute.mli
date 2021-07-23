@@ -5,7 +5,7 @@ module Static : sig
   type t = {
     id : Id.Attribute.t;
     name : string;
-    abbr : string;
+    abbreviation : string;
     description : string;
   }
   (** The attribute type. *)

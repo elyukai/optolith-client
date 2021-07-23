@@ -4,6 +4,28 @@ let decode_many f g =
   Decoders_bs.Decode.(
     field "value" (NonEmptyList.Decode.t int) >|= NonEmptyList.fmap f >|= g)
 
+module type IdGroup = sig
+  type t
+
+  val compare : t -> t -> int
+
+  module Map : MapX.T with type key = t
+end
+
+module Make (S : sig
+  type t
+
+  val compare : t -> t -> int
+end) : IdGroup with type t := S.t = struct
+  include S
+
+  module Map = MapX.Make (struct
+    type nonrec t = S.t
+
+    let compare = compare
+  end)
+end
+
 module ExtensionRule = struct
   type t = FocusRule of Id.FocusRule.t | OptionalRule of Id.OptionalRule.t
   [@@bs.deriving accessors]
@@ -12,7 +34,7 @@ module ExtensionRule = struct
     open Decoders_bs.Decode
 
     let t =
-      field "type" string
+      field "tag" string
       >>= function
       | "FocusRule" -> decode_one Id.FocusRule.from_int focusRule
       | "OptionalRule" -> decode_one Id.OptionalRule.from_int optionalRule
@@ -85,7 +107,7 @@ module Activatable = struct
       open Decoders_bs.Decode
 
       let t =
-        field "type" string
+        field "tag" string
         >>= function
         | "Advantage" -> decode_many Id.Advantage.from_int advantage
         | "Disadvantage" -> decode_many Id.Disadvantage.from_int disadvantage
@@ -244,7 +266,7 @@ module Activatable = struct
     open Decoders_bs.Decode
 
     let t =
-      field "type" string
+      field "tag" string
       >>= function
       | "Advantage" -> decode_one Id.Advantage.from_int advantage
       | "Disadvantage" -> decode_one Id.Disadvantage.from_int disadvantage
@@ -379,7 +401,7 @@ module SelectOption = struct
     let t =
       let generic = int |> map generic in
       let specific =
-        field "type" string
+        field "tag" string
         >>= function
         | "Blessing" -> decode_one Id.Blessing.from_int blessing
         | "Cantrip" -> decode_one Id.Cantrip.from_int cantrip
@@ -438,7 +460,7 @@ module Rated = struct
       open Decoders_bs.Decode
 
       let t =
-        field "type" string
+        field "tag" string
         >>= function
         | "Attribute" -> decode_many Id.Attribute.from_int attribute
         | "Skill" -> decode_many Id.Skill.from_int skill
@@ -470,7 +492,7 @@ module Rated = struct
     open Decoders_bs.Decode
 
     let t =
-      field "type" string
+      field "tag" string
       >>= function
       | "Attribute" -> decode_one Id.Attribute.from_int attribute
       | "Skill" -> decode_one Id.Skill.from_int skill
@@ -500,7 +522,7 @@ module Skill = struct
     open Decoders_bs.Decode
 
     let t =
-      field "type" string
+      field "tag" string
       >>= function
       | "Skill" -> decode_one Id.Skill.from_int skill
       | "Spell" -> decode_one Id.Spell.from_int spell
@@ -524,7 +546,7 @@ module ActivatableSkill = struct
     open Decoders_bs.Decode
 
     let t =
-      field "type" string
+      field "tag" string
       >>= function
       | "Spell" -> decode_one Id.Spell.from_int spell
       | "Ritual" -> decode_one Id.Ritual.from_int ritual
@@ -532,6 +554,22 @@ module ActivatableSkill = struct
           decode_one Id.LiturgicalChant.from_int liturgicalChant
       | "Ceremony" -> decode_one Id.Ceremony.from_int ceremony
       | _ -> fail "Expected an activatable skill category"
+  end
+end
+
+module Spellwork = struct
+  type t = Spell of Id.Spell.t | Ritual of Id.Ritual.t
+  [@@bs.deriving accessors]
+
+  module Decode = struct
+    open Decoders_bs.Decode
+
+    let t =
+      field "tag" string
+      >>= function
+      | "Spell" -> decode_one Id.Spell.from_int spell
+      | "Ritual" -> decode_one Id.Ritual.from_int ritual
+      | _ -> fail "Expected a spellwork category"
   end
 end
 
@@ -561,9 +599,35 @@ module AnimistPower = struct
     open Decoders_bs.Decode
 
     let t =
-      field "type" string
+      field "tag" string
       >>= function
       | "AnimistPower" -> decode_one Id.AnimistPower.from_int animistPower
       | _ -> fail "Expected the animist power category"
   end
+end
+
+module Application = struct
+  type t = Generic of int | Region of Id.Region.t | Disease of Id.Disease.t
+
+  include Make (struct
+    type nonrec t = t
+
+    let outer_to_int = function
+      | Generic _ -> 0
+      | Region _ -> 1
+      | Disease _ -> 2
+
+    let compare a b =
+      match (a, b) with
+      | Generic a', Generic b' -> a' - b'
+      | Region a', Region b' -> Id.Region.compare a' b'
+      | Disease a', Disease b' -> Id.Disease.compare a' b'
+      | (Generic _ as a), (Region _ as b)
+      | (Generic _ as a), (Disease _ as b)
+      | (Region _ as a), (Generic _ as b)
+      | (Region _ as a), (Disease _ as b)
+      | (Disease _ as a), (Generic _ as b)
+      | (Disease _ as a), (Region _ as b) ->
+          outer_to_int a - outer_to_int b
+  end)
 end

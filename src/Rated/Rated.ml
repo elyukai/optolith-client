@@ -604,7 +604,7 @@ end
 module Static = struct
   module Activatable = struct
     module MainParameter = struct
-      type t = { full : string; abbr : string; isNotModifiable : bool }
+      type t = { full : string; abbr : string; is_modifiable : bool }
 
       module Decode = struct
         open Decoders_bs.Decode
@@ -616,8 +616,46 @@ module Static = struct
           >>= fun full ->
           field "abbr" string >>= fun abbr -> succeed { full; abbr }
 
-        let make isNotModifiable ({ full; abbr } : translation) =
-          { full; abbr; isNotModifiable }
+        let make is_modifiable ({ full; abbr } : translation) =
+          { full; abbr; is_modifiable }
+      end
+    end
+
+    module EffectByQualityLevel = struct
+      type t =
+        | PerOne of {
+            ql1 : string;
+            ql2 : string;
+            ql3 : string;
+            ql4 : string;
+            ql5 : string;
+            ql6 : string;
+          }
+        | PerTwo of { ql1 : string; ql3 : string; ql5 : string }
+
+      module Decode = struct
+        open Decoders_bs.Decode
+
+        let t =
+          Parsing.Infix.(
+            string
+            >>=:: fun ql1 ->
+            string
+            >>=:: fun ql2 ->
+            string
+            >>=:: fun ql3 ->
+            one_of
+              [
+                ( "per one",
+                  string
+                  >>=:: fun ql4 ->
+                  string
+                  >>=:: fun ql5 ->
+                  string
+                  >>=:: fun ql6 ->
+                  succeed (PerOne { ql1; ql2; ql3; ql4; ql5; ql6 }) );
+                ("per two", succeed (PerTwo { ql1; ql3 = ql2; ql5 = ql3 }));
+              ])
       end
     end
   end

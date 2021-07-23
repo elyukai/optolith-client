@@ -7,7 +7,7 @@ module Static = struct
 
   module Application = struct
     type t = {
-      id : int;
+      id : IdGroup.Application.t;
       name : string;
       prerequisite : linked_activatable option;
     }
@@ -37,17 +37,20 @@ module Static = struct
         multilingual.translations
         |> TranslationMap.preferred locale_order
         <&> fun translation ->
-        ( multilingual.id,
-          { id = multilingual.id; name = translation.name; prerequisite = None }
-        )
+        ( IdGroup.Application.Generic multilingual.id,
+          {
+            id = Generic multilingual.id;
+            name = translation.name;
+            prerequisite = None;
+          } )
 
       let make_map locale_order =
         list (make_assoc locale_order)
         >|= ListX.foldl'
               (function
                 | None -> Function.id
-                | Some (key, value) -> IntMap.insert key value)
-              IntMap.empty
+                | Some (key, value) -> IdGroup.Application.Map.insert key value)
+              IdGroup.Application.Map.empty
     end
   end
 
@@ -55,23 +58,23 @@ module Static = struct
     type t = { id : int; name : string; prerequisite : linked_activatable }
   end
 
-  type encumbrance = True | False | Maybe of string option
+  type encumbrance = True | False | Maybe of string
 
   type t = {
     id : Id.Skill.t;
     name : string;
     check : Check.t;
-    encumbrance : encumbrance;
-    gr : int;
-    ic : ImprovementCost.t;
-    applications : Application.t IntMap.t;
+    applications : Application.t IdGroup.Application.Map.t;
     applications_input : string option;
     uses : Use.t IntMap.t;
+    encumbrance : encumbrance;
     tools : string option;
     quality : string;
     failed : string;
     critical : string;
     botch : string;
+    improvement_cost : ImprovementCost.t;
+    gr : int;
     src : PublicationRef.list;
     errata : Erratum.list;
   }
@@ -123,6 +126,53 @@ module Static = struct
           errata;
         }
 
+    type derived = Regions | Diseases
+
+    let derived =
+      string
+      >>= function
+      | "Regions" -> succeed Regions
+      | "Diseases" -> succeed Diseases
+      | _ -> fail "Expected a category to derive applications from"
+
+    type applications =
+      | Derived of derived
+      | Explicit of Application.t IdGroup.Application.Map.t
+
+    let applications locale_order =
+      field "tag" string
+      >>= function
+      | "Derived" -> field "value" derived >|= fun mp -> Derived mp
+      | "Explicit" ->
+          field "list" (Application.Decode.make_map locale_order)
+          >|= fun mp -> Explicit mp
+      | _ -> fail "Expected either derived or explicit applications"
+
+    let region_to_application (x : Region.t) : Application.t =
+      { id = Region x.id; name = x.name; prerequisite = None }
+
+    let disease_to_application (x : Disease.t) : Application.t =
+      { id = Disease x.id; name = x.name; prerequisite = None }
+
+    let resolve_applications ~regions ~diseases = function
+      | Derived derived -> (
+          match derived with
+          | Regions ->
+              regions |> Id.Region.Map.to_array
+              |> IdGroup.Application.Map.(
+                   Js.Array.reduce
+                     (fun mp (key, x) ->
+                       insert (Region key) (region_to_application x) mp)
+                     empty)
+          | Diseases ->
+              diseases |> Id.Disease.Map.to_array
+              |> IdGroup.Application.Map.(
+                   Js.Array.reduce
+                     (fun mp (key, x) ->
+                       insert (Disease key) (disease_to_application x) mp)
+                     empty))
+      | Explicit mp -> mp
+
     type encumbrance_multilingual = True | False | Maybe
 
     let encumbrance_multilingual =
@@ -136,9 +186,9 @@ module Static = struct
     type multilingual = {
       id : Id.Skill.t;
       check : Check.t;
-      applications : Application.t IntMap.t option;
-      ic : ImprovementCost.t;
+      applications : applications option;
       enc : encumbrance_multilingual;
+      improvement_cost : ImprovementCost.t;
       gr : int;
       src : PublicationRef.list;
       translations : translation TranslationMap.t;
@@ -147,12 +197,12 @@ module Static = struct
     let multilingual locale_order =
       field "id" Id.Skill.Decode.t
       >>= fun id ->
-      field_opt "applications" (Application.Decode.make_map locale_order)
+      field_opt "applications" (applications locale_order)
       >>= fun applications ->
       field "check" Check.Decode.t
       >>= fun check ->
-      field "ic" ImprovementCost.Decode.t
-      >>= fun ic ->
+      field "improvement_cost" ImprovementCost.Decode.t
+      >>= fun improvement_cost ->
       field "enc" encumbrance_multilingual
       >>= fun enc ->
       field "gr" int
@@ -161,39 +211,55 @@ module Static = struct
       >>= fun src ->
       field "translations" (TranslationMap.Decode.t translation)
       >>= fun translations ->
-      succeed { id; applications; check; ic; enc; gr; src; translations }
+      succeed
+        {
+          id;
+          applications;
+          check;
+          improvement_cost;
+          enc;
+          gr;
+          src;
+          translations;
+        }
 
-    let make_assoc locale_order =
-      let open Option.Infix in
+    let make_assoc ~regions ~diseases locale_order =
       multilingual locale_order
-      >|= fun multilingual ->
+      >>= fun multilingual ->
       multilingual.translations
       |> TranslationMap.preferred locale_order
-      <&> fun translation ->
-      ( multilingual.id,
-        {
-          id = multilingual.id;
-          name = translation.name;
-          check = multilingual.check;
-          encumbrance =
-            (match multilingual.enc with
-            | True -> True
-            | False -> False
-            | Maybe -> Maybe translation.encDescription);
-          applications =
-            multilingual.applications |> Option.value ~default:IntMap.empty;
-          applications_input = translation.applicationsInput;
-          uses = IntMap.empty;
-          ic = multilingual.ic;
-          gr = multilingual.gr;
-          tools = translation.tools;
-          quality = translation.quality;
-          failed = translation.failed;
-          critical = translation.critical;
-          botch = translation.botch;
-          src = multilingual.src;
-          errata = translation.errata |> Option.value ~default:[];
-        } )
+      |> function
+      | Some translation ->
+          (match (multilingual.enc, translation.encDescription) with
+          | True, None -> succeed (True : encumbrance)
+          | False, None -> succeed (False : encumbrance)
+          | Maybe, Some text -> succeed (Maybe text : encumbrance)
+          | (True | False), Some _ | Maybe, None -> fail "")
+          >|= fun encumbrance ->
+          Some
+            ( multilingual.id,
+              {
+                id = multilingual.id;
+                name = translation.name;
+                check = multilingual.check;
+                encumbrance;
+                applications =
+                  multilingual.applications
+                  |> Option.fold ~none:IdGroup.Application.Map.empty
+                       ~some:(resolve_applications ~regions ~diseases);
+                applications_input = translation.applicationsInput;
+                uses = IntMap.empty;
+                improvement_cost = multilingual.improvement_cost;
+                gr = multilingual.gr;
+                tools = translation.tools;
+                quality = translation.quality;
+                failed = translation.failed;
+                critical = translation.critical;
+                botch = translation.botch;
+                src = multilingual.src;
+                errata = translation.errata |> Option.value ~default:[];
+              } )
+      | None -> succeed None
   end
 end
 
@@ -204,7 +270,7 @@ module Dynamic = Rated.Dynamic.Make (struct
 
   type static = t
 
-  let ic x = x.ic
+  let ic x = x.improvement_cost
 
   let min_value = 0
 end)

@@ -1,91 +1,322 @@
 module Entities = struct
-  let decode_type ~log_err empty insert decoder
-      (file_contents : DatabaseReader.Entities.raw_collection) =
-    ListX.foldl'
-      (fun file_content ->
-        file_content |> Yaml.parse
-        |> Decoders_bs.Decode.decode_value decoder
-        |> function
-        | Ok (Some (parsed_key, parsed_value)) -> insert parsed_key parsed_value
-        | Ok None -> Function.id
-        | Error err ->
-            let () = log_err err in
-            Function.id)
-      empty file_contents
-
   let categories_total = DatabaseReader.Entities.dirs_number |> Js.Int.toFloat
 
   let percent_per_category = 1.0 /. categories_total
 
+  (** Prepare decoders for each type in the database. *)
+  module DecodeType = struct
+    open DatabaseReader.Entities
+
+    let decode empty insert make_assoc data_acc ~log_err locale_order data =
+      data |> data_acc
+      |> ListX.foldl'
+           (fun file_content ->
+             file_content |> Yaml.parse
+             |> Decoders_bs.Decode.decode_value (make_assoc locale_order)
+             |> function
+             | Ok (Some (parsed_key, parsed_value)) ->
+                 insert parsed_key parsed_value
+             | Ok None -> Function.id
+             | Error err ->
+                 let () = log_err err in
+                 Function.id)
+           empty
+
+    (* let animal_shapes = decode_type (AnimalShape.Decode.assoc langs) parsed_data.animal_shapes in let () = progress 1.0 in *)
+    (* let animal_shape_paths = decode_type (IdName.Decode.assoc langs) parsed_data.animal_shape_paths in let () = progress 2.0 in *)
+    (* let animal_shape_sizes = decode_type (AnimalShape.Size.Decode.assoc langs) parsed_data.animal_shape_sizes in let () = progress 3.0 in *)
+
+    let animist_powers =
+      let open Id.AnimistPower.Map in
+      let open AnimistPower.Static.Decode in
+      let data_acc data = data.animist_powers in
+      decode empty insert make_assoc data_acc
+
+    (* let arcane_bard_traditions ~log_err langs data =
+       let open Id.MagicalTradition.ArcaneBardTradition.Map in
+       let open ArcaneBardTradition.Static.Decode in
+       decode ~log_err empty insert (make_assoc langs) data.arcane_bard_traditions *)
+
+    (* let arcane_dancer_traditions ~log_err langs data =
+       let open Id.MagicalTradition.ArcaneDancerTradition.Map in
+       let open ArcaneDancerTradition.Static.Decode in
+       decode ~log_err empty insert (make_assoc langs) data.arcane_dancer_traditions *)
+
+    (* let armor_types = decode_type (IdName.Decode.assoc langs) parsed_data.armor_types in let () = progress 7.0 in *)
+    (* let aspects = decode_type (Aspect.Decode.assoc langs) parsed_data.aspects in let () = progress 8.0 in *)
+
+    let attributes =
+      let open Id.Attribute.Map in
+      let open Attribute.Static.Decode in
+      let data_acc data = data.attributes in
+      decode empty insert make_assoc data_acc
+
+    (* let blessings = decode_type (Blessing.Static.Decode.assoc langs) parsed_data.blessings in let () = progress 10.0 in *)
+    (* let brews = decode_type (IdName.Decode.assoc langs) parsed_data.brews in let () = progress 11.0 in *)
+    (* let cantrips = decode_type (Cantrip.Static.Decode.assoc langs) parsed_data.cantrips in let () = progress 12.0 in *)
+
+    let ceremonies =
+      let open Id.Ceremony.Map in
+      let open Ceremony.Static.Decode in
+      let data_acc data = data.ceremonies in
+      decode empty insert make_assoc data_acc
+
+    (* let combat_special_ability_groups = decode_type (IdName.Decode.assoc langs) parsed_data.combat_special_ability_groups in let () = progress 14.0 in *)
+    (* let combat_technique_groups = decode_type (IdName.Decode.assoc langs) parsed_data.combat_technique_groups in let () = progress 15.0 in *)
+    (* let conditions = decode_type (Condition.Static.Decode.assoc langs) parsed_data.conditions in let () = progress 16.0 in *)
+    (* let core_rules = decode_type (CoreRule.Decode.assoc langs) parsed_data.core_rules in let () = progress 17.0 in *)
+    (* let cultures = decode_type (Culture.Static.Decode.assoc langs) parsed_data.cultures in let () = progress 18.0 in *)
+    (* let curricula = decode_type (Curriculum.Static.Decode.assoc langs) parsed_data.curricula in let () = progress 19.0 in *)
+
+    let curses =
+      let open Id.Curse.Map in
+      let open Curse.Static.Decode in
+      let data_acc data = data.curses in
+      decode empty insert make_assoc data_acc
+
+    (* let derived_characteristics = decode_type (DerivedCharacteristic.Static.Decode.assoc langs) parsed_data.derived_characteristics in let () = progress 21.0 in *)
+
+    let diseases =
+      let open Id.Disease.Map in
+      let open Disease.Decode in
+      let data_acc data = data.diseases in
+      decode empty insert make_assoc data_acc
+
+    let domination_rituals =
+      let open Id.DominationRitual.Map in
+      let open DominationRitual.Static.Decode in
+      let data_acc data = data.domination_rituals in
+      decode empty insert make_assoc data_acc
+
+    (* let elements = decode_type (Element.Decode.assoc langs) parsed_data.elements in let () = progress 24.0 in *)
+
+    let elven_magical_songs =
+      let open Id.ElvenMagicalSong.Map in
+      let open ElvenMagicalSong.Static.Decode in
+      let data_acc data = data.elven_magical_songs in
+      decode empty insert make_assoc data_acc
+
+    (* let equipment_packages = decode_type (EquipmentPackage.Decode.assoc langs) parsed_data.equipment_packages in let () = progress 26.0 in *)
+
+    let experience_levels =
+      let open Id.ExperienceLevel.Map in
+      let open ExperienceLevel.Decode in
+      let data_acc data = data.experience_levels in
+      decode empty insert make_assoc data_acc
+
+    (* let eye_colors = decode_type (IdName.Decode.assoc langs) parsed_data.eye_colors in let () = progress 28.0 in *)
+
+    let focus_rules =
+      let open Id.FocusRule.Map in
+      let open FocusRule.Static.Decode in
+      let data_acc data = data.focus_rules in
+      decode empty insert make_assoc data_acc
+
+    let geode_rituals =
+      let open Id.GeodeRitual.Map in
+      let open GeodeRitual.Static.Decode in
+      let data_acc data = data.geode_rituals in
+      decode empty insert make_assoc data_acc
+
+    (* let hair_colors = decode_type (strinDecode.assoc langs) parsed_data.hair_colors in let () = progress 31.0 in *)
+    (* let items = decode_type (Item.Decode.assoc langs) parsed_data.items in let () = progress 32.0 in *)
+    (* let item_groups = decode_type (IdName.Decode.assoc langs) parsed_data.item_groups in let () = progress 33.0 in *)
+
+    let jester_tricks =
+      let open Id.JesterTrick.Map in
+      let open JesterTrick.Static.Decode in
+      let data_acc data = data.jester_tricks in
+      decode empty insert make_assoc data_acc
+
+    (* let languages = decode_type (Language.Decode.assoc langs) parsed_data.languages in let () = progress 34.0 in *)
+
+    let liturgical_chants =
+      let open Id.LiturgicalChant.Map in
+      let open LiturgicalChant.Static.Decode in
+      let data_acc data = data.liturgical_chants in
+      decode empty insert make_assoc data_acc
+
+    (* let liturgical_chant_groups = decode_type (IdName.Decode.assoc langs) parsed_data.liturgical_chant_groups in let () = progress 36.0 in *)
+
+    let magical_dances =
+      let open Id.MagicalDance.Map in
+      let open MagicalDance.Static.Decode in
+      let data_acc data = data.magical_dances in
+      decode empty insert make_assoc data_acc
+
+    let magical_melodies =
+      let open Id.MagicalMelody.Map in
+      let open MagicalMelody.Static.Decode in
+      let data_acc data = data.magical_melodies in
+      decode empty insert make_assoc data_acc
+
+    let melee_combat_techniques =
+      let open Id.MeleeCombatTechnique.Map in
+      let open CombatTechnique.Melee.Static.Decode in
+      let data_acc data = data.melee_combat_techniques in
+      decode empty insert make_assoc data_acc
+
+    let optional_rules =
+      let open Id.OptionalRule.Map in
+      let open OptionalRule.Static.Decode in
+      let data_acc data = data.optional_rules in
+      decode empty insert make_assoc data_acc
+
+    (* let pact = decode_type (Pact.Static.Decode.assoc langs) parsed_data.pact in let () = progress 41.0 in *)
+
+    let patrons =
+      let open IntMap in
+      let open Patron.Decode in
+      let data_acc data = data.patrons in
+      decode empty insert make_assoc data_acc
+
+    let patron_categories =
+      let open IntMap in
+      let open Patron.Category.Decode in
+      let data_acc data = data.patron_categories in
+      decode empty insert make_assoc data_acc
+
+    (* let poisons = decode_type (Poison.Decode.assoc langs) parsed_data.poisons in let () = progress 44.0 in *)
+    (* let professions = decode_type (Profession.Static.Decode.assoc langs) parsed_data.professions in let () = progress 45.0 in *)
+    (* let properties = decode_type (Property.Decode.assoc langs) parsed_data.properties in let () = progress 46.0 in *)
+
+    let publications =
+      let open Id.Publication.Map in
+      let open Publication.Decode in
+      let data_acc data = data.publications in
+      decode empty insert make_assoc data_acc
+
+    (* let races = decode_type (Race.Static.Decode.assoc langs) parsed_data.races in let () = progress 48.0 in *)
+
+    let ranged_combat_techniques =
+      let open Id.RangedCombatTechnique.Map in
+      let open CombatTechnique.Ranged.Static.Decode in
+      let data_acc data = data.ranged_combat_techniques in
+      decode empty insert make_assoc data_acc
+
+    (* let reaches = decode_type (IdName.Decode.assoc langs) parsed_data.reaches in let () = progress 50.0 in *)
+
+    let regions =
+      let open Id.Region.Map in
+      let open Region.Decode in
+      let data_acc data = data.regions in
+      decode empty insert make_assoc data_acc
+
+    let rituals =
+      let open Id.Ritual.Map in
+      let open Ritual.Static.Decode in
+      let data_acc data = data.rituals in
+      decode empty insert make_assoc data_acc
+
+    (* let scripts = decode_type (Script.Decode.assoc langs) parsed_data.scripts in let () = progress 53.0 in *)
+
+    let skills ~regions ~diseases =
+      let open Id.Skill.Map in
+      let open Skill.Static.Decode in
+      let data_acc data = data.skills in
+      decode empty insert (make_assoc ~regions ~diseases) data_acc
+
+    let skill_groups =
+      let open IntMap in
+      let open Skill.Group.Decode in
+      let data_acc data = data.skill_groups in
+      decode empty insert make_assoc data_acc
+
+    (* let social_statuses = decode_type (IdName.Decode.assoc langs) parsed_data.social_statuses in let () = progress 56.0 in *)
+    (* let special_ability_groups = decode_type (IdName.Decode.assoc langs) parsed_data.special_ability_groups in let () = progress 57.0 in *)
+
+    let spells =
+      let open Id.Spell.Map in
+      let open Spell.Static.Decode in
+      let data_acc data = data.spells in
+      decode empty insert make_assoc data_acc
+
+    (* let spell_groups = decode_type (IdName.Decode.assoc langs) parsed_data.spell_groups in let () = progress 59.0 in *)
+    (* let states = decode_type (State.Static.Decode.assoc langs) parsed_data.states in let () = progress 60.0 in *)
+    (* let subjects = decode_type (IdName.Decode.assoc langs) parsed_data.subjects in let () = progress 61.0 in *)
+    (* let trade_secrets = decode_type (TradeSecret.Decode.assoc langs) parsed_data.trade_secrets in let () = progress 62.0 in *)
+    (* let tribes = decode_type (IdName.Decode.assoc langs) parsed_data.tribes in let () = progress 63.0 in *)
+    (* let ui = decode_type (Messages.Decode.assoc langs) parsed_data.ui in let () = progress 64.0 in *)
+
+    let zibilja_rituals =
+      let open Id.ZibiljaRitual.Map in
+      let open ZibiljaRitual.Static.Decode in
+      let data_acc data = data.zibilja_rituals in
+      decode empty insert make_assoc data_acc
+  end
+
   let decode_files
-       ~set_progress ~log_err langs _messages (parsed_data: DatabaseReader.Entities.t): Static.t =
-     let progress part = set_progress(percent_per_category *. part) in
+       ~set_progress ~log_err langs _messages (parsed: DatabaseReader.Entities.t): Static.t =
+     let count = ref 0 in
+     let progress () = let () = count := !count + 1 in set_progress(percent_per_category *. Js.Int.toFloat(!count)) in
   
      (* let animal_shapes = decode_type (AnimalShape.Decode.assoc langs) parsed_data.animal_shapes in let () = progress 1.0 in *)
      (* let animal_shape_paths = decode_type (IdName.Decode.assoc langs) parsed_data.animal_shape_paths in let () = progress 2.0 in *)
      (* let animal_shape_sizes = decode_type (AnimalShape.Size.Decode.assoc langs) parsed_data.animal_shape_sizes in let () = progress 3.0 in *)
-     (* let animist_forces = decode_type (AnimistForce.Static.Decode.assoc langs) parsed_data.animist_forces in let () = progress 4.0 in *)
+     let animist_powers = DecodeType.animist_powers ~log_err langs parsed in let () = progress () in
      (* let arcane_bard_traditions = decode_type (ArcaneTradition.Decode.assoc langs) parsed_data.arcane_bard_traditions in let () = progress 5.0 in *)
      (* let arcane_dancer_traditions = decode_type (ArcaneTradition.Decode.assoc langs) parsed_data.arcane_dancer_traditions in let () = progress 6.0 in *)
      (* let armor_types = decode_type (IdName.Decode.assoc langs) parsed_data.armor_types in let () = progress 7.0 in *)
      (* let aspects = decode_type (Aspect.Decode.assoc langs) parsed_data.aspects in let () = progress 8.0 in *)
-     (* let attributes = decode_type (Attribute.Static.Decode.assoc langs) parsed_data.attributes in let () = progress 9.0 in *)
+     let attributes = DecodeType.attributes ~log_err langs parsed in let () = progress () in
      (* let blessings = decode_type (Blessing.Static.Decode.assoc langs) parsed_data.blessings in let () = progress 10.0 in *)
      (* let brews = decode_type (IdName.Decode.assoc langs) parsed_data.brews in let () = progress 11.0 in *)
      (* let cantrips = decode_type (Cantrip.Static.Decode.assoc langs) parsed_data.cantrips in let () = progress 12.0 in *)
-     (* let ceremonies = decode_type (Ceremony.Static.Decode.assoc langs) parsed_data.ceremonies in let () = progress 13.0 in *)
+     let ceremonies = DecodeType.ceremonies ~log_err langs parsed in let () = progress () in
      (* let combat_special_ability_groups = decode_type (IdName.Decode.assoc langs) parsed_data.combat_special_ability_groups in let () = progress 14.0 in *)
      (* let combat_technique_groups = decode_type (IdName.Decode.assoc langs) parsed_data.combat_technique_groups in let () = progress 15.0 in *)
      (* let conditions = decode_type (Condition.Static.Decode.assoc langs) parsed_data.conditions in let () = progress 16.0 in *)
      (* let core_rules = decode_type (CoreRule.Decode.assoc langs) parsed_data.core_rules in let () = progress 17.0 in *)
      (* let cultures = decode_type (Culture.Static.Decode.assoc langs) parsed_data.cultures in let () = progress 18.0 in *)
      (* let curricula = decode_type (Curriculum.Static.Decode.assoc langs) parsed_data.curricula in let () = progress 19.0 in *)
-     (* let curses = decode_type (Curse.Static.Decode.assoc langs) parsed_data.curses in let () = progress 20.0 in *)
+     let curses = DecodeType.curses ~log_err langs parsed in let () = progress () in
      (* let derived_characteristics = decode_type (DerivedCharacteristic.Static.Decode.assoc langs) parsed_data.derived_characteristics in let () = progress 21.0 in *)
-     (* let diseases = decode_type (Disease.Decode.assoc langs) parsed_data.diseases in let () = progress 22.0 in *)
-     (* let domination_rituals = decode_type (DominationRitual.Static.Decode.assoc langs) parsed_data.domination_rituals in let () = progress 23.0 in *)
+     let diseases = DecodeType.diseases ~log_err langs parsed in let () = progress () in
+     let domination_rituals = DecodeType.domination_rituals ~log_err langs parsed in let () = progress () in
      (* let elements = decode_type (Element.Decode.assoc langs) parsed_data.elements in let () = progress 24.0 in *)
-     (* let elven_magical_songs = decode_type (ElvenMagicalSong.Static.Decode.assoc langs) parsed_data.elven_magical_songs in let () = progress 25.0 in *)
+     let elven_magical_songs = DecodeType.elven_magical_songs ~log_err langs parsed in let () = progress () in
      (* let equipment_packages = decode_type (EquipmentPackage.Decode.assoc langs) parsed_data.equipment_packages in let () = progress 26.0 in *)
-     let experience_levels = Id.ExperienceLevel.Map.(decode_type ~log_err empty insert (ExperienceLevel.Decode.make_assoc langs) parsed_data.experience_levels) in let () = progress 27.0 in
+     let experience_levels = DecodeType.experience_levels ~log_err langs parsed in let () = progress () in
      (* let eye_colors = decode_type (IdName.Decode.assoc langs) parsed_data.eye_colors in let () = progress 28.0 in *)
-     (* let focus_rules = decode_type (FocusRule.Static.Decode.assoc langs) parsed_data.focus_rules in let () = progress 29.0 in *)
-     (* let geodenrituale = decode_type (Geodenritual.Static.Decode.assoc langs) parsed_data.geodenrituale in let () = progress 30.0 in *)
+     let focus_rules = DecodeType.focus_rules ~log_err langs parsed in let () = progress () in
+     let geode_rituals = DecodeType.geode_rituals ~log_err langs parsed in let () = progress () in
      (* let hair_colors = decode_type (strinDecode.assoc langs) parsed_data.hair_colors in let () = progress 31.0 in *)
      (* let items = decode_type (Item.Decode.assoc langs) parsed_data.items in let () = progress 32.0 in *)
      (* let item_groups = decode_type (IdName.Decode.assoc langs) parsed_data.item_groups in let () = progress 33.0 in *)
+     let jester_tricks = DecodeType.jester_tricks ~log_err langs parsed in let () = progress () in
      (* let languages = decode_type (Language.Decode.assoc langs) parsed_data.languages in let () = progress 34.0 in *)
-     (* let liturgical_chants = decode_type (LiturgicalChant.Static.Decode.assoc langs) parsed_data.liturgical_chants in let () = progress 35.0 in *)
+     let liturgical_chants = DecodeType.liturgical_chants ~log_err langs parsed in let () = progress () in
      (* let liturgical_chant_groups = decode_type (IdName.Decode.assoc langs) parsed_data.liturgical_chant_groups in let () = progress 36.0 in *)
-     (* let magical_dances = decode_type (MagicalDance.Static.Decode.assoc langs) parsed_data.magical_dances in let () = progress 37.0 in *)
-     (* let magical_melodies = decode_type (MagicalMelody.Static.Decode.assoc langs) parsed_data.magical_melodies in let () = progress 38.0 in *)
-     (* let melee_combat_techniques = decode_type (CombatTechnique.Melee.Static.Decode.assoc langs) parsed_data.melee_combat_techniques in let () = progress 39.0 in *)
-     (* let optional_rules = decode_type (OptionalRule.Static.Decode.assoc langs) parsed_data.optional_rules in let () = progress 40.0 in *)
+     let magical_dances = DecodeType.magical_dances ~log_err langs parsed in let () = progress () in
+     let magical_melodies = DecodeType.magical_melodies ~log_err langs parsed in let () = progress () in
+     let melee_combat_techniques = DecodeType.melee_combat_techniques ~log_err langs parsed in let () = progress () in
+     let optional_rules = DecodeType.optional_rules ~log_err langs parsed in let () = progress () in
      (* let pact = decode_type (Pact.Static.Decode.assoc langs) parsed_data.pact in let () = progress 41.0 in *)
-     (* let patrons = decode_type (Patron.Decode.assoc langs) parsed_data.patrons in let () = progress 42.0 in *)
-     (* let patron_categories = decode_type (Patron.Category.Decode.assoc langs) parsed_data.patron_categories in let () = progress 43.0 in *)
+     let patrons = DecodeType.patrons ~log_err langs parsed in let () = progress () in
+     let patron_categories = DecodeType.patron_categories ~log_err langs parsed in let () = progress () in
      (* let poisons = decode_type (Poison.Decode.assoc langs) parsed_data.poisons in let () = progress 44.0 in *)
      (* let professions = decode_type (Profession.Static.Decode.assoc langs) parsed_data.professions in let () = progress 45.0 in *)
      (* let properties = decode_type (Property.Decode.assoc langs) parsed_data.properties in let () = progress 46.0 in *)
-     (* let publications = decode_type (Publication.Decode.assoc langs) parsed_data.publications in let () = progress 47.0 in *)
+     let publications = DecodeType.publications ~log_err langs parsed in let () = progress () in
      (* let races = decode_type (Race.Static.Decode.assoc langs) parsed_data.races in let () = progress 48.0 in *)
-     (* let ranged_combat_techniques = decode_type (CombatTechnique.Ranged.Static.Decode.assoc langs) parsed_data.ranged_combat_techniques in let () = progress 49.0 in *)
+     let ranged_combat_techniques = DecodeType.ranged_combat_techniques ~log_err langs parsed in let () = progress () in
      (* let reaches = decode_type (IdName.Decode.assoc langs) parsed_data.reaches in let () = progress 50.0 in *)
-     (* let rituals = decode_type (Ritual.Static.Decode.assoc langs) parsed_data.rituals in let () = progress 51.0 in *)
-     (* let schelmenzauber = decode_type (Schelmenzauber.Static.Decode.assoc langs) parsed_data.schelmenzauber in let () = progress 52.0 in *)
+     let regions = DecodeType.regions ~log_err langs parsed in let () = progress () in
+     let rituals = DecodeType.rituals ~log_err langs parsed in let () = progress () in
      (* let scripts = decode_type (Script.Decode.assoc langs) parsed_data.scripts in let () = progress 53.0 in *)
-     (* let skills = Id.Skill.Map.(decode_type empty insert (Skill.Static.Decode.make_assoc langs) parsed_data.skills) in let () = progress 54.0 in *)
-     (* let skill_groups = decode_type (Skill.Group.Decode.assoc langs) parsed_data.skill_groups in let () = progress 55.0 in *)
+     let skill_groups = DecodeType.skill_groups ~log_err langs parsed in let () = progress () in
      (* let social_statuses = decode_type (IdName.Decode.assoc langs) parsed_data.social_statuses in let () = progress 56.0 in *)
      (* let special_ability_groups = decode_type (IdName.Decode.assoc langs) parsed_data.special_ability_groups in let () = progress 57.0 in *)
-     (* let spells = decode_type (Spell.Static.Decode.assoc langs) parsed_data.spells in let () = progress 58.0 in *)
+     let spells = DecodeType.spells ~log_err langs parsed in let () = progress () in
      (* let spell_groups = decode_type (IdName.Decode.assoc langs) parsed_data.spell_groups in let () = progress 59.0 in *)
      (* let states = decode_type (State.Static.Decode.assoc langs) parsed_data.states in let () = progress 60.0 in *)
      (* let subjects = decode_type (IdName.Decode.assoc langs) parsed_data.subjects in let () = progress 61.0 in *)
      (* let trade_secrets = decode_type (TradeSecret.Decode.assoc langs) parsed_data.trade_secrets in let () = progress 62.0 in *)
      (* let tribes = decode_type (IdName.Decode.assoc langs) parsed_data.tribes in let () = progress 63.0 in *)
      (* let ui = decode_type (Messages.Decode.assoc langs) parsed_data.ui in let () = progress 64.0 in *)
-     (* let zibiljarituale = decode_type (ZibiljaRitual.Static.Decode.assoc langs) parsed_data.zibiljarituale in let () = progress 65.0 in *)
+     let zibilja_rituals = DecodeType.zibilja_rituals ~log_err langs parsed in let () = progress () in
+  
+     let skills = DecodeType.skills ~regions ~diseases ~log_err langs parsed in let () = progress () in
   
      (* let advanced_combat_special_abilities = decode_type (AdvancedCombatSpecialAbility.Static.Decode.assoc langs) parsed_data.advanced_combat_special_abilities in let () = progress 1.0 in *)
      (* let advanced_karma_special_abilities = decode_type (AdvancedKarmaSpecialAbility.Static.Decode.assoc langs) parsed_data.advanced_karma_special_abilities in let () = progress 2.0 in *)
@@ -144,21 +375,21 @@ module Entities = struct
        (* animal_shape_paths; *)
        (* animal_shapes; *)
        (* animal_shape_sizes; *)
-       (* animist_forces; *)
+       animist_powers;
        (* arcane_bard_traditions; *)
        (* arcane_dancer_traditions; *)
        (* armors; *)
        (* armor_types; *)
        (* aspects; *)
        (* attire_enchantments; *)
-       (* attributes; *)
+       attributes;
        (* blessed_traditions; *)
        (* blessings; *)
        (* brawling_special_abilities; *)
        (* brews; *)
        (* cantrips; *)
        (* ceremonial_item_special_abilities; *)
-       (* ceremonies; *)
+       ceremonies;
        (* chronikzauber; *)
        (* combat_special_abilities; *)
        (* combat_special_ability_groups; *)
@@ -169,59 +400,60 @@ module Entities = struct
        (* core_rules; *)
        (* cultures; *)
        (* curricula; *)
-       (* curses; *)
+       curses;
        (* dagger_rituals; *)
        (* derived_characteristics; *)
        (* disadvantages; *)
-       (* diseases; *)
-       (* domination_rituals; *)
+       diseases;
+       domination_rituals;
        (* elements; *)
-       (* elven_magical_songs; *)
+       elven_magical_songs;
        (* equipment_packages; *)
        (* erweiterte_talentsonderfertigkeiten; *)
        experience_levels;
        (* eye_colors; *)
        (* familiar_special_abilities; *)
        (* fate_point_special_abilities; *)
-       (* focus_rules; *)
+       focus_rules;
        (* general_special_abilities; *)
-       (* geodenrituale; *)
+       geode_rituals;
        (* hair_colors; *)
        (* instrument_enchantments; *)
        (* item_groups; *)
        (* items; *)
+       jester_tricks;
        (* kappenzauber; *)
        (* karma_special_abilities; *)
        (* kesselzauber; *)
        (* kugelzauber; *)
        (* languages; *)
        (* liturgical_chant_groups; *)
-       (* liturgical_chants; *)
+       liturgical_chants;
        (* liturgical_style_special_abilities; *)
        (* lykanthropische_gaben; *)
-       (* magical_dances; *)
-       (* magical_melodies; *)
+       magical_dances;
+       magical_melodies;
        (* magical_special_abilities; *)
        (* magical_traditions; *)
        (* magic_style_special_abilities; *)
-       (* melee_combat_techniques; *)
-       (* optional_rules; *)
+       melee_combat_techniques;
+       optional_rules;
        (* orb_enchantments; *)
        (* pact_categories; *)
        (* paktgeschenke; *)
-       (* patron_categories; *)
-       (* patrons; *)
+       patron_categories;
+       patrons;
        (* poisons; *)
        (* professions; *)
        (* properties; *)
        (* protective_warding_circle_special_abilities; *)
-       (* publications; *)
+       publications;
        (* races; *)
-       (* ranged_combat_techniques; *)
+       ranged_combat_techniques;
        (* reaches; *)
+       regions;
        (* ringzauber; *)
-       (* rituals; *)
-       (* schelmenzauber; *)
+       rituals;
        (* schalenzauber; *)
        (* scripts; *)
        (* sermons; *)
@@ -229,12 +461,12 @@ module Entities = struct
        (* sex_sonderfertigkeiten; *)
        (* sichelrituale; *)
        (* sikaryan_raub_sonderfertigkeiten; *)
-       (* skill_groups; *)
-       (* skills; *)
+       skill_groups;
+       skills;
        (* social_statuses; *)
        (* special_ability_groups; *)
        (* spell_groups; *)
-       (* spells; *)
+       spells;
        (* spell_sword_enchantments; *)
        (* spielzeugzauber; *)
        (* staff_enchantments; *)
@@ -249,6 +481,6 @@ module Entities = struct
        (* waffenzauber; *)
        (* wand_enchantments; *)
        (* weapons; *)
-       (* zibiljarituale; *)
+       zibilja_rituals;
      }[@@ocamlformat "disable"]
 end

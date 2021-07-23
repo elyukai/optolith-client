@@ -14,6 +14,11 @@ module Category : sig
   end
 end
 
+(** The patron is only available to a certain set of cultures. It may be
+    available to all, it may be available to only specific ones and it may be
+    available to all except specific ones to the listed cultures. *)
+type culture = All | Only of Id.Culture.Set.t | Except of Id.Culture.Set.t
+
 (** The target value of a combat power. *)
 type combat_value =
   | Attack
@@ -39,8 +44,7 @@ type t = {
   name : string;
   category : int;
   skills : Id.Skill.t * Id.Skill.t * Id.Skill.t;
-  limited_to_cultures : Id.Culture.Set.t;
-  is_limited_to_cultures_reverse : bool;
+  culture : culture;
   powers : power NonEmptyList.t list;
       (** The list represents the powers for different levels of an animal power
           that grants them based on the primary patron. So the powers at index 0

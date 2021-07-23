@@ -17,7 +17,7 @@ module Sex = struct
     open Decoders_bs.Decode
 
     let t =
-      string
+      field "id" string
       >>= function
       | "Male" -> succeed Male
       | "Female" -> succeed Female
@@ -32,16 +32,11 @@ module Race = struct
     open Decoders_bs.Decode
 
     let t =
-      one_of
-        [
-          ( "Simple",
-            NonEmptyList.Decode.one_or_many int
-            >>= fun id -> succeed { id; active = true } );
-          ( "Extended",
-            field "races" (NonEmptyList.Decode.one_or_many int)
-            >>= fun id ->
-            field "active" bool >>= fun active -> succeed { id; active } );
-        ]
+      field "id" (NonEmptyList.Decode.one_or_many int)
+      >>= fun id ->
+      field_opt "active" bool
+      >>= fun active ->
+      succeed { id; active = Option.value ~default:false active }
   end
 end
 
@@ -51,7 +46,7 @@ module Culture = struct
   module Decode = struct
     open Decoders_bs.Decode
 
-    let t = NonEmptyList.Decode.one_or_many int
+    let t = field "id" (NonEmptyList.Decode.one_or_many int)
   end
 end
 
@@ -62,10 +57,12 @@ module PrimaryAttribute = struct
     open Decoders_bs.Decode
 
     let t =
+      field "value" int
+      >>= fun value ->
       field "type" string
       >>= function
-      | "Blessed" -> field "value" int >|= fun value -> Blessed value
-      | "Magical" -> field "value" int >|= fun value -> Magical value
+      | "Blessed" -> succeed (Blessed value)
+      | "Magical" -> succeed (Magical value)
       | _ -> fail "Expected a primary attribute type"
   end
 end
@@ -93,7 +90,9 @@ module SocialStatus = struct
   type t = int
 
   module Decode = struct
-    let t = Decoders_bs.Decode.int
+    open Decoders_bs.Decode
+
+    let t = field "id" int
   end
 end
 
@@ -103,7 +102,7 @@ module State = struct
   module Decode = struct
     open Decoders_bs.Decode
 
-    let t = NonEmptyList.Decode.one_or_many int
+    let t = field "id" (NonEmptyList.Decode.one_or_many int)
   end
 end
 
@@ -111,7 +110,9 @@ module Rule = struct
   type t = IdGroup.ExtensionRule.t
 
   module Decode = struct
-    let t = IdGroup.ExtensionRule.Decode.t
+    open Decoders_bs.Decode
+
+    let t = field "id" IdGroup.ExtensionRule.Decode.t
   end
 end
 
@@ -119,7 +120,9 @@ module Publication = struct
   type t = int
 
   module Decode = struct
-    let t = Decoders_bs.Decode.int
+    open Decoders_bs.Decode
+
+    let t = field "id" int
   end
 end
 
@@ -220,6 +223,33 @@ module Activatable = struct
   end
 end
 
+module MagicalTradition = struct
+  type t = { can_learn_rituals : bool option; can_bind_familiars : bool option }
+
+  module Decode = struct
+    open Decoders_bs.Decode
+
+    let t =
+      field_opt "can_learn_rituals" bool
+      >>= fun can_learn_rituals ->
+      field_opt "can_bind_familiars" bool
+      >>= fun can_bind_familiars ->
+      succeed { can_learn_rituals; can_bind_familiars }
+  end
+end
+
+module BlessedTradition = struct
+  type t = { is_shamanistic : bool option }
+
+  module Decode = struct
+    open Decoders_bs.Decode
+
+    let t =
+      field_opt "is_shamanistic" bool
+      >>= fun is_shamanistic -> succeed { is_shamanistic }
+  end
+end
+
 module Rated = struct
   module AnyOf = struct
     type t = { id : IdGroup.Rated.Many.t; value : int }
@@ -259,11 +289,79 @@ module AnimistPower = struct
   end
 end
 
-module Enhancement = struct
-  type t = int
+module MinimumSkillRating = struct
+  type targets =
+    | Skills of Id.Skill.t list
+    | Spellworks of Id.Property.t
+    | Liturgies of Id.Aspect.t
+
+  type t = { number : int; value : int; targets : targets }
 
   module Decode = struct
-    let t = Decoders_bs.Decode.int
+    open Decoders_bs.Decode
+
+    let targets =
+      field "tag" string
+      >>= function
+      | "Skills" ->
+          field "id" (list Id.Skill.Decode.t)
+          >>= fun list -> succeed (Skills list)
+      | "Spellworks" ->
+          field "property" Id.Property.Decode.t
+          >>= fun property -> succeed (Spellworks property)
+      | "Liturgies" ->
+          field "aspect" Id.Aspect.Decode.t
+          >>= fun aspect -> succeed (Liturgies aspect)
+      | _ -> fail "Expected a skill rating target"
+
+    let t =
+      field "number" int
+      >>= fun number ->
+      field "value" int
+      >>= fun value ->
+      field "targets" targets
+      >>= fun targets -> succeed { number; value; targets }
+  end
+end
+
+module Enhancement = struct
+  module Internal = struct
+    type t = { id : int }
+
+    module Decode = struct
+      open Decoders_bs.Decode
+
+      let t = field "id" int >>= fun id -> succeed { id }
+    end
+  end
+
+  type t = { spellwork : IdGroup.Spellwork.t; enhancement : int }
+
+  module Decode = struct
+    open Decoders_bs.Decode
+
+    let t =
+      field "spellwork" IdGroup.Spellwork.Decode.t
+      >>= fun spellwork ->
+      field "enhancement" int
+      >>= fun enhancement -> succeed { spellwork; enhancement }
+  end
+end
+
+module Special = struct
+  type t = { text : string }
+
+  module Decode = struct
+    open Decoders_bs.Decode
+
+    let t locale_order =
+      field "text" (TranslationMap.Decode.t string)
+      >>= fun translation ->
+      translation
+      |> TranslationMap.preferred locale_order
+      |> function
+      | Some text -> succeed { text }
+      | None -> fail "Expected a prerequisite text"
   end
 end
 
@@ -309,7 +407,7 @@ module When = struct
     open Decoders_bs.Decode
 
     let t =
-      field "type" string
+      field "tag" string
       >>= function
       | "Publication" ->
           field "value" Publication.Decode.t >|= fun x -> Publication x
@@ -318,32 +416,32 @@ module When = struct
 end
 
 module Config = struct
-  type 'a t = { value : 'a; displayMode : DisplayMode.t; when_ : When.t list }
+  type 'a t = { value : 'a; display_mode : DisplayMode.t; when_ : When.t list }
 
   module Decode = struct
     open Decoders_bs.Decode
 
     type 'a multilingual = {
       value : 'a;
-      displayOption : DisplayMode.t option;
+      display_option : DisplayMode.t option;
       when_ : When.t NonEmptyList.t option;
     }
 
     let multilingual locale_order decoder wrap =
-      field "value" decoder
+      decoder
       >>= fun value ->
-      field_opt "displayOption" (DisplayMode.Decode.make locale_order)
-      >>= fun displayOption ->
+      field_opt "display_option" (DisplayMode.Decode.make locale_order)
+      >>= fun display_option ->
       field_opt "when" (NonEmptyList.Decode.t When.Decode.t)
-      >>= fun when_ -> succeed { value = value |> wrap; displayOption; when_ }
+      >>= fun when_ -> succeed { value = value |> wrap; display_option; when_ }
 
     let make locale_order decoder wrap =
       multilingual locale_order decoder wrap
       >|= fun multilingual : 'b t ->
       {
         value = multilingual.value;
-        displayMode =
-          multilingual.displayOption
+        display_mode =
+          multilingual.display_option
           |> Option.value ~default:DisplayMode.Generate;
         when_ =
           multilingual.when_ |> Option.fold ~none:[] ~some:NonEmptyList.to_list;
@@ -367,9 +465,13 @@ module Group = struct
       | Activatable of Activatable.t
       | ActivatableAnyOf of Activatable.AnyOf.t
       | ActivatableAnyOfSelect of Activatable.AnyOf.Select.t
+      | MagicalTradition of MagicalTradition.t
+      | BlessedTradition of BlessedTradition.t
       | Rated of Rated.t
       | RatedAnyOf of Rated.AnyOf.t
+      | MinimumSkillRating of MinimumSkillRating.t
       | AnimistPower of AnimistPower.t
+      | Enhancement of Enhancement.t
       | Other
 
     type t = value Config.t
@@ -388,8 +490,12 @@ module Group = struct
       | Activatable of Activatable.t
       | ActivatableAnyOf of Activatable.AnyOf.t
       | ActivatableAnyOfSelect of Activatable.AnyOf.Select.t
+      | MagicalTradition of MagicalTradition.t
+      | BlessedTradition of BlessedTradition.t
       | Rated of Rated.t
       | RatedAnyOf of Rated.AnyOf.t
+      | MinimumSkillRating of MinimumSkillRating.t
+      | Enhancement of Enhancement.t
 
     type t = value Config.t
 
@@ -409,15 +515,19 @@ module Group = struct
           | Activatable x -> Activatable x
           | ActivatableAnyOf x -> ActivatableAnyOf x
           | ActivatableAnyOfSelect x -> ActivatableAnyOfSelect x
+          | MagicalTradition x -> MagicalTradition x
+          | BlessedTradition x -> BlessedTradition x
           | Rated x -> Rated x
-          | RatedAnyOf x -> RatedAnyOf x);
+          | RatedAnyOf x -> RatedAnyOf x
+          | MinimumSkillRating x -> MinimumSkillRating x
+          | Enhancement x -> Enhancement x);
       }
 
     module Decode = struct
       open Decoders_bs.Decode
 
       let make locale_order =
-        field "type" string
+        field "tag" string
         >>= function
         | "Sex" -> Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
         | "Race" ->
@@ -446,11 +556,23 @@ module Group = struct
         | "ActivatableMultiSelect" ->
             Config.Decode.make locale_order Activatable.AnyOf.Select.Decode.t
               (fun v -> ActivatableAnyOfSelect v)
+        | "MagicalTradition" ->
+            Config.Decode.make locale_order MagicalTradition.Decode.t (fun v ->
+                MagicalTradition v)
+        | "BlessedTradition" ->
+            Config.Decode.make locale_order BlessedTradition.Decode.t (fun v ->
+                BlessedTradition v)
         | "Increasable" ->
             Config.Decode.make locale_order Rated.Decode.t (fun v -> Rated v)
         | "IncreasableMultiEntry" ->
             Config.Decode.make locale_order Rated.AnyOf.Decode.t (fun v ->
                 RatedAnyOf v)
+        | "MinimumSkillRating" ->
+            Config.Decode.make locale_order MinimumSkillRating.Decode.t
+              (fun v -> MinimumSkillRating v)
+        | "Enhancement" ->
+            Config.Decode.make locale_order Enhancement.Decode.t (fun v ->
+                Enhancement v)
         | _ -> fail "Expected special ability prerequisite type"
     end
   end
@@ -481,7 +603,7 @@ module Group = struct
       open Decoders_bs.Decode
 
       let make locale_order =
-        field "type" string
+        field "tag" string
         >>= function
         | "Sex" -> Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
         | "Race" ->
@@ -512,8 +634,11 @@ module Group = struct
       | Activatable of Activatable.t
       | ActivatableAnyOf of Activatable.AnyOf.t
       | ActivatableAnyOfSelect of Activatable.AnyOf.Select.t
+      | MagicalTradition of MagicalTradition.t
+      | BlessedTradition of BlessedTradition.t
       | Rated of Rated.t
       | RatedAnyOf of Rated.AnyOf.t
+      | MinimumSkillRating of MinimumSkillRating.t
 
     type t = value Config.t
 
@@ -534,21 +659,24 @@ module Group = struct
           | Activatable x -> Activatable x
           | ActivatableAnyOf x -> ActivatableAnyOf x
           | ActivatableAnyOfSelect x -> ActivatableAnyOfSelect x
+          | MagicalTradition x -> MagicalTradition x
+          | BlessedTradition x -> BlessedTradition x
           | Rated x -> Rated x
-          | RatedAnyOf x -> RatedAnyOf x);
+          | RatedAnyOf x -> RatedAnyOf x
+          | MinimumSkillRating x -> MinimumSkillRating x);
       }
 
     module Decode = struct
       open Decoders_bs.Decode
 
       let make locale_order =
-        field "type" string
+        field "tag" string
         >>= function
         | "CommonSuggestedByRCP" ->
             succeed
               ({
                  value = CommonSuggestedByRCP;
-                 displayMode = Generate;
+                 display_mode = Generate;
                  when_ = [];
                }
                 : t)
@@ -579,11 +707,20 @@ module Group = struct
         | "ActivatableMultiSelect" ->
             Config.Decode.make locale_order Activatable.AnyOf.Select.Decode.t
               (fun v -> ActivatableAnyOfSelect v)
+        | "MagicalTradition" ->
+            Config.Decode.make locale_order MagicalTradition.Decode.t (fun v ->
+                MagicalTradition v)
+        | "BlessedTradition" ->
+            Config.Decode.make locale_order BlessedTradition.Decode.t (fun v ->
+                BlessedTradition v)
         | "Increasable" ->
             Config.Decode.make locale_order Rated.Decode.t (fun v -> Rated v)
         | "IncreasableMultiEntry" ->
             Config.Decode.make locale_order Rated.AnyOf.Decode.t (fun v ->
                 RatedAnyOf v)
+        | "MinimumSkillRating" ->
+            Config.Decode.make locale_order MinimumSkillRating.Decode.t
+              (fun v -> MinimumSkillRating v)
         | _ -> fail "Expected advantage/disadvantage prerequisite type"
     end
   end
@@ -603,7 +740,7 @@ module Group = struct
       open Decoders_bs.Decode
 
       let make locale_order =
-        field "type" string
+        field "tag" string
         >>= function
         | "Sex" -> Config.Decode.make locale_order Sex.Decode.t (fun v -> Sex v)
         | "Culture" ->
@@ -614,24 +751,26 @@ module Group = struct
   end
 
   module PersonalityTrait = struct
-    type value = Culture of Culture.t | Special
+    type value = Culture of Culture.t | Special of Special.t
 
     type t = value Config.t
 
     let unify (x : t) : Unified.t =
       {
         x with
-        value = (match x.value with Special -> Other | Culture x -> Culture x);
+        value =
+          (match x.value with Special _ -> Other | Culture x -> Culture x);
       }
 
     module Decode = struct
       open Decoders_bs.Decode
 
       let make locale_order =
-        field "type" string
+        field "tag" string
         >>= function
         | "Special" ->
-            Config.Decode.make locale_order value (Function.const Special)
+            Config.Decode.make locale_order (Special.Decode.t locale_order)
+              (fun v -> Special v)
         | "Culture" ->
             Config.Decode.make locale_order Culture.Decode.t (fun v ->
                 Culture v)
@@ -654,11 +793,11 @@ module Group = struct
       open Decoders_bs.Decode
 
       let make locale_order =
-        field "type" string
+        field "tag" string
         >>= function
         | "Rule" ->
             Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
-        | "Culture" ->
+        | "Increasable" ->
             Config.Decode.make locale_order Rated.Decode.t (fun v -> Rated v)
         | _ -> fail "Expected spellwork prerequisite type"
     end
@@ -676,7 +815,7 @@ module Group = struct
       open Decoders_bs.Decode
 
       let make locale_order =
-        field "type" string
+        field "tag" string
         >>= function
         | "Rule" ->
             Config.Decode.make locale_order Rule.Decode.t (fun v -> Rule v)
@@ -700,7 +839,7 @@ module Group = struct
       open Decoders_bs.Decode
 
       let make locale_order =
-        field "type" string
+        field "tag" string
         >>= function
         | "Special" ->
             Config.Decode.make locale_order value (Function.const Special)
@@ -729,7 +868,7 @@ module Group = struct
       open Decoders_bs.Decode
 
       let make locale_order =
-        field "type" string
+        field "tag" string
         >>= function
         | "Race" ->
             Config.Decode.make locale_order Race.Decode.t (fun v -> Race v)
@@ -752,7 +891,7 @@ module Group = struct
       open Decoders_bs.Decode
 
       let make locale_order =
-        field "type" string
+        field "tag" string
         >>= function
         | "AnimistPower" ->
             Config.Decode.make locale_order AnimistPower.Decode.t (fun v ->
@@ -762,15 +901,16 @@ module Group = struct
   end
 
   module Enhancement = struct
-    type t = Enhancement of Enhancement.t
+    type t = Enhancement of Enhancement.Internal.t
 
     module Decode = struct
       open Decoders_bs.Decode
 
       let make _ =
-        field "type" string
+        field "tag" string
         >>= function
-        | "Enhancement" -> Enhancement.Decode.t |> map (fun v -> Enhancement v)
+        | "Enhancement" ->
+            Enhancement.Internal.Decode.t |> map (fun v -> Enhancement v)
         | _ -> fail "Expected enhancement prerequisite type"
     end
   end
@@ -784,7 +924,7 @@ module Collection = struct
       open Decoders_bs.Decode
 
       let make decoder =
-        field "type" string
+        field "tag" string
         >>= function
         | "Plain" -> field "value" (list decoder)
         | _ -> fail "Expected collection type"
@@ -822,7 +962,7 @@ module Collection = struct
       open Decoders_bs.Decode
 
       let make decoder =
-        field "type" string
+        field "tag" string
         >>= function
         | "Plain" -> field "value" (list decoder) |> map plain
         | "ByLevel" ->
