@@ -37,6 +37,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.ACCESS_TOKEN }}
+        submodules: true
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
