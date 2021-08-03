@@ -12,6 +12,7 @@ import { any, lookup, OrderedMap } from "../../Data/OrderedMap"
 import { toObject } from "../../Data/Record"
 import * as IO from "../../System/IO"
 import * as ActionTypes from "../Constants/ActionTypes"
+
 import { APCache } from "../Models/Cache"
 import { Config } from "../Models/Config"
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
@@ -306,6 +307,7 @@ export const imgPathToBase64 =
 
     return Just (path)
   }
+
 
 export const requestHeroExport =
   (id: string): ReduxAction =>

@@ -1,7 +1,7 @@
 {
   "name": "optolith",
   "productName": "Optolith",
-  "version": "1.5.0-alpha.2",
+  "version": "1.5.0-alpha.4",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'.",
   "author": {
     "name": "Lukas Obermann",
@@ -12,6 +12,7 @@
   "main": "app/main.js",
   "dependencies": {
     "@glennsl/bs-json": "5.0.2",
+    "adm-zip": "^0.5.1",
     "ajv": "6.12.6",
     "bs-platform": "8.3.2",
     "electron-devtools-installer": "3.1.1",
@@ -71,7 +72,7 @@
     "jest": "26.4.2",
     "qusly-core": "2.5.2",
     "sass": "1.29.0",
-    "standard-version": "9.0.0",
+    "standard-version": "^9.3.1",
     "ts-jest": "26.4.4",
     "ts-loader": "8.0.11",
     "typescript": "3.8.3",
