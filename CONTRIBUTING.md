@@ -40,6 +40,12 @@ Due to licensing, the YAML files containing the crunch elements from the books a
 - Code should follow functional programming practices while maintaining readablilty &ndash; which can be an issue using JavaScript/TypeScript, which is why in certain circumstances imperative/OOP code is allowed. It is also possible to write Reason/OCaml code, which compiles to JS.
 - The contribution has to be easy to understand not only for players using the app, but also for coders trying to further enhance the app: Please document *at least* module exports!
 
+### Install required software
+
+- **Git** &mdash; https://git-scm.com/downloads or via a package manager
+- **Node.js** with **npm** &mdash; https://nodejs.org/en/ or via [`nvm`](https://github.com/nvm-sh/nvm)
+- *Optional:* **Visual Studio Code** &mdash; https://code.visualstudio.com/ (you can use your own editor as well, there are project-specific VSCode settings within this repository, though)
+
 ### Prepare the repo
 
 Clone the repo, including the private submodule.

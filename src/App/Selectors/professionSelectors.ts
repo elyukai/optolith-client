@@ -4,7 +4,7 @@ import { fmap, fmapF } from "../../Data/Functor"
 import { over } from "../../Data/Lens"
 import { all, cons, Cons, elemF, filter, find, foldr, List, ListI, map, sortBy, subscriptF } from "../../Data/List"
 import { bind, ensure, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe"
-import { add } from "../../Data/Num"
+import { add, lte } from "../../Data/Num"
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Tuple/Curry"
@@ -22,12 +22,12 @@ import { Culture } from "../Models/Wiki/Culture"
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel"
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
 import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement"
-import { RequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement"
 import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/ProfessionRequireIncreasable"
 import { Profession } from "../Models/Wiki/Profession"
 import { CombatTechniquesSelection, CombatTechniquesSelectionL } from "../Models/Wiki/professionSelections/CombatTechniquesSelection"
-import { ProfessionSelectionsL } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
-import { ProfessionVariantSelectionsL } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections"
+import { ProfessionSelections, ProfessionSelectionsL } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections"
+import { ProfessionVariantSelections, ProfessionVariantSelectionsL } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections"
+import { isRemoveCombatTechniquesSelection, VariantCombatTechniquesSelection } from "../Models/Wiki/professionSelections/RemoveCombatTechniquesSelection"
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant"
 import { Skill } from "../Models/Wiki/Skill"
 import { Spell } from "../Models/Wiki/Spell"
@@ -36,7 +36,7 @@ import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill"
 import { IncreaseSkillList } from "../Models/Wiki/sub/IncreaseSkillList"
 import { NameBySex } from "../Models/Wiki/sub/NameBySex"
 import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
-import { ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers"
+import { ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers"
 import { getNameCostForWiki } from "../Utilities/Activatable/activatableActiveUtils"
 import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
@@ -71,7 +71,10 @@ const SPA = Spell.A
 const CTA = CombatTechnique.A
 const LCA = LiturgicalChant.A
 const PRIA = ProfessionRequireIncreasable.A
+const CTSA = CombatTechniquesSelection.A
+const PSA = ProfessionSelections.A
 const PSL = ProfessionSelectionsL
+const PVSA = ProfessionVariantSelections.A
 const PVSL = ProfessionVariantSelectionsL
 
 export const getProfession = createMaybeSelector (
@@ -471,33 +474,53 @@ export const getAllProfessions = createMaybeSelector (
 const isCustomProfession = (e: Record<ProfessionCombined>) => ProfessionCombinedA_.id (e)
                                                               === ProfessionId.CustomProfession
 
-const areProfessionOrVariantPrerequisitesValid =
-  (current_sex: Sex) =>
-  (current_race_id: string) =>
-  (current_culture_id: string) =>
+const profession_boni_meet_experience_level_max =
   (start_el: Record<ExperienceLevel>) =>
-  (dependencies: List<ProfessionDependency>) =>
-  (prerequisites: List<ProfessionPrerequisite>): boolean => {
-    const isProfessionValid = validateProfession (dependencies)
-                                                 (current_sex)
-                                                 (current_race_id)
-                                                 (current_culture_id)
+  (combatTechniquesSelection: Maybe<VariantCombatTechniquesSelection>) =>
+  (prerequisites: List<ProfessionPrerequisite>) =>
+  (combatTechniques: List<Record<IncreaseSkill>>) =>
+    pipe_ (
+      combatTechniques,
+      all (x => ISA.value (x) + 6 <= ELA.maxCombatTechniqueRating (start_el))
+    )
+    && pipe_ (
+      combatTechniquesSelection,
+      maybe (true)
+            (sel => {
+              if (isRemoveCombatTechniquesSelection (sel)) {
+                return true
+              }
 
-    return isProfessionValid
-      && thrush (prerequisites)
-                (all (d => {
-                  if (RequireIncreasable.is (d)) {
-                    const category = getCategoryById (PRIA.id (d))
+              return pipe_ (
+                sel,
+                CTSA.value,
+                add (6),
+                lte (ELA.maxCombatTechniqueRating (start_el))
+              )
+            })
+    )
+    && pipe_ (
+      prerequisites,
+      all (d => {
+        if (ProfessionRequireIncreasable.is (d)) {
+          return pipe_ (
+            getCategoryById (PRIA.id (d)),
+            maybe (true)
+                  (category => {
+                    switch (category) {
+                      case Category.ATTRIBUTES:
+                        return PRIA.value (d) <= ELA.maxAttributeValue (start_el)
 
-                    const isAttribute = Maybe.elemF (category) (Category.ATTRIBUTES)
-                    const isGreaterThanMax = PRIA.value (d) > ELA.maxAttributeValue (start_el)
+                      default:
+                        return true
+                    }
+                  })
+          )
+        }
 
-                    return isAttribute && isGreaterThanMax
-                  }
-
-                  return true
-                }))
-  }
+        return true
+      })
+    )
 
 const filterProfession =
   (wiki_books: StaticData["books"]) =>
@@ -569,12 +592,18 @@ const filterProfession =
       return false
     }
 
-    return areProfessionOrVariantPrerequisitesValid (current_sex)
-                                                    (current_race_id)
-                                                    (CA.id (current_culture))
-                                                    (start_el)
-                                                    (ProfessionCombinedA_.dependencies (e))
-                                                    (ProfessionCombinedA_.prerequisites (e))
+    return validateProfession (ProfessionCombinedA_.dependencies (e))
+                              (current_sex)
+                              (current_race_id)
+                              (CA.id (current_culture))
+      && profession_boni_meet_experience_level_max (start_el)
+                                                   (pipe_ (
+                                                     e,
+                                                     ProfessionCombinedA_.selections,
+                                                     PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES]
+                                                   ))
+                                                   (ProfessionCombinedA_.prerequisites (e))
+                                                   (ProfessionCombinedA_.combatTechniques (e))
   }
 
 const filterProfessionVariant =
@@ -583,12 +612,27 @@ const filterProfessionVariant =
   (current_culture_id: string) =>
   (start_el: Record<ExperienceLevel>) =>
   (e: Record<ProfessionVariantCombined>) =>
-    areProfessionOrVariantPrerequisitesValid (current_sex)
-                                             (current_race_id)
-                                             (current_culture_id)
-                                             (start_el)
-                                             (pipe_ (e, PVCA.wikiEntry, PVA.dependencies))
-                                             (pipe_ (e, PVCA.wikiEntry, PVA.prerequisites))
+    validateProfession (pipe_ (e, PVCA.wikiEntry, PVA.dependencies))
+                       (current_sex)
+                       (current_race_id)
+                       (current_culture_id)
+    && profession_boni_meet_experience_level_max (start_el)
+                                                 (pipe_ (
+                                                   e,
+                                                   PVCA.wikiEntry,
+                                                   PVA.selections,
+                                                   PVSA[ProfessionSelectionIds.COMBAT_TECHNIQUES]
+                                                 ))
+                                                 (pipe_ (
+                                                    e,
+                                                    PVCA.wikiEntry,
+                                                    PVA.prerequisites
+                                                 ))
+                                                 (pipe_ (
+                                                    e,
+                                                    PVCA.wikiEntry,
+                                                    PVA.combatTechniques
+                                                 ))
 
 export const getCommonProfessions = createMaybeSelector (
   getWikiBooks,

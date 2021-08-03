@@ -94,22 +94,28 @@ export const getTemplates = createMaybeSelector (
   elems
 )
 
-export const getSortedTemplates = createMaybeSelector (
-  getWiki,
+const getAvailableItemTemplates = createMaybeSelector (
   getTemplates,
-  uncurryN (staticData => tpls => sortRecordsByName (staticData) (tpls))
-)
-
-export const getAvailableItemTemplates = createMaybeSelector (
-  getSortedTemplates,
   getRuleBooksEnabled,
   uncurryN (flip (filterByAvailability (ITA.src)))
 )
 
-export const getFilteredItemTemplates = createMaybeSelector (
+const getFilteredItemTemplates = createMaybeSelector (
   getItemTemplatesFilterText,
   getAvailableItemTemplates,
   uncurryN (filterText => xs => filterRecordsByName (filterText) (xs))
+)
+
+export const getSortedItemTemplates = createMaybeSelector (
+  getWiki,
+  getAvailableItemTemplates,
+  uncurryN (staticData => tpls => sortRecordsByName (staticData) (tpls))
+)
+
+export const getFilteredSortedItemTemplates = createMaybeSelector (
+  getWiki,
+  getFilteredItemTemplates,
+  uncurryN (staticData => tpls => sortRecordsByName (staticData) (tpls))
 )
 
 export const getItems = createMaybeSelector (

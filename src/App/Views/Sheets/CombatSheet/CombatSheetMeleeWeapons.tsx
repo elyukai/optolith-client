@@ -2,7 +2,7 @@ import * as React from "react"
 import { Textfit } from "react-textfit"
 import { fmap, fmapF } from "../../../../Data/Functor"
 import { flength, fnull, intercalate, List, map, replicateR, subscriptF, toArray } from "../../../../Data/List"
-import { bindF, fromMaybe, Just, Maybe } from "../../../../Data/Maybe"
+import { bindF, catMaybes, ensure, fromMaybe, Just, Maybe, maybeRNull } from "../../../../Data/Maybe"
 import { lookupF } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { bimap, fst, isTuple, snd } from "../../../../Data/Tuple"
@@ -84,10 +84,33 @@ export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
                 const getPrimaryAtIndex =
                   (i: number) => pipe (MWA.primary, subscriptF (i), renderMaybe)
 
+                const weapon_settings = pipe_ (
+                  List (
+                    Maybe.guardReplace (MWA.isTwoHandedWeapon (e)) ("2H"),
+                    Maybe.guardReplace (MWA.isImprovisedWeapon (e)) ("i"),
+                  ),
+                  catMaybes,
+                  ensure (List.notNull),
+                  fmap (intercalate (", "))
+                )
+
                 return (
                   <tr key={MWA.id (e)}>
                     <td className="name">
-                      <Textfit max={11} min={7} mode="single">{MWA.name (e)}</Textfit>
+                      <Textfit max={11} min={7} mode="single">
+                        {MWA.name (e)}
+                        {maybeRNull ((str: string) => (
+                                      <>
+                                        {" "}
+                                        <span className="weapon-settings">
+                                          {"("}
+                                          {str}
+                                          {")"}
+                                        </span>
+                                      </>
+                                    ))
+                                    (weapon_settings)}
+                      </Textfit>
                     </td>
                     <td className="combat-technique">{MWA.combatTechnique (e)}</td>
                     <td className="damage-bonus">

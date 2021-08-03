@@ -2,9 +2,10 @@ import { fmap } from "../../Data/Functor"
 import { bindF, fromJust, isJust, Just, Maybe } from "../../Data/Maybe"
 import { keys, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
+import { Pair } from "../../Data/Tuple"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { IdPrefixes } from "../Constants/IdPrefixes"
-import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids"
+import { AttrId, MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids"
 import { EquipmentSortOptions } from "../Models/Config"
 import { EditItem } from "../Models/Hero/EditItem"
 import { HitZoneArmor } from "../Models/Hero/HitZoneArmor"
@@ -375,16 +376,17 @@ export const setDamageFlat = (value: string): SetDamageFlatAction => ({
 export interface SetPrimaryAttributeAction {
   type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE
   payload: {
-    primary: Maybe<string>
+    primary: Maybe<AttrId | Pair<AttrId, AttrId>>
   }
 }
 
-export const setPrimaryAttribute = (primary: Maybe<string>): SetPrimaryAttributeAction => ({
-  type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE,
-  payload: {
-    primary,
-  },
-})
+export const setPrimaryAttribute =
+  (primary: Maybe<AttrId | Pair<AttrId, AttrId>>): SetPrimaryAttributeAction => ({
+    type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE,
+    payload: {
+      primary,
+    },
+  })
 
 export interface SetDamageThresholdAction {
   type: ActionTypes.SET_ITEM_DAMAGE_THRESHOLD

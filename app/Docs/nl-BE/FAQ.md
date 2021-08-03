@@ -48,4 +48,6 @@ Een lijst met relevante files:
 - `config.json` bevat de configuratie van Optolith. Het bevat geen kritieke data maar dingen zoals theme, taal (alleen als je een specifieke taal gekozen hebt) en zoverder.
   *Een noot voor Windows:* `AppData` is een *verborgen* folder. Om die te kunnen zien, open Windows Explorere, ga naar de  "View" tab en activeer de setting "Hidden elements".
 
-  
+## Hoe schaal ik de UI voor Optolith in Linux?
+
+Als je de `.tar.gz` hebt gedownload, ga je naar de uitgepakte folder en start je `GDK_DPI_SCALE=<Scale> ./Optolith` in je terminal, waarbij  je `<scale>` moet vervangen  met de gewenste schaal, e.g. `1.5`.

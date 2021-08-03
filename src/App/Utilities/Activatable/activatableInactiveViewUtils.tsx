@@ -480,6 +480,19 @@ export const getIdSpecificAffectedAndDispatchProps =
 
         const mspec_input = bind (moption) (SOA.specializationInput)
 
+        const active_specializations_for_language = pipe_ (
+          entry,
+          IAA.heroEntry,
+          liftM2 ((language_id: string | number) => pipe (
+                   ADA.active,
+                   mapMaybe (ao => Maybe.elem (language_id) (AOA.sid (ao))
+                                   ? pipe_ (ao, AOA.sid2, misNumberM)
+                                   : Nothing)
+                 ))
+                 (mselected),
+          fromMaybe (List ())
+        )
+
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -499,12 +512,15 @@ export const getIdSpecificAffectedAndDispatchProps =
               pipe_ (
                 moption,
                 bindF (SOA.specializations),
-                fmap (imap (i => name => SelectOption ({
-                                           id: i + 1,
-                                           name,
-                                           src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
-                                           errata: Nothing,
-                                         })))
+                fmap (pipe (
+                  imap (i => name => SelectOption ({
+                    id: i + 1,
+                    name,
+                    src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
+                    errata: Nothing,
+                  })),
+                  filter (so => List.notElem (SOA.id (so)) (active_specializations_for_language)),
+                )),
               ),
           })
         )

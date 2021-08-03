@@ -1,13 +1,13 @@
 {
   "name": "optolith",
   "productName": "Optolith",
-  "version": "1.4.3-alpha.1",
+  "version": "1.5.0-alpha.2",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'.",
   "author": {
     "name": "Lukas Obermann",
     "email": "support@optolith.app"
   },
-  "homepage": "https://github.com/elyukai/optolith-client",
+  "homepage": "https://optolith.app",
   "license": "MPL-2.0",
   "main": "app/main.js",
   "dependencies": {
@@ -24,7 +24,7 @@
     "react": "16.13.1",
     "react-custom-scrollbars": "4.2.1",
     "react-dom": "16.13.1",
-    "react-markdown": "4.3.1",
+    "react-markdown": "^6.0.2",
     "react-portal": "4.2.1",
     "react-redux": "7.2.1",
     "react-textfit": "1.1.0",
@@ -33,7 +33,8 @@
     "redux": "4.0.5",
     "redux-devtools-extension": "2.13.8",
     "redux-thunk": "2.3.0",
-    "remark-breaks": "1.0.5",
+    "rehype-raw": "^5.1.0",
+    "remark-breaks": "^2.0.2",
     "reselect": "4.0.0",
     "semver": "7.3.2",
     "ssh2-sftp-client": "5.3.1",
@@ -58,7 +59,7 @@
     "@typescript-eslint/parser": "4.7.0",
     "custom-env": "2.0.1",
     "dotenv": "8.2.0",
-    "electron": "10.1.5",
+    "electron": "^13.0.1",
     "electron-builder": "22.9.1",
     "electron-notarize": "0.3.0",
     "eslint": "7.13.0",

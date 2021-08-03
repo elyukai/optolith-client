@@ -405,7 +405,8 @@ export const isSpellsRitualsCountMaxReached =
                                                           (wiki)
                                                           (hero)
 
-    if (isLastTrad (SpecialAbilityId.traditionIntuitiveMage)) {
+    if (isLastTrad (SpecialAbilityId.traditionIntuitiveMage)
+        || isLastTrad (SpecialAbilityId.traditionAnimisten)) {
       const mbonus = lookup (AdvantageId.largeSpellSelection) (HA.advantages (hero))
       const mmalus = lookup (DisadvantageId.smallSpellSelection) (HA.disadvantages (hero))
 
@@ -429,10 +430,6 @@ export const isSpellsRitualsCountMaxReached =
       if (current_count >= max_spellworks) {
         return true
       }
-    }
-
-    if (isLastTrad (SpecialAbilityId.traditionAnimisten) && current_count >= BASE_MAX_INTU_ANIM) {
-      return true
     }
 
     const maxSpellsLiturgicalChants =

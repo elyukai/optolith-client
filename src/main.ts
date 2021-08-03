@@ -52,6 +52,7 @@ const createWindow = async () => {
     show: false,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
       // preload: path.join (app.getAppPath (), "app", "esmPreload.js"),
       enableRemoteModule: true,
     },

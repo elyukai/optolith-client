@@ -71,11 +71,12 @@ export const WikiExtensions: FC = props => {
                                                  ))
 
                          return (
-                           <Markdown
-                             key={SOA.id (e)}
-                             source={text}
-                             isListElement
-                             />
+                           <li>
+                             <Markdown
+                               key={SOA.id (e)}
+                               source={text}
+                               />
+                           </li>
                          )
                        }),
                        toArray

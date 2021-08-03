@@ -10,8 +10,8 @@ import { getInitialStartingWealth } from "../Selectors/activatableSelectors"
 import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors"
 import { getCarryingCapacity } from "../Selectors/attributeSelectors"
 import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelectors"
-import { getAvailableSortedEquipmentGroups, getFilteredItems, getFilteredItemTemplates, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors"
-import { getEquipmentFilterText, getItemTemplatesFilterText, getPurse, getIsAddRemoveMoneyOpen } from "../Selectors/stateSelectors"
+import { getAvailableSortedEquipmentGroups, getFilteredItems, getFilteredSortedItemTemplates, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors"
+import { getEquipmentFilterText, getIsAddRemoveMoneyOpen, getItemTemplatesFilterText, getPurse } from "../Selectors/stateSelectors"
 import { getEquipmentSortOrder, getMeleeItemTemplateCombatTechniqueFilter, getRangedItemTemplateCombatTechniqueFilter } from "../Selectors/uisettingsSelectors"
 import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from "../Views/Equipment/Equipment"
 
@@ -24,7 +24,7 @@ const mapStateToProps =
     hasNoAddedAP: getHasCurrentNoAddedAP (state),
     purse: getPurse (state),
     sortOrder: getEquipmentSortOrder (state),
-    templates: getFilteredItemTemplates (state, ownProps),
+    templates: getFilteredSortedItemTemplates (state, ownProps),
     totalPrice: getTotalPrice (state),
     totalWeight: getTotalWeight (state),
     meleeItemTemplateCombatTechniqueFilter: getMeleeItemTemplateCombatTechniqueFilter (state),

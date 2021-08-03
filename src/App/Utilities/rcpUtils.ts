@@ -1,7 +1,7 @@
 import { fmap } from "../../Data/Functor"
 import { flength, foldr, List, subscript } from "../../Data/List"
 import { altF, bindF, elem, fromMaybe, liftM2, Maybe, sum } from "../../Data/Maybe"
-import { add, dec, lt, odd, subtract, subtractBy } from "../../Data/Num"
+import { abs, add, dec, lt, odd, signum, subtract, subtractBy } from "../../Data/Num"
 import { lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { show } from "../../Data/Show"
@@ -104,7 +104,8 @@ export const rerollWeight =
 
                return foldr
                  ((die: Record<Die>) => add (rollDiceFold (f (sides (die)))
-                                                          (amount (die))))
+                                                          (abs (amount (die)))
+                                              * signum (amount (die))))
                  (-weightBase (race))
                  (weightRandom (race))
              },
