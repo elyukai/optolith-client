@@ -12,6 +12,8 @@ import { Checkbox } from "../Universal/Checkbox"
 import { Dialog } from "../Universal/Dialog"
 import { Dropdown } from "../Universal/Dropdown"
 import { SegmentedControls } from "../Universal/SegmentedControls"
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 export interface SettingsOwnProps {
   staticData: StaticDataRecord
@@ -30,6 +32,7 @@ export interface SettingsStateProps {
   areAnimationsEnabled: boolean
   languages: List<Record<DropdownOption<string>>>
   isCheckForUpdatesDisabled: boolean
+  zoomLevel: number
 }
 
 export interface SettingsDispatchProps {
@@ -37,11 +40,14 @@ export interface SettingsDispatchProps {
   setLocale (id: Maybe<string>): void
   setFallbackLocale (id: Maybe<string>): void
   setTheme (id: Maybe<string>): void
+  setZoomLevel(value: number): void
   switchEnableEditingHeroAfterCreationPhase (): void
   switchEnableAnimations (): void
 }
 
 type Props = SettingsStateProps & SettingsDispatchProps & SettingsOwnProps
+
+export const zoomLevels = [ 75, 90, 100, 110, 125, 150, 175, 200 ]
 
 export const Settings: React.FC<Props> = props => {
   const {
@@ -64,6 +70,8 @@ export const Settings: React.FC<Props> = props => {
     checkForUpdates,
     languages,
     isCheckForUpdatesDisabled,
+    zoomLevel,
+    setZoomLevel,
   } = props
 
   return (
@@ -134,6 +142,16 @@ export const Settings: React.FC<Props> = props => {
         onClick={checkForUpdates}
         autoWidth
         disabled={isCheckForUpdatesDisabled}
+        />
+      <p>{translate (staticData) ("settings.zoomlevel.title")}</p>
+      <Slider
+        min={zoomLevels[0]}
+        max={zoomLevels[zoomLevels.length-1]}
+        defaultValue={zoomLevel}
+        included={false}
+        marks={Object.fromEntries(zoomLevels.map(function(z) { return [z, z] }))}
+        step={null}
+        onChange={function(v) {setZoomLevel(v)}}
         />
     </Dialog>
   )

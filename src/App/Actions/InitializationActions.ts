@@ -124,6 +124,7 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
   const config = fromRight_ (econfig)
 
   console.log (show (config))
+  // webFrame.setZoomFactor((Config.A.zoomLevel (config)) / 100)
 
   const mheroes = await pipe_ (
     join (user_data_path, "heroes.json"),

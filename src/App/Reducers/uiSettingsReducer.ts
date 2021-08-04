@@ -1,10 +1,11 @@
+import { webFrame } from "electron"
 import { not } from "../../Data/Bool"
 import { cnst, ident } from "../../Data/Function"
-import { over, set } from "../../Data/Lens"
+import { over, set, view } from "../../Data/Lens"
 import { fromJust, fromMaybe, isJust } from "../../Data/Maybe"
 import { Record } from "../../Data/Record"
 import { SetCombatTechniquesSortOrderAction } from "../Actions/CombatTechniquesActions"
-import { SetThemeAction, SwitchEnableActiveItemHintsAction, SwitchEnableAnimationsAction, SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/ConfigActions"
+import { GetZoomLevelAction, MoveZoomLevelAction, SetThemeAction, SetZoomLevelAction, SwitchEnableActiveItemHintsAction, SwitchEnableAnimationsAction, SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/ConfigActions"
 import { SetCulturesSortOrderAction, SetCulturesVisibilityFilterAction } from "../Actions/CultureActions"
 import { SwitchDisAdvRatingVisibilityAction } from "../Actions/DisAdvActions"
 import { SetItemsSortOrderAction, SetMeleeItemTemplatesCombatTechniqueFilterAction, SetRangedItemTemplatesCombatTechniqueFilterAction } from "../Actions/EquipmentActions"
@@ -20,6 +21,7 @@ import { SetSpellsSortOrderAction } from "../Actions/SpellsActions"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { Config, Theme } from "../Models/Config"
 import { UISettingsState, UISettingsStateL } from "../Models/UISettingsState"
+import { zoomLevels } from "../Views/Settings/Settings"
 
 type Action = ReceiveInitialDataAction
             | SetCombatTechniquesSortOrderAction
@@ -47,6 +49,9 @@ type Action = ReceiveInitialDataAction
             | SetMeleeItemTemplatesCombatTechniqueFilterAction
             | SetRangedItemTemplatesCombatTechniqueFilterAction
             | SwitchEnableAnimationsAction
+            | GetZoomLevelAction
+            | SetZoomLevelAction
+            | MoveZoomLevelAction
 
 const CA = Config.A
 
@@ -130,6 +135,7 @@ export const uiSettingsReducer =
             rangedItemTemplatesCombatTechniqueFilter:
               CA.rangedItemTemplatesCombatTechniqueFilter (config),
             enableAnimations: fromMaybe (true) (CA.enableAnimations (config)),
+            zoomLevel: CA.zoomLevel (config)
           }))
         }
 
@@ -192,6 +198,44 @@ export const uiSettingsReducer =
 
       case ActionTypes.SWITCH_ENABLE_ANIMATIONS:
         return over (UISettingsStateL.enableAnimations) (not)
+
+      case ActionTypes.GET_ZOOM_LEVEL:
+        let factor = webFrame.getZoomFactor();
+        return set (UISettingsStateL.zoomLevel) (factor * 100)
+
+      case ActionTypes.SET_ZOOM_LEVEL:
+        webFrame.setZoomFactor(action.payload.zoomLevel / 100);
+        return set (UISettingsStateL.zoomLevel) (action.payload.zoomLevel)
+
+      case ActionTypes.MOVE_ZOOM_LEVEL:
+        return function(state) {
+          let oldIndex = zoomLevels.findIndex(function(e) { e == view (UISettingsStateL.zoomLevel) (state) } )
+          switch (action.payload.zoom) {
+            case "in":
+              switch(oldIndex) {
+                case -1:
+                  return state
+                case zoomLevels.length - 1:
+                  return state
+                default:
+                  let newLevel = zoomLevels[oldIndex + 1]
+                  webFrame.setZoomFactor(newLevel / 100);
+                  return set (UISettingsStateL.zoomLevel) (newLevel) (state)
+              }
+
+            case "out":
+              switch(oldIndex) {
+                case -1:
+                  return state
+                case 0:
+                  return state
+                default:
+                  let newLevel = zoomLevels[oldIndex - 1]
+                  webFrame.setZoomFactor(newLevel / 100);
+                  return set (UISettingsStateL.zoomLevel) (newLevel) (state)
+              }
+          } 
+        }
 
       default:
         return ident

@@ -20,7 +20,11 @@ const config = [
           options: {
             configFile: "tsconfig.webpack.json"
           }
-        }
+        },
+        {
+          test: /\.css$/i,
+          use: ["style-loader", "css-loader"],
+        },
       ]
     },
     output: {
@@ -45,7 +49,11 @@ const config = [
           options: {
             configFile: "tsconfig.webpack.json"
           }
-        }
+        },
+        {
+          test: /\.css$/i,
+          use: ["style-loader", "css-loader"],
+        },
       ]
     },
     output: {
@@ -60,7 +68,7 @@ const config = [
     externals: {
       electron: "commonjs electron"
     }
-  }
+  },
 ]
 
 module.exports = config

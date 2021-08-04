@@ -82,6 +82,8 @@ store
           label: translate (staticData) ("macosmenubar.view"),
           submenu: [
             { role: "togglefullscreen" },
+            // TODO implement zoom.
+            // Can't subscribe to zoom changes nor implement a custom zoom action.
           ],
         },
         {

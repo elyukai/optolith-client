@@ -102,6 +102,9 @@
         },
         "enableAnimations": {
           "type": "boolean"
+        },
+        "zoomLevel": {
+          "type": "number"
         }
       },
       "required": [

@@ -182,6 +182,7 @@ export const parseConfig = async () => {
                                  ),
                                enableAnimations:
                                  Maybe (validated_data.enableAnimations),
+                               zoomLevel: validated_data.zoomLevel ?? 100,
                              }))
                            }
 

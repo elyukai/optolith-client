@@ -171,7 +171,7 @@ const main = async () => {
   const installedExtensions = await installExtension.default ([
     installExtension.REACT_DEVELOPER_TOOLS,
     installExtension.REDUX_DEVTOOLS,
-  ])
+  ], { loadExtensionOptions: { allowFileAccess: true } })
 
   console.log (`main: Installed extensions: ${installedExtensions}`)
 

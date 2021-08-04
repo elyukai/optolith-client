@@ -975,6 +975,12 @@ export type SET_ITEM_TEMPLATES_FILTER_TEXT = "SET_ITEM_TEMPLATES_FILTER_TEXT"
 export const SET_ZONE_ARMOR_FILTER_TEXT = "SET_ZONE_ARMOR_FILTER_TEXT"
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type SET_ZONE_ARMOR_FILTER_TEXT = "SET_ZONE_ARMOR_FILTER_TEXT"
+export const GET_ZOOM_LEVEL = "GET_ZOOM_LEVEL"
+export type GET_ZOOM_LEVEL = "GET_ZOOM_LEVEL"
+export const SET_ZOOM_LEVEL = "SET_ZOOM_LEVEL"
+export type SET_ZOOM_LEVEL = "SET_ZOOM_LEVEL"
+export const MOVE_ZOOM_LEVEL = "MOVE_ZOOM_LEVEL"
+export type MOVE_ZOOM_LEVEL = "MOVE_ZOOM_LEVEL"
 
 export const LOAD_RAW_INGAME_DATA = "LOAD_RAW_INGAME_DATA"
 // eslint-disable-next-line @typescript-eslint/no-redeclare

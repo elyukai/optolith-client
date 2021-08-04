@@ -9,7 +9,7 @@ import { AppStateRecord } from "../Models/AppState"
 import { Locale, Theme } from "../Models/Config"
 import { getUserSelectableSupportedLanguages } from "../Selectors/localeSelectors"
 import { getFallbackLocaleId, getFallbackLocaleType, getLocaleId, getLocaleType } from "../Selectors/stateSelectors"
-import { areAnimationsEnabled, getIsEditingHeroAfterCreationPhaseEnabled, getTheme } from "../Selectors/uisettingsSelectors"
+import { areAnimationsEnabled, getIsEditingHeroAfterCreationPhaseEnabled, getTheme, getZoomLevel } from "../Selectors/uisettingsSelectors"
 import { isUpdaterEnabled } from "../Utilities/CheckForUpdatesRenderer"
 import { Settings, SettingsDispatchProps, SettingsOwnProps, SettingsStateProps } from "../Views/Settings/Settings"
 
@@ -23,6 +23,7 @@ const mapStateToProps = (state: AppStateRecord): SettingsStateProps => ({
   theme: getTheme (state),
   languages: getUserSelectableSupportedLanguages (state),
   isCheckForUpdatesDisabled: !isUpdaterEnabled (),
+  zoomLevel: getZoomLevel (state),
 })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): SettingsDispatchProps => ({
@@ -46,6 +47,9 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): SettingsDispatchProps => (
   switchEnableAnimations () {
     dispatch (ConfigActions.switchEnableAnimations ())
   },
+  setZoomLevel (zoomLevel) {
+    dispatch (ConfigActions.setZoomLevel(zoomLevel))
+  }
 })
 
 const connectSettings =
