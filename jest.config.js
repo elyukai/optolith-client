@@ -1,21 +1,7 @@
 // @ts-check
-/**
- * @typedef {import('ts-jest')}
- * @type {import('@jest/types').Config.InitialOptions}
- */
+/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
-  transform: {
-    "^.+\\.tsx?$": "ts-jest"
-  },
-  testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
-  moduleFileExtensions: [
-    "ts",
-    "tsx",
-    "js",
-    "jsx",
-    "json",
-    "node"
-  ],
+  preset: "ts-jest",
   testEnvironment: "node",
   globals: {
     "ts-jest": {
