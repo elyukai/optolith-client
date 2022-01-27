@@ -1,4 +1,4 @@
-import { remote } from "electron"
+import * as remote from "@electron/remote"
 import * as React from "react"
 import { fmap } from "../../../Data/Functor"
 import { List } from "../../../Data/List"

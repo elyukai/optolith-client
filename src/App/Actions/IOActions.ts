@@ -1,4 +1,4 @@
-import { remote } from "electron"
+import * as remote from "@electron/remote"
 import * as fs from "fs"
 import { extname, join } from "path"
 import { handleE } from "../../Control/Exception"

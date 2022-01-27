@@ -1,4 +1,4 @@
-import { remote } from "electron"
+import * as remote from "@electron/remote"
 import * as React from "react"
 import { useDispatch } from "react-redux"
 import { setTab } from "../../Actions/LocationActions"

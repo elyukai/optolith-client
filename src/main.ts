@@ -1,3 +1,4 @@
+import * as remote from "@electron/remote/main"
 import { app, BrowserWindow, ipcMain } from "electron"
 import * as log from "electron-log"
 import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater"
@@ -8,6 +9,8 @@ import { prerelease } from "semver"
 import * as url from "url"
 import { isUpdaterEnabled } from "./App/Utilities/CheckForUpdatesMain"
 import { existsFile } from "./System/IO"
+
+remote.initialize ()
 
 app.setAppUserModelId ("lukasobermann.optolith")
 
@@ -54,9 +57,10 @@ const createWindow = async () => {
       nodeIntegration: true,
       contextIsolation: false,
       // preload: path.join (app.getAppPath (), "app", "esmPreload.js"),
-      enableRemoteModule: true,
     },
   })
+
+  remote.enable (mainWindow.webContents)
 
   console.log ("main (window): Manage browser window with state keeper")
 

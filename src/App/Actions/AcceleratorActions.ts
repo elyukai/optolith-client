@@ -1,4 +1,4 @@
-import { remote } from "electron"
+import * as remote from "@electron/remote"
 import { Just, Nothing } from "../../Data/Maybe"
 import { getIsHeroSection } from "../Selectors/uilocationSelectors"
 import { TabId } from "../Utilities/LocationUtils"

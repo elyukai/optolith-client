@@ -1,5 +1,6 @@
+import * as remote from "@electron/remote"
 import { ProgressInfo } from "builder-util-runtime"
-import { ipcRenderer, remote, webFrame } from "electron"
+import { ipcRenderer, webFrame } from "electron"
 import { UpdateInfo } from "electron-updater"
 import * as React from "react"
 import { render } from "react-dom"

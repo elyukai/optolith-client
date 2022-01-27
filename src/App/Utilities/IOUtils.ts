@@ -1,4 +1,4 @@
-import { remote } from "electron"
+import * as remote from "@electron/remote"
 import { flength, fromArray, List, subscript } from "../../Data/List"
 import { fromMaybe, guard, Maybe, normalize, then } from "../../Data/Maybe"
 import { divideBy, inc } from "../../Data/Num"
