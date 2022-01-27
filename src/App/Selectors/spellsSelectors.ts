@@ -141,9 +141,7 @@ export const getActiveSpells = createMaybeSelector (
                                    isUnfamiliar: isUnfamiliarCustom (wiki_entry),
                                    stateEntry: hero_entry,
                                    wikiEntry: wiki_entry,
-                                 })
-                               )
-                       )
+                                 })))
                     ))
                    ))
   }

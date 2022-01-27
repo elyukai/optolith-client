@@ -255,7 +255,7 @@ List.bindF = bindF
  */
 export const then =
   <A> (xs1: List<any>) => (xs2: List<A>): List<A> =>
-    bind<any, A> (xs1) (_ => xs2)
+    bind<any, A> (xs1) (() => xs2)
 
 List.then = then
 

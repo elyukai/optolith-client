@@ -42,8 +42,6 @@ interface Props {
   race: Maybe<Record<Race>>
   sex: Maybe<Sex>
   useParchment: boolean
-  printToPDF (): void
-  switchUseParchment (): void
 }
 
 export const MainSheet: React.FC<Props> = props => {
@@ -90,33 +88,30 @@ export const MainSheet: React.FC<Props> = props => {
           />
         <div className="lower">
           <div className="lists">
-            {toNewMaybe(maybeAdvantagesActive)
-              .maybe<React.ReactNode>(null, advantagesActive => (
+            {toNewMaybe (maybeAdvantagesActive)
+              .maybe<React.ReactNode> (null, advantagesActive => (
                 <TextBox
                   className="activatable-list"
                   label={translate (staticData) ("sheets.mainsheet.advantages")}
                   value={compressList (staticData) (advantagesActive)}
                   />
-              ))
-            }
-            {toNewMaybe(maybeDisadvantagesActive)
-              .maybe<React.ReactNode>(null, disadvantagesActive => (
+              ))}
+            {toNewMaybe (maybeDisadvantagesActive)
+              .maybe<React.ReactNode> (null, disadvantagesActive => (
                 <TextBox
                   className="activatable-list"
                   label={translate (staticData) ("sheets.mainsheet.disadvantages")}
                   value={compressList (staticData) (disadvantagesActive)}
                   />
-              ))
-            }
-            {toNewMaybe(maybeGeneralsaActive)
-              .maybe<React.ReactNode>(null, generalsaActive => (
+              ))}
+            {toNewMaybe (maybeGeneralsaActive)
+              .maybe<React.ReactNode> (null, generalsaActive => (
                 <TextBox
                   className="activatable-list"
                   label={translate (staticData) ("sheets.mainsheet.generalspecialabilites")}
                   value={compressList (staticData) (generalsaActive)}
                   />
-              ))
-            }
+              ))}
           </div>
           <MainSheetAttributes
             attributes={derivedCharacteristics}

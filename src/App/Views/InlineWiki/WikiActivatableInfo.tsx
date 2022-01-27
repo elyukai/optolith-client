@@ -29,7 +29,7 @@ import { Race } from "../../Models/Wiki/Race"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
-import { Activatable, AllRequirements, PrerequisitesIndex } from "../../Models/Wiki/wikiTypeHelpers"
+import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
 import { getNameCostForWiki } from "../../Utilities/Activatable/activatableActiveUtils"
 import { getName } from "../../Utilities/Activatable/activatableNameUtils"
 import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyleUtils"
@@ -152,8 +152,8 @@ const getSocialPrerequisiteText: (staticData: StaticDataRecord) =>
                                   ))
 
 export const getCategorizedItems =
-  (_req_text_index: PrerequisitesIndex) =>
-  ifoldr (_i => (e: AllRequirements): ident<Record<CategorizedPrerequisites>> => {
+  // (_req_text_index: PrerequisitesIndex) =>
+  ifoldr (() => (e: AllRequirements): ident<Record<CategorizedPrerequisites>> => {
            // lookup (i) (req_text_index)
            const index_special = Nothing
 
@@ -546,7 +546,7 @@ export interface PrerequisitesProps {
 
 const getPrerequisites =
   (rs: List<AllRequirements>) =>
-  (req_text_index: PrerequisitesIndex) =>
+  // (req_text_index: PrerequisitesIndex) =>
   (props: PrerequisitesProps): List<Maybe<JSX.Element | string>> => {
     const { x, staticData } = props
 
@@ -556,7 +556,8 @@ const getPrerequisites =
       )
     }
 
-    const items = getCategorizedItems (req_text_index) (rs)
+    // const items = getCategorizedItems (req_text_index) (rs)
+    const items = getCategorizedItems (rs)
 
     const rcp = CIA.rcp (items)
     const casterBlessedOne = CIA.casterBlessedOne (items)
@@ -618,7 +619,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   const { x, staticData } = props
 
   const prerequisitesText = AAL.prerequisitesText (x)
-  const prerequisitesTextIndex = AAL.prerequisitesTextIndex (x)
+  // const prerequisitesTextIndex = AAL.prerequisitesTextIndex (x)
 
   if (isJust (prerequisitesText)) {
     return (
@@ -687,7 +688,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
                       {level_num_str}
                       {maybeRNull ((rs: List<AllRequirements>) =>
                                     pipe_ (
-                                      getPrerequisites (rs) (prerequisitesTextIndex) (props),
+                                      // getPrerequisites (rs) (prerequisitesTextIndex) (props),
+                                      getPrerequisites (rs) (props),
                                       catMaybes,
                                       intersperse<TypeofList> (", "),
                                       toArray,
@@ -720,7 +722,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
         </span>
         <span>
           {pipe_ (
-            getPrerequisites (prerequisites) (prerequisitesTextIndex) (props),
+            // getPrerequisites (prerequisites) (prerequisitesTextIndex) (props),
+            getPrerequisites (prerequisites) (props),
             consF<TypeofMaybeList> (mtext_before),
             snocF<TypeofMaybeList> (mtext_after_insidelist),
             catMaybes,

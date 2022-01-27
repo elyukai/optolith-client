@@ -232,7 +232,7 @@ export const bindF =
  */
 export const then =
   (x: Maybe<any>) => <A> (y: Maybe<A>): Maybe<A> =>
-    bind<any> (x) (_ => y)
+    bind<any> (x) (() => y)
 
 /**
  * `(<<) :: Maybe a -> Maybe b -> Maybe a`
@@ -242,7 +242,7 @@ export const then =
  */
 export const thenF =
   <A> (x: Maybe<A>) => (y: Maybe<any>): Maybe<A> =>
-    bind<any> (y) (_ => x)
+    bind<any> (y) (() => x)
 
 /**
  * `(>=>) :: (a -> Maybe b) -> (b -> Maybe c) -> a -> Maybe c`

@@ -61,13 +61,13 @@ declare namespace Intl {
   export function getCanonicalLocales (locales: string | string[]): string[]
 
   export class RelativeTimeFormat {
-      constructor (locale: string);
+      constructor (locale: string)
   }
 
   export class ListFormat {
-      constructor (locale: string, options?: ListFormatOptions);
+      constructor (locale: string, options?: ListFormatOptions)
 
-      format (list: Iterable<string>): string;
+      format (list: Iterable<string>): string
   }
 
   export type ListFormatOptions = {

@@ -33,8 +33,10 @@ webFrame.setZoomFactor (1)
 webFrame.setVisualZoomLevelLimits (1, 1)
 
 const nativeAppReducer =
-  uncurryN (pipe ((x: AppStateRecord | undefined) => x === undefined ? AppState.default : x,
-                  flip (appReducer)))
+  uncurryN (pipe (
+    (x: AppStateRecord | undefined) => x === undefined ? AppState.default : x,
+    flip (appReducer)
+  ))
 
 const store: Store<AppStateRecord, Action> & { dispatch: ReduxDispatch<Action> } =
   createStore (nativeAppReducer, composeWithDevTools (applyMiddleware (thunk)))

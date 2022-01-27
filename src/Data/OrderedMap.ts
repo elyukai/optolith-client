@@ -898,7 +898,7 @@ export const filter: Filter =
   <K, A>
   (pred: (x: A) => boolean) => (xs: OrderedMap<K, A>): OrderedMap<K, A> =>
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    fromArray ([ ...xs .value ] .filter (([ _, value ]) => pred (value)))
+    fromArray ([ ...xs .value ] .filter (p => pred (p[1])))
 
 interface FilterWithKey {
 

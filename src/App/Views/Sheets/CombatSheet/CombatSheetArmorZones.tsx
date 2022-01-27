@@ -64,7 +64,7 @@ export const CombatSheetArmorZones: React.FC<Props> = props => {
         <tbody>
           {
             mhit_zone_armors
-              .maybe<React.ReactNode>(null, xs =>
+              .maybe<React.ReactNode> (null, xs =>
                 xs.map (e => (
                   <tr key={HZAFVA.id (e)}>
                     <td className="name">
@@ -93,10 +93,9 @@ export const CombatSheetArmorZones: React.FC<Props> = props => {
                                   ))}
                     </td>
                   </tr>
-                ))
-              )
+                )))
           }
-          {replicateR (2 - mhit_zone_armors.map(xs => xs.length).sum())
+          {replicateR (2 - mhit_zone_armors.map (xs => xs.length).sum ())
                       (i => (
                         <tr key={`undefined-${i}`}>
                           <td className="name" />

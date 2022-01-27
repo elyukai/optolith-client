@@ -209,7 +209,7 @@ export const Sheets: React.FC<Props> = props => {
     find<DCPair> (pipe (fst, DerivedCharacteristic.A.id, equals<DerivedCharacteristicId> (DCId.KP)))
                  (derivedCharacteristics)
 
-  const nArmorZones = armorZones.map(xs => xs.length).sum()
+  const nArmorZones = armorZones.map (xs => xs.length).sum ()
   const nArmors = Maybe.sum (fmapF (armors) (xs => xs.length))
 
   return (
@@ -288,8 +288,6 @@ export const Sheets: React.FC<Props> = props => {
           profile={profile}
           race={race}
           sex={sex}
-          printToPDF={printToPDF}
-          switchUseParchment={switchUseParchment}
           useParchment={useParchment}
           />
         <SkillsSheet
@@ -302,7 +300,6 @@ export const Sheets: React.FC<Props> = props => {
           scriptsWikiEntry={scriptsWikiEntry}
           skillsByGroup={skillsByGroup}
           skillGroupPages={skillGroupPages}
-          switchAttributeValueVisibility={switchAttributeValueVisibility}
           useParchment={useParchment}
           />
         {
@@ -390,7 +387,6 @@ export const Sheets: React.FC<Props> = props => {
                          derivedCharacteristics={derivedCharacteristics}
                          liturgicalChants={liturgicalChants}
                          staticData={staticData}
-                         switchAttributeValueVisibility={switchAttributeValueVisibility}
                          useParchment={useParchment}
                          />
                      ))

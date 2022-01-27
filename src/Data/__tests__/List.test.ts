@@ -544,12 +544,10 @@ test ("isInfixOf", () => {
 
 test ("lookup", () => {
   expect (List.lookup (1)
-                      (List (Pair (1) ("a")
-                                         , Pair (2) ("b"))))
+                      (List (Pair (1) ("a"), Pair (2) ("b"))))
     .toEqual (Just ("a"))
   expect (List.lookup (3)
-                      (List (Pair (1) ("a")
-                                         , Pair (2) ("b"))))
+                      (List (Pair (1) ("a"), Pair (2) ("b"))))
     .toEqual (Nothing)
 })
 
@@ -769,7 +767,7 @@ test ("modifyAt", () => {
 test ("updateAt", () => {
   expect (List.updateAt (2) ((x: number) => Just (x * 3)) (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 2, 9, 4, 5))
-  expect (List.updateAt (2) ((_: number) => Nothing) (List (1, 2, 3, 4, 5)))
+  expect (List.updateAt (2) (() => Nothing) (List (1, 2, 3, 4, 5)))
     .toEqual (List (1, 2, 4, 5))
 })
 
@@ -910,10 +908,10 @@ test ("notNullStr", () => {
 })
 
 test ("list", () => {
-  expect (List.list (1) ((v: number) => _ => v - 2) (List (5, 6, 7)))
+  expect (List.list (1) ((v: number) => () => v - 2) (List (5, 6, 7)))
     .toEqual (3)
 
-  expect (List.list (1) ((v: number) => _ => v - 2) (List ()))
+  expect (List.list (1) ((v: number) => () => v - 2) (List ()))
     .toEqual (1)
 })
 

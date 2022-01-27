@@ -116,9 +116,7 @@ export const getActiveLiturgicalChants = createMaybeSelector (
                                                            (hero_entry),
                                          stateEntry: hero_entry,
                                          wikiEntry: wiki_entry,
-                                       })
-                                     )
-                             )
+                                       })))
                            ))))
                   (mhero)
                   (mstart_el))
@@ -127,8 +125,8 @@ export const getActiveLiturgicalChants = createMaybeSelector (
 export const getActiveAndInactiveBlessings = createMaybeSelector (
   getWikiBlessings,
   getBlessings,
-  (wikiBlessings, activeBlessings) =>
-    fmapF (activeBlessings)
+  (wikiBlessings, mactiveBlessings) =>
+    fmapF (mactiveBlessings)
           (activeBlessings =>
             pipe_ (
               wikiBlessings,
@@ -139,8 +137,7 @@ export const getActiveAndInactiveBlessings = createMaybeSelector (
                               (activeBlessings),
               })),
               partition (BCA.active)
-            )
-          )
+            ))
 )
 
 export const getActiveBlessings = createMaybeSelector (
@@ -188,8 +185,8 @@ export const getInactiveLiturgicalChants = createMaybeSelector (
   getIsMaximumOfLiturgicalChantsReached,
   getWikiLiturgicalChants,
   getLiturgicalChants,
-  (is_max, wiki_chants, hero_chants) =>
-    fmapF (hero_chants)
+  (is_max, wiki_chants, mhero_chants) =>
+    fmapF (mhero_chants)
           (hero_chants =>
             and (is_max)
             ? List<Combined> ()
@@ -201,7 +198,7 @@ export const getInactiveLiturgicalChants = createMaybeSelector (
                                             wikiEntry: wiki_entry,
                                             stateEntry:
                                              fromMaybe_ (() =>
-                                                          createInactiveActivatableSkillDependent (k))
+                                               createInactiveActivatableSkillDependent (k))
                                                         (mhero_entry),
                                             isDecreasable: Nothing,
                                             isIncreasable: Nothing,

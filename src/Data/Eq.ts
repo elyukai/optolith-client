@@ -87,6 +87,7 @@ export const equals = <A> (x1: A) => (x2: A): boolean => {
       return Internals.isMaybe (x2)
         && (
           (Internals.isNothing (x1) && Internals.isNothing (x2 as unknown as Maybe<any>))
+          // eslint-disable-next-line react/destructuring-assignment
           || (Internals.isJust (x1) && Internals.isJust (x2) && equals (x1 .value) (x2 .value))
         )
     }
@@ -94,6 +95,7 @@ export const equals = <A> (x1: A) => (x2: A): boolean => {
     if (Internals.isEither (x1)) {
       return Internals.isEither (x2)
         && Internals.isRight (x1) === Internals.isRight (x2)
+        // eslint-disable-next-line react/destructuring-assignment
         && equals (x1 .value) (x2 .value)
     }
 
@@ -110,8 +112,10 @@ export const equals = <A> (x1: A) => (x2: A): boolean => {
     }
 
     if (Internals.isTuple (x1)) {
+      // eslint-disable-next-line react/destructuring-assignment
       if (Internals.isTuple (x2) && x1 .length === x2 .length) {
         for (let i = 0; i < x1 .length; i++) {
+          // eslint-disable-next-line react/destructuring-assignment
           const equal = equals (x1 .values [i]) (x2 .values [i])
 
           if (!equal) {
@@ -157,11 +161,14 @@ export const equals = <A> (x1: A) => (x2: A): boolean => {
 
     if (Internals.isRecord (x1)) {
       if (Internals.isRecord (x2)) {
-        return flength (x1 .keys) === flength (x2 .keys)
-          && all (key => elem (key) (x2 .keys)
+        const { keys: x1Keys } = x1
+        const { keys: x2Keys } = x2
+
+        return flength (x1Keys) === flength (x2Keys)
+          && all (key => elem (key) (x2Keys)
                    && equals (getRecordField<any> (key as string) (x1 as Record<any>))
                              (getRecordField<any> (key as string) (x2 as Record<any>)))
-                 (x1 .keys)
+                 (x1Keys)
       }
 
       return false
@@ -206,6 +213,7 @@ export const equals = <A> (x1: A) => (x2: A): boolean => {
     }
 
     if (x1 instanceof Date) {
+      // eslint-disable-next-line react/destructuring-assignment
       return x2 instanceof Date && x1 .toISOString () === x2 .toISOString ()
     }
 

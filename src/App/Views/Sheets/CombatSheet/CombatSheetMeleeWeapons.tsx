@@ -77,9 +77,9 @@ export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
         </thead>
         <tbody>
           {
-            toNewMaybe(mmelee_weapons)
-              .maybe<React.ReactNode>(null, xs =>
-                xs.map(e => {
+            toNewMaybe (mmelee_weapons)
+              .maybe<React.ReactNode> (null, xs =>
+                xs.map (e => {
                   const primaryBonus = MWA.primaryBonus (e)
 
                   const getPrimaryAtIndex =
@@ -168,8 +168,7 @@ export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
                       </td>
                     </tr>
                   )
-                })
-              )
+                }))
           }
           {replicateR (2 - Maybe.sum (fmapF (mmelee_weapons) (xs => xs.length)))
                       (i => (

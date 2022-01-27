@@ -64,31 +64,31 @@ export const getFullItem =
   (id: string) =>
     pipe_ (
       items,
-      lookup(id),
+      lookup (id),
       toNewMaybe
     )
-      .map(item => {
-        const isTemplateLocked = IA.isTemplateLocked(item)
-        const templateId = toNewMaybe(IA.template(item))
-        const where = IA.where(item)
-        const amount = IA.amount(item)
-        const loss = IA.loss(item)
+      .map (item => {
+        const isTemplateLocked = IA.isTemplateLocked (item)
+        const where = IA.where (item)
+        const amount = IA.amount (item)
+        const loss = IA.loss (item)
 
-        const template = templateId.bind(id => toNewMaybe(lookup(id)(templates)))
+        const template = toNewMaybe (IA.template (item))
+          .bind (templateId => toNewMaybe (lookup (templateId) (templates)))
 
         const lockedTemplate = isTemplateLocked ? template : Nothing
 
         return lockedTemplate
-          .map(pipe (
+          .map (pipe (
             fromItemTemplate (id),
             set (IL.where) (where),
             set (IL.amount) (amount),
             set (IL.loss) (loss)
           ))
-          .fromMaybe(item)
+          .fromMaybe (item)
       })
-      .altLazy(() => toNewMaybe(lookup(id)(templates)).map(fromItemTemplate(id)))
-      .toOldMaybe()
+      .altLazy (() => toNewMaybe (lookup (id) (templates)).map (fromItemTemplate (id)))
+      .toOldMaybe ()
 
 export const getTemplates = createMaybeSelector (
   getWikiItemTemplates,
@@ -123,12 +123,11 @@ export const getItems = createMaybeSelector (
   getWikiItemTemplates,
   getItemsState,
   (templates, itemsState) =>
-    toNewMaybe(itemsState)
-      .map(items => pipe_ (items, elems, toArray)
-        .mapMaybe(pipe (IA.id, getFullItem (items) (templates), toNewMaybe))
-      )
-      .map(fromArray)
-      .toOldMaybe()
+    toNewMaybe (itemsState)
+      .map (items => pipe_ (items, elems, toArray)
+        .mapMaybe (pipe (IA.id, getFullItem (items) (templates), toNewMaybe)))
+      .map (fromArray)
+      .toOldMaybe ()
 )
 
 export const getFilteredItems = createMaybeSelector (
@@ -136,14 +135,14 @@ export const getFilteredItems = createMaybeSelector (
   getEquipmentFilterText,
   getEquipmentSortOptions,
   (mitems, filterText, sortOptions) =>
-    toNewMaybe(mitems)
-      .map(filterAndSortRecordsBy (0) ([ IA.name ]) (sortOptions) (filterText))
-      .toOldMaybe()
+    toNewMaybe (mitems)
+      .map (filterAndSortRecordsBy (0) ([ IA.name ]) (sortOptions) (filterText))
+      .toOldMaybe ()
 )
 
 export const getHitZoneArmors = createMaybeSelector (
   getHitZoneArmorsState,
-  hitZoneArmorsState => toNewMaybe(hitZoneArmorsState).map(elems)
+  hitZoneArmorsState => toNewMaybe (hitZoneArmorsState).map (elems)
 )
 
 export const getFilteredHitZoneArmors = createMaybeSelector (
@@ -152,8 +151,8 @@ export const getFilteredHitZoneArmors = createMaybeSelector (
   getWiki,
   (mhitZoneArmors, filterText, staticData) =>
     mhitZoneArmors
-      .map(filterAndSortRecordsByName (staticData) (filterText))
-      .toOldMaybe()
+      .map (filterAndSortRecordsByName (staticData) (filterText))
+      .toOldMaybe ()
 )
 
 const getProtection = pipe (bindF (IA.pro), Maybe.sum)
@@ -308,8 +307,8 @@ export const getAllItems = createMaybeSelector (
                           id: HZAA.id (hitZoneArmor),
                           name: HZAA.name (hitZoneArmor),
                           amount: 1,
-                          price: Just (priceTotal).toOldMaybe(),
-                          weight: Just (weightTotal).toOldMaybe(),
+                          price: Just (priceTotal).toOldMaybe (),
+                          weight: Just (weightTotal).toOldMaybe (),
                           gr: 4,
                         })
                       }))
@@ -349,14 +348,15 @@ export const getMeleeWeapons = createMaybeSelector (
 
             const is_garether_gossen_stil_active = isMaybeActive (garether_gossen_stil)
 
-            return toArray(elems (items))
-              .filter(item => IA.gr (item) === 1 || Maybe.elem (1) (IA.improvisedWeaponGroup (item)))
-              .mapMaybe(item =>
-                toNewMaybe(getFullItem (items) (SDA.itemTemplates (wiki)) (IA.id(item)))
-                  .bind(full_item =>
-                    toNewMaybe(IA.combatTechnique(full_item))
-                      .bind(id => toNewMaybe(lookup (id) (SDA.combatTechniques (wiki))))
-                      .bind(wiki_entry => {
+            return toArray (elems (items))
+              .filter (item => IA.gr (item) === 1
+                               || Maybe.elem (1) (IA.improvisedWeaponGroup (item)))
+              .mapMaybe (item =>
+                toNewMaybe (getFullItem (items) (SDA.itemTemplates (wiki)) (IA.id (item)))
+                  .bind (full_item =>
+                    toNewMaybe (IA.combatTechnique (full_item))
+                      .bind (id => toNewMaybe (lookup (id) (SDA.combatTechniques (wiki))))
+                      .bind (wiki_entry => {
                         const hero_entry = lookup (CTA.id (wiki_entry)) (HA.combatTechniques (hero))
 
                         const atBase = getAttack (hero) (wiki_entry) (hero_entry)
@@ -475,9 +475,7 @@ export const getMeleeWeapons = createMaybeSelector (
                               isParryingWeapon: IA.isParryingWeapon (full_item),
                             }))
                           : Nothing
-                      })
-                  )
-              )
+                      })))
           })
 )
 
@@ -489,14 +487,15 @@ export const getRangedWeapons = createMaybeSelector (
           (hero => {
             const items = pipe_ (hero, HA.belongings, BA.items)
 
-            return toArray(elems (items))
-              .filter(item => IA.gr (item) === 2 || Maybe.elem (2) (IA.improvisedWeaponGroup (item)))
-              .mapMaybe(item =>
-                toNewMaybe(getFullItem (items) (SDA.itemTemplates (staticData)) (IA.id(item)))
-                  .bind(full_item =>
-                    toNewMaybe(IA.combatTechnique(full_item))
-                      .bind(id => toNewMaybe(lookup (id) (SDA.combatTechniques (staticData))))
-                      .map(wiki_entry => {
+            return toArray (elems (items))
+              .filter (item => IA.gr (item) === 2
+                               || Maybe.elem (2) (IA.improvisedWeaponGroup (item)))
+              .mapMaybe (item =>
+                toNewMaybe (getFullItem (items) (SDA.itemTemplates (staticData)) (IA.id (item)))
+                  .bind (full_item =>
+                    toNewMaybe (IA.combatTechnique (full_item))
+                      .bind (id => toNewMaybe (lookup (id) (SDA.combatTechniques (staticData))))
+                      .map (wiki_entry => {
                         const hero_entry = lookup (CTA.id (wiki_entry)) (HA.combatTechniques (hero))
 
                         const atBase = getAttack (hero) (wiki_entry) (hero_entry)
@@ -528,9 +527,7 @@ export const getRangedWeapons = createMaybeSelector (
                           isImprovisedWeapon:
                             isJust (IA.improvisedWeaponGroup (full_item)),
                         })
-                      })
-                  )
-              )
+                      })))
           })
 )
 
@@ -547,11 +544,11 @@ export const getArmors = createMaybeSelector (
   (mitems, wiki) =>
     fmapF (mitems)
           (items =>
-            toArray(elems (items))
-              .filter(item => IA.gr (item) === 4)
-              .mapMaybe(item =>
-                toNewMaybe(getFullItem (items) (SDA.itemTemplates (wiki)) (IA.id(item)))
-                  .map(full_item => {
+            toArray (elems (items))
+              .filter (item => IA.gr (item) === 4)
+              .mapMaybe (item =>
+                toNewMaybe (getFullItem (items) (SDA.itemTemplates (wiki)) (IA.id (item)))
+                  .map (full_item => {
                     const addPenaltiesMod = IA.addPenalties (full_item) ? -1 : 0
 
                     return Armor ({
@@ -571,21 +568,19 @@ export const getArmors = createMaybeSelector (
                       weight: IA.weight (full_item),
                       where: IA.where (full_item),
                     })
-                  })
-              )
-          )
+                  })))
 )
 
 export const getArmorZones = createMaybeSelector (
   getWikiItemTemplates,
   getEquipmentState,
   (templates, belongingsOpt) =>
-    toNewMaybe(belongingsOpt)
-      .map(belongings => {
+    toNewMaybe (belongingsOpt)
+      .map (belongings => {
         const items = BA.items (belongings)
 
-        return toArray(elems (BA.hitZoneArmors (belongings)))
-          .map(hitZoneArmor => {
+        return toArray (elems (BA.hitZoneArmors (belongings)))
+          .map (hitZoneArmor => {
             const headArmor = getFullHitZoneItem (items) (templates) ("head") (hitZoneArmor)
             const torsoArmor = getFullHitZoneItem (items) (templates) ("torso") (hitZoneArmor)
             const leftArmArmor = getFullHitZoneItem (items) (templates) ("leftArm") (hitZoneArmor)
@@ -632,19 +627,19 @@ export const getShieldsAndParryingWeapons = createMaybeSelector (
           (hero => {
             const items = pipe_ (hero, HA.belongings, BA.items)
 
-            return toArray(elems (items))
-              .filter(item => IA.gr (item) === 1
+            return toArray (elems (items))
+              .filter (item => IA.gr (item) === 1
                               && (
                                 Maybe.elem<string> (CombatTechniqueId.Shields)
                                                   (IA.combatTechnique (item))
                                 || IA.isParryingWeapon (item)
                               ))
-              .mapMaybe(item =>
-                toNewMaybe(getFullItem (items) (SDA.itemTemplates (staticData)) (IA.id(item)))
-                  .bind(full_item =>
-                    toNewMaybe(IA.combatTechnique(full_item))
-                      .bind(id => toNewMaybe(lookup (id) (SDA.combatTechniques (staticData))))
-                      .map(wiki_entry =>
+              .mapMaybe (item =>
+                toNewMaybe (getFullItem (items) (SDA.itemTemplates (staticData)) (IA.id (item)))
+                  .bind (full_item =>
+                    toNewMaybe (IA.combatTechnique (full_item))
+                      .bind (id => toNewMaybe (lookup (id) (SDA.combatTechniques (staticData))))
+                      .map (wiki_entry =>
                         ShieldOrParryingWeapon ({
                           id: IA.id (full_item),
                           name: IA.name (full_item),
@@ -655,10 +650,7 @@ export const getShieldsAndParryingWeapons = createMaybeSelector (
                           atMod: IA.at (full_item),
                           paMod: IA.pa (full_item),
                           weight: IA.weight (full_item),
-                        })
-                      )
-                  )
-              )
+                        }))))
           })
 )
 
@@ -702,7 +694,7 @@ const getItemGroupsAsDropdowns = pipe (
                                    SDA.equipmentGroups,
                                    elems,
                                    map (nin => DropdownOption ({
-                                                 id: Just (NINA.id (nin)).toOldMaybe(),
+                                                 id: Just (NINA.id (nin)).toOldMaybe (),
                                                  name: NINA.name (nin),
                                                }))
                                  )

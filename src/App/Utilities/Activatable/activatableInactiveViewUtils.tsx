@@ -879,13 +879,15 @@ export const getInactiveActivatableControlElements =
         || (isJust (minput_desc) && isNothing (minput_text))
       )
       && notElem (IAA.id (entry))
-                 (List<string> (AdvantageId.magicalAttunement,
-                                DisadvantageId.afraidOf,
-                                DisadvantageId.magicalRestriction,
-                                DisadvantageId.principles,
-                                DisadvantageId.badHabit,
-                                DisadvantageId.stigma,
-                                DisadvantageId.obligations))
+                 (List<string> (
+                   AdvantageId.magicalAttunement,
+                   DisadvantageId.afraidOf,
+                   DisadvantageId.magicalRestriction,
+                   DisadvantageId.principles,
+                   DisadvantageId.badHabit,
+                   DisadvantageId.stigma,
+                   DisadvantageId.obligations
+                 ))
         ? set (IACEL.disabled) (Just (true))
         : ident,
       fromMaybe

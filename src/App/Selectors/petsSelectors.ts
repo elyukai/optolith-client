@@ -7,14 +7,14 @@ import { getPets } from "./stateSelectors"
 
 export const getPet = createMaybeSelector (
   getPets,
-  pets =>
+  mpets =>
   pipe_ (
-    fmapF (pets) (pets => elems(pets)),
+    fmapF (mpets) (pets => elems (pets)),
     bindF (listToMaybe)
   )
 )
 
 export const getAllPets = createMaybeSelector (
   getPets,
-  pets => fmapF (pets) (pets => elems(pets))
+  mpets => fmapF (mpets) (pets => elems (pets))
 )

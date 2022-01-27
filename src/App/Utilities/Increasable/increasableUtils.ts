@@ -21,7 +21,7 @@ export const addPoint =
     ? over (AttributeDependentL.value) (inc) (instance) as T
     : isActivatableSkillDependent (instance)
     ? over (ActivatableSkillDependentL.value) (inc) (instance) as T
-    : over (SkillDependentL.value) (inc) (instance as Record<SkillDependent>) as T
+    : over (SkillDependentL.value) (inc) (instance) as T
 
 export const removePoint =
   <T extends ValueBasedDependent>(instance: T): T =>
@@ -29,7 +29,7 @@ export const removePoint =
     ? over (AttributeDependentL.value) (dec) (instance) as T
     : isActivatableSkillDependent (instance)
     ? over (ActivatableSkillDependentL.value) (dec) (instance) as T
-    : over (SkillDependentL.value) (dec) (instance as Record<SkillDependent>) as T
+    : over (SkillDependentL.value) (dec) (instance) as T
 
 export const getBaseValueByCategory =
   (current_category: Category) => {

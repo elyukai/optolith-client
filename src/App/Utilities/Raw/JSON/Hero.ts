@@ -68,7 +68,7 @@ export const parseHero = (staticData: StaticDataRecord) => async (path: string) 
   // Generate new local ID
   const new_id = prefixId (IdPrefixes.HERO) (getNewIdByDate ())
 
-  const { player, avatar, ...other } = validated_data.value
+  const { player: _player, avatar, ...other } = validated_data.value
 
   // Adjust data with new ID and valid avatar
   const adjusted_data: RawHero = {

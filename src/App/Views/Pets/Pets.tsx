@@ -187,8 +187,8 @@ export function Pets (props: PetsProps) {
       }
       <Scroll>
         <ListView>
-          {toNewMaybe(pets)
-            .maybe<React.ReactNode>(null, pipe (
+          {toNewMaybe (pets)
+            .maybe<React.ReactNode> (null, pipe (
               elems,
               map ((e: Record<Pet>) => (
                 <PetsListItem
@@ -200,8 +200,7 @@ export function Pets (props: PetsProps) {
               )),
               toArray,
               x => <>{x}</>
-            ))
-          }
+            ))}
         </ListView>
       </Scroll>
     </Page>

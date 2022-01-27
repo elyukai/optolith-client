@@ -76,7 +76,7 @@ export const CombatSheetArmor: React.FC<Props> = props => {
           </tr>
         </thead>
         <tbody>
-          {maybeRNull ((xs: Record<Armor>[]) => xs.map((e) => {
+          {maybeRNull ((xs: Record<Armor>[]) => xs.map (e => {
                         const addPenalties =
                           catMaybes (List (
                                       fmapF (ensure (notEquals (0)) (AA.mov (e)))

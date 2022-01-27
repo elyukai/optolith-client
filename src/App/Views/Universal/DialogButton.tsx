@@ -20,6 +20,7 @@ export type DialogButtonProps = Omit<Props, "onClickDefault">
 
 export const DialogButton: React.FC<Props> = props => {
   const {
+    active,
     autoWidth,
     className,
     disabled,
@@ -43,6 +44,7 @@ export const DialogButton: React.FC<Props> = props => {
 
   return (
     <BorderButton
+      active={active}
       autoWidth={autoWidth}
       className={className}
       disabled={disabled}

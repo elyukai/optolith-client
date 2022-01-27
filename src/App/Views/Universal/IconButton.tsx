@@ -12,13 +12,13 @@ interface Props {
   fullWidth?: boolean
   hint?: Maybe<string>
   primary?: boolean
-  round?: boolean
   onClick? (): void
   icon: string
 }
 
 export const IconButton: React.FC<Props> = props => {
   const {
+    active,
     autoWidth,
     icon,
     className,
@@ -32,6 +32,7 @@ export const IconButton: React.FC<Props> = props => {
 
   return (
     <Button
+      active={active}
       autoWidth={autoWidth}
       className={className}
       disabled={disabled}

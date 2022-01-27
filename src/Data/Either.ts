@@ -265,7 +265,7 @@ export const then =
   <E, B>
   (x: Either<E, any>) =>
   (y: Either<E, B>): Either<E, B> =>
-    bind (x) (_ => y)
+    bind (x) (() => y)
 
 /**
  * `(>=>) :: (a -> Either e b) -> (b -> Either e c) -> a -> Either e c`

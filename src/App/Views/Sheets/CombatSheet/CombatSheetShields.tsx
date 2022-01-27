@@ -57,9 +57,9 @@ export const CombatSheetShields: React.FC<Props> = props => {
         </thead>
         <tbody>
           {
-            toNewMaybe(msh_or_parry_weapons)
-              .maybe<React.ReactNode>(null, xs =>
-                xs.map(e => (
+            toNewMaybe (msh_or_parry_weapons)
+              .maybe<React.ReactNode> (null, xs =>
+                xs.map (e => (
                   <tr key={SOPWA.id (e)}>
                     <td className="name">
                       <Textfit max={11} min={7} mode="single">{SOPWA.name (e)}</Textfit>
@@ -95,10 +95,10 @@ export const CombatSheetShields: React.FC<Props> = props => {
                                   ))}
                     </td>
                   </tr>
-                ))
-              )
+                )))
           }
-          {replicateR (2 - toNewMaybe(msh_or_parry_weapons).map(xs => xs.length).sum())
+          {replicateR (2 - toNewMaybe (msh_or_parry_weapons).map (xs => xs.length)
+.sum ())
                       (i => (
                         <tr key={`undefined-${i}`}>
                           <td className="name" />

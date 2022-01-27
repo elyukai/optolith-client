@@ -72,9 +72,9 @@ export const CombatSheetRangedWeapons: React.FC<Props> = props => {
         </thead>
         <tbody>
           {
-            toNewMaybe(mranged_weapons)
-              .maybe<React.ReactNode>(null, xs =>
-                xs.map(e => (
+            toNewMaybe (mranged_weapons)
+              .maybe<React.ReactNode> (null, xs =>
+                xs.map (e => (
                   <tr key={RWA.id (e)}>
                     <td className="name">
                       <Textfit max={11} min={7} mode="single">{RWA.name (e)}</Textfit>
@@ -121,8 +121,7 @@ export const CombatSheetRangedWeapons: React.FC<Props> = props => {
                                   ))}
                     </td>
                   </tr>
-                ))
-              )
+                )))
           }
           {replicateR (2 - Maybe.sum (fmapF (mranged_weapons) (xs => xs.length)))
                       (i => (

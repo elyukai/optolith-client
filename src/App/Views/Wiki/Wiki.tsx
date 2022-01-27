@@ -87,7 +87,6 @@ export interface WikiStateProps extends WikiTabLists {
 
 export interface WikiDispatchProps {
   setCategory1 (category: Maybe<string>): void
-  setCategory2 (category: Maybe<string>): void
   setFilter (filterText: string): void
   setProfessionsGroup (group: Maybe<number>): void
   setSkillsGroup (group: Maybe<number>): void
@@ -110,7 +109,6 @@ export const Wiki: React.FC<Props> = props => {
     filterText,
     staticData,
     setCategory1,
-    setCategory2,
     setFilter,
     professionsGroup,
     skillsGroup,

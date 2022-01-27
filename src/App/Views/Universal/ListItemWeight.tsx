@@ -1,13 +1,12 @@
 import * as React from "react"
 import { Maybe, maybe } from "../../../Data/Maybe"
-import { ndash } from "../../Utilities/Chars.bs"
-import { pipe } from "../../Utilities/pipe"
-import { localizeSize, localizeNumber } from "../../Utilities/I18n"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { ndash } from "../../Utilities/Chars.bs"
+import { localizeNumber, localizeSize } from "../../Utilities/I18n"
+import { pipe } from "../../Utilities/pipe"
 
 interface Props {
   weight: Maybe<number>
-  small?: boolean
   staticData: StaticDataRecord
 }
 

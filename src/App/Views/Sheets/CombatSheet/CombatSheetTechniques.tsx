@@ -61,8 +61,8 @@ export const CombatSheetTechniques: React.FC<Props> = props => {
           </tr>
         </thead>
         <tbody>
-          {toNewMaybe(mcombat_techniques)
-            .maybe<React.ReactNode>(null, pipe (
+          {toNewMaybe (mcombat_techniques)
+            .maybe<React.ReactNode> (null, pipe (
               map (e => (
                 <tr key={CTWAPBA_.id (e)}>
                   <td className="name">{CTWAPBA_.name (e)}</td>
@@ -87,8 +87,7 @@ export const CombatSheetTechniques: React.FC<Props> = props => {
                 </tr>
               )),
               toArray
-            ))
-          }
+            ))}
         </tbody>
       </table>
     </TextBox>

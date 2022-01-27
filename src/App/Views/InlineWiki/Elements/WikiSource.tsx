@@ -33,7 +33,9 @@ export const WikiSource: FC = props => {
     addSrcs,
   } = props
 
-  const base_src = Nullable(macc).map(acc => acc.src (x)).fromMaybe(List<Record<SourceLink>>())
+  const base_src = Nullable (macc)
+    .map (acc => acc.src (x))
+    .fromMaybe (List<Record<SourceLink>> ())
 
   const select_src =
     pipe_ (

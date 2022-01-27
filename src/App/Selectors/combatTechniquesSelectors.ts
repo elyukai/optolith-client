@@ -82,8 +82,8 @@ export const getCombatTechniquesForView = createMaybeSelector (
   getAttributes,
   getSpecialAbilities,
   getCombatTechniques,
-  (staticData, wiki_combat_techniques, attributes, special_abilities, combatTechniques) =>
-    fmapF (combatTechniques)
+  (staticData, wiki_combat_techniques, attributes, special_abilities, mcombatTechniques) =>
+    fmapF (mcombatTechniques)
           ((combatTechniques): List<Record<CombatTechniqueWithAttackParryBase>> =>
             pipe_ (
               wiki_combat_techniques,

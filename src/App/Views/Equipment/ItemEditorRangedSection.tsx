@@ -99,7 +99,8 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 elems,
                 mapMaybe (pipe (
                   ensure (pipe (CTA.gr, equals (2))),
-                  fmap ((x: Record<CombatTechnique>) => DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
+                  fmap ((x: Record<CombatTechnique>) =>
+                    DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
                 ))
               )}
               onChangeJust={setCombatTechnique}

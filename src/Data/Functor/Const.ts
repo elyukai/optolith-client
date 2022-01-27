@@ -21,4 +21,4 @@ export const getConst = <A, B> (x: Const<A, B>): A => x .value
 
 // CUSTOM CONST FUNCTIONS
 
-export import isConst = Internals.isConst
+export const { isConst } = Internals

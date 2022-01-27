@@ -161,7 +161,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                 EIA.damageBonus,
                 EPADTA.primary,
                 toNewMaybe,
-                x => x.map(id => typeof id === "object" ? "ATTR_6_8" : id).toOldMaybe()
+                x => x.map (id => typeof id === "object" ? "ATTR_6_8" : id).toOldMaybe ()
               )}
               options={List (
                 DropdownOption ({

@@ -26,4 +26,4 @@ export const runIdentity = <A> (x: Identity<A>): A => x .value
 
 // CUSTOM IDENTITY FUNCTIONS
 
-export import isIdentity = Internals.isIdentity
+export const { isIdentity } = Internals

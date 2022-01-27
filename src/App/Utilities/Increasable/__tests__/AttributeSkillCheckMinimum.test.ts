@@ -153,16 +153,20 @@ describe ("addEntryToCache", () => {
       Skill ({ ...skillFakeBase, id: "TAL_3", check: List ("ATTR_2", "ATTR_3", "ATTR_6") }),
       OrderedMap.fromArray ([
         [ "ATTR_8", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" }, { tag: "Skill", value: "TAL_2" }
+          { tag: "Spell", value: "SPELL_2" },
+          { tag: "Skill", value: "TAL_2" }
         ) ],
         [ "ATTR_3", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_1" }, { tag: "Skill", value: "TAL_2" }
+          { tag: "Skill", value: "TAL_1" },
+          { tag: "Skill", value: "TAL_2" }
         ) ],
         [ "ATTR_4", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" }, { tag: "Skill", value: "TAL_1" }
+          { tag: "Spell", value: "SPELL_2" },
+          { tag: "Skill", value: "TAL_1" }
         ) ],
         [ "ATTR_1", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }, { tag: "Skill", value: "TAL_1" }
+          { tag: "LiturgicalChant", value: "LITURGY_1" },
+          { tag: "Skill", value: "TAL_1" }
         ) ],
         [ "ATTR_7", List<CacheSkillId> (
           { tag: "LiturgicalChant", value: "LITURGY_1" }

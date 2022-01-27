@@ -46,7 +46,7 @@ export const AvatarChange: React.FC<Props> = props => {
               fmap ((xs: Cons<string>) => pipe_ (
                 xs,
                 head,
-                (path_to_image) => {
+                path_to_image => {
                   const new_data = imgPathToBase64 (path_to_image)
                   const ext = path.extname (path_to_image) .toLowerCase ()
 

@@ -82,8 +82,8 @@ export const SpellsSheetSpells: React.FC<Props> = props => {
           </tr>
         </thead>
         <tbody>
-          {toNewMaybe(maybeSpells)
-            .maybe<React.ReactNode>(null, pipe (
+          {toNewMaybe (maybeSpells)
+            .maybe<React.ReactNode> (null, pipe (
               map (e => {
                 const check =
                   getAttributeStringByIdList (checkAttributeValueVisibility)
@@ -149,8 +149,7 @@ export const SpellsSheetSpells: React.FC<Props> = props => {
                 )
               }),
               toArray
-            ))
-          }
+            ))}
           {replicateR (21 - Maybe.sum (fmapF (maybeSpells) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
