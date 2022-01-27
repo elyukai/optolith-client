@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0-alpha.5](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.4...v1.5.0-alpha.5) (2022-01-27)
+
+
+### Features
+
+* portuguese translations ([d8c9f52](https://github.com/elyukai/optolith-client/commit/d8c9f52542120f9e5fa569728b3f11cb79102365))
+
+
+### Bug Fixes
+
+* latest TypeScript compilation errors ([6b93c15](https://github.com/elyukai/optolith-client/commit/6b93c15aa02513dcd8ddccfb43cea92370de8290))
+* missing import ([29c7b4b](https://github.com/elyukai/optolith-client/commit/29c7b4bc39d21e41291ee944c8051b2b10863069))
+
 ## [1.5.0-alpha.4](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.3...v1.5.0-alpha.4) (2021-08-03)
 
 
