@@ -1,11 +1,11 @@
 import { PrintToPDFOptions } from "electron"
 import { handleE } from "../../Control/Exception"
-import { Either, isLeft, isRight, Right } from "../../Data/Either"
 import { flip } from "../../Data/Function"
 import { appendStr } from "../../Data/List"
 import { isJust, maybe } from "../../Data/Maybe"
 import * as IO from "../../System/IO"
 import { getCurrentHeroName, getWiki } from "../Selectors/stateSelectors"
+import { Either, Right } from "../Utilities/Either"
 import { translate } from "../Utilities/I18n"
 import { showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils"
 import { pipe } from "../Utilities/pipe"
@@ -42,15 +42,15 @@ export const requestPrintHeroToPDF = (): ReduxAction<Promise<void>> =>
                             (pipe (flip (IO.writeFile) (data), handleE))
                             (path)
 
-    if (isRight (res) && isJust (path)) {
+    if (res.isRight && isJust (path)) {
       await dispatch (addAlert (AlertOptions ({
                                  message: translate (staticData) ("sheets.dialogs.pdfsaved"),
                                })))
     }
-    else if (isLeft (res)) {
+    else if (res.isLeft) {
       await dispatch (addDefaultErrorAlert (staticData)
                                            (translate (staticData)
                                                       ("sheets.dialogs.pdfsaveerror.title"))
-                                           (res))
+                                           (res.value))
     }
   }

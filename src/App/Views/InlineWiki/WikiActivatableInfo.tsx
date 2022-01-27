@@ -386,7 +386,7 @@ const getPrerequisitesAttributesText =
     return pipe (
       ensure (notNull as notNull<IncreasablePrerequisiteObjects>),
       fmap (pipe (
-        map (e => {
+        map ((e: IncreasablePrerequisiteObjects) => {
           if (RequireIncreasable.is (e)) {
             const ids = RIA.id (e)
             const value = RIA.value (e)
@@ -431,7 +431,7 @@ const getPrerequisitesSkillsText =
     pipe (
       ensure (notNull as notNull<IncreasablePrerequisiteObjects>),
       fmap (pipe (
-        map (e => {
+        map ((e: IncreasablePrerequisiteObjects) => {
           if (RequireIncreasable.is (e)) {
             const ids = RIA.id (e)
             const value = RIA.value (e)
@@ -475,7 +475,7 @@ const getPrerequisitesActivatedSkillsText =
     pipe (
       ensure (notNull as notNull<ActivatablePrerequisiteObjects>),
       fmap (pipe (
-        map (e => {
+        map ((e: ActivatablePrerequisiteObjects) => {
           if (RequireActivatable.is (e)) {
             const ids = RAA.id (e)
 

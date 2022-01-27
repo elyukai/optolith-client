@@ -91,7 +91,7 @@ const isTopMarginNeeded =
       bindF (ensure (
         () => sortOrder === "group" && SCCA.active (curr)
       )),
-      fmap (prev =>
+      fmap ((prev: Combined) =>
              (!isCantrip (prev) && isCantrip (curr))
              || (isCantrip (prev) && !isCantrip (curr))
              || (!isCantrip (prev)

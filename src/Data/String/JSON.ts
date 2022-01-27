@@ -1,11 +1,13 @@
+import { Either as NewEither, Left, Right, toNewEither } from "../../App/Utilities/Either"
 import { EnsureEnumType, GenericEnumType, isInEnum } from "../../App/Utilities/Enum"
-import { pipe, pipe_ } from "../../App/Utilities/pipe"
+import { Maybe, Nullable } from "../../App/Utilities/Maybe"
+import { pipe } from "../../App/Utilities/pipe"
 import { Expect } from "../../App/Utilities/Raw/Expect"
 import { isBoolean, isNumber, isString } from "../../App/Utilities/typeCheckUtils"
-import { bimap, bindF, Either, eitherToMaybe, first, fromLeft_, fromRight_, isLeft, Left, Right } from "../Either"
+import { bimap, bindF, Either, eitherToMaybe, fromLeft_, fromRight_, isLeft } from "../Either"
 import { ident } from "../Function"
 import { elem, fromArray, List } from "../List"
-import { Maybe, Nothing } from "../Maybe"
+import { Nothing } from "../Maybe"
 import { empty, insert, OrderedMap } from "../OrderedMap"
 import { OmitName, Record, RecordBase, RecordIBase } from "../Record"
 
@@ -25,18 +27,21 @@ export type GetJSONRecord<A extends RecordBase> = {
   [K in keyof A]: GetJSON<A[K] | Nothing>
 }
 
-export const tryParseJSON: (x: string) => Either<Error, unknown> =
+export const tryParseJSON: (x: string) => NewEither<Error, unknown> =
   x => {
     try {
       return Right (JSON.parse (x))
     }
     catch (err) {
-      return Left (err)
+      if (err instanceof Error) {
+        return Left (err)
+      }
+
+      return Left (new Error (String (err)))
     }
   }
 
-export const parseJSON: (x: string) => Maybe<unknown> =
-  pipe (tryParseJSON, eitherToMaybe)
+export const parseJSON = (x: string): Maybe<unknown> => tryParseJSON (x).toMaybe ()
 
 /**
  * `fromJSRecord :: Validators a -> (a -> b) -> String -> GetJSON b`
@@ -64,31 +69,28 @@ export const fromJSRecord =
         const res = validator ((x as any) [key] as unknown)
 
         if (isLeft (res)) {
-          return Left (`In object at key "${key}":\n${fromLeft_ (res)}`)
+          return Left (`In object at key "${key}":\n${fromLeft_ (res)}`).toOldEither ()
         }
         else {
           (validated as RecordBase) [key] = fromRight_ (res)
         }
       }
 
-      return Right (toRecord (validated))
+      return Right (toRecord (validated)).toOldEither ()
     }
 
-    return Left (`Expected: ${expected}, Received: not an object: ${JSON.stringify (x)}`)
+    return Left (`Expected: ${expected}, Received: not an object: ${JSON.stringify (x)}`).toOldEither ()
   }
 
 export const tryParseJSONRecord =
   <A extends RecordIBase<any>> (validators: GetJSONRecord<OmitName<A>>) =>
   (toRecord: (x: OmitName<A>) => Record<A>) =>
   (expected: string) =>
-  (x: string) => pipe_ (
-    x,
-    tryParseJSON,
-    first (err => err.message),
-    bindF (fromJSRecord<A> (validators)
-                                 (toRecord)
-                                 (expected))
-  )
+  (x: string) =>
+    tryParseJSON (x)
+      .first (err => err.message)
+      .bind (val => toNewEither (fromJSRecord<A> (validators) (toRecord) (expected) (val)))
+      .toOldEither ()
 
 export const parseJSONRecord =
   <A extends RecordIBase<any>> (validators: GetJSONRecord<OmitName<A>>) =>
@@ -109,9 +111,9 @@ const fromJS =
   <B> (f: (x: A) => B) =>
   (expected: string): GetJSON<B> =>
   (x: unknown) =>
-    validator (x)
+    (validator (x)
     ? Right (f (x))
-    : Left (`Expected: ${expected}, Received: ${JSON.stringify (x)}`)
+    : Left (`Expected: ${expected}, Received: ${JSON.stringify (x)}`)).toOldEither ()
 
 /**
  * `fromJSId :: (Unknown -> Bool) -> String -> GetJSON a`
@@ -136,19 +138,19 @@ const orUndefined =
 export const fromJSString = fromJSId (isString) (Expect.String)
 
 export const fromJSStringM = fromJS (orUndefined (isString))
-                                    <Maybe<string>> (Maybe)
+                                    <Maybe<string>> (Nullable)
                                     (Expect.Maybe (Expect.String))
 
 export const fromJSRational = fromJSId (isNumber) (Expect.Float)
 
 export const fromJSRationalM = fromJS (orUndefined (isNumber))
-                                      <Maybe<number>> (Maybe)
+                                      <Maybe<number>> (Nullable)
                                       (Expect.Maybe (Expect.Float))
 
 export const fromJSBool = fromJSId (isBoolean) (Expect.Boolean)
 
 export const fromJSBoolM = fromJS (orUndefined (isBoolean))
-                                  <Maybe<boolean>> (Maybe)
+                                  <Maybe<boolean>> (Nullable)
                                   (Expect.Maybe (Expect.Boolean))
 
 export const fromJSEnum =
@@ -167,7 +169,7 @@ export const fromJSEnumM =
                                                                      (x as GenericEnumType<A>)
                                                        )
                                                        || x === undefined)
-           <Maybe<EnsureEnumType<A>>> (Maybe)
+           <Maybe<EnsureEnumType<A>>> (Nullable)
            (enum_name)
 
 export const fromJSInArray =
@@ -184,7 +186,7 @@ export const mapM =
   (f: (x: A) => Either<string, B>) =>
   (m: A[]): Either<string, B[]> => {
     if (m .length === 0) {
-      return Right ([])
+      return Right ([]).toOldEither ()
     }
 
     const arr: B[] = []
@@ -194,13 +196,13 @@ export const mapM =
       const res = f (value)
 
       if (isLeft (res)) {
-        return Left (`In array at index ${i}\n${fromLeft_ (res)}`)
+        return Left (`In array at index ${i}\n${fromLeft_ (res)}`).toOldEither ()
       }
 
       arr .push (fromRight_ (res))
     }
 
-    return Right (arr)
+    return Right (arr).toOldEither ()
   }
 
 /**
@@ -217,10 +219,10 @@ export const fromJSArray =
   <A> (validator: GetJSON<A>): GetJSON<List<A>> =>
     pipe (
       (x): Either<string, unknown[]> => Array.isArray (x)
-        ? Right (x)
+        ? Right (x).toOldEither ()
         : Left (
             `Expected: ${Expect.Array ("a")}, Received: not an array (${JSON.stringify (x)})`
-          ),
+          ).toOldEither (),
       bindF (mapM (validator)),
       bimap ((str: string) => `In array:\n${str}`) (fromArray)
     )
@@ -247,22 +249,22 @@ export const fromJSDict =
           ? Right (key)
           : Left (`Expected: Key, Received: ${JSON.stringify (key)}`)
 
-        const v = validator (value)
+        const v = toNewEither (validator (value))
 
-        if (isLeft (k)) {
-          return k
+        if (k.isLeft) {
+          return k.toOldEither ()
         }
-        else if (isLeft (v)) {
-          return Left (`In object at key "${key}"\n${fromLeft_ (v)}`)
+        else if (v.isLeft) {
+          return Left (`In object at key "${key}"\n${v.value}`).toOldEither ()
         }
         else {
-          validated = insert (fromRight_ (k)) (f (fromRight_ (v))) (validated)
+          validated = insert (k.value) (f (v.value)) (validated)
         }
       }
 
-      return Right (validated)
+      return Right (validated).toOldEither ()
     }
     else {
-      return Left (`Expected: ${expected}, Received: not an object (${JSON.stringify (x)})`)
+      return Left (`Expected: ${expected}, Received: not an object (${JSON.stringify (x)})`).toOldEither ()
     }
   }

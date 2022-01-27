@@ -37,9 +37,10 @@ export const iterateGroupHeaders =
                                                      equals (id)
                                                    ))
                                                    (attributes),
-                              fmap (attr => checkAttributeValueVisibility
-                                              ? AttributeCombinedA_.value (attr)
-                                              : AttributeCombinedA_.short (attr))
+                              fmap ((attr: Record<AttributeCombined>) =>
+                                      checkAttributeValueVisibility
+                                      ? AttributeCombinedA_.value (attr)
+                                      : AttributeCombinedA_.short (attr))
                             )),
                             intercalate ("/"),
                             check => (

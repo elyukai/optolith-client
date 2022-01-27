@@ -1,5 +1,4 @@
 import { clipboard } from "electron"
-import { fromLeft_, Left } from "../../Data/Either"
 import { fmapF } from "../../Data/Functor"
 import { List } from "../../Data/List"
 import { Just, Maybe, Nothing } from "../../Data/Maybe"
@@ -180,13 +179,13 @@ export const addErrorAlert =
 export const getErrorMsg =
   (staticData: StaticDataRecord) =>
   (message: string) =>
-  (error: Left<Error>): string =>
-    `${message} (${translate (staticData) ("general.errorcode")}: ${JSON.stringify (fromLeft_ (error))})`
+  (error: Error): string =>
+    `${message} (${translate (staticData) ("general.errorcode")}: ${JSON.stringify (error)})`
 
 export const addDefaultErrorAlert =
   (staticData: StaticDataRecord) =>
   (message: string) =>
-  (error: Left<Error>) =>
+  (error: Error) =>
     addErrorAlert (AlertOptions ({
                     message: getErrorMsg (staticData) (message) (error),
                     title: Just (translate (staticData) ("general.error")),
@@ -196,7 +195,7 @@ export const addDefaultErrorAlertWithTitle =
   (staticData: StaticDataRecord) =>
   (title: string) =>
   (message: string) =>
-  (error: Left<Error>) =>
+  (error: Error) =>
     addErrorAlert (AlertOptions ({
                     message: getErrorMsg (staticData) (message) (error),
                     title: Just (title),

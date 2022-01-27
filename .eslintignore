@@ -1,3 +1,5 @@
 src/App/Utilities/YAML/Schema/
 *.js
 *.gen.tsx
+node_modules
+/app

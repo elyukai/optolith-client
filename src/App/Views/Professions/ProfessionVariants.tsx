@@ -8,7 +8,7 @@ import { Record } from "../../../Data/Record"
 import { selectProfessionVariant } from "../../Actions/ProfessionVariantActions"
 import { Sex } from "../../Models/Hero/heroTypeHelpers"
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined"
-import { ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined"
+import { ProfessionVariantCombined, ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined"
 import { RadioOption } from "../../Models/View/RadioOption"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate, translateP } from "../../Utilities/I18n"
@@ -53,7 +53,7 @@ export const ProfessionVariants: React.FC<ProfessionVariantsProps> = props => {
                PCA.mappedVariants,
                ensure (notNull),
                fmap (pipe (
-                 map (prof_var => {
+                 map ((prof_var: Record<ProfessionVariantCombined>) => {
                    const name = getNameBySex (sex) (PVCA_.name (prof_var))
                    const ap = Maybe.sum (PCA_.ap (prof)) + PVCA_.ap (prof_var)
 

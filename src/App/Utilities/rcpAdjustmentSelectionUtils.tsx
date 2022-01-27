@@ -89,7 +89,7 @@ export const getMotherTongueSelectionElement =
                         (pipe (
                           Just,
                           findSelectOption (wikiEntry),
-                          fmap (option => DropdownOption ({
+                          fmap ((option: Record<SelectOption>) => DropdownOption ({
                                  id: Just (SOA.id (option)),
                                  name: SOA.name (option),
                                }))

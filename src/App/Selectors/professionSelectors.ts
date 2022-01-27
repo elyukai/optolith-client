@@ -200,7 +200,7 @@ const mapProfessionSelection =
 const mapProfessionVariantSelection =
   (staticData: StaticDataRecord) =>
     over (PVSL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
-         (fmap (sel =>
+         (fmap ((sel: VariantCombatTechniquesSelection) =>
                  CombatTechniquesSelection.is (sel)
                    ? mapCombatTechniquesSelectionNames (staticData) (sel)
                    : sel))
@@ -674,7 +674,7 @@ export const getAvailableProfessions = createMaybeSelector (
   getCommonProfessions,
   uncurryN3 (visibility =>
              availability =>
-              fmap (xs => visibility === "all"
+              fmap ((xs: List<Record<ProfessionCombined>>) => visibility === "all"
                           ? filterByAvailabilityAndPred (ProfessionCombinedA_.src)
                                                         (isCustomProfession)
                                                         (availability)

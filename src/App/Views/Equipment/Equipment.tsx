@@ -98,7 +98,8 @@ const prepareCombatTechniquesForSelection =
       mxs,
       fmap (mapMaybe (pipe (
                              ensure (pipe (CTWRA_.gr, equals (gr))),
-                             fmap (x => DropdownOption ({
+                             fmap ((x: Record<CombatTechniqueWithRequirements>) =>
+                                        DropdownOption ({
                                           id: Just (CTWRA_.id (x)),
                                           name: CTWRA_.name (x),
                                         }))
@@ -262,7 +263,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
                 ensure (notNull),
                 fmap (pipe (
                   map (
-                    obj => (
+                    (obj: Record<ItemTemplate>) => (
                       <EquipmentListItem
                         key={ITA.id (obj)}
                         data={fromItemTemplate (ITA.id (obj)) (obj)}
@@ -332,7 +333,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
               bindF (ensure (notNull)),
               fmap (pipe (
                 map (
-                  obj => (
+                  (obj: Record<Item>) => (
                     <EquipmentListItem
                       key={IA.id (obj)}
                       data={obj}

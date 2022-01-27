@@ -52,7 +52,7 @@ export const SkillsSheetLanguages: React.FC<Props> = props => {
     mapMaybe (activeObject => pipe_ (
       maybeLanguagesWikiEntry,
       bindF (flip (findSelectOption) (ActiveObject.A.sid (activeObject))),
-      fmap (select_option => IdNameLevel ({
+      fmap ((select_option: Record<SelectOption>) => IdNameLevel ({
                                id: SelectOption.A.id (select_option),
                                name: SelectOption.A.name (select_option),
                                level: Maybe.sum (ActiveObject.A.tier (activeObject)),

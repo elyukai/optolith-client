@@ -1,56 +1,56 @@
-import { lookupF, OrderedMap } from "../../Data/OrderedMap"
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
-import { Record } from "../../Data/Record"
-import { pipe, pipe_ } from "./pipe"
-import { isJust, isNothing, mapMaybe, maybe, Maybe, fromMaybe } from "../../Data/Maybe"
-import { fmap } from "../../Data/Functor"
-import { getAE, getDO, getINI, getKP, getLP, getMOV, getSPI, getTOU } from "../Selectors/derivedCharacteristicsSelectors"
-import { AppStateRecord } from "../Models/AppState"
-import { getActiveForEditView, getFatePointsModifier } from "../Selectors/activatableSelectors"
-import { getArmors, getArmorZones, getFullItem, getMeleeWeapons, getRangedWeapons } from "../Selectors/equipmentSelectors"
-import { MeleeWeapon } from "../Models/View/MeleeWeapon"
-import { List } from "../../Data/List"
-import { RangedWeapon } from "../Models/View/RangedWeapon"
-import { getAllCombatTechniques } from "../Selectors/combatTechniquesSelectors"
-import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
-import { getWiki, getWikiItemTemplates } from "../Selectors/stateSelectors"
-import { Item } from "../Models/Hero/Item"
-import { Advantage } from "../Models/Wiki/Advantage"
-import { Disadvantage } from "../Models/Wiki/Disadvantage"
-import { Skill } from "../Models/Wiki/Skill"
-import { NumIdName } from "../Models/NumIdName"
-import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
-import { SkillGroup } from "../Models/Wiki/SkillGroup"
-import { SkillDependent } from "../Models/ActiveEntries/SkillDependent"
-import { Attribute } from "../Models/Wiki/Attribute"
-import { Armor } from "../Models/View/Armor"
-import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
-import { HitZoneArmorForView } from "../Models/View/HitZoneArmorForView"
-import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
-import { isTuple, Pair, Tuple } from "../../Data/Tuple"
-import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
-import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
-import { Spell } from "../Models/Wiki/Spell"
-import { ReduxAction } from "../Actions/Actions"
-import { showSaveDialog } from "./IOUtils"
-import { Either, isLeft, isRight, Right } from "../../Data/Either"
-import { flip } from "../../Data/Function"
-import { addAlert, addDefaultErrorAlert, AlertOptions } from "../Actions/AlertActions"
-import { translate } from "./I18n"
-import { handleE } from "../../Control/Exception"
-import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
-import { ActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
-import { StaticData } from "../Models/Wiki/WikiModel"
-import { writeFile } from "../../System/IO"
-import { Category } from "../Constants/Categories"
-import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveActivatable"
-import { CombatTechniqueId } from "../Constants/Ids.gen"
-import { getAttributesForView } from "../Selectors/attributeSelectors"
-import { AttributeWithRequirements } from "../Models/View/AttributeWithRequirements"
 import { readFileSync } from "fs-extra"
+import { handleE } from "../../Control/Exception"
+import { fmap } from "../../Data/Functor"
+import { List } from "../../Data/List"
+import { fromMaybe, isJust, isNothing, mapMaybe, Maybe } from "../../Data/Maybe"
+import { lookupF, OrderedMap } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
+import { isTuple, Pair, Tuple } from "../../Data/Tuple"
+import { writeFile } from "../../System/IO"
+import { ReduxAction } from "../Actions/Actions"
+import { addAlert, addDefaultErrorAlert, AlertOptions } from "../Actions/AlertActions"
+import { Category } from "../Constants/Categories"
 import { Property } from "../Constants/Groups"
+import { CombatTechniqueId } from "../Constants/Ids.gen"
+import { ActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
+import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
+import { SkillDependent } from "../Models/ActiveEntries/SkillDependent"
+import { AppStateRecord } from "../Models/AppState"
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Item } from "../Models/Hero/Item"
+import { NumIdName } from "../Models/NumIdName"
+import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveActivatable"
+import { Armor } from "../Models/View/Armor"
+import { AttributeWithRequirements } from "../Models/View/AttributeWithRequirements"
+import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements"
+import { HitZoneArmorForView } from "../Models/View/HitZoneArmorForView"
+import { MeleeWeapon } from "../Models/View/MeleeWeapon"
+import { RangedWeapon } from "../Models/View/RangedWeapon"
+import { Advantage } from "../Models/Wiki/Advantage"
+import { Attribute } from "../Models/Wiki/Attribute"
+import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
+import { Disadvantage } from "../Models/Wiki/Disadvantage"
+import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant"
+import { Skill } from "../Models/Wiki/Skill"
+import { SkillGroup } from "../Models/Wiki/SkillGroup"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
+import { Spell } from "../Models/Wiki/Spell"
+import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
+import { StaticData } from "../Models/Wiki/WikiModel"
+import { getActiveForEditView, getFatePointsModifier } from "../Selectors/activatableSelectors"
+import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
+import { getAttributesForView } from "../Selectors/attributeSelectors"
+import { getAllCombatTechniques } from "../Selectors/combatTechniquesSelectors"
+import { getAE, getDO, getINI, getKP, getLP, getMOV, getSPI, getTOU } from "../Selectors/derivedCharacteristicsSelectors"
 import { current_version } from "../Selectors/envSelectors"
+import { getArmors, getArmorZones, getFullItem, getMeleeWeapons, getRangedWeapons } from "../Selectors/equipmentSelectors"
+import { getWiki, getWikiItemTemplates } from "../Selectors/stateSelectors"
 import { getBlessedTradition } from "./Activatable/traditionUtils"
+import { Either, Right } from "./Either"
+import { translate } from "./I18n"
+import { showSaveDialog } from "./IOUtils"
+import { toNewMaybe } from "./Maybe"
+import { pipe, pipe_ } from "./pipe"
 
 type MapToolsEntry = {
   key: string
@@ -155,7 +155,8 @@ function getStaticDataXML (hero: HeroModelRecord, portraitID: string): string {
 function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string {
   // TODO: Hier werden Minimaleigenschaften leider noch nicht mit exportiert.
 
-  let xml: string = pipe_ (getAttributesForView (state, { hero }),
+  let xml: string = pipe_ (
+    getAttributesForView (state, { hero }),
     fromMaybe (List<Record<AttributeWithRequirements>> ()),
     mapMaybe ((attr: Record<AttributeWithRequirements>) =>
       pipe_ (
@@ -168,7 +169,8 @@ function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string
           value: AttributeDependent.A.value (stateEntry).toString (),
         }))
       )),
-    List.intercalate (""))
+    List.intercalate ("")
+  )
 
   const leP: number = fromMaybe (0) (getLP (state, { hero }).values.value)
   const aspContainer = getAE (state, { hero })
@@ -365,38 +367,48 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
   pipe (
     SkillGroup.A.id,
     grid =>
-      pipe_ (state.values.wiki.values.skills,
+      pipe_ (
+        state.values.wiki.values.skills,
         OrderedMap.filter (skill => Skill.A.gr (skill) === grid),
         OrderedMap.elems,
-        fmap ((skill: Record<Skill>) => pipe_ (skill,
+        fmap ((skill: Record<Skill>) => pipe_ (
+          skill,
           Skill.A.id,
           OrderedMap.lookupF (hero.values.skills),
-          buildSkill (skill))))
+          buildSkill (skill)
+        ))
+      )
   )
 
-  const skills: List<MapToolsSkillGroup> =
-  pipe_ (state.values.wiki.values.skillGroups,
+const skills: List<MapToolsSkillGroup> =
+  pipe_ (
+    state.values.wiki.values.skillGroups,
     OrderedMap.elems,
     fmap (
       (g: Record<SkillGroup>) => ({
         groupName: skillGroupNameForMapTool (g),
         skills: buildSkillList (g),
       })
-  ))
+    )
+  )
 
   let xml: string =
-    pipe_ (skills,
+    pipe_ (
+skills,
       fmap ((sg: MapToolsSkillGroup) => entry ({
         key: sg.groupName,
-        value: `[${pipe_ (sg.skills,
+        value: `[${pipe_ (
+          sg.skills,
           fmap ((skill: MapToolsSkill) =>
             `{"Talent":"${skill.name}","Talentwert":${skill.value},"Probe":{`
             + `"Eigenschaft1":"${skill.attr1}",`
             + `"Eigenschaft2":"${skill.attr2}",`
             + `"Eigenschaft3":"${skill.attr3}"}}`),
-          List.intercalate (","))}]`,
+          List.intercalate (",")
+        )}]`,
       })),
-      List.intercalate (""))
+      List.intercalate ("")
+)
 
   // AsP- bzw. KaP-Kosten könnte man auch exportieren
 
@@ -417,16 +429,18 @@ function getTalentsXML (hero: HeroModelRecord, state: AppStateRecord): string {
   const spells = allSpells.values [0]
   const rituals = allSpells.values [1]
 
-  const entrySpell = (key: string, spells: List<MapToolsSpell>) => entry ({
+  const entrySpell = (key: string, spellsliturgies: List<MapToolsSpell>) => entry ({
     key,
-    value: `[${pipe_ (spells,
-    fmap ((spell: MapToolsSpell) =>
-      `{"Talent":"${spell.name}","Talentwert":${spell.value},"Probe":{`
-      + `"Eigenschaft1":"${spell.attr1}",`
-      + `"Eigenschaft2":"${spell.attr2}",`
-      + `"Eigenschaft3":"${spell.attr3}"},`
-      + `"Merkmal": "${spell.property}"}`),
-    List.intercalate (","))}]`,
+    value: `[${pipe_ (
+      spellsliturgies,
+      fmap ((spell: MapToolsSpell) =>
+        `{"Talent":"${spell.name}","Talentwert":${spell.value},"Probe":{`
+        + `"Eigenschaft1":"${spell.attr1}",`
+        + `"Eigenschaft2":"${spell.attr2}",`
+        + `"Eigenschaft3":"${spell.attr3}"},`
+        + `"Merkmal": "${spell.property}"}`),
+      List.intercalate (",")
+    )}]`,
   })
 
   xml += entrySpell ("Zauber", spells)
@@ -555,17 +569,21 @@ function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): 
     getActiveForEditView (Category.SPECIAL_ABILITIES) (state, { hero }),
     fromMaybe (List<Record<ActiveActivatable<SpecialAbility>>> ()),
     fmap ((sf: Record<ActiveActivatable<SpecialAbility>>) =>
-      ({ key: pipe_ (sf.values.wikiEntry.values.gr,
-                    OrderedMap.lookupF (state.values.wiki.values.specialAbilityGroups),
-                    specialAbilityGroupForMapTool),
-         value: `{"Name":"${sf.values.nameAndCost.values.naming.values.name}",`
-              + `"Stufe":${(fromMaybe (0) (ActiveActivatableA_.level (sf))).toString ()}}`,
+      ({
+        key: pipe_ (
+          sf.values.wikiEntry.values.gr,
+          OrderedMap.lookupF (state.values.wiki.values.specialAbilityGroups),
+          specialAbilityGroupForMapTool
+        ),
+        value: `{"Name":"${sf.values.nameAndCost.values.naming.values.name}",`
+          + `"Stufe":${(fromMaybe (0) (ActiveActivatableA_.level (sf))).toString ()}}`,
       }))
   )
 
   const groups: List<string> = List<string> ("AllgemeineSF", "MagieSF", "KampfSF", "KlerikaleSF")
 
-  const xml = pipe_ (groups,
+  const xml = pipe_ (
+    groups,
     fmap ((group: string) => entry ({
       key: group,
       value: `[${
@@ -577,7 +595,8 @@ function getSpecialAbilitiesXML (hero: HeroModelRecord, state: AppStateRecord): 
         )
       }]`,
     })),
-    List.intercalate (""))
+    List.intercalate ("")
+  )
 
   return xml
 }
@@ -587,9 +606,11 @@ let id = 0
 function weaponForXML (state: AppStateRecord): (weapon: Record<Item>) => string {
   return weapon => {
     let techniqueStr = ""
-    const technique = pipe_ (weapon.values.combatTechnique,
+    const technique = pipe_ (
+      weapon.values.combatTechnique,
       fromMaybe (""),
-      lookupF (StaticData.A.combatTechniques (state.values.wiki)))
+      lookupF (StaticData.A.combatTechniques (state.values.wiki))
+    )
     if (isJust (technique)) {
       techniqueStr = technique.value.values.name
     }
@@ -638,9 +659,11 @@ function getLS (state: AppStateRecord, weapon: Record<Item>): string {
               ? (damageBonus.threshold).values[num]
               : damageBonus.threshold
 
-        return `[${pipe_ (technique.values.primary,
-                    fmap (LSPair (getThreshold (i++))),
-                    List.intercalate (", "))}]`
+        return `[${pipe_ (
+          technique.values.primary,
+          fmap (LSPair (getThreshold (i++))),
+          List.intercalate (", ")
+        )}]`
       }
     }
   }
@@ -692,15 +715,26 @@ function combatTechniqueForXML (technique: Record<CombatTechniqueWithRequirement
   return "{"
   + `"Name":"${technique.values.wikiEntry.values.name}",`
   + `"FW":${technique.values.stateEntry.values.value},`
-  + `"L":[${pipe_ (technique.values.wikiEntry.values.primary,
+  + `"L":[${pipe_ (
+    technique.values.wikiEntry.values.primary,
     fmap ((s: string) => `"${attrFromString (s).toString ()}"`),
-    List.intercalate (", "))}]}`
+    List.intercalate (", ")
+  )}]}`
 }
 
-function armorForXML (name: string, rshead: Maybe<number>, rstorso: Maybe<number>,
-                      rsarmleft: Maybe<number>, rsarmright: Maybe<number>,
-                      rslegleft: Maybe<number>, rslegright: Maybe<number>,
-                      ini: number, mov: number, enc: number, type: string): string {
+function armorForXML (
+  name: string,
+  rshead: Maybe<number>,
+  rstorso: Maybe<number>,
+  rsarmleft: Maybe<number>,
+  rsarmright: Maybe<number>,
+  rslegleft: Maybe<number>,
+  rslegright: Maybe<number>,
+  ini: number,
+  mov: number,
+  enc: number,
+  type: string
+): string {
   const head: number = fromMaybe (0) (rshead)
   const torso: number = fromMaybe (0) (rstorso)
   const armleft: number = fromMaybe (0) (rsarmleft)
@@ -718,7 +752,8 @@ function armorForXML (name: string, rshead: Maybe<number>, rstorso: Maybe<number
 
 
 function totalArmorForXML (armor: Armor): string {
-  return armorForXML (armor.name,
+  return armorForXML (
+    armor.name,
     armor.pro,
     armor.pro,
     armor.pro,
@@ -728,13 +763,15 @@ function totalArmorForXML (armor: Armor): string {
     armor.ini,
     armor.mov,
     fromMaybe (0) (armor.enc),
-    "gesamt")
+    "gesamt"
+  )
 }
 
 function zoneArmorForXML (armorZones: HitZoneArmorForView): string {
   const penalty: number = armorZones.addPenalties ? 1 : 0
 
-  return armorForXML (armorZones.name,
+  return armorForXML (
+    armorZones.name,
     armorZones.head,
     armorZones.torso,
     armorZones.leftArm,
@@ -744,7 +781,8 @@ function zoneArmorForXML (armorZones: HitZoneArmorForView): string {
     penalty,
     penalty,
     armorZones.enc,
-    "zone")
+    "zone"
+)
 }
 
 function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
@@ -777,19 +815,16 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
   let meleeWeaponsForXML = "[]"
   if (isJust (meleeWeapons)) {
     meleeWeaponsForXML = `[${
-    pipe_ (
-      List<List<string>> (
-        List<string> (naturalWeapon),
-        pipe_ (
-          meleeWeapons.value,
-          fmap (MeleeWeapon.A.id),
-          Maybe.mapMaybe (getItem),
-          fmap (meleeWeaponForXML (state)),
-        )
-      ),
-      List.join,
-      List.intercalate (", ")
-    )}]`
+      [
+        naturalWeapon,
+        ...meleeWeapons
+          .value
+          .map (MeleeWeapon.A.id)
+          .mapMaybe (weaponId => toNewMaybe (getItem (weaponId)))
+          .map (weapon => meleeWeaponForXML (state) (weapon)),
+      ]
+        .join (", ")
+    }]`
   }
   xml += entry ({ key: "Nahkampfwaffen", value: meleeWeaponsForXML })
 
@@ -798,27 +833,27 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
   let rangedWeaponsForXML = "[]"
   if (isJust (rangedWeapons)) {
     rangedWeaponsForXML = `[${
-    pipe_ (
-      rangedWeapons.value,
-      fmap (RangedWeapon.A.id),
-      Maybe.mapMaybe (getItem),
-      fmap (rangedWeaponForXML (state)),
-      List.intercalate (", ")
-    )
+      rangedWeapons
+        .value
+        .map (RangedWeapon.A.id)
+        .mapMaybe (weaponId => toNewMaybe (getItem (weaponId)))
+        .map (weapon => rangedWeaponForXML (state) (weapon))
+        .join (", ")
     }]`
   }
   xml += entry ({ key: "Fernkampfwaffen", value: rangedWeaponsForXML })
 
   xml += entry ({ key: "AW", value: `${fromMaybe (0) (getDO (state, { hero }).values.value)}` })
 
-  const armors = fromMaybe (List<Record<Armor>> ()) (getArmors (state))
-  const armorZones = fromMaybe (List<Record<HitZoneArmorForView>> ()) (getArmorZones (state))
+  const armors = toNewMaybe (getArmors (state)).fromMaybe ([])
+  const armorZones = getArmorZones (state).fromMaybe ([])
 
   id = 0
   xml += entry ({ key: "Ruestungen",
     value: `[${
-      pipe_ (List<List<string>> (
-        List<string> (armorForXML ("Keine Rüstung",
+      [
+        armorForXML (
+          "Keine Rüstung",
           Maybe (0),
           Maybe (0),
           Maybe (0),
@@ -828,14 +863,13 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
           0,
           0,
           0,
-          "gesamt")),
-        pipe_ (armors, fmap ((armor: Record<Armor>) => totalArmorForXML (armor.values))),
-        pipe_ (armorZones, fmap ((armorZones: Record<HitZoneArmorForView>) =>
-          zoneArmorForXML (armorZones.values)))
-      ),
-      List.join,
-      List.intercalate (", "))
-     }]` })
+          "gesamt"
+        ),
+        ...armors.map (armor => totalArmorForXML (armor.values)),
+        ...armorZones.map (armorZone => zoneArmorForXML (armorZone.values)),
+      ]
+        .join (", ")
+    }]` })
 
   return xml
 }
@@ -895,10 +929,10 @@ string {
   return contentXml
 }
 
-function getAssetXML (id: string, extension: string): string {
+function getAssetXML (id_: string, extension: string): string {
   const assetXml = "<net.rptools.maptool.model.Asset>"
   + "<id>"
-  + `<id>${id}</id>`
+  + `<id>${id_}</id>`
   + "</id>"
   + "<name>Image</name>"
   + `<extension>${extension}</extension>`
@@ -945,9 +979,11 @@ function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer {
   zip.addFile (`assets/${portraitID}`, getAssetXML (portraitID, type))
   zip.addFile (`assets/${portraitID}.${type}`, binaryAvatar)
 
-  zip.addFile ("content.xml",
+  zip.addFile (
+    "content.xml",
     Buffer.from (getContentXML (hero, state, portraitID)),
-    "Content of the hero")
+    "Content of the hero"
+  )
   zip.addFile ("properties.xml", Buffer.from (getPropertiesXML ()), "Properties")
 
   return zip.toBuffer ()
@@ -961,27 +997,28 @@ export const requestExportHeroAsRptok = (hero: HeroModelRecord): ReduxAction<Pro
 
     const data = getRptok (hero, state)
 
-    const path = await showSaveDialog ({
+    const path = toNewMaybe (await showSaveDialog ({
                     title: translate (staticData) ("sheets.dialogs.rptokexportsavelocation.title"),
                     defaultPath: `${hero.values.name}.rptok`,
                     filters: [
                       { name: "Rptok", extensions: [ "rptok" ] },
                     ],
-                  })
+                  }))
 
-    const res = await maybe (Promise.resolve<Either<Error, void>> (Right (undefined)))
-                            (pipe (flip (writeFile) (data), handleE))
-                            (path)
+    const res: Either<Error, void> = await path.maybe (
+      Promise.resolve<Either<Error, void>> (Right (undefined)),
+      async p => handleE (writeFile (p) (data))
+    )
 
-    if (isRight (res) && isJust (path)) {
+    if ((res.isRight) && (path.isJust)) {
       await dispatch (addAlert (AlertOptions ({
                                   message: translate (staticData) ("sheets.dialogs.rptoksaved"),
                                 })))
     }
-    else if (isLeft (res)) {
+    else if ((res.isLeft)) {
       await dispatch (addDefaultErrorAlert (staticData)
-                                            (translate (staticData)
-                                                      ("sheets.dialogs.rptoksaveerror.title"))
-                                            (res))
+                                           (translate (staticData)
+                                                     ("sheets.dialogs.rptoksaveerror.title"))
+                                           (res.value))
     }
   }

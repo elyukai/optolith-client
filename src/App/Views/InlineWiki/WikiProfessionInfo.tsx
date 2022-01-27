@@ -3,7 +3,7 @@ import { equals } from "../../../Data/Eq"
 import { flip, ident } from "../../../Data/Function"
 import { fmap, fmapF } from "../../../Data/Functor"
 import { append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, intersperse, isList, List, ListI, map, NonEmptyList, notElem, notNull, reverse, snoc, sortBy, toArray, uncons, unconsSafe, unsafeIndex } from "../../../Data/List"
-import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe"
+import { alt_, any, bind, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe"
 import { compare, dec, gt, inc } from "../../../Data/Num"
 import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet"
@@ -49,6 +49,7 @@ import { getSelectOptionName } from "../../Utilities/Activatable/selectionUtils"
 import { ndash } from "../../Utilities/Chars"
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n"
 import { getNumericId, prefixRace } from "../../Utilities/IDUtils"
+import { toNewMaybe } from "../../Utilities/Maybe"
 import { signNeg } from "../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils"
@@ -88,26 +89,29 @@ const getSpecializationSelection =
       profession,
       PCA.mappedSelections,
       PSA[ProfessionSelectionIds.SPECIALIZATION],
-      bindF (sel => {
-              const sid = SpecializationSelection.A.sid (sel)
-
-              if (isList (sid)) {
-                return pipe_ (
-                  sid,
-                  mapMaybe (pipe (lookupF (skills), fmap (Skill.A.name))),
-                  ensure (notNull),
-                  fmap (pipe (
-                    sortStrings (staticData),
-                    localizeOrList (staticData)
-                  ))
-                )
-              }
-              else {
-                return pipe_ (sid, lookupF (skills), fmap (Skill.A.name))
-              }
-            }),
-      fmap (pipe (List.pure, translateP (staticData) ("inlinewiki.skillspecialization")))
+      toNewMaybe
     )
+      .bind (sel => {
+        const sid = SpecializationSelection.A.sid (sel)
+
+        if (isList (sid)) {
+          return pipe_ (
+            sid,
+            mapMaybe (pipe (lookupF (skills), fmap (Skill.A.name))),
+            ensure (notNull),
+            fmap (pipe (
+              sortStrings (staticData),
+              localizeOrList (staticData)
+            )),
+            toNewMaybe
+          )
+        }
+        else {
+          return pipe_ (sid, lookupF (skills), fmap (Skill.A.name), toNewMaybe)
+        }
+      })
+      .map (pipe (List.pure, translateP (staticData) ("inlinewiki.skillspecialization")))
+      .toOldMaybe ()
 
 interface CombatTechniquesProps {
   combatTechniquesSelectionString: Maybe<string>
@@ -160,7 +164,7 @@ const getSkillSelection =
       profession,
       PCA.mappedSelections,
       PSA[ProfessionSelectionIds.SKILLS],
-      fmap (sel => {
+      fmap ((sel: Record<SkillsSelection>) => {
         const skill_gr = lookup (fromMaybe (0) (SkillsSelection.A.gr (sel)))
                                 (SDA.skillGroups (staticData))
 
@@ -1134,7 +1138,7 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
   const selections = PCA.mappedSelections (x)
 
   const name = getNameBySex (fromMaybe<Sex> ("m") (sex)) (PCA_.name (x))
-  const msubname = getNameBySexM (fromMaybe<Sex> ("m") (sex)) (PCA_.subname (x))
+  const msubname = getNameBySexM (toNewMaybe (sex).fromMaybe ("m"), toNewMaybe (PCA_.subname (x)))
 
   const specializationSelectionString =
     getSpecializationSelection (staticData) (skills) (x)
@@ -1288,7 +1292,7 @@ export const WikiProfessionInfo: React.FC<WikiProfessionInfoProps> = props => {
   return (
     <WikiBoxTemplate
       className="profession"
-      title={maybe (name) ((subname: string) => `${name} (${subname})`) (msubname)}
+      title={msubname.maybe (name, subname => `${name} (${subname})`)}
       >
       <WikiProperty staticData={staticData} title="inlinewiki.apvalue">
         {final_ap}

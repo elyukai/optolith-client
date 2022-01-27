@@ -77,7 +77,8 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
       templates,
       mapMaybe (pipe (
         ensure (pipe (ITA.gr, equals (3))),
-        fmap (x => DropdownOption ({ id: Just (ITA.id (x)), name: ITA.name (x) }))
+        fmap ((x: Record<ItemTemplate>) =>
+          DropdownOption ({ id: Just (ITA.id (x)), name: ITA.name (x) }))
       )),
       consF (DropdownOption ({ name: translate (staticData) ("general.none") }))
     )
@@ -98,7 +99,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 elems,
                 mapMaybe (pipe (
                   ensure (pipe (CTA.gr, equals (2))),
-                  fmap (x => DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
+                  fmap ((x: Record<CombatTechnique>) => DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
                 ))
               )}
               onChangeJust={setCombatTechnique}

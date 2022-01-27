@@ -66,7 +66,7 @@ export const MainSheetAttributesItem: React.FC<Props> = props => {
         {pipe_ (
           maybeSubList,
           fmap (pipe (
-            imap (i => x => (
+            imap (i => (x: number) => (
               <div key={`${label}${i}`} className="sub">
                 {or (empty) ? ndash : x}
               </div>

@@ -178,7 +178,8 @@ const excludeSelectOptionsByMaybeId = (
   return pipe_ (
     entry,
     IAA.selectOptions,
-    fmap (filter (selectOption => notElem (SOA.id (selectOption)) (safeExcludeIds)))
+    fmap (filter ((selectOption: Record<SelectOption>) =>
+                    notElem (SOA.id (selectOption)) (safeExcludeIds)))
   )
 }
 
@@ -442,7 +443,7 @@ export const getIdSpecificAffectedAndDispatchProps =
               pipe_ (
                 x,
                 bindF (SOA.applications),
-                fmap (map (a => SelectOption ({
+                fmap (map ((a: Record<Application>) => SelectOption ({
                                   id: AA.id (a),
                                   name: AA.name (a),
                                   src,
@@ -513,7 +514,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                 moption,
                 bindF (SOA.specializations),
                 fmap (pipe (
-                  imap (i => name => SelectOption ({
+                  imap (i => (name: string) => SelectOption ({
                     id: i + 1,
                     name,
                     src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
@@ -539,7 +540,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                     ((other_id: string | number) => filter (pipe (AA.id, notEquals (other_id))))
                     (mother_id),
               ensure (notNull),
-              fmap (map (e => SelectOption ({
+              fmap (map ((e: Record<Application>) => SelectOption ({
                                 id: AA.id (e),
                                 name: AA.name (e),
                                 src: IAA_.src (entry),
@@ -655,7 +656,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                             bindF (ensure ((c): c is number | List<number> =>
                                             selectedLevel > 0
                                             && (isNumber (c) || isList (c)))),
-                            fmap (cost => second (set (PABYL.currentCost)
+                            fmap ((cost: number | List<number>) => second (set (PABYL.currentCost)
                                                       (Just (isList (cost)
                                                         ? SAAL.category (IAA.wikiEntry (entry))
                                                           === Category.SPECIAL_ABILITIES
@@ -894,7 +895,7 @@ export const getInactiveActivatableControlElements =
                          (List (AdvantageId.immunityToPoison, AdvantageId.immunityToDisease))),
           thenF (minput_desc),
           fmap (
-            input =>
+            (input: string) =>
               set (IACEL.inputElement)
                   (
                     Just (

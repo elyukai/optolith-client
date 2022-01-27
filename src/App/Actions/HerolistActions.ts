@@ -1,5 +1,4 @@
 import { handleE } from "../../Control/Exception"
-import { Either, fromLeft_, fromRight_, isLeft, isRight } from "../../Data/Either"
 import { List } from "../../Data/List"
 import { elem, fromJust, isJust, Just, Maybe } from "../../Data/Maybe"
 import { lookup } from "../../Data/OrderedMap"
@@ -121,7 +120,7 @@ export const loadHero = (id: string): LoadHeroAction => ({
 export const saveHeroes: ReduxAction =
   async (dispatch, getState) => {
     await bind (handleE (dispatch (requestAllHeroesSave)))
-               (async res => isRight (res)
+               (async res => res.isRight
                              ? dispatch (addAlert (AlertOptions ({
                                                     message: translate (getWiki (getState ()))
                                                                        ("header.dialogs.allsaved"),
@@ -141,8 +140,8 @@ export const saveHero =
     async (dispatch, getState) => {
       await bind (handleE (dispatch (requestHeroSave (id))))
                  (async res => {
-                   if (isLeft (res)) {
-                     const err = fromLeft_ (res)
+                   if (res.isLeft) {
+                     const err = res.value
 
                      const title = translate (getWiki (getState ()))
                                              ("header.dialogs.saveheroeserror.title")
@@ -154,8 +153,8 @@ export const saveHero =
 
                      await dispatch (addErrorAlert (opts))
                    }
-                   else if (Either.any (isJust) (res)) {
-                     const save_id = fromJust (fromRight_ (res))
+                   else if (isJust (res.value)) {
+                     const save_id = fromJust (res.value)
 
                      dispatch<SaveHeroAction> ({
                        type: ActionTypes.SAVE_HERO,

@@ -17,6 +17,7 @@ import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils"
 import { getLossLevelElements } from "../../Utilities/ItemUtils"
+import { toNewMaybe } from "../../Utilities/Maybe"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { isString } from "../../Utilities/typeCheckUtils"
 import { Checkbox } from "../Universal/Checkbox"
@@ -142,7 +143,8 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                 elems,
                 mapMaybe (pipe (
                   ensure (pipe (CTA.gr, equals (1))),
-                  fmap (x => DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
+                  fmap ((x: Record<CombatTechnique>) =>
+                    DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
                 ))
               )}
               onChangeJust={setCombatTechnique}
@@ -158,7 +160,8 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                 item,
                 EIA.damageBonus,
                 EPADTA.primary,
-                fmap (x => typeof x === "object" ? "ATTR_6_8" : x)
+                toNewMaybe,
+                x => x.map(id => typeof id === "object" ? "ATTR_6_8" : id).toOldMaybe()
               )}
               options={List (
                 DropdownOption ({

@@ -1,13 +1,13 @@
 import * as path from "path"
 import * as React from "react"
 import { fmap, fmapF } from "../../../Data/Functor"
-import { head, notNull } from "../../../Data/List"
+import { Cons, head, notNull } from "../../../Data/List"
 import { ensure, fromJust, isJust, orN } from "../../../Data/Maybe"
 import { imgPathToBase64 } from "../../Actions/IOActions"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { showOpenDialog } from "../../Utilities/IOUtils"
-import { pipe } from "../../Utilities/pipe"
+import { pipe, pipe_ } from "../../Utilities/pipe"
 import { AvatarWrapper } from "./AvatarWrapper"
 import { BorderButton } from "./BorderButton"
 import { Dialog } from "./Dialog"
@@ -43,9 +43,10 @@ export const AvatarChange: React.FC<Props> = props => {
             }))
             (pipe (
               ensure (notNull),
-              fmap (pipe (
+              fmap ((xs: Cons<string>) => pipe_ (
+                xs,
                 head,
-                path_to_image => {
+                (path_to_image) => {
                   const new_data = imgPathToBase64 (path_to_image)
                   const ext = path.extname (path_to_image) .toLowerCase ()
 

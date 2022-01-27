@@ -564,7 +564,7 @@ export const putLevelName =
     pipe_ (
       entry,
       getLevelNameIfValid (staticData),
-      fmap (levelName => addLevelToName
+      fmap ((levelName: string) => addLevelToName
                            ? pipe_ (
                                entry,
                                over (ActivatableNameCostL_.name)

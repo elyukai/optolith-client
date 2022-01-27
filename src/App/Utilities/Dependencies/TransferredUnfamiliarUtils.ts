@@ -50,7 +50,7 @@ const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
           active,
           AOWIA.sid,
           misStringM,
-          fmap (id => List (TransferUnfamiliar ({ id, srcId: src_id })))
+          fmap ((id: string) => List (TransferUnfamiliar ({ id, srcId: src_id })))
         )
 
       case SpecialAbilityId.zaubervariabilitaet:

@@ -46,15 +46,15 @@ export const getAddCombatHeaderVals =
              (dcToHeaderVal (head (derivedCharacteristics)))
 
 interface Props {
-  armors: Maybe<List<Record<Armor>>>
+  armors: Maybe<Record<Armor>[]>
   attributes: List<Record<AttributeCombined>>
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   combatTechniques: Maybe<List<Record<CombatTechniqueWithAttackParryBase>>>
   derivedCharacteristics: List<DCPair>
   staticData: StaticDataRecord
-  meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
-  rangedWeapons: Maybe<List<Record<RangedWeapon>>>
-  shieldsAndParryingWeapons: Maybe<List<Record<ShieldOrParryingWeapon>>>
+  meleeWeapons: Maybe<Record<MeleeWeapon>[]>
+  rangedWeapons: Maybe<Record<RangedWeapon>[]>
+  shieldsAndParryingWeapons: Maybe<Record<ShieldOrParryingWeapon>[]>
   conditions: List<Record<Condition>>
   states: List<Record<State>>
   useParchment: boolean

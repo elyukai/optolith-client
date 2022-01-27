@@ -1,12 +1,10 @@
 import { join } from "path"
 import { handleE } from "../../Control/Exception"
-import { eitherToMaybe } from "../../Data/Either"
-import { fmap } from "../../Data/Functor"
-import { and, bindF, ensure } from "../../Data/Maybe"
 import { parseJSON } from "../../Data/String/JSON"
 import { readFile, writeFile } from "../../System/IO"
 import { user_data_path } from "../Selectors/envSelectors"
-import { pipe, pipe_ } from "./pipe"
+import { ensure } from "./Maybe"
+import { pipe } from "./pipe"
 import { isObject } from "./typeCheckUtils"
 
 const property_name = "update"
@@ -19,19 +17,11 @@ const file_path = join (user_data_path, "update.json")
  * there is no file present.
  */
 export const readUpdate =
-  async () =>
-    pipe_ (
-      file_path,
-      readFile,
-      handleE,
-      fmap (pipe (
-        eitherToMaybe,
-        bindF (parseJSON),
-        bindF (ensure (isObject)),
-        fmap (x => (x as any) [property_name] === true),
-        and
-      ))
-    )
+  async () => (await handleE (readFile (file_path)))
+    .toMaybe ()
+    .bind (parseJSON)
+    .bind (json => ensure (json, isObject))
+    .maybe (true, x => (x as any) [property_name] === true)
 
 /**
  * Pass in if an update has been downloaded or not, and then create/overwrite

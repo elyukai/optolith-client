@@ -4,9 +4,9 @@ import { flip, on, thrush } from "../../../Data/Function"
 import { fmap, fmapF } from "../../../Data/Functor"
 import { set } from "../../../Data/Lens"
 import { all, any, concat, elem, elemF, foldl, isList, List, map, sortBy } from "../../../Data/List"
-import { and, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe"
+import { and, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe"
 import { compare, dec, gt, gte, lte, min } from "../../../Data/Num"
-import { lookupF, OrderedMap, toList } from "../../../Data/OrderedMap"
+import { lookup, lookupF, OrderedMap, toList } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd } from "../../../Data/Tuple"
 import { ActivatableDependent, isActivatableDependent, isExtendedActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -38,6 +38,7 @@ import { isActive } from "../Activatable/isActive"
 import { isPactFromStateValid } from "../Activatable/pactUtils"
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
 import { getHeroStateItem } from "../heroStateUtils"
+import { toNewMaybe } from "../Maybe"
 import { pipe, pipe_ } from "../pipe"
 import { getPrimaryAttributeId } from "../primaryAttributeUtils"
 import { getAllWikiEntriesByGroup } from "../WikiUtils"
@@ -58,66 +59,53 @@ const DOA = DependencyObject.A
 const SDAL = SkillDependent.AL
 
 const getAllRaceEntries =
-  (wiki: StaticDataRecord) =>
-    pipe (
-      HA.race,
-      bindF (lookupF (SDA.races (wiki))),
-      fmap (
-        selectedRace => concat (
-          List (
-            Race.A.stronglyRecommendedAdvantages (selectedRace),
-            Race.A.automaticAdvantages (selectedRace),
-            Race.A.stronglyRecommendedAdvantages (selectedRace),
-            Race.A.stronglyRecommendedDisadvantages (selectedRace),
-            Race.A.commonAdvantages (selectedRace),
-            Race.A.commonDisadvantages (selectedRace)
-          )
+  (wiki: StaticDataRecord) => (hero: HeroModelRecord) =>
+    toNewMaybe (HA.race (hero))
+      .bind (id => toNewMaybe (lookup (id) (SDA.races (wiki))))
+      .map (selectedRace => concat (
+        List (
+          Race.A.stronglyRecommendedAdvantages (selectedRace),
+          Race.A.automaticAdvantages (selectedRace),
+          Race.A.stronglyRecommendedAdvantages (selectedRace),
+          Race.A.stronglyRecommendedDisadvantages (selectedRace),
+          Race.A.commonAdvantages (selectedRace),
+          Race.A.commonDisadvantages (selectedRace)
         )
-      )
-    )
+      ))
 
 const getAllCultureEntries =
-  (wiki: StaticDataRecord) =>
-    pipe (
-      HA.culture,
-      bindF (lookupF (SDA.cultures (wiki))),
-      fmap (
-        selectedCulture => concat (
-          List (
-            Culture.A.commonAdvantages (selectedCulture),
-            Culture.A.commonDisadvantages (selectedCulture)
-          )
+  (wiki: StaticDataRecord) => (hero: HeroModelRecord) =>
+    toNewMaybe (HA.culture (hero))
+      .bind (id => toNewMaybe (lookup (id) (SDA.cultures (wiki))))
+      .map (selectedCulture => concat (
+        List (
+          Culture.A.commonAdvantages (selectedCulture),
+          Culture.A.commonDisadvantages (selectedCulture)
         )
-      )
-    )
+      ))
 
 const getAllProfessionEntries =
-  (wiki: StaticDataRecord) =>
-    pipe (
-      HA.profession,
-      bindF (lookupF (SDA.professions (wiki))),
-      fmap (
-        selectedProfession => concat (
-          List (
-            Profession.A.suggestedAdvantages (selectedProfession),
-            Profession.A.suggestedDisadvantages (selectedProfession)
-          )
+  (wiki: StaticDataRecord) => (hero: HeroModelRecord) =>
+    toNewMaybe (HA.profession (hero))
+      .bind (id => toNewMaybe (lookup (id) (SDA.professions (wiki))))
+      .map (selectedProfession => concat (
+        List (
+          Profession.A.suggestedAdvantages (selectedProfession),
+          Profession.A.suggestedDisadvantages (selectedProfession)
         )
-      )
-    )
+      ))
 
 const isRCPValid =
   (wiki: StaticDataRecord) =>
   (state: HeroModelRecord) =>
   (sourceId: string): boolean =>
-    any (elem (sourceId))
-        (catMaybes (
-          List (
-            getAllRaceEntries (wiki) (state),
-            getAllCultureEntries (wiki) (state),
-            getAllProfessionEntries (wiki) (state)
-          )
-        ))
+    [
+      getAllRaceEntries (wiki) (state),
+      getAllCultureEntries (wiki) (state),
+      getAllProfessionEntries (wiki) (state),
+    ]
+      .catMaybes ()
+      .some (elem (sourceId))
 
 const isSexValid =
   (currentSex: "m" | "f") => (req: Record<SexRequirement>): boolean =>

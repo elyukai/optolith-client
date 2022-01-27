@@ -24,7 +24,7 @@ export const setUpdateDownloadProgress =
   })
 
 enum UpdateAvailableResponse {
- UpdateAndRestart, Cancel
+  UpdateAndRestart, Cancel
 }
 
 export const updateAvailable =

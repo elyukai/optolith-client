@@ -17,6 +17,7 @@ import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { rollDiceFold, rollDiceR, rollDie } from "./dice"
 import { translate } from "./I18n"
 import { ifElse } from "./ifElse"
+import { Maybe as NewMaybe } from "./Maybe"
 import { multiplyString, toInt } from "./NumberUtils"
 import { pipe, pipe_ } from "./pipe"
 
@@ -171,6 +172,5 @@ export const getFullProfessionName =
 export const getNameBySex: (sex: Sex) => (name: string | Record<NameBySex>) => string =
   s => n => NameBySex.is (n) ? NameBySex.A[s] (n) : n
 
-export const getNameBySexM: (sex: Sex) =>
-                            (mname: Maybe<string | Record<NameBySex>>) => Maybe<string> =
-  s => fmap (n => NameBySex.is (n) ? NameBySex.A[s] (n) : n)
+export const getNameBySexM = (sex: Sex, mname: NewMaybe<string | Record<NameBySex>>) =>
+  mname.map (name_ => NameBySex.is (name_) ? NameBySex.A[sex] (name_) : name_)

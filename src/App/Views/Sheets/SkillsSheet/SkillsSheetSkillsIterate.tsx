@@ -43,7 +43,7 @@ export const iterateList =
             mapMaybe (pipe (
               id => find (pipe (AttributeCombinedA_.id, equals (id)))
                          (attributes),
-              fmap (attr => checkValueVisibility
+              fmap ((attr: Record<AttributeCombined>) => checkValueVisibility
                               ? AttributeCombinedA_.value (attr)
                               : AttributeCombinedA_.short (attr))
             )),

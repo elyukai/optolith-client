@@ -429,7 +429,7 @@ const isEntryDisabledByDependencies =
                 (ensure (isActivatableWikiEntry)),
 
               // Get flat prerequisites for origin entry
-              fmap (origin_entry =>
+              fmap ((origin_entry: Activatable) =>
                 flattenPrerequisites (Nothing)
                                      (alt (AAL.tiers (origin_entry)) (Just (1)))
                                      (AAL.prerequisites (origin_entry))),
@@ -459,7 +459,7 @@ const isEntryDisabledByDependencies =
               // Check if there are other entries that would
               // match the prerequisite so that this entry
               // could be removed
-              fmap (req =>
+              fmap ((req: PrerequisitesWithIds) =>
                !any ((x: string) =>
                       validateObject (wiki)
                                       (hero)
@@ -689,7 +689,7 @@ export const getIsRemovalOrChangeDisabled =
                  getHeroStateItem (hero),
                  bindF<Dependent, Record<ActivatableDependent>>
                    (ensure (isActivatableDependent)),
-                 fmap (hero_entry => {
+                 fmap ((hero_entry: Record<ActivatableDependent>) => {
                    const minimum_level = getMinTier (wiki)
                                                     (hero)
                                                     (entry)

@@ -96,31 +96,29 @@ export const getActiveLiturgicalChants = createMaybeSelector (
                            (mapMaybe (pipe (
                              ensure (ASDA.active),
                              bindF (hero_entry =>
-                                     pipe_ (
-                                       wiki,
-                                       SDA.liturgicalChants,
-                                       lookup (ASDA.id (hero_entry)),
-                                       fmap (wiki_entry =>
-                                         LiturgicalChantWithRequirements ({
-                                           isIncreasable:
-                                             isLCIncreasable (blessed_trad)
-                                                             (start_el)
-                                                             (HA.phase (hero))
-                                                             (HA.attributes (hero))
-                                                             (mexceptional_skill)
-                                                             (maspect_knowledge)
-                                                             (wiki_entry)
-                                                             (hero_entry),
-                                           isDecreasable:
-                                             isLCDecreasable (wiki)
-                                                             (hero)
-                                                             (maspect_knowledge)
-                                                             (wiki_entry)
-                                                             (hero_entry),
-                                           stateEntry: hero_entry,
-                                           wikiEntry: wiki_entry,
-                                         }))
-                                     ))
+                               fmapF (lookup (ASDA.id (hero_entry)) (SDA.liturgicalChants (wiki)))
+                                     (wiki_entry =>
+                                       LiturgicalChantWithRequirements ({
+                                         isIncreasable:
+                                           isLCIncreasable (blessed_trad)
+                                                           (start_el)
+                                                           (HA.phase (hero))
+                                                           (HA.attributes (hero))
+                                                           (mexceptional_skill)
+                                                           (maspect_knowledge)
+                                                           (wiki_entry)
+                                                           (hero_entry),
+                                         isDecreasable:
+                                           isLCDecreasable (wiki)
+                                                           (hero)
+                                                           (maspect_knowledge)
+                                                           (wiki_entry)
+                                                           (hero_entry),
+                                         stateEntry: hero_entry,
+                                         wikiEntry: wiki_entry,
+                                       })
+                                     )
+                             )
                            ))))
                   (mhero)
                   (mstart_el))
@@ -129,26 +127,30 @@ export const getActiveLiturgicalChants = createMaybeSelector (
 export const getActiveAndInactiveBlessings = createMaybeSelector (
   getWikiBlessings,
   getBlessings,
-  uncurryN (wiki_blessings => fmap (hero_blessings => pipe_ (
-                                                              wiki_blessings,
-                                                              elems,
-                                                              map (wiki_entry => BlessingCombined ({
-                                                                wikiEntry: wiki_entry,
-                                                                active: member (BA.id (wiki_entry))
-                                                                               (hero_blessings),
-                                                              })),
-                                                              partition (BCA.active)
-                                                            )))
+  (wikiBlessings, activeBlessings) =>
+    fmapF (activeBlessings)
+          (activeBlessings =>
+            pipe_ (
+              wikiBlessings,
+              elems,
+              map (wiki_entry => BlessingCombined ({
+                wikiEntry: wiki_entry,
+                active: member (BA.id (wiki_entry))
+                              (activeBlessings),
+              })),
+              partition (BCA.active)
+            )
+          )
 )
 
 export const getActiveBlessings = createMaybeSelector (
   getActiveAndInactiveBlessings,
-  fmap (fst)
+  blessingsPair => fmapF (blessingsPair) (fst)
 )
 
 const getInactiveBlessings = createMaybeSelector (
   getActiveAndInactiveBlessings,
-  fmap (snd)
+  blessingsPair => fmapF (blessingsPair) (snd)
 )
 
 export const getAvailableInactiveBlessings = createMaybeSelector (
@@ -186,32 +188,30 @@ export const getInactiveLiturgicalChants = createMaybeSelector (
   getIsMaximumOfLiturgicalChantsReached,
   getWikiLiturgicalChants,
   getLiturgicalChants,
-  uncurryN3 (
-    is_max =>
-    wiki_chants =>
-      fmap (hero_chants =>
-        and (is_max)
-        ? List<Combined> ()
-        : OrderedMap.foldrWithKey ((k: string) => (wiki_entry: Record<LiturgicalChant>) => {
-                                    const mhero_entry = lookup (k) (hero_chants)
+  (is_max, wiki_chants, hero_chants) =>
+    fmapF (hero_chants)
+          (hero_chants =>
+            and (is_max)
+            ? List<Combined> ()
+            : OrderedMap.foldrWithKey ((k: string) => (wiki_entry: Record<LiturgicalChant>) => {
+                                        const mhero_entry = lookup (k) (hero_chants)
 
-                                    if (all (notP (ASDA.active)) (mhero_entry)) {
-                                      return consF (LiturgicalChantWithRequirements ({
-                                        wikiEntry: wiki_entry,
-                                        stateEntry:
-                                         fromMaybe_ (() =>
-                                                      createInactiveActivatableSkillDependent (k))
-                                                    (mhero_entry),
-                                        isDecreasable: Nothing,
-                                        isIncreasable: Nothing,
-                                      }))
-                                    }
+                                        if (all (notP (ASDA.active)) (mhero_entry)) {
+                                          return consF (LiturgicalChantWithRequirements ({
+                                            wikiEntry: wiki_entry,
+                                            stateEntry:
+                                             fromMaybe_ (() =>
+                                                          createInactiveActivatableSkillDependent (k))
+                                                        (mhero_entry),
+                                            isDecreasable: Nothing,
+                                            isIncreasable: Nothing,
+                                          }))
+                                        }
 
-                                    return ident as ident<List<Combined>>
-                                  })
-                                  (List ())
-                                  (wiki_chants))
-  )
+                                        return ident as ident<List<Combined>>
+                                      })
+                                      (List ())
+                                      (wiki_chants))
 )
 
 const additionalInactiveListFilter = (

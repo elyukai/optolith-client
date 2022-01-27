@@ -2,7 +2,7 @@ import * as React from "react"
 import { DerivedCharacteristicId } from "../../../../app/Database/Schema/DerivedCharacteristics/DerivedCharacteristics.l10n"
 import { equals } from "../../../Data/Eq"
 import { fmapF } from "../../../Data/Functor"
-import { find, flength, List } from "../../../Data/List"
+import { find, List } from "../../../Data/List"
 import { bindF, Just, Maybe, maybeRNull } from "../../../Data/Maybe"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
@@ -44,6 +44,7 @@ import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { DCPair } from "../../Selectors/derivedCharacteristicsSelectors"
 import { classListMaybe } from "../../Utilities/CSS"
 import { translate } from "../../Utilities/I18n"
+import { Maybe as NewMaybe } from "../../Utilities/Maybe"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { BorderButton } from "../Universal/BorderButton"
 import { Checkbox } from "../Universal/Checkbox"
@@ -67,8 +68,8 @@ export interface SheetsOwnProps {
 export interface SheetsStateProps {
   advantagesActive: Maybe<List<Record<ActiveActivatable<Advantage>>>>
   ap: Maybe<Record<AdventurePointsCategories>>
-  armors: Maybe<List<Record<Armor>>>
-  armorZones: Maybe<List<Record<HitZoneArmorForView>>>
+  armors: Maybe<Record<Armor>[]>
+  armorZones: NewMaybe<Record<HitZoneArmorForView>[]>
   attributes: List<Record<AttributeCombined>>
   avatar: Maybe<string>
   checkAttributeValueVisibility: boolean
@@ -80,7 +81,7 @@ export interface SheetsStateProps {
   el: Maybe<Record<ExperienceLevel>>
   fatePointsModifier: number
   generalsaActive: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
-  meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
+  meleeWeapons: Maybe<Record<MeleeWeapon>[]>
   name: Maybe<string>
   professionName: Maybe<string>
   useParchment: boolean
@@ -90,9 +91,9 @@ export interface SheetsStateProps {
   // professionVariant: Maybe<Record<ProfessionVariant>>
   profile: Record<PersonalData>
   race: Maybe<Record<Race>>
-  rangedWeapons: Maybe<List<Record<RangedWeapon>>>
+  rangedWeapons: Maybe<Record<RangedWeapon>[]>
   sex: Maybe<Sex>
-  shieldsAndParryingWeapons: Maybe<List<Record<ShieldOrParryingWeapon>>>
+  shieldsAndParryingWeapons: Maybe<Record<ShieldOrParryingWeapon>[]>
   skills: Maybe<List<Record<SkillCombined>>>
   items: Maybe<List<Record<ItemForView>>>
   pet: Maybe<Record<Pet>>
@@ -208,8 +209,8 @@ export const Sheets: React.FC<Props> = props => {
     find<DCPair> (pipe (fst, DerivedCharacteristic.A.id, equals<DerivedCharacteristicId> (DCId.KP)))
                  (derivedCharacteristics)
 
-  const nArmorZones = Maybe.sum (fmapF (armorZones) (flength))
-  const nArmors = Maybe.sum (fmapF (armors) (flength))
+  const nArmorZones = armorZones.map(xs => xs.length).sum()
+  const nArmors = Maybe.sum (fmapF (armors) (xs => xs.length))
 
   return (
     <Page id="sheets">

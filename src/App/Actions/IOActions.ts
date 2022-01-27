@@ -2,7 +2,7 @@ import { remote } from "electron"
 import * as fs from "fs"
 import { extname, join } from "path"
 import { handleE } from "../../Control/Exception"
-import { Either, fromLeft_, fromRight_, isLeft, isRight } from "../../Data/Either"
+import { Either, fromLeft_, fromRight_, isLeft } from "../../Data/Either"
 import { flip } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
 import { over } from "../../Data/Lens"
@@ -12,7 +12,6 @@ import { any, lookup, OrderedMap } from "../../Data/OrderedMap"
 import { toObject } from "../../Data/Record"
 import * as IO from "../../System/IO"
 import * as ActionTypes from "../Constants/ActionTypes"
-
 import { APCache } from "../Models/Cache"
 import { Config } from "../Models/Config"
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
@@ -37,6 +36,7 @@ import { isBase64Image } from "../Utilities/RegexUtils"
 import { deleteHeroFromFile, saveAllHeroesToFile, saveHeroToFile } from "../Utilities/SaveHeroes"
 import { ReduxAction } from "./Actions"
 import { addAlert, addErrorAlert, addPrompt, AlertOptions, CustomPromptOptions, getErrorMsg, PromptButton } from "./AlertActions"
+
 
 const UISSA = UISettingsState.A
 
@@ -70,13 +70,13 @@ export const requestConfigSave: ReduxAction<Promise<boolean>> =
       IO.bindF (async res => {
         console.log (res)
 
-        if (isLeft (res)) {
+        if (res.isLeft) {
           const title = Just (translate (static_data) ("header.dialogs.saveconfigerror.title"))
 
           const message = getErrorMsg (static_data)
                                       (translate (static_data)
                                                  ("header.dialogs.saveconfigerror.message"))
-                                      (res)
+                                      (res.value)
 
           await dispatch (addErrorAlert (AlertOptions ({
                                           title,
@@ -120,7 +120,7 @@ export const requestAllHeroesSave: ReduxAction<Promise<boolean>> =
           const message = getErrorMsg (static_data)
                                       (translate (static_data)
                                                  ("header.dialogs.saveheroeserror.message"))
-                                      (res)
+                                      (fromLeft_ (res))
 
           await dispatch (addErrorAlert (AlertOptions ({
                                           title,
@@ -145,6 +145,7 @@ export const requestSaveCache = (all_saved: boolean): ReduxAction<Promise<Either
       prepareAPCache (all_saved),
       writeCache
     )
+      .then (e => e.toOldEither ())
 
 export interface ReceiveHeroSaveAction {
   type: ActionTypes.RECEIVE_HERO_SAVE
@@ -195,7 +196,7 @@ export const requestHeroSave =
             const message = getErrorMsg (static_data)
                                         (translate (static_data)
                                                    ("header.dialogs.saveheroeserror.message"))
-                                        (res)
+                                        (fromLeft_ (res))
 
             await dispatch (addErrorAlert (AlertOptions ({
                                             title,
@@ -211,13 +212,13 @@ export const requestHeroSave =
             await dispatch (async (_, getState2) => writeCache (prepareAPCache (false)
                                                                                (getState2 ())))
 
-          if (isLeft (cacheRes)) {
+          if (cacheRes.isLeft) {
             const title = Just (translate (static_data) ("header.dialogs.saveheroeserror.title"))
 
             const message = getErrorMsg (static_data)
                                         (translate (static_data)
                                                    ("header.dialogs.saveheroeserror.message"))
-                                        (cacheRes)
+                                        (cacheRes.value)
 
             await dispatch (addErrorAlert (AlertOptions ({
                                             title,
@@ -269,7 +270,7 @@ export const requestHeroDeletion =
           const message = getErrorMsg (staticData)
                                       (translate (staticData)
                                                  ("header.dialogs.saveheroeserror.message"))
-                                      (res)
+                                      (fromLeft_ (res))
 
           await dispatch (addErrorAlert (AlertOptions ({
                                           title,
@@ -344,7 +345,7 @@ export const requestHeroExport =
                                          (flip (IO.writeFile) (JSON.stringify (hero)))
                                          (pmfilepath))
 
-        if (isRight (res)) {
+        if (res.isRight) {
           await dispatch (addAlert (AlertOptions ({
                                      message: translate (staticData) ("heroes.dialogs.herosaved"),
                                    })))
@@ -355,7 +356,7 @@ export const requestHeroExport =
           const message = getErrorMsg (staticData)
                                       (translate (staticData)
                                                  ("header.dialogs.saveheroeserror.message"))
-                                      (res)
+                                      (res.value)
 
           await dispatch (addErrorAlert (AlertOptions ({
                                           title,
@@ -397,14 +398,14 @@ export const requestHeroImport: ReduxAction<Promise<void>> =
     if (isJust (mfile_path)) {
       const staticData = getWiki (getState ())
 
-      const ehero = await parseHero (staticData)
+      const hero = await parseHero (staticData)
                                     (fromJust (mfile_path))
 
-      if (isLeft (ehero)) {
-        await dispatch (addErrorAlert (fromLeft_ (ehero)))
+      if (hero.isLeft) {
+        await dispatch (addErrorAlert (hero.value))
       }
       else {
-        dispatch (receiveHeroImport (fromRight_ (ehero)))
+        dispatch (receiveHeroImport (hero.value))
       }
     }
   }

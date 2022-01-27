@@ -3,12 +3,12 @@ import { elemF, filter, List, map } from "../../Data/List"
 import { bind, fromMaybe, mapMaybe } from "../../Data/Maybe"
 import { elems, lookupF } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
-import { PairF } from "../../Data/Tuple"
 import { uncurryN, uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry"
 import { CultureCombined } from "../Models/View/CultureCombined"
 import { Culture } from "../Models/Wiki/Culture"
 import { Race } from "../Models/Wiki/Race"
 import { RaceVariant } from "../Models/Wiki/RaceVariant"
+import { Skill } from "../Models/Wiki/Skill"
 import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
@@ -52,7 +52,8 @@ export const getAllCultures = createMaybeSelector (
                                              x,
                                              ISA.id,
                                              lookupF (skills),
-                                             fmap (PairF (ISA.value (x)))
+                                             fmap ((skill: Record<Skill>) =>
+                                               Pair (skill, ISA.value (x)))
                                            ))
                                            (CA.culturalPackageSkills (wiki_entry)),
                                 wikiEntry: wiki_entry,

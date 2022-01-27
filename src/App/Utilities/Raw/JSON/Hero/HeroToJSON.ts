@@ -25,7 +25,8 @@ import { PrimaryAttributeDamageThreshold } from "../../../../Models/Wiki/sub/Pri
 import { current_version } from "../../../../Selectors/envSelectors"
 import { HeroStateMapKey } from "../../../heroStateUtils"
 import { ifElse } from "../../../ifElse"
-import { pipe, pipe_ } from "../../../pipe"
+import { toNewMaybe } from "../../../Maybe"
+import { pipe } from "../../../pipe"
 import { RawActiveObject, RawArmorZone, RawCustomItem, RawHero, RawPet, RawPrimaryAttributeDamageThreshold } from "../../RawData"
 
 const HA = HeroModel.A
@@ -137,11 +138,11 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
           reloadTime,
           stp,
           stabilityMod,
-          note,
-          rules,
-          advantage,
-          disadvantage,
-          src,
+          note: _note,
+          rules: _rules,
+          advantage: _advantage,
+          disadvantage: _disadvantage,
+          src: _src,
           ammunition,
           combatTechnique,
           damageDiceSides,
@@ -174,20 +175,12 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
           length: maybeToUndefined (length),
           pa: maybeToUndefined (pa),
           pro: maybeToUndefined (pro),
-          reloadTime: pipe_ (
-                        reloadTime,
-                        fmap (x => isList (x)
-                                   ? List.toArray (x)
-                                   : x),
-                        maybeToUndefined
-                      ),
-          stp: pipe_ (
-                 stp,
-                 fmap (x => isList (x)
-                            ? List.toArray (x)
-                            : x),
-                 maybeToUndefined
-               ),
+          reloadTime: toNewMaybe (reloadTime)
+            .map (x => isList (x) ? List.toArray (x) : x)
+            .toUndefined (),
+          stp: toNewMaybe (stp)
+            .map (x => isList (x) ? List.toArray (x) : x)
+            .toUndefined (),
           stabilityMod: maybeToUndefined (stabilityMod),
           ammunition: maybeToUndefined (ammunition),
           combatTechnique: maybeToUndefined (combatTechnique),
@@ -205,13 +198,9 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
                                const threshold = PADTA.threshold (bonus)
 
                                return {
-                                 primary: pipe_ (
-                                            primary,
-                                            fmap (x => isTuple (x)
-                                                       ? Tuple.toArray (x)
-                                                       : x),
-                                            maybeToUndefined
-                                          ),
+                                 primary: toNewMaybe (primary)
+                                  .map (x => isTuple (x) ? Tuple.toArray (x) : x)
+                                  .toUndefined (),
                                  threshold: ifElse<number | PNumNum, PNumNum> (isTuple)
                                                                               <number | number[]>
                                                                               (Tuple.toArray)
@@ -362,7 +351,7 @@ export const convertHeroForSave =
         enabledRuleBooks: toArray (Rules.AL.enabledRuleBooks (rules)),
       },
       pets: getPetsForSave (hero),
-      pact: pipe_ (pact, fmap (toObject), maybeToUndefined),
+      pact: maybeToUndefined (fmapF (pact) (toObject)),
     }
 
     return obj

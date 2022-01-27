@@ -79,7 +79,7 @@ export const HerolistItem: React.FC<HerolistItemProps> = props => {
           hero,
           HA.player,
           bindF (lookupF (users)),
-          fmap (user => user.displayName)
+          fmap ((user: User) => user.displayName)
         )}
         large
         >

@@ -206,13 +206,13 @@ export const getHighestPrimaryMagicalAttributes = createMaybeSelector (
 )
 
 type AttrCs = List<Record<AttributeCombined>>
-type NonEmotyAttrCs = NonEmptyList<Record<AttributeCombined>>
+type NonEmptyAttrCs = NonEmptyList<Record<AttributeCombined>>
 
 export const getHighestPrimaryMagicalAttribute = createMaybeSelector (
   getHighestPrimaryMagicalAttributes,
   pipe (
-    bindF (ensure (pipe (flength, equals (1)) as (xs: AttrCs) => xs is NonEmotyAttrCs)),
-    fmap (head)
+    bindF (ensure (pipe (flength, equals (1)) as (xs: AttrCs) => xs is NonEmptyAttrCs)),
+    fmap ((xs: NonEmptyAttrCs) => head (xs))
   )
 )
 

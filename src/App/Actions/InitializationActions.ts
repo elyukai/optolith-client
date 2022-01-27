@@ -1,10 +1,9 @@
 import { join } from "path"
 import { handleE, toMsg } from "../../Control/Exception"
-import { eitherToMaybe, fromLeft_, fromRight_, isLeft, Left } from "../../Data/Either"
+import { fromLeft_, fromRight_, isLeft } from "../../Data/Either"
 import { flip } from "../../Data/Function"
-import { fmap } from "../../Data/Functor"
 import { fromArray, intercalate, map } from "../../Data/List"
-import { bindF, fromJust, fromMaybe, isJust, Just, Maybe } from "../../Data/Maybe"
+import { fromJust, fromMaybe, isJust, Just, Maybe } from "../../Data/Maybe"
 import { filter, keysSet, OrderedMap } from "../../Data/OrderedMap"
 import { notMember } from "../../Data/OrderedSet"
 import { Record } from "../../Data/Record"
@@ -23,6 +22,7 @@ import { user_data_path } from "../Selectors/envSelectors"
 import { getHeroes } from "../Selectors/stateSelectors"
 import { deleteCache, forceCacheIsAvailable, insertAppStateCache, insertCacheMap, insertHeroesCache, readCache } from "../Utilities/Cache"
 import { getSystemLocale } from "../Utilities/IOUtils"
+import { Maybe as NewMaybe } from "../Utilities/Maybe"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { parseConfig } from "../Utilities/Raw/JSON/Config"
 import { RawHerolist } from "../Utilities/Raw/RawData"
@@ -85,17 +85,17 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
 
   const did_update = await readUpdate ()
 
-  const dispatchErrorAlertOptions = async (options: Left<Record<AlertOptions>>) => {
-    await dispatch (addErrorAlert (fromLeft_ (options)))
+  const dispatchErrorAlertOptions = async (options: Record<AlertOptions>) => {
+    await dispatch (addErrorAlert (options))
 
     dispatch (setLoadingDoneWithError ())
   }
 
-  const dispatchError = async (err: Left<Error>) =>
-    dispatchErrorAlertOptions (Left (AlertOptions ({
-                                      title: Just ("Error"),
-                                      message: toMsg (fromLeft_ (err)),
-                                    })))
+  const dispatchError = async (err: Error) =>
+    dispatchErrorAlertOptions (AlertOptions ({
+                                title: Just ("Error"),
+                                message: toMsg (err),
+                              }))
 
   console.log (did_update)
 
@@ -103,7 +103,7 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
     const deleted = await deleteCache ()
 
     if (isLeft (deleted)) {
-      return dispatchError (deleted)
+      return dispatchError (fromLeft_ (deleted))
     }
   }
 
@@ -111,26 +111,26 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
 
   console.log (show (update_written))
 
-  if (isLeft (update_written)) {
-    return dispatchError (update_written)
+  if (update_written.isLeft) {
+    return dispatchError (update_written.value)
   }
 
-  const econfig = await parseConfig ()
+  const config = await parseConfig ()
 
-  if (isLeft (econfig)) {
-    return dispatchErrorAlertOptions (econfig)
+  if (config.isLeft) {
+    return dispatchErrorAlertOptions (config.value)
   }
 
-  const config = fromRight_ (econfig)
+  console.log (show (config.value))
 
-  console.log (show (config))
-
-  const mheroes = await pipe_ (
+  const mheroes = (await pipe_ (
     join (user_data_path, "heroes.json"),
     IO.readFile,
-    handleE,
-    fmap (pipe (eitherToMaybe, bindF (parseJSON as (x: string) => Maybe<RawHerolist>)))
-  )
+    handleE
+  ))
+    .toMaybe ()
+    .bind (x => parseJSON (x) as NewMaybe<RawHerolist>)
+    .toOldMaybe ()
 
   const mcache = await readCache ()
 
@@ -142,7 +142,6 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
       fromLeft_,
       parseErrorsToPairStr,
       pairStrErrorToAlertOptions,
-      Left,
       dispatchErrorAlertOptions
     )
   }
@@ -151,8 +150,8 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
 
   const estatic_data =
     await parseStaticData (
-      fromMaybe (defaultLocale) (Config.A.locale (config)),
-      Config.A.fallbackLocale (config)
+      fromMaybe (defaultLocale) (Config.A.locale (config.value)),
+      Config.A.fallbackLocale (config.value)
     )
 
   if (isLeft (estatic_data)) {
@@ -161,7 +160,6 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
       fromLeft_,
       parseErrorsToPairStr,
       pairStrErrorToAlertOptions,
-      Left,
       dispatchErrorAlertOptions
     )
   }
@@ -170,7 +168,7 @@ export const requestInitialData: ReduxAction<Promise<void>> = async (dispatch, g
     staticData: fromRight_ (estatic_data),
     heroes: mheroes,
     defaultLocale,
-    config: Just (config),
+    config: Just (config.value),
     cache: mcache,
     availableLangs: available_langs,
   }

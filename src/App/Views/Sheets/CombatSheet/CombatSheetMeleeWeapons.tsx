@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Textfit } from "react-textfit"
 import { fmap, fmapF } from "../../../../Data/Functor"
-import { flength, fnull, intercalate, List, map, replicateR, subscriptF, toArray } from "../../../../Data/List"
+import { fnull, intercalate, List, replicateR, subscriptF } from "../../../../Data/List"
 import { bindF, catMaybes, ensure, fromMaybe, Just, Maybe, maybeRNull } from "../../../../Data/Maybe"
 import { lookupF } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
@@ -12,6 +12,7 @@ import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { mdash, ndash } from "../../../Utilities/Chars"
 import { localizeNumber, localizeWeight, translate, translateP } from "../../../Utilities/I18n"
 import { getDamageStr } from "../../../Utilities/ItemUtils"
+import { toNewMaybe } from "../../../Utilities/Maybe"
 import { sign, toRoman } from "../../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
@@ -19,7 +20,7 @@ import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
   staticData: StaticDataRecord
-  meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
+  meleeWeapons: Maybe<Record<MeleeWeapon>[]>
 }
 
 const SDA = StaticData.A
@@ -75,104 +76,102 @@ export const CombatSheetMeleeWeapons: React.FC<Props> = props => {
           </tr>
         </thead>
         <tbody>
-          {pipe_ (
-            mmelee_weapons,
-            fmap (pipe (
-              map (e => {
-                const primaryBonus = MWA.primaryBonus (e)
+          {
+            toNewMaybe(mmelee_weapons)
+              .maybe<React.ReactNode>(null, xs =>
+                xs.map(e => {
+                  const primaryBonus = MWA.primaryBonus (e)
 
-                const getPrimaryAtIndex =
-                  (i: number) => pipe (MWA.primary, subscriptF (i), renderMaybe)
+                  const getPrimaryAtIndex =
+                    (i: number) => pipe (MWA.primary, subscriptF (i), renderMaybe)
 
-                const weapon_settings = pipe_ (
-                  List (
-                    Maybe.guardReplace (MWA.isTwoHandedWeapon (e)) ("2H"),
-                    Maybe.guardReplace (MWA.isImprovisedWeapon (e)) ("i"),
-                  ),
-                  catMaybes,
-                  ensure (List.notNull),
-                  fmap (intercalate (", "))
-                )
+                  const weapon_settings = pipe_ (
+                    List (
+                      Maybe.guardReplace (MWA.isTwoHandedWeapon (e)) ("2H"),
+                      Maybe.guardReplace (MWA.isImprovisedWeapon (e)) ("i"),
+                    ),
+                    catMaybes,
+                    ensure (List.notNull),
+                    fmap (intercalate (", "))
+                  )
 
-                return (
-                  <tr key={MWA.id (e)}>
-                    <td className="name">
-                      <Textfit max={11} min={7} mode="single">
-                        {MWA.name (e)}
-                        {maybeRNull ((str: string) => (
-                                      <>
-                                        {" "}
-                                        <span className="weapon-settings">
-                                          {"("}
-                                          {str}
-                                          {")"}
-                                        </span>
-                                      </>
-                                    ))
-                                    (weapon_settings)}
-                      </Textfit>
-                    </td>
-                    <td className="combat-technique">{MWA.combatTechnique (e)}</td>
-                    <td className="damage-bonus">
-                      {fnull (MWA.primary (e))
-                        ? mdash
-                        : isTuple (primaryBonus)
-                        ? pipe_ (
-                            primaryBonus,
-                            bimap (first => `${getPrimaryAtIndex (0) (e)} ${first}`)
-                                  (second => `${getPrimaryAtIndex (1) (e)} ${second}`),
-                            p => `${fst (p)}/${snd (p)}`
-                          )
-                        : `${intercalate ("/") (MWA.primary (e))} ${primaryBonus}`}
-                    </td>
-                    <td className="damage">
-                      {getDamageStr (staticData)
-                                    (Just (MWA.damageFlat (e)))
-                                    (MWA.damageDiceNumber (e))
-                                    (MWA.damageDiceSides (e))}
-                    </td>
-                    <td className="at-mod mod">
-                      {sign (Maybe.sum (MWA.atMod (e)))}
-                    </td>
-                    <td className="pa-mod mod">
-                      {sign (Maybe.sum (MWA.paMod (e)))}
-                    </td>
-                    <td className="reach">
-                      {pipe_ (
-                        e,
-                        MWA.reach,
-                        bindF (lookupF (SDA.reaches (staticData))),
-                        renderMaybeWith (NumIdName.A.name)
-                      )}
-                    </td>
-                    <td className="bf">{MWA.bf (e)}</td>
-                    <td className="loss">
-                      {renderMaybeWith (toRoman) (MWA.loss (e))}
-                    </td>
-                    <td className="at">{MWA.at (e)}</td>
-                    <td className="pa">
-                      {fromMaybe<string | number> (ndash) (MWA.pa (e))}
-                    </td>
-                    <td className="weight">
-                      {translateP (staticData)
-                                  ("general.weightvalue")
-                                  (List (
-                                    pipe_ (
-                                      e,
-                                      MWA.weight,
-                                      localizeWeight (staticData),
-                                      localizeNumber (staticData)
-                                    )
-                                  ))}
-                    </td>
-                  </tr>
-                )
-              }),
-              toArray
-            )),
-            fromMaybe (null as React.ReactNode)
-          )}
-          {replicateR (2 - Maybe.sum (fmapF (mmelee_weapons) (flength)))
+                  return (
+                    <tr key={MWA.id (e)}>
+                      <td className="name">
+                        <Textfit max={11} min={7} mode="single">
+                          {MWA.name (e)}
+                          {maybeRNull ((str: string) => (
+                                        <>
+                                          {" "}
+                                          <span className="weapon-settings">
+                                            {"("}
+                                            {str}
+                                            {")"}
+                                          </span>
+                                        </>
+                                      ))
+                                      (weapon_settings)}
+                        </Textfit>
+                      </td>
+                      <td className="combat-technique">{MWA.combatTechnique (e)}</td>
+                      <td className="damage-bonus">
+                        {fnull (MWA.primary (e))
+                          ? mdash
+                          : isTuple (primaryBonus)
+                          ? pipe_ (
+                              primaryBonus,
+                              bimap (first => `${getPrimaryAtIndex (0) (e)} ${first}`)
+                                    (second => `${getPrimaryAtIndex (1) (e)} ${second}`),
+                              p => `${fst (p)}/${snd (p)}`
+                            )
+                          : `${intercalate ("/") (MWA.primary (e))} ${primaryBonus}`}
+                      </td>
+                      <td className="damage">
+                        {getDamageStr (staticData)
+                                      (Just (MWA.damageFlat (e)))
+                                      (MWA.damageDiceNumber (e))
+                                      (MWA.damageDiceSides (e))}
+                      </td>
+                      <td className="at-mod mod">
+                        {sign (Maybe.sum (MWA.atMod (e)))}
+                      </td>
+                      <td className="pa-mod mod">
+                        {sign (Maybe.sum (MWA.paMod (e)))}
+                      </td>
+                      <td className="reach">
+                        {pipe_ (
+                          e,
+                          MWA.reach,
+                          bindF (lookupF (SDA.reaches (staticData))),
+                          renderMaybeWith (NumIdName.A.name)
+                        )}
+                      </td>
+                      <td className="bf">{MWA.bf (e)}</td>
+                      <td className="loss">
+                        {renderMaybeWith (toRoman) (MWA.loss (e))}
+                      </td>
+                      <td className="at">{MWA.at (e)}</td>
+                      <td className="pa">
+                        {fromMaybe<string | number> (ndash) (MWA.pa (e))}
+                      </td>
+                      <td className="weight">
+                        {translateP (staticData)
+                                    ("general.weightvalue")
+                                    (List (
+                                      pipe_ (
+                                        e,
+                                        MWA.weight,
+                                        localizeWeight (staticData),
+                                        localizeNumber (staticData)
+                                      )
+                                    ))}
+                      </td>
+                    </tr>
+                  )
+                })
+              )
+          }
+          {replicateR (2 - Maybe.sum (fmapF (mmelee_weapons) (xs => xs.length)))
                       (i => (
                         <tr key={`undefined-${i}`}>
                           <td className="name" />

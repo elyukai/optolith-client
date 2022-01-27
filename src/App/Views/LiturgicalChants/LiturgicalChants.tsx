@@ -42,7 +42,7 @@ const isTopMarginNeeded =
       bindF (ensure (
         () => sortOrder === "group" && LCBCA.active (curr)
       )),
-      fmap (prev =>
+      fmap ((prev: Combined) =>
              (!BlessingCombined.is (prev) && BlessingCombined.is (curr))
              || (BlessingCombined.is (prev) && !BlessingCombined.is (curr))
              || (

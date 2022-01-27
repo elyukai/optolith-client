@@ -235,7 +235,7 @@ const getPropertyOrAspectKnowledgeDiff =
   (id: string) =>
     pipe (
       find (pipe (ActiveActivatableA_.id, equals (id))),
-      fmap (entry => {
+      fmap ((entry: Record<ActiveActivatable>) => {
         const current_active_length =
           pipe_ (entry, ActiveActivatable.AL.heroEntry, ActivatableDependent.A.active, flength)
 
@@ -294,7 +294,7 @@ const getPersonalityFlawsDiff =
       // Find any Personality Flaw entry, as all of them have the same list of
       // active objects
       find (pipe (ActiveActivatableA_.id, equals<string> (DisadvantageId.PersonalityFlaw))),
-      fmap (entry => pipe_ (
+      fmap ((entry: Record<ActiveActivatable>) => pipe_ (
         entry,
         ActiveActivatableA_.active,
         countWithByKeyMaybe (e => then (guard (isNothing (AOA.cost (e))))
@@ -353,7 +353,7 @@ const getSkillSpecializationsDiff =
       return sum (pipe_ (
         hero_slice,
         lookup<string> (SpecialAbilityId.SkillSpecialization),
-        fmap (entry => {
+        fmap ((entry: Record<ActivatableDependent>) => {
           const current_active = ActivatableDependent.A.active (entry)
 
           // Count how many specializations are for the same skill

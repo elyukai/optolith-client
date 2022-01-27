@@ -126,7 +126,12 @@ const ActivatableRemoveListItem: React.FC<ActivatableRemoveListItemProps> = prop
               options={levelOptionsWithMotherTongue}
               />
           )
-          : pipe_ (levelOptions, listToMaybe, fmap (o => ` ${DOA.name (o)}`), renderMaybe)
+          : pipe_ (
+              levelOptions,
+              listToMaybe,
+              fmap ((o: Record<DropdownOption<number>>) => ` ${DOA.name (o)}`),
+              renderMaybe
+            )
       })
       (AAA_.levels (item))
       (AAA_.level (item))

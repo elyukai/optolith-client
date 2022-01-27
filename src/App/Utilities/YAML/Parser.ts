@@ -3,8 +3,7 @@ import Ajv from "ajv"
 import { join } from "path"
 import YAML from "yaml"
 import { handleE } from "../../../Control/Exception"
-import { Either, either, Left, Right } from "../../../Data/Either"
-import { fmap } from "../../../Data/Functor"
+import { Either, Left, Right } from "../../../Data/Either"
 import { bindF, IO, readFile } from "../../../System/IO"
 import { app_path } from "../../Selectors/envSelectors"
 import { pipe, pipe_ } from "../pipe"
@@ -87,9 +86,10 @@ export const readYaml : (pathToDir : string) => (validator : Ajv.Ajv) => YamlPar
                           ),
                           parseYamlFile,
                           handleE,
-                          fmap (either ((err : Error) : YamlParserResult<typeof ref> =>
-                                          Left ([ err ]))
-                                        (validateJson (validator) (ref)))
+                          async io => (await io).either<YamlParserResult<typeof ref>> (
+                            err => Left ([ err ]),
+                            validateJson (validator) (ref)
+                          )
                         )
 
 

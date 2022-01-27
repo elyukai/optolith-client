@@ -62,7 +62,7 @@ export const SkillSelectionList: React.FC<Props> = props => {
           staticData,
           SDA.skillGroups,
           lookup (fromMaybe (0) (mgr)),
-          fmap (gr => translateP (staticData)
+          fmap ((gr: Record<SkillGroup>) => translateP (staticData)
                                  ("rcpselectoptions.skillselectionap")
                                  (List<string | number> (
                                    SkillGroup.A.name (gr),

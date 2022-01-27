@@ -52,7 +52,7 @@ export const convertHero =
         pipe (
           convertLT ("0.51.1-alpha.2")
                     (hero => {
-                      const entry = { ...hero }
+                      const entry: RawHeroFromSchema = { ...hero }
 
                       const oldRaceId = entry.r
 
@@ -113,9 +113,7 @@ export const convertHero =
                         enabledRuleBooks: [],
                       }
 
-                      entry.clientVersion = "0.51.1"
-
-                      return entry as RawHero120alpha11
+                      return { ...entry, clientVersion: "0.51.1" } as RawHero120alpha11
                     }),
           convertLT ("0.51.3-alpha.4")
                     (hero => {

@@ -718,12 +718,13 @@ export const applyItemTemplate: ReduxAction =
       getItemEditorInstance,
       bindF (EditItem.A.template),
       bindF (lookupF (getWikiItemTemplates (getState ()))),
-      fmap (template => dispatch<ApplyItemTemplateAction> ({
-                          type: ActionTypes.APPLY_ITEM_TEMPLATE,
-                          payload: {
-                            template,
-                          },
-                        }))
+      fmap ((template: Record<ItemTemplate>) =>
+              dispatch<ApplyItemTemplateAction> ({
+                type: ActionTypes.APPLY_ITEM_TEMPLATE,
+                payload: {
+                  template,
+                },
+              }))
     )
 }
 
@@ -741,12 +742,13 @@ export const lockItemTemplate: ReduxAction =
       getItemEditorInstance,
       bindF (EditItem.A.template),
       bindF (lookupF (getWikiItemTemplates (getState ()))),
-      fmap (template => dispatch<LockItemTemplateAction> ({
-                          type: ActionTypes.LOCK_ITEM_TEMPLATE,
-                          payload: {
-                            template,
-                          },
-                        }))
+      fmap ((template: Record<ItemTemplate>) =>
+              dispatch<LockItemTemplateAction> ({
+                type: ActionTypes.LOCK_ITEM_TEMPLATE,
+                payload: {
+                  template,
+                },
+              }))
     )
   }
 

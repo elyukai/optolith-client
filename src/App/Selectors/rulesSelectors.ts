@@ -22,7 +22,7 @@ export const getRuleBooksEnabled = createMaybeSelector (
 export const getRuleBooksEnabledM = createMaybeSelector (
   getWikiBooks,
   getRulesM,
-  uncurryN (bs => fmap ((r): EnabledSourceBooks => Pair (bs, r)))
+  uncurryN (bs => fmap ((r: Record<Rules>): EnabledSourceBooks => Pair (bs, r)))
 )
 
 export const isEnableLanguageSpecializationsDeactivatable = createMaybeSelector (

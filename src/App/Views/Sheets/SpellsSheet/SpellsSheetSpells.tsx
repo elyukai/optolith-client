@@ -1,8 +1,8 @@
 import * as React from "react"
 import { Textfit } from "react-textfit"
-import { fmap, fmapF } from "../../../../Data/Functor"
+import { fmapF } from "../../../../Data/Functor"
 import { flength, List, map, notNull, replicateR, toArray } from "../../../../Data/List"
-import { fromMaybe, guardReplace, Just, Maybe, maybe } from "../../../../Data/Maybe"
+import { guardReplace, Just, Maybe, maybe } from "../../../../Data/Maybe"
 import { lookup } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { icFromJs } from "../../../Constants/Groups"
@@ -14,6 +14,7 @@ import { minus } from "../../../Utilities/Chars"
 import { classListMaybe } from "../../../Utilities/CSS"
 import { translate } from "../../../Utilities/I18n"
 import { icToStr } from "../../../Utilities/IC.gen"
+import { toNewMaybe } from "../../../Utilities/Maybe"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybeWith } from "../../../Utilities/ReactUtils"
 import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils"
@@ -81,9 +82,8 @@ export const SpellsSheetSpells: React.FC<Props> = props => {
           </tr>
         </thead>
         <tbody>
-          {pipe_ (
-            maybeSpells,
-            fmap (pipe (
+          {toNewMaybe(maybeSpells)
+            .maybe<React.ReactNode>(null, pipe (
               map (e => {
                 const check =
                   getAttributeStringByIdList (checkAttributeValueVisibility)
@@ -149,9 +149,8 @@ export const SpellsSheetSpells: React.FC<Props> = props => {
                 )
               }),
               toArray
-            )),
-            fromMaybe (null as React.ReactNode)
-          )}
+            ))
+          }
           {replicateR (21 - Maybe.sum (fmapF (maybeSpells) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>

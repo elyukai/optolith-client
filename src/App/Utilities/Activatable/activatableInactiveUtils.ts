@@ -46,6 +46,7 @@ import { getAllEntriesByGroup } from "../heroStateUtils"
 import { prefixSA } from "../IDUtils"
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils"
 import { isUnfamiliarSpell } from "../Increasable/spellUtils"
+import { ensure as newensure, toNewMaybe } from "../Maybe"
 import { pipe, pipe_ } from "../pipe"
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils"
 import { isEntryAvailable } from "../RulesUtils"
@@ -231,14 +232,10 @@ const isAddExistSkillSpecAllowed =
 
 const isAddNotExistSkillSpecAllowed =
   (hero: HeroModelRecord) =>
-  (curr_select_id: string | number) =>
-    pipe_ (
-      curr_select_id,
-      ensure (isString),
-      bindF (lookupF (HA.skills (hero))),
-      fmap (skill => SkDA.value (skill) >= 6),
-      or
-    )
+  (selectId: string | number) =>
+    newensure (selectId, isString)
+      .bind (id => toNewMaybe (lookup (id) (HA.skills (hero))))
+      .maybe (false, skill => SkDA.value (skill) >= 6)
 
 const is3or4 = (x: string | number): x is number => x === 3 || x === 4
 
@@ -380,7 +377,7 @@ const modifySelectOptions =
                        // otherwise return current cost
                        : ident),
                 over (SOL.applications)
-                     (fmap (filter (app => {
+                     (fmap (filter ((app: Record<Application>) => {
                                      const isInactive =
                                        all (notElem<number | string>
                                              (AppA.id (app)))
@@ -558,7 +555,7 @@ const modifySelectOptions =
                                                 guard (is3or4 (current_level)),
                                                 thenF (AOA.sid (obj)),
                                                 misNumberM,
-                                                fmap (consF)
+                                                fmap ((level: number) => consF (level))
                                               )),
                                       fromMaybe (
                                         ident as ident<List<number>>
@@ -754,7 +751,7 @@ const modifyOtherOptions =
                                     (maybe (0)
                                            (pipe (ADA.active, flength))
                                            (mhero_entry))),
-          fmap (pipe (Just, set (IAL.cost)))
+          fmap ((cost: number) => pipe_ (cost, Just, set (IAL.cost)))
         )
       }
 
@@ -933,7 +930,7 @@ export const getInactiveView =
                             (wiki_entry)
                             (mhero_entry),
         ensure (maybe (true) (notNull)),
-        fmap (select_options => InactiveActivatable ({
+        fmap ((select_options: Maybe<List<Record<SelectOption>>>) => InactiveActivatable ({
                                   id: current_id,
                                   name: SpAL.name (wiki_entry),
                                   cost: AAL.cost (wiki_entry),

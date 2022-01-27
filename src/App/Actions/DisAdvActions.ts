@@ -284,14 +284,14 @@ export const removeDisAdvantage =
                                 Race.A.eyeColors,
                                 altF_ (() => fmapF (mrace_var) (RaceVariant.A.eyeColors)),
                                 bindF (uncons),
-                                fmap (fst)
+                                fmap<Pair<number, List<number>>, number> (fst)
                               )
                               (race),
                          pipe (
                                 Race.A.hairColors,
                                 altF_ (() => fmapF (mrace_var) (RaceVariant.A.hairColors)),
                                 bindF (uncons),
-                                fmap (fst)
+                                fmap<Pair<number, List<number>>, number> (fst)
                               )
                               (race)
                        )

@@ -2,7 +2,7 @@ import * as React from "react"
 import { equals } from "../../../../Data/Eq"
 import { fmap } from "../../../../Data/Functor"
 import { find, intercalate, List, map, toArray } from "../../../../Data/List"
-import { fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe"
+import { mapMaybe, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { icFromJs } from "../../../Constants/Groups"
 import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined"
@@ -11,6 +11,7 @@ import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { ndash } from "../../../Utilities/Chars"
 import { translate } from "../../../Utilities/I18n"
 import { icToStr } from "../../../Utilities/IC.gen"
+import { toNewMaybe } from "../../../Utilities/Maybe"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { TextBox } from "../../Universal/TextBox"
 
@@ -60,9 +61,8 @@ export const CombatSheetTechniques: React.FC<Props> = props => {
           </tr>
         </thead>
         <tbody>
-          {pipe_ (
-            mcombat_techniques,
-            fmap (pipe (
+          {toNewMaybe(mcombat_techniques)
+            .maybe<React.ReactNode>(null, pipe (
               map (e => (
                 <tr key={CTWAPBA_.id (e)}>
                   <td className="name">{CTWAPBA_.name (e)}</td>
@@ -87,9 +87,8 @@ export const CombatSheetTechniques: React.FC<Props> = props => {
                 </tr>
               )),
               toArray
-            )),
-            fromMaybe (null as React.ReactNode)
-          )}
+            ))
+          }
         </tbody>
       </table>
     </TextBox>

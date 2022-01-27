@@ -5,7 +5,7 @@ import { filter, find, flength, intercalate, List, map, splitAt } from "../../..
 import { fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { divideBy, max, multiply } from "../../../../Data/Num"
 import { Record } from "../../../../Data/Record"
-import { fst, snd } from "../../../../Data/Tuple"
+import { fst, Pair, snd } from "../../../../Data/Tuple"
 import { AttrId } from "../../../Constants/Ids"
 import { Pet } from "../../../Models/Hero/Pet"
 import { Purse } from "../../../Models/Hero/Purse"
@@ -83,7 +83,7 @@ export const BelongingsSheet: React.FC<Props> = props => {
             >
             {pipe_ (
               maybeColumns,
-              fmap (columns => (
+              fmap ((columns: Pair<List<Record<ItemForView>>, List<Record<ItemForView>>>) => (
                 <div>
                   <BelongingsSheetItemsColumn
                     items={fst (columns)}
