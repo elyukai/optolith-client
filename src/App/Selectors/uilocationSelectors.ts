@@ -442,8 +442,9 @@ export const getSubtabs = createMaybeSelector (
                          (fmapF (mruleBooksEnabled)
                                 (pipe (
                                   sourceBooksPairToTuple,
-                                  ruleBooksEnabled => uncurry3 (isBookEnabled) (ruleBooksEnabled)
-                                                                               ("US25208")
+                                  ruleBooksEnabled =>
+                                    any (uncurry3 (isBookEnabled) (ruleBooksEnabled))
+                                        (List ("US25208", "US25208E"))
                                 )))) {
             return Just (insertAt (1)
                                   <SubTab> ({
