@@ -320,7 +320,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
             {translate (staticData) ("equipment.header.group")}
           </ListHeaderTag>
           <ListHeaderTag className="weight">
-            {translate (staticData) ("equipment.dialogs.addedit.weight")}
+            {translate (staticData) ("inlinewiki.equipment.weight")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
