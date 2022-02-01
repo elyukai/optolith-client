@@ -66,6 +66,7 @@
     "eslint": "^8.7.0",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-plugin-tsdoc": "^0.2.14",
     "fs-extra": "9.0.1",
     "gentype": "3.38.0",
     "html-webpack-plugin": "^5.5.0",
