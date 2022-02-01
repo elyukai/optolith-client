@@ -435,7 +435,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
       && mainScript === 0
     )
     || (
-      PSA[ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL] (prof_sels)
+      isJust (guildMageUnfamiliarSpell)
       && isNothing (selectedUnfamiliarSpell)
     )
 
