@@ -29,7 +29,7 @@ const getMaxPrimaryAttributeValueById =
                             lookupF (HA.attributes (state)),
                             maybe (currentMax) (pipe (ADA.value, max (currentMax)))
                           ))
-                          (0)
+                          (8)
 
 const calculatePrimaryAttributeMod = pipe (add (-8), divideBy (3), Math.floor, max (0))
 
