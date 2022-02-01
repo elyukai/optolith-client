@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 * add kilogram hint to English item dialog ([bd9fc1b](https://github.com/elyukai/optolith-client/commit/bd9fc1badc8a408495bd7c1594338b1a5fe6df11))
 * add utilities for working with tagged unions ([bba9b92](https://github.com/elyukai/optolith-client/commit/bba9b92e5d50fbb7cad7450b56b95b87e2e9aa4d))
-* Apple M1 native support ([94e751f](https://github.com/elyukai/optolith-client/commit/94e751fda169c4de90cdb82346d3d864cf697300))
+* add native Apple M1 support ([94e751f](https://github.com/elyukai/optolith-client/commit/94e751fda169c4de90cdb82346d3d864cf697300))
 
 
 ### Bug Fixes
