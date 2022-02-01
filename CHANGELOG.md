@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0-alpha.6](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.5...v1.5.0-alpha.6) (2022-02-01)
+
+
+### Features
+
+* add kilogram hint to English item dialog ([bd9fc1b](https://github.com/elyukai/optolith-client/commit/bd9fc1badc8a408495bd7c1594338b1a5fe6df11))
+* add utilities for working with tagged unions ([bba9b92](https://github.com/elyukai/optolith-client/commit/bba9b92e5d50fbb7cad7450b56b95b87e2e9aa4d))
+
+
+### Bug Fixes
+
+* attributes on minimum value do not allow CtR over 6 ([47e66d6](https://github.com/elyukai/optolith-client/commit/47e66d65467999e2661eaac30a97b5a1ebfece94)), closes [elyukai/optolith-client#835](https://github.com/elyukai/optolith-client/issues/835)
+* profession Sharisad gets Earthencraft bonus instead of Clothworking bonus ([cd16e53](https://github.com/elyukai/optolith-client/commit/cd16e5314a7f579a5f5f916bb204a15df3220bda)), closes [#1341](https://github.com/elyukai/optolith-client/issues/1341)
+* show Hit Zone Armor tab for English Armory ([383a9c1](https://github.com/elyukai/optolith-client/commit/383a9c166c6d8c5d713f4852f40999c5d8c00efc)), closes [elyukai/optolith-client#1328](https://github.com/elyukai/optolith-client/issues/1328)
+* special ability Tradition (Tsatuara-Anhängerinnen) is in wrong group ([6669352](https://github.com/elyukai/optolith-client/commit/6669352d06c3687a9793eb69ea0018915b865212)), closes [#1137](https://github.com/elyukai/optolith-client/issues/1137)
+* too large PDF output when using a sheet background ([9cb2658](https://github.com/elyukai/optolith-client/commit/9cb26586f3a5026d06f41801d4bbf714631d06a4)), closes [#1094](https://github.com/elyukai/optolith-client/issues/1094)
+* weight column in inventory shows wrong weight in English ([6ba99f2](https://github.com/elyukai/optolith-client/commit/6ba99f2f4610e8a26d1703d978738a907f26bd92)), closes [elyukai/optolith-client#1329](https://github.com/elyukai/optolith-client/issues/1329)
+
 ## [1.5.0-alpha.5](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.4...v1.5.0-alpha.5) (2022-01-27)
 
 
