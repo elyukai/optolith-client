@@ -1,9 +1,8 @@
 import { notEquals } from "../../../Data/Eq"
 import { flip, ident, join, thrush } from "../../../Data/Function"
-import { fmap } from "../../../Data/Functor"
 import { over } from "../../../Data/Lens"
 import { consF, foldr, isList, sdelete } from "../../../Data/List"
-import { elemF, fromMaybe, isNothing, Just, Nothing } from "../../../Data/Maybe"
+import { elemF, isNothing, Just, Nothing } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject"
@@ -12,16 +11,14 @@ import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from 
 import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependency"
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement"
 import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement"
-import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement"
+import { PrimaryAttributeType, RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement"
 import { SocialPrerequisite } from "../../Models/Wiki/prerequisites/SocialPrerequisite"
 import { AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
 import { getCategoryById } from "../IDUtils"
 import { pipe } from "../pipe"
-import { getPrimaryAttributeId } from "../primaryAttributeUtils"
 import { addActivatableDependency, addActivatableSkillDependency, addAttributeDependency, addSkillDependency } from "./addDependencyUtils"
 import { removeActivatableDependency, removeActivatableSkillDependency, removeAttributeDependency, removeSkillDependency } from "./removeDependencyUtils"
 
-const HA = HeroModel.A
 const HL = HeroModelL
 const RAA = RequireActivatable.A
 const RPAA = RequirePrimaryAttribute.A
@@ -87,15 +84,6 @@ const putActivatableDependency =
              (id)
   }
 
-const putPrimaryAttributeDependency =
-  (f: ModifyAttributeDependency) =>
-  (req: Record<RequirePrimaryAttribute>) =>
-  (state: HeroModelRecord): HeroModelRecord =>
-    fromMaybe (state)
-              (fmap ((x: string) => f (RPAA.value (req)) (x) (state))
-                    (getPrimaryAttributeId (HA.specialAbilities (state))
-                                           (RPAA.type (req))))
-
 const getMatchingIncreasableModifier =
   (f: ModifyAttributeDependency) =>
   (g: ModifySkillDependency) =>
@@ -154,6 +142,27 @@ const modifySocialDependency: (isToAdd: boolean) =>
   isToAdd => x => over (HL.socialStatusDependencies)
                        ((isToAdd ? consF : sdelete) (SocialPrerequisite.A.value (x)))
 
+const modifyPrimaryAttributeDependency = (
+  isToAdd: boolean,
+  sourceId: string,
+  d: Record<RequirePrimaryAttribute>,
+  state: HeroModelRecord
+) =>
+    over (RPAA.type (d) === PrimaryAttributeType.Blessed
+           ? HL.blessedPrimaryAttributeDependencies
+           : HL.magicalPrimaryAttributeDependencies)
+         (isToAdd
+           ? old_ds => [ ...old_ds, { sourceIdentifier: sourceId, minValue: RPAA.value (d) } ]
+           : old_ds => {
+             const index = old_ds.findIndex (
+               ({ sourceIdentifier, minValue }) =>
+                 sourceIdentifier === sourceId && minValue === RPAA.value (d)
+             )
+
+             return [ ...old_ds.slice (0, index), ...old_ds.slice (index + 1) ]
+           })
+         (state)
+
 const modifyDependencies =
   (isToAdd: boolean) =>
   (modifyAttributeDependency: ModifyAttributeDependency) =>
@@ -163,8 +172,7 @@ const modifyDependencies =
   (sourceId: string) =>
     flip (foldr ((x: AllRequirements): ident<Record<HeroModel>> => {
                   if (RequirePrimaryAttribute.is (x)) {
-                    return putPrimaryAttributeDependency (modifyAttributeDependency)
-                                                          (x)
+                    return state => modifyPrimaryAttributeDependency (isToAdd, sourceId, x, state)
                   }
                   else if (RequireIncreasable.is (x)) {
                     return putIncreasableDependency (modifyAttributeDependency)

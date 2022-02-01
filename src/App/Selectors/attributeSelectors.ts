@@ -116,19 +116,27 @@ const getAttributeMinimum =
   (added: Tuple<[number, number, number]>) =>
   (mblessed_primary_attr: Maybe<Record<AttributeCombined>>) =>
   (mhighest_magical_primary_attr: Maybe<Record<AttributeCombined>>) =>
-  (hero_entry: Record<AttributeDependent>): number =>
-    maximum (List<number> (
+  (hero_entry: Record<AttributeDependent>): number => {
+    const isConstitution = AtDA.id (hero_entry) === AttrId.Constitution
+
+    const isHighestMagicalPrimaryAttribute =
+      Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mhighest_magical_primary_attr))
+
+    const isBlessedPrimaryAttribute =
+      Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mblessed_primary_attr))
+
+    const blessedPrimaryAttributeDependencies = HA.blessedPrimaryAttributeDependencies (hero)
+
+    const magicalPrimaryAttributeDependencies = HA.magicalPrimaryAttributeDependencies (hero)
+
+    return maximum (List<number> (
               ...flattenDependencies (wiki) (hero) (AtDA.dependencies (hero_entry)),
-              ...(
-                AtDA.id (hero_entry) === AttrId.Constitution
-                ? List (sel1 (added))
-                : List<number> ()
-              ),
-              ...(Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mhighest_magical_primary_attr))
-                ? List (sel2 (added))
+              ...(isConstitution ? List (sel1 (added)) : List<number> ()),
+              ...(isHighestMagicalPrimaryAttribute
+                ? List (sel2 (added), ...magicalPrimaryAttributeDependencies.map (x => x.minValue))
                 : List<number> ()),
-              ...(Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mblessed_primary_attr))
-                ? List (sel3 (added))
+              ...(isBlessedPrimaryAttribute
+                ? List (sel3 (added), ...blessedPrimaryAttributeDependencies.map (x => x.minValue))
                 : List<number> ()),
               fromMaybe (8)
                         (getSkillCheckAttributeMinimum (
@@ -143,6 +151,7 @@ const getAttributeMinimum =
                           AtDA.id (hero_entry),
                         ))
             ))
+  }
 
 const getAddedEnergies = createMaybeSelector (
   getHeroProp,

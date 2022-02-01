@@ -72,6 +72,10 @@ export interface HeroModel {
   skillStyleDependencies: List<Record<StyleDependency>>
   socialStatusDependencies: List<SocialStatusId>
   transferredUnfamiliarSpells: List<Record<TransferUnfamiliar>>
+  blessedPrimaryAttributeDependencies:
+    readonly Readonly<{ sourceIdentifier: string; minValue: number }>[]
+  magicalPrimaryAttributeDependencies:
+    readonly Readonly<{ sourceIdentifier: string; minValue: number }>[]
   skillCheckAttributeCache: SkillCheckAttributeCache
 }
 
@@ -127,6 +131,8 @@ export const HeroModel: RecordCreator<HeroModel> =
                 skillStyleDependencies: List (),
                 socialStatusDependencies: List (),
                 transferredUnfamiliarSpells: List (),
+                blessedPrimaryAttributeDependencies: [],
+                magicalPrimaryAttributeDependencies: [],
                 skillCheckAttributeCache: OrderedMap.empty,
               })
 
@@ -186,5 +192,7 @@ export const getInitialHeroObject =
       skillStyleDependencies: Nothing,
       socialStatusDependencies: Nothing,
       transferredUnfamiliarSpells: Nothing,
+      blessedPrimaryAttributeDependencies: [],
+      magicalPrimaryAttributeDependencies: [],
       skillCheckAttributeCache: Nothing,
     })

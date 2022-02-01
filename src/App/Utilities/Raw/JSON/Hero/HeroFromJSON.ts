@@ -301,6 +301,8 @@ const createHeroObject = (staticData: StaticDataRecord) => (hero: Raw.RawHero): 
     skillStyleDependencies: Nothing,
     socialStatusDependencies: Nothing,
     transferredUnfamiliarSpells: Nothing,
+    blessedPrimaryAttributeDependencies: [],
+    magicalPrimaryAttributeDependencies: [],
     skillCheckAttributeCache: Nothing,
   })
 
