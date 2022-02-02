@@ -152,14 +152,14 @@ const modifyPrimaryAttributeDependency = (
            ? HL.blessedPrimaryAttributeDependencies
            : HL.magicalPrimaryAttributeDependencies)
          (isToAdd
-           ? old_ds => [ ...old_ds, { sourceIdentifier: sourceId, minValue: RPAA.value (d) } ]
+           ? old_ds => old_ds.append ({ sourceIdentifier: sourceId, minValue: RPAA.value (d) })
            : old_ds => {
              const index = old_ds.findIndex (
                ({ sourceIdentifier, minValue }) =>
                  sourceIdentifier === sourceId && minValue === RPAA.value (d)
              )
 
-             return [ ...old_ds.slice (0, index), ...old_ds.slice (index + 1) ]
+             return old_ds.deleteAt (index)
            })
          (state)
 

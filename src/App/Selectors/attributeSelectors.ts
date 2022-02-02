@@ -129,28 +129,30 @@ const getAttributeMinimum =
 
     const magicalPrimaryAttributeDependencies = HA.magicalPrimaryAttributeDependencies (hero)
 
-    return maximum (List<number> (
-              ...flattenDependencies (wiki) (hero) (AtDA.dependencies (hero_entry)),
-              ...(isConstitution ? List (sel1 (added)) : List<number> ()),
-              ...(isHighestMagicalPrimaryAttribute
-                ? List (sel2 (added), ...magicalPrimaryAttributeDependencies.map (x => x.minValue))
-                : List<number> ()),
-              ...(isBlessedPrimaryAttribute
-                ? List (sel3 (added), ...blessedPrimaryAttributeDependencies.map (x => x.minValue))
-                : List<number> ()),
-              fromMaybe (8)
-                        (getSkillCheckAttributeMinimum (
-                          SDA.skills (wiki),
-                          SDA.spells (wiki),
-                          SDA.liturgicalChants (wiki),
-                          HA.attributes (hero),
-                          HA.skills (hero),
-                          HA.spells (hero),
-                          HA.liturgicalChants (hero),
-                          HA.skillCheckAttributeCache (hero),
-                          AtDA.id (hero_entry),
-                        ))
-            ))
+    const maximumValues = [
+      ...flattenDependencies (wiki) (hero) (AtDA.dependencies (hero_entry)),
+      ...(isConstitution ? [ sel1 (added) ] : []),
+      ...(isHighestMagicalPrimaryAttribute
+        ? [ sel2 (added), ...magicalPrimaryAttributeDependencies.map (x => x.minValue) ]
+        : []),
+      ...(isBlessedPrimaryAttribute
+        ? [ sel3 (added), ...blessedPrimaryAttributeDependencies.map (x => x.minValue) ]
+        : []),
+      fromMaybe (8)
+                (getSkillCheckAttributeMinimum (
+                  SDA.skills (wiki),
+                  SDA.spells (wiki),
+                  SDA.liturgicalChants (wiki),
+                  HA.attributes (hero),
+                  HA.skills (hero),
+                  HA.spells (hero),
+                  HA.liturgicalChants (hero),
+                  HA.skillCheckAttributeCache (hero),
+                  AtDA.id (hero_entry),
+                )),
+    ]
+
+    return maximumValues.maximum ()
   }
 
 const getAddedEnergies = createMaybeSelector (

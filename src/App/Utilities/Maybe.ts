@@ -1,4 +1,5 @@
 import { Just as OldJust, Maybe as OldMaybe, maybe as oldMaybe, Nothing as OldNothing } from "../../Data/Maybe"
+import "./Array"
 
 // type NothingValue = { readonly tag: "Nothing" }
 // type JustValue<T> = { readonly tag: "Just", readonly value: T }
