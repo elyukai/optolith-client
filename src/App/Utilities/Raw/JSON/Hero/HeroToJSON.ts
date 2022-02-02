@@ -123,6 +123,11 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
     items: toObjectWith
       ((obj: Record<Item>): RawCustomItem => {
         const {
+          id: itemId,
+          name,
+          gr,
+          amount,
+          isTemplateLocked,
           improvisedWeaponGroup,
           damageBonus,
           range,
@@ -148,22 +153,25 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
           damageDiceSides,
           reach,
           template,
-          isParryingWeapon: _isParryingWeapon,
+          isParryingWeapon,
           where,
-          isTwoHandedWeapon: _isTwoHandedWeapon,
+          isTwoHandedWeapon,
           loss,
-          forArmorZoneOnly: _forArmorZoneOnly,
-          addPenalties: _addPenalties,
+          forArmorZoneOnly,
+          addPenalties,
           armorType,
           price,
           weight,
-          ...other
         } = toObject (obj)
 
         type PNumNum = Pair<number, number>
 
         return {
-          ...other,
+          id: itemId,
+          name,
+          gr,
+          amount,
+          isTemplateLocked,
           weight: maybeToUndefined (weight),
           price: maybeToUndefined (price),
           at: maybeToUndefined (at),
@@ -209,6 +217,10 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
                                }
                              })),
           range: maybeToUndefined (fmap<List<number>, number[]> (List.toArray) (range)),
+          isParryingWeapon: gr === 1 || gr === 2 ? isParryingWeapon : undefined,
+          isTwoHandedWeapon: gr === 1 || gr === 2 ? isTwoHandedWeapon : undefined,
+          forArmorZoneOnly: gr === 3 ? forArmorZoneOnly : undefined,
+          addPenalties: gr === 3 ? addPenalties : undefined,
         }
       })
       (items (HA.belongings (hero))),
