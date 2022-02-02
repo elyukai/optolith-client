@@ -1,6 +1,7 @@
 import { List } from "../../../Data/List"
 import { Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault } from "../../../Data/Record"
+import { Range } from "../Hero/Item"
 
 export interface RangedWeapon {
   "@@name": "RangedWeapon"
@@ -12,7 +13,7 @@ export interface RangedWeapon {
   damageDiceSides: Maybe<number>
   damageFlat: Maybe<number>
   at: number
-  range: Maybe<List<number>>
+  range: Maybe<Range>
   bf: number
   loss: Maybe<number>
   weight: Maybe<number>

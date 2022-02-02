@@ -1,5 +1,3 @@
-import { fmap } from "../../Data/Functor"
-import { subscriptF } from "../../Data/List"
 import { elem, fromJust, isJust, maybe, Nothing } from "../../Data/Maybe"
 import { lookup } from "../../Data/OrderedMap"
 import { fromDefault, Record } from "../../Data/Record"
@@ -8,6 +6,7 @@ import { CombatTechniqueGroupId } from "../Constants/Groups"
 import { CombatTechniqueId } from "../Constants/Ids"
 import { EditItem } from "../Models/Hero/EditItem"
 import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold"
+import { EditRange } from "../Models/Hero/heroTypeHelpers"
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique"
 import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { pipe, pipe_ } from "./pipe"
@@ -77,11 +76,10 @@ const EIA = EditItem.A
 const IEIVA = ItemEditorInputValidation.A
 const EPADTA = EditPrimaryAttributeDamageThreshold.A
 
-const validateRange = (index: 0 | 1 | 2) => pipe (
+const validateRange = (key: keyof EditRange) => pipe (
   EIA.range,
-  subscriptF (index),
-  fmap (isEmptyOr (isNaturalNumber)),
-  elem<boolean> (true)
+  range => range[key],
+  isEmptyOr (isNaturalNumber)
 )
 
 // Lances
@@ -198,9 +196,9 @@ export const validateItemEditorInput = (staticData: StaticDataRecord) =>
   const validPAMod = isEmptyOr (isInteger) (EIA.pa (item))
   const validPrice = isEmptyOr (isFloat) (EIA.price (item))
   const validPRO = isNaturalNumber (EIA.pro (item))
-  const validRange1 = validateRange (0) (item)
-  const validRange2 = validateRange (1) (item)
-  const validRange3 = validateRange (2) (item)
+  const validRange1 = validateRange ("close") (item)
+  const validRange2 = validateRange ("medium") (item)
+  const validRange3 = validateRange ("far") (item)
   const validStabilityMod = isEmptyOr (isInteger) (EIA.stabilityMod (item))
   const validWeight = isEmptyOr (isFloat) (EIA.weight (item))
 

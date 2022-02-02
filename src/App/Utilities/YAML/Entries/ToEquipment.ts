@@ -2,7 +2,7 @@
 import { ItemInfo, ItemL10n } from "../../../../../app/Database/Schema/Equipment/Equipment.l10n"
 import { Armor, CombinedWeapon, ItemUniv, MeleeWeapon, MundaneItem, RangedWeapon } from "../../../../../app/Database/Schema/Equipment/Equipment.univ"
 import { bindF, Right, second } from "../../../../Data/Either"
-import { fromArray, List } from "../../../../Data/List"
+import { fromArray } from "../../../../Data/List"
 import { Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
@@ -96,11 +96,11 @@ const toRangedItem = (univ : RangedWeapon) : Partial<ItemTemplate> => ({
                        damageDiceSides: Maybe (univ.damageDiceSides),
                        damageFlat: Maybe (univ.damageFlat),
                        length: Maybe (univ.length),
-                       range: Just (List (
-                         univ.closeRange,
-                         univ.mediumRange,
-                         univ.farRange
-                       )),
+                       range: Just ({
+                         close: univ.closeRange,
+                         medium: univ.mediumRange,
+                         far: univ.farRange,
+                       }),
                        reloadTime: Just (typeof univ.reloadTime === "object"
                                          ? fromArray (univ.reloadTime)
                                          : univ.reloadTime),

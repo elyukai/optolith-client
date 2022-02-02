@@ -20,6 +20,7 @@ import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { ndash } from "../../Utilities/Chars"
 import { localizeNumber, localizeSize, localizeWeight, translate, translateP } from "../../Utilities/I18n"
 import { convertPrimaryAttributeToArray, getDamageStr } from "../../Utilities/ItemUtils"
+import { toNewMaybe } from "../../Utilities/Maybe"
 import { sign } from "../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils"
@@ -288,7 +289,7 @@ export const WikiEquipmentInfo: React.FC<WikiEquipmentInfoProps> = props => {
               </tr>
               <tr>
                 <td>{translate (staticData) ("inlinewiki.equipment.range")}</td>
-                <td>{renderMaybeWith (intercalate ("/")) (range)}</td>
+                <td>{toNewMaybe (range).maybe ("", ({ close, medium, far }) => `${close}/${medium}/${far}`)}</td>
               </tr>
               <tr>
                 <td>{translate (staticData) ("inlinewiki.equipment.ammunition")}</td>

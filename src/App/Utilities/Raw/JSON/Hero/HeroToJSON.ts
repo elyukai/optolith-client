@@ -1,5 +1,5 @@
 import { ident } from "../../../../../Data/Function"
-import { fmap, fmapF } from "../../../../../Data/Functor"
+import { fmapF } from "../../../../../Data/Functor"
 import { isList, List } from "../../../../../Data/List"
 import { elem, maybeToUndefined } from "../../../../../Data/Maybe"
 import { gt } from "../../../../../Data/Num"
@@ -216,7 +216,8 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
                                                                               (threshold),
                                }
                              })),
-          range: maybeToUndefined (fmap<List<number>, number[]> (List.toArray) (range)),
+          range: maybeToUndefined (fmapF (range)
+                                         (({ close, medium, far }) => [ close, medium, far ])),
           isParryingWeapon: gr === 1 || gr === 2 ? isParryingWeapon : undefined,
           isTwoHandedWeapon: gr === 1 || gr === 2 ? isTwoHandedWeapon : undefined,
           forArmorZoneOnly: gr === 3 ? forArmorZoneOnly : undefined,

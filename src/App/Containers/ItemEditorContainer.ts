@@ -6,6 +6,7 @@ import * as EquipmentActions from "../Actions/EquipmentActions"
 import { AttrId } from "../Constants/Ids"
 import { AppStateRecord } from "../Models/AppState"
 import { HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Range } from "../Models/Hero/Item"
 import { getSortedItemTemplates } from "../Selectors/equipmentSelectors"
 import { getIsItemCreation, getItemEditorInstance, getWikiAttributes, getWikiCombatTechniques } from "../Selectors/stateSelectors"
 import { ItemEditor, ItemEditorDispatchProps, ItemEditorOwnProps, ItemEditorStateProps } from "../Views/Equipment/ItemEditor"
@@ -92,8 +93,8 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): ItemEditorDispatchProps =>
   setStructurePoints (value: string): void {
     dispatch (EquipmentActions.setStructurePoints (value))
   },
-  setRange (index: 1 | 2 | 3): (value: string) => void {
-    return value => dispatch (EquipmentActions.setRange (value, index))
+  setRange (key: keyof Range): (value: string) => void {
+    return value => dispatch (EquipmentActions.setRange (value, key))
   },
   setReloadTime (value: string): void {
     dispatch (EquipmentActions.setReloadTime (value))

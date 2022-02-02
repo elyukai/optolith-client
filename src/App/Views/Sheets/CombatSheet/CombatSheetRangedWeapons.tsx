@@ -101,7 +101,7 @@ export const CombatSheetRangedWeapons: React.FC<Props> = props => {
                       {renderMaybe (RWA.ammunition (e))}
                     </td>
                     <td className="range">
-                      {renderMaybeWith (intercalate ("/")) (RWA.range (e))}
+                      {toNewMaybe (RWA.range (e)).maybe ("", ({ close, medium, far }) => `${close}/${medium}/${far}`)}
                     </td>
                     <td className="bf">{RWA.bf (e)}</td>
                     <td className="loss">

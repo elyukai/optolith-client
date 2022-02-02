@@ -9,7 +9,7 @@ import { AttrId, MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Cons
 import { EquipmentSortOptions } from "../Models/Config"
 import { EditItem } from "../Models/Hero/EditItem"
 import { HitZoneArmor } from "../Models/Hero/HitZoneArmor"
-import { Item } from "../Models/Hero/Item"
+import { Item, Range } from "../Models/Hero/Item"
 import { ItemTemplate } from "../Models/Wiki/ItemTemplate"
 import { getHitZoneArmorsState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from "../Selectors/stateSelectors"
 import { getNewId, prefixId } from "../Utilities/IDUtils"
@@ -512,15 +512,15 @@ export interface SetRangeAction {
   type: ActionTypes.SET_ITEM_RANGE
   payload: {
     value: string
-    index: number
+    key: keyof Range
   }
 }
 
-export const setRange = (value: string, index: number): SetRangeAction => ({
+export const setRange = (value: string, key: keyof Range): SetRangeAction => ({
   type: ActionTypes.SET_ITEM_RANGE,
   payload: {
     value,
-    index,
+    key,
   },
 })
 

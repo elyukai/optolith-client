@@ -7,6 +7,7 @@ import { Pair } from "../../../Data/Tuple"
 import { AttrId } from "../../Constants/Ids"
 import { EditItem } from "../../Models/Hero/EditItem"
 import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Range } from "../../Models/Hero/Item"
 import { Attribute } from "../../Models/Wiki/Attribute"
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
@@ -57,7 +58,7 @@ export interface ItemEditorDispatchProps {
   setReach (id: number): void
   setLength (value: string): void
   setStructurePoints (value: string): void
-  setRange (index: 1 | 2 | 3): (value: string) => void
+  setRange (key: keyof Range): (value: string) => void
   setReloadTime (value: string): void
   setAmmunition (id: string): void
   setProtection (value: string): void

@@ -34,7 +34,7 @@ export interface ItemTemplate {
   pa: Maybe<number>
   price: Maybe<number>
   pro: Maybe<number>
-  range: Maybe<List<number>>
+  range: Maybe<Readonly<{ close: number; medium: number; far: number }>>
   reach: Maybe<number>
   reloadTime: Maybe<number | List<number>>
   stabilityMod: Maybe<number>

@@ -691,9 +691,9 @@ function rangedWeaponForXML (state: AppStateRecord): (weapon: Record<Item>) => s
     let rw3 = 0
     let reloadTime = 0
     if (isJust (weapon.values.range)) {
-      rw1 = fromMaybe (0) (List.subscript (weapon.values.range.value) (0))
-      rw2 = fromMaybe (0) (List.subscript (weapon.values.range.value) (1))
-      rw3 = fromMaybe (0) (List.subscript (weapon.values.range.value) (2))
+      rw1 = weapon.values.range.value.close
+      rw2 = weapon.values.range.value.medium
+      rw3 = weapon.values.range.value.far
     }
     if (isJust (weapon.values.reloadTime)) {
       // Prinzipiell gibt es Waffen mit mehreren Ladezeiten. Dies ist ein Sonderfall den wir erstmal ignorieren

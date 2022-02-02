@@ -1,4 +1,3 @@
-import { List } from "../../../Data/List"
 import { isJust, Just, Nothing } from "../../../Data/Maybe"
 import { fromDefault, makeLenses, Record } from "../../../Data/Record"
 import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold"
@@ -46,7 +45,7 @@ export const EditItem =
                 pa: "",
                 price: "",
                 pro: "",
-                range: List ("", "", ""),
+                range: { close: "", medium: "", far: "" },
                 reloadTime: "",
                 stp: "",
                 weight: "",
