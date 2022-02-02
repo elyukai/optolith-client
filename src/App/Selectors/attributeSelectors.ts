@@ -129,7 +129,7 @@ const getAttributeMinimum =
 
     const magicalPrimaryAttributeDependencies = HA.magicalPrimaryAttributeDependencies (hero)
 
-    const maximumValues = [
+    const minimumValues = [
       ...flattenDependencies (wiki) (hero) (AtDA.dependencies (hero_entry)),
       ...(isConstitution ? [ sel1 (added) ] : []),
       ...(isHighestMagicalPrimaryAttribute
@@ -152,7 +152,7 @@ const getAttributeMinimum =
                 )),
     ]
 
-    return maximumValues.maximum ()
+    return minimumValues.maximum ()
   }
 
 const getAddedEnergies = createMaybeSelector (
