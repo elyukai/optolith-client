@@ -45,7 +45,6 @@
     {
       "label": "watch",
       "dependsOn": ["tsc watch", "webpack watch"],
-
       "group": {
         "kind": "build",
         "isDefault": true
@@ -58,6 +57,10 @@
     {
       "label": "create release",
       "command": "npm run release:main"
+    },
+    {
+      "label": "git push --follow-tags",
+      "command": "git push --follow-tags"
     }
   ]
 }
