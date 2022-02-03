@@ -9,14 +9,12 @@ import { not, notP } from "../../../Data/Bool"
 import { equals } from "../../../Data/Eq"
 import { flip, Functn, thrush } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
-import { all, any, countWith, elem, elemF, filter, find, flength, foldl, isList, List, mapByIdKeyMap, notElemF, notNull, sdelete } from "../../../Data/List"
+import { all, any, countWith, elem, filter, find, flength, foldl, isList, List, mapByIdKeyMap, notElemF, notNull, sdelete } from "../../../Data/List"
 import { alt, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, or, sum } from "../../../Data/Maybe"
 import { add, gt, gte, inc, lt, lte, max, min, subtract, subtractBy } from "../../../Data/Num"
 import { elems, isOrderedMap, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
 import { size } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
-import { Tuple } from "../../../Data/Tuple"
-import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select"
 import { MagicalGroup, SpecialAbilityGroup } from "../../Constants/Groups"
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -40,15 +38,17 @@ import { Spell } from "../../Models/Wiki/Spell"
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable, EntryWithCategory, LevelAwarePrerequisites, PrerequisitesWithIds, SID } from "../../Models/Wiki/wikiTypeHelpers"
+import { MatchingScriptAndLanguageRelated } from "../../Selectors/activatableSelectors"
 import { countActiveGroupEntries } from "../entryGroupUtils"
 import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils"
 import { prefixSA } from "../IDUtils"
 import { isOwnTradition } from "../Increasable/liturgicalChantUtils"
+import { ensure as newEnsure, toNewMaybe } from "../Maybe"
 import { pipe, pipe_ } from "../pipe"
 import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites"
 import { setPrerequisiteId } from "../Prerequisites/setPrerequisiteId"
 import { validateLevel, validateObject } from "../Prerequisites/validatePrerequisitesUtils"
-import { isBoolean, misNumberM, misStringM } from "../typeCheckUtils"
+import { isBoolean, isNumber, misNumberM, misStringM } from "../typeCheckUtils"
 import { getWikiEntry, isActivatableWikiEntry } from "../WikiUtils"
 import { countActiveSkillEntries } from "./activatableSkillUtils"
 import { isStyleValidToRemove } from "./ExtendedStyleUtils"
@@ -82,7 +82,11 @@ const TUA = TransferUnfamiliar.A
 const isRemovalDisabledEntrySpecific =
   (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
-  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
+  ({
+    isEntryRequiringMatchingScriptAndLangActive,
+    scriptsWithMatchingLanguages,
+    languagesWithMatchingScripts,
+  }: MatchingScriptAndLanguageRelated) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActivatableDependent>) =>
 
@@ -152,35 +156,19 @@ const isRemovalDisabledEntrySpecific =
       }
 
       case SpecialAbilityId.literacy: {
-        if (sel1 (matching_script_and_lang_related)) {
-          const active_matching_scripts = sel2 (matching_script_and_lang_related)
-
-          return flength (active_matching_scripts) === 1
-            && pipe_ (
-              AOWIA.sid (active),
-              misNumberM,
-              maybe (false) (elemF (active_matching_scripts))
-            )
-        }
-        else {
-          return false
-        }
+        return isEntryRequiringMatchingScriptAndLangActive
+          && scriptsWithMatchingLanguages.length < 2
+          && toNewMaybe (AOWIA.sid (active))
+              .bind (sid => newEnsure (sid, isNumber))
+              .maybe (false, sid => scriptsWithMatchingLanguages.includes (sid))
       }
 
       case SpecialAbilityId.language: {
-        if (sel1 (matching_script_and_lang_related)) {
-          const active_matching_languages = sel3 (matching_script_and_lang_related)
-
-          return flength (active_matching_languages) === 1
-            && pipe_ (
-              AOWIA.sid (active),
-              misNumberM,
-              maybe (false) (elemF (active_matching_languages))
-            )
-        }
-        else {
-          return false
-        }
+        return isEntryRequiringMatchingScriptAndLangActive
+          && languagesWithMatchingScripts.length < 2
+          && toNewMaybe (AOWIA.sid (active))
+              .bind (sid => newEnsure (sid, isNumber))
+              .maybe (false, sid => languagesWithMatchingScripts.includes (sid))
       }
 
       case SpecialAbilityId.propertyKnowledge:
@@ -528,6 +516,11 @@ export const getSermonsAndVisionsCount =
 const getEntrySpecificMinimumLevel =
   (staticData: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
+  ({
+    isEntryRequiringMatchingScriptAndLangActive,
+    scriptsWithMatchingLanguages,
+    languagesWithMatchingScripts,
+  }: MatchingScriptAndLanguageRelated) =>
   (x: Record<ActiveObjectWithId>): Maybe<number> => {
     switch (AOWIA.id (x)) {
       case AdvantageId.largeSpellSelection:
@@ -550,6 +543,26 @@ const getEntrySpecificMinimumLevel =
           getSermonsAndVisionsCount (staticData) (hero),
           getMinLevelForIncreaseEntry (3)
         )
+
+      case SpecialAbilityId.literacy: {
+        return isEntryRequiringMatchingScriptAndLangActive
+          && scriptsWithMatchingLanguages.length < 2
+          && toNewMaybe (AOWIA.sid (x))
+              .bind (sid => newEnsure (sid, isNumber))
+              .maybe (false, sid => scriptsWithMatchingLanguages.includes (sid))
+          ? Just (3)
+          : Nothing
+      }
+
+      case SpecialAbilityId.language: {
+        return isEntryRequiringMatchingScriptAndLangActive
+          && languagesWithMatchingScripts.length < 2
+          && toNewMaybe (AOWIA.sid (x))
+              .bind (sid => newEnsure (sid, isNumber))
+              .maybe (false, sid => languagesWithMatchingScripts.includes (sid))
+          ? Just (3)
+          : Nothing
+      }
 
       case SpecialAbilityId.imitationszauberei:
         return pipe_ (
@@ -634,13 +647,15 @@ const adjustMinimumLevelByDependencies =
 export const getMinTier =
   (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
+  (matchingScriptAndLanguageRelated: MatchingScriptAndLanguageRelated) =>
   (entry: Record<ActiveObjectWithId>) =>
   (entry_dependencies: List<ActivatableDependency>): Maybe<number> =>
     adjustMinimumLevelByDependencies (entry)
                                      (entry_dependencies)
                                      (getEntrySpecificMinimumLevel (wiki)
-                                                                   (hero)
-                                                                   (entry))
+                                                                  (hero)
+                                                                  (matchingScriptAndLanguageRelated)
+                                                                  (entry))
 
 const minMaybe: (mx: Maybe<number>) => (my: Maybe<number>) => Maybe<number> =
   mx => my => isNothing (mx) ? my : isNothing (my) ? mx : Just (min (fromJust (mx)) (fromJust (my)))
@@ -676,7 +691,7 @@ export const getMaxTier =
 export const getIsRemovalOrChangeDisabled =
   (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
-  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
+  (matchingScriptAndLanguageRelated: MatchingScriptAndLanguageRelated) =>
   (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableActivationValidation>> =>
     pipe (
            getWikiEntry (wiki),
@@ -692,6 +707,7 @@ export const getIsRemovalOrChangeDisabled =
                  fmap ((hero_entry: Record<ActivatableDependent>) => {
                    const minimum_level = getMinTier (wiki)
                                                     (hero)
+                                                    (matchingScriptAndLanguageRelated)
                                                     (entry)
                                                     (ADA.dependencies (hero_entry))
 
@@ -718,7 +734,7 @@ export const getIsRemovalOrChangeDisabled =
                        // remove
                        || isRemovalDisabledEntrySpecific (wiki)
                                                          (hero)
-                                                         (matching_script_and_lang_related)
+                                                         (matchingScriptAndLanguageRelated)
                                                          (wiki_entry)
                                                          (hero_entry)
                                                          (entry),

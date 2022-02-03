@@ -461,8 +461,14 @@ export const toNewMaybe = <T>(x: OldMaybe<T>): Maybe<T> =>
 declare global {
   interface Array<T> {
     mapMaybe<U>(f: (x: T) => Maybe<U>): U[]
-    catMaybes<T extends Maybe<any>, U extends (T extends Just<infer I> ? I : never)>(this: T[]): U[]
+    catMaybes<T extends Maybe<any>, U extends (T extends Just<infer I> ? I : never)>(): U[]
     mapM<U>(f: (x: T) => Maybe<U>): Maybe<U[]>
+  }
+
+  interface ReadonlyArray<T> {
+    mapMaybe<U>(f: (x: T) => Maybe<U>): readonly U[]
+    catMaybes<T extends Maybe<any>, U extends (T extends Just<infer I> ? I : never)>(): readonly U[]
+    mapM<U>(f: (x: T) => Maybe<U>): Maybe<readonly U[]>
   }
 }
 

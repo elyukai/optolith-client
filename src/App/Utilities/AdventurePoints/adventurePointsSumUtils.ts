@@ -7,7 +7,7 @@ import { add, multiply } from "../../../Data/Num"
 import { foldr, lookupF } from "../../../Data/OrderedMap"
 import { OrderedSet } from "../../../Data/OrderedSet"
 import { Record } from "../../../Data/Record"
-import { bimap, first, fst, Pair, second, snd, Tuple } from "../../../Data/Tuple"
+import { bimap, first, fst, Pair, second, snd } from "../../../Data/Tuple"
 import { curryN3 } from "../../../Data/Tuple/Curry"
 import { Category } from "../../Constants/Categories"
 import { icFromJs } from "../../Constants/Groups"
@@ -31,6 +31,7 @@ import { Skill } from "../../Models/Wiki/Skill"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { Spell } from "../../Models/Wiki/Spell"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { MatchingScriptAndLanguageRelated } from "../../Selectors/activatableSelectors"
 import { getAllActiveByCategory } from "../Activatable/activatableActiveUtils"
 import { getAPForActivatation, getAPForRange } from "../IC.gen"
 import { pipe, pipe_ } from "../pipe"
@@ -309,7 +310,7 @@ export const getAPObject =
   (staticData: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
   (automatic_advantages: List<string>) =>
-  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) => {
+  (matchingScriptAndLanguageRelated: MatchingScriptAndLanguageRelated) => {
     const total = HA.adventurePointsTotal (hero)
 
     const spentOnAttributes = getAPSpentForAttributes (HA.attributes (hero))
@@ -347,7 +348,7 @@ export const getAPObject =
                                     (getAllActiveByCategory (Category.SPECIAL_ABILITIES)
                                                             (false)
                                                             (automatic_advantages)
-                                                            (matching_script_and_lang_related)
+                                                            (matchingScriptAndLanguageRelated)
                                                             (staticData)
                                                             (hero))
 
@@ -357,7 +358,7 @@ export const getAPObject =
                                 (getAllActiveByCategory (Category.ADVANTAGES)
                                                         (false)
                                                         (automatic_advantages)
-                                                        (matching_script_and_lang_related)
+                                                        (matchingScriptAndLanguageRelated)
                                                         (staticData)
                                                         (hero))
 
@@ -367,7 +368,7 @@ export const getAPObject =
                                        (getAllActiveByCategory (Category.ADVANTAGES)
                                                                (false)
                                                                (automatic_advantages)
-                                                               (matching_script_and_lang_related)
+                                                               (matchingScriptAndLanguageRelated)
                                                                (staticData)
                                                                (hero))
 
@@ -377,7 +378,7 @@ export const getAPObject =
                                         (getAllActiveByCategory (Category.ADVANTAGES)
                                                                 (false)
                                                                 (automatic_advantages)
-                                                                (matching_script_and_lang_related)
+                                                                (matchingScriptAndLanguageRelated)
                                                                 (staticData)
                                                                 (hero))
 
@@ -387,7 +388,7 @@ export const getAPObject =
                                     (getAllActiveByCategory (Category.DISADVANTAGES)
                                                             (false)
                                                             (automatic_advantages)
-                                                            (matching_script_and_lang_related)
+                                                            (matchingScriptAndLanguageRelated)
                                                             (staticData)
                                                             (hero))
 
@@ -397,7 +398,7 @@ export const getAPObject =
                                           (getAllActiveByCategory (Category.DISADVANTAGES)
                                                                   (false)
                                                                   (automatic_advantages)
-                                                                  (matching_script_and_lang_related)
+                                                                  (matchingScriptAndLanguageRelated)
                                                                   (staticData)
                                                                   (hero))
 
@@ -407,7 +408,7 @@ export const getAPObject =
                                           (getAllActiveByCategory (Category.DISADVANTAGES)
                                                                   (false)
                                                                   (automatic_advantages)
-                                                                  (matching_script_and_lang_related)
+                                                                  (matchingScriptAndLanguageRelated)
                                                                   (staticData)
                                                                   (hero))
 

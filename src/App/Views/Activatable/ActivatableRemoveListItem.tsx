@@ -117,7 +117,7 @@ const ActivatableRemoveListItem: React.FC<ActivatableRemoveListItemProps> = prop
                    }))
             : levelOptions
 
-        return flength (levelOptions) > 1
+        return flength (levelOptionsWithMotherTongue) > 1
           ? (
             <Dropdown
               className="tiers"

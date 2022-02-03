@@ -18,7 +18,6 @@ import { add, gt, gte, inc, multiply } from "../../../Data/Num"
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap"
 import { Record, RecordI } from "../../../Data/Record"
 import { filterMapListT, filterT, mapT } from "../../../Data/Transducer"
-import { Tuple } from "../../../Data/Tuple"
 import { traceShowId } from "../../../Debug/Trace"
 import { Aspect, CombatTechniqueGroupId, MagicalTradition, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
 import { AdvantageId, DisadvantageId, SkillId, SpecialAbilityId } from "../../Constants/Ids.gen"
@@ -39,6 +38,7 @@ import { Application } from "../../Models/Wiki/sub/Application"
 import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
+import { MatchingScriptAndLanguageRelated } from "../../Selectors/activatableSelectors"
 import { composeT } from "../compose"
 import { filterUnfamiliar } from "../Dependencies/TransferredUnfamiliarUtils"
 import { countActiveGroupEntries } from "../entryGroupUtils"
@@ -892,7 +892,7 @@ export const getInactiveView =
   (hero: HeroModelRecord) =>
   (automatic_advantages: List<string>) =>
   (required_apply_to_mag_actions: boolean) =>
-  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
+  (matchingScriptAndLanguageRelated: MatchingScriptAndLanguageRelated) =>
   (adventure_points: Record<AdventurePointsCategories>) =>
   (validExtendedSpecialAbilities: List<string>) =>
   (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
@@ -915,7 +915,7 @@ export const getInactiveView =
                                           (hero)
                                           (required_apply_to_mag_actions)
                                           (validExtendedSpecialAbilities)
-                                          (matching_script_and_lang_related)
+                                          (matchingScriptAndLanguageRelated)
                                           (wiki_entry)
                                           (mhero_entry)
                                           (max_level)

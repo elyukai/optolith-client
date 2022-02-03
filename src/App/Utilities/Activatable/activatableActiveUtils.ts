@@ -9,10 +9,10 @@
 
 import { fmap } from "../../../Data/Functor"
 import { List } from "../../../Data/List"
-import { liftM2, liftM4, mapMaybe, Maybe } from "../../../Data/Maybe"
+import { bind, liftM2, mapMaybe, Maybe } from "../../../Data/Maybe"
 import { lookup, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { fst, Pair, snd, Tuple } from "../../../Data/Tuple"
+import { fst, Pair, snd } from "../../../Data/Tuple"
 import { ActivatableCategory, Category } from "../../Constants/Categories"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
@@ -25,7 +25,8 @@ import { Advantage } from "../../Models/Wiki/Advantage"
 import { Disadvantage } from "../../Models/Wiki/Disadvantage"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
-import { WikiEntryByCategory, WikiEntryRecordByCategory } from "../../Models/Wiki/wikiTypeHelpers"
+import { WikiEntryByCategory } from "../../Models/Wiki/wikiTypeHelpers"
+import { MatchingScriptAndLanguageRelated } from "../../Selectors/activatableSelectors"
 import { convertPerTierCostToFinalCost, getCost } from "../AdventurePoints/activatableCostUtils"
 import { pipe_ } from "../pipe"
 import { getIsRemovalOrChangeDisabled } from "./activatableActiveValidationUtils"
@@ -121,11 +122,9 @@ export const getAllActiveByCategory =
   (category: T) =>
   (addLevelToName: boolean) =>
   (automatic_advantages: List<string>) =>
-  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
+  (matchingScriptAndLanguageRelated: MatchingScriptAndLanguageRelated) =>
   (staticData: StaticDataRecord) =>
   (hero: HeroModelRecord): List<Record<ActiveActivatable<WikiEntryByCategory[T]>>> => {
-    type GenericWikiEntry = WikiEntryRecordByCategory[T]
-
     const convertCost = convertPerTierCostToFinalCost (addLevelToName) (staticData)
 
     const wiki_slice = getActivatableWikiSliceByCategory (category) (staticData)
@@ -139,15 +138,15 @@ export const getAllActiveByCategory =
       mapMaybe ((active: Record<ActiveObjectWithId>): Entry => {
                  const current_id = ActiveObjectWithId.A.id (active)
 
-                 return liftM4 ((nameAndCost: Record<ActivatableNameCostSafeCost>) =>
-                                (wiki_entry: GenericWikiEntry) =>
-                                (hero_entry: Record<ActivatableDependent>) =>
+                 return bind (lookup (current_id) (wiki_slice)) (staticEntry =>
+                 bind (lookup (current_id) (hero_slice)) (characterEntry =>
+                  liftM2 ((nameAndCost: Record<ActivatableNameCostSafeCost>) =>
                                 (validation: Record<ActivatableActivationValidation>) =>
                                   ActiveActivatable ({
                                    nameAndCost,
                                    validation,
-                                   heroEntry: hero_entry,
-                                   wikiEntry: wiki_entry,
+                                   heroEntry: characterEntry,
+                                   wikiEntry: staticEntry,
                                   }))
                                (fmap (convertCost)
                                      (getNameCost (false)
@@ -155,12 +154,10 @@ export const getAllActiveByCategory =
                                                   (staticData)
                                                   (hero)
                                                   (active)))
-                               (lookup (current_id) (wiki_slice) as Maybe<GenericWikiEntry>)
-                               (lookup (current_id) (hero_slice))
                                (getIsRemovalOrChangeDisabled (staticData)
                                                              (hero)
-                                                             (matching_script_and_lang_related)
-                                                             (active)) as Entry
+                                                             (matchingScriptAndLanguageRelated)
+                                                             (active)) as Entry))
                })
     )
   }

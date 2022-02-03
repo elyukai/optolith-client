@@ -1,12 +1,10 @@
-import { equals } from "../../Data/Eq"
 import { flip, ident } from "../../Data/Function"
 import { fmap, fmapF } from "../../Data/Functor"
-import { any, consF, filter, filterMulti, find, foldr, intercalate, List, map, notElemF, nub } from "../../Data/List"
-import { bindF, elemF, ensure, fromMaybe, joinMaybeList, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe"
-import { insert, lookup, OrderedMap } from "../../Data/OrderedMap"
+import { consF, filter, filterMulti, foldr, intercalate, List, map, notElemF, toArray } from "../../Data/List"
+import { bindF, elemF, fromMaybe, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe"
+import { insert, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { member, OrderedSet } from "../../Data/OrderedSet"
 import { Record } from "../../Data/Record"
-import { fst, Pair, snd, Tuple } from "../../Data/Tuple"
 import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry"
 import { ActivatableCategory, Category } from "../Constants/Categories"
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../Constants/Ids"
@@ -36,11 +34,12 @@ import { createMapSelectorP } from "../Utilities/createMapSelector"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
 import { compareLocale } from "../Utilities/I18n"
+import { ensure, Nothing as NewNothing, Nullable, toNewMaybe } from "../Utilities/Maybe"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { mapCurrentHero, mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils"
 import { blessedSpecialAbilityGroups, combatSpecialAbilityGroups, generalSpecialAbilityGroups, magicalSpecialAbilityGroups } from "../Utilities/sheetUtils"
 import { comparingR, sortStrings } from "../Utilities/sortBy"
-import { misNumberM, misStringM } from "../Utilities/typeCheckUtils"
+import { isNumber, misStringM } from "../Utilities/typeCheckUtils"
 import { getCulture } from "./cultureSelectors"
 import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors"
 import { getProfession } from "./professionSelectors"
@@ -55,83 +54,118 @@ const ADA = ActivatableDependent.A
 const AOA = ActiveObject.A
 const SOA = SelectOption.A
 
-const getSelectOptions = pipe (bindF (SAA.select), joinMaybeList)
-const mapActiveObjects =
-  (sos: List<Record<SelectOption>>) =>
-    pipe (
-      fmap (ADA.active) as
-        (m: Maybe<Record<ActivatableDependent>>) => Maybe<List<Record<ActiveObject>>>,
-      joinMaybeList,
-      mapMaybe (pipe (AOA.sid, sid => find (pipe (SOA.id, elemF (sid))) (sos)))
-    )
+const getSelectOptions = (specialAbilityOpt: Maybe<Record<SpecialAbility>>) =>
+  toNewMaybe (specialAbilityOpt)
+    .bind (specialAbility => toNewMaybe (SAA.select (specialAbility)))
+    .maybe ([], toArray)
 
-export const getActiveScriptsAndLanguages = createMaybeSelector (
+const mapActiveObjects = (
+  selectOptions: readonly Record<SelectOption>[],
+  characterEntry: Maybe<Record<ActivatableDependent>>,
+  activeObjectPred: (activeObject: Record<ActiveObject>) => boolean
+): readonly Record<SelectOption>[] =>
+    toNewMaybe (characterEntry)
+      .map (ADA.active)
+      .maybe ([], toArray)
+      .mapMaybe (activeObject => {
+        const sid = AOA.sid (activeObject)
+
+        if (activeObjectPred (activeObject)) {
+          return Nullable (selectOptions.find (pipe (SOA.id, elemF (sid))))
+        }
+        else {
+          return NewNothing
+        }
+      })
+
+const getActiveObjectsAsSelectOptions = (
+  staticEntry: Maybe<Record<SpecialAbility>>,
+  characterEntry: Maybe<Record<ActivatableDependent>>,
+  activeObjectPred: (activeObject: Record<ActiveObject>) => boolean
+) => mapActiveObjects (getSelectOptions (staticEntry), characterEntry, activeObjectPred)
+
+const getActiveScriptsAndLanguages = createMaybeSelector (
   mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.Literacy),
   mapGetToSlice (getWikiSpecialAbilities) (SpecialAbilityId.Literacy),
   mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.Language),
   mapGetToSlice (getWikiSpecialAbilities) (SpecialAbilityId.Language),
-  (mscripts_hero, scripts_wiki, mlanguages_hero, languages_wiki) => {
-    const scripts = getSelectOptions (scripts_wiki)
-    const languages = getSelectOptions (languages_wiki)
-
-    const active_scripts = mapActiveObjects (scripts) (mscripts_hero)
-    const active_languages = mapActiveObjects (languages) (mlanguages_hero)
-
-    return Pair (active_scripts, active_languages)
-  }
+  (mscripts_hero, scripts_wiki, mlanguages_hero, languages_wiki) =>
+    ({
+      scripts: getActiveObjectsAsSelectOptions (scripts_wiki, mscripts_hero, () => true),
+      languages: getActiveObjectsAsSelectOptions (
+        languages_wiki,
+        mlanguages_hero,
+        activeObject => toNewMaybe (AOA.tier (activeObject))
+          .maybe (false, level => level >= 3)
+      ),
+    })
 )
 
 export const getScriptsWithMatchingLanguages = createMaybeSelector (
   getActiveScriptsAndLanguages,
-  p => {
-    const active_scripts = fst (p)
-    const active_languages = snd (p)
+  ({ scripts, languages }) => {
+    const isMatchingLanguageActive = (script: Record<SelectOption>) =>
+      toNewMaybe (SOA.languages (script))
+        .maybe ([], toArray)
+        .some (matchingLanguageId =>
+          languages.some (language =>
+            SOA.id (language) === matchingLanguageId))
 
-    return mapMaybe (pipe (
-                      ensure (pipe (
-                        SOA.languages,
-                        joinMaybeList,
-                        any (id => any (pipe (SOA.id, equals<string | number> (id)))
-                                       (active_languages))
-                      )),
-                      fmap (SOA.id),
-                      misNumberM
-                    ))
-                    (active_scripts)
+    return scripts.mapMaybe (script =>
+      ensure (script, isMatchingLanguageActive)
+        .map (SOA.id)
+        .bind (id => ensure (id, isNumber)))
   }
 )
 
 export const getLanguagesWithMatchingScripts = createMaybeSelector (
   getActiveScriptsAndLanguages,
-  p => {
-    const active_scripts = fst (p)
-    const active_languages = snd (p)
-
-    return nub (mapMaybe (pipe (
-                           SOA.languages,
-                           joinMaybeList,
-                           find (id => any (pipe (SOA.id, equals<string | number> (id)))
-                                           (active_languages))
-                         ))
-                         (active_scripts))
-  }
+  ({ scripts, languages }) =>
+    scripts
+      .bind (script =>
+        toNewMaybe (SOA.languages (script))
+          .maybe ([], toArray)
+          .filter (matchingLanguageId =>
+            languages.some (language =>
+              SOA.id (language) === matchingLanguageId)))
+      .nub ()
 )
 
-export const isEntryRequiringMatchingScriptAndLangActive = createMaybeSelector (
+const entriesRequiringMatchingScriptAndLanguage = [
+  SpecialAbilityId.Writing,
+  SpecialAbilityId.SpeedWriting,
+  SpecialAbilityId.Kurzschrift,
+  SpecialAbilityId.Kryptographie,
+  SpecialAbilityId.WegDerSchreiberin,
+]
+
+export const getIsEntryRequiringMatchingScriptAndLangActive = createMaybeSelector (
   getSpecialAbilities,
-  pipe (
-    lookup<string> (SpecialAbilityId.WegDerSchreiberin),
+  specialAbilities => entriesRequiringMatchingScriptAndLanguage.some (pipe (
+    lookupF (specialAbilities),
     isMaybeActive
-  )
+  ))
 )
 
-export const getMatchingScriptAndLangRelated = createMaybeSelector (
-  isEntryRequiringMatchingScriptAndLangActive,
+export type MatchingScriptAndLanguageRelated = Readonly<{
+  isEntryRequiringMatchingScriptAndLangActive: boolean
+  scriptsWithMatchingLanguages: readonly number[]
+  languagesWithMatchingScripts: readonly number[]
+}>
+
+export const getMatchingScriptAndLanguageRelated = createMaybeSelector (
+  getIsEntryRequiringMatchingScriptAndLangActive,
   getScriptsWithMatchingLanguages,
   getLanguagesWithMatchingScripts,
-
-  // tslint:disable-next-line: no-unnecessary-callback-wrapper
-  (is, scripts, langs) => Tuple (is, scripts, langs)
+  (
+    isEntryRequiringMatchingScriptAndLangActive,
+    scriptsWithMatchingLanguages,
+    languagesWithMatchingScripts
+  ): MatchingScriptAndLanguageRelated => ({
+    isEntryRequiringMatchingScriptAndLangActive,
+    scriptsWithMatchingLanguages,
+    languagesWithMatchingScripts,
+  })
 )
 
 export const getActive = <T extends ActivatableCategory>(category: T, addLevelToName: boolean) =>
@@ -139,12 +173,17 @@ export const getActive = <T extends ActivatableCategory>(category: T, addLevelTo
     getWiki,
     getCurrentHeroPresent,
     getAutomaticAdvantages,
-    getMatchingScriptAndLangRelated,
-    (staticData, mhero, automatic_advantages, matching_script_and_lang_related) =>
+    getMatchingScriptAndLanguageRelated,
+    (
+      staticData,
+      mhero,
+      automatic_advantages,
+      matchingScriptAndLanguageRelated
+    ) =>
       fmapF (mhero) (getAllActiveByCategory (category)
                                             (addLevelToName)
                                             (automatic_advantages)
-                                            (matching_script_and_lang_related)
+                                            (matchingScriptAndLanguageRelated)
                                             (staticData))
   )
 
@@ -156,14 +195,14 @@ export const getActiveMap =
                        (
                          getWiki,
                          getAutomaticAdvantages,
-                         getMatchingScriptAndLangRelated
+                         getMatchingScriptAndLanguageRelated
                        )
                        (heroReducer.A.present)
-                       ((staticData, automatic_advantages, matching_script_and_lang_related) =>
+                       ((staticData, automatic_advantages, matchingScriptAndLanguageRelated) =>
                          getAllActiveByCategory (category)
                                                 (addLevelToName)
                                                 (automatic_advantages)
-                                                (matching_script_and_lang_related)
+                                                (matchingScriptAndLanguageRelated)
                                                 (staticData))
 
 export const getActiveForView = <T extends ActivatableCategory>(category: T) =>

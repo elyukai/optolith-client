@@ -1,4 +1,5 @@
 import "../Array"
+import { Just, Nothing } from "../Maybe"
 
 describe ("Array Prototype Extensions", () => {
   describe ("drop", () => {
@@ -91,6 +92,29 @@ describe ("Array Prototype Extensions", () => {
       const xs2 = [ 1 ]
       expect (xs2.append (2)).toEqual ([ 1, 2 ])
       expect (xs2.append (2)).not.toBe (xs2)
+    })
+  })
+
+  describe ("nub", () => {
+    it ("removes any duplicate elements based on reference equality", () => {
+      expect ([ 2, 3, 2, 4, 1, 1, 2, 5, 6 ].nub ()).toEqual ([ 2, 3, 4, 1, 5, 6 ])
+    })
+  })
+
+  describe ("findM", () => {
+    it ("returns the first value where the predicate returns true as a Just", () => {
+      expect ([ 2, 3, 2, 4, 1, 1, 2, 5, 6 ].findM (x => x > 3)).toEqual (Just (4))
+    })
+
+    it ("returns Nothing if the predicate returns true for no element", () => {
+      expect ([ 2, 3, 2, 3, 1, 1, 2, 2, 1 ].findM (x => x > 3)).toEqual (Nothing)
+    })
+  })
+
+  describe ("bind", () => {
+    it ("maps over the array and flattens the results into a single array", () => {
+      expect ([ 1, 2, 3 ].bind (x => Array.from ({ length: x }).fill (x)))
+        .toEqual ([ 1, 2, 2, 3, 3, 3 ])
     })
   })
 })
