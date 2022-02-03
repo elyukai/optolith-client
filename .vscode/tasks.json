@@ -43,8 +43,17 @@
       }
     },
     {
+      "label": "sass watch",
+      "command": "npm run css:watch",
+      "isBackground": true,
+      "group": "build",
+      "presentation": {
+        "group": "watch"
+      }
+    },
+    {
       "label": "watch",
-      "dependsOn": ["tsc watch", "webpack watch"],
+      "dependsOn": ["tsc watch", "webpack watch", "sass watch"],
       "group": {
         "kind": "build",
         "isDefault": true
