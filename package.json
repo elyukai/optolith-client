@@ -60,7 +60,7 @@
     "@typescript-eslint/parser": "^5.10.0",
     "custom-env": "2.0.1",
     "dotenv": "8.2.0",
-    "electron": "^16.0.7",
+    "electron": "^17.0.0",
     "electron-builder": "^22.14.5",
     "electron-notarize": "0.3.0",
     "eslint": "^8.7.0",
