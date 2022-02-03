@@ -1,6 +1,6 @@
 // @ts-check
 require("dotenv").config()
-const { Client } = require ("qusly-core")
+const Client = require ("ssh2-sftp-client")
 const readline = require ("readline")
 const fs = require ("fs")
 const path = require ("path")
@@ -99,27 +99,12 @@ const uploadToServer = async () => {
 
   const client = new Client ()
 
-  console.log("Connecting to server...");
+  console.log("Connecting to server ...");
 
   await client.connect ({
-    protocol: "sftp",
     host: process.env.HOST,
-    user: process.env.USERNAME,
+    username: process.env.USERNAME,
     password: process.env.PASSWORD,
-  })
-
-  let loggedProgress = false
-
-  client.addListener("progress", (progress, info) => {
-    if (loggedProgress) {
-      readline.clearLine(process.stdout, 1);
-      readline.cursorTo(process.stdout, 0);
-    }
-    else {
-      loggedProgress = true
-    }
-
-    process.stdout.write(`Progress: ${progress.percent}%`);
   })
 
   console.log(`Server connection established.`);
@@ -127,22 +112,36 @@ const uploadToServer = async () => {
   for (const fileName of latestFileNames) {
     console.log(`Uploading ${fileName}`);
 
-    loggedProgress = false
-    const stream = fs.createReadStream (path.join (...distPath, fileName))
-    await client.upload (`${serverPath}/${fileName}`, stream)
+    await client.fastPut (
+      path.join (...distPath, fileName),
+      `${serverPath}/${fileName}`,
+      {
+        step: (totalTransferred, _, total) => {
+          const percent = Math.floor (totalTransferred / total * 100)
+          console.log(`Progress: ${percent}%`);
+        }
+      }
+    )
 
-    console.log(`\nUpload done: ${fileName}.`);
+    console.log(`Upload done: ${fileName}.`);
   }
 
-  console.log(`Uploading ${updateYmlName}...`);
+  console.log(`Uploading ${updateYmlName} ...`);
 
-  loggedProgress = false
-  const updateYml = fs.createReadStream (path.join (...distPath, updateYmlName))
-  await client.upload (`${serverPath}/${updateYmlName}`, updateYml)
+  await client.fastPut (
+    path.join (...distPath, updateYmlName),
+    `${serverPath}/${updateYmlName}`,
+    {
+      step: (totalTransferred, _, total) => {
+        const percent = Math.floor (totalTransferred / total * 100) / 100
+        console.log(`Progress: ${percent}%`);
+      }
+    }
+  )
 
-  console.log(`\nUpload done: ${updateYmlName}.`);
+  console.log(`Upload done: ${updateYmlName}.`);
 
-  await client.disconnect ()
+  await client.end ()
 
   console.log("Closed server connection.");
 }

@@ -38,7 +38,6 @@
     "remark-breaks": "^2.0.2",
     "reselect": "4.0.0",
     "semver": "7.3.2",
-    "ssh2-sftp-client": "^7.2.0",
     "tslib": "^2.3.1",
     "yaml": "1.10.0"
   },
@@ -72,8 +71,8 @@
     "html-webpack-plugin": "^5.5.0",
     "husky": "^4.3.8",
     "jest": "^26.6.3",
-    "qusly-core": "2.5.2",
     "sass": "1.29.0",
+    "ssh2-sftp-client": "^7.2.2",
     "standard-version": "^9.3.1",
     "ts-jest": "^26.5.6",
     "ts-loader": "^9.2.6",
