@@ -50,6 +50,14 @@
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "label": "create prerelease",
+      "command": "npm run release:pre"
+    },
+    {
+      "label": "create release",
+      "command": "npm run release:main"
     }
   ]
 }
