@@ -141,10 +141,12 @@ const getAttributeMinimum =
       fromMaybe (8)
                 (getSkillCheckAttributeMinimum (
                   SDA.skills (wiki),
+                  SDA.combatTechniques (wiki),
                   SDA.spells (wiki),
                   SDA.liturgicalChants (wiki),
                   HA.attributes (hero),
                   HA.skills (hero),
+                  HA.combatTechniques (hero),
                   HA.spells (hero),
                   HA.liturgicalChants (hero),
                   HA.skillCheckAttributeCache (hero),

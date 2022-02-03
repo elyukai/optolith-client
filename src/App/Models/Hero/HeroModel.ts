@@ -133,7 +133,7 @@ export const HeroModel: RecordCreator<HeroModel> =
                 transferredUnfamiliarSpells: List (),
                 blessedPrimaryAttributeDependencies: [],
                 magicalPrimaryAttributeDependencies: [],
-                skillCheckAttributeCache: OrderedMap.empty,
+                skillCheckAttributeCache: new Map (),
               })
 
 export const HeroModelL = makeLenses (HeroModel)

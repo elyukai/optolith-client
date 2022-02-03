@@ -1,5 +1,6 @@
 import { ident } from "../../Data/Function"
 import { over, set } from "../../Data/Lens"
+import { toArray } from "../../Data/List"
 import { insert, sdelete } from "../../Data/OrderedSet"
 import * as AttributesActions from "../Actions/AttributesActions"
 import * as CombatTechniquesActions from "../Actions/CombatTechniquesActions"
@@ -51,7 +52,7 @@ export const increasableReducer =
           over (HeroModelL.skillCheckAttributeCache)
                (cache => addEntryToCache (
                            Spell.A.id,
-                           Spell.A.check,
+                           pipe (Spell.A.check, toArray),
                            "Spell",
                            action.payload.staticEntry,
                            cache,
@@ -74,7 +75,7 @@ export const increasableReducer =
           over (HeroModelL.skillCheckAttributeCache)
                (cache => addEntryToCache (
                            LiturgicalChant.A.id,
-                           LiturgicalChant.A.check,
+                           pipe (LiturgicalChant.A.check, toArray),
                            "LiturgicalChant",
                            action.payload.staticEntry,
                            cache,
@@ -96,7 +97,7 @@ export const increasableReducer =
           over (HeroModelL.skillCheckAttributeCache)
                (cache => removeEntryFromCache (
                            Spell.A.id,
-                           Spell.A.check,
+                           pipe (Spell.A.check, toArray),
                            "Spell",
                            action.payload.staticEntry,
                            cache,
@@ -120,7 +121,7 @@ export const increasableReducer =
           over (HeroModelL.skillCheckAttributeCache)
                (cache => addEntryToCache (
                            LiturgicalChant.A.id,
-                           LiturgicalChant.A.check,
+                           pipe (LiturgicalChant.A.check, toArray),
                            "LiturgicalChant",
                            action.payload.staticEntry,
                            cache,

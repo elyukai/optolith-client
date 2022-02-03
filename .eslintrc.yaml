@@ -75,6 +75,8 @@ rules:
     - 2
     - exceptions:
         - "Array"
+        - "Map"
+        - "Set"
   no-extra-bind: 2
   no-extra-label: 2
   no-fallthrough: 2

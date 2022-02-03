@@ -422,6 +422,7 @@ export const convertFromRawHero =
         set (HL.skillCheckAttributeCache)
             (initializeCache (
               SDA.skills (staticData),
+              SDA.combatTechniques (staticData),
               SDA.spells (staticData),
               SDA.liturgicalChants (staticData),
               HA.spells (intermediateHero),

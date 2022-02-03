@@ -59,6 +59,18 @@ describe ("Array Prototype Extensions", () => {
     })
   })
 
+  // describe ("deleteFirst", () => {
+  //   const xs = [ 1, 2, 1, 3, 3, 4, 5, 6 ]
+
+  //   it ("removes the first occurrence of the element and returns a new array", () => {
+  //     expect (xs.deleteFirst (1)).toEqual ([ 2, 1, 3, 3, 4, 5, 6 ])
+  //   })
+
+  //   it ("returns the original array if the element is not in the array", () => {
+  //     expect (xs.deleteFirst (6)).toBe (xs)
+  //   })
+  // })
+
   describe ("maximum", () => {
     it ("returns negative infinity if the array is empty", () => {
       expect ([].maximum ()).toBe (-Infinity)

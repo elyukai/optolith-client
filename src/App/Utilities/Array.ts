@@ -5,6 +5,7 @@ declare global {
     drop(elements: number): T[]
     take(elements: number): T[]
     deleteAt(index: number): T[]
+    // deleteFirst(element: T): T[]
     maximum(this: number[]): number
     minimum(this: number[]): number
     append(element: T): T[]
@@ -18,6 +19,7 @@ declare global {
     drop(elements: number): readonly T[]
     take(elements: number): readonly T[]
     deleteAt(index: number): readonly T[]
+    // deleteFirst(element: T): readonly T[]
     maximum(this: readonly number[]): number
     minimum(this: readonly number[]): number
     append(element: T): readonly T[]

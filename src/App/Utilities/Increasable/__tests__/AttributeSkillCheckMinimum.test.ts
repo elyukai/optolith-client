@@ -1,12 +1,16 @@
-import { List } from "../../../../Data/List"
+import { List, toArray } from "../../../../Data/List"
 import { Just, Nothing } from "../../../../Data/Maybe"
 import * as OrderedMap from "../../../../Data/OrderedMap"
 import { ActivatableSkillDependent } from "../../../Models/ActiveEntries/ActivatableSkillDependent"
 import { AttributeDependent } from "../../../Models/ActiveEntries/AttributeDependent"
 import { SkillDependent } from "../../../Models/ActiveEntries/SkillDependent"
+import { CombatTechnique } from "../../../Models/Wiki/CombatTechnique"
 import { LiturgicalChant } from "../../../Models/Wiki/LiturgicalChant"
 import { Skill } from "../../../Models/Wiki/Skill"
 import { Spell } from "../../../Models/Wiki/Spell"
+import "../../Array"
+import "../../Map"
+import { pipe } from "../../pipe"
 import * as AttributeUtils from "../AttributeSkillCheckMinimum"
 import { CacheSkillId } from "../AttributeSkillCheckMinimum"
 
@@ -25,6 +29,18 @@ const skillFakeBase = {
   quality: Nothing,
   src: Nothing,
   uses: Nothing,
+}
+
+const combatTechniqueFakeBase = {
+  name: Nothing,
+  category: Nothing,
+  gr: Nothing,
+  ic: Nothing,
+  bpr: Nothing,
+  special: Nothing,
+  hasNoParry: Nothing,
+  src: Nothing,
+  errata: Nothing,
 }
 
 const spellFakeBase = {
@@ -88,122 +104,122 @@ describe ("addEntryToCache", () => {
   it ("adds the skill id to every attribute's list", () => {
     expect (AttributeUtils.addEntryToCache (
       Skill.A.id,
-      Skill.A.check,
+      pipe (Skill.A.check, toArray),
       "Skill",
       Skill ({ ...skillFakeBase, id: "TAL_3", check: List ("ATTR_2", "ATTR_3", "ATTR_4") }),
-      OrderedMap.fromArray ([
-        [ "ATTR_8", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_3", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_1" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_4", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_1", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_7", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
-        [ "ATTR_2", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
+      new Map ([
+        [ "ATTR_8", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+        ] ],
+        [ "ATTR_3", [
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+        ] ],
+        [ "ATTR_4", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_1", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_7", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
+        [ "ATTR_2", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
       ])
     ))
-      .toEqual (OrderedMap.fromArray ([
-        [ "ATTR_8", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_3", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_3" },
-          { tag: "Skill", value: "TAL_1" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_4", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_3" },
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_1", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_7", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
-        [ "ATTR_2", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_3" },
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
+      .toEqual (new Map ([
+        [ "ATTR_8", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+        ] ],
+        [ "ATTR_3", [
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_3" }),
+        ] ],
+        [ "ATTR_4", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+          CacheSkillId.Skill ({ value: "TAL_3" }),
+        ] ],
+        [ "ATTR_1", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_7", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
+        [ "ATTR_2", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+          CacheSkillId.Skill ({ value: "TAL_3" }),
+        ] ],
       ]))
   })
 
   it ("adds the skill id to every attribute's list and creates a new list if the key is not yet present", () => {
     expect (AttributeUtils.addEntryToCache (
       Skill.A.id,
-      Skill.A.check,
+      pipe (Skill.A.check, toArray),
       "Skill",
       Skill ({ ...skillFakeBase, id: "TAL_3", check: List ("ATTR_2", "ATTR_3", "ATTR_6") }),
-      OrderedMap.fromArray ([
-        [ "ATTR_8", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_3", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_1" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_4", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_1", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_7", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
-        [ "ATTR_2", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
+      new Map ([
+        [ "ATTR_8", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+        ] ],
+        [ "ATTR_3", [
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+        ] ],
+        [ "ATTR_4", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_1", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_7", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
+        [ "ATTR_2", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
       ])
     ))
-      .toEqual (OrderedMap.fromArray ([
-        [ "ATTR_8", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_3", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_3" },
-          { tag: "Skill", value: "TAL_1" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_4", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_1", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_7", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
-        [ "ATTR_2", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_3" },
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
-        [ "ATTR_6", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_3" }
-        ) ],
+      .toEqual (new Map ([
+        [ "ATTR_8", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+        ] ],
+        [ "ATTR_3", [
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_3" }),
+        ] ],
+        [ "ATTR_4", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_1", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_7", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
+        [ "ATTR_2", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+          CacheSkillId.Skill ({ value: "TAL_3" }),
+        ] ],
+        [ "ATTR_6", [
+          CacheSkillId.Skill ({ value: "TAL_3" }),
+        ] ],
       ]))
   })
 })
@@ -212,54 +228,54 @@ describe ("removeEntryFromCache", () => {
   it ("removes the skill id from every attribute's list", () => {
     expect (AttributeUtils.removeEntryFromCache (
       LiturgicalChant.A.id,
-      LiturgicalChant.A.check,
+      pipe (LiturgicalChant.A.check, toArray),
       "LiturgicalChant",
       LiturgicalChant ({
         ...chantFakeBase, id: "LITURGY_1", check: List ("ATTR_1", "ATTR_2", "ATTR_7"),
       }),
-      OrderedMap.fromArray ([
-        [ "ATTR_8", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_3", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_1" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_4", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_1", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_7", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
-        [ "ATTR_2", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
+      new Map ([
+        [ "ATTR_8", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+        ] ],
+        [ "ATTR_3", [
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+        ] ],
+        [ "ATTR_4", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_1", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_7", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
+        [ "ATTR_2", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
       ])
     ))
-      .toEqual (OrderedMap.fromArray ([
-        [ "ATTR_8", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_3", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_1" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_4", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_1", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_7", List<CacheSkillId> () ],
-        [ "ATTR_2", List<CacheSkillId> () ],
+      .toEqual (new Map ([
+        [ "ATTR_8", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+        ] ],
+        [ "ATTR_3", [
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+        ] ],
+        [ "ATTR_4", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_1", [
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_7", [] ],
+        [ "ATTR_2", [] ],
       ]))
   })
 })
@@ -273,6 +289,14 @@ describe ("initializeCache", () => {
         }) ],
         [ "TAL_2", Skill ({
           ...skillFakeBase, id: "TAL_2", check: List ("ATTR_3", "ATTR_3", "ATTR_8"),
+        }) ],
+      ]),
+      OrderedMap.fromArray ([
+        [ "CT_1", CombatTechnique ({
+          ...combatTechniqueFakeBase, id: "CT_1", primary: List ("ATTR_8"),
+        }) ],
+        [ "CT_2", CombatTechnique ({
+          ...combatTechniqueFakeBase, id: "CT_2", primary: List ("ATTR_6", "ATTR_8"),
         }) ],
       ]),
       OrderedMap.fromArray ([
@@ -308,29 +332,34 @@ describe ("initializeCache", () => {
         }) ],
       ]),
     ))
-      .toEqual (OrderedMap.fromArray ([
-        [ "ATTR_8", List (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_3", List (
-          { tag: "Skill", value: "TAL_1" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_4", List (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_1", List (
-          { tag: "LiturgicalChant", value: "LITURGY_1" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_7", List (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
-        [ "ATTR_2", List (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
+      .toEqual (new Map ([
+        [ "ATTR_8", [
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+          CacheSkillId.CombatTechnique ({ value: "CT_2" }),
+          CacheSkillId.CombatTechnique ({ value: "CT_1" }),
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+        ] ],
+        [ "ATTR_3", [
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_4", [
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+        ] ],
+        [ "ATTR_1", [
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
+        [ "ATTR_6", [
+          CacheSkillId.CombatTechnique ({ value: "CT_2" }),
+        ] ],
+        [ "ATTR_7", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
+        [ "ATTR_2", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
       ]))
   })
 })
@@ -444,6 +473,16 @@ describe ("getSkillCheckAttributeMinimum", () => {
         }) ],
       ])
 
+    const staticCombatTechniques =
+      OrderedMap.fromArray ([
+        [ "CT_1", CombatTechnique ({
+          ...combatTechniqueFakeBase, id: "CT_1", primary: List ("ATTR_8"),
+        }) ],
+        [ "CT_2", CombatTechnique ({
+          ...combatTechniqueFakeBase, id: "CT_2", primary: List ("ATTR_6", "ATTR_8"),
+        }) ],
+      ])
+
     const staticSpells =
       OrderedMap.fromArray ([
         [ "SPELL_1", Spell ({
@@ -477,15 +516,25 @@ describe ("getSkillCheckAttributeMinimum", () => {
         }) ],
       ])
 
-      const heroSkills =
-        OrderedMap.fromArray ([
-          [ "TAL_1", SkillDependent ({
-            id: "TAL_1", value: 12, dependencies: List (),
-          }) ],
-          [ "TAL_2", SkillDependent ({
-            id: "TAL_2", value: 13, dependencies: List (),
-          }) ],
-        ])
+    const heroSkills =
+      OrderedMap.fromArray ([
+        [ "TAL_1", SkillDependent ({
+          id: "TAL_1", value: 12, dependencies: List (),
+        }) ],
+        [ "TAL_2", SkillDependent ({
+          id: "TAL_2", value: 13, dependencies: List (),
+        }) ],
+      ])
+
+    const heroCombatTechniques =
+      OrderedMap.fromArray ([
+        [ "CT_1", SkillDependent ({
+          id: "CT_1", value: 12, dependencies: List (),
+        }) ],
+        [ "CT_2", SkillDependent ({
+          id: "CT_2", value: 14, dependencies: List (),
+        }) ],
+      ])
 
     const heroSpells =
       OrderedMap.fromArray ([
@@ -508,42 +557,47 @@ describe ("getSkillCheckAttributeMinimum", () => {
       ])
 
     const cache =
-      OrderedMap.fromArray ([
-        [ "ATTR_8", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_3", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_3" },
-          { tag: "Skill", value: "TAL_1" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_4", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_1", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_7", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
-        [ "ATTR_2", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_3" },
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
-        [ "ATTR_6", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_3" }
-        ) ],
+      new Map ([
+        [ "ATTR_8", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+          CacheSkillId.CombatTechnique ({ value: "CT_1" }),
+          CacheSkillId.CombatTechnique ({ value: "CT_2" }),
+        ] ],
+        [ "ATTR_3", [
+          CacheSkillId.Skill ({ value: "TAL_3" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+        ] ],
+        [ "ATTR_4", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_1", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_7", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
+        [ "ATTR_2", [
+          CacheSkillId.Skill ({ value: "TAL_3" }),
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
+        [ "ATTR_6", [
+          CacheSkillId.Skill ({ value: "TAL_3" }),
+          CacheSkillId.CombatTechnique ({ value: "CT_2" }),
+        ] ],
       ])
 
     expect (
       AttributeUtils.getSkillCheckAttributeMinimum (
         staticSkills,
+        staticCombatTechniques,
         staticSpells,
         staticLiturgicalChants,
         heroAttributes,
+        heroCombatTechniques,
         heroSkills,
         heroSpells,
         heroLiturgicalChants,
@@ -562,6 +616,16 @@ describe ("getSkillCheckAttributeMinimum", () => {
         }) ],
         [ "TAL_2", Skill ({
           ...skillFakeBase, id: "TAL_2", check: List ("ATTR_3", "ATTR_3", "ATTR_8"),
+        }) ],
+      ])
+
+    const staticCombatTechniques =
+      OrderedMap.fromArray ([
+        [ "CT_1", CombatTechnique ({
+          ...combatTechniqueFakeBase, id: "CT_1", primary: List ("ATTR_8"),
+        }) ],
+        [ "CT_2", CombatTechnique ({
+          ...combatTechniqueFakeBase, id: "CT_2", primary: List ("ATTR_6", "ATTR_8"),
         }) ],
       ])
 
@@ -598,15 +662,25 @@ describe ("getSkillCheckAttributeMinimum", () => {
         }) ],
       ])
 
-      const heroSkills =
-        OrderedMap.fromArray ([
-          [ "TAL_1", SkillDependent ({
-            id: "TAL_1", value: 8, dependencies: List (),
-          }) ],
-          [ "TAL_2", SkillDependent ({
-            id: "TAL_2", value: 7, dependencies: List (),
-          }) ],
-        ])
+    const heroSkills =
+      OrderedMap.fromArray ([
+        [ "TAL_1", SkillDependent ({
+          id: "TAL_1", value: 8, dependencies: List (),
+        }) ],
+        [ "TAL_2", SkillDependent ({
+          id: "TAL_2", value: 7, dependencies: List (),
+        }) ],
+      ])
+
+    const heroCombatTechniques =
+      OrderedMap.fromArray ([
+        [ "CT_1", SkillDependent ({
+          id: "CT_1", value: 8, dependencies: List (),
+        }) ],
+        [ "CT_2", SkillDependent ({
+          id: "CT_2", value: 10, dependencies: List (),
+        }) ],
+      ])
 
     const heroSpells =
       OrderedMap.fromArray ([
@@ -629,43 +703,48 @@ describe ("getSkillCheckAttributeMinimum", () => {
       ])
 
     const cache =
-      OrderedMap.fromArray ([
-        [ "ATTR_8", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_3", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_3" },
-          { tag: "Skill", value: "TAL_1" },
-          { tag: "Skill", value: "TAL_2" }
-        ) ],
-        [ "ATTR_4", List<CacheSkillId> (
-          { tag: "Spell", value: "SPELL_2" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_1", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" },
-          { tag: "Skill", value: "TAL_1" }
-        ) ],
-        [ "ATTR_7", List<CacheSkillId> (
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
-        [ "ATTR_2", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_3" },
-          { tag: "LiturgicalChant", value: "LITURGY_1" }
-        ) ],
-        [ "ATTR_6", List<CacheSkillId> (
-          { tag: "Skill", value: "TAL_3" }
-        ) ],
+      new Map ([
+        [ "ATTR_8", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+          CacheSkillId.CombatTechnique ({ value: "CT_1" }),
+          CacheSkillId.CombatTechnique ({ value: "CT_2" }),
+        ] ],
+        [ "ATTR_3", [
+          CacheSkillId.Skill ({ value: "TAL_3" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+          CacheSkillId.Skill ({ value: "TAL_2" }),
+        ] ],
+        [ "ATTR_4", [
+          CacheSkillId.Spell ({ value: "SPELL_2" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_1", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+          CacheSkillId.Skill ({ value: "TAL_1" }),
+        ] ],
+        [ "ATTR_7", [
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
+        [ "ATTR_2", [
+          CacheSkillId.Skill ({ value: "TAL_3" }),
+          CacheSkillId.LiturgicalChant ({ value: "LITURGY_1" }),
+        ] ],
+        [ "ATTR_6", [
+          CacheSkillId.Skill ({ value: "TAL_3" }),
+          CacheSkillId.CombatTechnique ({ value: "CT_2" }),
+        ] ],
       ])
 
     expect (
       AttributeUtils.getSkillCheckAttributeMinimum (
         staticSkills,
+        staticCombatTechniques,
         staticSpells,
         staticLiturgicalChants,
         heroAttributes,
         heroSkills,
+        heroCombatTechniques,
         heroSpells,
         heroLiturgicalChants,
         cache,
