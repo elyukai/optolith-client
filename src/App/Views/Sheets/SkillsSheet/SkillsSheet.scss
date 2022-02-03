@@ -10,6 +10,7 @@
 	.upper {
 		display: flex;
 		width: 100%;
+    align-items: flex-start;
 
 		table {
 			width: 50%;
@@ -108,7 +109,7 @@
 	.languages-list {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		grid-auto-rows: auto;
+		grid-auto-rows: 4.5mm;
 		list-style: none;
 		margin: 0;
 		padding: 0;
