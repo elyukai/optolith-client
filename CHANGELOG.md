@@ -35,7 +35,7 @@ All notable changes to this project will be documented in this file. See [standa
 * show Hit Zone Armor tab for English Armory ([383a9c1](https://github.com/elyukai/optolith-client/commit/383a9c166c6d8c5d713f4852f40999c5d8c00efc)), closes [elyukai/optolith-client#1328](https://github.com/elyukai/optolith-client/issues/1328)
 * special ability Tradition (Tsatuara-Anhängerinnen) is in wrong group ([6669352](https://github.com/elyukai/optolith-client/commit/6669352d06c3687a9793eb69ea0018915b865212)), closes [#1137](https://github.com/elyukai/optolith-client/issues/1137)
 * too large PDF output when using a sheet background ([9cb2658](https://github.com/elyukai/optolith-client/commit/9cb26586f3a5026d06f41801d4bbf714631d06a4)), closes [#1094](https://github.com/elyukai/optolith-client/issues/1094)
-* weight column in inventory shows wrong weight in English ([6ba99f2](https://github.com/elyukai/optolith-client/commit/6ba99f2f4610e8a26d1703d978738a907f26bd92)), closes [elyukai/optolith-client#1329](https://github.com/elyukai/optolith-client/issues/1329)
+* weight column in inventory shows wrong weight in English ([6ba99f2](https://github.com/elyukai/optolith-client/commit/6ba99f2f4610e8a26d1703d978738a907f26bd92)), closes [#1329](https://github.com/elyukai/optolith-client/issues/1329)
 
 ## [1.5.0-alpha.5](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.4...v1.5.0-alpha.5) (2022-01-27)
 
