@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0-alpha.7](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.6...v1.5.0-alpha.7) (2022-02-03)
+
+
+### Bug Fixes
+
+* auto-updater not working in AppImage ([a24ff80](https://github.com/elyukai/optolith-client/commit/a24ff8082a5556fc07af05f113bacfd9c84428a4)), closes [#753](https://github.com/elyukai/optolith-client/issues/753)
+* cannot activate special ability Weg der Schreiberin ([83b534d](https://github.com/elyukai/optolith-client/commit/83b534d3f9fcd5e63ef7cf482d9dd26f06b5a1a2)), closes [#1233](https://github.com/elyukai/optolith-client/issues/1233)
+* primary attribute prerequisites may not have been added as dependencies ([ac0cdc3](https://github.com/elyukai/optolith-client/commit/ac0cdc377800a1eb380993dbb7914fa88b8f254e)), closes [#1260](https://github.com/elyukai/optolith-client/issues/1260)
+* range brackets input influences other bracket fields ([0ab65e8](https://github.com/elyukai/optolith-client/commit/0ab65e869c26536127b386753db110f2e26b33af)), closes [#1251](https://github.com/elyukai/optolith-client/issues/1251)
+* requiring one matching languages and script requires all of them ([4dabbdb](https://github.com/elyukai/optolith-client/commit/4dabbdbcd23c1ffeff18a8b1f9497a4a8315aa6a)), closes [#1343](https://github.com/elyukai/optolith-client/issues/1343)
+* scripts do not require an active matching language ([1ed0c64](https://github.com/elyukai/optolith-client/commit/1ed0c64b0dd9873593169bd9994082d49299fa3e)), closes [#1344](https://github.com/elyukai/optolith-client/issues/1344)
+* some item properties were not saved ([f2e6138](https://github.com/elyukai/optolith-client/commit/f2e61386abe444aa76f0211469d50c30fde99a0c)), closes [#1252](https://github.com/elyukai/optolith-client/issues/1252)
+* typo in German name of Tarnele ([8b5eede](https://github.com/elyukai/optolith-client/commit/8b5eedeb372622761480f2511935e8b74bdfcdcd)), closes [#1330](https://github.com/elyukai/optolith-client/issues/1330)
+* unfamiliar spell selection in profession was optional ([3574d1b](https://github.com/elyukai/optolith-client/commit/3574d1ba46725d04a83286cd1055c080fe1de95f)), closes [#1315](https://github.com/elyukai/optolith-client/issues/1315)
+* use Brawling Points in special ability Knuckle Storm description ([06b57c9](https://github.com/elyukai/optolith-client/commit/06b57c9d15e1ef6f35da69ea46512bb790119b0a)), closes [#1340](https://github.com/elyukai/optolith-client/issues/1340)
+
 ## [1.5.0-alpha.6](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.5...v1.5.0-alpha.6) (2022-02-01)
 
 
