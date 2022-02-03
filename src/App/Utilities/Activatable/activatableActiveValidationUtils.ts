@@ -86,6 +86,7 @@ const isRemovalDisabledEntrySpecific =
     isEntryRequiringMatchingScriptAndLangActive,
     scriptsWithMatchingLanguages,
     languagesWithMatchingScripts,
+    languagesWithDependingScripts,
   }: MatchingScriptAndLanguageRelated) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActivatableDependent>) =>
@@ -164,11 +165,29 @@ const isRemovalDisabledEntrySpecific =
       }
 
       case SpecialAbilityId.language: {
-        return isEntryRequiringMatchingScriptAndLangActive
+        const isRequiredByEntryRequiringMatchingScriptAndLanguage =
+          isEntryRequiringMatchingScriptAndLangActive
           && languagesWithMatchingScripts.length < 2
           && toNewMaybe (AOWIA.sid (active))
               .bind (sid => newEnsure (sid, isNumber))
               .maybe (false, sid => languagesWithMatchingScripts.includes (sid))
+
+        const isRequiredByDependingLanguage =
+          toNewMaybe (AOWIA.sid (active))
+            .bind (sid => newEnsure (sid, isNumber))
+            .maybe (false, sid =>
+              languagesWithDependingScripts
+                .findM (languageGroupOfScript =>
+                  languageGroupOfScript.includes (sid))
+                .maybe (false, languageGroupOfScript =>
+                  languageGroupOfScript
+                    .mapMaybe (idOfGroup =>
+                      toNewMaybe (find ((ao: Record<ActiveObject>) =>
+                                          Maybe.elemF (AOA.sid (ao)) (idOfGroup))
+                                       (ADA.active (hero_entry))))
+                    .length < 2))
+
+        return isRequiredByEntryRequiringMatchingScriptAndLanguage || isRequiredByDependingLanguage
       }
 
       case SpecialAbilityId.propertyKnowledge:

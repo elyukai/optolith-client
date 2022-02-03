@@ -131,6 +131,15 @@ export const getLanguagesWithMatchingScripts = createMaybeSelector (
       .nub ()
 )
 
+export const getLanguagesWithDependingScripts = createMaybeSelector (
+  getActiveScriptsAndLanguages,
+  ({ scripts }) =>
+    scripts
+      .map (script =>
+        toNewMaybe (SOA.languages (script))
+          .maybe ([], toArray))
+)
+
 const entriesRequiringMatchingScriptAndLanguage = [
   SpecialAbilityId.Writing,
   SpecialAbilityId.SpeedWriting,
@@ -151,20 +160,24 @@ export type MatchingScriptAndLanguageRelated = Readonly<{
   isEntryRequiringMatchingScriptAndLangActive: boolean
   scriptsWithMatchingLanguages: readonly number[]
   languagesWithMatchingScripts: readonly number[]
+  languagesWithDependingScripts: readonly (readonly number[])[]
 }>
 
 export const getMatchingScriptAndLanguageRelated = createMaybeSelector (
   getIsEntryRequiringMatchingScriptAndLangActive,
   getScriptsWithMatchingLanguages,
   getLanguagesWithMatchingScripts,
+  getLanguagesWithDependingScripts,
   (
     isEntryRequiringMatchingScriptAndLangActive,
     scriptsWithMatchingLanguages,
-    languagesWithMatchingScripts
+    languagesWithMatchingScripts,
+    languagesWithDependingScripts
   ): MatchingScriptAndLanguageRelated => ({
     isEntryRequiringMatchingScriptAndLangActive,
     scriptsWithMatchingLanguages,
     languagesWithMatchingScripts,
+    languagesWithDependingScripts,
   })
 )
 
