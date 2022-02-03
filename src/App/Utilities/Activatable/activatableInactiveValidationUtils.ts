@@ -121,7 +121,7 @@ const isAdditionDisabledSpecialAbilitySpecific =
     }
 
     if (current_id === SpecialAbilityId.WegDerSchreiberin) {
-      return languagesWithMatchingScripts.length >= 1 || scriptsWithMatchingLanguages.length >= 1
+      return languagesWithMatchingScripts.length < 1 || scriptsWithMatchingLanguages.length < 1
     }
 
     if (SAA.gr (wiki_entry) === SpecialAbilityGroup.Paktgeschenke) {
