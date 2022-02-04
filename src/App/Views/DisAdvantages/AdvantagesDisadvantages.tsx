@@ -183,10 +183,11 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
                        ? "advantages.filters.commonadvantages"
                        : "disadvantages.filters.commondisadvantages")}
         </Checkbox>
+        {isRemovingEnabled ? 
         <BorderButton
           label={translate (staticData) ("advantagesdisadvantages.addbtn")}
           onClick={handleShowSlidein}
-          />
+          /> : null }
         {showRating ? <RecommendedReference staticData={staticData} strongly /> : null}
         {fromMaybe (null as React.ReactNode)
                    (fmapF (m_ap)
@@ -209,7 +210,7 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
             >
             {translate (staticData) ("advantagesdisadvantages.header.adventurepoints")}
           </ListHeaderTag>
-          <ListHeaderTag className="btn-placeholder" />
+          {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null }
           <ListHeaderTag className="btn-placeholder" />
         </ListHeader>
         <ActiveList
