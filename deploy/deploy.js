@@ -116,10 +116,10 @@ const uploadToServer = async () => {
       path.join (...distPath, fileName),
       `${serverPath}/${fileName}`,
       {
-        step: (totalTransferred, _, total) => {
+        step: !process.env.CI ? (totalTransferred, _, total) => {
           const percent = Math.floor (totalTransferred / total * 100)
           console.log(`Progress: ${percent}%`);
-        }
+        } : undefined
       }
     )
 
@@ -132,10 +132,10 @@ const uploadToServer = async () => {
     path.join (...distPath, updateYmlName),
     `${serverPath}/${updateYmlName}`,
     {
-      step: (totalTransferred, _, total) => {
-        const percent = Math.floor (totalTransferred / total * 100) / 100
+      step: !process.env.CI ? (totalTransferred, _, total) => {
+        const percent = Math.floor (totalTransferred / total * 100)
         console.log(`Progress: ${percent}%`);
-      }
+      } : undefined
     }
   )
 
