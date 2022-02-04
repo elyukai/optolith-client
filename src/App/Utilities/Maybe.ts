@@ -248,9 +248,9 @@ class Nothing implements BaseMaybe<never> {
 
   static singleton = Object.freeze (new Nothing ()) as Nothing
 
-  isNothing: true = true
+  declare readonly isNothing: true
 
-  isJust: false = false
+  declare readonly isJust: false
 
   map () {
     return this
@@ -332,12 +332,20 @@ class Nothing implements BaseMaybe<never> {
   }
 }
 
+Object.defineProperty (Nothing.prototype, "isJust", {
+  value: false,
+})
+
+Object.defineProperty (Nothing.prototype, "isNothing", {
+  value: true,
+})
+
 class Just<T> implements BaseMaybe<T> {
   constructor (readonly value: T) { }
 
-  isNothing: false = false
+  declare readonly isNothing: false
 
-  isJust: true = true
+  declare readonly isJust: true
 
   map<U>(f: (x: T) => U) {
     return new Just (f (this.value))
@@ -430,6 +438,14 @@ class Just<T> implements BaseMaybe<T> {
     return OldJust (this.value)
   }
 }
+
+Object.defineProperty (Just.prototype, "isJust", {
+  value: true,
+})
+
+Object.defineProperty (Just.prototype, "isNothing", {
+  value: false,
+})
 
 type Maybe<T> = (Just<T> | Nothing)
 

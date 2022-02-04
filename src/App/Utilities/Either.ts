@@ -27,9 +27,9 @@ interface BaseEither<L, R> {
 class Left<L> implements BaseEither<L, never> {
   constructor (readonly value: L) { }
 
-  readonly isLeft: true = true
+  declare readonly isLeft: true
 
-  readonly isRight: false = false
+  declare readonly isRight: false
 
   map () {
     return this
@@ -65,12 +65,20 @@ class Left<L> implements BaseEither<L, never> {
   }
 }
 
+Object.defineProperty (Left.prototype, "isLeft", {
+  value: true,
+})
+
+Object.defineProperty (Left.prototype, "isRight", {
+  value: false,
+})
+
 class Right<R> implements BaseEither<never, R> {
   constructor (readonly value: R) { }
 
-  readonly isLeft: false = false
+  declare readonly isLeft: false
 
-  readonly isRight: true = true
+  declare readonly isRight: true
 
   map<S>(f: (value: R) => S) {
     return new Right (f (this.value))
@@ -104,6 +112,14 @@ class Right<R> implements BaseEither<never, R> {
     return OldEither.Right (this.value)
   }
 }
+
+Object.defineProperty (Right.prototype, "isLeft", {
+  value: false,
+})
+
+Object.defineProperty (Right.prototype, "isRight", {
+  value: true,
+})
 
 type Either<L, R> = (Left<L> | Right<R>) & BaseEither<L, R>
 
