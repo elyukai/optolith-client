@@ -1,4 +1,4 @@
-import { Maybe, Nullable } from "./Maybe"
+import { Just, Maybe, Nothing } from "./Maybe"
 
 declare global {
   interface Array<T> {
@@ -83,7 +83,9 @@ Array.prototype.findM = function findM<T> (
   this: T[],
   pred: (value: T, index: number, obj: T[]) => boolean
 ): Maybe<T> {
-  return Nullable (this.find (pred))
+  const index = this.findIndex (pred)
+
+  return index > -1 ? Just (this[index]) : Nothing
 }
 
 Array.prototype.bind = function bind<T, U> (
