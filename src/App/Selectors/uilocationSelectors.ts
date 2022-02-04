@@ -152,6 +152,11 @@ export const getTabs = createMaybeSelector (
           subTabs: List (),
         }),
         NavigationBarTabOptions ({
+          id: TabId.Advantages,
+          label: translate (staticData) ("header.tabs.advantagesanddisadvantages"),
+          subTabs: List (TabId.Advantages, TabId.Disadvantages),
+        }),
+        NavigationBarTabOptions ({
           id: TabId.Skills,
           label: translate (staticData) ("header.tabs.abilities"),
           subTabs: List (
