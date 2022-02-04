@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "Electron: Debug Main",
-      "type": "node",
+      "type": "pwa-node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
