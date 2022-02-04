@@ -1,6 +1,6 @@
 import { handleE } from "../../Control/Exception"
 import { List } from "../../Data/List"
-import { elem, fromJust, isJust, Just, Maybe } from "../../Data/Maybe"
+import { elem, fromJust, isJust, Just } from "../../Data/Maybe"
 import { lookup } from "../../Data/OrderedMap"
 import { OrderedSet } from "../../Data/OrderedSet"
 import { bind } from "../../System/IO"
@@ -136,7 +136,7 @@ export interface SaveHeroAction {
 }
 
 export const saveHero =
-  (id: Maybe<string>): ReduxAction<Promise<void>> =>
+  (id: string): ReduxAction<Promise<void>> =>
     async (dispatch, getState) => {
       await bind (handleE (dispatch (requestHeroSave (id))))
                  (async res => {

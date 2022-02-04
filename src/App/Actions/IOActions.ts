@@ -7,7 +7,7 @@ import { flip } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
 import { over } from "../../Data/Lens"
 import { List, notNull } from "../../Data/List"
-import { alt_, bindF, elem, ensure, fromJust, isJust, isNothing, Just, listToMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe"
+import { bindF, elem, ensure, fromJust, isJust, Just, listToMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe"
 import { any, lookup, OrderedMap } from "../../Data/OrderedMap"
 import { toObject } from "../../Data/Record"
 import * as IO from "../../System/IO"
@@ -23,7 +23,7 @@ import { UISettingsState } from "../Models/UISettingsState"
 import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { heroReducer } from "../Reducers/heroReducer"
 import { user_data_path } from "../Selectors/envSelectors"
-import { getCurrentHeroId, getFallbackLocaleId, getHeroes, getLocaleId, getWiki } from "../Selectors/stateSelectors"
+import { getFallbackLocaleId, getHeroes, getLocaleId, getWiki } from "../Selectors/stateSelectors"
 import { getUISettingsState } from "../Selectors/uisettingsSelectors"
 import { prepareAPCache, prepareAPCacheForHero, writeCache } from "../Utilities/Cache"
 import { translate } from "../Utilities/I18n"
@@ -170,19 +170,11 @@ const receiveHeroSave = (
 })
 
 export const requestHeroSave =
-  (mcurrent_id: Maybe<string>): ReduxAction<Promise<Maybe<string>>> =>
+  (id: string): ReduxAction<Promise<Maybe<string>>> =>
   async (dispatch, getState) => {
     const state = getState ()
     const static_data = getWiki (state)
     const heroes = getHeroes (state)
-
-    const mcurrent_id_alt = alt_ (mcurrent_id) (() => getCurrentHeroId (getState ()))
-
-    if (isNothing (mcurrent_id_alt)) {
-      return Promise.resolve (Nothing)
-    }
-
-    const id = fromJust (mcurrent_id_alt)
 
     const mcache = prepareAPCacheForHero (state, id)
 

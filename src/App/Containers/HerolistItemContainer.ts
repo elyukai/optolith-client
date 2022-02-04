@@ -1,6 +1,6 @@
 import { connect } from "react-redux"
 import { Action } from "redux"
-import { join, Just } from "../../Data/Maybe"
+import { join } from "../../Data/Maybe"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as HerolistActions from "../Actions/HerolistActions"
 import * as LocationActions from "../Actions/LocationActions"
@@ -32,7 +32,7 @@ const mapDispatchToProps = (
     dispatch (LocationActions.setTab (TabId.Profile))
   },
   async saveHero () {
-    await dispatch (HerolistActions.saveHero (Just (HA.id (hero))))
+    await dispatch (HerolistActions.saveHero (HA.id (hero)))
   },
   saveHeroAsJSON () {
     dispatch (HerolistActions.exportHeroValidate (HA.id (hero)))

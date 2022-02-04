@@ -1,5 +1,5 @@
 import { connect } from "react-redux"
-import { bind, join, Nothing } from "../../Data/Maybe"
+import { bind, join } from "../../Data/Maybe"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as HerolistActions from "../Actions/HerolistActions"
 import * as HistoryActions from "../Actions/HistoryActions"
@@ -16,6 +16,7 @@ import { getIsSpellsTabAvailable } from "../Selectors/spellsSelectors"
 import { getAvatar, getCurrentTab, getIsSettingsOpen } from "../Selectors/stateSelectors"
 import { getIsHeroSection, getSubtabs, getTabs } from "../Selectors/uilocationSelectors"
 import { TabId } from "../Utilities/LocationUtils"
+import { toNewMaybe } from "../Utilities/Maybe"
 import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from "../Views/NavBar/NavigationBar"
 
 const mapStateToProps =
@@ -38,7 +39,7 @@ const mapStateToProps =
     isBlessedOne: getIsLiturgicalChantsTabAvailable (state, ownProps),
   })
 
-const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch, ownProps: NavigationBarOwnProps) => ({
   setTab (id: TabId) {
     dispatch (LocationActions.setTab (id))
   },
@@ -49,7 +50,10 @@ const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
     dispatch (HistoryActions.redo ())
   },
   async saveHero () {
-    await dispatch (HerolistActions.saveHero (Nothing))
+    const mhero = toNewMaybe (ownProps.mhero)
+    if (mhero.isJust) {
+      await dispatch (HerolistActions.saveHero (HeroModel.A.id (mhero.value)))
+    }
   },
   openSettings () {
     dispatch (SubwindowsActions.openSettings ())
