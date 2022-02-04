@@ -71,6 +71,11 @@ All notable changes to this project will be documented in this file. See [standa
 ## [1.5.0-alpha.4](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.3...v1.5.0-alpha.4) (2021-08-03)
 
 
+### Features
+
+* add XML export for MapTool ([87cec15](https://github.com/elyukai/optolith-client/commit/87cec15ba9751c329ee39719dc654895b9f4f193))
+
+
 ### Bug Fixes
 
 * maptools should provide user interface strings ([b2fb035](https://github.com/elyukai/optolith-client/commit/b2fb0353a9cac409d726e3ad236c0508f230ff06))
