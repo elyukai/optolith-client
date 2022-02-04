@@ -347,6 +347,7 @@ export enum SpecialAbilityId {
   TraditionSchelme = "SA_726",
   TraditionZauberalchimisten = "SA_750",
   GrosseMeditation = "SA_772",
+  Imitationszauberei = "SA_775",
   ScholarDerHalleDesLebensZuNorburg = "SA_802",
   ScholarDesKreisesDerEinfuehlung = "SA_808",
   MadaschwesternStil = "SA_821",

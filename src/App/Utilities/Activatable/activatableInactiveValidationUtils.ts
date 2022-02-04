@@ -29,6 +29,7 @@ import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
 import { MatchingScriptAndLanguageRelated } from "../../Selectors/activatableSelectors"
 import { countActiveGroupEntries, hasActiveGroupEntry } from "../entryGroupUtils"
 import { getAllEntriesByGroup } from "../heroStateUtils"
+import { toNewMaybe } from "../Maybe"
 import { pipe, pipe_ } from "../pipe"
 import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites"
 import { validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils"
@@ -114,6 +115,15 @@ const isAdditionDisabledSpecialAbilitySpecific =
 
     if (current_id === SpecialAbilityId.MagicStyleCombination) {
       return !hasActiveGroupEntry (staticData) (hero) (SpecialAbilityGroup.MagicalStyles)
+    }
+
+    if (current_id === SpecialAbilityId.SpellEnhancement) {
+      const traditionSchelme = toNewMaybe (lookup<string> (SpecialAbilityId.TraditionSchelme)
+                                                          (HA.specialAbilities (hero)))
+
+      if (traditionSchelme.isJust && isActive (traditionSchelme.value)) {
+        return true
+      }
     }
 
     if (current_id === SpecialAbilityId.DunklesAbbildDerBuendnisgabe) {

@@ -395,27 +395,12 @@ export const isSpellsRitualsCountMaxReached =
   (wiki : StaticDataRecord) =>
   (hero : HeroModelRecord) =>
   (isLastTrad : (x : string) => boolean) => {
-    // Count maximum for Intuitive Mages and Animisten
-    const BASE_MAX_INTU_ANIM = 3
-
     const current_count = countActiveSpellEntriesInGroups (List (
                                                             MagicalGroup.Spells,
                                                             MagicalGroup.Rituals
                                                           ))
                                                           (wiki)
                                                           (hero)
-
-    if (isLastTrad (SpecialAbilityId.traditionIntuitiveMage)
-        || isLastTrad (SpecialAbilityId.traditionAnimisten)) {
-      const mbonus = lookup (AdvantageId.largeSpellSelection) (HA.advantages (hero))
-      const mmalus = lookup (DisadvantageId.smallSpellSelection) (HA.disadvantages (hero))
-
-      const max_spells = modifyByLevel (BASE_MAX_INTU_ANIM) (mbonus) (mmalus)
-
-      if (current_count >= max_spells) {
-        return true
-      }
-    }
 
     if (isLastTrad (SpecialAbilityId.traditionSchelme)) {
       const max_spellworks = pipe_ (
@@ -427,7 +412,20 @@ export const isSpellsRitualsCountMaxReached =
                                fromMaybe (0)
                              )
 
-      if (current_count >= max_spellworks) {
+      return current_count >= max_spellworks
+    }
+
+    // Count maximum for Intuitive Mages and Animisten
+    const BASE_MAX_INTU_ANIM = 3
+
+    if (isLastTrad (SpecialAbilityId.traditionIntuitiveMage)
+        || isLastTrad (SpecialAbilityId.traditionAnimisten)) {
+      const mbonus = lookup (AdvantageId.largeSpellSelection) (HA.advantages (hero))
+      const mmalus = lookup (DisadvantageId.smallSpellSelection) (HA.disadvantages (hero))
+
+      const max_spells = modifyByLevel (BASE_MAX_INTU_ANIM) (mbonus) (mmalus)
+
+      if (current_count >= max_spells) {
         return true
       }
     }
