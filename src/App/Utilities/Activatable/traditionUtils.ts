@@ -66,6 +66,7 @@ export const isBlessedTradId =
       case SpecialAbilityId.TraditionChurchOfNandus:
       case SpecialAbilityId.TraditionChurchOfSwafnir:
       case SpecialAbilityId.TraditionCultOfNuminoru:
+      case SpecialAbilityId.TraditionCultOfLevthan:
         return true
 
       default:
@@ -301,6 +302,9 @@ export const mapBlessedTradIdToNumId =
       case SpecialAbilityId.TraditionCultOfNuminoru:
         return Just (BlessedTradition.CultOfNuminoru)
 
+      case SpecialAbilityId.TraditionCultOfLevthan:
+        return Just (BlessedTradition.Levthankult)
+
       default:
         return Nothing
     }
@@ -369,6 +373,9 @@ export const mapBlessedNumIdToTradId =
 
       case BlessedTradition.CultOfNuminoru:
         return Just (SpecialAbilityId.TraditionCultOfNuminoru)
+
+      case BlessedTradition.Levthankult:
+        return Just (SpecialAbilityId.TraditionCultOfLevthan)
 
       default:
         return Nothing
