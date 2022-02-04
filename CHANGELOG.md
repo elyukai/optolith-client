@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0-alpha.8](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.7...v1.5.0-alpha.8) (2022-02-04)
+
+
+### Features
+
+* **logs:** add small logging utility function ([8b18b26](https://github.com/elyukai/optolith-client/commit/8b18b26361c1526c93b4ca8906e961d56f85ed49))
+
+
+### Bug Fixes
+
+* attribute minimum must include combat techniques ([1ce2db9](https://github.com/elyukai/optolith-client/commit/1ce2db9cfbb06b1ca8a549957b8225af71de9185)), closes [#836](https://github.com/elyukai/optolith-client/issues/836)
+* **datatypes:** find might return an existing value that is undefined ([232795d](https://github.com/elyukai/optolith-client/commit/232795d12984e1070223bffd60b79367d3560752))
+* **prerelease:** cult of Levtan not registered as blessed tradition ([1f09060](https://github.com/elyukai/optolith-client/commit/1f090605a4c5404ed1550a0b4048a72dffbb0104))
+* saving a hero clears the undo history of multiple characters ([923b760](https://github.com/elyukai/optolith-client/commit/923b7605fee4c4288dc743e962728308f7254ca9)), closes [#811](https://github.com/elyukai/optolith-client/issues/811)
+* spells converted by Imitationszauberei cannot use spell enhancements ([e558c1d](https://github.com/elyukai/optolith-client/commit/e558c1d80d1c668f926e4a56049029f989081a45)), closes [#828](https://github.com/elyukai/optolith-client/issues/828)
+* widened rows in seconds column of skills table on character sheet ([41ee35b](https://github.com/elyukai/optolith-client/commit/41ee35ba76af42ad837daa6c45a940406b0c5daa)), closes [#1342](https://github.com/elyukai/optolith-client/issues/1342)
+* wrong combat type of special ability Blattschuss ([7e31136](https://github.com/elyukai/optolith-client/commit/7e31136083ae62e26c5017f3af2376938bd264c3)), closes [#1331](https://github.com/elyukai/optolith-client/issues/1331)
+
 ## [1.5.0-alpha.7](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.6...v1.5.0-alpha.7) (2022-02-03)
 
 
