@@ -541,6 +541,13 @@ const isInactiveValidForArcaneBardOrDancer =
     && Maybe.all (notP (ASDA.active)) (mhero_entry)
 
 
+const isValidInactiveAnimistPower = (
+  wiki_entry : Record<Spell>,
+  mhero_entry : Maybe<Record<ActivatableSkillDependent>>
+) =>
+  Maybe.all (notP (ASDA.active)) (mhero_entry)
+  && SA.gr (wiki_entry) === MagicalGroup.AnimistForces
+
 /**
  * ```haskell
  * isInactiveValidForAnimists :: Wiki
@@ -563,7 +570,7 @@ const isInactiveValidForAnimist =
                                     (is_spell_max_count_reached)
                                     (wiki_entry)
                                     (mhero_entry)
-    || SA.gr (wiki_entry) === MagicalGroup.AnimistForces
+    || isValidInactiveAnimistPower (wiki_entry, mhero_entry)
 
 
 const consTradSpecificSpell =
