@@ -129,4 +129,34 @@ describe ("Array Prototype Extensions", () => {
         .toEqual ([ 1, 2, 2, 3, 3, 3 ])
     })
   })
+
+  describe (Array.prototype.atM.name, () => {
+    it ("returns the value at the specified index as a Just", () => {
+      expect ([ 1, 2, 3 ].atM (0)).toEqual (Just (1))
+      expect ([ 1, 2, 3 ].atM (1)).toEqual (Just (2))
+      expect ([ 1, 2, 3 ].atM (2)).toEqual (Just (3))
+    })
+
+    it ("returns Nothing if the index is negative", () => {
+      expect ([ 1, 2, 3 ].atM (-1)).toBe (Nothing)
+      expect ([ 1, 2, 3 ].atM (-2)).toBe (Nothing)
+    })
+
+    it ("returns Nothing if the index exceeds the array length", () => {
+      expect ([ 1, 2, 3 ].atM (3)).toBe (Nothing)
+      expect ([ 1, 2, 3 ].atM (4)).toBe (Nothing)
+    })
+  })
+
+  describe (Array.prototype.notNull.name, () => {
+    it ("returns true if the array has at least one element", () => {
+      expect ([ 1 ].notNull ()).toBe (true)
+      expect ([ 1, 2 ].notNull ()).toBe (true)
+      expect ([ 1, 2, 3 ].notNull ()).toBe (true)
+    })
+
+    it ("returns false if the array is empty", () => {
+      expect ([ ].notNull ()).toBe (false)
+    })
+  })
 })

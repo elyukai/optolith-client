@@ -13,6 +13,8 @@ declare global {
     findM<S extends T>(pred: (value: T, index: number, obj: T[]) => value is S): Maybe<S>
     findM(pred: (value: T, index: number, obj: T[]) => boolean): Maybe<T>
     bind<U>(f: (value: T) => U[]): U[]
+    atM(index: number): Maybe<T>
+    notNull(): boolean
   }
 
   interface ReadonlyArray<T> {
@@ -27,6 +29,8 @@ declare global {
     findM<S extends T>(pred: (value: T, index: number, obj: readonly T[]) => value is S): Maybe<S>
     findM(pred: (value: T, index: number, obj: readonly T[]) => boolean): Maybe<T>
     bind<U>(f: (value: T) => readonly U[]): readonly U[]
+    atM(index: number): Maybe<T>
+    notNull(): boolean
   }
 }
 
@@ -88,11 +92,21 @@ Array.prototype.findM = function findM<T> (
   return index > -1 ? Just (this[index]) : Nothing
 }
 
-Array.prototype.bind = function bind<T, U> (
-  this: T[],
-  f: (value: T) => U[]
-): U[] {
+Array.prototype.bind = function bind<T, U> (this: T[], f: (value: T) => U[]): U[] {
   return this.flatMap (f)
+}
+
+Array.prototype.atM = function atM<T> (this: T[], index: number): Maybe<T> {
+  if (index >= 0 && index < this.length) {
+    return Just (this[index])
+  }
+  else {
+    return Nothing
+  }
+}
+
+Array.prototype.notNull = function notNull<T> (this: T[]): boolean {
+  return this.length > 0
 }
 
 export { }
