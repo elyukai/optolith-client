@@ -65,7 +65,7 @@ body:
     validations:
       required: true
   - type: textarea
-    id: description
+    id: additional-context
     attributes:
       label: Additional context
       description: Add any other context about the problem here.
