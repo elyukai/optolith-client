@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0-alpha.9](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.8...v1.5.0-alpha.9) (2022-02-06)
+
+
+### Bug Fixes
+
+* active animist powers occurred multiple times in addition list ([06eac93](https://github.com/elyukai/optolith-client/commit/06eac932217377b78901a08a1133789d95e8920e)), closes [#794](https://github.com/elyukai/optolith-client/issues/794)
+* typo in German name of Tradition (Illusionist) ([bdb3eb7](https://github.com/elyukai/optolith-client/commit/bdb3eb7804f8464689172f39d5bd8c229140c891)), closes [#1239](https://github.com/elyukai/optolith-client/issues/1239)
+
 ## [1.5.0-alpha.8](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.7...v1.5.0-alpha.8) (2022-02-04)
 
 
