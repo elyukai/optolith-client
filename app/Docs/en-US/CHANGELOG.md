@@ -10,6 +10,7 @@
 
 * Kilogram input hint for weight in item dialog ([bd9fc1b](https://github.com/elyukai/optolith-client/commit/bd9fc1badc8a408495bd7c1594338b1a5fe6df11))
 * Security ([723e910](https://github.com/elyukai/optolith-client/commit/723e9106ebb178db6a7cccec2a022b3edaed5b98) and others)
+* Show advantages & disadvantages tab after character creation without being in edit mode ([xxxxxxx](https://github.com/elyukai/optolith-client/commit/xxxxxxx), [#1334](https://github.com/elyukai/optolith-client/issues/1334))
 
 ### Bug Fixes
 
@@ -24,7 +25,7 @@
 * INI/MOV modifiers on armor were handled as penalties ([eb5a068](https://github.com/elyukai/optolith-client/commit/eb5a06884db1894e1a9f2b4b040b114cb4dc85cb), [#1091](https://github.com/elyukai/optolith-client/issues/1091))
 * Language specializations did not always cost 1 AP and could not be activated multiple times for a single language ([0a59d9e](https://github.com/elyukai/optolith-client/commit/0a59d9e5e571e87525b18d0b25035e73f7cd87bf), [#1082](https://github.com/elyukai/optolith-client/issues/1082))
 * Portraits with transparency had a black background ([cc5ecd6](https://github.com/elyukai/optolith-client/commit/cc5ecd6f098ae6c080eeb3b306887727a99c1220), [#800](https://github.com/elyukai/optolith-client/issues/800))
-* Bornlander cultural package had Prepare Food instead of Leatherworking ([397abe2](https://github.com/elyukai/optolith-client/commit/397abe2b4a69582dc49422add1700807272c32d6), [#824](https://github.com/elyukai/optolith-client/issues/824))
+* Bornlander cultural package had Leatherworking instead of Prepare Food ([397abe2](https://github.com/elyukai/optolith-client/commit/397abe2b4a69582dc49422add1700807272c32d6), [#824](https://github.com/elyukai/optolith-client/issues/824))
 * Spell Wind Shaping had the wrong traditions and wrong spell enhancements order ([397abe2](https://github.com/elyukai/optolith-client/commit/397abe2b4a69582dc49422add1700807272c32d6), [#1139](https://github.com/elyukai/optolith-client/issues/1139))
 * Primary attribute changes for items were not applied in edit window, only on character sheet ([6c63ab1](https://github.com/elyukai/optolith-client/commit/6c63ab1b5051882ace71f15740c3a69fff4a267f), [#798](https://github.com/elyukai/optolith-client/issues/798))
 * Professions with due to EL impossible attribute values could be selected ([fdde329](https://github.com/elyukai/optolith-client/commit/fdde329de591319df3f6da11404dd7523d800c3e), [#1109](https://github.com/elyukai/optolith-client/issues/1109))
