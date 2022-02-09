@@ -9,7 +9,6 @@
 ### Migliorie
 
 * Sicurezza ([723e910](https://github.com/elyukai/optolith-client/commit/723e9106ebb178db6a7cccec2a022b3edaed5b98) e altre)
-* Mostra la scheda di Vantaggi e Svantaggi dopo la creazione del personaggio senza essere nella modalità di modifica ([xxxxxxx](https://github.com/elyukai/optolith-client/commit/xxxxxxx), [#1334](https://github.com/elyukai/optolith-client/issues/1334))
 
 ### Correzioni
 

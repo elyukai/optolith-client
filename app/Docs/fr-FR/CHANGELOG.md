@@ -9,7 +9,6 @@
 ### Améliorations
 
 * Security ([723e910](https://github.com/elyukai/optolith-client/commit/723e9106ebb178db6a7cccec2a022b3edaed5b98) and others)
-* Show advantages & disadvantages tab after character creation without being in edit mode ([xxxxxxx](https://github.com/elyukai/optolith-client/commit/xxxxxxx), [#1334](https://github.com/elyukai/optolith-client/issues/1334))
 
 ### Bugs rectifiés
 
