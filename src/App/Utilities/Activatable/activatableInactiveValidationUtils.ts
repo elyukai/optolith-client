@@ -14,8 +14,6 @@ import { all, any, bind, bindF, fromMaybe, isJust, listToMaybe, Maybe, sum } fro
 import { add, inc, lte } from "../../../Data/Num"
 import { isOrderedMap, lookup } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { Tuple } from "../../../Data/Tuple"
-import { sel2, sel3 } from "../../../Data/Tuple/Select"
 import { SpecialAbilityGroup } from "../../Constants/Groups"
 import { SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -28,8 +26,10 @@ import { Advantage } from "../../Models/Wiki/Advantage"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
+import { MatchingScriptAndLanguageRelated } from "../../Selectors/activatableSelectors"
 import { countActiveGroupEntries, hasActiveGroupEntry } from "../entryGroupUtils"
 import { getAllEntriesByGroup } from "../heroStateUtils"
+import { toNewMaybe } from "../Maybe"
 import { pipe, pipe_ } from "../pipe"
 import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites"
 import { validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils"
@@ -78,7 +78,10 @@ const isAdditionDisabledForCombatStyle =
 const isAdditionDisabledSpecialAbilitySpecific =
   (staticData: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
-  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
+  ({
+    languagesWithMatchingScripts,
+    scriptsWithMatchingLanguages,
+  }: MatchingScriptAndLanguageRelated) =>
   (wiki_entry: Record<SpecialAbility>): boolean => {
     const current_id = SAA.id (wiki_entry)
 
@@ -114,13 +117,21 @@ const isAdditionDisabledSpecialAbilitySpecific =
       return !hasActiveGroupEntry (staticData) (hero) (SpecialAbilityGroup.MagicalStyles)
     }
 
+    if (current_id === SpecialAbilityId.SpellEnhancement) {
+      const traditionSchelme = toNewMaybe (lookup<string> (SpecialAbilityId.TraditionSchelme)
+                                                          (HA.specialAbilities (hero)))
+
+      if (traditionSchelme.isJust && isActive (traditionSchelme.value)) {
+        return true
+      }
+    }
+
     if (current_id === SpecialAbilityId.DunklesAbbildDerBuendnisgabe) {
       return hasActiveGroupEntry (staticData) (hero) (SpecialAbilityGroup.Paktgeschenke)
     }
 
     if (current_id === SpecialAbilityId.WegDerSchreiberin) {
-      return flength (sel2 (matching_script_and_lang_related)) >= 1
-             && flength (sel3 (matching_script_and_lang_related)) >= 1
+      return languagesWithMatchingScripts.length < 1 || scriptsWithMatchingLanguages.length < 1
     }
 
     if (SAA.gr (wiki_entry) === SpecialAbilityGroup.Paktgeschenke) {
@@ -194,13 +205,13 @@ const isAdditionDisabledSpecialAbilitySpecific =
 const isAdditionDisabledEntrySpecific =
   (wiki: StaticDataRecord) =>
   (hero: HeroModelRecord) =>
-  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
+  (matchingScriptAndLanguageRelated: MatchingScriptAndLanguageRelated) =>
   (wiki_entry: Activatable): boolean =>
     (
       SpecialAbility.is (wiki_entry)
       && isAdditionDisabledSpecialAbilitySpecific (wiki)
                                                   (hero)
-                                                  (matching_script_and_lang_related)
+                                                  (matchingScriptAndLanguageRelated)
                                                   (wiki_entry)
     )
     || !validatePrerequisites (wiki)
@@ -244,11 +255,11 @@ export const isAdditionDisabled =
   (hero: HeroModelRecord) =>
   (required_apply_to_mag_actions: boolean) =>
   (validExtendedSpecialAbilities: List<string>) =>
-  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
+  (matchingScriptAndLanguageRelated: MatchingScriptAndLanguageRelated) =>
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
   (max_level: Maybe<number>): boolean =>
-    isAdditionDisabledEntrySpecific (wiki) (hero) (matching_script_and_lang_related) (wiki_entry)
+    isAdditionDisabledEntrySpecific (wiki) (hero) (matchingScriptAndLanguageRelated) (wiki_entry)
     || hasGeneralRestrictionToAdd (mhero_entry)
     || hasReachedMaximumEntries (wiki_entry) (mhero_entry)
     || hasReachedImpossibleMaximumLevel (max_level)

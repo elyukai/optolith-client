@@ -11,7 +11,7 @@
 import { cnst, flip, ident } from "../../../Data/Function"
 import { fmap, fmapF } from "../../../Data/Functor"
 import { over, set } from "../../../Data/Lens"
-import { appendStr, countWith, filter, find, foldl, ifoldr, isList, List, map, notElem, notNull, subscript, subscriptF, sum } from "../../../Data/List"
+import { appendStr, countWith, filter, foldl, ifoldr, isList, List, map, notElem, notNull, subscript, subscriptF, sum } from "../../../Data/List"
 import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe"
 import { add, dec, gt, multiply, negate } from "../../../Data/Num"
 import { lookup, lookupF } from "../../../Data/OrderedMap"
@@ -354,31 +354,6 @@ const getEntrySpecificCost =
                       ))
       }
 
-      case SpecialAbilityId.LanguageSpecializations: {
-        if (isNothing (mcurrent_sid)) {
-          return Nothing
-        }
-
-        const current_sid = fromJust (mcurrent_sid)
-
-        return pipe (
-                      HA.specialAbilities,
-                      lookup<string> (SpecialAbilityId.Language),
-                      bindF (pipe (
-                        ActivatableDependent.A.active,
-
-                        // Get the `ActiveObject` for the corresponding language
-                        find (pipe (ActiveObject.A.sid, elem (current_sid)))
-                      )),
-                      bindF (ActiveObject.A.tier),
-
-                      // If it's a native language, it costs nothing, otherwise
-                      // the default SA's AP
-                      bindF (level => level === 4 ? Nothing : misNumberM (mcurrent_cost))
-                    )
-                    (hero)
-      }
-
       case SpecialAbilityId.Handwerkskunst:
       case SpecialAbilityId.KindDerNatur:
       case SpecialAbilityId.KoerperlichesGeschick:
@@ -589,7 +564,7 @@ export const putLevelName =
     pipe_ (
       entry,
       getLevelNameIfValid (staticData),
-      fmap (levelName => addLevelToName
+      fmap ((levelName: string) => addLevelToName
                            ? pipe_ (
                                entry,
                                over (ActivatableNameCostL_.name)

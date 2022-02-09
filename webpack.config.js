@@ -1,65 +1,119 @@
 // @ts-check
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require("path");
 
 /** @type {import("webpack").Configuration[]} */
 const config = [
   {
+    name: 'main',
     mode: 'development',
-    entry: './src/main.ts',
+    entry: {
+      main: './src/main.ts'
+    },
     target: 'electron-main',
+    optimization: {
+      splitChunks: {
+        chunks: "all",
+        cacheGroups: {
+          default: {
+            name: 'main',
+            minChunks: 2,
+            priority: -20
+          },
+          defaultVendors: {
+            name: 'main-vendors',
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            reuseExistingChunk: true,
+          }
+        }
+      }
+    },
     module: {
       rules: [
         {
           test: /\.ts$/,
-          include: /src/,
+          include: path.resolve(__dirname, 'src'),
           loader: 'ts-loader',
           resolve: {
-            extensions: [".ts", ".tsx", ".js"],
+            extensions: [".ts", ".tsx", ".js"]
           },
           options: {
-            configFile: "tsconfig.webpack.json"
+            configFile: "tsconfig.webpack.json",
+            transpileOnly: true
           }
         }
       ]
     },
+    resolve: {
+      symlinks: false
+    },
     output: {
       path: __dirname + '/app',
-      filename: 'main.js'
+      filename: '[name].js'
+    },
+    externalsPresets: {
+      electronMain: true
     }
   },
   {
+    name: 'renderer',
     mode: 'development',
-    entry: './src/entry.tsx',
+    entry: {
+      renderer: './src/renderer.tsx'
+    },
     target: 'node',
-    devtool: 'source-map',
+    optimization: {
+      splitChunks: {
+        chunks: "all",
+        cacheGroups: {
+          default: {
+            name: 'renderer',
+            minChunks: 2,
+            priority: -20
+          },
+          defaultVendors: {
+            name: 'renderer-vendors',
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            reuseExistingChunk: true
+          }
+        }
+      }
+    },
     module: {
       rules: [
         {
           test: /\.ts(x?)$/,
-          include: /src/,
+          include: path.resolve(__dirname, 'src'),
           loader: 'ts-loader',
           resolve: {
-            extensions: [".ts", ".tsx", ".js"],
+            extensions: [".ts", ".tsx", ".js"]
           },
           options: {
-            configFile: "tsconfig.webpack.json"
+            configFile: "tsconfig.webpack.json",
+            transpileOnly: true
           }
         }
       ]
     },
+    resolve: {
+      symlinks: false
+    },
     output: {
       path: __dirname + '/app',
-      filename: 'renderer.js'
+      filename: '[name].js'
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: './src/index.html',
+        template: './src/index.html'
       })
     ],
-    externals: {
-      electron: "commonjs electron"
-    }
+    externalsPresets: {
+      electronRenderer: true
+    },
+    profile: true
   }
 ]
 

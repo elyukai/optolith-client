@@ -19,7 +19,8 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
 
 const connectAlertsContainer =
   connect<AlertsStateProps, AlertsDispatchProps, AlertsOwnProps, AppStateRecord> (
-    mapStateToProps, mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
   )
 
 export const AlertsContainer = connectAlertsContainer (Alerts)

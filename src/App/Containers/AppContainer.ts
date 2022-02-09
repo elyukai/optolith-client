@@ -1,4 +1,5 @@
-import { ipcRenderer, remote } from "electron"
+import * as remote from "@electron/remote"
+import { ipcRenderer } from "electron"
 import { connect } from "react-redux"
 import { Action } from "redux"
 import { Nothing } from "../../Data/Maybe"

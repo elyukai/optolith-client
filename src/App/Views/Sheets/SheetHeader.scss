@@ -1,17 +1,18 @@
 .sheet-header {
 	align-items: flex-end;
 	flex: none;
-	height: 32mm;
+	height: 28mm;
 	margin-bottom: 4mm;
 }
 
 .sheet-title {
 	flex: 1 1 100%;
-	height: 12mm;
+	height: 28mm;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: flex-end;
 	position: relative;
+  padding-bottom: 0.5mm;
 
 	h1, p {
 		text-align: center;
@@ -27,7 +28,6 @@
 		width: 3cm;
 		opacity: .2;
 		left: calc(50% - 1.5cm);
-		top: -16mm;
 	}
 }
 

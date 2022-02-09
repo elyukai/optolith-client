@@ -23,6 +23,7 @@ interface ActivatableNameCostConstructor extends RecordCreator<ActivatableNameCo
   default: Record<ActivatableNameCostSafeCost>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivatableNameCost =
   fromDefault ("ActivatableNameCost")
               <ActivatableNameCost> ({

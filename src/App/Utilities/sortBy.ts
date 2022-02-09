@@ -55,6 +55,7 @@ export interface RecordWithName extends RecordIBase<any> {
   name: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RecordWithName = fromDefault ("RecordWithName")
                                           <RecordWithName> ({ name: "" })
 

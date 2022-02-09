@@ -21,6 +21,7 @@ export interface InactiveActivatable<T extends RecordI<Activatable> = RecordI<Ac
   isAutomatic: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const InactiveActivatable =
   fromDefault ("InactiveActivatable")
               <InactiveActivatable> ({

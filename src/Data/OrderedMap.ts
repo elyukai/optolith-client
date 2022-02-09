@@ -421,6 +421,7 @@ export const lookup =
   (m: OrderedMap<K, A>): Maybe<A> =>
     Maybe (m .value .get (key))
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type lookup<K, A> = (key: K) => (m: OrderedMap<K, A>) => Maybe<A>
 
 /**
@@ -486,6 +487,7 @@ export const insert =
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     fromArray ([ ...mp .value, [ key, value ] ])
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type insert<K, A> = (key: K) => (value: A) => (mp: OrderedMap<K, A>) => OrderedMap<K, A>
 
 /**
@@ -711,7 +713,7 @@ export const alter =
   <K>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    maybe<(mp: OrderedMap<K, A>) => OrderedMap<K, A>>
+    maybe<ident<OrderedMap<K, A>>>
       (sdelete (key))
       <A> (insert (key))
       (f (lookup (key) (mp)))
@@ -896,7 +898,7 @@ export const filter: Filter =
   <K, A>
   (pred: (x: A) => boolean) => (xs: OrderedMap<K, A>): OrderedMap<K, A> =>
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    fromArray ([ ...xs .value ] .filter (([ _, value ]) => pred (value)))
+    fromArray ([ ...xs .value ] .filter (p => pred (p[1])))
 
 interface FilterWithKey {
 
@@ -1136,6 +1138,7 @@ export const adjustDef =
 
 // NAMESPACED FUNCTIONS
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const OrderedMap = {
   fromUniquePairs,
   fromArray,

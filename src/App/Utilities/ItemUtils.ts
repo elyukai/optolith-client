@@ -1,8 +1,7 @@
-import { equals } from "../../Data/Eq"
 import { fmap } from "../../Data/Functor"
 import { set } from "../../Data/Lens"
-import { flength, fnull, head, intercalate, List, map, NonEmptyList, splitOn } from "../../Data/List"
-import { bindF, ensure, fromJust, fromMaybe, Just, liftM2, mapM, mapMaybe, Maybe, maybe, Nothing, product, sum } from "../../Data/Maybe"
+import { flength, fnull, head, intercalate, List, NonEmptyList, splitOn } from "../../Data/List"
+import { bind, bindF, ensure, fromJust, fromMaybe, Just, liftM2, mapM, Maybe, maybe, Nothing, product, sum } from "../../Data/Maybe"
 import { gt } from "../../Data/Num"
 import { Record } from "../../Data/Record"
 import { show } from "../../Data/Show"
@@ -10,8 +9,9 @@ import { bimap, fst, isTuple, Pair, snd } from "../../Data/Tuple"
 import { EditHitZoneArmor, EditHitZoneArmorSafe } from "../Models/Hero/EditHitZoneArmor"
 import { EditItem, EditItemL, EditItemSafe } from "../Models/Hero/EditItem"
 import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold"
+import { EditRange } from "../Models/Hero/heroTypeHelpers"
 import { HitZoneArmor } from "../Models/Hero/HitZoneArmor"
-import { fromItemTemplate, Item } from "../Models/Hero/Item"
+import { fromItemTemplate, Item, Range } from "../Models/Hero/Item"
 import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold"
 import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { ndash } from "./Chars"
@@ -89,8 +89,12 @@ export const itemToEditable =
       pa: showMaybe (IA.pa (item)),
       price: showMaybe (IA.price (item)),
       pro: showMaybe (IA.pro (item)),
-      range: maybe (List ("", "", ""))
-                   (map<number, string> (show))
+      range: maybe<EditRange> ({ close: "", medium: "", far: "" })
+                   (({ close, medium, far }: Range) => ({
+                     close: close.toString (),
+                     medium: medium.toString (),
+                     far: far.toString (),
+                   }))
                    (IA.range (item)),
       reloadTime: pipe_ (item, IA.reloadTime, intOrIntsMToEditable),
       stp: pipe_ (item, IA.stp, intOrIntsMToEditable),
@@ -161,8 +165,10 @@ export const editableToItem =
       pa: toInt (EIA.pa (item)),
       price: toFloat (EIA.price (item)),
       pro: toInt (EIA.pro (item)),
-      range: ensure<List<number>> (pipe (flength, equals (3)))
-                                  (mapMaybe (toInt) (EIA.range (item))),
+      range: bind (toInt (EIA.range (item).close))
+                  (close => bind (toInt (EIA.range (item).medium))
+                                 (medium => bind (toInt (EIA.range (item).far))
+                                                 (far => Just ({ close, medium, far })))),
       reloadTime: pipe_ (item, EIA.reloadTime, intOrIntsMFromEditable),
       stp: pipe_ (item, EIA.stp, intOrIntsMFromEditable),
       weight: toFloat (EIA.weight (item)),

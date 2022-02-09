@@ -121,31 +121,27 @@ export const getActiveSpells = createMaybeSelector (
                      mapMaybe (pipe (
                        ensure (ASDA.active),
                        bindF (hero_entry =>
-                               pipe_ (
-                                 wiki,
-                                 SDA.spells,
-                                 lookup (ASDA.id (hero_entry)),
-                                 fmap (wiki_entry =>
-                                   SpellWithRequirements ({
-                                     isIncreasable:
-                                       isSpellIncreasable (start_el)
-                                                          (HA.phase (hero))
-                                                          (HA.attributes (hero))
-                                                          (mexceptional_skill)
-                                                          (maproperty_knowledge)
-                                                          (wiki_entry)
-                                                          (hero_entry),
-                                     isDecreasable:
-                                       isSpellDecreasable (wiki)
-                                                          (hero)
-                                                          (maproperty_knowledge)
-                                                          (wiki_entry)
-                                                          (hero_entry),
-                                     isUnfamiliar: isUnfamiliarCustom (wiki_entry),
-                                     stateEntry: hero_entry,
-                                     wikiEntry: wiki_entry,
-                                   }))
-                               ))
+                         fmapF (lookup (ASDA.id (hero_entry)) (SDA.spells (wiki)))
+                               (wiki_entry =>
+                                 SpellWithRequirements ({
+                                   isIncreasable:
+                                     isSpellIncreasable (start_el)
+                                                        (HA.phase (hero))
+                                                        (HA.attributes (hero))
+                                                        (mexceptional_skill)
+                                                        (maproperty_knowledge)
+                                                        (wiki_entry)
+                                                        (hero_entry),
+                                   isDecreasable:
+                                     isSpellDecreasable (wiki)
+                                                        (hero)
+                                                        (maproperty_knowledge)
+                                                        (wiki_entry)
+                                                        (hero_entry),
+                                   isUnfamiliar: isUnfamiliarCustom (wiki_entry),
+                                   stateEntry: hero_entry,
+                                   wikiEntry: wiki_entry,
+                                 })))
                     ))
                    ))
   }
@@ -209,13 +205,13 @@ export const getActiveAndInactiveCantrips = createMaybeSelector (
 
 export const getActiveCantrips = createMaybeSelector (
   getActiveAndInactiveCantrips,
-  fmap (fst)
+  cantripsPair => fmapF (cantripsPair) (fst)
 )
 
 
 export const getInactiveCantrips = createMaybeSelector (
   getActiveAndInactiveCantrips,
-  fmap (snd)
+  cantripsPair => fmapF (cantripsPair) (snd)
 )
 
 
@@ -349,6 +345,7 @@ type getNameFromSpellOrCantrip =
   (x: Record<SpellWithRequirements | CantripCombined>) => string
 
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const getNameFromSpellOrCantrip =
   (x: Record<SpellWithRequirements> | Record<CantripCombined>) =>
     SpellWithRequirements.is (x)
@@ -394,7 +391,9 @@ export const getFilteredInactiveSpellsAndCantrips = createMaybeSelector (
 export const getCantripsForSheet = createMaybeSelector (
   getCantripsSortOptions,
   getActiveCantrips,
-  uncurryN (sort_options => fmap (sortByMulti (sort_options)))
+  (sortOptions, activeCantrips) =>
+    fmapF (activeCantrips)
+          (sortByMulti (sortOptions))
 )
 
 
@@ -402,15 +401,16 @@ export const getSpellsForSheet = createMaybeSelector (
   getSpellsSortOptions,
   getIsUnfamiliarSpell,
   getActiveSpells,
-  uncurryN3 (sort_options =>
-             isUnfamiliar => fmap (pipe (
-                                    map (s => isUnfamiliar (SWRA.wikiEntry (s))
-                                                ? s
-                                                : set (composeL (SWRL.wikiEntry, SL.tradition))
-                                                      (List ())
-                                                      (s)),
-                                    sortByMulti (sort_options)
-                                  )))
+  (sortOptions, isUnfamiliar, activeSpells) =>
+  fmapF (activeSpells)
+        (pipe (
+          map (s => isUnfamiliar (SWRA.wikiEntry (s))
+                      ? s
+                      : set (composeL (SWRL.wikiEntry, SL.tradition))
+                            (List ())
+                            (s)),
+          sortByMulti (sortOptions)
+        ))
 )
 
 

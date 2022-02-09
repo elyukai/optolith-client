@@ -44,6 +44,7 @@ interface TupleConstructor {
   isTuple: (x: any) => x is Tuple<any[]>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Tuple =
   ((...args: any[]) => Internals._Tuple (...args)) as TupleConstructor
 
@@ -61,6 +62,7 @@ interface PairConstructor {
   <A, B> (first: A, second: B): Pair<A, B>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Pair =
   ((...args: [any] | [any, any]) => {
     if (args.length === 1) {
@@ -96,7 +98,7 @@ export const bimap =
 */
 export const first =
   <A, B>
-  (f: (first: A) => B) =>
+  (f: (fst: A) => B) =>
   <C>
   (x: Pair<A, C>): Pair<B, C> => {
     if (x .length !== 2) {
@@ -111,7 +113,7 @@ export const first =
 */
 export const second =
   <B, C>
-  (f: (second: B) => C) =>
+  (f: (fst: B) => C) =>
   <A>
   (x: Pair<A, B>): Pair<A, C> => {
     if (x .length !== 2) {

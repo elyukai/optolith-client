@@ -14,19 +14,17 @@ export const parseStaticData = async (
 ): Promise<Either<Error[], StaticDataRecord>> => {
   console.time ("parseStaticData")
 
-  const eschemes = await handleE (getAllSchemes ())
+  const schemes = await handleE (getAllSchemes ())
 
-  if (isLeft (eschemes)) {
-    console.log (fromLeft_ (eschemes))
+  if (schemes.isLeft) {
+    console.log (schemes.value)
 
-    return Left ([ fromLeft_ (eschemes) ])
+    return Left ([ schemes.value ])
   }
 
   console.log ("Schemes loaded")
 
-  const schemes = fromRight_ (eschemes)
-
-  const validator = new Ajv ({ allErrors: true }) .addSchema (schemes)
+  const validator = new Ajv ({ allErrors: true }) .addSchema (schemes.value)
 
   const univ_parser = readYamlUniv (validator)
   const l10n_parser = readYamlL10n (locale) (validator)

@@ -395,26 +395,12 @@ export const isSpellsRitualsCountMaxReached =
   (wiki : StaticDataRecord) =>
   (hero : HeroModelRecord) =>
   (isLastTrad : (x : string) => boolean) => {
-    // Count maximum for Intuitive Mages and Animisten
-    const BASE_MAX_INTU_ANIM = 3
-
     const current_count = countActiveSpellEntriesInGroups (List (
                                                             MagicalGroup.Spells,
                                                             MagicalGroup.Rituals
                                                           ))
                                                           (wiki)
                                                           (hero)
-
-    if (isLastTrad (SpecialAbilityId.traditionIntuitiveMage)) {
-      const mbonus = lookup (AdvantageId.largeSpellSelection) (HA.advantages (hero))
-      const mmalus = lookup (DisadvantageId.smallSpellSelection) (HA.disadvantages (hero))
-
-      const max_spells = modifyByLevel (BASE_MAX_INTU_ANIM) (mbonus) (mmalus)
-
-      if (current_count >= max_spells) {
-        return true
-      }
-    }
 
     if (isLastTrad (SpecialAbilityId.traditionSchelme)) {
       const max_spellworks = pipe_ (
@@ -426,13 +412,22 @@ export const isSpellsRitualsCountMaxReached =
                                fromMaybe (0)
                              )
 
-      if (current_count >= max_spellworks) {
-        return true
-      }
+      return current_count >= max_spellworks
     }
 
-    if (isLastTrad (SpecialAbilityId.traditionAnimisten) && current_count >= BASE_MAX_INTU_ANIM) {
-      return true
+    // Count maximum for Intuitive Mages and Animisten
+    const BASE_MAX_INTU_ANIM = 3
+
+    if (isLastTrad (SpecialAbilityId.traditionIntuitiveMage)
+        || isLastTrad (SpecialAbilityId.traditionAnimisten)) {
+      const mbonus = lookup (AdvantageId.largeSpellSelection) (HA.advantages (hero))
+      const mmalus = lookup (DisadvantageId.smallSpellSelection) (HA.disadvantages (hero))
+
+      const max_spells = modifyByLevel (BASE_MAX_INTU_ANIM) (mbonus) (mmalus)
+
+      if (current_count >= max_spells) {
+        return true
+      }
     }
 
     const maxSpellsLiturgicalChants =
@@ -546,6 +541,13 @@ const isInactiveValidForArcaneBardOrDancer =
     && Maybe.all (notP (ASDA.active)) (mhero_entry)
 
 
+const isValidInactiveAnimistPower = (
+  wiki_entry : Record<Spell>,
+  mhero_entry : Maybe<Record<ActivatableSkillDependent>>
+) =>
+  Maybe.all (notP (ASDA.active)) (mhero_entry)
+  && SA.gr (wiki_entry) === MagicalGroup.AnimistForces
+
 /**
  * ```haskell
  * isInactiveValidForAnimists :: Wiki
@@ -568,7 +570,7 @@ const isInactiveValidForAnimist =
                                     (is_spell_max_count_reached)
                                     (wiki_entry)
                                     (mhero_entry)
-    || SA.gr (wiki_entry) === MagicalGroup.AnimistForces
+    || isValidInactiveAnimistPower (wiki_entry, mhero_entry)
 
 
 const consTradSpecificSpell =

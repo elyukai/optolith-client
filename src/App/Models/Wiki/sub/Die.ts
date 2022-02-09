@@ -6,6 +6,7 @@ export interface Die {
   amount: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Die =
   fromDefault ("Die")
               <Die> ({

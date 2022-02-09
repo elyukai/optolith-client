@@ -1,17 +1,20 @@
 import { equals } from "../../Data/Eq"
 import { ident } from "../../Data/Function"
 import { over, set } from "../../Data/Lens"
-import { bind, fromJust, isJust, Just, maybe } from "../../Data/Maybe"
+import { bind, fromJust, isJust, Just, maybe, Nothing } from "../../Data/Maybe"
 import { adjust, any, deleteLookupWithKey, insert, lookup, sdelete } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { fst, snd } from "../../Data/Tuple"
 import * as HerolistActions from "../Actions/HerolistActions"
 import { ReceiveInitialDataAction } from "../Actions/InitializationActions"
 import * as IOActions from "../Actions/IOActions"
+import { SetTabAction } from "../Actions/LocationActions"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { HeroModel, HeroModelL } from "../Models/Hero/HeroModel"
 import { HeroesState, HeroesStateL } from "../Models/HeroesState"
 import { composeL } from "../Utilities/compose"
+import { TabId } from "../Utilities/LocationUtils"
+import { toNewMaybe } from "../Utilities/Maybe"
 import { pipe } from "../Utilities/pipe"
 import { reduceReducersC } from "../Utilities/reduceReducers"
 import { UndoState } from "../Utilities/undo"
@@ -28,6 +31,7 @@ type Action = ReceiveInitialDataAction
             | HerolistActions.DeleteHeroAction
             | HerolistActions.DuplicateHeroAction
             | HerolistActions.UpdateDateModifiedAction
+            | SetTabAction
 
 export const precedingHerolistReducer =
   (action: Action): ident<Record<HeroesState>> => {
@@ -119,6 +123,15 @@ export const precedingHerolistReducer =
         return set (HeroesStateL.heroes) (updatedHeroes)
       }
 
+      case ActionTypes.SET_TAB: {
+        if (action.payload.tab === TabId.Herolist) {
+          return set (HeroesStateL.currentId) (Nothing)
+        }
+        else {
+          return ident
+        }
+      }
+
       default:
         return ident
     }
@@ -127,12 +140,14 @@ export const precedingHerolistReducer =
 const prepareHeroReducer =
   (action: Action) =>
   (state: Record<HeroesState>): Record<HeroesState> =>
-    maybe (state)
-          ((current_id: string) => over (HeroesStateL.heroes)
-                                        (adjust (heroReducer (action))
-                                                (current_id))
-                                        (state))
-          (HeroesState.AL.currentId (state))
+    toNewMaybe (HeroesState.AL.currentId (state))
+      .maybe (
+        state,
+        currentId => over (HeroesStateL.heroes)
+                          (adjust (heroReducer (action))
+                                  (currentId))
+                          (state)
+      )
 
 export const herolistReducer = reduceReducersC (
   precedingHerolistReducer,

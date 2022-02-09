@@ -5,7 +5,7 @@ import { add, divideBy, max, min } from "../../../Data/Num"
 import { lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { CombatTechniqueGroupId } from "../../Constants/Groups"
-import { AdvantageId, AttrId, CombatTechniqueId } from "../../Constants/Ids"
+import { AdvantageId, AttrId } from "../../Constants/Ids"
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
@@ -29,7 +29,7 @@ const getMaxPrimaryAttributeValueById =
                             lookupF (HA.attributes (state)),
                             maybe (currentMax) (pipe (ADA.value, max (currentMax)))
                           ))
-                          (0)
+                          (8)
 
 const calculatePrimaryAttributeMod = pipe (add (-8), divideBy (3), Math.floor, max (0))
 
@@ -55,8 +55,7 @@ export const getParry =
   (wikiEntry: Record<CombatTechnique>) =>
   (maybeStateEntry: Maybe<Record<SkillDependent>>): Maybe<number> =>
     then (guard (CTA.gr (wikiEntry) !== CombatTechniqueGroupId.Ranged
-                 && CTA.id (wikiEntry) !== CombatTechniqueId.ChainWeapons
-                 && CTA.id (wikiEntry) !== CombatTechniqueId.Brawling))
+                 && !CTA.hasNoParry (wikiEntry)))
          (Just (
            Math.round (getCombatTechniqueRating (maybeStateEntry) / 2)
            + getPrimaryAttributeMod (state) (CTA.primary (wikiEntry))

@@ -1,11 +1,12 @@
 import * as React from "react"
 import { equals } from "../../../Data/Eq"
 import { fmap } from "../../../Data/Functor"
-import { consF, List, map, subscript } from "../../../Data/List"
-import { ensure, Just, mapMaybe, Maybe, maybeToUndefined } from "../../../Data/Maybe"
+import { consF, List, map } from "../../../Data/List"
+import { ensure, Just, mapMaybe, Maybe } from "../../../Data/Maybe"
 import { elems, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { EditItem } from "../../Models/Hero/EditItem"
+import { Range } from "../../Models/Hero/Item"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
@@ -30,7 +31,7 @@ export interface ItemEditorRangedSectionProps {
   setDamageDiceSides (value: number): void
   setDamageFlat (value: string): void
   setLength (value: string): void
-  setRange (index: 1 | 2 | 3): (value: string) => void
+  setRange (key: keyof Range): (value: string) => void
   setReloadTime (value: string): void
   setAmmunition (id: string): void
   setStabilityModifier (value: string): void
@@ -77,7 +78,8 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
       templates,
       mapMaybe (pipe (
         ensure (pipe (ITA.gr, equals (3))),
-        fmap (x => DropdownOption ({ id: Just (ITA.id (x)), name: ITA.name (x) }))
+        fmap ((x: Record<ItemTemplate>) =>
+          DropdownOption ({ id: Just (ITA.id (x)), name: ITA.name (x) }))
       )),
       consF (DropdownOption ({ name: translate (staticData) ("general.none") }))
     )
@@ -98,7 +100,8 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
                 elems,
                 mapMaybe (pipe (
                   ensure (pipe (CTA.gr, equals (2))),
-                  fmap (x => DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
+                  fmap ((x: Record<CombatTechnique>) =>
+                    DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
                 ))
               )}
               onChangeJust={setCombatTechnique}
@@ -165,24 +168,24 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
               <TextField
                 className="range1"
                 label={translate (staticData) ("equipment.dialogs.addedit.rangeclose")}
-                value={maybeToUndefined (subscript (EIA.range (item)) (0))}
-                onChange={setRange (1)}
+                value={EIA.range (item).close}
+                onChange={setRange ("close")}
                 disabled={locked}
                 valid={IEIVA.range1 (inputValidation)}
                 />
               <TextField
                 className="range2"
                 label={translate (staticData) ("equipment.dialogs.addedit.rangemedium")}
-                value={maybeToUndefined (subscript (EIA.range (item)) (1))}
-                onChange={setRange (2)}
+                value={EIA.range (item).medium}
+                onChange={setRange ("medium")}
                 disabled={locked}
                 valid={IEIVA.range2 (inputValidation)}
                 />
               <TextField
                 className="range3"
                 label={translate (staticData) ("equipment.dialogs.addedit.rangefar")}
-                value={maybeToUndefined (subscript (EIA.range (item)) (2))}
-                onChange={setRange (3)}
+                value={EIA.range (item).far}
+                onChange={setRange ("far")}
                 disabled={locked}
                 valid={IEIVA.range3 (inputValidation)}
                 />

@@ -197,8 +197,8 @@ export const getAPSpentMap =
                               spentOnCantrips,
                               spentOnBlessings,
                               spentOnEnergies,
-                              fmapF (spentOnAdvantages) (fmap (snd)),
-                              fmapF (spentOnDisadvantages) (fmap (snd)),
+                              fmapF (spentOnAdvantages) (spent => fmapF (spent) (snd)),
+                              fmapF (spentOnDisadvantages) (spent => fmapF (spent) (snd)),
                               spentOnSpecialAbilities,
                               spentOnProfession,
                               spentOnRace

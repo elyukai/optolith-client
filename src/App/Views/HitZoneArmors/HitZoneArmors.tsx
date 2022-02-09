@@ -11,7 +11,8 @@ import { Purse } from "../../Models/Hero/Purse"
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
-import { pipe, pipe_ } from "../../Utilities/pipe"
+import { pipe_ } from "../../Utilities/pipe"
+import { PurseAddRemoveMoney } from "../Equipment/PurseAddRemoveMoney"
 import { PurseAndTotals } from "../Equipment/PurseAndTotals"
 import { Aside } from "../Universal/Aside"
 import { BorderButton } from "../Universal/BorderButton"
@@ -26,7 +27,6 @@ import { Scroll } from "../Universal/Scroll"
 import { SearchField } from "../Universal/SearchField"
 import { HitZoneArmorEditor } from "./HitZoneArmorEditor"
 import { HitZoneArmorsListItem } from "./HitZoneArmorsListItem"
-import { PurseAddRemoveMoney } from "../Equipment/PurseAddRemoveMoney"
 
 export interface HitZoneArmorsOwnProps {
   staticData: StaticDataRecord
@@ -167,7 +167,8 @@ export const HitZoneArmors: React.FC<HitZoneArmorsProps> = props => {
                 (pipe_ (
                   armorZones,
                   bindF (ensure (notNull)),
-                  fmap (pipe (
+                  fmap ((xs: List<Record<HitZoneArmor>>) => pipe_ (
+                    xs,
                     map (x => (
                       <HitZoneArmorsListItem
                         key={HZAA.id (x)}

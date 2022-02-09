@@ -2,7 +2,7 @@ import * as React from "react"
 import { Textfit } from "react-textfit"
 import { notEquals } from "../../../../Data/Eq"
 import { fmap, fmapF } from "../../../../Data/Functor"
-import { flength, intercalate, List, map, notNull, replicateR, toArray } from "../../../../Data/List"
+import { intercalate, List, notNull, replicateR } from "../../../../Data/List"
 import { catMaybes, ensure, Maybe, maybe, maybeRNull } from "../../../../Data/Maybe"
 import { lookup } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
@@ -17,7 +17,7 @@ import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils"
 import { TextBox } from "../../Universal/TextBox"
 
 interface Props {
-  armors: Maybe<List<Record<Armor>>>
+  armors: Maybe<Record<Armor>[]>
   staticData: StaticDataRecord
 }
 
@@ -76,57 +76,54 @@ export const CombatSheetArmor: React.FC<Props> = props => {
           </tr>
         </thead>
         <tbody>
-          {maybeRNull (pipe (
-                        map ((e: Record<Armor>) => {
-                          const addPenalties =
-                            catMaybes (List (
-                                        fmapF (ensure (notEquals (0)) (AA.mov (e)))
-                                              (mov => `${sign (mov)} ${movement_tag}`),
-                                        fmapF (ensure (notEquals (0)) (AA.ini (e)))
-                                              (ini => `${sign (ini)} ${initiative_tag}`)
-                                      ))
+          {maybeRNull ((xs: Record<Armor>[]) => xs.map (e => {
+                        const addPenalties =
+                          catMaybes (List (
+                                      fmapF (ensure (notEquals (0)) (AA.mov (e)))
+                                            (mov => `${sign (mov)} ${movement_tag}`),
+                                      fmapF (ensure (notEquals (0)) (AA.ini (e)))
+                                            (ini => `${sign (ini)} ${initiative_tag}`)
+                                    ))
 
-                          return (
-                            <tr key={AA.id (e)}>
-                              <td className="name">
-                                <Textfit max={11} min={7} mode="single">{AA.name (e)}</Textfit>
-                              </td>
-                              <td className="st">{Maybe.sum (AA.st (e))}</td>
-                              <td className="loss">{renderMaybeWith (toRoman) (AA.loss (e))}</td>
-                              <td className="pro">{Maybe.sum (AA.pro (e))}</td>
-                              <td className="enc">{Maybe.sum (AA.enc (e))}</td>
-                              <td className="add-penalties">
-                                {maybe (ndash)
-                                       (intercalate (", "))
-                                       (ensure (notNull) (addPenalties))}
-                              </td>
-                              <td className="weight">
-                                {translateP (staticData)
-                                            ("general.weightvalue")
-                                            (List (
-                                              pipe_ (
-                                                e,
-                                                AA.weight,
-                                                fmap (pipe (
-                                                  localizeWeight (staticData),
-                                                  localizeNumber (staticData)
-                                                )),
-                                                renderMaybe
-                                              )
-                                            ))}
-                              </td>
-                              <td className="where">
-                                <Textfit max={11} min={7} mode="single">
-                                  {renderMaybe (AA.where (e))}
-                                </Textfit>
-                              </td>
-                            </tr>
-                          )
-                        }),
-                        toArray
-                      ))
+                        return (
+                          <tr key={AA.id (e)}>
+                            <td className="name">
+                              <Textfit max={11} min={7} mode="single">{AA.name (e)}</Textfit>
+                            </td>
+                            <td className="st">{Maybe.sum (AA.st (e))}</td>
+                            <td className="loss">{renderMaybeWith (toRoman) (AA.loss (e))}</td>
+                            <td className="pro">{Maybe.sum (AA.pro (e))}</td>
+                            <td className="enc">{Maybe.sum (AA.enc (e))}</td>
+                            <td className="add-penalties">
+                              {maybe (ndash)
+                                     (intercalate (", "))
+                                     (ensure (notNull) (addPenalties))}
+                            </td>
+                            <td className="weight">
+                              {translateP (staticData)
+                                          ("general.weightvalue")
+                                          (List (
+                                            pipe_ (
+                                              e,
+                                              AA.weight,
+                                              fmap (pipe (
+                                                localizeWeight (staticData),
+                                                localizeNumber (staticData)
+                                              )),
+                                              renderMaybe
+                                            )
+                                          ))}
+                            </td>
+                            <td className="where">
+                              <Textfit max={11} min={7} mode="single">
+                                {renderMaybe (AA.where (e))}
+                              </Textfit>
+                            </td>
+                          </tr>
+                        )
+                      }))
                       (marmors)}
-          {replicateR (2 - Maybe.sum (fmapF (marmors) (flength)))
+          {replicateR (2 - Maybe.sum (fmapF (marmors) (xs => xs.length)))
                       (i => (
                         <tr key={`undefined-${i}`}>
                           <td className="name" />

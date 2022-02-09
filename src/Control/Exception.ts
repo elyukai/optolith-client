@@ -8,13 +8,10 @@
  * @see IO
  */
 
-import { pipe } from "../App/Utilities/pipe"
-import { Either, either, Left, Right } from "../Data/Either"
-import { bindF, pure } from "../System/IO"
+import { Either, Left, Right } from "../App/Utilities/Either"
 
 
-export const toMsg : (err : Error) => string
-                   = err => err .message
+export const toMsg = (err : Error) : string => err .message
 
 
 /**
@@ -25,8 +22,10 @@ export const toMsg : (err : Error) => string
  * with the value of the exception passed as an argument. Otherwise, the result
  * is returned as normal.
  */
-export const handle : <A> (f : (err : Error) => Promise<A>) => (x : Promise<A>) => Promise<A>
-                    = f => async x => x .catch (f)
+export const handle = async <A> (
+  x : Promise<A>,
+  f : (err : Error) => Promise<A>
+) : Promise<A> => x.catch (f)
 
 
 /**
@@ -36,8 +35,8 @@ export const handle : <A> (f : (err : Error) => Promise<A>) => (x : Promise<A>) 
  * exception was raised, or `(Left ex)` if an exception was raised and its value
  * is `ex`.
  */
-export const handleE : <A> (x : Promise<A>) => Promise<Either<Error, A>>
-                     = async x => x .then (Right) .catch (Left)
+export const handleE = async <A> (x : Promise<A>) : Promise<Either<Error, A>> =>
+  x.then (Right).catch (Left)
 
 
 /**
@@ -61,7 +60,11 @@ export const trySync : <A, B> (success : (x : A) => B)
                          return f (a)
                        }
                        catch (err) {
-                         return g (err)
+                         if (err instanceof Error) {
+                           return g (err)
+                         }
+
+                         return g (new Error (String (err)))
                        }
                      }
 
@@ -73,7 +76,8 @@ export const trySync : <A, B> (success : (x : A) => B)
  *
  * This way you can pipe functions that may result in errors.
  */
-export const pipeEx : <A, B> (f : (x : A) => Promise<Either<Error, B>>)
-                    => (x : Promise<Either<Error, A>>)
-                    => Promise<Either<Error, B>>
-                    = f => bindF (either <Error, ReturnType<typeof f>> (pipe (Left, pure)) (f))
+export const pipeEx = async <A, B> (
+  x : Promise<Either<Error, A>>,
+  f : (x : A) => Promise<Either<Error, B>>
+) : Promise<Either<Error, B>> =>
+  x.then (async e => e.either (async l => Promise.resolve (Left (l)), f))

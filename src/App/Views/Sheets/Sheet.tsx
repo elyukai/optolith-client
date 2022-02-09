@@ -28,6 +28,7 @@ export const Sheet: React.FC<SheetProps> = props => {
         staticData={staticData}
         />
       {children}
+      <img className="background" src="images/Character-Sheet-Background.jpg" aria-hidden />
     </div>
   )
 }

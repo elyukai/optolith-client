@@ -8,64 +8,19 @@
 	"type": "shell",
   "tasks": [
     {
-      "label": "build",
-      "command": "npm run build",
-      "problemMatcher": [
-        "$tsc"
-      ]
-    },
-    {
-      "label": "buildTest",
-      "command": "npm run buildTest"
-    },
-    {
-      "label": "buildMac",
-      "command": "npm run buildMac"
-    },
-    {
-      "label": "buildMacTest",
-      "command": "npm run buildMacTest"
-    },
-    {
-      "label": "watch",
-      "command": "npm run watch"
-    },
-    {
-      "label": "bundle",
-      "command": "npm run bundle",
-      "problemMatcher": [
-        "$tsc"
-      ]
-    },
-    {
-      "label": "run",
+      "label": "start",
       "command": "npm start"
     },
     {
-      "label": "bundle_l10ns",
-      "command": "npm run bundle_l10ns"
-    },
-    {
-      "label": "bundle_data",
-      "command": "npm run bundle_data"
-    },
-    {
-      "label": "bundle_css",
-      "command": "npm run bundle_css"
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "tsconfig.json",
-      "isBackground": true,
-      "problemMatcher": [
-        "$tsc"
-      ],
+      "label": "jest",
+      "command": "npm test",
       "group": {
-        "kind": "build",
+        "kind": "test",
         "isDefault": true
       }
     },
     {
+      "label": "tsc watch",
       "type": "typescript",
       "tsconfig": "tsconfig.json",
       "option": "watch",
@@ -73,12 +28,48 @@
       "problemMatcher": [
         "$tsc-watch"
       ],
-      "group": "build"
+      "group": "build",
+      "presentation": {
+        "group": "watch"
+      }
     },
     {
-      "type": "npm",
-      "script": "buildWin",
-      "problemMatcher": []
+      "label": "webpack watch",
+      "command": "npm run js:watch",
+      "isBackground": true,
+      "group": "build",
+      "presentation": {
+        "group": "watch"
+      }
+    },
+    {
+      "label": "sass watch",
+      "command": "npm run css:watch",
+      "isBackground": true,
+      "group": "build",
+      "presentation": {
+        "group": "watch"
+      }
+    },
+    {
+      "label": "watch",
+      "dependsOn": ["tsc watch", "webpack watch", "sass watch"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "create prerelease",
+      "command": "npm run release:pre"
+    },
+    {
+      "label": "create release",
+      "command": "npm run release:main"
+    },
+    {
+      "label": "git push --follow-tags",
+      "command": "git push --follow-tags"
     }
   ]
 }

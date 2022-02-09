@@ -3,7 +3,11 @@ import { List } from "../../../Data/List"
 import { elem, fromJust, isJust, Maybe, or } from "../../../Data/Maybe"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
+import { Pair } from "../../../Data/Tuple"
+import { AttrId } from "../../Constants/Ids"
 import { EditItem } from "../../Models/Hero/EditItem"
+import { HeroModelRecord } from "../../Models/Hero/HeroModel"
+import { Range } from "../../Models/Hero/Item"
 import { Attribute } from "../../Models/Wiki/Attribute"
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate"
@@ -18,6 +22,7 @@ import { ItemEditorRangedSection } from "./ItemEditorRangedSection"
 
 export interface ItemEditorOwnProps {
   staticData: StaticDataRecord
+  hero: HeroModelRecord
 }
 
 export interface ItemEditorStateProps {
@@ -43,7 +48,7 @@ export interface ItemEditorDispatchProps {
   setDamageDiceNumber (value: string): void
   setDamageDiceSides (value: number): void
   setDamageFlat (value: string): void
-  setPrimaryAttribute (primary: Maybe<string>): void
+  setPrimaryAttribute (primary: Maybe<AttrId | Pair<AttrId, AttrId>>): void
   setDamageThreshold (value: string): void
   setFirstDamageThreshold (value: string): void
   setSecondDamageThreshold (value: string): void
@@ -53,7 +58,7 @@ export interface ItemEditorDispatchProps {
   setReach (id: number): void
   setLength (value: string): void
   setStructurePoints (value: string): void
-  setRange (index: 1 | 2 | 3): (value: string) => void
+  setRange (key: keyof Range): (value: string) => void
   setReloadTime (value: string): void
   setAmmunition (id: string): void
   setProtection (value: string): void

@@ -29,7 +29,7 @@ import { Race } from "../../Models/Wiki/Race"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
-import { Activatable, AllRequirements, PrerequisitesIndex } from "../../Models/Wiki/wikiTypeHelpers"
+import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
 import { getNameCostForWiki } from "../../Utilities/Activatable/activatableActiveUtils"
 import { getName } from "../../Utilities/Activatable/activatableNameUtils"
 import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyleUtils"
@@ -37,7 +37,7 @@ import { isBlessedTradId, isMagicalTradId } from "../../Utilities/Activatable/tr
 import { putLevelName } from "../../Utilities/AdventurePoints/activatableCostUtils"
 import { nbsp } from "../../Utilities/Chars"
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n"
-import { getCategoryById, prefixRace } from "../../Utilities/IDUtils"
+import { getCategoryById } from "../../Utilities/IDUtils"
 import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { renderMaybe } from "../../Utilities/ReactUtils"
@@ -152,8 +152,8 @@ const getSocialPrerequisiteText: (staticData: StaticDataRecord) =>
                                   ))
 
 export const getCategorizedItems =
-  (_req_text_index: PrerequisitesIndex) =>
-  ifoldr (_i => (e: AllRequirements): ident<Record<CategorizedPrerequisites>> => {
+  // (_req_text_index: PrerequisitesIndex) =>
+  ifoldr (() => (e: AllRequirements): ident<Record<CategorizedPrerequisites>> => {
            // lookup (i) (req_text_index)
            const index_special = Nothing
 
@@ -386,7 +386,7 @@ const getPrerequisitesAttributesText =
     return pipe (
       ensure (notNull as notNull<IncreasablePrerequisiteObjects>),
       fmap (pipe (
-        map (e => {
+        map ((e: IncreasablePrerequisiteObjects) => {
           if (RequireIncreasable.is (e)) {
             const ids = RIA.id (e)
             const value = RIA.value (e)
@@ -431,7 +431,7 @@ const getPrerequisitesSkillsText =
     pipe (
       ensure (notNull as notNull<IncreasablePrerequisiteObjects>),
       fmap (pipe (
-        map (e => {
+        map ((e: IncreasablePrerequisiteObjects) => {
           if (RequireIncreasable.is (e)) {
             const ids = RIA.id (e)
             const value = RIA.value (e)
@@ -475,7 +475,7 @@ const getPrerequisitesActivatedSkillsText =
     pipe (
       ensure (notNull as notNull<ActivatablePrerequisiteObjects>),
       fmap (pipe (
-        map (e => {
+        map ((e: ActivatablePrerequisiteObjects) => {
           if (RequireActivatable.is (e)) {
             const ids = RAA.id (e)
 
@@ -526,14 +526,14 @@ const getPrerequisitesRaceText =
       const curr_races =
         pipe_ (
           value,
-          mapMaybe (pipe (prefixRace, lookupF (races), fmap (Race.A.name))),
+          mapMaybe (pipe (lookupF (races), fmap (Race.A.name))),
           localizeOrList (staticData)
         )
 
       return <span className={active ? "" : "disabled"}>{`${race_tag} ${curr_races}`}</span>
     }
     else {
-      const curr_race = pipe_ (value, prefixRace, lookupF (races), maybe ("") (Race.A.name))
+      const curr_race = pipe_ (value, lookupF (races), maybe ("") (Race.A.name))
 
       return <span className={active ? "" : "disabled"}>{`${race_tag} ${curr_race}`}</span>
     }
@@ -546,7 +546,7 @@ export interface PrerequisitesProps {
 
 const getPrerequisites =
   (rs: List<AllRequirements>) =>
-  (req_text_index: PrerequisitesIndex) =>
+  // (req_text_index: PrerequisitesIndex) =>
   (props: PrerequisitesProps): List<Maybe<JSX.Element | string>> => {
     const { x, staticData } = props
 
@@ -556,7 +556,8 @@ const getPrerequisites =
       )
     }
 
-    const items = getCategorizedItems (req_text_index) (rs)
+    // const items = getCategorizedItems (req_text_index) (rs)
+    const items = getCategorizedItems (rs)
 
     const rcp = CIA.rcp (items)
     const casterBlessedOne = CIA.casterBlessedOne (items)
@@ -618,7 +619,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
   const { x, staticData } = props
 
   const prerequisitesText = AAL.prerequisitesText (x)
-  const prerequisitesTextIndex = AAL.prerequisitesTextIndex (x)
+  // const prerequisitesTextIndex = AAL.prerequisitesTextIndex (x)
 
   if (isJust (prerequisitesText)) {
     return (
@@ -687,7 +688,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
                       {level_num_str}
                       {maybeRNull ((rs: List<AllRequirements>) =>
                                     pipe_ (
-                                      getPrerequisites (rs) (prerequisitesTextIndex) (props),
+                                      // getPrerequisites (rs) (prerequisitesTextIndex) (props),
+                                      getPrerequisites (rs) (props),
                                       catMaybes,
                                       intersperse<TypeofList> (", "),
                                       toArray,
@@ -720,7 +722,8 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
         </span>
         <span>
           {pipe_ (
-            getPrerequisites (prerequisites) (prerequisitesTextIndex) (props),
+            // getPrerequisites (prerequisites) (prerequisitesTextIndex) (props),
+            getPrerequisites (prerequisites) (props),
             consF<TypeofMaybeList> (mtext_before),
             snocF<TypeofMaybeList> (mtext_after_insidelist),
             catMaybes,

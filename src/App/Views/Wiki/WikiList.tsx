@@ -10,6 +10,7 @@ import { Disadvantage } from "../../Models/Wiki/Disadvantage"
 import { Skill } from "../../Models/Wiki/Skill"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers"
+import { toNewMaybe } from "../../Utilities/Maybe"
 import { toRoman } from "../../Utilities/NumberUtils"
 import { pipe_ } from "../../Utilities/pipe"
 import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils"
@@ -64,13 +65,13 @@ const WikiList: React.FC<Props> = ({ list, sex = "m", currentInfoId, showInfo })
         else if (ProfessionCombined.is (x)) {
           const id = ProfessionCombinedA_.id (x)
           const name = getNameBySex (sex) (ProfessionCombinedA_.name (x))
-          const msubname = getNameBySexM (sex) (ProfessionCombinedA_.subname (x))
+          const msubname = getNameBySexM (sex, toNewMaybe (ProfessionCombinedA_.subname (x)))
 
           return (
             <WikiListItem
               key={id}
               id={id}
-              name={maybe (name) ((subname: string) => `${name} (${subname})`) (msubname)}
+              name={msubname.maybe (name, subname => `${name} (${subname})`)}
               currentInfoId={currentInfoId}
               showInfo={showInfo}
               />

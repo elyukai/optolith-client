@@ -102,6 +102,8 @@ export enum EntryRating {
   Essential = "Essential",
 }
 
+export type EditRange = Readonly<{ close: string; medium: string; far: string }>
+
 export interface ItemEditorSpecific {
   id: Maybe<string>
   at: string
@@ -116,7 +118,7 @@ export interface ItemEditorSpecific {
   pa: string
   price: string
   pro: string
-  range: List<string>
+  range: EditRange
   reloadTime: string
   stp: string
   weight: string

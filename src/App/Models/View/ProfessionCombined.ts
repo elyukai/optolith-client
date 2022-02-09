@@ -31,6 +31,7 @@ export interface ProfessionCombined {
   mappedVariants: List<Record<ProfessionVariantCombined>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProfessionCombined =
   fromDefault ("ProfessionCombined")
               <ProfessionCombined> ({
@@ -57,6 +58,7 @@ export const ProfessionCombinedA_ = {
   name: pipe (ProfessionCombined.A.wikiEntry, Profession.A.name),
   subname: pipe (ProfessionCombined.A.wikiEntry, Profession.A.subname),
   ap: pipe (ProfessionCombined.A.wikiEntry, Profession.A.ap),
+  combatTechniques: pipe (ProfessionCombined.A.wikiEntry, Profession.A.combatTechniques),
   spells: pipe (ProfessionCombined.A.wikiEntry, Profession.A.spells),
   liturgicalChants: pipe (ProfessionCombined.A.wikiEntry, Profession.A.liturgicalChants),
   blessings: pipe (ProfessionCombined.A.wikiEntry, Profession.A.blessings),

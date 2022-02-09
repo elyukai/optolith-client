@@ -52,7 +52,7 @@ export const SkillSpecializationSelectionApplications: React.FC<Props> = props =
 
   const inputElement = pipe_ (
     mapplication_input,
-    fmap (input => (
+    fmap ((input: string) => (
            <TextField
              hint={input}
              value={snd (active)}

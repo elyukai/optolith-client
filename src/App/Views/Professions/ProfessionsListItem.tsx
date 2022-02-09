@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux"
 import { flip } from "../../../Data/Function"
 import { fmap, fmapF } from "../../../Data/Functor"
 import { notNull, toArray } from "../../../Data/List"
-import { bind, fromMaybe, mapMaybe, Maybe, maybe, maybeRNull } from "../../../Data/Maybe"
+import { fromMaybe, mapMaybe, Maybe, maybeRNull } from "../../../Data/Maybe"
 import { lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { selectProfession } from "../../Actions/ProfessionActions"
@@ -12,6 +12,7 @@ import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/Prof
 import { Book } from "../../Models/Wiki/Book"
 import { SourceLink } from "../../Models/Wiki/sub/SourceLink"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import { toNewMaybe } from "../../Utilities/Maybe"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils"
 import { IconButton } from "../Universal/IconButton"
@@ -44,12 +45,11 @@ export const ProfessionsListItem: React.FC<ProfessionsListItemProps> = props => 
 
   const professionName = fmapF (msex) (flip (getNameBySex) (PCA_.name (profession)))
 
-  const professionSubName = bind (msex) (flip (getNameBySexM) (PCA_.subname (profession)))
+  const professionSubName =
+    toNewMaybe (msex).bind (sex => getNameBySexM (sex, toNewMaybe (PCA_.subname (profession))))
 
   const fullName = fmapF (professionName)
-                         (name => maybe (name)
-                                        ((subname: string) => `${name} (${subname})`)
-                                        (professionSubName))
+                         (name => professionSubName.maybe (name, subname => `${name} (${subname})`))
 
   const id = PCA_.id (profession)
   const src = PCA_.src (profession)
@@ -74,7 +74,8 @@ export const ProfessionsListItem: React.FC<ProfessionsListItemProps> = props => 
                 mapMaybe (pipe (
                   SourceLink.A.id,
                   lookupF (StaticData.A.books (wiki)),
-                  fmap (book => <span key={Book.A.id (book)}>{Book.A.short (book)}</span>)
+                  fmap ((book: Record<Book>) =>
+                    <span key={Book.A.id (book)}>{Book.A.short (book)}</span>)
                 )),
                 toArray
               )}

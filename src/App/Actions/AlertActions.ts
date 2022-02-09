@@ -1,5 +1,4 @@
 import { clipboard } from "electron"
-import { fromLeft_, Left } from "../../Data/Either"
 import { fmapF } from "../../Data/Functor"
 import { List } from "../../Data/List"
 import { Just, Maybe, Nothing } from "../../Data/Maybe"
@@ -25,6 +24,7 @@ interface PromptOptionsCreator extends RecordCreator<PromptOptions<any>> {
   <A> (x: PartialMaybeOrNothing<OmitName<PromptOptions<A>>>): Record<PromptOptions<A>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PromptOptions: PromptOptionsCreator =
   fromDefault ("PromptOptions")
               <PromptOptions<any>> ({
@@ -45,6 +45,7 @@ interface PromptButtonCreator extends RecordCreator<PromptButton<any>> {
   <A> (x: PartialMaybeOrNothing<OmitName<PromptButton<A>>>): Record<PromptButton<A>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PromptButton: PromptButtonCreator =
   fromDefault ("PromptButton")
               <PromptButton<any>> ({
@@ -72,6 +73,7 @@ interface CustomPromptOptionsCreator extends RecordCreator<CustomPromptOptions<a
   <A> (x: PartialMaybeOrNothing<OmitName<CustomPromptOptions<A>>>): Record<CustomPromptOptions<A>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomPromptOptions: CustomPromptOptionsCreator =
   fromDefault ("CustomPromptOptions")
               <CustomPromptOptions<any>> ({
@@ -104,6 +106,7 @@ export interface AlertOptions {
   message: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AlertOptions =
   fromDefault ("AlertOptions")
               <AlertOptions> ({
@@ -176,13 +179,13 @@ export const addErrorAlert =
 export const getErrorMsg =
   (staticData: StaticDataRecord) =>
   (message: string) =>
-  (error: Left<Error>): string =>
-    `${message} (${translate (staticData) ("general.errorcode")}: ${JSON.stringify (fromLeft_ (error))})`
+  (error: Error): string =>
+    `${message} (${translate (staticData) ("general.errorcode")}: ${JSON.stringify (error)})`
 
 export const addDefaultErrorAlert =
   (staticData: StaticDataRecord) =>
   (message: string) =>
-  (error: Left<Error>) =>
+  (error: Error) =>
     addErrorAlert (AlertOptions ({
                     message: getErrorMsg (staticData) (message) (error),
                     title: Just (translate (staticData) ("general.error")),
@@ -192,7 +195,7 @@ export const addDefaultErrorAlertWithTitle =
   (staticData: StaticDataRecord) =>
   (title: string) =>
   (message: string) =>
-  (error: Left<Error>) =>
+  (error: Error) =>
     addErrorAlert (AlertOptions ({
                     message: getErrorMsg (staticData) (message) (error),
                     title: Just (title),
@@ -212,6 +215,7 @@ export interface ConfirmOptions {
   useYesNo: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ConfirmOptions =
   fromDefault ("ConfirmOptions")
               <ConfirmOptions> ({

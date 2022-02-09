@@ -10,6 +10,7 @@ export type L10nKey = keyof OmitName<L10n>
 
 export type L10nRecord = Record<L10n>
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const L10n =
   fromDefault ("L10n")
               <L10n> ({
@@ -245,6 +246,11 @@ export const L10n =
                 "sheets.dialogs.pdfsaveerror.message": "",
                 "sheets.dialogs.pdfcreationerror.title": "",
                 "sheets.dialogs.pdfcreationerror.message": "",
+                "sheets.exportasrptokbtn": "",
+                "sheets.dialogs.rptokexportsavelocation.title": "",
+                "sheets.dialogs.rptoksaved": "",
+                "sheets.dialogs.rptoksaveerror.title": "",
+                "sheets.dialogs.rptoksaveerror.message": "",
                 "sheets.showattributevalues": "",
                 "sheets.useparchment": "",
                 "sheets.zoomfactor": "",

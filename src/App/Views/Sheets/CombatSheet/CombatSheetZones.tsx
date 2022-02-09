@@ -15,7 +15,7 @@ import { State } from "../../../Models/Wiki/State"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { translate } from "../../../Utilities/I18n"
-import { Options } from "../../Universal/Options"
+import { Maybe as NewMaybe } from "../../../Utilities/Maybe"
 import { Sheet } from "../Sheet"
 import { SheetWrapper } from "../SheetWrapper"
 import { getAddCombatHeaderVals } from "./CombatSheet"
@@ -29,15 +29,15 @@ import { CombatSheetStates } from "./CombatSheetStates"
 import { CombatSheetTechniques } from "./CombatSheetTechniques"
 
 interface Props {
-  armorZones: Maybe<List<Record<HitZoneArmorForView>>>
+  armorZones: NewMaybe<Record<HitZoneArmorForView>[]>
   attributes: List<Record<AttributeCombined>>
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   combatTechniques: Maybe<List<Record<CombatTechniqueWithAttackParryBase>>>
   derivedCharacteristics: List<DCPair>
   staticData: StaticDataRecord
-  meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
-  rangedWeapons: Maybe<List<Record<RangedWeapon>>>
-  shieldsAndParryingWeapons: Maybe<List<Record<ShieldOrParryingWeapon>>>
+  meleeWeapons: Maybe<Record<MeleeWeapon>[]>
+  rangedWeapons: Maybe<Record<RangedWeapon>[]>
+  shieldsAndParryingWeapons: Maybe<Record<ShieldOrParryingWeapon>[]>
   conditions: List<Record<Condition>>
   states: List<Record<State>>
   useParchment: boolean
@@ -63,7 +63,6 @@ export const CombatSheetZones: React.FC<Props> = props => {
 
   return (
     <SheetWrapper>
-      <Options />
       <Sheet
         id="combat-sheet-zones"
         title={translate (staticData) ("sheets.combatsheet.title")}

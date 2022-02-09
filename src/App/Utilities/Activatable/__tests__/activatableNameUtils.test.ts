@@ -19,45 +19,47 @@ const StaticDataMockup = set (composeL (StaticDataL.ui, L10nL.id)) ("de-DE") (St
 
 test ("compressList", () => {
   expect (compressList (StaticDataMockup)
-                       (List (ActiveActivatable ({
-                                 nameAndCost: ActivatableNameCost ({
-                                   active: ActiveObjectWithId ({
-                                     id: DisadvantageId.PersonalityFlaw,
-                                     index: Nothing,
-                                   }),
-                                   finalCost: Nothing,
-                                   naming: ActivatableCombinedName ({
-                                     addName: Just ("Arroganz"),
-                                     baseName: "Persönlichkeitsschwäche",
-                                     name: "Persönlichkeitsschwäche (Arroganz)",
-                                   }),
-                                   isAutomatic: false,
-                                 }),
-                                 validation: ActivatableActivationValidation ({
-                                   disabled: Nothing,
-                                 }),
-                                 heroEntry: Nothing,
-                                 wikiEntry: Nothing,
-                               })
-                             , ActiveActivatable ({
-                                 nameAndCost: ActivatableNameCost ({
-                                   active: ActiveObjectWithId ({
-                                     id: DisadvantageId.PersonalityFlaw,
-                                     index: Nothing,
-                                   }),
-                                   finalCost: Nothing,
-                                   naming: ActivatableCombinedName ({
-                                     addName: Just ("Weltfremd"),
-                                     baseName: "Persönlichkeitsschwäche",
-                                     name: "Persönlichkeitsschwäche (Weltfremd)",
-                                   }),
-                                   isAutomatic: false,
-                                 }),
-                                 validation: ActivatableActivationValidation ({
-                                   disabled: Nothing,
-                                 }),
-                                 heroEntry: Nothing,
-                                 wikiEntry: Nothing,
-                               }))))
+                       (List (
+                         ActiveActivatable ({
+                           nameAndCost: ActivatableNameCost ({
+                             active: ActiveObjectWithId ({
+                               id: DisadvantageId.PersonalityFlaw,
+                               index: Nothing,
+                             }),
+                             finalCost: Nothing,
+                             naming: ActivatableCombinedName ({
+                               addName: Just ("Arroganz"),
+                               baseName: "Persönlichkeitsschwäche",
+                               name: "Persönlichkeitsschwäche (Arroganz)",
+                             }),
+                             isAutomatic: false,
+                           }),
+                           validation: ActivatableActivationValidation ({
+                             disabled: Nothing,
+                           }),
+                           heroEntry: Nothing,
+                           wikiEntry: Nothing,
+                         }),
+                         ActiveActivatable ({
+                           nameAndCost: ActivatableNameCost ({
+                             active: ActiveObjectWithId ({
+                               id: DisadvantageId.PersonalityFlaw,
+                               index: Nothing,
+                             }),
+                             finalCost: Nothing,
+                             naming: ActivatableCombinedName ({
+                               addName: Just ("Weltfremd"),
+                               baseName: "Persönlichkeitsschwäche",
+                               name: "Persönlichkeitsschwäche (Weltfremd)",
+                             }),
+                             isAutomatic: false,
+                           }),
+                           validation: ActivatableActivationValidation ({
+                             disabled: Nothing,
+                           }),
+                           heroEntry: Nothing,
+                           wikiEntry: Nothing,
+                         })
+                       )))
     .toEqual ("Persönlichkeitsschwäche (Arroganz, Weltfremd)")
 })

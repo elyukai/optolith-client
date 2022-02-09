@@ -23,6 +23,7 @@ import { getAllSkills } from "../Selectors/skillsSelectors"
 import { getCantripsForSheet, getSpellsForSheet } from "../Selectors/spellsSelectors"
 import { getAvatar, getCurrentHeroName, getCurrentSex, getProfile, getPurse, getSpecialAbilities, getWikiBooks, getWikiSpecialAbilities } from "../Selectors/stateSelectors"
 import { getSheetCheckAttributeValueVisibility, getSheetUseParchment, getSheetZoomFactor } from "../Selectors/uisettingsSelectors"
+import { requestExportHeroAsRptok } from "../Utilities/MapToolExporter"
 import { pipe } from "../Utilities/pipe"
 import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils"
 import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from "../Views/Sheets/Sheets"
@@ -90,7 +91,7 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   skillsByGroup: getSkillsByGroup (state),
 })
 
-const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch, ownProps: SheetsOwnProps) => ({
   switchAttributeValueVisibility () {
     dispatch (SheetActions.switchAttributeValueVisibility ())
   },
@@ -102,6 +103,9 @@ const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
   },
   async printToPDF () {
     await dispatch (requestPrintHeroToPDF ())
+  },
+  async exportAsRptok () {
+    await dispatch (requestExportHeroAsRptok (ownProps.hero))
   },
 })
 

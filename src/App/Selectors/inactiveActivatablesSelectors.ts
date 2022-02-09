@@ -23,7 +23,7 @@ import { pipe } from "../Utilities/pipe"
 import { filterByAvailability } from "../Utilities/RulesUtils"
 import { sortByMulti } from "../Utilities/sortBy"
 import { getWikiSliceGetterByCategory } from "../Utilities/WikiUtils"
-import { getMatchingScriptAndLangRelated } from "./activatableSelectors"
+import { getMatchingScriptAndLanguageRelated } from "./activatableSelectors"
 import { getAPObjectMap } from "./adventurePointsSelectors"
 import { getAreDisAdvRequiredApplyToMagActionsOrApps } from "./magicalTraditionSelectors"
 import { getAutomaticAdvantages } from "./raceSelectors"
@@ -61,7 +61,7 @@ export const getInactiveForView =
                         stateSelectors.getWiki,
                         getMagicalTraditionsFromHero,
                         getAutomaticAdvantages,
-                        getMatchingScriptAndLangRelated,
+                        getMatchingScriptAndLanguageRelated,
                         getAreDisAdvRequiredApplyToMagActionsOrApps
                       )
                       (heroReducer.A.present)
@@ -71,7 +71,7 @@ export const getInactiveForView =
                          staticData,
                          hero_magical_traditions,
                          automatic_advantages,
-                         matching_script_and_lang_rel,
+                         matchingScriptAndLanguageRelated,
                          required_apply_to_mag_actions
                        ) =>
                        (hero): Inactives<T> =>
@@ -84,18 +84,18 @@ export const getInactiveForView =
                                                                                       (hero)
 
                                  return mapMaybe ((wiki_entry: WikiEntryRecordByCategory[T]) =>
-                                                   getInactiveView (staticData)
-                                                                   (hero)
-                                                                   (automatic_advantages)
-                                                                   (required_apply_to_mag_actions)
-                                                                   (matching_script_and_lang_rel)
-                                                                   (adventure_points)
-                                                                   (validExtendedSpecialAbilities)
-                                                                   (hero_magical_traditions)
-                                                                   (wiki_entry)
-                                                                   (lookup (getId (wiki_entry))
-                                                                           (stateSlice)) as
-                                                                     Maybe<Inactive<T>>)
+                                                  getInactiveView (staticData)
+                                                                  (hero)
+                                                                  (automatic_advantages)
+                                                                  (required_apply_to_mag_actions)
+                                                                  (matchingScriptAndLanguageRelated)
+                                                                  (adventure_points)
+                                                                  (validExtendedSpecialAbilities)
+                                                                  (hero_magical_traditions)
+                                                                  (wiki_entry)
+                                                                  (lookup (getId (wiki_entry))
+                                                                          (stateSlice)) as
+                                                                    Maybe<Inactive<T>>)
                                                  (elems<Activatable> (wikiSlice) as
                                                    List<WikiEntryRecordByCategory[T]>)
                                }))

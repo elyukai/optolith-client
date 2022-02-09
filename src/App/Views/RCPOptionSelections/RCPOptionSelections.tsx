@@ -435,7 +435,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
       && mainScript === 0
     )
     || (
-      PSA[ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL] (prof_sels)
+      isJust (guildMageUnfamiliarSpell)
       && isNothing (selectedUnfamiliarSpell)
     )
 
@@ -450,7 +450,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
             onChangeJust={handleSetAttributeAdjustment}
             options={mapMaybe (pipe (
                                 lookupF (SDA.attributes (staticData)),
-                                fmap (attr => DropdownOption ({
+                                fmap ((attr: Record<Attribute>) => DropdownOption ({
                                     id: Just (AttrA.id (attr)),
                                     name: `${AttrA.name (attr)} ${signed_attr_ajst_val}`,
                                   }))

@@ -32,8 +32,8 @@ import { SearchField } from "../Universal/SearchField"
 import { Slidein } from "../Universal/Slidein"
 import { SortNames, SortOptions } from "../Universal/SortOptions"
 import { EquipmentListItem } from "./EquipmentListItem"
-import { PurseAndTotals } from "./PurseAndTotals"
 import { PurseAddRemoveMoney } from "./PurseAddRemoveMoney"
+import { PurseAndTotals } from "./PurseAndTotals"
 
 export interface EquipmentOwnProps {
   staticData: StaticDataRecord
@@ -98,7 +98,8 @@ const prepareCombatTechniquesForSelection =
       mxs,
       fmap (mapMaybe (pipe (
                              ensure (pipe (CTWRA_.gr, equals (gr))),
-                             fmap (x => DropdownOption ({
+                             fmap ((x: Record<CombatTechniqueWithRequirements>) =>
+                                        DropdownOption ({
                                           id: Just (CTWRA_.id (x)),
                                           name: CTWRA_.name (x),
                                         }))
@@ -134,6 +135,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
 
   const {
     staticData,
+    hero,
     combatTechniques: maybeCombatTechniques,
     carryingCapacity,
     initialStartingWealth,
@@ -261,7 +263,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
                 ensure (notNull),
                 fmap (pipe (
                   map (
-                    obj => (
+                    (obj: Record<ItemTemplate>) => (
                       <EquipmentListItem
                         key={ITA.id (obj)}
                         data={fromItemTemplate (ITA.id (obj)) (obj)}
@@ -318,7 +320,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
             {translate (staticData) ("equipment.header.group")}
           </ListHeaderTag>
           <ListHeaderTag className="weight">
-            {translate (staticData) ("equipment.dialogs.addedit.weight")}
+            {translate (staticData) ("inlinewiki.equipment.weight")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
@@ -331,7 +333,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
               bindF (ensure (notNull)),
               fmap (pipe (
                 map (
-                  obj => (
+                  (obj: Record<Item>) => (
                     <EquipmentListItem
                       key={IA.id (obj)}
                       data={obj}
@@ -375,7 +377,7 @@ export const Equipment: React.FC<EquipmentProps> = props => {
           />
         <WikiInfoContainer currentId={infoId} noWrapper />
       </Aside>
-      <ItemEditorContainer staticData={staticData} />
+      <ItemEditorContainer staticData={staticData} hero={hero} />
       <PurseAddRemoveMoney
         close={closeAddRemoveMoney}
         isOpen={isAddRemoveMoneyOpen}

@@ -15,7 +15,7 @@ export const TextFieldError: React.FC<Props> =
     x => isEither (x) ? eitherToMaybe (invertEither (x)) : x,
     normalize,
     bindF (ensure (notNullStr)),
-    fmap (msg => (
+    fmap ((msg: string) => (
       <p className="error">
         {msg}
       </p>

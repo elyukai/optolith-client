@@ -16,6 +16,7 @@ export interface SubWindowsState {
   isAddRemoveMoneyOpen: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SubWindowsState =
   fromDefault ("SubWindowsState")
               <SubWindowsState> ({

@@ -17,10 +17,9 @@
     "removeComments": true,
     "resolveJsonModule": true,
     "rootDir": "src/",
-    "inlineSourceMap": true,
     "strict": true,
     "skipLibCheck": true,
-    "target": "es2019",
+    "target": "ESNext",
     "noEmit": true
   },
   "include": [

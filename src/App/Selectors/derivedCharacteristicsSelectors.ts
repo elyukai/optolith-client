@@ -96,7 +96,7 @@ export const getAE = createMaybeSelector (
       staticData,
       SDA.derivedCharacteristics,
       lookup ("AE"),
-      fmap (dc => {
+      fmap ((dc: Record<DerivedCharacteristic>) => {
         const mlast_trad = listToMaybe (trads)
 
         const mredeemed = fmap (PermanentEnergyLossAndBoughtBack.A.redeemed) (paep)

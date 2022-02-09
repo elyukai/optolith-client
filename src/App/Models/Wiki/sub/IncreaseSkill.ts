@@ -9,6 +9,7 @@ export interface IncreaseSkill {
   value: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const IncreaseSkill =
   fromDefault ("IncreaseSkill")
               <IncreaseSkill> ({

@@ -9,6 +9,7 @@ interface MarketPrototype {
   readonly isMarket: true
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const MarketPrototype =
   Object.freeze<MarketPrototype> ({
     isMarket: true,
@@ -25,6 +26,7 @@ export interface Market<A, B, S, T> extends MarketPrototype {
 /**
  * `Market :: (b -> t) -> (s -> Either t a) -> Market a b s t`
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Market =
   <B, T> (to: (x: B) => T) =>
   <S, A> (fro: (x: S) => Either<T, A>): Market<A, B, S, T> =>

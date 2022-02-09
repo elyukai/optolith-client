@@ -2,7 +2,7 @@ import { not } from "../../Data/Bool"
 import { ident } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
 import { over, set, view } from "../../Data/Lens"
-import { insertAt, isList } from "../../Data/List"
+import { isList } from "../../Data/List"
 import { bind, bindF, ensure, fromJust, isJust, Just, maybe, Maybe, Nothing } from "../../Data/Maybe"
 import { insert, lookup, map, sdelete } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
@@ -451,10 +451,10 @@ const itemDetailsReducer =
       }
 
       case ActionTypes.SET_ITEM_RANGE: {
-        const { index, value } = action.payload
+        const { key, value } = action.payload
 
         return modifyEditItem (over (range)
-                                    (insertAt (index - 1) (value)))
+                                    (oldRange => ({ ...oldRange, [key]: value })))
       }
 
       case ActionTypes.SET_ITEM_RELOAD_TIME: {

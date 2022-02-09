@@ -54,7 +54,12 @@ module.exports = {
     category: "public.app-category.role-playing-games",
     type: "distribution",
     icon: "app/icon.icns",
-    target: "default",
+    target: [
+      {
+        target: "default",
+        arch: "universal"
+      }
+    ],
     artifactName: "Optolith_${version}.${ext}",
     hardenedRuntime: true,
     // entitlements: "deploy/entitlements.mac.plist",

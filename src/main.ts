@@ -1,15 +1,32 @@
+import * as remote from "@electron/remote/main"
 import { app, BrowserWindow, ipcMain } from "electron"
 import * as log from "electron-log"
 import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater"
 import windowStateKeeper from "electron-window-state"
 import { promises } from "fs"
+import { platform } from "os"
 import * as path from "path"
 import { prerelease } from "semver"
 import * as url from "url"
-import { isUpdaterEnabled } from "./App/Utilities/CheckForUpdatesMain"
+import { IPCChannels } from "./App/Utilities/IPCChannels"
 import { existsFile } from "./System/IO"
 
+remote.initialize ()
+
 app.setAppUserModelId ("lukasobermann.optolith")
+
+const isUpdaterEnabled = (() => {
+  switch (platform ()) {
+    case "darwin":
+      return false
+    default:
+      return autoUpdater.isUpdaterActive ()
+  }
+}) ()
+
+ipcMain.on (IPCChannels.IsUpdaterEnabled, event => {
+  event.returnValue = isUpdaterEnabled
+})
 
 const setDerivedUserDataPath = async () => {
   const isPrerelease = prerelease (app.getVersion ()) !== null
@@ -52,10 +69,12 @@ const createWindow = async () => {
     show: false,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
       // preload: path.join (app.getAppPath (), "app", "esmPreload.js"),
-      enableRemoteModule: true,
     },
   })
+
+  remote.enable (mainWindow.webContents)
 
   console.log ("main (window): Manage browser window with state keeper")
 
@@ -85,7 +104,7 @@ const createWindow = async () => {
     ipcMain.addListener ("loading-done", () => {
       let cancellationToken: CancellationToken | undefined = undefined
 
-      if (isUpdaterEnabled ()) {
+      if (isUpdaterEnabled) {
         console.log ("main: Updater is enabled, check for updates ...")
 
         autoUpdater

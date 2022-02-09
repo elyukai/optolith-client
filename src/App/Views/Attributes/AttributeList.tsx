@@ -34,7 +34,7 @@ export const AttributeList: React.FC<AttributeListProps> = props => {
       {pipe_ (
         attributes,
         fmap (map (
-          attr => (
+          (attr: Record<AttributeWithRequirements>) => (
             <AttributeListItem
               key={pipe_ (attr, AttributeWithRequirements.A.wikiEntry, Attribute.A.id)}
               attribute={attr}

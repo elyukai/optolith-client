@@ -19,6 +19,7 @@ import { Cantrip } from "../../Models/Wiki/Cantrip"
 import { Spell } from "../../Models/Wiki/Spell"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
+import { ensure as ensure_, toNewMaybe } from "../../Utilities/Maybe"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { SkillListItem } from "../Skills/SkillListItem"
 import { BorderButton } from "../Universal/BorderButton"
@@ -91,7 +92,7 @@ const isTopMarginNeeded =
       bindF (ensure (
         () => sortOrder === "group" && SCCA.active (curr)
       )),
-      fmap (prev =>
+      fmap ((prev: Combined) =>
              (!isCantrip (prev) && isCantrip (curr))
              || (isCantrip (prev) && !isCantrip (curr))
              || (!isCantrip (prev)
@@ -262,98 +263,88 @@ export const Spells: React.FC<Props> = props => {
           </ListHeader>
           <Scroll>
             <ListView>
-              {pipe_ (
-                inactiveList,
-                bindF (ensure (notNull)),
-                fmap (pipe (
-                  mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
-                              const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
+              {
+                toNewMaybe (inactiveList)
+                  .map (toArray)
+                  .bind (xs => ensure_ (xs, () => xs.notNull ()))
+                  .map<React.ReactNode> (
+                    xs => xs.map ((curr, i) => {
+                      const mprev = xs.atM (i).toOldMaybe ()
 
-                              const propertyName = getPropertyStr (staticData) (curr)
+                      const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
 
-                              if (SCCA.active (curr)) {
-                                return Pair<Maybe<Combined>, JSX.Element> (
-                                  Just (curr),
-                                  (
-                                    <ListItem
-                                      key={SCCA.id (curr)}
-                                      disabled
-                                      insertTopMargin={insertTopMargin}
-                                      >
-                                      <ListItemName name={SCCA.name (curr)} />
-                                    </ListItem>
-                                  )
-                                )
-                              }
-                              else if (isCantrip (curr)) {
-                                return Pair<Maybe<Combined>, JSX.Element> (
-                                  Just (curr),
-                                  (
-                                    <SkillListItem
-                                      key={SCCA.id (curr)}
-                                      id={SCCA.id (curr)}
-                                      name={SCCA.name (curr)}
-                                      isNotActive
-                                      activate={addCantripToList}
-                                      addFillElement
-                                      insertTopMargin={insertTopMargin}
-                                      attributes={attributes}
-                                      staticData={staticData}
-                                      isRemovingEnabled={isRemovingEnabled}
-                                      selectForInfo={handleShowSlideinInfo}
-                                      addText={
-                                        sortOrder === "group"
-                                          ? `${propertyName} / ${translate (staticData) ("spells.groups.cantrip")}`
-                                          : propertyName
-                                      }
-                                      untyp={SWRAL.isUnfamiliar (curr)}
-                                      selectedForInfo={currentSlideinId}
-                                      />
-                                  )
-                                )
-                              }
-                              else {
-                                const add_text = getSpellAddText (staticData)
-                                                                 (sortOrder)
-                                                                 (propertyName)
-                                                                 (curr)
+                      const propertyName = getPropertyStr (staticData) (curr)
 
-                                return Pair<Maybe<Combined>, JSX.Element> (
-                                  Just (curr),
-                                  (
-                                    <SkillListItem
-                                      key={SCCA.id (curr)}
-                                      id={SCCA.id (curr)}
-                                      name={SCCA.name (curr)}
-                                      isNotActive
-                                      activate={addToList}
-                                      activateDisabled={addSpellsDisabled && SWRA_.gr (curr) < 3}
-                                      addFillElement
-                                      check={SWRA_.check (curr)}
-                                      checkmod={SWRA_.checkmod (curr)}
-                                      ic={SWRA_.ic (curr)}
-                                      insertTopMargin={insertTopMargin}
-                                      attributes={attributes}
-                                      staticData={staticData}
-                                      isRemovingEnabled={isRemovingEnabled}
-                                      selectForInfo={handleShowSlideinInfo}
-                                      addText={add_text}
-                                      untyp={SWRAL.isUnfamiliar (curr)}
-                                      selectedForInfo={currentSlideinId}
-                                      />
-                                  )
-                                )
-                              }
-                            })
-                            (Nothing),
-                  snd,
-                  toArray,
-                  arr => <>{arr}</>
-                )),
-                fromMaybe (
-                  <ListPlaceholder staticData={staticData} type="inactiveSpells" noResults />
-                )
-              )}
+                      if (SCCA.active (curr)) {
+                        return (
+                          <ListItem
+                            key={SCCA.id (curr)}
+                            disabled
+                            insertTopMargin={insertTopMargin}
+                            >
+                            <ListItemName name={SCCA.name (curr)} />
+                          </ListItem>
+                        )
+                      }
+                      else if (isCantrip (curr)) {
+                        return (
+                          <SkillListItem
+                            key={SCCA.id (curr)}
+                            id={SCCA.id (curr)}
+                            name={SCCA.name (curr)}
+                            isNotActive
+                            activate={addCantripToList}
+                            addFillElement
+                            insertTopMargin={insertTopMargin}
+                            attributes={attributes}
+                            staticData={staticData}
+                            isRemovingEnabled={isRemovingEnabled}
+                            selectForInfo={handleShowSlideinInfo}
+                            addText={
+                              sortOrder === "group"
+                                ? `${propertyName} / ${translate (staticData) ("spells.groups.cantrip")}`
+                                : propertyName
+                            }
+                            untyp={SWRAL.isUnfamiliar (curr)}
+                            selectedForInfo={currentSlideinId}
+                            />
+                        )
+                      }
+                      else {
+                        const add_text = getSpellAddText (staticData)
+                                                         (sortOrder)
+                                                         (propertyName)
+                                                         (curr)
+
+                        return (
+                          <SkillListItem
+                            key={SCCA.id (curr)}
+                            id={SCCA.id (curr)}
+                            name={SCCA.name (curr)}
+                            isNotActive
+                            activate={addToList}
+                            activateDisabled={addSpellsDisabled && SWRA_.gr (curr) < 3}
+                            addFillElement
+                            check={SWRA_.check (curr)}
+                            checkmod={SWRA_.checkmod (curr)}
+                            ic={SWRA_.ic (curr)}
+                            insertTopMargin={insertTopMargin}
+                            attributes={attributes}
+                            staticData={staticData}
+                            isRemovingEnabled={isRemovingEnabled}
+                            selectForInfo={handleShowSlideinInfo}
+                            addText={add_text}
+                            untyp={SWRAL.isUnfamiliar (curr)}
+                            selectedForInfo={currentSlideinId}
+                            />
+                        )
+                      }
+                    })
+                  )
+                  .fromMaybe (
+                    <ListPlaceholder staticData={staticData} type="inactiveSpells" noResults />
+                  )
+              }
             </ListView>
           </Scroll>
         </MainContent>

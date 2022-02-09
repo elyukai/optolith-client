@@ -72,6 +72,10 @@ export interface HeroModel {
   skillStyleDependencies: List<Record<StyleDependency>>
   socialStatusDependencies: List<SocialStatusId>
   transferredUnfamiliarSpells: List<Record<TransferUnfamiliar>>
+  blessedPrimaryAttributeDependencies:
+    readonly Readonly<{ sourceIdentifier: string; minValue: number }>[]
+  magicalPrimaryAttributeDependencies:
+    readonly Readonly<{ sourceIdentifier: string; minValue: number }>[]
   skillCheckAttributeCache: SkillCheckAttributeCache
 }
 
@@ -79,6 +83,7 @@ export interface HeroModel {
  * Create a new `Hero` object from scratch. Does not handle special semantic
  * rules, so you need to take of them on your own.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const HeroModel: RecordCreator<HeroModel> =
   fromDefault ("Hero")
               <HeroModel> ({
@@ -126,7 +131,9 @@ export const HeroModel: RecordCreator<HeroModel> =
                 skillStyleDependencies: List (),
                 socialStatusDependencies: List (),
                 transferredUnfamiliarSpells: List (),
-                skillCheckAttributeCache: OrderedMap.empty,
+                blessedPrimaryAttributeDependencies: [],
+                magicalPrimaryAttributeDependencies: [],
+                skillCheckAttributeCache: new Map (),
               })
 
 export const HeroModelL = makeLenses (HeroModel)
@@ -185,5 +192,7 @@ export const getInitialHeroObject =
       skillStyleDependencies: Nothing,
       socialStatusDependencies: Nothing,
       transferredUnfamiliarSpells: Nothing,
+      blessedPrimaryAttributeDependencies: [],
+      magicalPrimaryAttributeDependencies: [],
       skillCheckAttributeCache: Nothing,
     })

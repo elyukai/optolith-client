@@ -9,6 +9,7 @@ export interface SkillCombined {
   stateEntry: Record<SkillDependent>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SkillCombined =
   fromDefault ("SkillCombined")
               <SkillCombined> ({

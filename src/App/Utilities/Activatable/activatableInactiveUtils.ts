@@ -18,7 +18,6 @@ import { add, gt, gte, inc, multiply } from "../../../Data/Num"
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap"
 import { Record, RecordI } from "../../../Data/Record"
 import { filterMapListT, filterT, mapT } from "../../../Data/Transducer"
-import { fst, Pair, snd, Tuple } from "../../../Data/Tuple"
 import { traceShowId } from "../../../Debug/Trace"
 import { Aspect, CombatTechniqueGroupId, MagicalTradition, SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
 import { AdvantageId, DisadvantageId, SkillId, SpecialAbilityId } from "../../Constants/Ids.gen"
@@ -39,6 +38,7 @@ import { Application } from "../../Models/Wiki/sub/Application"
 import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
+import { MatchingScriptAndLanguageRelated } from "../../Selectors/activatableSelectors"
 import { composeT } from "../compose"
 import { filterUnfamiliar } from "../Dependencies/TransferredUnfamiliarUtils"
 import { countActiveGroupEntries } from "../entryGroupUtils"
@@ -46,6 +46,7 @@ import { getAllEntriesByGroup } from "../heroStateUtils"
 import { prefixSA } from "../IDUtils"
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils"
 import { isUnfamiliarSpell } from "../Increasable/spellUtils"
+import { ensure as newensure, toNewMaybe } from "../Maybe"
 import { pipe, pipe_ } from "../pipe"
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils"
 import { isEntryAvailable } from "../RulesUtils"
@@ -231,14 +232,10 @@ const isAddExistSkillSpecAllowed =
 
 const isAddNotExistSkillSpecAllowed =
   (hero: HeroModelRecord) =>
-  (curr_select_id: string | number) =>
-    pipe_ (
-      curr_select_id,
-      ensure (isString),
-      bindF (lookupF (HA.skills (hero))),
-      fmap (skill => SkDA.value (skill) >= 6),
-      or
-    )
+  (selectId: string | number) =>
+    newensure (selectId, isString)
+      .bind (id => toNewMaybe (lookup (id) (HA.skills (hero))))
+      .maybe (false, skill => SkDA.value (skill) >= 6)
 
 const is3or4 = (x: string | number): x is number => x === 3 || x === 4
 
@@ -380,7 +377,7 @@ const modifySelectOptions =
                        // otherwise return current cost
                        : ident),
                 over (SOL.applications)
-                     (fmap (filter (app => {
+                     (fmap (filter ((app: Record<Application>) => {
                                      const isInactive =
                                        all (notElem<number | string>
                                              (AppA.id (app)))
@@ -546,7 +543,7 @@ const modifySelectOptions =
                   const available_langs =
 
                           // Pair: fst = sid, snd = current_level
-                    maybe (List<Pair<number, number>> ())
+                    maybe (List<number> ())
                           (pipe (
                             ADA.active,
                             foldr ((obj: Record<ActiveObject>) =>
@@ -558,14 +555,10 @@ const modifySelectOptions =
                                                 guard (is3or4 (current_level)),
                                                 thenF (AOA.sid (obj)),
                                                 misNumberM,
-                                                fmap (current_sid =>
-                                                       consF (Pair (
-                                                               current_sid,
-                                                               current_level
-                                                             )))
+                                                fmap ((level: number) => consF (level))
                                               )),
                                       fromMaybe (
-                                        ident as ident<List<Pair<number, number>>>
+                                        ident as ident<List<number>>
                                       )
                                     ))
                                   (List ())
@@ -577,21 +570,20 @@ const modifySelectOptions =
                           ))
 
                   const filterLanguages =
-                    foldr (isNoRequiredOrActiveSelection
+                    foldr (isNoRequiredSelection
                           (e => {
                             const lang =
-                              find ((l: Pair<number, number>) =>
-                                     fst (l) === SOA.id (e))
+                              find ((l: number) => l === SOA.id (e))
                                    (available_langs)
 
-                            if (isJust (lang)) {
-                              const isMotherTongue =
-                                snd (fromJust (lang)) === 4
+                            // a language must provide either a set of
+                            // possible specializations or an input where a
+                            // custom specialization can be entered.
+                            const provides_specific_or_input =
+                              Maybe.any (notNull) (SOA.specializations (e))
+                              || isJust (SOA.specializationInput (e))
 
-                              if (isMotherTongue) {
-                                return consF (set (SOL.cost) (Just (0)) (e))
-                              }
-
+                            if (isJust (lang) && provides_specific_or_input) {
                               return consF (e)
                             }
 
@@ -759,7 +751,7 @@ const modifyOtherOptions =
                                     (maybe (0)
                                            (pipe (ADA.active, flength))
                                            (mhero_entry))),
-          fmap (pipe (Just, set (IAL.cost)))
+          fmap ((cost: number) => pipe_ (cost, Just, set (IAL.cost)))
         )
       }
 
@@ -900,7 +892,7 @@ export const getInactiveView =
   (hero: HeroModelRecord) =>
   (automatic_advantages: List<string>) =>
   (required_apply_to_mag_actions: boolean) =>
-  (matching_script_and_lang_related: Tuple<[boolean, List<number>, List<number>]>) =>
+  (matchingScriptAndLanguageRelated: MatchingScriptAndLanguageRelated) =>
   (adventure_points: Record<AdventurePointsCategories>) =>
   (validExtendedSpecialAbilities: List<string>) =>
   (hero_magical_traditions: List<Record<ActivatableDependent>>) =>
@@ -923,7 +915,7 @@ export const getInactiveView =
                                           (hero)
                                           (required_apply_to_mag_actions)
                                           (validExtendedSpecialAbilities)
-                                          (matching_script_and_lang_related)
+                                          (matchingScriptAndLanguageRelated)
                                           (wiki_entry)
                                           (mhero_entry)
                                           (max_level)
@@ -938,7 +930,7 @@ export const getInactiveView =
                             (wiki_entry)
                             (mhero_entry),
         ensure (maybe (true) (notNull)),
-        fmap (select_options => InactiveActivatable ({
+        fmap ((select_options: Maybe<List<Record<SelectOption>>>) => InactiveActivatable ({
                                   id: current_id,
                                   name: SpAL.name (wiki_entry),
                                   cost: AAL.cost (wiki_entry),

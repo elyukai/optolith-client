@@ -103,6 +103,7 @@ export type List<A> = Nil | Cons<A>
  *
  * Creates a new `List` instance from the passed arguments.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const List =
   <A> (...values: A[]): List<A> => {
     if (values .length === 0) {
@@ -254,7 +255,7 @@ List.bindF = bindF
  */
 export const then =
   <A> (xs1: List<any>) => (xs2: List<A>): List<A> =>
-    bind<any, A> (xs1) (_ => xs2)
+    bind<any, A> (xs1) (() => xs2)
 
 List.then = then
 
@@ -436,6 +437,7 @@ export const elem =
   <A> (x: A) => (xs: List<A>): boolean =>
     isNil (xs) ? false : equals (x) (xs .x) || elem (x) (xs .xs)
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type elem<A> = (x: A) => (xs: List<A>) => boolean
 
 List.elem = elem
@@ -633,6 +635,7 @@ export const append =
   <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
     isNil (xs2) ? xs1 : isNil (xs1) ? xs2 : appendSafe (xs1) (xs2)
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type append<A> = (xs1: List<A>) => (xs2: List<A>) => List<A>
 
 List.append = append
@@ -2102,6 +2105,7 @@ List.splitOn = splitOn
 export const notNull =
   pipe (fnull, not) as <A> (xs: List<A>) => xs is NonEmptyList<A>
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type notNull<A> = (xs: List<A>) => xs is NonEmptyList<A>
 
 List.notNull = notNull
@@ -2471,6 +2475,7 @@ interface RecordBaseWithId extends RecordBase {
   id: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const RecordBaseWithId = fromDefault ("RecordBaseWithId") <RecordBaseWithId> ({ id: "" })
 
 /**

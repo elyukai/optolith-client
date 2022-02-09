@@ -1,9 +1,9 @@
 import { flip } from "../../Data/Function"
-import { fmap } from "../../Data/Functor"
+import { fmap, fmapF } from "../../Data/Functor"
 import { foldr, map } from "../../Data/List"
 import { fromMaybe, liftM3, maybe } from "../../Data/Maybe"
 import { elems, insertF, lookup, OrderedMap } from "../../Data/OrderedMap"
-import { uncurryN, uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry"
+import { uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry"
 import { AdvantageId } from "../Constants/Ids"
 import { createPlainSkillDependent } from "../Models/ActiveEntries/SkillDependent"
 import { HeroModel } from "../Models/Hero/HeroModel"
@@ -30,19 +30,20 @@ const CA = Culture.A
 export const getAllSkills = createMaybeSelector (
   getWikiSkills,
   getSkills,
-  uncurryN (wiki_skills =>
-              fmap (hero_skills => pipe_ (
-                     wiki_skills,
-                     elems,
-                     map (wiki_entry =>
-                            SkillCombined ({
-                              stateEntry:
-                                fromMaybe (createPlainSkillDependent (SA.id (wiki_entry)))
-                                          (lookup (SA.id (wiki_entry))
-                                                  (hero_skills)),
-                              wikiEntry: wiki_entry,
-                            }))
-                   )))
+  (staticSkills, heroSkills) =>
+    fmapF (heroSkills)
+          (hero_skills => pipe_ (
+            staticSkills,
+            elems,
+            map (wiki_entry =>
+                  SkillCombined ({
+                    stateEntry:
+                      fromMaybe (createPlainSkillDependent (SA.id (wiki_entry)))
+                                (lookup (SA.id (wiki_entry))
+                                        (hero_skills)),
+                    wikiEntry: wiki_entry,
+                  }))
+          ))
 )
 
 export const getSkillsWithRequirements = createMaybeSelector (

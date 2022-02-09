@@ -1,6 +1,6 @@
 import { equals } from "../../../Data/Eq"
 import { fmap } from "../../../Data/Functor"
-import { append, filter, find, flength, List, notNull } from "../../../Data/List"
+import { append, Cons, filter, find, flength, List, notNull } from "../../../Data/List"
 import { bindF, elemF, ensure, fromMaybe, joinMaybeList, Just, liftM2, Maybe, maybe, maybeToList, Nothing } from "../../../Data/Maybe"
 import { Record } from "../../../Data/Record"
 import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
@@ -142,7 +142,7 @@ export const getGeneratedPrerequisites =
         return pipe_ (
           sid,
           misStringM,
-          fmap (id => List (RequireIncreasable ({
+          fmap ((id: string) => List (RequireIncreasable ({
                               id,
                               value: 10,
                             })))
@@ -152,7 +152,7 @@ export const getGeneratedPrerequisites =
         return pipe_ (
           sid,
           misStringM,
-          fmap (id => List (RequireActivatable ({
+          fmap ((id: string) => List (RequireActivatable ({
                               id,
                               active: true,
                             })))
@@ -188,7 +188,7 @@ export const getGeneratedPrerequisites =
           static_data,
           getMagicalTraditionsWithRituals,
           ensure (notNull),
-          fmap (xs => List (
+          fmap ((xs: Cons<string>) => List (
             RequireActivatable ({
               id: xs,
               active: true,

@@ -18,16 +18,14 @@ const ThumbVertical: React.FC = p => (
   </div>
 )
 
-const TrackHorizontal: React.FC = p => (
-  // @ts-ignore
+const TrackHorizontal: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ style, ...p }) => (
   // eslint-disable-next-line react/jsx-props-no-spreading
-  <div {...p} style={{ ...p.style, height: 11 }} className="track track-horizontal" />
+  <div {...p} style={{ ...style, height: 11 }} className="track track-horizontal" />
 )
 
-const TrackVertical: React.FC = p => (
-  // @ts-ignore
+const TrackVertical: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ style, ...p }) => (
   // eslint-disable-next-line react/jsx-props-no-spreading
-  <div {...p} style={{ ...p.style, width: 11 }} className="track track-vertical" />
+  <div {...p} style={{ ...style, width: 11 }} className="track track-vertical" />
 )
 
 const View: React.FC = p => (

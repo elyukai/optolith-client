@@ -1,19 +1,23 @@
 import { connect } from "react-redux"
 import { Maybe } from "../../Data/Maybe"
+import { Pair } from "../../Data/Tuple"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as EquipmentActions from "../Actions/EquipmentActions"
+import { AttrId } from "../Constants/Ids"
 import { AppStateRecord } from "../Models/AppState"
-import { getSortedTemplates } from "../Selectors/equipmentSelectors"
+import { HeroModelRecord } from "../Models/Hero/HeroModel"
+import { Range } from "../Models/Hero/Item"
+import { getSortedItemTemplates } from "../Selectors/equipmentSelectors"
 import { getIsItemCreation, getItemEditorInstance, getWikiAttributes, getWikiCombatTechniques } from "../Selectors/stateSelectors"
 import { ItemEditor, ItemEditorDispatchProps, ItemEditorOwnProps, ItemEditorStateProps } from "../Views/Equipment/ItemEditor"
 
 const mapStateToProps =
-  (state: AppStateRecord): ItemEditorStateProps => ({
+  (state: AppStateRecord, ownProps: { hero: HeroModelRecord }): ItemEditorStateProps => ({
     attributes: getWikiAttributes (state),
     combatTechniques: getWikiCombatTechniques (state),
     isInCreation: getIsItemCreation (state),
     item: getItemEditorInstance (state),
-    templates: getSortedTemplates (state),
+    templates: getSortedItemTemplates (state, ownProps),
   })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): ItemEditorDispatchProps => ({
@@ -59,7 +63,7 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): ItemEditorDispatchProps =>
   setDamageFlat (value: string): void {
     dispatch (EquipmentActions.setDamageFlat (value))
   },
-  setPrimaryAttribute (primary: Maybe<string>): void {
+  setPrimaryAttribute (primary: Maybe<AttrId | Pair<AttrId, AttrId>>): void {
     dispatch (EquipmentActions.setPrimaryAttribute (primary))
   },
   setDamageThreshold (value: string): void {
@@ -89,8 +93,8 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): ItemEditorDispatchProps =>
   setStructurePoints (value: string): void {
     dispatch (EquipmentActions.setStructurePoints (value))
   },
-  setRange (index: 1 | 2 | 3): (value: string) => void {
-    return value => dispatch (EquipmentActions.setRange (value, index))
+  setRange (key: keyof Range): (value: string) => void {
+    return value => dispatch (EquipmentActions.setRange (value, key))
   },
   setReloadTime (value: string): void {
     dispatch (EquipmentActions.setReloadTime (value))

@@ -128,7 +128,7 @@ const getStyleDependencies =
       style_special_ability,
       SAA.extended,
       fmap (pipe (
-        map (x => StyleDependency ({ id: x, origin: styleId })),
+        map ((x: string | List<string>) => StyleDependency ({ id: x, origin: styleId })),
         xs => {
           switch (styleId) {
             case SpecialAbilityId.scholarDesMagierkollegsZuHoningen:

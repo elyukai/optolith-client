@@ -41,8 +41,8 @@ const flattenMap =
   (mnew_level: Maybe<number>) =>
   (mold_level: Maybe<number>) =>
     pipe (
-      filterWithKey ((key: number) => (_: ActivatablePrerequisites) =>
-                      keyInRangePred (mnew_level) (mold_level) (key)),
+      filterWithKey<number, ActivatablePrerequisites> (key => () =>
+        keyInRangePred (mnew_level) (mold_level) (key)),
       elems,
       concat
     )

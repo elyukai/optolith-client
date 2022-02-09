@@ -10,6 +10,7 @@ export interface LiturgicalChantCombined {
   stateEntry: Record<ActivatableSkillDependent>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LiturgicalChantCombined =
   fromDefault ("LiturgicalChantCombined")
               <LiturgicalChantCombined> ({

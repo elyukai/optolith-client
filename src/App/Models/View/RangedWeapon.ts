@@ -1,6 +1,7 @@
 import { List } from "../../../Data/List"
 import { Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault } from "../../../Data/Record"
+import { Range } from "../Hero/Item"
 
 export interface RangedWeapon {
   "@@name": "RangedWeapon"
@@ -12,13 +13,15 @@ export interface RangedWeapon {
   damageDiceSides: Maybe<number>
   damageFlat: Maybe<number>
   at: number
-  range: Maybe<List<number>>
+  range: Maybe<Range>
   bf: number
   loss: Maybe<number>
   weight: Maybe<number>
   ammunition: Maybe<string>
+  isImprovisedWeapon: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RangedWeapon =
   fromDefault ("RangedWeapon")
               <RangedWeapon> ({
@@ -35,4 +38,5 @@ export const RangedWeapon =
                 loss: Nothing,
                 weight: Nothing,
                 ammunition: Nothing,
+                isImprovisedWeapon: false,
               })

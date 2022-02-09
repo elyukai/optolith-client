@@ -91,7 +91,7 @@ export const LiturgicalChantsSheetLiturgicalChants: React.FC<Props> = props => {
           {pipe_ (
             maybeLiturgicalChants,
             fmap (pipe (
-              map (e => {
+              map ((e: Record<LiturgicalChantWithRequirements>) => {
                 const check =
                   getAttributeStringByIdList (checkAttributeValueVisibility)
                                              (attributes)

@@ -41,6 +41,7 @@ export interface MagicalMelody {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MagicalMelody =
   fromDefault ("MagicalMelody")
               <MagicalMelody> ({

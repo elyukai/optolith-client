@@ -8,6 +8,7 @@ export interface Use {
   prerequisite: Record<RequireActivatable>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Use =
   fromDefault ("Use")
               <Use> ({

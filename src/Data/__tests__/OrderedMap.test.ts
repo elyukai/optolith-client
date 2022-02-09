@@ -449,13 +449,13 @@ test ("update", () => {
   expect (OrderedMap.update ((x: string) => Just (`${x}d`)) (3) (map))
     .toEqual (fromArray ([ [ 1, "a" ], [ 2, "b" ], [ 3, "cd" ] ]))
 
-  expect (OrderedMap.update ((_: string) => Nothing) (3) (map))
+  expect (OrderedMap.update (() => Nothing) (3) (map))
     .toEqual (fromArray ([ [ 1, "a" ], [ 2, "b" ] ]))
 
   expect (OrderedMap.update ((x: string) => Just (`${x}d`)) (4) (map) === map)
     .toBeTruthy ()
 
-  expect (OrderedMap.update ((_: string) => Nothing) (4) (map) === map)
+  expect (OrderedMap.update (() => Nothing) (4) (map) === map)
     .toBeTruthy ()
 })
 
@@ -467,7 +467,7 @@ test ("updateWithKey", () => {
                                    (map))
     .toEqual (fromArray ([ [ 1, "a" ], [ 2, "b" ], [ 3, "c3" ] ]))
 
-  expect (OrderedMap.updateWithKey <number, string> (_1 => _2 => Nothing) (3) (map))
+  expect (OrderedMap.updateWithKey <number, string> (() => () => Nothing) (3) (map))
     .toEqual (fromArray ([ [ 1, "a" ], [ 2, "b" ] ]))
 
   expect (OrderedMap.updateWithKey <number, string> (key => x => Just (x + key.toString ()))
@@ -475,7 +475,7 @@ test ("updateWithKey", () => {
                                    (map) === map)
     .toBeTruthy ()
 
-  expect (OrderedMap.updateWithKey <number, string> (_1 => _2 => Nothing) (4) (map) === map)
+  expect (OrderedMap.updateWithKey <number, string> (() => () => Nothing) (4) (map) === map)
     .toBeTruthy ()
 })
 

@@ -116,29 +116,46 @@ const getAttributeMinimum =
   (added: Tuple<[number, number, number]>) =>
   (mblessed_primary_attr: Maybe<Record<AttributeCombined>>) =>
   (mhighest_magical_primary_attr: Maybe<Record<AttributeCombined>>) =>
-  (hero_entry: Record<AttributeDependent>): number =>
-    maximum (List<number> (
-              ...flattenDependencies (wiki) (hero) (AtDA.dependencies (hero_entry)),
-              ...(AtDA.id (hero_entry) === AttrId.Strength ? List (sel1 (added)) : List<number> ()),
-              ...(Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mhighest_magical_primary_attr))
-                ? List (sel2 (added))
-                : List<number> ()),
-              ...(Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mblessed_primary_attr))
-                ? List (sel3 (added))
-                : List<number> ()),
-              fromMaybe (8)
-                        (getSkillCheckAttributeMinimum (
-                          SDA.skills (wiki),
-                          SDA.spells (wiki),
-                          SDA.liturgicalChants (wiki),
-                          HA.attributes (hero),
-                          HA.skills (hero),
-                          HA.spells (hero),
-                          HA.liturgicalChants (hero),
-                          HA.skillCheckAttributeCache (hero),
-                          AtDA.id (hero_entry),
-                        ))
-            ))
+  (hero_entry: Record<AttributeDependent>): number => {
+    const isConstitution = AtDA.id (hero_entry) === AttrId.Constitution
+
+    const isHighestMagicalPrimaryAttribute =
+      Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mhighest_magical_primary_attr))
+
+    const isBlessedPrimaryAttribute =
+      Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mblessed_primary_attr))
+
+    const blessedPrimaryAttributeDependencies = HA.blessedPrimaryAttributeDependencies (hero)
+
+    const magicalPrimaryAttributeDependencies = HA.magicalPrimaryAttributeDependencies (hero)
+
+    const minimumValues = [
+      ...flattenDependencies (wiki) (hero) (AtDA.dependencies (hero_entry)),
+      ...(isConstitution ? [ sel1 (added) ] : []),
+      ...(isHighestMagicalPrimaryAttribute
+        ? [ sel2 (added), ...magicalPrimaryAttributeDependencies.map (x => x.minValue) ]
+        : []),
+      ...(isBlessedPrimaryAttribute
+        ? [ sel3 (added), ...blessedPrimaryAttributeDependencies.map (x => x.minValue) ]
+        : []),
+      fromMaybe (8)
+                (getSkillCheckAttributeMinimum (
+                  SDA.skills (wiki),
+                  SDA.combatTechniques (wiki),
+                  SDA.spells (wiki),
+                  SDA.liturgicalChants (wiki),
+                  HA.attributes (hero),
+                  HA.skills (hero),
+                  HA.combatTechniques (hero),
+                  HA.spells (hero),
+                  HA.liturgicalChants (hero),
+                  HA.skillCheckAttributeCache (hero),
+                  AtDA.id (hero_entry),
+                )),
+    ]
+
+    return minimumValues.maximum ()
+  }
 
 const getAddedEnergies = createMaybeSelector (
   getHeroProp,
@@ -202,13 +219,13 @@ export const getHighestPrimaryMagicalAttributes = createMaybeSelector (
 )
 
 type AttrCs = List<Record<AttributeCombined>>
-type NonEmotyAttrCs = NonEmptyList<Record<AttributeCombined>>
+type NonEmptyAttrCs = NonEmptyList<Record<AttributeCombined>>
 
 export const getHighestPrimaryMagicalAttribute = createMaybeSelector (
   getHighestPrimaryMagicalAttributes,
   pipe (
-    bindF (ensure (pipe (flength, equals (1)) as (xs: AttrCs) => xs is NonEmotyAttrCs)),
-    fmap (head)
+    bindF (ensure (pipe (flength, equals (1)) as (xs: AttrCs) => xs is NonEmptyAttrCs)),
+    fmap ((xs: NonEmptyAttrCs) => head (xs))
   )
 )
 

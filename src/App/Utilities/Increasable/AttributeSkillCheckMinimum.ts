@@ -13,9 +13,8 @@
  */
 
 import { flip } from "../../../Data/Function"
-import { cons, consF, foldr, lengthAtLeast, List, nub, sdelete } from "../../../Data/List"
-import { ensure, fromJust, isJust, listToMaybe, mapMaybe, maybe, Maybe, Nothing } from "../../../Data/Maybe"
-import { gt, subtractBy } from "../../../Data/Num"
+import { cons, foldr, lengthAtLeast, List, nub, toArray } from "../../../Data/List"
+import { fromJust, isJust, listToMaybe, mapMaybe, maybe, Maybe, Nothing } from "../../../Data/Maybe"
 import { lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd } from "../../../Data/Tuple"
@@ -23,27 +22,43 @@ import { curryN5, curryN6 } from "../../../Data/Tuple/All"
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent"
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique"
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
 import { Skill } from "../../Models/Wiki/Skill"
 import { Spell } from "../../Models/Wiki/Spell"
+import { ensure } from "../Maybe"
 import { pipe, pipe_ } from "../pipe"
-import { V } from "../Variant"
+import { MakeTagged, Tagged } from "../Tagged"
 
 const ADA = AttributeDependent.A
 const ASDA = ActivatableSkillDependent.A
 const SkA = Skill.A
+const CTA = CombatTechnique.A
 const SpA = Spell.A
 const LCA = LiturgicalChant.A
 
-type Type = "Skill" | "Spell" | "LiturgicalChant"
+type CacheSkillIdTypes = {
+  Skill: { value: string }
+  CombatTechnique: { value: string }
+  Spell: { value: string }
+  LiturgicalChant: { value: string }
+}
 
-export type CacheSkillId = V<Type, string>
+export type CacheSkillId = Tagged<CacheSkillIdTypes>
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CacheSkillId = MakeTagged<CacheSkillIdTypes> ({
+  Skill: "Skill",
+  CombatTechnique: "CombatTechnique",
+  Spell: "Spell",
+  LiturgicalChant: "LiturgicalChant",
+})
 
 /**
  * A map from attribute ids to skill (skill, spell, magical action, liturgical
  * chant) ids.
  */
-export type AttributeSkillCheckMinimumCache = OrderedMap<string, List<CacheSkillId>>
+export type AttributeSkillCheckMinimumCache = ReadonlyMap<string, readonly CacheSkillId[]>
 
 /**
  * `addEntryToCache` takes the check attribute of the `entry` and for each
@@ -51,16 +66,22 @@ export type AttributeSkillCheckMinimumCache = OrderedMap<string, List<CacheSkill
  */
 export const addEntryToCache = <A> (
   getId: (x: A) => string,
-  getCheckAttributes: (x: A) => List<string>,
-  type: Type,
+  getCheckAttributes: (x: A) => readonly string[],
+  type: keyof CacheSkillIdTypes,
   entry: A,
   cache: AttributeSkillCheckMinimumCache
 ) =>
-  List.foldr ((attrId: string) => OrderedMap.adjustDef (List<CacheSkillId> ())
-                                                       (consF ({ tag: type, value: getId (entry) }))
-                                                       (attrId))
-             (cache)
-             (nub (getCheckAttributes (entry)))
+  getCheckAttributes (entry)
+    .nub ()
+    .reduce (
+      (newCache, attrId) =>
+        newCache.insertWith (
+          attrId,
+          [ CacheSkillId[type] ({ value: getId (entry) }) ],
+          (oldArr, newArr) => oldArr.concat (newArr)
+        ),
+      cache
+    )
 
 /**
  * `removeEntryFromCache` takes the check attribute of the `entry` and for each
@@ -68,15 +89,23 @@ export const addEntryToCache = <A> (
  */
 export const removeEntryFromCache = <A> (
   getId: (x: A) => string,
-  getCheckAttributes: (x: A) => List<string>,
-  type: Type,
+  getCheckAttributes: (x: A) => readonly string[],
+  type: keyof CacheSkillIdTypes,
   entry: A,
   cache: AttributeSkillCheckMinimumCache
 ) =>
-  List.foldr ((attrId: string) => OrderedMap.adjust (sdelete ({ tag: type, value: getId (entry) }))
-                                                    (attrId))
-             (cache)
-             (nub (getCheckAttributes (entry)))
+  getCheckAttributes (entry)
+    .nub ()
+    .reduce (
+      (newCache, attrId) =>
+        newCache.adjust (
+          attrId,
+          oldArr => oldArr.deleteAt (
+            oldArr.findIndex (({ tag, value }) => tag === type && value === getId (entry))
+          )
+        ),
+      cache
+    )
 
 /**
  * `insertAttributeIdsFromActivatableSkill` maps the `heroEntry` to a static
@@ -85,8 +114,8 @@ export const removeEntryFromCache = <A> (
  */
 const addOptionalEntryToCache = <A> (
   getId: (x: A) => string,
-  getCheckAttributes: (x: A) => List<string>,
-  type: Type,
+  getCheckAttributes: (x: A) => readonly string[],
+  type: keyof CacheSkillIdTypes,
   staticEntryMap: OrderedMap<string, A>,
   heroEntry: Record<ActivatableSkillDependent>,
   cache: AttributeSkillCheckMinimumCache
@@ -106,27 +135,36 @@ const addOptionalEntryToCache = <A> (
  */
 export const initializeCache = (
   staticSkills: OrderedMap<string, Record<Skill>>,
+  staticCombatTechniques: OrderedMap<string, Record<CombatTechnique>>,
   staticSpells: OrderedMap<string, Record<Spell>>,
   staticLiturgicalChants: OrderedMap<string, Record<LiturgicalChant>>,
-  heroSpells: OrderedMap<string, Record<ActivatableSkillDependent>>,
-  heroLiturgicalChants: OrderedMap<string, Record<ActivatableSkillDependent>>,
+  characterSpells: OrderedMap<string, Record<ActivatableSkillDependent>>,
+  characterLiturgicalChants: OrderedMap<string, Record<ActivatableSkillDependent>>,
 ) =>
   pipe_ (
-    OrderedMap.empty,
-    flip (OrderedMap.foldr (curryN5 (addEntryToCache) (SkA.id) (SkA.check) ("Skill")))
+    new Map (),
+    flip (OrderedMap.foldr (curryN5 (addEntryToCache)
+                                    (SkA.id)
+                                    (pipe (SkA.check, toArray))
+                                    ("Skill")))
          (staticSkills),
+    flip (OrderedMap.foldr (curryN5 (addEntryToCache)
+                                    (CTA.id)
+                                    (pipe (CTA.primary, toArray))
+                                    ("CombatTechnique")))
+         (staticCombatTechniques),
     flip (OrderedMap.foldr (curryN6 (addOptionalEntryToCache)
                                     (SpA.id)
-                                    (SpA.check)
+                                    (pipe (SpA.check, toArray))
                                     ("Spell")
                                     (staticSpells)))
-         (heroSpells),
+         (characterSpells),
     flip (OrderedMap.foldr (curryN6 (addOptionalEntryToCache)
                                     (LCA.id)
-                                    (LCA.check)
+                                    (pipe (LCA.check, toArray))
                                     ("LiturgicalChant")
                                     (staticLiturgicalChants)))
-         (heroLiturgicalChants)
+         (characterLiturgicalChants)
   )
 
 /**
@@ -205,61 +243,75 @@ const getGenericNewMinimumSr = <A, B> (
 
 const getNewMinimumSR = (
   staticSkills: OrderedMap<string, Record<Skill>>,
+  staticCombatTechniques: OrderedMap<string, Record<CombatTechnique>>,
   staticSpells: OrderedMap<string, Record<Spell>>,
   staticLiturgicalChants: OrderedMap<string, Record<LiturgicalChant>>,
-  heroAttributes: OrderedMap<string, Record<AttributeDependent>>,
-  heroSkills: OrderedMap<string, Record<SkillDependent>>,
-  heroSpells: OrderedMap<string, Record<ActivatableSkillDependent>>,
-  heroLiturgicalChants: OrderedMap<string, Record<ActivatableSkillDependent>>,
+  characterAttributes: OrderedMap<string, Record<AttributeDependent>>,
+  characterSkills: OrderedMap<string, Record<SkillDependent>>,
+  characterCombatTechniques: OrderedMap<string, Record<SkillDependent>>,
+  characterSpells: OrderedMap<string, Record<ActivatableSkillDependent>>,
+  characterLiturgicalChants: OrderedMap<string, Record<ActivatableSkillDependent>>,
   attributeId: string,
-) => (skillId: V<Type, string>) => (accMinimumSR: number) => pipe_ (
-  skillId,
-  ({ tag, value }) => {
-    switch (tag) {
-      case "Skill": {
-        return getGenericNewMinimumSr (
-          Skill.A.check,
-          SkillDependent.A.value,
-          staticSkills,
-          heroAttributes,
-          heroSkills,
-          attributeId,
-          accMinimumSR,
-          value
-        )
-      }
-
-      case "Spell": {
-        return getGenericNewMinimumSr (
-          Spell.A.check,
-          ActivatableSkillDependent.A.value,
-          staticSpells,
-          heroAttributes,
-          heroSpells,
-          attributeId,
-          accMinimumSR,
-          value
-        )
-      }
-
-      case "LiturgicalChant": {
-        return getGenericNewMinimumSr (
-          LiturgicalChant.A.check,
-          ActivatableSkillDependent.A.value,
-          staticLiturgicalChants,
-          heroAttributes,
-          heroLiturgicalChants,
-          attributeId,
-          accMinimumSR,
-          value
-        )
-      }
-
-      default:
-        return accMinimumSR
+  skillId: CacheSkillId,
+  accMinimumSR: number
+) => {
+  switch (skillId.tag) {
+    case "Skill": {
+      return getGenericNewMinimumSr (
+        Skill.A.check,
+        SkillDependent.A.value,
+        staticSkills,
+        characterAttributes,
+        characterSkills,
+        attributeId,
+        accMinimumSR,
+        skillId.value
+      )
     }
+
+    case "CombatTechnique": {
+      return getGenericNewMinimumSr (
+        CombatTechnique.A.primary,
+        SkillDependent.A.value,
+        staticCombatTechniques,
+        characterAttributes,
+        characterCombatTechniques,
+        attributeId,
+        accMinimumSR,
+        skillId.value
+      )
+    }
+
+    case "Spell": {
+      return getGenericNewMinimumSr (
+        Spell.A.check,
+        ActivatableSkillDependent.A.value,
+        staticSpells,
+        characterAttributes,
+        characterSpells,
+        attributeId,
+        accMinimumSR,
+        skillId.value
+      )
+    }
+
+    case "LiturgicalChant": {
+      return getGenericNewMinimumSr (
+        LiturgicalChant.A.check,
+        ActivatableSkillDependent.A.value,
+        staticLiturgicalChants,
+        characterAttributes,
+        characterLiturgicalChants,
+        attributeId,
+        accMinimumSR,
+        skillId.value
+      )
+    }
+
+    default:
+      return accMinimumSR
   }
-)
+}
 
 /**
  * Returns the attribute minimum based on the created skill check attribute
@@ -275,36 +327,45 @@ const getNewMinimumSR = (
  */
 export const getSkillCheckAttributeMinimum = (
   staticSkills: OrderedMap<string, Record<Skill>>,
+  staticCombatTechniques: OrderedMap<string, Record<CombatTechnique>>,
   staticSpells: OrderedMap<string, Record<Spell>>,
   staticLiturgicalChants: OrderedMap<string, Record<LiturgicalChant>>,
-  heroAttributes: OrderedMap<string, Record<AttributeDependent>>,
-  heroSkills: OrderedMap<string, Record<SkillDependent>>,
+  characterAttributes: OrderedMap<string, Record<AttributeDependent>>,
+  characterSkills: OrderedMap<string, Record<SkillDependent>>,
+  characterCombatTechniques: OrderedMap<string, Record<SkillDependent>>,
   // TODO: Once this is converted to Reason, dont forget to add all relevant
   // magical actions here!
-  heroSpells: OrderedMap<string, Record<ActivatableSkillDependent>>,
-  heroLiturgicalChants: OrderedMap<string, Record<ActivatableSkillDependent>>,
+  characterSpells: OrderedMap<string, Record<ActivatableSkillDependent>>,
+  characterLiturgicalChants: OrderedMap<string, Record<ActivatableSkillDependent>>,
   cache: AttributeSkillCheckMinimumCache,
   attributeId: string,
-): Maybe<number> =>
-  pipe_ (
-    attributeId,
-    lookupF (cache),
-    maybe (0)
-          (List.foldr (getNewMinimumSR (
-                        staticSkills,
-                        staticSpells,
-                        staticLiturgicalChants,
-                        heroAttributes,
-                        heroSkills,
-                        heroSpells,
-                        heroLiturgicalChants,
-                        attributeId,
-                      ))
-                      (0)),
-    // Highest attribute + 2 is SR maximum, so the attribute minimum is
-    // highest SR - 2
-    subtractBy (2),
-    // clean up the result to only return a number if it's higher than the
-    // default minimum of 8
-    ensure (gt (8))
-  )
+): Maybe<number> => {
+  // Highest attribute + 2 is SR maximum, so the attribute minimum is
+  // highest SR - 2
+  const calculatedMinimum = cache
+    .lookup (attributeId)
+    .maybe (
+      0,
+      ids => ids.reduce (
+        (min, taggedId) => getNewMinimumSR (
+          staticSkills,
+          staticCombatTechniques,
+          staticSpells,
+          staticLiturgicalChants,
+          characterAttributes,
+          characterSkills,
+          characterCombatTechniques,
+          characterSpells,
+          characterLiturgicalChants,
+          attributeId,
+          taggedId,
+          min
+        ),
+        0
+      )
+    ) - 2
+
+  // clean up the result to only return a number if it's higher than the
+  // default minimum of 8
+  return ensure (calculatedMinimum, x => x > 8).toOldMaybe ()
+}

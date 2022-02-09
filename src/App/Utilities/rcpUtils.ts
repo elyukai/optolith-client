@@ -1,7 +1,7 @@
 import { fmap } from "../../Data/Functor"
 import { flength, foldr, List, subscript } from "../../Data/List"
 import { altF, bindF, elem, fromMaybe, liftM2, Maybe, sum } from "../../Data/Maybe"
-import { add, dec, lt, odd, subtract, subtractBy } from "../../Data/Num"
+import { abs, add, dec, lt, odd, signum, subtract, subtractBy } from "../../Data/Num"
 import { lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { show } from "../../Data/Show"
@@ -17,6 +17,7 @@ import { StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { rollDiceFold, rollDiceR, rollDie } from "./dice"
 import { translate } from "./I18n"
 import { ifElse } from "./ifElse"
+import { Maybe as NewMaybe } from "./Maybe"
 import { multiplyString, toInt } from "./NumberUtils"
 import { pipe, pipe_ } from "./pipe"
 
@@ -104,7 +105,8 @@ export const rerollWeight =
 
                return foldr
                  ((die: Record<Die>) => add (rollDiceFold (f (sides (die)))
-                                                          (amount (die))))
+                                                          (abs (amount (die)))
+                                              * signum (amount (die))))
                  (-weightBase (race))
                  (weightRandom (race))
              },
@@ -170,6 +172,5 @@ export const getFullProfessionName =
 export const getNameBySex: (sex: Sex) => (name: string | Record<NameBySex>) => string =
   s => n => NameBySex.is (n) ? NameBySex.A[s] (n) : n
 
-export const getNameBySexM: (sex: Sex) =>
-                            (mname: Maybe<string | Record<NameBySex>>) => Maybe<string> =
-  s => fmap (n => NameBySex.is (n) ? NameBySex.A[s] (n) : n)
+export const getNameBySexM = (sex: Sex, mname: NewMaybe<string | Record<NameBySex>>) =>
+  mname.map (name_ => NameBySex.is (name_) ? NameBySex.A[sex] (name_) : name_)

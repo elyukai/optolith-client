@@ -14,7 +14,7 @@ export const TextFieldHint: React.FC<Props> =
   ({ hint: mhint, isFieldEmpty }) => pipe_ (
     mhint,
     normalize,
-    fmap (hint => (
+    fmap ((hint: string) => (
       <div
         className={
           classListMaybe (List (

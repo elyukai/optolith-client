@@ -11,6 +11,7 @@ export interface SpellWithRequirements extends IncreasableWithRequirements {
   isUnfamiliar: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SpellWithRequirements =
   fromDefault ("SpellWithRequirements")
               <SpellWithRequirements> ({

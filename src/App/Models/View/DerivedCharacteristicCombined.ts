@@ -42,6 +42,7 @@ interface DerivedCharacteristicCreator extends RecordCreator<DerivedCharacterist
   Record<DerivedCharacteristicValues<I>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DerivedCharacteristicValues =
   fromDefault ("DerivedCharacteristicValues")
               <DerivedCharacteristicValues> ({

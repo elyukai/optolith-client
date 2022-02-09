@@ -36,7 +36,7 @@ export const SkillCheck: React.FC<Props> = props => {
           imapMaybe (index => id => pipe_ (
                                       attributes,
                                       find (pipe (AttributeCombinedA_.id, equals (id))),
-                                      fmap (attr => (
+                                      fmap ((attr: Record<AttributeCombined>) => (
                                         <div key={`${id}${index}`} className={`check ${id}`}>
                                           <span className="short">
                                             {AttributeCombinedA_.short (attr)}

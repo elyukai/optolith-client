@@ -1,7 +1,6 @@
 import * as React from "react"
-import { fmap } from "../../../../Data/Functor"
 import { List } from "../../../../Data/List"
-import { fromMaybe, Maybe } from "../../../../Data/Maybe"
+import { Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { Sex } from "../../../Models/Hero/heroTypeHelpers"
 import { PersonalData } from "../../../Models/Hero/PersonalData"
@@ -18,7 +17,7 @@ import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { DCPair } from "../../../Selectors/derivedCharacteristicsSelectors"
 import { compressList } from "../../../Utilities/Activatable/activatableNameUtils"
 import { translate } from "../../../Utilities/I18n"
-import { pipe_ } from "../../../Utilities/pipe"
+import { toNewMaybe } from "../../../Utilities/Maybe"
 import { TextBox } from "../../Universal/TextBox"
 import { Sheet } from "../Sheet"
 import { SheetWrapper } from "../SheetWrapper"
@@ -43,8 +42,6 @@ interface Props {
   race: Maybe<Record<Race>>
   sex: Maybe<Sex>
   useParchment: boolean
-  printToPDF (): void
-  switchUseParchment (): void
 }
 
 export const MainSheet: React.FC<Props> = props => {
@@ -91,39 +88,30 @@ export const MainSheet: React.FC<Props> = props => {
           />
         <div className="lower">
           <div className="lists">
-            {pipe_ (
-              maybeAdvantagesActive,
-              fmap (advantagesActive => (
+            {toNewMaybe (maybeAdvantagesActive)
+              .maybe<React.ReactNode> (null, advantagesActive => (
                 <TextBox
                   className="activatable-list"
                   label={translate (staticData) ("sheets.mainsheet.advantages")}
                   value={compressList (staticData) (advantagesActive)}
                   />
-              )),
-              fromMaybe (null as React.ReactNode)
-            )}
-            {pipe_ (
-              maybeDisadvantagesActive,
-              fmap (disadvantagesActive => (
+              ))}
+            {toNewMaybe (maybeDisadvantagesActive)
+              .maybe<React.ReactNode> (null, disadvantagesActive => (
                 <TextBox
                   className="activatable-list"
                   label={translate (staticData) ("sheets.mainsheet.disadvantages")}
                   value={compressList (staticData) (disadvantagesActive)}
                   />
-              )),
-              fromMaybe (null as React.ReactNode)
-            )}
-            {pipe_ (
-              maybeGeneralsaActive,
-              fmap (generalsaActive => (
+              ))}
+            {toNewMaybe (maybeGeneralsaActive)
+              .maybe<React.ReactNode> (null, generalsaActive => (
                 <TextBox
                   className="activatable-list"
                   label={translate (staticData) ("sheets.mainsheet.generalspecialabilites")}
                   value={compressList (staticData) (generalsaActive)}
                   />
-              )),
-              fromMaybe (null as React.ReactNode)
-            )}
+              ))}
           </div>
           <MainSheetAttributes
             attributes={derivedCharacteristics}

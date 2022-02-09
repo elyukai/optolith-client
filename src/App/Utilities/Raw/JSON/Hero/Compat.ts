@@ -14,7 +14,7 @@ import { getBlessedTradStrIdFromNumId, getMagicalTraditionInstanceIdByNumericId 
 import { hasOwnProperty } from "../../../Object"
 import { pipe, pipe_ } from "../../../pipe"
 import { isNumber } from "../../../typeCheckUtils"
-import { RawCustomItem_1_2_0_alpha_11, RawCustomItem_1_3_0_alpha_2, RawHero, RawHeroBase, RawHero_1_2_0_alpha_11, RawHero_1_3_0_alpha_2 } from "../../RawData"
+import { RawCustomItem120alpha11, RawCustomItem130alpha2, RawHero, RawHero120alpha11, RawHero130alpha2, RawHeroBase } from "../../RawData"
 
 const SDA = StaticData.A
 
@@ -52,7 +52,7 @@ export const convertHero =
         pipe (
           convertLT ("0.51.1-alpha.2")
                     (hero => {
-                      const entry = { ...hero }
+                      const entry: RawHeroFromSchema = { ...hero }
 
                       const oldRaceId = entry.r
 
@@ -113,9 +113,7 @@ export const convertHero =
                         enabledRuleBooks: [],
                       }
 
-                      entry.clientVersion = "0.51.1"
-
-                      return entry as RawHero_1_2_0_alpha_11
+                      return { ...entry, clientVersion: "0.51.1" } as RawHero120alpha11
                     }),
           convertLT ("0.51.3-alpha.4")
                     (hero => {
@@ -323,7 +321,7 @@ export const convertHero =
                       //   .reduce<StringKeyObject<number>> ((acc, e) => ({ ...acc, [e[0]]: e[1] - 6 }), {}),
                     })),
           convertLT ("1.1.0-alpha.9")
-                    ((hero): RawHero_1_2_0_alpha_11 => ({
+                    ((hero): RawHero120alpha11 => ({
                       ...hero,
                       locale: L10n.A.id (SDA.ui (staticData)),
                       belongings: {
@@ -331,8 +329,8 @@ export const convertHero =
                         items: pipe_ (
                           hero.belongings.items,
                           Object.entries,
-                          (xs: [string, RawCustomItem_1_2_0_alpha_11][]) =>
-                            xs .map<[string, RawCustomItem_1_2_0_alpha_11]> (
+                          (xs: [string, RawCustomItem120alpha11][]) =>
+                            xs .map<[string, RawCustomItem120alpha11]> (
                               x => [
                                 x[0],
                                 {
@@ -431,7 +429,7 @@ export const convertHero =
 
                     // Fix Stigma (Green Hair) actually allow green hair in
                     // personal data
-                    ((hero: RawHero_1_2_0_alpha_11) =>
+                    ((hero: RawHero120alpha11) =>
                       hasOwnProperty ("DISADV_45") (hero .activatable)
                       && hero .activatable .DISADV_45 .some (e => e .sid === 3)
                       ? {
@@ -462,7 +460,7 @@ export const convertHero =
 
                     // Fix different types for structure points and reload time
                     // for items
-                    ((hero: RawHero_1_2_0_alpha_11): RawHero_1_3_0_alpha_2 => ({
+                    ((hero: RawHero120alpha11): RawHero130alpha2 => ({
                       ...hero,
                       belongings: {
                         ...hero.belongings,
@@ -470,8 +468,8 @@ export const convertHero =
                           hero.belongings.items,
                           Object.entries,
                           items => items.map (
-                            ([ k, h ]: [string, RawCustomItem_1_2_0_alpha_11]):
-                              [string, RawCustomItem_1_3_0_alpha_2] => [
+                            ([ k, h ]: [string, RawCustomItem120alpha11]):
+                              [string, RawCustomItem130alpha2] => [
                                 k,
                                 {
                                   ...h,

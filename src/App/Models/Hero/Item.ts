@@ -26,6 +26,8 @@ export interface ItemBase {
   armorType: Maybe<number>
 }
 
+export type Range = Readonly<{ close: number; medium: number; far: number }>
+
 export interface Item extends ItemBase {
   "@@name": "Item"
   id: string
@@ -41,7 +43,7 @@ export interface Item extends ItemBase {
   pa: Maybe<number>
   price: Maybe<number>
   pro: Maybe<number>
-  range: Maybe<List<number>>
+  range: Maybe<Range>
   reloadTime: Maybe<number | List<number>>
   stp: Maybe<number | List<number>>
   weight: Maybe<number>
@@ -53,6 +55,7 @@ export interface Item extends ItemBase {
   src: Maybe<List<Record<SourceLink>>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Item =
   fromDefault ("Item")
               <Item> ({

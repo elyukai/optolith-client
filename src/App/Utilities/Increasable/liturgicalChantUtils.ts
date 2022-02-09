@@ -3,7 +3,7 @@ import { ident } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
 import { all, any, concatMap, consF, fnull, intercalate, List, maximum, minimum, notElemF, notNull } from "../../../Data/List"
 import { count } from "../../../Data/List/Unique"
-import { bindF, catMaybes, elem, ensure, fromMaybe, guard, isNothing, Just, mapMaybe, Maybe, maybe, Nothing, thenF } from "../../../Data/Maybe"
+import { bindF, catMaybes, elem, ensure, guard, isNothing, Just, mapMaybe, Maybe, maybe, Nothing, thenF } from "../../../Data/Maybe"
 import { add, gte, lt } from "../../../Data/Num"
 import { elems, find, findWithDefault, fromArray, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
@@ -27,6 +27,7 @@ import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
 import { mapBlessedTradIdToNumId } from "../Activatable/traditionUtils"
 import { flattenDependencies } from "../Dependencies/flattenDependencies"
+import { toNewMaybe } from "../Maybe"
 import { pipe, pipe_ } from "../pipe"
 import { sortStrings } from "../sortBy"
 import { isNumber } from "../typeCheckUtils"
@@ -442,7 +443,9 @@ export const getAspectsStr =
                                SDA.blessedTraditions,
                                find (trad => BTA.numId (trad) === tradition_id)
                              )),
-      fmap (tradition =>
+      toNewMaybe
+    )
+      .maybe ("", tradition =>
         pipe_ (
           curr,
           LCBCA.aspects,
@@ -451,21 +454,19 @@ export const getAspectsStr =
                      bindF (lookupF (SDA.aspects (staticData))),
                      fmap (NumIdName.A.name)
                    )),
-        List.elem (14) (LCBCA.tradition (curr))
-          ? consF (BTA.name (tradition))
-          : ident,
-        xs => fnull (xs)
-              ? mapMaybe (pipe (
-                           lookupF (SDA.aspects (staticData)),
-                           fmap (NumIdName.A.name)
-                         ))
-                         (LCBCA.aspects (curr))
-              : xs,
-        sortStrings (staticData),
-        intercalate (", ")
-      )),
-      fromMaybe ("")
-    )
+          List.elem (14) (LCBCA.tradition (curr))
+            ? consF (BTA.name (tradition))
+            : ident,
+          xs => fnull (xs)
+                ? mapMaybe (pipe (
+                            lookupF (SDA.aspects (staticData)),
+                            fmap (NumIdName.A.name)
+                          ))
+                          (LCBCA.aspects (curr))
+                : xs,
+          sortStrings (staticData),
+          intercalate (", ")
+        ))
 
 /**
  * Returns the final Group/Aspects string for list display.

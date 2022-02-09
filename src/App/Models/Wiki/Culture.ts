@@ -40,6 +40,7 @@ export interface Culture {
   category: Category
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Culture =
   fromDefault ("Culture")
               <Culture> ({

@@ -10,6 +10,7 @@ export interface Disadvantage extends AdvantageDisadvantageBase {
   isExclusiveToArcaneSpellworks: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Disadvantage =
   fromDefault ("Disadvantage")
               <Disadvantage> ({

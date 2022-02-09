@@ -5,7 +5,7 @@ import { flength, intercalate, isList, List, map } from "../../../Data/List"
 import { bindF, elem, ensure, fromJust, isJust, isNothing, Just, mapMaybe, Maybe, maybe, or } from "../../../Data/Maybe"
 import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { fst, isTuple, snd } from "../../../Data/Tuple"
+import { fst, isTuple, Pair, snd } from "../../../Data/Tuple"
 import { AttrId, CombatTechniqueId } from "../../Constants/Ids"
 import { EditItem } from "../../Models/Hero/EditItem"
 import { EditPrimaryAttributeDamageThreshold } from "../../Models/Hero/EditPrimaryAttributeDamageThreshold"
@@ -17,6 +17,7 @@ import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils"
 import { getLossLevelElements } from "../../Utilities/ItemUtils"
+import { toNewMaybe } from "../../Utilities/Maybe"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { isString } from "../../Utilities/typeCheckUtils"
 import { Checkbox } from "../Universal/Checkbox"
@@ -35,7 +36,7 @@ export interface ItemEditorMeleeSectionProps {
   setDamageDiceNumber (value: string): void
   setDamageDiceSides (value: number): void
   setDamageFlat (value: string): void
-  setPrimaryAttribute (primary: Maybe<string>): void
+  setPrimaryAttribute (primary: Maybe<AttrId | Pair<AttrId, AttrId>>): void
   setDamageThreshold (value: string): void
   setFirstDamageThreshold (value: string): void
   setSecondDamageThreshold (value: string): void
@@ -117,6 +118,15 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
     || !isJust (combatTechnique)
     || fromJust (combatTechnique) === CombatTechniqueId.Lances
 
+  const handleSetPrimaryAttribute = React.useCallback ((mattr: Maybe<AttrId | "ATTR_6_8">) =>
+    pipe_ (
+      mattr,
+      fmap ((attr: AttrId | "ATTR_6_8") => attr === "ATTR_6_8"
+                                           ? Pair (AttrId.Agility, AttrId.Strength)
+                                           : attr),
+      setPrimaryAttribute
+  ), [ setPrimaryAttribute ])
+
   return (gr === 1 || (elem (1) (EIA.improvisedWeaponGroup (item)) && gr > 4))
     ? (
       <>
@@ -133,7 +143,8 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                 elems,
                 mapMaybe (pipe (
                   ensure (pipe (CTA.gr, equals (1))),
-                  fmap (x => DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
+                  fmap ((x: Record<CombatTechnique>) =>
+                    DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
                 ))
               )}
               onChangeJust={setCombatTechnique}
@@ -149,7 +160,8 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                 item,
                 EIA.damageBonus,
                 EPADTA.primary,
-                x => typeof x === "object" ? "ATTR_6_8" : x
+                toNewMaybe,
+                x => x.map (id => typeof id === "object" ? "ATTR_6_8" : id).toOldMaybe ()
               )}
               options={List (
                 DropdownOption ({
@@ -187,7 +199,7 @@ export const ItemEditorMeleeSection: React.FC<ItemEditorMeleeSectionProps> = pro
                   name: shortOrEmpty (attributes) (AttrId.Strength),
                 })
               )}
-              onChange={setPrimaryAttribute}
+              onChange={handleSetPrimaryAttribute}
               disabled={lockedByNoCombatTechniqueOrLances}
               />
             {

@@ -1,6 +1,5 @@
 import * as React from "react"
 import { thrush } from "../../../../Data/Function"
-import { fmap } from "../../../../Data/Functor"
 import { append, List, map, notNull, notNullStr } from "../../../../Data/List"
 import { bindF, ensure, joinMaybeList, Maybe, maybe_, normalize, Nothing } from "../../../../Data/Maybe"
 import { Record, RecordIBase } from "../../../../Data/Record"
@@ -8,6 +7,7 @@ import { SelectOption } from "../../../Models/Wiki/sub/SelectOption"
 import { SourceLink } from "../../../Models/Wiki/sub/SourceLink"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
+import { Nullable } from "../../../Utilities/Maybe"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { combineShowSources, combineShowSourcesWithout } from "../../../Utilities/SourceUtils"
 
@@ -33,7 +33,9 @@ export const WikiSource: FC = props => {
     addSrcs,
   } = props
 
-  const base_src = pipe_ (Maybe (macc), fmap (acc => acc.src (x)), joinMaybeList)
+  const base_src = Nullable (macc)
+    .map (acc => acc.src (x))
+    .fromMaybe (List<Record<SourceLink>> ())
 
   const select_src =
     pipe_ (

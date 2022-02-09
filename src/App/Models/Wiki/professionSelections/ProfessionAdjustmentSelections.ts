@@ -23,6 +23,7 @@ export interface ProfessionSelections {
   // [ProfessionSelectionIds.SPECIAL_ABILITY]: Maybe<Record<SpecialAbilitySelection>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProfessionSelections =
   fromDefault ("ProfessionSelections")
               <ProfessionSelections> ({

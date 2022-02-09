@@ -14,12 +14,12 @@ interface Props {
   hint?: Maybe<string>
   label: string | undefined
   primary?: boolean
-  round?: boolean
   onClick? (): void
 }
 
 export const BorderButton: React.FC<Props> = props => {
   const {
+    active,
     autoWidth,
     children,
     className,
@@ -34,6 +34,7 @@ export const BorderButton: React.FC<Props> = props => {
 
   return (
     <Button
+      active={active}
       autoWidth={autoWidth}
       className={className}
       disabled={disabled}

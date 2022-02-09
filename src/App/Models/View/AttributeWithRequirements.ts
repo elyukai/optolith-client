@@ -12,6 +12,7 @@ export interface AttributeWithRequirements {
   min: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AttributeWithRequirements =
   fromDefault ("AttributeWithRequirements")
               <AttributeWithRequirements> ({

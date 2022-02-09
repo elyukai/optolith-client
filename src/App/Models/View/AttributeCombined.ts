@@ -9,6 +9,7 @@ export interface AttributeCombined {
   stateEntry: Record<AttributeDependent>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AttributeCombined =
   fromDefault ("AttributeCombined")
               <AttributeCombined> ({

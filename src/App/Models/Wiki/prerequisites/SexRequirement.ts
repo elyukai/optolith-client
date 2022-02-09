@@ -12,6 +12,7 @@ export interface SexRequirement {
   value: Sex
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SexRequirement =
   fromDefault ("SexRequirement")
               <SexRequirement> ({

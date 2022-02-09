@@ -28,6 +28,7 @@ export interface Curse {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Curse =
   fromDefault ("Curse")
               <Curse> ({

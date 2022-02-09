@@ -30,7 +30,6 @@ interface Props {
   skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
   skillGroupPages: OrderedMap<number, Pair<number, number>>
   useParchment: boolean
-  switchAttributeValueVisibility (): void
 }
 
 export const SkillsSheet: React.FC<Props> = props => {

@@ -1,11 +1,10 @@
 import { connect } from "react-redux"
 import { Action } from "redux"
-import { fromJust, isJust, Just, Maybe } from "../../Data/Maybe"
+import { fromJust, isJust, Maybe } from "../../Data/Maybe"
 import { OrderedSet } from "../../Data/OrderedSet"
 import { ReduxDispatch } from "../Actions/Actions"
 import * as HerolistActions from "../Actions/HerolistActions"
 import * as IOActions from "../Actions/IOActions"
-import * as LocationActions from "../Actions/LocationActions"
 import * as SubwindowsActions from "../Actions/SubwindowsActions"
 import { AppStateRecord } from "../Models/AppState"
 import { HeroListSortOptions, HeroListVisibilityFilter } from "../Models/Config"
@@ -13,7 +12,6 @@ import { getSortedBooks } from "../Selectors/bookSelectors"
 import { getSortedHerolist, getUnsavedHeroesById } from "../Selectors/herolistSelectors"
 import { getCurrentHeroPresent, getHerolistFilterText, getIsCharacterCreatorOpen, getUsers, getWiki, getWikiExperienceLevels } from "../Selectors/stateSelectors"
 import { getHerolistSortOrder, getHerolistVisibilityFilter } from "../Selectors/uisettingsSelectors"
-import { TabId } from "../Utilities/LocationUtils"
 import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from "../Views/Heroes/Herolist"
 
 const mapStateToProps = (state: AppStateRecord) => ({
@@ -30,25 +28,7 @@ const mapStateToProps = (state: AppStateRecord) => ({
   wiki: getWiki (state),
 })
 
-const mapDispatchToProps = (dispatch: ReduxDispatch<Action>) => ({
-  loadHero (id: string) {
-    dispatch (HerolistActions.loadHero (id))
-  },
-  showHero () {
-    dispatch (LocationActions.setTab (TabId.Profile))
-  },
-  async saveHero (id: string) {
-    await dispatch (HerolistActions.saveHero (Just (id)))
-  },
-  saveHeroAsJSON (id: string) {
-    dispatch (HerolistActions.exportHeroValidate (id))
-  },
-  async deleteHero (id: string) {
-    await dispatch (HerolistActions.deleteHeroValidate (id))
-  },
-  duplicateHero (id: string) {
-    dispatch (HerolistActions.duplicateHero (id))
-  },
+const mapDispatchToProps = (dispatch: ReduxDispatch<Action>): HerolistDispatchProps => ({
   createHero (
     name: string,
     sex: "m" | "f",

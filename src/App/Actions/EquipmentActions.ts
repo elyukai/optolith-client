@@ -2,13 +2,14 @@ import { fmap } from "../../Data/Functor"
 import { bindF, fromJust, isJust, Just, Maybe } from "../../Data/Maybe"
 import { keys, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
+import { Pair } from "../../Data/Tuple"
 import * as ActionTypes from "../Constants/ActionTypes"
 import { IdPrefixes } from "../Constants/IdPrefixes"
-import { MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids"
+import { AttrId, MeleeCombatTechniqueId, RangedCombatTechniqueId } from "../Constants/Ids"
 import { EquipmentSortOptions } from "../Models/Config"
 import { EditItem } from "../Models/Hero/EditItem"
 import { HitZoneArmor } from "../Models/Hero/HitZoneArmor"
-import { Item } from "../Models/Hero/Item"
+import { Item, Range } from "../Models/Hero/Item"
 import { ItemTemplate } from "../Models/Wiki/ItemTemplate"
 import { getHitZoneArmorsState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from "../Selectors/stateSelectors"
 import { getNewId, prefixId } from "../Utilities/IDUtils"
@@ -375,16 +376,17 @@ export const setDamageFlat = (value: string): SetDamageFlatAction => ({
 export interface SetPrimaryAttributeAction {
   type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE
   payload: {
-    primary: Maybe<string>
+    primary: Maybe<AttrId | Pair<AttrId, AttrId>>
   }
 }
 
-export const setPrimaryAttribute = (primary: Maybe<string>): SetPrimaryAttributeAction => ({
-  type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE,
-  payload: {
-    primary,
-  },
-})
+export const setPrimaryAttribute =
+  (primary: Maybe<AttrId | Pair<AttrId, AttrId>>): SetPrimaryAttributeAction => ({
+    type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE,
+    payload: {
+      primary,
+    },
+  })
 
 export interface SetDamageThresholdAction {
   type: ActionTypes.SET_ITEM_DAMAGE_THRESHOLD
@@ -510,15 +512,15 @@ export interface SetRangeAction {
   type: ActionTypes.SET_ITEM_RANGE
   payload: {
     value: string
-    index: number
+    key: keyof Range
   }
 }
 
-export const setRange = (value: string, index: number): SetRangeAction => ({
+export const setRange = (value: string, key: keyof Range): SetRangeAction => ({
   type: ActionTypes.SET_ITEM_RANGE,
   payload: {
     value,
-    index,
+    key,
   },
 })
 
@@ -716,12 +718,13 @@ export const applyItemTemplate: ReduxAction =
       getItemEditorInstance,
       bindF (EditItem.A.template),
       bindF (lookupF (getWikiItemTemplates (getState ()))),
-      fmap (template => dispatch<ApplyItemTemplateAction> ({
-                          type: ActionTypes.APPLY_ITEM_TEMPLATE,
-                          payload: {
-                            template,
-                          },
-                        }))
+      fmap ((template: Record<ItemTemplate>) =>
+              dispatch<ApplyItemTemplateAction> ({
+                type: ActionTypes.APPLY_ITEM_TEMPLATE,
+                payload: {
+                  template,
+                },
+              }))
     )
 }
 
@@ -739,12 +742,13 @@ export const lockItemTemplate: ReduxAction =
       getItemEditorInstance,
       bindF (EditItem.A.template),
       bindF (lookupF (getWikiItemTemplates (getState ()))),
-      fmap (template => dispatch<LockItemTemplateAction> ({
-                          type: ActionTypes.LOCK_ITEM_TEMPLATE,
-                          payload: {
-                            template,
-                          },
-                        }))
+      fmap ((template: Record<ItemTemplate>) =>
+              dispatch<LockItemTemplateAction> ({
+                type: ActionTypes.LOCK_ITEM_TEMPLATE,
+                payload: {
+                  template,
+                },
+              }))
     )
   }
 

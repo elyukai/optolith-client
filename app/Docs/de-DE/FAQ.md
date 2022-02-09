@@ -51,5 +51,9 @@ Die Charaktere und auch andere Dateien wie die Konfiguration findest du – je n
 Hier finden sich verschiedene relevante Dateien:
 
 - `heroes.json` enthält alle Helden, die aktuell in Optolith sind
-- `config.json` enthält die Konfiguration deiner Optolith-Anwendung. Enthält keine wichtigen Daten, nur Dinge wie Farbschema, Sprache (falls man eine spezielle eingestellt hat), und ein paar andere Sachen. 
+- `config.json` enthält die Konfiguration deiner Optolith-Anwendung. Enthält keine wichtigen Daten, nur Dinge wie Farbschema, Sprache (falls man eine spezielle eingestellt hat), und ein paar andere Sachen.
   *Ein Hinweis zu Windows:* `AppData` ist ein versteckter Ordner. Um ihn zu sehen, müsst ihr im Windows Explorer unter *Ansicht* die Einstellung *Ausgeblendete Elemente* aktivieren.
+
+## Wie skaliere ich die Benutzeroberfläche von Optolith auf meinem Linux-System?
+
+Wenn du die `tar.gz` heruntergeladen hast, kannst du in den entpackten Ordner navigieren und dort `GDK_DPI_SCALE=<Scale> ./Optolith` in der Kommandozeile ausführen. Dabei muss `<Scale>` mit dem gewünschten Skalierungsfaktor ersetzt werden, also z. B. `1.5`.

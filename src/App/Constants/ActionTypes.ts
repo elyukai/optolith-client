@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-redeclare */
+
 export const SET_LOCALE = "SET_LOCALE"
 export type SET_LOCALE = "SET_LOCALE"
 
@@ -390,8 +392,6 @@ export const EDIT_ITEM = "EDIT_ITEM"
 export type EDIT_ITEM = "EDIT_ITEM"
 export const REMOVE_ITEM = "REMOVE_ITEM"
 export type REMOVE_ITEM = "REMOVE_ITEM"
-export const SET_ITEM = "SET_ITEM"
-export type SET_ITEM = "SET_ITEM"
 export const SET_ITEMS_SORT_ORDER = "SET_ITEMS_SORT_ORDER"
 export type SET_ITEMS_SORT_ORDER = "SET_ITEMS_SORT_ORDER"
 export const SET_DUCATES = "SET_DUCATES"

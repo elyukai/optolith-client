@@ -16,6 +16,7 @@ export interface RadioOptionCreator extends RecordCreator<RadioOption<any>> {
   (x: PartialMaybeOrNothing<OmitName<RadioOption<A>>>): Record<RadioOption<A>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RadioOption: RadioOptionCreator =
   fromDefault ("RadioOption") <RadioOption<any>> ({
                 className: Nothing,

@@ -82,7 +82,7 @@ export const uncurryN3 =
  */
 export const uncurryN4 =
   <A, B, C, D, E>
-  (f: (a: A) => (b: B) => (c: C) => (c: D) => E) =>
+  (f: (a: A) => (b: B) => (c: C) => (d: D) => E) =>
   (x: A, y: B, z: C, a: D): E =>
     f (x) (y) (z) (a)
 
@@ -104,9 +104,9 @@ export const uncurryN5 =
  */
 export const uncurryN6 =
   <A, B, C, D, E, F, G>
-  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => G) =>
+  (fn: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => G) =>
   (x: A, y: B, z: C, a: D, b: E, c: F): G =>
-    f (x) (y) (z) (a) (b) (c)
+    fn (x) (y) (z) (a) (b) (c)
 
 /**
  * `uncurryN7 :: (a -> b -> c -> d -> e -> f -> g -> h) -> (a, b, c, d, e, f, g) -> h`
@@ -115,9 +115,9 @@ export const uncurryN6 =
  */
 export const uncurryN7 =
   <A, B, C, D, E, F, G, H>
-  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => (g: G) => H) =>
+  (fn: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => (g: G) => H) =>
   (x: A, y: B, z: C, a: D, b: E, c: F, d: G): H =>
-    f (x) (y) (z) (a) (b) (c) (d)
+    fn (x) (y) (z) (a) (b) (c) (d)
 
 /**
  * `uncurryN8 :: (a -> b -> c -> d -> e -> f -> g -> h -> i) -> (a, b, c, d, e, f, g, h) -> i`
@@ -126,9 +126,9 @@ export const uncurryN7 =
  */
 export const uncurryN8 =
   <A, B, C, D, E, F, G, H, I>
-  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => (g: G) => (h: H) => I) =>
+  (fn: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => (g: G) => (h: H) => I) =>
   (x: A, y: B, z: C, a: D, b: E, c: F, d: G, e: H): I =>
-    f (x) (y) (z) (a) (b) (c) (d) (e)
+    fn (x) (y) (z) (a) (b) (c) (d) (e)
 
 /**
  * `uncurryN9 :: (a -> b -> c -> d -> e -> f -> g -> h -> i -> j) -> (a, b, c, d, e, f, g, h, i) -> j`
@@ -137,7 +137,7 @@ export const uncurryN8 =
  */
 export const uncurryN9 =
   <A, B, C, D, E, F, G, H, I, J>
-  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) =>
+  (fn: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) =>
       (f: F) => (g: G) => (h: H) => (i: I) => J) =>
   (x: A, y: B, z: C, a: D, b: E, c: F, d: G, e: H, g: I): J =>
-    f (x) (y) (z) (a) (b) (c) (d) (e) (g)
+    fn (x) (y) (z) (a) (b) (c) (d) (e) (g)

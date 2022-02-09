@@ -1,9 +1,9 @@
-import { remote } from "electron"
-import { fmap } from "../../Data/Functor"
+import * as remote from "@electron/remote"
 import { flength, fromArray, List, subscript } from "../../Data/List"
-import { fromMaybe, guard, joinMaybeList, Maybe, normalize, then } from "../../Data/Maybe"
+import { fromMaybe, guard, Maybe, normalize, then } from "../../Data/Maybe"
 import { divideBy, inc } from "../../Data/Num"
 import { bimap, fst, Pair, snd } from "../../Data/Tuple"
+import { toNewMaybe } from "./Maybe"
 import { pipe_ } from "./pipe"
 
 /**
@@ -36,9 +36,10 @@ export const showOpenDialog: (options: Electron.OpenDialogOptions) => Promise<Li
     ),
     res => res .filePaths,
     normalize,
-    fmap (fromArray),
-    joinMaybeList
+    toNewMaybe
   )
+    .map (fromArray)
+    .fromMaybe (List ())
 
 export const getSystemLocale = (): string => {
   const systemLocale = remote.app.getLocale ()

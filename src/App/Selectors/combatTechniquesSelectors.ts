@@ -5,7 +5,7 @@ import { Just, liftM2, Maybe, maybe, Nothing } from "../../Data/Maybe"
 import { add, divideBy, gt, max, subtractBy } from "../../Data/Num"
 import { findWithDefault, foldrWithKey, lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
-import { uncurryN, uncurryN5 } from "../../Data/Tuple/Curry"
+import { uncurryN } from "../../Data/Tuple/Curry"
 import { IdPrefixes } from "../Constants/IdPrefixes"
 import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids.gen"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
@@ -82,51 +82,50 @@ export const getCombatTechniquesForView = createMaybeSelector (
   getAttributes,
   getSpecialAbilities,
   getCombatTechniques,
-  uncurryN5 (staticData =>
-             wiki_combat_techniques =>
-             attributes =>
-             special_abilities =>
-               fmap ((combatTechniques): List<Record<CombatTechniqueWithAttackParryBase>> =>
-                 pipe_ (
-                   wiki_combat_techniques,
-                   foldrWithKey ((id: string) => (wiki_entry: Record<CombatTechnique>) => {
-                                const hero_entry =
-                                  findWithDefault (createSkillDependentWithValue6 (id))
-                                                  (id)
-                                                  (combatTechniques)
+  (staticData, wiki_combat_techniques, attributes, special_abilities, mcombatTechniques) =>
+    fmapF (mcombatTechniques)
+          ((combatTechniques): List<Record<CombatTechniqueWithAttackParryBase>> =>
+            pipe_ (
+              wiki_combat_techniques,
+              foldrWithKey ((id: string) => (wiki_entry: Record<CombatTechnique>) => {
+                           const hero_entry =
+                             findWithDefault (createSkillDependentWithValue6 (id))
+                                             (id)
+                                             (combatTechniques)
 
-                                if (id === CombatTechniqueId.spittingFire
-                                    && maybe (true)
-                                             (pipe (ADA.active, fnull))
-                                             (lookup (SpecialAbilityId.feuerschlucker)
-                                                     (special_abilities))) {
-                                  // If SF Feuerschlucker is not active, do not
-                                  // show CT Spitting Fire
-                                  return ident as
-                                    ident<List<Record<CombatTechniqueWithAttackParryBase>>>
-                                }
+                           if (id === CombatTechniqueId.spittingFire
+                               && maybe (true)
+                                        (pipe (ADA.active, fnull))
+                                        (lookup (SpecialAbilityId.feuerschlucker)
+                                                (special_abilities))) {
+                             // If SF Feuerschlucker is not active, do not
+                             // show CT Spitting Fire
+                             return ident as
+                               ident<List<Record<CombatTechniqueWithAttackParryBase>>>
+                           }
 
-                                return consF (CombatTechniqueWithAttackParryBase ({
-                                  at: getAttackBase (attributes) (wiki_entry) (hero_entry),
-                                  pa: getParryBase (attributes) (wiki_entry) (hero_entry),
-                                  stateEntry: hero_entry,
-                                  wikiEntry: wiki_entry,
-                                }))
-                              })
-                              (List.empty),
-                   sortByMulti ([ comparingR (CombatTechniqueWithAttackParryBaseA_.name)
-                                             (compareLocale (staticData)) ])
-                 )))
+                           return consF (CombatTechniqueWithAttackParryBase ({
+                             at: getAttackBase (attributes) (wiki_entry) (hero_entry),
+                             pa: getParryBase (attributes) (wiki_entry) (hero_entry),
+                             stateEntry: hero_entry,
+                             wikiEntry: wiki_entry,
+                           }))
+                         })
+                         (List.empty),
+              sortByMulti ([ comparingR (CombatTechniqueWithAttackParryBaseA_.name)
+                                        (compareLocale (staticData)) ])
+            ))
 )
 
 export const getCombatTechniquesForSheet = createMaybeSelector (
   getWiki,
   getCombatTechniquesForView,
-  uncurryN (staticData =>
-             fmap (filter (x => SDA.value (CTWAPBA.stateEntry (x)) > 6
-                                || isEntryFromCoreBook (CTA.src)
-                                                       (StaticData.A.books (staticData))
-                                                       (CTWAPBA.wikiEntry (x)))))
+  (staticData, combatTechniques) =>
+    fmapF (combatTechniques)
+          (filter (x => SDA.value (CTWAPBA.stateEntry (x)) > 6
+                        || isEntryFromCoreBook (CTA.src)
+                                               (StaticData.A.books (staticData))
+                                               (CTWAPBA.wikiEntry (x))))
 )
 
 const getGr = pipe (CTWAPBA.wikiEntry, CTA.gr)

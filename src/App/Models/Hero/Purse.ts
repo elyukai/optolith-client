@@ -11,6 +11,7 @@ export interface Purse {
 /**
  * Create a new `Purse` object.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Purse =
   fromDefault ("Purse")
               <Purse> ({

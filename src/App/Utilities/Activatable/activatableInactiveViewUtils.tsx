@@ -49,6 +49,7 @@ interface PropertiesAffectedByState {
   inputDescription: Maybe<string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PropertiesAffectedByState =
   fromDefault ("PropertiesAffectedByState") <PropertiesAffectedByState> ({
                 currentCost: Nothing,
@@ -74,6 +75,7 @@ interface InactiveActivatableControlElements {
   levelElementAfter: Maybe<JSX.Element>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const InactiveActivatableControlElements =
   fromDefault ("InactiveActivatableControlElements") <InactiveActivatableControlElements> ({
                 disabled: Nothing,
@@ -176,7 +178,8 @@ const excludeSelectOptionsByMaybeId = (
   return pipe_ (
     entry,
     IAA.selectOptions,
-    fmap (filter (selectOption => notElem (SOA.id (selectOption)) (safeExcludeIds)))
+    fmap (filter ((selectOption: Record<SelectOption>) =>
+                    notElem (SOA.id (selectOption)) (safeExcludeIds)))
   )
 }
 
@@ -440,7 +443,7 @@ export const getIdSpecificAffectedAndDispatchProps =
               pipe_ (
                 x,
                 bindF (SOA.applications),
-                fmap (map (a => SelectOption ({
+                fmap (map ((a: Record<Application>) => SelectOption ({
                                   id: AA.id (a),
                                   name: AA.name (a),
                                   src,
@@ -478,6 +481,19 @@ export const getIdSpecificAffectedAndDispatchProps =
 
         const mspec_input = bind (moption) (SOA.specializationInput)
 
+        const active_specializations_for_language = pipe_ (
+          entry,
+          IAA.heroEntry,
+          liftM2 ((language_id: string | number) => pipe (
+                   ADA.active,
+                   mapMaybe (ao => Maybe.elem (language_id) (AOA.sid (ao))
+                                   ? pipe_ (ao, AOA.sid2, misNumberM)
+                                   : Nothing)
+                 ))
+                 (mselected),
+          fromMaybe (List ())
+        )
+
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -497,12 +513,15 @@ export const getIdSpecificAffectedAndDispatchProps =
               pipe_ (
                 moption,
                 bindF (SOA.specializations),
-                fmap (imap (i => name => SelectOption ({
-                                           id: i + 1,
-                                           name,
-                                           src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
-                                           errata: Nothing,
-                                         })))
+                fmap (pipe (
+                  imap (i => (name: string) => SelectOption ({
+                    id: i + 1,
+                    name,
+                    src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
+                    errata: Nothing,
+                  })),
+                  filter (so => List.notElem (SOA.id (so)) (active_specializations_for_language)),
+                )),
               ),
           })
         )
@@ -521,7 +540,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                     ((other_id: string | number) => filter (pipe (AA.id, notEquals (other_id))))
                     (mother_id),
               ensure (notNull),
-              fmap (map (e => SelectOption ({
+              fmap (map ((e: Record<Application>) => SelectOption ({
                                 id: AA.id (e),
                                 name: AA.name (e),
                                 src: IAA_.src (entry),
@@ -637,7 +656,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                             bindF (ensure ((c): c is number | List<number> =>
                                             selectedLevel > 0
                                             && (isNumber (c) || isList (c)))),
-                            fmap (cost => second (set (PABYL.currentCost)
+                            fmap ((cost: number | List<number>) => second (set (PABYL.currentCost)
                                                       (Just (isList (cost)
                                                         ? SAAL.category (IAA.wikiEntry (entry))
                                                           === Category.SPECIAL_ABILITIES
@@ -860,13 +879,15 @@ export const getInactiveActivatableControlElements =
         || (isJust (minput_desc) && isNothing (minput_text))
       )
       && notElem (IAA.id (entry))
-                 (List<string> (AdvantageId.magicalAttunement,
-                                DisadvantageId.afraidOf,
-                                DisadvantageId.magicalRestriction,
-                                DisadvantageId.principles,
-                                DisadvantageId.badHabit,
-                                DisadvantageId.stigma,
-                                DisadvantageId.obligations))
+                 (List<string> (
+                   AdvantageId.magicalAttunement,
+                   DisadvantageId.afraidOf,
+                   DisadvantageId.magicalRestriction,
+                   DisadvantageId.principles,
+                   DisadvantageId.badHabit,
+                   DisadvantageId.stigma,
+                   DisadvantageId.obligations
+                 ))
         ? set (IACEL.disabled) (Just (true))
         : ident,
       fromMaybe
@@ -876,7 +897,7 @@ export const getInactiveActivatableControlElements =
                          (List (AdvantageId.immunityToPoison, AdvantageId.immunityToDisease))),
           thenF (minput_desc),
           fmap (
-            input =>
+            (input: string) =>
               set (IACEL.inputElement)
                   (
                     Just (

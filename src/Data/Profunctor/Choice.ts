@@ -25,7 +25,7 @@ export type ChoiceLeft_ =
   (x: F) =>
     F extends Market<infer A_, infer B_, A, B> ? Market<A_, B_, Either<A, C>, Either<B, C>> :
     F extends Tagged<A, B> ? Tagged<Either<A, C>, Either<B, C>> :
-    F extends ((x: A) => B) ? (x: Either<A, C>) => Either<B, C> :
+    F extends ((y: A) => B) ? (e: Either<A, C>) => Either<B, C> :
     never
 
 /**
@@ -58,7 +58,7 @@ export type ChoiceRight_ =
   (x: F) =>
     F extends Market<infer A_, infer B_, A, B> ? Market<A_, B_, Either<C, A>, Either<C, B>> :
     F extends Tagged<A, B> ? Tagged<Either<C, A>, Either<C, B>> :
-    F extends ((x: A) => B) ? (x: Either<C, A>) => Either<C, B> :
+    F extends ((y: A) => B) ? (e: Either<C, A>) => Either<C, B> :
     never
 
 /**

@@ -1,8 +1,7 @@
 import { join } from "path"
 import { handleE } from "../../Control/Exception"
-import { Either, Left, second } from "../../Data/Either"
+import { Either, Left } from "../../Data/Either"
 import { ident } from "../../Data/Function"
-import { fmap } from "../../Data/Functor"
 import { set } from "../../Data/Lens"
 import { append, consF, List, notNull, reverse, unsnoc } from "../../Data/List"
 import { fromJust, isNothing, maybe } from "../../Data/Maybe"
@@ -71,14 +70,15 @@ export const saveAllHeroesToFile: (heroes: HeroesMap) => IO<Either<Error, Heroes
   async heroes => {
     const updated_heroes = updateSavedHeroes (heroes)
 
-    return pipe_ (
+    return (await pipe_ (
       updated_heroes,
       convertHeroesForSave,
       JSON.stringify,
       writeHeroesToFile,
-      handleE,
-      fmap (second (() => updated_heroes))
-    )
+      handleE
+    ))
+      .map (() => updated_heroes)
+      .toOldEither ()
   }
 
 /**
@@ -101,14 +101,15 @@ export const saveHeroToFile: (heroes: HeroesMap, id: string) => IO<Either<Error,
 
     const updated_hero = fromJust (mupdated_hero)
 
-    return pipe_ (
+    return (await pipe_ (
       updated_heroes,
       convertHeroesForSave,
       JSON.stringify,
       writeHeroesToFile,
       handleE,
-      fmap (second (() => updated_hero))
-    )
+    ))
+      .map (() => updated_hero)
+      .toOldEither ()
   }
 
 /**
@@ -123,13 +124,14 @@ export const deleteHeroFromFile: (heroes: HeroesMap, id: string) => IO<Either<Er
   async (heroes, id) => {
     const heroes_without = filter (pipe (UHA.present, HA.id, hero_id => hero_id !== id)) (heroes)
 
-    return pipe_ (
+    return (await pipe_ (
       heroes_without,
       resetHeroes,
       convertHeroesForSave,
       JSON.stringify,
       writeHeroesToFile,
       handleE,
-      fmap (second (() => heroes_without))
-    )
+    ))
+      .map (() => heroes_without)
+      .toOldEither ()
   }

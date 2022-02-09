@@ -10,6 +10,7 @@ export interface LanguagesSelectionListItemOptions {
 /**
  * Create a new `LanguagesSelectionListItem` object.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LanguagesSelectionListItemOptions =
   fromDefault ("LanguagesSelectionListItemOptions")
               <LanguagesSelectionListItemOptions> ({

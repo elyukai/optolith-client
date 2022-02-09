@@ -4,6 +4,7 @@ import { filter, foldr, groupByKey } from "../../Data/List"
 import { fromMaybe, listToMaybe } from "../../Data/Maybe"
 import { max, min } from "../../Data/Num"
 import { elems, map } from "../../Data/OrderedMap"
+import { Record } from "../../Data/Record"
 import { fst, isTuple, Pair, snd } from "../../Data/Tuple"
 import { upd1, upd2 } from "../../Data/Tuple/Update"
 import { ConditionId } from "../Constants/Ids.gen"
@@ -64,7 +65,7 @@ export const getSkillPages = createMaybeSelector (
     map (foldr (pipe (
                  Skill.A.src,
                  listToMaybe,
-                 fmap (sl => {
+                 fmap ((sl: Record<SourceLink>) => {
                    const pages = SourceLink.A.page (sl)
 
                    if (isTuple (pages)) {

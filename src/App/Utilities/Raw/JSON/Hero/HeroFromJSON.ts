@@ -38,6 +38,7 @@ import { addOtherSpecialAbilityDependenciesOnHeroInit } from "../../../Activatab
 import { addDependencies } from "../../../Dependencies/dependencyUtils"
 import { getCategoryById } from "../../../IDUtils"
 import { initializeCache } from "../../../Increasable/AttributeSkillCheckMinimum"
+import { Nullable } from "../../../Maybe"
 import { pipe, pipe_ } from "../../../pipe"
 import * as Raw from "../../RawData"
 
@@ -194,8 +195,9 @@ const createHeroObject = (staticData: StaticDataRecord) => (hero: Raw.RawHero): 
               pa: Maybe (obj .pa),
               price: Maybe (obj .price),
               pro: Maybe (obj .pro),
-              range: fmap<number[], List<number>> (List.fromArray)
-                                                  (Maybe (obj .range)),
+              range: Nullable (obj.range)
+                .map (([ close, medium, far ]) => ({ close, medium, far }))
+                .toOldMaybe (),
               reloadTime: typeof obj.reloadTime === "object"
                           ? Just (List.fromArray (obj.reloadTime))
                           : Maybe (obj.reloadTime),
@@ -301,6 +303,8 @@ const createHeroObject = (staticData: StaticDataRecord) => (hero: Raw.RawHero): 
     skillStyleDependencies: Nothing,
     socialStatusDependencies: Nothing,
     transferredUnfamiliarSpells: Nothing,
+    blessedPrimaryAttributeDependencies: [],
+    magicalPrimaryAttributeDependencies: [],
     skillCheckAttributeCache: Nothing,
   })
 
@@ -418,6 +422,7 @@ export const convertFromRawHero =
         set (HL.skillCheckAttributeCache)
             (initializeCache (
               SDA.skills (staticData),
+              SDA.combatTechniques (staticData),
               SDA.spells (staticData),
               SDA.liturgicalChants (staticData),
               HA.spells (intermediateHero),

@@ -1,14 +1,13 @@
 import { join } from "path"
 import { handleE } from "../../Control/Exception"
-import { Either, eitherToMaybe, Right } from "../../Data/Either"
+import { Either, Right } from "../../Data/Either"
 import { ident } from "../../Data/Function"
 import { fmap } from "../../Data/Functor"
-import { all, fromArray, List } from "../../Data/List"
-import { bindF, ensure, mapM, Maybe } from "../../Data/Maybe"
-import { fromList, lookup, mapMaybe, OrderedMap, toObjectWith } from "../../Data/OrderedMap"
+import { bindF, Maybe } from "../../Data/Maybe"
+import { fromArray, lookup, mapMaybe, OrderedMap, toObjectWith } from "../../Data/OrderedMap"
 import { Record, StringKeyObject } from "../../Data/Record"
 import { parseJSON } from "../../Data/String/JSON"
-import { Pair, Tuple } from "../../Data/Tuple"
+import { Pair } from "../../Data/Tuple"
 import { deleteFile, existsFile, readFile, writeFile } from "../../System/IO"
 import { AppState, AppStateRecord } from "../Models/AppState"
 import { APCache, Cache, PresavedCache } from "../Models/Cache"
@@ -19,6 +18,7 @@ import { heroReducer } from "../Reducers/heroReducer"
 import { getAPObjectMap, getAPSpentMap, getAPSpentOnAdvantagesMap, getAPSpentOnAttributesMap, getAPSpentOnBlessedAdvantagesMap, getAPSpentOnBlessedDisadvantagesMap, getAPSpentOnBlessingsMap, getAPSpentOnCantripsMap, getAPSpentOnCombatTechniquesMap, getAPSpentOnDisadvantagesMap, getAPSpentOnEnergiesMap, getAPSpentOnLiturgicalChantsMap, getAPSpentOnMagicalAdvantagesMap, getAPSpentOnMagicalDisadvantagesMap, getAPSpentOnSkillsMap, getAPSpentOnSpecialAbilitiesMap, getAPSpentOnSpellsMap, getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { current_version, user_data_path } from "../Selectors/envSelectors"
 import { getHeroes } from "../Selectors/stateSelectors"
+import { ensure, Nullable } from "./Maybe"
 import { pipe, pipe_ } from "./pipe"
 import { isObject } from "./typeCheckUtils"
 
@@ -29,8 +29,8 @@ const file_path = join (user_data_path, "cache.json")
  */
 export const AP_KEY = "ap"
 
-const ap_cache_keys: List<keyof APCache> =
-  List (
+const apCacheKeys: readonly (keyof APCache)[] =
+  [
     "spent",
     "spentOnAttributes",
     "spentOnSkills",
@@ -39,11 +39,11 @@ const ap_cache_keys: List<keyof APCache> =
     "spentOnLiturgicalChants",
     "spentOnCantrips",
     "spentOnBlessings",
-    "spentOnEnergies"
-  )
+    "spentOnEnergies",
+  ]
 
-const ap_optional_cache_keys: List<keyof APCache> =
-  List (
+const apOptionalCacheKeys: readonly (keyof APCache)[] =
+  [
     "available",
     "spentOnAdvantages",
     "spentOnMagicalAdvantages",
@@ -51,37 +51,26 @@ const ap_optional_cache_keys: List<keyof APCache> =
     "spentOnDisadvantages",
     "spentOnMagicalDisadvantages",
     "spentOnBlessedDisadvantages",
-    "spentOnSpecialAbilities"
-  )
+    "spentOnSpecialAbilities",
+  ]
 
 export const readCache =
-  async () =>
-    pipe_ (
-      file_path,
-      readFile,
-      handleE,
-      fmap (pipe (
-        eitherToMaybe,
-        bindF (parseJSON),
-        bindF (ensure (isObject)),
-        bindF (x => Maybe ((x as any) [AP_KEY])),
-        bindF (ensure (isObject)),
-        bindF (pipe (
-          Object.entries,
-          fromArray,
-          mapM (pipe (
-            ensure ((e): e is [string, APCache] =>
-                     all ((k: keyof APCache) => typeof e [1] [k] === "number")
-                         (ap_cache_keys)
-                     && all ((k: keyof APCache) => typeof e [1] [k] === "number"
-                                                   || e [1] [k] === undefined)
-                            (ap_optional_cache_keys)),
-            fmap (Tuple.fromArray)
-          ))
-        )),
-        fmap (fromList)
-      ))
-    )
+  async () => (await handleE (readFile (file_path)))
+    .toMaybe ()
+    .bind (parseJSON)
+    .bind (json => ensure (json, isObject))
+    .bind (obj => Nullable ((obj as any) [AP_KEY]))
+    .bind (ap => ensure (ap, isObject))
+    .bind (ap => Object.entries (ap)
+      .mapM (p => ensure (
+          p,
+          (p_: [string, any]): p_ is [string, APCache] =>
+            apCacheKeys.every (k => typeof p_[1][k] === "number")
+            && apOptionalCacheKeys.every (k =>
+              typeof p_[1][k] === "number" || p_[1][k] === undefined)
+        )))
+    .map (fromArray)
+    .toOldMaybe ()
 
 export const writeCache =
   pipe (
@@ -96,7 +85,7 @@ export const writeCache =
 
 export const deleteCache: () => Promise<Either<Error, void>> =
   async () => await existsFile (file_path)
-              ? pipe_ (file_path, deleteFile, handleE)
+              ? (await handleE (deleteFile (file_path))).toOldEither ()
               : Right<void> (undefined)
 
 const fromNumOrPair =

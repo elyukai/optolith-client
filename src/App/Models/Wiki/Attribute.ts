@@ -10,6 +10,7 @@ export interface Attribute {
   short: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Attribute =
   fromDefault ("Attribute")
               <Attribute> ({

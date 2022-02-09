@@ -1,3 +1,4 @@
+import { ipcRenderer } from "electron"
 import { connect } from "react-redux"
 import { fromJust, isJust, Maybe } from "../../Data/Maybe"
 import { ReduxDispatch } from "../Actions/Actions"
@@ -10,7 +11,7 @@ import { Locale, Theme } from "../Models/Config"
 import { getUserSelectableSupportedLanguages } from "../Selectors/localeSelectors"
 import { getFallbackLocaleId, getFallbackLocaleType, getLocaleId, getLocaleType } from "../Selectors/stateSelectors"
 import { areAnimationsEnabled, getIsEditingHeroAfterCreationPhaseEnabled, getTheme } from "../Selectors/uisettingsSelectors"
-import { isUpdaterEnabled } from "../Utilities/CheckForUpdatesRenderer"
+import { IPCChannels } from "../Utilities/IPCChannels"
 import { Settings, SettingsDispatchProps, SettingsOwnProps, SettingsStateProps } from "../Views/Settings/Settings"
 
 const mapStateToProps = (state: AppStateRecord): SettingsStateProps => ({
@@ -22,7 +23,7 @@ const mapStateToProps = (state: AppStateRecord): SettingsStateProps => ({
   areAnimationsEnabled: areAnimationsEnabled (state),
   theme: getTheme (state),
   languages: getUserSelectableSupportedLanguages (state),
-  isCheckForUpdatesDisabled: !isUpdaterEnabled (),
+  isCheckForUpdatesDisabled: !(ipcRenderer.sendSync (IPCChannels.IsUpdaterEnabled) as boolean),
 })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): SettingsDispatchProps => ({

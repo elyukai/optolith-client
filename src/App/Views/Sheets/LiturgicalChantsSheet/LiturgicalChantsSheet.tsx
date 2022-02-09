@@ -37,7 +37,6 @@ interface Props {
   derivedCharacteristics: List<DCPair>
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
   staticData: StaticDataRecord
-  switchAttributeValueVisibility (): void
 }
 
 export const LiturgicalChantsSheet: React.FC<Props> = props => {

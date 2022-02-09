@@ -14,6 +14,6 @@ export const TextFieldLabel: React.FC<Props> =
     label,
     normalize,
     bindF (ensure (notNullStr)),
-    fmap (l => <Label text={l} />),
+    fmap ((l: string) => <Label text={l} />),
     maybeToNullable
   )

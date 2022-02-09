@@ -1,7 +1,7 @@
 import * as React from "react"
 import { fmap } from "../../../Data/Functor"
 import { map, toArray } from "../../../Data/List"
-import { fromMaybe, Maybe } from "../../../Data/Maybe"
+import { Maybe } from "../../../Data/Maybe"
 import { elems, OrderedMap, size } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { EditPet } from "../../Models/Hero/EditPet"
@@ -9,8 +9,8 @@ import { Pet } from "../../Models/Hero/Pet"
 import { Attribute } from "../../Models/Wiki/Attribute"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
-import { pipe, pipe_ } from "../../Utilities/pipe"
-import { ReactReturn } from "../../Utilities/ReactUtils"
+import { toNewMaybe } from "../../Utilities/Maybe"
+import { pipe } from "../../Utilities/pipe"
 import { BorderButton } from "../Universal/BorderButton"
 import { ListView } from "../Universal/List"
 import { Options } from "../Universal/Options"
@@ -187,11 +187,10 @@ export function Pets (props: PetsProps) {
       }
       <Scroll>
         <ListView>
-          {pipe_ (
-            pets,
-            fmap (pipe (
+          {toNewMaybe (pets)
+            .maybe<React.ReactNode> (null, pipe (
               elems,
-              map (e => (
+              map ((e: Record<Pet>) => (
                 <PetsListItem
                   key={Pet.A.id (e)}
                   pet={e}
@@ -201,9 +200,7 @@ export function Pets (props: PetsProps) {
               )),
               toArray,
               x => <>{x}</>
-            )),
-            fromMaybe (null as ReactReturn)
-          )}
+            ))}
         </ListView>
       </Scroll>
     </Page>

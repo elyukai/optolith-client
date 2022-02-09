@@ -8,6 +8,7 @@ export interface PermanentEnergyLoss {
 /**
  * Create a new `PermanentEnergyLoss` object.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PermanentEnergyLoss =
   fromDefault ("PermanentEnergyLoss")
               <PermanentEnergyLoss> ({

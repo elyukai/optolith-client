@@ -34,7 +34,7 @@ export interface ItemTemplate {
   pa: Maybe<number>
   price: Maybe<number>
   pro: Maybe<number>
-  range: Maybe<List<number>>
+  range: Maybe<Readonly<{ close: number; medium: number; far: number }>>
   reach: Maybe<number>
   reloadTime: Maybe<number | List<number>>
   stabilityMod: Maybe<number>
@@ -49,6 +49,7 @@ export interface ItemTemplate {
   errata: List<Record<Erratum>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ItemTemplate =
   fromDefault ("ItemTemplate")
               <ItemTemplate> ({

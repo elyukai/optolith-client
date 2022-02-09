@@ -46,7 +46,7 @@ const renderPlainOrByVars =
                                  pipe_ (
                                    v,
                                    mapVarText,
-                                   fmap (text => (
+                                   fmap ((text: string) => (
                                      <li key={RVA.id (v)}>
                                        <span>{RVA.name (v)}</span>
                                        <span>{text}</span>

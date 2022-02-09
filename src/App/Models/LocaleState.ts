@@ -14,6 +14,7 @@ export interface LocaleState {
   availableLangs: OrderedMap<string, Record<Locale>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LocaleState =
   fromDefault ("LocaleState")
               <LocaleState> ({

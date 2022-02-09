@@ -9,6 +9,7 @@ export interface Application {
   prerequisite: Maybe<Record<RequireActivatable>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Application =
   fromDefault ("Application")
               <Application> ({
