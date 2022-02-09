@@ -2,6 +2,78 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/elyukai/optolith-client/compare/v1.4.2...v1.5.0) (2022-02-09)
+
+### Features
+
+* MapTool export ([87cec15](https://github.com/elyukai/optolith-client/commit/87cec15ba9751c329ee39719dc654895b9f4f193))
+* Portuguese translations ([d8c9f52](https://github.com/elyukai/optolith-client/commit/d8c9f52542120f9e5fa569728b3f11cb79102365), [#676](https://github.com/elyukai/optolith-client/issues/676))
+* Native Apple M1 support ([94e751f](https://github.com/elyukai/optolith-client/commit/94e751fda169c4de90cdb82346d3d864cf697300))
+
+### Enhancements
+
+* **English:** Kilogram input hint for weight in item dialog ([bd9fc1b](https://github.com/elyukai/optolith-client/commit/bd9fc1badc8a408495bd7c1594338b1a5fe6df11))
+* Security ([723e910](https://github.com/elyukai/optolith-client/commit/723e9106ebb178db6a7cccec2a022b3edaed5b98) and others)
+
+### Bug Fixes
+
+* **German/English:** Hit Zone Armor character sheet had left margin ([e637136](https://github.com/elyukai/optolith-client/commit/e63713687eff9b825a79d159fb8b44dc26f64ffe), [#788](https://github.com/elyukai/optolith-client/issues/788))
+* Additional LE set a minimum required value of STR instead of CON ([390dcb6](https://github.com/elyukai/optolith-client/commit/390dcb616aaa68e5b103bb49dd75d1529c4e7e3a), [#787](https://github.com/elyukai/optolith-client/issues/787))
+* Two-handed (2H) and improvised (i) weapon indicators were missing on character sheet ([3f9fae3](https://github.com/elyukai/optolith-client/commit/3f9fae30a2291b8e53486a74dae8cc1533741b94), [#797](https://github.com/elyukai/optolith-client/issues/797))
+* Brawling weapons had no parry on character sheet ([a02700e](https://github.com/elyukai/optolith-client/commit/a02700eeccbd95a75f778d4d9e78ad7a2447dad8), [#1229](https://github.com/elyukai/optolith-client/issues/1229))
+* An entry that depends on a single activation of another entry disables removing of all activations of that entry if multiple activations are present ([092343f](https://github.com/elyukai/optolith-client/commit/092343f45da566a45b13b275899a458fed720a76), [#1097](https://github.com/elyukai/optolith-client/issues/1097))
+* Entries affecting spells to not be unfamiliar could be removed if Spell Enhancements were bought ([28f260a](https://github.com/elyukai/optolith-client/commit/28f260a2c4a96adb0d36585a478676f95c304414), [#827](https://github.com/elyukai/optolith-client/issues/827))
+* The equipment info area may have crashed ([ae2fbad](https://github.com/elyukai/optolith-client/commit/ae2fbad1c738354dd468c1b36b06eda729a879e5))
+* Professions that granted higher Combat Technique Ratings than what the selected Experience Level allowed were not filtered ([c8094f5](https://github.com/elyukai/optolith-client/commit/c8094f5ef15f62f69088386b9fc6c64f7d8bfd02), [#1244](https://github.com/elyukai/optolith-client/issues/1244))
+* **German:** Special ability Kernschuss had misplaced minus sign in penalty ([ccd7dec](https://github.com/elyukai/optolith-client/commit/ccd7decc8314ca476b6a15932ed9b3fb1c22a1f7), [#1080](https://github.com/elyukai/optolith-client/issues/1080))
+* **German:** Wrong page number in description of Albernisches Entermesser and Harbener Säbel ([ccd7dec](https://github.com/elyukai/optolith-client/commit/ccd7decc8314ca476b6a15932ed9b3fb1c22a1f7), [#1081](https://github.com/elyukai/optolith-client/issues/1081))
+* **German:** Spell Zauberschnurren had mixed-up QL descriptions in spell description ([ccd7dec](https://github.com/elyukai/optolith-client/commit/ccd7decc8314ca476b6a15932ed9b3fb1c22a1f7), [#846](https://github.com/elyukai/optolith-client/issues/846) [#1122](https://github.com/elyukai/optolith-client/issues/1122))
+* **German:** Schlachtermesser and Fleischerbeil were not marked as improvised ([ccd7dec](https://github.com/elyukai/optolith-client/commit/ccd7decc8314ca476b6a15932ed9b3fb1c22a1f7), [#808](https://github.com/elyukai/optolith-client/issues/808))
+* INI/MOV modifiers on armor were handled as penalties ([eb5a068](https://github.com/elyukai/optolith-client/commit/eb5a06884db1894e1a9f2b4b040b114cb4dc85cb), [#1091](https://github.com/elyukai/optolith-client/issues/1091))
+* Language specializations did not always cost 1 AP and could not be activated multiple times for a single language ([0a59d9e](https://github.com/elyukai/optolith-client/commit/0a59d9e5e571e87525b18d0b25035e73f7cd87bf), [#1082](https://github.com/elyukai/optolith-client/issues/1082))
+* Portraits with transparency had a black background ([cc5ecd6](https://github.com/elyukai/optolith-client/commit/cc5ecd6f098ae6c080eeb3b306887727a99c1220), [#800](https://github.com/elyukai/optolith-client/issues/800))
+* **German:** Profession Garether Krieger was missing Swords 12 and Orienting should be 3 instead of 2 ([397abe2](https://github.com/elyukai/optolith-client/commit/397abe2b4a69582dc49422add1700807272c32d6), [#792](https://github.com/elyukai/optolith-client/issues/792))
+* Bornlander cultural package had Prepare Food instead of Leatherworking ([397abe2](https://github.com/elyukai/optolith-client/commit/397abe2b4a69582dc49422add1700807272c32d6), [#824](https://github.com/elyukai/optolith-client/issues/824))
+* **Italian:** Some typos in translation of items, languages and scripts ([397abe2](https://github.com/elyukai/optolith-client/commit/397abe2b4a69582dc49422add1700807272c32d6), [#832](https://github.com/elyukai/optolith-client/issues/832))
+* **Italian:** Doubled level range in title of Iron Will special ability ([397abe2](https://github.com/elyukai/optolith-client/commit/397abe2b4a69582dc49422add1700807272c32d6), [#850](https://github.com/elyukai/optolith-client/issues/850))
+* **Italian:** Spells and liturgies displayed different casing and punctuation ([397abe2](https://github.com/elyukai/optolith-client/commit/397abe2b4a69582dc49422add1700807272c32d6), [#851](https://github.com/elyukai/optolith-client/issues/851))
+* **German/English:** Spell Wind Shaping had the wrong traditions and wrong spell enhancements order ([397abe2](https://github.com/elyukai/optolith-client/commit/397abe2b4a69582dc49422add1700807272c32d6), [#1139](https://github.com/elyukai/optolith-client/issues/1139))
+* **German:** Typo in measurements in description of spell Invocatio Minima ([397abe2](https://github.com/elyukai/optolith-client/commit/397abe2b4a69582dc49422add1700807272c32d6), [#1224](https://github.com/elyukai/optolith-client/issues/1224))
+* Primary attribute changes for items were not applied in edit window, only on character sheet ([6c63ab1](https://github.com/elyukai/optolith-client/commit/6c63ab1b5051882ace71f15740c3a69fff4a267f), [#798](https://github.com/elyukai/optolith-client/issues/798))
+* Professions with due to EL impossible attribute values could be selected ([fdde329](https://github.com/elyukai/optolith-client/commit/fdde329de591319df3f6da11404dd7523d800c3e), [#1109](https://github.com/elyukai/optolith-client/issues/1109))
+* Summoning spellworks from professions did not register dependencies from prerequisites ([c1b2e26](https://github.com/elyukai/optolith-client/commit/c1b2e267cb3f02d2d18812415c39c58739ad99ec), [#1240](https://github.com/elyukai/optolith-client/issues/1240))
+* **Dutch:** Typo in effect of Bliksemblind spell ([c58279c](https://github.com/elyukai/optolith-client/commit/c58279cc95aba5506824510d83aa6ffbc410107a), [#805](https://github.com/elyukai/optolith-client/issues/805))
+* Weight of Elves was not generated correctly ([3b05e69](https://github.com/elyukai/optolith-client/commit/3b05e69e27f7faa1634b50eb134000fe1a2c3a21), [#813](https://github.com/elyukai/optolith-client/issues/813))
+* **English:** Gaze into the Essence spell was misspelled as Gase into the Essence ([42891f0](https://github.com/elyukai/optolith-client/commit/42891f070c35b74c49bb2c9e16152789cc8cc7df), [#1180](https://github.com/elyukai/optolith-client/issues/1180))
+* **German:** Typo in Physiostabilis name ([e40f995](https://github.com/elyukai/optolith-client/commit/e40f995e341dc7fbcb1d9688c4b82a9187c180de), [#1234](https://github.com/elyukai/optolith-client/issues/1234))
+* **German/English:** Tradition (Druid) referenced a non-existent disadvantage instead of advantage Iron-Attuned Aura ([f8114c2](https://github.com/elyukai/optolith-client/commit/f8114c2f4318967631b71ea3614bf647e7826fa2), [#1237](https://github.com/elyukai/optolith-client/issues/1237))
+* **German/English:** Hook Dagger was not marked as a parrying weapon ([ed74170](https://github.com/elyukai/optolith-client/commit/ed74170865b2caad8008a345db5c1705e0376bc5), [#1232](https://github.com/elyukai/optolith-client/issues/1232))
+* **English:** Special ability Deadly Thrust had special ability Crossblock's rules text ([ec9bd71](https://github.com/elyukai/optolith-client/commit/ec9bd71e101abcaf61e84e3da340890e161896ea), [#841](https://github.com/elyukai/optolith-client/issues/841))
+* **German:** Weapon advantage of Kriegsbogen has wrong DP bonus ([8297455](https://github.com/elyukai/optolith-client/commit/8297455ddbd360035428a4ed244a684e6f1c7e7a), [#1074](https://github.com/elyukai/optolith-client/issues/1074))
+* **English:** Missing translations for spell enhancements of Heptagramma ([a5df7c8](https://github.com/elyukai/optolith-client/commit/a5df7c863cded391609950fa5b8bf8474ffe2dfd), [#848](https://github.com/elyukai/optolith-client/issues/848))
+* **German:** Wrong Animal Lore value in profession Spider Witch ([#1250](https://github.com/elyukai/optolith-client/issues/1250))
+* Attributes on minimum value (8) did not allow a combat technique rating over 6 if the attribute was the combat technique's primary attribute ([47e66d6](https://github.com/elyukai/optolith-client/commit/47e66d65467999e2661eaac30a97b5a1ebfece94), [#835](https://github.com/elyukai/optolith-client/issues/835))
+* **German/English:** Profession Sharisad got Earthencraft bonus instead of Clothworking bonus ([cd16e53](https://github.com/elyukai/optolith-client/commit/cd16e5314a7f579a5f5f916bb204a15df3220bda), [#1341](https://github.com/elyukai/optolith-client/issues/1341))
+* **English:** The Hit Zone Armor tab in Belongings was not available, even with Aventuria Armory activated ([383a9c1](https://github.com/elyukai/optolith-client/commit/383a9c166c6d8c5d713f4852f40999c5d8c00efc), [#1328](https://github.com/elyukai/optolith-client/issues/1328))
+* Too large PDF output when using a sheet background ([9cb2658](https://github.com/elyukai/optolith-client/commit/9cb26586f3a5026d06f41801d4bbf714631d06a4), [#1094](https://github.com/elyukai/optolith-client/issues/1094))
+* **English:** Weight column in inventory showed wrong weight ([6ba99f2](https://github.com/elyukai/optolith-client/commit/6ba99f2f4610e8a26d1703d978738a907f26bd92), [#1329](https://github.com/elyukai/optolith-client/issues/1329))
+* Auto-updater did not work in AppImage ([a24ff80](https://github.com/elyukai/optolith-client/commit/a24ff8082a5556fc07af05f113bacfd9c84428a4), [#753](https://github.com/elyukai/optolith-client/issues/753))
+* **German:** Special ability Weg der Schreiberin could not be activated ([83b534d](https://github.com/elyukai/optolith-client/commit/83b534d3f9fcd5e63ef7cf482d9dd26f06b5a1a2), [#1233](https://github.com/elyukai/optolith-client/issues/1233))
+* Some primary attribute prerequisites were not enforced ([ac0cdc3](https://github.com/elyukai/optolith-client/commit/ac0cdc377800a1eb380993dbb7914fa88b8f254e), [#1260](https://github.com/elyukai/optolith-client/issues/1260))
+* Range brackets input fields influenced other bracket fields ([0ab65e8](https://github.com/elyukai/optolith-client/commit/0ab65e869c26536127b386753db110f2e26b33af), [#1251](https://github.com/elyukai/optolith-client/issues/1251))
+* Requiring only one matching languages and script required all of them instead ([4dabbdb](https://github.com/elyukai/optolith-client/commit/4dabbdbcd23c1ffeff18a8b1f9497a4a8315aa6a), [#1343](https://github.com/elyukai/optolith-client/issues/1343))
+* Scripts did not require an active matching language ([1ed0c64](https://github.com/elyukai/optolith-client/commit/1ed0c64b0dd9873593169bd9994082d49299fa3e), [#1344](https://github.com/elyukai/optolith-client/issues/1344))
+* Some item properties were not saved ([f2e6138](https://github.com/elyukai/optolith-client/commit/f2e61386abe444aa76f0211469d50c30fde99a0c), [#1252](https://github.com/elyukai/optolith-client/issues/1252))
+* **German:** Typo in Tarnele ([8b5eede](https://github.com/elyukai/optolith-client/commit/8b5eedeb372622761480f2511935e8b74bdfcdcd), [#1330](https://github.com/elyukai/optolith-client/issues/1330))
+* Unfamiliar spell selection in profession was optional ([3574d1b](https://github.com/elyukai/optolith-client/commit/3574d1ba46725d04a83286cd1055c080fe1de95f), [#1315](https://github.com/elyukai/optolith-client/issues/1315))
+* **English:** special ability Knuckle Storm's description used Damage Points instead of Brawling Points ([06b57c9](https://github.com/elyukai/optolith-client/commit/06b57c9d15e1ef6f35da69ea46512bb790119b0a), [#1340](https://github.com/elyukai/optolith-client/issues/1340))
+* Combat techniques did not influence the minimum of their primary attributes ([1ce2db9](https://github.com/elyukai/optolith-client/commit/1ce2db9cfbb06b1ca8a549957b8225af71de9185), [#836](https://github.com/elyukai/optolith-client/issues/836))
+* Saving a hero cleared the undo history of multiple characters ([923b760](https://github.com/elyukai/optolith-client/commit/923b7605fee4c4288dc743e962728308f7254ca9), [#811](https://github.com/elyukai/optolith-client/issues/811))
+* **German:** Spells converted by Imitationszauberei could not use spell enhancements ([e558c1d](https://github.com/elyukai/optolith-client/commit/e558c1d80d1c668f926e4a56049029f989081a45), [#828](https://github.com/elyukai/optolith-client/issues/828))
+* Widened rows in second column of skills table on character sheet ([41ee35b](https://github.com/elyukai/optolith-client/commit/41ee35ba76af42ad837daa6c45a940406b0c5daa), [#1342](https://github.com/elyukai/optolith-client/issues/1342))
+* **German:** Special ability Blattschuss displayed the wrong combat special ability type ([7e31136](https://github.com/elyukai/optolith-client/commit/7e31136083ae62e26c5017f3af2376938bd264c3), [#1331](https://github.com/elyukai/optolith-client/issues/1331))
+* **German:** Typo in name of Tradition (Illusionist) ([bdb3eb7](https://github.com/elyukai/optolith-client/commit/bdb3eb7804f8464689172f39d5bd8c229140c891), [#1239](https://github.com/elyukai/optolith-client/issues/1239))
+
 ## [1.5.0-alpha.9](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.8...v1.5.0-alpha.9) (2022-02-06)
 
 

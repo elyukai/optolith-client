@@ -1,7 +1,7 @@
 {
   "name": "optolith",
   "productName": "Optolith",
-  "version": "1.5.0-alpha.9",
+  "version": "1.5.0",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'.",
   "author": {
     "name": "Lukas Obermann",
