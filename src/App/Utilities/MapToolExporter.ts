@@ -122,6 +122,14 @@ function getStaticDataXML (hero: HeroModelRecord, portraitID: string): string {
   + `<isoHeight>50</isoHeight>`
   + `<scaleX>1.0</scaleX>`
   + `<scaleY>1.0</scaleY>`
+  + `<sizeMap>`
+  + `  <entry>`
+  + `    <string>net.rptools.maptool.model.SquareGrid</string>`
+  + `    <net.rptools.maptool.model.GUID>`
+  + `      <baGUID>fwABAc9lFSoFAAAAKgABAQ==</baGUID>`
+  + `    </net.rptools.maptool.model.GUID>`
+  + `  </entry>`
+  + `</sizeMap>`
   + `<snapToGrid>false</snapToGrid>`
   + `<isVisible>true</isVisible>`
   + `<visibleOnlyToOwner>false</visibleOnlyToOwner>`
