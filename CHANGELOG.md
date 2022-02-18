@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1-alpha.0](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.9...v1.5.1-alpha.0) (2022-02-18)
+
+
+### Bug Fixes
+
+* add missing Italian translations for MapTool export ([3f87dca](https://github.com/elyukai/optolith-client/commit/3f87dca910ce5229c7fd5378ba5f4177cbf431ac)), closes [#1350](https://github.com/elyukai/optolith-client/issues/1350)
+* add more action types that should be ignored for undo history ([d2eca82](https://github.com/elyukai/optolith-client/commit/d2eca82ea5fd1d65f234363d2700c80f37afe653))
+* **maptool:** format change for 1.11.4 ([9e9a113](https://github.com/elyukai/optolith-client/commit/9e9a1139d3821bb5a36fbaa973236319026d996a))
+* markdown parser ignores strikethrough ([2c9332c](https://github.com/elyukai/optolith-client/commit/2c9332c37f9b2d8d9e0359a9e4dadf0a40beeba1)), closes [#1349](https://github.com/elyukai/optolith-client/issues/1349)
+
 ## [1.5.0](https://github.com/elyukai/optolith-client/compare/v1.4.2...v1.5.0) (2022-02-09)
 
 ### Features
