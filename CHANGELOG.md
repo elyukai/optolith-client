@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1-alpha.1](https://github.com/elyukai/optolith-client/compare/v1.5.1-alpha.0...v1.5.1-alpha.1) (2022-02-21)
+
+
+### Bug Fixes
+
+* **maptool:** no export possible without an avatar ([80fdffb](https://github.com/elyukai/optolith-client/commit/80fdffb373fccc467383cf6d98c1f07a92168ee4)), closes [#1348](https://github.com/elyukai/optolith-client/issues/1348)
+
 ### [1.5.1-alpha.0](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.9...v1.5.1-alpha.0) (2022-02-18)
 
 
