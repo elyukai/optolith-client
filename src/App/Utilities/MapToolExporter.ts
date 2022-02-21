@@ -3,8 +3,8 @@ import { readFileSync } from "fs-extra"
 import { join } from "path"
 import { handleE } from "../../Control/Exception"
 import { fmap } from "../../Data/Functor"
-import { List } from "../../Data/List"
-import { fromMaybe, isJust, isNothing, mapMaybe, Maybe } from "../../Data/Maybe"
+import { List, map } from "../../Data/List"
+import { fromMaybe, isJust, isNothing, Maybe } from "../../Data/Maybe"
 import { lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { isTuple, Pair, Tuple } from "../../Data/Tuple"
@@ -163,22 +163,23 @@ function getStaticDataXML (hero: HeroModelRecord, portraitID: string): string {
 }
 
 function getAttributesXML (hero: HeroModelRecord, state: AppStateRecord): string {
-  // TODO: Hier werden Minimaleigenschaften leider noch nicht mit exportiert.
-
   let xml: string = pipe_ (
     getAttributesForView (state, { hero }),
     fromMaybe (List<Record<AttributeWithRequirements>> ()),
-    mapMaybe ((attr: Record<AttributeWithRequirements>) =>
-      pipe_ (
-        attr,
-        AttributeWithRequirements.A.wikiEntry,
-        Attribute.A.id,
-        OrderedMap.lookupF (hero.values.attributes),
-        fmap ((stateEntry: Record<AttributeDependent>) => entry ({
-          key: pipe_ (attr, AttributeWithRequirements.A.wikiEntry, Attribute.A.short),
-          value: AttributeDependent.A.value (stateEntry).toString (),
-        }))
-      )),
+    map ((attr: Record<AttributeWithRequirements>) =>
+      entry ({
+        key: pipe_ (
+          attr,
+          AttributeWithRequirements.A.wikiEntry,
+          Attribute.A.short
+        ),
+        value: pipe_ (
+          attr,
+          AttributeWithRequirements.A.stateEntry,
+          AttributeDependent.A.value
+        )
+          .toString (),
+      })),
     List.intercalate ("")
   )
 
@@ -687,9 +688,6 @@ function meleeWeaponForXML (state: AppStateRecord): (weapon: Record<Item>) => st
     + `"AT":${fromMaybe (0) (weapon.values.at)},`
     + `"PA":${fromMaybe (0) (weapon.values.pa)},`
     + `"LS":${getLS (state, weapon)},`
-    // TODO: isTwoHandedWeapon scheint hier immer 0 zu liefern.
-    // Ich habe das gerade mal im Inventar getestet. Dort scheint es so zu sein dass das Häckchen immer fehlt.
-    // Wenn man jedoch die Sperre aufhebt und wieder reinmacht ist der Haken da.
     + `"Zweihand":${weapon.values.isTwoHandedWeapon ? 1 : 0},`
     + `"Parierwaffe":${weapon.values.isParryingWeapon ? 1 : 0}}`
 }
@@ -893,6 +891,24 @@ function getCurrencyNumber (value: string): string {
   }
 }
 
+// const escapeMap: [pattern: RegExp, replace: string][] = [
+//   [ /&lt;br&gt;/gu, "" ],
+//   [ /\n$/u, "" ],
+//   [ /</gu, "&lt;" ],
+//   [ />/gu, "&gt;" ],
+//   [ /& /gu, "&amp; " ],
+//   [ /"/gu, "&quot;" ],
+//   [ /'/gu, "&apos;" ],
+//   [ /\n/gu, "&lt;br&gt;" ],
+// ]
+
+// const escapeForXml = (str: string) =>
+//   escapeMap.reduce (
+//     (escapedStr, [ pattern, replace ]) =>
+//       escapedStr.replace (pattern, replace),
+//     str
+//   )
+
 function getBelongingsXML (hero: HeroModelRecord, state: AppStateRecord): string {
   let xml = ""
   const purse = hero.values.belongings.values.purse.values
@@ -909,9 +925,8 @@ function getBelongingsXML (hero: HeroModelRecord, state: AppStateRecord): string
       items[i] += `"gegenstand":"${item.value.values.name}",`
       items[i] += `"anzahl":${value.values.amount},`
       items[i] += `"gewicht":${fromMaybe (0) (value.values.weight)},`
-      // TODO: Hier scheint es Probleme mit einigen Gegenständen zu geben. Wir exportieren ja ein JSON Format.
-      // Dort müssen "" in der gleichen Zeile geschlossen werden. Wenn sich in der Beschreibung Zeilenumbrüche befinden macht as Probleme
-      // items[i] += `"beschreibung":"${(fromMaybe ("") (item.value.values.rules)).replace ("/[\r\n]+/gm", "")}",`
+      // TODO: Markdown export cannot be resolved in MapTool
+      // items[i] += `"beschreibung":"${escapeForXml (fromMaybe ("") (item.value.values.rules))}",`
       items[i] += `"behaelter":1}`
       i++
     }
