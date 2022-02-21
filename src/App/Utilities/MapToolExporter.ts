@@ -1,4 +1,6 @@
+import { createHash } from "crypto"
 import { readFileSync } from "fs-extra"
+import { join } from "path"
 import { handleE } from "../../Control/Exception"
 import { fmap } from "../../Data/Functor"
 import { List } from "../../Data/List"
@@ -42,7 +44,7 @@ import { getAPObjectMap } from "../Selectors/adventurePointsSelectors"
 import { getAttributesForView } from "../Selectors/attributeSelectors"
 import { getAllCombatTechniques } from "../Selectors/combatTechniquesSelectors"
 import { getAE, getDO, getINI, getKP, getLP, getMOV, getSPI, getTOU } from "../Selectors/derivedCharacteristicsSelectors"
-import { current_version } from "../Selectors/envSelectors"
+import { app_path, current_version } from "../Selectors/envSelectors"
 import { getArmors, getArmorZones, getFullItem, getMeleeWeapons, getRangedWeapons } from "../Selectors/equipmentSelectors"
 import { getWiki, getWikiItemTemplates } from "../Selectors/stateSelectors"
 import { getBlessedTradition } from "./Activatable/traditionUtils"
@@ -974,12 +976,11 @@ function getRptok (hero: HeroModelRecord, state: AppStateRecord): Buffer {
     }
   }
   else {
-    binaryAvatar = readFileSync ("app/images/default-token.png")
+    binaryAvatar = readFileSync (join (app_path, "app", "images", "default-token.png"))
     type = "png"
   }
 
-  const crypto = require ("crypto")
-  const portraitID = crypto.createHash ("md5")
+  const portraitID = createHash ("md5")
     .update (binaryAvatar)
     .digest ("hex")
 
