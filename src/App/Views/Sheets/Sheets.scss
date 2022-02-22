@@ -116,7 +116,9 @@ table {
       justify-content: space-between;
     }
 
-    h1, h2, h3 {
+    h1,
+    h2,
+    h3 {
       color: black;
       margin: 0;
     }
@@ -137,7 +139,8 @@ table {
       width: 100%;
     }
 
-    th, td {
+    th,
+    td {
       border-style: solid;
       border-color: #c8c8c8;
       border-width: 0;
@@ -184,6 +187,10 @@ table {
 .sheet-options {
   flex: none;
   margin-right: 24px;
+}
+
+p.maptool-hint {
+  margin: 0 0 0.5rem;
 }
 
 @import "SheetHeader";
