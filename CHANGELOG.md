@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1-alpha.2](https://github.com/elyukai/optolith-client/compare/v1.5.1-alpha.1...v1.5.1-alpha.2) (2022-02-22)
+
+
+### Features
+
+* **maptool:** add project links ([07d336d](https://github.com/elyukai/optolith-client/commit/07d336dbb3ceba9818185a9b8c0cdffa6283afb3))
+
+
+### Bug Fixes
+
+* advantage Inspire Confidence could be bought with social Incompetence ([8102bb1](https://github.com/elyukai/optolith-client/commit/8102bb1a9adac4849499380bf3bc2270aa7dd2c6)), closes [#1351](https://github.com/elyukai/optolith-client/issues/1351)
+
 ### [1.5.1-alpha.1](https://github.com/elyukai/optolith-client/compare/v1.5.1-alpha.0...v1.5.1-alpha.1) (2022-02-21)
 
 
