@@ -247,6 +247,8 @@ export const L10n =
                 "sheets.dialogs.pdfcreationerror.title": "",
                 "sheets.dialogs.pdfcreationerror.message": "",
                 "sheets.exportasrptokbtn": "",
+                "sheets.maptool.whatisthis": "",
+                "sheets.maptool.download": "",
                 "sheets.dialogs.rptokexportsavelocation.title": "",
                 "sheets.dialogs.rptoksaved": "",
                 "sheets.dialogs.rptoksaveerror.title": "",

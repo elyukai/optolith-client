@@ -1,5 +1,5 @@
 import * as remote from "@electron/remote/main"
-import { app, BrowserWindow, ipcMain } from "electron"
+import { app, BrowserWindow, ipcMain, shell } from "electron"
 import * as log from "electron-log"
 import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater"
 import windowStateKeeper from "electron-window-state"
@@ -75,6 +75,12 @@ const createWindow = async () => {
   })
 
   remote.enable (mainWindow.webContents)
+
+  mainWindow.webContents.on ("new-window", (e, targetUrl) => {
+    e.preventDefault ()
+    shell.openExternal (targetUrl)
+      .catch (console.error)
+  })
 
   console.log ("main (window): Manage browser window with state keeper")
 

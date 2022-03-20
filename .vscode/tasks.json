@@ -61,15 +61,18 @@
     },
     {
       "label": "create prerelease",
-      "command": "npm run release:pre"
+      "command": "npm run release:pre",
+      "problemMatcher": []
     },
     {
       "label": "create release",
-      "command": "npm run release:main"
+      "command": "npm run release:main",
+      "problemMatcher": []
     },
     {
       "label": "git push --follow-tags",
-      "command": "git push --follow-tags"
+      "command": "git push --follow-tags",
+      "problemMatcher": []
     }
   ]
 }

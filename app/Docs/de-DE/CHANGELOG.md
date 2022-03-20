@@ -1,3 +1,16 @@
+## 1.5.1
+
+### Verbesserungen
+
+* **MapTool:** unter dem Exportbutton sind nun Links zu der MapTool-Erweiterung ([07d336d](https://github.com/elyukai/optolith-client/commit/07d336dbb3ceba9818185a9b8c0cdffa6283afb3))
+
+### Fehlerbehebungen
+
+* **MapTool:** ohne Avatar konnte nicht exportiert werden ([80fdffb](https://github.com/elyukai/optolith-client/commit/80fdffb373fccc467383cf6d98c1f07a92168ee4)), schließt [#1348](https://github.com/elyukai/optolith-client/issues/1348)
+* **MapTool:** für MapTool Version 1.11.4 wurde das Exportformat angepasst ([9e9a113](https://github.com/elyukai/optolith-client/commit/9e9a1139d3821bb5a36fbaa973236319026d996a))
+* Vorteil *Vertrauenerweckend* konnte selbst mit einem aktiven Nachteil *Inkompetent* in einem Gesellschaftstalent gekauft werden ([8102bb1](https://github.com/elyukai/optolith-client/commit/8102bb1a9adac4849499380bf3bc2270aa7dd2c6)), schließt [#1351](https://github.com/elyukai/optolith-client/issues/1351)
+* Voraussetzungen, die hätten durchgestrichen werden sollen, wurden stattdessen mit umgebenen Tilden dargestellt ([2c9332c](https://github.com/elyukai/optolith-client/commit/2c9332c37f9b2d8d9e0359a9e4dadf0a40beeba1)), schließt [#1349](https://github.com/elyukai/optolith-client/issues/1349)
+
 ## 1.5.0
 
 ### Features

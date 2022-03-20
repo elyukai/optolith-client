@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1-alpha.2](https://github.com/elyukai/optolith-client/compare/v1.5.1-alpha.1...v1.5.1-alpha.2) (2022-02-22)
+
+
+### Features
+
+* **maptool:** add project links ([07d336d](https://github.com/elyukai/optolith-client/commit/07d336dbb3ceba9818185a9b8c0cdffa6283afb3))
+
+
+### Bug Fixes
+
+* advantage Inspire Confidence could be bought with social Incompetence ([8102bb1](https://github.com/elyukai/optolith-client/commit/8102bb1a9adac4849499380bf3bc2270aa7dd2c6)), closes [#1351](https://github.com/elyukai/optolith-client/issues/1351)
+
+### [1.5.1-alpha.1](https://github.com/elyukai/optolith-client/compare/v1.5.1-alpha.0...v1.5.1-alpha.1) (2022-02-21)
+
+
+### Bug Fixes
+
+* **maptool:** no export possible without an avatar ([80fdffb](https://github.com/elyukai/optolith-client/commit/80fdffb373fccc467383cf6d98c1f07a92168ee4)), closes [#1348](https://github.com/elyukai/optolith-client/issues/1348)
+
+### [1.5.1-alpha.0](https://github.com/elyukai/optolith-client/compare/v1.5.0-alpha.9...v1.5.1-alpha.0) (2022-02-18)
+
+
+### Bug Fixes
+
+* add missing Italian translations for MapTool export ([3f87dca](https://github.com/elyukai/optolith-client/commit/3f87dca910ce5229c7fd5378ba5f4177cbf431ac)), closes [#1350](https://github.com/elyukai/optolith-client/issues/1350)
+* add more action types that should be ignored for undo history ([d2eca82](https://github.com/elyukai/optolith-client/commit/d2eca82ea5fd1d65f234363d2700c80f37afe653))
+* **maptool:** format change for 1.11.4 ([9e9a113](https://github.com/elyukai/optolith-client/commit/9e9a1139d3821bb5a36fbaa973236319026d996a))
+* markdown parser ignores strikethrough ([2c9332c](https://github.com/elyukai/optolith-client/commit/2c9332c37f9b2d8d9e0359a9e4dadf0a40beeba1)), closes [#1349](https://github.com/elyukai/optolith-client/issues/1349)
+
 ## [1.5.0](https://github.com/elyukai/optolith-client/compare/v1.4.2...v1.5.0) (2022-02-09)
 
 ### Features

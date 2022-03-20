@@ -225,6 +225,16 @@ export const Sheets: React.FC<Props> = props => {
           label={translate (staticData) ("sheets.exportasrptokbtn")}
           onClick={exportAsRptok}
           />
+        <p className="maptool-hint">
+          <a href="https://www.youtube.com/watch?v=1GhtRMBgSWY" target="_blank" rel="noreferrer">
+            {translate (staticData) ("sheets.maptool.whatisthis")}
+          </a>
+          {" — "}
+          {/* eslint-disable-next-line max-len */}
+          <a href="https://www.orkenspalter.de/filebase/index.php?file/2736-dsa5-regelsatz-f%C3%BCr-maptool/" target="_blank" rel="noreferrer">
+            {translate (staticData) ("sheets.maptool.download")}
+          </a>
+        </p>
         <Checkbox
           checked={useParchment}
           onClick={switchUseParchment}

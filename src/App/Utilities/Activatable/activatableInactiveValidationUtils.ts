@@ -9,13 +9,13 @@
 import { not } from "../../../Data/Bool"
 import { ident } from "../../../Data/Function"
 import { fmap } from "../../../Data/Functor"
-import { elem, flength, foldr, isList, List, notElem } from "../../../Data/List"
+import { elem, flength, foldr, isList, List, notElem, toArray } from "../../../Data/List"
 import { all, any, bind, bindF, fromMaybe, isJust, listToMaybe, Maybe, sum } from "../../../Data/Maybe"
 import { add, inc, lte } from "../../../Data/Num"
-import { isOrderedMap, lookup } from "../../../Data/OrderedMap"
+import { isOrderedMap, lookup, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { SpecialAbilityGroup } from "../../Constants/Groups"
-import { SpecialAbilityId } from "../../Constants/Ids"
+import { SkillGroup, SpecialAbilityGroup } from "../../Constants/Groups"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
@@ -23,20 +23,23 @@ import { ActivatableDependency } from "../../Models/Hero/heroTypeHelpers"
 import { Pact } from "../../Models/Hero/Pact"
 import { Rules } from "../../Models/Hero/Rules"
 import { Advantage } from "../../Models/Wiki/Advantage"
+import { Skill } from "../../Models/Wiki/Skill"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
 import { MatchingScriptAndLanguageRelated } from "../../Selectors/activatableSelectors"
 import { countActiveGroupEntries, hasActiveGroupEntry } from "../entryGroupUtils"
 import { getAllEntriesByGroup } from "../heroStateUtils"
-import { toNewMaybe } from "../Maybe"
+import { ensure, toNewMaybe } from "../Maybe"
 import { pipe, pipe_ } from "../pipe"
 import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites"
 import { validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils"
+import { isString } from "../typeCheckUtils"
 import * as CheckStyleUtils from "./checkStyleUtils"
 import { isActive, isMaybeActive } from "./isActive"
 
 const SDA = StaticData.A
+const AA = Advantage.A
 const AAL = Advantage.AL
 const SAA = SpecialAbility.A
 const HA = HeroModel.A
@@ -82,116 +85,139 @@ const isAdditionDisabledSpecialAbilitySpecific =
     languagesWithMatchingScripts,
     scriptsWithMatchingLanguages,
   }: MatchingScriptAndLanguageRelated) =>
-  (wiki_entry: Record<SpecialAbility>): boolean => {
-    const current_id = SAA.id (wiki_entry)
+  (wiki_entry: Activatable): boolean => {
+    if (Advantage.is (wiki_entry)) {
+      switch (AA.id (wiki_entry)) {
+        case AdvantageId.InspireConfidence: {
+          return toNewMaybe (lookup<string> (DisadvantageId.Incompetent) (HA.disadvantages (hero)))
+            .maybe (false, incompetentStateEntry =>
+              toArray (ADA.active (incompetentStateEntry))
+                .some (ao =>
+                  toNewMaybe (AOA.sid (ao))
+                    .bind (skillId => ensure (skillId, isString))
+                    .bind (skillId => toNewMaybe (lookupF (SDA.skills (staticData))
+                                                                  (skillId)))
+                    .maybe (
+                      false,
+                      skill => Skill.A.gr (skill) === SkillGroup.Social
+                    )))
+        }
 
-    if (CheckStyleUtils.isCombatStyleSpecialAbility (wiki_entry)) {
-      return isAdditionDisabledForCombatStyle (staticData) (hero) (wiki_entry)
-    }
-
-    if (CheckStyleUtils.isMagicalStyleSpecialAbility (wiki_entry)) {
-      const combination_hero_entry = lookup<string> (SpecialAbilityId.MagicStyleCombination)
-                                                    (HA.specialAbilities (hero))
-
-      const total_active = countActiveGroupEntries (staticData)
-                                                   (hero)
-                                                   (SpecialAbilityGroup.MagicalStyles)
-
-      return total_active >= (isMaybeActive (combination_hero_entry) ? 2 : 1)
-    }
-
-    if (CheckStyleUtils.isBlessedStyleSpecialAbility (wiki_entry)) {
-      return hasActiveGroupEntry (staticData) (hero) (SpecialAbilityGroup.BlessedStyles)
-    }
-
-    if (current_id === SpecialAbilityId.CombatStyleCombination) {
-      return !hasActiveGroupEntry (staticData)
-                                  (hero)
-                                  (
-                                    SpecialAbilityGroup.CombatStylesArmed,
-                                    SpecialAbilityGroup.CombatStylesUnarmed
-                                  )
-    }
-
-    if (current_id === SpecialAbilityId.MagicStyleCombination) {
-      return !hasActiveGroupEntry (staticData) (hero) (SpecialAbilityGroup.MagicalStyles)
-    }
-
-    if (current_id === SpecialAbilityId.SpellEnhancement) {
-      const traditionSchelme = toNewMaybe (lookup<string> (SpecialAbilityId.TraditionSchelme)
-                                                          (HA.specialAbilities (hero)))
-
-      if (traditionSchelme.isJust && isActive (traditionSchelme.value)) {
-        return true
+        default:
+          return false
       }
     }
+    else if (SpecialAbility.is (wiki_entry)) {
+      const current_id = SAA.id (wiki_entry)
 
-    if (current_id === SpecialAbilityId.DunklesAbbildDerBuendnisgabe) {
-      return hasActiveGroupEntry (staticData) (hero) (SpecialAbilityGroup.Paktgeschenke)
-    }
+      if (CheckStyleUtils.isCombatStyleSpecialAbility (wiki_entry)) {
+        return isAdditionDisabledForCombatStyle (staticData) (hero) (wiki_entry)
+      }
 
-    if (current_id === SpecialAbilityId.WegDerSchreiberin) {
-      return languagesWithMatchingScripts.length < 1 || scriptsWithMatchingLanguages.length < 1
-    }
+      if (CheckStyleUtils.isMagicalStyleSpecialAbility (wiki_entry)) {
+        const combination_hero_entry = lookup<string> (SpecialAbilityId.MagicStyleCombination)
+                                                      (HA.specialAbilities (hero))
 
-    if (SAA.gr (wiki_entry) === SpecialAbilityGroup.Paktgeschenke) {
-      const dunkles_abbild = lookup<string> (SpecialAbilityId.DunklesAbbildDerBuendnisgabe)
-                                            (HA.specialAbilities (hero))
+        const total_active = countActiveGroupEntries (staticData)
+                                                     (hero)
+                                                     (SpecialAbilityGroup.MagicalStyles)
 
-      const allPactPresents = getAllEntriesByGroup (SDA.specialAbilities (staticData))
-                                                   (HA.specialAbilities (hero))
-                                                   (SpecialAbilityGroup.Paktgeschenke)
+        return total_active >= (isMaybeActive (combination_hero_entry) ? 2 : 1)
+      }
 
-      const countPactPresents =
-        foldr ((obj: Record<ActivatableDependent>) => {
-                if (isActive (obj)) {
-                  const wikiObj = lookup (ADA.id (obj)) (SDA.specialAbilities (staticData))
+      if (CheckStyleUtils.isBlessedStyleSpecialAbility (wiki_entry)) {
+        return hasActiveGroupEntry (staticData) (hero) (SpecialAbilityGroup.BlessedStyles)
+      }
 
-                  if (
-                    any (pipe (SAA.prerequisites, isOrderedMap))
-                        (wikiObj)
-                    && any (pipe (SAA.cost, isList))
-                           (wikiObj)
-                    && isJust (bind (wikiObj) (SAA.tiers))
-                  ) {
-                    return add (sum (
-                      bindF (AOA.tier) (listToMaybe (ADA.active (obj)))
-                    ))
+      if (current_id === SpecialAbilityId.CombatStyleCombination) {
+        return !hasActiveGroupEntry (staticData)
+                                    (hero)
+                                    (
+                                      SpecialAbilityGroup.CombatStylesArmed,
+                                      SpecialAbilityGroup.CombatStylesUnarmed
+                                    )
+      }
+
+      if (current_id === SpecialAbilityId.MagicStyleCombination) {
+        return !hasActiveGroupEntry (staticData) (hero) (SpecialAbilityGroup.MagicalStyles)
+      }
+
+      if (current_id === SpecialAbilityId.SpellEnhancement) {
+        const traditionSchelme = toNewMaybe (lookup<string> (SpecialAbilityId.TraditionSchelme)
+                                                            (HA.specialAbilities (hero)))
+
+        if (traditionSchelme.isJust && isActive (traditionSchelme.value)) {
+          return true
+        }
+      }
+
+      if (current_id === SpecialAbilityId.DunklesAbbildDerBuendnisgabe) {
+        return hasActiveGroupEntry (staticData) (hero) (SpecialAbilityGroup.Paktgeschenke)
+      }
+
+      if (current_id === SpecialAbilityId.WegDerSchreiberin) {
+        return languagesWithMatchingScripts.length < 1 || scriptsWithMatchingLanguages.length < 1
+      }
+
+      if (SAA.gr (wiki_entry) === SpecialAbilityGroup.Paktgeschenke) {
+        const dunkles_abbild = lookup<string> (SpecialAbilityId.DunklesAbbildDerBuendnisgabe)
+                                              (HA.specialAbilities (hero))
+
+        const allPactPresents = getAllEntriesByGroup (SDA.specialAbilities (staticData))
+                                                     (HA.specialAbilities (hero))
+                                                     (SpecialAbilityGroup.Paktgeschenke)
+
+        const countPactPresents =
+          foldr ((obj: Record<ActivatableDependent>) => {
+                  if (isActive (obj)) {
+                    const wikiObj = lookup (ADA.id (obj)) (SDA.specialAbilities (staticData))
+
+                    if (
+                      any (pipe (SAA.prerequisites, isOrderedMap))
+                          (wikiObj)
+                      && any (pipe (SAA.cost, isList))
+                             (wikiObj)
+                      && isJust (bind (wikiObj) (SAA.tiers))
+                    ) {
+                      return add (sum (
+                        bindF (AOA.tier) (listToMaybe (ADA.active (obj)))
+                      ))
+                    }
+
+                    return inc
                   }
 
-                  return inc
-                }
+                  return ident as ident<number>
+                })
+                (0)
+                (allPactPresents)
 
-                return ident as ident<number>
-              })
-              (0)
-              (allPactPresents)
+                           // isFaeriePact?
+        const isDisabled = all (pipe (PA.category, lte (1))) (HA.pact (hero))
+                           ? isMaybeActive (dunkles_abbild)
+                             || all (pipe (PA.level, lte (countPactPresents))) (HA.pact (hero))
 
-                         // isFaeriePact?
-      const isDisabled = all (pipe (PA.category, lte (1))) (HA.pact (hero))
-                         ? isMaybeActive (dunkles_abbild)
-                           || all (pipe (PA.level, lte (countPactPresents))) (HA.pact (hero))
+                           // is Lesser Pact?
+                           : all (pipe (PA.level, lte (0))) (HA.pact (hero))
 
-                         // is Lesser Pact?
-                         : all (pipe (PA.level, lte (0))) (HA.pact (hero))
+                           // Lesser Pact only provides 3 PactGifts
+                           ? countPactPresents >= 3
 
-                         // Lesser Pact only provides 3 PactGifts
-                         ? countPactPresents >= 3
+                           // Normal DemonPact: KdV + 7 PactGifts
+                           : all (pipe (PA.level, lte (countPactPresents - 7))) (HA.pact (hero))
 
-                         // Normal DemonPact: KdV + 7 PactGifts
-                         : all (pipe (PA.level, lte (countPactPresents - 7))) (HA.pact (hero))
+        return isDisabled
+      }
 
-      return isDisabled
-    }
+      if (current_id === SpecialAbilityId.LanguageSpecializations) {
+        return pipe (HA.rules, RA.enableLanguageSpecializations, not) (hero)
+      }
 
-    if (current_id === SpecialAbilityId.LanguageSpecializations) {
-      return pipe (HA.rules, RA.enableLanguageSpecializations, not) (hero)
-    }
-
-    if (elem (SAA.gr (wiki_entry)) (List (31, 32))) {
-      // TODO: add option to activate vampire or lycanthropy and activate this
-      //       SAs based on that option
-      return true
+      if (elem (SAA.gr (wiki_entry)) (List (31, 32))) {
+        // TODO: add option to activate vampire or lycanthropy and activate this
+        //       SAs based on that option
+        return true
+      }
     }
 
     return false
@@ -207,13 +233,10 @@ const isAdditionDisabledEntrySpecific =
   (hero: HeroModelRecord) =>
   (matchingScriptAndLanguageRelated: MatchingScriptAndLanguageRelated) =>
   (wiki_entry: Activatable): boolean =>
-    (
-      SpecialAbility.is (wiki_entry)
-      && isAdditionDisabledSpecialAbilitySpecific (wiki)
-                                                  (hero)
-                                                  (matchingScriptAndLanguageRelated)
-                                                  (wiki_entry)
-    )
+    isAdditionDisabledSpecialAbilitySpecific (wiki)
+                                             (hero)
+                                             (matchingScriptAndLanguageRelated)
+                                             (wiki_entry)
     || !validatePrerequisites (wiki)
                               (hero)
                               (getFirstLevelPrerequisites (AAL.prerequisites (wiki_entry)))

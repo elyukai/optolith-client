@@ -1,3 +1,17 @@
+## 1.5.1
+
+### Miglioramenti
+
+* **MapTool:** aggiunto collegamento all’estensione accanto al pulsante di esportazione ([07d336d](https://github.com/elyukai/optolith-client/commit/07d336dbb3ceba9818185a9b8c0cdffa6283afb3))
+
+### Correzioni
+
+* **MapTool:** non era possibile esportare senza avatar ([80fdffb](https://github.com/elyukai/optolith-client/commit/80fdffb373fccc467383cf6d98c1f07a92168ee4)), corregge [#1348](https://github.com/elyukai/optolith-client/issues/1348)
+* **MapTool:** modificato il formato di esportazione alla versione 1.11.4 di MapTool ([9e9a113](https://github.com/elyukai/optolith-client/commit/9e9a1139d3821bb5a36fbaa973236319026d996a))
+* **MapTool:** aggiunte traduzioni italiane per l’esportazione ([3f87dca](https://github.com/elyukai/optolith-client/commit/3f87dca910ce5229c7fd5378ba5f4177cbf431ac)), corregge [#1350](https://github.com/elyukai/optolith-client/issues/1350)
+* Il vantaggio *Affabilità* poteva essere acquistato con lo svantaggio *Incompetenza* su una competenza sociale ([8102bb1](https://github.com/elyukai/optolith-client/commit/8102bb1a9adac4849499380bf3bc2270aa7dd2c6)), corregge [#1351](https://github.com/elyukai/optolith-client/issues/1351)
+* Prerequisiti barrati venivano renderizzati con delle tilde prima e dopo ([2c9332c](https://github.com/elyukai/optolith-client/commit/2c9332c37f9b2d8d9e0359a9e4dadf0a40beeba1)), corregge [#1349](https://github.com/elyukai/optolith-client/issues/1349)
+
 ## 1.5.0
 
 ### Features
