@@ -73,6 +73,9 @@ export const getSheetCheckAttributeValueVisibility =
 export const getSheetUseParchment =
   pipe (ASA.ui, UISA.settings, UISSA.sheetUseParchment)
 
+export const getSheetGenerateNotes =
+  pipe (ASA.ui, UISA.settings, UISSA.sheetGenerateNotes)
+
 export const getSheetZoomFactor =
   pipe (ASA.ui, UISA.settings, UISSA.sheetZoomFactor)
 

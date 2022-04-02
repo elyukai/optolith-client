@@ -85,6 +85,7 @@ export interface SheetsStateProps {
   name: Maybe<string>
   professionName: Maybe<string>
   useParchment: boolean
+  generateNotes: boolean
   zoomFactor: number
 
   // profession: Maybe<Record<Profession>>
@@ -128,6 +129,7 @@ export interface SheetsDispatchProps {
   exportAsRptok (): void
   switchAttributeValueVisibility (): void
   switchUseParchment (): void
+  switchGenerateNotes (): void
   setSheetZoomFactor (zoomFactor: number): void
 }
 
@@ -165,8 +167,10 @@ export const Sheets: React.FC<Props> = props => {
     skillGroupPages,
     switchAttributeValueVisibility,
     switchUseParchment,
+    switchGenerateNotes,
     setSheetZoomFactor,
     useParchment,
+    generateNotes,
     zoomFactor,
 
     armors,
@@ -246,6 +250,12 @@ export const Sheets: React.FC<Props> = props => {
           onClick={switchAttributeValueVisibility}
           >
           {translate (staticData) ("sheets.showattributevalues")}
+        </Checkbox>
+        <Checkbox
+          checked={generateNotes}
+          onClick={switchGenerateNotes}
+          >
+          {translate (staticData) ("sheets.generatenotes")}
         </Checkbox>
         <Dropdown
           label={translate (staticData) ("sheets.zoomfactor")}
