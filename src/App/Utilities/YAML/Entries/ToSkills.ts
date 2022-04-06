@@ -23,24 +23,36 @@ import { toMarkdown, toMarkdownM } from "./ToMarkdown"
 import { toActivatablePrerequisite } from "./ToPrerequisites"
 import { toSourceRefs } from "./ToSourceRefs"
 
-
 const toApplications : (x : [SkillUniv, SkillL10n]) => List<Record<Application>>
                      = pipe (
                          ([ univ, l10n ]) => zipByIdLoose ((univ.applications ?? []))
                                                           (l10n.applications),
                          ([ xs, ys ]) : Pair<Record<Application>[], Record<Application>[]> =>
                            Pair (
-                             xs.map (([ u, l ]) => Application ({
-                                                   id: u.id,
-                                                   name: l.name,
-                                                   prerequisite:
-                                                     Just (
-                                                       toActivatablePrerequisite (u.prerequisite)
-                                                     ),
-                                                 })),
+                             xs.map (([ u, l ]) =>
+                               u.id < 0
+                                  ? Application ({
+                                                 id: u.id,
+                                                 name: l.name,
+                                                 affections: u.affections === undefined
+                                                   ? List.empty
+                                                   : List.fromArray (u.affections),
+                                                 prerequisite:
+                                                   Just (
+                                                     toActivatablePrerequisite (u.prerequisite)
+                                                   ),
+                                                 })
+                                  : Application ({
+                                                 id: u.id,
+                                                 name: l.name,
+                                                 affections: u.affections === undefined
+                                                   ? List.empty
+                                                   : List.fromArray (u.affections),
+                                                })),
                              ys.map (l => Application ({
                                             id: l.id,
                                             name: l.name,
+                                            affections: List.empty,
                                           }))
                            ),
                          uncurry (on (append as append<Record<Application>>)

@@ -8,11 +8,13 @@ import { AdvantageId } from "../Constants/Ids"
 import { createPlainSkillDependent } from "../Models/ActiveEntries/SkillDependent"
 import { HeroModel } from "../Models/Hero/HeroModel"
 import { EntryRating } from "../Models/Hero/heroTypeHelpers"
+import { ApplicationWithAffection } from "../Models/View/ApplicationWithAffection"
 import { SkillCombined } from "../Models/View/SkillCombined"
 import { SkillWithRequirements } from "../Models/View/SkillWithRequirements"
 import { SkillWithActivations } from "../Models/View/SkillWithActivations"
 import { Culture } from "../Models/Wiki/Culture"
 import { Skill } from "../Models/Wiki/Skill"
+import { Affection } from "../Models/Wiki/sub/Affection"
 import { Application } from "../Models/Wiki/sub/Application"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
@@ -61,7 +63,21 @@ export const getSkillsWithActivations = createMaybeSelector (
     liftM2 (hero =>
         map (x =>
           SkillWithActivations ({
-            activeAdvantages: List.empty, // TODO: Get all advantages that are active
+            activeAffections: pipe_ (x, SCA.wikiEntry, SA.applications, List.map (item => {
+              const activeAvantageAffections = List.filter ((affection: Affection) => {
+                const affectedAdvantage = lookup (affection.id) (HA.advantages (hero))
+
+                return Maybe.isJust (affectedAdvantage)
+              }) (AA.affections (item))
+
+              const getBonus = (affection: Affection) => affection.bonus
+
+              return ApplicationWithAffection ({
+                entry: item,
+                active: !List.fnull (activeAvantageAffections),
+                bonus: List.sum (List.map (getBonus) (activeAvantageAffections)),
+              })
+            }), List.filter (item => ApplicationWithAffection.A.active (item))),
             activeApplications: pipe_ (x, SCA.wikiEntry, SA.applications, List.filter (item => {
               const requirements = AA.prerequisite (item)
               const id = SA.id (SCA.wikiEntry (x))
@@ -72,7 +88,6 @@ export const getSkillsWithActivations = createMaybeSelector (
 
               return false
             })),
-            activeSpecialAbilities: List.empty, // TODO: Get all special abilities that are active
             stateEntry: SCA.stateEntry (x),
             wikiEntry: SCA.wikiEntry (x),
           }))))

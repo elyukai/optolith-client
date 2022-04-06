@@ -2,18 +2,16 @@ import { fromDefault, Record } from "../../../Data/Record"
 import { List } from "../../../Data/List"
 import { pipe } from "../../Utilities/pipe"
 import { SkillDependent } from "../ActiveEntries/SkillDependent"
-import { Advantage } from "../Wiki/Advantage"
 import { Skill } from "../Wiki/Skill"
-import { SpecialAbility } from "../Wiki/SpecialAbility"
 import { Application } from "../Wiki/sub/Application"
+import { ApplicationWithAffection } from "./ApplicationWithAffection"
 
 export interface SkillWithActivations {
   "@@name": "SkillWithActivations"
   wikiEntry: Record<Skill>
   stateEntry: Record<SkillDependent>
-  activeAdvantages: List<Record<Advantage>>
+  activeAffections: List<Record<ApplicationWithAffection>>
   activeApplications: List<Record<Application>>
-  activeSpecialAbilities: List<Record<SpecialAbility>>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -22,9 +20,8 @@ export const SkillWithActivations =
   <SkillWithActivations> ({
     wikiEntry: Skill .default,
     stateEntry: SkillDependent .default,
-    activeAdvantages: List .empty,
+    activeAffections: List .empty,
     activeApplications: List .empty,
-    activeSpecialAbilities: List .empty,
   })
 
 export const SkillWithActivationsA_ = {

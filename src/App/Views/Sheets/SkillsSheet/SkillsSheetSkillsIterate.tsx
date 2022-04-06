@@ -1,4 +1,5 @@
 import * as React from "react"
+import { Textfit } from "react-textfit"
 import { equals } from "../../../../Data/Eq"
 import { fmap } from "../../../../Data/Functor"
 import { find, intercalate, List, map, toArray } from "../../../../Data/List"
@@ -6,6 +7,7 @@ import { mapMaybe, maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { fst, Pair, snd } from "../../../../Data/Tuple"
 import { icFromJs } from "../../../Constants/Groups"
+import { ApplicationWithAffection } from "../../../Models/View/ApplicationWithAffection"
 import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined"
 import {
   SkillWithActivations,
@@ -76,6 +78,27 @@ export const iterateList =
           if (activeApplications.length) {
             notes += activeApplications
           }
+
+          const activeAffections = pipe_ (
+            obj,
+            SkillWithActivations.A.activeAffections,
+            List.map (item => {
+              const name = Application.A.name (ApplicationWithAffection.A.entry (item))
+              const bonus = ApplicationWithAffection.A.bonus (item)
+
+              if (bonus) {
+                return `${name}:\u00a0+${bonus}`
+              }
+
+              return name
+            }),
+            intercalate (", ")
+          )
+
+          if (activeAffections.length) {
+            notes += (notes.length ? ", " : "")
+            notes += activeAffections
+          }
         }
 
         return (
@@ -91,8 +114,10 @@ export const iterateList =
                        `${sign (fst (routine))}${snd (routine) ? "!" : ""}`)
                      (mroutine)}
             </td>
-            <td className={notes.length <= 20 ? "comment single-line" : "comment multi-line"}>
-              {notes}
+            <td className="comment">
+              <Textfit mode="multi" min={6} max={11}>
+                {notes}
+              </Textfit>
             </td>
           </tr>
         )

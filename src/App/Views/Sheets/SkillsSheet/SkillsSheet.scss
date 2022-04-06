@@ -82,25 +82,18 @@
 
 			&.comment {
 				width: 30mm;
-				padding: 0 1mm;
-			}
-
-			&.comment.single-line {
-				overflow: hidden;
-				text-overflow: ellipsis;
-				font-size: 11px;
-				white-space: pre;
-			}
-
-			&.comment.multi-line {
-				overflow: hidden;
-				text-overflow: ellipsis;
-				display: -webkit-box;
-				-webkit-line-clamp: 2;
-				-webkit-box-orient: vertical;
-				font-size: 8px;
-				white-space: normal;
+				padding-left: 1mm;
 				hyphens: auto;
+				white-space: normal;
+				text-overflow: ellipsis;
+
+				& > div {
+					overflow: hidden;
+					height: 4mm;
+					display: flex;
+					padding-top: 1px;
+					align-items: center;
+				}
 			}
 
 			&:nth-child(2n) {
