@@ -84,10 +84,40 @@ export const iterateList =
             SkillWithActivations.A.activeAffections,
             List.map (item => {
               const name = Application.A.name (ApplicationWithAffection.A.entry (item))
-              const bonus = ApplicationWithAffection.A.bonus (item)
+              let bonus = `${ApplicationWithAffection.A.bonus (item)}`
+              let penalty = `${ApplicationWithAffection.A.penalty (item)}`
+              const situative = ApplicationWithAffection.A.situative (item)
 
-              if (bonus) {
+              const bonusOnAttribute = ApplicationWithAffection.A.bonusOnAttribute (item)
+              if (bonusOnAttribute.CH) {
+                bonus = `${bonusOnAttribute.CH}(CH)`
+              }
+              if (bonusOnAttribute.KL) {
+                bonus = `${bonusOnAttribute.KL}(KL)`
+              }
+
+              const penaltyOnAttribute = ApplicationWithAffection.A.penaltyOnAttribute (item)
+              if (penaltyOnAttribute.CH) {
+                penalty = `${penaltyOnAttribute.CH}(CH)`
+              }
+              if (penaltyOnAttribute.KL) {
+                penalty = `${penaltyOnAttribute.KL}(KL)`
+              }
+
+              if (!penalty && situative) {
+                return `${name}:\u00a00/+${bonus || 0}`
+              }
+              if (situative) {
+                return `${name}:\u00a0-${penalty || 0}/+${bonus || 0}`
+              }
+              if (bonus !== "0" && penalty !== "0") {
+                return `${name}:\u00a0-${penalty}/+${bonus}`
+              }
+              if (bonus !== "0") {
                 return `${name}:\u00a0+${bonus}`
+              }
+              if (penalty !== "0") {
+                return `${name}:\u00a0-${penalty}`
               }
 
               return name

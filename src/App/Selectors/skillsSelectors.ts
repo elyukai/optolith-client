@@ -64,18 +64,44 @@ export const getSkillsWithActivations = createMaybeSelector (
         map (x =>
           SkillWithActivations ({
             activeAffections: pipe_ (x, SCA.wikiEntry, SA.applications, List.map (item => {
-              const activeAvantageAffections = List.filter ((affection: Affection) => {
+              const activeAffections = List.filter ((affection: Affection) => {
                 const affectedAdvantage = lookup (affection.id) (HA.advantages (hero))
+                const affectedSpecialAbility = lookup (affection.id) (HA.specialAbilities (hero))
 
-                return Maybe.isJust (affectedAdvantage)
+                return Maybe.isJust (affectedAdvantage) || Maybe.isJust (affectedSpecialAbility)
               }) (AA.affections (item))
 
-              const getBonus = (affection: Affection) => affection.bonus
+              const getBonus = (affection: Affection) => affection.bonus || 0
+              const getBonusOnCH = (affection: Affection) => affection.bonusOnAttribute?.CH || 0
+              const getBonusOnKL = (affection: Affection) => affection.bonusOnAttribute?.KL || 0
+              const getPenalty = (affection: Affection) => affection.penalty || 0
+              const getPenaltyOnCH = (affection: Affection) => affection.penaltyOnAttribute?.CH || 0
+              const getPenaltyOnKL = (affection: Affection) => affection.penaltyOnAttribute?.KL || 0
+              const getSituative = (affection: Affection) => affection.situative || false
+
+              const active = !List.fnull (activeAffections)
+              const bonus = List.sum (List.map (getBonus) (activeAffections))
+              const bonusOnCH = List.sum (List.map (getBonusOnCH) (activeAffections))
+              const bonusOnKL = List.sum (List.map (getBonusOnKL) (activeAffections))
+              const penalty = List.sum (List.map (getPenalty) (activeAffections))
+              const penaltyOnCH = List.sum (List.map (getPenaltyOnCH) (activeAffections))
+              const penaltyOnKL = List.sum (List.map (getPenaltyOnKL) (activeAffections))
+              const situative = List.any (getSituative) (activeAffections)
 
               return ApplicationWithAffection ({
                 entry: item,
-                active: !List.fnull (activeAvantageAffections),
-                bonus: List.sum (List.map (getBonus) (activeAvantageAffections)),
+                active,
+                bonus,
+                bonusOnAttribute: {
+                  CH: bonusOnCH,
+                  KL: bonusOnKL,
+                },
+                penalty,
+                penaltyOnAttribute: {
+                  CH: penaltyOnCH,
+                  KL: penaltyOnKL,
+                },
+                situative,
               })
             }), List.filter (item => ApplicationWithAffection.A.active (item))),
             activeApplications: pipe_ (x, SCA.wikiEntry, SA.applications, List.filter (item => {
