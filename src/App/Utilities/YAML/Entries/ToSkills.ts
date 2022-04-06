@@ -109,6 +109,7 @@ const toSkill = (x : [SkillUniv, SkillL10n]) : Either<Error[], [string, Record<S
       encumbranceDescription: Maybe (l10n.encDescription),
       gr: univ.gr,
       ic: icToJs (univ.ic),
+      affections: List.fromArray (univ.affections === undefined ? [] : univ.affections),
       applications,
       applicationsInput: Maybe (l10n.applicationsInput),
       uses,

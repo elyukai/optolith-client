@@ -4,6 +4,8 @@ export interface Affection {
   "@@name": "Affection"
   id: string
 
+  fp: number
+  qs: number
   bonus: number
   bonusOnAttribute: {
     CH: number
@@ -22,6 +24,8 @@ export const Affection =
   fromDefault ("Affection")
   <Affection> ({
     id: "",
+    fp: 0,
+    qs: 0,
     bonus: 0,
     bonusOnAttribute: {
       CH: 0,

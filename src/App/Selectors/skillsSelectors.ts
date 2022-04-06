@@ -1,6 +1,7 @@
 import { flip } from "../../Data/Function"
 import { fmap, fmapF } from "../../Data/Functor"
 import { foldr, map, List } from "../../Data/List"
+import { Record } from "../../Data/Record"
 import { fromMaybe, liftM2, liftM3, Maybe, maybe } from "../../Data/Maybe"
 import { elems, insertF, lookup, OrderedMap } from "../../Data/OrderedMap"
 import { uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry"
@@ -8,13 +9,13 @@ import { AdvantageId } from "../Constants/Ids"
 import { createPlainSkillDependent } from "../Models/ActiveEntries/SkillDependent"
 import { HeroModel } from "../Models/Hero/HeroModel"
 import { EntryRating } from "../Models/Hero/heroTypeHelpers"
-import { ApplicationWithAffection } from "../Models/View/ApplicationWithAffection"
+import { Affection } from "../Models/View/Affection"
 import { SkillCombined } from "../Models/View/SkillCombined"
 import { SkillWithRequirements } from "../Models/View/SkillWithRequirements"
 import { SkillWithActivations } from "../Models/View/SkillWithActivations"
 import { Culture } from "../Models/Wiki/Culture"
 import { Skill } from "../Models/Wiki/Skill"
-import { Affection } from "../Models/Wiki/sub/Affection"
+import { Affection as WikiAffection } from "../Models/Wiki/sub/Affection"
 import { Application } from "../Models/Wiki/sub/Application"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
@@ -55,6 +56,58 @@ export const getAllSkills = createMaybeSelector (
           ))
 )
 
+const createAffection = (hero: Record<HeroModel>) =>
+  (affections: List<WikiAffection>) => (name: string) => {
+  const activeAffections = List.filter ((affection: WikiAffection) => {
+    const affectedAdvantage = lookup (affection.id) (HA.advantages (hero))
+    const affectedSpecialAbility = lookup (affection.id) (HA.specialAbilities (hero))
+    const affectedDisadvantage = lookup (affection.id) (HA.disadvantages (hero))
+
+    return Maybe.isJust (affectedAdvantage)
+      || Maybe.isJust (affectedSpecialAbility)
+      || Maybe.isJust (affectedDisadvantage)
+  }) (affections)
+
+  const getBonus = (affection: WikiAffection) => affection.bonus || 0
+  const getFP = (affection: WikiAffection) => affection.fp || 0
+  const getQS = (affection: WikiAffection) => affection.qs || 0
+  const getBonusOnCH = (affection: WikiAffection) => affection.bonusOnAttribute?.CH || 0
+  const getBonusOnKL = (affection: WikiAffection) => affection.bonusOnAttribute?.KL || 0
+  const getPenalty = (affection: WikiAffection) => affection.penalty || 0
+  const getPenaltyOnCH = (affection: WikiAffection) => affection.penaltyOnAttribute?.CH || 0
+  const getPenaltyOnKL = (affection: WikiAffection) => affection.penaltyOnAttribute?.KL || 0
+  const getSituative = (affection: WikiAffection) => affection.situative || false
+
+  const active = !List.fnull (activeAffections)
+  const fp = List.sum (List.map (getFP) (activeAffections))
+  const qs = List.sum (List.map (getQS) (activeAffections))
+  const bonus = List.sum (List.map (getBonus) (activeAffections))
+  const bonusOnCH = List.sum (List.map (getBonusOnCH) (activeAffections))
+  const bonusOnKL = List.sum (List.map (getBonusOnKL) (activeAffections))
+  const penalty = List.sum (List.map (getPenalty) (activeAffections))
+  const penaltyOnCH = List.sum (List.map (getPenaltyOnCH) (activeAffections))
+  const penaltyOnKL = List.sum (List.map (getPenaltyOnKL) (activeAffections))
+  const situative = List.any (getSituative) (activeAffections)
+
+  return Affection ({
+    name,
+    active,
+    fp,
+    qs,
+    bonus,
+    bonusOnAttribute: {
+      CH: bonusOnCH,
+      KL: bonusOnKL,
+    },
+    penalty,
+    penaltyOnAttribute: {
+      CH: penaltyOnCH,
+      KL: penaltyOnKL,
+    },
+    situative,
+  })
+}
+
 export const getSkillsWithActivations = createMaybeSelector (
   getWiki,
   getCurrentHeroPresent,
@@ -63,47 +116,15 @@ export const getSkillsWithActivations = createMaybeSelector (
     liftM2 (hero =>
         map (x =>
           SkillWithActivations ({
-            activeAffections: pipe_ (x, SCA.wikiEntry, SA.applications, List.map (item => {
-              const activeAffections = List.filter ((affection: Affection) => {
-                const affectedAdvantage = lookup (affection.id) (HA.advantages (hero))
-                const affectedSpecialAbility = lookup (affection.id) (HA.specialAbilities (hero))
-
-                return Maybe.isJust (affectedAdvantage) || Maybe.isJust (affectedSpecialAbility)
-              }) (AA.affections (item))
-
-              const getBonus = (affection: Affection) => affection.bonus || 0
-              const getBonusOnCH = (affection: Affection) => affection.bonusOnAttribute?.CH || 0
-              const getBonusOnKL = (affection: Affection) => affection.bonusOnAttribute?.KL || 0
-              const getPenalty = (affection: Affection) => affection.penalty || 0
-              const getPenaltyOnCH = (affection: Affection) => affection.penaltyOnAttribute?.CH || 0
-              const getPenaltyOnKL = (affection: Affection) => affection.penaltyOnAttribute?.KL || 0
-              const getSituative = (affection: Affection) => affection.situative || false
-
-              const active = !List.fnull (activeAffections)
-              const bonus = List.sum (List.map (getBonus) (activeAffections))
-              const bonusOnCH = List.sum (List.map (getBonusOnCH) (activeAffections))
-              const bonusOnKL = List.sum (List.map (getBonusOnKL) (activeAffections))
-              const penalty = List.sum (List.map (getPenalty) (activeAffections))
-              const penaltyOnCH = List.sum (List.map (getPenaltyOnCH) (activeAffections))
-              const penaltyOnKL = List.sum (List.map (getPenaltyOnKL) (activeAffections))
-              const situative = List.any (getSituative) (activeAffections)
-
-              return ApplicationWithAffection ({
-                entry: item,
-                active,
-                bonus,
-                bonusOnAttribute: {
-                  CH: bonusOnCH,
-                  KL: bonusOnKL,
-                },
-                penalty,
-                penaltyOnAttribute: {
-                  CH: penaltyOnCH,
-                  KL: penaltyOnKL,
-                },
-                situative,
-              })
-            }), List.filter (item => ApplicationWithAffection.A.active (item))),
+            activeAffection: createAffection (hero)
+            (SA.affections (SCA.wikiEntry (x))) (SA.name (SCA.wikiEntry (x))),
+            activeApplicationAffections: pipe_ (
+              x,
+              SCA.wikiEntry,
+              SA.applications,
+              List.map (item => createAffection (hero) (AA.affections (item)) (AA.name (item))),
+              List.filter (item => Affection.A.active (item))
+            ),
             activeApplications: pipe_ (x, SCA.wikiEntry, SA.applications, List.filter (item => {
               const requirements = AA.prerequisite (item)
               const id = SA.id (SCA.wikiEntry (x))

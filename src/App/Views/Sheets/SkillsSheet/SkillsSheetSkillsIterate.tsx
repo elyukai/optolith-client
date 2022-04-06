@@ -7,7 +7,7 @@ import { mapMaybe, maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { fst, Pair, snd } from "../../../../Data/Tuple"
 import { icFromJs } from "../../../Constants/Groups"
-import { ApplicationWithAffection } from "../../../Models/View/ApplicationWithAffection"
+import { Affection } from "../../../Models/View/Affection"
 import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined"
 import {
   SkillWithActivations,
@@ -68,6 +68,66 @@ export const iterateList =
 
         let notes = ""
         if (generateNotes) {
+          const activeAffection = (item => {
+            const fp = Affection.A.fp (item)
+            const qs = Affection.A.qs (item)
+            let bonus = `${Affection.A.bonus (item)}`
+            let penalty = `${Affection.A.penalty (item)}`
+            const situative = Affection.A.situative (item)
+
+            const bonusOnAttribute = Affection.A.bonusOnAttribute (item)
+            if (bonusOnAttribute.CH) {
+              bonus = `${bonusOnAttribute.CH}(CH)`
+            }
+            if (bonusOnAttribute.KL) {
+              bonus = `${bonusOnAttribute.KL}(KL)`
+            }
+
+            const penaltyOnAttribute = Affection.A.penaltyOnAttribute (item)
+            if (penaltyOnAttribute.CH) {
+              penalty = `${penaltyOnAttribute.CH}(CH)`
+            }
+            if (penaltyOnAttribute.KL) {
+              penalty = `${penaltyOnAttribute.KL}(KL)`
+            }
+
+            if (fp && bonus !== "0") {
+              bonus += `, +${fp}FP`
+            }
+            if (fp && bonus === "0") {
+              bonus = `${fp}FP`
+            }
+            if (qs && bonus !== "0") {
+              bonus += `, +${qs}QS`
+            }
+            if (qs && bonus === "0") {
+              bonus = `${qs}QS`
+            }
+
+            if (penalty === "0" && situative) {
+              return `\u00a0evtl.\u00a0+${bonus || 0}`
+            }
+            if (situative) {
+              return `\u00a0-${penalty || 0}/+${bonus || 0}`
+            }
+            if (bonus !== "0" && penalty !== "0") {
+              return `\u00a0-${penalty}/+${bonus}`
+            }
+            if (bonus !== "0") {
+              return `\u00a0+${bonus}`
+            }
+            if (penalty !== "0") {
+              return `\u00a0-${penalty}`
+            }
+
+            return ""
+          }) (SkillWithActivations.A.activeAffection (obj))
+
+          if (activeAffection.length > 0) {
+            notes += (notes.length ? ", " : "")
+            notes += activeAffection
+          }
+
           const activeApplications = pipe_ (
             obj,
             SkillWithActivations.A.activeApplications,
@@ -76,19 +136,23 @@ export const iterateList =
           )
 
           if (activeApplications.length) {
+            notes += (notes.length ? ", " : "")
             notes += activeApplications
           }
 
-          const activeAffections = pipe_ (
-            obj,
-            SkillWithActivations.A.activeAffections,
-            List.map (item => {
-              const name = Application.A.name (ApplicationWithAffection.A.entry (item))
-              let bonus = `${ApplicationWithAffection.A.bonus (item)}`
-              let penalty = `${ApplicationWithAffection.A.penalty (item)}`
-              const situative = ApplicationWithAffection.A.situative (item)
 
-              const bonusOnAttribute = ApplicationWithAffection.A.bonusOnAttribute (item)
+          const activeApplicationAffections = pipe_ (
+            obj,
+            SkillWithActivations.A.activeApplicationAffections,
+            List.map (item => {
+              const name = Affection.A.name (item)
+              const fp = Affection.A.fp (item)
+              const qs = Affection.A.qs (item)
+              let bonus = `${Affection.A.bonus (item)}`
+              let penalty = `${Affection.A.penalty (item)}`
+              const situative = Affection.A.situative (item)
+
+              const bonusOnAttribute = Affection.A.bonusOnAttribute (item)
               if (bonusOnAttribute.CH) {
                 bonus = `${bonusOnAttribute.CH}(CH)`
               }
@@ -96,7 +160,7 @@ export const iterateList =
                 bonus = `${bonusOnAttribute.KL}(KL)`
               }
 
-              const penaltyOnAttribute = ApplicationWithAffection.A.penaltyOnAttribute (item)
+              const penaltyOnAttribute = Affection.A.penaltyOnAttribute (item)
               if (penaltyOnAttribute.CH) {
                 penalty = `${penaltyOnAttribute.CH}(CH)`
               }
@@ -104,8 +168,21 @@ export const iterateList =
                 penalty = `${penaltyOnAttribute.KL}(KL)`
               }
 
-              if (!penalty && situative) {
-                return `${name}:\u00a00/+${bonus || 0}`
+              if (fp && bonus !== "0") {
+                bonus += `, +${fp}FP`
+              }
+              if (fp && bonus === "0") {
+                bonus = `${fp}FP`
+              }
+              if (qs && bonus !== "0") {
+                bonus += `, +${qs}QS`
+              }
+              if (qs && bonus === "0") {
+                bonus = `${qs}QS`
+              }
+
+              if (penalty === "0" && situative) {
+                return `${name}:\u00a0evtl.\u00a0+${bonus || 0}`
               }
               if (situative) {
                 return `${name}:\u00a0-${penalty || 0}/+${bonus || 0}`
@@ -125,9 +202,9 @@ export const iterateList =
             intercalate (", ")
           )
 
-          if (activeAffections.length) {
+          if (activeApplicationAffections.length) {
             notes += (notes.length ? ", " : "")
-            notes += activeAffections
+            notes += activeApplicationAffections
           }
         }
 

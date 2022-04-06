@@ -4,13 +4,14 @@ import { pipe } from "../../Utilities/pipe"
 import { SkillDependent } from "../ActiveEntries/SkillDependent"
 import { Skill } from "../Wiki/Skill"
 import { Application } from "../Wiki/sub/Application"
-import { ApplicationWithAffection } from "./ApplicationWithAffection"
+import { Affection } from "./Affection"
 
 export interface SkillWithActivations {
   "@@name": "SkillWithActivations"
   wikiEntry: Record<Skill>
   stateEntry: Record<SkillDependent>
-  activeAffections: List<Record<ApplicationWithAffection>>
+  activeAffection: Record<Affection>
+  activeApplicationAffections: List<Record<Affection>>
   activeApplications: List<Record<Application>>
 }
 
@@ -20,7 +21,8 @@ export const SkillWithActivations =
   <SkillWithActivations> ({
     wikiEntry: Skill .default,
     stateEntry: SkillDependent .default,
-    activeAffections: List .empty,
+    activeAffection: Affection .default,
+    activeApplicationAffections: List .empty,
     activeApplications: List .empty,
   })
 

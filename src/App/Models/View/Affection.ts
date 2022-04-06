@@ -1,10 +1,11 @@
-import { fromDefault, Record } from "../../../Data/Record"
-import { Application } from "../Wiki/sub/Application"
+import { fromDefault } from "../../../Data/Record"
 
-export interface ApplicationWithAffection {
-  "@@name": "ApplicationWithAffection"
-  entry: Record<Application>
+export interface Affection {
+  "@@name": "Affection"
+  name: string
   active: boolean
+  fp: number
+  qs: number
   bonus: number
   bonusOnAttribute: {
     CH: number
@@ -19,11 +20,13 @@ export interface ApplicationWithAffection {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ApplicationWithAffection =
-  fromDefault ("ApplicationWithAffection")
-  <ApplicationWithAffection> ({
-    entry: Application.default,
+export const Affection =
+  fromDefault ("Affection")
+  <Affection> ({
+    name: "",
     active: false,
+    fp: 0,
+    qs: 0,
     bonus: 0,
     bonusOnAttribute: {
       CH: 0,

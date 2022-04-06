@@ -2,6 +2,7 @@ import { List } from "../../../Data/List"
 import { Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault, Record } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
+import { Affection } from "./sub/Affection"
 import { Application } from "./sub/Application"
 import { Erratum } from "./sub/Errata"
 import { SourceLink } from "./sub/SourceLink"
@@ -18,6 +19,7 @@ export interface Skill {
   encumbranceDescription: Maybe<string>
   gr: number
   ic: number
+  affections: List<Affection>
   applications: List<Record<Application>>
   applicationsInput: Maybe<string>
   uses: List<Record<Use>>
@@ -42,6 +44,7 @@ export const Skill =
                 encumbranceDescription: Nothing,
                 gr: 0,
                 ic: 0,
+                affections: List.empty,
                 applications: List.empty,
                 applicationsInput: Nothing,
                 uses: List.empty,
