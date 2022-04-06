@@ -1,7 +1,7 @@
 import { flip } from "../../Data/Function"
 import { fmap, fmapF } from "../../Data/Functor"
-import { foldr, map } from "../../Data/List"
-import { fromMaybe, liftM3, maybe } from "../../Data/Maybe"
+import { foldr, map, List } from "../../Data/List"
+import { fromMaybe, liftM2, liftM3, Maybe, maybe } from "../../Data/Maybe"
 import { elems, insertF, lookup, OrderedMap } from "../../Data/OrderedMap"
 import { uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry"
 import { AdvantageId } from "../Constants/Ids"
@@ -10,12 +10,18 @@ import { HeroModel } from "../Models/Hero/HeroModel"
 import { EntryRating } from "../Models/Hero/heroTypeHelpers"
 import { SkillCombined } from "../Models/View/SkillCombined"
 import { SkillWithRequirements } from "../Models/View/SkillWithRequirements"
+import { SkillWithActivations } from "../Models/View/SkillWithActivations"
 import { Culture } from "../Models/Wiki/Culture"
 import { Skill } from "../Models/Wiki/Skill"
+import { Application } from "../Models/Wiki/sub/Application"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
-import { isSkillDecreasable, isSkillIncreasable } from "../Utilities/Increasable/skillUtils"
+import {
+  isSkillDecreasable,
+  isSkillIncreasable,
+} from "../Utilities/Increasable/skillUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
+import { validateObject } from "../Utilities/Prerequisites/validatePrerequisitesUtils"
 import { getCurrentCulture } from "./cultureSelectors"
 import { getStartEl } from "./elSelectors"
 import { getSkillsCombinedSortOptions } from "./sortOptionsSelectors"
@@ -23,6 +29,7 @@ import { getCurrentHeroPresent, getSkills, getSkillsFilterText, getWiki, getWiki
 
 const HA = HeroModel.A
 const SA = Skill.A
+const AA = Application.A
 const SCA = SkillCombined.A
 const SWRA = SkillWithRequirements.A
 const CA = Culture.A
@@ -44,6 +51,31 @@ export const getAllSkills = createMaybeSelector (
                     wikiEntry: wiki_entry,
                   }))
           ))
+)
+
+export const getSkillsWithActivations = createMaybeSelector (
+  getWiki,
+  getCurrentHeroPresent,
+  getAllSkills,
+  uncurryN3 (wiki =>
+    liftM2 (hero =>
+        map (x =>
+          SkillWithActivations ({
+            activeAdvantages: List.empty, // TODO: Get all advantages that are active
+            activeApplications: pipe_ (x, SCA.wikiEntry, SA.applications, List.filter (item => {
+              const requirements = AA.prerequisite (item)
+              const id = SA.id (SCA.wikiEntry (x))
+
+              if (Maybe.isJust (requirements)) {
+                return validateObject (wiki) (hero) (Maybe.fromJust (requirements)) (id)
+              }
+
+              return false
+            })),
+            activeSpecialAbilities: List.empty, // TODO: Get all special abilities that are active
+            stateEntry: SCA.stateEntry (x),
+            wikiEntry: SCA.wikiEntry (x),
+          }))))
 )
 
 export const getSkillsWithRequirements = createMaybeSelector (

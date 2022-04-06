@@ -10,10 +10,11 @@
 	.upper {
 		display: flex;
 		width: 100%;
-    align-items: flex-start;
+    	align-items: flex-start;
 
 		table {
 			width: 50%;
+			table-layout: fixed;
 		}
 
 		table:first-child td:last-child {
@@ -52,24 +53,54 @@
 		}
 
 		th, td {
+			&.name {
+				width: 33mm;
+				padding: 0 1mm;
+			}
+
+			&.check {
+				width: 14mm;
+			}
+
+			&.enc {
+				width: 8mm;
+				padding: 0 1mm;
+			}
+
 			&.ic {
 				width: 4.5mm;
+			}
+
+			&.sr {
+				width: 7mm;
+				padding: 0 1mm;
 			}
 
 			&.routine {
 				width: 3mm;
 			}
 
-			&.name, &.enc, &.sr, &.comment {
+			&.comment {
+				width: 30mm;
 				padding: 0 1mm;
 			}
 
-			&.check {
-				width: 16mm;
+			&.comment.single-line {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				font-size: 11px;
+				white-space: pre;
 			}
 
-			&.comment {
-				width: 26mm;
+			&.comment.multi-line {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+				font-size: 8px;
+				white-space: normal;
+				hyphens: auto;
 			}
 
 			&:nth-child(2n) {

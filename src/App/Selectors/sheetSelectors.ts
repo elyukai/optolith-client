@@ -8,7 +8,7 @@ import { Record } from "../../Data/Record"
 import { fst, isTuple, Pair, snd } from "../../Data/Tuple"
 import { upd1, upd2 } from "../../Data/Tuple/Update"
 import { ConditionId } from "../Constants/Ids.gen"
-import { SkillCombinedA_ } from "../Models/View/SkillCombined"
+import { SkillWithActivationsA_ } from "../Models/View/SkillWithActivations"
 import { Condition } from "../Models/Wiki/Condition"
 import { Skill } from "../Models/Wiki/Skill"
 import { State } from "../Models/Wiki/State"
@@ -19,7 +19,7 @@ import { pipe, pipe_ } from "../Utilities/pipe"
 import { filterByAvailability } from "../Utilities/RulesUtils"
 import { sortRecordsByName } from "../Utilities/sortBy"
 import { getRuleBooksEnabled } from "./rulesSelectors"
-import { getAllSkills } from "./skillsSelectors"
+import { getSkillsWithActivations } from "./skillsSelectors"
 import { getWiki, getWikiSkills } from "./stateSelectors"
 
 const CA = Condition.A
@@ -53,8 +53,8 @@ export const getStates = createMaybeSelector (
 )
 
 export const getSkillsByGroup = createMaybeSelector (
-  getAllSkills,
-  fmap (groupByKey (SkillCombinedA_.gr))
+  getSkillsWithActivations,
+  fmap (groupByKey (SkillWithActivationsA_.gr))
 )
 
 export const getSkillPages = createMaybeSelector (
