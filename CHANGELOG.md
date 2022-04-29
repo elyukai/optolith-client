@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.2-alpha.1](https://github.com/elyukai/optolith-client/compare/v1.5.1-alpha.2...v1.5.2-alpha.1) (2022-04-29)
+
+
+### Features
+
+* add krallenkettenzauber as placeholder ([c987847](https://github.com/elyukai/optolith-client/commit/c987847c9b192a0528df52da33f55adf90164eaf))
+
+
 ## [1.5.1](https://github.com/elyukai/optolith-client/compare/v1.5.0...v1.5.1) (2022-03-20)
 
 
