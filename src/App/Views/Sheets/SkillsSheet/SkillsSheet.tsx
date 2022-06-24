@@ -6,7 +6,7 @@ import { Record } from "../../../../Data/Record"
 import { Pair } from "../../../../Data/Tuple"
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent"
 import { AttributeCombined } from "../../../Models/View/AttributeCombined"
-import { SkillCombined } from "../../../Models/View/SkillCombined"
+import { SkillWithActivations } from "../../../Models/View/SkillWithActivations"
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
@@ -22,12 +22,13 @@ import { SkillsSheetSkills } from "./SkillsSheetSkills"
 interface Props {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
+  generateNotes: boolean
   languagesStateEntry: Maybe<Record<ActivatableDependent>>
   languagesWikiEntry: Maybe<Record<SpecialAbility>>
   staticData: StaticDataRecord
   scriptsStateEntry: Maybe<Record<ActivatableDependent>>
   scriptsWikiEntry: Maybe<Record<SpecialAbility>>
-  skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
+  skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillWithActivations>>>>
   skillGroupPages: OrderedMap<number, Pair<number, number>>
   useParchment: boolean
 }
@@ -36,6 +37,7 @@ export const SkillsSheet: React.FC<Props> = props => {
   const {
     attributes,
     checkAttributeValueVisibility,
+    generateNotes,
     languagesStateEntry,
     languagesWikiEntry,
     staticData,
@@ -58,6 +60,7 @@ export const SkillsSheet: React.FC<Props> = props => {
         <SkillsSheetSkills
           attributes={attributes}
           checkAttributeValueVisibility={checkAttributeValueVisibility}
+          generateNotes={generateNotes}
           staticData={staticData}
           skillsByGroup={skillsByGroup}
           skillGroupPages={skillGroupPages}

@@ -255,6 +255,7 @@ export const L10n =
                 "sheets.dialogs.rptoksaveerror.message": "",
                 "sheets.showattributevalues": "",
                 "sheets.useparchment": "",
+                "sheets.generatenotes": "",
                 "sheets.zoomfactor": "",
                 "sheets.charactersheet": "",
                 "sheets.attributemodifiers.title": "",

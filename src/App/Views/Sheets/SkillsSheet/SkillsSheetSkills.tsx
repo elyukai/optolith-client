@@ -5,7 +5,7 @@ import { lookup, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Pair } from "../../../../Data/Tuple"
 import { AttributeCombined } from "../../../Models/View/AttributeCombined"
-import { SkillCombined } from "../../../Models/View/SkillCombined"
+import { SkillWithActivations } from "../../../Models/View/SkillWithActivations"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { translate } from "../../../Utilities/I18n"
 import { pipe_ } from "../../../Utilities/pipe"
@@ -16,8 +16,9 @@ import { iterateList } from "./SkillsSheetSkillsIterate"
 interface Props {
   attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
+  generateNotes: boolean
   staticData: StaticDataRecord
-  skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
+  skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillWithActivations>>>>
   skillGroupPages: OrderedMap<number, Pair<number, number>>
 }
 
@@ -37,6 +38,7 @@ export const SkillsSheetSkills: React.FC<Props> = props => {
   const {
     attributes,
     checkAttributeValueVisibility,
+    generateNotes,
     staticData,
     skillsByGroup,
     skillGroupPages,
@@ -83,7 +85,9 @@ export const SkillsSheetSkills: React.FC<Props> = props => {
               skillsByGroup,
               bindF (lookup (1)),
               maybe (null as React.ReactNode)
-                    (iterateList (staticData) (checkAttributeValueVisibility) (attributes))
+                    (iterateList (staticData)
+                                 (checkAttributeValueVisibility, generateNotes)
+                                 (attributes))
             )}
             <EmptyRow />
             {pipe_ (groupHeaders, subscriptF (1), fromMaybe (null as React.ReactNode))}
@@ -91,7 +95,9 @@ export const SkillsSheetSkills: React.FC<Props> = props => {
               skillsByGroup,
               bindF (lookup (2)),
               maybe (null as React.ReactNode)
-                    (iterateList (staticData) (checkAttributeValueVisibility) (attributes))
+                    (iterateList (staticData)
+                    (checkAttributeValueVisibility, generateNotes)
+                    (attributes))
             )}
             <EmptyRow />
             {pipe_ (groupHeaders, subscriptF (2), fromMaybe (null as React.ReactNode))}
@@ -99,7 +105,9 @@ export const SkillsSheetSkills: React.FC<Props> = props => {
               skillsByGroup,
               bindF (lookup (3)),
               maybe (null as React.ReactNode)
-                    (iterateList (staticData) (checkAttributeValueVisibility) (attributes))
+                    (iterateList (staticData)
+                    (checkAttributeValueVisibility, generateNotes)
+                    (attributes))
             )}
           </tbody>
         </table>
@@ -136,7 +144,9 @@ export const SkillsSheetSkills: React.FC<Props> = props => {
               skillsByGroup,
               bindF (lookup (4)),
               maybe (null as React.ReactNode)
-                    (iterateList (staticData) (checkAttributeValueVisibility) (attributes))
+                    (iterateList (staticData)
+                    (checkAttributeValueVisibility, generateNotes)
+                    (attributes))
             )}
             <EmptyRow />
             {pipe_ (groupHeaders, subscriptF (4), fromMaybe (null as React.ReactNode))}
@@ -144,7 +154,9 @@ export const SkillsSheetSkills: React.FC<Props> = props => {
               skillsByGroup,
               bindF (lookup (5)),
               maybe (null as React.ReactNode)
-                    (iterateList (staticData) (checkAttributeValueVisibility) (attributes))
+                    (iterateList (staticData)
+                    (checkAttributeValueVisibility, generateNotes)
+                    (attributes))
             )}
           </tbody>
         </table>

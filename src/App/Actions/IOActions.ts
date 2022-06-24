@@ -53,6 +53,8 @@ export const requestConfigSave: ReduxAction<Promise<boolean>> =
         Just (UISSA.sheetCheckAttributeValueVisibility (uiSettingsState)),
       sheetUseParchment:
         Just (UISSA.sheetUseParchment (uiSettingsState)),
+      sheetGenerateNotes:
+        Just (UISSA.sheetGenerateNotes (uiSettingsState)),
       sheetZoomFactor:
         UISSA.sheetZoomFactor (uiSettingsState),
       theme: Just (UISSA.theme (uiSettingsState)),

@@ -30,6 +30,7 @@ import { MeleeWeapon } from "../../Models/View/MeleeWeapon"
 import { RangedWeapon } from "../../Models/View/RangedWeapon"
 import { ShieldOrParryingWeapon } from "../../Models/View/ShieldOrParryingWeapon"
 import { SkillCombined } from "../../Models/View/SkillCombined"
+import { SkillWithActivations } from "../../Models/View/SkillWithActivations"
 import { SpellWithRequirements } from "../../Models/View/SpellWithRequirements"
 import { Advantage } from "../../Models/Wiki/Advantage"
 import { Condition } from "../../Models/Wiki/Condition"
@@ -85,6 +86,7 @@ export interface SheetsStateProps {
   name: Maybe<string>
   professionName: Maybe<string>
   useParchment: boolean
+  generateNotes: boolean
   zoomFactor: number
 
   // profession: Maybe<Record<Profession>>
@@ -120,7 +122,7 @@ export interface SheetsStateProps {
   states: List<Record<State>>
   books: StaticData["books"]
   skillGroupPages: OrderedMap<number, Pair<number, number>>
-  skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
+  skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillWithActivations>>>>
 }
 
 export interface SheetsDispatchProps {
@@ -128,6 +130,7 @@ export interface SheetsDispatchProps {
   exportAsRptok (): void
   switchAttributeValueVisibility (): void
   switchUseParchment (): void
+  switchGenerateNotes (): void
   setSheetZoomFactor (zoomFactor: number): void
 }
 
@@ -165,8 +168,10 @@ export const Sheets: React.FC<Props> = props => {
     skillGroupPages,
     switchAttributeValueVisibility,
     switchUseParchment,
+    switchGenerateNotes,
     setSheetZoomFactor,
     useParchment,
+    generateNotes,
     zoomFactor,
 
     armors,
@@ -247,6 +252,12 @@ export const Sheets: React.FC<Props> = props => {
           >
           {translate (staticData) ("sheets.showattributevalues")}
         </Checkbox>
+        <Checkbox
+          checked={generateNotes}
+          onClick={switchGenerateNotes}
+          >
+          {translate (staticData) ("sheets.generatenotes")}
+        </Checkbox>
         <Dropdown
           label={translate (staticData) ("sheets.zoomfactor")}
           value={Just (zoomFactor)}
@@ -311,6 +322,7 @@ export const Sheets: React.FC<Props> = props => {
           skillsByGroup={skillsByGroup}
           skillGroupPages={skillGroupPages}
           useParchment={useParchment}
+          generateNotes={generateNotes}
           />
         {
           (nArmorZones === 0 || nArmors > 0)

@@ -13,7 +13,7 @@ import { ReceiveInitialDataAction } from "../Actions/InitializationActions"
 import { SetLiturgicalChantsSortOrderAction } from "../Actions/LiturgicalChantActions"
 import { SetProfessionsGroupVisibilityFilterAction, SetProfessionsSortOrderAction, SetProfessionsVisibilityFilterAction } from "../Actions/ProfessionActions"
 import { SetRacesSortOrderAction } from "../Actions/RaceActions"
-import { SwitchSheetAttributeValueVisibilityAction, SwitchSheetUseParchmentAction, SetSheetZoomFactor } from "../Actions/SheetActions"
+import { SwitchSheetAttributeValueVisibilityAction, SwitchSheetUseParchmentAction, SwitchSheetGenerateNotesAction, SetSheetZoomFactor } from "../Actions/SheetActions"
 import { SetSkillsSortOrderAction, SwitchSkillRatingVisibilityAction } from "../Actions/SkillActions"
 import { SetSpecialAbilitiesSortOrderAction } from "../Actions/SpecialAbilitiesActions"
 import { SetSpellsSortOrderAction } from "../Actions/SpellsActions"
@@ -41,6 +41,7 @@ type Action = ReceiveInitialDataAction
             | SwitchSkillRatingVisibilityAction
             | SwitchSheetAttributeValueVisibilityAction
             | SwitchSheetUseParchmentAction
+            | SwitchSheetGenerateNotesAction
             | SetSheetZoomFactor
             | SetThemeAction
             | SwitchEnableEditingHeroAfterCreationPhaseAction
@@ -120,6 +121,8 @@ export const uiSettingsReducer =
               fromMaybe (false) (CA.sheetCheckAttributeValueVisibility (config)),
             sheetUseParchment:
               fromMaybe (false) (CA.sheetUseParchment (config)),
+            sheetGenerateNotes:
+              fromMaybe (false) (CA.sheetGenerateNotes (config)),
             sheetZoomFactor:
               CA.sheetZoomFactor (config),
             theme: fromMaybe (Theme.Dark) (CA.theme (config)),
@@ -140,6 +143,8 @@ export const uiSettingsReducer =
         return over (UISettingsStateL.sheetCheckAttributeValueVisibility) (not)
       case ActionTypes.SWITCH_SHEET_USE_PARCHMENT:
           return over (UISettingsStateL.sheetUseParchment) (not)
+      case ActionTypes.SWITCH_SHEET_GENERATE_NOTES:
+        return over (UISettingsStateL.sheetGenerateNotes) (not)
       case ActionTypes.SET_SHEET_ZOOM_FACTOR:
           return set (UISettingsStateL.sheetZoomFactor) (action.payload.zoomFactor)
 
