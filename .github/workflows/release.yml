@@ -27,10 +27,10 @@ jobs:
       with:
         token: ${{ secrets.ACCESS_TOKEN }}
         submodules: true
-    - name: Use Node.js 16.x
+    - name: Use Node.js 18.x
       uses: actions/setup-node@v1
       with:
-        node-version: 16.x
+        node-version: 18.x
     - name: Install Node.js dependencies
       run: npm ci
     - name: Build ReasonML files
@@ -40,14 +40,17 @@ jobs:
     - name: Build Sass files
       run: npm run css:build
     - name: Build
-      run: node ./deploy/build.js stable
+      run: node ./deploy/build.mjs stable
       env:
         UPDATE_URL: ${{ secrets.UPDATE_URL }}
     - name: Deploy
-      run: node ./deploy/deploy.js stable
+      run: node ./deploy/deploy.mjs stable
       env:
         HOST: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         PASSWORD: ${{ secrets.PASSWORD }}
         ROOT: ${{ secrets.ROOT }}
+        APPLEID: ${{ secrets.APPLEID }}
+        APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
+        TEAMID: ${{ secrets.TEAMID }}
         CI: true

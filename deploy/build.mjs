@@ -1,6 +1,6 @@
 // @ts-check
-const builder = require("electron-builder")
-const { getSystem } = require("./platform")
+import builder from "electron-builder"
+import { getSystem } from "./platform.mjs"
 
 const [channel] = process.argv.slice(2)
 
@@ -10,15 +10,18 @@ if (channel !== "stable" && channel !== "prerelease") {
 
 const config =
   channel === "prerelease"
-  ? require("./build.prerelease.config.js")
-  : require("./build.config.js")
+  ? (await import("./build.prerelease.config.mjs")).default
+  : (await import("./build.config.mjs")).default
 
 process.on ('unhandledRejection', error => {
-  throw new Error (`Unhandled promise rejection: ${error .toString ()}`);
-});
+  throw new Error(`Unhandled promise rejection: ${/** @type {Error} */ (error).toString ()}`)
+})
 
 const os = getSystem()
 
 const plaformKey = os === "linux" ? "LINUX" : os === "mac" ? "MAC" : "WINDOWS"
 
-builder.build ({ config, targets: builder.Platform[plaformKey].createTarget () })
+await builder.build({
+  config,
+  targets: builder.Platform[plaformKey].createTarget(),
+})

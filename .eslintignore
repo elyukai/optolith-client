@@ -3,3 +3,4 @@ src/App/Utilities/YAML/Schema/
 *.gen.tsx
 node_modules
 /app
+/deploy
