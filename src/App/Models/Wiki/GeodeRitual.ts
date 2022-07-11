@@ -3,14 +3,15 @@ import { Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault, Record } from "../../../Data/Record"
 import { Tuple } from "../../../Data/Tuple"
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/All"
-import { IC, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
+import { MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
+import { ImprovementCost } from "../../Utilities/ImprovementCost"
 import { RequireActivatable } from "./prerequisites/ActivatableRequirement"
 import { Spell } from "./Spell"
 import { Erratum } from "./sub/Errata"
 import { SourceLink } from "./sub/SourceLink"
 import { CheckModifier } from "./wikiTypeHelpers"
 
-export const GeodeRitualIC = IC.B
+export const GeodeRitualIC = ImprovementCost.B
 
 export interface GeodeRitual {
   "@@name": "GeodeRitual"

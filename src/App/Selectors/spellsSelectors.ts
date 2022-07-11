@@ -11,7 +11,7 @@ import { Record } from "../../Data/Record"
 import { fst, snd } from "../../Data/Tuple"
 import { uncurryN, uncurryN3, uncurryN5, uncurryN6 } from "../../Data/Tuple/Curry"
 import { MagicalGroup } from "../Constants/Groups"
-import { AdvantageId, Phase, SpecialAbilityId } from "../Constants/Ids.gen"
+import { AdvantageId, Phase, SpecialAbilityId } from "../Constants/Ids"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
 import { HeroModel } from "../Models/Hero/HeroModel"
@@ -82,7 +82,7 @@ export const getIsSpellsTabAvailable = createMaybeSelector (
   any (xs => notNull (xs)
              && List.all (pipe (
                            ActivatableDependent.A.id,
-                           notEquals<string> (SpecialAbilityId.traditionSavant)
+                           notEquals<string> (SpecialAbilityId.TraditionSavant)
                          ))
                          (xs))
 )
@@ -98,8 +98,8 @@ const getIsUnfamiliarSpell = createMaybeSelector (
 export const getActiveSpells = createMaybeSelector (
   getMagicalTraditionsFromWiki,
   getStartEl,
-  mapGetToMaybeSlice (getAdvantages) (AdvantageId.exceptionalSkill),
-  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.propertyKnowledge),
+  mapGetToMaybeSlice (getAdvantages) (AdvantageId.ExceptionalSkill),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.PropertyKnowledge),
   getWiki,
   getHeroProp,
   getIsUnfamiliarSpell,
@@ -107,8 +107,8 @@ export const getActiveSpells = createMaybeSelector (
     const isLastTrad = isIdInSpecialAbilityList (trads)
 
     const isUnfamiliarCustom =
-      isLastTrad (SpecialAbilityId.traditionSchelme)
-      || isLastTrad (SpecialAbilityId.traditionZauberalchimisten)
+      isLastTrad (SpecialAbilityId.TraditionSchelme)
+      || isLastTrad (SpecialAbilityId.TraditionZauberalchimisten)
       ? () => false
       : isUnfamiliar
 
@@ -164,8 +164,8 @@ export const getActiveAndInactiveCantrips = createMaybeSelector (
                const isLastTrad = isIdInSpecialAbilityList (trads)
 
                const isUnfamiliarCustom =
-                 isLastTrad (SpecialAbilityId.traditionSchelme)
-                 || isLastTrad (SpecialAbilityId.traditionZauberalchimisten)
+                 isLastTrad (SpecialAbilityId.TraditionSchelme)
+                 || isLastTrad (SpecialAbilityId.TraditionZauberalchimisten)
                  ? () => false
                  : isUnfamiliar
 
@@ -236,7 +236,7 @@ const isUnfamiliarSpellsActivationDisabled = createMaybeSelector (
   getPhase,
   getUnfamiliarSpellsCount,
   getStartEl,
-  uncurryN3 (phase => count => phase > Phase.creation
+  uncurryN3 (phase => count => phase > Phase.Creation
                                ? cnst (false)
                                : maybe (false)
                                        (pipe (ELA.maxUnfamiliarSpells, lte (count))))
@@ -264,30 +264,30 @@ export const getInactiveSpells = createMaybeSelector (
       const isUnfamiliar = isUnfamiliarSpell (HA.transferredUnfamiliarSpells (hero))
                                              (trads_hero)
 
-      if (isLastTrad (SpecialAbilityId.traditionIntuitiveMage)) {
+      if (isLastTrad (SpecialAbilityId.TraditionIntuitiveMage)) {
         return getInactiveSpellsForIntuitiveMages (wiki)
                                                   (hero)
                                                   (is_spells_rituals_count_max_reached)
       }
 
-      if (isLastTrad (SpecialAbilityId.traditionSchelme)) {
+      if (isLastTrad (SpecialAbilityId.TraditionSchelme)) {
         return getInactiveSpellsForSchelme (wiki)
                                            (hero)
                                            (is_spells_rituals_count_max_reached)
       }
 
-      if (isLastTrad (SpecialAbilityId.traditionZauberalchimisten)) {
+      if (isLastTrad (SpecialAbilityId.TraditionZauberalchimisten)) {
         return List ()
       }
 
-      if (isLastTrad (SpecialAbilityId.traditionAnimisten)) {
+      if (isLastTrad (SpecialAbilityId.TraditionAnimisten)) {
         return getInactiveSpellsForAnimist (wiki)
                                            (hero)
                                            (is_spells_rituals_count_max_reached)
       }
 
-      if (isLastTrad (SpecialAbilityId.traditionArcaneBard)
-          || isLastTrad (SpecialAbilityId.traditionArcaneDancer)) {
+      if (isLastTrad (SpecialAbilityId.TraditionArcaneBard)
+          || isLastTrad (SpecialAbilityId.TraditionArcaneDancer)) {
         return getInactiveSpellsForArcaneBardOrDancer (wiki)
                                                       (hero)
                                                       (isUnfamiliar)
@@ -419,7 +419,7 @@ export const getAllSpellsForManualGuildMageSelect = createMaybeSelector (
   getRuleBooksEnabled,
   getWikiSpecialAbilities,
   uncurryN3 (staticData => av => pipe (
-                             lookup (prefixSA (SpecialAbilityId.traditionGuildMages)),
+                             lookup (prefixSA (SpecialAbilityId.TraditionGuildMages)),
                              bindF (SAA.select),
                              fmap (pipe (
                                filterByAvailability (SOA.src) (av),

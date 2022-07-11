@@ -5,12 +5,11 @@ import { inc, max } from "../../Data/Num"
 import { lookupF, OrderedMap } from "../../Data/OrderedMap"
 import { Category } from "../Constants/Categories"
 import { IdPrefixes } from "../Constants/IdPrefixes"
-import { DCId, SpecialAbilityId } from "../Constants/Ids"
-import { Id } from "../Constants/Ids.gen"
+import { DCId, Id, SpecialAbilityId } from "../Constants/Ids"
 import { CheckModifier } from "../Models/Wiki/wikiTypeHelpers"
+import { assertUnreachable } from "./exhaustiveChecks"
 import { match } from "./match"
 import { pipe } from "./pipe"
-import { assertNever } from "./Variant"
 
 export const getIdPrefix = (id: string) => id.split (/_/u)[0] as IdPrefixes
 
@@ -161,39 +160,39 @@ export const isCheckMod: (x: string) => x is CheckModifier =
 export const removeIdPrefix = (x: string): number => Number.parseInt (x.split ("_")[1], 10)
 
 export const idVariantToStringId = (id: Id): string => {
-  switch (id.NAME) {
-    case "ExperienceLevel": return prefixId (IdPrefixes.EXPERIENCE_LEVELS) (id.VAL)
-    case "Race": return prefixId (IdPrefixes.RACES) (id.VAL)
-    case "Culture": return prefixId (IdPrefixes.CULTURES) (id.VAL)
-    case "Profession": return prefixId (IdPrefixes.PROFESSIONS) (id.VAL)
-    case "Attribute": return prefixId (IdPrefixes.ATTRIBUTES) (id.VAL)
-    case "Advantage": return prefixId (IdPrefixes.ADVANTAGES) (id.VAL)
-    case "Disadvantage": return prefixId (IdPrefixes.DISADVANTAGES) (id.VAL)
-    case "Skill": return prefixId (IdPrefixes.SKILLS) (id.VAL)
-    case "CombatTechnique": return prefixId (IdPrefixes.COMBAT_TECHNIQUES) (id.VAL)
-    case "Spell": return prefixId (IdPrefixes.SPELLS) (id.VAL)
-    case "Curse": return prefixId (IdPrefixes.SPELLS) (id.VAL)
-    case "ElvenMagicalSong": return prefixId (IdPrefixes.SPELLS) (id.VAL)
-    case "DominationRitual": return prefixId (IdPrefixes.SPELLS) (id.VAL)
-    case "MagicalMelody": return prefixId (IdPrefixes.SPELLS) (id.VAL)
-    case "MagicalDance": return prefixId (IdPrefixes.SPELLS) (id.VAL)
-    case "RogueSpell": return prefixId (IdPrefixes.SPELLS) (id.VAL)
-    case "AnimistForce": return prefixId (IdPrefixes.SPELLS) (id.VAL)
-    case "GeodeRitual": return prefixId (IdPrefixes.SPELLS) (id.VAL)
-    case "ZibiljaRitual": return prefixId (IdPrefixes.SPELLS) (id.VAL)
-    case "Cantrip": return prefixId (IdPrefixes.CANTRIPS) (id.VAL)
-    case "LiturgicalChant": return prefixId (IdPrefixes.LITURGICAL_CHANTS) (id.VAL)
-    case "Blessing": return prefixId (IdPrefixes.BLESSINGS) (id.VAL)
-    case "SpecialAbility": return prefixId (IdPrefixes.SPECIAL_ABILITIES) (id.VAL)
-    case "Item": return prefixId (IdPrefixes.ITEM) (id.VAL)
-    case "EquipmentPackage": return prefixId (IdPrefixes.EXPERIENCE_LEVELS) (id.VAL)
-    case "HitZoneArmor": return prefixId (IdPrefixes.HIT_ZONE_ARMOR) (id.VAL)
-    case "Familiar": return prefixId (IdPrefixes.FAMILIAR) (id.VAL)
-    case "Animal": return prefixId (IdPrefixes.ANIMAL) (id.VAL)
-    case "FocusRule": return prefixId (IdPrefixes.FOCUS_RULE) (id.VAL)
-    case "OptionalRule": return prefixId (IdPrefixes.OPTIONAL_RULE) (id.VAL)
-    case "Condition": return prefixId (IdPrefixes.CONDITION) (id.VAL)
-    case "State": return prefixId (IdPrefixes.STATE) (id.VAL)
-    default: return assertNever (id)
+  switch (id.tag) {
+    case "ExperienceLevel": return prefixId (IdPrefixes.EXPERIENCE_LEVELS) (id.value)
+    case "Race": return prefixId (IdPrefixes.RACES) (id.value)
+    case "Culture": return prefixId (IdPrefixes.CULTURES) (id.value)
+    case "Profession": return prefixId (IdPrefixes.PROFESSIONS) (id.value)
+    case "Attribute": return prefixId (IdPrefixes.ATTRIBUTES) (id.value)
+    case "Advantage": return prefixId (IdPrefixes.ADVANTAGES) (id.value)
+    case "Disadvantage": return prefixId (IdPrefixes.DISADVANTAGES) (id.value)
+    case "Skill": return prefixId (IdPrefixes.SKILLS) (id.value)
+    case "CombatTechnique": return prefixId (IdPrefixes.COMBAT_TECHNIQUES) (id.value)
+    case "Spell": return prefixId (IdPrefixes.SPELLS) (id.value)
+    case "Curse": return prefixId (IdPrefixes.SPELLS) (id.value)
+    case "ElvenMagicalSong": return prefixId (IdPrefixes.SPELLS) (id.value)
+    case "DominationRitual": return prefixId (IdPrefixes.SPELLS) (id.value)
+    case "MagicalMelody": return prefixId (IdPrefixes.SPELLS) (id.value)
+    case "MagicalDance": return prefixId (IdPrefixes.SPELLS) (id.value)
+    case "RogueSpell": return prefixId (IdPrefixes.SPELLS) (id.value)
+    case "AnimistForce": return prefixId (IdPrefixes.SPELLS) (id.value)
+    case "GeodeRitual": return prefixId (IdPrefixes.SPELLS) (id.value)
+    case "ZibiljaRitual": return prefixId (IdPrefixes.SPELLS) (id.value)
+    case "Cantrip": return prefixId (IdPrefixes.CANTRIPS) (id.value)
+    case "LiturgicalChant": return prefixId (IdPrefixes.LITURGICAL_CHANTS) (id.value)
+    case "Blessing": return prefixId (IdPrefixes.BLESSINGS) (id.value)
+    case "SpecialAbility": return prefixId (IdPrefixes.SPECIAL_ABILITIES) (id.value)
+    case "Item": return prefixId (IdPrefixes.ITEM) (id.value)
+    case "EquipmentPackage": return prefixId (IdPrefixes.EXPERIENCE_LEVELS) (id.value)
+    case "HitZoneArmor": return prefixId (IdPrefixes.HIT_ZONE_ARMOR) (id.value)
+    case "Familiar": return prefixId (IdPrefixes.FAMILIAR) (id.value)
+    case "Animal": return prefixId (IdPrefixes.ANIMAL) (id.value)
+    case "FocusRule": return prefixId (IdPrefixes.FOCUS_RULE) (id.value)
+    case "OptionalRule": return prefixId (IdPrefixes.OPTIONAL_RULE) (id.value)
+    case "Condition": return prefixId (IdPrefixes.CONDITION) (id.value)
+    case "State": return prefixId (IdPrefixes.STATE) (id.value)
+    default: return assertUnreachable (id)
   }
 }

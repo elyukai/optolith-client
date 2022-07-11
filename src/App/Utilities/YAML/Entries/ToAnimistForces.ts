@@ -7,6 +7,7 @@ import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Tuple } from "../../../../Data/Tuple"
 import { AnimistForce } from "../../../Models/Wiki/AnimistForce"
+import { strToIc } from "../../ImprovementCost"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -25,7 +26,7 @@ const toAnimistForce : YamlPairConverterE<AnimistForceUniv, AnimistForceL10n, st
                            id: univ .id,
                            name: l10n.name,
                            check: Tuple (univ.check1, univ.check2, univ.check3),
-                           ic: univ .ic,
+                           ic: strToIc (univ .ic),
                            property: univ.property,
                            tribes: fromArray (univ.tribes ?? []),
                            effect: toMarkdown (l10n.effect),

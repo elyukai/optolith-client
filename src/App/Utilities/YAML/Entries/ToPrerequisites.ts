@@ -8,7 +8,6 @@ import { catMaybes, Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { assocs, insert, OrderedMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { fst, snd } from "../../../../Data/Tuple"
-import { OverridePrerequisite } from "../../../Models/Static_Prerequisites.gen"
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement"
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement"
 import { RequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement"
@@ -18,7 +17,7 @@ import { ProfessionRequireIncreasable } from "../../../Models/Wiki/prerequisites
 import { RaceRequirement } from "../../../Models/Wiki/prerequisites/RaceRequirement"
 import { SexRequirement } from "../../../Models/Wiki/prerequisites/SexRequirement"
 import { SocialPrerequisite } from "../../../Models/Wiki/prerequisites/SocialPrerequisite"
-import { AllRequirementObjects, PrerequisitesIndex } from "../../../Models/Wiki/wikiTypeHelpers"
+import { AllRequirementObjects, OverridePrerequisite, PrerequisitesIndex } from "../../../Models/Wiki/wikiTypeHelpers"
 import { pipe, pipe_ } from "../../pipe"
 
 

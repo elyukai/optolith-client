@@ -7,11 +7,11 @@ import { Just, Maybe, Nothing } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Pair, uncurry } from "../../../../Data/Tuple"
-import { icToJs } from "../../../Constants/Groups"
 import { Skill } from "../../../Models/Wiki/Skill"
 import { Application } from "../../../Models/Wiki/sub/Application"
 import { Use } from "../../../Models/Wiki/sub/Use"
 import { Either, Left, Right, toNewEither } from "../../Either"
+import { strToIc } from "../../ImprovementCost"
 import { Just as NewJust, Maybe as NewMaybe, Nothing as NewNothing } from "../../Maybe"
 import { pipe, pipe_ } from "../../pipe"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -96,7 +96,7 @@ const toSkill = (x : [SkillUniv, SkillL10n]) : Either<Error[], [string, Record<S
       encumbrance: univ.enc,
       encumbranceDescription: Maybe (l10n.encDescription),
       gr: univ.gr,
-      ic: icToJs (univ.ic),
+      ic: strToIc (univ.ic),
       applications,
       applicationsInput: Maybe (l10n.applicationsInput),
       uses,

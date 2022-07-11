@@ -5,7 +5,6 @@ import { flength, List, map, notNull, replicateR, toArray } from "../../../../Da
 import { guardReplace, Just, Maybe, maybe } from "../../../../Data/Maybe"
 import { lookup } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
-import { icFromJs } from "../../../Constants/Groups"
 import { NumIdName } from "../../../Models/NumIdName"
 import { AttributeCombined } from "../../../Models/View/AttributeCombined"
 import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../../Models/View/SpellWithRequirements"
@@ -13,7 +12,7 @@ import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { minus } from "../../../Utilities/Chars"
 import { classListMaybe } from "../../../Utilities/CSS"
 import { translate } from "../../../Utilities/I18n"
-import { icToStr } from "../../../Utilities/IC.gen"
+import { icToStr } from "../../../Utilities/ImprovementCost"
 import { toNewMaybe } from "../../../Utilities/Maybe"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { renderMaybeWith } from "../../../Utilities/ReactUtils"
@@ -142,7 +141,7 @@ export const SpellsSheetSpells: React.FC<Props> = props => {
                                                  (StaticData.A.properties (staticData)))}
                       </Textfit>
                     </td>
-                    <td className="ic">{icToStr (icFromJs (SWRA_.ic (e)))}</td>
+                    <td className="ic">{icToStr (SWRA_.ic (e))}</td>
                     <td className="effect" />
                     <td className="ref" />
                   </tr>

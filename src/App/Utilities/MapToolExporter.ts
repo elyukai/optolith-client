@@ -13,7 +13,7 @@ import { ReduxAction } from "../Actions/Actions"
 import { addAlert, addDefaultErrorAlert, AlertOptions } from "../Actions/AlertActions"
 import { Category } from "../Constants/Categories"
 import { Property } from "../Constants/Groups"
-import { CombatTechniqueId } from "../Constants/Ids.gen"
+import { CombatTechniqueId } from "../Constants/Ids"
 import { ActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
 import { SkillDependent } from "../Models/ActiveEntries/SkillDependent"
@@ -814,7 +814,8 @@ function getCombatXML (hero: HeroModelRecord, state: AppStateRecord): string {
   id = 1
   // Waffenlos fügen wir manuell ein
   const brawlingTechnique =
-    OrderedMap.lookup (CombatTechniqueId.brawling) (state.values.wiki.values.combatTechniques)
+    OrderedMap.lookup<string> (CombatTechniqueId.Brawling)
+                              (state.values.wiki.values.combatTechniques)
   let naturalWeapon = ""
   if (isJust (brawlingTechnique)) {
     naturalWeapon = `{"ID":0,"Name":"Waffenlos","RW":1,"AT":0,"PA":0,"Technik":"${brawlingTechnique.value.values.name}","Parierwaffe":0,"Improvisiert":0,"TP":"1d6","LS":[{"L":"GE","S":14},{"L":"KK","S":14}],"Zweihand":0}`

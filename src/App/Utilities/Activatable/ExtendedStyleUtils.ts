@@ -9,7 +9,7 @@ import { lookup } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd, uncurry } from "../../../Data/Tuple"
 import { SpecialAbilityGroup } from "../../Constants/Groups"
-import { SpecialAbilityId } from "../../Constants/Ids.gen"
+import { SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
 import { HeroModel, HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel"
@@ -131,11 +131,11 @@ const getStyleDependencies =
         map ((x: string | List<string>) => StyleDependency ({ id: x, origin: styleId })),
         xs => {
           switch (styleId) {
-            case SpecialAbilityId.scholarDesMagierkollegsZuHoningen:
+            case SpecialAbilityId.ScholarDesMagierkollegsZuHoningen:
               return pipe_ (
                 hero,
                 HA.specialAbilities,
-                lookup (SpecialAbilityId.scholarDesMagierkollegsZuHoningen),
+                lookup<string> (SpecialAbilityId.ScholarDesMagierkollegsZuHoningen),
                 bindF (pipe (ADA.active, listToMaybe)),
                 bindF (AOA.sid2),
                 misStringM,

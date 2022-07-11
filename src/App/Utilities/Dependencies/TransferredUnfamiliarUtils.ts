@@ -6,7 +6,7 @@ import { append, countWith, filter, foldr, List, sdelete, subscriptF } from "../
 import { bindF, Just, liftM3, maybe, Maybe, Nothing } from "../../../Data/Maybe"
 import { elems, lookup, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { Phase, SpecialAbilityId } from "../../Constants/Ids.gen"
+import { Phase, SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
@@ -20,7 +20,6 @@ import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { convertUIStateToActiveObject } from "../Activatable/activatableConvertUtils"
 import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils"
-import { prefixSA } from "../IDUtils"
 import { isUnfamiliarSpell } from "../Increasable/spellUtils"
 import { pipe, pipe_ } from "../pipe"
 import { isStringM, misStringM } from "../typeCheckUtils"
@@ -43,9 +42,9 @@ const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
     const src_id = AOWIA.id (active)
 
     switch (src_id) {
-      case prefixSA (SpecialAbilityId.traditionGuildMages):
-      case SpecialAbilityId.madaschwesternStil:
-      case SpecialAbilityId.scholarDesMagierkollegsZuHoningen:
+      case SpecialAbilityId.TraditionGuildMages:
+      case SpecialAbilityId.MadaschwesternStil:
+      case SpecialAbilityId.ScholarDesMagierkollegsZuHoningen:
         return pipe_ (
           active,
           AOWIA.sid,
@@ -53,11 +52,11 @@ const getTransferredUnfamiliarById: (active: Record<ActiveObjectWithId>) =>
           fmap ((id: string) => List (TransferUnfamiliar ({ id, srcId: src_id })))
         )
 
-      case SpecialAbilityId.zaubervariabilitaet:
+      case SpecialAbilityId.Zaubervariabilitaet:
         return Just (List (TransferUnfamiliar ({ id: UnfamiliarGroup.Spells, srcId: src_id })))
 
-      case SpecialAbilityId.scholarDerHalleDesLebensZuNorburg:
-      case SpecialAbilityId.scholarDesKreisesDerEinfuehlung:
+      case SpecialAbilityId.ScholarDerHalleDesLebensZuNorburg:
+      case SpecialAbilityId.ScholarDesKreisesDerEinfuehlung:
         return liftM3 ((id1: string) => (id2: string) => (id3: string) =>
                         List (
                           TransferUnfamiliar ({ id: id1, srcId: src_id }),
@@ -172,7 +171,7 @@ export const isEntryAllowingTransferUnfamiliarRemovable: (wiki: StaticDataRecord
                                                          (hero: HeroModelRecord) =>
                                                          (src_id: string) => boolean =
   wiki => hero => {
-    if (HA.phase (hero) >= Phase.inGame) {
+    if (HA.phase (hero) >= Phase.InGame) {
       return cnst (true)
     }
 

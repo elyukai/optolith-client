@@ -7,7 +7,7 @@ import { elems, map } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { fst, isTuple, Pair, snd } from "../../Data/Tuple"
 import { upd1, upd2 } from "../../Data/Tuple/Update"
-import { ConditionId } from "../Constants/Ids.gen"
+import { ConditionId } from "../Constants/Ids"
 import { SkillCombinedA_ } from "../Models/View/SkillCombined"
 import { Condition } from "../Models/Wiki/Condition"
 import { Skill } from "../Models/Wiki/Skill"
@@ -32,8 +32,8 @@ export const getConditions = createMaybeSelector (
       staticData,
       StaticData.A.conditions,
       elems,
-      filter (x => CA.id (x) !== ConditionId.sikaryanVerlust
-                   && CA.id (x) !== ConditionId.daemonischeAuszehrung),
+      filter (x => CA.id (x) !== ConditionId.SikaryanVerlust
+                   && CA.id (x) !== ConditionId.DaemonischeAuszehrung),
       filterByAvailability (CA.src) (availability),
       sortRecordsByName (staticData),
     )

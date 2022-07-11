@@ -1,5 +1,39 @@
 import { List } from "../../Data/List"
 
+export type Id =
+  | { tag: "ExperienceLevel"; value: number }
+  | { tag: "Race"; value: number }
+  | { tag: "Culture"; value: number }
+  | { tag: "Profession"; value: number }
+  | { tag: "Attribute"; value: number }
+  | { tag: "Advantage"; value: number }
+  | { tag: "Disadvantage"; value: number }
+  | { tag: "Skill"; value: number }
+  | { tag: "CombatTechnique"; value: number }
+  | { tag: "Spell"; value: number }
+  | { tag: "Curse"; value: number }
+  | { tag: "ElvenMagicalSong"; value: number }
+  | { tag: "DominationRitual"; value: number }
+  | { tag: "MagicalMelody"; value: number }
+  | { tag: "MagicalDance"; value: number }
+  | { tag: "RogueSpell"; value: number }
+  | { tag: "AnimistForce"; value: number }
+  | { tag: "GeodeRitual"; value: number }
+  | { tag: "ZibiljaRitual"; value: number }
+  | { tag: "Cantrip"; value: number }
+  | { tag: "LiturgicalChant"; value: number }
+  | { tag: "Blessing"; value: number }
+  | { tag: "SpecialAbility"; value: number }
+  | { tag: "Item"; value: number }
+  | { tag: "EquipmentPackage"; value: number }
+  | { tag: "HitZoneArmor"; value: number }
+  | { tag: "Familiar"; value: number }
+  | { tag: "Animal"; value: number }
+  | { tag: "FocusRule"; value: number }
+  | { tag: "OptionalRule"; value: number }
+  | { tag: "Condition"; value: number }
+  | { tag: "State"; value: number }
+
 /**
  * Please keep enum members sorted by value and not by key!
  */
@@ -108,7 +142,7 @@ export enum AdvantageId {
 /**
  * Lists advantage IDs that have no influence on the AP maximum for advantages.
  */
-export const AdvantageIdsNoMaxInfl = List<AdvantageId> (AdvantageId.Einkommen)
+export const AdvantageIdsNoMaxInfl = List<string> (AdvantageId.Einkommen)
 
 export enum DisadvantageId {
   CustomDisadvantage = "DISADV_0",
@@ -287,6 +321,8 @@ export enum SpecialAbilityId {
   FavoriteSpellwork = "SA_250",
   TraditionWitches = "SA_255",
   MagicStyleCombination = "SA_266",
+  Harmoniezauberei = "SA_296",
+  Matrixzauberei = "SA_303",
   TraditionElves = "SA_345",
   TraditionDruids = "SA_346",
   SpellEnhancement = "SA_414",
@@ -300,14 +336,14 @@ export enum SpecialAbilityId {
   PredigtDesWohlgefallens = "SA_547",
   PredigtWiderMissgeschicke = "SA_548",
   VisionDerBestimmung = "SA_549",
-  VisionDerEntrückung = "SA_550",
+  VisionDerEntrueckung = "SA_550",
   VisionDerGottheit = "SA_551",
   VisionDesSchicksals = "SA_552",
   VisionDesWahrenGlaubens = "SA_553",
   HoheWeihe = "SA_563",
   Lieblingsliturgie = "SA_569",
   Zugvoegel = "SA_623",
-  JaegerinnenDerWeißenMaid = "SA_625",
+  JaegerinnenDerWeissenMaid = "SA_625",
   AnhaengerDesGueldenen = "SA_632",
   GebieterDesAspekts = "SA_639",
   ChantEnhancement = "SA_663",
@@ -348,6 +384,7 @@ export enum SpecialAbilityId {
   TraditionZauberalchimisten = "SA_750",
   GrosseMeditation = "SA_772",
   Imitationszauberei = "SA_775",
+  Kraftliniennutzung = "SA_781",
   ScholarDerHalleDesLebensZuNorburg = "SA_802",
   ScholarDesKreisesDerEinfuehlung = "SA_808",
   MadaschwesternStil = "SA_821",
@@ -386,4 +423,9 @@ export enum OptionalRuleId {
   MaximumAttributeScores = "OR_8",
   LanguageSpecialization = "OR_15",
   HigherDefenseStats = "OR_17",
+}
+
+export enum ConditionId {
+  SikaryanVerlust = "COND_11",
+  DaemonischeAuszehrung = "COND_14",
 }

@@ -3,10 +3,9 @@ import { isNothing, maybe } from "../../../Data/Maybe"
 import { divideBy } from "../../../Data/Num"
 import { lookup, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { icFromJs } from "../../Constants/Groups"
 import { Skill } from "../../Models/Wiki/Skill"
 import { minus } from "../../Utilities/Chars"
-import { getAPForInc } from "../../Utilities/IC.gen"
+import { getAPForInc } from "../../Utilities/ImprovementCost"
 import { BorderButton } from "../Universal/BorderButton"
 
 const SA = Skill.A
@@ -30,7 +29,7 @@ export const SkillSelectionListItem: React.FC<Props> = props => {
 
   const value = maybe (0) (divideBy (ic)) (msr)
 
-  const nextCosts = getAPForInc (icFromJs (ic), value)
+  const nextCosts = getAPForInc (ic, value)
 
   const handleAddPoint = React.useCallback (
     () => addSkillPoint (id),

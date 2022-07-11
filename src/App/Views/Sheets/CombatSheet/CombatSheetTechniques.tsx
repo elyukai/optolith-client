@@ -4,13 +4,12 @@ import { fmap } from "../../../../Data/Functor"
 import { find, intercalate, List, map, toArray } from "../../../../Data/List"
 import { mapMaybe, Maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
-import { icFromJs } from "../../../Constants/Groups"
 import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined"
 import { CombatTechniqueWithAttackParryBase, CombatTechniqueWithAttackParryBaseA_ } from "../../../Models/View/CombatTechniqueWithAttackParryBase"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { ndash } from "../../../Utilities/Chars"
 import { translate } from "../../../Utilities/I18n"
-import { icToStr } from "../../../Utilities/IC.gen"
+import { icToStr } from "../../../Utilities/ImprovementCost"
 import { toNewMaybe } from "../../../Utilities/Maybe"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
 import { TextBox } from "../../Universal/TextBox"
@@ -78,7 +77,7 @@ export const CombatSheetTechniques: React.FC<Props> = props => {
                       intercalate ("/")
                     )}
                   </td>
-                  <td className="ic">{icToStr (icFromJs (CTWAPBA_.ic (e)))}</td>
+                  <td className="ic">{icToStr (CTWAPBA_.ic (e))}</td>
                   <td className="value">{CTWAPBA_.value (e)}</td>
                   <td className="at">{CTWAPBA.at (e)}</td>
                   <td className="pa">

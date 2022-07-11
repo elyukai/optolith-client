@@ -8,8 +8,8 @@ import { bindF, catMaybes, elem, ensure, fromMaybe, fromMaybe_, guard, isJust, i
 import { add, gte, lt } from "../../../Data/Num"
 import { elems, foldrWithKey, lookup, lookupF, OrderedMap, union } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
-import { IC, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
+import { MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
@@ -37,6 +37,7 @@ import { mapMagicalTradIdToNumId } from "../Activatable/traditionUtils"
 import { flattenDependencies } from "../Dependencies/flattenDependencies"
 import { getExperienceLevelAtStart } from "../ELUtils"
 import { ifElse } from "../ifElse"
+import { ImprovementCost } from "../ImprovementCost"
 import { pipe, pipe_ } from "../pipe"
 import { areSpellPrereqisitesMet } from "../Prerequisites/validatePrerequisitesUtils"
 import { isNumber, misNumberM } from "../typeCheckUtils"
@@ -333,7 +334,7 @@ export const isUnfamiliarSpell : (transferred_unfamiliar : List<Record<TransferU
                                 (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean =
   transferred_unfamiliar =>
   trads => {
-    if (any (pipe (ADA.id, equals<string> (SpecialAbilityId.traditionIntuitiveMage))) (trads)) {
+    if (any (pipe (ADA.id, equals<string> (SpecialAbilityId.TraditionIntuitiveMage))) (trads)) {
       return cnst (false)
     }
 
@@ -402,11 +403,11 @@ export const isSpellsRitualsCountMaxReached =
                                                           (wiki)
                                                           (hero)
 
-    if (isLastTrad (SpecialAbilityId.traditionSchelme)) {
+    if (isLastTrad (SpecialAbilityId.TraditionSchelme)) {
       const max_spellworks = pipe_ (
                                hero,
                                HA.specialAbilities,
-                               lookup (SpecialAbilityId.imitationszauberei),
+                               lookup<string> (SpecialAbilityId.Imitationszauberei),
                                bindF (pipe (ADA.active, listToMaybe)),
                                bindF (AOA.tier),
                                fromMaybe (0)
@@ -418,10 +419,10 @@ export const isSpellsRitualsCountMaxReached =
     // Count maximum for Intuitive Mages and Animisten
     const BASE_MAX_INTU_ANIM = 3
 
-    if (isLastTrad (SpecialAbilityId.traditionIntuitiveMage)
-        || isLastTrad (SpecialAbilityId.traditionAnimisten)) {
-      const mbonus = lookup (AdvantageId.largeSpellSelection) (HA.advantages (hero))
-      const mmalus = lookup (DisadvantageId.smallSpellSelection) (HA.disadvantages (hero))
+    if (isLastTrad (SpecialAbilityId.TraditionIntuitiveMage)
+        || isLastTrad (SpecialAbilityId.TraditionAnimisten)) {
+      const mbonus = lookup<string> (AdvantageId.LargeSpellSelection) (HA.advantages (hero))
+      const mmalus = lookup<string> (DisadvantageId.SmallSpellSelection) (HA.disadvantages (hero))
 
       const max_spells = modifyByLevel (BASE_MAX_INTU_ANIM) (mbonus) (mmalus)
 
@@ -455,14 +456,17 @@ export const isIdInSpecialAbilityList : (xs : List<Record<SpecialAbility>>) =>
 
 const isAnySpellActiveWithImpCostC =
   (wiki_spells : OrderedMap<string, Record<Spell>>) =>
-    OrderedMap.any ((x : Record<ActivatableSkillDependent>) => ASDA.active (x)
-                                                              && pipe_ (
-                                                                x,
-                                                                ASDA.id,
-                                                                lookupF (wiki_spells),
-                                                                maybe (false)
-                                                                      (pipe (SA.ic, equals (IC.C)))
-                                                              ))
+    OrderedMap.any (
+      (x : Record<ActivatableSkillDependent>) =>
+        ASDA.active (x)
+        && pipe_ (
+          x,
+          ASDA.id,
+          lookupF (wiki_spells),
+          maybe (false)
+                (pipe (SA.ic, equals (ImprovementCost.C)))
+        )
+    )
 
 
 /**
@@ -491,11 +495,13 @@ const isInactiveValidForIntuitiveMage =
     && Maybe.all (notP (ASDA.active)) (mhero_entry)
 
     // No spells with IC D
-    && SA.ic (wiki_entry) < IC.D
+    && SA.ic (wiki_entry) < ImprovementCost.D
 
     // Only one spell with IC C
-    && !(SA.ic (wiki_entry) === IC.C && isAnySpellActiveWithImpCostC (SDA.spells (wiki))
-                                                                     (HA.spells (hero)))
+    && !(
+      SA.ic (wiki_entry) === ImprovementCost.C
+      && isAnySpellActiveWithImpCostC (SDA.spells (wiki)) (HA.spells (hero))
+    )
 
 const isInactiveValidForSchelme =
   (is_spell_max_count_reached : boolean) =>
@@ -512,7 +518,7 @@ const isInactiveValidForSchelme =
       && Maybe.all (notP (ASDA.active)) (mhero_entry)
 
       // No spells with IC D or C
-      && SA.ic (wiki_entry) < IC.C
+      && SA.ic (wiki_entry) < ImprovementCost.C
 
       // No property Demonic
       && SA.property (wiki_entry) !== Property.Demonic

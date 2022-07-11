@@ -11,7 +11,7 @@ import { insert, member, OrderedSet } from "../../Data/OrderedSet"
 import { Record } from "../../Data/Record"
 import { fst, snd } from "../../Data/Tuple"
 import { uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6 } from "../../Data/Tuple/Curry"
-import { Aspect, BlessedTradition, IC } from "../Constants/Groups"
+import { Aspect, BlessedTradition } from "../Constants/Groups"
 import { AdvantageId, SpecialAbilityId } from "../Constants/Ids"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent"
@@ -28,6 +28,7 @@ import { getBlessedTradition, mapBlessedTradIdToNumId } from "../Utilities/Activ
 import { composeL } from "../Utilities/compose"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
+import { ImprovementCost } from "../Utilities/ImprovementCost"
 import { getAspectsOfTradition, isLCDecreasable, isLCIncreasable, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { filterByAvailability } from "../Utilities/RulesUtils"
@@ -229,7 +230,7 @@ const additionalInactiveListFilter = (
                         notElem (1) (LCA.tradition (wiki_entry))
                         && fullCheck (chant)
 
-                      const isICValid = LCA.ic (wiki_entry) <= IC.C
+                      const isICValid = LCA.ic (wiki_entry) <= ImprovementCost.C
 
                       return mapReplace (LCA.id (wiki_entry))
                                         (guard (isTraditionValid && isICValid))
@@ -249,7 +250,7 @@ const isGr =
 export const getAdditionalValidLiturgicalChants = createMaybeSelector (
   getBlessedTraditionFromWikiState,
   mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.Zugvoegel),
-  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.JaegerinnenDerWeißenMaid),
+  mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.JaegerinnenDerWeissenMaid),
   mapGetToSlice (getSpecialAbilities) (SpecialAbilityId.AnhaengerDesGueldenen),
   getInactiveLiturgicalChants,
   getActiveLiturgicalChants,

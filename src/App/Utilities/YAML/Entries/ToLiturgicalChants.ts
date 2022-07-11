@@ -6,8 +6,8 @@ import { fromArray, List } from "../../../../Data/List"
 import { Maybe, Nothing } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
-import { icToJs } from "../../../Constants/Groups"
 import { LiturgicalChant } from "../../../Models/Wiki/LiturgicalChant"
+import { strToIc } from "../../ImprovementCost"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -29,7 +29,7 @@ const toLC : YamlPairConverterE<LiturgicalChantUniv, LiturgicalChantL10n, string
                  check: List (univ.check1, univ.check2, univ.check3),
                  checkmod: Maybe (univ.checkMod),
                  gr: univ .gr,
-                 ic: icToJs (univ .ic),
+                 ic: strToIc (univ .ic),
                  aspects: fromArray (univ.aspects ?? []),
                  tradition: fromArray (univ.traditions),
                  effect: toMarkdown (l10n.effect),

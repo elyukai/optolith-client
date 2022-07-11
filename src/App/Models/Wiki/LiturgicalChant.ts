@@ -3,6 +3,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault, makeLenses, Record } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
 import { Aspect, BlessedGroup, BlessedTradition } from "../../Constants/Groups"
+import { ImprovementCost } from "../../Utilities/ImprovementCost"
 import { Erratum } from "./sub/Errata"
 import { SourceLink } from "./sub/SourceLink"
 import { CheckModifier, EntryWithCategory } from "./wikiTypeHelpers"
@@ -17,7 +18,7 @@ export interface LiturgicalChant {
   check: List<string>
   checkmod: Maybe<CheckModifier>
   gr: BlessedGroup
-  ic: number
+  ic: ImprovementCost
   tradition: List<BlessedTradition>
   effect: string
   castingTime: string
@@ -49,7 +50,7 @@ export const LiturgicalChant =
                 check: List.empty,
                 checkmod: Nothing,
                 gr: 0,
-                ic: 0,
+                ic: ImprovementCost.A,
                 tradition: List.empty,
                 effect: "",
                 castingTime: "",

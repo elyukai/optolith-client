@@ -7,6 +7,7 @@ import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
 import { Tuple } from "../../../../Data/Tuple"
 import { RogueSpell } from "../../../Models/Wiki/RogueSpell"
+import { strToIc } from "../../ImprovementCost"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -26,7 +27,7 @@ const toRogueSpell : YamlPairConverterE<RogueSpellUniv, RogueSpellL10n, string, 
                          name: l10n.name,
                          check: Tuple (univ.check1, univ.check2, univ.check3),
                          checkmod: Maybe (univ.checkMod),
-                         ic: univ .ic,
+                         ic: strToIc (univ .ic),
                          property: univ.property,
                          effect: toMarkdown (l10n.effect),
                          castingTime: l10n.castingTime,

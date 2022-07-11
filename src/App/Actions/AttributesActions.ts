@@ -8,7 +8,7 @@ import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors"
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors"
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getCurrentHeroPresent, getWikiAttributes } from "../Selectors/stateSelectors"
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils"
-import { getAPForInc } from "../Utilities/IC.gen"
+import { getAPForInc, ImprovementCost } from "../Utilities/ImprovementCost"
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { ReduxAction } from "./Actions"
@@ -84,7 +84,7 @@ export const addLifePoint: ReduxAction<Promise<void>> =
         liftM2 (pipe (
 
                  // get AP for added points
-                 curryN (getAPForInc) ("D"),
+                 curryN (getAPForInc) (ImprovementCost.D),
 
                  // AP are passed to result and result finally gets the available AP
                  getMissingAP (getIsInCharacterCreation (state))
@@ -120,7 +120,7 @@ export const addArcaneEnergyPoint: ReduxAction<Promise<void>> =
         liftM2 (pipe (
 
                  // get AP for added points
-                 curryN (getAPForInc) ("D"),
+                 curryN (getAPForInc) (ImprovementCost.D),
 
                  // AP are passed to result and result finally gets the available AP
                  getMissingAP (getIsInCharacterCreation (state))
@@ -156,7 +156,7 @@ export const addKarmaPoint: ReduxAction<Promise<void>> =
         liftM2 (pipe (
 
                  // get AP for added points
-                 curryN (getAPForInc) ("D"),
+                 curryN (getAPForInc) (ImprovementCost.D),
 
                  // AP are passed to result and result finally gets the available AP
                  getMissingAP (getIsInCharacterCreation (state))

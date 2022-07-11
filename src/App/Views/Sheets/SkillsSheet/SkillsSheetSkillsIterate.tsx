@@ -5,13 +5,12 @@ import { find, intercalate, List, map, toArray } from "../../../../Data/List"
 import { mapMaybe, maybe } from "../../../../Data/Maybe"
 import { Record } from "../../../../Data/Record"
 import { fst, Pair, snd } from "../../../../Data/Tuple"
-import { icFromJs } from "../../../Constants/Groups"
 import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined"
 import { SkillCombined, SkillCombinedA_ } from "../../../Models/View/SkillCombined"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
 import { ndash } from "../../../Utilities/Chars"
 import { compareLocale, translate } from "../../../Utilities/I18n"
-import { icToStr } from "../../../Utilities/IC.gen"
+import { icToStr } from "../../../Utilities/ImprovementCost"
 import { getMinCheckModForRoutine } from "../../../Utilities/Increasable/skillUtils"
 import { sign } from "../../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../../Utilities/pipe"
@@ -65,7 +64,7 @@ export const iterateList =
             <td className="name">{SkillCombinedA_.name (obj)}</td>
             <td className="check">{check_str}</td>
             <td className="enc">{enc_str}</td>
-            <td className="ic">{icToStr (icFromJs (SkillCombinedA_.ic (obj)))}</td>
+            <td className="ic">{icToStr (SkillCombinedA_.ic (obj))}</td>
             <td className="sr">{SkillCombinedA_.value (obj)}</td>
             <td className="routine">
               {maybe (ndash)

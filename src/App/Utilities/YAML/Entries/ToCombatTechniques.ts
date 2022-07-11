@@ -6,8 +6,8 @@ import { fromArray } from "../../../../Data/List"
 import { Maybe, Nothing } from "../../../../Data/Maybe"
 import { fromMap } from "../../../../Data/OrderedMap"
 import { Record } from "../../../../Data/Record"
-import { icToJs } from "../../../Constants/Groups"
 import { CombatTechnique } from "../../../Models/Wiki/CombatTechnique"
+import { strToIc } from "../../ImprovementCost"
 import { pipe } from "../../pipe"
 import { map } from "../Array"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -25,7 +25,7 @@ const toCT : YamlPairConverter<CombatTechniqueUniv, CombatTechniqueL10n, string,
                  id: univ.id,
                  name: l10n.name,
                  gr: univ.gr,
-                 ic: icToJs (univ.ic),
+                 ic: strToIc (univ.ic),
                  bpr: univ.bpr,
                  primary: fromArray (univ.primary),
                  special: Maybe (l10n.special),

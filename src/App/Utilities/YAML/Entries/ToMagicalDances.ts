@@ -8,6 +8,7 @@ import { Record } from "../../../../Data/Record"
 import { Tuple } from "../../../../Data/Tuple"
 import { NumIdName } from "../../../Models/NumIdName"
 import { MagicalDance } from "../../../Models/Wiki/MagicalDance"
+import { strToIc } from "../../ImprovementCost"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -31,7 +32,7 @@ const toMagicalDance : YamlPairConverterE<MagicalDanceUniv, MagicalDanceL10n, st
                                OrderedMap.empty
                              ),
                            check: Tuple (univ.check1, univ.check2, univ.check3),
-                           ic: univ .ic,
+                           ic: strToIc (univ .ic),
                            property: univ.property,
                            musictraditions: fromArray (univ.musictraditions),
                            effect: toMarkdown (l10n.effect),

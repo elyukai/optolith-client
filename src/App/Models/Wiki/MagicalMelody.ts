@@ -5,10 +5,10 @@ import { lookupF, OrderedMap } from "../../../Data/OrderedMap"
 import { fromDefault, Record } from "../../../Data/Record"
 import { Tuple } from "../../../Data/Tuple"
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/All"
-import { icToJs, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
+import { MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
 import { ndash } from "../../Utilities/Chars"
 import { localizeOrList } from "../../Utilities/I18n"
-import { t as IC } from "../../Utilities/IC.gen"
+import { ImprovementCost } from "../../Utilities/ImprovementCost"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { sortStrings } from "../../Utilities/sortBy"
 import { NumIdName } from "../NumIdName"
@@ -29,7 +29,7 @@ export interface MagicalMelody {
    * Does enhancing the song only work with one specific skill?
    */
   skill: List<"TAL_9" | "TAL_56">
-  ic: IC
+  ic: ImprovementCost
   property: Property
   musictraditions: List<number>
   effect: string
@@ -50,7 +50,7 @@ export const MagicalMelody =
                 nameByTradition: OrderedMap.empty,
                 check: Tuple ("", "", ""),
                 skill: List (),
-                ic: "A",
+                ic: ImprovementCost.A,
                 property: 0,
                 musictraditions: List.empty,
                 effect: "",
@@ -83,7 +83,7 @@ export const magicalMelodyToSpell = (staticData: StaticDataRecord) =>
                                       ),
                                       checkmod: Nothing,
                                       gr: MagicalGroup.MagicalMelodies,
-                                      ic: icToJs (MagicalMelody.A.ic (x)),
+                                      ic: MagicalMelody.A.ic (x),
                                       property: MagicalMelody.A.property (x),
                                       tradition: List (MagicalTradition.ArcaneBards),
                                       subtradition: MagicalMelody.A.musictraditions (x),

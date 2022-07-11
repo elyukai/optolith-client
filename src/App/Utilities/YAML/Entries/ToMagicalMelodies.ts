@@ -9,6 +9,7 @@ import { Tuple } from "../../../../Data/Tuple"
 import { SkillId } from "../../../Constants/Ids"
 import { NumIdName } from "../../../Models/NumIdName"
 import { MagicalMelody as MM } from "../../../Models/Wiki/MagicalMelody"
+import { strToIc } from "../../ImprovementCost"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -35,7 +36,7 @@ const toMagicalMelody : YamlPairConverterE<MagicalMelodyUniv, MagicalMelodyL10n,
                             skill: univ.skill === undefined
                                    ? List (SkillId.Singing, SkillId.Music)
                                    : List (univ.skill),
-                            ic: univ .ic,
+                            ic: strToIc (univ .ic),
                             property: univ.property,
                             musictraditions: fromArray (univ.musictraditions),
                             effect: toMarkdown (l10n.effect),

@@ -5,10 +5,10 @@ import { lookupF } from "../../../Data/OrderedMap"
 import { fromDefault, Record } from "../../../Data/Record"
 import { Tuple } from "../../../Data/Tuple"
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/All"
-import { icToJs, MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
+import { MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
 import { ndash } from "../../Utilities/Chars"
 import { localizeOrList } from "../../Utilities/I18n"
-import { t as IC } from "../../Utilities/IC.gen"
+import { ImprovementCost } from "../../Utilities/ImprovementCost"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { sortStrings } from "../../Utilities/sortBy"
 import { Skill } from "./Skill"
@@ -29,7 +29,7 @@ export interface ElvenMagicalSong {
    * Does enhancing the song only work with one specific skill?
    */
   skill: List<"TAL_9" | "TAL_56">
-  ic: IC
+  ic: ImprovementCost
   property: Property
   effect: string
   cost: string
@@ -47,7 +47,7 @@ export const ElvenMagicalSong =
                 check: Tuple ("", "", ""),
                 checkmod: Nothing,
                 skill: List (),
-                ic: "A",
+                ic: ImprovementCost.A,
                 property: 0,
                 effect: "",
                 cost: "",
@@ -77,7 +77,7 @@ export const elvenMagicalSongToSpell = (staticData: StaticDataRecord) =>
                                          ),
                                          checkmod: ElvenMagicalSong.A.checkmod (x),
                                          gr: MagicalGroup.ElvenMagicalSongs,
-                                         ic: icToJs (ElvenMagicalSong.A.ic (x)),
+                                         ic: ElvenMagicalSong.A.ic (x),
                                          property: ElvenMagicalSong.A.property (x),
                                          tradition: List (MagicalTradition.Elves),
                                          subtradition: List (),

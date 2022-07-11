@@ -4,7 +4,6 @@ import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
 import { Item } from "../Hero/Item"
-import { OverridePrerequisite } from "../Static_Prerequisites.gen"
 import { CultureCombined } from "../View/CultureCombined"
 import { ProfessionCombined } from "../View/ProfessionCombined"
 import { RaceCombined } from "../View/RaceCombined"
@@ -172,6 +171,12 @@ export type LevelAwarePrerequisites =
   ActivatablePrerequisites |
   OrderedMap<number, ActivatablePrerequisites>
 
+export type OverridePrerequisite =
+  | "Hide"
+  | {
+    tag: "ReplaceWith"
+    value: string
+  }
 
 type Prerequisites_tIndex = Readonly<{
   sex?: OverridePrerequisite

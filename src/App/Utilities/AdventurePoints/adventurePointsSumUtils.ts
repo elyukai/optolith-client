@@ -10,7 +10,6 @@ import { Record } from "../../../Data/Record"
 import { bimap, first, fst, Pair, second, snd } from "../../../Data/Tuple"
 import { curryN3 } from "../../../Data/Tuple/Curry"
 import { Category } from "../../Constants/Categories"
-import { icFromJs } from "../../Constants/Groups"
 import { AdvantageIdsNoMaxInfl } from "../../Constants/Ids"
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
@@ -33,7 +32,7 @@ import { Spell } from "../../Models/Wiki/Spell"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { MatchingScriptAndLanguageRelated } from "../../Selectors/activatableSelectors"
 import { getAllActiveByCategory } from "../Activatable/activatableActiveUtils"
-import { getAPForActivatation, getAPForRange } from "../IC.gen"
+import { getAPForActivatation, getAPForRange, ImprovementCost } from "../ImprovementCost"
 import { pipe, pipe_ } from "../pipe"
 import { getAdventurePointsSpentDifference } from "./adventurePointsUtils"
 
@@ -42,7 +41,10 @@ const HA = HeroModel.A
 
 // Attributes
 
-const getAPForAttribute = pipe (AttributeDependent.A.value, curryN3 (getAPForRange) ("E") (8))
+const getAPForAttribute = pipe (
+  AttributeDependent.A.value,
+  curryN3 (getAPForRange) (ImprovementCost.E) (8)
+)
 
 export const getAPSpentForAttributes = foldr (pipe (getAPForAttribute, add)) (0)
 
@@ -50,7 +52,7 @@ export const getAPSpentForAttributes = foldr (pipe (getAPForAttribute, add)) (0)
 
 const getAPForSkill =
   (x: Record<Skill>) =>
-    pipe (SkillDependent.A.value, curryN3 (getAPForRange) (icFromJs (Skill.A.ic (x))) (0))
+    pipe (SkillDependent.A.value, curryN3 (getAPForRange) (Skill.A.ic (x)) (0))
 
 type skillsFold = (x: Record<SkillDependent>) => (s: number) => number
 
@@ -68,7 +70,7 @@ export const getAPSpentForSkills =
 
 const getAPForCombatTechnique =
   (x: Record<CombatTechnique>) =>
-    pipe (SkillDependent.A.value, curryN3 (getAPForRange) (icFromJs (CombatTechnique.A.ic (x))) (6))
+    pipe (SkillDependent.A.value, curryN3 (getAPForRange) (CombatTechnique.A.ic (x)) (6))
 
 export const getAPSpentForCombatTechniques =
   (xmap: StaticData["combatTechniques"]) =>
@@ -89,8 +91,8 @@ const getAPForSpellOrChant =
       ? pipe_ (
           asd,
           ActivatableSkillDependent.A.value,
-          curryN3 (getAPForRange) (icFromJs (Spell.AL.ic (x))) (0),
-          add (getAPForActivatation (icFromJs (Spell.AL.ic (x))))
+          curryN3 (getAPForRange) (Spell.AL.ic (x)) (0),
+          add (getAPForActivatation (Spell.AL.ic (x)))
         )
       : 0
 
@@ -242,13 +244,25 @@ export const getAPSpentForSpecialAbilities =
 export const getAPSpentForEnergies =
   (energies: Record<Energies>) => {
     const addedArcaneEnergyCost =
-      pipe_ (energies, Energies.A.addedArcaneEnergyPoints, curryN3 (getAPForRange) ("D") (0))
+      pipe_ (
+        energies,
+        Energies.A.addedArcaneEnergyPoints,
+        curryN3 (getAPForRange) (ImprovementCost.D) (0)
+      )
 
     const addedKarmaPointsCost =
-      pipe_ (energies, Energies.A.addedKarmaPoints, curryN3 (getAPForRange) ("D") (0))
+      pipe_ (
+        energies,
+        Energies.A.addedKarmaPoints,
+        curryN3 (getAPForRange) (ImprovementCost.D) (0)
+      )
 
     const addedLifePointsCost =
-      pipe_ (energies, Energies.A.addedLifePoints, curryN3 (getAPForRange) ("D") (0))
+      pipe_ (
+        energies,
+        Energies.A.addedLifePoints,
+        curryN3 (getAPForRange) (ImprovementCost.D) (0)
+      )
 
     const boughtBackArcaneEnergyCost =
       pipe_ (

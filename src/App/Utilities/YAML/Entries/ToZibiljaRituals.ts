@@ -8,6 +8,7 @@ import { Record } from "../../../../Data/Record"
 import { Tuple } from "../../../../Data/Tuple"
 import { ZibiljaRitual as ZR } from "../../../Models/Wiki/ZibiljaRitual"
 import { ndash } from "../../Chars"
+import { strToIc } from "../../ImprovementCost"
 import { pipe } from "../../pipe"
 import { mapM } from "../Either"
 import { toMapIntegrity } from "../EntityIntegrity"
@@ -27,7 +28,7 @@ const toZibiljaRitual : YamlPairConverterE<ZibiljaRitualUniv, ZibiljaRitualL10n,
                             name: l10n.name,
                             check: Tuple (univ.check1, univ.check2, univ.check3),
                             checkmod: Maybe (univ.checkMod),
-                            ic: univ .ic,
+                            ic: strToIc (univ .ic),
                             property: univ.property,
                             effect: toMarkdown (l10n.effect),
                             castingTime: ndash,

@@ -3,6 +3,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault, makeLenses, Record } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
 import { MagicalTradition, Property } from "../../Constants/Groups"
+import { ImprovementCost } from "../../Utilities/ImprovementCost"
 import { Erratum } from "./sub/Errata"
 import { SourceLink } from "./sub/SourceLink"
 import { AllRequirementObjects, CheckModifier, EntryWithCategory } from "./wikiTypeHelpers"
@@ -14,7 +15,7 @@ export interface Spell {
   check: List<string>
   checkmod: Maybe<CheckModifier>
   gr: number
-  ic: number
+  ic: ImprovementCost
   property: Property
   tradition: List<MagicalTradition>
   subtradition: List<number>
@@ -47,7 +48,7 @@ export const Spell =
                 check: List.empty,
                 checkmod: Nothing,
                 gr: 0,
-                ic: 0,
+                ic: ImprovementCost.A,
                 property: 0,
                 tradition: List.empty,
                 subtradition: List.empty,

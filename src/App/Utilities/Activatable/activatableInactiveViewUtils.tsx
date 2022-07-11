@@ -11,7 +11,7 @@ import { lookupF } from "../../../Data/OrderedMap"
 import { fromDefault, makeLenses, Record } from "../../../Data/Record"
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple"
 import { Category } from "../../Constants/Categories"
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids.gen"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions"
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
@@ -205,19 +205,19 @@ export const getIdSpecificAffectedAndDispatchProps =
 
     switch (id) {
       // Entry with Skill selection (string id)
-      case AdvantageId.aptitude:
-      case AdvantageId.exceptionalSkill:
-      case AdvantageId.exceptionalCombatTechnique:
-      case AdvantageId.weaponAptitude:
-      case DisadvantageId.incompetent:
-      case SpecialAbilityId.adaptionZauber:
-      case SpecialAbilityId.favoriteSpellwork:
-      case SpecialAbilityId.forschungsgebiet:
-      case SpecialAbilityId.expertenwissen:
-      case SpecialAbilityId.wissensdurst:
-      case SpecialAbilityId.lieblingsliturgie:
-      case SpecialAbilityId.wegDerGelehrten:
-      case SpecialAbilityId.wegDerKuenstlerin: {
+      case AdvantageId.Aptitude:
+      case AdvantageId.ExceptionalSkill:
+      case AdvantageId.ExceptionalCombatTechnique:
+      case AdvantageId.WeaponAptitude:
+      case DisadvantageId.Incompetent:
+      case SpecialAbilityId.AdaptionZauber:
+      case SpecialAbilityId.FavoriteSpellwork:
+      case SpecialAbilityId.Forschungsgebiet:
+      case SpecialAbilityId.Expertenwissen:
+      case SpecialAbilityId.Wissensdurst:
+      case SpecialAbilityId.Lieblingsliturgie:
+      case SpecialAbilityId.WegDerGelehrten:
+      case SpecialAbilityId.WegDerKuenstlerin: {
         return getPropsForEntryWithSkillSel (misStringM)
                                             (staticData)
                                             (mselected)
@@ -225,10 +225,10 @@ export const getIdSpecificAffectedAndDispatchProps =
                                             (id)
       }
 
-      case AdvantageId.immunityToPoison:
-      case AdvantageId.immunityToDisease:
-      case DisadvantageId.negativeTrait:
-      case DisadvantageId.maimed: {
+      case AdvantageId.ImmunityToPoison:
+      case AdvantageId.ImmunityToDisease:
+      case DisadvantageId.NegativeTrait:
+      case DisadvantageId.Maimed: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -242,7 +242,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case DisadvantageId.afraidOf: {
+      case DisadvantageId.AfraidOf: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -260,8 +260,8 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case DisadvantageId.principles:
-      case DisadvantageId.obligations: {
+      case DisadvantageId.Principles:
+      case DisadvantageId.Obligations: {
         const active_selections =
           joinMaybeList (getActiveSelectionsMaybe (IAA.heroEntry (entry)))
 
@@ -318,8 +318,8 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case AdvantageId.magicalAttunement:
-      case DisadvantageId.magicalRestriction: {
+      case AdvantageId.MagicalAttunement:
+      case DisadvantageId.MagicalRestriction: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -334,7 +334,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case AdvantageId.hatredOf: {
+      case AdvantageId.HatredOf: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -350,7 +350,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case DisadvantageId.personalityFlaw: {
+      case DisadvantageId.PersonalityFlaw: {
         const is_text_input_required = any (elemF (List<string | number> (7, 8))) (mselected)
 
         const isMaxActiveSelections =
@@ -394,8 +394,8 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case DisadvantageId.badHabit:
-      case DisadvantageId.stigma: {
+      case DisadvantageId.BadHabit:
+      case DisadvantageId.Stigma: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -405,7 +405,7 @@ export const getIdSpecificAffectedAndDispatchProps =
           }),
           PropertiesAffectedByState ({
             currentCost:
-              id === DisadvantageId.badHabit
+              id === DisadvantageId.BadHabit
                 ? pipe_ (
                     entry,
                     IAA.heroEntry,
@@ -424,7 +424,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.skillSpecialization: {
+      case SpecialAbilityId.SkillSpecialization: {
         const x = getCurrentSelectOption (entry) (mselected)
 
         const src = pipe_ (entry, IAA.wikiEntry, SAAL.src)
@@ -455,7 +455,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.language: {
+      case SpecialAbilityId.Language: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -476,7 +476,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.languageSpecializations: {
+      case SpecialAbilityId.LanguageSpecializations: {
         const moption = getCurrentSelectOption (entry) (mselected)
 
         const mspec_input = bind (moption) (SOA.specializationInput)
@@ -527,7 +527,7 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.fachwissen: {
+      case SpecialAbilityId.Fachwissen: {
         const getApps =
           (mother_id: Maybe<string | number>) =>
             pipe_ (
@@ -569,11 +569,11 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.handwerkskunst:
-      case SpecialAbilityId.kindDerNatur:
-      case SpecialAbilityId.koerperlichesGeschick:
-      case SpecialAbilityId.sozialeKompetenz:
-      case SpecialAbilityId.universalgenie: {
+      case SpecialAbilityId.Handwerkskunst:
+      case SpecialAbilityId.KindDerNatur:
+      case SpecialAbilityId.KoerperlichesGeschick:
+      case SpecialAbilityId.SozialeKompetenz:
+      case SpecialAbilityId.Universalgenie: {
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -602,11 +602,11 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.scholarDesMagierkollegsZuHoningen: {
+      case SpecialAbilityId.ScholarDesMagierkollegsZuHoningen: {
         const secondSelectOptions = pipe_ (
                                       List (
-                                        SpecialAbilityId.harmoniezauberei,
-                                        SpecialAbilityId.matrixzauberei
+                                        SpecialAbilityId.Harmoniezauberei,
+                                        SpecialAbilityId.Matrixzauberei,
                                       ),
                                       mapMaybe (lookupF (SDA.specialAbilities (staticData))),
                                       map (x => SelectOption ({
@@ -820,7 +820,7 @@ export const getInactiveActivatableControlElements =
                 const levelOptions: List<Record<DropdownOption<number>>> =
                   pipe_ (
                     getLevelElementsWithMin (min_level) (max_level),
-                    ls => SpecialAbilityId.language === id && isEditingAllowed
+                    ls => SpecialAbilityId.Language === id && isEditingAllowed
                           ? cons (ls)
                                  (DropdownOption ({
                                    id: Just (4),
@@ -832,7 +832,7 @@ export const getInactiveActivatableControlElements =
 
                 return pipe_ (
                   elements,
-                  set (([ DisadvantageId.principles, DisadvantageId.obligations ] as string[])
+                  set (([ DisadvantageId.Principles, DisadvantageId.Obligations ] as string[])
                         .includes (IAA.id (entry))
                         ? IACEL.levelElementBefore
                         : IACEL.levelElementAfter)
@@ -856,7 +856,7 @@ export const getInactiveActivatableControlElements =
         (ident as ident<Record<InactiveActivatableControlElements>>)
         (pipe_ (
           guard (notElem (IAA.id (entry))
-                         (List (DisadvantageId.principles, DisadvantageId.obligations))),
+                         (List (DisadvantageId.Principles, DisadvantageId.Obligations))),
           thenF (msels),
           fmap (pipe (
             map (selectToDropdownOption),
@@ -880,13 +880,13 @@ export const getInactiveActivatableControlElements =
       )
       && notElem (IAA.id (entry))
                  (List<string> (
-                   AdvantageId.magicalAttunement,
-                   DisadvantageId.afraidOf,
-                   DisadvantageId.magicalRestriction,
-                   DisadvantageId.principles,
-                   DisadvantageId.badHabit,
-                   DisadvantageId.stigma,
-                   DisadvantageId.obligations
+                   AdvantageId.MagicalAttunement,
+                   DisadvantageId.AfraidOf,
+                   DisadvantageId.MagicalRestriction,
+                   DisadvantageId.Principles,
+                   DisadvantageId.BadHabit,
+                   DisadvantageId.Stigma,
+                   DisadvantageId.Obligations
                  ))
         ? set (IACEL.disabled) (Just (true))
         : ident,
@@ -894,7 +894,7 @@ export const getInactiveActivatableControlElements =
         (ident as ident<Record<InactiveActivatableControlElements>>)
         (pipe_ (
           guard (notElem (IAA.id (entry))
-                         (List (AdvantageId.immunityToPoison, AdvantageId.immunityToDisease))),
+                         (List (AdvantageId.ImmunityToPoison, AdvantageId.ImmunityToDisease))),
           thenF (minput_desc),
           fmap (
             (input: string) =>
@@ -910,7 +910,7 @@ export const getInactiveActivatableControlElements =
                   )
           )
         )),
-      IAA.id (entry) === SpecialAbilityId.skillSpecialization
+      IAA.id (entry) === SpecialAbilityId.SkillSpecialization
         ? pipe (
             set (IACEL.inputElement)
                 (Just (
@@ -943,13 +943,13 @@ export const getInactiveActivatableControlElements =
                     sels2 =>
                       set (IACEL.secondSelectElement)
                           (Just (
-                            [
-                              SpecialAbilityId.handwerkskunst,
-                              SpecialAbilityId.kindDerNatur,
-                              SpecialAbilityId.koerperlichesGeschick,
-                              SpecialAbilityId.sozialeKompetenz,
-                              SpecialAbilityId.universalgenie,
-                            ].includes (IAA.id (entry))
+                            ([
+                              SpecialAbilityId.Handwerkskunst,
+                              SpecialAbilityId.KindDerNatur,
+                              SpecialAbilityId.KoerperlichesGeschick,
+                              SpecialAbilityId.SozialeKompetenz,
+                              SpecialAbilityId.Universalgenie,
+                            ] as string[]).includes (IAA.id (entry))
                             ? (
                               <Dropdown
                                 value={mselected2}
@@ -975,13 +975,13 @@ export const getInactiveActivatableControlElements =
                     f => pipe (
                       f,
                       (
-                        [
-                          SpecialAbilityId.handwerkskunst,
-                          SpecialAbilityId.kindDerNatur,
-                          SpecialAbilityId.koerperlichesGeschick,
-                          SpecialAbilityId.sozialeKompetenz,
-                          SpecialAbilityId.universalgenie,
-                        ].includes (IAA.id (entry))
+                        ([
+                          SpecialAbilityId.Handwerkskunst,
+                          SpecialAbilityId.KindDerNatur,
+                          SpecialAbilityId.KoerperlichesGeschick,
+                          SpecialAbilityId.SozialeKompetenz,
+                          SpecialAbilityId.Universalgenie,
+                        ] as string[]).includes (IAA.id (entry))
                           ? isNothing (mselected2) && isJust (mselected3)
                           : isNothing (mselected2)
                       )
@@ -996,13 +996,13 @@ export const getInactiveActivatableControlElements =
                     sels3 =>
                       set (IACEL.thirdSelectElement)
                           (Just (
-                            [
-                              SpecialAbilityId.handwerkskunst,
-                              SpecialAbilityId.kindDerNatur,
-                              SpecialAbilityId.koerperlichesGeschick,
-                              SpecialAbilityId.sozialeKompetenz,
-                              SpecialAbilityId.universalgenie,
-                            ].includes (IAA.id (entry))
+                            ([
+                              SpecialAbilityId.Handwerkskunst,
+                              SpecialAbilityId.KindDerNatur,
+                              SpecialAbilityId.KoerperlichesGeschick,
+                              SpecialAbilityId.SozialeKompetenz,
+                              SpecialAbilityId.Universalgenie,
+                            ] as string[]).includes (IAA.id (entry))
                             ? (
                               <Dropdown
                                 value={mselected3}
@@ -1027,13 +1027,13 @@ export const getInactiveActivatableControlElements =
                     f => pipe (
                       f,
                       (
-                        [
-                          SpecialAbilityId.handwerkskunst,
-                          SpecialAbilityId.kindDerNatur,
-                          SpecialAbilityId.koerperlichesGeschick,
-                          SpecialAbilityId.sozialeKompetenz,
-                          SpecialAbilityId.universalgenie,
-                        ].includes (IAA.id (entry))
+                        ([
+                          SpecialAbilityId.Handwerkskunst,
+                          SpecialAbilityId.KindDerNatur,
+                          SpecialAbilityId.KoerperlichesGeschick,
+                          SpecialAbilityId.SozialeKompetenz,
+                          SpecialAbilityId.Universalgenie,
+                        ] as string[]).includes (IAA.id (entry))
                           ? false
                           : isNothing (mselected3)
                       )

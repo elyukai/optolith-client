@@ -7,7 +7,7 @@ import { findWithDefault, foldrWithKey, lookup } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
 import { uncurryN } from "../../Data/Tuple/Curry"
 import { IdPrefixes } from "../Constants/IdPrefixes"
-import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids.gen"
+import { CombatTechniqueId, SpecialAbilityId } from "../Constants/Ids"
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent"
 import { createSkillDependentWithValue6, SkillDependent } from "../Models/ActiveEntries/SkillDependent"
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel"
@@ -93,11 +93,11 @@ export const getCombatTechniquesForView = createMaybeSelector (
                                              (id)
                                              (combatTechniques)
 
-                           if (id === CombatTechniqueId.spittingFire
+                           if (id === CombatTechniqueId.SpittingFire
                                && maybe (true)
                                         (pipe (ADA.active, fnull))
-                                        (lookup (SpecialAbilityId.feuerschlucker)
-                                                (special_abilities))) {
+                                        (lookup<string> (SpecialAbilityId.Feuerschlucker)
+                                                        (special_abilities))) {
                              // If SF Feuerschlucker is not active, do not
                              // show CT Spitting Fire
                              return ident as
@@ -138,7 +138,7 @@ export const getAllCombatTechniques = createMaybeSelector (
   getWiki,
   (mcombat_techniques, mhero, wiki) =>
     liftM2 ((combatTechniques: List<Record<CTWAPB>>) => (hero: HeroModelRecord) => {
-             const hunter = lookup<string> (SpecialAbilityId.hunter)
+             const hunter = lookup<string> (SpecialAbilityId.Hunter)
                                            (HeroModel.A.specialAbilities (hero))
 
              const hunterRequiresMinimum =

@@ -33,8 +33,6 @@ jobs:
         node-version: 18.x
     - name: Install Node.js dependencies
       run: npm ci
-    - name: Build ReasonML files
-      run: npm run re:build
     - name: Build TypeScript files
       run: npm run js:build
     - name: Build Sass files

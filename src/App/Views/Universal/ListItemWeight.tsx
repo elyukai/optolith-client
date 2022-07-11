@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Maybe, maybe } from "../../../Data/Maybe"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
-import { ndash } from "../../Utilities/Chars.bs"
+import { ndash } from "../../Utilities/Chars"
 import { localizeNumber, localizeWeight } from "../../Utilities/I18n"
 import { pipe } from "../../Utilities/pipe"
 
