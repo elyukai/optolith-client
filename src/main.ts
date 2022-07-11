@@ -4,7 +4,6 @@ import * as log from "electron-log"
 import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater"
 import windowStateKeeper from "electron-window-state"
 import { promises } from "fs"
-import { platform } from "os"
 import * as path from "path"
 import { prerelease } from "semver"
 import * as url from "url"
@@ -15,14 +14,7 @@ remote.initialize ()
 
 app.setAppUserModelId ("lukasobermann.optolith")
 
-const isUpdaterEnabled = (() => {
-  switch (platform ()) {
-    case "darwin":
-      return false
-    default:
-      return autoUpdater.isUpdaterActive ()
-  }
-}) ()
+const isUpdaterEnabled = autoUpdater.isUpdaterActive ()
 
 ipcMain.on (IPCChannels.IsUpdaterEnabled, event => {
   event.returnValue = isUpdaterEnabled
@@ -116,12 +108,12 @@ const createWindow = async () => {
         autoUpdater
           .checkForUpdates ()
           .then (res => {
-            if (res.cancellationToken === undefined) {
+            if (res === null || res.cancellationToken === undefined) {
               console.log ("main: No update available")
             }
             else {
-              const { cancellationToken: token } = res
-              cancellationToken = token
+              // eslint-disable-next-line prefer-destructuring
+              cancellationToken = res.cancellationToken
               console.log ("main: Update is available")
               mainWindow.webContents.send ("update-available", res.updateInfo)
             }
@@ -143,14 +135,14 @@ const createWindow = async () => {
           autoUpdater
             .checkForUpdates ()
             .then (res => {
-              const { cancellationToken: token } = res
+              const token = res?.cancellationToken
 
               if (token === undefined) {
                 mainWindow.webContents.send ("update-not-available")
               }
               else {
                 cancellationToken = token
-                mainWindow.webContents.send ("update-available", res.updateInfo)
+                mainWindow.webContents.send ("update-available", res?.updateInfo)
               }
             })
             .catch (() => {})
