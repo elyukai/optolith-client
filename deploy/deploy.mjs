@@ -1,5 +1,5 @@
 // @ts-check
-import { version } from "../package.json" assert { type: "json" }
+import packageJson from "../package.json" assert { type: "json" }
 import { getApplicationFileNames, getUpdateFileName } from "./assetNames.mjs"
 import { getLocalPath } from "./localPath.mjs"
 import { getSystem, getSystemName } from "./platform.mjs"
@@ -37,7 +37,7 @@ const localDir = getLocalPath(channel)
 const remoteDir = getRemotePath(ROOT, channel, os)
 
 const updateFileName = getUpdateFileName(os)
-const applicationFileNames = getApplicationFileNames(os, channel, version)
+const applicationFileNames = getApplicationFileNames(os, channel, packageJson.version)
 
 console.log(`Files to upload: ${[updateFileName, ...applicationFileNames] .join (", ")}.`)
 
