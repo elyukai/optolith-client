@@ -1,5 +1,5 @@
 // @ts-check
-import { version } from "../package.json"
+import { version } from "../package.json" assert { type: "json" }
 import { getApplicationFileNames, getUpdateFileName } from "./assetNames.mjs"
 import { getLocalPath } from "./localPath.mjs"
 import { getSystem, getSystemName } from "./platform.mjs"
