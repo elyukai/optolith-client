@@ -40,7 +40,13 @@ jobs:
     - name: Build
       run: node ./deploy/build.mjs stable
       env:
+        APPLEID: ${{ secrets.APPLEID }}
+        APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
+        TEAMID: ${{ secrets.TEAMID }}
+        CSC_LINK: ${{ secrets.CSC_LINK }}
+        CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
         UPDATE_URL: ${{ secrets.UPDATE_URL }}
+        CI: true
     - name: Deploy
       run: node ./deploy/deploy.mjs stable
       env:
@@ -48,7 +54,4 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PASSWORD: ${{ secrets.PASSWORD }}
         ROOT: ${{ secrets.ROOT }}
-        APPLEID: ${{ secrets.APPLEID }}
-        APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
-        TEAMID: ${{ secrets.TEAMID }}
         CI: true
