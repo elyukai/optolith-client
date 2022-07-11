@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.2-alpha.2](https://github.com/elyukai/optolith-client/compare/v1.5.2-alpha.1...v1.5.2-alpha.2) (2022-07-11)
+
+
+### Features
+
+* enable auto-update for macOS ([7c6e377](https://github.com/elyukai/optolith-client/commit/7c6e3776921fdc4f13c42ea5c6a4bf5d316856e1))
+
 ### [1.5.2-alpha.1](https://github.com/elyukai/optolith-client/compare/v1.5.1-alpha.2...v1.5.2-alpha.1) (2022-04-29)
 
 
