@@ -28,7 +28,7 @@ const extensions = os => {
   switch (os) {
     case "win":   return [".exe", ".exe.blockmap"]
     case "linux": return [".AppImage", ".tar.gz"]
-    case "mac":   return [".dmg", ".dmg.blockmap", ".zip"]
+    case "mac":   return [".dmg", ".dmg.blockmap", ".zip", ".zip.blockmap"]
   }
 }
 

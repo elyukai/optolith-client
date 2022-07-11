@@ -69,6 +69,9 @@ const config = {
     hardenedRuntime: true,
     gatekeeperAssess: false,
   },
+  dmg: {
+    sign: false
+  },
   publish: {
     "provider": "generic",
     "url": `${process.env.UPDATE_URL}/\${os}`,
