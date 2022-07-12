@@ -8,7 +8,7 @@ interface Props {
 export const SkillImprovementCost: React.FC<Props> = props => {
   const { ic } = props
 
-  if (typeof ic === "number") {
+  if (ic !== undefined) {
     return (
       <div className="ic">
         {icToStr (ic)}
