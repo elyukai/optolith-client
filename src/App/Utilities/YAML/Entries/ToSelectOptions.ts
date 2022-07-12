@@ -14,6 +14,7 @@ import { LiturgicalChant } from "../../../Models/Wiki/LiturgicalChant"
 import { Skill } from "../../../Models/Wiki/Skill"
 import { Spell } from "../../../Models/Wiki/Spell"
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption"
+import { getAPForActivatation } from "../../ImprovementCost"
 import { pipe, pipe_ } from "../../pipe"
 import { toErrata } from "./ToErrata"
 import { toPrerequisites } from "./ToPrerequisites"
@@ -63,7 +64,7 @@ const ctToSelectOption : (combatTechnique : Record<CombatTechnique>) => Record<S
                        = x => SelectOption ({
                                 id: CombatTechnique.A.id (x),
                                 name: CombatTechnique.A.name (x),
-                                cost: Just (CombatTechnique.A.ic (x)),
+                                cost: Just (getAPForActivatation (CombatTechnique.A.ic (x))),
                                 src: CombatTechnique.A.src (x),
                                 errata: CombatTechnique.A.errata (x),
                               })
@@ -93,7 +94,7 @@ const lcToSelectOption : (liturgicalChant : Record<LiturgicalChant>) => Record<S
                        = x => SelectOption ({
                                 id: LiturgicalChant.A.id (x),
                                 name: LiturgicalChant.A.name (x),
-                                cost: Just (LiturgicalChant.A.ic (x)),
+                                cost: Just (getAPForActivatation (LiturgicalChant.A.ic (x))),
                                 src: LiturgicalChant.A.src (x),
                                 errata: LiturgicalChant.A.errata (x),
                               })
@@ -123,7 +124,7 @@ const skillToSelectOption : (skill : Record<Skill>) => Record<SelectOption>
                           = x => SelectOption ({
                                    id: Skill.A.id (x),
                                    name: Skill.A.name (x),
-                                   cost: Just (Skill.A.ic (x)),
+                                   cost: Just (getAPForActivatation (Skill.A.ic (x))),
                                    applications: Just (Skill.A.applications (x)),
                                    applicationInput: Skill.A.applicationsInput (x),
                                    src: Skill.A.src (x),
@@ -155,7 +156,7 @@ const spellToSelectOption : (spell : Record<Spell>) => Record<SelectOption>
                           = x => SelectOption ({
                                    id: Spell.A.id (x),
                                    name: Spell.A.name (x),
-                                   cost: Just (Spell.A.ic (x)),
+                                   cost: Just (getAPForActivatation (Spell.A.ic (x))),
                                    src: Spell.A.src (x),
                                    errata: Spell.A.errata (x),
                                  })

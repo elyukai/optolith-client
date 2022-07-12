@@ -1,5 +1,6 @@
 import * as React from "react"
 import { orN } from "../../../Data/Maybe"
+import { ImprovementCost } from "../../Utilities/ImprovementCost"
 import { isNumber } from "../../Utilities/typeCheckUtils"
 import { IconButton } from "../Universal/IconButton"
 import { ListItemButtons } from "../Universal/ListItemButtons"
@@ -7,7 +8,7 @@ import { ListItemButtons } from "../Universal/ListItemButtons"
 interface Props {
   activateDisabled?: boolean
   addDisabled?: boolean
-  ic?: number
+  ic?: ImprovementCost
   id: string
   isNotActive?: boolean
   removeDisabled?: boolean

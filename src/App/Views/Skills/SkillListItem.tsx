@@ -5,6 +5,7 @@ import { Record } from "../../../Data/Record"
 import { AttributeCombined } from "../../Models/View/AttributeCombined"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { CheckModifier } from "../../Models/Wiki/wikiTypeHelpers"
+import { ImprovementCost } from "../../Utilities/ImprovementCost"
 import { ListItem } from "../Universal/ListItem"
 import { ListItemName } from "../Universal/ListItemName"
 import { ListItemSeparator } from "../Universal/ListItemSeparator"
@@ -28,7 +29,7 @@ interface Props {
   checkDisabled?: boolean
   checkmod?: Maybe<CheckModifier>
   group?: number
-  ic?: number
+  ic?: ImprovementCost
   id: string
   insertTopMargin?: boolean
   isNotActive?: boolean

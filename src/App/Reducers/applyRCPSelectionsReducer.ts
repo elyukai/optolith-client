@@ -41,6 +41,7 @@ import { composeL } from "../Utilities/compose"
 import { addDependencies } from "../Utilities/Dependencies/dependencyUtils"
 import { getHeroStateItem, updateEntryDef } from "../Utilities/heroStateUtils"
 import { ifElse } from "../Utilities/ifElse"
+import { getAPForActivatation } from "../Utilities/ImprovementCost"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { isString } from "../Utilities/typeCheckUtils"
 import { getWikiEntry, isActivatableWikiEntry } from "../Utilities/WikiUtils"
@@ -410,7 +411,8 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
     over (CML.skillRatingList)
          (flip (foldrWithKey ((id: string) => (value: number) =>
                                maybe (ident as ident<OrderedMap<string, number>>)
-                                     ((r: Record<Skill>) => addToSRs (value / SA.ic (r)) (id))
+                                     ((r: Record<Skill>) =>
+                                       addToSRs (value / getAPForActivatation (SA.ic (r))) (id))
                                      (lookup (id) (SDA.skills (P.wiki)))))
                              (P.skills)),
 

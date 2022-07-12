@@ -25,6 +25,7 @@ import { Skill } from "../../Models/Wiki/Skill"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers"
 import { translate, translateP } from "../../Utilities/I18n"
+import { getAPForActivatation } from "../../Utilities/ImprovementCost"
 import { getAllAdjustmentSelections } from "../../Utilities/mergeRcpAdjustmentSelections"
 import { sign } from "../../Utilities/NumberUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
@@ -193,7 +194,7 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                            staticData,
                            SDA.skills,
                            lookup (id),
-                           fmap (pipe (Skill.A.ic, add (Maybe.sum (skill))))
+                           fmap (pipe (Skill.A.ic, getAPForActivatation, add (Maybe.sum (skill))))
                          ))
                        (id))
     },
@@ -207,7 +208,12 @@ export const RCPOptionSelections: React.FC<RCPOptionSelectionsProps> = props => 
                            staticData,
                            SDA.skills,
                            lookup (id),
-                           bindF (pipe (Skill.A.ic, subtract (Maybe.sum (skill)), ensure (gt (0))))
+                           bindF (pipe (
+                             Skill.A.ic,
+                             getAPForActivatation,
+                             subtract (Maybe.sum (skill)),
+                             ensure (gt (0))
+                           ))
                          ))
                        (id))
     },

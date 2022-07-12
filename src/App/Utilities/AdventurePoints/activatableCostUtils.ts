@@ -13,7 +13,7 @@ import { fmap, fmapF } from "../../../Data/Functor"
 import { over, set } from "../../../Data/Lens"
 import { appendStr, countWith, filter, foldl, ifoldr, isList, List, map, notElem, notNull, subscript, subscriptF, sum } from "../../../Data/List"
 import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe"
-import { add, dec, gt, multiply, negate } from "../../../Data/Num"
+import { add, gt, multiply, negate } from "../../../Data/Num"
 import { lookup, lookupF } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
@@ -35,6 +35,7 @@ import { nbsp, nobr } from "../Chars"
 import { getHeroStateItem } from "../heroStateUtils"
 import { translate } from "../I18n"
 import { getCategoryById } from "../IDUtils"
+import { getAPForActivatation, icToIx } from "../ImprovementCost"
 import { toRoman } from "../NumberUtils"
 import { pipe, pipe_ } from "../pipe"
 import { isNumber, misNumberM, misStringM } from "../typeCheckUtils"
@@ -68,7 +69,7 @@ const getCostForEntryWithSkillSel =
 
                         // Use the IC as an index for the list
                         // of AP
-                        bindF (subscriptF (Skill.AL.ic (skill) - 1))
+                        bindF (subscriptF (icToIx (Skill.AL.ic (skill))))
                       ))
     )
 
@@ -269,7 +270,7 @@ const getEntrySpecificCost =
                                 (all_active) + (isEntryToAdd ? 1 : 0))
 
                       // ...with the skill's IC
-                      * Skill.AL.ic (skill))
+                      * getAPForActivatation (Skill.AL.ic (skill)))
           )
         )
       }
@@ -341,7 +342,7 @@ const getEntrySpecificCost =
             ActiveObject.AL.sid,
             misStringM,
             bindF (lookupF (StaticData.A.skills (wiki))),
-            bindF (pipe (Skill.A.ic, dec, subscript (current_cost)))
+            bindF (pipe (Skill.A.ic, icToIx, subscript (current_cost)))
           )
 
         return liftM2 (add)

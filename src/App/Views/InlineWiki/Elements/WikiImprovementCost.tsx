@@ -1,11 +1,11 @@
 import * as React from "react"
 import { Record, RecordIBase } from "../../../../Data/Record"
 import { StaticDataRecord } from "../../../Models/Wiki/WikiModel"
-import { icToStr } from "../../../Utilities/ImprovementCost"
+import { icToStr, ImprovementCost } from "../../../Utilities/ImprovementCost"
 import { WikiProperty } from "../WikiProperty"
 
 interface Accessors<A extends RecordIBase<any>> {
-  ic: (r: Record<A>) => number
+  ic: (r: Record<A>) => ImprovementCost
 }
 
 export interface WikiImprovementCostProps<A extends RecordIBase<any>> {

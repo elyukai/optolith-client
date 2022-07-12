@@ -2,6 +2,7 @@ import { List } from "../../../Data/List"
 import { Maybe, Nothing } from "../../../Data/Maybe"
 import { fromDefault, Record } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
+import { ImprovementCost } from "../../Utilities/ImprovementCost"
 import { Erratum } from "./sub/Errata"
 import { SourceLink } from "./sub/SourceLink"
 import { EntryWithCategory } from "./wikiTypeHelpers"
@@ -12,7 +13,7 @@ export interface CombatTechnique {
   name: string
   category: Category
   gr: number
-  ic: number
+  ic: ImprovementCost
   bpr: number
   primary: List<string>
   special: Maybe<string>
@@ -29,7 +30,7 @@ export const CombatTechnique =
                 name: "",
                 category: Category.COMBAT_TECHNIQUES,
                 gr: 0,
-                ic: 0,
+                ic: ImprovementCost.B,
                 bpr: 0,
                 primary: List.empty,
                 special: Nothing,

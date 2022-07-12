@@ -44,6 +44,7 @@ import { filterUnfamiliar } from "../Dependencies/TransferredUnfamiliarUtils"
 import { countActiveGroupEntries } from "../entryGroupUtils"
 import { getAllEntriesByGroup } from "../heroStateUtils"
 import { prefixSA } from "../IDUtils"
+import { getAPForActivatation } from "../ImprovementCost"
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils"
 import { isUnfamiliarSpell } from "../Increasable/spellUtils"
 import { ensure as newensure, toNewMaybe } from "../Maybe"
@@ -795,7 +796,7 @@ const modifyOtherOptions =
           bindF (skill => pipe (
                                  bindF<number | List<number>, List<number>> (ensure (isList)),
                                  fmap (pipe (
-                                        map (add (SA.ic (skill))),
+                                        map (add (getAPForActivatation (SA.ic (skill)))),
                                         Just,
                                         set (IAL.cost)
                                       ))

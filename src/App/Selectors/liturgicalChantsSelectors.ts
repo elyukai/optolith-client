@@ -28,7 +28,7 @@ import { getBlessedTradition, mapBlessedTradIdToNumId } from "../Utilities/Activ
 import { composeL } from "../Utilities/compose"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
-import { ImprovementCost } from "../Utilities/ImprovementCost"
+import { getAPForActivatation, ImprovementCost } from "../Utilities/ImprovementCost"
 import { getAspectsOfTradition, isLCDecreasable, isLCIncreasable, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { filterByAvailability } from "../Utilities/RulesUtils"
@@ -313,7 +313,12 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
                                        (LCWRA.wikiEntry (active)))
                      (actives)
 
-            const inactive_with_valid_IC = filter (pipe (LCWRA.wikiEntry, LCA.ic, lte (2)))
+            const inactive_with_valid_IC = filter (pipe (
+                                                    LCWRA.wikiEntry,
+                                                    LCA.ic,
+                                                    getAPForActivatation,
+                                                    lte (2)
+                                                  ))
                                                   (inactives)
 
             if (notNull (unfamiliar_chants)) {

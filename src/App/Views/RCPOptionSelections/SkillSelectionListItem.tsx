@@ -5,7 +5,7 @@ import { lookup, OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { Skill } from "../../Models/Wiki/Skill"
 import { minus } from "../../Utilities/Chars"
-import { getAPForInc } from "../../Utilities/ImprovementCost"
+import { getAPForActivatation, getAPForInc } from "../../Utilities/ImprovementCost"
 import { BorderButton } from "../Universal/BorderButton"
 
 const SA = Skill.A
@@ -27,7 +27,7 @@ export const SkillSelectionListItem: React.FC<Props> = props => {
 
   const msr = lookup (id) (active)
 
-  const value = maybe (0) (divideBy (ic)) (msr)
+  const value = maybe (0) (divideBy (getAPForActivatation (ic))) (msr)
 
   const nextCosts = getAPForInc (ic, value)
 
@@ -44,7 +44,7 @@ export const SkillSelectionListItem: React.FC<Props> = props => {
   return (
     <li key={id}>
       <div className="skillname">{name}</div>
-      <span>{maybe (0) (divideBy (ic)) (msr)}</span>
+      <span>{value}</span>
       <BorderButton
         label="+"
         disabled={ap_left < nextCosts}

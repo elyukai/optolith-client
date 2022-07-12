@@ -20,6 +20,7 @@ import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers"
 import { getSelectOptionCost } from "../Activatable/selectionUtils"
 import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils"
+import { getAPForActivatation } from "../ImprovementCost"
 import { pipe, pipe_ } from "../pipe"
 import { misNumberM, misStringM } from "../typeCheckUtils"
 import { compareMaxLevel, compareSubMaxLevel, getActiveWithNoCustomCost } from "./activatableCostUtils"
@@ -370,7 +371,8 @@ const getSkillSpecializationsDiff =
             (sid: string) =>
             (counter: number) =>
             (skill: Record<Skill>) =>
-              Skill.A.ic (skill) * (getFlatSkillDone (sid) (accMap) + 1 - counter)
+              getAPForActivatation (Skill.A.ic (skill))
+              * (getFlatSkillDone (sid) (accMap) + 1 - counter)
 
           type TrackingPair = Pair<number, OrderedMap<string, number>>
 

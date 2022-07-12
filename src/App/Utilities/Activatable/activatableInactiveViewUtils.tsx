@@ -6,7 +6,7 @@ import { fmap, fmapF } from "../../../Data/Functor"
 import { over, set } from "../../../Data/Lens"
 import { cons, countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, notNull, subscriptF, sum, take } from "../../../Data/List"
 import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, maybeToUndefined, Nothing, or, then, thenF } from "../../../Data/Maybe"
-import { dec, gt, gte, max, min, multiply, negate } from "../../../Data/Num"
+import { gt, gte, max, min, multiply, negate } from "../../../Data/Num"
 import { lookupF } from "../../../Data/OrderedMap"
 import { fromDefault, makeLenses, Record } from "../../../Data/Record"
 import { bimap, first, Pair, second, snd } from "../../../Data/Tuple"
@@ -30,6 +30,7 @@ import { TextField } from "../../Views/Universal/TextField"
 import { getActiveWithNoCustomCost } from "../AdventurePoints/activatableCostUtils"
 import { mdash } from "../Chars"
 import { translate } from "../I18n"
+import { icToIx } from "../ImprovementCost"
 import { getLevelElementsWithMin } from "../levelUtils"
 import { toInt } from "../NumberUtils"
 import { pipe, pipe_ } from "../pipe"
@@ -140,7 +141,7 @@ const getCostForEntryWithSkillSel =
       bindF (ensure (isSkillishWikiEntry)),
       bindF (pipe (
         SkAL.ic,
-        dec,
+        icToIx,
         i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
       ))
     )

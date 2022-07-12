@@ -34,6 +34,7 @@ import { SourceLink } from "../Models/Wiki/sub/SourceLink"
 import { StaticData, StaticDataRecord } from "../Models/Wiki/WikiModel"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { compareLocale, translate } from "../Utilities/I18n"
+import { icToIx } from "../Utilities/ImprovementCost"
 import { pipe } from "../Utilities/pipe"
 import { comparingR, SortOptions } from "../Utilities/sortBy"
 import { isNumber, isString } from "../Utilities/typeCheckUtils"
@@ -198,7 +199,7 @@ export const getSkillsCombinedSortOptions = createMaybeSelector (
   (staticData, sortOrder): SortOptions<Record<SkillWithRequirements>> => {
     if (sortOrder === "ic") {
       return [
-        comparingR (pipe (SkillWithRequirements.A.wikiEntry, Skill.A.ic))
+        comparingR (pipe (SkillWithRequirements.A.wikiEntry, Skill.A.ic, icToIx))
                    (compare),
         comparingR (pipe (SkillWithRequirements.A.wikiEntry, Skill.A.name))
                    (compareLocale (staticData)),
@@ -226,7 +227,7 @@ export const getCombatTechniquesSortOptions = createMaybeSelector (
   (staticData, sortOrder): SortOptions<Record<CombatTechnique>> => {
     if (sortOrder === "ic") {
       return [
-        comparingR (CombatTechnique.A.ic) (compare),
+        comparingR (pipe (CombatTechnique.A.ic, icToIx)) (compare),
         compareName (staticData),
       ]
     }
@@ -247,7 +248,11 @@ export const getCombatTechniquesWithRequirementsSortOptions = createMaybeSelecto
   (staticData, sortOrder) => {
     if (sortOrder === "ic") {
       return [
-        comparingR (pipe (CombatTechniqueWithRequirements.A.wikiEntry, CombatTechnique.A.ic))
+        comparingR (pipe (
+                     CombatTechniqueWithRequirements.A.wikiEntry,
+                     CombatTechnique.A.ic,
+                     icToIx
+                   ))
                    (compare),
         comparingR (pipe (CombatTechniqueWithRequirements.A.wikiEntry, CombatTechnique.A.name))
                    (compareLocale (staticData)),
@@ -318,7 +323,7 @@ export const getSpellsSortOptions = createMaybeSelector (
     }
     else if (sortOrder === "ic") {
       return [
-        comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.ic))
+        comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.ic, icToIx))
                    (compare),
         comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.name))
                    (compareLocale (staticData)),
@@ -381,7 +386,7 @@ export const getSpellsCombinedSortOptions = createMaybeSelector (
         comparingR (pipe (
                      getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      ensure (isSpell) as ensureSpell,
-                     maybe (0) (Spell.A.ic)
+                     maybe (0) (pipe (Spell.A.ic, icToIx))
                    ))
                    (compare),
         comparingR (pipe (
@@ -436,7 +441,11 @@ export const getLiturgicalChantsSortOptions = createMaybeSelector (
   (staticData, sortOrder): SortOptions<Record<LiturgicalChantWithRequirements>> => {
     if (sortOrder === "ic") {
       return [
-        comparingR (pipe (LiturgicalChantWithRequirements.A.wikiEntry, LiturgicalChant.A.ic))
+        comparingR (pipe (
+                     LiturgicalChantWithRequirements.A.wikiEntry,
+                     LiturgicalChant.A.ic,
+                     icToIx
+                   ))
                    (compare),
         comparingR (pipe (LiturgicalChantWithRequirements.A.wikiEntry, LiturgicalChant.A.name))
                    (compareLocale (staticData)),
@@ -479,7 +488,7 @@ export const getLiturgicalChantsCombinedSortOptions = createMaybeSelector (
         comparingR (pipe (
                      getChantOrBlessingFromCombined as getChantOrBlessingFromCombined,
                      ensure (isLiturgicalChant) as ensureChant,
-                     maybe (0) (LiturgicalChant.A.ic)
+                     maybe (0) (pipe (LiturgicalChant.A.ic, icToIx))
                    ))
                    (compare),
         comparingR (pipe (
