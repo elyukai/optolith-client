@@ -14,7 +14,6 @@ import { SelectOption } from "../../Models/Wiki/sub/SelectOption"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable, AllRequirementObjects, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
 import { findSelectOption } from "../Activatable/selectionUtils"
-import { prefixSA } from "../IDUtils"
 import { getMagicalTraditionsWithRituals } from "../magicalTraditionUtils"
 import { pipe, pipe_ } from "../pipe"
 import { misStringM } from "../typeCheckUtils"
@@ -158,8 +157,8 @@ export const getGeneratedPrerequisites =
                             })))
         )
 
-      case prefixSA (SpecialAbilityId.SpellEnhancement):
-      case prefixSA (SpecialAbilityId.ChantEnhancement):
+      case SpecialAbilityId.SpellEnhancement:
+      case SpecialAbilityId.ChantEnhancement:
         return addToSelectOptionReqs (bindF ((option: Record<SelectOption>) =>
                                               liftM2 ((target: string) => (level: number) =>
                                                        List (

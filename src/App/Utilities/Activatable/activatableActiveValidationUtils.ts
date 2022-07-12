@@ -41,7 +41,6 @@ import { Activatable, EntryWithCategory, LevelAwarePrerequisites, PrerequisitesW
 import { MatchingScriptAndLanguageRelated } from "../../Selectors/activatableSelectors"
 import { countActiveGroupEntries } from "../entryGroupUtils"
 import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils"
-import { prefixSA } from "../IDUtils"
 import { isOwnTradition } from "../Increasable/liturgicalChantUtils"
 import { ensure as newEnsure, toNewMaybe } from "../Maybe"
 import { pipe, pipe_ } from "../pipe"
@@ -294,7 +293,7 @@ const isRemovalDisabledEntrySpecific =
 
       // entries transferring unfamiliar special abilities (start)
 
-      case prefixSA (SpecialAbilityId.TraditionGuildMages):
+      case SpecialAbilityId.TraditionGuildMages:
       case SpecialAbilityId.MadaschwesternStil:
       case SpecialAbilityId.ScholarDesMagierkollegsZuHoningen:
       case SpecialAbilityId.Zaubervariabilitaet:
@@ -303,13 +302,13 @@ const isRemovalDisabledEntrySpecific =
         const m_static_spell_enhancements = pipe_ (
           wiki,
           SDA.specialAbilities,
-          lookup (prefixSA (SpecialAbilityId.SpellEnhancement))
+          lookup<string> (SpecialAbilityId.SpellEnhancement)
         )
 
         const active_spell_enhancements = pipe_ (
           hero,
           HA.specialAbilities,
-          lookup (prefixSA (SpecialAbilityId.SpellEnhancement)),
+          lookup<string> (SpecialAbilityId.SpellEnhancement),
           liftM2 ((static_spell_enhancements: Record<SpecialAbility>) =>
                     pipe (
                       ADA.active,

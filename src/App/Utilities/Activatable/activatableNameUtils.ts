@@ -30,7 +30,6 @@ import { Activatable, ActivatableSkillEntry, EntryWithCategory, SID, SkillishEnt
 import { mdash } from "../Chars"
 import { composeL } from "../compose"
 import { formatList, translate } from "../I18n"
-import { prefixSA } from "../IDUtils"
 import { ifElse } from "../ifElse"
 import { toRoman } from "../NumberUtils"
 import { pipe, pipe_ } from "../pipe"
@@ -185,8 +184,8 @@ const getEntrySpecificNameAddition =
           fmap (SOA.name)
         )
 
-      case prefixSA (SpecialAbilityId.SpellEnhancement):
-      case prefixSA (SpecialAbilityId.ChantEnhancement):
+      case SpecialAbilityId.SpellEnhancement:
+      case SpecialAbilityId.ChantEnhancement:
         return pipe (
                       AOWIA.sid,
                       findSelectOption (wiki_entry),
@@ -194,7 +193,7 @@ const getEntrySpecificNameAddition =
                                            bindF ((target_id: string) => {
                                              const acc =
                                                AOWIA.id (hero_entry)
-                                               === prefixSA (SpecialAbilityId.SpellEnhancement)
+                                               === SpecialAbilityId.SpellEnhancement
                                                  ? SDA.spells
                                                  : SDA.liturgicalChants
 

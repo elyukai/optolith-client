@@ -43,7 +43,6 @@ import { composeT } from "../compose"
 import { filterUnfamiliar } from "../Dependencies/TransferredUnfamiliarUtils"
 import { countActiveGroupEntries } from "../entryGroupUtils"
 import { getAllEntriesByGroup } from "../heroStateUtils"
-import { prefixSA } from "../IDUtils"
 import { getAPForActivatation } from "../ImprovementCost"
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils"
 import { isUnfamiliarSpell } from "../Increasable/spellUtils"
@@ -400,7 +399,7 @@ const modifySelectOptions =
         )))
       }
 
-      case prefixSA (SpecialAbilityId.TraditionGuildMages): {
+      case SpecialAbilityId.TraditionGuildMages: {
         return fmap (filterUnfamiliar (pipe (
                                         SpA.tradition,
                                         trads => notElem (MagicalTradition.General) (trads)
@@ -487,15 +486,15 @@ const modifySelectOptions =
                                     )))
       }
 
-      case prefixSA (SpecialAbilityId.SpellEnhancement):
-      case prefixSA (SpecialAbilityId.ChantEnhancement): {
-        const getTargetHeroEntry = current_id === prefixSA (SpecialAbilityId.SpellEnhancement)
+      case SpecialAbilityId.SpellEnhancement:
+      case SpecialAbilityId.ChantEnhancement: {
+        const getTargetHeroEntry = current_id === SpecialAbilityId.SpellEnhancement
           ? bindF (lookupF (HA.spells (hero)))
           : bindF (lookupF (HA.liturgicalChants (hero)))
 
         const getTargetWikiEntry:
           ((x: Maybe<string>) => Maybe<Record<Spell> | Record<LiturgicalChant>>) =
-          current_id === prefixSA (SpecialAbilityId.SpellEnhancement)
+          current_id === SpecialAbilityId.SpellEnhancement
             ? bindF (lookupF (SDA.spells (staticData)))
             : bindF (lookupF (SDA.liturgicalChants (staticData)))
 
@@ -615,7 +614,7 @@ const modifySelectOptions =
 
         const mtransferred_spell_trads = pipe_ (
                                            HA.specialAbilities (hero),
-                                           lookup (prefixSA (SpecialAbilityId.TraditionGuildMages)),
+                                           lookup<string> (SpecialAbilityId.TraditionGuildMages),
                                            bindF (pipe (ADA.active, listToMaybe)),
                                            bindF (pipe (AOA.sid, isStringM)),
                                            bindF (lookupF (SDA.spells (staticData))),
@@ -723,7 +722,7 @@ const modifyOtherOptions =
         )
       }
 
-      case prefixSA (SpecialAbilityId.TraditionGuildMages):
+      case SpecialAbilityId.TraditionGuildMages:
       case SpecialAbilityId.TraditionWitches:
       case SpecialAbilityId.TraditionElves:
       case SpecialAbilityId.TraditionDruids:

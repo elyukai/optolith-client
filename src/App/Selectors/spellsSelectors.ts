@@ -27,7 +27,6 @@ import { getMagicalTraditionsHeroEntries } from "../Utilities/Activatable/tradit
 import { composeL } from "../Utilities/compose"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
-import { prefixSA } from "../Utilities/IDUtils"
 import { getInactiveSpellsForAnimist, getInactiveSpellsForArcaneBardOrDancer, getInactiveSpellsForIntuitiveMages, getInactiveSpellsForOtherTradition, getInactiveSpellsForSchelme, isIdInSpecialAbilityList, isSpellDecreasable, isSpellIncreasable, isSpellsRitualsCountMaxReached, isUnfamiliarSpell } from "../Utilities/Increasable/spellUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { validatePrerequisites } from "../Utilities/Prerequisites/validatePrerequisitesUtils"
@@ -419,7 +418,7 @@ export const getAllSpellsForManualGuildMageSelect = createMaybeSelector (
   getRuleBooksEnabled,
   getWikiSpecialAbilities,
   uncurryN3 (staticData => av => pipe (
-                             lookup (prefixSA (SpecialAbilityId.TraditionGuildMages)),
+                             lookup<string> (SpecialAbilityId.TraditionGuildMages),
                              bindF (SAA.select),
                              fmap (pipe (
                                filterByAvailability (SOA.src) (av),
