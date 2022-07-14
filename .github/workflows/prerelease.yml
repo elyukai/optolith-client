@@ -3,7 +3,7 @@ name: Prerelease Builds
 on:
   push:
     tags:
-    - v[0-9]+.[0-9]+.[0-9]+-[a-z]+.[0-9]+
+      - v[0-9]+.[0-9]+.[0-9]+-[a-z]+.[0-9]+
 
 jobs:
   build:
@@ -12,55 +12,55 @@ jobs:
     strategy:
       matrix:
         os:
-        - ubuntu-latest
-        - windows-latest
-        - macOS-latest
+          - ubuntu-latest
+          - windows-latest
+          - macOS-latest
         include:
-        - os: ubuntu-latest
-          osName: Linux
-        - os: windows-latest
-          osName: Windows
-        - os: macOS-latest
-          osName: macOS
+          - os: ubuntu-latest
+            osName: Linux
+          - os: windows-latest
+            osName: Windows
+          - os: macOS-latest
+            osName: macOS
     steps:
-    - uses: actions/checkout@v2
-      with:
-        token: ${{ secrets.ACCESS_TOKEN }}
-        submodules: true
-    - name: Use Node.js 18.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 18.x
-    - name: Install Node.js dependencies
-      run: npm ci
-    - name: Compile JavaScript files
-      run: npm run js:build
-    - name: Compile Sass files
-      run: npm run css:build
-    - name: Build macOS application
-      if: runner.os == 'macOS'
-      run: node ./deploy/build.mjs prerelease
-      env:
-        APPLEID: ${{ secrets.APPLEID }}
-        APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
-        TEAMID: ${{ secrets.TEAMID }}
-        CSC_LINK: ${{ secrets.CSC_LINK }}
-        CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-        UPDATE_URL: ${{ secrets.UPDATE_URL }}
-    - name: Build Linux application
-      if: runner.os == 'Linux'
-      run: node ./deploy/build.mjs prerelease
-      env:
-        UPDATE_URL: ${{ secrets.UPDATE_URL }}
-    - name: Build Windows application
-      if: runner.os == 'Windows'
-      run: node ./deploy/build.mjs prerelease
-      env:
-        UPDATE_URL: ${{ secrets.UPDATE_URL }}
-    - name: Deploy
-      run: node ./deploy/deploy.mjs prerelease
-      env:
-        HOST: ${{ secrets.HOST }}
-        USERNAME: ${{ secrets.USERNAME }}
-        PASSWORD: ${{ secrets.PASSWORD }}
-        ROOT: ${{ secrets.ROOT }}
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          submodules: true
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.x
+      - name: Install Node.js dependencies
+        run: npm ci
+      - name: Compile JavaScript files
+        run: npm run js:build
+      - name: Compile Sass files
+        run: npm run css:build
+      - name: Build macOS application
+        if: runner.os == 'macOS'
+        run: node ./deploy/build.mjs prerelease
+        env:
+          APPLEID: ${{ secrets.APPLEID }}
+          APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
+          TEAMID: ${{ secrets.TEAMID }}
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          UPDATE_URL: ${{ secrets.UPDATE_URL }}
+      - name: Build Linux application
+        if: runner.os == 'Linux'
+        run: node ./deploy/build.mjs prerelease
+        env:
+          UPDATE_URL: ${{ secrets.UPDATE_URL }}
+      - name: Build Windows application
+        if: runner.os == 'Windows'
+        run: node ./deploy/build.mjs prerelease
+        env:
+          UPDATE_URL: ${{ secrets.UPDATE_URL }}
+      - name: Deploy
+        run: node ./deploy/deploy.mjs prerelease
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          ROOT: ${{ secrets.ROOT }}
