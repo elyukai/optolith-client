@@ -33,11 +33,12 @@ jobs:
         node-version: 18.x
     - name: Install Node.js dependencies
       run: npm ci
-    - name: Build TypeScript files
+    - name: Compile JavaScript files
       run: npm run js:build
-    - name: Build Sass files
+    - name: Compile Sass files
       run: npm run css:build
-    - name: Build
+    - name: Build macOS application
+      if: runner.os == 'macOS'
       run: node ./deploy/build.mjs prerelease
       env:
         APPLEID: ${{ secrets.APPLEID }}
@@ -46,7 +47,16 @@ jobs:
         CSC_LINK: ${{ secrets.CSC_LINK }}
         CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
         UPDATE_URL: ${{ secrets.UPDATE_URL }}
-        CI: true
+    - name: Build Linux application
+      if: runner.os == 'Linux'
+      run: node ./deploy/build.mjs prerelease
+      env:
+        UPDATE_URL: ${{ secrets.UPDATE_URL }}
+    - name: Build Windows application
+      if: runner.os == 'Windows'
+      run: node ./deploy/build.mjs prerelease
+      env:
+        UPDATE_URL: ${{ secrets.UPDATE_URL }}
     - name: Deploy
       run: node ./deploy/deploy.mjs prerelease
       env:
@@ -54,4 +64,3 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PASSWORD: ${{ secrets.PASSWORD }}
         ROOT: ${{ secrets.ROOT }}
-        CI: true
