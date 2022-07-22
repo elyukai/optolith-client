@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.2-alpha.4](https://github.com/elyukai/optolith-client/compare/v1.5.2-alpha.3...v1.5.2-alpha.4) (2022-07-22)
+
+
+### Bug Fixes
+
+* improvement cost handling for some traditions ([c52fc26](https://github.com/elyukai/optolith-client/commit/c52fc26a1b1d6cccc1cfec758da8886be966233b))
+* show improvement cost in tabular list ([c162931](https://github.com/elyukai/optolith-client/commit/c162931e74bce5f4fd1e42de6ebc92c71d15e81a))
+
 ### [1.5.2-alpha.3](https://github.com/elyukai/optolith-client/compare/v1.5.2-alpha.2...v1.5.2-alpha.3) (2022-07-12)
 
 ### [1.5.2-alpha.2](https://github.com/elyukai/optolith-client/compare/v1.5.2-alpha.1...v1.5.2-alpha.2) (2022-07-11)
