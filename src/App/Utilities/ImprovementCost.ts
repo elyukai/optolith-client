@@ -98,22 +98,47 @@ export const icToIx = (ic: ImprovementCost): number => {
 
 export const strToIcUnsafe = (x: string): ImprovementCost => {
   switch (x) {
-    case "A": return { tag: "A" }
-    case "B": return { tag: "B" }
-    case "C": return { tag: "C" }
-    case "D": return { tag: "D" }
-    case "E": return { tag: "E" }
+    case "A": return ImprovementCost.A
+    case "B": return ImprovementCost.B
+    case "C": return ImprovementCost.C
+    case "D": return ImprovementCost.D
+    case "E": return ImprovementCost.E
     default: throw new TypeError (`strToIc: ${x} is not an Improvement Cost`)
   }
 }
 
 export const strToIc = (x: "A" | "B" | "C" | "D" | "E"): ImprovementCost => {
   switch (x) {
-    case "A": return { tag: "A" }
-    case "B": return { tag: "B" }
-    case "C": return { tag: "C" }
-    case "D": return { tag: "D" }
-    case "E": return { tag: "E" }
+    case "A": return ImprovementCost.A
+    case "B": return ImprovementCost.B
+    case "C": return ImprovementCost.C
+    case "D": return ImprovementCost.D
+    case "E": return ImprovementCost.E
     default: return assertUnreachable (x)
   }
 }
+
+/**
+ * Negative value means `x1 < x2` and positive value means `x1 > x2`. Comparing
+ * the result with `0` mirrors the sign:
+ *
+ * - `x1 < x2` ≈ `compare(x1, x2) < 0`
+ * - `x1 >= x2` ≈ `compare(x1, x2) >= 0`
+ * - `x1 === x2` ≈ `compare(x1, x2) === 0`
+ */
+export const compare = (x1: ImprovementCost, x2: ImprovementCost): number => {
+  const toInt = (x: ImprovementCost): number => {
+    switch (x.tag) {
+      case "A": return 1
+      case "B": return 2
+      case "C": return 3
+      case "D": return 4
+      case "E": return 5
+      default: return assertUnreachable (x)
+    }
+  }
+
+  return toInt (x1) - toInt (x2)
+}
+
+export const equals = (x1: ImprovementCost, x2: ImprovementCost): boolean => x1.tag === x2.tag

@@ -37,7 +37,7 @@ import { mapMagicalTradIdToNumId } from "../Activatable/traditionUtils"
 import { flattenDependencies } from "../Dependencies/flattenDependencies"
 import { getExperienceLevelAtStart } from "../ELUtils"
 import { ifElse } from "../ifElse"
-import { ImprovementCost } from "../ImprovementCost"
+import { compare, ImprovementCost } from "../ImprovementCost"
 import { pipe, pipe_ } from "../pipe"
 import { areSpellPrereqisitesMet } from "../Prerequisites/validatePrerequisitesUtils"
 import { isNumber, misNumberM } from "../typeCheckUtils"
@@ -464,7 +464,7 @@ const isAnySpellActiveWithImpCostC =
           ASDA.id,
           lookupF (wiki_spells),
           maybe (false)
-                (pipe (SA.ic, equals (ImprovementCost.C)))
+                (s => compare (SA.ic (s), ImprovementCost.C) === 0)
         )
     )
 
@@ -495,11 +495,11 @@ const isInactiveValidForIntuitiveMage =
     && Maybe.all (notP (ASDA.active)) (mhero_entry)
 
     // No spells with IC D
-    && SA.ic (wiki_entry) < ImprovementCost.D
+    && compare (SA.ic (wiki_entry), ImprovementCost.D) < 0
 
     // Only one spell with IC C
     && !(
-      SA.ic (wiki_entry) === ImprovementCost.C
+      compare (SA.ic (wiki_entry), ImprovementCost.C) === 0
       && isAnySpellActiveWithImpCostC (SDA.spells (wiki)) (HA.spells (hero))
     )
 
@@ -518,7 +518,7 @@ const isInactiveValidForSchelme =
       && Maybe.all (notP (ASDA.active)) (mhero_entry)
 
       // No spells with IC D or C
-      && SA.ic (wiki_entry) < ImprovementCost.C
+      && compare (SA.ic (wiki_entry), ImprovementCost.C) < 0
 
       // No property Demonic
       && SA.property (wiki_entry) !== Property.Demonic

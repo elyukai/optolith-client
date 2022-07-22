@@ -28,7 +28,7 @@ import { getBlessedTradition, mapBlessedTradIdToNumId } from "../Utilities/Activ
 import { composeL } from "../Utilities/compose"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy"
-import { getAPForActivatation, ImprovementCost } from "../Utilities/ImprovementCost"
+import { compare, getAPForActivatation, ImprovementCost } from "../Utilities/ImprovementCost"
 import { getAspectsOfTradition, isLCDecreasable, isLCIncreasable, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { filterByAvailability } from "../Utilities/RulesUtils"
@@ -230,7 +230,7 @@ const additionalInactiveListFilter = (
                         notElem (1) (LCA.tradition (wiki_entry))
                         && fullCheck (chant)
 
-                      const isICValid = LCA.ic (wiki_entry) <= ImprovementCost.C
+                      const isICValid = compare (LCA.ic (wiki_entry), ImprovementCost.C) <= 0
 
                       return mapReplace (LCA.id (wiki_entry))
                                         (guard (isTraditionValid && isICValid))
