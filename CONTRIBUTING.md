@@ -69,7 +69,7 @@ Compile the source code. `js:` is for TypeScript/Webpack, `re:` for Reason/OCaml
 You have to run the Reason build first as it generates TypeScript files...
 
 ```sh
-npm run re:build
+npm run ts:build
 npm run css:build
 npm run js:build
 ```
