@@ -1,5 +1,4 @@
 {
-  "$schema": "https://bucklescript.github.io/bucklescript/docson/build-schema.json",
   "name": "optolith-client",
   "version": "0.1.0",
   "sources": [
@@ -18,6 +17,7 @@
     { "dir": "src/App/Utilities/YAML" },
     { "dir": "src/App/Views" },
     { "dir": "src/App/Views/Universal" },
+    { "dir": "src/Cloud" },
     { "dir": "src/Control" },
     { "dir": "src/Data" },
     { "dir": "src/Data/__tests__", "type": "dev" },
@@ -45,10 +45,13 @@
   "bs-dependencies": [
     "@glennsl/bs-json",
     "@glennsl/bs-jest",
+    "bs-fetch",
     "bs-webapi",
+    "decco",
     "reason-react",
     "reductive"
   ],
+  "ppx-flags": [ "decco/ppx" ],
   "reason": {
     "react-jsx": 3
   },
@@ -56,6 +59,5 @@
     "number": "+A-42-48",
     "error": "+A-3-4-27-32-41-44-102"
   },
-  "namespace": true,
-  "refmt": 3
+  "namespace": true
 }

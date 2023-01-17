@@ -1134,9 +1134,9 @@ module SpecialAbility = struct
   module CombatStyleSpecialAbility = struct
     type t = GaretherGossenStil | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function 40 -> GaretherGossenStil | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function GaretherGossenStil -> 40 | Other x -> x
   end
 
   module AdvancedCombatSpecialAbility = struct
@@ -1163,9 +1163,19 @@ module SpecialAbility = struct
       | ScholarDesMagierkollegsZuHoningen
       | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 37 -> ScholarDerHalleDesLebensZuNorburg
+      | 42 -> ScholarDesKreisesDerEinfuehlung
+      | 55 -> MadaschwesternStil
+      | 24 -> ScholarDesMagierkollegsZuHoningen
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | ScholarDerHalleDesLebensZuNorburg -> 37
+      | ScholarDesKreisesDerEinfuehlung -> 42
+      | MadaschwesternStil -> 55
+      | ScholarDesMagierkollegsZuHoningen -> 24
+      | Other x -> x
   end
 
   module AdvancedMagicalSpecialAbility = struct
@@ -1302,9 +1312,17 @@ module SpecialAbility = struct
       | FollowersOfTheGoldenOne
       | Other of int
 
-    let fromInt = function x -> Other x
+    let fromInt = function
+      | 38 -> BirdsOfPassage
+      | 40 -> HuntressesOfTheWhiteMaiden
+      | 47 -> FollowersOfTheGoldenOne
+      | x -> Other x
 
-    let toInt = function Other x -> x
+    let toInt = function
+      | BirdsOfPassage -> 38
+      | HuntressesOfTheWhiteMaiden -> 40
+      | FollowersOfTheGoldenOne -> 47
+      | Other x -> x
   end
 
   module AdvancedKarmaSpecialAbility = struct

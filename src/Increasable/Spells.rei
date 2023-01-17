@@ -6,8 +6,12 @@ let getMax:
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
-    ~exceptionalSkill: option(Activatable_Dynamic.t),
-    ~propertyKnowledge: option(Activatable_Dynamic.t),
+    ~exceptionalSkill: option(Activatable_Dynamic.t(Advantage.Static.t)),
+    ~propertyKnowledge: option(
+                          Activatable_Dynamic.t(
+                            MagicalSpecialAbility.Static.t,
+                          ),
+                        ),
     ~staticEntry: Spell.Static.t
   ) =>
   int;
@@ -20,10 +24,10 @@ let isIncreasable:
     ~startEl: ExperienceLevel.t,
     ~phase: Id.Phase.t,
     ~heroAttrs: Ley_IntMap.t(Attribute.Dynamic.t),
-    ~exceptionalSkill: option(Activatable_Dynamic.t),
-    ~propertyKnowledge: option(Activatable_Dynamic.t),
+    ~exceptionalSkill: option(Advantage.Static.t),
+    ~propertyKnowledge: option(MagicalSpecialAbility.Static.t),
     ~staticEntry: Spell.Static.t,
-    ~heroEntry: ActivatableSkill.Dynamic.t
+    ~heroEntry: ActivatableSkill.Dynamic.t('a)
   ) =>
   bool;
 
@@ -35,11 +39,11 @@ let isIncreasable:
  */
 let getMin:
   (
-    ~propertyKnowledge: Activatable_Dynamic.t,
+    ~propertyKnowledge: Activatable_Dynamic.t(MagicalSpecialAbility.Static.t),
     ~staticSpells: Ley_IntMap.t(Spell.Static.t),
-    ~heroSpells: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
+    ~heroSpells: Ley_IntMap.t(ActivatableSkill.Dynamic.t('a)),
     ~staticEntry: Spell.Static.t,
-    ~heroEntry: ActivatableSkill.Dynamic.t
+    ~heroEntry: ActivatableSkill.Dynamic.t('a)
   ) =>
   option(int);
 
@@ -48,11 +52,11 @@ let getMin:
  */
 let isDecreasable:
   (
-    ~propertyKnowledge: Activatable_Dynamic.t,
+    ~propertyKnowledge: Activatable_Dynamic.t(MagicalSpecialAbility.Static.t),
     ~staticSpells: Ley_IntMap.t(Spell.Static.t),
-    ~heroSpells: Ley_IntMap.t(ActivatableSkill.Dynamic.t),
+    ~heroSpells: Ley_IntMap.t(ActivatableSkill.Dynamic.t('a)),
     ~staticEntry: Spell.Static.t,
-    ~heroEntry: ActivatableSkill.Dynamic.t
+    ~heroEntry: ActivatableSkill.Dynamic.t('a)
   ) =>
   bool;
 
@@ -64,7 +68,9 @@ module PropertyKnowledge: {
   let getAvailableProperties:
     (
       Ley_IntMap.t(Spell.Static.t),
-      Ley_IntMap.t(ActivatableSkill.Dynamic.t)
+      Ley_IntMap.t(
+        ActivatableSkill.Dynamic.t(MagicalSpecialAbility.Static.t),
+      )
     ) =>
     list(int);
 };

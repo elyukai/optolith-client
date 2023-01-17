@@ -4,7 +4,12 @@
  * `dec` entry's level decreases the value.
  */
 let modifyByLevel:
-  (int, option(Activatable_Dynamic.t), option(Activatable_Dynamic.t)) => int;
+  (
+    int,
+    option(Activatable_Dynamic.t('a)),
+    option(Activatable_Dynamic.t('a))
+  ) =>
+  int;
 
 /**
  * `modifyByLevelM value inc dec` modifies a base `value` by the active level of
@@ -15,8 +20,8 @@ let modifyByLevel:
 let modifyByLevelM:
   (
     option(int),
-    option(Activatable_Dynamic.t),
-    option(Activatable_Dynamic.t)
+    option(Activatable_Dynamic.t('a)),
+    option(Activatable_Dynamic.t('a))
   ) =>
   int;
 
@@ -30,8 +35,8 @@ let modifyByLevelM:
 let getModifierByIsActive:
   (
     option(int),
-    option(Activatable_Dynamic.t),
-    option(Activatable_Dynamic.t)
+    option(Activatable_Dynamic.t('a)),
+    option(Activatable_Dynamic.t('a))
   ) =>
   int;
 
@@ -43,7 +48,7 @@ let getModifierByIsActive:
 let getModifierByIsActives:
   (
     option(int),
-    list(option(Activatable_Dynamic.t)),
-    list(option(Activatable_Dynamic.t))
+    list(option(Activatable_Dynamic.t('a))),
+    list(option(Activatable_Dynamic.t('a)))
   ) =>
   int;
