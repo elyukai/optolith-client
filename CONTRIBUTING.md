@@ -28,7 +28,7 @@ You can suggest features either in the issues tracker or in one of the [listed f
 
 ### Important note
 
-Due to licensing, the YAML files containing the crunch elements from the books are **not** included in this repository but in a separate private one. Please join my [Discord Server](https://discord.gg/uDyR4yr) if you want to contribute and thus need to access them. Just text me in a channel on the server or PN me (@elyukai).
+Due to licensing, the YAML files containing the crunch elements from the books are **not** included in this repository but in a separate private one. If you only plan to contribute something independent of the database, you can just get the database from an alpha installation. On Windows, for example, the database is available under `Resources/app.asar.unpacked/app/Data` inside the installation folder. If you plan to contribute anything to the database itself and thus need to access its source, please join my [Discord Server](https://discord.gg/uDyR4yr) and text me in a channel on the server or PN me (@elyukai).
 
 ### Basic development rules
 
@@ -42,9 +42,9 @@ Due to licensing, the YAML files containing the crunch elements from the books a
 
 ### Install required software
 
-- **Git** &mdash; https://git-scm.com/downloads or via a package manager
-- **Node.js** with **npm** &mdash; https://nodejs.org/en/ or via [`nvm`](https://github.com/nvm-sh/nvm)
-- *Optional:* **Visual Studio Code** &mdash; https://code.visualstudio.com/ (you can use your own editor as well, there are project-specific VSCode settings within this repository, though)
+- **Git** &mdash; <https://git-scm.com/downloads> or via a package manager
+- **Node.js** with **npm** &mdash; <https://nodejs.org/en/> or via [`nvm`](https://github.com/nvm-sh/nvm)
+- *Optional:* **Visual Studio Code** &mdash; <https://code.visualstudio.com/> (you can use your own editor as well, there are project-specific VSCode settings within this repository, though)
 
 ### Prepare the repo
 
