@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "allowJs": true,
-    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "lib": ["esnext", "dom"],
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "noEmit": true,
     "noEmitHelpers": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
@@ -17,10 +17,9 @@
     "removeComments": true,
     "resolveJsonModule": true,
     "rootDir": "src/",
-    "strict": true,
     "skipLibCheck": true,
+    "strict": true,
     "target": "ESNext",
-    "noEmit": true
   },
   "include": [
     "src/**/*",
