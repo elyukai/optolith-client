@@ -8,8 +8,7 @@ plugins:
 parserOptions:
   ecmaVersion: latest
   sourceType: module
-  project:
-    - ./tsconfig.json
+  project: ./tsconfig.json
   ecmaFeatures:
     jsx: true
 env:
@@ -247,11 +246,6 @@ rules:
     - blocks: never
       classes: never
       switches: never
-  padding-line-between-statements:
-    - 2
-    - blankLine: always
-      prev: "*"
-      next: return
   prefer-object-spread: 2
   quote-props:
     - 2
@@ -291,8 +285,12 @@ rules:
   prefer-const: 2
   prefer-destructuring:
     - 2
-    - object: true
-      array: false
+    - VariableDeclarator:
+        array: true
+        object: true
+      AssignmentExpression:
+        array: false
+        object: false
   prefer-numeric-literals: 2
   prefer-rest-params: 2
   prefer-spread: 2
@@ -341,7 +339,6 @@ rules:
   "@typescript-eslint/prefer-for-of": 2
   "@typescript-eslint/prefer-includes": 2
   "@typescript-eslint/prefer-readonly": 2
-  "@typescript-eslint/promise-function-async": 2
   # "@typescript-eslint/quotes": 2
   "@typescript-eslint/require-array-sort-compare": 2
   "@typescript-eslint/require-await": 2
@@ -363,10 +360,7 @@ rules:
   comma-spacing: 0
   "@typescript-eslint/comma-spacing": 2
   func-call-spacing: 0
-  "@typescript-eslint/func-call-spacing":
-    - 2
-    - always
-    - allowNewlines: true
+  "@typescript-eslint/func-call-spacing": 2
   indent: 0
   "@typescript-eslint/indent": 0
   no-array-constructor: 0
@@ -429,7 +423,7 @@ rules:
   react/no-will-update-set-state: 2
   react/prefer-es6-class: 2
   react/prefer-stateless-function: 2
-  react/react-in-jsx-scope: 2
+  react/react-in-jsx-scope: 0
   react/require-render-return: 2
   react/self-closing-comp: 2
   react/state-in-constructor:

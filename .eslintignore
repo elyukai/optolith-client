@@ -1,6 +1,3 @@
-src/App/Utilities/YAML/Schema/
+*.cjs
 *.js
-*.gen.tsx
 node_modules
-/app
-/deploy
