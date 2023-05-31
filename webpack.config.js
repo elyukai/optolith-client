@@ -1,120 +1,147 @@
 // @ts-check
 
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const path = require("path");
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { getOptimization } from "./webpack.optimization.js";
+import { rules } from "./webpack.rules.js";
 
 /** @type {import("webpack").Configuration[]} */
-const config = [
+export default [
   {
-    name: 'main',
-    mode: 'development',
+    name: "main",
+    mode: "development",
     entry: {
-      main: './src/main.ts'
+      main: "./src/main.ts"
     },
-    target: 'electron-main',
-    optimization: {
-      splitChunks: {
-        chunks: "all",
-        cacheGroups: {
-          default: {
-            name: 'main',
-            minChunks: 2,
-            priority: -20
-          },
-          defaultVendors: {
-            name: 'main-vendors',
-            test: /[\\/]node_modules[\\/]/,
-            priority: -10,
-            reuseExistingChunk: true,
-          }
-        }
-      }
-    },
+    target: "electron-main",
+    optimization: getOptimization("main"),
     module: {
-      rules: [
-        {
-          test: /\.ts$/,
-          include: path.resolve(__dirname, 'src'),
-          loader: 'ts-loader',
-          resolve: {
-            extensions: [".ts", ".tsx", ".js"]
-          },
-          options: {
-            configFile: "tsconfig.webpack.json",
-            transpileOnly: true
-          }
-        }
-      ]
+      rules: rules
     },
     resolve: {
       symlinks: false
     },
     output: {
-      path: __dirname + '/app',
-      filename: '[name].js'
+      path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
+      filename: "[name].js"
     },
     externalsPresets: {
       electronMain: true
     }
   },
   {
-    name: 'renderer',
-    mode: 'development',
+    name: "database",
+    mode: "development",
     entry: {
-      renderer: './src/renderer.tsx'
+      database: "./src/database.ts"
     },
-    target: 'node',
-    optimization: {
-      splitChunks: {
-        chunks: "all",
-        cacheGroups: {
-          default: {
-            name: 'renderer',
-            minChunks: 2,
-            priority: -20
-          },
-          defaultVendors: {
-            name: 'renderer-vendors',
-            test: /[\\/]node_modules[\\/]/,
-            priority: -10,
-            reuseExistingChunk: true
-          }
-        }
-      }
-    },
+    target: "electron-main",
+    optimization: getOptimization("database"),
     module: {
-      rules: [
-        {
-          test: /\.ts(x?)$/,
-          include: path.resolve(__dirname, 'src'),
-          loader: 'ts-loader',
-          resolve: {
-            extensions: [".ts", ".tsx", ".js"]
-          },
-          options: {
-            configFile: "tsconfig.webpack.json",
-            transpileOnly: true
-          }
-        }
-      ]
+      rules: rules
     },
     resolve: {
       symlinks: false
     },
     output: {
-      path: __dirname + '/app',
-      filename: '[name].js'
+      path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
+      filename: "[name].js"
+    },
+    externalsPresets: {
+      electronMain: true
+    }
+  },
+  {
+    name: "renderer_main",
+    mode: "development",
+    entry: {
+      renderer_main: "./src/renderers/main/entry.tsx",
+    },
+    target: "electron-renderer",
+    module: {
+      rules: rules
+    },
+    resolve: {
+      symlinks: false
+    },
+    output: {
+      path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
+      filename: "[name].js"
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: './src/index.html'
+        filename: "[name].html",
+        template: "./src/renderers/template.html"
       })
     ],
     externalsPresets: {
       electronRenderer: true
     },
     profile: true
+  },
+  {
+    name: "renderer_main_preload",
+    mode: "development",
+    entry: {
+      renderer_main_preload: "./src/renderers/main/preload.ts"
+    },
+    target: "electron-preload",
+    module: {
+      rules: rules
+    },
+    resolve: {
+      symlinks: false
+    },
+    output: {
+      path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
+      filename: "[name].js"
+    }
+  },
+  {
+    name: "renderer_updater",
+    mode: "development",
+    entry: {
+      renderer_updater: "./src/renderers/updater/entry.tsx"
+    },
+    target: "electron-renderer",
+    module: {
+      rules: rules
+    },
+    resolve: {
+      symlinks: false
+    },
+    output: {
+      path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
+      filename: "[name].js"
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        filename: "[name].html",
+        template: "./src/renderers/template.html"
+      })
+    ],
+    externalsPresets: {
+      electronRenderer: true
+    },
+    profile: true
+  },
+  {
+    name: "renderer_updater_preload",
+    mode: "development",
+    entry: {
+      renderer_updater_preload: "./src/renderers/updater/preload.ts"
+    },
+    target: "electron-preload",
+    module: {
+      rules: rules
+    },
+    resolve: {
+      symlinks: false
+    },
+    output: {
+      path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
+      filename: "[name].js"
+    }
   }
 ]
-
-module.exports = config
