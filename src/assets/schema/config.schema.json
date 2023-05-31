@@ -1,0 +1,272 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "/config.schema.json",
+  "$ref": "#/definitions/Config",
+  "definitions": {
+    "Config": {
+      "description": "The user-configurable app-wide settings.",
+      "type": "object",
+      "properties": {
+        "locale": {
+          "type": "string"
+        },
+        "fallbackLocale": {
+          "type": "string"
+        },
+        "herolistSortOrder": {
+          "oneOf": [
+            {
+              "const": "name"
+            },
+            {
+              "const": "datemodified"
+            },
+            {
+              "const": "dateModified"
+            }
+          ]
+        },
+        "herolistVisibilityFilter": {
+          "oneOf": [
+            {
+              "const": "all"
+            },
+            {
+              "const": "own"
+            },
+            {
+              "const": "shared"
+            }
+          ]
+        },
+        "racesSortOrder": {
+          "oneOf": [
+            {
+              "const": "name"
+            },
+            {
+              "const": "cost"
+            }
+          ]
+        },
+        "racesValueVisibility": {
+          "type": "boolean"
+        },
+        "culturesSortOrder": {
+          "oneOf": [
+            {
+              "const": "name"
+            },
+            {
+              "const": "cost"
+            }
+          ]
+        },
+        "culturesVisibilityFilter": {
+          "oneOf": [
+            {
+              "const": "all"
+            },
+            {
+              "const": "common"
+            }
+          ]
+        },
+        "culturesValueVisibility": {
+          "type": "boolean"
+        },
+        "professionsSortOrder": {
+          "oneOf": [
+            {
+              "const": "name"
+            },
+            {
+              "const": "cost"
+            }
+          ]
+        },
+        "professionsVisibilityFilter": {
+          "oneOf": [
+            {
+              "const": "all"
+            },
+            {
+              "const": "common"
+            }
+          ]
+        },
+        "professionsGroupVisibilityFilter": {
+          "oneOf": [
+            {
+              "const": 0
+            },
+            {
+              "const": 1
+            },
+            {
+              "const": 2
+            },
+            {
+              "const": 3
+            }
+          ]
+        },
+        "professionsFromExpansionsVisibility": {
+          "type": "boolean"
+        },
+        "advantagesDisadvantagesCultureRatingVisibility": {
+          "type": "boolean"
+        },
+        "talentsSortOrder": {
+          "oneOf": [
+            {
+              "const": "name"
+            },
+            {
+              "const": "group"
+            },
+            {
+              "const": "ic"
+            }
+          ]
+        },
+        "talentsCultureRatingVisibility": {
+          "type": "boolean"
+        },
+        "combatTechniquesSortOrder": {
+          "oneOf": [
+            {
+              "const": "name"
+            },
+            {
+              "const": "group"
+            },
+            {
+              "const": "ic"
+            }
+          ]
+        },
+        "specialAbilitiesSortOrder": {
+          "oneOf": [
+            {
+              "const": "name"
+            },
+            {
+              "const": "group"
+            },
+            {
+              "const": "groupname"
+            }
+          ]
+        },
+        "spellsSortOrder": {
+          "oneOf": [
+            {
+              "const": "name"
+            },
+            {
+              "const": "group"
+            },
+            {
+              "const": "property"
+            },
+            {
+              "const": "ic"
+            }
+          ]
+        },
+        "spellsUnfamiliarVisibility": {
+          "type": "boolean"
+        },
+        "liturgiesSortOrder": {
+          "oneOf": [
+            {
+              "const": "name"
+            },
+            {
+              "const": "group"
+            },
+            {
+              "const": "ic"
+            }
+          ]
+        },
+        "equipmentSortOrder": {
+          "oneOf": [
+            {
+              "const": "name"
+            },
+            {
+              "const": "groupname"
+            },
+            {
+              "const": "where"
+            },
+            {
+              "const": "weight"
+            }
+          ]
+        },
+        "equipmentGroupVisibilityFilter": {
+          "type": "number"
+        },
+        "sheetCheckAttributeValueVisibility": {
+          "type": "boolean"
+        },
+        "sheetUseParchment": {
+          "type": "boolean"
+        },
+        "sheetZoomFactor": {
+          "type": "number"
+        },
+        "enableActiveItemHints": {
+          "type": "boolean"
+        },
+        "theme": {
+          "oneOf": [
+            {
+              "const": "light"
+            },
+            {
+              "const": "dark"
+            }
+          ]
+        },
+        "enableEditingHeroAfterCreationPhase": {
+          "type": "boolean"
+        },
+        "meleeItemTemplatesCombatTechniqueFilter": {
+          "type": "string"
+        },
+        "rangedItemTemplatesCombatTechniqueFilter": {
+          "type": "string"
+        },
+        "enableAnimations": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "herolistSortOrder",
+        "herolistVisibilityFilter",
+        "racesSortOrder",
+        "culturesSortOrder",
+        "culturesVisibilityFilter",
+        "professionsSortOrder",
+        "professionsVisibilityFilter",
+        "professionsGroupVisibilityFilter",
+        "advantagesDisadvantagesCultureRatingVisibility",
+        "talentsSortOrder",
+        "talentsCultureRatingVisibility",
+        "combatTechniquesSortOrder",
+        "specialAbilitiesSortOrder",
+        "spellsSortOrder",
+        "spellsUnfamiliarVisibility",
+        "liturgiesSortOrder",
+        "equipmentSortOrder",
+        "equipmentGroupVisibilityFilter",
+        "enableActiveItemHints"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

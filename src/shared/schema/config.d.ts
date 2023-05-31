@@ -1,4 +1,13 @@
-export interface RawConfig {
+/**
+ * @main Config
+ */
+
+/**
+ * The user-configurable app-wide settings.
+ */
+export type Config = {
+  locale?: string
+  fallbackLocale?: string
   herolistSortOrder: "name" | "datemodified" | "dateModified"
   herolistVisibilityFilter: "all" | "own" | "shared"
   racesSortOrder: "name" | "cost"
@@ -24,8 +33,6 @@ export interface RawConfig {
   sheetUseParchment?: boolean
   sheetZoomFactor?: number
   enableActiveItemHints: boolean
-  locale?: string
-  fallbackLocale?: string
   theme?: "light" | "dark"
   enableEditingHeroAfterCreationPhase?: boolean
   meleeItemTemplatesCombatTechniqueFilter?: string
