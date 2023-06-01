@@ -23,10 +23,15 @@
   },
   "include": [
     "src/**/*",
-    "src/*",
-    "app/**/*.d.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/App/**/*",
+    "src/Control/**/*",
+    "src/Data/**/*",
+    "src/Debug/**/*",
+    "src/System/**/*",
+    "src/database/Compatibility/**/*",
+    "src/database/migration/**/*"
   ]
 }
