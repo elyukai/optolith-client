@@ -14,3 +14,8 @@ declare module "*.icns" {
   declare const url: string
   export default url
 }
+
+declare module "*.svg" {
+  declare const url: string
+  export default url
+}

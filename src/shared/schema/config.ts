@@ -33,9 +33,14 @@ export type Config = {
   sheetUseParchment?: boolean
   sheetZoomFactor?: number
   enableActiveItemHints: boolean
-  theme?: "light" | "dark"
+  theme?: Theme
   enableEditingHeroAfterCreationPhase?: boolean
   meleeItemTemplatesCombatTechniqueFilter?: string
   rangedItemTemplatesCombatTechniqueFilter?: string
   enableAnimations?: boolean
+}
+
+export enum Theme {
+  Light = "light",
+  Dark = "dark",
 }

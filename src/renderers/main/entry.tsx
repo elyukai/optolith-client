@@ -33,9 +33,11 @@
 // import { Unit } from "./Data/Unit"
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
+import { Theme } from "../../shared/schema/config.ts"
 import { preloadApi } from "./preloadApi.ts"
-import { store } from "./store.ts"
 import { initDatabase } from "./slices/databaseSlice.ts"
+import { store } from "./store.ts"
+import { Root } from "./views/Root.tsx"
 
 // webFrame.setZoomFactor (1)
 // webFrame.setVisualZoomLevelLimits (1, 1)
@@ -156,7 +158,7 @@ const root = createRoot(domNode)
 
 root.render(
   <Provider store={store}>
-    <div />
+    <Root theme={Theme.Dark} areAnimationsEnabled language="de-DE" />
   </Provider>
 )
 
