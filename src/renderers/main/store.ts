@@ -1,8 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { useDispatch } from "react-redux"
+import { databaseReducer } from "./slices/databaseSlice.ts"
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {
+    database: databaseReducer,
+  },
 })
 
 export type RootState = ReturnType<typeof store.getState>

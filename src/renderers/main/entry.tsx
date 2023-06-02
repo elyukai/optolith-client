@@ -35,6 +35,7 @@ import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
 import { preloadApi } from "./preloadApi.ts"
 import { store } from "./store.ts"
+import { initDatabase } from "./slices/databaseSlice.ts"
 
 // webFrame.setZoomFactor (1)
 // webFrame.setVisualZoomLevelLimits (1, 1)
@@ -159,8 +160,9 @@ root.render(
   </Provider>
 )
 
-preloadApi.on("database-available", _database => {
+preloadApi.on("database-available", database => {
   console.log("database available")
+  store.dispatch(initDatabase(database))
 })
 
 // ipcRenderer.addListener ("update-available", (_event: Event, info: UpdateInfo) => {
