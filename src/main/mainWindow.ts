@@ -1,4 +1,4 @@
-import { BrowserWindow, app, shell } from "electron"
+import { BrowserWindow, app, ipcMain, shell } from "electron"
 import windowStateKeeper from "electron-window-state"
 import * as path from "node:path"
 import * as url from "node:url"
@@ -57,6 +57,37 @@ export const createMainWindow = async () => {
     console.log("main (window): Maximize window ...")
     mainWindow.maximize()
   }
+
+  mainWindow.on("maximize", () => mainWindow.webContents.send("maximize"))
+  mainWindow.on("unmaximize", () => mainWindow.webContents.send("unmaximize"))
+  mainWindow.on("enter-full-screen", () => mainWindow.webContents.send("enter-full-screen"))
+  mainWindow.on("leave-full-screen", () => mainWindow.webContents.send("leave-full-screen"))
+  mainWindow.on("blur", () => mainWindow.webContents.send("blur"))
+  mainWindow.on("focus", () => mainWindow.webContents.send("focus"))
+
+  ipcMain.handle("receive-is-maximized", _ => mainWindow.isMaximized())
+  ipcMain.handle("receive-is-full-screen", _ => mainWindow.isFullScreen())
+  ipcMain.handle("receive-is-focused", _ => mainWindow.isFocused())
+
+  ipcMain.on("minimize", () => mainWindow.minimize())
+  ipcMain.on("maximize", () => mainWindow.maximize())
+  ipcMain.on("restore", () => mainWindow.restore())
+  ipcMain.on("enter-full-screen", () => mainWindow.setFullScreen(true))
+  ipcMain.on("leave-full-screen", () => mainWindow.setFullScreen(false))
+  ipcMain.on("close", () => mainWindow.close())
+
+  mainWindow.on("closed", () => {
+    ipcMain.removeAllListeners("receive-is-maximized")
+    ipcMain.removeAllListeners("receive-is-full-screen")
+    ipcMain.removeAllListeners("receive-is-focused")
+
+    ipcMain.removeAllListeners("minimize")
+    ipcMain.removeAllListeners("maximize")
+    ipcMain.removeAllListeners("restore")
+    ipcMain.removeAllListeners("enter-full-screen")
+    ipcMain.removeAllListeners("leave-full-screen")
+    ipcMain.removeAllListeners("close")
+  })
 
   return mainWindow
 }
