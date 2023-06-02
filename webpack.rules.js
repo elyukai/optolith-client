@@ -1,5 +1,6 @@
 // @ts-check
 
+import MiniCssExtractPlugin from "mini-css-extract-plugin"
 import { dirname, resolve } from "path"
 import { fileURLToPath } from "url"
 
@@ -42,6 +43,19 @@ export const rules = [
   },
   {
     test: /\.(css|sass|scss)$/,
-    use: ['css-loader', 'sass-loader'],
+    use: [
+      MiniCssExtractPlugin.loader,
+      'css-loader',
+      'resolve-url-loader',
+      {
+        loader: 'sass-loader',
+        options: {
+          sourceMap: true,
+        },
+      }
+    ],
+    generator: {
+      filename: "assets/css/[name].[hash][ext][query]"
+    }
   },
 ]

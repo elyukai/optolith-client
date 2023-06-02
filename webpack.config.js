@@ -1,16 +1,17 @@
 // @ts-check
 
-import HtmlWebpackPlugin from "html-webpack-plugin";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-import { getOptimization } from "./webpack.optimization.js";
-import { rules } from "./webpack.rules.js";
+import { dirname, resolve } from "node:path"
+import { fileURLToPath } from "node:url"
+import { mode } from "./webpack.env.js"
+import { getOptimization } from "./webpack.optimization.js"
+import { rendererPlugins } from "./webpack.plugins.js"
+import { rules } from "./webpack.rules.js"
 
 /** @type {import("webpack").Configuration[]} */
 export default [
   {
     name: "main",
-    mode: "development",
+    mode,
     entry: {
       main: "./src/main.ts"
     },
@@ -32,7 +33,7 @@ export default [
   },
   {
     name: "database",
-    mode: "development",
+    mode,
     entry: {
       database: "./src/database.ts"
     },
@@ -54,7 +55,7 @@ export default [
   },
   {
     name: "renderer_main",
-    mode: "development",
+    mode,
     entry: {
       renderer_main: "./src/renderers/main/entry.tsx",
     },
@@ -69,12 +70,7 @@ export default [
       path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
       filename: "[name].js"
     },
-    plugins: [
-      new HtmlWebpackPlugin({
-        filename: "[name].html",
-        template: "./src/renderers/template.html"
-      })
-    ],
+    plugins: rendererPlugins,
     externalsPresets: {
       electronRenderer: true
     },
@@ -82,7 +78,7 @@ export default [
   },
   {
     name: "renderer_main_preload",
-    mode: "development",
+    mode,
     entry: {
       renderer_main_preload: "./src/renderers/main/preload.ts"
     },
@@ -100,7 +96,7 @@ export default [
   },
   {
     name: "renderer_updater",
-    mode: "development",
+    mode,
     entry: {
       renderer_updater: "./src/renderers/updater/entry.tsx"
     },
@@ -115,12 +111,7 @@ export default [
       path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
       filename: "[name].js"
     },
-    plugins: [
-      new HtmlWebpackPlugin({
-        filename: "[name].html",
-        template: "./src/renderers/template.html"
-      })
-    ],
+    plugins: rendererPlugins,
     externalsPresets: {
       electronRenderer: true
     },
@@ -128,7 +119,7 @@ export default [
   },
   {
     name: "renderer_updater_preload",
-    mode: "development",
+    mode,
     entry: {
       renderer_updater_preload: "./src/renderers/updater/preload.ts"
     },
