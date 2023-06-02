@@ -32,7 +32,9 @@
 // import { uncurryN } from "./Data/Tuple/Curry"
 // import { Unit } from "./Data/Unit"
 import { createRoot } from "react-dom/client"
+import { Provider } from "react-redux"
 import { preloadApi } from "./preloadApi.ts"
+import { store } from "./store.ts"
 
 // webFrame.setZoomFactor (1)
 // webFrame.setVisualZoomLevelLimits (1, 1)
@@ -148,15 +150,14 @@ import { preloadApi } from "./preloadApi.ts"
 //   })
 //   .catch (console.error)
 
-// render (
-//   <Provider store={store}>
-//     <AppContainer />
-//   </Provider>,
-//   document.querySelector ("#bodywrapper")
-// )
-
 const domNode = document.getElementById("root")!
 const root = createRoot(domNode)
+
+root.render(
+  <Provider store={store}>
+    <div />
+  </Provider>
+)
 
 preloadApi.on("database-available", _database => {
   console.log("database available")
