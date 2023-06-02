@@ -1,5 +1,6 @@
 import { FC, useCallback, useEffect, useState } from "react"
 import { preloadApi } from "../../preloadApi.ts"
+import "./TitleBar.scss"
 import { TitleBarButton } from "./TitleBarButton.tsx"
 import { TitleBarWrapper } from "./TitleBarWrapper.tsx"
 

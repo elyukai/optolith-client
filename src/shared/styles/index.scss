@@ -1,0 +1,61 @@
+@use "variables";
+@use "fonts";
+@use "headings";
+
+* {
+  box-sizing: border-box;
+  -ms-overflow-style: none;
+
+  &:not(input):not(textarea) {
+    -moz-user-select: none;
+    -o-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+a {
+  color: var(--link);
+
+  &:hover {
+    color: var(--link-hover);
+  }
+}
+
+p {
+  &:first-child {
+    margin: 0;
+  }
+
+  margin: 10px 0 0;
+
+  &.featured {
+    font-weight: 500;
+    color: var(--headings-color);
+  }
+}
+
+.default-1-1 {
+  width: 100%;
+}
+
+.flex {
+  display: flex;
+}
+
+%label {
+  label {
+    color: #a19b8f;
+    letter-spacing: 0.05em;
+    display: block;
+    font: 500 12px/1 Alegreya Sans;
+    padding-bottom: 6px;
+  }
+}
+
+.smallcaps {
+  font: bold 13px/1 Alegreya SC;
+  text-transform: uppercase;
+  color: var(--headings-color);
+}

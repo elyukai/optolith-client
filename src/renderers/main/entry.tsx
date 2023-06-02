@@ -34,6 +34,7 @@
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
 import { Theme } from "../../shared/schema/config.ts"
+import "../../shared/styles/index.scss"
 import { preloadApi } from "./preloadApi.ts"
 import { initDatabase } from "./slices/databaseSlice.ts"
 import { store } from "./store.ts"

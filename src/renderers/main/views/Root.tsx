@@ -2,6 +2,7 @@ import { FC } from "react"
 import backgroundImg from "../../../assets/images/background.svg"
 import { classList } from "../../../shared/helpers/classList.ts"
 import { preloadApi } from "../preloadApi.ts"
+import "./Root.scss"
 
 type Props = {
   theme: string
