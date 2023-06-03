@@ -20,10 +20,10 @@ jobs:
         with:
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: true
-      - name: Use Node.js 18.x
+      - name: Use Node.js 20
         uses: actions/setup-node@v1
         with:
-          node-version: 18.x
+          node-version: 20
       - name: Install Node.js dependencies
         run: npm ci
       - name: Compile TypeScript files
@@ -39,10 +39,10 @@ jobs:
         with:
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: true
-      - name: Use Node.js 18.x
+      - name: Use Node.js 20
         uses: actions/setup-node@v1
         with:
-          node-version: 18.x
+          node-version: 20
       - name: Install Node.js dependencies
         run: npm ci
       - name: Run linter
