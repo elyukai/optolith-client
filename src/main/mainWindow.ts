@@ -71,16 +71,17 @@ export const createMainWindow = async () => {
   ipcMain.on("maximize", () => mainWindow.maximize())
   ipcMain.on("restore", () => mainWindow.restore())
   ipcMain.on("close", () => mainWindow.close())
+  ipcMain.on("toggle-dev-tools", () => mainWindow.webContents.toggleDevTools())
 
   mainWindow.on("closed", () => {
     ipcMain.removeAllListeners("receive-is-maximized")
-    ipcMain.removeAllListeners("receive-is-full-screen")
     ipcMain.removeAllListeners("receive-is-focused")
 
     ipcMain.removeAllListeners("minimize")
     ipcMain.removeAllListeners("maximize")
     ipcMain.removeAllListeners("restore")
     ipcMain.removeAllListeners("close")
+    ipcMain.removeAllListeners("toggle-dev-tools")
   })
 
   return mainWindow

@@ -1,0 +1,54 @@
+.btn {
+  height: auto;
+  min-height: 32px;
+  color: var(--accent-color);
+  text-align: center;
+  overflow: hidden;
+  border: 1px solid var(--accent-color);
+  background: none;
+
+  &:hover,
+  &:active {
+    cursor: pointer;
+  }
+
+  &:hover {
+    border-color: var(--headings-color);
+    color: var(--headings-color);
+  }
+
+  &:active {
+    border-color: var(--accent-color-intense);
+    color: var(--accent-color-intense);
+  }
+
+  &.disabled {
+    border-color: var(--separator-color-transparent);
+    color: var(--separator-color-halftransparent);
+    pointer-events: none;
+
+    &:hover {
+      border-color: var(--separator-color-transparent);
+      color: var(--separator-color-halftransparent);
+    }
+  }
+
+  &.active {
+    background: var(--accent-color);
+    color: var(--background-color);
+    pointer-events: none;
+
+    &:hover {
+      border-color: var(--accent-color);
+    }
+  }
+
+  &.autoWidth {
+    width: auto;
+    min-width: auto;
+  }
+
+  &.btn-flat {
+    border: none;
+  }
+}

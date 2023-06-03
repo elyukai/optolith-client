@@ -12,6 +12,10 @@ export type PreloadAPI = {
   maximize: () => void
   restore: () => void
   close: () => void
+  getLicense: () => Promise<string>
+  getChangelog: () => Promise<string>
+  getVersion: () => Promise<string>
+  toggleDevTools: () => void
 } & Events
 
 type Events =
@@ -28,15 +32,17 @@ const api: PreloadAPI = {
   emit: events.emit.bind(events),
   removeListener: events.removeListener.bind(events),
   platform: process.platform,
-  checkForUpdates: () => {
-    ipcRenderer.send("check-for-updates")
-  },
+  checkForUpdates: () => ipcRenderer.send("check-for-updates"),
   isMaximized: () => ipcRenderer.invoke("receive-is-maximized"),
   isFocused: () => ipcRenderer.invoke("receive-is-focused"),
   minimize: () => ipcRenderer.send("minimize"),
   maximize: () => ipcRenderer.send("maximize"),
   restore: () => ipcRenderer.send("restore"),
   close: () => ipcRenderer.send("close"),
+  getLicense: () => ipcRenderer.invoke("receive-license"),
+  getChangelog: () => ipcRenderer.invoke("receive-changelog"),
+  getVersion: () => ipcRenderer.invoke("receive-version"),
+  toggleDevTools: () => ipcRenderer.send("toggle-dev-tools"),
 }
 
 contextBridge.exposeInMainWorld("optolith", api)

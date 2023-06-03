@@ -165,7 +165,6 @@ rules:
   jsx-quotes: 2
   key-spacing: 2
   keyword-spacing: 2
-  line-comment-position: 2
   lines-around-comment:
     - 0
       # requires an empty line before block comments
@@ -210,7 +209,6 @@ rules:
     - ignoreChainWithDepth: 2
   no-bitwise: 2
   no-continue: 2
-  no-inline-comments: 2
   no-lonely-if: 2
   no-mixed-operators:
     - 2
@@ -393,8 +391,6 @@ rules:
     - 2
     - never
     - beforeStatementContinuationChars: never
-  space-before-function-paren: 0
-  "@typescript-eslint/space-before-function-paren": 2
 
   # React
   react/boolean-prop-naming: 2

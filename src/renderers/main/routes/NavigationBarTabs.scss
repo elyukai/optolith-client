@@ -1,0 +1,23 @@
+.navigationbar-tabs {
+  flex: 1 1 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+
+  .tab {
+    font-size: 15px;
+    line-height: var(--navigationbar-height);
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &.tab--active {
+      &::after {
+        height: 3px;
+      }
+    }
+  }
+}

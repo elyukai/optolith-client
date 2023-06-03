@@ -3,7 +3,7 @@
  * nullable values and keys with falsey values.
  */
 export const classList = (
-  ...cls: (string | null | undefined | Record<string, boolean>)[]
+  ...cls: (string | null | undefined | Record<string, boolean | undefined>)[]
 ): string =>
   cls.flatMap(cl => {
     if (cl === null || cl === undefined) {
@@ -13,6 +13,6 @@ export const classList = (
       return [ cl ]
     }
     else {
-      return Object.entries(cl).flatMap(([ k, v ]) => v ? [ k ] : [])
+      return Object.entries(cl).flatMap(([ k, v ]) => v === true ? [ k ] : [])
     }
   }).join(" ")

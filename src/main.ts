@@ -1,6 +1,7 @@
 import { app, ipcMain, utilityProcess } from "electron"
 import { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS, installExtension } from "electron-extension-installer"
 import { autoUpdater } from "electron-updater"
+import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import * as process from "node:process"
 import type { Database } from "./database.ts"
@@ -46,6 +47,14 @@ const installExtensions = async () => {
   console.log(`main: installed extensions: ${installedExtensionsString}`)
 }
 
+const readFileInAppPath = (...path: string[]) => readFile(join(app.getAppPath(), ...path), "utf-8")
+
+const registerGlobalListeners = () => {
+  ipcMain.handle("receive-license", _ => readFileInAppPath("LICENSE"))
+  ipcMain.handle("receive-changelog", _ => readFileInAppPath("CHANGELOG.md"))
+  ipcMain.handle("receive-version", _ => app.getVersion())
+}
+
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 app.whenReady().then(async () => {
   autoUpdater.autoDownload = false
@@ -59,6 +68,7 @@ app.whenReady().then(async () => {
   if (!installUpdateInsteadOfStartup) {
     await setUserDataPath()
     await installExtensions()
+    registerGlobalListeners()
     showMainWindow(await createMainWindow(), await databaseLoading)
 
     ipcMain.on("check-for-update", runAsync(async () => {

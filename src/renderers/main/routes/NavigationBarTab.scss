@@ -1,0 +1,56 @@
+.nav-tab.tab {
+  font-family: "Alegreya SC";
+  font-weight: bold;
+  flex: 0 1 auto;
+  letter-spacing: 0.1em;
+  margin: 0 20px;
+  padding: 0;
+  text-transform: uppercase;
+  position: relative;
+  min-width: 0;
+  z-index: 2;
+
+  &.tab--active {
+    pointer-events: none;
+
+    a {
+      color: var(--headings-color);
+    }
+
+    &:after {
+      position: absolute;
+      content: "";
+      width: auto;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      background: var(--accent-color);
+    }
+  }
+
+  &.tab--disabled {
+    pointer-events: none;
+    color: var(--separator-color-halftransparent);
+  }
+
+  a {
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--accent-color);
+
+    &:hover {
+      color: var(--headings-color);
+      cursor: pointer;
+    }
+
+    &:active,
+    &:focus {
+      color: var(--accent-color-intense);
+      cursor: pointer;
+    }
+  }
+}
