@@ -3,6 +3,7 @@ import backgroundImg from "../../../assets/images/background.svg"
 import { classList } from "../../../shared/helpers/classList.ts"
 import { preloadApi } from "../preloadApi.ts"
 import "./Root.scss"
+import { TitleBar } from "./universal/TitleBar.tsx"
 
 type Props = {
   theme: string
@@ -28,7 +29,7 @@ export const Root: FC<Props> = props => {
       </div>
 
       {/* <AlertsContainer /> */}
-      {/* <TitleBar /> */}
+      <TitleBar />
 
       <div id="content">
         {/* <NavigationBarContainer

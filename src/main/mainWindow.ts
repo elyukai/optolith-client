@@ -33,6 +33,7 @@ export const createMainWindow = async () => {
       preload: path.join(__dirname, "renderer_main_preload.js"),
     },
     show: false,
+    titleBarStyle: "hiddenInset",
   })
 
   mainWindow.webContents.setWindowOpenHandler(details => {
@@ -60,20 +61,15 @@ export const createMainWindow = async () => {
 
   mainWindow.on("maximize", () => mainWindow.webContents.send("maximize"))
   mainWindow.on("unmaximize", () => mainWindow.webContents.send("unmaximize"))
-  mainWindow.on("enter-full-screen", () => mainWindow.webContents.send("enter-full-screen"))
-  mainWindow.on("leave-full-screen", () => mainWindow.webContents.send("leave-full-screen"))
   mainWindow.on("blur", () => mainWindow.webContents.send("blur"))
   mainWindow.on("focus", () => mainWindow.webContents.send("focus"))
 
   ipcMain.handle("receive-is-maximized", _ => mainWindow.isMaximized())
-  ipcMain.handle("receive-is-full-screen", _ => mainWindow.isFullScreen())
   ipcMain.handle("receive-is-focused", _ => mainWindow.isFocused())
 
   ipcMain.on("minimize", () => mainWindow.minimize())
   ipcMain.on("maximize", () => mainWindow.maximize())
   ipcMain.on("restore", () => mainWindow.restore())
-  ipcMain.on("enter-full-screen", () => mainWindow.setFullScreen(true))
-  ipcMain.on("leave-full-screen", () => mainWindow.setFullScreen(false))
   ipcMain.on("close", () => mainWindow.close())
 
   mainWindow.on("closed", () => {
@@ -84,8 +80,6 @@ export const createMainWindow = async () => {
     ipcMain.removeAllListeners("minimize")
     ipcMain.removeAllListeners("maximize")
     ipcMain.removeAllListeners("restore")
-    ipcMain.removeAllListeners("enter-full-screen")
-    ipcMain.removeAllListeners("leave-full-screen")
     ipcMain.removeAllListeners("close")
   })
 

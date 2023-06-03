@@ -7,13 +7,10 @@ export type PreloadAPI = {
   platform: NodeJS.Platform
   checkForUpdates: () => void
   isMaximized: () => Promise<boolean>
-  isFullScreen: () => Promise<boolean>
   isFocused: () => Promise<boolean>
   minimize: () => void
   maximize: () => void
   restore: () => void
-  enterFullScreen: () => void
-  leaveFullScreen: () => void
   close: () => void
 } & Events
 
@@ -21,8 +18,6 @@ type Events =
   & TypedEventEmitterForEvent<"database-available", [database: ValidResults]>
   & TypedEventEmitterForEvent<"maximize", []>
   & TypedEventEmitterForEvent<"unmaximize", []>
-  & TypedEventEmitterForEvent<"enter-full-screen", []>
-  & TypedEventEmitterForEvent<"leave-full-screen", []>
   & TypedEventEmitterForEvent<"blur", []>
   & TypedEventEmitterForEvent<"focus", []>
 
@@ -37,13 +32,10 @@ const api: PreloadAPI = {
     ipcRenderer.send("check-for-updates")
   },
   isMaximized: () => ipcRenderer.invoke("receive-is-maximized"),
-  isFullScreen: () => ipcRenderer.invoke("receive-is-full-screen"),
   isFocused: () => ipcRenderer.invoke("receive-is-focused"),
   minimize: () => ipcRenderer.send("minimize"),
   maximize: () => ipcRenderer.send("maximize"),
   restore: () => ipcRenderer.send("restore"),
-  enterFullScreen: () => ipcRenderer.send("enter-full-screen"),
-  leaveFullScreen: () => ipcRenderer.send("leave-full-screen"),
   close: () => ipcRenderer.send("close"),
 }
 
@@ -55,7 +47,5 @@ ipcRenderer
   })
   .on("maximize", () => events.emit("maximize"))
   .on("unmaximize", () => events.emit("unmaximize"))
-  .on("enter-full-screen", () => events.emit("enter-full-screen"))
-  .on("leave-full-screen", () => events.emit("leave-full-screen"))
   .on("blur", () => events.emit("blur"))
   .on("focus", () => events.emit("focus"))
