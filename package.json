@@ -37,7 +37,6 @@
   "devDependencies": {
     "@commitlint/cli": "11.0.0",
     "@commitlint/config-conventional": "11.0.0",
-    "@types/jest": "26.0.15",
     "@types/mousetrap": "1.6.4",
     "@types/node": "^20.2.5",
     "@types/react": "^18.2.7",
@@ -54,8 +53,8 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-tsdoc": "^0.2.14",
+    "glob": "^10.2.6",
     "html-webpack-plugin": "^5.5.1",
-    "jest": "^29.5.0",
     "mini-css-extract-plugin": "^2.7.6",
     "optolith-tsjsonschemamd": "^0.9.3",
     "resolve-url-loader": "^5.0.0",
@@ -65,6 +64,7 @@
     "standard-version": "^9.3.1",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.2",
+    "tsx": "^3.12.7",
     "typescript": "^5.0.4",
     "webpack": "^5.84.1",
     "webpack-cli": "^5.1.1"
@@ -86,7 +86,7 @@
     "createschemas": "otjsmd",
     "lint": "eslint \"src/\" --ext \".ts\" --ext \".tsx\"",
     "start": "electron .",
-    "test": "jest",
+    "test": "glob -c \"node --loader tsx --test\" \"./src/shared/**/*.test.ts\"",
     "circ": "madge -c ./src",
     "release:main": "standard-version --skip.commit --skip.tag",
     "release:pre": "standard-version --prerelease=alpha"
