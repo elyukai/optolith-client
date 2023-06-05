@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react"
 import { Markdown } from "../../../shared/components/markdown/Markdown.tsx"
 import { Page } from "../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"
-import { preloadApi } from "../../preload.ts"
+import { ExternalAPI } from "../../external.ts"
 
 let savedText: string | undefined = undefined
 
@@ -12,7 +12,7 @@ export const LastChanges: FC = () => {
   useEffect(
     () => {
       if (savedText === undefined) {
-        preloadApi.getChangelog()
+        ExternalAPI.getChangelog()
           .then(loadedText => {
             setText(loadedText)
             savedText = loadedText

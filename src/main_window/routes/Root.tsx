@@ -3,15 +3,15 @@ import backgroundImg from "../../assets/images/background.svg"
 import { TitleBar } from "../../shared/components/titleBar/TitleBar.tsx"
 import { Theme } from "../../shared/schema/config.ts"
 import { classList } from "../../shared/utils/classList.ts"
-import { preloadApi } from "../preload.ts"
+import { ExternalAPI } from "../external.ts"
 import { NavigationBar } from "./NavigationBar.tsx"
 import "./Root.scss"
 import { Router } from "./Router.tsx"
 
-const handleMinimize = preloadApi.minimize
-const handleMaximize = preloadApi.maximize
-const handleRestore = preloadApi.restore
-const handleClose = preloadApi.close
+const handleMinimize = ExternalAPI.minimize
+const handleMaximize = ExternalAPI.maximize
+const handleRestore = ExternalAPI.restore
+const handleClose = ExternalAPI.close
 
 export const Root: FC = () => {
   const theme = Theme.Dark
@@ -23,7 +23,7 @@ export const Root: FC = () => {
       id="body"
       className={classList(
         `theme-${theme}`,
-        `platform-${preloadApi.platform}`,
+        `platform-${ExternalAPI.platform}`,
         { "show-animations": areAnimationsEnabled },
       )}
       lang={language}
@@ -34,14 +34,14 @@ export const Root: FC = () => {
 
       {/* <AlertsContainer /> */}
       <TitleBar
-        platform={preloadApi.platform}
-        windowEvents={preloadApi}
+        platform={ExternalAPI.platform}
+        windowEvents={ExternalAPI}
         onMinimize={handleMinimize}
         onMaximize={handleMaximize}
         onRestore={handleRestore}
         onClose={handleClose}
-        isMaximized={preloadApi.isMaximized}
-        isFocused={preloadApi.isFocused}
+        isMaximized={ExternalAPI.isMaximized}
+        isFocused={ExternalAPI.isFocused}
         />
 
       <div id="content">

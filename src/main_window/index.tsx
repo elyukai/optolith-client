@@ -34,7 +34,7 @@
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
 import "../shared/styles/index.scss"
-import { preloadApi } from "./preload.ts"
+import { ExternalAPI } from "./external.ts"
 import { Root } from "./routes/Root.tsx"
 import { initDatabase } from "./slices/databaseSlice.ts"
 import { store } from "./store.ts"
@@ -162,7 +162,7 @@ root.render(
   </Provider>
 )
 
-preloadApi.on("database-available", database => {
+ExternalAPI.on("database-available", database => {
   console.log("database available")
   store.dispatch(initDatabase(database))
 })

@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react"
 import { Page } from "../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"
-import { preloadApi } from "../../preload.ts"
+import { ExternalAPI } from "../../external.ts"
 import "./ThirdPartyLicenses.scss"
 
 let savedVersion: string | undefined = undefined
@@ -14,7 +14,7 @@ export const ThirdPartyLicenses: FC = () => {
   useEffect(
     () => {
       if (savedText === undefined) {
-        preloadApi.getLicense()
+        ExternalAPI.getLicense()
           .then(loadedText => {
             setText(loadedText)
             savedText = loadedText
@@ -26,7 +26,7 @@ export const ThirdPartyLicenses: FC = () => {
       }
 
       if (savedVersion === undefined) {
-        preloadApi.getVersion()
+        ExternalAPI.getVersion()
           .then(loadedVersion => {
             setVersion(loadedVersion)
             savedVersion = loadedVersion

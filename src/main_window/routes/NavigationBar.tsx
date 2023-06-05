@@ -1,15 +1,15 @@
 import { FC } from "react"
 import { IconButton } from "../../shared/components/iconButton/IconButton.tsx"
+import { ExternalAPI } from "../external.ts"
 import { useTranslate } from "../hooks/translate.ts"
 import { useVisibleTabs } from "../hooks/visibleTabs.ts"
-import { preloadApi } from "../preload.ts"
 import { NavigationBarLeft } from "./NavigationBarLeft.tsx"
 import { NavigationBarRight } from "./NavigationBarRight.tsx"
 import { NavigationBarSubTabs } from "./NavigationBarSubTabs.tsx"
 import { NavigationBarTabs } from "./NavigationBarTabs.tsx"
 import { NavigationBarWrapper } from "./NavigationBarWrapper.tsx"
 
-const handleToggleDevTools = preloadApi.toggleDevTools
+const handleToggleDevTools = ExternalAPI.toggleDevTools
 
 export const NavigationBar: FC = () => {
   const translate = useTranslate()
