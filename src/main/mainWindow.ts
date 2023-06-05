@@ -2,7 +2,7 @@ import { BrowserWindow, app, ipcMain, shell } from "electron"
 import windowStateKeeper from "electron-window-state"
 import * as path from "node:path"
 import * as url from "node:url"
-import type { Database } from "../database.ts"
+import type { Database } from "../database/index.ts"
 
 export const createMainWindow = async () => {
   console.log("main: Create Window ...")

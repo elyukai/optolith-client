@@ -10,7 +10,7 @@ import { isDevelopment } from "./webpack.env.js"
 export const rendererPlugins = [
   new HtmlWebpackPlugin({
     filename: "[name].html",
-    template: "./src/renderers/template.html"
+    template: "./src/template.html"
   }),
   new MiniCssExtractPlugin({
     filename: `assets/css/${isDevelopment ? '[name].css' : '[name].[hash].css'}`,

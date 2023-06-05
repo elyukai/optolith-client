@@ -38,7 +38,7 @@
     "src/Data/**/*",
     "src/Debug/**/*",
     "src/System/**/*",
-    "src/database/Compatibility/**/*",
-    "src/database/migration/**/*"
+    "src/database/contents/Compatibility/**/*",
+    "src/database/contents/migration/**/*"
   ]
 }

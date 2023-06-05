@@ -13,7 +13,7 @@ export default [
     name: "main",
     mode,
     entry: {
-      main: "./src/main.ts"
+      main: "./src/main/index.ts"
     },
     target: "electron-main",
     optimization: getOptimization("main"),
@@ -35,7 +35,7 @@ export default [
     name: "database",
     mode,
     entry: {
-      database: "./src/database.ts"
+      database: "./src/database/index.ts"
     },
     target: "electron-main",
     optimization: getOptimization("database"),
@@ -57,7 +57,7 @@ export default [
     name: "renderer_main",
     mode,
     entry: {
-      renderer_main: "./src/renderers/main/entry.tsx",
+      renderer_main: "./src/main_window/index.tsx",
     },
     target: "electron-renderer",
     module: {
@@ -80,7 +80,7 @@ export default [
     name: "renderer_main_preload",
     mode,
     entry: {
-      renderer_main_preload: "./src/renderers/main/preload.ts"
+      renderer_main_preload: "./src/main_window_preload/index.ts"
     },
     target: "electron-preload",
     module: {
@@ -98,7 +98,7 @@ export default [
     name: "renderer_updater",
     mode,
     entry: {
-      renderer_updater: "./src/renderers/updater/entry.tsx"
+      renderer_updater: "./src/updater_window/index.tsx"
     },
     target: "electron-renderer",
     module: {
@@ -121,7 +121,7 @@ export default [
     name: "renderer_updater_preload",
     mode,
     entry: {
-      renderer_updater_preload: "./src/renderers/updater/preload.ts"
+      renderer_updater_preload: "./src/updater_window_preload/index.ts"
     },
     target: "electron-preload",
     module: {
