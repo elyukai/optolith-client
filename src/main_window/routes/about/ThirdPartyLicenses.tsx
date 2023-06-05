@@ -1,30 +1,45 @@
 import { FC, useEffect, useState } from "react"
+import { Page } from "../../../shared/components/page/Page.tsx"
+import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"
 import { preloadApi } from "../../preload.ts"
+import "./ThirdPartyLicenses.scss"
+
+let savedVersion: string | undefined = undefined
+let savedText: string | undefined = undefined
 
 export const ThirdPartyLicenses: FC = () => {
-  const [ version, setVersion ] = useState("0.0.0")
-  const [ text, setText ] = useState("...")
+  const [ version, setVersion ] = useState(savedVersion ?? "0.0.0")
+  const [ text, setText ] = useState(savedText ?? "...")
 
   useEffect(
     () => {
-      preloadApi.getLicense()
-        .then(setText)
-        .catch(err => {
-          console.error(err)
-          setText("Third-party licenses could not be loaded")
-        })
+      if (savedText === undefined) {
+        preloadApi.getLicense()
+          .then(loadedText => {
+            setText(loadedText)
+            savedText = loadedText
+          })
+          .catch(err => {
+            console.error(err)
+            setText("Third-party licenses could not be loaded")
+          })
+      }
 
-      preloadApi.getVersion()
-        .then(setVersion)
-        .catch(console.error)
+      if (savedVersion === undefined) {
+        preloadApi.getVersion()
+          .then(loadedVersion => {
+            setVersion(loadedVersion)
+            savedVersion = loadedVersion
+          })
+          .catch(console.error)
+      }
     },
     []
   )
 
   return (
-    <>
-    {/* <Page id="last-changes">
-      <Scroll className="text"> */}
+    <Page id="third-party-licenses">
+      <Scroll className="text">
         <h2>
           {"Optolith Desktop Client v"}
           {version}
@@ -33,8 +48,7 @@ export const ThirdPartyLicenses: FC = () => {
         <pre className="third-party-software-body">
           {text}
         </pre>
-      {/* </Scroll>
-    </Page> */}
-    </>
+      </Scroll>
+    </Page>
   )
 }

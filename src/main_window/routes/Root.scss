@@ -1,5 +1,3 @@
-@use "../../shared/styles/index.scss";
-
 html,
 body,
 #root,
@@ -16,7 +14,6 @@ body,
   cursor: default;
   background: var(--background-color);
   display: flex;
-  font: 14px Alegreya;
   border: 1px solid var(--separator-color-transparent);
 }
 

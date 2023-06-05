@@ -1,13 +1,14 @@
 import { FC } from "react"
+import { Page } from "../../../shared/components/page/Page.tsx"
+import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"
 import { useTranslate } from "../../hooks/translate.ts"
 
 export const Imprint: FC = () => {
   const translate = useTranslate()
   return (
-    <>
-     {/* <Page id="imprint">
-       <Scroll className="text"> */}
-        <h2>{translate("imprint.title")}</h2>
+    <Page id="imprint">
+      <Scroll className="text">
+        <h2>{translate("Imprint")}</h2>
 
         <h3>{"Lukas Obermann"}</h3>
         <p>
@@ -30,8 +31,7 @@ export const Imprint: FC = () => {
           <br />
           <a href="mailto:support@cloud.optolith.app">{"support@cloud.optolith.app"}</a>
         </p>
-      {/* </Scroll>
-    </Page> */}
-    </>
+      </Scroll>
+    </Page>
   )
 }

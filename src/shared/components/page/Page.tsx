@@ -1,10 +1,11 @@
-import * as React from "react"
+import { FCC } from "../../utils/react.ts"
+import "./Page.scss"
 
 interface Props {
   id?: string
 }
 
-export const Page: React.FC<Props> = props => {
+export const Page: FCC<Props> = props => {
   const { children, id } = props
 
   return (

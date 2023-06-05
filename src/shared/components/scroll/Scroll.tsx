@@ -1,34 +1,34 @@
-import * as React from "react"
-import Scrollbars from "react-custom-scrollbars"
-import { List } from "../../../Data/List"
-import { Just, Maybe, orN } from "../../../Data/Maybe"
-import { classListMaybe } from "../../Utilities/CSS"
+import { FC, HTMLAttributes } from "react"
+import { Scrollbars } from "react-custom-scrollbars-2"
+import { classList } from "../../utils/classList.ts"
+import { FCC } from "../../utils/react.ts"
+import "./Scroll.scss"
 
-const ThumbHorizontal: React.FC = p => (
+const ThumbHorizontal: FC = p => (
   // eslint-disable-next-line react/jsx-props-no-spreading
   <div {...p} className="thumb thumb-horizontal">
     <div />
   </div>
 )
 
-const ThumbVertical: React.FC = p => (
+const ThumbVertical: FC = p => (
   // eslint-disable-next-line react/jsx-props-no-spreading
   <div {...p} className="thumb thumb-vertical">
     <div />
   </div>
 )
 
-const TrackHorizontal: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ style, ...p }) => (
+const TrackHorizontal: FC<HTMLAttributes<HTMLDivElement>> = ({ style, ...p }) => (
   // eslint-disable-next-line react/jsx-props-no-spreading
   <div {...p} style={{ ...style, height: 11 }} className="track track-horizontal" />
 )
 
-const TrackVertical: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ style, ...p }) => (
+const TrackVertical: FC<HTMLAttributes<HTMLDivElement>> = ({ style, ...p }) => (
   // eslint-disable-next-line react/jsx-props-no-spreading
   <div {...p} style={{ ...style, width: 11 }} className="track track-vertical" />
 )
 
-const View: React.FC = p => (
+const View: FC = p => (
   // eslint-disable-next-line react/jsx-props-no-spreading
   <div {...p} className="scroll-view" />
 )
@@ -38,19 +38,19 @@ interface Props {
   noInnerElement?: boolean
 }
 
-export const Scroll: React.FC<Props> = props => {
+export const Scroll: FCC<Props> = props => {
   const { className, children, noInnerElement } = props
 
   return (
     <Scrollbars
-      className={classListMaybe (List (Just ("scroll"), Maybe (className)))}
+      className={classList("scroll", className)}
       renderThumbHorizontal={ThumbHorizontal}
       renderThumbVertical={ThumbVertical}
       renderTrackHorizontal={TrackHorizontal}
       renderTrackVertical={TrackVertical}
       renderView={View}
       >
-      {orN (noInnerElement)
+      {noInnerElement === true
         ? children
         : (
           <div className="scroll-inner">

@@ -2,6 +2,10 @@ import { FC } from "react"
 import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
 import { useAppSelector } from "../hooks/redux.ts"
 import { selectRoute } from "../slices/routeSlice.ts"
+import "./Router.scss"
+import { Imprint } from "./about/Imprint.tsx"
+import { LastChanges } from "./about/LastChanges.tsx"
+import { ThirdPartyLicenses } from "./about/ThirdPartyLicenses.tsx"
 
 export const Router: FC = () => {
   const route = useAppSelector(selectRoute)
@@ -12,9 +16,9 @@ export const Router: FC = () => {
     case "library": return null // <WikiContainer staticData={staticData} />,
     case "faq": return null // <HelpContainer staticData={staticData} />,
 
-    case "imprint": return null // <Imprint staticData={staticData} />,
-    case "third_party_licenses": return null // <ThirdPartyLicenses />,
-    case "last_changes": return null // <LastChanges staticData={staticData} />,
+    case "imprint": return <Imprint />
+    case "third_party_licenses": return <ThirdPartyLicenses />
+    case "last_changes": return <LastChanges />
 
     case "profile": return null // unwrapWithHero(hero => ( <PersonalDataContainer staticData={staticData} hero={hero} /> )),
     case "personal_data": return null // unwrapWithHero(hero => ( <PersonalDataContainer staticData={staticData} hero={hero} /> )),
