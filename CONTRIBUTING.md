@@ -54,7 +54,7 @@ Clone the repo, including the private submodule.
 git clone --recurse-submodules https://github.com/elyukai/optolith-client.git
 ```
 
-Make sure Node.js (lastest version) is installed and run
+Make sure Node.js (lastest version) is installed, nagivate into the created project folder and install all dependencies using the following command:
 
 ```sh
 npm i
@@ -64,27 +64,17 @@ This installs all necessary packages.
 
 ### First run
 
-Compile the source code. `js:` is for TypeScript/Webpack, `re:` for Reason/OCaml and `css:` for CSS/Sass. Webpack does not check the TypeScript validity, to check this, use `ts:` commands.
+Compile the source code. `js:` is for TypeScript/Webpack. Webpack does not check the TypeScript validity, to check this, use `ts:` commands.
 
-You have to run the Reason build first as it generates TypeScript files...
+Build the source by running
 
 ```sh
-npm run ts:build
-npm run css:build
 npm run js:build
-```
-
-(There's also a shorthand for that:)
-
-```sh
-npm run build
 ```
 
 &hellip;or watch it for better performance for subsequent compiling on save (you need to use separate terminal instances then).
 
 ```sh
-npm run re:watch
-npm run css:watch
 npm run js:watch
 ```
 
@@ -101,21 +91,7 @@ Run the app:
 npm start
 ```
 
-### Stylesheets
-
-To compile the SCSS files, use
-
-```sh
-npm run css:build
-```
-
 ### Miscellaneous
-
-Clean the files built by the Reason compiler, if there are any issue with it.
-
-```sh
-npm run re:clean
-```
 
 Lint all project TS files using ESLint.
 
