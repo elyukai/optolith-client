@@ -4,7 +4,7 @@ plugins:
   - "@typescript-eslint"
   - eslint-plugin-react
   - eslint-plugin-react-hooks
-  - eslint-plugin-tsdoc
+  # - eslint-plugin-tsdoc
 parserOptions:
   ecmaVersion: latest
   sourceType: module
@@ -479,8 +479,8 @@ rules:
   react-hooks/rules-of-hooks: 2
   react-hooks/exhaustive-deps: 2
 
-  # TSDoc
-  tsdoc/syntax: warn
+  # # TSDoc
+  # tsdoc/syntax: warn
 settings:
   react:
     version: detect
