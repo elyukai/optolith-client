@@ -1,50 +1,49 @@
+import Debug from "debug"
 import { app, ipcMain, utilityProcess } from "electron"
-import { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS, installExtension } from "electron-extension-installer"
 import { autoUpdater } from "electron-updater"
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
-import * as process from "node:process"
 import type { Database } from "../database/index.ts"
 import { createMainWindow, showMainWindow } from "./mainWindow.ts"
 import { ensureUserDataPathExists } from "./saveData.ts"
 import { checkForUpdatesOnRequest, checkForUpdatesOnStartup } from "./updater.ts"
+const debug = Debug("main")
 
 app.setAppUserModelId("lukasobermann.optolith")
 
-console.log("main: loading database ...")
+debug("loading database ...")
 const databaseProcess = utilityProcess.fork(join(__dirname, "./database.js"))
 const databaseLoading = new Promise<Database>(resolve => {
   databaseProcess.on("message", (message: Database) => {
-    console.log("main: database loaded")
+    debug("database received")
     resolve(message)
   })
 })
 
-console.log(process.platform)
-
 const runAsync = (fn: () => Promise<void>) => () => {
-  fn().catch(err => console.error("main: unexpected error", err))
+  fn().catch(err => debug("unexpected error: %O", err))
 }
 
 const setUserDataPath = async () => {
-  console.log("main: set user data path ...")
+  debug("setting user data path ...")
   app.setPath("userData", await ensureUserDataPathExists())
 }
 
 const installExtensions = async () => {
-  console.log("main: install extensions ...")
+  debug("install extensions ...")
 
-  const installedExtensions = await installExtension([
-    REACT_DEVELOPER_TOOLS,
-    REDUX_DEVTOOLS,
-  ])
+  const installedExtensions: string[] | string | undefined =
+    await Promise.resolve(undefined as string[] | string | undefined) /* await installExtension([
+      REACT_DEVELOPER_TOOLS,
+      REDUX_DEVTOOLS,
+    ]) */
 
   const installedExtensionsString =
     Array.isArray(installedExtensions)
       ? installedExtensions.join(", ")
-      : installedExtensions
+      : installedExtensions ?? "none"
 
-  console.log(`main: installed extensions: ${installedExtensionsString}`)
+  debug("installed extensions: %s", installedExtensionsString)
 }
 
 const readFileInAppPath = (...path: string[]) => readFile(join(app.getAppPath(), ...path), "utf-8")
@@ -64,7 +63,7 @@ app.whenReady().then(async () => {
   })
 
   const installUpdateInsteadOfStartup = await checkForUpdatesOnStartup()
-  console.log("main: install update instead of startup", installUpdateInsteadOfStartup)
+  debug("skip startup because of update?", installUpdateInsteadOfStartup ? "yes" : "no")
   if (!installUpdateInsteadOfStartup) {
     await setUserDataPath()
     await installExtensions()

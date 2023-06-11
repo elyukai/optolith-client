@@ -1,20 +1,22 @@
+import Debug from "debug"
 import { BrowserWindow, app, ipcMain, shell } from "electron"
 import windowStateKeeper from "electron-window-state"
 import * as path from "node:path"
 import * as url from "node:url"
 import type { Database } from "../database/index.ts"
+const debug = Debug("main:main")
 
 export const createMainWindow = async () => {
-  console.log("main: Create Window ...")
+  debug("Create Window ...")
 
-  console.log("main (window): Initialize window state keeper")
+  debug("Initialize window state keeper")
   const mainWindowState = windowStateKeeper({
     defaultHeight: 720,
     defaultWidth: 1280,
     file: "window.json",
   })
 
-  console.log("main (window): Initialize browser window")
+  debug("Initialize browser window")
   const mainWindow = new BrowserWindow({
     x: mainWindowState.x,
     y: mainWindowState.y,
@@ -38,24 +40,24 @@ export const createMainWindow = async () => {
 
   mainWindow.webContents.setWindowOpenHandler(details => {
     shell.openExternal(details.url)
-      .catch(console.error)
+      .catch(err => debug("unexpected error: %O", err))
     return { action: "deny" }
   })
 
-  console.log("main (window): Manage browser window with state keeper")
+  debug("Manage browser window with state keeper")
   mainWindowState.manage(mainWindow)
 
-  console.log("main (window): Load url")
+  debug("Load url")
   await mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, "renderer_main.html"),
     protocol: "file:",
     slashes: true,
   }))
 
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   if (mainWindowState.isMaximized) {
-    console.log("main (window): Maximize window ...")
+    debug("Maximize window ...")
     mainWindow.maximize()
   }
 
@@ -89,6 +91,6 @@ export const createMainWindow = async () => {
 
 export const showMainWindow = (mainWindow: BrowserWindow, database: Database) => {
   mainWindow.webContents.send("database-available", database)
-  console.log("main (window): Show window once database is available")
+  debug("Show window once database is available")
   mainWindow.show()
 }

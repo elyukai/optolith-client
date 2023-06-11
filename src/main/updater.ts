@@ -1,8 +1,10 @@
+import Debug from "debug"
 import { BrowserWindow, ipcMain } from "electron"
 import { CancellationToken, UpdateCheckResult, autoUpdater } from "electron-updater"
 import * as path from "node:path"
 import * as url from "node:url"
 import appIconMacOS from "../assets/icon/AppIcon.icns"
+const debug = Debug("main:updater")
 
 type AvailableUpdateCheckResult = {
   cancellationToken: CancellationToken
@@ -24,6 +26,7 @@ const checkForUpdates = async (): Promise<AvailableUpdateCheckResult | undefined
 }
 
 const createUpdaterWindow = async () => {
+  debug("create window")
   const updaterWindow = new BrowserWindow({
     icon: appIconMacOS,
     center: true,
@@ -46,7 +49,7 @@ const createUpdaterWindow = async () => {
   updaterWindow.webContents.openDevTools()
 
   autoUpdater.on("error", (err: Error) => {
-    console.log("updater: error", err)
+    debug("error %O", err)
     updaterWindow.webContents.send("auto-updater-error", err)
   })
 
@@ -73,47 +76,47 @@ const prepareUpdaterWindowForAvailableUpdate = (
   updaterWindow.webContents.send("update-available", updateInfo)
 
   autoUpdater.signals.progress(progressObj => {
-    console.log(`updater: download progress at ${progressObj.percent} %`)
+    debug("download progress at %d %", progressObj.percent)
     updaterWindow.webContents.send("download-progress", progressObj)
   })
 
   autoUpdater.signals.updateDownloaded(info => {
-    console.log(`updater: update downloaded to "${info.downloadedFile}"`)
+    debug("update downloaded to %s", info.downloadedFile)
     updaterWindow.webContents.send("update-downloaded", info)
   })
 
   ipcMain.on("download-update-later", () => {
-    console.log(`updater: download update later`)
+    debug("download update later")
     onCancelUpdate?.()
     updaterWindow.close()
   })
 
   ipcMain.on("download-update", () => {
-    console.log(`updater: downloading update ...`)
+    debug("downloading update ...")
     autoUpdater.downloadUpdate(cancellationToken).catch(console.error)
   })
 
   ipcMain.on("install-update-later", () => {
-    console.log(`updater: install update later`)
+    debug("install update later")
     onCancelUpdate?.()
     updaterWindow.close()
   })
 
   ipcMain.on("quit-and-install-update", () => {
-    console.log(`updater: quit and install update`)
+    debug("quit and install update")
     onApplyUpdate?.()
     autoUpdater.quitAndInstall()
   })
 }
 
 export const checkForUpdatesOnStartup = async () => {
-  console.log("updater: checking for updates ...")
+  debug("checking for updates ...")
 
   const checkResult = await checkForUpdates()
   const isUpdateAvailable = checkResult !== undefined
 
   if (isUpdateAvailable) {
-    console.log("updater: update is available")
+    debug("update is available")
     const updaterWindow = await createUpdaterWindow()
     const updatePromise = new Promise<boolean>(resolve => {
       prepareUpdaterWindowForAvailableUpdate(
@@ -127,24 +130,24 @@ export const checkForUpdatesOnStartup = async () => {
     return updatePromise
   }
   else {
-    console.log("updater: no update available")
+    debug("no update available")
     return false
   }
 }
 
 export const checkForUpdatesOnRequest = async () => {
-  console.log("updater: checking for updates ...")
+  debug("checking for updates ...")
   const updaterWindow = await createUpdaterWindow()
   updaterWindow.show()
   const checkResult = await checkForUpdates()
   const isUpdateAvailable = checkResult !== undefined
 
   if (isUpdateAvailable) {
-    console.log("updater: update is available")
+    debug("update is available")
     prepareUpdaterWindowForAvailableUpdate(updaterWindow, checkResult)
   }
   else {
-    console.log("updater: no update available")
+    debug("no update available")
     updaterWindow.webContents.send("no-update-available")
   }
 

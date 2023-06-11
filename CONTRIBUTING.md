@@ -91,6 +91,18 @@ Run the app:
 npm start
 ```
 
+The [debug](https://www.npmjs.com/package/debug) package is used for some general logging. If you want to see its output, you need to set the `DEBUG` environment variable.
+
+```sh
+DEBUG=* npm start
+```
+
+In PowerShell you need to write this instead:
+
+```sh
+$env:DEBUG='*'; npm start
+```
+
 ### Miscellaneous
 
 Lint all project TS files using ESLint.
