@@ -1,15 +1,14 @@
-import * as React from "react"
-import { Maybe } from "../../../Data/Maybe"
-import { BorderButton } from "./BorderButton"
+import { FC, useCallback } from "react"
+import { Button } from "../button/Button.tsx"
 
-interface Props {
+type Props = {
   active?: boolean
   autoWidth?: boolean
   className?: string
-  disabled?: boolean | Maybe<boolean>
+  disabled?: boolean
   flat?: boolean
   fullWidth?: boolean
-  hint?: Maybe<string>
+  hint?: string
   label: string | undefined
   primary?: boolean
   onClick? (): void
@@ -18,7 +17,7 @@ interface Props {
 
 export type DialogButtonProps = Omit<Props, "onClickDefault">
 
-export const DialogButton: React.FC<Props> = props => {
+export const DialogButton: FC<Props> = props => {
   const {
     active,
     autoWidth,
@@ -33,17 +32,18 @@ export const DialogButton: React.FC<Props> = props => {
     label,
   } = props
 
-  const handleClick = React.useCallback (
-    () => typeof onClickDefault === "function"
-          ? onClickDefault (onClick)
-          : typeof onClick === "function"
-          ? onClick ()
-          : undefined,
+  const handleClick = useCallback(
+    () =>
+      typeof onClickDefault === "function"
+      ? onClickDefault(onClick)
+      : typeof onClick === "function"
+      ? onClick()
+      : undefined,
     [ onClick, onClickDefault ]
   )
 
   return (
-    <BorderButton
+    <Button
       active={active}
       autoWidth={autoWidth}
       className={className}
@@ -52,9 +52,10 @@ export const DialogButton: React.FC<Props> = props => {
       fullWidth={fullWidth}
       hint={hint}
       primary={primary}
-      label={label}
       onClick={handleClick}
       key={label}
-      />
+      >
+      {label}
+    </Button>
   )
 }

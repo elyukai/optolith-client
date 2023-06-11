@@ -1,17 +1,17 @@
-import * as React from "react"
-import { DialogButton, DialogButtonProps } from "./DialogButton"
+import { FC } from "react"
+import { DialogButton, DialogButtonProps } from "./DialogButton.tsx"
 
-interface Props {
+type Props = {
   list: DialogButtonProps[]
   onClickDefault? (f?: () => void): void
 }
 
-export const DialogButtons: React.FC<Props> = props => {
+export const DialogButtons: FC<Props> = props => {
   const { list, onClickDefault } = props
 
   const buttons =
-    Array.isArray (list) && list.length > 0
-      ? list.map (
+    Array.isArray(list) && list.length > 0
+      ? list.map(
           ({
             active,
             autoWidth,

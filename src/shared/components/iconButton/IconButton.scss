@@ -1,22 +1,22 @@
-.btn-round {
-	width: 32px;
-	color: var(--accent-color);
-	border-radius: 50%;
-	min-width: 0;
-	padding: 0;
+.btn--round {
+  width: 32px;
+  color: var(--accent-color);
+  border-radius: 50%;
+  min-width: 0;
+  padding: 0;
 
-	> div {
-		font: 32px/30px TDE Heroes;
-		width: 30px;
-		text-align: center;
-		margin-left: -1px;
-	}
+  > div {
+    font: 32px/30px TDE Heroes;
+    width: 30px;
+    text-align: center;
+    margin-left: -1px;
+  }
 
-	&.disabled {
-		color: var(--separator-color-transparent);
+  &:disabled {
+    color: var(--separator-color-transparent);
 
-		&:hover {
-			color: var(--separator-color-transparent);
-		}
-	}
+    &:hover {
+      color: var(--separator-color-transparent);
+    }
+  }
 }

@@ -6,6 +6,15 @@
   overflow: hidden;
   border: 1px solid var(--accent-color);
   background: none;
+  margin: 0;
+
+  &.btn--text {
+    padding: 0 16px;
+    text-decoration: none;
+    text-transform: uppercase;
+    font: bold 13px/19px "Alegreya SC";
+    letter-spacing: 0.1em;
+  }
 
   &:hover,
   &:active {
@@ -22,7 +31,7 @@
     color: var(--accent-color-intense);
   }
 
-  &.disabled {
+  &:disabled {
     border-color: var(--separator-color-transparent);
     color: var(--separator-color-halftransparent);
     pointer-events: none;
@@ -33,7 +42,7 @@
     }
   }
 
-  &.active {
+  &.btn--active {
     background: var(--accent-color);
     color: var(--background-color);
     pointer-events: none;
@@ -43,12 +52,16 @@
     }
   }
 
-  &.autoWidth {
+  &.btn--auto-width {
     width: auto;
     min-width: auto;
   }
 
-  &.btn-flat {
+  &.btn--flat {
     border: none;
+  }
+
+  &.btn--full-width {
+    display: block;
   }
 }

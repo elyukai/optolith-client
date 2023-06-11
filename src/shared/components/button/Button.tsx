@@ -33,18 +33,18 @@ export const Button: FCC<Props> = props => {
     <button
       className={classList(
         "btn",
-        round === true ? "btn-round" : "btn-text",
+        round === true ? "btn--round" : "btn--text",
         className,
         {
-          "btn-primary": primary === true,
-          "btn-flat": flat === true,
-          autoWidth,
-          fullWidth,
-          disabled,
-          active,
+          "btn--primary": primary === true,
+          "btn--flat": flat === true,
+          "btn--auto-width": autoWidth,
+          "btn--full-width": fullWidth,
+          "btn--active": active,
         }
       )}
       onClick={disabled === true ? undefined : onClick}
+      disabled={disabled === true}
       >
       {children}
     </button>

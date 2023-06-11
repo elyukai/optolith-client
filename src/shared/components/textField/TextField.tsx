@@ -1,28 +1,28 @@
-// import { TextareaAutosize } from 'react-textarea-autosize'
-import * as React from "react"
-import { Either } from "../../../Data/Either"
-import { Maybe, orN } from "../../../Data/Maybe"
-import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers"
-import { TextFieldContainer } from "./TextFieldContainer"
+import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useRef } from "react"
+import "./TextField.scss"
+import { TextFieldContainer } from "./TextFieldContainer.tsx"
+
+export type InputTextEvent = ChangeEvent<HTMLInputElement>
+export type InputKeyEvent = KeyboardEvent<HTMLInputElement>
 
 export interface TextFieldProps {
-  autoFocus?: boolean | Maybe<boolean>
+  autoFocus?: boolean
   className?: string
   countCurrent?: number
   countMax?: number
   disabled?: boolean
-  error?: Maybe<string> | Either<string, any>
+  error?: string
   fullWidth?: boolean
-  hint?: Maybe<string> | string
-  label?: Maybe<string> | string
+  hint?: string
+  label?: string
   max?: string
   min?: string
   type?: string
   value?: string
   valid?: boolean
-  onChange (newText: string): void
-  onKeyDown? (event: InputKeyEvent): void
-  onKeyUp? (event: InputKeyEvent): void
+  onChange(newText: string): void
+  onKeyDown?(event: InputKeyEvent): void
+  onKeyUp?(event: InputKeyEvent): void
 }
 
 export const TextField: React.FC<TextFieldProps> = props => {
@@ -46,22 +46,22 @@ export const TextField: React.FC<TextFieldProps> = props => {
     hint,
   } = props
 
-  const inputRef = React.useRef<HTMLInputElement | null> (null)
+  const inputRef = useRef<HTMLInputElement | null>(null)
 
-  React.useEffect (
+  useEffect(
     () => {
-      if (Maybe.elem (true) (Maybe.normalize (autoFocus)) && inputRef.current !== null) {
-        inputRef.current.focus ()
+      if (autoFocus === true && inputRef.current !== null) {
+        inputRef.current.focus()
       }
     },
     [ autoFocus ]
   )
 
   const handleChange =
-    React.useCallback (
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!orN (disabled)) {
-          onChange (e.target.value)
+    useCallback(
+      (e: ChangeEvent<HTMLInputElement>) => {
+        if (disabled !== true) {
+          onChange(e.target.value)
         }
       },
       [ disabled, onChange ]
@@ -86,9 +86,9 @@ export const TextField: React.FC<TextFieldProps> = props => {
         max={max}
         value={value}
         onChange={handleChange}
-        onKeyPress={orN (disabled) ? undefined : onKeyDown}
-        onKeyUp={orN (disabled) ? undefined : onKeyUp}
-        readOnly={disabled}
+        onKeyDown={disabled === true ? undefined : onKeyDown}
+        onKeyUp={disabled === true ? undefined : onKeyUp}
+        disabled={disabled}
         ref={inputRef}
         />
     </TextFieldContainer>

@@ -26,7 +26,8 @@
     margin: 0;
   }
 
-  input, textarea {
+  input,
+  textarea {
     width: 100%;
     height: 32px;
     border: 1px solid var(--accent-color);
@@ -38,7 +39,9 @@
     outline: 0 none;
     background: none;
 
-    &:hover, &:focus, &:active {
+    &:hover,
+    &:focus,
+    &:active {
       color: var(--headings-color);
       border-color: var(--headings-color);
 
@@ -63,7 +66,8 @@
       color: var(--separator-color-halftransparent);
     }
 
-    input, textarea {
+    input,
+    textarea {
       border-color: var(--separator-color-transparent);
       color: var(--separator-color-halftransparent);
     }
@@ -74,33 +78,34 @@
       color: var(--uncommon-bright-color);
     }
 
-    input, textarea {
+    input,
+    textarea {
       border: 1px solid var(--uncommon-dark-color);
       color: var(--uncommon-bright-color);
     }
   }
 
-//  hr {
-//    width: 100%;
-//    height: 0px;
-//    border: 0 none;
-//    margin: 0;
-//
-//    &.default {
-//      border-bottom: 1px solid #182424;
-//    }
-//
-//    &.accent {
-//      border-bottom: 2px solid $highlight;
-//      transform: scaleX(0);
-//      margin-top: -2px;
-//      @include defaultEasing (all);
-//    }
-//  }
+  //  hr {
+  //    width: 100%;
+  //    height: 0px;
+  //    border: 0 none;
+  //    margin: 0;
+  //
+  //    &.default {
+  //      border-bottom: 1px solid #182424;
+  //    }
+  //
+  //    &.accent {
+  //      border-bottom: 2px solid $highlight;
+  //      transform: scaleX(0);
+  //      margin-top: -2px;
+  //      @include defaultEasing (all);
+  //    }
+  //  }
 
-//  &.focused {
-//    hr.accent {
-//      transform: scaleX(1);
-//    }
-//  }
+  //  &.focused {
+  //    hr.accent {
+  //      transform: scaleX(1);
+  //    }
+  //  }
 }

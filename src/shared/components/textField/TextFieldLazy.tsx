@@ -1,29 +1,26 @@
-// import { TextareaAutosize } from 'react-textarea-autosize'
-import * as React from "react"
-import { Either } from "../../../Data/Either"
-import { Maybe, orN } from "../../../Data/Maybe"
-import { InputKeyEvent } from "../../Models/Hero/heroTypeHelpers"
-import { TextFieldContainer } from "./TextFieldContainer"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { InputKeyEvent } from "./TextField.tsx"
+import { TextFieldContainer } from "./TextFieldContainer.tsx"
 
-interface Props {
+type Props = {
   autoFocus?: boolean
   className?: string
   countCurrent?: number
   countMax?: number
   disabled?: boolean
-  error?: Maybe<string> | Either<string, any>
+  error?: string
   fullWidth?: boolean
-  hint?: Maybe<string> | string
-  label?: Maybe<string> | string
+  hint?: string
+  label?: string
   max?: string
   min?: string
   type?: string
   value?: string
   valid?: boolean
   checkDirectInput?: (text: string) => boolean
-  onChange (newText: string): void
-  onKeyDown? (event: InputKeyEvent): void
-  onKeyUp? (event: InputKeyEvent): void
+  onChange(newText: string): void
+  onKeyDown?(event: InputKeyEvent): void
+  onKeyUp?(event: InputKeyEvent): void
 }
 
 export const TextFieldLazy: React.FC<Props> = props => {
@@ -48,43 +45,43 @@ export const TextFieldLazy: React.FC<Props> = props => {
     value: defaultValue = "",
   } = props
 
-  const inputRef = React.useRef<HTMLInputElement | null> (null)
+  const inputRef = useRef<HTMLInputElement | null>(null)
 
-  const [ value, setValue ] = React.useState (defaultValue)
-  const [ prevValue, setPrevValue ] = React.useState (defaultValue)
+  const [ value, setValue ] = useState(defaultValue)
+  const [ prevValue, setPrevValue ] = useState(defaultValue)
 
   if (prevValue !== defaultValue) {
-    setValue (defaultValue)
-    setPrevValue (defaultValue)
+    setValue(defaultValue)
+    setPrevValue(defaultValue)
   }
 
-  React.useEffect (
+  useEffect(
     () => {
-      if (orN (autoFocus) && inputRef.current !== null) {
-        inputRef.current.focus ()
+      if (autoFocus === true && inputRef.current !== null) {
+        inputRef.current.focus()
       }
     },
     [ autoFocus ]
   )
 
   const handleChange =
-    React.useCallback (
+    useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
         if (
-          !orN (disabled)
-          && (typeof checkDirectInput !== "function" || checkDirectInput (e.target.value))
+          disabled !== true
+          && (typeof checkDirectInput !== "function" || checkDirectInput(e.target.value))
         ) {
-          setValue (e.target.value)
+          setValue(e.target.value)
         }
       },
       [ disabled, checkDirectInput ]
     )
 
   const handleBlur =
-    React.useCallback (
+    useCallback(
       (e: React.FocusEvent<HTMLInputElement>) => {
-        if (!orN (disabled) && defaultValue !== value) {
-          onChange (e.target.value)
+        if (disabled !== true && defaultValue !== value) {
+          onChange(e.target.value)
         }
       },
       [ defaultValue, disabled, onChange, value ]
@@ -109,8 +106,8 @@ export const TextFieldLazy: React.FC<Props> = props => {
         max={max}
         value={value}
         onChange={handleChange}
-        onKeyPress={orN (disabled) ? undefined : onKeyDown}
-        onKeyUp={orN (disabled) ? undefined : onKeyUp}
+        onKeyDown={disabled === true ? undefined : onKeyDown}
+        onKeyUp={disabled === true ? undefined : onKeyUp}
         readOnly={disabled}
         ref={inputRef}
         onBlur={handleBlur}
