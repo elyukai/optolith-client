@@ -1,5 +1,5 @@
-import { rangeSafe, sum } from "../utils/array.ts"
-import { assertExhaustive } from "../utils/typeSafety.ts"
+import { rangeSafe, sum } from "../../utils/array.ts"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
 
 export enum ImprovementCost {
   A = "A",

@@ -10,6 +10,11 @@
   min-width: 0;
   z-index: 2;
 
+  &::before,
+  &::marker {
+    opacity: 0;
+  }
+
   &.tab--active {
     pointer-events: none;
 

@@ -156,6 +156,8 @@ import { store } from "./store.ts"
 const domNode = document.getElementById("root")!
 const root = createRoot(domNode)
 
+document.body.classList.add(`platform--${ExternalAPI.platform}`)
+
 root.render(
   <Provider store={store}>
     <Root />

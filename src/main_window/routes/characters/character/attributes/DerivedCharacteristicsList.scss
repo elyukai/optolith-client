@@ -1,0 +1,28 @@
+#attributes {
+  .derived-characteristics {
+    display: flex;
+
+    .value {
+      background: transparent;
+    }
+
+    .number-box {
+      width: 40px;
+    }
+  }
+
+  .derived-characteristics-item {
+  }
+
+  .permanent {
+    .value-inner > div {
+      height: 23px;
+      line-height: 23px;
+      font-size: 14px;
+    }
+
+    .number-box {
+      top: 20px;
+    }
+  }
+}

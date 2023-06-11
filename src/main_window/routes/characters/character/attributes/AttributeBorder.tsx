@@ -1,10 +1,8 @@
-import * as React from "react"
-import { List } from "../../../Data/List"
-import { Just, Maybe } from "../../../Data/Maybe"
-import { classListMaybe } from "../../Utilities/CSS"
-import { TooltipToggle } from "../Universal/TooltipToggle"
+import { FC } from "react"
+import { TooltipToggle } from "../../../../../shared/components/tooltipToggle/TooltipToggle.tsx"
+import { classList } from "../../../../../shared/utils/classList.ts"
 
-export interface AttributeBorderProps {
+type Props = {
   children?: React.ReactNode
   className?: string
   label?: string
@@ -13,13 +11,17 @@ export interface AttributeBorderProps {
   value: number | string
 }
 
-export const AttributeBorder: React.FC<AttributeBorderProps> = props => {
+export const AttributeBorder: FC<Props> = props => {
   const { children, className, label, tooltip, tooltipMargin, value } = props
 
   const valueElement =
     tooltip === undefined
     ? (
-      <div className="value"><div className="value-inner"><div>{value}</div></div></div>
+      <div className="value">
+        <div className="value-inner">
+          <div>{value}</div>
+        </div>
+      </div>
     )
     : (
       <TooltipToggle
@@ -36,7 +38,7 @@ export const AttributeBorder: React.FC<AttributeBorderProps> = props => {
     )
 
   return (
-    <div className={classListMaybe (List (Just ("attr"), Maybe (className)))}>
+    <div className={classList("attr", className)}>
       <div className="short">{label}</div>
       {valueElement}
       {children}

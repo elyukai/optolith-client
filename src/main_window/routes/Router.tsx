@@ -6,6 +6,7 @@ import "./Router.scss"
 import { Imprint } from "./about/Imprint.tsx"
 import { LastChanges } from "./about/LastChanges.tsx"
 import { ThirdPartyLicenses } from "./about/ThirdPartyLicenses.tsx"
+import { Attributes } from "./characters/character/attributes/Attributes.tsx"
 
 export const Router: FC = () => {
   const route = useAppSelector(selectRoute)
@@ -30,7 +31,7 @@ export const Router: FC = () => {
     case "culture": return null // unwrapWithHero(hero => ( <CulturesContainer staticData={staticData} hero={hero} /> )),
     case "profession": return null // unwrapWithHero(hero => ( <ProfessionsContainer staticData={staticData} hero={hero} /> )),
 
-    case "attributes": return null // unwrapWithHero(hero => ( <AttributesContainer staticData={staticData} hero={hero} /> )),
+    case "attributes": return <Attributes /> // unwrapWithHero(hero => ( <AttributesContainer staticData={staticData} hero={hero} /> )),
 
     case "advantages": return null // unwrapWithHero(hero => ( <AdvantagesContainer staticData={staticData} hero={hero} /> )),
     case "disadvantages": return null // unwrapWithHero(hero => ( <DisadvantagesContainer staticData={staticData} hero={hero} /> )),

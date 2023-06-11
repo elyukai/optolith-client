@@ -65,3 +65,16 @@ p {
   text-transform: uppercase;
   color: var(--headings-color);
 }
+
+hr {
+  margin: 15px 0 5px;
+  border: none;
+  height: 1px;
+  background: var(--separator-color-transparent);
+
+  &.vertical {
+    margin: 0 20px;
+    height: auto;
+    width: 1px;
+  }
+}

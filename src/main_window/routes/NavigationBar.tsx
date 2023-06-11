@@ -1,8 +1,13 @@
 import { FC } from "react"
+import { Button } from "../../shared/components/button/Button.tsx"
 import { IconButton } from "../../shared/components/iconButton/IconButton.tsx"
+import { TooltipToggle } from "../../shared/components/tooltipToggle/TooltipToggle.tsx"
 import { ExternalAPI } from "../external.ts"
+import { useAppSelector } from "../hooks/redux.ts"
 import { useTranslate } from "../hooks/translate.ts"
 import { useVisibleTabs } from "../hooks/visibleTabs.ts"
+import { selectAdventurePointsAvailable } from "../selectors/adventurePointSelectors.ts"
+import { AdventurePointsTooltip } from "./AdventurePointsTooltip.tsx"
 import { NavigationBarLeft } from "./NavigationBarLeft.tsx"
 import { NavigationBarRight } from "./NavigationBarRight.tsx"
 import { NavigationBarSubTabs } from "./NavigationBarSubTabs.tsx"
@@ -15,8 +20,8 @@ export const NavigationBar: FC = () => {
   const translate = useTranslate()
   // const dispatch = useAppDispatch()
   // const handleHerolistTab = useCallback(() => dispatch(goToTab("characters")), [ dispatch ])
-
-  const { mainTabs, subTabs } = useVisibleTabs()
+  const { section, mainTabs, subTabs } = useVisibleTabs()
+  const available = useAppSelector(selectAdventurePointsAvailable)
 
   return (
     <nav>
@@ -33,68 +38,46 @@ export const NavigationBar: FC = () => {
           <NavigationBarTabs tabs={mainTabs} />
         </NavigationBarLeft>
         <NavigationBarRight>
-          {/* {isHeroSection
+          {section === "character"
             ? (
               <>
-                {maybe(<Text className="collected-ap">
-                          {translateP(staticData)("header.apleft")(List("X"))}
-                       </Text>)
-                        ((ap: Record<AdventurePointsCategories>) => (
-                          <TooltipToggle
-                            position="bottom"
-                            margin={12}
-                            content={
-                              <ApTooltip
-                                adventurePoints={ap}
-                                staticData={staticData}
-                                maximumForMagicalAdvantagesDisadvantages={
-                                  maximumForMagicalAdvantagesDisadvantages
-                                }
-                                isSpellcaster={isSpellcaster}
-                                isBlessedOne={isBlessedOne}
-                                />
-                            }
-                            target={
-                              <Text className="collected-ap">
-                                {translateP(staticData)
-                                            ("header.apleft")
-                                            (List(
-                                              pipe_(
-                                                m_ap,
-                                                fmap(pipe(
-                                                  AdventurePointsCategories.A.available,
-                                                  signNeg
-                                                )),
-                                                fromMaybe <string | number >("")
-                                              )
-                                            ))}
-                              </Text>
-                            }
-                            />
-                        ))
-                        (m_ap)}
+                <TooltipToggle
+                  position="bottom"
+                  margin={12}
+                  content={
+                    <AdventurePointsTooltip />
+                  }
+                  target={
+                    <div className="collected-ap">
+                      {translate("header.apleft", available)}
+                    </div>
+                  }
+                  />
                 <IconButton
                   icon="&#xE90f;"
-                  onClick={undo}
-                  disabled={!isUndoAvailable}
+                  label={translate("Undo")}
+                  // onClick={undo}
+                  disabled/* ={!isUndoAvailable} */
                   />
                 <IconButton
                   icon="&#xE910;"
-                  onClick={redo}
-                  disabled={!isRedoAvailable}
+                  label={translate("Redo")}
+                  // onClick={redo}
+                  disabled/* ={!isRedoAvailable} */
                   />
-                <BorderButton
-                  label={translate(staticData)("header.savebtn")}
-                  onClick={saveHero}
-                  />
+                <Button /* onClick={saveHero} */>
+                  {translate("Save")}
+                </Button>
               </>
             )
-            : null} */}
-          {/* <IconButton
+            : null}
+          <IconButton
             icon="&#xE906;"
-            onClick={openSettings}
+            label={translate("Show Settings")}
+            // onClick={openSettings}
+            disabled
             />
-          <SettingsContainer
+          {/* <SettingsContainer
             staticData={staticData}
             isSettingsOpen={isSettingsOpen}
             close={closeSettings}

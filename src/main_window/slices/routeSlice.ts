@@ -34,7 +34,7 @@ type RouteState = {
 }
 
 const initialRouteState: RouteState = {
-  route: "characters",
+  route: "attributes",
 }
 
 const routeSlice = createSlice({

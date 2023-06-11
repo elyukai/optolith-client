@@ -1,9 +1,10 @@
 import { FC } from "react"
 import backgroundImg from "../../assets/images/background.svg"
 import { TitleBar } from "../../shared/components/titleBar/TitleBar.tsx"
-import { Theme } from "../../shared/schema/config.ts"
 import { classList } from "../../shared/utils/classList.ts"
 import { ExternalAPI } from "../external.ts"
+import { useAppSelector } from "../hooks/redux.ts"
+import { selectAreAnimationsEnabled, selectLocale, selectTheme } from "../slices/settingsSlice.ts"
 import { NavigationBar } from "./NavigationBar.tsx"
 import "./Root.scss"
 import { Router } from "./Router.tsx"
@@ -14,16 +15,15 @@ const handleRestore = ExternalAPI.restore
 const handleClose = ExternalAPI.close
 
 export const Root: FC = () => {
-  const theme = Theme.Dark
-  const areAnimationsEnabled = true
-  const language = "de-DE"
+  const theme = useAppSelector(selectTheme)
+  const language = useAppSelector(selectLocale)
+  const areAnimationsEnabled = useAppSelector(selectAreAnimationsEnabled)
 
   return (
     <div
       id="body"
       className={classList(
-        `theme-${theme}`,
-        `platform-${ExternalAPI.platform}`,
+        `theme--${theme}`,
         { "show-animations": areAnimationsEnabled },
       )}
       lang={language}

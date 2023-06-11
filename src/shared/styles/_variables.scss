@@ -38,7 +38,7 @@
   --print-border: 0.25mm solid black;
 }
 
-.theme-light {
+.theme--light {
   --selection-color: #c2ad88;
   --accent-color-intense: #b6a68a;
   --background-color: #f0f0f0;
@@ -72,6 +72,6 @@
   // --strength-color: #ea8c00;
 }
 
-.platform-darwin {
+.platform--darwin {
   --titlebar-height: 36px;
 }

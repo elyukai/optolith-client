@@ -91,7 +91,11 @@ rules:
   no-labels: 2
   no-lone-blocks: 2
   no-loop-func: 2
-  no-multi-spaces: 2
+  no-multi-spaces:
+    - error
+    - exceptions:
+        Property: true
+        SwitchCase: true
   no-multi-str: 2
   no-new: 2
   no-new-func: 2
@@ -219,7 +223,6 @@ rules:
       - ["in", "instanceof"]
       allowSamePrecedence: true
   no-mixed-spaces-and-tabs: 2
-  no-multi-assign: 2
   no-multiple-empty-lines: 2
   no-negated-condition: 2
   no-new-object: 2

@@ -60,6 +60,8 @@ const mainHierarchy: DisplayRoute[] = [
   },
 ]
 
+type Section = "main" | "character"
+
 export const useVisibleTabs = () => {
   const currentRoute = useSelector(selectRoute)
 
@@ -150,7 +152,10 @@ export const useVisibleTabs = () => {
     ]
   )
 
-  const hierarchies = [ mainHierarchy, characterHierarchy ]
+  const hierarchies: [Section, DisplayRoute[]][] = [
+    [ "main", mainHierarchy ],
+    [ "character", characterHierarchy ],
+  ]
 
   const isInDisplayRoute = (route: Route, tab: DisplayRoute) =>
     tab.type === "single" ? tab.route === route : tab.routes.includes(route)
@@ -159,14 +164,15 @@ export const useVisibleTabs = () => {
     hierarchy.some(tab => isInDisplayRoute(route, tab))
 
   const getHierarchyByRoute = (route: Route) =>
-    hierarchies.find(hierarchy => isInHierarchy(route, hierarchy))
+    hierarchies.find(hierarchy => isInHierarchy(route, hierarchy[1]))
 
-  const currentHierarchy = getHierarchyByRoute(currentRoute) ?? mainHierarchy
+  const currentHierarchy = getHierarchyByRoute(currentRoute) ?? [ "main", mainHierarchy ]
 
-  const currentDisplayRoute = currentHierarchy?.find(tab => isInDisplayRoute(currentRoute, tab))
+  const currentDisplayRoute = currentHierarchy[1]?.find(tab => isInDisplayRoute(currentRoute, tab))
 
   return {
-    mainTabs: currentHierarchy,
+    section: currentHierarchy[0],
+    mainTabs: currentHierarchy[1],
     subTabs: currentDisplayRoute?.type === "group" ? currentDisplayRoute.routes : undefined,
   }
 }
