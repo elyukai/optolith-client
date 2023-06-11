@@ -60,6 +60,7 @@ export default [
       renderer_main: "./src/main_window/index.tsx",
     },
     target: "electron-renderer",
+    optimization: getOptimization("renderer_main"),
     module: {
       rules: rules
     },
@@ -68,13 +69,15 @@ export default [
     },
     output: {
       path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
-      filename: "[name].js"
+      filename: "[name].js",
+      globalObject: "globalThis",
     },
     plugins: rendererPlugins,
     externalsPresets: {
       electronRenderer: true
     },
-    profile: true
+    profile: true,
+    devtool: "source-map",
   },
   {
     name: "renderer_main_preload",
@@ -101,6 +104,7 @@ export default [
       renderer_updater: "./src/updater_window/index.tsx"
     },
     target: "electron-renderer",
+    optimization: getOptimization("renderer_updater"),
     module: {
       rules: rules
     },
@@ -109,13 +113,15 @@ export default [
     },
     output: {
       path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
-      filename: "[name].js"
+      filename: "[name].js",
+      globalObject: "globalThis",
     },
     plugins: rendererPlugins,
     externalsPresets: {
       electronRenderer: true
     },
-    profile: true
+    profile: true,
+    devtool: "source-map",
   },
   {
     name: "renderer_updater_preload",

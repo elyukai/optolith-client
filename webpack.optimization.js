@@ -14,7 +14,7 @@ export const getOptimization = (processType) => ({
         priority: -20
       },
       defaultVendors: {
-        name: `${processType}-vendors`,
+        name: `${processType}_vendors`,
         test: /[\\/]node_modules[\\/]/,
         priority: -10,
         reuseExistingChunk: true,
