@@ -10,5 +10,5 @@ export const firstLevel = (activatable: Activatable | undefined) =>
 /**
  * Returns if a present activatable entry is active. Defaults to `false`.
  */
-export const isActive = (activatable: Activatable | undefined) =>
+export const isActive = (activatable: Activatable | undefined): activatable is Activatable =>
   (activatable?.instances.length ?? 0) > 0

@@ -31,8 +31,6 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
     modifier,
     purchaseMaximum,
     purchased,
-    permanentlyLost,
-    permanentlyLostBoughtBack,
   } = attribute
 
   const dispatch = useAppDispatch()
@@ -64,6 +62,8 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
     [ dispatch, id ]
   )
 
+  const calculation = translations?.calculation?.[attribute.calculation ?? "default"]
+
   return (
     <div className="derived-characteristics-item">
       <AttributeBorder
@@ -75,11 +75,14 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
               <span>{translations?.name ?? ""}</span>
               <span>{value}</span>
             </h4>
-            <p className="calc-text">
-              {translations?.calculation?.default ?? ""}
-              {" = "}
-              {base}
-            </p>
+            {calculation === undefined
+              ? null
+              : (
+                <p className="calc-text">
+                  {`${calculation} = `}
+                  {base}
+                </p>
+              )}
             <p>
               <span className="mod">
                 {translate("Modifier")}
@@ -107,48 +110,27 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
           ? <NumberBox current={purchased} max={purchaseMaximum} />
           : null}
         {
-          !isInCharacterCreation
-          && purchased !== undefined
-          && purchaseMaximum !== undefined
+          !isInCharacterCreation && isDisplayedEnergy(attribute)
           ? (
             <IconButton
               className="add"
               icon="&#xE908;"
               label={translate("Increment")}
               onClick={handleAddMaxEnergyPoint}
-              disabled={
-                purchased >= purchaseMaximum
-                || (
-                  id !== DCId.LifePoints
-                  && permanentlyLost !== undefined
-                  && permanentlyLostBoughtBack !== undefined
-                  && permanentlyLost >= permanentlyLostBoughtBack
-                )
-              }
+              disabled={!attribute.isIncreasable}
               />
           )
           : null
         }
         {
-          !isInCharacterCreation
-          && isRemovingEnabled
-          && purchased !== undefined
-          && purchaseMaximum !== undefined
+          !isInCharacterCreation && isRemovingEnabled && isDisplayedEnergy(attribute)
             ? (
               <IconButton
                 className="remove"
                 icon="&#xE909;"
                 label={translate("Decrement")}
                 onClick={handleRemoveMaxEnergyPoint}
-                disabled={
-                  purchased <= 0
-                  || (
-                    id !== DCId.LifePoints
-                    && permanentlyLost !== undefined
-                    && permanentlyLostBoughtBack !== undefined
-                    && permanentlyLost >= permanentlyLostBoughtBack
-                  )
-                }
+                disabled={!attribute.isDecreasable}
                 />
             )
             : null
