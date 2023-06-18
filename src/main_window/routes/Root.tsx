@@ -4,18 +4,12 @@ import { TitleBar } from "../../shared/components/titleBar/TitleBar.tsx"
 import { classList } from "../../shared/utils/classList.ts"
 import { ExternalAPI } from "../external.ts"
 import { useAppSelector } from "../hooks/redux.ts"
-import { selectAreAnimationsEnabled, selectLocale, selectTheme } from "../slices/settingsSlice.ts"
+import { selectAreAnimationsEnabled, selectLocale } from "../slices/settingsSlice.ts"
 import { NavigationBar } from "./NavigationBar.tsx"
 import "./Root.scss"
 import { Router } from "./Router.tsx"
 
-const handleMinimize = ExternalAPI.minimize
-const handleMaximize = ExternalAPI.maximize
-const handleRestore = ExternalAPI.restore
-const handleClose = ExternalAPI.close
-
 export const Root: FC = () => {
-  const theme = useAppSelector(selectTheme)
   const language = useAppSelector(selectLocale)
   const areAnimationsEnabled = useAppSelector(selectAreAnimationsEnabled)
 
@@ -23,7 +17,6 @@ export const Root: FC = () => {
     <div
       id="body"
       className={classList(
-        `theme--${theme}`,
         { "show-animations": areAnimationsEnabled },
       )}
       lang={language}
@@ -35,13 +28,12 @@ export const Root: FC = () => {
       {/* <AlertsContainer /> */}
       <TitleBar
         platform={ExternalAPI.platform}
-        windowEvents={ExternalAPI}
-        onMinimize={handleMinimize}
-        onMaximize={handleMaximize}
-        onRestore={handleRestore}
-        onClose={handleClose}
+        maximizeEvents={ExternalAPI}
+        onMinimize={ExternalAPI.minimize}
+        onMaximize={ExternalAPI.maximize}
+        onRestore={ExternalAPI.restore}
+        onClose={ExternalAPI.close}
         isMaximized={ExternalAPI.isMaximized}
-        isFocused={ExternalAPI.isFocused}
         />
 
       <div id="content">

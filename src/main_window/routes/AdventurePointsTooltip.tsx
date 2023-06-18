@@ -36,16 +36,16 @@ export const AdventurePointsTooltip: FC = () => {
 
   return (
     <div className="ap-details">
-      <h4>{translate("header.aptooltip.title")}</h4>
+      <h4>{translate("Adventure Points")}</h4>
       <p className="general">
-        <span>{translate("header.aptooltip.total", total ?? 0)}</span>
-        <span>{translate("header.aptooltip.spent", spent.general)}</span>
+        <span>{translate("{0} Total AP", total ?? 0)}</span>
+        <span>{translate("{0} AP Spent", spent.general)}</span>
       </p>
       <hr />
       <p>
         <span>
           {translate(
-            "header.aptooltip.spentonadvantages",
+            "{0}/{1} AP spent on advantages",
             spentOnAdvantages.general + spentOnAdvantages.bound,
             80
           )}
@@ -53,7 +53,7 @@ export const AdventurePointsTooltip: FC = () => {
         <span>
           {spentOnMagicalAdvantages.general + spentOnMagicalAdvantages.bound > 0
             ? translate(
-              "header.aptooltip.spentonmagicadvantages",
+              "Thereof {0}/{1} on magic advantages",
               spentOnMagicalAdvantages.general + spentOnMagicalAdvantages.bound,
               maximumForMagicalAdvantagesDisadvantages,
             )
@@ -62,7 +62,7 @@ export const AdventurePointsTooltip: FC = () => {
         <span>
           {spentOnBlessedAdvantages.general + spentOnBlessedAdvantages.bound > 0
             ? translate(
-              "header.aptooltip.spentonblessedadvantages",
+              "Thereof {0}/{1} on blessed advantages",
               spentOnBlessedAdvantages.general + spentOnBlessedAdvantages.bound,
               50,
             )
@@ -70,7 +70,7 @@ export const AdventurePointsTooltip: FC = () => {
         </span>
         <span>
           {translate(
-            "header.aptooltip.spentondisadvantages",
+            "{0}/{1} AP received from disadvantages",
             spentOnDisadvantages.general + spentOnDisadvantages.bound,
             80,
           )}
@@ -78,7 +78,7 @@ export const AdventurePointsTooltip: FC = () => {
         <span>
           {spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound > 0
             ? translate(
-              "header.aptooltip.spentonmagicdisadvantages",
+              "Thereof {0}/{1} from magic disadvantages",
               spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound,
               maximumForMagicalAdvantagesDisadvantages,
             )
@@ -87,7 +87,7 @@ export const AdventurePointsTooltip: FC = () => {
         <span>
           {spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound > 0
             ? translate(
-              "header.aptooltip.spentonblesseddisadvantages",
+              "Thereof {0}/{1} from blessed disadvantages",
               spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound,
               50,
             )
@@ -97,30 +97,30 @@ export const AdventurePointsTooltip: FC = () => {
       <hr />
       <p>
         <span>
-          {translate("header.aptooltip.spentonrace", spentOnRace)}
+          {translate("{0} AP spent on race", spentOnRace)}
         </span>
         {spentOnProfession === undefined
           ? null
           : (
             <span>
-              {translate("header.aptooltip.spentonprofession", spentOnProfession)}
+              {translate("{0} AP spent on profession", spentOnProfession)}
             </span>
           )}
         <span>
           {translate(
-            "header.aptooltip.spentonattributes",
+            "{0} AP spent on attributes",
             spentOnAttributes.general + spentOnAttributes.bound,
           )}
         </span>
         <span>
           {translate(
-            "header.aptooltip.spentonskills",
+            "{0} AP spent on skills",
             spentOnSkills.general + spentOnSkills.bound,
           )}
         </span>
         <span>
           {translate(
-            "header.aptooltip.spentoncombattechniques",
+            "{0} AP spent on combat techniques",
             spentOnCombatTechniques.general + spentOnCombatTechniques.bound,
           )}
         </span>
@@ -128,7 +128,7 @@ export const AdventurePointsTooltip: FC = () => {
           ? (
             <span>
               {translate(
-                "header.aptooltip.spentonspells",
+                "{0} AP spent on spells",
                 spentOnSpells.general + spentOnSpells.bound,
               )}
             </span>
@@ -138,7 +138,7 @@ export const AdventurePointsTooltip: FC = () => {
           ? (
             <span>
               {translate(
-                "header.aptooltip.spentoncantrips",
+                "{0} AP spent on cantrips",
                 spentOnCantrips.general + spentOnCantrips.bound,
               )}
             </span>
@@ -148,7 +148,7 @@ export const AdventurePointsTooltip: FC = () => {
           ? (
             <span>
               {translate(
-                "header.aptooltip.spentonliturgicalchants",
+                "{0} AP spent on liturgical chants",
                 spentOnLiturgicalChants.general + spentOnLiturgicalChants.bound,
               )}
             </span>
@@ -158,7 +158,7 @@ export const AdventurePointsTooltip: FC = () => {
           ? (
             <span>
               {translate(
-                "header.aptooltip.spentonblessings",
+                "{0} AP spent on blessings",
                 spentOnBlessings.general + spentOnBlessings.bound,
               )}
             </span>
@@ -166,13 +166,13 @@ export const AdventurePointsTooltip: FC = () => {
           : null}
         <span>
           {translate(
-            "header.aptooltip.spentonspecialabilities",
+            "{0} AP spent on special abilities",
             spentOnSpecialAbilities.general + spentOnSpecialAbilities.bound,
           )}
         </span>
         <span>
           {translate(
-            "header.aptooltip.spentonenergies",
+            "{0} AP spent on improving/buying back LP/AE/KP",
             spentOnEnergies,
           )}
         </span>

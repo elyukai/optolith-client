@@ -2,14 +2,15 @@ import { FC, useCallback, useEffect, useState } from "react"
 import { TypedEventEmitterForEvent } from "../../utils/events.ts"
 import "./TitleBar.scss"
 import { TitleBarButton } from "./TitleBarButton.tsx"
+import { TitleBarTitle } from "./TitleBarTitle.tsx"
 import { TitleBarWrapper } from "./TitleBarWrapper.tsx"
 
-const useWindowState = (getWindowState: () => Promise<boolean>) => {
+const useWindowState = (getWindowState?: () => Promise<boolean>) => {
   const [ state, setState ] = useState(false)
 
   useEffect(() => {
     const updateState = () => {
-      getWindowState()
+      getWindowState?.()
         .then(setState)
         .catch(console.error)
     }
@@ -18,7 +19,7 @@ const useWindowState = (getWindowState: () => Promise<boolean>) => {
   }, [ getWindowState ])
 
   const update = useCallback(() => {
-    getWindowState()
+    getWindowState?.()
       .then(setState)
       .catch(console.error)
   }, [ getWindowState ])
@@ -27,70 +28,66 @@ const useWindowState = (getWindowState: () => Promise<boolean>) => {
 }
 
 type Props = {
+  title?: string
+  secondary?: boolean
   platform: NodeJS.Platform
-  windowEvents:
+  maximizeEvents?:
     & TypedEventEmitterForEvent<"maximize", []>
     & TypedEventEmitterForEvent<"unmaximize", []>
-    & TypedEventEmitterForEvent<"blur", []>
-    & TypedEventEmitterForEvent<"focus", []>
-  onMinimize: () => void
-  onMaximize: () => void
-  onRestore: () => void
+  onMinimize?: () => void
+  onMaximize?: () => void
+  onRestore?: () => void
   onClose: () => void
-  isMaximized: () => Promise<boolean>
-  isFocused: () => Promise<boolean>
+  isMaximized?: () => Promise<boolean>
 }
 
 export const TitleBar: FC<Props> = props => {
   const {
+    title,
+    secondary,
     platform,
-    windowEvents,
+    maximizeEvents,
     onMinimize,
     onMaximize,
     onRestore,
     onClose,
     isMaximized: getIsMaximized,
-    isFocused: getIsFocused,
   } = props
 
   const [ isMaximized, updateIsMaximized ] = useWindowState(getIsMaximized)
-  const [ isFocused, updateIsFocused ] = useWindowState(getIsFocused)
 
   useEffect(
     () => {
-      windowEvents.on("maximize", updateIsMaximized)
-      windowEvents.on("unmaximize", updateIsMaximized)
-      windowEvents.on("blur", updateIsFocused)
-      windowEvents.on("focus", updateIsFocused)
+      maximizeEvents?.on("maximize", updateIsMaximized)
+      maximizeEvents?.on("unmaximize", updateIsMaximized)
 
       return () => {
-        windowEvents.removeListener("maximize", updateIsMaximized)
-        windowEvents.removeListener("unmaximize", updateIsMaximized)
-        windowEvents.removeListener("blur", updateIsFocused)
-        windowEvents.removeListener("focus", updateIsFocused)
+        maximizeEvents?.removeListener("maximize", updateIsMaximized)
+        maximizeEvents?.removeListener("unmaximize", updateIsMaximized)
       }
     },
-    [ updateIsFocused, updateIsMaximized, windowEvents ]
+    [ updateIsMaximized, maximizeEvents ]
   )
 
   if (platform === "darwin") {
     return (
-      <TitleBarWrapper isFocused={isFocused}>
+      <TitleBarWrapper secondary={secondary}>
         <div className="macos-hover-area" />
+        <TitleBarTitle title={title} />
       </TitleBarWrapper>
     )
   }
 
   return (
-    <TitleBarWrapper isFocused={isFocused}>
-      <TitleBarButton icon="&#xE903;" onClick={onMinimize} className="minimize" />
-      {isMaximized
-        ? null
-        : <TitleBarButton icon="&#xE901;" onClick={onMaximize} className="maximize" />}
-      {isMaximized
-        ? <TitleBarButton icon="&#xE902;" onClick={onRestore} className="restore" />
-        : null}
-      <TitleBarButton icon="&#xE900;" onClick={onClose} className="close" />
+    <TitleBarWrapper secondary={secondary}>
+      <TitleBarTitle title={title} />
+      <div>
+        <TitleBarButton icon="&#xE903;" onClick={onMinimize} className="minimize" />
+        {isMaximized
+          ? <TitleBarButton icon="&#xE902;" onClick={onRestore} className="restore" />
+          : <TitleBarButton icon="&#xE901;" onClick={onMaximize} className="maximize" />}
+        <TitleBarButton icon="&#xE900;" onClick={onClose} className="close" />
+      </div>
     </TitleBarWrapper>
   )
 }

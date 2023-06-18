@@ -38,38 +38,40 @@
   --print-border: 0.25mm solid black;
 }
 
-.theme--light {
-  --selection-color: #c2ad88;
-  --accent-color-intense: #b6a68a;
-  --background-color: #f0f0f0;
-  --background-color-transparent02: rgba(240, 240, 240, 0.2);
-  --background-color-transparent04: rgba(240, 240, 240, 0.4);
-  --background-color-transparent06: rgba(240, 240, 240, 0.6);
-  --background-color-transparent08: rgba(240, 240, 240, 0.8);
-  --headings-color: black;
-  --text-color: #3c3c3c;
-  --important-bright-color: #cac158;
-  --important-dark-color: #cac158;
-  --common-bright-color: #5398bb;
-  --common-dark-color: #5398bb;
-  --uncommon-bright-color: #c54747;
-  --uncommon-dark-color: #c54747;
-  --courage-color: #c54747;
-  --sagacity-color: #a85bd4;
-  --intuition-color: #339b5b;
-  --charisma-color: black;
-  --dexterity-color: #cac158;
-  --agility-color: #5398bb;
-  --constitution-color: white;
-  --strength-color: #c28e46;
-  // --courage-color: #d00000;
-  // --sagacity-color: #8100ca;
-  // --intuition-color: #00ba4a;
-  // --charisma-color: black;
-  // --dexterity-color: #daca00;
-  // --agility-color: #007eca;
-  // --constitution-color: white;
-  // --strength-color: #ea8c00;
+@media (prefers-color-scheme: light) {
+  :root {
+    --selection-color: #c2ad88;
+    --accent-color-intense: #b6a68a;
+    --background-color: #f0f0f0;
+    --background-color-transparent02: rgba(240, 240, 240, 0.2);
+    --background-color-transparent04: rgba(240, 240, 240, 0.4);
+    --background-color-transparent06: rgba(240, 240, 240, 0.6);
+    --background-color-transparent08: rgba(240, 240, 240, 0.8);
+    --headings-color: black;
+    --text-color: #3c3c3c;
+    --important-bright-color: #cac158;
+    --important-dark-color: #cac158;
+    --common-bright-color: #5398bb;
+    --common-dark-color: #5398bb;
+    --uncommon-bright-color: #c54747;
+    --uncommon-dark-color: #c54747;
+    --courage-color: #c54747;
+    --sagacity-color: #a85bd4;
+    --intuition-color: #339b5b;
+    --charisma-color: black;
+    --dexterity-color: #cac158;
+    --agility-color: #5398bb;
+    --constitution-color: white;
+    --strength-color: #c28e46;
+    // --courage-color: #d00000;
+    // --sagacity-color: #8100ca;
+    // --intuition-color: #00ba4a;
+    // --charisma-color: black;
+    // --dexterity-color: #daca00;
+    // --agility-color: #007eca;
+    // --constitution-color: white;
+    // --strength-color: #ea8c00;
+  }
 }
 
 .platform--darwin {

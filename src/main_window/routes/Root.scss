@@ -1,22 +1,3 @@
-html,
-body,
-#root,
-#body {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  margin: 0;
-  overflow: hidden;
-  padding: 0;
-}
-
-#body {
-  cursor: default;
-  background: var(--background-color);
-  display: flex;
-  border: 1px solid var(--separator-color-transparent);
-}
-
 .background-image {
   position: absolute;
   width: 120vmax;
@@ -25,7 +6,8 @@ body,
   justify-content: center;
   align-items: center;
   align-self: center;
-  left: -10vmax;
+  top: calc((100% - 120vmax) / 2);
+  left: calc((100% - 120vmax) / 2);
 
   > img {
     opacity: 0.15;

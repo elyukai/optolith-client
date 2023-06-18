@@ -1,10 +1,13 @@
 import { contextBridge, ipcRenderer } from "electron"
 import EventEmitter from "events"
 import { ValidResults } from "optolith-database-schema"
+import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
+import { GlobalSettingsEvents, attachGlobalSettingsEvents } from "../shared/settings/listeningRendererPreload.ts"
 import { TypedEventEmitterForEvent } from "../shared/utils/events.ts"
 
 export type PreloadAPI = {
   platform: NodeJS.Platform
+  systemLocale: string
   checkForUpdates: () => void
   isMaximized: () => Promise<boolean>
   isFocused: () => Promise<boolean>
@@ -16,14 +19,17 @@ export type PreloadAPI = {
   getChangelog: () => Promise<string>
   getVersion: () => Promise<string>
   toggleDevTools: () => void
+  showSettings: () => void
+  setTitle: (title: string) => void
 } & Events
 
 type Events =
-  & TypedEventEmitterForEvent<"database-available", [database: ValidResults]>
+  & TypedEventEmitterForEvent<"initial-setup", [InitialSetupEventMessage]>
   & TypedEventEmitterForEvent<"maximize", []>
   & TypedEventEmitterForEvent<"unmaximize", []>
   & TypedEventEmitterForEvent<"blur", []>
   & TypedEventEmitterForEvent<"focus", []>
+  & GlobalSettingsEvents
 
 const events = new EventEmitter() as Events
 
@@ -32,26 +38,38 @@ const api: PreloadAPI = {
   emit: events.emit.bind(events),
   removeListener: events.removeListener.bind(events),
   platform: process.platform,
+  systemLocale: "en-US",
   checkForUpdates: () => ipcRenderer.send("check-for-updates"),
-  isMaximized: () => ipcRenderer.invoke("receive-is-maximized"),
-  isFocused: () => ipcRenderer.invoke("receive-is-focused"),
-  minimize: () => ipcRenderer.send("minimize"),
-  maximize: () => ipcRenderer.send("maximize"),
-  restore: () => ipcRenderer.send("restore"),
-  close: () => ipcRenderer.send("close"),
+  isMaximized: () => ipcRenderer.invoke("main-window-receive-is-maximized"),
+  isFocused: () => ipcRenderer.invoke("main-window-receive-is-focused"),
+  minimize: () => ipcRenderer.send("main-window-minimize"),
+  maximize: () => ipcRenderer.send("main-window-maximize"),
+  restore: () => ipcRenderer.send("main-window-restore"),
+  close: () => ipcRenderer.send("main-window-close"),
   getLicense: () => ipcRenderer.invoke("receive-license"),
   getChangelog: () => ipcRenderer.invoke("receive-changelog"),
   getVersion: () => ipcRenderer.invoke("receive-version"),
-  toggleDevTools: () => ipcRenderer.send("toggle-dev-tools"),
+  toggleDevTools: () => ipcRenderer.send("main-window-toggle-dev-tools"),
+  showSettings: () => ipcRenderer.send("show-settings"),
+  setTitle: title => ipcRenderer.send("main-window-set-title", title),
 }
 
 contextBridge.exposeInMainWorld("optolith", api)
 
+export type InitialSetupEventMessage = {
+  database: ValidResults
+  globalSettings: GlobalSettings
+  systemLocale: string
+}
+
 ipcRenderer
-  .on("database-available", (_event: Event, database: ValidResults) => {
-    events.emit("database-available", database)
+  .on("initial-setup", (_event: Event, message: InitialSetupEventMessage) => {
+    api.systemLocale = message.systemLocale
+    events.emit("initial-setup", message)
   })
   .on("maximize", () => events.emit("maximize"))
   .on("unmaximize", () => events.emit("unmaximize"))
   .on("blur", () => events.emit("blur"))
   .on("focus", () => events.emit("focus"))
+
+attachGlobalSettingsEvents(ipcRenderer, events)

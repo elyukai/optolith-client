@@ -4,14 +4,15 @@ import { classList } from "../../utils/classList.ts"
 type Props = {
   className?: string
   icon: string
-  onClick (): void
+  onClick?(): void
 }
 
 export const TitleBarButton: React.FC<Props> = ({ className, icon, onClick }) => (
-  <div
+  <button
     className={classList("titlebar-btn", className)}
+    disabled={onClick === undefined}
     onClick={onClick}
     >
     <span>{icon}</span>
-  </div>
+  </button>
 )

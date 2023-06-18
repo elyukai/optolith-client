@@ -1,0 +1,23 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-gap: 1rem;
+}
+
+.grid-item {
+  &[data-grid="1/1"] {
+    grid-column-end: span 6;
+  }
+
+  &[data-grid="1/2"] {
+    grid-column-end: span 3;
+  }
+
+  &[data-grid="1/3"] {
+    grid-column-end: span 2;
+  }
+
+  &[data-grid="2/3"] {
+    grid-column-end: span 4;
+  }
+}

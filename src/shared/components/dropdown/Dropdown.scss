@@ -1,0 +1,202 @@
+.dropdown {
+  // width: 280px;
+  font: 500 13px/30px Alegreya Sans;
+
+  > div {
+    position: relative;
+
+    > .value {
+      width: 100%;
+      height: 32px;
+      padding: 0 22px 0 11px;
+      margin: 0;
+      color: var(--headings-color);
+      display: block;
+      position: relative;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      border: 1px solid var(--accent-color);
+
+      &.hint {
+        color: var(--accent-color);
+      }
+
+      &:hover {
+        cursor: pointer;
+        color: var(--headings-color);
+        border-color: var(--headings-color);
+
+        &::before,
+        &::after {
+          border-color: var(--headings-color);
+        }
+      }
+
+      &::before,
+      &::after {
+        position: absolute;
+        content: "";
+        height: 6px;
+        width: 6px;
+        border: 1px solid var(--accent-color);
+        right: 9px;
+      }
+
+      &::before {
+        top: 9px;
+        transform: rotate(45deg);
+      }
+
+      &::after {
+        bottom: 9px;
+        transform: rotate(45deg);
+      }
+    }
+
+    > .down {
+      position: absolute;
+      width: 100%;
+      top: 32px;
+      left: 0;
+      z-index: 11000;
+      overflow: hidden;
+      height: 1px;
+      pointer-events: none;
+
+      > div {
+        position: relative;
+
+        .scroll-view > div {
+          height: 32px;
+          padding: 0 11px;
+          line-height: 12px;
+          color: var(--text-color);
+          position: relative;
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+
+          &:not(:last-child) {
+            height: 33px;
+            border-bottom: 1px solid var(--separator-color-transparent);
+          }
+
+          &:hover {
+            cursor: pointer;
+            color: var(--headings-color);
+            background: var(--separator-color-transparent);
+            border-color: transparent;
+          }
+
+          &.active {
+            &:after {
+              content: "";
+              position: absolute;
+              top: 12px;
+              right: 11px;
+              width: 11px;
+              height: 4px;
+              border-width: 0 0 1px 1px;
+              border-style: solid;
+              border-color: var(--headings-color);
+              transform: rotate(-45deg);
+            }
+          }
+
+          &.disabled {
+            color: var(--separator-color-halftransparent);
+            pointer-events: none;
+          }
+        }
+
+        .scroll-active .scroll-view > div.active:after {
+          right: 22px;
+        }
+      }
+    }
+  }
+
+  .track-horizontal {
+    display: none;
+  }
+
+  &.active {
+    > div {
+      > .value {
+        color: var(--accent-color-intense);
+        border-color: var(--accent-color-intense);
+
+        &::before,
+        &::after {
+          border-color: var(--accent-color-intense);
+        }
+      }
+
+      > .down {
+        transition: height 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+        pointer-events: all;
+        display: block;
+        border: 1px solid var(--accent-color);
+        background: var(--background-color);
+      }
+    }
+  }
+
+  &.disabled {
+    pointer-events: none;
+
+    > div {
+      > .value {
+        color: var(--separator-color-halftransparent);
+        border-image: none;
+        border-color: var(--separator-color-transparent);
+        box-shadow: none;
+        background: transparent;
+
+        &::before,
+        &::after {
+          border-color: var(--separator-color-transparent);
+        }
+      }
+    }
+  }
+
+  &.invalid:not(.disabled) {
+    label {
+      color: var(--uncommon-bright-color);
+    }
+
+    > div {
+      > .value {
+        border-image: none;
+        border-color: var(--uncommon-dark-color);
+        color: var(--uncommon-bright-color);
+
+        &::before,
+        &::after {
+          border-color: var(--uncommon-bright-color)
+            var(--uncommon-bright-color) transparent transparent;
+        }
+      }
+    }
+  }
+
+  &.fullWidth {
+    width: auto;
+  }
+
+  &.top {
+    > div > .down {
+      top: auto;
+      bottom: 32px;
+    }
+  }
+
+  &.top.active {
+    > div > .down {
+      border-image: linear-gradient(to bottom, #6d5024 0%, #524018 100%);
+      border-image-slice: 1;
+    }
+  }
+}

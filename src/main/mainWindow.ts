@@ -4,6 +4,8 @@ import windowStateKeeper from "electron-window-state"
 import * as path from "node:path"
 import * as url from "node:url"
 import type { Database } from "../database/index.ts"
+import { InitialSetupEventMessage } from "../main_window_preload/index.ts"
+import { getGlobalSettings } from "../shared/settings/main.ts"
 const debug = Debug("main:main")
 
 export const createMainWindow = async () => {
@@ -66,31 +68,38 @@ export const createMainWindow = async () => {
   mainWindow.on("blur", () => mainWindow.webContents.send("blur"))
   mainWindow.on("focus", () => mainWindow.webContents.send("focus"))
 
-  ipcMain.handle("receive-is-maximized", _ => mainWindow.isMaximized())
-  ipcMain.handle("receive-is-focused", _ => mainWindow.isFocused())
+  ipcMain.handle("main-window-receive-is-maximized", _ => mainWindow.isMaximized())
+  ipcMain.handle("main-window-receive-is-focused", _ => mainWindow.isFocused())
 
-  ipcMain.on("minimize", () => mainWindow.minimize())
-  ipcMain.on("maximize", () => mainWindow.maximize())
-  ipcMain.on("restore", () => mainWindow.restore())
-  ipcMain.on("close", () => mainWindow.close())
-  ipcMain.on("toggle-dev-tools", () => mainWindow.webContents.toggleDevTools())
+  ipcMain.on("main-window-minimize", () => mainWindow.minimize())
+  ipcMain.on("main-window-maximize", () => mainWindow.maximize())
+  ipcMain.on("main-window-restore", () => mainWindow.restore())
+  ipcMain.on("main-window-close", () => mainWindow.close())
+  ipcMain.on("main-window-toggle-dev-tools", () => mainWindow.webContents.toggleDevTools())
+  ipcMain.on("main-window-set-title", (_, title) => mainWindow.setTitle(title))
 
   mainWindow.on("closed", () => {
-    ipcMain.removeAllListeners("receive-is-maximized")
-    ipcMain.removeAllListeners("receive-is-focused")
+    ipcMain.removeAllListeners("main-window-receive-is-maximized")
+    ipcMain.removeAllListeners("main-window-receive-is-focused")
 
-    ipcMain.removeAllListeners("minimize")
-    ipcMain.removeAllListeners("maximize")
-    ipcMain.removeAllListeners("restore")
-    ipcMain.removeAllListeners("close")
-    ipcMain.removeAllListeners("toggle-dev-tools")
+    ipcMain.removeAllListeners("main-window-minimize")
+    ipcMain.removeAllListeners("main-window-maximize")
+    ipcMain.removeAllListeners("main-window-restore")
+    ipcMain.removeAllListeners("main-window-close")
+    ipcMain.removeAllListeners("main-window-toggle-dev-tools")
   })
 
   return mainWindow
 }
 
 export const showMainWindow = (mainWindow: BrowserWindow, database: Database) => {
-  mainWindow.webContents.send("database-available", database)
+  const initialSetupEventMessage: InitialSetupEventMessage = {
+    database,
+    globalSettings: getGlobalSettings(),
+    systemLocale: app.getLocale(),
+  }
+
+  mainWindow.webContents.send("initial-setup", initialSetupEventMessage)
   debug("Show window once database is available")
   mainWindow.show()
 }

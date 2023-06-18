@@ -1,7 +1,5 @@
 import { useCallback } from "react"
 import { createPortal } from "react-dom"
-import { useAppSelector } from "../../../main_window/hooks/redux.ts"
-import { selectTheme } from "../../../main_window/slices/settingsSlice.ts"
 import { classList } from "../../utils/classList.ts"
 import { FCC } from "../../utils/react.ts"
 import "./Dialog.scss"
@@ -31,8 +29,6 @@ export const Dialog: FCC<Props> = props => {
     isOpen,
     id,
   } = props
-
-  const theme = useAppSelector(selectTheme)
 
   const handleButtonClick = useCallback(
     (f: () => void) => {
@@ -68,7 +64,7 @@ export const Dialog: FCC<Props> = props => {
   return isOpen
     ? createPortal(
         <div
-          className={classList("modal", "modal-backdrop", `theme--${theme}`, className)}
+          className={classList("modal", "modal-backdrop", className)}
           id={id}
           >
           <div

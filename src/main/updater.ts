@@ -1,9 +1,12 @@
 import Debug from "debug"
-import { BrowserWindow, ipcMain } from "electron"
+import { BrowserWindow, app, ipcMain } from "electron"
 import { CancellationToken, UpdateCheckResult, autoUpdater } from "electron-updater"
 import * as path from "node:path"
 import * as url from "node:url"
 import appIconMacOS from "../assets/icon/AppIcon.icns"
+import { Database } from "../database/index.ts"
+import { getGlobalSettings } from "../shared/settings/main.ts"
+import { InitialSetupEventMessage } from "../updater_window_preload/index.ts"
 const debug = Debug("main:updater")
 
 type AvailableUpdateCheckResult = {
@@ -25,19 +28,25 @@ const checkForUpdates = async (): Promise<AvailableUpdateCheckResult | undefined
   }
 }
 
-const createUpdaterWindow = async () => {
+const createUpdaterWindow = async (database: Database) => {
   debug("create window")
   const updaterWindow = new BrowserWindow({
     icon: appIconMacOS,
     center: true,
-    title: "Optolith Update Available",
+    title: "Optolith",
     acceptFirstMouse: true,
-    width: 1400,
-    height: 800,
+    frame: false,
+    width: 400,
+    height: 100,
+    resizable: false,
     webPreferences: {
       preload: path.join(__dirname, "renderer_updater_preload.js"),
     },
     show: false,
+    titleBarStyle: "hidden",
+    fullscreenable: false,
+    maximizable: false,
+    minimizable: false,
   })
 
   await updaterWindow.loadURL(url.format({
@@ -46,12 +55,22 @@ const createUpdaterWindow = async () => {
     slashes: true,
   }))
 
-  updaterWindow.webContents.openDevTools()
+  const initialSetupEventMessage: InitialSetupEventMessage = {
+    translations: Object.fromEntries(database.ui),
+    locales: Object.fromEntries(database.locales),
+    globalSettings: getGlobalSettings(),
+    systemLocale: app.getLocale(),
+    locale: getGlobalSettings().locale,
+  }
+
+  updaterWindow.webContents.send("initial-setup", initialSetupEventMessage)
 
   autoUpdater.on("error", (err: Error) => {
     debug("error %O", err)
     updaterWindow.webContents.send("auto-updater-error", err)
   })
+
+  ipcMain.on("updater-window-set-title", (_, title) => updaterWindow.setTitle(title))
 
   updaterWindow.on("closed", () => {
     autoUpdater.removeAllListeners("error")
@@ -60,6 +79,7 @@ const createUpdaterWindow = async () => {
     ipcMain.removeAllListeners("download-update")
     ipcMain.removeAllListeners("install-update-later")
     ipcMain.removeAllListeners("quit-and-install-update")
+    ipcMain.removeAllListeners("updater-window-set-title")
   })
 
   return updaterWindow
@@ -109,7 +129,7 @@ const prepareUpdaterWindowForAvailableUpdate = (
   })
 }
 
-export const checkForUpdatesOnStartup = async () => {
+export const checkForUpdatesOnStartup = async (database: Database) => {
   debug("checking for updates ...")
 
   const checkResult = await checkForUpdates()
@@ -117,7 +137,7 @@ export const checkForUpdatesOnStartup = async () => {
 
   if (isUpdateAvailable) {
     debug("update is available")
-    const updaterWindow = await createUpdaterWindow()
+    const updaterWindow = await createUpdaterWindow(database)
     const updatePromise = new Promise<boolean>(resolve => {
       prepareUpdaterWindowForAvailableUpdate(
         updaterWindow,
@@ -135,9 +155,9 @@ export const checkForUpdatesOnStartup = async () => {
   }
 }
 
-export const checkForUpdatesOnRequest = async () => {
+export const checkForUpdatesOnRequest = async (database: Database) => {
   debug("checking for updates ...")
-  const updaterWindow = await createUpdaterWindow()
+  const updaterWindow = await createUpdaterWindow(database)
   updaterWindow.show()
   const checkResult = await checkForUpdates()
   const isUpdateAvailable = checkResult !== undefined

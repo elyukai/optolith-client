@@ -33,10 +33,12 @@
 // import { Unit } from "./Data/Unit"
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
+import { onGlobalSettingsUpdate } from "../shared/settings/listeningRenderer.ts"
 import "../shared/styles/index.scss"
 import { ExternalAPI } from "./external.ts"
+import { init } from "./init.ts"
 import { Root } from "./routes/Root.tsx"
-import { initDatabase } from "./slices/databaseSlice.ts"
+import { setAreAnimationsEnabled, setFallbackLocale, setIsEditAfterCreationEnabled, setLocale } from "./slices/settingsSlice.ts"
 import { store } from "./store.ts"
 
 // webFrame.setZoomFactor (1)
@@ -158,15 +160,23 @@ const root = createRoot(domNode)
 
 document.body.classList.add(`platform--${ExternalAPI.platform}`)
 
-root.render(
-  <Provider store={store}>
-    <Root />
-  </Provider>
-)
+ExternalAPI.on("initial-setup", ({ database, globalSettings }) => {
+  root.render(
+    <Provider store={store}>
+      <Root />
+    </Provider>
+  )
 
-ExternalAPI.on("database-available", database => {
   console.log("database available")
-  store.dispatch(initDatabase(database))
+  store.dispatch(init({ database, globalSettings }))
+})
+
+onGlobalSettingsUpdate(ExternalAPI, {
+  locale: newValue => store.dispatch(setLocale(newValue)),
+  fallbackLocale: newValue => store.dispatch(setFallbackLocale(newValue)),
+  theme: _newValue => undefined,
+  isEditAfterCreationEnabled: newValue => store.dispatch(setIsEditAfterCreationEnabled(newValue)),
+  areAnimationsEnabled: newValue => store.dispatch(setAreAnimationsEnabled(newValue)),
 })
 
 // ipcRenderer.addListener ("update-available", (_event: Event, info: UpdateInfo) => {

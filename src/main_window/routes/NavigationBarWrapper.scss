@@ -1,26 +1,24 @@
 .navigationbar {
-	width: 100%;
-	margin-top: var(--titlebar-height);
-	flex: none;
+  width: 100%;
 }
 
 .navigationbar-inner {
-	height: var(--navigationbar-height);
-	width: 100%;
-	display: flex;
-	position: relative;
+  height: var(--navigationbar-height);
+  width: 100%;
+  display: flex;
+  position: relative;
 
-	> div {
-		z-index: 800;
-	}
+  > div {
+    z-index: 800;
+  }
 
-	&::after {
-		position: absolute;
-		content: "";
-		width: 100%;
-		height: 1px;
-		background: var(--separator-color-transparent);
-		bottom: 0;
-		z-index: 799;
-	}
+  &::after {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 1px;
+    background: var(--separator-color-transparent);
+    bottom: 0;
+    z-index: 799;
+  }
 }

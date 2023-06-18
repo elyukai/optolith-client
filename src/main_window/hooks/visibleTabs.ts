@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux"
 import { Route, selectRoute } from "../slices/routeSlice.ts"
 // import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils"
 // import { getIsLiturgicalChantsTabAvailable } from "./liturgicalChantsSelectors"
@@ -8,6 +7,7 @@ import { Route, selectRoute } from "../slices/routeSlice.ts"
 // import { getCurrentCultureId, getCurrentPhase, getCurrentTab, getRaceIdM, getWiki } from "./stateSelectors"
 import { useMemo } from "react"
 import { filterNonNullable } from "../../shared/utils/array.ts"
+import { useAppSelector } from "./redux.ts"
 
 type RouteGroupName =
   | "about"
@@ -63,7 +63,7 @@ const mainHierarchy: DisplayRoute[] = [
 type Section = "main" | "character"
 
 export const useVisibleTabs = () => {
-  const currentRoute = useSelector(selectRoute)
+  const currentRoute = useAppSelector(selectRoute)
 
   // TODO: Replace these with real values
   const phase = 3 as number
