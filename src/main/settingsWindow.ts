@@ -1,21 +1,13 @@
 import Debug from "debug"
-import { BrowserWindow, app, ipcMain, nativeTheme } from "electron"
+import { BrowserWindow, app, ipcMain } from "electron"
 import * as path from "node:path"
 import * as url from "node:url"
 import { Database } from "../database/index.ts"
 import type { InitialSetupEventMessage } from "../settings_window_preload/index.ts"
-import { Theme } from "../shared/schema/config.ts"
+import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import { attachGlobalSettingsBroadcastToWindow, attachGlobalSettingsChanged, getGlobalSettings } from "../shared/settings/main.ts"
-import { assertExhaustive } from "../shared/utils/typeSafety.ts"
+import { setNativeTheme } from "./nativeTheme.ts"
 const debug = Debug("main:settings")
-
-export type GlobalSettings = {
-  locale: string | undefined
-  fallbackLocale: string | undefined
-  theme: Theme | undefined
-  isEditAfterCreationEnabled: boolean
-  areAnimationsEnabled: boolean
-}
 
 let settingsWindow: BrowserWindow | undefined = undefined
 
@@ -62,15 +54,12 @@ export const createSettingsWindow = async (
     ipcMain.on("settings-window-close", () => settingsWindow?.close())
     ipcMain.on("settings-window-set-title", (_, title) => settingsWindow?.setTitle(title))
 
+    settingsWindow.on("blur", () => settingsWindow?.webContents.send("blur"))
+    settingsWindow.on("focus", () => settingsWindow?.webContents.send("focus"))
+
     attachGlobalSettingsChanged(settingsWindow, (key, value) => {
       if (key === "theme") {
-        const newTheme = value as GlobalSettings["theme"]
-        switch (newTheme) {
-          case Theme.Dark:  nativeTheme.themeSource = "dark"; break
-          case Theme.Light: nativeTheme.themeSource = "light"; break
-          case undefined:   nativeTheme.themeSource = "system"; break
-          default: assertExhaustive(newTheme)
-        }
+        setNativeTheme(value as GlobalSettings["theme"])
       }
       else if (key === "locale") {
         onLocaleChanged(value as GlobalSettings["locale"])

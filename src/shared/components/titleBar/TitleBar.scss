@@ -15,11 +15,19 @@
   --windows-titlebar-close: #e81123;
 }
 
+:root.blurred .titlebar-inner {
+  border-bottom-color: var(--separator-color-transparent);
+}
+
 .titlebar-inner {
   height: var(--titlebar-height);
   width: 100%;
   position: relative;
-  border-bottom: 1px solid var(--separator-color-transparent);
+  border-bottom: 1px solid var(--separator-color-halftransparent);
+}
+
+:root.blurred .titlebar-title {
+  opacity: 0.25;
 }
 
 .titlebar-title {

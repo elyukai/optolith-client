@@ -18,3 +18,11 @@ ExternalAPI.on("initial-setup", ({ translations, locales, systemLocale, settings
       />
   )
 })
+
+ExternalAPI.on("blur", () => {
+  document.documentElement.classList.add("blurred")
+})
+
+ExternalAPI.on("focus", () => {
+  document.documentElement.classList.remove("blurred")
+})

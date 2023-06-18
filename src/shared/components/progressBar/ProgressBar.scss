@@ -1,0 +1,27 @@
+.progress-bar {
+  border: 1px solid var(--accent-color);
+  background: var(--separator-color-transparent);
+  padding: 1px;
+  height: 100%;
+  width: 8px;
+  position: relative;
+
+  .progress-bar-overlay {
+    background: var(--accent-color);
+  }
+
+  &:not(.progress-bar--horizontal) .progress-bar-overlay {
+    top: 0;
+    width: 4px;
+  }
+
+  &.progress-bar--horizontal {
+    height: 8px;
+    width: 100%;
+
+    .progress-bar-overlay {
+      right: 0;
+      height: 4px;
+    }
+  }
+}

@@ -41,6 +41,7 @@ const createUpdaterWindow = async (database: Database) => {
     resizable: false,
     webPreferences: {
       preload: path.join(__dirname, "renderer_updater_preload.js"),
+      enablePreferredSizeMode: true,
     },
     show: false,
     titleBarStyle: "hidden",
@@ -64,6 +65,20 @@ const createUpdaterWindow = async (database: Database) => {
   }
 
   updaterWindow.webContents.send("initial-setup", initialSetupEventMessage)
+
+  updaterWindow.on("blur", () => updaterWindow.webContents.send("blur"))
+  updaterWindow.on("focus", () => updaterWindow.webContents.send("focus"))
+  updaterWindow.webContents.on("preferred-size-changed", (_event, preferredSize) => {
+    const { x, width } = updaterWindow.getBounds()
+    updaterWindow.setBounds(
+      {
+        x: x + (width - preferredSize.width) / 2,
+        width: preferredSize.width,
+        height: preferredSize.height,
+      },
+      true
+    )
+  })
 
   autoUpdater.on("error", (err: Error) => {
     debug("error %O", err)

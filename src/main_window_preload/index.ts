@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron"
+import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
 import EventEmitter from "events"
 import { ValidResults } from "optolith-database-schema"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
@@ -63,7 +63,7 @@ export type InitialSetupEventMessage = {
 }
 
 ipcRenderer
-  .on("initial-setup", (_event: Event, message: InitialSetupEventMessage) => {
+  .on("initial-setup", (_event: IpcRendererEvent, message: InitialSetupEventMessage) => {
     api.systemLocale = message.systemLocale
     events.emit("initial-setup", message)
   })

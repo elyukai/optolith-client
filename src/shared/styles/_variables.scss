@@ -36,6 +36,12 @@
   --link-hover: #52abd1;
 
   --print-border: 0.25mm solid black;
+
+  &.blurred {
+    --selection-color: #666666;
+    --accent-color: #606060;
+    --accent-color-intense: #353535;
+  }
 }
 
 @media (prefers-color-scheme: light) {
@@ -71,6 +77,12 @@
     // --agility-color: #007eca;
     // --constitution-color: white;
     // --strength-color: #ea8c00;
+
+    &.blurred {
+      --selection-color: #ababab;
+      --accent-color: #808080;
+      --accent-color-intense: #a2a2a2;
+    }
   }
 }
 

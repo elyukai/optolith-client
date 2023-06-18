@@ -179,6 +179,14 @@ onGlobalSettingsUpdate(ExternalAPI, {
   areAnimationsEnabled: newValue => store.dispatch(setAreAnimationsEnabled(newValue)),
 })
 
+ExternalAPI.on("blur", () => {
+  document.documentElement.classList.add("blurred")
+})
+
+ExternalAPI.on("focus", () => {
+  document.documentElement.classList.remove("blurred")
+})
+
 // ipcRenderer.addListener ("update-available", (_event: Event, info: UpdateInfo) => {
 //   const dispatch = store.dispatch as ReduxDispatch
 

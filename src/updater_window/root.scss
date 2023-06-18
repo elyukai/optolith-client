@@ -1,0 +1,56 @@
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+:root {
+  min-width: 400px;
+  min-height: 100px;
+  width: initial;
+  height: initial;
+
+  &.phase--checking {
+    --loading-indicator-size: 40px;
+    width: 100%;
+    height: 100%;
+
+    body,
+    #root,
+    #body {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+body,
+#root,
+#body {
+  width: initial;
+  height: initial;
+}
+
+.btn {
+  white-space: nowrap;
+}
+
+main {
+  padding: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1 1 0;
+}
+
+.buttons {
+  display: flex;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.download-progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}

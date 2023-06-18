@@ -1,8 +1,8 @@
-import { contextBridge, ipcRenderer } from "electron"
+import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
 import EventEmitter from "events"
 import { Locale } from "optolith-database-schema/types/Locale"
 import { UI } from "optolith-database-schema/types/UI"
-import { GlobalSettings } from "../main/settingsWindow.ts"
+import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import { GlobalSettingsEmittingAPI, globalSettingsEmittingAPI } from "../shared/settings/emittingRendererPreload.ts"
 import { TypedEventEmitterForEvent } from "../shared/utils/events.ts"
 
@@ -15,6 +15,8 @@ export type PreloadAPI = {
 
 type Events =
   & TypedEventEmitterForEvent<"initial-setup", [InitialSetupEventMessage]>
+  & TypedEventEmitterForEvent<"blur", []>
+  & TypedEventEmitterForEvent<"focus", []>
 
 const events = new EventEmitter() as Events
 
@@ -40,8 +42,10 @@ export type InitialSetupEventMessage = {
 
 ipcRenderer
   .on("initial-setup", (
-    _event: Event,
+    _event: IpcRendererEvent,
     message: InitialSetupEventMessage
   ) => {
     events.emit("initial-setup", message)
   })
+  .on("blur", () => events.emit("blur"))
+  .on("focus", () => events.emit("focus"))
