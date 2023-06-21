@@ -9,7 +9,7 @@ import { Grid } from "../shared/components/grid/Grid.tsx"
 import { GridItem } from "../shared/components/grid/GridItem.tsx"
 import { SegmentedControls } from "../shared/components/segmentedControls/SegmentedControls.tsx"
 import { TitleBar } from "../shared/components/titleBar/TitleBar.tsx"
-import { useBooleanState } from "../shared/hooks/booleanState.ts"
+import { useToggleState } from "../shared/hooks/toggleState.ts"
 import { Theme } from "../shared/schema/config.ts"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import { useBroadcastSetting } from "../shared/settings/emittingRenderer.ts"
@@ -30,10 +30,10 @@ export const Root: React.FC<Props> = props => {
   const [ locale, setLocale ] = useState(initialSettings.locale)
   const [ fallbackLocale, setFallbackLocale ] = useState(initialSettings.fallbackLocale)
   const [ theme, setTheme ] = useState(initialSettings.theme)
-  const [ isEditAfterCreationEnabled, _1, toggleEditAfterCreationEnabled ] =
-    useBooleanState(initialSettings.isEditAfterCreationEnabled)
-  const [ areAnimationsEnabled, _2, toggleAnimationsEnabled ] =
-    useBooleanState(initialSettings.areAnimationsEnabled)
+  const [ isEditAfterCreationEnabled, toggleEditAfterCreationEnabled ] =
+    useToggleState(initialSettings.isEditAfterCreationEnabled)
+  const [ areAnimationsEnabled, toggleAnimationsEnabled ] =
+  useToggleState(initialSettings.areAnimationsEnabled)
 
   const translate = useMemo(
     () => createTranslate(
