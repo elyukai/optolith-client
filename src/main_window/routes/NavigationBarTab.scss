@@ -10,9 +10,8 @@
   min-width: 0;
   z-index: 2;
 
-  &::before,
   &::marker {
-    opacity: 0;
+    color: transparent;
   }
 
   &.tab--active {
@@ -37,7 +36,7 @@
 
   &.tab--disabled {
     pointer-events: none;
-    color: var(--separator-color-halftransparent);
+    color: var(--separator-color-30);
   }
 
   a {

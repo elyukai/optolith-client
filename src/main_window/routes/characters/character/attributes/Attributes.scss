@@ -18,7 +18,7 @@
   }
 
   .value-inner {
-    border: 1px solid var(--separator-color-transparent);
+    border: 1px solid var(--separator-color-20);
     padding: 1px;
 
     > div {
@@ -136,7 +136,7 @@
         position: absolute;
         height: 100%;
         width: 1px;
-        background: var(--separator-color-transparent);
+        background: var(--separator-color-20);
         left: -1px;
       }
     }

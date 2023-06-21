@@ -13,10 +13,10 @@
   }
 
   &:disabled {
-    color: var(--separator-color-transparent);
+    color: var(--separator-color-20);
 
     &:hover {
-      color: var(--separator-color-transparent);
+      color: var(--separator-color-20);
     }
   }
 }

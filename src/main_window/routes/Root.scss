@@ -93,26 +93,22 @@
   font: 500 12px Alegreya Sans;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--separator-color-halftransparent);
+  color: var(--separator-color-30);
 }
 
 ul:not(.list-wrapper) {
-  list-style: none outside none;
   margin: 0;
-  padding: 0;
+  padding: 0 0 0 12px;
+  list-style: "◆";
 
   li {
-    padding-left: 18px;
+    position: relative;
+    padding-left: 6px;
 
-    &::before {
-      position: absolute;
-      content: "";
-      transform: rotate(45deg);
-      width: 6px;
-      height: 6px;
-      background: var(--separator-color-transparent);
-      margin-top: 8px;
-      margin-left: -17px;
+    &::marker {
+      color: var(--separator-color-20);
+      font-size: 18px;
+      line-height: 18px;
     }
 
     em {

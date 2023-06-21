@@ -17,6 +17,13 @@ const matchSystemLocaleToSupported = (available: string[], system: string) => {
   return matchingLocale ?? "en-US"
 }
 
+export type Translate = <K extends keyof UI>(
+  key: K,
+  ...options: UI[K] extends PluralizationCategories
+    ? [count: number, ...params: (string | number)[]]
+    : [...params: (string | number)[]]
+) => string
+
 export const createTranslate = (
   translations: Record<string, UI>,
   locales: Record<string, Locale>,
@@ -26,20 +33,13 @@ export const createTranslate = (
   const locale = selectedLocale ?? matchSystemLocaleToSupported(Object.keys(locales), systemLocale)
   const pluralRules = new Intl.PluralRules(locale)
 
-  const translate = <K extends keyof UI>(
-    key: K,
-    ...options: UI[K] extends PluralizationCategories
-      ? [count: number, ...params: (string | number)[]]
-      : [...params: (string | number)[]]
-  ): string => {
+  const translate: Translate = (key, ...options) => {
     const value = translations[locale]?.[key] ?? key
 
     if (typeof value === "object" && typeof options[0] === "number") {
       const [ count, ...params ] = options
-      const selectedValue = value[pluralRules.select(count)]
-      return selectedValue === undefined
-        ? key
-        : options.length > 0
+      const selectedValue = value[pluralRules.select(count)] ?? value.other
+      return options.length > 0
         ? insertParams(selectedValue, params)
         : selectedValue
     }

@@ -6,6 +6,7 @@ import { attributesReducer } from "./attributesSlice.ts"
 import { derivedCharacteristicsReducer } from "./derivedCharacteristicsSlice.ts"
 import { personalDataReducer } from "./personalDataSlice.ts"
 import { professionReducer } from "./professionSlice.ts"
+import { rulesReducer } from "./rulesSlice.ts"
 
 export type CharacterState = {
   /**
@@ -627,8 +628,8 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
   rules: {
     includeAllPublications: false,
     includePublications: [],
-    activeFocusRules: [],
-    activeOptionalRules: [],
+    activeFocusRules: {},
+    activeOptionalRules: {},
   },
   personalData: {
     sex: { type: "Male" },
@@ -763,6 +764,8 @@ export const selectProfessionInstanceId = (state: RootState) => selectCurrentCha
 export const selectProfessionVariantId = (state: RootState) => selectCurrentCharacter(state)?.profession.variantId
 export const selectCustomProfessionName = (state: RootState) => selectCurrentCharacter(state)?.profession.customName
 export const selectAttributeAdjustmentId = (state: RootState) => selectCurrentCharacter(state)?.race.selectedAttributeAdjustmentId
+export const selectIncludeAllPublications = (state: RootState) => selectCurrentCharacter(state)?.rules.includeAllPublications
+export const selectIncludePublications = (state: RootState) => selectCurrentCharacter(state)?.rules.includePublications
 export const selectActiveFocusRules = (state: RootState) => selectCurrentCharacter(state)?.rules.activeFocusRules ?? {}
 export const selectActiveOptionalRules = (state: RootState) => selectCurrentCharacter(state)?.rules.activeOptionalRules ?? {}
 export const selectPersonalData = (state: RootState): CharacterState["personalData"] => selectCurrentCharacter(state)?.personalData ?? staticInitialState.personalData
@@ -873,4 +876,5 @@ export const characterReducer = createReducer(initialState, builder => {
   derivedCharacteristicsReducer(builder)
   personalDataReducer(builder)
   professionReducer(builder)
+  rulesReducer(builder)
 })

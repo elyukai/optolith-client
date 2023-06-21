@@ -67,58 +67,17 @@
       > div {
         position: relative;
 
-        .scroll-view > div {
-          height: 32px;
-          padding: 0 11px;
-          line-height: 12px;
-          color: var(--text-color);
-          position: relative;
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-
-          &:not(:last-child) {
-            height: 33px;
-            border-bottom: 1px solid var(--separator-color-transparent);
-          }
-
-          &:hover {
-            cursor: pointer;
-            color: var(--headings-color);
-            background: var(--separator-color-transparent);
-            border-color: transparent;
-          }
-
-          &.active {
-            &:after {
-              content: "";
-              position: absolute;
-              top: 12px;
-              right: 11px;
-              width: 11px;
-              height: 4px;
-              border-width: 0 0 1px 1px;
-              border-style: solid;
-              border-color: var(--headings-color);
-              transform: rotate(-45deg);
-            }
-          }
-
-          &.disabled {
-            color: var(--separator-color-halftransparent);
-            pointer-events: none;
-          }
-        }
-
-        .scroll-active .scroll-view > div.active:after {
+        .scroll-active li.active:after {
           right: 22px;
         }
       }
     }
   }
 
-  .track-horizontal {
-    display: none;
+  .scroll {
+    padding-top: 0;
+    padding-bottom: 0;
+    overflow-x: visible;
   }
 
   &.active {
@@ -148,15 +107,15 @@
 
     > div {
       > .value {
-        color: var(--separator-color-halftransparent);
+        color: var(--separator-color-30);
         border-image: none;
-        border-color: var(--separator-color-transparent);
+        border-color: var(--separator-color-20);
         box-shadow: none;
         background: transparent;
 
         &::before,
         &::after {
-          border-color: var(--separator-color-transparent);
+          border-color: var(--separator-color-20);
         }
       }
     }
@@ -197,6 +156,56 @@
     > div > .down {
       border-image: linear-gradient(to bottom, #6d5024 0%, #524018 100%);
       border-image-slice: 1;
+    }
+  }
+}
+
+ul.dropdown-options {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    height: 32px;
+    margin: 0;
+    padding: 0 11px;
+    line-height: 12px;
+    color: var(--text-color);
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    &:not(:last-child) {
+      height: 33px;
+      border-bottom: 1px solid var(--separator-color-20);
+    }
+
+    &:hover {
+      cursor: pointer;
+      color: var(--headings-color);
+      background: var(--separator-color-20);
+      border-color: transparent;
+    }
+
+    &.active {
+      &:after {
+        content: "";
+        position: absolute;
+        top: 12px;
+        right: 11px;
+        width: 11px;
+        height: 4px;
+        border-width: 0 0 1px 1px;
+        border-style: solid;
+        border-color: var(--headings-color);
+        transform: rotate(-45deg);
+      }
+    }
+
+    &.disabled {
+      color: var(--separator-color-30);
+      pointer-events: none;
     }
   }
 }

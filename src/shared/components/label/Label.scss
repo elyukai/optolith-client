@@ -1,11 +1,11 @@
 label {
-	color: var(--text-color);
-	letter-spacing: 0.05em;
-	display: block;
-	font: 500 12px/1 Alegreya Sans;
-	padding-bottom: 6px;
+  color: var(--text-color);
+  letter-spacing: 0.05em;
+  display: block;
+  font: 500 12px/1 Alegreya Sans;
+  padding-bottom: 6px;
 
-	&.disabled {
-		color: var(--separator-color-halftransparent);
-	}
+  &.disabled {
+    color: var(--separator-color-30);
+  }
 }

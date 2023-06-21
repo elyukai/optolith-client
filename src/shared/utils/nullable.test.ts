@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
-import { isNotNullish, isNullish, mapNullableDefault } from "./nullable.ts"
+import { isNotNullish, isNullish, mapNullable, mapNullableDefault } from "./nullable.ts"
 
 describe("isNullish", () => {
   it("returns if a value is nullish", () => {
@@ -19,6 +19,16 @@ describe("isNotNullish", () => {
     assert.equal(isNotNullish(false), true)
     assert.equal(isNotNullish(0), true)
     assert.equal(isNotNullish(""), true)
+  })
+})
+
+describe("mapNullable", () => {
+  it("maps a value if it is not nullish", () => {
+    assert.equal(mapNullable(2, x => x * 2), 4)
+  })
+
+  it("returns the original value if it is nullish", () => {
+    assert.equal(mapNullable(undefined, x => x * 2), undefined)
   })
 })
 

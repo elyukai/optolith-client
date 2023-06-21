@@ -32,13 +32,13 @@
   }
 
   &:disabled {
-    border-color: var(--separator-color-transparent);
-    color: var(--separator-color-halftransparent);
+    border-color: var(--separator-color-20);
+    color: var(--separator-color-30);
     pointer-events: none;
 
     &:hover {
-      border-color: var(--separator-color-transparent);
-      color: var(--separator-color-halftransparent);
+      border-color: var(--separator-color-20);
+      color: var(--separator-color-30);
     }
   }
 

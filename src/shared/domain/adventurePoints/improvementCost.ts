@@ -1,3 +1,4 @@
+import { ImprovementCost as RawImprovementCost } from "optolith-database-schema/types/_ImprovementCost"
 import { rangeSafe, sum } from "../../utils/array.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 
@@ -114,6 +115,16 @@ export const toString = (ic: ImprovementCost): string => {
     case ImprovementCost.C: return "C"
     case ImprovementCost.D: return "D"
     case ImprovementCost.E: return "E"
+    default: return assertExhaustive(ic)
+  }
+}
+
+export const fromRaw = (ic: RawImprovementCost): ImprovementCost => {
+  switch (ic) {
+    case "A": return ImprovementCost.A
+    case "B": return ImprovementCost.B
+    case "C": return ImprovementCost.C
+    case "D": return ImprovementCost.D
     default: return assertExhaustive(ic)
   }
 }

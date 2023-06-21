@@ -122,17 +122,19 @@ export const Dropdown = <A extends DropdownKey>(props: Props<A>): ReturnType<FCC
     <div style={{ height: style }} className="down">
       <div style={{ height: (style - 2) }}>
         <Scroll noInnerElement className={options.length > 5 ? "scroll-active" : ""}>
-          {
-            options.map(option => (
-              <DropdownItem
-                key={option.id ?? "__DEFAULT__"}
-                active={value}
-                disabled={normalizedDisabled}
-                onChange={handleChange}
-                option={option}
-                />
-            ))
-          }
+          <ul className="dropdown-options">
+            {
+              options.map(option => (
+                <DropdownItem
+                  key={option.id ?? "__DEFAULT__"}
+                  active={value}
+                  disabled={normalizedDisabled}
+                  onChange={handleChange}
+                  option={option}
+                  />
+              ))
+            }
+          </ul>
         </Scroll>
       </div>
     </div>

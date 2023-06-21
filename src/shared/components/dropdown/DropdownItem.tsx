@@ -25,7 +25,7 @@ export const DropdownItem = <A extends DropdownKey>(props: Props<A>): ReturnType
   )
 
   return (
-    <div
+    <li
       className={classList({
         active: option.id === active,
         disabled: option.disabled === true,
@@ -33,6 +33,6 @@ export const DropdownItem = <A extends DropdownKey>(props: Props<A>): ReturnType
       onClick={handleClick}
       >
       {option.name}
-    </div>
+    </li>
   )
 }

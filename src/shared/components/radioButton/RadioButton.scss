@@ -6,7 +6,7 @@
   align-items: flex-start;
 
   &:hover {
-    background: var(--separator-color-transparent);
+    background: var(--separator-color-20);
     cursor: pointer;
 
     // .icon {
@@ -80,16 +80,16 @@
 
     .icon {
       .border {
-        border: 1px solid var(--separator-color-transparent);
+        border: 1px solid var(--separator-color-20);
       }
 
       .dot {
-        background: var(--separator-color-transparent);
+        background: var(--separator-color-20);
       }
     }
 
     .checkbox-label {
-      color: var(--separator-color-halftransparent);
+      color: var(--separator-color-30);
     }
   }
 

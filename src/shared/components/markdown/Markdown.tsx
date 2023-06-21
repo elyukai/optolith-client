@@ -12,16 +12,16 @@ type Props = {
   source: string
 }
 
+const a = (p: { children?: React.ReactNode}) => (
+  <>
+    {"["}
+    {p.children}
+    {"]"}
+  </>
+)
+
 export const Markdown: FC<Props> = props => {
   const { className, source = "...", noWrapper } = props
-
-  const a = (p: { children?: React.ReactNode}) => (
-                 <>
-                   {"["}
-                   {p.children}
-                   {"]"}
-                 </>
-               )
 
   return (
     <ReactMarkdown

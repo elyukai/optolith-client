@@ -8,6 +8,7 @@ import { LastChanges } from "./about/LastChanges.tsx"
 import { ThirdPartyLicenses } from "./about/ThirdPartyLicenses.tsx"
 import { Attributes } from "./characters/character/attributes/Attributes.tsx"
 import { ProfileOverview } from "./characters/character/profile/ProfileOverview.tsx"
+import { Rules } from "./characters/character/rules/Rules.tsx"
 
 export const Router: FC = () => {
   const route = useAppSelector(selectRoute)
@@ -26,7 +27,7 @@ export const Router: FC = () => {
     case "personal_data": return null // unwrapWithHero(hero => ( <PersonalDataContainer staticData={staticData} hero={hero} /> )),
     case "character_sheet": return null // unwrapWithHero(hero => ( <SheetsContainer staticData={staticData} hero={hero} /> )),
     case "pact": return null // unwrapWithHero(hero => ( <PactContainer staticData={staticData} hero={hero} /> )),
-    case "rules": return null // unwrapWithHero(hero => ( <RulesContainer staticData={staticData} hero={hero} /> )),
+    case "rules": return <Rules /> // unwrapWithHero(hero => ( <RulesContainer staticData={staticData} hero={hero} /> )),
 
     case "race": return null // unwrapWithHero(hero => ( <RacesContainer staticData={staticData} hero={hero} /> )),
     case "culture": return null // unwrapWithHero(hero => ( <CulturesContainer staticData={staticData} hero={hero} /> )),

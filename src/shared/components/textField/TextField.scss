@@ -59,17 +59,17 @@
     pointer-events: none;
 
     .textfield-hint {
-      color: var(--separator-color-halftransparent);
+      color: var(--separator-color-30);
     }
 
     label {
-      color: var(--separator-color-halftransparent);
+      color: var(--separator-color-30);
     }
 
     input,
     textarea {
-      border-color: var(--separator-color-transparent);
-      color: var(--separator-color-halftransparent);
+      border-color: var(--separator-color-20);
+      color: var(--separator-color-30);
     }
   }
 

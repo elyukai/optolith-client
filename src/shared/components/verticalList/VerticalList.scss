@@ -1,11 +1,11 @@
 .vertical-list {
-	> span:not(:last-child)::after {
-		content: '';
-		background: var(--separator-color-transparent);
+  > span:not(:last-child)::after {
+    content: "";
+    background: var(--separator-color-20);
     border-radius: 50%;
     width: 4px;
     height: 4px;
-		display: inline-block;
-		margin: 2px 8px;
-	}
+    display: inline-block;
+    margin: 2px 8px;
+  }
 }

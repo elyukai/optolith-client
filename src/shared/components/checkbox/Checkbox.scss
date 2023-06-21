@@ -5,7 +5,7 @@
   align-items: flex-start;
 
   &:hover {
-    background: var(--separator-color-transparent);
+    background: var(--separator-color-20);
     cursor: pointer;
 
     .icon {
@@ -61,21 +61,29 @@
     pointer-events: none;
 
     .icon {
-      flex: 1 0%;
-      margin: 4px 0 5px;
-
       .border {
-        border: 1px solid var(--separator-color-transparent);
-        box-shadow: 0 none;
+        border-color: var(--separator-color-20);
       }
 
       .hook {
-        border-color: var(--separator-color-transparent);
+        border-color: var(--separator-color-20);
+      }
+    }
+
+    &.active {
+      .icon {
+        .border {
+          border-color: var(--separator-color-60);
+        }
+
+        .hook {
+          border-color: var(--separator-color-60);
+        }
       }
     }
 
     .checkbox-label {
-      color: var(--separator-color-halftransparent);
+      color: var(--separator-color-60);
     }
   }
 

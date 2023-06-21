@@ -1,0 +1,31 @@
+dl.inline-library-properties {
+  font: 500 14px/22px Alegreya Sans;
+  letter-spacing: 0.04em;
+
+  > div {
+    padding-left: 18px;
+    text-indent: -18px;
+    margin-top: 0;
+  }
+
+  dt {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+
+    &::after {
+      content: ": ";
+    }
+  }
+
+  dd {
+    display: inline;
+    margin: 0;
+    padding: 0;
+
+    p {
+      margin-top: 0;
+    }
+  }
+}

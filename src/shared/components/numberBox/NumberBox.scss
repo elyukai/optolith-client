@@ -1,14 +1,14 @@
 .number-box {
-	position: absolute;
-	border: 1px solid var(--separator-color-transparent);
-	background: var(--background-color);
-	color: var(--text-color);
-	text-align: center;
-	font-size: 12px;
-	line-height: 16px;
-	height: 18px;
+  position: absolute;
+  border: 1px solid var(--separator-color-20);
+  background: var(--background-color);
+  color: var(--text-color);
+  text-align: center;
+  font-size: 12px;
+  line-height: 16px;
+  height: 18px;
 
-	span + span:before {
-		content: " / "
-	}
+  span + span:before {
+    content: " / ";
+  }
 }

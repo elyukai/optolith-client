@@ -13,6 +13,15 @@ export const isNotNullish = <T>(value: T): value is NonNullable<T> =>
   !isNullish(value)
 
 /**
+ * Maps a value to another value if it is not `null` or `undefined`.
+ */
+export const mapNullable = <T, U>(
+  value: T,
+  map: (value: NonNullable<T>) => U,
+): U | Nullish<T> =>
+  isNotNullish(value) ? map(value) : (value as Nullish<T>)
+
+/**
  * Maps a value to another value if it is not `null` or `undefined`, otherwise
  * returns a default value.
  */

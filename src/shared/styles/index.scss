@@ -37,7 +37,7 @@ body {
   background: var(--background-color);
 
   &:not(.platform--darwin) {
-    border: 1px solid var(--separator-color-transparent);
+    border: 1px solid var(--separator-color-20);
   }
 }
 
@@ -90,7 +90,7 @@ hr {
   margin: 15px 0 5px;
   border: none;
   height: 1px;
-  background: var(--separator-color-transparent);
+  background: var(--separator-color-20);
 
   &.vertical {
     margin: 0 20px;

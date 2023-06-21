@@ -42,8 +42,6 @@ export const selectAvailableHairColorsIdDice = createSelector(
     const isAlbino = isOptionActive(stigma, { type: "Generic", value: ALBINO })
     const isGreenHaired = isOptionActive(stigma, { type: "Generic", value: GREEN_HAIR })
 
-    console.log(currentRace, currentRaceVariant)
-
     if (isAlbino || isGreenHaired) {
       return filterNonNullable([
         isAlbino ? HairColorIdentifier.White : undefined,

@@ -16,14 +16,14 @@
 }
 
 :root.blurred .titlebar-inner {
-  border-bottom-color: var(--separator-color-transparent);
+  border-bottom-color: var(--separator-color-20);
 }
 
 .titlebar-inner {
   height: var(--titlebar-height);
   width: 100%;
   position: relative;
-  border-bottom: 1px solid var(--separator-color-halftransparent);
+  border-bottom: 1px solid var(--separator-color-30);
 }
 
 :root.blurred .titlebar-title {
@@ -65,12 +65,12 @@
     padding: 0;
 
     &:disabled {
-      color: var(--separator-color-transparent);
+      color: var(--separator-color-20);
     }
 
     &:not(:disabled):hover {
       color: var(--headings-color);
-      background: var(--separator-color-transparent);
+      background: var(--separator-color-20);
 
       &.close {
         background: var(--windows-titlebar-close);
