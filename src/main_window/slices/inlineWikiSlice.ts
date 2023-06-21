@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 import * as ID from "optolith-database-schema/types/_Identifier"
 import { RootState } from "../store.ts"
+import { goToTab, goToTabGroup } from "./routeSlice.ts"
 
 export type DisplayableMainIdentifier =
   | ID.AdvancedCombatSpecialAbilityIdentifier
@@ -106,9 +107,7 @@ type InlineWikiState = {
   id?: DisplayableMainIdentifier
 }
 
-const initialState: InlineWikiState = {
-  id: { tag: "Skill", skill: 33 },
-}
+const initialState: InlineWikiState = {}
 
 const inlineLibrarySlice = createSlice({
   name: "inlineLibrary",
@@ -118,6 +117,14 @@ const inlineLibrarySlice = createSlice({
       state.id = action.payload
     },
   },
+  extraReducers: builder =>
+    builder
+      .addCase(goToTab, (state, _action) => {
+        state.id = undefined
+      })
+      .addCase(goToTabGroup, (state, _action) => {
+        state.id = undefined
+      }),
 })
 
 export const { changeInlineLibraryEntry } = inlineLibrarySlice.actions
