@@ -1,0 +1,13 @@
+.confirm-edit {
+  display: flex;
+  align-items: center;
+
+  > .textfield {
+    margin: 0;
+  }
+
+  > .btn {
+    margin-left: 11px;
+    letter-spacing: 0;
+  }
+}

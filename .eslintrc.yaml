@@ -202,7 +202,7 @@ rules:
     - code: 100
       ignoreComments: true
       ignoreTemplateLiterals: true
-      ignorePattern: "^import |^export \\{(.*?)\\}|^ \\* |^ *it ?\\(\"\\w+"
+      ignorePattern: "^import |^export \\{(.*?)\\}|^ \\* |^ *it ?\\(\"\\w+|^export const \\w+ = createAction(?:<.+?>)?\\(\"\\w+/\\w+\"\\)"
   max-statements-per-line: [2, { max: 2 }]
   multiline-ternary:
     - 2

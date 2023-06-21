@@ -1,6 +1,13 @@
 import { isNotNullish } from "./nullable.ts"
 
 /**
+ * Filters out `null` and `undefined` values from the arguments and turns them
+ * into an array.
+ */
+export const arrayFromNonNullable = <T>(...args: T[]): NonNullable<T>[] =>
+  args.filter(isNotNullish)
+
+/**
  * Filters out `null` and `undefined` values from an array.
  */
 export const filterNonNullable = <T>(array: T[]): NonNullable<T>[] =>
@@ -37,3 +44,10 @@ export const rangeSafe = (start: number, end: number): number[] =>
  */
 export const sum = (arr: number[]): number =>
   arr.reduce((acc, value) => acc + value, 0)
+
+/**
+ * Filters out duplicate values from an array. Objects are not supported, since
+ * they don’t provide value equality semantics.
+ */
+export const unique = <T extends number | boolean | string | null | undefined>(arr: T[]): T[] =>
+  Array.from(new Set(arr))

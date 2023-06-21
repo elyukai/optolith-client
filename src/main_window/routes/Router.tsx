@@ -7,6 +7,7 @@ import { Imprint } from "./about/Imprint.tsx"
 import { LastChanges } from "./about/LastChanges.tsx"
 import { ThirdPartyLicenses } from "./about/ThirdPartyLicenses.tsx"
 import { Attributes } from "./characters/character/attributes/Attributes.tsx"
+import { ProfileOverview } from "./characters/character/profile/ProfileOverview.tsx"
 
 export const Router: FC = () => {
   const route = useAppSelector(selectRoute)
@@ -21,7 +22,7 @@ export const Router: FC = () => {
     case "third_party_licenses": return <ThirdPartyLicenses />
     case "last_changes": return <LastChanges />
 
-    case "profile": return null // unwrapWithHero(hero => ( <PersonalDataContainer staticData={staticData} hero={hero} /> )),
+    case "profile": return <ProfileOverview /> // unwrapWithHero(hero => ( <PersonalDataContainer staticData={staticData} hero={hero} /> )),
     case "personal_data": return null // unwrapWithHero(hero => ( <PersonalDataContainer staticData={staticData} hero={hero} /> )),
     case "character_sheet": return null // unwrapWithHero(hero => ( <SheetsContainer staticData={staticData} hero={hero} /> )),
     case "pact": return null // unwrapWithHero(hero => ( <PactContainer staticData={staticData} hero={hero} /> )),

@@ -1,9 +1,11 @@
 /* eslint-disable max-len */
-import { createReducer } from "@reduxjs/toolkit"
+import { createAction, createReducer } from "@reduxjs/toolkit"
 import { ActivatableRated, ActivatableRatedWithEnhancements, Rated } from "../../shared/domain/ratedEntry.ts"
 import { RootState } from "../store.ts"
 import { attributesReducer } from "./attributesSlice.ts"
 import { derivedCharacteristicsReducer } from "./derivedCharacteristicsSlice.ts"
+import { personalDataReducer } from "./personalDataSlice.ts"
+import { professionReducer } from "./professionSlice.ts"
 
 export type CharacterState = {
   /**
@@ -15,6 +17,11 @@ export type CharacterState = {
    * The character's name.
    */
   name: string
+
+  /**
+   * The character's avatar. This is a base64 encoded image.
+   */
+  avatar?: string
 
   /**
    * Date of character creation, in ISO8601 format.
@@ -199,10 +206,17 @@ export type CharacterState = {
      */
     title?: string
 
-    /**
-     * The social status identifier.
-     */
-    socialStatusId?: number
+    socialStatus: {
+      /**
+       * The social status identifier.
+       */
+      id?: number
+
+      /**
+       * The social status dependencies.
+       */
+      dependencies: SocialStatusDependency[]
+    }
 
     /**
      * The character's characteristics.
@@ -392,6 +406,10 @@ export type BinaryHandling = {
   asFemale: boolean
 }
 
+export type SocialStatusDependency = {
+  id: number
+}
+
 export type Color =
   | PredefinedColor
   | CustomColor
@@ -512,59 +530,7 @@ export type Activatable = {
      * One or multiple options for the activatable. The meaning depends on the activatable.
      * @minItems 1
      */
-    options?: (
-      | {
-        type: "Predefined"
-
-        /**
-         * An identifier referencing a different entry.
-         */
-        id: {
-          /**
-           * The entry type or `"Generic"` if it references a select option local to the entry.
-           */
-          type:
-            | "Generic"
-            | "Blessing"
-            | "Cantrip"
-            | "TradeSecret"
-            | "Script"
-            | "AnimalShape"
-            | "ArcaneBardTradition"
-            | "ArcaneDancerTradition"
-            | "SexPractice"
-            | "Race"
-            | "Culture"
-            | "BlessedTradition"
-            | "Element"
-            | "Property"
-            | "Aspect"
-            | "Disease"
-            | "Poison"
-            | "Language"
-            | "Skill"
-            | "MeleeCombatTechnique"
-            | "RangedCombatTechnique"
-            | "LiturgicalChant"
-            | "Ceremony"
-            | "Spell"
-            | "Ritual"
-
-          /**
-           * The numeric identifier.
-           */
-          value: number
-        }
-      }
-      | {
-        type: "Custom"
-
-        /**
-         * A user-entered text.
-         */
-        value: string
-      }
-    )[]
+    options?: ActivatableOption[]
 
     /**
      * The instance level (if the activatable has levels).
@@ -578,20 +544,76 @@ export type Activatable = {
   }[]
 }
 
+export type ActivatableOption =
+  | PredefinedActivatableOption
+  | CustomActivatableOption
+
+export type PredefinedActivatableOption = {
+  type: "Predefined"
+
+  /**
+   * An identifier referencing a different entry.
+   */
+  id: {
+    /**
+     * The entry type or `"Generic"` if it references a select option local to the entry.
+     */
+    type:
+      | "Generic"
+      | "Blessing"
+      | "Cantrip"
+      | "TradeSecret"
+      | "Script"
+      | "AnimalShape"
+      | "ArcaneBardTradition"
+      | "ArcaneDancerTradition"
+      | "SexPractice"
+      | "Race"
+      | "Culture"
+      | "BlessedTradition"
+      | "Element"
+      | "Property"
+      | "Aspect"
+      | "Disease"
+      | "Poison"
+      | "Language"
+      | "Skill"
+      | "MeleeCombatTechnique"
+      | "RangedCombatTechnique"
+      | "LiturgicalChant"
+      | "Ceremony"
+      | "Spell"
+      | "Ritual"
+
+    /**
+     * The numeric identifier.
+     */
+    value: number
+  }
+}
+
+export type CustomActivatableOption = {
+  type: "Custom"
+
+  /**
+   * A user-entered text.
+   */
+  value: string
+}
+
 export type ActivatableMap = {
   [id: number]: Activatable
 }
 
-const initialState = (): CharacterState => ({
+const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified"> = {
   version: undefined,
   name: "",
-  dateCreated: new Date().toISOString(),
-  dateLastModified: new Date().toISOString(),
   totalAdventurePoints: 1100,
   experienceLevelStartId: 3,
   isCharacterCreationFinished: false,
   race: {
     id: 1,
+    variantId: 1,
     selectedAttributeAdjustmentId: 1,
   },
   culture: {
@@ -610,6 +632,9 @@ const initialState = (): CharacterState => ({
   },
   personalData: {
     sex: { type: "Male" },
+    socialStatus: {
+      dependencies: [],
+    },
   },
   advantages: {},
   disadvantages: {},
@@ -712,6 +737,12 @@ const initialState = (): CharacterState => ({
   },
   // creatures: {}
   // pact: {}
+}
+
+const initialState = (): CharacterState => ({
+  ...staticInitialState,
+  dateCreated: new Date().toISOString(),
+  dateLastModified: new Date().toISOString(),
 })
 
 export const selectCurrentCharacter = (state: RootState) =>
@@ -719,14 +750,44 @@ export const selectCurrentCharacter = (state: RootState) =>
   ? undefined
   : state.characters.characters[state.characters.selectedId]
 
+export const selectName = (state: RootState) => selectCurrentCharacter(state)?.name
+export const selectAvatar = (state: RootState) => selectCurrentCharacter(state)?.avatar
 export const selectTotalAdventurePoints = (state: RootState) => selectCurrentCharacter(state)?.totalAdventurePoints
 export const selectExperienceLevelStartId = (state: RootState) => selectCurrentCharacter(state)?.experienceLevelStartId
 export const selectIsCharacterCreationFinished = (state: RootState) => selectCurrentCharacter(state)?.isCharacterCreationFinished ?? false
 export const selectRaceId = (state: RootState) => selectCurrentCharacter(state)?.race.id
 export const selectRaceVariantId = (state: RootState) => selectCurrentCharacter(state)?.race.variantId
+export const selectCultureId = (state: RootState) => selectCurrentCharacter(state)?.culture.id
+export const selectProfessionId = (state: RootState) => selectCurrentCharacter(state)?.profession.id
+export const selectProfessionInstanceId = (state: RootState) => selectCurrentCharacter(state)?.profession.instanceId
+export const selectProfessionVariantId = (state: RootState) => selectCurrentCharacter(state)?.profession.variantId
+export const selectCustomProfessionName = (state: RootState) => selectCurrentCharacter(state)?.profession.customName
 export const selectAttributeAdjustmentId = (state: RootState) => selectCurrentCharacter(state)?.race.selectedAttributeAdjustmentId
 export const selectActiveFocusRules = (state: RootState) => selectCurrentCharacter(state)?.rules.activeFocusRules ?? {}
 export const selectActiveOptionalRules = (state: RootState) => selectCurrentCharacter(state)?.rules.activeOptionalRules ?? {}
+export const selectPersonalData = (state: RootState): CharacterState["personalData"] => selectCurrentCharacter(state)?.personalData ?? staticInitialState.personalData
+export const selectSex = (state: RootState) => selectPersonalData(state).sex
+export const selectFamily = (state: RootState) => selectPersonalData(state).family
+export const selectPlaceOfBirth = (state: RootState) => selectPersonalData(state).placeOfBirth
+export const selectDateOfBirth = (state: RootState) => selectPersonalData(state).dateOfBirth
+export const selectAge = (state: RootState) => selectPersonalData(state).age
+export const selectHairColor = (state: RootState) => selectPersonalData(state).hairColor
+export const selectPredefinedHairColor = (state: RootState) => {
+  const hairColor = selectHairColor(state)
+  return hairColor?.type === "Predefined" ? hairColor.id : undefined
+}
+export const selectEyeColor = (state: RootState) => selectPersonalData(state).eyeColor
+export const selectPredefinedEyeColor = (state: RootState) => {
+  const eyeColor = selectEyeColor(state)
+  return eyeColor?.type === "Predefined" ? eyeColor.id : undefined
+}
+export const selectSize = (state: RootState) => selectPersonalData(state).size
+export const selectWeight = (state: RootState) => selectPersonalData(state).weight
+export const selectTitle = (state: RootState) => selectPersonalData(state).title
+export const selectSocialStatusId = (state: RootState) => selectPersonalData(state).socialStatus.id
+export const selectSocialStatusDependencies = (state: RootState) => selectPersonalData(state).socialStatus.dependencies
+export const selectCharacteristics = (state: RootState) => selectPersonalData(state).characteristics
+export const selectOtherInfo = (state: RootState) => selectPersonalData(state).otherInfo
 export const selectAdvantages = (state: RootState) => selectCurrentCharacter(state)?.advantages ?? {}
 export const selectDisadvantages = (state: RootState) => selectCurrentCharacter(state)?.disadvantages ?? {}
 export const selectAdvancedCombatSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.advancedCombatSpecialAbilities ?? {}
@@ -778,22 +839,7 @@ export const selectVisions = (state: RootState) => selectCurrentCharacter(state)
 export const selectWandEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.wandEnchantments ?? {}
 export const selectWeaponEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.weaponEnchantments ?? {}
 export const selectAttributes = (state: RootState) => selectCurrentCharacter(state)?.attributes ?? {}
-export const selectDerivedCharacteristics = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics ?? {
-  lifePoints: {
-    purchased: 0,
-    permanentlyLost: 0,
-  },
-  arcaneEnergy: {
-    purchased: 0,
-    permanentlyLost: 0,
-    permanentlyLostBoughtBack: 0,
-  },
-  karmaPoints: {
-    purchased: 0,
-    permanentlyLost: 0,
-    permanentlyLostBoughtBack: 0,
-  },
-}
+export const selectDerivedCharacteristics = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics ?? staticInitialState.derivedCharacteristics
 export const selectPurchasedLifePoints = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.lifePoints.purchased ?? 0
 export const selectLifePointsPermanentlyLost = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.lifePoints.permanentlyLost ?? 0
 export const selectPurchasedArcaneEnergy = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.arcaneEnergy.purchased ?? 0
@@ -803,7 +849,28 @@ export const selectPurchasedKarmaPoints = (state: RootState) => selectCurrentCha
 export const selectKarmaPointsPermanentlyLost = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.permanentlyLost ?? 0
 export const selectKarmaPointsPermanentlyLostBoughtBack = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.permanentlyLostBoughtBack ?? 0
 
+export const setName = createAction<string>("character/setName")
+export const setAvatar = createAction<string>("character/setAvatar")
+export const deleteAvatar = createAction("character/deleteAvatar")
+export const finishCharacterCreation = createAction("character/finishCharacterCreation")
+
 export const characterReducer = createReducer(initialState, builder => {
+  builder
+    .addCase(setName, (state, action) => {
+      state.name = action.payload
+    })
+    .addCase(setAvatar, (state, action) => {
+      state.avatar = action.payload
+    })
+    .addCase(deleteAvatar, (state, _action) => {
+      state.avatar = undefined
+    })
+    .addCase(finishCharacterCreation, (state, _action) => {
+      state.isCharacterCreationFinished = true
+    })
+
   attributesReducer(builder)
   derivedCharacteristicsReducer(builder)
+  personalDataReducer(builder)
+  professionReducer(builder)
 })

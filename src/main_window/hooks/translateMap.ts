@@ -8,8 +8,8 @@ export const useTranslateMap = () => {
   const locale = useAppSelector(selectLocale)
 
   const _translateMap = useMemo(() => {
-    const translateMap = <T>(map: LocaleMap<T>): T | undefined =>
-      map[locale ?? ExternalAPI.systemLocale]
+    const translateMap = <T>(map: LocaleMap<T> | undefined): T | undefined =>
+      map?.[locale ?? ExternalAPI.systemLocale]
     return translateMap
   }, [ locale ])
 

@@ -1,6 +1,15 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
-import { filterNonNullable, range, rangeSafe, sum } from "./array.ts"
+import { arrayFromNonNullable, filterNonNullable, range, rangeSafe, sum, unique } from "./array.ts"
+
+describe("arrayFromNonNullable", () => {
+  it("returns an array with null and undefined removed", () => {
+    assert.deepEqual(
+      arrayFromNonNullable(1, 2, null, 3, undefined, 4, 5),
+      [ 1, 2, 3, 4, 5 ],
+    )
+  })
+})
 
 describe("filterNonNullable", () => {
   it("returns an array with null and undefined removed", () => {
@@ -40,5 +49,13 @@ describe("sum", () => {
     assert.equal(sum([ 1, 2 ]), 3)
     assert.equal(sum([ 1, 2, 3 ]), 6)
     assert.equal(sum([ 1, 2, 3, 4 ]), 10)
+  })
+})
+
+describe("unique", () => {
+  it("filters out duplicate values from an array", () => {
+    assert.deepEqual(unique([]), [])
+    assert.deepEqual(unique([ 1, 2, 3 ]), [ 1, 2, 3 ])
+    assert.deepEqual(unique([ 1, 2, 1, 3 ]), [ 1, 2, 3 ])
   })
 })

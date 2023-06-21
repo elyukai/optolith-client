@@ -6,7 +6,6 @@ import { useTranslate } from "../../../../hooks/translate.ts"
 import { selectTotalPoints } from "../../../../selectors/attributeSelectors.ts"
 import { selectIsInCharacterCreation } from "../../../../selectors/characterSelectors.ts"
 import { selectMaximumTotalAttributePoints } from "../../../../selectors/experienceLevelSelectors.ts"
-import { selectAttributes } from "../../../../slices/characterSlice.ts"
 import "./Attributes.scss"
 import { AttributeList } from "./AttributesList.tsx"
 import { DerivedCharacteristicsList } from "./DerivedCharacteristicsList.tsx"
@@ -19,8 +18,6 @@ export const Attributes: FC = () => {
   const totalPoints = useAppSelector(selectTotalPoints)
   const maxTotalPoints = useAppSelector(selectMaximumTotalAttributePoints)
   const isInCharacterCreation = useAppSelector(selectIsInCharacterCreation)
-
-  console.log(useAppSelector(selectAttributes))
 
   return (
     <Page id="attributes">

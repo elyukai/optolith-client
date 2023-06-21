@@ -5,6 +5,24 @@ export enum OptionalRuleIdentifier {
   HigherDefenseStats = 17,
 }
 
+export enum RaceIdentifier {
+  Humans = 1,
+}
+
+export enum ProfessionIdentifier {
+  OwnProfession = 0,
+}
+
+export enum EyeColorIdentifier {
+  Red = 19,
+  Purple = 20,
+}
+
+export enum HairColorIdentifier {
+  White = 24,
+  Green = 25,
+}
+
 export enum AttributeIdentifier {
   Courage = 1,
   Sagacity = 2,

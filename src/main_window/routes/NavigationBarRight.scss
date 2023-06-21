@@ -1,35 +1,35 @@
 .navigationbar-right {
-	flex: 1 0 auto;
-	display: flex;
-	position: relative;
-	margin: 0 24px;
-	align-items: center;
+  flex: 1 0 auto;
+  display: flex;
+  position: relative;
+  margin: 0 24px;
+  align-items: center;
 
-	> .navigationbar-tabs {
-		margin: 0 24px;
-	}
+  > .navigationbar-tabs {
+    margin: 0 24px;
+  }
 
-	.btn {
-		margin-left: 11px;
-		flex: none;
-	}
+  .btn {
+    margin-left: 11px;
+    flex: none;
+  }
 
-	.collected-ap {
-		color: var(--text-color);
-		flex: 1 0 auto;
-		font: bold 15px/32px Alegreya;
-		font-variant-numeric: lining-nums;
-		height: 32px;
-		letter-spacing: 0.1em;
-		margin: 0 11px 0 24px;
-		position: relative;
-		text-transform: uppercase;
-	}
+  .collected-ap {
+    color: var(--text-color);
+    flex: 1 0 auto;
+    font: bold 15px/32px Alegreya;
+    font-variant-numeric: lining-nums;
+    height: 32px;
+    letter-spacing: 0.1em;
+    margin: 0 11px 0 0;
+    position: relative;
+    text-transform: uppercase;
+  }
 }
 
 .ap-details {
-	p > span {
-		display: block;
-		font-variant-numeric: lining-nums;
-	}
+  p > span {
+    display: block;
+    font-variant-numeric: lining-nums;
+  }
 }

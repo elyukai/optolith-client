@@ -37,7 +37,7 @@ export const PermanentLossSheet: FC<Props> = props => {
       value={value}
       invalid={isNaturalNumber(value) ? undefined : ""}
       acceptLabel={translate("attributes.removeenergypointslostpermanently.removebtn")}
-      rejectLabel={translate("general.dialogs.cancelbtn")}
+      rejectLabel={translate("Cancel")}
       onClose={close}
       onAccept={handleRemove}
       onChange={setValue}

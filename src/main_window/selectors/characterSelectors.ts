@@ -5,3 +5,8 @@ export const selectIsInCharacterCreation = createSelector(
   selectIsCharacterCreationFinished,
   (isCharacterCreationFinished): boolean => !isCharacterCreationFinished
 )
+
+export const selectCanAddAdventurePoints = createSelector(
+  selectIsCharacterCreationFinished,
+  (isCharacterCreationFinished): boolean => isCharacterCreationFinished
+)

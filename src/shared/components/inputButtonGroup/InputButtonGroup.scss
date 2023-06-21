@@ -1,7 +1,7 @@
 .btn-group {
-	display: flex;
+  display: flex;
 
-	div + .btn {
-		margin: 10px 0 10px 11px;
-	}
+  div + .btn {
+    margin-left: 11px;
+  }
 }

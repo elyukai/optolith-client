@@ -47,7 +47,7 @@ export const Dropdown = <A extends DropdownKey>(props: Props<A>): ReturnType<FCC
 
   const handleSwitch = useCallback(
     () => {
-      if (!isOpen && containerRef.current !== null) {
+      if (containerRef.current !== null) {
         const containerRect = containerRef.current.getBoundingClientRect()
 
         if ((window.innerHeight - 32 - containerRect.top) < overlayHeight) {
@@ -60,7 +60,7 @@ export const Dropdown = <A extends DropdownKey>(props: Props<A>): ReturnType<FCC
 
       setOpen(hasBeenOpen => !hasBeenOpen)
     },
-    [ isOpen, overlayHeight ]
+    [ overlayHeight ]
   )
 
   const handleChange = useCallback(
