@@ -12,7 +12,7 @@
       "command": "npm start"
     },
     {
-      "label": "jest",
+      "label": "test",
       "command": "npm test",
       "group": {
         "kind": "test",
