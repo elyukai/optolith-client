@@ -1,3 +1,4 @@
+import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import "../shared/styles/index.scss"
 import { ExternalAPI } from "./external.ts"
@@ -10,12 +11,14 @@ const root = createRoot(domNode)
 
 ExternalAPI.on("initial-setup", ({ translations, systemLocale, locale, locales }) => {
   root.render(
-    <Root
-      translations={translations}
-      systemLocale={systemLocale}
-      locale={locale}
-      locales={locales}
-      />
+    <StrictMode>
+      <Root
+        translations={translations}
+        systemLocale={systemLocale}
+        locale={locale}
+        locales={locales}
+        />
+    </StrictMode>
   )
 })
 

@@ -31,6 +31,7 @@
 // import { Just } from "./Data/Maybe"
 // import { uncurryN } from "./Data/Tuple/Curry"
 // import { Unit } from "./Data/Unit"
+import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
 import { onGlobalSettingsUpdate } from "../shared/settings/listeningRenderer.ts"
@@ -162,9 +163,11 @@ document.body.classList.add(`platform--${ExternalAPI.platform}`)
 
 ExternalAPI.on("initial-setup", ({ database, globalSettings }) => {
   root.render(
-    <Provider store={store}>
-      <Root />
-    </Provider>
+    <StrictMode>
+      <Provider store={store}>
+        <Root />
+      </Provider>
+    </StrictMode>
   )
 
   console.log("database available")
