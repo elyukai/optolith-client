@@ -1,7 +1,74 @@
-import { ProfessionName } from "optolith-database-schema/types/Profession"
+import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
+import { Profession, ProfessionName, ProfessionPackage, ProfessionTranslation, ProfessionVariant, ProfessionVersion } from "optolith-database-schema/types/Profession"
+import { LocaleMap } from "optolith-database-schema/types/_LocaleMap"
+import { TranslateMap } from "../../main_window/hooks/translateMap.ts"
 import { Sex } from "../../main_window/slices/characterSlice.ts"
-import { Nullish } from "../utils/nullable.ts"
+import { Nullish, isNotNullish } from "../utils/nullable.ts"
 import { assertExhaustive } from "../utils/typeSafety.ts"
+import { ProfessionIdentifier } from "./identifier.ts"
+
+export type ProfessionParts = {
+  base: Profession
+  translations: LocaleMap<ProfessionTranslation>
+  instance: ProfessionVersion
+  package: ProfessionPackage
+}
+
+export const getProfessionParts = (
+  professions: Record<number, Profession>,
+  id: number,
+  instanceId: number,
+  startExperienceLevel: ExperienceLevel,
+): ProfessionParts | undefined => {
+  const selectedProfession = professions[id]
+  if (selectedProfession === undefined) {
+    return undefined
+  }
+  else {
+    const selectedInstance = selectedProfession.versions.find(x =>
+      x.tag === "Experienced"
+      ? x.experienced.id === instanceId
+      : x.by_experience_level.id === instanceId)
+
+    if (selectedInstance === undefined) {
+      return undefined
+    }
+    else {
+      const selectedTranslations = selectedInstance.tag === "Experienced"
+        ? selectedInstance.experienced.translations
+        : selectedInstance?.by_experience_level.translations
+
+      const selectedPackage = selectedInstance.tag === "Experienced"
+        ? selectedInstance.experienced.package
+        : selectedInstance.by_experience_level.packages_map
+            .find(x => x.experience_level_id === startExperienceLevel.id)?.package
+
+      if (selectedPackage === undefined) {
+        return undefined
+      }
+      else {
+        return {
+          base: selectedProfession,
+          instance: selectedInstance,
+          translations: selectedTranslations,
+          package: selectedPackage,
+        }
+      }
+    }
+  }
+}
+
+export const getProfessionVariant = (
+  profession: ProfessionParts,
+  variantId?: number,
+): ProfessionVariant | undefined => {
+  if (variantId === undefined) {
+    return undefined
+  }
+  else {
+    return profession.package.variants?.list.find(x => x.id === variantId)
+  }
+}
 
 export const professionNameToString = <T extends ProfessionName | undefined>(
   sex: Sex,
@@ -18,6 +85,58 @@ export const professionNameToString = <T extends ProfessionName | undefined>(
       case "Tsajana":
       case "Custom": return professionName.default
       default: return assertExhaustive(sex)
+    }
+  }
+}
+
+export type FullProfessionNameParts = {
+  name: string
+  subName?: string
+  variantName?: string
+  fullName: string
+}
+
+export const getFullProfessionNameParts = (
+  translateMap: TranslateMap,
+  sex: Sex,
+  profession: ProfessionParts,
+  professionVariant?: ProfessionVariant,
+  customName?: string,
+): FullProfessionNameParts => {
+  if (profession.base.id === ProfessionIdentifier.OwnProfession) {
+    const name = customName
+      ?? professionNameToString(sex, translateMap(profession.translations)?.name)
+      ?? ""
+
+    return {
+      name,
+      fullName: name,
+    }
+  }
+
+  const professionName =
+    professionNameToString(sex, translateMap(profession.translations)?.name)
+  const professionSubName =
+    professionNameToString(sex, translateMap(profession.translations)?.specification)
+  const professionVariantName =
+    professionNameToString(sex, translateMap(professionVariant?.translations)?.name)
+
+  if (professionSubName !== undefined || professionVariantName !== undefined) {
+    const specifications = [ professionSubName, professionVariantName ]
+      .filter(isNotNullish)
+      .join(", ")
+
+    return {
+      name: professionName ?? "",
+      subName: professionSubName,
+      variantName: professionVariantName,
+      fullName: `${professionName ?? ""} (${specifications})`,
+    }
+  }
+  else {
+    return {
+      name: professionName ?? "",
+      fullName: professionName ?? "",
     }
   }
 }

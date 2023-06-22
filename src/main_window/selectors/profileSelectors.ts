@@ -18,5 +18,5 @@ export const selectCanFinishCharacterCreation = createSelector(
 export const selectCanDefineCustomProfessionName = createSelector(
   selectCurrentProfession,
   (profession): boolean =>
-    profession?.profession.id === ProfessionIdentifier.OwnProfession
+    profession?.base.id === ProfessionIdentifier.OwnProfession
 )

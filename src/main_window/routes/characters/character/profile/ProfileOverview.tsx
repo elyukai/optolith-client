@@ -6,7 +6,8 @@ import { IconButton } from "../../../../../shared/components/iconButton/IconButt
 import { Page } from "../../../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { VerticalList } from "../../../../../shared/components/verticalList/VerticalList.tsx"
-import { mapNullableDefault } from "../../../../../shared/utils/nullable.ts"
+import { getFullCultureName } from "../../../../../shared/domain/culture.ts"
+import { getFullRaceName } from "../../../../../shared/domain/race.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { useProfessionName } from "../../../../hooks/professionName.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
@@ -41,7 +42,7 @@ export const ProfileOverview: FC = () => {
   const currentRaceVariant = useAppSelector(selectCurrentRaceVariant)
   const currentCulture = useAppSelector(selectCurrentCulture)
   const currentProfession = useAppSelector(selectCurrentProfession)
-  const { name: professionName, fullName: fullProfessionName } = useProfessionName()
+  const { name: professionName = "", fullName: fullProfessionName = "" } = useProfessionName() ?? {}
   const showFinishCharacterCreation = useAppSelector(selectShowFinishCharacterCreation)
   const canFinishCharacterCreation = useAppSelector(selectCanFinishCharacterCreation)
   const canDefineCustomProfessionName = useAppSelector(selectCanDefineCustomProfessionName)
@@ -158,15 +159,14 @@ export const ProfileOverview: FC = () => {
                     })()}
                   </span>
                   <span className="race">
-                    {translateMap(currentRace?.translations)?.name}
-                    {mapNullableDefault(
-                      translateMap(currentRaceVariant?.translations)?.name,
-                      str => ` (${str})`,
-                      ""
-                    )}
+                    {currentRace === undefined
+                      ? ""
+                      : getFullRaceName(translateMap, currentRace, currentRaceVariant)}
                   </span>
                   <span className="culture">
-                    {translateMap(currentCulture?.translations)?.name}
+                    {currentCulture === undefined
+                      ? ""
+                      : getFullCultureName(translateMap, currentCulture)}
                   </span>
                   <span className="profession">
                     {fullProfessionName}

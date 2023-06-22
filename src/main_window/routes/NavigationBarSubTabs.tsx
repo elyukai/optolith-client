@@ -1,10 +1,10 @@
 import { FC } from "react"
-import { Route } from "../slices/routeSlice.ts"
+import { RoutePath } from "../slices/routeSlice.ts"
 import "./NavigationBarSubTabs.scss"
 import { NavigationBarTab } from "./NavigationBarTab.tsx"
 
 interface Props {
-  tabs: Route[]
+  tabs: RoutePath[]
 }
 
 export const NavigationBarSubTabs: FC<Props> = props => {
@@ -14,7 +14,7 @@ export const NavigationBarSubTabs: FC<Props> = props => {
     <ul className="navigationbar-subtabs">
       {tabs.map(displayRoute => (
         <NavigationBarTab
-          key={displayRoute}
+          key={displayRoute.at(-1)}
           displayRoute={{ type: "single", route: displayRoute }}
           />
       ))}

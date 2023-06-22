@@ -37,11 +37,9 @@ export const createTranslate = (
     const value = translations[locale]?.[key] ?? key
 
     if (typeof value === "object" && typeof options[0] === "number") {
-      const [ count, ...params ] = options
+      const [ count ] = options
       const selectedValue = value[pluralRules.select(count)] ?? value.other
-      return options.length > 0
-        ? insertParams(selectedValue, params)
-        : selectedValue
+      return insertParams(selectedValue, options)
     }
     else {
       const str = typeof value === "string" ? value : key

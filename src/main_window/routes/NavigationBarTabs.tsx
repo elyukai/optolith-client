@@ -14,7 +14,7 @@ export const NavigationBarTabs: FC<Props> = props => {
     <ul className="navigationbar-tabs">
       {tabs.map(displayRoute => (
         <NavigationBarTab
-          key={displayRoute.type === "single" ? displayRoute.route : displayRoute.name}
+          key={displayRoute.type === "single" ? displayRoute.route.at(-1) : displayRoute.name}
           displayRoute={displayRoute}
           />
       ))}

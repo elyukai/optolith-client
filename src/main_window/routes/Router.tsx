@@ -6,6 +6,7 @@ import "./Router.scss"
 import { Imprint } from "./about/Imprint.tsx"
 import { LastChanges } from "./about/LastChanges.tsx"
 import { ThirdPartyLicenses } from "./about/ThirdPartyLicenses.tsx"
+import { Characters } from "./characters/Characters.tsx"
 import { Attributes } from "./characters/character/attributes/Attributes.tsx"
 import { ProfileOverview } from "./characters/character/profile/ProfileOverview.tsx"
 import { Rules } from "./characters/character/rules/Rules.tsx"
@@ -13,8 +14,38 @@ import { Rules } from "./characters/character/rules/Rules.tsx"
 export const Router: FC = () => {
   const route = useAppSelector(selectRoute)
 
-  switch (route) {
-    case "characters": return null // <HerolistContainer staticData={staticData} />,
+  switch (route[0]) {
+    case "characters": return (() => {
+      switch (route[2]) {
+        case undefined: return <Characters />
+        case "profile": return <ProfileOverview />
+        case "personal_data": return null
+        case "character_sheet": return null
+        case "pact": return null
+        case "rules": return <Rules />
+
+        case "race": return null
+        case "culture": return null
+        case "profession": return null
+
+        case "attributes": return <Attributes />
+
+        case "advantages": return null
+        case "disadvantages": return null
+
+        case "skills": return null
+        case "combat_techniques": return null
+        case "special_abilities": return null
+        case "spells": return null
+        case "liturgical_chants": return null
+
+        case "equipment": return null
+        case "hit_zone_armor": return null
+        case "pets": return null
+        default: assertExhaustive(route)
+      }
+    })()
+
     case "groups": return null // <Grouplist />,
     case "library": return null // <WikiContainer staticData={staticData} />,
     case "faq": return null // <HelpContainer staticData={staticData} />,
@@ -22,31 +53,6 @@ export const Router: FC = () => {
     case "imprint": return <Imprint />
     case "third_party_licenses": return <ThirdPartyLicenses />
     case "last_changes": return <LastChanges />
-
-    case "profile": return <ProfileOverview /> // unwrapWithHero(hero => ( <PersonalDataContainer staticData={staticData} hero={hero} /> )),
-    case "personal_data": return null // unwrapWithHero(hero => ( <PersonalDataContainer staticData={staticData} hero={hero} /> )),
-    case "character_sheet": return null // unwrapWithHero(hero => ( <SheetsContainer staticData={staticData} hero={hero} /> )),
-    case "pact": return null // unwrapWithHero(hero => ( <PactContainer staticData={staticData} hero={hero} /> )),
-    case "rules": return <Rules /> // unwrapWithHero(hero => ( <RulesContainer staticData={staticData} hero={hero} /> )),
-
-    case "race": return null // unwrapWithHero(hero => ( <RacesContainer staticData={staticData} hero={hero} /> )),
-    case "culture": return null // unwrapWithHero(hero => ( <CulturesContainer staticData={staticData} hero={hero} /> )),
-    case "profession": return null // unwrapWithHero(hero => ( <ProfessionsContainer staticData={staticData} hero={hero} /> )),
-
-    case "attributes": return <Attributes /> // unwrapWithHero(hero => ( <AttributesContainer staticData={staticData} hero={hero} /> )),
-
-    case "advantages": return null // unwrapWithHero(hero => ( <AdvantagesContainer staticData={staticData} hero={hero} /> )),
-    case "disadvantages": return null // unwrapWithHero(hero => ( <DisadvantagesContainer staticData={staticData} hero={hero} /> )),
-
-    case "skills": return null // unwrapWithHero(hero => ( <SkillsContainer staticData={staticData} hero={hero} /> )),
-    case "combat_techniques": return null // unwrapWithHero(hero => ( <CombatTechniquesContainer staticData={staticData} hero={hero} /> )),
-    case "special_abilities": return null // unwrapWithHero(hero => ( <SpecialAbilitiesContainer staticData={staticData} hero={hero} /> )),
-    case "spells": return null // unwrapWithHero(hero => ( <SpellsContainer staticData={staticData} hero={hero} /> )),
-    case "liturgical_chants": return null // unwrapWithHero(hero => ( <LiturgicalChantsContainer staticData={staticData} hero={hero} /> )),
-
-    case "equipment": return null // unwrapWithHero(hero => ( <EquipmentContainer staticData={staticData} hero={hero} /> )),
-    case "hit_zone_armor": return null // unwrapWithHero(hero => ( <HitZoneArmorsContainer staticData={staticData} hero={hero} /> )),
-    case "pets": return null // <PetsContainer staticData={staticData} />,
 
     default: assertExhaustive(route)
   }

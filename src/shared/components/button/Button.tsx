@@ -1,5 +1,6 @@
+import { forwardRef } from "react"
 import { classList } from "../../utils/classList.ts"
-import { FCC } from "../../utils/react.js"
+import { FRRFC } from "../../utils/react.js"
 import "./Button.scss"
 
 interface Props {
@@ -15,7 +16,7 @@ interface Props {
   onClick? (): void
 }
 
-export const Button: FCC<Props> = props => {
+const Button: FRRFC<HTMLButtonElement, Props> = (props, ref) => {
   const {
     active,
     autoWidth,
@@ -43,8 +44,9 @@ export const Button: FCC<Props> = props => {
           "btn--active": active,
         }
       )}
-      onClick={disabled === true ? undefined : onClick}
-      disabled={disabled === true}
+      onClick={disabled === true || onClick === undefined ? undefined : onClick}
+      disabled={disabled === true || onClick === undefined}
+      ref={ref}
       >
       {children}
     </button>
@@ -52,3 +54,7 @@ export const Button: FCC<Props> = props => {
 
   return btnElement
 }
+
+const ButtonWithRef = forwardRef(Button)
+
+export { ButtonWithRef as Button }

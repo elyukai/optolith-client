@@ -9,6 +9,8 @@ import { professionReducer } from "./professionSlice.ts"
 import { rulesReducer } from "./rulesSlice.ts"
 
 export type CharacterState = {
+  id: string
+
   /**
    * A valid semantic version (https://semver.org), representing the Optolith version this character was created with.
    */
@@ -607,8 +609,9 @@ export type ActivatableMap = {
 }
 
 const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified"> = {
+  id: "550e8400-e29b-11d4-a716-446655440000",
   version: undefined,
-  name: "",
+  name: "Alrik",
   totalAdventurePoints: 1100,
   experienceLevelStartId: 3,
   isCharacterCreationFinished: false,
@@ -746,10 +749,17 @@ const initialState = (): CharacterState => ({
   dateLastModified: new Date().toISOString(),
 })
 
-export const selectCurrentCharacter = (state: RootState) =>
-  state.characters.selectedId === undefined
-  ? undefined
-  : state.characters.characters[state.characters.selectedId]
+export { initialState as initialCharacterState }
+
+export const selectCurrentCharacter = (state: RootState): CharacterState | undefined => {
+  const selectedId = state.route.path[0] === "characters"
+    ? state.route.path[1]
+    : undefined
+
+  return selectedId === undefined
+    ? undefined
+    : state.characters[selectedId]
+}
 
 export const selectName = (state: RootState) => selectCurrentCharacter(state)?.name
 export const selectAvatar = (state: RootState) => selectCurrentCharacter(state)?.avatar

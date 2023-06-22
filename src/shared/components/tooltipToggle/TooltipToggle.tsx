@@ -1,4 +1,4 @@
-import { FC, ReactNode, cloneElement, useCallback, useRef, useState } from "react"
+import { FC, ReactNode, RefObject, useEffect, useState } from "react"
 import { classList } from "../../utils/classList.ts"
 import { Overlay } from "../overlay/Overlay.tsx"
 import "./TooltipToggle.scss"
@@ -8,51 +8,42 @@ type Props = {
   margin?: number
   small?: boolean
   position?: "top" | "bottom" | "left" | "right"
-  target: JSX.Element
+  targetRef: RefObject<HTMLElement>
 }
 
 export const TooltipToggle: FC<Props> = props => {
-  const { content, margin, position = "top", small, target } = props
+  const { content, margin, position = "top", small, targetRef } = props
 
   const [ isOpen, setIsOpen ] = useState(false)
 
-  const targetRef = useRef<Element>(null)
+  useEffect(() => {
+    const onMouseOver = () => setIsOpen(true)
+    const onMouseOut = () => setIsOpen(false)
 
-  const handleMouseOver =
-    useCallback(
-      () => setIsOpen(true),
-      [ setIsOpen ]
-    )
+    const target = targetRef.current
 
-  const handleMouseOut =
-    useCallback(
-      () => setIsOpen(false),
-      [ setIsOpen ]
-    )
+    target?.addEventListener("mouseover", onMouseOver)
+    target?.addEventListener("mouseout", onMouseOut)
+
+    return () => {
+      target?.removeEventListener("mouseover", onMouseOver)
+      target?.removeEventListener("mouseout", onMouseOut)
+    }
+  }, [ targetRef ])
 
   return (
-    <>
-      {cloneElement(
-        target,
-        {
-          ref: targetRef,
-          onMouseOut: handleMouseOut,
-          onMouseOver: handleMouseOver,
-        }
-      )}
-      {isOpen && targetRef.current !== null
-        ? (
-          <Overlay
-            className={classList("tooltip", { "tooltip-small": small })}
-            position={position}
-            trigger={targetRef.current}
-            margin={margin}
-            small={small}
-            >
-            {content}
-          </Overlay>
-        )
-        : null}
-    </>
+    isOpen && targetRef.current !== null
+      ? (
+        <Overlay
+          className={classList("tooltip", { "tooltip-small": small })}
+          position={position}
+          trigger={targetRef.current}
+          margin={margin}
+          small={small}
+          >
+          {content}
+        </Overlay>
+      )
+      : null
   )
 }

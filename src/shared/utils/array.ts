@@ -51,3 +51,12 @@ export const sum = (arr: number[]): number =>
  */
 export const unique = <T extends number | boolean | string | null | undefined>(arr: T[]): T[] =>
   Array.from(new Set(arr))
+
+/**
+ * Returns `true` if the two arrays are equal, `false` otherwise.
+ */
+export const arrayEqual = <T extends number | boolean | string | null | undefined>(
+  arr1: T[],
+  arr2: T[],
+): boolean =>
+  arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index])

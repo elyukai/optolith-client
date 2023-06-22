@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useRef } from "react"
 import { TooltipToggle } from "../../../../../shared/components/tooltipToggle/TooltipToggle.tsx"
 import { classList } from "../../../../../shared/utils/classList.ts"
 
@@ -14,33 +14,28 @@ type Props = {
 export const AttributeBorder: FC<Props> = props => {
   const { children, className, label, tooltip, tooltipMargin, value } = props
 
-  const valueElement =
+  const ref = useRef<HTMLDivElement>(null)
+
+  const tooltipElement =
     tooltip === undefined
-    ? (
-      <div className="value">
-        <div className="value-inner">
-          <div>{value}</div>
-        </div>
-      </div>
-    )
+    ? undefined
     : (
       <TooltipToggle
         content={tooltip}
         margin={tooltipMargin}
-        target={
-          <div className="value">
-            <div className="value-inner">
-              <div>{value}</div>
-            </div>
-          </div>
-        }
+        targetRef={ref}
         />
     )
 
   return (
     <div className={classList("attr", className)}>
       <div className="short">{label}</div>
-      {valueElement}
+      {tooltipElement}
+      <div className="value" ref={ref}>
+        <div className="value-inner">
+          <div>{value}</div>
+        </div>
+      </div>
       {children}
     </div>
   )

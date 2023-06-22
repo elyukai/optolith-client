@@ -1,0 +1,27 @@
+#characters {
+  .list-wrapper li {
+    svg {
+      position: absolute;
+      left: 4px;
+      -webkit-filter: drop-shadow(0 0 2px black);
+      filter: drop-shadow(0 0 2px black);
+      z-index: 2;
+      visibility: hidden;
+
+      .progress-arc--fg {
+        stroke: #8f52cc;
+        // stroke: #0cc8c6;
+      }
+    }
+
+    &:hover {
+      svg {
+        visibility: visible;
+      }
+    }
+
+    .btns .save {
+      margin-right: 5px;
+    }
+  }
+}

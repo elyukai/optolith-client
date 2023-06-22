@@ -1,5 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
+import { getCurrentExperienceLevel } from "../../shared/domain/experienceLevel.ts"
 import { selectExperienceLevelStartId, selectTotalAdventurePoints } from "../slices/characterSlice.ts"
 import { selectExperienceLevels } from "../slices/databaseSlice.ts"
 
@@ -16,15 +17,7 @@ export const selectCurrentExperienceLevel = createSelector(
   (experienceLevels, totalAdventurePoints): ExperienceLevel | undefined =>
     totalAdventurePoints === undefined
     ? undefined
-    : Object.values(experienceLevels)
-      .sort((a, b) => a.adventure_points - b.adventure_points)
-      .reduce(
-        (acc, experienceLevel) =>
-          experienceLevel.adventure_points <= totalAdventurePoints
-          ? experienceLevel
-          : acc,
-        experienceLevels[0]
-      )
+    : getCurrentExperienceLevel(experienceLevels, totalAdventurePoints)
 )
 
 export const selectMaximumTotalAttributePoints = createSelector(

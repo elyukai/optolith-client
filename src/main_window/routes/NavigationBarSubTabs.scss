@@ -1,4 +1,4 @@
-.navigationbar-subtabs {
+ul.navigationbar-subtabs {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -6,6 +6,8 @@
   position: relative;
   height: 32px;
   flex: none;
+  margin: 0;
+  padding: 0;
 
   &::after {
     position: absolute;
@@ -20,9 +22,5 @@
   > .tab {
     font-size: 13px;
     line-height: 32px;
-
-    &:last-child {
-      margin-right: 20px;
-    }
   }
 }

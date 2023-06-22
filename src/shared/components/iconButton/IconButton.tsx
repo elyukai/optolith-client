@@ -1,9 +1,10 @@
-import { FC } from "react"
+import { forwardRef } from "react"
+import { FRRFC } from "../../utils/react.ts"
 import { Button } from "../button/Button.tsx"
 import { Icon } from "../icon/Icon.tsx"
 import "./IconButton.scss"
 
-interface Props {
+type Props = {
   active?: boolean
   autoWidth?: boolean
   className?: string
@@ -13,10 +14,10 @@ interface Props {
   icon: string
   label: string
   primary?: boolean
-  onClick? (): void
+  onClick?(): void
 }
 
-export const IconButton: FC<Props> = props => {
+const IconButton: FRRFC<HTMLButtonElement, Props> = (props, ref) => {
   const {
     active,
     autoWidth,
@@ -41,8 +42,13 @@ export const IconButton: FC<Props> = props => {
       primary={primary}
       onClick={onClick}
       round
+      ref={ref}
       >
       <Icon label={label}>{icon}</Icon>
     </Button>
   )
 }
+
+const IconButtonWithRef = forwardRef(IconButton)
+
+export { IconButtonWithRef as IconButton }
