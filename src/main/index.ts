@@ -7,7 +7,7 @@ import type { Database } from "../database/index.ts"
 import { getGlobalSettings } from "../shared/settings/main.ts"
 import { createTranslate } from "../shared/utils/translate.ts"
 import { createMainWindow, showMainWindow } from "./mainWindow.ts"
-import { setNativeTheme } from "./nativeTheme.ts"
+import { handleNativeThemeChanges, setNativeTheme } from "./nativeTheme.ts"
 import { ensureUserDataPathExists } from "./saveData.ts"
 import { createSettingsWindow } from "./settingsWindow.ts"
 import { checkForUpdatesOnRequest, checkForUpdatesOnStartup } from "./updater.ts"
@@ -273,3 +273,5 @@ app.whenReady().then(async () => {
     }))
   }
 })
+
+handleNativeThemeChanges()

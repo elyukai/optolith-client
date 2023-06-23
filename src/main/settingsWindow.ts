@@ -6,7 +6,7 @@ import { Database } from "../database/index.ts"
 import type { InitialSetupEventMessage } from "../settings_window_preload/index.ts"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import { attachGlobalSettingsBroadcastToWindow, attachGlobalSettingsChanged, getGlobalSettings } from "../shared/settings/main.ts"
-import { setNativeTheme } from "./nativeTheme.ts"
+import { getWindowBackgroundColor, setNativeTheme } from "./nativeTheme.ts"
 const debug = Debug("main:settings")
 
 let settingsWindow: BrowserWindow | undefined = undefined
@@ -28,7 +28,7 @@ export const createSettingsWindow = async (
       center: true,
       title: "Optolith",
       acceptFirstMouse: true,
-      backgroundColor: "#111111",
+      backgroundColor: getWindowBackgroundColor(getGlobalSettings().theme),
       webPreferences: {
         preload: path.join(__dirname, "renderer_settings_preload.js"),
       },

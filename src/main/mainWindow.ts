@@ -6,6 +6,7 @@ import * as url from "node:url"
 import type { Database } from "../database/index.ts"
 import { InitialSetupEventMessage } from "../main_window_preload/index.ts"
 import { getGlobalSettings } from "../shared/settings/main.ts"
+import { getWindowBackgroundColor } from "./nativeTheme.ts"
 const debug = Debug("main:main")
 
 export const createMainWindow = async () => {
@@ -32,7 +33,7 @@ export const createMainWindow = async () => {
     center: true,
     title: "Optolith",
     acceptFirstMouse: true,
-    backgroundColor: "#111111",
+    backgroundColor: getWindowBackgroundColor(getGlobalSettings().theme),
     webPreferences: {
       preload: path.join(__dirname, "renderer_main_preload.js"),
     },

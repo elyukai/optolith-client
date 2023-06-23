@@ -7,6 +7,7 @@ import appIconMacOS from "../assets/icon/AppIcon.icns"
 import { Database } from "../database/index.ts"
 import { getGlobalSettings } from "../shared/settings/main.ts"
 import { InitialSetupEventMessage } from "../updater_window_preload/index.ts"
+import { getWindowBackgroundColor } from "./nativeTheme.ts"
 const debug = Debug("main:updater")
 
 type AvailableUpdateCheckResult = {
@@ -48,6 +49,7 @@ const createUpdaterWindow = async (database: Database) => {
     fullscreenable: false,
     maximizable: false,
     minimizable: false,
+    backgroundColor: getWindowBackgroundColor(getGlobalSettings().theme),
   })
 
   await updaterWindow.loadURL(url.format({
