@@ -1,9 +1,9 @@
 import { useMemo } from "react"
 import { FullProfessionNameParts, getFullProfessionNameParts } from "../../shared/domain/profession.ts"
+import { useTranslateMap } from "../../shared/hooks/translateMap.ts"
 import { selectCurrentProfession, selectCurrentProfessionVariant } from "../selectors/professionSelectors.ts"
 import { selectCustomProfessionName, selectSex } from "../slices/characterSlice.ts"
 import { useAppSelector } from "./redux.ts"
-import { useTranslateMap } from "./translateMap.ts"
 
 export const useProfessionName = (): FullProfessionNameParts | undefined => {
   const translateMap = useTranslateMap()

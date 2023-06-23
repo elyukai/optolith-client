@@ -34,6 +34,7 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
+import { LocalizationProvider } from "../shared/components/localizationProvider/LocalizationProvider.tsx"
 import { onGlobalSettingsUpdate } from "../shared/settings/listeningRenderer.ts"
 import "../shared/styles/index.scss"
 import { ExternalAPI } from "./external.ts"
@@ -165,7 +166,15 @@ ExternalAPI.on("initial-setup", ({ database, globalSettings }) => {
   root.render(
     <StrictMode>
       <Provider store={store}>
-        <Root />
+        <LocalizationProvider
+          selectedLocale={globalSettings.locale}
+          selectedLocaleEvents={ExternalAPI}
+          systemLocale={ExternalAPI.systemLocale}
+          locales={Object.fromEntries(database.locales)}
+          ui={Object.fromEntries(database.ui)}
+          >
+          <Root />
+        </LocalizationProvider>
       </Provider>
     </StrictMode>
   )

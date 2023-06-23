@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { Page } from "../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"
-import { useTranslate } from "../../hooks/translate.ts"
+import { useTranslate } from "../../../shared/hooks/translate.ts"
 
 export const Imprint: FC = () => {
   const translate = useTranslate()

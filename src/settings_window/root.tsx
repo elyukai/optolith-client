@@ -1,5 +1,4 @@
 import { Locale } from "optolith-database-schema/types/Locale"
-import { UI } from "optolith-database-schema/types/UI"
 import { useEffect, useMemo, useState } from "react"
 import { Button } from "../shared/components/button/Button.tsx"
 import { Checkbox } from "../shared/components/checkbox/Checkbox.tsx"
@@ -10,22 +9,20 @@ import { GridItem } from "../shared/components/grid/GridItem.tsx"
 import { SegmentedControls } from "../shared/components/segmentedControls/SegmentedControls.tsx"
 import { TitleBar } from "../shared/components/titleBar/TitleBar.tsx"
 import { useToggleState } from "../shared/hooks/toggleState.ts"
+import { useTranslate } from "../shared/hooks/translate.ts"
 import { Theme } from "../shared/schema/config.ts"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import { useBroadcastSetting } from "../shared/settings/emittingRenderer.ts"
-import { createTranslate } from "../shared/utils/translate.ts"
 import { ExternalAPI } from "./external.ts"
 import "./root.scss"
 
 type Props = {
-  translations: Record<string, UI>
   locales: Record<string, Locale>
-  systemLocale: string
   initialSettings: GlobalSettings
 }
 
 export const Root: React.FC<Props> = props => {
-  const { translations, locales, systemLocale, initialSettings } = props
+  const { locales, initialSettings } = props
 
   const [ locale, setLocale ] = useState(initialSettings.locale)
   const [ fallbackLocale, setFallbackLocale ] = useState(initialSettings.fallbackLocale)
@@ -35,15 +32,7 @@ export const Root: React.FC<Props> = props => {
   const [ areAnimationsEnabled, toggleAnimationsEnabled ] =
   useToggleState(initialSettings.areAnimationsEnabled)
 
-  const translate = useMemo(
-    () => createTranslate(
-      translations,
-      locales,
-      locale,
-      systemLocale
-    ),
-    [ locale, locales, systemLocale, translations ]
-  )
+  const translate = useTranslate()
 
   useEffect(() => ExternalAPI.setTitle(translate("Settings")), [ translate ])
 

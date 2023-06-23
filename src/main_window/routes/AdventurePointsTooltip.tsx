@@ -1,6 +1,6 @@
 import { FC } from "react"
+import { useTranslate } from "../../shared/hooks/translate.ts"
 import { useAppSelector } from "../hooks/redux.ts"
-import { useTranslate } from "../hooks/translate.ts"
 import { selectAdventurePointsSpent, selectAdventurePointsSpentOnAdvantages, selectAdventurePointsSpentOnAttributes, selectAdventurePointsSpentOnBlessedAdvantages, selectAdventurePointsSpentOnBlessedDisadvantages, selectAdventurePointsSpentOnBlessings, selectAdventurePointsSpentOnCantrips, selectAdventurePointsSpentOnCombatTechniques, selectAdventurePointsSpentOnDisadvantages, selectAdventurePointsSpentOnEnergies, selectAdventurePointsSpentOnLiturgicalChants, selectAdventurePointsSpentOnMagicalAdvantages, selectAdventurePointsSpentOnMagicalDisadvantages, selectAdventurePointsSpentOnProfession, selectAdventurePointsSpentOnRace, selectAdventurePointsSpentOnSkills, selectAdventurePointsSpentOnSpecialAbilities, selectAdventurePointsSpentOnSpells } from "../selectors/adventurePointSelectors.ts"
 import { selectTotalAdventurePoints } from "../slices/characterSlice.ts"
 

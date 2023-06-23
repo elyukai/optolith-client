@@ -6,6 +6,7 @@ export type GlobalSettingsEvents =
   TypedEventEmitterForEvent<"global-setting-changed", [{
     [K in keyof GlobalSettings]: [key: K, newValue: GlobalSettings[K]]
   }[keyof GlobalSettings]]>
+  & TypedEventEmitterForEvent<"locale-changed", [newLocale: GlobalSettings["locale"]]>
 
 export const attachGlobalSettingsEvents = (
   ipcRenderer: IpcRenderer,
@@ -13,4 +14,8 @@ export const attachGlobalSettingsEvents = (
 ) =>
   ipcRenderer.on("global-setting-changed", (_event: IpcRendererEvent, key, value) => {
     preloadEvents.emit("global-setting-changed", [ key, value ])
+
+    if (key === "locale") {
+      preloadEvents.emit("locale-changed", value)
+    }
   })

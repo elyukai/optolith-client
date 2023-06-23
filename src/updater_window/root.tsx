@@ -1,19 +1,16 @@
 import type { ProgressInfo, UpdateDownloadedEvent, UpdateInfo } from "electron-updater"
-import { Locale } from "optolith-database-schema/types/Locale"
-import { UI } from "optolith-database-schema/types/UI"
-import { FC, useEffect, useMemo, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { Button } from "../shared/components/button/Button.tsx"
 import { LoadingIndicator } from "../shared/components/loadingIndicator/LoadingIndicator.tsx"
 import { ProgressBar } from "../shared/components/progressBar/ProgressBar.tsx"
 import { TitleBar } from "../shared/components/titleBar/TitleBar.tsx"
-import { bytify, createTranslate } from "../shared/utils/translate.ts"
+import { useTranslate } from "../shared/hooks/translate.ts"
+import { bytify } from "../shared/utils/translate.ts"
 import { assertExhaustive } from "../shared/utils/typeSafety.ts"
 import { ExternalAPI } from "./external.ts"
 import "./root.scss"
 
 type Props = {
-  translations: Record<string, UI>
-  locales: Record<string, Locale>
   systemLocale: string
   locale: string | undefined
 }
@@ -26,19 +23,11 @@ type UpdatePhase =
   | { type: "Downloaded"; info: UpdateDownloadedEvent }
 
 export const Root: FC<Props> = props => {
-  const { translations, locales, systemLocale, locale } = props
+  const { systemLocale, locale } = props
 
   const [ phase, setPhase ] = useState<UpdatePhase>({ type: "Checking" })
 
-  const translate = useMemo(
-    () => createTranslate(
-      translations,
-      locales,
-      locale,
-      systemLocale
-    ),
-    [ locale, locales, systemLocale, translations ]
-  )
+  const translate = useTranslate()
 
   const [ prevPhase, setPrevPhase ] = useState<UpdatePhase["type"] | undefined>()
 

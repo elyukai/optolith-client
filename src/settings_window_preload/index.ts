@@ -3,7 +3,7 @@ import EventEmitter from "events"
 import { Locale } from "optolith-database-schema/types/Locale"
 import { UI } from "optolith-database-schema/types/UI"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
-import { GlobalSettingsEmittingAPI, globalSettingsEmittingAPI } from "../shared/settings/emittingRendererPreload.ts"
+import { GlobalSettingsEmittingAPI, GlobalSettingsEvents, getGlobalSettingsEmittingAPI } from "../shared/settings/emittingRendererPreload.ts"
 import { TypedEventEmitterForEvent } from "../shared/utils/events.ts"
 
 export type PreloadAPI = {
@@ -17,6 +17,7 @@ type Events =
   & TypedEventEmitterForEvent<"initial-setup", [InitialSetupEventMessage]>
   & TypedEventEmitterForEvent<"blur", []>
   & TypedEventEmitterForEvent<"focus", []>
+  & GlobalSettingsEvents
 
 const events = new EventEmitter() as Events
 
@@ -28,7 +29,7 @@ const api: PreloadAPI = {
   checkForUpdate: () => ipcRenderer.send("check-for-update"),
   close: () => ipcRenderer.send("settings-window-close"),
   setTitle: title => ipcRenderer.send("settings-window-set-title", title),
-  ...globalSettingsEmittingAPI,
+  ...getGlobalSettingsEmittingAPI(events),
 }
 
 contextBridge.exposeInMainWorld("optolith", api)

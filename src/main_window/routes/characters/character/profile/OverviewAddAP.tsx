@@ -1,9 +1,9 @@
 import { FC, useCallback, useState } from "react"
 import { Dialog } from "../../../../../shared/components/dialog/Dialog.tsx"
 import { TextField } from "../../../../../shared/components/textField/TextField.tsx"
+import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { parseInt } from "../../../../../shared/utils/math.ts"
 import { isInteger, isNaturalNumber } from "../../../../../shared/utils/regex.ts"
-import { useTranslate } from "../../../../hooks/translate.ts"
 
 type Props = {
   isOpen: boolean

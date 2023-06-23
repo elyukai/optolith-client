@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { Markdown } from "../../../shared/components/markdown/Markdown.tsx"
+import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
 import { useAppSelector } from "../../hooks/redux.ts"
-import { useTranslateMap } from "../../hooks/translateMap.ts"
 import { selectOptionalRules } from "../../slices/databaseSlice.ts"
 import { InlineLibraryPlaceholder } from "../InlineLibraryPlaceholder.tsx"
 import { InlineLibraryTemplate } from "../InlineLibraryTemplate.tsx"

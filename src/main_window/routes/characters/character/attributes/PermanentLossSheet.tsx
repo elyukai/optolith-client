@@ -1,8 +1,8 @@
 import { FC, useCallback, useState } from "react"
 import { BasicInputDialog } from "../../../../../shared/components/basicInputDialog/BasicInputDialog.tsx"
+import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { parseInt } from "../../../../../shared/utils/math.ts"
 import { isNaturalNumber } from "../../../../../shared/utils/regex.ts"
-import { useTranslate } from "../../../../hooks/translate.ts"
 
 type Props = {
   isOpen: boolean

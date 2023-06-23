@@ -2,7 +2,7 @@ import { FC } from "react"
 import { Dialog } from "../../../../../shared/components/dialog/Dialog.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { DerivedCharacteristicIdentifier as DCId, EnergyIdentifier } from "../../../../../shared/domain/identifier.ts"
-import { useTranslate } from "../../../../hooks/translate.ts"
+import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 
 type Props = {
   id: EnergyIdentifier

@@ -1,5 +1,9 @@
 import { ipcRenderer } from "electron"
+import { TypedEventEmitterForEvent } from "../utils/events.ts"
 import { GlobalSettings } from "./GlobalSettings.ts"
+
+export type GlobalSettingsEvents =
+  TypedEventEmitterForEvent<"locale-changed", [newLocale: GlobalSettings["locale"]]>
 
 export type GlobalSettingsEmittingAPI = {
   setGlobalSetting: (keyValue: {
@@ -7,7 +11,14 @@ export type GlobalSettingsEmittingAPI = {
   }[keyof GlobalSettings]) => void
 }
 
-export const globalSettingsEmittingAPI: GlobalSettingsEmittingAPI = {
-  setGlobalSetting: ([ key, value ]) =>
-    ipcRenderer.send("settings-window-change-setting", key, value),
-}
+export const getGlobalSettingsEmittingAPI = (
+  events: GlobalSettingsEvents,
+): GlobalSettingsEmittingAPI => ({
+  setGlobalSetting: ([ key, value ]) => {
+    if (key === "locale") {
+      events.emit("locale-changed", value)
+    }
+
+    ipcRenderer.send("settings-window-change-setting", key, value)
+  },
+})

@@ -1,12 +1,12 @@
 import { Occurrence, Page, PublicationRefs, SimpleOccurrence, SimpleOccurrences, VersionedOccurrence } from "optolith-database-schema/types/source/_PublicationRef"
 import { FC } from "react"
 import { PageRange, fromRawPageRange, normalizePageRanges, numberRangeToPageRange } from "../../../shared/domain/pages.ts"
+import { useTranslate } from "../../../shared/hooks/translate.ts"
+import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
 import { isNotNullish } from "../../../shared/utils/nullable.ts"
 import { Translate } from "../../../shared/utils/translate.ts"
 import { assertExhaustive } from "../../../shared/utils/typeSafety.ts"
 import { useAppSelector } from "../../hooks/redux.ts"
-import { useTranslate } from "../../hooks/translate.ts"
-import { useTranslateMap } from "../../hooks/translateMap.ts"
 import { selectPublications } from "../../slices/databaseSlice.ts"
 
 type Props = {

@@ -1,5 +1,6 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
+import { LocalizationProvider } from "../shared/components/localizationProvider/LocalizationProvider.tsx"
 import "../shared/styles/index.scss"
 import { ExternalAPI } from "./external.ts"
 import { Root } from "./root.tsx"
@@ -12,12 +13,18 @@ const root = createRoot(domNode)
 ExternalAPI.on("initial-setup", ({ translations, systemLocale, locale, locales }) => {
   root.render(
     <StrictMode>
-      <Root
-        translations={translations}
+      <LocalizationProvider
+        selectedLocale={locale}
+        selectedLocaleEvents={ExternalAPI}
         systemLocale={systemLocale}
-        locale={locale}
         locales={locales}
-        />
+        ui={translations}
+        >
+        <Root
+          systemLocale={systemLocale}
+          locale={locale}
+          />
+      </LocalizationProvider>
     </StrictMode>
   )
 })
