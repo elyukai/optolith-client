@@ -90,6 +90,7 @@ const createUpdaterWindow = async (database: Database) => {
   ipcMain.on("updater-window-set-title", (_, title) => updaterWindow.setTitle(title))
 
   updaterWindow.on("closed", () => {
+    debug("closed")
     autoUpdater.removeAllListeners("error")
     autoUpdater.removeAllListeners("download-progress")
     autoUpdater.removeAllListeners("update-downloaded")

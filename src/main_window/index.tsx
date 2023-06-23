@@ -181,6 +181,8 @@ ExternalAPI.on("initial-setup", ({ database, globalSettings }) => {
 
   console.log("database available")
   store.dispatch(init({ database, globalSettings }))
+
+  ExternalAPI.initialSetupDone()
 })
 
 onGlobalSettingsUpdate(ExternalAPI, {

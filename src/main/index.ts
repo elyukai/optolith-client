@@ -6,7 +6,7 @@ import { join } from "node:path"
 import type { Database } from "../database/index.ts"
 import { getGlobalSettings } from "../shared/settings/main.ts"
 import { createTranslate } from "../shared/utils/translate.ts"
-import { createMainWindow, showMainWindow } from "./mainWindow.ts"
+import { createMainWindow } from "./mainWindow.ts"
 import { handleNativeThemeChanges, setNativeTheme } from "./nativeTheme.ts"
 import { ensureUserDataPathExists } from "./saveData.ts"
 import { createSettingsWindow } from "./settingsWindow.ts"
@@ -25,8 +25,8 @@ const databaseLoading = new Promise<Database>(resolve => {
   })
 })
 
-const runAsync = (fn: () => Promise<void>) => () => {
-  fn().catch(err => debug("unexpected error: %O", err))
+const runAsync = <T extends any[]>(fn: (...args: T) => Promise<void>) => (...args: T) => {
+  fn(...args).catch(err => debug("unexpected error: %O", err))
 }
 
 const setMenu = (database: Database) => {
@@ -85,6 +85,14 @@ const setMenu = (database: Database) => {
     {
       label: translate("File"),
       submenu: [
+        {
+          label: translate("New Character"),
+          accelerator: "CommandOrControl+N",
+          click: runAsync(async () => {
+            (await createMainWindow(database)).webContents.send("new-character")
+          }),
+        },
+        { type: "separator" },
         isMac
           ? {
             role: "close",
@@ -234,17 +242,6 @@ const installExtensions = async () => {
 
 const readFileInAppPath = (...path: string[]) => readFile(join(app.getAppPath(), ...path), "utf-8")
 
-const registerGlobalListeners = () => {
-  ipcMain.handle("receive-license", _ => readFileInAppPath("LICENSE"))
-  ipcMain.handle("receive-changelog", _ => readFileInAppPath("CHANGELOG.md"))
-  ipcMain.handle("receive-version", _ => app.getVersion())
-  ipcMain.handle("receive-system-locale", _ => app.getSystemLocale())
-  ipcMain.on("show-settings", runAsync(async () => {
-    const database = await databaseLoading
-    await createSettingsWindow(database, () => setMenu(database))
-  }))
-}
-
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 app.whenReady().then(async () => {
   autoUpdater.autoDownload = false
@@ -265,13 +262,29 @@ app.whenReady().then(async () => {
   if (!installUpdateInsteadOfStartup) {
     await setUserDataPath()
     await installExtensions()
-    registerGlobalListeners()
-    showMainWindow(await createMainWindow(), database)
 
+    ipcMain.handle("receive-license", _ => readFileInAppPath("LICENSE"))
+    ipcMain.handle("receive-changelog", _ => readFileInAppPath("CHANGELOG.md"))
+    ipcMain.handle("receive-version", _ => app.getVersion())
+    ipcMain.handle("receive-system-locale", _ => app.getSystemLocale())
+    ipcMain.on("show-settings", runAsync(async () => {
+      debug("show settings")
+      await createSettingsWindow(database, () => setMenu(database))
+    }))
     ipcMain.on("check-for-update", runAsync(async () => {
+      debug("check for update")
       await checkForUpdatesOnRequest(database)
     }))
+
+    await createMainWindow(database)
   }
+
+  app.on("activate", runAsync(async (_event, hasVisibleWindows) => {
+    debug("activated: hasVisibleWindows = %s", hasVisibleWindows)
+    if (!hasVisibleWindows) {
+      await createMainWindow(database)
+    }
+  }))
 })
 
 handleNativeThemeChanges()

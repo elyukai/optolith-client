@@ -8,6 +8,7 @@ import { TypedEventEmitterForEvent } from "../shared/utils/events.ts"
 export type PreloadAPI = {
   platform: NodeJS.Platform
   systemLocale: string
+  initialSetupDone: () => void
   checkForUpdates: () => void
   isMaximized: () => Promise<boolean>
   isFocused: () => Promise<boolean>
@@ -29,6 +30,7 @@ type Events =
   & TypedEventEmitterForEvent<"unmaximize", []>
   & TypedEventEmitterForEvent<"blur", []>
   & TypedEventEmitterForEvent<"focus", []>
+  & TypedEventEmitterForEvent<"new-character", []>
   & GlobalSettingsEvents
 
 const events = new EventEmitter() as Events
@@ -39,6 +41,7 @@ const api: PreloadAPI = {
   removeListener: events.removeListener.bind(events),
   platform: process.platform,
   systemLocale: "en-US",
+  initialSetupDone: () => ipcRenderer.send("initial-setup-done"),
   checkForUpdates: () => ipcRenderer.send("check-for-updates"),
   isMaximized: () => ipcRenderer.invoke("main-window-receive-is-maximized"),
   isFocused: () => ipcRenderer.invoke("main-window-receive-is-focused"),
@@ -71,5 +74,6 @@ ipcRenderer
   .on("unmaximize", () => events.emit("unmaximize"))
   .on("blur", () => events.emit("blur"))
   .on("focus", () => events.emit("focus"))
+  .on("new-character", () => events.emit("new-character"))
 
 attachGlobalSettingsEvents(ipcRenderer, events)

@@ -8,6 +8,7 @@ import { TypedEventEmitterForEvent } from "../shared/utils/events.ts"
 
 export type PreloadAPI = {
   platform: NodeJS.Platform
+  initialSetupDone: () => void
   checkForUpdate: () => void
   close: () => void
   setTitle: (title: string) => void
@@ -26,6 +27,7 @@ const api: PreloadAPI = {
   emit: events.emit.bind(events),
   removeListener: events.removeListener.bind(events),
   platform: process.platform,
+  initialSetupDone: () => ipcRenderer.send("initial-setup-done"),
   checkForUpdate: () => ipcRenderer.send("check-for-update"),
   close: () => ipcRenderer.send("settings-window-close"),
   setTitle: title => ipcRenderer.send("settings-window-set-title", title),

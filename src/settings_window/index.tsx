@@ -27,6 +27,8 @@ ExternalAPI.on("initial-setup", ({ translations, locales, systemLocale, settings
       </LocalizationProvider>
     </StrictMode>
   )
+
+  ExternalAPI.initialSetupDone()
 })
 
 ExternalAPI.on("blur", () => {

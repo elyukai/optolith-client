@@ -68,6 +68,7 @@ export const createSettingsWindow = async (
     attachGlobalSettingsBroadcastToWindow(settingsWindow)
 
     settingsWindow.on("closed", () => {
+      debug("closed")
       settingsWindow = undefined
       // ipcMain.removeAllListeners("receive-is-maximized")
 
@@ -84,7 +85,10 @@ export const createSettingsWindow = async (
 
     settingsWindow.webContents.send("initial-setup", initialSetupEventMessage)
 
-    settingsWindow.show()
+    ipcMain.once("initial-setup-done", () => {
+      debug("initial setup done")
+      settingsWindow?.show()
+    })
   }
   else {
     settingsWindow.focus()
