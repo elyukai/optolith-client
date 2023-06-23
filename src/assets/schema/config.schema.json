@@ -14,17 +14,7 @@
           "type": "string"
         },
         "herolistSortOrder": {
-          "oneOf": [
-            {
-              "const": "name"
-            },
-            {
-              "const": "datemodified"
-            },
-            {
-              "const": "dateModified"
-            }
-          ]
+          "$ref": "#/definitions/CharactersSortOrder"
         },
         "herolistVisibilityFilter": {
           "oneOf": [
@@ -40,76 +30,28 @@
           ]
         },
         "racesSortOrder": {
-          "oneOf": [
-            {
-              "const": "name"
-            },
-            {
-              "const": "cost"
-            }
-          ]
+          "$ref": "#/definitions/RacesSortOrder"
         },
         "racesValueVisibility": {
           "type": "boolean"
         },
         "culturesSortOrder": {
-          "oneOf": [
-            {
-              "const": "name"
-            },
-            {
-              "const": "cost"
-            }
-          ]
+          "$ref": "#/definitions/CulturesSortOrder"
         },
         "culturesVisibilityFilter": {
-          "oneOf": [
-            {
-              "const": "all"
-            },
-            {
-              "const": "common"
-            }
-          ]
+          "$ref": "#/definitions/CulturesVisibilityFilter"
         },
         "culturesValueVisibility": {
           "type": "boolean"
         },
         "professionsSortOrder": {
-          "oneOf": [
-            {
-              "const": "name"
-            },
-            {
-              "const": "cost"
-            }
-          ]
+          "$ref": "#/definitions/ProfessionsSortOrder"
         },
         "professionsVisibilityFilter": {
-          "oneOf": [
-            {
-              "const": "all"
-            },
-            {
-              "const": "common"
-            }
-          ]
+          "$ref": "#/definitions/ProfessionsVisibilityFilter"
         },
         "professionsGroupVisibilityFilter": {
-          "oneOf": [
-            {
-              "const": 0
-            },
-            {
-              "const": 1
-            },
-            {
-              "const": 2
-            },
-            {
-              "const": 3
-            }
-          ]
+          "$ref": "#/definitions/ProfessionsGroupVisibilityFilter"
         },
         "professionsFromExpansionsVisibility": {
           "type": "boolean"
@@ -118,94 +60,28 @@
           "type": "boolean"
         },
         "talentsSortOrder": {
-          "oneOf": [
-            {
-              "const": "name"
-            },
-            {
-              "const": "group"
-            },
-            {
-              "const": "ic"
-            }
-          ]
+          "$ref": "#/definitions/SkillsSortOrder"
         },
         "talentsCultureRatingVisibility": {
           "type": "boolean"
         },
         "combatTechniquesSortOrder": {
-          "oneOf": [
-            {
-              "const": "name"
-            },
-            {
-              "const": "group"
-            },
-            {
-              "const": "ic"
-            }
-          ]
+          "$ref": "#/definitions/CombatTechniquesSortOrder"
         },
         "specialAbilitiesSortOrder": {
-          "oneOf": [
-            {
-              "const": "name"
-            },
-            {
-              "const": "group"
-            },
-            {
-              "const": "groupname"
-            }
-          ]
+          "$ref": "#/definitions/SpecialAbilitiesSortOrder"
         },
         "spellsSortOrder": {
-          "oneOf": [
-            {
-              "const": "name"
-            },
-            {
-              "const": "group"
-            },
-            {
-              "const": "property"
-            },
-            {
-              "const": "ic"
-            }
-          ]
+          "$ref": "#/definitions/SpellsSortOrder"
         },
         "spellsUnfamiliarVisibility": {
           "type": "boolean"
         },
         "liturgiesSortOrder": {
-          "oneOf": [
-            {
-              "const": "name"
-            },
-            {
-              "const": "group"
-            },
-            {
-              "const": "ic"
-            }
-          ]
+          "$ref": "#/definitions/LiturgiesSortOrder"
         },
         "equipmentSortOrder": {
-          "oneOf": [
-            {
-              "const": "name"
-            },
-            {
-              "const": "groupname"
-            },
-            {
-              "const": "where"
-            },
-            {
-              "const": "weight"
-            }
-          ]
+          "$ref": "#/definitions/EquipmentSortOrder"
         },
         "equipmentGroupVisibilityFilter": {
           "type": "number"
@@ -223,14 +99,7 @@
           "type": "boolean"
         },
         "theme": {
-          "oneOf": [
-            {
-              "const": "light"
-            },
-            {
-              "const": "dark"
-            }
-          ]
+          "$ref": "#/definitions/Theme"
         },
         "enableEditingHeroAfterCreationPhase": {
           "type": "boolean"
@@ -267,6 +136,101 @@
         "enableActiveItemHints"
       ],
       "additionalProperties": false
+    },
+    "CharactersSortOrder": {
+      "enum": [
+        "name",
+        "datemodified",
+        "datecreated"
+      ]
+    },
+    "RacesSortOrder": {
+      "enum": [
+        "name",
+        "cost"
+      ]
+    },
+    "CulturesSortOrder": {
+      "enum": [
+        "name",
+        "cost"
+      ]
+    },
+    "CulturesVisibilityFilter": {
+      "enum": [
+        "all",
+        "common"
+      ]
+    },
+    "ProfessionsSortOrder": {
+      "enum": [
+        "name",
+        "cost"
+      ]
+    },
+    "ProfessionsVisibilityFilter": {
+      "enum": [
+        "all",
+        "common"
+      ]
+    },
+    "ProfessionsGroupVisibilityFilter": {
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "SkillsSortOrder": {
+      "enum": [
+        "name",
+        "group",
+        "ic"
+      ]
+    },
+    "CombatTechniquesSortOrder": {
+      "enum": [
+        "name",
+        "group",
+        "ic"
+      ]
+    },
+    "SpecialAbilitiesSortOrder": {
+      "enum": [
+        "name",
+        "group",
+        "groupname"
+      ]
+    },
+    "SpellsSortOrder": {
+      "enum": [
+        "name",
+        "group",
+        "property",
+        "ic"
+      ]
+    },
+    "LiturgiesSortOrder": {
+      "enum": [
+        "name",
+        "group",
+        "ic"
+      ]
+    },
+    "EquipmentSortOrder": {
+      "enum": [
+        "name",
+        "groupname",
+        "where",
+        "weight"
+      ]
+    },
+    "Theme": {
+      "enum": [
+        "light",
+        "dark"
+      ]
     }
   }
 }

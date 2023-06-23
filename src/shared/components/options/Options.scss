@@ -1,0 +1,14 @@
+aside.options {
+  position: static;
+  flex: 1 0 auto;
+  width: 200px;
+  border-left: none;
+
+  > .grid {
+    padding-right: 0;
+  }
+
+  p {
+    font: 12px/20px Alegreya Sans;
+  }
+}

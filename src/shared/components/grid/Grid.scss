@@ -1,7 +1,22 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  grid-gap: 1rem;
+
+  &.grid--small {
+    grid-gap: 10px;
+  }
+
+  &.grid--medium {
+    grid-gap: 16px;
+  }
+
+  &.grid--large {
+    grid-gap: 24px;
+  }
+
+  > :not(.grid-item) {
+    grid-column-end: span 6;
+  }
 }
 
 .grid-item {

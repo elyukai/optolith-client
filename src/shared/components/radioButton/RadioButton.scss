@@ -23,7 +23,7 @@
       background: var(--headings-color);
     }
 
-    .checkbox-label {
+    .radio-label {
       color: var(--headings-color);
     }
   }
@@ -56,7 +56,7 @@
       visibility: visible;
     }
 
-    .checkbox-label {
+    .radio-label {
       color: var(--headings-color);
     }
 
@@ -86,12 +86,12 @@
       }
     }
 
-    .checkbox-label {
+    .radio-label {
       color: var(--separator-color-30);
     }
   }
 
-  .checkbox-label {
+  .radio-label {
     flex: 0 100%;
     color: var(--accent-color);
     font: 500 12px/20px Alegreya Sans;

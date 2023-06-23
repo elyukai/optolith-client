@@ -1,3 +1,4 @@
+import { Label } from "../label/Label.tsx"
 import { RadioButton } from "./RadioButton.tsx"
 
 export type RadioOptionValue = string | number
@@ -13,13 +14,14 @@ interface Props<A extends RadioOptionValue = RadioOptionValue> {
   active: A | undefined
   array: RadioOption<A>[]
   disabled?: boolean
+  label?: string
   onClick?(option: A | undefined): void
   onClickJust?(option: A): void
 }
 
 export const RadioButtonGroup = <A extends RadioOptionValue = RadioOptionValue>
   (props: Props<A>): React.ReactElement => {
-    const { active, array: xs, disabled, onClick, onClickJust } = props
+    const { active, array: xs, disabled, label, onClick, onClickJust } = props
 
     const onClickCombined = (optionValue: A | undefined) => () => {
       if (typeof onClick === "function") {
@@ -33,6 +35,7 @@ export const RadioButtonGroup = <A extends RadioOptionValue = RadioOptionValue>
 
     return (
       <div className="radiobutton-group">
+        {label === undefined ? null : <Label text={label} />}
         {xs.map(e => (
           <RadioButton
             key={e.value ?? "__default__"}

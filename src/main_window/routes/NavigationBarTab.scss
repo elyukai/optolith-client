@@ -19,6 +19,10 @@
 
     a {
       color: var(--headings-color);
+
+      :root.blurred & {
+        color: var(--accent-color);
+      }
     }
 
     &:after {

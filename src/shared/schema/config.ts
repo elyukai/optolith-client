@@ -8,26 +8,26 @@
 export type Config = {
   locale?: string
   fallbackLocale?: string
-  herolistSortOrder: "name" | "datemodified" | "dateModified"
+  herolistSortOrder: CharactersSortOrder
   herolistVisibilityFilter: "all" | "own" | "shared"
-  racesSortOrder: "name" | "cost"
+  racesSortOrder: RacesSortOrder
   racesValueVisibility?: boolean
-  culturesSortOrder: "name" | "cost"
-  culturesVisibilityFilter: "all" | "common"
+  culturesSortOrder: CulturesSortOrder
+  culturesVisibilityFilter: CulturesVisibilityFilter
   culturesValueVisibility?: boolean
-  professionsSortOrder: "name" | "cost"
-  professionsVisibilityFilter: "all" | "common"
-  professionsGroupVisibilityFilter: 0 | 1 | 2 | 3
+  professionsSortOrder: ProfessionsSortOrder
+  professionsVisibilityFilter: ProfessionsVisibilityFilter
+  professionsGroupVisibilityFilter: ProfessionsGroupVisibilityFilter
   professionsFromExpansionsVisibility?: boolean
   advantagesDisadvantagesCultureRatingVisibility: boolean
-  talentsSortOrder: "name" | "group" | "ic"
+  talentsSortOrder: SkillsSortOrder
   talentsCultureRatingVisibility: boolean
-  combatTechniquesSortOrder: "name" | "group" | "ic"
-  specialAbilitiesSortOrder: "name" | "group" | "groupname"
-  spellsSortOrder: "name" | "group" | "property" | "ic"
+  combatTechniquesSortOrder: CombatTechniquesSortOrder
+  specialAbilitiesSortOrder: SpecialAbilitiesSortOrder
+  spellsSortOrder: SpellsSortOrder
   spellsUnfamiliarVisibility: boolean
-  liturgiesSortOrder: "name" | "group" | "ic"
-  equipmentSortOrder: "name" | "groupname" | "where" | "weight"
+  liturgiesSortOrder: LiturgiesSortOrder
+  equipmentSortOrder: EquipmentSortOrder
   equipmentGroupVisibilityFilter: number
   sheetCheckAttributeValueVisibility?: boolean
   sheetUseParchment?: boolean
@@ -38,6 +38,82 @@ export type Config = {
   meleeItemTemplatesCombatTechniqueFilter?: string
   rangedItemTemplatesCombatTechniqueFilter?: string
   enableAnimations?: boolean
+}
+
+export enum CharactersSortOrder {
+  Name = "name",
+  DateModified = "datemodified",
+  DateCreated = "datecreated",
+}
+
+export enum RacesSortOrder {
+  Name = "name",
+  Cost = "cost",
+}
+
+export enum CulturesSortOrder {
+  Name = "name",
+  Cost = "cost",
+}
+
+export enum CulturesVisibilityFilter {
+  All = "all",
+  Common = "common",
+}
+
+export enum ProfessionsSortOrder {
+  Name = "name",
+  Cost = "cost",
+}
+
+export enum ProfessionsVisibilityFilter {
+  All = "all",
+  Common = "common",
+}
+
+export enum ProfessionsGroupVisibilityFilter {
+  All = 0,
+  Mundane = 1,
+  Magical = 2,
+  Blessed = 3,
+}
+
+export enum SkillsSortOrder {
+  Name = "name",
+  Group = "group",
+  ImprovementCost = "ic",
+}
+
+export enum CombatTechniquesSortOrder {
+  Name = "name",
+  Group = "group",
+  ImprovementCost = "ic",
+}
+
+export enum SpecialAbilitiesSortOrder {
+  Name = "name",
+  Group = "group",
+  GroupName = "groupname",
+}
+
+export enum SpellsSortOrder {
+  Name = "name",
+  Group = "group",
+  Property = "property",
+  ImprovementCost = "ic",
+}
+
+export enum LiturgiesSortOrder {
+  Name = "name",
+  Group = "group",
+  ImprovementCost = "ic",
+}
+
+export enum EquipmentSortOrder {
+  Name = "name",
+  GroupName = "groupname",
+  Where = "where",
+  Weight = "weight",
 }
 
 export enum Theme {

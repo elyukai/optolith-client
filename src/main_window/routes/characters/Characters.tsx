@@ -1,12 +1,20 @@
-import { FC, useMemo } from "react"
+import { FC, useCallback, useMemo, useState } from "react"
+import { Button } from "../../../shared/components/button/Button.tsx"
+import { Grid } from "../../../shared/components/grid/Grid.tsx"
 import { List } from "../../../shared/components/list/List.tsx"
+import { Options } from "../../../shared/components/options/Options.tsx"
 import { Page } from "../../../shared/components/page/Page.tsx"
+import { RadioButtonGroup } from "../../../shared/components/radioButton/RadioButtonGroup.tsx"
 import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"
+import { TextField } from "../../../shared/components/textField/TextField.tsx"
 import { useLocaleCompare } from "../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../shared/hooks/translate.ts"
-import { compareAt } from "../../../shared/utils/sort.ts"
-import { useAppSelector } from "../../hooks/redux.ts"
+import { CharactersSortOrder } from "../../../shared/schema/config.ts"
+import { compareAt, reduceCompare } from "../../../shared/utils/sort.ts"
+import { assertExhaustive } from "../../../shared/utils/typeSafety.ts"
+import { useAppDispatch, useAppSelector } from "../../hooks/redux.ts"
 import { selectCharacters } from "../../slices/charactersSlice.ts"
+import { changeCharactersSortOrder, selectCharactersSortOrder } from "../../slices/settingsSlice.ts"
 import "./Characters.scss"
 import { CharactersItem } from "./CharactersItem.tsx"
 
@@ -49,24 +57,49 @@ export interface HerolistState {
 export const Characters: FC = () => {
   const translate = useTranslate()
   const localeCompare = useLocaleCompare()
+  const dispatch = useAppDispatch()
+
+  const [ filterText, setFilterText ] = useState("")
+  const sortOrder = useAppSelector(selectCharactersSortOrder)
+  const handleChangeSortOrder = useCallback(
+    (id: CharactersSortOrder) => dispatch(changeCharactersSortOrder(id)),
+    [ dispatch ]
+  )
 
   const charactersMap = useAppSelector(selectCharacters)
   const characters = useMemo(
     () => Object.values(charactersMap)
-      .sort(compareAt(c => c.name, localeCompare)),
-    [ charactersMap, localeCompare ]
+      .filter(c => c.name.toLowerCase().includes(filterText.toLowerCase()))
+      .sort((() => {
+        switch (sortOrder) {
+          case CharactersSortOrder.Name:
+            return compareAt(c => c.name, localeCompare)
+          case CharactersSortOrder.DateModified:
+            return reduceCompare(
+              compareAt(c => c.dateLastModified, localeCompare),
+              compareAt(c => c.name, localeCompare),
+            )
+          case CharactersSortOrder.DateCreated:
+            return reduceCompare(
+              compareAt(c => c.dateCreated, localeCompare),
+              compareAt(c => c.name, localeCompare),
+            )
+          default:
+            return assertExhaustive(sortOrder)
+        }
+      })()),
+    [ charactersMap, filterText, localeCompare, sortOrder ]
   )
 
   return (
     <Page id="characters">
-      {/* <Options>
-        <SearchField
-          staticData={staticData}
+      <Options>
+        <TextField
           value={filterText}
           onChange={setFilterText}
-          fullWidth
+          hint={translate("Search")}
           />
-        <Dropdown
+        {/* <Dropdown
           value={visibilityFilter}
           onChange={setVisibilityFilter}
           options={[
@@ -85,20 +118,34 @@ export const Characters: FC = () => {
           ]}
           fullWidth
           disabled
+          /> */}
+        <RadioButtonGroup
+          active={sortOrder}
+          label={translate("Sort By")}
+          array={[
+            {
+              name: translate("Name"),
+              value: CharactersSortOrder.Name,
+            },
+            {
+              name: translate("Date Modified"),
+              value: CharactersSortOrder.DateModified,
+            },
+          ]}
+          onClick={handleChangeSortOrder}
           />
-        <SortOptions
-          staticData={staticData}
-          options={List(SortNames.Name, SortNames.DateModified)}
-          sort={setSortOrder}
-          sortOrder={sortOrder}
-          />
-        <Button onClick={openCharacterCreator} primary>
-          {translate("heroes.createherobtn")}
-        </Button>
-        <Button onClick={importHero}>
-          {translate("heroes.importherobtn")}
-        </Button>
-      </Options> */}
+        <Grid size="small">
+          <Button
+            /* TODO: onClick={openCharacterCreator} */
+            primary
+            >
+            {translate("New Character")}
+          </Button>
+          <Button /* TODO: onClick={importHero} */ >
+            {translate("heroes.importherobtn")}
+          </Button>
+        </Grid>
+      </Options>
       <Scroll>
         <List>
           {characters.map(character => (
