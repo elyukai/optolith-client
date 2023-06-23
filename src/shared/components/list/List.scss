@@ -306,7 +306,6 @@ ul.list-wrapper {
         &:hover {
           border-color: var(--headings-color);
           color: var(--headings-color);
-          cursor: pointer;
 
           &.custom-cost::after,
           &.custom-cost::before {

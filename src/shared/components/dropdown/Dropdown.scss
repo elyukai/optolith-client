@@ -23,7 +23,6 @@
       }
 
       &:hover {
-        cursor: pointer;
         color: var(--headings-color);
         border-color: var(--headings-color);
 
@@ -182,7 +181,6 @@ ul.dropdown-options {
     }
 
     &:hover {
-      cursor: pointer;
       color: var(--headings-color);
       background: var(--separator-color-20);
       border-color: transparent;

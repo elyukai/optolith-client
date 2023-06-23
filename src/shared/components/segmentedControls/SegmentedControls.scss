@@ -44,8 +44,6 @@
     }
 
     &.active {
-      cursor: default;
-
       &::before,
       &::after {
         background: var(--accent-color);

@@ -16,11 +16,6 @@
     letter-spacing: 0.1em;
   }
 
-  &:hover,
-  &:active {
-    cursor: pointer;
-  }
-
   &:hover {
     border-color: var(--headings-color);
     color: var(--headings-color);

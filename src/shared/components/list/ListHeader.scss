@@ -37,11 +37,20 @@
       justify-content: flex-end;
     }
 
-    &.value, &.ic, &.cost, &.primary, &.at, &.pa, &.mod {
+    &.value,
+    &.ic,
+    &.cost,
+    &.primary,
+    &.at,
+    &.pa,
+    &.mod {
       width: 32px;
     }
 
-    &.primary, &.at, &.pa, &.mod {
+    &.primary,
+    &.at,
+    &.pa,
+    &.mod {
       margin-right: 8px;
     }
 
@@ -62,14 +71,11 @@
         margin-left: 5px;
       }
     }
-
-    &.has-hint:hover {
-      cursor: pointer;
-    }
   }
 }
 
-section > .page, .slidein-backdrop > .slidein > .slidein-content {
+section > .page,
+.slidein-backdrop > .slidein > .slidein-content {
   > .main-content > .list-header + .scroll .scroll-inner {
     padding-top: 0;
   }

@@ -45,16 +45,15 @@
     overflow: hidden;
     white-space: nowrap;
     color: var(--accent-color);
+    cursor: default;
 
     &:hover {
       color: var(--headings-color);
-      cursor: pointer;
     }
 
     &:active,
     &:focus {
       color: var(--accent-color-intense);
-      cursor: pointer;
     }
   }
 }
