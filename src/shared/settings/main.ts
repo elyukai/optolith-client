@@ -1,7 +1,6 @@
 import { BrowserWindow, Event, ipcMain } from "electron"
 import { getWindowBackgroundColor } from "../../main/nativeTheme.ts"
-import { Theme } from "../schema/config.ts"
-import { GlobalSettings } from "./GlobalSettings.ts"
+import { GlobalSettings, Theme } from "./GlobalSettings.ts"
 
 const globalSettings: GlobalSettings = {
   locale: "de-DE",

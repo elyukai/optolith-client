@@ -33,90 +33,72 @@ export type Config = {
   sheetUseParchment?: boolean
   sheetZoomFactor?: number
   enableActiveItemHints: boolean
-  theme?: Theme
+  theme?: "light" | "dark"
   enableEditingHeroAfterCreationPhase?: boolean
   meleeItemTemplatesCombatTechniqueFilter?: string
   rangedItemTemplatesCombatTechniqueFilter?: string
   enableAnimations?: boolean
 }
 
-export enum CharactersSortOrder {
-  Name = "name",
-  DateModified = "datemodified",
-  DateCreated = "datecreated",
-}
+export type CharactersSortOrder =
+  | "name"
+  | "datemodified"
+  | "datecreated"
 
-export enum RacesSortOrder {
-  Name = "name",
-  Cost = "cost",
-}
+export type RacesSortOrder =
+  | "name"
+  | "cost"
 
-export enum CulturesSortOrder {
-  Name = "name",
-  Cost = "cost",
-}
+export type CulturesSortOrder =
+  | "name"
+  | "cost"
 
-export enum CulturesVisibilityFilter {
-  All = "all",
-  Common = "common",
-}
+export type CulturesVisibilityFilter =
+  | "all"
+  | "common"
 
-export enum ProfessionsSortOrder {
-  Name = "name",
-  Cost = "cost",
-}
+export type ProfessionsSortOrder =
+  | "name"
+  | "cost"
 
-export enum ProfessionsVisibilityFilter {
-  All = "all",
-  Common = "common",
-}
+export type ProfessionsVisibilityFilter =
+  | "all"
+  | "common"
 
-export enum ProfessionsGroupVisibilityFilter {
-  All = 0,
-  Mundane = 1,
-  Magical = 2,
-  Blessed = 3,
-}
+export type ProfessionsGroupVisibilityFilter =
+  | 0
+  | 1
+  | 2
+  | 3
 
-export enum SkillsSortOrder {
-  Name = "name",
-  Group = "group",
-  ImprovementCost = "ic",
-}
+export type SkillsSortOrder =
+  | "name"
+  | "group"
+  | "ic"
 
-export enum CombatTechniquesSortOrder {
-  Name = "name",
-  Group = "group",
-  ImprovementCost = "ic",
-}
+export type CombatTechniquesSortOrder =
+  | "name"
+  | "group"
+  | "ic"
 
-export enum SpecialAbilitiesSortOrder {
-  Name = "name",
-  Group = "group",
-  GroupName = "groupname",
-}
+export type SpecialAbilitiesSortOrder =
+  | "name"
+  | "group"
+  | "groupname"
 
-export enum SpellsSortOrder {
-  Name = "name",
-  Group = "group",
-  Property = "property",
-  ImprovementCost = "ic",
-}
+export type SpellsSortOrder =
+  | "name"
+  | "group"
+  | "property"
+  | "ic"
 
-export enum LiturgiesSortOrder {
-  Name = "name",
-  Group = "group",
-  ImprovementCost = "ic",
-}
+export type LiturgiesSortOrder =
+  | "name"
+  | "group"
+  | "ic"
 
-export enum EquipmentSortOrder {
-  Name = "name",
-  GroupName = "groupname",
-  Where = "where",
-  Weight = "weight",
-}
-
-export enum Theme {
-  Light = "light",
-  Dark = "dark",
-}
+export type EquipmentSortOrder =
+  | "name"
+  | "groupname"
+  | "where"
+  | "weight"

@@ -9,11 +9,10 @@ import { RadioButtonGroup } from "../../../../../shared/components/radioButton/R
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { TextField } from "../../../../../shared/components/textField/TextField.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { SkillsSortOrder } from "../../../../../shared/schema/config.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import { changeSkillsSortOrder, selectSkillsSortOrder } from "../../../../slices/settingsSlice.ts"
+import { SkillsSortOrder, changeSkillsSortOrder, selectSkillsSortOrder } from "../../../../slices/settingsSlice.ts"
 import "./Skills.scss"
 
 // const isTopMarginNeeded =

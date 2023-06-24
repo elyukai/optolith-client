@@ -1,4 +1,7 @@
-import { Theme } from "../schema/config.ts"
+export enum Theme {
+  Light,
+  Dark,
+}
 
 export type GlobalSettings = {
   locale: string | undefined
