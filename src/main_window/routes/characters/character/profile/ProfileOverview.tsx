@@ -2,7 +2,10 @@ import { FC, useCallback, useState } from "react"
 import { AvatarWrapper } from "../../../../../shared/components/avatarWrapper/AvatarWrapper.tsx"
 import { Button } from "../../../../../shared/components/button/Button.tsx"
 import { EditText } from "../../../../../shared/components/editText/EditText.tsx"
+import { Grid } from "../../../../../shared/components/grid/Grid.tsx"
+import { GridItem } from "../../../../../shared/components/grid/GridItem.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
+import { Main } from "../../../../../shared/components/main/Main.tsx"
 import { Page } from "../../../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { VerticalList } from "../../../../../shared/components/verticalList/VerticalList.tsx"
@@ -136,133 +139,137 @@ export const ProfileOverview: FC = () => {
 
   return (
     <Page id="personal-data">
-      <Scroll className="text">
-        <div className="title-wrapper">
-          <AvatarWrapper src={avatar ?? ""} /* TODO: onClick={openEditCharacterAvatar} */ />
-          <div className="text-wrapper">
-            {nameElement}
+      <Main>
+        <Scroll className="text">
+          <Grid size="large">
+            <GridItem className="title-wrapper">
+              <AvatarWrapper src={avatar ?? ""} /* TODO: onClick={openEditCharacterAvatar} */ />
+              <div className="text-wrapper">
+                {nameElement}
+                {
+                  currentProfession === undefined
+                  ? null
+                  : (
+                    <VerticalList className="rcp">
+                      <span>
+                        {((): string => {
+                          switch (sex.type) {
+                            case "Male":     return translate("Male")
+                            case "Female":   return translate("Female")
+                            case "BalThani": return translate("Bal’Thani")
+                            case "Tsajana":  return translate("Tsajana")
+                            case "Custom":   return sex.name
+                            default: return assertExhaustive(sex)
+                          }
+                        })()}
+                      </span>
+                      <span className="race">
+                        {currentRace === undefined
+                          ? ""
+                          : getFullRaceName(translateMap, currentRace, currentRaceVariant)}
+                      </span>
+                      <span className="culture">
+                        {currentCulture === undefined
+                          ? ""
+                          : getFullCultureName(translateMap, currentCulture)}
+                      </span>
+                      <span className="profession">
+                        {fullProfessionName}
+                      </span>
+                    </VerticalList>
+                  )
+                }
+                <VerticalList className="el">
+                  <span>
+                    {
+                      startExpLevel === undefined || currentExpLevel === undefined
+                      ? "—"
+                      : currentExpLevel.id === startExpLevel.id
+                      ? (translateMap(startExpLevel.translations)?.name ?? "—")
+                      : `${(translateMap(currentExpLevel.translations)?.name ?? "—")} (${(translateMap(startExpLevel.translations)?.name ?? "—")})`
+                    }
+                  </span>
+                  <span>
+                    {translate("{0} AP", totalAdventurePoints ?? 0)}
+                  </span>
+                </VerticalList>
+              </div>
+            </GridItem>
+            <GridItem className="main-profile-actions">
+              {
+                canAddAdventurePoints
+                  ? (
+                      <Button
+                        className="add-ap"
+                        disabled // TODO: onClick={openAddAdventurePoints}
+                        >
+                        {translate("Add AP")}
+                      </Button>
+                    )
+                  : null
+              }
+              <Button
+                className="delete-avatar"
+                onClick={handleDeleteAvatar}
+                disabled={avatar === undefined}
+                >
+                {translate("Delete Avatar")}
+              </Button>
+              {professionNameElement}
+            </GridItem>
             {
               currentProfession === undefined
               ? null
               : (
-                <VerticalList className="rcp">
-                  <span>
-                    {((): string => {
-                      switch (sex.type) {
-                        case "Male":     return translate("Male")
-                        case "Female":   return translate("Female")
-                        case "BalThani": return translate("Bal’Thani")
-                        case "Tsajana":  return translate("Tsajana")
-                        case "Custom":   return sex.name
-                        default: return assertExhaustive(sex)
-                      }
-                    })()}
-                  </span>
-                  <span className="race">
-                    {currentRace === undefined
-                      ? ""
-                      : getFullRaceName(translateMap, currentRace, currentRaceVariant)}
-                  </span>
-                  <span className="culture">
-                    {currentCulture === undefined
-                      ? ""
-                      : getFullCultureName(translateMap, currentCulture)}
-                  </span>
-                  <span className="profession">
-                    {fullProfessionName}
-                  </span>
-                </VerticalList>
+                <GridItem>
+                  <h3>{translate("Personal Data")}</h3>
+                  <PersonalData />
+                </GridItem>
               )
             }
-            <VerticalList className="el">
-              <span>
-                {
-                  startExpLevel === undefined || currentExpLevel === undefined
-                  ? "—"
-                  : currentExpLevel.id === startExpLevel.id
-                  ? (translateMap(startExpLevel.translations)?.name ?? "—")
-                  : `${(translateMap(currentExpLevel.translations)?.name ?? "—")} (${(translateMap(startExpLevel.translations)?.name ?? "—")})`
-                }
-              </span>
-              <span>
-                {translate("{0} AP", totalAdventurePoints ?? 0)}
-              </span>
-            </VerticalList>
-          </div>
-        </div>
-        <div className="main-profile-actions">
-          {
-            canAddAdventurePoints
-              ? (
-                  <Button
-                    className="add-ap"
-                    disabled // TODO: onClick={openAddAdventurePoints}
-                    >
-                    {translate("Add AP")}
-                  </Button>
+            {
+              showFinishCharacterCreation
+                ? (
+                  <GridItem>
+                    <Button
+                      className="end-char-creation"
+                      onClick={handlFinishCharacterCreation}
+                      primary
+                      disabled={!canFinishCharacterCreation}
+                      >
+                      {translate("Finish Character Creation")}
+                    </Button>
+                  </GridItem>
                 )
-              : null
-          }
-          <Button
-            className="delete-avatar"
-            onClick={handleDeleteAvatar}
-            disabled={avatar === undefined}
-            >
-            {translate("Delete Avatar")}
-          </Button>
-          {professionNameElement}
-        </div>
-        {
-          currentProfession === undefined
-          ? null
-          : (
-            <>
-              <h3>{translate("Personal Data")}</h3>
-              <PersonalData />
-            </>
-          )
-        }
-        {
-          showFinishCharacterCreation
-            ? (
-              <div>
-                <Button
-                  className="end-char-creation"
-                  onClick={handlFinishCharacterCreation}
-                  primary
-                  disabled={!canFinishCharacterCreation}
-                  >
-                  {translate("Finish Character Creation")}
-                </Button>
-              </div>
-            )
-            : null
-        }
-        {
-          // TODO: Maybe.elem(3)(phase)
-          //   ? (
-          //     <div>
-          //       <h3>{translate("profile.advantages")}</h3>
-          //       {maybeRNull((advantages: List<Record<ActiveActivatable>>) => (
-          //                       <ActivatableTextList
-          //                         list={advantages}
-          //                         staticData={staticData}
-          //                         />
-          //                     ))
-          //                   (maybeAdvantages)}
-          //       <h3>{translate("profile.disadvantages")}</h3>
-          //       {maybeRNull((disadvantages: List<Record<ActiveActivatable>>) => (
-          //                       <ActivatableTextList
-          //                         list={disadvantages}
-          //                         staticData={staticData}
-          //                         />
-          //                     ))
-          //                   (maybeDisadvantages)}
-          //     </div>
-          //   )
-          // : null
-        }
-      </Scroll>
+                : null
+            }
+            {
+              // TODO: Maybe.elem(3)(phase)
+              //   ? (
+              //     <GridItem>
+              //       <h3>{translate("profile.advantages")}</h3>
+              //       {maybeRNull((advantages: List<Record<ActiveActivatable>>) => (
+              //                       <ActivatableTextList
+              //                         list={advantages}
+              //                         staticData={staticData}
+              //                         />
+              //                     ))
+              //                   (maybeAdvantages)}
+              //       <h3>{translate("profile.disadvantages")}</h3>
+              //       {maybeRNull((disadvantages: List<Record<ActiveActivatable>>) => (
+              //                       <ActivatableTextList
+              //                         list={disadvantages}
+              //                         staticData={staticData}
+              //                         />
+              //                     ))
+              //                   (maybeDisadvantages)}
+              //     </GridItem>
+              //   )
+              // : null
+            }
+          </Grid>
+        </Scroll>
+      </Main>
       {/* TODO: <OverviewAddAP
         close={closeAddAdventurePoints}
         isOpen={isAddAdventurePointsOpen}

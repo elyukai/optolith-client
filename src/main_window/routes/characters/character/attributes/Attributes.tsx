@@ -1,4 +1,5 @@
 import { FC } from "react"
+import { Main } from "../../../../../shared/components/main/Main.tsx"
 import { Page } from "../../../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
@@ -21,35 +22,37 @@ export const Attributes: FC = () => {
 
   return (
     <Page id="attributes">
-      <Scroll>
-        <div className="counter">
-          {translate("Total Points")}
-          {": "}
-          {isInCharacterCreation ? `${totalPoints} / ${maxTotalPoints}` : totalPoints}
-        </div>
-        <AttributeList
-          isInCharacterCreation={isInCharacterCreation}
-          isRemovingEnabled={isRemovingEnabled}
-          />
-        <div className="secondary">
-          {/* {isInCharacterCreation
-            ? (
-              <AttributesAdjustment
-                adjustmentValue={adjustmentValue}
-                attributes={attributes}
-                availableAttributeIds={availableAttributeIds}
-                currentAttributeId={currentAttributeId}
-                staticData={staticData}
-                setAdjustmentId={setAdjustmentId}
-                />
-            )
-            : null} */}
-          <DerivedCharacteristicsList
+      <Main>
+        <Scroll>
+          <div className="counter">
+            {translate("Total Points")}
+            {": "}
+            {isInCharacterCreation ? `${totalPoints} / ${maxTotalPoints}` : totalPoints}
+          </div>
+          <AttributeList
             isInCharacterCreation={isInCharacterCreation}
             isRemovingEnabled={isRemovingEnabled}
             />
-        </div>
-      </Scroll>
+          <div className="secondary">
+            {/* {isInCharacterCreation
+              ? (
+                <AttributesAdjustment
+                  adjustmentValue={adjustmentValue}
+                  attributes={attributes}
+                  availableAttributeIds={availableAttributeIds}
+                  currentAttributeId={currentAttributeId}
+                  staticData={staticData}
+                  setAdjustmentId={setAdjustmentId}
+                  />
+              )
+              : null} */}
+            <DerivedCharacteristicsList
+              isInCharacterCreation={isInCharacterCreation}
+              isRemovingEnabled={isRemovingEnabled}
+              />
+          </div>
+        </Scroll>
+      </Main>
     </Page>
   )
 }

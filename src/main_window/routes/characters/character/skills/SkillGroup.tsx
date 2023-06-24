@@ -1,13 +1,13 @@
-import * as React from "react"
-import { ListItemGroup } from "../Universal/ListItemGroup"
+import { FC } from "react"
+import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 
-interface Props {
+type Props = {
   addText?: string
   group?: number
   getGroupName?: (id: number) => string
 }
 
-export const SkillGroup: React.FC<Props> = props => {
+export const SkillGroup: FC<Props> = props => {
   const {
     addText,
     group,

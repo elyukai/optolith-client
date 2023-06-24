@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react"
+import { Main } from "../../../shared/components/main/Main.tsx"
 import { Page } from "../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"
 import { ExternalAPI } from "../../external.ts"
@@ -39,16 +40,18 @@ export const ThirdPartyLicenses: FC = () => {
 
   return (
     <Page id="third-party-licenses">
-      <Scroll className="text">
-        <h2>
-          {"Optolith Desktop Client v"}
-          {version}
-        </h2>
-        <p>{"Third Party Software and Content Licenses"}</p>
-        <pre className="third-party-software-body">
-          {text}
-        </pre>
-      </Scroll>
+      <Main>
+        <Scroll className="text">
+          <h2>
+            {"Optolith Desktop Client v"}
+            {version}
+          </h2>
+          <p>{"Third Party Software and Content Licenses"}</p>
+          <pre className="third-party-software-body">
+            {text}
+          </pre>
+        </Scroll>
+      </Main>
     </Page>
   )
 }

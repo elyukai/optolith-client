@@ -2,7 +2,6 @@ import { FC } from "react"
 import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
 import { useAppSelector } from "../hooks/redux.ts"
 import { selectRoute } from "../slices/routeSlice.ts"
-import "./Router.scss"
 import { Imprint } from "./about/Imprint.tsx"
 import { LastChanges } from "./about/LastChanges.tsx"
 import { ThirdPartyLicenses } from "./about/ThirdPartyLicenses.tsx"
@@ -10,6 +9,7 @@ import { Characters } from "./characters/Characters.tsx"
 import { Attributes } from "./characters/character/attributes/Attributes.tsx"
 import { ProfileOverview } from "./characters/character/profile/ProfileOverview.tsx"
 import { Rules } from "./characters/character/rules/Rules.tsx"
+import { Skills } from "./characters/character/skills/Skills.tsx"
 
 export const Router: FC = () => {
   const route = useAppSelector(selectRoute)
@@ -33,7 +33,7 @@ export const Router: FC = () => {
         case "advantages": return null
         case "disadvantages": return null
 
-        case "skills": return null
+        case "skills": return <Skills />
         case "combat_techniques": return null
         case "special_abilities": return null
         case "spells": return null

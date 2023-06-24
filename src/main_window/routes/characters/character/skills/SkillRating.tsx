@@ -1,13 +1,13 @@
-import * as React from "react"
+import { FC } from "react"
 
-interface Props {
+type Props = {
   isNotActive?: boolean
   noIncrease?: boolean
   sr?: number
-  addPoint? (id: string): void
+  addPoint?(id: number): void
 }
 
-export const SkillRating: React.FC<Props> = props => {
+export const SkillRating: FC<Props> = props => {
   const {
     isNotActive,
     noIncrease,

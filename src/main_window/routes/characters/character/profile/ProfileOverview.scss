@@ -1,6 +1,5 @@
 #personal-data {
   .title-wrapper {
-    margin-top: 11px;
     display: flex;
     align-items: center;
 
@@ -69,7 +68,6 @@
 
   .main-profile-actions {
     display: flex;
-    margin-top: 20px;
 
     > div {
       margin: 0 10px 0 0;
@@ -103,11 +101,6 @@
         flex: none;
       }
     }
-  }
-
-  .end-char-creation,
-  .delete-char {
-    margin-top: 20px;
   }
 }
 

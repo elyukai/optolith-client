@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react"
+import { Main } from "../../../shared/components/main/Main.tsx"
 import { Markdown } from "../../../shared/components/markdown/Markdown.tsx"
 import { Page } from "../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"
@@ -28,9 +29,11 @@ export const LastChanges: FC = () => {
 
   return (
     <Page id="last-changes">
-      <Scroll className="text">
-        <Markdown source={text} />
-      </Scroll>
+      <Main>
+        <Scroll className="text">
+          <Markdown source={text} />
+        </Scroll>
+      </Main>
     </Page>
   )
 }

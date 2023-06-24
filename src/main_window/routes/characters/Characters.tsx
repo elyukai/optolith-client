@@ -2,6 +2,7 @@ import { FC, useCallback, useMemo, useState } from "react"
 import { Button } from "../../../shared/components/button/Button.tsx"
 import { Grid } from "../../../shared/components/grid/Grid.tsx"
 import { List } from "../../../shared/components/list/List.tsx"
+import { Main } from "../../../shared/components/main/Main.tsx"
 import { Options } from "../../../shared/components/options/Options.tsx"
 import { Page } from "../../../shared/components/page/Page.tsx"
 import { RadioButtonGroup } from "../../../shared/components/radioButton/RadioButtonGroup.tsx"
@@ -146,13 +147,15 @@ export const Characters: FC = () => {
           </Button>
         </Grid>
       </Options>
-      <Scroll>
-        <List>
-          {characters.map(character => (
-            <CharactersItem key={character.id} character={character} />
-          ))}
-        </List>
-      </Scroll>
+      <Main>
+        <Scroll>
+          <List>
+            {characters.map(character => (
+              <CharactersItem key={character.id} character={character} />
+            ))}
+          </List>
+        </Scroll>
+      </Main>
       {/* <HeroCreation
         close={closeCharacterCreator}
         isOpen={isCharacterCreatorOpen}

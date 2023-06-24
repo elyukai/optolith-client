@@ -1,12 +1,6 @@
-import { RoutePath, selectRoute } from "../slices/routeSlice.ts"
-// import { isBookEnabled, sourceBooksPairToTuple } from "../Utilities/RulesUtils"
-// import { getIsLiturgicalChantsTabAvailable } from "./liturgicalChantsSelectors"
-// import { getIsRemovingEnabled } from "./phaseSelectors"
-// import { getRuleBooksEnabledM } from "./rulesSelectors"
-// import { getIsSpellsTabAvailable } from "./spellsSelectors"
-// import { getCurrentCultureId, getCurrentPhase, getCurrentTab, getRaceIdM, getWiki } from "./stateSelectors"
 import { useMemo } from "react"
 import { arrayEqual, filterNonNullable } from "../../shared/utils/array.ts"
+import { RoutePath, selectRoute } from "../slices/routeSlice.ts"
 import { useAppSelector } from "./redux.ts"
 
 type RouteGroupName =
@@ -76,8 +70,6 @@ export const useVisibleTabs = () => {
   const isBlessedOne = true as boolean
 
   const characterId = currentRoute[0] === "characters" ? currentRoute[1] : undefined
-
-  console.log("currentRoute:", currentRoute)
 
   const characterHierarchy = useMemo(
     (): DisplayRoute[] =>
@@ -178,11 +170,7 @@ export const useVisibleTabs = () => {
 
   const currentHierarchy = getHierarchyByRoute(currentRoute) ?? [ "main", mainHierarchy ]
 
-  console.log("currentHierarchy:", currentHierarchy)
-
   const currentDisplayRoute = currentHierarchy[1]?.find(tab => isInDisplayRoute(currentRoute, tab))
-
-  console.log("currentDisplayRoute:", currentDisplayRoute)
 
   return {
     section: currentHierarchy[0],

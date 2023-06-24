@@ -20,7 +20,7 @@ export const ListHeaderTag: FCC<Props> = props => {
           hint={hint}
           targetRef={ref}
           />
-        <div className={classList("has-hint", className)}>
+        <div className={classList("has-hint", className)} ref={ref}>
           {children}
         </div>
       </>

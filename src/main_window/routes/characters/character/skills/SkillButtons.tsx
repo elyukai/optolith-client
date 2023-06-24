@@ -1,22 +1,21 @@
-import * as React from "react"
-import { orN } from "../../../Data/Maybe"
-import { ImprovementCost } from "../../Utilities/ImprovementCost"
-import { isNumber } from "../../Utilities/typeCheckUtils"
-import { IconButton } from "../Universal/IconButton"
-import { ListItemButtons } from "../Universal/ListItemButtons"
+import { useCallback } from "react"
+import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
+import { ListItemButtons } from "../../../../../shared/components/list/ListItemButtons.tsx"
+import { ImprovementCost } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
+import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 
-interface Props {
+type Props = {
   activateDisabled?: boolean
   addDisabled?: boolean
   ic?: ImprovementCost
-  id: string
+  id: number
   isNotActive?: boolean
   removeDisabled?: boolean
   sr?: number
-  activate? (id: string): void
-  addPoint? (id: string): void
-  removePoint? (id: string): void
-  selectForInfo (id: string): void
+  activate?(id: number): void
+  addPoint?(id: number): void
+  removePoint?(id: number): void
+  selectForInfo(id: number): void
 }
 
 export const SkillButtons: React.FC<Props> = props => {
@@ -34,49 +33,52 @@ export const SkillButtons: React.FC<Props> = props => {
     selectForInfo,
   } = props
 
+  const translate = useTranslate()
+
   const boundSelectForInfo =
-    React.useCallback (
-      () => selectForInfo (id),
+    useCallback(
+      () => selectForInfo(id),
       [ selectForInfo, id ]
     )
 
   const getRemoveIcon =
-    () => (isNumber (sr) && sr === 0 && removeDisabled !== true) || ic === undefined
+    () => (sr !== undefined && sr === 0 && removeDisabled !== true) || ic === undefined
       ? "\uE90b"
       : "\uE909"
 
   const handleActivation =
-    React.useCallback (
+    useCallback(
       () => typeof activate === "function"
-            ? activate (id)
+            ? activate(id)
             : undefined,
       [ activate, id ]
     )
 
   const handleAddPoint =
-    React.useCallback (
+    useCallback(
       () => addDisabled !== true && typeof addPoint === "function"
-            ? addPoint (id)
+            ? addPoint(id)
             : undefined,
       [ addPoint, id, addDisabled ]
     )
 
   const handleRemovePoint =
-    React.useCallback (
+    useCallback(
       () => removeDisabled !== true && typeof removePoint === "function"
-            ? removePoint (id)
+            ? removePoint(id)
             : undefined,
       [ removePoint, id, removeDisabled ]
     )
 
   return (
     <ListItemButtons>
-      {orN (isNotActive)
+      {isNotActive === true
         ? (
           <IconButton
             icon="&#xE916;"
             onClick={handleActivation}
             disabled={activateDisabled}
+            label={translate("Activate")}
             flat
             />
         )
@@ -88,6 +90,7 @@ export const SkillButtons: React.FC<Props> = props => {
                     icon="&#xE908;"
                     onClick={handleAddPoint}
                     disabled={addDisabled}
+                    label={translate("Increment")}
                     flat
                     />
                 )
@@ -95,9 +98,10 @@ export const SkillButtons: React.FC<Props> = props => {
               {typeof removePoint === "function"
                 ? (
                   <IconButton
-                    icon={getRemoveIcon ()}
+                    icon={getRemoveIcon()}
                     onClick={handleRemovePoint}
                     disabled={removeDisabled}
+                    label={translate("Decrement")}
                     flat
                     />
                 )
@@ -107,6 +111,7 @@ export const SkillButtons: React.FC<Props> = props => {
       <IconButton
         icon="&#xE912;"
         onClick={boundSelectForInfo}
+        label={translate("Show details")}
         flat
         />
     </ListItemButtons>

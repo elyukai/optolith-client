@@ -1,3 +1,5 @@
+import { useAppSelector } from "../../../main_window/hooks/redux.ts"
+import { selectCanRemove } from "../../../main_window/selectors/characterSelectors.ts"
 import { classList } from "../../utils/classList.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { IconButton } from "../iconButton/IconButton.tsx"
@@ -35,6 +37,7 @@ type Props = {
 
 export const ListPlaceholder: React.FC<Props> = props => {
   const { type = "advantages", message } = props
+  const canRemove = useAppSelector(selectCanRemove)
 
   const placeholder = (() => {
     switch (type) {
@@ -142,12 +145,16 @@ export const ListPlaceholder: React.FC<Props> = props => {
                 flat
                 disabled
                 />
-              <IconButton
-                label=""
-                icon="&#xE909;"
-                flat
-                disabled
-                />
+              {canRemove
+                ? (
+                  <IconButton
+                    label=""
+                    icon="&#xE909;"
+                    flat
+                    disabled
+                    />
+                )
+                : null}
               <IconButton
                 label=""
                 icon="&#xE912;"
