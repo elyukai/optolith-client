@@ -1,6 +1,6 @@
 import { Race, RaceVariant } from "optolith-database-schema/types/Race"
-import { TranslateMap } from "../hooks/translateMap.ts"
 import { mapNullableDefault } from "../utils/nullable.ts"
+import { TranslateMap } from "../utils/translate.ts"
 
 export const getRace = (
   races: Record<number, Race>,

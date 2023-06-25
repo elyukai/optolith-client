@@ -1,6 +1,7 @@
 import { Locale } from "optolith-database-schema/types/Locale"
 import { UI } from "optolith-database-schema/types/UI"
 import { PluralizationCategories } from "optolith-database-schema/types/_I18n"
+import { LocaleMap } from "optolith-database-schema/types/_LocaleMap"
 
 const insertParams = (str: string, params: (string | number)[]): string =>
   str.replace(
@@ -48,6 +49,24 @@ export const createTranslate = (
   }
 
   return translate
+}
+
+export type TranslateMap = <T>(map: LocaleMap<T> | undefined) => T | undefined
+
+export const createTranslateMap = (
+  locales: Record<string, Locale>,
+  selectedLocale: string | undefined,
+  fallbackLocale: string | undefined,
+  systemLocale: string,
+) => {
+  const mainLocale = selectedLocale
+    ?? matchSystemLocaleToSupported(Object.keys(locales), systemLocale)
+
+  const translateMap: TranslateMap = map =>
+    map?.[mainLocale]
+    ?? (fallbackLocale === undefined ? undefined : map?.[fallbackLocale])
+
+  return translateMap
 }
 
 const byteTags = [ "", "K", "M", "G", "T" ]

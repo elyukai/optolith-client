@@ -1,7 +1,6 @@
 import { Attribute } from "optolith-database-schema/types/Attribute"
 import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
-import { TranslateMap } from "../../../shared/hooks/translateMap.ts"
-import { Translate } from "../../../shared/utils/translate.ts"
+import { Translate, TranslateMap } from "../../../shared/utils/translate.ts"
 import { InlineLibraryProperty } from "../InlineLibraryProperties.tsx"
 
 export const createCheck = (

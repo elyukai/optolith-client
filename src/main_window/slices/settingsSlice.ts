@@ -179,8 +179,8 @@ const settingsSlice = createSlice({
     changeSkillsSortOrder: (state, action: PayloadAction<SkillsSortOrder>) => {
       state.skillsSortOrder = action.payload
     },
-    changeSkillsCultureRatingVisibility: (state, action: PayloadAction<boolean>) => {
-      state.skillsCultureRatingVisibility = action.payload
+    switchSkillsCultureRatingVisibility: state => {
+      state.skillsCultureRatingVisibility = !state.skillsCultureRatingVisibility
     },
     changeCombatTechniquesSortOrder: (state, action: PayloadAction<CombatTechniquesSortOrder>) => {
       state.combatTechniquesSortOrder = action.payload
@@ -238,7 +238,7 @@ export const {
   changeProfessionsGroupVisibilityFilter,
   changeAdvantagesDisadvantagesCultureRatingVisibility,
   changeSkillsSortOrder,
-  changeSkillsCultureRatingVisibility,
+  switchSkillsCultureRatingVisibility,
   changeCombatTechniquesSortOrder,
   changeSpecialAbilitiesSortOrder,
   changeSpellsSortOrder,

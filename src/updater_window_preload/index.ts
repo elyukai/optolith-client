@@ -49,7 +49,6 @@ export type InitialSetupEventMessage = {
   locales: Record<string, Locale>
   globalSettings: GlobalSettings
   systemLocale: string
-  locale: string | undefined
 }
 
 ipcRenderer

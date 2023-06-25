@@ -63,7 +63,6 @@ const createUpdaterWindow = async (database: Database) => {
     locales: Object.fromEntries(database.locales),
     globalSettings: getGlobalSettings(),
     systemLocale: app.getLocale(),
-    locale: getGlobalSettings().locale,
   }
 
   updaterWindow.webContents.send("initial-setup", initialSetupEventMessage)

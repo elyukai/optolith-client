@@ -1,5 +1,5 @@
 import { Culture } from "optolith-database-schema/types/Culture"
-import { TranslateMap } from "../hooks/translateMap.ts"
+import { TranslateMap } from "../utils/translate.ts"
 
 export const getCulture = (
   cultures: Record<number, Culture>,

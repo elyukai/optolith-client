@@ -15,6 +15,7 @@ ExternalAPI.on("initial-setup", ({ translations, locales, systemLocale, settings
     <StrictMode>
       <LocalizationProvider
         selectedLocale={settings.locale}
+        selectedFallbackLocale={settings.fallbackLocale}
         selectedLocaleEvents={ExternalAPI}
         systemLocale={systemLocale}
         locales={locales}

@@ -10,11 +10,13 @@ document.body.classList.add(`platform--${ExternalAPI.platform}`)
 const domNode = document.getElementById("root")!
 const root = createRoot(domNode)
 
-ExternalAPI.on("initial-setup", ({ translations, systemLocale, locale, locales }) => {
+ExternalAPI.on("initial-setup", data => {
+  const { translations, systemLocale, globalSettings, locales } = data
   root.render(
     <StrictMode>
       <LocalizationProvider
-        selectedLocale={locale}
+        selectedLocale={globalSettings.locale}
+        selectedFallbackLocale={globalSettings.fallbackLocale}
         selectedLocaleEvents={ExternalAPI}
         systemLocale={systemLocale}
         locales={locales}
@@ -22,7 +24,7 @@ ExternalAPI.on("initial-setup", ({ translations, systemLocale, locale, locales }
         >
         <Root
           systemLocale={systemLocale}
-          locale={locale}
+          locale={globalSettings.locale}
           />
       </LocalizationProvider>
     </StrictMode>

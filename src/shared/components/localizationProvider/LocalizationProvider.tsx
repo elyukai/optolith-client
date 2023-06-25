@@ -7,7 +7,10 @@ import { FCC } from "../../utils/react.ts"
 
 type Props = {
   selectedLocale: string | undefined
-  selectedLocaleEvents: TypedEventEmitterForEvent<"locale-changed", [locale: string | undefined]>
+  selectedFallbackLocale: string | undefined
+  selectedLocaleEvents:
+    TypedEventEmitterForEvent<"locale-changed", [locale: string | undefined]>
+    & TypedEventEmitterForEvent<"fallback-locale-changed", [locale: string | undefined]>
   systemLocale: string
   locales: Record<string, Locale>
   ui: Record<string, UI>
@@ -18,23 +21,31 @@ export const LocalizationProvider: FCC<Props> = props => {
     children,
     locales,
     selectedLocale: initialSelectedLocale,
+    selectedFallbackLocale: initialSelectedFallbackLocale,
     selectedLocaleEvents,
     systemLocale,
     ui,
   } = props
 
-  const [ selectedLocale, setSelectedLocale ] = useState<string | undefined>(initialSelectedLocale)
+  const [ selectedLocale, setSelectedLocale ] =
+    useState<string | undefined>(initialSelectedLocale)
+  const [ selectedFallbackLocale, setSelectedFallbackLocale ] =
+    useState<string | undefined>(initialSelectedFallbackLocale)
 
   useEffect(() => {
     selectedLocaleEvents.on("locale-changed", setSelectedLocale)
+    selectedLocaleEvents.on("fallback-locale-changed", setSelectedFallbackLocale)
 
     return () => {
       selectedLocaleEvents.removeListener("locale-changed", setSelectedLocale)
+      selectedLocaleEvents.removeListener("fallback-locale-changed", setSelectedFallbackLocale)
     }
   }, [ selectedLocaleEvents ])
 
   return (
-    <LocalizationContext.Provider value={{ locales, selectedLocale, systemLocale, ui }}>
+    <LocalizationContext.Provider
+      value={{ locales, selectedLocale, selectedFallbackLocale, systemLocale, ui }}
+      >
       {children}
     </LocalizationContext.Provider>
   )
