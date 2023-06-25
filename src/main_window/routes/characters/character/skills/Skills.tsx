@@ -1,4 +1,7 @@
-import { FC, useCallback, useState } from "react"
+import { FC, useCallback, useMemo, useState } from "react"
+import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
+import { Grid } from "../../../../../shared/components/grid/Grid.tsx"
+import { List } from "../../../../../shared/components/list/List.tsx"
 import { ListHeader } from "../../../../../shared/components/list/ListHeader.tsx"
 import { ListHeaderTag } from "../../../../../shared/components/list/ListHeaderTag.tsx"
 import { ListPlaceholder } from "../../../../../shared/components/list/ListPlaceholder.tsx"
@@ -6,72 +9,45 @@ import { Main } from "../../../../../shared/components/main/Main.tsx"
 import { Options } from "../../../../../shared/components/options/Options.tsx"
 import { Page } from "../../../../../shared/components/page/Page.tsx"
 import { RadioButtonGroup } from "../../../../../shared/components/radioButton/RadioButtonGroup.tsx"
+import { RecommendedReference } from "../../../../../shared/components/recommendedReference/RecommendedReference.tsx"
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { TextField } from "../../../../../shared/components/textField/TextField.tsx"
+import { compareImprovementCost, fromRaw } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
+import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { compareAt, numAsc, reduceCompare } from "../../../../../shared/utils/compare.ts"
+import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import { SkillsSortOrder, changeSkillsSortOrder, selectSkillsSortOrder } from "../../../../slices/settingsSlice.ts"
+import { DisplayedSkill, selectVisibleSkills } from "../../../../selectors/skillsSelectors.ts"
+import { selectSkillGroups } from "../../../../slices/databaseSlice.ts"
+import { SkillsSortOrder, changeSkillsSortOrder, selectSkillsCultureRatingVisibility, selectSkillsSortOrder, switchSkillsCultureRatingVisibility } from "../../../../slices/settingsSlice.ts"
+import { decrementSkill, incrementSkill } from "../../../../slices/skillsSlice.ts"
+import { SkillListItem } from "./SkillListItem.tsx"
 import "./Skills.scss"
 
-// const isTopMarginNeeded =
-//   (sortOrder: string) =>
-//   (curr: Element) =>
-//   (mprev: Maybe<Element>) =>
-//     sortOrder === "group"
-//     && maybe (false) (pipe (SWRA_.gr, notEquals (SWRA_.gr (curr)))) (mprev)
-
-// export interface SkillsOwnProps {
-//   staticData: StaticDataRecord
-//   hero: HeroModelRecord
-// }
-
-// export interface SkillsStateProps {
-//   attributes: List<Record<AttributeCombined>>
-//   list: Maybe<List<Record<SkillWithRequirements>>>
-//   isRemovingEnabled: boolean
-//   sortOrder: SortNames
-//   filterText: string
-//   ratingVisibility: boolean
-//   skillRating: OrderedMap<string, EntryRating>
-// }
-
-// export interface SkillsDispatchProps {
-//   setSortOrder (sortOrder: SortNames): void
-//   setFilterText (filterText: string): void
-//   switchRatingVisibility (): void
-//   addPoint (id: string): void
-//   removePoint (id: string): void
-// }
-
-// type Props = SkillsStateProps & SkillsDispatchProps & SkillsOwnProps
-
-// export interface SkillsState {
-//   infoId: Maybe<string>
-// }
+const isTopMarginNeeded =
+  (sortOrder: SkillsSortOrder, curr: DisplayedSkill, mprev: DisplayedSkill | undefined) =>
+    sortOrder === "group"
+    && mprev !== undefined
+    && curr.static.group.id.skill_group !== mprev.static.group.id.skill_group
 
 export const Skills: FC = () => {
-  // const {
-  //   addPoint,
-  //   attributes,
-  //   staticData,
-  //   isRemovingEnabled,
-  //   ratingVisibility: is_rating_visible,
-  //   removePoint,
-  //   setSortOrder,
-  //   sortOrder,
-  //   switchRatingVisibility,
-  //   skillRating,
-  //   list,
-  //   filterText,
-  //   setFilterText,
-  // } = props
-
   const translate = useTranslate()
+  const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
+  const localeCompare = useLocaleCompare()
+
+  const cultureRatingVisibility = useAppSelector(selectSkillsCultureRatingVisibility)
+  const handlSwitchCultureRatingVisibility = useCallback(
+    () => dispatch(switchSkillsCultureRatingVisibility()),
+    [ dispatch ]
+  )
 
   const canRemove = useAppSelector(selectCanRemove)
+  const skillGroups = useAppSelector(selectSkillGroups)
 
   const [ filterText, setFilterText ] = useState("")
   const sortOrder = useAppSelector(selectSkillsSortOrder)
@@ -79,11 +55,46 @@ export const Skills: FC = () => {
     (id: SkillsSortOrder) => dispatch(changeSkillsSortOrder(id)),
     [ dispatch ]
   )
+  const visibleSkills = useAppSelector(selectVisibleSkills)
+  const list = useMemo(
+    () => visibleSkills
+      .filter(c => translateMap(c.static.translations)?.name.toLowerCase()
+        .includes(filterText.toLowerCase()) ?? false)
+      .sort((() => {
+        switch (sortOrder) {
+          case SkillsSortOrder.Name:
+            return compareAt(c => translateMap(c.static.translations)?.name ?? "", localeCompare)
+          case SkillsSortOrder.Group:
+            return reduceCompare(
+              compareAt(c => c.static.group.id.skill_group, numAsc),
+              compareAt(c => translateMap(c.static.translations)?.name ?? "", localeCompare),
+            )
+          case SkillsSortOrder.ImprovementCost:
+            return reduceCompare(
+              compareAt(c => fromRaw(c.static.improvement_cost), compareImprovementCost),
+              compareAt(c => translateMap(c.static.translations)?.name ?? "", localeCompare),
+            )
+          default:
+            return assertExhaustive(sortOrder)
+        }
+      })()),
+    [ filterText, localeCompare, sortOrder, translateMap, visibleSkills ]
+  )
 
-  // const showInfo = React.useCallback(
-  //   (id: string) => setInfoId(Just(id)),
-  //   [ setInfoId ]
-  // )
+  const handleAdd = useCallback(
+    (id: number) => dispatch(incrementSkill(id)),
+    [ dispatch ]
+  )
+
+  const handleRemove = useCallback(
+    (id: number) => dispatch(decrementSkill(id)),
+    [ dispatch ]
+  )
+
+  const getGroupName = useCallback(
+    (id: number) => translateMap(skillGroups[id]?.translations)?.name ?? "",
+    [ skillGroups, translateMap ]
+  )
 
   return (
     <Page id="skills">
@@ -112,13 +123,15 @@ export const Skills: FC = () => {
           ]}
           onClick={handleChangeSortOrder}
           />
-        {/* <Checkbox
-          checked={is_rating_visible}
-          onClick={switchRatingVisibility}
-          >
-          {translate("skills.commonskills")}
-        </Checkbox> */}
-        {/* {is_rating_visible ? <RecommendedReference staticData={staticData} /> : null} */}
+        <Grid size="medium">
+          <Checkbox
+            checked={cultureRatingVisibility}
+            onClick={handlSwitchCultureRatingVisibility}
+            >
+            {translate("skills.commonskills")}
+          </Checkbox>
+          {cultureRatingVisibility ? <RecommendedReference /> : null}
+        </Grid>
       </Options>
       <Main>
         <ListHeader>
@@ -148,58 +161,37 @@ export const Skills: FC = () => {
           <ListHeaderTag className="btn-placeholder" />
         </ListHeader>
         <Scroll>
-          {/* <List>
-            {pipe_(
-              list,
-              bindF(ensure(notNull)),
-              fmap(pipe(
-                mapAccumL((mprev: Maybe<Element>) => (curr: Element) =>
-                            Pair<Maybe<Element>, JSX.Element>(
-                              Just(curr),
-                              (
-                                <SkillListItem
-                                  key={SWRA_.id(curr)}
-                                  id={SWRA_.id(curr)}
-                                  typ={
-                                    is_rating_visible
-                                    && isSkillCommon(skillRating)(SWRA.wikiEntry(curr))
-                                  }
-                                  untyp={
-                                    is_rating_visible
-                                    && isSkillUncommon(skillRating)(SWRA.wikiEntry(curr))
-                                  }
-                                  name={SWRA_.name(curr)}
-                                  sr={SWRA_.value(curr)}
-                                  check={SWRA_.check(curr)}
-                                  ic={SWRA_.ic(curr)}
-                                  addDisabled={!SWRA.isIncreasable(curr)}
-                                  addPoint={addPoint}
-                                  removeDisabled={!isRemovingEnabled || !SWRA.isDecreasable(curr)}
-                                  removePoint={removePoint}
-                                  addFillElement
-                                  insertTopMargin={isTopMarginNeeded(sortOrder)(curr)(mprev)}
-                                  attributes={attributes}
-                                  staticData={staticData}
-                                  isRemovingEnabled={isRemovingEnabled}
-                                  selectForInfo={showInfo}
-                                  group={SWRA_.gr(curr)}
-                                  getGroupName={pipe(
-                                    lookupF(StaticData.A.skillGroups(staticData)),
-                                    maybe("")(SkillGroup.A.name)
-                                  )}
-                                  selectedForInfo={infoId}
-                                  />
-                              )
-                            ))
-                          (Nothing),
-                snd,
-                toArray,
-                arr => <>{arr}</>
-              )),
-              fromMaybe(<ListPlaceholder staticData={staticData} type="skills" noResults />)
-            )}
-          </List> */}
-          <ListPlaceholder type="skills" message={translate("No Results")} />
+          {
+            list.length > 0
+            ? (
+              <List>
+                {list.map((x, i) => {
+                  const translation = translateMap(x.static.translations)
+                  return (
+                    <SkillListItem
+                      key={x.static.id}
+                      id={x.static.id}
+                      typ={cultureRatingVisibility && x.commonness === "common"}
+                      untyp={cultureRatingVisibility && x.commonness === "uncommon"}
+                      name={translation?.name ?? ""}
+                      sr={x.dynamic.value}
+                      check={x.static.check}
+                      ic={fromRaw(x.static.improvement_cost)}
+                      addDisabled={!x.isIncreasable}
+                      addPoint={handleAdd}
+                      removeDisabled={!x.isDecreasable}
+                      removePoint={handleRemove}
+                      addFillElement
+                      insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
+                      group={x.static.group.id.skill_group}
+                      getGroupName={getGroupName}
+                      />
+                  )
+                })}
+              </List>
+            )
+            : <ListPlaceholder type="skills" message={translate("No Results")} />
+          }
         </Scroll>
       </Main>
       <InlineLibrary />

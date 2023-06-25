@@ -1,7 +1,7 @@
 .list-header {
   flex: none;
   height: 32px;
-  padding: 0 37px 0 13px;
+  padding: 0 42px 0 16px;
   display: flex;
   font: 500 12px Alegreya Sans;
   letter-spacing: 0.05em;
@@ -10,7 +10,12 @@
   margin-top: 12px;
 
   + .scroll {
-    flex: 1 1 auto;
+    flex: 1 1 0;
+    height: 0;
+
+    > .scroll-area > .scroll-inner:has(> ul.list-wrapper) {
+      padding-top: 0;
+    }
   }
 
   > div {

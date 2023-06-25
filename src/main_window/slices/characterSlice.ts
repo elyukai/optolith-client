@@ -1,12 +1,16 @@
 /* eslint-disable max-len */
-import { createAction, createReducer } from "@reduxjs/toolkit"
+import { AnyAction, createAction } from "@reduxjs/toolkit"
+import { Draft } from "immer"
 import { ActivatableRated, ActivatableRatedWithEnhancements, Rated } from "../../shared/domain/ratedEntry.ts"
+import { createImmerReducer, reduceReducers } from "../../shared/utils/redux.ts"
 import { RootState } from "../store.ts"
 import { attributesReducer } from "./attributesSlice.ts"
+import { DatabaseState } from "./databaseSlice.ts"
 import { derivedCharacteristicsReducer } from "./derivedCharacteristicsSlice.ts"
 import { personalDataReducer } from "./personalDataSlice.ts"
 import { professionReducer } from "./professionSlice.ts"
 import { rulesReducer } from "./rulesSlice.ts"
+import { skillsReducer } from "./skillsSlice.ts"
 
 export type CharacterState = {
   id: string
@@ -861,30 +865,37 @@ export const selectArcaneEnergyPermanentlyLostBoughtBack = (state: RootState) =>
 export const selectPurchasedKarmaPoints = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.purchased ?? 0
 export const selectKarmaPointsPermanentlyLost = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.permanentlyLost ?? 0
 export const selectKarmaPointsPermanentlyLostBoughtBack = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.permanentlyLostBoughtBack ?? 0
+export const selectSkills = (state: RootState) => selectCurrentCharacter(state)?.skills ?? {}
 
 export const setName = createAction<string>("character/setName")
 export const setAvatar = createAction<string>("character/setAvatar")
 export const deleteAvatar = createAction("character/deleteAvatar")
 export const finishCharacterCreation = createAction("character/finishCharacterCreation")
 
-export const characterReducer = createReducer(initialState, builder => {
-  builder
-    .addCase(setName, (state, action) => {
+const generalCharacterReducer = createImmerReducer(
+  (state: Draft<CharacterState>, action) => {
+    if (setName.match(action)) {
       state.name = action.payload
-    })
-    .addCase(setAvatar, (state, action) => {
+    }
+    else if (setAvatar.match(action)) {
       state.avatar = action.payload
-    })
-    .addCase(deleteAvatar, (state, _action) => {
+    }
+    else if (deleteAvatar.match(action)) {
       state.avatar = undefined
-    })
-    .addCase(finishCharacterCreation, (state, _action) => {
+    }
+    else if (finishCharacterCreation.match(action)) {
       state.isCharacterCreationFinished = true
-    })
+    }
+  }
+)
 
-  attributesReducer(builder)
-  derivedCharacteristicsReducer(builder)
-  personalDataReducer(builder)
-  professionReducer(builder)
-  rulesReducer(builder)
-})
+export const characterReducer =
+  reduceReducers<Draft<CharacterState>, AnyAction, [database: DatabaseState]>(
+    generalCharacterReducer,
+    attributesReducer,
+    derivedCharacteristicsReducer,
+    personalDataReducer,
+    professionReducer,
+    rulesReducer,
+    skillsReducer,
+  )

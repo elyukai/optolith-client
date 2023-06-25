@@ -4,7 +4,7 @@ import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { compareAt, reduceCompare } from "../../../../../shared/utils/sort.ts"
+import { compareAt, reduceCompare } from "../../../../../shared/utils/compare.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectIncludeAllPublications } from "../../../../slices/characterSlice.ts"
 import { selectPublications } from "../../../../slices/databaseSlice.ts"

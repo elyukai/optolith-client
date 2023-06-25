@@ -1,13 +1,11 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { Attribute } from "optolith-database-schema/types/Attribute"
-import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
-import { Race } from "optolith-database-schema/types/Race"
-import { AttributeIdentifier, OptionalRuleIdentifier } from "../../shared/domain/identifier.ts"
+import { getAttributeMaximum, getAttributeMinimum, isAttributeDecreasable, isAttributeIncreasable } from "../../shared/domain/attribute.ts"
+import { OptionalRuleIdentifier } from "../../shared/domain/identifier.ts"
 import { Rated } from "../../shared/domain/ratedEntry.ts"
-import { filterNonNullable } from "../../shared/utils/array.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
-import { createDynamicAttribute } from "../slices/attributesSlice.ts"
-import { CharacterState, selectActiveOptionalRules, selectAttributeAdjustmentId, selectDerivedCharacteristics, selectAttributes as selectDynamicAttributes } from "../slices/characterSlice.ts"
+import { createInitialDynamicAttribute } from "../slices/attributesSlice.ts"
+import { selectActiveOptionalRules, selectAttributeAdjustmentId, selectDerivedCharacteristics, selectAttributes as selectDynamicAttributes } from "../slices/characterSlice.ts"
 import { selectAttributes as selectStaticAttributes } from "../slices/databaseSlice.ts"
 import { selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectCurrentExperienceLevel, selectMaximumTotalAttributePoints, selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
@@ -32,110 +30,6 @@ export const selectTotalPoints = createSelector(
       0
     )
 )
-
-const getMinimum = (
-  characterDerivedCharacteristics: CharacterState["derivedCharacteristics"],
-  dynamic: Rated,
-): number => {
-  // (wiki: StaticDataRecord) =>
-  // (hero: HeroModelRecord) =>
-  // (mblessed_primary_attr: Maybe<Record<AttributeCombined>>) =>
-  // (mhighest_magical_primary_attr: Maybe<Record<AttributeCombined>>) =>
-
-  const isConstitution = dynamic.id === AttributeIdentifier.Constitution
-
-  // const isHighestMagicalPrimaryAttribute =
-  //   Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mhighest_magical_primary_attr))
-
-  // const isBlessedPrimaryAttribute =
-  //   Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mblessed_primary_attr))
-
-  // const blessedPrimaryAttributeDependencies = HA.blessedPrimaryAttributeDependencies (hero)
-
-  // const magicalPrimaryAttributeDependencies = HA.magicalPrimaryAttributeDependencies (hero)
-
-  const minimumValues = filterNonNullable([
-    8,
-    // ...flattenDependencies (wiki) (hero) (AtDA.dependencies (hero_entry)),
-    isConstitution ? characterDerivedCharacteristics.lifePoints.purchased : undefined,
-    // ...(isHighestMagicalPrimaryAttribute
-    //   ? [ sel2 (added), ...magicalPrimaryAttributeDependencies.map (x => x.minValue) ]
-    //   : []),
-    // ...(isBlessedPrimaryAttribute
-    //   ? [ sel3 (added), ...blessedPrimaryAttributeDependencies.map (x => x.minValue) ]
-    //   : []),
-    // fromMaybe (8)
-    //           (getSkillCheckAttributeMinimum (
-    //             SDA.skills (wiki),
-    //             SDA.combatTechniques (wiki),
-    //             SDA.spells (wiki),
-    //             SDA.liturgicalChants (wiki),
-    //             HA.attributes (hero),
-    //             HA.skills (hero),
-    //             HA.combatTechniques (hero),
-    //             HA.spells (hero),
-    //             HA.liturgicalChants (hero),
-    //             HA.skillCheckAttributeCache (hero),
-    //             AtDA.id (hero_entry),
-    //           )),
-  ])
-
-  return Math.max(...minimumValues)
-}
-
-/**
- * Returns the modifier if the attribute specified by `id` is a member of the
- * race `race`
- */
-const getModIfSelectedAdjustment = (id: number, race: Race) =>
-  race.attribute_adjustments
-    .find(adjustment =>
-      adjustment.list.length > 1
-      && adjustment.list.some(attribute => attribute.id.attribute === id))
-    ?.value ?? 0
-
-const getModIfStaticAdjustment = (id: number, race: Race) =>
-  race.attribute_adjustments
-    .filter(adjustment => adjustment.list.length === 1 && adjustment.list[0]!.id.attribute === id)
-    .reduce((acc, adjustment) => acc + adjustment.value, 0)
-
-const getMaximum = (
-  isInCharacterCreation: boolean,
-  race: Race | undefined,
-  startExperienceLevel: ExperienceLevel | undefined,
-  currentExperienceLevel: ExperienceLevel | undefined,
-  isAttributeValueLimitEnabled: boolean,
-  adjustmentId: number | undefined,
-  id: number,
-): number | undefined => {
-  if (isInCharacterCreation && race !== undefined && startExperienceLevel !== undefined) {
-    const selectedAdjustment = adjustmentId === id ? getModIfSelectedAdjustment(id, race) : 0
-    const staticAdjustment = getModIfStaticAdjustment(id, race)
-
-    return startExperienceLevel.max_attribute_value + selectedAdjustment + staticAdjustment
-  }
-
-  if (isAttributeValueLimitEnabled && currentExperienceLevel !== undefined) {
-    return currentExperienceLevel.max_attribute_value + 2
-  }
-
-  return undefined
-}
-
-const isDecreasable = (
-  dynamic: Rated,
-  min: number,
-) => min < dynamic.value
-
-const isIncreasable = (
-  dynamic: Rated,
-  max: number | undefined,
-  totalPoints: number,
-  maxTotalPoints: number,
-  isInCharacterCreation: boolean,
-) =>
-  (!isInCharacterCreation || totalPoints < maxTotalPoints)
-  && (max === undefined || dynamic.value < max)
 
 export const selectVisibleAttributes = createSelector(
   selectStaticAttributes,
@@ -166,14 +60,14 @@ export const selectVisibleAttributes = createSelector(
       .sort((a, b) => a.id - b.id)
       .map(attribute => {
         const dynamicAttribute =
-          dynamicAttributes[attribute.id] ?? createDynamicAttribute(attribute.id)
+          dynamicAttributes[attribute.id] ?? createInitialDynamicAttribute(attribute.id)
 
-        const minimum = getMinimum(
+        const minimum = getAttributeMinimum(
           derivedCharacteristics,
           dynamicAttribute,
         )
 
-        const maximum = getMaximum(
+        const maximum = getAttributeMaximum(
           isInCharacterCreation,
           currentRace,
           startExperienceLevel,
@@ -189,12 +83,12 @@ export const selectVisibleAttributes = createSelector(
           minimum,
           maximum,
           isDecreasable:
-            isDecreasable(
+            isAttributeDecreasable(
               dynamicAttribute,
               minimum
             ),
           isIncreasable:
-            isIncreasable(
+            isAttributeIncreasable(
               dynamicAttribute,
               maximum,
               totalPoints,
@@ -255,7 +149,7 @@ export const selectHighestMagicalPrimaryAttributes = createSelector(
           else {
             const { id: { attribute: id }, use_half_for_arcane_energy } = staticPrimaryAttribute
             const staticAttribute = staticAttributes[id]
-            const dynamicAttribute = dynamicAttributes[id] ?? createDynamicAttribute(id)
+            const dynamicAttribute = dynamicAttributes[id] ?? createInitialDynamicAttribute(id)
 
             if (staticAttribute === undefined) {
               return currentlyHighest
@@ -311,7 +205,7 @@ export const selectBlessedPrimaryAttribute = createSelector(
     }
     else {
       const staticAttribute = staticAttributes[id]
-      const dynamicAttribute = dynamicAttributes[id] ?? createDynamicAttribute(id)
+      const dynamicAttribute = dynamicAttributes[id] ?? createInitialDynamicAttribute(id)
 
       if (staticAttribute === undefined) {
         return undefined

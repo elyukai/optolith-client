@@ -1,6 +1,6 @@
 import { Page, PageRange as RawPageRange, SimpleOccurrence } from "optolith-database-schema/types/source/_PublicationRef"
 import { range } from "../utils/array.ts"
-import { Compare } from "../utils/sort.ts"
+import { Compare } from "../utils/compare.ts"
 import { assertExhaustive } from "../utils/typeSafety.ts"
 
 export const comparePage: Compare<Page> = (a, b) => {

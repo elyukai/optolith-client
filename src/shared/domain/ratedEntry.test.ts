@@ -76,7 +76,7 @@ describe("createRatedHelpers", () => {
     })
   })
 
-  describe("updateRating", () => {
+  describe("updateValue", () => {
     const oldEntry: Rated = {
       id: 1,
       value: 8,
@@ -134,7 +134,7 @@ describe("createRatedHelpers", () => {
     })
   })
 
-  describe("rating", () => {
+  describe("getValue", () => {
     const oldEntry: Rated = {
       id: 1,
       value: 9,
@@ -147,11 +147,11 @@ describe("createRatedHelpers", () => {
     }
 
     it("returns the rating if an entry is present", () => {
-      assert.equal(helpers.value(oldEntry), 9)
+      assert.equal(helpers.getValue(oldEntry), 9)
     })
 
     it("returns the initial rating if no entry is present", () => {
-      assert.equal(helpers.value(undefined), 8)
+      assert.equal(helpers.getValue(undefined), 8)
     })
   })
 })

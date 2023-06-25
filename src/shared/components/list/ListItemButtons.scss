@@ -1,0 +1,14 @@
+.li-btns {
+  flex: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  .btn {
+    flex: none;
+
+    &:not(.btn--flat):not(:first-child) {
+      margin-left: 5px;
+    }
+  }
+}

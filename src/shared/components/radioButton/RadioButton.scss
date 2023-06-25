@@ -1,8 +1,18 @@
+.radiobutton-group {
+  .radio:not(:first-child) {
+    margin-top: 0;
+  }
+
+  .radio:not(:last-child) {
+    margin-bottom: 0;
+  }
+}
+
 .radio {
   display: flex;
   height: 32px;
   padding: 6px 11px 6px 0;
-  margin: 0 1px;
+  margin: -6px 1px;
   align-items: flex-start;
 
   &:hover {

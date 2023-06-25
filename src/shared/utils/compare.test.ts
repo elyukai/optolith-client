@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
-import { compareAt, numAsc, reduceCompare } from "./sort.ts"
+import { compareAt, numAsc, reduceCompare } from "./compare.ts"
 
 describe("compareAt", () => {
   it("builds a compare function for a nested value", () => {

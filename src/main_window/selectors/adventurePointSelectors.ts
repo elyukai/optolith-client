@@ -1,26 +1,29 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { ImprovementCost, adventurePointsForRange } from "../../shared/domain/adventurePoints/improvementCost.ts"
-import { selectAttributes, selectCurrentCharacter, selectDerivedCharacteristics, selectTotalAdventurePoints } from "../slices/characterSlice.ts"
+import { RatedMap, selectAttributes, selectCurrentCharacter, selectDerivedCharacteristics, selectSkills, selectTotalAdventurePoints } from "../slices/characterSlice.ts"
 
 export type SpentAdventurePoints = {
   general: number
   bound: number
 }
 
-export const selectAdventurePointsSpentOnAttributes = createSelector(
-  selectAttributes,
-  (attributes): SpentAdventurePoints => Object.values(attributes).reduce(
-    (acc, attribute) => ({
-      general: acc.general + attribute.cachedAdventurePoints.general,
-      bound: acc.bound + attribute.cachedAdventurePoints.bound,
+const sumRatedMap = (ratedMap: RatedMap): SpentAdventurePoints =>
+  Object.values(ratedMap).reduce(
+    (acc, rated) => ({
+      general: acc.general + rated.cachedAdventurePoints.general,
+      bound: acc.bound + rated.cachedAdventurePoints.bound,
     }),
     { general: 0, bound: 0 }
   )
+
+export const selectAdventurePointsSpentOnAttributes = createSelector(
+  selectAttributes,
+  sumRatedMap
 )
 
 export const selectAdventurePointsSpentOnSkills = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 })
+  selectSkills,
+  sumRatedMap
 )
 
 export const selectAdventurePointsSpentOnCombatTechniques = createSelector(

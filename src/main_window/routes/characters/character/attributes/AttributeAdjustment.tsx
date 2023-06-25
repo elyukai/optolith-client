@@ -36,7 +36,7 @@ import "./AttributeAdjustment.scss"
 //   return (
 //     <div className="attribute-adjustment">
 //       <span className="label">
-//         {translate("attributes.attributeadjustmentselection")}
+//         {translate("Attribute Adjustment Selection")}
 //       </span>
 //       {fromMaybe
 //         (<></>)

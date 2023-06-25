@@ -1,33 +1,37 @@
-#spells, #liturgies, .adding-spells, .adding-liturgical-chants {
-	li {
-		.values {
-			width: 252px;
-		}
+#spells,
+#liturgies,
+.adding-spells,
+.adding-liturgical-chants {
+  li {
+    .values {
+      width: 252px;
+    }
 
-		&.no-increase .values {
-			width: 284px;
+    &.no-increase .values {
+      width: 284px;
 
-			.fill {
-				margin-right: 10px;
-			}
-		}
+      .fill {
+        margin-right: 10px;
+      }
+    }
 
-		.fill {
-			background-color: var(--separator-color-transparent);
+    .fill {
+      background-color: var(--separator-color-transparent);
 
-			&:first-child {
-				margin-right: 12px;
-			}
+      &:first-child {
+        margin-right: 12px;
+      }
 
-			&:nth-child(4) {
-				margin-right: 8px;
-			}
-		}
-	}
+      &:nth-child(4) {
+        margin-right: 8px;
+      }
+    }
+  }
 }
 
-.adding-spells, .adding-liturgical-chants {
-	.slidein li .values {
-		width: 208px;
-	}
+.adding-spells,
+.adding-liturgical-chants {
+  .slidein li .values {
+    width: 208px;
+  }
 }

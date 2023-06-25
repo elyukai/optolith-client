@@ -1,0 +1,55 @@
+.recommended-ref {
+  margin: -6px 1px;
+
+  > div {
+    display: flex;
+    align-items: center;
+    height: 32px;
+  }
+
+  .icon {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    margin-right: 11px;
+    border-width: 2px;
+    border-style: solid;
+  }
+
+  .name {
+    font: 400 12px/1 Alegreya Sans;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-top: 3px;
+  }
+
+  .rec {
+    .icon {
+      border-color: var(--common-dark-color);
+    }
+
+    .name {
+      color: var(--common-bright-color);
+    }
+  }
+
+  .unrec {
+    .icon {
+      border-color: var(--uncommon-dark-color);
+    }
+
+    .name {
+      color: var(--uncommon-bright-color);
+    }
+  }
+
+  .strongly-recommended {
+    .icon {
+      border-color: var(--important-dark-color);
+    }
+
+    .name {
+      color: var(--important-bright-color);
+    }
+  }
+}

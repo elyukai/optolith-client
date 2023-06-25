@@ -14,39 +14,39 @@ ul.list-wrapper {
 
     &:hover {
       .values {
-        .ATTR_1 {
+        .attr--1 {
           border-color: var(--courage-color);
         }
 
-        .ATTR_2 {
+        .attr--2 {
           border-color: var(--sagacity-color);
         }
 
-        .ATTR_3 {
+        .attr--3 {
           border-color: var(--intuition-color);
         }
 
-        .ATTR_4 {
+        .attr--4 {
           border-color: var(--charisma-color);
         }
 
-        .ATTR_5 {
+        .attr--5 {
           border-color: var(--dexterity-color);
         }
 
-        .ATTR_6 {
+        .attr--6 {
           border-color: var(--agility-color);
         }
 
-        .ATTR_7 {
+        .attr--7 {
           border-color: var(--constitution-color);
         }
 
-        .ATTR_8 {
+        .attr--8 {
           border-color: var(--strength-color);
         }
 
-        .ATTR_6_8 {
+        .attr--6-8 {
           border-color: var(--agility-color) var(--strength-color)
             var(--strength-color) var(--agility-color);
         }
@@ -366,7 +366,7 @@ ul.list-wrapper {
         }
       }
 
-      .ATTR_6_8 {
+      .attr--6-8 {
         font-size: 8px;
       }
 
@@ -385,21 +385,6 @@ ul.list-wrapper {
         margin: 0;
         border: none;
         flex: 1 1 auto;
-      }
-    }
-
-    .btns {
-      flex: none;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-
-      .btn {
-        flex: none;
-
-        &:not(.btn-flat):not(:first-child) {
-          margin-left: 5px;
-        }
       }
     }
 

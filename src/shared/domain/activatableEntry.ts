@@ -1,4 +1,8 @@
 import { Activatable, PredefinedActivatableOption } from "../../main_window/slices/characterSlice.ts"
+import { Equality } from "../utils/compare.ts"
+
+const equalOptionId: Equality<PredefinedActivatableOption["id"]> = (a, b) =>
+  a.type === b.type && a.value === b.value
 
 /**
  * Get the level of the first instance of a given activatable entry, if it is
@@ -25,7 +29,20 @@ export const isOptionActive = (
 ): boolean =>
   activatable?.instances.some(instance => {
     const optionAtIndex = instance.options?.[atIndex]
-    return optionAtIndex?.type === "Predefined"
-      && optionAtIndex.id.type === optionId.type
-      && optionAtIndex.id.value === optionId.value
+    return optionAtIndex?.type === "Predefined" && equalOptionId(optionAtIndex.id, optionId)
   }) ?? false
+
+/**
+ * Returns the number of instances of a given activatable entry that have a
+ * given option active. It defaults to the first option in the options array,
+ * but a different index can be specified.
+ */
+export const countOptions = (
+  activatable: Activatable | undefined,
+  optionId: PredefinedActivatableOption["id"],
+  atIndex = 0,
+): number =>
+  activatable?.instances.filter(instance => {
+    const optionAtIndex = instance.options?.[atIndex]
+    return optionAtIndex?.type === "Predefined" && equalOptionId(optionAtIndex.id, optionId)
+  }).length ?? 0

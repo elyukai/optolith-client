@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
-import { ImprovementCost, adventurePointsForActivation, adventurePointsForDecrement, adventurePointsForIncrement, adventurePointsForRange, compare, equals, toString } from "./improvementCost.ts"
+import { ImprovementCost, adventurePointsForActivation, adventurePointsForDecrement, adventurePointsForIncrement, adventurePointsForRange, compareImprovementCost, equals, toString } from "./improvementCost.ts"
 
 describe("adventurePointsForRange", () => {
   it("returns positive int on increase", () => {
@@ -90,11 +90,11 @@ describe("adventurePointsForActivation", () => {
   })
 })
 
-describe("compare", () => {
+describe("compareImprovementCost", () => {
   it("returns the relative ordering of two improvement costs", () => {
-    assert.equal(compare(ImprovementCost.A, ImprovementCost.B), -1)
-    assert.equal(compare(ImprovementCost.B, ImprovementCost.B), 0)
-    assert.equal(compare(ImprovementCost.B, ImprovementCost.A), 1)
+    assert.equal(compareImprovementCost(ImprovementCost.A, ImprovementCost.B), -1)
+    assert.equal(compareImprovementCost(ImprovementCost.B, ImprovementCost.B), 0)
+    assert.equal(compareImprovementCost(ImprovementCost.B, ImprovementCost.A), 1)
   })
 })
 

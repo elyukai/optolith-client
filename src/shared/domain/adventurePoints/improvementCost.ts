@@ -1,5 +1,6 @@
 import { ImprovementCost as RawImprovementCost } from "optolith-database-schema/types/_ImprovementCost"
 import { rangeSafe, sum } from "../../utils/array.ts"
+import { Nullish } from "../../utils/nullable.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 
 export enum ImprovementCost {
@@ -85,7 +86,7 @@ export const adventurePointsForActivation = adventureCostBase
  * relative order of the two costs; a negative result means the first argument
  * is lower than the second.
  */
-export const compare = (ic1: ImprovementCost, ic2: ImprovementCost): number => {
+export const compareImprovementCost = (ic1: ImprovementCost, ic2: ImprovementCost): number => {
   const toInt = (ic: ImprovementCost): number => {
     switch (ic) {
       case ImprovementCost.A: return 1
@@ -119,12 +120,15 @@ export const toString = (ic: ImprovementCost): string => {
   }
 }
 
-export const fromRaw = (ic: RawImprovementCost): ImprovementCost => {
+export const fromRaw = <T extends RawImprovementCost | undefined>(
+  ic: T
+): ImprovementCost | Nullish<T> => {
   switch (ic) {
     case "A": return ImprovementCost.A
     case "B": return ImprovementCost.B
     case "C": return ImprovementCost.C
     case "D": return ImprovementCost.D
+    case undefined: return undefined as Nullish<T>
     default: return assertExhaustive(ic)
   }
 }

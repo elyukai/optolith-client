@@ -1,8 +1,9 @@
-import { ActionReducerMapBuilder, createAction } from "@reduxjs/toolkit"
+import { createAction } from "@reduxjs/toolkit"
 import { Height, Weight, WeightDiceOffsetStrategy } from "optolith-database-schema/types/Race"
 import { DieType } from "optolith-database-schema/types/_Dice"
 import { rollDice, separateDice } from "../../shared/utils/dice.ts"
 import { even, parseInt, randomInt } from "../../shared/utils/math.ts"
+import { createImmerReducer } from "../../shared/utils/redux.ts"
 import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
 import { CharacterState } from "./characterSlice.ts"
 
@@ -73,46 +74,46 @@ export const rerollWeight = createAction(
   })
 )
 
-export const personalDataReducer = (builder: ActionReducerMapBuilder<CharacterState>) =>
-  builder
-    .addCase(setFamily, (state, action) => {
+export const personalDataReducer =
+  createImmerReducer<CharacterState>((state, action) => {
+    if (setFamily.match(action)) {
       state.personalData.family = action.payload === "" ? undefined : action.payload
-    })
-    .addCase(setPlaceOfBirth, (state, action) => {
+    }
+    else if (setPlaceOfBirth.match(action)) {
       state.personalData.placeOfBirth = action.payload === "" ? undefined : action.payload
-    })
-    .addCase(setDateOfBirth, (state, action) => {
+    }
+    else if (setDateOfBirth.match(action)) {
       state.personalData.dateOfBirth = action.payload === "" ? undefined : action.payload
-    })
-    .addCase(setAge, (state, action) => {
+    }
+    else if (setAge.match(action)) {
       state.personalData.age = action.payload === "" ? undefined : action.payload
-    })
-    .addCase(setPredefinedHairColor, (state, action) => {
+    }
+    else if (setPredefinedHairColor.match(action)) {
       state.personalData.hairColor = { type: "Predefined", id: action.payload }
-    })
-    .addCase(rerollHairColor, (state, action) => {
+    }
+    else if (rerollHairColor.match(action)) {
       if (action.payload !== undefined) {
         state.personalData.hairColor = { type: "Predefined", id: action.payload }
       }
-    })
-    .addCase(setPredefinedEyeColor, (state, action) => {
+    }
+    else if (setPredefinedEyeColor.match(action)) {
       state.personalData.eyeColor = { type: "Predefined", id: action.payload }
-    })
-    .addCase(rerollEyeColor, (state, action) => {
+    }
+    else if (rerollEyeColor.match(action)) {
       if (action.payload !== undefined) {
         state.personalData.eyeColor = { type: "Predefined", id: action.payload }
       }
-    })
-    .addCase(setSize, (state, action) => {
+    }
+    else if (setSize.match(action)) {
       state.personalData.size = action.payload === "" ? undefined : action.payload
-    })
-    .addCase(rerollSize, (state, action) => {
+    }
+    else if (rerollSize.match(action)) {
       state.personalData.size = action.payload.toString()
-    })
-    .addCase(setWeight, (state, action) => {
+    }
+    else if (setWeight.match(action)) {
       state.personalData.weight = action.payload === "" ? undefined : action.payload
-    })
-    .addCase(rerollWeight, (state, action) => {
+    }
+    else if (rerollWeight.match(action)) {
       const { height, isNew } = (() => {
         const heightStr = state.personalData.size
         const previousHeight = heightStr === undefined ? undefined : parseInt(heightStr)
@@ -129,16 +130,17 @@ export const personalDataReducer = (builder: ActionReducerMapBuilder<CharacterSt
       }
 
       state.personalData.weight = (height + action.payload.heightModifier).toString()
-    })
-    .addCase(setTitle, (state, action) => {
+    }
+    else if (setTitle.match(action)) {
       state.personalData.title = action.payload === "" ? undefined : action.payload
-    })
-    .addCase(setSocialStatus, (state, action) => {
+    }
+    else if (setSocialStatus.match(action)) {
       state.personalData.socialStatus.id = action.payload
-    })
-    .addCase(setCharacteristics, (state, action) => {
+    }
+    else if (setCharacteristics.match(action)) {
       state.personalData.characteristics = action.payload === "" ? undefined : action.payload
-    })
-    .addCase(setOtherInfo, (state, action) => {
+    }
+    else if (setOtherInfo.match(action)) {
       state.personalData.otherInfo = action.payload === "" ? undefined : action.payload
-    })
+    }
+  })

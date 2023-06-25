@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
-import { ActionReducerMapBuilder, createAction } from "@reduxjs/toolkit"
+import { createAction } from "@reduxjs/toolkit"
+import { createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 
 export const incrementLifePoints = createAction("derivedCharacteristics/incrementLifePoints")
@@ -22,78 +23,79 @@ export const addKarmaPointsPermanentlyLost = createAction<number>("derivedCharac
 export const incrementKarmaPointsBoughtBack = createAction("derivedCharacteristics/incrementKarmaPointsBoughtBack")
 export const decrementKarmaPointsBoughtBack = createAction("derivedCharacteristics/decrementKarmaPointsBoughtBack")
 
-export const derivedCharacteristicsReducer = (builder: ActionReducerMapBuilder<CharacterState>) =>
-  builder
-    .addCase(incrementLifePoints, (state, _action) => {
+export const derivedCharacteristicsReducer =
+  createImmerReducer<CharacterState>((state, action) => {
+    if (incrementLifePoints.match(action)) {
       state.derivedCharacteristics.lifePoints.purchased++
-    })
-    .addCase(decrementLifePoints, (state, _action) => {
+    }
+    else if (decrementLifePoints.match(action)) {
       if (state.derivedCharacteristics.lifePoints.purchased > 0) {
         state.derivedCharacteristics.lifePoints.purchased--
       }
-    })
-    .addCase(incrementLifePointsPermanentlyLost, (state, _action) => {
+    }
+    else if (incrementLifePointsPermanentlyLost.match(action)) {
       state.derivedCharacteristics.lifePoints.permanentlyLost++
-    })
-    .addCase(decrementLifePointsPermanentlyLost, (state, _action) => {
+    }
+    else if (decrementLifePointsPermanentlyLost.match(action)) {
       if (state.derivedCharacteristics.lifePoints.permanentlyLost > 0) {
         state.derivedCharacteristics.lifePoints.permanentlyLost--
       }
-    })
-    .addCase(addLifePointsPermanentlyLost, (state, action) => {
+    }
+    else if (addLifePointsPermanentlyLost.match(action)) {
       state.derivedCharacteristics.lifePoints.permanentlyLost += action.payload
-    })
-    .addCase(incrementArcaneEnergy, (state, _action) => {
+    }
+    else if (incrementArcaneEnergy.match(action)) {
       state.derivedCharacteristics.arcaneEnergy.purchased++
-    })
-    .addCase(decrementArcaneEnergy, (state, _action) => {
+    }
+    else if (decrementArcaneEnergy.match(action)) {
       if (state.derivedCharacteristics.arcaneEnergy.purchased > 0) {
         state.derivedCharacteristics.arcaneEnergy.purchased--
       }
-    })
-    .addCase(incrementArcaneEnergyPermanentlyLost, (state, _action) => {
+    }
+    else if (incrementArcaneEnergyPermanentlyLost.match(action)) {
       state.derivedCharacteristics.arcaneEnergy.permanentlyLost++
-    })
-    .addCase(decrementArcaneEnergyPermanentlyLost, (state, _action) => {
+    }
+    else if (decrementArcaneEnergyPermanentlyLost.match(action)) {
       if (state.derivedCharacteristics.arcaneEnergy.permanentlyLost > 0) {
         state.derivedCharacteristics.arcaneEnergy.permanentlyLost--
       }
-    })
-    .addCase(addArcaneEnergyPermanentlyLost, (state, action) => {
+    }
+    else if (addArcaneEnergyPermanentlyLost.match(action)) {
       state.derivedCharacteristics.arcaneEnergy.permanentlyLost += action.payload
-    })
-    .addCase(incrementArcaneEnergyBoughtBack, (state, _action) => {
+    }
+    else if (incrementArcaneEnergyBoughtBack.match(action)) {
       state.derivedCharacteristics.arcaneEnergy.permanentlyLostBoughtBack++
-    })
-    .addCase(decrementArcaneEnergyBoughtBack, (state, _action) => {
+    }
+    else if (decrementArcaneEnergyBoughtBack.match(action)) {
       if (state.derivedCharacteristics.arcaneEnergy.permanentlyLostBoughtBack > 0) {
         state.derivedCharacteristics.arcaneEnergy.permanentlyLostBoughtBack--
       }
-    })
-    .addCase(incrementKarmaPoints, (state, _action) => {
+    }
+    else if (incrementKarmaPoints.match(action)) {
       state.derivedCharacteristics.karmaPoints.purchased++
-    })
-    .addCase(decrementKarmaPoints, (state, _action) => {
+    }
+    else if (decrementKarmaPoints.match(action)) {
       if (state.derivedCharacteristics.karmaPoints.purchased > 0) {
         state.derivedCharacteristics.karmaPoints.purchased--
       }
-    })
-    .addCase(incrementKarmaPointsPermanentlyLost, (state, _action) => {
+    }
+    else if (incrementKarmaPointsPermanentlyLost.match(action)) {
       state.derivedCharacteristics.karmaPoints.permanentlyLost++
-    })
-    .addCase(decrementKarmaPointsPermanentlyLost, (state, _action) => {
+    }
+    else if (decrementKarmaPointsPermanentlyLost.match(action)) {
       if (state.derivedCharacteristics.karmaPoints.permanentlyLost > 0) {
         state.derivedCharacteristics.karmaPoints.permanentlyLost--
       }
-    })
-    .addCase(addKarmaPointsPermanentlyLost, (state, action) => {
+    }
+    else if (addKarmaPointsPermanentlyLost.match(action)) {
       state.derivedCharacteristics.karmaPoints.permanentlyLost += action.payload
-    })
-    .addCase(incrementKarmaPointsBoughtBack, (state, _action) => {
+    }
+    else if (incrementKarmaPointsBoughtBack.match(action)) {
       state.derivedCharacteristics.karmaPoints.permanentlyLostBoughtBack++
-    })
-    .addCase(decrementKarmaPointsBoughtBack, (state, _action) => {
+    }
+    else if (decrementKarmaPointsBoughtBack.match(action)) {
       if (state.derivedCharacteristics.karmaPoints.permanentlyLostBoughtBack > 0) {
         state.derivedCharacteristics.karmaPoints.permanentlyLostBoughtBack--
       }
-    })
+    }
+  })

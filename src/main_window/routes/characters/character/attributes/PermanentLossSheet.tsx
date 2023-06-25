@@ -32,11 +32,11 @@ export const PermanentLossSheet: FC<Props> = props => {
     <BasicInputDialog
       id="overview-add-ap"
       isOpen={isOpen}
-      title={translate("attributes.removeenergypointslostpermanently.message")}
+      title={translate("Loose Permanent Points")}
       description=""
       value={value}
       invalid={isNaturalNumber(value) ? undefined : ""}
-      acceptLabel={translate("attributes.removeenergypointslostpermanently.removebtn")}
+      acceptLabel={translate("Remove")}
       rejectLabel={translate("Cancel")}
       onClose={close}
       onAccept={handleRemove}

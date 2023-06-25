@@ -43,7 +43,7 @@ export const Dropdown = <A extends DropdownKey>(props: Props<A>): ReturnType<FCC
   const [ position, setPosition ] = useState<"top" | "bottom">("bottom")
   const containerRef = useRef<HTMLDivElement | null>(null)
 
-  const overlayHeight = Math.min(options.length, 5) * 33 + 1
+  const overlayHeight = Math.min(options.length, 5) * 33 + 7
 
   const handleSwitch = useCallback(
     () => {

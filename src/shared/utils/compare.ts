@@ -40,3 +40,15 @@ export const reduceCompare = <T>(...compares: Compare<T>[]): Compare<T> => (a, b
  * Compare function for numbers that sorts them in ascending order.
  */
 export const numAsc: Compare<number> = (a, b) => a - b
+
+export type Equality<T> = (a: T, b: T) => boolean
+
+/**
+ * Build an equality function for values that are nested inside other values.
+ * The nested value is getting extracted by the provided accessor function and
+ * then compared using the provided equality function.
+ */
+export const equalityAt = <T, U>(
+  accessor: (value: T) => U,
+  equality: Equality<U>,
+): Equality<T> => (a, b) => equality(accessor(a), accessor(b))

@@ -1,4 +1,5 @@
-import { ActionReducerMapBuilder, createAction } from "@reduxjs/toolkit"
+import { createAction } from "@reduxjs/toolkit"
+import { createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 
 export const switchIncludeAllPublications = createAction("rules/switchIncludeAllPublications")
@@ -6,12 +7,12 @@ export const switchIncludePublication = createAction<number>("rules/switchInclud
 export const switchFocusRule = createAction<number>("rules/switchFocusRule")
 export const switchOptionalRule = createAction<number>("rules/switchOptionalRule")
 
-export const rulesReducer = (builder: ActionReducerMapBuilder<CharacterState>) =>
-  builder
-    .addCase(switchIncludeAllPublications, (state, _action) => {
+export const rulesReducer =
+  createImmerReducer<CharacterState>((state, action) => {
+    if (switchIncludeAllPublications.match(action)) {
       state.rules.includeAllPublications = !state.rules.includeAllPublications
-    })
-    .addCase(switchIncludePublication, (state, action) => {
+    }
+    else if (switchIncludePublication.match(action)) {
       const index = state.rules.includePublications.indexOf(action.payload)
       if (index === -1) {
         state.rules.includePublications.push(action.payload)
@@ -19,8 +20,8 @@ export const rulesReducer = (builder: ActionReducerMapBuilder<CharacterState>) =
       else {
         state.rules.includePublications.splice(index, 1)
       }
-    })
-    .addCase(switchFocusRule, (state, action) => {
+    }
+    else if (switchFocusRule.match(action)) {
       if (Object.hasOwn(state.rules.activeFocusRules, action.payload)) {
         delete state.rules.activeFocusRules[action.payload]
       }
@@ -29,8 +30,8 @@ export const rulesReducer = (builder: ActionReducerMapBuilder<CharacterState>) =
           id: action.payload,
         }
       }
-    })
-    .addCase(switchOptionalRule, (state, action) => {
+    }
+    else if (switchOptionalRule.match(action)) {
       if (Object.hasOwn(state.rules.activeOptionalRules, action.payload)) {
         delete state.rules.activeOptionalRules[action.payload]
       }
@@ -39,4 +40,5 @@ export const rulesReducer = (builder: ActionReducerMapBuilder<CharacterState>) =
           id: action.payload,
         }
       }
-    })
+    }
+  })

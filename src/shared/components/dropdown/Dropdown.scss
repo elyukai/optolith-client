@@ -67,15 +67,13 @@
         position: relative;
 
         .scroll-active li.active:after {
-          right: 22px;
+          right: 13px;
         }
       }
     }
   }
 
   .scroll {
-    padding-top: 0;
-    padding-bottom: 0;
     overflow-x: visible;
   }
 
@@ -167,7 +165,7 @@ ul.dropdown-options {
   li {
     height: 32px;
     margin: 0;
-    padding: 0 11px;
+    padding: 0 8px;
     line-height: 12px;
     color: var(--text-color);
     position: relative;
@@ -191,7 +189,7 @@ ul.dropdown-options {
         content: "";
         position: absolute;
         top: 12px;
-        right: 11px;
+        right: 8px;
         width: 11px;
         height: 4px;
         border-width: 0 0 1px 1px;

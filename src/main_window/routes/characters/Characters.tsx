@@ -10,7 +10,7 @@ import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"
 import { TextField } from "../../../shared/components/textField/TextField.tsx"
 import { useLocaleCompare } from "../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../shared/hooks/translate.ts"
-import { compareAt, reduceCompare } from "../../../shared/utils/sort.ts"
+import { compareAt, reduceCompare } from "../../../shared/utils/compare.ts"
 import { assertExhaustive } from "../../../shared/utils/typeSafety.ts"
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.ts"
 import { selectCharacters } from "../../slices/charactersSlice.ts"
@@ -142,7 +142,7 @@ export const Characters: FC = () => {
             {translate("New Character")}
           </Button>
           <Button /* TODO: onClick={importHero} */ >
-            {translate("heroes.importherobtn")}
+            {translate("Import")}
           </Button>
         </Grid>
       </Options>
