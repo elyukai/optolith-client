@@ -1,66 +1,56 @@
-// import * as React from "react"
-// import { elem, flength, List } from "../../../Data/List"
-// import { fromMaybe, isNothing, joinMaybeList, Just, liftM2, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe"
-// import { Record } from "../../../Data/Record"
-// import { AttributeWithRequirements, AttributeWithRequirementsA_ } from "../../Models/View/AttributeWithRequirements"
-// import { DropdownOption } from "../../Models/View/DropdownOption"
-// import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
-// import { translate } from "../../Utilities/I18n"
-// import { sign } from "../../Utilities/NumberUtils"
-// import { pipe_ } from "../../Utilities/pipe"
-// import { Dropdown } from "../Universal/Dropdown"
+
+import { FC, useCallback, useMemo } from "react"
+import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
+import { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
+import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { sign } from "../../../../../shared/utils/math.ts"
+import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
+import { selectAvailableAdjustments } from "../../../../selectors/attributeSelectors.ts"
+import { selectAttributeAdjustmentId } from "../../../../slices/characterSlice.ts"
+import { changeAttributeAdjustmentId } from "../../../../slices/raceSlice.ts"
 import "./AttributeAdjustment.scss"
 
-// export interface AttributesAdjustmentProps {
-//   adjustmentValue: Maybe<number>
-//   attributes: Maybe<List<Record<AttributeWithRequirements>>>
-//   availableAttributeIds: Maybe<List<string>>
-//   currentAttributeId: Maybe<string>
-//   staticData: StaticDataRecord
-//   setAdjustmentId (id: Maybe<string>): void
-// }
+export const AttributesAdjustment: FC = () => {
+  const dispatch = useAppDispatch()
+  const translate = useTranslate()
+  const translateMap = useTranslateMap()
+  const adjustments = useAppSelector(selectAvailableAdjustments)
+  const currentAdjustmentId = useAppSelector(selectAttributeAdjustmentId)
 
-// const AWRA_ = AttributeWithRequirementsA_
+  const adjustmentOptions = useMemo(() => {
+    if (adjustments === undefined) {
+      return undefined
+    }
+    else {
+      return adjustments.list.map<DropdownOption<number>>(attribute => ({
+        id: attribute.static.id,
+        name: `${translateMap(attribute.static.translations)?.name ?? attribute.static.id} ${sign(adjustments.value)}`,
+      }))
+    }
+  }, [ adjustments, translateMap ])
 
-// export const AttributesAdjustment: FC<AttributesAdjustmentProps> = props => {
-//   const {
-//     attributes: mattributes,
-//     currentAttributeId,
-//     adjustmentValue: madjustment,
-//     availableAttributeIds: mavailable_attr_ids,
-//     setAdjustmentId,
-//   } = props
+  const setAdjustmentId = useCallback(
+    (id: number) => dispatch(changeAttributeAdjustmentId(id)),
+    [ dispatch ]
+  )
 
-//   const translate = useTranslate()
-
-//   return (
-//     <div className="attribute-adjustment">
-//       <span className="label">
-//         {translate("Attribute Adjustment Selection")}
-//       </span>
-//       {fromMaybe
-//         (<></>)
-//         (liftM2((available_attr_ids: List<string>) => (adjustment: number) => (
-//                   <Dropdown
-//                     options={
-//                       pipe_(
-//                         mattributes,
-//                         joinMaybeList,
-//                         mapMaybe(x => elem(AWRA_.id(x))(available_attr_ids)
-//                                          ? Just(DropdownOption({
-//                                                   id: Just(AWRA_.id(x)),
-//                                                   name: `${AWRA_.name(x)} ${sign(adjustment)}`,
-//                                                 }))
-//                                          : Nothing)
-//                       )
-//                     }
-//                     value={currentAttributeId}
-//                     onChange={setAdjustmentId}
-//                     disabled={isNothing(currentAttributeId) || flength(available_attr_ids) === 1}
-//                     />
-//                 ))
-//                 (mavailable_attr_ids)
-//                 (madjustment))}
-//     </div>
-//   )
-// }
+  return adjustmentOptions === undefined
+    ? null
+    : (
+      <div className="attribute-adjustment">
+        <span className="label">
+          {translate("Attribute Adjustment Selection")}
+        </span>
+        <Dropdown
+          options={adjustmentOptions}
+          value={currentAdjustmentId}
+          onChange={setAdjustmentId}
+          disabled={
+            adjustmentOptions.length === 1
+            && adjustmentOptions[0]!.id === currentAdjustmentId
+          }
+          />
+      </div>
+    )
+}

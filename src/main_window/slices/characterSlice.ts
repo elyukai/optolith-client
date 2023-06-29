@@ -9,6 +9,7 @@ import { DatabaseState } from "./databaseSlice.ts"
 import { derivedCharacteristicsReducer } from "./derivedCharacteristicsSlice.ts"
 import { personalDataReducer } from "./personalDataSlice.ts"
 import { professionReducer } from "./professionSlice.ts"
+import { raceReducer } from "./raceSlice.ts"
 import { rulesReducer } from "./rulesSlice.ts"
 import { skillsReducer } from "./skillsSlice.ts"
 
@@ -772,12 +773,12 @@ export const selectExperienceLevelStartId = (state: RootState) => selectCurrentC
 export const selectIsCharacterCreationFinished = (state: RootState) => selectCurrentCharacter(state)?.isCharacterCreationFinished ?? false
 export const selectRaceId = (state: RootState) => selectCurrentCharacter(state)?.race.id
 export const selectRaceVariantId = (state: RootState) => selectCurrentCharacter(state)?.race.variantId
+export const selectAttributeAdjustmentId = (state: RootState) => selectCurrentCharacter(state)?.race.selectedAttributeAdjustmentId
 export const selectCultureId = (state: RootState) => selectCurrentCharacter(state)?.culture.id
 export const selectProfessionId = (state: RootState) => selectCurrentCharacter(state)?.profession.id
 export const selectProfessionInstanceId = (state: RootState) => selectCurrentCharacter(state)?.profession.instanceId
 export const selectProfessionVariantId = (state: RootState) => selectCurrentCharacter(state)?.profession.variantId
 export const selectCustomProfessionName = (state: RootState) => selectCurrentCharacter(state)?.profession.customName
-export const selectAttributeAdjustmentId = (state: RootState) => selectCurrentCharacter(state)?.race.selectedAttributeAdjustmentId
 export const selectIncludeAllPublications = (state: RootState) => selectCurrentCharacter(state)?.rules.includeAllPublications
 export const selectIncludePublications = (state: RootState) => selectCurrentCharacter(state)?.rules.includePublications
 export const selectActiveFocusRules = (state: RootState) => selectCurrentCharacter(state)?.rules.activeFocusRules ?? {}
@@ -895,6 +896,7 @@ export const characterReducer =
     attributesReducer,
     derivedCharacteristicsReducer,
     personalDataReducer,
+    raceReducer,
     professionReducer,
     rulesReducer,
     skillsReducer,

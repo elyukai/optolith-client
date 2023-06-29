@@ -5,20 +5,19 @@ import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
 import { selectTotalPoints } from "../../../../selectors/attributeSelectors.ts"
-import { selectIsInCharacterCreation } from "../../../../selectors/characterSelectors.ts"
+import { selectCanRemove, selectIsInCharacterCreation } from "../../../../selectors/characterSelectors.ts"
 import { selectMaximumTotalAttributePoints } from "../../../../selectors/experienceLevelSelectors.ts"
+import { AttributesAdjustment } from "./AttributeAdjustment.tsx"
 import "./Attributes.scss"
 import { AttributeList } from "./AttributesList.tsx"
 import { DerivedCharacteristicsList } from "./DerivedCharacteristicsList.tsx"
 
 export const Attributes: FC = () => {
-  // TODO: Replace with actual selectors
-  const isRemovingEnabled = true
-
   const translate = useTranslate()
   const totalPoints = useAppSelector(selectTotalPoints)
   const maxTotalPoints = useAppSelector(selectMaximumTotalAttributePoints)
   const isInCharacterCreation = useAppSelector(selectIsInCharacterCreation)
+  const isRemovingEnabled = useAppSelector(selectCanRemove)
 
   return (
     <Page id="attributes">
@@ -34,18 +33,7 @@ export const Attributes: FC = () => {
             isRemovingEnabled={isRemovingEnabled}
             />
           <div className="secondary">
-            {/* {isInCharacterCreation
-              ? (
-                <AttributesAdjustment
-                  adjustmentValue={adjustmentValue}
-                  attributes={attributes}
-                  availableAttributeIds={availableAttributeIds}
-                  currentAttributeId={currentAttributeId}
-                  staticData={staticData}
-                  setAdjustmentId={setAdjustmentId}
-                  />
-              )
-              : null} */}
+            {isInCharacterCreation ? <AttributesAdjustment /> : null}
             <DerivedCharacteristicsList
               isInCharacterCreation={isInCharacterCreation}
               isRemovingEnabled={isRemovingEnabled}

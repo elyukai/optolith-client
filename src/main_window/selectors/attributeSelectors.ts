@@ -3,8 +3,9 @@ import { Attribute } from "optolith-database-schema/types/Attribute"
 import { getAttributeMaximum, getAttributeMinimum, isAttributeDecreasable, isAttributeIncreasable } from "../../shared/domain/attribute.ts"
 import { OptionalRuleIdentifier } from "../../shared/domain/identifier.ts"
 import { Rated } from "../../shared/domain/ratedEntry.ts"
+import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
-import { createInitialDynamicAttribute } from "../slices/attributesSlice.ts"
+import { attributeValue, createInitialDynamicAttribute } from "../slices/attributesSlice.ts"
 import { selectActiveOptionalRules, selectAttributeAdjustmentId, selectDerivedCharacteristics, selectAttributes as selectDynamicAttributes } from "../slices/characterSlice.ts"
 import { selectAttributes as selectStaticAttributes } from "../slices/databaseSlice.ts"
 import { selectIsInCharacterCreation } from "./characterSelectors.ts"
@@ -266,79 +267,42 @@ export const selectBlessedPrimaryAttribute = createSelector(
 //   fmap (pipe (ACA.wikiEntry, AA.short))
 // )
 
-export const getCarryingCapacity = createSelector(
+export const selectCarryingCapacity = createSelector(
   selectDynamicAttributes,
   (attributes): number => (attributes[8]?.value ?? 8) * 2
 )
 
-// export const getAdjustmentValue = createMaybeSelector (
-//   getRace,
-//   fmap (pipe (Race.A.attributeAdjustmentsSelection, fst))
-// )
+export const selectAvailableAdjustments = createSelector(
+  selectCurrentRace,
+  selectAttributeAdjustmentId,
+  selectVisibleAttributes,
+  (race, currentId, attributes) => {
+    const selectableAdjustment = race?.attribute_adjustments.find(pair => pair.list.length > 1)
 
-// export const getCurrentAttributeAdjustment = createMaybeSelector (
-//   getCurrentAttributeAdjustmentId,
-//   getAttributesForView,
-//   uncurryN (blackbirdF (liftM2 ((id: string) => find (pipe (AWRA.wikiEntry, AA.id, equals (id)))))
-//                        (join as join<Record<AttributeWithRequirements>>))
-// )
+    if (selectableAdjustment === undefined) {
+      return undefined
+    }
+    else {
+      const current = attributes.find(attr => attr.static.id === currentId)
 
-// export const getAvailableAdjustmentIds = createMaybeSelector (
-//   getRace,
-//   getAdjustmentValue,
-//   getAttributesForView,
-//   getCurrentAttributeAdjustment,
-//   (mrace, madjustmentValue, mattrsCalculated, mcurr_attr) =>
-//     fmapF (mrace)
-//           (pipe (
-//             Race.A.attributeAdjustmentsSelection,
-//             snd,
-//             adjustmentIds => {
-//               if (isJust (mcurr_attr)) {
-//                 const curr_attr = fromJust (mcurr_attr)
+      const canNotSwitch = current !== undefined
+        && current.maximum !== undefined
+        && current.maximum - selectableAdjustment.value < attributeValue(current.dynamic)
 
-//                 const curr_attr_val = pipe_ (curr_attr, AWRA.stateEntry, AtDA.value)
-
-//                 if (or (pipe_ (curr_attr, AWRA.max, liftM2 (blackbirdF (subtractBy)
-//                                                                        (lt (curr_attr_val)))
-//                                                            (madjustmentValue)))) {
-//                   const curr_attr_id = pipe_ (curr_attr, AWRA.stateEntry, AtDA.id)
-
-//                   return List (curr_attr_id)
-//                 }
-//               }
-
-//               return filter ((id: string) => {
-//                               const mattr = bind (mattrsCalculated)
-//                                                  (find (pipe (AWRA.wikiEntry, AA.id, equals (id))))
-
-//                               if (isJust (mattr)) {
-//                                 const attr = fromJust (mattr)
-
-//                                 const mmax = AWRA.max (attr)
-
-//                                 const mcurr_attr_id = fmapF (mcurr_attr)
-//                                                             (pipe (AWRA.stateEntry, AtDA.id))
-
-//                                 if (isNothing (mmax) || Maybe.elem (id) (mcurr_attr_id)) {
-//                                   return true
-//                                 }
-
-//                                 if (isJust (madjustmentValue)) {
-//                                   const attr_val = pipe_ (attr, AWRA.stateEntry, AtDA.value)
-
-//                                   return maybe (true)
-//                                                (pipe (
-//                                                  add (fromJust (madjustmentValue)),
-//                                                  gte (attr_val)
-//                                                ))
-//                                                (mmax)
-//                                 }
-//                               }
-
-//                               return false
-//                             })
-//                             (adjustmentIds)
-//             }
-//           ))
-// )
+      if (canNotSwitch) {
+        return {
+          value: selectableAdjustment.value,
+          list: [ current ],
+        }
+      }
+      else {
+        return {
+          value: selectableAdjustment.value,
+          list: selectableAdjustment.list
+            .map(id => attributes.find(attr => attr.static.id === id.id.attribute))
+            .filter(isNotNullish),
+        }
+      }
+    }
+  }
+)
