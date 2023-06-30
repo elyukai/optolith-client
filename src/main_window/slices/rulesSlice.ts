@@ -1,4 +1,5 @@
 import { createAction } from "@reduxjs/toolkit"
+import { OptionalRuleIdentifier } from "../../shared/domain/identifier.ts"
 import { createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 
@@ -6,6 +7,7 @@ export const switchIncludeAllPublications = createAction("rules/switchIncludeAll
 export const switchIncludePublication = createAction<number>("rules/switchIncludePublication")
 export const switchFocusRule = createAction<number>("rules/switchFocusRule")
 export const switchOptionalRule = createAction<number>("rules/switchOptionalRule")
+export const changeOptionalRuleOption = createAction<{ id: number; option: number }>("rules/changeOptionalRuleOption")
 
 export const rulesReducer =
   createImmerReducer<CharacterState>((state, action) => {
@@ -35,10 +37,22 @@ export const rulesReducer =
       if (Object.hasOwn(state.rules.activeOptionalRules, action.payload)) {
         delete state.rules.activeOptionalRules[action.payload]
       }
+      else if (action.payload === OptionalRuleIdentifier.HigherDefenseStats) {
+        state.rules.activeOptionalRules[action.payload] = {
+          id: action.payload,
+          options: [ 2 ],
+        }
+      }
       else {
         state.rules.activeOptionalRules[action.payload] = {
           id: action.payload,
         }
+      }
+    }
+    else if (changeOptionalRuleOption.match(action)) {
+      if (Object.hasOwn(state.rules.activeOptionalRules, action.payload.id)) {
+        (state.rules.activeOptionalRules[action.payload.id]!.options ??= [])[0] =
+          action.payload.option
       }
     }
   })

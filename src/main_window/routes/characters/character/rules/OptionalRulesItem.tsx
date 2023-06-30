@@ -1,12 +1,14 @@
 import { OptionalRule, OptionalRuleTranslation } from "optolith-database-schema/types/rule/OptionalRule"
 import { FC, useCallback } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
+import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
+import { OptionalRuleIdentifier } from "../../../../../shared/domain/identifier.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectActiveOptionalRules } from "../../../../slices/characterSlice.ts"
 import { changeInlineLibraryEntry } from "../../../../slices/inlineWikiSlice.ts"
-import { switchOptionalRule } from "../../../../slices/rulesSlice.ts"
+import { changeOptionalRuleOption, switchOptionalRule } from "../../../../slices/rulesSlice.ts"
 
 type Props = {
   optionalRule: {
@@ -35,23 +37,37 @@ export const OptionalRulesItem: FC<Props> = props => {
     [ dispatch, optionalRule.id ],
   )
 
+  const handleChangeOption = useCallback(
+    (option: number) => dispatch(changeOptionalRuleOption({
+      id: optionalRule.id,
+      option,
+    })),
+    [ dispatch, optionalRule.id ],
+  )
+
+  const isActive = Object.hasOwn(activeOptionalRules, optionalRule.id)
+
   return (
     <li>
       <Checkbox
-        checked={Object.hasOwn(activeOptionalRules, optionalRule.id)}
+        checked={isActive}
         onClick={handleSwitch}
         label={optionalRuleTranslation.name}
         disabled={optionalRule.is_missing_implementation}
         />
-      {/* TODO: <Dropdown
-        options={List(
-          DropdownOption({ id: Just(2), name: "+2" }),
-          DropdownOption({ id: Just(4), name: "+4" })
-        )}
-        value={higherParadeValues}
-        onChange={changeHigherParadeValues}
-        disabled={higherParadeValues === 0}
-        /> */}
+      {optionalRule.id === OptionalRuleIdentifier.HigherDefenseStats
+        ? (
+        <Dropdown
+          options={[
+            { id: 2, name: "+2" },
+            { id: 4, name: "+4" },
+          ]}
+          value={activeOptionalRules[optionalRule.id]?.options?.[0] ?? 2}
+          onChange={handleChangeOption}
+          disabled={!isActive}
+          />
+        )
+        : null}
       <IconButton
         icon="&#xE912;"
         label={translate("Show details")}
