@@ -1,8 +1,8 @@
 import { createAction } from "@reduxjs/toolkit"
-import { ValidResults } from "optolith-database-schema"
+import type { Database } from "../database/index.ts"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 
 export const init = createAction<{
-  database: ValidResults
+  database: Database
   globalSettings: GlobalSettings
 }>("init")

@@ -37,6 +37,9 @@ jobs:
         run: npm run js:build
       - name: Compile Sass files
         run: npm run css:build
+      - name: Build database cache
+        run: npm run buildCache
+        working-directory: ./src/database/contents
       - name: Build macOS application
         if: runner.os == 'macOS'
         run: node ./deploy/build.mjs stable

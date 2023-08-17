@@ -1,8 +1,11 @@
 import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
 import EventEmitter from "events"
-import { ValidResults } from "optolith-database-schema"
+import type { Database } from "../database/index.ts"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
-import { GlobalSettingsEvents, attachGlobalSettingsEvents } from "../shared/settings/listeningRendererPreload.ts"
+import {
+  GlobalSettingsEvents,
+  attachGlobalSettingsEvents,
+} from "../shared/settings/listeningRendererPreload.ts"
 import { TypedEventEmitterForEvent } from "../shared/utils/events.ts"
 
 export type PreloadAPI = {
@@ -24,14 +27,13 @@ export type PreloadAPI = {
   setTitle: (title: string) => void
 } & Events
 
-type Events =
-  & TypedEventEmitterForEvent<"initial-setup", [InitialSetupEventMessage]>
-  & TypedEventEmitterForEvent<"maximize", []>
-  & TypedEventEmitterForEvent<"unmaximize", []>
-  & TypedEventEmitterForEvent<"blur", []>
-  & TypedEventEmitterForEvent<"focus", []>
-  & TypedEventEmitterForEvent<"new-character", []>
-  & GlobalSettingsEvents
+type Events = TypedEventEmitterForEvent<"initial-setup", [InitialSetupEventMessage]> &
+  TypedEventEmitterForEvent<"maximize", []> &
+  TypedEventEmitterForEvent<"unmaximize", []> &
+  TypedEventEmitterForEvent<"blur", []> &
+  TypedEventEmitterForEvent<"focus", []> &
+  TypedEventEmitterForEvent<"new-character", []> &
+  GlobalSettingsEvents
 
 const events = new EventEmitter() as Events
 
@@ -60,7 +62,7 @@ const api: PreloadAPI = {
 contextBridge.exposeInMainWorld("optolith", api)
 
 export type InitialSetupEventMessage = {
-  database: ValidResults
+  database: Database
   globalSettings: GlobalSettings
   systemLocale: string
 }

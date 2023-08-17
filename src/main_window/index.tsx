@@ -171,8 +171,8 @@ ExternalAPI.on("initial-setup", ({ database, globalSettings }) => {
           selectedFallbackLocale={globalSettings.fallbackLocale}
           selectedLocaleEvents={ExternalAPI}
           systemLocale={ExternalAPI.systemLocale}
-          locales={Object.fromEntries(database.locales)}
-          ui={Object.fromEntries(database.ui)}
+          locales={Object.fromEntries(database.raw.locales)}
+          ui={Object.fromEntries(database.raw.ui)}
           >
           <Root />
         </LocalizationProvider>

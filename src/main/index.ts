@@ -31,8 +31,8 @@ const runAsync = <T extends any[]>(fn: (...args: T) => Promise<void>) => (...arg
 
 const setMenu = (database: Database) => {
   const translate = createTranslate(
-    Object.fromEntries(database.ui),
-    Object.fromEntries(database.locales),
+    Object.fromEntries(database.raw.ui),
+    Object.fromEntries(database.raw.locales),
     getGlobalSettings().locale,
     app.getLocale()
   )
