@@ -6,8 +6,10 @@ import {
 import { RatedMap } from "../../shared/domain/ratedEntry.ts"
 import {
   selectAttributes,
+  selectCloseCombatTechniques,
   selectCurrentCharacter,
   selectDerivedCharacteristics,
+  selectRangedCombatTechniques,
   selectSkills,
   selectTotalAdventurePoints,
 } from "../slices/characterSlice.ts"
@@ -17,22 +19,25 @@ export type SpentAdventurePoints = {
   bound: number
 }
 
-const sumRatedMap = (ratedMap: RatedMap): SpentAdventurePoints =>
-  Object.values(ratedMap).reduce(
-    (acc, rated) => ({
-      general: acc.general + rated.cachedAdventurePoints.general,
-      bound: acc.bound + rated.cachedAdventurePoints.bound,
-    }),
-    { general: 0, bound: 0 },
-  )
+const sumRatedMaps = (...ratedMaps: RatedMap[]): SpentAdventurePoints =>
+  ratedMaps
+    .flatMap(ratedMap => Object.values(ratedMap))
+    .reduce(
+      (acc, rated) => ({
+        general: acc.general + rated.cachedAdventurePoints.general,
+        bound: acc.bound + rated.cachedAdventurePoints.bound,
+      }),
+      { general: 0, bound: 0 },
+    )
 
-export const selectAdventurePointsSpentOnAttributes = createSelector(selectAttributes, sumRatedMap)
+export const selectAdventurePointsSpentOnAttributes = createSelector(selectAttributes, sumRatedMaps)
 
-export const selectAdventurePointsSpentOnSkills = createSelector(selectSkills, sumRatedMap)
+export const selectAdventurePointsSpentOnSkills = createSelector(selectSkills, sumRatedMaps)
 
 export const selectAdventurePointsSpentOnCombatTechniques = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
+  selectCloseCombatTechniques,
+  selectRangedCombatTechniques,
+  sumRatedMaps,
 )
 
 export const selectAdventurePointsSpentOnSpells = createSelector(
