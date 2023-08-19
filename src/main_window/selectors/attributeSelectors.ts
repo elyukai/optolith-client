@@ -32,11 +32,11 @@ import {
   selectMaximumTotalAttributePoints,
   selectStartExperienceLevel,
 } from "./experienceLevelSelectors.ts"
+import { selectCurrentRace } from "./raceSelectors.ts"
 import {
   selectActiveBlessedTradition,
   selectActiveMagicalTraditions,
-} from "./magicalTraditionSelectors.ts"
-import { selectCurrentRace } from "./raceSelectors.ts"
+} from "./traditionSelectors.ts"
 
 export type DisplayedPrimaryAttribute = {
   static: Attribute

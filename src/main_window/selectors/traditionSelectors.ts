@@ -2,8 +2,16 @@ import { createSelector } from "@reduxjs/toolkit"
 import { BlessedTradition } from "optolith-database-schema/types/specialAbility/BlessedTradition"
 import { MagicalTradition } from "optolith-database-schema/types/specialAbility/MagicalTradition"
 import { Activatable, isActive } from "../../shared/domain/activatableEntry.ts"
-import { isNotNullish } from "../../shared/utils/nullable.ts"
+import { isBlessedOne } from "../../shared/domain/blessedTradition.ts"
+import { AdvantageIdentifier } from "../../shared/domain/identifier.ts"
 import {
+  getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
+  isSpellcaster,
+} from "../../shared/domain/magicalTradition.ts"
+import { isNotNullish } from "../../shared/utils/nullable.ts"
+import { createPropertySelector } from "../../shared/utils/redux.ts"
+import {
+  selectAdvantages,
   selectBlessedTraditions as selectDynamicBlessedTraditions,
   selectMagicalTraditions as selectDynamicMagicalTraditions,
 } from "../slices/characterSlice.ts"
@@ -60,4 +68,24 @@ export const selectActiveBlessedTradition = createSelector(
         return undefined
       })
       .find(isNotNullish),
+)
+
+export const selectIsSpellcaster = createSelector(
+  createPropertySelector(selectAdvantages, AdvantageIdentifier.Spellcaster),
+  selectDynamicMagicalTraditions,
+  isSpellcaster,
+)
+
+export const selectIsBlessedOne = createSelector(
+  createPropertySelector(selectAdvantages, AdvantageIdentifier.Blessed),
+  selectDynamicBlessedTraditions,
+  isBlessedOne,
+)
+
+export const selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages = createSelector(
+  selectActiveMagicalTraditions,
+  (magicalTraditions): number =>
+    getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages(
+      magicalTraditions.map(combined => combined.static),
+    ),
 )

@@ -21,15 +21,21 @@ import {
   selectAdventurePointsSpentOnSpecialAbilities,
   selectAdventurePointsSpentOnSpells,
 } from "../selectors/adventurePointSelectors.ts"
+import {
+  selectIsBlessedOne,
+  selectIsSpellcaster,
+  selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
+} from "../selectors/traditionSelectors.ts"
 import { selectTotalAdventurePoints } from "../slices/characterSlice.ts"
 
 export const AdventurePointsTooltip: FC = () => {
   const translate = useTranslate()
 
-  // TODO: Replace with real selectors
-  const isSpellcaster = true
-  const isBlessedOne = true
-  const maximumForMagicalAdvantagesDisadvantages = 50
+  const isSpellcaster = useAppSelector(selectIsSpellcaster)
+  const isBlessedOne = useAppSelector(selectIsBlessedOne)
+  const maximumForMagicalAdvantagesDisadvantages = useAppSelector(
+    selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
+  )
 
   const total = useAppSelector(selectTotalAdventurePoints)
   const spent = useAppSelector(selectAdventurePointsSpent)
