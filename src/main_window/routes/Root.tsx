@@ -16,11 +16,9 @@ export const Root: FC = () => {
   return (
     <div
       id="body"
-      className={classList(
-        { "show-animations": areAnimationsEnabled },
-      )}
+      className={classList({ "show-animations": areAnimationsEnabled })}
       lang={language}
-      >
+    >
       <div className="background-image">
         <img src={backgroundImg} alt="" />
       </div>
@@ -34,7 +32,7 @@ export const Root: FC = () => {
         onRestore={ExternalAPI.restore}
         onClose={ExternalAPI.close}
         isMaximized={ExternalAPI.isMaximized}
-        />
+      />
 
       <div id="content">
         <NavigationBar />

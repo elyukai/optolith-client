@@ -15,11 +15,7 @@ type Props = {
 }
 
 export const AttributeListItem: FC<Props> = props => {
-  const {
-    attribute,
-    isInCharacterCreation,
-    isRemovingEnabled,
-  } = props
+  const { attribute, isInCharacterCreation, isRemovingEnabled } = props
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
@@ -37,15 +33,9 @@ export const AttributeListItem: FC<Props> = props => {
 
   const valueHeader = isInCharacterCreation ? `${value} / ${max}` : value
 
-  const handleAdd = useCallback(
-    () => dispatch(incrementAttribute(id)),
-    [ dispatch, id ]
-  )
+  const handleAdd = useCallback(() => dispatch(incrementAttribute(id)), [dispatch, id])
 
-  const handleRemove = useCallback(
-    () => dispatch(decrementAttribute(id)),
-    [ dispatch, id ]
-  )
+  const handleRemove = useCallback(() => dispatch(decrementAttribute(id)), [dispatch, id])
 
   return (
     <AttributeBorder
@@ -58,15 +48,11 @@ export const AttributeListItem: FC<Props> = props => {
             <span>{translations?.name ?? id.toFixed()}</span>
             <span>{valueHeader}</span>
           </h4>
-          {
-            translations === undefined
-            ? null
-            : <p>{translations.description}</p>
-          }
+          {translations === undefined ? null : <p>{translations.description}</p>}
         </div>
       }
       tooltipMargin={11}
-      >
+    >
       {isInCharacterCreation ? <NumberBox max={max} /> : null}
       <IconButton
         className="add"
@@ -74,18 +60,16 @@ export const AttributeListItem: FC<Props> = props => {
         onClick={handleAdd}
         disabled={!isIncreasable}
         label={translate("Increment")}
+      />
+      {isRemovingEnabled ? (
+        <IconButton
+          className="remove"
+          icon="&#xE909;"
+          onClick={handleRemove}
+          disabled={!isDecreasable}
+          label={translate("Decrement")}
         />
-      {isRemovingEnabled
-        ? (
-            <IconButton
-              className="remove"
-              icon="&#xE909;"
-              onClick={handleRemove}
-              disabled={!isDecreasable}
-              label={translate("Decrement")}
-              />
-          )
-        : null}
+      ) : null}
     </AttributeBorder>
   )
 }

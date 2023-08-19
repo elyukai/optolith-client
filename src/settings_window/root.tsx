@@ -23,17 +23,19 @@ type Props = {
 export const Root: React.FC<Props> = props => {
   const { locales, initialSettings } = props
 
-  const [ locale, setLocale ] = useState(initialSettings.locale)
-  const [ fallbackLocale, setFallbackLocale ] = useState(initialSettings.fallbackLocale)
-  const [ theme, setTheme ] = useState(initialSettings.theme)
-  const [ isEditAfterCreationEnabled, toggleEditAfterCreationEnabled ] =
-    useToggleState(initialSettings.isEditAfterCreationEnabled)
-  const [ areAnimationsEnabled, toggleAnimationsEnabled ] =
-  useToggleState(initialSettings.areAnimationsEnabled)
+  const [locale, setLocale] = useState(initialSettings.locale)
+  const [fallbackLocale, setFallbackLocale] = useState(initialSettings.fallbackLocale)
+  const [theme, setTheme] = useState(initialSettings.theme)
+  const [isEditAfterCreationEnabled, toggleEditAfterCreationEnabled] = useToggleState(
+    initialSettings.isEditAfterCreationEnabled,
+  )
+  const [areAnimationsEnabled, toggleAnimationsEnabled] = useToggleState(
+    initialSettings.areAnimationsEnabled,
+  )
 
   const translate = useTranslate()
 
-  useEffect(() => ExternalAPI.setTitle(translate("Settings")), [ translate ])
+  useEffect(() => ExternalAPI.setTitle(translate("Settings")), [translate])
 
   useBroadcastSetting(ExternalAPI, "locale", locale)
   useBroadcastSetting(ExternalAPI, "fallbackLocale", fallbackLocale)
@@ -44,12 +46,12 @@ export const Root: React.FC<Props> = props => {
   const localeOptions = useMemo(
     (): DropdownOption<string>[] =>
       Object.entries(locales)
-        .map(([ id, localeObj ]) => ({
+        .map(([id, localeObj]) => ({
           id,
           name: `${localeObj.name} (${localeObj.region})`,
         }))
         .sort((a, b) => a.name.localeCompare(b.name)),
-    [ locales ]
+    [locales],
   )
 
   return (
@@ -59,7 +61,7 @@ export const Root: React.FC<Props> = props => {
         secondary
         platform={ExternalAPI.platform}
         onClose={ExternalAPI.close}
-        />
+      />
       <main>
         <Grid>
           <GridItem width="1/2">
@@ -74,7 +76,7 @@ export const Root: React.FC<Props> = props => {
               value={locale}
               label={translate("Main Language")}
               onChange={setLocale}
-              />
+            />
           </GridItem>
           <GridItem width="1/2">
             <Dropdown<string | undefined>
@@ -88,7 +90,7 @@ export const Root: React.FC<Props> = props => {
               value={fallbackLocale}
               label={translate("Fallback Language")}
               onChange={setFallbackLocale}
-              />
+            />
           </GridItem>
           <GridItem width="1/1">
             <SegmentedControls<Theme | undefined>
@@ -109,7 +111,7 @@ export const Root: React.FC<Props> = props => {
               active={theme}
               onClick={setTheme}
               label={translate("Appearance")}
-              />
+            />
           </GridItem>
           <GridItem width="1/1">
             <Checkbox
@@ -117,7 +119,7 @@ export const Root: React.FC<Props> = props => {
               className="editor-switch"
               label={translate("Edit characters after creation")}
               onClick={toggleEditAfterCreationEnabled}
-              />
+            />
           </GridItem>
           <GridItem width="1/1">
             <Checkbox
@@ -125,13 +127,10 @@ export const Root: React.FC<Props> = props => {
               className="animations"
               label={translate("Show animations")}
               onClick={toggleAnimationsEnabled}
-              />
+            />
           </GridItem>
           <GridItem width="1/1">
-            <Button
-              onClick={ExternalAPI.checkForUpdate}
-              autoWidth
-              >
+            <Button onClick={ExternalAPI.checkForUpdate} autoWidth>
               {translate("Check for updates")}
             </Button>
           </GridItem>

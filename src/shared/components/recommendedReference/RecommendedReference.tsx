@@ -25,16 +25,12 @@ export const RecommendedReference: FC<Props> = props => {
 
   return (
     <div className="recommended-ref">
-      {strongly === true
-        ? (
-          <div className="strongly-recommended">
-            <div className="icon" />
-            <div className="name">
-              {translate("showfrequency.stronglyrecommended")}
-            </div>
-          </div>
-        )
-        : null}
+      {strongly === true ? (
+        <div className="strongly-recommended">
+          <div className="icon" />
+          <div className="name">{translate("showfrequency.stronglyrecommended")}</div>
+        </div>
+      ) : null}
       <div className="rec">
         <div className="icon" />
         <div className="name">{translate("showfrequency.common")}</div>

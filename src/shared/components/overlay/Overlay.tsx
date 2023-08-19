@@ -35,7 +35,7 @@ type OverlayPosition = {
 type AxisGetter = (
   triggerRect: ClientRect | DOMRect,
   overlayRect: ClientRect | DOMRect,
-  margin: number
+  margin: number,
 ) => number
 
 const getTitlebarHeight = () => {
@@ -48,15 +48,15 @@ const getTopGapMainAxis: AxisGetter = (triggerRect, overlayRect, margin) =>
   triggerRect.top - margin - overlayRect.height - MIN_WINDOW_OFFSET - getTitlebarHeight()
 
 const getBottomGapMainAxis: AxisGetter = (triggerRect, overlayRect, margin) =>
-  window.innerHeight
-  - (triggerRect.top + triggerRect.height + margin + overlayRect.height + MIN_WINDOW_OFFSET)
+  window.innerHeight -
+  (triggerRect.top + triggerRect.height + margin + overlayRect.height + MIN_WINDOW_OFFSET)
 
 const getLeftGapMainAxis: AxisGetter = (triggerRect, overlayRect, margin) =>
   triggerRect.left - margin - overlayRect.width - MIN_WINDOW_OFFSET
 
 const getRightGapMainAxis: AxisGetter = (triggerRect, overlayRect, margin) =>
-  window.innerWidth
-  - (triggerRect.left + triggerRect.width + margin + overlayRect.width + MIN_WINDOW_OFFSET)
+  window.innerWidth -
+  (triggerRect.left + triggerRect.width + margin + overlayRect.width + MIN_WINDOW_OFFSET)
 
 const getPositionIfNotEnoughFreeSpace = (
   triggerRect: ClientRect | DOMRect,
@@ -70,17 +70,22 @@ const getPositionIfNotEnoughFreeSpace = (
     ifBothMatch: Position,
     otherwise: Position,
   ) =>
-    ifBelowZero(triggerRect, overlayRect, margin) < 0
-    && ifAtLeastZero(triggerRect, overlayRect, margin) >= 0
-    ? ifBothMatch
-    : otherwise
+    ifBelowZero(triggerRect, overlayRect, margin) < 0 &&
+    ifAtLeastZero(triggerRect, overlayRect, margin) >= 0
+      ? ifBothMatch
+      : otherwise
 
   switch (pos) {
-    case "top":    return switchPos(getTopGapMainAxis, getBottomGapMainAxis, "bottom", "top")
-    case "bottom": return switchPos(getBottomGapMainAxis, getTopGapMainAxis, "top", "bottom")
-    case "left":   return switchPos(getLeftGapMainAxis, getRightGapMainAxis, "right", "left")
-    case "right":  return switchPos(getRightGapMainAxis, getLeftGapMainAxis, "left", "right")
-    default:       return assertExhaustive(pos)
+    case "top":
+      return switchPos(getTopGapMainAxis, getBottomGapMainAxis, "bottom", "top")
+    case "bottom":
+      return switchPos(getBottomGapMainAxis, getTopGapMainAxis, "top", "bottom")
+    case "left":
+      return switchPos(getLeftGapMainAxis, getRightGapMainAxis, "right", "left")
+    case "right":
+      return switchPos(getRightGapMainAxis, getLeftGapMainAxis, "left", "right")
+    default:
+      return assertExhaustive(pos)
   }
 }
 
@@ -91,27 +96,32 @@ const getCenteredOverlayPosition = (
   pos: Position,
 ): OverlayPosition => {
   switch (pos) {
-    case "top": return {
-      left: triggerRect.left + triggerRect.width / 2 - overlayRect.width / 2,
-      top: triggerRect.top - overlayRect.height - margin,
-    }
+    case "top":
+      return {
+        left: triggerRect.left + triggerRect.width / 2 - overlayRect.width / 2,
+        top: triggerRect.top - overlayRect.height - margin,
+      }
 
-    case "bottom": return {
-      left: triggerRect.left + triggerRect.width / 2 - overlayRect.width / 2,
-      top: triggerRect.top + triggerRect.height + margin,
-    }
+    case "bottom":
+      return {
+        left: triggerRect.left + triggerRect.width / 2 - overlayRect.width / 2,
+        top: triggerRect.top + triggerRect.height + margin,
+      }
 
-    case "left": return {
-      left: triggerRect.left - overlayRect.width - margin,
-      top: triggerRect.top + triggerRect.height / 2 - overlayRect.height / 2,
-    }
+    case "left":
+      return {
+        left: triggerRect.left - overlayRect.width - margin,
+        top: triggerRect.top + triggerRect.height / 2 - overlayRect.height / 2,
+      }
 
-    case "right": return {
-      left: triggerRect.left + triggerRect.width + margin,
-      top: triggerRect.top + triggerRect.height / 2 - overlayRect.height / 2,
-    }
+    case "right":
+      return {
+        left: triggerRect.left + triggerRect.width + margin,
+        top: triggerRect.top + triggerRect.height / 2 - overlayRect.height / 2,
+      }
 
-    default: return assertExhaustive(pos)
+    default:
+      return assertExhaustive(pos)
   }
 }
 
@@ -120,38 +130,41 @@ const adjustCrossAxis = (
   pos: Position,
   centeredRect: OverlayPosition,
 ): OverlayPosition => {
-    switch (pos) {
-      case "top":
-      case "bottom": {
-        const { top, left } = centeredRect
+  switch (pos) {
+    case "top":
+    case "bottom": {
+      const { top, left } = centeredRect
 
-        return {
-          top,
-          left: left < MIN_WINDOW_OFFSET
+      return {
+        top,
+        left:
+          left < MIN_WINDOW_OFFSET
             ? MIN_WINDOW_OFFSET
             : left + overlayRect.width > window.innerWidth - MIN_WINDOW_OFFSET
             ? window.innerWidth - MIN_WINDOW_OFFSET - overlayRect.width
             : left,
-        }
       }
+    }
 
-      case "left":
-      case "right": {
-        const { top, left } = centeredRect
+    case "left":
+    case "right": {
+      const { top, left } = centeredRect
 
-        return {
-          top: top < MIN_WINDOW_OFFSET
+      return {
+        top:
+          top < MIN_WINDOW_OFFSET
             ? MIN_WINDOW_OFFSET
             : top + overlayRect.height > window.innerHeight - MIN_WINDOW_OFFSET
             ? window.innerHeight - MIN_WINDOW_OFFSET - overlayRect.height
             : top,
-          left,
-        }
+        left,
       }
-
-      default: return assertExhaustive(pos)
     }
+
+    default:
+      return assertExhaustive(pos)
   }
+}
 
 const getArrowPosition = (
   arrowSize: number,
@@ -160,30 +173,35 @@ const getArrowPosition = (
   centered: OverlayPosition,
   adjusted: OverlayPosition,
 ): OverlayPosition => {
-    switch (position) {
-      case "top": return {
+  switch (position) {
+    case "top":
+      return {
         left: overlayCoords.width * 0.5 - arrowSize * 0.5 - 1 - adjusted.left + centered.left,
         top: overlayCoords.height - (arrowSize * 0.5 + 1.5),
       }
 
-      case "bottom": return {
+    case "bottom":
+      return {
         left: overlayCoords.width * 0.5 - arrowSize * 0.5 - 1 - adjusted.left + centered.left,
         top: -arrowSize * 0.5 - 0.5,
       }
 
-      case "left": return {
+    case "left":
+      return {
         left: overlayCoords.width - (arrowSize * 0.5 + 1.5),
         top: overlayCoords.height * 0.5 - arrowSize * 0.5 - 1 - adjusted.top + centered.top,
       }
 
-      case "right": return {
+    case "right":
+      return {
         left: -arrowSize * 0.5 - 0.5,
         top: overlayCoords.height * 0.5 - arrowSize * 0.5 - 1 - adjusted.top + centered.top,
       }
 
-      default: return assertExhaustive(position)
-    }
+    default:
+      return assertExhaustive(position)
   }
+}
 
 const alignToElement = (
   arrowSize: number,
@@ -219,40 +237,35 @@ type Props = {
 }
 
 export const Overlay: FCC<Props> = props => {
-  const {
-    children,
-    className,
-    margin = 0,
-    position: defPosition = "top",
-    small,
-    trigger,
-  } = props
+  const { children, className, margin = 0, position: defPosition = "top", small, trigger } = props
 
-  const [ position, setPosition ] = useState<Position>(defPosition)
-  const [ style, setStyle ] = useState<React.CSSProperties>({ visibility: "hidden" })
-  const [ arrowStyle, setArrowStyle ] = useState<React.CSSProperties>({})
+  const [position, setPosition] = useState<Position>(defPosition)
+  const [style, setStyle] = useState<React.CSSProperties>({ visibility: "hidden" })
+  const [arrowStyle, setArrowStyle] = useState<React.CSSProperties>({})
   const overlayRef = useRef<HTMLDivElement>(null)
 
   const arrow_size = small === true ? 6 : 12
 
-  useEffect(
-    () => {
-      const { newPosition, newCoords, newArrowCoords } =
-        alignToElement(arrow_size, overlayRef, trigger, defPosition, margin)
+  useEffect(() => {
+    const { newPosition, newCoords, newArrowCoords } = alignToElement(
+      arrow_size,
+      overlayRef,
+      trigger,
+      defPosition,
+      margin,
+    )
 
-      setPosition(newPosition)
-      setArrowStyle({ height: arrow_size, width: arrow_size, ...newArrowCoords })
-      setStyle(newCoords)
-    },
-    [ setPosition, setStyle, defPosition, margin, trigger, setArrowStyle, arrow_size ]
-  )
+    setPosition(newPosition)
+    setArrowStyle({ height: arrow_size, width: arrow_size, ...newArrowCoords })
+    setStyle(newCoords)
+  }, [setPosition, setStyle, defPosition, margin, trigger, setArrowStyle, arrow_size])
 
   return (
     <div
       style={style}
       className={classList("overlay", `overlay-${position}`, className)}
       ref={overlayRef}
-      >
+    >
       {children}
       <div className="arrow" style={arrowStyle} />
     </div>

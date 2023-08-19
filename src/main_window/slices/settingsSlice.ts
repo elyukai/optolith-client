@@ -167,14 +167,21 @@ const settingsSlice = createSlice({
     changeProfessionsSortOrder: (state, action: PayloadAction<ProfessionsSortOrder>) => {
       state.professionsSortOrder = action.payload
     },
-    changeProfessionsVisibilityFilter: (state, action: PayloadAction<ProfessionsVisibilityFilter>) => {
+    changeProfessionsVisibilityFilter: (
+      state,
+      action: PayloadAction<ProfessionsVisibilityFilter>,
+    ) => {
       state.professionsVisibilityFilter = action.payload
     },
-    changeProfessionsGroupVisibilityFilter: (state, action: PayloadAction<ProfessionsGroupVisibilityFilter>) => {
+    changeProfessionsGroupVisibilityFilter: (
+      state,
+      action: PayloadAction<ProfessionsGroupVisibilityFilter>,
+    ) => {
       state.professionsGroupVisibilityFilter = action.payload
     },
-    changeAdvantagesDisadvantagesCultureRatingVisibility: (state, action: PayloadAction<boolean>) => {
-      state.advantagesDisadvantagesCultureRatingVisibility = action.payload
+    switchAdvantagesDisadvantagesCultureRatingVisibility: state => {
+      state.advantagesDisadvantagesCultureRatingVisibility =
+        !state.advantagesDisadvantagesCultureRatingVisibility
     },
     changeSkillsSortOrder: (state, action: PayloadAction<SkillsSortOrder>) => {
       state.skillsSortOrder = action.payload
@@ -214,13 +221,12 @@ const settingsSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    builder
-      .addCase(init, (state, action) => {
-        state.locale = action.payload.globalSettings.locale
-        state.fallbackLocale = action.payload.globalSettings.fallbackLocale
-        state.isEditAfterCreationEnabled = action.payload.globalSettings.isEditAfterCreationEnabled
-        state.areAnimationsEnabled = action.payload.globalSettings.areAnimationsEnabled
-      })
+    builder.addCase(init, (state, action) => {
+      state.locale = action.payload.globalSettings.locale
+      state.fallbackLocale = action.payload.globalSettings.fallbackLocale
+      state.isEditAfterCreationEnabled = action.payload.globalSettings.isEditAfterCreationEnabled
+      state.areAnimationsEnabled = action.payload.globalSettings.areAnimationsEnabled
+    })
   },
 })
 
@@ -236,7 +242,7 @@ export const {
   changeProfessionsSortOrder,
   changeProfessionsVisibilityFilter,
   changeProfessionsGroupVisibilityFilter,
-  changeAdvantagesDisadvantagesCultureRatingVisibility,
+  switchAdvantagesDisadvantagesCultureRatingVisibility,
   changeSkillsSortOrder,
   switchSkillsCultureRatingVisibility,
   changeCombatTechniquesSortOrder,
@@ -253,27 +259,38 @@ export const {
 
 export const selectLocale = (state: RootState) => state.settings.locale
 export const selectFallbackLocale = (state: RootState) => state.settings.fallbackLocale
-export const selectIsEditAfterCreationEnabled = (state: RootState) => state.settings.isEditAfterCreationEnabled
+export const selectIsEditAfterCreationEnabled = (state: RootState) =>
+  state.settings.isEditAfterCreationEnabled
 export const selectAreAnimationsEnabled = (state: RootState) => state.settings.areAnimationsEnabled
 export const selectCharactersSortOrder = (state: RootState) => state.settings.charactersSortOrder
 export const selectRacesSortOrder = (state: RootState) => state.settings.racesSortOrder
 export const selectCulturesSortOrder = (state: RootState) => state.settings.culturesSortOrder
-export const selectCulturesVisibilityFilter = (state: RootState) => state.settings.culturesVisibilityFilter
+export const selectCulturesVisibilityFilter = (state: RootState) =>
+  state.settings.culturesVisibilityFilter
 export const selectProfessionsSortOrder = (state: RootState) => state.settings.professionsSortOrder
-export const selectProfessionsVisibilityFilter = (state: RootState) => state.settings.professionsVisibilityFilter
-export const selectProfessionsGroupVisibilityFilter = (state: RootState) => state.settings.professionsGroupVisibilityFilter
-export const selectAdvantagesDisadvantagesCultureRatingVisibility = (state: RootState) => state.settings.advantagesDisadvantagesCultureRatingVisibility
+export const selectProfessionsVisibilityFilter = (state: RootState) =>
+  state.settings.professionsVisibilityFilter
+export const selectProfessionsGroupVisibilityFilter = (state: RootState) =>
+  state.settings.professionsGroupVisibilityFilter
+export const selectAdvantagesDisadvantagesCultureRatingVisibility = (state: RootState) =>
+  state.settings.advantagesDisadvantagesCultureRatingVisibility
 export const selectSkillsSortOrder = (state: RootState) => state.settings.skillsSortOrder
-export const selectSkillsCultureRatingVisibility = (state: RootState) => state.settings.skillsCultureRatingVisibility
-export const selectCombatTechniquesSortOrder = (state: RootState) => state.settings.combatTechniquesSortOrder
-export const selectSpecialAbilitiesSortOrder = (state: RootState) => state.settings.specialAbilitiesSortOrder
+export const selectSkillsCultureRatingVisibility = (state: RootState) =>
+  state.settings.skillsCultureRatingVisibility
+export const selectCombatTechniquesSortOrder = (state: RootState) =>
+  state.settings.combatTechniquesSortOrder
+export const selectSpecialAbilitiesSortOrder = (state: RootState) =>
+  state.settings.specialAbilitiesSortOrder
 export const selectSpellsSortOrder = (state: RootState) => state.settings.spellsSortOrder
-export const selectSpellsUnfamiliarVisibility = (state: RootState) => state.settings.spellsUnfamiliarVisibility
+export const selectSpellsUnfamiliarVisibility = (state: RootState) =>
+  state.settings.spellsUnfamiliarVisibility
 export const selectLiturgiesSortOrder = (state: RootState) => state.settings.liturgiesSortOrder
 export const selectEquipmentSortOrder = (state: RootState) => state.settings.equipmentSortOrder
 // export const selectEquipmentGroupVisibilityFilter = (state: RootState) => state.settings.equipmentGroupVisibilityFilter
-export const selectEnableActiveItemHints = (state: RootState) => state.settings.enableActiveItemHints
-export const selectSheetCheckAttributeValueVisibility = (state: RootState) => state.settings.sheetCheckAttributeValueVisibility
+export const selectEnableActiveItemHints = (state: RootState) =>
+  state.settings.enableActiveItemHints
+export const selectSheetCheckAttributeValueVisibility = (state: RootState) =>
+  state.settings.sheetCheckAttributeValueVisibility
 export const selectSheetUseParchment = (state: RootState) => state.settings.sheetUseParchment
 export const selectSheetZoomFactor = (state: RootState) => state.settings.sheetZoomFactor
 // export const selectMeleeItemTemplatesCombatTechniqueFilter = (state: RootState) => state.settings.meleeItemTemplatesCombatTechniqueFilter

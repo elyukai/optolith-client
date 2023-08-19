@@ -13,13 +13,7 @@ export const Scroll: FCC<Props> = props => {
   return (
     <div className={classList("scroll", className)}>
       <div className="scroll-area">
-        {noInnerElement === true
-          ? children
-          : (
-            <div className="scroll-inner">
-              {children}
-            </div>
-          )}
+        {noInnerElement === true ? children : <div className="scroll-inner">{children}</div>}
       </div>
     </div>
   )

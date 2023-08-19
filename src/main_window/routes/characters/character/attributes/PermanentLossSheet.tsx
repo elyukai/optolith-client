@@ -13,18 +13,15 @@ type Props = {
 export const PermanentLossSheet: FC<Props> = props => {
   const { remove, isOpen, close } = props
 
-  const [ value, setValue ] = useState("")
+  const [value, setValue] = useState("")
 
-  const handleRemove = useCallback(
-    () => {
-      const parsedValue = parseInt(value)
+  const handleRemove = useCallback(() => {
+    const parsedValue = parseInt(value)
 
-      if (parsedValue !== undefined) {
-        remove(parsedValue)
-      }
-    },
-    [ remove, value ]
-  )
+    if (parsedValue !== undefined) {
+      remove(parsedValue)
+    }
+  }, [remove, value])
 
   const translate = useTranslate()
 
@@ -41,6 +38,6 @@ export const PermanentLossSheet: FC<Props> = props => {
       onClose={close}
       onAccept={handleRemove}
       onChange={setValue}
-      />
+    />
   )
 }

@@ -1,9 +1,7 @@
 /**
  * A maybe can contain a value or nothing.
  */
-export type Maybe<T> =
-  | Just<T>
-  | Nothing
+export type Maybe<T> = Just<T> | Nothing
 
 /**
  * A maybe that contains a value.
@@ -19,26 +17,23 @@ export type Nothing = { readonly tag: "Nothing" }
  * Creates a maybe that contains a value.
  */
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Just = <T>(value: T): Maybe<T> =>
-  ({ tag: "Just", value })
+export const Just = <T>(value: T): Maybe<T> => ({ tag: "Just", value })
 
 /**
  * Checks if a maybe contains a value.
  */
-export const isJust = <T>(result: Maybe<T>): result is Just<T> =>
-  result.tag === "Just"
+export const isJust = <T>(result: Maybe<T>): result is Just<T> => result.tag === "Just"
 
 /**
  * Creates a maybe that contains nothing.
  */
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Nothing: Maybe<never> = ({ tag: "Nothing" })
+export const Nothing: Maybe<never> = { tag: "Nothing" }
 
 /**
  * Checks if a maybe contains nothing.
  */
-export const isNothing = <T>(result: Maybe<T>): result is Nothing =>
-  result.tag === "Nothing"
+export const isNothing = <T>(result: Maybe<T>): result is Nothing => result.tag === "Nothing"
 
 /**
  * Creates a maybe from a nullable value.
@@ -62,10 +57,7 @@ export const combine = <T1, T2, TR>(
   maybe1: Maybe<T1>,
   maybe2: Maybe<T2>,
   f: (value1: T1, value2: T2) => TR,
-): Maybe<TR> =>
-  isJust(maybe1) && isJust(maybe2)
-    ? Just(f(maybe1.value, maybe2.value))
-    : Nothing
+): Maybe<TR> => (isJust(maybe1) && isJust(maybe2) ? Just(f(maybe1.value, maybe2.value)) : Nothing)
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Maybe = Object.freeze({

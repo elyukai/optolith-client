@@ -7,12 +7,12 @@ import { selectRaces } from "../slices/databaseSlice.ts"
 export const selectCurrentRace = createSelector(
   selectRaces,
   selectRaceId,
-  (races, id): Race | undefined => id === undefined ? undefined : getRace(races, id)
+  (races, id): Race | undefined => (id === undefined ? undefined : getRace(races, id)),
 )
 
 export const selectCurrentRaceVariant = createSelector(
   selectCurrentRace,
   selectRaceVariantId,
   (currentRace, id): RaceVariant | undefined =>
-    currentRace === undefined ? undefined : getRaceVariant(currentRace, id)
+    currentRace === undefined ? undefined : getRaceVariant(currentRace, id),
 )

@@ -5,7 +5,13 @@ import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
 import { isNotNullish } from "../../../shared/utils/nullable.ts"
 import { assertExhaustive } from "../../../shared/utils/typeSafety.ts"
 import { useAppSelector } from "../../hooks/redux.ts"
-import { selectAttributes, selectBlessedTraditions, selectDiseases, selectRegions, selectSkills } from "../../slices/databaseSlice.ts"
+import {
+  selectAttributes,
+  selectBlessedTraditions,
+  selectDiseases,
+  selectRegions,
+  selectSkills,
+} from "../../slices/databaseSlice.ts"
 import { InlineLibraryPlaceholder } from "../InlineLibraryPlaceholder.tsx"
 import { InlineLibraryProperties } from "../InlineLibraryProperties.tsx"
 import { InlineLibraryTemplate } from "../InlineLibraryTemplate.tsx"
@@ -35,36 +41,40 @@ export const InlineLibrarySkill: FC<Props> = ({ id }) => {
 
   const applications = (() => {
     switch (entry.applications.tag) {
-      case "Derived": return (() => {
-        switch (entry.applications.derived) {
-          case "BlessedTraditions": return Object.values(blessedTraditions)
-            .map(x => translateMap(x.translations)?.name)
-            .filter(isNotNullish)
-            .sort(localeCompare)
-          case "Diseases": return Object.values(diseases)
-            .map(x => translateMap(x.translations)?.name)
-            .filter(isNotNullish)
-            .sort(localeCompare)
-          case "Regions": return Object.values(regions)
-            .map(x => translateMap(x.translations)?.name)
-            .filter(isNotNullish)
-            .sort(localeCompare)
-          default: return assertExhaustive(entry.applications.derived)
-        }
-      })()
-      case "Explicit": return entry.applications.explicit
-        .map(x => translateMap(x.translations)?.name)
-        .filter(isNotNullish)
-        .sort(localeCompare)
-      default: return assertExhaustive(entry.applications)
+      case "Derived":
+        return (() => {
+          switch (entry.applications.derived) {
+            case "BlessedTraditions":
+              return Object.values(blessedTraditions)
+                .map(x => translateMap(x.translations)?.name)
+                .filter(isNotNullish)
+                .sort(localeCompare)
+            case "Diseases":
+              return Object.values(diseases)
+                .map(x => translateMap(x.translations)?.name)
+                .filter(isNotNullish)
+                .sort(localeCompare)
+            case "Regions":
+              return Object.values(regions)
+                .map(x => translateMap(x.translations)?.name)
+                .filter(isNotNullish)
+                .sort(localeCompare)
+            default:
+              return assertExhaustive(entry.applications.derived)
+          }
+        })()
+      case "Explicit":
+        return entry.applications.explicit
+          .map(x => translateMap(x.translations)?.name)
+          .filter(isNotNullish)
+          .sort(localeCompare)
+      default:
+        return assertExhaustive(entry.applications)
     }
   })()
 
   return (
-    <InlineLibraryTemplate
-      className="Skill"
-      title={translation?.name ?? entry.id.toString()}
-      >
+    <InlineLibraryTemplate className="Skill" title={translation?.name ?? entry.id.toString()}>
       <InlineLibraryProperties
         list={[
           createCheck(translate, translateMap, attributes, entry.check),
@@ -74,18 +84,19 @@ export const InlineLibrarySkill: FC<Props> = ({ id }) => {
           },
           {
             label: translate("Encumbrance"),
-            value: entry.encumbrance === "True"
-              ? translate("Yes")
-              : entry.encumbrance === "False"
-              ? translate("No")
-              : translation.encumbrance_description ?? translate("Maybe"),
+            value:
+              entry.encumbrance === "True"
+                ? translate("Yes")
+                : entry.encumbrance === "False"
+                ? translate("No")
+                : translation.encumbrance_description ?? translate("Maybe"),
           },
           translation?.tools === undefined
             ? undefined
             : {
-              label: translate("Tools"),
-              value: translation.tools,
-            },
+                label: translate("Tools"),
+                value: translation.tools,
+              },
           {
             label: translate("Quality"),
             value: translation.quality,
@@ -104,9 +115,9 @@ export const InlineLibrarySkill: FC<Props> = ({ id }) => {
           },
           createImprovementCost(translate, entry.improvement_cost),
         ]}
-        />
+      />
       <Source sources={entry.src} />
-        {/* <WikiApplications
+      {/* <WikiApplications
           advantages={advantages}
           specialAbilities={specialAbilities}
           staticData={staticData}

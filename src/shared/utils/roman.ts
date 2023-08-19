@@ -1,14 +1,15 @@
 import { minus } from "./math.ts"
 
 const signPairs: [one: string, five: string][] = [
-  [ "I", "V" ],
-  [ "X", "L" ],
-  [ "C", "D" ],
-  [ "M", "ↁ" ],
+  ["I", "V"],
+  ["X", "L"],
+  ["C", "D"],
+  ["M", "ↁ"],
 ]
 
 const romanizeNatural = (num: number): string =>
-  num.toString(10)
+  num
+    .toString(10)
     .split("")
     .reverse()
     .map((digit, index) => {
@@ -19,21 +20,18 @@ const romanizeNatural = (num: number): string =>
       }
 
       const value = parseInt(digit, 10)
-      const [ one, five ] = pair
+      const [one, five] = pair
 
       if (value <= 3) {
         return one.repeat(value)
-      }
-      else if (value === 4) {
+      } else if (value === 4) {
         return one + five
-      }
-      else if (value <= 8) {
+      } else if (value <= 8) {
         return five + one.repeat(value - 5)
-      }
-      else {
+      } else {
         return one + (signPairs[index + 1]?.[0] ?? "?")
       }
-      })
+    })
     .reverse()
     .join("")
 
@@ -43,11 +41,9 @@ const romanizeNatural = (num: number): string =>
 export const romanize = (num: number): string => {
   if (num === 0) {
     return "0"
-  }
-  else if (num < 0) {
+  } else if (num < 0) {
     return minus + romanizeNatural(-num)
-  }
-  else {
+  } else {
     return romanizeNatural(num)
   }
 }

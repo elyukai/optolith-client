@@ -23,8 +23,7 @@ const checkForUpdates = async (): Promise<AvailableUpdateCheckResult | undefined
 
   if (res?.cancellationToken === undefined) {
     return undefined
-  }
-  else {
+  } else {
     return res as AvailableUpdateCheckResult
   }
 }
@@ -52,15 +51,17 @@ const createUpdaterWindow = async (database: Database) => {
     backgroundColor: getWindowBackgroundColor(getGlobalSettings().theme),
   })
 
-  await updaterWindow.loadURL(url.format({
-    pathname: path.join(__dirname, "renderer_updater.html"),
-    protocol: "file:",
-    slashes: true,
-  }))
+  await updaterWindow.loadURL(
+    url.format({
+      pathname: path.join(__dirname, "renderer_updater.html"),
+      protocol: "file:",
+      slashes: true,
+    }),
+  )
 
   const initialSetupEventMessage: InitialSetupEventMessage = {
-    translations: Object.fromEntries(database.ui),
-    locales: Object.fromEntries(database.locales),
+    translations: Object.fromEntries(database.raw.ui),
+    locales: Object.fromEntries(database.raw.locales),
     globalSettings: getGlobalSettings(),
     systemLocale: app.getLocale(),
   }
@@ -77,7 +78,7 @@ const createUpdaterWindow = async (database: Database) => {
         width: preferredSize.width,
         height: preferredSize.height,
       },
-      true
+      true,
     )
   })
 
@@ -165,8 +166,7 @@ export const checkForUpdatesOnStartup = async (database: Database) => {
     })
     updaterWindow.show()
     return updatePromise
-  }
-  else {
+  } else {
     debug("no update available")
     return false
   }
@@ -182,8 +182,7 @@ export const checkForUpdatesOnRequest = async (database: Database) => {
   if (isUpdateAvailable) {
     debug("update is available")
     prepareUpdaterWindowForAvailableUpdate(updaterWindow, checkResult)
-  }
-  else {
+  } else {
     debug("no update available")
     updaterWindow.webContents.send("no-update-available")
   }

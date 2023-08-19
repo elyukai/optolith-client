@@ -17,6 +17,6 @@ export const TooltipHint: FC<Props> = props => {
       small
       targetRef={targetRef}
       margin={margin}
-      />
+    />
   )
 }

@@ -11,11 +11,7 @@ export const LoadingIndicator: FC<Props> = props => {
   return (
     <div className="loading-indicator">
       <div className="loading-indicator-icon" />
-      {text === undefined
-        ? null
-        : (
-          <div className="loading-indicator-description">{text}</div>
-        )}
+      {text === undefined ? null : <div className="loading-indicator-description">{text}</div>}
     </div>
   )
 }

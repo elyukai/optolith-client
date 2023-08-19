@@ -19,34 +19,35 @@ interface Props<A extends RadioOptionValue = RadioOptionValue> {
   onClickJust?(option: A): void
 }
 
-export const RadioButtonGroup = <A extends RadioOptionValue = RadioOptionValue>
-  (props: Props<A>): React.ReactElement => {
-    const { active, array: xs, disabled, label, onClick, onClickJust } = props
+export const RadioButtonGroup = <A extends RadioOptionValue = RadioOptionValue>(
+  props: Props<A>,
+): React.ReactElement => {
+  const { active, array: xs, disabled, label, onClick, onClickJust } = props
 
-    const onClickCombined = (optionValue: A | undefined) => () => {
-      if (typeof onClick === "function") {
-        onClick(optionValue)
-      }
-
-      if (typeof onClickJust === "function" && optionValue !== undefined) {
-        onClickJust(optionValue)
-      }
+  const onClickCombined = (optionValue: A | undefined) => () => {
+    if (typeof onClick === "function") {
+      onClick(optionValue)
     }
 
-    return (
-      <div className="radiobutton-group">
-        {label === undefined ? null : <Label text={label} />}
-        {xs.map(e => (
-          <RadioButton
-            key={e.value ?? "__default__"}
-            value={e.value}
-            active={e.value === active}
-            onClick={onClickCombined(e.value)}
-            disabled={e.disabled === true || disabled === true}
-            >
-            {e.name}
-          </RadioButton>
-        ))}
-      </div>
-    )
+    if (typeof onClickJust === "function" && optionValue !== undefined) {
+      onClickJust(optionValue)
+    }
   }
+
+  return (
+    <div className="radiobutton-group">
+      {label === undefined ? null : <Label text={label} />}
+      {xs.map(e => (
+        <RadioButton
+          key={e.value ?? "__default__"}
+          value={e.value}
+          active={e.value === active}
+          onClick={onClickCombined(e.value)}
+          disabled={e.disabled === true || disabled === true}
+        >
+          {e.name}
+        </RadioButton>
+      ))}
+    </div>
+  )
+}

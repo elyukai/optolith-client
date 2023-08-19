@@ -16,21 +16,12 @@ export const AvatarWrapper: FCC<Props> = props => {
 
   const validPath = isUrl(src)
 
-  const className = classList(
-    "avatar-wrapper",
-    inheritedClassName,
-    { "no-avatar": !validPath },
-  )
+  const className = classList("avatar-wrapper", inheritedClassName, { "no-avatar": !validPath })
 
   return (
     <div className={className} onClick={onClick}>
       {children}
-      <Avatar
-        img={img}
-        src={src}
-        hasWrapper
-        validPath={validPath}
-        />
+      <Avatar img={img} src={src} hasWrapper validPath={validPath} />
     </div>
   )
 }

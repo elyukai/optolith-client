@@ -6,6 +6,8 @@ type Props = {
 }
 
 export const Form: FCC<Props> = ({ notSemantic, children }) =>
-  notSemantic === true
-    ? <div className="form">{children}</div>
-    : <form className="form">{children}</form>
+  notSemantic === true ? (
+    <div className="form">{children}</div>
+  ) : (
+    <form className="form">{children}</form>
+  )

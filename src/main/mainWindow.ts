@@ -45,8 +45,7 @@ export const createMainWindow = async (database: Database) => {
     })
 
     mainWindow.webContents.setWindowOpenHandler(details => {
-      shell.openExternal(details.url)
-        .catch(err => debug("unexpected error: %O", err))
+      shell.openExternal(details.url).catch(err => debug("unexpected error: %O", err))
       return { action: "deny" }
     })
 
@@ -54,11 +53,13 @@ export const createMainWindow = async (database: Database) => {
     mainWindowState.manage(mainWindow)
 
     debug("Load url")
-    await mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, "renderer_main.html"),
-      protocol: "file:",
-      slashes: true,
-    }))
+    await mainWindow.loadURL(
+      url.format({
+        pathname: path.join(__dirname, "renderer_main.html"),
+        protocol: "file:",
+        slashes: true,
+      }),
+    )
 
     // mainWindow.webContents.openDevTools()
 
@@ -108,8 +109,7 @@ export const createMainWindow = async (database: Database) => {
       debug("initial setup done")
       mainWindow?.show()
     })
-  }
-  else {
+  } else {
     mainWindow.focus()
   }
 

@@ -10,9 +10,10 @@ export const createCheck = (
   check: SkillCheck,
 ): InlineLibraryProperty => ({
   label: translate("Check"),
-  value:
-    check
-      .map(({ id: { attribute: id } }) =>
-        translateMap(attributes[id]?.translations)?.abbreviation ?? "??")
-      .join("/"),
+  value: check
+    .map(
+      ({ id: { attribute: id } }) =>
+        translateMap(attributes[id]?.translations)?.abbreviation ?? "??",
+    )
+    .join("/"),
 })

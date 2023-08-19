@@ -13,7 +13,7 @@ interface Props {
   hint?: string
   primary?: boolean
   round?: boolean
-  onClick? (): void
+  onClick?(): void
 }
 
 const Button: FRRFC<HTMLButtonElement, Props> = (props, ref) => {
@@ -32,22 +32,17 @@ const Button: FRRFC<HTMLButtonElement, Props> = (props, ref) => {
 
   const btnElement = (
     <button
-      className={classList(
-        "btn",
-        round === true ? "btn--round" : "btn--text",
-        className,
-        {
-          "btn--primary": primary === true,
-          "btn--flat": flat === true,
-          "btn--auto-width": autoWidth,
-          "btn--full-width": fullWidth,
-          "btn--active": active,
-        }
-      )}
+      className={classList("btn", round === true ? "btn--round" : "btn--text", className, {
+        "btn--primary": primary === true,
+        "btn--flat": flat === true,
+        "btn--auto-width": autoWidth,
+        "btn--full-width": fullWidth,
+        "btn--active": active,
+      })}
       onClick={disabled === true || onClick === undefined ? undefined : onClick}
       disabled={disabled === true || onClick === undefined}
       ref={ref}
-      >
+    >
       {children}
     </button>
   )

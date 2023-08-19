@@ -12,10 +12,7 @@ type Props = {
 export const AttributeList: FC<Props> = props => {
   const attributes = useAppSelector(selectVisibleAttributes)
 
-  const {
-    isInCharacterCreation,
-    isRemovingEnabled,
-  } = props
+  const { isInCharacterCreation, isRemovingEnabled } = props
 
   return (
     <div className="main">
@@ -25,7 +22,7 @@ export const AttributeList: FC<Props> = props => {
           attribute={attribute}
           isInCharacterCreation={isInCharacterCreation}
           isRemovingEnabled={isRemovingEnabled}
-          />
+        />
       ))}
     </div>
   )

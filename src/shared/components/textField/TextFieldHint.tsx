@@ -7,10 +7,6 @@ type Props = {
 }
 
 export const TextFieldHint: FC<Props> = ({ hint, isFieldEmpty }) =>
-  hint === undefined
-  ? null
-  : (
-    <div className={classList("textfield-hint", { hide: !isFieldEmpty })} >
-      {hint}
-    </div>
+  hint === undefined ? null : (
+    <div className={classList("textfield-hint", { hide: !isFieldEmpty })}>{hint}</div>
   )

@@ -5,10 +5,17 @@ import { assertExhaustive } from "../shared/utils/typeSafety.ts"
 
 export const setNativeTheme = (theme: Theme | undefined) => {
   switch (theme) {
-    case Theme.Dark:  nativeTheme.themeSource = "dark"; break
-    case Theme.Light: nativeTheme.themeSource = "light"; break
-    case undefined:   nativeTheme.themeSource = "system"; break
-    default: assertExhaustive(theme)
+    case Theme.Dark:
+      nativeTheme.themeSource = "dark"
+      break
+    case Theme.Light:
+      nativeTheme.themeSource = "light"
+      break
+    case undefined:
+      nativeTheme.themeSource = "system"
+      break
+    default:
+      assertExhaustive(theme)
   }
 }
 
@@ -17,10 +24,14 @@ const LIGHT = "#f0f0f0"
 
 export const getWindowBackgroundColor = (theme: Theme | undefined) => {
   switch (theme) {
-    case Theme.Dark:  return DARK
-    case Theme.Light: return "#f0f0f0"
-    case undefined:   return nativeTheme.shouldUseDarkColors ? DARK : LIGHT
-    default: assertExhaustive(theme)
+    case Theme.Dark:
+      return DARK
+    case Theme.Light:
+      return "#f0f0f0"
+    case undefined:
+      return nativeTheme.shouldUseDarkColors ? DARK : LIGHT
+    default:
+      assertExhaustive(theme)
   }
 }
 

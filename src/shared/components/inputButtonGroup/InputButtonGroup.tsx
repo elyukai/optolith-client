@@ -9,9 +9,5 @@ type Props = {
 export const InputButtonGroup: FCC<Props> = props => {
   const { className, children } = props
 
-  return (
-    <div className={classList("btn-group", className)}>
-      {children}
-    </div>
-  )
+  return <div className={classList("btn-group", className)}>{children}</div>
 }

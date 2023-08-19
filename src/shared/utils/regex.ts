@@ -33,8 +33,7 @@ export const isEmptyOr = (check: (test: string) => boolean, test: string) =>
 export const isUrl = (test: string) => {
   try {
     return typeof new URL(test) === "object"
-  }
-  catch {
+  } catch {
     return false
   }
 }

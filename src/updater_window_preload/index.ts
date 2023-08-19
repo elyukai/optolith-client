@@ -4,7 +4,10 @@ import EventEmitter from "events"
 import { Locale } from "optolith-database-schema/types/Locale"
 import { UI } from "optolith-database-schema/types/UI"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
-import { GlobalSettingsEvents, attachGlobalSettingsEvents } from "../shared/settings/listeningRendererPreload.ts"
+import {
+  GlobalSettingsEvents,
+  attachGlobalSettingsEvents,
+} from "../shared/settings/listeningRendererPreload.ts"
 import { TypedEventEmitterForEvent } from "../shared/utils/events.ts"
 
 export type PreloadAPI = {
@@ -17,15 +20,14 @@ export type PreloadAPI = {
   quitAndInstallUpdate: () => void
 } & Events
 
-type Events =
-  & TypedEventEmitterForEvent<"initial-setup", [InitialSetupEventMessage]>
-  & TypedEventEmitterForEvent<"update-available", [updateInfo: UpdateInfo]>
-  & TypedEventEmitterForEvent<"no-update-available", []>
-  & TypedEventEmitterForEvent<"download-progress", [updateInfo: ProgressInfo]>
-  & TypedEventEmitterForEvent<"update-downloaded", [updateInfo: UpdateDownloadedEvent]>
-  & TypedEventEmitterForEvent<"blur", []>
-  & TypedEventEmitterForEvent<"focus", []>
-  & GlobalSettingsEvents
+type Events = TypedEventEmitterForEvent<"initial-setup", [InitialSetupEventMessage]> &
+  TypedEventEmitterForEvent<"update-available", [updateInfo: UpdateInfo]> &
+  TypedEventEmitterForEvent<"no-update-available", []> &
+  TypedEventEmitterForEvent<"download-progress", [updateInfo: ProgressInfo]> &
+  TypedEventEmitterForEvent<"update-downloaded", [updateInfo: UpdateDownloadedEvent]> &
+  TypedEventEmitterForEvent<"blur", []> &
+  TypedEventEmitterForEvent<"focus", []> &
+  GlobalSettingsEvents
 
 const events = new EventEmitter() as Events
 

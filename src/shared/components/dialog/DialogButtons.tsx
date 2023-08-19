@@ -3,7 +3,7 @@ import { DialogButton, DialogButtonProps } from "./DialogButton.tsx"
 
 type Props = {
   list: DialogButtonProps[]
-  onClickDefault? (f?: () => void): void
+  onClickDefault?(f?: () => void): void
 }
 
 export const DialogButtons: FC<Props> = props => {
@@ -37,16 +37,14 @@ export const DialogButtons: FC<Props> = props => {
               primary={primary}
               onClick={onClick}
               onClickDefault={onClickDefault}
-              />
-          )
+            />
+          ),
         )
       : []
 
   return (
     <div className="dialog-buttons">
-      <div className="dialog-buttons-inner">
-        {buttons}
-      </div>
+      <div className="dialog-buttons-inner">{buttons}</div>
     </div>
   )
 }

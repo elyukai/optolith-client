@@ -39,7 +39,7 @@ export const ListItem: FCC<Props> = props => {
         untyp: unrecommended,
       })}
       onClick={onClick}
-      >
+    >
       {insertTopMargin === true ? <div className="separator" /> : null}
       {children}
     </li>

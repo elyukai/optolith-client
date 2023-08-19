@@ -23,10 +23,7 @@ export const InlineLibraryExperienceLevel: FC<Props> = ({ id }) => {
   }
 
   return (
-    <InlineLibraryTemplate
-      className="experience-level"
-      title={translation.name}
-      >
+    <InlineLibraryTemplate className="experience-level" title={translation.name}>
       <InlineLibraryProperties
         list={[
           {
@@ -58,7 +55,7 @@ export const InlineLibraryExperienceLevel: FC<Props> = ({ id }) => {
             value: entry.max_number_of_unfamiliar_spells,
           },
         ]}
-        />
+      />
     </InlineLibraryTemplate>
   )
 }

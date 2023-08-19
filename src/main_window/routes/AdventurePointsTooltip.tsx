@@ -1,7 +1,26 @@
 import { FC } from "react"
 import { useTranslate } from "../../shared/hooks/translate.ts"
 import { useAppSelector } from "../hooks/redux.ts"
-import { selectAdventurePointsSpent, selectAdventurePointsSpentOnAdvantages, selectAdventurePointsSpentOnAttributes, selectAdventurePointsSpentOnBlessedAdvantages, selectAdventurePointsSpentOnBlessedDisadvantages, selectAdventurePointsSpentOnBlessings, selectAdventurePointsSpentOnCantrips, selectAdventurePointsSpentOnCombatTechniques, selectAdventurePointsSpentOnDisadvantages, selectAdventurePointsSpentOnEnergies, selectAdventurePointsSpentOnLiturgicalChants, selectAdventurePointsSpentOnMagicalAdvantages, selectAdventurePointsSpentOnMagicalDisadvantages, selectAdventurePointsSpentOnProfession, selectAdventurePointsSpentOnRace, selectAdventurePointsSpentOnSkills, selectAdventurePointsSpentOnSpecialAbilities, selectAdventurePointsSpentOnSpells } from "../selectors/adventurePointSelectors.ts"
+import {
+  selectAdventurePointsSpent,
+  selectAdventurePointsSpentOnAdvantages,
+  selectAdventurePointsSpentOnAttributes,
+  selectAdventurePointsSpentOnBlessedAdvantages,
+  selectAdventurePointsSpentOnBlessedDisadvantages,
+  selectAdventurePointsSpentOnBlessings,
+  selectAdventurePointsSpentOnCantrips,
+  selectAdventurePointsSpentOnCombatTechniques,
+  selectAdventurePointsSpentOnDisadvantages,
+  selectAdventurePointsSpentOnEnergies,
+  selectAdventurePointsSpentOnLiturgicalChants,
+  selectAdventurePointsSpentOnMagicalAdvantages,
+  selectAdventurePointsSpentOnMagicalDisadvantages,
+  selectAdventurePointsSpentOnProfession,
+  selectAdventurePointsSpentOnRace,
+  selectAdventurePointsSpentOnSkills,
+  selectAdventurePointsSpentOnSpecialAbilities,
+  selectAdventurePointsSpentOnSpells,
+} from "../selectors/adventurePointSelectors.ts"
 import { selectTotalAdventurePoints } from "../slices/characterSlice.ts"
 
 export const AdventurePointsTooltip: FC = () => {
@@ -25,10 +44,12 @@ export const AdventurePointsTooltip: FC = () => {
   const spentOnMagicalAdvantages = useAppSelector(selectAdventurePointsSpentOnMagicalAdvantages)
   const spentOnBlessedAdvantages = useAppSelector(selectAdventurePointsSpentOnBlessedAdvantages)
   const spentOnDisadvantages = useAppSelector(selectAdventurePointsSpentOnDisadvantages)
-  const spentOnMagicalDisadvantages =
-    useAppSelector(selectAdventurePointsSpentOnMagicalDisadvantages)
-  const spentOnBlessedDisadvantages =
-    useAppSelector(selectAdventurePointsSpentOnBlessedDisadvantages)
+  const spentOnMagicalDisadvantages = useAppSelector(
+    selectAdventurePointsSpentOnMagicalDisadvantages,
+  )
+  const spentOnBlessedDisadvantages = useAppSelector(
+    selectAdventurePointsSpentOnBlessedDisadvantages,
+  )
   const spentOnSpecialAbilities = useAppSelector(selectAdventurePointsSpentOnSpecialAbilities)
   const spentOnEnergies = useAppSelector(selectAdventurePointsSpentOnEnergies)
   const spentOnRace = useAppSelector(selectAdventurePointsSpentOnRace)
@@ -47,25 +68,25 @@ export const AdventurePointsTooltip: FC = () => {
           {translate(
             "{0}/{1} AP spent on advantages",
             spentOnAdvantages.general + spentOnAdvantages.bound,
-            80
+            80,
           )}
         </span>
         <span>
           {spentOnMagicalAdvantages.general + spentOnMagicalAdvantages.bound > 0
             ? translate(
-              "Thereof {0}/{1} on magic advantages",
-              spentOnMagicalAdvantages.general + spentOnMagicalAdvantages.bound,
-              maximumForMagicalAdvantagesDisadvantages,
-            )
+                "Thereof {0}/{1} on magic advantages",
+                spentOnMagicalAdvantages.general + spentOnMagicalAdvantages.bound,
+                maximumForMagicalAdvantagesDisadvantages,
+              )
             : null}
         </span>
         <span>
           {spentOnBlessedAdvantages.general + spentOnBlessedAdvantages.bound > 0
             ? translate(
-              "Thereof {0}/{1} on blessed advantages",
-              spentOnBlessedAdvantages.general + spentOnBlessedAdvantages.bound,
-              50,
-            )
+                "Thereof {0}/{1} on blessed advantages",
+                spentOnBlessedAdvantages.general + spentOnBlessedAdvantages.bound,
+                50,
+              )
             : null}
         </span>
         <span>
@@ -78,34 +99,28 @@ export const AdventurePointsTooltip: FC = () => {
         <span>
           {spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound > 0
             ? translate(
-              "Thereof {0}/{1} from magic disadvantages",
-              spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound,
-              maximumForMagicalAdvantagesDisadvantages,
-            )
+                "Thereof {0}/{1} from magic disadvantages",
+                spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound,
+                maximumForMagicalAdvantagesDisadvantages,
+              )
             : null}
         </span>
         <span>
           {spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound > 0
             ? translate(
-              "Thereof {0}/{1} from blessed disadvantages",
-              spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound,
-              50,
-            )
+                "Thereof {0}/{1} from blessed disadvantages",
+                spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound,
+                50,
+              )
             : null}
         </span>
       </p>
       <hr />
       <p>
-        <span>
-          {translate("{0} AP spent on race", spentOnRace)}
-        </span>
-        {spentOnProfession === undefined
-          ? null
-          : (
-            <span>
-              {translate("{0} AP spent on profession", spentOnProfession)}
-            </span>
-          )}
+        <span>{translate("{0} AP spent on race", spentOnRace)}</span>
+        {spentOnProfession === undefined ? null : (
+          <span>{translate("{0} AP spent on profession", spentOnProfession)}</span>
+        )}
         <span>
           {translate(
             "{0} AP spent on attributes",
@@ -113,10 +128,7 @@ export const AdventurePointsTooltip: FC = () => {
           )}
         </span>
         <span>
-          {translate(
-            "{0} AP spent on skills",
-            spentOnSkills.general + spentOnSkills.bound,
-          )}
+          {translate("{0} AP spent on skills", spentOnSkills.general + spentOnSkills.bound)}
         </span>
         <span>
           {translate(
@@ -124,58 +136,39 @@ export const AdventurePointsTooltip: FC = () => {
             spentOnCombatTechniques.general + spentOnCombatTechniques.bound,
           )}
         </span>
-        {isSpellcaster
-          ? (
-            <span>
-              {translate(
-                "{0} AP spent on spells",
-                spentOnSpells.general + spentOnSpells.bound,
-              )}
-            </span>
-          )
-          : null}
-        {isSpellcaster
-          ? (
-            <span>
-              {translate(
-                "{0} AP spent on cantrips",
-                spentOnCantrips.general + spentOnCantrips.bound,
-              )}
-            </span>
-          )
-          : null}
-        {isBlessedOne
-          ? (
-            <span>
-              {translate(
-                "{0} AP spent on liturgical chants",
-                spentOnLiturgicalChants.general + spentOnLiturgicalChants.bound,
-              )}
-            </span>
-          )
-          : null}
-        {isBlessedOne
-          ? (
-            <span>
-              {translate(
-                "{0} AP spent on blessings",
-                spentOnBlessings.general + spentOnBlessings.bound,
-              )}
-            </span>
-          )
-          : null}
+        {isSpellcaster ? (
+          <span>
+            {translate("{0} AP spent on spells", spentOnSpells.general + spentOnSpells.bound)}
+          </span>
+        ) : null}
+        {isSpellcaster ? (
+          <span>
+            {translate("{0} AP spent on cantrips", spentOnCantrips.general + spentOnCantrips.bound)}
+          </span>
+        ) : null}
+        {isBlessedOne ? (
+          <span>
+            {translate(
+              "{0} AP spent on liturgical chants",
+              spentOnLiturgicalChants.general + spentOnLiturgicalChants.bound,
+            )}
+          </span>
+        ) : null}
+        {isBlessedOne ? (
+          <span>
+            {translate(
+              "{0} AP spent on blessings",
+              spentOnBlessings.general + spentOnBlessings.bound,
+            )}
+          </span>
+        ) : null}
         <span>
           {translate(
             "{0} AP spent on special abilities",
             spentOnSpecialAbilities.general + spentOnSpecialAbilities.bound,
           )}
         </span>
-        <span>
-          {translate(
-            "{0} AP spent on improving/buying back LP/AE/KP",
-            spentOnEnergies,
-          )}
-        </span>
+        <span>{translate("{0} AP spent on improving/buying back LP/AE/KP", spentOnEnergies)}</span>
       </p>
     </div>
   )

@@ -17,14 +17,8 @@ export const AttributeBorder: FC<Props> = props => {
   const ref = useRef<HTMLDivElement>(null)
 
   const tooltipElement =
-    tooltip === undefined
-    ? undefined
-    : (
-      <TooltipToggle
-        content={tooltip}
-        margin={tooltipMargin}
-        targetRef={ref}
-        />
+    tooltip === undefined ? undefined : (
+      <TooltipToggle content={tooltip} margin={tooltipMargin} targetRef={ref} />
     )
 
   return (

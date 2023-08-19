@@ -15,20 +15,12 @@ export const RadioButton: FCC<Props> = props => {
   const { active, children, disabled, label, onClick, value } = props
 
   return (
-    <Activate
-      className="radio"
-      active={active}
-      onClick={onClick}
-      disabled={disabled}
-      value={value}
-      >
+    <Activate className="radio" active={active} onClick={onClick} disabled={disabled} value={value}>
       <Icon label="">
         <div className="border" />
         <div className="dot" />
       </Icon>
-      <div className="radio-label">
-        {label === undefined ? children : label}
-      </div>
+      <div className="radio-label">{label === undefined ? children : label}</div>
     </Activate>
   )
 }

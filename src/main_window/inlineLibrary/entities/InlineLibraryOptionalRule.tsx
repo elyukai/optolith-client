@@ -22,10 +22,7 @@ export const InlineLibraryOptionalRule: FC<Props> = ({ id }) => {
   }
 
   return (
-    <InlineLibraryTemplate
-      className="optional-rule"
-      title={translation.name}
-      >
+    <InlineLibraryTemplate className="optional-rule" title={translation.name}>
       <Markdown className="no-indent" source={translation.description} />
       <Source sources={entry.src} />
     </InlineLibraryTemplate>

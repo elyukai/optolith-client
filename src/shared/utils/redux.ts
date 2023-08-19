@@ -16,7 +16,7 @@ export type Reducer<
   S = any,
   A extends Action = AnyAction,
   P extends any[] = [],
-  IS extends S | undefined = S
+  IS extends S | undefined = S,
 > = (state: IS, action: A, ...additionalParams: P) => S
 
 const isDraftT = <T, U>(state: T | Draft<U>): state is Draft<U> => isDraft(state)
@@ -28,8 +28,7 @@ const ensureDraftState = <S>(
   if (isDraftT(state)) {
     const result = f(state as Draft<S>)
     return result === undefined ? state : (result as S)
-  }
-  else {
+  } else {
     return produce(state, f)
   }
 }
@@ -38,25 +37,30 @@ const ensureDraftState = <S>(
  * Chains multiple reducers together. The first reducer must provide an initial
  * state.
  */
-export const reduceReducers = <
-  S = any,
-  A extends Action = AnyAction,
-  P extends any[] = [],
-  IS extends S | undefined = S,
->(
-  initialReducer: Reducer<S, A, P, IS>,
-  ...reducers: Reducer<S, A, P>[]
-): Reducer<S, A, P, IS> =>
-  (state, action, ...additionalParams) => reducers.reduce(
-    (newState, reducer) => reducer(newState, action, ...additionalParams),
-    initialReducer(state, action, ...additionalParams),
-  )
+export const reduceReducers =
+  <S = any, A extends Action = AnyAction, P extends any[] = [], IS extends S | undefined = S>(
+    initialReducer: Reducer<S, A, P, IS>,
+    ...reducers: Reducer<S, A, P>[]
+  ): Reducer<S, A, P, IS> =>
+  (state, action, ...additionalParams) =>
+    reducers.reduce(
+      (newState, reducer) => reducer(newState, action, ...additionalParams),
+      initialReducer(state, action, ...additionalParams),
+    )
 
 type ValidReducerReturnType<State> =
-  State | void | undefined | (State extends undefined ? typeof nothing : never)
+  | State
+  | void
+  | undefined
+  | (State extends undefined ? typeof nothing : never)
 
-export const createImmerReducer = <S = any, A extends Action = AnyAction, P extends any[] = []>(
-  reducer: (state: Draft<S>, action: A, ...additionalParams: P) => ValidReducerReturnType<Draft<S>>
-): Reducer<S, A, P> =>
+export const createImmerReducer =
+  <S = any, A extends Action = AnyAction, P extends any[] = []>(
+    reducer: (
+      state: Draft<S>,
+      action: A,
+      ...additionalParams: P
+    ) => ValidReducerReturnType<Draft<S>>,
+  ): Reducer<S, A, P> =>
   (state, action, ...additionalParams) =>
     ensureDraftState(state, draft => reducer(draft, action, ...additionalParams))

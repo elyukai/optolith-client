@@ -6,12 +6,10 @@ type Props = {
 }
 
 export const TextFieldCounter: FC<Props> = ({ current = 0, max }) =>
-  typeof max === "number"
-  ? (
+  typeof max === "number" ? (
     <div>
       {current}
       {" / "}
       {max}
     </div>
-  )
-  : null
+  ) : null

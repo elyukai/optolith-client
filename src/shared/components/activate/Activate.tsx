@@ -7,26 +7,20 @@ type Props = {
   className?: string
   disabled?: boolean
   value?: string | number
-  onClick (value: string | number | undefined): void
+  onClick(value: string | number | undefined): void
 }
 
 export const Activate: FCC<Props> = props => {
   const { active, className, disabled, onClick, value, children } = props
 
-  const onClickEval = useCallback(
-    () => {
-      if (disabled !== true) {
-        onClick(value)
-      }
-    },
-    [ disabled, onClick, value ]
-  )
+  const onClickEval = useCallback(() => {
+    if (disabled !== true) {
+      onClick(value)
+    }
+  }, [disabled, onClick, value])
 
   return (
-    <div
-      className={classList(className, { active, disabled })}
-      onClick={onClickEval}
-      >
+    <div className={classList(className, { active, disabled })} onClick={onClickEval}>
       {children}
     </div>
   )

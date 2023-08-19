@@ -25,48 +25,31 @@ export const EditText: FC<Props> = props => {
     cancelLabel,
   } = props
 
-  const [ text, setText ] = useState(defaultText ?? "")
+  const [text, setText] = useState(defaultText ?? "")
 
-  const handleSubmit =
-    useCallback(
-      () => text === "" ? undefined : submit(text),
-      [ submit, text ]
-    )
+  const handleSubmit = useCallback(() => (text === "" ? undefined : submit(text)), [submit, text])
 
-  const handleEnter =
-    useCallback(
-      (event: InputKeyEvent) => {
-        if (event.key === "Enter" && text !== "") {
-          submit(text)
-        }
-        else if (event.key === "Escape") {
-          cancel()
-        }
-      },
-      [ cancel, submit, text ]
-    )
+  const handleEnter = useCallback(
+    (event: InputKeyEvent) => {
+      if (event.key === "Enter" && text !== "") {
+        submit(text)
+      } else if (event.key === "Escape") {
+        cancel()
+      }
+    },
+    [cancel, submit, text],
+  )
 
   return (
-    <div
-      className={classList("confirm-edit", className)}
-      >
-      <TextField
-        value={text}
-        onChange={setText}
-        onKeyDown={handleEnter}
-        autoFocus={autoFocus}
-        />
+    <div className={classList("confirm-edit", className)}>
+      <TextField value={text} onChange={setText} onKeyDown={handleEnter} autoFocus={autoFocus} />
       <IconButton
         icon="&#xE90a;"
         onClick={handleSubmit}
         disabled={text === ""}
         label={submitLabel}
-        />
-      <IconButton
-        icon="&#xE915;"
-        onClick={cancel}
-        label={cancelLabel}
-        />
+      />
+      <IconButton icon="&#xE915;" onClick={cancel} label={cancelLabel} />
     </div>
   )
 }

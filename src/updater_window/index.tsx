@@ -21,13 +21,10 @@ ExternalAPI.on("initial-setup", data => {
         systemLocale={systemLocale}
         locales={locales}
         ui={translations}
-        >
-        <Root
-          systemLocale={systemLocale}
-          locale={globalSettings.locale}
-          />
+      >
+        <Root systemLocale={systemLocale} locale={globalSettings.locale} />
       </LocalizationProvider>
-    </StrictMode>
+    </StrictMode>,
   )
 })
 

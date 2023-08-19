@@ -5,10 +5,7 @@ const {
   create,
   createInitial,
   getValue,
-  actions: {
-    incrementAction,
-    decrementAction,
-  },
+  actions: { incrementAction, decrementAction },
   reducer,
 } = createRatedSlice({
   namespace: "attributes",

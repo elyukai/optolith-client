@@ -8,17 +8,11 @@ type Props = {
 }
 
 export const SkillGroup: FC<Props> = props => {
-  const {
-    addText,
-    group,
-    getGroupName,
-  } = props
+  const { addText, group, getGroupName } = props
 
   if (addText === undefined && (group === undefined || getGroupName === undefined)) {
     return null
   }
 
-  return (
-    <ListItemGroup group={group} getGroupName={getGroupName} text={addText} />
-  )
+  return <ListItemGroup group={group} getGroupName={getGroupName} text={addText} />
 }

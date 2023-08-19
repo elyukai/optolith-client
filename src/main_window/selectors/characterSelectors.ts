@@ -4,17 +4,17 @@ import { selectIsEditAfterCreationEnabled } from "../slices/settingsSlice.ts"
 
 export const selectIsInCharacterCreation = createSelector(
   selectIsCharacterCreationFinished,
-  (isCharacterCreationFinished): boolean => !isCharacterCreationFinished
+  (isCharacterCreationFinished): boolean => !isCharacterCreationFinished,
 )
 
 export const selectCanAddAdventurePoints = createSelector(
   selectIsCharacterCreationFinished,
-  (isCharacterCreationFinished): boolean => isCharacterCreationFinished
+  (isCharacterCreationFinished): boolean => isCharacterCreationFinished,
 )
 
 export const selectCanRemove = createSelector(
   selectIsCharacterCreationFinished,
   selectIsEditAfterCreationEnabled,
   (isCharacterCreationFinished, isEditAfterCreationEnabled): boolean =>
-    !isCharacterCreationFinished || isEditAfterCreationEnabled
+    !isCharacterCreationFinished || isEditAfterCreationEnabled,
 )

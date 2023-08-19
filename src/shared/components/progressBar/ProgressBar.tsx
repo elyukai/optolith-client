@@ -15,19 +15,11 @@ export const ProgressBar: FC<Props> = props => {
 
   return (
     <div
-      className={
-        classList(
-          "progress-bar",
-          className,
-          { "progress-bar--horizontal": orientation === "horizontal" },
-        )
-      }
-      >
-      <ProgressBarOverlay
-        current={current}
-        horizontal={orientation === "horizontal"}
-        max={max}
-        />
+      className={classList("progress-bar", className, {
+        "progress-bar--horizontal": orientation === "horizontal",
+      })}
+    >
+      <ProgressBarOverlay current={current} horizontal={orientation === "horizontal"} max={max} />
     </div>
   )
 }

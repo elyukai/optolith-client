@@ -12,7 +12,7 @@ type Props = {
   source: string
 }
 
-const a = (p: { children?: React.ReactNode}) => (
+const a = (p: { children?: React.ReactNode }) => (
   <>
     {"["}
     {p.children}
@@ -30,10 +30,10 @@ export const Markdown: FC<Props> = props => {
       components={{
         a,
       }}
-      disallowedElements={noWrapper === true ? [ "p" ] : undefined}
-      remarkPlugins={[ Ph, [ remarkGfm, { singleTilde: false } ] ]}
-      rehypePlugins={[ rehypeRaw ]}
-      >
+      disallowedElements={noWrapper === true ? ["p"] : undefined}
+      remarkPlugins={[Ph, [remarkGfm, { singleTilde: false }]]}
+      rehypePlugins={[rehypeRaw]}
+    >
       {source}
     </ReactMarkdown>
   )

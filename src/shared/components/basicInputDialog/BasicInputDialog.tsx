@@ -45,16 +45,14 @@ export const BasicInputDialog: FC<Props> = props => {
       if (event.key === "Enter" && !acceptDisabled) {
         onAccept()
         onClose()
-      }
-      else if (event.key === "Enter" && isInputEmpty && !rejectDisabled) {
+      } else if (event.key === "Enter" && isInputEmpty && !rejectDisabled) {
         onReject()
         onClose()
-      }
-      else if (event.key === "Escape") {
+      } else if (event.key === "Escape") {
         onClose()
       }
     },
-    [ acceptDisabled, isInputEmpty, rejectDisabled, onAccept, onReject, onClose ]
+    [acceptDisabled, isInputEmpty, rejectDisabled, onAccept, onReject, onClose],
   )
 
   useEffect(() => {
@@ -87,7 +85,7 @@ export const BasicInputDialog: FC<Props> = props => {
           onClick: onReject,
         },
       ]}
-      >
+    >
       <p className="description">{description}</p>
       <TextField
         value={value}
@@ -96,7 +94,7 @@ export const BasicInputDialog: FC<Props> = props => {
         autoFocus
         error={invalid}
         onKeyUp={handleKeyUp}
-        />
+      />
     </Dialog>
   )
 }

@@ -6,34 +6,29 @@ import { TitleBarTitle } from "./TitleBarTitle.tsx"
 import { TitleBarWrapper } from "./TitleBarWrapper.tsx"
 
 const useWindowState = (getWindowState?: () => Promise<boolean>) => {
-  const [ state, setState ] = useState(false)
+  const [state, setState] = useState(false)
 
   useEffect(() => {
     const updateState = () => {
-      getWindowState?.()
-        .then(setState)
-        .catch(console.error)
+      getWindowState?.().then(setState).catch(console.error)
     }
 
     updateState()
-  }, [ getWindowState ])
+  }, [getWindowState])
 
   const update = useCallback(() => {
-    getWindowState?.()
-      .then(setState)
-      .catch(console.error)
-  }, [ getWindowState ])
+    getWindowState?.().then(setState).catch(console.error)
+  }, [getWindowState])
 
-  return [ state, update ] as const
+  return [state, update] as const
 }
 
 type Props = {
   title?: string
   secondary?: boolean
   platform: NodeJS.Platform
-  maximizeEvents?:
-    & TypedEventEmitterForEvent<"maximize", []>
-    & TypedEventEmitterForEvent<"unmaximize", []>
+  maximizeEvents?: TypedEventEmitterForEvent<"maximize", []> &
+    TypedEventEmitterForEvent<"unmaximize", []>
   onMinimize?: () => void
   onMaximize?: () => void
   onRestore?: () => void
@@ -54,20 +49,17 @@ export const TitleBar: FC<Props> = props => {
     isMaximized: getIsMaximized,
   } = props
 
-  const [ isMaximized, updateIsMaximized ] = useWindowState(getIsMaximized)
+  const [isMaximized, updateIsMaximized] = useWindowState(getIsMaximized)
 
-  useEffect(
-    () => {
-      maximizeEvents?.on("maximize", updateIsMaximized)
-      maximizeEvents?.on("unmaximize", updateIsMaximized)
+  useEffect(() => {
+    maximizeEvents?.on("maximize", updateIsMaximized)
+    maximizeEvents?.on("unmaximize", updateIsMaximized)
 
-      return () => {
-        maximizeEvents?.removeListener("maximize", updateIsMaximized)
-        maximizeEvents?.removeListener("unmaximize", updateIsMaximized)
-      }
-    },
-    [ updateIsMaximized, maximizeEvents ]
-  )
+    return () => {
+      maximizeEvents?.removeListener("maximize", updateIsMaximized)
+      maximizeEvents?.removeListener("unmaximize", updateIsMaximized)
+    }
+  }, [updateIsMaximized, maximizeEvents])
 
   if (platform === "darwin") {
     return (
@@ -83,9 +75,11 @@ export const TitleBar: FC<Props> = props => {
       <TitleBarTitle title={title} />
       <div>
         <TitleBarButton icon="&#xE903;" onClick={onMinimize} className="minimize" />
-        {isMaximized
-          ? <TitleBarButton icon="&#xE902;" onClick={onRestore} className="restore" />
-          : <TitleBarButton icon="&#xE901;" onClick={onMaximize} className="maximize" />}
+        {isMaximized ? (
+          <TitleBarButton icon="&#xE902;" onClick={onRestore} className="restore" />
+        ) : (
+          <TitleBarButton icon="&#xE901;" onClick={onMaximize} className="maximize" />
+        )}
         <TitleBarButton icon="&#xE900;" onClick={onClose} className="close" />
       </div>
     </TitleBarWrapper>

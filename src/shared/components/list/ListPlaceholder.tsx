@@ -10,25 +10,26 @@ import { ListItemName } from "./ListItemName.tsx"
 import { ListItemSeparator } from "./ListItemSeparator.tsx"
 import { ListItemValues } from "./ListItemValues.tsx"
 
-export type ListPlaceholderType = "races"
-                                | "cultures"
-                                | "professions"
-                                | "advantages"
-                                | "disadvantages"
-                                | "specialAbilities"
-                                | "inactiveAdvantages"
-                                | "inactiveDisadvantages"
-                                | "inactiveSpecialAbilities"
-                                | "wiki"
-                                | "skills"
-                                | "combatTechniques"
-                                | "spells"
-                                | "liturgicalChants"
-                                | "inactiveSpells"
-                                | "inactiveLiturgicalChants"
-                                | "equipment"
-                                | "itemTemplates"
-                                | "zoneArmor"
+export type ListPlaceholderType =
+  | "races"
+  | "cultures"
+  | "professions"
+  | "advantages"
+  | "disadvantages"
+  | "specialAbilities"
+  | "inactiveAdvantages"
+  | "inactiveDisadvantages"
+  | "inactiveSpecialAbilities"
+  | "wiki"
+  | "skills"
+  | "combatTechniques"
+  | "spells"
+  | "liturgicalChants"
+  | "inactiveSpells"
+  | "inactiveLiturgicalChants"
+  | "equipment"
+  | "itemTemplates"
+  | "zoneArmor"
 
 type Props = {
   type?: ListPlaceholderType
@@ -48,7 +49,9 @@ export const ListPlaceholder: React.FC<Props> = props => {
             <ListItemName name="" />
             <ListItemSeparator />
             <ListItemValues>
-              <div className="cost"><div className="placeholder-text" /></div>
+              <div className="cost">
+                <div className="placeholder-text" />
+              </div>
             </ListItemValues>
             <ListItemButtons>
               <IconButton label="" icon="&#xE90a;" disabled />
@@ -77,21 +80,13 @@ export const ListPlaceholder: React.FC<Props> = props => {
             <ListItemName name="" />
             <ListItemSeparator />
             <ListItemValues>
-              <div className="cost"><div className="placeholder-text" /></div>
+              <div className="cost">
+                <div className="placeholder-text" />
+              </div>
             </ListItemValues>
             <ListItemButtons>
-              <IconButton
-                label=""
-                icon="&#xE90b;"
-                flat
-                disabled
-                />
-              <IconButton
-                label=""
-                icon="&#xE912;"
-                flat
-                disabled
-                />
+              <IconButton label="" icon="&#xE90b;" flat disabled />
+              <IconButton label="" icon="&#xE912;" flat disabled />
             </ListItemButtons>
           </ListItem>
         )
@@ -104,21 +99,13 @@ export const ListPlaceholder: React.FC<Props> = props => {
             <ListItemName name="" />
             <ListItemSeparator />
             <ListItemValues>
-              <div className="cost"><div className="placeholder-text" /></div>
+              <div className="cost">
+                <div className="placeholder-text" />
+              </div>
             </ListItemValues>
             <ListItemButtons>
-              <IconButton
-                label=""
-                icon="&#xE916;"
-                flat
-                disabled
-                />
-              <IconButton
-                label=""
-                icon="&#xE912;"
-                flat
-                disabled
-                />
+              <IconButton label="" icon="&#xE916;" flat disabled />
+              <IconButton label="" icon="&#xE912;" flat disabled />
             </ListItemButtons>
           </ListItem>
         )
@@ -139,28 +126,9 @@ export const ListPlaceholder: React.FC<Props> = props => {
               <div className="ic" />
             </ListItemValues>
             <ListItemButtons>
-              <IconButton
-                label=""
-                icon="&#xE908;"
-                flat
-                disabled
-                />
-              {canRemove
-                ? (
-                  <IconButton
-                    label=""
-                    icon="&#xE909;"
-                    flat
-                    disabled
-                    />
-                )
-                : null}
-              <IconButton
-                label=""
-                icon="&#xE912;"
-                flat
-                disabled
-                />
+              <IconButton label="" icon="&#xE908;" flat disabled />
+              {canRemove ? <IconButton label="" icon="&#xE909;" flat disabled /> : null}
+              <IconButton label="" icon="&#xE912;" flat disabled />
             </ListItemButtons>
           </ListItem>
         )
@@ -180,18 +148,8 @@ export const ListPlaceholder: React.FC<Props> = props => {
               <div className="ic" />
             </ListItemValues>
             <ListItemButtons>
-              <IconButton
-                label=""
-                icon="&#xE916;"
-                flat
-                disabled
-                />
-              <IconButton
-                label=""
-                icon="&#xE912;"
-                flat
-                disabled
-                />
+              <IconButton label="" icon="&#xE916;" flat disabled />
+              <IconButton label="" icon="&#xE912;" flat disabled />
             </ListItemButtons>
           </ListItem>
         )
@@ -210,24 +168,9 @@ export const ListPlaceholder: React.FC<Props> = props => {
               <div className="pa" />
             </ListItemValues>
             <ListItemButtons>
-              <IconButton
-                label=""
-                icon="&#xE908;"
-                flat
-                disabled
-                />
-              <IconButton
-                label=""
-                icon="&#xE909;"
-                flat
-                disabled
-                />
-              <IconButton
-                label=""
-                icon="&#xE912;"
-                flat
-                disabled
-                />
+              <IconButton label="" icon="&#xE908;" flat disabled />
+              <IconButton label="" icon="&#xE909;" flat disabled />
+              <IconButton label="" icon="&#xE912;" flat disabled />
             </ListItemButtons>
           </ListItem>
         )
@@ -238,24 +181,9 @@ export const ListPlaceholder: React.FC<Props> = props => {
             <ListItemName name="" />
             <ListItemSeparator />
             <ListItemButtons>
-              <IconButton
-                label=""
-                icon="&#xE90c;"
-                flat
-                disabled
-                />
-              <IconButton
-                label=""
-                icon="&#xE90b;"
-                flat
-                disabled
-                />
-              <IconButton
-                label=""
-                icon="&#xE912;"
-                flat
-                disabled
-                />
+              <IconButton label="" icon="&#xE90c;" flat disabled />
+              <IconButton label="" icon="&#xE90b;" flat disabled />
+              <IconButton label="" icon="&#xE912;" flat disabled />
             </ListItemButtons>
           </ListItem>
         )
@@ -266,18 +194,8 @@ export const ListPlaceholder: React.FC<Props> = props => {
             <ListItemName name="" />
             <ListItemSeparator />
             <ListItemButtons>
-              <IconButton
-                label=""
-                icon="&#xE916;"
-                flat
-                disabled
-                />
-              <IconButton
-                label=""
-                icon="&#xE912;"
-                flat
-                disabled
-                />
+              <IconButton label="" icon="&#xE916;" flat disabled />
+              <IconButton label="" icon="&#xE912;" flat disabled />
             </ListItemButtons>
           </ListItem>
         )
@@ -288,18 +206,8 @@ export const ListPlaceholder: React.FC<Props> = props => {
             <ListItemName name="" />
             <ListItemSeparator />
             <ListItemButtons>
-              <IconButton
-                label=""
-                icon="&#xE90c;"
-                flat
-                disabled
-                />
-              <IconButton
-                label=""
-                icon="&#xE90b;"
-                flat
-                disabled
-                />
+              <IconButton label="" icon="&#xE90c;" flat disabled />
+              <IconButton label="" icon="&#xE90b;" flat disabled />
             </ListItemButtons>
           </ListItem>
         )
@@ -312,26 +220,24 @@ export const ListPlaceholder: React.FC<Props> = props => {
           </ListItem>
         )
 
-      default: return assertExhaustive(type)
+      default:
+        return assertExhaustive(type)
     }
   })()
 
   return (
     <List
-      className={classList(
-        "placeholder-wrapper",
-        {
-          "increased-padding": [
-            "advantages",
-            "disadvantages",
-            "specialAbilities",
-            "inactiveAdvantages",
-            "inactiveDisadvantages",
-            "inactiveSpecialAbilities",
-          ].includes(type),
-        }
-      )}
-      >
+      className={classList("placeholder-wrapper", {
+        "increased-padding": [
+          "advantages",
+          "disadvantages",
+          "specialAbilities",
+          "inactiveAdvantages",
+          "inactiveDisadvantages",
+          "inactiveSpecialAbilities",
+        ].includes(type),
+      })}
+    >
       {placeholder}
       {placeholder}
       {placeholder}

@@ -11,9 +11,7 @@ type RouteGroupName =
   | "abilities"
   | "belongings"
 
-export type DisplayRoute =
-  | SingleDisplayRoute
-  | DisplayRouteGroup
+export type DisplayRoute = SingleDisplayRoute | DisplayRouteGroup
 
 export type SingleDisplayRoute = {
   type: "single"
@@ -29,28 +27,24 @@ export type DisplayRouteGroup = {
 const mainHierarchy: DisplayRoute[] = [
   {
     type: "single",
-    route: [ "characters" ],
+    route: ["characters"],
   },
   {
     type: "single",
-    route: [ "groups" ],
+    route: ["groups"],
   },
   {
     type: "single",
-    route: [ "library" ],
+    route: ["library"],
   },
   {
     type: "single",
-    route: [ "faq" ],
+    route: ["faq"],
   },
   {
     type: "group",
     name: "about",
-    routes: [
-      [ "imprint" ],
-      [ "third_party_licenses" ],
-      [ "last_changes" ],
-    ],
+    routes: [["imprint"], ["third_party_licenses"], ["last_changes"]],
   },
 ]
 
@@ -74,71 +68,72 @@ export const useVisibleTabs = () => {
   const characterHierarchy = useMemo(
     (): DisplayRoute[] =>
       characterId === undefined
-      ? []
-      : filterNonNullable([
-          {
-            type: "group",
-            name: "profile",
-            routes: filterNonNullable([
-              "profile" as const,
-              // "personal_data",
-              phase === 3 ? "character_sheet" as const : undefined,
-              phase > 1 && arePactsAvailable ? "pact" as const : undefined, // "US25102", "US25008")
-              "rules" as const,
-            ]).map(route => [ "characters", characterId, route ]),
-          },
-          phase === 1
-            ? {
+        ? []
+        : filterNonNullable([
+            {
               type: "group",
-              name: "race_culture_profession",
+              name: "profile",
               routes: filterNonNullable([
-                "race" as const,
-                isRaceSelected ? "culture" as const : undefined,
-                isRaceSelected && isCultureSelected ? "profession" as const : undefined,
-              ]).map(route => [ "characters", characterId, route ]),
-            }
-            : undefined,
-          phase > 1
-            ? {
-              type: "single",
-              route: [ "characters", characterId, "attributes" ],
-            }
-            : undefined,
-          phase > 1 || isRemovingEnabled
-            ? {
-              type: "group",
-              name: "advantages_disadvantages",
-              routes: [
-                "advantages" as const,
-                "disadvantages" as const,
-              ].map(route => [ "characters", characterId, route ]),
-            }
-            : undefined,
-          phase > 1
-            ? {
-              type: "group",
-              name: "abilities",
-              routes: filterNonNullable([
-                "skills" as const,
-                "combat_techniques" as const,
-                "special_abilities" as const,
-                isSpellcaster ? "spells" as const : undefined,
-                isBlessedOne ? "liturgical_chants" as const : undefined,
-              ]).map(route => [ "characters", characterId, route ]),
-            }
-            : undefined,
-          phase > 1
-            ? {
-              type: "group",
-              name: "belongings",
-              routes: filterNonNullable([
-                "equipment" as const,
-                isHitZoneArmorEnabled ? "hit_zone_armor" as const : undefined,
-                "pets" as const,
-              ]).map(route => [ "characters", characterId, route ]),
-            }
-            : undefined,
-        ]),
+                "profile" as const,
+                // "personal_data",
+                phase === 3 ? ("character_sheet" as const) : undefined,
+                phase > 1 && arePactsAvailable ? ("pact" as const) : undefined, // "US25102", "US25008")
+                "rules" as const,
+              ]).map(route => ["characters", characterId, route]),
+            },
+            phase === 1
+              ? {
+                  type: "group",
+                  name: "race_culture_profession",
+                  routes: filterNonNullable([
+                    "race" as const,
+                    isRaceSelected ? ("culture" as const) : undefined,
+                    isRaceSelected && isCultureSelected ? ("profession" as const) : undefined,
+                  ]).map(route => ["characters", characterId, route]),
+                }
+              : undefined,
+            phase > 1
+              ? {
+                  type: "single",
+                  route: ["characters", characterId, "attributes"],
+                }
+              : undefined,
+            phase > 1 || isRemovingEnabled
+              ? {
+                  type: "group",
+                  name: "advantages_disadvantages",
+                  routes: ["advantages" as const, "disadvantages" as const].map(route => [
+                    "characters",
+                    characterId,
+                    route,
+                  ]),
+                }
+              : undefined,
+            phase > 1
+              ? {
+                  type: "group",
+                  name: "abilities",
+                  routes: filterNonNullable([
+                    "skills" as const,
+                    "combat_techniques" as const,
+                    "special_abilities" as const,
+                    isSpellcaster ? ("spells" as const) : undefined,
+                    isBlessedOne ? ("liturgical_chants" as const) : undefined,
+                  ]).map(route => ["characters", characterId, route]),
+                }
+              : undefined,
+            phase > 1
+              ? {
+                  type: "group",
+                  name: "belongings",
+                  routes: filterNonNullable([
+                    "equipment" as const,
+                    isHitZoneArmorEnabled ? ("hit_zone_armor" as const) : undefined,
+                    "pets" as const,
+                  ]).map(route => ["characters", characterId, route]),
+                }
+              : undefined,
+          ]),
     [
       characterId,
       isHitZoneArmorEnabled,
@@ -149,18 +144,18 @@ export const useVisibleTabs = () => {
       isCultureSelected,
       isSpellcaster,
       isBlessedOne,
-    ]
+    ],
   )
 
   const hierarchies: [Section, DisplayRoute[]][] = [
-    [ "main", mainHierarchy ],
-    [ "character", characterHierarchy ],
+    ["main", mainHierarchy],
+    ["character", characterHierarchy],
   ]
 
   const isInDisplayRoute = (route: RoutePath, tab: DisplayRoute) =>
     tab.type === "single"
-    ? arrayEqual(tab.route, route)
-    : tab.routes.some(subroute => arrayEqual(subroute, route))
+      ? arrayEqual(tab.route, route)
+      : tab.routes.some(subroute => arrayEqual(subroute, route))
 
   const isInHierarchy = (route: RoutePath, hierarchy: DisplayRoute[]) =>
     hierarchy.some(tab => isInDisplayRoute(route, tab))
@@ -168,7 +163,7 @@ export const useVisibleTabs = () => {
   const getHierarchyByRoute = (route: RoutePath) =>
     hierarchies.find(hierarchy => isInHierarchy(route, hierarchy[1]))
 
-  const currentHierarchy = getHierarchyByRoute(currentRoute) ?? [ "main", mainHierarchy ]
+  const currentHierarchy = getHierarchyByRoute(currentRoute) ?? ["main", mainHierarchy]
 
   const currentDisplayRoute = currentHierarchy[1]?.find(tab => isInDisplayRoute(currentRoute, tab))
 

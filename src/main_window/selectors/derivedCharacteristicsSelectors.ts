@@ -1,15 +1,53 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { DerivedCharacteristic, DerivedCharacteristicTranslation } from "optolith-database-schema/types/DerivedCharacteristic"
+import {
+  DerivedCharacteristic,
+  DerivedCharacteristicTranslation,
+} from "optolith-database-schema/types/DerivedCharacteristic"
 import { firstLevel, isActive } from "../../shared/domain/activatableEntry.ts"
-import { modifierByIsActive, modifierByIsActives, modifierByLevel } from "../../shared/domain/activatableModifiers.ts"
-import { AdvantageIdentifier, AttributeIdentifier, CombatSpecialAbilityIdentifier, DerivedCharacteristicIdentifier as DCId, DisadvantageIdentifier, EnergyIdentifier, KarmaSpecialAbilityIdentifier, MagicalSpecialAbilityIdentifier, OptionalRuleIdentifier } from "../../shared/domain/identifier.ts"
+import {
+  modifierByIsActive,
+  modifierByIsActives,
+  modifierByLevel,
+} from "../../shared/domain/activatableModifiers.ts"
+import {
+  AdvantageIdentifier,
+  AttributeIdentifier,
+  CombatSpecialAbilityIdentifier,
+  DerivedCharacteristicIdentifier as DCId,
+  DisadvantageIdentifier,
+  EnergyIdentifier,
+  KarmaSpecialAbilityIdentifier,
+  MagicalSpecialAbilityIdentifier,
+  OptionalRuleIdentifier,
+} from "../../shared/domain/identifier.ts"
 import { Rated } from "../../shared/domain/ratedEntry.ts"
 import { filterNonNullable } from "../../shared/utils/array.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { attributeValue } from "../slices/attributesSlice.ts"
-import { selectActiveOptionalRules, selectAdvantages, selectArcaneEnergyPermanentlyLost, selectArcaneEnergyPermanentlyLostBoughtBack, selectAttributes, selectBlessedTraditions, selectCombatSpecialAbilities, selectDisadvantages, selectKarmaPointsPermanentlyLost, selectKarmaPointsPermanentlyLostBoughtBack, selectKarmaSpecialAbilities, selectLifePointsPermanentlyLost, selectMagicalSpecialAbilities, selectMagicalTraditions, selectPurchasedArcaneEnergy, selectPurchasedKarmaPoints, selectPurchasedLifePoints } from "../slices/characterSlice.ts"
+import {
+  selectActiveOptionalRules,
+  selectAdvantages,
+  selectArcaneEnergyPermanentlyLost,
+  selectArcaneEnergyPermanentlyLostBoughtBack,
+  selectAttributes,
+  selectBlessedTraditions,
+  selectCombatSpecialAbilities,
+  selectDisadvantages,
+  selectKarmaPointsPermanentlyLost,
+  selectKarmaPointsPermanentlyLostBoughtBack,
+  selectKarmaSpecialAbilities,
+  selectLifePointsPermanentlyLost,
+  selectMagicalSpecialAbilities,
+  selectMagicalTraditions,
+  selectPurchasedArcaneEnergy,
+  selectPurchasedKarmaPoints,
+  selectPurchasedLifePoints,
+} from "../slices/characterSlice.ts"
 import { selectDerivedCharacteristics as selectStaticDerivedCharacteristics } from "../slices/databaseSlice.ts"
-import { selectBlessedPrimaryAttribute, selectHighestMagicalPrimaryAttributes } from "./attributeSelectors.ts"
+import {
+  selectBlessedPrimaryAttribute,
+  selectHighestMagicalPrimaryAttributes,
+} from "./attributeSelectors.ts"
 import { selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectCurrentRace } from "./raceSelectors.ts"
 
@@ -67,8 +105,7 @@ export const selectLifePoints = createSelector(
   ): DisplayedEnergy<DCId.LifePoints> | undefined => {
     if (race === undefined || staticEntry === undefined) {
       return undefined
-    }
-    else {
+    } else {
       const conValue = attributeValue(con)
       const base = race.base_values.life_points + conValue * 2
       const modifier = modifierByLevel(incrementor, decrementor)
@@ -87,7 +124,7 @@ export const selectLifePoints = createSelector(
         static: staticEntry,
       }
     }
-  }
+  },
 )
 
 export const selectArcaneEnergy = createSelector(
@@ -100,7 +137,10 @@ export const selectArcaneEnergy = createSelector(
   selectArcaneEnergyPermanentlyLostBoughtBack,
   selectPurchasedArcaneEnergy,
   // eslint-disable-next-line max-len
-  createPropertySelector(selectMagicalSpecialAbilities, MagicalSpecialAbilityIdentifier.GrosseMeditation),
+  createPropertySelector(
+    selectMagicalSpecialAbilities,
+    MagicalSpecialAbilityIdentifier.GrosseMeditation,
+  ),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.ArcaneEnergy),
   selectIsInCharacterCreation,
   (
@@ -120,15 +160,14 @@ export const selectArcaneEnergy = createSelector(
 
     if (!isActive(spellcaster) || !magicalTraditions.some(isActive) || staticEntry === undefined) {
       return undefined
-    }
-    else {
+    } else {
       const primaryAttrValue = highestMagicalPrimaryAttributes[0]?.dynamic.value
       const primaryAttrBase =
         primaryAttrValue === undefined
-        ? 0
-        : useHalf
-        ? Math.round(primaryAttrValue / 2)
-        : primaryAttrValue
+          ? 0
+          : useHalf
+          ? Math.round(primaryAttrValue / 2)
+          : primaryAttrValue
 
       const base = 20 + primaryAttrBase
       const modifier = firstLevel(grosseMeditation) * 6 + modifierByLevel(incrementor, decrementor)
@@ -143,25 +182,23 @@ export const selectArcaneEnergy = createSelector(
         purchaseMaximum: primaryAttrBase,
         purchased,
         isDecreasable:
-          !isInCharacterCreation
-          && permanentlyLost >= permanentlyLostBoughtBack
-          && purchased > 0,
+          !isInCharacterCreation && permanentlyLost >= permanentlyLostBoughtBack && purchased > 0,
         isIncreasable:
-          !isInCharacterCreation
-          && permanentlyLost >= permanentlyLostBoughtBack
-          && purchased < primaryAttrBase,
+          !isInCharacterCreation &&
+          permanentlyLost >= permanentlyLostBoughtBack &&
+          purchased < primaryAttrBase,
         permanentlyLost,
         permanentlyLostBoughtBack,
         calculation:
           highestMagicalPrimaryAttributes.length === 0
-          ? "no_primary"
-          : useHalf
-          ? "half_primary"
-          : "default",
+            ? "no_primary"
+            : useHalf
+            ? "half_primary"
+            : "default",
         static: staticEntry,
       }
     }
-  }
+  },
 )
 
 export const selectKarmaPoints = createSelector(
@@ -174,7 +211,10 @@ export const selectKarmaPoints = createSelector(
   selectKarmaPointsPermanentlyLostBoughtBack,
   selectPurchasedKarmaPoints,
   // eslint-disable-next-line max-len
-  createPropertySelector(selectKarmaSpecialAbilities, KarmaSpecialAbilityIdentifier.HigherOrdination),
+  createPropertySelector(
+    selectKarmaSpecialAbilities,
+    KarmaSpecialAbilityIdentifier.HigherOrdination,
+  ),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.KarmaPoints),
   selectIsInCharacterCreation,
   (
@@ -194,13 +234,9 @@ export const selectKarmaPoints = createSelector(
 
     if (!isActive(blessed) || !blessedTraditions.some(isActive) || staticEntry === undefined) {
       return undefined
-    }
-    else {
+    } else {
       const primaryAttrValue = blessedPrimaryAttribute?.dynamic.value
-      const primaryAttrBase =
-        primaryAttrValue === undefined
-        ? 0
-        : primaryAttrValue
+      const primaryAttrBase = primaryAttrValue === undefined ? 0 : primaryAttrValue
 
       const base = 20 + primaryAttrBase
       const modifier = firstLevel(higherOrdination) * 6 + modifierByLevel(incrementor, decrementor)
@@ -215,23 +251,18 @@ export const selectKarmaPoints = createSelector(
         purchaseMaximum: primaryAttrBase,
         purchased,
         isDecreasable:
-          !isInCharacterCreation
-          && permanentlyLost >= permanentlyLostBoughtBack
-          && purchased > 0,
+          !isInCharacterCreation && permanentlyLost >= permanentlyLostBoughtBack && purchased > 0,
         isIncreasable:
-          !isInCharacterCreation
-          && permanentlyLost >= permanentlyLostBoughtBack
-          && purchased < primaryAttrBase,
+          !isInCharacterCreation &&
+          permanentlyLost >= permanentlyLostBoughtBack &&
+          purchased < primaryAttrBase,
         permanentlyLost,
         permanentlyLostBoughtBack,
-        calculation:
-          primaryAttrValue === undefined
-          ? "no_primary"
-          : "default",
+        calculation: primaryAttrValue === undefined ? "no_primary" : "default",
         static: staticEntry,
       }
     }
-  }
+  },
 )
 
 const divideAttributeSumByRound = (attributes: (Rated | undefined)[], divisor: number) =>
@@ -256,9 +287,8 @@ export const selectSpirit = createSelector(
   ): DisplayedDerivedCharacteristic<DCId.Spirit> | undefined => {
     if (race === undefined || staticEntry === undefined) {
       return undefined
-    }
-    else {
-      const base = race.base_values.spirit + divideAttributeSumByRound([ cou, sgc, int ], 6)
+    } else {
+      const base = race.base_values.spirit + divideAttributeSumByRound([cou, sgc, int], 6)
       const modifier = modifierByIsActive(incrementor, decrementor)
       const value = base + modifier
 
@@ -270,7 +300,7 @@ export const selectSpirit = createSelector(
         static: staticEntry,
       }
     }
-  }
+  },
 )
 
 export const selectToughness = createSelector(
@@ -290,9 +320,8 @@ export const selectToughness = createSelector(
   ): DisplayedDerivedCharacteristic<DCId.Toughness> | undefined => {
     if (race === undefined || staticEntry === undefined) {
       return undefined
-    }
-    else {
-      const base = race.base_values.toughness + divideAttributeSumByRound([ con, con, str ], 6)
+    } else {
+      const base = race.base_values.toughness + divideAttributeSumByRound([con, con, str], 6)
       const modifier = modifierByIsActive(incrementor, decrementor)
       const value = base + modifier
 
@@ -304,7 +333,7 @@ export const selectToughness = createSelector(
         static: staticEntry,
       }
     }
-  }
+  },
 )
 
 export const selectDodge = createSelector(
@@ -318,9 +347,8 @@ export const selectDodge = createSelector(
   ): DisplayedDerivedCharacteristic<DCId.Dodge> | undefined => {
     if (staticEntry === undefined) {
       return undefined
-    }
-    else {
-      const base = divideAttributeSumByRound([ agi ], 2)
+    } else {
+      const base = divideAttributeSumByRound([agi], 2)
       const modifier = (higherDefenseStats?.options?.[0] ?? 2) / 2
       const value = base + modifier
 
@@ -332,14 +360,17 @@ export const selectDodge = createSelector(
         static: staticEntry,
       }
     }
-  }
+  },
 )
 
 export const selectInitiative = createSelector(
   createPropertySelector(selectAttributes, AttributeIdentifier.Courage),
   createPropertySelector(selectAttributes, AttributeIdentifier.Agility),
   // eslint-disable-next-line max-len
-  createPropertySelector(selectCombatSpecialAbilities, CombatSpecialAbilityIdentifier.CombatReflexes),
+  createPropertySelector(
+    selectCombatSpecialAbilities,
+    CombatSpecialAbilityIdentifier.CombatReflexes,
+  ),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.Initiative),
   (
     cou,
@@ -349,9 +380,8 @@ export const selectInitiative = createSelector(
   ): DisplayedDerivedCharacteristic<DCId.Initiative> | undefined => {
     if (staticEntry === undefined) {
       return undefined
-    }
-    else {
-      const base = divideAttributeSumByRound([ cou, agi ], 2)
+    } else {
+      const base = divideAttributeSumByRound([cou, agi], 2)
       const modifier = firstLevel(combatReflexes)
       const value = base + modifier
 
@@ -363,7 +393,7 @@ export const selectInitiative = createSelector(
         static: staticEntry,
       }
     }
-  }
+  },
 )
 
 export const selectMovement = createSelector(
@@ -383,21 +413,21 @@ export const selectMovement = createSelector(
   ): DisplayedDerivedCharacteristic<DCId.Movement> | undefined => {
     if (race === undefined || staticEntry === undefined) {
       return undefined
-    }
-    else {
+    } else {
       const oneLegged = 3
-      const isOneLeggedActive = maimed?.instances.some(
-        instance =>
-          instance.options?.[0]?.type === "Predefined"
-          && instance.options?.[0]?.id.type === "Generic"
-          && instance.options?.[0]?.id.value === oneLegged
-      ) ?? false
+      const isOneLeggedActive =
+        maimed?.instances.some(
+          instance =>
+            instance.options?.[0]?.type === "Predefined" &&
+            instance.options?.[0]?.id.type === "Generic" &&
+            instance.options?.[0]?.id.value === oneLegged,
+        ) ?? false
 
       const base = isOneLeggedActive
         ? Math.round(race.base_values.movement / 2)
         : race.base_values.movement
 
-      const modifier = modifierByIsActives([ mimble, leichterGang ], [ slow ])
+      const modifier = modifierByIsActives([mimble, leichterGang], [slow])
       const value = base + modifier
 
       return {
@@ -408,7 +438,7 @@ export const selectMovement = createSelector(
         static: staticEntry,
       }
     }
-  }
+  },
 )
 
 export const selectWoundThreshold = createSelector(
@@ -428,9 +458,8 @@ export const selectWoundThreshold = createSelector(
     //                                              ("US25003")
     if (staticEntry === undefined) {
       return undefined
-    }
-    else {
-      const base = divideAttributeSumByRound([ con ], 2)
+    } else {
+      const base = divideAttributeSumByRound([con], 2)
       const modifier = modifierByIsActive(incrementor, decrementor)
       const value = base + modifier
 
@@ -442,7 +471,7 @@ export const selectWoundThreshold = createSelector(
         static: staticEntry,
       }
     }
-  }
+  },
 )
 
 export const selectFatePoints = createSelector(
@@ -456,8 +485,7 @@ export const selectFatePoints = createSelector(
   ): DisplayedDerivedCharacteristic<DCId.FatePoints> | undefined => {
     if (staticEntry === undefined) {
       return undefined
-    }
-    else {
+    } else {
       const base = 3
       const modifier = modifierByLevel(incrementor, decrementor)
       const value = base + modifier
@@ -470,7 +498,7 @@ export const selectFatePoints = createSelector(
         static: staticEntry,
       }
     }
-  }
+  },
 )
 
 export const selectDerivedCharacteristics = createSelector(
@@ -495,16 +523,17 @@ export const selectDerivedCharacteristics = createSelector(
     movement,
     woundThreshold,
     fatePoints,
-  ): DisplayedDerivedCharacteristic[] => filterNonNullable([
-    lifePoints,
-    arcaneEnergy,
-    karmaPoints,
-    spirit,
-    toughness,
-    dodge,
-    initiative,
-    movement,
-    woundThreshold,
-    fatePoints,
-  ])
+  ): DisplayedDerivedCharacteristic[] =>
+    filterNonNullable([
+      lifePoints,
+      arcaneEnergy,
+      karmaPoints,
+      spirit,
+      toughness,
+      dodge,
+      initiative,
+      movement,
+      woundThreshold,
+      fatePoints,
+    ]),
 )

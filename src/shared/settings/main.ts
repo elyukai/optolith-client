@@ -12,14 +12,14 @@ const globalSettings: GlobalSettings = {
 
 export const attachGlobalSettingsChanged = (
   settingsWindow: BrowserWindow,
-  listener: <K extends keyof GlobalSettings>(key: K, value: GlobalSettings[K]) => void
+  listener: <K extends keyof GlobalSettings>(key: K, value: GlobalSettings[K]) => void,
 ) => {
   ipcMain.on(
     "settings-window-change-setting",
     <K extends keyof GlobalSettings>(_: Event, key: K, value: GlobalSettings[K]) => {
       globalSettings[key] = value
       listener(key, value)
-    }
+    },
   )
 
   settingsWindow.on("closed", () => {

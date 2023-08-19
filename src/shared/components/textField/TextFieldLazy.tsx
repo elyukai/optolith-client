@@ -47,45 +47,40 @@ export const TextFieldLazy: React.FC<Props> = props => {
 
   const inputRef = useRef<HTMLInputElement | null>(null)
 
-  const [ value, setValue ] = useState(defaultValue)
-  const [ prevValue, setPrevValue ] = useState(defaultValue)
+  const [value, setValue] = useState(defaultValue)
+  const [prevValue, setPrevValue] = useState(defaultValue)
 
   if (prevValue !== defaultValue) {
     setValue(defaultValue)
     setPrevValue(defaultValue)
   }
 
-  useEffect(
-    () => {
-      if (autoFocus === true && inputRef.current !== null) {
-        inputRef.current.focus()
+  useEffect(() => {
+    if (autoFocus === true && inputRef.current !== null) {
+      inputRef.current.focus()
+    }
+  }, [autoFocus])
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (
+        disabled !== true &&
+        (typeof checkDirectInput !== "function" || checkDirectInput(e.target.value))
+      ) {
+        setValue(e.target.value)
       }
     },
-    [ autoFocus ]
+    [disabled, checkDirectInput],
   )
 
-  const handleChange =
-    useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (
-          disabled !== true
-          && (typeof checkDirectInput !== "function" || checkDirectInput(e.target.value))
-        ) {
-          setValue(e.target.value)
-        }
-      },
-      [ disabled, checkDirectInput ]
-    )
-
-  const handleBlur =
-    useCallback(
-      (e: React.FocusEvent<HTMLInputElement>) => {
-        if (disabled !== true && defaultValue !== value) {
-          onChange(e.target.value)
-        }
-      },
-      [ defaultValue, disabled, onChange, value ]
-    )
+  const handleBlur = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      if (disabled !== true && defaultValue !== value) {
+        onChange(e.target.value)
+      }
+    },
+    [defaultValue, disabled, onChange, value],
+  )
 
   return (
     <TextFieldContainer
@@ -99,7 +94,7 @@ export const TextFieldLazy: React.FC<Props> = props => {
       isFieldEmpty={value.length === 0}
       label={label}
       valid={valid}
-      >
+    >
       <input
         type={type}
         min={min}
@@ -111,7 +106,7 @@ export const TextFieldLazy: React.FC<Props> = props => {
         readOnly={disabled}
         ref={inputRef}
         onBlur={handleBlur}
-        />
+      />
     </TextFieldContainer>
   )
 }

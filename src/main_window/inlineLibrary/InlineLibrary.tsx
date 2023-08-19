@@ -11,11 +11,7 @@ export const InlineLibrary: FC = () => {
 
   return (
     <Aside className="inline-library">
-      {
-        id === undefined
-        ? <InlineLibraryPlaceholder />
-        : <InlineLibraryRouter id={id} />
-      }
+      {id === undefined ? <InlineLibraryPlaceholder /> : <InlineLibraryRouter id={id} />}
     </Aside>
   )
 }

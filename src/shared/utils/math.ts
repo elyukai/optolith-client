@@ -26,8 +26,7 @@ export const sign = (x: number): string =>
  * Returns the sign of the given number. Returns `undefined` if the number is
  * zero.
  */
-export const signStr = (x: number): string | undefined =>
-  x > 0 ? "+" : x < 0 ? minus : undefined
+export const signStr = (x: number): string | undefined => (x > 0 ? "+" : x < 0 ? minus : undefined)
 
 /**
  * Converts a string to an integer. If the string is not a valid integer, it
@@ -46,8 +45,7 @@ export const parseNat = (str: string): number | undefined =>
 /**
  * Returns a random integer between `0` and `max` (inclusive).
  */
-export const randomInt = (max: number): number =>
-  Math.floor(Math.random() * (max + 1))
+export const randomInt = (max: number): number => Math.floor(Math.random() * (max + 1))
 
 /**
  * Returns a random integer between `min` and `max` (inclusive).

@@ -9,20 +9,17 @@ describe("comparePage", () => {
         { tag: "InsideCoverBack", inside_cover_back: {} },
         { tag: "InsideCoverBack", inside_cover_back: {} },
       ),
-      0
+      0,
     )
     assert.equal(
       comparePage(
         { tag: "InsideCoverFront", inside_cover_front: {} },
         { tag: "InsideCoverFront", inside_cover_front: {} },
       ),
-      0
+      0,
     )
     assert.equal(
-      comparePage(
-        { tag: "Numbered", numbered: 42 },
-        { tag: "Numbered", numbered: 42 },
-      ),
+      comparePage({ tag: "Numbered", numbered: 42 }, { tag: "Numbered", numbered: 42 }),
       0,
     )
   })
@@ -33,27 +30,24 @@ describe("comparePage", () => {
         { tag: "InsideCoverFront", inside_cover_front: {} },
         { tag: "InsideCoverBack", inside_cover_back: {} },
       ),
-      -1
+      -1,
     )
     assert.equal(
       comparePage(
         { tag: "InsideCoverFront", inside_cover_front: {} },
         { tag: "Numbered", numbered: 42 },
       ),
-      -1
+      -1,
     )
     assert.equal(
       comparePage(
         { tag: "Numbered", numbered: 42 },
         { tag: "InsideCoverBack", inside_cover_back: {} },
       ),
-      -1
+      -1,
     )
     assert.equal(
-      comparePage(
-        { tag: "Numbered", numbered: 24 },
-        { tag: "Numbered", numbered: 42 },
-      ),
+      comparePage({ tag: "Numbered", numbered: 24 }, { tag: "Numbered", numbered: 42 }),
       -18,
     )
   })
@@ -64,27 +58,24 @@ describe("comparePage", () => {
         { tag: "InsideCoverBack", inside_cover_back: {} },
         { tag: "InsideCoverFront", inside_cover_front: {} },
       ),
-      1
+      1,
     )
     assert.equal(
       comparePage(
         { tag: "Numbered", numbered: 42 },
         { tag: "InsideCoverFront", inside_cover_front: {} },
       ),
-      1
+      1,
     )
     assert.equal(
       comparePage(
         { tag: "InsideCoverBack", inside_cover_back: {} },
         { tag: "Numbered", numbered: 42 },
       ),
-      1
+      1,
     )
     assert.equal(
-      comparePage(
-        { tag: "Numbered", numbered: 42 },
-        { tag: "Numbered", numbered: 24 },
-      ),
+      comparePage({ tag: "Numbered", numbered: 42 }, { tag: "Numbered", numbered: 24 }),
       18,
     )
   })

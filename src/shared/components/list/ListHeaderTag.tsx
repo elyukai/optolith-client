@@ -16,10 +16,7 @@ export const ListHeaderTag: FCC<Props> = props => {
   if (typeof hint === "string") {
     return (
       <>
-        <TooltipHint
-          hint={hint}
-          targetRef={ref}
-          />
+        <TooltipHint hint={hint} targetRef={ref} />
         <div className={classList("has-hint", className)} ref={ref}>
           {children}
         </div>
@@ -27,9 +24,5 @@ export const ListHeaderTag: FCC<Props> = props => {
     )
   }
 
-  return (
-    <div className={className}>
-      {children}
-    </div>
-  )
+  return <div className={className}>{children}</div>
 }

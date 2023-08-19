@@ -6,18 +6,19 @@ export const useTranslate = () => {
   const localizationContext = useContext(LocalizationContext)
 
   const _translate = useMemo(
-    () => createTranslate(
-      localizationContext.ui,
-      localizationContext.locales,
-      localizationContext.selectedLocale,
-      localizationContext.systemLocale
-    ),
+    () =>
+      createTranslate(
+        localizationContext.ui,
+        localizationContext.locales,
+        localizationContext.selectedLocale,
+        localizationContext.systemLocale,
+      ),
     [
       localizationContext.locales,
       localizationContext.selectedLocale,
       localizationContext.systemLocale,
       localizationContext.ui,
-    ]
+    ],
   )
 
   return _translate

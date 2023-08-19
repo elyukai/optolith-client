@@ -5,10 +5,4 @@ type Props = {
 }
 
 export const TextFieldError: FC<Props> = ({ error }) =>
-  error !== undefined && error !== ""
-  ? (
-    <p className="error">
-      {error}
-    </p>
-  )
-  : null
+  error !== undefined && error !== "" ? <p className="error">{error}</p> : null

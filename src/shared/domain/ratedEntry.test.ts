@@ -11,40 +11,34 @@ describe("createRatedHelpers", () => {
 
   describe("create", () => {
     it("returns initial values if no optional values are provided", () => {
-      assert.deepEqual<Rated>(
-        helpers.create(1),
-        {
-          id: 1,
-          value: 8,
-          dependencies: [],
-          cachedAdventurePoints: {
-            general: 0,
-            bound: 0,
-          },
-          boundAdventurePoints: [],
+      assert.deepEqual<Rated>(helpers.create(1), {
+        id: 1,
+        value: 8,
+        dependencies: [],
+        cachedAdventurePoints: {
+          general: 0,
+          bound: 0,
         },
-      )
+        boundAdventurePoints: [],
+      })
     })
 
     it("calculates adventure points cache if a specific rating is provided", () => {
-      assert.deepEqual<Rated>(
-        helpers.create(1, 9),
-        {
-          id: 1,
-          value: 9,
-          dependencies: [],
-          cachedAdventurePoints: {
-            general: 15,
-            bound: 0,
-          },
-          boundAdventurePoints: [],
+      assert.deepEqual<Rated>(helpers.create(1, 9), {
+        id: 1,
+        value: 9,
+        dependencies: [],
+        cachedAdventurePoints: {
+          general: 15,
+          bound: 0,
         },
-      )
+        boundAdventurePoints: [],
+      })
     })
 
     it("calculates adventure points cache if a specific rating and bound adventure points are provided", () => {
       assert.deepEqual<Rated>(
-        helpers.create(1, 9, { boundAdventurePoints: [ { rating: 9, adventurePoints: 10 } ] }),
+        helpers.create(1, 9, { boundAdventurePoints: [{ rating: 9, adventurePoints: 10 }] }),
         {
           id: 1,
           value: 9,
@@ -53,13 +47,11 @@ describe("createRatedHelpers", () => {
             general: 15,
             bound: 0,
           },
-          boundAdventurePoints: [
-            { rating: 9, adventurePoints: 10 },
-          ],
+          boundAdventurePoints: [{ rating: 9, adventurePoints: 10 }],
         },
       )
       assert.deepEqual<Rated>(
-        helpers.create(1, 9, { boundAdventurePoints: [ { rating: 8, adventurePoints: 10 } ] }),
+        helpers.create(1, 9, { boundAdventurePoints: [{ rating: 8, adventurePoints: 10 }] }),
         {
           id: 1,
           value: 9,
@@ -68,9 +60,7 @@ describe("createRatedHelpers", () => {
             general: 5,
             bound: 10,
           },
-          boundAdventurePoints: [
-            { rating: 8, adventurePoints: 10 },
-          ],
+          boundAdventurePoints: [{ rating: 8, adventurePoints: 10 }],
         },
       )
     })
@@ -96,9 +86,7 @@ describe("createRatedHelpers", () => {
         general: 0,
         bound: 0,
       },
-      boundAdventurePoints: [
-        { rating: 8, adventurePoints: 10 },
-      ],
+      boundAdventurePoints: [{ rating: 8, adventurePoints: 10 }],
     }
 
     it("returns updated rating and adventure points cache", () => {
@@ -126,9 +114,7 @@ describe("createRatedHelpers", () => {
             general: 5,
             bound: 10,
           },
-          boundAdventurePoints: [
-            { rating: 8, adventurePoints: 10 },
-          ],
+          boundAdventurePoints: [{ rating: 8, adventurePoints: 10 }],
         },
       )
     })

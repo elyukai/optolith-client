@@ -11,46 +11,75 @@ import "./NavigationBarTab.scss"
 
 const getRouteTranslation = (route: RoutePath) => {
   switch (route[0]) {
-    case "characters": return (() => {
-      switch (route[2]) {
-        case undefined: return "Characters" as const
-        case "profile": return "Overview" as const
-        case "personal_data": return "Personal Data" as const
-        case "character_sheet": return "Character Sheet" as const
-        case "pact": return "Pact" as const
-        case "rules": return "Rules" as const
+    case "characters":
+      return (() => {
+        switch (route[2]) {
+          case undefined:
+            return "Characters" as const
+          case "profile":
+            return "Overview" as const
+          case "personal_data":
+            return "Personal Data" as const
+          case "character_sheet":
+            return "Character Sheet" as const
+          case "pact":
+            return "Pact" as const
+          case "rules":
+            return "Rules" as const
 
-        case "race": return "Race" as const
-        case "culture": return "Culture" as const
-        case "profession": return "Profession" as const
+          case "race":
+            return "Race" as const
+          case "culture":
+            return "Culture" as const
+          case "profession":
+            return "Profession" as const
 
-        case "attributes": return "Attributes" as const
+          case "attributes":
+            return "Attributes" as const
 
-        case "advantages": return "Advantages" as const
-        case "disadvantages": return "Disadvantages" as const
+          case "advantages":
+            return "Advantages" as const
+          case "disadvantages":
+            return "Disadvantages" as const
 
-        case "skills": return "Skills" as const
-        case "combat_techniques": return "Combat Techniques" as const
-        case "special_abilities": return "Special Abilities" as const
-        case "spells": return "Spells" as const
-        case "liturgical_chants": return "Liturgical Chants" as const
+          case "skills":
+            return "Skills" as const
+          case "combat_techniques":
+            return "Combat Techniques" as const
+          case "special_abilities":
+            return "Special Abilities" as const
+          case "spells":
+            return "Spells" as const
+          case "liturgical_chants":
+            return "Liturgical Chants" as const
 
-        case "equipment": return "Equipment" as const
-        case "hit_zone_armor": return "Hit Zone Armor" as const
-        case "pets": return "Pets" as const
-        default: assertExhaustive(route)
-      }
-    })()
+          case "equipment":
+            return "Equipment" as const
+          case "hit_zone_armor":
+            return "Hit Zone Armor" as const
+          case "pets":
+            return "Pets" as const
+          default:
+            assertExhaustive(route)
+        }
+      })()
 
-    case "groups": return "Groups" as const
-    case "library": return "Library" as const
-    case "faq": return "FAQ" as const
+    case "groups":
+      return "Groups" as const
+    case "library":
+      return "Library" as const
+    case "faq":
+      return "FAQ" as const
 
-    case "imprint": return "Imprint" as const
-    case "third_party_licenses": return "Third-Party Licenses" as const
-    case "last_changes": return "Last Changes" as const
+    case "imprint":
+      return "Imprint" as const
+    case "third_party_licenses":
+      return "Third-Party Licenses" as const
+    case "last_changes":
+      return "Last Changes" as const
 
-    default: assertExhaustive(route)
+    default:
+      assertExhaustive(route)
   }
 }
 
@@ -69,10 +98,7 @@ type Props = {
 }
 
 export const NavigationBarTab: FC<Props> = props => {
-  const {
-    className,
-    displayRoute,
-  } = props
+  const { className, displayRoute } = props
 
   const translate = useTranslate()
   const route = useAppSelector(selectRoute)
@@ -83,17 +109,13 @@ export const NavigationBarTab: FC<Props> = props => {
       ? arrayEqual(displayRoute.route, route)
       : displayRoute.routes.some(subroute => arrayEqual(subroute, route))
 
-  const handleClick = useCallback(
-    () => {
-      if (displayRoute.type === "single") {
-        dispatch(goToTab(displayRoute.route))
-      }
-      else if (displayRoute.type === "group") {
-        dispatch(goToTabGroup(displayRoute.routes))
-      }
-    },
-    [ dispatch, displayRoute ]
-  )
+  const handleClick = useCallback(() => {
+    if (displayRoute.type === "single") {
+      dispatch(goToTab(displayRoute.route))
+    } else if (displayRoute.type === "group") {
+      dispatch(goToTabGroup(displayRoute.routes))
+    }
+  }, [dispatch, displayRoute])
 
   return (
     <Tab
@@ -103,8 +125,8 @@ export const NavigationBarTab: FC<Props> = props => {
       label={translate(
         displayRoute.type === "single"
           ? getRouteTranslation(displayRoute.route)
-          : groupTranslations[displayRoute.name]
+          : groupTranslations[displayRoute.name],
       )}
-      />
+    />
   )
 }

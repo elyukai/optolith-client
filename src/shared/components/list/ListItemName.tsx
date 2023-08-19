@@ -12,22 +12,15 @@ export const ListItemName: FCC<Props> = props => {
   const { addName, children, large, name, onClick } = props
 
   return (
-    <div
-      className={classList("name", { large: large !== undefined })}
-      onClick={onClick}
-      >
-      {addName === undefined
-        ? (
-          <p className="title">
-            {name}
-          </p>
-        )
-        : (
-          <p className="title">
-            <span>{name}</span>
-            <span className="add">{addName}</span>
-          </p>
-        )}
+    <div className={classList("name", { large: large !== undefined })} onClick={onClick}>
+      {addName === undefined ? (
+        <p className="title">{name}</p>
+      ) : (
+        <p className="title">
+          <span>{name}</span>
+          <span className="add">{addName}</span>
+        </p>
+      )}
       {children}
     </div>
   )

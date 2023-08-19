@@ -15,10 +15,7 @@ const sliceReducer = combineReducers({
   settings: settingsReducer,
 })
 
-const reducer = reduceReducers(
-  sliceReducer,
-  globalReducer,
-)
+const reducer = reduceReducers(sliceReducer, globalReducer)
 
 export const store = configureStore({
   reducer,

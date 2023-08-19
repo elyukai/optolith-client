@@ -6,6 +6,4 @@ type Props = {
 }
 
 export const TextFieldLabel: FC<Props> = ({ label }) =>
-  label !== undefined && label !== ""
-  ? <Label text={label} />
-  : null
+  label !== undefined && label !== "" ? <Label text={label} /> : null

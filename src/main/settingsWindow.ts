@@ -5,7 +5,11 @@ import * as url from "node:url"
 import { Database } from "../database/index.ts"
 import type { InitialSetupEventMessage } from "../settings_window_preload/index.ts"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
-import { attachGlobalSettingsBroadcastToWindow, attachGlobalSettingsChanged, getGlobalSettings } from "../shared/settings/main.ts"
+import {
+  attachGlobalSettingsBroadcastToWindow,
+  attachGlobalSettingsChanged,
+  getGlobalSettings,
+} from "../shared/settings/main.ts"
 import { getWindowBackgroundColor, setNativeTheme } from "./nativeTheme.ts"
 const debug = Debug("main:settings")
 
@@ -40,11 +44,13 @@ export const createSettingsWindow = async (
     })
 
     debug("load url")
-    await settingsWindow.loadURL(url.format({
-      pathname: path.join(__dirname, "renderer_settings.html"),
-      protocol: "file:",
-      slashes: true,
-    }))
+    await settingsWindow.loadURL(
+      url.format({
+        pathname: path.join(__dirname, "renderer_settings.html"),
+        protocol: "file:",
+        slashes: true,
+      }),
+    )
 
     // mainWindow.on("maximize", () => mainWindow.webContents.send("maximize"))
 
@@ -60,8 +66,7 @@ export const createSettingsWindow = async (
     attachGlobalSettingsChanged(settingsWindow, (key, value) => {
       if (key === "theme") {
         setNativeTheme(value as GlobalSettings["theme"])
-      }
-      else if (key === "locale") {
+      } else if (key === "locale") {
         onLocaleChanged(value as GlobalSettings["locale"])
       }
     })
@@ -77,8 +82,8 @@ export const createSettingsWindow = async (
     })
 
     const initialSetupEventMessage: InitialSetupEventMessage = {
-      translations: Object.fromEntries(database.ui),
-      locales: Object.fromEntries(database.locales),
+      translations: Object.fromEntries(database.raw.ui),
+      locales: Object.fromEntries(database.raw.locales),
       systemLocale: app.getLocale(),
       settings: getGlobalSettings(),
     }
@@ -89,8 +94,7 @@ export const createSettingsWindow = async (
       debug("initial setup done")
       settingsWindow?.show()
     })
-  }
-  else {
+  } else {
     settingsWindow.focus()
   }
 

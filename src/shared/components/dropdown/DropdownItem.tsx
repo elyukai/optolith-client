@@ -20,8 +20,8 @@ export const DropdownItem = <A extends DropdownKey>(props: Props<A>): ReturnType
   const { active, disabled, onChange, option } = props
 
   const handleClick = useCallback(
-    () => disabled || option.disabled === true ? undefined : onChange(option.id),
-    [ disabled, onChange, option ]
+    () => (disabled || option.disabled === true ? undefined : onChange(option.id)),
+    [disabled, onChange, option],
   )
 
   return (
@@ -31,7 +31,7 @@ export const DropdownItem = <A extends DropdownKey>(props: Props<A>): ReturnType
         disabled: option.disabled === true,
       })}
       onClick={handleClick}
-      >
+    >
       {option.name}
     </li>
   )

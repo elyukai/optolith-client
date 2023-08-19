@@ -11,8 +11,8 @@ type Props = {
   hint?: string
   label: string | undefined
   primary?: boolean
-  onClick? (): void
-  onClickDefault? (f?: () => void): void
+  onClick?(): void
+  onClickDefault?(f?: () => void): void
 }
 
 export type DialogButtonProps = Omit<Props, "onClickDefault">
@@ -35,11 +35,11 @@ export const DialogButton: FC<Props> = props => {
   const handleClick = useCallback(
     () =>
       typeof onClickDefault === "function"
-      ? onClickDefault(onClick)
-      : typeof onClick === "function"
-      ? onClick()
-      : undefined,
-    [ onClick, onClickDefault ]
+        ? onClickDefault(onClick)
+        : typeof onClick === "function"
+        ? onClick()
+        : undefined,
+    [onClick, onClickDefault],
   )
 
   return (
@@ -54,7 +54,7 @@ export const DialogButton: FC<Props> = props => {
       primary={primary}
       onClick={handleClick}
       key={label}
-      >
+    >
       {label}
     </Button>
   )

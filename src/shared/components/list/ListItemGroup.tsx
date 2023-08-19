@@ -11,17 +11,12 @@ type Props = {
 export const ListItemGroup: FCC<Props> = props => {
   const { children, group, getGroupName, small, text } = props
 
-  const content = group !== undefined && typeof getGroupName === "function"
-                  ? getGroupName(group)
-                  : typeof text === "string"
-                  ? text
-                  : children
+  const content =
+    group !== undefined && typeof getGroupName === "function"
+      ? getGroupName(group)
+      : typeof text === "string"
+      ? text
+      : children
 
-  return (
-    <div
-      className={classList("group", { "small-info-text": small })}
-      >
-      {content}
-    </div>
-  )
+  return <div className={classList("group", { "small-info-text": small })}>{content}</div>
 }

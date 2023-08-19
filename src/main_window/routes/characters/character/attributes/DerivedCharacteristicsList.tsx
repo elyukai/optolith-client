@@ -10,10 +10,7 @@ type Props = {
 }
 
 export const DerivedCharacteristicsList: FC<Props> = props => {
-  const {
-    isInCharacterCreation,
-    isRemovingEnabled,
-  } = props
+  const { isInCharacterCreation, isRemovingEnabled } = props
 
   const derivedCharacteristics = useAppSelector(selectDerivedCharacteristics)
 
@@ -25,7 +22,7 @@ export const DerivedCharacteristicsList: FC<Props> = props => {
           attribute={derivedCharacteristic}
           isInCharacterCreation={isInCharacterCreation}
           isRemovingEnabled={isRemovingEnabled}
-          />
+        />
       ))}
     </div>
   )

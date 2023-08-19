@@ -24,20 +24,32 @@ describe("isNotNullish", () => {
 
 describe("mapNullable", () => {
   it("maps a value if it is not nullish", () => {
-    assert.equal(mapNullable(2, x => x * 2), 4)
+    assert.equal(
+      mapNullable(2, x => x * 2),
+      4,
+    )
   })
 
   it("returns the original value if it is nullish", () => {
-    assert.equal(mapNullable(undefined, x => x * 2), undefined)
+    assert.equal(
+      mapNullable(undefined, x => x * 2),
+      undefined,
+    )
   })
 })
 
 describe("mapNullableDefault", () => {
   it("maps a value if it is not nullish", () => {
-    assert.equal(mapNullableDefault(2, x => x * 2, 0), 4)
+    assert.equal(
+      mapNullableDefault(2, x => x * 2, 0),
+      4,
+    )
   })
 
   it("returns a default if the value is nullish", () => {
-    assert.equal(mapNullableDefault(undefined, x => x * 2, 0), 0)
+    assert.equal(
+      mapNullableDefault(undefined, x => x * 2, 0),
+      0,
+    )
   })
 })

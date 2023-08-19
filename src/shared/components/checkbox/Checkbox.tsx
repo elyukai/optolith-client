@@ -21,14 +21,12 @@ export const Checkbox: FCC<Props> = props => {
       className={classList("checkbox", className)}
       onClick={onClick}
       disabled={disabled}
-      >
+    >
       <Icon label="">
         <div className="border" />
         <div className="hook" />
       </Icon>
-      <div className="checkbox-label">
-        {label === undefined ? children : label}
-      </div>
+      <div className="checkbox-label">{label === undefined ? children : label}</div>
     </Activate>
   )
 }

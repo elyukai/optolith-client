@@ -16,7 +16,7 @@ export const NavigationBarTabs: FC<Props> = props => {
         <NavigationBarTab
           key={displayRoute.type === "single" ? displayRoute.route.at(-1) : displayRoute.name}
           displayRoute={displayRoute}
-          />
+        />
       ))}
     </ul>
   )

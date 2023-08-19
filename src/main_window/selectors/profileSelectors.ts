@@ -6,17 +6,16 @@ import { selectCurrentProfession } from "./professionSelectors.ts"
 
 export const selectShowFinishCharacterCreation = createSelector(
   selectIsCharacterCreationFinished,
-  (isCharacterCreationFinished): boolean => !isCharacterCreationFinished
+  (isCharacterCreationFinished): boolean => !isCharacterCreationFinished,
 )
 
 export const selectCanFinishCharacterCreation = createSelector(
   selectAdventurePointsAvailable,
   (availableAdventurePoints): boolean =>
-    availableAdventurePoints >= 0 && availableAdventurePoints <= 10
+    availableAdventurePoints >= 0 && availableAdventurePoints <= 10,
 )
 
 export const selectCanDefineCustomProfessionName = createSelector(
   selectCurrentProfession,
-  (profession): boolean =>
-    profession?.base.id === ProfessionIdentifier.OwnProfession
+  (profession): boolean => profession?.base.id === ProfessionIdentifier.OwnProfession,
 )

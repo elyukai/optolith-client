@@ -12,7 +12,7 @@ export const TitleBarButton: React.FC<Props> = ({ className, icon, onClick }) =>
     className={classList("titlebar-btn", className)}
     disabled={onClick === undefined}
     onClick={onClick}
-    >
+  >
     <span>{icon}</span>
   </button>
 )

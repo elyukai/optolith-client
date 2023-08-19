@@ -40,7 +40,12 @@ import "../shared/styles/index.scss"
 import { ExternalAPI } from "./external.ts"
 import { init } from "./init.ts"
 import { Root } from "./routes/Root.tsx"
-import { setAreAnimationsEnabled, setFallbackLocale, setIsEditAfterCreationEnabled, setLocale } from "./slices/settingsSlice.ts"
+import {
+  setAreAnimationsEnabled,
+  setFallbackLocale,
+  setIsEditAfterCreationEnabled,
+  setLocale,
+} from "./slices/settingsSlice.ts"
 import { store } from "./store.ts"
 
 // webFrame.setZoomFactor (1)
@@ -173,11 +178,11 @@ ExternalAPI.on("initial-setup", ({ database, globalSettings }) => {
           systemLocale={ExternalAPI.systemLocale}
           locales={Object.fromEntries(database.raw.locales)}
           ui={Object.fromEntries(database.raw.ui)}
-          >
+        >
           <Root />
         </LocalizationProvider>
       </Provider>
-    </StrictMode>
+    </StrictMode>,
   )
 
   console.log("database available")

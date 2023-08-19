@@ -14,7 +14,11 @@ import { compareAt, reduceCompare } from "../../../shared/utils/compare.ts"
 import { assertExhaustive } from "../../../shared/utils/typeSafety.ts"
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.ts"
 import { selectCharacters } from "../../slices/charactersSlice.ts"
-import { CharactersSortOrder, changeCharactersSortOrder, selectCharactersSortOrder } from "../../slices/settingsSlice.ts"
+import {
+  CharactersSortOrder,
+  changeCharactersSortOrder,
+  selectCharactersSortOrder,
+} from "../../slices/settingsSlice.ts"
 import "./Characters.scss"
 import { CharactersItem } from "./CharactersItem.tsx"
 
@@ -59,46 +63,45 @@ export const Characters: FC = () => {
   const localeCompare = useLocaleCompare()
   const dispatch = useAppDispatch()
 
-  const [ filterText, setFilterText ] = useState("")
+  const [filterText, setFilterText] = useState("")
   const sortOrder = useAppSelector(selectCharactersSortOrder)
   const handleChangeSortOrder = useCallback(
     (id: CharactersSortOrder) => dispatch(changeCharactersSortOrder(id)),
-    [ dispatch ]
+    [dispatch],
   )
 
   const charactersMap = useAppSelector(selectCharacters)
   const characters = useMemo(
-    () => Object.values(charactersMap)
-      .filter(c => c.name.toLowerCase().includes(filterText.toLowerCase()))
-      .sort((() => {
-        switch (sortOrder) {
-          case CharactersSortOrder.Name:
-            return compareAt(c => c.name, localeCompare)
-          case CharactersSortOrder.DateModified:
-            return reduceCompare(
-              compareAt(c => c.dateLastModified, localeCompare),
-              compareAt(c => c.name, localeCompare),
-            )
-          case CharactersSortOrder.DateCreated:
-            return reduceCompare(
-              compareAt(c => c.dateCreated, localeCompare),
-              compareAt(c => c.name, localeCompare),
-            )
-          default:
-            return assertExhaustive(sortOrder)
-        }
-      })()),
-    [ charactersMap, filterText, localeCompare, sortOrder ]
+    () =>
+      Object.values(charactersMap)
+        .filter(c => c.name.toLowerCase().includes(filterText.toLowerCase()))
+        .sort(
+          (() => {
+            switch (sortOrder) {
+              case CharactersSortOrder.Name:
+                return compareAt(c => c.name, localeCompare)
+              case CharactersSortOrder.DateModified:
+                return reduceCompare(
+                  compareAt(c => c.dateLastModified, localeCompare),
+                  compareAt(c => c.name, localeCompare),
+                )
+              case CharactersSortOrder.DateCreated:
+                return reduceCompare(
+                  compareAt(c => c.dateCreated, localeCompare),
+                  compareAt(c => c.name, localeCompare),
+                )
+              default:
+                return assertExhaustive(sortOrder)
+            }
+          })(),
+        ),
+    [charactersMap, filterText, localeCompare, sortOrder],
   )
 
   return (
     <Page id="characters">
       <Options>
-        <TextField
-          value={filterText}
-          onChange={setFilterText}
-          hint={translate("Search")}
-          />
+        <TextField value={filterText} onChange={setFilterText} hint={translate("Search")} />
         {/* <Dropdown
           value={visibilityFilter}
           onChange={setVisibilityFilter}
@@ -133,17 +136,15 @@ export const Characters: FC = () => {
             },
           ]}
           onClick={handleChangeSortOrder}
-          />
+        />
         <Grid size="small">
           <Button
             /* TODO: onClick={openCharacterCreator} */
             primary
-            >
+          >
             {translate("New Character")}
           </Button>
-          <Button /* TODO: onClick={importHero} */ >
-            {translate("Import")}
-          </Button>
+          <Button /* TODO: onClick={importHero} */>{translate("Import")}</Button>
         </Grid>
       </Options>
       <Main>

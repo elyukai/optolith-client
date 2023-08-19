@@ -11,9 +11,5 @@ type Props = {
 export const Label: FC<Props> = props => {
   const { className, disabled, text } = props
 
-  return (
-    <label className={classList(className, { disabled })} >
-      {text}
-    </label>
-  )
+  return <label className={classList(className, { disabled })}>{text}</label>
 }

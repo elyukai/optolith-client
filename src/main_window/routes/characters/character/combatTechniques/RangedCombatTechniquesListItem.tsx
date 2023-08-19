@@ -26,7 +26,10 @@ import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
 import { selectAttributes } from "../../../../slices/databaseSlice.ts"
-import { changeInlineLibraryEntry, selectInlineLibraryEntryId } from "../../../../slices/inlineWikiSlice.ts"
+import {
+  changeInlineLibraryEntry,
+  selectInlineLibraryEntryId,
+} from "../../../../slices/inlineWikiSlice.ts"
 import { SkillAdditionalValues } from "../skills/SkillAdditionalValues.tsx"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillImprovementCost } from "../skills/SkillImprovementCost.tsx"
@@ -67,11 +70,13 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
   const canRemove = useAppSelector(selectCanRemove)
 
-  const handleSelectForInfo =
-    useCallback(
-      () => dispatch(changeInlineLibraryEntry({ tag: "RangedCombatTechnique", ranged_combat_technique: id })),
-      [ dispatch, id ]
-    )
+  const handleSelectForInfo = useCallback(
+    () =>
+      dispatch(
+        changeInlineLibraryEntry({ tag: "RangedCombatTechnique", ranged_combat_technique: id }),
+      ),
+    [dispatch, id],
+  )
 
   const attributes = useAppSelector(selectAttributes)
 
@@ -86,16 +91,16 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
   return (
     <ListItem
       insertTopMargin={insertTopMargin}
-      active={inlineLibraryEntryId?.tag === "RangedCombatTechnique" && inlineLibraryEntryId.ranged_combat_technique === id}
-      >
+      active={
+        inlineLibraryEntryId?.tag === "RangedCombatTechnique" &&
+        inlineLibraryEntryId.ranged_combat_technique === id
+      }
+    >
       <ListItemName name={name} onClick={handleSelectForInfo} />
       <ListItemSeparator />
       <ListItemGroup text={translate("Ranged Combat")} />
       <ListItemValues>
-        <SkillRating
-          sr={sr}
-          addPoint={addPoint}
-          />
+        <SkillRating sr={sr} addPoint={addPoint} />
         <SkillImprovementCost ic={ic} />
         <SkillAdditionalValues
           addValues={[
@@ -105,9 +110,9 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
             {
               className: "pa",
               value: "—",
-            }
+            },
           ]}
-          />
+        />
       </ListItemValues>
       <SkillButtons
         addDisabled={addDisabled}
@@ -118,7 +123,7 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
         addPoint={addPoint}
         removePoint={canRemove ? removePoint : undefined}
         selectForInfo={handleSelectForInfo}
-        />
+      />
     </ListItem>
   )
 }

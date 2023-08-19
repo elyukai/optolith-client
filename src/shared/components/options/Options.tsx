@@ -7,9 +7,7 @@ export const Options: FCC = props => {
 
   return (
     <aside className="options">
-      <Grid size="large">
-        {children}
-      </Grid>
+      <Grid size="large">{children}</Grid>
     </aside>
   )
 }

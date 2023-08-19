@@ -38,31 +38,34 @@ const rerollHeightLogic = (height: Height) => {
 
 const rerollWeightLogic = (weight: Weight) => {
   const separatedDice = weight.random.flatMap(dice =>
-    Array.from({ length: dice.number }, () => [ dice.sides, dice.offset_strategy ] as const))
+    Array.from({ length: dice.number }, () => [dice.sides, dice.offset_strategy] as const),
+  )
 
   const rollWeightDice = (sides: DieType, strategy: WeightDiceOffsetStrategy) => {
     switch (strategy) {
-      case "Add": return rollDice(sides)
-      case "Subtract": return -rollDice(sides)
+      case "Add":
+        return rollDice(sides)
+      case "Subtract":
+        return -rollDice(sides)
       case "AddEvenSubtractOdd": {
         const result = rollDice(sides)
         return result * (even(result) ? 1 : -1)
       }
-      default: return assertExhaustive(strategy)
+      default:
+        return assertExhaustive(strategy)
     }
   }
 
   const diceRollSum = separatedDice.reduce(
-    (acc, [ sides, strategy ]) => acc + rollWeightDice(sides, strategy),
-    0
+    (acc, [sides, strategy]) => acc + rollWeightDice(sides, strategy),
+    0,
   )
   return -weight.base + diceRollSum
 }
 
-export const rerollSize = createAction(
-  "personalData/rerollSize",
-  (height: Height) => ({ payload: rerollHeightLogic(height) })
-)
+export const rerollSize = createAction("personalData/rerollSize", (height: Height) => ({
+  payload: rerollHeightLogic(height),
+}))
 
 export const rerollWeight = createAction(
   "personalData/rerollWeight",
@@ -71,76 +74,60 @@ export const rerollWeight = createAction(
       heightModifier: rerollWeightLogic(weight),
       height: rerollHeightLogic(height),
     },
-  })
+  }),
 )
 
-export const personalDataReducer =
-  createImmerReducer<CharacterState>((state, action) => {
-    if (setFamily.match(action)) {
-      state.personalData.family = action.payload === "" ? undefined : action.payload
-    }
-    else if (setPlaceOfBirth.match(action)) {
-      state.personalData.placeOfBirth = action.payload === "" ? undefined : action.payload
-    }
-    else if (setDateOfBirth.match(action)) {
-      state.personalData.dateOfBirth = action.payload === "" ? undefined : action.payload
-    }
-    else if (setAge.match(action)) {
-      state.personalData.age = action.payload === "" ? undefined : action.payload
-    }
-    else if (setPredefinedHairColor.match(action)) {
+export const personalDataReducer = createImmerReducer<CharacterState>((state, action) => {
+  if (setFamily.match(action)) {
+    state.personalData.family = action.payload === "" ? undefined : action.payload
+  } else if (setPlaceOfBirth.match(action)) {
+    state.personalData.placeOfBirth = action.payload === "" ? undefined : action.payload
+  } else if (setDateOfBirth.match(action)) {
+    state.personalData.dateOfBirth = action.payload === "" ? undefined : action.payload
+  } else if (setAge.match(action)) {
+    state.personalData.age = action.payload === "" ? undefined : action.payload
+  } else if (setPredefinedHairColor.match(action)) {
+    state.personalData.hairColor = { type: "Predefined", id: action.payload }
+  } else if (rerollHairColor.match(action)) {
+    if (action.payload !== undefined) {
       state.personalData.hairColor = { type: "Predefined", id: action.payload }
     }
-    else if (rerollHairColor.match(action)) {
-      if (action.payload !== undefined) {
-        state.personalData.hairColor = { type: "Predefined", id: action.payload }
-      }
-    }
-    else if (setPredefinedEyeColor.match(action)) {
+  } else if (setPredefinedEyeColor.match(action)) {
+    state.personalData.eyeColor = { type: "Predefined", id: action.payload }
+  } else if (rerollEyeColor.match(action)) {
+    if (action.payload !== undefined) {
       state.personalData.eyeColor = { type: "Predefined", id: action.payload }
     }
-    else if (rerollEyeColor.match(action)) {
-      if (action.payload !== undefined) {
-        state.personalData.eyeColor = { type: "Predefined", id: action.payload }
-      }
-    }
-    else if (setSize.match(action)) {
-      state.personalData.size = action.payload === "" ? undefined : action.payload
-    }
-    else if (rerollSize.match(action)) {
-      state.personalData.size = action.payload.toString()
-    }
-    else if (setWeight.match(action)) {
-      state.personalData.weight = action.payload === "" ? undefined : action.payload
-    }
-    else if (rerollWeight.match(action)) {
-      const { height, isNew } = (() => {
-        const heightStr = state.personalData.size
-        const previousHeight = heightStr === undefined ? undefined : parseInt(heightStr)
+  } else if (setSize.match(action)) {
+    state.personalData.size = action.payload === "" ? undefined : action.payload
+  } else if (rerollSize.match(action)) {
+    state.personalData.size = action.payload.toString()
+  } else if (setWeight.match(action)) {
+    state.personalData.weight = action.payload === "" ? undefined : action.payload
+  } else if (rerollWeight.match(action)) {
+    const { height, isNew } = (() => {
+      const heightStr = state.personalData.size
+      const previousHeight = heightStr === undefined ? undefined : parseInt(heightStr)
 
-        if (previousHeight === undefined) {
-          return { height: action.payload.height, isNew: true }
-        }
-
-        return { height: previousHeight, isNew: false }
-      })()
-
-      if (isNew) {
-        state.personalData.size = height.toString()
+      if (previousHeight === undefined) {
+        return { height: action.payload.height, isNew: true }
       }
 
-      state.personalData.weight = (height + action.payload.heightModifier).toString()
+      return { height: previousHeight, isNew: false }
+    })()
+
+    if (isNew) {
+      state.personalData.size = height.toString()
     }
-    else if (setTitle.match(action)) {
-      state.personalData.title = action.payload === "" ? undefined : action.payload
-    }
-    else if (setSocialStatus.match(action)) {
-      state.personalData.socialStatus.id = action.payload
-    }
-    else if (setCharacteristics.match(action)) {
-      state.personalData.characteristics = action.payload === "" ? undefined : action.payload
-    }
-    else if (setOtherInfo.match(action)) {
-      state.personalData.otherInfo = action.payload === "" ? undefined : action.payload
-    }
-  })
+
+    state.personalData.weight = (height + action.payload.heightModifier).toString()
+  } else if (setTitle.match(action)) {
+    state.personalData.title = action.payload === "" ? undefined : action.payload
+  } else if (setSocialStatus.match(action)) {
+    state.personalData.socialStatus.id = action.payload
+  } else if (setCharacteristics.match(action)) {
+    state.personalData.characteristics = action.payload === "" ? undefined : action.payload
+  } else if (setOtherInfo.match(action)) {
+    state.personalData.otherInfo = action.payload === "" ? undefined : action.payload
+  }
+})

@@ -25,61 +25,65 @@ const databaseLoading = new Promise<Database>(resolve => {
   })
 })
 
-const runAsync = <T extends any[]>(fn: (...args: T) => Promise<void>) => (...args: T) => {
-  fn(...args).catch(err => debug("unexpected error: %O", err))
-}
+const runAsync =
+  <T extends any[]>(fn: (...args: T) => Promise<void>) =>
+  (...args: T) => {
+    fn(...args).catch(err => debug("unexpected error: %O", err))
+  }
 
 const setMenu = (database: Database) => {
   const translate = createTranslate(
     Object.fromEntries(database.raw.ui),
     Object.fromEntries(database.raw.locales),
     getGlobalSettings().locale,
-    app.getLocale()
+    app.getLocale(),
   )
 
   const template: MenuItemConstructorOptions[] = [
     // { role: "appMenu" }
     ...(isMac
-      ? [ {
-          label: app.name,
-          submenu: [
-            {
-              role: "about",
-              label: translate("About {0}", app.name),
-            },
-            { type: "separator" },
-            {
-              label: translate("Preferences …"),
-              accelerator: "Command+,",
-              click: runAsync(async () => {
-                await createSettingsWindow(database, () => setMenu(database))
-              }),
-            },
-            { type: "separator" },
-            {
-              role: "services",
-              label: translate("Services"),
-            },
-            { type: "separator" },
-            {
-              role: "hide",
-              label: translate("Hide {0}", app.name),
-            },
-            {
-              role: "hideOthers",
-              label: translate("Hide Others"),
-            },
-            {
-              role: "unhide",
-              label: translate("Show All"),
-            },
-            { type: "separator" },
-            {
-              role: "quit",
-              label: translate("Quit {0}", app.name),
-            },
-          ],
-        } as MenuItemConstructorOptions ]
+      ? [
+          {
+            label: app.name,
+            submenu: [
+              {
+                role: "about",
+                label: translate("About {0}", app.name),
+              },
+              { type: "separator" },
+              {
+                label: translate("Preferences …"),
+                accelerator: "Command+,",
+                click: runAsync(async () => {
+                  await createSettingsWindow(database, () => setMenu(database))
+                }),
+              },
+              { type: "separator" },
+              {
+                role: "services",
+                label: translate("Services"),
+              },
+              { type: "separator" },
+              {
+                role: "hide",
+                label: translate("Hide {0}", app.name),
+              },
+              {
+                role: "hideOthers",
+                label: translate("Hide Others"),
+              },
+              {
+                role: "unhide",
+                label: translate("Show All"),
+              },
+              { type: "separator" },
+              {
+                role: "quit",
+                label: translate("Quit {0}", app.name),
+              },
+            ],
+          } as MenuItemConstructorOptions,
+        ]
       : []),
     // { role: "fileMenu" }
     {
@@ -89,19 +93,19 @@ const setMenu = (database: Database) => {
           label: translate("New Character"),
           accelerator: "CommandOrControl+N",
           click: runAsync(async () => {
-            (await createMainWindow(database)).webContents.send("new-character")
+            ;(await createMainWindow(database)).webContents.send("new-character")
           }),
         },
         { type: "separator" },
         isMac
           ? {
-            role: "close",
-            label: translate("Close"),
-          }
+              role: "close",
+              label: translate("Close"),
+            }
           : {
-            role: "quit",
-            label: translate("Quit"),
-          },
+              role: "quit",
+              label: translate("Quit"),
+            },
       ],
     } as MenuItemConstructorOptions,
     // { role: "editMenu" }
@@ -155,16 +159,18 @@ const setMenu = (database: Database) => {
     } as MenuItemConstructorOptions,
     // { role: "viewMenu" }
     ...(isMac
-      ? [ {
-        label: translate("View"),
-        submenu: [
-          { role: "toggleDevTools" },
+      ? [
           {
-            role: "togglefullscreen",
-            label: translate("Toggle Full Screen"),
-          },
-        ],
-      } as MenuItemConstructorOptions ]
+            label: translate("View"),
+            submenu: [
+              { role: "toggleDevTools" },
+              {
+                role: "togglefullscreen",
+                label: translate("Toggle Full Screen"),
+              },
+            ],
+          } as MenuItemConstructorOptions,
+        ]
       : []),
     // { role: "windowMenu" }
     {
@@ -226,16 +232,16 @@ const setUserDataPath = async () => {
 const installExtensions = async () => {
   debug("install extensions ...")
 
-  const installedExtensions: string[] | string | undefined =
-    await Promise.resolve(undefined as string[] | string | undefined) /* await installExtension([
+  const installedExtensions: string[] | string | undefined = await Promise.resolve(
+    undefined as string[] | string | undefined,
+  ) /* await installExtension([
       REACT_DEVELOPER_TOOLS,
       REDUX_DEVTOOLS,
     ]) */
 
-  const installedExtensionsString =
-    Array.isArray(installedExtensions)
-      ? installedExtensions.join(", ")
-      : installedExtensions ?? "none"
+  const installedExtensionsString = Array.isArray(installedExtensions)
+    ? installedExtensions.join(", ")
+    : installedExtensions ?? "none"
 
   debug("installed extensions: %s", installedExtensionsString)
 }
@@ -255,8 +261,7 @@ app.whenReady().then(async () => {
   const database = await databaseLoading
   setMenu(database)
   setNativeTheme(getGlobalSettings().theme)
-  const installUpdateInsteadOfStartup =
-    await checkForUpdatesOnStartup(database)
+  const installUpdateInsteadOfStartup = await checkForUpdatesOnStartup(database)
 
   debug("skip startup because of update?", installUpdateInsteadOfStartup ? "yes" : "no")
   if (!installUpdateInsteadOfStartup) {
@@ -267,24 +272,33 @@ app.whenReady().then(async () => {
     ipcMain.handle("receive-changelog", _ => readFileInAppPath("CHANGELOG.md"))
     ipcMain.handle("receive-version", _ => app.getVersion())
     ipcMain.handle("receive-system-locale", _ => app.getSystemLocale())
-    ipcMain.on("show-settings", runAsync(async () => {
-      debug("show settings")
-      await createSettingsWindow(database, () => setMenu(database))
-    }))
-    ipcMain.on("check-for-update", runAsync(async () => {
-      debug("check for update")
-      await checkForUpdatesOnRequest(database)
-    }))
+    ipcMain.on(
+      "show-settings",
+      runAsync(async () => {
+        debug("show settings")
+        await createSettingsWindow(database, () => setMenu(database))
+      }),
+    )
+    ipcMain.on(
+      "check-for-update",
+      runAsync(async () => {
+        debug("check for update")
+        await checkForUpdatesOnRequest(database)
+      }),
+    )
 
     await createMainWindow(database)
   }
 
-  app.on("activate", runAsync(async (_event, hasVisibleWindows) => {
-    debug("activated: hasVisibleWindows = %s", hasVisibleWindows)
-    if (!hasVisibleWindows) {
-      await createMainWindow(database)
-    }
-  }))
+  app.on(
+    "activate",
+    runAsync(async (_event, hasVisibleWindows) => {
+      debug("activated: hasVisibleWindows = %s", hasVisibleWindows)
+      if (!hasVisibleWindows) {
+        await createMainWindow(database)
+      }
+    }),
+  )
 })
 
 handleNativeThemeChanges()

@@ -9,9 +9,5 @@ type Props = {
 export const List: FCC<Props> = props => {
   const { children, className } = props
 
-  return (
-    <ul className={classList("list-wrapper", className)}>
-      {children}
-    </ul>
-  )
+  return <ul className={classList("list-wrapper", className)}>{children}</ul>
 }

@@ -21,7 +21,7 @@ type Props<A extends SegmentedOptionValue> = {
 }
 
 export const SegmentedControls = <A extends SegmentedOptionValue = SegmentedOptionValue>(
-  props: Props<A>
+  props: Props<A>,
 ): ReturnType<FC<Props<A>>> => {
   const { active, disabled, label, onClick, options } = props
 
@@ -36,7 +36,7 @@ export const SegmentedControls = <A extends SegmentedOptionValue = SegmentedOpti
             disabled={disabled}
             onClick={onClick}
             option={option}
-            />
+          />
         ))}
       </div>
     </div>

@@ -25,11 +25,11 @@ type UpdatePhase =
 export const Root: FC<Props> = props => {
   const { systemLocale, locale } = props
 
-  const [ phase, setPhase ] = useState<UpdatePhase>({ type: "Checking" })
+  const [phase, setPhase] = useState<UpdatePhase>({ type: "Checking" })
 
   const translate = useTranslate()
 
-  const [ prevPhase, setPrevPhase ] = useState<UpdatePhase["type"] | undefined>()
+  const [prevPhase, setPrevPhase] = useState<UpdatePhase["type"] | undefined>()
 
   useEffect(() => {
     if (prevPhase !== phase.type) {
@@ -80,14 +80,11 @@ export const Root: FC<Props> = props => {
 
     // return () => clearInterval(timer)
 
-    const onUpdateAvailable = (info: UpdateInfo) =>
-      setPhase({ type: "Available", info })
+    const onUpdateAvailable = (info: UpdateInfo) => setPhase({ type: "Available", info })
 
-    const onNoUpdateAvailable = () =>
-      setPhase({ type: "NoneAvailable" })
+    const onNoUpdateAvailable = () => setPhase({ type: "NoneAvailable" })
 
-    const onUpdateDownloadProgress = (info: ProgressInfo) =>
-      setPhase({ type: "Downloading", info })
+    const onUpdateDownloadProgress = (info: ProgressInfo) => setPhase({ type: "Downloading", info })
 
     const onUpdateDownloaded = (info: UpdateDownloadedEvent) =>
       setPhase({ type: "Downloaded", info })
@@ -103,20 +100,26 @@ export const Root: FC<Props> = props => {
       ExternalAPI.removeListener("download-progress", onUpdateDownloadProgress)
       ExternalAPI.removeListener("update-downloaded", onUpdateDownloaded)
     }
-  }, [ phase.type, prevPhase ])
+  }, [phase.type, prevPhase])
 
   const title = (() => {
     switch (phase.type) {
-      case "Checking":      return translate("Checking for updates …")
-      case "NoneAvailable": return translate("No update available")
-      case "Available":     return translate("New version available")
-      case "Downloading":   return translate("Downloading update …")
-      case "Downloaded":    return translate("Update downloaded")
-      default: return assertExhaustive(phase)
+      case "Checking":
+        return translate("Checking for updates …")
+      case "NoneAvailable":
+        return translate("No update available")
+      case "Available":
+        return translate("New version available")
+      case "Downloading":
+        return translate("Downloading update …")
+      case "Downloaded":
+        return translate("Update downloaded")
+      default:
+        return assertExhaustive(phase)
     }
   })()
 
-  useEffect(() => ExternalAPI.setTitle(title), [ title, translate ])
+  useEffect(() => ExternalAPI.setTitle(title), [title, translate])
 
   return (
     <>
@@ -125,76 +128,82 @@ export const Root: FC<Props> = props => {
         secondary
         platform={ExternalAPI.platform}
         onClose={ExternalAPI.close}
-        />
+      />
       <main>
         {(() => {
           switch (phase.type) {
-            case "Checking": return (
-              <>
-                <LoadingIndicator />
-              </>
-            )
-            case "NoneAvailable": return (
-              <>
-                <p>{translate("You're running the latest version available.")}</p>
-                <div className="buttons">
-                  <Button onClick={ExternalAPI.close}>{translate("Done")}</Button>
-                </div>
-              </>
-            )
-            case "Available": return (
-              <>
-                <p>
-                  {translate(
-                    "Version {0} is available! Do you wish to download and install?",
-                    phase.info.version
-                  )}
-                </p>
-                <div className="buttons">
-                  <Button onClick={ExternalAPI.close}>{translate("Download")}</Button>
-                  <Button onClick={ExternalAPI.close}>{translate("Download Later")}</Button>
-                </div>
-              </>
-            )
-            case "Downloading": return (
-              <>
-                <div>
-                  <div className="download-progress-info">
-                    <div className="download-progress-info-size">
-                      {bytify(phase.info.transferred, locale, systemLocale)}
-                      {"/"}
-                      {bytify(phase.info.total, locale, systemLocale)}
-                    </div>
-                    <div className="download-progress-info-speed">
-                      {bytify(phase.info.bytesPerSecond, locale, systemLocale)}
-                      {"/s"}
-                    </div>
+            case "Checking":
+              return (
+                <>
+                  <LoadingIndicator />
+                </>
+              )
+            case "NoneAvailable":
+              return (
+                <>
+                  <p>{translate("You're running the latest version available.")}</p>
+                  <div className="buttons">
+                    <Button onClick={ExternalAPI.close}>{translate("Done")}</Button>
                   </div>
-                  <ProgressBar orientation="horizontal" current={phase.info.percent} max={100} />
-                </div>
-                <div className="buttons">
-                  <Button disabled>{translate("Quit and Install")}</Button>
-                  <Button disabled>{translate("Install Later")}</Button>
-                </div>
-              </>
-            )
-            case "Downloaded": return (
-              <>
-                <div>
-                  <div className="download-progress-info">
-                    <div className="download-progress-info-size">
-                      {translate("Update downloaded")}
-                    </div>
+                </>
+              )
+            case "Available":
+              return (
+                <>
+                  <p>
+                    {translate(
+                      "Version {0} is available! Do you wish to download and install?",
+                      phase.info.version,
+                    )}
+                  </p>
+                  <div className="buttons">
+                    <Button onClick={ExternalAPI.close}>{translate("Download")}</Button>
+                    <Button onClick={ExternalAPI.close}>{translate("Download Later")}</Button>
                   </div>
-                  <ProgressBar orientation="horizontal" current={100} max={100} />
-                </div>
-                <div className="buttons">
-                  <Button onClick={ExternalAPI.close}>{translate("Quit and Install")}</Button>
-                  <Button onClick={ExternalAPI.close}>{translate("Install Later")}</Button>
-                </div>
-              </>
-            )
-            default: return assertExhaustive(phase)
+                </>
+              )
+            case "Downloading":
+              return (
+                <>
+                  <div>
+                    <div className="download-progress-info">
+                      <div className="download-progress-info-size">
+                        {bytify(phase.info.transferred, locale, systemLocale)}
+                        {"/"}
+                        {bytify(phase.info.total, locale, systemLocale)}
+                      </div>
+                      <div className="download-progress-info-speed">
+                        {bytify(phase.info.bytesPerSecond, locale, systemLocale)}
+                        {"/s"}
+                      </div>
+                    </div>
+                    <ProgressBar orientation="horizontal" current={phase.info.percent} max={100} />
+                  </div>
+                  <div className="buttons">
+                    <Button disabled>{translate("Quit and Install")}</Button>
+                    <Button disabled>{translate("Install Later")}</Button>
+                  </div>
+                </>
+              )
+            case "Downloaded":
+              return (
+                <>
+                  <div>
+                    <div className="download-progress-info">
+                      <div className="download-progress-info-size">
+                        {translate("Update downloaded")}
+                      </div>
+                    </div>
+                    <ProgressBar orientation="horizontal" current={100} max={100} />
+                  </div>
+                  <div className="buttons">
+                    <Button onClick={ExternalAPI.close}>{translate("Quit and Install")}</Button>
+                    <Button onClick={ExternalAPI.close}>{translate("Install Later")}</Button>
+                  </div>
+                </>
+              )
+            default:
+              return assertExhaustive(phase)
           }
         })()}
       </main>

@@ -7,5 +7,5 @@ import { selectCultures } from "../slices/databaseSlice.ts"
 export const selectCurrentCulture = createSelector(
   selectCultures,
   selectCultureId,
-  (cultures, id): Culture | undefined => id === undefined ? undefined : getCulture(cultures, id)
+  (cultures, id): Culture | undefined => (id === undefined ? undefined : getCulture(cultures, id)),
 )

@@ -16,45 +16,74 @@ export const Router: FC = () => {
   const route = useAppSelector(selectRoute)
 
   switch (route[0]) {
-    case "characters": return (() => {
-      switch (route[2]) {
-        case undefined: return <Characters />
-        case "profile": return <ProfileOverview />
-        case "personal_data": return null
-        case "character_sheet": return null
-        case "pact": return null
-        case "rules": return <Rules />
+    case "characters":
+      return (() => {
+        switch (route[2]) {
+          case undefined:
+            return <Characters />
+          case "profile":
+            return <ProfileOverview />
+          case "personal_data":
+            return null
+          case "character_sheet":
+            return null
+          case "pact":
+            return null
+          case "rules":
+            return <Rules />
 
-        case "race": return null
-        case "culture": return null
-        case "profession": return null
+          case "race":
+            return null
+          case "culture":
+            return null
+          case "profession":
+            return null
 
-        case "attributes": return <Attributes />
+          case "attributes":
+            return <Attributes />
 
-        case "advantages": return null
-        case "disadvantages": return null
+          case "advantages":
+            return null
+          case "disadvantages":
+            return null
 
-        case "skills": return <Skills />
-        case "combat_techniques": return <CombatTechniques />
-        case "special_abilities": return null
-        case "spells": return null
-        case "liturgical_chants": return null
+          case "skills":
+            return <Skills />
+          case "combat_techniques":
+            return <CombatTechniques />
+          case "special_abilities":
+            return null
+          case "spells":
+            return null
+          case "liturgical_chants":
+            return null
 
-        case "equipment": return null
-        case "hit_zone_armor": return null
-        case "pets": return null
-        default: assertExhaustive(route)
-      }
-    })()
+          case "equipment":
+            return null
+          case "hit_zone_armor":
+            return null
+          case "pets":
+            return null
+          default:
+            assertExhaustive(route)
+        }
+      })()
 
-    case "groups": return null // <Grouplist />,
-    case "library": return null // <WikiContainer staticData={staticData} />,
-    case "faq": return null // <HelpContainer staticData={staticData} />,
+    case "groups":
+      return null // <Grouplist />,
+    case "library":
+      return null // <WikiContainer staticData={staticData} />,
+    case "faq":
+      return null // <HelpContainer staticData={staticData} />,
 
-    case "imprint": return <Imprint />
-    case "third_party_licenses": return <ThirdPartyLicenses />
-    case "last_changes": return <LastChanges />
+    case "imprint":
+      return <Imprint />
+    case "third_party_licenses":
+      return <ThirdPartyLicenses />
+    case "last_changes":
+      return <LastChanges />
 
-    default: assertExhaustive(route)
+    default:
+      assertExhaustive(route)
   }
 }

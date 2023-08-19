@@ -1,7 +1,11 @@
 import { AnyAction, createAction } from "@reduxjs/toolkit"
 import { Draft } from "immer"
 import { ActivatableMap } from "../../shared/domain/activatableEntry.ts"
-import { ActivatableRatedMap, ActivatableRatedWithEnhancementsMap, RatedMap } from "../../shared/domain/ratedEntry.ts"
+import {
+  ActivatableRatedMap,
+  ActivatableRatedWithEnhancementsMap,
+  RatedMap,
+} from "../../shared/domain/ratedEntry.ts"
 import { Sex } from "../../shared/domain/sex.ts"
 import { createImmerReducer, reduceReducers } from "../../shared/utils/redux.ts"
 import { RootState } from "../store.ts"
@@ -169,7 +173,7 @@ export type CharacterState = {
   personalData: {
     /**
      * The character's sex. It does not have to be binary, although it always must be specified how to handle it in the context of binary sex prerequisites. You can also provide a custom sex with a custom name.
-      */
+     */
     sex: Sex
 
     /**
@@ -362,9 +366,7 @@ export type SocialStatusDependency = {
   id: number
 }
 
-export type Color =
-  | PredefinedColor
-  | CustomColor
+export type Color = PredefinedColor | CustomColor
 
 /**
  * A predefined color.
@@ -599,33 +601,42 @@ const initialState = (): CharacterState => ({
 export { initialState as initialCharacterState }
 
 export const selectCurrentCharacter = (state: RootState): CharacterState | undefined => {
-  const selectedId = state.route.path[0] === "characters"
-    ? state.route.path[1]
-    : undefined
+  const selectedId = state.route.path[0] === "characters" ? state.route.path[1] : undefined
 
-  return selectedId === undefined
-    ? undefined
-    : state.characters[selectedId]
+  return selectedId === undefined ? undefined : state.characters[selectedId]
 }
 
 export const selectName = (state: RootState) => selectCurrentCharacter(state)?.name
 export const selectAvatar = (state: RootState) => selectCurrentCharacter(state)?.avatar
-export const selectTotalAdventurePoints = (state: RootState) => selectCurrentCharacter(state)?.totalAdventurePoints
-export const selectExperienceLevelStartId = (state: RootState) => selectCurrentCharacter(state)?.experienceLevelStartId
-export const selectIsCharacterCreationFinished = (state: RootState) => selectCurrentCharacter(state)?.isCharacterCreationFinished ?? false
+export const selectTotalAdventurePoints = (state: RootState) =>
+  selectCurrentCharacter(state)?.totalAdventurePoints
+export const selectExperienceLevelStartId = (state: RootState) =>
+  selectCurrentCharacter(state)?.experienceLevelStartId
+export const selectIsCharacterCreationFinished = (state: RootState) =>
+  selectCurrentCharacter(state)?.isCharacterCreationFinished ?? false
 export const selectRaceId = (state: RootState) => selectCurrentCharacter(state)?.race.id
-export const selectRaceVariantId = (state: RootState) => selectCurrentCharacter(state)?.race.variantId
-export const selectAttributeAdjustmentId = (state: RootState) => selectCurrentCharacter(state)?.race.selectedAttributeAdjustmentId
+export const selectRaceVariantId = (state: RootState) =>
+  selectCurrentCharacter(state)?.race.variantId
+export const selectAttributeAdjustmentId = (state: RootState) =>
+  selectCurrentCharacter(state)?.race.selectedAttributeAdjustmentId
 export const selectCultureId = (state: RootState) => selectCurrentCharacter(state)?.culture.id
 export const selectProfessionId = (state: RootState) => selectCurrentCharacter(state)?.profession.id
-export const selectProfessionInstanceId = (state: RootState) => selectCurrentCharacter(state)?.profession.instanceId
-export const selectProfessionVariantId = (state: RootState) => selectCurrentCharacter(state)?.profession.variantId
-export const selectCustomProfessionName = (state: RootState) => selectCurrentCharacter(state)?.profession.customName
-export const selectIncludeAllPublications = (state: RootState) => selectCurrentCharacter(state)?.rules.includeAllPublications
-export const selectIncludePublications = (state: RootState) => selectCurrentCharacter(state)?.rules.includePublications
-export const selectActiveFocusRules = (state: RootState) => selectCurrentCharacter(state)?.rules.activeFocusRules ?? {}
-export const selectActiveOptionalRules = (state: RootState) => selectCurrentCharacter(state)?.rules.activeOptionalRules ?? {}
-export const selectPersonalData = (state: RootState): CharacterState["personalData"] => selectCurrentCharacter(state)?.personalData ?? staticInitialState.personalData
+export const selectProfessionInstanceId = (state: RootState) =>
+  selectCurrentCharacter(state)?.profession.instanceId
+export const selectProfessionVariantId = (state: RootState) =>
+  selectCurrentCharacter(state)?.profession.variantId
+export const selectCustomProfessionName = (state: RootState) =>
+  selectCurrentCharacter(state)?.profession.customName
+export const selectIncludeAllPublications = (state: RootState) =>
+  selectCurrentCharacter(state)?.rules.includeAllPublications
+export const selectIncludePublications = (state: RootState) =>
+  selectCurrentCharacter(state)?.rules.includePublications
+export const selectActiveFocusRules = (state: RootState) =>
+  selectCurrentCharacter(state)?.rules.activeFocusRules ?? {}
+export const selectActiveOptionalRules = (state: RootState) =>
+  selectCurrentCharacter(state)?.rules.activeOptionalRules ?? {}
+export const selectPersonalData = (state: RootState): CharacterState["personalData"] =>
+  selectCurrentCharacter(state)?.personalData ?? staticInitialState.personalData
 export const selectSex = (state: RootState) => selectPersonalData(state).sex
 export const selectFamily = (state: RootState) => selectPersonalData(state).family
 export const selectPlaceOfBirth = (state: RootState) => selectPersonalData(state).placeOfBirth
@@ -645,109 +656,172 @@ export const selectSize = (state: RootState) => selectPersonalData(state).size
 export const selectWeight = (state: RootState) => selectPersonalData(state).weight
 export const selectTitle = (state: RootState) => selectPersonalData(state).title
 export const selectSocialStatusId = (state: RootState) => selectPersonalData(state).socialStatus.id
-export const selectSocialStatusDependencies = (state: RootState) => selectPersonalData(state).socialStatus.dependencies
+export const selectSocialStatusDependencies = (state: RootState) =>
+  selectPersonalData(state).socialStatus.dependencies
 export const selectCharacteristics = (state: RootState) => selectPersonalData(state).characteristics
 export const selectOtherInfo = (state: RootState) => selectPersonalData(state).otherInfo
-export const selectAdvantages = (state: RootState) => selectCurrentCharacter(state)?.advantages ?? {}
-export const selectDisadvantages = (state: RootState) => selectCurrentCharacter(state)?.disadvantages ?? {}
-export const selectAdvancedCombatSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.advancedCombatSpecialAbilities ?? {}
-export const selectAdvancedKarmaSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.advancedKarmaSpecialAbilities ?? {}
-export const selectAdvancedMagicalSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.advancedMagicalSpecialAbilities ?? {}
-export const selectAdvancedSkillSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.advancedSkillSpecialAbilities ?? {}
-export const selectAncestorGlyphs = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.ancestorGlyphs ?? {}
-export const selectArcaneOrbEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.arcaneOrbEnchantments ?? {}
-export const selectAttireEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.attireEnchantments ?? {}
-export const selectBlessedTraditions = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.blessedTraditions ?? {}
-export const selectBowlEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.bowlEnchantments ?? {}
-export const selectBrawlingSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.brawlingSpecialAbilities ?? {}
-export const selectCauldronEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.cauldronEnchantments ?? {}
-export const selectCeremonialItemSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.ceremonialItemSpecialAbilities ?? {}
-export const selectChronicleEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.chronicleEnchantments ?? {}
-export const selectCombatSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.combatSpecialAbilities ?? {}
-export const selectCombatStyleSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.combatStyleSpecialAbilities ?? {}
-export const selectCommandSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.commandSpecialAbilities ?? {}
-export const selectDaggerRituals = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.daggerRituals ?? {}
-export const selectFamiliarSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.familiarSpecialAbilities ?? {}
-export const selectFatePointSexSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.fatePointSexSpecialAbilities ?? {}
-export const selectFatePointSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.fatePointSpecialAbilities ?? {}
-export const selectFoolsHatEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.foolsHatEnchantments ?? {}
-export const selectGeneralSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.generalSpecialAbilities ?? {}
-export const selectInstrumentEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.instrumentEnchantments ?? {}
-export const selectKarmaSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.karmaSpecialAbilities ?? {}
-export const selectKrallenkettenzauber = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.krallenkettenzauber ?? {}
-export const selectLiturgicalStyleSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.liturgicalStyleSpecialAbilities ?? {}
-export const selectLycantropicGifts = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.lycantropicGifts ?? {}
-export const selectMagicalRunes = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.magicalRunes ?? {}
-export const selectMagicalSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.magicalSpecialAbilities ?? {}
-export const selectMagicalTraditions = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.magicalTraditions ?? {}
-export const selectMagicStyleSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.magicStyleSpecialAbilities ?? {}
-export const selectOrbEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.orbEnchantments ?? {}
-export const selectPactGifts = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.pactGifts ?? {}
-export const selectProtectiveWardingCircleSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.protectiveWardingCircleSpecialAbilities ?? {}
-export const selectRingEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.ringEnchantments ?? {}
-export const selectSermons = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.sermons ?? {}
-export const selectSexSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.sexSpecialAbilities ?? {}
-export const selectSickleRituals = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.sickleRituals ?? {}
-export const selectSikaryanDrainSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.sikaryanDrainSpecialAbilities ?? {}
-export const selectSkillStyleSpecialAbilities = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.skillStyleSpecialAbilities ?? {}
-export const selectSpellSwordEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.spellSwordEnchantments ?? {}
-export const selectStaffEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.staffEnchantments ?? {}
-export const selectToyEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.toyEnchantments ?? {}
-export const selectTrinkhornzauber = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.trinkhornzauber ?? {}
-export const selectVampiricGifts = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.vampiricGifts ?? {}
-export const selectVisions = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.visions ?? {}
-export const selectWandEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.wandEnchantments ?? {}
-export const selectWeaponEnchantments = (state: RootState) => selectCurrentCharacter(state)?.specialAbilities.weaponEnchantments ?? {}
-export const selectAttributes = (state: RootState) => selectCurrentCharacter(state)?.attributes ?? {}
-export const selectDerivedCharacteristics = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics ?? staticInitialState.derivedCharacteristics
-export const selectPurchasedLifePoints = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.lifePoints.purchased ?? 0
-export const selectLifePointsPermanentlyLost = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.lifePoints.permanentlyLost ?? 0
-export const selectPurchasedArcaneEnergy = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.arcaneEnergy.purchased ?? 0
-export const selectArcaneEnergyPermanentlyLost = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.arcaneEnergy.permanentlyLost ?? 0
-export const selectArcaneEnergyPermanentlyLostBoughtBack = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.arcaneEnergy.permanentlyLostBoughtBack ?? 0
-export const selectPurchasedKarmaPoints = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.purchased ?? 0
-export const selectKarmaPointsPermanentlyLost = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.permanentlyLost ?? 0
-export const selectKarmaPointsPermanentlyLostBoughtBack = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.permanentlyLostBoughtBack ?? 0
+export const selectAdvantages = (state: RootState) =>
+  selectCurrentCharacter(state)?.advantages ?? {}
+export const selectDisadvantages = (state: RootState) =>
+  selectCurrentCharacter(state)?.disadvantages ?? {}
+export const selectAdvancedCombatSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.advancedCombatSpecialAbilities ?? {}
+export const selectAdvancedKarmaSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.advancedKarmaSpecialAbilities ?? {}
+export const selectAdvancedMagicalSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.advancedMagicalSpecialAbilities ?? {}
+export const selectAdvancedSkillSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.advancedSkillSpecialAbilities ?? {}
+export const selectAncestorGlyphs = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.ancestorGlyphs ?? {}
+export const selectArcaneOrbEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.arcaneOrbEnchantments ?? {}
+export const selectAttireEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.attireEnchantments ?? {}
+export const selectBlessedTraditions = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.blessedTraditions ?? {}
+export const selectBowlEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.bowlEnchantments ?? {}
+export const selectBrawlingSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.brawlingSpecialAbilities ?? {}
+export const selectCauldronEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.cauldronEnchantments ?? {}
+export const selectCeremonialItemSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.ceremonialItemSpecialAbilities ?? {}
+export const selectChronicleEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.chronicleEnchantments ?? {}
+export const selectCombatSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.combatSpecialAbilities ?? {}
+export const selectCombatStyleSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.combatStyleSpecialAbilities ?? {}
+export const selectCommandSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.commandSpecialAbilities ?? {}
+export const selectDaggerRituals = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.daggerRituals ?? {}
+export const selectFamiliarSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.familiarSpecialAbilities ?? {}
+export const selectFatePointSexSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.fatePointSexSpecialAbilities ?? {}
+export const selectFatePointSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.fatePointSpecialAbilities ?? {}
+export const selectFoolsHatEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.foolsHatEnchantments ?? {}
+export const selectGeneralSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.generalSpecialAbilities ?? {}
+export const selectInstrumentEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.instrumentEnchantments ?? {}
+export const selectKarmaSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.karmaSpecialAbilities ?? {}
+export const selectKrallenkettenzauber = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.krallenkettenzauber ?? {}
+export const selectLiturgicalStyleSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.liturgicalStyleSpecialAbilities ?? {}
+export const selectLycantropicGifts = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.lycantropicGifts ?? {}
+export const selectMagicalRunes = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.magicalRunes ?? {}
+export const selectMagicalSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.magicalSpecialAbilities ?? {}
+export const selectMagicalTraditions = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.magicalTraditions ?? {}
+export const selectMagicStyleSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.magicStyleSpecialAbilities ?? {}
+export const selectOrbEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.orbEnchantments ?? {}
+export const selectPactGifts = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.pactGifts ?? {}
+export const selectProtectiveWardingCircleSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.protectiveWardingCircleSpecialAbilities ?? {}
+export const selectRingEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.ringEnchantments ?? {}
+export const selectSermons = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.sermons ?? {}
+export const selectSexSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.sexSpecialAbilities ?? {}
+export const selectSickleRituals = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.sickleRituals ?? {}
+export const selectSikaryanDrainSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.sikaryanDrainSpecialAbilities ?? {}
+export const selectSkillStyleSpecialAbilities = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.skillStyleSpecialAbilities ?? {}
+export const selectSpellSwordEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.spellSwordEnchantments ?? {}
+export const selectStaffEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.staffEnchantments ?? {}
+export const selectToyEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.toyEnchantments ?? {}
+export const selectTrinkhornzauber = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.trinkhornzauber ?? {}
+export const selectVampiricGifts = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.vampiricGifts ?? {}
+export const selectVisions = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.visions ?? {}
+export const selectWandEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.wandEnchantments ?? {}
+export const selectWeaponEnchantments = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.weaponEnchantments ?? {}
+export const selectAttributes = (state: RootState) =>
+  selectCurrentCharacter(state)?.attributes ?? {}
+export const selectDerivedCharacteristics = (state: RootState) =>
+  selectCurrentCharacter(state)?.derivedCharacteristics ?? staticInitialState.derivedCharacteristics
+export const selectPurchasedLifePoints = (state: RootState) =>
+  selectCurrentCharacter(state)?.derivedCharacteristics.lifePoints.purchased ?? 0
+export const selectLifePointsPermanentlyLost = (state: RootState) =>
+  selectCurrentCharacter(state)?.derivedCharacteristics.lifePoints.permanentlyLost ?? 0
+export const selectPurchasedArcaneEnergy = (state: RootState) =>
+  selectCurrentCharacter(state)?.derivedCharacteristics.arcaneEnergy.purchased ?? 0
+export const selectArcaneEnergyPermanentlyLost = (state: RootState) =>
+  selectCurrentCharacter(state)?.derivedCharacteristics.arcaneEnergy.permanentlyLost ?? 0
+export const selectArcaneEnergyPermanentlyLostBoughtBack = (state: RootState) =>
+  selectCurrentCharacter(state)?.derivedCharacteristics.arcaneEnergy.permanentlyLostBoughtBack ?? 0
+export const selectPurchasedKarmaPoints = (state: RootState) =>
+  selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.purchased ?? 0
+export const selectKarmaPointsPermanentlyLost = (state: RootState) =>
+  selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.permanentlyLost ?? 0
+export const selectKarmaPointsPermanentlyLostBoughtBack = (state: RootState) =>
+  selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.permanentlyLostBoughtBack ?? 0
 export const selectSkills = (state: RootState) => selectCurrentCharacter(state)?.skills ?? {}
-export const selectCloseCombatTechniques = (state: RootState) => selectCurrentCharacter(state)?.combatTechniques.close ?? {}
-export const selectRangedCombatTechniques = (state: RootState) => selectCurrentCharacter(state)?.combatTechniques.ranged ?? {}
+export const selectCloseCombatTechniques = (state: RootState) =>
+  selectCurrentCharacter(state)?.combatTechniques.close ?? {}
+export const selectRangedCombatTechniques = (state: RootState) =>
+  selectCurrentCharacter(state)?.combatTechniques.ranged ?? {}
 export const selectSpells = (state: RootState) => selectCurrentCharacter(state)?.spells ?? {}
 export const selectRituals = (state: RootState) => selectCurrentCharacter(state)?.rituals ?? {}
-export const selectLiturgicalChants = (state: RootState) => selectCurrentCharacter(state)?.liturgicalChants ?? {}
-export const selectCeremonies = (state: RootState) => selectCurrentCharacter(state)?.ceremonies ?? {}
+export const selectLiturgicalChants = (state: RootState) =>
+  selectCurrentCharacter(state)?.liturgicalChants ?? {}
+export const selectCeremonies = (state: RootState) =>
+  selectCurrentCharacter(state)?.ceremonies ?? {}
 
 export const setName = createAction<string>("character/setName")
 export const setAvatar = createAction<string>("character/setAvatar")
 export const deleteAvatar = createAction("character/deleteAvatar")
 export const finishCharacterCreation = createAction("character/finishCharacterCreation")
 
-const generalCharacterReducer = createImmerReducer(
-  (state: Draft<CharacterState>, action) => {
-    if (setName.match(action)) {
-      state.name = action.payload
-    }
-    else if (setAvatar.match(action)) {
-      state.avatar = action.payload
-    }
-    else if (deleteAvatar.match(action)) {
-      state.avatar = undefined
-    }
-    else if (finishCharacterCreation.match(action)) {
-      state.isCharacterCreationFinished = true
-    }
+const generalCharacterReducer = createImmerReducer((state: Draft<CharacterState>, action) => {
+  if (setName.match(action)) {
+    state.name = action.payload
+  } else if (setAvatar.match(action)) {
+    state.avatar = action.payload
+  } else if (deleteAvatar.match(action)) {
+    state.avatar = undefined
+  } else if (finishCharacterCreation.match(action)) {
+    state.isCharacterCreationFinished = true
   }
-)
+})
 
-export const characterReducer =
-  reduceReducers<Draft<CharacterState>, AnyAction, [database: DatabaseState]>(
-    generalCharacterReducer,
-    attributesReducer,
-    derivedCharacteristicsReducer,
-    personalDataReducer,
-    raceReducer,
-    professionReducer,
-    rulesReducer,
-    skillsReducer,
-    closeCombatTechniquesReducer,
-    rangedCombatTechniquesReducer,
-  )
+export const characterReducer = reduceReducers<
+  Draft<CharacterState>,
+  AnyAction,
+  [database: DatabaseState]
+>(
+  generalCharacterReducer,
+  attributesReducer,
+  derivedCharacteristicsReducer,
+  personalDataReducer,
+  raceReducer,
+  professionReducer,
+  rulesReducer,
+  skillsReducer,
+  closeCombatTechniquesReducer,
+  rangedCombatTechniquesReducer,
+)

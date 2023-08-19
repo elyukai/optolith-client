@@ -1,4 +1,7 @@
-import { SkillCheckPenalty, SkillCheck as SkillCheckType } from "optolith-database-schema/types/_SkillCheck"
+import {
+  SkillCheckPenalty,
+  SkillCheck as SkillCheckType,
+} from "optolith-database-schema/types/_SkillCheck"
 import { FC } from "react"
 import { DerivedCharacteristicIdentifier as DCId } from "../../../../../shared/domain/identifier.ts"
 import { getDisplayedSkillCheck } from "../../../../../shared/domain/skillCheck.ts"
@@ -7,7 +10,10 @@ import { minus } from "../../../../../shared/utils/math.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
 import { selectAttributes as selectDynamicAttributes } from "../../../../slices/characterSlice.ts"
-import { selectDerivedCharacteristics, selectAttributes as selectStaticAttributes } from "../../../../slices/databaseSlice.ts"
+import {
+  selectDerivedCharacteristics,
+  selectAttributes as selectStaticAttributes,
+} from "../../../../slices/databaseSlice.ts"
 
 type Props = {
   check: SkillCheckType
@@ -15,10 +21,7 @@ type Props = {
 }
 
 export const SkillCheck: FC<Props> = props => {
-  const {
-    check,
-    checkPenalty,
-  } = props
+  const { check, checkPenalty } = props
 
   const translateMap = useTranslateMap()
   const staticAttributes = useAppSelector(selectStaticAttributes)
@@ -38,30 +41,33 @@ export const SkillCheck: FC<Props> = props => {
             <span className="short">
               {translateMap(attribute.translations)?.abbreviation ?? "??"}
             </span>
-            <span className="value">
-              {value}
-            </span>
+            <span className="value">{value}</span>
           </div>
-        )
+        ),
       )}
-      {checkPenalty === undefined
-        ? null
-        : (
-          <div className="check mod">
-            {minus}
-            {((): string => {
-              switch (checkPenalty) {
-                case "Spirit":                     return spi
-                case "HalfOfSpirit":               return `${spi}/2`
-                case "Toughness":                  return tou
-                case "HigherOfSpiritAndToughness": return `${spi}/${tou}`
-                case "SummoningDifficulty":        return "X"
-                case "CreationDifficulty":         return "X"
-                default: return assertExhaustive(checkPenalty)
-              }
-            })()}
-          </div>
-        )}
+      {checkPenalty === undefined ? null : (
+        <div className="check mod">
+          {minus}
+          {((): string => {
+            switch (checkPenalty) {
+              case "Spirit":
+                return spi
+              case "HalfOfSpirit":
+                return `${spi}/2`
+              case "Toughness":
+                return tou
+              case "HigherOfSpiritAndToughness":
+                return `${spi}/${tou}`
+              case "SummoningDifficulty":
+                return "X"
+              case "CreationDifficulty":
+                return "X"
+              default:
+                return assertExhaustive(checkPenalty)
+            }
+          })()}
+        </div>
+      )}
     </>
   )
 }

@@ -5,10 +5,7 @@ const {
   create,
   createInitial,
   getValue,
-  actions: {
-    incrementAction,
-    decrementAction,
-  },
+  actions: { incrementAction, decrementAction },
   reducer,
 } = createRatedSlice({
   namespace: "skills",
@@ -22,8 +19,8 @@ const {
 export {
   create as createDynamicSkill,
   createInitial as createInitialDynamicSkill,
-  getValue as skillValue,
-  incrementAction as incrementSkill,
   decrementAction as decrementSkill,
+  incrementAction as incrementSkill,
+  getValue as skillValue,
   reducer as skillsReducer,
 }

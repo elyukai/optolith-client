@@ -28,7 +28,7 @@ export const InlineLibraryFocusRule: FC<Props> = ({ id }) => {
       className="focus-rule"
       title={`${translation.name} (${romanize(entry.level)})`}
       subtitle={translateMap(subjects[entry.subject.id.subject]?.translations)?.name}
-      >
+    >
       <Markdown className="no-indent" source={translation.description} />
       <Source sources={entry.src} />
     </InlineLibraryTemplate>

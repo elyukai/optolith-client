@@ -24,7 +24,7 @@ const handleToggleDevTools = ExternalAPI.toggleDevTools
 export const NavigationBar: FC = () => {
   const translate = useTranslate()
   const dispatch = useAppDispatch()
-  const handleCharactersTab = useCallback(() => dispatch(goToTab([ "characters" ])), [ dispatch ])
+  const handleCharactersTab = useCallback(() => dispatch(goToTab(["characters"])), [dispatch])
   const { section, mainTabs, subTabs } = useVisibleTabs()
   const available = useAppSelector(selectAdventurePointsAvailable)
   const currentRoute = useAppSelector(selectRoute)
@@ -32,43 +32,72 @@ export const NavigationBar: FC = () => {
 
   useEffect(() => {
     switch (currentRoute[0]) {
-      case "characters": return (() => {
-        switch (currentRoute[2]) {
-          case undefined: return ExternalAPI.setTitle(translate("Characters"))
-          case "profile": return ExternalAPI.setTitle(translate("Overview"))
-          case "personal_data": return ExternalAPI.setTitle(translate("Personal Data"))
-          case "character_sheet": return ExternalAPI.setTitle(translate("Character Sheet"))
-          case "pact": return ExternalAPI.setTitle(translate("Pact"))
-          case "rules": return ExternalAPI.setTitle(translate("Rules"))
-          case "race": return ExternalAPI.setTitle(translate("Race"))
-          case "culture": return ExternalAPI.setTitle(translate("Culture"))
-          case "profession": return ExternalAPI.setTitle(translate("Profession"))
-          case "attributes": return ExternalAPI.setTitle(translate("Attributes"))
-          case "advantages": return ExternalAPI.setTitle(translate("Advantages"))
-          case "disadvantages": return ExternalAPI.setTitle(translate("Disadvantages"))
-          case "skills": return ExternalAPI.setTitle(translate("Skills"))
-          case "combat_techniques": return ExternalAPI.setTitle(translate("Combat Techniques"))
-          case "special_abilities": return ExternalAPI.setTitle(translate("Special Abilities"))
-          case "spells": return ExternalAPI.setTitle(translate("Spells"))
-          case "liturgical_chants": return ExternalAPI.setTitle(translate("Liturgical Chants"))
-          case "equipment": return ExternalAPI.setTitle(translate("Equipment"))
-          case "hit_zone_armor": return ExternalAPI.setTitle(translate("Hit Zone Armor"))
-          case "pets": return ExternalAPI.setTitle(translate("Pets"))
-          default: assertExhaustive(currentRoute)
-        }
-      })()
+      case "characters":
+        return (() => {
+          switch (currentRoute[2]) {
+            case undefined:
+              return ExternalAPI.setTitle(translate("Characters"))
+            case "profile":
+              return ExternalAPI.setTitle(translate("Overview"))
+            case "personal_data":
+              return ExternalAPI.setTitle(translate("Personal Data"))
+            case "character_sheet":
+              return ExternalAPI.setTitle(translate("Character Sheet"))
+            case "pact":
+              return ExternalAPI.setTitle(translate("Pact"))
+            case "rules":
+              return ExternalAPI.setTitle(translate("Rules"))
+            case "race":
+              return ExternalAPI.setTitle(translate("Race"))
+            case "culture":
+              return ExternalAPI.setTitle(translate("Culture"))
+            case "profession":
+              return ExternalAPI.setTitle(translate("Profession"))
+            case "attributes":
+              return ExternalAPI.setTitle(translate("Attributes"))
+            case "advantages":
+              return ExternalAPI.setTitle(translate("Advantages"))
+            case "disadvantages":
+              return ExternalAPI.setTitle(translate("Disadvantages"))
+            case "skills":
+              return ExternalAPI.setTitle(translate("Skills"))
+            case "combat_techniques":
+              return ExternalAPI.setTitle(translate("Combat Techniques"))
+            case "special_abilities":
+              return ExternalAPI.setTitle(translate("Special Abilities"))
+            case "spells":
+              return ExternalAPI.setTitle(translate("Spells"))
+            case "liturgical_chants":
+              return ExternalAPI.setTitle(translate("Liturgical Chants"))
+            case "equipment":
+              return ExternalAPI.setTitle(translate("Equipment"))
+            case "hit_zone_armor":
+              return ExternalAPI.setTitle(translate("Hit Zone Armor"))
+            case "pets":
+              return ExternalAPI.setTitle(translate("Pets"))
+            default:
+              assertExhaustive(currentRoute)
+          }
+        })()
 
-      case "groups": return ExternalAPI.setTitle(translate("Groups"))
-      case "library": return ExternalAPI.setTitle(translate("Library"))
-      case "faq": return ExternalAPI.setTitle(translate("FAQ"))
+      case "groups":
+        return ExternalAPI.setTitle(translate("Groups"))
+      case "library":
+        return ExternalAPI.setTitle(translate("Library"))
+      case "faq":
+        return ExternalAPI.setTitle(translate("FAQ"))
 
-      case "imprint": return ExternalAPI.setTitle(translate("Imprint"))
-      case "third_party_licenses": return ExternalAPI.setTitle(translate("Third-Party Licenses"))
-      case "last_changes": return ExternalAPI.setTitle(translate("Last Changes"))
+      case "imprint":
+        return ExternalAPI.setTitle(translate("Imprint"))
+      case "third_party_licenses":
+        return ExternalAPI.setTitle(translate("Third-Party Licenses"))
+      case "last_changes":
+        return ExternalAPI.setTitle(translate("Last Changes"))
 
-      default: assertExhaustive(currentRoute)
+      default:
+        assertExhaustive(currentRoute)
     }
-  }, [ currentRoute, translate ])
+  }, [currentRoute, translate])
 
   const ref = useRef<HTMLDivElement>(null)
 
@@ -76,66 +105,54 @@ export const NavigationBar: FC = () => {
     <nav>
       <NavigationBarWrapper>
         <NavigationBarLeft>
-          {section === "character"
-            ? (
-              <>
-                <NavigationBarBack handleSetTab={handleCharactersTab} />
-                <AvatarWrapper src={avatar ?? ""} />
-              </>
-            )
-            : null}
+          {section === "character" ? (
+            <>
+              <NavigationBarBack handleSetTab={handleCharactersTab} />
+              <AvatarWrapper src={avatar ?? ""} />
+            </>
+          ) : null}
           <NavigationBarTabs tabs={mainTabs} />
         </NavigationBarLeft>
         <NavigationBarRight>
-          {section === "character"
-            ? (
-              <>
-                <TooltipToggle
-                  position="bottom"
-                  margin={12}
-                  content={
-                    <AdventurePointsTooltip />
-                  }
-                  targetRef={ref}
-                  />
-                <div className="collected-ap" ref={ref}>
-                  {translate("{0} AP Remaining", available)}
-                </div>
-                <IconButton
-                  icon="&#xE90f;"
-                  label={translate("Undo")}
-                  // onClick={undo}
-                  disabled/* ={!isUndoAvailable} */
-                  />
-                <IconButton
-                  icon="&#xE910;"
-                  label={translate("Redo")}
-                  // onClick={redo}
-                  disabled/* ={!isRedoAvailable} */
-                  />
-                <Button /* onClick={saveHero} */>
-                  {translate("Save")}
-                </Button>
-              </>
-            )
-            : null}
+          {section === "character" ? (
+            <>
+              <TooltipToggle
+                position="bottom"
+                margin={12}
+                content={<AdventurePointsTooltip />}
+                targetRef={ref}
+              />
+              <div className="collected-ap" ref={ref}>
+                {translate("{0} AP Remaining", available)}
+              </div>
+              <IconButton
+                icon="&#xE90f;"
+                label={translate("Undo")}
+                // onClick={undo}
+                disabled /* ={!isUndoAvailable} */
+              />
+              <IconButton
+                icon="&#xE910;"
+                label={translate("Redo")}
+                // onClick={redo}
+                disabled /* ={!isRedoAvailable} */
+              />
+              <Button /* onClick={saveHero} */>{translate("Save")}</Button>
+            </>
+          ) : null}
           <IconButton
             icon="&#xE906;"
             label={translate("Show Settings")}
             onClick={ExternalAPI.showSettings}
-            />
+          />
           <IconButton
             icon="&#xE911;"
             label={translate("Toggle DevTools")}
             onClick={handleToggleDevTools}
-            />
+          />
         </NavigationBarRight>
       </NavigationBarWrapper>
-      {
-        subTabs !== undefined && subTabs.length > 0
-          ? <NavigationBarSubTabs tabs={subTabs} />
-          : null
-      }
+      {subTabs !== undefined && subTabs.length > 0 ? <NavigationBarSubTabs tabs={subTabs} /> : null}
     </nav>
   )
 }

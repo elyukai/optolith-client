@@ -5,7 +5,10 @@ import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
 import { selectTotalPoints } from "../../../../selectors/attributeSelectors.ts"
-import { selectCanRemove, selectIsInCharacterCreation } from "../../../../selectors/characterSelectors.ts"
+import {
+  selectCanRemove,
+  selectIsInCharacterCreation,
+} from "../../../../selectors/characterSelectors.ts"
 import { selectMaximumTotalAttributePoints } from "../../../../selectors/experienceLevelSelectors.ts"
 import { AttributesAdjustment } from "./AttributeAdjustment.tsx"
 import "./Attributes.scss"
@@ -31,13 +34,13 @@ export const Attributes: FC = () => {
           <AttributeList
             isInCharacterCreation={isInCharacterCreation}
             isRemovingEnabled={isRemovingEnabled}
-            />
+          />
           <div className="secondary">
             {isInCharacterCreation ? <AttributesAdjustment /> : null}
             <DerivedCharacteristicsList
               isInCharacterCreation={isInCharacterCreation}
               isRemovingEnabled={isRemovingEnabled}
-              />
+            />
           </div>
         </Scroll>
       </Main>

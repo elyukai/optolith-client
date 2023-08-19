@@ -8,8 +8,8 @@ export const useBroadcastSetting = <K extends keyof GlobalSettings>(
   value: GlobalSettings[K],
 ) => {
   useEffect(() => {
-    api.setGlobalSetting([ key, value ] as {
+    api.setGlobalSetting([key, value] as {
       [K1 in keyof GlobalSettings]: [key: K1, newValue: GlobalSettings[K1]]
     }[keyof GlobalSettings])
-  }, [ api, key, value ])
+  }, [api, key, value])
 }

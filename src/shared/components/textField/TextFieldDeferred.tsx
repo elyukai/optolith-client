@@ -12,54 +12,41 @@ type Props = {
 }
 
 export const TextFieldDeferred: FC<Props> = props => {
-  const {
-    autoFocus,
-    disabled,
-    type,
-    value: defaultValue,
-    onChange,
-    onKeyDown,
-    onKeyUp,
-  } = props
+  const { autoFocus, disabled, type, value: defaultValue, onChange, onKeyDown, onKeyUp } = props
 
   const inputRef = useRef<HTMLInputElement | null>(null)
 
-  const [ value, setValue ] = useState(defaultValue)
-  const [ prevValue, setPrevValue ] = useState(defaultValue)
+  const [value, setValue] = useState(defaultValue)
+  const [prevValue, setPrevValue] = useState(defaultValue)
 
   if (prevValue !== defaultValue) {
     setValue(defaultValue)
     setPrevValue(defaultValue)
   }
 
-  useEffect(
-    () => {
-      if (autoFocus === true && inputRef.current !== null) {
-        inputRef.current.focus()
+  useEffect(() => {
+    if (autoFocus === true && inputRef.current !== null) {
+      inputRef.current.focus()
+    }
+  }, [autoFocus])
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (disabled !== true) {
+        setValue(e.target.value)
       }
     },
-    [ autoFocus ]
+    [disabled],
   )
 
-  const handleChange =
-    useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (disabled !== true) {
-          setValue(e.target.value)
-        }
-      },
-      [ disabled ]
-    )
-
-  const handleBlur =
-    useCallback(
-      (e: React.FocusEvent<HTMLInputElement>) => {
-        if (disabled !== true && defaultValue !== value) {
-          onChange(e.target.value)
-        }
-      },
-      [ defaultValue, disabled, onChange, value ]
-    )
+  const handleBlur = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      if (disabled !== true && defaultValue !== value) {
+        onChange(e.target.value)
+      }
+    },
+    [defaultValue, disabled, onChange, value],
+  )
 
   return (
     <input
@@ -71,6 +58,6 @@ export const TextFieldDeferred: FC<Props> = props => {
       readOnly={disabled}
       ref={inputRef}
       onBlur={handleBlur}
-      />
+    />
   )
 }

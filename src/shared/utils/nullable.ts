@@ -9,16 +9,12 @@ export const isNullish = <T>(value: T): value is Exclude<T, NonNullable<T>> =>
 /**
  * Checks if a value is not `null` or `undefined`.
  */
-export const isNotNullish = <T>(value: T): value is NonNullable<T> =>
-  !isNullish(value)
+export const isNotNullish = <T>(value: T): value is NonNullable<T> => !isNullish(value)
 
 /**
  * Maps a value to another value if it is not `null` or `undefined`.
  */
-export const mapNullable = <T, U>(
-  value: T,
-  map: (value: NonNullable<T>) => U,
-): U | Nullish<T> =>
+export const mapNullable = <T, U>(value: T, map: (value: NonNullable<T>) => U): U | Nullish<T> =>
   isNotNullish(value) ? map(value) : (value as Nullish<T>)
 
 /**
@@ -29,5 +25,4 @@ export const mapNullableDefault = <T, U>(
   value: T,
   map: (value: NonNullable<T>) => U,
   defaultValue: U,
-): U =>
-  isNotNullish(value) ? map(value) : defaultValue
+): U => (isNotNullish(value) ? map(value) : defaultValue)

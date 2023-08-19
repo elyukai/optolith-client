@@ -1,4 +1,3 @@
-
 import { FC, useCallback, useMemo } from "react"
 import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
 import { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
@@ -21,36 +20,32 @@ export const AttributesAdjustment: FC = () => {
   const adjustmentOptions = useMemo(() => {
     if (adjustments === undefined) {
       return undefined
-    }
-    else {
+    } else {
       return adjustments.list.map<DropdownOption<number>>(attribute => ({
         id: attribute.static.id,
-        name: `${translateMap(attribute.static.translations)?.name ?? attribute.static.id} ${sign(adjustments.value)}`,
+        name: `${translateMap(attribute.static.translations)?.name ?? attribute.static.id} ${sign(
+          adjustments.value,
+        )}`,
       }))
     }
-  }, [ adjustments, translateMap ])
+  }, [adjustments, translateMap])
 
   const setAdjustmentId = useCallback(
     (id: number) => dispatch(changeAttributeAdjustmentId(id)),
-    [ dispatch ]
+    [dispatch],
   )
 
-  return adjustmentOptions === undefined
-    ? null
-    : (
-      <div className="attribute-adjustment">
-        <span className="label">
-          {translate("Attribute Adjustment Selection")}
-        </span>
-        <Dropdown
-          options={adjustmentOptions}
-          value={currentAdjustmentId}
-          onChange={setAdjustmentId}
-          disabled={
-            adjustmentOptions.length === 1
-            && adjustmentOptions[0]!.id === currentAdjustmentId
-          }
-          />
-      </div>
-    )
+  return adjustmentOptions === undefined ? null : (
+    <div className="attribute-adjustment">
+      <span className="label">{translate("Attribute Adjustment Selection")}</span>
+      <Dropdown
+        options={adjustmentOptions}
+        value={currentAdjustmentId}
+        onChange={setAdjustmentId}
+        disabled={
+          adjustmentOptions.length === 1 && adjustmentOptions[0]!.id === currentAdjustmentId
+        }
+      />
+    </div>
+  )
 }

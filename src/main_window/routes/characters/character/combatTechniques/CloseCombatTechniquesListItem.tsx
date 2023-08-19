@@ -97,7 +97,7 @@ const CloseCombatTechniquesListItem: FC<Props> = props => {
         inlineLibraryEntryId?.tag === "CloseCombatTechnique" &&
         inlineLibraryEntryId.close_combat_technique === id
       }
-      >
+    >
       <ListItemName name={name} onClick={handleSelectForInfo} />
       <ListItemSeparator />
       <ListItemGroup text={translate("Close Combat")} />
@@ -114,7 +114,7 @@ const CloseCombatTechniquesListItem: FC<Props> = props => {
               value: pa ?? "—",
             },
           ]}
-          />
+        />
       </ListItemValues>
       <SkillButtons
         addDisabled={addDisabled}
@@ -125,7 +125,7 @@ const CloseCombatTechniquesListItem: FC<Props> = props => {
         addPoint={addPoint}
         removePoint={canRemove ? removePoint : undefined}
         selectForInfo={handleSelectForInfo}
-        />
+      />
     </ListItem>
   )
 }

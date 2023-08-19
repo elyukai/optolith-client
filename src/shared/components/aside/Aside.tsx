@@ -6,7 +6,5 @@ type Props = {
 }
 
 export const Aside: FCC<Props> = ({ children, className }) => (
-  <aside className={className}>
-    {children}
-  </aside>
+  <aside className={className}>{children}</aside>
 )

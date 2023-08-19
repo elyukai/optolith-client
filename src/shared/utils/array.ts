@@ -4,14 +4,12 @@ import { isNotNullish } from "./nullable.ts"
  * Filters out `null` and `undefined` values from the arguments and turns them
  * into an array.
  */
-export const arrayFromNonNullable = <T>(...args: T[]): NonNullable<T>[] =>
-  args.filter(isNotNullish)
+export const arrayFromNonNullable = <T>(...args: T[]): NonNullable<T>[] => args.filter(isNotNullish)
 
 /**
  * Filters out `null` and `undefined` values from an array.
  */
-export const filterNonNullable = <T>(array: T[]): NonNullable<T>[] =>
-  array.filter(isNotNullish)
+export const filterNonNullable = <T>(array: T[]): NonNullable<T>[] => array.filter(isNotNullish)
 
 /**
  * Returns a range of numbers from `start` to `end` (inclusive).
@@ -19,10 +17,7 @@ export const filterNonNullable = <T>(array: T[]): NonNullable<T>[] =>
  * @param end The last number in the range.
  * @throws `RangeError` if the upper bound is lower than the lower bound.
  */
-export const range = (
-  start: number,
-  end: number,
-): number[] => {
+export const range = (start: number, end: number): number[] => {
   if (start > end) {
     throw new RangeError("The upper bound must be greater than or equal to the lower bound.")
   }
@@ -42,8 +37,7 @@ export const rangeSafe = (start: number, end: number): number[] =>
 /**
  * Returns the sum of all numbers in the given array.
  */
-export const sum = (arr: number[]): number =>
-  arr.reduce((acc, value) => acc + value, 0)
+export const sum = (arr: number[]): number => arr.reduce((acc, value) => acc + value, 0)
 
 /**
  * Filters out duplicate values from an array. Objects are not supported, since
@@ -58,5 +52,4 @@ export const unique = <T extends number | boolean | string | null | undefined>(a
 export const arrayEqual = <T extends number | boolean | string | null | undefined>(
   arr1: T[],
   arr2: T[],
-): boolean =>
-  arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index])
+): boolean => arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index])

@@ -1,6 +1,18 @@
-import { Occurrence, Page, PublicationRefs, SimpleOccurrence, SimpleOccurrences, VersionedOccurrence } from "optolith-database-schema/types/source/_PublicationRef"
+import {
+  Occurrence,
+  Page,
+  PublicationRefs,
+  SimpleOccurrence,
+  SimpleOccurrences,
+  VersionedOccurrence,
+} from "optolith-database-schema/types/source/_PublicationRef"
 import { FC } from "react"
-import { PageRange, fromRawPageRange, normalizePageRanges, numberRangeToPageRange } from "../../../shared/domain/pages.ts"
+import {
+  PageRange,
+  fromRawPageRange,
+  normalizePageRanges,
+  numberRangeToPageRange,
+} from "../../../shared/domain/pages.ts"
 import { useTranslate } from "../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
 import { isNotNullish } from "../../../shared/utils/nullable.ts"
@@ -24,22 +36,24 @@ const isVersionedOccurrence = (occurrence: Occurrence): occurrence is VersionedO
 
 const printPage = (translate: Translate, page: Page) => {
   switch (page.tag) {
-    case "InsideCoverFront": return translate("Front Cover Inside")
-    case "InsideCoverBack": return translate("Back Cover Inside")
-    case "Numbered": return page.numbered.toString()
-    default: return assertExhaustive(page)
+    case "InsideCoverFront":
+      return translate("Front Cover Inside")
+    case "InsideCoverBack":
+      return translate("Back Cover Inside")
+    case "Numbered":
+      return page.numbered.toString()
+    default:
+      return assertExhaustive(page)
   }
 }
 
 const printPageRange = (translate: Translate, pageRange: PageRange) =>
   pageRange.lastPage === undefined
-  ? printPage(translate, pageRange.firstPage)
-  : `${printPage(translate, pageRange.firstPage)}–${printPage(translate, pageRange.lastPage)}`
+    ? printPage(translate, pageRange.firstPage)
+    : `${printPage(translate, pageRange.firstPage)}–${printPage(translate, pageRange.lastPage)}`
 
 const printPageRanges = (translate: Translate, pageRanges: PageRange[]) =>
-  pageRanges
-    .map(pageRange => printPageRange(translate, pageRange))
-    .join(", ")
+  pageRanges.map(pageRange => printPageRange(translate, pageRange)).join(", ")
 
 export const Source: FC<Props> = ({ sources }) => {
   const translate = useTranslate()
@@ -49,61 +63,71 @@ export const Source: FC<Props> = ({ sources }) => {
   return (
     <p className="sources">
       {sources
-      .map(source => {
-        const publication = publications[source.id.publication]
-        const publicationTranslations = translateMap(publication?.translations)
-        const occurrences = translateMap(source.occurrences)
+        .map(source => {
+          const publication = publications[source.id.publication]
+          const publicationTranslations = translateMap(publication?.translations)
+          const occurrences = translateMap(source.occurrences)
 
-        if (
-          publication === undefined
-          || publicationTranslations === undefined
-          || occurrences === undefined
-        ) {
-          return undefined
-        }
+          if (
+            publication === undefined ||
+            publicationTranslations === undefined ||
+            occurrences === undefined
+          ) {
+            return undefined
+          }
 
-        if (isSimpleOccurrence(occurrences)) {
-          return `${publicationTranslations.name} ${printPageRange(translate, numberRangeToPageRange(occurrences))}`
-        }
+          if (isSimpleOccurrence(occurrences)) {
+            return `${publicationTranslations.name} ${printPageRange(
+              translate,
+              numberRangeToPageRange(occurrences),
+            )}`
+          }
 
-        if (isSimpleOccurrences(occurrences)) {
-          const ranges = normalizePageRanges(occurrences.map(numberRangeToPageRange))
-          return `${publicationTranslations.name} ${printPageRanges(translate, ranges)}`
-        }
+          if (isSimpleOccurrences(occurrences)) {
+            const ranges = normalizePageRanges(occurrences.map(numberRangeToPageRange))
+            return `${publicationTranslations.name} ${printPageRanges(translate, ranges)}`
+          }
 
-        if (isVersionedOccurrence(occurrences)) {
-          const initialPageRanges =
-            normalizePageRanges(occurrences.initial.pages.map(fromRawPageRange))
+          if (isVersionedOccurrence(occurrences)) {
+            const initialPageRanges = normalizePageRanges(
+              occurrences.initial.pages.map(fromRawPageRange),
+            )
 
-          const initial =
-            occurrences.initial.printing === undefined
-            ? printPageRanges(translate, initialPageRanges)
-            : `${printPageRanges(translate, initialPageRanges)} (${translate("since the {0}. printing", occurrences.initial.printing)})`
+            const initial =
+              occurrences.initial.printing === undefined
+                ? printPageRanges(translate, initialPageRanges)
+                : `${printPageRanges(translate, initialPageRanges)} (${translate(
+                    "since the {0}. printing",
+                    occurrences.initial.printing,
+                  )})`
 
-          const revisions = occurrences.revisions?.map(
-            rev => {
-              switch (rev.tag) {
-                case "Since": {
-                  const pageRanges = normalizePageRanges(rev.since.pages.map(fromRawPageRange))
-                  return `${printPageRanges(translate, pageRanges)} (${translate("since the {0}. printing", rev.since.printing)})`
+            const revisions =
+              occurrences.revisions?.map(rev => {
+                switch (rev.tag) {
+                  case "Since": {
+                    const pageRanges = normalizePageRanges(rev.since.pages.map(fromRawPageRange))
+                    return `${printPageRanges(translate, pageRanges)} (${translate(
+                      "since the {0}. printing",
+                      rev.since.printing,
+                    )})`
+                  }
+                  case "Deprecated": {
+                    return translate("removed in {0}. printing", rev.deprecated.printing)
+                  }
+                  default:
+                    return assertExhaustive(rev)
                 }
-                case "Deprecated": {
-                  return translate("removed in {0}. printing", rev.deprecated.printing)
-                }
-                default: return assertExhaustive(rev)
-              }
-            }
-          ) ?? []
+              }) ?? []
 
-          const allPageRanges = [ initial, ...revisions ].join("; ")
+            const allPageRanges = [initial, ...revisions].join("; ")
 
-          return `${publicationTranslations.name} ${allPageRanges}`
-        }
+            return `${publicationTranslations.name} ${allPageRanges}`
+          }
 
-        return assertExhaustive(occurrences)
-      })
-      .filter(isNotNullish)
-      .join("; ")}
+          return assertExhaustive(occurrences)
+        })
+        .filter(isNotNullish)
+        .join("; ")}
     </p>
   )
 }

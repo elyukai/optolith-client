@@ -10,7 +10,7 @@ export interface TabBaseProps {
 
 export interface TabProps extends TabBaseProps {
   active: boolean
-  onClick (): void
+  onClick(): void
 }
 
 export const Tab: FCC<TabProps> = props => {
@@ -18,19 +18,12 @@ export const Tab: FCC<TabProps> = props => {
 
   return (
     <li
-      className={classList(
-        "tab",
-        className,
-        {
-          "tab--active": active,
-          "tab--disabled": disabled,
-        }
-      )}
-      >
-      <a
-        aria-current={active}
-        onClick={disabled ? undefined : onClick}
-        >
+      className={classList("tab", className, {
+        "tab--active": active,
+        "tab--disabled": disabled,
+      })}
+    >
+      <a aria-current={active} onClick={disabled ? undefined : onClick}>
         {isNonEmptyString(label) ? label : children}
       </a>
     </li>

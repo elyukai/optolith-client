@@ -48,24 +48,20 @@ export const TextField: React.FC<TextFieldProps> = props => {
 
   const inputRef = useRef<HTMLInputElement | null>(null)
 
-  useEffect(
-    () => {
-      if (autoFocus === true && inputRef.current !== null) {
-        inputRef.current.focus()
+  useEffect(() => {
+    if (autoFocus === true && inputRef.current !== null) {
+      inputRef.current.focus()
+    }
+  }, [autoFocus])
+
+  const handleChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (disabled !== true) {
+        onChange(e.target.value)
       }
     },
-    [ autoFocus ]
+    [disabled, onChange],
   )
-
-  const handleChange =
-    useCallback(
-      (e: ChangeEvent<HTMLInputElement>) => {
-        if (disabled !== true) {
-          onChange(e.target.value)
-        }
-      },
-      [ disabled, onChange ]
-    )
 
   return (
     <TextFieldContainer
@@ -79,7 +75,7 @@ export const TextField: React.FC<TextFieldProps> = props => {
       isFieldEmpty={value.length === 0}
       label={label}
       valid={valid}
-      >
+    >
       <input
         type={type}
         min={min}
@@ -90,7 +86,7 @@ export const TextField: React.FC<TextFieldProps> = props => {
         onKeyUp={disabled === true ? undefined : onKeyUp}
         disabled={disabled}
         ref={inputRef}
-        />
+      />
     </TextFieldContainer>
   )
 }

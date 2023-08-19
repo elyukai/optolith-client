@@ -8,24 +8,21 @@ import { ExternalAPI } from "../../external.ts"
 let savedText: string | undefined = undefined
 
 export const LastChanges: FC = () => {
-  const [ text, setText ] = useState(savedText ?? "...")
+  const [text, setText] = useState(savedText ?? "...")
 
-  useEffect(
-    () => {
-      if (savedText === undefined) {
-        ExternalAPI.getChangelog()
-          .then(loadedText => {
-            setText(loadedText)
-            savedText = loadedText
-          })
-          .catch(err => {
-            console.error(err)
-            setText("Changelog could not be loaded")
-          })
-      }
-    },
-    []
-  )
+  useEffect(() => {
+    if (savedText === undefined) {
+      ExternalAPI.getChangelog()
+        .then(loadedText => {
+          setText(loadedText)
+          savedText = loadedText
+        })
+        .catch(err => {
+          console.error(err)
+          setText("Changelog could not be loaded")
+        })
+    }
+  }, [])
 
   return (
     <Page id="last-changes">

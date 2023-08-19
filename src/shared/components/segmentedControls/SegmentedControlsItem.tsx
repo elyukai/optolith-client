@@ -10,16 +10,13 @@ type Props<A extends SegmentedOptionValue> = {
 }
 
 export const SegmentedControlsItem = <A extends SegmentedOptionValue>(
-  props: Props<A>
+  props: Props<A>,
 ): ReturnType<FC<Props<A>>> => {
   const { active, option, disabled, onClick } = props
 
-  const handleClick = useCallback(
-    () => {
-      onClick(option.value)
-    },
-    [ onClick, option.value ]
-  )
+  const handleClick = useCallback(() => {
+    onClick(option.value)
+  }, [onClick, option.value])
 
   return (
     <Button
@@ -27,7 +24,7 @@ export const SegmentedControlsItem = <A extends SegmentedOptionValue>(
       onClick={handleClick}
       disabled={option.disabled === true || disabled === true}
       autoWidth
-      >
+    >
       {option.name}
     </Button>
   )

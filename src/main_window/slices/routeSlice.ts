@@ -34,7 +34,7 @@ export type RouteState = {
 }
 
 const initialState: RouteState = {
-  path: [ "characters" ],
+  path: ["characters"],
 }
 
 const routeSlice = createSlice({
@@ -45,7 +45,7 @@ const routeSlice = createSlice({
       state.path = action.payload
     },
     goToTabGroup: (state, action: PayloadAction<RoutePath[]>) => {
-      const [ firstRoute ] = action.payload
+      const [firstRoute] = action.payload
       if (firstRoute !== undefined) {
         state.path = firstRoute
       }
@@ -57,8 +57,6 @@ export const { goToTab, goToTabGroup } = routeSlice.actions
 
 export const selectRoute = (state: RootState) => state.route.path
 export const selectSelectedCharacterId = (state: RootState) =>
-  state.route.path[0] === "characters"
-  ? state.route.path[1]
-  : undefined
+  state.route.path[0] === "characters" ? state.route.path[1] : undefined
 
 export const routeReducer = routeSlice.reducer

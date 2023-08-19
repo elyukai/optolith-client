@@ -18,18 +18,8 @@ type Props = {
 }
 
 const IconButton: FRRFC<HTMLButtonElement, Props> = (props, ref) => {
-  const {
-    active,
-    autoWidth,
-    className,
-    disabled,
-    flat,
-    fullWidth,
-    icon,
-    label,
-    onClick,
-    primary,
-  } = props
+  const { active, autoWidth, className, disabled, flat, fullWidth, icon, label, onClick, primary } =
+    props
 
   return (
     <Button
@@ -43,7 +33,7 @@ const IconButton: FRRFC<HTMLButtonElement, Props> = (props, ref) => {
       onClick={onClick}
       round
       ref={ref}
-      >
+    >
       <Icon label={label}>{icon}</Icon>
     </Button>
   )

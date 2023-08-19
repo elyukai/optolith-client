@@ -35,85 +35,67 @@ export const SkillButtons: React.FC<Props> = props => {
 
   const translate = useTranslate()
 
-  const boundSelectForInfo =
-    useCallback(
-      () => selectForInfo(id),
-      [ selectForInfo, id ]
-    )
+  const boundSelectForInfo = useCallback(() => selectForInfo(id), [selectForInfo, id])
 
-  const getRemoveIcon =
-    () => (sr !== undefined && sr === 0 && removeDisabled !== true) || ic === undefined
+  const getRemoveIcon = () =>
+    (sr !== undefined && sr === 0 && removeDisabled !== true) || ic === undefined
       ? "\uE90b"
       : "\uE909"
 
-  const handleActivation =
-    useCallback(
-      () => typeof activate === "function"
-            ? activate(id)
-            : undefined,
-      [ activate, id ]
-    )
+  const handleActivation = useCallback(
+    () => (typeof activate === "function" ? activate(id) : undefined),
+    [activate, id],
+  )
 
-  const handleAddPoint =
-    useCallback(
-      () => addDisabled !== true && typeof addPoint === "function"
-            ? addPoint(id)
-            : undefined,
-      [ addPoint, id, addDisabled ]
-    )
+  const handleAddPoint = useCallback(
+    () => (addDisabled !== true && typeof addPoint === "function" ? addPoint(id) : undefined),
+    [addPoint, id, addDisabled],
+  )
 
-  const handleRemovePoint =
-    useCallback(
-      () => removeDisabled !== true && typeof removePoint === "function"
-            ? removePoint(id)
-            : undefined,
-      [ removePoint, id, removeDisabled ]
-    )
+  const handleRemovePoint = useCallback(
+    () =>
+      removeDisabled !== true && typeof removePoint === "function" ? removePoint(id) : undefined,
+    [removePoint, id, removeDisabled],
+  )
 
   return (
     <ListItemButtons>
-      {isNotActive === true
-        ? (
-          <IconButton
-            icon="&#xE916;"
-            onClick={handleActivation}
-            disabled={activateDisabled}
-            label={translate("Activate")}
-            flat
+      {isNotActive === true ? (
+        <IconButton
+          icon="&#xE916;"
+          onClick={handleActivation}
+          disabled={activateDisabled}
+          label={translate("Activate")}
+          flat
+        />
+      ) : (
+        <>
+          {typeof addPoint === "function" ? (
+            <IconButton
+              icon="&#xE908;"
+              onClick={handleAddPoint}
+              disabled={addDisabled}
+              label={translate("Increment")}
+              flat
             />
-        )
-        : (
-            <>
-              {typeof addPoint === "function"
-                ? (
-                  <IconButton
-                    icon="&#xE908;"
-                    onClick={handleAddPoint}
-                    disabled={addDisabled}
-                    label={translate("Increment")}
-                    flat
-                    />
-                )
-              : null}
-              {typeof removePoint === "function"
-                ? (
-                  <IconButton
-                    icon={getRemoveIcon()}
-                    onClick={handleRemovePoint}
-                    disabled={removeDisabled}
-                    label={translate("Decrement")}
-                    flat
-                    />
-                )
-              : null}
-            </>
-          )}
+          ) : null}
+          {typeof removePoint === "function" ? (
+            <IconButton
+              icon={getRemoveIcon()}
+              onClick={handleRemovePoint}
+              disabled={removeDisabled}
+              label={translate("Decrement")}
+              flat
+            />
+          ) : null}
+        </>
+      )}
       <IconButton
         icon="&#xE912;"
         onClick={boundSelectForInfo}
         label={translate("Show details")}
         flat
-        />
+      />
     </ListItemButtons>
   )
 }

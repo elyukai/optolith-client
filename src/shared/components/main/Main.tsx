@@ -4,9 +4,5 @@ import "./Main.scss"
 export const Main: FCC = props => {
   const { children } = props
 
-  return (
-    <main>
-      {children}
-    </main>
-  )
+  return <main>{children}</main>
 }

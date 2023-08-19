@@ -35,16 +35,12 @@ export const TextFieldContainer: FCC<Props> = props => {
 
   return (
     <div
-      className={classList(
-        "textfield",
-        className,
-        {
-          fullWidth,
-          disabled,
-          invalid: valid === false || error !== undefined,
-        }
-      )}
-      >
+      className={classList("textfield", className, {
+        fullWidth,
+        disabled,
+        invalid: valid === false || error !== undefined,
+      })}
+    >
       <TextFieldLabel label={label} />
       {children}
       <TextFieldHint hint={hint} isFieldEmpty={isFieldEmpty} />

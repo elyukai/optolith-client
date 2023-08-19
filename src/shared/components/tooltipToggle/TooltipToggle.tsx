@@ -14,7 +14,7 @@ type Props = {
 export const TooltipToggle: FC<Props> = props => {
   const { content, margin, position = "top", small, targetRef } = props
 
-  const [ isOpen, setIsOpen ] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     const onMouseOver = () => setIsOpen(true)
@@ -29,21 +29,17 @@ export const TooltipToggle: FC<Props> = props => {
       target?.removeEventListener("mouseover", onMouseOver)
       target?.removeEventListener("mouseout", onMouseOut)
     }
-  }, [ targetRef ])
+  }, [targetRef])
 
-  return (
-    isOpen && targetRef.current !== null
-      ? (
-        <Overlay
-          className={classList("tooltip", { "tooltip-small": small })}
-          position={position}
-          trigger={targetRef.current}
-          margin={margin}
-          small={small}
-          >
-          {content}
-        </Overlay>
-      )
-      : null
-  )
+  return isOpen && targetRef.current !== null ? (
+    <Overlay
+      className={classList("tooltip", { "tooltip-small": small })}
+      position={position}
+      trigger={targetRef.current}
+      margin={margin}
+      small={small}
+    >
+      {content}
+    </Overlay>
+  ) : null
 }
