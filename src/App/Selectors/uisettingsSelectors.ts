@@ -72,6 +72,8 @@ export const getSheetCheckAttributeValueVisibility =
 
 export const getSheetUseParchment =
   pipe (ASA.ui, UISA.settings, UISSA.sheetUseParchment)
+export const getSheetShowRules =
+  pipe (ASA.ui, UISA.settings, UISSA.sheetShowRules)
 
 export const getSheetZoomFactor =
   pipe (ASA.ui, UISA.settings, UISSA.sheetZoomFactor)

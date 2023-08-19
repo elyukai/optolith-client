@@ -1,0 +1,34 @@
+#rule-sheet {
+  table.rules {
+
+    max-width: 100%;
+    white-space: break-spaces;
+
+    tbody {
+
+      tr:not(.category-display) {
+        td {
+          padding-top: 0.2rem;
+        }
+
+        td:first-child {
+          vertical-align: baseline;
+          padding-right: .1rem;
+        }
+
+        td:last-child {
+          word-break: break-word;
+        }
+      }
+      tr.category-display {
+        td {
+          height: 6mm;
+          border-width: 0.75pt 0;
+          font: bold 10px/1 "Alegreya SC";
+          border-color: #424242;
+        }
+      }
+    }
+  }
+
+}

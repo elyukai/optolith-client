@@ -76,6 +76,9 @@
         "sheetUseParchment": {
           "type": "boolean"
         },
+        "sheetShowRules": {
+          "type": "boolean"
+        },
         "sheetZoomFactor": {
           "type": "number"
         },
