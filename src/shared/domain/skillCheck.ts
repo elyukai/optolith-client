@@ -13,6 +13,7 @@ const zipTriple = <T, U, V>(
 
 type SkillCheckAttributes = Triple<Attribute>
 type SkillCheckValues = Triple<number>
+type SkillCheckValuesWithId = Triple<{ id: number; value: number }>
 type DisplayedSkillCheck = Triple<{ attribute: Attribute; value: number }>
 
 /**
@@ -35,6 +36,19 @@ export const getSkillCheckValues = (attributes: RatedMap, check: SkillCheck): Sk
   getAttributeValue(attributes[check[1].id.attribute]),
   getAttributeValue(attributes[check[2].id.attribute]),
 ]
+
+/**
+ * Returns the attributes of a skill check, paired with their attribute
+ * identifiers.
+ */
+export const getSkillCheckWithId = (
+  dynamicAttributes: RatedMap,
+  check: SkillCheck,
+): SkillCheckValuesWithId =>
+  zipTriple(check, getSkillCheckValues(dynamicAttributes, check), (ref, value) => ({
+    id: ref.id.attribute,
+    value,
+  }))
 
 /**
  * Returns the attributes of a skill check, paired with their values.

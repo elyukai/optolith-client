@@ -4,9 +4,10 @@ import { Skill } from "optolith-database-schema/types/Skill"
 import { filterNonNullable } from "../utils/array.ts"
 import { mapNullable } from "../utils/nullable.ts"
 import { Activatable, countOptions, isActive } from "./activatableEntry.ts"
+import { getSingleHighestAttribute } from "./attribute.ts"
 import { SkillIdentifier } from "./identifier.ts"
 import { Dependency, Rated, RatedMap, flattenMinimumRestrictions } from "./ratedEntry.ts"
-import { getSkillCheckValues } from "./skillCheck.ts"
+import { getSkillCheckValues, getSkillCheckWithId } from "./skillCheck.ts"
 
 export const getSkillValue = (dynamic: Rated | undefined): number => dynamic?.value ?? 0
 
@@ -67,6 +68,31 @@ export const getSkillMaximum = (
   const exceptionalSkillBonus = countOptions(exceptionalSkill, { type: "Skill", value: skill.id })
 
   return Math.min(...maximumValues) + exceptionalSkillBonus
+}
+
+export const getHighestRequiredAttributeForSkill = (
+  attributes: RatedMap,
+  staticSkill: Skill,
+  dynamicSkill: Rated,
+  exceptionalSkill: Activatable | undefined,
+): { id: number; value: number } | undefined => {
+  const singleHighestAttribute = getSingleHighestAttribute(
+    getSkillCheckWithId(attributes, staticSkill.check),
+  )
+
+  if (singleHighestAttribute === undefined) {
+    return undefined
+  }
+
+  const exceptionalSkillBonus = countOptions(exceptionalSkill, {
+    type: "Skill",
+    value: staticSkill.id,
+  })
+
+  return {
+    id: singleHighestAttribute.id,
+    value: dynamicSkill.value - 2 - exceptionalSkillBonus,
+  }
 }
 
 export const isSkillDecreasable = (dynamic: Rated, min: number, canRemove: boolean) =>

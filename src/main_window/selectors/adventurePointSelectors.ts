@@ -3,15 +3,30 @@ import {
   ImprovementCost,
   adventurePointsForRange,
 } from "../../shared/domain/adventurePoints/improvementCost.ts"
-import { RatedMap } from "../../shared/domain/ratedEntry.ts"
+import { RatedAdventurePointsCache } from "../../shared/domain/adventurePoints/ratedEntry.ts"
 import {
+  selectAnimistPowers,
   selectAttributes,
+  selectBlessings,
+  selectCantrips,
+  selectCeremonies,
   selectCloseCombatTechniques,
   selectCurrentCharacter,
+  selectCurses,
   selectDerivedCharacteristics,
+  selectDominationRituals,
+  selectElvenMagicalSongs,
+  selectGeodeRituals,
+  selectJesterTricks,
+  selectLiturgicalChants,
+  selectMagicalDances,
+  selectMagicalMelodies,
   selectRangedCombatTechniques,
+  selectRituals,
   selectSkills,
+  selectSpells,
   selectTotalAdventurePoints,
+  selectZibiljaRituals,
 } from "../slices/characterSlice.ts"
 
 export type SpentAdventurePoints = {
@@ -19,7 +34,9 @@ export type SpentAdventurePoints = {
   bound: number
 }
 
-const sumRatedMaps = (...ratedMaps: RatedMap[]): SpentAdventurePoints =>
+const sumRatedMaps = (
+  ...ratedMaps: Record<number, { cachedAdventurePoints: RatedAdventurePointsCache }>[]
+): SpentAdventurePoints =>
   ratedMaps
     .flatMap(ratedMap => Object.values(ratedMap))
     .reduce(
@@ -41,23 +58,34 @@ export const selectAdventurePointsSpentOnCombatTechniques = createSelector(
 )
 
 export const selectAdventurePointsSpentOnSpells = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
+  selectSpells,
+  selectRituals,
+  selectCurses,
+  selectElvenMagicalSongs,
+  selectDominationRituals,
+  selectMagicalDances,
+  selectMagicalMelodies,
+  selectJesterTricks,
+  selectAnimistPowers,
+  selectGeodeRituals,
+  selectZibiljaRituals,
+  sumRatedMaps,
 )
 
 export const selectAdventurePointsSpentOnLiturgicalChants = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
+  selectLiturgicalChants,
+  selectCeremonies,
+  sumRatedMaps,
 )
 
 export const selectAdventurePointsSpentOnCantrips = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
+  selectCantrips,
+  cantrips => cantrips.length,
 )
 
 export const selectAdventurePointsSpentOnBlessings = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
+  selectBlessings,
+  blessings => blessings.length,
 )
 
 export const selectAdventurePointsSpentOnAdvantages = createSelector(

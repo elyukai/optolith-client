@@ -2,30 +2,61 @@ import { createSelector } from "@reduxjs/toolkit"
 import { Attribute } from "optolith-database-schema/types/Attribute"
 import {
   getAttributeMaximum,
+  getAttributeMinimaByAssociatedAttributes,
   getAttributeMinimum,
   isAttributeDecreasable,
   isAttributeIncreasable,
 } from "../../shared/domain/attribute.ts"
 import { filterApplyingRatedDependencies } from "../../shared/domain/dependencies/filterApplyingDependencies.ts"
-import { OptionalRuleIdentifier } from "../../shared/domain/identifier.ts"
+import { AdvantageIdentifier, OptionalRuleIdentifier } from "../../shared/domain/identifier.ts"
 import { Rated } from "../../shared/domain/ratedEntry.ts"
 import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { attributeValue, createInitialDynamicAttribute } from "../slices/attributesSlice.ts"
 import {
   selectActiveOptionalRules,
+  selectAdvantages,
   selectAttributeAdjustmentId,
-  selectCeremonies,
-  selectCloseCombatTechniques,
+  selectBlessedPrimaryAttributeDependencies,
   selectDerivedCharacteristics,
+  selectAnimistPowers as selectDynamicAnimistPowers,
   selectAttributes as selectDynamicAttributes,
-  selectLiturgicalChants,
-  selectRangedCombatTechniques,
-  selectRituals,
-  selectSkills,
-  selectSpells,
+  selectCeremonies as selectDynamicCeremonies,
+  selectCloseCombatTechniques as selectDynamicCloseCombatTechniques,
+  selectCurses as selectDynamicCurses,
+  selectDominationRituals as selectDynamicDominationRituals,
+  selectElvenMagicalSongs as selectDynamicElvenMagicalSongs,
+  selectGeodeRituals as selectDynamicGeodeRituals,
+  selectJesterTricks as selectDynamicJesterTricks,
+  selectLiturgicalChants as selectDynamicLiturgicalChants,
+  selectMagicalDances as selectDynamicMagicalDances,
+  selectMagicalMelodies as selectDynamicMagicalMelodies,
+  selectRangedCombatTechniques as selectDynamicRangedCombatTechniques,
+  selectRituals as selectDynamicRituals,
+  selectSkills as selectDynamicSkills,
+  selectSpells as selectDynamicSpells,
+  selectZibiljaRituals as selectDynamicZibiljaRituals,
+  selectMagicalPrimaryAttributeDependencies,
 } from "../slices/characterSlice.ts"
-import { selectAttributes as selectStaticAttributes } from "../slices/databaseSlice.ts"
+import {
+  selectAnimistPowers as selectStaticAnimistPowers,
+  selectAttributes as selectStaticAttributes,
+  selectCeremonies as selectStaticCeremonies,
+  selectCloseCombatTechniques as selectStaticCloseCombatTechniques,
+  selectCurses as selectStaticCurses,
+  selectDominationRituals as selectStaticDominationRituals,
+  selectElvenMagicalSongs as selectStaticElvenMagicalSongs,
+  selectGeodeRituals as selectStaticGeodeRituals,
+  selectJesterTricks as selectStaticJesterTricks,
+  selectLiturgicalChants as selectStaticLiturgicalChants,
+  selectMagicalDances as selectStaticMagicalDances,
+  selectMagicalMelodies as selectStaticMagicalMelodies,
+  selectRangedCombatTechniques as selectStaticRangedCombatTechniques,
+  selectRituals as selectStaticRituals,
+  selectSkills as selectStaticSkills,
+  selectSpells as selectStaticSpells,
+  selectZibiljaRituals as selectStaticZibiljaRituals,
+} from "../slices/databaseSlice.ts"
 import { selectIsInCharacterCreation } from "./characterSelectors.ts"
 import {
   selectCurrentExperienceLevel,
@@ -135,6 +166,45 @@ export const selectBlessedPrimaryAttribute = createSelector(
   },
 )
 
+const selectAttributeMinimaByAssociatedAttributes = createSelector(
+  selectStaticSkills,
+  selectStaticCloseCombatTechniques,
+  selectStaticRangedCombatTechniques,
+  selectStaticSpells,
+  selectStaticRituals,
+  selectStaticLiturgicalChants,
+  selectStaticCeremonies,
+  selectStaticCurses,
+  selectStaticElvenMagicalSongs,
+  selectStaticDominationRituals,
+  selectStaticMagicalDances,
+  selectStaticMagicalMelodies,
+  selectStaticJesterTricks,
+  selectStaticAnimistPowers,
+  selectStaticGeodeRituals,
+  selectStaticZibiljaRituals,
+  selectDynamicAttributes,
+  selectDynamicSkills,
+  selectDynamicCloseCombatTechniques,
+  selectDynamicRangedCombatTechniques,
+  selectDynamicSpells,
+  selectDynamicRituals,
+  selectDynamicLiturgicalChants,
+  selectDynamicCeremonies,
+  selectDynamicCurses,
+  selectDynamicElvenMagicalSongs,
+  selectDynamicDominationRituals,
+  selectDynamicMagicalDances,
+  selectDynamicMagicalMelodies,
+  selectDynamicJesterTricks,
+  selectDynamicAnimistPowers,
+  selectDynamicGeodeRituals,
+  selectDynamicZibiljaRituals,
+  createPropertySelector(selectAdvantages, AdvantageIdentifier.ExceptionalSkill),
+  createPropertySelector(selectAdvantages, AdvantageIdentifier.ExceptionalCombatTechnique),
+  getAttributeMinimaByAssociatedAttributes,
+)
+
 export type DisplayedAttribute = {
   static: Attribute
   dynamic: Rated
@@ -163,15 +233,18 @@ export const selectVisibleAttributes = createSelector(
   createPropertySelector(selectActiveOptionalRules, OptionalRuleIdentifier.MaximumAttributeScores),
   selectAttributeAdjustmentId,
   selectDerivedCharacteristics,
-  selectSkills,
-  selectCloseCombatTechniques,
-  selectRangedCombatTechniques,
-  selectSpells,
-  selectRituals,
-  selectLiturgicalChants,
-  selectCeremonies,
+  selectDynamicSkills,
+  selectDynamicCloseCombatTechniques,
+  selectDynamicRangedCombatTechniques,
+  selectDynamicSpells,
+  selectDynamicRituals,
+  selectDynamicLiturgicalChants,
+  selectDynamicCeremonies,
   selectHighestMagicalPrimaryAttributes,
   selectBlessedPrimaryAttribute,
+  selectAttributeMinimaByAssociatedAttributes,
+  selectMagicalPrimaryAttributeDependencies,
+  selectBlessedPrimaryAttributeDependencies,
   (
     attributes,
     dynamicAttributes,
@@ -193,6 +266,9 @@ export const selectVisibleAttributes = createSelector(
     ceremonies,
     highestMagicalPrimaryAttributes,
     blessedPrimaryAttribute,
+    attributeMinimaByAssociatedAttributes,
+    magicalPrimaryAttributeDependencies,
+    blessedPrimaryAttributeDependencies,
   ): DisplayedAttribute[] => {
     const filterApplyingDependencies = filterApplyingRatedDependencies({
       attributes: dynamicAttributes,
@@ -222,11 +298,11 @@ export const selectVisibleAttributes = createSelector(
           derivedCharacteristics.karmaPoints,
           dynamicAttribute,
           singleHighestMagicalPrimaryAttribute?.static.id,
-          [], // TODO: Replace
+          magicalPrimaryAttributeDependencies,
           blessedPrimaryAttribute?.static.id,
-          [], // TODO: Replace
+          blessedPrimaryAttributeDependencies,
           filterApplyingDependencies,
-          _id => undefined, // TODO: Replace
+          id => attributeMinimaByAssociatedAttributes[id],
         )
 
         const maximum = getAttributeMaximum(

@@ -4,6 +4,7 @@ import { ActivatableMap } from "../../shared/domain/activatableEntry.ts"
 import {
   ActivatableRatedMap,
   ActivatableRatedWithEnhancementsMap,
+  Dependency,
   RatedMap,
 } from "../../shared/domain/ratedEntry.ts"
 import { Sex } from "../../shared/domain/sex.ts"
@@ -336,6 +337,9 @@ export type CharacterState = {
   liturgicalChants: ActivatableRatedWithEnhancementsMap
   ceremonies: ActivatableRatedWithEnhancementsMap
 
+  magicalPrimaryAttributeDependencies: Dependency[]
+  blessedPrimaryAttributeDependencies: Dependency[]
+
   // items: {}
   // hitZoneArmors: {}
   purse: Purse
@@ -580,6 +584,8 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
   blessings: [],
   liturgicalChants: {},
   ceremonies: {},
+  magicalPrimaryAttributeDependencies: [],
+  blessedPrimaryAttributeDependencies: [],
   // items: {}
   // hitZoneArmors: {}
   purse: {
@@ -785,12 +791,36 @@ export const selectCloseCombatTechniques = (state: RootState) =>
   selectCurrentCharacter(state)?.combatTechniques.close ?? {}
 export const selectRangedCombatTechniques = (state: RootState) =>
   selectCurrentCharacter(state)?.combatTechniques.ranged ?? {}
+export const selectCantrips = (state: RootState) => selectCurrentCharacter(state)?.cantrips ?? []
 export const selectSpells = (state: RootState) => selectCurrentCharacter(state)?.spells ?? {}
 export const selectRituals = (state: RootState) => selectCurrentCharacter(state)?.rituals ?? {}
+export const selectCurses = (state: RootState) =>
+  selectCurrentCharacter(state)?.magicalActions.curses ?? {}
+export const selectElvenMagicalSongs = (state: RootState) =>
+  selectCurrentCharacter(state)?.magicalActions.elvenMagicalSongs ?? {}
+export const selectDominationRituals = (state: RootState) =>
+  selectCurrentCharacter(state)?.magicalActions.dominationRituals ?? {}
+export const selectMagicalDances = (state: RootState) =>
+  selectCurrentCharacter(state)?.magicalActions.magicalDances ?? {}
+export const selectMagicalMelodies = (state: RootState) =>
+  selectCurrentCharacter(state)?.magicalActions.magicalMelodies ?? {}
+export const selectJesterTricks = (state: RootState) =>
+  selectCurrentCharacter(state)?.magicalActions.jesterTricks ?? {}
+export const selectAnimistPowers = (state: RootState) =>
+  selectCurrentCharacter(state)?.magicalActions.animistPowers ?? {}
+export const selectGeodeRituals = (state: RootState) =>
+  selectCurrentCharacter(state)?.magicalActions.geodeRituals ?? {}
+export const selectZibiljaRituals = (state: RootState) =>
+  selectCurrentCharacter(state)?.magicalActions.zibiljaRituals ?? {}
+export const selectBlessings = (state: RootState) => selectCurrentCharacter(state)?.blessings ?? []
 export const selectLiturgicalChants = (state: RootState) =>
   selectCurrentCharacter(state)?.liturgicalChants ?? {}
 export const selectCeremonies = (state: RootState) =>
   selectCurrentCharacter(state)?.ceremonies ?? {}
+export const selectMagicalPrimaryAttributeDependencies = (state: RootState) =>
+  selectCurrentCharacter(state)?.magicalPrimaryAttributeDependencies ?? []
+export const selectBlessedPrimaryAttributeDependencies = (state: RootState) =>
+  selectCurrentCharacter(state)?.blessedPrimaryAttributeDependencies ?? []
 
 export const setName = createAction<string>("character/setName")
 export const setAvatar = createAction<string>("character/setAvatar")
