@@ -1,27 +1,3 @@
-// import * as React from "react"
-// import { List, map, notNull, toArray } from "../../../../../Data/List.ts"
-// import { bindF, ensure, Just, Maybe, maybe, Nothing } from "../../../../../Data/Maybe.ts"
-// import { Record } from "../../../../../Data/Record.ts"
-// import { WikiInfoContainer } from "../../../../../App/Containers/WikiInfoContainer.ts"
-// import { CombatTechniquesSortOptions } from "../../../../../App/Models/Config.ts"
-// import { HeroModelRecord } from "../../../../../App/Models/Hero/HeroModel.ts"
-// import { AttributeCombined } from "../../../../../App/Models/View/AttributeCombined.ts"
-// import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../../../../App/Models/View/CombatTechniqueWithRequirements.ts"
-// import { StaticDataRecord } from "../../../../../App/Models/Wiki/WikiModel.ts"
-// import { translate } from "../../../../../App/Utilities/I18n.ts"
-// import { pipe, pipe_ } from "../../../../../App/Utilities/pipe.ts"
-// import { ListView } from "../Universal/List"
-// import { ListHeader } from "../Universal/ListHeader"
-// import { ListHeaderTag } from "../Universal/ListHeaderTag"
-// import { ListPlaceholder } from "../Universal/ListPlaceholder"
-// import { MainContent } from "../Universal/MainContent"
-// import { Options } from "../Universal/Options"
-// import { Page } from "../Universal/Page"
-// import { Scroll } from "../Universal/Scroll"
-// import { SearchField } from "../../../../../App/Views/Universal/SearchField.tsx"
-// import { SortNames, SortOptions } from "../../../../../App/Views/Universal/SortOptions.tsx"
-// import { CombatTechniqueListItem } from "./CombatTechniquesListItem"
-
 import { FC, useCallback, useMemo, useState } from "react"
 import { List } from "../../../../../shared/components/list/List.tsx"
 import { ListHeader } from "../../../../../shared/components/list/ListHeader.tsx"
@@ -201,7 +177,7 @@ export const CombatTechniques: FC = () => {
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
         </ListHeader>
-        <Scroll>
+        <Scroll stable>
           {list.length > 0 ? (
             <List>
               {list.map((x, i) => {

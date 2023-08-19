@@ -6,11 +6,16 @@ import { Imprint } from "./about/Imprint.tsx"
 import { LastChanges } from "./about/LastChanges.tsx"
 import { ThirdPartyLicenses } from "./about/ThirdPartyLicenses.tsx"
 import { Characters } from "./characters/Characters.tsx"
+import { Advantages } from "./characters/character/advantagesAndDisadvantages/Advantages.tsx"
+import { Disadvantages } from "./characters/character/advantagesAndDisadvantages/Disadvantages.tsx"
 import { Attributes } from "./characters/character/attributes/Attributes.tsx"
 import { CombatTechniques } from "./characters/character/combatTechniques/CombatTechniques.tsx"
+import { LiturgicalChants } from "./characters/character/liturgicalChants/LiturgicalChants.tsx"
 import { ProfileOverview } from "./characters/character/profile/ProfileOverview.tsx"
 import { Rules } from "./characters/character/rules/Rules.tsx"
 import { Skills } from "./characters/character/skills/Skills.tsx"
+import { SpecialAbilities } from "./characters/character/specialAbilities/SpecialAbilities.tsx"
+import { Spells } from "./characters/character/spells/Spells.tsx"
 
 export const Router: FC = () => {
   const route = useAppSelector(selectRoute)
@@ -43,20 +48,20 @@ export const Router: FC = () => {
             return <Attributes />
 
           case "advantages":
-            return null
+            return <Advantages />
           case "disadvantages":
-            return null
+            return <Disadvantages />
 
           case "skills":
             return <Skills />
           case "combat_techniques":
             return <CombatTechniques />
           case "special_abilities":
-            return null
+            return <SpecialAbilities />
           case "spells":
-            return null
+            return <Spells />
           case "liturgical_chants":
-            return null
+            return <LiturgicalChants />
 
           case "equipment":
             return null

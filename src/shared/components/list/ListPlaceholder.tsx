@@ -1,6 +1,5 @@
 import { useAppSelector } from "../../../main_window/hooks/redux.ts"
 import { selectCanRemove } from "../../../main_window/selectors/characterSelectors.ts"
-import { classList } from "../../utils/classList.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { IconButton } from "../iconButton/IconButton.tsx"
 import { List } from "./List.tsx"
@@ -226,18 +225,7 @@ export const ListPlaceholder: React.FC<Props> = props => {
   })()
 
   return (
-    <List
-      className={classList("placeholder-wrapper", {
-        "increased-padding": [
-          "advantages",
-          "disadvantages",
-          "specialAbilities",
-          "inactiveAdvantages",
-          "inactiveDisadvantages",
-          "inactiveSpecialAbilities",
-        ].includes(type),
-      })}
-    >
+    <List className="placeholder-wrapper">
       {placeholder}
       {placeholder}
       {placeholder}

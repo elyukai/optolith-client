@@ -148,7 +148,7 @@ export const Characters: FC = () => {
         </Grid>
       </Options>
       <Main>
-        <Scroll>
+        <Scroll stable>
           <List>
             {characters.map(character => (
               <CharactersItem key={character.id} character={character} />

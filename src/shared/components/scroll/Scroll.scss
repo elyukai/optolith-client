@@ -5,9 +5,13 @@
   height: 100%;
 
   > .scroll-area {
-    overflow: overlay;
+    overflow: auto;
     height: 100%;
     width: 100%;
+
+    &.scroll-area--stable {
+      scrollbar-gutter: stable;
+    }
 
     &::-webkit-scrollbar {
       width: 5px;

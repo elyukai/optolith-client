@@ -5,14 +5,15 @@ import "./Scroll.scss"
 interface Props {
   className?: string
   noInnerElement?: boolean
+  stable?: boolean
 }
 
 export const Scroll: FCC<Props> = props => {
-  const { className, children, noInnerElement } = props
+  const { className, children, noInnerElement, stable } = props
 
   return (
     <div className={classList("scroll", className)}>
-      <div className="scroll-area">
+      <div className={classList("scroll-area", { "scroll-area--stable": stable })}>
         {noInnerElement === true ? children : <div className="scroll-inner">{children}</div>}
       </div>
     </div>

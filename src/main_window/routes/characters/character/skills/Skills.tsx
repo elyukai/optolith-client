@@ -157,7 +157,7 @@ export const Skills: FC = () => {
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
         </ListHeader>
-        <Scroll>
+        <Scroll stable>
           {list.length > 0 ? (
             <List>
               {list.map((x, i) => {

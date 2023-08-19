@@ -47,8 +47,8 @@ ul.list-wrapper {
         }
 
         .attr--6-8 {
-          border-color: var(--agility-color) var(--strength-color)
-            var(--strength-color) var(--agility-color);
+          border-color: var(--agility-color) var(--strength-color) var(--strength-color)
+            var(--agility-color);
         }
       }
 
@@ -296,6 +296,7 @@ ul.list-wrapper {
       .check:not(.mod) {
         .value {
           display: none;
+          font-size: 15px;
         }
       }
 

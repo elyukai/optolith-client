@@ -56,7 +56,6 @@ export enum CombatTechniquesSortOrder {
 export enum SpecialAbilitiesSortOrder {
   Name = "name",
   Group = "group",
-  GroupName = "groupname",
 }
 
 export enum SpellsSortOrder {
@@ -125,7 +124,7 @@ const initialSettingsState: SettingsState = {
   skillsSortOrder: SkillsSortOrder.Group,
   skillsCultureRatingVisibility: true,
   combatTechniquesSortOrder: CombatTechniquesSortOrder.Name,
-  specialAbilitiesSortOrder: SpecialAbilitiesSortOrder.GroupName,
+  specialAbilitiesSortOrder: SpecialAbilitiesSortOrder.Group,
   spellsSortOrder: SpellsSortOrder.Name,
   spellsUnfamiliarVisibility: true,
   liturgiesSortOrder: LiturgiesSortOrder.Name,
