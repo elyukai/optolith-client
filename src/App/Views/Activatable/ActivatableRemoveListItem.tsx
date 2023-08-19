@@ -15,6 +15,9 @@ import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/Active
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import {
+  isCustomActivatableId
+} from "../../Utilities/Activatable/checkActivatableUtils"
 import { classListMaybe } from "../../Utilities/CSS"
 import { translate } from "../../Utilities/I18n"
 import { getLevelElementsWithMin } from "../../Utilities/levelUtils"
@@ -147,7 +150,10 @@ const ActivatableRemoveListItem: React.FC<ActivatableRemoveListItemProps> = prop
   let active = false
   if (isJust (selectedForInfo)) {
     active = id === selectedForInfo.value.currentId
-    active &&= index === selectedForInfo.value.index
+
+    if (isCustomActivatableId (id)) {
+      active &&= index === selectedForInfo.value.index
+    }
   }
 
   return (

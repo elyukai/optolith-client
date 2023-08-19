@@ -11,7 +11,7 @@ import { isOrderedMap, lookup, lookupF, notMember } from "../../../Data/OrderedM
 import { Record, RecordI } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
 import { SpecialAbilityGroup } from "../../Constants/Groups"
-import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { AdvantageId, SpecialAbilityId } from "../../Constants/Ids"
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
 import { NumIdName } from "../../Models/NumIdName"
 import { ActivatableNameCost, ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost"
@@ -32,6 +32,7 @@ import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers"
 import { getNameCostForWiki } from "../../Utilities/Activatable/activatableActiveUtils"
 import { getName } from "../../Utilities/Activatable/activatableNameUtils"
+import { isCustomActivatable } from "../../Utilities/Activatable/checkActivatableUtils"
 import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyleUtils"
 import { isBlessedTradId, isMagicalTradId } from "../../Utilities/Activatable/traditionUtils"
 import { putLevelName } from "../../Utilities/AdventurePoints/activatableCostUtils"
@@ -749,7 +750,7 @@ export interface WikiActivatableInfoProps {
 export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => {
   const { x, staticData, selector } = props
 
-  const isCustom = x.values.id === AdvantageId.CustomAdvantage || x.values.id === DisadvantageId.CustomDisadvantage || x.values.id === SpecialAbilityId.CustomSpecialAbility
+  const isCustom = isCustomActivatable (x)
 
   const specialAbilities = SDA.specialAbilities (staticData)
 

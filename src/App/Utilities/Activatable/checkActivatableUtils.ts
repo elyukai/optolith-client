@@ -1,7 +1,7 @@
 import { any } from "../../../Data/List"
 import { member, Record } from "../../../Data/Record"
 import { Pair } from "../../../Data/Tuple"
-import { AdvantageId } from "../../Constants/Ids"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
 import { Advantage } from "../../Models/Wiki/Advantage"
@@ -44,3 +44,13 @@ type ViewActivatable = Record<ActiveActivatable> | Record<InactiveActivatable>
 export const isActiveViewObject =
   (obj: ViewActivatable): obj is Record<ActiveActivatable> =>
     member ("index") (obj)
+
+export const isCustomActivatable =
+  (obj: Activatable): boolean =>
+    isCustomActivatableId(obj.values.id)
+
+export const isCustomActivatableId =
+  (activatableId: string): boolean =>
+    activatableId === AdvantageId.CustomAdvantage
+    || activatableId === DisadvantageId.CustomDisadvantage
+    || activatableId === SpecialAbilityId.CustomSpecialAbility
