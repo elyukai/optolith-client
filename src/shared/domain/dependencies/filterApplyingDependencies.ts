@@ -23,7 +23,7 @@ import { getCombatTechniqueValue } from "../combatTechnique.ts"
 import { getLiturgicalChantValue } from "../liturgicalChant.ts"
 import {
   ActivatableRatedWithEnhancementsMap,
-  Dependency as RatedDependency,
+  RatedDependency,
   RatedMap,
   compareWithRestriction,
 } from "../ratedEntry.ts"

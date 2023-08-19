@@ -11,7 +11,7 @@ import {
 } from "./activatableEntry.ts"
 import { getAttributeValue, getSingleHighestAttribute } from "./attribute.ts"
 import { AttributeIdentifier } from "./identifier.ts"
-import { Dependency, Rated, RatedMap, flattenMinimumRestrictions } from "./ratedEntry.ts"
+import { Rated, RatedDependency, RatedMap, flattenMinimumRestrictions } from "./ratedEntry.ts"
 
 export const getCombatTechniqueValue = (dynamic: Rated | undefined): number => dynamic?.value ?? 6
 
@@ -90,7 +90,7 @@ export const getCombatTechniqueMinimum = (
   staticCombatTechnique: CombatTechnique,
   dynamicCombatTechnique: Rated,
   hunter: Activatable | undefined,
-  filterApplyingDependencies: (dependencies: Dependency[]) => Dependency[],
+  filterApplyingDependencies: (dependencies: RatedDependency[]) => RatedDependency[],
 ): number => {
   const minimumValues: number[][] = [
     [6],

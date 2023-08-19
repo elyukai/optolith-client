@@ -1,6 +1,14 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
-import { arrayFromNonNullable, filterNonNullable, range, rangeSafe, sum, unique } from "./array.ts"
+import {
+  arrayFromNonNullable,
+  ensureNonEmpty,
+  filterNonNullable,
+  range,
+  rangeSafe,
+  sum,
+  unique,
+} from "./array.ts"
 
 describe("arrayFromNonNullable", () => {
   it("returns an array with null and undefined removed", () => {
@@ -51,5 +59,15 @@ describe("unique", () => {
     assert.deepEqual(unique([]), [])
     assert.deepEqual(unique([1, 2, 3]), [1, 2, 3])
     assert.deepEqual(unique([1, 2, 1, 3]), [1, 2, 3])
+  })
+})
+
+describe("ensureNonEmpty", () => {
+  it("returns undefined if the array is empty", () => {
+    assert.deepEqual(ensureNonEmpty([]), undefined)
+  })
+
+  it("returns the non-empty array as-is", () => {
+    assert.deepEqual(ensureNonEmpty([1, 2]), [1, 2])
   })
 })

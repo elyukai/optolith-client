@@ -49,7 +49,7 @@ export const compareWithRestriction = (
 /**
  * Describes a dependency on a certain rated entry.
  */
-export type Dependency = {
+export type RatedDependency = {
   /**
    * The source of the dependency.
    */
@@ -70,13 +70,13 @@ export type Dependency = {
 /**
  * Flattens the minimum restrictions of a list of dependencies.
  */
-export const flattenMinimumRestrictions = (dependencies: Dependency[]): number[] =>
+export const flattenMinimumRestrictions = (dependencies: RatedDependency[]): number[] =>
   dependencies.flatMap(dep => (isMinimumRestriction(dep.value) ? [dep.value.minimum] : []))
 
 /**
  * Flattens the maximum restrictions of a list of dependencies.
  */
-export const flattenMaximumRestrictions = (dependencies: Dependency[]): number[] =>
+export const flattenMaximumRestrictions = (dependencies: RatedDependency[]): number[] =>
   dependencies.flatMap(dep => (isMaximumRestriction(dep.value) ? [dep.value.maximum] : []))
 
 /**
@@ -106,7 +106,7 @@ export type Rated = {
   /**
    * The list of dependencies.
    */
-  readonly dependencies: Dependency[]
+  readonly dependencies: RatedDependency[]
 
   /**
    * A list of bound adventure points. Bound adventure points are granted by the
@@ -130,7 +130,7 @@ export type RatedHelpers = {
     id: number,
     value?: RatedValue,
     options?: Partial<{
-      dependencies: Dependency[]
+      dependencies: RatedDependency[]
       boundAdventurePoints: BoundAdventurePoints[]
     }>,
   ) => Rated
@@ -225,7 +225,7 @@ export type ActivatableRated = {
   /**
    * The list of dependencies.
    */
-  readonly dependencies: Dependency[]
+  readonly dependencies: RatedDependency[]
 
   /**
    * A list of bound adventure points. Bound adventure points are granted by the
@@ -249,7 +249,7 @@ export type ActivatableRatedHelpers = {
     id: number,
     value?: ActivatableRatedValue,
     options?: Partial<{
-      dependencies: Dependency[]
+      dependencies: RatedDependency[]
       boundAdventurePoints: BoundAdventurePoints[]
     }>,
   ) => ActivatableRated
@@ -344,7 +344,7 @@ export type ActivatableRatedWithEnhancements = {
   /**
    * The list of dependencies.
    */
-  readonly dependencies: Dependency[]
+  readonly dependencies: RatedDependency[]
 
   /**
    * A list of bound adventure points. Bound adventure points are granted by the

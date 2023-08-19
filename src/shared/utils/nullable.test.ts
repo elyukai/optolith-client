@@ -1,6 +1,12 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
-import { isNotNullish, isNullish, mapNullable, mapNullableDefault } from "./nullable.ts"
+import {
+  isNotNullish,
+  isNullish,
+  mapNullable,
+  mapNullableDefault,
+  nullableToArray,
+} from "./nullable.ts"
 
 describe("isNullish", () => {
   it("returns if a value is nullish", () => {
@@ -51,5 +57,16 @@ describe("mapNullableDefault", () => {
       mapNullableDefault(undefined, x => x * 2, 0),
       0,
     )
+  })
+})
+
+describe("nullableToArray", () => {
+  it("wraps a non-nullish value into an array", () => {
+    assert.deepEqual(nullableToArray(2), [2])
+  })
+
+  it("returns an empty array if the value is null or undefined", () => {
+    assert.deepEqual(nullableToArray(undefined), [])
+    assert.deepEqual(nullableToArray(null), [])
   })
 })

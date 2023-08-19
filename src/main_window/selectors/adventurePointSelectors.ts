@@ -80,12 +80,12 @@ export const selectAdventurePointsSpentOnLiturgicalChants = createSelector(
 
 export const selectAdventurePointsSpentOnCantrips = createSelector(
   selectCantrips,
-  cantrips => cantrips.length,
+  (cantrips): SpentAdventurePoints => ({ general: cantrips.length, bound: 0 }),
 )
 
 export const selectAdventurePointsSpentOnBlessings = createSelector(
   selectBlessings,
-  blessings => blessings.length,
+  (blessings): SpentAdventurePoints => ({ general: blessings.length, bound: 0 }),
 )
 
 export const selectAdventurePointsSpentOnAdvantages = createSelector(

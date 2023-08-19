@@ -21,15 +21,17 @@ import { Activatable } from "./activatableEntry.ts"
 import { getHighestRequiredAttributeForCombatTechnique } from "./combatTechnique.ts"
 import { Energy, EnergyWithBuyBack } from "./energy.ts"
 import { AttributeIdentifier } from "./identifier.ts"
+import { getHighestRequiredAttributeForLiturgicalChant } from "./liturgicalChant.ts"
 import {
   ActivatableRatedMap,
   ActivatableRatedWithEnhancementsMap,
-  Dependency,
   Rated,
+  RatedDependency,
   RatedMap,
   flattenMinimumRestrictions,
 } from "./ratedEntry.ts"
 import { getHighestRequiredAttributeForSkill } from "./skill.ts"
+import { getHighestRequiredAttributeForSpellwork } from "./spell.ts"
 
 export const getAttributeValue = (dynamic: Rated | undefined): number => dynamic?.value ?? 8
 
@@ -39,10 +41,10 @@ export const getAttributeMinimum = (
   karmaPoints: EnergyWithBuyBack,
   dynamicAttribute: Rated,
   singleHighestMagicalPrimaryAttributeId: number | undefined,
-  magicalPrimaryAttributeDependencies: Dependency[],
+  magicalPrimaryAttributeDependencies: RatedDependency[],
   blessedPrimaryAttributeId: number | undefined,
-  blessedPrimaryAttributeDependencies: Dependency[],
-  filterApplyingDependencies: (dependencies: Dependency[]) => Dependency[],
+  blessedPrimaryAttributeDependencies: RatedDependency[],
+  filterApplyingDependencies: (dependencies: RatedDependency[]) => RatedDependency[],
   getSkillCheckAttributeMinimum: (id: number) => number | undefined,
 ): number => {
   const isConstitution = dynamicAttribute.id === AttributeIdentifier.Constitution
@@ -242,70 +244,152 @@ export const getAttributeMinimaByAssociatedAttributes = (
           exceptionalCombatTechnique,
         ),
     ),
-    ...getAttributeMinimaForEntity(
-      dynamicSpells,
-      staticSpells,
-      (dynamicEntry, staticEntry) => undefined,
+    ...getAttributeMinimaForEntity(dynamicSpells, staticSpells, (dynamicEntry, staticEntry) =>
+      getHighestRequiredAttributeForSpellwork(
+        attributes,
+        staticEntry,
+        dynamicEntry,
+        exceptionalSkill,
+        "Spell",
+      ),
     ),
-    ...getAttributeMinimaForEntity(
-      dynamicRituals,
-      staticRituals,
-      (dynamicEntry, staticEntry) => undefined,
+    ...getAttributeMinimaForEntity(dynamicRituals, staticRituals, (dynamicEntry, staticEntry) =>
+      getHighestRequiredAttributeForSpellwork(
+        attributes,
+        staticEntry,
+        dynamicEntry,
+        exceptionalSkill,
+        "Ritual",
+      ),
     ),
     ...getAttributeMinimaForEntity(
       dynamicLiturgicalChants,
       staticLiturgicalChants,
-      (dynamicEntry, staticEntry) => undefined,
+      (dynamicEntry, staticEntry) =>
+        getHighestRequiredAttributeForLiturgicalChant(
+          attributes,
+          staticEntry,
+          dynamicEntry,
+          exceptionalSkill,
+          "LiturgicalChant",
+        ),
     ),
     ...getAttributeMinimaForEntity(
       dynamicCeremonies,
       staticCeremonies,
-      (dynamicEntry, staticEntry) => undefined,
+      (dynamicEntry, staticEntry) =>
+        getHighestRequiredAttributeForLiturgicalChant(
+          attributes,
+          staticEntry,
+          dynamicEntry,
+          exceptionalSkill,
+          "Ceremony",
+        ),
     ),
-    ...getAttributeMinimaForEntity(
-      dynamicCurses,
-      staticCurses,
-      (dynamicEntry, staticEntry) => undefined,
+    ...getAttributeMinimaForEntity(dynamicCurses, staticCurses, (dynamicEntry, staticEntry) =>
+      getHighestRequiredAttributeForSpellwork(
+        attributes,
+        staticEntry,
+        dynamicEntry,
+        undefined,
+        undefined,
+      ),
     ),
     ...getAttributeMinimaForEntity(
       dynamicElvenMagicalSongs,
       staticElvenMagicalSongs,
-      (dynamicEntry, staticEntry) => undefined,
+      (dynamicEntry, staticEntry) =>
+        getHighestRequiredAttributeForSpellwork(
+          attributes,
+          staticEntry,
+          dynamicEntry,
+          undefined,
+          undefined,
+        ),
     ),
     ...getAttributeMinimaForEntity(
       dynamicDominationRituals,
       staticDominationRituals,
-      (dynamicEntry, staticEntry) => undefined,
+      (dynamicEntry, staticEntry) =>
+        getHighestRequiredAttributeForSpellwork(
+          attributes,
+          staticEntry,
+          dynamicEntry,
+          undefined,
+          undefined,
+        ),
     ),
     ...getAttributeMinimaForEntity(
       dynamicMagicalDances,
       staticMagicalDances,
-      (dynamicEntry, staticEntry) => undefined,
+      (dynamicEntry, staticEntry) =>
+        getHighestRequiredAttributeForSpellwork(
+          attributes,
+          staticEntry,
+          dynamicEntry,
+          undefined,
+          undefined,
+        ),
     ),
     ...getAttributeMinimaForEntity(
       dynamicMagicalMelodies,
       staticMagicalMelodies,
-      (dynamicEntry, staticEntry) => undefined,
+      (dynamicEntry, staticEntry) =>
+        getHighestRequiredAttributeForSpellwork(
+          attributes,
+          staticEntry,
+          dynamicEntry,
+          undefined,
+          undefined,
+        ),
     ),
     ...getAttributeMinimaForEntity(
       dynamicJesterTricks,
       staticJesterTricks,
-      (dynamicEntry, staticEntry) => undefined,
+      (dynamicEntry, staticEntry) =>
+        getHighestRequiredAttributeForSpellwork(
+          attributes,
+          staticEntry,
+          dynamicEntry,
+          undefined,
+          undefined,
+        ),
     ),
     ...getAttributeMinimaForEntity(
       dynamicAnimistPowers,
       staticAnimistPowers,
-      (dynamicEntry, staticEntry) => undefined,
+      (dynamicEntry, staticEntry) =>
+        getHighestRequiredAttributeForSpellwork(
+          attributes,
+          staticEntry,
+          dynamicEntry,
+          undefined,
+          undefined,
+        ),
     ),
     ...getAttributeMinimaForEntity(
       dynamicGeodeRituals,
       staticGeodeRituals,
-      (dynamicEntry, staticEntry) => undefined,
+      (dynamicEntry, staticEntry) =>
+        getHighestRequiredAttributeForSpellwork(
+          attributes,
+          staticEntry,
+          dynamicEntry,
+          undefined,
+          undefined,
+        ),
     ),
     ...getAttributeMinimaForEntity(
       dynamicZibiljaRituals,
       staticZibiljaRituals,
-      (dynamicEntry, staticEntry) => undefined,
+      (dynamicEntry, staticEntry) =>
+        getHighestRequiredAttributeForSpellwork(
+          attributes,
+          staticEntry,
+          dynamicEntry,
+          undefined,
+          undefined,
+        ),
     ),
   ].reduce<Record<number, number>>(
     (acc, { id, value }) => ({

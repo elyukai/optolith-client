@@ -53,3 +53,8 @@ export const arrayEqual = <T extends number | boolean | string | null | undefine
   arr1: T[],
   arr2: T[],
 ): boolean => arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index])
+
+/**
+ * Returns `undefined` if the array is empty, otherwise the non-empty array.
+ */
+export const ensureNonEmpty = <T>(arr: T[]): T[] | undefined => (arr.length > 0 ? arr : undefined)

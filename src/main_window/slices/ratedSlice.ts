@@ -4,7 +4,7 @@ import {
   BoundAdventurePoints,
   cachedAdventurePoints,
 } from "../../shared/domain/adventurePoints/ratedEntry.ts"
-import { Dependency, Rated, RatedMap, RatedValue } from "../../shared/domain/ratedEntry.ts"
+import { Rated, RatedDependency, RatedMap, RatedValue } from "../../shared/domain/ratedEntry.ts"
 import { Reducer, createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 import { DatabaseState } from "./databaseSlice.ts"
@@ -19,7 +19,7 @@ export type RatedSlice<N extends string, E extends string> = {
     id: number,
     value: RatedValue,
     options?: Partial<{
-      dependencies: Dependency[]
+      dependencies: RatedDependency[]
       boundAdventurePoints: BoundAdventurePoints[]
     }>,
   ) => Rated
@@ -30,7 +30,7 @@ export type RatedSlice<N extends string, E extends string> = {
   createInitial: (
     id: number,
     options?: Partial<{
-      dependencies: Dependency[]
+      dependencies: RatedDependency[]
       boundAdventurePoints: BoundAdventurePoints[]
     }>,
   ) => Rated

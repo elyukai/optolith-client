@@ -4,7 +4,7 @@ import { ActivatableMap } from "../../shared/domain/activatableEntry.ts"
 import {
   ActivatableRatedMap,
   ActivatableRatedWithEnhancementsMap,
-  Dependency,
+  RatedDependency,
   RatedMap,
 } from "../../shared/domain/ratedEntry.ts"
 import { Sex } from "../../shared/domain/sex.ts"
@@ -337,8 +337,8 @@ export type CharacterState = {
   liturgicalChants: ActivatableRatedWithEnhancementsMap
   ceremonies: ActivatableRatedWithEnhancementsMap
 
-  magicalPrimaryAttributeDependencies: Dependency[]
-  blessedPrimaryAttributeDependencies: Dependency[]
+  magicalPrimaryAttributeDependencies: RatedDependency[]
+  blessedPrimaryAttributeDependencies: RatedDependency[]
 
   // items: {}
   // hitZoneArmors: {}

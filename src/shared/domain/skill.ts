@@ -6,7 +6,7 @@ import { mapNullable } from "../utils/nullable.ts"
 import { Activatable, countOptions, isActive } from "./activatableEntry.ts"
 import { getSingleHighestAttribute } from "./attribute.ts"
 import { SkillIdentifier } from "./identifier.ts"
-import { Dependency, Rated, RatedMap, flattenMinimumRestrictions } from "./ratedEntry.ts"
+import { Rated, RatedDependency, RatedMap, flattenMinimumRestrictions } from "./ratedEntry.ts"
 import { getSkillCheckValues, getSkillCheckWithId } from "./skillCheck.ts"
 
 export const getSkillValue = (dynamic: Rated | undefined): number => dynamic?.value ?? 0
@@ -38,7 +38,7 @@ export const getSkillMinimum = (
   skills: RatedMap,
   dynamicSkill: Rated,
   craftInstruments: Activatable | undefined,
-  filterApplyingDependencies: (dependencies: Dependency[]) => Dependency[],
+  filterApplyingDependencies: (dependencies: RatedDependency[]) => RatedDependency[],
 ): number => {
   const minimumValues: number[][] = [
     [0],
