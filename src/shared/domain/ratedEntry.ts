@@ -1,15 +1,22 @@
-import { ActivatableIdentifier, SkillWithEnhancementsIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import {
+  ActivatableIdentifier,
+  RatedIdentifier,
+  SkillWithEnhancementsIdentifier,
+} from "optolith-database-schema/types/_IdentifierGroup"
 import { ImprovementCost } from "./adventurePoints/improvementCost.ts"
-import { BoundAdventurePoints, RatedAdventurePointsCache, cachedAdventurePoints, cachedAdventurePointsForActivatable } from "./adventurePoints/ratedEntry.ts"
+import {
+  BoundAdventurePoints,
+  RatedAdventurePointsCache,
+  cachedAdventurePoints,
+  cachedAdventurePointsForActivatable,
+} from "./adventurePoints/ratedEntry.ts"
 import { Enhancement } from "./enhancement.ts"
 
 /**
  * A required value from a prerequisite. Can either require a minimum or a
  * maximum value.
  */
-export type ValueRestriction =
-  | MinimumValueRestriction
-  | MaximumValueRestriction
+export type ValueRestriction = MinimumValueRestriction | MaximumValueRestriction
 
 export type MinimumValueRestriction = {
   readonly tag: "Minimum"
@@ -27,6 +34,18 @@ export const isMinimumRestriction = (x: ValueRestriction): x is MinimumValueRest
 export const isMaximumRestriction = (x: ValueRestriction): x is MaximumValueRestriction =>
   x.tag === "Maximum"
 
+export const compareWithRestriction = (
+  restriction: ValueRestriction,
+  value: number | undefined,
+): boolean =>
+  isMinimumRestriction(restriction)
+    ? value === undefined
+      ? false
+      : value >= restriction.minimum
+    : value === undefined
+    ? true
+    : value <= restriction.maximum
+
 /**
  * Describes a dependency on a certain rated entry.
  */
@@ -40,13 +59,25 @@ export type Dependency = {
    * If the source prerequisite targets multiple entries, the other entries are
    * listed here.
    */
-  readonly otherTargets?: ActivatableIdentifier | SkillWithEnhancementsIdentifier
+  readonly otherTargets?: RatedIdentifier[]
 
   /**
    * The required value.
    */
   readonly value: ValueRestriction
 }
+
+/**
+ * Flattens the minimum restrictions of a list of dependencies.
+ */
+export const flattenMinimumRestrictions = (dependencies: Dependency[]): number[] =>
+  dependencies.flatMap(dep => (isMinimumRestriction(dep.value) ? [dep.value.minimum] : []))
+
+/**
+ * Flattens the maximum restrictions of a list of dependencies.
+ */
+export const flattenMaximumRestrictions = (dependencies: Dependency[]): number[] =>
+  dependencies.flatMap(dep => (isMaximumRestriction(dep.value) ? [dep.value.maximum] : []))
 
 /**
  * The current value.
@@ -84,6 +115,10 @@ export type Rated = {
    * granted is stored as well.
    */
   readonly boundAdventurePoints: BoundAdventurePoints[]
+}
+
+export type RatedMap = {
+  [id: number]: Rated
 }
 
 export type RatedHelpers = {
@@ -124,22 +159,18 @@ export const createRatedHelpers = (config: {
 
   const updateCachedAdventurePoints = (entry: Rated): Rated => ({
     ...entry,
-    cachedAdventurePoints:
-      cachedAdventurePoints(
-        entry.value,
-        minValue,
-        entry.boundAdventurePoints,
-        getImprovementCost(entry.id),
-      ),
+    cachedAdventurePoints: cachedAdventurePoints(
+      entry.value,
+      minValue,
+      entry.boundAdventurePoints,
+      getImprovementCost(entry.id),
+    ),
   })
 
   const create: RatedHelpers["create"] = (
     id,
     value = minValue,
-    {
-      dependencies = [],
-      boundAdventurePoints = [],
-    } = {},
+    { dependencies = [], boundAdventurePoints = [] } = {},
   ) =>
     updateCachedAdventurePoints({
       id,
@@ -205,6 +236,10 @@ export type ActivatableRated = {
   readonly boundAdventurePoints: BoundAdventurePoints[]
 }
 
+export type ActivatableRatedMap = {
+  [id: number]: ActivatableRated
+}
+
 export type ActivatableRatedHelpers = {
   /**
    * Creates a new entry with an initial value if active. The initial
@@ -246,21 +281,17 @@ export const createActivatableRatedHelpers = (config: {
 
   const updateCachedAdventurePoints = (entry: ActivatableRated): ActivatableRated => ({
     ...entry,
-    cachedAdventurePoints:
-      cachedAdventurePointsForActivatable(
-        entry.value,
-        entry.boundAdventurePoints,
-        getImprovementCost(entry.id),
-      ),
+    cachedAdventurePoints: cachedAdventurePointsForActivatable(
+      entry.value,
+      entry.boundAdventurePoints,
+      getImprovementCost(entry.id),
+    ),
   })
 
   const create: ActivatableRatedHelpers["create"] = (
     id,
     value,
-    {
-      dependencies = [],
-      boundAdventurePoints = [],
-    } = {},
+    { dependencies = [], boundAdventurePoints = [] } = {},
   ) =>
     updateCachedAdventurePoints({
       id,
@@ -329,4 +360,8 @@ export type ActivatableRatedWithEnhancements = {
   readonly enhancements: {
     [id: number]: Enhancement
   }
+}
+
+export type ActivatableRatedWithEnhancementsMap = {
+  [id: number]: ActivatableRatedWithEnhancements
 }

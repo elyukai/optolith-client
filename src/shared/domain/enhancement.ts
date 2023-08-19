@@ -2,21 +2,21 @@ import { ActivatableIdentifier } from "optolith-database-schema/types/_Identifie
 
 export type EnhancementDependency =
   | {
-    tag: "Internal"
+      tag: "Internal"
 
-    /**
-     * The depending enhancement.
-     */
-    id: number
-  }
+      /**
+       * The depending enhancement.
+       */
+      id: number
+    }
   | {
-    tag: "External"
+      tag: "External"
 
-    /**
-     * The depending activatable.
-     */
-    id: ActivatableIdentifier
-  }
+      /**
+       * The depending activatable.
+       */
+      id: ActivatableIdentifier
+    }
 
 export type Enhancement = {
   id: number

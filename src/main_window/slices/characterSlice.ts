@@ -1,15 +1,18 @@
-/* eslint-disable max-len */
 import { AnyAction, createAction } from "@reduxjs/toolkit"
 import { Draft } from "immer"
-import { ActivatableRated, ActivatableRatedWithEnhancements, Rated } from "../../shared/domain/ratedEntry.ts"
+import { ActivatableMap } from "../../shared/domain/activatableEntry.ts"
+import { ActivatableRatedMap, ActivatableRatedWithEnhancementsMap, RatedMap } from "../../shared/domain/ratedEntry.ts"
+import { Sex } from "../../shared/domain/sex.ts"
 import { createImmerReducer, reduceReducers } from "../../shared/utils/redux.ts"
 import { RootState } from "../store.ts"
 import { attributesReducer } from "./attributesSlice.ts"
+import { closeCombatTechniquesReducer } from "./closeCombatTechniqueSlice.ts"
 import { DatabaseState } from "./databaseSlice.ts"
 import { derivedCharacteristicsReducer } from "./derivedCharacteristicsSlice.ts"
 import { personalDataReducer } from "./personalDataSlice.ts"
 import { professionReducer } from "./professionSlice.ts"
 import { raceReducer } from "./raceSlice.ts"
+import { rangedCombatTechniquesReducer } from "./rangedCombatTechniqueSlice.ts"
 import { rulesReducer } from "./rulesSlice.ts"
 import { skillsReducer } from "./skillsSlice.ts"
 
@@ -355,65 +358,6 @@ export type ActiveOptionalRule = {
   options?: number[]
 }
 
-/**
- * The character's sex. It does not have to be binary, although it always must be specified how to handle it in the context of binary sex prerequisites. You can also provide a custom sex with a custom name.
- */
-export type Sex =
-  | BinarySex
-  | NonBinarySex
-  | CustomSex
-
-/**
- * A binary sex option.
- */
-export type BinarySex = {
-  type: "Male" | "Female"
-}
-
-/**
- * A non-binary sex option.
- */
-export type NonBinarySex ={
-  type: "BalThani" | "Tsajana"
-
-  /**
-   * Defines how a non-binary sex should be treated when checking prerequisites.
-   */
-  binaryHandling: BinaryHandling
-}
-
-/**
- * A custom non-binary sex option.
- */
-export type CustomSex = {
-  type: "Custom"
-
-  /**
-   * The custom sex name.
-   */
-  name: string
-
-  /**
-   * Defines how a non-binary sex should be treated when checking prerequisites.
-   */
-  binaryHandling: BinaryHandling
-}
-
-/**
- * Defines how a non-binary sex should be treated when checking prerequisites.
- */
-export type BinaryHandling = {
-  /**
-   * Defines if the sex should be treated as male when checking prerequisites.
-   */
-  asMale: boolean
-
-  /**
-   * Defines if the sex should be treated as female when checking prerequisites.
-   */
-  asFemale: boolean
-}
-
 export type SocialStatusDependency = {
   id: number
 }
@@ -475,18 +419,6 @@ export type EnergyWithBuyBack = {
   permanentlyLostBoughtBack: number
 }
 
-export type RatedMap = {
-  [id: number]: Rated
-}
-
-export type ActivatableRatedMap = {
-  [id: number]: ActivatableRated
-}
-
-export type ActivatableRatedWithEnhancementsMap = {
-  [id: number]: ActivatableRatedWithEnhancements
-}
-
 export type TinyActivatableSet = number[]
 
 /**
@@ -521,96 +453,6 @@ export type Purse = {
    * @integer
    */
   ducats: number
-}
-
-export type Activatable = {
-  /**
-   * The activatable identifier.
-   * @integer
-   */
-  id: number
-
-  /**
-   * One or multiple activations of the activatable.
-   */
-  instances: {
-    /**
-     * One or multiple options for the activatable. The meaning depends on the activatable.
-     * @minItems 1
-     */
-    options?: ActivatableOption[]
-
-    /**
-     * The instance level (if the activatable has levels).
-     */
-    level?: number
-
-    /**
-     * If provided, a custom adventure points value has been set for this instance.
-     */
-    customAdventurePointsValue?: number
-  }[]
-}
-
-export type ActivatableOption =
-  | PredefinedActivatableOption
-  | CustomActivatableOption
-
-export type PredefinedActivatableOption = {
-  type: "Predefined"
-
-  /**
-   * An identifier referencing a different entry.
-   */
-  id: {
-    /**
-     * The entry type or `"Generic"` if it references a select option local to the entry.
-     */
-    type:
-      | "Generic"
-      | "Blessing"
-      | "Cantrip"
-      | "TradeSecret"
-      | "Script"
-      | "AnimalShape"
-      | "ArcaneBardTradition"
-      | "ArcaneDancerTradition"
-      | "SexPractice"
-      | "Race"
-      | "Culture"
-      | "BlessedTradition"
-      | "Element"
-      | "Property"
-      | "Aspect"
-      | "Disease"
-      | "Poison"
-      | "Language"
-      | "Skill"
-      | "MeleeCombatTechnique"
-      | "RangedCombatTechnique"
-      | "LiturgicalChant"
-      | "Ceremony"
-      | "Spell"
-      | "Ritual"
-
-    /**
-     * The numeric identifier.
-     */
-    value: number
-  }
-}
-
-export type CustomActivatableOption = {
-  type: "Custom"
-
-  /**
-   * A user-entered text.
-   */
-  value: string
-}
-
-export type ActivatableMap = {
-  [id: number]: Activatable
 }
 
 const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified"> = {
@@ -867,6 +709,12 @@ export const selectPurchasedKarmaPoints = (state: RootState) => selectCurrentCha
 export const selectKarmaPointsPermanentlyLost = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.permanentlyLost ?? 0
 export const selectKarmaPointsPermanentlyLostBoughtBack = (state: RootState) => selectCurrentCharacter(state)?.derivedCharacteristics.karmaPoints.permanentlyLostBoughtBack ?? 0
 export const selectSkills = (state: RootState) => selectCurrentCharacter(state)?.skills ?? {}
+export const selectCloseCombatTechniques = (state: RootState) => selectCurrentCharacter(state)?.combatTechniques.close ?? {}
+export const selectRangedCombatTechniques = (state: RootState) => selectCurrentCharacter(state)?.combatTechniques.ranged ?? {}
+export const selectSpells = (state: RootState) => selectCurrentCharacter(state)?.spells ?? {}
+export const selectRituals = (state: RootState) => selectCurrentCharacter(state)?.rituals ?? {}
+export const selectLiturgicalChants = (state: RootState) => selectCurrentCharacter(state)?.liturgicalChants ?? {}
+export const selectCeremonies = (state: RootState) => selectCurrentCharacter(state)?.ceremonies ?? {}
 
 export const setName = createAction<string>("character/setName")
 export const setAvatar = createAction<string>("character/setAvatar")
@@ -900,4 +748,6 @@ export const characterReducer =
     professionReducer,
     rulesReducer,
     skillsReducer,
+    closeCombatTechniquesReducer,
+    rangedCombatTechniquesReducer,
   )

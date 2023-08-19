@@ -1,10 +1,16 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { BlessedTradition } from "optolith-database-schema/types/specialAbility/BlessedTradition"
 import { MagicalTradition } from "optolith-database-schema/types/specialAbility/MagicalTradition"
-import { isActive } from "../../shared/domain/activatableEntry.ts"
+import { Activatable, isActive } from "../../shared/domain/activatableEntry.ts"
 import { isNotNullish } from "../../shared/utils/nullable.ts"
-import { Activatable, selectBlessedTraditions as selectDynamicBlessedTraditions, selectMagicalTraditions as selectDynamicMagicalTraditions } from "../slices/characterSlice.ts"
-import { selectBlessedTraditions as selectStaticBlessedTraditions, selectMagicalTraditions as selectStaticMagicalTraditions } from "../slices/databaseSlice.ts"
+import {
+  selectBlessedTraditions as selectDynamicBlessedTraditions,
+  selectMagicalTraditions as selectDynamicMagicalTraditions,
+} from "../slices/characterSlice.ts"
+import {
+  selectBlessedTraditions as selectStaticBlessedTraditions,
+  selectMagicalTraditions as selectStaticMagicalTraditions,
+} from "../slices/databaseSlice.ts"
 
 export type CombinedActiveMagicalTradition = {
   static: MagicalTradition
@@ -28,7 +34,7 @@ export const selectActiveMagicalTraditions = createSelector(
 
         return undefined
       })
-      .filter(isNotNullish)
+      .filter(isNotNullish),
 )
 
 export type CombinedActiveBlessedTradition = {
@@ -53,5 +59,5 @@ export const selectActiveBlessedTradition = createSelector(
 
         return undefined
       })
-      .find(isNotNullish)
+      .find(isNotNullish),
 )

@@ -1,5 +1,4 @@
-import { Activatable } from "../../main_window/slices/characterSlice.ts"
-import { firstLevel, isActive } from "./activatableEntry.ts"
+import { Activatable, firstLevel, isActive } from "./activatableEntry.ts"
 
 /**
  * There are pairs of entries that are mutually exclusive and modify a certain
@@ -9,8 +8,7 @@ import { firstLevel, isActive } from "./activatableEntry.ts"
 export const modifierByLevel = (
   incrementor: Activatable | undefined,
   decrementor: Activatable | undefined,
-): number =>
-  firstLevel(incrementor) - firstLevel(decrementor)
+): number => firstLevel(incrementor) - firstLevel(decrementor)
 
 /**
  * There are pairs of entries that are mutually exclusive and modify a certain
@@ -21,8 +19,7 @@ export const modifierByLevel = (
 export const modifierByIsActive = (
   incrementor: Activatable | undefined,
   decrementor: Activatable | undefined,
-): number =>
-  isActive(incrementor) ? 1 : isActive(decrementor) ? -1 : 0
+): number => (isActive(incrementor) ? 1 : isActive(decrementor) ? -1 : 0)
 
 const countActive = (activatables: (Activatable | undefined)[]) =>
   activatables.reduce((acc, entry) => acc + (isActive(entry) ? 1 : 0), 0)
@@ -35,5 +32,4 @@ const countActive = (activatables: (Activatable | undefined)[]) =>
 export const modifierByIsActives = (
   incrementors: (Activatable | undefined)[],
   decrementors: (Activatable | undefined)[],
-): number =>
-  countActive(incrementors) - countActive(decrementors)
+): number => countActive(incrementors) - countActive(decrementors)

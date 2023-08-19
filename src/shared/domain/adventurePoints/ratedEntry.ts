@@ -36,15 +36,12 @@ export type RatedAdventurePointsCache = {
 }
 
 const groupBoundAdventurePointsByRating = (
-  boundAdventurePoints: BoundAdventurePoints[]
+  boundAdventurePoints: BoundAdventurePoints[],
 ): ReadonlyMap<number | "activation", number> =>
-  boundAdventurePoints.reduce(
-    (map, { rating: boundRating, adventurePoints }) => {
-      const key = boundRating ?? "activation"
-      return map.set(key, (map.get(key) ?? 0) + adventurePoints)
-    },
-    new Map<number | "activation", number>(),
-  )
+  boundAdventurePoints.reduce((map, { rating: boundRating, adventurePoints }) => {
+    const key = boundRating ?? "activation"
+    return map.set(key, (map.get(key) ?? 0) + adventurePoints)
+  }, new Map<number | "activation", number>())
 
 const accumulateCache = (
   startValue: number,
@@ -59,9 +56,8 @@ const accumulateCache = (
       const usedBoundForStep = Math.min(costForStep, acc.remainingApplicableBound)
       const usedGeneralForStep = costForStep - usedBoundForStep
 
-      const newRemainingBound = acc.remainingApplicableBound
-        - usedBoundForStep
-        + (boundByValue.get(currentValue) ?? 0)
+      const newRemainingBound =
+        acc.remainingApplicableBound - usedBoundForStep + (boundByValue.get(currentValue) ?? 0)
 
       return {
         usedGeneral: acc.usedGeneral + usedGeneralForStep,
@@ -72,8 +68,8 @@ const accumulateCache = (
     {
       usedGeneral: 0,
       usedBound: 0,
-      remainingApplicableBound: (boundByValue.get(initialApplicableBoundKey) ?? 0),
-    }
+      remainingApplicableBound: boundByValue.get(initialApplicableBoundKey) ?? 0,
+    },
   )
 
   return {
@@ -98,8 +94,7 @@ export const cachedAdventurePoints = (
       general: 0,
       bound: 0,
     }
-  }
-  else {
+  } else {
     const boundByValue = groupBoundAdventurePointsByRating(boundAdventurePoints)
     return accumulateCache(minValue + 1, value, minValue, boundByValue, ic)
   }
@@ -120,8 +115,7 @@ export const cachedAdventurePointsForActivatable = (
       general: 0,
       bound: 0,
     }
-  }
-  else {
+  } else {
     const boundByValue = groupBoundAdventurePointsByRating(boundAdventurePoints)
     return accumulateCache(0, value, "activation", boundByValue, ic)
   }

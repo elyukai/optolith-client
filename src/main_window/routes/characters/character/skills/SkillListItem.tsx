@@ -1,4 +1,7 @@
-import { SkillCheckPenalty, SkillCheck as SkillCheckType } from "optolith-database-schema/types/_SkillCheck"
+import {
+  SkillCheckPenalty,
+  SkillCheck as SkillCheckType,
+} from "optolith-database-schema/types/_SkillCheck"
 import { memo, useCallback } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
@@ -7,7 +10,10 @@ import { ListItemValues } from "../../../../../shared/components/list/ListItemVa
 import { ImprovementCost } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import { changeInlineLibraryEntry, selectInlineLibraryEntryId } from "../../../../slices/inlineWikiSlice.ts"
+import {
+  changeInlineLibraryEntry,
+  selectInlineLibraryEntryId,
+} from "../../../../slices/inlineWikiSlice.ts"
 import { AdditionalValue, SkillAdditionalValues } from "./SkillAdditionalValues.tsx"
 import { SkillButtons } from "./SkillButtons.tsx"
 import { SkillCheck } from "./SkillCheck.tsx"
@@ -73,11 +79,10 @@ const SkillListItem: React.FC<Props> = props => {
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
   const canRemove = useAppSelector(selectCanRemove)
 
-  const handleSelectForInfo =
-    useCallback(
-      () => dispatch(changeInlineLibraryEntry({ tag: "Skill", skill: id })),
-      [ dispatch, id ]
-    )
+  const handleSelectForInfo = useCallback(
+    () => dispatch(changeInlineLibraryEntry({ tag: "Skill", skill: id })),
+    [dispatch, id],
+  )
 
   return (
     <ListItem
@@ -86,38 +91,23 @@ const SkillListItem: React.FC<Props> = props => {
       unrecommended={untyp}
       insertTopMargin={insertTopMargin}
       active={inlineLibraryEntryId?.tag === "Skill" && inlineLibraryEntryId.skill === id}
-      >
+    >
       <ListItemName name={name} onClick={handleSelectForInfo} />
       <ListItemSeparator />
-      <SkillGroup
-        addText={addText}
-        group={group}
-        getGroupName={getGroupName}
-        />
+      <SkillGroup addText={addText} group={group} getGroupName={getGroupName} />
       <ListItemValues>
         <SkillRating
           isNotActive={isNotActive}
           noIncrease={noIncrease}
           sr={sr}
           addPoint={addPoint}
-          />
-        {checkDisabled !== true && check !== undefined
-          ? (
-            <SkillCheck
-              check={check}
-              checkPenalty={checkmod}
-              />
-          )
-          : null}
-        <SkillFill
-          addFillElement={addFillElement}
-          />
-        <SkillImprovementCost
-          ic={ic}
-          />
-        <SkillAdditionalValues
-          addValues={addValues}
-          />
+        />
+        {checkDisabled !== true && check !== undefined ? (
+          <SkillCheck check={check} checkPenalty={checkmod} />
+        ) : null}
+        <SkillFill addFillElement={addFillElement} />
+        <SkillImprovementCost ic={ic} />
+        <SkillAdditionalValues addValues={addValues} />
       </ListItemValues>
       <SkillButtons
         activateDisabled={activateDisabled}
@@ -131,7 +121,7 @@ const SkillListItem: React.FC<Props> = props => {
         addPoint={addPoint}
         removePoint={canRemove ? removePoint : undefined}
         selectForInfo={handleSelectForInfo}
-        />
+      />
     </ListItem>
   )
 }

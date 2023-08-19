@@ -1,58 +1,43 @@
 import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
 import { Race } from "optolith-database-schema/types/Race"
-import { CharacterState } from "../../main_window/slices/characterSlice.ts"
-import { filterNonNullable } from "../utils/array.ts"
+import { mapNullable } from "../utils/nullable.ts"
+import { Energy, EnergyWithBuyBack } from "./energy.ts"
 import { AttributeIdentifier } from "./identifier.ts"
-import { Rated } from "./ratedEntry.ts"
+import { Dependency, Rated, flattenMinimumRestrictions } from "./ratedEntry.ts"
+
+export const getAttributeValue = (dynamic: Rated | undefined): number => dynamic?.value ?? 8
 
 export const getAttributeMinimum = (
-  characterDerivedCharacteristics: CharacterState["derivedCharacteristics"],
-  dynamic: Rated,
+  lifePoints: Energy,
+  arcaneEnergy: EnergyWithBuyBack,
+  karmaPoints: EnergyWithBuyBack,
+  dynamicAttribute: Rated,
+  singleHighestMagicalPrimaryAttributeId: number | undefined,
+  magicalPrimaryAttributeDependencies: Dependency[],
+  blessedPrimaryAttributeId: number | undefined,
+  blessedPrimaryAttributeDependencies: Dependency[],
+  filterApplyingDependencies: (dependencies: Dependency[]) => Dependency[],
+  getSkillCheckAttributeMinimum: (id: number) => number | undefined,
 ): number => {
-  // (wiki: StaticDataRecord) =>
-  // (hero: HeroModelRecord) =>
-  // (mblessed_primary_attr: Maybe<Record<AttributeCombined>>) =>
-  // (mhighest_magical_primary_attr: Maybe<Record<AttributeCombined>>) =>
+  const isConstitution = dynamicAttribute.id === AttributeIdentifier.Constitution
+  const isHighestMagicalPrimaryAttribute =
+    dynamicAttribute.id === singleHighestMagicalPrimaryAttributeId
+  const isBlessedPrimaryAttribute = dynamicAttribute.id === blessedPrimaryAttributeId
 
-  const isConstitution = dynamic.id === AttributeIdentifier.Constitution
+  const minimumValues: number[][] = [
+    [8],
+    flattenMinimumRestrictions(filterApplyingDependencies(dynamicAttribute.dependencies)),
+    isConstitution ? [lifePoints.purchased] : [],
+    isHighestMagicalPrimaryAttribute
+      ? [arcaneEnergy.purchased, ...flattenMinimumRestrictions(magicalPrimaryAttributeDependencies)]
+      : [],
+    isBlessedPrimaryAttribute
+      ? [karmaPoints.purchased, ...flattenMinimumRestrictions(blessedPrimaryAttributeDependencies)]
+      : [],
+    mapNullable(getSkillCheckAttributeMinimum(dynamicAttribute.id), min => [min]) ?? [],
+  ]
 
-  // const isHighestMagicalPrimaryAttribute =
-  //   Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mhighest_magical_primary_attr))
-
-  // const isBlessedPrimaryAttribute =
-  //   Maybe.elem (AtDA.id (hero_entry)) (fmap (ACA_.id) (mblessed_primary_attr))
-
-  // const blessedPrimaryAttributeDependencies = HA.blessedPrimaryAttributeDependencies (hero)
-
-  // const magicalPrimaryAttributeDependencies = HA.magicalPrimaryAttributeDependencies (hero)
-
-  const minimumValues = filterNonNullable([
-    8,
-    // ...flattenDependencies (wiki) (hero) (AtDA.dependencies (hero_entry)),
-    isConstitution ? characterDerivedCharacteristics.lifePoints.purchased : undefined,
-    // ...(isHighestMagicalPrimaryAttribute
-    //   ? [ sel2 (added), ...magicalPrimaryAttributeDependencies.map (x => x.minValue) ]
-    //   : []),
-    // ...(isBlessedPrimaryAttribute
-    //   ? [ sel3 (added), ...blessedPrimaryAttributeDependencies.map (x => x.minValue) ]
-    //   : []),
-    // fromMaybe (8)
-    //           (getSkillCheckAttributeMinimum (
-    //             SDA.skills (wiki),
-    //             SDA.combatTechniques (wiki),
-    //             SDA.spells (wiki),
-    //             SDA.liturgicalChants (wiki),
-    //             HA.attributes (hero),
-    //             HA.skills (hero),
-    //             HA.combatTechniques (hero),
-    //             HA.spells (hero),
-    //             HA.liturgicalChants (hero),
-    //             HA.skillCheckAttributeCache (hero),
-    //             AtDA.id (hero_entry),
-    //           )),
-  ])
-
-  return Math.max(...minimumValues)
+  return Math.max(...minimumValues.flat())
 }
 
 /**
@@ -60,16 +45,14 @@ export const getAttributeMinimum = (
  * race `race`
  */
 const getModIfSelectedAdjustment = (id: number, race: Race) =>
-  race.attribute_adjustments
-    .find(adjustment =>
-      adjustment.list.length > 1
-      && adjustment.list.some(attribute => attribute.id.attribute === id))
-    ?.value ?? 0
+  race.attribute_adjustments.selectable?.find(adjustment =>
+    adjustment.list.some(attribute => attribute.id.attribute === id),
+  )?.value ?? 0
 
 const getModIfStaticAdjustment = (id: number, race: Race) =>
-  race.attribute_adjustments
-    .filter(adjustment => adjustment.list.length === 1 && adjustment.list[0]!.id.attribute === id)
-    .reduce((acc, adjustment) => acc + adjustment.value, 0)
+  race.attribute_adjustments.fixed
+    ?.filter(adjustment => adjustment.id.attribute === id)
+    .reduce((acc, adjustment) => acc + adjustment.value, 0) ?? 0
 
 export const getAttributeMaximum = (
   isInCharacterCreation: boolean,
@@ -94,10 +77,7 @@ export const getAttributeMaximum = (
   return undefined
 }
 
-export const isAttributeDecreasable = (
-  dynamic: Rated,
-  min: number,
-) => min < dynamic.value
+export const isAttributeDecreasable = (dynamic: Rated, min: number) => min < dynamic.value
 
 export const isAttributeIncreasable = (
   dynamic: Rated,
@@ -106,5 +86,5 @@ export const isAttributeIncreasable = (
   maxTotalPoints: number,
   isInCharacterCreation: boolean,
 ) =>
-  (!isInCharacterCreation || totalPoints < maxTotalPoints)
-  && (max === undefined || dynamic.value < max)
+  (!isInCharacterCreation || totalPoints < maxTotalPoints) &&
+  (max === undefined || dynamic.value < max)

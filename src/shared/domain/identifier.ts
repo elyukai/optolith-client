@@ -52,6 +52,68 @@ export type EnergyIdentifier =
   | DerivedCharacteristicIdentifier.ArcaneEnergy
   | DerivedCharacteristicIdentifier.KarmaPoints
 
+export enum SkillIdentifier {
+  Flying = 1,
+  Gaukelei = 2,
+  Climbing = 3,
+  BodyControl = 4,
+  FeatOfStrength = 5,
+  Riding = 6,
+  Swimming = 7,
+  SelfControl = 8,
+  Singing = 9,
+  Perception = 10,
+  Dancing = 11,
+  Pickpocket = 12,
+  Stealth = 13,
+  Carousing = 14,
+  Persuasion = 15,
+  Seduction = 16,
+  Intimidation = 17,
+  Etiquette = 18,
+  Streetwise = 19,
+  Empathy = 20,
+  FastTalk = 21,
+  Disguise = 22,
+  Willpower = 23,
+  Tracking = 24,
+  Ropes = 25,
+  Fishing = 26,
+  Orienting = 27,
+  PlantLore = 28,
+  AnimalLore = 29,
+  Survival = 30,
+  Gambling = 31,
+  Geography = 32,
+  History = 33,
+  Religions = 34,
+  Warfare = 35,
+  MagicalLore = 36,
+  Mechanics = 37,
+  Math = 38,
+  Law = 39,
+  MythsAndLegends = 40,
+  SphereLore = 41,
+  Astronomy = 42,
+  Alchemy = 43,
+  Sailing = 44,
+  Driving = 45,
+  Commerce = 46,
+  TreatPoison = 47,
+  TreatDisease = 48,
+  TreatSoul = 49,
+  TreatWounds = 50,
+  Woodworking = 51,
+  PrepareFood = 52,
+  Leatherworking = 53,
+  ArtisticAbility = 54,
+  Metalworking = 55,
+  Music = 56,
+  PickLocks = 57,
+  Earthencraft = 58,
+  Clothworking = 59,
+}
+
 export enum AdvantageIdentifier {
   CustomAdvantage = 0,
   Aptitude = 4, // Begabung
@@ -113,8 +175,18 @@ export enum DisadvantageIdentifier {
   WenigeVisionen = 73,
 }
 
+export enum RangedCombatTechniqueIdentifier {
+  SpittingFire = 4,
+}
+
 export enum CombatSpecialAbilityIdentifier {
   CombatReflexes = 12,
+}
+
+export enum GeneralSpecialAbilityIdentifier {
+  CraftInstruments = 17,
+  Hunter = 18,
+  FireEater = 53,
 }
 
 export enum MagicalSpecialAbilityIdentifier {

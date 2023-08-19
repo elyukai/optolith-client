@@ -1,17 +1,139 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { Attribute } from "optolith-database-schema/types/Attribute"
-import { getAttributeMaximum, getAttributeMinimum, isAttributeDecreasable, isAttributeIncreasable } from "../../shared/domain/attribute.ts"
+import {
+  getAttributeMaximum,
+  getAttributeMinimum,
+  isAttributeDecreasable,
+  isAttributeIncreasable,
+} from "../../shared/domain/attribute.ts"
+import { filterApplyingRatedDependencies } from "../../shared/domain/dependencies/filterApplyingDependencies.ts"
 import { OptionalRuleIdentifier } from "../../shared/domain/identifier.ts"
 import { Rated } from "../../shared/domain/ratedEntry.ts"
 import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { attributeValue, createInitialDynamicAttribute } from "../slices/attributesSlice.ts"
-import { selectActiveOptionalRules, selectAttributeAdjustmentId, selectDerivedCharacteristics, selectAttributes as selectDynamicAttributes } from "../slices/characterSlice.ts"
+import {
+  selectActiveOptionalRules,
+  selectAttributeAdjustmentId,
+  selectCeremonies,
+  selectCloseCombatTechniques,
+  selectDerivedCharacteristics,
+  selectAttributes as selectDynamicAttributes,
+  selectLiturgicalChants,
+  selectRangedCombatTechniques,
+  selectRituals,
+  selectSkills,
+  selectSpells,
+} from "../slices/characterSlice.ts"
 import { selectAttributes as selectStaticAttributes } from "../slices/databaseSlice.ts"
 import { selectIsInCharacterCreation } from "./characterSelectors.ts"
-import { selectCurrentExperienceLevel, selectMaximumTotalAttributePoints, selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
-import { selectActiveBlessedTradition, selectActiveMagicalTraditions } from "./magicalTraditionSelectors.ts"
+import {
+  selectCurrentExperienceLevel,
+  selectMaximumTotalAttributePoints,
+  selectStartExperienceLevel,
+} from "./experienceLevelSelectors.ts"
+import {
+  selectActiveBlessedTradition,
+  selectActiveMagicalTraditions,
+} from "./magicalTraditionSelectors.ts"
 import { selectCurrentRace } from "./raceSelectors.ts"
+
+export type DisplayedPrimaryAttribute = {
+  static: Attribute
+  dynamic: Rated
+}
+
+export type DisplayedMagicalPrimaryAttributes = {
+  list: DisplayedPrimaryAttribute[]
+  halfed: boolean
+}
+
+export const selectHighestMagicalPrimaryAttributes = createSelector(
+  selectActiveMagicalTraditions,
+  selectStaticAttributes,
+  selectDynamicAttributes,
+  (
+    activeMagicalTraditions,
+    staticAttributes,
+    dynamicAttributes,
+  ): DisplayedMagicalPrimaryAttributes => {
+    const { map, halfed } = activeMagicalTraditions.reduce<{
+      map: Map<number, DisplayedPrimaryAttribute>
+      halfed: boolean
+    }>(
+      (currentlyHighest, magicalTradition) => {
+        const staticPrimaryAttribute = magicalTradition.static.primary
+
+        if (staticPrimaryAttribute === undefined) {
+          return currentlyHighest
+        } else {
+          const {
+            id: { attribute: id },
+            use_half_for_arcane_energy,
+          } = staticPrimaryAttribute
+          const staticAttribute = staticAttributes[id]
+          const dynamicAttribute = dynamicAttributes[id] ?? createInitialDynamicAttribute(id)
+
+          if (staticAttribute === undefined) {
+            return currentlyHighest
+          } else if (
+            currentlyHighest.map.size === 0 ||
+            [...currentlyHighest.map.values()][0]!.dynamic.value < dynamicAttribute.value
+          ) {
+            return {
+              map: new Map([[id, { static: staticAttribute, dynamic: dynamicAttribute }]]),
+              halfed: currentlyHighest.halfed || use_half_for_arcane_energy,
+            }
+          } else if (
+            [...currentlyHighest.map.values()][0]!.dynamic.value === dynamicAttribute.value
+          ) {
+            return {
+              map: currentlyHighest.map.set(id, {
+                static: staticAttribute,
+                dynamic: dynamicAttribute,
+              }),
+              halfed: currentlyHighest.halfed || use_half_for_arcane_energy,
+            }
+          } else {
+            return currentlyHighest
+          }
+        }
+      },
+      { map: new Map(), halfed: false },
+    )
+
+    return {
+      list: [...map.values()],
+      halfed,
+    }
+  },
+)
+
+export const selectBlessedPrimaryAttribute = createSelector(
+  selectActiveBlessedTradition,
+  selectStaticAttributes,
+  selectDynamicAttributes,
+  (
+    activeBlessedTradition,
+    staticAttributes,
+    dynamicAttributes,
+  ): DisplayedPrimaryAttribute | undefined => {
+    const id = activeBlessedTradition?.static.primary?.id.attribute
+
+    if (id === undefined) {
+      return undefined
+    } else {
+      const staticAttribute = staticAttributes[id]
+      const dynamicAttribute = dynamicAttributes[id] ?? createInitialDynamicAttribute(id)
+
+      if (staticAttribute === undefined) {
+        return undefined
+      } else {
+        return { static: staticAttribute, dynamic: dynamicAttribute }
+      }
+    }
+  },
+)
 
 export type DisplayedAttribute = {
   static: Attribute
@@ -26,10 +148,7 @@ export const selectTotalPoints = createSelector(
   selectStaticAttributes,
   selectDynamicAttributes,
   (attributes, dynamicAttributes): number =>
-    Object.values(attributes).reduce(
-      (sum, { id }) => sum + (dynamicAttributes[id]?.value ?? 8),
-      0
-    )
+    Object.values(attributes).reduce((sum, { id }) => sum + (dynamicAttributes[id]?.value ?? 8), 0),
 )
 
 export const selectVisibleAttributes = createSelector(
@@ -44,6 +163,15 @@ export const selectVisibleAttributes = createSelector(
   createPropertySelector(selectActiveOptionalRules, OptionalRuleIdentifier.MaximumAttributeScores),
   selectAttributeAdjustmentId,
   selectDerivedCharacteristics,
+  selectSkills,
+  selectCloseCombatTechniques,
+  selectRangedCombatTechniques,
+  selectSpells,
+  selectRituals,
+  selectLiturgicalChants,
+  selectCeremonies,
+  selectHighestMagicalPrimaryAttributes,
+  selectBlessedPrimaryAttribute,
   (
     attributes,
     dynamicAttributes,
@@ -56,16 +184,49 @@ export const selectVisibleAttributes = createSelector(
     maximumAttributeScores,
     attributeAdjustmentId,
     derivedCharacteristics,
-  ): DisplayedAttribute[] =>
-    Object.values(attributes)
+    skills,
+    closeCombatTechniques,
+    rangedCombatTechniques,
+    spells,
+    rituals,
+    liturgicalChants,
+    ceremonies,
+    highestMagicalPrimaryAttributes,
+    blessedPrimaryAttribute,
+  ): DisplayedAttribute[] => {
+    const filterApplyingDependencies = filterApplyingRatedDependencies({
+      attributes: dynamicAttributes,
+      skills,
+      closeCombatTechniques,
+      rangedCombatTechniques,
+      spells,
+      rituals,
+      liturgicalChants,
+      ceremonies,
+    })
+
+    const singleHighestMagicalPrimaryAttribute =
+      highestMagicalPrimaryAttributes.list.length === 1
+        ? highestMagicalPrimaryAttributes.list[0]
+        : undefined
+
+    return Object.values(attributes)
       .sort((a, b) => a.id - b.id)
       .map(attribute => {
         const dynamicAttribute =
           dynamicAttributes[attribute.id] ?? createInitialDynamicAttribute(attribute.id)
 
         const minimum = getAttributeMinimum(
-          derivedCharacteristics,
+          derivedCharacteristics.lifePoints,
+          derivedCharacteristics.arcaneEnergy,
+          derivedCharacteristics.karmaPoints,
           dynamicAttribute,
+          singleHighestMagicalPrimaryAttribute?.static.id,
+          [], // TODO: Replace
+          blessedPrimaryAttribute?.static.id,
+          [], // TODO: Replace
+          filterApplyingDependencies,
+          _id => undefined, // TODO: Replace
         )
 
         const maximum = getAttributeMaximum(
@@ -83,21 +244,17 @@ export const selectVisibleAttributes = createSelector(
           dynamic: dynamicAttribute,
           minimum,
           maximum,
-          isDecreasable:
-            isAttributeDecreasable(
-              dynamicAttribute,
-              minimum
-            ),
-          isIncreasable:
-            isAttributeIncreasable(
-              dynamicAttribute,
-              maximum,
-              totalPoints,
-              maxTotalPoints,
-              isInCharacterCreation,
-            ),
+          isDecreasable: isAttributeDecreasable(dynamicAttribute, minimum),
+          isIncreasable: isAttributeIncreasable(
+            dynamicAttribute,
+            maximum,
+            totalPoints,
+            maxTotalPoints,
+            isInCharacterCreation,
+          ),
         }
       })
+  },
 )
 
 // const getAddedEnergies = createMaybeSelector (
@@ -119,104 +276,6 @@ export const selectVisibleAttributes = createSelector(
 //       consF (8),
 //       maximum
 //     )
-
-export type DisplayedPrimaryAttribute = {
-  static: Attribute
-  dynamic: Rated
-}
-
-export type DisplayedMagicalPrimaryAttributes = {
-  list: DisplayedPrimaryAttribute[]
-  halfed: boolean
-}
-
-export const selectHighestMagicalPrimaryAttributes = createSelector(
-  selectActiveMagicalTraditions,
-  selectStaticAttributes,
-  selectDynamicAttributes,
-  (
-    activeMagicalTraditions,
-    staticAttributes,
-    dynamicAttributes
-  ): DisplayedMagicalPrimaryAttributes => {
-    const { map, halfed } = activeMagicalTraditions
-      .reduce<{ map: Map<number, DisplayedPrimaryAttribute>; halfed: boolean }>(
-        (currentlyHighest, magicalTradition) => {
-          const staticPrimaryAttribute = magicalTradition.static.primary
-
-          if (staticPrimaryAttribute === undefined) {
-            return currentlyHighest
-          }
-          else {
-            const { id: { attribute: id }, use_half_for_arcane_energy } = staticPrimaryAttribute
-            const staticAttribute = staticAttributes[id]
-            const dynamicAttribute = dynamicAttributes[id] ?? createInitialDynamicAttribute(id)
-
-            if (staticAttribute === undefined) {
-              return currentlyHighest
-            }
-            else if (
-              currentlyHighest.map.size === 0
-              || [ ...currentlyHighest.map.values() ][0]!.dynamic.value < dynamicAttribute.value
-            ) {
-              return {
-                map: new Map([
-                  [
-                    id,
-                    { static: staticAttribute, dynamic: dynamicAttribute },
-                  ],
-                ]),
-                halfed: currentlyHighest.halfed || use_half_for_arcane_energy,
-              }
-            }
-            else {
-              return {
-                map: currentlyHighest.map.set(
-                  id,
-                  { static: staticAttribute, dynamic: dynamicAttribute }
-                ),
-                halfed: currentlyHighest.halfed || use_half_for_arcane_energy,
-              }
-            }
-          }
-        },
-        { map: new Map(), halfed: false }
-      )
-
-    return {
-      list: [ ...map.values() ],
-      halfed,
-    }
-  }
-)
-
-export const selectBlessedPrimaryAttribute = createSelector(
-  selectActiveBlessedTradition,
-  selectStaticAttributes,
-  selectDynamicAttributes,
-  (
-    activeBlessedTradition,
-    staticAttributes,
-    dynamicAttributes,
-  ): DisplayedPrimaryAttribute | undefined => {
-    const id = activeBlessedTradition?.static.primary?.id.attribute
-
-    if (id === undefined) {
-      return undefined
-    }
-    else {
-      const staticAttribute = staticAttributes[id]
-      const dynamicAttribute = dynamicAttributes[id] ?? createInitialDynamicAttribute(id)
-
-      if (staticAttribute === undefined) {
-        return undefined
-      }
-      else {
-        return { static: staticAttribute, dynamic: dynamicAttribute }
-      }
-    }
-  }
-)
 
 // export const getPrimaryMagicalAttributes = createMaybeSelector (
 //   getWikiAttributes,
@@ -269,7 +328,7 @@ export const selectBlessedPrimaryAttribute = createSelector(
 
 export const selectCarryingCapacity = createSelector(
   selectDynamicAttributes,
-  (attributes): number => (attributes[8]?.value ?? 8) * 2
+  (attributes): number => (attributes[8]?.value ?? 8) * 2,
 )
 
 export const selectAvailableAdjustments = createSelector(
@@ -277,25 +336,24 @@ export const selectAvailableAdjustments = createSelector(
   selectAttributeAdjustmentId,
   selectVisibleAttributes,
   (race, currentId, attributes) => {
-    const selectableAdjustment = race?.attribute_adjustments.find(pair => pair.list.length > 1)
+    const selectableAdjustment = race?.attribute_adjustments?.selectable?.[0]
 
     if (selectableAdjustment === undefined) {
       return undefined
-    }
-    else {
+    } else {
       const current = attributes.find(attr => attr.static.id === currentId)
 
-      const canNotSwitch = current !== undefined
-        && current.maximum !== undefined
-        && current.maximum - selectableAdjustment.value < attributeValue(current.dynamic)
+      const canNotSwitch =
+        current !== undefined &&
+        current.maximum !== undefined &&
+        current.maximum - selectableAdjustment.value < attributeValue(current.dynamic)
 
       if (canNotSwitch) {
         return {
           value: selectableAdjustment.value,
-          list: [ current ],
+          list: [current],
         }
-      }
-      else {
+      } else {
         return {
           value: selectableAdjustment.value,
           list: selectableAdjustment.list
@@ -304,5 +362,5 @@ export const selectAvailableAdjustments = createSelector(
         }
       }
     }
-  }
+  },
 )

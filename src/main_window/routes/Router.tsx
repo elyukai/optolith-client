@@ -7,6 +7,7 @@ import { LastChanges } from "./about/LastChanges.tsx"
 import { ThirdPartyLicenses } from "./about/ThirdPartyLicenses.tsx"
 import { Characters } from "./characters/Characters.tsx"
 import { Attributes } from "./characters/character/attributes/Attributes.tsx"
+import { CombatTechniques } from "./characters/character/combatTechniques/CombatTechniques.tsx"
 import { ProfileOverview } from "./characters/character/profile/ProfileOverview.tsx"
 import { Rules } from "./characters/character/rules/Rules.tsx"
 import { Skills } from "./characters/character/skills/Skills.tsx"
@@ -34,7 +35,7 @@ export const Router: FC = () => {
         case "disadvantages": return null
 
         case "skills": return <Skills />
-        case "combat_techniques": return null
+        case "combat_techniques": return <CombatTechniques />
         case "special_abilities": return null
         case "spells": return null
         case "liturgical_chants": return null

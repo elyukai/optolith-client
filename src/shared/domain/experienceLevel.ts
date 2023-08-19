@@ -8,8 +8,6 @@ export const getCurrentExperienceLevel = (
     .sort((a, b) => a.adventure_points - b.adventure_points)
     .reduce(
       (acc, experienceLevel) =>
-        experienceLevel.adventure_points <= totalAdventurePoints
-        ? experienceLevel
-        : acc,
-      experienceLevels[0]
+        experienceLevel.adventure_points <= totalAdventurePoints ? experienceLevel : acc,
+      experienceLevels[0],
     )

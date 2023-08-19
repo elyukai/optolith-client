@@ -17,5 +17,11 @@
     "eslint.lintTask.enable": true,
     "eslint.lintTask.options": "\"src/**\" -c \"./.eslintrc.yaml\" --ext=\"ts\" --ext=\"tsx\" --ignore-pattern=\"./src/App/Utilities/YAML/Schema/**\"",
     "editor.tabSize": 2,
-    "editor.detectIndentation": false
+    "editor.detectIndentation": false,
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
 }

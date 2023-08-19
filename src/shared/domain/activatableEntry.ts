@@ -1,5 +1,92 @@
-import { Activatable, PredefinedActivatableOption } from "../../main_window/slices/characterSlice.ts"
 import { Equality } from "../utils/compare.ts"
+
+export type Activatable = {
+  /**
+   * The activatable identifier.
+   * @integer
+   */
+  id: number
+
+  /**
+   * One or multiple activations of the activatable.
+   */
+  instances: {
+    /**
+     * One or multiple options for the activatable. The meaning depends on the activatable.
+     * @minItems 1
+     */
+    options?: ActivatableOption[]
+
+    /**
+     * The instance level (if the activatable has levels).
+     */
+    level?: number
+
+    /**
+     * If provided, a custom adventure points value has been set for this instance.
+     */
+    customAdventurePointsValue?: number
+  }[]
+}
+
+export type ActivatableOption = PredefinedActivatableOption | CustomActivatableOption
+
+export type PredefinedActivatableOption = {
+  type: "Predefined"
+
+  /**
+   * An identifier referencing a different entry.
+   */
+  id: {
+    /**
+     * The entry type or `"Generic"` if it references a select option local to the entry.
+     */
+    type:
+      | "Generic"
+      | "Blessing"
+      | "Cantrip"
+      | "TradeSecret"
+      | "Script"
+      | "AnimalShape"
+      | "ArcaneBardTradition"
+      | "ArcaneDancerTradition"
+      | "SexPractice"
+      | "Race"
+      | "Culture"
+      | "BlessedTradition"
+      | "Element"
+      | "Property"
+      | "Aspect"
+      | "Disease"
+      | "Poison"
+      | "Language"
+      | "Skill"
+      | "CloseCombatTechnique"
+      | "RangedCombatTechnique"
+      | "LiturgicalChant"
+      | "Ceremony"
+      | "Spell"
+      | "Ritual"
+
+    /**
+     * The numeric identifier.
+     */
+    value: number
+  }
+}
+
+export type CustomActivatableOption = {
+  type: "Custom"
+
+  /**
+   * A user-entered text.
+   */
+  value: string
+}
+
+export type ActivatableMap = {
+  [id: number]: Activatable
+}
 
 const equalOptionId: Equality<PredefinedActivatableOption["id"]> = (a, b) =>
   a.type === b.type && a.value === b.value

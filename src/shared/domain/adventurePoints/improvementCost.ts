@@ -13,12 +13,18 @@ export enum ImprovementCost {
 
 const adventureCostBase = (ic: ImprovementCost): number => {
   switch (ic) {
-    case ImprovementCost.A: return 1
-    case ImprovementCost.B: return 2
-    case ImprovementCost.C: return 3
-    case ImprovementCost.D: return 4
-    case ImprovementCost.E: return 15
-    default: return assertExhaustive(ic)
+    case ImprovementCost.A:
+      return 1
+    case ImprovementCost.B:
+      return 2
+    case ImprovementCost.C:
+      return 3
+    case ImprovementCost.D:
+      return 4
+    case ImprovementCost.E:
+      return 15
+    default:
+      return assertExhaustive(ic)
   }
 }
 
@@ -27,9 +33,12 @@ const constantThresholdValue = (ic: ImprovementCost): number => {
     case ImprovementCost.A:
     case ImprovementCost.B:
     case ImprovementCost.C:
-    case ImprovementCost.D: return 12
-    case ImprovementCost.E: return 14
-    default: return assertExhaustive(ic)
+    case ImprovementCost.D:
+      return 12
+    case ImprovementCost.E:
+      return 14
+    default:
+      return assertExhaustive(ic)
   }
 }
 
@@ -47,7 +56,7 @@ const adventurePointsValue = (ic: ImprovementCost, value: number): number =>
 export const adventurePointsForRange = (
   ic: ImprovementCost,
   fromValue: number,
-  toValue: number
+  toValue: number,
 ): number => {
   if (fromValue === toValue) {
     return 0
@@ -89,12 +98,18 @@ export const adventurePointsForActivation = adventureCostBase
 export const compareImprovementCost = (ic1: ImprovementCost, ic2: ImprovementCost): number => {
   const toInt = (ic: ImprovementCost): number => {
     switch (ic) {
-      case ImprovementCost.A: return 1
-      case ImprovementCost.B: return 2
-      case ImprovementCost.C: return 3
-      case ImprovementCost.D: return 4
-      case ImprovementCost.E: return 5
-      default: return assertExhaustive(ic)
+      case ImprovementCost.A:
+        return 1
+      case ImprovementCost.B:
+        return 2
+      case ImprovementCost.C:
+        return 3
+      case ImprovementCost.D:
+        return 4
+      case ImprovementCost.E:
+        return 5
+      default:
+        return assertExhaustive(ic)
     }
   }
 
@@ -111,24 +126,36 @@ export const equals = (ic1: ImprovementCost, ic2: ImprovementCost): boolean => i
  */
 export const toString = (ic: ImprovementCost): string => {
   switch (ic) {
-    case ImprovementCost.A: return "A"
-    case ImprovementCost.B: return "B"
-    case ImprovementCost.C: return "C"
-    case ImprovementCost.D: return "D"
-    case ImprovementCost.E: return "E"
-    default: return assertExhaustive(ic)
+    case ImprovementCost.A:
+      return "A"
+    case ImprovementCost.B:
+      return "B"
+    case ImprovementCost.C:
+      return "C"
+    case ImprovementCost.D:
+      return "D"
+    case ImprovementCost.E:
+      return "E"
+    default:
+      return assertExhaustive(ic)
   }
 }
 
 export const fromRaw = <T extends RawImprovementCost | undefined>(
-  ic: T
+  ic: T,
 ): ImprovementCost | Nullish<T> => {
   switch (ic) {
-    case "A": return ImprovementCost.A
-    case "B": return ImprovementCost.B
-    case "C": return ImprovementCost.C
-    case "D": return ImprovementCost.D
-    case undefined: return undefined as Nullish<T>
-    default: return assertExhaustive(ic)
+    case "A":
+      return ImprovementCost.A
+    case "B":
+      return ImprovementCost.B
+    case "C":
+      return ImprovementCost.C
+    case "D":
+      return ImprovementCost.D
+    case undefined:
+      return undefined as Nullish<T>
+    default:
+      return assertExhaustive(ic)
   }
 }

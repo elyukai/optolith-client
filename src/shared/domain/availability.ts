@@ -9,9 +9,10 @@ export const isPublicationEnabled = (
   publication: Publication,
   includeAllPublications: boolean,
   includePublications: number[],
-) => publication.category === "CoreRules"
-  || (!publication.contains_adult_content && includeAllPublications)
-  || includePublications.includes(publication.id)
+) =>
+  publication.category === "CoreRules" ||
+  (!publication.contains_adult_content && includeAllPublications) ||
+  includePublications.includes(publication.id)
 
 /**
  * Checks if an entry from one or more publications is available, based on if
@@ -25,6 +26,8 @@ export const isEntryAvailable = (
 ) =>
   sourceReferences.some(ref => {
     const publication = publications[ref.id.publication]
-    return publication !== undefined
-      && isPublicationEnabled(publication, includeAllPublications, includePublications)
+    return (
+      publication !== undefined &&
+      isPublicationEnabled(publication, includeAllPublications, includePublications)
+    )
   })
