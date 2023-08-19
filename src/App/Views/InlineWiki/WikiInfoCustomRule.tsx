@@ -1,7 +1,10 @@
-import React, { useRef, useState } from "react"
+import React, { useState } from "react"
 import { isNothing, Maybe } from "../../../Data/Maybe"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
+import { Dialog } from "../Universal/Dialog"
+import { Markdown } from "../Universal/Markdown"
+import { TextArea } from "../Universal/TextArea"
 import { WikiInfoSelector } from "./WikiInfo"
 
 export interface WikiInfoCustomRuleStateProps {
@@ -23,8 +26,7 @@ export const WikiInfoCustomRule: React.FC<WikiInfoCustomRuleProps> = props => {
   const { staticData, selector, saveRule, savedRule } = props
 
   const [ isEditing, setIsEditing ] = useState<boolean> (false)
-
-  const textareaRef = useRef<HTMLTextAreaElement> (null)
+  const [ rule, setRule ] = useState<string> (savedRule)
 
   if (isNothing (selector)) {
     return (
@@ -35,38 +37,40 @@ export const WikiInfoCustomRule: React.FC<WikiInfoCustomRuleProps> = props => {
     )
   }
 
-  const selectorVal = selector.value
-
   const ruleDisplay = () => {
-    if (isEditing) {
-      return (<></>)
-    }
-
     if (savedRule === "") {
-      return (
-        <i>{"No rule specified."}</i>
-      )
+      return "*No rule specified.*"
     }
 
-    return (<>{savedRule}</>)
+    return savedRule
   }
 
-  const handleSaveEditButton = () => {
-    if (!textareaRef.current) {
+  const startEditing = () => {
+    if (isEditing) {
       return
     }
 
+    setRule (savedRule)
+    setIsEditing (true)
+  }
+
+  const saveEdit = () => {
     if (!isEditing) {
-      textareaRef.current.value = savedRule
+      return
     }
 
-    if (isEditing) {
-      const savingRule = textareaRef.current.value
-
-      saveRule (selectorVal, savingRule)
+    saveRule (selector.value, rule)
+  }
+  const closeDialog = () => {
+    if (!isEditing) {
+      return
     }
 
-    setIsEditing (!isEditing)
+    if (!rule) {
+      setRule (savedRule)
+    }
+
+    setIsEditing (false)
   }
 
   return (
@@ -74,23 +78,43 @@ export const WikiInfoCustomRule: React.FC<WikiInfoCustomRuleProps> = props => {
       <div>
         <i
           className="icon"
-          style={{ float: "right", cursor: "pointer", marginTop: ".6rem" }}
-          onClick={handleSaveEditButton}
-        >
-          {isEditing ? "\uE90a" : "\uE90c"}
+          style={{ float: "right", cursor: "pointer", marginTop: ".6rem", userSelect: "none" }}
+          onClick={startEditing}
+          >
+          {"\uE90c"}
         </i>
 
         <p>
-          <strong>{`${translate (staticData) ("inlinewiki.rule")}: `}</strong>
-          {ruleDisplay ()}
+          <Markdown
+            source={`**${translate (staticData) ("inlinewiki.rule")}:** ${ruleDisplay ()}`}
+            noWrapper
+          />
         </p>
       </div>
 
-      <textarea
-        ref={textareaRef}
-        className={`${(isEditing ? "" : "hide")} d-block textfield`}
-        style={{ width: "100%" }}
-      />
+      <Dialog
+        id="edit-custom-rule"
+        close={closeDialog}
+        isOpen={isEditing}
+        title="Edit Rule"
+        buttons={[
+          {
+            autoWidth: true,
+            label: "Save",
+            disabled: false,
+            onClick: saveEdit,
+          },
+        ]}
+        >
+        <small>{"You can partly use Markdown here."}</small>
+        <TextArea
+          value={rule}
+          onChange={setRule}
+          fullWidth
+          autoFocus
+          resize="vertical"
+          />
+      </Dialog>
     </div>
   )
 }
