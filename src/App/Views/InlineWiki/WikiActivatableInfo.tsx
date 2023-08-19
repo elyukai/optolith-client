@@ -11,7 +11,7 @@ import { isOrderedMap, lookup, lookupF, notMember } from "../../../Data/OrderedM
 import { Record, RecordI } from "../../../Data/Record"
 import { Category } from "../../Constants/Categories"
 import { SpecialAbilityGroup } from "../../Constants/Groups"
-import { AdvantageId, SpecialAbilityId } from "../../Constants/Ids"
+import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId"
 import { NumIdName } from "../../Models/NumIdName"
 import { ActivatableNameCost, ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost"
@@ -48,6 +48,8 @@ import { Markdown } from "../Universal/Markdown"
 import { WikiCombatTechniques } from "./Elements/WikiCombatTechniques"
 import { WikiSource } from "./Elements/WikiSource"
 import { WikiBoxTemplate } from "./WikiBoxTemplate"
+import { WikiInfoSelector } from "./WikiInfo"
+import { WikiInfoCustomRuleContainer } from "./WikiInfoCustomRuleContainer"
 import { WikiProperty } from "./WikiProperty"
 
 const CIA = CategorizedPrerequisites.A
@@ -741,10 +743,13 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
 export interface WikiActivatableInfoProps {
   staticData: StaticDataRecord
   x: Activatable
+  selector: Maybe<WikiInfoSelector>
 }
 
 export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => {
-  const { x, staticData } = props
+  const { x, staticData, selector } = props
+
+  const isCustom = x.values.id === AdvantageId.CustomAdvantage || x.values.id === DisadvantageId.CustomDisadvantage || x.values.id === SpecialAbilityId.CustomSpecialAbility
 
   const specialAbilities = SDA.specialAbilities (staticData)
 
@@ -781,6 +786,24 @@ export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => 
             ))
             (bind (SAA.subgr (x))
                   (lookupF (SDA.combatSpecialAbilityGroups (staticData))))
+
+
+    if (isCustom) {
+      return (
+        <WikiBoxTemplate className="disadv" title={header_name}>
+          <WikiInfoCustomRuleContainer
+            staticData={staticData}
+            selector={selector}
+            />
+          <PrerequisitesText
+            staticData={staticData}
+            x={x}
+            />
+          {cost_elem}
+          {source_elem}
+        </WikiBoxTemplate>
+      )
+    }
 
     switch (SAA.gr (x)) {
       case SpecialAbilityGroup.StaffEnchantments:
@@ -1342,6 +1365,24 @@ export const WikiActivatableInfo: React.FC<WikiActivatableInfoProps> = props => 
     const header_rcp = has_rcp ? " (*)" : ""
 
     const header_name = `${header_full_name}${header_name_levels}${header_rcp}`
+
+
+    if (isCustom) {
+      return (
+        <WikiBoxTemplate className="disadv" title={header_name}>
+          <WikiInfoCustomRuleContainer
+            staticData={staticData}
+            selector={selector}
+            />
+          <PrerequisitesText
+            staticData={staticData}
+            x={x}
+            />
+          {cost_elem}
+          {source_elem}
+        </WikiBoxTemplate>
+      )
+    }
 
     return (
       <WikiBoxTemplate className="disadv" title={header_name}>

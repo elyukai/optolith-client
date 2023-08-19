@@ -34,6 +34,7 @@ import { translate, translateP } from "../Utilities/I18n"
 import { pipe, pipe_ } from "../Utilities/pipe"
 import { misNumberM } from "../Utilities/typeCheckUtils"
 import { getWikiEntry } from "../Utilities/WikiUtils"
+import { WikiInfoSelector } from "../Views/InlineWiki/WikiInfo"
 import { ReduxAction, ReduxDispatch } from "./Actions"
 import { addAlert, addNotEnoughAPAlert, AlertOptions } from "./AlertActions"
 
@@ -466,6 +467,14 @@ export const switchRatingVisibility = (): SwitchDisAdvRatingVisibilityAction => 
   type: ActionTypes.SWITCH_DISADV_RATING_VISIBILITY,
 })
 
+export const setRule = (selector: WikiInfoSelector, rule: string): SaveRuleAction => ({
+  type: ActionTypes.SET_CUSTOM_RULE,
+  payload: {
+    rule,
+    selector,
+  },
+})
+
 export interface SetActiveAdvantagesFilterTextAction {
   type: ActionTypes.SET_ADVANTAGES_FILTER_TEXT
   payload: {
@@ -525,3 +534,11 @@ export const setInactiveDisadvantagesFilterText =
       filterText,
     },
   })
+
+export interface SaveRuleAction {
+  type: ActionTypes.SET_CUSTOM_RULE
+  payload: {
+    rule: string
+    selector: WikiInfoSelector
+  }
+}

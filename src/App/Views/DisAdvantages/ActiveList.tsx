@@ -8,6 +8,7 @@ import { EntryRating } from "../../Models/Hero/heroTypeHelpers"
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { ActivatableRemoveList } from "../Activatable/ActivatableRemoveList"
+import { WikiInfoSelector } from "../InlineWiki/WikiInfo"
 
 export interface ActiveListProps {
   filterText: string
@@ -16,10 +17,10 @@ export interface ActiveListProps {
   rating: Maybe<OrderedMap<string, EntryRating>>
   showRating: boolean
   isRemovingEnabled: boolean
-  selectedForInfo: Maybe<string>
+  selectedForInfo: Maybe<WikiInfoSelector>
   removeFromList (args: Record<ActivatableDeactivationOptions>): void
   setLevel (id: string, index: number, level: number): void
-  selectForInfo (id: string): void
+  selectForInfo (selector: WikiInfoSelector): void
 }
 
 export const ActiveList: React.FC<ActiveListProps> = props => {

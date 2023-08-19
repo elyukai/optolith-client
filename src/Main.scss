@@ -44,6 +44,12 @@ p {
 .flex {
 	display: flex;
 }
+.hide {
+	display: none !important;
+}
+.d-block {
+	display: block;
+}
 
 %label {
 	label {
