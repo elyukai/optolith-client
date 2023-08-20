@@ -15,11 +15,15 @@ import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/Active
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
+import {
+  isCustomActivatableId
+} from "../../Utilities/Activatable/checkActivatableUtils"
 import { classListMaybe } from "../../Utilities/CSS"
 import { translate } from "../../Utilities/I18n"
 import { getLevelElementsWithMin } from "../../Utilities/levelUtils"
 import { pipe, pipe_ } from "../../Utilities/pipe"
 import { renderMaybe } from "../../Utilities/ReactUtils"
+import { WikiInfoSelector } from "../InlineWiki/WikiInfo"
 import { Dropdown } from "../Universal/Dropdown"
 import { IconButton } from "../Universal/IconButton"
 import { ListItem } from "../Universal/ListItem"
@@ -38,10 +42,10 @@ export interface ActivatableRemoveListItemProps {
   isImportant?: boolean
   isTypical?: boolean
   isUntypical?: boolean
-  selectedForInfo: Maybe<string>
+  selectedForInfo: Maybe<WikiInfoSelector>
   setLevel (id: string, index: number, level: number): void
   removeFromList (args: Record<ActivatableDeactivationOptions>): void
-  selectForInfo (id: string): void
+  selectForInfo (selector: WikiInfoSelector): void
 }
 
 const AAA = ActiveActivatable.A
@@ -64,16 +68,17 @@ const ActivatableRemoveListItem: React.FC<ActivatableRemoveListItemProps> = prop
   } = props
 
   const id = AAA_.id (item)
+  const index = AAA_.index (item)
 
   const handleSelectTier = React.useCallback (
     (mlevel: Maybe<number>) => {
       if (isJust (mlevel)) {
         const level = fromJust (mlevel)
 
-        setLevel (id, AAA_.index (item), level)
+        setLevel (id, index, level)
       }
     },
-    [ item, setLevel, id ]
+    [ item, setLevel, id, index ]
   )
 
   const handleRemove = React.useCallback (
@@ -82,17 +87,21 @@ const ActivatableRemoveListItem: React.FC<ActivatableRemoveListItemProps> = prop
                            AAA_.finalCost,
                            cost => ActivatableDeactivationOptions ({
                                      id,
-                                     index: AAA_.index (item),
+                                     index,
                                      cost,
                                    })
                          )),
-    [ item, removeFromList, id ]
+    [ item, removeFromList, id, index ]
   )
 
   const handleSelectForInfo =
     React.useCallback (
-      () => selectForInfo (id),
-      [ selectForInfo, id ]
+      () => selectForInfo ({
+        currentId: id,
+        index,
+        item,
+      }),
+      [ selectForInfo, id, index, item ]
     )
 
   const mlevel_element =
@@ -138,12 +147,21 @@ const ActivatableRemoveListItem: React.FC<ActivatableRemoveListItemProps> = prop
 
   const baseName = AAA_.baseName (item)
 
+  let active = false
+  if (isJust (selectedForInfo)) {
+    active = id === selectedForInfo.value.currentId
+
+    if (isCustomActivatableId (id)) {
+      active &&= index === selectedForInfo.value.index
+    }
+  }
+
   return (
     <ListItem
       important={isImportant}
       recommended={isTypical}
       unrecommended={isUntypical}
-      active={Maybe.elem (id) (selectedForInfo)}
+      active={active}
       >
       <ListItemName
         name={

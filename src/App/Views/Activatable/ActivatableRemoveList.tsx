@@ -11,6 +11,7 @@ import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/Active
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { pipe_ } from "../../Utilities/pipe"
 import { isActiveRated } from "../../Utilities/ratingUtils"
+import { WikiInfoSelector } from "../InlineWiki/WikiInfo"
 import { ListView } from "../Universal/List"
 import { ListPlaceholder } from "../Universal/ListPlaceholder"
 import { Scroll } from "../Universal/Scroll"
@@ -24,10 +25,10 @@ export interface ActivatableRemoveListProps {
   isRemovingEnabled: boolean
   rating?: Maybe<OrderedMap<string, EntryRating>>
   showRating?: boolean
-  selectedForInfo: Maybe<string>
+  selectedForInfo: Maybe<WikiInfoSelector>
   setLevel (id: string, index: number, level: number): void
   removeFromList (args: Record<ActivatableDeactivationOptions>): void
-  selectForInfo (id: string): void
+  selectForInfo (selector: WikiInfoSelector): void
 }
 
 const AAA_ = ActiveActivatableA_

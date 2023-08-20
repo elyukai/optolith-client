@@ -13,6 +13,7 @@ import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCate
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
+import { WikiInfoSelector } from "../InlineWiki/WikiInfo"
 import { BorderButton } from "../Universal/BorderButton"
 import { Checkbox } from "../Universal/Checkbox"
 import { ListHeader } from "../Universal/ListHeader"
@@ -76,7 +77,7 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
   } = props
 
   const [ showAddSlidein, setShowAddSlidein ] = React.useState (false)
-  const [ currentId, setCurrenId ] = React.useState<Maybe<string>> (Nothing)
+  const [ currentWikiSelector, setCurrentWikiSelector ] = React.useState<Maybe<WikiInfoSelector>> (Nothing)
   const [ currentSlideinId, setCurrentSlideinId ] = React.useState<Maybe<string>> (Nothing)
 
   const handleShowSlidein = React.useCallback (
@@ -94,8 +95,10 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
   )
 
   const handleShowInfo = React.useCallback (
-    (id: string) => setCurrenId (Just (id)),
-    [ setCurrenId ]
+    (selector: WikiInfoSelector) => {
+      setCurrentWikiSelector (Just (selector))
+    },
+    [ setCurrentWikiSelector ]
   )
 
   const handleShowSlideinInfo = React.useCallback (
@@ -219,13 +222,13 @@ export const AdvantagesDisadvantages: React.FC<AdvantagesDisadvantagesProps> = p
           rating={rating}
           showRating={showRating}
           isRemovingEnabled={isRemovingEnabled}
-          selectedForInfo={currentId}
+          selectedForInfo={currentWikiSelector}
           removeFromList={removeFromList}
           setLevel={setLevel}
           selectForInfo={handleShowInfo}
           />
       </MainContent>
-      <WikiInfoContainer currentId={currentId} />
+      <WikiInfoContainer currentSelector={currentWikiSelector} />
     </Page>
   )
 }

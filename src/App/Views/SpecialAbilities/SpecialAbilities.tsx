@@ -14,6 +14,7 @@ import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
 import { translate } from "../../Utilities/I18n"
 import { ActivatableAddList } from "../Activatable/ActivatableAddList"
 import { ActivatableRemoveList } from "../Activatable/ActivatableRemoveList"
+import { WikiInfoSelector } from "../InlineWiki/WikiInfo"
 import { BorderButton } from "../Universal/BorderButton"
 import { Checkbox } from "../Universal/Checkbox"
 import { ListHeader } from "../Universal/ListHeader"
@@ -76,7 +77,7 @@ export const SpecialAbilities: React.FC<Props> = props => {
   } = props
 
   const [ isSlideinOpen, setIsSlideinOpen ] = React.useState (false)
-  const [ currentId, setCurrentId ] = React.useState<Maybe<string>> (Nothing)
+  const [ currentWikiSelector, setCurrentWikiSelector ] = React.useState<Maybe<WikiInfoSelector>> (Nothing)
   const [ currentSlideinId, setCurrentSlideinId ] = React.useState<Maybe<string>> (Nothing)
 
   const handleShowSlidein = React.useCallback (
@@ -91,10 +92,11 @@ export const SpecialAbilities: React.FC<Props> = props => {
     },
     [ setIsSlideinOpen, setInactiveFilterText ]
   )
-
   const handleInfo = React.useCallback (
-    (id: string) => setCurrentId (Just (id)),
-    [ setCurrentId ]
+    (selector: WikiInfoSelector) => {
+      setCurrentWikiSelector (Just (selector))
+    },
+    [ setCurrentWikiSelector ]
   )
 
   const handleSlideinInfo = React.useCallback (
@@ -195,10 +197,10 @@ export const SpecialAbilities: React.FC<Props> = props => {
           removeFromList={removeFromList}
           setLevel={setLevel}
           selectForInfo={handleInfo}
-          selectedForInfo={currentId}
+          selectedForInfo={currentWikiSelector}
           />
       </MainContent>
-      <WikiInfoContainer currentId={currentId} />
+      <WikiInfoContainer currentSelector={currentWikiSelector} />
     </Page>
   )
 }

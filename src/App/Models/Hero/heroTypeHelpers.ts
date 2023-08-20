@@ -1,3 +1,4 @@
+import React from "react"
 import { List } from "../../../Data/List"
 import { Maybe } from "../../../Data/Maybe"
 import { OrderedMap } from "../../../Data/OrderedMap"
@@ -145,8 +146,8 @@ export interface HistoryPrevState {
   "@@name": "HistoryPrevState"
 }
 
-export type InputTextEvent = React.ChangeEvent<HTMLInputElement>
-export type InputKeyEvent = React.KeyboardEvent<HTMLInputElement>
+export type InputTextEvent = React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>
+export type InputKeyEvent = React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>
 
 export interface SubTab {
   id: TabId

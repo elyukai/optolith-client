@@ -255,6 +255,7 @@ export const L10n =
                 "sheets.dialogs.rptoksaveerror.message": "",
                 "sheets.showattributevalues": "",
                 "sheets.useparchment": "",
+                "sheets.usecustomrules": "",
                 "sheets.zoomfactor": "",
                 "sheets.charactersheet": "",
                 "sheets.attributemodifiers.title": "",
@@ -467,6 +468,13 @@ export const L10n =
                 "sheets.chantssheet.blessedspecialabilities": "",
                 "sheets.chantssheet.blessings": "",
 
+                "sheets.rulessheet.title": "",
+                "sheets.rulessheet.header.name": "",
+                "sheets.rulessheet.header.rule": "",
+                "sheets.rulessheet.advantages": "",
+                "sheets.rulessheet.disadvantages": "",
+                "sheets.rulessheet.specialabilities": "",
+
                 "pacts.pactcategory": "",
                 "pacts.nopact": "",
                 "pacts.pactlevel": "",
@@ -564,6 +572,12 @@ export const L10n =
                 "inlinewiki.unsuitabledisadvantages": "",
                 "inlinewiki.variants": "",
                 "inlinewiki.insteadof": "",
+
+                "inlinewiki.custom.inactive": "",
+                "inlinewiki.custom.norule": "",
+                "inlinewiki.custom.dialog.title": "",
+                "inlinewiki.custom.dialog.markdownInfo": "",
+                "inlinewiki.custom.dialog.saveBtn": "",
 
                 "rcpselectoptions.race": "",
                 "rcpselectoptions.culture": "",

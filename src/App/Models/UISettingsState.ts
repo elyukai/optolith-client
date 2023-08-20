@@ -28,6 +28,7 @@ export interface UISettingsState {
   enableActiveItemHints: boolean
   sheetCheckAttributeValueVisibility: boolean
   sheetUseParchment: boolean
+  sheetShowRules: boolean
   sheetZoomFactor: number
   theme: Theme
   enableEditingHeroAfterCreationPhase: boolean
@@ -61,6 +62,7 @@ export const UISettingsState =
                 enableActiveItemHints: false,
                 sheetCheckAttributeValueVisibility: false,
                 sheetUseParchment: false,
+                sheetShowRules: false,
                 sheetZoomFactor: 100,
                 theme: Theme.Dark,
                 enableEditingHeroAfterCreationPhase: false,

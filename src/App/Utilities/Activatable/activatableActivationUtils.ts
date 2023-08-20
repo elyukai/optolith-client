@@ -208,3 +208,17 @@ export const setLevel =
       return hero
     }
   }
+
+export function saveRule (
+    rule: string,
+    hero: HeroModelRecord,
+    index: number,
+    itemId: string
+  ): HeroModelRecord {
+  return adjustEntryDef (over (ActivatableDependentL.active)
+    (modifyAt (index)
+      (set (ActiveObjectL.sid2)
+        (Just (rule)))))
+  (itemId)
+  (hero)
+}

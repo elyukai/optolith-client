@@ -15,13 +15,19 @@ import { ActivatableDependentL } from "../Models/ActiveEntries/ActivatableDepend
 import { ActiveObjectL } from "../Models/ActiveEntries/ActiveObject"
 import { SkillDependentL } from "../Models/ActiveEntries/SkillDependent"
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel"
-import { activate, deactivate, setLevel } from "../Utilities/Activatable/activatableActivationUtils"
+import {
+  activate,
+  deactivate,
+  saveRule,
+  setLevel,
+} from "../Utilities/Activatable/activatableActivationUtils"
 import { addOtherSpecialAbilityDependenciesOnActivation, removeOtherSpecialAbilityDependenciesOnDeletion } from "../Utilities/Activatable/SpecialAbilityUtils"
 import { pipe, pipe_ } from "../Utilities/pipe"
 
 type Action = DisAdvActions.ActivateDisAdvAction
             | DisAdvActions.DeactivateDisAdvAction
             | DisAdvActions.SetDisAdvLevelAction
+            | DisAdvActions.SaveRuleAction
             | SpecialAbilitiesActions.ActivateSpecialAbilityAction
             | SpecialAbilitiesActions.DeactivateSpecialAbilityAction
             | SpecialAbilitiesActions.SetSpecialAbilityTierAction
@@ -96,6 +102,16 @@ export const activatableReducer =
                                                  (Just (action.payload.id)))))
                             (SpecialAbilityId.TraditionGuildMages as string))
       }
+
+      case ActionTypes.SET_CUSTOM_RULE: {
+        return hero => saveRule (
+          action.payload.rule,
+          hero,
+          action.payload.selector.index,
+          action.payload.selector.currentId
+        )
+      }
+
 
       default:
         return ident
