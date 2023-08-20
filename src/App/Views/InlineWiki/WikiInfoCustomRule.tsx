@@ -32,14 +32,14 @@ export const WikiInfoCustomRule: React.FC<WikiInfoCustomRuleProps> = props => {
     return (
       <p>
         <strong>{`${translate (staticData) ("inlinewiki.rule")}: `}</strong>
-        <i>{"This is a placeholder for the custom rule. Add the item to your list to add a rule."}</i>
+        <i>{translate (staticData) ("inlinewiki.custom.inactive")}</i>
       </p>
     )
   }
 
   const ruleDisplay = () => {
     if (savedRule === "") {
-      return "*No rule specified.*"
+      return `*${translate (staticData) ("inlinewiki.custom.norule")}*`
     }
 
     return savedRule
@@ -96,17 +96,17 @@ export const WikiInfoCustomRule: React.FC<WikiInfoCustomRuleProps> = props => {
         id="edit-custom-rule"
         close={closeDialog}
         isOpen={isEditing}
-        title="Edit Rule"
+        title={translate (staticData) ("inlinewiki.custom.dialog.title")}
         buttons={[
           {
             autoWidth: true,
-            label: "Save",
+            label: translate (staticData) ("inlinewiki.custom.dialog.saveBtn"),
             disabled: false,
             onClick: saveEdit,
           },
         ]}
         >
-        <small>{"You can partly use Markdown here."}</small>
+        <small>{translate (staticData) ("inlinewiki.custom.dialog.markdownInfo")}</small>
         <TextArea
           value={rule}
           onChange={setRule}

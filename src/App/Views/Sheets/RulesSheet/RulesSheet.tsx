@@ -136,7 +136,7 @@ export class RulesSheet extends React.Component<Props> {
       <SheetWrapper>
         <Sheet
           id="rule-sheet"
-          title="Rules"
+          title={translate (staticData) ("sheets.rulessheet.title")}
           attributes={attributes}
           staticData={staticData}
           useParchment={useParchment}
@@ -144,14 +144,14 @@ export class RulesSheet extends React.Component<Props> {
           <table className="rules" ref={this.tableRef}>
             <thead>
             <tr>
-              <th>Name</th>
-              <th>Rule</th>
+              <th>{translate (staticData) ("sheets.rulessheet.header.name")}</th>
+              <th>{translate (staticData) ("sheets.rulessheet.header.rule")}</th>
             </tr>
             </thead>
             <tbody>
-            {this.displayRules ("advantages", translate (staticData) ("sheets.mainsheet.advantages"), rules.advantages)}
-            {this.displayRules ("disadvantages", translate (staticData) ("sheets.mainsheet.disadvantages"), rules.disadvantages)}
-            {this.displayRules ("specialAbilities", "Special Abilities", rules.specialAbilities)}
+            {this.displayRules ("advantages", translate (staticData) ("sheets.rulessheet.advantages"), rules.advantages)}
+            {this.displayRules ("disadvantages", translate (staticData) ("sheets.rulessheet.disadvantages"), rules.disadvantages)}
+            {this.displayRules ("specialAbilities", translate (staticData) ("sheets.rulessheet.specialabilities"), rules.specialAbilities)}
             </tbody>
           </table>
 

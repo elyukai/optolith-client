@@ -273,7 +273,7 @@ export const Sheets: React.FC<Props> = props => {
           onClick={switchShowRules}
           disabled={!hasRules}
           >
-          {"Add custom rules"}
+          {translate (staticData) ("sheets.usecustomrules")}
         </Checkbox>
         <Dropdown
           label={translate (staticData) ("sheets.zoomfactor")}
