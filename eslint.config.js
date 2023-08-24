@@ -1,6 +1,7 @@
 // @ts-check
 import { FlatCompat } from "@eslint/eslintrc"
 import js from "@eslint/js"
+import jsdoc from "eslint-plugin-jsdoc"
 import reactJsxRuntime from "eslint-plugin-react/configs/jsx-runtime.js"
 import reactRecommended from "eslint-plugin-react/configs/recommended.js"
 import globals from "globals"
@@ -21,6 +22,7 @@ export default [
   reactRecommended,
   reactJsxRuntime,
   ...compat.extends("plugin:react-hooks/recommended", "plugin:@typescript-eslint/recommended"),
+  jsdoc.configs["flat/recommended-typescript-error"],
   {
     languageOptions: {
       globals: {
@@ -31,7 +33,7 @@ export default [
         project: "./tsconfig.json",
       },
     },
-    ignores: ["node_modules/**", ".webpack/**", "eslint.config.js"],
+    ignores: ["node_modules/**", ".webpack/**", "/eslint.config.js"],
     rules: {
       // Possible problems
       "require-atomic-updates": "error",
@@ -151,6 +153,7 @@ export default [
       "@typescript-eslint/prefer-readonly": "error",
       "@typescript-eslint/require-array-sort-compare": "error",
       "@typescript-eslint/strict-boolean-expressions": "error",
+      "@typescript-eslint/switch-exhaustiveness-check": "error",
 
       // React
       "react/boolean-prop-naming": "error",
@@ -230,6 +233,25 @@ export default [
       // React Hooks
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "error",
+
+      // JSDoc
+      "jsdoc/require-jsdoc": [
+        "error",
+        {
+          contexts: ["TSInterfaceDeclaration", "TSMethodSignature", "TSEnumDeclaration", "TSTypeAliasDeclaration"],
+          publicOnly: true,
+          require: {
+            ArrowFunctionExpression: true,
+            ClassDeclaration: true,
+            ClassExpression: true,
+            FunctionDeclaration: true,
+            FunctionExpression: true,
+            MethodDefinition: true,
+          },
+        },
+      ],
+      "jsdoc/require-param": "off",
+      "jsdoc/require-returns": "off",
     },
     settings: {
       react: {
