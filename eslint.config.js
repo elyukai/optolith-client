@@ -16,7 +16,7 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 })
 
-/** @type {import('eslint').Linter.Config[]} */
+/** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
   js.configs.recommended,
   reactRecommended,
@@ -33,7 +33,7 @@ export default [
         project: "./tsconfig.json",
       },
     },
-    ignores: ["node_modules/**", ".webpack/**", "/eslint.config.js"],
+    ignores: ["node_modules/**", ".webpack/**", "*.config.js"],
     rules: {
       // Possible problems
       "require-atomic-updates": "error",
@@ -238,7 +238,12 @@ export default [
       "jsdoc/require-jsdoc": [
         "error",
         {
-          contexts: ["TSInterfaceDeclaration", "TSMethodSignature", "TSEnumDeclaration", "TSTypeAliasDeclaration"],
+          contexts: [
+            "TSInterfaceDeclaration",
+            "TSMethodSignature",
+            "TSEnumDeclaration",
+            "TSTypeAliasDeclaration",
+          ],
           publicOnly: true,
           require: {
             ArrowFunctionExpression: true,
@@ -258,5 +263,5 @@ export default [
         version: "detect",
       },
     },
-  },
+  }
 ]
