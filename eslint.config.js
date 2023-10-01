@@ -180,6 +180,7 @@ export default [
       "react/no-will-update-set-state": "error",
       "react/prefer-es6-class": "error",
       "react/prefer-stateless-function": "error",
+      "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
       "react/require-render-return": "error",
       "react/self-closing-comp": "error",
@@ -242,6 +243,7 @@ export default [
             "TSMethodSignature",
             "TSEnumDeclaration",
             "TSTypeAliasDeclaration",
+            "ExportNamedDeclaration > VariableDeclaration",
           ],
           publicOnly: true,
           require: {
@@ -256,6 +258,24 @@ export default [
       ],
       "jsdoc/require-param": "off",
       "jsdoc/require-returns": "off",
+      "jsdoc/require-description": [
+        "error",
+        {
+          contexts: [
+            "ArrowFunctionExpression",
+            "ClassDeclaration",
+            "ClassExpression",
+            "FunctionDeclaration",
+            "FunctionExpression",
+            "MethodDefinition",
+            "TSInterfaceDeclaration",
+            "TSMethodSignature",
+            "TSEnumDeclaration",
+            "TSTypeAliasDeclaration",
+            "ExportNamedDeclaration",
+          ]
+        },
+      ],
     },
     settings: {
       react: {
