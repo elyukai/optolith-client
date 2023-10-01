@@ -33,7 +33,6 @@ export default [
         project: "./tsconfig.json",
       },
     },
-    ignores: ["node_modules/**", ".webpack/**", "*.config.js"],
     rules: {
       // Possible problems
       "require-atomic-updates": "error",
@@ -263,5 +262,18 @@ export default [
         version: "detect",
       },
     },
-  }
+  },
+  {
+    ignores: [
+      ".webpack/**",
+      "*.config.js",
+      "src/App/**",
+      "src/Control/**",
+      "src/Data/**",
+      "src/Debug/**",
+      "src/System/**",
+      "src/database/contents/Compatibility/**",
+      "src/database/contents/migration/**",
+    ],
+  },
 ]

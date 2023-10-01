@@ -80,7 +80,7 @@
     "ts:build": "tsc",
     "ts:watch": "tsc -w",
     "createschemas": "otjsmd",
-    "lint": "eslint \"src/\"",
+    "lint": "eslint \"src/**\"",
     "start": "electron .",
     "test": "glob -c \"node --loader tsx --test\" \"./src/shared/**/*.test.ts\"",
     "circ": "madge -c ./src",
