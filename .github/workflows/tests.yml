@@ -18,12 +18,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.ACCESS_TOKEN }}
-          submodules: true
-      - name: Use Node.js 20
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
         with:
           node-version: 20
       - name: Install Node.js dependencies
@@ -37,12 +33,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.ACCESS_TOKEN }}
-          submodules: true
-      - name: Use Node.js 20
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
         with:
           node-version: 20
       - name: Install Node.js dependencies
