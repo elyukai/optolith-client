@@ -239,21 +239,9 @@ export default [
         "error",
         {
           contexts: [
-            "TSInterfaceDeclaration",
-            "TSMethodSignature",
-            "TSEnumDeclaration",
-            "TSTypeAliasDeclaration",
-            "ExportNamedDeclaration > VariableDeclaration",
+            "ExportNamedDeclaration",
           ],
-          publicOnly: true,
-          require: {
-            ArrowFunctionExpression: true,
-            ClassDeclaration: true,
-            ClassExpression: true,
-            FunctionDeclaration: true,
-            FunctionExpression: true,
-            MethodDefinition: true,
-          },
+          publicOnly: true
         },
       ],
       "jsdoc/require-param": "off",
@@ -262,16 +250,6 @@ export default [
         "error",
         {
           contexts: [
-            "ArrowFunctionExpression",
-            "ClassDeclaration",
-            "ClassExpression",
-            "FunctionDeclaration",
-            "FunctionExpression",
-            "MethodDefinition",
-            "TSInterfaceDeclaration",
-            "TSMethodSignature",
-            "TSEnumDeclaration",
-            "TSTypeAliasDeclaration",
             "ExportNamedDeclaration",
           ]
         },
