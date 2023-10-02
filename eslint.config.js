@@ -235,6 +235,12 @@ export default [
       "react-hooks/exhaustive-deps": "error",
 
       // JSDoc
+      "jsdoc/check-tag-names": [
+        "error",
+        {
+          definedTags: ["main", "integer", "minItems"],
+        },
+      ],
       "jsdoc/require-jsdoc": [
         "error",
         {
