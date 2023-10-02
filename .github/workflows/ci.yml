@@ -1,4 +1,4 @@
-name: Integration
+name: CI
 
 on:
   push:
@@ -13,8 +13,8 @@ on:
       - develop-v2
 
 jobs:
-  test:
-    name: Test
+  tests:
+    name: Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -28,8 +28,8 @@ jobs:
         run: npm run ts:build
       - name: Run tests
         run: npm test
-  lint:
-    name: Lint
+  linting:
+    name: Linting
     runs-on: ubuntu-latest
 
     steps:
