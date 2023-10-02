@@ -1,3 +1,6 @@
+/**
+ * Extracts `null` and `undefined` from a type.
+ */
 export type Nullish<T = null | undefined> = T extends null | undefined ? T : never
 
 /**
@@ -31,8 +34,7 @@ export const mapNullableDefault = <T, U>(
  * Returns an array, containing the value if it is not `null` or `undefined`.
  *
  * This can be useful in combination with the spread operator or
- * `Array.prototype.flatMap`:
- *
+ * `Array.prototype.flatMap`.
  * @example
  * nullableToArray(2) // [2]
  * nullableToArray(undefined) // []

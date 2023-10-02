@@ -14,6 +14,9 @@ import { assertExhaustive } from "../utils/typeSafety.ts"
 import { ProfessionIdentifier } from "./identifier.ts"
 import { Sex } from "./sex.ts"
 
+/**
+ * Selected parts of a base profession.
+ */
 export type ProfessionParts = {
   base: Profession
   translations: LocaleMap<ProfessionTranslation>
@@ -21,6 +24,9 @@ export type ProfessionParts = {
   package: ProfessionPackage
 }
 
+/**
+ * Provides different selected parts of a base profession.
+ */
 export const getProfessionParts = (
   professions: Record<number, Profession>,
   id: number,
@@ -66,6 +72,9 @@ export const getProfessionParts = (
   }
 }
 
+/**
+ * Returns a profession variant by id, if any.
+ */
 export const getProfessionVariant = (
   profession: ProfessionParts,
   variantId?: number,
@@ -77,6 +86,9 @@ export const getProfessionVariant = (
   }
 }
 
+/**
+ * Maps a profession name that may be different for different sexes to a string.
+ */
 export const professionNameToString = <T extends ProfessionName | undefined>(
   sex: Sex,
   professionName: T,
@@ -99,6 +111,9 @@ export const professionNameToString = <T extends ProfessionName | undefined>(
   }
 }
 
+/**
+ * The parts of a full profession name.
+ */
 export type FullProfessionNameParts = {
   name: string
   subName?: string
@@ -106,6 +121,10 @@ export type FullProfessionNameParts = {
   fullName: string
 }
 
+/**
+ * Creates the full profession name for the given profession and optional
+ * profession variant.
+ */
 export const getFullProfessionNameParts = (
   translateMap: TranslateMap,
   sex: Sex,

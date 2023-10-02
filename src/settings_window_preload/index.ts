@@ -16,6 +16,9 @@ type Events = GlobalSettingsEvents & {
   focus: []
 }
 
+/**
+ * The API that is exposed to the settings window.
+ */
 export type PreloadAPI = {
   platform: NodeJS.Platform
   initialSetupDone: () => void
@@ -41,6 +44,10 @@ const api: PreloadAPI = {
 
 contextBridge.exposeInMainWorld("optolith", api)
 
+/**
+ * Attach a listener to the main process that updates the global settings when a
+ * setting is changed from the settings window.
+ */
 export type InitialSetupEventMessage = {
   translations: Record<string, UI>
   locales: Record<string, Locale>

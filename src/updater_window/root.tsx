@@ -22,6 +22,9 @@ type UpdatePhase =
   | { type: "Downloading"; info: ProgressInfo }
   | { type: "Downloaded"; info: UpdateDownloadedEvent }
 
+/**
+ * Root component for the updater window.
+ */
 export const Root: FC<Props> = props => {
   const { systemLocale, locale } = props
 

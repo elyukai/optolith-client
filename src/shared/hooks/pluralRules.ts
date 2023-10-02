@@ -1,6 +1,10 @@
 import { useContext, useMemo } from "react"
 import { LocalizationContext } from "../contexts/localization.ts"
 
+/**
+ * A hook that returns a cached {@link Intl.PluralRules} instance for the
+ * current localization context.
+ */
 export const usePluralRules = (options?: Intl.PluralRulesOptions): Intl.PluralRules => {
   const localizationContext = useContext(LocalizationContext)
   return useMemo(

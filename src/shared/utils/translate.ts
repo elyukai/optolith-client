@@ -15,6 +15,9 @@ const matchSystemLocaleToSupported = (available: string[], system: string) => {
   return matchingLocale ?? "en-US"
 }
 
+/**
+ * Translates a given key into a string, optionally with parameters.
+ */
 export type Translate = <K extends keyof UI>(
   key: K,
   ...options: UI[K] extends PluralizationCategories
@@ -22,6 +25,10 @@ export type Translate = <K extends keyof UI>(
     : [...params: (string | number)[]]
 ) => string
 
+/**
+ * Creates a translate function based on the given environment, translations and
+ * locales.
+ */
 export const createTranslate = (
   translations: Record<string, UI>,
   locales: Record<string, Locale>,
@@ -47,8 +54,15 @@ export const createTranslate = (
   return translate
 }
 
+/**
+ * Selects a value from a locale dictionary based on the selected locale.
+ */
 export type TranslateMap = <T>(map: LocaleMap<T> | undefined) => T | undefined
 
+/**
+ * Creates a function that selects a value from a locale dictionary based on the
+ * given environment, translations and locales.
+ */
 export const createTranslateMap = (
   locales: Record<string, Locale>,
   selectedLocale: string | undefined,

@@ -53,12 +53,20 @@ export const reduce = <T, R>(maybe: Maybe<T>, def: R, f: (value: T) => R): R =>
 export const map = <T, U>(maybe: Maybe<T>, f: (value: T) => U): Maybe<U> =>
   isJust(maybe) ? Just(f(maybe.value)) : Nothing
 
+/**
+ * Combines two maybes into one maybe. If both maybes contain a value, the
+ * values are combined using the provided function. If at least one maybe
+ * contains nothing, nothing is returned.
+ */
 export const combine = <T1, T2, TR>(
   maybe1: Maybe<T1>,
   maybe2: Maybe<T2>,
   f: (value1: T1, value2: T2) => TR,
 ): Maybe<TR> => (isJust(maybe1) && isJust(maybe2) ? Just(f(maybe1.value, maybe2.value)) : Nothing)
 
+/**
+ * A namespace for maybe functions.
+ */
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Maybe = Object.freeze({
   Just,

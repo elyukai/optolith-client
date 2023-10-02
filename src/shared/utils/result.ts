@@ -54,6 +54,12 @@ export const map = <T, U, E>(result: Result<T, E>, f: (value: T) => U): Result<U
 export const mapError = <T, E, F>(result: Result<T, E>, f: (value: E) => F): Result<T, F> =>
   isError(result) ? error(f(result.error)) : result
 
+/**
+ * Combines two results into one result. If both results are ok, the values are
+ * combined using the provided function. If one result is an error, the error is
+ * returned. If both results are errors, the errors are combined using the
+ * provided function.
+ */
 export const combine = <T1, T2, TR, E1, E2, ER>(
   result1: Result<T1, E1>,
   result2: Result<T2, E2>,
@@ -68,6 +74,9 @@ export const combine = <T1, T2, TR, E1, E2, ER>(
     ? result1
     : error(ferror(result1.error, result2.error))
 
+/**
+ * A namespace for result functions.
+ */
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Result = Object.freeze({
   ok,

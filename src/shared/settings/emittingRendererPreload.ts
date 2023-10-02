@@ -2,13 +2,22 @@ import { ipcRenderer } from "electron"
 import { TypedEventEmitter } from "../utils/events.ts"
 import { GlobalSettings } from "./GlobalSettings.ts"
 
+/**
+ * A map of global setting event definitions for the settings window.
+ */
 export type GlobalSettingsEvents = {
   "locale-changed": [newLocale: GlobalSettings["locale"]]
   "fallback-locale-changed": [newFallbackLocale: GlobalSettings["fallbackLocale"]]
 }
 
+/**
+ * A typed event emitter for global settings events for the settings window.
+ */
 export type GlobalSettingsEventEmitter = TypedEventEmitter<GlobalSettingsEvents>
 
+/**
+ * Functions for emitting global settings events.
+ */
 export type GlobalSettingsEmittingAPI = {
   setGlobalSetting: (
     keyValue: {
@@ -17,6 +26,11 @@ export type GlobalSettingsEmittingAPI = {
   ) => void
 }
 
+/**
+ * Get the API for emitting global settings events by providing an available
+ * event emitter for global settings events (this should usually be the preload
+ * API).
+ */
 export const getGlobalSettingsEmittingAPI = (
   events: GlobalSettingsEventEmitter,
 ): GlobalSettingsEmittingAPI => ({

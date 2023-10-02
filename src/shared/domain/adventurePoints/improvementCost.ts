@@ -3,6 +3,9 @@ import { rangeSafe, sum } from "../../utils/array.ts"
 import { Nullish } from "../../utils/nullable.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 
+/**
+ * The cost category of an improvement.
+ */
 export enum ImprovementCost {
   A = "A",
   B = "B",
@@ -141,6 +144,9 @@ export const toString = (ic: ImprovementCost): string => {
   }
 }
 
+/**
+ * Converts an improvement cost from the database schema to the domain schema.
+ */
 export const fromRaw = <T extends RawImprovementCost | undefined>(
   ic: T,
 ): ImprovementCost | Nullish<T> => {

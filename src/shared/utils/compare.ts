@@ -41,6 +41,9 @@ export const reduceCompare =
  */
 export const numAsc: Compare<number> = (a, b) => a - b
 
+/**
+ * A function that compares two values for equality.
+ */
 export type Equality<T> = (a: T, b: T) => boolean
 
 /**

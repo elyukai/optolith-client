@@ -2,6 +2,10 @@ import { useEffect } from "react"
 import { GlobalSettings } from "./GlobalSettings.ts"
 import { GlobalSettingsEmittingAPI } from "./emittingRendererPreload.ts"
 
+/**
+ * A hook that emits a global setting change event when the setting is changed
+ * locally in the window.
+ */
 export const useBroadcastSetting = <K extends keyof GlobalSettings>(
   api: GlobalSettingsEmittingAPI,
   key: K,

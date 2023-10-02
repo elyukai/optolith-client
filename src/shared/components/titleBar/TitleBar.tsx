@@ -35,6 +35,9 @@ type Props = {
   isMaximized?: () => Promise<boolean>
 }
 
+/**
+ * The title bar for a window.
+ */
 export const TitleBar: FC<Props> = props => {
   const {
     title,

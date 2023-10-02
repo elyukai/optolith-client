@@ -20,6 +20,9 @@ type Props = {
   checkPenalty?: SkillCheckPenalty
 }
 
+/**
+ * Displays a skill check in an interactive list.
+ */
 export const SkillCheck: FC<Props> = props => {
   const { check, checkPenalty } = props
 

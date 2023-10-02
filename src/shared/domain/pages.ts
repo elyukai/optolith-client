@@ -7,6 +7,9 @@ import { range } from "../utils/array.ts"
 import { Compare } from "../utils/compare.ts"
 import { assertExhaustive } from "../utils/typeSafety.ts"
 
+/**
+ * A comparison function for two pages.
+ */
 export const comparePage: Compare<Page> = (a, b) => {
   switch (a.tag) {
     case "InsideCoverFront":
@@ -20,8 +23,14 @@ export const comparePage: Compare<Page> = (a, b) => {
   }
 }
 
+/**
+ * Checks if two pages are equal.
+ */
 export const equalsPage = (a: Page, b: Page): boolean => comparePage(a, b) === 0
 
+/**
+ * Returns the successor of a page.
+ */
 export const succ = (page: Page): Page => {
   switch (page.tag) {
     case "InsideCoverFront":
@@ -35,13 +44,23 @@ export const succ = (page: Page): Page => {
   }
 }
 
+/**
+ * Creates a page object for a page number.
+ */
 export const numberToPage = (number: number): Page => ({ tag: "Numbered", numbered: number })
 
+/**
+ * A range of pages, including the first and last page, if the range includes
+ * more than on page.
+ */
 export type PageRange = {
   firstPage: Page
   lastPage?: Page
 }
 
+/**
+ * Converts a numeric range to a page object range.
+ */
 export const numberRangeToPageRange = (numberRange: SimpleOccurrence): PageRange =>
   numberRange.last_page === undefined
     ? { firstPage: numberToPage(numberRange.first_page) }
@@ -50,6 +69,9 @@ export const numberRangeToPageRange = (numberRange: SimpleOccurrence): PageRange
         lastPage: numberToPage(numberRange.last_page),
       }
 
+/**
+ * Converts a page object range from the database to a local page object range.
+ */
 export const fromRawPageRange = (pageRange: RawPageRange): PageRange =>
   pageRange.last_page === undefined
     ? { firstPage: pageRange.first_page }
@@ -58,6 +80,9 @@ export const fromRawPageRange = (pageRange: RawPageRange): PageRange =>
         lastPage: pageRange.last_page,
       }
 
+/**
+ * Sorts and combines page ranges while removing duplicates.
+ */
 export const normalizePageRanges = (ranges: PageRange[]): PageRange[] =>
   ranges
     .flatMap(({ firstPage, lastPage = firstPage }): Page[] => {

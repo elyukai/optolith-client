@@ -8,7 +8,7 @@ import {
   GlobalSettingsEvents,
   attachGlobalSettingsEvents,
 } from "../shared/settings/listeningRendererPreload.ts"
-import { TypedEventEmitterForEvent } from "../shared/utils/events.ts"
+import { TypedEventEmitter } from "../shared/utils/events.ts"
 
 type Events = GlobalSettingsEvents & {
   "initial-setup": [InitialSetupEventMessage]
@@ -20,6 +20,9 @@ type Events = GlobalSettingsEvents & {
   focus: []
 }
 
+/**
+ * The API that is exposed to the updater window.
+ */
 export type PreloadAPI = {
   platform: NodeJS.Platform
   close: () => void
@@ -47,6 +50,10 @@ const api: PreloadAPI = {
 
 contextBridge.exposeInMainWorld("optolith", api)
 
+/**
+ * The message that is sent from the main process to the updater window right
+ * after creation.
+ */
 export type InitialSetupEventMessage = {
   translations: Record<string, UI>
   locales: Record<string, Locale>

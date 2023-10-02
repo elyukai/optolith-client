@@ -2,11 +2,18 @@ import { MagicalTradition } from "optolith-database-schema/types/specialAbility/
 import { mapNullableDefault } from "../utils/nullable.ts"
 import { Activatable, ActivatableMap, isActive } from "./activatableEntry.ts"
 
+/**
+ * Checks if a character is a spellcaster.
+ */
 export const isSpellcaster = (
   spellcaster: Activatable | undefined,
   magicalTraditions: ActivatableMap,
 ): boolean => isActive(spellcaster) && Object.values(magicalTraditions).some(isActive)
 
+/**
+ * Returns the maximum number of adventure points that can be spent for magical
+ * advantages and disadvantages.
+ */
 export const getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages = (
   activeMagicalTraditions: MagicalTradition[],
 ): number =>

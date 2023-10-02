@@ -36,9 +36,6 @@ import { getSpellValue } from "../spell.ts"
  * included in the resulting list, depending on whether it has to follow the
  * optional dependency or not. The result is a plain `List` of all non-optional
  * dependencies.
- * @param wiki The full wiki.
- * @param state The current hero.
- * @param dependencies The list of dependencies to flatten.
  */
 export const filterApplyingRatedDependencies =
   (ratedMaps: {

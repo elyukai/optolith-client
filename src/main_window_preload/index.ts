@@ -17,6 +17,9 @@ type Events = GlobalSettingsEvents & {
   "new-character": []
 }
 
+/**
+ * The API that is exposed to the main window.
+ */
 export type PreloadAPI = {
   platform: NodeJS.Platform
   systemLocale: string
@@ -62,6 +65,10 @@ const api: PreloadAPI = {
 
 contextBridge.exposeInMainWorld("optolith", api)
 
+/**
+ * The message that is sent from the main process to the main window right after
+ * creation.
+ */
 export type InitialSetupEventMessage = {
   database: Database
   globalSettings: GlobalSettings

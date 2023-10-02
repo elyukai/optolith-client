@@ -9,6 +9,13 @@ const globalSettings: GlobalSettings = {
   areAnimationsEnabled: false,
 }
 
+/**
+ * Attach a listener to the settings window that updates the global settings
+ * when a setting is changed from the settings window.
+ * @param settingsWindow The settings window instance.
+ * @param listener The listener that is called when a setting is changed from
+ * the settings window.
+ */
 export const attachGlobalSettingsChanged = (
   settingsWindow: BrowserWindow,
   listener: <K extends keyof GlobalSettings>(key: K, value: GlobalSettings[K]) => void,
@@ -26,6 +33,13 @@ export const attachGlobalSettingsChanged = (
   })
 }
 
+/**
+ * Attach a listener to the settings window that broadcasts the global settings
+ * to all other windows when a setting is changed from the settings window.
+ * @param settingsWindow The settings window instance.
+ * @param getWindowBackgroundColor A function that maps a theme to a hex color
+ * string for the background.
+ */
 export const attachGlobalSettingsBroadcastToWindow = (
   settingsWindow: BrowserWindow,
   getWindowBackgroundColor: (theme: Theme | undefined) => string,
@@ -43,4 +57,7 @@ export const attachGlobalSettingsBroadcastToWindow = (
   })
 }
 
+/**
+ * Get the currently stored global settings
+ */
 export const getGlobalSettings = () => globalSettings

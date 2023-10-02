@@ -2,6 +2,10 @@ import { IpcRenderer, IpcRendererEvent } from "electron"
 import { TypedEventEmitter } from "../utils/events.ts"
 import { GlobalSettings } from "./GlobalSettings.ts"
 
+/**
+ * A map of global setting event definitions for renderer processes other than
+ * the settings window.
+ */
 export type GlobalSettingsEvents = {
   "global-setting-changed": [
     {
@@ -12,8 +16,16 @@ export type GlobalSettingsEvents = {
   "fallback-locale-changed": [newFallbackLocale: GlobalSettings["fallbackLocale"]]
 }
 
+/**
+ * A typed event emitter for global settings events for renderer processes other
+ * than the settings window.
+ */
 export type GlobalSettingsEventEmitter = TypedEventEmitter<GlobalSettingsEvents>
 
+/**
+ * Attach a listener to the main process that updates the global settings when a
+ * setting is changed from the settings window.
+ */
 export const attachGlobalSettingsEvents = (
   ipcRenderer: IpcRenderer,
   preloadEvents: GlobalSettingsEventEmitter,

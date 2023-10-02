@@ -1,28 +1,46 @@
 // TODO: Update for new identifier mappings
 
+/**
+ * Used identifiers of optional rules.
+ */
 export enum OptionalRuleIdentifier {
   MaximumAttributeScores = 8,
   HigherDefenseStats = 17,
 }
 
+/**
+ * Used identifiers of races.
+ */
 export enum RaceIdentifier {
   Humans = 1,
 }
 
+/**
+ * Used identifiers of professions.
+ */
 export enum ProfessionIdentifier {
   OwnProfession = 0,
 }
 
+/**
+ * Used identifiers of eye colors.
+ */
 export enum EyeColorIdentifier {
   Red = 19,
   Purple = 20,
 }
 
+/**
+ * Used identifiers of hair colors.
+ */
 export enum HairColorIdentifier {
   White = 24,
   Green = 25,
 }
 
+/**
+ * Used identifiers of attributes.
+ */
 export enum AttributeIdentifier {
   Courage = 1,
   Sagacity = 2,
@@ -34,6 +52,9 @@ export enum AttributeIdentifier {
   Strength = 8,
 }
 
+/**
+ * Used identifiers of derived characteristics.
+ */
 export enum DerivedCharacteristicIdentifier {
   LifePoints = 1,
   ArcaneEnergy = 2,
@@ -47,11 +68,17 @@ export enum DerivedCharacteristicIdentifier {
   WoundThreshold = 10,
 }
 
+/**
+ * Used identifiers of energies.
+ */
 export type EnergyIdentifier =
   | DerivedCharacteristicIdentifier.LifePoints
   | DerivedCharacteristicIdentifier.ArcaneEnergy
   | DerivedCharacteristicIdentifier.KarmaPoints
 
+/**
+ * Used identifiers of skill.
+ */
 export enum SkillIdentifier {
   Flying = 1,
   Gaukelei = 2,
@@ -114,6 +141,9 @@ export enum SkillIdentifier {
   Clothworking = 59,
 }
 
+/**
+ * Used identifiers of advantages.
+ */
 export enum AdvantageIdentifier {
   CustomAdvantage = 0,
   Aptitude = 4, // Begabung
@@ -146,6 +176,9 @@ export enum AdvantageIdentifier {
   Einkommen = 99,
 }
 
+/**
+ * Used identifiers of disadvantages.
+ */
 export enum DisadvantageIdentifier {
   CustomDisadvantage = 0,
   AfraidOf = 1,
@@ -175,24 +208,41 @@ export enum DisadvantageIdentifier {
   WenigeVisionen = 73,
 }
 
+/**
+ * Used identifiers of ranged combat techniques.
+ */
 export enum RangedCombatTechniqueIdentifier {
   SpittingFire = 4,
 }
 
+/**
+ * Used identifiers of combat special abilities.
+ */
 export enum CombatSpecialAbilityIdentifier {
   CombatReflexes = 12,
 }
 
+/**
+ * Used identifiers of general special abilities.
+ */
 export enum GeneralSpecialAbilityIdentifier {
   CraftInstruments = 17,
   Hunter = 18,
   FireEater = 53,
 }
 
+/**
+ * Used identifiers of magical special abilities.
+ */
 export enum MagicalSpecialAbilityIdentifier {
+  PropertyKnowledge = 3,
   GrosseMeditation = 12,
 }
 
+/**
+ * Used identifiers of karma special abilities.
+ */
 export enum KarmaSpecialAbilityIdentifier {
+  AspectKnowledge = 1,
   HigherOrdination = 14,
 }

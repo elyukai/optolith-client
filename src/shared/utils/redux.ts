@@ -3,6 +3,13 @@ import { Draft, isDraft, nothing, produce } from "immer"
 
 type Indexed = { [key: string | number]: any }
 
+/**
+ * Creates a selector from an object-selecting selector that selects only a
+ * property of the object.
+ * @param selector The selector function that selects an object.
+ * @param property A possible property of the object.
+ * @returns A selector that selects the property of the object.
+ */
 export const createPropertySelector = <S, O extends Indexed, K extends keyof O>(
   selector: (state: S) => O,
   property: K,
@@ -54,6 +61,11 @@ type ValidReducerReturnType<State> =
   | undefined
   | (State extends undefined ? typeof nothing : never)
 
+/**
+ * Enhance a reducing function with Immer.
+ * @param reducer The reducing function.
+ * @returns The enhanced reducing function.
+ */
 export const createImmerReducer =
   <S = any, A extends Action = AnyAction, P extends any[] = []>(
     reducer: (

@@ -19,6 +19,9 @@ import {
   selectLiturgiesSortOrder,
 } from "../../../../slices/settingsSlice.ts"
 
+/**
+ * Returns a page for managing liturgical chants.
+ */
 export const LiturgicalChants: FC = () => {
   const translate = useTranslate()
   const dispatch = useAppDispatch()

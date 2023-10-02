@@ -1,5 +1,8 @@
 import { Equality } from "../utils/compare.ts"
 
+/**
+ * An activatable entry.
+ */
 export type Activatable = {
   /**
    * The activatable identifier.
@@ -29,8 +32,14 @@ export type Activatable = {
   }[]
 }
 
+/**
+ * An option for an activatable entry.
+ */
 export type ActivatableOption = PredefinedActivatableOption | CustomActivatableOption
 
+/**
+ * A predefined option for an activatable entry.
+ */
 export type PredefinedActivatableOption = {
   type: "Predefined"
 
@@ -75,6 +84,9 @@ export type PredefinedActivatableOption = {
   }
 }
 
+/**
+ * A custom option for an activatable entry, handled as user-entered text.
+ */
 export type CustomActivatableOption = {
   type: "Custom"
 
@@ -84,6 +96,9 @@ export type CustomActivatableOption = {
   value: string
 }
 
+/**
+ * A map of activatable entries.
+ */
 export type ActivatableMap = {
   [id: number]: Activatable
 }

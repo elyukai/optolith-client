@@ -17,6 +17,10 @@ type Props = {
   ui: Record<string, UI>
 }
 
+/**
+ * Provides localization information to the application and handles global
+ * locale changes.
+ */
 export const LocalizationProvider: FCC<Props> = props => {
   const {
     children,
