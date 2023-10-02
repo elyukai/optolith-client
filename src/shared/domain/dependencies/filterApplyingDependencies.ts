@@ -21,14 +21,24 @@ import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { getAttributeValue } from "../attribute.ts"
 import { getCombatTechniqueValue } from "../combatTechnique.ts"
 import { getLiturgicalChantValue } from "../liturgicalChant.ts"
-import {
-  ActivatableRatedWithEnhancementsMap,
-  RatedDependency,
-  RatedMap,
-  compareWithRestriction,
-} from "../ratedEntry.ts"
+import { RatedDependency, compareWithRestriction } from "../rated/ratedDependency.ts"
+import { ActivatableRatedWithEnhancementsMap, RatedMap } from "../ratedEntry.ts"
 import { getSkillValue } from "../skill.ts"
 import { getSpellValue } from "../spell.ts"
+
+/**
+ * An object containing all rated entries of a character.
+ */
+type RatedMaps = {
+  attributes: RatedMap
+  skills: RatedMap
+  closeCombatTechniques: RatedMap
+  rangedCombatTechniques: RatedMap
+  spells: ActivatableRatedWithEnhancementsMap
+  rituals: ActivatableRatedWithEnhancementsMap
+  liturgicalChants: ActivatableRatedWithEnhancementsMap
+  ceremonies: ActivatableRatedWithEnhancementsMap
+}
 
 /**
  * `flattenDependencies` flattens the list of dependencies to usable values.
@@ -38,16 +48,7 @@ import { getSpellValue } from "../spell.ts"
  * dependencies.
  */
 export const filterApplyingRatedDependencies =
-  (ratedMaps: {
-    attributes: RatedMap
-    skills: RatedMap
-    closeCombatTechniques: RatedMap
-    rangedCombatTechniques: RatedMap
-    spells: ActivatableRatedWithEnhancementsMap
-    rituals: ActivatableRatedWithEnhancementsMap
-    liturgicalChants: ActivatableRatedWithEnhancementsMap
-    ceremonies: ActivatableRatedWithEnhancementsMap
-  }) =>
+  (ratedMaps: RatedMaps) =>
   (dependencies: RatedDependency[]): RatedDependency[] =>
     dependencies.filter(dep => {
       if (dep.otherTargets) {

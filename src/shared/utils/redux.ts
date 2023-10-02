@@ -1,7 +1,7 @@
 import { Action, AnyAction, OutputSelector, createSelector } from "@reduxjs/toolkit"
 import { Draft, isDraft, nothing, produce } from "immer"
 
-type Indexed = { [key: string | number]: any }
+type Indexed = { [key: string | number]: unknown }
 
 /**
  * Creates a selector from an object-selecting selector that selects only a
@@ -20,9 +20,9 @@ export const createPropertySelector = <S, O extends Indexed, K extends keyof O>(
  * A reducer type with possible additional parameters.
  */
 export type Reducer<
-  S = any,
+  S = unknown,
   A extends Action = AnyAction,
-  P extends any[] = [],
+  P extends unknown[] = [],
   IS extends S | undefined = S,
 > = (state: IS, action: A, ...additionalParams: P) => S
 
@@ -45,7 +45,12 @@ const ensureDraftState = <S>(
  * state.
  */
 export const reduceReducers =
-  <S = any, A extends Action = AnyAction, P extends any[] = [], IS extends S | undefined = S>(
+  <
+    S = unknown,
+    A extends Action = AnyAction,
+    P extends unknown[] = [],
+    IS extends S | undefined = S,
+  >(
     initialReducer: Reducer<S, A, P, IS>,
     ...reducers: Reducer<S, A, P>[]
   ): Reducer<S, A, P, IS> =>
@@ -67,7 +72,7 @@ type ValidReducerReturnType<State> =
  * @returns The enhanced reducing function.
  */
 export const createImmerReducer =
-  <S = any, A extends Action = AnyAction, P extends any[] = []>(
+  <S = unknown, A extends Action = AnyAction, P extends unknown[] = []>(
     reducer: (
       state: Draft<S>,
       action: A,
