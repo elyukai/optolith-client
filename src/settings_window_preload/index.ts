@@ -8,7 +8,13 @@ import {
   GlobalSettingsEvents,
   getGlobalSettingsEmittingAPI,
 } from "../shared/settings/emittingRendererPreload.ts"
-import { TypedEventEmitterForEvent } from "../shared/utils/events.ts"
+import { TypedEventEmitter } from "../shared/utils/events.ts"
+
+type Events = GlobalSettingsEvents & {
+  "initial-setup": [InitialSetupEventMessage]
+  blur: []
+  focus: []
+}
 
 export type PreloadAPI = {
   platform: NodeJS.Platform
@@ -16,15 +22,10 @@ export type PreloadAPI = {
   checkForUpdate: () => void
   close: () => void
   setTitle: (title: string) => void
-} & Events &
+} & TypedEventEmitter<Events> &
   GlobalSettingsEmittingAPI
 
-type Events = TypedEventEmitterForEvent<"initial-setup", [InitialSetupEventMessage]> &
-  TypedEventEmitterForEvent<"blur", []> &
-  TypedEventEmitterForEvent<"focus", []> &
-  GlobalSettingsEvents
-
-const events = new EventEmitter() as Events
+const events = new EventEmitter() as TypedEventEmitter<Events>
 
 const api: PreloadAPI = {
   on: events.on.bind(events),

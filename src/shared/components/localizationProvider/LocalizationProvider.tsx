@@ -2,14 +2,16 @@ import { Locale } from "optolith-database-schema/types/Locale"
 import { UI } from "optolith-database-schema/types/UI"
 import { useEffect, useState } from "react"
 import { LocalizationContext } from "../../contexts/localization.ts"
-import { TypedEventEmitterForEvent } from "../../utils/events.ts"
+import { TypedEventEmitter } from "../../utils/events.ts"
 import { FCC } from "../../utils/react.ts"
 
 type Props = {
   selectedLocale: string | undefined
   selectedFallbackLocale: string | undefined
-  selectedLocaleEvents: TypedEventEmitterForEvent<"locale-changed", [locale: string | undefined]> &
-    TypedEventEmitterForEvent<"fallback-locale-changed", [locale: string | undefined]>
+  selectedLocaleEvents: TypedEventEmitter<{
+    "locale-changed": [locale: string | undefined]
+    "fallback-locale-changed": [locale: string | undefined]
+  }>
   systemLocale: string
   locales: Record<string, Locale>
   ui: Record<string, UI>

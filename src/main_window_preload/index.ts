@@ -6,7 +6,16 @@ import {
   GlobalSettingsEvents,
   attachGlobalSettingsEvents,
 } from "../shared/settings/listeningRendererPreload.ts"
-import { TypedEventEmitterForEvent } from "../shared/utils/events.ts"
+import { TypedEventEmitter } from "../shared/utils/events.ts"
+
+type Events = GlobalSettingsEvents & {
+  "initial-setup": [InitialSetupEventMessage]
+  maximize: []
+  unmaximize: []
+  blur: []
+  focus: []
+  "new-character": []
+}
 
 export type PreloadAPI = {
   platform: NodeJS.Platform
@@ -25,17 +34,9 @@ export type PreloadAPI = {
   toggleDevTools: () => void
   showSettings: () => void
   setTitle: (title: string) => void
-} & Events
+} & TypedEventEmitter<Events>
 
-type Events = TypedEventEmitterForEvent<"initial-setup", [InitialSetupEventMessage]> &
-  TypedEventEmitterForEvent<"maximize", []> &
-  TypedEventEmitterForEvent<"unmaximize", []> &
-  TypedEventEmitterForEvent<"blur", []> &
-  TypedEventEmitterForEvent<"focus", []> &
-  TypedEventEmitterForEvent<"new-character", []> &
-  GlobalSettingsEvents
-
-const events = new EventEmitter() as Events
+const events = new EventEmitter() as TypedEventEmitter<Events>
 
 const api: PreloadAPI = {
   on: events.on.bind(events),

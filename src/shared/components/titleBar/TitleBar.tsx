@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState } from "react"
-import { TypedEventEmitterForEvent } from "../../utils/events.ts"
+import { TypedEventEmitter } from "../../utils/events.ts"
 import "./TitleBar.scss"
 import { TitleBarButton } from "./TitleBarButton.tsx"
 import { TitleBarTitle } from "./TitleBarTitle.tsx"
@@ -27,8 +27,7 @@ type Props = {
   title?: string
   secondary?: boolean
   platform: NodeJS.Platform
-  maximizeEvents?: TypedEventEmitterForEvent<"maximize", []> &
-    TypedEventEmitterForEvent<"unmaximize", []>
+  maximizeEvents?: TypedEventEmitter<{ maximize: []; unmaximize: [] }>
   onMinimize?: () => void
   onMaximize?: () => void
   onRestore?: () => void

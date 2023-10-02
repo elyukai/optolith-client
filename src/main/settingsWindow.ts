@@ -70,7 +70,7 @@ export const createSettingsWindow = async (
         onLocaleChanged(value as GlobalSettings["locale"])
       }
     })
-    attachGlobalSettingsBroadcastToWindow(settingsWindow)
+    attachGlobalSettingsBroadcastToWindow(settingsWindow, getWindowBackgroundColor)
 
     settingsWindow.on("closed", () => {
       debug("closed")

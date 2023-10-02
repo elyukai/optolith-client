@@ -1,24 +1,22 @@
 import { IpcRenderer, IpcRendererEvent } from "electron"
-import { TypedEventEmitterForEvent } from "../utils/events.ts"
+import { TypedEventEmitter } from "../utils/events.ts"
 import { GlobalSettings } from "./GlobalSettings.ts"
 
-export type GlobalSettingsEvents = TypedEventEmitterForEvent<
-  "global-setting-changed",
-  [
+export type GlobalSettingsEvents = {
+  "global-setting-changed": [
     {
       [K in keyof GlobalSettings]: [key: K, newValue: GlobalSettings[K]]
     }[keyof GlobalSettings],
   ]
-> &
-  TypedEventEmitterForEvent<"locale-changed", [newLocale: GlobalSettings["locale"]]> &
-  TypedEventEmitterForEvent<
-    "fallback-locale-changed",
-    [newFallbackLocale: GlobalSettings["fallbackLocale"]]
-  >
+  "locale-changed": [newLocale: GlobalSettings["locale"]]
+  "fallback-locale-changed": [newFallbackLocale: GlobalSettings["fallbackLocale"]]
+}
+
+export type GlobalSettingsEventEmitter = TypedEventEmitter<GlobalSettingsEvents>
 
 export const attachGlobalSettingsEvents = (
   ipcRenderer: IpcRenderer,
-  preloadEvents: GlobalSettingsEvents,
+  preloadEvents: GlobalSettingsEventEmitter,
 ) =>
   ipcRenderer.on("global-setting-changed", (_event: IpcRendererEvent, key, value) => {
     preloadEvents.emit("global-setting-changed", [key, value])

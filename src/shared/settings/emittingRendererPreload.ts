@@ -1,15 +1,13 @@
 import { ipcRenderer } from "electron"
-import { TypedEventEmitterForEvent } from "../utils/events.ts"
+import { TypedEventEmitter } from "../utils/events.ts"
 import { GlobalSettings } from "./GlobalSettings.ts"
 
-export type GlobalSettingsEvents = TypedEventEmitterForEvent<
-  "locale-changed",
-  [newLocale: GlobalSettings["locale"]]
-> &
-  TypedEventEmitterForEvent<
-    "fallback-locale-changed",
-    [newFallbackLocale: GlobalSettings["fallbackLocale"]]
-  >
+export type GlobalSettingsEvents = {
+  "locale-changed": [newLocale: GlobalSettings["locale"]]
+  "fallback-locale-changed": [newFallbackLocale: GlobalSettings["fallbackLocale"]]
+}
+
+export type GlobalSettingsEventEmitter = TypedEventEmitter<GlobalSettingsEvents>
 
 export type GlobalSettingsEmittingAPI = {
   setGlobalSetting: (
@@ -20,7 +18,7 @@ export type GlobalSettingsEmittingAPI = {
 }
 
 export const getGlobalSettingsEmittingAPI = (
-  events: GlobalSettingsEvents,
+  events: GlobalSettingsEventEmitter,
 ): GlobalSettingsEmittingAPI => ({
   setGlobalSetting: ([key, value]) => {
     if (key === "locale") {

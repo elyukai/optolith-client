@@ -1,5 +1,4 @@
 import { BrowserWindow, Event, ipcMain } from "electron"
-import { getWindowBackgroundColor } from "../../main/nativeTheme.ts"
 import { GlobalSettings, Theme } from "./GlobalSettings.ts"
 
 const globalSettings: GlobalSettings = {
@@ -27,7 +26,10 @@ export const attachGlobalSettingsChanged = (
   })
 }
 
-export const attachGlobalSettingsBroadcastToWindow = (settingsWindow: BrowserWindow) => {
+export const attachGlobalSettingsBroadcastToWindow = (
+  settingsWindow: BrowserWindow,
+  getWindowBackgroundColor: (theme: Theme | undefined) => string,
+) => {
   attachGlobalSettingsChanged(settingsWindow, (key, value) => {
     BrowserWindow.getAllWindows().forEach(window => {
       if (key === "theme") {

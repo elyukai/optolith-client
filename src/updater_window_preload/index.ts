@@ -10,6 +10,16 @@ import {
 } from "../shared/settings/listeningRendererPreload.ts"
 import { TypedEventEmitterForEvent } from "../shared/utils/events.ts"
 
+type Events = GlobalSettingsEvents & {
+  "initial-setup": [InitialSetupEventMessage]
+  "update-available": [updateInfo: UpdateInfo]
+  "no-update-available": []
+  "download-progress": [updateInfo: ProgressInfo]
+  "update-downloaded": [updateInfo: UpdateDownloadedEvent]
+  blur: []
+  focus: []
+}
+
 export type PreloadAPI = {
   platform: NodeJS.Platform
   close: () => void
@@ -18,18 +28,9 @@ export type PreloadAPI = {
   downloadUpdate: () => void
   installUpdateLater: () => void
   quitAndInstallUpdate: () => void
-} & Events
+} & TypedEventEmitter<Events>
 
-type Events = TypedEventEmitterForEvent<"initial-setup", [InitialSetupEventMessage]> &
-  TypedEventEmitterForEvent<"update-available", [updateInfo: UpdateInfo]> &
-  TypedEventEmitterForEvent<"no-update-available", []> &
-  TypedEventEmitterForEvent<"download-progress", [updateInfo: ProgressInfo]> &
-  TypedEventEmitterForEvent<"update-downloaded", [updateInfo: UpdateDownloadedEvent]> &
-  TypedEventEmitterForEvent<"blur", []> &
-  TypedEventEmitterForEvent<"focus", []> &
-  GlobalSettingsEvents
-
-const events = new EventEmitter() as Events
+const events = new EventEmitter() as TypedEventEmitter<Events>
 
 const api: PreloadAPI = {
   on: events.on.bind(events),
