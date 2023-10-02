@@ -229,23 +229,6 @@ const setUserDataPath = async () => {
   app.setPath("userData", await ensureUserDataPathExists())
 }
 
-const installExtensions = async () => {
-  debug("install extensions ...")
-
-  const installedExtensions: string[] | string | undefined = await Promise.resolve(
-    undefined as string[] | string | undefined,
-  ) /* await installExtension([
-      REACT_DEVELOPER_TOOLS,
-      REDUX_DEVTOOLS,
-    ]) */
-
-  const installedExtensionsString = Array.isArray(installedExtensions)
-    ? installedExtensions.join(", ")
-    : installedExtensions ?? "none"
-
-  debug("installed extensions: %s", installedExtensionsString)
-}
-
 const readFileInAppPath = (...path: string[]) => readFile(join(app.getAppPath(), ...path), "utf-8")
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -266,7 +249,6 @@ app.whenReady().then(async () => {
   debug("skip startup because of update?", installUpdateInsteadOfStartup ? "yes" : "no")
   if (!installUpdateInsteadOfStartup) {
     await setUserDataPath()
-    await installExtensions()
 
     ipcMain.handle("receive-license", _ => readFileInAppPath("LICENSE"))
     ipcMain.handle("receive-changelog", _ => readFileInAppPath("CHANGELOG.md"))
