@@ -2,13 +2,10 @@ import { classList } from "../../utils/classList.ts"
 import { FCC } from "../../utils/react.js"
 import { isNonEmptyString } from "../../utils/string.ts"
 
-export interface TabBaseProps {
+type Props = {
   className?: string
   disabled?: boolean
   label: string | undefined
-}
-
-export interface TabProps extends TabBaseProps {
   active: boolean
   onClick(): void
 }
@@ -16,7 +13,7 @@ export interface TabProps extends TabBaseProps {
 /**
  * A tab that can be selected.
  */
-export const Tab: FCC<TabProps> = props => {
+export const Tab: FCC<Props> = props => {
   const { active, children, className, disabled = false, label, onClick } = props
 
   return (

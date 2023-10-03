@@ -7,7 +7,7 @@ import { TextFieldContainer } from "./TextFieldContainer.tsx"
  */
 export type InputKeyEvent = KeyboardEvent<HTMLInputElement>
 
-export interface TextFieldProps {
+type Props = {
   autoFocus?: boolean
   className?: string
   countCurrent?: number
@@ -30,7 +30,7 @@ export interface TextFieldProps {
 /**
  * A text field with label, hint, error, and character count.
  */
-export const TextField: React.FC<TextFieldProps> = props => {
+export const TextField: FC<Props> = props => {
   const {
     autoFocus,
     className,
