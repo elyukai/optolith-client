@@ -108,6 +108,6 @@ const InactiveLiturgicalChantsListItem: FC<Props> = props => {
 const MemoInactiveLiturgicalChantsListItem = memo(InactiveLiturgicalChantsListItem)
 
 /**
- *
+ * Displays a liturgical chant that is currently inactive.
  */
 export { MemoInactiveLiturgicalChantsListItem as InactiveLiturgicalChantsListItem }

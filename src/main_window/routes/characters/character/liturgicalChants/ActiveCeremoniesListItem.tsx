@@ -114,9 +114,9 @@ const ActiveCeremoniesListItem: FC<Props> = props => {
   )
 }
 
+/**
+ * Displays a ceremony that is currently active.
+ */
 const MemoActiveCeremoniesListItem = memo(ActiveCeremoniesListItem)
 
-/**
- *
- */
 export { MemoActiveCeremoniesListItem as ActiveCeremoniesListItem }

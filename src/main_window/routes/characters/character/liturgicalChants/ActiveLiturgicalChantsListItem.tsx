@@ -117,9 +117,9 @@ const ActiveLiturgicalChantsListItem: FC<Props> = props => {
   )
 }
 
+/**
+ * Displays a liturgical chant that is currently active.
+ */
 const MemoActiveLiturgicalChantsListItem = memo(ActiveLiturgicalChantsListItem)
 
-/**
- *
- */
 export { MemoActiveLiturgicalChantsListItem as ActiveLiturgicalChantsListItem }

@@ -79,9 +79,9 @@ const ActiveBlessingsListItem: FC<Props> = props => {
   )
 }
 
+/**
+ * Displays a blessing that is currently active.
+ */
 const MemoActiveBlessingsListItem = memo(ActiveBlessingsListItem)
 
-/**
- *
- */
 export { MemoActiveBlessingsListItem as ActiveBlessingsListItem }

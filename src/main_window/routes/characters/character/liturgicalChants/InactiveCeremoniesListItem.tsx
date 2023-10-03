@@ -102,9 +102,9 @@ const InactiveCeremoniesListItem: FC<Props> = props => {
   )
 }
 
+/**
+ * Displays a ceremony that is currently inactive.
+ */
 const MemoInactiveCeremoniesListItem = memo(InactiveCeremoniesListItem)
 
-/**
- *
- */
 export { MemoInactiveCeremoniesListItem as InactiveCeremoniesListItem }

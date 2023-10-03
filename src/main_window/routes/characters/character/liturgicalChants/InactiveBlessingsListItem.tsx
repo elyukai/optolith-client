@@ -73,9 +73,9 @@ const InactiveBlessingsListItem: FC<Props> = props => {
   )
 }
 
+/**
+ * Displays a blessing that is currently inactive.
+ */
 const MemoInactiveBlessingsListItem = memo(InactiveBlessingsListItem)
 
-/**
- *
- */
 export { MemoInactiveBlessingsListItem as InactiveBlessingsListItem }
