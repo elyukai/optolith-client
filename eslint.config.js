@@ -271,13 +271,13 @@ export default [
     ignores: [
       ".webpack/**",
       "*.config.js",
+      "deploy/**",
       "src/App/**",
       "src/Control/**",
       "src/Data/**",
       "src/Debug/**",
       "src/System/**",
-      "src/database/contents/Compatibility/**",
-      "src/database/contents/migration/**",
+      "src/database/contents/**",
     ],
   },
 ]
