@@ -4,12 +4,18 @@ import { getRace, getRaceVariant } from "../../shared/domain/race.ts"
 import { selectRaceId, selectRaceVariantId } from "../slices/characterSlice.ts"
 import { selectRaces } from "../slices/databaseSlice.ts"
 
+/**
+ * Select the current race of the character.
+ */
 export const selectCurrentRace = createSelector(
   selectRaces,
   selectRaceId,
   (races, id): Race | undefined => (id === undefined ? undefined : getRace(races, id)),
 )
 
+/**
+ * Select the current race variant of the character, if any.
+ */
 export const selectCurrentRaceVariant = createSelector(
   selectCurrentRace,
   selectRaceVariantId,

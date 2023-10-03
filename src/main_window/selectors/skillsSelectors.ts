@@ -33,6 +33,11 @@ import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelecto
 import { selectCurrentCulture } from "./cultureSelectors.ts"
 import { selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
 
+/**
+ * A combination of a static and corresponding dynamic skill entry, extended by
+ * value bounds, full logic for if the value can be increased or decreased, and
+ * commonness based on the selected culture.
+ */
 export type DisplayedSkill = {
   static: Skill
   dynamic: Rated
@@ -43,6 +48,11 @@ export type DisplayedSkill = {
   commonness?: "common" | "uncommon"
 }
 
+/**
+ * Returns all skills with their corresponding dynamic skill entries, extended
+ * by value bounds, full logic for if the value can be increased or decreased,
+ * and commonness based on the selected culture.
+ */
 export const selectVisibleSkills = createSelector(
   selectStaticSkills,
   selectDynamicSkills,

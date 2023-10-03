@@ -4,6 +4,9 @@ import { getCulture } from "../../shared/domain/culture.ts"
 import { selectCultureId } from "../slices/characterSlice.ts"
 import { selectCultures } from "../slices/databaseSlice.ts"
 
+/**
+ * Select the current culture of the character.
+ */
 export const selectCurrentCulture = createSelector(
   selectCultures,
   selectCultureId,

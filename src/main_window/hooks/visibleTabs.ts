@@ -15,13 +15,22 @@ type RouteGroupName =
   | "abilities"
   | "belongings"
 
+/**
+ * A route can either be a single route or a collection of routes.
+ */
 export type DisplayRoute = SingleDisplayRoute | DisplayRouteGroup
 
+/**
+ * A single route.
+ */
 export type SingleDisplayRoute = {
   type: "single"
   route: RoutePath
 }
 
+/**
+ * A group of routes with a group name.
+ */
 export type DisplayRouteGroup = {
   type: "group"
   name: RouteGroupName
@@ -54,6 +63,9 @@ const mainHierarchy: DisplayRoute[] = [
 
 type Section = "main" | "character"
 
+/**
+ * A hook that returns the currently visible tabs.
+ */
 export const useVisibleTabs = () => {
   const currentRoute = useAppSelector(selectRoute)
 

@@ -20,6 +20,9 @@ const a = (p: { children?: React.ReactNode }) => (
   </>
 )
 
+/**
+ * Renders a markdown view.
+ */
 export const Markdown: FC<Props> = props => {
   const { className, source = "...", noWrapper } = props
 
