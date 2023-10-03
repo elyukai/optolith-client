@@ -24,7 +24,8 @@ const createRendererConfig = name => [
       rules: rules
     },
     resolve: {
-      symlinks: false
+      symlinks: false,
+      conditionNames: ["browser", "default", "import", "require"],
     },
     output: {
       path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
