@@ -1,67 +1,31 @@
+import { Aspect } from "optolith-database-schema/types/Aspect"
 import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
 import { SkillTradition } from "optolith-database-schema/types/_Blessed"
+import { LiturgyIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
 import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
-import { filterNonNullable } from "../utils/array.ts"
+import { BlessedTradition } from "optolith-database-schema/types/specialAbility/BlessedTradition"
+import { count, countByMany } from "../utils/array.ts"
+import { isNotNullish } from "../utils/nullable.ts"
+import { TranslateMap } from "../utils/translate.ts"
 import { assertExhaustive } from "../utils/typeSafety.ts"
 import { Activatable, countOptions } from "./activatableEntry.ts"
-import { getSingleHighestAttribute } from "./attribute.ts"
+import { AspectIdentifier } from "./identifier.ts"
 import {
   ActivatableRated,
+  ActivatableRatedMap,
   ActivatableRatedValue,
-  RatedDependency,
-  RatedMap,
-  flattenMinimumRestrictions,
+  ActivatableRatedWithEnhancementsMap,
+  isRatedActive,
+  isRatedWithEnhancementsActive,
 } from "./ratedEntry.ts"
-import { getSkillCheckValues, getSkillCheckWithId } from "./skillCheck.ts"
 
+/**
+ * Returns the value for a dynamic liturgical chant entry that might not exist
+ * yet.
+ */
 export const getLiturgicalChantValue = (
   dynamic: ActivatableRated | undefined,
 ): number | undefined => dynamic?.value
-
-// import { ident } from "../../../Data/Function"
-// import { fmap } from "../../../Data/Functor"
-// import { all, any, concatMap, consF, fnull, intercalate, List, maximum, minimum, notElemF, notNull } from "../../../Data/List"
-// import { count } from "../../../Data/List/Unique"
-// import { bindF, catMaybes, elem, ensure, guard, isNothing, Just, mapMaybe, Maybe, maybe, Nothing, thenF } from "../../../Data/Maybe"
-// import { add, gte, lt } from "../../../Data/Num"
-// import { elems, find, findWithDefault, fromArray, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap"
-// import { Record } from "../../../Data/Record"
-// import { fst, Pair, snd } from "../../../Data/Tuple"
-// import { Aspect, BlessedTradition } from "../../Constants/Groups"
-// import { SpecialAbilityId } from "../../Constants/Ids"
-// import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
-// import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
-// import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
-// import { ChantsSortOptions } from "../../Models/Config"
-// import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
-// import { NumIdName } from "../../Models/NumIdName"
-// import { BlessingCombined } from "../../Models/View/BlessingCombined"
-// import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../Models/View/LiturgicalChantWithRequirements"
-// import { BlessedTradition as BlessedTraditionR } from "../../Models/Wiki/BlessedTradition"
-// import { Blessing } from "../../Models/Wiki/Blessing"
-// import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
-// import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant"
-// import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
-// import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
-// import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
-// import { mapBlessedTradIdToNumId } from "../Activatable/traditionUtils"
-// import { flattenDependencies } from "../Dependencies/flattenDependencies"
-// import { toNewMaybe } from "../Maybe"
-// import { pipe, pipe_ } from "../pipe"
-// import { sortStrings } from "../sortBy"
-// import { isNumber } from "../typeCheckUtils"
-// import { getExceptionalSkillBonus, getMaxSRByCheckAttrs, getMaxSRFromEL } from "./skillUtils"
-
-// const SDA = StaticData.A
-// const HA = HeroModel.A
-// const LCA = LiturgicalChant.A
-// const LCAL = LiturgicalChant.AL
-// const SAA = SpecialAbility.A
-// const ASDA = ActivatableSkillDependent.A
-// const LCWRA_ = LiturgicalChantWithRequirementsA_
-// const BTA = BlessedTraditionR.A
-
-// type ASD = ActivatableSkillDependent
 
 // /**
 //  * Checks if the passed liturgical chant or blessing is valid for the current
@@ -77,36 +41,10 @@ export const getLiturgicalChantValue = (
 //                                  (LCAL.tradition (entry))
 //   }
 
-// type LiturgicalChantsAbove10ByAspect = OrderedMap<Aspect, number>
-
-// /**
-//  * Returns the lowest SR and it's occurences for every aspect. The values of
-//  * the map are pairs where the first is the lowest SR and the second is the
-//  * amount of liturgical chants at that exact SR.
-//  */
-// export const chantsAbove10ByAspect : (wiki_chants : StaticData["liturgicalChants"])
-//                                    => (hero_chants : HeroModel["liturgicalChants"])
-//                                    => LiturgicalChantsAbove10ByAspect
-//                                    = wiki_chants =>
-//                                        pipe (
-//                                          elems,
-//                                          concatMap (pipe (
-//                                            ensure (ASDA.active),
-//                                            Maybe.find (pipe (
-//                                              ASDA.value,
-//                                              gte (10)
-//                                            )),
-//                                            bindF (pipe (
-//                                              ASDA.id,
-//                                              lookupF (wiki_chants)
-//                                            )),
-//                                            maybe (List<Aspect> ())
-//                                                  (LCA.aspects)
-//                                          )),
-//                                          count
-//                                        )
-
-const flattenAspectIds = (traditions: SkillTradition[]): number[] =>
+/**
+ * Extracts the list of aspect identifiers from a list of tradition objects.
+ */
+export const flattenAspectIds = (traditions: SkillTradition[]): number[] =>
   traditions
     .flatMap(tradition => {
       switch (tradition.tag) {
@@ -120,88 +58,100 @@ const flattenAspectIds = (traditions: SkillTradition[]): number[] =>
     })
     .map(aspect => aspect.id.aspect)
 
-export const getLiturgicalChantMinimumFromAspectKnowledgePrerequistes = (
-  liturgicalChantsAbove10ByAspect: Record<number, number>,
-  activeAspectKnowledges: number[],
-  aspectIds: number[],
-  value: number | undefined,
-): number | undefined =>
-  aspectIds.some(
-    aspectId =>
-      activeAspectKnowledges.includes(aspectId) &&
-      (liturgicalChantsAbove10ByAspect[aspectId] ?? 0) <= 3,
-  ) &&
-  value !== undefined &&
-  value >= 10
-    ? 10
-    : undefined
+/**
+ * Returns the translation of all aspects relevant to the current active blessed
+ * tradition. If the tradition has no aspects, the name of the tradition is used
+ * instead.
+ */
+export const getAspectsForTranslation = (
+  traditions: SkillTradition[],
+  activeBlessedTradition: BlessedTradition,
+  getAspectById: (id: number) => Aspect | undefined,
+  translateMap: TranslateMap,
+): string[] =>
+  traditions
+    .flatMap(tradition => {
+      switch (tradition.tag) {
+        case "GeneralAspect": {
+          const isShamanisticGeneral =
+            tradition.general_aspect.id.aspect === AspectIdentifier.AllgemeinSchamanenritus
 
-export const getLiturgicalChantMinimum = (
-  liturgicalChantsAbove10ByAspect: Record<number, number>,
-  activeAspectKnowledges: number[],
-  staticLiturgicalChant: { traditions: SkillTradition[] },
-  dynamicLiturgicalChant: ActivatableRated,
-  filterApplyingDependencies: (dependencies: RatedDependency[]) => RatedDependency[],
-): number | undefined => {
-  const minimumValues: number[] = filterNonNullable([
-    ...flattenMinimumRestrictions(filterApplyingDependencies(dynamicLiturgicalChant.dependencies)),
-    getLiturgicalChantMinimumFromAspectKnowledgePrerequistes(
-      liturgicalChantsAbove10ByAspect,
-      activeAspectKnowledges,
-      flattenAspectIds(staticLiturgicalChant.traditions),
-      dynamicLiturgicalChant.value,
-    ),
-  ])
+          if (isShamanisticGeneral === activeBlessedTradition.is_shamanistic) {
+            return translateMap(getAspectById(tradition.general_aspect.id.aspect)?.translations)
+              ?.name
+          } else {
+            return []
+          }
+        }
+        case "Tradition": {
+          if (tradition.tradition.tradition.id.blessed_tradition === activeBlessedTradition.id) {
+            if (activeBlessedTradition.aspects === undefined) {
+              return translateMap(activeBlessedTradition.translations)?.name
+            } else {
+              return (
+                tradition.tradition.aspects?.map(
+                  aspectRef => translateMap(getAspectById(aspectRef.id.aspect)?.translations)?.name,
+                ) ?? []
+              )
+            }
+          }
 
-  return minimumValues.length > 0 ? Math.max(...minimumValues) : undefined
+          return []
+        }
+        default:
+          return assertExhaustive(tradition)
+      }
+    })
+    .filter(isNotNullish)
+
+/**
+ * Counts the number of liturgical chants that are active and have a value
+ * greater than 10 for each aspect.
+ */
+export const getLiturgicalChantsAbove10ByAspect = (
+  getTraditions: (id: LiturgyIdentifier) => SkillTradition[],
+  dynamicLiturgicalChants: ActivatableRatedMap,
+  dynamicCeremonies: ActivatableRatedMap,
+): Record<number, number> => {
+  const prepareEntity = (
+    ratedMap: ActivatableRatedMap,
+    numberToId: (id: number) => LiturgyIdentifier,
+  ) =>
+    Object.values(ratedMap)
+      .filter(isRatedActive)
+      .flatMap(dynamicEntry =>
+        flattenAspectIds(getTraditions(numberToId(dynamicEntry.id))).map(
+          aspectId => [aspectId, dynamicEntry.value] as const,
+        ),
+      )
+
+  return [
+    ...prepareEntity(dynamicLiturgicalChants, id => ({
+      tag: "LiturgicalChant",
+      liturgical_chant: id,
+    })),
+    ...prepareEntity(dynamicCeremonies, id => ({ tag: "Ceremony", ceremony: id })),
+  ].reduce<Record<number, number>>(
+    (acc, [aspectId, value]) =>
+      value >= 10 ? { ...acc, [aspectId]: (acc[aspectId] ?? 0) + 1 } : acc,
+    {},
+  )
 }
 
-export const getLiturgicalChantMaximumFromAspectKnowledge = (
-  activeAspectKnowledges: number[],
-  aspectIds: number[],
-): number | undefined =>
-  aspectIds.some(aspectId => activeAspectKnowledges.includes(aspectId)) ? undefined : 14
-
-export const getLiturgicalChantMaximum = (
-  attributes: RatedMap,
-  activeAspectKnowledges: number[],
-  staticLiturgicalChant: { id: number; check: SkillCheck; traditions: SkillTradition[] },
-  isInCharacterCreation: boolean,
-  startExperienceLevel: ExperienceLevel | undefined,
-  exceptionalSkill: Activatable | undefined,
-  type: "LiturgicalChant" | "Ceremony",
-): number => {
-  const maximumValues = filterNonNullable([
-    Math.max(...getSkillCheckValues(attributes, staticLiturgicalChant.check)) + 2,
-    isInCharacterCreation && startExperienceLevel !== undefined
-      ? startExperienceLevel.max_skill_rating
-      : undefined,
-    getLiturgicalChantMaximumFromAspectKnowledge(
-      activeAspectKnowledges,
-      flattenAspectIds(staticLiturgicalChant.traditions),
-    ),
-  ])
-
-  const exceptionalSkillBonus = countOptions(exceptionalSkill, {
-    type,
-    value: staticLiturgicalChant.id,
-  })
-
-  return Math.min(...maximumValues) + exceptionalSkillBonus
-}
-
+/**
+ * Returns the highest required attribute and its value for a liturgical chant,
+ * if any.
+ */
 export const getHighestRequiredAttributeForLiturgicalChant = (
-  attributes: RatedMap,
+  getSingleHighestCheckAttributeId: (check: SkillCheck) => number | undefined,
   staticLiturgicalChant: { id: number; check: SkillCheck },
   dynamicLiturgicalChant: { value: ActivatableRatedValue },
   exceptionalSkill: Activatable | undefined,
   type: "LiturgicalChant" | "Ceremony",
 ): { id: number; value: number } | undefined => {
-  const singleHighestAttribute = getSingleHighestAttribute(
-    getSkillCheckWithId(attributes, staticLiturgicalChant.check),
-  )
+  const singleHighestAttributeId = getSingleHighestCheckAttributeId(staticLiturgicalChant.check)
 
-  if (singleHighestAttribute === undefined || dynamicLiturgicalChant.value === undefined) {
+  if (singleHighestAttributeId === undefined || dynamicLiturgicalChant.value === undefined) {
     return undefined
   }
 
@@ -211,112 +161,92 @@ export const getHighestRequiredAttributeForLiturgicalChant = (
   })
 
   return {
-    id: singleHighestAttribute.id,
+    id: singleHighestAttributeId,
     value: dynamicLiturgicalChant.value - 2 - exceptionalSkillBonus,
   }
 }
 
-export const isLiturgicalChantDecreasable = (
-  dynamic: ActivatableRated,
-  min: number | undefined,
-  canRemove: boolean,
+/**
+ * Counts all active liturgical chants and ceremonies.
+ */
+export const countActiveLiturgicalChants = (
+  dynamicLiturgicalChants: ActivatableRatedWithEnhancementsMap,
+  dynamicCeremonies: ActivatableRatedWithEnhancementsMap,
 ) =>
-  (min === undefined || (dynamic.value !== undefined && dynamic.value > Math.max(min, 0))) &&
-  canRemove
+  count(Object.values(dynamicLiturgicalChants), isRatedWithEnhancementsActive) +
+  count(Object.values(dynamicCeremonies), isRatedWithEnhancementsActive)
 
-export const isLiturgicalChantIncreasable = (dynamic: ActivatableRated, max: number) =>
-  dynamic.value === undefined || dynamic.value < max
+/**
+ * Checks if the maximum number of liturgical chants has been reached.
+ */
+export const isMaximumOfLiturgicalChantsReached = (
+  activeCount: number,
+  isInCharacterCreation: boolean,
+  startExperienceLevel: ExperienceLevel,
+) =>
+  isInCharacterCreation
+    ? activeCount >= startExperienceLevel.max_number_of_spells_liturgical_chants
+    : false
 
-// /**
-//  * Keys are aspects and their value is the respective tradition.
-//  */
-// const traditionsByAspect = fromArray<Aspect, BlessedTradition> ([
-//   [ Aspect.General, BlessedTradition.General ],
-//   [ Aspect.AntiMagic, BlessedTradition.ChurchOfPraios ],
-//   [ Aspect.Order, BlessedTradition.ChurchOfPraios ],
-//   [ Aspect.Shield, BlessedTradition.ChurchOfRondra ],
-//   [ Aspect.Storm, BlessedTradition.ChurchOfRondra ],
-//   [ Aspect.Death, BlessedTradition.ChurchOfBoron ],
-//   [ Aspect.Dream, BlessedTradition.ChurchOfBoron ],
-//   [ Aspect.Magic, BlessedTradition.ChurchOfHesinde ],
-//   [ Aspect.Knowledge, BlessedTradition.ChurchOfHesinde ],
-//   [ Aspect.Commerce, BlessedTradition.ChurchOfPhex ],
-//   [ Aspect.Shadow, BlessedTradition.ChurchOfPhex ],
-//   [ Aspect.Healing, BlessedTradition.ChurchOfPeraine ],
-//   [ Aspect.Agriculture, BlessedTradition.ChurchOfPeraine ],
-//   [ Aspect.Wind, BlessedTradition.ChurchOfEfferd ],
-//   [ Aspect.Wogen, BlessedTradition.ChurchOfEfferd ],
-//   [ Aspect.Freundschaft, BlessedTradition.ChurchOfTravia ],
-//   [ Aspect.Heim, BlessedTradition.ChurchOfTravia ],
-//   [ Aspect.Jagd, BlessedTradition.ChurchOfFirun ],
-//   [ Aspect.Kaelte, BlessedTradition.ChurchOfFirun ],
-//   [ Aspect.Freiheit, BlessedTradition.ChurchOfTsa ],
-//   [ Aspect.Wandel, BlessedTradition.ChurchOfTsa ],
-//   [ Aspect.Feuer, BlessedTradition.ChurchOfIngerimm ],
-//   [ Aspect.Handwerk, BlessedTradition.ChurchOfIngerimm ],
-//   [ Aspect.Ekstase, BlessedTradition.ChurchOfRahja ],
-//   [ Aspect.Harmonie, BlessedTradition.ChurchOfRahja ],
-//   [ Aspect.Reise, BlessedTradition.ChurchOfAves ],
-//   [ Aspect.Schicksal, BlessedTradition.ChurchOfAves ],
-//   [ Aspect.Hilfsbereitschaft, BlessedTradition.ChurchOfIfirn ],
-//   [ Aspect.Natur, BlessedTradition.ChurchOfIfirn ],
-//   [ Aspect.GuterKampf, BlessedTradition.ChurchOfKor ],
-//   [ Aspect.GutesGold, BlessedTradition.ChurchOfKor ],
-//   [ Aspect.Bildung, BlessedTradition.ChurchOfNandus ],
-//   [ Aspect.Erkenntnis, BlessedTradition.ChurchOfNandus ],
-//   [ Aspect.Kraft, BlessedTradition.ChurchOfSwafnir ],
-//   [ Aspect.Tapferkeit, BlessedTradition.ChurchOfSwafnir ],
-//   [ Aspect.ReissenderStrudel, BlessedTradition.CultOfNuminoru ],
-//   [ Aspect.UnendlicheTiefe, BlessedTradition.CultOfNuminoru ],
-//   [ Aspect.Begierde, BlessedTradition.Levthankult ],
-//   [ Aspect.Rausch, BlessedTradition.Levthankult ],
-// ])
+/**
+ * Checks if the liturgical chant belongs to a blessed tradition.
+ */
+export const belongsToBlessedTradition = (
+  traditions: SkillTradition[],
+  activeTradition: BlessedTradition,
+): boolean =>
+  traditions.some(tradition => {
+    switch (tradition.tag) {
+      case "GeneralAspect":
+        return (
+          tradition.general_aspect.id.aspect ===
+          (activeTradition.is_shamanistic
+            ? AspectIdentifier.AllgemeinSchamanenritus
+            : AspectIdentifier.General)
+        )
+      case "Tradition":
+        return tradition.tradition.tradition.id.blessed_tradition === activeTradition.id
+      default:
+        return assertExhaustive(tradition)
+    }
+  })
 
-// /**
-//  * Returns the tradition id used by chants. To get the tradition SId for the
-//  * actual special ability, you have to decrease the return value by 1.
-//  * @param aspectId The id used for chants or Aspect Knowledge.
-//  */
-// export const getTraditionOfAspect =
-//   (key : Aspect) => findWithDefault (BlessedTradition.General) (key) (traditionsByAspect)
+/**
+ * Counts the number of active liturgical chants that belong to a blessed
+ * tradition that is not the active one, by tradition.
+ */
+export const countActiveByUnfamiliarTradition = <T extends { traditions: SkillTradition[] }>(
+  dynamicEntries: ActivatableRatedWithEnhancementsMap,
+  staticEntries: { [id: number]: T },
+  activeBlessedTradition: BlessedTradition,
+): { [traditionId: number]: number } =>
+  countByMany(
+    Object.values(dynamicEntries)
+      .map(dynamicEntry => staticEntries[dynamicEntry.id])
+      .filter(
+        (staticEntry): staticEntry is NonNullable<typeof staticEntry> =>
+          isNotNullish(staticEntry) &&
+          !belongsToBlessedTradition(staticEntry.traditions, activeBlessedTradition),
+      ),
+    staticLiturgicalChant =>
+      staticLiturgicalChant.traditions.flatMap(tradition =>
+        tradition.tag === "Tradition" ? tradition.tradition.tradition.id.blessed_tradition : [],
+      ),
+  )
 
-// /**
-//  * Keys are traditions and their values are their respective aspects
-//  */
-// const aspectsByTradition = fromArray<BlessedTradition, List<Aspect>> ([
-//   [ BlessedTradition.General, List () ],
-//   [ BlessedTradition.ChurchOfPraios, List (Aspect.AntiMagic, Aspect.Order) ],
-//   [ BlessedTradition.ChurchOfRondra, List (Aspect.Shield, Aspect.Storm) ],
-//   [ BlessedTradition.ChurchOfBoron, List (Aspect.Death, Aspect.Dream) ],
-//   [ BlessedTradition.ChurchOfHesinde, List (Aspect.Magic, Aspect.Knowledge) ],
-//   [ BlessedTradition.ChurchOfPhex, List (Aspect.Commerce, Aspect.Shadow) ],
-//   [ BlessedTradition.ChurchOfPeraine, List (Aspect.Healing, Aspect.Agriculture) ],
-//   [ BlessedTradition.ChurchOfEfferd, List (Aspect.Wind, Aspect.Wogen) ],
-//   [ BlessedTradition.ChurchOfTravia, List (Aspect.Freundschaft, Aspect.Heim) ],
-//   [ BlessedTradition.ChurchOfFirun, List (Aspect.Jagd, Aspect.Kaelte) ],
-//   [ BlessedTradition.ChurchOfTsa, List (Aspect.Freiheit, Aspect.Wandel) ],
-//   [ BlessedTradition.ChurchOfIngerimm, List (Aspect.Feuer, Aspect.Handwerk) ],
-//   [ BlessedTradition.ChurchOfRahja, List (Aspect.Ekstase, Aspect.Harmonie) ],
-//   [ BlessedTradition.CultOfTheNamelessOne, List () ],
-//   [ BlessedTradition.ChurchOfAves, List (Aspect.Reise, Aspect.Schicksal) ],
-//   [ BlessedTradition.ChurchOfIfirn, List (Aspect.Hilfsbereitschaft, Aspect.Natur) ],
-//   [ BlessedTradition.ChurchOfKor, List (Aspect.GuterKampf, Aspect.GutesGold) ],
-//   [ BlessedTradition.ChurchOfNandus, List (Aspect.Bildung, Aspect.Erkenntnis) ],
-//   [ BlessedTradition.ChurchOfSwafnir, List (Aspect.Kraft, Aspect.Tapferkeit) ],
-//   [ BlessedTradition.CultOfNuminoru, List (Aspect.ReissenderStrudel, Aspect.UnendlicheTiefe) ],
-//   [ BlessedTradition.Levthankult, List (Aspect.Begierde, Aspect.Rausch) ],
-// ])
-
-// /**
-//  * Return the aspect ids used for chants and Aspect Knowledge.
-//  * @param traditionId The id used by chants. If you only have the SId from the
-//  * actual special ability, you have to increase the value by 1 before passing
-//  * it.
-//  */
-// export const getAspectsOfTradition = pipe (
-//   (key : BlessedTradition) => findWithDefault (List<Aspect> ()) (key) (aspectsByTradition),
-//   consF<Aspect> (Aspect.General)
-// )
+/**
+ * Checks if any of the passed traditions matches the predicate. General
+ * aspects are ignored.
+ */
+export const anyBlessedTradition = (
+  traditions: SkillTradition[],
+  predicate: (traditionId: number) => boolean,
+): boolean =>
+  traditions.some(
+    tradition =>
+      tradition.tag === "Tradition" &&
+      predicate(tradition.tradition.tradition.id.blessed_tradition),
+  )
 
 // export type LiturgicalChantBlessingCombined = Record<LiturgicalChantWithRequirements>
 //                                             | Record<BlessingCombined>

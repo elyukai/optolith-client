@@ -35,6 +35,17 @@ export type RatedAdventurePointsCache = {
   bound: number
 }
 
+/**
+ * Adds two caches together.
+ */
+const addCache = (
+  cache1: RatedAdventurePointsCache,
+  cache2: RatedAdventurePointsCache,
+): RatedAdventurePointsCache => ({
+  general: cache1.general + cache2.general,
+  bound: cache1.bound + cache2.bound,
+})
+
 const groupBoundAdventurePointsByRating = (
   boundAdventurePoints: BoundAdventurePoints[],
 ): ReadonlyMap<number | "activation", number> =>
@@ -118,5 +129,36 @@ export const cachedAdventurePointsForActivatable = (
   } else {
     const boundByValue = groupBoundAdventurePointsByRating(boundAdventurePoints)
     return accumulateCache(0, value, "activation", boundByValue, ic)
+  }
+}
+
+/**
+ * Calculates the accumulated used adventure points value for an activatable
+ * rated entry that has enhancements. It takes into account the minimum value if
+ * it’s always active, bound adventure points and the improvement cost of the
+ * entry.
+ */
+export const cachedAdventurePointsForActivatableWithEnhancements = (
+  value: number | undefined,
+  boundAdventurePoints: BoundAdventurePoints[],
+  ic: ImprovementCost,
+  enhancements: number[],
+  getAdventurePointsModifierForEnhancement: (enhancementId: number) => number,
+): RatedAdventurePointsCache => {
+  if (value === undefined) {
+    return {
+      general: 0,
+      bound: 0,
+    }
+  } else {
+    const boundByValue = groupBoundAdventurePointsByRating(boundAdventurePoints)
+    const enhancementAdventurePoints = enhancements.reduce(
+      (acc, enhancementId) => acc + getAdventurePointsModifierForEnhancement(enhancementId),
+      0,
+    )
+    return addCache(accumulateCache(0, value, "activation", boundByValue, ic), {
+      general: enhancementAdventurePoints,
+      bound: 0,
+    })
   }
 }

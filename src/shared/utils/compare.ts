@@ -1,3 +1,5 @@
+import { isNullish } from "./nullable.ts"
+
 /**
  * The type of a compare function that can be used to sort values.
  * @returns A negative number if `a` should be sorted before `b`, a positive
@@ -40,6 +42,28 @@ export const reduceCompare =
  * Compare function for numbers that sorts them in ascending order.
  */
 export const numAsc: Compare<number> = (a, b) => a - b
+
+/**
+ * Higher-order compare function that extends a compare function to also handle
+ * `null` and `undefined` values. Nullish values are always sorted first.
+ */
+export const compareNullish =
+  <T extends NonNullable<unknown>>(compare: Compare<T>) =>
+  (a: T | null | undefined, b: T | null | undefined): number => {
+    if (isNullish(a) && isNullish(b)) {
+      return 0
+    }
+
+    if (isNullish(a)) {
+      return -1
+    }
+
+    if (isNullish(b)) {
+      return 1
+    }
+
+    return compare(a, b)
+  }
 
 /**
  * A function that compares two values for equality.

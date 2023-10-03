@@ -1,5 +1,5 @@
 #spells,
-#liturgies,
+#liturgical-chants,
 .adding-spells,
 .adding-liturgical-chants {
   li {
@@ -16,7 +16,7 @@
     }
 
     .fill {
-      background-color: var(--separator-color-transparent);
+      background-color: var(--separator-color-20);
 
       &:first-child {
         margin-right: 12px;

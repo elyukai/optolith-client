@@ -41,6 +41,14 @@ type RatedMaps = {
 }
 
 /**
+ * A function that filters a list of dependencies by if they apply to the
+ * entry, since some dependencies target multiple entries but only one of them
+ * has to apply. And if other entries match the dependency, the dependency does
+ * not need to be matched by this entry.
+ */
+export type FilterApplyingRatedDependencies = (dependencies: RatedDependency[]) => RatedDependency[]
+
+/**
  * `flattenDependencies` flattens the list of dependencies to usable values.
  * That means, optional dependencies (objects) will be evaluated and will be
  * included in the resulting list, depending on whether it has to follow the
@@ -48,8 +56,8 @@ type RatedMaps = {
  * dependencies.
  */
 export const filterApplyingRatedDependencies =
-  (ratedMaps: RatedMaps) =>
-  (dependencies: RatedDependency[]): RatedDependency[] =>
+  (ratedMaps: RatedMaps): FilterApplyingRatedDependencies =>
+  dependencies =>
     dependencies.filter(dep => {
       if (dep.otherTargets) {
         return dep.otherTargets.some(target => {

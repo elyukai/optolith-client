@@ -12,7 +12,7 @@ import { useAppSelector } from "../../../../hooks/redux.ts"
 import { selectAttributes as selectDynamicAttributes } from "../../../../slices/characterSlice.ts"
 import {
   selectDerivedCharacteristics,
-  selectAttributes as selectStaticAttributes,
+  selectGetAttribute,
 } from "../../../../slices/databaseSlice.ts"
 
 type Props = {
@@ -27,7 +27,7 @@ export const SkillCheck: FC<Props> = props => {
   const { check, checkPenalty } = props
 
   const translateMap = useTranslateMap()
-  const staticAttributes = useAppSelector(selectStaticAttributes)
+  const getStaticAttribute = useAppSelector(selectGetAttribute)
   const dynamicAttributes = useAppSelector(selectDynamicAttributes)
   const derivedCharacteristics = useAppSelector(selectDerivedCharacteristics)
   const spirit = derivedCharacteristics[DCId.Spirit]
@@ -37,10 +37,9 @@ export const SkillCheck: FC<Props> = props => {
 
   return (
     <>
-      {getDisplayedSkillCheck(staticAttributes, dynamicAttributes, check).map(
+      {getDisplayedSkillCheck(getStaticAttribute, id => dynamicAttributes[id], check).map(
         ({ attribute, value }, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div key={`${attribute.id}${index}`} className={`check attr--${attribute.id}`}>
+          <div key={`${attribute.id}-${index + 1}`} className={`check attr--${attribute.id}`}>
             <span className="short">
               {translateMap(attribute.translations)?.abbreviation ?? "??"}
             </span>

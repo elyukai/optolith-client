@@ -2,11 +2,16 @@ import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 import {
   arrayFromNonNullable,
+  count,
+  countBy,
+  countByMany,
   ensureNonEmpty,
   filterNonNullable,
+  partition,
   range,
   rangeSafe,
   sum,
+  sumWith,
   unique,
 } from "./array.ts"
 
@@ -54,6 +59,34 @@ describe("sum", () => {
   })
 })
 
+describe("sumWith", () => {
+  it("returns 0 if the array is empty", () => {
+    assert.equal(
+      sumWith([], x => x * 2),
+      0,
+    )
+  })
+
+  it("returns the sum of all mapped numbers in the array", () => {
+    assert.equal(
+      sumWith([1], x => x * 2),
+      2,
+    )
+    assert.equal(
+      sumWith([1, 2], x => x * 2),
+      6,
+    )
+    assert.equal(
+      sumWith([1, 2, 3], x => x * 2),
+      12,
+    )
+    assert.equal(
+      sumWith([1, 2, 3, 4], x => x * 2),
+      20,
+    )
+  })
+})
+
 describe("unique", () => {
   it("filters out duplicate values from an array", () => {
     assert.deepEqual(unique([]), [])
@@ -69,5 +102,90 @@ describe("ensureNonEmpty", () => {
 
   it("returns the non-empty array as-is", () => {
     assert.deepEqual(ensureNonEmpty([1, 2]), [1, 2])
+  })
+})
+
+describe("count", () => {
+  it("returns how many elements satify the given predicate", () => {
+    assert.equal(
+      count([], x => x > 3),
+      0,
+    )
+    assert.equal(
+      count([0, 2, 3], x => x >= 3),
+      1,
+    )
+    assert.equal(
+      count([0, 2, 4, 6, 8], x => x > 3),
+      3,
+    )
+  })
+})
+
+describe("countBy", () => {
+  it("returns an empty object of the array is empty", () => {
+    assert.deepEqual(
+      countBy([], x => x % 2),
+      {},
+    )
+  })
+  it("returns for how many elements the function returns the same value", () => {
+    assert.deepEqual(
+      countBy([0, 2, 3], x => x % 2),
+      { 0: 2, 1: 1 },
+    )
+    assert.deepEqual(
+      countBy([0, 2, 4, 6, 8], x => x % 2),
+      { 0: 5 },
+    )
+  })
+})
+
+describe("countByMany", () => {
+  it("returns an empty object of the array is empty", () => {
+    assert.deepEqual(
+      countByMany([], x => [x, Math.round(x / 2), x % 2]),
+      {},
+    )
+  })
+  it("returns for how many elements the function returns the same value", () => {
+    assert.deepEqual(
+      countByMany([0, 2, 3], x => [x, Math.round(x / 2), x % 2]),
+      { 0: 2, 1: 2, 2: 2, 3: 1 },
+    )
+    assert.deepEqual(
+      countByMany([0, 2, 4, 6, 8], x => [x, Math.round(x / 2), x % 2]),
+      { 0: 5, 1: 1, 2: 2, 3: 1, 4: 2, 6: 1, 8: 1 },
+    )
+  })
+})
+
+describe("partition", () => {
+  it("splits all array elements into two separate arrays based on a predicate", () => {
+    assert.deepEqual(
+      partition([], x => x >= 3),
+      [[], []],
+    )
+    assert.deepEqual(
+      partition([0, 2, 3], x => x >= 3),
+      [[3], [0, 2]],
+    )
+    assert.deepEqual(
+      partition([0, 2, 4, 6, 8], x => x >= 3),
+      [
+        [4, 6, 8],
+        [0, 2],
+      ],
+    )
+  })
+
+  it("keeps the original order of elements", () => {
+    assert.deepEqual(
+      partition([4, 8, 2, 7, 5, 6, 1, 3], x => x >= 3),
+      [
+        [4, 8, 7, 5, 6, 3],
+        [2, 1],
+      ],
+    )
   })
 })

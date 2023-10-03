@@ -1,10 +1,12 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { BlessedTradition } from "optolith-database-schema/types/specialAbility/BlessedTradition"
-import { MagicalTradition } from "optolith-database-schema/types/specialAbility/MagicalTradition"
-import { Activatable, isActive } from "../../shared/domain/activatableEntry.ts"
-import { isBlessedOne } from "../../shared/domain/blessedTradition.ts"
+import { isActive } from "../../shared/domain/activatableEntry.ts"
+import {
+  CombinedActiveBlessedTradition,
+  isBlessedOne,
+} from "../../shared/domain/blessedTradition.ts"
 import { AdvantageIdentifier } from "../../shared/domain/identifier.ts"
 import {
+  CombinedActiveMagicalTradition,
   getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
   isSpellcaster,
 } from "../../shared/domain/magicalTradition.ts"
@@ -20,11 +22,10 @@ import {
   selectMagicalTraditions as selectStaticMagicalTraditions,
 } from "../slices/databaseSlice.ts"
 
-export type CombinedActiveMagicalTradition = {
-  static: MagicalTradition
-  dynamic: Activatable
-}
-
+/**
+ * Returns all active magical traditions with their corresponding static
+ * entries.
+ */
 export const selectActiveMagicalTraditions = createSelector(
   selectStaticMagicalTraditions,
   selectDynamicMagicalTraditions,
@@ -45,11 +46,10 @@ export const selectActiveMagicalTraditions = createSelector(
       .filter(isNotNullish),
 )
 
-export type CombinedActiveBlessedTradition = {
-  static: BlessedTradition
-  dynamic: Activatable
-}
-
+/**
+ * Returns the active blessed traditions with its corresponding static entry,
+ * if any.
+ */
 export const selectActiveBlessedTradition = createSelector(
   selectStaticBlessedTraditions,
   selectDynamicBlessedTraditions,
@@ -70,18 +70,28 @@ export const selectActiveBlessedTradition = createSelector(
       .find(isNotNullish),
 )
 
+/**
+ * Selects whether the character is a spellcaster.
+ */
 export const selectIsSpellcaster = createSelector(
   createPropertySelector(selectAdvantages, AdvantageIdentifier.Spellcaster),
   selectDynamicMagicalTraditions,
   isSpellcaster,
 )
 
+/**
+ * Selects whether the character is a Blessed One.
+ */
 export const selectIsBlessedOne = createSelector(
   createPropertySelector(selectAdvantages, AdvantageIdentifier.Blessed),
   selectDynamicBlessedTraditions,
   isBlessedOne,
 )
 
+/**
+ * Selects the maximum number of adventure points that can be spent for magical
+ * advantages and disadvantages, based on the active magical traditions.
+ */
 export const selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages = createSelector(
   selectActiveMagicalTraditions,
   (magicalTraditions): number =>

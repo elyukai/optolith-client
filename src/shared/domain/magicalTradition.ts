@@ -3,6 +3,15 @@ import { mapNullableDefault } from "../utils/nullable.ts"
 import { Activatable, ActivatableMap, isActive } from "./activatableEntry.ts"
 
 /**
+ * A combination of a static and corresponding dynamic active magical tradition
+ * entry.
+ */
+export type CombinedActiveMagicalTradition = {
+  static: MagicalTradition
+  dynamic: Activatable
+}
+
+/**
  * Checks if a character is a spellcaster.
  */
 export const isSpellcaster = (

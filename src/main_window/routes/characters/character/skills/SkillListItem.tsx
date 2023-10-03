@@ -105,7 +105,7 @@ const SkillListItem: React.FC<Props> = props => {
         {checkDisabled !== true && check !== undefined ? (
           <SkillCheck check={check} checkPenalty={checkmod} />
         ) : null}
-        <SkillFill addFillElement={addFillElement} />
+        {addFillElement === true ? <SkillFill /> : null}
         <SkillImprovementCost ic={ic} />
         <SkillAdditionalValues addValues={addValues} />
       </ListItemValues>

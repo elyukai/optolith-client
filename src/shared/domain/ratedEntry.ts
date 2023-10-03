@@ -1,8 +1,3 @@
-import {
-  ActivatableIdentifier,
-  RatedIdentifier,
-  SkillWithEnhancementsIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
 import { ImprovementCost } from "./adventurePoints/improvementCost.ts"
 import {
   BoundAdventurePoints,
@@ -11,73 +6,7 @@ import {
   cachedAdventurePointsForActivatable,
 } from "./adventurePoints/ratedEntry.ts"
 import { Enhancement } from "./enhancement.ts"
-
-/**
- * A required value from a prerequisite. Can either require a minimum or a
- * maximum value.
- */
-export type ValueRestriction = MinimumValueRestriction | MaximumValueRestriction
-
-export type MinimumValueRestriction = {
-  readonly tag: "Minimum"
-  readonly minimum: number
-}
-
-export type MaximumValueRestriction = {
-  readonly tag: "Maximum"
-  readonly maximum: number
-}
-
-export const isMinimumRestriction = (x: ValueRestriction): x is MinimumValueRestriction =>
-  x.tag === "Minimum"
-
-export const isMaximumRestriction = (x: ValueRestriction): x is MaximumValueRestriction =>
-  x.tag === "Maximum"
-
-export const compareWithRestriction = (
-  restriction: ValueRestriction,
-  value: number | undefined,
-): boolean =>
-  isMinimumRestriction(restriction)
-    ? value === undefined
-      ? false
-      : value >= restriction.minimum
-    : value === undefined
-    ? true
-    : value <= restriction.maximum
-
-/**
- * Describes a dependency on a certain rated entry.
- */
-export type RatedDependency = {
-  /**
-   * The source of the dependency.
-   */
-  readonly source: ActivatableIdentifier | SkillWithEnhancementsIdentifier
-
-  /**
-   * If the source prerequisite targets multiple entries, the other entries are
-   * listed here.
-   */
-  readonly otherTargets?: RatedIdentifier[]
-
-  /**
-   * The required value.
-   */
-  readonly value: ValueRestriction
-}
-
-/**
- * Flattens the minimum restrictions of a list of dependencies.
- */
-export const flattenMinimumRestrictions = (dependencies: RatedDependency[]): number[] =>
-  dependencies.flatMap(dep => (isMinimumRestriction(dep.value) ? [dep.value.minimum] : []))
-
-/**
- * Flattens the maximum restrictions of a list of dependencies.
- */
-export const flattenMaximumRestrictions = (dependencies: RatedDependency[]): number[] =>
-  dependencies.flatMap(dep => (isMaximumRestriction(dep.value) ? [dep.value.maximum] : []))
+import { RatedDependency } from "./rated/ratedDependency.ts"
 
 /**
  * The current value.
@@ -117,10 +46,17 @@ export type Rated = {
   readonly boundAdventurePoints: BoundAdventurePoints[]
 }
 
+/**
+ * Instances of entries that are specified by a rating/value, keyed by
+ * identifier.
+ */
 export type RatedMap = {
   [id: number]: Rated
 }
 
+/**
+ * Keyed helper functions for rated entries.
+ */
 export type RatedHelpers = {
   /**
    * Creates a new entry with an initial value if active. The initial
@@ -236,10 +172,34 @@ export type ActivatableRated = {
   readonly boundAdventurePoints: BoundAdventurePoints[]
 }
 
+/**
+ * The active instance of an activatable entry that is specified by a
+ * rating/value.
+ */
+export type ActiveActivatableRated = Omit<ActivatableRated, "value"> & {
+  /**
+   * The current value.
+   */
+  value: number
+}
+
+/**
+ * Checks whether the entry is active.
+ */
+export const isRatedActive = (entry: ActivatableRated): entry is ActiveActivatableRated =>
+  entry.value !== undefined
+
+/**
+ * Instances of activatable entries that are specified by a rating/value, keyed
+ * by identifier.
+ */
 export type ActivatableRatedMap = {
   [id: number]: ActivatableRated
 }
 
+/**
+ * Keyed helper functions for activatable rated entries.
+ */
 export type ActivatableRatedHelpers = {
   /**
    * Creates a new entry with an initial value if active. The initial
@@ -323,7 +283,8 @@ export const createActivatableRatedHelpers = (config: {
 }
 
 /**
- * The instance of an activatable entry that is specified by a rating/value.
+ * The instance of an activatable entry with enhancements that is specified by a
+ * rating/value.
  */
 export type ActivatableRatedWithEnhancements = {
   /**
@@ -337,7 +298,8 @@ export type ActivatableRatedWithEnhancements = {
   readonly value: ActivatableRatedValue
 
   /**
-   * The accumulated used adventure points value of all value increases.
+   * The accumulated used adventure points value of all value increases and
+   * enhancements.
    */
   readonly cachedAdventurePoints: RatedAdventurePointsCache
 
@@ -362,6 +324,38 @@ export type ActivatableRatedWithEnhancements = {
   }
 }
 
+/**
+ * The active instance of an activatable entry with enhancements that is
+ * specified by a rating/value.
+ */
+export type ActiveActivatableRatedWithEnhancements = Omit<
+  ActivatableRatedWithEnhancements,
+  "value"
+> & {
+  /**
+   * The current value.
+   */
+  value: number
+}
+
+/**
+ * Checks whether the entry is active.
+ */
+export const isRatedWithEnhancementsActive = (
+  entry: ActivatableRatedWithEnhancements,
+): entry is ActiveActivatableRatedWithEnhancements => entry.value !== undefined
+
+/**
+ * Checks whether the entry that may not exist is active.
+ */
+export const isOptionalRatedWithEnhancementsActive = (
+  entry: ActivatableRatedWithEnhancements | undefined,
+): entry is ActiveActivatableRatedWithEnhancements => entry?.value !== undefined
+
+/**
+ * Instances of activatable entries with enhancements that are specified by a
+ * rating/value, keyed by identifier.
+ */
 export type ActivatableRatedWithEnhancementsMap = {
   [id: number]: ActivatableRatedWithEnhancements
 }

@@ -240,9 +240,43 @@ export enum MagicalSpecialAbilityIdentifier {
 }
 
 /**
+ * Used identifiers of magical traditions.
+ */
+export enum MagicalTraditionIdentifier {
+  GuildMages = 1,
+}
+
+/**
+ * Used identifiers of aspects.
+ */
+export enum AspectIdentifier {
+  General = 1,
+  AllgemeinSchamanenritus = 44,
+}
+
+/**
  * Used identifiers of karma special abilities.
  */
 export enum KarmaSpecialAbilityIdentifier {
   AspectKnowledge = 1,
   HigherOrdination = 14,
+}
+
+/**
+ * Used identifiers of liturgical style special abilities.
+ */
+export enum LiturgicalStyleSpecialAbilityIdentifier {
+  BirdsOfPassage = 38, // Zugvögel
+  HuntressesOfTheWhiteMaiden = 40, // Jägerinnen der Weißen Maid
+  FollowersOfTheGoldenOne = 47, // Anhänger des Güldenen
+}
+
+/**
+ * Used identifiers of blessed traditions.
+ */
+export enum BlessedTraditionIdentifier {
+  Praios = 1,
+  Phex = 5,
+  Firun = 9,
+  Rahja = 12,
 }
