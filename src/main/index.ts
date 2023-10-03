@@ -189,6 +189,14 @@ const setMenu = (database: Database) => {
               },
               { type: "separator" },
               {
+                label: translate("Main Window"),
+                accelerator: "Command+0",
+                click: runAsync(async () => {
+                  await createMainWindow(database)
+                }),
+              },
+              { type: "separator" },
+              {
                 role: "front",
                 label: translate("Bring All to Front"),
               },
