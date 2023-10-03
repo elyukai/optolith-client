@@ -161,11 +161,6 @@ export const selectAdventurePointsSpentOnBlessedDisadvantages = createSelector(
   (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
 )
 
-// export const getMagicalAdvantagesDisadvantagesAdventurePointsMaximum = createMaybeSelector(
-//   getCurrentHeroPresent,
-//   fmap(getDisAdvantagesSubtypeMax(true))
-// )
-
 /**
  * Returns the adventure points spent on special abilities.
  */

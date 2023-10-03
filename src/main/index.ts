@@ -26,7 +26,7 @@ const databaseLoading = new Promise<Database>(resolve => {
 })
 
 const runAsync =
-  <T extends any[]>(fn: (...args: T) => Promise<void>) =>
+  <T extends unknown[]>(fn: (...args: T) => Promise<void>) =>
   (...args: T) => {
     fn(...args).catch(err => debug("unexpected error: %O", err))
   }
@@ -93,7 +93,8 @@ const setMenu = (database: Database) => {
           label: translate("New Character"),
           accelerator: "CommandOrControl+N",
           click: runAsync(async () => {
-            ;(await createMainWindow(database)).webContents.send("new-character")
+            const mainWindow = await createMainWindow(database)
+            mainWindow.webContents.send("new-character")
           }),
         },
         { type: "separator" },

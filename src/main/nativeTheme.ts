@@ -33,7 +33,7 @@ export const getWindowBackgroundColor = (theme: Theme | undefined) => {
     case Theme.Dark:
       return DARK
     case Theme.Light:
-      return "#f0f0f0"
+      return LIGHT
     case undefined:
       return nativeTheme.shouldUseDarkColors ? DARK : LIGHT
     default:
