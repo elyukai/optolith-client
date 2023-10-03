@@ -1,6 +1,6 @@
 import { Locale } from "optolith-database-schema/types/Locale"
 import { UI } from "optolith-database-schema/types/UI"
-import { PluralizationCategories } from "optolith-database-schema/types/_I18n"
+import { PluralizationCategories, VaryBySystem } from "optolith-database-schema/types/_I18n"
 import { LocaleMap } from "optolith-database-schema/types/_LocaleMap"
 
 const insertParams = (str: string, params: (string | number)[]): string =>
@@ -25,6 +25,14 @@ export type Translate = <K extends keyof UI>(
     : [...params: (string | number)[]]
 ) => string
 
+const isPluralizationCategories = (
+  value: string | PluralizationCategories | VaryBySystem,
+): value is PluralizationCategories => typeof value === "object" && "other" in value
+
+const isVaryBySystem = (
+  value: string | PluralizationCategories | VaryBySystem,
+): value is VaryBySystem => typeof value === "object" && "mac" in value
+
 /**
  * Creates a translate function based on the given environment, translations and
  * locales.
@@ -34,17 +42,25 @@ export const createTranslate = (
   locales: Record<string, Locale>,
   selectedLocale: string | undefined,
   systemLocale: string,
+  platform: NodeJS.Platform,
+  pluralRulesOptions?: Intl.PluralRulesOptions,
 ) => {
   const locale = selectedLocale ?? matchSystemLocaleToSupported(Object.keys(locales), systemLocale)
-  const pluralRules = new Intl.PluralRules(locale)
+  const pluralRules = new Intl.PluralRules(locale, pluralRulesOptions)
 
   const translate: Translate = (key, ...options) => {
     const value = translations[locale]?.[key] ?? key
 
-    if (typeof value === "object" && typeof options[0] === "number") {
-      const [count] = options
-      const selectedValue = value[pluralRules.select(count)] ?? value.other
-      return insertParams(selectedValue, options)
+    if (isVaryBySystem(value)) {
+      return platform === "darwin" ? value.mac : platform === "win32" ? value.windows : value.linux
+    } else if (isPluralizationCategories(value)) {
+      if (typeof options[0] === "number") {
+        const [count] = options
+        const selectedValue = value[pluralRules.select(count)] ?? value.other
+        return insertParams(selectedValue, options)
+      } else {
+        return insertParams(value.other, options)
+      }
     } else {
       const str = typeof value === "string" ? value : key
       return options.length > 0 ? insertParams(str, options) : str

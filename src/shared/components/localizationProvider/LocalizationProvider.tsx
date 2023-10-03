@@ -13,6 +13,7 @@ type Props = {
     "fallback-locale-changed": [locale: string | undefined]
   }>
   systemLocale: string
+  platform: NodeJS.Platform
   locales: Record<string, Locale>
   ui: Record<string, UI>
 }
@@ -25,6 +26,7 @@ export const LocalizationProvider: FCC<Props> = props => {
   const {
     children,
     locales,
+    platform,
     selectedLocale: initialSelectedLocale,
     selectedFallbackLocale: initialSelectedFallbackLocale,
     selectedLocaleEvents,
@@ -49,7 +51,7 @@ export const LocalizationProvider: FCC<Props> = props => {
 
   return (
     <LocalizationContext.Provider
-      value={{ locales, selectedLocale, selectedFallbackLocale, systemLocale, ui }}
+      value={{ locales, platform, selectedLocale, selectedFallbackLocale, systemLocale, ui }}
     >
       {children}
     </LocalizationContext.Provider>

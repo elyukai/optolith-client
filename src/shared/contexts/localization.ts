@@ -10,6 +10,7 @@ export type LocalizationContext = {
   selectedLocale: string | undefined
   selectedFallbackLocale: string | undefined
   systemLocale: string
+  platform: NodeJS.Platform
   locales: Record<string, Locale>
   ui: Record<string, UI>
 }
@@ -23,6 +24,7 @@ export const LocalizationContext = createContext<LocalizationContext>({
   selectedLocale: undefined,
   selectedFallbackLocale: undefined,
   systemLocale: "en-US",
+  platform: "win32",
   locales: {},
   ui: {},
 })

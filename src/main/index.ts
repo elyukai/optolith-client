@@ -37,6 +37,7 @@ const setMenu = (database: Database) => {
     Object.fromEntries(database.raw.locales),
     getGlobalSettings().locale,
     app.getLocale(),
+    process.platform,
   )
 
   const template: MenuItemConstructorOptions[] = [

@@ -16,12 +16,14 @@ export const useTranslate = () => {
         localizationContext.locales,
         localizationContext.selectedLocale,
         localizationContext.systemLocale,
+        localizationContext.platform,
       ),
     [
       localizationContext.locales,
       localizationContext.selectedLocale,
       localizationContext.systemLocale,
       localizationContext.ui,
+      localizationContext.platform,
     ],
   )
 

@@ -18,6 +18,7 @@ ExternalAPI.on("initial-setup", ({ translations, locales, systemLocale, settings
         selectedFallbackLocale={settings.fallbackLocale}
         selectedLocaleEvents={ExternalAPI}
         systemLocale={systemLocale}
+        platform={ExternalAPI.platform}
         locales={locales}
         ui={translations}
       >
