@@ -29,6 +29,10 @@ import {
   selectZibiljaRituals,
 } from "../slices/characterSlice.ts"
 
+/**
+ * Adventure Points can either be spent from the main pool of adventure points
+ * or from the pool bound to a specific entry.
+ */
 export type SpentAdventurePoints = {
   general: number
   bound: number
@@ -47,16 +51,28 @@ const sumRatedMaps = (
       { general: 0, bound: 0 },
     )
 
+/**
+ * Returns the adventure points spent on attributes.
+ */
 export const selectAdventurePointsSpentOnAttributes = createSelector(selectAttributes, sumRatedMaps)
 
+/**
+ * Returns the adventure points spent on skills.
+ */
 export const selectAdventurePointsSpentOnSkills = createSelector(selectSkills, sumRatedMaps)
 
+/**
+ * Returns the adventure points spent on combat techniques.
+ */
 export const selectAdventurePointsSpentOnCombatTechniques = createSelector(
   selectCloseCombatTechniques,
   selectRangedCombatTechniques,
   sumRatedMaps,
 )
 
+/**
+ * Returns the adventure points spent on spells.
+ */
 export const selectAdventurePointsSpentOnSpells = createSelector(
   selectSpells,
   selectRituals,
@@ -72,47 +88,74 @@ export const selectAdventurePointsSpentOnSpells = createSelector(
   sumRatedMaps,
 )
 
+/**
+ * Returns the adventure points spent on liturgical chants.
+ */
 export const selectAdventurePointsSpentOnLiturgicalChants = createSelector(
   selectLiturgicalChants,
   selectCeremonies,
   sumRatedMaps,
 )
 
+/**
+ * Returns the adventure points spent on cantrips.
+ */
 export const selectAdventurePointsSpentOnCantrips = createSelector(
   selectCantrips,
   (cantrips): SpentAdventurePoints => ({ general: cantrips.length, bound: 0 }),
 )
 
+/**
+ * Returns the adventure points spent on blessings.
+ */
 export const selectAdventurePointsSpentOnBlessings = createSelector(
   selectBlessings,
   (blessings): SpentAdventurePoints => ({ general: blessings.length, bound: 0 }),
 )
 
+/**
+ * Returns the adventure points spent on advantages.
+ */
 export const selectAdventurePointsSpentOnAdvantages = createSelector(
   selectCurrentCharacter,
   (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
 )
 
+/**
+ * Returns the adventure points spent on magical advantages.
+ */
 export const selectAdventurePointsSpentOnMagicalAdvantages = createSelector(
   selectCurrentCharacter,
   (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
 )
 
+/**
+ * Returns the adventure points spent on blessed advantages.
+ */
 export const selectAdventurePointsSpentOnBlessedAdvantages = createSelector(
   selectCurrentCharacter,
   (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
 )
 
+/**
+ * Returns the adventure points spent on disadvantages.
+ */
 export const selectAdventurePointsSpentOnDisadvantages = createSelector(
   selectCurrentCharacter,
   (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
 )
 
+/**
+ * Returns the adventure points spent on magical disadvantages.
+ */
 export const selectAdventurePointsSpentOnMagicalDisadvantages = createSelector(
   selectCurrentCharacter,
   (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
 )
 
+/**
+ * Returns the adventure points spent on blessed disadvantages.
+ */
 export const selectAdventurePointsSpentOnBlessedDisadvantages = createSelector(
   selectCurrentCharacter,
   (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
@@ -123,11 +166,17 @@ export const selectAdventurePointsSpentOnBlessedDisadvantages = createSelector(
 //   fmap(getDisAdvantagesSubtypeMax(true))
 // )
 
+/**
+ * Returns the adventure points spent on special abilities.
+ */
 export const selectAdventurePointsSpentOnSpecialAbilities = createSelector(
   selectCurrentCharacter,
   (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
 )
 
+/**
+ * Returns the adventure points spent on energies.
+ */
 export const selectAdventurePointsSpentOnEnergies = createSelector(
   selectDerivedCharacteristics,
   (derivedCharacteristics): number =>
@@ -143,16 +192,25 @@ export const selectAdventurePointsSpentOnEnergies = createSelector(
     derivedCharacteristics.karmaPoints.permanentlyLostBoughtBack * 2,
 )
 
+/**
+ * Returns the adventure points spent on race.
+ */
 export const selectAdventurePointsSpentOnRace = createSelector(
   selectCurrentCharacter,
   (): number => 0,
 )
 
+/**
+ * Returns the adventure points spent on profession.
+ */
 export const selectAdventurePointsSpentOnProfession = createSelector(
   selectCurrentCharacter,
   (): number | undefined => undefined,
 )
 
+/**
+ * Returns the adventure points spent.
+ */
 export const selectAdventurePointsSpent = createSelector(
   selectAdventurePointsSpentOnAttributes,
   selectAdventurePointsSpentOnSkills,
@@ -193,6 +251,9 @@ export const selectAdventurePointsSpent = createSelector(
     ),
 )
 
+/**
+ * Returns the available adventure points.
+ */
 export const selectAdventurePointsAvailable = createSelector(
   selectTotalAdventurePoints,
   selectAdventurePointsSpent,

@@ -7,6 +7,9 @@ import {
 } from "../slices/characterSlice.ts"
 import { selectExperienceLevels } from "../slices/databaseSlice.ts"
 
+/**
+ * Returns the experience level the character started with.
+ */
 export const selectStartExperienceLevel = createSelector(
   selectExperienceLevels,
   selectExperienceLevelStartId,
@@ -14,6 +17,10 @@ export const selectStartExperienceLevel = createSelector(
     experienceLevelStartId === undefined ? undefined : experienceLevels[experienceLevelStartId],
 )
 
+/**
+ * Returns the experience level the character has reached with the current
+ * amount of adventure points.
+ */
 export const selectCurrentExperienceLevel = createSelector(
   selectExperienceLevels,
   selectTotalAdventurePoints,
@@ -23,6 +30,9 @@ export const selectCurrentExperienceLevel = createSelector(
       : getCurrentExperienceLevel(experienceLevels, totalAdventurePoints),
 )
 
+/**
+ * Returns the maximum number of attribute points that can be spent.
+ */
 export const selectMaximumTotalAttributePoints = createSelector(
   selectStartExperienceLevel,
   (experienceLevel): number => experienceLevel?.max_attribute_total ?? 0,

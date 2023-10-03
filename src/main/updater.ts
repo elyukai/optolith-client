@@ -147,6 +147,10 @@ const prepareUpdaterWindowForAvailableUpdate = (
   })
 }
 
+/**
+ * Checks for updates on startup and returns a `Promise` that resolves to `true`
+ * if an update is available.
+ */
 export const checkForUpdatesOnStartup = async (database: Database) => {
   debug("checking for updates ...")
 
@@ -172,6 +176,10 @@ export const checkForUpdatesOnStartup = async (database: Database) => {
   }
 }
 
+/**
+ * Checks for updates when the user manually requests to and returns a `Promise`
+ * that resolves to `true` if an update is available.
+ */
 export const checkForUpdatesOnRequest = async (database: Database) => {
   debug("checking for updates ...")
   const updaterWindow = await createUpdaterWindow(database)

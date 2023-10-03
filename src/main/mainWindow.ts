@@ -11,6 +11,9 @@ const debug = Debug("main:main")
 
 let mainWindow: BrowserWindow | undefined = undefined
 
+/**
+ * Creates the main window with the loaded database and returns its instance.
+ */
 export const createMainWindow = async (database: Database) => {
   if (mainWindow === undefined) {
     debug("Create Window ...")

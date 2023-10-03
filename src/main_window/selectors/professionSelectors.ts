@@ -13,6 +13,9 @@ import {
 import { selectProfessions } from "../slices/databaseSlice.ts"
 import { selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
 
+/**
+ * Returns different selected parts of a base profession.
+ */
 export const selectCurrentProfession = createSelector(
   selectProfessions,
   selectProfessionId,
@@ -27,6 +30,9 @@ export const selectCurrentProfession = createSelector(
   },
 )
 
+/**
+ * Returns the current profession variant.
+ */
 export const selectCurrentProfessionVariant = createSelector(
   selectCurrentProfession,
   selectProfessionVariantId,

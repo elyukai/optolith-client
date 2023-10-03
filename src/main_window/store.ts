@@ -17,9 +17,19 @@ const sliceReducer = combineReducers({
 
 const reducer = reduceReducers(sliceReducer, globalReducer)
 
+/**
+ * The Redux store for the main window.
+ */
 export const store = configureStore({
   reducer,
 })
 
+/**
+ * The root state of the Redux store.
+ */
 export type RootState = ReturnType<typeof sliceReducer>
+
+/**
+ * A pre-typed version of the dispatch function.
+ */
 export type AppDispatch = typeof store.dispatch

@@ -11,6 +11,9 @@ import {
 import { selectCustomProfessionName, selectSex } from "../slices/characterSlice.ts"
 import { useAppSelector } from "./redux.ts"
 
+/**
+ * Returns the full name of the current profession.
+ */
 export const useProfessionName = (): FullProfessionNameParts | undefined => {
   const translateMap = useTranslateMap()
   const sex = useAppSelector(selectSex)

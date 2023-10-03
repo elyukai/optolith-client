@@ -3,6 +3,9 @@ import { Theme } from "../shared/settings/GlobalSettings.ts"
 import { getGlobalSettings } from "../shared/settings/main.ts"
 import { assertExhaustive } from "../shared/utils/typeSafety.ts"
 
+/**
+ * Sets the native theme for the application.
+ */
 export const setNativeTheme = (theme: Theme | undefined) => {
   switch (theme) {
     case Theme.Dark:
@@ -22,6 +25,9 @@ export const setNativeTheme = (theme: Theme | undefined) => {
 const DARK = "#111111"
 const LIGHT = "#f0f0f0"
 
+/**
+ * Returns the background color for each window based on the theme.
+ */
 export const getWindowBackgroundColor = (theme: Theme | undefined) => {
   switch (theme) {
     case Theme.Dark:
@@ -35,6 +41,9 @@ export const getWindowBackgroundColor = (theme: Theme | undefined) => {
   }
 }
 
+/**
+ * Sets the background color for all windows based on the theme.
+ */
 export const setBackgroundColorForAllWindows = (theme: Theme | undefined) => {
   const color = getWindowBackgroundColor(theme)
 
@@ -43,6 +52,10 @@ export const setBackgroundColorForAllWindows = (theme: Theme | undefined) => {
   })
 }
 
+/**
+ * Attaches a listener to native theme changes that updates all windows on each
+ * change.
+ */
 export const handleNativeThemeChanges = () => {
   nativeTheme.on("updated", () => {
     setBackgroundColorForAllWindows(getGlobalSettings().theme)

@@ -23,6 +23,9 @@ get()
   })
   .catch(() => {})
 
+/**
+ * The complate database content.
+ */
 export type Database = {
   raw: Awaited<ReturnType<typeof getAllValidData>>
   cache: Awaited<ReturnType<typeof getCache>>

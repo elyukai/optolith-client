@@ -15,6 +15,10 @@ const debug = Debug("main:settings")
 
 let settingsWindow: BrowserWindow | undefined = undefined
 
+/**
+ * Creates the settings window with the loaded database and a handler that gets
+ * called then the locale is changed and returns its instance.
+ */
 export const createSettingsWindow = async (
   database: Database,
   onLocaleChanged: (newLocale: string | undefined) => void,

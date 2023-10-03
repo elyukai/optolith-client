@@ -20,6 +20,9 @@ type Props = {
   initialSettings: GlobalSettings
 }
 
+/**
+ * Root component for the settings window.
+ */
 export const Root: React.FC<Props> = props => {
   const { locales, initialSettings } = props
 

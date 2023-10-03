@@ -7,6 +7,10 @@ import {
 import { selectPublications } from "../slices/databaseSlice.ts"
 import { useAppSelector } from "./redux.ts"
 
+/**
+ * Returns a function that checks if a given entry is available based on the
+ * enabled publications.
+ */
 export const useIsEntryAvailable = () => {
   const publications = useAppSelector(selectPublications)
   const includeAllPublications = useAppSelector(selectIncludeAllPublications) === true

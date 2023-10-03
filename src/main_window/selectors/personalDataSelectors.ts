@@ -17,6 +17,10 @@ import { selectEyeColors, selectHairColors, selectSocialStatuses } from "../slic
 import { selectCurrentCulture } from "./cultureSelectors.ts"
 import { selectCurrentRace, selectCurrentRaceVariant } from "./raceSelectors.ts"
 
+/**
+ * Returns the social statuses that are available for the character based on
+ * the culture.
+ */
 export const selectAvailableSocialStatuses = createSelector(
   selectCurrentCulture,
   selectSocialStatusDependencies,
@@ -40,6 +44,11 @@ export const selectAvailableSocialStatuses = createSelector(
 const ALBINO = 1
 const GREEN_HAIR = 3
 
+/**
+ * Returns a array containing 20 hair color identifiers that mirror the
+ * probabilities used for randomly rolling a die and that are available for the
+ * character based on the race.
+ */
 export const selectAvailableHairColorsIdDice = createSelector(
   selectCurrentRace,
   selectCurrentRaceVariant,
@@ -66,6 +75,10 @@ export const selectAvailableHairColorsIdDice = createSelector(
   },
 )
 
+/**
+ * Returns the hair colors that are available for the character based on the
+ * race.
+ */
 export const selectAvailableHairColors = createSelector(
   selectAvailableHairColorsIdDice,
   selectHairColors,
@@ -73,6 +86,11 @@ export const selectAvailableHairColors = createSelector(
     filterNonNullable(unique(hairColorIds).map(id => hairColors[id])),
 )
 
+/**
+ * Returns a array containing 20 eye color identifiers that mirror the
+ * probabilities used for randomly rolling a die and that are available for the
+ * character based on the race.
+ */
 export const selectAvailableEyeColorsIdDice = createSelector(
   selectCurrentRace,
   selectCurrentRaceVariant,
@@ -96,6 +114,10 @@ export const selectAvailableEyeColorsIdDice = createSelector(
   },
 )
 
+/**
+ * Returns the eye colors that are available for the character based on the
+ * race.
+ */
 export const selectAvailableEyeColors = createSelector(
   selectAvailableEyeColorsIdDice,
   selectEyeColors,
@@ -103,6 +125,9 @@ export const selectAvailableEyeColors = createSelector(
     filterNonNullable(unique(eyeColorIds).map(id => eyeColors[id])),
 )
 
+/**
+ * Returns the configuration for random height generation.
+ */
 export const selectRandomHeightCalculation = createSelector(
   selectCurrentRace,
   selectCurrentRaceVariant,
@@ -113,6 +138,9 @@ export const selectRandomHeightCalculation = createSelector(
       : { base: 0, random: [] }),
 )
 
+/**
+ * Returns the configuration for random weight generation.
+ */
 export const selectRandomWeightCalculation = createSelector(
   selectCurrentRace,
   (currentRace): Weight => currentRace?.weight ?? { base: 0, random: [] },

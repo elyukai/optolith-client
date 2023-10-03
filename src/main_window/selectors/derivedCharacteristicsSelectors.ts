@@ -51,6 +51,10 @@ import {
 import { selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectCurrentRace } from "./raceSelectors.ts"
 
+/**
+ * A combination of a static derived characteristic and its corresponding
+ * derived values, extended by value bounds.
+ */
 export type DisplayedDerivedCharacteristic<T extends DCId = DCId> = {
   id: T
   base: number
@@ -66,6 +70,10 @@ export type DisplayedDerivedCharacteristic<T extends DCId = DCId> = {
   static: DerivedCharacteristic
 }
 
+/**
+ * A combination of a static energy and its corresponding derived values,
+ * extended by value bounds.
+ */
 export type DisplayedEnergy<T extends EnergyIdentifier = EnergyIdentifier> = {
   id: T
   base: number
@@ -81,9 +89,15 @@ export type DisplayedEnergy<T extends EnergyIdentifier = EnergyIdentifier> = {
   static: DerivedCharacteristic
 }
 
+/**
+ * Checks if a displayed derived characteristic is an energy.
+ */
 export const isDisplayedEnergy = (dc: DisplayedDerivedCharacteristic): dc is DisplayedEnergy =>
   dc.id === DCId.LifePoints || dc.id === DCId.ArcaneEnergy || dc.id === DCId.KarmaPoints
 
+/**
+ * Returns the static and dynamic values for life points.
+ */
 export const selectLifePoints = createSelector(
   selectCurrentRace,
   createPropertySelector(selectAttributes, AttributeIdentifier.Constitution),
@@ -127,6 +141,9 @@ export const selectLifePoints = createSelector(
   },
 )
 
+/**
+ * Returns the static and dynamic values for arcane energy.
+ */
 export const selectArcaneEnergy = createSelector(
   createPropertySelector(selectAdvantages, AdvantageIdentifier.Spellcaster),
   selectMagicalTraditions,
@@ -201,6 +218,9 @@ export const selectArcaneEnergy = createSelector(
   },
 )
 
+/**
+ * Returns the static and dynamic values for karma points.
+ */
 export const selectKarmaPoints = createSelector(
   createPropertySelector(selectAdvantages, AdvantageIdentifier.Blessed),
   selectBlessedTraditions,
@@ -268,6 +288,9 @@ export const selectKarmaPoints = createSelector(
 const divideAttributeSumByRound = (attributes: (Rated | undefined)[], divisor: number) =>
   Math.round(attributes.reduce((acc, attr) => acc + attributeValue(attr), 0) / divisor)
 
+/**
+ * Returns the static and dynamic values for spirit.
+ */
 export const selectSpirit = createSelector(
   selectCurrentRace,
   createPropertySelector(selectAttributes, AttributeIdentifier.Courage),
@@ -303,6 +326,9 @@ export const selectSpirit = createSelector(
   },
 )
 
+/**
+ * Returns the static and dynamic values for toughness.
+ */
 export const selectToughness = createSelector(
   selectCurrentRace,
   createPropertySelector(selectAttributes, AttributeIdentifier.Constitution),
@@ -336,6 +362,9 @@ export const selectToughness = createSelector(
   },
 )
 
+/**
+ * Returns the static and dynamic values for dodge.
+ */
 export const selectDodge = createSelector(
   createPropertySelector(selectAttributes, AttributeIdentifier.Agility),
   createPropertySelector(selectActiveOptionalRules, OptionalRuleIdentifier.HigherDefenseStats),
@@ -363,6 +392,9 @@ export const selectDodge = createSelector(
   },
 )
 
+/**
+ * Returns the static and dynamic values for initiative.
+ */
 export const selectInitiative = createSelector(
   createPropertySelector(selectAttributes, AttributeIdentifier.Courage),
   createPropertySelector(selectAttributes, AttributeIdentifier.Agility),
@@ -396,6 +428,9 @@ export const selectInitiative = createSelector(
   },
 )
 
+/**
+ * Returns the static and dynamic values for movement.
+ */
 export const selectMovement = createSelector(
   selectCurrentRace,
   createPropertySelector(selectAdvantages, AdvantageIdentifier.Nimble),
@@ -441,6 +476,9 @@ export const selectMovement = createSelector(
   },
 )
 
+/**
+ * Returns the static and dynamic values for wound threshold.
+ */
 export const selectWoundThreshold = createSelector(
   createPropertySelector(selectAttributes, AttributeIdentifier.Constitution),
   createPropertySelector(selectAdvantages, AdvantageIdentifier.Unyielding),
@@ -474,6 +512,9 @@ export const selectWoundThreshold = createSelector(
   },
 )
 
+/**
+ * Returns the static and dynamic values for fate points.
+ */
 export const selectFatePoints = createSelector(
   createPropertySelector(selectAdvantages, AdvantageIdentifier.Luck),
   createPropertySelector(selectDisadvantages, DisadvantageIdentifier.BadLuck),
@@ -501,6 +542,9 @@ export const selectFatePoints = createSelector(
   },
 )
 
+/**
+ * Returns static and dynamic values for all derived characteristics.
+ */
 export const selectDerivedCharacteristics = createSelector(
   selectLifePoints,
   selectArcaneEnergy,
