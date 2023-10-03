@@ -9,6 +9,9 @@ import { ListItemName } from "./ListItemName.tsx"
 import { ListItemSeparator } from "./ListItemSeparator.tsx"
 import { ListItemValues } from "./ListItemValues.tsx"
 
+/**
+ * The type adjusts the header for each use case.
+ */
 export type ListPlaceholderType =
   | "races"
   | "cultures"
@@ -35,6 +38,9 @@ type Props = {
   message: string
 }
 
+/**
+ * A placeholder for an empty list.
+ */
 export const ListPlaceholder: React.FC<Props> = props => {
   const { type = "advantages", message } = props
   const canRemove = useAppSelector(selectCanRemove)

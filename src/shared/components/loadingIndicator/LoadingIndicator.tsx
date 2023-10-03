@@ -5,6 +5,9 @@ type Props = {
   text?: string
 }
 
+/**
+ * A loading indicator that overlays the window content.
+ */
 export const LoadingIndicator: FC<Props> = props => {
   const { text } = props
 

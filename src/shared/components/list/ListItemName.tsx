@@ -8,6 +8,9 @@ type Props = {
   onClick?(): void
 }
 
+/**
+ * The name of a list item.
+ */
 export const ListItemName: FCC<Props> = props => {
   const { addName, children, large, name, onClick } = props
 

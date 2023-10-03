@@ -10,6 +10,9 @@ type Props = {
   max: number
 }
 
+/**
+ * A progress bar.
+ */
 export const ProgressBar: FC<Props> = props => {
   const { className, current, orientation, max } = props
 

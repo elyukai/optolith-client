@@ -23,6 +23,10 @@ type Props = {
   onKeyUp?(event: InputKeyEvent): void
 }
 
+/**
+ * A text field with label, hint, error, and character count that only updates
+ * its value when it loses focus.
+ */
 export const TextFieldLazy: React.FC<Props> = props => {
   const {
     autoFocus,

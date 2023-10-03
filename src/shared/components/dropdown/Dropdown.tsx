@@ -21,11 +21,17 @@ type Props<A extends DropdownKey> = {
   onChangeList?(selected: A[]): void
 }
 
+/**
+ * Create a dropdown option from a string and its index in a list.
+ */
 export const optionFromIndexed = (name: string, index: number): DropdownOption<number> => ({
   id: index + 1,
   name,
 })
 
+/**
+ * A dropdown with a list of options.
+ */
 export const Dropdown = <A extends DropdownKey>(props: Props<A>): ReturnType<FCC<Props<A>>> => {
   const {
     className,

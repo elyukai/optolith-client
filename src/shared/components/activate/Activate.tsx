@@ -10,6 +10,9 @@ type Props = {
   onClick(value: string | number | undefined): void
 }
 
+/**
+ * A clickable element that can be activated.
+ */
 export const Activate: FCC<Props> = props => {
   const { active, className, disabled, onClick, value, children } = props
 

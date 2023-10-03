@@ -11,6 +11,9 @@ type Props = {
   onClick?: () => void
 }
 
+/**
+ * A decorated avatar with validation.
+ */
 export const AvatarWrapper: FCC<Props> = props => {
   const { children, className: inheritedClassName, img, onClick, src } = props
 

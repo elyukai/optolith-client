@@ -50,6 +50,9 @@ const Button: FRRFC<HTMLButtonElement, Props> = (props, ref) => {
   return btnElement
 }
 
+/**
+ * A button.
+ */
 const ButtonWithRef = forwardRef(Button)
 
 export { ButtonWithRef as Button }

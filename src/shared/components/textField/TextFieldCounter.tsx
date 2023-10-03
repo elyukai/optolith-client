@@ -5,6 +5,9 @@ type Props = {
   max: number | undefined
 }
 
+/**
+ * The counter for a text field.
+ */
 export const TextFieldCounter: FC<Props> = ({ current = 0, max }) =>
   typeof max === "number" ? (
     <div>

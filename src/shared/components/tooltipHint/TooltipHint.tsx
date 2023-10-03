@@ -8,6 +8,9 @@ type Props = {
   margin?: number
 }
 
+/**
+ * Displays a tooltip hint.
+ */
 export const TooltipHint: FC<Props> = props => {
   const { hint, targetRef, margin } = props
 

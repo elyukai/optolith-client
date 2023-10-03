@@ -13,6 +13,9 @@ interface Props {
   onClick?(): void
 }
 
+/**
+ * A list item.
+ */
 export const ListItem: FCC<Props> = props => {
   const {
     active,

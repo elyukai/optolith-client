@@ -39,6 +39,9 @@ const IconButton: FRRFC<HTMLButtonElement, Props> = (props, ref) => {
   )
 }
 
+/**
+ * A button that only contains an icon.
+ */
 const IconButtonWithRef = forwardRef(IconButton)
 
 export { IconButtonWithRef as IconButton }

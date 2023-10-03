@@ -1,8 +1,14 @@
 import { Label } from "../label/Label.tsx"
 import { RadioButton } from "./RadioButton.tsx"
 
+/**
+ * The possible type of a value of a radio option.
+ */
 export type RadioOptionValue = string | number
 
+/**
+ * Configuration for a radio option.
+ */
 export type RadioOption<A extends RadioOptionValue = RadioOptionValue> = {
   className?: string
   disabled?: boolean
@@ -19,6 +25,9 @@ interface Props<A extends RadioOptionValue = RadioOptionValue> {
   onClickJust?(option: A): void
 }
 
+/**
+ * A group of related radio controls.
+ */
 export const RadioButtonGroup = <A extends RadioOptionValue = RadioOptionValue>(
   props: Props<A>,
 ): React.ReactElement => {

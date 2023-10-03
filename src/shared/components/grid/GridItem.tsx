@@ -8,6 +8,10 @@ type Props = {
   width?: Width
 }
 
+/**
+ * An item in a grid layout where its width is specified as a fraction of the
+ * fill grid.
+ */
 export const GridItem: FCC<Props> = ({ children, className, width = "1/1" }) => (
   <div className={classList("grid-item", className)} data-grid={width}>
     {children}

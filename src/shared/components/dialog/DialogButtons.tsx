@@ -6,6 +6,9 @@ type Props = {
   onClickDefault?(f?: () => void): void
 }
 
+/**
+ * A list of buttons for the bottom side of a dialog.
+ */
 export const DialogButtons: FC<Props> = props => {
   const { list, onClickDefault } = props
 

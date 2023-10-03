@@ -11,6 +11,9 @@ type Props = {
   onClick(value: string | number | undefined): void
 }
 
+/**
+ * A single custom radio button with an optional label.
+ */
 export const RadioButton: FCC<Props> = props => {
   const { active, children, disabled, label, onClick, value } = props
 

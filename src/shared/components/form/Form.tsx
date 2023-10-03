@@ -5,6 +5,9 @@ type Props = {
   notSemantic?: boolean
 }
 
+/**
+ * A form that also provides additional layout features.
+ */
 export const Form: FCC<Props> = ({ notSemantic, children }) =>
   notSemantic === true ? (
     <div className="form">{children}</div>

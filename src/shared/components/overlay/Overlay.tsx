@@ -236,6 +236,9 @@ type Props = {
   trigger: Element
 }
 
+/**
+ * An overlay that can be positioned relative to another element.
+ */
 export const Overlay: FCC<Props> = props => {
   const { children, className, margin = 0, position: defPosition = "top", small, trigger } = props
 

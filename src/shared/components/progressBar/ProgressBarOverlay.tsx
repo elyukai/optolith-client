@@ -6,6 +6,9 @@ type Props = {
   horizontal?: boolean
 }
 
+/**
+ * The active part of the progress bar.
+ */
 export const ProgressBarOverlay: FC<Props> = props => {
   const { current, max, horizontal } = props
 

@@ -17,6 +17,9 @@ type Props = {
   onClose?(): void
 }
 
+/**
+ * A dialog that is displayed about the window content.
+ */
 export const Dialog: FCC<Props> = props => {
   const {
     buttons = [],

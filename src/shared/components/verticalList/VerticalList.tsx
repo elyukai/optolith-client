@@ -6,6 +6,9 @@ type Props = {
   className?: string
 }
 
+/**
+ * Displays a list of elements vertically, separated by dots.
+ */
 export const VerticalList: FCC<Props> = props => {
   const { children, className } = props
 

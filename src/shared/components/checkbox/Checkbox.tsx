@@ -12,6 +12,9 @@ type Props = {
   onClick(): void
 }
 
+/**
+ * A custom checkbox with an optional label.
+ */
 export const Checkbox: FCC<Props> = props => {
   const { checked, children, className, disabled, label, onClick } = props
 

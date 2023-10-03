@@ -19,6 +19,9 @@ type Props = {
   onChange: (newText: string) => void
 }
 
+/**
+ * A dialog with a single text field.
+ */
 export const BasicInputDialog: FC<Props> = props => {
   const {
     id,

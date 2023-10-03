@@ -6,6 +6,9 @@ type Props = {
   className?: string
 }
 
+/**
+ * A table-style list.
+ */
 export const List: FCC<Props> = props => {
   const { children, className } = props
 

@@ -8,6 +8,9 @@ type Props = {
   size?: Size
 }
 
+/**
+ * A grid layout.
+ */
 export const Grid: FCC<Props> = ({ children, size = "medium" }) => (
   <div className={classList("grid", `grid--${size}`)}>{children}</div>
 )

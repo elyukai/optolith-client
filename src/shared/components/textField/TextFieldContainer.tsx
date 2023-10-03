@@ -18,6 +18,9 @@ type Props = {
   valid?: boolean
 }
 
+/**
+ * The container for a text field.
+ */
 export const TextFieldContainer: FCC<Props> = props => {
   const {
     children,

@@ -11,6 +11,9 @@ type Props = {
   onKeyUp?(event: InputKeyEvent): void
 }
 
+/**
+ * A text field that only updates its value when it loses focus.
+ */
 export const TextFieldDeferred: FC<Props> = props => {
   const { autoFocus, disabled, type, value: defaultValue, onChange, onKeyDown, onKeyUp } = props
 

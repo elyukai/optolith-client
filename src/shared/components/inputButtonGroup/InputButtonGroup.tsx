@@ -6,6 +6,9 @@ type Props = {
   className?: string
 }
 
+/**
+ * A group of buttons.
+ */
 export const InputButtonGroup: FCC<Props> = props => {
   const { className, children } = props
 

@@ -8,6 +8,9 @@ type Props = {
   hint?: string
 }
 
+/**
+ * A header element for a list.
+ */
 export const ListHeaderTag: FCC<Props> = props => {
   const { children, className, hint } = props
 

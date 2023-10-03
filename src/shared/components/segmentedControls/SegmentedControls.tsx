@@ -3,8 +3,14 @@ import { Label } from "../label/Label.tsx"
 import "./SegmentedControls.scss"
 import { SegmentedControlsItem } from "./SegmentedControlsItem.tsx"
 
+/**
+ * The possible type of a value for a segmented control.
+ */
 export type SegmentedOptionValue = string | number | undefined
 
+/**
+ * Configuration for a single item of a segmented control.
+ */
 export type SegmentedOption<A extends SegmentedOptionValue = SegmentedOptionValue> = {
   className?: string
   disabled?: boolean
@@ -20,6 +26,10 @@ type Props<A extends SegmentedOptionValue> = {
   onClick(option: A): void
 }
 
+/**
+ * A segmented control is a variant of radio controls that looks more like
+ * buttons.
+ */
 export const SegmentedControls = <A extends SegmentedOptionValue = SegmentedOptionValue>(
   props: Props<A>,
 ): ReturnType<FC<Props<A>>> => {

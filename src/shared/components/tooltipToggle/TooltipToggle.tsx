@@ -11,6 +11,9 @@ type Props = {
   targetRef: RefObject<HTMLElement>
 }
 
+/**
+ * Displays a tooltip on hover.
+ */
 export const TooltipToggle: FC<Props> = props => {
   const { content, margin, position = "top", small, targetRef } = props
 

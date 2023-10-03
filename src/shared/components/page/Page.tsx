@@ -5,6 +5,9 @@ interface Props {
   id?: string
 }
 
+/**
+ * Wrapper for a route view.
+ */
 export const Page: FCC<Props> = props => {
   const { children, id } = props
 

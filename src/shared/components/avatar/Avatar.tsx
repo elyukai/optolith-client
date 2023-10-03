@@ -11,6 +11,9 @@ type Props = {
   onClick?(): void
 }
 
+/**
+ * Displays an avatar image.
+ */
 export const Avatar: React.FC<Props> = props => {
   const { className: inheritedClassName, hasWrapper, img, onClick, src, validPath = false } = props
 

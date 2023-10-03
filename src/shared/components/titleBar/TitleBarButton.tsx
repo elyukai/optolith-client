@@ -7,6 +7,9 @@ type Props = {
   onClick?(): void
 }
 
+/**
+ * A window control for the title bar.
+ */
 export const TitleBarButton: React.FC<Props> = ({ className, icon, onClick }) => (
   <button
     className={classList("titlebar-btn", className)}

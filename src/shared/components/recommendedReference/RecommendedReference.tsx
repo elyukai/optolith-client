@@ -7,6 +7,10 @@ type Props = {
   unfamiliarSpells?: boolean
 }
 
+/**
+ * A reference for the recommended frequency of skills, advantages, spells and
+ * other kinds of entries.
+ */
 export const RecommendedReference: FC<Props> = props => {
   const { strongly, unfamiliarSpells } = props
 

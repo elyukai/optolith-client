@@ -1,8 +1,10 @@
-import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useRef } from "react"
+import { ChangeEvent, FC, KeyboardEvent, useCallback, useEffect, useRef } from "react"
 import "./TextField.scss"
 import { TextFieldContainer } from "./TextFieldContainer.tsx"
 
-export type InputTextEvent = ChangeEvent<HTMLInputElement>
+/**
+ * A keyboard event for an input element.
+ */
 export type InputKeyEvent = KeyboardEvent<HTMLInputElement>
 
 export interface TextFieldProps {
@@ -25,6 +27,9 @@ export interface TextFieldProps {
   onKeyUp?(event: InputKeyEvent): void
 }
 
+/**
+ * A text field with label, hint, error, and character count.
+ */
 export const TextField: React.FC<TextFieldProps> = props => {
   const {
     autoFocus,

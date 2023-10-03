@@ -8,6 +8,9 @@ interface Props {
   stable?: boolean
 }
 
+/**
+ * A scrollable area.
+ */
 export const Scroll: FCC<Props> = props => {
   const { className, children, noInnerElement, stable } = props
 

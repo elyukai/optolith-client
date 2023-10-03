@@ -6,6 +6,9 @@ interface Props {
   label: string
 }
 
+/**
+ * An icon.
+ */
 export const Icon: FCC<Props> = props => {
   const { className, children, label } = props
 

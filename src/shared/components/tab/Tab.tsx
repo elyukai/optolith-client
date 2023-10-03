@@ -13,6 +13,9 @@ export interface TabProps extends TabBaseProps {
   onClick(): void
 }
 
+/**
+ * A tab that can be selected.
+ */
 export const Tab: FCC<TabProps> = props => {
   const { active, children, className, disabled = false, label, onClick } = props
 

@@ -14,6 +14,9 @@ type Props = {
   submit(text: string): void
 }
 
+/**
+ * A text field with a submit and cancel button and simple keyboard shortcuts.
+ */
 export const EditText: FC<Props> = props => {
   const {
     autoFocus,

@@ -8,6 +8,9 @@ type Props = {
   text?: string
 }
 
+/**
+ * A secondary text option.
+ */
 export const ListItemGroup: FCC<Props> = props => {
   const { children, group, getGroupName, small, text } = props
 

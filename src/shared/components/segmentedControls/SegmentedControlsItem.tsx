@@ -9,6 +9,9 @@ type Props<A extends SegmentedOptionValue> = {
   onClick(option: A): void
 }
 
+/**
+ * A single item of a segmented control.
+ */
 export const SegmentedControlsItem = <A extends SegmentedOptionValue>(
   props: Props<A>,
 ): ReturnType<FC<Props<A>>> => {

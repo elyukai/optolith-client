@@ -15,8 +15,14 @@ type Props = {
   onClickDefault?(f?: () => void): void
 }
 
+/**
+ * Configuration for a dialog button.
+ */
 export type DialogButtonProps = Omit<Props, "onClickDefault">
 
+/**
+ * A button for the bottom side of a dialog.
+ */
 export const DialogButton: FC<Props> = props => {
   const {
     active,

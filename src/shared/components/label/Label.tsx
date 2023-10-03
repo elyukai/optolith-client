@@ -8,6 +8,9 @@ type Props = {
   text?: string
 }
 
+/**
+ * A label.
+ */
 export const Label: FC<Props> = props => {
   const { className, disabled, text } = props
 
