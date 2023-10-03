@@ -20,7 +20,7 @@ export const createPropertySelector = <S, O extends Indexed, K extends keyof O>(
  * A reducer type with possible additional parameters.
  */
 export type Reducer<
-  S = unknown,
+  S,
   A extends Action = AnyAction,
   P extends unknown[] = [],
   IS extends S | undefined = S,
@@ -45,12 +45,7 @@ const ensureDraftState = <S>(
  * state.
  */
 export const reduceReducers =
-  <
-    S = unknown,
-    A extends Action = AnyAction,
-    P extends unknown[] = [],
-    IS extends S | undefined = S,
-  >(
+  <S, A extends Action = AnyAction, P extends unknown[] = [], IS extends S | undefined = S>(
     initialReducer: Reducer<S, A, P, IS>,
     ...reducers: Reducer<S, A, P>[]
   ): Reducer<S, A, P, IS> =>
@@ -72,7 +67,7 @@ type ValidReducerReturnType<State> =
  * @returns The enhanced reducing function.
  */
 export const createImmerReducer =
-  <S = unknown, A extends Action = AnyAction, P extends unknown[] = []>(
+  <S, A extends Action = AnyAction, P extends unknown[] = []>(
     reducer: (
       state: Draft<S>,
       action: A,

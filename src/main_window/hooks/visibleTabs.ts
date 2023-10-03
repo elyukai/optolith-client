@@ -1,5 +1,9 @@
 import { useMemo } from "react"
 import { arrayEqual, filterNonNullable } from "../../shared/utils/array.ts"
+import { selectCanRemove } from "../selectors/characterSelectors.ts"
+import { selectCurrentCulture } from "../selectors/cultureSelectors.ts"
+import { selectCurrentRace } from "../selectors/raceSelectors.ts"
+import { selectIsBlessedOne, selectIsSpellcaster } from "../selectors/traditionSelectors.ts"
 import { RoutePath, selectRoute } from "../slices/routeSlice.ts"
 import { useAppSelector } from "./redux.ts"
 
@@ -57,11 +61,11 @@ export const useVisibleTabs = () => {
   const phase = 3 as number
   const isHitZoneArmorEnabled = true as boolean
   const arePactsAvailable = true as boolean
-  const isRemovingEnabled = true as boolean
-  const isRaceSelected = true as boolean
-  const isCultureSelected = true as boolean
-  const isSpellcaster = true as boolean
-  const isBlessedOne = true as boolean
+  const isRemovingEnabled = useAppSelector(selectCanRemove)
+  const isRaceSelected = useAppSelector(selectCurrentRace) !== undefined
+  const isCultureSelected = useAppSelector(selectCurrentCulture) !== undefined
+  const isSpellcaster = useAppSelector(selectIsSpellcaster)
+  const isBlessedOne = useAppSelector(selectIsBlessedOne)
 
   const characterId = currentRoute[0] === "characters" ? currentRoute[1] : undefined
 

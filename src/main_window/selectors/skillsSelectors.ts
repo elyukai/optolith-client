@@ -1,18 +1,19 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { Skill } from "optolith-database-schema/types/Skill"
+import { getHighestAttributeValue } from "../../shared/domain/attribute.ts"
 import { filterApplyingRatedDependencies } from "../../shared/domain/dependencies/filterApplyingDependencies.ts"
 import {
   AdvantageIdentifier,
   GeneralSpecialAbilityIdentifier,
 } from "../../shared/domain/identifier.ts"
 import { Rated } from "../../shared/domain/ratedEntry.ts"
+import { getSkillCommonness } from "../../shared/domain/skill.ts"
 import {
-  getSkillCommonness,
   getSkillMaximum,
   getSkillMinimum,
   isSkillDecreasable,
   isSkillIncreasable,
-} from "../../shared/domain/skill.ts"
+} from "../../shared/domain/skillBounds.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import {
   selectAdvantages,
@@ -93,14 +94,14 @@ export const selectVisibleSkills = createSelector(
       const dynamicSkill = dynamicSkills[skill.id] ?? createInitialDynamicSkill(skill.id)
 
       const minimum = getSkillMinimum(
-        dynamicSkills,
+        id => dynamicSkills[id],
         dynamicSkill,
         craftInstruments,
         filterApplyingDependencies,
       )
 
       const maximum = getSkillMaximum(
-        attributes,
+        refs => getHighestAttributeValue(id => attributes[id], refs),
         skill,
         isInCharacterCreation,
         startExperienceLevel,

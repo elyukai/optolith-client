@@ -1,19 +1,22 @@
 import { AnyAction, createAction } from "@reduxjs/toolkit"
 import { Draft } from "immer"
 import { ActivatableMap } from "../../shared/domain/activatableEntry.ts"
+import { RatedDependency } from "../../shared/domain/rated/ratedDependency.ts"
 import {
   ActivatableRatedMap,
   ActivatableRatedWithEnhancementsMap,
-  RatedDependency,
   RatedMap,
 } from "../../shared/domain/ratedEntry.ts"
 import { Sex } from "../../shared/domain/sex.ts"
 import { createImmerReducer, reduceReducers } from "../../shared/utils/redux.ts"
 import { RootState } from "../store.ts"
 import { attributesReducer } from "./attributesSlice.ts"
+import { blessingsReducer } from "./blessingsSlice.ts"
+import { ceremoniesReducer } from "./ceremoniesSlice.ts"
 import { closeCombatTechniquesReducer } from "./closeCombatTechniqueSlice.ts"
 import { DatabaseState } from "./databaseSlice.ts"
 import { derivedCharacteristicsReducer } from "./derivedCharacteristicsSlice.ts"
+import { liturgicalChantsReducer } from "./liturgicalChantsSlice.ts"
 import { personalDataReducer } from "./personalDataSlice.ts"
 import { professionReducer } from "./professionSlice.ts"
 import { raceReducer } from "./raceSlice.ts"
@@ -854,4 +857,7 @@ export const characterReducer = reduceReducers<
   skillsReducer,
   closeCombatTechniquesReducer,
   rangedCombatTechniquesReducer,
+  blessingsReducer,
+  liturgicalChantsReducer,
+  ceremoniesReducer,
 )

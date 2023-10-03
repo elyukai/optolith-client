@@ -6,9 +6,13 @@ import {
   getAttributeMinimum,
   isAttributeDecreasable,
   isAttributeIncreasable,
-} from "../../shared/domain/attribute.ts"
+} from "../../shared/domain/attributeBounds.ts"
 import { filterApplyingRatedDependencies } from "../../shared/domain/dependencies/filterApplyingDependencies.ts"
-import { AdvantageIdentifier, OptionalRuleIdentifier } from "../../shared/domain/identifier.ts"
+import {
+  AdvantageIdentifier,
+  AttributeIdentifier,
+  OptionalRuleIdentifier,
+} from "../../shared/domain/identifier.ts"
 import { Rated } from "../../shared/domain/ratedEntry.ts"
 import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
@@ -69,16 +73,27 @@ import {
   selectActiveMagicalTraditions,
 } from "./traditionSelectors.ts"
 
+/**
+ * A combination of a static and corresponding dynamic attribute entry.
+ */
 export type DisplayedPrimaryAttribute = {
   static: Attribute
   dynamic: Rated
 }
 
+/**
+ * A list of the highest primary attributes of all active magical traditions,
+ * and if they are halfed for calculating arcane energy.
+ */
 export type DisplayedMagicalPrimaryAttributes = {
   list: DisplayedPrimaryAttribute[]
   halfed: boolean
 }
 
+/**
+ * Returns the highest primary attributes of all active magical traditions, and
+ * if they are halfed for calculating arcane energy.
+ */
 export const selectHighestMagicalPrimaryAttributes = createSelector(
   selectActiveMagicalTraditions,
   selectStaticAttributes,
@@ -140,6 +155,9 @@ export const selectHighestMagicalPrimaryAttributes = createSelector(
   },
 )
 
+/**
+ * Returns the primary attribute of the active blessed tradition, if any.
+ */
 export const selectBlessedPrimaryAttribute = createSelector(
   selectActiveBlessedTradition,
   selectStaticAttributes,
@@ -205,6 +223,11 @@ const selectAttributeMinimaByAssociatedAttributes = createSelector(
   getAttributeMinimaByAssociatedAttributes,
 )
 
+/**
+ * A combination of a static and corresponding dynamic attribute entry, extended
+ * by value bounds and full logic for if the value can be increased or
+ * decreased.
+ */
 export type DisplayedAttribute = {
   static: Attribute
   dynamic: Rated
@@ -214,6 +237,9 @@ export type DisplayedAttribute = {
   isDecreasable: boolean
 }
 
+/**
+ * Returns the sum of all attribute values.
+ */
 export const selectTotalPoints = createSelector(
   selectStaticAttributes,
   selectDynamicAttributes,
@@ -221,6 +247,10 @@ export const selectTotalPoints = createSelector(
     Object.values(attributes).reduce((sum, { id }) => sum + (dynamicAttributes[id]?.value ?? 8), 0),
 )
 
+/**
+ * Returns all attributes with their corresponding dynamic values, extended by
+ * value bounds and full logic for if the value can be increased or decreased.
+ */
 export const selectVisibleAttributes = createSelector(
   selectStaticAttributes,
   selectDynamicAttributes,
@@ -286,6 +316,14 @@ export const selectVisibleAttributes = createSelector(
         ? highestMagicalPrimaryAttributes.list[0]
         : undefined
 
+    if (
+      startExperienceLevel === undefined ||
+      currentExperienceLevel === undefined ||
+      currentRace === undefined
+    ) {
+      return []
+    }
+
     return Object.values(attributes)
       .sort((a, b) => a.id - b.id)
       .map(attribute => {
@@ -293,26 +331,26 @@ export const selectVisibleAttributes = createSelector(
           dynamicAttributes[attribute.id] ?? createInitialDynamicAttribute(attribute.id)
 
         const minimum = getAttributeMinimum(
-          derivedCharacteristics.lifePoints,
-          derivedCharacteristics.arcaneEnergy,
-          derivedCharacteristics.karmaPoints,
-          dynamicAttribute,
+          derivedCharacteristics.lifePoints.purchased,
+          derivedCharacteristics.arcaneEnergy.purchased,
+          derivedCharacteristics.karmaPoints.purchased,
           singleHighestMagicalPrimaryAttribute?.static.id,
           magicalPrimaryAttributeDependencies,
           blessedPrimaryAttribute?.static.id,
           blessedPrimaryAttributeDependencies,
           filterApplyingDependencies,
           id => attributeMinimaByAssociatedAttributes[id],
+          dynamicAttribute,
         )
 
         const maximum = getAttributeMaximum(
           isInCharacterCreation,
-          currentRace,
+          currentRace.attribute_adjustments,
           startExperienceLevel,
           currentExperienceLevel,
           maximumAttributeScores !== undefined,
           attributeAdjustmentId,
-          attribute.id,
+          dynamicAttribute,
         )
 
         return {
@@ -353,65 +391,31 @@ export const selectVisibleAttributes = createSelector(
 //       maximum
 //     )
 
-// export const getPrimaryMagicalAttributes = createMaybeSelector (
-//   getWikiAttributes,
-//   getAttributes,
-//   getMagicalTraditionsFromHero,
-//   uncurryN3 (wiki_attributes =>
-//              hero_attributes =>
-//                mapMaybe (mapTradHeroEntryToAttrCombined (wiki_attributes) (hero_attributes)))
-// )
-
-// export const getHighestPrimaryMagicalAttributeValue = createMaybeSelector (
-//   getPrimaryMagicalAttributes,
-//   pipe (ensure (notNull), fmap (List.foldr (pipe (ACA_.value, max)) (0)))
-// )
-
-// export const getHighestPrimaryMagicalAttributes = createMaybeSelector (
-//   getPrimaryMagicalAttributes,
-//   getHighestPrimaryMagicalAttributeValue,
-//   uncurryN (attrs => fmap (max_value => filter (pipe (ACA_.value, equals (max_value))) (attrs)))
-// )
-
-// type AttrCs = List<Record<AttributeCombined>>
-// type NonEmptyAttrCs = NonEmptyList<Record<AttributeCombined>>
-
-// export const getHighestPrimaryMagicalAttribute = createMaybeSelector (
-//   getHighestPrimaryMagicalAttributes,
-//   pipe (
-//     bindF (ensure (pipe (flength, equals (1)) as (xs: AttrCs) => xs is NonEmptyAttrCs)),
-//     fmap ((xs: NonEmptyAttrCs) => head (xs))
-//   )
-// )
-
-// export const getPrimaryMagicalAttributeForSheet = createMaybeSelector (
-//   getPrimaryMagicalAttributes,
-//   map (ACA_.short)
-// )
-
-// export const getPrimaryBlessedAttribute = createMaybeSelector (
-//   getBlessedTraditionFromState,
-//   getAttributes,
-//   getWikiAttributes,
-//   (mtradition, hero_attributes, wiki_attributes) =>
-//     bind (mtradition) (mapTradHeroEntryToAttrCombined (wiki_attributes) (hero_attributes))
-// )
-
-// export const getPrimaryBlessedAttributeForSheet = createMaybeSelector (
-//   getPrimaryBlessedAttribute,
-//   fmap (pipe (ACA.wikiEntry, AA.short))
-// )
-
+/**
+ * Returns the carrying capacity of the character.
+ */
 export const selectCarryingCapacity = createSelector(
-  selectDynamicAttributes,
-  (attributes): number => (attributes[8]?.value ?? 8) * 2,
+  createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Strength),
+  (strength): number => (strength?.value ?? 8) * 2,
 )
 
+/**
+ * An adjustment value for an attribute that can be applied to one of the
+ * provided attributes.
+ */
+export type DisplayedAttributeAdjustment = {
+  value: number
+  list: DisplayedAttribute[]
+}
+
+/**
+ * Returns an attribute adjustment option, if any is available.
+ */
 export const selectAvailableAdjustments = createSelector(
   selectCurrentRace,
   selectAttributeAdjustmentId,
   selectVisibleAttributes,
-  (race, currentId, attributes) => {
+  (race, currentId, attributes): DisplayedAttributeAdjustment | undefined => {
     const selectableAdjustment = race?.attribute_adjustments?.selectable?.[0]
 
     if (selectableAdjustment === undefined) {

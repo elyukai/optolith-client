@@ -1,4 +1,5 @@
 import { Equality } from "../utils/compare.ts"
+import { isNotNullish } from "../utils/nullable.ts"
 
 /**
  * An activatable entry.
@@ -148,3 +149,14 @@ export const countOptions = (
     const optionAtIndex = instance.options?.[atIndex]
     return optionAtIndex?.type === "Predefined" && equalOptionId(optionAtIndex.id, optionId)
   }).length ?? 0
+
+/**
+ * Returns option values of instances of a given activatable entry. It defaults
+ * to the first option in the options array, but a different index can be
+ * specified.
+ */
+export const getOptions = (
+  activatable: Activatable | undefined,
+  atIndex = 0,
+): ActivatableOption[] =>
+  activatable?.instances.map(instance => instance.options?.[atIndex]).filter(isNotNullish) ?? []
