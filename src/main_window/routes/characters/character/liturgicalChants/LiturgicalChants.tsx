@@ -1,4 +1,3 @@
-import { ImprovementCost } from "optolith-database-schema/types/_ImprovementCost"
 import { FC, useCallback, useMemo, useState } from "react"
 import { Button } from "../../../../../shared/components/button/Button.tsx"
 import { List } from "../../../../../shared/components/list/List.tsx"
@@ -12,22 +11,14 @@ import { RadioButtonGroup } from "../../../../../shared/components/radioButton/R
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { Slidein } from "../../../../../shared/components/slidein/Slidein.tsx"
 import { TextField } from "../../../../../shared/components/textField/TextField.tsx"
-import {
-  compareImprovementCost,
-  fromRaw,
-} from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
+import { filterAndSortDisplayed } from "../../../../../shared/domain/liturgicalChant.ts"
 import { DisplayedActiveLiturgy } from "../../../../../shared/domain/liturgicalChantActive.ts"
 import { DisplayedInactiveLiturgy } from "../../../../../shared/domain/liturgicalChantInactive.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import {
-  compareAt,
-  compareNullish,
-  numAsc,
-  reduceCompare,
-} from "../../../../../shared/utils/compare.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
+import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
@@ -88,106 +79,28 @@ export const LiturgicalChants: FC = () => {
   const visibleInactiveLiturgies = useAppSelector(selectVisibleInactiveLiturgies)
   const visibleActiveLiturgies = useAppSelector(selectVisibleActiveLiturgies)
 
-  const getName = useCallback(
-    (liturgy: DisplayedInactiveLiturgy | DisplayedActiveLiturgy): string | undefined => {
-      switch (liturgy.kind) {
-        case "blessing":
-          return translateMap(liturgy.static.translations)?.name
-        case "liturgicalChant":
-          return translateMap(liturgy.static.translations)?.name
-        case "ceremony":
-          return translateMap(liturgy.static.translations)?.name
-        default:
-          return assertExhaustive(liturgy)
-      }
-    },
-    [translateMap],
-  )
-
-  const getImprovementCost = (
-    liturgy: DisplayedInactiveLiturgy | DisplayedActiveLiturgy,
-  ): ImprovementCost | undefined => {
-    switch (liturgy.kind) {
-      case "blessing":
-        return undefined
-      case "liturgicalChant":
-      case "ceremony":
-        return liturgy.static.improvement_cost
-      default:
-        return assertExhaustive(liturgy)
-    }
-  }
-
   const inactiveList = useMemo(
     () =>
-      (activeFilterText === ""
-        ? visibleInactiveLiturgies
-        : visibleInactiveLiturgies.filter(
-            c => getName(c)?.toLowerCase().includes(activeFilterText.toLowerCase()) ?? false,
-          )
-      ).sort(
-        (() => {
-          switch (sortOrder) {
-            case LiturgiesSortOrder.Name:
-              return compareAt(c => getName(c) ?? "", localeCompare)
-            case LiturgiesSortOrder.Group:
-              return reduceCompare(
-                compareAt(
-                  c => (c.kind === "blessing" ? 1 : c.kind === "liturgicalChant" ? 2 : 3),
-                  numAsc,
-                ),
-                compareAt(c => getName(c) ?? "", localeCompare),
-              )
-            case LiturgiesSortOrder.ImprovementCost:
-              return reduceCompare(
-                compareAt(
-                  c => fromRaw(getImprovementCost(c)),
-                  compareNullish(compareImprovementCost),
-                ),
-                compareAt(c => getName(c) ?? "", localeCompare),
-              )
-            default:
-              return assertExhaustive(sortOrder)
-          }
-        })(),
+      filterAndSortDisplayed(
+        visibleInactiveLiturgies,
+        activeFilterText,
+        sortOrder,
+        translateMap,
+        localeCompare,
       ),
-    [activeFilterText, getName, localeCompare, sortOrder, visibleInactiveLiturgies],
+    [activeFilterText, localeCompare, sortOrder, translateMap, visibleInactiveLiturgies],
   )
 
   const activeList = useMemo(
     () =>
-      (inactiveFilterText === ""
-        ? visibleActiveLiturgies
-        : visibleActiveLiturgies.filter(
-            c => getName(c)?.toLowerCase().includes(inactiveFilterText.toLowerCase()) ?? false,
-          )
-      ).sort(
-        (() => {
-          switch (sortOrder) {
-            case LiturgiesSortOrder.Name:
-              return compareAt(c => getName(c) ?? "", localeCompare)
-            case LiturgiesSortOrder.Group:
-              return reduceCompare(
-                compareAt(
-                  c => (c.kind === "blessing" ? 1 : c.kind === "liturgicalChant" ? 2 : 3),
-                  numAsc,
-                ),
-                compareAt(c => getName(c) ?? "", localeCompare),
-              )
-            case LiturgiesSortOrder.ImprovementCost:
-              return reduceCompare(
-                compareAt(
-                  c => fromRaw(getImprovementCost(c)),
-                  compareNullish(compareImprovementCost),
-                ),
-                compareAt(c => getName(c) ?? "", localeCompare),
-              )
-            default:
-              return assertExhaustive(sortOrder)
-          }
-        })(),
+      filterAndSortDisplayed(
+        visibleActiveLiturgies,
+        inactiveFilterText,
+        sortOrder,
+        translateMap,
+        localeCompare,
       ),
-    [inactiveFilterText, getName, localeCompare, sortOrder, visibleActiveLiturgies],
+    [visibleActiveLiturgies, inactiveFilterText, sortOrder, translateMap, localeCompare],
   )
 
   const handleAddLiturgicalChantPoint = useCallback(
@@ -228,9 +141,7 @@ export const LiturgicalChants: FC = () => {
 
   const handleRemoveCeremony = useCallback((id: number) => dispatch(removeCeremony(id)), [dispatch])
 
-  const [isSlideinVisible, setIsSlideinVisible] = useState(false)
-  const openSlidein = useCallback(() => setIsSlideinVisible(true), [])
-  const closeSlidein = useCallback(() => setIsSlideinVisible(false), [])
+  const { isOpen: isSlideinVisible, open: openSlidein, close: closeSlidein } = useModalState()
 
   return (
     <Page id="liturgical-chants">
@@ -293,7 +204,7 @@ export const LiturgicalChants: FC = () => {
             <ListHeaderTag className="btn-placeholder" />
           </ListHeader>
           <Scroll>
-            {activeList.length > 0 ? (
+            {inactiveList.length > 0 ? (
               <List>
                 {inactiveList.map((x, i) => {
                   switch (x.kind) {

@@ -2,14 +2,20 @@ import { Aspect } from "optolith-database-schema/types/Aspect"
 import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
 import { SkillTradition } from "optolith-database-schema/types/_Blessed"
 import { LiturgyIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { ImprovementCost } from "optolith-database-schema/types/_ImprovementCost"
 import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
 import { BlessedTradition } from "optolith-database-schema/types/specialAbility/BlessedTradition"
+import { LiturgiesSortOrder } from "../../main_window/slices/settingsSlice.ts"
 import { count, countByMany } from "../utils/array.ts"
+import { Compare, compareAt, compareNullish, numAsc, reduceCompare } from "../utils/compare.ts"
 import { isNotNullish } from "../utils/nullable.ts"
 import { TranslateMap } from "../utils/translate.ts"
 import { assertExhaustive } from "../utils/typeSafety.ts"
 import { Activatable, countOptions } from "./activatableEntry.ts"
+import { compareImprovementCost, fromRaw } from "./adventurePoints/improvementCost.ts"
 import { AspectIdentifier } from "./identifier.ts"
+import { DisplayedActiveLiturgy } from "./liturgicalChantActive.ts"
+import { DisplayedInactiveLiturgy } from "./liturgicalChantInactive.ts"
 import {
   ActivatableRated,
   ActivatableRatedMap,
@@ -247,6 +253,91 @@ export const anyBlessedTradition = (
       tradition.tag === "Tradition" &&
       predicate(tradition.tradition.tradition.id.blessed_tradition),
   )
+
+const getNameOfDisplayedLiturgy =
+  (translateMap: TranslateMap) =>
+  (liturgy: DisplayedInactiveLiturgy | DisplayedActiveLiturgy): string =>
+    (() => {
+      switch (liturgy.kind) {
+        case "blessing":
+          return translateMap(liturgy.static.translations)
+        case "liturgicalChant":
+          return translateMap(liturgy.static.translations)
+        case "ceremony":
+          return translateMap(liturgy.static.translations)
+        default:
+          return assertExhaustive(liturgy)
+      }
+    })?.name ?? ""
+
+const getImprovementCostDisplayedLiturgy = (
+  liturgy: DisplayedInactiveLiturgy | DisplayedActiveLiturgy,
+): ImprovementCost | undefined => {
+  switch (liturgy.kind) {
+    case "blessing":
+      return undefined
+    case "liturgicalChant":
+    case "ceremony":
+      return liturgy.static.improvement_cost
+    default:
+      return assertExhaustive(liturgy)
+  }
+}
+
+const getGroupNumberDisplayedLiturgy = (
+  liturgy: DisplayedInactiveLiturgy | DisplayedActiveLiturgy,
+): number => {
+  switch (liturgy.kind) {
+    case "blessing":
+      return 1
+    case "liturgicalChant":
+      return 2
+    case "ceremony":
+      return 3
+    default:
+      return assertExhaustive(liturgy)
+  }
+}
+
+/**
+ * Filters and sorts the displayed liturgies.
+ */
+export const filterAndSortDisplayed = <T extends DisplayedActiveLiturgy | DisplayedInactiveLiturgy>(
+  visibileLiturgies: T[],
+  filterText: string,
+  sortOrder: LiturgiesSortOrder,
+  translateMap: TranslateMap,
+  localeCompare: Compare<string>,
+) => {
+  const getName = getNameOfDisplayedLiturgy(translateMap)
+  return (
+    filterText === ""
+      ? visibileLiturgies
+      : visibileLiturgies.filter(c => getName(c).toLowerCase().includes(filterText.toLowerCase()))
+  ).sort(
+    (() => {
+      switch (sortOrder) {
+        case LiturgiesSortOrder.Name:
+          return compareAt(getName, localeCompare)
+        case LiturgiesSortOrder.Group:
+          return reduceCompare(
+            compareAt(getGroupNumberDisplayedLiturgy, numAsc),
+            compareAt(getName, localeCompare),
+          )
+        case LiturgiesSortOrder.ImprovementCost:
+          return reduceCompare(
+            compareAt(
+              c => fromRaw(getImprovementCostDisplayedLiturgy(c)),
+              compareNullish(compareImprovementCost),
+            ),
+            compareAt(getName, localeCompare),
+          )
+        default:
+          return assertExhaustive(sortOrder)
+      }
+    })(),
+  )
+}
 
 // export type LiturgicalChantBlessingCombined = Record<LiturgicalChantWithRequirements>
 //                                             | Record<BlessingCombined>
