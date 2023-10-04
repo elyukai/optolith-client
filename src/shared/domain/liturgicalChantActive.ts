@@ -88,7 +88,7 @@ export type DisplayedActiveLiturgy =
  * knowledge.
  */
 export const getActiveLiturgicalChantsOrCeremonies = <
-  K extends string,
+  K extends "liturgicalChant" | "ceremony",
   T extends LiturgicalChant | Ceremony,
 >(
   kind: K,
@@ -135,7 +135,7 @@ export const getActiveLiturgicalChantsOrCeremonies = <
         isInCharacterCreation,
         startExperienceLevel,
         exceptionalSkill,
-        "LiturgicalChant",
+        kind === "liturgicalChant" ? "LiturgicalChant" : "Ceremony",
       )
 
       return {
