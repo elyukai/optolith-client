@@ -484,7 +484,7 @@ export const selectVisibleInactiveCeremonies = createSelector(
 
 /**
  * Returns all liturgies with their corresponding dynamic entries, extended by
- * value bounds, and full logic for if the value can be increased or decreased.
+ * whether the entry can be activated.
  */
 export const selectVisibleInactiveLiturgies = createSelector(
   selectVisibleInactiveBlessings,
