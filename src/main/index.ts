@@ -243,9 +243,11 @@ const readFileInAppPath = (...path: string[]) => readFile(join(app.getAppPath(),
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 app.whenReady().then(async () => {
+  debug("ready")
   autoUpdater.autoDownload = false
 
   app.on("window-all-closed", () => {
+    debug("all windows closed")
     if (!isMac) {
       app.quit()
     }
