@@ -12,7 +12,7 @@ const config = {
     output: "dist/insider"
   },
   files: [
-    "app/**/*",
+    ".webpack/**",
     "LICENSE"
   ],
   asarUnpack: "app/Database/**/*",
@@ -26,7 +26,7 @@ const config = {
         ]
       }
     ],
-    icon: "app/icon.ico",
+    icon: "src/assets/icon/icon.ico",
     artifactName: "OptolithInsiderSetup_${version}.${ext}"
   },
   nsis: {
@@ -57,7 +57,7 @@ const config = {
   mac: {
     category: "public.app-category.role-playing-games",
     type: "distribution",
-    icon: "app/icon.icns",
+    icon: "src/assets/icon/AppIcon.icns",
     target: [
       {
         target: "default",
