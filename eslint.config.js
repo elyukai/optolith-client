@@ -84,7 +84,7 @@ export default [
       "no-useless-return": "error",
       "no-var": "error",
       "no-void": "error",
-      "no-warning-comments": "warn",
+      "no-warning-comments": "error",
       "object-shorthand": "error",
       "prefer-arrow-callback": "error",
       "prefer-const": "error",
