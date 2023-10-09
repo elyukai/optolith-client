@@ -36,7 +36,7 @@ const config = {
   linux: {
     category: "RolePlaying",
     executableName: "Optolith",
-    icon: "app",
+    icon: "src/assets/icon/AppList.targetsize-512.png",
     target: [
       {
         target: "AppImage",

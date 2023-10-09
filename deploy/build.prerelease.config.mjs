@@ -26,7 +26,7 @@ const config = {
         ]
       }
     ],
-    icon: "src/assets/icon/icon.ico",
+    icon: "src/assets/icon/AppList.targetsize-512.pre.png",
     artifactName: "OptolithInsiderSetup_${version}.${ext}"
   },
   nsis: {
@@ -37,7 +37,7 @@ const config = {
   linux: {
     category: "RolePlaying",
     executableName: "OptolithInsider",
-    icon: "app",
+    icon: "src/assets/icon/icon.pre.png",
     target: [
       {
         target: "AppImage",
@@ -57,7 +57,7 @@ const config = {
   mac: {
     category: "public.app-category.role-playing-games",
     type: "distribution",
-    icon: "src/assets/icon/AppIcon.icns",
+    icon: "src/assets/icon/AppIcon.pre.icns",
     target: [
       {
         target: "default",
