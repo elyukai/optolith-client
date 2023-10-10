@@ -85,7 +85,8 @@
     "test": "glob -c \"node --loader tsx --test\" \"./src/shared/**/*.test.ts\"",
     "circ": "madge -c ./src",
     "release:main": "standard-version --skip.commit --skip.tag",
-    "release:pre": "standard-version --prerelease=alpha"
+    "release:pre": "standard-version --prerelease=alpha",
+    "buildicns": "iconutil -c icns src/assets/icon/AppIcon.iconset && iconutil -c icns src/assets/icon/AppIcon.pre.iconset"
   },
   "repository": "github:elyukai/optolith-client",
   "type": "module"
