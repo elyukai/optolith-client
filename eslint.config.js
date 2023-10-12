@@ -1,6 +1,7 @@
 // @ts-check
 import { FlatCompat } from "@eslint/eslintrc"
 import js from "@eslint/js"
+import eslintConfigPrettier from "eslint-config-prettier"
 import jsdoc from "eslint-plugin-jsdoc"
 import reactJsxRuntime from "eslint-plugin-react/configs/jsx-runtime.js"
 import reactRecommended from "eslint-plugin-react/configs/recommended.js"
@@ -279,6 +280,7 @@ export default [
       },
     },
   },
+  eslintConfigPrettier,
   {
     ignores: [
       ".webpack/**",
