@@ -17,28 +17,11 @@
 // import { isNumber } from "../typeCheckUtils"
 // import { getWikiEntry } from "../WikiUtils"
 
-import { assertExhaustive } from "../../utils/typeSafety.ts"
-import { getAttributeValue } from "../attribute.ts"
-import { getCombatTechniqueValue } from "../combatTechnique.ts"
-import { getLiturgicalChantValue } from "../liturgicalChant.ts"
-import { RatedDependency, compareWithRestriction } from "../rated/ratedDependency.ts"
-import { ActivatableRatedWithEnhancementsMap, RatedMap } from "../ratedEntry.ts"
-import { getSkillValue } from "../skill.ts"
-import { getSpellValue } from "../spell.ts"
-
-/**
- * An object containing all rated entries of a character.
- */
-type RatedMaps = {
-  attributes: RatedMap
-  skills: RatedMap
-  closeCombatTechniques: RatedMap
-  rangedCombatTechniques: RatedMap
-  spells: ActivatableRatedWithEnhancementsMap
-  rituals: ActivatableRatedWithEnhancementsMap
-  liturgicalChants: ActivatableRatedWithEnhancementsMap
-  ceremonies: ActivatableRatedWithEnhancementsMap
-}
+import {
+  ActivatableIdentifier,
+  SkillWithEnhancementsIdentifier,
+} from "optolith-database-schema/types/_IdentifierGroup"
+import { RatedDependency } from "../rated/ratedDependency.ts"
 
 /**
  * A function that filters a list of dependencies by if they apply to the
@@ -56,60 +39,16 @@ export type FilterApplyingRatedDependencies = (dependencies: RatedDependency[]) 
  * dependencies.
  */
 export const filterApplyingRatedDependencies =
-  (ratedMaps: RatedMaps): FilterApplyingRatedDependencies =>
+  (
+    checkMultipleDisjunctionPartsAreValid: (
+      id: ActivatableIdentifier | SkillWithEnhancementsIdentifier,
+      index: number,
+    ) => boolean,
+  ): FilterApplyingRatedDependencies =>
   dependencies =>
     dependencies.filter(dep => {
-      if (dep.otherTargets) {
-        return dep.otherTargets.some(target => {
-          switch (target.tag) {
-            case "Attribute":
-              return compareWithRestriction(
-                dep.value,
-                getAttributeValue(ratedMaps.attributes[target.attribute]),
-              )
-            case "Skill":
-              return compareWithRestriction(
-                dep.value,
-                getSkillValue(ratedMaps.skills[target.skill]),
-              )
-            case "CloseCombatTechnique":
-              return compareWithRestriction(
-                dep.value,
-                getCombatTechniqueValue(
-                  ratedMaps.closeCombatTechniques[target.close_combat_technique],
-                ),
-              )
-            case "RangedCombatTechnique":
-              return compareWithRestriction(
-                dep.value,
-                getCombatTechniqueValue(
-                  ratedMaps.rangedCombatTechniques[target.ranged_combat_technique],
-                ),
-              )
-            case "Spell":
-              return compareWithRestriction(
-                dep.value,
-                getSpellValue(ratedMaps.spells[target.spell]),
-              )
-            case "Ritual":
-              return compareWithRestriction(
-                dep.value,
-                getSpellValue(ratedMaps.rituals[target.ritual]),
-              )
-            case "LiturgicalChant":
-              return compareWithRestriction(
-                dep.value,
-                getLiturgicalChantValue(ratedMaps.liturgicalChants[target.liturgical_chant]),
-              )
-            case "Ceremony":
-              return compareWithRestriction(
-                dep.value,
-                getLiturgicalChantValue(ratedMaps.ceremonies[target.ceremony]),
-              )
-            default:
-              return assertExhaustive(target)
-          }
-        })
+      if (dep.isPartOfDisjunction) {
+        return checkMultipleDisjunctionPartsAreValid(dep.source, dep.index)
       }
 
       return true

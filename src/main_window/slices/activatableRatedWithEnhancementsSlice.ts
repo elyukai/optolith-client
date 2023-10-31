@@ -4,6 +4,7 @@ import {
   BoundAdventurePoints,
   cachedAdventurePointsForActivatableWithEnhancements,
 } from "../../shared/domain/adventurePoints/ratedEntry.ts"
+import { RegistrationMethod } from "../../shared/domain/dependencies/registrationHelpers.ts"
 import { Enhancement } from "../../shared/domain/enhancement.ts"
 import { RatedDependency } from "../../shared/domain/rated/ratedDependency.ts"
 import {
@@ -91,6 +92,8 @@ export type ActivatableRatedWithEnhancementsSlice<N extends string, E extends st
 export const createActivatableRatedWithEnhancementsSlice = <
   N extends string,
   E extends string,
+  P,
+  IdO extends { tag: string },
 >(config: {
   namespace: N
   entityName: E
@@ -101,6 +104,14 @@ export const createActivatableRatedWithEnhancementsSlice = <
     enhancementId: number,
     database: DatabaseState,
   ) => number
+  getPrerequisites: (id: number, database: DatabaseState) => P[]
+  createIdentifierObject: (id: number) => IdO
+  registerOrUnregisterPrerequisitesAsDependencies: (
+    method: RegistrationMethod,
+    character: Draft<CharacterState>,
+    prerequisites: P[],
+    sourceId: IdO,
+  ) => void
 }): ActivatableRatedWithEnhancementsSlice<N, E> => {
   const updateCachedAdventurePoints = (
     entry: Draft<ActivatableRatedWithEnhancements>,
@@ -175,7 +186,19 @@ export const createActivatableRatedWithEnhancementsSlice = <
     (state: Draft<CharacterState>, action, database: DatabaseState) => {
       if (addAction.match(action)) {
         config.getState(state)[action.payload] ??= create(database, action.payload, 0)
+        config.registerOrUnregisterPrerequisitesAsDependencies(
+          RegistrationMethod.Add,
+          state,
+          config.getPrerequisites(action.payload, database),
+          config.createIdentifierObject(action.payload),
+        )
       } else if (removeAction.match(action)) {
+        config.registerOrUnregisterPrerequisitesAsDependencies(
+          RegistrationMethod.Remove,
+          state,
+          config.getPrerequisites(action.payload, database),
+          config.createIdentifierObject(action.payload),
+        )
         delete config.getState(state)[action.payload]
       } else if (incrementAction.match(action)) {
         const entry = (config.getState(state)[action.payload] ??= createInitial(action.payload))

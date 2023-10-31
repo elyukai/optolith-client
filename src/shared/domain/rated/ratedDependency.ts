@@ -1,6 +1,5 @@
 import {
   ActivatableIdentifier,
-  RatedIdentifier,
   SkillWithEnhancementsIdentifier,
 } from "optolith-database-schema/types/_IdentifierGroup"
 
@@ -63,10 +62,15 @@ export type RatedDependency = {
   readonly source: ActivatableIdentifier | SkillWithEnhancementsIdentifier
 
   /**
-   * If the source prerequisite targets multiple entries, the other entries are
-   * listed here.
+   * The top-level index of the prerequisite. If the prerequisite is part of a
+   * group or disjunction, this is the index of the group or disjunction.
    */
-  readonly otherTargets?: RatedIdentifier[]
+  readonly index: number
+
+  /**
+   * Is the source prerequisite is part of a prerequisite disjunction?
+   */
+  readonly isPartOfDisjunction: boolean
 
   /**
    * The required value.

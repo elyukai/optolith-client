@@ -289,6 +289,12 @@ export const selectActiveOptionalRules = (state: RootState) =>
   selectCurrentCharacter(state)?.rules.activeOptionalRules ?? {}
 
 /**
+ * Select the active states of the currently open character.
+ */
+export const selectActiveStates = (state: RootState) =>
+  selectCurrentCharacter(state)?.activeStates ?? {}
+
+/**
  * Select the personal data of the currently open character.
  */
 export const selectPersonalData = (state: RootState): CharacterState["personalData"] =>
@@ -866,6 +872,11 @@ export const selectMagicalPrimaryAttributeDependencies = (state: RootState) =>
  */
 export const selectBlessedPrimaryAttributeDependencies = (state: RootState) =>
   selectCurrentCharacter(state)?.blessedPrimaryAttributeDependencies ?? []
+
+/**
+ * Select the pact of the currently open character, if any.
+ */
+export const selectPact = (state: RootState) => selectCurrentCharacter(state)?.pact
 
 /**
  * Action to change the name of the currently open character.

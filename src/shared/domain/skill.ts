@@ -5,9 +5,29 @@ import { Activatable, countOptions } from "./activatableEntry.ts"
 import { Rated } from "./ratedEntry.ts"
 
 /**
+ * The minimum value of a skill.
+ */
+export const minimumSkillValue = 0
+
+/**
  * Returns the value for a dynamic skill entry that might not exist yet.
  */
-export const getSkillValue = (dynamic: Rated | undefined): number => dynamic?.value ?? 0
+export const getSkillValue = (dynamic: Rated | undefined): number =>
+  dynamic?.value ?? minimumSkillValue
+
+/**
+ * Creates an initial dynamic skill entry.
+ */
+export const createEmptyDynamicSkill = (id: number): Rated => ({
+  id,
+  value: minimumSkillValue,
+  cachedAdventurePoints: {
+    general: 0,
+    bound: 0,
+  },
+  dependencies: [],
+  boundAdventurePoints: [],
+})
 
 /**
  * Returns the highest required attribute and its value for a skill, if any.

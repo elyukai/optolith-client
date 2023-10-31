@@ -7,10 +7,30 @@ import { AttributeIdentifier } from "./identifier.ts"
 import { Rated } from "./ratedEntry.ts"
 
 /**
+ * The minimum value of a combat technique.
+ */
+export const minimumCombatTechniqueValue = 6
+
+/**
  * Returns the value for a dynamic combat technique entry that might not exist
  * yet.
  */
-export const getCombatTechniqueValue = (dynamic: Rated | undefined): number => dynamic?.value ?? 6
+export const getCombatTechniqueValue = (dynamic: Rated | undefined): number =>
+  dynamic?.value ?? minimumCombatTechniqueValue
+
+/**
+ * Creates an initial dynamic skill entry.
+ */
+export const createEmptyDynamicCombatTechnique = (id: number): Rated => ({
+  id,
+  value: minimumCombatTechniqueValue,
+  cachedAdventurePoints: {
+    general: 0,
+    bound: 0,
+  },
+  dependencies: [],
+  boundAdventurePoints: [],
+})
 
 /**
  * A combination of the different types of combat techniques.

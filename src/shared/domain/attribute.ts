@@ -7,6 +7,20 @@ import { Rated } from "./ratedEntry.ts"
 export const minimumAttributeValue = 8
 
 /**
+ * Creates an initial dynamic attribute entry.
+ */
+export const createEmptyDynamicAttribute = (id: number): Rated => ({
+  id,
+  value: minimumAttributeValue,
+  cachedAdventurePoints: {
+    general: 0,
+    bound: 0,
+  },
+  dependencies: [],
+  boundAdventurePoints: [],
+})
+
+/**
  * Returns the value for a dynamic attribute entry that might not exist yet.
  */
 export const getAttributeValue = (dynamicEntry: Rated | undefined): number =>

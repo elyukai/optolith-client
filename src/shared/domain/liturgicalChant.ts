@@ -16,10 +16,11 @@ import { AspectIdentifier } from "./identifier.ts"
 import { DisplayedActiveLiturgy } from "./liturgicalChantActive.ts"
 import { DisplayedInactiveLiturgy } from "./liturgicalChantInactive.ts"
 import {
-  ActivatableRated,
   ActivatableRatedMap,
   ActivatableRatedValue,
+  ActivatableRatedWithEnhancements,
   ActivatableRatedWithEnhancementsMap,
+  ActiveActivatableRatedWithEnhancements,
   isRatedActive,
   isRatedWithEnhancementsActive,
 } from "./ratedEntry.ts"
@@ -32,6 +33,23 @@ import { LiturgiesSortOrder } from "./sortOrders.ts"
 export const getLiturgicalChantValue = (
   dynamic: ActivatableRated | undefined,
 ): number | undefined => dynamic?.value
+
+/**
+ * Creates an initial dynamic liturgical chant entry.
+ */
+export const createEmptyDynamicLiturgicalChant = (
+  id: number,
+): ActivatableRatedWithEnhancements => ({
+  id,
+  value: undefined,
+  cachedAdventurePoints: {
+    general: 0,
+    bound: 0,
+  },
+  dependencies: [],
+  boundAdventurePoints: [],
+  enhancements: [],
+})
 
 // /**
 //  * Checks if the passed liturgical chant or blessing is valid for the current
@@ -109,6 +127,31 @@ export const getAspectsForTranslation = (
       }
     })
     .filter(isNotNullish)
+
+/**
+ * Returns a list of active dynamic liturgical chant entries for a given aspect.
+ */
+export const getActiveDynamicLiturgicalChantsByAspect = (
+  getTraditionsOfLiturgicalChant: (id: number) => SkillTradition[],
+  dynamicLiturgicalChants: ActivatableRatedWithEnhancementsMap,
+  aspectId: number,
+): ActiveActivatableRatedWithEnhancements[] =>
+  Object.values(dynamicLiturgicalChants)
+    .filter(isRatedWithEnhancementsActive)
+    .filter(dynamicLiturgicalChant => {
+      getTraditionsOfLiturgicalChant(dynamicLiturgicalChant.id).some(tradition => {
+        switch (tradition.tag) {
+          case "GeneralAspect":
+            return tradition.general_aspect.id.aspect === aspectId
+          case "Tradition":
+            return (
+              tradition.tradition.aspects?.some(aspect => aspect.id.aspect === aspectId) ?? false
+            )
+          default:
+            return assertExhaustive(tradition)
+        }
+      })
+    })
 
 /**
  * Counts the number of liturgical chants that are active and have a value
@@ -268,7 +311,7 @@ const getNameOfDisplayedLiturgy =
         default:
           return assertExhaustive(liturgy)
       }
-    })?.name ?? ""
+    })()?.name ?? ""
 
 const getImprovementCostDisplayedLiturgy = (
   liturgy: DisplayedInactiveLiturgy | DisplayedActiveLiturgy,
