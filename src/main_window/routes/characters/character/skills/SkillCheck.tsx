@@ -48,7 +48,12 @@ export const SkillCheck: FC<Props> = props => {
         ),
       )}
       {checkPenalty === undefined ? null : (
-        <div className="check mod">
+        <div
+          className={classList("check", "mod", {
+            "mod--spi-2": checkPenalty === "HalfOfSpirit",
+            "mod--spi-tou": checkPenalty === "HigherOfSpiritAndToughness",
+          })}
+        >
           {minus}
           {((): string => {
             switch (checkPenalty) {

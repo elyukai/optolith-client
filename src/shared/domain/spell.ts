@@ -1,206 +1,162 @@
+import { Cantrip } from "optolith-database-schema/types/Cantrip"
 import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
-import { PropertyReference } from "optolith-database-schema/types/_SimpleReferences"
-import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
-import { filterNonNullable } from "../utils/array.ts"
-import { Activatable, countOptions } from "./activatableEntry.ts"
-import { getSingleHighestAttribute } from "./attribute.ts"
+import { Property } from "optolith-database-schema/types/Property"
+import { Ritual } from "optolith-database-schema/types/Ritual"
+import { Spell } from "optolith-database-schema/types/Spell"
+import { CantripIdentifier, PropertyIdentifier } from "optolith-database-schema/types/_Identifier"
 import {
-  ActivatableRated,
+  MagicalActionIdentifier,
+  SpellworkIdentifier,
+} from "optolith-database-schema/types/_IdentifierGroup"
+import { ImprovementCost as RawImprovementCost } from "optolith-database-schema/types/_ImprovementCost"
+import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
+import { Traditions } from "optolith-database-schema/types/_Spellwork"
+import { AnimistPower } from "optolith-database-schema/types/magicalActions/AnimistPower"
+import { Curse } from "optolith-database-schema/types/magicalActions/Curse"
+import { DominationRitual } from "optolith-database-schema/types/magicalActions/DominationRitual"
+import { ElvenMagicalSong } from "optolith-database-schema/types/magicalActions/ElvenMagicalSong"
+import { GeodeRitual } from "optolith-database-schema/types/magicalActions/GeodeRitual"
+import { JesterTrick } from "optolith-database-schema/types/magicalActions/JesterTrick"
+import { MagicalDance } from "optolith-database-schema/types/magicalActions/MagicalDance"
+import { MagicalMelody } from "optolith-database-schema/types/magicalActions/MagicalMelody"
+import { ZibiljaRitual } from "optolith-database-schema/types/magicalActions/ZibiljaRitual"
+import { count, countBy, sum } from "../utils/array.ts"
+import { Compare, compareAt, compareNullish, numAsc, reduceCompare } from "../utils/compare.ts"
+import { isNotNullish, mapNullableDefault } from "../utils/nullable.ts"
+import { TranslateMap } from "../utils/translate.ts"
+import { assertExhaustive } from "../utils/typeSafety.ts"
+import { Activatable, countOptions } from "./activatableEntry.ts"
+import {
+  ImprovementCost,
+  compareImprovementCost,
+  fromRaw,
+} from "./adventurePoints/improvementCost.ts"
+import { MagicalTraditionIdentifier, createIdentifierObject } from "./identifier.ts"
+import {
+  cursesImprovementCost,
+  dominationRitualsImprovementCost,
+  geodeRitualsImprovementCost,
+} from "./magicalActions.ts"
+import { CombinedActiveMagicalTradition } from "./magicalTradition.ts"
+import {
+  ActivatableRatedMap,
   ActivatableRatedValue,
-  RatedDependency,
-  RatedMap,
-  flattenMinimumRestrictions,
+  ActivatableRatedWithEnhancements,
+  ActivatableRatedWithEnhancementsMap,
+  ActiveActivatableRatedWithEnhancements,
+  isRatedActive,
+  isRatedWithEnhancementsActive,
 } from "./ratedEntry.ts"
-import { getSkillCheckValues, getSkillCheckWithId } from "./skillCheck.ts"
+import { SpellsSortOrder } from "./sortOrders.ts"
+import { DisplayedActiveSpellwork } from "./spellActive.ts"
+import { DisplayedInactiveSpellwork } from "./spellInactive.ts"
 
-export const getSpellValue = (dynamic: ActivatableRated | undefined): number | undefined =>
-  dynamic?.value
+/**
+ * Returns the value for a dynamic spell entry that might not exist yet.
+ */
+export const getSpellValue = (
+  dynamicEntry: ActivatableRatedWithEnhancements | undefined,
+): number | undefined => dynamicEntry?.value
 
-// import { notP } from "../../../Data/Bool"
-// import { equals } from "../../../Data/Eq"
-// import { cnst, flip, ident } from "../../../Data/Function"
-// import { fmap } from "../../../Data/Functor"
-// import { all, any, consF, countWith, countWithByKeyMaybe, elemF, find, intersecting, List, maximum, minimum, notElem, notNull } from "../../../Data/List"
-// import { bindF, catMaybes, elem, ensure, fromMaybe, fromMaybe_, guard, isJust, isNothing, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe"
-// import { add, gte, lt } from "../../../Data/Num"
-// import { elems, foldrWithKey, lookup, lookupF, OrderedMap, union } from "../../../Data/OrderedMap"
-// import { Record } from "../../../Data/Record"
-// import { MagicalGroup, MagicalTradition, Property } from "../../Constants/Groups"
-// import { AdvantageId, DisadvantageId, SpecialAbilityId } from "../../Constants/Ids"
-// import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent"
-// import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent"
-// import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject"
-// import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent"
-// import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel"
-// import { TransferUnfamiliar, UnfamiliarGroup } from "../../Models/Hero/TransferUnfamiliar"
-// import { SpellWithRequirements } from "../../Models/View/SpellWithRequirements"
-// import { animistForceToSpell } from "../../Models/Wiki/AnimistForce"
-// import { Cantrip } from "../../Models/Wiki/Cantrip"
-// import { curseToSpell } from "../../Models/Wiki/Curse"
-// import { dominationRitualToSpell } from "../../Models/Wiki/DominationRitual"
-// import { elvenMagicalSongToSpell } from "../../Models/Wiki/ElvenMagicalSong"
-// import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel"
-// import { geodeRitualToSpell } from "../../Models/Wiki/GeodeRitual"
-// import { magicalDanceToSpell } from "../../Models/Wiki/MagicalDance"
-// import { magicalMelodyToSpell } from "../../Models/Wiki/MagicalMelody"
-// import { rogueSpellToSpell } from "../../Models/Wiki/RogueSpell"
-// import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
-// import { Spell } from "../../Models/Wiki/Spell"
-// import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
-// import { zibiljaRitualToSpell } from "../../Models/Wiki/ZibiljaRitual"
-// import { modifyByLevel } from "../Activatable/activatableModifierUtils"
-// import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils"
-// import { mapMagicalTradIdToNumId } from "../Activatable/traditionUtils"
-// import { flattenDependencies } from "../Dependencies/flattenDependencies"
-// import { getExperienceLevelAtStart } from "../ELUtils"
-// import { ifElse } from "../ifElse"
-// import { compare, ImprovementCost } from "../ImprovementCost"
-// import { pipe, pipe_ } from "../pipe"
-// import { areSpellPrereqisitesMet } from "../Prerequisites/validatePrerequisitesUtils"
-// import { isNumber, misNumberM } from "../typeCheckUtils"
-// import { getExceptionalSkillBonus, getMaxSRByCheckAttrs, getMaxSRFromEL } from "./skillUtils"
+/**
+ * Creates an initial dynamic spell entry.
+ */
+export const createEmptyDynamicSpell = (id: number): ActivatableRatedWithEnhancements => ({
+  id,
+  value: undefined,
+  cachedAdventurePoints: {
+    general: 0,
+    bound: 0,
+  },
+  dependencies: [],
+  boundAdventurePoints: [],
+  enhancements: [],
+})
 
-// const SDA = StaticData.A
-// const HA = HeroModel.A
-// const ELA = ExperienceLevel.A
-// const SA = Spell.A
-// const SAL = Spell.AL
-// const ASDA = ActivatableSkillDependent.A
-// const ADA = ActivatableDependent.A
-// const SAA = SpecialAbility.A
-// const TUA = TransferUnfamiliar.A
-// const AOA = ActiveObject.A
-
-// type ASD = ActivatableSkillDependent
-
-// /**
-//  * `isActiveTradition id xs` checks if `id` is a tradition contained in the list
-//  * of active traditions `xs`.
-//  */
-// const isActiveTradition = (e : MagicalTradition) =>
-//                             find (pipe (
-//                                    SAA.id,
-//                                    mapMagicalTradIdToNumId,
-//                                    elem (e)
-//                                  ))
-
-// /**
-//  * Checks if the passed spell or cantrip is valid for the current
-//  * active magical traditions.
-//  */
-// export const isOwnTradition = (activeTradition : List<Record<SpecialAbility>>) =>
-//                               (wiki_entry : Record<Spell> | Record<Cantrip>) : boolean =>
-//                                 pipe (
-//                                        SAL.tradition,
-//                                        any (e => e === MagicalTradition.General
-//                                                  || isJust (isActiveTradition (e)
-//                                                                               (activeTradition)))
-//                                      )
-//                                      (wiki_entry)
-
-// type SpellsAbove10ByProperty = OrderedMap<Property, number>
-
-// /**
-//  * Returns the lowest SR and it's occurences for every property. The values of
-//  * the map are pairs where the first is the lowest SR and the second is the
-//  * amount of spells at that exact SR.
-//  */
-// export const spellsAbove10ByProperty : (wiki_spells : StaticData["spells"])
-//                                      => (hero_spells : HeroModel["spells"])
-//                                      => SpellsAbove10ByProperty
-//                                      = wiki_spells =>
-//                                          pipe (
-//                                            elems,
-//                                            countWithByKeyMaybe (pipe (
-//                                                                  ensure (ASDA.active),
-//                                                                  Maybe.find (pipe (
-//                                                                    ASDA.value,
-//                                                                    gte (10)
-//                                                                  )),
-//                                                                  bindF (pipe (
-//                                                                    ASDA.id,
-//                                                                    lookupF (wiki_spells)
-//                                                                  )),
-//                                                                  fmap (SA.property)
-//                                                                ))
-//                                          )
-
-export const getSpellworkMinimumFromPropertyKnowledgePrerequistes = (
-  spellsAbove10ByProperty: Record<number, number>,
-  activePropertyKnowledges: number[],
+/**
+ * Returns a list of active dynamic spellwork entries for a given property.
+ */
+export const getActiveDynamicSpellworksByProperty = (
+  getPropertyOfSpellwork: (id: number) => PropertyIdentifier | undefined,
+  dynamicSpellworks: ActivatableRatedWithEnhancementsMap,
   propertyId: number,
-  value: number | undefined,
-): number | undefined =>
-  activePropertyKnowledges.includes(propertyId) &&
-  (spellsAbove10ByProperty[propertyId] ?? 0) <= 3 &&
-  value !== undefined &&
-  value >= 10
-    ? 10
-    : undefined
+): ActiveActivatableRatedWithEnhancements[] =>
+  Object.values(dynamicSpellworks)
+    .filter(isRatedWithEnhancementsActive)
+    .filter(
+      dynamicSpellwork => getPropertyOfSpellwork(dynamicSpellwork.id)?.property === propertyId,
+    )
 
-export const getSpellworkMinimum = (
-  spellsAbove10ByProperty: Record<number, number>,
-  activePropertyKnowledges: number[],
-  staticSpellwork: { property: PropertyReference },
-  dynamicSpellwork: ActivatableRated,
-  filterApplyingDependencies: (dependencies: RatedDependency[]) => RatedDependency[],
-): number | undefined => {
-  const minimumValues: number[] = filterNonNullable([
-    ...flattenMinimumRestrictions(filterApplyingDependencies(dynamicSpellwork.dependencies)),
-    getSpellworkMinimumFromPropertyKnowledgePrerequistes(
-      spellsAbove10ByProperty,
-      activePropertyKnowledges,
-      staticSpellwork.property.id.property,
-      dynamicSpellwork.value,
-    ),
-  ])
+/**
+ * Counts the number of spellworks that are active and have a value greater than
+ * 10 for each property.
+ */
+export const getSpellworksAbove10ByProperty = (
+  getPropertyId: (id: SpellworkIdentifier | MagicalActionIdentifier) => number | undefined,
+  dynamicSpells: ActivatableRatedWithEnhancementsMap,
+  dynamicRituals: ActivatableRatedWithEnhancementsMap,
+  dynamicCurses: ActivatableRatedMap,
+  dynamicElvenMagicalSongs: ActivatableRatedMap,
+  dynamicDominationRituals: ActivatableRatedMap,
+  dynamicMagicalDances: ActivatableRatedMap,
+  dynamicMagicalMelodies: ActivatableRatedMap,
+  dynamicJesterTricks: ActivatableRatedMap,
+  dynamicAnimistPowers: ActivatableRatedMap,
+  dynamicGeodeRituals: ActivatableRatedMap,
+  dynamicZibiljaRituals: ActivatableRatedMap,
+): Record<number, number> => {
+  const prepareEntity = (
+    ratedMap: ActivatableRatedMap,
+    numberToId: (id: number) => SpellworkIdentifier | MagicalActionIdentifier,
+  ) =>
+    Object.values(ratedMap)
+      .filter(isRatedActive)
+      .flatMap(dynamicEntry =>
+        mapNullableDefault(
+          getPropertyId(numberToId(dynamicEntry.id)),
+          propertyId => [[propertyId, dynamicEntry.value] as const],
+          [],
+        ),
+      )
 
-  return minimumValues.length > 0 ? Math.max(...minimumValues) : undefined
+  return [
+    ...prepareEntity(dynamicSpells, id => ({ tag: "Spell", spell: id })),
+    ...prepareEntity(dynamicRituals, id => ({ tag: "Ritual", ritual: id })),
+    ...prepareEntity(dynamicCurses, id => ({ tag: "Curse", curse: id })),
+    ...prepareEntity(dynamicElvenMagicalSongs, id => ({
+      tag: "ElvenMagicalSong",
+      elven_magical_song: id,
+    })),
+    ...prepareEntity(dynamicDominationRituals, id => ({
+      tag: "DominationRitual",
+      domination_ritual: id,
+    })),
+    ...prepareEntity(dynamicMagicalDances, id => ({ tag: "MagicalDance", magical_dance: id })),
+    ...prepareEntity(dynamicMagicalMelodies, id => ({ tag: "MagicalMelody", magical_melody: id })),
+    ...prepareEntity(dynamicJesterTricks, id => ({ tag: "JesterTrick", jester_trick: id })),
+    ...prepareEntity(dynamicAnimistPowers, id => ({ tag: "AnimistPower", animist_power: id })),
+    ...prepareEntity(dynamicGeodeRituals, id => ({ tag: "GeodeRitual", geode_ritual: id })),
+    ...prepareEntity(dynamicZibiljaRituals, id => ({ tag: "ZibiljaRitual", zibilja_ritual: id })),
+  ].reduce<Record<number, number>>(
+    (acc, [propertyId, value]) =>
+      value >= 10 ? { ...acc, [propertyId]: (acc[propertyId] ?? 0) + 1 } : acc,
+    {},
+  )
 }
 
-export const getSpellworkMaximumFromPropertyKnowledge = (
-  activePropertyKnowledges: number[],
-  propertyId: number,
-): number | undefined => (activePropertyKnowledges.includes(propertyId) ? undefined : 14)
-
-export const getSpellworkMaximum = (
-  attributes: RatedMap,
-  activePropertyKnowledges: number[],
-  staticSpellwork: { id: number; check: SkillCheck; property: PropertyReference },
-  isInCharacterCreation: boolean,
-  startExperienceLevel: ExperienceLevel | undefined,
-  exceptionalSkill: Activatable | undefined,
-  type: "Spell" | "Ritual" | undefined,
-): number => {
-  const maximumValues = filterNonNullable([
-    Math.max(...getSkillCheckValues(attributes, staticSpellwork.check)) + 2,
-    isInCharacterCreation && startExperienceLevel !== undefined
-      ? startExperienceLevel.max_skill_rating
-      : undefined,
-    getSpellworkMaximumFromPropertyKnowledge(
-      activePropertyKnowledges,
-      staticSpellwork.property.id.property,
-    ),
-  ])
-
-  const exceptionalSkillBonus =
-    type === undefined ? 0 : countOptions(exceptionalSkill, { type, value: staticSpellwork.id })
-
-  return Math.min(...maximumValues) + exceptionalSkillBonus
-}
-
+/**
+ * Returns the highest required attribute and its value for a spellwork, if any.
+ */
 export const getHighestRequiredAttributeForSpellwork = (
-  attributes: RatedMap,
+  getSingleHighestCheckAttributeId: (check: SkillCheck) => number | undefined,
   staticSpellwork: { id: number; check: SkillCheck },
   dynamicSpellwork: { value: ActivatableRatedValue },
   exceptionalSkill: Activatable | undefined,
   type: "Spell" | "Ritual" | undefined,
 ): { id: number; value: number } | undefined => {
-  const singleHighestAttribute = getSingleHighestAttribute(
-    getSkillCheckWithId(attributes, staticSpellwork.check),
-  )
+  const singleHighestAttributeId = getSingleHighestCheckAttributeId(staticSpellwork.check)
 
-  if (singleHighestAttribute === undefined || dynamicSpellwork.value === undefined) {
+  if (singleHighestAttributeId === undefined || dynamicSpellwork.value === undefined) {
     return undefined
   }
 
@@ -208,105 +164,289 @@ export const getHighestRequiredAttributeForSpellwork = (
     type === undefined ? 0 : countOptions(exceptionalSkill, { type, value: staticSpellwork.id })
 
   return {
-    id: singleHighestAttribute.id,
+    id: singleHighestAttributeId,
     value: dynamicSpellwork.value - 2 - exceptionalSkillBonus,
   }
 }
 
-export const isSpellworkDecreasable = (
-  dynamic: ActivatableRated,
-  min: number | undefined,
-  canRemove: boolean,
+/**
+ * Counts active spellworks.
+ */
+export const countActiveSpellworks = (
+  dynamicSpells: ActivatableRatedWithEnhancementsMap,
+  dynamicRituals: ActivatableRatedWithEnhancementsMap,
+  dynamicCurses: ActivatableRatedMap,
+  dynamicElvenMagicalSongs: ActivatableRatedMap,
+  dynamicDominationRituals: ActivatableRatedMap,
+  dynamicMagicalDances: ActivatableRatedMap,
+  dynamicMagicalMelodies: ActivatableRatedMap,
+  dynamicJesterTricks: ActivatableRatedMap,
+  dynamicAnimistPowers: ActivatableRatedMap,
+  dynamicGeodeRituals: ActivatableRatedMap,
+  dynamicZibiljaRituals: ActivatableRatedMap,
+): number =>
+  count([dynamicSpells, dynamicRituals].flatMap(Object.values), isRatedWithEnhancementsActive) +
+  count(
+    [
+      dynamicCurses,
+      dynamicElvenMagicalSongs,
+      dynamicDominationRituals,
+      dynamicMagicalDances,
+      dynamicMagicalMelodies,
+      dynamicJesterTricks,
+      dynamicAnimistPowers,
+      dynamicGeodeRituals,
+      dynamicZibiljaRituals,
+    ].flatMap(Object.values),
+    isRatedActive,
+  )
+
+/**
+ * Counts active unfamiliar spellworks.
+ */
+export const countActiveUnfamiliarSpellworks = (
+  dynamicSpells: ActivatableRatedWithEnhancementsMap,
+  dynamicRituals: ActivatableRatedWithEnhancementsMap,
+  getIsUnfamiliar: (id: SpellworkIdentifier) => boolean,
+): number => {
+  const countForType = (
+    dynamicSpellworks: ActivatableRatedWithEnhancementsMap,
+    getId: (id: number) => SpellworkIdentifier,
+  ) =>
+    count(
+      Object.values(dynamicSpellworks),
+      dynamicEntry =>
+        isRatedWithEnhancementsActive(dynamicEntry) && getIsUnfamiliar(getId(dynamicEntry.id)),
+    )
+
+  return sum([
+    countForType(dynamicSpells, id => createIdentifierObject("Spell", id)),
+    countForType(dynamicRituals, id => createIdentifierObject("Ritual", id)),
+  ])
+}
+
+/**
+ * Counts active spellworks by improvement cost.
+ */
+export const countActiveSpellworksByImprovementCost = (
+  staticSpells: Record<number, Spell>,
+  staticRituals: Record<number, Ritual>,
+  staticCurses: Record<number, Curse>,
+  staticElvenMagicalSongs: Record<number, ElvenMagicalSong>,
+  staticDominationRituals: Record<number, DominationRitual>,
+  staticMagicalDances: Record<number, MagicalDance>,
+  staticMagicalMelodies: Record<number, MagicalMelody>,
+  staticJesterTricks: Record<number, JesterTrick>,
+  staticAnimistPowers: Record<number, AnimistPower>,
+  staticGeodeRituals: Record<number, GeodeRitual>,
+  staticZibiljaRituals: Record<number, ZibiljaRitual>,
+  dynamicSpells: ActivatableRatedWithEnhancementsMap,
+  dynamicRituals: ActivatableRatedWithEnhancementsMap,
+  dynamicCurses: ActivatableRatedMap,
+  dynamicElvenMagicalSongs: ActivatableRatedMap,
+  dynamicDominationRituals: ActivatableRatedMap,
+  dynamicMagicalDances: ActivatableRatedMap,
+  dynamicMagicalMelodies: ActivatableRatedMap,
+  dynamicJesterTricks: ActivatableRatedMap,
+  dynamicAnimistPowers: ActivatableRatedMap,
+  dynamicGeodeRituals: ActivatableRatedMap,
+  dynamicZibiljaRituals: ActivatableRatedMap,
+): Record<ImprovementCost, number> => {
+  const prepareListWithEnhancements = <T>(
+    dynamicSpellworks: ActivatableRatedWithEnhancementsMap,
+    staticSpellworks: Record<number, T>,
+    getImprovementCost: (entry: T | undefined) => RawImprovementCost | undefined,
+  ): ImprovementCost[] =>
+    Object.values(dynamicSpellworks)
+      .filter(isRatedWithEnhancementsActive)
+      .map(dynamicEntry => fromRaw(getImprovementCost(staticSpellworks[dynamicEntry.id])))
+      .filter(isNotNullish)
+
+  const prepareList = <T>(
+    dynamicSpellworks: ActivatableRatedMap,
+    staticSpellworks: Record<number, T>,
+    getImprovementCost: (entry: T | undefined) => RawImprovementCost | undefined,
+  ): ImprovementCost[] =>
+    Object.values(dynamicSpellworks)
+      .filter(isRatedActive)
+      .map(dynamicEntry => fromRaw(getImprovementCost(staticSpellworks[dynamicEntry.id])))
+      .filter(isNotNullish)
+
+  return countBy(
+    [
+      ...prepareListWithEnhancements(dynamicSpells, staticSpells, spell => spell?.improvement_cost),
+      ...prepareListWithEnhancements(
+        dynamicRituals,
+        staticRituals,
+        ritual => ritual?.improvement_cost,
+      ),
+      ...prepareList(dynamicCurses, staticCurses, _curse => cursesImprovementCost),
+      ...prepareList(
+        dynamicElvenMagicalSongs,
+        staticElvenMagicalSongs,
+        elvenMagicalSong => elvenMagicalSong?.improvement_cost,
+      ),
+      ...prepareList(
+        dynamicDominationRituals,
+        staticDominationRituals,
+        _dominationRitual => dominationRitualsImprovementCost,
+      ),
+      ...prepareList(
+        dynamicMagicalDances,
+        staticMagicalDances,
+        magicalDance => magicalDance?.improvement_cost,
+      ),
+      ...prepareList(
+        dynamicMagicalMelodies,
+        staticMagicalMelodies,
+        magicalMelodie => magicalMelodie?.improvement_cost,
+      ),
+      ...prepareList(
+        dynamicJesterTricks,
+        staticJesterTricks,
+        jesterTrick => jesterTrick?.improvement_cost,
+      ),
+      ...prepareList(dynamicAnimistPowers, staticAnimistPowers, animistPower =>
+        // TODO: Replace with derived improvement cost
+        animistPower?.improvement_cost.tag === "Fixed"
+          ? animistPower.improvement_cost.fixed
+          : undefined,
+      ),
+      ...prepareList(
+        dynamicGeodeRituals,
+        staticGeodeRituals,
+        _geodeRitual => geodeRitualsImprovementCost,
+      ),
+      ...prepareList(
+        dynamicZibiljaRituals,
+        staticZibiljaRituals,
+        zibiljaRitual => zibiljaRitual?.improvement_cost,
+      ),
+    ],
+    entry => entry,
+  )
+}
+
+/**
+ * Checks if the maximum number of spellworks has been reached.
+ */
+export const isMaximumOfSpellworksReached = (
+  activeCount: number,
+  isInCharacterCreation: boolean,
+  startExperienceLevel: ExperienceLevel,
 ) =>
-  (min === undefined || (dynamic.value !== undefined && dynamic.value > Math.max(min, 0))) &&
-  canRemove
+  isInCharacterCreation
+    ? activeCount >= startExperienceLevel.max_number_of_spells_liturgical_chants
+    : false
 
-export const isSpellworkIncreasable = (dynamic: ActivatableRated, max: number) =>
-  dynamic.value === undefined || dynamic.value < max
+/**
+ * Checks if the maximum number of spellworks has been reached.
+ */
+export const isMaximumOfUnfamiliarSpellworksReached = (
+  activeUnfamiliarCount: number,
+  isInCharacterCreation: boolean,
+  startExperienceLevel: ExperienceLevel,
+) =>
+  isInCharacterCreation
+    ? activeUnfamiliarCount >= startExperienceLevel.max_number_of_unfamiliar_spells
+    : false
 
-// export const combineSpellsAndMagicalActions = (staticData : StaticDataRecord) => pipe_ (
-//                                                 SDA.spells (staticData),
-//                                                 pipe_ (
-//                                                   SDA.animistForces (staticData),
-//                                                   OrderedMap.map (animistForceToSpell),
-//                                                   union
-//                                                 ),
-//                                                 pipe_ (
-//                                                   SDA.curses (staticData),
-//                                                   OrderedMap.map (curseToSpell),
-//                                                   union
-//                                                 ),
-//                                                 pipe_ (
-//                                                   SDA.dominationRituals (staticData),
-//                                                   OrderedMap.map (dominationRitualToSpell),
-//                                                   union
-//                                                 ),
-//                                                 pipe_ (
-//                                                   SDA.elvenMagicalSongs (staticData),
-//                                                   OrderedMap.map (
-//                                                     elvenMagicalSongToSpell (staticData)
-//                                                   ),
-//                                                   union
-//                                                 ),
-//                                                 pipe_ (
-//                                                   SDA.geodeRituals (staticData),
-//                                                   OrderedMap.map (geodeRitualToSpell),
-//                                                   union
-//                                                 ),
-//                                                 pipe_ (
-//                                                   SDA.magicalDances (staticData),
-//                                                   OrderedMap.map (magicalDanceToSpell),
-//                                                   union
-//                                                 ),
-//                                                 pipe_ (
-//                                                   SDA.magicalMelodies (staticData),
-//                                                   OrderedMap.map (
-//                                                     magicalMelodyToSpell (staticData)
-//                                                   ),
-//                                                   union
-//                                                 ),
-//                                                 pipe_ (
-//                                                   SDA.rogueSpells (staticData),
-//                                                   OrderedMap.map (rogueSpellToSpell),
-//                                                   union
-//                                                 ),
-//                                                 pipe_ (
-//                                                   SDA.zibiljaRituals (staticData),
-//                                                   OrderedMap.map (zibiljaRitualToSpell),
-//                                                   union
-//                                                 )
-//                                               )
+/**
+ * Checks a list of tradition identifiers if at least one of them is active.
+ */
+export const isTraditionActive = (
+  activeMagicalTraditions: CombinedActiveMagicalTradition[],
+  traditionIds: MagicalTraditionIdentifier[],
+): boolean => activeMagicalTraditions.some(active => traditionIds.includes(active.static.id))
 
-// export const isUnfamiliarSpell : (transferred_unfamiliar : List<Record<TransferUnfamiliar>>) =>
-//                                 (trad_hero_entries : List<Record<ActivatableDependent>>) =>
-//                                 (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean =
-//   transferred_unfamiliar =>
-//   trads => {
-//     if (any (pipe (ADA.id, equals<string> (SpecialAbilityId.TraditionIntuitiveMage))) (trads)) {
-//       return cnst (false)
-//     }
+/**
+ * Returns a function that checks if a cantrip, spell or ritual is unfamiliar.
+ */
+export const createGetIsUnfamiliar = (
+  activeMagicalTraditions: CombinedActiveMagicalTradition[],
+  staticCantrips: Record<number, Cantrip>,
+  staticSpells: Record<number, Spell>,
+  staticRituals: Record<number, Ritual>,
+): ((id: SpellworkIdentifier | CantripIdentifier) => boolean) => {
+  if (
+    isTraditionActive(activeMagicalTraditions, [
+      MagicalTraditionIdentifier.IntuitiveMages,
+      MagicalTraditionIdentifier.Schelme,
+      MagicalTraditionIdentifier.Zauberalchimisten,
+    ])
+  ) {
+    return _ => false
+  }
 
-//     const active_trad_num_ids =
-//       pipe_ (
-//         trads,
-//         mapMaybe (pipe (ADA.id, mapMagicalTradIdToNumId)),
-//         consF (MagicalTradition.General),
-//         ifElse (List.elem (MagicalTradition.Qabalyamagier))
-//                (consF<MagicalTradition> (MagicalTradition.GuildMages))
-//                (ident)
-//       )
+  const applicableTraditionIds = activeMagicalTraditions
+    .flatMap(trad => [
+      trad.static.id,
+      trad.static.use_arcane_spellworks_from_tradition?.id.magical_tradition,
+    ])
+    .filter(isNotNullish)
 
-//     const isNoTraditionActive = notP (intersecting (active_trad_num_ids))
+  // TODO: Check transferred unfamiliar
+  // all (pipe (TUA.id, trans_id => trans_id !== id && trans_id !== UnfamiliarGroup.Spells))
+  //     (transferred_unfamiliar)
 
-//     return x => {
-//       const id = SAL.id (x)
-//       const possible_traditions = SAL.tradition (x)
+  const checkSpellwork = <T extends { traditions: Traditions }>(
+    staticSpellworks: Record<number, T>,
+    id: number,
+  ) => {
+    const spellwork = staticSpellworks[id]
+    if (spellwork === undefined) {
+      return false
+    }
+    switch (spellwork.traditions.tag) {
+      case "General":
+        return false
+      case "Specific":
+        return !spellwork.traditions.specific.some(trad =>
+          applicableTraditionIds.includes(trad.magical_tradition),
+        )
+      default:
+        return assertExhaustive(spellwork.traditions)
+    }
+  }
 
-//       return all (pipe (TUA.id, trans_id => trans_id !== id && trans_id !== UnfamiliarGroup.Spells))
-//                  (transferred_unfamiliar)
-//         && isNoTraditionActive (possible_traditions)
-//     }
-//   }
+  return id => {
+    switch (id.tag) {
+      case "Spell":
+        return checkSpellwork(staticSpells, id.spell)
+      case "Ritual":
+        return checkSpellwork(staticRituals, id.ritual)
+      case "Cantrip": {
+        const cantrip = staticCantrips[id.cantrip]
+        if (cantrip === undefined) {
+          return false
+        }
+        switch (cantrip.note?.tag) {
+          case "Common":
+            return !cantrip.note.common.list.some(trad => {
+              switch (trad.tag) {
+                case "Academy":
+                  return applicableTraditionIds.includes(MagicalTraditionIdentifier.GuildMages)
+                case "Tradition":
+                  return applicableTraditionIds.includes(trad.tradition.id.magical_tradition)
+                default:
+                  return assertExhaustive(trad)
+              }
+            })
+          case "Exclusive":
+            return !cantrip.note.exclusive.traditions.some(trad =>
+              applicableTraditionIds.includes(trad.id.magical_tradition),
+            )
+          case undefined:
+            return false
+          default:
+            return assertExhaustive(cantrip.note)
+        }
+      }
+      default:
+        return assertExhaustive(id)
+    }
+  }
+}
 
 // /**
 //  * ```haskell
@@ -387,316 +527,161 @@ export const isSpellworkIncreasable = (dynamic: ActivatableRated, max: number) =
 //     return HA.phase (hero) < 3 && current_count >= maxSpellsLiturgicalChants
 //   }
 
-// /**
-//  * ```haskell
-//  * isIdInSpecialAbilityList :: [SpecialAbility] -> String -> Bool
-//  * ```
-//  *
-//  * Takes a list of special ability wiki entries and returns a function that
-//  * checks if a passed ID belongs to a wiki entry from the list
-//  */
-// export const isIdInSpecialAbilityList : (xs : List<Record<SpecialAbility>>) =>
-//                                        (id : string) => boolean =
-//   flip (id => List.any (pipe (SAA.id, equals (id))))
+const getNameOfDisplayedSpellwork =
+  (translateMap: TranslateMap) =>
+  (spellwork: DisplayedInactiveSpellwork | DisplayedActiveSpellwork): string =>
+    (() => {
+      switch (spellwork.kind) {
+        case "cantrip":
+          return translateMap(spellwork.static.translations)
+        case "spell":
+          return translateMap(spellwork.static.translations)
+        case "ritual":
+          return translateMap(spellwork.static.translations)
+        case "curse":
+          return translateMap(spellwork.static.translations)
+        case "elvenMagicalSong":
+          return translateMap(spellwork.static.translations)
+        case "dominationRitual":
+          return translateMap(spellwork.static.translations)
+        case "magicalDance":
+          return translateMap(spellwork.static.translations)
+        case "magicalMelody":
+          return translateMap(spellwork.static.translations)
+        case "jesterTrick":
+          return translateMap(spellwork.static.translations)
+        case "animistPower":
+          return translateMap(spellwork.static.translations)
+        case "geodeRitual":
+          return translateMap(spellwork.static.translations)
+        case "zibiljaRitual":
+          return translateMap(spellwork.static.translations)
+        default:
+          return assertExhaustive(spellwork)
+      }
+    })()?.name ?? ""
 
-// const isAnySpellActiveWithImpCostC =
-//   (wiki_spells : OrderedMap<string, Record<Spell>>) =>
-//     OrderedMap.any (
-//       (x : Record<ActivatableSkillDependent>) =>
-//         ASDA.active (x)
-//         && pipe_ (
-//           x,
-//           ASDA.id,
-//           lookupF (wiki_spells),
-//           maybe (false)
-//                 (s => compare (SA.ic (s), ImprovementCost.C) === 0)
-//         )
-//     )
+const getImprovementCostOfDisplayedSpellwork = (
+  liturgy: DisplayedInactiveSpellwork | DisplayedActiveSpellwork,
+): RawImprovementCost | undefined => {
+  switch (liturgy.kind) {
+    case "cantrip":
+      return undefined
+    case "spell":
+      return liturgy.static.improvement_cost
+    case "ritual":
+      return liturgy.static.improvement_cost
+    case "curse":
+      return cursesImprovementCost
+    case "elvenMagicalSong":
+      return liturgy.static.improvement_cost
+    case "dominationRitual":
+      return dominationRitualsImprovementCost
+    case "magicalDance":
+      return liturgy.static.improvement_cost
+    case "magicalMelody":
+      return liturgy.static.improvement_cost
+    case "jesterTrick":
+      return liturgy.static.improvement_cost
+    case "animistPower":
+      // TODO: Replace with derived improvement cost
+      return liturgy.static.improvement_cost.tag === "Fixed"
+        ? liturgy.static.improvement_cost.fixed
+        : undefined
+    case "geodeRitual":
+      return geodeRitualsImprovementCost
+    case "zibiljaRitual":
+      return liturgy.static.improvement_cost
+    default:
+      return assertExhaustive(liturgy)
+  }
+}
 
-// /**
-//  * ```haskell
-//  * isInactiveValidForIntuitiveMage :: Wiki
-//  *                                 -> Hero
-//  *                                 -> Bool
-//  *                                 -> Spell
-//  *                                 -> Maybe ActivatableSkillDependent
-//  * ```
-//  *
-//  * Checks if a spell is valid to add when *Tradition (Intuitive Mage)* is used.
-//  */
-// const isInactiveValidForIntuitiveMage =
-//   (wiki : StaticDataRecord) =>
-//   (hero : HeroModelRecord) =>
-//   (is_spell_max_count_reached : boolean) =>
-//   (wiki_entry : Record<Spell>) =>
-//   (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
-//     !is_spell_max_count_reached
+const getGroupNumberOfDisplayedSpellwork = (
+  liturgy: DisplayedInactiveSpellwork | DisplayedActiveSpellwork,
+): number => {
+  switch (liturgy.kind) {
+    case "cantrip":
+      return 1
+    case "spell":
+      return 2
+    case "ritual":
+      return 3
+    case "curse":
+      return 4
+    case "elvenMagicalSong":
+      return 5
+    case "dominationRitual":
+      return 6
+    case "magicalDance":
+      return 7
+    case "magicalMelody":
+      return 8
+    case "jesterTrick":
+      return 9
+    case "animistPower":
+      return 10
+    case "geodeRitual":
+      return 11
+    case "zibiljaRitual":
+      return 12
+    default:
+      return assertExhaustive(liturgy)
+  }
+}
 
-//     // Intuitive Mages can only learn spells
-//     && SA.gr (wiki_entry) === MagicalGroup.Spells
+const getPropertyNameOfDisplayedSpellwork =
+  (translateMap: TranslateMap, getProperty: (id: number) => Property | undefined) =>
+  (liturgy: DisplayedInactiveSpellwork | DisplayedActiveSpellwork): string =>
+    translateMap(getProperty(liturgy.static.property.id.property)?.translations)?.name ?? ""
 
-//     // Must be inactive
-//     && Maybe.all (notP (ASDA.active)) (mhero_entry)
-
-//     // No spells with IC D
-//     && compare (SA.ic (wiki_entry), ImprovementCost.D) < 0
-
-//     // Only one spell with IC C
-//     && !(
-//       compare (SA.ic (wiki_entry), ImprovementCost.C) === 0
-//       && isAnySpellActiveWithImpCostC (SDA.spells (wiki)) (HA.spells (hero))
-//     )
-
-// const isInactiveValidForSchelme =
-//   (is_spell_max_count_reached : boolean) =>
-//   (wiki_entry : Record<Spell>) =>
-//   (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
-//     SA.gr (wiki_entry) === MagicalGroup.RogueSpells
-//     || (
-//       !is_spell_max_count_reached
-
-//       // Schelme can only learn spells
-//       && SA.gr (wiki_entry) === MagicalGroup.Spells
-
-//       // Must be inactive
-//       && Maybe.all (notP (ASDA.active)) (mhero_entry)
-
-//       // No spells with IC D or C
-//       && compare (SA.ic (wiki_entry), ImprovementCost.C) < 0
-
-//       // No property Demonic
-//       && SA.property (wiki_entry) !== Property.Demonic
-//     )
-
-// /**
-//  * ```haskell
-//  * isInactiveValidForArcaneBardOrDancer :: Wiki
-//  *                                     -> Hero
-//  *                                     -> Bool
-//  *                                     -> Spell
-//  *                                     -> Maybe ActivatableSkillDependent
-//  * ```
-//  *
-//  * Checks if a spell is valid to add when *Tradition (Arcane Bard)* or
-//  * *Tradition (Arcane Dancer)* is used.
-//  */
-// const isInactiveValidForArcaneBardOrDancer =
-//   (isUnfamiliar : (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean) =>
-//   (msub_trad : Maybe<number>) =>
-//   (wiki_entry : Record<Spell>) =>
-//   (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
-//     !isUnfamiliar (wiki_entry)
-//     && maybe (false) (elemF (SA.subtradition (wiki_entry))) (msub_trad)
-//     && Maybe.all (notP (ASDA.active)) (mhero_entry)
-
-// const isValidInactiveAnimistPower = (
-//   wiki_entry : Record<Spell>,
-//   mhero_entry : Maybe<Record<ActivatableSkillDependent>>
-// ) =>
-//   Maybe.all (notP (ASDA.active)) (mhero_entry)
-//   && SA.gr (wiki_entry) === MagicalGroup.AnimistForces
-
-// /**
-//  * ```haskell
-//  * isInactiveValidForAnimists :: Wiki
-//  *                            -> Hero
-//  *                            -> Bool
-//  *                            -> Spell
-//  *                            -> Maybe ActivatableSkillDependent
-//  * ```
-//  *
-//  * Checks if a spell is valid to add when *Tradition (Animisten)* is used.
-//  */
-// const isInactiveValidForAnimist =
-//   (wiki : StaticDataRecord) =>
-//   (hero : HeroModelRecord) =>
-//   (is_spell_max_count_reached : boolean) =>
-//   (wiki_entry : Record<Spell>) =>
-//   (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
-//     isInactiveValidForIntuitiveMage (wiki)
-//                                     (hero)
-//                                     (is_spell_max_count_reached)
-//                                     (wiki_entry)
-//                                     (mhero_entry)
-//     || isValidInactiveAnimistPower (wiki_entry, mhero_entry)
-
-// const consTradSpecificSpell =
-//   (wiki_entry : Record<Spell>) =>
-//   (mhero_entry : Maybe<Record<ActivatableSkillDependent>>) =>
-//   (id : string) =>
-//     consF (SpellWithRequirements ({
-//       wikiEntry: wiki_entry,
-//       stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (id))
-//                              (mhero_entry),
-//       isUnfamiliar: false,
-//       isDecreasable: Nothing,
-//       isIncreasable: Nothing,
-//     }))
-
-// export const getInactiveSpellsForIntuitiveMageOrAnimist =
-//   (isValid : typeof isInactiveValidForIntuitiveMage) =>
-//   (wiki : StaticDataRecord) =>
-//   (hero : HeroModelRecord) =>
-//   (is_spell_max_count_reached : boolean) : List<Record<SpellWithRequirements>> =>
-//     pipe_ (
-//       wiki,
-//       SDA.spells,
-//       foldrWithKey ((k : string) => (wiki_entry : Record<Spell>) => {
-//                      const mhero_entry = lookup (k) (HA.spells (hero))
-
-//                      if (areSpellPrereqisitesMet (wiki) (hero) (wiki_entry)
-//                          && isValid (wiki)
-//                                     (hero)
-//                                     (is_spell_max_count_reached)
-//                                     (wiki_entry)
-//                                     (mhero_entry)) {
-//                        return consTradSpecificSpell (wiki_entry) (mhero_entry) (k)
-//                      }
-
-//                      return ident as ident<List<Record<SpellWithRequirements>>>
-//                    })
-//                    (List ())
-//     )
-
-// /**
-//  * ```haskell
-//  * getInactiveSpellsForIntuitiveMages :: Wiki -> Hero -> Bool -> [SpellWithRequirements]
-//  * ```
-//  *
-//  * Returns all valid inactive spells for intuitive mages.
-//  */
-// export const getInactiveSpellsForIntuitiveMages =
-//   (wiki : StaticDataRecord) =>
-//   (hero : HeroModelRecord) =>
-//   (is_spell_max_count_reached : boolean) : List<Record<SpellWithRequirements>> => {
-//     if (is_spell_max_count_reached) {
-//       return List<Record<SpellWithRequirements>> ()
-//     }
-
-//     return getInactiveSpellsForIntuitiveMageOrAnimist (isInactiveValidForIntuitiveMage)
-//                                                       (wiki)
-//                                                       (hero)
-//                                                       (is_spell_max_count_reached)
-//   }
-
-// /**
-//  * ```haskell
-//  * getInactiveSpellsForAnimists :: Wiki -> Hero -> Bool -> [SpellWithRequirements]
-//  * ```
-//  *
-//  * Returns all valid inactive spells for animists.
-//  */
-// export const getInactiveSpellsForAnimist =
-//   getInactiveSpellsForIntuitiveMageOrAnimist (isInactiveValidForAnimist)
-
-// /**
-//  * ```haskell
-//  * getInactiveSpellsForAnimists :: Wiki
-//  *                              -> Hero
-//  *                              -> ((Spell | Cantrip) -> Bool)
-//  *                              -> [ActivatableDependent]
-//  *                              -> [SpellWithRequirements]
-//  * ```
-//  *
-//  * Returns all valid inactive spells for arcane bards or dancers.
-//  */
-// export const getInactiveSpellsForArcaneBardOrDancer =
-//   (wiki : StaticDataRecord) =>
-//   (hero : HeroModelRecord) =>
-//   (isUnfamiliar : (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean) =>
-//   (trads_hero : List<Record<ActivatableDependent>>) : List<Record<SpellWithRequirements>> => {
-//     const msub_trad =
-//       pipe_ (
-//         trads_hero,
-//         listToMaybe,
-//         bindF (pipe (ADA.active, listToMaybe)),
-//         bindF (AOA.sid),
-//         misNumberM
-//       )
-
-//     return pipe_ (
-//       wiki,
-//       SDA.spells,
-//       foldrWithKey ((k : string) => (wiki_entry : Record<Spell>) => {
-//                      const mhero_entry = lookup (k) (HA.spells (hero))
-
-//                      if (areSpellPrereqisitesMet (wiki) (hero) (wiki_entry)
-//                          && isInactiveValidForArcaneBardOrDancer (isUnfamiliar)
-//                                                                  (msub_trad)
-//                                                                  (wiki_entry)
-//                                                                  (mhero_entry)) {
-//                        return consTradSpecificSpell (wiki_entry) (mhero_entry) (k)
-//                      }
-
-//                      return ident as ident<List<Record<SpellWithRequirements>>>
-//                    })
-//                    (List ())
-//     )
-//   }
-
-// export const getInactiveSpellsForSchelme =
-//   (wiki : StaticDataRecord) =>
-//   (hero : HeroModelRecord) =>
-//   (is_spell_max_count_reached : boolean) : List<Record<SpellWithRequirements>> =>
-//     pipe_ (
-//       wiki,
-//       SDA.spells,
-//       foldrWithKey ((k : string) => (wiki_entry : Record<Spell>) => {
-//                      const mhero_entry = lookup (k) (HA.spells (hero))
-
-//                      if (areSpellPrereqisitesMet (wiki) (hero) (wiki_entry)
-//                          && isInactiveValidForSchelme (is_spell_max_count_reached)
-//                                                       (wiki_entry)
-//                                                       (mhero_entry)) {
-//                        return consTradSpecificSpell (wiki_entry) (mhero_entry) (k)
-//                      }
-
-//                      return ident as ident<List<Record<SpellWithRequirements>>>
-//                    })
-//                    (List ())
-//     )
-
-// /**
-//  * ```haskell
-//  * getInactiveSpellsForOtherTradition :: Wiki
-//  *                                    -> Hero
-//  *                                    -> Bool
-//  *                                    -> Bool
-//  *                                    -> ((Spell | Cantrip) -> Bool)
-//  *                                    -> [SpellWithRequirements]
-//  * ```
-//  *
-//  * Returns all valid inactive spells for arcane bards or dancers.
-//  */
-// export const getInactiveSpellsForOtherTradition =
-//   (wiki : StaticDataRecord) =>
-//   (hero : HeroModelRecord) =>
-//   (is_spell_max_count_reached : boolean) =>
-//   (is_max_unfamiliar : boolean) =>
-//   (isUnfamiliar : (spell_or_cantrip : Record<Spell> | Record<Cantrip>) => boolean) :
-//   List<Record<SpellWithRequirements>> =>
-//     pipe_ (
-//       wiki,
-//       SDA.spells,
-//       foldrWithKey ((k : string) => (wiki_entry : Record<Spell>) => {
-//                      const mhero_entry = lookup (k) (HA.spells (hero))
-
-//                      if ((!is_spell_max_count_reached || SA.gr (wiki_entry) > MagicalGroup.Rituals)
-//                          && areSpellPrereqisitesMet (wiki) (hero) (wiki_entry)
-//                          && (!isUnfamiliar (wiki_entry)
-//                              || (SA.gr (wiki_entry) <= MagicalGroup.Rituals && !is_max_unfamiliar))
-//                          && Maybe.all (notP (ASDA.active)) (mhero_entry)) {
-//                        return consF (SpellWithRequirements ({
-//                          wikiEntry: wiki_entry,
-//                          stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
-//                                                 (mhero_entry),
-//                          isUnfamiliar: isUnfamiliar (wiki_entry),
-//                          isDecreasable: Nothing,
-//                          isIncreasable: Nothing,
-//                        }))
-//                      }
-
-//                      return ident as ident<List<Record<SpellWithRequirements>>>
-//                    })
-//                    (List ())
-//     )
+/**
+ * Filters and sorts the displayed liturgies.
+ */
+export const filterAndSortDisplayed = <
+  T extends DisplayedInactiveSpellwork | DisplayedActiveSpellwork,
+>(
+  visibileSpellworks: T[],
+  filterText: string,
+  sortOrder: SpellsSortOrder,
+  translateMap: TranslateMap,
+  localeCompare: Compare<string>,
+  getProperty: (id: number) => Property | undefined,
+) => {
+  const getName = getNameOfDisplayedSpellwork(translateMap)
+  return (
+    filterText === ""
+      ? visibileSpellworks
+      : visibileSpellworks.filter(c => getName(c).toLowerCase().includes(filterText.toLowerCase()))
+  ).sort(
+    (() => {
+      switch (sortOrder) {
+        case SpellsSortOrder.Name:
+          return compareAt(getName, localeCompare)
+        case SpellsSortOrder.Group:
+          return reduceCompare(
+            compareAt(getGroupNumberOfDisplayedSpellwork, numAsc),
+            compareAt(getName, localeCompare),
+          )
+        case SpellsSortOrder.Property:
+          return reduceCompare(
+            compareAt(
+              getPropertyNameOfDisplayedSpellwork(translateMap, getProperty),
+              localeCompare,
+            ),
+            compareAt(getName, localeCompare),
+          )
+        case SpellsSortOrder.ImprovementCost:
+          return reduceCompare(
+            compareAt(
+              c => fromRaw(getImprovementCostOfDisplayedSpellwork(c)),
+              compareNullish(compareImprovementCost),
+            ),
+            compareAt(getName, localeCompare),
+          )
+        default:
+          return assertExhaustive(sortOrder)
+      }
+    })(),
+  )
+}

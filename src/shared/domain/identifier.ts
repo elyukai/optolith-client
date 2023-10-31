@@ -1,3 +1,5 @@
+import * as ID from "optolith-database-schema/types/_Identifier"
+
 // TODO: Update for new identifier mappings
 
 /**
@@ -237,6 +239,7 @@ export enum GeneralSpecialAbilityIdentifier {
 export enum MagicalSpecialAbilityIdentifier {
   PropertyKnowledge = 3,
   GrosseMeditation = 12,
+  Imitationszauberei = 51,
 }
 
 /**
@@ -244,6 +247,26 @@ export enum MagicalSpecialAbilityIdentifier {
  */
 export enum MagicalTraditionIdentifier {
   GuildMages = 1,
+  Witches = 2,
+  Elves = 3,
+  Unicorn = 4,
+  Druids = 5,
+  QabalyaMages = 6,
+  IntuitiveMages = 7,
+  Savants = 8,
+  Illusionists = 9,
+  ArcaneBards = 10,
+  ArcaneDancers = 11,
+  Schelme = 13,
+  Zauberalchimisten = 14,
+  TsatuariaAnhaengerinnen = 16,
+  Necker = 17,
+  Animisten = 18,
+  Geoden = 19,
+  Zibilijas = 20,
+  BrobimGeoden = 21,
+  Darna = 23,
+  Runenschoepfer = 24,
 }
 
 /**
@@ -280,3 +303,256 @@ export enum BlessedTraditionIdentifier {
   Firun = 9,
   Rahja = 12,
 }
+
+type TagPropertyOptions = {
+  Advantage: ID.AdvantageIdentifier
+  Disadvantage: ID.DisadvantageIdentifier
+  GeneralSpecialAbility: ID.GeneralSpecialAbilityIdentifier
+  FatePointSpecialAbility: ID.FatePointSpecialAbilityIdentifier
+  CombatSpecialAbility: ID.CombatSpecialAbilityIdentifier
+  MagicalSpecialAbility: ID.MagicalSpecialAbilityIdentifier
+  StaffEnchantment: ID.StaffEnchantmentIdentifier
+  FamiliarSpecialAbility: ID.FamiliarSpecialAbilityIdentifier
+  KarmaSpecialAbility: ID.KarmaSpecialAbilityIdentifier
+  ProtectiveWardingCircleSpecialAbility: ID.ProtectiveWardingCircleSpecialAbilityIdentifier
+  CombatStyleSpecialAbility: ID.CombatStyleSpecialAbilityIdentifier
+  AdvancedCombatSpecialAbility: ID.AdvancedCombatSpecialAbilityIdentifier
+  CommandSpecialAbility: ID.CommandSpecialAbilityIdentifier
+  MagicStyleSpecialAbility: ID.MagicStyleSpecialAbilityIdentifier
+  AdvancedMagicalSpecialAbility: ID.AdvancedMagicalSpecialAbilityIdentifier
+  SpellSwordEnchantment: ID.SpellSwordEnchantmentIdentifier
+  DaggerRitual: ID.DaggerRitualIdentifier
+  InstrumentEnchantment: ID.InstrumentEnchantmentIdentifier
+  AttireEnchantment: ID.AttireEnchantmentIdentifier
+  OrbEnchantment: ID.OrbEnchantmentIdentifier
+  WandEnchantment: ID.WandEnchantmentIdentifier
+  BrawlingSpecialAbility: ID.BrawlingSpecialAbilityIdentifier
+  AncestorGlyph: ID.AncestorGlyphIdentifier
+  CeremonialItemSpecialAbility: ID.CeremonialItemSpecialAbilityIdentifier
+  Sermon: ID.SermonIdentifier
+  LiturgicalStyleSpecialAbility: ID.LiturgicalStyleSpecialAbilityIdentifier
+  AdvancedKarmaSpecialAbility: ID.AdvancedKarmaSpecialAbilityIdentifier
+  Vision: ID.VisionIdentifier
+  MagicalTradition: ID.MagicalTraditionIdentifier
+  BlessedTradition: ID.BlessedTraditionIdentifier
+  PactGift: ID.PactGiftIdentifier
+  SikaryanDrainSpecialAbility: ID.SikaryanDrainSpecialAbilityIdentifier
+  LycantropicGift: ID.LycantropicGiftIdentifier
+  SkillStyleSpecialAbility: ID.SkillStyleSpecialAbilityIdentifier
+  AdvancedSkillSpecialAbility: ID.AdvancedSkillSpecialAbilityIdentifier
+  ArcaneOrbEnchantment: ID.ArcaneOrbEnchantmentIdentifier
+  CauldronEnchantment: ID.CauldronEnchantmentIdentifier
+  FoolsHatEnchantment: ID.FoolsHatEnchantmentIdentifier
+  ToyEnchantment: ID.ToyEnchantmentIdentifier
+  BowlEnchantment: ID.BowlEnchantmentIdentifier
+  FatePointSexSpecialAbility: ID.FatePointSexSpecialAbilityIdentifier
+  SexSpecialAbility: ID.SexSpecialAbilityIdentifier
+  WeaponEnchantment: ID.WeaponEnchantmentIdentifier
+  SickleRitual: ID.SickleRitualIdentifier
+  RingEnchantment: ID.RingEnchantmentIdentifier
+  ChronicleEnchantment: ID.ChronicleEnchantmentIdentifier
+  Krallenkettenzauber: ID.KrallenkettenzauberIdentifier
+  Trinkhornzauber: ID.TrinkhornzauberIdentifier
+  Attribute: ID.AttributeIdentifier
+  Skill: ID.SkillIdentifier
+  CloseCombatTechnique: ID.CloseCombatTechniqueIdentifier
+  RangedCombatTechnique: ID.RangedCombatTechniqueIdentifier
+  Cantrip: ID.CantripIdentifier
+  Spell: ID.SpellIdentifier
+  Ritual: ID.RitualIdentifier
+  Curse: ID.CurseIdentifier
+  ElvenMagicalSong: ID.ElvenMagicalSongIdentifier
+  DominationRitual: ID.DominationRitualIdentifier
+  MagicalMelody: ID.MagicalMelodyIdentifier
+  MagicalDance: ID.MagicalDanceIdentifier
+  JesterTrick: ID.JesterTrickIdentifier
+  AnimistPower: ID.AnimistPowerIdentifier
+  GeodeRitual: ID.GeodeRitualIdentifier
+  ZibiljaRitual: ID.ZibiljaRitualIdentifier
+  Blessing: ID.BlessingIdentifier
+  LiturgicalChant: ID.LiturgicalChantIdentifier
+  Ceremony: ID.CeremonyIdentifier
+  Alchemicum: ID.AlchemicumIdentifier
+  Ammunition: ID.AmmunitionIdentifier
+  Animal: ID.AnimalIdentifier
+  AnimalCare: ID.AnimalCareIdentifier
+  Armor: ID.ArmorIdentifier
+  BandageOrRemedy: ID.BandageOrRemedyIdentifier
+  Book: ID.BookIdentifier
+  CeremonialItem: ID.CeremonialItemIdentifier
+  Clothes: ID.ClothesIdentifier
+  Container: ID.ContainerIdentifier
+  EquipmentOfBlessedOnes: ID.EquipmentOfBlessedOnesIdentifier
+  GemOrPreciousStone: ID.GemOrPreciousStoneIdentifier
+  IlluminationLightSource: ID.IlluminationLightSourceIdentifier
+  IlluminationRefillsOrSupplies: ID.IlluminationRefillsOrSuppliesIdentifier
+  Jewelry: ID.JewelryIdentifier
+  Liebesspielzeug: ID.LiebesspielzeugIdentifier
+  LuxuryGood: ID.LuxuryGoodIdentifier
+  MagicalArtifact: ID.MagicalArtifactIdentifier
+  MusicalInstrument: ID.MusicalInstrumentIdentifier
+  OrienteeringAid: ID.OrienteeringAidIdentifier
+  Poison: ID.PoisonIdentifier
+  RopeOrChain: ID.RopeOrChainIdentifier
+  Stationary: ID.StationaryIdentifier
+  ThievesTool: ID.ThievesToolIdentifier
+  ToolOfTheTrade: ID.ToolOfTheTradeIdentifier
+  TravelGearOrTool: ID.TravelGearOrToolIdentifier
+  Vehicle: ID.VehicleIdentifier
+  Weapon: ID.WeaponIdentifier
+  WeaponAccessory: ID.WeaponAccessoryIdentifier
+}
+
+const TagPropertyMap: {
+  [K in keyof TagPropertyOptions]: (id: number) => TagPropertyOptions[K]
+} = {
+  Advantage: id => ({ tag: "Advantage", advantage: id }),
+  Disadvantage: id => ({ tag: "Disadvantage", disadvantage: id }),
+  GeneralSpecialAbility: id => ({ tag: "GeneralSpecialAbility", general_special_ability: id }),
+  FatePointSpecialAbility: id => ({
+    tag: "FatePointSpecialAbility",
+    fate_point_special_ability: id,
+  }),
+  CombatSpecialAbility: id => ({ tag: "CombatSpecialAbility", combat_special_ability: id }),
+  MagicalSpecialAbility: id => ({ tag: "MagicalSpecialAbility", magical_special_ability: id }),
+  StaffEnchantment: id => ({ tag: "StaffEnchantment", staff_enchantment: id }),
+  FamiliarSpecialAbility: id => ({ tag: "FamiliarSpecialAbility", familiar_special_ability: id }),
+  KarmaSpecialAbility: id => ({ tag: "KarmaSpecialAbility", karma_special_ability: id }),
+  ProtectiveWardingCircleSpecialAbility: id => ({
+    tag: "ProtectiveWardingCircleSpecialAbility",
+    protective_warding_circle_special_ability: id,
+  }),
+  CombatStyleSpecialAbility: id => ({
+    tag: "CombatStyleSpecialAbility",
+    combat_style_special_ability: id,
+  }),
+  AdvancedCombatSpecialAbility: id => ({
+    tag: "AdvancedCombatSpecialAbility",
+    advanced_combat_special_ability: id,
+  }),
+  CommandSpecialAbility: id => ({ tag: "CommandSpecialAbility", command_special_ability: id }),
+  MagicStyleSpecialAbility: id => ({
+    tag: "MagicStyleSpecialAbility",
+    magic_style_special_ability: id,
+  }),
+  AdvancedMagicalSpecialAbility: id => ({
+    tag: "AdvancedMagicalSpecialAbility",
+    advanced_magical_special_ability: id,
+  }),
+  SpellSwordEnchantment: id => ({ tag: "SpellSwordEnchantment", spell_sword_enchantment: id }),
+  DaggerRitual: id => ({ tag: "DaggerRitual", dagger_ritual: id }),
+  InstrumentEnchantment: id => ({ tag: "InstrumentEnchantment", instrument_enchantment: id }),
+  AttireEnchantment: id => ({ tag: "AttireEnchantment", attire_enchantment: id }),
+  OrbEnchantment: id => ({ tag: "OrbEnchantment", orb_enchantment: id }),
+  WandEnchantment: id => ({ tag: "WandEnchantment", wand_enchantment: id }),
+  BrawlingSpecialAbility: id => ({ tag: "BrawlingSpecialAbility", brawling_special_ability: id }),
+  AncestorGlyph: id => ({ tag: "AncestorGlyph", ancestor_glyph: id }),
+  CeremonialItemSpecialAbility: id => ({
+    tag: "CeremonialItemSpecialAbility",
+    ceremonial_item_special_ability: id,
+  }),
+  Sermon: id => ({ tag: "Sermon", sermon: id }),
+  LiturgicalStyleSpecialAbility: id => ({
+    tag: "LiturgicalStyleSpecialAbility",
+    liturgical_style_special_ability: id,
+  }),
+  AdvancedKarmaSpecialAbility: id => ({
+    tag: "AdvancedKarmaSpecialAbility",
+    advanced_karma_special_ability: id,
+  }),
+  Vision: id => ({ tag: "Vision", vision: id }),
+  MagicalTradition: id => ({ tag: "MagicalTradition", magical_tradition: id }),
+  BlessedTradition: id => ({ tag: "BlessedTradition", blessed_tradition: id }),
+  PactGift: id => ({ tag: "PactGift", pact_gift: id }),
+  SikaryanDrainSpecialAbility: id => ({
+    tag: "SikaryanDrainSpecialAbility",
+    sikaryan_drain_special_ability: id,
+  }),
+  LycantropicGift: id => ({ tag: "LycantropicGift", lycantropic_gift: id }),
+  SkillStyleSpecialAbility: id => ({
+    tag: "SkillStyleSpecialAbility",
+    skill_style_special_ability: id,
+  }),
+  AdvancedSkillSpecialAbility: id => ({
+    tag: "AdvancedSkillSpecialAbility",
+    advanced_skill_special_ability: id,
+  }),
+  ArcaneOrbEnchantment: id => ({ tag: "ArcaneOrbEnchantment", arcane_orb_enchantment: id }),
+  CauldronEnchantment: id => ({ tag: "CauldronEnchantment", cauldron_enchantment: id }),
+  FoolsHatEnchantment: id => ({ tag: "FoolsHatEnchantment", fools_hat_enchantment: id }),
+  ToyEnchantment: id => ({ tag: "ToyEnchantment", toy_enchantment: id }),
+  BowlEnchantment: id => ({ tag: "BowlEnchantment", bowl_enchantment: id }),
+  FatePointSexSpecialAbility: id => ({
+    tag: "FatePointSexSpecialAbility",
+    fate_point_sex_special_ability: id,
+  }),
+  SexSpecialAbility: id => ({ tag: "SexSpecialAbility", sex_special_ability: id }),
+  WeaponEnchantment: id => ({ tag: "WeaponEnchantment", weapon_enchantment: id }),
+  SickleRitual: id => ({ tag: "SickleRitual", sickle_ritual: id }),
+  RingEnchantment: id => ({ tag: "RingEnchantment", ring_enchantment: id }),
+  ChronicleEnchantment: id => ({ tag: "ChronicleEnchantment", chronicle_enchantment: id }),
+  Krallenkettenzauber: id => ({ tag: "Krallenkettenzauber", krallenkettenzauber: id }),
+  Trinkhornzauber: id => ({ tag: "Trinkhornzauber", trinkhornzauber: id }),
+  Attribute: id => ({ tag: "Attribute", attribute: id }),
+  Skill: id => ({ tag: "Skill", skill: id }),
+  CloseCombatTechnique: id => ({ tag: "CloseCombatTechnique", close_combat_technique: id }),
+  RangedCombatTechnique: id => ({ tag: "RangedCombatTechnique", ranged_combat_technique: id }),
+  Cantrip: id => ({ tag: "Cantrip", cantrip: id }),
+  Spell: id => ({ tag: "Spell", spell: id }),
+  Ritual: id => ({ tag: "Ritual", ritual: id }),
+  Curse: id => ({ tag: "Curse", curse: id }),
+  ElvenMagicalSong: id => ({ tag: "ElvenMagicalSong", elven_magical_song: id }),
+  DominationRitual: id => ({ tag: "DominationRitual", domination_ritual: id }),
+  MagicalMelody: id => ({ tag: "MagicalMelody", magical_melody: id }),
+  MagicalDance: id => ({ tag: "MagicalDance", magical_dance: id }),
+  JesterTrick: id => ({ tag: "JesterTrick", jester_trick: id }),
+  AnimistPower: id => ({ tag: "AnimistPower", animist_power: id }),
+  GeodeRitual: id => ({ tag: "GeodeRitual", geode_ritual: id }),
+  ZibiljaRitual: id => ({ tag: "ZibiljaRitual", zibilja_ritual: id }),
+  Blessing: id => ({ tag: "Blessing", blessing: id }),
+  LiturgicalChant: id => ({ tag: "LiturgicalChant", liturgical_chant: id }),
+  Ceremony: id => ({ tag: "Ceremony", ceremony: id }),
+  Alchemicum: id => ({ tag: "Alchemicum", alchemicum: id }),
+  Ammunition: id => ({ tag: "Ammunition", ammunition: id }),
+  Animal: id => ({ tag: "Animal", animal: id }),
+  AnimalCare: id => ({ tag: "AnimalCare", animal_care: id }),
+  Armor: id => ({ tag: "Armor", armor: id }),
+  BandageOrRemedy: id => ({ tag: "BandageOrRemedy", bandage_or_remedy: id }),
+  Book: id => ({ tag: "Book", book: id }),
+  CeremonialItem: id => ({ tag: "CeremonialItem", ceremonial_item: id }),
+  Clothes: id => ({ tag: "Clothes", clothes: id }),
+  Container: id => ({ tag: "Container", container: id }),
+  EquipmentOfBlessedOnes: id => ({ tag: "EquipmentOfBlessedOnes", equipment_of_blessed_ones: id }),
+  GemOrPreciousStone: id => ({ tag: "GemOrPreciousStone", gem_or_precious_stone: id }),
+  IlluminationLightSource: id => ({
+    tag: "IlluminationLightSource",
+    illumination_light_source: id,
+  }),
+  IlluminationRefillsOrSupplies: id => ({
+    tag: "IlluminationRefillsOrSupplies",
+    illumination_refills_or_supplies: id,
+  }),
+  Jewelry: id => ({ tag: "Jewelry", jewelry: id }),
+  Liebesspielzeug: id => ({ tag: "Liebesspielzeug", liebesspielzeug: id }),
+  LuxuryGood: id => ({ tag: "LuxuryGood", luxury_good: id }),
+  MagicalArtifact: id => ({ tag: "MagicalArtifact", magical_artifact: id }),
+  MusicalInstrument: id => ({ tag: "MusicalInstrument", musical_instrument: id }),
+  OrienteeringAid: id => ({ tag: "OrienteeringAid", orienteering_aid: id }),
+  Poison: id => ({ tag: "Poison", poison: id }),
+  RopeOrChain: id => ({ tag: "RopeOrChain", rope_or_chain: id }),
+  Stationary: id => ({ tag: "Stationary", stationary: id }),
+  ThievesTool: id => ({ tag: "ThievesTool", thieves_tool: id }),
+  ToolOfTheTrade: id => ({ tag: "ToolOfTheTrade", tool_of_the_trade: id }),
+  TravelGearOrTool: id => ({ tag: "TravelGearOrTool", travel_gear_or_tool: id }),
+  Vehicle: id => ({ tag: "Vehicle", vehicle: id }),
+  Weapon: id => ({ tag: "Weapon", weapon: id }),
+  WeaponAccessory: id => ({ tag: "WeaponAccessory", weapon_accessory: id }),
+} as const
+
+/**
+ * Creates an identifier object from a type name and a plain identifier.
+ */
+export const createIdentifierObject = <T extends keyof TagPropertyOptions>(
+  tag: T,
+  id: number,
+): TagPropertyOptions[T] => TagPropertyMap[tag](id)

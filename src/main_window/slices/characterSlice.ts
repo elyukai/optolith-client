@@ -12,17 +12,29 @@ import { createImmerReducer, reduceReducers } from "../../shared/utils/redux.ts"
 import { RootState } from "../store.ts"
 import { attributesReducer } from "./attributesSlice.ts"
 import { blessingsReducer } from "./blessingsSlice.ts"
+import { cantripsReducer } from "./cantripsSlice.ts"
 import { ceremoniesReducer } from "./ceremoniesSlice.ts"
 import { closeCombatTechniquesReducer } from "./closeCombatTechniqueSlice.ts"
 import { DatabaseState } from "./databaseSlice.ts"
 import { derivedCharacteristicsReducer } from "./derivedCharacteristicsSlice.ts"
 import { liturgicalChantsReducer } from "./liturgicalChantsSlice.ts"
+import { animistPowersReducer } from "./magicalActions/animistPowersSlice.ts"
+import { cursesReducer } from "./magicalActions/cursesSlice.ts"
+import { dominationRitualsReducer } from "./magicalActions/dominationRitualsSlice.ts"
+import { elvenMagicalSongsReducer } from "./magicalActions/elvenMagicalSongsSlice.ts"
+import { geodeRitualsReducer } from "./magicalActions/geodeRitualsSlice.ts"
+import { jesterTricksReducer } from "./magicalActions/jesterTricksSlice.ts"
+import { magicalDancesReducer } from "./magicalActions/magicalDancesSlice.ts"
+import { magicalMelodiesReducer } from "./magicalActions/magicalMelodiesSlice.ts"
+import { zibiljaRitualsReducer } from "./magicalActions/zibiljaRitualsSlice.ts"
 import { personalDataReducer } from "./personalDataSlice.ts"
 import { professionReducer } from "./professionSlice.ts"
 import { raceReducer } from "./raceSlice.ts"
 import { rangedCombatTechniquesReducer } from "./rangedCombatTechniqueSlice.ts"
+import { ritualsReducer } from "./ritualsSlice.ts"
 import { rulesReducer } from "./rulesSlice.ts"
 import { skillsReducer } from "./skillsSlice.ts"
+import { spellsReducer } from "./spellsSlice.ts"
 
 /**
  * The full state of a single character.
@@ -1354,6 +1366,18 @@ export const characterReducer = reduceReducers<
   skillsReducer,
   closeCombatTechniquesReducer,
   rangedCombatTechniquesReducer,
+  cantripsReducer,
+  spellsReducer,
+  ritualsReducer,
+  cursesReducer,
+  elvenMagicalSongsReducer,
+  dominationRitualsReducer,
+  magicalDancesReducer,
+  magicalMelodiesReducer,
+  jesterTricksReducer,
+  animistPowersReducer,
+  geodeRitualsReducer,
+  zibiljaRitualsReducer,
   blessingsReducer,
   liturgicalChantsReducer,
   ceremoniesReducer,

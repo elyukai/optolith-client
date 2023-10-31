@@ -190,6 +190,13 @@ export const isRatedActive = (entry: ActivatableRated): entry is ActiveActivatab
   entry.value !== undefined
 
 /**
+ * Checks whether the entry that may not exist is active.
+ */
+export const isOptionalRatedActive = (
+  entry: ActivatableRated | undefined,
+): entry is ActiveActivatableRated => entry?.value !== undefined
+
+/**
  * Instances of activatable entries that are specified by a rating/value, keyed
  * by identifier.
  */

@@ -1,10 +1,15 @@
 import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
 import {
+  MagicalActionIdentifier,
+  SpellworkIdentifier,
+} from "optolith-database-schema/types/_IdentifierGroup"
+import {
   AttributeReference,
   PropertyReference,
 } from "optolith-database-schema/types/_SimpleReferences"
 import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
 import { filterNonNullable } from "../utils/array.ts"
+import { assertExhaustive } from "../utils/typeSafety.ts"
 import { Activatable, countOptions } from "./activatableEntry.ts"
 import { RatedDependency, flattenMinimumRestrictions } from "./rated/ratedDependency.ts"
 import { ActivatableRated } from "./ratedEntry.ts"
@@ -60,7 +65,7 @@ export const getSpellworkMaximum = (
   isInCharacterCreation: boolean,
   startExperienceLevel: ExperienceLevel,
   exceptionalSkill: Activatable | undefined,
-  type: "Spell" | "Ritual" | undefined,
+  type: (SpellworkIdentifier | MagicalActionIdentifier)["tag"],
 ): number => {
   const maximumValues = filterNonNullable([
     getHighestAttributeValue(staticSpellwork.check) + 2,
@@ -72,7 +77,30 @@ export const getSpellworkMaximum = (
   ])
 
   const exceptionalSkillBonus =
-    type === undefined ? 0 : countOptions(exceptionalSkill, { type, value: staticSpellwork.id })
+    exceptionalSkill === undefined
+      ? 0
+      : (() => {
+          switch (type) {
+            case "Spell":
+            case "Ritual":
+              return countOptions(exceptionalSkill, {
+                type,
+                value: staticSpellwork.id,
+              })
+            case "Curse":
+            case "ElvenMagicalSong":
+            case "DominationRitual":
+            case "MagicalMelody":
+            case "MagicalDance":
+            case "JesterTrick":
+            case "AnimistPower":
+            case "GeodeRitual":
+            case "ZibiljaRitual":
+              return 0
+            default:
+              return assertExhaustive(type)
+          }
+        })()
 
   return Math.min(...maximumValues) + exceptionalSkillBonus
 }

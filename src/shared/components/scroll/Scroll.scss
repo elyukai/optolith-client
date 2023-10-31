@@ -48,7 +48,7 @@
       background: transparent;
     }
 
-    main > & > .scroll-inner {
+    :is(main, .main-content) > & > .scroll-inner {
       padding: 21px 21px 21px 0;
     }
   }

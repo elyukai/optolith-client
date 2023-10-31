@@ -1,5 +1,7 @@
+import { RequirableSelectOptionIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
 import { Equality } from "../utils/compare.ts"
 import { isNotNullish } from "../utils/nullable.ts"
+import { assertExhaustive } from "../utils/typeSafety.ts"
 
 /**
  * An activatable entry.
@@ -14,23 +16,28 @@ export type Activatable = {
   /**
    * One or multiple activations of the activatable.
    */
-  instances: {
-    /**
-     * One or multiple options for the activatable. The meaning depends on the activatable.
-     * @minItems 1
-     */
-    options?: ActivatableOption[]
+  instances: ActivatableInstance[]
+}
 
-    /**
-     * The instance level (if the activatable has levels).
-     */
-    level?: number
+/**
+ * A single activation of an activatable entry.
+ */
+export type ActivatableInstance = {
+  /**
+   * One or multiple options for the activatable. The meaning depends on the activatable.
+   * @minItems 1
+   */
+  options?: ActivatableOption[]
 
-    /**
-     * If provided, a custom adventure points value has been set for this instance.
-     */
-    customAdventurePointsValue?: number
-  }[]
+  /**
+   * The instance level (if the activatable has levels).
+   */
+  level?: number
+
+  /**
+   * If provided, a custom adventure points value has been set for this instance.
+   */
+  customAdventurePointsValue?: number
 }
 
 /**
@@ -104,6 +111,14 @@ export type ActivatableMap = {
   [id: number]: Activatable
 }
 
+/**
+ * Creates an initial dynamic activatable entry.
+ */
+export const createEmptyDynamicActivatable = (id: number): Activatable => ({
+  id,
+  instances: [],
+})
+
 const equalOptionId: Equality<PredefinedActivatableOption["id"]> = (a, b) =>
   a.type === b.type && a.value === b.value
 
@@ -151,6 +166,33 @@ export const countOptions = (
   }).length ?? 0
 
 /**
+ * Returns the option value of the first instance of a given activatable entry.
+ * It defaults to the first option in the options array, but a different index
+ * can be specified.
+ */
+export const getFirstOption = (
+  activatable: Activatable | undefined,
+  atIndex = 0,
+): ActivatableOption | undefined => activatable?.instances[0]?.options?.[atIndex]
+
+/**
+ * Returns the option value of the first instance of a given activatable entry
+ * if it corresponds to a given predefined type. It defaults to the first option
+ * in the options array, but a different index can be specified.
+ */
+export const getFirstOptionOfType = (
+  activatable: Activatable | undefined,
+  type: PredefinedActivatableOption["id"]["type"],
+  atIndex = 0,
+): number | undefined => {
+  const firstOption = getFirstOption(activatable, atIndex)
+  if (firstOption?.type === "Predefined" && firstOption.id.type === type) {
+    return firstOption.id.value
+  }
+  return undefined
+}
+
+/**
  * Returns option values of instances of a given activatable entry. It defaults
  * to the first option in the options array, but a different index can be
  * specified.
@@ -160,3 +202,32 @@ export const getOptions = (
   atIndex = 0,
 ): ActivatableOption[] =>
   activatable?.instances.map(instance => instance.options?.[atIndex]).filter(isNotNullish) ?? []
+
+/**
+ * Checks if a prerequisite option and an instance option are equal.
+ */
+export const equalsOptionPrerequisite = (
+  instanceOption: PredefinedActivatableOption["id"],
+  prerequisiteOption: RequirableSelectOptionIdentifier,
+): boolean => {
+  switch (prerequisiteOption.tag) {
+    case "General":
+      return (
+        instanceOption.type === "Generic" && prerequisiteOption.general === instanceOption.value
+      )
+    case "Skill":
+      return instanceOption.type === "Skill" && prerequisiteOption.skill === instanceOption.value
+    case "CloseCombatTechnique":
+      return (
+        instanceOption.type === "CloseCombatTechnique" &&
+        prerequisiteOption.close_combat_technique === instanceOption.value
+      )
+    case "RangedCombatTechnique":
+      return (
+        instanceOption.type === "RangedCombatTechnique" &&
+        prerequisiteOption.ranged_combat_technique === instanceOption.value
+      )
+    default:
+      return assertExhaustive(prerequisiteOption)
+  }
+}
