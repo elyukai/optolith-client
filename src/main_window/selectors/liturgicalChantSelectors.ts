@@ -283,17 +283,9 @@ const selectIsMaximumOfLiturgicalChantsReached = createSelector(
   selectActiveLiturgicalChantsCount,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
-  (activeCount, isInCharacterCreation, startExperienceLevel) => {
-    if (startExperienceLevel === undefined) {
-      return true
-    }
-
-    return isMaximumOfLiturgicalChantsReached(
-      activeCount,
-      isInCharacterCreation,
-      startExperienceLevel,
-    )
-  },
+  (activeCount, isInCharacterCreation, startExperienceLevel) =>
+    startExperienceLevel === undefined ||
+    isMaximumOfLiturgicalChantsReached(activeCount, isInCharacterCreation, startExperienceLevel),
 )
 
 const selectActiveLiturgicalChantsCountByUnfamiliarTradition = createSelector(

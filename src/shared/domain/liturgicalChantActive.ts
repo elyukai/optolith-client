@@ -3,6 +3,7 @@ import { Ceremony } from "optolith-database-schema/types/Ceremony"
 import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
 import { LiturgicalChant } from "optolith-database-schema/types/LiturgicalChant"
 import { isNotNullish } from "../utils/nullable.ts"
+import { assertExhaustive } from "../utils/typeSafety.ts"
 import { Activatable } from "./activatableEntry.ts"
 import { getHighestAttributeValue } from "./attribute.ts"
 import { FilterApplyingRatedDependencies } from "./dependencies/filterApplyingDependencies.ts"
@@ -135,7 +136,16 @@ export const getActiveLiturgicalChantsOrCeremonies = <
         isInCharacterCreation,
         startExperienceLevel,
         exceptionalSkill,
-        kind === "liturgicalChant" ? "LiturgicalChant" : "Ceremony",
+        (() => {
+          switch (kind) {
+            case "liturgicalChant":
+              return "LiturgicalChant"
+            case "ceremony":
+              return "Ceremony"
+            default:
+              return assertExhaustive(kind)
+          }
+        })(),
       )
 
       return {
