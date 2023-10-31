@@ -90,6 +90,7 @@ export type DisplayableMainIdentifier =
   | ID.SickleRitualIdentifier
   | ID.SikaryanDrainSpecialAbilityIdentifier
   | ID.SkillIdentifier
+  | ID.SpellIdentifier
   | ID.ThievesToolIdentifier
   | ID.ToolOfTheTradeIdentifier
   | ID.ToyEnchantmentIdentifier

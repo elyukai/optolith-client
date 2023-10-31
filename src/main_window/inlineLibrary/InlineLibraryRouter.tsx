@@ -12,6 +12,9 @@ type Props = {
   id: DisplayableMainIdentifier
 }
 
+/**
+ * Displays the right component for the requested entry.
+ */
 export const InlineLibraryRouter: FC<Props> = ({ id }) => {
   switch (id.tag) {
     case "AdvancedCombatSpecialAbility":
@@ -186,6 +189,8 @@ export const InlineLibraryRouter: FC<Props> = ({ id }) => {
       return <InlineLibraryPlaceholder />
     case "Skill":
       return <InlineLibrarySkill id={id.skill} />
+    case "Spell":
+      return <InlineLibraryPlaceholder />
     case "ThievesTool":
       return <InlineLibraryPlaceholder />
     case "ToolOfTheTrade":
