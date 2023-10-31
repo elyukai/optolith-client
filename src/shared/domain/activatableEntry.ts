@@ -4,6 +4,11 @@ import { isNotNullish } from "../utils/nullable.ts"
 import { assertExhaustive } from "../utils/typeSafety.ts"
 
 /**
+ * A simple set of activated activatable identifiers.
+ */
+export type TinyActivatableSet = number[]
+
+/**
  * An activatable entry.
  */
 export type Activatable = {
