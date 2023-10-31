@@ -9,12 +9,12 @@ import { Page } from "../../../../../shared/components/page/Page.tsx"
 import { RadioButtonGroup } from "../../../../../shared/components/radioButton/RadioButtonGroup.tsx"
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { TextField } from "../../../../../shared/components/textField/TextField.tsx"
+import { SpecialAbilitiesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
 import {
-  SpecialAbilitiesSortOrder,
   changeSpecialAbilitiesSortOrder,
   selectSpecialAbilitiesSortOrder,
 } from "../../../../slices/settingsSlice.ts"

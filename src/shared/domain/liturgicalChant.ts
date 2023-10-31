@@ -5,7 +5,6 @@ import { LiturgyIdentifier } from "optolith-database-schema/types/_IdentifierGro
 import { ImprovementCost } from "optolith-database-schema/types/_ImprovementCost"
 import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
 import { BlessedTradition } from "optolith-database-schema/types/specialAbility/BlessedTradition"
-import { LiturgiesSortOrder } from "../../main_window/slices/settingsSlice.ts"
 import { count, countByMany } from "../utils/array.ts"
 import { Compare, compareAt, compareNullish, numAsc, reduceCompare } from "../utils/compare.ts"
 import { isNotNullish } from "../utils/nullable.ts"
@@ -24,6 +23,7 @@ import {
   isRatedActive,
   isRatedWithEnhancementsActive,
 } from "./ratedEntry.ts"
+import { LiturgiesSortOrder } from "./sortOrders.ts"
 
 /**
  * Returns the value for a dynamic liturgical chant entry that might not exist

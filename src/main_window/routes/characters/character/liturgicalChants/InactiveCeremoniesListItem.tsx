@@ -7,6 +7,7 @@ import { ListItemValues } from "../../../../../shared/components/list/ListItemVa
 import { fromRaw } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
 import { getAspectsForTranslation } from "../../../../../shared/domain/liturgicalChant.ts"
 import { DisplayedInactiveCeremony } from "../../../../../shared/domain/liturgicalChantInactive.ts"
+import { LiturgiesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
@@ -17,7 +18,6 @@ import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
 } from "../../../../slices/inlineWikiSlice.ts"
-import { LiturgiesSortOrder } from "../../../../slices/settingsSlice.ts"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillCheck } from "../skills/SkillCheck.tsx"
 import { SkillFill } from "../skills/SkillFill.tsx"

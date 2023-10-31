@@ -6,6 +6,7 @@ import { ListItemSeparator } from "../../../../../shared/components/list/ListIte
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
 import { AspectIdentifier } from "../../../../../shared/domain/identifier.ts"
 import { DisplayedActiveBlessing } from "../../../../../shared/domain/liturgicalChantActive.ts"
+import { LiturgiesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
@@ -15,7 +16,6 @@ import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
 } from "../../../../slices/inlineWikiSlice.ts"
-import { LiturgiesSortOrder } from "../../../../slices/settingsSlice.ts"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillFill } from "../skills/SkillFill.tsx"
 

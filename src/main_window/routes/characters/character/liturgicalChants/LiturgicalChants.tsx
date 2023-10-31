@@ -14,6 +14,7 @@ import { TextField } from "../../../../../shared/components/textField/TextField.
 import { filterAndSortDisplayed } from "../../../../../shared/domain/liturgicalChant.ts"
 import { DisplayedActiveLiturgy } from "../../../../../shared/domain/liturgicalChantActive.ts"
 import { DisplayedInactiveLiturgy } from "../../../../../shared/domain/liturgicalChantInactive.ts"
+import { LiturgiesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
@@ -40,7 +41,6 @@ import {
   removeLiturgicalChant,
 } from "../../../../slices/liturgicalChantsSlice.ts"
 import {
-  LiturgiesSortOrder,
   changeLiturgiesSortOrder,
   selectLiturgiesSortOrder,
 } from "../../../../slices/settingsSlice.ts"

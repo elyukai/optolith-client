@@ -13,6 +13,7 @@ import {
   compareImprovementCost,
   fromRaw,
 } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
+import { CombatTechniquesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
@@ -34,7 +35,6 @@ import {
   incrementRangedCombatTechnique,
 } from "../../../../slices/rangedCombatTechniqueSlice.ts"
 import {
-  CombatTechniquesSortOrder,
   changeCombatTechniquesSortOrder,
   selectCombatTechniquesSortOrder,
 } from "../../../../slices/settingsSlice.ts"

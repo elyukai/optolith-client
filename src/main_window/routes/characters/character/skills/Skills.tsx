@@ -16,6 +16,7 @@ import {
   compareImprovementCost,
   fromRaw,
 } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
+import { SkillsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
@@ -27,7 +28,6 @@ import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
 import { DisplayedSkill, selectVisibleSkills } from "../../../../selectors/skillsSelectors.ts"
 import { selectStaticSkillGroups } from "../../../../slices/databaseSlice.ts"
 import {
-  SkillsSortOrder,
   changeSkillsSortOrder,
   selectSkillsCultureRatingVisibility,
   selectSkillsSortOrder,
