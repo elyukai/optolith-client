@@ -32,6 +32,7 @@ export const baseCharacter: Character = {
     activeFocusRules: {},
     activeOptionalRules: {},
   },
+  activeStates: {},
   personalData: {
     sex: { type: "Male" },
     socialStatus: {

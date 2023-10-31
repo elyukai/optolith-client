@@ -34,6 +34,7 @@ import { spellsReducer } from "./spellsSlice.ts"
  */
 export type CharacterState = Character
 
+// TODO: Remove prefilled values for a real character
 const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified"> = {
   id: "550e8400-e29b-11d4-a716-446655440000",
   version: undefined,
@@ -60,6 +61,7 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     activeFocusRules: {},
     activeOptionalRules: {},
   },
+  activeStates: [],
   personalData: {
     sex: { type: "Male" },
     socialStatus: {

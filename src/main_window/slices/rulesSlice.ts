@@ -27,6 +27,7 @@ export const rulesReducer = createImmerReducer<CharacterState>((state, action) =
     } else {
       state.rules.activeFocusRules[action.payload] = {
         id: action.payload,
+        dependencies: [],
       }
     }
   } else if (switchOptionalRule.match(action)) {
@@ -36,10 +37,12 @@ export const rulesReducer = createImmerReducer<CharacterState>((state, action) =
       state.rules.activeOptionalRules[action.payload] = {
         id: action.payload,
         options: [2],
+        dependencies: [],
       }
     } else {
       state.rules.activeOptionalRules[action.payload] = {
         id: action.payload,
+        dependencies: [],
       }
     }
   } else if (changeOptionalRuleOption.match(action)) {
