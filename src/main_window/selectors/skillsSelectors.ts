@@ -1,7 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { Skill } from "optolith-database-schema/types/Skill"
 import { getHighestAttributeValue } from "../../shared/domain/attribute.ts"
-import { filterApplyingRatedDependencies } from "../../shared/domain/dependencies/filterApplyingDependencies.ts"
 import {
   AdvantageIdentifier,
   GeneralSpecialAbilityIdentifier,
@@ -18,19 +17,14 @@ import { createPropertySelector } from "../../shared/utils/redux.ts"
 import {
   selectDynamicAdvantages,
   selectDynamicAttributes,
-  selectDynamicCeremonies,
-  selectDynamicCloseCombatTechniques,
   selectDynamicGeneralSpecialAbilities,
-  selectDynamicLiturgicalChants,
-  selectDynamicRangedCombatTechniques,
-  selectDynamicRituals,
   selectDynamicSkills,
-  selectDynamicSpells,
 } from "../slices/characterSlice.ts"
 import { selectStaticSkills } from "../slices/databaseSlice.ts"
 import { createInitialDynamicSkill } from "../slices/skillsSlice.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectCurrentCulture } from "./cultureSelectors.ts"
+import { selectFilterApplyingRatedDependencies } from "./dependencySelectors.ts"
 import { selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
 
 /**
@@ -66,12 +60,7 @@ export const selectVisibleSkills = createSelector(
     GeneralSpecialAbilityIdentifier.CraftInstruments,
   ),
   selectCurrentCulture,
-  selectDynamicCloseCombatTechniques,
-  selectDynamicRangedCombatTechniques,
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicLiturgicalChants,
-  selectDynamicCeremonies,
+  selectFilterApplyingRatedDependencies,
   (
     skills,
     dynamicSkills,
@@ -82,25 +71,9 @@ export const selectVisibleSkills = createSelector(
     exceptionalSkill,
     craftInstruments,
     culture,
-    closeCombatTechniques,
-    rangedCombatTechniques,
-    spells,
-    rituals,
-    liturgicalChants,
-    ceremonies,
-  ): DisplayedSkill[] => {
-    const filterApplyingDependencies = filterApplyingRatedDependencies({
-      attributes,
-      skills: dynamicSkills,
-      closeCombatTechniques,
-      rangedCombatTechniques,
-      spells,
-      rituals,
-      liturgicalChants,
-      ceremonies,
-    })
-
-    return Object.values(skills).map(skill => {
+    filterApplyingDependencies,
+  ): DisplayedSkill[] =>
+    Object.values(skills).map(skill => {
       const dynamicSkill = dynamicSkills[skill.id] ?? createInitialDynamicSkill(skill.id)
 
       const minimum = getSkillMinimum(
@@ -127,6 +100,5 @@ export const selectVisibleSkills = createSelector(
         isIncreasable: isSkillIncreasable(dynamicSkill, maximum),
         commonness: culture === undefined ? undefined : getSkillCommonness(culture, skill),
       }
-    })
-  },
+    }),
 )

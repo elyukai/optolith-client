@@ -3,14 +3,9 @@ import {
   selectDynamicAttributes,
   selectDynamicBlessings,
   selectDynamicCeremonies,
-  selectDynamicCloseCombatTechniques,
   selectDynamicKarmaSpecialAbilities,
   selectDynamicLiturgicalChants,
   selectDynamicLiturgicalStyleSpecialAbilities,
-  selectDynamicRangedCombatTechniques,
-  selectDynamicRituals,
-  selectDynamicSkills,
-  selectDynamicSpells,
 } from "../slices/characterSlice.ts"
 import {
   selectStaticBlessings,
@@ -20,7 +15,6 @@ import {
 
 import { createSelector } from "@reduxjs/toolkit"
 import { getOptions } from "../../shared/domain/activatableEntry.ts"
-import { filterApplyingRatedDependencies } from "../../shared/domain/dependencies/filterApplyingDependencies.ts"
 import {
   AdvantageIdentifier,
   KarmaSpecialAbilityIdentifier,
@@ -50,6 +44,7 @@ import {
 import { partition } from "../../shared/utils/array.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"
+import { selectFilterApplyingRatedDependencies } from "./dependencySelectors.ts"
 import { selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
 import { selectIsEntryAvailable } from "./publicationSelectors.ts"
 import { selectActiveBlessedTradition } from "./traditionSelectors.ts"
@@ -119,14 +114,9 @@ export const selectVisibleActiveLiturgicalChants = createSelector(
   selectCanRemove,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalSkill),
   selectDynamicAttributes,
-  selectDynamicSkills,
-  selectDynamicCloseCombatTechniques,
-  selectDynamicRangedCombatTechniques,
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicCeremonies,
   selectLiturgicalChantsAbove10ByAspect,
   selectActiveAspectKnowledges,
+  selectFilterApplyingRatedDependencies,
   (
     staticLiturgicalChants,
     dynamicLiturgicalChants,
@@ -135,29 +125,13 @@ export const selectVisibleActiveLiturgicalChants = createSelector(
     canRemove,
     exceptionalSkill,
     attributes,
-    skills,
-    closeCombatTechniques,
-    rangedCombatTechniques,
-    spells,
-    rituals,
-    ceremonies,
     liturgicalChantsAbove10ByAspect,
     activeAspectKnowledges,
+    filterApplyingDependencies,
   ): DisplayedActiveLiturgicalChant[] => {
     if (startExperienceLevel === undefined) {
       return []
     }
-
-    const filterApplyingDependencies = filterApplyingRatedDependencies({
-      attributes,
-      skills,
-      closeCombatTechniques,
-      rangedCombatTechniques,
-      spells,
-      rituals,
-      liturgicalChants: dynamicLiturgicalChants,
-      ceremonies,
-    })
 
     return getActiveLiturgicalChantsOrCeremonies(
       "liturgicalChant",
@@ -187,14 +161,9 @@ export const selectVisibleActiveCeremonies = createSelector(
   selectCanRemove,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalSkill),
   selectDynamicAttributes,
-  selectDynamicSkills,
-  selectDynamicCloseCombatTechniques,
-  selectDynamicRangedCombatTechniques,
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicLiturgicalChants,
   selectLiturgicalChantsAbove10ByAspect,
   selectActiveAspectKnowledges,
+  selectFilterApplyingRatedDependencies,
   (
     staticCeremonies,
     dynamicCeremonies,
@@ -203,29 +172,13 @@ export const selectVisibleActiveCeremonies = createSelector(
     canRemove,
     exceptionalSkill,
     attributes,
-    skills,
-    closeCombatTechniques,
-    rangedCombatTechniques,
-    spells,
-    rituals,
-    liturgicalChants,
     liturgicalChantsAbove10ByAspect,
     activeAspectKnowledges,
+    filterApplyingDependencies,
   ): DisplayedActiveCeremony[] => {
     if (startExperienceLevel === undefined) {
       return []
     }
-
-    const filterApplyingDependencies = filterApplyingRatedDependencies({
-      attributes,
-      skills,
-      closeCombatTechniques,
-      rangedCombatTechniques,
-      spells,
-      rituals,
-      liturgicalChants,
-      ceremonies: dynamicCeremonies,
-    })
 
     return getActiveLiturgicalChantsOrCeremonies(
       "ceremony",

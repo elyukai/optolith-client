@@ -7,7 +7,6 @@ import {
   isAttributeDecreasable,
   isAttributeIncreasable,
 } from "../../shared/domain/attributeBounds.ts"
-import { filterApplyingRatedDependencies } from "../../shared/domain/dependencies/filterApplyingDependencies.ts"
 import {
   AdvantageIdentifier,
   AttributeIdentifier,
@@ -68,6 +67,7 @@ import {
   selectStaticZibiljaRituals,
 } from "../slices/databaseSlice.ts"
 import { selectIsInCharacterCreation } from "./characterSelectors.ts"
+import { selectFilterApplyingRatedDependencies } from "./dependencySelectors.ts"
 import {
   selectCurrentExperienceLevel,
   selectMaximumTotalAttributePoints,
@@ -199,18 +199,12 @@ export const selectVisibleAttributes = createSelector(
   createPropertySelector(selectActiveOptionalRules, OptionalRuleIdentifier.MaximumAttributeScores),
   selectAttributeAdjustmentId,
   selectDerivedCharacteristics,
-  selectDynamicSkills,
-  selectDynamicCloseCombatTechniques,
-  selectDynamicRangedCombatTechniques,
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicLiturgicalChants,
-  selectDynamicCeremonies,
   selectHighestMagicalPrimaryAttributes,
   selectBlessedPrimaryAttribute,
   selectAttributeMinimaByAssociatedAttributes,
   selectMagicalPrimaryAttributeDependencies,
   selectBlessedPrimaryAttributeDependencies,
+  selectFilterApplyingRatedDependencies,
   (
     attributes,
     dynamicAttributes,
@@ -223,30 +217,13 @@ export const selectVisibleAttributes = createSelector(
     maximumAttributeScores,
     attributeAdjustmentId,
     derivedCharacteristics,
-    skills,
-    closeCombatTechniques,
-    rangedCombatTechniques,
-    spells,
-    rituals,
-    liturgicalChants,
-    ceremonies,
     highestMagicalPrimaryAttributes,
     blessedPrimaryAttribute,
     attributeMinimaByAssociatedAttributes,
     magicalPrimaryAttributeDependencies,
     blessedPrimaryAttributeDependencies,
+    filterApplyingDependencies,
   ): DisplayedAttribute[] => {
-    const filterApplyingDependencies = filterApplyingRatedDependencies({
-      attributes: dynamicAttributes,
-      skills,
-      closeCombatTechniques,
-      rangedCombatTechniques,
-      spells,
-      rituals,
-      liturgicalChants,
-      ceremonies,
-    })
-
     const singleHighestMagicalPrimaryAttribute =
       highestMagicalPrimaryAttributes.list.length === 1
         ? highestMagicalPrimaryAttributes.list[0]

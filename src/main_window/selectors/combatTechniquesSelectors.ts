@@ -14,7 +14,6 @@ import {
   isCombatTechniqueDecreasable,
   isCombatTechniqueIncreasable,
 } from "../../shared/domain/combatTechniqueBounds.ts"
-import { filterApplyingRatedDependencies } from "../../shared/domain/dependencies/filterApplyingDependencies.ts"
 import {
   AdvantageIdentifier,
   GeneralSpecialAbilityIdentifier,
@@ -26,14 +25,9 @@ import { createPropertySelector } from "../../shared/utils/redux.ts"
 import {
   selectDynamicAdvantages,
   selectDynamicAttributes,
-  selectDynamicCeremonies,
   selectDynamicCloseCombatTechniques,
   selectDynamicGeneralSpecialAbilities,
-  selectDynamicLiturgicalChants,
   selectDynamicRangedCombatTechniques,
-  selectDynamicRituals,
-  selectDynamicSkills,
-  selectDynamicSpells,
 } from "../slices/characterSlice.ts"
 import { createInitialDynamicCloseCombatTechnique } from "../slices/closeCombatTechniqueSlice.ts"
 import {
@@ -42,6 +36,7 @@ import {
 } from "../slices/databaseSlice.ts"
 import { createInitialDynamicRangedCombatTechnique } from "../slices/rangedCombatTechniqueSlice.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"
+import { selectFilterApplyingRatedDependencies } from "./dependencySelectors.ts"
 import { selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
 import { selectIsEntryAvailable } from "./publicationSelectors.ts"
 
@@ -110,14 +105,9 @@ export const selectVisibleCloseCombatTechniques = createSelector(
     GeneralSpecialAbilityIdentifier.Hunter,
   ),
   selectDynamicAttributes,
-  selectDynamicSkills,
-  selectDynamicRangedCombatTechniques,
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicLiturgicalChants,
-  selectDynamicCeremonies,
   selectRangedCombatTechniquesAt10,
   selectIsEntryAvailable,
+  selectFilterApplyingRatedDependencies,
   (
     staticCloseCombatTechniques,
     dynamicCloseCombatTechniques,
@@ -127,29 +117,13 @@ export const selectVisibleCloseCombatTechniques = createSelector(
     exceptionalSkill,
     hunter,
     attributes,
-    skills,
-    rangedCombatTechniques,
-    spells,
-    rituals,
-    liturgicalChants,
-    ceremonies,
     rangedCombatTechniquesAt10,
     isEntryAvailable,
+    filterApplyingDependencies,
   ): DisplayedCloseCombatTechnique[] => {
     if (startExperienceLevel === undefined) {
       return []
     }
-
-    const filterApplyingDependencies = filterApplyingRatedDependencies({
-      attributes,
-      skills,
-      closeCombatTechniques: dynamicCloseCombatTechniques,
-      rangedCombatTechniques,
-      spells,
-      rituals,
-      liturgicalChants,
-      ceremonies,
-    })
 
     return Object.values(staticCloseCombatTechniques)
       .filter(staticLiturgicalChant => isEntryAvailable(staticLiturgicalChant.src))
@@ -218,14 +192,9 @@ export const selectVisibleRangedCombatTechniques = createSelector(
     GeneralSpecialAbilityIdentifier.FireEater,
   ),
   selectDynamicAttributes,
-  selectDynamicSkills,
-  selectDynamicCloseCombatTechniques,
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicLiturgicalChants,
-  selectDynamicCeremonies,
   selectRangedCombatTechniquesAt10,
   selectIsEntryAvailable,
+  selectFilterApplyingRatedDependencies,
   (
     staticRangedCombatTechniques,
     dynamicRangedCombatTechniques,
@@ -236,29 +205,13 @@ export const selectVisibleRangedCombatTechniques = createSelector(
     hunter,
     fireEater,
     attributes,
-    skills,
-    closeCombatTechniques,
-    spells,
-    rituals,
-    liturgicalChants,
-    ceremonies,
     rangedCombatTechniquesAt10,
     isEntryAvailable,
+    filterApplyingDependencies,
   ): DisplayedRangedCombatTechnique[] => {
     if (startExperienceLevel === undefined) {
       return []
     }
-
-    const filterApplyingDependencies = filterApplyingRatedDependencies({
-      attributes,
-      skills,
-      closeCombatTechniques,
-      rangedCombatTechniques: dynamicRangedCombatTechniques,
-      spells,
-      rituals,
-      liturgicalChants,
-      ceremonies,
-    })
 
     const isFireEaterActive = isActive(fireEater)
 
