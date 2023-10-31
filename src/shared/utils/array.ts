@@ -119,3 +119,44 @@ export const partition = <T>(arr: T[], predicate: (value: T) => boolean): [pos: 
     },
     [[], []],
   )
+
+/**
+ * Reduces an array, but stops as soon as the predicate returns `true` for an
+ * accumulated value (including the initial value) and returns the last
+ * accumulated value.
+ * @param arr The array to reduce.
+ * @param fn The function to apply to each element in the array.
+ * @param pred The predicate to apply to the initial value and to every result
+ * of a call to `fn`, where if it returns `true`, the reduction stops.
+ * @param initial The initial value.
+ */
+export const reduceWhile = <T, U>(
+  arr: T[],
+  fn: (acc: U, value: T, index: number) => U,
+  pred: (acc: U) => boolean,
+  initial: U,
+): U => {
+  let acc = initial
+  let index = 0
+  while (index < arr.length && !pred(acc)) {
+    acc = fn(acc, arr[index]!, index)
+    index++
+  }
+  return acc
+}
+
+/**
+ * Returns `true` if the array contains at least `minCount` elements that
+ * satisfy the given predicate, `false` otherwise.
+ */
+export const someCount = <T>(
+  arr: T[],
+  predicate: (value: T) => boolean,
+  minCount: number,
+): boolean =>
+  reduceWhile(
+    arr,
+    (acc, value) => (predicate(value) ? acc + 1 : acc),
+    acc => acc >= minCount,
+    0,
+  ) >= minCount

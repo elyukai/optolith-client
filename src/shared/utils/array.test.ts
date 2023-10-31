@@ -10,6 +10,8 @@ import {
   partition,
   range,
   rangeSafe,
+  reduceWhile,
+  someCount,
   sum,
   sumWith,
   unique,
@@ -187,5 +189,59 @@ describe("partition", () => {
         [2, 1],
       ],
     )
+  })
+})
+
+describe("reduceWhile", () => {
+  it("should return the initial value for an empty array", () => {
+    const result = reduceWhile(
+      [],
+      (acc, value) => acc + value,
+      () => false,
+      10,
+    )
+    assert.equal(result, 10)
+  })
+
+  it("should correctly reduce the array", () => {
+    const result = reduceWhile(
+      [1, 2, 3, 4, 5],
+      (acc, value) => acc + value,
+      () => false,
+      0,
+    )
+    assert.equal(result, 15)
+  })
+
+  it("should break early and return the correct value", () => {
+    const result = reduceWhile(
+      [1, 2, 3, 4, 5],
+      (acc, value) => acc + value,
+      acc => acc > 3,
+      0,
+    )
+    assert.equal(result, 6)
+  })
+})
+
+describe("someCount", () => {
+  it("should return true if the array has the required minimum elements that satisfy the predicate", () => {
+    const result = someCount([1, 2, 3, 4, 5], value => value > 2, 3)
+    assert.equal(result, true)
+  })
+
+  it("should return false if the array does not have the required minimum elements that satisfy the predicate", () => {
+    const result = someCount([1, 2, 3, 4, 5], value => value > 5, 3)
+    assert.equal(result, false)
+  })
+
+  it("should return true for an array that has exactly the required number of elements satisfying the predicate", () => {
+    const result = someCount([1, 2, 3, 4, 5], value => value > 3, 2)
+    assert.equal(result, true)
+  })
+
+  it("should return false for an empty array", () => {
+    const result = someCount([], value => value === 0, 2)
+    assert.equal(result, false)
   })
 })
