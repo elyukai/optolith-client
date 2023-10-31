@@ -19,7 +19,7 @@ export type NonBinarySex = {
   /**
    * Defines how a non-binary sex should be treated when checking prerequisites.
    */
-  binaryHandling: BinaryHandling
+  ruleBasedInterpretation: RuleBasedInterpretation
 }
 
 /**
@@ -36,13 +36,13 @@ export type CustomSex = {
   /**
    * Defines how a non-binary sex should be treated when checking prerequisites.
    */
-  binaryHandling: BinaryHandling
+  ruleBasedInterpretation: RuleBasedInterpretation
 }
 
 /**
  * Defines how a non-binary sex should be treated when checking prerequisites.
  */
-export type BinaryHandling = {
+export type RuleBasedInterpretation = {
   /**
    * Defines if the sex should be treated as male when checking prerequisites.
    */
@@ -52,4 +52,28 @@ export type BinaryHandling = {
    * Defines if the sex should be treated as female when checking prerequisites.
    */
   asFemale: boolean
+
+  /**
+   * Defines how a non-binary sex’s sexual characteristics should be treated
+   * when checking prerequisites.
+   */
+  sexualCharacteristics: SexualCharacteristicsInterpretation
+}
+
+/**
+ * Defines how a non-binary sex’s sexual characteristics should be treated when
+ * checking prerequisites.
+ */
+export type SexualCharacteristicsInterpretation = {
+  /**
+   * Defines if the sex should be treated as having a penis when checking
+   * prerequisites.
+   */
+  hasPenis: boolean
+
+  /**
+   * Defines if the sex should be treated as having a vagina when checking
+   * prerequisites.
+   */
+  hasVagina: boolean
 }
