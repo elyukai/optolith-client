@@ -143,7 +143,12 @@ export default [
       ],
       "@typescript-eslint/no-inferrable-types": "error",
       "@typescript-eslint/no-redeclare": "error",
-      "@typescript-eslint/no-shadow": "error",
+      "@typescript-eslint/no-shadow": [
+        "error",
+        {
+          ignoreTypeValueShadow: true,
+        }
+      ],
       "no-unused-expressions": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-unused-expressions": "error",
