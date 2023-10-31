@@ -19,42 +19,6 @@ import { changeCharactersSortOrder, selectCharactersSortOrder } from "../../slic
 import "./Characters.scss"
 import { CharactersItem } from "./CharactersItem.tsx"
 
-// export interface HerolistOwnProps {
-//   staticData: StaticDataRecord
-// }
-
-// export interface HerolistStateProps {
-//   experienceLevels: OrderedMap<string, Record<ExperienceLevel>>
-//   filterText: string
-//   list: List<HeroModelRecord>
-//   visibilityFilter: string
-//   sortOrder: SortNames
-//   isCharacterCreatorOpen: boolean
-//   sortedBooks: List<Record<Book>>
-// }
-
-// export interface HerolistDispatchProps {
-//   createHero (
-//     name: string,
-//     sex: "m" | "f",
-//     el: string,
-//     enableAllRuleBooks: boolean,
-//     enabledRuleBooks: OrderedSet<string>
-//   ): void
-//   importHero (): void
-//   setFilterText (newValue: string): void
-//   setSortOrder (id: SortNames): void
-//   setVisibilityFilter (id: Maybe<string>): void
-//   openCharacterCreator (): void
-//   closeCharacterCreator (): void
-// }
-
-// export type HerolistProps = HerolistStateProps & HerolistDispatchProps & HerolistOwnProps
-
-export interface HerolistState {
-  showHeroCreation: boolean
-}
-
 export const Characters: FC = () => {
   const translate = useTranslate()
   const localeCompare = useLocaleCompare()
