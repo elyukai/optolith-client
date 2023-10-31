@@ -1,4 +1,7 @@
-import { OptionalRule, OptionalRuleTranslation } from "optolith-database-schema/types/rule/OptionalRule"
+import {
+  OptionalRule,
+  OptionalRuleTranslation,
+} from "optolith-database-schema/types/rule/OptionalRule"
 import { FC, useMemo } from "react"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
@@ -23,12 +26,16 @@ export const OptionalRules: FC = () => {
       Object.values(optionalRules)
         .filter(x => isEntryAvailable(x.src) || Object.hasOwn(activeOptionalRules, x.id))
         .map(x => ({ optionalRule: x, optionalRuleTranslation: translateMap(x.translations) }))
-        .filter((x): x is {
-          optionalRule: OptionalRule
-          optionalRuleTranslation: OptionalRuleTranslation
-        } => x.optionalRuleTranslation !== undefined)
+        .filter(
+          (
+            x,
+          ): x is {
+            optionalRule: OptionalRule
+            optionalRuleTranslation: OptionalRuleTranslation
+          } => x.optionalRuleTranslation !== undefined,
+        )
         .sort(compareAt(x => translateMap(x.optionalRule.translations)?.name ?? "", localeCompare)),
-    [ activeOptionalRules, optionalRules, isEntryAvailable, localeCompare, translateMap ],
+    [activeOptionalRules, optionalRules, isEntryAvailable, localeCompare, translateMap],
   )
 
   // const higherParadeValues = Rules.A.higherParadeValues(rules)

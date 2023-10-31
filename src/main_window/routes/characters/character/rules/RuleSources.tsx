@@ -1,4 +1,7 @@
-import { Publication, PublicationTranslation } from "optolith-database-schema/types/source/Publication"
+import {
+  Publication,
+  PublicationTranslation,
+} from "optolith-database-schema/types/source/Publication"
 import { FC, useCallback, useMemo } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
@@ -24,27 +27,36 @@ export const RuleSources: FC = () => {
     () =>
       Object.values(publications)
         .map(x => ({ publication: x, publicationTranslation: translateMap(x.translations) }))
-        .filter((x): x is {
-          publication: Publication
-          publicationTranslation: PublicationTranslation
-        } => x.publicationTranslation !== undefined)
-        .sort(reduceCompare(
-          compareAt(x => x.publication.category, (a, b) =>
-            a === "CoreRules" && b === "CoreRules"
-            ? 0
-            : a === "CoreRules"
-            ? -1
-            : b === "CoreRules"
-            ? 1
-            : 0),
-          compareAt(x => translateMap(x.publication.translations)?.name ?? "", localeCompare)
-        )),
-    [ localeCompare, publications, translateMap ],
+        .filter(
+          (
+            x,
+          ): x is {
+            publication: Publication
+            publicationTranslation: PublicationTranslation
+          } => x.publicationTranslation !== undefined,
+        )
+        .sort(
+          reduceCompare(
+            compareAt(
+              x => x.publication.category,
+              (a, b) =>
+                a === "CoreRules" && b === "CoreRules"
+                  ? 0
+                  : a === "CoreRules"
+                  ? -1
+                  : b === "CoreRules"
+                  ? 1
+                  : 0,
+            ),
+            compareAt(x => translateMap(x.publication.translations)?.name ?? "", localeCompare),
+          ),
+        ),
+    [localeCompare, publications, translateMap],
   )
 
   const handleSwitchIncludeAllPublications = useCallback(
     () => dispatch(switchIncludeAllPublications()),
-    [ dispatch ],
+    [dispatch],
   )
 
   return (
@@ -54,7 +66,7 @@ export const RuleSources: FC = () => {
         checked={includeAllPublications ?? false}
         onClick={handleSwitchIncludeAllPublications}
         label={translate("Use all publications")}
-        />
+      />
       <div className="rule-books">
         {publicationOptions.map(e => (
           <RuleSourcesListItem key={e.publication.id} publication={e} />

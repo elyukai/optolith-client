@@ -23,12 +23,16 @@ export const FocusRules: FC = () => {
       Object.values(focusRules)
         .filter(x => isEntryAvailable(x.src) || Object.hasOwn(activeFocusRules, x.id))
         .map(x => ({ focusRule: x, focusRuleTranslation: translateMap(x.translations) }))
-        .filter((x): x is {
-          focusRule: FocusRule
-          focusRuleTranslation: FocusRuleTranslation
-        } => x.focusRuleTranslation !== undefined)
+        .filter(
+          (
+            x,
+          ): x is {
+            focusRule: FocusRule
+            focusRuleTranslation: FocusRuleTranslation
+          } => x.focusRuleTranslation !== undefined,
+        )
         .sort(compareAt(x => translateMap(x.focusRule.translations)?.name ?? "", localeCompare)),
-    [ activeFocusRules, focusRules, isEntryAvailable, localeCompare, translateMap ],
+    [activeFocusRules, focusRules, isEntryAvailable, localeCompare, translateMap],
   )
 
   return (
