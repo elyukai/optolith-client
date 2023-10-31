@@ -31,7 +31,7 @@ import { LiturgiesSortOrder } from "./sortOrders.ts"
  * yet.
  */
 export const getLiturgicalChantValue = (
-  dynamic: ActivatableRated | undefined,
+  dynamic: ActivatableRatedWithEnhancements | undefined,
 ): number | undefined => dynamic?.value
 
 /**

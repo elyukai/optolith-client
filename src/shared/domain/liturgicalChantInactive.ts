@@ -58,7 +58,7 @@ export type DisplayedInactiveLiturgy =
   | DisplayedInactiveCeremony
 
 /**
- * Filters the given list of inactive blessing by tradition restrictions.
+ * Filters the given list of inactive blessings by tradition restrictions.
  */
 export const filterInactiveBlessings = (
   visibleBlessings: DisplayedInactiveBlessing[],
@@ -193,7 +193,7 @@ export const getInactiveLiturgicalChantsOrCeremonies = <
   return Object.values(staticLiturgicalChants)
     .filter(
       staticLiturgicalChant =>
-        isEntryAvailable(activeBlessedTradition.static.src) &&
+        isEntryAvailable(staticLiturgicalChant.src) &&
         !isOptionalRatedWithEnhancementsActive(dynamicLiturgicalChants[staticLiturgicalChant.id]) &&
         (belongsToBlessedTradition(
           staticLiturgicalChant.traditions,
