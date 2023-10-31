@@ -83,7 +83,7 @@
     "createschemas": "otjsmd",
     "lint": "eslint \"src/**\"",
     "start": "electron .",
-    "test": "glob -c \"node --loader tsx --test\" \"./src/shared/**/*.test.ts\"",
+    "test": "glob -c \"node --import tsx --test\" \"./src/shared/**/*.test.ts\"",
     "circ": "madge -c ./src",
     "release:main": "standard-version --skip.commit --skip.tag",
     "release:pre": "standard-version --prerelease=alpha",
