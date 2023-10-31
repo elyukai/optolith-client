@@ -24,12 +24,15 @@ const {
   CI,
 } = process.env
 
-const [channel] = process.argv.slice(2)
+const args = process.argv.slice(2)
 const os = getSystem()
 
-if (channel !== "stable" && channel !== "prerelease") {
-  throw new TypeError(`publishToServer requires a specified channel ("stable" or "prerelease"), but it received ${channel}`)
+
+if (!args.includes("--stable") && !args.includes("--prerelease")) {
+  throw new TypeError(`publishToServer requires a specified channel ("--stable" or "--prerelease")`)
 }
+
+const channel = args.includes("--prerelease") ? "prerelease" : "stable"
 
 console.log(`Preparing to upload update files for "${getSystemName(os)}" on "${channel}" channel...`)
 
