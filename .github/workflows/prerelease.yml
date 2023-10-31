@@ -40,7 +40,7 @@ jobs:
         working-directory: ./src/database/contents
       - name: Build macOS application
         if: runner.os == 'macOS'
-        run: node ./deploy/build.mjs prerelease
+        run: node ./deploy/build.mjs --prerelease
         env:
           APPLEID: ${{ secrets.APPLEID }}
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
@@ -50,16 +50,16 @@ jobs:
           UPDATE_URL: ${{ secrets.UPDATE_URL }}
       - name: Build Linux application
         if: runner.os == 'Linux'
-        run: node ./deploy/build.mjs prerelease
+        run: node ./deploy/build.mjs --prerelease
         env:
           UPDATE_URL: ${{ secrets.UPDATE_URL }}
       - name: Build Windows application
         if: runner.os == 'Windows'
-        run: node ./deploy/build.mjs prerelease
+        run: node ./deploy/build.mjs --prerelease
         env:
           UPDATE_URL: ${{ secrets.UPDATE_URL }}
       - name: Deploy
-        run: node ./deploy/deploy.mjs prerelease
+        run: node ./deploy/deploy.mjs --prerelease
         env:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
