@@ -5,13 +5,13 @@ import {
   selectExperienceLevelStartId,
   selectTotalAdventurePoints,
 } from "../slices/characterSlice.ts"
-import { selectExperienceLevels } from "../slices/databaseSlice.ts"
+import { selectStaticExperienceLevels } from "../slices/databaseSlice.ts"
 
 /**
  * Returns the experience level the character started with.
  */
 export const selectStartExperienceLevel = createSelector(
-  selectExperienceLevels,
+  selectStaticExperienceLevels,
   selectExperienceLevelStartId,
   (experienceLevels, experienceLevelStartId): ExperienceLevel | undefined =>
     experienceLevelStartId === undefined ? undefined : experienceLevels[experienceLevelStartId],
@@ -22,7 +22,7 @@ export const selectStartExperienceLevel = createSelector(
  * amount of adventure points.
  */
 export const selectCurrentExperienceLevel = createSelector(
-  selectExperienceLevels,
+  selectStaticExperienceLevels,
   selectTotalAdventurePoints,
   (experienceLevels, totalAdventurePoints): ExperienceLevel | undefined =>
     totalAdventurePoints === undefined

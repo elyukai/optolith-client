@@ -19,7 +19,7 @@ import { isNotNullish } from "../../../shared/utils/nullable.ts"
 import { Translate } from "../../../shared/utils/translate.ts"
 import { assertExhaustive } from "../../../shared/utils/typeSafety.ts"
 import { useAppSelector } from "../../hooks/redux.ts"
-import { selectPublications } from "../../slices/databaseSlice.ts"
+import { selectStaticPublications } from "../../slices/databaseSlice.ts"
 
 type Props = {
   sources: PublicationRefs
@@ -58,7 +58,7 @@ const printPageRanges = (translate: Translate, pageRanges: PageRange[]) =>
 export const Source: FC<Props> = ({ sources }) => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
-  const publications = useAppSelector(selectPublications)
+  const publications = useAppSelector(selectStaticPublications)
 
   return (
     <p className="sources">

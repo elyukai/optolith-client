@@ -417,191 +417,205 @@ const databaseSlice = createSlice({
 
 // export const { } = databaseSlice.actions
 
-export const selectAdvancedCombatSpecialAbilities = (state: RootState) =>
+export const selectDatabase = (state: RootState) => state.database
+
+export const selectStaticAdvancedCombatSpecialAbilities = (state: RootState) =>
   state.database.advancedCombatSpecialAbilities
-export const selectAdvancedKarmaSpecialAbilities = (state: RootState) =>
+export const selectStaticAdvancedKarmaSpecialAbilities = (state: RootState) =>
   state.database.advancedKarmaSpecialAbilities
-export const selectAdvancedMagicalSpecialAbilities = (state: RootState) =>
+export const selectStaticAdvancedMagicalSpecialAbilities = (state: RootState) =>
   state.database.advancedMagicalSpecialAbilities
-export const selectAdvancedSkillSpecialAbilities = (state: RootState) =>
+export const selectStaticAdvancedSkillSpecialAbilities = (state: RootState) =>
   state.database.advancedSkillSpecialAbilities
-export const selectAdvantages = (state: RootState) => state.database.advantages
-export const selectAlchemicae = (state: RootState) => state.database.alchemicae
-export const selectAmmunition = (state: RootState) => state.database.ammunition
-export const selectAncestorGlyphs = (state: RootState) => state.database.ancestorGlyphs
-export const selectAnimalCare = (state: RootState) => state.database.animalCare
-export const selectAnimalDiseases = (state: RootState) => state.database.animalDiseases
-export const selectAnimals = (state: RootState) => state.database.animals
-export const selectAnimalShapePaths = (state: RootState) => state.database.animalShapePaths
-export const selectAnimalShapes = (state: RootState) => state.database.animalShapes
-export const selectAnimalShapeSizes = (state: RootState) => state.database.animalShapeSizes
-export const selectAnimalTypes = (state: RootState) => state.database.animalTypes
-export const selectAnimistPowers = (state: RootState) => state.database.animistPowers
-export const selectAnimistPowerTribes = (state: RootState) => state.database.animistPowerTribes
-export const selectArcaneBardTraditions = (state: RootState) => state.database.arcaneBardTraditions
-export const selectArcaneDancerTraditions = (state: RootState) =>
+export const selectStaticAdvantages = (state: RootState) => state.database.advantages
+export const selectStaticAlchemicae = (state: RootState) => state.database.alchemicae
+export const selectStaticAmmunition = (state: RootState) => state.database.ammunition
+export const selectStaticAncestorGlyphs = (state: RootState) => state.database.ancestorGlyphs
+export const selectStaticAnimalCare = (state: RootState) => state.database.animalCare
+export const selectStaticAnimalDiseases = (state: RootState) => state.database.animalDiseases
+export const selectStaticAnimals = (state: RootState) => state.database.animals
+export const selectStaticAnimalShapePaths = (state: RootState) => state.database.animalShapePaths
+export const selectStaticAnimalShapes = (state: RootState) => state.database.animalShapes
+export const selectStaticAnimalShapeSizes = (state: RootState) => state.database.animalShapeSizes
+export const selectStaticAnimalTypes = (state: RootState) => state.database.animalTypes
+export const selectStaticAnimistPowers = (state: RootState) => state.database.animistPowers
+export const selectStaticAnimistPowerTribes = (state: RootState) =>
+  state.database.animistPowerTribes
+export const selectStaticArcaneBardTraditions = (state: RootState) =>
+  state.database.arcaneBardTraditions
+export const selectStaticArcaneDancerTraditions = (state: RootState) =>
   state.database.arcaneDancerTraditions
-export const selectArcaneOrbEnchantments = (state: RootState) =>
+export const selectStaticArcaneOrbEnchantments = (state: RootState) =>
   state.database.arcaneOrbEnchantments
-export const selectArmors = (state: RootState) => state.database.armors
-export const selectArmorTypes = (state: RootState) => state.database.armorTypes
-export const selectAspects = (state: RootState) => state.database.aspects
-export const selectAttireEnchantments = (state: RootState) => state.database.attireEnchantments
-export const selectAttributes = (state: RootState) => state.database.attributes
-export const selectBandagesAndRemedies = (state: RootState) => state.database.bandagesAndRemedies
-export const selectBlessedTraditions = (state: RootState) => state.database.blessedTraditions
-export const selectBlessings = (state: RootState) => state.database.blessings
-export const selectBooks = (state: RootState) => state.database.books
-export const selectBowlEnchantments = (state: RootState) => state.database.bowlEnchantments
-export const selectBrawlingSpecialAbilities = (state: RootState) =>
+export const selectStaticArmors = (state: RootState) => state.database.armors
+export const selectStaticArmorTypes = (state: RootState) => state.database.armorTypes
+export const selectStaticAspects = (state: RootState) => state.database.aspects
+export const selectStaticAttireEnchantments = (state: RootState) =>
+  state.database.attireEnchantments
+export const selectStaticAttributes = (state: RootState) => state.database.attributes
+export const selectStaticBandagesAndRemedies = (state: RootState) =>
+  state.database.bandagesAndRemedies
+export const selectStaticBlessedTraditions = (state: RootState) => state.database.blessedTraditions
+export const selectStaticBlessings = (state: RootState) => state.database.blessings
+export const selectStaticBooks = (state: RootState) => state.database.books
+export const selectStaticBowlEnchantments = (state: RootState) => state.database.bowlEnchantments
+export const selectStaticBrawlingSpecialAbilities = (state: RootState) =>
   state.database.brawlingSpecialAbilities
-export const selectBrews = (state: RootState) => state.database.brews
-export const selectCantrips = (state: RootState) => state.database.cantrips
-export const selectCauldronEnchantments = (state: RootState) => state.database.cauldronEnchantments
-export const selectCeremonialItems = (state: RootState) => state.database.ceremonialItems
-export const selectCeremonialItemSpecialAbilities = (state: RootState) =>
+export const selectStaticBrews = (state: RootState) => state.database.brews
+export const selectStaticCantrips = (state: RootState) => state.database.cantrips
+export const selectStaticCauldronEnchantments = (state: RootState) =>
+  state.database.cauldronEnchantments
+export const selectStaticCeremonialItems = (state: RootState) => state.database.ceremonialItems
+export const selectStaticCeremonialItemSpecialAbilities = (state: RootState) =>
   state.database.ceremonialItemSpecialAbilities
-export const selectCeremonies = (state: RootState) => state.database.ceremonies
-export const selectChronicleEnchantments = (state: RootState) =>
+export const selectStaticCeremonies = (state: RootState) => state.database.ceremonies
+export const selectStaticChronicleEnchantments = (state: RootState) =>
   state.database.chronicleEnchantments
-export const selectCloseCombatTechniques = (state: RootState) =>
+export const selectStaticCloseCombatTechniques = (state: RootState) =>
   state.database.closeCombatTechniques
-export const selectClothes = (state: RootState) => state.database.clothes
-export const selectCombatSpecialAbilities = (state: RootState) =>
+export const selectStaticClothes = (state: RootState) => state.database.clothes
+export const selectStaticCombatSpecialAbilities = (state: RootState) =>
   state.database.combatSpecialAbilities
-export const selectCombatStyleSpecialAbilities = (state: RootState) =>
+export const selectStaticCombatStyleSpecialAbilities = (state: RootState) =>
   state.database.combatStyleSpecialAbilities
-export const selectCommandSpecialAbilities = (state: RootState) =>
+export const selectStaticCommandSpecialAbilities = (state: RootState) =>
   state.database.commandSpecialAbilities
-export const selectConditions = (state: RootState) => state.database.conditions
-export const selectContainers = (state: RootState) => state.database.containers
-export const selectContinents = (state: RootState) => state.database.continents
-export const selectCoreRules = (state: RootState) => state.database.coreRules
-export const selectCultures = (state: RootState) => state.database.cultures
-export const selectCurses = (state: RootState) => state.database.curses
-export const selectDaggerRituals = (state: RootState) => state.database.daggerRituals
-export const selectDerivedCharacteristics = (state: RootState) =>
+export const selectStaticConditions = (state: RootState) => state.database.conditions
+export const selectStaticContainers = (state: RootState) => state.database.containers
+export const selectStaticContinents = (state: RootState) => state.database.continents
+export const selectStaticCoreRules = (state: RootState) => state.database.coreRules
+export const selectStaticCultures = (state: RootState) => state.database.cultures
+export const selectStaticCurses = (state: RootState) => state.database.curses
+export const selectStaticDaggerRituals = (state: RootState) => state.database.daggerRituals
+export const selectStaticDerivedCharacteristics = (state: RootState) =>
   state.database.derivedCharacteristics
-export const selectDisadvantages = (state: RootState) => state.database.disadvantages
-export const selectDiseases = (state: RootState) => state.database.diseases
-export const selectDominationRituals = (state: RootState) => state.database.dominationRituals
-export const selectElements = (state: RootState) => state.database.elements
-export const selectElixirs = (state: RootState) => state.database.elixirs
-export const selectElvenMagicalSongs = (state: RootState) => state.database.elvenMagicalSongs
-export const selectEquipmentOfBlessedOnes = (state: RootState) =>
+export const selectStaticDisadvantages = (state: RootState) => state.database.disadvantages
+export const selectStaticDiseases = (state: RootState) => state.database.diseases
+export const selectStaticDominationRituals = (state: RootState) => state.database.dominationRituals
+export const selectStaticElements = (state: RootState) => state.database.elements
+export const selectStaticElixirs = (state: RootState) => state.database.elixirs
+export const selectStaticElvenMagicalSongs = (state: RootState) => state.database.elvenMagicalSongs
+export const selectStaticEquipmentOfBlessedOnes = (state: RootState) =>
   state.database.equipmentOfBlessedOnes
-export const selectEquipmentPackages = (state: RootState) => state.database.equipmentPackages
-export const selectExperienceLevels = (state: RootState) => state.database.experienceLevels
-export const selectEyeColors = (state: RootState) => state.database.eyeColors
-export const selectFamiliarSpecialAbilities = (state: RootState) =>
+export const selectStaticEquipmentPackages = (state: RootState) => state.database.equipmentPackages
+export const selectStaticExperienceLevels = (state: RootState) => state.database.experienceLevels
+export const selectStaticEyeColors = (state: RootState) => state.database.eyeColors
+export const selectStaticFamiliarSpecialAbilities = (state: RootState) =>
   state.database.familiarSpecialAbilities
-export const selectFamiliarsTricks = (state: RootState) => state.database.familiarsTricks
-export const selectFatePointSexSpecialAbilities = (state: RootState) =>
+export const selectStaticFamiliarsTricks = (state: RootState) => state.database.familiarsTricks
+export const selectStaticFatePointSexSpecialAbilities = (state: RootState) =>
   state.database.fatePointSexSpecialAbilities
-export const selectFatePointSpecialAbilities = (state: RootState) =>
+export const selectStaticFatePointSpecialAbilities = (state: RootState) =>
   state.database.fatePointSpecialAbilities
-export const selectFocusRules = (state: RootState) => state.database.focusRules
-export const selectFocusRuleSubjects = (state: RootState) => state.database.focusRuleSubjects
-export const selectFoolsHatEnchantments = (state: RootState) => state.database.foolsHatEnchantments
-export const selectGemsAndPreciousStones = (state: RootState) =>
+export const selectStaticFocusRules = (state: RootState) => state.database.focusRules
+export const selectStaticFocusRuleSubjects = (state: RootState) => state.database.focusRuleSubjects
+export const selectStaticFoolsHatEnchantments = (state: RootState) =>
+  state.database.foolsHatEnchantments
+export const selectStaticGemsAndPreciousStones = (state: RootState) =>
   state.database.gemsAndPreciousStones
-export const selectGeneralSpecialAbilities = (state: RootState) =>
+export const selectStaticGeneralSpecialAbilities = (state: RootState) =>
   state.database.generalSpecialAbilities
-export const selectGeodeRituals = (state: RootState) => state.database.geodeRituals
-export const selectHairColors = (state: RootState) => state.database.hairColors
-export const selectIlluminationLightSources = (state: RootState) =>
+export const selectStaticGeodeRituals = (state: RootState) => state.database.geodeRituals
+export const selectStaticHairColors = (state: RootState) => state.database.hairColors
+export const selectStaticIlluminationLightSources = (state: RootState) =>
   state.database.illuminationLightSources
-export const selectIlluminationRefillsAndSupplies = (state: RootState) =>
+export const selectStaticIlluminationRefillsAndSupplies = (state: RootState) =>
   state.database.illuminationRefillsAndSupplies
-export const selectInstrumentEnchantments = (state: RootState) =>
+export const selectStaticInstrumentEnchantments = (state: RootState) =>
   state.database.instrumentEnchantments
-export const selectJesterTricks = (state: RootState) => state.database.jesterTricks
-export const selectJewelry = (state: RootState) => state.database.jewelry
-export const selectKarmaSpecialAbilities = (state: RootState) =>
+export const selectStaticJesterTricks = (state: RootState) => state.database.jesterTricks
+export const selectStaticJewelry = (state: RootState) => state.database.jewelry
+export const selectStaticKarmaSpecialAbilities = (state: RootState) =>
   state.database.karmaSpecialAbilities
-export const selectKirchenpraegungen = (state: RootState) => state.database.kirchenpraegungen
-export const selectKrallenkettenzauber = (state: RootState) => state.database.krallenkettenzauber
-export const selectLanguages = (state: RootState) => state.database.languages
-export const selectLessonsCurricula = (state: RootState) => state.database.lessonsCurricula
-export const selectLessonsGuidelines = (state: RootState) => state.database.lessonsGuidelines
-export const selectLiebesspielzeug = (state: RootState) => state.database.liebesspielzeug
-export const selectLiturgicalChants = (state: RootState) => state.database.liturgicalChants
-export const selectLiturgicalStyleSpecialAbilities = (state: RootState) =>
+export const selectStaticKirchenpraegungen = (state: RootState) => state.database.kirchenpraegungen
+export const selectStaticKrallenkettenzauber = (state: RootState) =>
+  state.database.krallenkettenzauber
+export const selectStaticLanguages = (state: RootState) => state.database.languages
+export const selectStaticLessonsCurricula = (state: RootState) => state.database.lessonsCurricula
+export const selectStaticLessonsGuidelines = (state: RootState) => state.database.lessonsGuidelines
+export const selectStaticLiebesspielzeug = (state: RootState) => state.database.liebesspielzeug
+export const selectStaticLiturgicalChants = (state: RootState) => state.database.liturgicalChants
+export const selectStaticLiturgicalStyleSpecialAbilities = (state: RootState) =>
   state.database.liturgicalStyleSpecialAbilities
-export const selectLocales = (state: RootState) => state.database.locales
-export const selectLuxuryGoods = (state: RootState) => state.database.luxuryGoods
-export const selectLycantropicGifts = (state: RootState) => state.database.lycantropicGifts
-export const selectMagicalArtifacts = (state: RootState) => state.database.magicalArtifacts
-export const selectMagicalDances = (state: RootState) => state.database.magicalDances
-export const selectMagicalMelodies = (state: RootState) => state.database.magicalMelodies
-export const selectMagicalRunes = (state: RootState) => state.database.magicalRunes
-export const selectMagicalSigns = (state: RootState) => state.database.magicalSigns
-export const selectMagicalSpecialAbilities = (state: RootState) =>
+export const selectStaticLocales = (state: RootState) => state.database.locales
+export const selectStaticLuxuryGoods = (state: RootState) => state.database.luxuryGoods
+export const selectStaticLycantropicGifts = (state: RootState) => state.database.lycantropicGifts
+export const selectStaticMagicalArtifacts = (state: RootState) => state.database.magicalArtifacts
+export const selectStaticMagicalDances = (state: RootState) => state.database.magicalDances
+export const selectStaticMagicalMelodies = (state: RootState) => state.database.magicalMelodies
+export const selectStaticMagicalRunes = (state: RootState) => state.database.magicalRunes
+export const selectStaticMagicalSigns = (state: RootState) => state.database.magicalSigns
+export const selectStaticMagicalSpecialAbilities = (state: RootState) =>
   state.database.magicalSpecialAbilities
-export const selectMagicalTraditions = (state: RootState) => state.database.magicalTraditions
-export const selectMagicStyleSpecialAbilities = (state: RootState) =>
+export const selectStaticMagicalTraditions = (state: RootState) => state.database.magicalTraditions
+export const selectStaticMagicStyleSpecialAbilities = (state: RootState) =>
   state.database.magicStyleSpecialAbilities
-export const selectMetaConditions = (state: RootState) => state.database.metaConditions
-export const selectMusicalInstruments = (state: RootState) => state.database.musicalInstruments
-export const selectOptionalRules = (state: RootState) => state.database.optionalRules
-export const selectOrbEnchantments = (state: RootState) => state.database.orbEnchantments
-export const selectOrienteeringAids = (state: RootState) => state.database.orienteeringAids
-export const selectPactCategories = (state: RootState) => state.database.pactCategories
-export const selectPactGifts = (state: RootState) => state.database.pactGifts
-export const selectPatronCategories = (state: RootState) => state.database.patronCategories
-export const selectPatrons = (state: RootState) => state.database.patrons
-export const selectPersonalityTraits = (state: RootState) => state.database.personalityTraits
-export const selectPoisons = (state: RootState) => state.database.poisons
-export const selectProfessions = (state: RootState) => state.database.professions
-export const selectProperties = (state: RootState) => state.database.properties
-export const selectProtectiveWardingCircleSpecialAbilities = (state: RootState) =>
+export const selectStaticMetaConditions = (state: RootState) => state.database.metaConditions
+export const selectStaticMusicalInstruments = (state: RootState) =>
+  state.database.musicalInstruments
+export const selectStaticOptionalRules = (state: RootState) => state.database.optionalRules
+export const selectStaticOrbEnchantments = (state: RootState) => state.database.orbEnchantments
+export const selectStaticOrienteeringAids = (state: RootState) => state.database.orienteeringAids
+export const selectStaticPactCategories = (state: RootState) => state.database.pactCategories
+export const selectStaticPactGifts = (state: RootState) => state.database.pactGifts
+export const selectStaticPatronCategories = (state: RootState) => state.database.patronCategories
+export const selectStaticPatrons = (state: RootState) => state.database.patrons
+export const selectStaticPersonalityTraits = (state: RootState) => state.database.personalityTraits
+export const selectStaticPoisons = (state: RootState) => state.database.poisons
+export const selectStaticProfessions = (state: RootState) => state.database.professions
+export const selectStaticProperties = (state: RootState) => state.database.properties
+export const selectStaticProtectiveWardingCircleSpecialAbilities = (state: RootState) =>
   state.database.protectiveWardingCircleSpecialAbilities
-export const selectPublications = (state: RootState) => state.database.publications
-export const selectRaces = (state: RootState) => state.database.races
-export const selectRangedCombatTechniques = (state: RootState) =>
+export const selectStaticPublications = (state: RootState) => state.database.publications
+export const selectStaticRaces = (state: RootState) => state.database.races
+export const selectStaticRangedCombatTechniques = (state: RootState) =>
   state.database.rangedCombatTechniques
-export const selectReaches = (state: RootState) => state.database.reaches
-export const selectRegions = (state: RootState) => state.database.regions
-export const selectRingEnchantments = (state: RootState) => state.database.ringEnchantments
-export const selectRituals = (state: RootState) => state.database.rituals
-export const selectRopesAndChains = (state: RootState) => state.database.ropesAndChains
-export const selectScripts = (state: RootState) => state.database.scripts
-export const selectSermons = (state: RootState) => state.database.sermons
-export const selectServices = (state: RootState) => state.database.services
-export const selectSexPractices = (state: RootState) => state.database.sexPractices
-export const selectSexSpecialAbilities = (state: RootState) => state.database.sexSpecialAbilities
-export const selectSickleRituals = (state: RootState) => state.database.sickleRituals
-export const selectSikaryanDrainSpecialAbilities = (state: RootState) =>
+export const selectStaticReaches = (state: RootState) => state.database.reaches
+export const selectStaticRegions = (state: RootState) => state.database.regions
+export const selectStaticRingEnchantments = (state: RootState) => state.database.ringEnchantments
+export const selectStaticRituals = (state: RootState) => state.database.rituals
+export const selectStaticRopesAndChains = (state: RootState) => state.database.ropesAndChains
+export const selectStaticScripts = (state: RootState) => state.database.scripts
+export const selectStaticSermons = (state: RootState) => state.database.sermons
+export const selectStaticServices = (state: RootState) => state.database.services
+export const selectStaticSexPractices = (state: RootState) => state.database.sexPractices
+export const selectStaticSexSpecialAbilities = (state: RootState) =>
+  state.database.sexSpecialAbilities
+export const selectStaticSickleRituals = (state: RootState) => state.database.sickleRituals
+export const selectStaticSikaryanDrainSpecialAbilities = (state: RootState) =>
   state.database.sikaryanDrainSpecialAbilities
-export const selectSkillGroups = (state: RootState) => state.database.skillGroups
-export const selectSkillModificationLevels = (state: RootState) =>
+export const selectStaticSkillGroups = (state: RootState) => state.database.skillGroups
+export const selectStaticSkillModificationLevels = (state: RootState) =>
   state.database.skillModificationLevels
-export const selectSkills = (state: RootState) => state.database.skills
-export const selectSkillStyleSpecialAbilities = (state: RootState) =>
+export const selectStaticSkills = (state: RootState) => state.database.skills
+export const selectStaticSkillStyleSpecialAbilities = (state: RootState) =>
   state.database.skillStyleSpecialAbilities
-export const selectSocialStatuses = (state: RootState) => state.database.socialStatuses
-export const selectSpells = (state: RootState) => state.database.spells
-export const selectSpellSwordEnchantments = (state: RootState) =>
+export const selectStaticSocialStatuses = (state: RootState) => state.database.socialStatuses
+export const selectStaticSpells = (state: RootState) => state.database.spells
+export const selectStaticSpellSwordEnchantments = (state: RootState) =>
   state.database.spellSwordEnchantments
-export const selectStaffEnchantments = (state: RootState) => state.database.staffEnchantments
-export const selectStates = (state: RootState) => state.database.states
-export const selectStationary = (state: RootState) => state.database.stationary
-export const selectTalismans = (state: RootState) => state.database.talismans
-export const selectTargetCategories = (state: RootState) => state.database.targetCategories
-export const selectThievesTools = (state: RootState) => state.database.thievesTools
-export const selectToolsOfTheTrade = (state: RootState) => state.database.toolsOfTheTrade
-export const selectToyEnchantments = (state: RootState) => state.database.toyEnchantments
-export const selectTradeSecrets = (state: RootState) => state.database.tradeSecrets
-export const selectTravelGearAndTools = (state: RootState) => state.database.travelGearAndTools
-export const selectTrinkhornzauber = (state: RootState) => state.database.trinkhornzauber
-export const selectUi = (state: RootState) => state.database.ui
-export const selectVampiricGifts = (state: RootState) => state.database.vampiricGifts
-export const selectVehicles = (state: RootState) => state.database.vehicles
-export const selectVisions = (state: RootState) => state.database.visions
-export const selectWandEnchantments = (state: RootState) => state.database.wandEnchantments
-export const selectWeaponAccessories = (state: RootState) => state.database.weaponAccessories
-export const selectWeaponEnchantments = (state: RootState) => state.database.weaponEnchantments
-export const selectWeapons = (state: RootState) => state.database.weapons
-export const selectZibiljaRituals = (state: RootState) => state.database.zibiljaRituals
+export const selectStaticStaffEnchantments = (state: RootState) => state.database.staffEnchantments
+export const selectStaticStates = (state: RootState) => state.database.states
+export const selectStaticStationary = (state: RootState) => state.database.stationary
+export const selectStaticTalismans = (state: RootState) => state.database.talismans
+export const selectStaticTargetCategories = (state: RootState) => state.database.targetCategories
+export const selectStaticThievesTools = (state: RootState) => state.database.thievesTools
+export const selectStaticToolsOfTheTrade = (state: RootState) => state.database.toolsOfTheTrade
+export const selectStaticToyEnchantments = (state: RootState) => state.database.toyEnchantments
+export const selectStaticTradeSecrets = (state: RootState) => state.database.tradeSecrets
+export const selectStaticTravelGearAndTools = (state: RootState) =>
+  state.database.travelGearAndTools
+export const selectStaticTrinkhornzauber = (state: RootState) => state.database.trinkhornzauber
+export const selectStaticUi = (state: RootState) => state.database.ui
+export const selectStaticVampiricGifts = (state: RootState) => state.database.vampiricGifts
+export const selectStaticVehicles = (state: RootState) => state.database.vehicles
+export const selectStaticVisions = (state: RootState) => state.database.visions
+export const selectStaticWandEnchantments = (state: RootState) => state.database.wandEnchantments
+export const selectStaticWeaponAccessories = (state: RootState) => state.database.weaponAccessories
+export const selectStaticWeaponEnchantments = (state: RootState) =>
+  state.database.weaponEnchantments
+export const selectStaticWeapons = (state: RootState) => state.database.weapons
+export const selectStaticZibiljaRituals = (state: RootState) => state.database.zibiljaRituals
+
 
 export const databaseReducer = databaseSlice.reducer

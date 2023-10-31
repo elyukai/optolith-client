@@ -19,10 +19,10 @@ import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.ts"
 import { CharacterState, selectCustomProfessionName } from "../../slices/characterSlice.ts"
 import {
-  selectCultures,
-  selectExperienceLevels,
-  selectProfessions,
-  selectRaces,
+  selectStaticCultures,
+  selectStaticExperienceLevels,
+  selectStaticProfessions,
+  selectStaticRaces,
 } from "../../slices/databaseSlice.ts"
 import { goToTab } from "../../slices/routeSlice.ts"
 
@@ -37,10 +37,10 @@ export const CharactersItem: FC<HerolistItemProps> = props => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
 
-  const experienceLevels = useAppSelector(selectExperienceLevels)
+  const experienceLevels = useAppSelector(selectStaticExperienceLevels)
   const startExperienceLevel = experienceLevels[character.experienceLevelStartId]
 
-  const races = useAppSelector(selectRaces)
+  const races = useAppSelector(selectStaticRaces)
   const race = useMemo(
     () => (character.race.id === undefined ? undefined : getRace(races, character.race.id)),
     [character.race.id, races],
@@ -50,14 +50,14 @@ export const CharactersItem: FC<HerolistItemProps> = props => {
     [character.race.variantId, race],
   )
 
-  const cultures = useAppSelector(selectCultures)
+  const cultures = useAppSelector(selectStaticCultures)
   const culture = useMemo(
     () =>
       character.culture.id === undefined ? undefined : getCulture(cultures, character.culture.id),
     [character.culture.id, cultures],
   )
 
-  const professions = useAppSelector(selectProfessions)
+  const professions = useAppSelector(selectStaticProfessions)
   const profession = useMemo(
     () =>
       character.profession.id === undefined ||

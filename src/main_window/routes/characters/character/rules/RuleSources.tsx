@@ -7,7 +7,7 @@ import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { compareAt, reduceCompare } from "../../../../../shared/utils/compare.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectIncludeAllPublications } from "../../../../slices/characterSlice.ts"
-import { selectPublications } from "../../../../slices/databaseSlice.ts"
+import { selectStaticPublications } from "../../../../slices/databaseSlice.ts"
 import { switchIncludeAllPublications } from "../../../../slices/rulesSlice.ts"
 import { RuleSourcesListItem } from "./RuleSourcesListItem.tsx"
 
@@ -19,7 +19,7 @@ export const RuleSources: FC = () => {
 
   const includeAllPublications = useAppSelector(selectIncludeAllPublications)
 
-  const publications = useAppSelector(selectPublications)
+  const publications = useAppSelector(selectStaticPublications)
   const publicationOptions = useMemo(
     () =>
       Object.values(publications)

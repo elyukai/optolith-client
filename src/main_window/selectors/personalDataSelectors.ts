@@ -12,8 +12,15 @@ import {
 import { filterNonNullable, unique } from "../../shared/utils/array.ts"
 import { compareAt, numAsc } from "../../shared/utils/compare.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
-import { selectDisadvantages, selectSocialStatusDependencies } from "../slices/characterSlice.ts"
-import { selectEyeColors, selectHairColors, selectSocialStatuses } from "../slices/databaseSlice.ts"
+import {
+  selectDynamicDisadvantages,
+  selectSocialStatusDependencies,
+} from "../slices/characterSlice.ts"
+import {
+  selectStaticEyeColors,
+  selectStaticHairColors,
+  selectStaticSocialStatuses,
+} from "../slices/databaseSlice.ts"
 import { selectCurrentCulture } from "./cultureSelectors.ts"
 import { selectCurrentRace, selectCurrentRaceVariant } from "./raceSelectors.ts"
 
@@ -24,7 +31,7 @@ import { selectCurrentRace, selectCurrentRaceVariant } from "./raceSelectors.ts"
 export const selectAvailableSocialStatuses = createSelector(
   selectCurrentCulture,
   selectSocialStatusDependencies,
-  selectSocialStatuses,
+  selectStaticSocialStatuses,
   (currentCulture, socialStatusDependencies, socialStatuses): SocialStatus[] => {
     const minimumSocialStatus =
       socialStatusDependencies.length === 0
@@ -52,7 +59,7 @@ const GREEN_HAIR = 3
 export const selectAvailableHairColorsIdDice = createSelector(
   selectCurrentRace,
   selectCurrentRaceVariant,
-  createPropertySelector(selectDisadvantages, DisadvantageIdentifier.Stigma),
+  createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.Stigma),
   (currentRace, currentRaceVariant, stigma): number[] => {
     const isAlbino = isOptionActive(stigma, { type: "Generic", value: ALBINO })
     const isGreenHaired = isOptionActive(stigma, { type: "Generic", value: GREEN_HAIR })
@@ -81,7 +88,7 @@ export const selectAvailableHairColorsIdDice = createSelector(
  */
 export const selectAvailableHairColors = createSelector(
   selectAvailableHairColorsIdDice,
-  selectHairColors,
+  selectStaticHairColors,
   (hairColorIds, hairColors): HairColor[] =>
     filterNonNullable(unique(hairColorIds).map(id => hairColors[id])),
 )
@@ -94,7 +101,7 @@ export const selectAvailableHairColors = createSelector(
 export const selectAvailableEyeColorsIdDice = createSelector(
   selectCurrentRace,
   selectCurrentRaceVariant,
-  createPropertySelector(selectDisadvantages, DisadvantageIdentifier.Stigma),
+  createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.Stigma),
   (currentRace, currentRaceVariant, stigma): number[] => {
     const isAlbino = isOptionActive(stigma, { type: "Generic", value: ALBINO })
 
@@ -120,7 +127,7 @@ export const selectAvailableEyeColorsIdDice = createSelector(
  */
 export const selectAvailableEyeColors = createSelector(
   selectAvailableEyeColorsIdDice,
-  selectEyeColors,
+  selectStaticEyeColors,
   (eyeColorIds, eyeColors): EyeColor[] =>
     filterNonNullable(unique(eyeColorIds).map(id => eyeColors[id])),
 )

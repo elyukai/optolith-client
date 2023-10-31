@@ -16,18 +16,18 @@ import {
 } from "../../shared/domain/skillBounds.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import {
-  selectAdvantages,
-  selectAttributes,
-  selectCeremonies,
-  selectCloseCombatTechniques,
-  selectSkills as selectDynamicSkills,
-  selectGeneralSpecialAbilities,
-  selectLiturgicalChants,
-  selectRangedCombatTechniques,
-  selectRituals,
-  selectSpells,
+  selectDynamicAdvantages,
+  selectDynamicAttributes,
+  selectDynamicCeremonies,
+  selectDynamicCloseCombatTechniques,
+  selectDynamicGeneralSpecialAbilities,
+  selectDynamicLiturgicalChants,
+  selectDynamicRangedCombatTechniques,
+  selectDynamicRituals,
+  selectDynamicSkills,
+  selectDynamicSpells,
 } from "../slices/characterSlice.ts"
-import { selectSkills as selectStaticSkills } from "../slices/databaseSlice.ts"
+import { selectStaticSkills } from "../slices/databaseSlice.ts"
 import { createInitialDynamicSkill } from "../slices/skillsSlice.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectCurrentCulture } from "./cultureSelectors.ts"
@@ -56,22 +56,22 @@ export type DisplayedSkill = {
 export const selectVisibleSkills = createSelector(
   selectStaticSkills,
   selectDynamicSkills,
-  selectAttributes,
+  selectDynamicAttributes,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.ExceptionalSkill),
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalSkill),
   createPropertySelector(
-    selectGeneralSpecialAbilities,
+    selectDynamicGeneralSpecialAbilities,
     GeneralSpecialAbilityIdentifier.CraftInstruments,
   ),
   selectCurrentCulture,
-  selectCloseCombatTechniques,
-  selectRangedCombatTechniques,
-  selectSpells,
-  selectRituals,
-  selectLiturgicalChants,
-  selectCeremonies,
+  selectDynamicCloseCombatTechniques,
+  selectDynamicRangedCombatTechniques,
+  selectDynamicSpells,
+  selectDynamicRituals,
+  selectDynamicLiturgicalChants,
+  selectDynamicCeremonies,
   (
     skills,
     dynamicSkills,

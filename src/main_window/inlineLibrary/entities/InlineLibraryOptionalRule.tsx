@@ -2,7 +2,7 @@ import { FC } from "react"
 import { Markdown } from "../../../shared/components/markdown/Markdown.tsx"
 import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
 import { useAppSelector } from "../../hooks/redux.ts"
-import { selectOptionalRules } from "../../slices/databaseSlice.ts"
+import { selectStaticOptionalRules } from "../../slices/databaseSlice.ts"
 import { InlineLibraryPlaceholder } from "../InlineLibraryPlaceholder.tsx"
 import { InlineLibraryTemplate } from "../InlineLibraryTemplate.tsx"
 import { Source } from "../shared/Source.tsx"
@@ -14,7 +14,7 @@ type Props = {
 export const InlineLibraryOptionalRule: FC<Props> = ({ id }) => {
   const translateMap = useTranslateMap()
 
-  const entry = useAppSelector(selectOptionalRules)[id]
+  const entry = useAppSelector(selectStaticOptionalRules)[id]
   const translation = translateMap(entry?.translations)
 
   if (entry === undefined || translation === undefined) {

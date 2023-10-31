@@ -6,11 +6,11 @@ import { isNotNullish } from "../../../shared/utils/nullable.ts"
 import { assertExhaustive } from "../../../shared/utils/typeSafety.ts"
 import { useAppSelector } from "../../hooks/redux.ts"
 import {
-  selectAttributes,
-  selectBlessedTraditions,
-  selectDiseases,
-  selectRegions,
-  selectSkills,
+  selectStaticAttributes,
+  selectStaticBlessedTraditions,
+  selectStaticDiseases,
+  selectStaticRegions,
+  selectStaticSkills,
 } from "../../slices/databaseSlice.ts"
 import { InlineLibraryPlaceholder } from "../InlineLibraryPlaceholder.tsx"
 import { InlineLibraryProperties } from "../InlineLibraryProperties.tsx"
@@ -28,11 +28,11 @@ export const InlineLibrarySkill: FC<Props> = ({ id }) => {
   const translateMap = useTranslateMap()
   const localeCompare = useLocaleCompare()
 
-  const attributes = useAppSelector(selectAttributes)
-  const blessedTraditions = useAppSelector(selectBlessedTraditions)
-  const diseases = useAppSelector(selectDiseases)
-  const regions = useAppSelector(selectRegions)
-  const entry = useAppSelector(selectSkills)[id]
+  const attributes = useAppSelector(selectStaticAttributes)
+  const blessedTraditions = useAppSelector(selectStaticBlessedTraditions)
+  const diseases = useAppSelector(selectStaticDiseases)
+  const regions = useAppSelector(selectStaticRegions)
+  const entry = useAppSelector(selectStaticSkills)[id]
   const translation = translateMap(entry?.translations)
 
   if (entry === undefined || translation === undefined) {

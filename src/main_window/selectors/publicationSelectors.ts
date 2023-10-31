@@ -5,7 +5,7 @@ import {
   selectIncludeAllPublications,
   selectIncludePublications,
 } from "../slices/characterSlice.ts"
-import { selectPublications } from "../slices/databaseSlice.ts"
+import { selectStaticPublications } from "../slices/databaseSlice.ts"
 
 /**
  * Selects a function that checks if an entry from one or more publications is
@@ -13,7 +13,7 @@ import { selectPublications } from "../slices/databaseSlice.ts"
  * enabled.
  */
 export const selectIsEntryAvailable = createSelector(
-  selectPublications,
+  selectStaticPublications,
   selectIncludeAllPublications,
   selectIncludePublications,
   (publications, includeAllPublications, includePublications) =>

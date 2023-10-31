@@ -13,7 +13,7 @@ import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
 import { selectActiveBlessedTradition } from "../../../../selectors/traditionSelectors.ts"
-import { selectAspects } from "../../../../slices/databaseSlice.ts"
+import { selectStaticAspects } from "../../../../slices/databaseSlice.ts"
 import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
@@ -56,7 +56,7 @@ const ActiveCeremoniesListItem: FC<Props> = props => {
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
   const canRemove = useAppSelector(selectCanRemove)
   const activeBlessedTradition = useAppSelector(selectActiveBlessedTradition)
-  const staticAspects = useAppSelector(selectAspects)
+  const staticAspects = useAppSelector(selectStaticAspects)
 
   const { name = "" } = translateMap(translations) ?? {}
 

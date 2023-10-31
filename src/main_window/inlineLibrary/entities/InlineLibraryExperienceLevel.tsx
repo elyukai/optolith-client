@@ -2,7 +2,7 @@ import { FC } from "react"
 import { useTranslate } from "../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
 import { useAppSelector } from "../../hooks/redux.ts"
-import { selectExperienceLevels } from "../../slices/databaseSlice.ts"
+import { selectStaticExperienceLevels } from "../../slices/databaseSlice.ts"
 import { InlineLibraryPlaceholder } from "../InlineLibraryPlaceholder.tsx"
 import { InlineLibraryProperties } from "../InlineLibraryProperties.tsx"
 import { InlineLibraryTemplate } from "../InlineLibraryTemplate.tsx"
@@ -15,7 +15,7 @@ export const InlineLibraryExperienceLevel: FC<Props> = ({ id }) => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
 
-  const entry = useAppSelector(selectExperienceLevels)[id]
+  const entry = useAppSelector(selectStaticExperienceLevels)[id]
   const translation = translateMap(entry?.translations)
 
   if (entry === undefined || translation === undefined) {

@@ -26,24 +26,24 @@ import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { attributeValue } from "../slices/attributesSlice.ts"
 import {
   selectActiveOptionalRules,
-  selectAdvantages,
   selectArcaneEnergyPermanentlyLost,
   selectArcaneEnergyPermanentlyLostBoughtBack,
-  selectAttributes,
-  selectBlessedTraditions,
-  selectCombatSpecialAbilities,
-  selectDisadvantages,
+  selectDynamicAdvantages,
+  selectDynamicAttributes,
+  selectDynamicBlessedTraditions,
+  selectDynamicCombatSpecialAbilities,
+  selectDynamicDisadvantages,
+  selectDynamicKarmaSpecialAbilities,
+  selectDynamicMagicalSpecialAbilities,
+  selectDynamicMagicalTraditions,
   selectKarmaPointsPermanentlyLost,
   selectKarmaPointsPermanentlyLostBoughtBack,
-  selectKarmaSpecialAbilities,
   selectLifePointsPermanentlyLost,
-  selectMagicalSpecialAbilities,
-  selectMagicalTraditions,
   selectPurchasedArcaneEnergy,
   selectPurchasedKarmaPoints,
   selectPurchasedLifePoints,
 } from "../slices/characterSlice.ts"
-import { selectDerivedCharacteristics as selectStaticDerivedCharacteristics } from "../slices/databaseSlice.ts"
+import { selectStaticDerivedCharacteristics } from "../slices/databaseSlice.ts"
 import {
   selectBlessedPrimaryAttribute,
   selectHighestMagicalPrimaryAttributes,
@@ -100,9 +100,9 @@ export const isDisplayedEnergy = (dc: DisplayedDerivedCharacteristic): dc is Dis
  */
 export const selectLifePoints = createSelector(
   selectCurrentRace,
-  createPropertySelector(selectAttributes, AttributeIdentifier.Constitution),
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.IncreasedLifePoints),
-  createPropertySelector(selectDisadvantages, DisadvantageIdentifier.DecreasedLifePoints),
+  createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Constitution),
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.IncreasedLifePoints),
+  createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.DecreasedLifePoints),
   selectLifePointsPermanentlyLost,
   selectPurchasedLifePoints,
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.LifePoints),
@@ -145,17 +145,17 @@ export const selectLifePoints = createSelector(
  * Returns the static and dynamic values for arcane energy.
  */
 export const selectArcaneEnergy = createSelector(
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.Spellcaster),
-  selectMagicalTraditions,
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Spellcaster),
+  selectDynamicMagicalTraditions,
   selectHighestMagicalPrimaryAttributes,
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.IncreasedAstralPower),
-  createPropertySelector(selectDisadvantages, DisadvantageIdentifier.DecreasedArcanePower),
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.IncreasedAstralPower),
+  createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.DecreasedArcanePower),
   selectArcaneEnergyPermanentlyLost,
   selectArcaneEnergyPermanentlyLostBoughtBack,
   selectPurchasedArcaneEnergy,
   // eslint-disable-next-line max-len
   createPropertySelector(
-    selectMagicalSpecialAbilities,
+    selectDynamicMagicalSpecialAbilities,
     MagicalSpecialAbilityIdentifier.GrosseMeditation,
   ),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.ArcaneEnergy),
@@ -222,17 +222,17 @@ export const selectArcaneEnergy = createSelector(
  * Returns the static and dynamic values for karma points.
  */
 export const selectKarmaPoints = createSelector(
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.Blessed),
-  selectBlessedTraditions,
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Blessed),
+  selectDynamicBlessedTraditions,
   selectBlessedPrimaryAttribute,
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.IncreasedKarmaPoints),
-  createPropertySelector(selectDisadvantages, DisadvantageIdentifier.DecreasedKarmaPoints),
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.IncreasedKarmaPoints),
+  createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.DecreasedKarmaPoints),
   selectKarmaPointsPermanentlyLost,
   selectKarmaPointsPermanentlyLostBoughtBack,
   selectPurchasedKarmaPoints,
   // eslint-disable-next-line max-len
   createPropertySelector(
-    selectKarmaSpecialAbilities,
+    selectDynamicKarmaSpecialAbilities,
     KarmaSpecialAbilityIdentifier.HigherOrdination,
   ),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.KarmaPoints),
@@ -293,11 +293,11 @@ const divideAttributeSumByRound = (attributes: (Rated | undefined)[], divisor: n
  */
 export const selectSpirit = createSelector(
   selectCurrentRace,
-  createPropertySelector(selectAttributes, AttributeIdentifier.Courage),
-  createPropertySelector(selectAttributes, AttributeIdentifier.Sagacity),
-  createPropertySelector(selectAttributes, AttributeIdentifier.Intuition),
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.IncreasedSpirit),
-  createPropertySelector(selectDisadvantages, DisadvantageIdentifier.DecreasedSpirit),
+  createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Courage),
+  createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Sagacity),
+  createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Intuition),
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.IncreasedSpirit),
+  createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.DecreasedSpirit),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.Spirit),
   (
     race,
@@ -331,10 +331,10 @@ export const selectSpirit = createSelector(
  */
 export const selectToughness = createSelector(
   selectCurrentRace,
-  createPropertySelector(selectAttributes, AttributeIdentifier.Constitution),
-  createPropertySelector(selectAttributes, AttributeIdentifier.Strength),
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.IncreasedToughness),
-  createPropertySelector(selectDisadvantages, DisadvantageIdentifier.DecreasedToughness),
+  createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Constitution),
+  createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Strength),
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.IncreasedToughness),
+  createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.DecreasedToughness),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.Toughness),
   (
     race,
@@ -366,7 +366,7 @@ export const selectToughness = createSelector(
  * Returns the static and dynamic values for dodge.
  */
 export const selectDodge = createSelector(
-  createPropertySelector(selectAttributes, AttributeIdentifier.Agility),
+  createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Agility),
   createPropertySelector(selectActiveOptionalRules, OptionalRuleIdentifier.HigherDefenseStats),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.Dodge),
   (
@@ -396,11 +396,11 @@ export const selectDodge = createSelector(
  * Returns the static and dynamic values for initiative.
  */
 export const selectInitiative = createSelector(
-  createPropertySelector(selectAttributes, AttributeIdentifier.Courage),
-  createPropertySelector(selectAttributes, AttributeIdentifier.Agility),
+  createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Courage),
+  createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Agility),
   // eslint-disable-next-line max-len
   createPropertySelector(
-    selectCombatSpecialAbilities,
+    selectDynamicCombatSpecialAbilities,
     CombatSpecialAbilityIdentifier.CombatReflexes,
   ),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.Initiative),
@@ -433,10 +433,10 @@ export const selectInitiative = createSelector(
  */
 export const selectMovement = createSelector(
   selectCurrentRace,
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.Nimble),
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.LeichterGang),
-  createPropertySelector(selectDisadvantages, DisadvantageIdentifier.Maimed),
-  createPropertySelector(selectDisadvantages, DisadvantageIdentifier.Slow),
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Nimble),
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.LeichterGang),
+  createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.Maimed),
+  createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.Slow),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.Movement),
   (
     race,
@@ -480,9 +480,9 @@ export const selectMovement = createSelector(
  * Returns the static and dynamic values for wound threshold.
  */
 export const selectWoundThreshold = createSelector(
-  createPropertySelector(selectAttributes, AttributeIdentifier.Constitution),
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.Unyielding),
-  createPropertySelector(selectDisadvantages, DisadvantageIdentifier.BrittleBones),
+  createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Constitution),
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Unyielding),
+  createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.BrittleBones),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.WoundThreshold),
   (
     con,
@@ -516,8 +516,8 @@ export const selectWoundThreshold = createSelector(
  * Returns the static and dynamic values for fate points.
  */
 export const selectFatePoints = createSelector(
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.Luck),
-  createPropertySelector(selectDisadvantages, DisadvantageIdentifier.BadLuck),
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Luck),
+  createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.BadLuck),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.FatePoints),
   (
     incrementor,

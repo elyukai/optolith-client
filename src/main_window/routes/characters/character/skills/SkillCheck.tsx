@@ -6,13 +6,14 @@ import { FC } from "react"
 import { DerivedCharacteristicIdentifier as DCId } from "../../../../../shared/domain/identifier.ts"
 import { getDisplayedSkillCheck } from "../../../../../shared/domain/skillCheck.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { classList } from "../../../../../shared/utils/classList.ts"
 import { minus } from "../../../../../shared/utils/math.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
-import { selectAttributes as selectDynamicAttributes } from "../../../../slices/characterSlice.ts"
+import { selectDynamicAttributes } from "../../../../slices/characterSlice.ts"
 import {
-  selectDerivedCharacteristics,
   selectGetAttribute,
+  selectStaticDerivedCharacteristics,
 } from "../../../../slices/databaseSlice.ts"
 
 type Props = {
@@ -29,7 +30,7 @@ export const SkillCheck: FC<Props> = props => {
   const translateMap = useTranslateMap()
   const getStaticAttribute = useAppSelector(selectGetAttribute)
   const dynamicAttributes = useAppSelector(selectDynamicAttributes)
-  const derivedCharacteristics = useAppSelector(selectDerivedCharacteristics)
+  const derivedCharacteristics = useAppSelector(selectStaticDerivedCharacteristics)
   const spirit = derivedCharacteristics[DCId.Spirit]
   const toughness = derivedCharacteristics[DCId.Toughness]
   const spi = translateMap(spirit?.translations)?.abbreviation ?? "?"

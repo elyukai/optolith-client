@@ -9,7 +9,7 @@ import { DisplayedInactiveBlessing } from "../../../../../shared/domain/liturgic
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { selectAspects } from "../../../../slices/databaseSlice.ts"
+import { selectStaticAspects } from "../../../../slices/databaseSlice.ts"
 import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
@@ -39,7 +39,7 @@ const InactiveBlessingsListItem: FC<Props> = props => {
   const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
-  const staticAspects = useAppSelector(selectAspects)
+  const staticAspects = useAppSelector(selectStaticAspects)
 
   const { name = "" } = translateMap(translations) ?? {}
 

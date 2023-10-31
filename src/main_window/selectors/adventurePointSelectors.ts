@@ -5,28 +5,28 @@ import {
 } from "../../shared/domain/adventurePoints/improvementCost.ts"
 import { RatedAdventurePointsCache } from "../../shared/domain/adventurePoints/ratedEntry.ts"
 import {
-  selectAnimistPowers,
-  selectAttributes,
-  selectBlessings,
-  selectCantrips,
-  selectCeremonies,
-  selectCloseCombatTechniques,
   selectCurrentCharacter,
-  selectCurses,
   selectDerivedCharacteristics,
-  selectDominationRituals,
-  selectElvenMagicalSongs,
-  selectGeodeRituals,
-  selectJesterTricks,
-  selectLiturgicalChants,
-  selectMagicalDances,
-  selectMagicalMelodies,
-  selectRangedCombatTechniques,
-  selectRituals,
-  selectSkills,
-  selectSpells,
+  selectDynamicAnimistPowers,
+  selectDynamicAttributes,
+  selectDynamicBlessings,
+  selectDynamicCantrips,
+  selectDynamicCeremonies,
+  selectDynamicCloseCombatTechniques,
+  selectDynamicCurses,
+  selectDynamicDominationRituals,
+  selectDynamicElvenMagicalSongs,
+  selectDynamicGeodeRituals,
+  selectDynamicJesterTricks,
+  selectDynamicLiturgicalChants,
+  selectDynamicMagicalDances,
+  selectDynamicMagicalMelodies,
+  selectDynamicRangedCombatTechniques,
+  selectDynamicRituals,
+  selectDynamicSkills,
+  selectDynamicSpells,
+  selectDynamicZibiljaRituals,
   selectTotalAdventurePoints,
-  selectZibiljaRituals,
 } from "../slices/characterSlice.ts"
 
 /**
@@ -54,19 +54,22 @@ const sumRatedMaps = (
 /**
  * Returns the adventure points spent on attributes.
  */
-export const selectAdventurePointsSpentOnAttributes = createSelector(selectAttributes, sumRatedMaps)
+export const selectAdventurePointsSpentOnAttributes = createSelector(
+  selectDynamicAttributes,
+  sumRatedMaps,
+)
 
 /**
  * Returns the adventure points spent on skills.
  */
-export const selectAdventurePointsSpentOnSkills = createSelector(selectSkills, sumRatedMaps)
+export const selectAdventurePointsSpentOnSkills = createSelector(selectDynamicSkills, sumRatedMaps)
 
 /**
  * Returns the adventure points spent on combat techniques.
  */
 export const selectAdventurePointsSpentOnCombatTechniques = createSelector(
-  selectCloseCombatTechniques,
-  selectRangedCombatTechniques,
+  selectDynamicCloseCombatTechniques,
+  selectDynamicRangedCombatTechniques,
   sumRatedMaps,
 )
 
@@ -74,17 +77,17 @@ export const selectAdventurePointsSpentOnCombatTechniques = createSelector(
  * Returns the adventure points spent on spells.
  */
 export const selectAdventurePointsSpentOnSpells = createSelector(
-  selectSpells,
-  selectRituals,
-  selectCurses,
-  selectElvenMagicalSongs,
-  selectDominationRituals,
-  selectMagicalDances,
-  selectMagicalMelodies,
-  selectJesterTricks,
-  selectAnimistPowers,
-  selectGeodeRituals,
-  selectZibiljaRituals,
+  selectDynamicSpells,
+  selectDynamicRituals,
+  selectDynamicCurses,
+  selectDynamicElvenMagicalSongs,
+  selectDynamicDominationRituals,
+  selectDynamicMagicalDances,
+  selectDynamicMagicalMelodies,
+  selectDynamicJesterTricks,
+  selectDynamicAnimistPowers,
+  selectDynamicGeodeRituals,
+  selectDynamicZibiljaRituals,
   sumRatedMaps,
 )
 
@@ -92,8 +95,8 @@ export const selectAdventurePointsSpentOnSpells = createSelector(
  * Returns the adventure points spent on liturgical chants.
  */
 export const selectAdventurePointsSpentOnLiturgicalChants = createSelector(
-  selectLiturgicalChants,
-  selectCeremonies,
+  selectDynamicLiturgicalChants,
+  selectDynamicCeremonies,
   sumRatedMaps,
 )
 
@@ -101,7 +104,7 @@ export const selectAdventurePointsSpentOnLiturgicalChants = createSelector(
  * Returns the adventure points spent on cantrips.
  */
 export const selectAdventurePointsSpentOnCantrips = createSelector(
-  selectCantrips,
+  selectDynamicCantrips,
   (cantrips): SpentAdventurePoints => ({ general: cantrips.length, bound: 0 }),
 )
 
@@ -109,7 +112,7 @@ export const selectAdventurePointsSpentOnCantrips = createSelector(
  * Returns the adventure points spent on blessings.
  */
 export const selectAdventurePointsSpentOnBlessings = createSelector(
-  selectBlessings,
+  selectDynamicBlessings,
   (blessings): SpentAdventurePoints => ({ general: blessings.length, bound: 0 }),
 )
 

@@ -10,7 +10,7 @@ import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import { selectAspects } from "../../../../slices/databaseSlice.ts"
+import { selectStaticAspects } from "../../../../slices/databaseSlice.ts"
 import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
@@ -41,7 +41,7 @@ const ActiveBlessingsListItem: FC<Props> = props => {
   const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
   const canRemove = useAppSelector(selectCanRemove)
-  const staticAspects = useAppSelector(selectAspects)
+  const staticAspects = useAppSelector(selectStaticAspects)
 
   const { name = "" } = translateMap(translations) ?? {}
 

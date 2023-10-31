@@ -4,7 +4,7 @@ import {
   selectIncludeAllPublications,
   selectIncludePublications,
 } from "../slices/characterSlice.ts"
-import { selectPublications } from "../slices/databaseSlice.ts"
+import { selectStaticPublications } from "../slices/databaseSlice.ts"
 import { useAppSelector } from "./redux.ts"
 
 /**
@@ -12,7 +12,7 @@ import { useAppSelector } from "./redux.ts"
  * enabled publications.
  */
 export const useIsEntryAvailable = () => {
-  const publications = useAppSelector(selectPublications)
+  const publications = useAppSelector(selectStaticPublications)
   const includeAllPublications = useAppSelector(selectIncludeAllPublications) === true
   const includePublications = useAppSelector(selectIncludePublications) ?? []
 

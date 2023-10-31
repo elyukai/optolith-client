@@ -13,13 +13,13 @@ import {
 import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import {
-  selectAdvantages,
-  selectBlessedTraditions as selectDynamicBlessedTraditions,
-  selectMagicalTraditions as selectDynamicMagicalTraditions,
+  selectDynamicAdvantages,
+  selectDynamicBlessedTraditions,
+  selectDynamicMagicalTraditions,
 } from "../slices/characterSlice.ts"
 import {
-  selectBlessedTraditions as selectStaticBlessedTraditions,
-  selectMagicalTraditions as selectStaticMagicalTraditions,
+  selectStaticBlessedTraditions,
+  selectStaticMagicalTraditions,
 } from "../slices/databaseSlice.ts"
 
 /**
@@ -74,7 +74,7 @@ export const selectActiveBlessedTradition = createSelector(
  * Selects whether the character is a spellcaster.
  */
 export const selectIsSpellcaster = createSelector(
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.Spellcaster),
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Spellcaster),
   selectDynamicMagicalTraditions,
   isSpellcaster,
 )
@@ -83,7 +83,7 @@ export const selectIsSpellcaster = createSelector(
  * Selects whether the character is a Blessed One.
  */
 export const selectIsBlessedOne = createSelector(
-  createPropertySelector(selectAdvantages, AdvantageIdentifier.Blessed),
+  createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Blessed),
   selectDynamicBlessedTraditions,
   isBlessedOne,
 )

@@ -7,7 +7,7 @@ import { compareAt } from "../../../../../shared/utils/compare.ts"
 import { useIsEntryAvailable } from "../../../../hooks/isAvailable.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
 import { selectActiveFocusRules } from "../../../../slices/characterSlice.ts"
-import { selectFocusRules } from "../../../../slices/databaseSlice.ts"
+import { selectStaticFocusRules } from "../../../../slices/databaseSlice.ts"
 import { FocusRulesItem } from "./FocusRulesItem.tsx"
 
 export const FocusRules: FC = () => {
@@ -16,7 +16,7 @@ export const FocusRules: FC = () => {
   const localeCompare = useLocaleCompare()
   const isEntryAvailable = useIsEntryAvailable()
 
-  const focusRules = useAppSelector(selectFocusRules)
+  const focusRules = useAppSelector(selectStaticFocusRules)
   const activeFocusRules = useAppSelector(selectActiveFocusRules)
   const focusRuleOptions = useMemo(
     () =>

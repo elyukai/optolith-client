@@ -25,7 +25,7 @@ import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
 import { DisplayedSkill, selectVisibleSkills } from "../../../../selectors/skillsSelectors.ts"
-import { selectSkillGroups } from "../../../../slices/databaseSlice.ts"
+import { selectStaticSkillGroups } from "../../../../slices/databaseSlice.ts"
 import {
   SkillsSortOrder,
   changeSkillsSortOrder,
@@ -59,7 +59,7 @@ export const Skills: FC = () => {
   )
 
   const canRemove = useAppSelector(selectCanRemove)
-  const skillGroups = useAppSelector(selectSkillGroups)
+  const skillGroups = useAppSelector(selectStaticSkillGroups)
 
   const [filterText, setFilterText] = useState("")
   const sortOrder = useAppSelector(selectSkillsSortOrder)

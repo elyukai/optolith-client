@@ -7,7 +7,7 @@ import { compareAt } from "../../../../../shared/utils/compare.ts"
 import { useIsEntryAvailable } from "../../../../hooks/isAvailable.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
 import { selectActiveOptionalRules } from "../../../../slices/characterSlice.ts"
-import { selectOptionalRules } from "../../../../slices/databaseSlice.ts"
+import { selectStaticOptionalRules } from "../../../../slices/databaseSlice.ts"
 import { OptionalRulesItem } from "./OptionalRulesItem.tsx"
 
 export const OptionalRules: FC = () => {
@@ -16,7 +16,7 @@ export const OptionalRules: FC = () => {
   const localeCompare = useLocaleCompare()
   const isEntryAvailable = useIsEntryAvailable()
 
-  const optionalRules = useAppSelector(selectOptionalRules)
+  const optionalRules = useAppSelector(selectStaticOptionalRules)
   const activeOptionalRules = useAppSelector(selectActiveOptionalRules)
   const optionalRuleOptions = useMemo(
     () =>

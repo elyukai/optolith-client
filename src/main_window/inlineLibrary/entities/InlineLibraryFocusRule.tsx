@@ -3,7 +3,10 @@ import { Markdown } from "../../../shared/components/markdown/Markdown.tsx"
 import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
 import { romanize } from "../../../shared/utils/roman.ts"
 import { useAppSelector } from "../../hooks/redux.ts"
-import { selectFocusRuleSubjects, selectFocusRules } from "../../slices/databaseSlice.ts"
+import {
+  selectStaticFocusRuleSubjects,
+  selectStaticFocusRules,
+} from "../../slices/databaseSlice.ts"
 import { InlineLibraryPlaceholder } from "../InlineLibraryPlaceholder.tsx"
 import { InlineLibraryTemplate } from "../InlineLibraryTemplate.tsx"
 import { Source } from "../shared/Source.tsx"
@@ -15,8 +18,8 @@ type Props = {
 export const InlineLibraryFocusRule: FC<Props> = ({ id }) => {
   const translateMap = useTranslateMap()
 
-  const entry = useAppSelector(selectFocusRules)[id]
-  const subjects = useAppSelector(selectFocusRuleSubjects)
+  const entry = useAppSelector(selectStaticFocusRules)[id]
+  const subjects = useAppSelector(selectStaticFocusRuleSubjects)
   const translation = translateMap(entry?.translations)
 
   if (entry === undefined || translation === undefined) {

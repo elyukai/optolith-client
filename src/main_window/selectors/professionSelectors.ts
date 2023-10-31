@@ -10,14 +10,14 @@ import {
   selectProfessionInstanceId,
   selectProfessionVariantId,
 } from "../slices/characterSlice.ts"
-import { selectProfessions } from "../slices/databaseSlice.ts"
+import { selectStaticProfessions } from "../slices/databaseSlice.ts"
 import { selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
 
 /**
  * Returns different selected parts of a base profession.
  */
 export const selectCurrentProfession = createSelector(
-  selectProfessions,
+  selectStaticProfessions,
   selectProfessionId,
   selectProfessionInstanceId,
   selectStartExperienceLevel,

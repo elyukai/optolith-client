@@ -10,7 +10,7 @@ import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import { selectAttributes } from "../../../../slices/databaseSlice.ts"
+import { selectStaticAttributes } from "../../../../slices/databaseSlice.ts"
 import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
@@ -65,7 +65,7 @@ const CloseCombatTechniquesListItem: FC<Props> = props => {
     [dispatch, id],
   )
 
-  const attributes = useAppSelector(selectAttributes)
+  const attributes = useAppSelector(selectStaticAttributes)
 
   const primaryStr = primary
     .map(ref => translateMap(attributes[ref.id.attribute]?.translations)?.abbreviation ?? "")
