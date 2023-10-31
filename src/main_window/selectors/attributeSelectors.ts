@@ -12,12 +12,6 @@ import {
   AttributeIdentifier,
   OptionalRuleIdentifier,
 } from "../../shared/domain/identifier.ts"
-import {
-  DisplayedMagicalPrimaryAttributes,
-  DisplayedPrimaryAttribute,
-  getBlessedPrimaryAttribute,
-  getHighestMagicalPrimaryAttributes,
-} from "../../shared/domain/primaryAttribute.ts"
 import { Rated } from "../../shared/domain/ratedEntry.ts"
 import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
@@ -73,52 +67,11 @@ import {
   selectMaximumTotalAttributePoints,
   selectStartExperienceLevel,
 } from "./experienceLevelSelectors.ts"
-import { selectCurrentRace } from "./raceSelectors.ts"
 import {
-  selectActiveBlessedTradition,
-  selectActiveMagicalTraditions,
-} from "./traditionSelectors.ts"
-
-/**
- * Returns the highest primary attributes of all active magical traditions, and
- * if they are halfed for calculating arcane energy.
- */
-export const selectHighestMagicalPrimaryAttributes = createSelector(
-  selectActiveMagicalTraditions,
-  selectStaticAttributes,
-  selectDynamicAttributes,
-  (
-    activeMagicalTraditions,
-    staticAttributes,
-    dynamicAttributes,
-  ): DisplayedMagicalPrimaryAttributes =>
-    getHighestMagicalPrimaryAttributes(
-      activeMagicalTraditions,
-      id => staticAttributes[id],
-      id => dynamicAttributes[id],
-    ),
-)
-
-/**
- * Returns the primary attribute of the active blessed tradition, if any.
- */
-export const selectBlessedPrimaryAttribute = createSelector(
-  selectActiveBlessedTradition,
-  selectStaticAttributes,
-  selectDynamicAttributes,
-  (
-    activeBlessedTradition,
-    staticAttributes,
-    dynamicAttributes,
-  ): DisplayedPrimaryAttribute | undefined =>
-    activeBlessedTradition === undefined
-      ? undefined
-      : getBlessedPrimaryAttribute(
-          activeBlessedTradition,
-          id => staticAttributes[id],
-          id => dynamicAttributes[id],
-        ),
-)
+  selectBlessedPrimaryAttribute,
+  selectHighestMagicalPrimaryAttributes,
+} from "./primaryAttributeSelectors.ts"
+import { selectCurrentRace } from "./raceSelectors.ts"
 
 const selectAttributeMinimaByAssociatedAttributes = createSelector(
   selectStaticSkills,

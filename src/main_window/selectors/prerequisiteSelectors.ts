@@ -59,11 +59,11 @@ import {
   selectStaticRituals,
   selectStaticSpells,
 } from "../slices/databaseSlice.ts"
+import { selectCurrentCulture } from "./cultureSelectors.ts"
 import {
   selectBlessedPrimaryAttribute,
   selectHighestMagicalPrimaryAttributes,
-} from "./attributeSelectors.ts"
-import { selectCurrentCulture } from "./cultureSelectors.ts"
+} from "./primaryAttributeSelectors.ts"
 import { selectCurrentProfession } from "./professionSelectors.ts"
 import { selectCurrentRace, selectCurrentRaceVariant } from "./raceSelectors.ts"
 import {

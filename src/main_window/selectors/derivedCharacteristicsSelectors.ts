@@ -44,11 +44,11 @@ import {
   selectPurchasedLifePoints,
 } from "../slices/characterSlice.ts"
 import { selectStaticDerivedCharacteristics } from "../slices/databaseSlice.ts"
+import { selectIsInCharacterCreation } from "./characterSelectors.ts"
 import {
   selectBlessedPrimaryAttribute,
   selectHighestMagicalPrimaryAttributes,
-} from "./attributeSelectors.ts"
-import { selectIsInCharacterCreation } from "./characterSelectors.ts"
+} from "./primaryAttributeSelectors.ts"
 import { selectCurrentRace } from "./raceSelectors.ts"
 
 /**
