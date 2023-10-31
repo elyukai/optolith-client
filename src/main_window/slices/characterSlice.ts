@@ -1,6 +1,11 @@
 import { AnyAction, createAction } from "@reduxjs/toolkit"
 import { Draft } from "immer"
 import { Character } from "../../shared/domain/character.ts"
+import {
+  AdvantageIdentifier,
+  BlessedTraditionIdentifier,
+  MagicalTraditionIdentifier,
+} from "../../shared/domain/identifier.ts"
 import { createImmerReducer, reduceReducers } from "../../shared/utils/redux.ts"
 import { RootState } from "../store.ts"
 import { attributesReducer } from "./attributesSlice.ts"
@@ -56,7 +61,7 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     instanceId: 1,
   },
   rules: {
-    includeAllPublications: false,
+    includeAllPublications: true,
     includePublications: [],
     activeFocusRules: {},
     activeOptionalRules: {},
@@ -68,7 +73,16 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
       dependencies: [],
     },
   },
-  advantages: {},
+  advantages: {
+    [AdvantageIdentifier.Blessed]: {
+      id: AdvantageIdentifier.Blessed,
+      instances: [{}],
+    },
+    [AdvantageIdentifier.Spellcaster]: {
+      id: AdvantageIdentifier.Spellcaster,
+      instances: [{}],
+    },
+  },
   disadvantages: {},
   specialAbilities: {
     advancedCombatSpecialAbilities: {},
@@ -78,7 +92,12 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     ancestorGlyphs: {},
     arcaneOrbEnchantments: {},
     attireEnchantments: {},
-    blessedTraditions: {},
+    blessedTraditions: {
+      [BlessedTraditionIdentifier.Praios]: {
+        id: BlessedTraditionIdentifier.Praios,
+        instances: [{}],
+      },
+    },
     bowlEnchantments: {},
     brawlingSpecialAbilities: {},
     cauldronEnchantments: {},
@@ -100,7 +119,12 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     lycantropicGifts: {},
     magicalRunes: {},
     magicalSpecialAbilities: {},
-    magicalTraditions: {},
+    magicalTraditions: {
+      [MagicalTraditionIdentifier.Witches]: {
+        id: MagicalTraditionIdentifier.Witches,
+        instances: [{}],
+      },
+    },
     magicStyleSpecialAbilities: {},
     orbEnchantments: {},
     pactGifts: {},
@@ -142,9 +166,33 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     close: {},
     ranged: {},
   },
-  cantrips: [],
-  spells: {},
-  rituals: {},
+  cantrips: [1],
+  spells: {
+    1: {
+      id: 1,
+      boundAdventurePoints: [],
+      cachedAdventurePoints: {
+        bound: 0,
+        general: 2,
+      },
+      dependencies: [],
+      enhancements: {},
+      value: 0,
+    },
+  },
+  rituals: {
+    1: {
+      id: 1,
+      boundAdventurePoints: [],
+      cachedAdventurePoints: {
+        bound: 0,
+        general: 4,
+      },
+      dependencies: [],
+      enhancements: {},
+      value: 0,
+    },
+  },
   magicalActions: {
     curses: {},
     elvenMagicalSongs: {},
@@ -156,9 +204,33 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     geodeRituals: {},
     zibiljaRituals: {},
   },
-  blessings: [],
-  liturgicalChants: {},
-  ceremonies: {},
+  blessings: [1],
+  liturgicalChants: {
+    1: {
+      id: 1,
+      boundAdventurePoints: [],
+      cachedAdventurePoints: {
+        bound: 0,
+        general: 1,
+      },
+      dependencies: [],
+      enhancements: {},
+      value: 0,
+    },
+  },
+  ceremonies: {
+    1: {
+      id: 1,
+      boundAdventurePoints: [],
+      cachedAdventurePoints: {
+        bound: 0,
+        general: 2,
+      },
+      dependencies: [],
+      enhancements: {},
+      value: 0,
+    },
+  },
   magicalPrimaryAttributeDependencies: [],
   blessedPrimaryAttributeDependencies: [],
   // items: {}
