@@ -13,6 +13,12 @@ import {
   AttributeIdentifier,
   OptionalRuleIdentifier,
 } from "../../shared/domain/identifier.ts"
+import {
+  DisplayedMagicalPrimaryAttributes,
+  DisplayedPrimaryAttribute,
+  getBlessedPrimaryAttribute,
+  getHighestMagicalPrimaryAttributes,
+} from "../../shared/domain/primaryAttribute.ts"
 import { Rated } from "../../shared/domain/ratedEntry.ts"
 import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
@@ -74,23 +80,6 @@ import {
 } from "./traditionSelectors.ts"
 
 /**
- * A combination of a static and corresponding dynamic attribute entry.
- */
-export type DisplayedPrimaryAttribute = {
-  static: Attribute
-  dynamic: Rated
-}
-
-/**
- * A list of the highest primary attributes of all active magical traditions,
- * and if they are halfed for calculating arcane energy.
- */
-export type DisplayedMagicalPrimaryAttributes = {
-  list: DisplayedPrimaryAttribute[]
-  halfed: boolean
-}
-
-/**
  * Returns the highest primary attributes of all active magical traditions, and
  * if they are halfed for calculating arcane energy.
  */
@@ -102,57 +91,12 @@ export const selectHighestMagicalPrimaryAttributes = createSelector(
     activeMagicalTraditions,
     staticAttributes,
     dynamicAttributes,
-  ): DisplayedMagicalPrimaryAttributes => {
-    const { map, halfed } = activeMagicalTraditions.reduce<{
-      map: Map<number, DisplayedPrimaryAttribute>
-      halfed: boolean
-    }>(
-      (currentlyHighest, magicalTradition) => {
-        const staticPrimaryAttribute = magicalTradition.static.primary
-
-        if (staticPrimaryAttribute === undefined) {
-          return currentlyHighest
-        } else {
-          const {
-            id: { attribute: id },
-            use_half_for_arcane_energy,
-          } = staticPrimaryAttribute
-          const staticAttribute = staticAttributes[id]
-          const dynamicAttribute = dynamicAttributes[id] ?? createInitialDynamicAttribute(id)
-
-          if (staticAttribute === undefined) {
-            return currentlyHighest
-          } else if (
-            currentlyHighest.map.size === 0 ||
-            [...currentlyHighest.map.values()][0]!.dynamic.value < dynamicAttribute.value
-          ) {
-            return {
-              map: new Map([[id, { static: staticAttribute, dynamic: dynamicAttribute }]]),
-              halfed: currentlyHighest.halfed || use_half_for_arcane_energy,
-            }
-          } else if (
-            [...currentlyHighest.map.values()][0]!.dynamic.value === dynamicAttribute.value
-          ) {
-            return {
-              map: currentlyHighest.map.set(id, {
-                static: staticAttribute,
-                dynamic: dynamicAttribute,
-              }),
-              halfed: currentlyHighest.halfed || use_half_for_arcane_energy,
-            }
-          } else {
-            return currentlyHighest
-          }
-        }
-      },
-      { map: new Map(), halfed: false },
-    )
-
-    return {
-      list: [...map.values()],
-      halfed,
-    }
-  },
+  ): DisplayedMagicalPrimaryAttributes =>
+    getHighestMagicalPrimaryAttributes(
+      activeMagicalTraditions,
+      id => staticAttributes[id],
+      id => dynamicAttributes[id],
+    ),
 )
 
 /**
@@ -166,22 +110,14 @@ export const selectBlessedPrimaryAttribute = createSelector(
     activeBlessedTradition,
     staticAttributes,
     dynamicAttributes,
-  ): DisplayedPrimaryAttribute | undefined => {
-    const id = activeBlessedTradition?.static.primary?.id.attribute
-
-    if (id === undefined) {
-      return undefined
-    } else {
-      const staticAttribute = staticAttributes[id]
-      const dynamicAttribute = dynamicAttributes[id] ?? createInitialDynamicAttribute(id)
-
-      if (staticAttribute === undefined) {
-        return undefined
-      } else {
-        return { static: staticAttribute, dynamic: dynamicAttribute }
-      }
-    }
-  },
+  ): DisplayedPrimaryAttribute | undefined =>
+    activeBlessedTradition === undefined
+      ? undefined
+      : getBlessedPrimaryAttribute(
+          activeBlessedTradition,
+          id => staticAttributes[id],
+          id => dynamicAttributes[id],
+        ),
 )
 
 const selectAttributeMinimaByAssociatedAttributes = createSelector(
