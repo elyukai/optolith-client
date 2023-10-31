@@ -64,7 +64,7 @@
     "ssh2-sftp-client": "^9.1.0",
     "standard-version": "^9.5.0",
     "ts-loader": "^9.4.4",
-    "tsx": "^3.13.0",
+    "tsx": "^3.14.0",
     "typescript": "^5.2.2",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
