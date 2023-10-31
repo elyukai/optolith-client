@@ -1,6 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../store.ts"
 
+/**
+ * Possible routes.
+ */
 export type RoutePath =
   | ["characters"]
   | ["characters", string, "profile"]
@@ -29,21 +32,30 @@ export type RoutePath =
   | ["third_party_licenses"]
   | ["last_changes"]
 
+/**
+ * The sub-state for routes.
+ */
 export type RouteState = {
   path: RoutePath
 }
 
 const initialState: RouteState = {
-  path: ["characters"],
+  path: ["characters", "550e8400-e29b-11d4-a716-446655440000", "spells"],
 }
 
 const routeSlice = createSlice({
   name: "route",
   initialState,
   reducers: {
+    /**
+     * Action to go to a specific tab.
+     */
     goToTab: (state, action: PayloadAction<RoutePath>) => {
       state.path = action.payload
     },
+    /**
+     * Action to go to a specific tab group.
+     */
     goToTabGroup: (state, action: PayloadAction<RoutePath[]>) => {
       const [firstRoute] = action.payload
       if (firstRoute !== undefined) {
@@ -53,10 +65,21 @@ const routeSlice = createSlice({
   },
 })
 
+// eslint-disable-next-line jsdoc/require-jsdoc
 export const { goToTab, goToTabGroup } = routeSlice.actions
 
+/**
+ * Selects the current route from the state.
+ */
 export const selectRoute = (state: RootState) => state.route.path
+
+/**
+ * Selects the selected character identifier from the state.
+ */
 export const selectSelectedCharacterId = (state: RootState) =>
   state.route.path[0] === "characters" ? state.route.path[1] : undefined
 
+/**
+ * The state reducer for routes.
+ */
 export const routeReducer = routeSlice.reducer

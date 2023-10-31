@@ -14,6 +14,10 @@ export enum ImprovementCost {
   E = "E",
 }
 
+/**
+ * Returns the base value for calculating the adventure points for an
+ * improvement cost.
+ */
 const adventureCostBase = (ic: ImprovementCost): number => {
   switch (ic) {
     case ImprovementCost.A:
@@ -31,6 +35,10 @@ const adventureCostBase = (ic: ImprovementCost): number => {
   }
 }
 
+/**
+ * The highest value that uses the base cost value. Values above this threshold
+ * have cost that increase with each value increase.
+ */
 const constantThresholdValue = (ic: ImprovementCost): number => {
   switch (ic) {
     case ImprovementCost.A:
@@ -45,9 +53,18 @@ const constantThresholdValue = (ic: ImprovementCost): number => {
   }
 }
 
+/**
+ * Returns the multiplier for the base cost value for the given improvement
+ * cost. The multiplier is 1 for values below the constant threshold value and
+ * increases by 1 for each value above the threshold.
+ */
 const baseMultiplier = (ic: ImprovementCost, value: number): number =>
   Math.max(1, value - constantThresholdValue(ic) + 1)
 
+/**
+ * Returns the adventure points required to increase a value by 1 to the given
+ * value.
+ */
 const adventurePointsValue = (ic: ImprovementCost, value: number): number =>
   adventureCostBase(ic) * baseMultiplier(ic, value)
 
