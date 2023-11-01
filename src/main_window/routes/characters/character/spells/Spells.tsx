@@ -171,8 +171,6 @@ export const Spells: FC = () => {
     ],
   )
 
-  console.log(inactiveList)
-
   const activeList = useMemo(
     () =>
       filterAndSortDisplayed(
