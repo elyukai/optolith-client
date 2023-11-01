@@ -9,8 +9,8 @@ if (!args.includes("--stable") && !args.includes("--prerelease")) {
 }
 
 const config = args.includes("--prerelease")
-  ? (await import("./build.prerelease.config.mjs")).default
-  : (await import("./build.config.mjs")).default
+  ? (await import("./build.prerelease.config.mjs")).prereleaseConfig
+  : (await import("./build.stable.config.mjs")).stableConfig
 
 process.on("unhandledRejection", error => {
   throw new Error(`Unhandled promise rejection: ${/** @type {Error} */ (error).toString()}`)
