@@ -142,7 +142,9 @@ export const NavigationBar: FC = () => {
               <Button /* onClick={saveHero} */>{translate("Save")}</Button>
             </>
           ) : null}
-          <IconButton icon="&#xE906;" label={translate("Show Settings")} onClick={showSettings} />
+          {ExternalAPI.platform !== "darwin" ? (
+            <IconButton icon="&#xE906;" label={translate("Show Settings")} onClick={showSettings} />
+          ) : null}
           <IconButton
             icon="&#xE911;"
             label={translate("Toggle DevTools")}
