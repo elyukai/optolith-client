@@ -11,7 +11,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "contents")
 debug("loading database ...")
 
 const get = async () => {
-  const raw = await getAllValidData(getAbsoluteEntityPaths(root))
+  const raw = await getAllValidData(getAbsoluteEntityPaths(root), {
+    ajvOptions: { allErrors: true },
+  })
   const cache = await getCache(getAbsoluteCachePaths(root))
   return { raw, cache }
 }
@@ -21,7 +23,9 @@ get()
     debug("database loaded")
     parentPort.postMessage(database)
   })
-  .catch(() => {})
+  .catch(err => {
+    debug("database error: %O", err)
+  })
 
 /**
  * The complate database content.
