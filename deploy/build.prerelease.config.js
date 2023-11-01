@@ -1,5 +1,5 @@
 // @ts-check
-import { baseConfig } from "./build.base.config.mjs"
+import { baseConfig } from "./build.base.config.js"
 
 /**
  * @type {import("electron-builder").Configuration}

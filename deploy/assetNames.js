@@ -10,7 +10,7 @@ const channelSuffix = channel => {
 }
 
 /**
- * @param {import("./platform.mjs").System} os
+ * @param {import("./platform.js").System} os
  * @param {"prerelease" | "stable"} channel
  */
 const prefix = (os, channel) => {
@@ -22,7 +22,7 @@ const prefix = (os, channel) => {
 }
 
 /**
- * @param {import("./platform.mjs").System} os
+ * @param {import("./platform.js").System} os
  */
 const extensions = os => {
   switch (os) {
@@ -33,7 +33,7 @@ const extensions = os => {
 }
 
 /**
- * @param {import("./platform.mjs").System} os
+ * @param {import("./platform.js").System} os
  * @param {"prerelease" | "stable"} channel
  * @param {string} version
  */

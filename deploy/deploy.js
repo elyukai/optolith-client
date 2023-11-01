@@ -1,10 +1,10 @@
 // @ts-check
 import packageJson from "../package.json" assert { type: "json" }
-import { getApplicationFileNames, getUpdateFileName } from "./assetNames.mjs"
-import { getLocalPath } from "./localPath.mjs"
-import { getSystem, getSystemName } from "./platform.mjs"
-import { run, upload } from "./remoteConnection.mjs"
-import { getRemotePath } from "./remotePath.mjs"
+import { getApplicationFileNames, getUpdateFileName } from "./assetNames.js"
+import { getLocalPath } from "./localPath.js"
+import { getSystem, getSystemName } from "./platform.js"
+import { run, upload } from "./remoteConnection.js"
+import { getRemotePath } from "./remotePath.js"
 
 /**
  * Needed env variables:

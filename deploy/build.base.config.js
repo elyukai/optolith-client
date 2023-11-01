@@ -1,5 +1,5 @@
 // @ts-check
-import { notarize } from "./notarize.mjs"
+import { notarize } from "./notarize.js"
 
 /**
  * @type {import("electron-builder").Configuration}

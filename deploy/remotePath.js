@@ -12,7 +12,7 @@ const remoteChannelPath = channel => {
 }
 
 /**
- * @param {import("./platform.mjs").System} os
+ * @param {import("./platform.js").System} os
  */
 const remoteOsPath = os => {
   switch (os) {
@@ -25,7 +25,7 @@ const remoteOsPath = os => {
 /**
  * @param {string} root
  * @param {"prerelease" | "stable"} channel
- * @param {import("./platform.mjs").System} os
+ * @param {import("./platform.js").System} os
  */
 export const getRemotePath = (root, channel, os) =>
   join(root, remoteChannelPath(channel), remoteOsPath(os))
