@@ -9,6 +9,13 @@ import { NavigationBar } from "./NavigationBar.tsx"
 import "./Root.scss"
 import { Router } from "./Router.tsx"
 
+// Inserting context bridge function directly into React components breaks.
+const onMinimize = () => ExternalAPI.minimize()
+const onMaximize = () => ExternalAPI.maximize()
+const onRestore = () => ExternalAPI.restore()
+const onClose = () => ExternalAPI.close()
+const isMaximized = () => ExternalAPI.isMaximized()
+
 export const Root: FC = () => {
   const language = useAppSelector(selectLocale)
   const areAnimationsEnabled = useAppSelector(selectAreAnimationsEnabled)
@@ -27,11 +34,11 @@ export const Root: FC = () => {
       <TitleBar
         platform={ExternalAPI.platform}
         maximizeEvents={ExternalAPI}
-        onMinimize={ExternalAPI.minimize}
-        onMaximize={ExternalAPI.maximize}
-        onRestore={ExternalAPI.restore}
-        onClose={ExternalAPI.close}
-        isMaximized={ExternalAPI.isMaximized}
+        onMinimize={onMinimize}
+        onMaximize={onMaximize}
+        onRestore={onRestore}
+        onClose={onClose}
+        isMaximized={isMaximized}
       />
 
       <div id="content">

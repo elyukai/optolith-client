@@ -22,6 +22,13 @@ type UpdatePhase =
   | { type: "Downloading"; info: ProgressInfo }
   | { type: "Downloaded"; info: UpdateDownloadedEvent }
 
+// Inserting context bridge function directly into React components breaks.
+const close = () => ExternalAPI.close()
+const downloadUpdateLater = () => ExternalAPI.downloadUpdateLater()
+const downloadUpdate = () => ExternalAPI.downloadUpdate()
+const installUpdateLater = () => ExternalAPI.installUpdateLater()
+const quitAndInstallUpdate = () => ExternalAPI.quitAndInstallUpdate()
+
 /**
  * Root component for the updater window.
  */
@@ -126,12 +133,7 @@ export const Root: FC<Props> = props => {
 
   return (
     <>
-      <TitleBar
-        title={title}
-        secondary
-        platform={ExternalAPI.platform}
-        onClose={ExternalAPI.close}
-      />
+      <TitleBar title={title} secondary platform={ExternalAPI.platform} onClose={close} />
       <main>
         {(() => {
           switch (phase.type) {
@@ -146,7 +148,7 @@ export const Root: FC<Props> = props => {
                 <>
                   <p>{translate("You're running the latest version available.")}</p>
                   <div className="buttons">
-                    <Button onClick={ExternalAPI.close}>{translate("Done")}</Button>
+                    <Button onClick={close}>{translate("Done")}</Button>
                   </div>
                 </>
               )
@@ -160,8 +162,8 @@ export const Root: FC<Props> = props => {
                     )}
                   </p>
                   <div className="buttons">
-                    <Button onClick={ExternalAPI.close}>{translate("Download")}</Button>
-                    <Button onClick={ExternalAPI.close}>{translate("Download Later")}</Button>
+                    <Button onClick={downloadUpdate}>{translate("Download")}</Button>
+                    <Button onClick={downloadUpdateLater}>{translate("Download Later")}</Button>
                   </div>
                 </>
               )
@@ -200,8 +202,8 @@ export const Root: FC<Props> = props => {
                     <ProgressBar orientation="horizontal" current={100} max={100} />
                   </div>
                   <div className="buttons">
-                    <Button onClick={ExternalAPI.close}>{translate("Quit and Install")}</Button>
-                    <Button onClick={ExternalAPI.close}>{translate("Install Later")}</Button>
+                    <Button onClick={quitAndInstallUpdate}>{translate("Quit and Install")}</Button>
+                    <Button onClick={installUpdateLater}>{translate("Install Later")}</Button>
                   </div>
                 </>
               )

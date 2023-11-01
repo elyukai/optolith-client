@@ -19,7 +19,9 @@ import { NavigationBarSubTabs } from "./NavigationBarSubTabs.tsx"
 import { NavigationBarTabs } from "./NavigationBarTabs.tsx"
 import { NavigationBarWrapper } from "./NavigationBarWrapper.tsx"
 
-const handleToggleDevTools = ExternalAPI.toggleDevTools
+// Inserting context bridge function directly into React components breaks.
+const showSettings = () => ExternalAPI.showSettings()
+const toggleDevTools = () => ExternalAPI.toggleDevTools()
 
 export const NavigationBar: FC = () => {
   const translate = useTranslate()
@@ -140,15 +142,11 @@ export const NavigationBar: FC = () => {
               <Button /* onClick={saveHero} */>{translate("Save")}</Button>
             </>
           ) : null}
-          <IconButton
-            icon="&#xE906;"
-            label={translate("Show Settings")}
-            onClick={ExternalAPI.showSettings}
-          />
+          <IconButton icon="&#xE906;" label={translate("Show Settings")} onClick={showSettings} />
           <IconButton
             icon="&#xE911;"
             label={translate("Toggle DevTools")}
-            onClick={handleToggleDevTools}
+            onClick={toggleDevTools}
           />
         </NavigationBarRight>
       </NavigationBarWrapper>
