@@ -1,12 +1,13 @@
 import Debug from "debug"
-import { dirname, join } from "node:path"
+import { join } from "node:path"
 import { parentPort } from "node:process"
-import { fileURLToPath } from "node:url"
 import { getAllValidData, getCache } from "optolith-database-schema"
 import { getAbsoluteCachePaths, getAbsoluteEntityPaths } from "./contents/src/config.js"
 const debug = Debug("util:database")
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "contents")
+// This is the relative path from the project root directory to the database
+// root directory.
+const root = join("src", "database", "contents")
 
 debug("loading database ...")
 
