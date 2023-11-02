@@ -52,8 +52,7 @@ export const baseConfig = {
     ],
     entitlements: "deploy/entitlements.mac.plist",
     entitlementsInherit: "deploy/entitlements.mac.plist",
-    hardenedRuntime: true,
-    gatekeeperAssess: false,
+    mergeASARs: false,
   },
   dmg: {
     sign: false,
