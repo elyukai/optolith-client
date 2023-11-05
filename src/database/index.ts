@@ -5,9 +5,8 @@ import * as databaseSchema from "optolith-database-schema"
 import { getAbsoluteCachePaths, getAbsoluteEntityPaths } from "./contents/src/config.js"
 const debug = Debug("util:database")
 
-// This is the relative path from the project root directory to the database
-// root directory.
-const root = join("src", "database", "contents")
+const appPath = process.argv[2] ?? ""
+const root = join(appPath, "src", "database", "contents")
 
 debug("loading database ...")
 
