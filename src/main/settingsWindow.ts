@@ -38,7 +38,7 @@ export const createSettingsWindow = async (
       acceptFirstMouse: true,
       backgroundColor: getWindowBackgroundColor(getGlobalSettings().theme),
       webPreferences: {
-        preload: path.join(__dirname, "renderer_settings_preload.js"),
+        preload: path.join(__dirname, "renderer_settings_preload.cjs"),
       },
       show: false,
       titleBarStyle: "hidden",

@@ -18,7 +18,7 @@ const createRendererConfig = name => [
     entry: {
       [`renderer_${name}`]: `./src/${name}_window/index.tsx`
     },
-    target: "electron-renderer",
+    target: "electron27-renderer",
     optimization: getOptimization(`renderer_${name}`),
     module: {
       rules: rules
@@ -45,7 +45,7 @@ const createRendererConfig = name => [
     entry: {
       [`renderer_${name}_preload`]: `./src/${name}_window_preload/index.ts`
     },
-    target: "electron-preload",
+    target: "electron27-preload",
     module: {
       rules: rules
     },
@@ -54,7 +54,7 @@ const createRendererConfig = name => [
     },
     output: {
       path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
-      filename: "[name].js"
+      filename: "[name].cjs"
     }
   }
 ]
@@ -67,7 +67,7 @@ export default [
     entry: {
       main: "./src/main/index.ts"
     },
-    target: "electron-main",
+    target: "electron27-main",
     optimization: getOptimization("main"),
     module: {
       rules: rules
@@ -77,7 +77,7 @@ export default [
     },
     output: {
       path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
-      filename: "[name].js"
+      filename: "[name].cjs"
     },
     externalsPresets: {
       electronMain: true
@@ -89,7 +89,7 @@ export default [
     entry: {
       database: "./src/database/index.ts"
     },
-    target: "electron-main",
+    target: "electron27-main",
     optimization: getOptimization("database"),
     module: {
       rules: rules
@@ -99,7 +99,7 @@ export default [
     },
     output: {
       path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
-      filename: "[name].js"
+      filename: "[name].cjs"
     },
     externalsPresets: {
       electronMain: true

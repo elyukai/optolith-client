@@ -9,7 +9,7 @@
   },
   "homepage": "https://optolith.app",
   "license": "MPL-2.0",
-  "main": ".webpack/main.js",
+  "main": ".webpack/main.cjs",
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
     "adm-zip": "^0.5.10",

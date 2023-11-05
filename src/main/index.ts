@@ -17,7 +17,7 @@ app.setAppUserModelId("lukasobermann.optolith")
 const isMac = process.platform === "darwin"
 
 debug("loading database ...")
-const databaseProcess = utilityProcess.fork(join(__dirname, "./database.js"))
+const databaseProcess = utilityProcess.fork(join(__dirname, "./database.cjs"))
 const databaseLoading = new Promise<Database>(resolve => {
   databaseProcess.on("message", (message: Database) => {
     debug("database received")

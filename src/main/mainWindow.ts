@@ -41,7 +41,7 @@ export const createMainWindow = async (database: Database) => {
       acceptFirstMouse: true,
       backgroundColor: getWindowBackgroundColor(getGlobalSettings().theme),
       webPreferences: {
-        preload: path.join(__dirname, "renderer_main_preload.js"),
+        preload: path.join(__dirname, "renderer_main_preload.cjs"),
       },
       show: false,
       titleBarStyle: "hiddenInset",
