@@ -57,5 +57,6 @@ export const baseConfig = {
   dmg: {
     sign: false,
   },
+  asar: false,
   afterSign: notarize,
 }
