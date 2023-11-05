@@ -103,6 +103,9 @@ export default [
     },
     externalsPresets: {
       electronMain: true
+    },
+    externals: {
+      "optolith-database-schema": "module optolith-database-schema",
     }
   },
   ...createRendererConfig("main"),
