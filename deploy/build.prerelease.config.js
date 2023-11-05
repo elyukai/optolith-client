@@ -11,7 +11,6 @@ export const prereleaseConfig = {
   directories: {
     output: "dist/insider",
   },
-  asarUnpack: "src/database/contents/**",
   win: {
     ...baseConfig.win,
     icon: "src/assets/icon/AppList.targetsize-512.pre.png",

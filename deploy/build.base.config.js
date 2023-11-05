@@ -15,6 +15,12 @@ export const baseConfig = {
     "src/database/contents/Compatibility/**",
     "src/database/contents/Data/**",
   ],
+  asar: false, // otherwise optolith-database-schema package is not properly resolved
+  asarUnpack: [
+    "node_modules/optolith-character-schema/**",
+    "node_modules/optolith-database-schema/**",
+    "src/database/contents/**",
+  ],
   win: {
     target: [
       {
@@ -57,6 +63,5 @@ export const baseConfig = {
   dmg: {
     sign: false,
   },
-  asar: false,
   afterSign: notarize,
 }
