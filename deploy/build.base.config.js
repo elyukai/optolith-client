@@ -59,9 +59,12 @@ export const baseConfig = {
     entitlements: "deploy/entitlements.mac.plist",
     entitlementsInherit: "deploy/entitlements.mac.plist",
     mergeASARs: false,
+    darkModeSupport: true,
+    gatekeeperAssess: true,
   },
-  dmg: {
-    sign: false,
+  afterSign: async context => {
+    if (context.electronPlatformName === "darwin") {
+      await notarize(context)
+    }
   },
-  afterSign: notarize,
 }
