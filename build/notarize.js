@@ -1,16 +1,22 @@
 // @ts-check
-import { notarize as electronNotarize } from '@electron/notarize'
+import { notarize as electronNotarize } from "@electron/notarize"
 
 /**
+ * Notarizes the app package after it has been built. It detects the
+ * authentication method from the environment variables.
  * @param context {import("electron-builder").AfterPackContext}
  */
-export const notarize = async (context) => {
+export const notarize = async context => {
   const { electronPlatformName, appOutDir } = context
 
-  if (electronPlatformName === 'darwin') {
+  if (electronPlatformName === "darwin") {
     const appName = context.packager.appInfo.productFilename
 
-    if (typeof process.env.APPLEID === "string" && typeof process.env.APPLEIDPASS === "string" && typeof process.env.TEAMID === "string") {
+    if (
+      typeof process.env.APPLEID === "string" &&
+      typeof process.env.APPLEIDPASS === "string" &&
+      typeof process.env.TEAMID === "string"
+    ) {
       console.log(`Notarizing "${appName}.app" via Apple ID ...`)
       await electronNotarize({
         tool: "notarytool",
@@ -20,7 +26,11 @@ export const notarize = async (context) => {
         teamId: process.env.TEAMID,
       })
       console.log(`Notarization successful`)
-    } else if (typeof process.env.APPLEAPIKEY === "string" && typeof process.env.APPLEAPIKEYID === "string" && typeof process.env.APPLEAPIISSUER === "string") {
+    } else if (
+      typeof process.env.APPLEAPIKEY === "string" &&
+      typeof process.env.APPLEAPIKEYID === "string" &&
+      typeof process.env.APPLEAPIISSUER === "string"
+    ) {
       console.log(`Notarizing "${appName}.app" via App Store Connect API ...`)
       await electronNotarize({
         tool: "notarytool",
@@ -40,7 +50,9 @@ export const notarize = async (context) => {
       })
       console.log(`Notarization successful`)
     } else {
-      throw new Error(`Notarization failed: No valid authentication method found in environment. Please provide either APPLEID and APPLEIDPASS, or APPLEAPIKEY, APPLEAPIKEYID and APPLEAPIISSUER, or (optional) KEYCHAIN and KEYCHAINPROFILE.`)
+      throw new Error(
+        `Notarization failed: No valid authentication method found in environment. Please provide either APPLEID and APPLEIDPASS, or APPLEAPIKEY, APPLEAPIKEYID and APPLEAPIISSUER, or (optional) KEYCHAIN and KEYCHAINPROFILE.`,
+      )
     }
   }
 }
