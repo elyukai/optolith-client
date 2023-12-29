@@ -12,7 +12,7 @@ import {
   fromRawPageRange,
   normalizePageRanges,
   numberRangeToPageRange,
-} from "../../../shared/domain/pages.ts"
+} from "../../../shared/domain/sources/pages.ts"
 import { useTranslate } from "../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
 import { isNotNullish } from "../../../shared/utils/nullable.ts"

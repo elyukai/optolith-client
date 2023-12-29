@@ -3,9 +3,9 @@ import {
   PageRange as RawPageRange,
   SimpleOccurrence,
 } from "optolith-database-schema/types/source/_PublicationRef"
-import { range } from "../utils/array.ts"
-import { Compare } from "../utils/compare.ts"
-import { assertExhaustive } from "../utils/typeSafety.ts"
+import { range } from "../../utils/array.ts"
+import { Compare } from "../../utils/compare.ts"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
 
 /**
  * A comparison function for two pages.
