@@ -1,7 +1,7 @@
 import { RequirableSelectOptionIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
-import { Equality } from "../utils/compare.ts"
-import { isNotNullish } from "../utils/nullable.ts"
-import { assertExhaustive } from "../utils/typeSafety.ts"
+import { Equality } from "../../utils/compare.ts"
+import { isNotNullish } from "../../utils/nullable.ts"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
 
 /**
  * A simple set of activated activatable identifiers.

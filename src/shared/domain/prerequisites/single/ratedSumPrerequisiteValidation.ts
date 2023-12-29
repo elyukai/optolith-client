@@ -1,7 +1,7 @@
 import { RatedSumPrerequisite } from "optolith-database-schema/types/prerequisites/single/RatedSumPrerequisite"
 import { sumWith } from "../../../utils/array.ts"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { ActivatableRatedWithEnhancements, Rated } from "../../ratedEntry.ts"
+import { ActivatableRatedWithEnhancements, Rated } from "../../rated/ratedEntry.ts"
 
 /**
  * Checks a single rated sum prerequisite if it’s matched.

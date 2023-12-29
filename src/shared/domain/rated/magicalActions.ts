@@ -1,4 +1,4 @@
-import { ImprovementCost } from "./adventurePoints/improvementCost.ts"
+import { ImprovementCost } from "../adventurePoints/improvementCost.ts"
 
 /**
  * The improvement cost for a curse is always the same.

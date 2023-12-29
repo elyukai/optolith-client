@@ -1,4 +1,4 @@
-import { geodeRitualsImprovementCost } from "../../../shared/domain/magicalActions.ts"
+import { geodeRitualsImprovementCost } from "../../../shared/domain/rated/magicalActions.ts"
 import { createActivatableRatedSlice } from "../activatableRatedSlice.ts"
 
 // eslint-disable-next-line jsdoc/require-jsdoc

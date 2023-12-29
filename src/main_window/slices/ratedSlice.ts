@@ -5,7 +5,7 @@ import {
   cachedAdventurePoints,
 } from "../../shared/domain/adventurePoints/ratedEntry.ts"
 import { RatedDependency } from "../../shared/domain/rated/ratedDependency.ts"
-import { Rated, RatedMap, RatedValue } from "../../shared/domain/ratedEntry.ts"
+import { Rated, RatedMap, RatedValue } from "../../shared/domain/rated/ratedEntry.ts"
 import { Reducer, createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 import { DatabaseState } from "./databaseSlice.ts"

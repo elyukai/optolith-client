@@ -1,6 +1,6 @@
 import { RatedPrerequisite } from "optolith-database-schema/types/prerequisites/single/RatedPrerequisite"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { ActivatableRatedWithEnhancements, Rated } from "../../ratedEntry.ts"
+import { ActivatableRatedWithEnhancements, Rated } from "../../rated/ratedEntry.ts"
 
 /**
  * Checks a single rated prerequisite if it’s matched.

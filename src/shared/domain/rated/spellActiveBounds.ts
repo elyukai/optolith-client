@@ -8,10 +8,10 @@ import {
   PropertyReference,
 } from "optolith-database-schema/types/_SimpleReferences"
 import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
-import { filterNonNullable } from "../utils/array.ts"
-import { assertExhaustive } from "../utils/typeSafety.ts"
-import { Activatable, countOptions } from "./activatableEntry.ts"
-import { RatedDependency, flattenMinimumRestrictions } from "./rated/ratedDependency.ts"
+import { filterNonNullable } from "../../utils/array.ts"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
+import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
+import { RatedDependency, flattenMinimumRestrictions } from "./ratedDependency.ts"
 import { ActivatableRated } from "./ratedEntry.ts"
 
 const getSpellworkMinimumFromPropertyKnowledgePrerequistes = (

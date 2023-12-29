@@ -1,7 +1,7 @@
 import { FC, memo } from "react"
-import { geodeRitualsImprovementCost } from "../../../../../shared/domain/magicalActions.ts"
+import { geodeRitualsImprovementCost } from "../../../../../shared/domain/rated/magicalActions.ts"
+import { DisplayedInactiveGeodeRitual } from "../../../../../shared/domain/rated/spellInactive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
-import { DisplayedInactiveGeodeRitual } from "../../../../../shared/domain/spellInactive.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { InactiveMagicalActionsListItem } from "./InactiveMagicalActionsListItem.tsx"
 

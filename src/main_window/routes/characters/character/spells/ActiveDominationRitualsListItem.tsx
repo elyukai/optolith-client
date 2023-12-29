@@ -1,7 +1,7 @@
 import { FC, memo } from "react"
-import { dominationRitualsImprovementCost } from "../../../../../shared/domain/magicalActions.ts"
+import { dominationRitualsImprovementCost } from "../../../../../shared/domain/rated/magicalActions.ts"
+import { DisplayedActiveDominationRitual } from "../../../../../shared/domain/rated/spellActive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
-import { DisplayedActiveDominationRitual } from "../../../../../shared/domain/spellActive.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { ActiveMagicalActionsListItem } from "./ActiveMagicalActionsListItem.tsx"
 

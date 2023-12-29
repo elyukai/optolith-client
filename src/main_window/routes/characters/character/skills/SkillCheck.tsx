@@ -4,7 +4,7 @@ import {
 } from "optolith-database-schema/types/_SkillCheck"
 import { FC } from "react"
 import { DerivedCharacteristicIdentifier as DCId } from "../../../../../shared/domain/identifier.ts"
-import { getDisplayedSkillCheck } from "../../../../../shared/domain/skillCheck.ts"
+import { getDisplayedSkillCheck } from "../../../../../shared/domain/rated/skillCheck.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { classList } from "../../../../../shared/utils/classList.ts"
 import { minus } from "../../../../../shared/utils/math.ts"

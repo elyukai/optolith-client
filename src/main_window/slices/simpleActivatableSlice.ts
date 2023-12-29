@@ -1,5 +1,5 @@
 import { ActionCreatorWithPayload, AnyAction, Draft, createAction } from "@reduxjs/toolkit"
-import { TinyActivatableSet } from "../../shared/domain/activatableEntry.ts"
+import { TinyActivatableSet } from "../../shared/domain/activatable/activatableEntry.ts"
 import { Reducer, createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 

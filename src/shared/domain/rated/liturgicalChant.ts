@@ -5,14 +5,15 @@ import { LiturgyIdentifier } from "optolith-database-schema/types/_IdentifierGro
 import { ImprovementCost } from "optolith-database-schema/types/_ImprovementCost"
 import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
 import { BlessedTradition } from "optolith-database-schema/types/specialAbility/BlessedTradition"
-import { count, countByMany } from "../utils/array.ts"
-import { Compare, compareAt, compareNullish, numAsc, reduceCompare } from "../utils/compare.ts"
-import { isNotNullish } from "../utils/nullable.ts"
-import { TranslateMap } from "../utils/translate.ts"
-import { assertExhaustive } from "../utils/typeSafety.ts"
-import { Activatable, countOptions } from "./activatableEntry.ts"
-import { compareImprovementCost, fromRaw } from "./adventurePoints/improvementCost.ts"
-import { AspectIdentifier } from "./identifier.ts"
+import { count, countByMany } from "../../utils/array.ts"
+import { Compare, compareAt, compareNullish, numAsc, reduceCompare } from "../../utils/compare.ts"
+import { isNotNullish } from "../../utils/nullable.ts"
+import { TranslateMap } from "../../utils/translate.ts"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
+import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
+import { compareImprovementCost, fromRaw } from "../adventurePoints/improvementCost.ts"
+import { AspectIdentifier } from "../identifier.ts"
+import { LiturgiesSortOrder } from "../sortOrders.ts"
 import { DisplayedActiveLiturgy } from "./liturgicalChantActive.ts"
 import { DisplayedInactiveLiturgy } from "./liturgicalChantInactive.ts"
 import {
@@ -24,7 +25,6 @@ import {
   isRatedActive,
   isRatedWithEnhancementsActive,
 } from "./ratedEntry.ts"
-import { LiturgiesSortOrder } from "./sortOrders.ts"
 
 /**
  * Returns the value for a dynamic liturgical chant entry that might not exist

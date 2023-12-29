@@ -1,5 +1,5 @@
 import { MagicalTradition } from "optolith-database-schema/types/specialAbility/MagicalTradition"
-import { mapNullableDefault } from "../utils/nullable.ts"
+import { mapNullableDefault } from "../../utils/nullable.ts"
 import { Activatable, ActivatableMap, isActive } from "./activatableEntry.ts"
 
 /**

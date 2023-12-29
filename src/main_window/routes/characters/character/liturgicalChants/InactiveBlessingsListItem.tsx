@@ -5,7 +5,7 @@ import { ListItemName } from "../../../../../shared/components/list/ListItemName
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
 import { AspectIdentifier } from "../../../../../shared/domain/identifier.ts"
-import { DisplayedInactiveBlessing } from "../../../../../shared/domain/liturgicalChantInactive.ts"
+import { DisplayedInactiveBlessing } from "../../../../../shared/domain/rated/liturgicalChantInactive.ts"
 import { LiturgiesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"

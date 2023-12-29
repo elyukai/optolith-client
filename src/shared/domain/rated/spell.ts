@@ -20,24 +20,25 @@ import { JesterTrick } from "optolith-database-schema/types/magicalActions/Jeste
 import { MagicalDance } from "optolith-database-schema/types/magicalActions/MagicalDance"
 import { MagicalMelody } from "optolith-database-schema/types/magicalActions/MagicalMelody"
 import { ZibiljaRitual } from "optolith-database-schema/types/magicalActions/ZibiljaRitual"
-import { count, countBy, sum } from "../utils/array.ts"
-import { Compare, compareAt, compareNullish, numAsc, reduceCompare } from "../utils/compare.ts"
-import { isNotNullish, mapNullableDefault } from "../utils/nullable.ts"
-import { TranslateMap } from "../utils/translate.ts"
-import { assertExhaustive } from "../utils/typeSafety.ts"
-import { Activatable, countOptions } from "./activatableEntry.ts"
+import { count, countBy, sum } from "../../utils/array.ts"
+import { Compare, compareAt, compareNullish, numAsc, reduceCompare } from "../../utils/compare.ts"
+import { isNotNullish, mapNullableDefault } from "../../utils/nullable.ts"
+import { TranslateMap } from "../../utils/translate.ts"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
+import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
+import { CombinedActiveMagicalTradition } from "../activatable/magicalTradition.ts"
 import {
   ImprovementCost,
   compareImprovementCost,
   fromRaw,
-} from "./adventurePoints/improvementCost.ts"
-import { MagicalTraditionIdentifier, createIdentifierObject } from "./identifier.ts"
+} from "../adventurePoints/improvementCost.ts"
+import { MagicalTraditionIdentifier, createIdentifierObject } from "../identifier.ts"
+import { SpellsSortOrder } from "../sortOrders.ts"
 import {
   cursesImprovementCost,
   dominationRitualsImprovementCost,
   geodeRitualsImprovementCost,
 } from "./magicalActions.ts"
-import { CombinedActiveMagicalTradition } from "./magicalTradition.ts"
 import {
   ActivatableRatedMap,
   ActivatableRatedValue,
@@ -47,7 +48,6 @@ import {
   isRatedActive,
   isRatedWithEnhancementsActive,
 } from "./ratedEntry.ts"
-import { SpellsSortOrder } from "./sortOrders.ts"
 import { DisplayedActiveSpellwork } from "./spellActive.ts"
 import { DisplayedInactiveSpellwork } from "./spellInactive.ts"
 

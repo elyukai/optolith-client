@@ -1,6 +1,6 @@
 import { Advantage } from "optolith-database-schema/types/Advantage"
 import { AncestorBloodPrerequisite } from "optolith-database-schema/types/prerequisites/single/AncestorBloodPrerequisite"
-import { ActivatableMap } from "../../activatableEntry.ts"
+import { ActivatableMap } from "../../activatable/activatableEntry.ts"
 
 /**
  * Checks a single ancestor blood prerequisite if it’s matched.

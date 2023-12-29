@@ -3,8 +3,8 @@ import {
   InternalEnhancementPrerequisite,
 } from "optolith-database-schema/types/prerequisites/single/EnhancementPrerequisite"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { Enhancement } from "../../enhancement.ts"
-import { ActivatableRatedWithEnhancements } from "../../ratedEntry.ts"
+import { Enhancement } from "../../rated/enhancement.ts"
+import { ActivatableRatedWithEnhancements } from "../../rated/ratedEntry.ts"
 
 /**
  * Checks a single external enhancement prerequisite if it’s matched.

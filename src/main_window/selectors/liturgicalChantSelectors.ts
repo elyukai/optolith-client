@@ -14,7 +14,7 @@ import {
 } from "../slices/databaseSlice.ts"
 
 import { createSelector } from "@reduxjs/toolkit"
-import { getOptions } from "../../shared/domain/activatableEntry.ts"
+import { getOptions } from "../../shared/domain/activatable/activatableEntry.ts"
 import {
   AdvantageIdentifier,
   KarmaSpecialAbilityIdentifier,
@@ -25,14 +25,14 @@ import {
   countActiveLiturgicalChants,
   getLiturgicalChantsAbove10ByAspect,
   isMaximumOfLiturgicalChantsReached,
-} from "../../shared/domain/liturgicalChant.ts"
+} from "../../shared/domain/rated/liturgicalChant.ts"
 import {
   DisplayedActiveBlessing,
   DisplayedActiveCeremony,
   DisplayedActiveLiturgicalChant,
   DisplayedActiveLiturgy,
   getActiveLiturgicalChantsOrCeremonies,
-} from "../../shared/domain/liturgicalChantActive.ts"
+} from "../../shared/domain/rated/liturgicalChantActive.ts"
 import {
   DisplayedInactiveBlessing,
   DisplayedInactiveCeremony,
@@ -40,7 +40,7 @@ import {
   DisplayedInactiveLiturgy,
   filterInactiveBlessings,
   getInactiveLiturgicalChantsOrCeremonies,
-} from "../../shared/domain/liturgicalChantInactive.ts"
+} from "../../shared/domain/rated/liturgicalChantInactive.ts"
 import { partition } from "../../shared/utils/array.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"

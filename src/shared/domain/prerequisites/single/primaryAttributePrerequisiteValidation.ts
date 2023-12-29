@@ -1,7 +1,7 @@
 import { PrimaryAttributePrerequisite } from "optolith-database-schema/types/prerequisites/single/PrimaryAttributePrerequisite"
 import { mapNullableDefault } from "../../../utils/nullable.ts"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { DisplayedPrimaryAttribute } from "../../primaryAttribute.ts"
+import { DisplayedPrimaryAttribute } from "../../rated/primaryAttribute.ts"
 
 /**
  * Checks a single primary attribute prerequisite if it’s matched.

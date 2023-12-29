@@ -2,11 +2,11 @@ import { Blessing } from "optolith-database-schema/types/Blessing"
 import { Ceremony } from "optolith-database-schema/types/Ceremony"
 import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
 import { LiturgicalChant } from "optolith-database-schema/types/LiturgicalChant"
-import { isNotNullish } from "../utils/nullable.ts"
-import { assertExhaustive } from "../utils/typeSafety.ts"
-import { Activatable } from "./activatableEntry.ts"
+import { isNotNullish } from "../../utils/nullable.ts"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
+import { Activatable } from "../activatable/activatableEntry.ts"
+import { FilterApplyingRatedDependencies } from "../dependencies/filterApplyingDependencies.ts"
 import { getHighestAttributeValue } from "./attribute.ts"
-import { FilterApplyingRatedDependencies } from "./dependencies/filterApplyingDependencies.ts"
 import {
   getLiturgicalChantMaximum,
   getLiturgicalChantMinimum,

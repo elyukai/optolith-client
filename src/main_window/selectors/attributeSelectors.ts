@@ -1,18 +1,18 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { Attribute } from "optolith-database-schema/types/Attribute"
 import {
+  AdvantageIdentifier,
+  AttributeIdentifier,
+  OptionalRuleIdentifier,
+} from "../../shared/domain/identifier.ts"
+import {
   getAttributeMaximum,
   getAttributeMinimaByAssociatedAttributes,
   getAttributeMinimum,
   isAttributeDecreasable,
   isAttributeIncreasable,
-} from "../../shared/domain/attributeBounds.ts"
-import {
-  AdvantageIdentifier,
-  AttributeIdentifier,
-  OptionalRuleIdentifier,
-} from "../../shared/domain/identifier.ts"
-import { Rated } from "../../shared/domain/ratedEntry.ts"
+} from "../../shared/domain/rated/attributeBounds.ts"
+import { Rated } from "../../shared/domain/rated/ratedEntry.ts"
 import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { attributeValue, createInitialDynamicAttribute } from "../slices/attributesSlice.ts"

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
-import { ImprovementCost } from "./adventurePoints/improvementCost.ts"
+import { ImprovementCost } from "../adventurePoints/improvementCost.ts"
 import { Rated, createRatedHelpers } from "./ratedEntry.ts"
 
 describe("createRatedHelpers", () => {

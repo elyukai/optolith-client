@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { getOptions } from "../../shared/domain/activatableEntry.ts"
+import { getOptions } from "../../shared/domain/activatable/activatableEntry.ts"
 import {
   AdvantageIdentifier,
   MagicalSpecialAbilityIdentifier,
@@ -13,7 +13,7 @@ import {
   getSpellworksAbove10ByProperty,
   isMaximumOfSpellworksReached,
   isMaximumOfUnfamiliarSpellworksReached,
-} from "../../shared/domain/spell.ts"
+} from "../../shared/domain/rated/spell.ts"
 import {
   DisplayedActiveAnimistPower,
   DisplayedActiveCurse,
@@ -30,7 +30,7 @@ import {
   getActiveMagicalActions,
   getActiveSpellsOrRituals,
   getVisibleActiveCantrips,
-} from "../../shared/domain/spellActive.ts"
+} from "../../shared/domain/rated/spellActive.ts"
 import {
   DisplayedInactiveRitual,
   DisplayedInactiveSpell,
@@ -46,7 +46,7 @@ import {
   getInactiveSpellsOrRituals,
   getInactiveZibiljaRituals,
   getVisibleInactiveCantrips,
-} from "../../shared/domain/spellInactive.ts"
+} from "../../shared/domain/rated/spellInactive.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
 import {

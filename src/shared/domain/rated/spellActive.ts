@@ -13,11 +13,11 @@ import { JesterTrick } from "optolith-database-schema/types/magicalActions/Jeste
 import { MagicalDance } from "optolith-database-schema/types/magicalActions/MagicalDance"
 import { MagicalMelody } from "optolith-database-schema/types/magicalActions/MagicalMelody"
 import { ZibiljaRitual } from "optolith-database-schema/types/magicalActions/ZibiljaRitual"
-import { isNotNullish } from "../utils/nullable.ts"
-import { assertExhaustive } from "../utils/typeSafety.ts"
-import { Activatable, TinyActivatableSet } from "./activatableEntry.ts"
+import { isNotNullish } from "../../utils/nullable.ts"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
+import { Activatable, TinyActivatableSet } from "../activatable/activatableEntry.ts"
+import { FilterApplyingRatedDependencies } from "../dependencies/filterApplyingDependencies.ts"
 import { getHighestAttributeValue } from "./attribute.ts"
-import { FilterApplyingRatedDependencies } from "./dependencies/filterApplyingDependencies.ts"
 import {
   ActivatableRated,
   ActivatableRatedMap,

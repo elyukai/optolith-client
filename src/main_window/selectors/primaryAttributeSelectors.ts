@@ -4,7 +4,7 @@ import {
   DisplayedPrimaryAttribute,
   getBlessedPrimaryAttribute,
   getHighestMagicalPrimaryAttributes,
-} from "../../shared/domain/primaryAttribute.ts"
+} from "../../shared/domain/rated/primaryAttribute.ts"
 import { selectDynamicAttributes } from "../slices/characterSlice.ts"
 import { selectStaticAttributes } from "../slices/databaseSlice.ts"
 import {

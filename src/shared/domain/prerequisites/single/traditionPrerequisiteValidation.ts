@@ -3,8 +3,8 @@ import {
   MagicalTraditionPrerequisite,
 } from "optolith-database-schema/types/prerequisites/single/TraditionPrerequisite"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { CombinedActiveBlessedTradition } from "../../blessedTradition.ts"
-import { CombinedActiveMagicalTradition } from "../../magicalTradition.ts"
+import { CombinedActiveBlessedTradition } from "../../activatable/blessedTradition.ts"
+import { CombinedActiveMagicalTradition } from "../../activatable/magicalTradition.ts"
 
 /**
  * Checks a single blessed tradition prerequisite if it’s matched.

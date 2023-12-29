@@ -1,18 +1,18 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { Skill } from "optolith-database-schema/types/Skill"
-import { getHighestAttributeValue } from "../../shared/domain/attribute.ts"
 import {
   AdvantageIdentifier,
   GeneralSpecialAbilityIdentifier,
 } from "../../shared/domain/identifier.ts"
-import { Rated } from "../../shared/domain/ratedEntry.ts"
-import { getSkillCommonness } from "../../shared/domain/skill.ts"
+import { getHighestAttributeValue } from "../../shared/domain/rated/attribute.ts"
+import { Rated } from "../../shared/domain/rated/ratedEntry.ts"
+import { getSkillCommonness } from "../../shared/domain/rated/skill.ts"
 import {
   getSkillMaximum,
   getSkillMinimum,
   isSkillDecreasable,
   isSkillIncreasable,
-} from "../../shared/domain/skillBounds.ts"
+} from "../../shared/domain/rated/skillBounds.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import {
   selectDynamicAdvantages,

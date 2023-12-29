@@ -3,7 +3,7 @@ import { EyeColor } from "optolith-database-schema/types/EyeColor"
 import { HairColor } from "optolith-database-schema/types/HairColor"
 import { Height, Weight } from "optolith-database-schema/types/Race"
 import { SocialStatus } from "optolith-database-schema/types/SocialStatus"
-import { isOptionActive } from "../../shared/domain/activatableEntry.ts"
+import { isOptionActive } from "../../shared/domain/activatable/activatableEntry.ts"
 import {
   DisadvantageIdentifier,
   EyeColorIdentifier,

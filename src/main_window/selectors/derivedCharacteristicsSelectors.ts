@@ -3,12 +3,12 @@ import {
   DerivedCharacteristic,
   DerivedCharacteristicTranslation,
 } from "optolith-database-schema/types/DerivedCharacteristic"
-import { firstLevel, isActive } from "../../shared/domain/activatableEntry.ts"
+import { firstLevel, isActive } from "../../shared/domain/activatable/activatableEntry.ts"
 import {
   modifierByIsActive,
   modifierByIsActives,
   modifierByLevel,
-} from "../../shared/domain/activatableModifiers.ts"
+} from "../../shared/domain/activatable/activatableModifiers.ts"
 import {
   AdvantageIdentifier,
   AttributeIdentifier,
@@ -20,7 +20,7 @@ import {
   MagicalSpecialAbilityIdentifier,
   OptionalRuleIdentifier,
 } from "../../shared/domain/identifier.ts"
-import { Rated } from "../../shared/domain/ratedEntry.ts"
+import { Rated } from "../../shared/domain/rated/ratedEntry.ts"
 import { filterNonNullable } from "../../shared/utils/array.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { attributeValue } from "../slices/attributesSlice.ts"

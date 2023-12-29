@@ -9,7 +9,7 @@ import {
   ActivatableRated,
   ActivatableRatedMap,
   ActivatableRatedValue,
-} from "../../shared/domain/ratedEntry.ts"
+} from "../../shared/domain/rated/ratedEntry.ts"
 import { Reducer, createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 import { DatabaseState } from "./databaseSlice.ts"

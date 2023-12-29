@@ -2,10 +2,10 @@ import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
 import { SkillTradition } from "optolith-database-schema/types/_Blessed"
 import { AttributeReference } from "optolith-database-schema/types/_SimpleReferences"
 import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
-import { filterNonNullable } from "../utils/array.ts"
-import { Activatable, countOptions } from "./activatableEntry.ts"
+import { filterNonNullable } from "../../utils/array.ts"
+import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
 import { flattenAspectIds } from "./liturgicalChant.ts"
-import { RatedDependency, flattenMinimumRestrictions } from "./rated/ratedDependency.ts"
+import { RatedDependency, flattenMinimumRestrictions } from "./ratedDependency.ts"
 import { ActivatableRated, ActiveActivatableRated } from "./ratedEntry.ts"
 
 const getLiturgicalChantMinimumFromAspectKnowledgePrerequistes = (

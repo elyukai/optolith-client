@@ -5,13 +5,13 @@ import {
   cachedAdventurePointsForActivatableWithEnhancements,
 } from "../../shared/domain/adventurePoints/ratedEntry.ts"
 import { RegistrationMethod } from "../../shared/domain/dependencies/registrationHelpers.ts"
-import { Enhancement } from "../../shared/domain/enhancement.ts"
+import { Enhancement } from "../../shared/domain/rated/enhancement.ts"
 import { RatedDependency } from "../../shared/domain/rated/ratedDependency.ts"
 import {
   ActivatableRatedValue,
   ActivatableRatedWithEnhancements,
   ActivatableRatedWithEnhancementsMap,
-} from "../../shared/domain/ratedEntry.ts"
+} from "../../shared/domain/rated/ratedEntry.ts"
 import { Reducer, createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 import { DatabaseState } from "./databaseSlice.ts"

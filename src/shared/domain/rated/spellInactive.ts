@@ -11,21 +11,22 @@ import { MagicalDance } from "optolith-database-schema/types/magicalActions/Magi
 import { MagicalMelody } from "optolith-database-schema/types/magicalActions/MagicalMelody"
 import { ZibiljaRitual } from "optolith-database-schema/types/magicalActions/ZibiljaRitual"
 import { PublicationRefs } from "optolith-database-schema/types/source/_PublicationRef"
-import { assertExhaustive } from "../utils/typeSafety.ts"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
 import {
   Activatable,
   TinyActivatableSet,
   firstLevel,
   getFirstOptionOfType,
-} from "./activatableEntry.ts"
+} from "../activatable/activatableEntry.ts"
+import { CombinedActiveMagicalTradition } from "../activatable/magicalTradition.ts"
 import {
   ImprovementCost,
   compareImprovementCost,
   fromRaw,
-} from "./adventurePoints/improvementCost.ts"
-import { MagicalTraditionIdentifier } from "./identifier.ts"
-import { CombinedActiveMagicalTradition } from "./magicalTradition.ts"
-import { checkPrerequisitesOfSpellwork } from "./prerequisites/fullPrerequisiteValidationForType.ts"
+} from "../adventurePoints/improvementCost.ts"
+import { MagicalTraditionIdentifier } from "../identifier.ts"
+import { checkPrerequisitesOfSpellwork } from "../prerequisites/fullPrerequisiteValidationForType.ts"
+import { ActiveFocusRule, ActiveOptionalRule } from "../rules.ts"
 import {
   ActivatableRated,
   ActivatableRatedMap,
@@ -35,7 +36,6 @@ import {
   isOptionalRatedActive,
   isOptionalRatedWithEnhancementsActive,
 } from "./ratedEntry.ts"
-import { ActiveFocusRule, ActiveOptionalRule } from "./rules.ts"
 import { isTraditionActive } from "./spell.ts"
 
 /**

@@ -16,15 +16,15 @@ import { JesterTrick } from "optolith-database-schema/types/magicalActions/Jeste
 import { MagicalDance } from "optolith-database-schema/types/magicalActions/MagicalDance"
 import { MagicalMelody } from "optolith-database-schema/types/magicalActions/MagicalMelody"
 import { ZibiljaRitual } from "optolith-database-schema/types/magicalActions/ZibiljaRitual"
-import { filterNonNullable } from "../utils/array.ts"
-import { mapNullable, mapNullableDefault } from "../utils/nullable.ts"
-import { Activatable } from "./activatableEntry.ts"
+import { filterNonNullable } from "../../utils/array.ts"
+import { mapNullable, mapNullableDefault } from "../../utils/nullable.ts"
+import { Activatable } from "../activatable/activatableEntry.ts"
+import { getSingleHighestPair } from "../idValue.ts"
+import { AttributeIdentifier } from "../identifier.ts"
 import { getAttributeValue } from "./attribute.ts"
 import { getHighestRequiredAttributeForCombatTechnique } from "./combatTechnique.ts"
-import { getSingleHighestPair } from "./idValue.ts"
-import { AttributeIdentifier } from "./identifier.ts"
 import { getHighestRequiredAttributeForLiturgicalChant } from "./liturgicalChant.ts"
-import { RatedDependency, flattenMinimumRestrictions } from "./rated/ratedDependency.ts"
+import { RatedDependency, flattenMinimumRestrictions } from "./ratedDependency.ts"
 import {
   ActivatableRatedMap,
   ActivatableRatedWithEnhancementsMap,

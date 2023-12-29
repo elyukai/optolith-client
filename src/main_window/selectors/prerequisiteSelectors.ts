@@ -1,5 +1,4 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { getActiveDynamicLiturgicalChantsByAspect } from "../../shared/domain/liturgicalChant.ts"
 import { checkPrecondition } from "../../shared/domain/prerequisites/prerequisiteValidationForType.ts"
 import { checkActivatablePrerequisite } from "../../shared/domain/prerequisites/single/activatablePrerequisiteValidation.ts"
 import { checkAncestorBloodPrerequisite } from "../../shared/domain/prerequisites/single/ancestorBloodPrerequisiteValidation.ts"
@@ -25,7 +24,8 @@ import {
   checkBlessedTraditionPrerequisite,
   checkMagicalTraditionPrerequisite,
 } from "../../shared/domain/prerequisites/single/traditionPrerequisiteValidation.ts"
-import { getActiveDynamicSpellworksByProperty } from "../../shared/domain/spell.ts"
+import { getActiveDynamicLiturgicalChantsByAspect } from "../../shared/domain/rated/liturgicalChant.ts"
+import { getActiveDynamicSpellworksByProperty } from "../../shared/domain/rated/spell.ts"
 import { isStateActive } from "../../shared/domain/state.ts"
 import {
   selectActiveFocusRules,

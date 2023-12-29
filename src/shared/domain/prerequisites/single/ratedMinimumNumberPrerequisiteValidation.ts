@@ -1,7 +1,7 @@
 import { RatedMinimumNumberPrerequisite } from "optolith-database-schema/types/prerequisites/single/RatedMinimumNumberPrerequisite"
 import { isNotNullish } from "../../../utils/nullable.ts"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { ActivatableRatedWithEnhancements, Rated } from "../../ratedEntry.ts"
+import { ActivatableRatedWithEnhancements, Rated } from "../../rated/ratedEntry.ts"
 
 /**
  * Checks a single rated minimum number prerequisite if it’s matched.

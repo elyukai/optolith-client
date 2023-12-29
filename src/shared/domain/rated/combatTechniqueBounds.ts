@@ -1,13 +1,13 @@
 import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
 import { AttributeReference } from "optolith-database-schema/types/_SimpleReferences"
-import { filterNonNullable } from "../utils/array.ts"
-import { Activatable, countOptions, isActive } from "./activatableEntry.ts"
+import { filterNonNullable } from "../../utils/array.ts"
+import { Activatable, countOptions, isActive } from "../activatable/activatableEntry.ts"
 import {
   CombinedCombatTechnique,
   getCombinedId,
   getCombinedPrimaryAttribute,
 } from "./combatTechnique.ts"
-import { RatedDependency, flattenMinimumRestrictions } from "./rated/ratedDependency.ts"
+import { RatedDependency, flattenMinimumRestrictions } from "./ratedDependency.ts"
 import { Rated } from "./ratedEntry.ts"
 
 const getCombatTechniqueMinimumForHunter = (

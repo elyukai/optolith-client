@@ -1,7 +1,7 @@
 import { FC, memo } from "react"
 import { fromRaw } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
+import { DisplayedInactiveMagicalMelody } from "../../../../../shared/domain/rated/spellInactive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
-import { DisplayedInactiveMagicalMelody } from "../../../../../shared/domain/spellInactive.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { InactiveMagicalActionsListItem } from "./InactiveMagicalActionsListItem.tsx"
 

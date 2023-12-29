@@ -1,15 +1,15 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { isActive } from "../../shared/domain/activatableEntry.ts"
+import { isActive } from "../../shared/domain/activatable/activatableEntry.ts"
 import {
   CombinedActiveBlessedTradition,
   isBlessedOne,
-} from "../../shared/domain/blessedTradition.ts"
-import { AdvantageIdentifier } from "../../shared/domain/identifier.ts"
+} from "../../shared/domain/activatable/blessedTradition.ts"
 import {
   CombinedActiveMagicalTradition,
   getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
   isSpellcaster,
-} from "../../shared/domain/magicalTradition.ts"
+} from "../../shared/domain/activatable/magicalTradition.ts"
+import { AdvantageIdentifier } from "../../shared/domain/identifier.ts"
 import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import {

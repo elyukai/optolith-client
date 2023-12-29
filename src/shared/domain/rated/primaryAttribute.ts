@@ -1,7 +1,7 @@
 import { Attribute } from "optolith-database-schema/types/Attribute"
+import { CombinedActiveBlessedTradition } from "../activatable/blessedTradition.ts"
+import { CombinedActiveMagicalTradition } from "../activatable/magicalTradition.ts"
 import { createEmptyDynamicAttribute } from "./attribute.ts"
-import { CombinedActiveBlessedTradition } from "./blessedTradition.ts"
-import { CombinedActiveMagicalTradition } from "./magicalTradition.ts"
 import { Rated } from "./ratedEntry.ts"
 
 /**

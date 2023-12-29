@@ -1,9 +1,13 @@
 import { CloseCombatTechnique } from "optolith-database-schema/types/CombatTechnique_Close"
 import { RangedCombatTechnique } from "optolith-database-schema/types/CombatTechnique_Ranged"
 import { AttributeReference } from "optolith-database-schema/types/_SimpleReferences"
-import { Activatable, PredefinedActivatableOption, countOptions } from "./activatableEntry.ts"
+import {
+  Activatable,
+  PredefinedActivatableOption,
+  countOptions,
+} from "../activatable/activatableEntry.ts"
+import { AttributeIdentifier } from "../identifier.ts"
 import { getAttributeValue } from "./attribute.ts"
-import { AttributeIdentifier } from "./identifier.ts"
 import { Rated } from "./ratedEntry.ts"
 
 /**

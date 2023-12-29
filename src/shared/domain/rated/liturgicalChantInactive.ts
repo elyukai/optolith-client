@@ -3,15 +3,15 @@ import { Ceremony } from "optolith-database-schema/types/Ceremony"
 import { LiturgicalChant } from "optolith-database-schema/types/LiturgicalChant"
 import { BlessingReference } from "optolith-database-schema/types/_SimpleReferences"
 import { PublicationRefs } from "optolith-database-schema/types/source/_PublicationRef"
-import { assertExhaustive } from "../utils/typeSafety.ts"
-import { Activatable, isActive } from "./activatableEntry.ts"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
+import { Activatable, isActive } from "../activatable/activatableEntry.ts"
+import { CombinedActiveBlessedTradition } from "../activatable/blessedTradition.ts"
 import {
   ImprovementCost,
   compareImprovementCost,
   fromRaw,
-} from "./adventurePoints/improvementCost.ts"
-import { CombinedActiveBlessedTradition } from "./blessedTradition.ts"
-import { BlessedTraditionIdentifier } from "./identifier.ts"
+} from "../adventurePoints/improvementCost.ts"
+import { BlessedTraditionIdentifier } from "../identifier.ts"
 import { anyBlessedTradition, belongsToBlessedTradition } from "./liturgicalChant.ts"
 import {
   ActivatableRatedWithEnhancements,

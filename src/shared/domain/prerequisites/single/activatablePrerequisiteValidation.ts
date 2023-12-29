@@ -8,7 +8,7 @@ import {
   Activatable,
   ActivatableInstance,
   equalsOptionPrerequisite,
-} from "../../activatableEntry.ts"
+} from "../../activatable/activatableEntry.ts"
 
 /**
  * Checks a single activatable prerequisite if it’s matched.

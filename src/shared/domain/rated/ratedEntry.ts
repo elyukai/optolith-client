@@ -1,12 +1,12 @@
-import { ImprovementCost } from "./adventurePoints/improvementCost.ts"
+import { ImprovementCost } from "../adventurePoints/improvementCost.ts"
 import {
   BoundAdventurePoints,
   RatedAdventurePointsCache,
   cachedAdventurePoints,
   cachedAdventurePointsForActivatable,
-} from "./adventurePoints/ratedEntry.ts"
+} from "../adventurePoints/ratedEntry.ts"
 import { Enhancement } from "./enhancement.ts"
-import { RatedDependency } from "./rated/ratedDependency.ts"
+import { RatedDependency } from "./ratedDependency.ts"
 
 /**
  * The current value.

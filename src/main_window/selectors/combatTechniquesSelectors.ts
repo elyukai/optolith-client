@@ -1,25 +1,25 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { CloseCombatTechnique } from "optolith-database-schema/types/CombatTechnique_Close"
 import { RangedCombatTechnique } from "optolith-database-schema/types/CombatTechnique_Ranged"
-import { isActive } from "../../shared/domain/activatableEntry.ts"
-import { getHighestAttributeValue } from "../../shared/domain/attribute.ts"
-import {
-  getAttackBaseForClose,
-  getAttackBaseForRanged,
-  getParryBaseForClose,
-} from "../../shared/domain/combatTechnique.ts"
-import {
-  getCombatTechniqueMaximum,
-  getCombatTechniqueMinimum,
-  isCombatTechniqueDecreasable,
-  isCombatTechniqueIncreasable,
-} from "../../shared/domain/combatTechniqueBounds.ts"
+import { isActive } from "../../shared/domain/activatable/activatableEntry.ts"
 import {
   AdvantageIdentifier,
   GeneralSpecialAbilityIdentifier,
   RangedCombatTechniqueIdentifier,
 } from "../../shared/domain/identifier.ts"
-import { Rated } from "../../shared/domain/ratedEntry.ts"
+import { getHighestAttributeValue } from "../../shared/domain/rated/attribute.ts"
+import {
+  getAttackBaseForClose,
+  getAttackBaseForRanged,
+  getParryBaseForClose,
+} from "../../shared/domain/rated/combatTechnique.ts"
+import {
+  getCombatTechniqueMaximum,
+  getCombatTechniqueMinimum,
+  isCombatTechniqueDecreasable,
+  isCombatTechniqueIncreasable,
+} from "../../shared/domain/rated/combatTechniqueBounds.ts"
+import { Rated } from "../../shared/domain/rated/ratedEntry.ts"
 import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import {

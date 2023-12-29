@@ -1,7 +1,7 @@
 import { FC, memo } from "react"
-import { cursesImprovementCost } from "../../../../../shared/domain/magicalActions.ts"
+import { cursesImprovementCost } from "../../../../../shared/domain/rated/magicalActions.ts"
+import { DisplayedActiveCurse } from "../../../../../shared/domain/rated/spellActive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
-import { DisplayedActiveCurse } from "../../../../../shared/domain/spellActive.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { ActiveMagicalActionsListItem } from "./ActiveMagicalActionsListItem.tsx"
 

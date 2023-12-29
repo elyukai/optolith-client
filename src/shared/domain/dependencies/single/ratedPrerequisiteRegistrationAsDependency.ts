@@ -4,12 +4,12 @@ import {
 } from "optolith-database-schema/types/_IdentifierGroup"
 import { RatedPrerequisite } from "optolith-database-schema/types/prerequisites/single/RatedPrerequisite"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { createEmptyDynamicAttribute } from "../../attribute.ts"
-import { createEmptyDynamicCombatTechnique } from "../../combatTechnique.ts"
-import { createEmptyDynamicLiturgicalChant } from "../../liturgicalChant.ts"
+import { createEmptyDynamicAttribute } from "../../rated/attribute.ts"
+import { createEmptyDynamicCombatTechnique } from "../../rated/combatTechnique.ts"
+import { createEmptyDynamicLiturgicalChant } from "../../rated/liturgicalChant.ts"
 import { RatedDependency } from "../../rated/ratedDependency.ts"
-import { createEmptyDynamicSkill } from "../../skill.ts"
-import { createEmptyDynamicSpell } from "../../spell.ts"
+import { createEmptyDynamicSkill } from "../../rated/skill.ts"
+import { createEmptyDynamicSpell } from "../../rated/spell.ts"
 import { RegistrationFunction, addOrRemoveDependency } from "../registrationHelpers.ts"
 
 /**

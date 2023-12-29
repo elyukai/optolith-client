@@ -1,10 +1,14 @@
-import { ActivatableMap, TinyActivatableSet } from "./activatableEntry.ts"
+import { ActivatableMap, TinyActivatableSet } from "./activatable/activatableEntry.ts"
 import { Color } from "./color.ts"
 import { Energy, EnergyWithBuyBack } from "./energy.ts"
 import { Pact } from "./pact.ts"
 import { Purse } from "./purse.ts"
 import { RatedDependency } from "./rated/ratedDependency.ts"
-import { ActivatableRatedMap, ActivatableRatedWithEnhancementsMap, RatedMap } from "./ratedEntry.ts"
+import {
+  ActivatableRatedMap,
+  ActivatableRatedWithEnhancementsMap,
+  RatedMap,
+} from "./rated/ratedEntry.ts"
 import { ActiveFocusRule, ActiveOptionalRule } from "./rules.ts"
 import { Sex } from "./sex.ts"
 import { SocialStatusDependency } from "./socialStatus.ts"

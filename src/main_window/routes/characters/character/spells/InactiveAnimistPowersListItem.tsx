@@ -3,8 +3,8 @@ import {
   ImprovementCost,
   fromRaw,
 } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
+import { DisplayedInactiveAnimistPower } from "../../../../../shared/domain/rated/spellInactive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
-import { DisplayedInactiveAnimistPower } from "../../../../../shared/domain/spellInactive.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { InactiveMagicalActionsListItem } from "./InactiveMagicalActionsListItem.tsx"

@@ -1,7 +1,7 @@
 import { Attribute } from "optolith-database-schema/types/Attribute"
 import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
+import { IdValuePair, getSingleHighestPair } from "../idValue.ts"
 import { getAttributeValue } from "./attribute.ts"
-import { IdValuePair, getSingleHighestPair } from "./idValue.ts"
 import { Rated } from "./ratedEntry.ts"
 
 type Triple<T> = [T, T, T]
