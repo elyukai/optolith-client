@@ -1,5 +1,6 @@
 import { Publication } from "optolith-database-schema/types/source/Publication"
 import { PublicationRefs } from "optolith-database-schema/types/source/_PublicationRef"
+import { GetById } from "../getTypes.ts"
 
 /**
  * Checks if a publication is enabled, depending on the type of publication and
@@ -19,13 +20,13 @@ export const isPublicationEnabled = (
  * at least one of its associated publications is enabled.
  */
 export const isEntryAvailable = (
-  publications: Record<number, Publication>,
+  getPublication: GetById.Static.Publication,
   includeAllPublications: boolean,
   includePublications: number[],
   sourceReferences: PublicationRefs,
 ) =>
   sourceReferences.some(ref => {
-    const publication = publications[ref.id.publication]
+    const publication = getPublication(ref.id.publication)
     return (
       publication !== undefined &&
       isPublicationEnabled(publication, includeAllPublications, includePublications)

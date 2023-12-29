@@ -17,5 +17,10 @@ export const useIsEntryAvailable = () => {
   const includePublications = useAppSelector(selectIncludePublications) ?? []
 
   return (sourceReferences: PublicationRefs) =>
-    isEntryAvailable(publications, includeAllPublications, includePublications, sourceReferences)
+    isEntryAvailable(
+      id => publications[id],
+      includeAllPublications,
+      includePublications,
+      sourceReferences,
+    )
 }

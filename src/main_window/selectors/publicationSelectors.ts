@@ -18,5 +18,10 @@ export const selectIsEntryAvailable = createSelector(
   selectIncludePublications,
   (publications, includeAllPublications, includePublications) =>
     (sourceReferences: PublicationRefs) =>
-      isEntryAvailable(publications, includeAllPublications, includePublications, sourceReferences),
+      isEntryAvailable(
+        id => publications[id],
+        includeAllPublications,
+        includePublications,
+        sourceReferences,
+      ),
 )
