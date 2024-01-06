@@ -372,7 +372,6 @@ type TagPropertyOptions = {
   Blessing: ID.BlessingIdentifier
   LiturgicalChant: ID.LiturgicalChantIdentifier
   Ceremony: ID.CeremonyIdentifier
-  Alchemicum: ID.AlchemicumIdentifier
   Ammunition: ID.AmmunitionIdentifier
   Animal: ID.AnimalIdentifier
   AnimalCare: ID.AnimalCareIdentifier
@@ -382,6 +381,7 @@ type TagPropertyOptions = {
   CeremonialItem: ID.CeremonialItemIdentifier
   Clothes: ID.ClothesIdentifier
   Container: ID.ContainerIdentifier
+  Elixir: ID.ElixirIdentifier
   EquipmentOfBlessedOnes: ID.EquipmentOfBlessedOnesIdentifier
   GemOrPreciousStone: ID.GemOrPreciousStoneIdentifier
   IlluminationLightSource: ID.IlluminationLightSourceIdentifier
@@ -512,7 +512,6 @@ const TagPropertyMap: {
   Blessing: id => ({ tag: "Blessing", blessing: id }),
   LiturgicalChant: id => ({ tag: "LiturgicalChant", liturgical_chant: id }),
   Ceremony: id => ({ tag: "Ceremony", ceremony: id }),
-  Alchemicum: id => ({ tag: "Alchemicum", alchemicum: id }),
   Ammunition: id => ({ tag: "Ammunition", ammunition: id }),
   Animal: id => ({ tag: "Animal", animal: id }),
   AnimalCare: id => ({ tag: "AnimalCare", animal_care: id }),
@@ -522,6 +521,7 @@ const TagPropertyMap: {
   CeremonialItem: id => ({ tag: "CeremonialItem", ceremonial_item: id }),
   Clothes: id => ({ tag: "Clothes", clothes: id }),
   Container: id => ({ tag: "Container", container: id }),
+  Elixir: id => ({ tag: "Elixir", elixir: id }),
   EquipmentOfBlessedOnes: id => ({ tag: "EquipmentOfBlessedOnes", equipment_of_blessed_ones: id }),
   GemOrPreciousStone: id => ({ tag: "GemOrPreciousStone", gem_or_precious_stone: id }),
   IlluminationLightSource: id => ({

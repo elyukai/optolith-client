@@ -27,8 +27,6 @@ export const InlineLibraryRouter: FC<Props> = ({ id }) => {
       return <InlineLibraryPlaceholder />
     case "Advantage":
       return <InlineLibraryPlaceholder />
-    case "Alchemicum":
-      return <InlineLibraryPlaceholder />
     case "Ammunition":
       return <InlineLibraryPlaceholder />
     case "AncestorGlyph":

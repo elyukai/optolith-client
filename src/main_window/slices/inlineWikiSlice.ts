@@ -9,7 +9,6 @@ export type DisplayableMainIdentifier =
   | ID.AdvancedMagicalSpecialAbilityIdentifier
   | ID.AdvancedSkillSpecialAbilityIdentifier
   | ID.AdvantageIdentifier
-  | ID.AlchemicumIdentifier
   | ID.AmmunitionIdentifier
   | ID.AncestorGlyphIdentifier
   | ID.AnimalCareIdentifier

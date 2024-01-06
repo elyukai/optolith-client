@@ -17,7 +17,6 @@ const initialDatabaseState: DatabaseState = {
   advancedMagicalSpecialAbilities: {},
   advancedSkillSpecialAbilities: {},
   advantages: {},
-  alchemicae: {},
   ammunition: {},
   ancestorGlyphs: {},
   animalCare: {},
@@ -192,7 +191,6 @@ const databaseSlice = createSlice({
         action.payload.database.raw.advancedSkillSpecialAbilities,
       )
       state.advantages = Object.fromEntries(action.payload.database.raw.advantages)
-      state.alchemicae = Object.fromEntries(action.payload.database.raw.alchemicae)
       state.ammunition = Object.fromEntries(action.payload.database.raw.ammunition)
       state.ancestorGlyphs = Object.fromEntries(action.payload.database.raw.ancestorGlyphs)
       state.animalCare = Object.fromEntries(action.payload.database.raw.animalCare)
@@ -428,7 +426,6 @@ export const selectStaticAdvancedMagicalSpecialAbilities = (state: RootState) =>
 export const selectStaticAdvancedSkillSpecialAbilities = (state: RootState) =>
   state.database.advancedSkillSpecialAbilities
 export const selectStaticAdvantages = (state: RootState) => state.database.advantages
-export const selectStaticAlchemicae = (state: RootState) => state.database.alchemicae
 export const selectStaticAmmunition = (state: RootState) => state.database.ammunition
 export const selectStaticAncestorGlyphs = (state: RootState) => state.database.ancestorGlyphs
 export const selectStaticAnimalCare = (state: RootState) => state.database.animalCare
@@ -634,7 +631,6 @@ export const selectAllAdvancedSkillSpecialAbilities = createSelector(
   xs => Object.values(xs),
 )
 export const selectAllAdvantages = createSelector(selectStaticAdvantages, xs => Object.values(xs))
-export const selectAllAlchemicae = createSelector(selectStaticAlchemicae, xs => Object.values(xs))
 export const selectAllAmmunition = createSelector(selectStaticAmmunition, xs => Object.values(xs))
 export const selectAllAncestorGlyphs = createSelector(selectStaticAncestorGlyphs, xs =>
   Object.values(xs),
@@ -1020,10 +1016,6 @@ export const selectGetAdvancedSkillSpecialAbility = createSelector(
 )
 export const selectGetAdvantage = createSelector(
   selectStaticAdvantages,
-  xs => (id: number) => xs[id],
-)
-export const selectGetAlchemicum = createSelector(
-  selectStaticAlchemicae,
   xs => (id: number) => xs[id],
 )
 export const selectGetAmmunition = createSelector(

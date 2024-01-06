@@ -50,7 +50,6 @@ import { config as talismanConfig } from "optolith-database-schema/types/Talisma
 import { config as targetCategoryConfig } from "optolith-database-schema/types/TargetCategory"
 import { config as uIConfig } from "optolith-database-schema/types/UI"
 import { config as equipmentPackageConfig } from "optolith-database-schema/types/equipment/EquipmentPackage"
-import { config as alchemicumConfig } from "optolith-database-schema/types/equipment/item/Alchemicum"
 import { config as ammunitionConfig } from "optolith-database-schema/types/equipment/item/Ammunition"
 import { config as animalConfig } from "optolith-database-schema/types/equipment/item/Animal"
 import { config as animalCareConfig } from "optolith-database-schema/types/equipment/item/AnimalCare"
@@ -177,7 +176,6 @@ export namespace GetById {
     export type AdvancedMagicalSpecialAbility = GetByIdFromConfig<typeof advancedMagicalSpecialAbilityConfig>
     export type AdvancedSkillSpecialAbility = GetByIdFromConfig<typeof advancedSkillSpecialAbilityConfig>
     export type Advantage = GetByIdFromConfig<typeof advantageConfig>
-    export type Alchemicum = GetByIdFromConfig<typeof alchemicumConfig>
     export type Ammunition = GetByIdFromConfig<typeof ammunitionConfig>
     export type AncestorGlyph = GetByIdFromConfig<typeof ancestorGlyphConfig>
     export type AnimalCare = GetByIdFromConfig<typeof animalCareConfig>
@@ -336,7 +334,6 @@ export namespace GetAll {
     export type AdvancedMagicalSpecialAbilities = GetAllFromConfig<typeof advancedMagicalSpecialAbilityConfig>
     export type AdvancedSkillSpecialAbilities = GetAllFromConfig<typeof advancedSkillSpecialAbilityConfig>
     export type Advantages = GetAllFromConfig<typeof advantageConfig>
-    export type Alchemicae = GetAllFromConfig<typeof alchemicumConfig>
     export type Ammunition = GetAllFromConfig<typeof ammunitionConfig>
     export type AncestorGlyphs = GetAllFromConfig<typeof ancestorGlyphConfig>
     export type AnimalCare = GetAllFromConfig<typeof animalCareConfig>
