@@ -1,20 +1,23 @@
 import { RatedMinimumNumberPrerequisite } from "optolith-database-schema/types/prerequisites/single/RatedMinimumNumberPrerequisite"
 import { isNotNullish } from "../../../utils/nullable.ts"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
+import { GetAll, GetById } from "../../getTypes.ts"
+import { GetDynamicLiturgicalChantsByAspectCapability } from "../../rated/liturgicalChant.ts"
 import { ActivatableRatedWithEnhancements, Rated } from "../../rated/ratedEntry.ts"
+import { GetDynamicSpellworksByPropertyCapability } from "../../rated/spell.ts"
 
 /**
  * Checks a single rated minimum number prerequisite if it’s matched.
  */
 export const checkRatedMinimumNumberPrerequisite = (
   caps: {
-    getDynamicSkill: (id: number) => Rated | undefined
-    getDynamicCloseCombatTechniques: () => Rated[]
-    getDynamicRangedCombatTechniques: () => Rated[]
-    getDynamicSpellsByProperty: (propertyId: number) => ActivatableRatedWithEnhancements[]
-    getDynamicRitualsByProperty: (propertyId: number) => ActivatableRatedWithEnhancements[]
-    getDynamicLiturgicalChantsByAspect: (aspectId: number) => ActivatableRatedWithEnhancements[]
-    getDynamicCeremoniesByAspect: (aspectId: number) => ActivatableRatedWithEnhancements[]
+    getDynamicSkillById: GetById.Dynamic.Skill
+    getDynamicCloseCombatTechniques: GetAll.Dynamic.CloseCombatTechniques
+    getDynamicRangedCombatTechniques: GetAll.Dynamic.RangedCombatTechniques
+    getDynamicSpellsByProperty: GetDynamicSpellworksByPropertyCapability
+    getDynamicRitualsByProperty: GetDynamicSpellworksByPropertyCapability
+    getDynamicLiturgicalChantsByAspect: GetDynamicLiturgicalChantsByAspectCapability
+    getDynamicCeremoniesByAspect: GetDynamicLiturgicalChantsByAspectCapability
   },
   p: RatedMinimumNumberPrerequisite,
 ): boolean => {
@@ -26,7 +29,7 @@ export const checkRatedMinimumNumberPrerequisite = (
     switch (p.targets.tag) {
       case "Skills":
         return p.targets.skills.list
-          .map(ref => caps.getDynamicSkill(ref.id.skill))
+          .map(ref => caps.getDynamicSkillById(ref.id.skill))
           .filter(isNotNullish)
           .filter(matchRated)
       case "CombatTechniques":

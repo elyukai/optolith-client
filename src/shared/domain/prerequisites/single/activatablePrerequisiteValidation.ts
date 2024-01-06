@@ -15,54 +15,54 @@ import { GetById } from "../../getTypes.ts"
  */
 export const checkActivatablePrerequisite = (
   caps: {
-    getDynamicAdvantage: GetById.Dynamic.Advantage
-    getDynamicDisadvantage: GetById.Dynamic.Disadvantage
-    getDynamicGeneralSpecialAbility: GetById.Dynamic.GeneralSpecialAbility
-    getDynamicFatePointSpecialAbility: GetById.Dynamic.FatePointSpecialAbility
-    getDynamicCombatSpecialAbility: GetById.Dynamic.CombatSpecialAbility
-    getDynamicMagicalSpecialAbility: GetById.Dynamic.MagicalSpecialAbility
-    getDynamicStaffEnchantment: GetById.Dynamic.StaffEnchantment
-    getDynamicFamiliarSpecialAbility: GetById.Dynamic.FamiliarSpecialAbility
-    getDynamicKarmaSpecialAbility: GetById.Dynamic.KarmaSpecialAbility
-    getDynamicProtectiveWardingCircleSpecialAbility: GetById.Dynamic.ProtectiveWardingCircleSpecialAbility
-    getDynamicCombatStyleSpecialAbility: GetById.Dynamic.CombatStyleSpecialAbility
-    getDynamicAdvancedCombatSpecialAbility: GetById.Dynamic.AdvancedCombatSpecialAbility
-    getDynamicCommandSpecialAbility: GetById.Dynamic.CommandSpecialAbility
-    getDynamicMagicStyleSpecialAbility: GetById.Dynamic.MagicStyleSpecialAbility
-    getDynamicAdvancedMagicalSpecialAbility: GetById.Dynamic.AdvancedMagicalSpecialAbility
-    getDynamicSpellSwordEnchantment: GetById.Dynamic.SpellSwordEnchantment
-    getDynamicDaggerRitual: GetById.Dynamic.DaggerRitual
-    getDynamicInstrumentEnchantment: GetById.Dynamic.InstrumentEnchantment
-    getDynamicAttireEnchantment: GetById.Dynamic.AttireEnchantment
-    getDynamicOrbEnchantment: GetById.Dynamic.OrbEnchantment
-    getDynamicWandEnchantment: GetById.Dynamic.WandEnchantment
-    getDynamicBrawlingSpecialAbility: GetById.Dynamic.BrawlingSpecialAbility
-    getDynamicAncestorGlyph: GetById.Dynamic.AncestorGlyph
-    getDynamicCeremonialItemSpecialAbility: GetById.Dynamic.CeremonialItemSpecialAbility
-    getDynamicSermon: GetById.Dynamic.Sermon
-    getDynamicLiturgicalStyleSpecialAbility: GetById.Dynamic.LiturgicalStyleSpecialAbility
-    getDynamicAdvancedKarmaSpecialAbility: GetById.Dynamic.AdvancedKarmaSpecialAbility
-    getDynamicVision: GetById.Dynamic.Vision
-    getDynamicMagicalTradition: GetById.Dynamic.MagicalTradition
-    getDynamicBlessedTradition: GetById.Dynamic.BlessedTradition
-    getDynamicPactGift: GetById.Dynamic.PactGift
-    getDynamicSikaryanDrainSpecialAbility: GetById.Dynamic.SikaryanDrainSpecialAbility
-    getDynamicLycantropicGift: GetById.Dynamic.LycantropicGift
-    getDynamicSkillStyleSpecialAbility: GetById.Dynamic.SkillStyleSpecialAbility
-    getDynamicAdvancedSkillSpecialAbility: GetById.Dynamic.AdvancedSkillSpecialAbility
-    getDynamicArcaneOrbEnchantment: GetById.Dynamic.ArcaneOrbEnchantment
-    getDynamicCauldronEnchantment: GetById.Dynamic.CauldronEnchantment
-    getDynamicFoolsHatEnchantment: GetById.Dynamic.FoolsHatEnchantment
-    getDynamicToyEnchantment: GetById.Dynamic.ToyEnchantment
-    getDynamicBowlEnchantment: GetById.Dynamic.BowlEnchantment
-    getDynamicFatePointSexSpecialAbility: GetById.Dynamic.FatePointSexSpecialAbility
-    getDynamicSexSpecialAbility: GetById.Dynamic.SexSpecialAbility
-    getDynamicWeaponEnchantment: GetById.Dynamic.WeaponEnchantment
-    getDynamicSickleRitual: GetById.Dynamic.SickleRitual
-    getDynamicRingEnchantment: GetById.Dynamic.RingEnchantment
-    getDynamicChronicleEnchantment: GetById.Dynamic.ChronicleEnchantment
-    getDynamicKrallenkettenzauber: GetById.Dynamic.Krallenkettenzauber
-    getDynamicTrinkhornzauber: GetById.Dynamic.Trinkhornzauber
+    getDynamicAdvantageById: GetById.Dynamic.Advantage
+    getDynamicDisadvantageById: GetById.Dynamic.Disadvantage
+    getDynamicGeneralSpecialAbilityById: GetById.Dynamic.GeneralSpecialAbility
+    getDynamicFatePointSpecialAbilityById: GetById.Dynamic.FatePointSpecialAbility
+    getDynamicCombatSpecialAbilityById: GetById.Dynamic.CombatSpecialAbility
+    getDynamicMagicalSpecialAbilityById: GetById.Dynamic.MagicalSpecialAbility
+    getDynamicStaffEnchantmentById: GetById.Dynamic.StaffEnchantment
+    getDynamicFamiliarSpecialAbilityById: GetById.Dynamic.FamiliarSpecialAbility
+    getDynamicKarmaSpecialAbilityById: GetById.Dynamic.KarmaSpecialAbility
+    getDynamicProtectiveWardingCircleSpecialAbilityById: GetById.Dynamic.ProtectiveWardingCircleSpecialAbility
+    getDynamicCombatStyleSpecialAbilityById: GetById.Dynamic.CombatStyleSpecialAbility
+    getDynamicAdvancedCombatSpecialAbilityById: GetById.Dynamic.AdvancedCombatSpecialAbility
+    getDynamicCommandSpecialAbilityById: GetById.Dynamic.CommandSpecialAbility
+    getDynamicMagicStyleSpecialAbilityById: GetById.Dynamic.MagicStyleSpecialAbility
+    getDynamicAdvancedMagicalSpecialAbilityById: GetById.Dynamic.AdvancedMagicalSpecialAbility
+    getDynamicSpellSwordEnchantmentById: GetById.Dynamic.SpellSwordEnchantment
+    getDynamicDaggerRitualById: GetById.Dynamic.DaggerRitual
+    getDynamicInstrumentEnchantmentById: GetById.Dynamic.InstrumentEnchantment
+    getDynamicAttireEnchantmentById: GetById.Dynamic.AttireEnchantment
+    getDynamicOrbEnchantmentById: GetById.Dynamic.OrbEnchantment
+    getDynamicWandEnchantmentById: GetById.Dynamic.WandEnchantment
+    getDynamicBrawlingSpecialAbilityById: GetById.Dynamic.BrawlingSpecialAbility
+    getDynamicAncestorGlyphById: GetById.Dynamic.AncestorGlyph
+    getDynamicCeremonialItemSpecialAbilityById: GetById.Dynamic.CeremonialItemSpecialAbility
+    getDynamicSermonById: GetById.Dynamic.Sermon
+    getDynamicLiturgicalStyleSpecialAbilityById: GetById.Dynamic.LiturgicalStyleSpecialAbility
+    getDynamicAdvancedKarmaSpecialAbilityById: GetById.Dynamic.AdvancedKarmaSpecialAbility
+    getDynamicVisionById: GetById.Dynamic.Vision
+    getDynamicMagicalTraditionById: GetById.Dynamic.MagicalTradition
+    getDynamicBlessedTraditionById: GetById.Dynamic.BlessedTradition
+    getDynamicPactGiftById: GetById.Dynamic.PactGift
+    getDynamicSikaryanDrainSpecialAbilityById: GetById.Dynamic.SikaryanDrainSpecialAbility
+    getDynamicLycantropicGiftById: GetById.Dynamic.LycantropicGift
+    getDynamicSkillStyleSpecialAbilityById: GetById.Dynamic.SkillStyleSpecialAbility
+    getDynamicAdvancedSkillSpecialAbilityById: GetById.Dynamic.AdvancedSkillSpecialAbility
+    getDynamicArcaneOrbEnchantmentById: GetById.Dynamic.ArcaneOrbEnchantment
+    getDynamicCauldronEnchantmentById: GetById.Dynamic.CauldronEnchantment
+    getDynamicFoolsHatEnchantmentById: GetById.Dynamic.FoolsHatEnchantment
+    getDynamicToyEnchantmentById: GetById.Dynamic.ToyEnchantment
+    getDynamicBowlEnchantmentById: GetById.Dynamic.BowlEnchantment
+    getDynamicFatePointSexSpecialAbilityById: GetById.Dynamic.FatePointSexSpecialAbility
+    getDynamicSexSpecialAbilityById: GetById.Dynamic.SexSpecialAbility
+    getDynamicWeaponEnchantmentById: GetById.Dynamic.WeaponEnchantment
+    getDynamicSickleRitualById: GetById.Dynamic.SickleRitual
+    getDynamicRingEnchantmentById: GetById.Dynamic.RingEnchantment
+    getDynamicChronicleEnchantmentById: GetById.Dynamic.ChronicleEnchantment
+    getDynamicKrallenkettenzauberById: GetById.Dynamic.Krallenkettenzauber
+    getDynamicTrinkhornzauberById: GetById.Dynamic.Trinkhornzauber
     checkPrecondition: (pre: PreconditionGroup) => boolean
   },
   p: ActivatablePrerequisite,
@@ -70,103 +70,107 @@ export const checkActivatablePrerequisite = (
   const dynamicEntry = (() => {
     switch (p.id.tag) {
       case "Advantage":
-        return caps.getDynamicAdvantage(p.id.advantage)
+        return caps.getDynamicAdvantageById(p.id.advantage)
       case "Disadvantage":
-        return caps.getDynamicDisadvantage(p.id.disadvantage)
+        return caps.getDynamicDisadvantageById(p.id.disadvantage)
       case "GeneralSpecialAbility":
-        return caps.getDynamicGeneralSpecialAbility(p.id.general_special_ability)
+        return caps.getDynamicGeneralSpecialAbilityById(p.id.general_special_ability)
       case "FatePointSpecialAbility":
-        return caps.getDynamicFatePointSpecialAbility(p.id.fate_point_special_ability)
+        return caps.getDynamicFatePointSpecialAbilityById(p.id.fate_point_special_ability)
       case "CombatSpecialAbility":
-        return caps.getDynamicCombatSpecialAbility(p.id.combat_special_ability)
+        return caps.getDynamicCombatSpecialAbilityById(p.id.combat_special_ability)
       case "MagicalSpecialAbility":
-        return caps.getDynamicMagicalSpecialAbility(p.id.magical_special_ability)
+        return caps.getDynamicMagicalSpecialAbilityById(p.id.magical_special_ability)
       case "StaffEnchantment":
-        return caps.getDynamicStaffEnchantment(p.id.staff_enchantment)
+        return caps.getDynamicStaffEnchantmentById(p.id.staff_enchantment)
       case "FamiliarSpecialAbility":
-        return caps.getDynamicFamiliarSpecialAbility(p.id.familiar_special_ability)
+        return caps.getDynamicFamiliarSpecialAbilityById(p.id.familiar_special_ability)
       case "KarmaSpecialAbility":
-        return caps.getDynamicKarmaSpecialAbility(p.id.karma_special_ability)
+        return caps.getDynamicKarmaSpecialAbilityById(p.id.karma_special_ability)
       case "ProtectiveWardingCircleSpecialAbility":
-        return caps.getDynamicProtectiveWardingCircleSpecialAbility(
+        return caps.getDynamicProtectiveWardingCircleSpecialAbilityById(
           p.id.protective_warding_circle_special_ability,
         )
       case "CombatStyleSpecialAbility":
-        return caps.getDynamicCombatStyleSpecialAbility(p.id.combat_style_special_ability)
+        return caps.getDynamicCombatStyleSpecialAbilityById(p.id.combat_style_special_ability)
       case "AdvancedCombatSpecialAbility":
-        return caps.getDynamicAdvancedCombatSpecialAbility(p.id.advanced_combat_special_ability)
+        return caps.getDynamicAdvancedCombatSpecialAbilityById(p.id.advanced_combat_special_ability)
       case "CommandSpecialAbility":
-        return caps.getDynamicCommandSpecialAbility(p.id.command_special_ability)
+        return caps.getDynamicCommandSpecialAbilityById(p.id.command_special_ability)
       case "MagicStyleSpecialAbility":
-        return caps.getDynamicMagicStyleSpecialAbility(p.id.magic_style_special_ability)
+        return caps.getDynamicMagicStyleSpecialAbilityById(p.id.magic_style_special_ability)
       case "AdvancedMagicalSpecialAbility":
-        return caps.getDynamicAdvancedMagicalSpecialAbility(p.id.advanced_magical_special_ability)
+        return caps.getDynamicAdvancedMagicalSpecialAbilityById(
+          p.id.advanced_magical_special_ability,
+        )
       case "SpellSwordEnchantment":
-        return caps.getDynamicSpellSwordEnchantment(p.id.spell_sword_enchantment)
+        return caps.getDynamicSpellSwordEnchantmentById(p.id.spell_sword_enchantment)
       case "DaggerRitual":
-        return caps.getDynamicDaggerRitual(p.id.dagger_ritual)
+        return caps.getDynamicDaggerRitualById(p.id.dagger_ritual)
       case "InstrumentEnchantment":
-        return caps.getDynamicInstrumentEnchantment(p.id.instrument_enchantment)
+        return caps.getDynamicInstrumentEnchantmentById(p.id.instrument_enchantment)
       case "AttireEnchantment":
-        return caps.getDynamicAttireEnchantment(p.id.attire_enchantment)
+        return caps.getDynamicAttireEnchantmentById(p.id.attire_enchantment)
       case "OrbEnchantment":
-        return caps.getDynamicOrbEnchantment(p.id.orb_enchantment)
+        return caps.getDynamicOrbEnchantmentById(p.id.orb_enchantment)
       case "WandEnchantment":
-        return caps.getDynamicWandEnchantment(p.id.wand_enchantment)
+        return caps.getDynamicWandEnchantmentById(p.id.wand_enchantment)
       case "BrawlingSpecialAbility":
-        return caps.getDynamicBrawlingSpecialAbility(p.id.brawling_special_ability)
+        return caps.getDynamicBrawlingSpecialAbilityById(p.id.brawling_special_ability)
       case "AncestorGlyph":
-        return caps.getDynamicAncestorGlyph(p.id.ancestor_glyph)
+        return caps.getDynamicAncestorGlyphById(p.id.ancestor_glyph)
       case "CeremonialItemSpecialAbility":
-        return caps.getDynamicCeremonialItemSpecialAbility(p.id.ceremonial_item_special_ability)
+        return caps.getDynamicCeremonialItemSpecialAbilityById(p.id.ceremonial_item_special_ability)
       case "Sermon":
-        return caps.getDynamicSermon(p.id.sermon)
+        return caps.getDynamicSermonById(p.id.sermon)
       case "LiturgicalStyleSpecialAbility":
-        return caps.getDynamicLiturgicalStyleSpecialAbility(p.id.liturgical_style_special_ability)
+        return caps.getDynamicLiturgicalStyleSpecialAbilityById(
+          p.id.liturgical_style_special_ability,
+        )
       case "AdvancedKarmaSpecialAbility":
-        return caps.getDynamicAdvancedKarmaSpecialAbility(p.id.advanced_karma_special_ability)
+        return caps.getDynamicAdvancedKarmaSpecialAbilityById(p.id.advanced_karma_special_ability)
       case "Vision":
-        return caps.getDynamicVision(p.id.vision)
+        return caps.getDynamicVisionById(p.id.vision)
       case "MagicalTradition":
-        return caps.getDynamicMagicalTradition(p.id.magical_tradition)
+        return caps.getDynamicMagicalTraditionById(p.id.magical_tradition)
       case "BlessedTradition":
-        return caps.getDynamicBlessedTradition(p.id.blessed_tradition)
+        return caps.getDynamicBlessedTraditionById(p.id.blessed_tradition)
       case "PactGift":
-        return caps.getDynamicPactGift(p.id.pact_gift)
+        return caps.getDynamicPactGiftById(p.id.pact_gift)
       case "SikaryanDrainSpecialAbility":
-        return caps.getDynamicSikaryanDrainSpecialAbility(p.id.sikaryan_drain_special_ability)
+        return caps.getDynamicSikaryanDrainSpecialAbilityById(p.id.sikaryan_drain_special_ability)
       case "LycantropicGift":
-        return caps.getDynamicLycantropicGift(p.id.lycantropic_gift)
+        return caps.getDynamicLycantropicGiftById(p.id.lycantropic_gift)
       case "SkillStyleSpecialAbility":
-        return caps.getDynamicSkillStyleSpecialAbility(p.id.skill_style_special_ability)
+        return caps.getDynamicSkillStyleSpecialAbilityById(p.id.skill_style_special_ability)
       case "AdvancedSkillSpecialAbility":
-        return caps.getDynamicAdvancedSkillSpecialAbility(p.id.advanced_skill_special_ability)
+        return caps.getDynamicAdvancedSkillSpecialAbilityById(p.id.advanced_skill_special_ability)
       case "ArcaneOrbEnchantment":
-        return caps.getDynamicArcaneOrbEnchantment(p.id.arcane_orb_enchantment)
+        return caps.getDynamicArcaneOrbEnchantmentById(p.id.arcane_orb_enchantment)
       case "CauldronEnchantment":
-        return caps.getDynamicCauldronEnchantment(p.id.cauldron_enchantment)
+        return caps.getDynamicCauldronEnchantmentById(p.id.cauldron_enchantment)
       case "FoolsHatEnchantment":
-        return caps.getDynamicFoolsHatEnchantment(p.id.fools_hat_enchantment)
+        return caps.getDynamicFoolsHatEnchantmentById(p.id.fools_hat_enchantment)
       case "ToyEnchantment":
-        return caps.getDynamicToyEnchantment(p.id.toy_enchantment)
+        return caps.getDynamicToyEnchantmentById(p.id.toy_enchantment)
       case "BowlEnchantment":
-        return caps.getDynamicBowlEnchantment(p.id.bowl_enchantment)
+        return caps.getDynamicBowlEnchantmentById(p.id.bowl_enchantment)
       case "FatePointSexSpecialAbility":
-        return caps.getDynamicFatePointSexSpecialAbility(p.id.fate_point_sex_special_ability)
+        return caps.getDynamicFatePointSexSpecialAbilityById(p.id.fate_point_sex_special_ability)
       case "SexSpecialAbility":
-        return caps.getDynamicSexSpecialAbility(p.id.sex_special_ability)
+        return caps.getDynamicSexSpecialAbilityById(p.id.sex_special_ability)
       case "WeaponEnchantment":
-        return caps.getDynamicWeaponEnchantment(p.id.weapon_enchantment)
+        return caps.getDynamicWeaponEnchantmentById(p.id.weapon_enchantment)
       case "SickleRitual":
-        return caps.getDynamicSickleRitual(p.id.sickle_ritual)
+        return caps.getDynamicSickleRitualById(p.id.sickle_ritual)
       case "RingEnchantment":
-        return caps.getDynamicRingEnchantment(p.id.ring_enchantment)
+        return caps.getDynamicRingEnchantmentById(p.id.ring_enchantment)
       case "ChronicleEnchantment":
-        return caps.getDynamicChronicleEnchantment(p.id.chronicle_enchantment)
+        return caps.getDynamicChronicleEnchantmentById(p.id.chronicle_enchantment)
       case "Krallenkettenzauber":
-        return caps.getDynamicKrallenkettenzauber(p.id.krallenkettenzauber)
+        return caps.getDynamicKrallenkettenzauberById(p.id.krallenkettenzauber)
       case "Trinkhornzauber":
-        return caps.getDynamicTrinkhornzauber(p.id.trinkhornzauber)
+        return caps.getDynamicTrinkhornzauberById(p.id.trinkhornzauber)
       default:
         return assertExhaustive(p.id)
     }

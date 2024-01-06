@@ -221,26 +221,26 @@ export const getVisibleInactiveCantrips = (
  * @param imitationszauberei The dynamic *Imitationszauberei* entry, if present.
  * @param isEntryAvailable A function that checks whether a spell or ritual is
  * available based on the active publications.
- * @param getDynamicFocusRule Returns the dynamic focus rule entry by
+ * @param getDynamicFocusRuleById Returns the dynamic focus rule entry by
  * identifier, if present.
- * @param getDynamicOptionalRule Returns the dynamic optional rule entry by
+ * @param getDynamicOptionalRuleById Returns the dynamic optional rule entry by
  * identifier, if present.
- * @param getDynamicAttribute Returns the dynamic attribute entry by identifier,
- * if present.
- * @param getDynamicSkill Returns the dynamic skill entry by identifier, if
+ * @param getDynamicAttributeById Returns the dynamic attribute entry by
+ * identifier, if present.
+ * @param getDynamicSkillById Returns the dynamic skill entry by identifier, if
  * present.
- * @param getDynamicCloseCombatTechnique Returns the dynamic close combat
+ * @param getDynamicCloseCombatTechniqueById Returns the dynamic close combat
  * technique entry by identifier, if present.
- * @param getDynamicRangedCombatTechnique Returns the dynamic ranged combat
+ * @param getDynamicRangedCombatTechniqueById Returns the dynamic ranged combat
  * technique entry by identifier, if present.
- * @param getDynamicSpell Returns the dynamic spell entry by identifier, if
+ * @param getDynamicSpellById Returns the dynamic spell entry by identifier, if
  * present.
- * @param getDynamicRitual Returns the dynamic ritual entry by identifier, if
- * present.
- * @param getDynamicLiturgicalChant Returns the dynamic liturgical chant entry
- * by identifier, if present.
- * @param getDynamicCeremony Returns the dynamic ceremony entry by identifier,
+ * @param getDynamicRitualById Returns the dynamic ritual entry by identifier,
  * if present.
+ * @param getDynamicLiturgicalChantById Returns the dynamic liturgical chant
+ * entry by identifier, if present.
+ * @param getDynamicCeremonyById Returns the dynamic ceremony entry by
+ * identifier, if present.
  * @param getIsUnfamiliar Returns if the spell or ritual (depending on the
  * `kind` parameter) is unfamiliar.
  */
@@ -255,16 +255,16 @@ export const getInactiveSpellsOrRituals = <K extends "spell" | "ritual", T exten
   isMaximumUnfamiliarCountReached: boolean,
   imitationszauberei: Activatable | undefined,
   isEntryAvailable: (src: PublicationRefs) => boolean,
-  getDynamicFocusRule: GetById.Dynamic.FocusRule,
-  getDynamicOptionalRule: GetById.Dynamic.OptionalRule,
-  getDynamicAttribute: GetById.Dynamic.Attribute,
-  getDynamicSkill: GetById.Dynamic.Skill,
-  getDynamicCloseCombatTechnique: GetById.Dynamic.CloseCombatTechnique,
-  getDynamicRangedCombatTechnique: GetById.Dynamic.RangedCombatTechnique,
-  getDynamicSpell: GetById.Dynamic.Spell,
-  getDynamicRitual: GetById.Dynamic.Ritual,
-  getDynamicLiturgicalChant: GetById.Dynamic.LiturgicalChant,
-  getDynamicCeremony: GetById.Dynamic.Ceremony,
+  getDynamicFocusRuleById: GetById.Dynamic.FocusRule,
+  getDynamicOptionalRuleById: GetById.Dynamic.OptionalRule,
+  getDynamicAttributeById: GetById.Dynamic.Attribute,
+  getDynamicSkillById: GetById.Dynamic.Skill,
+  getDynamicCloseCombatTechniqueById: GetById.Dynamic.CloseCombatTechnique,
+  getDynamicRangedCombatTechniqueById: GetById.Dynamic.RangedCombatTechnique,
+  getDynamicSpellById: GetById.Dynamic.Spell,
+  getDynamicRitualById: GetById.Dynamic.Ritual,
+  getDynamicLiturgicalChantById: GetById.Dynamic.LiturgicalChant,
+  getDynamicCeremonyById: GetById.Dynamic.Ceremony,
   getIsUnfamiliar: (id: number) => boolean,
 ): {
   kind: K
@@ -364,16 +364,16 @@ export const getInactiveSpellsOrRituals = <K extends "spell" | "ritual", T exten
           (!isUnfamiliar || !isMaximumUnfamiliarCountReached) &&
           additionalSoftPredicate(staticSpellwork) &&
           checkPrerequisitesOfSpellwork(staticSpellwork.prerequisites ?? [], {
-            getDynamicFocusRule,
-            getDynamicOptionalRule,
-            getDynamicAttribute,
-            getDynamicSkill,
-            getDynamicCloseCombatTechnique,
-            getDynamicRangedCombatTechnique,
-            getDynamicSpell,
-            getDynamicRitual,
-            getDynamicLiturgicalChant,
-            getDynamicCeremony,
+            getDynamicFocusRuleById,
+            getDynamicOptionalRuleById,
+            getDynamicAttributeById,
+            getDynamicSkillById,
+            getDynamicCloseCombatTechniqueById,
+            getDynamicRangedCombatTechniqueById,
+            getDynamicSpellById,
+            getDynamicRitualById,
+            getDynamicLiturgicalChantById,
+            getDynamicCeremonyById,
           }),
         isUnfamiliar,
       }

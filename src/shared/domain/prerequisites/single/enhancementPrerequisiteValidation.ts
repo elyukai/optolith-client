@@ -3,31 +3,31 @@ import {
   InternalEnhancementPrerequisite,
 } from "optolith-database-schema/types/prerequisites/single/EnhancementPrerequisite"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
+import { GetById } from "../../getTypes.ts"
 import { Enhancement } from "../../rated/enhancement.ts"
-import { ActivatableRatedWithEnhancements } from "../../rated/ratedEntry.ts"
 
 /**
  * Checks a single external enhancement prerequisite if it’s matched.
  */
 export const checkExternalEnhancementPrerequisite = (
   caps: {
-    getDynamicSpell: (id: number) => ActivatableRatedWithEnhancements | undefined
-    getDynamicRitual: (id: number) => ActivatableRatedWithEnhancements | undefined
-    getDynamicLiturgicalChant: (id: number) => ActivatableRatedWithEnhancements | undefined
-    getDynamicCeremony: (id: number) => ActivatableRatedWithEnhancements | undefined
+    getDynamicSpellById: GetById.Dynamic.Spell
+    getDynamicRitualById: GetById.Dynamic.Ritual
+    getDynamicLiturgicalChantById: GetById.Dynamic.LiturgicalChant
+    getDynamicCeremonyById: GetById.Dynamic.Ceremony
   },
   p: ExternalEnhancementPrerequisite,
 ): boolean => {
   const entry = (() => {
     switch (p.skill.id.tag) {
       case "Spell":
-        return caps.getDynamicSpell(p.skill.id.spell)
+        return caps.getDynamicSpellById(p.skill.id.spell)
       case "Ritual":
-        return caps.getDynamicRitual(p.skill.id.ritual)
+        return caps.getDynamicRitualById(p.skill.id.ritual)
       case "LiturgicalChant":
-        return caps.getDynamicLiturgicalChant(p.skill.id.liturgical_chant)
+        return caps.getDynamicLiturgicalChantById(p.skill.id.liturgical_chant)
       case "Ceremony":
-        return caps.getDynamicCeremony(p.skill.id.ceremony)
+        return caps.getDynamicCeremonyById(p.skill.id.ceremony)
       default:
         return assertExhaustive(p.skill.id)
     }

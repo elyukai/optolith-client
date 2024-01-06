@@ -6,7 +6,7 @@ import { GetAll, GetById } from "../../getTypes.ts"
  */
 export const checkAncestorBloodPrerequisite = (
   caps: {
-    getStaticAdvantage: GetById.Static.Advantage
+    getStaticAdvantageById: GetById.Static.Advantage
     getDynamicAdvantages: GetAll.Dynamic.Advantages
   },
   _p: AncestorBloodPrerequisite,
@@ -20,7 +20,7 @@ export const checkAncestorBloodPrerequisite = (
         x.id !== sourceId &&
         x.instances.length > 0 &&
         caps
-          .getStaticAdvantage(x.id)
+          .getStaticAdvantageById(x.id)
           ?.prerequisites?.some(
             p =>
               p.prerequisite.tag === "Single" &&

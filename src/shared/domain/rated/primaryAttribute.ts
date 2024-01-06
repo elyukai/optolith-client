@@ -22,6 +22,12 @@ export type DisplayedMagicalPrimaryAttributes = {
 }
 
 /**
+ * A capability type for getting the blessed primary attribute, if any is
+ * defined.
+ */
+export type GetHighestMagicalPrimaryAttributesCapability = () => DisplayedPrimaryAttribute[]
+
+/**
  * Returns the highest primary attributes of all active magical traditions, and
  * if they are halfed for calculating arcane energy.
  */
@@ -80,6 +86,12 @@ export const getHighestMagicalPrimaryAttributes = (
     halfed,
   }
 }
+
+/**
+ * A capability type for getting the blessed primary attribute, if any is
+ * defined.
+ */
+export type GetBlessedPrimaryAttributeCapability = () => DisplayedPrimaryAttribute | undefined
 
 /**
  * Returns the primary attribute of the active blessed tradition, if it has one.

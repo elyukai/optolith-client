@@ -1,5 +1,5 @@
 import { PublicationPrerequisite } from "optolith-database-schema/types/prerequisites/single/PublicationPrerequisite"
-import { Publication } from "optolith-database-schema/types/source/Publication"
+import { GetById } from "../../getTypes.ts"
 
 /**
  * Checks a single publication prerequisite if it’s matched.
@@ -8,11 +8,11 @@ export const checkPublicationPrerequisite = (
   caps: {
     getAreAllPublicationsEnabled: () => boolean
     getIsPublicationEnabledManually: (id: number) => boolean
-    getStaticPublication: (id: number) => Publication | undefined
+    getStaticPublicationById: GetById.Static.Publication
   },
   p: PublicationPrerequisite,
 ): boolean => {
-  const publication = caps.getStaticPublication(p.id)
+  const publication = caps.getStaticPublicationById(p.id)
 
   if (publication === undefined) {
     return false

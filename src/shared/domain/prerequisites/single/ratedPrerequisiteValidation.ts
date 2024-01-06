@@ -7,35 +7,35 @@ import { GetById } from "../../getTypes.ts"
  */
 export const checkRatedPrerequisite = (
   caps: {
-    getDynamicAttribute: GetById.Dynamic.Attribute
-    getDynamicSkill: GetById.Dynamic.Skill
-    getDynamicCloseCombatTechnique: GetById.Dynamic.CloseCombatTechnique
-    getDynamicRangedCombatTechnique: GetById.Dynamic.RangedCombatTechnique
-    getDynamicSpell: GetById.Dynamic.Spell
-    getDynamicRitual: GetById.Dynamic.Ritual
-    getDynamicLiturgicalChant: GetById.Dynamic.LiturgicalChant
-    getDynamicCeremony: GetById.Dynamic.Ceremony
+    getDynamicAttributeById: GetById.Dynamic.Attribute
+    getDynamicSkillById: GetById.Dynamic.Skill
+    getDynamicCloseCombatTechniqueById: GetById.Dynamic.CloseCombatTechnique
+    getDynamicRangedCombatTechniqueById: GetById.Dynamic.RangedCombatTechnique
+    getDynamicSpellById: GetById.Dynamic.Spell
+    getDynamicRitualById: GetById.Dynamic.Ritual
+    getDynamicLiturgicalChantById: GetById.Dynamic.LiturgicalChant
+    getDynamicCeremonyById: GetById.Dynamic.Ceremony
   },
   p: RatedPrerequisite,
 ): boolean =>
   (() => {
     switch (p.id.tag) {
       case "Attribute":
-        return caps.getDynamicAttribute(p.id.attribute)
+        return caps.getDynamicAttributeById(p.id.attribute)
       case "Skill":
-        return caps.getDynamicSkill(p.id.skill)
+        return caps.getDynamicSkillById(p.id.skill)
       case "CloseCombatTechnique":
-        return caps.getDynamicCloseCombatTechnique(p.id.close_combat_technique)
+        return caps.getDynamicCloseCombatTechniqueById(p.id.close_combat_technique)
       case "RangedCombatTechnique":
-        return caps.getDynamicRangedCombatTechnique(p.id.ranged_combat_technique)
+        return caps.getDynamicRangedCombatTechniqueById(p.id.ranged_combat_technique)
       case "Spell":
-        return caps.getDynamicSpell(p.id.spell)
+        return caps.getDynamicSpellById(p.id.spell)
       case "Ritual":
-        return caps.getDynamicRitual(p.id.ritual)
+        return caps.getDynamicRitualById(p.id.ritual)
       case "LiturgicalChant":
-        return caps.getDynamicLiturgicalChant(p.id.liturgical_chant)
+        return caps.getDynamicLiturgicalChantById(p.id.liturgical_chant)
       case "Ceremony":
-        return caps.getDynamicCeremony(p.id.ceremony)
+        return caps.getDynamicCeremonyById(p.id.ceremony)
       default:
         return assertExhaustive(p.id)
     }

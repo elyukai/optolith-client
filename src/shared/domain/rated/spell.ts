@@ -74,6 +74,22 @@ export const createEmptyDynamicSpell = (id: number): ActivatableRatedWithEnhance
 })
 
 /**
+ * A capability type for getting any dynamic spellworks that belong to a certain
+ * property.
+ */
+export type GetDynamicSpellworksByPropertyCapability = (
+  id: number,
+) => ActivatableRatedWithEnhancements[]
+
+/**
+ * A capability type for getting any active dynamic spellworks that belong to a
+ * certain property.
+ */
+export type GetActiveDynamicSpellworksByPropertyCapability = (
+  id: number,
+) => ActiveActivatableRatedWithEnhancements[]
+
+/**
  * Returns a list of active dynamic spellwork entries for a given property.
  */
 export const getActiveDynamicSpellworksByProperty = (

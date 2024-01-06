@@ -12,6 +12,11 @@ export type CombinedActiveMagicalTradition = {
 }
 
 /**
+ * A capability type for getting the active magical traditions.
+ */
+export type GetActiveMagicalTraditionsCapability = () => CombinedActiveMagicalTradition[]
+
+/**
  * Checks if a character is a spellcaster.
  */
 export const isSpellcaster = (

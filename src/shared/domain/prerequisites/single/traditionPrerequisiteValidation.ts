@@ -3,15 +3,15 @@ import {
   MagicalTraditionPrerequisite,
 } from "optolith-database-schema/types/prerequisites/single/TraditionPrerequisite"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { CombinedActiveBlessedTradition } from "../../activatable/blessedTradition.ts"
-import { CombinedActiveMagicalTradition } from "../../activatable/magicalTradition.ts"
+import { GetActiveBlessedTraditionCapability } from "../../activatable/blessedTradition.ts"
+import { GetActiveMagicalTraditionsCapability } from "../../activatable/magicalTradition.ts"
 
 /**
  * Checks a single blessed tradition prerequisite if it’s matched.
  */
 export const checkBlessedTraditionPrerequisite = (
   caps: {
-    getActiveBlessedTradition: () => CombinedActiveBlessedTradition | undefined
+    getActiveBlessedTradition: GetActiveBlessedTraditionCapability
   },
   p: BlessedTraditionPrerequisite,
 ): boolean => {
@@ -38,7 +38,7 @@ export const checkBlessedTraditionPrerequisite = (
  */
 export const checkMagicalTraditionPrerequisite = (
   caps: {
-    getActiveMagicalTraditions: () => CombinedActiveMagicalTradition[]
+    getActiveMagicalTraditions: GetActiveMagicalTraditionsCapability
   },
   p: MagicalTraditionPrerequisite,
 ): boolean => {

@@ -11,6 +11,11 @@ export type CombinedActiveBlessedTradition = {
 }
 
 /**
+ * A capability type for getting the active blessed tradition, if any.
+ */
+export type GetActiveBlessedTraditionCapability = () => CombinedActiveBlessedTradition | undefined
+
+/**
  * Checks if the character is a Blessed One.
  */
 export const isBlessedOne = (

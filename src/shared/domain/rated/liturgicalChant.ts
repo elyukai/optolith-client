@@ -129,6 +129,22 @@ export const getAspectsForTranslation = (
     .filter(isNotNullish)
 
 /**
+ * A capability type for getting any dynamic liturgical chants that belong to a
+ * certain aspect.
+ */
+export type GetDynamicLiturgicalChantsByAspectCapability = (
+  id: number,
+) => ActivatableRatedWithEnhancements[]
+
+/**
+ * A capability type for getting any active dynamic liturgical chants that
+ * belong to a certain aspect.
+ */
+export type GetActiveDynamicLiturgicalChantsByAspectCapability = (
+  id: number,
+) => ActiveActivatableRatedWithEnhancements[]
+
+/**
  * Returns a list of active dynamic liturgical chant entries for a given aspect.
  */
 export const getActiveDynamicLiturgicalChantsByAspect = (

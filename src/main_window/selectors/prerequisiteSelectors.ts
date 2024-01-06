@@ -26,7 +26,6 @@ import {
 } from "../../shared/domain/prerequisites/single/traditionPrerequisiteValidation.ts"
 import { getActiveDynamicLiturgicalChantsByAspect } from "../../shared/domain/rated/liturgicalChant.ts"
 import { getActiveDynamicSpellworksByProperty } from "../../shared/domain/rated/spell.ts"
-import { isStateActive } from "../../shared/domain/state.ts"
 import {
   selectCultureId,
   selectDynamicAdvantages,
@@ -42,7 +41,6 @@ import {
   selectDynamicSkills,
   selectDynamicSpecialAbilities,
   selectDynamicSpells,
-  selectDynamicStates,
   selectIncludeAllPublications,
   selectIncludePublications,
   selectPact,
@@ -59,6 +57,7 @@ import {
   selectStaticRituals,
   selectStaticSpells,
 } from "../slices/databaseSlice.ts"
+import { SelectGetById } from "./basicCapabilitySelectors.ts"
 import { selectCurrentCulture } from "./cultureSelectors.ts"
 import {
   selectBlessedPrimaryAttribute,
@@ -87,7 +86,7 @@ export const selectCapabilitiesForPrecondition = createSelector(
   ): Parameters<typeof checkPrecondition>[0] => ({
     getAreAllPublicationsEnabled: () => areAllPublicationsEnabled,
     getIsPublicationEnabledManually: id => includedPublications.includes(id),
-    getStaticPublication: id => publications[id],
+    getStaticPublicationById: id => publications[id],
     getSex: () => sex,
   }),
 )
@@ -106,63 +105,66 @@ export const selectCapabilitiesForActivatablePrerequisite = createSelector(
     specialAbilities,
     precondition,
   ): Parameters<typeof checkActivatablePrerequisite>[0] => ({
-    getDynamicAdvantage: id => advantages?.[id],
-    getDynamicDisadvantage: id => disadvantages?.[id],
-    getDynamicGeneralSpecialAbility: id => specialAbilities?.generalSpecialAbilities?.[id],
-    getDynamicFatePointSpecialAbility: id => specialAbilities?.fatePointSpecialAbilities?.[id],
-    getDynamicCombatSpecialAbility: id => specialAbilities?.combatSpecialAbilities?.[id],
-    getDynamicMagicalSpecialAbility: id => specialAbilities?.magicalSpecialAbilities?.[id],
-    getDynamicStaffEnchantment: id => specialAbilities?.staffEnchantments?.[id],
-    getDynamicFamiliarSpecialAbility: id => specialAbilities?.familiarSpecialAbilities?.[id],
-    getDynamicKarmaSpecialAbility: id => specialAbilities?.karmaSpecialAbilities?.[id],
-    getDynamicProtectiveWardingCircleSpecialAbility: id =>
+    getDynamicAdvantageById: id => advantages?.[id],
+    getDynamicDisadvantageById: id => disadvantages?.[id],
+    getDynamicGeneralSpecialAbilityById: id => specialAbilities?.generalSpecialAbilities?.[id],
+    getDynamicFatePointSpecialAbilityById: id => specialAbilities?.fatePointSpecialAbilities?.[id],
+    getDynamicCombatSpecialAbilityById: id => specialAbilities?.combatSpecialAbilities?.[id],
+    getDynamicMagicalSpecialAbilityById: id => specialAbilities?.magicalSpecialAbilities?.[id],
+    getDynamicStaffEnchantmentById: id => specialAbilities?.staffEnchantments?.[id],
+    getDynamicFamiliarSpecialAbilityById: id => specialAbilities?.familiarSpecialAbilities?.[id],
+    getDynamicKarmaSpecialAbilityById: id => specialAbilities?.karmaSpecialAbilities?.[id],
+    getDynamicProtectiveWardingCircleSpecialAbilityById: id =>
       specialAbilities?.protectiveWardingCircleSpecialAbilities?.[id],
-    getDynamicCombatStyleSpecialAbility: id => specialAbilities?.combatStyleSpecialAbilities?.[id],
-    getDynamicAdvancedCombatSpecialAbility: id =>
+    getDynamicCombatStyleSpecialAbilityById: id =>
+      specialAbilities?.combatStyleSpecialAbilities?.[id],
+    getDynamicAdvancedCombatSpecialAbilityById: id =>
       specialAbilities?.advancedCombatSpecialAbilities?.[id],
-    getDynamicCommandSpecialAbility: id => specialAbilities?.commandSpecialAbilities?.[id],
-    getDynamicMagicStyleSpecialAbility: id => specialAbilities?.magicStyleSpecialAbilities?.[id],
-    getDynamicAdvancedMagicalSpecialAbility: id =>
+    getDynamicCommandSpecialAbilityById: id => specialAbilities?.commandSpecialAbilities?.[id],
+    getDynamicMagicStyleSpecialAbilityById: id =>
+      specialAbilities?.magicStyleSpecialAbilities?.[id],
+    getDynamicAdvancedMagicalSpecialAbilityById: id =>
       specialAbilities?.advancedMagicalSpecialAbilities?.[id],
-    getDynamicSpellSwordEnchantment: id => specialAbilities?.spellSwordEnchantments?.[id],
-    getDynamicDaggerRitual: id => specialAbilities?.daggerRituals?.[id],
-    getDynamicInstrumentEnchantment: id => specialAbilities?.instrumentEnchantments?.[id],
-    getDynamicAttireEnchantment: id => specialAbilities?.attireEnchantments?.[id],
-    getDynamicOrbEnchantment: id => specialAbilities?.orbEnchantments?.[id],
-    getDynamicWandEnchantment: id => specialAbilities?.wandEnchantments?.[id],
-    getDynamicBrawlingSpecialAbility: id => specialAbilities?.brawlingSpecialAbilities?.[id],
-    getDynamicAncestorGlyph: id => specialAbilities?.ancestorGlyphs?.[id],
-    getDynamicCeremonialItemSpecialAbility: id =>
+    getDynamicSpellSwordEnchantmentById: id => specialAbilities?.spellSwordEnchantments?.[id],
+    getDynamicDaggerRitualById: id => specialAbilities?.daggerRituals?.[id],
+    getDynamicInstrumentEnchantmentById: id => specialAbilities?.instrumentEnchantments?.[id],
+    getDynamicAttireEnchantmentById: id => specialAbilities?.attireEnchantments?.[id],
+    getDynamicOrbEnchantmentById: id => specialAbilities?.orbEnchantments?.[id],
+    getDynamicWandEnchantmentById: id => specialAbilities?.wandEnchantments?.[id],
+    getDynamicBrawlingSpecialAbilityById: id => specialAbilities?.brawlingSpecialAbilities?.[id],
+    getDynamicAncestorGlyphById: id => specialAbilities?.ancestorGlyphs?.[id],
+    getDynamicCeremonialItemSpecialAbilityById: id =>
       specialAbilities?.ceremonialItemSpecialAbilities?.[id],
-    getDynamicSermon: id => specialAbilities?.sermons?.[id],
-    getDynamicLiturgicalStyleSpecialAbility: id =>
+    getDynamicSermonById: id => specialAbilities?.sermons?.[id],
+    getDynamicLiturgicalStyleSpecialAbilityById: id =>
       specialAbilities?.liturgicalStyleSpecialAbilities?.[id],
-    getDynamicAdvancedKarmaSpecialAbility: id =>
+    getDynamicAdvancedKarmaSpecialAbilityById: id =>
       specialAbilities?.advancedKarmaSpecialAbilities?.[id],
-    getDynamicVision: id => specialAbilities?.visions?.[id],
-    getDynamicMagicalTradition: id => specialAbilities?.magicalTraditions?.[id],
-    getDynamicBlessedTradition: id => specialAbilities?.blessedTraditions?.[id],
-    getDynamicPactGift: id => specialAbilities?.pactGifts?.[id],
-    getDynamicSikaryanDrainSpecialAbility: id =>
+    getDynamicVisionById: id => specialAbilities?.visions?.[id],
+    getDynamicMagicalTraditionById: id => specialAbilities?.magicalTraditions?.[id],
+    getDynamicBlessedTraditionById: id => specialAbilities?.blessedTraditions?.[id],
+    getDynamicPactGiftById: id => specialAbilities?.pactGifts?.[id],
+    getDynamicSikaryanDrainSpecialAbilityById: id =>
       specialAbilities?.sikaryanDrainSpecialAbilities?.[id],
-    getDynamicLycantropicGift: id => specialAbilities?.lycantropicGifts?.[id],
-    getDynamicSkillStyleSpecialAbility: id => specialAbilities?.skillStyleSpecialAbilities?.[id],
-    getDynamicAdvancedSkillSpecialAbility: id =>
+    getDynamicLycantropicGiftById: id => specialAbilities?.lycantropicGifts?.[id],
+    getDynamicSkillStyleSpecialAbilityById: id =>
+      specialAbilities?.skillStyleSpecialAbilities?.[id],
+    getDynamicAdvancedSkillSpecialAbilityById: id =>
       specialAbilities?.advancedSkillSpecialAbilities?.[id],
-    getDynamicArcaneOrbEnchantment: id => specialAbilities?.arcaneOrbEnchantments?.[id],
-    getDynamicCauldronEnchantment: id => specialAbilities?.cauldronEnchantments?.[id],
-    getDynamicFoolsHatEnchantment: id => specialAbilities?.foolsHatEnchantments?.[id],
-    getDynamicToyEnchantment: id => specialAbilities?.toyEnchantments?.[id],
-    getDynamicBowlEnchantment: id => specialAbilities?.bowlEnchantments?.[id],
-    getDynamicFatePointSexSpecialAbility: id =>
+    getDynamicArcaneOrbEnchantmentById: id => specialAbilities?.arcaneOrbEnchantments?.[id],
+    getDynamicCauldronEnchantmentById: id => specialAbilities?.cauldronEnchantments?.[id],
+    getDynamicFoolsHatEnchantmentById: id => specialAbilities?.foolsHatEnchantments?.[id],
+    getDynamicToyEnchantmentById: id => specialAbilities?.toyEnchantments?.[id],
+    getDynamicBowlEnchantmentById: id => specialAbilities?.bowlEnchantments?.[id],
+    getDynamicFatePointSexSpecialAbilityById: id =>
       specialAbilities?.fatePointSexSpecialAbilities?.[id],
-    getDynamicSexSpecialAbility: id => specialAbilities?.sexSpecialAbilities?.[id],
-    getDynamicWeaponEnchantment: id => specialAbilities?.weaponEnchantments?.[id],
-    getDynamicSickleRitual: id => specialAbilities?.sickleRituals?.[id],
-    getDynamicRingEnchantment: id => specialAbilities?.ringEnchantments?.[id],
-    getDynamicChronicleEnchantment: id => specialAbilities?.chronicleEnchantments?.[id],
-    getDynamicKrallenkettenzauber: id => specialAbilities?.krallenkettenzauber?.[id],
-    getDynamicTrinkhornzauber: id => specialAbilities?.trinkhornzauber?.[id],
+    getDynamicSexSpecialAbilityById: id => specialAbilities?.sexSpecialAbilities?.[id],
+    getDynamicWeaponEnchantmentById: id => specialAbilities?.weaponEnchantments?.[id],
+    getDynamicSickleRitualById: id => specialAbilities?.sickleRituals?.[id],
+    getDynamicRingEnchantmentById: id => specialAbilities?.ringEnchantments?.[id],
+    getDynamicChronicleEnchantmentById: id => specialAbilities?.chronicleEnchantments?.[id],
+    getDynamicKrallenkettenzauberById: id => specialAbilities?.krallenkettenzauber?.[id],
+    getDynamicTrinkhornzauberById: id => specialAbilities?.trinkhornzauber?.[id],
     checkPrecondition: pre => checkPrecondition(precondition, pre),
   }),
 )
@@ -174,8 +176,8 @@ export const selectCapabilitiesForAncestorBloodPrerequisite = createSelector(
   selectStaticAdvantages,
   selectDynamicAdvantages,
   (staticAdvantages, dynamicAdvantages): Parameters<typeof checkAncestorBloodPrerequisite>[0] => ({
-    getStaticAdvantage: id => staticAdvantages[id],
-    getDynamicAdvantages: () => dynamicAdvantages,
+    getStaticAdvantageById: id => staticAdvantages[id],
+    getDynamicAdvantages: () => Object.values(dynamicAdvantages),
   }),
 )
 
@@ -233,10 +235,10 @@ export const selectCapabilitiesForExternalEnhancementPrerequisite = createSelect
     dynamicLiturgicalChants,
     dynamicCeremonies,
   ): Parameters<typeof checkExternalEnhancementPrerequisite>[0] => ({
-    getDynamicSpell: id => dynamicSpells[id],
-    getDynamicRitual: id => dynamicRituals[id],
-    getDynamicLiturgicalChant: id => dynamicLiturgicalChants[id],
-    getDynamicCeremony: id => dynamicCeremonies[id],
+    getDynamicSpellById: id => dynamicSpells[id],
+    getDynamicRitualById: id => dynamicRituals[id],
+    getDynamicLiturgicalChantById: id => dynamicLiturgicalChants[id],
+    getDynamicCeremonyById: id => dynamicCeremonies[id],
   }),
 )
 
@@ -268,8 +270,8 @@ export const selectCapabilitiesForPrimaryAttributePrerequisite = createSelector(
     blessedPrimaryAttribute,
     magicalPrimaryAttributes,
   ): Parameters<typeof checkPrimaryAttributePrerequisite>[0] => ({
-    getDynamicBlessedPrimaryAttribute: () => blessedPrimaryAttribute,
-    getDynamicMagicalPrimaryAttributes: () => magicalPrimaryAttributes.list,
+    getBlessedPrimaryAttribute: () => blessedPrimaryAttribute,
+    getHighestMagicalPrimaryAttributes: () => magicalPrimaryAttributes.list,
   }),
 )
 
@@ -287,7 +289,7 @@ export const selectCapabilitiesForPublicationPrerequisite = createSelector(
   ): Parameters<typeof checkPublicationPrerequisite>[0] => ({
     getAreAllPublicationsEnabled: () => areAllPublicationsEnabled,
     getIsPublicationEnabledManually: id => enabledPublications.includes(id),
-    getStaticPublication: id => staticPublications[id],
+    getStaticPublicationById: id => staticPublications[id],
   }),
 )
 
@@ -382,14 +384,14 @@ export const selectCapabilitiesForRatedPrerequisite = createSelector(
     liturgicalChants,
     ceremonies,
   ): Parameters<typeof checkRatedPrerequisite>[0] => ({
-    getDynamicAttribute: id => attributes[id],
-    getDynamicSkill: id => skills[id],
-    getDynamicCloseCombatTechnique: id => closeCombatTechniques[id],
-    getDynamicRangedCombatTechnique: id => rangedCombatTechniques[id],
-    getDynamicSpell: id => spells[id],
-    getDynamicRitual: id => rituals[id],
-    getDynamicLiturgicalChant: id => liturgicalChants[id],
-    getDynamicCeremony: id => ceremonies[id],
+    getDynamicAttributeById: id => attributes[id],
+    getDynamicSkillById: id => skills[id],
+    getDynamicCloseCombatTechniqueById: id => closeCombatTechniques[id],
+    getDynamicRangedCombatTechniqueById: id => rangedCombatTechniques[id],
+    getDynamicSpellById: id => spells[id],
+    getDynamicRitualById: id => rituals[id],
+    getDynamicLiturgicalChantById: id => liturgicalChants[id],
+    getDynamicCeremonyById: id => ceremonies[id],
   }),
 )
 
@@ -409,11 +411,11 @@ export const selectCapabilitiesForRatedSumPrerequisite = createSelector(
     dynamicLiturgicalChants,
     dynamicCeremonys,
   ): Parameters<typeof checkRatedSumPrerequisite>[0] => ({
-    getDynamicSkill: id => dynamicSkills[id],
-    getDynamicSpell: id => dynamicSpells[id],
-    getDynamicRitual: id => dynamicRituals[id],
-    getDynamicLiturgicalChant: id => dynamicLiturgicalChants[id],
-    getDynamicCeremony: id => dynamicCeremonys[id],
+    getDynamicSkillById: id => dynamicSkills[id],
+    getDynamicSpellById: id => dynamicSpells[id],
+    getDynamicRitualById: id => dynamicRituals[id],
+    getDynamicLiturgicalChantById: id => dynamicLiturgicalChants[id],
+    getDynamicCeremonyById: id => dynamicCeremonys[id],
   }),
 )
 
@@ -424,8 +426,8 @@ export const selectCapabilitiesForRulePrerequisite = createSelector(
   selectDynamicFocusRules,
   selectDynamicOptionalRules,
   (activeFocusRules, activeOptionalRules): Parameters<typeof checkRulePrerequisite>[0] => ({
-    getDynamicFocusRule: id => activeFocusRules[id],
-    getDynamicOptionalRule: id => activeOptionalRules[id],
+    getDynamicFocusRuleById: id => activeFocusRules[id],
+    getDynamicOptionalRuleById: id => activeOptionalRules[id],
   }),
 )
 
@@ -460,9 +462,9 @@ export const selectCapabilitiesForSocialStatusPrerequisite = createSelector(
  * Select the capabilities needed to check for a state prerequisite.
  */
 export const selectCapabilitiesForStatePrerequisite = createSelector(
-  selectDynamicStates,
-  (dynamicStates): Parameters<typeof checkStatePrerequisite>[0] => ({
-    getDynamicState: id => isStateActive(id1 => dynamicStates[id1], id),
+  SelectGetById.Dynamic.State,
+  (getDynamicStateById): Parameters<typeof checkStatePrerequisite>[0] => ({
+    getDynamicStateById,
   }),
 )
 
