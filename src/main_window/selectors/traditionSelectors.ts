@@ -12,27 +12,20 @@ import {
 import { AdvantageIdentifier } from "../../shared/domain/identifier.ts"
 import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
-import {
-  selectDynamicAdvantages,
-  selectDynamicBlessedTraditions,
-  selectDynamicMagicalTraditions,
-} from "../slices/characterSlice.ts"
-import {
-  selectStaticBlessedTraditions,
-  selectStaticMagicalTraditions,
-} from "../slices/databaseSlice.ts"
+import { selectDynamicAdvantages } from "../slices/characterSlice.ts"
+import { SelectGetAll, SelectGetById } from "./basicCapabilitySelectors.ts"
 
 /**
  * Returns all active magical traditions with their corresponding static
  * entries.
  */
 export const selectActiveMagicalTraditions = createSelector(
-  selectStaticMagicalTraditions,
-  selectDynamicMagicalTraditions,
-  (staticMagicalTraditions, dynamicMagicalTraditions): CombinedActiveMagicalTradition[] =>
+  SelectGetById.Static.MagicalTradition,
+  SelectGetAll.Dynamic.MagicalTraditions,
+  (getStaticMagicalTraditionById, dynamicMagicalTraditions): CombinedActiveMagicalTradition[] =>
     Object.values(dynamicMagicalTraditions)
       .map(dynamicMagicalTradition => {
-        const staticMagicalTradition = staticMagicalTraditions[dynamicMagicalTradition.id]
+        const staticMagicalTradition = getStaticMagicalTraditionById(dynamicMagicalTradition.id)
 
         if (isActive(dynamicMagicalTradition) && staticMagicalTradition !== undefined) {
           return {
@@ -51,12 +44,15 @@ export const selectActiveMagicalTraditions = createSelector(
  * if any.
  */
 export const selectActiveBlessedTradition = createSelector(
-  selectStaticBlessedTraditions,
-  selectDynamicBlessedTraditions,
-  (staticBlessedTraditions, dynamicBlessedTraditions): CombinedActiveBlessedTradition | undefined =>
+  SelectGetById.Static.BlessedTradition,
+  SelectGetAll.Dynamic.BlessedTraditions,
+  (
+    getStaticBlessedTraditionById,
+    dynamicBlessedTraditions,
+  ): CombinedActiveBlessedTradition | undefined =>
     Object.values(dynamicBlessedTraditions)
       .map(dynamicBlessedTradition => {
-        const staticBlessedTradition = staticBlessedTraditions[dynamicBlessedTradition.id]
+        const staticBlessedTradition = getStaticBlessedTraditionById(dynamicBlessedTradition.id)
 
         if (isActive(dynamicBlessedTradition) && staticBlessedTradition !== undefined) {
           return {
@@ -75,8 +71,9 @@ export const selectActiveBlessedTradition = createSelector(
  */
 export const selectIsSpellcaster = createSelector(
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Spellcaster),
-  selectDynamicMagicalTraditions,
-  isSpellcaster,
+  SelectGetAll.Dynamic.MagicalTraditions,
+  (spellcaster, getDynamicMagicalTraditions): boolean =>
+    isSpellcaster(spellcaster, getDynamicMagicalTraditions()),
 )
 
 /**
@@ -84,8 +81,9 @@ export const selectIsSpellcaster = createSelector(
  */
 export const selectIsBlessedOne = createSelector(
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Blessed),
-  selectDynamicBlessedTraditions,
-  isBlessedOne,
+  SelectGetAll.Dynamic.BlessedTraditions,
+  (blessedOne, getDynamicBlessedTraditions): boolean =>
+    isBlessedOne(blessedOne, getDynamicBlessedTraditions()),
 )
 
 /**

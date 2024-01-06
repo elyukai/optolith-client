@@ -1,6 +1,6 @@
 import { MagicalTradition } from "optolith-database-schema/types/specialAbility/MagicalTradition"
 import { mapNullableDefault } from "../../utils/nullable.ts"
-import { Activatable, ActivatableMap, isActive } from "./activatableEntry.ts"
+import { Activatable, isActive } from "./activatableEntry.ts"
 
 /**
  * A combination of a static and corresponding dynamic active magical tradition
@@ -21,8 +21,8 @@ export type GetActiveMagicalTraditionsCapability = () => CombinedActiveMagicalTr
  */
 export const isSpellcaster = (
   spellcaster: Activatable | undefined,
-  magicalTraditions: ActivatableMap,
-): boolean => isActive(spellcaster) && Object.values(magicalTraditions).some(isActive)
+  magicalTraditions: Activatable[],
+): boolean => isActive(spellcaster) && magicalTraditions.some(isActive)
 
 /**
  * Returns the maximum number of adventure points that can be spent for magical
