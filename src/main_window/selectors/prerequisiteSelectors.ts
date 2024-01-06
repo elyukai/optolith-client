@@ -1,4 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit"
+import * as FullCheck from "../../shared/domain/prerequisites/fullPrerequisiteValidationForType.ts"
 import { checkPrecondition } from "../../shared/domain/prerequisites/prerequisiteValidationForType.ts"
 import { checkActivatablePrerequisite } from "../../shared/domain/prerequisites/single/activatablePrerequisiteValidation.ts"
 import { checkAncestorBloodPrerequisite } from "../../shared/domain/prerequisites/single/ancestorBloodPrerequisiteValidation.ts"
@@ -493,5 +494,334 @@ export const selectCapabilitiesForMagicalTraditionPrerequisite = createSelector(
   selectActiveMagicalTraditions,
   (activeMagicalTraditions): Parameters<typeof checkMagicalTraditionPrerequisite>[0] => ({
     getActiveMagicalTraditions: () => activeMagicalTraditions,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of a derived characteristic.
+ */
+export const selectCapabilitiesForPrerequisitesOfDerivedCharacteristic = createSelector(
+  selectCapabilitiesForRulePrerequisite,
+  (ruleCaps): Parameters<typeof FullCheck.checkPrerequisitesOfDerivedCharacteristic>[1] => ({
+    ...ruleCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of a publication.
+ */
+export const selectCapabilitiesForPrerequisitesOfPublication = createSelector(
+  selectCapabilitiesForPublicationPrerequisite,
+  (publicationCaps): Parameters<typeof FullCheck.checkPrerequisitesOfPublication>[1] => ({
+    ...publicationCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of a general entry.
+ */
+export const selectCapabilitiesForPrerequisitesOfGeneralEntry = createSelector(
+  selectCapabilitiesForSexPrerequisite,
+  selectCapabilitiesForRacePrerequisite,
+  selectCapabilitiesForCulturePrerequisite,
+  selectCapabilitiesForPactPrerequisite,
+  selectCapabilitiesForSocialStatusPrerequisite,
+  selectCapabilitiesForStatePrerequisite,
+  selectCapabilitiesForRulePrerequisite,
+  selectCapabilitiesForPrimaryAttributePrerequisite,
+  selectCapabilitiesForActivatablePrerequisite,
+  selectCapabilitiesForBlessedTraditionPrerequisite,
+  selectCapabilitiesForMagicalTraditionPrerequisite,
+  selectCapabilitiesForRatedPrerequisite,
+  selectCapabilitiesForRatedMinimumNumberPrerequisite,
+  selectCapabilitiesForRatedSumPrerequisite,
+  selectCapabilitiesForExternalEnhancementPrerequisite,
+  selectCapabilitiesForTextPrerequisite,
+  selectCapabilitiesForSexualCharacteristicPrerequisite,
+  (
+    sexCaps,
+    raceCaps,
+    cultureCaps,
+    pactCaps,
+    socialStatusCaps,
+    stateCaps,
+    ruleCaps,
+    primaryAttributeCaps,
+    activatableCaps,
+    blessedTraditionCaps,
+    magicalTraditionCaps,
+    ratedCaps,
+    ratedMinimumNumberCaps,
+    ratedSumCaps,
+    externalEnhancementCaps,
+    textCaps,
+    sexualCharacteristicCaps,
+  ): Parameters<typeof FullCheck.checkPrerequisitesOfGeneralEntry>[1] => ({
+    ...sexCaps,
+    ...raceCaps,
+    ...cultureCaps,
+    ...pactCaps,
+    ...socialStatusCaps,
+    ...stateCaps,
+    ...ruleCaps,
+    ...primaryAttributeCaps,
+    ...activatableCaps,
+    ...blessedTraditionCaps,
+    ...magicalTraditionCaps,
+    ...ratedCaps,
+    ...ratedMinimumNumberCaps,
+    ...ratedSumCaps,
+    ...externalEnhancementCaps,
+    ...textCaps,
+    ...sexualCharacteristicCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of a general entry with levels.
+ */
+export const selectCapabilitiesForPrerequisitesOfGeneralEntryWithLevels = createSelector(
+  selectCapabilitiesForSexPrerequisite,
+  selectCapabilitiesForRacePrerequisite,
+  selectCapabilitiesForCulturePrerequisite,
+  selectCapabilitiesForPactPrerequisite,
+  selectCapabilitiesForSocialStatusPrerequisite,
+  selectCapabilitiesForStatePrerequisite,
+  selectCapabilitiesForRulePrerequisite,
+  selectCapabilitiesForPrimaryAttributePrerequisite,
+  selectCapabilitiesForActivatablePrerequisite,
+  selectCapabilitiesForBlessedTraditionPrerequisite,
+  selectCapabilitiesForMagicalTraditionPrerequisite,
+  selectCapabilitiesForRatedPrerequisite,
+  selectCapabilitiesForRatedMinimumNumberPrerequisite,
+  selectCapabilitiesForRatedSumPrerequisite,
+  selectCapabilitiesForExternalEnhancementPrerequisite,
+  selectCapabilitiesForTextPrerequisite,
+  selectCapabilitiesForSexualCharacteristicPrerequisite,
+  (
+    sexCaps,
+    raceCaps,
+    cultureCaps,
+    pactCaps,
+    socialStatusCaps,
+    stateCaps,
+    ruleCaps,
+    primaryAttributeCaps,
+    activatableCaps,
+    blessedTraditionCaps,
+    magicalTraditionCaps,
+    ratedCaps,
+    ratedMinimumNumberCaps,
+    ratedSumCaps,
+    externalEnhancementCaps,
+    textCaps,
+    sexualCharacteristicCaps,
+  ): Parameters<typeof FullCheck.checkPrerequisitesOfGeneralEntryWithLevels>[2] => ({
+    ...sexCaps,
+    ...raceCaps,
+    ...cultureCaps,
+    ...pactCaps,
+    ...socialStatusCaps,
+    ...stateCaps,
+    ...ruleCaps,
+    ...primaryAttributeCaps,
+    ...activatableCaps,
+    ...blessedTraditionCaps,
+    ...magicalTraditionCaps,
+    ...ratedCaps,
+    ...ratedMinimumNumberCaps,
+    ...ratedSumCaps,
+    ...externalEnhancementCaps,
+    ...textCaps,
+    ...sexualCharacteristicCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of a profession.
+ */
+export const selectCapabilitiesForPrerequisitesOfProfession = createSelector(
+  selectCapabilitiesForSexPrerequisite,
+  selectCapabilitiesForRacePrerequisite,
+  selectCapabilitiesForCulturePrerequisite,
+  selectCapabilitiesForActivatablePrerequisite,
+  selectCapabilitiesForRatedPrerequisite,
+  (
+    sexCaps,
+    raceCaps,
+    cultureCaps,
+    activatableCaps,
+    ratedCaps,
+  ): Parameters<typeof FullCheck.checkPrerequisitesOfProfession>[1] => ({
+    ...sexCaps,
+    ...raceCaps,
+    ...cultureCaps,
+    ...activatableCaps,
+    ...ratedCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of an advantage or disadvantage.
+ */
+export const selectCapabilitiesForPrerequisitesOfAdvantageOrDisadvantage = createSelector(
+  selectCapabilitiesForCommonSuggestedByRCPPrerequisite,
+  selectCapabilitiesForSexPrerequisite,
+  selectCapabilitiesForRacePrerequisite,
+  selectCapabilitiesForCulturePrerequisite,
+  selectCapabilitiesForPactPrerequisite,
+  selectCapabilitiesForSocialStatusPrerequisite,
+  selectCapabilitiesForStatePrerequisite,
+  selectCapabilitiesForRulePrerequisite,
+  selectCapabilitiesForPrimaryAttributePrerequisite,
+  selectCapabilitiesForActivatablePrerequisite,
+  selectCapabilitiesForBlessedTraditionPrerequisite,
+  selectCapabilitiesForMagicalTraditionPrerequisite,
+  selectCapabilitiesForRatedPrerequisite,
+  selectCapabilitiesForRatedMinimumNumberPrerequisite,
+  selectCapabilitiesForRatedSumPrerequisite,
+  selectCapabilitiesForExternalEnhancementPrerequisite,
+  selectCapabilitiesForTextPrerequisite,
+  selectCapabilitiesForAncestorBloodPrerequisite,
+  selectCapabilitiesForSexualCharacteristicPrerequisite,
+  (
+    commonSuggestedByRCPCaps,
+    sexCaps,
+    raceCaps,
+    cultureCaps,
+    pactCaps,
+    socialStatusCaps,
+    stateCaps,
+    ruleCaps,
+    primaryAttributeCaps,
+    activatableCaps,
+    blessedTraditionCaps,
+    magicalTraditionCaps,
+    ratedCaps,
+    ratedMinimumNumberCaps,
+    ratedSumCaps,
+    externalEnhancementCaps,
+    textCaps,
+    ancestorBloodCaps,
+    sexualCharacteristicCaps,
+  ): Parameters<typeof FullCheck.checkPrerequisitesOfAdvantageOrDisadvantage>[4] => ({
+    ...commonSuggestedByRCPCaps,
+    ...sexCaps,
+    ...raceCaps,
+    ...cultureCaps,
+    ...pactCaps,
+    ...socialStatusCaps,
+    ...stateCaps,
+    ...ruleCaps,
+    ...primaryAttributeCaps,
+    ...activatableCaps,
+    ...blessedTraditionCaps,
+    ...magicalTraditionCaps,
+    ...ratedCaps,
+    ...ratedMinimumNumberCaps,
+    ...ratedSumCaps,
+    ...externalEnhancementCaps,
+    ...textCaps,
+    ...ancestorBloodCaps,
+    ...sexualCharacteristicCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of an arcane tradition.
+ */
+export const selectCapabilitiesForPrerequisitesOfArcaneTradition = createSelector(
+  selectCapabilitiesForSexPrerequisite,
+  selectCapabilitiesForCulturePrerequisite,
+  (sexCaps, cultureCaps): Parameters<typeof FullCheck.checkPrerequisitesOfArcaneTradition>[1] => ({
+    ...sexCaps,
+    ...cultureCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of a personality trait.
+ */
+export const selectCapabilitiesForPrerequisitesOfPersonalityTrait = createSelector(
+  selectCapabilitiesForCulturePrerequisite,
+  selectCapabilitiesForTextPrerequisite,
+  (
+    cultureCaps,
+    textCaps,
+  ): Parameters<typeof FullCheck.checkPrerequisitesOfPersonalityTrait>[1] => ({
+    ...cultureCaps,
+    ...textCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of a spellwork.
+ */
+export const selectCapabilitiesForPrerequisitesOfSpellwork = createSelector(
+  selectCapabilitiesForRulePrerequisite,
+  selectCapabilitiesForRatedPrerequisite,
+  (ruleCaps, ratedCaps): Parameters<typeof FullCheck.checkPrerequisitesOfSpellwork>[1] => ({
+    ...ruleCaps,
+    ...ratedCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of a liturgy.
+ */
+export const selectCapabilitiesForPrerequisitesOfLiturgy = createSelector(
+  selectCapabilitiesForRulePrerequisite,
+  (ruleCaps): Parameters<typeof FullCheck.checkPrerequisitesOfLiturgy>[1] => ({
+    ...ruleCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of an influence.
+ */
+export const selectCapabilitiesForPrerequisitesOfInfluence = createSelector(
+  selectCapabilitiesForInfluencePrerequisite,
+  selectCapabilitiesForTextPrerequisite,
+  (influenceCaps, textCaps): Parameters<typeof FullCheck.checkPrerequisitesOfInfluence>[1] => ({
+    ...influenceCaps,
+    ...textCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of a language.
+ */
+export const selectCapabilitiesForPrerequisitesOfLanguage = createSelector(
+  selectCapabilitiesForRacePrerequisite,
+  selectCapabilitiesForActivatablePrerequisite,
+  selectCapabilitiesForTextPrerequisite,
+  (
+    raceCaps,
+    activatableCaps,
+    textCaps,
+  ): Parameters<typeof FullCheck.checkPrerequisitesOfLanguage>[2] => ({
+    ...raceCaps,
+    ...activatableCaps,
+    ...textCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of an animist power.
+ */
+export const selectCapabilitiesForPrerequisitesOfAnimistPower = createSelector(
+  selectCapabilitiesForAnimistPowerPrerequisite,
+  (animistPowerCaps): Parameters<typeof FullCheck.checkPrerequisitesOfAnimistPower>[1] => ({
+    ...animistPowerCaps,
+  }),
+)
+
+/**
+ * Select the capabilities needed to check all prerequisites of a geode ritual.
+ */
+export const selectCapabilitiesForPrerequisitesOfGeodeRitual = createSelector(
+  selectCapabilitiesForInfluencePrerequisite,
+  (influenceCaps): Parameters<typeof FullCheck.checkPrerequisitesOfGeodeRitual>[1] => ({
+    ...influenceCaps,
   }),
 )

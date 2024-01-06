@@ -24,7 +24,6 @@ import {
   compareImprovementCost,
   fromRaw,
 } from "../adventurePoints/improvementCost.ts"
-import { GetById } from "../getTypes.ts"
 import { MagicalTraditionIdentifier } from "../identifier.ts"
 import { checkPrerequisitesOfSpellwork } from "../prerequisites/fullPrerequisiteValidationForType.ts"
 import {
@@ -221,26 +220,8 @@ export const getVisibleInactiveCantrips = (
  * @param imitationszauberei The dynamic *Imitationszauberei* entry, if present.
  * @param isEntryAvailable A function that checks whether a spell or ritual is
  * available based on the active publications.
- * @param getDynamicFocusRuleById Returns the dynamic focus rule entry by
- * identifier, if present.
- * @param getDynamicOptionalRuleById Returns the dynamic optional rule entry by
- * identifier, if present.
- * @param getDynamicAttributeById Returns the dynamic attribute entry by
- * identifier, if present.
- * @param getDynamicSkillById Returns the dynamic skill entry by identifier, if
- * present.
- * @param getDynamicCloseCombatTechniqueById Returns the dynamic close combat
- * technique entry by identifier, if present.
- * @param getDynamicRangedCombatTechniqueById Returns the dynamic ranged combat
- * technique entry by identifier, if present.
- * @param getDynamicSpellById Returns the dynamic spell entry by identifier, if
- * present.
- * @param getDynamicRitualById Returns the dynamic ritual entry by identifier,
- * if present.
- * @param getDynamicLiturgicalChantById Returns the dynamic liturgical chant
- * entry by identifier, if present.
- * @param getDynamicCeremonyById Returns the dynamic ceremony entry by
- * identifier, if present.
+ * @param prerequisiteCapabilities All capabilities that are needed to check the
+ * prerequisites of the spell or ritual.
  * @param getIsUnfamiliar Returns if the spell or ritual (depending on the
  * `kind` parameter) is unfamiliar.
  */
@@ -255,16 +236,7 @@ export const getInactiveSpellsOrRituals = <K extends "spell" | "ritual", T exten
   isMaximumUnfamiliarCountReached: boolean,
   imitationszauberei: Activatable | undefined,
   isEntryAvailable: (src: PublicationRefs) => boolean,
-  getDynamicFocusRuleById: GetById.Dynamic.FocusRule,
-  getDynamicOptionalRuleById: GetById.Dynamic.OptionalRule,
-  getDynamicAttributeById: GetById.Dynamic.Attribute,
-  getDynamicSkillById: GetById.Dynamic.Skill,
-  getDynamicCloseCombatTechniqueById: GetById.Dynamic.CloseCombatTechnique,
-  getDynamicRangedCombatTechniqueById: GetById.Dynamic.RangedCombatTechnique,
-  getDynamicSpellById: GetById.Dynamic.Spell,
-  getDynamicRitualById: GetById.Dynamic.Ritual,
-  getDynamicLiturgicalChantById: GetById.Dynamic.LiturgicalChant,
-  getDynamicCeremonyById: GetById.Dynamic.Ceremony,
+  prerequisiteCapabilities: Parameters<typeof checkPrerequisitesOfSpellwork>[1],
   getIsUnfamiliar: (id: number) => boolean,
 ): {
   kind: K
@@ -363,18 +335,10 @@ export const getInactiveSpellsOrRituals = <K extends "spell" | "ritual", T exten
           !isMaximumCountReached &&
           (!isUnfamiliar || !isMaximumUnfamiliarCountReached) &&
           additionalSoftPredicate(staticSpellwork) &&
-          checkPrerequisitesOfSpellwork(staticSpellwork.prerequisites ?? [], {
-            getDynamicFocusRuleById,
-            getDynamicOptionalRuleById,
-            getDynamicAttributeById,
-            getDynamicSkillById,
-            getDynamicCloseCombatTechniqueById,
-            getDynamicRangedCombatTechniqueById,
-            getDynamicSpellById,
-            getDynamicRitualById,
-            getDynamicLiturgicalChantById,
-            getDynamicCeremonyById,
-          }),
+          checkPrerequisitesOfSpellwork(
+            staticSpellwork.prerequisites ?? [],
+            prerequisiteCapabilities,
+          ),
         isUnfamiliar,
       }
     })
