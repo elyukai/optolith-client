@@ -8,7 +8,7 @@ import { ActivatableRatedWithEnhancements, Rated } from "../../rated/ratedEntry.
  */
 export const checkRatedMinimumNumberPrerequisite = (
   caps: {
-    getDynamicSkillById: (id: number) => Rated | undefined
+    getDynamicSkill: (id: number) => Rated | undefined
     getDynamicCloseCombatTechniques: () => Rated[]
     getDynamicRangedCombatTechniques: () => Rated[]
     getDynamicSpellsByProperty: (propertyId: number) => ActivatableRatedWithEnhancements[]
@@ -26,7 +26,7 @@ export const checkRatedMinimumNumberPrerequisite = (
     switch (p.targets.tag) {
       case "Skills":
         return p.targets.skills.list
-          .map(ref => caps.getDynamicSkillById(ref.id.skill))
+          .map(ref => caps.getDynamicSkill(ref.id.skill))
           .filter(isNotNullish)
           .filter(matchRated)
       case "CombatTechniques":
