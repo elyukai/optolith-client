@@ -63,10 +63,10 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
   rules: {
     includeAllPublications: true,
     includePublications: [],
-    activeFocusRules: {},
-    activeOptionalRules: {},
+    focusRules: {},
+    optionalRules: {},
   },
-  activeStates: [],
+  states: {},
   personalData: {
     sex: { type: "Male" },
     socialStatus: {
@@ -118,6 +118,7 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     liturgicalStyleSpecialAbilities: {},
     lycantropicGifts: {},
     magicalRunes: {},
+    magicalSigns: {},
     magicalSpecialAbilities: {},
     magicalTraditions: {
       [MagicalTraditionIdentifier.Witches]: {
@@ -353,20 +354,19 @@ export const selectIncludePublications = (state: RootState) =>
 /**
  * Select the active focus rules of the currently open character.
  */
-export const selectActiveFocusRules = (state: RootState) =>
-  selectCurrentCharacter(state)?.rules.activeFocusRules ?? {}
+export const selectDynamicFocusRules = (state: RootState) =>
+  selectCurrentCharacter(state)?.rules.focusRules ?? {}
 
 /**
  * Select the active optional rules of the currently open character.
  */
-export const selectActiveOptionalRules = (state: RootState) =>
-  selectCurrentCharacter(state)?.rules.activeOptionalRules ?? {}
+export const selectDynamicOptionalRules = (state: RootState) =>
+  selectCurrentCharacter(state)?.rules.optionalRules ?? {}
 
 /**
  * Select the active states of the currently open character.
  */
-export const selectActiveStates = (state: RootState) =>
-  selectCurrentCharacter(state)?.activeStates ?? {}
+export const selectDynamicStates = (state: RootState) => selectCurrentCharacter(state)?.states ?? {}
 
 /**
  * Select the personal data of the currently open character.

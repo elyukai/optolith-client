@@ -25,7 +25,6 @@ import { filterNonNullable } from "../../shared/utils/array.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { attributeValue } from "../slices/attributesSlice.ts"
 import {
-  selectActiveOptionalRules,
   selectArcaneEnergyPermanentlyLost,
   selectArcaneEnergyPermanentlyLostBoughtBack,
   selectDynamicAdvantages,
@@ -36,6 +35,7 @@ import {
   selectDynamicKarmaSpecialAbilities,
   selectDynamicMagicalSpecialAbilities,
   selectDynamicMagicalTraditions,
+  selectDynamicOptionalRules,
   selectKarmaPointsPermanentlyLost,
   selectKarmaPointsPermanentlyLostBoughtBack,
   selectLifePointsPermanentlyLost,
@@ -367,7 +367,7 @@ export const selectToughness = createSelector(
  */
 export const selectDodge = createSelector(
   createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Agility),
-  createPropertySelector(selectActiveOptionalRules, OptionalRuleIdentifier.HigherDefenseStats),
+  createPropertySelector(selectDynamicOptionalRules, OptionalRuleIdentifier.HigherDefenseStats),
   createPropertySelector(selectStaticDerivedCharacteristics, DCId.Dodge),
   (
     agi,

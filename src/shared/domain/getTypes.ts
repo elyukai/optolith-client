@@ -152,21 +152,39 @@ import { config as animalShapeConfig } from "optolith-database-schema/types/trad
 import { config as animalShapePathConfig } from "optolith-database-schema/types/traditionArtifacts/sub/AnimalShapePath"
 import { config as animalShapeSizeConfig } from "optolith-database-schema/types/traditionArtifacts/sub/AnimalShapeSize"
 import { config as brewConfig } from "optolith-database-schema/types/traditionArtifacts/sub/Brew"
+import { Activatable } from "./activatable/activatableEntry.ts"
+import { ActivatableRated, ActivatableRatedWithEnhancements, Rated } from "./rated/ratedEntry.ts"
+import { FocusRuleInstance } from "./rules/focusRule.ts"
+import { OptionalRuleInstance } from "./rules/optionalRule.ts"
+import { StateInstance } from "./state.ts"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type IdFromConfig<Config extends { id: (data: any, filePath: string) => string | number }> =
   ReturnType<Config["id"]>
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TypeFromConfig<Config extends { id: (data: any, filePath: string) => string | number }> =
   Parameters<Config["id"]>[0]
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type GetByIdFromConfig<Config extends { id: (data: any, filePath: string) => string | number }> = (
   id: IdFromConfig<Config>,
 ) => TypeFromConfig<Config> | undefined
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type GetAllFromConfig<Config extends { id: (data: any, filePath: string) => string | number }> = (
+type GetAllFromConfig<Config extends { id: (data: any, filePath: string) => string | number }> =
+  () => TypeFromConfig<Config>[]
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type GetByIdDynamic<Config extends { id: (data: any, filePath: string) => string | number }, T> = (
   id: IdFromConfig<Config>,
-) => TypeFromConfig<Config>[]
+) => T | undefined
+
+type GetAllDynamic<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  _Config extends { id: (data: any, filePath: string) => string | number },
+  T,
+> = () => T[]
 
 // prettier-ignore
 export namespace GetById {
@@ -324,6 +342,118 @@ export namespace GetById {
     export type Weapon = GetByIdFromConfig<typeof weaponConfig>
     export type ZibiljaRitual = GetByIdFromConfig<typeof zibiljaRitualConfig>
   }
+
+  export namespace Dynamic {
+    export type AdvancedCombatSpecialAbility = GetByIdDynamic<typeof advancedCombatSpecialAbilityConfig, Activatable>
+    export type AdvancedKarmaSpecialAbility = GetByIdDynamic<typeof advancedKarmaSpecialAbilityConfig, Activatable>
+    export type AdvancedMagicalSpecialAbility = GetByIdDynamic<typeof advancedMagicalSpecialAbilityConfig, Activatable>
+    export type AdvancedSkillSpecialAbility = GetByIdDynamic<typeof advancedSkillSpecialAbilityConfig, Activatable>
+    export type Advantage = GetByIdDynamic<typeof advantageConfig, Activatable>
+    // export type Ammunition = GetByIdDynamic<typeof ammunitionConfig, >
+    export type AncestorGlyph = GetByIdDynamic<typeof ancestorGlyphConfig, Activatable>
+    // export type AnimalCare = GetByIdDynamic<typeof animalCareConfig, never>
+    export type AnimistPower = GetByIdDynamic<typeof animistPowerConfig, ActivatableRated>
+    export type ArcaneOrbEnchantment = GetByIdDynamic<typeof arcaneOrbEnchantmentConfig, Activatable>
+    // export type Armor = GetByIdDynamic<typeof armorConfig, never>
+    export type AttireEnchantment = GetByIdDynamic<typeof attireEnchantmentConfig, Activatable>
+    export type Attribute = GetByIdDynamic<typeof attributeConfig, Rated>
+    // export type BandageOrRemedy = GetByIdDynamic<typeof bandageOrRemedyConfig, never>
+    export type BlessedTradition = GetByIdDynamic<typeof blessedTraditionConfig, Activatable>
+    export type Blessing = GetByIdDynamic<typeof blessingConfig, boolean>
+    // export type Book = GetByIdDynamic<typeof bookConfig, never>
+    export type BowlEnchantment = GetByIdDynamic<typeof bowlEnchantmentConfig, Activatable>
+    export type BrawlingSpecialAbility = GetByIdDynamic<typeof brawlingSpecialAbilityConfig, Activatable>
+    export type Cantrip = GetByIdDynamic<typeof cantripConfig, boolean>
+    export type CauldronEnchantment = GetByIdDynamic<typeof cauldronEnchantmentConfig, Activatable>
+    // export type CeremonialItem = GetByIdDynamic<typeof ceremonialItemConfig, never>
+    export type CeremonialItemSpecialAbility = GetByIdDynamic<typeof ceremonialItemSpecialAbilityConfig, Activatable>
+    export type Ceremony = GetByIdDynamic<typeof ceremonyConfig, ActivatableRatedWithEnhancements>
+    export type ChronicleEnchantment = GetByIdDynamic<typeof chronicleEnchantmentConfig, Activatable>
+    export type CloseCombatTechnique = GetByIdDynamic<typeof closeCombatTechniqueConfig, Rated>
+    // export type Clothes = GetByIdDynamic<typeof clothesConfig, never>
+    export type CombatSpecialAbility = GetByIdDynamic<typeof combatSpecialAbilityConfig, Activatable>
+    export type CombatStyleSpecialAbility = GetByIdDynamic<typeof combatStyleSpecialAbilityConfig, Activatable>
+    export type CommandSpecialAbility = GetByIdDynamic<typeof commandSpecialAbilityConfig, Activatable>
+    // export type Condition = GetByIdDynamic<typeof conditionConfig, never>
+    // export type Container = GetByIdDynamic<typeof containerConfig, never>
+    export type Curse = GetByIdDynamic<typeof curseConfig, ActivatableRated>
+    export type DaggerRitual = GetByIdDynamic<typeof daggerRitualConfig, Activatable>
+    // export type DerivedCharacteristic = GetByIdDynamic<typeof derivedCharacteristicConfig, never>
+    export type Disadvantage = GetByIdDynamic<typeof disadvantageConfig, Activatable>
+    // export type Disease = GetByIdDynamic<typeof diseaseConfig, never>
+    export type DominationRitual = GetByIdDynamic<typeof dominationRitualConfig, ActivatableRated>
+    // export type Elixir = GetByIdDynamic<typeof elixirConfig, never>
+    export type ElvenMagicalSong = GetByIdDynamic<typeof elvenMagicalSongConfig, ActivatableRated>
+    // export type EquipmentOfBlessedOnes = GetByIdDynamic<typeof equipmentOfBlessedOnesConfig, never>
+    export type FamiliarSpecialAbility = GetByIdDynamic<typeof familiarSpecialAbilityConfig, Activatable>
+    // export type FamiliarsTrick = GetByIdDynamic<typeof familiarsTrickConfig, never>
+    export type FatePointSexSpecialAbility = GetByIdDynamic<typeof fatePointSexSpecialAbilityConfig, Activatable>
+    export type FatePointSpecialAbility = GetByIdDynamic<typeof fatePointSpecialAbilityConfig, Activatable>
+    export type FocusRule = GetByIdDynamic<typeof focusRuleConfig, FocusRuleInstance>
+    export type FoolsHatEnchantment = GetByIdDynamic<typeof foolsHatEnchantmentConfig, Activatable>
+    // export type GemOrPreciousStone = GetByIdDynamic<typeof gemOrPreciousStoneConfig, never>
+    export type GeneralSpecialAbility = GetByIdDynamic<typeof generalSpecialAbilityConfig, Activatable>
+    export type GeodeRitual = GetByIdDynamic<typeof geodeRitualConfig, ActivatableRated>
+    // export type IlluminationLightSource = GetByIdDynamic<typeof illuminationLightSourceConfig, never>
+    // export type IlluminationRefillsOrSupplies = GetByIdDynamic<typeof illuminationRefillsOrSuppliesConfig, never>
+    export type InstrumentEnchantment = GetByIdDynamic<typeof instrumentEnchantmentConfig, Activatable>
+    export type JesterTrick = GetByIdDynamic<typeof jesterTrickConfig, ActivatableRated>
+    // export type Jewelry = GetByIdDynamic<typeof jewelryConfig, never>
+    export type KarmaSpecialAbility = GetByIdDynamic<typeof karmaSpecialAbilityConfig, Activatable>
+    export type Krallenkettenzauber = GetByIdDynamic<typeof krallenkettenzauberConfig, Activatable>
+    // export type Liebesspielzeug = GetByIdDynamic<typeof liebesspielzeugConfig, never>
+    export type LiturgicalChant = GetByIdDynamic<typeof liturgicalChantConfig, ActivatableRatedWithEnhancements>
+    export type LiturgicalStyleSpecialAbility = GetByIdDynamic<typeof liturgicalStyleSpecialAbilityConfig, Activatable>
+    // export type LuxuryGood = GetByIdDynamic<typeof luxuryGoodConfig, never>
+    export type LycantropicGift = GetByIdDynamic<typeof lycantropicGiftConfig, Activatable>
+    // export type MagicalArtifact = GetByIdDynamic<typeof magicalArtifactConfig, never>
+    export type MagicalDance = GetByIdDynamic<typeof magicalDanceConfig, ActivatableRated>
+    export type MagicalMelody = GetByIdDynamic<typeof magicalMelodyConfig, ActivatableRated>
+    export type MagicalRune = GetByIdDynamic<typeof magicalRuneConfig, Activatable>
+    export type MagicalSign = GetByIdDynamic<typeof magicalSignConfig, Activatable>
+    export type MagicalSpecialAbility = GetByIdDynamic<typeof magicalSpecialAbilityConfig, Activatable>
+    export type MagicalTradition = GetByIdDynamic<typeof magicalTraditionConfig, Activatable>
+    export type MagicStyleSpecialAbility = GetByIdDynamic<typeof magicStyleSpecialAbilityConfig, Activatable>
+    // export type MetaCondition = GetByIdDynamic<typeof metaConditionConfig, never>
+    // export type MusicalInstrument = GetByIdDynamic<typeof musicalInstrumentConfig, never>
+    export type OptionalRule = GetByIdDynamic<typeof optionalRuleConfig, OptionalRuleInstance>
+    export type OrbEnchantment = GetByIdDynamic<typeof orbEnchantmentConfig, Activatable>
+    // export type OrienteeringAid = GetByIdDynamic<typeof orienteeringAidConfig, never>
+    export type PactGift = GetByIdDynamic<typeof pactGiftConfig, Activatable>
+    // export type PersonalityTrait = GetByIdDynamic<typeof personalityTraitConfig, never>
+    // export type Poison = GetByIdDynamic<typeof poisonConfig, never>
+    export type ProtectiveWardingCircleSpecialAbility = GetByIdDynamic<typeof protectiveWardingCircleSpecialAbilityConfig, Activatable>
+    // export type Publication = GetByIdDynamic<typeof publicationConfig, never>
+    export type RangedCombatTechnique = GetByIdDynamic<typeof rangedCombatTechniqueConfig, Rated>
+    export type RingEnchantment = GetByIdDynamic<typeof ringEnchantmentConfig, Activatable>
+    export type Ritual = GetByIdDynamic<typeof ritualConfig, ActivatableRatedWithEnhancements>
+    // export type RopeOrChain = GetByIdDynamic<typeof ropeOrChainConfig, never>
+    export type Sermon = GetByIdDynamic<typeof sermonConfig, Activatable>
+    export type SexSpecialAbility = GetByIdDynamic<typeof sexSpecialAbilityConfig, Activatable>
+    export type SickleRitual = GetByIdDynamic<typeof sickleRitualConfig, Activatable>
+    export type SikaryanDrainSpecialAbility = GetByIdDynamic<typeof sikaryanDrainSpecialAbilityConfig, Activatable>
+    export type Skill = GetByIdDynamic<typeof skillConfig, Rated>
+    export type SkillStyleSpecialAbility = GetByIdDynamic<typeof skillStyleSpecialAbilityConfig, Activatable>
+    export type Spell = GetByIdDynamic<typeof spellConfig, ActivatableRatedWithEnhancements>
+    export type SpellSwordEnchantment = GetByIdDynamic<typeof spellSwordEnchantmentConfig, Activatable>
+    export type StaffEnchantment = GetByIdDynamic<typeof staffEnchantmentConfig, Activatable>
+    export type State = GetByIdDynamic<typeof stateConfig, StateInstance>
+    // export type Stationary = GetByIdDynamic<typeof stationaryConfig, never>
+    // export type Talisman = GetByIdDynamic<typeof talismanConfig, never>
+    // export type ThievesTool = GetByIdDynamic<typeof thievesToolConfig, never>
+    // export type ToolOfTheTrade = GetByIdDynamic<typeof toolOfTheTradeConfig, never>
+    export type ToyEnchantment = GetByIdDynamic<typeof toyEnchantmentConfig, Activatable>
+    // export type TravelGearOrTool = GetByIdDynamic<typeof travelGearOrToolConfig, never>
+    export type Trinkhornzauber = GetByIdDynamic<typeof trinkhornzauberConfig, Activatable>
+    export type VampiricGift = GetByIdDynamic<typeof vampiricGiftConfig, Activatable>
+    // export type Vehicle = GetByIdDynamic<typeof vehicleConfig, never>
+    export type Vision = GetByIdDynamic<typeof visionConfig, Activatable>
+    export type WandEnchantment = GetByIdDynamic<typeof wandEnchantmentConfig, Activatable>
+    // export type WeaponAccessory = GetByIdDynamic<typeof weaponAccessoryConfig, never>
+    export type WeaponEnchantment = GetByIdDynamic<typeof weaponEnchantmentConfig, Activatable>
+    // export type Weapon = GetByIdDynamic<typeof weaponConfig, never>
+    export type ZibiljaRitual = GetByIdDynamic<typeof zibiljaRitualConfig, ActivatableRated>
+  }
 }
 
 // prettier-ignore
@@ -472,7 +602,7 @@ export namespace GetAll {
     export type TradeSecrets = GetAllFromConfig<typeof tradeSecretConfig>
     export type TravelGearAndTools = GetAllFromConfig<typeof travelGearOrToolConfig>
     export type Trinkhornzauber = GetAllFromConfig<typeof trinkhornzauberConfig>
-    export type Ui = GetAllFromConfig<typeof uIConfig>
+    export type UI = GetAllFromConfig<typeof uIConfig>
     export type VampiricGifts = GetAllFromConfig<typeof vampiricGiftConfig>
     export type Vehicles = GetAllFromConfig<typeof vehicleConfig>
     export type Visions = GetAllFromConfig<typeof visionConfig>
@@ -481,5 +611,117 @@ export namespace GetAll {
     export type WeaponEnchantments = GetAllFromConfig<typeof weaponEnchantmentConfig>
     export type Weapons = GetAllFromConfig<typeof weaponConfig>
     export type ZibiljaRituals = GetAllFromConfig<typeof zibiljaRitualConfig>
+  }
+
+  export namespace Dynamic {
+    export type AdvancedCombatSpecialAbilities = GetAllDynamic<typeof advancedCombatSpecialAbilityConfig, Activatable>
+    export type AdvancedKarmaSpecialAbilities = GetAllDynamic<typeof advancedKarmaSpecialAbilityConfig, Activatable>
+    export type AdvancedMagicalSpecialAbilities = GetAllDynamic<typeof advancedMagicalSpecialAbilityConfig, Activatable>
+    export type AdvancedSkillSpecialAbilities = GetAllDynamic<typeof advancedSkillSpecialAbilityConfig, Activatable>
+    export type Advantages = GetAllDynamic<typeof advantageConfig, Activatable>
+    // export type Ammunition = GetAllDynamic<typeof ammunitionConfig, >
+    export type AncestorGlyphs = GetAllDynamic<typeof ancestorGlyphConfig, Activatable>
+    // export type AnimalCare = GetAllDynamic<typeof animalCareConfig, never>
+    export type AnimistPowers = GetAllDynamic<typeof animistPowerConfig, ActivatableRated>
+    export type ArcaneOrbEnchantments = GetAllDynamic<typeof arcaneOrbEnchantmentConfig, Activatable>
+    // export type Armor = GetAllDynamic<typeof armorConfig, never>
+    export type AttireEnchantments = GetAllDynamic<typeof attireEnchantmentConfig, Activatable>
+    export type Attributes = GetAllDynamic<typeof attributeConfig, Rated>
+    // export type BandagesAndRemedies = GetAllDynamic<typeof bandageOrRemedyConfig, never>
+    export type BlessedTraditions = GetAllDynamic<typeof blessedTraditionConfig, Activatable>
+    export type Blessings = GetAllDynamic<typeof blessingConfig, IdFromConfig<typeof blessingConfig>>
+    // export type Books = GetAllDynamic<typeof bookConfig, never>
+    export type BowlEnchantments = GetAllDynamic<typeof bowlEnchantmentConfig, Activatable>
+    export type BrawlingSpecialAbilities = GetAllDynamic<typeof brawlingSpecialAbilityConfig, Activatable>
+    export type Cantrips = GetAllDynamic<typeof cantripConfig, IdFromConfig<typeof cantripConfig>>
+    export type CauldronEnchantments = GetAllDynamic<typeof cauldronEnchantmentConfig, Activatable>
+    // export type CeremonialItems = GetAllDynamic<typeof ceremonialItemConfig, never>
+    export type CeremonialItemSpecialAbilities = GetAllDynamic<typeof ceremonialItemSpecialAbilityConfig, Activatable>
+    export type Ceremonies = GetAllDynamic<typeof ceremonyConfig, ActivatableRatedWithEnhancements>
+    export type ChronicleEnchantments = GetAllDynamic<typeof chronicleEnchantmentConfig, Activatable>
+    export type CloseCombatTechniques = GetAllDynamic<typeof closeCombatTechniqueConfig, Rated>
+    // export type Clothes = GetAllDynamic<typeof clothesConfig, never>
+    export type CombatSpecialAbilities = GetAllDynamic<typeof combatSpecialAbilityConfig, Activatable>
+    export type CombatStyleSpecialAbilities = GetAllDynamic<typeof combatStyleSpecialAbilityConfig, Activatable>
+    export type CommandSpecialAbilities = GetAllDynamic<typeof commandSpecialAbilityConfig, Activatable>
+    // export type Conditions = GetAllDynamic<typeof conditionConfig, never>
+    // export type Containers = GetAllDynamic<typeof containerConfig, never>
+    export type Curses = GetAllDynamic<typeof curseConfig, ActivatableRated>
+    export type DaggerRituals = GetAllDynamic<typeof daggerRitualConfig, Activatable>
+    // export type DerivedCharacteristics = GetAllDynamic<typeof derivedCharacteristicConfig, never>
+    export type Disadvantages = GetAllDynamic<typeof disadvantageConfig, Activatable>
+    // export type Diseases = GetAllDynamic<typeof diseaseConfig, never>
+    export type DominationRituals = GetAllDynamic<typeof dominationRitualConfig, ActivatableRated>
+    // export type Elixirs = GetAllDynamic<typeof elixirConfig, never>
+    export type ElvenMagicalSongs = GetAllDynamic<typeof elvenMagicalSongConfig, ActivatableRated>
+    // export type EquipmentOfBlessedOnes = GetAllDynamic<typeof equipmentOfBlessedOnesConfig, never>
+    export type FamiliarSpecialAbilities = GetAllDynamic<typeof familiarSpecialAbilityConfig, Activatable>
+    // export type FamiliarsTricks = GetAllDynamic<typeof familiarsTrickConfig, never>
+    export type FatePointSexSpecialAbilities = GetAllDynamic<typeof fatePointSexSpecialAbilityConfig, Activatable>
+    export type FatePointSpecialAbilities = GetAllDynamic<typeof fatePointSpecialAbilityConfig, Activatable>
+    export type FocusRules = GetAllDynamic<typeof focusRuleConfig, FocusRuleInstance>
+    export type FoolsHatEnchantments = GetAllDynamic<typeof foolsHatEnchantmentConfig, Activatable>
+    // export type GemsAndPreciousStones = GetAllDynamic<typeof gemOrPreciousStoneConfig, never>
+    export type GeneralSpecialAbilities = GetAllDynamic<typeof generalSpecialAbilityConfig, Activatable>
+    export type GeodeRituals = GetAllDynamic<typeof geodeRitualConfig, ActivatableRated>
+    // export type IlluminationLightSources = GetAllDynamic<typeof illuminationLightSourceConfig, never>
+    // export type IlluminationRefillsAndSupplies = GetAllDynamic<typeof illuminationRefillsOrSuppliesConfig, never>
+    export type InstrumentEnchantments = GetAllDynamic<typeof instrumentEnchantmentConfig, Activatable>
+    export type JesterTricks = GetAllDynamic<typeof jesterTrickConfig, ActivatableRated>
+    // export type Jewelry = GetAllDynamic<typeof jewelryConfig, never>
+    export type KarmaSpecialAbilities = GetAllDynamic<typeof karmaSpecialAbilityConfig, Activatable>
+    export type Krallenkettenzauber = GetAllDynamic<typeof krallenkettenzauberConfig, Activatable>
+    // export type Liebesspielzeuge = GetAllDynamic<typeof liebesspielzeugConfig, never>
+    export type LiturgicalChants = GetAllDynamic<typeof liturgicalChantConfig, ActivatableRatedWithEnhancements>
+    export type LiturgicalStyleSpecialAbilities = GetAllDynamic<typeof liturgicalStyleSpecialAbilityConfig, Activatable>
+    // export type LuxuryGoods = GetAllDynamic<typeof luxuryGoodConfig, never>
+    export type LycantropicGifts = GetAllDynamic<typeof lycantropicGiftConfig, Activatable>
+    // export type MagicalArtifacts = GetAllDynamic<typeof magicalArtifactConfig, never>
+    export type MagicalDances = GetAllDynamic<typeof magicalDanceConfig, ActivatableRated>
+    export type MagicalMelodies = GetAllDynamic<typeof magicalMelodyConfig, ActivatableRated>
+    export type MagicalRunes = GetAllDynamic<typeof magicalRuneConfig, Activatable>
+    export type MagicalSigns = GetAllDynamic<typeof magicalSignConfig, Activatable>
+    export type MagicalSpecialAbilities = GetAllDynamic<typeof magicalSpecialAbilityConfig, Activatable>
+    export type MagicalTraditions = GetAllDynamic<typeof magicalTraditionConfig, Activatable>
+    export type MagicStyleSpecialAbilities = GetAllDynamic<typeof magicStyleSpecialAbilityConfig, Activatable>
+    // export type MetaConditions = GetAllDynamic<typeof metaConditionConfig, never>
+    // export type MusicalInstruments = GetAllDynamic<typeof musicalInstrumentConfig, never>
+    export type OptionalRules = GetAllDynamic<typeof optionalRuleConfig, OptionalRuleInstance>
+    export type OrbEnchantments = GetAllDynamic<typeof orbEnchantmentConfig, Activatable>
+    // export type OrienteeringAids = GetAllDynamic<typeof orienteeringAidConfig, never>
+    export type PactGifts = GetAllDynamic<typeof pactGiftConfig, Activatable>
+    // export type PersonalityTraits = GetAllDynamic<typeof personalityTraitConfig, never>
+    // export type Poisons = GetAllDynamic<typeof poisonConfig, never>
+    export type ProtectiveWardingCircleSpecialAbilities = GetAllDynamic<typeof protectiveWardingCircleSpecialAbilityConfig, Activatable>
+    // export type Publications = GetAllDynamic<typeof publicationConfig, never>
+    export type RangedCombatTechniques = GetAllDynamic<typeof rangedCombatTechniqueConfig, Rated>
+    export type RingEnchantments = GetAllDynamic<typeof ringEnchantmentConfig, Activatable>
+    export type Rituals = GetAllDynamic<typeof ritualConfig, ActivatableRatedWithEnhancements>
+    // export type RopesAndChains = GetAllDynamic<typeof ropeOrChainConfig, never>
+    export type Sermons = GetAllDynamic<typeof sermonConfig, Activatable>
+    export type SexSpecialAbilities = GetAllDynamic<typeof sexSpecialAbilityConfig, Activatable>
+    export type SickleRituals = GetAllDynamic<typeof sickleRitualConfig, Activatable>
+    export type SikaryanDrainSpecialAbilities = GetAllDynamic<typeof sikaryanDrainSpecialAbilityConfig, Activatable>
+    export type Skills = GetAllDynamic<typeof skillConfig, Rated>
+    export type SkillStyleSpecialAbilities = GetAllDynamic<typeof skillStyleSpecialAbilityConfig, Activatable>
+    export type Spells = GetAllDynamic<typeof spellConfig, ActivatableRatedWithEnhancements>
+    export type SpellSwordEnchantments = GetAllDynamic<typeof spellSwordEnchantmentConfig, Activatable>
+    export type StaffEnchantments = GetAllDynamic<typeof staffEnchantmentConfig, Activatable>
+    export type States = GetAllDynamic<typeof stateConfig, StateInstance>
+    // export type Stationary = GetAllDynamic<typeof stationaryConfig, never>
+    // export type Talismans = GetAllDynamic<typeof talismanConfig, never>
+    // export type ThievesTools = GetAllDynamic<typeof thievesToolConfig, never>
+    // export type ToolsOfTheTrade = GetAllDynamic<typeof toolOfTheTradeConfig, never>
+    export type ToyEnchantments = GetAllDynamic<typeof toyEnchantmentConfig, Activatable>
+    // export type TravelGearAndTools = GetAllDynamic<typeof travelGearOrToolConfig, never>
+    export type Trinkhornzauber = GetAllDynamic<typeof trinkhornzauberConfig, Activatable>
+    export type VampiricGifts = GetAllDynamic<typeof vampiricGiftConfig, Activatable>
+    // export type Vehicle s=GetAllDynamic<typeof vehicleConfig, never>
+    export type Visions = GetAllDynamic<typeof visionConfig, Activatable>
+    export type WandEnchantments = GetAllDynamic<typeof wandEnchantmentConfig, Activatable>
+    // export type WeaponAccessories = GetAllDynamic<typeof weaponAccessoryConfig, never>
+    export type WeaponEnchantments = GetAllDynamic<typeof weaponEnchantmentConfig, Activatable>
+    // export type Weapons = GetAllDynamic<typeof weaponConfig, never>
+    export type ZibiljaRituals = GetAllDynamic<typeof zibiljaRitualConfig, ActivatableRated>
   }
 }

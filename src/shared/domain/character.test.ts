@@ -29,10 +29,10 @@ export const baseCharacter: Character = {
   rules: {
     includeAllPublications: false,
     includePublications: [],
-    activeFocusRules: {},
-    activeOptionalRules: {},
+    focusRules: {},
+    optionalRules: {},
   },
-  activeStates: {},
+  states: {},
   personalData: {
     sex: { type: "Male" },
     socialStatus: {
@@ -70,6 +70,7 @@ export const baseCharacter: Character = {
     liturgicalStyleSpecialAbilities: {},
     lycantropicGifts: {},
     magicalRunes: {},
+    magicalSigns: {},
     magicalSpecialAbilities: {},
     magicalTraditions: {},
     magicStyleSpecialAbilities: {},

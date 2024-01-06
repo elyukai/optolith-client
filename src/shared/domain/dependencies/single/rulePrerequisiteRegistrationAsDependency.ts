@@ -4,7 +4,9 @@ import {
 } from "optolith-database-schema/types/_IdentifierGroup"
 import { RulePrerequisite } from "optolith-database-schema/types/prerequisites/single/RulePrerequisite"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { RuleDependency } from "../../rules.ts"
+import { createFocusRule } from "../../rules/focusRule.ts"
+import { createOptionalRule } from "../../rules/optionalRule.ts"
+import { RuleDependency } from "../../rules/ruleDependency.ts"
 import { RegistrationFunction, addOrRemoveDependency } from "../registrationHelpers.ts"
 
 /**
@@ -24,17 +26,17 @@ export const registerOrUnregisterRulePrerequisiteAsDependency: RegistrationFunct
     case "FocusRule":
       return addOrRemoveDependency(
         method,
-        character.rules.activeFocusRules,
+        character.rules.focusRules,
         p.id.focus_rule,
-        id => ({ id, dependencies: [] }),
+        createFocusRule,
         dependency,
       )
     case "OptionalRule":
       return addOrRemoveDependency(
         method,
-        character.rules.activeOptionalRules,
+        character.rules.optionalRules,
         p.id.optional_rule,
-        id => ({ id, dependencies: [] }),
+        createOptionalRule,
         dependency,
       )
     default:

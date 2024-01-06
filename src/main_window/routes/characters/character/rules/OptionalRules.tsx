@@ -9,7 +9,7 @@ import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { compareAt } from "../../../../../shared/utils/compare.ts"
 import { useIsEntryAvailable } from "../../../../hooks/isAvailable.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
-import { selectActiveOptionalRules } from "../../../../slices/characterSlice.ts"
+import { selectDynamicOptionalRules } from "../../../../slices/characterSlice.ts"
 import { selectStaticOptionalRules } from "../../../../slices/databaseSlice.ts"
 import { OptionalRulesItem } from "./OptionalRulesItem.tsx"
 
@@ -20,7 +20,7 @@ export const OptionalRules: FC = () => {
   const isEntryAvailable = useIsEntryAvailable()
 
   const optionalRules = useAppSelector(selectStaticOptionalRules)
-  const activeOptionalRules = useAppSelector(selectActiveOptionalRules)
+  const activeOptionalRules = useAppSelector(selectDynamicOptionalRules)
   const optionalRuleOptions = useMemo(
     () =>
       Object.values(optionalRules)

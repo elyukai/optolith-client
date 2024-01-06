@@ -6,7 +6,7 @@ import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { compareAt } from "../../../../../shared/utils/compare.ts"
 import { useIsEntryAvailable } from "../../../../hooks/isAvailable.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
-import { selectActiveFocusRules } from "../../../../slices/characterSlice.ts"
+import { selectDynamicFocusRules } from "../../../../slices/characterSlice.ts"
 import { selectStaticFocusRules } from "../../../../slices/databaseSlice.ts"
 import { FocusRulesItem } from "./FocusRulesItem.tsx"
 
@@ -17,7 +17,7 @@ export const FocusRules: FC = () => {
   const isEntryAvailable = useIsEntryAvailable()
 
   const focusRules = useAppSelector(selectStaticFocusRules)
-  const activeFocusRules = useAppSelector(selectActiveFocusRules)
+  const activeFocusRules = useAppSelector(selectDynamicFocusRules)
   const focusRuleOptions = useMemo(
     () =>
       Object.values(focusRules)

@@ -9,10 +9,11 @@ import {
   ActivatableRatedWithEnhancementsMap,
   RatedMap,
 } from "./rated/ratedEntry.ts"
-import { ActiveFocusRule, ActiveOptionalRule } from "./rules.ts"
+import { FocusRuleInstance } from "./rules/focusRule.ts"
+import { OptionalRuleInstance } from "./rules/optionalRule.ts"
 import { Sex } from "./sex.ts"
 import { SocialStatusDependency } from "./socialStatus.ts"
-import { ActiveState } from "./state.ts"
+import { StateInstance } from "./state.ts"
 
 /**
  * All dynamic information about a character. Static information about used
@@ -152,22 +153,25 @@ export type Character = {
     includePublications: number[]
 
     /**
-     * Active focus rules.
+     * A map of focus rules that may be active for the character.
      */
-    activeFocusRules: {
-      [id: number]: ActiveFocusRule
+    focusRules: {
+      [id: number]: FocusRuleInstance
     }
 
     /**
-     * Active optional rules.
+     * A map of optional rules that maybe be active for the character.
      */
-    activeOptionalRules: {
-      [id: number]: ActiveOptionalRule
+    optionalRules: {
+      [id: number]: OptionalRuleInstance
     }
   }
 
-  activeStates: {
-    [id: number]: ActiveState
+  /**
+   * A map of states that may be active for the character.
+   */
+  states: {
+    [id: number]: StateInstance
   }
 
   /**
@@ -282,6 +286,7 @@ export type Character = {
     liturgicalStyleSpecialAbilities: ActivatableMap
     lycantropicGifts: ActivatableMap
     magicalRunes: ActivatableMap
+    magicalSigns: ActivatableMap
     magicalSpecialAbilities: ActivatableMap
     magicalTraditions: ActivatableMap
     magicStyleSpecialAbilities: ActivatableMap

@@ -28,21 +28,21 @@ import { getActiveDynamicLiturgicalChantsByAspect } from "../../shared/domain/ra
 import { getActiveDynamicSpellworksByProperty } from "../../shared/domain/rated/spell.ts"
 import { isStateActive } from "../../shared/domain/state.ts"
 import {
-  selectActiveFocusRules,
-  selectActiveOptionalRules,
-  selectActiveStates,
   selectCultureId,
   selectDynamicAdvantages,
   selectDynamicAttributes,
   selectDynamicCeremonies,
   selectDynamicCloseCombatTechniques,
   selectDynamicDisadvantages,
+  selectDynamicFocusRules,
   selectDynamicLiturgicalChants,
+  selectDynamicOptionalRules,
   selectDynamicRangedCombatTechniques,
   selectDynamicRituals,
   selectDynamicSkills,
   selectDynamicSpecialAbilities,
   selectDynamicSpells,
+  selectDynamicStates,
   selectIncludeAllPublications,
   selectIncludePublications,
   selectPact,
@@ -421,8 +421,8 @@ export const selectCapabilitiesForRatedSumPrerequisite = createSelector(
  * Select the capabilities needed to check for a rule prerequisite.
  */
 export const selectCapabilitiesForRulePrerequisite = createSelector(
-  selectActiveFocusRules,
-  selectActiveOptionalRules,
+  selectDynamicFocusRules,
+  selectDynamicOptionalRules,
   (activeFocusRules, activeOptionalRules): Parameters<typeof checkRulePrerequisite>[0] => ({
     getDynamicFocusRule: id => activeFocusRules[id],
     getDynamicOptionalRule: id => activeOptionalRules[id],
@@ -460,9 +460,9 @@ export const selectCapabilitiesForSocialStatusPrerequisite = createSelector(
  * Select the capabilities needed to check for a state prerequisite.
  */
 export const selectCapabilitiesForStatePrerequisite = createSelector(
-  selectActiveStates,
-  (activeStates): Parameters<typeof checkStatePrerequisite>[0] => ({
-    getDynamicState: id => isStateActive(activeStates, id),
+  selectDynamicStates,
+  (dynamicStates): Parameters<typeof checkStatePrerequisite>[0] => ({
+    getDynamicState: id => isStateActive(id1 => dynamicStates[id1], id),
   }),
 )
 

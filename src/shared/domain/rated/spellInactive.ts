@@ -24,15 +24,14 @@ import {
   compareImprovementCost,
   fromRaw,
 } from "../adventurePoints/improvementCost.ts"
+import { GetById } from "../getTypes.ts"
 import { MagicalTraditionIdentifier } from "../identifier.ts"
 import { checkPrerequisitesOfSpellwork } from "../prerequisites/fullPrerequisiteValidationForType.ts"
-import { ActiveFocusRule, ActiveOptionalRule } from "../rules.ts"
 import {
   ActivatableRated,
   ActivatableRatedMap,
   ActivatableRatedWithEnhancements,
   ActivatableRatedWithEnhancementsMap,
-  Rated,
   isOptionalRatedActive,
   isOptionalRatedWithEnhancementsActive,
 } from "./ratedEntry.ts"
@@ -256,16 +255,16 @@ export const getInactiveSpellsOrRituals = <K extends "spell" | "ritual", T exten
   isMaximumUnfamiliarCountReached: boolean,
   imitationszauberei: Activatable | undefined,
   isEntryAvailable: (src: PublicationRefs) => boolean,
-  getDynamicFocusRule: (id: number) => ActiveFocusRule | undefined,
-  getDynamicOptionalRule: (id: number) => ActiveOptionalRule | undefined,
-  getDynamicAttribute: (id: number) => Rated | undefined,
-  getDynamicSkill: (id: number) => Rated | undefined,
-  getDynamicCloseCombatTechnique: (id: number) => Rated | undefined,
-  getDynamicRangedCombatTechnique: (id: number) => Rated | undefined,
-  getDynamicSpell: (id: number) => ActivatableRatedWithEnhancements | undefined,
-  getDynamicRitual: (id: number) => ActivatableRatedWithEnhancements | undefined,
-  getDynamicLiturgicalChant: (id: number) => ActivatableRatedWithEnhancements | undefined,
-  getDynamicCeremony: (id: number) => ActivatableRatedWithEnhancements | undefined,
+  getDynamicFocusRule: GetById.Dynamic.FocusRule,
+  getDynamicOptionalRule: GetById.Dynamic.OptionalRule,
+  getDynamicAttribute: GetById.Dynamic.Attribute,
+  getDynamicSkill: GetById.Dynamic.Skill,
+  getDynamicCloseCombatTechnique: GetById.Dynamic.CloseCombatTechnique,
+  getDynamicRangedCombatTechnique: GetById.Dynamic.RangedCombatTechnique,
+  getDynamicSpell: GetById.Dynamic.Spell,
+  getDynamicRitual: GetById.Dynamic.Ritual,
+  getDynamicLiturgicalChant: GetById.Dynamic.LiturgicalChant,
+  getDynamicCeremony: GetById.Dynamic.Ceremony,
   getIsUnfamiliar: (id: number) => boolean,
 ): {
   kind: K

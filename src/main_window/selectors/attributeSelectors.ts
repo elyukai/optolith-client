@@ -17,7 +17,6 @@ import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { attributeValue, createInitialDynamicAttribute } from "../slices/attributesSlice.ts"
 import {
-  selectActiveOptionalRules,
   selectAttributeAdjustmentId,
   selectBlessedPrimaryAttributeDependencies,
   selectDerivedCharacteristics,
@@ -34,6 +33,7 @@ import {
   selectDynamicLiturgicalChants,
   selectDynamicMagicalDances,
   selectDynamicMagicalMelodies,
+  selectDynamicOptionalRules,
   selectDynamicRangedCombatTechniques,
   selectDynamicRituals,
   selectDynamicSkills,
@@ -149,7 +149,7 @@ export const selectVisibleAttributes = createSelector(
   selectCurrentRace,
   selectStartExperienceLevel,
   selectCurrentExperienceLevel,
-  createPropertySelector(selectActiveOptionalRules, OptionalRuleIdentifier.MaximumAttributeScores),
+  createPropertySelector(selectDynamicOptionalRules, OptionalRuleIdentifier.MaximumAttributeScores),
   selectAttributeAdjustmentId,
   selectDerivedCharacteristics,
   selectHighestMagicalPrimaryAttributes,

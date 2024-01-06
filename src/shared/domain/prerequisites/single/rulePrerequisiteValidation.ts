@@ -1,14 +1,14 @@
 import { RulePrerequisite } from "optolith-database-schema/types/prerequisites/single/RulePrerequisite"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { ActiveFocusRule, ActiveOptionalRule } from "../../rules.ts"
+import { GetById } from "../../getTypes.ts"
 
 /**
  * Checks a single rule prerequisite if it’s matched.
  */
 export const checkRulePrerequisite = (
   caps: {
-    getDynamicFocusRule: (id: number) => ActiveFocusRule | undefined
-    getDynamicOptionalRule: (id: number) => ActiveOptionalRule | undefined
+    getDynamicFocusRule: GetById.Dynamic.FocusRule
+    getDynamicOptionalRule: GetById.Dynamic.OptionalRule
   },
   p: RulePrerequisite,
 ): boolean => {

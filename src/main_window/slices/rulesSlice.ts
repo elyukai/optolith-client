@@ -22,32 +22,35 @@ export const rulesReducer = createImmerReducer<CharacterState>((state, action) =
       state.rules.includePublications.splice(index, 1)
     }
   } else if (switchFocusRule.match(action)) {
-    if (Object.hasOwn(state.rules.activeFocusRules, action.payload)) {
-      delete state.rules.activeFocusRules[action.payload]
+    if (state.rules.focusRules[action.payload]?.active === true) {
+      state.rules.focusRules[action.payload]!.active = false
     } else {
-      state.rules.activeFocusRules[action.payload] = {
+      state.rules.focusRules[action.payload] = {
         id: action.payload,
+        active: true,
         dependencies: [],
       }
     }
   } else if (switchOptionalRule.match(action)) {
-    if (Object.hasOwn(state.rules.activeOptionalRules, action.payload)) {
-      delete state.rules.activeOptionalRules[action.payload]
+    if (state.rules.optionalRules[action.payload]?.active === true) {
+      state.rules.optionalRules[action.payload]!.active = false
     } else if (action.payload === OptionalRuleIdentifier.HigherDefenseStats) {
-      state.rules.activeOptionalRules[action.payload] = {
+      state.rules.optionalRules[action.payload] = {
         id: action.payload,
+        active: true,
         options: [2],
         dependencies: [],
       }
     } else {
-      state.rules.activeOptionalRules[action.payload] = {
+      state.rules.optionalRules[action.payload] = {
         id: action.payload,
+        active: true,
         dependencies: [],
       }
     }
   } else if (changeOptionalRuleOption.match(action)) {
-    if (Object.hasOwn(state.rules.activeOptionalRules, action.payload.id)) {
-      ;(state.rules.activeOptionalRules[action.payload.id]!.options ??= [])[0] =
+    if (Object.hasOwn(state.rules.optionalRules, action.payload.id)) {
+      ;(state.rules.optionalRules[action.payload.id]!.options ??= [])[0] =
         action.payload.option
     }
   }

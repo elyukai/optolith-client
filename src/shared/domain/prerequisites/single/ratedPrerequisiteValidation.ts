@@ -1,20 +1,20 @@
 import { RatedPrerequisite } from "optolith-database-schema/types/prerequisites/single/RatedPrerequisite"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { ActivatableRatedWithEnhancements, Rated } from "../../rated/ratedEntry.ts"
+import { GetById } from "../../getTypes.ts"
 
 /**
  * Checks a single rated prerequisite if it’s matched.
  */
 export const checkRatedPrerequisite = (
   caps: {
-    getDynamicAttribute: (id: number) => Rated | undefined
-    getDynamicSkill: (id: number) => Rated | undefined
-    getDynamicCloseCombatTechnique: (id: number) => Rated | undefined
-    getDynamicRangedCombatTechnique: (id: number) => Rated | undefined
-    getDynamicSpell: (id: number) => ActivatableRatedWithEnhancements | undefined
-    getDynamicRitual: (id: number) => ActivatableRatedWithEnhancements | undefined
-    getDynamicLiturgicalChant: (id: number) => ActivatableRatedWithEnhancements | undefined
-    getDynamicCeremony: (id: number) => ActivatableRatedWithEnhancements | undefined
+    getDynamicAttribute: GetById.Dynamic.Attribute
+    getDynamicSkill: GetById.Dynamic.Skill
+    getDynamicCloseCombatTechnique: GetById.Dynamic.CloseCombatTechnique
+    getDynamicRangedCombatTechnique: GetById.Dynamic.RangedCombatTechnique
+    getDynamicSpell: GetById.Dynamic.Spell
+    getDynamicRitual: GetById.Dynamic.Ritual
+    getDynamicLiturgicalChant: GetById.Dynamic.LiturgicalChant
+    getDynamicCeremony: GetById.Dynamic.Ceremony
   },
   p: RatedPrerequisite,
 ): boolean =>

@@ -5,64 +5,64 @@ import { filterNonNullable } from "../../../utils/array.ts"
 import { mapNullable } from "../../../utils/nullable.ts"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import {
-  Activatable,
   ActivatableInstance,
   equalsOptionPrerequisite,
 } from "../../activatable/activatableEntry.ts"
+import { GetById } from "../../getTypes.ts"
 
 /**
  * Checks a single activatable prerequisite if it’s matched.
  */
 export const checkActivatablePrerequisite = (
   caps: {
-    getDynamicAdvantage: (id: number) => Activatable | undefined
-    getDynamicDisadvantage: (id: number) => Activatable | undefined
-    getDynamicGeneralSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicFatePointSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicCombatSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicMagicalSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicStaffEnchantment: (id: number) => Activatable | undefined
-    getDynamicFamiliarSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicKarmaSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicProtectiveWardingCircleSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicCombatStyleSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicAdvancedCombatSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicCommandSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicMagicStyleSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicAdvancedMagicalSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicSpellSwordEnchantment: (id: number) => Activatable | undefined
-    getDynamicDaggerRitual: (id: number) => Activatable | undefined
-    getDynamicInstrumentEnchantment: (id: number) => Activatable | undefined
-    getDynamicAttireEnchantment: (id: number) => Activatable | undefined
-    getDynamicOrbEnchantment: (id: number) => Activatable | undefined
-    getDynamicWandEnchantment: (id: number) => Activatable | undefined
-    getDynamicBrawlingSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicAncestorGlyph: (id: number) => Activatable | undefined
-    getDynamicCeremonialItemSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicSermon: (id: number) => Activatable | undefined
-    getDynamicLiturgicalStyleSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicAdvancedKarmaSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicVision: (id: number) => Activatable | undefined
-    getDynamicMagicalTradition: (id: number) => Activatable | undefined
-    getDynamicBlessedTradition: (id: number) => Activatable | undefined
-    getDynamicPactGift: (id: number) => Activatable | undefined
-    getDynamicSikaryanDrainSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicLycantropicGift: (id: number) => Activatable | undefined
-    getDynamicSkillStyleSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicAdvancedSkillSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicArcaneOrbEnchantment: (id: number) => Activatable | undefined
-    getDynamicCauldronEnchantment: (id: number) => Activatable | undefined
-    getDynamicFoolsHatEnchantment: (id: number) => Activatable | undefined
-    getDynamicToyEnchantment: (id: number) => Activatable | undefined
-    getDynamicBowlEnchantment: (id: number) => Activatable | undefined
-    getDynamicFatePointSexSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicSexSpecialAbility: (id: number) => Activatable | undefined
-    getDynamicWeaponEnchantment: (id: number) => Activatable | undefined
-    getDynamicSickleRitual: (id: number) => Activatable | undefined
-    getDynamicRingEnchantment: (id: number) => Activatable | undefined
-    getDynamicChronicleEnchantment: (id: number) => Activatable | undefined
-    getDynamicKrallenkettenzauber: (id: number) => Activatable | undefined
-    getDynamicTrinkhornzauber: (id: number) => Activatable | undefined
+    getDynamicAdvantage: GetById.Dynamic.Advantage
+    getDynamicDisadvantage: GetById.Dynamic.Disadvantage
+    getDynamicGeneralSpecialAbility: GetById.Dynamic.GeneralSpecialAbility
+    getDynamicFatePointSpecialAbility: GetById.Dynamic.FatePointSpecialAbility
+    getDynamicCombatSpecialAbility: GetById.Dynamic.CombatSpecialAbility
+    getDynamicMagicalSpecialAbility: GetById.Dynamic.MagicalSpecialAbility
+    getDynamicStaffEnchantment: GetById.Dynamic.StaffEnchantment
+    getDynamicFamiliarSpecialAbility: GetById.Dynamic.FamiliarSpecialAbility
+    getDynamicKarmaSpecialAbility: GetById.Dynamic.KarmaSpecialAbility
+    getDynamicProtectiveWardingCircleSpecialAbility: GetById.Dynamic.ProtectiveWardingCircleSpecialAbility
+    getDynamicCombatStyleSpecialAbility: GetById.Dynamic.CombatStyleSpecialAbility
+    getDynamicAdvancedCombatSpecialAbility: GetById.Dynamic.AdvancedCombatSpecialAbility
+    getDynamicCommandSpecialAbility: GetById.Dynamic.CommandSpecialAbility
+    getDynamicMagicStyleSpecialAbility: GetById.Dynamic.MagicStyleSpecialAbility
+    getDynamicAdvancedMagicalSpecialAbility: GetById.Dynamic.AdvancedMagicalSpecialAbility
+    getDynamicSpellSwordEnchantment: GetById.Dynamic.SpellSwordEnchantment
+    getDynamicDaggerRitual: GetById.Dynamic.DaggerRitual
+    getDynamicInstrumentEnchantment: GetById.Dynamic.InstrumentEnchantment
+    getDynamicAttireEnchantment: GetById.Dynamic.AttireEnchantment
+    getDynamicOrbEnchantment: GetById.Dynamic.OrbEnchantment
+    getDynamicWandEnchantment: GetById.Dynamic.WandEnchantment
+    getDynamicBrawlingSpecialAbility: GetById.Dynamic.BrawlingSpecialAbility
+    getDynamicAncestorGlyph: GetById.Dynamic.AncestorGlyph
+    getDynamicCeremonialItemSpecialAbility: GetById.Dynamic.CeremonialItemSpecialAbility
+    getDynamicSermon: GetById.Dynamic.Sermon
+    getDynamicLiturgicalStyleSpecialAbility: GetById.Dynamic.LiturgicalStyleSpecialAbility
+    getDynamicAdvancedKarmaSpecialAbility: GetById.Dynamic.AdvancedKarmaSpecialAbility
+    getDynamicVision: GetById.Dynamic.Vision
+    getDynamicMagicalTradition: GetById.Dynamic.MagicalTradition
+    getDynamicBlessedTradition: GetById.Dynamic.BlessedTradition
+    getDynamicPactGift: GetById.Dynamic.PactGift
+    getDynamicSikaryanDrainSpecialAbility: GetById.Dynamic.SikaryanDrainSpecialAbility
+    getDynamicLycantropicGift: GetById.Dynamic.LycantropicGift
+    getDynamicSkillStyleSpecialAbility: GetById.Dynamic.SkillStyleSpecialAbility
+    getDynamicAdvancedSkillSpecialAbility: GetById.Dynamic.AdvancedSkillSpecialAbility
+    getDynamicArcaneOrbEnchantment: GetById.Dynamic.ArcaneOrbEnchantment
+    getDynamicCauldronEnchantment: GetById.Dynamic.CauldronEnchantment
+    getDynamicFoolsHatEnchantment: GetById.Dynamic.FoolsHatEnchantment
+    getDynamicToyEnchantment: GetById.Dynamic.ToyEnchantment
+    getDynamicBowlEnchantment: GetById.Dynamic.BowlEnchantment
+    getDynamicFatePointSexSpecialAbility: GetById.Dynamic.FatePointSexSpecialAbility
+    getDynamicSexSpecialAbility: GetById.Dynamic.SexSpecialAbility
+    getDynamicWeaponEnchantment: GetById.Dynamic.WeaponEnchantment
+    getDynamicSickleRitual: GetById.Dynamic.SickleRitual
+    getDynamicRingEnchantment: GetById.Dynamic.RingEnchantment
+    getDynamicChronicleEnchantment: GetById.Dynamic.ChronicleEnchantment
+    getDynamicKrallenkettenzauber: GetById.Dynamic.Krallenkettenzauber
+    getDynamicTrinkhornzauber: GetById.Dynamic.Trinkhornzauber
     checkPrecondition: (pre: PreconditionGroup) => boolean
   },
   p: ActivatablePrerequisite,

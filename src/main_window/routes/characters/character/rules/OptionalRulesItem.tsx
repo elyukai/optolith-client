@@ -1,12 +1,16 @@
-import { OptionalRule, OptionalRuleTranslation } from "optolith-database-schema/types/rule/OptionalRule"
+import {
+  OptionalRule,
+  OptionalRuleTranslation,
+} from "optolith-database-schema/types/rule/OptionalRule"
 import { FC, useCallback } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { OptionalRuleIdentifier } from "../../../../../shared/domain/identifier.ts"
+import { isOptionalRuleActive } from "../../../../../shared/domain/rules/optionalRule.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { selectActiveOptionalRules } from "../../../../slices/characterSlice.ts"
+import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
 import { changeInlineLibraryEntry } from "../../../../slices/inlineWikiSlice.ts"
 import { changeOptionalRuleOption, switchOptionalRule } from "../../../../slices/rulesSlice.ts"
 
@@ -17,35 +21,46 @@ type Props = {
   }
 }
 
+/**
+ *
+ */
 export const OptionalRulesItem: FC<Props> = props => {
-  const { optionalRule: { optionalRule, optionalRuleTranslation } } = props
+  const {
+    optionalRule: { optionalRule, optionalRuleTranslation },
+  } = props
 
   const dispatch = useAppDispatch()
   const translate = useTranslate()
-  const activeOptionalRules = useAppSelector(selectActiveOptionalRules)
+  const getDynamicOptionalRuleById = useAppSelector(SelectGetById.Dynamic.OptionalRule)
 
   const handleSwitch = useCallback(
     () => dispatch(switchOptionalRule(optionalRule.id)),
-    [ dispatch, optionalRule.id ],
+    [dispatch, optionalRule.id],
   )
 
   const handleChangeInlineLibraryEntry = useCallback(
-    () => dispatch(changeInlineLibraryEntry({
-      tag: "OptionalRule",
-      optional_rule: optionalRule.id,
-    })),
-    [ dispatch, optionalRule.id ],
+    () =>
+      dispatch(
+        changeInlineLibraryEntry({
+          tag: "OptionalRule",
+          optional_rule: optionalRule.id,
+        }),
+      ),
+    [dispatch, optionalRule.id],
   )
 
   const handleChangeOption = useCallback(
-    (option: number) => dispatch(changeOptionalRuleOption({
-      id: optionalRule.id,
-      option,
-    })),
-    [ dispatch, optionalRule.id ],
+    (option: number) =>
+      dispatch(
+        changeOptionalRuleOption({
+          id: optionalRule.id,
+          option,
+        }),
+      ),
+    [dispatch, optionalRule.id],
   )
 
-  const isActive = Object.hasOwn(activeOptionalRules, optionalRule.id)
+  const isActive = isOptionalRuleActive(getDynamicOptionalRuleById, optionalRule.id)
 
   return (
     <li>
@@ -54,26 +69,24 @@ export const OptionalRulesItem: FC<Props> = props => {
         onClick={handleSwitch}
         label={optionalRuleTranslation.name}
         disabled={optionalRule.is_missing_implementation}
-        />
-      {optionalRule.id === OptionalRuleIdentifier.HigherDefenseStats
-        ? (
+      />
+      {optionalRule.id === OptionalRuleIdentifier.HigherDefenseStats ? (
         <Dropdown
           options={[
             { id: 2, name: "+2" },
             { id: 4, name: "+4" },
           ]}
-          value={activeOptionalRules[optionalRule.id]?.options?.[0] ?? 2}
+          value={getDynamicOptionalRuleById(optionalRule.id)?.options?.[0] ?? 2}
           onChange={handleChangeOption}
           disabled={!isActive}
-          />
-        )
-        : null}
+        />
+      ) : null}
       <IconButton
         icon="&#xE912;"
         label={translate("Show details")}
         onClick={handleChangeInlineLibraryEntry}
         flat
-        />
+      />
     </li>
   )
 }

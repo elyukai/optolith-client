@@ -1,14 +1,24 @@
+import { GetById } from "./getTypes.ts"
+
 /**
- * An active state instance.
+ * A character’s state instance.
  */
-export type ActiveState = {
+export type StateInstance = {
+  /**
+   * The state’s identifier.
+   */
   id: number
+
+  /**
+   * Is the state active?
+   */
+  active: boolean
 }
 
 /**
  * Checks if a state is active.
  */
 export const isStateActive = (
-  activeStates: Record<number, ActiveState>,
+  getDynamicStateById: GetById.Dynamic.State,
   stateId: number,
-): boolean => stateId in activeStates
+): boolean => getDynamicStateById(stateId)?.active ?? false
