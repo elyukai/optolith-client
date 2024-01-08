@@ -39,10 +39,10 @@ export type SpentAdventurePoints = {
 }
 
 const sumRatedMaps = (
-  ...ratedMaps: Record<number, { cachedAdventurePoints: RatedAdventurePointsCache }>[]
+  ...ratedMaps: (Record<number, { cachedAdventurePoints: RatedAdventurePointsCache }> | undefined)[]
 ): SpentAdventurePoints =>
   ratedMaps
-    .flatMap(ratedMap => Object.values(ratedMap))
+    .flatMap(ratedMap => Object.values(ratedMap ?? {}))
     .reduce(
       (acc, rated) => ({
         general: acc.general + rated.cachedAdventurePoints.general,
@@ -105,7 +105,7 @@ export const selectAdventurePointsSpentOnLiturgicalChants = createSelector(
  */
 export const selectAdventurePointsSpentOnCantrips = createSelector(
   selectDynamicCantrips,
-  (cantrips): SpentAdventurePoints => ({ general: cantrips.length, bound: 0 }),
+  (cantrips): SpentAdventurePoints => ({ general: cantrips?.length ?? 0, bound: 0 }),
 )
 
 /**
@@ -113,7 +113,7 @@ export const selectAdventurePointsSpentOnCantrips = createSelector(
  */
 export const selectAdventurePointsSpentOnBlessings = createSelector(
   selectDynamicBlessings,
-  (blessings): SpentAdventurePoints => ({ general: blessings.length, bound: 0 }),
+  (blessings): SpentAdventurePoints => ({ general: blessings?.length ?? 0, bound: 0 }),
 )
 
 /**

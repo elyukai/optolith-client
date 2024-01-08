@@ -11,10 +11,10 @@ type Indexed = { [key: string | number]: unknown }
  * @returns A selector that selects the property of the object.
  */
 export const createPropertySelector = <S, O extends Indexed, K extends keyof O>(
-  selector: (state: S) => O,
+  selector: (state: S) => O | undefined,
   property: K,
 ): OutputSelector<[typeof selector], O[K] | undefined, (obj: O) => O[K] | undefined> =>
-  createSelector(selector, obj => obj[property])
+  createSelector(selector, obj => obj?.[property])
 
 /**
  * A reducer type with possible additional parameters.

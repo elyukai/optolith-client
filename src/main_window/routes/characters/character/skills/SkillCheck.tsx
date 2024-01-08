@@ -10,11 +10,8 @@ import { classList } from "../../../../../shared/utils/classList.ts"
 import { minus } from "../../../../../shared/utils/math.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
-import { selectDynamicAttributes } from "../../../../slices/characterSlice.ts"
-import {
-  selectGetAttribute,
-  selectStaticDerivedCharacteristics,
-} from "../../../../slices/databaseSlice.ts"
+import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
+import { selectStaticDerivedCharacteristics } from "../../../../slices/databaseSlice.ts"
 
 type Props = {
   check: SkillCheckType
@@ -28,8 +25,8 @@ export const SkillCheck: FC<Props> = props => {
   const { check, checkPenalty } = props
 
   const translateMap = useTranslateMap()
-  const getStaticAttribute = useAppSelector(selectGetAttribute)
-  const dynamicAttributes = useAppSelector(selectDynamicAttributes)
+  const getStaticAttributeById = useAppSelector(SelectGetById.Static.Attribute)
+  const getDynamicAttributeById = useAppSelector(SelectGetById.Dynamic.Attribute)
   const derivedCharacteristics = useAppSelector(selectStaticDerivedCharacteristics)
   const spirit = derivedCharacteristics[DCId.Spirit]
   const toughness = derivedCharacteristics[DCId.Toughness]
@@ -38,7 +35,7 @@ export const SkillCheck: FC<Props> = props => {
 
   return (
     <>
-      {getDisplayedSkillCheck(getStaticAttribute, id => dynamicAttributes[id], check).map(
+      {getDisplayedSkillCheck(getStaticAttributeById, getDynamicAttributeById, check).map(
         ({ attribute, value }, index) => (
           <div key={`${attribute.id}-${index + 1}`} className={`check attr--${attribute.id}`}>
             <span className="short">

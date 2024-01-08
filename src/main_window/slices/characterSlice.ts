@@ -349,24 +349,24 @@ export const selectIncludeAllPublications = (state: RootState) =>
  * Select the explicitly included publications for the currently open character.
  */
 export const selectIncludePublications = (state: RootState) =>
-  selectCurrentCharacter(state)?.rules.includePublications ?? []
+  selectCurrentCharacter(state)?.rules.includePublications
 
 /**
  * Select the active focus rules of the currently open character.
  */
 export const selectDynamicFocusRules = (state: RootState) =>
-  selectCurrentCharacter(state)?.rules.focusRules ?? {}
+  selectCurrentCharacter(state)?.rules.focusRules
 
 /**
  * Select the active optional rules of the currently open character.
  */
 export const selectDynamicOptionalRules = (state: RootState) =>
-  selectCurrentCharacter(state)?.rules.optionalRules ?? {}
+  selectCurrentCharacter(state)?.rules.optionalRules
 
 /**
  * Select the active states of the currently open character.
  */
-export const selectDynamicStates = (state: RootState) => selectCurrentCharacter(state)?.states ?? {}
+export const selectDynamicStates = (state: RootState) => selectCurrentCharacter(state)?.states
 
 /**
  * Select the personal data of the currently open character.
@@ -467,13 +467,13 @@ export const selectOtherInfo = (state: RootState) => selectPersonalData(state).o
  * Select the advantages of the currently open character.
  */
 export const selectDynamicAdvantages = (state: RootState) =>
-  selectCurrentCharacter(state)?.advantages ?? {}
+  selectCurrentCharacter(state)?.advantages
 
 /**
  * Select the disadvantages of the currently open character.
  */
 export const selectDynamicDisadvantages = (state: RootState) =>
-  selectCurrentCharacter(state)?.disadvantages ?? {}
+  selectCurrentCharacter(state)?.disadvantages
 
 /**
  * Select the special abilities of the currently open character.
@@ -485,295 +485,301 @@ export const selectDynamicSpecialAbilities = (state: RootState) =>
  * Select the advanced combat special abilities of the currently open character.
  */
 export const selectDynamicAdvancedCombatSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.advancedCombatSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.advancedCombatSpecialAbilities
 
 /**
  * Select the advanced karma special abilities of the currently open character.
  */
 export const selectDynamicAdvancedKarmaSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.advancedKarmaSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.advancedKarmaSpecialAbilities
 
 /**
  * Select the advanced magical special abilities of the currently open character.
  */
 export const selectDynamicAdvancedMagicalSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.advancedMagicalSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.advancedMagicalSpecialAbilities
 
 /**
  * Select the advanced skill special abilities of the currently open character.
  */
 export const selectDynamicAdvancedSkillSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.advancedSkillSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.advancedSkillSpecialAbilities
 
 /**
  * Select the ancestor glyphs of the currently open character.
  */
 export const selectDynamicAncestorGlyphs = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.ancestorGlyphs ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.ancestorGlyphs
 
 /**
  * Select the arcane orb enchantments of the currently open character.
  */
 export const selectDynamicArcaneOrbEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.arcaneOrbEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.arcaneOrbEnchantments
 
 /**
  * Select the attire enchantments of the currently open character.
  */
 export const selectDynamicAttireEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.attireEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.attireEnchantments
 
 /**
  * Select the blessed traditions of the currently open character.
  */
 export const selectDynamicBlessedTraditions = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.blessedTraditions ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.blessedTraditions
 
 /**
  * Select the bowl enchantments of the currently open character.
  */
 export const selectDynamicBowlEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.bowlEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.bowlEnchantments
 
 /**
  * Select the brawling special abilities of the currently open character.
  */
 export const selectDynamicBrawlingSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.brawlingSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.brawlingSpecialAbilities
 
 /**
  * Select the cauldron enchantments of the currently open character.
  */
 export const selectDynamicCauldronEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.cauldronEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.cauldronEnchantments
 
 /**
  * Select the ceremonial item special abilities of the currently open character.
  */
 export const selectDynamicCeremonialItemSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.ceremonialItemSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.ceremonialItemSpecialAbilities
 
 /**
  * Select the chronicle enchantments of the currently open character.
  */
 export const selectDynamicChronicleEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.chronicleEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.chronicleEnchantments
 
 /**
  * Select the combat special abilities of the currently open character.
  */
 export const selectDynamicCombatSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.combatSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.combatSpecialAbilities
 
 /**
  * Select the combat style special abilities of the currently open character.
  */
 export const selectDynamicCombatStyleSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.combatStyleSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.combatStyleSpecialAbilities
 
 /**
  * Select the command special abilities of the currently open character.
  */
 export const selectDynamicCommandSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.commandSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.commandSpecialAbilities
 
 /**
  * Select the dagger rituals of the currently open character.
  */
 export const selectDynamicDaggerRituals = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.daggerRituals ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.daggerRituals
 
 /**
  * Select the familiar special abilities of the currently open character.
  */
 export const selectDynamicFamiliarSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.familiarSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.familiarSpecialAbilities
 
 /**
  * Select the fate point sex special abilities of the currently open character.
  */
 export const selectDynamicFatePointSexSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.fatePointSexSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.fatePointSexSpecialAbilities
 
 /**
  * Select the fate point special abilities of the currently open character.
  */
 export const selectDynamicFatePointSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.fatePointSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.fatePointSpecialAbilities
 
 /**
  * Select the fools hat enchantments of the currently open character.
  */
 export const selectDynamicFoolsHatEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.foolsHatEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.foolsHatEnchantments
 
 /**
  * Select the general special abilities of the currently open character.
  */
 export const selectDynamicGeneralSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.generalSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.generalSpecialAbilities
 
 /**
  * Select the instrument enchantments of the currently open character.
  */
 export const selectDynamicInstrumentEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.instrumentEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.instrumentEnchantments
 
 /**
  * Select the karma special abilities of the currently open character.
  */
 export const selectDynamicKarmaSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.karmaSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.karmaSpecialAbilities
 
 /**
  * Select the krallenkettenzauber of the currently open character.
  */
 export const selectDynamicKrallenkettenzauber = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.krallenkettenzauber ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.krallenkettenzauber
 
 /**
  * Select the liturgical style special abilities of the currently open character.
  */
 export const selectDynamicLiturgicalStyleSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.liturgicalStyleSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.liturgicalStyleSpecialAbilities
 
 /**
  * Select the lycantropic gifts of the currently open character.
  */
 export const selectDynamicLycantropicGifts = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.lycantropicGifts ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.lycantropicGifts
 
 /**
  * Select the magical runes of the currently open character.
  */
 export const selectDynamicMagicalRunes = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.magicalRunes ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.magicalRunes
+
+/**
+ * Select the magical signs of the currently open character.
+ */
+export const selectDynamicMagicalSigns = (state: RootState) =>
+  selectCurrentCharacter(state)?.specialAbilities.magicalSigns
 
 /**
  * Select the magical special abilities of the currently open character.
  */
 export const selectDynamicMagicalSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.magicalSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.magicalSpecialAbilities
 
 /**
  * Select the magical traditions of the currently open character.
  */
 export const selectDynamicMagicalTraditions = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.magicalTraditions ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.magicalTraditions
 
 /**
  * Select the magic style special abilities of the currently open character.
  */
 export const selectDynamicMagicStyleSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.magicStyleSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.magicStyleSpecialAbilities
 
 /**
  * Select the orb enchantments of the currently open character.
  */
 export const selectDynamicOrbEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.orbEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.orbEnchantments
 
 /**
  * Select the pact gifts of the currently open character.
  */
 export const selectDynamicPactGifts = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.pactGifts ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.pactGifts
 
 /**
  * Select the protective warding circle special abilities of the currently open character.
  */
 export const selectDynamicProtectiveWardingCircleSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.protectiveWardingCircleSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.protectiveWardingCircleSpecialAbilities
 
 /**
  * Select the ring enchantments of the currently open character.
  */
 export const selectDynamicRingEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.ringEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.ringEnchantments
 
 /**
  * Select the sermons of the currently open character.
  */
 export const selectDynamicSermons = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.sermons ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.sermons
 
 /**
  * Select the sex special abilities of the currently open character.
  */
 export const selectDynamicSexSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.sexSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.sexSpecialAbilities
 
 /**
  * Select the sickle rituals of the currently open character.
  */
 export const selectDynamicSickleRituals = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.sickleRituals ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.sickleRituals
 
 /**
  * Select the sikaryan drain special abilities of the currently open character.
  */
 export const selectDynamicSikaryanDrainSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.sikaryanDrainSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.sikaryanDrainSpecialAbilities
 
 /**
  * Select the skill style special abilities of the currently open character.
  */
 export const selectDynamicSkillStyleSpecialAbilities = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.skillStyleSpecialAbilities ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.skillStyleSpecialAbilities
 
 /**
  * Select the spell sword enchantments of the currently open character.
  */
 export const selectDynamicSpellSwordEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.spellSwordEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.spellSwordEnchantments
 
 /**
  * Select the staff enchantments of the currently open character.
  */
 export const selectDynamicStaffEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.staffEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.staffEnchantments
 
 /**
  * Select the toy enchantments of the currently open character.
  */
 export const selectDynamicToyEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.toyEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.toyEnchantments
 
 /**
  * Select the Trinkhornzauber of the currently open character.
  */
 export const selectDynamicTrinkhornzauber = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.trinkhornzauber ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.trinkhornzauber
 
 /**
  * Select the vampiric gifts of the currently open character.
  */
 export const selectDynamicVampiricGifts = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.vampiricGifts ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.vampiricGifts
 
 /**
  * Select the visions of the currently open character.
  */
 export const selectDynamicVisions = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.visions ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.visions
 
 /**
  * Select the wand enchantments of the currently open character.
  */
 export const selectDynamicWandEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.wandEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.wandEnchantments
 
 /**
  * Select the weapon enchantments of the currently open character.
  */
 export const selectDynamicWeaponEnchantments = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.weaponEnchantments ?? {}
+  selectCurrentCharacter(state)?.specialAbilities.weaponEnchantments
 
 /**
  * Select the attributes of the currently open character.
  */
 export const selectDynamicAttributes = (state: RootState) =>
-  selectCurrentCharacter(state)?.attributes ?? {}
+  selectCurrentCharacter(state)?.attributes
 
 /**
  * Select the derived characteristics of the currently open character.
@@ -832,120 +838,117 @@ export const selectKarmaPointsPermanentlyLostBoughtBack = (state: RootState) =>
 /**
  * Select the skills of the currently open character.
  */
-export const selectDynamicSkills = (state: RootState) => selectCurrentCharacter(state)?.skills ?? {}
+export const selectDynamicSkills = (state: RootState) => selectCurrentCharacter(state)?.skills
 
 /**
  * Select the close combat techniques of the currently open character.
  */
 export const selectDynamicCloseCombatTechniques = (state: RootState) =>
-  selectCurrentCharacter(state)?.combatTechniques.close ?? {}
+  selectCurrentCharacter(state)?.combatTechniques.close
 
 /**
  * Select the ranged combat techniques of the currently open character.
  */
 export const selectDynamicRangedCombatTechniques = (state: RootState) =>
-  selectCurrentCharacter(state)?.combatTechniques.ranged ?? {}
+  selectCurrentCharacter(state)?.combatTechniques.ranged
 
 /**
  * Select the cantrips of the currently open character.
  */
-export const selectDynamicCantrips = (state: RootState) =>
-  selectCurrentCharacter(state)?.cantrips ?? []
+export const selectDynamicCantrips = (state: RootState) => selectCurrentCharacter(state)?.cantrips
 
 /**
  * Select the spells of the currently open character.
  */
-export const selectDynamicSpells = (state: RootState) => selectCurrentCharacter(state)?.spells ?? {}
+export const selectDynamicSpells = (state: RootState) => selectCurrentCharacter(state)?.spells
 
 /**
  * Select the rituals of the currently open character.
  */
-export const selectDynamicRituals = (state: RootState) =>
-  selectCurrentCharacter(state)?.rituals ?? {}
+export const selectDynamicRituals = (state: RootState) => selectCurrentCharacter(state)?.rituals
 
 /**
  * Select the curses of the currently open character.
  */
 export const selectDynamicCurses = (state: RootState) =>
-  selectCurrentCharacter(state)?.magicalActions.curses ?? {}
+  selectCurrentCharacter(state)?.magicalActions.curses
 
 /**
  * Select the elven magical songs of the currently open character.
  */
 export const selectDynamicElvenMagicalSongs = (state: RootState) =>
-  selectCurrentCharacter(state)?.magicalActions.elvenMagicalSongs ?? {}
+  selectCurrentCharacter(state)?.magicalActions.elvenMagicalSongs
 
 /**
  * Select the domination rituals of the currently open character.
  */
 export const selectDynamicDominationRituals = (state: RootState) =>
-  selectCurrentCharacter(state)?.magicalActions.dominationRituals ?? {}
+  selectCurrentCharacter(state)?.magicalActions.dominationRituals
 
 /**
  * Select the magical dances of the currently open character.
  */
 export const selectDynamicMagicalDances = (state: RootState) =>
-  selectCurrentCharacter(state)?.magicalActions.magicalDances ?? {}
+  selectCurrentCharacter(state)?.magicalActions.magicalDances
 
 /**
  * Select the magical melodies of the currently open character.
  */
 export const selectDynamicMagicalMelodies = (state: RootState) =>
-  selectCurrentCharacter(state)?.magicalActions.magicalMelodies ?? {}
+  selectCurrentCharacter(state)?.magicalActions.magicalMelodies
 
 /**
  * Select the jester tricks of the currently open character.
  */
 export const selectDynamicJesterTricks = (state: RootState) =>
-  selectCurrentCharacter(state)?.magicalActions.jesterTricks ?? {}
+  selectCurrentCharacter(state)?.magicalActions.jesterTricks
 
 /**
  * Select the animist powers of the currently open character.
  */
 export const selectDynamicAnimistPowers = (state: RootState) =>
-  selectCurrentCharacter(state)?.magicalActions.animistPowers ?? {}
+  selectCurrentCharacter(state)?.magicalActions.animistPowers
 
 /**
  * Select the geode rituals of the currently open character.
  */
 export const selectDynamicGeodeRituals = (state: RootState) =>
-  selectCurrentCharacter(state)?.magicalActions.geodeRituals ?? {}
+  selectCurrentCharacter(state)?.magicalActions.geodeRituals
 
 /**
  * Select the zibilja rituals of the currently open character.
  */
 export const selectDynamicZibiljaRituals = (state: RootState) =>
-  selectCurrentCharacter(state)?.magicalActions.zibiljaRituals ?? {}
+  selectCurrentCharacter(state)?.magicalActions.zibiljaRituals
 
 /**
  * Select the blessings of the currently open character.
  */
-export const selectDynamicBlessings = (state: RootState) =>
-  selectCurrentCharacter(state)?.blessings ?? []
+export const selectDynamicBlessings = (state: RootState) => selectCurrentCharacter(state)?.blessings
 
 /**
  * Select the liturgical chants of the currently open character.
  */
 export const selectDynamicLiturgicalChants = (state: RootState) =>
-  selectCurrentCharacter(state)?.liturgicalChants ?? {}
+  selectCurrentCharacter(state)?.liturgicalChants
 
 /**
  * Select the ceremonies of the currently open character.
  */
 export const selectDynamicCeremonies = (state: RootState) =>
-  selectCurrentCharacter(state)?.ceremonies ?? {}
+  selectCurrentCharacter(state)?.ceremonies
 
 /**
  * Select the magical primary attribute dependencies of the currently open character.
  */
 export const selectMagicalPrimaryAttributeDependencies = (state: RootState) =>
-  selectCurrentCharacter(state)?.magicalPrimaryAttributeDependencies ?? []
+  selectCurrentCharacter(state)?.magicalPrimaryAttributeDependencies
 
 /**
  * Select the blessed primary attribute dependencies of the currently open character.
  */
 export const selectBlessedPrimaryAttributeDependencies = (state: RootState) =>
-  selectCurrentCharacter(state)?.blessedPrimaryAttributeDependencies ?? []
+  selectCurrentCharacter(state)?.blessedPrimaryAttributeDependencies
 
 /**
  * Select the pact of the currently open character, if any.
