@@ -9,6 +9,9 @@ type Props = {
   isRemovingEnabled: boolean
 }
 
+/**
+ * Returns a list of attribute values.
+ */
 export const AttributeList: FC<Props> = props => {
   const attributes = useAppSelector(selectVisibleAttributes)
 

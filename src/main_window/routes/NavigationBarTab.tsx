@@ -97,6 +97,9 @@ type Props = {
   displayRoute: DisplayRoute
 }
 
+/**
+ * Returns a single navigation tab.
+ */
 export const NavigationBarTab: FC<Props> = props => {
   const { className, displayRoute } = props
 

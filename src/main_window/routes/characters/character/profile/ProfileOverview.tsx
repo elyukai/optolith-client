@@ -18,20 +18,39 @@ import { useProfessionName } from "../../../../hooks/professionName.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectCanAddAdventurePoints } from "../../../../selectors/characterSelectors.ts"
 import { selectCurrentCulture } from "../../../../selectors/cultureSelectors.ts"
-import { selectCurrentExperienceLevel, selectStartExperienceLevel } from "../../../../selectors/experienceLevelSelectors.ts"
+import {
+  selectCurrentExperienceLevel,
+  selectStartExperienceLevel,
+} from "../../../../selectors/experienceLevelSelectors.ts"
 import { selectCurrentProfession } from "../../../../selectors/professionSelectors.ts"
-import { selectCanDefineCustomProfessionName, selectCanFinishCharacterCreation, selectShowFinishCharacterCreation } from "../../../../selectors/profileSelectors.ts"
+import {
+  selectCanDefineCustomProfessionName,
+  selectCanFinishCharacterCreation,
+  selectShowFinishCharacterCreation,
+} from "../../../../selectors/profileSelectors.ts"
 import { selectCurrentRace, selectCurrentRaceVariant } from "../../../../selectors/raceSelectors.ts"
-import { deleteAvatar, finishCharacterCreation, selectAvatar, selectName, selectSex, selectTotalAdventurePoints, setName } from "../../../../slices/characterSlice.ts"
+import {
+  deleteAvatar,
+  finishCharacterCreation,
+  selectAvatar,
+  selectName,
+  selectSex,
+  selectTotalAdventurePoints,
+  setName,
+} from "../../../../slices/characterSlice.ts"
 import { setCustomProfessionName } from "../../../../slices/professionSlice.ts"
 import { PersonalData } from "./PersonalData.tsx"
 import "./ProfileOverview.scss"
 
+/**
+ * Returns a page for managing the character’s profile, including the name,
+ * adventure points and personal data.
+ */
 export const ProfileOverview: FC = () => {
   const dispatch = useAppDispatch()
   const name = useAppSelector(selectName)
-  const [ isEditingName, setIsEditingName ] = useState(false)
-  const [ isEditingProfessionName, setIsEditingProfessionName ] = useState(false)
+  const [isEditingName, setIsEditingName] = useState(false)
+  const [isEditingProfessionName, setIsEditingProfessionName] = useState(false)
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
@@ -55,7 +74,7 @@ export const ProfileOverview: FC = () => {
       dispatch(setName(newName))
       setIsEditingName(false)
     },
-    [ dispatch ]
+    [dispatch],
   )
 
   const handleEditProfessionName = useCallback(
@@ -63,79 +82,62 @@ export const ProfileOverview: FC = () => {
       dispatch(setCustomProfessionName(newName))
       setIsEditingProfessionName(false)
     },
-    [ dispatch ]
+    [dispatch],
   )
 
-  const handleStartEditName = useCallback(
-    () => setIsEditingName(true),
-    [ setIsEditingName ]
-  )
+  const handleStartEditName = useCallback(() => setIsEditingName(true), [setIsEditingName])
 
-  const handleCancelEditName = useCallback(
-    () => setIsEditingName(false),
-    [ setIsEditingName ]
-  )
+  const handleCancelEditName = useCallback(() => setIsEditingName(false), [setIsEditingName])
 
   const handleStartEditProfessionName = useCallback(
     () => setIsEditingProfessionName(true),
-    [ setIsEditingProfessionName ]
+    [setIsEditingProfessionName],
   )
 
   const handleCancelEditProfessionName = useCallback(
     () => setIsEditingProfessionName(false),
-    [ setIsEditingProfessionName ]
+    [setIsEditingProfessionName],
   )
 
-  const handleDeleteAvatar = useCallback(
-    () => dispatch(deleteAvatar()),
-    [ dispatch ]
-  )
+  const handleDeleteAvatar = useCallback(() => dispatch(deleteAvatar()), [dispatch])
 
   const handlFinishCharacterCreation = useCallback(
     () => dispatch(finishCharacterCreation()),
-    [ dispatch ]
+    [dispatch],
   )
 
-  const nameElement = isEditingName
-    ? (
-      <EditText
-        className="change-name"
-        cancel={handleCancelEditName}
-        submit={handleEditName}
-        text={name}
-        autoFocus
-        submitLabel={translate("Edit Name")}
-        cancelLabel={translate("Cancel")}
-        />
-    )
-    : (
-      <h1 className="confirm-edit">
-        {name}
-        <IconButton label={translate("Edit Name")} icon="&#xE90c;" onClick={handleStartEditName} />
-      </h1>
-    )
+  const nameElement = isEditingName ? (
+    <EditText
+      className="change-name"
+      cancel={handleCancelEditName}
+      submit={handleEditName}
+      text={name}
+      autoFocus
+      submitLabel={translate("Edit Name")}
+      cancelLabel={translate("Cancel")}
+    />
+  ) : (
+    <h1 className="confirm-edit">
+      {name}
+      <IconButton label={translate("Edit Name")} icon="&#xE90c;" onClick={handleStartEditName} />
+    </h1>
+  )
 
-  const professionNameElement =
-    canDefineCustomProfessionName
-      ? (isEditingProfessionName
-        ? (
-          <EditText
-            submit={handleEditProfessionName}
-            submitLabel={translate("Edit Profession Name")}
-            cancel={handleCancelEditProfessionName}
-            cancelLabel={translate("Cancel")}
-            text={professionName}
-            />
-        )
-        : (
-          <Button
-            className="edit-profession-name-btn"
-            onClick={handleStartEditProfessionName}
-            >
-            {translate("Edit Profession Name")}
-          </Button>
-        ))
-      : null
+  const professionNameElement = canDefineCustomProfessionName ? (
+    isEditingProfessionName ? (
+      <EditText
+        submit={handleEditProfessionName}
+        submitLabel={translate("Edit Profession Name")}
+        cancel={handleCancelEditProfessionName}
+        cancelLabel={translate("Cancel")}
+        text={professionName}
+      />
+    ) : (
+      <Button className="edit-profession-name-btn" onClick={handleStartEditProfessionName}>
+        {translate("Edit Profession Name")}
+      </Button>
+    )
+  ) : null
 
   return (
     <Page id="personal-data">
@@ -146,103 +148,89 @@ export const ProfileOverview: FC = () => {
               <AvatarWrapper src={avatar ?? ""} /* TODO: onClick={openEditCharacterAvatar} */ />
               <div className="text-wrapper">
                 {nameElement}
-                {
-                  currentProfession === undefined
-                  ? null
-                  : (
-                    <VerticalList className="rcp">
-                      <span>
-                        {((): string => {
-                          switch (sex.type) {
-                            case "Male":     return translate("Male")
-                            case "Female":   return translate("Female")
-                            case "BalThani": return translate("Bal’Thani")
-                            case "Tsajana":  return translate("Tsajana")
-                            case "Custom":   return sex.name
-                            default: return assertExhaustive(sex)
-                          }
-                        })()}
-                      </span>
-                      <span className="race">
-                        {currentRace === undefined
-                          ? ""
-                          : getFullRaceName(translateMap, currentRace, currentRaceVariant)}
-                      </span>
-                      <span className="culture">
-                        {currentCulture === undefined
-                          ? ""
-                          : getFullCultureName(translateMap, currentCulture)}
-                      </span>
-                      <span className="profession">
-                        {fullProfessionName}
-                      </span>
-                    </VerticalList>
-                  )
-                }
+                {currentProfession === undefined ? null : (
+                  <VerticalList className="rcp">
+                    <span>
+                      {((): string => {
+                        switch (sex.type) {
+                          case "Male":
+                            return translate("Male")
+                          case "Female":
+                            return translate("Female")
+                          case "BalThani":
+                            return translate("Bal’Thani")
+                          case "Tsajana":
+                            return translate("Tsajana")
+                          case "Custom":
+                            return sex.name
+                          default:
+                            return assertExhaustive(sex)
+                        }
+                      })()}
+                    </span>
+                    <span className="race">
+                      {currentRace === undefined
+                        ? ""
+                        : getFullRaceName(translateMap, currentRace, currentRaceVariant)}
+                    </span>
+                    <span className="culture">
+                      {currentCulture === undefined
+                        ? ""
+                        : getFullCultureName(translateMap, currentCulture)}
+                    </span>
+                    <span className="profession">{fullProfessionName}</span>
+                  </VerticalList>
+                )}
                 <VerticalList className="el">
                   <span>
-                    {
-                      startExpLevel === undefined || currentExpLevel === undefined
+                    {startExpLevel === undefined || currentExpLevel === undefined
                       ? "—"
                       : currentExpLevel.id === startExpLevel.id
-                      ? (translateMap(startExpLevel.translations)?.name ?? "—")
-                      : `${(translateMap(currentExpLevel.translations)?.name ?? "—")} (${(translateMap(startExpLevel.translations)?.name ?? "—")})`
-                    }
+                      ? translateMap(startExpLevel.translations)?.name ?? "—"
+                      : `${translateMap(currentExpLevel.translations)?.name ?? "—"} (${
+                          translateMap(startExpLevel.translations)?.name ?? "—"
+                        })`}
                   </span>
-                  <span>
-                    {translate("{0} AP", totalAdventurePoints ?? 0)}
-                  </span>
+                  <span>{translate("{0} AP", totalAdventurePoints ?? 0)}</span>
                 </VerticalList>
               </div>
             </GridItem>
             <GridItem className="main-profile-actions">
-              {
-                canAddAdventurePoints
-                  ? (
-                      <Button
-                        className="add-ap"
-                        disabled // TODO: onClick={openAddAdventurePoints}
-                        >
-                        {translate("Add AP")}
-                      </Button>
-                    )
-                  : null
-              }
+              {canAddAdventurePoints ? (
+                <Button
+                  className="add-ap"
+                  disabled // TODO: onClick={openAddAdventurePoints}
+                >
+                  {translate("Add AP")}
+                </Button>
+              ) : null}
               <Button
                 className="delete-avatar"
                 onClick={handleDeleteAvatar}
                 disabled={avatar === undefined}
-                >
+              >
                 {translate("Delete Avatar")}
               </Button>
               {professionNameElement}
             </GridItem>
-            {
-              currentProfession === undefined
-              ? null
-              : (
-                <GridItem>
-                  <h3>{translate("Personal Data")}</h3>
-                  <PersonalData />
-                </GridItem>
-              )
-            }
-            {
-              showFinishCharacterCreation
-                ? (
-                  <GridItem>
-                    <Button
-                      className="end-char-creation"
-                      onClick={handlFinishCharacterCreation}
-                      primary
-                      disabled={!canFinishCharacterCreation}
-                      >
-                      {translate("Finish Character Creation")}
-                    </Button>
-                  </GridItem>
-                )
-                : null
-            }
+            {currentProfession === undefined ? null : (
+              <GridItem>
+                <h3>{translate("Personal Data")}</h3>
+                <PersonalData />
+              </GridItem>
+            )}
+            {showFinishCharacterCreation ? (
+              <GridItem>
+                <Button
+                  className="end-char-creation"
+                  onClick={handlFinishCharacterCreation}
+                  primary
+                  disabled={!canFinishCharacterCreation}
+                >
+                  {translate("Finish Character Creation")}
+                </Button>
+              </GridItem>
+            ) : null}
             {
               // TODO: Maybe.elem(3)(phase)
               //   ? (

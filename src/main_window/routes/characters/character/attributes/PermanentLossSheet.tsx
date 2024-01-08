@@ -10,6 +10,9 @@ type Props = {
   remove(value: number): void
 }
 
+/**
+ * Returns a sheet for managing permanent energy loss.
+ */
 export const PermanentLossSheet: FC<Props> = props => {
   const { remove, isOpen, close } = props
 

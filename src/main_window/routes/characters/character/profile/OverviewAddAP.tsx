@@ -12,29 +12,28 @@ type Props = {
   close(): void
 }
 
+/**
+ * Returns a sheet for adding adventure points to the character.
+ */
 export const OverviewAddAP: FC<Props> = props => {
   const { addAdventurePoints, isRemovingEnabled, isOpen, close } = props
 
   const translate = useTranslate()
-  const [ value, setValue ] = useState("")
-  const [ prevIsOpen, setPrevIsOpen ] = useState(false)
+  const [value, setValue] = useState("")
+  const [prevIsOpen, setPrevIsOpen] = useState(false)
 
   if (prevIsOpen !== isOpen) {
     setValue("")
     setPrevIsOpen(isOpen)
   }
 
-  const addAP =
-    useCallback(
-      () => {
-        const mvalue = parseInt(value)
+  const addAP = useCallback(() => {
+    const mvalue = parseInt(value)
 
-        if (mvalue !== undefined) {
-          addAdventurePoints(mvalue)
-        }
-      },
-      [ addAdventurePoints, value ]
-    )
+    if (mvalue !== undefined) {
+      addAdventurePoints(mvalue)
+    }
+  }, [addAdventurePoints, value])
 
   return (
     <Dialog
@@ -44,7 +43,7 @@ export const OverviewAddAP: FC<Props> = props => {
         {
           disabled: isRemovingEnabled
             ? !isInteger(value)
-            : (!isNaturalNumber(value) || value === "0"),
+            : !isNaturalNumber(value) || value === "0",
           label: translate("Add"),
           onClick: addAP,
         },
@@ -54,14 +53,14 @@ export const OverviewAddAP: FC<Props> = props => {
       ]}
       close={close}
       isOpen={isOpen}
-      >
+    >
       <TextField
         hint={translate("How many Adventure Points do you want to add?")}
         value={value}
         onChange={setValue}
         fullWidth
         valid={isRemovingEnabled ? isInteger(value) : isNaturalNumber(value) && value !== "0"}
-        />
+      />
     </Dialog>
   )
 }

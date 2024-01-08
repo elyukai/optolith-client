@@ -12,6 +12,10 @@ import {
 } from "../../../../selectors/adventurePointSelectors.ts"
 import { selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages } from "../../../../selectors/traditionSelectors.ts"
 
+/**
+ * Returns a sidebar widget for showing spent and available adventure points for
+ * advantages or disadvantages.
+ */
 export const AdventurePointsSpent: FC = () => {
   const translate = useTranslate()
 

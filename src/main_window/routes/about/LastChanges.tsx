@@ -7,6 +7,9 @@ import { ExternalAPI } from "../../external.ts"
 
 let savedText: string | undefined = undefined
 
+/**
+ * Returns a page that shows the changelog.
+ */
 export const LastChanges: FC = () => {
   const [text, setText] = useState(savedText ?? "...")
 

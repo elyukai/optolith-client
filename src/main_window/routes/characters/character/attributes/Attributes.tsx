@@ -15,6 +15,9 @@ import "./Attributes.scss"
 import { AttributeList } from "./AttributesList.tsx"
 import { DerivedCharacteristicsList } from "./DerivedCharacteristicsList.tsx"
 
+/**
+ * Returns a page for managing attributes.
+ */
 export const Attributes: FC = () => {
   const translate = useTranslate()
   const totalPoints = useAppSelector(selectTotalPoints)

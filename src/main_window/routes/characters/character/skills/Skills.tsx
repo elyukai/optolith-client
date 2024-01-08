@@ -46,6 +46,9 @@ const isTopMarginNeeded = (
   mprev !== undefined &&
   curr.static.group.id.skill_group !== mprev.static.group.id.skill_group
 
+/**
+ * Returns a page for managing skills.
+ */
 export const Skills: FC = () => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()

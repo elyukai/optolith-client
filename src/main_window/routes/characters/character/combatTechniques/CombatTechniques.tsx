@@ -47,6 +47,9 @@ const isTopMarginNeeded = (
   mprev: DisplayedCombatTechnique | undefined,
 ) => sortOrder === "group" && mprev !== undefined && curr.kind !== mprev.kind
 
+/**
+ * Returns a page for managing combat techniques.
+ */
 export const CombatTechniques: FC = () => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()

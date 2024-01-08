@@ -14,6 +14,9 @@ import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts
 import { selectStaticOptionalRules } from "../../../../slices/databaseSlice.ts"
 import { OptionalRulesItem } from "./OptionalRulesItem.tsx"
 
+/**
+ * Returns a page section for managing optional rules.
+ */
 export const OptionalRules: FC = () => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()

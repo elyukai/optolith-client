@@ -19,6 +19,9 @@ import {
   selectSpecialAbilitiesSortOrder,
 } from "../../../../slices/settingsSlice.ts"
 
+/**
+ * Returns a page for managing special abilities.
+ */
 export const SpecialAbilities: FC = () => {
   const translate = useTranslate()
   const dispatch = useAppDispatch()

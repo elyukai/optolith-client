@@ -22,7 +22,7 @@ type Props = {
 }
 
 /**
- *
+ * Returns a single optional rule item.
  */
 export const OptionalRulesItem: FC<Props> = props => {
   const {

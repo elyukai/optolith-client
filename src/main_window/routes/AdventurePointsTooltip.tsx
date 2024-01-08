@@ -28,6 +28,10 @@ import {
 } from "../selectors/traditionSelectors.ts"
 import { selectTotalAdventurePoints } from "../slices/characterSlice.ts"
 
+/**
+ * Returns the contents for the adventure points tooltip that displays which
+ * entry groups adventure points were spent on.
+ */
 export const AdventurePointsTooltip: FC = () => {
   const translate = useTranslate()
 

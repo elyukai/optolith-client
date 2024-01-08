@@ -10,6 +10,9 @@ import { selectAttributeAdjustmentId } from "../../../../slices/characterSlice.t
 import { changeAttributeAdjustmentId } from "../../../../slices/raceSlice.ts"
 import "./AttributeAdjustment.scss"
 
+/**
+ * Returns a widget for changing the attribute adjustment set for the race.
+ */
 export const AttributesAdjustment: FC = () => {
   const dispatch = useAppDispatch()
   const translate = useTranslate()

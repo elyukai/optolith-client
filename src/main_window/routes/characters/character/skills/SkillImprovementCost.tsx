@@ -8,6 +8,9 @@ type Props = {
   ic?: ImprovementCost
 }
 
+/**
+ * Returns a row section that displays an improvement cost.
+ */
 export const SkillImprovementCost: FC<Props> = props => {
   const { ic } = props
 

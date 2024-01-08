@@ -24,6 +24,9 @@ import {
 } from "../../../../slices/settingsSlice.ts"
 import { AdventurePointsSpent } from "./AdventurePointsSpent.tsx"
 
+/**
+ * Returns a page for managing disadvantages.
+ */
 export const Disadvantages: FC = () => {
   const translate = useTranslate()
   const dispatch = useAppDispatch()

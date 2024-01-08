@@ -16,6 +16,9 @@ const onRestore = () => ExternalAPI.restore()
 const onClose = () => ExternalAPI.close()
 const isMaximized = () => ExternalAPI.isMaximized()
 
+/**
+ * Returns the React application for the main window.
+ */
 export const Root: FC = () => {
   const language = useAppSelector(selectLocale)
   const areAnimationsEnabled = useAppSelector(selectAreAnimationsEnabled)

@@ -9,9 +9,47 @@ import { minus, plusMinus, signStr } from "../../../../../shared/utils/math.ts"
 import { isEmptyOr, isFloat, isNaturalNumber } from "../../../../../shared/utils/regex.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { selectAvailableEyeColors, selectAvailableEyeColorsIdDice, selectAvailableHairColors, selectAvailableHairColorsIdDice, selectAvailableSocialStatuses, selectRandomHeightCalculation, selectRandomWeightCalculation } from "../../../../selectors/personalDataSelectors.ts"
-import { selectAge, selectCharacteristics, selectDateOfBirth, selectFamily, selectOtherInfo, selectPlaceOfBirth, selectPredefinedEyeColor, selectPredefinedHairColor, selectSize, selectSocialStatusId, selectTitle, selectWeight } from "../../../../slices/characterSlice.ts"
-import { rerollEyeColor, rerollHairColor, rerollSize, rerollWeight, setAge, setCharacteristics, setDateOfBirth, setFamily, setOtherInfo, setPlaceOfBirth, setPredefinedEyeColor, setPredefinedHairColor, setSize, setSocialStatus, setTitle, setWeight } from "../../../../slices/personalDataSlice.ts"
+import {
+  selectAvailableEyeColors,
+  selectAvailableEyeColorsIdDice,
+  selectAvailableHairColors,
+  selectAvailableHairColorsIdDice,
+  selectAvailableSocialStatuses,
+  selectRandomHeightCalculation,
+  selectRandomWeightCalculation,
+} from "../../../../selectors/personalDataSelectors.ts"
+import {
+  selectAge,
+  selectCharacteristics,
+  selectDateOfBirth,
+  selectFamily,
+  selectOtherInfo,
+  selectPlaceOfBirth,
+  selectPredefinedEyeColor,
+  selectPredefinedHairColor,
+  selectSize,
+  selectSocialStatusId,
+  selectTitle,
+  selectWeight,
+} from "../../../../slices/characterSlice.ts"
+import {
+  rerollEyeColor,
+  rerollHairColor,
+  rerollSize,
+  rerollWeight,
+  setAge,
+  setCharacteristics,
+  setDateOfBirth,
+  setFamily,
+  setOtherInfo,
+  setPlaceOfBirth,
+  setPredefinedEyeColor,
+  setPredefinedHairColor,
+  setSize,
+  setSocialStatus,
+  setTitle,
+  setWeight,
+} from "../../../../slices/personalDataSlice.ts"
 import { PersonalDataDropdown } from "./PersonalDataDropdown.tsx"
 import { PersonalDataDropdownWithReroll } from "./PersonalDataDropdownWithReroll.tsx"
 import { PersonalDataTextField } from "./PersonalDataTextField.tsx"
@@ -23,6 +61,9 @@ const validateEmptyOrNaturalNumber = (value: string | undefined) =>
 const validateEmptyOrFloat = (value: string | undefined) =>
   value === undefined || isEmptyOr(isFloat, value)
 
+/**
+ * Returns a page for managing personal data of the character.
+ */
 export const PersonalData: FC = () => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
@@ -34,23 +75,27 @@ export const PersonalData: FC = () => {
   const hairColorOptions = useMemo(
     () =>
       availableHairColors
-        .map((hairColor): DropdownOption<number> => ({
-          id: hairColor.id,
-          name: translateMap(hairColor.translations)?.name ?? hairColor.id.toFixed(),
-        }))
+        .map(
+          (hairColor): DropdownOption<number> => ({
+            id: hairColor.id,
+            name: translateMap(hairColor.translations)?.name ?? hairColor.id.toFixed(),
+          }),
+        )
         .sort(reduceCompare(compareAt(x => x.name, localeCompare))),
-    [ availableHairColors, localeCompare, translateMap ],
+    [availableHairColors, localeCompare, translateMap],
   )
 
   const eyeColorOptions = useMemo(
     () =>
       availableEyeColors
-        .map((eyeColor): DropdownOption<number> => ({
-          id: eyeColor.id,
-          name: translateMap(eyeColor.translations)?.name ?? eyeColor.id.toFixed(),
-        }))
+        .map(
+          (eyeColor): DropdownOption<number> => ({
+            id: eyeColor.id,
+            name: translateMap(eyeColor.translations)?.name ?? eyeColor.id.toFixed(),
+          }),
+        )
         .sort(reduceCompare(compareAt(x => x.name, localeCompare))),
-    [ availableEyeColors, localeCompare, translateMap ],
+    [availableEyeColors, localeCompare, translateMap],
   )
 
   const randomHeightCalculation = useAppSelector(selectRandomHeightCalculation)
@@ -58,13 +103,12 @@ export const PersonalData: FC = () => {
   const heightCalculationString = useMemo(() => {
     const dice = translate("D")
 
-    const randomPart =
-      randomHeightCalculation.random
-        .map(({ number, sides }) => ` ${signStr(sides)} ${number}${dice}${sides}`)
-        .join("")
+    const randomPart = randomHeightCalculation.random
+      .map(({ number, sides }) => ` ${signStr(sides)} ${number}${dice}${sides}`)
+      .join("")
 
     return ` (${randomHeightCalculation.base}${randomPart})`
-  }, [ randomHeightCalculation.base, randomHeightCalculation.random, translate ])
+  }, [randomHeightCalculation.base, randomHeightCalculation.random, translate])
 
   const randomWeightCalculation = useAppSelector(selectRandomWeightCalculation)
 
@@ -74,36 +118,40 @@ export const PersonalData: FC = () => {
 
     const signStrWeight = (offsetStrategy: WeightDiceOffsetStrategy) => {
       switch (offsetStrategy) {
-        case "Add":                return "+"
-        case "Subtract":           return minus
-        case "AddEvenSubtractOdd": return plusMinus
-        default: return assertExhaustive(offsetStrategy)
+        case "Add":
+          return "+"
+        case "Subtract":
+          return minus
+        case "AddEvenSubtractOdd":
+          return plusMinus
+        default:
+          return assertExhaustive(offsetStrategy)
       }
     }
 
-    const randomPart =
-      randomWeightCalculation.random
-        .map(({ number, sides, offset_strategy }) => ` ${signStrWeight(offset_strategy)} ${number}${dice}${sides}`)
-        .join("")
+    const randomPart = randomWeightCalculation.random
+      .map(
+        ({ number, sides, offset_strategy }) =>
+          ` ${signStrWeight(offset_strategy)} ${number}${dice}${sides}`,
+      )
+      .join("")
 
     return ` (${size} ${minus} ${randomWeightCalculation.base}${randomPart})`
-  }, [
-    randomWeightCalculation.base,
-    randomWeightCalculation.random,
-    translate,
-  ])
+  }, [randomWeightCalculation.base, randomWeightCalculation.random, translate])
 
   const availableSocialStatuses = useAppSelector(selectAvailableSocialStatuses)
 
   const socialStatusOptions = useMemo(
     () =>
       availableSocialStatuses
-        .map((socialStatus): DropdownOption<number> => ({
-          id: socialStatus.id,
-          name: translateMap(socialStatus.translations)?.name ?? socialStatus.id.toFixed(),
-        }))
+        .map(
+          (socialStatus): DropdownOption<number> => ({
+            id: socialStatus.id,
+            name: translateMap(socialStatus.translations)?.name ?? socialStatus.id.toFixed(),
+          }),
+        )
         .sort(reduceCompare(compareAt(x => x.name, localeCompare))),
-    [ availableSocialStatuses, localeCompare, translateMap ],
+    [availableSocialStatuses, localeCompare, translateMap],
   )
 
   const dispatch = useAppDispatch()
@@ -112,22 +160,22 @@ export const PersonalData: FC = () => {
 
   const handleRerollHairColor = useCallback(
     () => dispatch(rerollHairColor(availableHairColorsIdDice)),
-    [ dispatch, availableHairColorsIdDice ]
+    [dispatch, availableHairColorsIdDice],
   )
 
   const handleRerollEyeColor = useCallback(
     () => dispatch(rerollEyeColor(availableEyeColorsIdDice)),
-    [ dispatch, availableEyeColorsIdDice ]
+    [dispatch, availableEyeColorsIdDice],
   )
 
   const handleRerollSize = useCallback(
     () => dispatch(rerollSize(randomHeightCalculation)),
-    [ dispatch, randomHeightCalculation ]
+    [dispatch, randomHeightCalculation],
   )
 
   const handleRerollWeight = useCallback(
     () => dispatch(rerollWeight(randomWeightCalculation, randomHeightCalculation)),
-    [ dispatch, randomWeightCalculation, randomHeightCalculation ]
+    [dispatch, randomWeightCalculation, randomHeightCalculation],
   )
 
   return (
@@ -136,23 +184,23 @@ export const PersonalData: FC = () => {
         label={translate("Family")}
         selector={selectFamily}
         action={setFamily}
-        />
+      />
       <PersonalDataTextField
         label={translate("Place of Birth")}
         selector={selectPlaceOfBirth}
         action={setPlaceOfBirth}
-        />
+      />
       <PersonalDataTextField
         label={translate("Date of Birth")}
         selector={selectDateOfBirth}
         action={setDateOfBirth}
-        />
+      />
       <PersonalDataTextField
         label={translate("Age")}
         selector={selectAge}
         action={setAge}
         validator={validateEmptyOrNaturalNumber}
-        />
+      />
       <PersonalDataDropdownWithReroll
         label={translate("Hair Color")}
         rerollLabel={translate("Reroll Hair Color")}
@@ -160,7 +208,7 @@ export const PersonalData: FC = () => {
         selector={selectPredefinedHairColor}
         action={setPredefinedHairColor}
         onReroll={handleRerollHairColor}
-        />
+      />
       <PersonalDataDropdownWithReroll
         label={translate("Eye Color")}
         rerollLabel={translate("Reroll Eye Color")}
@@ -168,7 +216,7 @@ export const PersonalData: FC = () => {
         selector={selectPredefinedEyeColor}
         action={setPredefinedEyeColor}
         onReroll={handleRerollEyeColor}
-        />
+      />
       <PersonalDataTextFieldWithReroll
         label={`${translate("Size")}${heightCalculationString}`}
         rerollLabel={translate("Reroll Size")}
@@ -176,7 +224,7 @@ export const PersonalData: FC = () => {
         action={setSize}
         onReroll={handleRerollSize}
         validator={validateEmptyOrFloat}
-        />
+      />
       <PersonalDataTextFieldWithReroll
         label={`${translate("Weight")}${weightCalculationString}`}
         rerollLabel={translate("Reroll Weight")}
@@ -184,28 +232,24 @@ export const PersonalData: FC = () => {
         action={setWeight}
         onReroll={handleRerollWeight}
         validator={validateEmptyOrNaturalNumber}
-        />
-      <PersonalDataTextField
-        label={translate("Title")}
-        selector={selectTitle}
-        action={setTitle}
-        />
+      />
+      <PersonalDataTextField label={translate("Title")} selector={selectTitle} action={setTitle} />
       <PersonalDataDropdown
         label={translate("Social Status")}
         selector={selectSocialStatusId}
         action={setSocialStatus}
         options={socialStatusOptions}
-        />
+      />
       <PersonalDataTextField
         label={translate("Characteristics")}
         selector={selectCharacteristics}
         action={setCharacteristics}
-        />
+      />
       <PersonalDataTextField
         label={translate("Other Information")}
         selector={selectOtherInfo}
         action={setOtherInfo}
-        />
+      />
     </div>
   )
 }

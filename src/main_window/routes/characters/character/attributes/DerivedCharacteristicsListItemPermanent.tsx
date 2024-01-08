@@ -30,6 +30,10 @@ type Props = {
   isRemovingEnabled: boolean
 }
 
+/**
+ * Returns a value item and buttons to adjust the value for a supplementary
+ * derived characteristic value.
+ */
 export const DerivedCharacteristicsListItemPermanent: FC<Props> = props => {
   const { attribute, isRemovingEnabled } = props
 

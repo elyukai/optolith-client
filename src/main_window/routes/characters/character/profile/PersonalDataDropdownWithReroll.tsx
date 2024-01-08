@@ -7,7 +7,7 @@ import { InputButtonGroup } from "../../../../../shared/components/inputButtonGr
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { RootState } from "../../../../store.ts"
 
-export type Props = {
+type Props = {
   label: string
   rerollLabel: string
   selector: (state: RootState) => number | undefined
@@ -16,15 +16,11 @@ export type Props = {
   onReroll: () => void
 }
 
+/**
+ * Returns a dropdown with a reroll option for use with personal data.
+ */
 export const PersonalDataDropdownWithReroll: FC<Props> = props => {
-  const {
-    label,
-    rerollLabel,
-    selector,
-    options,
-    action,
-    onReroll,
-  } = props
+  const { label, rerollLabel, selector, options, action, onReroll } = props
 
   const dispatch = useAppDispatch()
   const value = useAppSelector(selector)
@@ -33,7 +29,7 @@ export const PersonalDataDropdownWithReroll: FC<Props> = props => {
     (newValue: number) => {
       dispatch(action(newValue))
     },
-    [ dispatch, action ]
+    [dispatch, action],
   )
 
   return (
@@ -44,13 +40,13 @@ export const PersonalDataDropdownWithReroll: FC<Props> = props => {
         onChange={handleSetValue}
         options={options}
         disabled={options.length === 1 && value === options[0]!.id}
-        />
+      />
       <IconButton
         icon="&#xE913;"
         label={rerollLabel}
         onClick={onReroll}
         disabled={options.length === 1}
-        />
+      />
     </InputButtonGroup>
   )
 }

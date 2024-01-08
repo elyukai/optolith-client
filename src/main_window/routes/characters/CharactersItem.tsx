@@ -26,11 +26,14 @@ import {
 } from "../../slices/databaseSlice.ts"
 import { goToTab } from "../../slices/routeSlice.ts"
 
-export type HerolistItemProps = {
+type Props = {
   character: CharacterState
 }
 
-export const CharactersItem: FC<HerolistItemProps> = props => {
+/**
+ * Returns a single character item.
+ */
+export const CharactersItem: FC<Props> = props => {
   const { character } = props
 
   const dispatch = useAppDispatch()

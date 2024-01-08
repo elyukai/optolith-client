@@ -115,6 +115,9 @@ const CloseCombatTechniquesListItem: FC<Props> = props => {
   )
 }
 
+/**
+ * Displays a close combat technique.
+ */
 const MemoCloseCombatTechniquesListItem = memo(CloseCombatTechniquesListItem)
 
 export { MemoCloseCombatTechniquesListItem as CloseCombatTechniquesListItem }

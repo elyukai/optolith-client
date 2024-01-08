@@ -11,6 +11,9 @@ import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts
 import { selectStaticFocusRules } from "../../../../slices/databaseSlice.ts"
 import { FocusRulesItem } from "./FocusRulesItem.tsx"
 
+/**
+ * Returns a page section for managing focus rules.
+ */
 export const FocusRules: FC = () => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()

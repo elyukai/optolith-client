@@ -7,6 +7,10 @@ interface Props {
   tabs: RoutePath[]
 }
 
+/**
+ * Returns a section underneath the main navigation tabs section for switching
+ * between subtabs.
+ */
 export const NavigationBarSubTabs: FC<Props> = props => {
   const { tabs } = props
 
@@ -16,7 +20,7 @@ export const NavigationBarSubTabs: FC<Props> = props => {
         <NavigationBarTab
           key={displayRoute.at(-1)}
           displayRoute={{ type: "single", route: displayRoute }}
-          />
+        />
       ))}
     </ul>
   )

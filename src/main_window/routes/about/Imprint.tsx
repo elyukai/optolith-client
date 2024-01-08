@@ -4,6 +4,9 @@ import { Page } from "../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"
 import { useTranslate } from "../../../shared/hooks/translate.ts"
 
+/**
+ * Returns a page containing the imprint.
+ */
 export const Imprint: FC = () => {
   const translate = useTranslate()
   return (

@@ -8,6 +8,9 @@ import { OptionalRules } from "./OptionalRules.tsx"
 import { RuleSources } from "./RuleSources.tsx"
 import "./Rules.scss"
 
+/**
+ * Returns a page for managing a character’s ruleset.
+ */
 export const Rules: FC = () => (
   <Page id="rules">
     <Main>

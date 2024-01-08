@@ -6,7 +6,7 @@ import { TextFieldLazy } from "../../../../../shared/components/textField/TextFi
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { RootState } from "../../../../store.ts"
 
-export type Props = {
+type Props = {
   label: string
   rerollLabel: string
   selector: (state: RootState) => string | undefined
@@ -15,15 +15,11 @@ export type Props = {
   validator?: (value: string | undefined) => boolean
 }
 
+/**
+ * Returns a textfield with a reroll option for use with personal data.
+ */
 export const PersonalDataTextFieldWithReroll: FC<Props> = props => {
-  const {
-    label,
-    rerollLabel,
-    selector,
-    action,
-    onReroll,
-    validator,
-  } = props
+  const { label, rerollLabel, selector, action, onReroll, validator } = props
 
   const dispatch = useAppDispatch()
   const value = useAppSelector(selector)
@@ -32,7 +28,7 @@ export const PersonalDataTextFieldWithReroll: FC<Props> = props => {
     (newValue: string) => {
       dispatch(action(newValue))
     },
-    [ dispatch, action ]
+    [dispatch, action],
   )
 
   return (
@@ -42,12 +38,8 @@ export const PersonalDataTextFieldWithReroll: FC<Props> = props => {
         value={value}
         onChange={handleSetValue}
         valid={validator ? validator(value) : true}
-        />
-      <IconButton
-        icon="&#xE913;"
-        label={rerollLabel}
-        onClick={onReroll}
-        />
+      />
+      <IconButton icon="&#xE913;" label={rerollLabel} onClick={onReroll} />
     </InputButtonGroup>
   )
 }

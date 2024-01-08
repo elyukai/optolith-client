@@ -11,6 +11,9 @@ type Props = {
   value: number | string
 }
 
+/**
+ * Returns an attribute value block.
+ */
 export const AttributeBorder: FC<Props> = props => {
   const { children, className, label, tooltip, tooltipMargin, value } = props
 

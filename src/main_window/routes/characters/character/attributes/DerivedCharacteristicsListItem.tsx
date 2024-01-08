@@ -27,6 +27,10 @@ type Props = {
   isRemovingEnabled: boolean
 }
 
+/**
+ * Returns a single derived characterstics value item with optional buttons to
+ * manage the value.
+ */
 export const DerivedCharacteristicsListItem: FC<Props> = props => {
   const { attribute, isInCharacterCreation, isRemovingEnabled } = props
 

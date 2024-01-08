@@ -18,6 +18,9 @@ type Props = {
   selectForInfo(id: number): void
 }
 
+/**
+ * Returns a list of buttons for a skill row.
+ */
 export const SkillButtons: React.FC<Props> = props => {
   const {
     activateDisabled,

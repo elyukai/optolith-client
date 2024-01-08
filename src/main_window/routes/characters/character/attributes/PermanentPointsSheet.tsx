@@ -19,6 +19,9 @@ type Props = {
   close(): void
 }
 
+/**
+ * Returns a sheet for managing lost and redeemed energy points.
+ */
 export const PermanentPointsSheet: FC<Props> = props => {
   const {
     id,

@@ -5,6 +5,9 @@ interface Props {
   handleSetTab(): void
 }
 
+/**
+ * Returns a back button for the beginning of the navigation bar.
+ */
 export const NavigationBarBack: FC<Props> = props => {
   const { handleSetTab } = props
 

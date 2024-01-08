@@ -17,6 +17,9 @@ import { Skills } from "./characters/character/skills/Skills.tsx"
 import { SpecialAbilities } from "./characters/character/specialAbilities/SpecialAbilities.tsx"
 import { Spells } from "./characters/character/spells/Spells.tsx"
 
+/**
+ * Returns a page based on the currently selected route.
+ */
 export const Router: FC = () => {
   const route = useAppSelector(selectRoute)
 

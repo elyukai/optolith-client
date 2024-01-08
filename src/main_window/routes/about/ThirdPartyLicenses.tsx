@@ -8,6 +8,9 @@ import "./ThirdPartyLicenses.scss"
 let savedVersion: string | undefined = undefined
 let savedText: string | undefined = undefined
 
+/**
+ * Returns a page that shows licenses of third-party software.
+ */
 export const ThirdPartyLicenses: FC = () => {
   const [version, setVersion] = useState(savedVersion ?? "0.0.0")
   const [text, setText] = useState(savedText ?? "...")

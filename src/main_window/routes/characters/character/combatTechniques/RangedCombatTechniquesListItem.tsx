@@ -113,6 +113,9 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
   )
 }
 
+/**
+ * Displays a ranged combat technique.
+ */
 const MemoRangedCombatTechniquesListItem = memo(RangedCombatTechniquesListItem)
 
 export { MemoRangedCombatTechniquesListItem as RangedCombatTechniquesListItem }

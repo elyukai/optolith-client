@@ -7,6 +7,9 @@ type Props = {
   addPoint?(id: number): void
 }
 
+/**
+ * Returns a row section that displays a skill rating.
+ */
 export const SkillRating: FC<Props> = props => {
   const { isNotActive, noIncrease, sr, addPoint } = props
 

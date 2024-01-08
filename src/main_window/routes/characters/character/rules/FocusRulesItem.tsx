@@ -17,7 +17,7 @@ type Props = {
 }
 
 /**
- *
+ * Returns a single focus rule item.
  */
 export const FocusRulesItem: FC<Props> = props => {
   const {

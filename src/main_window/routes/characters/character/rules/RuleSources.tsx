@@ -14,6 +14,9 @@ import { selectStaticPublications } from "../../../../slices/databaseSlice.ts"
 import { switchIncludeAllPublications } from "../../../../slices/rulesSlice.ts"
 import { RuleSourcesListItem } from "./RuleSourcesListItem.tsx"
 
+/**
+ * Returns a page section for managing the publications to use for a character.
+ */
 export const RuleSources: FC = () => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()

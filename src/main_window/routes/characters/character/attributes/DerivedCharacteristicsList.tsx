@@ -9,6 +9,9 @@ type Props = {
   isRemovingEnabled: boolean
 }
 
+/**
+ * Returns a list of derived characteristic values.
+ */
 export const DerivedCharacteristicsList: FC<Props> = props => {
   const { isInCharacterCreation, isRemovingEnabled } = props
 

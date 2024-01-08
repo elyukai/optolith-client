@@ -19,6 +19,9 @@ import { changeCharactersSortOrder, selectCharactersSortOrder } from "../../slic
 import "./Characters.scss"
 import { CharactersItem } from "./CharactersItem.tsx"
 
+/**
+ * Returns a page for managing characters.
+ */
 export const Characters: FC = () => {
   const translate = useTranslate()
   const localeCompare = useLocaleCompare()

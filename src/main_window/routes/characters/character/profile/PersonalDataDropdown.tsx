@@ -5,20 +5,18 @@ import { DropdownOption } from "../../../../../shared/components/dropdown/Dropdo
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { RootState } from "../../../../store.ts"
 
-export type Props = {
+type Props = {
   label: string
   selector: (state: RootState) => number | undefined
   options: DropdownOption<number>[]
   action: ActionCreatorWithPayload<number>
 }
 
+/**
+ * Returns a dropdown for use with personal data.
+ */
 export const PersonalDataDropdown: FC<Props> = props => {
-  const {
-    label,
-    selector,
-    options,
-    action,
-  } = props
+  const { label, selector, options, action } = props
 
   const dispatch = useAppDispatch()
   const value = useAppSelector(selector)
@@ -27,7 +25,7 @@ export const PersonalDataDropdown: FC<Props> = props => {
     (newValue: number) => {
       dispatch(action(newValue))
     },
-    [ dispatch, action ]
+    [dispatch, action],
   )
 
   return (
@@ -38,7 +36,7 @@ export const PersonalDataDropdown: FC<Props> = props => {
         onChange={handleSetValue}
         options={options}
         disabled={options.length === 1 && value === options[0]!.id}
-        />
+      />
     </div>
   )
 }

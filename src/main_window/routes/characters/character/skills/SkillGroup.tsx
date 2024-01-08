@@ -7,6 +7,9 @@ type Props = {
   getGroupName?: (id: number) => string
 }
 
+/**
+ * Returns a row section that display a skill group.
+ */
 export const SkillGroup: FC<Props> = props => {
   const { addText, group, getGroupName } = props
 

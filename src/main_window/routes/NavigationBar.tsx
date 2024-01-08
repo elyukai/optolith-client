@@ -23,6 +23,9 @@ import { NavigationBarWrapper } from "./NavigationBarWrapper.tsx"
 const showSettings = () => ExternalAPI.showSettings()
 const toggleDevTools = () => ExternalAPI.toggleDevTools()
 
+/**
+ * Returns a top navigation bar.
+ */
 export const NavigationBar: FC = () => {
   const translate = useTranslate()
   const dispatch = useAppDispatch()

@@ -7,6 +7,9 @@ type Props = {
   tabs: DisplayRoute[]
 }
 
+/**
+ * Returns a navigation bar section for displaying navigation tabs.
+ */
 export const NavigationBarTabs: FC<Props> = props => {
   const { tabs } = props
 

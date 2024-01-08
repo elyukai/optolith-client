@@ -14,6 +14,9 @@ type Props = {
   isRemovingEnabled: boolean
 }
 
+/**
+ * Returns a single attribute value item with buttons to adjust the value.
+ */
 export const AttributeListItem: FC<Props> = props => {
   const { attribute, isInCharacterCreation, isRemovingEnabled } = props
 
