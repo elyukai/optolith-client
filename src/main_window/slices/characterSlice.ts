@@ -167,7 +167,12 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     close: {},
     ranged: {},
   },
-  cantrips: [1],
+  cantrips: {
+    1: {
+      id: 1,
+      active: true,
+    },
+  },
   spells: {
     1: {
       id: 1,
@@ -205,7 +210,12 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     geodeRituals: {},
     zibiljaRituals: {},
   },
-  blessings: [1],
+  blessings: {
+    1: {
+      id: 1,
+      active: true,
+    },
+  },
   liturgicalChants: {
     1: {
       id: 1,

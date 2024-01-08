@@ -14,9 +14,9 @@ import { PublicationRefs } from "optolith-database-schema/types/source/_Publicat
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import {
   Activatable,
-  TinyActivatableSet,
   firstLevel,
   getFirstOptionOfType,
+  isTinyActivatableActive,
 } from "../activatable/activatableEntry.ts"
 import { CombinedActiveMagicalTradition } from "../activatable/magicalTradition.ts"
 import {
@@ -24,6 +24,7 @@ import {
   compareImprovementCost,
   fromRaw,
 } from "../adventurePoints/improvementCost.ts"
+import { GetById } from "../getTypes.ts"
 import { MagicalTraditionIdentifier } from "../identifier.ts"
 import { checkPrerequisitesOfSpellwork } from "../prerequisites/fullPrerequisiteValidationForType.ts"
 import {
@@ -171,8 +172,8 @@ export type DisplayedInactiveSpellwork =
  * Filters the given list of inactive cantrips by tradition.
  */
 export const getVisibleInactiveCantrips = (
-  staticCantrips: Record<number, Cantrip>,
-  dynamicCantrips: TinyActivatableSet,
+  staticCantrips: Cantrip[],
+  getDynamicCantripById: GetById.Dynamic.Cantrip,
   activeTraditions: CombinedActiveMagicalTradition[],
   getIsEntryAvailable: (src: PublicationRefs) => boolean,
   getIsUnfamiliar: (id: number) => boolean,
@@ -182,7 +183,7 @@ export const getVisibleInactiveCantrips = (
     : Object.values(staticCantrips)
         .filter(
           cantrip =>
-            !dynamicCantrips.includes(cantrip.id) &&
+            !isTinyActivatableActive(getDynamicCantripById(cantrip.id)) &&
             getIsEntryAvailable(cantrip.src) &&
             (cantrip.note?.tag !== "Exclusive" ||
               // if the cantrip is exclusive to specific tradition, at least one of the

@@ -14,7 +14,10 @@ import {
 } from "../slices/databaseSlice.ts"
 
 import { createSelector } from "@reduxjs/toolkit"
-import { getOptions } from "../../shared/domain/activatable/activatableEntry.ts"
+import {
+  getOptions,
+  isTinyActivatableActive,
+} from "../../shared/domain/activatable/activatableEntry.ts"
 import {
   AdvantageIdentifier,
   KarmaSpecialAbilityIdentifier,
@@ -89,7 +92,7 @@ export const selectVisibleBlessings = createSelector(
   ): [active: DisplayedActiveBlessing[], inactive: DisplayedActiveBlessing[]] =>
     partition(
       Object.values(staticBlessings).map(blessing => ({ kind: "blessing", static: blessing })),
-      staticBlessing => dynamicBlessings.includes(staticBlessing.static.id),
+      staticBlessing => isTinyActivatableActive(getDynamicBlessingById(staticBlessing.static.id)),
     ),
 )
 

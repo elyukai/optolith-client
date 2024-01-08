@@ -1,4 +1,4 @@
-import { ActivatableMap, TinyActivatableSet } from "./activatable/activatableEntry.ts"
+import { ActivatableMap, TinyActivatableMap } from "./activatable/activatableEntry.ts"
 import { Color } from "./color.ts"
 import { Energy, EnergyWithBuyBack } from "./energy.ts"
 import { Pact } from "./pact.ts"
@@ -324,7 +324,7 @@ export type Character = {
     ranged: RatedMap
   }
 
-  cantrips: TinyActivatableSet
+  cantrips: TinyActivatableMap
   spells: ActivatableRatedWithEnhancementsMap
   rituals: ActivatableRatedWithEnhancementsMap
 
@@ -340,7 +340,7 @@ export type Character = {
     zibiljaRituals: ActivatableRatedMap
   }
 
-  blessings: TinyActivatableSet
+  blessings: TinyActivatableMap
   liturgicalChants: ActivatableRatedWithEnhancementsMap
   ceremonies: ActivatableRatedWithEnhancementsMap
 

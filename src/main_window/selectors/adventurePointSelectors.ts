@@ -100,12 +100,17 @@ export const selectAdventurePointsSpentOnLiturgicalChants = createSelector(
   sumRatedMaps,
 )
 
+const sumTinyActivatables = (tinyActivatables: TinyActivatable[]): SpentAdventurePoints => ({
+  general: count(tinyActivatables, isTinyActivatableActive),
+  bound: 0,
+})
+
 /**
  * Returns the adventure points spent on cantrips.
  */
 export const selectAdventurePointsSpentOnCantrips = createSelector(
   selectDynamicCantrips,
-  (cantrips): SpentAdventurePoints => ({ general: cantrips?.length ?? 0, bound: 0 }),
+  sumTinyActivatables,
 )
 
 /**
@@ -113,7 +118,7 @@ export const selectAdventurePointsSpentOnCantrips = createSelector(
  */
 export const selectAdventurePointsSpentOnBlessings = createSelector(
   selectDynamicBlessings,
-  (blessings): SpentAdventurePoints => ({ general: blessings?.length ?? 0, bound: 0 }),
+  sumTinyActivatables,
 )
 
 /**

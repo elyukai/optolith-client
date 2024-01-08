@@ -1,12 +1,12 @@
 import { ActionCreatorWithPayload, AnyAction, Draft, createAction } from "@reduxjs/toolkit"
-import { TinyActivatableSet } from "../../shared/domain/activatable/activatableEntry.ts"
+import { TinyActivatableMap } from "../../shared/domain/activatable/activatableEntry.ts"
 import { Reducer, createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 
 /**
  * Functions for working with simple activatable entries.
  */
-export type SimpleActivatableSlice<N extends string, E extends string> = {
+export type TinyActivatableSlice<N extends string, E extends string> = {
   /**
    * The actions that can be dispatched to modify the state.
    */
@@ -31,11 +31,11 @@ export type SimpleActivatableSlice<N extends string, E extends string> = {
 /**
  * Creates a slice for a map of simple activatable entries.
  */
-export const createSimpleActivatableSlice = <N extends string, E extends string>(config: {
+export const createTinyActivatableSlice = <N extends string, E extends string>(config: {
   namespace: N
   entityName: E
-  getState: (state: Draft<CharacterState>) => Draft<TinyActivatableSet>
-}): SimpleActivatableSlice<N, E> => {
+  getState: (state: Draft<CharacterState>) => Draft<TinyActivatableMap>
+}): TinyActivatableSlice<N, E> => {
   const addAction = createAction<number, `${N}/add${E}`>(
     `${config.namespace}/add${config.entityName}`,
   )
@@ -46,12 +46,15 @@ export const createSimpleActivatableSlice = <N extends string, E extends string>
   const reducer = createImmerReducer((state: Draft<CharacterState>, action) => {
     const focusedState = config.getState(state)
     if (addAction.match(action)) {
-      if (!focusedState.includes(action.payload)) {
-        focusedState.push(action.payload)
+      if (!Object.hasOwn(focusedState, action.payload)) {
+        focusedState[action.payload] = {
+          id: action.payload,
+          active: true,
+        }
       }
     } else if (removeAction.match(action)) {
-      if (focusedState.includes(action.payload)) {
-        focusedState.splice(focusedState.indexOf(action.payload), 1)
+      if (Object.hasOwn(focusedState, action.payload)) {
+        delete focusedState[action.payload]
       }
     }
   })

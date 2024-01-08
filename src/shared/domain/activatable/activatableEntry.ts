@@ -4,9 +4,25 @@ import { isNotNullish } from "../../utils/nullable.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 
 /**
- * A simple set of activated activatable identifiers.
+ * An activated activatable identifier.
  */
-export type TinyActivatableSet = number[]
+export type TinyActivatable = {
+  id: number
+  active: true
+}
+
+/**
+ * A simple map of activated activatable identifiers.
+ */
+export type TinyActivatableMap = {
+  [id: number]: TinyActivatable
+}
+
+/**
+ * Returns if a given tiny activatable entry is active.
+ */
+export const isTinyActivatableActive = (activatable: TinyActivatable | undefined): boolean =>
+  activatable?.active ?? false
 
 /**
  * An activatable entry.

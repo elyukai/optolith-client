@@ -15,8 +15,13 @@ import { MagicalMelody } from "optolith-database-schema/types/magicalActions/Mag
 import { ZibiljaRitual } from "optolith-database-schema/types/magicalActions/ZibiljaRitual"
 import { isNotNullish } from "../../utils/nullable.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
-import { Activatable, TinyActivatableSet } from "../activatable/activatableEntry.ts"
+import {
+  Activatable,
+  TinyActivatable,
+  isTinyActivatableActive,
+} from "../activatable/activatableEntry.ts"
 import { FilterApplyingRatedDependencies } from "../dependencies/filterApplyingDependencies.ts"
+import { GetById } from "../getTypes.ts"
 import { getHighestAttributeValue } from "./attribute.ts"
 import {
   ActivatableRated,
@@ -201,12 +206,13 @@ export type DisplayedActiveSpellwork =
  * Filters the given list of active cantrips by tradition.
  */
 export const getVisibleActiveCantrips = (
-  staticCantrips: Record<number, Cantrip>,
-  dynamicCantrips: TinyActivatableSet,
+  getStaticCantripById: GetById.Static.Cantrip,
+  dynamicCantrips: TinyActivatable[],
   getIsUnfamiliar: (id: number) => boolean,
 ): DisplayedActiveCantrip[] =>
   dynamicCantrips
-    .map(id => staticCantrips[id])
+    .filter(isTinyActivatableActive)
+    .map(dynamicCantrip => getStaticCantripById(dynamicCantrip.id))
     .filter(isNotNullish)
     .map(staticCantrip => ({
       kind: "cantrip",
