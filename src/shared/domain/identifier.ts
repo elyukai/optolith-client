@@ -547,7 +547,7 @@ const TagPropertyMap: {
   Vehicle: id => ({ tag: "Vehicle", vehicle: id }),
   Weapon: id => ({ tag: "Weapon", weapon: id }),
   WeaponAccessory: id => ({ tag: "WeaponAccessory", weapon_accessory: id }),
-} as const
+}
 
 /**
  * Creates an identifier object from a type name and a plain identifier.
