@@ -25,9 +25,7 @@ import { GetById } from "../getTypes.ts"
 import { getHighestAttributeValue } from "./attribute.ts"
 import {
   ActivatableRated,
-  ActivatableRatedMap,
   ActivatableRatedWithEnhancements,
-  ActivatableRatedWithEnhancementsMap,
   ActiveActivatableRated,
   ActiveActivatableRatedWithEnhancements,
   Rated,
@@ -225,7 +223,7 @@ export const getVisibleActiveCantrips = (
  * entries, extended by value bounds, and full logic for if the value can be
  * increased or decreased.
  * @param kind The value for the `kind` property.
- * @param staticSpellworks A map of static spells or rituals.
+ * @param getStaticSpellworkById Get a static spell or ritual by its identifier.
  * @param dynamicSpellworks A map of dynamic spells or rituals.
  * @param isInCharacterCreation Whether the character is in character creation.
  * @param startExperienceLevel The start experience level.
@@ -244,8 +242,8 @@ export const getVisibleActiveCantrips = (
  */
 export const getActiveSpellsOrRituals = <K extends "spell" | "ritual", T extends Spell | Ritual>(
   kind: K,
-  staticSpellworks: Record<number, T>,
-  dynamicSpellworks: ActivatableRatedWithEnhancementsMap,
+  getStaticSpellworkById: (id: number) => T | undefined,
+  dynamicSpellworks: ActivatableRatedWithEnhancements[],
   isInCharacterCreation: boolean,
   startExperienceLevel: ExperienceLevel,
   canRemove: boolean,
@@ -268,7 +266,7 @@ export const getActiveSpellsOrRituals = <K extends "spell" | "ritual", T extends
   Object.values(dynamicSpellworks)
     .filter(isRatedWithEnhancementsActive)
     .map(dynamicSpellwork => {
-      const staticSpellwork = staticSpellworks[dynamicSpellwork.id]
+      const staticSpellwork = getStaticSpellworkById(dynamicSpellwork.id)
 
       if (staticSpellwork === undefined) {
         return undefined
@@ -324,8 +322,8 @@ export const getActiveMagicalActions = <
   T extends { id: number; check: SkillCheck; property: PropertyReference },
 >(
   kind: K,
-  staticMagicalActions: Record<number, T>,
-  dynamicMagicalActions: ActivatableRatedMap,
+  getStaticMagicalActionById: (id: number) => T | undefined,
+  dynamicMagicalActions: ActivatableRated[],
   isInCharacterCreation: boolean,
   startExperienceLevel: ExperienceLevel,
   canRemove: boolean,
@@ -345,7 +343,7 @@ export const getActiveMagicalActions = <
   Object.values(dynamicMagicalActions)
     .filter(isRatedActive)
     .map(dynamicMagicalAction => {
-      const staticMagicalAction = staticMagicalActions[dynamicMagicalAction.id]
+      const staticMagicalAction = getStaticMagicalActionById(dynamicMagicalAction.id)
 
       if (staticMagicalAction === undefined) {
         return undefined

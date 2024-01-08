@@ -14,7 +14,7 @@ import {
   isLiturgicalChantIncreasable,
 } from "./liturgicalChantActiveBounds.ts"
 import {
-  ActivatableRatedWithEnhancementsMap,
+  ActivatableRatedWithEnhancements,
   ActiveActivatableRatedWithEnhancements,
   Rated,
   isRatedWithEnhancementsActive,
@@ -71,8 +71,8 @@ export type DisplayedActiveLiturgy =
  * entries, extended by value bounds, and full logic for if the value can be
  * increased or decreased.
  * @param kind The value for the `kind` property.
- * @param staticLiturgicalChants A map of static liturgical chants or
- * ceremonies.
+ * @param getStaticLiturgicalChantById Get a static liturgical chant or ceremony
+ * by its identifier.
  * @param dynamicLiturgicalChants A map of dynamic liturgical chants or
  * ceremonies.
  * @param isInCharacterCreation Whether the character is in character creation.
@@ -93,8 +93,8 @@ export const getActiveLiturgicalChantsOrCeremonies = <
   T extends LiturgicalChant | Ceremony,
 >(
   kind: K,
-  staticLiturgicalChants: Record<number, T>,
-  dynamicLiturgicalChants: ActivatableRatedWithEnhancementsMap,
+  getStaticLiturgicalChantById: (id: number) => T | undefined,
+  dynamicLiturgicalChants: ActivatableRatedWithEnhancements[],
   isInCharacterCreation: boolean,
   startExperienceLevel: ExperienceLevel,
   canRemove: boolean,
@@ -112,10 +112,10 @@ export const getActiveLiturgicalChantsOrCeremonies = <
   isIncreasable: boolean
   isDecreasable: boolean
 }[] =>
-  Object.values(dynamicLiturgicalChants)
+  dynamicLiturgicalChants
     .filter(isRatedWithEnhancementsActive)
     .map(dynamicLiturgicalChant => {
-      const staticLiturgicalChant = staticLiturgicalChants[dynamicLiturgicalChant.id]
+      const staticLiturgicalChant = getStaticLiturgicalChantById(dynamicLiturgicalChant.id)
 
       if (staticLiturgicalChant === undefined) {
         return undefined

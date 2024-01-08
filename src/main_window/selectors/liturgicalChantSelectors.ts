@@ -1,18 +1,3 @@
-import {
-  selectDynamicAdvantages,
-  selectDynamicAttributes,
-  selectDynamicBlessings,
-  selectDynamicCeremonies,
-  selectDynamicKarmaSpecialAbilities,
-  selectDynamicLiturgicalChants,
-  selectDynamicLiturgicalStyleSpecialAbilities,
-} from "../slices/characterSlice.ts"
-import {
-  selectStaticBlessings,
-  selectStaticCeremonies,
-  selectStaticLiturgicalChants,
-} from "../slices/databaseSlice.ts"
-
 import { createSelector } from "@reduxjs/toolkit"
 import {
   getOptions,
@@ -46,6 +31,12 @@ import {
 } from "../../shared/domain/rated/liturgicalChantInactive.ts"
 import { partition } from "../../shared/utils/array.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
+import {
+  selectDynamicAdvantages,
+  selectDynamicKarmaSpecialAbilities,
+  selectDynamicLiturgicalStyleSpecialAbilities,
+} from "../slices/characterSlice.ts"
+import { SelectAll, SelectGetById } from "./basicCapabilitySelectors.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectFilterApplyingRatedDependencies } from "./dependencySelectors.ts"
 import { selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
@@ -53,16 +44,21 @@ import { selectIsEntryAvailable } from "./publicationSelectors.ts"
 import { selectActiveBlessedTradition } from "./traditionSelectors.ts"
 
 const selectLiturgicalChantsAbove10ByAspect = createSelector(
-  selectStaticLiturgicalChants,
-  selectStaticCeremonies,
-  selectDynamicLiturgicalChants,
-  selectDynamicCeremonies,
-  (staticLiturgicalChants, staticCeremonies, dynamicLiturgicalChants, dynamicCeremonies) =>
+  SelectGetById.Static.LiturgicalChant,
+  SelectGetById.Static.Ceremony,
+  SelectAll.Dynamic.LiturgicalChants,
+  SelectAll.Dynamic.Ceremonies,
+  (
+    getStaticLiturgicalChantById,
+    getStaticCeremonyById,
+    dynamicLiturgicalChants,
+    dynamicCeremonies,
+  ) =>
     getLiturgicalChantsAbove10ByAspect(
       id =>
         (id.tag === "LiturgicalChant"
-          ? staticLiturgicalChants[id.liturgical_chant]
-          : staticCeremonies[id.ceremony]
+          ? getStaticLiturgicalChantById(id.liturgical_chant)
+          : getStaticCeremonyById(id.ceremony)
         )?.traditions ?? [],
       dynamicLiturgicalChants,
       dynamicCeremonies,
@@ -84,14 +80,14 @@ const selectActiveAspectKnowledges = createSelector(
  * Returns the blessings, split by active and inactive.
  */
 export const selectVisibleBlessings = createSelector(
-  selectStaticBlessings,
-  selectDynamicBlessings,
+  SelectAll.Static.Blessings,
+  SelectGetById.Dynamic.Blessing,
   (
     staticBlessings,
-    dynamicBlessings,
+    getDynamicBlessingById,
   ): [active: DisplayedActiveBlessing[], inactive: DisplayedActiveBlessing[]] =>
     partition(
-      Object.values(staticBlessings).map(blessing => ({ kind: "blessing", static: blessing })),
+      staticBlessings.map(blessing => ({ kind: "blessing", static: blessing })),
       staticBlessing => isTinyActivatableActive(getDynamicBlessingById(staticBlessing.static.id)),
     ),
 )
@@ -110,24 +106,24 @@ export const selectVisibleActiveBlessings = createSelector(
  * decreased.
  */
 export const selectVisibleActiveLiturgicalChants = createSelector(
-  selectStaticLiturgicalChants,
-  selectDynamicLiturgicalChants,
+  SelectGetById.Static.LiturgicalChant,
+  SelectAll.Dynamic.LiturgicalChants,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalSkill),
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectLiturgicalChantsAbove10ByAspect,
   selectActiveAspectKnowledges,
   selectFilterApplyingRatedDependencies,
   (
-    staticLiturgicalChants,
+    getStaticLiturgicalChantById,
     dynamicLiturgicalChants,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
     exceptionalSkill,
-    attributes,
+    getDynamicAttributeById,
     liturgicalChantsAbove10ByAspect,
     activeAspectKnowledges,
     filterApplyingDependencies,
@@ -138,13 +134,13 @@ export const selectVisibleActiveLiturgicalChants = createSelector(
 
     return getActiveLiturgicalChantsOrCeremonies(
       "liturgicalChant",
-      staticLiturgicalChants,
+      getStaticLiturgicalChantById,
       dynamicLiturgicalChants,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
       exceptionalSkill,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       liturgicalChantsAbove10ByAspect,
       activeAspectKnowledges,
@@ -157,24 +153,24 @@ export const selectVisibleActiveLiturgicalChants = createSelector(
  * value bounds, and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleActiveCeremonies = createSelector(
-  selectStaticCeremonies,
-  selectDynamicCeremonies,
+  SelectGetById.Static.Ceremony,
+  SelectAll.Dynamic.Ceremonies,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalSkill),
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectLiturgicalChantsAbove10ByAspect,
   selectActiveAspectKnowledges,
   selectFilterApplyingRatedDependencies,
   (
-    staticCeremonies,
+    getStaticCeremonyById,
     dynamicCeremonies,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
     exceptionalSkill,
-    attributes,
+    getDynamicAttributeById,
     liturgicalChantsAbove10ByAspect,
     activeAspectKnowledges,
     filterApplyingDependencies,
@@ -185,13 +181,13 @@ export const selectVisibleActiveCeremonies = createSelector(
 
     return getActiveLiturgicalChantsOrCeremonies(
       "ceremony",
-      staticCeremonies,
+      getStaticCeremonyById,
       dynamicCeremonies,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
       exceptionalSkill,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       liturgicalChantsAbove10ByAspect,
       activeAspectKnowledges,
@@ -230,8 +226,8 @@ export const selectVisibleInactiveBlessings = createSelector(
 )
 
 const selectActiveLiturgicalChantsCount = createSelector(
-  selectDynamicLiturgicalChants,
-  selectDynamicCeremonies,
+  SelectAll.Dynamic.LiturgicalChants,
+  SelectAll.Dynamic.Ceremonies,
   countActiveLiturgicalChants,
 )
 
@@ -245,37 +241,37 @@ const selectIsMaximumOfLiturgicalChantsReached = createSelector(
 )
 
 const selectActiveLiturgicalChantsCountByUnfamiliarTradition = createSelector(
-  selectDynamicLiturgicalChants,
-  selectStaticLiturgicalChants,
+  SelectAll.Dynamic.LiturgicalChants,
+  SelectGetById.Static.LiturgicalChant,
   selectActiveBlessedTradition,
   (
     dynamicLiturgicalChants,
-    staticLiturgicalChants,
+    getStaticLiturgicalChantById,
     activeBlessedTradition,
   ): { [traditionId: number]: number } =>
     activeBlessedTradition === undefined
       ? {}
       : countActiveByUnfamiliarTradition(
           dynamicLiturgicalChants,
-          staticLiturgicalChants,
+          getStaticLiturgicalChantById,
           activeBlessedTradition.static,
         ),
 )
 
 const selectActiveCeremoniesCountByUnfamiliarTradition = createSelector(
-  selectDynamicCeremonies,
-  selectStaticCeremonies,
+  SelectAll.Dynamic.Ceremonies,
+  SelectGetById.Static.Ceremony,
   selectActiveBlessedTradition,
   (
     dynamicCeremonies,
-    staticCeremonies,
+    getStaticCeremonyById,
     activeBlessedTradition,
   ): { [traditionId: number]: number } =>
     activeBlessedTradition === undefined
       ? {}
       : countActiveByUnfamiliarTradition(
           dynamicCeremonies,
-          staticCeremonies,
+          getStaticCeremonyById,
           activeBlessedTradition.static,
         ),
 )
@@ -317,8 +313,8 @@ const selectUnfamiliarTraditionsWithHighestActiveCount = createSelector(
  * extended by whether the entry can be activated.
  */
 export const selectVisibleInactiveLiturgicalChants = createSelector(
-  selectStaticLiturgicalChants,
-  selectDynamicLiturgicalChants,
+  SelectAll.Static.LiturgicalChants,
+  SelectGetById.Dynamic.LiturgicalChant,
   selectActiveBlessedTradition,
   selectIsMaximumOfLiturgicalChantsReached,
   createPropertySelector(
@@ -339,7 +335,7 @@ export const selectVisibleInactiveLiturgicalChants = createSelector(
   selectUnfamiliarTraditionsWithHighestActiveCount,
   (
     staticLiturgicalChants,
-    dynamicLiturgicalChants,
+    getDynamicLiturgicalChantById,
     activeBlessedTradition,
     isMaximumCountReached,
     birdsOfPassage,
@@ -357,7 +353,7 @@ export const selectVisibleInactiveLiturgicalChants = createSelector(
     return getInactiveLiturgicalChantsOrCeremonies(
       "liturgicalChant",
       staticLiturgicalChants,
-      dynamicLiturgicalChants,
+      getDynamicLiturgicalChantById,
       activeBlessedTradition,
       isMaximumCountReached,
       birdsOfPassage,
@@ -376,8 +372,8 @@ export const selectVisibleInactiveLiturgicalChants = createSelector(
  * whether the entry can be activated.
  */
 export const selectVisibleInactiveCeremonies = createSelector(
-  selectStaticCeremonies,
-  selectDynamicCeremonies,
+  SelectAll.Static.Ceremonies,
+  SelectGetById.Dynamic.Ceremony,
   selectActiveBlessedTradition,
   selectIsMaximumOfLiturgicalChantsReached,
   createPropertySelector(
@@ -398,7 +394,7 @@ export const selectVisibleInactiveCeremonies = createSelector(
   selectUnfamiliarTraditionsWithHighestActiveCount,
   (
     staticCeremonies,
-    dynamicCeremonies,
+    getDynamicCeremonyById,
     activeBlessedTradition,
     isMaximumCountReached,
     birdsOfPassage,
@@ -416,7 +412,7 @@ export const selectVisibleInactiveCeremonies = createSelector(
     return getInactiveLiturgicalChantsOrCeremonies(
       "ceremony",
       staticCeremonies,
-      dynamicCeremonies,
+      getDynamicCeremonyById,
       activeBlessedTradition,
       isMaximumCountReached,
       birdsOfPassage,

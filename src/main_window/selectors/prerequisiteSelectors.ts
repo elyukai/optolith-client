@@ -30,18 +30,8 @@ import { getActiveDynamicSpellworksByProperty } from "../../shared/domain/rated/
 import {
   selectCultureId,
   selectDynamicAdvantages,
-  selectDynamicAttributes,
-  selectDynamicCeremonies,
-  selectDynamicCloseCombatTechniques,
   selectDynamicDisadvantages,
-  selectDynamicFocusRules,
-  selectDynamicLiturgicalChants,
-  selectDynamicOptionalRules,
-  selectDynamicRangedCombatTechniques,
-  selectDynamicRituals,
-  selectDynamicSkills,
   selectDynamicSpecialAbilities,
-  selectDynamicSpells,
   selectIncludeAllPublications,
   selectIncludePublications,
   selectPact,
@@ -49,16 +39,8 @@ import {
   selectSex,
   selectSocialStatusId,
 } from "../slices/characterSlice.ts"
-import {
-  selectDatabase,
-  selectStaticAdvantages,
-  selectStaticCeremonies,
-  selectStaticLiturgicalChants,
-  selectStaticPublications,
-  selectStaticRituals,
-  selectStaticSpells,
-} from "../slices/databaseSlice.ts"
-import { SelectGetById } from "./basicCapabilitySelectors.ts"
+import { selectDatabase, selectStaticPublications } from "../slices/databaseSlice.ts"
+import { SelectAll, SelectGetById } from "./basicCapabilitySelectors.ts"
 import { selectCurrentCulture } from "./cultureSelectors.ts"
 import {
   selectBlessedPrimaryAttribute,
@@ -86,7 +68,7 @@ export const selectCapabilitiesForPrecondition = createSelector(
     sex,
   ): Parameters<typeof checkPrecondition>[0] => ({
     getAreAllPublicationsEnabled: () => areAllPublicationsEnabled,
-    getIsPublicationEnabledManually: id => includedPublications.includes(id),
+    getIsPublicationEnabledManually: id => includedPublications?.includes(id) ?? false,
     getStaticPublicationById: id => publications[id],
     getSex: () => sex,
   }),
@@ -174,11 +156,14 @@ export const selectCapabilitiesForActivatablePrerequisite = createSelector(
  * Select the capabilities needed to check for an ancestor blood prerequisite.
  */
 export const selectCapabilitiesForAncestorBloodPrerequisite = createSelector(
-  selectStaticAdvantages,
-  selectDynamicAdvantages,
-  (staticAdvantages, dynamicAdvantages): Parameters<typeof checkAncestorBloodPrerequisite>[0] => ({
-    getStaticAdvantageById: id => staticAdvantages[id],
-    getDynamicAdvantages: () => Object.values(dynamicAdvantages),
+  SelectGetById.Static.Advantage,
+  SelectAll.Dynamic.Advantages,
+  (
+    getStaticAdvantageById,
+    dynamicAdvantages,
+  ): Parameters<typeof checkAncestorBloodPrerequisite>[0] => ({
+    getStaticAdvantageById,
+    dynamicAdvantages,
   }),
 )
 
@@ -226,20 +211,20 @@ export const selectCapabilitiesForCulturePrerequisite = createSelector(
  * prerequisite.
  */
 export const selectCapabilitiesForExternalEnhancementPrerequisite = createSelector(
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicLiturgicalChants,
-  selectDynamicCeremonies,
+  SelectGetById.Dynamic.Spell,
+  SelectGetById.Dynamic.Ritual,
+  SelectGetById.Dynamic.LiturgicalChant,
+  SelectGetById.Dynamic.Ceremony,
   (
-    dynamicSpells,
-    dynamicRituals,
-    dynamicLiturgicalChants,
-    dynamicCeremonies,
+    getDynamicSpellById,
+    getDynamicRitualById,
+    getDynamicLiturgicalChantById,
+    getDynamicCeremonyById,
   ): Parameters<typeof checkExternalEnhancementPrerequisite>[0] => ({
-    getDynamicSpellById: id => dynamicSpells[id],
-    getDynamicRitualById: id => dynamicRituals[id],
-    getDynamicLiturgicalChantById: id => dynamicLiturgicalChants[id],
-    getDynamicCeremonyById: id => dynamicCeremonies[id],
+    getDynamicSpellById,
+    getDynamicRitualById,
+    getDynamicLiturgicalChantById,
+    getDynamicCeremonyById,
   }),
 )
 
@@ -289,7 +274,7 @@ export const selectCapabilitiesForPublicationPrerequisite = createSelector(
     enabledPublications,
   ): Parameters<typeof checkPublicationPrerequisite>[0] => ({
     getAreAllPublicationsEnabled: () => areAllPublicationsEnabled,
-    getIsPublicationEnabledManually: id => enabledPublications.includes(id),
+    getIsPublicationEnabledManually: id => enabledPublications?.includes(id) ?? false,
     getStaticPublicationById: id => staticPublications[id],
   }),
 )
@@ -309,54 +294,54 @@ export const selectCapabilitiesForRacePrerequisite = createSelector(
  * prerequisite.
  */
 export const selectCapabilitiesForRatedMinimumNumberPrerequisite = createSelector(
-  selectDynamicSkills,
-  selectDynamicCloseCombatTechniques,
-  selectDynamicRangedCombatTechniques,
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicLiturgicalChants,
-  selectDynamicCeremonies,
-  selectStaticSpells,
-  selectStaticRituals,
-  selectStaticLiturgicalChants,
-  selectStaticCeremonies,
+  SelectGetById.Dynamic.Skill,
+  SelectAll.Dynamic.CloseCombatTechniques,
+  SelectAll.Dynamic.RangedCombatTechniques,
+  SelectAll.Dynamic.Spells,
+  SelectAll.Dynamic.Rituals,
+  SelectAll.Dynamic.LiturgicalChants,
+  SelectAll.Dynamic.Ceremonies,
+  SelectGetById.Static.Spell,
+  SelectGetById.Static.Ritual,
+  SelectGetById.Static.LiturgicalChant,
+  SelectGetById.Static.Ceremony,
   (
-    dynamicSkills,
+    getDynamicSkillById,
     dynamicCloseCombatTechniques,
     dynamicRangedCombatTechniques,
     dynamicSpells,
     dynamicRituals,
     dynamicLiturgicalChants,
     dynamicCeremonies,
-    staticSpells,
-    staticRituals,
-    staticLiturgicalChants,
-    staticCeremonies,
+    getStaticSpellById,
+    getStaticRitualById,
+    getStaticLiturgicalChantById,
+    getStaticCeremonyById,
   ): Parameters<typeof checkRatedMinimumNumberPrerequisite>[0] => ({
-    getDynamicSkillById: id => dynamicSkills[id],
-    getDynamicCloseCombatTechniques: () => Object.values(dynamicCloseCombatTechniques),
-    getDynamicRangedCombatTechniques: () => Object.values(dynamicRangedCombatTechniques),
+    getDynamicSkillById,
+    dynamicCloseCombatTechniques,
+    dynamicRangedCombatTechniques,
     getDynamicSpellsByProperty: propertyId =>
       getActiveDynamicSpellworksByProperty(
-        id => staticSpells[id]?.property.id,
+        id => getStaticSpellById(id)?.property.id,
         dynamicSpells,
         propertyId,
       ),
     getDynamicRitualsByProperty: propertyId =>
       getActiveDynamicSpellworksByProperty(
-        id => staticRituals[id]?.property.id,
+        id => getStaticRitualById(id)?.property.id,
         dynamicRituals,
         propertyId,
       ),
     getDynamicLiturgicalChantsByAspect: aspectId =>
       getActiveDynamicLiturgicalChantsByAspect(
-        id => staticLiturgicalChants[id]?.traditions ?? [],
+        id => getStaticLiturgicalChantById(id)?.traditions ?? [],
         dynamicLiturgicalChants,
         aspectId,
       ),
     getDynamicCeremoniesByAspect: aspectId =>
       getActiveDynamicLiturgicalChantsByAspect(
-        id => staticCeremonies[id]?.traditions ?? [],
+        id => getStaticCeremonyById(id)?.traditions ?? [],
         dynamicCeremonies,
         aspectId,
       ),
@@ -367,32 +352,32 @@ export const selectCapabilitiesForRatedMinimumNumberPrerequisite = createSelecto
  * Select the capabilities needed to check for a rated prerequisite.
  */
 export const selectCapabilitiesForRatedPrerequisite = createSelector(
-  selectDynamicAttributes,
-  selectDynamicSkills,
-  selectDynamicCloseCombatTechniques,
-  selectDynamicRangedCombatTechniques,
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicLiturgicalChants,
-  selectDynamicCeremonies,
+  SelectGetById.Dynamic.Attribute,
+  SelectGetById.Dynamic.Skill,
+  SelectGetById.Dynamic.CloseCombatTechnique,
+  SelectGetById.Dynamic.RangedCombatTechnique,
+  SelectGetById.Dynamic.Spell,
+  SelectGetById.Dynamic.Ritual,
+  SelectGetById.Dynamic.LiturgicalChant,
+  SelectGetById.Dynamic.Ceremony,
   (
-    attributes,
-    skills,
-    closeCombatTechniques,
-    rangedCombatTechniques,
-    spells,
-    rituals,
-    liturgicalChants,
-    ceremonies,
+    getDynamicAttributeById,
+    getDynamicSkillById,
+    getDynamicCloseCombatTechniqueById,
+    getDynamicRangedCombatTechniqueById,
+    getDynamicSpellById,
+    getDynamicRitualById,
+    getDynamicLiturgicalChantById,
+    getDynamicCeremonyById,
   ): Parameters<typeof checkRatedPrerequisite>[0] => ({
-    getDynamicAttributeById: id => attributes[id],
-    getDynamicSkillById: id => skills[id],
-    getDynamicCloseCombatTechniqueById: id => closeCombatTechniques[id],
-    getDynamicRangedCombatTechniqueById: id => rangedCombatTechniques[id],
-    getDynamicSpellById: id => spells[id],
-    getDynamicRitualById: id => rituals[id],
-    getDynamicLiturgicalChantById: id => liturgicalChants[id],
-    getDynamicCeremonyById: id => ceremonies[id],
+    getDynamicAttributeById,
+    getDynamicSkillById,
+    getDynamicCloseCombatTechniqueById,
+    getDynamicRangedCombatTechniqueById,
+    getDynamicSpellById,
+    getDynamicRitualById,
+    getDynamicLiturgicalChantById,
+    getDynamicCeremonyById,
   }),
 )
 
@@ -400,23 +385,23 @@ export const selectCapabilitiesForRatedPrerequisite = createSelector(
  * Select the capabilities needed to check for a rated sum prerequisite.
  */
 export const selectCapabilitiesForRatedSumPrerequisite = createSelector(
-  selectDynamicSkills,
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicLiturgicalChants,
-  selectDynamicCeremonies,
+  SelectGetById.Dynamic.Skill,
+  SelectGetById.Dynamic.Spell,
+  SelectGetById.Dynamic.Ritual,
+  SelectGetById.Dynamic.LiturgicalChant,
+  SelectGetById.Dynamic.Ceremony,
   (
-    dynamicSkills,
-    dynamicSpells,
-    dynamicRituals,
-    dynamicLiturgicalChants,
-    dynamicCeremonys,
+    getDynamicSkillById,
+    getDynamicSpellById,
+    getDynamicRitualById,
+    getDynamicLiturgicalChantById,
+    getDynamicCeremonyById,
   ): Parameters<typeof checkRatedSumPrerequisite>[0] => ({
-    getDynamicSkillById: id => dynamicSkills[id],
-    getDynamicSpellById: id => dynamicSpells[id],
-    getDynamicRitualById: id => dynamicRituals[id],
-    getDynamicLiturgicalChantById: id => dynamicLiturgicalChants[id],
-    getDynamicCeremonyById: id => dynamicCeremonys[id],
+    getDynamicSkillById,
+    getDynamicSpellById,
+    getDynamicRitualById,
+    getDynamicLiturgicalChantById,
+    getDynamicCeremonyById,
   }),
 )
 
@@ -424,11 +409,14 @@ export const selectCapabilitiesForRatedSumPrerequisite = createSelector(
  * Select the capabilities needed to check for a rule prerequisite.
  */
 export const selectCapabilitiesForRulePrerequisite = createSelector(
-  selectDynamicFocusRules,
-  selectDynamicOptionalRules,
-  (activeFocusRules, activeOptionalRules): Parameters<typeof checkRulePrerequisite>[0] => ({
-    getDynamicFocusRuleById: id => activeFocusRules[id],
-    getDynamicOptionalRuleById: id => activeOptionalRules[id],
+  SelectGetById.Dynamic.FocusRule,
+  SelectGetById.Dynamic.OptionalRule,
+  (
+    getDynamicFocusRuleById,
+    getDynamicOptionalRuleById,
+  ): Parameters<typeof checkRulePrerequisite>[0] => ({
+    getDynamicFocusRuleById,
+    getDynamicOptionalRuleById,
   }),
 )
 

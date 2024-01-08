@@ -51,35 +51,14 @@ import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
 import {
   selectDynamicAdvantages,
-  selectDynamicAnimistPowers,
-  selectDynamicAttributes,
-  selectDynamicCantrips,
-  selectDynamicCurses,
-  selectDynamicDominationRituals,
-  selectDynamicElvenMagicalSongs,
-  selectDynamicGeodeRituals,
-  selectDynamicJesterTricks,
-  selectDynamicMagicalDances,
-  selectDynamicMagicalMelodies,
   selectDynamicMagicalSpecialAbilities,
-  selectDynamicRituals,
-  selectDynamicSpells,
-  selectDynamicZibiljaRituals,
 } from "../slices/characterSlice.ts"
 import {
-  selectStaticAnimistPowers,
   selectStaticCantrips,
-  selectStaticCurses,
-  selectStaticDominationRituals,
-  selectStaticElvenMagicalSongs,
-  selectStaticGeodeRituals,
-  selectStaticJesterTricks,
-  selectStaticMagicalDances,
-  selectStaticMagicalMelodies,
   selectStaticRituals,
   selectStaticSpells,
-  selectStaticZibiljaRituals,
 } from "../slices/databaseSlice.ts"
+import { SelectAll, SelectGetById } from "./basicCapabilitySelectors.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectFilterApplyingRatedDependencies } from "./dependencySelectors.ts"
 import { selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
@@ -88,40 +67,40 @@ import { selectIsEntryAvailable } from "./publicationSelectors.ts"
 import { selectActiveMagicalTraditions } from "./traditionSelectors.ts"
 
 const selectSpellworksAbove10ByProperty = createSelector(
-  selectStaticSpells,
-  selectStaticRituals,
-  selectStaticCurses,
-  selectStaticElvenMagicalSongs,
-  selectStaticDominationRituals,
-  selectStaticMagicalDances,
-  selectStaticMagicalMelodies,
-  selectStaticJesterTricks,
-  selectStaticAnimistPowers,
-  selectStaticGeodeRituals,
-  selectStaticZibiljaRituals,
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicCurses,
-  selectDynamicElvenMagicalSongs,
-  selectDynamicDominationRituals,
-  selectDynamicMagicalDances,
-  selectDynamicMagicalMelodies,
-  selectDynamicJesterTricks,
-  selectDynamicAnimistPowers,
-  selectDynamicGeodeRituals,
-  selectDynamicZibiljaRituals,
+  SelectGetById.Static.Spell,
+  SelectGetById.Static.Ritual,
+  SelectGetById.Static.Curse,
+  SelectGetById.Static.ElvenMagicalSong,
+  SelectGetById.Static.DominationRitual,
+  SelectGetById.Static.MagicalDance,
+  SelectGetById.Static.MagicalMelody,
+  SelectGetById.Static.JesterTrick,
+  SelectGetById.Static.AnimistPower,
+  SelectGetById.Static.GeodeRitual,
+  SelectGetById.Static.ZibiljaRitual,
+  SelectAll.Dynamic.Spells,
+  SelectAll.Dynamic.Rituals,
+  SelectAll.Dynamic.Curses,
+  SelectAll.Dynamic.ElvenMagicalSongs,
+  SelectAll.Dynamic.DominationRituals,
+  SelectAll.Dynamic.MagicalDances,
+  SelectAll.Dynamic.MagicalMelodies,
+  SelectAll.Dynamic.JesterTricks,
+  SelectAll.Dynamic.AnimistPowers,
+  SelectAll.Dynamic.GeodeRituals,
+  SelectAll.Dynamic.ZibiljaRituals,
   (
-    staticSpells,
-    staticRituals,
-    staticCurses,
-    staticElvenMagicalSongs,
-    staticDominationRituals,
-    staticMagicalDances,
-    staticMagicalMelodies,
-    staticJesterTricks,
-    staticAnimistPowers,
-    staticGeodeRituals,
-    staticZibiljaRituals,
+    getStaticSpellById,
+    getStaticRitualById,
+    getStaticCurseById,
+    getStaticElvenMagicalSongById,
+    getStaticDominationRitualById,
+    getStaticMagicalDanceById,
+    getStaticMagicalMelodyById,
+    getStaticJesterTrickById,
+    getStaticAnimistPowerById,
+    getStaticGeodeRitualById,
+    getStaticZibiljaRitualById,
     dynamicSpells,
     dynamicRituals,
     dynamicCurses,
@@ -139,27 +118,27 @@ const selectSpellworksAbove10ByProperty = createSelector(
         (() => {
           switch (id.tag) {
             case "Spell":
-              return staticSpells[id.spell]
+              return getStaticSpellById(id.spell)
             case "Ritual":
-              return staticRituals[id.ritual]
+              return getStaticRitualById(id.ritual)
             case "Curse":
-              return staticCurses[id.curse]
+              return getStaticCurseById(id.curse)
             case "ElvenMagicalSong":
-              return staticElvenMagicalSongs[id.elven_magical_song]
+              return getStaticElvenMagicalSongById(id.elven_magical_song)
             case "DominationRitual":
-              return staticDominationRituals[id.domination_ritual]
+              return getStaticDominationRitualById(id.domination_ritual)
             case "MagicalDance":
-              return staticMagicalDances[id.magical_dance]
+              return getStaticMagicalDanceById(id.magical_dance)
             case "MagicalMelody":
-              return staticMagicalMelodies[id.magical_melody]
+              return getStaticMagicalMelodyById(id.magical_melody)
             case "JesterTrick":
-              return staticJesterTricks[id.jester_trick]
+              return getStaticJesterTrickById(id.jester_trick)
             case "AnimistPower":
-              return staticAnimistPowers[id.animist_power]
+              return getStaticAnimistPowerById(id.animist_power)
             case "GeodeRitual":
-              return staticGeodeRituals[id.geode_ritual]
+              return getStaticGeodeRitualById(id.geode_ritual)
             case "ZibiljaRitual":
-              return staticZibiljaRituals[id.zibilja_ritual]
+              return getStaticZibiljaRitualById(id.zibilja_ritual)
             default:
               return assertExhaustive(id)
           }
@@ -201,17 +180,17 @@ const selectGetIsUnfamiliar = createSelector(
  * Number of active spells and rituals
  */
 const selectActiveSpellworksCount = createSelector(
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicCurses,
-  selectDynamicElvenMagicalSongs,
-  selectDynamicDominationRituals,
-  selectDynamicMagicalDances,
-  selectDynamicMagicalMelodies,
-  selectDynamicJesterTricks,
-  selectDynamicAnimistPowers,
-  selectDynamicGeodeRituals,
-  selectDynamicZibiljaRituals,
+  SelectAll.Dynamic.Spells,
+  SelectAll.Dynamic.Rituals,
+  SelectAll.Dynamic.Curses,
+  SelectAll.Dynamic.ElvenMagicalSongs,
+  SelectAll.Dynamic.DominationRituals,
+  SelectAll.Dynamic.MagicalDances,
+  SelectAll.Dynamic.MagicalMelodies,
+  SelectAll.Dynamic.JesterTricks,
+  SelectAll.Dynamic.AnimistPowers,
+  SelectAll.Dynamic.GeodeRituals,
+  SelectAll.Dynamic.ZibiljaRituals,
   countActiveSpellworks,
 )
 
@@ -219,8 +198,8 @@ const selectActiveSpellworksCount = createSelector(
  * Number of active spells and rituals
  */
 const selectActiveUnfamiliarSpellworksCount = createSelector(
-  selectDynamicSpells,
-  selectDynamicRituals,
+  SelectAll.Dynamic.Spells,
+  SelectAll.Dynamic.Rituals,
   selectGetIsUnfamiliar,
   countActiveUnfamiliarSpellworks,
 )
@@ -229,28 +208,28 @@ const selectActiveUnfamiliarSpellworksCount = createSelector(
  * Number of active spells and rituals
  */
 const selectActiveSpellworksCountByImprovementCost = createSelector(
-  selectStaticSpells,
-  selectStaticRituals,
-  selectStaticCurses,
-  selectStaticElvenMagicalSongs,
-  selectStaticDominationRituals,
-  selectStaticMagicalDances,
-  selectStaticMagicalMelodies,
-  selectStaticJesterTricks,
-  selectStaticAnimistPowers,
-  selectStaticGeodeRituals,
-  selectStaticZibiljaRituals,
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicCurses,
-  selectDynamicElvenMagicalSongs,
-  selectDynamicDominationRituals,
-  selectDynamicMagicalDances,
-  selectDynamicMagicalMelodies,
-  selectDynamicJesterTricks,
-  selectDynamicAnimistPowers,
-  selectDynamicGeodeRituals,
-  selectDynamicZibiljaRituals,
+  SelectGetById.Static.Spell,
+  SelectGetById.Static.Ritual,
+  SelectGetById.Static.Curse,
+  SelectGetById.Static.ElvenMagicalSong,
+  SelectGetById.Static.DominationRitual,
+  SelectGetById.Static.MagicalDance,
+  SelectGetById.Static.MagicalMelody,
+  SelectGetById.Static.JesterTrick,
+  SelectGetById.Static.AnimistPower,
+  SelectGetById.Static.GeodeRitual,
+  SelectGetById.Static.ZibiljaRitual,
+  SelectAll.Dynamic.Spells,
+  SelectAll.Dynamic.Rituals,
+  SelectAll.Dynamic.Curses,
+  SelectAll.Dynamic.ElvenMagicalSongs,
+  SelectAll.Dynamic.DominationRituals,
+  SelectAll.Dynamic.MagicalDances,
+  SelectAll.Dynamic.MagicalMelodies,
+  SelectAll.Dynamic.JesterTricks,
+  SelectAll.Dynamic.AnimistPowers,
+  SelectAll.Dynamic.GeodeRituals,
+  SelectAll.Dynamic.ZibiljaRituals,
   countActiveSpellworksByImprovementCost,
 )
 
@@ -280,11 +259,11 @@ const selectIsMaximumOfUnfamiliarSpellworksReached = createSelector(
  * Returns the active cantrips for combination with other types.
  */
 export const selectVisibleActiveCantrips = createSelector(
-  selectStaticCantrips,
-  selectDynamicCantrips,
+  SelectGetById.Static.Cantrip,
+  SelectAll.Dynamic.Cantrips,
   selectGetIsUnfamiliar,
-  (staticCantrips, dynamicCantrips, getIsUnfamiliar) =>
-    getVisibleActiveCantrips(staticCantrips, dynamicCantrips, id =>
+  (getStaticCantripById, dynamicCantrips, getIsUnfamiliar) =>
+    getVisibleActiveCantrips(getStaticCantripById, dynamicCantrips, id =>
       getIsUnfamiliar(createIdentifierObject("Cantrip", id)),
     ),
 )
@@ -294,25 +273,25 @@ export const selectVisibleActiveCantrips = createSelector(
  * value bounds, and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleActiveSpells = createSelector(
-  selectStaticSpells,
-  selectDynamicSpells,
+  SelectGetById.Static.Spell,
+  SelectAll.Dynamic.Spells,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalSkill),
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
   selectSpellworksAbove10ByProperty,
   selectActivePropertyKnowledges,
   selectGetIsUnfamiliar,
   (
-    staticSpells,
+    getStaticSpellById,
     dynamicSpells,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
     exceptionalSkill,
-    attributes,
+    getDynamicAttributeById,
     filterApplyingDependencies,
     spellworksAbove10ByProperty,
     activePropertyKnowledges,
@@ -324,13 +303,13 @@ export const selectVisibleActiveSpells = createSelector(
 
     return getActiveSpellsOrRituals(
       "spell",
-      staticSpells,
+      getStaticSpellById,
       dynamicSpells,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
       exceptionalSkill,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       spellworksAbove10ByProperty,
       activePropertyKnowledges,
@@ -344,25 +323,25 @@ export const selectVisibleActiveSpells = createSelector(
  * value bounds, and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleActiveRituals = createSelector(
-  selectStaticRituals,
-  selectDynamicRituals,
+  SelectGetById.Static.Ritual,
+  SelectAll.Dynamic.Rituals,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalSkill),
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
   selectSpellworksAbove10ByProperty,
   selectActivePropertyKnowledges,
   selectGetIsUnfamiliar,
   (
-    staticRituals,
+    getStaticRitualById,
     dynamicRituals,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
     exceptionalSkill,
-    attributes,
+    getDynamicAttributeById,
     filterApplyingDependencies,
     spellworksAbove10ByProperty,
     activePropertyKnowledges,
@@ -374,13 +353,13 @@ export const selectVisibleActiveRituals = createSelector(
 
     return getActiveSpellsOrRituals(
       "ritual",
-      staticRituals,
+      getStaticRitualById,
       dynamicRituals,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
       exceptionalSkill,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       spellworksAbove10ByProperty,
       activePropertyKnowledges,
@@ -394,22 +373,22 @@ export const selectVisibleActiveRituals = createSelector(
  * value bounds, and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleActiveCurses = createSelector(
-  selectStaticCurses,
-  selectDynamicCurses,
+  SelectGetById.Static.Curse,
+  SelectAll.Dynamic.Curses,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
   selectSpellworksAbove10ByProperty,
   selectActivePropertyKnowledges,
   (
-    staticCurses,
+    getStaticCurseById,
     dynamicCurses,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
-    attributes,
+    getDynamicAttributeById,
     filterApplyingDependencies,
     spellworksAbove10ByProperty,
     activePropertyKnowledges,
@@ -420,12 +399,12 @@ export const selectVisibleActiveCurses = createSelector(
 
     return getActiveMagicalActions(
       "curse",
-      staticCurses,
+      getStaticCurseById,
       dynamicCurses,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       spellworksAbove10ByProperty,
       activePropertyKnowledges,
@@ -438,22 +417,22 @@ export const selectVisibleActiveCurses = createSelector(
  * value bounds, and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleActiveElvenMagicalSongs = createSelector(
-  selectStaticElvenMagicalSongs,
-  selectDynamicElvenMagicalSongs,
+  SelectGetById.Static.ElvenMagicalSong,
+  SelectAll.Dynamic.ElvenMagicalSongs,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
   selectSpellworksAbove10ByProperty,
   selectActivePropertyKnowledges,
   (
-    staticElvenMagicalSongs,
+    getStaticElvenMagicalSongById,
     dynamicElvenMagicalSongs,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
-    attributes,
+    getDynamicAttributeById,
     filterApplyingDependencies,
     spellworksAbove10ByProperty,
     activePropertyKnowledges,
@@ -464,12 +443,12 @@ export const selectVisibleActiveElvenMagicalSongs = createSelector(
 
     return getActiveMagicalActions(
       "elvenMagicalSong",
-      staticElvenMagicalSongs,
+      getStaticElvenMagicalSongById,
       dynamicElvenMagicalSongs,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       spellworksAbove10ByProperty,
       activePropertyKnowledges,
@@ -482,22 +461,22 @@ export const selectVisibleActiveElvenMagicalSongs = createSelector(
  * value bounds, and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleActiveDominationRituals = createSelector(
-  selectStaticDominationRituals,
-  selectDynamicDominationRituals,
+  SelectGetById.Static.DominationRitual,
+  SelectAll.Dynamic.DominationRituals,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
   selectSpellworksAbove10ByProperty,
   selectActivePropertyKnowledges,
   (
-    staticDominationRituals,
+    getStaticDominationRitualById,
     dynamicDominationRituals,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
-    attributes,
+    getDynamicAttributeById,
     filterApplyingDependencies,
     spellworksAbove10ByProperty,
     activePropertyKnowledges,
@@ -508,12 +487,12 @@ export const selectVisibleActiveDominationRituals = createSelector(
 
     return getActiveMagicalActions(
       "dominationRitual",
-      staticDominationRituals,
+      getStaticDominationRitualById,
       dynamicDominationRituals,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       spellworksAbove10ByProperty,
       activePropertyKnowledges,
@@ -526,22 +505,22 @@ export const selectVisibleActiveDominationRituals = createSelector(
  * value bounds, and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleActiveMagicalDances = createSelector(
-  selectStaticMagicalDances,
-  selectDynamicMagicalDances,
+  SelectGetById.Static.MagicalDance,
+  SelectAll.Dynamic.MagicalDances,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
   selectSpellworksAbove10ByProperty,
   selectActivePropertyKnowledges,
   (
-    staticMagicalDances,
+    getStaticMagicalDanceById,
     dynamicMagicalDances,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
-    attributes,
+    getDynamicAttributeById,
     filterApplyingDependencies,
     spellworksAbove10ByProperty,
     activePropertyKnowledges,
@@ -552,12 +531,12 @@ export const selectVisibleActiveMagicalDances = createSelector(
 
     return getActiveMagicalActions(
       "magicalDance",
-      staticMagicalDances,
+      getStaticMagicalDanceById,
       dynamicMagicalDances,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       spellworksAbove10ByProperty,
       activePropertyKnowledges,
@@ -570,22 +549,22 @@ export const selectVisibleActiveMagicalDances = createSelector(
  * value bounds, and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleActiveMagicalMelodies = createSelector(
-  selectStaticMagicalMelodies,
-  selectDynamicMagicalMelodies,
+  SelectGetById.Static.MagicalMelody,
+  SelectAll.Dynamic.MagicalMelodies,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
   selectSpellworksAbove10ByProperty,
   selectActivePropertyKnowledges,
   (
-    staticMagicalMelodies,
+    getStaticMagicalMelodyById,
     dynamicMagicalMelodies,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
-    attributes,
+    getDynamicAttributeById,
     filterApplyingDependencies,
     spellworksAbove10ByProperty,
     activePropertyKnowledges,
@@ -596,12 +575,12 @@ export const selectVisibleActiveMagicalMelodies = createSelector(
 
     return getActiveMagicalActions(
       "magicalMelody",
-      staticMagicalMelodies,
+      getStaticMagicalMelodyById,
       dynamicMagicalMelodies,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       spellworksAbove10ByProperty,
       activePropertyKnowledges,
@@ -614,22 +593,22 @@ export const selectVisibleActiveMagicalMelodies = createSelector(
  * value bounds, and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleActiveJesterTricks = createSelector(
-  selectStaticJesterTricks,
-  selectDynamicJesterTricks,
+  SelectGetById.Static.JesterTrick,
+  SelectAll.Dynamic.JesterTricks,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
   selectSpellworksAbove10ByProperty,
   selectActivePropertyKnowledges,
   (
-    staticJesterTricks,
+    getStaticJesterTrickById,
     dynamicJesterTricks,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
-    attributes,
+    getDynamicAttributeById,
     filterApplyingDependencies,
     spellworksAbove10ByProperty,
     activePropertyKnowledges,
@@ -640,12 +619,12 @@ export const selectVisibleActiveJesterTricks = createSelector(
 
     return getActiveMagicalActions(
       "jesterTrick",
-      staticJesterTricks,
+      getStaticJesterTrickById,
       dynamicJesterTricks,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       spellworksAbove10ByProperty,
       activePropertyKnowledges,
@@ -658,22 +637,22 @@ export const selectVisibleActiveJesterTricks = createSelector(
  * value bounds, and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleActiveAnimistPowers = createSelector(
-  selectStaticAnimistPowers,
-  selectDynamicAnimistPowers,
+  SelectGetById.Static.AnimistPower,
+  SelectAll.Dynamic.AnimistPowers,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
   selectSpellworksAbove10ByProperty,
   selectActivePropertyKnowledges,
   (
-    staticAnimistPowers,
+    getStaticAnimistPowerById,
     dynamicAnimistPowers,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
-    attributes,
+    getDynamicAttributeById,
     filterApplyingDependencies,
     spellworksAbove10ByProperty,
     activePropertyKnowledges,
@@ -684,12 +663,12 @@ export const selectVisibleActiveAnimistPowers = createSelector(
 
     return getActiveMagicalActions(
       "animistPower",
-      staticAnimistPowers,
+      getStaticAnimistPowerById,
       dynamicAnimistPowers,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       spellworksAbove10ByProperty,
       activePropertyKnowledges,
@@ -702,22 +681,22 @@ export const selectVisibleActiveAnimistPowers = createSelector(
  * value bounds, and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleActiveGeodeRituals = createSelector(
-  selectStaticGeodeRituals,
-  selectDynamicGeodeRituals,
+  SelectGetById.Static.GeodeRitual,
+  SelectAll.Dynamic.GeodeRituals,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
   selectSpellworksAbove10ByProperty,
   selectActivePropertyKnowledges,
   (
-    staticGeodeRituals,
+    getStaticGeodeRitualById,
     dynamicGeodeRituals,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
-    attributes,
+    getDynamicAttributeById,
     filterApplyingDependencies,
     spellworksAbove10ByProperty,
     activePropertyKnowledges,
@@ -728,12 +707,12 @@ export const selectVisibleActiveGeodeRituals = createSelector(
 
     return getActiveMagicalActions(
       "geodeRitual",
-      staticGeodeRituals,
+      getStaticGeodeRitualById,
       dynamicGeodeRituals,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       spellworksAbove10ByProperty,
       activePropertyKnowledges,
@@ -746,22 +725,22 @@ export const selectVisibleActiveGeodeRituals = createSelector(
  * value bounds, and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleActiveZibiljaRituals = createSelector(
-  selectStaticZibiljaRituals,
-  selectDynamicZibiljaRituals,
+  SelectGetById.Static.ZibiljaRitual,
+  SelectAll.Dynamic.ZibiljaRituals,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
   selectSpellworksAbove10ByProperty,
   selectActivePropertyKnowledges,
   (
-    staticZibiljaRituals,
+    getStaticZibiljaRitualById,
     dynamicZibiljaRituals,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
-    attributes,
+    getDynamicAttributeById,
     filterApplyingDependencies,
     spellworksAbove10ByProperty,
     activePropertyKnowledges,
@@ -772,12 +751,12 @@ export const selectVisibleActiveZibiljaRituals = createSelector(
 
     return getActiveMagicalActions(
       "zibiljaRitual",
-      staticZibiljaRituals,
+      getStaticZibiljaRitualById,
       dynamicZibiljaRituals,
       isInCharacterCreation,
       startExperienceLevel,
       canRemove,
-      id => attributes[id],
+      getDynamicAttributeById,
       filterApplyingDependencies,
       spellworksAbove10ByProperty,
       activePropertyKnowledges,
@@ -835,15 +814,15 @@ export const selectVisibleActiveSpellworks = createSelector(
  * Returns the inactive cantrips for combination with other types.
  */
 export const selectVisibleInactiveCantrips = createSelector(
-  selectStaticCantrips,
-  selectDynamicCantrips,
+  SelectAll.Static.Cantrips,
+  SelectGetById.Dynamic.Cantrip,
   selectActiveMagicalTraditions,
   selectIsEntryAvailable,
   selectGetIsUnfamiliar,
-  (staticCantrips, dynamicCantrips, activeTraditions, getIsEntryAvailable, getIsUnfamiliar) =>
+  (staticCantrips, getDynamicCantripById, activeTraditions, getIsEntryAvailable, getIsUnfamiliar) =>
     getVisibleInactiveCantrips(
       staticCantrips,
-      dynamicCantrips,
+      getDynamicCantripById,
       activeTraditions,
       getIsEntryAvailable,
       id => getIsUnfamiliar(createIdentifierObject("Cantrip", id)),
@@ -855,8 +834,8 @@ export const selectVisibleInactiveCantrips = createSelector(
  * extended by whether the entry can be activated.
  */
 export const selectVisibleInactiveSpells = createSelector(
-  selectStaticSpells,
-  selectDynamicSpells,
+  SelectAll.Static.Spells,
+  SelectGetById.Dynamic.Spell,
   selectActiveMagicalTraditions,
   selectActiveSpellworksCount,
   selectActiveSpellworksCountByImprovementCost,
@@ -871,7 +850,7 @@ export const selectVisibleInactiveSpells = createSelector(
   selectGetIsUnfamiliar,
   (
     staticSpells,
-    dynamicSpells,
+    getDynamicSpellById,
     activeMagicalTraditions,
     activeCount,
     activeCountByImprovementCost,
@@ -885,7 +864,7 @@ export const selectVisibleInactiveSpells = createSelector(
     getInactiveSpellsOrRituals(
       "spell",
       staticSpells,
-      dynamicSpells,
+      getDynamicSpellById,
       activeMagicalTraditions,
       activeCount,
       activeCountByImprovementCost,
@@ -903,8 +882,8 @@ export const selectVisibleInactiveSpells = createSelector(
  * extended by whether the entry can be activated.
  */
 export const selectVisibleInactiveRituals = createSelector(
-  selectStaticRituals,
-  selectDynamicRituals,
+  SelectAll.Static.Rituals,
+  SelectGetById.Dynamic.Ritual,
   selectActiveMagicalTraditions,
   selectActiveSpellworksCount,
   selectActiveSpellworksCountByImprovementCost,
@@ -919,7 +898,7 @@ export const selectVisibleInactiveRituals = createSelector(
   selectGetIsUnfamiliar,
   (
     staticRituals,
-    dynamicRituals,
+    getDynamicRitualById,
     activeMagicalTraditions,
     activeCount,
     activeCountByImprovementCost,
@@ -933,7 +912,7 @@ export const selectVisibleInactiveRituals = createSelector(
     getInactiveSpellsOrRituals(
       "ritual",
       staticRituals,
-      dynamicRituals,
+      getDynamicRitualById,
       activeMagicalTraditions,
       activeCount,
       activeCountByImprovementCost,
@@ -951,8 +930,8 @@ export const selectVisibleInactiveRituals = createSelector(
  * extended by whether the entry can be activated.
  */
 export const selectVisibleInactiveCurses = createSelector(
-  selectStaticCurses,
-  selectDynamicCurses,
+  SelectAll.Static.Curses,
+  SelectGetById.Dynamic.Curse,
   selectActiveMagicalTraditions,
   selectIsMaximumOfSpellworksReached,
   selectIsEntryAvailable,
@@ -964,8 +943,8 @@ export const selectVisibleInactiveCurses = createSelector(
  * extended by whether the entry can be activated.
  */
 export const selectVisibleInactiveElvenMagicalSongs = createSelector(
-  selectStaticElvenMagicalSongs,
-  selectDynamicElvenMagicalSongs,
+  SelectAll.Static.ElvenMagicalSongs,
+  SelectGetById.Dynamic.ElvenMagicalSong,
   selectActiveMagicalTraditions,
   selectIsMaximumOfSpellworksReached,
   selectIsEntryAvailable,
@@ -977,8 +956,8 @@ export const selectVisibleInactiveElvenMagicalSongs = createSelector(
  * extended by whether the entry can be activated.
  */
 export const selectVisibleInactiveDominationRituals = createSelector(
-  selectStaticDominationRituals,
-  selectDynamicDominationRituals,
+  SelectAll.Static.DominationRituals,
+  SelectGetById.Dynamic.DominationRitual,
   selectActiveMagicalTraditions,
   selectIsMaximumOfSpellworksReached,
   selectIsEntryAvailable,
@@ -990,8 +969,8 @@ export const selectVisibleInactiveDominationRituals = createSelector(
  * extended by whether the entry can be activated.
  */
 export const selectVisibleInactiveMagicalDances = createSelector(
-  selectStaticMagicalDances,
-  selectDynamicMagicalDances,
+  SelectAll.Static.MagicalDances,
+  SelectGetById.Dynamic.MagicalDance,
   selectActiveMagicalTraditions,
   selectIsMaximumOfSpellworksReached,
   selectIsEntryAvailable,
@@ -1003,8 +982,8 @@ export const selectVisibleInactiveMagicalDances = createSelector(
  * extended by whether the entry can be activated.
  */
 export const selectVisibleInactiveMagicalMelodies = createSelector(
-  selectStaticMagicalMelodies,
-  selectDynamicMagicalMelodies,
+  SelectAll.Static.MagicalMelodies,
+  SelectGetById.Dynamic.MagicalMelody,
   selectActiveMagicalTraditions,
   selectIsMaximumOfSpellworksReached,
   selectIsEntryAvailable,
@@ -1016,8 +995,8 @@ export const selectVisibleInactiveMagicalMelodies = createSelector(
  * extended by whether the entry can be activated.
  */
 export const selectVisibleInactiveJesterTricks = createSelector(
-  selectStaticJesterTricks,
-  selectDynamicJesterTricks,
+  SelectAll.Static.JesterTricks,
+  SelectGetById.Dynamic.JesterTrick,
   selectActiveMagicalTraditions,
   selectIsMaximumOfSpellworksReached,
   selectIsEntryAvailable,
@@ -1029,8 +1008,8 @@ export const selectVisibleInactiveJesterTricks = createSelector(
  * extended by whether the entry can be activated.
  */
 export const selectVisibleInactiveAnimistPowers = createSelector(
-  selectStaticAnimistPowers,
-  selectDynamicAnimistPowers,
+  SelectAll.Static.AnimistPowers,
+  SelectGetById.Dynamic.AnimistPower,
   selectActiveMagicalTraditions,
   selectIsMaximumOfSpellworksReached,
   selectIsEntryAvailable,
@@ -1042,8 +1021,8 @@ export const selectVisibleInactiveAnimistPowers = createSelector(
  * extended by whether the entry can be activated.
  */
 export const selectVisibleInactiveGeodeRituals = createSelector(
-  selectStaticGeodeRituals,
-  selectDynamicGeodeRituals,
+  SelectAll.Static.GeodeRituals,
+  SelectGetById.Dynamic.GeodeRitual,
   selectActiveMagicalTraditions,
   selectIsMaximumOfSpellworksReached,
   selectIsEntryAvailable,
@@ -1055,8 +1034,8 @@ export const selectVisibleInactiveGeodeRituals = createSelector(
  * extended by whether the entry can be activated.
  */
 export const selectVisibleInactiveZibiljaRituals = createSelector(
-  selectStaticZibiljaRituals,
-  selectDynamicZibiljaRituals,
+  SelectAll.Static.ZibiljaRituals,
+  SelectGetById.Dynamic.ZibiljaRitual,
   selectActiveMagicalTraditions,
   selectIsMaximumOfSpellworksReached,
   selectIsEntryAvailable,

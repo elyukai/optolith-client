@@ -16,12 +16,10 @@ import {
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import {
   selectDynamicAdvantages,
-  selectDynamicAttributes,
   selectDynamicGeneralSpecialAbilities,
-  selectDynamicSkills,
 } from "../slices/characterSlice.ts"
-import { selectStaticSkills } from "../slices/databaseSlice.ts"
 import { createInitialDynamicSkill } from "../slices/skillsSlice.ts"
+import { SelectAll, SelectGetById } from "./basicCapabilitySelectors.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectCurrentCulture } from "./cultureSelectors.ts"
 import { selectFilterApplyingRatedDependencies } from "./dependencySelectors.ts"
@@ -48,9 +46,9 @@ export type DisplayedSkill = {
  * and commonness based on the selected culture.
  */
 export const selectVisibleSkills = createSelector(
-  selectStaticSkills,
-  selectDynamicSkills,
-  selectDynamicAttributes,
+  SelectAll.Static.Skills,
+  SelectGetById.Dynamic.Skill,
+  SelectGetById.Dynamic.Attribute,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
@@ -62,9 +60,9 @@ export const selectVisibleSkills = createSelector(
   selectCurrentCulture,
   selectFilterApplyingRatedDependencies,
   (
-    skills,
-    dynamicSkills,
-    attributes,
+    staticSkills,
+    getDynamicSkillById,
+    getDynamicAttributeById,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
@@ -73,18 +71,18 @@ export const selectVisibleSkills = createSelector(
     culture,
     filterApplyingDependencies,
   ): DisplayedSkill[] =>
-    Object.values(skills).map(skill => {
-      const dynamicSkill = dynamicSkills[skill.id] ?? createInitialDynamicSkill(skill.id)
+    staticSkills.map(skill => {
+      const dynamicSkill = getDynamicSkillById(skill.id) ?? createInitialDynamicSkill(skill.id)
 
       const minimum = getSkillMinimum(
-        id => dynamicSkills[id],
+        getDynamicSkillById,
         dynamicSkill,
         craftInstruments,
         filterApplyingDependencies,
       )
 
       const maximum = getSkillMaximum(
-        refs => getHighestAttributeValue(id => attributes[id], refs),
+        refs => getHighestAttributeValue(getDynamicAttributeById, refs),
         skill,
         isInCharacterCreation,
         startExperienceLevel,

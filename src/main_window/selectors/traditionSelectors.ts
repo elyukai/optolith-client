@@ -13,7 +13,7 @@ import { AdvantageIdentifier } from "../../shared/domain/identifier.ts"
 import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { selectDynamicAdvantages } from "../slices/characterSlice.ts"
-import { SelectGetAll, SelectGetById } from "./basicCapabilitySelectors.ts"
+import { SelectAll, SelectGetById } from "./basicCapabilitySelectors.ts"
 
 /**
  * Returns all active magical traditions with their corresponding static
@@ -21,7 +21,7 @@ import { SelectGetAll, SelectGetById } from "./basicCapabilitySelectors.ts"
  */
 export const selectActiveMagicalTraditions = createSelector(
   SelectGetById.Static.MagicalTradition,
-  SelectGetAll.Dynamic.MagicalTraditions,
+  SelectAll.Dynamic.MagicalTraditions,
   (getStaticMagicalTraditionById, dynamicMagicalTraditions): CombinedActiveMagicalTradition[] =>
     Object.values(dynamicMagicalTraditions)
       .map(dynamicMagicalTradition => {
@@ -45,7 +45,7 @@ export const selectActiveMagicalTraditions = createSelector(
  */
 export const selectActiveBlessedTradition = createSelector(
   SelectGetById.Static.BlessedTradition,
-  SelectGetAll.Dynamic.BlessedTraditions,
+  SelectAll.Dynamic.BlessedTraditions,
   (
     getStaticBlessedTraditionById,
     dynamicBlessedTraditions,
@@ -71,9 +71,8 @@ export const selectActiveBlessedTradition = createSelector(
  */
 export const selectIsSpellcaster = createSelector(
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Spellcaster),
-  SelectGetAll.Dynamic.MagicalTraditions,
-  (spellcaster, getDynamicMagicalTraditions): boolean =>
-    isSpellcaster(spellcaster, getDynamicMagicalTraditions()),
+  SelectAll.Dynamic.MagicalTraditions,
+  isSpellcaster,
 )
 
 /**
@@ -81,9 +80,8 @@ export const selectIsSpellcaster = createSelector(
  */
 export const selectIsBlessedOne = createSelector(
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Blessed),
-  SelectGetAll.Dynamic.BlessedTraditions,
-  (blessedOne, getDynamicBlessedTraditions): boolean =>
-    isBlessedOne(blessedOne, getDynamicBlessedTraditions()),
+  SelectAll.Dynamic.BlessedTraditions,
+  isBlessedOne,
 )
 
 /**

@@ -12,6 +12,7 @@ import { TranslateMap } from "../../utils/translate.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
 import { compareImprovementCost, fromRaw } from "../adventurePoints/improvementCost.ts"
+import { All } from "../getTypes.ts"
 import { AspectIdentifier } from "../identifier.ts"
 import { LiturgiesSortOrder } from "../sortOrders.ts"
 import { DisplayedActiveLiturgy } from "./liturgicalChantActive.ts"
@@ -235,11 +236,11 @@ export const getHighestRequiredAttributeForLiturgicalChant = (
  * Counts all active liturgical chants and ceremonies.
  */
 export const countActiveLiturgicalChants = (
-  dynamicLiturgicalChants: ActivatableRatedWithEnhancementsMap,
-  dynamicCeremonies: ActivatableRatedWithEnhancementsMap,
+  dynamicLiturgicalChants: All.Dynamic.LiturgicalChants,
+  dynamicCeremonies: All.Dynamic.Ceremonies,
 ) =>
-  count(Object.values(dynamicLiturgicalChants), isRatedWithEnhancementsActive) +
-  count(Object.values(dynamicCeremonies), isRatedWithEnhancementsActive)
+  count(dynamicLiturgicalChants, isRatedWithEnhancementsActive) +
+  count(dynamicCeremonies, isRatedWithEnhancementsActive)
 
 /**
  * Checks if the maximum number of liturgical chants has been reached.
@@ -281,13 +282,13 @@ export const belongsToBlessedTradition = (
  * tradition that is not the active one, by tradition.
  */
 export const countActiveByUnfamiliarTradition = <T extends { traditions: SkillTradition[] }>(
-  dynamicEntries: ActivatableRatedWithEnhancementsMap,
-  staticEntries: { [id: number]: T },
+  dynamicEntries: ActivatableRatedWithEnhancements[],
+  getStaticEntry: (id: number) => T | undefined,
   activeBlessedTradition: BlessedTradition,
 ): { [traditionId: number]: number } =>
   countByMany(
-    Object.values(dynamicEntries)
-      .map(dynamicEntry => staticEntries[dynamicEntry.id])
+    dynamicEntries
+      .map(dynamicEntry => getStaticEntry(dynamicEntry.id))
       .filter(
         (staticEntry): staticEntry is NonNullable<typeof staticEntry> =>
           isNotNullish(staticEntry) &&

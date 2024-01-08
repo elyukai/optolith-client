@@ -29,12 +29,10 @@ import {
   selectArcaneEnergyPermanentlyLostBoughtBack,
   selectDynamicAdvantages,
   selectDynamicAttributes,
-  selectDynamicBlessedTraditions,
   selectDynamicCombatSpecialAbilities,
   selectDynamicDisadvantages,
   selectDynamicKarmaSpecialAbilities,
   selectDynamicMagicalSpecialAbilities,
-  selectDynamicMagicalTraditions,
   selectDynamicOptionalRules,
   selectKarmaPointsPermanentlyLost,
   selectKarmaPointsPermanentlyLostBoughtBack,
@@ -44,6 +42,7 @@ import {
   selectPurchasedLifePoints,
 } from "../slices/characterSlice.ts"
 import { selectStaticDerivedCharacteristics } from "../slices/databaseSlice.ts"
+import { SelectAll } from "./basicCapabilitySelectors.ts"
 import { selectIsInCharacterCreation } from "./characterSelectors.ts"
 import {
   selectBlessedPrimaryAttribute,
@@ -146,7 +145,7 @@ export const selectLifePoints = createSelector(
  */
 export const selectArcaneEnergy = createSelector(
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Spellcaster),
-  selectDynamicMagicalTraditions,
+  SelectAll.Dynamic.MagicalTraditions,
   selectHighestMagicalPrimaryAttributes,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.IncreasedAstralPower),
   createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.DecreasedArcanePower),
@@ -162,7 +161,7 @@ export const selectArcaneEnergy = createSelector(
   selectIsInCharacterCreation,
   (
     spellcaster,
-    magicalTraditionsMap,
+    dynamicMagicalTraditions,
     { list: highestMagicalPrimaryAttributes, halfed: useHalf },
     incrementor,
     decrementor,
@@ -173,9 +172,11 @@ export const selectArcaneEnergy = createSelector(
     staticEntry,
     isInCharacterCreation,
   ): DisplayedEnergy<DCId.ArcaneEnergy> | undefined => {
-    const magicalTraditions = Object.values(magicalTraditionsMap)
-
-    if (!isActive(spellcaster) || !magicalTraditions.some(isActive) || staticEntry === undefined) {
+    if (
+      !isActive(spellcaster) ||
+      !dynamicMagicalTraditions.some(isActive) ||
+      staticEntry === undefined
+    ) {
       return undefined
     } else {
       const primaryAttrValue = highestMagicalPrimaryAttributes[0]?.dynamic.value
@@ -223,7 +224,7 @@ export const selectArcaneEnergy = createSelector(
  */
 export const selectKarmaPoints = createSelector(
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.Blessed),
-  selectDynamicBlessedTraditions,
+  SelectAll.Dynamic.BlessedTraditions,
   selectBlessedPrimaryAttribute,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.IncreasedKarmaPoints),
   createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.DecreasedKarmaPoints),
@@ -239,7 +240,7 @@ export const selectKarmaPoints = createSelector(
   selectIsInCharacterCreation,
   (
     blessed,
-    blessedTraditionsMap,
+    dynamicBlessedTraditions,
     blessedPrimaryAttribute,
     incrementor,
     decrementor,
@@ -250,9 +251,11 @@ export const selectKarmaPoints = createSelector(
     staticEntry,
     isInCharacterCreation,
   ): DisplayedEnergy<DCId.KarmaPoints> | undefined => {
-    const blessedTraditions = Object.values(blessedTraditionsMap)
-
-    if (!isActive(blessed) || !blessedTraditions.some(isActive) || staticEntry === undefined) {
+    if (
+      !isActive(blessed) ||
+      !dynamicBlessedTraditions.some(isActive) ||
+      staticEntry === undefined
+    ) {
       return undefined
     } else {
       const primaryAttrValue = blessedPrimaryAttribute?.dynamic.value

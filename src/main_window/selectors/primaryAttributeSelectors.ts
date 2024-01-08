@@ -5,8 +5,7 @@ import {
   getBlessedPrimaryAttribute,
   getHighestMagicalPrimaryAttributes,
 } from "../../shared/domain/rated/primaryAttribute.ts"
-import { selectDynamicAttributes } from "../slices/characterSlice.ts"
-import { selectStaticAttributes } from "../slices/databaseSlice.ts"
+import { SelectGetById } from "./basicCapabilitySelectors.ts"
 import {
   selectActiveBlessedTradition,
   selectActiveMagicalTraditions,
@@ -18,17 +17,17 @@ import {
  */
 export const selectHighestMagicalPrimaryAttributes = createSelector(
   selectActiveMagicalTraditions,
-  selectStaticAttributes,
-  selectDynamicAttributes,
+  SelectGetById.Static.Attribute,
+  SelectGetById.Dynamic.Attribute,
   (
     activeMagicalTraditions,
-    staticAttributes,
-    dynamicAttributes,
+    getStaticAttributeById,
+    getDynamicAttributeById,
   ): DisplayedMagicalPrimaryAttributes =>
     getHighestMagicalPrimaryAttributes(
       activeMagicalTraditions,
-      id => staticAttributes[id],
-      id => dynamicAttributes[id],
+      getStaticAttributeById,
+      getDynamicAttributeById,
     ),
 )
 
@@ -37,18 +36,18 @@ export const selectHighestMagicalPrimaryAttributes = createSelector(
  */
 export const selectBlessedPrimaryAttribute = createSelector(
   selectActiveBlessedTradition,
-  selectStaticAttributes,
-  selectDynamicAttributes,
+  SelectGetById.Static.Attribute,
+  SelectGetById.Dynamic.Attribute,
   (
     activeBlessedTradition,
-    staticAttributes,
-    dynamicAttributes,
+    getStaticAttributeById,
+    getDynamicAttributeById,
   ): DisplayedPrimaryAttribute | undefined =>
     activeBlessedTradition === undefined
       ? undefined
       : getBlessedPrimaryAttribute(
           activeBlessedTradition,
-          id => staticAttributes[id],
-          id => dynamicAttributes[id],
+          getStaticAttributeById,
+          getDynamicAttributeById,
         ),
 )

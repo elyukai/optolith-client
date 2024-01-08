@@ -1,36 +1,16 @@
-import { Ceremony } from "optolith-database-schema/types/Ceremony"
-import { CloseCombatTechnique } from "optolith-database-schema/types/CombatTechnique_Close"
-import { RangedCombatTechnique } from "optolith-database-schema/types/CombatTechnique_Ranged"
 import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
-import { LiturgicalChant } from "optolith-database-schema/types/LiturgicalChant"
 import { AttributeAdjustments } from "optolith-database-schema/types/Race"
-import { Ritual } from "optolith-database-schema/types/Ritual"
-import { Skill } from "optolith-database-schema/types/Skill"
-import { Spell } from "optolith-database-schema/types/Spell"
-import { AnimistPower } from "optolith-database-schema/types/magicalActions/AnimistPower"
-import { Curse } from "optolith-database-schema/types/magicalActions/Curse"
-import { DominationRitual } from "optolith-database-schema/types/magicalActions/DominationRitual"
-import { ElvenMagicalSong } from "optolith-database-schema/types/magicalActions/ElvenMagicalSong"
-import { GeodeRitual } from "optolith-database-schema/types/magicalActions/GeodeRitual"
-import { JesterTrick } from "optolith-database-schema/types/magicalActions/JesterTrick"
-import { MagicalDance } from "optolith-database-schema/types/magicalActions/MagicalDance"
-import { MagicalMelody } from "optolith-database-schema/types/magicalActions/MagicalMelody"
-import { ZibiljaRitual } from "optolith-database-schema/types/magicalActions/ZibiljaRitual"
 import { filterNonNullable } from "../../utils/array.ts"
 import { mapNullable, mapNullableDefault } from "../../utils/nullable.ts"
 import { Activatable } from "../activatable/activatableEntry.ts"
+import { All, GetById } from "../getTypes.ts"
 import { getSingleHighestPair } from "../idValue.ts"
 import { AttributeIdentifier } from "../identifier.ts"
 import { getAttributeValue } from "./attribute.ts"
 import { getHighestRequiredAttributeForCombatTechnique } from "./combatTechnique.ts"
 import { getHighestRequiredAttributeForLiturgicalChant } from "./liturgicalChant.ts"
 import { RatedDependency, flattenMinimumRestrictions } from "./ratedDependency.ts"
-import {
-  ActivatableRatedMap,
-  ActivatableRatedWithEnhancementsMap,
-  Rated,
-  RatedMap,
-} from "./ratedEntry.ts"
+import { Rated } from "./ratedEntry.ts"
 import { getHighestRequiredAttributeForSkill } from "./skill.ts"
 import { getSingleHighestCheckAttributeId } from "./skillCheck.ts"
 import { getHighestRequiredAttributeForSpellwork } from "./spell.ts"
@@ -152,20 +132,20 @@ const getAttributeMinimaForEntity = <
   D extends { id: number; value: number | undefined },
   S extends object,
 >(
-  dynamicMap: Record<number, D>,
-  staticMap: Record<number, S>,
+  dynamicEntries: D[],
+  getStaticEntryById: (id: number) => S | undefined,
   getHighestRequiredAttributeForEntry: (
     dynamicEntry: D,
     staticEntry: S,
   ) => { id: number; value: number } | undefined,
 ): { id: number; value: number }[] =>
-  Object.values(dynamicMap).flatMap(dynamicEntry =>
+  dynamicEntries.flatMap(dynamicEntry =>
     // optimize performance by filtering out all entries that are below the
     // attribute minimum of 8
     (dynamicEntry.value ?? 0) < 8
       ? []
       : mapNullableDefault(
-          mapNullable(staticMap[dynamicEntry.id], staticEntry =>
+          mapNullable(getStaticEntryById(dynamicEntry.id), staticEntry =>
             getHighestRequiredAttributeForEntry(dynamicEntry, staticEntry),
           ),
           x => [x],
@@ -184,51 +164,54 @@ const getAttributeMinimaForEntity = <
  * or *Exceptional Combat Technique*.
  */
 export const getAttributeMinimaByAssociatedAttributes = (
-  staticSkills: Record<number, Skill>,
-  staticCloseCombatTechniques: Record<number, CloseCombatTechnique>,
-  staticRangedCombatTechniques: Record<number, RangedCombatTechnique>,
-  staticSpells: Record<number, Spell>,
-  staticRituals: Record<number, Ritual>,
-  staticLiturgicalChants: Record<number, LiturgicalChant>,
-  staticCeremonies: Record<number, Ceremony>,
-  staticCurses: Record<number, Curse>,
-  staticElvenMagicalSongs: Record<number, ElvenMagicalSong>,
-  staticDominationRituals: Record<number, DominationRitual>,
-  staticMagicalDances: Record<number, MagicalDance>,
-  staticMagicalMelodies: Record<number, MagicalMelody>,
-  staticJesterTricks: Record<number, JesterTrick>,
-  staticAnimistPowers: Record<number, AnimistPower>,
-  staticGeodeRituals: Record<number, GeodeRitual>,
-  staticZibiljaRituals: Record<number, ZibiljaRitual>,
-  attributes: RatedMap,
-  dynamicSkills: RatedMap,
-  dynamicCloseCombatTechniques: RatedMap,
-  dynamicRangedCombatTechniques: RatedMap,
-  dynamicSpells: ActivatableRatedWithEnhancementsMap,
-  dynamicRituals: ActivatableRatedWithEnhancementsMap,
-  dynamicLiturgicalChants: ActivatableRatedWithEnhancementsMap,
-  dynamicCeremonies: ActivatableRatedWithEnhancementsMap,
-  dynamicCurses: ActivatableRatedMap,
-  dynamicElvenMagicalSongs: ActivatableRatedMap,
-  dynamicDominationRituals: ActivatableRatedMap,
-  dynamicMagicalDances: ActivatableRatedMap,
-  dynamicMagicalMelodies: ActivatableRatedMap,
-  dynamicJesterTricks: ActivatableRatedMap,
-  dynamicAnimistPowers: ActivatableRatedMap,
-  dynamicGeodeRituals: ActivatableRatedMap,
-  dynamicZibiljaRituals: ActivatableRatedMap,
+  getStaticSkillById: GetById.Static.Skill,
+  getStaticCloseCombatTechniqueById: GetById.Static.CloseCombatTechnique,
+  getStaticRangedCombatTechniqueById: GetById.Static.RangedCombatTechnique,
+  getStaticSpellById: GetById.Static.Spell,
+  getStaticRitualById: GetById.Static.Ritual,
+  getStaticLiturgicalChantById: GetById.Static.LiturgicalChant,
+  getStaticCeremonyById: GetById.Static.Ceremony,
+  getStaticCurseById: GetById.Static.Curse,
+  getStaticElvenMagicalSongById: GetById.Static.ElvenMagicalSong,
+  getStaticDominationRitualById: GetById.Static.DominationRitual,
+  getStaticMagicalDanceById: GetById.Static.MagicalDance,
+  getStaticMagicalMelodyById: GetById.Static.MagicalMelody,
+  getStaticJesterTrickById: GetById.Static.JesterTrick,
+  getStaticAnimistPowerById: GetById.Static.AnimistPower,
+  getStaticGeodeRitualById: GetById.Static.GeodeRitual,
+  getStaticZibiljaRitualById: GetById.Static.ZibiljaRitual,
+  getDynamicAttributeById: GetById.Dynamic.Attribute,
+  dynamicSkills: All.Dynamic.Skills,
+  dynamicCloseCombatTechniques: All.Dynamic.CloseCombatTechniques,
+  dynamicRangedCombatTechniques: All.Dynamic.RangedCombatTechniques,
+  dynamicSpells: All.Dynamic.Spells,
+  dynamicRituals: All.Dynamic.Rituals,
+  dynamicLiturgicalChants: All.Dynamic.LiturgicalChants,
+  dynamicCeremonies: All.Dynamic.Ceremonies,
+  dynamicCurses: All.Dynamic.Curses,
+  dynamicElvenMagicalSongs: All.Dynamic.ElvenMagicalSongs,
+  dynamicDominationRituals: All.Dynamic.DominationRituals,
+  dynamicMagicalDances: All.Dynamic.MagicalDances,
+  dynamicMagicalMelodies: All.Dynamic.MagicalMelodies,
+  dynamicJesterTricks: All.Dynamic.JesterTricks,
+  dynamicAnimistPowers: All.Dynamic.AnimistPowers,
+  dynamicGeodeRituals: All.Dynamic.GeodeRituals,
+  dynamicZibiljaRituals: All.Dynamic.ZibiljaRituals,
   exceptionalSkill: Activatable | undefined,
   exceptionalCombatTechnique: Activatable | undefined,
 ): Record<number, number> => {
   const getSingleHighestPrimaryAttributeId = (primaryAttributeIds: number[]) =>
     getSingleHighestPair(
-      primaryAttributeIds.map(id => ({ id, value: getAttributeValue(attributes[id]) })),
+      primaryAttributeIds.map(id => ({
+        id,
+        value: getAttributeValue(getDynamicAttributeById(id)),
+      })),
     )?.id
 
   return [
-    ...getAttributeMinimaForEntity(dynamicSkills, staticSkills, (dynamicEntry, staticEntry) =>
+    ...getAttributeMinimaForEntity(dynamicSkills, getStaticSkillById, (dynamicEntry, staticEntry) =>
       getHighestRequiredAttributeForSkill(
-        check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+        check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
         staticEntry,
         dynamicEntry,
         exceptionalSkill,
@@ -236,7 +219,7 @@ export const getAttributeMinimaByAssociatedAttributes = (
     ),
     ...getAttributeMinimaForEntity(
       dynamicCloseCombatTechniques,
-      staticCloseCombatTechniques,
+      getStaticCloseCombatTechniqueById,
       (dynamicEntry, staticEntry) =>
         getHighestRequiredAttributeForCombatTechnique(
           getSingleHighestPrimaryAttributeId,
@@ -247,7 +230,7 @@ export const getAttributeMinimaByAssociatedAttributes = (
     ),
     ...getAttributeMinimaForEntity(
       dynamicRangedCombatTechniques,
-      staticRangedCombatTechniques,
+      getStaticRangedCombatTechniqueById,
       (dynamicEntry, staticEntry) =>
         getHighestRequiredAttributeForCombatTechnique(
           getSingleHighestPrimaryAttributeId,
@@ -256,30 +239,33 @@ export const getAttributeMinimaByAssociatedAttributes = (
           exceptionalCombatTechnique,
         ),
     ),
-    ...getAttributeMinimaForEntity(dynamicSpells, staticSpells, (dynamicEntry, staticEntry) =>
+    ...getAttributeMinimaForEntity(dynamicSpells, getStaticSpellById, (dynamicEntry, staticEntry) =>
       getHighestRequiredAttributeForSpellwork(
-        check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+        check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
         staticEntry,
         dynamicEntry,
         exceptionalSkill,
         "Spell",
       ),
     ),
-    ...getAttributeMinimaForEntity(dynamicRituals, staticRituals, (dynamicEntry, staticEntry) =>
-      getHighestRequiredAttributeForSpellwork(
-        check => getSingleHighestCheckAttributeId(id => attributes[id], check),
-        staticEntry,
-        dynamicEntry,
-        exceptionalSkill,
-        "Ritual",
-      ),
+    ...getAttributeMinimaForEntity(
+      dynamicRituals,
+      getStaticRitualById,
+      (dynamicEntry, staticEntry) =>
+        getHighestRequiredAttributeForSpellwork(
+          check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
+          staticEntry,
+          dynamicEntry,
+          exceptionalSkill,
+          "Ritual",
+        ),
     ),
     ...getAttributeMinimaForEntity(
       dynamicLiturgicalChants,
-      staticLiturgicalChants,
+      getStaticLiturgicalChantById,
       (dynamicEntry, staticEntry) =>
         getHighestRequiredAttributeForLiturgicalChant(
-          check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+          check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
           staticEntry,
           dynamicEntry,
           exceptionalSkill,
@@ -288,19 +274,19 @@ export const getAttributeMinimaByAssociatedAttributes = (
     ),
     ...getAttributeMinimaForEntity(
       dynamicCeremonies,
-      staticCeremonies,
+      getStaticCeremonyById,
       (dynamicEntry, staticEntry) =>
         getHighestRequiredAttributeForLiturgicalChant(
-          check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+          check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
           staticEntry,
           dynamicEntry,
           exceptionalSkill,
           "Ceremony",
         ),
     ),
-    ...getAttributeMinimaForEntity(dynamicCurses, staticCurses, (dynamicEntry, staticEntry) =>
+    ...getAttributeMinimaForEntity(dynamicCurses, getStaticCurseById, (dynamicEntry, staticEntry) =>
       getHighestRequiredAttributeForSpellwork(
-        check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+        check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
         staticEntry,
         dynamicEntry,
         undefined,
@@ -309,10 +295,10 @@ export const getAttributeMinimaByAssociatedAttributes = (
     ),
     ...getAttributeMinimaForEntity(
       dynamicElvenMagicalSongs,
-      staticElvenMagicalSongs,
+      getStaticElvenMagicalSongById,
       (dynamicEntry, staticEntry) =>
         getHighestRequiredAttributeForSpellwork(
-          check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+          check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
           staticEntry,
           dynamicEntry,
           undefined,
@@ -321,10 +307,10 @@ export const getAttributeMinimaByAssociatedAttributes = (
     ),
     ...getAttributeMinimaForEntity(
       dynamicDominationRituals,
-      staticDominationRituals,
+      getStaticDominationRitualById,
       (dynamicEntry, staticEntry) =>
         getHighestRequiredAttributeForSpellwork(
-          check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+          check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
           staticEntry,
           dynamicEntry,
           undefined,
@@ -333,10 +319,10 @@ export const getAttributeMinimaByAssociatedAttributes = (
     ),
     ...getAttributeMinimaForEntity(
       dynamicMagicalDances,
-      staticMagicalDances,
+      getStaticMagicalDanceById,
       (dynamicEntry, staticEntry) =>
         getHighestRequiredAttributeForSpellwork(
-          check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+          check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
           staticEntry,
           dynamicEntry,
           undefined,
@@ -345,10 +331,10 @@ export const getAttributeMinimaByAssociatedAttributes = (
     ),
     ...getAttributeMinimaForEntity(
       dynamicMagicalMelodies,
-      staticMagicalMelodies,
+      getStaticMagicalMelodyById,
       (dynamicEntry, staticEntry) =>
         getHighestRequiredAttributeForSpellwork(
-          check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+          check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
           staticEntry,
           dynamicEntry,
           undefined,
@@ -357,10 +343,10 @@ export const getAttributeMinimaByAssociatedAttributes = (
     ),
     ...getAttributeMinimaForEntity(
       dynamicJesterTricks,
-      staticJesterTricks,
+      getStaticJesterTrickById,
       (dynamicEntry, staticEntry) =>
         getHighestRequiredAttributeForSpellwork(
-          check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+          check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
           staticEntry,
           dynamicEntry,
           undefined,
@@ -369,10 +355,10 @@ export const getAttributeMinimaByAssociatedAttributes = (
     ),
     ...getAttributeMinimaForEntity(
       dynamicAnimistPowers,
-      staticAnimistPowers,
+      getStaticAnimistPowerById,
       (dynamicEntry, staticEntry) =>
         getHighestRequiredAttributeForSpellwork(
-          check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+          check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
           staticEntry,
           dynamicEntry,
           undefined,
@@ -381,10 +367,10 @@ export const getAttributeMinimaByAssociatedAttributes = (
     ),
     ...getAttributeMinimaForEntity(
       dynamicGeodeRituals,
-      staticGeodeRituals,
+      getStaticGeodeRitualById,
       (dynamicEntry, staticEntry) =>
         getHighestRequiredAttributeForSpellwork(
-          check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+          check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
           staticEntry,
           dynamicEntry,
           undefined,
@@ -393,10 +379,10 @@ export const getAttributeMinimaByAssociatedAttributes = (
     ),
     ...getAttributeMinimaForEntity(
       dynamicZibiljaRituals,
-      staticZibiljaRituals,
+      getStaticZibiljaRitualById,
       (dynamicEntry, staticEntry) =>
         getHighestRequiredAttributeForSpellwork(
-          check => getSingleHighestCheckAttributeId(id => attributes[id], check),
+          check => getSingleHighestCheckAttributeId(getDynamicAttributeById, check),
           staticEntry,
           dynamicEntry,
           undefined,

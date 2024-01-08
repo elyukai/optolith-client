@@ -24,14 +24,12 @@ import {
   compareImprovementCost,
   fromRaw,
 } from "../adventurePoints/improvementCost.ts"
-import { GetById } from "../getTypes.ts"
+import { All, GetById } from "../getTypes.ts"
 import { MagicalTraditionIdentifier } from "../identifier.ts"
 import { checkPrerequisitesOfSpellwork } from "../prerequisites/fullPrerequisiteValidationForType.ts"
 import {
   ActivatableRated,
-  ActivatableRatedMap,
   ActivatableRatedWithEnhancements,
-  ActivatableRatedWithEnhancementsMap,
   isOptionalRatedActive,
   isOptionalRatedWithEnhancementsActive,
 } from "./ratedEntry.ts"
@@ -207,7 +205,8 @@ export const getVisibleInactiveCantrips = (
  * ceremonies are returned.
  * @param kind The value for the `kind` property.
  * @param staticSpellworks A map of static spells or rituals.
- * @param dynamicSpellworks A map of dynamic spells or rituals.
+ * @param getDynamicSpellworkById Get a dynamic spell or ritual by its
+ * identifier.
  * @param activeMagicalTraditions The active magical tradition(s).
  * @param activeCount The number of active spells, rituals and magical actions.
  * @param activeCountByImprovementCost The number of active spells, rituals and
@@ -228,8 +227,8 @@ export const getVisibleInactiveCantrips = (
  */
 export const getInactiveSpellsOrRituals = <K extends "spell" | "ritual", T extends Spell | Ritual>(
   kind: K,
-  staticSpellworks: Record<number, T>,
-  dynamicSpellworks: ActivatableRatedWithEnhancementsMap,
+  staticSpellworks: T[],
+  getDynamicSpellworkById: (id: number) => ActivatableRatedWithEnhancements | undefined,
   activeMagicalTraditions: CombinedActiveMagicalTradition[],
   activeCount: number,
   activeCountByImprovementCost: Record<ImprovementCost, number>,
@@ -321,11 +320,11 @@ export const getInactiveSpellsOrRituals = <K extends "spell" | "ritual", T exten
     .filter(
       staticSpellwork =>
         isEntryAvailable(staticSpellwork.src) &&
-        !isOptionalRatedWithEnhancementsActive(dynamicSpellworks[staticSpellwork.id]) &&
+        !isOptionalRatedWithEnhancementsActive(getDynamicSpellworkById(staticSpellwork.id)) &&
         additionalHardPredicate(staticSpellwork),
     )
     .map(staticSpellwork => {
-      const dynamicSpellwork = dynamicSpellworks[staticSpellwork.id]
+      const dynamicSpellwork = getDynamicSpellworkById(staticSpellwork.id)
       const isUnfamiliar = getIsUnfamiliar(staticSpellwork.id)
 
       return {
@@ -350,8 +349,8 @@ const getInactiveMagicalActions = <
   T extends { id: number; src: PublicationRefs },
 >(
   kind: K,
-  staticMagicalActions: Record<number, T>,
-  dynamicMagicalActions: ActivatableRatedMap,
+  staticMagicalActions: T[],
+  getDynamicMagicalActionById: (id: number) => ActivatableRated | undefined,
   activeMagicalTraditions: CombinedActiveMagicalTradition[],
   isMaximumCountReached: boolean,
   isEntryAvailable: (src: PublicationRefs) => boolean,
@@ -373,15 +372,15 @@ const getInactiveMagicalActions = <
         : [associatedMagicalTraditionId],
     )
   ) {
-    return Object.values(staticMagicalActions)
+    return staticMagicalActions
       .filter(
         staticMagicalAction =>
           isEntryAvailable(staticMagicalAction.src) &&
-          !isOptionalRatedActive(dynamicMagicalActions[staticMagicalAction.id]) &&
+          !isOptionalRatedActive(getDynamicMagicalActionById(staticMagicalAction.id)) &&
           (options.additionalHardPredicate?.(staticMagicalAction) ?? true),
       )
       .map(staticMagicalAction => {
-        const dynamicMagicalAction = dynamicMagicalActions[staticMagicalAction.id]
+        const dynamicMagicalAction = getDynamicMagicalActionById(staticMagicalAction.id)
 
         return {
           kind,
@@ -400,8 +399,8 @@ const getInactiveMagicalActions = <
  * whether the entry can be activated.
  */
 export const getInactiveCurses = (
-  staticCurses: Record<number, Curse>,
-  dynamicCurses: ActivatableRatedMap,
+  staticCurses: All.Static.Curses,
+  getDynamicCurseById: GetById.Dynamic.Curse,
   activeMagicalTraditions: CombinedActiveMagicalTradition[],
   isMaximumCountReached: boolean,
   isEntryAvailable: (src: PublicationRefs) => boolean,
@@ -409,7 +408,7 @@ export const getInactiveCurses = (
   getInactiveMagicalActions(
     "curse",
     staticCurses,
-    dynamicCurses,
+    getDynamicCurseById,
     activeMagicalTraditions,
     isMaximumCountReached,
     isEntryAvailable,
@@ -421,8 +420,8 @@ export const getInactiveCurses = (
  * extended by whether the entry can be activated.
  */
 export const getInactiveElvenMagicalSongs = (
-  staticElvenMagicalSongs: Record<number, ElvenMagicalSong>,
-  dynamicElvenMagicalSongs: ActivatableRatedMap,
+  staticElvenMagicalSongs: All.Static.ElvenMagicalSongs,
+  getDynamicElvenMagicalSongById: GetById.Dynamic.ElvenMagicalSong,
   activeMagicalTraditions: CombinedActiveMagicalTradition[],
   isMaximumCountReached: boolean,
   isEntryAvailable: (src: PublicationRefs) => boolean,
@@ -430,7 +429,7 @@ export const getInactiveElvenMagicalSongs = (
   getInactiveMagicalActions(
     "elvenMagicalSong",
     staticElvenMagicalSongs,
-    dynamicElvenMagicalSongs,
+    getDynamicElvenMagicalSongById,
     activeMagicalTraditions,
     isMaximumCountReached,
     isEntryAvailable,
@@ -442,8 +441,8 @@ export const getInactiveElvenMagicalSongs = (
  * extended by whether the entry can be activated.
  */
 export const getInactiveDominationRituals = (
-  staticDominationRituals: Record<number, DominationRitual>,
-  dynamicDominationRituals: ActivatableRatedMap,
+  staticDominationRituals: All.Static.DominationRituals,
+  getDynamicDominationRitualById: GetById.Dynamic.DominationRitual,
   activeMagicalTraditions: CombinedActiveMagicalTradition[],
   isMaximumCountReached: boolean,
   isEntryAvailable: (src: PublicationRefs) => boolean,
@@ -451,7 +450,7 @@ export const getInactiveDominationRituals = (
   getInactiveMagicalActions(
     "dominationRitual",
     staticDominationRituals,
-    dynamicDominationRituals,
+    getDynamicDominationRitualById,
     activeMagicalTraditions,
     isMaximumCountReached,
     isEntryAvailable,
@@ -463,8 +462,8 @@ export const getInactiveDominationRituals = (
  * by whether the entry can be activated.
  */
 export const getInactiveMagicalDances = (
-  staticMagicalDances: Record<number, MagicalDance>,
-  dynamicMagicalDances: ActivatableRatedMap,
+  staticMagicalDances: All.Static.MagicalDances,
+  getDynamicMagicalDanceById: GetById.Dynamic.MagicalDance,
   activeMagicalTraditions: CombinedActiveMagicalTradition[],
   isMaximumCountReached: boolean,
   isEntryAvailable: (src: PublicationRefs) => boolean,
@@ -481,7 +480,7 @@ export const getInactiveMagicalDances = (
   return getInactiveMagicalActions(
     "magicalDance",
     staticMagicalDances,
-    dynamicMagicalDances,
+    getDynamicMagicalDanceById,
     activeMagicalTraditions,
     isMaximumCountReached,
     isEntryAvailable,
@@ -498,8 +497,8 @@ export const getInactiveMagicalDances = (
  * extended by whether the entry can be activated.
  */
 export const getInactiveMagicalMelodies = (
-  staticMagicalMelodies: Record<number, MagicalMelody>,
-  dynamicMagicalMelodies: ActivatableRatedMap,
+  staticMagicalMelodies: All.Static.MagicalMelodies,
+  getDynamicMagicalMelodyById: GetById.Dynamic.MagicalMelody,
   activeMagicalTraditions: CombinedActiveMagicalTradition[],
   isMaximumCountReached: boolean,
   isEntryAvailable: (src: PublicationRefs) => boolean,
@@ -516,7 +515,7 @@ export const getInactiveMagicalMelodies = (
   return getInactiveMagicalActions(
     "magicalMelody",
     staticMagicalMelodies,
-    dynamicMagicalMelodies,
+    getDynamicMagicalMelodyById,
     activeMagicalTraditions,
     isMaximumCountReached,
     isEntryAvailable,
@@ -533,8 +532,8 @@ export const getInactiveMagicalMelodies = (
  * by whether the entry can be activated.
  */
 export const getInactiveJesterTricks = (
-  staticJesterTricks: Record<number, JesterTrick>,
-  dynamicJesterTricks: ActivatableRatedMap,
+  staticJesterTricks: All.Static.JesterTricks,
+  getDynamicJesterTrickById: GetById.Dynamic.JesterTrick,
   activeMagicalTraditions: CombinedActiveMagicalTradition[],
   isMaximumCountReached: boolean,
   isEntryAvailable: (src: PublicationRefs) => boolean,
@@ -542,7 +541,7 @@ export const getInactiveJesterTricks = (
   getInactiveMagicalActions(
     "jesterTrick",
     staticJesterTricks,
-    dynamicJesterTricks,
+    getDynamicJesterTrickById,
     activeMagicalTraditions,
     isMaximumCountReached,
     isEntryAvailable,
@@ -554,8 +553,8 @@ export const getInactiveJesterTricks = (
  * by whether the entry can be activated.
  */
 export const getInactiveAnimistPowers = (
-  staticAnimistPowers: Record<number, AnimistPower>,
-  dynamicAnimistPowers: ActivatableRatedMap,
+  staticAnimistPowers: All.Static.AnimistPowers,
+  getDynamicAnimistPowerById: GetById.Dynamic.AnimistPower,
   activeMagicalTraditions: CombinedActiveMagicalTradition[],
   isMaximumCountReached: boolean,
   isEntryAvailable: (src: PublicationRefs) => boolean,
@@ -563,7 +562,7 @@ export const getInactiveAnimistPowers = (
   getInactiveMagicalActions(
     "animistPower",
     staticAnimistPowers,
-    dynamicAnimistPowers,
+    getDynamicAnimistPowerById,
     activeMagicalTraditions,
     isMaximumCountReached,
     isEntryAvailable,
@@ -575,8 +574,8 @@ export const getInactiveAnimistPowers = (
  * by whether the entry can be activated.
  */
 export const getInactiveGeodeRituals = (
-  staticGeodeRituals: Record<number, GeodeRitual>,
-  dynamicGeodeRituals: ActivatableRatedMap,
+  staticGeodeRituals: All.Static.GeodeRituals,
+  getDynamicGeodeRitualById: GetById.Dynamic.GeodeRitual,
   activeMagicalTraditions: CombinedActiveMagicalTradition[],
   isMaximumCountReached: boolean,
   isEntryAvailable: (src: PublicationRefs) => boolean,
@@ -584,7 +583,7 @@ export const getInactiveGeodeRituals = (
   getInactiveMagicalActions(
     "geodeRitual",
     staticGeodeRituals,
-    dynamicGeodeRituals,
+    getDynamicGeodeRitualById,
     activeMagicalTraditions,
     isMaximumCountReached,
     isEntryAvailable,
@@ -596,8 +595,8 @@ export const getInactiveGeodeRituals = (
  * extended by whether the entry can be activated.
  */
 export const getInactiveZibiljaRituals = (
-  staticZibiljaRituals: Record<number, ZibiljaRitual>,
-  dynamicZibiljaRituals: ActivatableRatedMap,
+  staticZibiljaRituals: All.Static.ZibiljaRituals,
+  getDynamicZibiljaRitualById: GetById.Dynamic.ZibiljaRitual,
   activeMagicalTraditions: CombinedActiveMagicalTradition[],
   isMaximumCountReached: boolean,
   isEntryAvailable: (src: PublicationRefs) => boolean,
@@ -605,7 +604,7 @@ export const getInactiveZibiljaRituals = (
   getInactiveMagicalActions(
     "zibiljaRitual",
     staticZibiljaRituals,
-    dynamicZibiljaRituals,
+    getDynamicZibiljaRitualById,
     activeMagicalTraditions,
     isMaximumCountReached,
     isEntryAvailable,

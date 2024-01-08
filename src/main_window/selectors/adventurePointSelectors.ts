@@ -1,16 +1,19 @@
 import { createSelector } from "@reduxjs/toolkit"
 import {
+  TinyActivatable,
+  isTinyActivatableActive,
+} from "../../shared/domain/activatable/activatableEntry.ts"
+import {
   ImprovementCost,
   adventurePointsForRange,
 } from "../../shared/domain/adventurePoints/improvementCost.ts"
 import { RatedAdventurePointsCache } from "../../shared/domain/adventurePoints/ratedEntry.ts"
+import { count } from "../../shared/utils/array.ts"
 import {
   selectCurrentCharacter,
   selectDerivedCharacteristics,
   selectDynamicAnimistPowers,
   selectDynamicAttributes,
-  selectDynamicBlessings,
-  selectDynamicCantrips,
   selectDynamicCeremonies,
   selectDynamicCloseCombatTechniques,
   selectDynamicCurses,
@@ -28,6 +31,7 @@ import {
   selectDynamicZibiljaRituals,
   selectTotalAdventurePoints,
 } from "../slices/characterSlice.ts"
+import { SelectAll } from "./basicCapabilitySelectors.ts"
 
 /**
  * Adventure Points can either be spent from the main pool of adventure points
@@ -109,7 +113,7 @@ const sumTinyActivatables = (tinyActivatables: TinyActivatable[]): SpentAdventur
  * Returns the adventure points spent on cantrips.
  */
 export const selectAdventurePointsSpentOnCantrips = createSelector(
-  selectDynamicCantrips,
+  SelectAll.Dynamic.Cantrips,
   sumTinyActivatables,
 )
 
@@ -117,7 +121,7 @@ export const selectAdventurePointsSpentOnCantrips = createSelector(
  * Returns the adventure points spent on blessings.
  */
 export const selectAdventurePointsSpentOnBlessings = createSelector(
-  selectDynamicBlessings,
+  SelectAll.Dynamic.Blessings,
   sumTinyActivatables,
 )
 

@@ -11,15 +11,6 @@ import {
 import { ImprovementCost as RawImprovementCost } from "optolith-database-schema/types/_ImprovementCost"
 import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
 import { Traditions } from "optolith-database-schema/types/_Spellwork"
-import { AnimistPower } from "optolith-database-schema/types/magicalActions/AnimistPower"
-import { Curse } from "optolith-database-schema/types/magicalActions/Curse"
-import { DominationRitual } from "optolith-database-schema/types/magicalActions/DominationRitual"
-import { ElvenMagicalSong } from "optolith-database-schema/types/magicalActions/ElvenMagicalSong"
-import { GeodeRitual } from "optolith-database-schema/types/magicalActions/GeodeRitual"
-import { JesterTrick } from "optolith-database-schema/types/magicalActions/JesterTrick"
-import { MagicalDance } from "optolith-database-schema/types/magicalActions/MagicalDance"
-import { MagicalMelody } from "optolith-database-schema/types/magicalActions/MagicalMelody"
-import { ZibiljaRitual } from "optolith-database-schema/types/magicalActions/ZibiljaRitual"
 import { count, countBy, sum } from "../../utils/array.ts"
 import { Compare, compareAt, compareNullish, numAsc, reduceCompare } from "../../utils/compare.ts"
 import { isNotNullish, mapNullableDefault } from "../../utils/nullable.ts"
@@ -32,6 +23,7 @@ import {
   compareImprovementCost,
   fromRaw,
 } from "../adventurePoints/improvementCost.ts"
+import { All, GetById } from "../getTypes.ts"
 import { MagicalTraditionIdentifier, createIdentifierObject } from "../identifier.ts"
 import { SpellsSortOrder } from "../sortOrders.ts"
 import {
@@ -40,6 +32,7 @@ import {
   geodeRitualsImprovementCost,
 } from "./magicalActions.ts"
 import {
+  ActivatableRated,
   ActivatableRatedMap,
   ActivatableRatedValue,
   ActivatableRatedWithEnhancements,
@@ -189,19 +182,19 @@ export const getHighestRequiredAttributeForSpellwork = (
  * Counts active spellworks.
  */
 export const countActiveSpellworks = (
-  dynamicSpells: ActivatableRatedWithEnhancementsMap,
-  dynamicRituals: ActivatableRatedWithEnhancementsMap,
-  dynamicCurses: ActivatableRatedMap,
-  dynamicElvenMagicalSongs: ActivatableRatedMap,
-  dynamicDominationRituals: ActivatableRatedMap,
-  dynamicMagicalDances: ActivatableRatedMap,
-  dynamicMagicalMelodies: ActivatableRatedMap,
-  dynamicJesterTricks: ActivatableRatedMap,
-  dynamicAnimistPowers: ActivatableRatedMap,
-  dynamicGeodeRituals: ActivatableRatedMap,
-  dynamicZibiljaRituals: ActivatableRatedMap,
+  dynamicSpells: All.Dynamic.Spells,
+  dynamicRituals: All.Dynamic.Rituals,
+  dynamicCurses: All.Dynamic.Curses,
+  dynamicElvenMagicalSongs: All.Dynamic.ElvenMagicalSongs,
+  dynamicDominationRituals: All.Dynamic.DominationRituals,
+  dynamicMagicalDances: All.Dynamic.MagicalDances,
+  dynamicMagicalMelodies: All.Dynamic.MagicalMelodies,
+  dynamicJesterTricks: All.Dynamic.JesterTricks,
+  dynamicAnimistPowers: All.Dynamic.AnimistPowers,
+  dynamicGeodeRituals: All.Dynamic.GeodeRituals,
+  dynamicZibiljaRituals: All.Dynamic.ZibiljaRituals,
 ): number =>
-  count([dynamicSpells, dynamicRituals].flatMap(Object.values), isRatedWithEnhancementsActive) +
+  count([dynamicSpells, dynamicRituals].flat(), isRatedWithEnhancementsActive) +
   count(
     [
       dynamicCurses,
@@ -213,7 +206,7 @@ export const countActiveSpellworks = (
       dynamicAnimistPowers,
       dynamicGeodeRituals,
       dynamicZibiljaRituals,
-    ].flatMap(Object.values),
+    ].flat(),
     isRatedActive,
   )
 
@@ -221,16 +214,16 @@ export const countActiveSpellworks = (
  * Counts active unfamiliar spellworks.
  */
 export const countActiveUnfamiliarSpellworks = (
-  dynamicSpells: ActivatableRatedWithEnhancementsMap,
-  dynamicRituals: ActivatableRatedWithEnhancementsMap,
+  dynamicSpells: ActivatableRatedWithEnhancements[],
+  dynamicRituals: ActivatableRatedWithEnhancements[],
   getIsUnfamiliar: (id: SpellworkIdentifier) => boolean,
 ): number => {
   const countForType = (
-    dynamicSpellworks: ActivatableRatedWithEnhancementsMap,
+    dynamicSpellworks: ActivatableRatedWithEnhancements[],
     getId: (id: number) => SpellworkIdentifier,
   ) =>
     count(
-      Object.values(dynamicSpellworks),
+      dynamicSpellworks,
       dynamicEntry =>
         isRatedWithEnhancementsActive(dynamicEntry) && getIsUnfamiliar(getId(dynamicEntry.id)),
     )
@@ -245,84 +238,88 @@ export const countActiveUnfamiliarSpellworks = (
  * Counts active spellworks by improvement cost.
  */
 export const countActiveSpellworksByImprovementCost = (
-  staticSpells: Record<number, Spell>,
-  staticRituals: Record<number, Ritual>,
-  staticCurses: Record<number, Curse>,
-  staticElvenMagicalSongs: Record<number, ElvenMagicalSong>,
-  staticDominationRituals: Record<number, DominationRitual>,
-  staticMagicalDances: Record<number, MagicalDance>,
-  staticMagicalMelodies: Record<number, MagicalMelody>,
-  staticJesterTricks: Record<number, JesterTrick>,
-  staticAnimistPowers: Record<number, AnimistPower>,
-  staticGeodeRituals: Record<number, GeodeRitual>,
-  staticZibiljaRituals: Record<number, ZibiljaRitual>,
-  dynamicSpells: ActivatableRatedWithEnhancementsMap,
-  dynamicRituals: ActivatableRatedWithEnhancementsMap,
-  dynamicCurses: ActivatableRatedMap,
-  dynamicElvenMagicalSongs: ActivatableRatedMap,
-  dynamicDominationRituals: ActivatableRatedMap,
-  dynamicMagicalDances: ActivatableRatedMap,
-  dynamicMagicalMelodies: ActivatableRatedMap,
-  dynamicJesterTricks: ActivatableRatedMap,
-  dynamicAnimistPowers: ActivatableRatedMap,
-  dynamicGeodeRituals: ActivatableRatedMap,
-  dynamicZibiljaRituals: ActivatableRatedMap,
+  getStaticSpellById: GetById.Static.Spell,
+  getStaticRitualById: GetById.Static.Ritual,
+  getStaticCurseById: GetById.Static.Curse,
+  getStaticElvenMagicalSongById: GetById.Static.ElvenMagicalSong,
+  getStaticDominationRitualById: GetById.Static.DominationRitual,
+  getStaticMagicalDanceById: GetById.Static.MagicalDance,
+  getStaticMagicalMelodyById: GetById.Static.MagicalMelody,
+  getStaticJesterTrickById: GetById.Static.JesterTrick,
+  getStaticAnimistPowerById: GetById.Static.AnimistPower,
+  getStaticGeodeRitualById: GetById.Static.GeodeRitual,
+  getStaticZibiljaRitualById: GetById.Static.ZibiljaRitual,
+  dynamicSpells: All.Dynamic.Spells,
+  dynamicRituals: All.Dynamic.Rituals,
+  dynamicCurses: All.Dynamic.Curses,
+  dynamicElvenMagicalSongs: All.Dynamic.ElvenMagicalSongs,
+  dynamicDominationRituals: All.Dynamic.DominationRituals,
+  dynamicMagicalDances: All.Dynamic.MagicalDances,
+  dynamicMagicalMelodies: All.Dynamic.MagicalMelodies,
+  dynamicJesterTricks: All.Dynamic.JesterTricks,
+  dynamicAnimistPowers: All.Dynamic.AnimistPowers,
+  dynamicGeodeRituals: All.Dynamic.GeodeRituals,
+  dynamicZibiljaRituals: All.Dynamic.ZibiljaRituals,
 ): Record<ImprovementCost, number> => {
   const prepareListWithEnhancements = <T>(
-    dynamicSpellworks: ActivatableRatedWithEnhancementsMap,
-    staticSpellworks: Record<number, T>,
+    dynamicSpellworks: ActivatableRatedWithEnhancements[],
+    getStaticSpellwork: (id: number) => T,
     getImprovementCost: (entry: T | undefined) => RawImprovementCost | undefined,
   ): ImprovementCost[] =>
-    Object.values(dynamicSpellworks)
+    dynamicSpellworks
       .filter(isRatedWithEnhancementsActive)
-      .map(dynamicEntry => fromRaw(getImprovementCost(staticSpellworks[dynamicEntry.id])))
+      .map(dynamicEntry => fromRaw(getImprovementCost(getStaticSpellwork(dynamicEntry.id))))
       .filter(isNotNullish)
 
   const prepareList = <T>(
-    dynamicSpellworks: ActivatableRatedMap,
-    staticSpellworks: Record<number, T>,
+    dynamicSpellworks: ActivatableRated[],
+    getStaticSpellwork: (id: number) => T,
     getImprovementCost: (entry: T | undefined) => RawImprovementCost | undefined,
   ): ImprovementCost[] =>
-    Object.values(dynamicSpellworks)
+    dynamicSpellworks
       .filter(isRatedActive)
-      .map(dynamicEntry => fromRaw(getImprovementCost(staticSpellworks[dynamicEntry.id])))
+      .map(dynamicEntry => fromRaw(getImprovementCost(getStaticSpellwork(dynamicEntry.id))))
       .filter(isNotNullish)
 
   return countBy(
     [
-      ...prepareListWithEnhancements(dynamicSpells, staticSpells, spell => spell?.improvement_cost),
+      ...prepareListWithEnhancements(
+        dynamicSpells,
+        getStaticSpellById,
+        spell => spell?.improvement_cost,
+      ),
       ...prepareListWithEnhancements(
         dynamicRituals,
-        staticRituals,
+        getStaticRitualById,
         ritual => ritual?.improvement_cost,
       ),
-      ...prepareList(dynamicCurses, staticCurses, _curse => cursesImprovementCost),
+      ...prepareList(dynamicCurses, getStaticCurseById, _curse => cursesImprovementCost),
       ...prepareList(
         dynamicElvenMagicalSongs,
-        staticElvenMagicalSongs,
+        getStaticElvenMagicalSongById,
         elvenMagicalSong => elvenMagicalSong?.improvement_cost,
       ),
       ...prepareList(
         dynamicDominationRituals,
-        staticDominationRituals,
+        getStaticDominationRitualById,
         _dominationRitual => dominationRitualsImprovementCost,
       ),
       ...prepareList(
         dynamicMagicalDances,
-        staticMagicalDances,
+        getStaticMagicalDanceById,
         magicalDance => magicalDance?.improvement_cost,
       ),
       ...prepareList(
         dynamicMagicalMelodies,
-        staticMagicalMelodies,
+        getStaticMagicalMelodyById,
         magicalMelodie => magicalMelodie?.improvement_cost,
       ),
       ...prepareList(
         dynamicJesterTricks,
-        staticJesterTricks,
+        getStaticJesterTrickById,
         jesterTrick => jesterTrick?.improvement_cost,
       ),
-      ...prepareList(dynamicAnimistPowers, staticAnimistPowers, animistPower =>
+      ...prepareList(dynamicAnimistPowers, getStaticAnimistPowerById, animistPower =>
         // TODO: Replace with derived improvement cost
         animistPower?.improvement_cost.tag === "Fixed"
           ? animistPower.improvement_cost.fixed
@@ -330,16 +327,16 @@ export const countActiveSpellworksByImprovementCost = (
       ),
       ...prepareList(
         dynamicGeodeRituals,
-        staticGeodeRituals,
+        getStaticGeodeRitualById,
         _geodeRitual => geodeRitualsImprovementCost,
       ),
       ...prepareList(
         dynamicZibiljaRituals,
-        staticZibiljaRituals,
+        getStaticZibiljaRitualById,
         zibiljaRitual => zibiljaRitual?.improvement_cost,
       ),
     ],
-    entry => entry,
+    (entry): ImprovementCost => entry,
   )
 }
 

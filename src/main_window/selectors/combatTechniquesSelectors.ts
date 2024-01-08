@@ -24,17 +24,11 @@ import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import {
   selectDynamicAdvantages,
-  selectDynamicAttributes,
-  selectDynamicCloseCombatTechniques,
   selectDynamicGeneralSpecialAbilities,
-  selectDynamicRangedCombatTechniques,
 } from "../slices/characterSlice.ts"
 import { createInitialDynamicCloseCombatTechnique } from "../slices/closeCombatTechniqueSlice.ts"
-import {
-  selectStaticCloseCombatTechniques,
-  selectStaticRangedCombatTechniques,
-} from "../slices/databaseSlice.ts"
 import { createInitialDynamicRangedCombatTechnique } from "../slices/rangedCombatTechniqueSlice.ts"
+import { SelectAll, SelectGetById } from "./basicCapabilitySelectors.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectFilterApplyingRatedDependencies } from "./dependencySelectors.ts"
 import { selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
@@ -81,11 +75,10 @@ export type DisplayedCombatTechnique =
   | DisplayedRangedCombatTechnique
 
 const selectRangedCombatTechniquesAt10 = createSelector(
-  selectDynamicRangedCombatTechniques,
-  rangedCombatTechniques =>
-    Object.values(rangedCombatTechniques).filter(
-      rangedCombatTechnique => rangedCombatTechnique.value >= 10,
-    ).length,
+  SelectAll.Dynamic.RangedCombatTechniques,
+  staticRangedCombatTechniques =>
+    staticRangedCombatTechniques.filter(rangedCombatTechnique => rangedCombatTechnique.value >= 10)
+      .length,
 )
 
 /**
@@ -94,8 +87,8 @@ const selectRangedCombatTechniquesAt10 = createSelector(
  * decreased, and combat base values.
  */
 export const selectVisibleCloseCombatTechniques = createSelector(
-  selectStaticCloseCombatTechniques,
-  selectDynamicCloseCombatTechniques,
+  SelectAll.Static.CloseCombatTechniques,
+  SelectGetById.Dynamic.CloseCombatTechnique,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
@@ -104,19 +97,19 @@ export const selectVisibleCloseCombatTechniques = createSelector(
     selectDynamicGeneralSpecialAbilities,
     GeneralSpecialAbilityIdentifier.Hunter,
   ),
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectRangedCombatTechniquesAt10,
   selectIsEntryAvailable,
   selectFilterApplyingRatedDependencies,
   (
     staticCloseCombatTechniques,
-    dynamicCloseCombatTechniques,
+    getDynamicCloseCombatTechniqueById,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
     exceptionalSkill,
     hunter,
-    attributes,
+    getDynamicAttributeById,
     rangedCombatTechniquesAt10,
     isEntryAvailable,
     filterApplyingDependencies,
@@ -125,11 +118,11 @@ export const selectVisibleCloseCombatTechniques = createSelector(
       return []
     }
 
-    return Object.values(staticCloseCombatTechniques)
+    return staticCloseCombatTechniques
       .filter(staticLiturgicalChant => isEntryAvailable(staticLiturgicalChant.src))
       .map(combatTechnique => {
         const dynamicCloseCombatTechnique =
-          dynamicCloseCombatTechniques[combatTechnique.id] ??
+          getDynamicCloseCombatTechniqueById(combatTechnique.id) ??
           createInitialDynamicCloseCombatTechnique(combatTechnique.id)
 
         const minimum = getCombatTechniqueMinimum(
@@ -141,7 +134,7 @@ export const selectVisibleCloseCombatTechniques = createSelector(
         )
 
         const maximum = getCombatTechniqueMaximum(
-          refs => getHighestAttributeValue(id => attributes[id], refs),
+          refs => getHighestAttributeValue(getDynamicAttributeById, refs),
           { tag: "CloseCombatTechnique", closeCombatTechnique: combatTechnique },
           isInCharacterCreation,
           startExperienceLevel,
@@ -160,9 +153,9 @@ export const selectVisibleCloseCombatTechniques = createSelector(
             canRemove,
           ),
           isIncreasable: isCombatTechniqueIncreasable(dynamicCloseCombatTechnique, maximum),
-          attackBase: getAttackBaseForClose(id => attributes[id], dynamicCloseCombatTechnique),
+          attackBase: getAttackBaseForClose(getDynamicAttributeById, dynamicCloseCombatTechnique),
           parryBase: getParryBaseForClose(
-            id => attributes[id],
+            getDynamicAttributeById,
             combatTechnique,
             dynamicCloseCombatTechnique,
           ),
@@ -177,8 +170,8 @@ export const selectVisibleCloseCombatTechniques = createSelector(
  * increased or decreased, and combat base values.
  */
 export const selectVisibleRangedCombatTechniques = createSelector(
-  selectStaticRangedCombatTechniques,
-  selectDynamicRangedCombatTechniques,
+  SelectAll.Static.RangedCombatTechniques,
+  SelectGetById.Dynamic.RangedCombatTechnique,
   selectIsInCharacterCreation,
   selectStartExperienceLevel,
   selectCanRemove,
@@ -191,20 +184,20 @@ export const selectVisibleRangedCombatTechniques = createSelector(
     selectDynamicGeneralSpecialAbilities,
     GeneralSpecialAbilityIdentifier.FireEater,
   ),
-  selectDynamicAttributes,
+  SelectGetById.Dynamic.Attribute,
   selectRangedCombatTechniquesAt10,
   selectIsEntryAvailable,
   selectFilterApplyingRatedDependencies,
   (
     staticRangedCombatTechniques,
-    dynamicRangedCombatTechniques,
+    getDynamicRangedCombatTechniqueById,
     isInCharacterCreation,
     startExperienceLevel,
     canRemove,
     exceptionalSkill,
     hunter,
     fireEater,
-    attributes,
+    getDynamicAttributeById,
     rangedCombatTechniquesAt10,
     isEntryAvailable,
     filterApplyingDependencies,
@@ -215,7 +208,7 @@ export const selectVisibleRangedCombatTechniques = createSelector(
 
     const isFireEaterActive = isActive(fireEater)
 
-    return Object.values(staticRangedCombatTechniques)
+    return staticRangedCombatTechniques
       .filter(staticLiturgicalChant => isEntryAvailable(staticLiturgicalChant.src))
       .map(combatTechnique => {
         if (
@@ -226,7 +219,7 @@ export const selectVisibleRangedCombatTechniques = createSelector(
         }
 
         const dynamicRangedCombatTechnique =
-          dynamicRangedCombatTechniques[combatTechnique.id] ??
+          getDynamicRangedCombatTechniqueById(combatTechnique.id) ??
           createInitialDynamicRangedCombatTechnique(combatTechnique.id)
 
         const minimum = getCombatTechniqueMinimum(
@@ -238,7 +231,7 @@ export const selectVisibleRangedCombatTechniques = createSelector(
         )
 
         const maximum = getCombatTechniqueMaximum(
-          refs => getHighestAttributeValue(id => attributes[id], refs),
+          refs => getHighestAttributeValue(getDynamicAttributeById, refs),
           { tag: "RangedCombatTechnique", rangedCombatTechnique: combatTechnique },
           isInCharacterCreation,
           startExperienceLevel,
@@ -258,7 +251,7 @@ export const selectVisibleRangedCombatTechniques = createSelector(
           ),
           isIncreasable: isCombatTechniqueIncreasable(dynamicRangedCombatTechnique, maximum),
           attackBase: getAttackBaseForRanged(
-            id => attributes[id],
+            getDynamicAttributeById,
             combatTechnique,
             dynamicRangedCombatTechnique,
           ),

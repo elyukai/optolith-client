@@ -15,7 +15,6 @@ import { BlessedTraditionIdentifier } from "../identifier.ts"
 import { anyBlessedTradition, belongsToBlessedTradition } from "./liturgicalChant.ts"
 import {
   ActivatableRatedWithEnhancements,
-  ActivatableRatedWithEnhancementsMap,
   isOptionalRatedWithEnhancementsActive,
 } from "./ratedEntry.ts"
 
@@ -94,8 +93,8 @@ export const filterInactiveBlessings = (
  * @param kind The value for the `kind` property.
  * @param staticLiturgicalChants A map of static liturgical chants or
  * ceremonies.
- * @param dynamicLiturgicalChants A map of dynamic liturgical chants or
- * ceremonies.
+ * @param getDynamicLiturgicalChantById Get a dynamic liturgical chant or
+ * ceremony by its identifier.
  * @param activeBlessedTradition The active blessed tradition.
  * @param isMaximumCountReached Whether the maximum count of liturgical chants
  * or ceremonies based on the experience level is reached. It is always `false`
@@ -123,8 +122,8 @@ export const getInactiveLiturgicalChantsOrCeremonies = <
   T extends LiturgicalChant | Ceremony,
 >(
   kind: K,
-  staticLiturgicalChants: Record<number, T>,
-  dynamicLiturgicalChants: ActivatableRatedWithEnhancementsMap,
+  staticLiturgicalChants: T[],
+  getDynamicLiturgicalChantById: (id: number) => ActivatableRatedWithEnhancements | undefined,
   activeBlessedTradition: CombinedActiveBlessedTradition,
   isMaximumCountReached: boolean,
   birdsOfPassage: Activatable | undefined,
@@ -194,7 +193,9 @@ export const getInactiveLiturgicalChantsOrCeremonies = <
     .filter(
       staticLiturgicalChant =>
         isEntryAvailable(staticLiturgicalChant.src) &&
-        !isOptionalRatedWithEnhancementsActive(dynamicLiturgicalChants[staticLiturgicalChant.id]) &&
+        !isOptionalRatedWithEnhancementsActive(
+          getDynamicLiturgicalChantById(staticLiturgicalChant.id),
+        ) &&
         (belongsToBlessedTradition(
           staticLiturgicalChant.traditions,
           activeBlessedTradition.static,
@@ -202,7 +203,7 @@ export const getInactiveLiturgicalChantsOrCeremonies = <
           checkAdditionalUnlocked(staticLiturgicalChant)),
     )
     .map(staticLiturgicalChant => {
-      const dynamicLiturgicalChant = dynamicLiturgicalChants[staticLiturgicalChant.id]
+      const dynamicLiturgicalChant = getDynamicLiturgicalChantById(staticLiturgicalChant.id)
 
       return {
         kind,

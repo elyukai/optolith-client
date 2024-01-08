@@ -1,5 +1,5 @@
 import { AncestorBloodPrerequisite } from "optolith-database-schema/types/prerequisites/single/AncestorBloodPrerequisite"
-import { GetAll, GetById } from "../../getTypes.ts"
+import { All, GetById } from "../../getTypes.ts"
 
 /**
  * Checks a single ancestor blood prerequisite if it’s matched.
@@ -7,23 +7,21 @@ import { GetAll, GetById } from "../../getTypes.ts"
 export const checkAncestorBloodPrerequisite = (
   caps: {
     getStaticAdvantageById: GetById.Static.Advantage
-    getDynamicAdvantages: GetAll.Dynamic.Advantages
+    dynamicAdvantages: All.Dynamic.Advantages
   },
   _p: AncestorBloodPrerequisite,
   sourceId: number,
 ): boolean =>
   // check whether no other entry with this prerequisite is active
-  caps
-    .getDynamicAdvantages()
-    .every(
-      x =>
-        x.id !== sourceId &&
-        x.instances.length > 0 &&
-        caps
-          .getStaticAdvantageById(x.id)
-          ?.prerequisites?.some(
-            p =>
-              p.prerequisite.tag === "Single" &&
-              p.prerequisite.single.tag === "NoOtherAncestorBloodAdvantage",
-          ),
-    )
+  caps.dynamicAdvantages.every(
+    x =>
+      x.id !== sourceId &&
+      x.instances.length > 0 &&
+      caps
+        .getStaticAdvantageById(x.id)
+        ?.prerequisites?.some(
+          p =>
+            p.prerequisite.tag === "Single" &&
+            p.prerequisite.single.tag === "NoOtherAncestorBloodAdvantage",
+        ),
+  )

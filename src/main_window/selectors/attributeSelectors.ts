@@ -21,45 +21,11 @@ import {
   selectBlessedPrimaryAttributeDependencies,
   selectDerivedCharacteristics,
   selectDynamicAdvantages,
-  selectDynamicAnimistPowers,
   selectDynamicAttributes,
-  selectDynamicCeremonies,
-  selectDynamicCloseCombatTechniques,
-  selectDynamicCurses,
-  selectDynamicDominationRituals,
-  selectDynamicElvenMagicalSongs,
-  selectDynamicGeodeRituals,
-  selectDynamicJesterTricks,
-  selectDynamicLiturgicalChants,
-  selectDynamicMagicalDances,
-  selectDynamicMagicalMelodies,
   selectDynamicOptionalRules,
-  selectDynamicRangedCombatTechniques,
-  selectDynamicRituals,
-  selectDynamicSkills,
-  selectDynamicSpells,
-  selectDynamicZibiljaRituals,
   selectMagicalPrimaryAttributeDependencies,
 } from "../slices/characterSlice.ts"
-import {
-  selectStaticAnimistPowers,
-  selectStaticAttributes,
-  selectStaticCeremonies,
-  selectStaticCloseCombatTechniques,
-  selectStaticCurses,
-  selectStaticDominationRituals,
-  selectStaticElvenMagicalSongs,
-  selectStaticGeodeRituals,
-  selectStaticJesterTricks,
-  selectStaticLiturgicalChants,
-  selectStaticMagicalDances,
-  selectStaticMagicalMelodies,
-  selectStaticRangedCombatTechniques,
-  selectStaticRituals,
-  selectStaticSkills,
-  selectStaticSpells,
-  selectStaticZibiljaRituals,
-} from "../slices/databaseSlice.ts"
+import { SelectAll, SelectGetById } from "./basicCapabilitySelectors.ts"
 import { selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectFilterApplyingRatedDependencies } from "./dependencySelectors.ts"
 import {
@@ -74,39 +40,39 @@ import {
 import { selectCurrentRace } from "./raceSelectors.ts"
 
 const selectAttributeMinimaByAssociatedAttributes = createSelector(
-  selectStaticSkills,
-  selectStaticCloseCombatTechniques,
-  selectStaticRangedCombatTechniques,
-  selectStaticSpells,
-  selectStaticRituals,
-  selectStaticLiturgicalChants,
-  selectStaticCeremonies,
-  selectStaticCurses,
-  selectStaticElvenMagicalSongs,
-  selectStaticDominationRituals,
-  selectStaticMagicalDances,
-  selectStaticMagicalMelodies,
-  selectStaticJesterTricks,
-  selectStaticAnimistPowers,
-  selectStaticGeodeRituals,
-  selectStaticZibiljaRituals,
-  selectDynamicAttributes,
-  selectDynamicSkills,
-  selectDynamicCloseCombatTechniques,
-  selectDynamicRangedCombatTechniques,
-  selectDynamicSpells,
-  selectDynamicRituals,
-  selectDynamicLiturgicalChants,
-  selectDynamicCeremonies,
-  selectDynamicCurses,
-  selectDynamicElvenMagicalSongs,
-  selectDynamicDominationRituals,
-  selectDynamicMagicalDances,
-  selectDynamicMagicalMelodies,
-  selectDynamicJesterTricks,
-  selectDynamicAnimistPowers,
-  selectDynamicGeodeRituals,
-  selectDynamicZibiljaRituals,
+  SelectGetById.Static.Skill,
+  SelectGetById.Static.CloseCombatTechnique,
+  SelectGetById.Static.RangedCombatTechnique,
+  SelectGetById.Static.Spell,
+  SelectGetById.Static.Ritual,
+  SelectGetById.Static.LiturgicalChant,
+  SelectGetById.Static.Ceremony,
+  SelectGetById.Static.Curse,
+  SelectGetById.Static.ElvenMagicalSong,
+  SelectGetById.Static.DominationRitual,
+  SelectGetById.Static.MagicalDance,
+  SelectGetById.Static.MagicalMelody,
+  SelectGetById.Static.JesterTrick,
+  SelectGetById.Static.AnimistPower,
+  SelectGetById.Static.GeodeRitual,
+  SelectGetById.Static.ZibiljaRitual,
+  SelectGetById.Dynamic.Attribute,
+  SelectAll.Dynamic.Skills,
+  SelectAll.Dynamic.CloseCombatTechniques,
+  SelectAll.Dynamic.RangedCombatTechniques,
+  SelectAll.Dynamic.Spells,
+  SelectAll.Dynamic.Rituals,
+  SelectAll.Dynamic.LiturgicalChants,
+  SelectAll.Dynamic.Ceremonies,
+  SelectAll.Dynamic.Curses,
+  SelectAll.Dynamic.ElvenMagicalSongs,
+  SelectAll.Dynamic.DominationRituals,
+  SelectAll.Dynamic.MagicalDances,
+  SelectAll.Dynamic.MagicalMelodies,
+  SelectAll.Dynamic.JesterTricks,
+  SelectAll.Dynamic.AnimistPowers,
+  SelectAll.Dynamic.GeodeRituals,
+  SelectAll.Dynamic.ZibiljaRituals,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalSkill),
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalCombatTechnique),
   getAttributeMinimaByAssociatedAttributes,
@@ -130,10 +96,10 @@ export type DisplayedAttribute = {
  * Returns the sum of all attribute values.
  */
 export const selectTotalPoints = createSelector(
-  selectStaticAttributes,
-  selectDynamicAttributes,
-  (attributes, dynamicAttributes): number =>
-    Object.values(attributes).reduce((sum, { id }) => sum + (dynamicAttributes[id]?.value ?? 8), 0),
+  SelectAll.Static.Attributes,
+  SelectGetById.Dynamic.Attribute,
+  (staticAttributes, getDynamicAttributeById): number =>
+    staticAttributes.reduce((sum, { id }) => sum + (getDynamicAttributeById(id)?.value ?? 8), 0),
 )
 
 /**
@@ -141,8 +107,8 @@ export const selectTotalPoints = createSelector(
  * value bounds and full logic for if the value can be increased or decreased.
  */
 export const selectVisibleAttributes = createSelector(
-  selectStaticAttributes,
-  selectDynamicAttributes,
+  SelectAll.Static.Attributes,
+  SelectGetById.Dynamic.Attribute,
   selectTotalPoints,
   selectMaximumTotalAttributePoints,
   selectIsInCharacterCreation,
@@ -159,8 +125,8 @@ export const selectVisibleAttributes = createSelector(
   selectBlessedPrimaryAttributeDependencies,
   selectFilterApplyingRatedDependencies,
   (
-    attributes,
-    dynamicAttributes,
+    staticAttributes,
+    getDynamicAttributeById,
     totalPoints,
     maxTotalPoints,
     isInCharacterCreation,
@@ -190,20 +156,20 @@ export const selectVisibleAttributes = createSelector(
       return []
     }
 
-    return Object.values(attributes)
+    return staticAttributes
       .sort((a, b) => a.id - b.id)
       .map(attribute => {
         const dynamicAttribute =
-          dynamicAttributes[attribute.id] ?? createInitialDynamicAttribute(attribute.id)
+          getDynamicAttributeById(attribute.id) ?? createInitialDynamicAttribute(attribute.id)
 
         const minimum = getAttributeMinimum(
           derivedCharacteristics.lifePoints.purchased,
           derivedCharacteristics.arcaneEnergy.purchased,
           derivedCharacteristics.karmaPoints.purchased,
           singleHighestMagicalPrimaryAttribute?.static.id,
-          magicalPrimaryAttributeDependencies,
+          magicalPrimaryAttributeDependencies ?? [],
           blessedPrimaryAttribute?.static.id,
-          blessedPrimaryAttributeDependencies,
+          blessedPrimaryAttributeDependencies ?? [],
           filterApplyingDependencies,
           id => attributeMinimaByAssociatedAttributes[id],
           dynamicAttribute,

@@ -1,7 +1,7 @@
 import { RatedMinimumNumberPrerequisite } from "optolith-database-schema/types/prerequisites/single/RatedMinimumNumberPrerequisite"
 import { isNotNullish } from "../../../utils/nullable.ts"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { GetAll, GetById } from "../../getTypes.ts"
+import { All, GetById } from "../../getTypes.ts"
 import { GetDynamicLiturgicalChantsByAspectCapability } from "../../rated/liturgicalChant.ts"
 import { ActivatableRatedWithEnhancements, Rated } from "../../rated/ratedEntry.ts"
 import { GetDynamicSpellworksByPropertyCapability } from "../../rated/spell.ts"
@@ -12,8 +12,8 @@ import { GetDynamicSpellworksByPropertyCapability } from "../../rated/spell.ts"
 export const checkRatedMinimumNumberPrerequisite = (
   caps: {
     getDynamicSkillById: GetById.Dynamic.Skill
-    getDynamicCloseCombatTechniques: GetAll.Dynamic.CloseCombatTechniques
-    getDynamicRangedCombatTechniques: GetAll.Dynamic.RangedCombatTechniques
+    dynamicCloseCombatTechniques: All.Dynamic.CloseCombatTechniques
+    dynamicRangedCombatTechniques: All.Dynamic.RangedCombatTechniques
     getDynamicSpellsByProperty: GetDynamicSpellworksByPropertyCapability
     getDynamicRitualsByProperty: GetDynamicSpellworksByPropertyCapability
     getDynamicLiturgicalChantsByAspect: GetDynamicLiturgicalChantsByAspectCapability
@@ -36,13 +36,13 @@ export const checkRatedMinimumNumberPrerequisite = (
         switch (p.targets.combat_techniques.group) {
           case "All":
             return [
-              ...caps.getDynamicCloseCombatTechniques().filter(matchRated),
-              ...caps.getDynamicRangedCombatTechniques().filter(matchRated),
+              ...caps.dynamicCloseCombatTechniques.filter(matchRated),
+              ...caps.dynamicRangedCombatTechniques.filter(matchRated),
             ]
           case "Close":
-            return caps.getDynamicCloseCombatTechniques().filter(matchRated)
+            return caps.dynamicCloseCombatTechniques.filter(matchRated)
           case "Ranged":
-            return caps.getDynamicRangedCombatTechniques().filter(matchRated)
+            return caps.dynamicRangedCombatTechniques.filter(matchRated)
           default:
             return assertExhaustive(p.targets.combat_techniques.group)
         }
