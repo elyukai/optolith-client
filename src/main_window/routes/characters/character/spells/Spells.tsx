@@ -23,13 +23,13 @@ import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
 import {
   selectVisibleActiveSpellworks,
   selectVisibleInactiveSpellworks,
 } from "../../../../selectors/spellSelectors.ts"
 import { addCantrip, removeCantrip } from "../../../../slices/cantripsSlice.ts"
-import { selectGetProperty } from "../../../../slices/databaseSlice.ts"
 import {
   addAnimistPower,
   decrementAnimistPower,
@@ -138,7 +138,7 @@ export const Spells: FC = () => {
   const localeCompare = useLocaleCompare()
 
   const canRemove = useAppSelector(selectCanRemove)
-  const getProperty = useAppSelector(selectGetProperty)
+  const getProperty = useAppSelector(SelectGetById.Static.Property)
 
   const [activeFilterText, setActiveFilterText] = useState("")
   const [inactiveFilterText, setInactiveFilterText] = useState("")

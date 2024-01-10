@@ -12,7 +12,7 @@ import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { deepEqual } from "../../../../../shared/utils/compare.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { selectGetProperty } from "../../../../slices/databaseSlice.ts"
+import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
 import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
@@ -69,7 +69,7 @@ export const InactiveMagicalActionsListItem = <T extends DisplayedInactiveMagica
   const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
-  const getProperty = useAppSelector(selectGetProperty)
+  const getProperty = useAppSelector(SelectGetById.Static.Property)
 
   const { name = "" } = translateMap(translations) ?? {}
   const identifierObject = useMemo(() => createIdentifierObject(kind, id), [kind, id])

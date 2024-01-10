@@ -9,7 +9,7 @@ import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { selectGetProperty } from "../../../../slices/databaseSlice.ts"
+import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
 import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
@@ -39,7 +39,7 @@ const InactiveCantripsListItem: FC<Props> = props => {
   const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
-  const getProperty = useAppSelector(selectGetProperty)
+  const getProperty = useAppSelector(SelectGetById.Static.Property)
 
   const { name = "" } = translateMap(translations) ?? {}
 

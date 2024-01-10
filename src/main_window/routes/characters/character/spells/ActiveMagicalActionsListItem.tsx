@@ -12,8 +12,8 @@ import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { deepEqual } from "../../../../../shared/utils/compare.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
+import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import { selectGetProperty } from "../../../../slices/databaseSlice.ts"
 import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
@@ -78,7 +78,7 @@ export const ActiveMagicalActionsListItem = <T extends DisplayedActiveMagicalAct
   const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
   const canRemove = useAppSelector(selectCanRemove)
-  const getProperty = useAppSelector(selectGetProperty)
+  const getProperty = useAppSelector(SelectGetById.Static.Property)
 
   const { name = "" } = translateMap(translations) ?? {}
 
