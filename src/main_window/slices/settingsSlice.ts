@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc */
 /* eslint-disable max-len */
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 import {

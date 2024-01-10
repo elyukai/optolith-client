@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { createImmerReducer } from "../../shared/utils/redux.ts"
 import { RootState } from "../store.ts"
 import { characterReducer } from "./characterSlice.ts"

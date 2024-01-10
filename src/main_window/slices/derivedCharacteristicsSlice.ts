@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc */
 /* eslint-disable max-len */
 import { createAction } from "@reduxjs/toolkit"
 import { createImmerReducer } from "../../shared/utils/redux.ts"

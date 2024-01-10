@@ -6,6 +6,9 @@ import "./InlineLibrary.scss"
 import { InlineLibraryPlaceholder } from "./InlineLibraryPlaceholder.tsx"
 import { InlineLibraryRouter } from "./InlineLibraryRouter.tsx"
 
+/**
+ * Displays all information about a selected entry in a sidebar.
+ */
 export const InlineLibrary: FC = () => {
   const id = useAppSelector(selectInlineLibraryEntryId)
 

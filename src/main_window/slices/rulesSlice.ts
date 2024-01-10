@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { createAction } from "@reduxjs/toolkit"
 import { OptionalRuleIdentifier } from "../../shared/domain/identifier.ts"
 import { createImmerReducer } from "../../shared/utils/redux.ts"
@@ -50,8 +51,7 @@ export const rulesReducer = createImmerReducer<CharacterState>((state, action) =
     }
   } else if (changeOptionalRuleOption.match(action)) {
     if (Object.hasOwn(state.rules.optionalRules, action.payload.id)) {
-      ;(state.rules.optionalRules[action.payload.id]!.options ??= [])[0] =
-        action.payload.option
+      ;(state.rules.optionalRules[action.payload.id]!.options ??= [])[0] = action.payload.option
     }
   }
 })

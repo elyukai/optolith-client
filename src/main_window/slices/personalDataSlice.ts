@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { createAction } from "@reduxjs/toolkit"
 import { Height, Weight, WeightDiceOffsetStrategy } from "optolith-database-schema/types/Race"
 import { DieType } from "optolith-database-schema/types/_Dice"

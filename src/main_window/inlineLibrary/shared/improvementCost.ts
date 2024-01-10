@@ -3,6 +3,9 @@ import { fromRaw, toString } from "../../../shared/domain/adventurePoints/improv
 import { Translate } from "../../../shared/utils/translate.ts"
 import { InlineLibraryProperty } from "../InlineLibraryProperties.tsx"
 
+/**
+ * Returns the imporvement cost as an inline library property.
+ */
 export const createImprovementCost = (
   translate: Translate,
   improvementCost: ImprovementCost,

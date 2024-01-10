@@ -11,6 +11,9 @@ type Props = {
   id: number
 }
 
+/**
+ * Displays all information about an optional rule.
+ */
 export const InlineLibraryOptionalRule: FC<Props> = ({ id }) => {
   const translateMap = useTranslateMap()
 

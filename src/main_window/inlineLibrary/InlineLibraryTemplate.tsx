@@ -7,6 +7,9 @@ type Props = {
   subtitle?: string
 }
 
+/**
+ * Wraps entry properties in a common view with title and scroll behaviour.
+ */
 export const InlineLibraryTemplate: FCC<Props> = ({ className, children, title, subtitle }) => (
   <Scroll>
     <div className={`info ${className}-info`}>

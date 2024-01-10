@@ -15,6 +15,9 @@ type Props = {
   id: number
 }
 
+/**
+ * Displays all information about a focus rule.
+ */
 export const InlineLibraryFocusRule: FC<Props> = ({ id }) => {
   const translateMap = useTranslateMap()
 

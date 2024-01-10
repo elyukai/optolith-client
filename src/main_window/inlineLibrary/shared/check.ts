@@ -3,6 +3,9 @@ import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
 import { Translate, TranslateMap } from "../../../shared/utils/translate.ts"
 import { InlineLibraryProperty } from "../InlineLibraryProperties.tsx"
 
+/**
+ * Returns the skill check as an inline library property.
+ */
 export const createCheck = (
   translate: Translate,
   translateMap: TranslateMap,

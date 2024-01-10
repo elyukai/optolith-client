@@ -55,6 +55,9 @@ const printPageRange = (translate: Translate, pageRange: PageRange) =>
 const printPageRanges = (translate: Translate, pageRanges: PageRange[]) =>
   pageRanges.map(pageRange => printPageRange(translate, pageRange)).join(", ")
 
+/**
+ * Displays the sources of an entry.
+ */
 export const Source: FC<Props> = ({ sources }) => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()

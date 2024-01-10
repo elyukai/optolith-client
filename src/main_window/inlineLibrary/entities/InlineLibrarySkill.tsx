@@ -23,6 +23,9 @@ type Props = {
   id: number
 }
 
+/**
+ * Displays all information about a skill.
+ */
 export const InlineLibrarySkill: FC<Props> = ({ id }) => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
@@ -38,6 +41,12 @@ export const InlineLibrarySkill: FC<Props> = ({ id }) => {
   if (entry === undefined || translation === undefined) {
     return <InlineLibraryPlaceholder />
   }
+
+  // TODO: Implement
+  const newApplications = []
+
+  // TODO: Implement
+  const uses = []
 
   const applications = (() => {
     switch (entry.applications.tag) {
@@ -77,6 +86,14 @@ export const InlineLibrarySkill: FC<Props> = ({ id }) => {
     <InlineLibraryTemplate className="Skill" title={translation?.name ?? entry.id.toString()}>
       <InlineLibraryProperties
         list={[
+          {
+            label: translate("New Applications"),
+            value: newApplications.join(", "),
+          },
+          {
+            label: translate("Uses"),
+            value: uses.join(", "),
+          },
           createCheck(translate, translateMap, attributes, entry.check),
           {
             label: translate("Applications"),
@@ -117,45 +134,6 @@ export const InlineLibrarySkill: FC<Props> = ({ id }) => {
         ]}
       />
       <Source sources={entry.src} />
-      {/* <WikiApplications
-          advantages={advantages}
-          specialAbilities={specialAbilities}
-          staticData={staticData}
-          x={x}
-          acc={Skill.A}
-          showNewApplications
-          />
-        <WikiUses
-          advantages={advantages}
-          specialAbilities={specialAbilities}
-          staticData={staticData}
-          x={x}
-          acc={Skill.A}
-          />
-        <WikiSkillCheck
-          staticData={staticData}
-          x={x}
-          acc={Skill.A}
-          />
-        <WikiApplications
-          advantages={advantages}
-          specialAbilities={specialAbilities}
-          staticData={staticData}
-          x={x}
-          acc={Skill.A}
-          />
-        <WikiEncumbrance staticData={staticData} x={x} acc={Skill.A} />
-        <WikiTools staticData={staticData} x={x} acc={Skill.A} />
-        <WikiQuality staticData={staticData} x={x} acc={Skill.A} />
-        <WikiFailedCheck staticData={staticData} x={x} acc={Skill.A} />
-        <WikiCriticalSuccess staticData={staticData} x={x} acc={Skill.A} />
-        <WikiBotch staticData={staticData} x={x} acc={Skill.A} />
-        <WikiImprovementCost staticData={staticData} x={x} acc={Skill.A} />
-        <WikiSource
-          staticData={staticData}
-          x={x}
-          acc={Skill.A}
-          /> */}
     </InlineLibraryTemplate>
   )
 }

@@ -1,4 +1,5 @@
 /**
+ * Types for the user-configurable app-wide settings.
  * @main Config
  */
 

@@ -1,8 +1,12 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 import * as ID from "optolith-database-schema/types/_Identifier"
 import { RootState } from "../store.ts"
 import { goToTab, goToTabGroup } from "./routeSlice.ts"
 
+/**
+ * An identifier that can be displayed in the inline library.
+ */
 export type DisplayableMainIdentifier =
   | ID.AdvancedCombatSpecialAbilityIdentifier
   | ID.AdvancedKarmaSpecialAbilityIdentifier

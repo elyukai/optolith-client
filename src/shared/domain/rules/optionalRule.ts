@@ -24,7 +24,7 @@ export type OptionalRuleInstance = {
 }
 
 /**
- * Creates an instance of an active optional rule.
+ * Creates an instance of an optional rule.
  */
 export const createOptionalRule = (id: number): OptionalRuleInstance => ({
   id,

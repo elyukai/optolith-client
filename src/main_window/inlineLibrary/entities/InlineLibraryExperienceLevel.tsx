@@ -11,6 +11,9 @@ type Props = {
   id: number
 }
 
+/**
+ * Displays all information about an experience level.
+ */
 export const InlineLibraryExperienceLevel: FC<Props> = ({ id }) => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()

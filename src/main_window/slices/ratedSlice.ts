@@ -10,6 +10,9 @@ import { Reducer, createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 import { DatabaseState } from "./databaseSlice.ts"
 
+/**
+ * A slice that handles rated entries.
+ */
 export type RatedSlice<N extends string, E extends string> = {
   /**
    * Creates a new entry with an initial value if active. The initial adventure
@@ -63,6 +66,10 @@ export type RatedSlice<N extends string, E extends string> = {
   reducer: Reducer<CharacterState, AnyAction, [database: DatabaseState]>
 }
 
+/**
+ * Create a reducer, actions and selectors for a slice that handles rated
+ * entries.
+ */
 export const createRatedSlice = <N extends string, E extends string>(config: {
   namespace: N
   entityName: E

@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../store.ts"
 import { CharacterState, initialCharacterState } from "./characterSlice.ts"
