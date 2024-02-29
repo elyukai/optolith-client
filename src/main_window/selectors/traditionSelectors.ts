@@ -1,12 +1,12 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { isActive } from "../../shared/domain/activatable/activatableEntry.ts"
+import { getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages } from "../../shared/domain/activatable/advantagesDisadvantages.ts"
 import {
   CombinedActiveBlessedTradition,
   isBlessedOne,
 } from "../../shared/domain/activatable/blessedTradition.ts"
 import {
   CombinedActiveMagicalTradition,
-  getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
   isSpellcaster,
 } from "../../shared/domain/activatable/magicalTradition.ts"
 import { AdvantageIdentifier } from "../../shared/domain/identifier.ts"

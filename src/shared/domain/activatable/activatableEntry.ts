@@ -1,7 +1,9 @@
-import { RequirableSelectOptionIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
-import { Equality } from "../../utils/compare.ts"
+import { SelectOptionIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
 import { isNotNullish } from "../../utils/nullable.ts"
-import { assertExhaustive } from "../../utils/typeSafety.ts"
+import { BoundAdventurePointsForActivatable } from "../adventurePoints/activatableEntry.ts"
+import { AdventurePointsCache, emptyAdventurePointsCache } from "../adventurePoints/cache.ts"
+import { equalsIdentifier, splitIdentifierObject } from "../identifier.ts"
+import { ActivatableDependency } from "./activatableDependency.ts"
 
 /**
  * An activated activatable identifier.
@@ -27,7 +29,7 @@ export const isTinyActivatableActive = (activatable: TinyActivatable | undefined
 /**
  * An activatable entry.
  */
-export type Activatable = {
+export type Activatable = Readonly<{
   /**
    * The activatable identifier.
    * @integer
@@ -38,7 +40,25 @@ export type Activatable = {
    * One or multiple activations of the activatable.
    */
   instances: ActivatableInstance[]
-}
+
+  /**
+   * The accumulated used adventure points value of all instances.
+   */
+  cachedAdventurePoints: AdventurePointsCache
+
+  /**
+   * The activatable's dependencies.
+   */
+  dependencies: ActivatableDependency[]
+
+  /**
+   * A list of bound adventure points. Bound adventure points are granted by the
+   * GM and can only be spent on the entry. They don’t affect the costs of
+   * buying the activatable entry. They may specify for which configuration of
+   * an entry they count, just like a prerequisite.
+   */
+  boundAdventurePoints: BoundAdventurePointsForActivatable[]
+}>
 
 /**
  * A single activation of an activatable entry.
@@ -59,6 +79,11 @@ export type ActivatableInstance = {
    * If provided, a custom adventure points value has been set for this instance.
    */
   customAdventurePointsValue?: number
+
+  /**
+   * A list of used bound adventure points for this instance.
+   */
+  usedBoundAdventurePoints?: BoundAdventurePointsForActivatable[]
 }
 
 /**
@@ -75,43 +100,15 @@ export type PredefinedActivatableOption = {
   /**
    * An identifier referencing a different entry.
    */
-  id: {
-    /**
-     * The entry type or `"Generic"` if it references a select option local to the entry.
-     */
-    type:
-      | "Generic"
-      | "Blessing"
-      | "Cantrip"
-      | "TradeSecret"
-      | "Script"
-      | "AnimalShape"
-      | "ArcaneBardTradition"
-      | "ArcaneDancerTradition"
-      | "SexPractice"
-      | "Race"
-      | "Culture"
-      | "BlessedTradition"
-      | "Element"
-      | "Property"
-      | "Aspect"
-      | "Disease"
-      | "Poison"
-      | "Language"
-      | "Skill"
-      | "CloseCombatTechnique"
-      | "RangedCombatTechnique"
-      | "LiturgicalChant"
-      | "Ceremony"
-      | "Spell"
-      | "Ritual"
-
-    /**
-     * The numeric identifier.
-     */
-    value: number
-  }
+  id: SelectOptionIdentifier
 }
+
+/**
+ * A predicate for a predefined option on an activatable entry.
+ */
+export const isPredefinedActivatableOption = (
+  option: ActivatableOption,
+): option is PredefinedActivatableOption => option.type === "Predefined"
 
 /**
  * A custom option for an activatable entry, handled as user-entered text.
@@ -126,6 +123,19 @@ export type CustomActivatableOption = {
 }
 
 /**
+ * A predicate for a custom option on an activatable entry.
+ */
+export const isCustomActivatableOption = (
+  option: ActivatableOption,
+): option is CustomActivatableOption => option.type === "Custom"
+
+/**
+ * Returns whether a select option matches a given activatable option.
+ */
+export const matchesOptionId = (id: SelectOptionIdentifier, option: ActivatableOption) =>
+  isPredefinedActivatableOption(option) && equalsIdentifier(option.id, id)
+
+/**
  * A map of activatable entries.
  */
 export type ActivatableMap = {
@@ -138,10 +148,32 @@ export type ActivatableMap = {
 export const createEmptyDynamicActivatable = (id: number): Activatable => ({
   id,
   instances: [],
+  cachedAdventurePoints: emptyAdventurePointsCache,
+  dependencies: [],
+  boundAdventurePoints: [],
 })
 
-const equalOptionId: Equality<PredefinedActivatableOption["id"]> = (a, b) =>
-  a.type === b.type && a.value === b.value
+/**
+ * Creates a dynamic activatable entry.
+ */
+export const createDynamicActivatable = (
+  id: number,
+  instances: ActivatableInstance[],
+  cachedAdventurePoints: AdventurePointsCache | number,
+  options: {
+    dependencies?: ActivatableDependency[]
+    boundAdventurePoints?: BoundAdventurePointsForActivatable[]
+  } = {},
+): Activatable => ({
+  id,
+  instances,
+  cachedAdventurePoints:
+    typeof cachedAdventurePoints === "number"
+      ? { general: cachedAdventurePoints, bound: 0 }
+      : cachedAdventurePoints,
+  dependencies: options.dependencies ?? [],
+  boundAdventurePoints: options.boundAdventurePoints ?? [],
+})
 
 /**
  * Get the level of the first instance of a given activatable entry, if it is
@@ -157,6 +189,12 @@ export const isActive = (activatable: Activatable | undefined): activatable is A
   (activatable?.instances.length ?? 0) > 0
 
 /**
+ * Return whether the instance has a custom adventure points value.
+ */
+export const hasCustomAdventurePointsValue = (instance: ActivatableInstance): boolean =>
+  instance.customAdventurePointsValue !== undefined
+
+/**
  * Returns if a given option is active in any instance of a given activatable.
  * It defaults to the first option in the options array, but a different index
  * can be specified.
@@ -168,8 +206,14 @@ export const isOptionActive = (
 ): boolean =>
   activatable?.instances.some(instance => {
     const optionAtIndex = instance.options?.[atIndex]
-    return optionAtIndex?.type === "Predefined" && equalOptionId(optionAtIndex.id, optionId)
+    return optionAtIndex?.type === "Predefined" && equalsIdentifier(optionAtIndex.id, optionId)
   }) ?? false
+
+/**
+ * Returns the number of instances of a given activatable entry.
+ */
+export const countActivations = (activatable: Activatable | undefined): number =>
+  activatable?.instances.length ?? 0
 
 /**
  * Returns the number of instances of a given activatable entry that have a
@@ -177,14 +221,22 @@ export const isOptionActive = (
  * but a different index can be specified.
  */
 export const countOptions = (
-  activatable: Activatable | undefined,
-  optionId: PredefinedActivatableOption["id"],
-  atIndex = 0,
-): number =>
-  activatable?.instances.filter(instance => {
-    const optionAtIndex = instance.options?.[atIndex]
-    return optionAtIndex?.type === "Predefined" && equalOptionId(optionAtIndex.id, optionId)
-  }).length ?? 0
+  activatable: Activatable | undefined | ActivatableInstance[],
+  optionId: SelectOptionIdentifier,
+  options: { atIndex?: number; ignoreWithCustomAdventurePointsValue?: boolean } = {},
+): number => {
+  const { atIndex = 0, ignoreWithCustomAdventurePointsValue = false } = options
+  return (Array.isArray(activatable) ? activatable : activatable?.instances ?? []).filter(
+    instance => {
+      const optionAtIndex = instance.options?.[atIndex]
+      return (
+        optionAtIndex?.type === "Predefined" &&
+        equalsIdentifier(optionAtIndex.id, optionId) &&
+        (!ignoreWithCustomAdventurePointsValue || !hasCustomAdventurePointsValue(instance))
+      )
+    },
+  ).length
+}
 
 /**
  * Returns the option value of the first instance of a given activatable entry.
@@ -192,9 +244,10 @@ export const countOptions = (
  * can be specified.
  */
 export const getFirstOption = (
-  activatable: Activatable | undefined,
+  activatable: Activatable | undefined | ActivatableInstance[],
   atIndex = 0,
-): ActivatableOption | undefined => activatable?.instances[0]?.options?.[atIndex]
+): ActivatableOption | undefined =>
+  (Array.isArray(activatable) ? activatable : activatable?.instances ?? [])[0]?.options?.[atIndex]
 
 /**
  * Returns the option value of the first instance of a given activatable entry
@@ -202,13 +255,13 @@ export const getFirstOption = (
  * in the options array, but a different index can be specified.
  */
 export const getFirstOptionOfType = (
-  activatable: Activatable | undefined,
-  type: PredefinedActivatableOption["id"]["type"],
+  activatable: Activatable | undefined | ActivatableInstance[],
+  tag: SelectOptionIdentifier["tag"],
   atIndex = 0,
 ): number | undefined => {
   const firstOption = getFirstOption(activatable, atIndex)
-  if (firstOption?.type === "Predefined" && firstOption.id.type === type) {
-    return firstOption.id.value
+  if (firstOption?.type === "Predefined" && firstOption.id.tag === tag) {
+    return splitIdentifierObject(firstOption.id)[1]
   }
   return undefined
 }
@@ -219,36 +272,9 @@ export const getFirstOptionOfType = (
  * specified.
  */
 export const getOptions = (
-  activatable: Activatable | undefined,
+  activatable: Activatable | undefined | ActivatableInstance[],
   atIndex = 0,
 ): ActivatableOption[] =>
-  activatable?.instances.map(instance => instance.options?.[atIndex]).filter(isNotNullish) ?? []
-
-/**
- * Checks if a prerequisite option and an instance option are equal.
- */
-export const equalsOptionPrerequisite = (
-  instanceOption: PredefinedActivatableOption["id"],
-  prerequisiteOption: RequirableSelectOptionIdentifier,
-): boolean => {
-  switch (prerequisiteOption.tag) {
-    case "General":
-      return (
-        instanceOption.type === "Generic" && prerequisiteOption.general === instanceOption.value
-      )
-    case "Skill":
-      return instanceOption.type === "Skill" && prerequisiteOption.skill === instanceOption.value
-    case "CloseCombatTechnique":
-      return (
-        instanceOption.type === "CloseCombatTechnique" &&
-        prerequisiteOption.close_combat_technique === instanceOption.value
-      )
-    case "RangedCombatTechnique":
-      return (
-        instanceOption.type === "RangedCombatTechnique" &&
-        prerequisiteOption.ranged_combat_technique === instanceOption.value
-      )
-    default:
-      return assertExhaustive(prerequisiteOption)
-  }
-}
+  (Array.isArray(activatable) ? activatable : activatable?.instances ?? [])
+    .map(instance => instance.options?.[atIndex])
+    .filter(isNotNullish)

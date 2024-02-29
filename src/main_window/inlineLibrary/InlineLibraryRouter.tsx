@@ -103,8 +103,12 @@ export const InlineLibraryRouter: FC<Props> = ({ id }) => {
       return <InlineLibraryPlaceholder />
     case "FatePointSexSpecialAbility":
       return <InlineLibraryPlaceholder />
+    case "FatePointSpecialAbility":
+      return <InlineLibraryPlaceholder />
     case "FocusRule":
       return <InlineLibraryFocusRule id={id.focus_rule} />
+    case "FoolsHatEnchantment":
+      return <InlineLibraryPlaceholder />
     case "GemOrPreciousStone":
       return <InlineLibraryPlaceholder />
     case "GeneralSpecialAbility":
@@ -144,6 +148,10 @@ export const InlineLibraryRouter: FC<Props> = ({ id }) => {
     case "MagicalDance":
       return <InlineLibraryPlaceholder />
     case "MagicalMelody":
+      return <InlineLibraryPlaceholder />
+    case "MagicalRune":
+      return <InlineLibraryPlaceholder />
+    case "MagicalSign":
       return <InlineLibraryPlaceholder />
     case "MagicalSpecialAbility":
       return <InlineLibraryPlaceholder />
@@ -187,7 +195,13 @@ export const InlineLibraryRouter: FC<Props> = ({ id }) => {
       return <InlineLibraryPlaceholder />
     case "Skill":
       return <InlineLibrarySkill id={id.skill} />
+    case "SkillStyleSpecialAbility":
+      return <InlineLibraryPlaceholder />
     case "Spell":
+      return <InlineLibraryPlaceholder />
+    case "SpellSwordEnchantment":
+      return <InlineLibraryPlaceholder />
+    case "StaffEnchantment":
       return <InlineLibraryPlaceholder />
     case "ThievesTool":
       return <InlineLibraryPlaceholder />
@@ -198,6 +212,8 @@ export const InlineLibraryRouter: FC<Props> = ({ id }) => {
     case "TravelGearOrTool":
       return <InlineLibraryPlaceholder />
     case "Trinkhornzauber":
+      return <InlineLibraryPlaceholder />
+    case "VampiricGift":
       return <InlineLibraryPlaceholder />
     case "Vehicle":
       return <InlineLibraryPlaceholder />

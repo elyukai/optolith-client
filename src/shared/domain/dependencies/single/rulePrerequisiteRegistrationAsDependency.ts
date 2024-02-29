@@ -7,10 +7,11 @@ import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import { createFocusRule } from "../../rules/focusRule.ts"
 import { createOptionalRule } from "../../rules/optionalRule.ts"
 import { RuleDependency } from "../../rules/ruleDependency.ts"
-import { RegistrationFunction, addOrRemoveDependency } from "../registrationHelpers.ts"
+import { RegistrationFunction, addOrRemoveDependencyInSlice } from "../registrationHelpers.ts"
 
 /**
- * Registers or unregisters a {@link RulePrerequisite} as a dependency on the character's draft.
+ * Registers or unregisters a {@link RulePrerequisite} as a dependency on the
+ * character's draft.
  */
 export const registerOrUnregisterRulePrerequisiteAsDependency: RegistrationFunction<
   RulePrerequisite,
@@ -24,7 +25,7 @@ export const registerOrUnregisterRulePrerequisiteAsDependency: RegistrationFunct
 
   switch (p.id.tag) {
     case "FocusRule":
-      return addOrRemoveDependency(
+      return addOrRemoveDependencyInSlice(
         method,
         character.rules.focusRules,
         p.id.focus_rule,
@@ -32,7 +33,7 @@ export const registerOrUnregisterRulePrerequisiteAsDependency: RegistrationFunct
         dependency,
       )
     case "OptionalRule":
-      return addOrRemoveDependency(
+      return addOrRemoveDependencyInSlice(
         method,
         character.rules.optionalRules,
         p.id.optional_rule,

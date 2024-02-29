@@ -1,5 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit"
 import { reduceReducers } from "../shared/utils/redux.ts"
+import { alertsReducer } from "./slices/alertsSlice.ts"
 import { charactersReducer } from "./slices/charactersSlice.ts"
 import { databaseReducer } from "./slices/databaseSlice.ts"
 import { globalReducer } from "./slices/global.ts"
@@ -8,6 +9,7 @@ import { routeReducer } from "./slices/routeSlice.ts"
 import { settingsReducer } from "./slices/settingsSlice.ts"
 
 const sliceReducer = combineReducers({
+  alerts: alertsReducer,
   database: databaseReducer,
   characters: charactersReducer,
   inlineLibrary: inlineLibraryReducer,

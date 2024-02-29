@@ -50,8 +50,10 @@ export type DisplayableMainIdentifier =
   | ID.EquipmentOfBlessedOnesIdentifier
   | ID.ExperienceLevelIdentifier
   | ID.FamiliarSpecialAbilityIdentifier
+  | ID.FatePointSpecialAbilityIdentifier
   | ID.FatePointSexSpecialAbilityIdentifier
   | ID.FocusRuleIdentifier
+  | ID.FoolsHatEnchantmentIdentifier
   | ID.GemOrPreciousStoneIdentifier
   | ID.GeneralSpecialAbilityIdentifier
   | ID.GeodeRitualIdentifier
@@ -72,6 +74,8 @@ export type DisplayableMainIdentifier =
   | ID.MagicalArtifactIdentifier
   | ID.MagicalDanceIdentifier
   | ID.MagicalMelodyIdentifier
+  | ID.MagicalRuneIdentifier
+  | ID.MagicalSignIdentifier
   | ID.MagicalSpecialAbilityIdentifier
   | ID.MagicalTraditionIdentifier
   | ID.MusicalInstrumentIdentifier
@@ -93,12 +97,16 @@ export type DisplayableMainIdentifier =
   | ID.SickleRitualIdentifier
   | ID.SikaryanDrainSpecialAbilityIdentifier
   | ID.SkillIdentifier
+  | ID.SkillStyleSpecialAbilityIdentifier
   | ID.SpellIdentifier
+  | ID.SpellSwordEnchantmentIdentifier
+  | ID.StaffEnchantmentIdentifier
   | ID.ThievesToolIdentifier
   | ID.ToolOfTheTradeIdentifier
   | ID.ToyEnchantmentIdentifier
   | ID.TravelGearOrToolIdentifier
   | ID.TrinkhornzauberIdentifier
+  | ID.VampiricGiftIdentifier
   | ID.VehicleIdentifier
   | ID.VisionIdentifier
   | ID.WandEnchantmentIdentifier

@@ -12,34 +12,24 @@ export enum RegistrationMethod {
 }
 
 /**
- * Adds or removes a dependency from a character slice. When adding a
- * dependency and no entry exists for the given id, a new entry is created
- * using the given `createDefault` function. Removing a dependency is done by
- * a deep comparison of the dependency objects.
+ * Adds or removes a dependency from a dependency array. Removing a dependency
+ * is done by a deep comparison of the dependency objects.
  */
-export const addOrRemoveDependency = <
-  K extends string | number | symbol,
-  D,
-  T extends { dependencies: D[] },
->(
+export const addOrRemoveDependency = <D>(
   method: RegistrationMethod,
-  slice: Record<K, T>,
-  id: K,
-  createDefault: (id: K) => T,
+  dependencies: D[],
   dep: D,
 ): void => {
   switch (method) {
     case RegistrationMethod.Add: {
-      const entry = (slice[id] ??= createDefault(id))
-      entry.dependencies.push(dep)
+      dependencies.push(dep)
       break
     }
 
     case RegistrationMethod.Remove: {
-      const entry = slice[id]
-      const index = entry?.dependencies.findIndex(d => deepEqual(d, dep)) ?? -1
+      const index = dependencies.findIndex(d => deepEqual(d, dep)) ?? -1
       if (index > -1) {
-        entry?.dependencies.splice(index, 1)
+        dependencies.splice(index, 1)
       }
       break
     }
@@ -50,14 +40,54 @@ export const addOrRemoveDependency = <
 }
 
 /**
+ * Adds or removes a dependency from a character slice. When adding a
+ * dependency and no entry exists for the given identifier, a new entry is
+ * created using the given `createDefault` function. Removing a dependency is
+ * done by a deep comparison of the dependency objects.
+ */
+export const addOrRemoveDependencyInSlice = <
+  K extends string | number | symbol,
+  D,
+  T extends { dependencies: D[] },
+>(
+  method: RegistrationMethod,
+  slice: Record<K, T>,
+  id: K,
+  createDefault: (id: K) => T,
+  dep: D,
+): void => {
+  const entry = (slice[id] ??= createDefault(id))
+  addOrRemoveDependency(method, entry.dependencies, dep)
+}
+
+/**
  * A function that registers or unregisters a prerequisite as a dependency on
  * the character's draft.
  */
-export type RegistrationFunction<T, SourceId> = (
+export type RegistrationFunction<T, SourceId, C = undefined> = (
   method: RegistrationMethod,
   character: Draft<Character>,
   p: T,
   sourceId: SourceId,
   index: number,
   isPartOfDisjunction: boolean,
+  ...rest: C extends undefined ? [] : [capabilities: C]
 ) => void
+
+/**
+ * Additional data some registration functions need.
+ */
+export type RegistrationFunctionCapabilities = {
+  ancestorBloodAdvantageIds: number[]
+  closeCombatTechniqueIds: number[]
+  rangedCombatTechniqueIds: number[]
+  blessedTraditionChurchIds: number[]
+  blessedTraditionShamanisticIds: number[]
+  magicalTraditionIds: number[]
+  magicalTraditionIdsThatCanLearnRituals: number[]
+  magicalTraditionIdsThatCanBindFamiliars: number[]
+  getSpellIdsByPropertyId: (id: number) => number[]
+  getRitualIdsByPropertyId: (id: number) => number[]
+  getLiturgicalChantIdsByAspectId: (id: number) => number[]
+  getCeremonyIdsByAspectId: (id: number) => number[]
+}

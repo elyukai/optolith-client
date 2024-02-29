@@ -153,9 +153,11 @@ import { config as animalShapePathConfig } from "optolith-database-schema/types/
 import { config as animalShapeSizeConfig } from "optolith-database-schema/types/traditionArtifacts/sub/AnimalShapeSize"
 import { config as brewConfig } from "optolith-database-schema/types/traditionArtifacts/sub/Brew"
 import { Activatable, TinyActivatable } from "./activatable/activatableEntry.ts"
+import { Pact as PactInstance } from "./pact.ts"
 import { ActivatableRated, ActivatableRatedWithEnhancements, Rated } from "./rated/ratedEntry.ts"
 import { FocusRuleInstance } from "./rules/focusRule.ts"
 import { OptionalRuleInstance } from "./rules/optionalRule.ts"
+import { Sex as SexInstance } from "./sex.ts"
 import { StateInstance } from "./state.ts"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -409,7 +411,7 @@ export namespace GetById {
     // export type MagicalArtifact = GetByIdDynamic<typeof magicalArtifactConfig, never>
     export type MagicalDance = GetByIdDynamic<typeof magicalDanceConfig, ActivatableRated>
     export type MagicalMelody = GetByIdDynamic<typeof magicalMelodyConfig, ActivatableRated>
-    export type MagicalRune = GetByIdDynamic<typeof magicalRuneConfig, Activatable>
+    export type MagicalRune = GetByIdDynamic<typeof magicalRuneConfig, ActivatableRated>
     export type MagicalSign = GetByIdDynamic<typeof magicalSignConfig, Activatable>
     export type MagicalSpecialAbility = GetByIdDynamic<typeof magicalSpecialAbilityConfig, Activatable>
     export type MagicalTradition = GetByIdDynamic<typeof magicalTraditionConfig, Activatable>
@@ -453,6 +455,18 @@ export namespace GetById {
     export type WeaponEnchantment = GetByIdDynamic<typeof weaponEnchantmentConfig, Activatable>
     // export type Weapon = GetByIdDynamic<typeof weaponConfig, never>
     export type ZibiljaRitual = GetByIdDynamic<typeof zibiljaRitualConfig, ActivatableRated>
+  }
+}
+
+// prettier-ignore
+export namespace Singleton {
+  export namespace Static {
+    export type ExperienceLevel = TypeFromConfig<typeof experienceLevelConfig> | undefined
+  }
+
+  export namespace Dynamic {
+    export type Pact = PactInstance | undefined
+    export type Sex = SexInstance
   }
 }
 
@@ -679,7 +693,7 @@ export namespace All {
     // export type MagicalArtifacts = GetAllDynamic<typeof magicalArtifactConfig, never>
     export type MagicalDances = AllDynamic<typeof magicalDanceConfig, ActivatableRated>
     export type MagicalMelodies = AllDynamic<typeof magicalMelodyConfig, ActivatableRated>
-    export type MagicalRunes = AllDynamic<typeof magicalRuneConfig, Activatable>
+    export type MagicalRunes = AllDynamic<typeof magicalRuneConfig, ActivatableRated>
     export type MagicalSigns = AllDynamic<typeof magicalSignConfig, Activatable>
     export type MagicalSpecialAbilities = AllDynamic<typeof magicalSpecialAbilityConfig, Activatable>
     export type MagicalTraditions = AllDynamic<typeof magicalTraditionConfig, Activatable>

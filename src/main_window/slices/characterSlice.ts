@@ -8,6 +8,7 @@ import {
 } from "../../shared/domain/identifier.ts"
 import { createImmerReducer, reduceReducers } from "../../shared/utils/redux.ts"
 import { RootState } from "../store.ts"
+import { advantagesReducer } from "./advantagesSlice.ts"
 import { attributesReducer } from "./attributesSlice.ts"
 import { blessingsReducer } from "./blessingsSlice.ts"
 import { cantripsReducer } from "./cantripsSlice.ts"
@@ -15,6 +16,7 @@ import { ceremoniesReducer } from "./ceremoniesSlice.ts"
 import { closeCombatTechniquesReducer } from "./closeCombatTechniqueSlice.ts"
 import { DatabaseState } from "./databaseSlice.ts"
 import { derivedCharacteristicsReducer } from "./derivedCharacteristicsSlice.ts"
+import { disadvantagesReducer } from "./disadvantagesSlice.ts"
 import { liturgicalChantsReducer } from "./liturgicalChantsSlice.ts"
 import { animistPowersReducer } from "./magicalActions/animistPowersSlice.ts"
 import { cursesReducer } from "./magicalActions/cursesSlice.ts"
@@ -74,14 +76,12 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     },
   },
   advantages: {
-    [AdvantageIdentifier.Blessed]: {
-      id: AdvantageIdentifier.Blessed,
-      instances: [{}],
-    },
-    [AdvantageIdentifier.Spellcaster]: {
-      id: AdvantageIdentifier.Spellcaster,
-      instances: [{}],
-    },
+    [AdvantageIdentifier.Blessed]: createDynamicActivatable(AdvantageIdentifier.Blessed, [{}], 25),
+    [AdvantageIdentifier.Spellcaster]: createDynamicActivatable(
+      AdvantageIdentifier.Spellcaster,
+      [{}],
+      25,
+    ),
   },
   disadvantages: {},
   specialAbilities: {
@@ -93,10 +93,11 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     arcaneOrbEnchantments: {},
     attireEnchantments: {},
     blessedTraditions: {
-      [BlessedTraditionIdentifier.Praios]: {
-        id: BlessedTraditionIdentifier.Praios,
-        instances: [{}],
-      },
+      [BlessedTraditionIdentifier.Praios]: createDynamicActivatable(
+        BlessedTraditionIdentifier.Praios,
+        [{}],
+        130,
+      ),
     },
     bowlEnchantments: {},
     brawlingSpecialAbilities: {},
@@ -121,10 +122,11 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     magicalSigns: {},
     magicalSpecialAbilities: {},
     magicalTraditions: {
-      [MagicalTraditionIdentifier.Witches]: {
-        id: MagicalTraditionIdentifier.Witches,
-        instances: [{}],
-      },
+      [MagicalTraditionIdentifier.Witches]: createDynamicActivatable(
+        MagicalTraditionIdentifier.Witches,
+        [{}],
+        135,
+      ),
     },
     magicStyleSpecialAbilities: {},
     orbEnchantments: {},
@@ -145,7 +147,8 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     wandEnchantments: {},
     weaponEnchantments: {},
   },
-  attributes: {},
+  magicalPrimaryAttributeDependencies: [],
+  blessedPrimaryAttributeDependencies: [],
   derivedCharacteristics: {
     lifePoints: {
       purchased: 0,
@@ -242,8 +245,6 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
       value: 0,
     },
   },
-  magicalPrimaryAttributeDependencies: [],
-  blessedPrimaryAttributeDependencies: [],
   // items: {}
   // hitZoneArmors: {}
   purse: {
@@ -1012,6 +1013,8 @@ export const characterReducer = reduceReducers<
   raceReducer,
   professionReducer,
   rulesReducer,
+  advantagesReducer,
+  disadvantagesReducer,
   skillsReducer,
   closeCombatTechniquesReducer,
   rangedCombatTechniquesReducer,

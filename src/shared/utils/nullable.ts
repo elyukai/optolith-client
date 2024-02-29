@@ -45,3 +45,21 @@ export const mapNullableDefault = <T, U>(
  */
 export const nullableToArray = <T>(value: T): NonNullable<T>[] =>
   isNotNullish(value) ? [value] : []
+
+/**
+ * Returns the value if it matches the given predicate, otherwise `undefined`.
+ */
+export function ensure<T, T1 extends T>(
+  value: T,
+  predicate: (value: T) => value is T1,
+): T1 | undefined
+/**
+ * Returns the value if it matches the given predicate, otherwise `undefined`.
+ */
+export function ensure<T>(value: T, predicate: (value: T) => boolean): T | undefined
+/**
+ * Returns the value if it matches the given predicate, otherwise `undefined`.
+ */
+export function ensure<T>(value: T, predicate: (value: T) => boolean): T | undefined {
+  return predicate(value) ? value : undefined
+}

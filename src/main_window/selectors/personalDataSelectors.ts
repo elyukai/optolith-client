@@ -61,8 +61,8 @@ export const selectAvailableHairColorsIdDice = createSelector(
   selectCurrentRaceVariant,
   createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.Stigma),
   (currentRace, currentRaceVariant, stigma): number[] => {
-    const isAlbino = isOptionActive(stigma, { type: "Generic", value: ALBINO })
-    const isGreenHaired = isOptionActive(stigma, { type: "Generic", value: GREEN_HAIR })
+    const isAlbino = isOptionActive(stigma, { tag: "General", general: ALBINO })
+    const isGreenHaired = isOptionActive(stigma, { tag: "General", general: GREEN_HAIR })
 
     if (isAlbino || isGreenHaired) {
       return filterNonNullable([
@@ -103,7 +103,7 @@ export const selectAvailableEyeColorsIdDice = createSelector(
   selectCurrentRaceVariant,
   createPropertySelector(selectDynamicDisadvantages, DisadvantageIdentifier.Stigma),
   (currentRace, currentRaceVariant, stigma): number[] => {
-    const isAlbino = isOptionActive(stigma, { type: "Generic", value: ALBINO })
+    const isAlbino = isOptionActive(stigma, { tag: "General", general: ALBINO })
 
     if (isAlbino) {
       const eyeColorIds = [EyeColorIdentifier.Red, EyeColorIdentifier.Purple]

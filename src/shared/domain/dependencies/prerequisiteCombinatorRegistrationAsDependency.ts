@@ -7,41 +7,57 @@ import {
   PrerequisitesElement,
   PrerequisitesForLevels,
 } from "optolith-database-schema/types/_Prerequisite"
+import { RangeBounds, isInRange } from "../../utils/range.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { Character } from "../character.ts"
 import { RegistrationFunction, RegistrationMethod } from "./registrationHelpers.ts"
 
-const registerOrUnregisterPrerequisiteGroup = <T, SourceId>(
+const registerOrUnregisterPrerequisiteGroup = <T, SourceId, C>(
   method: RegistrationMethod,
   character: Draft<Character>,
   group: PrerequisiteGroup<T>,
   sourceId: SourceId,
   index: number,
-  registerOrUnregister: RegistrationFunction<T, SourceId>,
+  registerOrUnregister: RegistrationFunction<T, SourceId, C>,
+  ...rest: C extends undefined ? [] : [capabilities: C]
 ): void =>
-  group.list.forEach(p => registerOrUnregister(method, character, p, sourceId, index, false))
+  group.list.forEach(p =>
+    registerOrUnregister(method, character, p, sourceId, index, false, ...rest),
+  )
 
-const registerOrUnregisterPrerequisiteDisjunction = <T, SourceId>(
+const registerOrUnregisterPrerequisiteDisjunction = <T, SourceId, C>(
   method: RegistrationMethod,
   character: Draft<Character>,
   disjunction: PrerequisitesDisjunction<T>,
   sourceId: SourceId,
   index: number,
-  registerOrUnregister: RegistrationFunction<T, SourceId>,
+  registerOrUnregister: RegistrationFunction<T, SourceId, C>,
+  ...rest: C extends undefined ? [] : [capabilities: C]
 ): void =>
-  disjunction.list.forEach(p => registerOrUnregister(method, character, p, sourceId, index, true))
+  disjunction.list.forEach(p =>
+    registerOrUnregister(method, character, p, sourceId, index, true, ...rest),
+  )
 
-const registerOrUnregisterPrerequisiteElement = <T, SourceId>(
+const registerOrUnregisterPrerequisiteElement = <T, SourceId, C>(
   method: RegistrationMethod,
   character: Draft<Character>,
   element: PrerequisitesElement<T>,
   sourceId: SourceId,
   index: number,
-  registerOrUnregister: RegistrationFunction<T, SourceId>,
+  registerOrUnregister: RegistrationFunction<T, SourceId, C>,
+  ...rest: C extends undefined ? [] : [capabilities: C]
 ): void => {
   switch (element.tag) {
     case "Single":
-      return registerOrUnregister(method, character, element.single, sourceId, index, false)
+      return registerOrUnregister(
+        method,
+        character,
+        element.single,
+        sourceId,
+        index,
+        false,
+        ...rest,
+      )
     case "Group":
       return registerOrUnregisterPrerequisiteGroup(
         method,
@@ -50,6 +66,7 @@ const registerOrUnregisterPrerequisiteElement = <T, SourceId>(
         sourceId,
         index,
         registerOrUnregister,
+        ...rest,
       )
     case "Disjunction":
       return registerOrUnregisterPrerequisiteDisjunction(
@@ -59,6 +76,7 @@ const registerOrUnregisterPrerequisiteElement = <T, SourceId>(
         sourceId,
         index,
         registerOrUnregister,
+        ...rest,
       )
     default:
       return assertExhaustive(element)
@@ -68,12 +86,13 @@ const registerOrUnregisterPrerequisiteElement = <T, SourceId>(
 /**
  * Checks a plain list of prerequisites if they’re matched.
  */
-export const registerOrUnregisterPlainPrerequisites = <T, SourceId>(
+export const registerOrUnregisterPlainPrerequisites = <T, SourceId, C = undefined>(
   method: RegistrationMethod,
   character: Draft<Character>,
   prerequisites: PlainPrerequisites<T>,
   sourceId: SourceId,
-  registerOrUnregister: RegistrationFunction<T, SourceId>,
+  registerOrUnregister: RegistrationFunction<T, SourceId, C>,
+  ...rest: C extends undefined ? [] : [capabilities: C]
 ): void =>
   prerequisites.forEach((p, index) =>
     registerOrUnregisterPrerequisiteElement(
@@ -83,19 +102,21 @@ export const registerOrUnregisterPlainPrerequisites = <T, SourceId>(
       sourceId,
       index,
       registerOrUnregister,
+      ...rest,
     ),
   )
 
-const registerOrUnregisterPrerequisiteForLevel = <T, SourceId>(
+const registerOrUnregisterPrerequisiteForLevel = <T, SourceId, C>(
   method: RegistrationMethod,
   character: Draft<Character>,
   prerequisiteForLevel: PrerequisiteForLevel<T>,
-  level: number,
+  levelRange: RangeBounds,
   sourceId: SourceId,
   index: number,
-  registerOrUnregister: RegistrationFunction<T, SourceId>,
+  registerOrUnregister: RegistrationFunction<T, SourceId, C>,
+  ...rest: C extends undefined ? [] : [capabilities: C]
 ): void => {
-  if (prerequisiteForLevel.level <= level) {
+  if (isInRange(levelRange, prerequisiteForLevel.level)) {
     registerOrUnregisterPrerequisiteElement(
       method,
       character,
@@ -103,6 +124,7 @@ const registerOrUnregisterPrerequisiteForLevel = <T, SourceId>(
       sourceId,
       index,
       registerOrUnregister,
+      ...rest,
     )
   }
 }
@@ -111,22 +133,24 @@ const registerOrUnregisterPrerequisiteForLevel = <T, SourceId>(
  * Checks a list of level-specific prerequisites if they’re matched up to a
  * given level.
  */
-export const registerOrUnregisterPrerequisitesForLevels = <T, SourceId>(
+export const registerOrUnregisterPrerequisitesForLevels = <T, SourceId, C = undefined>(
   method: RegistrationMethod,
   character: Draft<Character>,
   prerequisitesForLevels: PrerequisitesForLevels<T>,
-  level: number,
+  levelRange: RangeBounds,
   sourceId: SourceId,
-  registerOrUnregister: RegistrationFunction<T, SourceId>,
+  registerOrUnregister: RegistrationFunction<T, SourceId, C>,
+  ...rest: C extends undefined ? [] : [capabilities: C]
 ): void =>
   prerequisitesForLevels.forEach((p, index) =>
     registerOrUnregisterPrerequisiteForLevel(
       method,
       character,
       p,
-      level,
+      levelRange,
       sourceId,
       index,
       registerOrUnregister,
+      ...rest,
     ),
   )

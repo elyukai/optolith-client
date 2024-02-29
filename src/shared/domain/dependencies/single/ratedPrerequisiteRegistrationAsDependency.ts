@@ -10,10 +10,11 @@ import { createEmptyDynamicLiturgicalChant } from "../../rated/liturgicalChant.t
 import { RatedDependency } from "../../rated/ratedDependency.ts"
 import { createEmptyDynamicSkill } from "../../rated/skill.ts"
 import { createEmptyDynamicSpell } from "../../rated/spell.ts"
-import { RegistrationFunction, addOrRemoveDependency } from "../registrationHelpers.ts"
+import { RegistrationFunction, addOrRemoveDependencyInSlice } from "../registrationHelpers.ts"
 
 /**
- * Registers or unregisters a {@link RatedPrerequisite} as a dependency on the character's draft.
+ * Registers or unregisters a {@link RatedPrerequisite} as a dependency on the
+ * character's draft.
  */
 export const registerOrUnregisterRatedPrerequisiteAsDependency: RegistrationFunction<
   RatedPrerequisite,
@@ -24,14 +25,17 @@ export const registerOrUnregisterRatedPrerequisiteAsDependency: RegistrationFunc
     index,
     isPartOfDisjunction,
     value: {
-      tag: "Minimum",
-      minimum: p.value,
+      tag: "Fixed",
+      value: {
+        tag: "Minimum",
+        minimum: p.value,
+      },
     },
   }
 
   switch (p.id.tag) {
     case "Attribute":
-      return addOrRemoveDependency(
+      return addOrRemoveDependencyInSlice(
         method,
         character.attributes,
         p.id.attribute,
@@ -39,7 +43,7 @@ export const registerOrUnregisterRatedPrerequisiteAsDependency: RegistrationFunc
         dependency,
       )
     case "Skill":
-      return addOrRemoveDependency(
+      return addOrRemoveDependencyInSlice(
         method,
         character.skills,
         p.id.skill,
@@ -47,7 +51,7 @@ export const registerOrUnregisterRatedPrerequisiteAsDependency: RegistrationFunc
         dependency,
       )
     case "CloseCombatTechnique":
-      return addOrRemoveDependency(
+      return addOrRemoveDependencyInSlice(
         method,
         character.combatTechniques.close,
         p.id.close_combat_technique,
@@ -55,7 +59,7 @@ export const registerOrUnregisterRatedPrerequisiteAsDependency: RegistrationFunc
         dependency,
       )
     case "RangedCombatTechnique":
-      return addOrRemoveDependency(
+      return addOrRemoveDependencyInSlice(
         method,
         character.combatTechniques.ranged,
         p.id.ranged_combat_technique,
@@ -63,7 +67,7 @@ export const registerOrUnregisterRatedPrerequisiteAsDependency: RegistrationFunc
         dependency,
       )
     case "Spell":
-      return addOrRemoveDependency(
+      return addOrRemoveDependencyInSlice(
         method,
         character.spells,
         p.id.spell,
@@ -71,7 +75,7 @@ export const registerOrUnregisterRatedPrerequisiteAsDependency: RegistrationFunc
         dependency,
       )
     case "Ritual":
-      return addOrRemoveDependency(
+      return addOrRemoveDependencyInSlice(
         method,
         character.rituals,
         p.id.ritual,
@@ -79,7 +83,7 @@ export const registerOrUnregisterRatedPrerequisiteAsDependency: RegistrationFunc
         dependency,
       )
     case "LiturgicalChant":
-      return addOrRemoveDependency(
+      return addOrRemoveDependencyInSlice(
         method,
         character.liturgicalChants,
         p.id.liturgical_chant,
@@ -87,7 +91,7 @@ export const registerOrUnregisterRatedPrerequisiteAsDependency: RegistrationFunc
         dependency,
       )
     case "Ceremony":
-      return addOrRemoveDependency(
+      return addOrRemoveDependencyInSlice(
         method,
         character.ceremonies,
         p.id.ceremony,

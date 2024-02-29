@@ -127,6 +127,7 @@ export const selectCapabilitiesForActivatablePrerequisite = createSelector(
     getDynamicMagicalTraditionById: id => specialAbilities?.magicalTraditions?.[id],
     getDynamicBlessedTraditionById: id => specialAbilities?.blessedTraditions?.[id],
     getDynamicPactGiftById: id => specialAbilities?.pactGifts?.[id],
+    getDynamicVampiricGiftById: id => specialAbilities?.vampiricGifts?.[id],
     getDynamicSikaryanDrainSpecialAbilityById: id =>
       specialAbilities?.sikaryanDrainSpecialAbilities?.[id],
     getDynamicLycantropicGiftById: id => specialAbilities?.lycantropicGifts?.[id],
@@ -148,6 +149,7 @@ export const selectCapabilitiesForActivatablePrerequisite = createSelector(
     getDynamicChronicleEnchantmentById: id => specialAbilities?.chronicleEnchantments?.[id],
     getDynamicKrallenkettenzauberById: id => specialAbilities?.krallenkettenzauber?.[id],
     getDynamicTrinkhornzauberById: id => specialAbilities?.trinkhornzauber?.[id],
+    getDynamicMagicalSignById: id => specialAbilities?.magicalSigns?.[id],
     checkPrecondition: pre => checkPrecondition(precondition, pre),
   }),
 )
@@ -386,22 +388,8 @@ export const selectCapabilitiesForRatedPrerequisite = createSelector(
  */
 export const selectCapabilitiesForRatedSumPrerequisite = createSelector(
   SelectGetById.Dynamic.Skill,
-  SelectGetById.Dynamic.Spell,
-  SelectGetById.Dynamic.Ritual,
-  SelectGetById.Dynamic.LiturgicalChant,
-  SelectGetById.Dynamic.Ceremony,
-  (
+  (getDynamicSkillById): Parameters<typeof checkRatedSumPrerequisite>[0] => ({
     getDynamicSkillById,
-    getDynamicSpellById,
-    getDynamicRitualById,
-    getDynamicLiturgicalChantById,
-    getDynamicCeremonyById,
-  ): Parameters<typeof checkRatedSumPrerequisite>[0] => ({
-    getDynamicSkillById,
-    getDynamicSpellById,
-    getDynamicRitualById,
-    getDynamicLiturgicalChantById,
-    getDynamicCeremonyById,
   }),
 )
 

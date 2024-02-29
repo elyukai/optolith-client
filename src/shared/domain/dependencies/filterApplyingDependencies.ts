@@ -21,7 +21,15 @@ import {
   ActivatableIdentifier,
   SkillWithEnhancementsIdentifier,
 } from "optolith-database-schema/types/_IdentifierGroup"
+import { Preconditions } from "optolith-database-schema/types/prerequisites/ConditionalPrerequisites"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
+import { ActivatableDependency } from "../activatable/activatableDependency.ts"
+import { All, GetById } from "../getTypes.ts"
+import { countMatchingRatedMinimumNumberEntries } from "../prerequisites/single/ratedMinimumNumberPrerequisiteValidation.ts"
+import { sumMatchingRatedSumEntries } from "../prerequisites/single/ratedSumPrerequisiteValidation.ts"
+import { GetDynamicLiturgicalChantsByAspectCapability } from "../rated/liturgicalChant.ts"
 import { RatedDependency } from "../rated/ratedDependency.ts"
+import { GetDynamicSpellworksByPropertyCapability } from "../rated/spell.ts"
 
 /**
  * A function that filters a list of dependencies by if they apply to the
@@ -32,11 +40,11 @@ import { RatedDependency } from "../rated/ratedDependency.ts"
 export type FilterApplyingRatedDependencies = (dependencies: RatedDependency[]) => RatedDependency[]
 
 /**
- * `flattenDependencies` flattens the list of dependencies to usable values.
- * That means, optional dependencies (objects) will be evaluated and will be
- * included in the resulting list, depending on whether it has to follow the
- * optional dependency or not. The result is a plain `List` of all non-optional
- * dependencies.
+ * `filterApplyingRatedDependencies` flattens the list of dependencies to usable
+ * values. That means, optional dependencies (objects) will be evaluated and
+ * will be included in the resulting list, depending on whether it has to follow
+ * the optional dependency or not. The result is a plain `List` of all
+ * non-optional dependencies.
  */
 export const filterApplyingRatedDependencies =
   (
@@ -44,11 +52,70 @@ export const filterApplyingRatedDependencies =
       id: ActivatableIdentifier | SkillWithEnhancementsIdentifier,
       index: number,
     ) => boolean,
+    caps: {
+      getDynamicSkillById: GetById.Dynamic.Skill
+      dynamicCloseCombatTechniques: All.Dynamic.CloseCombatTechniques
+      dynamicRangedCombatTechniques: All.Dynamic.RangedCombatTechniques
+      getDynamicSpellsByProperty: GetDynamicSpellworksByPropertyCapability
+      getDynamicRitualsByProperty: GetDynamicSpellworksByPropertyCapability
+      getDynamicLiturgicalChantsByAspect: GetDynamicLiturgicalChantsByAspectCapability
+      getDynamicCeremoniesByAspect: GetDynamicLiturgicalChantsByAspectCapability
+    },
   ): FilterApplyingRatedDependencies =>
   dependencies =>
     dependencies.filter(dep => {
       if (dep.isPartOfDisjunction) {
         return checkMultipleDisjunctionPartsAreValid(dep.source, dep.index)
+      }
+
+      switch (dep.value.tag) {
+        case "Fixed":
+          return true
+        case "MinimumNumberAtMinimumValue":
+          return (
+            countMatchingRatedMinimumNumberEntries(
+              dep.value.minimumValue,
+              dep.value.target,
+              caps,
+            ) <= dep.value.minimumCount
+          )
+        case "Sum":
+          return sumMatchingRatedSumEntries(dep.value.targetIds, caps) <= dep.value.sum
+        default:
+          return assertExhaustive(dep.value)
+      }
+    })
+
+/**
+ * A function that filters a list of dependencies by if they apply to the
+ * entry, since some dependencies target multiple entries but only one of them
+ * has to apply. And if other entries match the dependency, the dependency does
+ * not need to be matched by this entry.
+ */
+export type FilterApplyingActivatableDependencies = (
+  dependencies: ActivatableDependency[],
+) => ActivatableDependency[]
+
+/**
+ * `filterApplyingActivatableDependencies` flattens the list of dependencies to
+ * usable values. That means, optional dependencies (objects) will be evaluated
+ * and will be included in the resulting list, depending on whether it has to
+ * follow the optional dependency or not. The result is a plain `List` of all
+ * non-optional dependencies.
+ */
+export const filterApplyingActivatableDependencies =
+  (
+    checkMultipleDisjunctionPartsAreValid: (id: ActivatableIdentifier, index: number) => boolean,
+    checkPreconditions: (prerequisites: Preconditions) => boolean,
+  ): FilterApplyingActivatableDependencies =>
+  dependencies =>
+    dependencies.filter(dep => {
+      if (dep.when !== undefined && !checkPreconditions(dep.when)) {
+        return false
+      }
+
+      if (dep.isPartOfDisjunction) {
+        return checkMultipleDisjunctionPartsAreValid(dep.sourceId, dep.index)
       }
 
       return true

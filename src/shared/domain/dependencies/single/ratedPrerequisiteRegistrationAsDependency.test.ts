@@ -17,7 +17,7 @@ describe(registerOrUnregisterRatedPrerequisiteAsDependency.name, () => {
         dependencies: [
           {
             source: { tag: "Spell", spell: 1 },
-            value: { tag: "Minimum", minimum: 10 },
+            value: { tag: "Fixed", value: { tag: "Minimum", minimum: 10 } },
             index: 0,
             isPartOfDisjunction: false,
           },
@@ -60,7 +60,7 @@ describe(registerOrUnregisterRatedPrerequisiteAsDependency.name, () => {
         dependencies: [
           {
             source: { tag: "Spell", spell: 1 },
-            value: { tag: "Minimum", minimum: 10 },
+            value: { tag: "Fixed", value: { tag: "Minimum", minimum: 10 } },
             index: 0,
             isPartOfDisjunction: false,
           },
@@ -93,13 +93,13 @@ describe(registerOrUnregisterRatedPrerequisiteAsDependency.name, () => {
         dependencies: [
           {
             source: { tag: "Spell", spell: 1 },
-            value: { tag: "Minimum", minimum: 10 },
+            value: { tag: "Fixed", value: { tag: "Minimum", minimum: 10 } },
             index: 0,
             isPartOfDisjunction: false,
           },
           {
             source: { tag: "Ritual", ritual: 1 },
-            value: { tag: "Minimum", minimum: 11 },
+            value: { tag: "Fixed", value: { tag: "Minimum", minimum: 11 } },
             index: 0,
             isPartOfDisjunction: false,
           },
@@ -116,7 +116,7 @@ describe(registerOrUnregisterRatedPrerequisiteAsDependency.name, () => {
         dependencies: [
           {
             source: { tag: "Ritual", ritual: 1 },
-            value: { tag: "Minimum", minimum: 11 },
+            value: { tag: "Fixed", value: { tag: "Minimum", minimum: 11 } },
             index: 0,
             isPartOfDisjunction: false,
           },

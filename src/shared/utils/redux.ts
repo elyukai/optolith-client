@@ -26,14 +26,14 @@ export type Reducer<
   IS extends S | undefined = S,
 > = (state: IS, action: A, ...additionalParams: P) => S
 
-const isDraftT = <T, U>(state: T | Draft<U>): state is Draft<U> => isDraft(state)
+const isDraftT = <T>(state: T | Draft<T>): state is Draft<T> => isDraft(state)
 
 const ensureDraftState = <S>(
   state: S,
   f: (draft: Draft<S>) => ValidReducerReturnType<Draft<S>>,
 ): S => {
   if (isDraftT(state)) {
-    const result = f(state as Draft<S>)
+    const result = f(state)
     return result === undefined ? state : (result as S)
   } else {
     return produce(state, f)
@@ -51,9 +51,31 @@ export const reduceReducers =
   ): Reducer<S, A, P, IS> =>
   (state, action, ...additionalParams) =>
     reducers.reduce(
-      (newState, reducer) => reducer(newState, action, ...additionalParams),
+      (oldState, reducer) => reducer(oldState, action, ...additionalParams),
       initialReducer(state, action, ...additionalParams),
     )
+
+/**
+ * A reducer type with possible additional parameters that uses Immer.
+ */
+export type DraftReducer<S, A extends Action = AnyAction, P extends unknown[] = []> = (
+  state: Draft<S>,
+  action: A,
+  ...additionalParams: P
+) => void
+
+/**
+ * Chains multiple draft reducers together.
+ */
+export const reduceDraftReducers =
+  <S, A extends Action = AnyAction, P extends unknown[] = []>(
+    ...reducers: DraftReducer<S, A, P>[]
+  ): DraftReducer<S, A, P> =>
+  (state, action, ...additionalParams) => {
+    reducers.forEach(reducer => {
+      reducer(state, action, ...additionalParams)
+    })
+  }
 
 type ValidReducerReturnType<State> =
   | State

@@ -1,7 +1,7 @@
 /* eslint-disable jsdoc/require-jsdoc */
 /* eslint-disable @typescript-eslint/no-namespace */
 import { createSelector } from "@reduxjs/toolkit"
-import { All, GetById } from "../../shared/domain/getTypes.ts"
+import { All, GetById, Singleton } from "../../shared/domain/getTypes.ts"
 import {
   selectDynamicAdvancedCombatSpecialAbilities,
   selectDynamicAdvancedKarmaSpecialAbilities,
@@ -76,6 +76,8 @@ import {
   selectDynamicWandEnchantments,
   selectDynamicWeaponEnchantments,
   selectDynamicZibiljaRituals,
+  selectPact,
+  selectSex,
 } from "../slices/characterSlice.ts"
 import { selectDatabase } from "../slices/databaseSlice.ts"
 
@@ -346,6 +348,14 @@ export namespace SelectGetById {
     export const WeaponEnchantment = createSelector(selectDynamicWeaponEnchantments, (dynamicWeaponEnchantments): GetById.Dynamic.WeaponEnchantment => id => dynamicWeaponEnchantments?.[id])
     // export const Weapon = createSelector(selectDynamicWeapons, (dynamicWeapons): GetById.Dynamic.Weapon => id => dynamicWeapons?.[id])
     export const ZibiljaRitual = createSelector(selectDynamicZibiljaRituals, (dynamicZibiljaRituals): GetById.Dynamic.ZibiljaRitual => id => dynamicZibiljaRituals?.[id])
+  }
+}
+
+// prettier-ignore
+export namespace SelectSingleton {
+  export namespace Dynamic {
+    export const Pact = createSelector(selectPact, (pact): Singleton.Dynamic.Pact => pact)
+    export const Sex = createSelector(selectSex, (sex): Singleton.Dynamic.Sex => sex)
   }
 }
 

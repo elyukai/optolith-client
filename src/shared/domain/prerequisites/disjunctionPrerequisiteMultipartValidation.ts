@@ -100,6 +100,7 @@ export const checkMultipleDisjunctionPartsAreValid =
       getStaticMagicalTraditionById: GetById.Static.MagicalTradition
       getStaticBlessedTraditionById: GetById.Static.BlessedTradition
       getStaticPactGiftById: GetById.Static.PactGift
+      getStaticVampiricGiftById: GetById.Static.VampiricGift
       getStaticSikaryanDrainSpecialAbilityById: GetById.Static.SikaryanDrainSpecialAbility
       getStaticLycantropicGiftById: GetById.Static.LycantropicGift
       getStaticSkillStyleSpecialAbilityById: GetById.Static.SkillStyleSpecialAbility
@@ -117,6 +118,7 @@ export const checkMultipleDisjunctionPartsAreValid =
       getStaticChronicleEnchantmentById: GetById.Static.ChronicleEnchantment
       getStaticKrallenkettenzauberById: GetById.Static.Krallenkettenzauber
       getStaticTrinkhornzauberById: GetById.Static.Trinkhornzauber
+      getStaticMagicalSignById: GetById.Static.MagicalSign
       getStaticSpellById: GetById.Static.Spell
       getStaticRitualById: GetById.Static.Ritual
       getStaticLiturgicalChantById: GetById.Static.LiturgicalChant
@@ -351,6 +353,13 @@ export const checkMultipleDisjunctionPartsAreValid =
           index,
           caps,
         )
+      case "VampiricGift":
+        return checkLevelPrerequisite(
+          checkPrerequisiteOfGeneralEntry,
+          caps.getStaticVampiricGiftById(source.vampiric_gift),
+          index,
+          caps,
+        )
       case "SikaryanDrainSpecialAbility":
         return checkLevelPrerequisite(
           checkPrerequisiteOfGeneralEntry,
@@ -467,6 +476,13 @@ export const checkMultipleDisjunctionPartsAreValid =
         return checkLevelPrerequisite(
           checkPrerequisiteOfGeneralEntry,
           caps.getStaticTrinkhornzauberById(source.trinkhornzauber),
+          index,
+          caps,
+        )
+      case "MagicalSign":
+        return checkLevelPrerequisite(
+          checkPrerequisiteOfGeneralEntry,
+          caps.getStaticMagicalSignById(source.magical_sign),
           index,
           caps,
         )

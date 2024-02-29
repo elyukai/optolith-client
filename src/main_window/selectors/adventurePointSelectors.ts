@@ -4,6 +4,11 @@ import {
   isTinyActivatableActive,
 } from "../../shared/domain/activatable/activatableEntry.ts"
 import {
+  AdventurePointsCache,
+  addAdventurePointsCaches,
+  emptyAdventurePointsCache,
+} from "../../shared/domain/adventurePoints/cache.ts"
+import {
   ImprovementCost,
   adventurePointsForRange,
 } from "../../shared/domain/adventurePoints/improvementCost.ts"
@@ -12,11 +17,13 @@ import { count } from "../../shared/utils/array.ts"
 import {
   selectCurrentCharacter,
   selectDerivedCharacteristics,
+  selectDynamicAdvantages,
   selectDynamicAnimistPowers,
   selectDynamicAttributes,
   selectDynamicCeremonies,
   selectDynamicCloseCombatTechniques,
   selectDynamicCurses,
+  selectDynamicDisadvantages,
   selectDynamicDominationRituals,
   selectDynamicElvenMagicalSongs,
   selectDynamicGeodeRituals,
@@ -27,20 +34,13 @@ import {
   selectDynamicRangedCombatTechniques,
   selectDynamicRituals,
   selectDynamicSkills,
+  selectDynamicSpecialAbilities,
   selectDynamicSpells,
   selectDynamicZibiljaRituals,
   selectTotalAdventurePoints,
 } from "../slices/characterSlice.ts"
+import { selectMagicalAndBlessedAdvantagesAndDisadvantagesCache } from "../slices/databaseSlice.ts"
 import { SelectAll } from "./basicCapabilitySelectors.ts"
-
-/**
- * Adventure Points can either be spent from the main pool of adventure points
- * or from the pool bound to a specific entry.
- */
-export type SpentAdventurePoints = {
-  general: number
-  bound: number
-}
 
 const sumRatedMaps = (
   ...ratedMaps: (Record<number, { cachedAdventurePoints: RatedAdventurePointsCache }> | undefined)[]
@@ -125,60 +125,102 @@ export const selectAdventurePointsSpentOnBlessings = createSelector(
   sumTinyActivatables,
 )
 
+const sumActivatableMaps = (
+  ...activatableMaps: Record<number, { cachedAdventurePoints: AdventurePointsCache }>[]
+): AdventurePointsCache =>
+  activatableMaps
+    .flatMap(activatableMap => Object.values(activatableMap ?? {}))
+    .reduce(
+      (acc, rated) => addAdventurePointsCaches(acc, rated.cachedAdventurePoints),
+      emptyAdventurePointsCache,
+    )
+
+const sumActivatables = (
+  activatables: { cachedAdventurePoints: AdventurePointsCache }[],
+): AdventurePointsCache =>
+  activatables.reduce(
+    (acc, rated) => addAdventurePointsCaches(acc, rated.cachedAdventurePoints),
+    emptyAdventurePointsCache,
+  )
+
 /**
  * Returns the adventure points spent on advantages.
  */
 export const selectAdventurePointsSpentOnAdvantages = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
+  selectDynamicAdvantages,
+  (dynamicAdvantages): AdventurePointsCache => sumActivatableMaps(dynamicAdvantages ?? {}),
 )
 
 /**
  * Returns the adventure points spent on magical advantages.
  */
 export const selectAdventurePointsSpentOnMagicalAdvantages = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
+  SelectAll.Dynamic.Advantages,
+  selectMagicalAndBlessedAdvantagesAndDisadvantagesCache,
+  (dynamicAdvantages, cache): AdventurePointsCache =>
+    sumActivatables(
+      dynamicAdvantages.filter(({ id }) => cache.advantages.magical.ids.includes(id)),
+    ),
 )
 
 /**
  * Returns the adventure points spent on blessed advantages.
  */
 export const selectAdventurePointsSpentOnBlessedAdvantages = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
+  SelectAll.Dynamic.Advantages,
+  selectMagicalAndBlessedAdvantagesAndDisadvantagesCache,
+  (dynamicAdvantages, cache): AdventurePointsCache =>
+    sumActivatables(
+      dynamicAdvantages.filter(({ id }) => cache.advantages.blessed.ids.includes(id)),
+    ),
 )
 
 /**
  * Returns the adventure points spent on disadvantages.
  */
 export const selectAdventurePointsSpentOnDisadvantages = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
+  selectDynamicDisadvantages,
+  (dynamicDisadvantages): AdventurePointsCache => {
+    const { general, bound } = sumActivatableMaps(dynamicDisadvantages ?? {})
+    return { general: -general, bound: -bound }
+  },
 )
 
 /**
  * Returns the adventure points spent on magical disadvantages.
  */
 export const selectAdventurePointsSpentOnMagicalDisadvantages = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
+  SelectAll.Dynamic.Disadvantages,
+  selectMagicalAndBlessedAdvantagesAndDisadvantagesCache,
+  (dynamicDisadvantages, cache): AdventurePointsCache => {
+    const { general, bound } = sumActivatables(
+      dynamicDisadvantages.filter(({ id }) => cache.disadvantages.magical.ids.includes(id)),
+    )
+    return { general: -general, bound: -bound }
+  },
 )
 
 /**
  * Returns the adventure points spent on blessed disadvantages.
  */
 export const selectAdventurePointsSpentOnBlessedDisadvantages = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
+  SelectAll.Dynamic.Disadvantages,
+  selectMagicalAndBlessedAdvantagesAndDisadvantagesCache,
+  (dynamicDisadvantages, cache): AdventurePointsCache => {
+    const { general, bound } = sumActivatables(
+      dynamicDisadvantages.filter(({ id }) => cache.disadvantages.blessed.ids.includes(id)),
+    )
+    return { general: -general, bound: -bound }
+  },
 )
 
 /**
  * Returns the adventure points spent on special abilities.
  */
 export const selectAdventurePointsSpentOnSpecialAbilities = createSelector(
-  selectCurrentCharacter,
-  (): SpentAdventurePoints => ({ general: 0, bound: 0 }),
+  selectDynamicSpecialAbilities,
+  (dynamicSpecialAbilities): AdventurePointsCache =>
+    sumActivatableMaps(...Object.values(dynamicSpecialAbilities ?? {})),
 )
 
 /**
@@ -227,17 +269,13 @@ export const selectAdventurePointsSpent = createSelector(
   selectAdventurePointsSpentOnCantrips,
   selectAdventurePointsSpentOnBlessings,
   selectAdventurePointsSpentOnAdvantages,
-  selectAdventurePointsSpentOnMagicalAdvantages,
-  selectAdventurePointsSpentOnBlessedAdvantages,
   selectAdventurePointsSpentOnDisadvantages,
-  selectAdventurePointsSpentOnMagicalDisadvantages,
-  selectAdventurePointsSpentOnBlessedDisadvantages,
   selectAdventurePointsSpentOnSpecialAbilities,
   selectAdventurePointsSpentOnEnergies,
   selectAdventurePointsSpentOnRace,
   selectAdventurePointsSpentOnProfession,
-  (...spentCategories): SpentAdventurePoints =>
-    spentCategories.reduce<SpentAdventurePoints>(
+  (...spentCategories): AdventurePointsCache =>
+    spentCategories.reduce<AdventurePointsCache>(
       (acc, spentCategory) => ({
         general:
           acc.general +

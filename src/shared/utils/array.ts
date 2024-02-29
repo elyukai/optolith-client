@@ -70,8 +70,8 @@ export const ensureNonEmpty = <T>(arr: T[]): T[] | undefined => (arr.length > 0 
 /**
  * Counts the number of elements in an array that satisfy the given predicate.
  */
-export const count = <T>(arr: T[], predicate: (value: T) => boolean): number =>
-  arr.reduce((acc, value) => (predicate(value) ? acc + 1 : acc), 0)
+export const count = <T>(arr: T[], predicate: (value: T, index: number) => boolean): number =>
+  arr.reduce((acc, value, index) => (predicate(value, index) ? acc + 1 : acc), 0)
 
 /**
  * Counts the number of elements the function returns the same value for and
@@ -79,10 +79,10 @@ export const count = <T>(arr: T[], predicate: (value: T) => boolean): number =>
  */
 export const countBy = <T, K extends string | number | symbol>(
   arr: T[],
-  fn: (value: T) => K,
+  fn: (value: T, index: number) => K,
 ): { [key in K]: number } =>
-  arr.reduce((acc, value) => {
-    const key = fn(value)
+  arr.reduce((acc, value, index) => {
+    const key = fn(value, index)
     acc[key] = (acc[key] ?? 0) + 1
     return acc
   }, {} as { [key in K]: number })
@@ -93,10 +93,10 @@ export const countBy = <T, K extends string | number | symbol>(
  */
 export const countByMany = <T, K extends string | number | symbol>(
   arr: T[],
-  fn: (value: T) => K[],
+  fn: (value: T, index: number) => K[],
 ): { [key in K]: number } =>
-  arr.reduce((acc, value) => {
-    const keys = fn(value)
+  arr.reduce((acc, value, index) => {
+    const keys = fn(value, index)
     unique(keys).forEach(key => {
       acc[key] = (acc[key] ?? 0) + 1
     })
@@ -111,14 +111,28 @@ export const countByMany = <T, K extends string | number | symbol>(
  * that satisfy the predicate, the second one containing all elements that do
  * not satisfy the predicate.
  */
-export const partition = <T>(arr: T[], predicate: (value: T) => boolean): [pos: T[], neg: T[]] =>
-  arr.reduce<[T[], T[]]>(
+export function partition<T, T1 extends T>(
+  arr: T[],
+  predicate: (value: T) => value is T1,
+): [pos: T1[], neg: T[]]
+export function partition<T>(arr: T[], predicate: (value: T) => boolean): [pos: T[], neg: T[]]
+/**
+ * Partitions an array into two arrays based on a predicate.
+ * @param arr The array to split.
+ * @param predicate The function to apply to each element in the array.
+ * @returns An array with two elements, the first one containing all elements
+ * that satisfy the predicate, the second one containing all elements that do
+ * not satisfy the predicate.
+ */
+export function partition<T>(arr: T[], predicate: (value: T) => boolean): [pos: T[], neg: T[]] {
+  return arr.reduce<[T[], T[]]>(
     (acc, value) => {
       acc[predicate(value) ? 0 : 1].push(value)
       return acc
     },
     [[], []],
   )
+}
 
 /**
  * Reduces an array, but stops as soon as the predicate returns `true` for an
@@ -160,3 +174,12 @@ export const someCount = <T>(
     acc => acc >= minCount,
     0,
   ) >= minCount
+
+/**
+ * Returns a new array with all elements from the original array except for the
+ * given index.
+ */
+export const removeIndex = <T>(arr: T[], index: number): T[] => [
+  ...arr.slice(0, index),
+  ...arr.slice(index + 1),
+]

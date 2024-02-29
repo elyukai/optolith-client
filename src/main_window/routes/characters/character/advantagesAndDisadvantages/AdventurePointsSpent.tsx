@@ -66,25 +66,25 @@ export const AdventurePointsSpent: FC = () => {
       <p>
         {translate(
           "{0}/{1} AP received from disadvantages",
-          spentOnDisadvantages.general + spentOnDisadvantages.bound,
+          Math.abs(spentOnDisadvantages.general + spentOnDisadvantages.bound),
           80,
         )}
-        {spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound > 0 ? (
+        {spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound < 0 ? (
           <>
             <br />
             {translate(
               "Thereof {0}/{1} from magic disadvantages",
-              spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound,
+              Math.abs(spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound),
               maximumForMagicalAdvantagesDisadvantages,
             )}
           </>
         ) : null}
-        {spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound > 0 ? (
+        {spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound < 0 ? (
           <>
             <br />
             {translate(
               "Thereof {0}/{1} from blessed disadvantages",
-              spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound,
+              Math.abs(spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound),
               50,
             )}
           </>

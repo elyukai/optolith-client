@@ -58,17 +58,10 @@ export const SpecialAbilities: FC = () => {
       </Options>
       <Main>
         <ListHeader>
-          <ListHeaderTag className="name">
-            {translate("specialabilities.header.name")}
-          </ListHeaderTag>
-          <ListHeaderTag className="group">
-            {translate("specialabilities.header.group")}
-          </ListHeaderTag>
-          <ListHeaderTag
-            className="cost"
-            hint={translate("specialabilities.header.adventurepoints.tooltip")}
-          >
-            {translate("specialabilities.header.adventurepoints")}
+          <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+          <ListHeaderTag className="group">{translate("Group")}</ListHeaderTag>
+          <ListHeaderTag className="cost" hint={translate("Adventure Points")}>
+            {translate("AP")}
           </ListHeaderTag>
           {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />

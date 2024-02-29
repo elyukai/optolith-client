@@ -1,4 +1,8 @@
 import { FC } from "react"
+import {
+  maximumAdventurePointsForAdventagesAndDisadvantages,
+  maximumAdventurePointsForBlessedAdventagesAndDisadvantages,
+} from "../../shared/domain/activatable/advantagesDisadvantages.ts"
 import { useTranslate } from "../../shared/hooks/translate.ts"
 import { useAppSelector } from "../hooks/redux.ts"
 import {
@@ -78,7 +82,7 @@ export const AdventurePointsTooltip: FC = () => {
           {translate(
             "{0}/{1} AP spent on advantages",
             spentOnAdvantages.general + spentOnAdvantages.bound,
-            80,
+            maximumAdventurePointsForAdventagesAndDisadvantages,
           )}
         </span>
         <span>
@@ -95,32 +99,32 @@ export const AdventurePointsTooltip: FC = () => {
             ? translate(
                 "Thereof {0}/{1} on blessed advantages",
                 spentOnBlessedAdvantages.general + spentOnBlessedAdvantages.bound,
-                50,
+                maximumAdventurePointsForBlessedAdventagesAndDisadvantages,
               )
             : null}
         </span>
         <span>
           {translate(
             "{0}/{1} AP received from disadvantages",
-            spentOnDisadvantages.general + spentOnDisadvantages.bound,
-            80,
+            Math.abs(spentOnDisadvantages.general + spentOnDisadvantages.bound),
+            maximumAdventurePointsForAdventagesAndDisadvantages,
           )}
         </span>
         <span>
-          {spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound > 0
+          {spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound < 0
             ? translate(
                 "Thereof {0}/{1} from magic disadvantages",
-                spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound,
+                Math.abs(spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound),
                 maximumForMagicalAdvantagesDisadvantages,
               )
             : null}
         </span>
         <span>
-          {spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound > 0
+          {spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound < 0
             ? translate(
                 "Thereof {0}/{1} from blessed disadvantages",
-                spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound,
-                50,
+                Math.abs(spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound),
+                maximumAdventurePointsForBlessedAdventagesAndDisadvantages,
               )
             : null}
         </span>

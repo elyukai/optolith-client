@@ -5,6 +5,7 @@ import { classList } from "../../shared/utils/classList.ts"
 import { ExternalAPI } from "../external.ts"
 import { useAppSelector } from "../hooks/redux.ts"
 import { selectAreAnimationsEnabled, selectLocale } from "../slices/settingsSlice.ts"
+import { Alerts } from "./Alerts.tsx"
 import { NavigationBar } from "./NavigationBar.tsx"
 import "./Root.scss"
 import { Router } from "./Router.tsx"
@@ -33,7 +34,7 @@ export const Root: FC = () => {
         <img src={backgroundImg} alt="" />
       </div>
 
-      {/* <AlertsContainer /> */}
+      <Alerts />
       <TitleBar
         platform={ExternalAPI.platform}
         maximizeEvents={ExternalAPI}

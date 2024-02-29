@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 import {
+  ensure,
   isNotNullish,
   isNullish,
   mapNullable,
@@ -68,5 +69,21 @@ describe("nullableToArray", () => {
   it("returns an empty array if the value is null or undefined", () => {
     assert.deepEqual(nullableToArray(undefined), [])
     assert.deepEqual(nullableToArray(null), [])
+  })
+})
+
+describe("ensure", () => {
+  it("returns the value if it matches the predicate", () => {
+    assert.equal(
+      ensure(2, x => x === 2),
+      2,
+    )
+  })
+
+  it("returns undefined if the value does not match the predicate", () => {
+    assert.equal(
+      ensure(2, x => x === 3),
+      undefined,
+    )
   })
 })

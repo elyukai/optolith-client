@@ -4,11 +4,9 @@ import { ActivatablePrerequisite } from "optolith-database-schema/types/prerequi
 import { filterNonNullable } from "../../../utils/array.ts"
 import { mapNullable } from "../../../utils/nullable.ts"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import {
-  ActivatableInstance,
-  equalsOptionPrerequisite,
-} from "../../activatable/activatableEntry.ts"
+import { ActivatableInstance } from "../../activatable/activatableEntry.ts"
 import { GetById } from "../../getTypes.ts"
+import { equalsIdentifier } from "../../identifier.ts"
 
 /**
  * Checks a single activatable prerequisite if it’s matched.
@@ -46,6 +44,7 @@ export const checkActivatablePrerequisite = (
     getDynamicMagicalTraditionById: GetById.Dynamic.MagicalTradition
     getDynamicBlessedTraditionById: GetById.Dynamic.BlessedTradition
     getDynamicPactGiftById: GetById.Dynamic.PactGift
+    getDynamicVampiricGiftById: GetById.Dynamic.VampiricGift
     getDynamicSikaryanDrainSpecialAbilityById: GetById.Dynamic.SikaryanDrainSpecialAbility
     getDynamicLycantropicGiftById: GetById.Dynamic.LycantropicGift
     getDynamicSkillStyleSpecialAbilityById: GetById.Dynamic.SkillStyleSpecialAbility
@@ -63,6 +62,7 @@ export const checkActivatablePrerequisite = (
     getDynamicChronicleEnchantmentById: GetById.Dynamic.ChronicleEnchantment
     getDynamicKrallenkettenzauberById: GetById.Dynamic.Krallenkettenzauber
     getDynamicTrinkhornzauberById: GetById.Dynamic.Trinkhornzauber
+    getDynamicMagicalSignById: GetById.Dynamic.MagicalSign
     checkPrecondition: (pre: PreconditionGroup) => boolean
   },
   p: ActivatablePrerequisite,
@@ -137,6 +137,8 @@ export const checkActivatablePrerequisite = (
         return caps.getDynamicBlessedTraditionById(p.id.blessed_tradition)
       case "PactGift":
         return caps.getDynamicPactGiftById(p.id.pact_gift)
+      case "VampiricGift":
+        return caps.getDynamicVampiricGiftById(p.id.vampiric_gift)
       case "SikaryanDrainSpecialAbility":
         return caps.getDynamicSikaryanDrainSpecialAbilityById(p.id.sikaryan_drain_special_ability)
       case "LycantropicGift":
@@ -171,6 +173,8 @@ export const checkActivatablePrerequisite = (
         return caps.getDynamicKrallenkettenzauberById(p.id.krallenkettenzauber)
       case "Trinkhornzauber":
         return caps.getDynamicTrinkhornzauberById(p.id.trinkhornzauber)
+      case "MagicalSign":
+        return caps.getDynamicMagicalSignById(p.id.magical_sign)
       default:
         return assertExhaustive(p.id)
     }
@@ -196,9 +200,7 @@ export const checkActivatablePrerequisite = (
   ): boolean =>
     pOptions.every((option, index) => {
       const instanceOption = i.options?.[index]
-      return (
-        instanceOption?.type === "Predefined" && equalsOptionPrerequisite(instanceOption.id, option)
-      )
+      return instanceOption?.type === "Predefined" && equalsIdentifier(instanceOption.id, option)
     })
 
   // all checks must satisfy, if applicable depending on the prerequisite

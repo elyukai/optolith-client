@@ -21,6 +21,7 @@ import {
   PublicationPrerequisites,
   SpellworkPrerequisites,
 } from "optolith-database-schema/types/_Prerequisite"
+import { Preconditions } from "optolith-database-schema/types/prerequisites/ConditionalPrerequisites"
 import {
   checkPlainPrerequisites,
   checkPrerequisitesForLevels,
@@ -196,3 +197,11 @@ export const checkPrerequisitesOfEnhancement = (
   checkPlainPrerequisites(prerequisites, p =>
     SingleChecks.checkPrerequisiteOfEnhancement(capabilities, p),
   )
+
+/**
+ * Checks all prerequisites for an enhancement.
+ */
+export const checkPreconditions = (
+  prerequisites: Preconditions,
+  capabilities: Parameters<typeof SingleChecks.checkPrecondition>[0],
+): boolean => prerequisites.every(p => SingleChecks.checkPrecondition(capabilities, p))
