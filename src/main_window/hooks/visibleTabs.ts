@@ -4,6 +4,7 @@ import { selectCanRemove } from "../selectors/characterSelectors.ts"
 import { selectCurrentCulture } from "../selectors/cultureSelectors.ts"
 import { selectCurrentRace } from "../selectors/raceSelectors.ts"
 import { selectIsBlessedOne, selectIsSpellcaster } from "../selectors/traditionSelectors.ts"
+import { selectIsCharacterCreationFinished } from "../slices/characterSlice.ts"
 import { RoutePath, selectRoute } from "../slices/routeSlice.ts"
 import { useAppSelector } from "./redux.ts"
 
@@ -73,6 +74,7 @@ export const useVisibleTabs = () => {
   const phase = 3 as number
   const isHitZoneArmorEnabled = true as boolean
   const arePactsAvailable = true as boolean
+  const isCharacterCreationFinished = useAppSelector(selectIsCharacterCreationFinished)
   const isRemovingEnabled = useAppSelector(selectCanRemove)
   const isRaceSelected = useAppSelector(selectCurrentRace) !== undefined
   const isCultureSelected = useAppSelector(selectCurrentCulture) !== undefined
@@ -92,8 +94,8 @@ export const useVisibleTabs = () => {
               routes: filterNonNullable([
                 "profile" as const,
                 // "personal_data",
-                phase === 3 ? ("character_sheet" as const) : undefined,
-                phase > 1 && arePactsAvailable ? ("pact" as const) : undefined, // "US25102", "US25008")
+                isCharacterCreationFinished ? ("character_sheet" as const) : undefined,
+                arePactsAvailable ? ("pact" as const) : undefined, // "US25102", "US25008"
                 "rules" as const,
               ]).map(route => ["characters", characterId, route]),
             },
@@ -152,14 +154,14 @@ export const useVisibleTabs = () => {
           ]),
     [
       characterId,
-      isHitZoneArmorEnabled,
-      isRemovingEnabled,
-      phase,
+      isCharacterCreationFinished,
       arePactsAvailable,
       isRaceSelected,
       isCultureSelected,
+      isRemovingEnabled,
       isSpellcaster,
       isBlessedOne,
+      isHitZoneArmorEnabled,
     ],
   )
 
