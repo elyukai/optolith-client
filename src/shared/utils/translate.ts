@@ -33,6 +33,15 @@ const isVaryBySystem = (
   value: string | PluralizationCategories | VaryBySystem,
 ): value is VaryBySystem => typeof value === "object" && "mac" in value
 
+const pluralType: {
+  [K in keyof UI as UI[K] extends PluralizationCategories ? K : never]: Intl.PluralRuleType
+} = {
+  "{0} Adventure Points": "cardinal",
+  "You are missing {0} Adventure Points to do this.": "cardinal",
+  "since the {0}. printing": "ordinal",
+  "removed in {0}. printing": "ordinal",
+}
+
 /**
  * Creates a translate function based on the given environment, translations and
  * locales.
@@ -46,7 +55,24 @@ export const createTranslate = (
   pluralRulesOptions?: Intl.PluralRulesOptions,
 ) => {
   const locale = selectedLocale ?? matchSystemLocaleToSupported(Object.keys(locales), systemLocale)
-  const pluralRules = new Intl.PluralRules(locale, pluralRulesOptions)
+  const cardinalPluralRules = new Intl.PluralRules(locale, {
+    ...pluralRulesOptions,
+    type: "cardinal",
+  })
+  const ordinalPluralRules = new Intl.PluralRules(locale, {
+    ...pluralRulesOptions,
+    type: "ordinal",
+  })
+  const getPluralRules = (key: keyof UI): Intl.PluralRules => {
+    switch (pluralType[key as keyof typeof pluralType]) {
+      case "cardinal":
+        return cardinalPluralRules
+      case "ordinal":
+        return ordinalPluralRules
+      default:
+        return cardinalPluralRules
+    }
+  }
 
   const translate: Translate = (key, ...options) => {
     const value = translations[locale]?.[key] ?? key
@@ -56,7 +82,7 @@ export const createTranslate = (
     } else if (isPluralizationCategories(value)) {
       if (typeof options[0] === "number") {
         const [count] = options
-        const selectedValue = value[pluralRules.select(count)] ?? value.other
+        const selectedValue = value[getPluralRules(key).select(count)] ?? value.other
         return insertParams(selectedValue, options)
       } else {
         return insertParams(value.other, options)
