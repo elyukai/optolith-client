@@ -229,6 +229,11 @@ export const ProfileOverview: FC = () => {
                 >
                   {translate("Finish Character Creation")}
                 </Button>
+                <p className="help">
+                  {translate(
+                    "You can save up no more than 10 AP to use later during the game, and you cannot begin the game with a negative AP balance.",
+                  )}
+                </p>
               </GridItem>
             ) : null}
             {

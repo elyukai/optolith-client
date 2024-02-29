@@ -5,7 +5,7 @@ ul.list-wrapper {
   margin: 0;
   list-style: none;
 
-  li {
+  > li {
     flex: none;
     position: relative;
     display: flex;
@@ -143,7 +143,7 @@ ul.list-wrapper {
       > div {
         flex: 1 1 auto;
 
-        &:not(.name) {
+        &:not(:first-child) {
           margin: 0 0 0 10px;
         }
 
@@ -152,7 +152,7 @@ ul.list-wrapper {
           width: 200px;
         }
 
-        &.dropdown.tiers {
+        &.dropdown.level {
           width: 65px;
         }
       }
@@ -193,7 +193,7 @@ ul.list-wrapper {
       }
     }
 
-    p {
+    span {
       font: 500 12px/16px Alegreya Sans;
       letter-spacing: 0.05em;
       margin-top: 2px;
@@ -207,6 +207,10 @@ ul.list-wrapper {
         text-transform: none;
         color: var(--headings-color);
         margin: 0;
+      }
+
+      &.level {
+        margin-left: 0.3em;
       }
     }
 
@@ -254,7 +258,7 @@ ul.list-wrapper {
           width: 200px;
         }
 
-        &.dropdown.tiers {
+        &.dropdown.level {
           width: 65px;
         }
       }
@@ -406,7 +410,7 @@ ul.list-wrapper {
         border-color: var(--important-dark-color);
       }
 
-      p.title,
+      .title,
       .values .sr {
         color: var(--important-bright-color);
       }
@@ -421,7 +425,7 @@ ul.list-wrapper {
         border-color: var(--common-dark-color);
       }
 
-      p.title,
+      .title,
       .values .sr {
         color: var(--common-bright-color);
       }
@@ -436,26 +440,26 @@ ul.list-wrapper {
         border-color: var(--uncommon-dark-color);
       }
 
-      p.title,
+      .title,
       .values .sr {
         color: var(--uncommon-bright-color);
       }
     }
 
     &.disabled {
-      pointer-events: none;
+      .title {
+        color: var(--separator-color-60);
+      }
 
-      p.title {
-        color: var(--separator-color-30);
-        height: 32px;
-        line-height: 32px;
+      .values > div {
+        color: var(--separator-color-60);
       }
     }
 
     &.placeholder {
       pointer-events: none;
 
-      p.title {
+      .title {
         position: relative;
 
         &:after {
@@ -479,7 +483,7 @@ ul.list-wrapper {
       }
 
       &:first-child {
-        p.title {
+        .title {
           width: 148px;
         }
 
@@ -491,7 +495,7 @@ ul.list-wrapper {
       &:nth-child(2) {
         opacity: 0.8;
 
-        p.title {
+        .title {
           width: 111px;
         }
 
@@ -503,7 +507,7 @@ ul.list-wrapper {
       &:nth-child(3) {
         opacity: 0.6;
 
-        p.title {
+        .title {
           width: 200px;
         }
 
@@ -515,7 +519,7 @@ ul.list-wrapper {
       &:nth-child(4) {
         opacity: 0.4;
 
-        p.title {
+        .title {
           width: 138px;
         }
 
@@ -527,7 +531,7 @@ ul.list-wrapper {
       &:nth-child(5) {
         opacity: 0.2;
 
-        p.title {
+        .title {
           width: 222px;
         }
 

@@ -5,9 +5,9 @@ import { FCC } from "../../utils/react.ts"
 import { Label } from "../label/Label.tsx"
 import { Scroll } from "../scroll/Scroll.tsx"
 import "./Dropdown.scss"
-import { DropdownItem, DropdownKey, DropdownOption } from "./DropdownItem.tsx"
+import { DropdownItem, DropdownOption } from "./DropdownItem.tsx"
 
-type Props<A extends DropdownKey> = {
+type Props<A> = {
   className?: string
   disabled?: boolean
   fullWidth?: boolean
@@ -19,6 +19,8 @@ type Props<A extends DropdownKey> = {
   values?: A[]
   onChange?(option: A): void
   onChangeList?(selected: A[]): void
+  equals?(a: A, b: A): boolean
+  getKey(option: DropdownOption<A>): string | number | undefined
 }
 
 /**
@@ -32,7 +34,7 @@ export const optionFromIndexed = (name: string, index: number): DropdownOption<n
 /**
  * A dropdown with a list of options.
  */
-export const Dropdown = <A extends DropdownKey>(props: Props<A>): ReturnType<FCC<Props<A>>> => {
+export function Dropdown<A>(props: Props<A>): ReturnType<FCC<Props<A>>> {
   const {
     className,
     disabled,
@@ -45,6 +47,8 @@ export const Dropdown = <A extends DropdownKey>(props: Props<A>): ReturnType<FCC
     required,
     value,
     values,
+    equals,
+    getKey,
   } = props
 
   const [isOpen, setOpen] = useState(false)
@@ -125,11 +129,12 @@ export const Dropdown = <A extends DropdownKey>(props: Props<A>): ReturnType<FCC
           <ul className="dropdown-options">
             {options.map(option => (
               <DropdownItem
-                key={option.id ?? "__DEFAULT__"}
+                key={getKey(option) ?? "__DEFAULT__"}
                 active={value}
                 disabled={normalizedDisabled}
                 onChange={handleChange}
                 option={option}
+                equals={equals}
               />
             ))}
           </ul>

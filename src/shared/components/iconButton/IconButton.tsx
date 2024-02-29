@@ -1,4 +1,4 @@
-import { forwardRef } from "react"
+import { MouseEvent, forwardRef } from "react"
 import { FRRFC } from "../../utils/react.ts"
 import { Button } from "../button/Button.tsx"
 import { Icon } from "../icon/Icon.tsx"
@@ -14,7 +14,7 @@ type Props = {
   icon: string
   label: string
   primary?: boolean
-  onClick?(): void
+  onClick?(event: MouseEvent<HTMLButtonElement>): void
 }
 
 const IconButton: FRRFC<HTMLButtonElement, Props> = (props, ref) => {

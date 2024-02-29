@@ -1,32 +1,29 @@
 import { FC, useCallback } from "react"
 import { classList } from "../../utils/classList.ts"
-
-/**
- * The identifier of a dropdown option.
- */
-export type DropdownKey = string | number | undefined
+import { deepEqual } from "../../utils/compare.ts"
 
 /**
  * Configuration for a dropdown option.
  */
-export type DropdownOption<A extends DropdownKey = DropdownKey> = {
+export type DropdownOption<A> = {
   id: A
   name: string
   disabled?: boolean
 }
 
-type Props<A extends DropdownKey> = {
+type Props<A> = {
   active: A
   disabled: boolean
   option: DropdownOption<A>
   onChange(option: A): void
+  equals?(a: A, b: A): boolean
 }
 
 /**
  * An item in the list of options of a dropdown.
  */
-export const DropdownItem = <A extends DropdownKey>(props: Props<A>): ReturnType<FC<Props<A>>> => {
-  const { active, disabled, onChange, option } = props
+export function DropdownItem<A>(props: Props<A>): ReturnType<FC<Props<A>>> {
+  const { active, disabled, onChange, option, equals = deepEqual } = props
 
   const handleClick = useCallback(
     () => (disabled || option.disabled === true ? undefined : onChange(option.id)),
@@ -36,7 +33,7 @@ export const DropdownItem = <A extends DropdownKey>(props: Props<A>): ReturnType
   return (
     <li
       className={classList({
-        active: option.id === active,
+        active: equals(option.id, active),
         disabled: option.disabled === true,
       })}
       onClick={handleClick}

@@ -10,6 +10,8 @@ import { selectAttributeAdjustmentId } from "../../../../slices/characterSlice.t
 import { changeAttributeAdjustmentId } from "../../../../slices/raceSlice.ts"
 import "./AttributeAdjustment.scss"
 
+const getKey = (option: DropdownOption<number>) => option.id
+
 /**
  * Returns a widget for changing the attribute adjustment set for the race.
  */
@@ -48,6 +50,7 @@ export const AttributesAdjustment: FC = () => {
         disabled={
           adjustmentOptions.length === 1 && adjustmentOptions[0]!.id === currentAdjustmentId
         }
+        getKey={getKey}
       />
     </div>
   )

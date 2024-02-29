@@ -20,6 +20,8 @@ type Props = {
   initialSettings: GlobalSettings
 }
 
+const getLocaleKey = (option: DropdownOption<string | undefined>) => option.id
+
 /**
  * Root component for the settings window.
  */
@@ -79,6 +81,7 @@ export const Root: React.FC<Props> = props => {
               value={locale}
               label={translate("Main Language")}
               onChange={setLocale}
+              getKey={getLocaleKey}
             />
           </GridItem>
           <GridItem width="1/2">
@@ -93,6 +96,7 @@ export const Root: React.FC<Props> = props => {
               value={fallbackLocale}
               label={translate("Fallback Language")}
               onChange={setFallbackLocale}
+              getKey={getLocaleKey}
             />
           </GridItem>
           <GridItem width="1/1">

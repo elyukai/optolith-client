@@ -5,6 +5,7 @@ import {
 import { FC, useCallback } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
+import { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { OptionalRuleIdentifier } from "../../../../../shared/domain/identifier.ts"
 import { isOptionalRuleActive } from "../../../../../shared/domain/rules/optionalRule.ts"
@@ -20,6 +21,8 @@ type Props = {
     optionalRuleTranslation: OptionalRuleTranslation
   }
 }
+
+const getKey = (option: DropdownOption<number>) => option.id
 
 /**
  * Returns a single optional rule item.
@@ -79,6 +82,7 @@ export const OptionalRulesItem: FC<Props> = props => {
           value={getDynamicOptionalRuleById(optionalRule.id)?.options?.[0] ?? 2}
           onChange={handleChangeOption}
           disabled={!isActive}
+          getKey={getKey}
         />
       ) : null}
       <IconButton

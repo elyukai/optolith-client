@@ -12,6 +12,8 @@ type Props = {
   action: ActionCreatorWithPayload<number>
 }
 
+const getKey = (option: DropdownOption<number>) => option.id
+
 /**
  * Returns a dropdown for use with personal data.
  */
@@ -36,6 +38,7 @@ export const PersonalDataDropdown: FC<Props> = props => {
         onChange={handleSetValue}
         options={options}
         disabled={options.length === 1 && value === options[0]!.id}
+        getKey={getKey}
       />
     </div>
   )

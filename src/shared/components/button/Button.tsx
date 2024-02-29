@@ -1,4 +1,4 @@
-import { forwardRef } from "react"
+import { MouseEvent, forwardRef } from "react"
 import { classList } from "../../utils/classList.ts"
 import { FRRFC } from "../../utils/react.js"
 import "./Button.scss"
@@ -13,7 +13,7 @@ interface Props {
   hint?: string
   primary?: boolean
   round?: boolean
-  onClick?(): void
+  onClick?(event: MouseEvent<HTMLButtonElement>): void
 }
 
 const Button: FRRFC<HTMLButtonElement, Props> = (props, ref) => {
