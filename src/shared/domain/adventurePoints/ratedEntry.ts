@@ -1,4 +1,9 @@
 import { range } from "../../utils/array.ts"
+import {
+  AdventurePointsCache,
+  addAdventurePointsCaches,
+  emptyAdventurePointsCache,
+} from "./cache.ts"
 import { ImprovementCost, adventurePointsForIncrement } from "./improvementCost.ts"
 
 /**
@@ -6,7 +11,7 @@ import { ImprovementCost, adventurePointsForIncrement } from "./improvementCost.
  * entry. They don’t effect the costs of the rating at the time of granting, so
  * the rating at which they have been granted is stored as well.
  */
-export type BoundAdventurePoints = {
+export type BoundAdventurePointsForRated = {
   /**
    * The rating at which they have been granted. If the adventure points have
    * been granted when the entry was not active yet, the rating is `undefined`.
@@ -19,35 +24,8 @@ export type BoundAdventurePoints = {
   adventurePoints: number
 }
 
-/**
- * The accumulated used adventure points value of all value increases. It is
- * split by used bound and used general adventure points.
- */
-export type RatedAdventurePointsCache = {
-  /**
-   * The used general adventure points.
-   */
-  general: number
-
-  /**
-   * The used bound adventure points.
-   */
-  bound: number
-}
-
-/**
- * Adds two caches together.
- */
-const addCache = (
-  cache1: RatedAdventurePointsCache,
-  cache2: RatedAdventurePointsCache,
-): RatedAdventurePointsCache => ({
-  general: cache1.general + cache2.general,
-  bound: cache1.bound + cache2.bound,
-})
-
 const groupBoundAdventurePointsByRating = (
-  boundAdventurePoints: BoundAdventurePoints[],
+  boundAdventurePoints: BoundAdventurePointsForRated[],
 ): ReadonlyMap<number | "activation", number> =>
   boundAdventurePoints.reduce((map, { rating: boundRating, adventurePoints }) => {
     const key = boundRating ?? "activation"
@@ -60,7 +38,7 @@ const accumulateCache = (
   initialApplicableBoundKey: number | "activation",
   boundByValue: ReadonlyMap<number | "activation", number>,
   ic: ImprovementCost,
-): RatedAdventurePointsCache => {
+): AdventurePointsCache => {
   const { usedGeneral, usedBound } = range(startValue, endValue).reduce(
     (acc, currentValue) => {
       const costForStep = adventurePointsForIncrement(ic, currentValue - 1)
@@ -97,14 +75,11 @@ const accumulateCache = (
 export const cachedAdventurePoints = (
   value: number,
   minValue: number,
-  boundAdventurePoints: BoundAdventurePoints[],
+  boundAdventurePoints: BoundAdventurePointsForRated[],
   ic: ImprovementCost,
-): RatedAdventurePointsCache => {
+): AdventurePointsCache => {
   if (minValue >= value) {
-    return {
-      general: 0,
-      bound: 0,
-    }
+    return emptyAdventurePointsCache
   } else {
     const boundByValue = groupBoundAdventurePointsByRating(boundAdventurePoints)
     return accumulateCache(minValue + 1, value, minValue, boundByValue, ic)
@@ -118,14 +93,11 @@ export const cachedAdventurePoints = (
  */
 export const cachedAdventurePointsForActivatable = (
   value: number | undefined,
-  boundAdventurePoints: BoundAdventurePoints[],
+  boundAdventurePoints: BoundAdventurePointsForRated[],
   ic: ImprovementCost,
-): RatedAdventurePointsCache => {
+): AdventurePointsCache => {
   if (value === undefined) {
-    return {
-      general: 0,
-      bound: 0,
-    }
+    return emptyAdventurePointsCache
   } else {
     const boundByValue = groupBoundAdventurePointsByRating(boundAdventurePoints)
     return accumulateCache(0, value, "activation", boundByValue, ic)
@@ -140,23 +112,20 @@ export const cachedAdventurePointsForActivatable = (
  */
 export const cachedAdventurePointsForActivatableWithEnhancements = (
   value: number | undefined,
-  boundAdventurePoints: BoundAdventurePoints[],
+  boundAdventurePoints: BoundAdventurePointsForRated[],
   ic: ImprovementCost,
   enhancements: number[],
   getAdventurePointsModifierForEnhancement: (enhancementId: number) => number,
-): RatedAdventurePointsCache => {
+): AdventurePointsCache => {
   if (value === undefined) {
-    return {
-      general: 0,
-      bound: 0,
-    }
+    return emptyAdventurePointsCache
   } else {
     const boundByValue = groupBoundAdventurePointsByRating(boundAdventurePoints)
     const enhancementAdventurePoints = enhancements.reduce(
       (acc, enhancementId) => acc + getAdventurePointsModifierForEnhancement(enhancementId),
       0,
     )
-    return addCache(accumulateCache(0, value, "activation", boundByValue, ic), {
+    return addAdventurePointsCaches(accumulateCache(0, value, "activation", boundByValue, ic), {
       general: enhancementAdventurePoints,
       bound: 0,
     })

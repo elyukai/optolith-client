@@ -29,18 +29,6 @@ import {
 } from "../../../../selectors/liturgicalChantSelectors.ts"
 import { addBlessing, removeBlessing } from "../../../../slices/blessingsSlice.ts"
 import {
-  addCeremony,
-  decrementCeremony,
-  incrementCeremony,
-  removeCeremony,
-} from "../../../../slices/ceremoniesSlice.ts"
-import {
-  addLiturgicalChant,
-  decrementLiturgicalChant,
-  incrementLiturgicalChant,
-  removeLiturgicalChant,
-} from "../../../../slices/liturgicalChantsSlice.ts"
-import {
   changeLiturgiesSortOrder,
   selectLiturgiesSortOrder,
 } from "../../../../slices/settingsSlice.ts"
@@ -103,43 +91,12 @@ export const LiturgicalChants: FC = () => {
     [visibleActiveLiturgies, inactiveFilterText, sortOrder, translateMap, localeCompare],
   )
 
-  const handleAddLiturgicalChantPoint = useCallback(
-    (id: number) => dispatch(incrementLiturgicalChant(id)),
+  // TODO: Check AP
+  const handleAddBlessing = useCallback((id: number) => dispatch(addBlessing({ id })), [dispatch])
+  const handleRemoveBlessing = useCallback(
+    (id: number) => dispatch(removeBlessing({ id })),
     [dispatch],
   )
-
-  const handleRemoveLiturgicalChantPoint = useCallback(
-    (id: number) => dispatch(decrementLiturgicalChant(id)),
-    [dispatch],
-  )
-
-  const handleAddCeremonyPoint = useCallback(
-    (id: number) => dispatch(incrementCeremony(id)),
-    [dispatch],
-  )
-
-  const handleRemoveCeremonyPoint = useCallback(
-    (id: number) => dispatch(decrementCeremony(id)),
-    [dispatch],
-  )
-
-  const handleAddBlessing = useCallback((id: number) => dispatch(addBlessing(id)), [dispatch])
-
-  const handleAddLiturgicalChant = useCallback(
-    (id: number) => dispatch(addLiturgicalChant(id)),
-    [dispatch],
-  )
-
-  const handleAddCeremony = useCallback((id: number) => dispatch(addCeremony(id)), [dispatch])
-
-  const handleRemoveBlessing = useCallback((id: number) => dispatch(removeBlessing(id)), [dispatch])
-
-  const handleRemoveLiturgicalChant = useCallback(
-    (id: number) => dispatch(removeLiturgicalChant(id)),
-    [dispatch],
-  )
-
-  const handleRemoveCeremony = useCallback((id: number) => dispatch(removeCeremony(id)), [dispatch])
 
   const { isOpen: isSlideinVisible, open: openSlidein, close: closeSlidein } = useModalState()
 
@@ -177,29 +134,17 @@ export const LiturgicalChants: FC = () => {
         </Options>
         <Main classOnly>
           <ListHeader>
-            <ListHeaderTag className="name">
-              {translate("liturgicalchants.header.name")}
-            </ListHeaderTag>
+            <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
             <ListHeaderTag className="group">
               {translate("liturgicalchants.header.traditions")}
-              {sortOrder === LiturgiesSortOrder.Group
-                ? ` / ${translate("liturgicalchants.header.group")}`
-                : null}
+              {sortOrder === LiturgiesSortOrder.Group ? ` / ${translate("Group")}` : null}
             </ListHeaderTag>
-            <ListHeaderTag className="check">
-              {translate("liturgicalchants.header.check")}
+            <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
+            <ListHeaderTag className="mod" hint={translate("Check Modifier")}>
+              {translate("Mod")}
             </ListHeaderTag>
-            <ListHeaderTag
-              className="mod"
-              hint={translate("liturgicalchants.header.checkmodifier.tooltip")}
-            >
-              {translate("liturgicalchants.header.checkmodifier")}
-            </ListHeaderTag>
-            <ListHeaderTag
-              className="ic"
-              hint={translate("liturgicalchants.header.improvementcost.tooltip")}
-            >
-              {translate("liturgicalchants.header.improvementcost")}
+            <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
+              {translate("IC")}
             </ListHeaderTag>
             <ListHeaderTag className="btn-placeholder" />
           </ListHeader>
@@ -226,7 +171,6 @@ export const LiturgicalChants: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           liturgicalChant={x}
                           sortOrder={sortOrder}
-                          add={handleAddLiturgicalChant}
                         />
                       )
 
@@ -237,7 +181,6 @@ export const LiturgicalChants: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           ceremony={x}
                           sortOrder={sortOrder}
-                          add={handleAddCeremony}
                         />
                       )
 
@@ -282,35 +225,20 @@ export const LiturgicalChants: FC = () => {
       </Options>
       <Main>
         <ListHeader>
-          <ListHeaderTag className="name">
-            {translate("liturgicalchants.header.name")}
-          </ListHeaderTag>
+          <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
           <ListHeaderTag className="group">
             {translate("liturgicalchants.header.traditions")}
-            {sortOrder === LiturgiesSortOrder.Group
-              ? ` / ${translate("liturgicalchants.header.group")}`
-              : null}
+            {sortOrder === LiturgiesSortOrder.Group ? ` / ${translate("Group")}` : null}
           </ListHeaderTag>
-          <ListHeaderTag
-            className="value"
-            hint={translate("liturgicalchants.header.skillrating.tooltip")}
-          >
-            {translate("liturgicalchants.header.skillrating")}
+          <ListHeaderTag className="value" hint={translate("Skill Rating")}>
+            {translate("SR")}
           </ListHeaderTag>
-          <ListHeaderTag className="check">
-            {translate("liturgicalchants.header.check")}
+          <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
+          <ListHeaderTag className="mod" hint={translate("Check Modifier")}>
+            {translate("Mod")}
           </ListHeaderTag>
-          <ListHeaderTag
-            className="mod"
-            hint={translate("liturgicalchants.header.checkmodifier.tooltip")}
-          >
-            {translate("liturgicalchants.header.checkmodifier")}
-          </ListHeaderTag>
-          <ListHeaderTag
-            className="ic"
-            hint={translate("liturgicalchants.header.improvementcost.tooltip")}
-          >
-            {translate("liturgicalchants.header.improvementcost")}
+          <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
+            {translate("IC")}
           </ListHeaderTag>
           {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />
@@ -339,9 +267,6 @@ export const LiturgicalChants: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         liturgicalChant={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddLiturgicalChantPoint}
-                        removePoint={handleRemoveLiturgicalChantPoint}
-                        remove={handleRemoveLiturgicalChant}
                       />
                     )
 
@@ -352,9 +277,6 @@ export const LiturgicalChants: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         ceremony={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddCeremonyPoint}
-                        removePoint={handleRemoveCeremonyPoint}
-                        remove={handleRemoveCeremony}
                       />
                     )
 

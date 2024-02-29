@@ -1,21 +1,20 @@
-import { useCallback } from "react"
+import { MouseEvent, useCallback } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { ListItemButtons } from "../../../../../shared/components/list/ListItemButtons.tsx"
-import { ImprovementCost } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 
 type Props = {
   activateDisabled?: boolean
   addDisabled?: boolean
-  ic?: ImprovementCost
-  id: number
   isNotActive?: boolean
   removeDisabled?: boolean
-  sr?: number
-  activate?(id: number): void
-  addPoint?(id: number): void
-  removePoint?(id: number): void
-  selectForInfo(id: number): void
+  decrementIsRemove?: boolean
+  activate?(): void
+  addPoint?(): void
+  setToMax?(): void
+  removePoint?(): void
+  setToMin?(): void
+  selectForInfo(): void
 }
 
 /**
@@ -25,40 +24,43 @@ export const SkillButtons: React.FC<Props> = props => {
   const {
     activateDisabled,
     addDisabled,
-    ic,
-    id,
     isNotActive,
     removeDisabled,
-    sr,
+    decrementIsRemove,
     activate,
     addPoint,
+    setToMax,
+    setToMin,
     removePoint,
     selectForInfo,
   } = props
 
   const translate = useTranslate()
 
-  const boundSelectForInfo = useCallback(() => selectForInfo(id), [selectForInfo, id])
-
-  const getRemoveIcon = () =>
-    (sr !== undefined && sr === 0 && removeDisabled !== true) || ic === undefined
-      ? "\uE90b"
-      : "\uE909"
-
-  const handleActivation = useCallback(
-    () => (typeof activate === "function" ? activate(id) : undefined),
-    [activate, id],
-  )
-
   const handleAddPoint = useCallback(
-    () => (addDisabled !== true && typeof addPoint === "function" ? addPoint(id) : undefined),
-    [addPoint, id, addDisabled],
+    (event: MouseEvent<HTMLButtonElement>) => {
+      if (addDisabled !== true && typeof addPoint === "function") {
+        if (event.shiftKey && typeof setToMax === "function") {
+          setToMax()
+        } else {
+          addPoint()
+        }
+      }
+    },
+    [addDisabled, addPoint, setToMax],
   )
 
   const handleRemovePoint = useCallback(
-    () =>
-      removeDisabled !== true && typeof removePoint === "function" ? removePoint(id) : undefined,
-    [removePoint, id, removeDisabled],
+    (event: MouseEvent<HTMLButtonElement>) => {
+      if (removeDisabled !== true && typeof removePoint === "function") {
+        if (event.shiftKey && typeof setToMin === "function") {
+          setToMin()
+        } else {
+          removePoint()
+        }
+      }
+    },
+    [removeDisabled, removePoint, setToMin],
   )
 
   return (
@@ -66,7 +68,7 @@ export const SkillButtons: React.FC<Props> = props => {
       {isNotActive === true ? (
         <IconButton
           icon="&#xE916;"
-          onClick={handleActivation}
+          onClick={activate}
           disabled={activateDisabled}
           label={translate("Activate")}
           flat
@@ -84,7 +86,7 @@ export const SkillButtons: React.FC<Props> = props => {
           ) : null}
           {typeof removePoint === "function" ? (
             <IconButton
-              icon={getRemoveIcon()}
+              icon={decrementIsRemove === true ? "\uE90b" : "\uE909"}
               onClick={handleRemovePoint}
               disabled={removeDisabled}
               label={translate("Decrement")}
@@ -93,12 +95,7 @@ export const SkillButtons: React.FC<Props> = props => {
           ) : null}
         </>
       )}
-      <IconButton
-        icon="&#xE912;"
-        onClick={boundSelectForInfo}
-        label={translate("Show details")}
-        flat
-      />
+      <IconButton icon="&#xE912;" onClick={selectForInfo} label={translate("Show details")} flat />
     </ListItemButtons>
   )
 }

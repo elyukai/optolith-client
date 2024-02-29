@@ -11,9 +11,16 @@ import { LiturgiesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { useActiveActivatableActions } from "../../../../hooks/ratedActions.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
 import { selectActiveBlessedTradition } from "../../../../selectors/traditionSelectors.ts"
+import {
+  decrementCeremony,
+  incrementCeremony,
+  removeCeremony,
+  setCeremony,
+} from "../../../../slices/ceremoniesSlice.ts"
 import { selectStaticAspects } from "../../../../slices/databaseSlice.ts"
 import {
   changeInlineLibraryEntry,
@@ -29,9 +36,6 @@ type Props = {
   insertTopMargin?: boolean
   ceremony: DisplayedActiveCeremony
   sortOrder: LiturgiesSortOrder
-  addPoint: (id: number) => void
-  removePoint: (id: number) => void
-  remove: (id: number) => void
 }
 
 const ActiveCeremoniesListItem: FC<Props> = props => {
@@ -40,13 +44,12 @@ const ActiveCeremoniesListItem: FC<Props> = props => {
     ceremony: {
       dynamic: { value },
       static: { id, check, check_penalty, traditions, improvement_cost, translations },
+      maximum,
+      minimum,
       isDecreasable,
       isIncreasable,
     },
     sortOrder,
-    addPoint,
-    removePoint,
-    remove,
   } = props
 
   const translate = useTranslate()
@@ -59,6 +62,24 @@ const ActiveCeremoniesListItem: FC<Props> = props => {
   const staticAspects = useAppSelector(selectStaticAspects)
 
   const { name = "" } = translateMap(translations) ?? {}
+
+  const {
+    handleAddPoint,
+    handleRemovePoint,
+    handleSetToMaximumPoints,
+    handleSetToMinimumPoints,
+    handleRemove,
+  } = useActiveActivatableActions(
+    id,
+    value,
+    maximum,
+    minimum ?? 0,
+    fromRaw(improvement_cost),
+    incrementCeremony,
+    decrementCeremony,
+    setCeremony,
+    removeCeremony,
+  )
 
   const handleSelectForInfo = useCallback(
     () => dispatch(changeInlineLibraryEntry({ tag: "Ceremony", ceremony: id })),
@@ -95,19 +116,19 @@ const ActiveCeremoniesListItem: FC<Props> = props => {
         }
       />
       <ListItemValues>
-        <SkillRating sr={value} addPoint={addPoint} />
+        <SkillRating sr={value} />
         <SkillCheck check={check} checkPenalty={check_penalty} />
         <SkillFill />
         <SkillImprovementCost ic={fromRaw(improvement_cost)} />
       </ListItemValues>
       <SkillButtons
         addDisabled={!isIncreasable}
-        ic={fromRaw(improvement_cost)}
-        id={id}
         removeDisabled={!isDecreasable}
-        sr={value}
-        addPoint={addPoint}
-        removePoint={canRemove ? (value === 0 ? remove : removePoint) : undefined}
+        addPoint={handleAddPoint}
+        setToMax={handleSetToMaximumPoints}
+        removePoint={canRemove ? (value === 0 ? handleRemovePoint : handleRemove) : undefined}
+        setToMin={canRemove && value > 0 ? handleSetToMinimumPoints : undefined}
+        decrementIsRemove={value === 0}
         selectForInfo={handleSelectForInfo}
       />
     </ListItem>

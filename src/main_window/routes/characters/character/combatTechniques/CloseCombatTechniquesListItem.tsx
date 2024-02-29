@@ -1,15 +1,21 @@
-import { AttributeReference } from "optolith-database-schema/types/_SimpleReferences"
 import { FC, memo, useCallback } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
-import { ImprovementCost } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
+import { fromRaw } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { useRatedActions } from "../../../../hooks/ratedActions.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
+import { DisplayedCloseCombatTechnique } from "../../../../selectors/combatTechniquesSelectors.ts"
+import {
+  decrementCloseCombatTechnique,
+  incrementCloseCombatTechnique,
+  setCloseCombatTechnique,
+} from "../../../../slices/closeCombatTechniqueSlice.ts"
 import { selectStaticAttributes } from "../../../../slices/databaseSlice.ts"
 import {
   changeInlineLibraryEntry,
@@ -22,33 +28,22 @@ import { SkillRating } from "../skills/SkillRating.tsx"
 
 type Props = {
   insertTopMargin?: boolean
-  id: number
-  name: string
-  sr: number
-  primary: AttributeReference[]
-  ic: ImprovementCost
-  addDisabled: boolean
-  removeDisabled: boolean
-  at: number
-  pa?: number
-  addPoint: (id: number) => void
-  removePoint: (id: number) => void
+  closeCombatTechnique: DisplayedCloseCombatTechnique
 }
 
 const CloseCombatTechniquesListItem: FC<Props> = props => {
   const {
     insertTopMargin,
-    id,
-    name,
-    sr,
-    primary,
-    ic,
-    addDisabled,
-    removeDisabled,
-    at,
-    pa,
-    addPoint,
-    removePoint,
+    closeCombatTechnique: {
+      static: { id, primary_attribute, improvement_cost, translations },
+      dynamic: { value },
+      maximum,
+      minimum,
+      isIncreasable,
+      isDecreasable,
+      attackBase,
+      parryBase,
+    },
   } = props
 
   const translate = useTranslate()
@@ -56,6 +51,20 @@ const CloseCombatTechniquesListItem: FC<Props> = props => {
   const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
   const canRemove = useAppSelector(selectCanRemove)
+
+  const { name = "???" } = translateMap(translations) ?? {}
+
+  const { handleAddPoint, handleRemovePoint, handleSetToMaximumPoints, handleSetToMinimumPoints } =
+    useRatedActions(
+      id,
+      value,
+      maximum,
+      minimum,
+      fromRaw(improvement_cost),
+      incrementCloseCombatTechnique,
+      decrementCloseCombatTechnique,
+      setCloseCombatTechnique,
+    )
 
   const handleSelectForInfo = useCallback(
     () =>
@@ -67,11 +76,11 @@ const CloseCombatTechniquesListItem: FC<Props> = props => {
 
   const attributes = useAppSelector(selectStaticAttributes)
 
-  const primaryStr = primary
+  const primaryStr = primary_attribute
     .map(ref => translateMap(attributes[ref.id.attribute]?.translations)?.abbreviation ?? "")
     .join("/")
 
-  const customClassName = `attr--${primary.map(ref => ref.id.attribute).join("-")}`
+  const customClassName = `attr--${primary_attribute.map(ref => ref.id.attribute).join("-")}`
 
   const primaryClassName = `primary ${customClassName}`
 
@@ -87,28 +96,27 @@ const CloseCombatTechniquesListItem: FC<Props> = props => {
       <ListItemSeparator />
       <ListItemGroup text={translate("Close Combat")} />
       <ListItemValues>
-        <SkillRating sr={sr} addPoint={addPoint} />
-        <SkillImprovementCost ic={ic} />
+        <SkillRating sr={value} />
+        <SkillImprovementCost ic={fromRaw(improvement_cost)} />
         <SkillAdditionalValues
           addValues={[
             { className: primaryClassName, value: primaryStr },
-            { className: "at", value: at },
+            { className: "at", value: attackBase },
             { className: "atpa" },
             {
               className: "pa",
-              value: pa ?? "—",
+              value: parryBase ?? "—",
             },
           ]}
         />
       </ListItemValues>
       <SkillButtons
-        addDisabled={addDisabled}
-        ic={ic}
-        id={id}
-        removeDisabled={removeDisabled}
-        sr={sr}
-        addPoint={addPoint}
-        removePoint={canRemove ? removePoint : undefined}
+        addDisabled={!isIncreasable}
+        removeDisabled={!isDecreasable}
+        addPoint={handleAddPoint}
+        setToMax={handleSetToMaximumPoints}
+        removePoint={canRemove ? handleRemovePoint : undefined}
+        setToMin={canRemove ? handleSetToMinimumPoints : undefined}
         selectForInfo={handleSelectForInfo}
       />
     </ListItem>

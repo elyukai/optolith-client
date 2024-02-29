@@ -4,8 +4,10 @@ import { AttributeReference } from "optolith-database-schema/types/_SimpleRefere
 import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
 import { filterNonNullable } from "../../utils/array.ts"
 import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
+import { FilterApplyingRatedDependencies } from "../dependencies/filterApplyingDependencies.ts"
+import { createIdentifierObject } from "../identifier.ts"
 import { flattenAspectIds } from "./liturgicalChant.ts"
-import { RatedDependency, flattenMinimumRestrictions } from "./ratedDependency.ts"
+import { flattenMinimumRestrictions } from "./ratedDependency.ts"
 import { ActivatableRated, ActiveActivatableRated } from "./ratedEntry.ts"
 
 const getLiturgicalChantMinimumFromAspectKnowledgePrerequistes = (
@@ -32,7 +34,7 @@ export const getLiturgicalChantMinimum = (
   activeAspectKnowledges: number[],
   staticLiturgicalChant: { traditions: SkillTradition[] },
   dynamicLiturgicalChant: ActivatableRated,
-  filterApplyingDependencies: (dependencies: RatedDependency[]) => RatedDependency[],
+  filterApplyingDependencies: FilterApplyingRatedDependencies,
 ): number | undefined => {
   const minimumValues: number[] = filterNonNullable([
     ...flattenMinimumRestrictions(filterApplyingDependencies(dynamicLiturgicalChant.dependencies)),
@@ -74,10 +76,10 @@ export const getLiturgicalChantMaximum = (
     ),
   ])
 
-  const exceptionalSkillBonus = countOptions(exceptionalSkill, {
-    type,
-    value: staticLiturgicalChant.id,
-  })
+  const exceptionalSkillBonus = countOptions(
+    exceptionalSkill,
+    createIdentifierObject(type, staticLiturgicalChant.id),
+  )
 
   return Math.min(...maximumValues) + exceptionalSkillBonus
 }

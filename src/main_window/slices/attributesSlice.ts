@@ -1,25 +1,22 @@
-import { ImprovementCost } from "../../shared/domain/adventurePoints/improvementCost.ts"
+import {
+  attributeImprovementCost,
+  createEmptyDynamicAttribute,
+} from "../../shared/domain/rated/attribute.ts"
 import { createRatedSlice } from "./ratedSlice.ts"
 
-const {
-  create,
-  createInitial,
-  getValue,
-  actions: { incrementAction, decrementAction },
-  reducer,
+// eslint-disable-next-line jsdoc/require-jsdoc
+export const {
+  actions: {
+    incrementEntry: incrementAttribute,
+    setEntry: setAttribute,
+    decrementEntry: decrementAttribute,
+  },
+  reducer: attributesReducer,
 } = createRatedSlice({
   namespace: "attributes",
   entityName: "Attribute",
   getState: state => state.attributes,
   minValue: 8,
-  getImprovementCost: () => ImprovementCost.E,
+  getImprovementCost: () => attributeImprovementCost,
+  createEmptyRated: createEmptyDynamicAttribute,
 })
-
-export {
-  getValue as attributeValue,
-  reducer as attributesReducer,
-  create as createDynamicAttribute,
-  createInitial as createInitialDynamicAttribute,
-  decrementAction as decrementAttribute,
-  incrementAction as incrementAttribute,
-}

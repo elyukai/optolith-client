@@ -26,14 +26,12 @@ import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
 import { DisplayedSkill, selectVisibleSkills } from "../../../../selectors/skillsSelectors.ts"
-import { selectStaticSkillGroups } from "../../../../slices/databaseSlice.ts"
 import {
   changeSkillsSortOrder,
   selectSkillsCultureRatingVisibility,
   selectSkillsSortOrder,
   switchSkillsCultureRatingVisibility,
 } from "../../../../slices/settingsSlice.ts"
-import { decrementSkill, incrementSkill } from "../../../../slices/skillsSlice.ts"
 import { SkillListItem } from "./SkillListItem.tsx"
 import "./Skills.scss"
 
@@ -62,7 +60,6 @@ export const Skills: FC = () => {
   )
 
   const canRemove = useAppSelector(selectCanRemove)
-  const skillGroups = useAppSelector(selectStaticSkillGroups)
 
   const [filterText, setFilterText] = useState("")
   const sortOrder = useAppSelector(selectSkillsSortOrder)
@@ -70,7 +67,9 @@ export const Skills: FC = () => {
     (id: SkillsSortOrder) => dispatch(changeSkillsSortOrder(id)),
     [dispatch],
   )
+
   const visibleSkills = useAppSelector(selectVisibleSkills)
+
   const list = useMemo(
     () =>
       visibleSkills
@@ -106,15 +105,6 @@ export const Skills: FC = () => {
     [filterText, localeCompare, sortOrder, translateMap, visibleSkills],
   )
 
-  const handleAdd = useCallback((id: number) => dispatch(incrementSkill(id)), [dispatch])
-
-  const handleRemove = useCallback((id: number) => dispatch(decrementSkill(id)), [dispatch])
-
-  const getGroupName = useCallback(
-    (id: number) => translateMap(skillGroups[id]?.translations)?.name ?? "",
-    [skillGroups, translateMap],
-  )
-
   return (
     <Page id="skills">
       <Options>
@@ -140,21 +130,21 @@ export const Skills: FC = () => {
         />
         <Grid size="medium">
           <Checkbox checked={cultureRatingVisibility} onClick={handlSwitchCultureRatingVisibility}>
-            {translate("skills.commonskills")}
+            {translate("Common Skills")}
           </Checkbox>
           {cultureRatingVisibility ? <RecommendedReference /> : null}
         </Grid>
       </Options>
       <Main>
         <ListHeader>
-          <ListHeaderTag className="name">{translate("skills.header.name")}</ListHeaderTag>
-          <ListHeaderTag className="group">{translate("skills.header.group")}</ListHeaderTag>
-          <ListHeaderTag className="value" hint={translate("skills.header.skillrating.tooltip")}>
-            {translate("skills.header.skillrating")}
+          <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+          <ListHeaderTag className="group">{translate("Group")}</ListHeaderTag>
+          <ListHeaderTag className="value" hint={translate("Skill Rating")}>
+            {translate("SR")}
           </ListHeaderTag>
-          <ListHeaderTag className="check">{translate("skills.header.check")}</ListHeaderTag>
-          <ListHeaderTag className="ic" hint={translate("skills.header.improvementcost.tooltip")}>
-            {translate("skills.header.improvementcost")}
+          <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
+          <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
+            {translate("IC")}
           </ListHeaderTag>
           {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />
@@ -163,29 +153,13 @@ export const Skills: FC = () => {
         <Scroll stable>
           {list.length > 0 ? (
             <List>
-              {list.map((x, i) => {
-                const translation = translateMap(x.static.translations)
-                return (
-                  <SkillListItem
-                    key={x.static.id}
-                    id={x.static.id}
-                    typ={cultureRatingVisibility && x.commonness === "common"}
-                    untyp={cultureRatingVisibility && x.commonness === "uncommon"}
-                    name={translation?.name ?? ""}
-                    sr={x.dynamic.value}
-                    check={x.static.check}
-                    ic={fromRaw(x.static.improvement_cost)}
-                    addDisabled={!x.isIncreasable}
-                    addPoint={handleAdd}
-                    removeDisabled={!x.isDecreasable}
-                    removePoint={handleRemove}
-                    addFillElement
-                    insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
-                    group={x.static.group.id.skill_group}
-                    getGroupName={getGroupName}
-                  />
-                )
-              })}
+              {list.map((x, i) => (
+                <SkillListItem
+                  key={x.static.id}
+                  insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
+                  skill={x}
+                />
+              ))}
             </List>
           ) : (
             <ListPlaceholder type="skills" message={translate("No Results")} />

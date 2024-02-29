@@ -3,19 +3,26 @@ import { fromRaw } from "../../../../../shared/domain/adventurePoints/improvemen
 import { DisplayedInactiveZibiljaRitual } from "../../../../../shared/domain/rated/spellInactive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { useInactiveActivatableActions } from "../../../../hooks/ratedActions.ts"
+import { addZibiljaRitual } from "../../../../slices/magicalActions/zibiljaRitualsSlice.ts"
 import { InactiveMagicalActionsListItem } from "./InactiveMagicalActionsListItem.tsx"
 
 type Props = {
   insertTopMargin?: boolean
   zibiljaRitual: DisplayedInactiveZibiljaRitual
   sortOrder: SpellsSortOrder
-  add: (id: number) => void
 }
 
 const InactiveZibiljaRitualsListItem: FC<Props> = props => {
-  const { insertTopMargin, zibiljaRitual, sortOrder, add } = props
+  const { insertTopMargin, zibiljaRitual, sortOrder } = props
 
   const translate = useTranslate()
+
+  const { handleAdd } = useInactiveActivatableActions(
+    zibiljaRitual.static.id,
+    fromRaw(zibiljaRitual.static.improvement_cost),
+    addZibiljaRitual,
+  )
 
   return (
     <InactiveMagicalActionsListItem
@@ -26,7 +33,7 @@ const InactiveZibiljaRitualsListItem: FC<Props> = props => {
       groupName={translate("Zibilja Rituals")}
       checkPenalty={zibiljaRitual.static.check_penalty}
       improvementCost={fromRaw(zibiljaRitual.static.improvement_cost)}
-      add={add}
+      add={handleAdd}
     />
   )
 }

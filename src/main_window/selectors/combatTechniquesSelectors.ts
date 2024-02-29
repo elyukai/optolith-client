@@ -9,6 +9,7 @@ import {
 } from "../../shared/domain/identifier.ts"
 import { getHighestAttributeValue } from "../../shared/domain/rated/attribute.ts"
 import {
+  createEmptyDynamicCombatTechnique,
   getAttackBaseForClose,
   getAttackBaseForRanged,
   getParryBaseForClose,
@@ -26,8 +27,6 @@ import {
   selectDynamicAdvantages,
   selectDynamicGeneralSpecialAbilities,
 } from "../slices/characterSlice.ts"
-import { createInitialDynamicCloseCombatTechnique } from "../slices/closeCombatTechniqueSlice.ts"
-import { createInitialDynamicRangedCombatTechnique } from "../slices/rangedCombatTechniqueSlice.ts"
 import { SelectAll, SelectGetById } from "./basicCapabilitySelectors.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectFilterApplyingRatedDependencies } from "./dependencySelectors.ts"
@@ -123,7 +122,7 @@ export const selectVisibleCloseCombatTechniques = createSelector(
       .map(combatTechnique => {
         const dynamicCloseCombatTechnique =
           getDynamicCloseCombatTechniqueById(combatTechnique.id) ??
-          createInitialDynamicCloseCombatTechnique(combatTechnique.id)
+          createEmptyDynamicCombatTechnique(combatTechnique.id)
 
         const minimum = getCombatTechniqueMinimum(
           rangedCombatTechniquesAt10,
@@ -220,7 +219,7 @@ export const selectVisibleRangedCombatTechniques = createSelector(
 
         const dynamicRangedCombatTechnique =
           getDynamicRangedCombatTechniqueById(combatTechnique.id) ??
-          createInitialDynamicRangedCombatTechnique(combatTechnique.id)
+          createEmptyDynamicCombatTechnique(combatTechnique.id)
 
         const minimum = getCombatTechniqueMinimum(
           rangedCombatTechniquesAt10,

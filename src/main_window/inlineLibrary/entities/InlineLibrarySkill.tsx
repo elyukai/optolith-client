@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useMemo } from "react"
 import { useLocaleCompare } from "../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
@@ -6,6 +6,7 @@ import { isNotNullish } from "../../../shared/utils/nullable.ts"
 import { assertExhaustive } from "../../../shared/utils/typeSafety.ts"
 import { useAppSelector } from "../../hooks/redux.ts"
 import {
+  selectNewApplicationsAndUsesCache,
   selectStaticAttributes,
   selectStaticBlessedTraditions,
   selectStaticDiseases,
@@ -37,16 +38,29 @@ export const InlineLibrarySkill: FC<Props> = ({ id }) => {
   const regions = useAppSelector(selectStaticRegions)
   const entry = useAppSelector(selectStaticSkills)[id]
   const translation = translateMap(entry?.translations)
+  const cache = useAppSelector(selectNewApplicationsAndUsesCache)
+
+  const newApplications = useMemo(
+    () =>
+      (entry === undefined ? [] : cache.newApplications[entry.id] ?? [])
+        .map(x => translateMap(x.data.translations)?.name)
+        .filter(isNotNullish)
+        .sort(localeCompare),
+    [cache.newApplications, entry, localeCompare, translateMap],
+  )
+
+  const uses = useMemo(
+    () =>
+      (entry === undefined ? [] : cache.uses[entry.id] ?? [])
+        .map(x => translateMap(x.data.translations)?.name)
+        .filter(isNotNullish)
+        .sort(localeCompare),
+    [cache.uses, entry, localeCompare, translateMap],
+  )
 
   if (entry === undefined || translation === undefined) {
     return <InlineLibraryPlaceholder />
   }
-
-  // TODO: Implement
-  const newApplications = []
-
-  // TODO: Implement
-  const uses = []
 
   const applications = (() => {
     switch (entry.applications.tag) {
@@ -86,14 +100,18 @@ export const InlineLibrarySkill: FC<Props> = ({ id }) => {
     <InlineLibraryTemplate className="Skill" title={translation?.name ?? entry.id.toString()}>
       <InlineLibraryProperties
         list={[
-          {
-            label: translate("New Applications"),
-            value: newApplications.join(", "),
-          },
-          {
-            label: translate("Uses"),
-            value: uses.join(", "),
-          },
+          newApplications.length === 0
+            ? undefined
+            : {
+                label: translate("New Applications"),
+                value: newApplications.join(", "),
+              },
+          uses.length === 0
+            ? undefined
+            : {
+                label: translate("Uses"),
+                value: uses.join(", "),
+              },
           createCheck(translate, translateMap, attributes, entry.check),
           {
             label: translate("Applications"),

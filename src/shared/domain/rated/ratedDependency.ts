@@ -1,7 +1,10 @@
+import { SkillIdentifier } from "optolith-database-schema/types/_Identifier"
 import {
   ActivatableIdentifier,
   SkillWithEnhancementsIdentifier,
 } from "optolith-database-schema/types/_IdentifierGroup"
+import { RatedMinimumNumberPrerequisiteTarget } from "optolith-database-schema/types/prerequisites/single/RatedMinimumNumberPrerequisite"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
 
 /**
  * A required value from a prerequisite. Can either require a minimum or a
@@ -52,40 +55,80 @@ export const compareWithRestriction = (
     ? true
     : value <= restriction.maximum
 
+type FixedValue = {
+  tag: "Fixed"
+  value: ValueRestriction
+}
+
+type MinimumNumberAtMinimumValue = {
+  tag: "MinimumNumberAtMinimumValue"
+  minimumCount: number
+  minimumValue: number
+  target: RatedMinimumNumberPrerequisiteTarget
+}
+
+type Sum = {
+  tag: "Sum"
+  sum: number
+  targetIds: SkillIdentifier[]
+}
+
 /**
  * Describes a dependency on a certain rated entry.
  */
-export type RatedDependency = {
+export type RatedDependency = Readonly<{
   /**
-   * The source of the dependency.
+   * The identifier of the dependency source.
    */
-  readonly source: ActivatableIdentifier | SkillWithEnhancementsIdentifier
+  source: ActivatableIdentifier | SkillWithEnhancementsIdentifier
 
   /**
    * The top-level index of the prerequisite. If the prerequisite is part of a
    * group or disjunction, this is the index of the group or disjunction.
    */
-  readonly index: number
+  index: number
 
   /**
-   * Is the source prerequisite is part of a prerequisite disjunction?
+   * Is the source prerequisite part of a prerequisite disjunction?
    */
-  readonly isPartOfDisjunction: boolean
+  isPartOfDisjunction: boolean
 
   /**
    * The required value.
    */
-  readonly value: ValueRestriction
-}
+  value: FixedValue | MinimumNumberAtMinimumValue | Sum
+}>
 
 /**
  * Flattens the minimum restrictions of a list of dependencies.
  */
 export const flattenMinimumRestrictions = (dependencies: RatedDependency[]): number[] =>
-  dependencies.flatMap(dep => (isMinimumRestriction(dep.value) ? [dep.value.minimum] : []))
+  dependencies.flatMap(dep => {
+    switch (dep.value.tag) {
+      case "Fixed":
+        return isMinimumRestriction(dep.value.value) ? [dep.value.value.minimum] : []
+      case "MinimumNumberAtMinimumValue":
+        return [dep.value.minimumValue]
+      case "Sum":
+        // TODO: Implement
+        return []
+      default:
+        return assertExhaustive(dep.value)
+    }
+  })
 
 /**
  * Flattens the maximum restrictions of a list of dependencies.
  */
 export const flattenMaximumRestrictions = (dependencies: RatedDependency[]): number[] =>
-  dependencies.flatMap(dep => (isMaximumRestriction(dep.value) ? [dep.value.maximum] : []))
+  dependencies.flatMap(dep => {
+    switch (dep.value.tag) {
+      case "Fixed":
+        return isMaximumRestriction(dep.value.value) ? [dep.value.value.maximum] : []
+      case "MinimumNumberAtMinimumValue":
+      case "Sum":
+        return []
+      default:
+        return assertExhaustive(dep.value)
+    }
+  })

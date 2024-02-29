@@ -9,6 +9,10 @@ import { AttributeIdentifier } from "../identifier.ts"
 import { getAttributeValue } from "./attribute.ts"
 import { getHighestRequiredAttributeForCombatTechnique } from "./combatTechnique.ts"
 import { getHighestRequiredAttributeForLiturgicalChant } from "./liturgicalChant.ts"
+import {
+  PrimaryAttributeDependency,
+  primaryAttributeDependencyToRatedDependency,
+} from "./primaryAttribute.ts"
 import { RatedDependency, flattenMinimumRestrictions } from "./ratedDependency.ts"
 import { Rated } from "./ratedEntry.ts"
 import { getHighestRequiredAttributeForSkill } from "./skill.ts"
@@ -23,9 +27,9 @@ export const getAttributeMinimum = (
   purchasedArcaneEnergy: number,
   purchasedKarmaPoints: number,
   singleHighestMagicalPrimaryAttributeId: number | undefined,
-  magicalPrimaryAttributeDependencies: RatedDependency[],
+  magicalPrimaryAttributeDependencies: PrimaryAttributeDependency[],
   blessedPrimaryAttributeId: number | undefined,
-  blessedPrimaryAttributeDependencies: RatedDependency[],
+  blessedPrimaryAttributeDependencies: PrimaryAttributeDependency[],
   filterApplyingDependencies: (dependencies: RatedDependency[]) => RatedDependency[],
   getSkillCheckAttributeMinimum: (id: number) => number | undefined,
   dynamicAttribute: Rated,
@@ -43,7 +47,9 @@ export const getAttributeMinimum = (
       ? [
           purchasedArcaneEnergy,
           ...flattenMinimumRestrictions(
-            filterApplyingDependencies(magicalPrimaryAttributeDependencies),
+            filterApplyingDependencies(
+              magicalPrimaryAttributeDependencies.map(primaryAttributeDependencyToRatedDependency),
+            ),
           ),
         ]
       : []),
@@ -51,7 +57,9 @@ export const getAttributeMinimum = (
       ? [
           purchasedKarmaPoints,
           ...flattenMinimumRestrictions(
-            filterApplyingDependencies(blessedPrimaryAttributeDependencies),
+            filterApplyingDependencies(
+              blessedPrimaryAttributeDependencies.map(primaryAttributeDependencyToRatedDependency),
+            ),
           ),
         ]
       : []),

@@ -13,7 +13,7 @@ import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
 import { compareImprovementCost, fromRaw } from "../adventurePoints/improvementCost.ts"
 import { All } from "../getTypes.ts"
-import { AspectIdentifier } from "../identifier.ts"
+import { AspectIdentifier, createIdentifierObject } from "../identifier.ts"
 import { LiturgiesSortOrder } from "../sortOrders.ts"
 import { DisplayedActiveLiturgy } from "./liturgicalChantActive.ts"
 import { DisplayedInactiveLiturgy } from "./liturgicalChantInactive.ts"
@@ -82,6 +82,21 @@ export const flattenAspectIds = (traditions: SkillTradition[]): number[] =>
       }
     })
     .map(aspect => aspect.id.aspect)
+
+/**
+ * Checks if the passed liturgical chant features the passed aspect.
+ */
+export const hasAspectById = (id: number, traditions: SkillTradition[]): boolean =>
+  traditions.some(tradition => {
+    switch (tradition.tag) {
+      case "GeneralAspect":
+        return tradition.general_aspect.id.aspect === id
+      case "Tradition":
+        return tradition.tradition.aspects?.some(aspect => aspect.id.aspect === id) ?? false
+      default:
+        return assertExhaustive(tradition)
+    }
+  })
 
 /**
  * Returns the translation of all aspects relevant to the current active blessed
@@ -221,10 +236,10 @@ export const getHighestRequiredAttributeForLiturgicalChant = (
     return undefined
   }
 
-  const exceptionalSkillBonus = countOptions(exceptionalSkill, {
-    type,
-    value: staticLiturgicalChant.id,
-  })
+  const exceptionalSkillBonus = countOptions(
+    exceptionalSkill,
+    createIdentifierObject(type, staticLiturgicalChant.id),
+  )
 
   return {
     id: singleHighestAttributeId,

@@ -1,5 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit"
+import { Blessing } from "optolith-database-schema/types/Blessing"
 import {
+  TinyActivatable,
   getOptions,
   isTinyActivatableActive,
 } from "../../shared/domain/activatable/activatableEntry.ts"
@@ -72,23 +74,30 @@ const selectActiveAspectKnowledges = createSelector(
   ),
   aspectKnowledge =>
     getOptions(aspectKnowledge).flatMap(option =>
-      option.type === "Predefined" && option.id.type === "Aspect" ? [option.id.value] : [],
+      option.type === "Predefined" && option.id.tag === "Aspect" ? [option.id.aspect] : [],
     ),
 )
 
 /**
  * Returns the blessings, split by active and inactive.
  */
-export const selectVisibleBlessings = createSelector(
+const selectVisibleBlessings = createSelector(
   SelectAll.Static.Blessings,
   SelectGetById.Dynamic.Blessing,
-  (
-    staticBlessings,
-    getDynamicBlessingById,
-  ): [active: DisplayedActiveBlessing[], inactive: DisplayedActiveBlessing[]] =>
+  (staticBlessings, getDynamicBlessingById) =>
     partition(
-      staticBlessings.map(blessing => ({ kind: "blessing", static: blessing })),
-      staticBlessing => isTinyActivatableActive(getDynamicBlessingById(staticBlessing.static.id)),
+      staticBlessings.map(staticBlessing => ({
+        kind: "blessing" as const,
+        static: staticBlessing,
+        dynamic: getDynamicBlessingById(staticBlessing.id),
+      })),
+      (
+        blessing,
+      ): blessing is {
+        kind: "blessing"
+        static: Blessing
+        dynamic: TinyActivatable
+      } => isTinyActivatableActive(blessing.dynamic),
     ),
 )
 

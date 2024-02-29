@@ -3,21 +3,43 @@ import { fromRaw } from "../../../../../shared/domain/adventurePoints/improvemen
 import { DisplayedActiveZibiljaRitual } from "../../../../../shared/domain/rated/spellActive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { useActiveActivatableActions } from "../../../../hooks/ratedActions.ts"
+import {
+  decrementZibiljaRitual,
+  incrementZibiljaRitual,
+  removeZibiljaRitual,
+  setZibiljaRitual,
+} from "../../../../slices/magicalActions/zibiljaRitualsSlice.ts"
 import { ActiveMagicalActionsListItem } from "./ActiveMagicalActionsListItem.tsx"
 
 type Props = {
   insertTopMargin?: boolean
   zibiljaRitual: DisplayedActiveZibiljaRitual
   sortOrder: SpellsSortOrder
-  addPoint: (id: number) => void
-  removePoint: (id: number) => void
-  remove: (id: number) => void
 }
 
 const ActiveZibiljaRitualsListItem: FC<Props> = props => {
-  const { insertTopMargin, zibiljaRitual, sortOrder, addPoint, removePoint, remove } = props
+  const { insertTopMargin, zibiljaRitual, sortOrder } = props
 
   const translate = useTranslate()
+
+  const {
+    handleAddPoint,
+    handleRemovePoint,
+    handleSetToMaximumPoints,
+    handleSetToMinimumPoints,
+    handleRemove,
+  } = useActiveActivatableActions(
+    zibiljaRitual.static.id,
+    zibiljaRitual.dynamic.value,
+    zibiljaRitual.maximum,
+    zibiljaRitual.minimum ?? 0,
+    fromRaw(zibiljaRitual.static.improvement_cost),
+    incrementZibiljaRitual,
+    decrementZibiljaRitual,
+    setZibiljaRitual,
+    removeZibiljaRitual,
+  )
 
   return (
     <ActiveMagicalActionsListItem
@@ -28,9 +50,11 @@ const ActiveZibiljaRitualsListItem: FC<Props> = props => {
       groupName={translate("Zibilja Rituals")}
       checkPenalty={zibiljaRitual.static.check_penalty}
       improvementCost={fromRaw(zibiljaRitual.static.improvement_cost)}
-      addPoint={addPoint}
-      removePoint={removePoint}
-      remove={remove}
+      addPoint={handleAddPoint}
+      removePoint={handleRemovePoint}
+      setToMaximumPoints={handleSetToMaximumPoints}
+      setToMinimumPoints={handleSetToMinimumPoints}
+      remove={handleRemove}
     />
   )
 }

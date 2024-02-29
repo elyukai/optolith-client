@@ -1,3 +1,9 @@
+import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import {
+  PactCategoryReference,
+  PactDomainReference,
+} from "optolith-database-schema/types/_SimpleReferences"
+
 /**
  * A active pact between a character and a creature.
  */
@@ -44,3 +50,27 @@ export type PactDomain =
       kind: "Custom"
       name: string
     }
+
+/**
+ * A dependency on a pact.
+ */
+export type PactDependency = {
+  sourceId: ActivatableIdentifier
+  index: number
+  isPartOfDisjunction: boolean
+
+  /**
+   * The required pact category.
+   */
+  category: PactCategoryReference
+
+  /**
+   * The required domain(s).
+   */
+  domain?: PactDomainReference[]
+
+  /**
+   * The required pact level.
+   */
+  level?: number
+}

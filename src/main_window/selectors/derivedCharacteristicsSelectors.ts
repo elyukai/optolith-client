@@ -3,7 +3,11 @@ import {
   DerivedCharacteristic,
   DerivedCharacteristicTranslation,
 } from "optolith-database-schema/types/DerivedCharacteristic"
-import { firstLevel, isActive } from "../../shared/domain/activatable/activatableEntry.ts"
+import {
+  firstLevel,
+  isActive,
+  isOptionActive,
+} from "../../shared/domain/activatable/activatableEntry.ts"
 import {
   modifierByIsActive,
   modifierByIsActives,
@@ -20,10 +24,10 @@ import {
   MagicalSpecialAbilityIdentifier,
   OptionalRuleIdentifier,
 } from "../../shared/domain/identifier.ts"
+import { getAttributeValue } from "../../shared/domain/rated/attribute.ts"
 import { Rated } from "../../shared/domain/rated/ratedEntry.ts"
 import { filterNonNullable } from "../../shared/utils/array.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
-import { attributeValue } from "../slices/attributesSlice.ts"
 import {
   selectArcaneEnergyPermanentlyLost,
   selectArcaneEnergyPermanentlyLostBoughtBack,
@@ -119,7 +123,7 @@ export const selectLifePoints = createSelector(
     if (race === undefined || staticEntry === undefined) {
       return undefined
     } else {
-      const conValue = attributeValue(con)
+      const conValue = getAttributeValue(con)
       const base = race.base_values.life_points + conValue * 2
       const modifier = modifierByLevel(incrementor, decrementor)
       const value = base + modifier + purchased - permanentlyLost
@@ -289,7 +293,7 @@ export const selectKarmaPoints = createSelector(
 )
 
 const divideAttributeSumByRound = (attributes: (Rated | undefined)[], divisor: number) =>
-  Math.round(attributes.reduce((acc, attr) => acc + attributeValue(attr), 0) / divisor)
+  Math.round(attributes.reduce((acc, attr) => acc + getAttributeValue(attr), 0) / divisor)
 
 /**
  * Returns the static and dynamic values for spirit.
@@ -453,13 +457,7 @@ export const selectMovement = createSelector(
       return undefined
     } else {
       const oneLegged = 3
-      const isOneLeggedActive =
-        maimed?.instances.some(
-          instance =>
-            instance.options?.[0]?.type === "Predefined" &&
-            instance.options?.[0]?.id.type === "Generic" &&
-            instance.options?.[0]?.id.value === oneLegged,
-        ) ?? false
+      const isOneLeggedActive = isOptionActive(maimed, { tag: "General", general: oneLegged })
 
       const base = isOneLeggedActive
         ? Math.round(race.base_values.movement / 2)

@@ -1,3 +1,4 @@
+import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
 import { GetById } from "./getTypes.ts"
 
 /**
@@ -13,7 +14,30 @@ export type StateInstance = {
    * Is the state active?
    */
   active: boolean
+
+  /**
+   * The dependencies on the state.
+   */
+  dependencies: StateDependency[]
 }
+
+/**
+ * A dependency on a state.
+ */
+export type StateDependency = {
+  sourceId: ActivatableIdentifier
+  index: number
+  isPartOfDisjunction: boolean
+}
+
+/**
+ * Creates an instance of a state.
+ */
+export const createState = (id: number): StateInstance => ({
+  id,
+  active: false,
+  dependencies: [],
+})
 
 /**
  * Checks if a state is active.

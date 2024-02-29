@@ -1,12 +1,8 @@
 import { ActionCreatorWithPayload, AnyAction, Draft, createAction } from "@reduxjs/toolkit"
 import { ImprovementCost } from "../../shared/domain/adventurePoints/improvementCost.ts"
-import {
-  BoundAdventurePoints,
-  cachedAdventurePoints,
-} from "../../shared/domain/adventurePoints/ratedEntry.ts"
-import { RatedDependency } from "../../shared/domain/rated/ratedDependency.ts"
-import { Rated, RatedMap, RatedValue } from "../../shared/domain/rated/ratedEntry.ts"
-import { Reducer, createImmerReducer } from "../../shared/utils/redux.ts"
+import { cachedAdventurePoints } from "../../shared/domain/adventurePoints/ratedEntry.ts"
+import { Rated, RatedMap } from "../../shared/domain/rated/ratedEntry.ts"
+import { DraftReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 import { DatabaseState } from "./databaseSlice.ts"
 
@@ -15,55 +11,29 @@ import { DatabaseState } from "./databaseSlice.ts"
  */
 export type RatedSlice<N extends string, E extends string> = {
   /**
-   * Creates a new entry with an initial value if active. The initial adventure
-   * points cache is calculated from the initial value.
-   */
-  create: (
-    database: DatabaseState,
-    id: number,
-    value: RatedValue,
-    options?: Partial<{
-      dependencies: RatedDependency[]
-      boundAdventurePoints: BoundAdventurePoints[]
-    }>,
-  ) => Rated
-
-  /**
-   * Creates a new entry with no initial value.
-   */
-  createInitial: (
-    id: number,
-    options?: Partial<{
-      dependencies: RatedDependency[]
-      boundAdventurePoints: BoundAdventurePoints[]
-    }>,
-  ) => Rated
-
-  /**
-   * Takes an entry that may not exist (because its instance has not been used
-   * yet) and returns its value.
-   */
-  getValue: (entry: Rated | undefined) => RatedValue
-
-  /**
    * The actions that can be dispatched to modify the state.
    */
   actions: {
     /**
      * Increments the value of the entry with the given id.
      */
-    incrementAction: ActionCreatorWithPayload<number, `${N}/increment${E}`>
+    incrementEntry: ActionCreatorWithPayload<{ id: number }, `${N}/increment${E}`>
+
+    /**
+     * Sets the value of the entry with the given id.
+     */
+    setEntry: ActionCreatorWithPayload<{ id: number; value: number }, `${N}/set${E}`>
 
     /**
      * Decrements the value of the entry with the given id.
      */
-    decrementAction: ActionCreatorWithPayload<number, `${N}/decrement${E}`>
+    decrementEntry: ActionCreatorWithPayload<{ id: number }, `${N}/decrement${E}`>
   }
 
   /**
    * The reducer that handles the actions.
    */
-  reducer: Reducer<CharacterState, AnyAction, [database: DatabaseState]>
+  reducer: DraftReducer<CharacterState, AnyAction, [database: DatabaseState]>
 }
 
 /**
@@ -76,6 +46,7 @@ export const createRatedSlice = <N extends string, E extends string>(config: {
   getState: (state: Draft<CharacterState>) => Draft<RatedMap>
   minValue: number
   getImprovementCost: (id: number, database: DatabaseState) => ImprovementCost
+  createEmptyRated: (id: number) => Rated
 }): RatedSlice<N, E> => {
   const updateCachedAdventurePoints = (entry: Draft<Rated>, database: DatabaseState) => {
     entry.cachedAdventurePoints = cachedAdventurePoints(
@@ -87,72 +58,49 @@ export const createRatedSlice = <N extends string, E extends string>(config: {
     return entry
   }
 
-  const create: RatedSlice<N, E>["create"] = (
-    database,
-    id,
-    value,
-    { dependencies = [], boundAdventurePoints = [] } = {},
-  ) =>
-    updateCachedAdventurePoints(
-      {
-        id,
-        value: Math.max(config.minValue, value),
-        cachedAdventurePoints: {
-          general: 0,
-          bound: 0,
-        },
-        dependencies,
-        boundAdventurePoints,
-      },
-      database,
-    )
-
-  const createInitial: RatedSlice<N, E>["createInitial"] = (
-    id,
-    { dependencies = [], boundAdventurePoints = [] } = {},
-  ) => ({
-    id,
-    value: config.minValue,
-    cachedAdventurePoints: {
-      general: 0,
-      bound: 0,
-    },
-    dependencies,
-    boundAdventurePoints,
-  })
-
-  const getValue: RatedSlice<N, E>["getValue"] = entry => entry?.value ?? config.minValue
-
-  const incrementAction = createAction<number, `${N}/increment${E}`>(
+  const incrementEntry = createAction<{ id: number }, `${N}/increment${E}`>(
     `${config.namespace}/increment${config.entityName}`,
   )
-  const decrementAction = createAction<number, `${N}/decrement${E}`>(
+  const setEntry = createAction<{ id: number; value: number }, `${N}/set${E}`>(
+    `${config.namespace}/set${config.entityName}`,
+  )
+  const decrementEntry = createAction<{ id: number }, `${N}/decrement${E}`>(
     `${config.namespace}/decrement${config.entityName}`,
   )
 
-  const reducer = createImmerReducer(
-    (state: Draft<CharacterState>, action, database: DatabaseState) => {
-      if (incrementAction.match(action)) {
-        const entry = (config.getState(state)[action.payload] ??= createInitial(action.payload))
-        entry.value++
+  const reducer: DraftReducer<CharacterState, AnyAction, [database: DatabaseState]> = (
+    state,
+    action,
+    database,
+  ) => {
+    if (incrementEntry.match(action)) {
+      const entry = (config.getState(state)[action.payload.id] ??= config.createEmptyRated(
+        action.payload.id,
+      ))
+      entry.value++
+      updateCachedAdventurePoints(entry, database)
+    } else if (setEntry.match(action)) {
+      const entry = (config.getState(state)[action.payload.id] ??= config.createEmptyRated(
+        action.payload.id,
+      ))
+      if (action.payload.value >= config.minValue) {
+        entry.value = action.payload.value
         updateCachedAdventurePoints(entry, database)
-      } else if (decrementAction.match(action)) {
-        const entry = config.getState(state)[action.payload]
-        if (entry !== undefined && entry.value > config.minValue) {
-          entry.value--
-          updateCachedAdventurePoints(entry, database)
-        }
       }
-    },
-  )
+    } else if (decrementEntry.match(action)) {
+      const entry = config.getState(state)[action.payload.id]
+      if (entry !== undefined && entry.value > config.minValue) {
+        entry.value--
+        updateCachedAdventurePoints(entry, database)
+      }
+    }
+  }
 
   return {
-    create,
-    createInitial,
-    getValue,
     actions: {
-      incrementAction,
-      decrementAction,
+      incrementEntry,
+      decrementEntry,
+      setEntry,
     },
     reducer,
   }

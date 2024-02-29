@@ -1,10 +1,15 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { Attribute } from "optolith-database-schema/types/Attribute"
+import { getCarryingCapacity } from "../../shared/domain/equipment.ts"
 import {
   AdvantageIdentifier,
   AttributeIdentifier,
   OptionalRuleIdentifier,
 } from "../../shared/domain/identifier.ts"
+import {
+  createEmptyDynamicAttribute,
+  getAttributeValue,
+} from "../../shared/domain/rated/attribute.ts"
 import {
   getAttributeMaximum,
   getAttributeMinimaByAssociatedAttributes,
@@ -15,7 +20,6 @@ import {
 import { Rated } from "../../shared/domain/rated/ratedEntry.ts"
 import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
-import { attributeValue, createInitialDynamicAttribute } from "../slices/attributesSlice.ts"
 import {
   selectAttributeAdjustmentId,
   selectBlessedPrimaryAttributeDependencies,
@@ -160,7 +164,7 @@ export const selectVisibleAttributes = createSelector(
       .sort((a, b) => a.id - b.id)
       .map(attribute => {
         const dynamicAttribute =
-          getDynamicAttributeById(attribute.id) ?? createInitialDynamicAttribute(attribute.id)
+          getDynamicAttributeById(attribute.id) ?? createEmptyDynamicAttribute(attribute.id)
 
         const minimum = getAttributeMinimum(
           derivedCharacteristics.lifePoints.purchased,
@@ -228,7 +232,7 @@ export const selectVisibleAttributes = createSelector(
  */
 export const selectCarryingCapacity = createSelector(
   createPropertySelector(selectDynamicAttributes, AttributeIdentifier.Strength),
-  (strength): number => (strength?.value ?? 8) * 2,
+  (strength): number => getCarryingCapacity(getAttributeValue(strength)),
 )
 
 /**
@@ -258,7 +262,7 @@ export const selectAvailableAdjustments = createSelector(
       const canNotSwitch =
         current !== undefined &&
         current.maximum !== undefined &&
-        current.maximum - selectableAdjustment.value < attributeValue(current.dynamic)
+        current.maximum - selectableAdjustment.value < getAttributeValue(current.dynamic)
 
       if (canNotSwitch) {
         return {

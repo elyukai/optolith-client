@@ -3,21 +3,43 @@ import { geodeRitualsImprovementCost } from "../../../../../shared/domain/rated/
 import { DisplayedActiveGeodeRitual } from "../../../../../shared/domain/rated/spellActive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { useActiveActivatableActions } from "../../../../hooks/ratedActions.ts"
+import {
+  decrementGeodeRitual,
+  incrementGeodeRitual,
+  removeGeodeRitual,
+  setGeodeRitual,
+} from "../../../../slices/magicalActions/geodeRitualsSlice.ts"
 import { ActiveMagicalActionsListItem } from "./ActiveMagicalActionsListItem.tsx"
 
 type Props = {
   insertTopMargin?: boolean
   geodeRitual: DisplayedActiveGeodeRitual
   sortOrder: SpellsSortOrder
-  addPoint: (id: number) => void
-  removePoint: (id: number) => void
-  remove: (id: number) => void
 }
 
 const ActiveGeodeRitualsListItem: FC<Props> = props => {
-  const { insertTopMargin, geodeRitual, sortOrder, addPoint, removePoint, remove } = props
+  const { insertTopMargin, geodeRitual, sortOrder } = props
 
   const translate = useTranslate()
+
+  const {
+    handleAddPoint,
+    handleRemovePoint,
+    handleSetToMaximumPoints,
+    handleSetToMinimumPoints,
+    handleRemove,
+  } = useActiveActivatableActions(
+    geodeRitual.static.id,
+    geodeRitual.dynamic.value,
+    geodeRitual.maximum,
+    geodeRitual.minimum ?? 0,
+    geodeRitualsImprovementCost,
+    incrementGeodeRitual,
+    decrementGeodeRitual,
+    setGeodeRitual,
+    removeGeodeRitual,
+  )
 
   return (
     <ActiveMagicalActionsListItem
@@ -27,9 +49,11 @@ const ActiveGeodeRitualsListItem: FC<Props> = props => {
       sortOrder={sortOrder}
       groupName={translate("Geode Rituals")}
       improvementCost={geodeRitualsImprovementCost}
-      addPoint={addPoint}
-      removePoint={removePoint}
-      remove={remove}
+      addPoint={handleAddPoint}
+      removePoint={handleRemovePoint}
+      setToMaximumPoints={handleSetToMaximumPoints}
+      setToMinimumPoints={handleSetToMinimumPoints}
+      remove={handleRemove}
     />
   )
 }

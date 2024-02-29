@@ -1,7 +1,7 @@
+import { AdventurePointsCache, emptyAdventurePointsCache } from "../adventurePoints/cache.ts"
 import { ImprovementCost } from "../adventurePoints/improvementCost.ts"
 import {
-  BoundAdventurePoints,
-  RatedAdventurePointsCache,
+  BoundAdventurePointsForRated,
   cachedAdventurePoints,
   cachedAdventurePointsForActivatable,
 } from "../adventurePoints/ratedEntry.ts"
@@ -30,7 +30,7 @@ export type Rated = {
   /**
    * The accumulated used adventure points value of all value increases.
    */
-  readonly cachedAdventurePoints: RatedAdventurePointsCache
+  readonly cachedAdventurePoints: AdventurePointsCache
 
   /**
    * The list of dependencies.
@@ -39,11 +39,11 @@ export type Rated = {
 
   /**
    * A list of bound adventure points. Bound adventure points are granted by the
-   * GM and can only be spent on the entry. They don’t effect the costs of the
+   * GM and can only be spent on the entry. They don’t affect the costs of the
    * rating at the time of granting, so the rating at which they have been
    * granted is stored as well.
    */
-  readonly boundAdventurePoints: BoundAdventurePoints[]
+  readonly boundAdventurePoints: BoundAdventurePointsForRated[]
 }
 
 /**
@@ -67,7 +67,7 @@ export type RatedHelpers = {
     value?: RatedValue,
     options?: Partial<{
       dependencies: RatedDependency[]
-      boundAdventurePoints: BoundAdventurePoints[]
+      boundAdventurePoints: BoundAdventurePointsForRated[]
     }>,
   ) => Rated
 
@@ -111,10 +111,7 @@ export const createRatedHelpers = (config: {
     updateCachedAdventurePoints({
       id,
       value: Math.max(minValue, value),
-      cachedAdventurePoints: {
-        general: 0,
-        bound: 0,
-      },
+      cachedAdventurePoints: emptyAdventurePointsCache,
       dependencies,
       boundAdventurePoints,
     })
@@ -156,7 +153,7 @@ export type ActivatableRated = {
   /**
    * The accumulated used adventure points value of all value increases.
    */
-  readonly cachedAdventurePoints: RatedAdventurePointsCache
+  readonly cachedAdventurePoints: AdventurePointsCache
 
   /**
    * The list of dependencies.
@@ -169,7 +166,7 @@ export type ActivatableRated = {
    * rating at the time of granting, so the rating at which they have been
    * granted is stored as well.
    */
-  readonly boundAdventurePoints: BoundAdventurePoints[]
+  readonly boundAdventurePoints: BoundAdventurePointsForRated[]
 }
 
 /**
@@ -217,7 +214,7 @@ export type ActivatableRatedHelpers = {
     value?: ActivatableRatedValue,
     options?: Partial<{
       dependencies: RatedDependency[]
-      boundAdventurePoints: BoundAdventurePoints[]
+      boundAdventurePoints: BoundAdventurePointsForRated[]
     }>,
   ) => ActivatableRated
 
@@ -263,10 +260,7 @@ export const createActivatableRatedHelpers = (config: {
     updateCachedAdventurePoints({
       id,
       value: value === undefined ? undefined : Math.max(minValue, value),
-      cachedAdventurePoints: {
-        general: 0,
-        bound: 0,
-      },
+      cachedAdventurePoints: emptyAdventurePointsCache,
       dependencies,
       boundAdventurePoints,
     })
@@ -308,7 +302,7 @@ export type ActivatableRatedWithEnhancements = {
    * The accumulated used adventure points value of all value increases and
    * enhancements.
    */
-  readonly cachedAdventurePoints: RatedAdventurePointsCache
+  readonly cachedAdventurePoints: AdventurePointsCache
 
   /**
    * The list of dependencies.
@@ -321,7 +315,7 @@ export type ActivatableRatedWithEnhancements = {
    * rating at the time of granting, so the rating at which they have been
    * granted is stored as well.
    */
-  readonly boundAdventurePoints: BoundAdventurePoints[]
+  readonly boundAdventurePoints: BoundAdventurePointsForRated[]
 
   /**
    * The currently active enhancements for that entry.

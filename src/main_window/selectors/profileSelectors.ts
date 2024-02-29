@@ -1,5 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { ProfessionIdentifier } from "../../shared/domain/identifier.ts"
+import { isInRange } from "../../shared/utils/range.ts"
 import { selectIsCharacterCreationFinished } from "../slices/characterSlice.ts"
 import { selectAdventurePointsAvailable } from "./adventurePointSelectors.ts"
 import { selectCurrentProfession } from "./professionSelectors.ts"
@@ -17,8 +18,7 @@ export const selectShowFinishCharacterCreation = createSelector(
  */
 export const selectCanFinishCharacterCreation = createSelector(
   selectAdventurePointsAvailable,
-  (availableAdventurePoints): boolean =>
-    availableAdventurePoints >= 0 && availableAdventurePoints <= 10,
+  (availableAdventurePoints): boolean => isInRange([0, 10], availableAdventurePoints),
 )
 
 /**

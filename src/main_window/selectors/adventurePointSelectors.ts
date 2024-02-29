@@ -12,7 +12,6 @@ import {
   ImprovementCost,
   adventurePointsForRange,
 } from "../../shared/domain/adventurePoints/improvementCost.ts"
-import { RatedAdventurePointsCache } from "../../shared/domain/adventurePoints/ratedEntry.ts"
 import { count } from "../../shared/utils/array.ts"
 import {
   selectCurrentCharacter,
@@ -43,16 +42,13 @@ import { selectMagicalAndBlessedAdvantagesAndDisadvantagesCache } from "../slice
 import { SelectAll } from "./basicCapabilitySelectors.ts"
 
 const sumRatedMaps = (
-  ...ratedMaps: (Record<number, { cachedAdventurePoints: RatedAdventurePointsCache }> | undefined)[]
-): SpentAdventurePoints =>
+  ...ratedMaps: (Record<number, { cachedAdventurePoints: AdventurePointsCache }> | undefined)[]
+): AdventurePointsCache =>
   ratedMaps
     .flatMap(ratedMap => Object.values(ratedMap ?? {}))
     .reduce(
-      (acc, rated) => ({
-        general: acc.general + rated.cachedAdventurePoints.general,
-        bound: acc.bound + rated.cachedAdventurePoints.bound,
-      }),
-      { general: 0, bound: 0 },
+      (acc, rated) => addAdventurePointsCaches(acc, rated.cachedAdventurePoints),
+      emptyAdventurePointsCache,
     )
 
 /**
@@ -104,7 +100,7 @@ export const selectAdventurePointsSpentOnLiturgicalChants = createSelector(
   sumRatedMaps,
 )
 
-const sumTinyActivatables = (tinyActivatables: TinyActivatable[]): SpentAdventurePoints => ({
+const sumTinyActivatables = (tinyActivatables: TinyActivatable[]): AdventurePointsCache => ({
   general: count(tinyActivatables, isTinyActivatableActive),
   bound: 0,
 })

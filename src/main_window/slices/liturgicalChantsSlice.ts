@@ -1,18 +1,17 @@
 import { ImprovementCost, fromRaw } from "../../shared/domain/adventurePoints/improvementCost.ts"
 import { registerOrUnregisterPrerequisitesOfLiturgyAsDependencies } from "../../shared/domain/dependencies/fullPrerequisiteRegistrationAsDependencyForType.ts"
 import { createIdentifierObject } from "../../shared/domain/identifier.ts"
+import { createEmptyDynamicLiturgicalChant } from "../../shared/domain/rated/liturgicalChant.ts"
 import { createActivatableRatedWithEnhancementsSlice } from "./activatableRatedWithEnhancementsSlice.ts"
 
 // eslint-disable-next-line jsdoc/require-jsdoc
 export const {
-  create: createDynamicLiturgicalChant,
-  createInitial: createInitialDynamicLiturgicalChant,
-  getValue: getLiturgicalChantValue,
   actions: {
     addAction: addLiturgicalChant,
     removeAction: removeLiturgicalChant,
     incrementAction: incrementLiturgicalChant,
     decrementAction: decrementLiturgicalChant,
+    setAction: setLiturgicalChant,
   },
   reducer: liturgicalChantsReducer,
 } = createActivatableRatedWithEnhancementsSlice({
@@ -27,4 +26,5 @@ export const {
   createIdentifierObject: id => createIdentifierObject("LiturgicalChant", id),
   registerOrUnregisterPrerequisitesAsDependencies:
     registerOrUnregisterPrerequisitesOfLiturgyAsDependencies,
+  createEmptyActivatableRatedWithEnhancements: createEmptyDynamicLiturgicalChant,
 })

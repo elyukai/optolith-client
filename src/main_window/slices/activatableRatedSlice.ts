@@ -1,15 +1,7 @@
 import { ActionCreatorWithPayload, AnyAction, Draft, createAction } from "@reduxjs/toolkit"
 import { ImprovementCost } from "../../shared/domain/adventurePoints/improvementCost.ts"
-import {
-  BoundAdventurePoints,
-  cachedAdventurePointsForActivatable,
-} from "../../shared/domain/adventurePoints/ratedEntry.ts"
-import { RatedDependency } from "../../shared/domain/rated/ratedDependency.ts"
-import {
-  ActivatableRated,
-  ActivatableRatedMap,
-  ActivatableRatedValue,
-} from "../../shared/domain/rated/ratedEntry.ts"
+import { cachedAdventurePointsForActivatable } from "../../shared/domain/adventurePoints/ratedEntry.ts"
+import { ActivatableRated, ActivatableRatedMap } from "../../shared/domain/rated/ratedEntry.ts"
 import { Reducer, createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 import { DatabaseState } from "./databaseSlice.ts"
@@ -20,59 +12,33 @@ import { DatabaseState } from "./databaseSlice.ts"
  */
 export type ActivatableRatedSlice<N extends string, E extends string> = {
   /**
-   * Creates a new entry with an initial value if active. The initial adventure
-   * points cache is calculated from the initial value.
-   */
-  create: (
-    database: DatabaseState,
-    id: number,
-    value: ActivatableRatedValue,
-    options?: Partial<{
-      dependencies: RatedDependency[]
-      boundAdventurePoints: BoundAdventurePoints[]
-    }>,
-  ) => ActivatableRated
-
-  /**
-   * Creates a new entry with no initial value.
-   */
-  createInitial: (
-    id: number,
-    options?: Partial<{
-      dependencies: RatedDependency[]
-      boundAdventurePoints: BoundAdventurePoints[]
-    }>,
-  ) => ActivatableRated
-
-  /**
-   * Takes an entry that may not exist (because its instance has not been used
-   * yet) and returns its value.
-   */
-  getValue: (entry: ActivatableRated | undefined) => ActivatableRatedValue
-
-  /**
    * The actions that can be dispatched to modify the state.
    */
   actions: {
     /**
      * Add the entry with the given id.
      */
-    addAction: ActionCreatorWithPayload<number, `${N}/add${E}`>
+    addAction: ActionCreatorWithPayload<{ id: number }, `${N}/add${E}`>
 
     /**
      * Remove the entry with the given id.
      */
-    removeAction: ActionCreatorWithPayload<number, `${N}/remove${E}`>
+    removeAction: ActionCreatorWithPayload<{ id: number }, `${N}/remove${E}`>
 
     /**
      * Increments the value of the entry with the given id.
      */
-    incrementAction: ActionCreatorWithPayload<number, `${N}/increment${E}`>
+    incrementAction: ActionCreatorWithPayload<{ id: number }, `${N}/increment${E}`>
 
     /**
      * Decrements the value of the entry with the given id.
      */
-    decrementAction: ActionCreatorWithPayload<number, `${N}/decrement${E}`>
+    decrementAction: ActionCreatorWithPayload<{ id: number }, `${N}/decrement${E}`>
+
+    /**
+     * Sets the value of the entry with the given id.
+     */
+    setAction: ActionCreatorWithPayload<{ id: number; value: number }, `${N}/set${E}`>
   }
 
   /**
@@ -88,103 +54,87 @@ export const createActivatableRatedSlice = <N extends string, E extends string>(
   namespace: N
   entityName: E
   getState: (state: Draft<CharacterState>) => Draft<ActivatableRatedMap>
-  getImprovementCost: (id: number, database: DatabaseState) => ImprovementCost
+  getImprovementCost: (
+    id: number,
+    database: DatabaseState,
+    character: CharacterState,
+  ) => ImprovementCost
+  createEmptyActivatableRated: (id: number) => ActivatableRated
 }): ActivatableRatedSlice<N, E> => {
-  const updateCachedAdventurePoints = (entry: Draft<ActivatableRated>, database: DatabaseState) => {
+  const updateCachedAdventurePoints = (
+    entry: Draft<ActivatableRated>,
+    database: DatabaseState,
+    character: Draft<CharacterState>,
+  ) => {
     entry.cachedAdventurePoints = cachedAdventurePointsForActivatable(
       entry.value,
       entry.boundAdventurePoints,
-      config.getImprovementCost(entry.id, database),
+      config.getImprovementCost(entry.id, database, character),
     )
     return entry
   }
 
-  const create: ActivatableRatedSlice<N, E>["create"] = (
-    database,
-    id,
-    value,
-    { dependencies = [], boundAdventurePoints = [] } = {},
-  ) =>
-    updateCachedAdventurePoints(
-      {
-        id,
-        value: value === undefined ? undefined : Math.max(0, value),
-        cachedAdventurePoints: {
-          general: 0,
-          bound: 0,
-        },
-        dependencies,
-        boundAdventurePoints,
-      },
-      database,
-    )
-
-  const createInitial: ActivatableRatedSlice<N, E>["createInitial"] = (
-    id,
-    { dependencies = [], boundAdventurePoints = [] } = {},
-  ) => ({
-    id,
-    value: undefined,
-    cachedAdventurePoints: {
-      general: 0,
-      bound: 0,
-    },
-    dependencies,
-    boundAdventurePoints,
-    enhancements: {},
-  })
-
-  const getValue: ActivatableRatedSlice<N, E>["getValue"] = entry => entry?.value
-
-  const addAction = createAction<number, `${N}/add${E}`>(
+  const addAction = createAction<{ id: number }, `${N}/add${E}`>(
     `${config.namespace}/add${config.entityName}`,
   )
 
-  const removeAction = createAction<number, `${N}/remove${E}`>(
+  const removeAction = createAction<{ id: number }, `${N}/remove${E}`>(
     `${config.namespace}/remove${config.entityName}`,
   )
 
-  const incrementAction = createAction<number, `${N}/increment${E}`>(
+  const incrementAction = createAction<{ id: number }, `${N}/increment${E}`>(
     `${config.namespace}/increment${config.entityName}`,
   )
 
-  const decrementAction = createAction<number, `${N}/decrement${E}`>(
+  const decrementAction = createAction<{ id: number }, `${N}/decrement${E}`>(
     `${config.namespace}/decrement${config.entityName}`,
+  )
+
+  const setAction = createAction<{ id: number; value: number }, `${N}/set${E}`>(
+    `${config.namespace}/set${config.entityName}`,
   )
 
   const reducer = createImmerReducer(
     (state: Draft<CharacterState>, action, database: DatabaseState) => {
       if (addAction.match(action)) {
-        config.getState(state)[action.payload] ??= create(database, action.payload, 0)
+        config.getState(state)[action.payload.id] ??= config.createEmptyActivatableRated(
+          action.payload.id,
+        )
       } else if (removeAction.match(action)) {
-        delete config.getState(state)[action.payload]
+        delete config.getState(state)[action.payload.id]
       } else if (incrementAction.match(action)) {
-        const entry = (config.getState(state)[action.payload] ??= createInitial(action.payload))
+        const entry = (config.getState(state)[action.payload.id] ??=
+          config.createEmptyActivatableRated(action.payload.id))
         if (entry.value === undefined) {
           entry.value = 0
         } else {
           entry.value++
         }
-        updateCachedAdventurePoints(entry, database)
+        updateCachedAdventurePoints(entry, database, state)
       } else if (decrementAction.match(action)) {
-        const entry = config.getState(state)[action.payload]
+        const entry = config.getState(state)[action.payload.id]
         if (entry !== undefined && entry.value !== undefined && entry.value > 0) {
           entry.value--
-          updateCachedAdventurePoints(entry, database)
+          updateCachedAdventurePoints(entry, database, state)
+        }
+      } else if (setAction.match(action)) {
+        const entry = (config.getState(state)[action.payload.id] ??=
+          config.createEmptyActivatableRated(action.payload.id))
+        if (action.payload.value >= 0) {
+          entry.value = action.payload.value
+          updateCachedAdventurePoints(entry, database, state)
         }
       }
     },
   )
 
   return {
-    create,
-    createInitial,
-    getValue,
     actions: {
       addAction,
       removeAction,
       incrementAction,
       decrementAction,
+      setAction,
     },
     reducer,
   }

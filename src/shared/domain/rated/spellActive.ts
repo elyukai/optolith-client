@@ -20,6 +20,7 @@ import {
   TinyActivatable,
   isTinyActivatableActive,
 } from "../activatable/activatableEntry.ts"
+import { ImprovementCost } from "../adventurePoints/improvementCost.ts"
 import { FilterApplyingRatedDependencies } from "../dependencies/filterApplyingDependencies.ts"
 import { GetById } from "../getTypes.ts"
 import { getHighestAttributeValue } from "./attribute.ts"
@@ -45,6 +46,7 @@ import {
 export type DisplayedActiveCantrip = {
   kind: "cantrip"
   static: Cantrip
+  dynamic: TinyActivatable
   isUnfamiliar: boolean
 }
 
@@ -56,7 +58,7 @@ export type DisplayedActiveCantrip = {
 export type DisplayedActiveSpell = {
   kind: "spell"
   static: Spell
-  dynamic: ActivatableRatedWithEnhancements
+  dynamic: ActiveActivatableRatedWithEnhancements
   minimum: number | undefined
   maximum: number
   isIncreasable: boolean
@@ -72,7 +74,7 @@ export type DisplayedActiveSpell = {
 export type DisplayedActiveRitual = {
   kind: "ritual"
   static: Ritual
-  dynamic: ActivatableRatedWithEnhancements
+  dynamic: ActiveActivatableRatedWithEnhancements
   minimum: number | undefined
   maximum: number
   isIncreasable: boolean
@@ -83,7 +85,7 @@ export type DisplayedActiveRitual = {
 type DisplayedActiveMagicalActionBase<Kind extends string, Static> = {
   kind: Kind
   static: Static
-  dynamic: ActivatableRated
+  dynamic: ActiveActivatableRated
   minimum: number | undefined
   maximum: number
   isIncreasable: boolean
@@ -152,10 +154,16 @@ export type DisplayedActiveJesterTrick = DisplayedActiveMagicalActionBase<
  * entry, extended by value bounds, and full logic for if the value can be
  * increased or decreased.
  */
-export type DisplayedActiveAnimistPower = DisplayedActiveMagicalActionBase<
-  "animistPower",
-  AnimistPower
->
+export type DisplayedActiveAnimistPower = {
+  kind: "animistPower"
+  static: AnimistPower
+  dynamic: ActiveActivatableRated
+  minimum: number | undefined
+  maximum: number
+  isIncreasable: boolean
+  isDecreasable: boolean
+  improvementCost: ImprovementCost
+}
 
 /**
  * A combination of a static and corresponding dynamic active geode ritual
@@ -210,13 +218,21 @@ export const getVisibleActiveCantrips = (
 ): DisplayedActiveCantrip[] =>
   dynamicCantrips
     .filter(isTinyActivatableActive)
-    .map(dynamicCantrip => getStaticCantripById(dynamicCantrip.id))
+    .map((dynamicCantrip): DisplayedActiveCantrip | undefined => {
+      const staticCantrip = getStaticCantripById(dynamicCantrip.id)
+
+      if (staticCantrip === undefined) {
+        return undefined
+      }
+
+      return {
+        kind: "cantrip",
+        static: staticCantrip,
+        dynamic: dynamicCantrip,
+        isUnfamiliar: getIsUnfamiliar(dynamicCantrip.id),
+      }
+    })
     .filter(isNotNullish)
-    .map(staticCantrip => ({
-      kind: "cantrip",
-      static: staticCantrip,
-      isUnfamiliar: getIsUnfamiliar(staticCantrip.id),
-    }))
 
 /**
  * Returns all active spellworks with their corresponding dynamic

@@ -11,7 +11,9 @@ import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
 import { filterNonNullable } from "../../utils/array.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
-import { RatedDependency, flattenMinimumRestrictions } from "./ratedDependency.ts"
+import { FilterApplyingRatedDependencies } from "../dependencies/filterApplyingDependencies.ts"
+import { createIdentifierObject } from "../identifier.ts"
+import { flattenMinimumRestrictions } from "./ratedDependency.ts"
 import { ActivatableRated } from "./ratedEntry.ts"
 
 const getSpellworkMinimumFromPropertyKnowledgePrerequistes = (
@@ -35,7 +37,7 @@ export const getSpellworkMinimum = (
   activePropertyKnowledges: number[],
   staticSpellwork: { property: PropertyReference },
   dynamicSpellwork: ActivatableRated,
-  filterApplyingDependencies: (dependencies: RatedDependency[]) => RatedDependency[],
+  filterApplyingDependencies: FilterApplyingRatedDependencies,
 ): number | undefined => {
   const minimumValues = filterNonNullable([
     ...flattenMinimumRestrictions(filterApplyingDependencies(dynamicSpellwork.dependencies)),
@@ -83,10 +85,10 @@ export const getSpellworkMaximum = (
           switch (type) {
             case "Spell":
             case "Ritual":
-              return countOptions(exceptionalSkill, {
-                type,
-                value: staticSpellwork.id,
-              })
+              return countOptions(
+                exceptionalSkill,
+                createIdentifierObject(type, staticSpellwork.id),
+              )
             case "Curse":
             case "ElvenMagicalSong":
             case "DominationRitual":
@@ -96,6 +98,7 @@ export const getSpellworkMaximum = (
             case "AnimistPower":
             case "GeodeRitual":
             case "ZibiljaRitual":
+            case "MagicalRune":
               return 0
             default:
               return assertExhaustive(type)

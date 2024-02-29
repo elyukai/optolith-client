@@ -1,11 +1,19 @@
-import { FC, useCallback } from "react"
+import { FC, MouseEvent, useCallback } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { NumberBox } from "../../../../../shared/components/numberBox/NumberBox.tsx"
+import {
+  attributeImprovementCost,
+  minimumAttributeValue,
+} from "../../../../../shared/domain/rated/attribute.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { useAppDispatch } from "../../../../hooks/redux.ts"
+import { useRatedActions } from "../../../../hooks/ratedActions.ts"
 import { DisplayedAttribute } from "../../../../selectors/attributeSelectors.ts"
-import { decrementAttribute, incrementAttribute } from "../../../../slices/attributesSlice.ts"
+import {
+  decrementAttribute,
+  incrementAttribute,
+  setAttribute,
+} from "../../../../slices/attributesSlice.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
 
 type Props = {
@@ -24,21 +32,53 @@ export const AttributeListItem: FC<Props> = props => {
   const translateMap = useTranslateMap()
   const translations = translateMap(attribute.static.translations)
 
-  const dispatch = useAppDispatch()
-
   const {
     dynamic: { value },
     static: { id },
-    maximum: max,
+    maximum,
     isDecreasable,
     isIncreasable,
   } = attribute
 
-  const valueHeader = isInCharacterCreation ? `${value} / ${max}` : value
+  const valueHeader = isInCharacterCreation ? `${value} / ${maximum}` : value
 
-  const handleAdd = useCallback(() => dispatch(incrementAttribute(id)), [dispatch, id])
+  const { handleAddPoint, handleRemovePoint, handleSetToMaximumPoints, handleSetToMinimumPoints } =
+    useRatedActions(
+      id,
+      value,
+      maximum ?? value,
+      minimumAttributeValue,
+      attributeImprovementCost,
+      incrementAttribute,
+      decrementAttribute,
+      setAttribute,
+    )
 
-  const handleRemove = useCallback(() => dispatch(decrementAttribute(id)), [dispatch, id])
+  const handleAdd = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      if (isIncreasable) {
+        if (event.shiftKey && maximum !== undefined) {
+          handleSetToMaximumPoints()
+        } else {
+          handleAddPoint()
+        }
+      }
+    },
+    [handleAddPoint, handleSetToMaximumPoints, isIncreasable, maximum],
+  )
+
+  const handleRemove = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      if (isDecreasable) {
+        if (event.shiftKey) {
+          handleSetToMinimumPoints()
+        } else {
+          handleRemovePoint()
+        }
+      }
+    },
+    [handleRemovePoint, handleSetToMinimumPoints, isDecreasable],
+  )
 
   return (
     <AttributeBorder
@@ -56,7 +96,7 @@ export const AttributeListItem: FC<Props> = props => {
       }
       tooltipMargin={11}
     >
-      {isInCharacterCreation ? <NumberBox max={max} /> : null}
+      {isInCharacterCreation ? <NumberBox max={maximum} /> : null}
       <IconButton
         className="add"
         icon="&#xE908;"

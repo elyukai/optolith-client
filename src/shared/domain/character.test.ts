@@ -17,10 +17,12 @@ export const baseCharacter: Character = {
     id: 1,
     variantId: 1,
     selectedAttributeAdjustmentId: 1,
+    dependencies: [],
   },
   culture: {
     id: 1,
     isCulturalPackageApplied: false,
+    dependencies: [],
   },
   profession: {
     id: 1,
@@ -29,12 +31,14 @@ export const baseCharacter: Character = {
   rules: {
     includeAllPublications: false,
     includePublications: [],
+    publicationDependencies: [],
     focusRules: {},
     optionalRules: {},
   },
   states: {},
   personalData: {
     sex: { type: "Male" },
+    sexDependencies: [],
     socialStatus: {
       dependencies: [],
     },
@@ -69,7 +73,6 @@ export const baseCharacter: Character = {
     krallenkettenzauber: {},
     liturgicalStyleSpecialAbilities: {},
     lycantropicGifts: {},
-    magicalRunes: {},
     magicalSigns: {},
     magicalSpecialAbilities: {},
     magicalTraditions: {},
@@ -93,6 +96,8 @@ export const baseCharacter: Character = {
     weaponEnchantments: {},
   },
   attributes: {},
+  magicalPrimaryAttributeDependencies: [],
+  blessedPrimaryAttributeDependencies: [],
   derivedCharacteristics: {
     lifePoints: {
       purchased: 0,
@@ -127,12 +132,11 @@ export const baseCharacter: Character = {
     animistPowers: {},
     geodeRituals: {},
     zibiljaRituals: {},
+    magicalRunes: {},
   },
   blessings: [],
   liturgicalChants: {},
   ceremonies: {},
-  magicalPrimaryAttributeDependencies: [],
-  blessedPrimaryAttributeDependencies: [],
   // items: {}
   // hitZoneArmors: {}
   purse: {
@@ -143,4 +147,5 @@ export const baseCharacter: Character = {
   },
   // creatures: {}
   // pact: {}
+  pactDependencies: [],
 }

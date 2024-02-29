@@ -1,12 +1,12 @@
 import { AnyAction, createAction } from "@reduxjs/toolkit"
-import { Draft } from "immer"
+import { createDynamicActivatable } from "../../shared/domain/activatable/activatableEntry.ts"
 import { Character } from "../../shared/domain/character.ts"
 import {
   AdvantageIdentifier,
   BlessedTraditionIdentifier,
   MagicalTraditionIdentifier,
 } from "../../shared/domain/identifier.ts"
-import { createImmerReducer, reduceReducers } from "../../shared/utils/redux.ts"
+import { DraftReducer, reduceDraftReducers } from "../../shared/utils/redux.ts"
 import { RootState } from "../store.ts"
 import { advantagesReducer } from "./advantagesSlice.ts"
 import { attributesReducer } from "./attributesSlice.ts"
@@ -26,6 +26,7 @@ import { geodeRitualsReducer } from "./magicalActions/geodeRitualsSlice.ts"
 import { jesterTricksReducer } from "./magicalActions/jesterTricksSlice.ts"
 import { magicalDancesReducer } from "./magicalActions/magicalDancesSlice.ts"
 import { magicalMelodiesReducer } from "./magicalActions/magicalMelodiesSlice.ts"
+import { magicalRunesReducer } from "./magicalActions/magicalRunesSlice.ts"
 import { zibiljaRitualsReducer } from "./magicalActions/zibiljaRitualsSlice.ts"
 import { personalDataReducer } from "./personalDataSlice.ts"
 import { professionReducer } from "./professionSlice.ts"
@@ -53,10 +54,12 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     id: 1,
     variantId: 1,
     selectedAttributeAdjustmentId: 1,
+    dependencies: [],
   },
   culture: {
     id: 1,
     isCulturalPackageApplied: false,
+    dependencies: [],
   },
   profession: {
     id: 1,
@@ -65,12 +68,14 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
   rules: {
     includeAllPublications: true,
     includePublications: [],
+    publicationDependencies: [],
     focusRules: {},
     optionalRules: {},
   },
   states: {},
   personalData: {
     sex: { type: "Male" },
+    sexDependencies: [],
     socialStatus: {
       dependencies: [],
     },
@@ -118,7 +123,6 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     krallenkettenzauber: {},
     liturgicalStyleSpecialAbilities: {},
     lycantropicGifts: {},
-    magicalRunes: {},
     magicalSigns: {},
     magicalSpecialAbilities: {},
     magicalTraditions: {
@@ -146,6 +150,88 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     visions: {},
     wandEnchantments: {},
     weaponEnchantments: {},
+  },
+  attributes: {
+    1: {
+      id: 1,
+      value: 13,
+      dependencies: [],
+      cachedAdventurePoints: {
+        general: 75,
+        bound: 0,
+      },
+      boundAdventurePoints: [],
+    },
+    2: {
+      id: 2,
+      value: 13,
+      dependencies: [],
+      cachedAdventurePoints: {
+        general: 75,
+        bound: 0,
+      },
+      boundAdventurePoints: [],
+    },
+    3: {
+      id: 3,
+      value: 13,
+      dependencies: [],
+      cachedAdventurePoints: {
+        general: 75,
+        bound: 0,
+      },
+      boundAdventurePoints: [],
+    },
+    4: {
+      id: 4,
+      value: 13,
+      dependencies: [],
+      cachedAdventurePoints: {
+        general: 75,
+        bound: 0,
+      },
+      boundAdventurePoints: [],
+    },
+    5: {
+      id: 5,
+      value: 12,
+      dependencies: [],
+      cachedAdventurePoints: {
+        general: 60,
+        bound: 0,
+      },
+      boundAdventurePoints: [],
+    },
+    6: {
+      id: 6,
+      value: 12,
+      dependencies: [],
+      cachedAdventurePoints: {
+        general: 60,
+        bound: 0,
+      },
+      boundAdventurePoints: [],
+    },
+    7: {
+      id: 7,
+      value: 12,
+      dependencies: [],
+      cachedAdventurePoints: {
+        general: 60,
+        bound: 0,
+      },
+      boundAdventurePoints: [],
+    },
+    8: {
+      id: 8,
+      value: 12,
+      dependencies: [],
+      cachedAdventurePoints: {
+        general: 60,
+        bound: 0,
+      },
+      boundAdventurePoints: [],
+    },
   },
   magicalPrimaryAttributeDependencies: [],
   blessedPrimaryAttributeDependencies: [],
@@ -212,6 +298,7 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
     animistPowers: {},
     geodeRituals: {},
     zibiljaRituals: {},
+    magicalRunes: {},
   },
   blessings: {
     1: {
@@ -255,6 +342,7 @@ const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified
   },
   // creatures: {}
   // pact: {}
+  pactDependencies: [],
 }
 
 /**
@@ -655,12 +743,6 @@ export const selectDynamicLycantropicGifts = (state: RootState) =>
   selectCurrentCharacter(state)?.specialAbilities.lycantropicGifts
 
 /**
- * Select the magical runes of the currently open character.
- */
-export const selectDynamicMagicalRunes = (state: RootState) =>
-  selectCurrentCharacter(state)?.specialAbilities.magicalRunes
-
-/**
  * Select the magical signs of the currently open character.
  */
 export const selectDynamicMagicalSigns = (state: RootState) =>
@@ -933,6 +1015,12 @@ export const selectDynamicZibiljaRituals = (state: RootState) =>
   selectCurrentCharacter(state)?.magicalActions.zibiljaRituals
 
 /**
+ * Select the magical runes of the currently open character.
+ */
+export const selectDynamicMagicalRunes = (state: RootState) =>
+  selectCurrentCharacter(state)?.magicalActions.magicalRunes
+
+/**
  * Select the blessings of the currently open character.
  */
 export const selectDynamicBlessings = (state: RootState) => selectCurrentCharacter(state)?.blessings
@@ -986,7 +1074,7 @@ export const deleteAvatar = createAction("character/deleteAvatar")
  */
 export const finishCharacterCreation = createAction("character/finishCharacterCreation")
 
-const generalCharacterReducer = createImmerReducer((state: Draft<CharacterState>, action) => {
+const generalCharacterReducer: DraftReducer<CharacterState> = (state, action) => {
   if (setName.match(action)) {
     state.name = action.payload
   } else if (setAvatar.match(action)) {
@@ -996,13 +1084,13 @@ const generalCharacterReducer = createImmerReducer((state: Draft<CharacterState>
   } else if (finishCharacterCreation.match(action)) {
     state.isCharacterCreationFinished = true
   }
-})
+}
 
 /**
  * The state reducer for a character.
  */
-export const characterReducer = reduceReducers<
-  Draft<CharacterState>,
+export const characterReducer = reduceDraftReducers<
+  CharacterState,
   AnyAction,
   [database: DatabaseState]
 >(
@@ -1030,6 +1118,7 @@ export const characterReducer = reduceReducers<
   animistPowersReducer,
   geodeRitualsReducer,
   zibiljaRitualsReducer,
+  magicalRunesReducer,
   blessingsReducer,
   liturgicalChantsReducer,
   ceremoniesReducer,

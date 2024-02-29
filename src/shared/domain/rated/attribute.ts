@@ -1,10 +1,16 @@
 import { AttributeReference } from "optolith-database-schema/types/_SimpleReferences"
+import { ImprovementCost } from "../adventurePoints/improvementCost.ts"
 import { Rated } from "./ratedEntry.ts"
 
 /**
  * The minimum value of an attribute.
  */
 export const minimumAttributeValue = 8
+
+/**
+ * The improvement cost of an attribute.
+ */
+export const attributeImprovementCost = ImprovementCost.E
 
 /**
  * Creates an initial dynamic attribute entry.

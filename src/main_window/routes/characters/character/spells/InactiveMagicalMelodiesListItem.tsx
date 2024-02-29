@@ -3,19 +3,26 @@ import { fromRaw } from "../../../../../shared/domain/adventurePoints/improvemen
 import { DisplayedInactiveMagicalMelody } from "../../../../../shared/domain/rated/spellInactive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { useInactiveActivatableActions } from "../../../../hooks/ratedActions.ts"
+import { addMagicalMelody } from "../../../../slices/magicalActions/magicalMelodiesSlice.ts"
 import { InactiveMagicalActionsListItem } from "./InactiveMagicalActionsListItem.tsx"
 
 type Props = {
   insertTopMargin?: boolean
   magicalMelody: DisplayedInactiveMagicalMelody
   sortOrder: SpellsSortOrder
-  add: (id: number) => void
 }
 
 const InactiveMagicalMelodiesListItem: FC<Props> = props => {
-  const { insertTopMargin, magicalMelody, sortOrder, add } = props
+  const { insertTopMargin, magicalMelody, sortOrder } = props
 
   const translate = useTranslate()
+
+  const { handleAdd } = useInactiveActivatableActions(
+    magicalMelody.static.id,
+    fromRaw(magicalMelody.static.improvement_cost),
+    addMagicalMelody,
+  )
 
   return (
     <InactiveMagicalActionsListItem
@@ -26,7 +33,7 @@ const InactiveMagicalMelodiesListItem: FC<Props> = props => {
       groupName={translate("Magical Melodies")}
       checkPenalty={magicalMelody.static.check_penalty}
       improvementCost={fromRaw(magicalMelody.static.improvement_cost)}
-      add={add}
+      add={handleAdd}
     />
   )
 }

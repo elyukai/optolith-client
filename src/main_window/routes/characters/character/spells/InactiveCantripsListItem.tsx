@@ -43,6 +43,10 @@ const InactiveCantripsListItem: FC<Props> = props => {
 
   const { name = "" } = translateMap(translations) ?? {}
 
+  const handleAdd = useCallback(() => {
+    add(id)
+  }, [add, id])
+
   const handleSelectForInfo = useCallback(
     () => dispatch(changeInlineLibraryEntry({ tag: "Cantrip", cantrip: id })),
     [dispatch, id],
@@ -72,7 +76,7 @@ const InactiveCantripsListItem: FC<Props> = props => {
       <ListItemValues>
         <SkillFill />
       </ListItemValues>
-      <SkillButtons id={id} addPoint={add} selectForInfo={handleSelectForInfo} />
+      <SkillButtons addPoint={handleAdd} selectForInfo={handleSelectForInfo} />
     </ListItem>
   )
 }

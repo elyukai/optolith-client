@@ -3,19 +3,26 @@ import { fromRaw } from "../../../../../shared/domain/adventurePoints/improvemen
 import { DisplayedInactiveJesterTrick } from "../../../../../shared/domain/rated/spellInactive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { useInactiveActivatableActions } from "../../../../hooks/ratedActions.ts"
+import { addJesterTrick } from "../../../../slices/magicalActions/jesterTricksSlice.ts"
 import { InactiveMagicalActionsListItem } from "./InactiveMagicalActionsListItem.tsx"
 
 type Props = {
   insertTopMargin?: boolean
   jesterTrick: DisplayedInactiveJesterTrick
   sortOrder: SpellsSortOrder
-  add: (id: number) => void
 }
 
 const InactiveJesterTricksListItem: FC<Props> = props => {
-  const { insertTopMargin, jesterTrick, sortOrder, add } = props
+  const { insertTopMargin, jesterTrick, sortOrder } = props
 
   const translate = useTranslate()
+
+  const { handleAdd } = useInactiveActivatableActions(
+    jesterTrick.static.id,
+    fromRaw(jesterTrick.static.improvement_cost),
+    addJesterTrick,
+  )
 
   return (
     <InactiveMagicalActionsListItem
@@ -26,7 +33,7 @@ const InactiveJesterTricksListItem: FC<Props> = props => {
       groupName={translate("Jester Tricks")}
       checkPenalty={jesterTrick.static.check_penalty}
       improvementCost={fromRaw(jesterTrick.static.improvement_cost)}
-      add={add}
+      add={handleAdd}
     />
   )
 }

@@ -43,6 +43,10 @@ const InactiveBlessingsListItem: FC<Props> = props => {
 
   const { name = "" } = translateMap(translations) ?? {}
 
+  const handleAdd = useCallback(() => {
+    add(id)
+  }, [add, id])
+
   const handleSelectForInfo = useCallback(
     () => dispatch(changeInlineLibraryEntry({ tag: "Blessing", blessing: id })),
     [dispatch, id],
@@ -68,7 +72,7 @@ const InactiveBlessingsListItem: FC<Props> = props => {
       <ListItemValues>
         <SkillFill />
       </ListItemValues>
-      <SkillButtons id={id} addPoint={add} selectForInfo={handleSelectForInfo} />
+      <SkillButtons addPoint={handleAdd} selectForInfo={handleSelectForInfo} />
     </ListItem>
   )
 }

@@ -41,7 +41,7 @@ type Props<T extends DisplayedInactiveMagicalAction> = {
   groupName: string
   checkPenalty?: SkillCheckPenalty
   improvementCost?: ImprovementCost
-  add: (id: number) => void
+  add: () => void
 }
 
 /**
@@ -101,13 +101,7 @@ export const InactiveMagicalActionsListItem = <T extends DisplayedInactiveMagica
         <SkillFill />
         <SkillImprovementCost ic={improvementCost} />
       </ListItemValues>
-      <SkillButtons
-        addDisabled={!isAvailable}
-        ic={improvementCost}
-        id={id}
-        addPoint={add}
-        selectForInfo={handleSelectForInfo}
-      />
+      <SkillButtons addDisabled={!isAvailable} addPoint={add} selectForInfo={handleSelectForInfo} />
     </ListItem>
   )
 }

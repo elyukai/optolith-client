@@ -1,11 +1,8 @@
 import { CloseCombatTechnique } from "optolith-database-schema/types/CombatTechnique_Close"
 import { RangedCombatTechnique } from "optolith-database-schema/types/CombatTechnique_Ranged"
+import { CombatTechniqueIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
 import { AttributeReference } from "optolith-database-schema/types/_SimpleReferences"
-import {
-  Activatable,
-  PredefinedActivatableOption,
-  countOptions,
-} from "../activatable/activatableEntry.ts"
+import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
 import { AttributeIdentifier } from "../identifier.ts"
 import { getAttributeValue } from "./attribute.ts"
 import { Rated } from "./ratedEntry.ts"
@@ -48,10 +45,16 @@ export type CombinedCombatTechnique =
  */
 export const getCombinedId = (
   combatTechnique: CombinedCombatTechnique,
-): PredefinedActivatableOption["id"] =>
+): CombatTechniqueIdentifier =>
   combatTechnique.tag === "CloseCombatTechnique"
-    ? { type: "CloseCombatTechnique", value: combatTechnique.closeCombatTechnique.id }
-    : { type: "RangedCombatTechnique", value: combatTechnique.rangedCombatTechnique.id }
+    ? {
+        tag: "CloseCombatTechnique",
+        close_combat_technique: combatTechnique.closeCombatTechnique.id,
+      }
+    : {
+        tag: "RangedCombatTechnique",
+        ranged_combat_technique: combatTechnique.rangedCombatTechnique.id,
+      }
 
 /**
  * Returns the primary attribute of a combined combat technique.

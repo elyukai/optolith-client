@@ -11,8 +11,10 @@ import { LiturgiesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { useInactiveActivatableActions } from "../../../../hooks/ratedActions.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectActiveBlessedTradition } from "../../../../selectors/traditionSelectors.ts"
+import { addCeremony } from "../../../../slices/ceremoniesSlice.ts"
 import { selectStaticAspects } from "../../../../slices/databaseSlice.ts"
 import {
   changeInlineLibraryEntry,
@@ -27,7 +29,6 @@ type Props = {
   insertTopMargin?: boolean
   ceremony: DisplayedInactiveCeremony
   sortOrder: LiturgiesSortOrder
-  add: (id: number) => void
 }
 
 const InactiveCeremoniesListItem: FC<Props> = props => {
@@ -38,7 +39,6 @@ const InactiveCeremoniesListItem: FC<Props> = props => {
       isAvailable,
     },
     sortOrder,
-    add,
   } = props
 
   const translate = useTranslate()
@@ -50,6 +50,8 @@ const InactiveCeremoniesListItem: FC<Props> = props => {
   const staticAspects = useAppSelector(selectStaticAspects)
 
   const { name = "" } = translateMap(translations) ?? {}
+
+  const { handleAdd } = useInactiveActivatableActions(id, fromRaw(improvement_cost), addCeremony)
 
   const handleSelectForInfo = useCallback(
     () => dispatch(changeInlineLibraryEntry({ tag: "Ceremony", ceremony: id })),
@@ -93,9 +95,7 @@ const InactiveCeremoniesListItem: FC<Props> = props => {
       </ListItemValues>
       <SkillButtons
         addDisabled={!isAvailable}
-        ic={fromRaw(improvement_cost)}
-        id={id}
-        addPoint={add}
+        addPoint={handleAdd}
         selectForInfo={handleSelectForInfo}
       />
     </ListItem>

@@ -1,18 +1,17 @@
 import { ImprovementCost, fromRaw } from "../../shared/domain/adventurePoints/improvementCost.ts"
 import { registerOrUnregisterPrerequisitesOfSpellworkAsDependencies } from "../../shared/domain/dependencies/fullPrerequisiteRegistrationAsDependencyForType.ts"
 import { createIdentifierObject } from "../../shared/domain/identifier.ts"
+import { createEmptyDynamicSpell } from "../../shared/domain/rated/spell.ts"
 import { createActivatableRatedWithEnhancementsSlice } from "./activatableRatedWithEnhancementsSlice.ts"
 
 // eslint-disable-next-line jsdoc/require-jsdoc
 export const {
-  create: createDynamicSpell,
-  createInitial: createInitialDynamicSpell,
-  getValue: getSpellValue,
   actions: {
     addAction: addSpell,
     removeAction: removeSpell,
     incrementAction: incrementSpell,
     decrementAction: decrementSpell,
+    setAction: setSpell,
   },
   reducer: spellsReducer,
 } = createActivatableRatedWithEnhancementsSlice({
@@ -27,4 +26,5 @@ export const {
   createIdentifierObject: id => createIdentifierObject("Ritual", id),
   registerOrUnregisterPrerequisitesAsDependencies:
     registerOrUnregisterPrerequisitesOfSpellworkAsDependencies,
+  createEmptyActivatableRatedWithEnhancements: createEmptyDynamicSpell,
 })

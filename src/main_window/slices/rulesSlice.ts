@@ -1,7 +1,7 @@
 /* eslint-disable jsdoc/require-jsdoc */
 import { createAction } from "@reduxjs/toolkit"
 import { OptionalRuleIdentifier } from "../../shared/domain/identifier.ts"
-import { createImmerReducer } from "../../shared/utils/redux.ts"
+import { DraftReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 
 export const switchIncludeAllPublications = createAction("rules/switchIncludeAllPublications")
@@ -12,7 +12,7 @@ export const changeOptionalRuleOption = createAction<{ id: number; option: numbe
   "rules/changeOptionalRuleOption",
 )
 
-export const rulesReducer = createImmerReducer<CharacterState>((state, action) => {
+export const rulesReducer: DraftReducer<CharacterState> = (state, action) => {
   if (switchIncludeAllPublications.match(action)) {
     state.rules.includeAllPublications = !state.rules.includeAllPublications
   } else if (switchIncludePublication.match(action)) {
@@ -54,4 +54,4 @@ export const rulesReducer = createImmerReducer<CharacterState>((state, action) =
       ;(state.rules.optionalRules[action.payload.id]!.options ??= [])[0] = action.payload.option
     }
   }
-})
+}

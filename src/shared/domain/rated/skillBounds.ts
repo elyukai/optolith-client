@@ -3,8 +3,9 @@ import { Skill } from "optolith-database-schema/types/Skill"
 import { AttributeReference } from "optolith-database-schema/types/_SimpleReferences"
 import { filterNonNullable } from "../../utils/array.ts"
 import { Activatable, countOptions, isActive } from "../activatable/activatableEntry.ts"
+import { FilterApplyingRatedDependencies } from "../dependencies/filterApplyingDependencies.ts"
 import { SkillIdentifier } from "../identifier.ts"
-import { RatedDependency, flattenMinimumRestrictions } from "./ratedDependency.ts"
+import { flattenMinimumRestrictions } from "./ratedDependency.ts"
 import { Rated } from "./ratedEntry.ts"
 import { getSkillValue } from "./skill.ts"
 
@@ -38,7 +39,7 @@ export const getSkillMinimum = (
   getDynamicSkill: (id: number) => Rated | undefined,
   dynamicSkill: Rated,
   craftInstruments: Activatable | undefined,
-  filterApplyingDependencies: (dependencies: RatedDependency[]) => RatedDependency[],
+  filterApplyingDependencies: FilterApplyingRatedDependencies,
 ): number => {
   const minimumValues = filterNonNullable([
     0,
@@ -67,8 +68,8 @@ export const getSkillMaximum = (
   ])
 
   const exceptionalSkillBonus = countOptions(exceptionalSkill, {
-    type: "Skill",
-    value: staticSkill.id,
+    tag: "Skill",
+    skill: staticSkill.id,
   })
 
   return Math.min(...maximumValues) + exceptionalSkillBonus

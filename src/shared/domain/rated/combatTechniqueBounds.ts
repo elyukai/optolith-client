@@ -2,12 +2,13 @@ import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
 import { AttributeReference } from "optolith-database-schema/types/_SimpleReferences"
 import { filterNonNullable } from "../../utils/array.ts"
 import { Activatable, countOptions, isActive } from "../activatable/activatableEntry.ts"
+import { FilterApplyingRatedDependencies } from "../dependencies/filterApplyingDependencies.ts"
 import {
   CombinedCombatTechnique,
   getCombinedId,
   getCombinedPrimaryAttribute,
 } from "./combatTechnique.ts"
-import { RatedDependency, flattenMinimumRestrictions } from "./ratedDependency.ts"
+import { flattenMinimumRestrictions } from "./ratedDependency.ts"
 import { Rated } from "./ratedEntry.ts"
 
 const getCombatTechniqueMinimumForHunter = (
@@ -31,7 +32,7 @@ export const getCombatTechniqueMinimum = (
   staticCombatTechnique: CombinedCombatTechnique,
   dynamicCombatTechnique: Rated,
   hunter: Activatable | undefined,
-  filterApplyingDependencies: (dependencies: RatedDependency[]) => RatedDependency[],
+  filterApplyingDependencies: FilterApplyingRatedDependencies,
 ): number => {
   const minimumValues = filterNonNullable([
     6,

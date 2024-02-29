@@ -11,6 +11,7 @@ import { LiturgiesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { useInactiveActivatableActions } from "../../../../hooks/ratedActions.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectActiveBlessedTradition } from "../../../../selectors/traditionSelectors.ts"
 import { selectStaticAspects } from "../../../../slices/databaseSlice.ts"
@@ -18,6 +19,7 @@ import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
 } from "../../../../slices/inlineWikiSlice.ts"
+import { addLiturgicalChant } from "../../../../slices/liturgicalChantsSlice.ts"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillCheck } from "../skills/SkillCheck.tsx"
 import { SkillFill } from "../skills/SkillFill.tsx"
@@ -27,7 +29,6 @@ type Props = {
   insertTopMargin?: boolean
   liturgicalChant: DisplayedInactiveLiturgicalChant
   sortOrder: LiturgiesSortOrder
-  add: (id: number) => void
 }
 
 const InactiveLiturgicalChantsListItem: FC<Props> = props => {
@@ -38,7 +39,6 @@ const InactiveLiturgicalChantsListItem: FC<Props> = props => {
       isAvailable,
     },
     sortOrder,
-    add,
   } = props
 
   const translate = useTranslate()
@@ -50,6 +50,12 @@ const InactiveLiturgicalChantsListItem: FC<Props> = props => {
   const staticAspects = useAppSelector(selectStaticAspects)
 
   const { name = "" } = translateMap(translations) ?? {}
+
+  const { handleAdd } = useInactiveActivatableActions(
+    id,
+    fromRaw(improvement_cost),
+    addLiturgicalChant,
+  )
 
   const handleSelectForInfo = useCallback(
     () => dispatch(changeInlineLibraryEntry({ tag: "LiturgicalChant", liturgical_chant: id })),
@@ -96,9 +102,7 @@ const InactiveLiturgicalChantsListItem: FC<Props> = props => {
       </ListItemValues>
       <SkillButtons
         addDisabled={!isAvailable}
-        ic={fromRaw(improvement_cost)}
-        id={id}
-        addPoint={add}
+        addPoint={handleAdd}
         selectForInfo={handleSelectForInfo}
       />
     </ListItem>

@@ -24,7 +24,11 @@ import {
   fromRaw,
 } from "../adventurePoints/improvementCost.ts"
 import { All, GetById } from "../getTypes.ts"
-import { MagicalTraditionIdentifier, createIdentifierObject } from "../identifier.ts"
+import {
+  MagicalTraditionIdentifier,
+  createIdentifierObject,
+  getCreateIdentifierObject,
+} from "../identifier.ts"
 import { SpellsSortOrder } from "../sortOrders.ts"
 import {
   cursesImprovementCost,
@@ -113,6 +117,7 @@ export const getSpellworksAbove10ByProperty = (
   dynamicAnimistPowers: ActivatableRatedMap,
   dynamicGeodeRituals: ActivatableRatedMap,
   dynamicZibiljaRituals: ActivatableRatedMap,
+  dynamicMagicalRunes: ActivatableRatedMap,
 ): Record<number, number> => {
   const prepareEntity = (
     ratedMap: ActivatableRatedMap,
@@ -129,23 +134,18 @@ export const getSpellworksAbove10ByProperty = (
       )
 
   return [
-    ...prepareEntity(dynamicSpells, id => ({ tag: "Spell", spell: id })),
-    ...prepareEntity(dynamicRituals, id => ({ tag: "Ritual", ritual: id })),
-    ...prepareEntity(dynamicCurses, id => ({ tag: "Curse", curse: id })),
-    ...prepareEntity(dynamicElvenMagicalSongs, id => ({
-      tag: "ElvenMagicalSong",
-      elven_magical_song: id,
-    })),
-    ...prepareEntity(dynamicDominationRituals, id => ({
-      tag: "DominationRitual",
-      domination_ritual: id,
-    })),
-    ...prepareEntity(dynamicMagicalDances, id => ({ tag: "MagicalDance", magical_dance: id })),
-    ...prepareEntity(dynamicMagicalMelodies, id => ({ tag: "MagicalMelody", magical_melody: id })),
-    ...prepareEntity(dynamicJesterTricks, id => ({ tag: "JesterTrick", jester_trick: id })),
-    ...prepareEntity(dynamicAnimistPowers, id => ({ tag: "AnimistPower", animist_power: id })),
-    ...prepareEntity(dynamicGeodeRituals, id => ({ tag: "GeodeRitual", geode_ritual: id })),
-    ...prepareEntity(dynamicZibiljaRituals, id => ({ tag: "ZibiljaRitual", zibilja_ritual: id })),
+    ...prepareEntity(dynamicSpells, getCreateIdentifierObject("Spell")),
+    ...prepareEntity(dynamicRituals, getCreateIdentifierObject("Ritual")),
+    ...prepareEntity(dynamicCurses, getCreateIdentifierObject("Curse")),
+    ...prepareEntity(dynamicElvenMagicalSongs, getCreateIdentifierObject("ElvenMagicalSong")),
+    ...prepareEntity(dynamicDominationRituals, getCreateIdentifierObject("DominationRitual")),
+    ...prepareEntity(dynamicMagicalDances, getCreateIdentifierObject("MagicalDance")),
+    ...prepareEntity(dynamicMagicalMelodies, getCreateIdentifierObject("MagicalMelody")),
+    ...prepareEntity(dynamicJesterTricks, getCreateIdentifierObject("JesterTrick")),
+    ...prepareEntity(dynamicAnimistPowers, getCreateIdentifierObject("AnimistPower")),
+    ...prepareEntity(dynamicGeodeRituals, getCreateIdentifierObject("GeodeRitual")),
+    ...prepareEntity(dynamicZibiljaRituals, getCreateIdentifierObject("ZibiljaRitual")),
+    ...prepareEntity(dynamicMagicalRunes, getCreateIdentifierObject("MagicalRune")),
   ].reduce<Record<number, number>>(
     (acc, [propertyId, value]) =>
       value >= 10 ? { ...acc, [propertyId]: (acc[propertyId] ?? 0) + 1 } : acc,
@@ -170,7 +170,9 @@ export const getHighestRequiredAttributeForSpellwork = (
   }
 
   const exceptionalSkillBonus =
-    type === undefined ? 0 : countOptions(exceptionalSkill, { type, value: staticSpellwork.id })
+    type === undefined
+      ? 0
+      : countOptions(exceptionalSkill, createIdentifierObject(type, staticSpellwork.id))
 
   return {
     id: singleHighestAttributeId,

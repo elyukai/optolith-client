@@ -1,3 +1,5 @@
+import { ProfessionIdentifier } from "optolith-database-schema/types/_Identifier"
+import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
 import { BinarySex as RawBinarySex } from "optolith-database-schema/types/_Sex"
 import { SexualCharacteristic } from "optolith-database-schema/types/prerequisites/single/SexualCharacteristicPrerequisite"
 import { assertExhaustive } from "../utils/typeSafety.ts"
@@ -164,4 +166,22 @@ export const matchSexualCharacteristicToSex = (
     default:
       return assertExhaustive(sexualCharacteristic)
   }
+}
+
+/**
+ * Defines a dependency on the character’s sex
+ */
+export type SexDependency = {
+  value:
+    | {
+        kind: "BinarySex"
+        value: RawBinarySex
+      }
+    | {
+        kind: "SexualCharacteristic"
+        value: SexualCharacteristic
+      }
+  sourceId: ProfessionIdentifier | ActivatableIdentifier
+  index: number
+  isPartOfDisjunction: boolean
 }

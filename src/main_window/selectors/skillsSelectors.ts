@@ -6,7 +6,7 @@ import {
 } from "../../shared/domain/identifier.ts"
 import { getHighestAttributeValue } from "../../shared/domain/rated/attribute.ts"
 import { Rated } from "../../shared/domain/rated/ratedEntry.ts"
-import { getSkillCommonness } from "../../shared/domain/rated/skill.ts"
+import { createEmptyDynamicSkill, getSkillCommonness } from "../../shared/domain/rated/skill.ts"
 import {
   getSkillMaximum,
   getSkillMinimum,
@@ -18,7 +18,6 @@ import {
   selectDynamicAdvantages,
   selectDynamicGeneralSpecialAbilities,
 } from "../slices/characterSlice.ts"
-import { createInitialDynamicSkill } from "../slices/skillsSlice.ts"
 import { SelectAll, SelectGetById } from "./basicCapabilitySelectors.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectCurrentCulture } from "./cultureSelectors.ts"
@@ -72,7 +71,7 @@ export const selectVisibleSkills = createSelector(
     filterApplyingDependencies,
   ): DisplayedSkill[] =>
     staticSkills.map(skill => {
-      const dynamicSkill = getDynamicSkillById(skill.id) ?? createInitialDynamicSkill(skill.id)
+      const dynamicSkill = getDynamicSkillById(skill.id) ?? createEmptyDynamicSkill(skill.id)
 
       const minimum = getSkillMinimum(
         getDynamicSkillById,

@@ -1,16 +1,17 @@
-import { geodeRitualsImprovementCost } from "../../../shared/domain/rated/magicalActions.ts"
+import {
+  createEmptyDynamicMagicalAction,
+  geodeRitualsImprovementCost,
+} from "../../../shared/domain/rated/magicalActions.ts"
 import { createActivatableRatedSlice } from "../activatableRatedSlice.ts"
 
 // eslint-disable-next-line jsdoc/require-jsdoc
 export const {
-  create: createDynamicGeodeRitual,
-  createInitial: createInitialDynamicGeodeRitual,
-  getValue: getGeodeRitualValue,
   actions: {
     addAction: addGeodeRitual,
     removeAction: removeGeodeRitual,
     incrementAction: incrementGeodeRitual,
     decrementAction: decrementGeodeRitual,
+    setAction: setGeodeRitual,
   },
   reducer: geodeRitualsReducer,
 } = createActivatableRatedSlice({
@@ -18,4 +19,5 @@ export const {
   entityName: "GeodeRitual",
   getState: state => state.magicalActions.geodeRituals,
   getImprovementCost: (_id, _database) => geodeRitualsImprovementCost,
+  createEmptyActivatableRated: createEmptyDynamicMagicalAction,
 })

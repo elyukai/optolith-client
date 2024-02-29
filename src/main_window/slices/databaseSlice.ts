@@ -45,6 +45,78 @@ const initialDatabaseState: DatabaseState = {
   brews: {},
   cantrips: {},
   cache: {
+    activatableSelectOptions: {
+      advancedCombatSpecialAbilities: {},
+      advancedKarmaSpecialAbilities: {},
+      advancedMagicalSpecialAbilities: {},
+      advancedSkillSpecialAbilities: {},
+      advantages: {},
+      ancestorGlyphs: {},
+      arcaneOrbEnchantments: {},
+      attireEnchantments: {},
+      blessedTraditions: {},
+      bowlEnchantments: {},
+      brawlingSpecialAbilities: {},
+      cauldronEnchantments: {},
+      ceremonialItemSpecialAbilities: {},
+      chronicleEnchantments: {},
+      combatSpecialAbilities: {},
+      combatStyleSpecialAbilities: {},
+      commandSpecialAbilities: {},
+      daggerRituals: {},
+      disadvantages: {},
+      familiarSpecialAbilities: {},
+      fatePointSexSpecialAbilities: {},
+      fatePointSpecialAbilities: {},
+      foolsHatEnchantments: {},
+      generalSpecialAbilities: {},
+      instrumentEnchantments: {},
+      karmaSpecialAbilities: {},
+      krallenkettenzauber: {},
+      liturgicalStyleSpecialAbilities: {},
+      lycantropicGifts: {},
+      magicalSpecialAbilities: {},
+      magicalTraditions: {},
+      magicStyleSpecialAbilities: {},
+      orbEnchantments: {},
+      pactGifts: {},
+      protectiveWardingCircleSpecialAbilities: {},
+      ringEnchantments: {},
+      sermons: {},
+      sexSpecialAbilities: {},
+      sickleRituals: {},
+      sikaryanDrainSpecialAbilities: {},
+      staffEnchantments: {},
+      skillStyleSpecialAbilities: {},
+      spellSwordEnchantments: {},
+      toyEnchantments: {},
+      trinkhornzauber: {},
+      vampiricGifts: {},
+      visions: {},
+      wandEnchantments: {},
+      weaponEnchantments: {},
+    },
+    ancestorBloodAdvantages: {
+      ids: [],
+    },
+    magicalAndBlessedAdvantagesAndDisadvantages: {
+      advantages: {
+        magical: {
+          ids: [],
+        },
+        blessed: {
+          ids: [],
+        },
+      },
+      disadvantages: {
+        magical: {
+          ids: [],
+        },
+        blessed: {
+          ids: [],
+        },
+      },
+    },
     newApplicationsAndUses: {
       newApplications: {},
       uses: {},
@@ -613,5 +685,15 @@ export const selectStaticWeaponEnchantments = (state: RootState) =>
   state.database.weaponEnchantments
 export const selectStaticWeapons = (state: RootState) => state.database.weapons
 export const selectStaticZibiljaRituals = (state: RootState) => state.database.zibiljaRituals
+
+export const selectCache = (state: RootState) => state.database.cache
+export const selectActivatableSelectOptionsCache = (state: RootState) =>
+  state.database.cache.activatableSelectOptions
+export const selectAncestorBloodAdvantagesCache = (state: RootState) =>
+  state.database.cache.ancestorBloodAdvantages
+export const selectMagicalAndBlessedAdvantagesAndDisadvantagesCache = (state: RootState) =>
+  state.database.cache.magicalAndBlessedAdvantagesAndDisadvantages
+export const selectNewApplicationsAndUsesCache = (state: RootState) =>
+  state.database.cache.newApplicationsAndUses
 
 export const databaseReducer = databaseSlice.reducer

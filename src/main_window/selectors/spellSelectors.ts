@@ -3,8 +3,10 @@ import { getOptions } from "../../shared/domain/activatable/activatableEntry.ts"
 import {
   AdvantageIdentifier,
   MagicalSpecialAbilityIdentifier,
+  MagicalTraditionIdentifier,
   createIdentifierObject,
 } from "../../shared/domain/identifier.ts"
+import { getImprovementCostForAnimistPower } from "../../shared/domain/rated/animistPower.ts"
 import {
   countActiveSpellworks,
   countActiveSpellworksByImprovementCost,
@@ -78,6 +80,7 @@ const selectSpellworksAbove10ByProperty = createSelector(
   SelectGetById.Static.AnimistPower,
   SelectGetById.Static.GeodeRitual,
   SelectGetById.Static.ZibiljaRitual,
+  SelectGetById.Static.MagicalRune,
   SelectAll.Dynamic.Spells,
   SelectAll.Dynamic.Rituals,
   SelectAll.Dynamic.Curses,
@@ -89,6 +92,7 @@ const selectSpellworksAbove10ByProperty = createSelector(
   SelectAll.Dynamic.AnimistPowers,
   SelectAll.Dynamic.GeodeRituals,
   SelectAll.Dynamic.ZibiljaRituals,
+  SelectAll.Dynamic.MagicalRunes,
   (
     getStaticSpellById,
     getStaticRitualById,
@@ -101,6 +105,7 @@ const selectSpellworksAbove10ByProperty = createSelector(
     getStaticAnimistPowerById,
     getStaticGeodeRitualById,
     getStaticZibiljaRitualById,
+    getStaticMagicalRuneById,
     dynamicSpells,
     dynamicRituals,
     dynamicCurses,
@@ -112,6 +117,7 @@ const selectSpellworksAbove10ByProperty = createSelector(
     dynamicAnimistPowers,
     dynamicGeodeRituals,
     dynamicZibiljaRituals,
+    dynamicMagicalRunes,
   ) =>
     getSpellworksAbove10ByProperty(
       id =>
@@ -139,6 +145,8 @@ const selectSpellworksAbove10ByProperty = createSelector(
               return getStaticGeodeRitualById(id.geode_ritual)
             case "ZibiljaRitual":
               return getStaticZibiljaRitualById(id.zibilja_ritual)
+            case "MagicalRune":
+              return getStaticMagicalRuneById(id.magical_rune)
             default:
               return assertExhaustive(id)
           }
@@ -154,6 +162,7 @@ const selectSpellworksAbove10ByProperty = createSelector(
       dynamicAnimistPowers,
       dynamicGeodeRituals,
       dynamicZibiljaRituals,
+      dynamicMagicalRunes,
     ),
 )
 
@@ -164,7 +173,7 @@ const selectActivePropertyKnowledges = createSelector(
   ),
   propertyKnowledge =>
     getOptions(propertyKnowledge).flatMap(option =>
-      option.type === "Predefined" && option.id.type === "Property" ? [option.id.value] : [],
+      option.type === "Predefined" && option.id.tag === "Property" ? [option.id.property] : [],
     ),
 )
 
@@ -646,6 +655,8 @@ export const selectVisibleActiveAnimistPowers = createSelector(
   selectFilterApplyingRatedDependencies,
   selectSpellworksAbove10ByProperty,
   selectActivePropertyKnowledges,
+  SelectGetById.Static.Patron,
+  SelectGetById.Dynamic.MagicalTradition,
   (
     getStaticAnimistPowerById,
     dynamicAnimistPowers,
@@ -656,8 +667,12 @@ export const selectVisibleActiveAnimistPowers = createSelector(
     filterApplyingDependencies,
     spellworksAbove10ByProperty,
     activePropertyKnowledges,
+    getStaticPatronById,
+    getDynamicMagicalTraditionById,
   ): DisplayedActiveAnimistPower[] => {
-    if (startExperienceLevel === undefined) {
+    const traditionAnimists = getDynamicMagicalTraditionById(MagicalTraditionIdentifier.Animisten)
+
+    if (startExperienceLevel === undefined || traditionAnimists === undefined) {
       return []
     }
 
@@ -673,6 +688,18 @@ export const selectVisibleActiveAnimistPowers = createSelector(
       spellworksAbove10ByProperty,
       activePropertyKnowledges,
     )
+      .map(animistPower => ({
+        ...animistPower,
+        improvementCost: getImprovementCostForAnimistPower(
+          getStaticPatronById,
+          traditionAnimists,
+          animistPower.static.improvement_cost,
+        ),
+      }))
+      .filter(
+        (animistPower): animistPower is DisplayedActiveAnimistPower =>
+          animistPower.improvementCost !== undefined,
+      )
   },
 )
 
@@ -1013,7 +1040,34 @@ export const selectVisibleInactiveAnimistPowers = createSelector(
   selectActiveMagicalTraditions,
   selectIsMaximumOfSpellworksReached,
   selectIsEntryAvailable,
-  getInactiveAnimistPowers,
+  SelectGetById.Static.Patron,
+  SelectGetById.Dynamic.MagicalTradition,
+
+  (
+    staticAnimistPowers,
+    getDynamicAnimistPowerById,
+    activeMagicalTraditions,
+    isMaximumCountReached,
+    isEntryAvailable,
+    getStaticPatronById,
+    getDynamicMagicalTraditionById,
+  ) => {
+    const traditionAnimists = getDynamicMagicalTraditionById(MagicalTraditionIdentifier.Animisten)
+
+    if (traditionAnimists === undefined) {
+      return []
+    }
+
+    return getInactiveAnimistPowers(
+      staticAnimistPowers,
+      getDynamicAnimistPowerById,
+      activeMagicalTraditions,
+      isMaximumCountReached,
+      isEntryAvailable,
+      getStaticPatronById,
+      traditionAnimists,
+    )
+  },
 )
 
 /**

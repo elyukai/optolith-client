@@ -4,7 +4,7 @@ import { Height, Weight, WeightDiceOffsetStrategy } from "optolith-database-sche
 import { DieType } from "optolith-database-schema/types/_Dice"
 import { rollDice, separateDice } from "../../shared/utils/dice.ts"
 import { even, parseInt, randomInt } from "../../shared/utils/math.ts"
-import { createImmerReducer } from "../../shared/utils/redux.ts"
+import { DraftReducer } from "../../shared/utils/redux.ts"
 import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
 import { CharacterState } from "./characterSlice.ts"
 
@@ -78,7 +78,7 @@ export const rerollWeight = createAction(
   }),
 )
 
-export const personalDataReducer = createImmerReducer<CharacterState>((state, action) => {
+export const personalDataReducer: DraftReducer<CharacterState> = (state, action) => {
   if (setFamily.match(action)) {
     state.personalData.family = action.payload === "" ? undefined : action.payload
   } else if (setPlaceOfBirth.match(action)) {
@@ -131,4 +131,4 @@ export const personalDataReducer = createImmerReducer<CharacterState>((state, ac
   } else if (setOtherInfo.match(action)) {
     state.personalData.otherInfo = action.payload === "" ? undefined : action.payload
   }
-})
+}

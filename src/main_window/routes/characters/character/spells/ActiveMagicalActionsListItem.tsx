@@ -42,10 +42,12 @@ type Props<T extends DisplayedActiveMagicalAction> = {
   sortOrder: SpellsSortOrder
   groupName: string
   checkPenalty?: SkillCheckPenalty
-  improvementCost?: ImprovementCost
-  addPoint: (id: number) => void
-  removePoint: (id: number) => void
-  remove: (id: number) => void
+  improvementCost: ImprovementCost
+  addPoint: () => void
+  removePoint: () => void
+  setToMaximumPoints: () => void
+  setToMinimumPoints: () => void
+  remove: () => void
 }
 
 /**
@@ -64,14 +66,16 @@ export const ActiveMagicalActionsListItem = <T extends DisplayedActiveMagicalAct
     improvementCost,
     addPoint,
     removePoint,
+    setToMaximumPoints,
+    setToMinimumPoints,
     remove,
   } = props
 
   const {
-    dynamic: { value },
     static: { id, check, property, translations },
-    isDecreasable,
+    dynamic: { value },
     isIncreasable,
+    isDecreasable,
   } = magicalAction
 
   const translateMap = useTranslateMap()
@@ -107,19 +111,19 @@ export const ActiveMagicalActionsListItem = <T extends DisplayedActiveMagicalAct
         text={sortOrder === SpellsSortOrder.Group ? `${propertyName} / ${groupName}` : propertyName}
       />
       <ListItemValues>
-        <SkillRating sr={value} addPoint={addPoint} />
+        <SkillRating sr={value} />
         <SkillCheck check={check} checkPenalty={checkPenalty} />
         <SkillFill />
         <SkillImprovementCost ic={improvementCost} />
       </ListItemValues>
       <SkillButtons
         addDisabled={!isIncreasable}
-        ic={improvementCost}
-        id={id}
         removeDisabled={!isDecreasable}
-        sr={value}
         addPoint={addPoint}
+        setToMax={setToMaximumPoints}
         removePoint={canRemove ? (value === 0 ? remove : removePoint) : undefined}
+        setToMin={canRemove && value > 0 ? setToMinimumPoints : undefined}
+        decrementIsRemove={value === 0}
         selectForInfo={handleSelectForInfo}
       />
     </ListItem>

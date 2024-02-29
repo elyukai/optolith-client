@@ -4,7 +4,7 @@ import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
 import { LiturgicalChant } from "optolith-database-schema/types/LiturgicalChant"
 import { isNotNullish } from "../../utils/nullable.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
-import { Activatable } from "../activatable/activatableEntry.ts"
+import { Activatable, TinyActivatable } from "../activatable/activatableEntry.ts"
 import { FilterApplyingRatedDependencies } from "../dependencies/filterApplyingDependencies.ts"
 import { getHighestAttributeValue } from "./attribute.ts"
 import {
@@ -26,6 +26,7 @@ import {
 export type DisplayedActiveBlessing = {
   kind: "blessing"
   static: Blessing
+  dynamic: TinyActivatable
 }
 
 /**

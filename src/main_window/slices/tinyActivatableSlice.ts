@@ -14,12 +14,12 @@ export type TinyActivatableSlice<N extends string, E extends string> = {
     /**
      * Adds the entry with the given id.
      */
-    addAction: ActionCreatorWithPayload<number, `${N}/add${E}`>
+    addAction: ActionCreatorWithPayload<{ id: number }, `${N}/add${E}`>
 
     /**
      * Remove the entry with the given id.
      */
-    removeAction: ActionCreatorWithPayload<number, `${N}/remove${E}`>
+    removeAction: ActionCreatorWithPayload<{ id: number }, `${N}/remove${E}`>
   }
 
   /**
@@ -36,25 +36,25 @@ export const createTinyActivatableSlice = <N extends string, E extends string>(c
   entityName: E
   getState: (state: Draft<CharacterState>) => Draft<TinyActivatableMap>
 }): TinyActivatableSlice<N, E> => {
-  const addAction = createAction<number, `${N}/add${E}`>(
+  const addAction = createAction<{ id: number }, `${N}/add${E}`>(
     `${config.namespace}/add${config.entityName}`,
   )
-  const removeAction = createAction<number, `${N}/remove${E}`>(
+  const removeAction = createAction<{ id: number }, `${N}/remove${E}`>(
     `${config.namespace}/remove${config.entityName}`,
   )
 
   const reducer = createImmerReducer((state: Draft<CharacterState>, action) => {
     const focusedState = config.getState(state)
     if (addAction.match(action)) {
-      if (!Object.hasOwn(focusedState, action.payload)) {
-        focusedState[action.payload] = {
-          id: action.payload,
+      if (!Object.hasOwn(focusedState, action.payload.id)) {
+        focusedState[action.payload.id] = {
+          id: action.payload.id,
           active: true,
         }
       }
     } else if (removeAction.match(action)) {
-      if (Object.hasOwn(focusedState, action.payload)) {
-        delete focusedState[action.payload]
+      if (Object.hasOwn(focusedState, action.payload.id)) {
+        delete focusedState[action.payload.id]
       }
     }
   })

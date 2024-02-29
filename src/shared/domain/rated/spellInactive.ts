@@ -27,6 +27,7 @@ import {
 import { All, GetById } from "../getTypes.ts"
 import { MagicalTraditionIdentifier } from "../identifier.ts"
 import { checkPrerequisitesOfSpellwork } from "../prerequisites/fullPrerequisiteValidationForType.ts"
+import { getImprovementCostForAnimistPower } from "./animistPower.ts"
 import {
   ActivatableRated,
   ActivatableRatedWithEnhancements,
@@ -122,10 +123,13 @@ export type DisplayedInactiveJesterTrick = DisplayedInactiveMagicalActionBase<
 /**
  * A combination of a static and corresponding dynamic inactive animist power entry, extended by whether the entry can be activated.
  */
-export type DisplayedInactiveAnimistPower = DisplayedInactiveMagicalActionBase<
-  "animistPower",
-  AnimistPower
->
+export type DisplayedInactiveAnimistPower = {
+  kind: "animistPower"
+  static: AnimistPower
+  dynamic: ActivatableRated | undefined
+  isAvailable: boolean
+  improvementCost: ImprovementCost
+}
 
 /**
  * A combination of a static and corresponding dynamic inactive geode ritual entry, extended by whether the entry can be activated.
@@ -558,6 +562,8 @@ export const getInactiveAnimistPowers = (
   activeMagicalTraditions: CombinedActiveMagicalTradition[],
   isMaximumCountReached: boolean,
   isEntryAvailable: (src: PublicationRefs) => boolean,
+  getStaticPatronById: GetById.Static.Patron,
+  traditionAnimists: Activatable,
 ): DisplayedInactiveAnimistPower[] =>
   getInactiveMagicalActions(
     "animistPower",
@@ -568,6 +574,18 @@ export const getInactiveAnimistPowers = (
     isEntryAvailable,
     MagicalTraditionIdentifier.Animisten,
   )
+    .map(animistPower => ({
+      ...animistPower,
+      improvementCost: getImprovementCostForAnimistPower(
+        getStaticPatronById,
+        traditionAnimists,
+        animistPower.static.improvement_cost,
+      ),
+    }))
+    .filter(
+      (animistPower): animistPower is DisplayedInactiveAnimistPower =>
+        animistPower.improvementCost !== undefined,
+    )
 
 /**
  * Returns all geode rituals with their corresponding dynamic entries, extended

@@ -45,8 +45,8 @@ export const getHighestRequiredAttributeForSkill = (
   }
 
   const exceptionalSkillBonus = countOptions(exceptionalSkill, {
-    type: "Skill",
-    value: staticSkill.id,
+    tag: "Skill",
+    skill: staticSkill.id,
   })
 
   return {

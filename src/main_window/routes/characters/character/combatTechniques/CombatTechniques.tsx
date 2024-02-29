@@ -27,14 +27,6 @@ import {
   selectVisibleCombatTechniques,
 } from "../../../../selectors/combatTechniquesSelectors.ts"
 import {
-  decrementCloseCombatTechnique,
-  incrementCloseCombatTechnique,
-} from "../../../../slices/closeCombatTechniqueSlice.ts"
-import {
-  decrementRangedCombatTechnique,
-  incrementRangedCombatTechnique,
-} from "../../../../slices/rangedCombatTechniqueSlice.ts"
-import {
   changeCombatTechniquesSortOrder,
   selectCombatTechniquesSortOrder,
 } from "../../../../slices/settingsSlice.ts"
@@ -100,26 +92,6 @@ export const CombatTechniques: FC = () => {
     [filterText, localeCompare, sortOrder, translateMap, visibleCombatTechniques],
   )
 
-  const handleAddCloseCombatTechniquePoint = useCallback(
-    (id: number) => dispatch(incrementCloseCombatTechnique(id)),
-    [dispatch],
-  )
-
-  const handleRemoveCloseCombatTechniquePoint = useCallback(
-    (id: number) => dispatch(decrementCloseCombatTechnique(id)),
-    [dispatch],
-  )
-
-  const handleAddRangedCombatTechniquePoint = useCallback(
-    (id: number) => dispatch(incrementRangedCombatTechnique(id)),
-    [dispatch],
-  )
-
-  const handleRemoveRangedCombatTechniquePoint = useCallback(
-    (id: number) => dispatch(decrementRangedCombatTechnique(id)),
-    [dispatch],
-  )
-
   return (
     <Page id="combat-techniques">
       <Options>
@@ -146,35 +118,22 @@ export const CombatTechniques: FC = () => {
       </Options>
       <Main>
         <ListHeader>
-          <ListHeaderTag className="name">
-            {translate("combattechniques.header.name")}
+          <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+          <ListHeaderTag className="group">{translate("Group")}</ListHeaderTag>
+          <ListHeaderTag className="value" hint={translate("Combat Technique Rating")}>
+            {translate("CTR")}
           </ListHeaderTag>
-          <ListHeaderTag className="group">
-            {translate("combattechniques.header.group")}
+          <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
+            {translate("IC")}
           </ListHeaderTag>
-          <ListHeaderTag
-            className="value"
-            hint={translate("combattechniques.header.combattechniquerating.tooltip")}
-          >
-            {translate("combattechniques.header.combattechniquerating")}
+          <ListHeaderTag className="primary" hint={translate("Primary Attribute(s)")}>
+            {translate("P")}
           </ListHeaderTag>
-          <ListHeaderTag
-            className="ic"
-            hint={translate("combattechniques.header.improvementcost.tooltip")}
-          >
-            {translate("combattechniques.header.improvementcost")}
+          <ListHeaderTag className="at" hint={translate("Attack")}>
+            {translate("AT")}
           </ListHeaderTag>
-          <ListHeaderTag
-            className="primary"
-            hint={translate("combattechniques.header.primaryattribute.tooltip")}
-          >
-            {translate("combattechniques.header.primaryattribute")}
-          </ListHeaderTag>
-          <ListHeaderTag className="at" hint={translate("combattechniques.header.attack.tooltip")}>
-            {translate("combattechniques.header.attack")}
-          </ListHeaderTag>
-          <ListHeaderTag className="pa" hint={translate("combattechniques.header.parry.tooltip")}>
-            {translate("combattechniques.header.parry")}
+          <ListHeaderTag className="pa" hint={translate("Parry")}>
+            {translate("PA")}
           </ListHeaderTag>
           {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />
@@ -184,44 +143,26 @@ export const CombatTechniques: FC = () => {
           {list.length > 0 ? (
             <List>
               {list.map((x, i) => {
-                const translation = translateMap(x.static.translations)
-
-                if (x.kind === "close") {
-                  return (
-                    <CloseCombatTechniquesListItem
-                      key={`close--${x.static.id}`}
-                      insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
-                      id={x.static.id}
-                      name={translation?.name ?? ""}
-                      sr={x.dynamic.value}
-                      primary={x.static.primary_attribute}
-                      ic={fromRaw(x.static.improvement_cost)}
-                      addDisabled={!x.isIncreasable}
-                      removeDisabled={!x.isDecreasable}
-                      at={x.attackBase}
-                      pa={x.parryBase}
-                      addPoint={handleAddCloseCombatTechniquePoint}
-                      removePoint={handleRemoveCloseCombatTechniquePoint}
-                    />
-                  )
+                switch (x.kind) {
+                  case "close":
+                    return (
+                      <CloseCombatTechniquesListItem
+                        key={`close--${x.static.id}`}
+                        insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
+                        closeCombatTechnique={x}
+                      />
+                    )
+                  case "ranged":
+                    return (
+                      <RangedCombatTechniquesListItem
+                        key={`ranged--${x.static.id}`}
+                        insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
+                        rangedCombatTechnique={x}
+                      />
+                    )
+                  default:
+                    return assertExhaustive(x)
                 }
-
-                return (
-                  <RangedCombatTechniquesListItem
-                    key={`ranged--${x.static.id}`}
-                    insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
-                    id={x.static.id}
-                    name={translation?.name ?? ""}
-                    sr={x.dynamic.value}
-                    primary={x.static.primary_attribute}
-                    ic={fromRaw(x.static.improvement_cost)}
-                    addDisabled={!x.isIncreasable}
-                    removeDisabled={!x.isDecreasable}
-                    at={x.attackBase}
-                    addPoint={handleAddRangedCombatTechniquePoint}
-                    removePoint={handleRemoveRangedCombatTechniquePoint}
-                  />
-                )
               })}
             </List>
           ) : (

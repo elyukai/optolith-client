@@ -30,73 +30,7 @@ import {
   selectVisibleInactiveSpellworks,
 } from "../../../../selectors/spellSelectors.ts"
 import { addCantrip, removeCantrip } from "../../../../slices/cantripsSlice.ts"
-import {
-  addAnimistPower,
-  decrementAnimistPower,
-  incrementAnimistPower,
-  removeAnimistPower,
-} from "../../../../slices/magicalActions/animistPowersSlice.ts"
-import {
-  addCurse,
-  decrementCurse,
-  incrementCurse,
-  removeCurse,
-} from "../../../../slices/magicalActions/cursesSlice.ts"
-import {
-  addDominationRitual,
-  decrementDominationRitual,
-  incrementDominationRitual,
-  removeDominationRitual,
-} from "../../../../slices/magicalActions/dominationRitualsSlice.ts"
-import {
-  addElvenMagicalSong,
-  decrementElvenMagicalSong,
-  incrementElvenMagicalSong,
-  removeElvenMagicalSong,
-} from "../../../../slices/magicalActions/elvenMagicalSongsSlice.ts"
-import {
-  addGeodeRitual,
-  decrementGeodeRitual,
-  incrementGeodeRitual,
-  removeGeodeRitual,
-} from "../../../../slices/magicalActions/geodeRitualsSlice.ts"
-import {
-  addJesterTrick,
-  decrementJesterTrick,
-  incrementJesterTrick,
-  removeJesterTrick,
-} from "../../../../slices/magicalActions/jesterTricksSlice.ts"
-import {
-  addMagicalDance,
-  decrementMagicalDance,
-  incrementMagicalDance,
-  removeMagicalDance,
-} from "../../../../slices/magicalActions/magicalDancesSlice.ts"
-import {
-  addMagicalMelody,
-  decrementMagicalMelody,
-  incrementMagicalMelody,
-  removeMagicalMelody,
-} from "../../../../slices/magicalActions/magicalMelodiesSlice.ts"
-import {
-  addZibiljaRitual,
-  decrementZibiljaRitual,
-  incrementZibiljaRitual,
-  removeZibiljaRitual,
-} from "../../../../slices/magicalActions/zibiljaRitualsSlice.ts"
-import {
-  addRitual,
-  decrementRitual,
-  incrementRitual,
-  removeRitual,
-} from "../../../../slices/ritualsSlice.ts"
 import { changeSpellsSortOrder, selectSpellsSortOrder } from "../../../../slices/settingsSlice.ts"
-import {
-  addSpell,
-  decrementSpell,
-  incrementSpell,
-  removeSpell,
-} from "../../../../slices/spellsSlice.ts"
 import { ActiveAnimistPowersListItem } from "./ActiveAnimistPowersListItem.tsx"
 import { ActiveCantripsListItem } from "./ActiveCantripsListItem.tsx"
 import { ActiveCursesListItem } from "./ActiveCursesListItem.tsx"
@@ -191,163 +125,10 @@ export const Spells: FC = () => {
     ],
   )
 
-  const handleAddCantrip = useCallback((id: number) => dispatch(addCantrip(id)), [dispatch])
-  const handleRemoveCantrip = useCallback((id: number) => dispatch(removeCantrip(id)), [dispatch])
-
-  const handleAddSpell = useCallback((id: number) => dispatch(addSpell(id)), [dispatch])
-  const handleRemoveSpell = useCallback((id: number) => dispatch(removeSpell(id)), [dispatch])
-  const handleAddSpellPoint = useCallback((id: number) => dispatch(incrementSpell(id)), [dispatch])
-  const handleRemoveSpellPoint = useCallback(
-    (id: number) => dispatch(decrementSpell(id)),
-    [dispatch],
-  )
-
-  const handleAddRitual = useCallback((id: number) => dispatch(addRitual(id)), [dispatch])
-  const handleRemoveRitual = useCallback((id: number) => dispatch(removeRitual(id)), [dispatch])
-  const handleAddRitualPoint = useCallback(
-    (id: number) => dispatch(incrementRitual(id)),
-    [dispatch],
-  )
-  const handleRemoveRitualPoint = useCallback(
-    (id: number) => dispatch(decrementRitual(id)),
-    [dispatch],
-  )
-
-  const handleAddCurse = useCallback((id: number) => dispatch(addCurse(id)), [dispatch])
-  const handleRemoveCurse = useCallback((id: number) => dispatch(removeCurse(id)), [dispatch])
-  const handleAddCursePoint = useCallback((id: number) => dispatch(incrementCurse(id)), [dispatch])
-  const handleRemoveCursePoint = useCallback(
-    (id: number) => dispatch(decrementCurse(id)),
-    [dispatch],
-  )
-
-  const handleAddElvenMagicalSong = useCallback(
-    (id: number) => dispatch(addElvenMagicalSong(id)),
-    [dispatch],
-  )
-  const handleRemoveElvenMagicalSong = useCallback(
-    (id: number) => dispatch(removeElvenMagicalSong(id)),
-    [dispatch],
-  )
-  const handleAddElvenMagicalSongPoint = useCallback(
-    (id: number) => dispatch(incrementElvenMagicalSong(id)),
-    [dispatch],
-  )
-  const handleRemoveElvenMagicalSongPoint = useCallback(
-    (id: number) => dispatch(decrementElvenMagicalSong(id)),
-    [dispatch],
-  )
-
-  const handleAddDominationRitual = useCallback(
-    (id: number) => dispatch(addDominationRitual(id)),
-    [dispatch],
-  )
-  const handleRemoveDominationRitual = useCallback(
-    (id: number) => dispatch(removeDominationRitual(id)),
-    [dispatch],
-  )
-  const handleAddDominationRitualPoint = useCallback(
-    (id: number) => dispatch(incrementDominationRitual(id)),
-    [dispatch],
-  )
-  const handleRemoveDominationRitualPoint = useCallback(
-    (id: number) => dispatch(decrementDominationRitual(id)),
-    [dispatch],
-  )
-
-  const handleAddMagicalDance = useCallback(
-    (id: number) => dispatch(addMagicalDance(id)),
-    [dispatch],
-  )
-  const handleRemoveMagicalDance = useCallback(
-    (id: number) => dispatch(removeMagicalDance(id)),
-    [dispatch],
-  )
-  const handleAddMagicalDancePoint = useCallback(
-    (id: number) => dispatch(incrementMagicalDance(id)),
-    [dispatch],
-  )
-  const handleRemoveMagicalDancePoint = useCallback(
-    (id: number) => dispatch(decrementMagicalDance(id)),
-    [dispatch],
-  )
-
-  const handleAddMagicalMelody = useCallback(
-    (id: number) => dispatch(addMagicalMelody(id)),
-    [dispatch],
-  )
-  const handleRemoveMagicalMelody = useCallback(
-    (id: number) => dispatch(removeMagicalMelody(id)),
-    [dispatch],
-  )
-  const handleAddMagicalMelodyPoint = useCallback(
-    (id: number) => dispatch(incrementMagicalMelody(id)),
-    [dispatch],
-  )
-  const handleRemoveMagicalMelodyPoint = useCallback(
-    (id: number) => dispatch(decrementMagicalMelody(id)),
-    [dispatch],
-  )
-
-  const handleAddJesterTrick = useCallback((id: number) => dispatch(addJesterTrick(id)), [dispatch])
-  const handleRemoveJesterTrick = useCallback(
-    (id: number) => dispatch(removeJesterTrick(id)),
-    [dispatch],
-  )
-  const handleAddJesterTrickPoint = useCallback(
-    (id: number) => dispatch(incrementJesterTrick(id)),
-    [dispatch],
-  )
-  const handleRemoveJesterTrickPoint = useCallback(
-    (id: number) => dispatch(decrementJesterTrick(id)),
-    [dispatch],
-  )
-
-  const handleAddAnimistPower = useCallback(
-    (id: number) => dispatch(addAnimistPower(id)),
-    [dispatch],
-  )
-  const handleRemoveAnimistPower = useCallback(
-    (id: number) => dispatch(removeAnimistPower(id)),
-    [dispatch],
-  )
-  const handleAddAnimistPowerPoint = useCallback(
-    (id: number) => dispatch(incrementAnimistPower(id)),
-    [dispatch],
-  )
-  const handleRemoveAnimistPowerPoint = useCallback(
-    (id: number) => dispatch(decrementAnimistPower(id)),
-    [dispatch],
-  )
-
-  const handleAddGeodeRitual = useCallback((id: number) => dispatch(addGeodeRitual(id)), [dispatch])
-  const handleRemoveGeodeRitual = useCallback(
-    (id: number) => dispatch(removeGeodeRitual(id)),
-    [dispatch],
-  )
-  const handleAddGeodeRitualPoint = useCallback(
-    (id: number) => dispatch(incrementGeodeRitual(id)),
-    [dispatch],
-  )
-  const handleRemoveGeodeRitualPoint = useCallback(
-    (id: number) => dispatch(decrementGeodeRitual(id)),
-    [dispatch],
-  )
-
-  const handleAddZibiljaRitual = useCallback(
-    (id: number) => dispatch(addZibiljaRitual(id)),
-    [dispatch],
-  )
-  const handleRemoveZibiljaRitual = useCallback(
-    (id: number) => dispatch(removeZibiljaRitual(id)),
-    [dispatch],
-  )
-  const handleAddZibiljaRitualPoint = useCallback(
-    (id: number) => dispatch(incrementZibiljaRitual(id)),
-    [dispatch],
-  )
-  const handleRemoveZibiljaRitualPoint = useCallback(
-    (id: number) => dispatch(decrementZibiljaRitual(id)),
+  // TODO: Check available AP
+  const handleAddCantrip = useCallback((id: number) => dispatch(addCantrip({ id })), [dispatch])
+  const handleRemoveCantrip = useCallback(
+    (id: number) => dispatch(removeCantrip({ id })),
     [dispatch],
   )
 
@@ -391,17 +172,17 @@ export const Spells: FC = () => {
         </Options>
         <Main classOnly>
           <ListHeader>
-            <ListHeaderTag className="name">{translate("spells.header.name")}</ListHeaderTag>
+            <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate("spells.header.property")}
-              {sortOrder === "group" ? ` / ${translate("spells.header.group")}` : null}
+              {translate("Property")}
+              {sortOrder === "group" ? ` / ${translate("Group")}` : null}
             </ListHeaderTag>
-            <ListHeaderTag className="check">{translate("spells.header.check")}</ListHeaderTag>
-            <ListHeaderTag className="mod" hint={translate("spells.header.checkmodifier.tooltip")}>
-              {translate("spells.header.checkmodifier")}
+            <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
+            <ListHeaderTag className="mod" hint={translate("Check Modifier")}>
+              {translate("Mod")}
             </ListHeaderTag>
-            <ListHeaderTag className="ic" hint={translate("spells.header.improvementcost.tooltip")}>
-              {translate("spells.header.improvementcost")}
+            <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
+              {translate("IC")}
             </ListHeaderTag>
             <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder" />
@@ -429,7 +210,6 @@ export const Spells: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           spell={x}
                           sortOrder={sortOrder}
-                          add={handleAddSpell}
                         />
                       )
 
@@ -440,7 +220,6 @@ export const Spells: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           ritual={x}
                           sortOrder={sortOrder}
-                          add={handleAddRitual}
                         />
                       )
 
@@ -451,7 +230,6 @@ export const Spells: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           curse={x}
                           sortOrder={sortOrder}
-                          add={handleAddCurse}
                         />
                       )
 
@@ -462,7 +240,6 @@ export const Spells: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           elvenMagicalSong={x}
                           sortOrder={sortOrder}
-                          add={handleAddElvenMagicalSong}
                         />
                       )
 
@@ -473,7 +250,6 @@ export const Spells: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           dominationRitual={x}
                           sortOrder={sortOrder}
-                          add={handleAddDominationRitual}
                         />
                       )
 
@@ -484,7 +260,6 @@ export const Spells: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           magicalDance={x}
                           sortOrder={sortOrder}
-                          add={handleAddMagicalDance}
                         />
                       )
 
@@ -495,7 +270,6 @@ export const Spells: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           magicalMelody={x}
                           sortOrder={sortOrder}
-                          add={handleAddMagicalMelody}
                         />
                       )
 
@@ -506,7 +280,6 @@ export const Spells: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           jesterTrick={x}
                           sortOrder={sortOrder}
-                          add={handleAddJesterTrick}
                         />
                       )
 
@@ -517,7 +290,6 @@ export const Spells: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           animistPower={x}
                           sortOrder={sortOrder}
-                          add={handleAddAnimistPower}
                         />
                       )
 
@@ -528,7 +300,6 @@ export const Spells: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           geodeRitual={x}
                           sortOrder={sortOrder}
-                          add={handleAddGeodeRitual}
                         />
                       )
 
@@ -539,7 +310,6 @@ export const Spells: FC = () => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           zibiljaRitual={x}
                           sortOrder={sortOrder}
-                          add={handleAddZibiljaRitual}
                         />
                       )
 
@@ -589,20 +359,20 @@ export const Spells: FC = () => {
       </Options>
       <Main>
         <ListHeader>
-          <ListHeaderTag className="name">{translate("spells.header.name")}</ListHeaderTag>
+          <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate("spells.header.property")}
-            {sortOrder === "group" ? ` / ${translate("spells.header.group")}` : null}
+            {translate("Property")}
+            {sortOrder === "group" ? ` / ${translate("Group")}` : null}
           </ListHeaderTag>
-          <ListHeaderTag className="value" hint={translate("spells.header.skillrating.tooltip")}>
-            {translate("spells.header.skillrating")}
+          <ListHeaderTag className="value" hint={translate("Skill Rating")}>
+            {translate("SR")}
           </ListHeaderTag>
-          <ListHeaderTag className="check">{translate("spells.header.check")}</ListHeaderTag>
-          <ListHeaderTag className="mod" hint={translate("spells.header.checkmodifier.tooltip")}>
-            {translate("spells.header.checkmodifier")}
+          <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
+          <ListHeaderTag className="mod" hint={translate("Check Modifier")}>
+            {translate("Mod")}
           </ListHeaderTag>
-          <ListHeaderTag className="ic" hint={translate("spells.header.improvementcost.tooltip")}>
-            {translate("spells.header.improvementcost")}
+          <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
+            {translate("IC")}
           </ListHeaderTag>
           {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
           <ListHeaderTag className="btn-placeholder" />
@@ -631,9 +401,6 @@ export const Spells: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         spell={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddSpellPoint}
-                        removePoint={handleRemoveSpellPoint}
-                        remove={handleRemoveSpell}
                       />
                     )
 
@@ -644,9 +411,6 @@ export const Spells: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         ritual={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddRitualPoint}
-                        removePoint={handleRemoveRitualPoint}
-                        remove={handleRemoveRitual}
                       />
                     )
 
@@ -657,9 +421,6 @@ export const Spells: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         curse={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddCursePoint}
-                        removePoint={handleRemoveCursePoint}
-                        remove={handleRemoveCurse}
                       />
                     )
 
@@ -670,9 +431,6 @@ export const Spells: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         elvenMagicalSong={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddElvenMagicalSongPoint}
-                        removePoint={handleRemoveElvenMagicalSongPoint}
-                        remove={handleRemoveElvenMagicalSong}
                       />
                     )
 
@@ -683,9 +441,6 @@ export const Spells: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         dominationRitual={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddDominationRitualPoint}
-                        removePoint={handleRemoveDominationRitualPoint}
-                        remove={handleRemoveDominationRitual}
                       />
                     )
 
@@ -696,9 +451,6 @@ export const Spells: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         magicalDance={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddMagicalDancePoint}
-                        removePoint={handleRemoveMagicalDancePoint}
-                        remove={handleRemoveMagicalDance}
                       />
                     )
 
@@ -709,9 +461,6 @@ export const Spells: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         magicalMelody={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddMagicalMelodyPoint}
-                        removePoint={handleRemoveMagicalMelodyPoint}
-                        remove={handleRemoveMagicalMelody}
                       />
                     )
 
@@ -722,9 +471,6 @@ export const Spells: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         jesterTrick={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddJesterTrickPoint}
-                        removePoint={handleRemoveJesterTrickPoint}
-                        remove={handleRemoveJesterTrick}
                       />
                     )
 
@@ -735,9 +481,6 @@ export const Spells: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         animistPower={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddAnimistPowerPoint}
-                        removePoint={handleRemoveAnimistPowerPoint}
-                        remove={handleRemoveAnimistPower}
                       />
                     )
 
@@ -748,9 +491,6 @@ export const Spells: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         geodeRitual={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddGeodeRitualPoint}
-                        removePoint={handleRemoveGeodeRitualPoint}
-                        remove={handleRemoveGeodeRitual}
                       />
                     )
 
@@ -761,9 +501,6 @@ export const Spells: FC = () => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         zibiljaRitual={x}
                         sortOrder={sortOrder}
-                        addPoint={handleAddZibiljaRitualPoint}
-                        removePoint={handleRemoveZibiljaRitualPoint}
-                        remove={handleRemoveZibiljaRitual}
                       />
                     )
 

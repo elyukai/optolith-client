@@ -3,21 +3,43 @@ import { cursesImprovementCost } from "../../../../../shared/domain/rated/magica
 import { DisplayedActiveCurse } from "../../../../../shared/domain/rated/spellActive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { useActiveActivatableActions } from "../../../../hooks/ratedActions.ts"
+import {
+  decrementCurse,
+  incrementCurse,
+  removeCurse,
+  setCurse,
+} from "../../../../slices/magicalActions/cursesSlice.ts"
 import { ActiveMagicalActionsListItem } from "./ActiveMagicalActionsListItem.tsx"
 
 type Props = {
   insertTopMargin?: boolean
   curse: DisplayedActiveCurse
   sortOrder: SpellsSortOrder
-  addPoint: (id: number) => void
-  removePoint: (id: number) => void
-  remove: (id: number) => void
 }
 
 const ActiveCursesListItem: FC<Props> = props => {
-  const { insertTopMargin, curse, sortOrder, addPoint, removePoint, remove } = props
+  const { insertTopMargin, curse, sortOrder } = props
 
   const translate = useTranslate()
+
+  const {
+    handleAddPoint,
+    handleRemovePoint,
+    handleSetToMaximumPoints,
+    handleSetToMinimumPoints,
+    handleRemove,
+  } = useActiveActivatableActions(
+    curse.static.id,
+    curse.dynamic.value,
+    curse.maximum,
+    curse.minimum ?? 0,
+    cursesImprovementCost,
+    incrementCurse,
+    decrementCurse,
+    setCurse,
+    removeCurse,
+  )
 
   return (
     <ActiveMagicalActionsListItem
@@ -28,9 +50,11 @@ const ActiveCursesListItem: FC<Props> = props => {
       groupName={translate("Curses")}
       checkPenalty={curse.static.check_penalty}
       improvementCost={cursesImprovementCost}
-      addPoint={addPoint}
-      removePoint={removePoint}
-      remove={remove}
+      addPoint={handleAddPoint}
+      removePoint={handleRemovePoint}
+      setToMaximumPoints={handleSetToMaximumPoints}
+      setToMinimumPoints={handleSetToMinimumPoints}
+      remove={handleRemove}
     />
   )
 }

@@ -3,19 +3,26 @@ import { geodeRitualsImprovementCost } from "../../../../../shared/domain/rated/
 import { DisplayedInactiveGeodeRitual } from "../../../../../shared/domain/rated/spellInactive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { useInactiveActivatableActions } from "../../../../hooks/ratedActions.ts"
+import { addGeodeRitual } from "../../../../slices/magicalActions/geodeRitualsSlice.ts"
 import { InactiveMagicalActionsListItem } from "./InactiveMagicalActionsListItem.tsx"
 
 type Props = {
   insertTopMargin?: boolean
   geodeRitual: DisplayedInactiveGeodeRitual
   sortOrder: SpellsSortOrder
-  add: (id: number) => void
 }
 
 const InactiveGeodeRitualsListItem: FC<Props> = props => {
-  const { insertTopMargin, geodeRitual, sortOrder, add } = props
+  const { insertTopMargin, geodeRitual, sortOrder } = props
 
   const translate = useTranslate()
+
+  const { handleAdd } = useInactiveActivatableActions(
+    geodeRitual.static.id,
+    geodeRitualsImprovementCost,
+    addGeodeRitual,
+  )
 
   return (
     <InactiveMagicalActionsListItem
@@ -25,7 +32,7 @@ const InactiveGeodeRitualsListItem: FC<Props> = props => {
       sortOrder={sortOrder}
       groupName={translate("Geode Rituals")}
       improvementCost={geodeRitualsImprovementCost}
-      add={add}
+      add={handleAdd}
     />
   )
 }

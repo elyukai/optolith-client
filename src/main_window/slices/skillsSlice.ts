@@ -1,12 +1,11 @@
 import { ImprovementCost, fromRaw } from "../../shared/domain/adventurePoints/improvementCost.ts"
+import { createEmptyDynamicSkill } from "../../shared/domain/rated/skill.ts"
 import { createRatedSlice } from "./ratedSlice.ts"
 
-const {
-  create,
-  createInitial,
-  getValue,
-  actions: { incrementAction, decrementAction },
-  reducer,
+// eslint-disable-next-line jsdoc/require-jsdoc
+export const {
+  actions: { incrementEntry: incrementSkill, decrementEntry: decrementSkill, setEntry: setSkill },
+  reducer: skillsReducer,
 } = createRatedSlice({
   namespace: "skills",
   entityName: "Skill",
@@ -14,13 +13,5 @@ const {
   minValue: 0,
   getImprovementCost: (id, database) =>
     fromRaw(database.skills[id]?.improvement_cost) ?? ImprovementCost.D,
+  createEmptyRated: createEmptyDynamicSkill,
 })
-
-export {
-  create as createDynamicSkill,
-  createInitial as createInitialDynamicSkill,
-  decrementAction as decrementSkill,
-  incrementAction as incrementSkill,
-  getValue as skillValue,
-  reducer as skillsReducer,
-}

@@ -9,12 +9,14 @@ import { DisplayedInactiveRitual } from "../../../../../shared/domain/rated/spel
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { useInactiveActivatableActions } from "../../../../hooks/ratedActions.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
 import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
 } from "../../../../slices/inlineWikiSlice.ts"
+import { addRitual } from "../../../../slices/ritualsSlice.ts"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillCheck } from "../skills/SkillCheck.tsx"
 import { SkillFill } from "../skills/SkillFill.tsx"
@@ -24,7 +26,6 @@ type Props = {
   insertTopMargin?: boolean
   ritual: DisplayedInactiveRitual
   sortOrder: SpellsSortOrder
-  add: (id: number) => void
 }
 
 const InactiveRitualsListItem: FC<Props> = props => {
@@ -36,7 +37,6 @@ const InactiveRitualsListItem: FC<Props> = props => {
       isUnfamiliar,
     },
     sortOrder,
-    add,
   } = props
 
   const translate = useTranslate()
@@ -46,6 +46,8 @@ const InactiveRitualsListItem: FC<Props> = props => {
   const getProperty = useAppSelector(SelectGetById.Static.Property)
 
   const { name = "" } = translateMap(translations) ?? {}
+
+  const { handleAdd } = useInactiveActivatableActions(id, fromRaw(improvement_cost), addRitual)
 
   const handleSelectForInfo = useCallback(
     () => dispatch(changeInlineLibraryEntry({ tag: "Ritual", ritual: id })),
@@ -62,6 +64,7 @@ const InactiveRitualsListItem: FC<Props> = props => {
       insertTopMargin={insertTopMargin}
       active={inlineLibraryEntryId?.tag === "Ritual" && inlineLibraryEntryId.ritual === id}
       unrecommended={isUnfamiliar}
+      disabled={!isAvailable}
     >
       <ListItemName name={name} onClick={handleSelectForInfo} />
       <ListItemSeparator />
@@ -79,9 +82,7 @@ const InactiveRitualsListItem: FC<Props> = props => {
       </ListItemValues>
       <SkillButtons
         addDisabled={!isAvailable}
-        ic={fromRaw(improvement_cost)}
-        id={id}
-        addPoint={add}
+        addPoint={handleAdd}
         selectForInfo={handleSelectForInfo}
       />
     </ListItem>

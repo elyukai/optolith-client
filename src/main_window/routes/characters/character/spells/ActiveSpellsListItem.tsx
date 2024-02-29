@@ -9,6 +9,7 @@ import { DisplayedActiveSpell } from "../../../../../shared/domain/rated/spellAc
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { useActiveActivatableActions } from "../../../../hooks/ratedActions.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
@@ -16,6 +17,12 @@ import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
 } from "../../../../slices/inlineWikiSlice.ts"
+import {
+  decrementSpell,
+  incrementSpell,
+  removeSpell,
+  setSpell,
+} from "../../../../slices/spellsSlice.ts"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillCheck } from "../skills/SkillCheck.tsx"
 import { SkillFill } from "../skills/SkillFill.tsx"
@@ -26,9 +33,6 @@ type Props = {
   insertTopMargin?: boolean
   spell: DisplayedActiveSpell
   sortOrder: SpellsSortOrder
-  addPoint: (id: number) => void
-  removePoint: (id: number) => void
-  remove: (id: number) => void
 }
 
 const ActiveSpellsListItem: FC<Props> = props => {
@@ -37,14 +41,13 @@ const ActiveSpellsListItem: FC<Props> = props => {
     spell: {
       dynamic: { value },
       static: { id, check, check_penalty, property, improvement_cost, translations },
+      maximum,
+      minimum,
       isDecreasable,
       isIncreasable,
       isUnfamiliar,
     },
     sortOrder,
-    addPoint,
-    removePoint,
-    remove,
   } = props
 
   const translate = useTranslate()
@@ -54,7 +57,25 @@ const ActiveSpellsListItem: FC<Props> = props => {
   const canRemove = useAppSelector(selectCanRemove)
   const getProperty = useAppSelector(SelectGetById.Static.Property)
 
-  const { name = "" } = translateMap(translations) ?? {}
+  const { name = "???" } = translateMap(translations) ?? {}
+
+  const {
+    handleAddPoint,
+    handleRemovePoint,
+    handleSetToMaximumPoints,
+    handleSetToMinimumPoints,
+    handleRemove,
+  } = useActiveActivatableActions(
+    id,
+    value,
+    maximum,
+    minimum ?? 0,
+    fromRaw(improvement_cost),
+    incrementSpell,
+    decrementSpell,
+    setSpell,
+    removeSpell,
+  )
 
   const handleSelectForInfo = useCallback(
     () => dispatch(changeInlineLibraryEntry({ tag: "Spell", spell: id })),
@@ -82,19 +103,19 @@ const ActiveSpellsListItem: FC<Props> = props => {
         }
       />
       <ListItemValues>
-        <SkillRating sr={value} addPoint={addPoint} />
+        <SkillRating sr={value} />
         <SkillCheck check={check} checkPenalty={check_penalty} />
         <SkillFill />
         <SkillImprovementCost ic={fromRaw(improvement_cost)} />
       </ListItemValues>
       <SkillButtons
         addDisabled={!isIncreasable}
-        ic={fromRaw(improvement_cost)}
-        id={id}
         removeDisabled={!isDecreasable}
-        sr={value}
-        addPoint={addPoint}
-        removePoint={canRemove ? (value === 0 ? remove : removePoint) : undefined}
+        addPoint={handleAddPoint}
+        setToMax={handleSetToMaximumPoints}
+        removePoint={canRemove ? (value === 0 ? handleRemovePoint : handleRemove) : undefined}
+        setToMin={canRemove && value > 0 ? handleSetToMinimumPoints : undefined}
+        decrementIsRemove={value === 0}
         selectForInfo={handleSelectForInfo}
       />
     </ListItem>

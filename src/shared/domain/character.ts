@@ -1,9 +1,11 @@
 import { ActivatableMap, TinyActivatableMap } from "./activatable/activatableEntry.ts"
 import { Color } from "./color.ts"
+import { CultureDependency } from "./culture.ts"
 import { Energy, EnergyWithBuyBack } from "./energy.ts"
-import { Pact } from "./pact.ts"
+import { Pact, PactDependency } from "./pact.ts"
 import { Purse } from "./purse.ts"
-import { RatedDependency } from "./rated/ratedDependency.ts"
+import { RaceDependency } from "./race.ts"
+import { PrimaryAttributeDependency } from "./rated/primaryAttribute.ts"
 import {
   ActivatableRatedMap,
   ActivatableRatedWithEnhancementsMap,
@@ -11,8 +13,9 @@ import {
 } from "./rated/ratedEntry.ts"
 import { FocusRuleInstance } from "./rules/focusRule.ts"
 import { OptionalRuleInstance } from "./rules/optionalRule.ts"
-import { Sex } from "./sex.ts"
+import { Sex, SexDependency } from "./sex.ts"
 import { SocialStatusDependency } from "./socialStatus.ts"
+import { PublicationDependency } from "./sources/publicationDependency.ts"
 import { StateInstance } from "./state.ts"
 
 /**
@@ -81,6 +84,11 @@ export type Character = {
      * The identifier of the attribute adjustment that has been selected from the race.
      */
     selectedAttributeAdjustmentId: number
+
+    /**
+     * Dependencies on the selected race.
+     */
+    dependencies: RaceDependency[]
   }
 
   /**
@@ -96,6 +104,11 @@ export type Character = {
      * Describes whether the cultural package has been applied when creating the character.
      */
     isCulturalPackageApplied: boolean
+
+    /**
+     * Dependencies on the selected culture.
+     */
+    dependencies: CultureDependency[]
   }
 
   /**
@@ -153,6 +166,11 @@ export type Character = {
     includePublications: number[]
 
     /**
+     * Dependencies on certain publications.
+     */
+    publicationDependencies: PublicationDependency[]
+
+    /**
      * A map of focus rules that may be active for the character.
      */
     focusRules: {
@@ -182,6 +200,11 @@ export type Character = {
      * The character's sex. It does not have to be binary, although it always must be specified how to handle it in the context of binary sex prerequisites. You can also provide a custom sex with a custom name.
      */
     sex: Sex
+
+    /**
+     * Dependencies on the character’s sex.
+     */
+    sexDependencies: SexDependency[]
 
     /**
      * The family names and/or family members.
@@ -285,7 +308,6 @@ export type Character = {
     krallenkettenzauber: ActivatableMap
     liturgicalStyleSpecialAbilities: ActivatableMap
     lycantropicGifts: ActivatableMap
-    magicalRunes: ActivatableMap
     magicalSigns: ActivatableMap
     magicalSpecialAbilities: ActivatableMap
     magicalTraditions: ActivatableMap
@@ -310,6 +332,9 @@ export type Character = {
   }
 
   attributes: RatedMap
+
+  magicalPrimaryAttributeDependencies: PrimaryAttributeDependency[]
+  blessedPrimaryAttributeDependencies: PrimaryAttributeDependency[]
 
   derivedCharacteristics: {
     lifePoints: Energy
@@ -338,18 +363,17 @@ export type Character = {
     animistPowers: ActivatableRatedMap
     geodeRituals: ActivatableRatedMap
     zibiljaRituals: ActivatableRatedMap
+    magicalRunes: ActivatableRatedMap
   }
 
   blessings: TinyActivatableMap
   liturgicalChants: ActivatableRatedWithEnhancementsMap
   ceremonies: ActivatableRatedWithEnhancementsMap
 
-  magicalPrimaryAttributeDependencies: RatedDependency[]
-  blessedPrimaryAttributeDependencies: RatedDependency[]
-
   // items: {}
   // hitZoneArmors: {}
   purse: Purse
   // creatures: {}
   pact?: Pact
+  pactDependencies: PactDependency[]
 }

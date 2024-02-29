@@ -1,7 +1,7 @@
 /* eslint-disable jsdoc/require-jsdoc */
 /* eslint-disable max-len */
 import { createAction } from "@reduxjs/toolkit"
-import { createImmerReducer } from "../../shared/utils/redux.ts"
+import { DraftReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 
 export const incrementLifePoints = createAction("derivedCharacteristics/incrementLifePoints")
@@ -50,7 +50,7 @@ export const decrementKarmaPointsBoughtBack = createAction(
   "derivedCharacteristics/decrementKarmaPointsBoughtBack",
 )
 
-export const derivedCharacteristicsReducer = createImmerReducer<CharacterState>((state, action) => {
+export const derivedCharacteristicsReducer: DraftReducer<CharacterState> = (state, action) => {
   if (incrementLifePoints.match(action)) {
     state.derivedCharacteristics.lifePoints.purchased++
   } else if (decrementLifePoints.match(action)) {
@@ -106,4 +106,4 @@ export const derivedCharacteristicsReducer = createImmerReducer<CharacterState>(
       state.derivedCharacteristics.karmaPoints.permanentlyLostBoughtBack--
     }
   }
-})
+}
