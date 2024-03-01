@@ -39,7 +39,8 @@ import { modifierByLevel } from "./activatableModifiers.ts"
  * A combination of a static activatable entry and its dynamic counterpart,
  * extended by whether the entry can be activated and configuration options.
  */
-export type DisplayedInactiveActivatable<T> = {
+export type DisplayedInactiveActivatable<K extends string, T> = {
+  kind: K
   static: T
   dynamic: Activatable | undefined
   isAvailable: boolean
@@ -923,17 +924,19 @@ export const getMaximumLevel = (
  * extended by whether the entry can be activated and configuration options.
  */
 export const getInactiveActivatables = <
+  K extends string,
   T extends {
     id: number
     maximum?: number
     levels?: number
     prerequisites?: P[]
-    ap_value: AdventurePointsValue
+    ap_value: AdventurePointsValue | number
     src: PublicationRefs
     translations: LocaleMap<{ input?: string }>
   },
   P = T extends { prerequisites?: (infer P1)[] } ? P1 : never,
 >(
+  kind: K,
   staticActivatables: T[],
   getDynamicActivatableById: (id: number) => Activatable | undefined,
   isEntryAvailable: (src: PublicationRefs) => boolean,
@@ -950,9 +953,9 @@ export const getInactiveActivatables = <
     getDynamicAdvantageById: GetById.Dynamic.Advantage
     getDynamicDisadvantageById: GetById.Dynamic.Disadvantage
   },
-): DisplayedInactiveActivatable<T>[] =>
+): DisplayedInactiveActivatable<K, T>[] =>
   staticActivatables
-    .map((staticActivatable): DisplayedInactiveActivatable<T> | undefined => {
+    .map((staticActivatable): DisplayedInactiveActivatable<K, T> | undefined => {
       const idObject = createActivatableIdentifierObject(staticActivatable.id)
       const dynamicActivatable = getDynamicActivatableById(staticActivatable.id)
       const activations = dynamicActivatable?.instances.length ?? 0
@@ -982,7 +985,9 @@ export const getInactiveActivatables = <
       const paramModifiers = getEntrySpecificDisplayParameterModifiers(
         idObject,
         activations,
-        staticActivatable.ap_value,
+        typeof staticActivatable.ap_value === "number"
+          ? { tag: "Fixed", fixed: staticActivatable.ap_value }
+          : staticActivatable.ap_value,
         countOptionsForCurrent,
         staticActivatable.translations,
         caps,
@@ -1026,6 +1031,7 @@ export const getInactiveActivatables = <
       )
 
       return {
+        kind,
         static: staticActivatable,
         dynamic: dynamicActivatable,
         isAvailable:

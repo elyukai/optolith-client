@@ -207,6 +207,10 @@ ul.list-wrapper {
         text-transform: none;
         color: var(--headings-color);
         margin: 0;
+
+        &.wide-60 {
+          font-size: 8.5px;
+        }
       }
 
       &.level {

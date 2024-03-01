@@ -35,6 +35,54 @@ import { rangedCombatTechniquesReducer } from "./rangedCombatTechniqueSlice.ts"
 import { ritualsReducer } from "./ritualsSlice.ts"
 import { rulesReducer } from "./rulesSlice.ts"
 import { skillsReducer } from "./skillsSlice.ts"
+import { advancedCombatSpecialAbilitiesReducer } from "./specialAbilities/advancedCombatSpecialAbilitiesSlice.ts"
+import { advancedKarmaSpecialAbilitiesReducer } from "./specialAbilities/advancedKarmaSpecialAbilitiesSlice.ts"
+import { advancedMagicalSpecialAbilitiesReducer } from "./specialAbilities/advancedMagicalSpecialAbilitiesSlice.ts"
+import { advancedSkillSpecialAbilitiesReducer } from "./specialAbilities/advancedSkillSpecialAbilitiesSlice.ts"
+import { ancestorGlyphsReducer } from "./specialAbilities/ancestorGlyphsSlice.ts"
+import { arcaneOrbEnchantmentsReducer } from "./specialAbilities/arcaneOrbEnchantmentsSlice.ts"
+import { attireEnchantmentsReducer } from "./specialAbilities/attireEnchantmentsSlice.ts"
+import { blessedTraditionsReducer } from "./specialAbilities/blessedTraditionsSlice.ts"
+import { bowlEnchantmentsReducer } from "./specialAbilities/bowlEnchantmentsSlice.ts"
+import { brawlingSpecialAbilitiesReducer } from "./specialAbilities/brawlingSpecialAbilitiesSlice.ts"
+import { cauldronEnchantmentsReducer } from "./specialAbilities/cauldronEnchantmentsSlice.ts"
+import { ceremonialItemSpecialAbilitiesReducer } from "./specialAbilities/ceremonialItemSpecialAbilitiesSlice.ts"
+import { chronicleEnchantmentsReducer } from "./specialAbilities/chronicleEnchantmentsSlice.ts"
+import { combatSpecialAbilitiesReducer } from "./specialAbilities/combatSpecialAbilitiesSlice.ts"
+import { combatStyleSpecialAbilitiesReducer } from "./specialAbilities/combatStyleSpecialAbilitiesSlice.ts"
+import { commandSpecialAbilitiesReducer } from "./specialAbilities/commandSpecialAbilitiesSlice.ts"
+import { daggerRitualsReducer } from "./specialAbilities/daggerRitualsSlice.ts"
+import { familiarSpecialAbilitiesReducer } from "./specialAbilities/familiarSpecialAbilitiesSlice.ts"
+import { fatePointSexSpecialAbilitiesReducer } from "./specialAbilities/fatePointSexSpecialAbilitiesSlice.ts"
+import { fatePointSpecialAbilitiesReducer } from "./specialAbilities/fatePointSpecialAbilitiesSlice.ts"
+import { foolsHatEnchantmentsReducer } from "./specialAbilities/foolsHatEnchantmentsSlice.ts"
+import { generalSpecialAbilitiesReducer } from "./specialAbilities/generalSpecialAbilitiesSlice.ts"
+import { instrumentEnchantmentsReducer } from "./specialAbilities/instrumentEnchantmentsSlice.ts"
+import { karmaSpecialAbilitiesReducer } from "./specialAbilities/karmaSpecialAbilitiesSlice.ts"
+import { krallenkettenzauberReducer } from "./specialAbilities/krallenkettenzauberSlice.ts"
+import { liturgicalStyleSpecialAbilitiesReducer } from "./specialAbilities/liturgicalStyleSpecialAbilitiesSlice.ts"
+import { lycantropicGiftsReducer } from "./specialAbilities/lycantropicGiftsSlice.ts"
+import { magicStyleSpecialAbilitiesReducer } from "./specialAbilities/magicStyleSpecialAbilitiesSlice.ts"
+import { magicalSignsReducer } from "./specialAbilities/magicalSignsSlice.ts"
+import { magicalSpecialAbilitiesReducer } from "./specialAbilities/magicalSpecialAbilitiesSlice.ts"
+import { magicalTraditionsReducer } from "./specialAbilities/magicalTraditionsSlice.ts"
+import { orbEnchantmentsReducer } from "./specialAbilities/orbEnchantmentsSlice.ts"
+import { pactGiftsReducer } from "./specialAbilities/pactGiftsSlice.ts"
+import { protectiveWardingCircleSpecialAbilitiesReducer } from "./specialAbilities/protectiveWardingCircleSpecialAbilitiesSlice.ts"
+import { ringEnchantmentsReducer } from "./specialAbilities/ringEnchantmentsSlice.ts"
+import { sermonsReducer } from "./specialAbilities/sermonsSlice.ts"
+import { sexSpecialAbilitiesReducer } from "./specialAbilities/sexSpecialAbilitiesSlice.ts"
+import { sickleRitualsReducer } from "./specialAbilities/sickleRitualsSlice.ts"
+import { sikaryanDrainSpecialAbilitiesReducer } from "./specialAbilities/sikaryanDrainSpecialAbilitiesSlice.ts"
+import { skillStyleSpecialAbilitiesReducer } from "./specialAbilities/skillStyleSpecialAbilitiesSlice.ts"
+import { spellSwordEnchantmentsReducer } from "./specialAbilities/spellSwordEnchantmentsSlice.ts"
+import { staffEnchantmentsReducer } from "./specialAbilities/staffEnchantmentsSlice.ts"
+import { toyEnchantmentsReducer } from "./specialAbilities/toyEnchantmentsSlice.ts"
+import { trinkhornzauberReducer } from "./specialAbilities/trinkhornzauberSlice.ts"
+import { vampiricGiftsReducer } from "./specialAbilities/vampiricGiftsSlice.ts"
+import { visionsReducer } from "./specialAbilities/visionsSlice.ts"
+import { wandEnchantmentsReducer } from "./specialAbilities/wandEnchantmentsSlice.ts"
+import { weaponEnchantmentsReducer } from "./specialAbilities/weaponEnchantmentsSlice.ts"
 import { spellsReducer } from "./spellsSlice.ts"
 
 /**
@@ -1122,4 +1170,52 @@ export const characterReducer = reduceDraftReducers<
   blessingsReducer,
   liturgicalChantsReducer,
   ceremoniesReducer,
+  advancedCombatSpecialAbilitiesReducer,
+  advancedKarmaSpecialAbilitiesReducer,
+  advancedMagicalSpecialAbilitiesReducer,
+  advancedSkillSpecialAbilitiesReducer,
+  ancestorGlyphsReducer,
+  arcaneOrbEnchantmentsReducer,
+  attireEnchantmentsReducer,
+  blessedTraditionsReducer,
+  bowlEnchantmentsReducer,
+  brawlingSpecialAbilitiesReducer,
+  cauldronEnchantmentsReducer,
+  ceremonialItemSpecialAbilitiesReducer,
+  chronicleEnchantmentsReducer,
+  combatSpecialAbilitiesReducer,
+  combatStyleSpecialAbilitiesReducer,
+  commandSpecialAbilitiesReducer,
+  daggerRitualsReducer,
+  familiarSpecialAbilitiesReducer,
+  fatePointSexSpecialAbilitiesReducer,
+  fatePointSpecialAbilitiesReducer,
+  foolsHatEnchantmentsReducer,
+  generalSpecialAbilitiesReducer,
+  instrumentEnchantmentsReducer,
+  karmaSpecialAbilitiesReducer,
+  krallenkettenzauberReducer,
+  liturgicalStyleSpecialAbilitiesReducer,
+  lycantropicGiftsReducer,
+  magicalSignsReducer,
+  magicalSpecialAbilitiesReducer,
+  magicalTraditionsReducer,
+  magicStyleSpecialAbilitiesReducer,
+  orbEnchantmentsReducer,
+  pactGiftsReducer,
+  protectiveWardingCircleSpecialAbilitiesReducer,
+  ringEnchantmentsReducer,
+  sermonsReducer,
+  sexSpecialAbilitiesReducer,
+  sickleRitualsReducer,
+  sikaryanDrainSpecialAbilitiesReducer,
+  skillStyleSpecialAbilitiesReducer,
+  spellSwordEnchantmentsReducer,
+  staffEnchantmentsReducer,
+  toyEnchantmentsReducer,
+  trinkhornzauberReducer,
+  vampiricGiftsReducer,
+  visionsReducer,
+  wandEnchantmentsReducer,
+  weaponEnchantmentsReducer,
 )

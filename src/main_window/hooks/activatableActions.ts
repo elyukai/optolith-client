@@ -1,6 +1,5 @@
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit"
-import { Advantage } from "optolith-database-schema/types/Advantage"
-import { Disadvantage } from "optolith-database-schema/types/Disadvantage"
+import { AdventurePointsValue } from "optolith-database-schema/types/_Activatable"
 import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
 import { useCallback } from "react"
 import {
@@ -109,7 +108,7 @@ const useActiveActivatableActions = (
   const handleRemove = useCallback(
     (
       params: { id: number; index: number },
-      activeEntry: DisplayedActiveActivatable<Advantage | Disadvantage>,
+      activeEntry: DisplayedActiveActivatable<string, unknown>,
     ) => {
       const previousLevelCostDifference = getCostDifferenceOnRemove(activeEntry.cost)
       const enoughAP = areEnoughAdventurePointsAvailableToBuy(
@@ -133,13 +132,15 @@ const useActiveActivatableActions = (
   const handleChangeLevel = useCallback(
     (
       params: { id: number; index: number; level: number },
-      activeEntry: DisplayedActiveActivatable<Advantage | Disadvantage>,
+      activeEntry: DisplayedActiveActivatable<string, { ap_value: AdventurePointsValue | number }>,
     ): boolean => {
       const idObject = createIdObject(params.id)
       const previousLevelCostDifference = getCostDifferenceOnRemove(activeEntry.cost)
       const nextLevelCost = getCostOfInstance(
         idObject,
-        activeEntry.static.ap_value,
+        typeof activeEntry.static.ap_value === "number"
+          ? { tag: "Fixed", fixed: activeEntry.static.ap_value }
+          : activeEntry.static.ap_value,
         removeIndex(activeEntry.dynamic.instances, activeEntry.instanceIndex),
         activeEntry.dynamic.instances[activeEntry.instanceIndex]!,
         optionId => getSelectOptionsById(idObject)?.find(opt => equalsIdentifier(opt.id, optionId)),

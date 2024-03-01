@@ -179,7 +179,8 @@ import { getMaximumLevel } from "./activatableInactive.ts"
  * A combination of a static activatable entry and its dynamic counterpart,
  * extended by which activation/instance of the entry it represents.
  */
-export type DisplayedActiveActivatable<T> = {
+export type DisplayedActiveActivatable<K extends string, T> = {
+  kind: K
   static: T
   dynamic: Activatable
   instanceIndex: number
@@ -1605,16 +1606,18 @@ export const nameChunkToString = (
  * extended by which activation/instance of the entry it represents.
  */
 export const getActiveActivatables = <
+  K extends string,
   T extends {
     id: number
     levels?: number
     prerequisites?: P[]
-    ap_value: AdventurePointsValue
+    ap_value: AdventurePointsValue | number
     translations: LocaleMap<T10n>
   },
   P = T extends { prerequisites?: (infer P1)[] } ? P1 : never,
   T10n = T extends { translations: LocaleMap<infer T10n1> } ? T10n1 : never,
 >(
+  kind: K,
   getStaticActivatableById: (id: number) => T | undefined,
   dynamicActivatables: Activatable[],
   checkPrerequisites: (prerequisites: P[], level: number, id: number) => boolean,
@@ -1640,7 +1643,7 @@ export const getActiveActivatables = <
     getDynamicCloseCombatTechniqueById: GetById.Dynamic.CloseCombatTechnique
     getDynamicRangedCombatTechniqueById: GetById.Dynamic.RangedCombatTechnique
   },
-): DisplayedActiveActivatable<T>[] => {
+): DisplayedActiveActivatable<K, T>[] => {
   const getSelectOptionById = (idObject: ActivatableIdentifier, optionId: SelectOptionIdentifier) =>
     getSelectOptionsById(idObject)?.find(opt => equalsIdentifier(opt.id, optionId))
 
@@ -1668,12 +1671,17 @@ export const getActiveActivatables = <
       range: costRange,
       diff: totalCostDiff,
       values,
-    } = getCost(idObject, staticActivatable.ap_value, dynamicActivatable.instances, optionId =>
-      getSelectOptionById(idObject, optionId),
+    } = getCost(
+      idObject,
+      typeof staticActivatable.ap_value === "number"
+        ? { tag: "Fixed", fixed: staticActivatable.ap_value }
+        : staticActivatable.ap_value,
+      dynamicActivatable.instances,
+      optionId => getSelectOptionById(idObject, optionId),
     )
 
     return dynamicActivatable.instances.map(
-      (instance, instanceIndex): DisplayedActiveActivatable<T> => {
+      (instance, instanceIndex): DisplayedActiveActivatable<K, T> => {
         const minLevel = getMinimumLevel(idObject, dependencies, instance, caps)
         const maxLevel = getMaximumLevel(
           idObject,
@@ -1695,6 +1703,7 @@ export const getActiveActivatables = <
         )
 
         return {
+          kind,
           static: staticActivatable,
           dynamic: dynamicActivatable,
           instanceIndex,

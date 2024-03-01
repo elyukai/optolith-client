@@ -30,17 +30,17 @@ import {
   selectInlineLibraryEntryId,
 } from "../../../../slices/inlineWikiSlice.ts"
 
-type Props<T> = {
-  activatable: DisplayedActiveActivatable<T>
+type Props<K extends string, T> = {
+  activatable: DisplayedActiveActivatable<K, T>
   groupNameKey?: PickOfType<UI, string>
   isCustomCostAvailable?: boolean
   changeLevel: (
     parameters: { id: number; index: number; level: number },
-    activeEntry: DisplayedActiveActivatable<T>,
+    activeEntry: DisplayedActiveActivatable<K, T>,
   ) => boolean
   remove: (
     parameters: { id: number; index: number },
-    activeEntry: DisplayedActiveActivatable<T>,
+    activeEntry: DisplayedActiveActivatable<K, T>,
   ) => void
   createActivatableIdentifierObject: (id: number) => ActivatableIdentifier
 }
@@ -48,13 +48,14 @@ type Props<T> = {
 const getLevelKey = (option: DropdownOption<number>) => option.id
 
 const ActiveActivatablesListItem = <
+  K extends string,
   T extends {
     id: number
     levels?: number
     translations: LocaleMap<{ name: string }>
   },
 >(
-  props: Props<T>,
+  props: Props<K, T>,
 ): ReactNode => {
   const {
     activatable,

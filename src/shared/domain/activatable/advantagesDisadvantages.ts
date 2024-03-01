@@ -12,8 +12,10 @@ import { DisplayedInactiveActivatable } from "./activatableInactive.ts"
  */
 export const filterAndSortDisplayed = <
   T extends
-    | DisplayedInactiveActivatable<Advantage | Disadvantage>
-    | DisplayedActiveActivatable<Advantage | Disadvantage>,
+    | DisplayedInactiveActivatable<"Advantage", Advantage>
+    | DisplayedInactiveActivatable<"Disadvantage", Disadvantage>
+    | DisplayedActiveActivatable<"Advantage", Advantage>
+    | DisplayedActiveActivatable<"Disadvantage", Disadvantage>,
 >(
   visibleDisAdvantages: T[],
   filterText: string,

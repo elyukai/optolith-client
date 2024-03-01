@@ -11,8 +11,14 @@ import {
   DisplayedInactiveAdvantage,
   getInactiveAdvantages,
 } from "../../shared/domain/activatable/advantagesInactive.ts"
-import { getActiveDisadvantages } from "../../shared/domain/activatable/disadvantagesActive.ts"
-import { getInactiveDisadvantages } from "../../shared/domain/activatable/disadvantagesInactive.ts"
+import {
+  DisplayedActiveDisadvantage,
+  getActiveDisadvantages,
+} from "../../shared/domain/activatable/disadvantagesActive.ts"
+import {
+  DisplayedInactiveDisadvantage,
+  getInactiveDisadvantages,
+} from "../../shared/domain/activatable/disadvantagesInactive.ts"
 import {
   isRatedActive,
   isRatedWithEnhancementsActive,
@@ -115,7 +121,7 @@ export const selectVisibleInactiveDisadvantages = createSelector(
     activeVisionsCount,
     activeSpellworksCount,
     getDynamicAdvantageById,
-  ): DisplayedInactiveAdvantage[] =>
+  ): DisplayedInactiveDisadvantage[] =>
     getInactiveDisadvantages(
       staticDisadvantages,
       getDynamicDisadvantageById,
@@ -353,7 +359,7 @@ export const selectVisibleActiveDisadvantages = createSelector(
     getDynamicCloseCombatTechniqueById,
     getDynamicRangedCombatTechniqueById,
     startExperienceLevel,
-  ): DisplayedActiveAdvantage[] =>
+  ): DisplayedActiveDisadvantage[] =>
     getActiveDisadvantages(
       getStaticDisadvantageById,
       dynamicDisadvantages,

@@ -15,7 +15,10 @@ import { DisplayedInactiveActivatable, getInactiveActivatables } from "./activat
  * A combination of a static disadvantage and its dynamic counterpart, extended
  * by whether the entry can be activated and configuration options.
  */
-export type DisplayedInactiveDisadvantage = DisplayedInactiveActivatable<Disadvantage>
+export type DisplayedInactiveDisadvantage = DisplayedInactiveActivatable<
+  "Disadvantage",
+  Disadvantage
+>
 
 /**
  * Returns all disadvantages with their corresponding dynamic entry, extended by
@@ -37,6 +40,7 @@ export const getInactiveDisadvantages = (
   },
 ): DisplayedInactiveDisadvantage[] =>
   getInactiveActivatables(
+    "Disadvantage",
     staticDisadvantages,
     getDynamicDisadvantageById,
     isEntryAvailable,

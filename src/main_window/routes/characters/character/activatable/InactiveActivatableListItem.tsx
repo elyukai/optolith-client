@@ -42,8 +42,8 @@ import {
 } from "../../../../slices/inlineWikiSlice.ts"
 import { InactiveActivatableListItemOption } from "./InactiveActivatableListItemOption.tsx"
 
-type Props<T> = {
-  activatable: DisplayedInactiveActivatable<T>
+type Props<K extends string, T> = {
+  activatable: DisplayedInactiveActivatable<K, T>
   groupNameKey?: PickOfType<UI, string>
   isCustomCostAvailable?: boolean
   add: (parameters: { id: number; instance: ActivatableInstance }, cost: number) => void
@@ -53,13 +53,14 @@ type Props<T> = {
 const getLevelKey = (option: DropdownOption<number>) => option.id
 
 const InactiveActivatablesListItem = <
+  K extends string,
   T extends {
     id: number
-    ap_value: AdventurePointsValue
+    ap_value: AdventurePointsValue | number
     translations: LocaleMap<{ name: string }>
   },
 >(
-  props: Props<T>,
+  props: Props<K, T>,
 ): ReactNode => {
   const {
     activatable: {
@@ -145,7 +146,7 @@ const InactiveActivatablesListItem = <
     () =>
       getCostOfInstance(
         idObject,
-        ap_value,
+        typeof ap_value === "number" ? { tag: "Fixed", fixed: ap_value } : ap_value,
         dynamic?.instances ?? [],
         {
           level: selectedLevel,

@@ -11,7 +11,7 @@ import { DisplayedActiveActivatable, getActiveActivatables } from "./activatable
  * A combination of a static disadvantage and its dynamic counterpart, extended by
  * which activation/instance of the entry it represents.
  */
-export type DisplayedActiveDisadvantage = DisplayedActiveActivatable<Disadvantage>
+export type DisplayedActiveDisadvantage = DisplayedActiveActivatable<"Disadvantage", Disadvantage>
 
 /**
  * Returns all disadvantages with their corresponding dynamic entry, extended by
@@ -43,6 +43,7 @@ export const getActiveDisadvantages = (
   },
 ): DisplayedActiveDisadvantage[] =>
   getActiveActivatables(
+    "Disadvantage",
     getStaticDisadvantageById,
     dynamicDisadvantages,
     (prerequisites, level, id) =>
