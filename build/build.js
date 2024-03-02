@@ -72,9 +72,10 @@ const config = {
     artifactName: isPrerelease ? "OptolithInsiderSetup_${version}.${ext}" : "OptolithSetup_${version}.${ext}",
   },
   nsis: {
-    perMachine: true,
+    oneClick: false,
+    perMachine: false,
+    allowToChangeInstallationDirectory: true,
     differentialPackage: true,
-    deleteAppDataOnUninstall: false,
   },
   linux: {
     category: "RolePlaying",
