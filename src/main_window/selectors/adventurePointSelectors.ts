@@ -242,7 +242,7 @@ export const selectAdventurePointsSpentOnEnergies = createSelector(
  */
 export const selectAdventurePointsSpentOnRace = createSelector(
   selectCurrentCharacter,
-  (): number => 0,
+  (): number => 0, // TODO: Missing implementation
 )
 
 /**
@@ -250,7 +250,7 @@ export const selectAdventurePointsSpentOnRace = createSelector(
  */
 export const selectAdventurePointsSpentOnProfession = createSelector(
   selectCurrentCharacter,
-  (): number | undefined => undefined,
+  (): number | undefined => undefined, // TODO: Missing implementation
 )
 
 /**
