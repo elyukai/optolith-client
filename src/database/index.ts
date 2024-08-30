@@ -1,7 +1,7 @@
 import Debug from "debug"
 import { join } from "node:path"
 import { parentPort } from "node:process"
-import * as databaseSchema from "optolith-database-schema"
+import type * as databaseSchema from "optolith-database-schema"
 import { getAbsoluteCachePaths, getAbsoluteEntityPaths } from "./contents/src/config.js"
 const debug = Debug("util:database")
 
@@ -10,8 +10,7 @@ const root = join(appPath, "src", "database", "contents")
 
 debug("loading database ...")
 
-// fix dynamic webpack import
-;(databaseSchema as unknown as { default: Promise<typeof databaseSchema> }).default
+import("optolith-database-schema")
   .then(async db => {
     const raw = await db.getAllValidData(getAbsoluteEntityPaths(root), {
       ajvOptions: { allErrors: true },

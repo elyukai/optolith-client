@@ -2,7 +2,6 @@ import Debug from "debug"
 import { BrowserWindow, app, ipcMain, shell } from "electron"
 import windowStateKeeper from "electron-window-state"
 import * as path from "node:path"
-import * as url from "node:url"
 import type { Database } from "../database/index.ts"
 import { InitialSetupEventMessage } from "../main_window_preload/index.ts"
 import { getGlobalSettings } from "../shared/settings/main.ts"
@@ -55,14 +54,15 @@ export const createMainWindow = async (database: Database) => {
     debug("Manage browser window with state keeper")
     mainWindowState.manage(mainWindow)
 
-    debug("Load url")
-    await mainWindow.loadURL(
-      url.format({
-        pathname: path.join(__dirname, "renderer_main.html"),
-        protocol: "file:",
-        slashes: true,
-      }),
-    )
+    debug("Load file")
+
+    try {
+      await mainWindow.loadFile(path.join(".webpack", "renderer_main.html"))
+    } catch (error) {
+      debug("Error loading file: %O", error)
+    }
+
+    debug("Loaded file")
 
     // mainWindow.webContents.openDevTools()
 

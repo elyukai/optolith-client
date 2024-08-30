@@ -34,6 +34,8 @@
     "@electron/notarize": "^2.1.0",
     "@eslint/eslintrc": "^2.1.2",
     "@eslint/js": "^8.52.0",
+    "@rspack/cli": "^1.0.0",
+    "@rspack/core": "^1.0.0",
     "@types/mousetrap": "^1.6.13",
     "@types/node": "^20.8.10",
     "@types/react": "^18.2.33",
@@ -63,9 +65,7 @@
     "standard-version": "^9.5.0",
     "ts-loader": "^9.5.0",
     "tsx": "^3.14.0",
-    "typescript": "^5.2.2",
-    "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4"
+    "typescript": "^5.2.2"
   },
   "scripts": {
     "prerelease:win": "set NODE_ENV=development && node ./build/build.js --win --prerelease",
@@ -74,8 +74,8 @@
     "stable:win": "set NODE_ENV=production && node ./build/build.js --win --stable",
     "stable:linux": "NODE_ENV=production node ./build/build.js --linux --stable",
     "stable:mac": "NODE_ENV=production node ./build/build.js --mac --stable",
-    "js:build": "webpack",
-    "js:watch": "webpack -w",
+    "js:build": "rspack build",
+    "js:watch": "rspack build -w",
     "ts:build": "tsc",
     "ts:watch": "tsc -w",
     "createschemas": "otjsmd",
