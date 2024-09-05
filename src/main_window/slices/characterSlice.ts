@@ -1,4 +1,4 @@
-import { AnyAction, createAction } from "@reduxjs/toolkit"
+import { UnknownAction, createAction } from "@reduxjs/toolkit"
 import { createDynamicActivatable } from "../../shared/domain/activatable/activatableEntry.ts"
 import { Character } from "../../shared/domain/character.ts"
 import {
@@ -1139,7 +1139,7 @@ const generalCharacterReducer: DraftReducer<CharacterState> = (state, action) =>
  */
 export const characterReducer = reduceDraftReducers<
   CharacterState,
-  AnyAction,
+  UnknownAction,
   [database: DatabaseState]
 >(
   generalCharacterReducer,

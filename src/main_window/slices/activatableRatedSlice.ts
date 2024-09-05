@@ -1,4 +1,4 @@
-import { ActionCreatorWithPayload, AnyAction, Draft, createAction } from "@reduxjs/toolkit"
+import { ActionCreatorWithPayload, Draft, UnknownAction, createAction } from "@reduxjs/toolkit"
 import { ImprovementCost } from "../../shared/domain/adventurePoints/improvementCost.ts"
 import { cachedAdventurePointsForActivatable } from "../../shared/domain/adventurePoints/ratedEntry.ts"
 import { ActivatableRated, ActivatableRatedMap } from "../../shared/domain/rated/ratedEntry.ts"
@@ -44,7 +44,7 @@ export type ActivatableRatedSlice<N extends string, E extends string> = {
   /**
    * The reducer that handles the actions.
    */
-  reducer: Reducer<CharacterState, AnyAction, [database: DatabaseState]>
+  reducer: Reducer<CharacterState, UnknownAction, [database: DatabaseState]>
 }
 
 /**

@@ -50,11 +50,11 @@ a {
 }
 
 p {
+  margin: 10px 0 0;
+
   &:first-child {
     margin: 0;
   }
-
-  margin: 10px 0 0;
 
   &.featured {
     font-weight: 500;

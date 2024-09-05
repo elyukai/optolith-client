@@ -1,9 +1,9 @@
-import { Action, AnyAction } from "redux"
+import { Action, UnknownAction } from "redux"
 import { over } from "../../Data/Lens"
 import { foldr, OrderedSet } from "../../Data/OrderedSet"
 import { makeLenses, Omit, Record, RecordBase, RecordCreator, RecordIBase } from "../../Data/Record"
 
-export type ReducerM<S = any, A extends Action = AnyAction> = (action: A) => (mstate: S) => S
+export type ReducerM<S = any, A extends Action = UnknownAction> = (action: A) => (mstate: S) => S
 
 type ReducerRecord<S extends RecordBase, A extends Action = any> = {
   [K in keyof S]: ReducerM<S[K], A>
@@ -26,17 +26,16 @@ type ReducerRecord<S extends RecordBase, A extends Action = any> = {
  * - `L`: Lenses for all slices.
  */
 export const combineReducerRecord =
-  <S extends RecordIBase<Name>, A extends Action = any, Name extends string = S["@@name"]>
-  (x: RecordCreator<S>) =>
+  <S extends RecordIBase<Name>, A extends Action = any, Name extends string = S["@@name"]>(
+    x: RecordCreator<S>,
+  ) =>
   (reducers: Required<ReducerRecord<Omit<S, "@@name">>>) => {
-    const xL = makeLenses (x)
+    const xL = makeLenses(x)
 
-    const reducer =
-      (action: A) =>
-      (mstate: Record<S>) =>
-        foldr ((key: keyof Omit<S, "@@name">) => over (xL [key]) (reducers [key] (action)))
-              (mstate)
-              (x .keys as OrderedSet<keyof Omit<S, "@@name">>)
+    const reducer = (action: A) => (mstate: Record<S>) =>
+      foldr((key: keyof Omit<S, "@@name">) => over(xL[key])(reducers[key](action)))(mstate)(
+        x.keys as OrderedSet<keyof Omit<S, "@@name">>,
+      )
 
     reducer.default = x.default
     reducer.A = x.A

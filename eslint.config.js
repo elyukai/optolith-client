@@ -3,26 +3,21 @@ import { FlatCompat } from "@eslint/eslintrc"
 import js from "@eslint/js"
 import eslintConfigPrettier from "eslint-config-prettier"
 import jsdoc from "eslint-plugin-jsdoc"
-import reactJsxRuntime from "eslint-plugin-react/configs/jsx-runtime.js"
-import reactRecommended from "eslint-plugin-react/configs/recommended.js"
+import react from "eslint-plugin-react"
 import globals from "globals"
-import { dirname } from "node:path"
-import { fileURLToPath } from "node:url"
+import ts from "typescript-eslint"
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-// @ts-expect-error: FlatCompat is not properly typed
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
+  baseDirectory: import.meta.dirname,
 })
 
-/** @type {import('eslint').Linter.FlatConfig[]} */
+/** @type {import('eslint').Linter.Config[]} */
 export default [
   js.configs.recommended,
-  reactRecommended,
-  reactJsxRuntime,
-  ...compat.extends("plugin:react-hooks/recommended", "plugin:@typescript-eslint/recommended"),
+  react.configs.flat.recommended,
+  react.configs.flat['jsx-runtime'],
+  ...compat.extends("plugin:react-hooks/recommended"),
+  .../** @type {import('eslint').Linter.Config[]} */ (ts.configs.recommended),
   jsdoc.configs["flat/recommended-typescript-error"],
   {
     languageOptions: {
@@ -31,7 +26,8 @@ export default [
         ...globals.browser,
       },
       parserOptions: {
-        project: "./tsconfig.json",
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
     rules: {

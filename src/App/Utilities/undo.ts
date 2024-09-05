@@ -1,4 +1,4 @@
-import { Action, AnyAction } from "redux"
+import { Action, UnknownAction } from "redux"
 import { flip, ident } from "../../Data/Function"
 import { set } from "../../Data/Lens"
 import { cons, elem, empty, List, uncons } from "../../Data/List"
@@ -14,16 +14,14 @@ export interface UndoState<S> {
   future: List<S>
 }
 
-export const createUndoState =
-  <S> (x: S) => fromDefault ("UndoState")
-                            <UndoState<S>> ({
-                              past: List.empty,
-                              present: x,
-                              future: List.empty,
-                            })
+export const createUndoState = <S>(x: S) =>
+  fromDefault("UndoState")<UndoState<S>>({
+    past: List.empty,
+    present: x,
+    future: List.empty,
+  })
 
-export type UndoReducer<S, A> =
-  (state: UndoState<S>, action: A) => UndoState<S>
+export type UndoReducer<S, A> = (state: UndoState<S>, action: A) => UndoState<S>
 
 /**
  * `undo :: [ActionTypes] -> [ActionTypes] -> s -> (a -> s -> s) -> a -> s -> s`
@@ -42,48 +40,44 @@ export type UndoReducer<S, A> =
 export const undo =
   (resetActionTypes: List<string>) =>
   (ignoreActionTypes: List<string>) =>
-  <S>
-  (defaultState: S) =>
-  <A extends Action = AnyAction>
-  (reducer: (action: A) => (state: S) => S) => {
-    const L = createUndoState (defaultState)
+  <S>(defaultState: S) =>
+  <A extends Action = UnknownAction>(reducer: (action: A) => (state: S) => S) => {
+    const L = createUndoState(defaultState)
 
-    const LL = makeLenses (L)
+    const LL = makeLenses(L)
 
     const undoHandler =
       (action: A): ident<Record<UndoState<S>>> =>
       state => {
         if (action.type === ActionTypes.UNDO) {
-          return maybe
-            (state)
-            ((unconsed: Pair<S, List<S>>) => L ({
-              past: snd (unconsed),
+          return maybe(state)((unconsed: Pair<S, List<S>>) =>
+            L({
+              past: snd(unconsed),
               // @ts-ignore
-              present: fst (unconsed),
-              future: cons (L.A.future (state)) (L.A.present (state)),
-            }))
-            (uncons (L.A.past (state)))
+              present: fst(unconsed),
+              future: cons(L.A.future(state))(L.A.present(state)),
+            }),
+          )(uncons(L.A.past(state)))
         }
 
         if (action.type === ActionTypes.REDO) {
-          return maybe
-            (state)
-            ((unconsed: Pair<S, List<S>>) => L ({
-              past: cons (L.A.past (state)) (L.A.present (state)),
+          return maybe(state)((unconsed: Pair<S, List<S>>) =>
+            L({
+              past: cons(L.A.past(state))(L.A.present(state)),
               // @ts-ignore
-              present: fst (unconsed),
-              future: snd (unconsed),
-            }))
-            (uncons (L.A.future (state)))
+              present: fst(unconsed),
+              future: snd(unconsed),
+            }),
+          )(uncons(L.A.future(state)))
         }
 
-        const newPresent = reducer (action) (L.A.present (state))
+        const newPresent = reducer(action)(L.A.present(state))
 
-        if (L.A.present (state) === newPresent) {
-          if (elem (action.type) (resetActionTypes)) {
-            return L ({
+        if (L.A.present(state) === newPresent) {
+          if (elem(action.type)(resetActionTypes)) {
+            return L({
               // @ts-ignore
-              present: L.A.present (state),
+              present: L.A.present(state),
               past: empty,
               future: empty,
             })
@@ -92,8 +86,8 @@ export const undo =
           return state
         }
 
-        if (elem (action.type) (resetActionTypes)) {
-          return L ({
+        if (elem(action.type)(resetActionTypes)) {
+          return L({
             // @ts-ignore
             present: newPresent,
             past: empty,
@@ -101,12 +95,12 @@ export const undo =
           })
         }
 
-        if (elem (action.type) (ignoreActionTypes)) {
-          return set (LL.present) (newPresent) (state)
+        if (elem(action.type)(ignoreActionTypes)) {
+          return set(LL.present)(newPresent)(state)
         }
 
-        return L ({
-          past: cons (L.AL.past (state)) (L.AL.present (state)),
+        return L({
+          past: cons(L.AL.past(state))(L.AL.present(state)),
           // @ts-ignore
           present: newPresent,
           future: empty,
@@ -116,7 +110,7 @@ export const undo =
     undoHandler.default = L.default
     undoHandler.A = L.A
     undoHandler.AL = L.AL
-    undoHandler.L = makeLenses (L)
+    undoHandler.L = makeLenses(L)
 
     return undoHandler
   }
@@ -125,15 +119,15 @@ export const undo =
  * Calls `undo` without having any `ActionTypes` to reset history or to not
  * change history after an action has been dispatched.
  */
-export const undoSimple = undo (empty) (empty)
+export const undoSimple = undo(empty)(empty)
 
 /**
  * Calls `undo` only with `ActionTypes` to reset history.
  */
-export const undoR = flip (undo) (empty)
+export const undoR = flip(undo)(empty)
 
 /**
  * Calls `undo` only `ActionTypes` to not change history after an action has
  * been dispatched.
  */
-export const undoI = undo (empty)
+export const undoI = undo(empty)

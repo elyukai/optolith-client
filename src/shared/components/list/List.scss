@@ -358,6 +358,8 @@ ul.list-wrapper {
       .custom-cost {
         position: relative;
 
+        --distance: -1px;
+
         &::after,
         &::before {
           content: "";
@@ -367,8 +369,6 @@ ul.list-wrapper {
           border-style: solid;
           border-color: var(--accent-color);
         }
-
-        --distance: -1px;
 
         &::after {
           bottom: var(--distance);

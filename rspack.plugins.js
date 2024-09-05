@@ -1,6 +1,7 @@
 // @ts-check
 
 import rspack from "@rspack/core"
+import HtmlWebpackPlugin from "html-webpack-plugin"
 
 /**
  *
@@ -8,7 +9,7 @@ import rspack from "@rspack/core"
  * @returns {import("@rspack/core").Configuration["plugins"]}
  */
 export const rendererPlugins = (mode) => [
-  new rspack.HtmlRspackPlugin({
+  new HtmlWebpackPlugin({
     filename: "[name].html",
     template: "./src/template.html",
   }),

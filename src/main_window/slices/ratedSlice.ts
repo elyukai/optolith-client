@@ -1,4 +1,4 @@
-import { ActionCreatorWithPayload, AnyAction, Draft, createAction } from "@reduxjs/toolkit"
+import { ActionCreatorWithPayload, Draft, UnknownAction, createAction } from "@reduxjs/toolkit"
 import { ImprovementCost } from "../../shared/domain/adventurePoints/improvementCost.ts"
 import { cachedAdventurePoints } from "../../shared/domain/adventurePoints/ratedEntry.ts"
 import { Rated, RatedMap } from "../../shared/domain/rated/ratedEntry.ts"
@@ -33,7 +33,7 @@ export type RatedSlice<N extends string, E extends string> = {
   /**
    * The reducer that handles the actions.
    */
-  reducer: DraftReducer<CharacterState, AnyAction, [database: DatabaseState]>
+  reducer: DraftReducer<CharacterState, UnknownAction, [database: DatabaseState]>
 }
 
 /**
@@ -68,7 +68,7 @@ export const createRatedSlice = <N extends string, E extends string>(config: {
     `${config.namespace}/decrement${config.entityName}`,
   )
 
-  const reducer: DraftReducer<CharacterState, AnyAction, [database: DatabaseState]> = (
+  const reducer: DraftReducer<CharacterState, UnknownAction, [database: DatabaseState]> = (
     state,
     action,
     database,

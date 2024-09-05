@@ -1,4 +1,4 @@
-import { Action, AnyAction, OutputSelector, createSelector } from "@reduxjs/toolkit"
+import { Action, OutputSelector, UnknownAction, createSelector } from "@reduxjs/toolkit"
 import { Draft, isDraft, nothing, produce } from "immer"
 
 type Indexed = { [key: string | number]: unknown }
@@ -13,15 +13,15 @@ type Indexed = { [key: string | number]: unknown }
 export const createPropertySelector = <S, O extends Indexed, K extends keyof O>(
   selector: (state: S) => O | undefined,
   property: K,
-): OutputSelector<[typeof selector], O[K] | undefined, (obj: O) => O[K] | undefined> =>
-  createSelector(selector, obj => obj?.[property])
+): OutputSelector<[typeof selector], O[K] | undefined> =>
+  createSelector(selector, obj => (obj as O | undefined)?.[property])
 
 /**
  * A reducer type with possible additional parameters.
  */
 export type Reducer<
   S,
-  A extends Action = AnyAction,
+  A extends Action = UnknownAction,
   P extends unknown[] = [],
   IS extends S | undefined = S,
 > = (state: IS, action: A, ...additionalParams: P) => S
@@ -45,7 +45,7 @@ const ensureDraftState = <S>(
  * state.
  */
 export const reduceReducers =
-  <S, A extends Action = AnyAction, P extends unknown[] = [], IS extends S | undefined = S>(
+  <S, A extends Action = UnknownAction, P extends unknown[] = [], IS extends S | undefined = S>(
     initialReducer: Reducer<S, A, P, IS>,
     ...reducers: Reducer<S, A, P>[]
   ): Reducer<S, A, P, IS> =>
@@ -58,7 +58,7 @@ export const reduceReducers =
 /**
  * A reducer type with possible additional parameters that uses Immer.
  */
-export type DraftReducer<S, A extends Action = AnyAction, P extends unknown[] = []> = (
+export type DraftReducer<S, A extends Action = UnknownAction, P extends unknown[] = []> = (
   state: Draft<S>,
   action: A,
   ...additionalParams: P
@@ -68,7 +68,7 @@ export type DraftReducer<S, A extends Action = AnyAction, P extends unknown[] = 
  * Chains multiple draft reducers together.
  */
 export const reduceDraftReducers =
-  <S, A extends Action = AnyAction, P extends unknown[] = []>(
+  <S, A extends Action = UnknownAction, P extends unknown[] = []>(
     ...reducers: DraftReducer<S, A, P>[]
   ): DraftReducer<S, A, P> =>
   (state, action, ...additionalParams) => {
@@ -89,7 +89,7 @@ type ValidReducerReturnType<State> =
  * @returns The enhanced reducing function.
  */
 export const createImmerReducer =
-  <S, A extends Action = AnyAction, P extends unknown[] = []>(
+  <S, A extends Action = UnknownAction, P extends unknown[] = []>(
     reducer: (
       state: Draft<S>,
       action: A,

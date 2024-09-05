@@ -1,6 +1,6 @@
 import Debug from "debug"
 import { join } from "node:path"
-import { parentPort } from "node:process"
+import process from "node:process"
 import type * as databaseSchema from "optolith-database-schema"
 import { getAbsoluteCachePaths, getAbsoluteEntityPaths } from "./contents/src/config.js"
 const debug = Debug("util:database")
@@ -17,7 +17,7 @@ import("optolith-database-schema")
     })
     const cache = await db.getCache(getAbsoluteCachePaths(root))
     debug("database loaded")
-    parentPort.postMessage({ raw, cache })
+    process.send?.({ raw, cache })
   })
   .catch(err => {
     debug("database error: %O", err)

@@ -44,13 +44,13 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
   const handleAddMaxEnergyPoint = useCallback(() => {
     switch (id) {
       case DCId.LifePoints:
-        dispatch(incrementLifePoints)
+        dispatch(incrementLifePoints())
         break
       case DCId.ArcaneEnergy:
-        dispatch(incrementArcaneEnergy)
+        dispatch(incrementArcaneEnergy())
         break
       case DCId.KarmaPoints:
-        dispatch(incrementKarmaPoints)
+        dispatch(incrementKarmaPoints())
         break
       default:
         break
@@ -60,13 +60,13 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
   const handleRemoveMaxEnergyPoint = useCallback(() => {
     switch (id) {
       case DCId.LifePoints:
-        dispatch(decrementLifePoints)
+        dispatch(decrementLifePoints())
         break
       case DCId.ArcaneEnergy:
-        dispatch(decrementArcaneEnergy)
+        dispatch(decrementArcaneEnergy())
         break
       case DCId.KarmaPoints:
-        dispatch(decrementKarmaPoints)
+        dispatch(decrementKarmaPoints())
         break
       default:
         break

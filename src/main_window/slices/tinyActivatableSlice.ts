@@ -1,4 +1,4 @@
-import { ActionCreatorWithPayload, AnyAction, Draft, createAction } from "@reduxjs/toolkit"
+import { ActionCreatorWithPayload, Draft, UnknownAction, createAction } from "@reduxjs/toolkit"
 import { TinyActivatableMap } from "../../shared/domain/activatable/activatableEntry.ts"
 import { Reducer, createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
@@ -25,7 +25,7 @@ export type TinyActivatableSlice<N extends string, E extends string> = {
   /**
    * The reducer that handles the actions.
    */
-  reducer: Reducer<CharacterState, AnyAction>
+  reducer: Reducer<CharacterState, UnknownAction>
 }
 
 /**

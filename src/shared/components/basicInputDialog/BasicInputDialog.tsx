@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect } from "react"
-import { addKeybinding, removeKeybinding } from "../../../App/Utilities/Keybindings.ts"
+import { addKeybinding, removeKeybinding } from "../../utils/keybindings.ts"
 import { Dialog } from "../dialog/Dialog.tsx"
 import { InputKeyEvent, TextField } from "../textField/TextField.tsx"
 

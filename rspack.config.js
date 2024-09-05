@@ -1,7 +1,6 @@
 // @ts-check
 
-import { dirname, resolve } from "node:path"
-import { fileURLToPath } from "node:url"
+import { resolve } from "node:path"
 import { getOptimization } from "./rspack.optimization.js"
 import { rendererPlugins } from "./rspack.plugins.js"
 import { rules } from "./rspack.rules.js"
@@ -18,7 +17,7 @@ const createRendererConfig = (name, mode) => [
     entry: {
       [`renderer_${name}`]: `./src/${name}_window/index.tsx`,
     },
-    target: "electron27-renderer",
+    target: "electron-renderer",
     optimization: getOptimization(`renderer_${name}`),
     module: {
       rules: rules,
@@ -28,11 +27,15 @@ const createRendererConfig = (name, mode) => [
       conditionNames: ["browser", "default", "import", "require"],
     },
     output: {
-      path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
+      path: resolve(import.meta.dirname, ".webpack"),
       filename: "[name].js",
       globalObject: "globalThis",
     },
     plugins: rendererPlugins(mode),
+    externals: {
+      "electron/renderer": "commonjs electron/renderer",
+      "electron/common": "commonjs electron/common",
+    },
     externalsPresets: {
       electronRenderer: true,
     },
@@ -45,7 +48,7 @@ const createRendererConfig = (name, mode) => [
     entry: {
       [`renderer_${name}_preload`]: `./src/${name}_window_preload/index.ts`,
     },
-    target: "electron27-preload",
+    target: "electron-preload",
     module: {
       rules: rules,
     },
@@ -53,8 +56,15 @@ const createRendererConfig = (name, mode) => [
       symlinks: false,
     },
     output: {
-      path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
+      path: resolve(import.meta.dirname, ".webpack"),
       filename: "[name].cjs",
+    },
+    externals: {
+      "electron/renderer": "commonjs electron/renderer",
+      "electron/common": "commonjs electron/common",
+    },
+    externalsPresets: {
+      electronPreload: true,
     },
   },
 ]
@@ -74,7 +84,7 @@ export default () => {
       entry: {
         main: "./src/main/index.ts",
       },
-      target: "electron27-main",
+      target: "electron-main",
       optimization: getOptimization("main"),
       module: {
         rules: rules,
@@ -83,8 +93,12 @@ export default () => {
         symlinks: false,
       },
       output: {
-        path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
+        path: resolve(import.meta.dirname, ".webpack"),
         filename: "[name].cjs",
+      },
+      externals: {
+        "electron/main": "commonjs electron/main",
+        "electron/common": "commonjs electron/common",
       },
       externalsPresets: {
         electronMain: true,
@@ -96,7 +110,7 @@ export default () => {
       entry: {
         database: "./src/database/index.ts",
       },
-      target: "electron27-main",
+      target: "electron-main",
       optimization: getOptimization("database"),
       module: {
         rules: rules,
@@ -105,7 +119,7 @@ export default () => {
         symlinks: false,
       },
       output: {
-        path: resolve(dirname(fileURLToPath(import.meta.url)), ".webpack"),
+        path: resolve(import.meta.dirname, ".webpack"),
         filename: "[name].cjs",
       },
       externalsPresets: {

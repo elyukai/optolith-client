@@ -1,4 +1,4 @@
-import { ActionCreatorWithPayload, AnyAction, Draft, createAction } from "@reduxjs/toolkit"
+import { ActionCreatorWithPayload, Draft, UnknownAction, createAction } from "@reduxjs/toolkit"
 import { AdventurePointsValue } from "optolith-database-schema/types/_Activatable"
 import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
 import { getCost } from "../../shared/domain/activatable/activatableActive.ts"
@@ -51,7 +51,7 @@ export type ActivatableSlice<N extends string, E extends string> = {
   /**
    * The reducer that handles the actions.
    */
-  reducer: DraftReducer<CharacterState, AnyAction, [database: DatabaseState]>
+  reducer: DraftReducer<CharacterState, UnknownAction, [database: DatabaseState]>
 }
 
 const tagToNamespace = {
@@ -219,7 +219,7 @@ export const createActivatableSlice = <
         .map(x => x.id),
   })
 
-  const reducer: DraftReducer<CharacterState, AnyAction, [database: DatabaseState]> = (
+  const reducer: DraftReducer<CharacterState, UnknownAction, [database: DatabaseState]> = (
     state,
     action,
     database,

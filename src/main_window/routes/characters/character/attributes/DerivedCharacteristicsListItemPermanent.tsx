@@ -124,10 +124,10 @@ export const DerivedCharacteristicsListItemPermanent: FC<Props> = props => {
       case DCId.LifePoints:
         break
       case DCId.ArcaneEnergy:
-        dispatch(decrementArcaneEnergyBoughtBack)
+        dispatch(decrementArcaneEnergyBoughtBack())
         break
       case DCId.KarmaPoints:
-        dispatch(decrementKarmaPointsBoughtBack)
+        dispatch(decrementKarmaPointsBoughtBack())
         break
       default:
         assertExhaustive(id)

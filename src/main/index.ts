@@ -1,6 +1,7 @@
 import Debug from "debug"
-import { Menu, MenuItemConstructorOptions, app, ipcMain, utilityProcess } from "electron"
 import { autoUpdater } from "electron-updater"
+import { app, ipcMain, Menu, MenuItemConstructorOptions } from "electron/main"
+import { fork } from "node:child_process"
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import type { Database } from "../database/index.ts"
@@ -17,12 +18,21 @@ app.setAppUserModelId("lukasobermann.optolith")
 const isMac = process.platform === "darwin"
 
 debug("loading database ...")
-const databaseProcess = utilityProcess.fork(join(__dirname, "./database.cjs"), [app.getAppPath()])
-const databaseLoading = new Promise<Database>(resolve => {
-  databaseProcess.on("message", (message: Database) => {
-    debug("database received")
-    resolve(message)
-  })
+const databaseLoading = new Promise<Database>((resolve, reject) => {
+  try {
+    const args = [app.getAppPath()]
+    debug(join(__dirname, "database.cjs"))
+    const databaseProcess = fork(join(__dirname, "database.cjs"), args)
+      .on("spawn", () => debug("database spawned"))
+      .on("message", (message: Database) => {
+        debug("database received")
+        databaseProcess.kill()
+        resolve(message)
+      })
+  } catch (error) {
+    console.error(error)
+    reject(error)
+  }
 })
 
 const runAsync =

@@ -8,11 +8,11 @@
   -webkit-app-region: drag;
   padding: 1px 1px 0;
 
+  --windows-titlebar-close: #e81123;
+
   &.empty {
     height: 16px;
   }
-
-  --windows-titlebar-close: #e81123;
 }
 
 :root.blurred .titlebar-inner {

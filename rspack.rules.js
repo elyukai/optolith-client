@@ -11,7 +11,9 @@ export const rules = [
     exclude: [/node_modules/],
     loader: "builtin:swc-loader",
     resolve: {
-      extensions: [".ts", ".tsx", ".js"],
+      extensionAlias: {
+        '.js': ['.tsx', '.ts', 'jsx', '.js'],
+      },
     },
     options: {
       jsc: {

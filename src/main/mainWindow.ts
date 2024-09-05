@@ -106,12 +106,12 @@ export const createMainWindow = async (database: Database) => {
       systemLocale: app.getLocale(),
     }
 
-    mainWindow.webContents.send("initial-setup", initialSetupEventMessage)
-
     ipcMain.once("initial-setup-done", () => {
       debug("initial setup done")
       mainWindow?.show()
     })
+
+    mainWindow.webContents.send("initial-setup", initialSetupEventMessage)
   } else {
     mainWindow.focus()
   }
