@@ -3,10 +3,18 @@ import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
 import { DisplayableMainIdentifier } from "../slices/inlineWikiSlice.ts"
 import "./InlineLibrary.scss"
 import { InlineLibraryPlaceholder } from "./InlineLibraryPlaceholder.tsx"
+import { InlineLibraryBlessing } from "./entities/InlineLibraryBlessing.tsx"
+import { InlineLibraryCantrip } from "./entities/InlineLibraryCantrip.tsx"
+import { InlineLibraryCeremony } from "./entities/InlineLibraryCeremony.tsx"
+import { InlineLibraryCloseCombatTechnique } from "./entities/InlineLibraryCloseCombatTechnique.tsx"
 import { InlineLibraryExperienceLevel } from "./entities/InlineLibraryExperienceLevel.tsx"
 import { InlineLibraryFocusRule } from "./entities/InlineLibraryFocusRule.tsx"
+import { InlineLibraryLiturgicalChant } from "./entities/InlineLibraryLiturgicalChant.tsx"
 import { InlineLibraryOptionalRule } from "./entities/InlineLibraryOptionalRule.tsx"
+import { InlineLibraryRangedCombatTechnique } from "./entities/InlineLibraryRangedCombatTechnique.tsx"
+import { InlineLibraryRitual } from "./entities/InlineLibraryRitual.tsx"
 import { InlineLibrarySkill } from "./entities/InlineLibrarySkill.tsx"
+import { InlineLibrarySpell } from "./entities/InlineLibrarySpell.tsx"
 
 type Props = {
   id: DisplayableMainIdentifier
@@ -48,7 +56,7 @@ export const InlineLibraryRouter: FC<Props> = ({ id }) => {
     case "BlessedTradition":
       return <InlineLibraryPlaceholder />
     case "Blessing":
-      return <InlineLibraryPlaceholder />
+      return <InlineLibraryBlessing id={id.blessing} />
     case "Book":
       return <InlineLibraryPlaceholder />
     case "BowlEnchantment":
@@ -56,7 +64,7 @@ export const InlineLibraryRouter: FC<Props> = ({ id }) => {
     case "BrawlingSpecialAbility":
       return <InlineLibraryPlaceholder />
     case "Cantrip":
-      return <InlineLibraryPlaceholder />
+      return <InlineLibraryCantrip id={id.cantrip} />
     case "CauldronEnchantment":
       return <InlineLibraryPlaceholder />
     case "CeremonialItem":
@@ -64,11 +72,11 @@ export const InlineLibraryRouter: FC<Props> = ({ id }) => {
     case "CeremonialItemSpecialAbility":
       return <InlineLibraryPlaceholder />
     case "Ceremony":
-      return <InlineLibraryPlaceholder />
+      return <InlineLibraryCeremony id={id.ceremony} />
     case "ChronicleEnchantment":
       return <InlineLibraryPlaceholder />
     case "CloseCombatTechnique":
-      return <InlineLibraryPlaceholder />
+      return <InlineLibraryCloseCombatTechnique id={id.close_combat_technique} />
     case "Clothes":
       return <InlineLibraryPlaceholder />
     case "CombatSpecialAbility":
@@ -134,7 +142,7 @@ export const InlineLibraryRouter: FC<Props> = ({ id }) => {
     case "Liebesspielzeug":
       return <InlineLibraryPlaceholder />
     case "LiturgicalChant":
-      return <InlineLibraryPlaceholder />
+      return <InlineLibraryLiturgicalChant id={id.liturgical_chant} />
     case "LiturgicalStyleSpecialAbility":
       return <InlineLibraryPlaceholder />
     case "LuxuryGood":
@@ -178,11 +186,11 @@ export const InlineLibraryRouter: FC<Props> = ({ id }) => {
     case "Race":
       return <InlineLibraryPlaceholder />
     case "RangedCombatTechnique":
-      return <InlineLibraryPlaceholder />
+      return <InlineLibraryRangedCombatTechnique id={id.ranged_combat_technique} />
     case "RingEnchantment":
       return <InlineLibraryPlaceholder />
     case "Ritual":
-      return <InlineLibraryPlaceholder />
+      return <InlineLibraryRitual id={id.ritual} />
     case "RopeOrChain":
       return <InlineLibraryPlaceholder />
     case "Sermon":
@@ -198,7 +206,7 @@ export const InlineLibraryRouter: FC<Props> = ({ id }) => {
     case "SkillStyleSpecialAbility":
       return <InlineLibraryPlaceholder />
     case "Spell":
-      return <InlineLibraryPlaceholder />
+      return <InlineLibrarySpell id={id.spell} />
     case "SpellSwordEnchantment":
       return <InlineLibraryPlaceholder />
     case "StaffEnchantment":

@@ -2,8 +2,12 @@ import { CloseCombatTechnique } from "optolith-database-schema/types/CombatTechn
 import { RangedCombatTechnique } from "optolith-database-schema/types/CombatTechnique_Ranged"
 import { CombatTechniqueIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
 import { AttributeReference } from "optolith-database-schema/types/_SimpleReferences"
+import { mapNullable } from "../../utils/nullable.ts"
 import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
+import { createImprovementCost } from "../adventurePoints/improvementCost.ts"
+import { GetById } from "../getTypes.ts"
 import { AttributeIdentifier } from "../identifier.ts"
+import { createLibraryEntryCreator } from "../libraryEntry.ts"
 import { getAttributeValue } from "./attribute.ts"
 import { Rated } from "./ratedEntry.ts"
 
@@ -153,3 +157,73 @@ export const getHighestRequiredAttributeForCombatTechnique = (
     value: dynamicCombatTechnique.value - 2 - exceptionalCombatTechniqueBonus,
   }
 }
+
+/**
+ * Get a JSON representation of the rules text for a close combat technique.
+ */
+export const getCloseCombatTechniqueLibraryEntry = createLibraryEntryCreator<
+  CloseCombatTechnique,
+  {
+    getAttributeById: GetById.Static.Attribute
+  }
+>((entry, { getAttributeById }) => ({ translate, translateMap }) => {
+  const translation = translateMap(entry.translations)
+
+  if (translation === undefined) {
+    return undefined
+  }
+
+  return {
+    title: translation.name,
+    className: "combat-technique close-combat-technique",
+    content: [
+      mapNullable(translation.special, value => ({
+        label: translate("Special"),
+        value,
+      })),
+      {
+        label: translate("Primary Attribute"),
+        value: entry.primary_attribute
+          .map(attr => translateMap(getAttributeById(attr.id.attribute)?.translations)?.name)
+          .join("/"),
+      },
+      createImprovementCost(translate, entry.improvement_cost),
+    ],
+    src: entry.src,
+  }
+})
+
+/**
+ * Get a JSON representation of the rules text for a ranged combat technique.
+ */
+export const getRangedCombatTechniqueLibraryEntry = createLibraryEntryCreator<
+  RangedCombatTechnique,
+  {
+    getAttributeById: GetById.Static.Attribute
+  }
+>((entry, { getAttributeById }) => ({ translate, translateMap }) => {
+  const translation = translateMap(entry.translations)
+
+  if (translation === undefined) {
+    return undefined
+  }
+
+  return {
+    title: translation.name,
+    className: "combat-technique ranged-combat-technique",
+    content: [
+      mapNullable(translation.special, value => ({
+        label: translate("Special"),
+        value,
+      })),
+      {
+        label: translate("Primary Attribute"),
+        value: entry.primary_attribute
+          .map(attr => translateMap(getAttributeById(attr.id.attribute)?.translations)?.name)
+          .join("/"),
+      },
+      createImprovementCost(translate, entry.improvement_cost),
+    ],
+    src: entry.src,
+  }
+})

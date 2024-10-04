@@ -18,12 +18,7 @@ const matchSystemLocaleToSupported = (available: string[], system: string) => {
 /**
  * Translates a given key into a string, optionally with parameters.
  */
-export type Translate = <K extends keyof UI>(
-  key: K,
-  ...options: UI[K] extends PluralizationCategories
-    ? [count: number, ...params: (string | number)[]]
-    : [...params: (string | number)[]]
-) => string
+export type Translate = <K extends keyof UI>(key: K, ...params: (string | number)[]) => string
 
 const isPluralizationCategories = (
   value: string | PluralizationCategories | VaryBySystem,
@@ -40,6 +35,24 @@ const pluralType: {
   "You are missing {0} Adventure Points to do this.": "cardinal",
   "since the {0}. printing": "ordinal",
   "removed in {0}. printing": "ordinal",
+  "{0} actions": "cardinal",
+  "{0} hours": "cardinal",
+  "{0} minutes": "cardinal",
+  "{0} rounds": "cardinal",
+  "{0} seduction actions": "cardinal",
+  ", {0} of which are permanent": "cardinal",
+  "{0} centuries": "cardinal",
+  "{0} combat rounds": "cardinal",
+  "{0} days": "cardinal",
+  "{0} months": "cardinal",
+  "{0} mos.": "cardinal",
+  "{0} seconds": "cardinal",
+  "{0} weeks": "cardinal",
+  "{0} wks.": "cardinal",
+  "{0} years": "cardinal",
+  "{0} yrs.": "cardinal",
+  "{0} miles": "cardinal",
+  "{0} yards": "cardinal",
 }
 
 /**
@@ -95,6 +108,14 @@ export const createTranslate = (
 
   return translate
 }
+
+/**
+ * A mocked translate function.
+ */
+export const translateMock: Translate = <K extends keyof UI>(
+  key: K,
+  ...options: (string | number)[]
+) => insertParams(key, options)
 
 /**
  * Selects a value from a locale dictionary based on the selected locale.

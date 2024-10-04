@@ -1,3 +1,4 @@
+import { Equality } from "./compare.ts"
 import { isNotNullish } from "./nullable.ts"
 
 /**
@@ -183,3 +184,19 @@ export const removeIndex = <T>(arr: T[], index: number): T[] => [
   ...arr.slice(0, index),
   ...arr.slice(index + 1),
 ]
+
+/**
+ * Returns a new array, where adjacent elements that are considered equal by the
+ * given equality function are grouped together. Calling the `flat` method on
+ * the result will return the original array.
+ */
+export const groupBy = <T>(arr: T[], equal: Equality<T>): T[][] =>
+  arr.reduce<T[][]>((acc, value) => {
+    const lastGroup = acc[acc.length - 1]
+    if (lastGroup?.[0] !== undefined && equal(lastGroup[0], value)) {
+      lastGroup.push(value)
+    } else {
+      acc.push([value])
+    }
+    return acc
+  }, [])

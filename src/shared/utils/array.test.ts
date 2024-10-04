@@ -7,6 +7,7 @@ import {
   countByMany,
   ensureNonEmpty,
   filterNonNullable,
+  groupBy,
   partition,
   range,
   rangeSafe,
@@ -243,5 +244,17 @@ describe("someCount", () => {
   it("should return false for an empty array", () => {
     const result = someCount([], value => value === 0, 2)
     assert.equal(result, false)
+  })
+})
+
+describe("groupBy", () => {
+  it("should return an empty array for an empty input", () => {
+    const result = groupBy([], (a, b) => a === b)
+    assert.deepEqual(result, [])
+  })
+
+  it("should group adjacent elements that are equal", () => {
+    const result = groupBy([1, 1, 2, 2, 2, 3, 4, 4, 4, 4], (a, b) => a === b)
+    assert.deepEqual(result, [[1, 1], [2, 2, 2], [3], [4, 4, 4, 4]])
   })
 })

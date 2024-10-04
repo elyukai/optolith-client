@@ -136,7 +136,7 @@ export const LiturgicalChants: FC = () => {
           <ListHeader>
             <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate("liturgicalchants.header.traditions")}
+              {translate("Traditions")}
               {sortOrder === LiturgiesSortOrder.Group ? ` / ${translate("Group")}` : null}
             </ListHeaderTag>
             <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
@@ -227,7 +227,7 @@ export const LiturgicalChants: FC = () => {
         <ListHeader>
           <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
           <ListHeaderTag className="group">
-            {translate("liturgicalchants.header.traditions")}
+            {translate("Traditions")}
             {sortOrder === LiturgiesSortOrder.Group ? ` / ${translate("Group")}` : null}
           </ListHeaderTag>
           <ListHeaderTag className="value" hint={translate("Skill Rating")}>
