@@ -1,11 +1,8 @@
 import { FC } from "react"
-import { Markdown } from "../../../shared/components/markdown/Markdown.tsx"
-import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
+import { LibraryEntry } from "../../../shared/components/libraryEntry/LibraryEntry.tsx"
+import { getOptionalRuleLibraryEntry } from "../../../shared/domain/rules/optionalRule.ts"
 import { useAppSelector } from "../../hooks/redux.ts"
 import { selectStaticOptionalRules } from "../../slices/databaseSlice.ts"
-import { InlineLibraryPlaceholder } from "../InlineLibraryPlaceholder.tsx"
-import { InlineLibraryTemplate } from "../InlineLibraryTemplate.tsx"
-import { Source } from "../shared/Source.tsx"
 
 type Props = {
   id: number
@@ -15,19 +12,7 @@ type Props = {
  * Displays all information about an optional rule.
  */
 export const InlineLibraryOptionalRule: FC<Props> = ({ id }) => {
-  const translateMap = useTranslateMap()
-
   const entry = useAppSelector(selectStaticOptionalRules)[id]
-  const translation = translateMap(entry?.translations)
 
-  if (entry === undefined || translation === undefined) {
-    return <InlineLibraryPlaceholder />
-  }
-
-  return (
-    <InlineLibraryTemplate className="optional-rule" title={translation.name}>
-      <Markdown className="no-indent" source={translation.description} />
-      <Source sources={entry.src} />
-    </InlineLibraryTemplate>
-  )
+  return <LibraryEntry createLibraryEntry={getOptionalRuleLibraryEntry(entry)} />
 }

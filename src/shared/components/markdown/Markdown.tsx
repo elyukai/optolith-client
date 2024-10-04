@@ -24,16 +24,16 @@ const a = (p: { children?: React.ReactNode }) => (
  * Renders a markdown view.
  */
 export const Markdown: FC<Props> = props => {
-  const { className, source = "...", noWrapper } = props
+  const { className, source = "...", noWrapper = false } = props
 
   return (
     <ReactMarkdown
-      className={classList("markdown", className)}
-      unwrapDisallowed={noWrapper === true}
+      className={noWrapper ? undefined : classList("markdown", className)}
+      unwrapDisallowed={noWrapper}
       components={{
         a,
       }}
-      disallowedElements={noWrapper === true ? ["p"] : undefined}
+      disallowedElements={noWrapper ? ["p"] : undefined}
       remarkPlugins={[Ph, [remarkGfm, { singleTilde: false }]]}
       rehypePlugins={[rehypeRaw]}
     >

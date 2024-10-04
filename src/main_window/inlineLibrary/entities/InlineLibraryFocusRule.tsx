@@ -1,15 +1,9 @@
 import { FC } from "react"
-import { Markdown } from "../../../shared/components/markdown/Markdown.tsx"
-import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
-import { romanize } from "../../../shared/utils/roman.ts"
+import { LibraryEntry } from "../../../shared/components/libraryEntry/LibraryEntry.tsx"
+import { getFocusRuleLibraryEntry } from "../../../shared/domain/rules/focusRule.ts"
 import { useAppSelector } from "../../hooks/redux.ts"
-import {
-  selectStaticFocusRuleSubjects,
-  selectStaticFocusRules,
-} from "../../slices/databaseSlice.ts"
-import { InlineLibraryPlaceholder } from "../InlineLibraryPlaceholder.tsx"
-import { InlineLibraryTemplate } from "../InlineLibraryTemplate.tsx"
-import { Source } from "../shared/Source.tsx"
+import { SelectGetById } from "../../selectors/basicCapabilitySelectors.ts"
+import { selectStaticFocusRules } from "../../slices/databaseSlice.ts"
 
 type Props = {
   id: number
@@ -19,24 +13,8 @@ type Props = {
  * Displays all information about a focus rule.
  */
 export const InlineLibraryFocusRule: FC<Props> = ({ id }) => {
-  const translateMap = useTranslateMap()
-
   const entry = useAppSelector(selectStaticFocusRules)[id]
-  const subjects = useAppSelector(selectStaticFocusRuleSubjects)
-  const translation = translateMap(entry?.translations)
+  const getSubjectById = useAppSelector(SelectGetById.Static.Subject)
 
-  if (entry === undefined || translation === undefined) {
-    return <InlineLibraryPlaceholder />
-  }
-
-  return (
-    <InlineLibraryTemplate
-      className="focus-rule"
-      title={`${translation.name} (${romanize(entry.level)})`}
-      subtitle={translateMap(subjects[entry.subject.id.subject]?.translations)?.name}
-    >
-      <Markdown className="no-indent" source={translation.description} />
-      <Source sources={entry.src} />
-    </InlineLibraryTemplate>
-  )
+  return <LibraryEntry createLibraryEntry={getFocusRuleLibraryEntry(entry, { getSubjectById })} />
 }

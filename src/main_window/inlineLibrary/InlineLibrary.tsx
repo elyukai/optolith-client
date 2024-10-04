@@ -1,5 +1,6 @@
 import { FC } from "react"
 import { Aside } from "../../shared/components/aside/Aside.tsx"
+import { Scroll } from "../../shared/components/scroll/Scroll.tsx"
 import { useAppSelector } from "../hooks/redux.ts"
 import { selectInlineLibraryEntryId } from "../slices/inlineWikiSlice.ts"
 import "./InlineLibrary.scss"
@@ -14,7 +15,9 @@ export const InlineLibrary: FC = () => {
 
   return (
     <Aside className="inline-library">
-      {id === undefined ? <InlineLibraryPlaceholder /> : <InlineLibraryRouter id={id} />}
+      <Scroll>
+        {id === undefined ? <InlineLibraryPlaceholder /> : <InlineLibraryRouter id={id} />}
+      </Scroll>
     </Aside>
   )
 }

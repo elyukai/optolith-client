@@ -7,19 +7,19 @@ import {
   VersionedOccurrence,
 } from "optolith-database-schema/types/source/_PublicationRef"
 import { FC } from "react"
+import { useAppSelector } from "../../../main_window/hooks/redux.ts"
+import { selectStaticPublications } from "../../../main_window/slices/databaseSlice.ts"
 import {
   PageRange,
   fromRawPageRange,
   normalizePageRanges,
   numberRangeToPageRange,
-} from "../../../shared/domain/sources/pages.ts"
-import { useTranslate } from "../../../shared/hooks/translate.ts"
-import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
-import { isNotNullish } from "../../../shared/utils/nullable.ts"
-import { Translate } from "../../../shared/utils/translate.ts"
-import { assertExhaustive } from "../../../shared/utils/typeSafety.ts"
-import { useAppSelector } from "../../hooks/redux.ts"
-import { selectStaticPublications } from "../../slices/databaseSlice.ts"
+} from "../../domain/sources/pages.ts"
+import { useTranslate } from "../../hooks/translate.ts"
+import { useTranslateMap } from "../../hooks/translateMap.ts"
+import { isNotNullish } from "../../utils/nullable.ts"
+import { Translate } from "../../utils/translate.ts"
+import { assertExhaustive } from "../../utils/typeSafety.ts"
 
 type Props = {
   sources: PublicationRefs
@@ -58,13 +58,13 @@ const printPageRanges = (translate: Translate, pageRanges: PageRange[]) =>
 /**
  * Displays the sources of an entry.
  */
-export const Source: FC<Props> = ({ sources }) => {
+export const LibraryEntryReferences: FC<Props> = ({ sources }) => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const publications = useAppSelector(selectStaticPublications)
 
   return (
-    <p className="sources">
+    <p className="sources no-indent">
       {sources
         .map(source => {
           const publication = publications[source.id.publication]

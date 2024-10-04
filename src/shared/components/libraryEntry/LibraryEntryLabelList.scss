@@ -1,6 +1,7 @@
 dl.inline-library-properties {
   font: 500 14px/22px Alegreya Sans;
   letter-spacing: 0.04em;
+  margin: 0;
 
   > div {
     padding-left: 18px;
@@ -27,5 +28,9 @@ dl.inline-library-properties {
     p {
       margin-top: 0;
     }
+  }
+
+  dl.inline-library-properties {
+    margin-left: -16px;
   }
 }
