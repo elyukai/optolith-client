@@ -1,12 +1,12 @@
+import { EntityDescriptionSection } from "@optolith/entity-descriptions"
 import { FC, Fragment } from "react"
-import { LibraryEntryContent } from "../../domain/libraryEntry.ts"
 import { groupBy } from "../../utils/array.ts"
 import { classList } from "../../utils/classList.ts"
 import { Markdown } from "../markdown/Markdown.tsx"
 import { LibraryEntryLabelList } from "./LibraryEntryLabelList.tsx"
 
 type Props = {
-  contents: LibraryEntryContent[]
+  contents: EntityDescriptionSection[]
 }
 
 /**

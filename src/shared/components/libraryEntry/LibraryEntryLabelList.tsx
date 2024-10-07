@@ -1,10 +1,10 @@
+import { EntityDescriptionSection } from "@optolith/entity-descriptions"
 import { FC } from "react"
-import { LibraryEntryContent } from "../../domain/libraryEntry.ts"
 import { Markdown } from "../markdown/Markdown.tsx"
 import "./LibraryEntryLabelList.scss"
 
 type Props = {
-  contents: LibraryEntryContent[]
+  contents: EntityDescriptionSection[]
 }
 
 /**

@@ -1,6 +1,9 @@
-import { FC } from "react"
-import { LibraryEntry } from "../../../shared/components/libraryEntry/LibraryEntry.tsx"
-import { getCantripLibraryEntry } from "../../../shared/domain/rated/spell.ts"
+import { getCantripEntityDescription } from "@optolith/entity-descriptions/entities/spell"
+import { FC, useCallback } from "react"
+import {
+  LibraryEntry,
+  PartialEntityDescriptionCreator,
+} from "../../../shared/components/libraryEntry/LibraryEntry.tsx"
 import { useAppSelector } from "../../hooks/redux.ts"
 import { SelectGetById } from "../../selectors/basicCapabilitySelectors.ts"
 
@@ -18,14 +21,21 @@ export const InlineLibraryCantrip: FC<Props> = ({ id }) => {
   const getMagicalTraditionById = useAppSelector(SelectGetById.Static.MagicalTradition)
   const entry = useAppSelector(SelectGetById.Static.Cantrip)(id)
 
-  return (
-    <LibraryEntry
-      createLibraryEntry={getCantripLibraryEntry(entry, {
-        getTargetCategoryById,
-        getPropertyById,
-        getMagicalTraditionById,
-        getCurriculumById,
-      })}
-    />
+  const createEntityDescription: PartialEntityDescriptionCreator = useCallback(
+    (defaultDatabaseAccessors, locale) =>
+      getCantripEntityDescription(
+        {
+          ...defaultDatabaseAccessors,
+          getTargetCategoryById,
+          getPropertyById,
+          getCurriculumById,
+          getMagicalTraditionById,
+        },
+        locale,
+        entry,
+      ),
+    [entry, getCurriculumById, getMagicalTraditionById, getPropertyById, getTargetCategoryById],
   )
+
+  return <LibraryEntry createEntityDescription={createEntityDescription} />
 }

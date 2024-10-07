@@ -1,6 +1,9 @@
-import { FC } from "react"
-import { LibraryEntry } from "../../../shared/components/libraryEntry/LibraryEntry.tsx"
-import { getSkillLibraryEntry } from "../../../shared/domain/rated/skill.ts"
+import { getSkillEntityDescription } from "@optolith/entity-descriptions/entities/skill"
+import { FC, useCallback } from "react"
+import {
+  LibraryEntry,
+  PartialEntityDescriptionCreator,
+} from "../../../shared/components/libraryEntry/LibraryEntry.tsx"
 import { useAppSelector } from "../../hooks/redux.ts"
 import { SelectAll, SelectGetById } from "../../selectors/basicCapabilitySelectors.ts"
 import { selectNewApplicationsAndUsesCache } from "../../slices/databaseSlice.ts"
@@ -20,15 +23,22 @@ export const InlineLibrarySkill: FC<Props> = ({ id }) => {
   const entry = useAppSelector(SelectGetById.Static.Skill)(id)
   const cache = useAppSelector(selectNewApplicationsAndUsesCache)
 
-  return (
-    <LibraryEntry
-      createLibraryEntry={getSkillLibraryEntry(entry, {
-        getAttributeById,
-        blessedTraditions,
-        diseases,
-        regions,
-        cache,
-      })}
-    />
+  const createEntityDescription: PartialEntityDescriptionCreator = useCallback(
+    (defaultDatabaseAccessors, locale) =>
+      getSkillEntityDescription(
+        {
+          ...defaultDatabaseAccessors,
+          getAttributeById,
+          blessedTraditions,
+          diseases,
+          regions,
+          cache,
+        },
+        locale,
+        entry,
+      ),
+    [blessedTraditions, cache, diseases, entry, getAttributeById, regions],
   )
+
+  return <LibraryEntry createEntityDescription={createEntityDescription} />
 }

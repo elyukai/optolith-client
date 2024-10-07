@@ -1,6 +1,9 @@
-import { FC } from "react"
-import { LibraryEntry } from "../../../shared/components/libraryEntry/LibraryEntry.tsx"
-import { getOptionalRuleLibraryEntry } from "../../../shared/domain/rules/optionalRule.ts"
+import { getOptionalRuleEntityDescription } from "@optolith/entity-descriptions/entities/optionalRule"
+import { FC, useCallback } from "react"
+import {
+  LibraryEntry,
+  PartialEntityDescriptionCreator,
+} from "../../../shared/components/libraryEntry/LibraryEntry.tsx"
 import { useAppSelector } from "../../hooks/redux.ts"
 import { selectStaticOptionalRules } from "../../slices/databaseSlice.ts"
 
@@ -14,5 +17,11 @@ type Props = {
 export const InlineLibraryOptionalRule: FC<Props> = ({ id }) => {
   const entry = useAppSelector(selectStaticOptionalRules)[id]
 
-  return <LibraryEntry createLibraryEntry={getOptionalRuleLibraryEntry(entry)} />
+  const createEntityDescription: PartialEntityDescriptionCreator = useCallback(
+    (defaultDatabaseAccessors, locale) =>
+      getOptionalRuleEntityDescription(defaultDatabaseAccessors, locale, entry),
+    [entry],
+  )
+
+  return <LibraryEntry createEntityDescription={createEntityDescription} />
 }

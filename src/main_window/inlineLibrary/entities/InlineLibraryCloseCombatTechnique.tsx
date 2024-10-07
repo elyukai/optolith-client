@@ -1,6 +1,9 @@
-import { FC } from "react"
-import { LibraryEntry } from "../../../shared/components/libraryEntry/LibraryEntry.tsx"
-import { getCloseCombatTechniqueLibraryEntry } from "../../../shared/domain/rated/combatTechnique.ts"
+import { getCloseCombatTechniqueEntityDescription } from "@optolith/entity-descriptions/entities/combatTechnique"
+import { FC, useCallback } from "react"
+import {
+  LibraryEntry,
+  PartialEntityDescriptionCreator,
+} from "../../../shared/components/libraryEntry/LibraryEntry.tsx"
 import { useAppSelector } from "../../hooks/redux.ts"
 import { SelectGetById } from "../../selectors/basicCapabilitySelectors.ts"
 
@@ -15,11 +18,18 @@ export const InlineLibraryCloseCombatTechnique: FC<Props> = ({ id }) => {
   const getAttributeById = useAppSelector(SelectGetById.Static.Attribute)
   const entry = useAppSelector(SelectGetById.Static.CloseCombatTechnique)(id)
 
-  return (
-    <LibraryEntry
-      createLibraryEntry={getCloseCombatTechniqueLibraryEntry(entry, {
-        getAttributeById,
-      })}
-    />
+  const createEntityDescription: PartialEntityDescriptionCreator = useCallback(
+    (defaultDatabaseAccessors, locale) =>
+      getCloseCombatTechniqueEntityDescription(
+        {
+          ...defaultDatabaseAccessors,
+          getAttributeById,
+        },
+        locale,
+        entry,
+      ),
+    [entry, getAttributeById],
   )
+
+  return <LibraryEntry createEntityDescription={createEntityDescription} />
 }

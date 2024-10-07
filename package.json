@@ -11,6 +11,7 @@
   "license": "MPL-2.0",
   "main": ".webpack/main.cjs",
   "dependencies": {
+    "@optolith/entity-descriptions": "^0.2.1",
     "@reduxjs/toolkit": "^2.2.7",
     "adm-zip": "^0.5.16",
     "debug": "^4.3.7",

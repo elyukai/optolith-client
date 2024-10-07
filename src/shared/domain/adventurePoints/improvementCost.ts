@@ -1,9 +1,7 @@
 import { ImprovementCost as RawImprovementCost } from "optolith-database-schema/types/_ImprovementCost"
 import { rangeSafe, sum } from "../../utils/array.ts"
 import { Nullish } from "../../utils/nullable.ts"
-import { Translate } from "../../utils/translate.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
-import { LibraryEntryContent } from "../libraryEntry.ts"
 
 /**
  * The cost category of an improvement.
@@ -184,14 +182,3 @@ export const fromRaw = <T extends RawImprovementCost | undefined>(
       return assertExhaustive(ic)
   }
 }
-
-/**
- * Returns the improvement cost as an inline library property.
- */
-export const createImprovementCost = (
-  translate: Translate,
-  improvementCost: RawImprovementCost,
-): LibraryEntryContent => ({
-  label: translate("Improvement Cost"),
-  value: toString(fromRaw(improvementCost)),
-})

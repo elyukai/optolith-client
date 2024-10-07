@@ -1,6 +1,4 @@
-import { OptionalRule } from "optolith-database-schema/types/rule/OptionalRule"
 import { GetById } from "../getTypes.ts"
-import { createLibraryEntryCreator } from "../libraryEntry.ts"
 import { RuleDependency } from "./ruleDependency.ts"
 
 /**
@@ -41,24 +39,3 @@ export const isOptionalRuleActive = (
   getDynamicOptionalRuleById: GetById.Dynamic.OptionalRule,
   optionalRuleId: number,
 ): boolean => getDynamicOptionalRuleById(optionalRuleId)?.active ?? false
-
-/**
- * Get a JSON representation of the rules text for an optional rule.
- */
-export const getOptionalRuleLibraryEntry = createLibraryEntryCreator<OptionalRule>(
-  entry =>
-    ({ translateMap }) => {
-      const translation = translateMap(entry.translations)
-
-      if (translation === undefined) {
-        return undefined
-      }
-
-      return {
-        title: translation.name,
-        className: "optional-rule",
-        content: [{ value: translation.description }],
-        src: entry.src,
-      }
-    },
-)
