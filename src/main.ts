@@ -182,14 +182,20 @@ const main = async () => {
 
   console.log ("main: Install extensions ...")
 
-  const installExtension = require ("electron-devtools-installer")
 
-  const installedExtensions = await installExtension.default ([
-    installExtension.REACT_DEVELOPER_TOOLS,
-    installExtension.REDUX_DEVTOOLS,
-  ])
+  try {
+    const installExtension = require ("electron-devtools-installer")
 
-  console.log (`main: Installed extensions: ${installedExtensions}`)
+    const installedExtensions = await installExtension.default ([
+      installExtension.REACT_DEVELOPER_TOOLS,
+      installExtension.REDUX_DEVTOOLS,
+    ])
+
+    console.log (`main: Installed extensions: ${installedExtensions}`)
+  }
+  catch (error) {
+    console.error ("main: Installing extensions failed! Skipping extensions...")
+  }
 
   console.log ("main: Create Window ...")
 
