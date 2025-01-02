@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.2](https://github.com/elyukai/optolith-client/compare/v1.5.2-alpha.4...v1.5.2) (2025-01-02)
+
+
+### Bug Fixes
+
+* throws during startup due to changed devtools identifiers ([7f5f944](https://github.com/elyukai/optolith-client/commit/7f5f94491e1432d66add1315889075fb5369f700)), closes [#1634](https://github.com/elyukai/optolith-client/issues/1634)
+
 ### [1.5.2-alpha.4](https://github.com/elyukai/optolith-client/compare/v1.5.2-alpha.3...v1.5.2-alpha.4) (2022-07-22)
 
 
