@@ -31,6 +31,7 @@ import { WikiCantripInfo } from "./WikiCantripInfo"
 import { WikiCombatTechniqueInfo } from "./WikiCombatTechniqueInfo"
 import { WikiCultureInfo } from "./WikiCultureInfo"
 import { WikiEquipmentInfo } from "./WikiEquipmentInfo"
+import { WikiInfoSelector } from "./WikiInfo"
 import { WikiInfoContentWrapper } from "./WikiInfoContentWrapper"
 import { WikiLiturgicalChantInfo } from "./WikiLiturgicalChantInfo"
 import { WikiProfessionInfo } from "./WikiProfessionInfo"
@@ -110,6 +111,7 @@ const getEntry =
 
 export interface WikiInfoContentOwnProps {
   currentId: Maybe<string>
+  currentSelector: Maybe<WikiInfoSelector>
   noWrapper?: boolean
 }
 
@@ -136,6 +138,7 @@ export type WikiInfoContentProps =
 export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
   const {
     currentId: mid,
+    currentSelector,
     noWrapper,
     languages,
     liturgicalChantExtensions,
@@ -165,6 +168,7 @@ export const WikiInfoContent: React.FC<WikiInfoContentProps> = props => {
       return (
         <WikiInfoContentWrapper noWrapper={noWrapper}>
           <WikiActivatableInfo
+            selector={currentSelector}
             staticData={staticData}
             x={x}
             />

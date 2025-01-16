@@ -22,7 +22,12 @@ import { getConditions, getSkillPages, getSkillsByGroup, getStates } from "../Se
 import { getAllSkills } from "../Selectors/skillsSelectors"
 import { getCantripsForSheet, getSpellsForSheet } from "../Selectors/spellsSelectors"
 import { getAvatar, getCurrentHeroName, getCurrentSex, getProfile, getPurse, getSpecialAbilities, getWikiBooks, getWikiSpecialAbilities } from "../Selectors/stateSelectors"
-import { getSheetCheckAttributeValueVisibility, getSheetUseParchment, getSheetZoomFactor } from "../Selectors/uisettingsSelectors"
+import {
+  getSheetCheckAttributeValueVisibility,
+  getSheetShowRules,
+  getSheetUseParchment,
+  getSheetZoomFactor
+} from "../Selectors/uisettingsSelectors"
 import { requestExportHeroAsRptok } from "../Utilities/MapToolExporter"
 import { pipe } from "../Utilities/pipe"
 import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils"
@@ -56,6 +61,7 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   items: getAllItems (state),
   pet: getPet (state),
   useParchment: getSheetUseParchment (state),
+  showRules: getSheetShowRules (state),
   zoomFactor: getSheetZoomFactor (state),
   purse: getPurse (state),
   totalPrice: getTotalPrice (state),
@@ -97,6 +103,9 @@ const mapDispatchToProps = (dispatch: ReduxDispatch, ownProps: SheetsOwnProps) =
   },
   switchUseParchment () {
     dispatch (SheetActions.switchUseParchment ())
+  },
+  switchShowRules () {
+    dispatch (SheetActions.switchShowRules ())
   },
   setSheetZoomFactor (zoomFactor: number) {
     dispatch (SheetActions.setSheetZoomFactor (zoomFactor))

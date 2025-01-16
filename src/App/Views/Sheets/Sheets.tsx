@@ -3,7 +3,12 @@ import { DerivedCharacteristicId } from "../../../../app/Database/Schema/Derived
 import { equals } from "../../../Data/Eq"
 import { fmapF } from "../../../Data/Functor"
 import { find, List } from "../../../Data/List"
-import { bindF, Just, Maybe, maybeRNull } from "../../../Data/Maybe"
+import {
+  bindF,
+  Just,
+  Maybe,
+  maybeRNull,
+} from "../../../Data/Maybe"
 import { OrderedMap } from "../../../Data/OrderedMap"
 import { Record } from "../../../Data/Record"
 import { fst, Pair, snd } from "../../../Data/Tuple"
@@ -41,7 +46,10 @@ import { Race } from "../../Models/Wiki/Race"
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility"
 import { State } from "../../Models/Wiki/State"
 import { StaticData, StaticDataRecord } from "../../Models/Wiki/WikiModel"
-import { DCPair } from "../../Selectors/derivedCharacteristicsSelectors"
+import {
+  DCPair,
+  getCustomRules,
+} from "../../Selectors/derivedCharacteristicsSelectors"
 import { classListMaybe } from "../../Utilities/CSS"
 import { translate } from "../../Utilities/I18n"
 import { Maybe as NewMaybe } from "../../Utilities/Maybe"
@@ -55,6 +63,7 @@ import { Scroll } from "../Universal/Scroll"
 import { BelongingsSheet } from "./BelongingsSheet/BelongingsSheet"
 import { CombatSheet } from "./CombatSheet/CombatSheet"
 import { CombatSheetZones } from "./CombatSheet/CombatSheetZones"
+import { RulesSheet } from "./RulesSheet/RulesSheet"
 import { LiturgicalChantsSheet } from "./LiturgicalChantsSheet/LiturgicalChantsSheet"
 import { MainSheet } from "./MainSheet/MainSheet"
 import { SkillsSheet } from "./SkillsSheet/SkillsSheet"
@@ -85,6 +94,7 @@ export interface SheetsStateProps {
   name: Maybe<string>
   professionName: Maybe<string>
   useParchment: boolean
+  showRules: boolean
   zoomFactor: number
 
   // profession: Maybe<Record<Profession>>
@@ -128,11 +138,11 @@ export interface SheetsDispatchProps {
   exportAsRptok (): void
   switchAttributeValueVisibility (): void
   switchUseParchment (): void
+  switchShowRules (): void
   setSheetZoomFactor (zoomFactor: number): void
 }
 
 type Props = SheetsStateProps & SheetsDispatchProps & SheetsOwnProps
-
 
 export const Sheets: React.FC<Props> = props => {
   const {
@@ -199,6 +209,8 @@ export const Sheets: React.FC<Props> = props => {
     blessedTradition,
     blessings,
     liturgicalChants,
+    showRules,
+    switchShowRules,
   } = props
 
   const maybeArcaneEnergy =
@@ -211,6 +223,15 @@ export const Sheets: React.FC<Props> = props => {
 
   const nArmorZones = armorZones.map (xs => xs.length).sum ()
   const nArmors = Maybe.sum (fmapF (armors) (xs => xs.length))
+
+  const customRules = getCustomRules (
+    advantagesActive,
+    disadvantagesActive,
+    generalsaActive,
+    combatSpecialAbilities
+  )
+  const hasRules = customRules.total > 0
+  const displayRulePage = hasRules && showRules
 
   return (
     <Page id="sheets">
@@ -246,6 +267,13 @@ export const Sheets: React.FC<Props> = props => {
           onClick={switchAttributeValueVisibility}
           >
           {translate (staticData) ("sheets.showattributevalues")}
+        </Checkbox>
+        <Checkbox
+          checked={showRules}
+          onClick={switchShowRules}
+          disabled={!hasRules}
+          >
+          {translate (staticData) ("sheets.usecustomrules")}
         </Checkbox>
         <Dropdown
           label={translate (staticData) ("sheets.zoomfactor")}
@@ -401,6 +429,18 @@ export const Sheets: React.FC<Props> = props => {
                          />
                      ))
         )}
+      {
+        displayRulePage
+        ? (
+          <RulesSheet
+            attributes={attributes}
+            staticData={staticData}
+            useParchment={useParchment}
+            rules={customRules}
+            />
+          )
+        : null
+      }
       </Scroll>
     </Page>
   )
