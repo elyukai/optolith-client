@@ -1,7 +1,19 @@
 import { notEquals } from "../../Data/Eq"
 import { fmap, fmapF } from "../../Data/Functor"
 import { elem, foldr, List } from "../../Data/List"
-import { bindF, catMaybes, ensure, fromMaybe, Just, liftM2, listToMaybe, maybe, Maybe, Nothing } from "../../Data/Maybe"
+import {
+  bindF,
+  catMaybes,
+  ensure,
+  fromMaybe,
+  isJust, isNothing,
+  Just,
+  liftM2,
+  listToMaybe,
+  maybe,
+  Maybe,
+  Nothing,
+} from "../../Data/Maybe"
 import { add, multiply, negate, subtract } from "../../Data/Num"
 import { lookup, mapMaybe } from "../../Data/OrderedMap"
 import { Record } from "../../Data/Record"
@@ -15,13 +27,18 @@ import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent"
 import { PermanentEnergyLoss } from "../Models/Hero/PermanentEnergyLoss"
 import { PermanentEnergyLossAndBoughtBack } from "../Models/Hero/PermanentEnergyLossAndBoughtBack"
 import { Rules } from "../Models/Hero/Rules"
+import { ActiveActivatable } from "../Models/View/ActiveActivatable"
 import { AttributeCombined } from "../Models/View/AttributeCombined"
 import { DerivedCharacteristicValues } from "../Models/View/DerivedCharacteristicCombined"
+import { Advantage } from "../Models/Wiki/Advantage"
 import { DerivedCharacteristic } from "../Models/Wiki/DerivedCharacteristic"
+import { Disadvantage } from "../Models/Wiki/Disadvantage"
 import { MagicalTradition } from "../Models/Wiki/MagicalTradition"
 import { Race } from "../Models/Wiki/Race"
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility"
 import { StaticData } from "../Models/Wiki/WikiModel"
 import { getModifierByIsActive, getModifierByIsActives, modifyByLevelM } from "../Utilities/Activatable/activatableModifierUtils"
+import { isCustomActivatableId } from "../Utilities/Activatable/checkActivatableUtils"
 import { getActiveSelections } from "../Utilities/Activatable/selectionUtils"
 import { createMaybeSelector } from "../Utilities/createMaybeSelector"
 import { getAttributeValueWithDefault } from "../Utilities/Increasable/attributeUtils"
@@ -426,3 +443,77 @@ export const getDerivedCharacteristics = createMaybeSelector (
     lookup ("WT") (mp),
   ))
 )
+
+export interface RuleDictionary {
+  [key: string]: string
+}
+
+export interface RuleContainer {
+  total: number
+  advantages: RuleDictionary
+  disadvantages: RuleDictionary
+  specialAbilities: RuleDictionary
+}
+
+export const getCustomRules = (
+  advantagesActive: Maybe<List<Record<ActiveActivatable<Advantage>>>>,
+  disadvantagesActive: Maybe<List<Record<ActiveActivatable<Disadvantage>>>>,
+  generalsaActive: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>,
+  combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
+): RuleContainer => {
+  const customRules: RuleContainer = {
+    total: 0,
+    advantages: {},
+    disadvantages: { },
+    specialAbilities: { },
+  }
+  const addToCustomRules = (
+    list: List<Record<ActiveActivatable<Advantage>>>
+      | List<Record<ActiveActivatable<Disadvantage>>>
+      | List<Record<ActiveActivatable<SpecialAbility>>>,
+    target: RuleDictionary
+  ) => {
+    for (const activatable of list) {
+      const { heroEntry } = activatable.values
+
+      if (!isCustomActivatableId (heroEntry.values.id)) {
+        continue
+      }
+
+      for (const activeObject of heroEntry.values.active) {
+        if (!activeObject.values.sid2) {
+          continue
+        }
+
+        if (
+          isNothing (activeObject.values.sid)
+          || isNothing (activeObject.values.sid2)
+        ) {
+          continue
+        }
+
+        if (activeObject.values.sid.value in target) {
+          continue
+        }
+
+        target[activeObject.values.sid.value.toString ()] = activeObject.values.sid2.value.toString ()
+        customRules.total++
+      }
+    }
+  }
+
+  if (isJust(advantagesActive)) {
+    addToCustomRules (advantagesActive.value, customRules.advantages)
+  }
+  if (isJust(disadvantagesActive)) {
+    addToCustomRules (disadvantagesActive.value, customRules.disadvantages)
+  }
+  if (isJust(generalsaActive)) {
+    addToCustomRules (generalsaActive.value, customRules.specialAbilities)
+  }
+  if (isJust(combatSpecialAbilities)) {
+    addToCustomRules (combatSpecialAbilities.value, customRules.specialAbilities)
+  }
+
+  return customRules
+}

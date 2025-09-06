@@ -37,6 +37,7 @@ type Action = AttributesActions.AddAttributePointAction
             | DisAdvActions.ActivateDisAdvAction
             | DisAdvActions.DeactivateDisAdvAction
             | DisAdvActions.SetDisAdvLevelAction
+            | DisAdvActions.SaveRuleAction
             | SpecialAbilitiesActions.ActivateSpecialAbilityAction
             | SpecialAbilitiesActions.DeactivateSpecialAbilityAction
             | SpecialAbilitiesActions.SetSpecialAbilityTierAction
@@ -71,6 +72,7 @@ export const dependentReducer =
       case ActionTypes.ACTIVATE_SPECIALABILITY:
       case ActionTypes.DEACTIVATE_DISADV:
       case ActionTypes.DEACTIVATE_SPECIALABILITY:
+      case ActionTypes.SET_CUSTOM_RULE:
       case ActionTypes.SET_DISADV_TIER:
       case ActionTypes.SET_SPECIALABILITY_TIER:
       case ActionTypes.SET_TRAD_GUILD_MAGE_UNFAM_SPELL_ID:

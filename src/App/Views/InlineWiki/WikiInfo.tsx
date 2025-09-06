@@ -1,11 +1,20 @@
 import * as React from "react"
-import { Maybe, orN } from "../../../Data/Maybe"
+import { isJust, Maybe, Nothing, orN } from "../../../Data/Maybe"
+import { Record } from "../../../Data/Record"
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable"
 import { Aside } from "../Universal/Aside"
 import { ErrorMessage } from "../Universal/ErrorMessage"
 import { WikiInfoContent, WikiInfoContentStateProps } from "./WikiInfoContent"
 
+export interface WikiInfoSelector {
+  currentId: string
+  index: number
+  item: Record<ActiveActivatable>
+}
+
 export interface WikiInfoOwnProps {
-  currentId: Maybe<string>
+  currentId?: Maybe<string>
+  currentSelector?: Maybe<WikiInfoSelector>
   noWrapper?: boolean
 }
 
@@ -28,9 +37,9 @@ export class WikiInfo extends React.Component<WikiInfoProps, WikiInfoState> {
   }
 
   shouldComponentUpdate (nextProps: WikiInfoProps) {
-    const { currentId } = this.props
+    const { currentId, currentSelector } = this.props
 
-    return nextProps.currentId !== currentId
+    return nextProps.currentId !== currentId || nextProps.currentSelector !== currentSelector
   }
 
   componentDidUpdate (prevProps: WikiInfoProps, prevState: WikiInfoState) {
@@ -44,6 +53,7 @@ export class WikiInfo extends React.Component<WikiInfoProps, WikiInfoState> {
   render () {
     const {
       currentId,
+      currentSelector,
       noWrapper,
       combinedRaces,
       combinedCultures,
@@ -70,9 +80,29 @@ export class WikiInfo extends React.Component<WikiInfoProps, WikiInfoState> {
       return orN (noWrapper) ? currentElement : <Aside>{currentElement}</Aside>
     }
 
+    const id = (() => {
+      if (currentId && isJust (currentId)) {
+        return currentId
+      }
+
+      if (currentSelector && isJust (currentSelector)) {
+        return Maybe (currentSelector.value.currentId)
+      }
+
+      return Nothing
+    }) ()
+    const selector = (() => {
+      if (currentSelector) {
+        return currentSelector
+      }
+
+      return Nothing
+    }) ()
+
     return (
       <WikiInfoContent
-        currentId={currentId}
+        currentId={id}
+        currentSelector={selector}
         noWrapper={noWrapper}
         combinedRaces={combinedRaces}
         combinedCultures={combinedCultures}
