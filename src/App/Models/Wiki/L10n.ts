@@ -90,6 +90,8 @@ export const L10n =
                 "general.weightvalue": "",
                 "general.pricevalue": "",
                 "general.lengthvalue": "",
+                "general.weightunit": "",
+                "general.lengthunit": "",
                 "general.dice": "",
                 "general.none": "",
                 "general.or": "",

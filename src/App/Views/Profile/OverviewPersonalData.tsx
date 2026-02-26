@@ -7,7 +7,7 @@ import { SocialStatusId } from "../../Constants/Ids"
 import { PersonalData } from "../../Models/Hero/PersonalData"
 import { DropdownOption } from "../../Models/View/DropdownOption"
 import { StaticDataRecord } from "../../Models/Wiki/WikiModel"
-import { translate } from "../../Utilities/I18n"
+import { getSizeUnit, getWeightUnit, translate } from "../../Utilities/I18n"
 import { renderMaybeWith } from "../../Utilities/ReactUtils"
 import { isEmptyOr, isFloat, isNaturalNumber } from "../../Utilities/RegexUtils"
 import { Dropdown } from "../Universal/Dropdown"
@@ -145,7 +145,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextFieldLazy
-          label={`${translate (staticData) ("personaldata.size")}${wrapParenSpace (sizeCalcStr)}`}
+          label={`${translate (staticData) ("personaldata.size")} (${getSizeUnit (staticData)})${wrapParenSpace(sizeCalcStr)}`}
           value={maybeToUndefined (PDA.size (profile))}
           onChange={changeSize}
           valid={all (isEmptyOr (isFloat)) (size)}
@@ -155,7 +155,7 @@ export const OverviewPersonalData: React.FC<OverviewPersonalDataProps> = props =
       <InputButtonGroup className="reroll">
         <TextFieldLazy
           label={
-            `${translate (staticData) ("personaldata.weight")}${wrapParenSpace (weightCalcStr)}`
+            `${translate (staticData) ("personaldata.weight")} (${getWeightUnit (staticData)})${wrapParenSpace(weightCalcStr)}`
           }
           value={maybeToUndefined (PDA.weight (profile))}
           onChange={changeWeight}
