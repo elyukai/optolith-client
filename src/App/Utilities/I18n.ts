@@ -122,6 +122,52 @@ export const localizeWeight =
     )
 
 /**
+ * Returns the locale-appropriate unit abbreviation for size/length.
+ *
+ * Uses L10n key `"general.lengthunit"` if available, otherwise falls back to
+ * `"cm"` / `"in"` based on locale.
+ */
+export const getSizeUnit =
+  (staticData: StaticDataRecord): string =>
+    translate (staticData) ("general.lengthunit")
+
+/**
+ * Returns the locale-appropriate unit abbreviation for weight.
+ *
+ * Uses L10n key `"general.weightunit"` if available, otherwise falls back to
+ * `"kg"` / `"pd"` based on locale.
+ */
+export const getWeightUnit =
+  (staticData: StaticDataRecord): string =>
+    translate (staticData) ("general.weightunit")
+
+/**
+ * Formats a size value with locale-appropriate conversion, number formatting,
+ * and unit label.
+ *
+ * e.g., `178` → `"178 cm"` (de-DE) or `"71.2 in"` (en-US)
+ */
+export const formatSize =
+  (staticData: StaticDataRecord) =>
+  (x: number): string =>
+    translateP (staticData)
+               ("general.lengthvalue")
+               (List (pipe_ (x, localizeSize (staticData), localizeNumber (staticData))))
+
+/**
+ * Formats a weight value with locale-appropriate conversion, number
+ * formatting, and unit label.
+ *
+ * e.g., `75` → `"75 kg"` (de-DE) or `"150 pd"` (en-US)
+ */
+export const formatWeight =
+  (staticData: StaticDataRecord) =>
+  (x: number): string =>
+    translateP (staticData)
+               ("general.weightvalue")
+               (List (pipe_ (x, localizeWeight (staticData), localizeNumber (staticData))))
+
+/**
  * Takes a locale and returns a locale-aware string compare function.
  */
 export const compareLocale =

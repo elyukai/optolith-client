@@ -11,7 +11,7 @@ import { Culture } from "../../../Models/Wiki/Culture"
 import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel"
 import { Race } from "../../../Models/Wiki/Race"
 import { StaticData, StaticDataRecord } from "../../../Models/Wiki/WikiModel"
-import { localizeSize, localizeWeight, translate } from "../../../Utilities/I18n"
+import { formatSize, formatWeight, translate } from "../../../Utilities/I18n"
 import { toInt } from "../../../Utilities/NumberUtils"
 import { pipe_ } from "../../../Utilities/pipe"
 import { Avatar } from "../../Universal/Avatar"
@@ -121,7 +121,7 @@ export const MainSheetPersonalData: React.FC<Props> = props => {
             profile,
             PDA.size,
             bindF (toInt),
-            fmap (localizeSize (staticData))
+            fmap (formatSize (staticData))
           )}
           />
         <Plain
@@ -131,7 +131,7 @@ export const MainSheetPersonalData: React.FC<Props> = props => {
             profile,
             PDA.weight,
             bindF (toInt),
-            fmap (localizeWeight (staticData))
+            fmap (formatWeight (staticData))
           )}
           />
         <Plain
