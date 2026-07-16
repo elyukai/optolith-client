@@ -265,7 +265,7 @@ const getPrerequisitesIndexLevel =
     activatable: combinedIndexMap (univ.activatablePrerequisites, l10n.activatablePrerequisites),
     activatableMultiEntry: OrderedMap.empty,
     activatableMultiSelect: OrderedMap.empty,
-    increasable: combinedIndexMap (univ.activatablePrerequisites, l10n.activatablePrerequisites),
+    increasable: combinedIndexMap (univ.increasablePrerequisites, l10n.increasablePrerequisites),
     increasableMultiEntry: OrderedMap.empty,
   })
 
