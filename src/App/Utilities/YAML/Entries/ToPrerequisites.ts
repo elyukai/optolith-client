@@ -46,9 +46,9 @@ export const toRacePrerequisite : (x : RawPrerequisites.RaceRequirement)
                                          value: Array.isArray (x)
                                                 ? fromArray (x)
                                                 : typeof x === "object"
-                                                ? Array.isArray (x.race)
-                                                  ? fromArray (x.race)
-                                                  : x.race
+                                                ? Array.isArray (x.races)
+                                                  ? fromArray (x.races)
+                                                  : x.races
                                                 : x,
                                        })
 
