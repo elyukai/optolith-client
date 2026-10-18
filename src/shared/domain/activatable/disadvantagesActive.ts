@@ -1,6 +1,6 @@
 import { ResolvedSelectOption } from "optolith-database-schema/cache/activatableSelectOptions"
-import { Disadvantage } from "optolith-database-schema/types/Disadvantage"
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { Disadvantage } from "@optolith/database-schema/gen"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import { FilterApplyingActivatableDependencies } from "../dependencies/filterApplyingDependencies.ts"
 import { All, GetById, Singleton } from "../getTypes.ts"
 import { getCreateIdentifierObject } from "../identifier.ts"

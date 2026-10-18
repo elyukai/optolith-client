@@ -1,8 +1,8 @@
 import {
   ActivatableIdentifier,
   RequirableSelectOptionIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
-import { Preconditions } from "optolith-database-schema/types/prerequisites/ConditionalPrerequisites"
+} from "@optolith/database-schema/gen"
+import { Preconditions } from "@optolith/database-schema/gen"
 import { equalsIdentifier } from "../identifier.ts"
 import { ActivatableInstance, PredefinedActivatableOption } from "./activatableEntry.ts"
 

@@ -1,6 +1,6 @@
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit"
-import { AdventurePointsValue } from "optolith-database-schema/types/_Activatable"
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { AdventurePointsValue } from "@optolith/database-schema/gen"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import { useCallback } from "react"
 import {
   DisplayedActiveActivatable,

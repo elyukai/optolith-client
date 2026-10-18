@@ -1,10 +1,10 @@
+import type { Locale } from "@optolith/database-schema/gen"
 import Debug from "debug"
 import { BrowserWindow, app, ipcMain } from "electron"
 import { CancellationToken, UpdateCheckResult, autoUpdater } from "electron-updater"
 import * as path from "node:path"
 import * as url from "node:url"
 import appIconMacOS from "../assets/icon/AppIcon.icns"
-import { Database } from "../database/index.ts"
 import { getGlobalSettings } from "../shared/settings/main.ts"
 import { InitialSetupEventMessage } from "../updater_window_preload/index.ts"
 import { getWindowBackgroundColor } from "./nativeTheme.ts"
@@ -28,9 +28,10 @@ const checkForUpdates = async (): Promise<AvailableUpdateCheckResult | undefined
   }
 }
 
-const createUpdaterWindow = async (database: Database) => {
+const createUpdaterWindow = async (locales: Record<string, Locale>) => {
   debug("create window")
   const updaterWindow = new BrowserWindow({
+    name: "updater",
     icon: appIconMacOS,
     center: true,
     title: "Optolith",
@@ -60,8 +61,7 @@ const createUpdaterWindow = async (database: Database) => {
   )
 
   const initialSetupEventMessage: InitialSetupEventMessage = {
-    translations: Object.fromEntries(database.raw.ui),
-    locales: Object.fromEntries(database.raw.locales),
+    locales,
     globalSettings: getGlobalSettings(),
     systemLocale: app.getLocale(),
   }
@@ -151,7 +151,9 @@ const prepareUpdaterWindowForAvailableUpdate = (
  * Checks for updates on startup and returns a `Promise` that resolves to `true`
  * if an update is available.
  */
-export const checkForUpdatesOnStartup = async (database: Database): Promise<boolean> => {
+export const checkForUpdatesOnStartup = async (
+  locales: Record<string, Locale>,
+): Promise<boolean> => {
   debug("checking for updates ...")
 
   const checkResult = await checkForUpdates()
@@ -159,7 +161,7 @@ export const checkForUpdatesOnStartup = async (database: Database): Promise<bool
 
   if (isUpdateAvailable) {
     debug("update is available")
-    const updaterWindow = await createUpdaterWindow(database)
+    const updaterWindow = await createUpdaterWindow(locales)
     const updatePromise = new Promise<boolean>(resolve => {
       prepareUpdaterWindowForAvailableUpdate(
         updaterWindow,
@@ -180,9 +182,11 @@ export const checkForUpdatesOnStartup = async (database: Database): Promise<bool
  * Checks for updates when the user manually requests to and returns a `Promise`
  * that resolves to `true` if an update is available.
  */
-export const checkForUpdatesOnRequest = async (database: Database): Promise<boolean> => {
+export const checkForUpdatesOnRequest = async (
+  locales: Record<string, Locale>,
+): Promise<boolean> => {
   debug("checking for updates ...")
-  const updaterWindow = await createUpdaterWindow(database)
+  const updaterWindow = await createUpdaterWindow(locales)
   updaterWindow.show()
   const checkResult = await checkForUpdates()
   const isUpdateAvailable = checkResult !== undefined

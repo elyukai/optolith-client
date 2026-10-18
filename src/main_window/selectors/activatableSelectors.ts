@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { ResolvedSelectOption } from "optolith-database-schema/cache/activatableSelectOptions"
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import { getSelectOptionsFromCacheById } from "../../shared/domain/database.ts"
 import { selectDatabase } from "../slices/databaseSlice.ts"
 

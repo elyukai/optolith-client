@@ -1,5 +1,4 @@
-import { Locale } from "optolith-database-schema/types/Locale"
-import { UI } from "optolith-database-schema/types/UI"
+import type { Locale } from "@optolith/database-schema/gen"
 import { createContext } from "react"
 
 /**
@@ -12,7 +11,6 @@ export type LocalizationContext = {
   systemLocale: string
   platform: NodeJS.Platform
   locales: Record<string, Locale>
-  ui: Record<string, UI>
 }
 
 /**
@@ -26,5 +24,4 @@ export const LocalizationContext = createContext<LocalizationContext>({
   systemLocale: "en-US",
   platform: "win32",
   locales: {},
-  ui: {},
 })

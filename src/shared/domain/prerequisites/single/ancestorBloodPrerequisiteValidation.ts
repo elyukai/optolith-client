@@ -1,4 +1,4 @@
-import { AncestorBloodPrerequisite } from "optolith-database-schema/types/prerequisites/single/AncestorBloodPrerequisite"
+import { AncestorBloodPrerequisite } from "@optolith/database-schema/gen"
 import { All, GetById } from "../../getTypes.ts"
 
 /**

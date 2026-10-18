@@ -17,9 +17,9 @@ export const Imprint: FC = () => {
 
           <h3>{"Lukas Obermann"}</h3>
           <p>
-            {"Duburger Straße 13"}
+            {"Möhlenkamp 105"}
             <br />
-            {"24939 Flensburg"}
+            {"24340 Eckernförde"}
             <br />
             {"Germany"}
             <br />

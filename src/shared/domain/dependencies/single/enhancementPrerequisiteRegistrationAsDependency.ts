@@ -1,8 +1,8 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import {
   ExternalEnhancementPrerequisite,
   InternalEnhancementPrerequisite,
-} from "optolith-database-schema/types/prerequisites/single/EnhancementPrerequisite"
+} from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import { EnhancementDependency } from "../../rated/enhancement.ts"
 import { createEmptyDynamicLiturgicalChant } from "../../rated/liturgicalChant.ts"

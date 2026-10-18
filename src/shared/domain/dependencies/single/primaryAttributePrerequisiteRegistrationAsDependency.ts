@@ -1,5 +1,5 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
-import { PrimaryAttributePrerequisite } from "optolith-database-schema/types/prerequisites/single/PrimaryAttributePrerequisite"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import { PrimaryAttributePrerequisite } from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import { PrimaryAttributeDependency } from "../../rated/primaryAttribute.ts"
 import { RegistrationFunction, addOrRemoveDependency } from "../registrationHelpers.ts"

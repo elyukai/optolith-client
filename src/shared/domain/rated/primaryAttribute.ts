@@ -1,5 +1,5 @@
-import { Attribute } from "optolith-database-schema/types/Attribute"
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { Attribute } from "@optolith/database-schema/gen"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import { CombinedActiveBlessedTradition } from "../activatable/blessedTradition.ts"
 import { CombinedActiveMagicalTradition } from "../activatable/magicalTradition.ts"
 import { createEmptyDynamicAttribute } from "./attribute.ts"

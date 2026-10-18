@@ -1,5 +1,5 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
-import { StatePrerequisite } from "optolith-database-schema/types/prerequisites/single/StatePrerequisite"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import { StatePrerequisite } from "@optolith/database-schema/gen"
 import { StateDependency, createState } from "../../state.ts"
 import { RegistrationFunction, addOrRemoveDependencyInSlice } from "../registrationHelpers.ts"
 

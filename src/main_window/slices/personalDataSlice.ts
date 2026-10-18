@@ -1,7 +1,7 @@
 /* eslint-disable jsdoc/require-jsdoc */
 import { createAction } from "@reduxjs/toolkit"
-import { Height, Weight, WeightDiceOffsetStrategy } from "optolith-database-schema/types/Race"
-import { DieType } from "optolith-database-schema/types/_Dice"
+import { Height, Weight, WeightDiceOffsetStrategy } from "@optolith/database-schema/gen"
+import { DieType } from "@optolith/database-schema/gen"
 import { rollDice, separateDice } from "../../shared/utils/dice.ts"
 import { even, parseInt, randomInt } from "../../shared/utils/math.ts"
 import { DraftReducer } from "../../shared/utils/redux.ts"

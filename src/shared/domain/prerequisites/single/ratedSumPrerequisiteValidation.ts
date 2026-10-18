@@ -1,5 +1,5 @@
-import { SkillIdentifier } from "optolith-database-schema/types/_Identifier"
-import { RatedSumPrerequisite } from "optolith-database-schema/types/prerequisites/single/RatedSumPrerequisite"
+import { SkillIdentifier } from "@optolith/database-schema/gen"
+import { RatedSumPrerequisite } from "@optolith/database-schema/gen"
 import { sumWith } from "../../../utils/array.ts"
 import { GetById } from "../../getTypes.ts"
 import { getSkillValue } from "../../rated/skill.ts"

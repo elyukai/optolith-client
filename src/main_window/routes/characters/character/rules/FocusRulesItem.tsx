@@ -1,4 +1,4 @@
-import { FocusRule, FocusRuleTranslation } from "optolith-database-schema/types/rule/FocusRule"
+import { FocusRule, FocusRuleTranslation } from "@optolith/database-schema/gen"
 import { FC, useCallback } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"

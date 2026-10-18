@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { ProfessionVariant } from "optolith-database-schema/types/Profession"
+import { ProfessionVariant } from "@optolith/database-schema/gen"
 import {
   ProfessionParts,
   getProfessionParts,

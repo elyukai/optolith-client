@@ -1,4 +1,4 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import { GetById } from "./getTypes.ts"
 
 /**

@@ -1,12 +1,12 @@
 import { ResolvedSelectOption } from "optolith-database-schema/cache/activatableSelectOptions"
-import { AdventurePointsValue } from "optolith-database-schema/types/_Activatable"
+import { AdventurePointsValue } from "@optolith/database-schema/gen"
 import {
   ActivatableIdentifier,
   SelectOptionIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
-import { LocaleMap } from "optolith-database-schema/types/_LocaleMap"
-import { GeneralPrerequisites } from "optolith-database-schema/types/_Prerequisite"
-import { PublicationRefs } from "optolith-database-schema/types/source/_PublicationRef"
+} from "@optolith/database-schema/gen"
+import { LocaleMap } from "@optolith/database-schema/gen"
+import { GeneralPrerequisites } from "@optolith/database-schema/gen"
+import { PublicationRefs } from "@optolith/database-schema/gen"
 import { filterNonNullable } from "../../utils/array.ts"
 import { deepEqual } from "../../utils/compare.ts"
 import { andEvery, orSome } from "../../utils/function.ts"

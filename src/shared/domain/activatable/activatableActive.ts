@@ -7,14 +7,14 @@
 //  */
 
 import { ResolvedSelectOption } from "optolith-database-schema/cache/activatableSelectOptions"
-import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
-import { AdventurePointsValue } from "optolith-database-schema/types/_Activatable"
-import { GeneralIdentifier } from "optolith-database-schema/types/_Identifier"
+import { ExperienceLevel } from "@optolith/database-schema/gen"
+import { AdventurePointsValue } from "@optolith/database-schema/gen"
+import { GeneralIdentifier } from "@optolith/database-schema/gen"
 import {
   ActivatableIdentifier,
   SelectOptionIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
-import { LocaleMap } from "optolith-database-schema/types/_LocaleMap"
+} from "@optolith/database-schema/gen"
+import { LocaleMap } from "@optolith/database-schema/gen"
 import { count, sum, sumWith } from "../../utils/array.ts"
 import { not } from "../../utils/function.ts"
 import { ensure, isNotNullish } from "../../utils/nullable.ts"

@@ -1,5 +1,4 @@
-import { Locale } from "optolith-database-schema/types/Locale"
-import { UI } from "optolith-database-schema/types/UI"
+import type { Locale } from "@optolith/database-schema/gen"
 import { useEffect, useState } from "react"
 import { LocalizationContext } from "../../contexts/localization.ts"
 import { TypedEventEmitter } from "../../utils/events.ts"
@@ -15,7 +14,6 @@ type Props = {
   systemLocale: string
   platform: NodeJS.Platform
   locales: Record<string, Locale>
-  ui: Record<string, UI>
 }
 
 /**
@@ -31,7 +29,6 @@ export const LocalizationProvider: FCC<Props> = props => {
     selectedFallbackLocale: initialSelectedFallbackLocale,
     selectedLocaleEvents,
     systemLocale,
-    ui,
   } = props
 
   const [selectedLocale, setSelectedLocale] = useState<string | undefined>(initialSelectedLocale)
@@ -51,7 +48,7 @@ export const LocalizationProvider: FCC<Props> = props => {
 
   return (
     <LocalizationContext.Provider
-      value={{ locales, platform, selectedLocale, selectedFallbackLocale, systemLocale, ui }}
+      value={{ locales, platform, selectedLocale, selectedFallbackLocale, systemLocale }}
     >
       {children}
     </LocalizationContext.Provider>

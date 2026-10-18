@@ -157,8 +157,8 @@ export const Root: FC<Props> = props => {
                 <>
                   <p>
                     {translate(
-                      "Version {0} is available! Do you wish to download and install?",
-                      phase.info.version,
+                      "Version {$version} is available! Do you wish to download and install?",
+                      {version: phase.info.version},
                     )}
                   </p>
                   <div className="buttons">

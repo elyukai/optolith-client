@@ -6,7 +6,7 @@ import {
   PrerequisitesDisjunction,
   PrerequisitesElement,
   PrerequisitesForLevels,
-} from "optolith-database-schema/types/_Prerequisite"
+} from "@optolith/database-schema/gen"
 import { RangeBounds, isInRange } from "../../utils/range.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { Character } from "../character.ts"

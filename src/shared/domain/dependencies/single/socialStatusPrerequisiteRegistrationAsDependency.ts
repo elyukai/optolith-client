@@ -1,5 +1,5 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
-import { SocialStatusPrerequisite } from "optolith-database-schema/types/prerequisites/single/SocialStatusPrerequisite"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import { SocialStatusPrerequisite } from "@optolith/database-schema/gen"
 import { SocialStatusDependency } from "../../socialStatus.ts"
 import { RegistrationFunction, addOrRemoveDependency } from "../registrationHelpers.ts"
 

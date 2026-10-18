@@ -1,7 +1,7 @@
 import {
   OptionalRule,
   OptionalRuleTranslation,
-} from "optolith-database-schema/types/rule/OptionalRule"
+} from "@optolith/database-schema/gen"
 import { FC, useMemo } from "react"
 import { isOptionalRuleActive } from "../../../../../shared/domain/rules/optionalRule.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"

@@ -1,7 +1,7 @@
 import {
   Publication,
   PublicationTranslation,
-} from "optolith-database-schema/types/source/Publication"
+} from "@optolith/database-schema/gen"
 import { FC, useCallback, useMemo } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"

@@ -1,5 +1,5 @@
-import { InfluenceIdentifier } from "optolith-database-schema/types/_Identifier"
-import { InfluencePrerequisite } from "optolith-database-schema/types/prerequisites/single/InfluencePrerequisite"
+import { InfluenceIdentifier } from "@optolith/database-schema/gen"
+import { InfluencePrerequisite } from "@optolith/database-schema/gen"
 import { RegistrationFunction } from "../registrationHelpers.ts"
 
 /**

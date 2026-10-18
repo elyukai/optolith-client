@@ -5,7 +5,7 @@ import {
   PrerequisitesDisjunction,
   PrerequisitesElement,
   PrerequisitesForLevels,
-} from "optolith-database-schema/types/_Prerequisite"
+} from "@optolith/database-schema/gen"
 import { someCount } from "../../utils/array.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 

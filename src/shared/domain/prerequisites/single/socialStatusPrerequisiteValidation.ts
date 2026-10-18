@@ -1,4 +1,4 @@
-import { SocialStatusPrerequisite } from "optolith-database-schema/types/prerequisites/single/SocialStatusPrerequisite"
+import { SocialStatusPrerequisite } from "@optolith/database-schema/gen"
 
 /**
  * Checks a single social status prerequisite if it’s matched.

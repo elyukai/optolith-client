@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { Race, RaceVariant } from "optolith-database-schema/types/Race"
+import { Race, RaceVariant } from "@optolith/database-schema/gen"
 import { getRace, getRaceVariant } from "../../shared/domain/race.ts"
 import { selectRaceId, selectRaceVariantId } from "../slices/characterSlice.ts"
 import { selectStaticRaces } from "../slices/databaseSlice.ts"

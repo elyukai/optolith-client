@@ -19,37 +19,37 @@
         "isDefault": true
       }
     },
-    {
-      "label": "tsc watch",
-      "type": "typescript",
-      "tsconfig": "tsconfig.json",
-      "option": "watch",
-      "isBackground": true,
-      "problemMatcher": [
-        "$tsc-watch"
-      ],
-      "group": "build",
+		{
+			"type": "npm",
+			"script": "js:watch",
+			"problemMatcher": [],
+			"label": "Start Bundler Watcher",
       "presentation": {
-        "group": "watch"
+        "group": "client-serve"
       }
-    },
-    {
-      "label": "webpack watch",
-      "command": "npm run js:watch",
-      "isBackground": true,
-      "group": "build",
+		},
+		{
+			"type": "npm",
+			"script": "ts:watch",
+			"problemMatcher": [],
+			"label": "Start Typechecking Watcher",
       "presentation": {
-        "group": "watch"
+        "group": "client-serve"
       }
-    },
-    {
-      "label": "watch",
-      "dependsOn": ["tsc watch", "webpack watch"],
+		},
+		{
+			"label": "Start Watchers",
+			"dependsOn": ["Start Bundler Watcher", "Start Typechecking Watcher"],
+			"dependsOrder": "parallel",
+			"presentation": {
+				"panel": "shared"
+			},
+			"problemMatcher": [],
       "group": {
         "kind": "build",
         "isDefault": true
       }
-    },
+		},
     {
       "label": "create prerelease",
       "command": "npm run release:pre",

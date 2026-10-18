@@ -2,7 +2,7 @@ import { createSelector } from "@reduxjs/toolkit"
 import {
   DerivedCharacteristic,
   DerivedCharacteristicTranslation,
-} from "optolith-database-schema/types/DerivedCharacteristic"
+} from "@optolith/database-schema/gen"
 import {
   firstLevel,
   isActive,

@@ -1,5 +1,5 @@
-import { PublicationIdentifier } from "optolith-database-schema/types/_Identifier"
-import { PublicationPrerequisite } from "optolith-database-schema/types/prerequisites/single/PublicationPrerequisite"
+import { PublicationIdentifier } from "@optolith/database-schema/gen"
+import { PublicationPrerequisite } from "@optolith/database-schema/gen"
 import { PublicationDependency } from "../../sources/publicationDependency.ts"
 import { RegistrationFunction, addOrRemoveDependency } from "../registrationHelpers.ts"
 

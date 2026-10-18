@@ -1,7 +1,7 @@
 import {
   AdvantageIdentifier,
   DisadvantageIdentifier,
-} from "optolith-database-schema/types/_Identifier"
+} from "@optolith/database-schema/gen"
 import { RegistrationFunction } from "../registrationHelpers.ts"
 
 /**

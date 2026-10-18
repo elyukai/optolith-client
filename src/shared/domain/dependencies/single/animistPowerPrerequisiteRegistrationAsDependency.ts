@@ -1,5 +1,5 @@
-import { AnimistPowerIdentifier } from "optolith-database-schema/types/_Identifier"
-import { AnimistPowerPrerequisite } from "optolith-database-schema/types/prerequisites/single/AnimistPowerPrerequisite"
+import { AnimistPowerIdentifier } from "@optolith/database-schema/gen"
+import { AnimistPowerPrerequisite } from "@optolith/database-schema/gen"
 import { RegistrationFunction } from "../registrationHelpers.ts"
 
 /**

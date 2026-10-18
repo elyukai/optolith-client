@@ -1,4 +1,4 @@
-import { SelectOptionIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { SelectOptionIdentifier } from "@optolith/database-schema/gen"
 import { FC, useCallback } from "react"
 import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
 import { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"

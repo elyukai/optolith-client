@@ -1,4 +1,4 @@
-import { SkillCheckPenalty } from "optolith-database-schema/types/_SkillCheck"
+import { SkillCheckPenalty } from "@optolith/database-schema/gen"
 import { ReactNode, useCallback, useMemo } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"

@@ -21,7 +21,7 @@ import {
   ProfessionPrerequisiteGroup,
   PublicationPrerequisiteGroup,
   SpellworkPrerequisiteGroup,
-} from "optolith-database-schema/types/prerequisites/PrerequisiteGroups"
+} from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { checkActivatablePrerequisite } from "./single/activatablePrerequisiteValidation.ts"
 import { checkAncestorBloodPrerequisite } from "./single/ancestorBloodPrerequisiteValidation.ts"

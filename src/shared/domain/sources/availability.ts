@@ -1,5 +1,5 @@
-import { Publication } from "optolith-database-schema/types/source/Publication"
-import { PublicationRefs } from "optolith-database-schema/types/source/_PublicationRef"
+import { Publication } from "@optolith/database-schema/gen"
+import { PublicationRefs } from "@optolith/database-schema/gen"
 import { GetById } from "../getTypes.ts"
 
 /**

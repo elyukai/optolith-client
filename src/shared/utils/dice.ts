@@ -1,4 +1,4 @@
-import { Dice, DieType } from "optolith-database-schema/types/_Dice"
+import { Dice, DieType } from "@optolith/database-schema/gen"
 import { randomIntRange } from "./math.ts"
 
 /**

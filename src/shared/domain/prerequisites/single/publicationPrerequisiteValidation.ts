@@ -1,4 +1,4 @@
-import { PublicationPrerequisite } from "optolith-database-schema/types/prerequisites/single/PublicationPrerequisite"
+import { PublicationPrerequisite } from "@optolith/database-schema/gen"
 import { GetById } from "../../getTypes.ts"
 
 /**

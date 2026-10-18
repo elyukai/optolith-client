@@ -1,4 +1,4 @@
-import { MagicalRuneImprovementCost } from "optolith-database-schema/types/magicalActions/MagicalRune"
+import { MagicalRuneImprovementCost } from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { ImprovementCost, fromRaw } from "../adventurePoints/improvementCost.ts"
 

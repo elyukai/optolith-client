@@ -1,8 +1,8 @@
+import type { Locale } from "@optolith/database-schema/gen"
 import Debug from "debug"
 import { BrowserWindow, app, ipcMain } from "electron"
 import * as path from "node:path"
 import * as url from "node:url"
-import { Database } from "../database/index.ts"
 import type { InitialSetupEventMessage } from "../settings_window_preload/index.ts"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import {
@@ -20,7 +20,7 @@ let settingsWindow: BrowserWindow | undefined = undefined
  * called then the locale is changed and returns its instance.
  */
 export const createSettingsWindow = async (
-  database: Database,
+  locales: Record<string, Locale>,
   onLocaleChanged: (newLocale: string | undefined) => void,
 ) => {
   if (settingsWindow === undefined) {
@@ -28,6 +28,7 @@ export const createSettingsWindow = async (
 
     debug("initialize window")
     settingsWindow = new BrowserWindow({
+      name: "settings",
       height: 310, // 420
       width: 500, // 640
       // resizable: false,
@@ -86,8 +87,7 @@ export const createSettingsWindow = async (
     })
 
     const initialSetupEventMessage: InitialSetupEventMessage = {
-      translations: Object.fromEntries(database.raw.ui),
-      locales: Object.fromEntries(database.raw.locales),
+      locales,
       systemLocale: app.getLocale(),
       settings: getGlobalSettings(),
     }

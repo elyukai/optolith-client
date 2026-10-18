@@ -1,11 +1,11 @@
 import {
   ActivatableIdentifier,
   SkillWithEnhancementsIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
+} from "@optolith/database-schema/gen"
 import {
   PlainPrerequisites,
   PrerequisitesForLevels,
-} from "optolith-database-schema/types/_Prerequisite"
+} from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { GetById } from "../getTypes.ts"
 import { checkIfMultipleDisjunctionPartsAreValid } from "./prerequisiteCombinatorValidation.ts"

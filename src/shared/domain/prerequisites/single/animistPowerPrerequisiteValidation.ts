@@ -1,4 +1,4 @@
-import { AnimistPowerPrerequisite } from "optolith-database-schema/types/prerequisites/single/AnimistPowerPrerequisite"
+import { AnimistPowerPrerequisite } from "@optolith/database-schema/gen"
 
 /**
  * Checks a single animist power prerequisite if it’s matched.

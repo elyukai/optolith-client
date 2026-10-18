@@ -1,4 +1,4 @@
-import { PublicationRefs } from "optolith-database-schema/types/source/_PublicationRef"
+import { PublicationRefs } from "@optolith/database-schema/gen"
 import { isEntryAvailable } from "../../shared/domain/sources/availability.ts"
 import {
   selectIncludeAllPublications,

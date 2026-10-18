@@ -1,8 +1,8 @@
 import {
   ActivatableIdentifier,
   SkillWithEnhancementsIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
-import { RatedPrerequisite } from "optolith-database-schema/types/prerequisites/single/RatedPrerequisite"
+} from "@optolith/database-schema/gen"
+import { RatedPrerequisite } from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import { createEmptyDynamicAttribute } from "../../rated/attribute.ts"
 import { createEmptyDynamicCombatTechnique } from "../../rated/combatTechnique.ts"

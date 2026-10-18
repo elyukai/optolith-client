@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { Skill } from "optolith-database-schema/types/Skill"
+import { Skill } from "@optolith/database-schema/gen"
 import {
   AdvantageIdentifier,
   GeneralSpecialAbilityIdentifier,

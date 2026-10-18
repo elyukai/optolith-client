@@ -1,4 +1,4 @@
-import { RatedPrerequisite } from "optolith-database-schema/types/prerequisites/single/RatedPrerequisite"
+import { RatedPrerequisite } from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import { GetById } from "../../getTypes.ts"
 

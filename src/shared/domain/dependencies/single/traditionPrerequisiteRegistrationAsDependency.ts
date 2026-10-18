@@ -1,8 +1,8 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import {
   BlessedTraditionPrerequisite,
   MagicalTraditionPrerequisite,
-} from "optolith-database-schema/types/prerequisites/single/TraditionPrerequisite"
+} from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import { ActivatableDependency } from "../../activatable/activatableDependency.ts"
 import { createEmptyDynamicActivatable } from "../../activatable/activatableEntry.ts"

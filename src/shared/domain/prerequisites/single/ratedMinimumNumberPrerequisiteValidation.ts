@@ -1,7 +1,7 @@
 import {
   RatedMinimumNumberPrerequisite,
   RatedMinimumNumberPrerequisiteTarget,
-} from "optolith-database-schema/types/prerequisites/single/RatedMinimumNumberPrerequisite"
+} from "@optolith/database-schema/gen"
 import { isNotNullish } from "../../../utils/nullable.ts"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import { All, GetById } from "../../getTypes.ts"

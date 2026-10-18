@@ -1,4 +1,4 @@
-import { WeightDiceOffsetStrategy } from "optolith-database-schema/types/Race"
+import { WeightDiceOffsetStrategy } from "@optolith/database-schema/gen"
 import { FC, useCallback, useMemo } from "react"
 import { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"

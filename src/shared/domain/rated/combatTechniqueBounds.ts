@@ -1,5 +1,5 @@
-import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
-import { AttributeReference } from "optolith-database-schema/types/_SimpleReferences"
+import { ExperienceLevel } from "@optolith/database-schema/gen"
+import { AttributeReference } from "@optolith/database-schema/gen"
 import { filterNonNullable } from "../../utils/array.ts"
 import { Activatable, countOptions, isActive } from "../activatable/activatableEntry.ts"
 import { FilterApplyingRatedDependencies } from "../dependencies/filterApplyingDependencies.ts"

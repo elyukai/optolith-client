@@ -1,13 +1,7 @@
-import { Locale } from "optolith-database-schema/types/Locale"
-import { UI } from "optolith-database-schema/types/UI"
-import { PluralizationCategories, VaryBySystem } from "optolith-database-schema/types/_I18n"
-import { LocaleMap } from "optolith-database-schema/types/_LocaleMap"
-
-const insertParams = (str: string, params: (string | number)[]): string =>
-  str.replace(/\{(?<index>\d+)\}/gu, (_match, _p1, _offset, _s, { index: rawIndex }) => {
-    const index = Number.parseInt(rawIndex, 10)
-    return params[index]?.toString() ?? `{${rawIndex}}`
-  })
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type { Locale } from "@optolith/database-schema/gen"
+import { MessageFormat } from "messageformat"
+import type { MessageFunctionContext, MessageValue } from "messageformat/functions"
 
 const matchSystemLocaleToSupported = (available: string[], system: string) => {
   const systemLocale = system.slice(0, 2)
@@ -16,43 +10,75 @@ const matchSystemLocaleToSupported = (available: string[], system: string) => {
 }
 
 /**
+ * The type of all translations
+ */
+export type Translations = NonNullable<Locale["translations"]>
+
+/**
  * Translates a given key into a string, optionally with parameters.
  */
-export type Translate = <K extends keyof UI>(key: K, ...params: (string | number)[]) => string
+export type Translate = <K extends keyof Translations>(
+  key: K,
+  ...rest: TranslationParamsInArray<K>
+) => string
 
-const isPluralizationCategories = (
-  value: string | PluralizationCategories | VaryBySystem,
-): value is PluralizationCategories => typeof value === "object" && "other" in value
+/**
+ * Extracts the parameters for a given translation key, or never if the key does not have parameters.
+ */
+export type TranslationParams<K extends keyof Translations> = Translations[K] extends string & {
+  __params: infer Params
+}
+  ? Params
+  : undefined
 
-const isVaryBySystem = (
-  value: string | PluralizationCategories | VaryBySystem,
-): value is VaryBySystem => typeof value === "object" && "mac" in value
+/**
+ * Extracts the parameters for a given translation key as an array, or an empty array if the key does not have parameters.
+ */
+export type TranslationParamsInArray<K extends keyof Translations> =
+  Translations[K] extends string & {
+    __params: infer Params
+  }
+    ? [params: Params]
+    : []
 
-const pluralType: {
-  [K in keyof UI as UI[K] extends PluralizationCategories ? K : never]: Intl.PluralRuleType
-} = {
-  "{0} Adventure Points": "cardinal",
-  "You are missing {0} Adventure Points to do this.": "cardinal",
-  "since the {0}. printing": "ordinal",
-  "removed in {0}. printing": "ordinal",
-  "{0} actions": "cardinal",
-  "{0} hours": "cardinal",
-  "{0} minutes": "cardinal",
-  "{0} rounds": "cardinal",
-  "{0} seduction actions": "cardinal",
-  ", {0} of which are permanent": "cardinal",
-  "{0} centuries": "cardinal",
-  "{0} combat rounds": "cardinal",
-  "{0} days": "cardinal",
-  "{0} months": "cardinal",
-  "{0} mos.": "cardinal",
-  "{0} seconds": "cardinal",
-  "{0} weeks": "cardinal",
-  "{0} wks.": "cardinal",
-  "{0} years": "cardinal",
-  "{0} yrs.": "cardinal",
-  "{0} miles": "cardinal",
-  "{0} yards": "cardinal",
+const listFormattersCache: Partial<
+  Record<
+    string,
+    Partial<Record<Intl.ListFormatType, Partial<Record<Intl.ListFormatStyle, Intl.ListFormat>>>>
+  >
+> = {}
+
+const isValidListFormatType = (type: unknown): type is Intl.ListFormatType | undefined =>
+  type === undefined ||
+  (typeof type === "string" && ["conjunction", "disjunction", "unit"].includes(type))
+
+const isValidListFormatStyle = (style: unknown): style is Intl.ListFormatStyle | undefined =>
+  style === undefined || (typeof style === "string" && ["long", "short", "narrow"].includes(style))
+
+const getListFormatter = (
+  ctx: MessageFunctionContext,
+  type: Intl.ListFormatType = "conjunction",
+  style: Intl.ListFormatStyle = "long",
+): Intl.ListFormat => {
+  const localeCombination = `${ctx.localeMatcher}/${ctx.locales.join(",")}`
+
+  if (!(localeCombination in listFormattersCache)) {
+    listFormattersCache[localeCombination] = {}
+  }
+
+  if (!(type in listFormattersCache[localeCombination]!)) {
+    listFormattersCache[localeCombination]![type] = {}
+  }
+
+  if (!(style in listFormattersCache[localeCombination]![type]!)) {
+    listFormattersCache[localeCombination]![type]![style] = new Intl.ListFormat(ctx.locales, {
+      localeMatcher: ctx.localeMatcher,
+      type,
+      style,
+    })
+  }
+
+  return listFormattersCache[localeCombination]![type]![style]!
 }
 
 /**
@@ -60,51 +86,87 @@ const pluralType: {
  * locales.
  */
 export const createTranslate = (
-  translations: Record<string, UI>,
   locales: Record<string, Locale>,
   selectedLocale: string | undefined,
   systemLocale: string,
-  platform: NodeJS.Platform,
-  pluralRulesOptions?: Intl.PluralRulesOptions,
 ) => {
-  const locale = selectedLocale ?? matchSystemLocaleToSupported(Object.keys(locales), systemLocale)
-  const cardinalPluralRules = new Intl.PluralRules(locale, {
-    ...pluralRulesOptions,
-    type: "cardinal",
-  })
-  const ordinalPluralRules = new Intl.PluralRules(locale, {
-    ...pluralRulesOptions,
-    type: "ordinal",
-  })
-  const getPluralRules = (key: keyof UI): Intl.PluralRules => {
-    switch (pluralType[key as keyof typeof pluralType]) {
-      case "cardinal":
-        return cardinalPluralRules
-      case "ordinal":
-        return ordinalPluralRules
-      default:
-        return cardinalPluralRules
-    }
-  }
+  const localeId =
+    selectedLocale ?? matchSystemLocaleToSupported(Object.keys(locales), systemLocale)
 
-  const translate: Translate = (key, ...options) => {
-    const value = translations[locale]?.[key] ?? key
+  const translate: Translate = (key, ...rest) =>
+    new MessageFormat(
+      localeId,
+      locales[localeId]?.translations?.[key as keyof Translations] ?? key,
+      {
+        bidiIsolation: "none",
+        functions: {
+          list: (ctx, options, input): MessageValue<"list", "listseparator" | "listelement"> => {
+            const listType = options["type"]
+            const listStyle = options["style"]
 
-    if (isVaryBySystem(value)) {
-      return platform === "darwin" ? value.mac : platform === "win32" ? value.windows : value.linux
-    } else if (isPluralizationCategories(value)) {
-      if (typeof options[0] === "number") {
-        const [count] = options
-        const selectedValue = value[getPluralRules(key).select(count)] ?? value.other
-        return insertParams(selectedValue, options)
-      } else {
-        return insertParams(value.other, options)
-      }
-    } else {
-      const str = typeof value === "string" ? value : key
-      return options.length > 0 ? insertParams(str, options) : str
-    }
-  }
+            if (!Array.isArray(input)) {
+              ctx.onError(new RangeError("Input for list function must be an array"))
+              return {
+                type: "list",
+                options,
+              }
+            } else if (!isValidListFormatType(listType)) {
+              ctx.onError(new RangeError("Unsupported list type: ${options.type}"))
+              return {
+                type: "list",
+                options,
+              }
+            } else if (!isValidListFormatStyle(listStyle)) {
+              ctx.onError(new RangeError("Unsupported list style: ${options.type}"))
+              return {
+                type: "list",
+                options,
+              }
+            } else {
+              const listFormatter = getListFormatter(ctx, listType, listStyle)
+
+              return {
+                type: "list",
+                options,
+                toString() {
+                  return listFormatter.format(input)
+                },
+                toParts() {
+                  return listFormatter.formatToParts(input).map(part => ({
+                    type: part.type === "literal" ? "listseparator" : "listelement",
+                    value: part.value,
+                  }))
+                },
+                valueOf() {
+                  return input
+                },
+              }
+            }
+          },
+        },
+      },
+    )
+      .formatToParts(rest[0] as Record<string, unknown> | undefined)
+      .map(part => {
+        switch (part.type) {
+          case "number":
+            return part.parts.map(p => (p.type === "minusSign" ? "−" : p.value)).join("")
+          case "string":
+          case "bidiIsolation":
+          case "text":
+            return part.value
+          case "listelement":
+          case "listseparator":
+          case "fallback":
+          case "unknown":
+            return String(part.value)
+          case "markup":
+            return ""
+          default:
+            return assertExhaustive(part)
+        }
+      })
+      .join("")
 
   return translate
 }
@@ -112,10 +174,13 @@ export const createTranslate = (
 /**
  * A mocked translate function.
  */
-export const translateMock: Translate = <K extends keyof UI>(
-  key: K,
-  ...options: (string | number)[]
-) => insertParams(key, options)
+export const translateMock: Translate = (key, ...rest) =>
+  new MessageFormat("en", key).format(rest[0] as Record<string, unknown> | undefined)
+
+/**
+ * A dictionary of locale identifiers to other values.
+ */
+export type LocaleMap<T> = Record<string, T>
 
 /**
  * Selects a value from a locale dictionary based on the selected locale.

@@ -1,4 +1,4 @@
-import { AttributeReference } from "optolith-database-schema/types/_SimpleReferences"
+import { AttributeReference } from "@optolith/database-schema/gen"
 import { ImprovementCost } from "../adventurePoints/improvementCost.ts"
 import { Rated } from "./ratedEntry.ts"
 

@@ -1,6 +1,6 @@
-import { Culture } from "optolith-database-schema/types/Culture"
-import { ProfessionPackage } from "optolith-database-schema/types/Profession"
-import { Race, RaceVariant } from "optolith-database-schema/types/Race"
+import { Culture } from "@optolith/database-schema/gen"
+import { ProfessionPackage } from "@optolith/database-schema/gen"
+import { Race, RaceVariant } from "@optolith/database-schema/gen"
 import { isNotNullish } from "../../../utils/nullable.ts"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 

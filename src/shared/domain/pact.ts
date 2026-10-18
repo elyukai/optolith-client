@@ -1,8 +1,8 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import {
   PactCategoryReference,
   PactDomainReference,
-} from "optolith-database-schema/types/_SimpleReferences"
+} from "@optolith/database-schema/gen"
 
 /**
  * A active pact between a character and a creature.

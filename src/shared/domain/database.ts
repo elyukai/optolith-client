@@ -2,7 +2,7 @@ import {
   ActivatableSelectOptionsCache,
   ResolvedSelectOption,
 } from "optolith-database-schema/cache/activatableSelectOptions"
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../utils/typeSafety.ts"
 
 /**

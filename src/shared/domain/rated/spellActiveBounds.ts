@@ -1,13 +1,13 @@
-import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
+import { ExperienceLevel } from "@optolith/database-schema/gen"
 import {
   MagicalActionIdentifier,
   SpellworkIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
+} from "@optolith/database-schema/gen"
 import {
   AttributeReference,
   PropertyReference,
-} from "optolith-database-schema/types/_SimpleReferences"
-import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
+} from "@optolith/database-schema/gen"
+import { SkillCheck } from "@optolith/database-schema/gen"
 import { filterNonNullable } from "../../utils/array.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { Activatable, countOptions } from "../activatable/activatableEntry.ts"

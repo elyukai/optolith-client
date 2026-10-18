@@ -1,4 +1,4 @@
-import { CulturePrerequisite } from "optolith-database-schema/types/prerequisites/single/CulturePrerequisite"
+import { CulturePrerequisite } from "@optolith/database-schema/gen"
 
 /**
  * Checks a single culture prerequisite if it’s matched.

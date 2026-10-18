@@ -20,8 +20,8 @@ import {
   ProfessionPrerequisites,
   PublicationPrerequisites,
   SpellworkPrerequisites,
-} from "optolith-database-schema/types/_Prerequisite"
-import { Preconditions } from "optolith-database-schema/types/prerequisites/ConditionalPrerequisites"
+} from "@optolith/database-schema/gen"
+import { Preconditions } from "@optolith/database-schema/gen"
 import {
   checkPlainPrerequisites,
   checkPrerequisitesForLevels,

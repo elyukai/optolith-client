@@ -1,7 +1,7 @@
 import {
   OptionalRule,
   OptionalRuleTranslation,
-} from "optolith-database-schema/types/rule/OptionalRule"
+} from "@optolith/database-schema/gen"
 import { FC, useCallback } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"

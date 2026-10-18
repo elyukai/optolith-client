@@ -1,7 +1,7 @@
 import {
   ExternalEnhancementPrerequisite,
   InternalEnhancementPrerequisite,
-} from "optolith-database-schema/types/prerequisites/single/EnhancementPrerequisite"
+} from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import { GetById } from "../../getTypes.ts"
 import { Enhancement } from "../../rated/enhancement.ts"

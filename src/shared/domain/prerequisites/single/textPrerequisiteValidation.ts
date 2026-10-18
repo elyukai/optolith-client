@@ -1,4 +1,4 @@
-import { TextPrerequisite } from "optolith-database-schema/types/prerequisites/single/TextPrerequisite"
+import { TextPrerequisite } from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 
 /**

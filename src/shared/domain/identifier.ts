@@ -1,4 +1,4 @@
-import * as ID from "optolith-database-schema/types/_Identifier"
+import * as ID from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../utils/typeSafety.ts"
 
 // TODO: Update for new identifier mappings

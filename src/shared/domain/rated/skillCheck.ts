@@ -1,5 +1,5 @@
-import { Attribute } from "optolith-database-schema/types/Attribute"
-import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
+import { Attribute } from "@optolith/database-schema/gen"
+import { SkillCheck } from "@optolith/database-schema/gen"
 import { getSingleHighestPair, IdValuePair } from "../idValue.ts"
 import { getAttributeValue } from "./attribute.ts"
 import { Rated } from "./ratedEntry.ts"

@@ -39,7 +39,6 @@ const createRendererConfig = (name, mode) => [
     externalsPresets: {
       electronRenderer: true,
     },
-    profile: true,
     devtool: "source-map",
   },
   {
@@ -62,6 +61,9 @@ const createRendererConfig = (name, mode) => [
     externals: {
       "electron/renderer": "commonjs electron/renderer",
       "electron/common": "commonjs electron/common",
+    },
+    optimization: {
+      minimize: false,
     },
     externalsPresets: {
       electronPreload: true,
@@ -94,41 +96,48 @@ export default () => {
       },
       output: {
         path: resolve(import.meta.dirname, ".webpack"),
-        filename: "[name].cjs",
+        filename: "[name].mjs",
+        module: true,
+        chunkFormat: "module",
+        chunkLoading: "import",
+        workerChunkLoading: "import",
       },
       externals: {
-        "electron/main": "commonjs electron/main",
-        "electron/common": "commonjs electron/common",
+        "electron/main": "module electron/main",
+        "electron/common": "module electron/common",
+        tsondb: "module tsondb",
+        "tsondb/readonly": "module tsondb/readonly",
       },
       externalsPresets: {
         electronMain: true,
       },
     },
-    {
-      name: "database",
-      mode,
-      entry: {
-        database: "./src/database/index.ts",
-      },
-      target: "electron-main",
-      optimization: getOptimization("database"),
-      module: {
-        rules: rules,
-      },
-      resolve: {
-        symlinks: false,
-      },
-      output: {
-        path: resolve(import.meta.dirname, ".webpack"),
-        filename: "[name].cjs",
-      },
-      externalsPresets: {
-        electronMain: true,
-      },
-      externals: {
-        "optolith-database-schema": "module optolith-database-schema",
-      },
-    },
+    // {
+    //   name: "database",
+    //   mode,
+    //   entry: {
+    //     database: "./src/database/index.ts",
+    //   },
+    //   target: "electron-main",
+    //   optimization: getOptimization("database"),
+    //   module: {
+    //     rules: rules,
+    //   },
+    //   resolve: {
+    //     symlinks: false,
+    //   },
+    //   output: {
+    //     path: resolve(import.meta.dirname, ".webpack"),
+    //     filename: "[name].mjs",
+    //     scriptType: "module",
+    //   },
+    //   externalsPresets: {
+    //     electronMain: true,
+    //   },
+    //   externals: {
+    //     "@optolith/database-schema": "module @optolith/database-schema",
+    //   },
+    // },
     ...createRendererConfig("main", mode),
     ...createRendererConfig("updater", mode),
     ...createRendererConfig("settings", mode),

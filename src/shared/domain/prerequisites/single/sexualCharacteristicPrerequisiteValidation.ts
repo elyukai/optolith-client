@@ -1,4 +1,4 @@
-import { SexualCharacteristicPrerequisite } from "optolith-database-schema/types/prerequisites/single/SexualCharacteristicPrerequisite"
+import { SexualCharacteristicPrerequisite } from "@optolith/database-schema/gen"
 import { Sex, matchSexualCharacteristicToSex } from "../../sex.ts"
 
 /**

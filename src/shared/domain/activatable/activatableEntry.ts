@@ -1,4 +1,4 @@
-import { SelectOptionIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { SelectOptionIdentifier } from "@optolith/database-schema/gen"
 import { isNotNullish } from "../../utils/nullable.ts"
 import { BoundAdventurePointsForActivatable } from "../adventurePoints/activatableEntry.ts"
 import { AdventurePointsCache, emptyAdventurePointsCache } from "../adventurePoints/cache.ts"

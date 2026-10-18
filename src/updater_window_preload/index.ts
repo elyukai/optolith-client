@@ -1,8 +1,7 @@
+import type { Locale } from "@optolith/database-schema/gen"
 import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
 import { ProgressInfo, UpdateDownloadedEvent, UpdateInfo } from "electron-updater"
 import EventEmitter from "events"
-import { Locale } from "optolith-database-schema/types/Locale"
-import { UI } from "optolith-database-schema/types/UI"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import {
   GlobalSettingsEvents,
@@ -55,7 +54,6 @@ contextBridge.exposeInMainWorld("optolith", api)
  * after creation.
  */
 export type InitialSetupEventMessage = {
-  translations: Record<string, UI>
   locales: Record<string, Locale>
   globalSettings: GlobalSettings
   systemLocale: string

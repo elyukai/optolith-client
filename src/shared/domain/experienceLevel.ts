@@ -1,4 +1,4 @@
-import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
+import { ExperienceLevel } from "@optolith/database-schema/gen"
 
 /**
  * Returns the current experience level based on the total adventure points.

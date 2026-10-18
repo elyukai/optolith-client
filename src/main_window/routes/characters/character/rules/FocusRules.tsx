@@ -1,4 +1,4 @@
-import { FocusRule, FocusRuleTranslation } from "optolith-database-schema/types/rule/FocusRule"
+import { FocusRule, FocusRuleTranslation } from "@optolith/database-schema/gen"
 import { FC, useMemo } from "react"
 import { isFocusRuleActive } from "../../../../../shared/domain/rules/focusRule.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"

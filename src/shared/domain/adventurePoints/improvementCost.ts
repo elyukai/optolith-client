@@ -1,4 +1,4 @@
-import { ImprovementCost as RawImprovementCost } from "optolith-database-schema/types/_ImprovementCost"
+import { ImprovementCost as RawImprovementCost } from "@optolith/database-schema/gen"
 import { rangeSafe, sum } from "../../utils/array.ts"
 import { Nullish } from "../../utils/nullable.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"

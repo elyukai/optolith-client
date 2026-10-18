@@ -1,4 +1,4 @@
-import { RacePrerequisite } from "optolith-database-schema/types/prerequisites/single/RacePrerequisite"
+import { RacePrerequisite } from "@optolith/database-schema/gen"
 
 /**
  * Checks a single race prerequisite if it’s matched.

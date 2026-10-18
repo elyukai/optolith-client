@@ -1,4 +1,4 @@
-import { BlessedTradition } from "optolith-database-schema/types/specialAbility/BlessedTradition"
+import { BlessedTradition } from "@optolith/database-schema/gen"
 import { Activatable, isActive } from "./activatableEntry.ts"
 
 /**

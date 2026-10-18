@@ -1,13 +1,13 @@
 import { ResolvedSelectOption } from "optolith-database-schema/cache/activatableSelectOptions"
-import { AdventurePointsValue } from "optolith-database-schema/types/_Activatable"
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
-import { LocaleMap } from "optolith-database-schema/types/_LocaleMap"
+import { AdventurePointsValue } from "@optolith/database-schema/gen"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import { LocaleMap } from "@optolith/database-schema/gen"
 import {
   GeneralPrerequisites,
   PrerequisiteForLevel,
-} from "optolith-database-schema/types/_Prerequisite"
-import { GeneralPrerequisiteGroup } from "optolith-database-schema/types/prerequisites/PrerequisiteGroups"
-import { PublicationRefs } from "optolith-database-schema/types/source/_PublicationRef"
+} from "@optolith/database-schema/gen"
+import { GeneralPrerequisiteGroup } from "@optolith/database-schema/gen"
+import { PublicationRefs } from "@optolith/database-schema/gen"
 import { FilterApplyingActivatableDependencies } from "../dependencies/filterApplyingDependencies.ts"
 import { GetById } from "../getTypes.ts"
 import { getCreateIdentifierObject } from "../identifier.ts"

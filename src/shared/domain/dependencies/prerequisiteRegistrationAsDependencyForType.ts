@@ -1,18 +1,18 @@
 import {
   AdvantageIdentifier,
   DisadvantageIdentifier,
-} from "optolith-database-schema/types/_Identifier"
+} from "@optolith/database-schema/gen"
 import {
   LiturgyIdentifier,
   SpecialAbilityIdentifier,
   SpellworkIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
+} from "@optolith/database-schema/gen"
 import {
   AdvantageDisadvantagePrerequisiteGroup,
   GeneralPrerequisiteGroup,
   LiturgyPrerequisiteGroup,
   SpellworkPrerequisiteGroup,
-} from "optolith-database-schema/types/prerequisites/PrerequisiteGroups"
+} from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { RegistrationFunction } from "./registrationHelpers.ts"
 import { registerOrUnregisterActivatablePrerequisiteAsDependency } from "./single/activatablePrerequisiteRegistrationAsDependency.ts"

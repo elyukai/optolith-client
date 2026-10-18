@@ -1,13 +1,15 @@
+import type { Locale } from "@optolith/database-schema/gen"
 import Debug from "debug"
 import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
-import EventEmitter from "events"
-import type { Database } from "../database/index.ts"
+import EventEmitter from "node:events"
+import { attackDatabaseHandlersToPreloadAPI, type DatabaseHandlers } from "../shared/database.ts"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import {
   GlobalSettingsEvents,
   attachGlobalSettingsEvents,
 } from "../shared/settings/listeningRendererPreload.ts"
 import { TypedEventEmitter } from "../shared/utils/events.ts"
+
 const debugRendererCalls = Debug("mainwindowpreload:renderer")
 const debugMainEvents = Debug("mainwindowpreload:main")
 
@@ -40,7 +42,9 @@ export type PreloadAPI = {
   toggleDevTools: () => void
   showSettings: () => void
   setTitle: (title: string) => void
-} & TypedEventEmitter<Events>
+  log: (...args: unknown[]) => void
+} & TypedEventEmitter<Events> &
+  DatabaseHandlers
 
 const events = new EventEmitter() as TypedEventEmitter<Events>
 
@@ -106,6 +110,10 @@ const api: PreloadAPI = {
     debugRendererCalls('set title to "%s"', title)
     ipcRenderer.send("main-window-set-title", title)
   },
+  ...attackDatabaseHandlersToPreloadAPI(debugRendererCalls, ipcRenderer),
+  log: (...args: unknown[]) => {
+    ipcRenderer.send("main-window-log", ...args)
+  },
 }
 
 contextBridge.exposeInMainWorld("optolith", api)
@@ -115,7 +123,7 @@ contextBridge.exposeInMainWorld("optolith", api)
  * creation.
  */
 export type InitialSetupEventMessage = {
-  database: Database
+  locales: Record<string, Locale>
   globalSettings: GlobalSettings
   systemLocale: string
 }

@@ -1,8 +1,8 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { EyeColor } from "optolith-database-schema/types/EyeColor"
-import { HairColor } from "optolith-database-schema/types/HairColor"
-import { Height, Weight } from "optolith-database-schema/types/Race"
-import { SocialStatus } from "optolith-database-schema/types/SocialStatus"
+import { EyeColor } from "@optolith/database-schema/gen"
+import { HairColor } from "@optolith/database-schema/gen"
+import { Height, Weight } from "@optolith/database-schema/gen"
+import { SocialStatus } from "@optolith/database-schema/gen"
 import { isOptionActive } from "../../shared/domain/activatable/activatableEntry.ts"
 import {
   DisadvantageIdentifier,

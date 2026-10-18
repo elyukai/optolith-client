@@ -1,4 +1,4 @@
-import { PublicationIdentifier } from "optolith-database-schema/types/_Identifier"
+import { PublicationIdentifier } from "@optolith/database-schema/gen"
 
 /**
  * A dependency on a publication.

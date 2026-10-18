@@ -1,5 +1,5 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
-import { RacePrerequisite } from "optolith-database-schema/types/prerequisites/single/RacePrerequisite"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import { RacePrerequisite } from "@optolith/database-schema/gen"
 import { RaceDependency } from "../../race.ts"
 import { RegistrationFunction, addOrRemoveDependency } from "../registrationHelpers.ts"
 

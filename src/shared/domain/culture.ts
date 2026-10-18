@@ -1,5 +1,5 @@
-import { Culture } from "optolith-database-schema/types/Culture"
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { Culture } from "@optolith/database-schema/gen"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import { TranslateMap } from "../utils/translate.ts"
 
 /**

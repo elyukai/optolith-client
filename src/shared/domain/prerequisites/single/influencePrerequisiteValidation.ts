@@ -1,4 +1,4 @@
-import { InfluencePrerequisite } from "optolith-database-schema/types/prerequisites/single/InfluencePrerequisite"
+import { InfluencePrerequisite } from "@optolith/database-schema/gen"
 
 /**
  * Checks a single influence prerequisite if it’s matched.

@@ -1,5 +1,5 @@
-import { Race, RaceVariant } from "optolith-database-schema/types/Race"
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
+import { Race, RaceVariant } from "@optolith/database-schema/gen"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import { mapNullableDefault } from "../utils/nullable.ts"
 import { TranslateMap } from "../utils/translate.ts"
 

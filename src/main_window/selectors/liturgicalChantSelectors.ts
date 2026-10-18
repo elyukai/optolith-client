@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { Blessing } from "optolith-database-schema/types/Blessing"
+import { Blessing } from "@optolith/database-schema/gen"
 import {
   TinyActivatable,
   getOptions,

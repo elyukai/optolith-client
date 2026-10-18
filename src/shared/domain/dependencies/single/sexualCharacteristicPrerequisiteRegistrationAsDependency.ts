@@ -1,5 +1,5 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
-import { SexualCharacteristicPrerequisite } from "optolith-database-schema/types/prerequisites/single/SexualCharacteristicPrerequisite"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import { SexualCharacteristicPrerequisite } from "@optolith/database-schema/gen"
 import { SexDependency } from "../../sex.ts"
 import { RegistrationFunction, addOrRemoveDependency } from "../registrationHelpers.ts"
 

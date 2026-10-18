@@ -1,4 +1,4 @@
-import { Locale } from "optolith-database-schema/types/Locale"
+import type { Locale } from "@optolith/database-schema/gen"
 import { useEffect, useMemo, useState } from "react"
 import { Button } from "../shared/components/button/Button.tsx"
 import { Checkbox } from "../shared/components/checkbox/Checkbox.tsx"

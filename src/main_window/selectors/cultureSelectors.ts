@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { Culture } from "optolith-database-schema/types/Culture"
+import { Culture } from "@optolith/database-schema/gen"
 import { getCulture } from "../../shared/domain/culture.ts"
 import { selectCultureId } from "../slices/characterSlice.ts"
 import { selectStaticCultures } from "../slices/databaseSlice.ts"

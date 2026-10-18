@@ -1,5 +1,5 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
-import { AncestorBloodPrerequisite } from "optolith-database-schema/types/prerequisites/single/AncestorBloodPrerequisite"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import { AncestorBloodPrerequisite } from "@optolith/database-schema/gen"
 import { ActivatableDependency } from "../../activatable/activatableDependency.ts"
 import { createEmptyDynamicActivatable } from "../../activatable/activatableEntry.ts"
 import { RegistrationFunction, addOrRemoveDependencyInSlice } from "../registrationHelpers.ts"

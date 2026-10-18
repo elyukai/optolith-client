@@ -12,18 +12,14 @@ export const useTranslate = () => {
   const _translate = useMemo(
     () =>
       createTranslate(
-        localizationContext.ui,
         localizationContext.locales,
         localizationContext.selectedLocale,
         localizationContext.systemLocale,
-        localizationContext.platform,
       ),
     [
       localizationContext.locales,
       localizationContext.selectedLocale,
       localizationContext.systemLocale,
-      localizationContext.ui,
-      localizationContext.platform,
     ],
   )
 

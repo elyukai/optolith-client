@@ -1,4 +1,4 @@
-import { RulePrerequisite } from "optolith-database-schema/types/prerequisites/single/RulePrerequisite"
+import { RulePrerequisite } from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import { GetById } from "../../getTypes.ts"
 import { isFocusRuleActive } from "../../rules/focusRule.ts"

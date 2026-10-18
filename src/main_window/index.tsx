@@ -38,7 +38,6 @@ import { LocalizationProvider } from "../shared/components/localizationProvider/
 import { onGlobalSettingsUpdate } from "../shared/settings/listeningRenderer.ts"
 import "../shared/styles/index.scss"
 import { ExternalAPI } from "./external.ts"
-import { init } from "./init.ts"
 import { Root } from "./routes/Root.tsx"
 import {
   setAreAnimationsEnabled,
@@ -162,12 +161,14 @@ import { store } from "./store.ts"
 //   })
 //   .catch (console.error)
 
+ExternalAPI.log("hello")
+
 const domNode = document.getElementById("root")!
 const root = createRoot(domNode)
 
 document.body.classList.add(`platform--${ExternalAPI.platform}`)
 
-ExternalAPI.on("initial-setup", ({ database, globalSettings }) => {
+ExternalAPI.on("initial-setup", ({ locales, globalSettings }) => {
   root.render(
     <StrictMode>
       <Provider store={store}>
@@ -177,8 +178,7 @@ ExternalAPI.on("initial-setup", ({ database, globalSettings }) => {
           selectedLocaleEvents={ExternalAPI}
           systemLocale={ExternalAPI.systemLocale}
           platform={ExternalAPI.platform}
-          locales={Object.fromEntries(database.raw.locales)}
-          ui={Object.fromEntries(database.raw.ui)}
+          locales={locales}
         >
           <Root />
         </LocalizationProvider>
@@ -186,8 +186,9 @@ ExternalAPI.on("initial-setup", ({ database, globalSettings }) => {
     </StrictMode>,
   )
 
-  console.log("database available")
-  store.dispatch(init({ database, globalSettings }))
+  ExternalAPI.log("React initially rendered")
+  // store.dispatch(init({ globalSettings }))
+  ExternalAPI.log("store initialized")
 
   ExternalAPI.initialSetupDone()
 })

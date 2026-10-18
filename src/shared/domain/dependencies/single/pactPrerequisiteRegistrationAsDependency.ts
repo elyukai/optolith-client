@@ -1,5 +1,5 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
-import { PactPrerequisite } from "optolith-database-schema/types/prerequisites/single/PactPrerequisite"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import { PactPrerequisite } from "@optolith/database-schema/gen"
 import { PactDependency } from "../../pact.ts"
 import { RegistrationFunction, addOrRemoveDependency } from "../registrationHelpers.ts"
 

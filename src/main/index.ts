@@ -1,248 +1,55 @@
+import type { TSONDBTypes } from "@optolith/database-schema"
+import { createCache } from "@optolith/database-schema/cache"
+import type { Locale } from "@optolith/database-schema/gen"
 import Debug from "debug"
 import { autoUpdater } from "electron-updater"
-import { app, ipcMain, Menu, MenuItemConstructorOptions } from "electron/main"
-import { fork } from "node:child_process"
+import { app, ipcMain } from "electron/main"
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
-import type { Database } from "../database/index.ts"
+import { ReadonlyTSONDB } from "tsondb/readonly"
+import config from "../database/contents/tsondb.config.ts"
+import { attachDatabaseEventsMain } from "../shared/database.ts"
 import { getGlobalSettings } from "../shared/settings/main.ts"
-import { createTranslate } from "../shared/utils/translate.ts"
+import { runAsync } from "../shared/utils/async.ts"
 import { createMainWindow } from "./mainWindow.ts"
+import { setMenu } from "./menu.ts"
 import { handleNativeThemeChanges, setNativeTheme } from "./nativeTheme.ts"
 import { ensureUserDataPathExists } from "./saveData.ts"
 import { createSettingsWindow } from "./settingsWindow.ts"
 import { checkForUpdatesOnRequest, checkForUpdatesOnStartup } from "./updater.ts"
+
 const debug = Debug("main")
 
 app.setAppUserModelId("lukasobermann.optolith")
 const isMac = process.platform === "darwin"
 
 debug("loading database ...")
-const databaseLoading = new Promise<Database>((resolve, reject) => {
-  try {
-    const args = [app.getAppPath()]
-    debug(join(__dirname, "database.cjs"))
-    const databaseProcess = fork(join(__dirname, "database.cjs"), args)
-      .on("spawn", () => debug("database spawned"))
-      .on("message", (message: Database) => {
-        debug("database received")
-        databaseProcess.kill()
-        resolve(message)
-      })
-  } catch (error) {
-    console.error(error)
-    reject(error)
-  }
+if (config.dataRootPath === undefined) {
+  throw new Error("dataRootPath is not defined in tsondb.config.ts")
+}
+
+const db = await ReadonlyTSONDB.create<TSONDBTypes>({
+  ...config,
+  dataRootPath: config.dataRootPath,
 })
 
-const runAsync =
-  <T extends unknown[]>(fn: (...args: T) => Promise<void>) =>
-  (...args: T) => {
-    fn(...args).catch(err => debug("unexpected error: %O", err))
-  }
+debug("database loaded")
 
-const setMenu = (database: Database) => {
-  const translate = createTranslate(
-    Object.fromEntries(database.raw.ui),
-    Object.fromEntries(database.raw.locales),
-    getGlobalSettings().locale,
-    app.getLocale(),
-    process.platform,
-  )
+const cache = createCache(db)
 
-  const template: MenuItemConstructorOptions[] = [
-    // { role: "appMenu" }
-    ...(isMac
-      ? [
-          {
-            label: app.name,
-            submenu: [
-              {
-                role: "about",
-                label: translate("About {0}", app.name),
-              },
-              { type: "separator" },
-              {
-                label: translate("Preferences …"),
-                accelerator: "Command+,",
-                click: runAsync(async () => {
-                  await createSettingsWindow(database, () => setMenu(database))
-                }),
-              },
-              { type: "separator" },
-              {
-                role: "services",
-                label: translate("Services"),
-              },
-              { type: "separator" },
-              {
-                role: "hide",
-                label: translate("Hide {0}", app.name),
-              },
-              {
-                role: "hideOthers",
-                label: translate("Hide Others"),
-              },
-              {
-                role: "unhide",
-                label: translate("Show All"),
-              },
-              { type: "separator" },
-              {
-                role: "quit",
-                label: translate("Quit {0}", app.name),
-              },
-            ],
-          } as MenuItemConstructorOptions,
-        ]
-      : []),
-    // { role: "fileMenu" }
-    {
-      label: translate("File"),
-      submenu: [
-        {
-          label: translate("New Character"),
-          accelerator: "CommandOrControl+N",
-          click: runAsync(async () => {
-            const mainWindow = await createMainWindow(database)
-            mainWindow.webContents.send("new-character")
-          }),
-        },
-        { type: "separator" },
-        isMac
-          ? {
-              role: "close",
-              label: translate("Close"),
-            }
-          : {
-              role: "quit",
-              label: translate("Quit"),
-            },
-      ],
-    } as MenuItemConstructorOptions,
-    // { role: "editMenu" }
-    {
-      label: translate("Edit"),
-      submenu: [
-        {
-          role: "undo",
-          label: translate("Undo"),
-        },
-        {
-          role: "redo",
-          label: translate("Redo"),
-        },
-        { type: "separator" },
-        {
-          role: "cut",
-          label: translate("Cut"),
-        },
-        {
-          role: "copy",
-          label: translate("Copy"),
-        },
-        {
-          role: "paste",
-          label: translate("Paste"),
-        },
-        ...(isMac
-          ? [
-              {
-                role: "delete",
-                label: translate("Delete"),
-              },
-              {
-                role: "selectAll",
-                label: translate("Select All"),
-              },
-            ]
-          : [
-              {
-                role: "delete",
-                label: translate("Delete"),
-              },
-              { type: "separator" },
-              {
-                role: "selectAll",
-                label: translate("Select All"),
-              },
-            ]),
-      ],
-    } as MenuItemConstructorOptions,
-    // { role: "viewMenu" }
-    ...(isMac
-      ? [
-          {
-            label: translate("View"),
-            submenu: [
-              { role: "toggleDevTools" },
-              {
-                role: "togglefullscreen",
-                label: translate("Toggle Full Screen"),
-              },
-            ],
-          } as MenuItemConstructorOptions,
-        ]
-      : []),
-    // { role: "windowMenu" }
-    {
-      label: translate("Window"),
-      submenu: [
-        {
-          role: "minimize",
-          label: translate("Minimize"),
-        },
-        ...(isMac
-          ? [
-              {
-                role: "zoom",
-                label: translate("Zoom"),
-              },
-              { type: "separator" },
-              {
-                label: translate("Main Window"),
-                accelerator: "Command+0",
-                click: runAsync(async () => {
-                  await createMainWindow(database)
-                }),
-              },
-              { type: "separator" },
-              {
-                role: "front",
-                label: translate("Bring All to Front"),
-              },
-              // { type: "separator" },
-              // {
-              //   role: "window" ,
-              //   label: translate("Toggle Full Screen"),
-              // },
-            ]
-          : [
-              {
-                role: "close",
-                label: translate("Close"),
-              },
-            ]),
-      ],
-    } as MenuItemConstructorOptions,
-    // {
-    //   role: "help",
-    //   label: translate("Close"),
-    //   submenu: [
-    //     {
-    //       label: "Learn More",
-    //       click: async () => {
-    //         const { shell } = require("electron")
-    //         await shell.openExternal("https://electronjs.org")
-    //       },
-    //     },
-    //   ],
-    // } as MenuItemConstructorOptions,
-  ]
+debug("cache created")
 
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
-}
+attachDatabaseEventsMain(ipcMain, db, cache, (name, _event, error) => {
+  debug("error in database event %s: %O", name, error)
+})
+
+debug("database event listeners attached")
+
+const locales: Record<string, Locale> = Object.fromEntries(
+  db
+    .getAllInstanceContainersOfEntity("Locale")
+    .map((localeContainer): [string, Locale] => [localeContainer.id, localeContainer.content]),
+)
 
 const setUserDataPath = async () => {
   debug("setting user data path ...")
@@ -263,43 +70,42 @@ app.whenReady().then(async () => {
     }
   })
 
-  const database = await databaseLoading
-  setMenu(database)
+  setMenu(isMac, db, cache, locales)
   setNativeTheme(getGlobalSettings().theme)
-  const installUpdateInsteadOfStartup = await checkForUpdatesOnStartup(database)
+  const installUpdateInsteadOfStartup = await checkForUpdatesOnStartup(locales)
 
   debug("skip startup because of update?", installUpdateInsteadOfStartup ? "yes" : "no")
   if (!installUpdateInsteadOfStartup) {
     await setUserDataPath()
 
-    ipcMain.handle("receive-license", _ => readFileInAppPath("LICENSE"))
-    ipcMain.handle("receive-changelog", _ => readFileInAppPath("CHANGELOG.md"))
-    ipcMain.handle("receive-version", _ => app.getVersion())
-    ipcMain.handle("receive-system-locale", _ => app.getSystemLocale())
+    ipcMain.handle("receive-license", () => readFileInAppPath("LICENSE"))
+    ipcMain.handle("receive-changelog", () => readFileInAppPath("CHANGELOG.md"))
+    ipcMain.handle("receive-version", () => app.getVersion())
+    ipcMain.handle("receive-system-locale", () => app.getSystemLocale())
     ipcMain.on(
       "show-settings",
-      runAsync(async () => {
+      runAsync(debug, async () => {
         debug("show settings")
-        await createSettingsWindow(database, () => setMenu(database))
+        await createSettingsWindow(locales, () => setMenu(isMac, db, cache, locales))
       }),
     )
     ipcMain.on(
       "check-for-update",
-      runAsync(async () => {
+      runAsync(debug, async () => {
         debug("check for update")
-        await checkForUpdatesOnRequest(database)
+        await checkForUpdatesOnRequest(locales)
       }),
     )
 
-    await createMainWindow(database)
+    await createMainWindow(locales)
   }
 
   app.on(
     "activate",
-    runAsync(async (_event, hasVisibleWindows) => {
+    runAsync(debug, async (_event, hasVisibleWindows) => {
       debug("activated: hasVisibleWindows = %s", hasVisibleWindows)
       if (!hasVisibleWindows) {
-        await createMainWindow(database)
+        await createMainWindow(locales)
       }
     }),
   )

@@ -1,8 +1,8 @@
 import {
   ActivatableIdentifier,
   SkillWithEnhancementsIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
-import { RatedSumPrerequisite } from "optolith-database-schema/types/prerequisites/single/RatedSumPrerequisite"
+} from "@optolith/database-schema/gen"
+import { RatedSumPrerequisite } from "@optolith/database-schema/gen"
 import { RatedDependency } from "../../rated/ratedDependency.ts"
 import { createEmptyDynamicSkill } from "../../rated/skill.ts"
 import { RegistrationFunction, addOrRemoveDependencyInSlice } from "../registrationHelpers.ts"

@@ -1,9 +1,9 @@
-import { SkillIdentifier } from "optolith-database-schema/types/_Identifier"
+import { SkillIdentifier } from "@optolith/database-schema/gen"
 import {
   ActivatableIdentifier,
   SkillWithEnhancementsIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
-import { RatedMinimumNumberPrerequisiteTarget } from "optolith-database-schema/types/prerequisites/single/RatedMinimumNumberPrerequisite"
+} from "@optolith/database-schema/gen"
+import { RatedMinimumNumberPrerequisiteTarget } from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 
 /**

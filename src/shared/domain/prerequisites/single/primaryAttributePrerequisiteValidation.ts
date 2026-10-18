@@ -1,4 +1,4 @@
-import { PrimaryAttributePrerequisite } from "optolith-database-schema/types/prerequisites/single/PrimaryAttributePrerequisite"
+import { PrimaryAttributePrerequisite } from "@optolith/database-schema/gen"
 import { mapNullableDefault } from "../../../utils/nullable.ts"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import {

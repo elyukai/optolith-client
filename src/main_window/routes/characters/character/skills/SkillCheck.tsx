@@ -1,7 +1,7 @@
 import {
   SkillCheckPenalty,
   SkillCheck as SkillCheckType,
-} from "optolith-database-schema/types/_SkillCheck"
+} from "@optolith/database-schema/gen"
 import { FC } from "react"
 import { DerivedCharacteristicIdentifier as DCId } from "../../../../../shared/domain/identifier.ts"
 import { getDisplayedSkillCheck } from "../../../../../shared/domain/rated/skillCheck.ts"

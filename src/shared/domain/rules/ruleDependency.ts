@@ -1,7 +1,7 @@
 import {
   ActivatableIdentifier,
   SkillWithEnhancementsIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
+} from "@optolith/database-schema/gen"
 
 /**
  * A dependency on a rule being active.

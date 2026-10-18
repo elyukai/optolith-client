@@ -1,5 +1,5 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
-import { CulturePrerequisite } from "optolith-database-schema/types/prerequisites/single/CulturePrerequisite"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import { CulturePrerequisite } from "@optolith/database-schema/gen"
 import { CultureDependency } from "../../culture.ts"
 import { RegistrationFunction, addOrRemoveDependency } from "../registrationHelpers.ts"
 

@@ -1,4 +1,4 @@
-import { MagicalTradition } from "optolith-database-schema/types/specialAbility/MagicalTradition"
+import { MagicalTradition } from "@optolith/database-schema/gen"
 import { Activatable, isActive } from "./activatableEntry.ts"
 
 /**

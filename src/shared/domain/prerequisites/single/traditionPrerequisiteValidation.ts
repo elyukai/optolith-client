@@ -1,7 +1,7 @@
 import {
   BlessedTraditionPrerequisite,
   MagicalTraditionPrerequisite,
-} from "optolith-database-schema/types/prerequisites/single/TraditionPrerequisite"
+} from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import { GetActiveBlessedTraditionCapability } from "../../activatable/blessedTradition.ts"
 import { GetActiveMagicalTraditionsCapability } from "../../activatable/magicalTradition.ts"

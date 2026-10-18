@@ -2,19 +2,19 @@ import { Draft } from "@reduxjs/toolkit"
 import {
   AdvantageIdentifier,
   DisadvantageIdentifier,
-} from "optolith-database-schema/types/_Identifier"
+} from "@optolith/database-schema/gen"
 import {
   LiturgyIdentifier,
   SpecialAbilityIdentifier,
   SpellworkIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
+} from "@optolith/database-schema/gen"
 import {
   AdvantageDisadvantagePrerequisites,
   GeneralPrerequisites,
   LiturgyPrerequisites,
   PlainGeneralPrerequisites,
   SpellworkPrerequisites,
-} from "optolith-database-schema/types/_Prerequisite"
+} from "@optolith/database-schema/gen"
 import { RangeBounds } from "../../utils/range.ts"
 import { Character } from "../character.ts"
 import {

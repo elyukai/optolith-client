@@ -1,8 +1,8 @@
 import {
   PactCategoryReference,
   PactDomainReference,
-} from "optolith-database-schema/types/_SimpleReferences"
-import { PactPrerequisite } from "optolith-database-schema/types/prerequisites/single/PactPrerequisite"
+} from "@optolith/database-schema/gen"
+import { PactPrerequisite } from "@optolith/database-schema/gen"
 import { filterNonNullable } from "../../../utils/array.ts"
 import { mapNullable } from "../../../utils/nullable.ts"
 import { Pact } from "../../pact.ts"

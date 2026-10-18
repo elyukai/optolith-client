@@ -11,7 +11,7 @@ const domNode = document.getElementById("root")!
 const root = createRoot(domNode)
 
 ExternalAPI.on("initial-setup", data => {
-  const { translations, systemLocale, globalSettings, locales } = data
+  const { systemLocale, globalSettings, locales } = data
   root.render(
     <StrictMode>
       <LocalizationProvider
@@ -21,7 +21,6 @@ ExternalAPI.on("initial-setup", data => {
         systemLocale={systemLocale}
         platform={ExternalAPI.platform}
         locales={locales}
-        ui={translations}
       >
         <Root systemLocale={systemLocale} locale={globalSettings.locale} />
       </LocalizationProvider>

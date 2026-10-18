@@ -1,6 +1,6 @@
 /* eslint-disable jsdoc/require-jsdoc */
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
-import * as ID from "optolith-database-schema/types/_Identifier"
+import * as ID from "@optolith/database-schema/gen"
 import { RootState } from "../store.ts"
 import { goToTab, goToTabGroup } from "./routeSlice.ts"
 

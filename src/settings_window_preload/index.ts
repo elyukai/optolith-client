@@ -1,13 +1,12 @@
+import type { Locale } from "@optolith/database-schema/gen"
 import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
 import EventEmitter from "events"
-import { Locale } from "optolith-database-schema/types/Locale"
-import { UI } from "optolith-database-schema/types/UI"
-import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import {
   GlobalSettingsEmittingAPI,
   GlobalSettingsEvents,
   getGlobalSettingsEmittingAPI,
 } from "../shared/settings/emittingRendererPreload.ts"
+import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import { TypedEventEmitter } from "../shared/utils/events.ts"
 
 type Events = GlobalSettingsEvents & {
@@ -49,7 +48,6 @@ contextBridge.exposeInMainWorld("optolith", api)
  * setting is changed from the settings window.
  */
 export type InitialSetupEventMessage = {
-  translations: Record<string, UI>
   locales: Record<string, Locale>
   systemLocale: string
   settings: GlobalSettings

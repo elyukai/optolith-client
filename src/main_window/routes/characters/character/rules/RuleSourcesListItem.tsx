@@ -1,7 +1,7 @@
 import {
   Publication,
   PublicationTranslation,
-} from "optolith-database-schema/types/source/Publication"
+} from "@optolith/database-schema/gen"
 import { FC, useCallback } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"

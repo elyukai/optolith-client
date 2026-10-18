@@ -1,4 +1,4 @@
-import { AnimistPowerImprovementCost } from "optolith-database-schema/types/magicalActions/AnimistPower"
+import { AnimistPowerImprovementCost } from "@optolith/database-schema/gen"
 import { mapNullable } from "../../utils/nullable.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { Activatable, getFirstOptionOfType } from "../activatable/activatableEntry.ts"

@@ -1,6 +1,6 @@
-import { Culture } from "optolith-database-schema/types/Culture"
-import { Skill } from "optolith-database-schema/types/Skill"
-import { SkillCheck } from "optolith-database-schema/types/_SkillCheck"
+import { Culture } from "@optolith/database-schema/gen"
+import { Skill } from "@optolith/database-schema/gen"
+import { SkillCheck } from "@optolith/database-schema/gen"
 import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
 import { Rated } from "./ratedEntry.ts"
 

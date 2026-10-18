@@ -1,4 +1,4 @@
-import { StatePrerequisite } from "optolith-database-schema/types/prerequisites/single/StatePrerequisite"
+import { StatePrerequisite } from "@optolith/database-schema/gen"
 import { GetById } from "../../getTypes.ts"
 import { isStateActive } from "../../state.ts"
 

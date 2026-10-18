@@ -1,8 +1,8 @@
 import {
   ActivatableIdentifier,
   SkillWithEnhancementsIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
-import { TextPrerequisite } from "optolith-database-schema/types/prerequisites/single/TextPrerequisite"
+} from "@optolith/database-schema/gen"
+import { TextPrerequisite } from "@optolith/database-schema/gen"
 import { RegistrationFunction } from "../registrationHelpers.ts"
 
 /**

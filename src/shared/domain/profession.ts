@@ -1,4 +1,4 @@
-import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
+import { ExperienceLevel } from "@optolith/database-schema/gen"
 import {
   Profession,
   ProfessionName,
@@ -6,8 +6,8 @@ import {
   ProfessionTranslation,
   ProfessionVariant,
   ProfessionVersion,
-} from "optolith-database-schema/types/Profession"
-import { LocaleMap } from "optolith-database-schema/types/_LocaleMap"
+} from "@optolith/database-schema/gen"
+import { LocaleMap } from "@optolith/database-schema/gen"
 import { Nullish, isNotNullish } from "../utils/nullable.ts"
 import { TranslateMap } from "../utils/translate.ts"
 import { assertExhaustive } from "../utils/typeSafety.ts"

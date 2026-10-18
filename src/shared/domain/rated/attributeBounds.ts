@@ -1,5 +1,5 @@
-import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
-import { AttributeAdjustments } from "optolith-database-schema/types/Race"
+import { ExperienceLevel } from "@optolith/database-schema/gen"
+import { AttributeAdjustments } from "@optolith/database-schema/gen"
 import { filterNonNullable } from "../../utils/array.ts"
 import { mapNullable, mapNullableDefault } from "../../utils/nullable.ts"
 import { Activatable } from "../activatable/activatableEntry.ts"

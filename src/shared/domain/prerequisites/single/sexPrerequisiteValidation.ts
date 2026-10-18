@@ -1,4 +1,4 @@
-import { SexPrerequisite } from "optolith-database-schema/types/prerequisites/single/SexPrerequisite"
+import { SexPrerequisite } from "@optolith/database-schema/gen"
 import { Sex, matchBinarySexToSex } from "../../sex.ts"
 
 /**

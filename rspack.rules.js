@@ -7,53 +7,53 @@ import rspack from "@rspack/core"
  */
 export const rules = [
   {
-    test: /\.tsx?$/,
-    exclude: [/node_modules/],
+    test: /\.tsx?$/u,
+    exclude: [/node_modules/u],
     loader: "builtin:swc-loader",
     resolve: {
       extensionAlias: {
-        '.js': ['.tsx', '.ts', 'jsx', '.js'],
+        ".js": [".tsx", ".ts", "jsx", ".js"],
       },
     },
     options: {
       jsc: {
         parser: {
-          syntax: 'typescript',
+          syntax: "typescript",
         },
         transform: {
           react: {
-            runtime: 'automatic',
+            runtime: "automatic",
             throwIfNamespace: true,
             useBuiltins: false,
           },
         },
       },
     },
-    type: 'javascript/auto',
+    type: "javascript/auto",
   },
   {
-    test: /\.(png|jpe?g|svg)$/i,
+    test: /\.(png|jpe?g|svg)$/iu,
     type: "asset/resource",
     generator: {
       filename: "assets/images/[name].[hash][ext][query]",
     },
   },
   {
-    test: /\.(icns|ico)$/i,
+    test: /\.(icns|ico)$/iu,
     type: "asset/resource",
     generator: {
       filename: "assets/icons/[name].[hash][ext][query]",
     },
   },
   {
-    test: /\.(ttf|otf|woff2?)$/i,
+    test: /\.(ttf|otf|woff2?)$/iu,
     type: "asset/resource",
     generator: {
       filename: "assets/fonts/[name].[hash][ext][query]",
     },
   },
   {
-    test: /\.(css|sass|scss)$/,
+    test: /\.(css|sass|scss)$/u,
     use: [
       rspack.CssExtractRspackPlugin.loader,
       "css-loader",

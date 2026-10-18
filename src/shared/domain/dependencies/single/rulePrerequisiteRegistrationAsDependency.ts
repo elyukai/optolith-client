@@ -1,8 +1,8 @@
 import {
   ActivatableIdentifier,
   SkillWithEnhancementsIdentifier,
-} from "optolith-database-schema/types/_IdentifierGroup"
-import { RulePrerequisite } from "optolith-database-schema/types/prerequisites/single/RulePrerequisite"
+} from "@optolith/database-schema/gen"
+import { RulePrerequisite } from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import { createFocusRule } from "../../rules/focusRule.ts"
 import { createOptionalRule } from "../../rules/optionalRule.ts"

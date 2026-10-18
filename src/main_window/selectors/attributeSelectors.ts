@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { Attribute } from "optolith-database-schema/types/Attribute"
+import { Attribute } from "@optolith/database-schema/gen"
 import { getCarryingCapacity } from "../../shared/domain/equipment.ts"
 import {
   AdvantageIdentifier,

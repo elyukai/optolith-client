@@ -1,5 +1,5 @@
-import { ActivatableIdentifier } from "optolith-database-schema/types/_IdentifierGroup"
-import { RatedMinimumNumberPrerequisite } from "optolith-database-schema/types/prerequisites/single/RatedMinimumNumberPrerequisite"
+import { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import { RatedMinimumNumberPrerequisite } from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../../utils/typeSafety.ts"
 import { createEmptyDynamicCombatTechnique } from "../../rated/combatTechnique.ts"
 import { createEmptyDynamicLiturgicalChant } from "../../rated/liturgicalChant.ts"

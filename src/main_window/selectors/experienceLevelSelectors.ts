@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { ExperienceLevel } from "optolith-database-schema/types/ExperienceLevel"
+import { ExperienceLevel } from "@optolith/database-schema/gen"
 import { getCurrentExperienceLevel } from "../../shared/domain/experienceLevel.ts"
 import {
   selectExperienceLevelStartId,
