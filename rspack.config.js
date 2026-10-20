@@ -17,7 +17,7 @@ const createRendererConfig = (name, mode) => [
     entry: {
       [`renderer_${name}`]: `./src/${name}_window/index.tsx`,
     },
-    target: "electron-renderer",
+    target: "electron44-renderer",
     optimization: getOptimization(`renderer_${name}`),
     module: {
       rules: rules,
@@ -47,7 +47,7 @@ const createRendererConfig = (name, mode) => [
     entry: {
       [`renderer_${name}_preload`]: `./src/${name}_window_preload/index.ts`,
     },
-    target: "electron-preload",
+    target: "electron44-preload",
     module: {
       rules: rules,
     },
@@ -86,7 +86,7 @@ export default () => {
       entry: {
         main: "./src/main/index.ts",
       },
-      target: "electron-main",
+      target: "electron44-main",
       optimization: getOptimization("main"),
       module: {
         rules: rules,

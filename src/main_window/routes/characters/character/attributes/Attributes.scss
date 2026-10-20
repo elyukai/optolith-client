@@ -63,35 +63,35 @@
       padding: 2px;
     }
 
-    &.attr--1 > .value {
+    &.attr--red > .value {
       border-color: var(--courage-color);
     }
 
-    &.attr--2 > .value {
+    &.attr--purple > .value {
       border-color: var(--sagacity-color);
     }
 
-    &.attr--3 > .value {
+    &.attr--green > .value {
       border-color: var(--intuition-color);
     }
 
-    &.attr--4 > .value {
+    &.attr--black > .value {
       border-color: var(--charisma-color);
     }
 
-    &.attr--5 > .value {
+    &.attr--yellow > .value {
       border-color: var(--dexterity-color);
     }
 
-    &.attr--6 > .value {
+    &.attr--blue > .value {
       border-color: var(--agility-color);
     }
 
-    &.attr--7 > .value {
+    &.attr--white > .value {
       border-color: var(--constitution-color);
     }
 
-    &.attr--8 > .value {
+    &.attr--orange > .value {
       border-color: var(--strength-color);
     }
   }

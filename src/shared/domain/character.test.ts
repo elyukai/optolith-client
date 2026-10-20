@@ -1,10 +1,10 @@
-import { Character } from "./character.ts"
+import { _Character } from "./character.ts"
 
 /**
  * A base character that can be used for testing. It is meant to be extended
  * with the properties that are needed for the test.
  */
-export const baseCharacter: Character = {
+export const baseCharacter: _Character = {
   id: "550e8400-e29b-11d4-a716-446655440000",
   version: undefined,
   name: "Alrik",

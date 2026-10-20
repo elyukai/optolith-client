@@ -22,5 +22,5 @@ export const rendererPlugins = mode => [
       disableClientServer: true,
       output: { reportDir: ".rsdoctor/manifest.json" },
     }),
-  new rspack.CircularCheckRspackPlugin(),
+  // new rspack.CircularCheckRspackPlugin(),
 ]

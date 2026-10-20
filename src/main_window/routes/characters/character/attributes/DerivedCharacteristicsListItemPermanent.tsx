@@ -1,11 +1,11 @@
 import { FC, useCallback } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
+import type { DisplayedDerivedCharacteristic } from "../../../../../shared/domain/energy.ts"
 import { DerivedCharacteristicIdentifier as DCId } from "../../../../../shared/domain/identifier.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch } from "../../../../hooks/redux.ts"
-import { DisplayedDerivedCharacteristic } from "../../../../selectors/derivedCharacteristicsSelectors.ts"
 import {
   addArcaneEnergyPermanentlyLost,
   addKarmaPointsPermanentlyLost,
@@ -26,7 +26,7 @@ import { PermanentLossSheet } from "./PermanentLossSheet.tsx"
 import { PermanentPointsSheet } from "./PermanentPointsSheet.tsx"
 
 type Props = {
-  attribute: DisplayedDerivedCharacteristic<DCId.LifePoints | DCId.ArcaneEnergy | DCId.KarmaPoints>
+  attribute: DisplayedDerivedCharacteristic
   isRemovingEnabled: boolean
 }
 
@@ -143,8 +143,8 @@ export const DerivedCharacteristicsListItemPermanent: FC<Props> = props => {
     id === DCId.LifePoints
       ? [translate("pLP"), translate("Permanently Lost Life Points")]
       : id === DCId.ArcaneEnergy
-      ? [translate("pAE"), translate("Permanently Lost Arcane Energy")]
-      : [translate("pKP"), translate("Permanently Lost Karma Points")]
+        ? [translate("pAE"), translate("Permanently Lost Arcane Energy")]
+        : [translate("pKP"), translate("Permanently Lost Karma Points")]
 
   return (
     <AttributeBorder

@@ -1,15 +1,13 @@
 import { FC, useCallback } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { NumberBox } from "../../../../../shared/components/numberBox/NumberBox.tsx"
+import type { DisplayedDerivedCharacteristic } from "../../../../../shared/domain/energy.ts"
 import { DerivedCharacteristicIdentifier as DCId } from "../../../../../shared/domain/identifier.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { sign } from "../../../../../shared/utils/math.ts"
 import { useAppDispatch } from "../../../../hooks/redux.ts"
-import {
-  DisplayedDerivedCharacteristic,
-  isDisplayedEnergy,
-} from "../../../../selectors/derivedCharacteristicsSelectors.ts"
+import { isDisplayedEnergy } from "../../../../selectors/derivedCharacteristicsSelectors.ts"
 import {
   decrementArcaneEnergy,
   decrementKarmaPoints,
@@ -39,7 +37,7 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
   const dispatch = useAppDispatch()
   const translate = useTranslate()
   const translateMap = useTranslateMap()
-  const translations = translateMap(attribute.static.translations)
+  const translations = translateMap(attribute.translations)
 
   const handleAddMaxEnergyPoint = useCallback(() => {
     switch (id) {
@@ -135,7 +133,7 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
           />
         ) : null}
       </AttributeBorder>
-      {isDisplayedEnergy(attribute) ? (
+      {attribute.type?.kind === "Energy" ? (
         <DerivedCharacteristicsListItemPermanent
           attribute={attribute}
           isRemovingEnabled={isRemovingEnabled}

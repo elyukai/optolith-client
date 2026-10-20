@@ -1,13 +1,19 @@
+import type { Cache } from "@optolith/database-schema/cache"
 import type { Locale } from "@optolith/database-schema/gen"
 import Debug from "debug"
 import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
 import EventEmitter from "node:events"
 import { attackDatabaseHandlersToPreloadAPI, type DatabaseHandlers } from "../shared/database.ts"
+import type { CharacterIPCActions, CharacterIPCSelectors } from "../shared/ipc.ts"
 import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import {
   GlobalSettingsEvents,
   attachGlobalSettingsEvents,
 } from "../shared/settings/listeningRendererPreload.ts"
+import {
+  attachStateSelectorsAndActionsToContextBridge,
+  type StateSelectorsAndActionsBridge,
+} from "../shared/state.ts"
 import { TypedEventEmitter } from "../shared/utils/events.ts"
 
 const debugRendererCalls = Debug("mainwindowpreload:renderer")
@@ -44,7 +50,8 @@ export type PreloadAPI = {
   setTitle: (title: string) => void
   log: (...args: unknown[]) => void
 } & TypedEventEmitter<Events> &
-  DatabaseHandlers
+  DatabaseHandlers &
+  StateSelectorsAndActionsBridge<CharacterIPCSelectors, CharacterIPCActions>
 
 const events = new EventEmitter() as TypedEventEmitter<Events>
 
@@ -114,6 +121,9 @@ const api: PreloadAPI = {
   log: (...args: unknown[]) => {
     ipcRenderer.send("main-window-log", ...args)
   },
+  ...attachStateSelectorsAndActionsToContextBridge<CharacterIPCSelectors, CharacterIPCActions>(
+    ipcRenderer,
+  ),
 }
 
 contextBridge.exposeInMainWorld("optolith", api)
@@ -123,6 +133,8 @@ contextBridge.exposeInMainWorld("optolith", api)
  * creation.
  */
 export type InitialSetupEventMessage = {
+  database: [string, { id: string; content: object }[]][]
+  cache: Cache
   locales: Record<string, Locale>
   globalSettings: GlobalSettings
   systemLocale: string

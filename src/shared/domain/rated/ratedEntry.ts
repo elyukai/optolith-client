@@ -1,5 +1,6 @@
+import type { ImprovementCost } from "@optolith/adventure-points/improvement-cost"
+import { action, computed, observable } from "mobx"
 import { AdventurePointsCache, emptyAdventurePointsCache } from "../adventurePoints/cache.ts"
-import { ImprovementCost } from "../adventurePoints/improvementCost.ts"
 import {
   BoundAdventurePointsForRated,
   cachedAdventurePoints,
@@ -7,6 +8,112 @@ import {
 } from "../adventurePoints/ratedEntry.ts"
 import { Enhancement } from "./enhancement.ts"
 import { RatedDependency } from "./ratedDependency.ts"
+
+export abstract class CharacterRatedEntry {
+  declare ["constructor"]: typeof CharacterRatedEntry
+
+  static readonly minValue: number = 0
+
+  #getImprovementCost: (id: string) => ImprovementCost
+  readonly id: string
+  @observable accessor #value: number
+  readonly dependencies: readonly RatedDependency[]
+  readonly boundAdventurePoints: readonly BoundAdventurePointsForRated[]
+
+  constructor(
+    getImprovementCost: (id: string) => ImprovementCost,
+    id: string,
+    value: number,
+    boundAdventurePoints: BoundAdventurePointsForRated[],
+  ) {
+    this.#getImprovementCost = getImprovementCost
+    this.id = id
+    this.#value = value
+    this.dependencies = []
+    this.boundAdventurePoints = boundAdventurePoints
+  }
+
+  @computed
+  get value(): number {
+    return this.#value
+  }
+
+  @action
+  setValue(value: number) {
+    this.#value = Math.max(this.constructor.minValue, value)
+  }
+
+  @action
+  updateValue(fn: (value: number) => number) {
+    this.setValue(fn(this.#value))
+  }
+
+  @action
+  increment() {
+    this.updateValue(oldValue => oldValue + 1)
+  }
+
+  @action
+  decrement() {
+    this.updateValue(oldValue => oldValue - 1)
+  }
+
+  @action
+  incrementToMax() {
+    if (this.maxValue !== undefined) {
+      this.setValue(this.maxValue)
+    }
+  }
+
+  @action
+  decrementToMin() {
+    this.setValue(this.minValue)
+  }
+
+  @computed
+  get adventurePoints(): AdventurePointsCache {
+    return cachedAdventurePoints(
+      this.#value,
+      this.constructor.minValue,
+      this.boundAdventurePoints,
+      this.#getImprovementCost(this.id),
+    )
+  }
+
+  abstract get minValue(): number
+
+  abstract get maxValue(): number | undefined
+
+  @computed
+  get isIncreasable() {
+    return this.maxValue === undefined || this.maxValue > this.value
+  }
+
+  @computed
+  get isDecreasable() {
+    return this.value > this.minValue
+  }
+
+  toJSON(): DisplayedRated {
+    return {
+      id: this.id,
+      value: this.#value,
+      minValue: this.minValue,
+      maxValue: this.maxValue,
+      isIncreasable: this.isIncreasable,
+      isDecreasable: this.isDecreasable,
+    }
+  }
+}
+
+export type DisplayedRated = {
+  id: string
+  value: number
+  minValue: number
+  maxValue?: number
+  isIncreasable: boolean
+  isDecreasable: boolean
+}
 
 /**
  * The current value.
@@ -20,7 +127,7 @@ export type Rated = {
   /**
    * The rated entry's identifier.
    */
-  readonly id: number
+  readonly id: string
 
   /**
    * The current value.

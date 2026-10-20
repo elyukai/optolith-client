@@ -1,5 +1,4 @@
-import { Attribute } from "@optolith/database-schema/gen"
-import { SkillCheck } from "@optolith/database-schema/gen"
+import { Attribute, type Attribute_ID, SkillCheck } from "@optolith/database-schema/gen"
 import { getSingleHighestPair, IdValuePair } from "../idValue.ts"
 import { getAttributeValue } from "./attribute.ts"
 import { Rated } from "./ratedEntry.ts"
@@ -21,24 +20,24 @@ type DisplayedSkillCheck = Triple<{ attribute: Attribute; value: number }>
  * Returns the static attributes of a skill check.
  */
 export const getSkillCheckAttributes = (
-  getStaticAttribute: (id: number) => Attribute | undefined,
+  getStaticAttribute: (id: Attribute_ID) => Attribute | undefined,
   check: SkillCheck,
 ): SkillCheckAttributes => [
-  getStaticAttribute(check[0].id.attribute)!,
-  getStaticAttribute(check[1].id.attribute)!,
-  getStaticAttribute(check[2].id.attribute)!,
+  getStaticAttribute(check[0])!,
+  getStaticAttribute(check[1])!,
+  getStaticAttribute(check[2])!,
 ]
 
 /**
  * Returns the attribute values of a skill check.
  */
 export const getSkillCheckValues = (
-  getDynamicAttribute: (id: number) => Rated | undefined,
+  getDynamicAttribute: (id: Attribute_ID) => Rated | undefined,
   check: SkillCheck,
 ): SkillCheckValues => [
-  getAttributeValue(getDynamicAttribute(check[0].id.attribute)),
-  getAttributeValue(getDynamicAttribute(check[1].id.attribute)),
-  getAttributeValue(getDynamicAttribute(check[2].id.attribute)),
+  getAttributeValue(getDynamicAttribute(check[0])),
+  getAttributeValue(getDynamicAttribute(check[1])),
+  getAttributeValue(getDynamicAttribute(check[2])),
 ]
 
 /**
@@ -46,11 +45,11 @@ export const getSkillCheckValues = (
  * identifiers.
  */
 export const getSkillCheckWithId = (
-  getDynamicAttribute: (id: number) => Rated | undefined,
+  getDynamicAttribute: (id: Attribute_ID) => Rated | undefined,
   check: SkillCheck,
 ): SkillCheckValuesWithId =>
   zipTriple(check, getSkillCheckValues(getDynamicAttribute, check), (ref, value) => ({
-    id: ref.id.attribute,
+    id: ref,
     value,
   }))
 
@@ -58,8 +57,8 @@ export const getSkillCheckWithId = (
  * Returns the attributes of a skill check, paired with their values.
  */
 export const getDisplayedSkillCheck = (
-  getStaticAttribute: (id: number) => Attribute | undefined,
-  getDynamicAttribute: (id: number) => Rated | undefined,
+  getStaticAttribute: (id: Attribute_ID) => Attribute | undefined,
+  getDynamicAttribute: (id: Attribute_ID) => Rated | undefined,
   check: SkillCheck,
 ): DisplayedSkillCheck =>
   zipTriple(
@@ -72,14 +71,15 @@ export const getDisplayedSkillCheck = (
  * Returns the single highest attribute identifier from a skill check.
  */
 export const getSingleHighestCheckAttributeId = (
-  getDynamicAttribute: (id: number) => Rated | undefined,
+  getDynamicAttribute: (id: Attribute_ID) => Rated | undefined,
   check: SkillCheck,
-): number | undefined => getSingleHighestPair(getSkillCheckWithId(getDynamicAttribute, check))?.id
+): Attribute_ID | undefined =>
+  getSingleHighestPair(getSkillCheckWithId(getDynamicAttribute, check))?.id
 
 /**
  * Returns the single highest attribute value from a skill check.
  */
 export const getHighestCheckAttributeValue = (
-  getDynamicAttribute: (id: number) => Rated | undefined,
+  getDynamicAttribute: (id: Attribute_ID) => Rated | undefined,
   check: SkillCheck,
 ): number => Math.max(8, ...getSkillCheckValues(getDynamicAttribute, check))

@@ -1,6 +1,4 @@
-import { ExperienceLevel } from "@optolith/database-schema/gen"
-import { Skill } from "@optolith/database-schema/gen"
-import { AttributeReference } from "@optolith/database-schema/gen"
+import { ExperienceLevel, Skill, type SkillCheck } from "@optolith/database-schema/gen"
 import { filterNonNullable } from "../../utils/array.ts"
 import { Activatable, countOptions, isActive } from "../activatable/activatableEntry.ts"
 import { FilterApplyingRatedDependencies } from "../dependencies/filterApplyingDependencies.ts"
@@ -54,7 +52,7 @@ export const getSkillMinimum = (
  * Returns the maximum value for a skill.
  */
 export const getSkillMaximum = (
-  getHighestAttributeValue: (attributes: AttributeReference[]) => number,
+  getHighestAttributeValue: (attributes: SkillCheck) => number,
   staticSkill: Skill,
   isInCharacterCreation: boolean,
   startExperienceLevel: ExperienceLevel | undefined,

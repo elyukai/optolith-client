@@ -1,20 +1,17 @@
-import {
-  SkillCheckPenalty,
-  SkillCheck as SkillCheckType,
-} from "@optolith/database-schema/gen"
+import { toCamelCase } from "@elyukai/utils/string"
+import { SkillCheckPenalty } from "@optolith/database-schema/gen"
 import { FC } from "react"
 import { DerivedCharacteristicIdentifier as DCId } from "../../../../../shared/domain/identifier.ts"
-import { getDisplayedSkillCheck } from "../../../../../shared/domain/rated/skillCheck.ts"
+import type { DisplayedSkill } from "../../../../../shared/domain/rated/skill.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { classList } from "../../../../../shared/utils/classList.ts"
 import { minus } from "../../../../../shared/utils/math.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
-import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
 import { selectStaticDerivedCharacteristics } from "../../../../slices/databaseSlice.ts"
 
 type Props = {
-  check: SkillCheckType
+  check: DisplayedSkill["skillCheckValues"]
   checkPenalty?: SkillCheckPenalty
 }
 
@@ -25,8 +22,6 @@ export const SkillCheck: FC<Props> = props => {
   const { check, checkPenalty } = props
 
   const translateMap = useTranslateMap()
-  const getStaticAttributeById = useAppSelector(SelectGetById.Static.Attribute)
-  const getDynamicAttributeById = useAppSelector(SelectGetById.Dynamic.Attribute)
   const derivedCharacteristics = useAppSelector(selectStaticDerivedCharacteristics)
   const spirit = derivedCharacteristics[DCId.Spirit]
   const toughness = derivedCharacteristics[DCId.Toughness]
@@ -35,16 +30,15 @@ export const SkillCheck: FC<Props> = props => {
 
   return (
     <>
-      {getDisplayedSkillCheck(getStaticAttributeById, getDynamicAttributeById, check).map(
-        ({ attribute, value }, index) => (
-          <div key={`${attribute.id}-${index + 1}`} className={`check attr--${attribute.id}`}>
-            <span className="short">
-              {translateMap(attribute.translations)?.abbreviation ?? "??"}
-            </span>
-            <span className="value">{value}</span>
-          </div>
-        ),
-      )}
+      {check.map(({ id, value, dbEntry }, index) => (
+        <div
+          key={`${id}-${index + 1}`}
+          className={`check attr--${toCamelCase(dbEntry.color.kind)}`}
+        >
+          <span className="short">{translateMap(dbEntry.translations)?.abbreviation ?? "??"}</span>
+          <span className="value">{value}</span>
+        </div>
+      ))}
       {checkPenalty === undefined ? null : (
         <div
           className={classList("check", "mod", {
@@ -54,7 +48,9 @@ export const SkillCheck: FC<Props> = props => {
         >
           {minus}
           {((): string => {
-            switch (checkPenalty) {
+            switch (checkPenalty.kind) {
+              case "DerivedCharacteristic":
+                return spi
               case "Spirit":
                 return spi
               case "HalfOfSpirit":
@@ -66,6 +62,8 @@ export const SkillCheck: FC<Props> = props => {
               case "SummoningDifficulty":
                 return "X"
               case "CreationDifficulty":
+                return "X"
+              case "Object":
                 return "X"
               default:
                 return assertExhaustive(checkPenalty)

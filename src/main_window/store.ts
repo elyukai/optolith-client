@@ -1,4 +1,4 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit"
+import { combineReducers, configureStore, type Action, type ThunkAction } from "@reduxjs/toolkit"
 import { reduceReducers } from "../shared/utils/redux.ts"
 import { alertsReducer } from "./slices/alertsSlice.ts"
 import { charactersReducer } from "./slices/charactersSlice.ts"
@@ -35,3 +35,8 @@ export type RootState = ReturnType<typeof sliceReducer>
  * A pre-typed version of the dispatch function.
  */
 export type AppDispatch = typeof store.dispatch
+
+/**
+ * A pre-typed version of the thunk action type.
+ */
+export type AppThunk = ThunkAction<void, RootState, unknown, Action>

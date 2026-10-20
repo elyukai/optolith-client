@@ -1,3 +1,4 @@
+import { observer } from "mobx-react"
 import { FC, useCallback, useMemo, useState } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { Grid } from "../../../../../shared/components/grid/Grid.tsx"
@@ -16,16 +17,17 @@ import {
   compareImprovementCost,
   fromRaw,
 } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
+import type { DisplayedSkill } from "../../../../../shared/domain/rated/skill.ts"
 import { SkillsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { compareAt, numAsc, reduceCompare } from "../../../../../shared/utils/compare.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
+import { SharedState } from "../../../../external.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import { DisplayedSkill, selectVisibleSkills } from "../../../../selectors/skillsSelectors.ts"
 import {
   changeSkillsSortOrder,
   selectSkillsCultureRatingVisibility,
@@ -39,15 +41,12 @@ const isTopMarginNeeded = (
   sortOrder: SkillsSortOrder,
   curr: DisplayedSkill,
   mprev: DisplayedSkill | undefined,
-) =>
-  sortOrder === "group" &&
-  mprev !== undefined &&
-  curr.static.group.id.skill_group !== mprev.static.group.id.skill_group
+) => sortOrder === "group" && mprev !== undefined && curr.group !== mprev.group
 
 /**
  * Returns a page for managing skills.
  */
-export const Skills: FC = () => {
+export const Skills: FC = observer(() => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
@@ -68,34 +67,30 @@ export const Skills: FC = () => {
     [dispatch],
   )
 
-  const visibleSkills = useAppSelector(selectVisibleSkills)
+  const visibleSkills = SharedState.skills
 
   const list = useMemo(
     () =>
       visibleSkills
         .filter(
           c =>
-            translateMap(c.static.translations)
-              ?.name.toLowerCase()
-              .includes(filterText.toLowerCase()) ?? false,
+            translateMap(c.translations)?.name.toLowerCase().includes(filterText.toLowerCase()) ??
+            false,
         )
         .sort(
           (() => {
             switch (sortOrder) {
               case SkillsSortOrder.Name:
-                return compareAt(
-                  c => translateMap(c.static.translations)?.name ?? "",
-                  localeCompare,
-                )
+                return compareAt(c => translateMap(c.translations)?.name ?? "", localeCompare)
               case SkillsSortOrder.Group:
                 return reduceCompare(
-                  compareAt(c => c.static.group.id.skill_group, numAsc),
-                  compareAt(c => translateMap(c.static.translations)?.name ?? "", localeCompare),
+                  compareAt(c => c.groupPosition, numAsc),
+                  compareAt(c => translateMap(c.translations)?.name ?? "", localeCompare),
                 )
               case SkillsSortOrder.ImprovementCost:
                 return reduceCompare(
-                  compareAt(c => fromRaw(c.static.improvement_cost), compareImprovementCost),
-                  compareAt(c => translateMap(c.static.translations)?.name ?? "", localeCompare),
+                  compareAt(c => fromRaw(c.improvement_cost), compareImprovementCost),
+                  compareAt(c => translateMap(c.translations)?.name ?? "", localeCompare),
                 )
               default:
                 return assertExhaustive(sortOrder)
@@ -155,7 +150,7 @@ export const Skills: FC = () => {
             <List>
               {list.map((x, i) => (
                 <SkillListItem
-                  key={x.static.id}
+                  key={x.id}
                   insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
                   skill={x}
                 />
@@ -169,4 +164,4 @@ export const Skills: FC = () => {
       <InlineLibrary />
     </Page>
   )
-}
+})

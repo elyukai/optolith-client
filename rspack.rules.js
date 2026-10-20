@@ -9,16 +9,20 @@ export const rules = [
   {
     test: /\.tsx?$/u,
     exclude: [/node_modules/u],
+    type: "javascript/auto",
     loader: "builtin:swc-loader",
     resolve: {
       extensionAlias: {
         ".js": [".tsx", ".ts", "jsx", ".js"],
       },
     },
+    /** @type {import('@rspack/core').SwcLoaderOptions} */
     options: {
       jsc: {
+        keepClassNames: true,
         parser: {
           syntax: "typescript",
+          decorators: true,
         },
         transform: {
           react: {
@@ -26,10 +30,10 @@ export const rules = [
             throwIfNamespace: true,
             useBuiltins: false,
           },
+          decoratorVersion: "2022-03",
         },
       },
     },
-    type: "javascript/auto",
   },
   {
     test: /\.(png|jpe?g|svg)$/iu,

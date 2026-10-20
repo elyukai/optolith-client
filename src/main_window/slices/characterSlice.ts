@@ -1,6 +1,6 @@
 import { UnknownAction, createAction } from "@reduxjs/toolkit"
 import { createDynamicActivatable } from "../../shared/domain/activatable/activatableEntry.ts"
-import { Character } from "../../shared/domain/character.ts"
+import { _Character } from "../../shared/domain/character.ts"
 import {
   AdvantageIdentifier,
   BlessedTraditionIdentifier,
@@ -88,7 +88,7 @@ import { spellsReducer } from "./spellsSlice.ts"
 /**
  * The full state of a single character.
  */
-export type CharacterState = Character
+export type CharacterState = _Character
 
 // TODO: Remove prefilled values for a real character
 const staticInitialState: Omit<CharacterState, "dateCreated" | "dateLastModified"> = {

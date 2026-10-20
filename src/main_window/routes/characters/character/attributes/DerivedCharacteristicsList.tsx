@@ -1,6 +1,6 @@
+import { observer } from "mobx-react"
 import { FC } from "react"
-import { useAppSelector } from "../../../../hooks/redux.ts"
-import { selectDerivedCharacteristics } from "../../../../selectors/derivedCharacteristicsSelectors.ts"
+import { SharedState } from "../../../../external.ts"
 import "./DerivedCharacteristicsList.scss"
 import { DerivedCharacteristicsListItem } from "./DerivedCharacteristicsListItem.tsx"
 
@@ -12,14 +12,12 @@ type Props = {
 /**
  * Returns a list of derived characteristic values.
  */
-export const DerivedCharacteristicsList: FC<Props> = props => {
+export const DerivedCharacteristicsList: FC<Props> = observer(props => {
   const { isInCharacterCreation, isRemovingEnabled } = props
-
-  const derivedCharacteristics = useAppSelector(selectDerivedCharacteristics)
 
   return (
     <div className="derived-characteristics">
-      {derivedCharacteristics.map(derivedCharacteristic => (
+      {SharedState.derivedCharacteristics.map(derivedCharacteristic => (
         <DerivedCharacteristicsListItem
           key={derivedCharacteristic.id}
           attribute={derivedCharacteristic}
@@ -29,4 +27,4 @@ export const DerivedCharacteristicsList: FC<Props> = props => {
       ))}
     </div>
   )
-}
+})

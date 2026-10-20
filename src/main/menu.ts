@@ -4,6 +4,7 @@ import type { Locale } from "@optolith/database-schema/gen"
 import Debug from "debug"
 import { app, Menu, MenuItemConstructorOptions } from "electron/main"
 import type { ReadonlyTSONDB } from "tsondb/readonly"
+import type { Characters } from "../shared/domain/character.ts"
 import { getGlobalSettings } from "../shared/settings/main.ts"
 import { runAsync } from "../shared/utils/async.ts"
 import { createTranslate } from "../shared/utils/translate.ts"
@@ -17,6 +18,7 @@ export const setMenu = (
   db: ReadonlyTSONDB<TSONDBTypes>,
   cache: Cache,
   locales: Record<string, Locale>,
+  characters: Characters,
 ) => {
   const translate = createTranslate(locales, getGlobalSettings().locale, app.getLocale())
 
@@ -36,7 +38,9 @@ export const setMenu = (
                 label: translate("Preferences …"),
                 accelerator: "Command+,",
                 click: runAsync(debug, async () => {
-                  await createSettingsWindow(locales, () => setMenu(isMac, db, cache, locales))
+                  await createSettingsWindow(locales, () =>
+                    setMenu(isMac, db, cache, locales, characters),
+                  )
                 }),
               },
               { type: "separator" },
@@ -76,7 +80,7 @@ export const setMenu = (
           label: translate("New Character"),
           accelerator: "CommandOrControl+N",
           click: runAsync(debug, async () => {
-            const mainWindow = await createMainWindow(locales)
+            const mainWindow = await createMainWindow(locales, db, cache, characters)
             mainWindow.webContents.send("new-character")
           }),
         },
@@ -175,7 +179,7 @@ export const setMenu = (
                 label: translate("Main Window"),
                 accelerator: "Command+0",
                 click: runAsync(debug, async () => {
-                  await createMainWindow(locales)
+                  await createMainWindow(locales, db, cache, characters)
                 }),
               },
               { type: "separator" },

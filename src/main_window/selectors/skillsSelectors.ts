@@ -1,5 +1,5 @@
-import { createSelector } from "@reduxjs/toolkit"
 import { Skill } from "@optolith/database-schema/gen"
+import { createSelector } from "@reduxjs/toolkit"
 import {
   AdvantageIdentifier,
   GeneralSpecialAbilityIdentifier,
@@ -30,6 +30,7 @@ import { selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
  * commonness based on the selected culture.
  */
 export type DisplayedSkill = {
+  id: string
   static: Skill
   dynamic: Rated
   minimum: number
@@ -89,6 +90,7 @@ export const selectVisibleSkills = createSelector(
       )
 
       return {
+        id: skill.id,
         static: skill,
         dynamic: dynamicSkill,
         minimum,

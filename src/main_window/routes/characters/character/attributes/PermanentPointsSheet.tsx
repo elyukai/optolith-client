@@ -1,14 +1,11 @@
 import { FC } from "react"
 import { Dialog } from "../../../../../shared/components/dialog/Dialog.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
-import {
-  DerivedCharacteristicIdentifier as DCId,
-  EnergyIdentifier,
-} from "../../../../../shared/domain/identifier.ts"
+import { DerivedCharacteristicIdentifier as DCId } from "../../../../../shared/domain/identifier.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 
 type Props = {
-  id: EnergyIdentifier
+  id: string
   isOpen: boolean
   permanentlyLost: number
   permanentlyLostBoughtBack: number | undefined
@@ -39,7 +36,7 @@ export const PermanentPointsSheet: FC<Props> = props => {
 
   return (
     <Dialog
-      id={id.toFixed()}
+      id={id}
       isOpen={isOpen}
       close={close}
       className="permanent-points-editor"
@@ -47,8 +44,8 @@ export const PermanentPointsSheet: FC<Props> = props => {
         id === DCId.ArcaneEnergy
           ? translate("Permanently Lost Arcane Energy")
           : id === DCId.KarmaPoints
-          ? translate("Permanently Lost Karma Points")
-          : translate("Permanently Lost Life Points")
+            ? translate("Permanently Lost Karma Points")
+            : translate("Permanently Lost Life Points")
       }
       buttons={[
         {

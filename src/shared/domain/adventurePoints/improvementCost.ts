@@ -167,7 +167,7 @@ export const toString = (ic: ImprovementCost): string => {
 export const fromRaw = <T extends RawImprovementCost | undefined>(
   ic: T,
 ): ImprovementCost | Nullish<T> => {
-  switch (ic) {
+  switch (ic?.kind) {
     case "A":
       return ImprovementCost.A
     case "B":

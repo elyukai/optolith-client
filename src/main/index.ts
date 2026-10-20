@@ -9,7 +9,10 @@ import { join } from "node:path"
 import { ReadonlyTSONDB } from "tsondb/readonly"
 import config from "../database/contents/tsondb.config.ts"
 import { attachDatabaseEventsMain } from "../shared/database.ts"
+import { Characters } from "../shared/domain/character.ts"
+import type { CharacterIPCActions } from "../shared/ipc.ts"
 import { getGlobalSettings } from "../shared/settings/main.ts"
+import { attachStateActionHandlersToMain } from "../shared/state.ts"
 import { runAsync } from "../shared/utils/async.ts"
 import { createMainWindow } from "./mainWindow.ts"
 import { setMenu } from "./menu.ts"
@@ -45,6 +48,12 @@ attachDatabaseEventsMain(ipcMain, db, cache, (name, _event, error) => {
 
 debug("database event listeners attached")
 
+const characters = new Characters(db)
+
+attachStateActionHandlersToMain<CharacterIPCActions>(ipcMain, (...args) => {
+  characters.handleIPCAction(...args)
+})
+
 const locales: Record<string, Locale> = Object.fromEntries(
   db
     .getAllInstanceContainersOfEntity("Locale")
@@ -70,7 +79,7 @@ app.whenReady().then(async () => {
     }
   })
 
-  setMenu(isMac, db, cache, locales)
+  setMenu(isMac, db, cache, locales, characters)
   setNativeTheme(getGlobalSettings().theme)
   const installUpdateInsteadOfStartup = await checkForUpdatesOnStartup(locales)
 
@@ -86,7 +95,7 @@ app.whenReady().then(async () => {
       "show-settings",
       runAsync(debug, async () => {
         debug("show settings")
-        await createSettingsWindow(locales, () => setMenu(isMac, db, cache, locales))
+        await createSettingsWindow(locales, () => setMenu(isMac, db, cache, locales, characters))
       }),
     )
     ipcMain.on(
@@ -97,7 +106,7 @@ app.whenReady().then(async () => {
       }),
     )
 
-    await createMainWindow(locales)
+    await createMainWindow(locales, db, cache, characters)
   }
 
   app.on(
@@ -105,7 +114,7 @@ app.whenReady().then(async () => {
     runAsync(debug, async (_event, hasVisibleWindows) => {
       debug("activated: hasVisibleWindows = %s", hasVisibleWindows)
       if (!hasVisibleWindows) {
-        await createMainWindow(locales)
+        await createMainWindow(locales, db, cache, characters)
       }
     }),
   )

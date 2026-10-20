@@ -1,7 +1,7 @@
 import { Draft } from "@reduxjs/toolkit"
 import { deepEqual } from "../../utils/compare.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
-import { Character } from "../character.ts"
+import { _Character } from "../character.ts"
 
 /**
  * Whether to add or remove a prerequisite as a dependency.
@@ -66,7 +66,7 @@ export const addOrRemoveDependencyInSlice = <
  */
 export type RegistrationFunction<T, SourceId, C = undefined> = (
   method: RegistrationMethod,
-  character: Draft<Character>,
+  character: Draft<_Character>,
   p: T,
   sourceId: SourceId,
   index: number,

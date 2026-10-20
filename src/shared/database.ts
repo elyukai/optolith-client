@@ -1,38 +1,38 @@
 import { deepEqual } from "@elyukai/utils/equality"
 import type { TSONDBTypes } from "@optolith/database-schema"
 import type { Cache } from "@optolith/database-schema/cache"
-import type * as Database from "@optolith/database-schema/gen"
+import type * as Gen from "@optolith/database-schema/gen"
 import type { GetResolvedSelectOptionById } from "@optolith/entity-descriptions/entities/partial/prerequisites/single/activatable"
 import type { Debugger } from "debug"
 import type { ReadonlyTSONDB } from "tsondb/readonly"
 import { fromUniformCase, type IdArgsVariant } from "tsondb/schema/gen"
 
-export type GetInstanceById<in T extends Extract<keyof Database.EntityMap, string>> = <U extends T>(
-  ...args: IdArgsVariant<Database.EntityMap, U>
-) => Database.EntityMap[U] | undefined
+export type Database = ReadonlyTSONDB<TSONDBTypes>
 
-export type GetAllInstances<in T extends keyof Database.EntityMap> = <U extends T>(
-  entity: U,
-) => { id: string; content: Database.EntityMap[U] }[]
+export type GetInstanceById<in T extends Extract<keyof Gen.EntityMap, string>> = <U extends T>(
+  ...args: IdArgsVariant<Gen.EntityMap, U>
+) => Gen.EntityMap[U] | undefined
 
-export type GetAllChildInstancesForParent<in T extends keyof Database.ChildEntityMap> = <
-  U extends T,
->(
+export type GetAllInstances<in T extends keyof Gen.EntityMap> = <U extends T>(
   entity: U,
-  parentId: Database.ChildEntityMap[U][2],
-) => { id: string; content: Database.ChildEntityMap[U][0] }[]
+) => { id: string; content: Gen.EntityMap[U] }[]
+
+export type GetAllChildInstancesForParent<in T extends keyof Gen.ChildEntityMap> = <U extends T>(
+  entity: U,
+  parentId: Gen.ChildEntityMap[U][2],
+) => { id: string; content: Gen.ChildEntityMap[U][0] }[]
 
 export type DatabaseHandlers = {
-  getInstanceById: <U extends keyof Database.EntityMap>(
-    ...args: IdArgsVariant<Database.EntityMap, U>
-  ) => Promise<Database.EntityMap[U] | undefined>
-  getAllInstances: <U extends keyof Database.EntityMap>(
+  getInstanceById: <U extends keyof Gen.EntityMap>(
+    ...args: IdArgsVariant<Gen.EntityMap, U>
+  ) => Promise<Gen.EntityMap[U] | undefined>
+  getAllInstances: <U extends keyof Gen.EntityMap>(
     entity: U,
-  ) => Promise<{ id: string; content: Database.EntityMap[U] }[]>
-  getChildrenInstancesByParentId: <U extends keyof Database.ChildEntityMap>(
+  ) => Promise<{ id: string; content: Gen.EntityMap[U] }[]>
+  getChildrenInstancesByParentId: <U extends keyof Gen.ChildEntityMap>(
     entity: U,
-    parentId: Database.ChildEntityMap[U][2],
-  ) => Promise<{ id: string; content: Database.ChildEntityMap[U][0] }[]>
+    parentId: Gen.ChildEntityMap[U][2],
+  ) => Promise<{ id: string; content: Gen.ChildEntityMap[U][0] }[]>
   getResolvedSelectOptionById: (
     ...args: Parameters<GetResolvedSelectOptionById>
   ) => Promise<ReturnType<GetResolvedSelectOptionById>>
@@ -113,3 +113,54 @@ export const attackDatabaseHandlersToPreloadAPI = (
     return ipcRenderer.invoke("db:getcache", ...args)
   },
 })
+
+// export const attackDatabaseHandlersToPreloadAPI = (
+//   debug: Debugger,
+//   ipcRenderer: Electron.IpcRenderer,
+// ): DatabaseHandlers => {
+//   const singleEntryDatabaseCache: Partial<{
+//     [E in keyof Database.EntityMap]: Partial<Record<string, Database.EntityMap[E]>>
+//   }> = {}
+//   const allEntriesDatabaseCache: Partial<{
+//     [E in keyof Database.EntityMap]: { id: string; content: Database.EntityMap[E] }[]
+//   }> = {}
+//   let cacheCache: Cache | undefined = undefined
+
+//   return {
+//     getInstanceById: async (...args) => {
+//       const { entityName, id } = normalizedIdArgs(args)
+//       debug("get instance of entity $s by id %s", entityName, id)
+//       const entityCache = (singleEntryDatabaseCache[entityName] ??= {}) as Partial<
+//         Record<string, Database.EntityMap[typeof entityName]>
+//       >
+//       entityCache[id] ??= (await ipcRenderer.invoke("db:get", entityName, id)) as
+//         | Database.EntityMap[typeof entityName]
+//         | undefined
+//       return entityCache[id]
+//     },
+//     getAllInstances: async entity => {
+//       debug("get all instances for s", entity)
+//       ;(allEntriesDatabaseCache[entity] as {
+//         id: string
+//         content: Database.EntityMap[typeof entity]
+//       }[]) ??= (await ipcRenderer.invoke("db:getall", entity)) as {
+//         id: string
+//         content: Database.EntityMap[typeof entity]
+//       }[]
+//       return allEntriesDatabaseCache[entity] ?? []
+//     },
+//     getChildrenInstancesByParentId: async (...args) => {
+//       debug("get children instances for parent %O", args)
+//       return ipcRenderer.invoke("db:getchildren", ...args)
+//     },
+//     getResolvedSelectOptionById: async (parentId, id) => {
+//       debug("get resolved select option of parent $O by id %O", parentId, id)
+//       cacheCache ??= (await ipcRenderer.invoke("db:getcache")) as Cache
+//     },
+//     getCache: async () => {
+//       debug("get cache")
+//       cacheCache ??= (await ipcRenderer.invoke("db:getcache")) as Cache
+//       return ipcRenderer.invoke("db:getcache")
+//     },
+//   }
+// }

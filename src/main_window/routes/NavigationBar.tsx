@@ -1,3 +1,4 @@
+import { observer } from "mobx-react"
 import { FC, useCallback, useEffect, useRef } from "react"
 import { AvatarWrapper } from "../../shared/components/avatarWrapper/AvatarWrapper.tsx"
 import { Button } from "../../shared/components/button/Button.tsx"
@@ -5,10 +6,9 @@ import { IconButton } from "../../shared/components/iconButton/IconButton.tsx"
 import { TooltipToggle } from "../../shared/components/tooltipToggle/TooltipToggle.tsx"
 import { useTranslate } from "../../shared/hooks/translate.ts"
 import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
-import { ExternalAPI } from "../external.ts"
+import { ExternalAPI, SharedState } from "../external.ts"
 import { useAppDispatch, useAppSelector } from "../hooks/redux.ts"
 import { useVisibleTabs } from "../hooks/visibleTabs.ts"
-import { selectAdventurePointsAvailable } from "../selectors/adventurePointSelectors.ts"
 import { selectAvatar } from "../slices/characterSlice.ts"
 import { goToTab, selectRoute } from "../slices/routeSlice.ts"
 import { AdventurePointsTooltip } from "./AdventurePointsTooltip.tsx"
@@ -26,12 +26,11 @@ const toggleDevTools = () => ExternalAPI.toggleDevTools()
 /**
  * Returns a top navigation bar.
  */
-export const NavigationBar: FC = () => {
+export const NavigationBar: FC = observer(() => {
   const translate = useTranslate()
   const dispatch = useAppDispatch()
   const handleCharactersTab = useCallback(() => dispatch(goToTab(["characters"])), [dispatch])
   const { section, mainTabs, subTabs } = useVisibleTabs()
-  const available = useAppSelector(selectAdventurePointsAvailable)
   const currentRoute = useAppSelector(selectRoute)
   const avatar = useAppSelector(selectAvatar)
 
@@ -128,7 +127,9 @@ export const NavigationBar: FC = () => {
                 targetRef={ref}
               />
               <div className="collected-ap" ref={ref}>
-                {translate("{0} AP Remaining", available)}
+                {translate("{$value} AP Remaining", {
+                  value: SharedState.adventurePointsStats.available.toFixed(),
+                })}
               </div>
               <IconButton
                 icon="&#xE90f;"
@@ -158,4 +159,4 @@ export const NavigationBar: FC = () => {
       {subTabs !== undefined && subTabs.length > 0 ? <NavigationBarSubTabs tabs={subTabs} /> : null}
     </nav>
   )
-}
+})

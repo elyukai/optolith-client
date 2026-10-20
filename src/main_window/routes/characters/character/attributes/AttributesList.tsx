@@ -1,6 +1,6 @@
+import { observer } from "mobx-react"
 import { FC } from "react"
-import { useAppSelector } from "../../../../hooks/redux.ts"
-import { selectVisibleAttributes } from "../../../../selectors/attributeSelectors.ts"
+import { SharedState } from "../../../../external.ts"
 import "./AttributesList.scss"
 import { AttributeListItem } from "./AttributesListItem.tsx"
 
@@ -12,16 +12,14 @@ type Props = {
 /**
  * Returns a list of attribute values.
  */
-export const AttributeList: FC<Props> = props => {
-  const attributes = useAppSelector(selectVisibleAttributes)
-
+export const AttributeList: FC<Props> = observer(props => {
   const { isInCharacterCreation, isRemovingEnabled } = props
 
   return (
     <div className="main">
-      {attributes.map(attribute => (
+      {SharedState.attributes.map(attribute => (
         <AttributeListItem
-          key={attribute.static.id}
+          key={attribute.id}
           attribute={attribute}
           isInCharacterCreation={isInCharacterCreation}
           isRemovingEnabled={isRemovingEnabled}
@@ -29,4 +27,4 @@ export const AttributeList: FC<Props> = props => {
       ))}
     </div>
   )
-}
+})

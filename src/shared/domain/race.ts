@@ -1,7 +1,63 @@
-import { Race, RaceVariant } from "@optolith/database-schema/gen"
-import { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import {
+  ActivatableIdentifier,
+  Race,
+  RaceVariant,
+  type Attribute_ID,
+  type Race_ID,
+  type RaceVariant_ID,
+} from "@optolith/database-schema/gen"
+import { computed, observable } from "mobx"
+import type { Database } from "../database.ts"
 import { mapNullableDefault } from "../utils/nullable.ts"
 import { TranslateMap } from "../utils/translate.ts"
+
+export class CharacterRace {
+  readonly #db: Database
+
+  /**
+   * The base race identifier.
+   */
+  @observable accessor id: Race_ID
+
+  /**
+   * The race variant identifier.
+   */
+  @observable accessor variantId: RaceVariant_ID
+
+  /**
+   * The identifier of the attribute adjustment that has been selected from the race.
+   */
+  @observable accessor selectedAttributeAdjustmentId: Attribute_ID | undefined
+
+  /**
+   * Dependencies on the selected race.
+   */
+  @observable accessor dependencies: RaceDependency[]
+
+  constructor(
+    db: Database,
+    id: Race_ID,
+    variantId: RaceVariant_ID,
+    selectedAttributeAdjustmentId?: Attribute_ID | undefined,
+    dependencies: RaceDependency[] = [],
+  ) {
+    this.#db = db
+    this.id = id
+    this.variantId = variantId
+    this.selectedAttributeAdjustmentId = selectedAttributeAdjustmentId
+    this.dependencies = dependencies
+  }
+
+  @computed
+  get base(): Race | undefined {
+    return this.#db.getInstanceOfEntityById("Race", this.id)
+  }
+
+  @computed
+  get variant(): RaceVariant | undefined {
+    return this.#db.getInstanceOfEntityById("RaceVariant", this.id)
+  }
+}
 
 /**
  * Gets a race by id.

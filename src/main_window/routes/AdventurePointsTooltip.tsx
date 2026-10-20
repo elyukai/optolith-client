@@ -1,189 +1,141 @@
+import { observer } from "mobx-react"
 import { FC } from "react"
 import {
   maximumAdventurePointsForAdventagesAndDisadvantages,
   maximumAdventurePointsForBlessedAdventagesAndDisadvantages,
 } from "../../shared/domain/activatable/advantagesDisadvantages.ts"
 import { useTranslate } from "../../shared/hooks/translate.ts"
-import { useAppSelector } from "../hooks/redux.ts"
-import {
-  selectAdventurePointsSpent,
-  selectAdventurePointsSpentOnAdvantages,
-  selectAdventurePointsSpentOnAttributes,
-  selectAdventurePointsSpentOnBlessedAdvantages,
-  selectAdventurePointsSpentOnBlessedDisadvantages,
-  selectAdventurePointsSpentOnBlessings,
-  selectAdventurePointsSpentOnCantrips,
-  selectAdventurePointsSpentOnCombatTechniques,
-  selectAdventurePointsSpentOnDisadvantages,
-  selectAdventurePointsSpentOnEnergies,
-  selectAdventurePointsSpentOnLiturgicalChants,
-  selectAdventurePointsSpentOnMagicalAdvantages,
-  selectAdventurePointsSpentOnMagicalDisadvantages,
-  selectAdventurePointsSpentOnProfession,
-  selectAdventurePointsSpentOnRace,
-  selectAdventurePointsSpentOnSkills,
-  selectAdventurePointsSpentOnSpecialAbilities,
-  selectAdventurePointsSpentOnSpells,
-} from "../selectors/adventurePointSelectors.ts"
-import {
-  selectIsBlessedOne,
-  selectIsSpellcaster,
-  selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
-} from "../selectors/traditionSelectors.ts"
-import { selectTotalAdventurePoints } from "../slices/characterSlice.ts"
+import { SharedState } from "../external.ts"
 
 /**
  * Returns the contents for the adventure points tooltip that displays which
  * entry groups adventure points were spent on.
  */
-export const AdventurePointsTooltip: FC = () => {
+export const AdventurePointsTooltip: FC = observer(() => {
   const translate = useTranslate()
 
-  const isSpellcaster = useAppSelector(selectIsSpellcaster)
-  const isBlessedOne = useAppSelector(selectIsBlessedOne)
-  const maximumForMagicalAdvantagesDisadvantages = useAppSelector(
-    selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
-  )
+  const isSpellcaster = true // useAppSelector(selectIsSpellcaster)
+  const isBlessedOne = true // useAppSelector(selectIsBlessedOne)
+  const maximumForMagicalAdvantagesDisadvantages = 80 // useAppSelector(
+  //   selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
+  // )
 
-  const total = useAppSelector(selectTotalAdventurePoints)
-  const spent = useAppSelector(selectAdventurePointsSpent)
-  const spentOnAttributes = useAppSelector(selectAdventurePointsSpentOnAttributes)
-  const spentOnSkills = useAppSelector(selectAdventurePointsSpentOnSkills)
-  const spentOnCombatTechniques = useAppSelector(selectAdventurePointsSpentOnCombatTechniques)
-  const spentOnSpells = useAppSelector(selectAdventurePointsSpentOnSpells)
-  const spentOnLiturgicalChants = useAppSelector(selectAdventurePointsSpentOnLiturgicalChants)
-  const spentOnCantrips = useAppSelector(selectAdventurePointsSpentOnCantrips)
-  const spentOnBlessings = useAppSelector(selectAdventurePointsSpentOnBlessings)
-  const spentOnAdvantages = useAppSelector(selectAdventurePointsSpentOnAdvantages)
-  const spentOnMagicalAdvantages = useAppSelector(selectAdventurePointsSpentOnMagicalAdvantages)
-  const spentOnBlessedAdvantages = useAppSelector(selectAdventurePointsSpentOnBlessedAdvantages)
-  const spentOnDisadvantages = useAppSelector(selectAdventurePointsSpentOnDisadvantages)
-  const spentOnMagicalDisadvantages = useAppSelector(
-    selectAdventurePointsSpentOnMagicalDisadvantages,
-  )
-  const spentOnBlessedDisadvantages = useAppSelector(
-    selectAdventurePointsSpentOnBlessedDisadvantages,
-  )
-  const spentOnSpecialAbilities = useAppSelector(selectAdventurePointsSpentOnSpecialAbilities)
-  const spentOnEnergies = useAppSelector(selectAdventurePointsSpentOnEnergies)
-  const spentOnRace = useAppSelector(selectAdventurePointsSpentOnRace)
-  const spentOnProfession = useAppSelector(selectAdventurePointsSpentOnProfession)
+  const stats = SharedState.adventurePointsStats
 
   return (
     <div className="ap-details">
       <h4>{translate("Adventure Points")}</h4>
       <p className="general">
-        <span>{translate("{0} Total AP", total ?? 0)}</span>
-        <span>{translate("{0} AP Spent", spent.general)}</span>
+        <span>{translate("{$value} Total AP", { value: stats.total.toFixed() })}</span>
+        <span>{translate("{$value} AP Spent", { value: stats.spent.toFixed() })}</span>
       </p>
       <hr />
       <p>
         <span>
-          {translate(
-            "{0}/{1} AP spent on advantages",
-            spentOnAdvantages.general + spentOnAdvantages.bound,
-            maximumAdventurePointsForAdventagesAndDisadvantages,
-          )}
+          {translate("{$value}/{$max} AP spent on advantages", {
+            value: stats.spentOnAdvantages.toFixed(),
+            max: maximumAdventurePointsForAdventagesAndDisadvantages.toFixed(),
+          })}
         </span>
         <span>
-          {spentOnMagicalAdvantages.general + spentOnMagicalAdvantages.bound > 0
-            ? translate(
-                "Thereof {0}/{1} on magic advantages",
-                spentOnMagicalAdvantages.general + spentOnMagicalAdvantages.bound,
-                maximumForMagicalAdvantagesDisadvantages,
-              )
+          {stats.spentOnMagicalAdvantages > 0
+            ? translate("Thereof {$value}/{$max} on magic advantages", {
+                value: stats.spentOnMagicalAdvantages.toFixed(),
+                max: maximumForMagicalAdvantagesDisadvantages.toFixed(),
+              })
             : null}
         </span>
         <span>
-          {spentOnBlessedAdvantages.general + spentOnBlessedAdvantages.bound > 0
-            ? translate(
-                "Thereof {0}/{1} on blessed advantages",
-                spentOnBlessedAdvantages.general + spentOnBlessedAdvantages.bound,
-                maximumAdventurePointsForBlessedAdventagesAndDisadvantages,
-              )
+          {stats.spentOnBlessedAdvantages > 0
+            ? translate("Thereof {$value}/{$max} on blessed advantages", {
+                value: stats.spentOnBlessedAdvantages.toFixed(),
+                max: maximumAdventurePointsForBlessedAdventagesAndDisadvantages.toFixed(),
+              })
             : null}
         </span>
         <span>
-          {translate(
-            "{0}/{1} AP received from disadvantages",
-            Math.abs(spentOnDisadvantages.general + spentOnDisadvantages.bound),
-            maximumAdventurePointsForAdventagesAndDisadvantages,
-          )}
+          {translate("{$value}/{$max} AP received from disadvantages", {
+            value: stats.spentOnDisadvantages.toFixed(),
+            max: maximumAdventurePointsForAdventagesAndDisadvantages.toFixed(),
+          })}
         </span>
         <span>
-          {spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound < 0
-            ? translate(
-                "Thereof {0}/{1} from magic disadvantages",
-                Math.abs(spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound),
-                maximumForMagicalAdvantagesDisadvantages,
-              )
+          {stats.spentOnMagicalDisadvantages < 0
+            ? translate("Thereof {$value}/{$max} from magic disadvantages", {
+                value: Math.abs(stats.spentOnMagicalDisadvantages).toFixed(),
+                max: maximumForMagicalAdvantagesDisadvantages.toFixed(),
+              })
             : null}
         </span>
         <span>
-          {spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound < 0
-            ? translate(
-                "Thereof {0}/{1} from blessed disadvantages",
-                Math.abs(spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound),
-                maximumAdventurePointsForBlessedAdventagesAndDisadvantages,
-              )
+          {stats.spentOnBlessedDisadvantages < 0
+            ? translate("Thereof {$value}/{$max} from blessed disadvantages", {
+                value: Math.abs(stats.spentOnBlessedDisadvantages).toFixed(),
+                max: maximumAdventurePointsForBlessedAdventagesAndDisadvantages.toFixed(),
+              })
             : null}
         </span>
       </p>
       <hr />
       <p>
-        <span>{translate("{0} AP spent on race", spentOnRace)}</span>
-        {spentOnProfession === undefined ? null : (
-          <span>{translate("{0} AP spent on profession", spentOnProfession)}</span>
+        <span>
+          {translate("{$value} AP spent on race", { value: stats.spentOnRace.toFixed() })}
+        </span>
+        {stats.spentOnProfession === undefined ? null : (
+          <span>
+            {translate("{$value} AP spent on profession", {
+              value: stats.spentOnProfession.toFixed(),
+            })}
+          </span>
         )}
         <span>
-          {translate(
-            "{0} AP spent on attributes",
-            spentOnAttributes.general + spentOnAttributes.bound,
-          )}
+          {translate("{$value} AP spent on attributes", {
+            value: stats.spentOnAttributes.toFixed(),
+          })}
         </span>
         <span>
-          {translate("{0} AP spent on skills", spentOnSkills.general + spentOnSkills.bound)}
+          {translate("{$value} AP spent on skills", { value: stats.spentOnSkills.toFixed() })}
         </span>
         <span>
-          {translate(
-            "{0} AP spent on combat techniques",
-            spentOnCombatTechniques.general + spentOnCombatTechniques.bound,
-          )}
+          {translate("{$value} AP spent on combat techniques", {
+            value: stats.spentOnCombatTechniques.toFixed(),
+          })}
         </span>
         {isSpellcaster ? (
           <span>
-            {translate("{0} AP spent on spells", spentOnSpells.general + spentOnSpells.bound)}
+            {translate("{$value} AP spent on spells", { value: stats.spentOnSpells.toFixed() })}
           </span>
         ) : null}
         {isSpellcaster ? (
           <span>
-            {translate("{0} AP spent on cantrips", spentOnCantrips.general + spentOnCantrips.bound)}
+            {translate("{$value} AP spent on cantrips", { value: stats.spentOnCantrips.toFixed() })}
           </span>
         ) : null}
         {isBlessedOne ? (
           <span>
-            {translate(
-              "{0} AP spent on liturgical chants",
-              spentOnLiturgicalChants.general + spentOnLiturgicalChants.bound,
-            )}
+            {translate("{$value} AP spent on liturgical chants", {
+              value: stats.spentOnLiturgicalChants.toFixed(),
+            })}
           </span>
         ) : null}
         {isBlessedOne ? (
           <span>
-            {translate(
-              "{0} AP spent on blessings",
-              spentOnBlessings.general + spentOnBlessings.bound,
-            )}
+            {translate("{$value} AP spent on blessings", {
+              value: stats.spentOnBlessings.toFixed(),
+            })}
           </span>
         ) : null}
         <span>
-          {translate(
-            "{0} AP spent on special abilities",
-            spentOnSpecialAbilities.general + spentOnSpecialAbilities.bound,
-          )}
+          {translate("{$value} AP spent on special abilities", {
+            value: stats.spentOnSpecialAbilities.toFixed(),
+          })}
         </span>
-        <span>{translate("{0} AP spent on improving/buying back LP/AE/KP", spentOnEnergies)}</span>
+        <span>
+          {translate("{$value} AP spent on improving/buying back LP/AE/KP", {
+            value: stats.spentOnEnergies.toFixed(),
+          })}
+        </span>
       </p>
     </div>
   )
-}
+})

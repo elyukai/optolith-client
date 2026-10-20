@@ -1,10 +1,13 @@
+import {
+  type ImprovementCost,
+  getAdventurePointsForRating,
+} from "@optolith/adventure-points/improvement-cost"
 import { range } from "../../utils/array.ts"
 import {
   AdventurePointsCache,
   addAdventurePointsCaches,
   emptyAdventurePointsCache,
 } from "./cache.ts"
-import { ImprovementCost, adventurePointsForIncrement } from "./improvementCost.ts"
 
 /**
  * Bound adventure points are granted by the GM and can only be spent on the
@@ -25,7 +28,7 @@ export type BoundAdventurePointsForRated = {
 }
 
 const groupBoundAdventurePointsByRating = (
-  boundAdventurePoints: BoundAdventurePointsForRated[],
+  boundAdventurePoints: readonly BoundAdventurePointsForRated[],
 ): ReadonlyMap<number | "activation", number> =>
   boundAdventurePoints.reduce((map, { rating: boundRating, adventurePoints }) => {
     const key = boundRating ?? "activation"
@@ -41,7 +44,7 @@ const accumulateCache = (
 ): AdventurePointsCache => {
   const { usedGeneral, usedBound } = range(startValue, endValue).reduce(
     (acc, currentValue) => {
-      const costForStep = adventurePointsForIncrement(ic, currentValue - 1)
+      const costForStep = getAdventurePointsForRating(ic, currentValue - 1)
       const usedBoundForStep = Math.min(costForStep, acc.remainingApplicableBound)
       const usedGeneralForStep = costForStep - usedBoundForStep
 
@@ -75,7 +78,7 @@ const accumulateCache = (
 export const cachedAdventurePoints = (
   value: number,
   minValue: number,
-  boundAdventurePoints: BoundAdventurePointsForRated[],
+  boundAdventurePoints: readonly BoundAdventurePointsForRated[],
   ic: ImprovementCost,
 ): AdventurePointsCache => {
   if (minValue >= value) {
@@ -93,7 +96,7 @@ export const cachedAdventurePoints = (
  */
 export const cachedAdventurePointsForActivatable = (
   value: number | undefined,
-  boundAdventurePoints: BoundAdventurePointsForRated[],
+  boundAdventurePoints: readonly BoundAdventurePointsForRated[],
   ic: ImprovementCost,
 ): AdventurePointsCache => {
   if (value === undefined) {

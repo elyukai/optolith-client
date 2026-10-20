@@ -5,18 +5,17 @@ import { ListItemName } from "../../../../../shared/components/list/ListItemName
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
 import { fromRaw } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
+import type { DisplayedSkill } from "../../../../../shared/domain/rated/skill.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { useRatedActions } from "../../../../hooks/ratedActions.ts"
+import { ExternalAPI } from "../../../../external.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import { DisplayedSkill } from "../../../../selectors/skillsSelectors.ts"
 import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
 } from "../../../../slices/inlineWikiSlice.ts"
 import { selectSkillsCultureRatingVisibility } from "../../../../slices/settingsSlice.ts"
-import { decrementSkill, incrementSkill, setSkill } from "../../../../slices/skillsSlice.ts"
 import { SkillButtons } from "./SkillButtons.tsx"
 import { SkillCheck } from "./SkillCheck.tsx"
 import { SkillImprovementCost } from "./SkillImprovementCost.tsx"
@@ -31,10 +30,12 @@ const SkillListItem: React.FC<Props> = props => {
   const {
     insertTopMargin,
     skill: {
-      static: { id, check, group, improvement_cost, translations },
-      dynamic: { value },
-      maximum,
-      minimum,
+      id,
+      skillCheckValues: check,
+      group,
+      improvement_cost,
+      translations,
+      value,
       isIncreasable,
       isDecreasable,
       commonness,
@@ -50,18 +51,6 @@ const SkillListItem: React.FC<Props> = props => {
 
   const { name = "???" } = translateMap(translations) ?? {}
 
-  const { handleAddPoint, handleRemovePoint, handleSetToMaximumPoints, handleSetToMinimumPoints } =
-    useRatedActions(
-      id,
-      value,
-      maximum,
-      minimum,
-      fromRaw(improvement_cost),
-      incrementSkill,
-      decrementSkill,
-      setSkill,
-    )
-
   const handleSelectForInfo = useCallback(
     () => dispatch(changeInlineLibraryEntry({ tag: "Skill", skill: id })),
     [dispatch, id],
@@ -69,8 +58,8 @@ const SkillListItem: React.FC<Props> = props => {
 
   const getStaticSkillGroupById = useAppSelector(SelectGetById.Static.SkillGroup)
   const groupName = useMemo(
-    () => translateMap(getStaticSkillGroupById(group.id.skill_group)?.translations)?.name,
-    [getStaticSkillGroupById, group.id.skill_group, translateMap],
+    () => translateMap(getStaticSkillGroupById(group)?.translations)?.name,
+    [getStaticSkillGroupById, group, translateMap],
   )
 
   return (
@@ -91,10 +80,10 @@ const SkillListItem: React.FC<Props> = props => {
       <SkillButtons
         addDisabled={!isIncreasable}
         removeDisabled={!isDecreasable}
-        addPoint={handleAddPoint}
-        setToMax={handleSetToMaximumPoints}
-        removePoint={canRemove ? handleRemovePoint : undefined}
-        setToMin={canRemove ? handleSetToMinimumPoints : undefined}
+        addPoint={() => ExternalAPI.execute("incrementSkill", id)}
+        setToMax={() => ExternalAPI.execute("incrementSkillToMax", id)}
+        removePoint={canRemove ? () => ExternalAPI.execute("decrementSkill", id) : undefined}
+        setToMin={canRemove ? () => ExternalAPI.execute("decrementSkillToMin", id) : undefined}
         selectForInfo={handleSelectForInfo}
       />
     </ListItem>

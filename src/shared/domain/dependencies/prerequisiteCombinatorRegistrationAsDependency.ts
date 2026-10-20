@@ -9,12 +9,12 @@ import {
 } from "@optolith/database-schema/gen"
 import { RangeBounds, isInRange } from "../../utils/range.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
-import { Character } from "../character.ts"
+import { _Character } from "../character.ts"
 import { RegistrationFunction, RegistrationMethod } from "./registrationHelpers.ts"
 
 const registerOrUnregisterPrerequisiteGroup = <T, SourceId, C>(
   method: RegistrationMethod,
-  character: Draft<Character>,
+  character: Draft<_Character>,
   group: PrerequisiteGroup<T>,
   sourceId: SourceId,
   index: number,
@@ -27,7 +27,7 @@ const registerOrUnregisterPrerequisiteGroup = <T, SourceId, C>(
 
 const registerOrUnregisterPrerequisiteDisjunction = <T, SourceId, C>(
   method: RegistrationMethod,
-  character: Draft<Character>,
+  character: Draft<_Character>,
   disjunction: PrerequisitesDisjunction<T>,
   sourceId: SourceId,
   index: number,
@@ -40,7 +40,7 @@ const registerOrUnregisterPrerequisiteDisjunction = <T, SourceId, C>(
 
 const registerOrUnregisterPrerequisiteElement = <T, SourceId, C>(
   method: RegistrationMethod,
-  character: Draft<Character>,
+  character: Draft<_Character>,
   element: PrerequisitesElement<T>,
   sourceId: SourceId,
   index: number,
@@ -88,7 +88,7 @@ const registerOrUnregisterPrerequisiteElement = <T, SourceId, C>(
  */
 export const registerOrUnregisterPlainPrerequisites = <T, SourceId, C = undefined>(
   method: RegistrationMethod,
-  character: Draft<Character>,
+  character: Draft<_Character>,
   prerequisites: PlainPrerequisites<T>,
   sourceId: SourceId,
   registerOrUnregister: RegistrationFunction<T, SourceId, C>,
@@ -108,7 +108,7 @@ export const registerOrUnregisterPlainPrerequisites = <T, SourceId, C = undefine
 
 const registerOrUnregisterPrerequisiteForLevel = <T, SourceId, C>(
   method: RegistrationMethod,
-  character: Draft<Character>,
+  character: Draft<_Character>,
   prerequisiteForLevel: PrerequisiteForLevel<T>,
   levelRange: RangeBounds,
   sourceId: SourceId,
@@ -135,7 +135,7 @@ const registerOrUnregisterPrerequisiteForLevel = <T, SourceId, C>(
  */
 export const registerOrUnregisterPrerequisitesForLevels = <T, SourceId, C = undefined>(
   method: RegistrationMethod,
-  character: Draft<Character>,
+  character: Draft<_Character>,
   prerequisitesForLevels: PrerequisitesForLevels<T>,
   levelRange: RangeBounds,
   sourceId: SourceId,

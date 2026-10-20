@@ -48,7 +48,7 @@ const useHandleAdd = (
   ])
 
 const useHandleAddPoint = (
-  id: number,
+  id: string,
   value: number,
   improvementCost: ImprovementCost,
   createIncrementAction: ActionCreatorWithPayload<{ id: number }>,
@@ -147,7 +147,7 @@ const useHandleRemove = (
  * Returns a set of callbacks for interaction with rated entries.
  */
 export const useRatedActions = (
-  id: number,
+  id: string,
   value: number,
   maximum: number,
   minimum: number,

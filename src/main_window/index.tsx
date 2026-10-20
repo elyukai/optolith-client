@@ -38,6 +38,7 @@ import { LocalizationProvider } from "../shared/components/localizationProvider/
 import { onGlobalSettingsUpdate } from "../shared/settings/listeningRenderer.ts"
 import "../shared/styles/index.scss"
 import { ExternalAPI } from "./external.ts"
+import { init } from "./init.ts"
 import { Root } from "./routes/Root.tsx"
 import {
   setAreAnimationsEnabled,
@@ -161,14 +162,12 @@ import { store } from "./store.ts"
 //   })
 //   .catch (console.error)
 
-ExternalAPI.log("hello")
-
 const domNode = document.getElementById("root")!
 const root = createRoot(domNode)
 
 document.body.classList.add(`platform--${ExternalAPI.platform}`)
 
-ExternalAPI.on("initial-setup", ({ locales, globalSettings }) => {
+ExternalAPI.on("initial-setup", ({ locales, globalSettings, database, cache }) => {
   root.render(
     <StrictMode>
       <Provider store={store}>
@@ -187,7 +186,7 @@ ExternalAPI.on("initial-setup", ({ locales, globalSettings }) => {
   )
 
   ExternalAPI.log("React initially rendered")
-  // store.dispatch(init({ globalSettings }))
+  store.dispatch(init({ database, cache, globalSettings }))
   ExternalAPI.log("store initialized")
 
   ExternalAPI.initialSetupDone()
@@ -208,45 +207,3 @@ ExternalAPI.on("blur", () => {
 ExternalAPI.on("focus", () => {
   document.documentElement.classList.remove("blurred")
 })
-
-// ipcRenderer.addListener ("update-available", (_event: Event, info: UpdateInfo) => {
-//   const dispatch = store.dispatch as ReduxDispatch
-
-//   dispatch (updateAvailable (info))
-// })
-
-// ipcRenderer.addListener ("update-not-available", () => {
-//   const dispatch = store.dispatch as ReduxDispatch
-
-//   dispatch (updateNotAvailable ())
-// })
-
-// ipcRenderer.addListener ("download-progress", (_event: Event, progressObj: ProgressInfo) => {
-//   store.dispatch (setUpdateDownloadProgress (progressObj))
-// })
-
-// const isError = (err: Error | {}): err is Error => hasOwnProperty ("name") (err)
-//                                                    && hasOwnProperty ("message") (err)
-
-// ipcRenderer.addListener ("auto-updater-error", (_event: Event, err: Error | {}) => {
-//   const dispatch = store.dispatch as ReduxDispatch
-
-//   dispatch (setUpdateDownloadProgress ())
-
-//   console.error (err)
-
-//   if (isError (err)) {
-//     dispatch (addErrorAlert (AlertOptions ({
-//                               title: Just (`${err.name} during update`),
-//                               message: `An error occured during auto-update:\n${err.message}`,
-//                             })))
-//       .catch (console.error)
-//   }
-//   else {
-//     dispatch (addAlert (AlertOptions ({
-//                          title: Just ("Server Error"),
-//                          message: `The server does not respond.`,
-//                        })))
-//       .catch (console.error)
-//   }
-// })

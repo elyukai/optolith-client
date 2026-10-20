@@ -1,8 +1,144 @@
-import { Culture } from "@optolith/database-schema/gen"
-import { Skill } from "@optolith/database-schema/gen"
-import { SkillCheck } from "@optolith/database-schema/gen"
+import type { Attribute, Culture, Skill, SkillCheck, Skill_ID } from "@optolith/database-schema/gen"
+import { action, computed, get, observable } from "mobx"
+import type { Database } from "../../database.ts"
 import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
-import { Rated } from "./ratedEntry.ts"
+import { addAdventurePointsCaches, emptyAdventurePointsCache } from "../adventurePoints/cache.ts"
+import type { BoundAdventurePointsForRated } from "../adventurePoints/ratedEntry.ts"
+import type { Character } from "../character.ts"
+import { CharacterRatedEntry, Rated, type DisplayedRated } from "./ratedEntry.ts"
+
+export class CharacterSkill extends CharacterRatedEntry {
+  #character: Character
+
+  readonly dbEntry: Skill
+
+  constructor(
+    id: string,
+    dbEntry: Skill,
+    character: Character,
+    value: number,
+    boundAdventurePoints: BoundAdventurePointsForRated[],
+  ) {
+    super(() => this.dbEntry.improvement_cost.kind, id, value, boundAdventurePoints)
+    this.#character = character
+    this.dbEntry = dbEntry
+  }
+
+  static createEmpty(id: string, dbEntry: Skill | undefined, character: Character): CharacterSkill {
+    if (!dbEntry) {
+      throw new Error(`Skill with id ${id} not provided.`)
+    }
+    return new CharacterSkill(id, dbEntry, character, CharacterSkill.minValue, [])
+  }
+
+  @computed
+  get minValue() {
+    // TODO
+    return CharacterSkill.minValue
+  }
+
+  @computed
+  get maxValue() {
+    // TODO
+    return this.#character.startExperienceLevel.base?.max_skill_rating
+  }
+
+  @computed
+  get skillCheckValues() {
+    return this.dbEntry.check.map(attributeId => {
+      const attribute = this.#character.attributes.getByIdSafe(attributeId)
+      return {
+        id: attributeId,
+        value: attribute.value,
+        dbEntry: attribute.dbEntry,
+      }
+    })
+  }
+}
+
+/**
+ * A combination of a static and corresponding dynamic skill entry, extended by value bounds and full logic for if the value can be increased or decreased.
+ */
+export type DisplayedSkill = DisplayedRated &
+  Skill & {
+    skillCheckValues: { id: string; value: number; dbEntry: Attribute }[]
+    groupPosition: number
+  }
+
+export class CharacterSkills {
+  #db: Database
+  #character: Character
+  @observable accessor #skills: Record<string, CharacterSkill> = {}
+
+  constructor(db: Database, character: Character) {
+    this.#db = db
+    this.#character = character
+  }
+
+  getById(id: Skill_ID): CharacterSkill | undefined {
+    return get(this.#skills, id)
+  }
+
+  getValueById(id: Skill_ID): number {
+    return this.getById(id)?.value ?? CharacterSkill.minValue
+  }
+
+  @computed
+  get skills() {
+    return this.#db.getAllInstanceContainersOfEntity("Skill").map((container): DisplayedSkill => {
+      const entry =
+        this.getById(container.id) ??
+        CharacterSkill.createEmpty(container.id, container.content, this.#character)
+
+      return {
+        ...entry.toJSON(),
+        ...container.content,
+        groupPosition:
+          this.#db.getInstanceOfEntityById("SkillGroup", container.content.group)?.position ?? 0,
+        skillCheckValues: entry.skillCheckValues,
+      }
+    })
+  }
+
+  @computed
+  get adventurePointsTotal() {
+    return Object.values(this.#skills).reduce(
+      (acc, entry) => addAdventurePointsCaches(acc, entry.adventurePoints),
+      emptyAdventurePointsCache,
+    )
+  }
+
+  #ensureEntryExists(id: Skill_ID): CharacterSkill {
+    if (!this.#skills[id]) {
+      this.#skills[id] = CharacterSkill.createEmpty(
+        id,
+        this.#db.getInstanceOfEntityById("Skill", id),
+        this.#character,
+      )
+    }
+    return this.#skills[id]
+  }
+
+  @action
+  increment(id: Skill_ID) {
+    this.#ensureEntryExists(id).increment()
+  }
+
+  @action
+  decrement(id: Skill_ID) {
+    this.#ensureEntryExists(id).decrement()
+  }
+
+  @action
+  incrementToMax(id: Skill_ID) {
+    this.#ensureEntryExists(id).incrementToMax()
+  }
+
+  @action
+  decrementToMin(id: Skill_ID) {
+    this.#ensureEntryExists(id).decrementToMin()
+  }
+}
 
 /**
  * The minimum value of a skill.
@@ -18,7 +154,7 @@ export const getSkillValue = (dynamic: Rated | undefined): number =>
 /**
  * Creates an initial dynamic skill entry.
  */
-export const createEmptyDynamicSkill = (id: number): Rated => ({
+export const createEmptyDynamicSkill = (id: string): Rated => ({
   id,
   value: minimumSkillValue,
   cachedAdventurePoints: {
@@ -64,6 +200,6 @@ export const getSkillCommonness = (
 ): "common" | "uncommon" | undefined =>
   culture.common_skills.some(({ id: { skill: id } }) => skill.id === id)
     ? "common"
-    : culture.uncommon_skills?.some(({ id: { skill: id } }) => skill.id === id) ?? false
-    ? "uncommon"
-    : undefined
+    : (culture.uncommon_skills?.some(({ id: { skill: id } }) => skill.id === id) ?? false)
+      ? "uncommon"
+      : undefined

@@ -1,9 +1,14 @@
+import type { TSONDBTypes } from "@optolith/database-schema"
+import type { Cache } from "@optolith/database-schema/cache"
 import type { Locale } from "@optolith/database-schema/gen"
 import Debug from "debug"
 import { BrowserWindow, app, ipcMain, shell } from "electron"
 import * as path from "node:path"
+import type { ReadonlyTSONDB } from "tsondb/readonly"
 import { InitialSetupEventMessage } from "../main_window_preload/index.ts"
+import type { Characters } from "../shared/domain/character.ts"
 import { getGlobalSettings } from "../shared/settings/main.ts"
+import { attachStateSelectorsToWindow } from "../shared/state.ts"
 import { getWindowBackgroundColor } from "./nativeTheme.ts"
 
 const debug = Debug("main:main")
@@ -14,7 +19,12 @@ let mainWindow: BrowserWindow | undefined = undefined
 /**
  * Creates the main window with the loaded database and returns its instance.
  */
-export const createMainWindow = async (locales: Record<string, Locale>) => {
+export const createMainWindow = async (
+  locales: Record<string, Locale>,
+  database: ReadonlyTSONDB<TSONDBTypes>,
+  cache: Cache,
+  characters: Characters,
+) => {
   if (mainWindow === undefined) {
     debug("Create Window ...")
 
@@ -55,7 +65,7 @@ export const createMainWindow = async (locales: Record<string, Locale>) => {
 
     debug("Loaded file")
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 
     mainWindow.on("maximize", () => mainWindow?.webContents.send("maximize"))
     mainWindow.on("unmaximize", () => mainWindow?.webContents.send("unmaximize"))
@@ -88,6 +98,11 @@ export const createMainWindow = async (locales: Record<string, Locale>) => {
     })
 
     const initialSetupEventMessage: InitialSetupEventMessage = {
+      database: database.schema.entities.map(entity => [
+        entity.name,
+        database.getAllInstanceContainersOfEntity(entity.name),
+      ]),
+      cache,
       locales,
       globalSettings: getGlobalSettings(),
       systemLocale: app.getLocale(),
@@ -95,7 +110,15 @@ export const createMainWindow = async (locales: Record<string, Locale>) => {
 
     ipcMain.once("initial-setup-done", () => {
       debug("initial setup done")
-      mainWindow?.show()
+
+      if (mainWindow) {
+        attachStateSelectorsToWindow(
+          mainWindow,
+          characters.characters["550e8400-e29b-11d4-a716-446655440000"]!.selectors,
+        )
+
+        mainWindow.show()
+      }
     })
 
     mainWindow.webContents.send("initial-setup", initialSetupEventMessage)

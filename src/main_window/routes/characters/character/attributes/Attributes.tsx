@@ -1,10 +1,11 @@
+import { observer } from "mobx-react"
 import { FC } from "react"
 import { Main } from "../../../../../shared/components/main/Main.tsx"
 import { Page } from "../../../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { SharedState } from "../../../../external.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
-import { selectTotalPoints } from "../../../../selectors/attributeSelectors.ts"
 import {
   selectCanRemove,
   selectIsInCharacterCreation,
@@ -18,9 +19,9 @@ import { DerivedCharacteristicsList } from "./DerivedCharacteristicsList.tsx"
 /**
  * Returns a page for managing attributes.
  */
-export const Attributes: FC = () => {
+export const Attributes: FC = observer(() => {
   const translate = useTranslate()
-  const totalPoints = useAppSelector(selectTotalPoints)
+  const totalPoints = SharedState.attributesTotal
   const maxTotalPoints = useAppSelector(selectMaximumTotalAttributePoints)
   const isInCharacterCreation = useAppSelector(selectIsInCharacterCreation)
   const isRemovingEnabled = useAppSelector(selectCanRemove)
@@ -49,4 +50,4 @@ export const Attributes: FC = () => {
       </Main>
     </Page>
   )
-}
+})

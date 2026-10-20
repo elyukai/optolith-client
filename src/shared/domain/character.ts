@@ -1,16 +1,26 @@
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { computed, observable } from "mobx"
+import type { Database } from "../database.ts"
+import type { CharacterIPCActions, CharacterIPCSelectors } from "../ipc.ts"
+import type { StateActionsAsParameters, StateSelectors } from "../state.ts"
 import { ActivatableMap, TinyActivatableMap } from "./activatable/activatableEntry.ts"
+import { getTotalAdventurePointsFromCache } from "./adventurePoints/cache.ts"
 import { Color } from "./color.ts"
 import { CultureDependency } from "./culture.ts"
-import { Energy, EnergyWithBuyBack } from "./energy.ts"
+import { CharacterDerivedCharacteristics, Energy, EnergyWithBuyBack } from "./energy.ts"
+import { CharacterExperienceLevel } from "./experienceLevel.ts"
 import { Pact, PactDependency } from "./pact.ts"
 import { Purse } from "./purse.ts"
-import { RaceDependency } from "./race.ts"
+import { CharacterRace, RaceDependency } from "./race.ts"
+import { CharacterAttributes } from "./rated/attribute.ts"
 import { PrimaryAttributeDependency } from "./rated/primaryAttribute.ts"
 import {
   ActivatableRatedMap,
   ActivatableRatedWithEnhancementsMap,
   RatedMap,
 } from "./rated/ratedEntry.ts"
+import { CharacterSkills } from "./rated/skill.ts"
+import { CharacterRules } from "./rules.ts"
 import { FocusRuleInstance } from "./rules/focusRule.ts"
 import { OptionalRuleInstance } from "./rules/optionalRule.ts"
 import { Sex, SexDependency } from "./sex.ts"
@@ -18,11 +28,185 @@ import { SocialStatusDependency } from "./socialStatus.ts"
 import { PublicationDependency } from "./sources/publicationDependency.ts"
 import { StateInstance } from "./state.ts"
 
+export class Character {
+  #db: Database
+
+  /**
+   * The rules settings for the character.
+   */
+  readonly rules: CharacterRules
+
+  /**
+   * Total adventure points.
+   */
+  @observable accessor totalAdventurePoints: number
+
+  /**
+   * The start experience level identifier.
+   */
+  readonly startExperienceLevel: CharacterExperienceLevel
+
+  /**
+   * An object storing the identifiers of the race and its optional race variant.
+   */
+  @observable accessor race: CharacterRace | undefined
+
+  readonly attributes: CharacterAttributes
+
+  readonly derivedCharacteristics: CharacterDerivedCharacteristics
+
+  readonly skills: CharacterSkills
+
+  constructor(db: Database) {
+    this.#db = db
+    this.rules = new CharacterRules(db, this, false, [])
+    this.totalAdventurePoints = 1100
+    this.startExperienceLevel = new CharacterExperienceLevel(
+      db,
+      "2b0a18c5-40a8-4c86-98b3-a93c85e82497",
+    )
+    this.race = new CharacterRace(
+      db,
+      "252841cf-f2d4-4fb9-af56-30de48531db5",
+      "48a1fe0b-ec55-4992-b47b-e1086f2a583f",
+    )
+    this.attributes = new CharacterAttributes(db, this)
+    this.derivedCharacteristics = new CharacterDerivedCharacteristics(db, this)
+    this.skills = new CharacterSkills(db, this)
+  }
+
+  @computed
+  get adventurePointsSpent(): number {
+    return (
+      this.attributes.adventurePointsTotal.general +
+      this.derivedCharacteristics.adventurePointsTotal.general +
+      this.skills.adventurePointsTotal.general
+    )
+  }
+
+  @computed
+  get adventurePointsAvailable(): number {
+    return this.totalAdventurePoints - this.adventurePointsSpent
+  }
+
+  @computed
+  get adventurePointsStats(): AdventurePointsStats {
+    return {
+      total: this.totalAdventurePoints,
+      spent: this.adventurePointsSpent,
+      available: this.adventurePointsAvailable,
+      spentOnAdvantages: 0,
+      spentOnMagicalAdvantages: 0,
+      spentOnBlessedAdvantages: 0,
+      spentOnDisadvantages: 0,
+      spentOnMagicalDisadvantages: 0,
+      spentOnBlessedDisadvantages: 0,
+      spentOnRace: 0,
+      spentOnProfession: 0,
+      spentOnAttributes: getTotalAdventurePointsFromCache(this.attributes.adventurePointsTotal),
+      spentOnSkills: getTotalAdventurePointsFromCache(this.skills.adventurePointsTotal),
+      spentOnCombatTechniques: 0,
+      spentOnSpells: 0,
+      spentOnCantrips: 0,
+      spentOnLiturgicalChants: 0,
+      spentOnBlessings: 0,
+      spentOnSpecialAbilities: 0,
+      spentOnEnergies: getTotalAdventurePointsFromCache(
+        this.derivedCharacteristics.adventurePointsTotal,
+      ),
+    }
+  }
+
+  handleIPCAction(...args: StateActionsAsParameters<CharacterIPCActions>) {
+    switch (args[0]) {
+      case "incrementAttribute":
+        this.attributes.increment(...args[1])
+        break
+      case "decrementAttribute":
+        this.attributes.decrement(...args[1])
+        break
+      case "incrementAttributeToMax":
+        this.attributes.incrementToMax(...args[1])
+        break
+      case "decrementAttributeToMin":
+        this.attributes.decrementToMin(...args[1])
+        break
+      case "incrementDerivedCharacteristic":
+        this.derivedCharacteristics.increment(...args[1])
+        break
+      case "decrementDerivedCharacteristic":
+        this.derivedCharacteristics.decrement(...args[1])
+        break
+      case "incrementSkill":
+        this.skills.increment(...args[1])
+        break
+      case "decrementSkill":
+        this.skills.decrement(...args[1])
+        break
+      case "incrementSkillToMax":
+        this.skills.incrementToMax(...args[1])
+        break
+      case "decrementSkillToMin":
+        this.skills.decrementToMin(...args[1])
+        break
+      default:
+        return assertExhaustive(args)
+    }
+  }
+
+  get selectors(): StateSelectors<CharacterIPCSelectors> {
+    return {
+      adventurePointsStats: () => this.adventurePointsStats,
+      attributes: () => this.attributes.attributes,
+      attributesTotal: () => this.attributes.attributesTotal,
+      derivedCharacteristics: () => this.derivedCharacteristics.derivedCharacteristics,
+      skills: () => this.skills.skills,
+    }
+  }
+}
+
+export type AdventurePointsStats = {
+  total: number
+  spent: number
+  available: number
+  spentOnAdvantages: number
+  spentOnMagicalAdvantages: number
+  spentOnBlessedAdvantages: number
+  spentOnDisadvantages: number
+  spentOnMagicalDisadvantages: number
+  spentOnBlessedDisadvantages: number
+  spentOnRace: number
+  spentOnProfession: number
+  spentOnAttributes: number
+  spentOnSkills: number
+  spentOnCombatTechniques: number
+  spentOnSpells: number
+  spentOnCantrips: number
+  spentOnLiturgicalChants: number
+  spentOnBlessings: number
+  spentOnSpecialAbilities: number
+  spentOnEnergies: number
+}
+
+export class Characters {
+  @observable accessor characters: Record<string, Character>
+
+  constructor(db: Database) {
+    this.characters = {
+      "550e8400-e29b-11d4-a716-446655440000": new Character(db),
+    }
+  }
+
+  handleIPCAction(...args: StateActionsAsParameters<CharacterIPCActions>) {
+    this.characters["550e8400-e29b-11d4-a716-446655440000"]!.handleIPCAction(...args)
+  }
+}
+
 /**
  * All dynamic information about a character. Static information about used
  * crunch elements is stored in the database only.
  */
-export type Character = {
+export type _Character = {
   id: string
 
   /**

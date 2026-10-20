@@ -5,7 +5,7 @@
 /**
  * A pair of a numeric identifier and a value.
  */
-export type IdValuePair = { id: number; value: number }
+export type IdValuePair = { id: string; value: number }
 
 /**
  * Returns the pair with the highest value from a list, if it higher than the
@@ -14,22 +14,22 @@ export type IdValuePair = { id: number; value: number }
  * ignored.
  */
 export const getSingleHighestPair = (pairs: IdValuePair[]): IdValuePair | undefined => {
-  type IntermediateResult = { id: number | "multiple"; value: number } | undefined
+  type IntermediateResult = { id: string | "multiple"; value: number } | undefined
 
   const intermediateResult = pairs.reduce<IntermediateResult>(
     (currentHighest, attr) =>
       currentHighest === undefined || attr.value > currentHighest.value
         ? attr
         : attr.value === currentHighest.value && attr.id !== currentHighest.id
-        ? // different pairs with the same value, if it’s already "multiple"
-          // it stays "multiple", in which case the id comparison will always be
-          // true
-          { id: "multiple", value: currentHighest.value }
-        : currentHighest,
+          ? // different pairs with the same value, if it’s already "multiple"
+            // it stays "multiple", in which case the id comparison will always be
+            // true
+            { id: "multiple", value: currentHighest.value }
+          : currentHighest,
     undefined,
   )
 
-  const isSingleHighest = (res: IntermediateResult): res is { id: number; value: number } =>
+  const isSingleHighest = (res: IntermediateResult): res is { id: string; value: number } =>
     res !== undefined && res.id !== "multiple"
 
   return isSingleHighest(intermediateResult) ? intermediateResult : undefined

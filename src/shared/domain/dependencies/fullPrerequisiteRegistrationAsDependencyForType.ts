@@ -16,7 +16,7 @@ import {
   SpellworkPrerequisites,
 } from "@optolith/database-schema/gen"
 import { RangeBounds } from "../../utils/range.ts"
-import { Character } from "../character.ts"
+import { _Character } from "../character.ts"
 import {
   registerOrUnregisterPlainPrerequisites,
   registerOrUnregisterPrerequisitesForLevels,
@@ -35,7 +35,7 @@ import { RegistrationMethod } from "./registrationHelpers.ts"
  */
 export const registerOrUnregisterPrerequisitesOfPlainGeneralAsDependencies = (
   method: RegistrationMethod,
-  character: Draft<Character>,
+  character: Draft<_Character>,
   p: PlainGeneralPrerequisites,
   sourceId: SpecialAbilityIdentifier,
   capabilities: {
@@ -67,7 +67,7 @@ export const registerOrUnregisterPrerequisitesOfPlainGeneralAsDependencies = (
  */
 export const registerOrUnregisterPrerequisitesOfGeneralAsDependencies = (
   method: RegistrationMethod,
-  character: Draft<Character>,
+  character: Draft<_Character>,
   p: GeneralPrerequisites,
   sourceId: SpecialAbilityIdentifier,
   levelRange: RangeBounds,
@@ -119,7 +119,7 @@ export const registerOrUnregisterPrerequisitesOfGeneralAsDependencies = (
  */
 export const registerOrUnregisterPrerequisitesOfAdvantageOrDisadvantageAsDependencies = (
   method: RegistrationMethod,
-  character: Draft<Character>,
+  character: Draft<_Character>,
   p: AdvantageDisadvantagePrerequisites,
   sourceId: AdvantageIdentifier | DisadvantageIdentifier,
   levelRange: RangeBounds,
@@ -190,7 +190,7 @@ export const registerOrUnregisterPrerequisitesOfAdvantageOrDisadvantageAsDepende
  */
 export const registerOrUnregisterPrerequisitesOfSpellworkAsDependencies = (
   method: RegistrationMethod,
-  character: Draft<Character>,
+  character: Draft<_Character>,
   p: SpellworkPrerequisites,
   sourceId: SpellworkIdentifier,
 ): void =>
@@ -208,7 +208,7 @@ export const registerOrUnregisterPrerequisitesOfSpellworkAsDependencies = (
  */
 export const registerOrUnregisterPrerequisitesOfLiturgyAsDependencies = (
   method: RegistrationMethod,
-  character: Draft<Character>,
+  character: Draft<_Character>,
   p: LiturgyPrerequisites,
   sourceId: LiturgyIdentifier,
 ): void =>
