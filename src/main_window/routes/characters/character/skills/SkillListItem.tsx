@@ -8,13 +8,11 @@ import { fromRaw } from "../../../../../shared/domain/adventurePoints/improvemen
 import type { DisplayedSkill } from "../../../../../shared/domain/rated/skill.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { ExternalAPI } from "../../../../external.ts"
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
+import { useAppSelector } from "../../../../hooks/redux.ts"
+import { InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
 import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import {
-  changeInlineLibraryEntry,
-  selectInlineLibraryEntryId,
-} from "../../../../slices/inlineWikiSlice.ts"
+import { selectInlineLibraryEntryId } from "../../../../slices/inlineWikiSlice.ts"
 import { selectSkillsCultureRatingVisibility } from "../../../../slices/settingsSlice.ts"
 import { SkillButtons } from "./SkillButtons.tsx"
 import { SkillCheck } from "./SkillCheck.tsx"
@@ -43,7 +41,6 @@ const SkillListItem: React.FC<Props> = props => {
   } = props
 
   const translateMap = useTranslateMap()
-  const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
   const canRemove = useAppSelector(selectCanRemove)
 
@@ -52,8 +49,8 @@ const SkillListItem: React.FC<Props> = props => {
   const { name = "???" } = translateMap(translations) ?? {}
 
   const handleSelectForInfo = useCallback(
-    () => dispatch(changeInlineLibraryEntry({ tag: "Skill", skill: id })),
-    [dispatch, id],
+    () => InlineLibraryManager.instance.goTo(["Skill", id]),
+    [id],
   )
 
   const getStaticSkillGroupById = useAppSelector(SelectGetById.Static.SkillGroup)

@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useEffect } from "react"
 import backgroundImg from "../../assets/images/background.svg"
 import { TitleBar } from "../../shared/components/titleBar/TitleBar.tsx"
 import { classList } from "../../shared/utils/classList.ts"
@@ -24,12 +24,14 @@ export const Root: FC = () => {
   const language = useAppSelector(selectLocale)
   const areAnimationsEnabled = useAppSelector(selectAreAnimationsEnabled)
 
+  useEffect(() => {
+    if (language !== undefined) {
+      document.body.lang = language
+    }
+  }, [language])
+
   return (
-    <div
-      id="body"
-      className={classList({ "show-animations": areAnimationsEnabled })}
-      lang={language}
-    >
+    <div id="body" className={classList({ "show-animations": areAnimationsEnabled })}>
       <div className="background-image">
         <img src={backgroundImg} alt="" />
       </div>

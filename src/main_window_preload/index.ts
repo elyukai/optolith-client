@@ -1,5 +1,8 @@
 import type { Cache } from "@optolith/database-schema/cache"
 import type { Locale } from "@optolith/database-schema/gen"
+import type { AvailableCreatorEntity } from "@optolith/entity-descriptions"
+import type { EntityDescription } from "@optolith/entity-descriptions/description"
+import type { PublicationOptions } from "@optolith/entity-descriptions/publication-options"
 import Debug from "debug"
 import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
 import EventEmitter from "node:events"
@@ -49,6 +52,13 @@ export type PreloadAPI = {
   showSettings: () => void
   setTitle: (title: string) => void
   log: (...args: unknown[]) => void
+  getEntityDescription: <E extends AvailableCreatorEntity>(
+    entity: E,
+    id: string,
+    publicationOptions: PublicationOptions,
+  ) => Promise<
+    [EntityDescription<E, string> | undefined, specialTag: string | undefined] | undefined
+  >
 } & TypedEventEmitter<Events> &
   DatabaseHandlers &
   StateSelectorsAndActionsBridge<CharacterIPCSelectors, CharacterIPCActions>
@@ -124,6 +134,10 @@ const api: PreloadAPI = {
   ...attachStateSelectorsAndActionsToContextBridge<CharacterIPCSelectors, CharacterIPCActions>(
     ipcRenderer,
   ),
+  getEntityDescription: (...args) => {
+    debugRendererCalls("get entity description for entity %s with id %s", ...args.slice(0, 2))
+    return ipcRenderer.invoke("receive-entity-description", ...args)
+  },
 }
 
 contextBridge.exposeInMainWorld("optolith", api)

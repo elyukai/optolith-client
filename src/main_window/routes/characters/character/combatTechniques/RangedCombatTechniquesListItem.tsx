@@ -10,11 +10,9 @@ import type { DisplayedRangedCombatTechnique } from "../../../../../shared/domai
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { ExternalAPI } from "../../../../external.ts"
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import {
-  changeInlineLibraryEntry,
-  selectInlineLibraryEntryId,
-} from "../../../../slices/inlineWikiSlice.ts"
+import { useAppSelector } from "../../../../hooks/redux.ts"
+import { InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { selectInlineLibraryEntryId } from "../../../../slices/inlineWikiSlice.ts"
 import { SkillAdditionalValues } from "../skills/SkillAdditionalValues.tsx"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillImprovementCost } from "../skills/SkillImprovementCost.tsx"
@@ -44,17 +42,13 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
-  const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
 
   const { name = "???" } = translateMap(translations) ?? {}
 
   const handleSelectForInfo = useCallback(
-    () =>
-      dispatch(
-        changeInlineLibraryEntry({ tag: "RangedCombatTechnique", ranged_combat_technique: id }),
-      ),
-    [dispatch, id],
+    () => InlineLibraryManager.instance.goTo(["RangedCombatTechnique", id]),
+    [id],
   )
 
   const primaryStr = primaryAttributeValues

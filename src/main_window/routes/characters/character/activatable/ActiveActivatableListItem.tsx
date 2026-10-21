@@ -21,11 +21,9 @@ import { romanize } from "../../../../../shared/utils/roman.ts"
 import type { LocaleMap, Translations } from "../../../../../shared/utils/translate.ts"
 import { PickOfType } from "../../../../../shared/utils/type.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import {
-  changeInlineLibraryEntry,
-  selectInlineLibraryEntryId,
-} from "../../../../slices/inlineWikiSlice.ts"
+import { useAppSelector } from "../../../../hooks/redux.ts"
+import { InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { selectInlineLibraryEntryId } from "../../../../slices/inlineWikiSlice.ts"
 
 type Props<K extends ActivatableIdentifier["kind"]> = {
   activatable: DisplayedActiveActivatable<K>
@@ -64,7 +62,6 @@ const ActiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
-  const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
 
   const [selectedLevel, setSelectedLevel] = useState(dynamic.instances[instanceIndex]!.level)
@@ -79,8 +76,8 @@ const ActiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
   )
 
   const handleSelectForInfo = useCallback(
-    () => dispatch(changeInlineLibraryEntry({ kind: activatable.type, [activatable.type]: id })),
-    [dispatch, activatable.type],
+    () => InlineLibraryManager.instance.goTo([activatable.type, id]),
+    [activatable.type],
   )
 
   const handleRemove = useCallback(() => {

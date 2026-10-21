@@ -5,3 +5,27 @@
   align-items: center;
   font: 64px TDE Heroes;
 }
+
+aside.inline-library {
+  width: 23.5rem;
+}
+
+aside.inline-library .scroll .scroll-inner {
+  padding: 1rem;
+}
+
+aside.inline-library :is(.tde-official-style, .preview) {
+  background: none;
+}
+
+aside.inline-library .tde-official-style a {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.inline-library__nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}

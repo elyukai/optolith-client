@@ -30,11 +30,9 @@ import { isNonEmptyString } from "../../../../../shared/utils/string.ts"
 import { PickOfType } from "../../../../../shared/utils/type.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import {
-  changeInlineLibraryEntry,
-  selectInlineLibraryEntryId,
-} from "../../../../slices/inlineWikiSlice.ts"
+import { useAppSelector } from "../../../../hooks/redux.ts"
+import { InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { selectInlineLibraryEntryId } from "../../../../slices/inlineWikiSlice.ts"
 import { InactiveActivatableListItemOption } from "./InactiveActivatableListItemOption.tsx"
 
 type Props<K extends ActivatableIdentifier["kind"]> = {
@@ -61,7 +59,6 @@ const InactiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
-  const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
 
   const { name = "" } = translateMap<{ name: string }>(translations) ?? {}
@@ -122,8 +119,8 @@ const InactiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
   )
 
   const handleSelectForInfo = useCallback(
-    () => dispatch(changeInlineLibraryEntry(idObject)),
-    [dispatch, idObject],
+    () => InlineLibraryManager.instance.goTo([activatable.type, id]),
+    [activatable.type, id],
   )
 
   const cost = useMemo(

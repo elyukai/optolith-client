@@ -1,12 +1,26 @@
+import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
+import { deepEqual } from "@elyukai/utils/equality"
+import { isNotNullish } from "@elyukai/utils/nullable"
 import type { TSONDBTypes } from "@optolith/database-schema"
 import { createCache } from "@optolith/database-schema/cache"
-import type { Locale } from "@optolith/database-schema/gen"
+import type { EntityMap, Locale } from "@optolith/database-schema/gen"
+import {
+  MagicalActionIdentifier,
+  TraditionArtifactEnchantmentIdentifier,
+} from "@optolith/database-schema/types/_IdentifierGroup"
+import {
+  getEntityDescription,
+  isSupportedEntity,
+  type AvailableCreatorEntity,
+} from "@optolith/entity-descriptions"
+import type { PublicationOptions } from "@optolith/entity-descriptions/publication-options"
 import Debug from "debug"
 import { autoUpdater } from "electron-updater"
 import { app, ipcMain } from "electron/main"
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { ReadonlyTSONDB } from "tsondb/readonly"
+import { fromUniformCase } from "tsondb/schema/gen"
 import config from "../database/contents/tsondb.config.ts"
 import { attachDatabaseEventsMain } from "../shared/database.ts"
 import { Characters } from "../shared/domain/character.ts"
@@ -14,6 +28,7 @@ import type { CharacterIPCActions } from "../shared/ipc.ts"
 import { getGlobalSettings } from "../shared/settings/main.ts"
 import { attachStateActionHandlersToMain } from "../shared/state.ts"
 import { runAsync } from "../shared/utils/async.ts"
+import { getLocaleEnvironment } from "../shared/utils/locale.ts"
 import { createMainWindow } from "./mainWindow.ts"
 import { setMenu } from "./menu.ts"
 import { handleNativeThemeChanges, setNativeTheme } from "./nativeTheme.ts"
@@ -42,17 +57,13 @@ const cache = createCache(db)
 
 debug("cache created")
 
-attachDatabaseEventsMain(ipcMain, db, cache, (name, _event, error) => {
-  debug("error in database event %s: %O", name, error)
-})
+const settings = db.getSingletonInstanceOfEntity("Settings")
 
-debug("database event listeners attached")
+if (settings === undefined) {
+  throw new Error("Settings instance not found in database")
+}
 
 const characters = new Characters(db)
-
-attachStateActionHandlersToMain<CharacterIPCActions>(ipcMain, (...args) => {
-  characters.handleIPCAction(...args)
-})
 
 const locales: Record<string, Locale> = Object.fromEntries(
   db
@@ -66,6 +77,21 @@ const setUserDataPath = async () => {
 }
 
 const readFileInAppPath = (...path: string[]) => readFile(join(app.getAppPath(), ...path), "utf-8")
+
+const getSpecialEntityDescriptionTag = <E extends AvailableCreatorEntity>(
+  entityName: E,
+  entry: EntityMap[E],
+): string | undefined => {
+  if (entityName === "Skill") {
+    return db.getInstanceOfEntityById("SkillGroup", (entry as EntityMap["Skill"]).group)?.color.kind
+  } else if (Object.hasOwn(TraditionArtifactEnchantmentIdentifier.type.value.values, entityName)) {
+    return "TraditionArtifactEnchantment"
+  } else if (Object.hasOwn(MagicalActionIdentifier.type.value.values, entityName)) {
+    return "MagicalAction"
+  } else {
+    return undefined
+  }
+}
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 app.whenReady().then(async () => {
@@ -87,6 +113,16 @@ app.whenReady().then(async () => {
   if (!installUpdateInsteadOfStartup) {
     await setUserDataPath()
 
+    attachDatabaseEventsMain(ipcMain, db, cache, (name, _event, error) => {
+      debug("error in database event %s: %O", name, error)
+    })
+    debug("database event listeners attached")
+
+    attachStateActionHandlersToMain<CharacterIPCActions>(ipcMain, (...args) => {
+      characters.handleIPCAction(...args)
+    })
+    debug("character action listeners attached")
+
     ipcMain.handle("receive-license", () => readFileInAppPath("LICENSE"))
     ipcMain.handle("receive-changelog", () => readFileInAppPath("CHANGELOG.md"))
     ipcMain.handle("receive-version", () => app.getVersion())
@@ -104,6 +140,51 @@ app.whenReady().then(async () => {
         debug("check for update")
         await checkForUpdatesOnRequest(locales)
       }),
+    )
+    ipcMain.handle(
+      "receive-entity-description",
+      (
+        _event,
+        entity: AvailableCreatorEntity,
+        id: string,
+        publicationOptions: PublicationOptions,
+      ) => {
+        debug("generate entity description for entity %s with id %s", entity, id)
+        const setLocales = [getGlobalSettings().locale, getGlobalSettings().fallbackLocale].filter(
+          isNotNullish,
+        )
+        if (!isNotEmpty(setLocales)) {
+          throw new Error("No locale is set in the global settings")
+        }
+        if (!isSupportedEntity(entity)) {
+          return undefined
+        }
+        const entry = db.getInstanceOfEntityById(entity, id)
+        if (entry === undefined) {
+          return undefined
+        }
+
+        return [
+          getEntityDescription(
+            db,
+            getLocaleEnvironment(locales, setLocales),
+            settings,
+            (parentId, optionid) =>
+              cache.activatableSelectOptions[parentId.kind][fromUniformCase(parentId)]?.find(
+                option => deepEqual(option.id, optionid),
+              ),
+            parentId =>
+              cache.activatableSelectOptions[parentId.kind][fromUniformCase(parentId)] ?? [],
+            skillId => cache.newApplicationsAndUses.newApplications[skillId] ?? [],
+            skillId => cache.newApplicationsAndUses.uses[skillId] ?? [],
+            entity,
+            { id, content: entry },
+            publicationOptions,
+            "Full",
+          ),
+          getSpecialEntityDescriptionTag(entity, entry),
+        ]
+      },
     )
 
     await createMainWindow(locales, db, cache, characters)
