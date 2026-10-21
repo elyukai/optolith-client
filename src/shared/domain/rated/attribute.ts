@@ -12,11 +12,10 @@ import type { Character } from "../character.ts"
 import { CharacterRatedEntry, Rated, type DisplayedRated } from "./ratedEntry.ts"
 
 export class CharacterAttribute extends CharacterRatedEntry {
-  #character: Character
-
   static override readonly minValue = 8
   static readonly improvementCost: ImprovementCost = "E"
 
+  readonly #character: Character
   readonly dbEntry: Attribute
 
   constructor(
@@ -51,7 +50,7 @@ export class CharacterAttribute extends CharacterRatedEntry {
   @computed
   get maxValue() {
     // TODO
-    return this.#character.startExperienceLevel.base?.max_attribute_value
+    return this.#character.experienceLevel.start?.max_attribute_value
   }
 }
 
@@ -108,7 +107,7 @@ export class CharacterAttributes {
 
   @computed
   get attributesTotalMaximum() {
-    return this.#character.startExperienceLevel.base?.max_attribute_total ?? 0
+    return this.#character.experienceLevel.start?.max_attribute_total ?? 0
   }
 
   @computed

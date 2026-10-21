@@ -1,3 +1,4 @@
+import { isNotNullish } from "@elyukai/utils/nullable"
 import type { Attribute, Culture, Skill, SkillCheck, Skill_ID } from "@optolith/database-schema/gen"
 import { action, computed, get, observable } from "mobx"
 import type { Database } from "../../database.ts"
@@ -33,14 +34,29 @@ export class CharacterSkill extends CharacterRatedEntry {
 
   @computed
   get minValue() {
-    // TODO
-    return CharacterSkill.minValue
+    const minimumValues = [
+      CharacterSkill.minValue,
+      // TODO ...flattenMinimumRestrictions(filterApplyingDependencies(this.dependencies)),
+    ].filter(isNotNullish)
+
+    return Math.max(...minimumValues)
   }
 
   @computed
   get maxValue() {
-    // TODO
-    return this.#character.startExperienceLevel.base?.max_skill_rating
+    const maximumValues = [
+      Math.max(...this.skillCheckValues.map(scv => scv.value)) + 2,
+      this.#character.isInCharacterCreation
+        ? this.#character.experienceLevel.start?.max_skill_rating
+        : undefined,
+    ].filter(isNotNullish)
+
+    const exceptionalSkillBonus = 0 /* TODO: countOptions(exceptionalSkill, {
+      tag: "Skill",
+      skill: staticSkill.id,
+    }) */
+
+    return Math.min(...maximumValues) + exceptionalSkillBonus
   }
 
   @computed

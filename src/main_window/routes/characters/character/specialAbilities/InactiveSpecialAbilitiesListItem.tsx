@@ -1,8 +1,7 @@
+import type { SpecialAbilityIdentifier } from "@optolith/database-schema/gen"
 import { FC } from "react"
+import type { DisplayedInactiveActivatable } from "../../../../../shared/domain/activatable/activatableEntry.ts"
 import { specialAbilityGroupTranslationKeys } from "../../../../../shared/domain/activatable/specialAbilities.ts"
-import { DisplayedInactiveSpecialAbility } from "../../../../../shared/domain/activatable/specialAbilitiesInactive.ts"
-import { getCreateIdentifierObject } from "../../../../../shared/domain/identifier.ts"
-import { useInactiveSpecialAbilityActions } from "../../../../hooks/activatableActions.ts"
 import { addAdvancedCombatSpecialAbility } from "../../../../slices/specialAbilities/advancedCombatSpecialAbilitiesSlice.ts"
 import { addAdvancedKarmaSpecialAbility } from "../../../../slices/specialAbilities/advancedKarmaSpecialAbilitiesSlice.ts"
 import { addAdvancedMagicalSpecialAbility } from "../../../../slices/specialAbilities/advancedMagicalSpecialAbilitiesSlice.ts"
@@ -30,10 +29,10 @@ import { addKarmaSpecialAbility } from "../../../../slices/specialAbilities/karm
 import { addKrallenkettenzauber } from "../../../../slices/specialAbilities/krallenkettenzauberSlice.ts"
 import { addLiturgicalStyleSpecialAbility } from "../../../../slices/specialAbilities/liturgicalStyleSpecialAbilitiesSlice.ts"
 import { addLycantropicGift } from "../../../../slices/specialAbilities/lycantropicGiftsSlice.ts"
-import { addMagicStyleSpecialAbility } from "../../../../slices/specialAbilities/magicStyleSpecialAbilitiesSlice.ts"
 import { addMagicalSign } from "../../../../slices/specialAbilities/magicalSignsSlice.ts"
 import { addMagicalSpecialAbility } from "../../../../slices/specialAbilities/magicalSpecialAbilitiesSlice.ts"
 import { addMagicalTradition } from "../../../../slices/specialAbilities/magicalTraditionsSlice.ts"
+import { addMagicStyleSpecialAbility } from "../../../../slices/specialAbilities/magicStyleSpecialAbilitiesSlice.ts"
 import { addOrbEnchantment } from "../../../../slices/specialAbilities/orbEnchantmentsSlice.ts"
 import { addPactGift } from "../../../../slices/specialAbilities/pactGiftsSlice.ts"
 import { addProtectiveWardingCircleSpecialAbility } from "../../../../slices/specialAbilities/protectiveWardingCircleSpecialAbilitiesSlice.ts"
@@ -54,7 +53,7 @@ import { addWeaponEnchantment } from "../../../../slices/specialAbilities/weapon
 import { InactiveActivatablesListItem } from "../activatable/InactiveActivatableListItem.tsx"
 
 type Props = {
-  specialAbility: DisplayedInactiveSpecialAbility
+  specialAbility: DisplayedInactiveActivatable<SpecialAbilityIdentifier["kind"]>
 }
 
 const specialAbilityActions = {
@@ -113,15 +112,14 @@ const specialAbilityActions = {
  */
 export const InactiveSpecialAbilitiesListItem: FC<Props> = props => {
   const { specialAbility } = props
-  const [addAction] = specialAbilityActions[specialAbility.kind]
-  const { handleAdd } = useInactiveSpecialAbilityActions(addAction)
+  // const [addAction] = specialAbilityActions[specialAbility.type]
+  // const { handleAdd } = useInactiveSpecialAbilityActions(addAction)
 
   return (
     <InactiveActivatablesListItem
       activatable={specialAbility}
-      add={handleAdd}
-      createActivatableIdentifierObject={getCreateIdentifierObject(specialAbility.kind)}
-      groupNameKey={specialAbilityGroupTranslationKeys[specialAbility.kind]}
+      add={() => undefined /* TODO handleAdd */}
+      groupNameKey={specialAbilityGroupTranslationKeys[specialAbility.type]}
     />
   )
 }

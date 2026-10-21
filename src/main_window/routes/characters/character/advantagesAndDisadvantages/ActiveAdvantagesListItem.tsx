@@ -1,12 +1,12 @@
 import { FC } from "react"
-import { DisplayedActiveAdvantage } from "../../../../../shared/domain/activatable/advantagesActive.ts"
+import type { DisplayedActiveActivatable } from "../../../../../shared/domain/activatable/activatableEntry.ts"
 import { getCreateIdentifierObject } from "../../../../../shared/domain/identifier.ts"
 import { useActiveAdvantageAndDisadvantageActions } from "../../../../hooks/activatableActions.ts"
 import { changeAdvantageLevel, removeAdvantage } from "../../../../slices/advantagesSlice.ts"
 import { ActiveActivatablesListItem } from "../activatable/ActiveActivatableListItem.tsx"
 
 type Props = {
-  advantage: DisplayedActiveAdvantage
+  advantage: DisplayedActiveActivatable<"Advantage">
 }
 
 /**

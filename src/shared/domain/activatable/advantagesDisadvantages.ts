@@ -1,35 +1,33 @@
-import { Advantage } from "@optolith/database-schema/gen"
-import { Disadvantage } from "@optolith/database-schema/gen"
 import { MagicalTradition } from "@optolith/database-schema/gen"
 import { Compare, compareAt } from "../../utils/compare.ts"
 import { mapNullableDefault } from "../../utils/nullable.ts"
 import { TranslateMap } from "../../utils/translate.ts"
-import { DisplayedActiveActivatable } from "./activatableActive.ts"
-import { DisplayedInactiveActivatable } from "./activatableInactive.ts"
+import type {
+  DisplayedActiveActivatable,
+  DisplayedInactiveActivatable,
+} from "./activatableEntry.ts"
 
 /**
  * Filters and sorts the displayed advantages or disadvantages.
  */
 export const filterAndSortDisplayed = <
   T extends
-    | DisplayedInactiveActivatable<"Advantage", Advantage>
-    | DisplayedInactiveActivatable<"Disadvantage", Disadvantage>
-    | DisplayedActiveActivatable<"Advantage", Advantage>
-    | DisplayedActiveActivatable<"Disadvantage", Disadvantage>,
+    | DisplayedInactiveActivatable<"Advantage" | "Disadvantage">
+    | DisplayedActiveActivatable<"Advantage" | "Disadvantage">,
 >(
   visibleDisAdvantages: T[],
   filterText: string,
   translateMap: TranslateMap,
   localeCompare: Compare<string>,
 ) => {
-  const getName = (c: T) => translateMap(c.static.translations)?.name ?? ""
+  const getName = (c: T) => translateMap(c.dbEntry.translations)?.name ?? ""
   return (
     filterText === ""
       ? visibleDisAdvantages
       : visibleDisAdvantages.filter(
           c => getName(c).toLowerCase().includes(filterText.toLowerCase()) ?? false,
         )
-  ).sort(compareAt(getName, localeCompare))
+  ).toSorted(compareAt(getName, localeCompare))
 }
 
 /**

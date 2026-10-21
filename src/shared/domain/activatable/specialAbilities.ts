@@ -1,58 +1,111 @@
-import { LocaleMap } from "@optolith/database-schema/gen"
-import { AdvancedCombatSpecialAbility } from "@optolith/database-schema/gen"
-import { AdvancedKarmaSpecialAbility } from "@optolith/database-schema/gen"
-import { AdvancedMagicalSpecialAbility } from "@optolith/database-schema/gen"
-import { AdvancedSkillSpecialAbility } from "@optolith/database-schema/gen"
-import { AncestorGlyph } from "@optolith/database-schema/gen"
-import { BlessedTradition } from "@optolith/database-schema/gen"
-import { BrawlingSpecialAbility } from "@optolith/database-schema/gen"
-import { CeremonialItemSpecialAbility } from "@optolith/database-schema/gen"
-import { CombatSpecialAbility } from "@optolith/database-schema/gen"
-import { CombatStyleSpecialAbility } from "@optolith/database-schema/gen"
-import { CommandSpecialAbility } from "@optolith/database-schema/gen"
-import { FamiliarSpecialAbility } from "@optolith/database-schema/gen"
-import { FatePointSexSpecialAbility } from "@optolith/database-schema/gen"
-import { FatePointSpecialAbility } from "@optolith/database-schema/gen"
-import { GeneralSpecialAbility } from "@optolith/database-schema/gen"
-import { KarmaSpecialAbility } from "@optolith/database-schema/gen"
-import { LiturgicalStyleSpecialAbility } from "@optolith/database-schema/gen"
-import { LycantropicGift } from "@optolith/database-schema/gen"
-import { MagicStyleSpecialAbility } from "@optolith/database-schema/gen"
-import { MagicalSign } from "@optolith/database-schema/gen"
-import { MagicalSpecialAbility } from "@optolith/database-schema/gen"
-import { MagicalTradition } from "@optolith/database-schema/gen"
-import { PactGift } from "@optolith/database-schema/gen"
-import { ProtectiveWardingCircleSpecialAbility } from "@optolith/database-schema/gen"
-import { Sermon } from "@optolith/database-schema/gen"
-import { SexSpecialAbility } from "@optolith/database-schema/gen"
-import { SikaryanDrainSpecialAbility } from "@optolith/database-schema/gen"
-import { SkillStyleSpecialAbility } from "@optolith/database-schema/gen"
-import { VampiricGift } from "@optolith/database-schema/gen"
-import { Vision } from "@optolith/database-schema/gen"
-import { ArcaneOrbEnchantment } from "@optolith/database-schema/gen"
-import { AttireEnchantment } from "@optolith/database-schema/gen"
-import { BowlEnchantment } from "@optolith/database-schema/gen"
-import { CauldronEnchantment } from "@optolith/database-schema/gen"
-import { ChronicleEnchantment } from "@optolith/database-schema/gen"
-import { DaggerRitual } from "@optolith/database-schema/gen"
-import { FoolsHatEnchantment } from "@optolith/database-schema/gen"
-import { InstrumentEnchantment } from "@optolith/database-schema/gen"
-import { Krallenkettenzauber } from "@optolith/database-schema/gen"
-import { OrbEnchantment } from "@optolith/database-schema/gen"
-import { RingEnchantment } from "@optolith/database-schema/gen"
-import { SickleRitual } from "@optolith/database-schema/gen"
-import { SpellSwordEnchantment } from "@optolith/database-schema/gen"
-import { StaffEnchantment } from "@optolith/database-schema/gen"
-import { ToyEnchantment } from "@optolith/database-schema/gen"
-import { Trinkhornzauber } from "@optolith/database-schema/gen"
-import { WandEnchantment } from "@optolith/database-schema/gen"
-import { WeaponEnchantment } from "@optolith/database-schema/gen"
+import { mapObject } from "@elyukai/utils/object"
+import type {
+  AdvancedCombatSpecialAbility,
+  AdvancedKarmaSpecialAbility,
+  AdvancedMagicalSpecialAbility,
+  AdvancedSkillSpecialAbility,
+  AncestorGlyph,
+  ArcaneOrbEnchantment,
+  AttireEnchantment,
+  BlessedTradition,
+  BowlEnchantment,
+  BrawlingSpecialAbility,
+  CauldronEnchantment,
+  CeremonialItemSpecialAbility,
+  ChronicleEnchantment,
+  CombatSpecialAbility,
+  CombatStyleSpecialAbility,
+  CommandSpecialAbility,
+  DaggerRitual,
+  FamiliarSpecialAbility,
+  FatePointSexSpecialAbility,
+  FatePointSpecialAbility,
+  FoolsHatEnchantment,
+  GeneralSpecialAbility,
+  InstrumentEnchantment,
+  KarmaSpecialAbility,
+  Krallenkettenzauber,
+  LiturgicalStyleSpecialAbility,
+  LycantropicGift,
+  MagicStyleSpecialAbility,
+  MagicalSign,
+  MagicalSpecialAbility,
+  MagicalTradition,
+  OrbEnchantment,
+  PactGift,
+  ProtectiveWardingCircleSpecialAbility,
+  RingEnchantment,
+  Sermon,
+  SexSpecialAbility,
+  SickleRitual,
+  SikaryanDrainSpecialAbility,
+  SkillStyleSpecialAbility,
+  SpecialAbilityIdentifier as SpecialAbilityIdentifierType,
+  SpellSwordEnchantment,
+  StaffEnchantment,
+  ToyEnchantment,
+  Trinkhornzauber,
+  VampiricGift,
+  Vision,
+  WandEnchantment,
+  WeaponEnchantment,
+} from "@optolith/database-schema/gen"
+import { SpecialAbilityIdentifier } from "@optolith/database-schema/types/_IdentifierGroup"
+import { computed } from "mobx"
+import type { Database } from "../../database.ts"
 import { Compare, compareAt, reduceCompare } from "../../utils/compare.ts"
 import { Translate, TranslateMap } from "../../utils/translate.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
+import { addAdventurePointsCaches, emptyAdventurePointsCache } from "../adventurePoints/cache.ts"
+import type { Character } from "../character.ts"
 import { SpecialAbilitiesSortOrder } from "../sortOrders.ts"
-import { DisplayedActiveActivatable } from "./activatableActive.ts"
-import { DisplayedInactiveActivatable } from "./activatableInactive.ts"
+import {
+  CharacterActivatables,
+  type DisplayedActiveActivatable,
+  type DisplayedInactiveActivatable,
+} from "./activatableEntry.ts"
+
+export class CharacterSpecialAbilities {
+  readonly #db: Database
+  readonly #character: Character
+  readonly #specialAbilities: {
+    [Entity in SpecialAbilityIdentifierType["kind"]]: CharacterActivatables<Entity>
+  }
+
+  constructor(db: Database, character: Character) {
+    this.#db = db
+    this.#character = character
+    this.#specialAbilities = mapObject(
+      SpecialAbilityIdentifier.type.value.values,
+      (_value, key) => new CharacterActivatables(db, character, key),
+    ) as {
+      [Entity in SpecialAbilityIdentifierType["kind"]]: CharacterActivatables<Entity>
+    }
+  }
+
+  @computed
+  get adventurePointsTotal() {
+    return Object.values(this.#specialAbilities).reduce(
+      (acc, entry) => addAdventurePointsCaches(acc, entry.adventurePointsTotal),
+      emptyAdventurePointsCache,
+    )
+  }
+
+  @computed
+  get active(): DisplayedActiveActivatable<SpecialAbilityIdentifierType["kind"]>[] {
+    return Object.values(this.#specialAbilities).flatMap(
+      (entry): DisplayedActiveActivatable<SpecialAbilityIdentifierType["kind"]>[] => entry.active,
+    )
+  }
+
+  @computed
+  get inactive(): DisplayedInactiveActivatable<SpecialAbilityIdentifierType["kind"]>[] {
+    return Object.values(this.#specialAbilities).flatMap(
+      (entry): DisplayedInactiveActivatable<SpecialAbilityIdentifierType["kind"]>[] =>
+        entry.inactive,
+    )
+  }
+}
 
 /**
  * A map of all special ability tag names and their corresponding static entry
@@ -170,14 +223,8 @@ export const specialAbilityGroupTranslationKeys = Object.freeze({
  */
 export const filterAndSortDisplayed = <
   T extends
-    | DisplayedInactiveActivatable<
-        keyof SpecialAbilityTagTypeMap,
-        { translations: LocaleMap<{ name: string }> }
-      >
-    | DisplayedActiveActivatable<
-        keyof SpecialAbilityTagTypeMap,
-        { translations: LocaleMap<{ name: string }> }
-      >,
+    | DisplayedInactiveActivatable<SpecialAbilityIdentifier["kind"]>
+    | DisplayedActiveActivatable<SpecialAbilityIdentifier["kind"]>,
 >(
   visibleDisAdvantages: T[],
   filterText: string,
@@ -186,21 +233,24 @@ export const filterAndSortDisplayed = <
   translateMap: TranslateMap,
   localeCompare: Compare<string>,
 ) => {
-  const getName = (c: T) => translateMap(c.static.translations)?.name ?? ""
+  const getName = (c: T) => translateMap<{ name: string }>(c.dbEntry.translations)?.name ?? ""
   return (
     filterText === ""
       ? visibleDisAdvantages
       : visibleDisAdvantages.filter(
           c => getName(c).toLowerCase().includes(filterText.toLowerCase()) ?? false,
         )
-  ).sort(
+  ).toSorted(
     (() => {
       switch (sortOrder) {
         case SpecialAbilitiesSortOrder.Name:
           return compareAt(getName, localeCompare)
         case SpecialAbilitiesSortOrder.Group:
           return reduceCompare(
-            compareAt(x => translate(specialAbilityGroupTranslationKeys[x.kind]), localeCompare),
+            compareAt(
+              x => translate(specialAbilityGroupTranslationKeys[x.type] ?? ""),
+              localeCompare,
+            ),
             compareAt(getName, localeCompare),
           )
         default:

@@ -1,3 +1,4 @@
+import { observer } from "mobx-react"
 import { FC, useCallback, useMemo, useState } from "react"
 import { Button } from "../../../../../shared/components/button/Button.tsx"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
@@ -17,13 +18,10 @@ import { filterAndSortDisplayed } from "../../../../../shared/domain/activatable
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { SharedState } from "../../../../external.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
-import {
-  selectVisibleActiveAdvantages,
-  selectVisibleInactiveAdvantages,
-} from "../../../../selectors/advantageDisadvantageSelectors.ts"
 import {
   selectCanRemove,
   selectIsInCharacterCreation,
@@ -39,7 +37,7 @@ import { InactiveAdvantagesListItem } from "./InactiveAdvantagesListItem.tsx"
 /**
  * Returns a page for managing advantages.
  */
-export const Advantages: FC = () => {
+export const Advantages: FC = observer(() => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
@@ -59,29 +57,26 @@ export const Advantages: FC = () => {
   const [activeFilterText, setActiveFilterText] = useState("")
   const [inactiveFilterText, setInactiveFilterText] = useState("")
 
-  const visibleInactiveAdvantages = useAppSelector(selectVisibleInactiveAdvantages)
-  const visibleActiveAdvantages = useAppSelector(selectVisibleActiveAdvantages)
-
   const inactiveList = useMemo(
     () =>
       filterAndSortDisplayed(
-        visibleInactiveAdvantages,
+        SharedState.inactiveAdvantages,
         inactiveFilterText,
         translateMap,
         localeCompare,
       ),
-    [visibleInactiveAdvantages, inactiveFilterText, translateMap, localeCompare],
+    [SharedState.inactiveAdvantages, inactiveFilterText, translateMap, localeCompare],
   )
 
   const activeList = useMemo(
     () =>
       filterAndSortDisplayed(
-        visibleActiveAdvantages,
+        SharedState.activeAdvantages,
         activeFilterText,
         translateMap,
         localeCompare,
       ),
-    [visibleActiveAdvantages, activeFilterText, translateMap, localeCompare],
+    [SharedState.activeAdvantages, activeFilterText, translateMap, localeCompare],
   )
 
   const { isOpen: isSlideinVisible, open: openSlidein, close: closeSlidein } = useModalState()
@@ -122,7 +117,7 @@ export const Advantages: FC = () => {
             {inactiveList.length > 0 ? (
               <List>
                 {inactiveList.map(x => (
-                  <InactiveAdvantagesListItem key={`advantage-${x.static.id}`} advantage={x} />
+                  <InactiveAdvantagesListItem key={`advantage-${x.id}`} advantage={x} />
                 ))}
               </List>
             ) : (
@@ -160,7 +155,7 @@ export const Advantages: FC = () => {
           {activeList.length > 0 ? (
             <List>
               {activeList.map(x => (
-                <ActiveAdvantagesListItem key={`advantage-${x.static.id}`} advantage={x} />
+                <ActiveAdvantagesListItem key={`advantage-${x.id}`} advantage={x} />
               ))}
             </List>
           ) : (
@@ -171,4 +166,4 @@ export const Advantages: FC = () => {
       <InlineLibrary />
     </Page>
   )
-}
+})

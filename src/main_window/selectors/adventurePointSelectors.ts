@@ -154,9 +154,7 @@ export const selectAdventurePointsSpentOnMagicalAdvantages = createSelector(
   SelectAll.Dynamic.Advantages,
   selectMagicalAndBlessedAdvantagesAndDisadvantagesCache,
   (dynamicAdvantages, cache): AdventurePointsCache =>
-    sumActivatables(
-      dynamicAdvantages.filter(({ id }) => cache.advantages.magical.ids.includes(id)),
-    ),
+    sumActivatables(dynamicAdvantages.filter(({ id }) => cache.Advantage.Magical.includes(id))),
 )
 
 /**
@@ -166,9 +164,7 @@ export const selectAdventurePointsSpentOnBlessedAdvantages = createSelector(
   SelectAll.Dynamic.Advantages,
   selectMagicalAndBlessedAdvantagesAndDisadvantagesCache,
   (dynamicAdvantages, cache): AdventurePointsCache =>
-    sumActivatables(
-      dynamicAdvantages.filter(({ id }) => cache.advantages.blessed.ids.includes(id)),
-    ),
+    sumActivatables(dynamicAdvantages.filter(({ id }) => cache.Advantage.Blessed.includes(id))),
 )
 
 /**
@@ -190,7 +186,7 @@ export const selectAdventurePointsSpentOnMagicalDisadvantages = createSelector(
   selectMagicalAndBlessedAdvantagesAndDisadvantagesCache,
   (dynamicDisadvantages, cache): AdventurePointsCache => {
     const { general, bound } = sumActivatables(
-      dynamicDisadvantages.filter(({ id }) => cache.disadvantages.magical.ids.includes(id)),
+      dynamicDisadvantages.filter(({ id }) => cache.Disadvantage.Magical.includes(id)),
     )
     return { general: -general, bound: -bound }
   },
@@ -204,7 +200,7 @@ export const selectAdventurePointsSpentOnBlessedDisadvantages = createSelector(
   selectMagicalAndBlessedAdvantagesAndDisadvantagesCache,
   (dynamicDisadvantages, cache): AdventurePointsCache => {
     const { general, bound } = sumActivatables(
-      dynamicDisadvantages.filter(({ id }) => cache.disadvantages.blessed.ids.includes(id)),
+      dynamicDisadvantages.filter(({ id }) => cache.Disadvantage.Blessed.includes(id)),
     )
     return { general: -general, bound: -bound }
   },
@@ -278,15 +274,15 @@ export const selectAdventurePointsSpent = createSelector(
           (typeof spentCategory === "number"
             ? spentCategory
             : typeof spentCategory === "object"
-            ? spentCategory.general
-            : 0),
+              ? spentCategory.general
+              : 0),
         bound:
           acc.general +
           (typeof spentCategory === "number"
             ? 0
             : typeof spentCategory === "object"
-            ? spentCategory.bound
-            : 0),
+              ? spentCategory.bound
+              : 0),
       }),
       { general: 0, bound: 0 },
     ),

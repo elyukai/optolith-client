@@ -1,95 +1,76 @@
+import { observer } from "mobx-react"
 import { FC } from "react"
 import { GridItem } from "../../../../../shared/components/grid/GridItem.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { SharedState } from "../../../../external.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
-import {
-  selectAdventurePointsSpentOnAdvantages,
-  selectAdventurePointsSpentOnBlessedAdvantages,
-  selectAdventurePointsSpentOnBlessedDisadvantages,
-  selectAdventurePointsSpentOnDisadvantages,
-  selectAdventurePointsSpentOnMagicalAdvantages,
-  selectAdventurePointsSpentOnMagicalDisadvantages,
-} from "../../../../selectors/adventurePointSelectors.ts"
 import { selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages } from "../../../../selectors/traditionSelectors.ts"
 
 /**
  * Returns a sidebar widget for showing spent and available adventure points for
  * advantages or disadvantages.
  */
-export const AdventurePointsSpent: FC = () => {
+export const AdventurePointsSpent: FC = observer(() => {
   const translate = useTranslate()
 
+  const maximumAdventurePointsForAdventagesAndDisadvantages = 80
   const maximumForMagicalAdvantagesDisadvantages = useAppSelector(
     selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
   )
+  const maximumAdventurePointsForBlessedAdventagesAndDisadvantages = 50
 
-  const spentOnAdvantages = useAppSelector(selectAdventurePointsSpentOnAdvantages)
-  const spentOnBlessedAdvantages = useAppSelector(selectAdventurePointsSpentOnBlessedAdvantages)
-  const spentOnMagicalAdvantages = useAppSelector(selectAdventurePointsSpentOnMagicalAdvantages)
-  const spentOnDisadvantages = useAppSelector(selectAdventurePointsSpentOnDisadvantages)
-  const spentOnBlessedDisadvantages = useAppSelector(
-    selectAdventurePointsSpentOnBlessedDisadvantages,
-  )
-  const spentOnMagicalDisadvantages = useAppSelector(
-    selectAdventurePointsSpentOnMagicalDisadvantages,
-  )
+  const stats = SharedState.adventurePointsStats
 
   return (
     <GridItem>
       <p>
-        {translate(
-          "{0}/{1} AP spent on advantages",
-          spentOnAdvantages.general + spentOnAdvantages.bound,
-          80,
-        )}
-        {spentOnMagicalAdvantages.general + spentOnMagicalAdvantages.bound > 0 ? (
+        {translate("{$value}/{$max} AP spent on advantages", {
+          value: stats.spentOnAdvantages.toFixed(),
+          max: maximumAdventurePointsForAdventagesAndDisadvantages.toFixed(),
+        })}
+        {stats.spentOnMagicalAdvantages > 0 ? (
           <>
             <br />
-            {translate(
-              "Thereof {0}/{1} on magic advantages",
-              spentOnMagicalAdvantages.general + spentOnMagicalAdvantages.bound,
-              maximumForMagicalAdvantagesDisadvantages,
-            )}
+            {translate("Thereof {$value}/{$max} on magic advantages", {
+              value: stats.spentOnMagicalAdvantages.toFixed(),
+              max: maximumForMagicalAdvantagesDisadvantages.toFixed(),
+            })}
           </>
         ) : null}
-        {spentOnBlessedAdvantages.general + spentOnBlessedAdvantages.bound > 0 ? (
+        {stats.spentOnBlessedAdvantages > 0 ? (
           <>
             <br />
-            {translate(
-              "Thereof {0}/{1} on blessed advantages",
-              spentOnBlessedAdvantages.general + spentOnBlessedAdvantages.bound,
-              50,
-            )}
+            {translate("Thereof {$value}/{$max} on blessed advantages", {
+              value: stats.spentOnBlessedAdvantages.toFixed(),
+              max: maximumAdventurePointsForBlessedAdventagesAndDisadvantages.toFixed(),
+            })}
           </>
         ) : null}
       </p>
       <p>
-        {translate(
-          "{0}/{1} AP received from disadvantages",
-          Math.abs(spentOnDisadvantages.general + spentOnDisadvantages.bound),
-          80,
-        )}
-        {spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound < 0 ? (
+        {translate("{$value}/{$max} AP received from disadvantages", {
+          value: stats.spentOnDisadvantages.toFixed(),
+          max: maximumAdventurePointsForAdventagesAndDisadvantages.toFixed(),
+        })}
+        {stats.spentOnMagicalDisadvantages < 0 ? (
           <>
             <br />
-            {translate(
-              "Thereof {0}/{1} from magic disadvantages",
-              Math.abs(spentOnMagicalDisadvantages.general + spentOnMagicalDisadvantages.bound),
-              maximumForMagicalAdvantagesDisadvantages,
-            )}
+            {translate("Thereof {$value}/{$max} from magic disadvantages", {
+              value: Math.abs(stats.spentOnMagicalDisadvantages).toFixed(),
+              max: maximumForMagicalAdvantagesDisadvantages.toFixed(),
+            })}
           </>
         ) : null}
-        {spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound < 0 ? (
+        {stats.spentOnBlessedDisadvantages < 0 ? (
           <>
             <br />
-            {translate(
-              "Thereof {0}/{1} from blessed disadvantages",
-              Math.abs(spentOnBlessedDisadvantages.general + spentOnBlessedDisadvantages.bound),
-              50,
-            )}
+            {translate("Thereof {$value}/{$max} from blessed disadvantages", {
+              value: Math.abs(stats.spentOnBlessedDisadvantages).toFixed(),
+              max: maximumAdventurePointsForBlessedAdventagesAndDisadvantages.toFixed(),
+            })}
           </>
         ) : null}
       </p>
     </GridItem>
   )
-}
+})

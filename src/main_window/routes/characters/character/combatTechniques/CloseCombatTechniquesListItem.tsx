@@ -1,3 +1,4 @@
+import { toKebabCase } from "@elyukai/utils/string"
 import { FC, memo, useCallback } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
@@ -5,18 +6,11 @@ import { ListItemName } from "../../../../../shared/components/list/ListItemName
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
 import { fromRaw } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
+import type { DisplayedCloseCombatTechnique } from "../../../../../shared/domain/rated/combatTechnique.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { useRatedActions } from "../../../../hooks/ratedActions.ts"
+import { ExternalAPI } from "../../../../external.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import { DisplayedCloseCombatTechnique } from "../../../../selectors/combatTechniquesSelectors.ts"
-import {
-  decrementCloseCombatTechnique,
-  incrementCloseCombatTechnique,
-  setCloseCombatTechnique,
-} from "../../../../slices/closeCombatTechniqueSlice.ts"
-import { selectStaticAttributes } from "../../../../slices/databaseSlice.ts"
 import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
@@ -29,42 +23,32 @@ import { SkillRating } from "../skills/SkillRating.tsx"
 type Props = {
   insertTopMargin?: boolean
   closeCombatTechnique: DisplayedCloseCombatTechnique
+  canRemove: boolean
 }
 
 const CloseCombatTechniquesListItem: FC<Props> = props => {
   const {
     insertTopMargin,
     closeCombatTechnique: {
-      static: { id, primary_attribute, improvement_cost, translations },
-      dynamic: { value },
-      maximum,
-      minimum,
+      id,
+      improvement_cost,
+      translations,
+      value,
       isIncreasable,
       isDecreasable,
       attackBase,
       parryBase,
+      primaryAttributeValues,
     },
+    canRemove,
   } = props
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
-  const canRemove = useAppSelector(selectCanRemove)
 
   const { name = "???" } = translateMap(translations) ?? {}
-
-  const { handleAddPoint, handleRemovePoint, handleSetToMaximumPoints, handleSetToMinimumPoints } =
-    useRatedActions(
-      id,
-      value,
-      maximum,
-      minimum,
-      fromRaw(improvement_cost),
-      incrementCloseCombatTechnique,
-      decrementCloseCombatTechnique,
-      setCloseCombatTechnique,
-    )
 
   const handleSelectForInfo = useCallback(
     () =>
@@ -74,13 +58,11 @@ const CloseCombatTechniquesListItem: FC<Props> = props => {
     [dispatch, id],
   )
 
-  const attributes = useAppSelector(selectStaticAttributes)
-
-  const primaryStr = primary_attribute
-    .map(ref => translateMap(attributes[ref.id.attribute]?.translations)?.abbreviation ?? "")
+  const primaryStr = primaryAttributeValues
+    .map(({ dbEntry }) => translateMap(dbEntry.translations)?.abbreviation ?? "")
     .join("/")
 
-  const customClassName = `attr--${primary_attribute.map(ref => ref.id.attribute).join("-")}`
+  const customClassName = `attr--${primaryAttributeValues.map(({ dbEntry }) => toKebabCase(dbEntry.color.kind)).join("-")}`
 
   const primaryClassName = `primary ${customClassName}`
 
@@ -113,10 +95,18 @@ const CloseCombatTechniquesListItem: FC<Props> = props => {
       <SkillButtons
         addDisabled={!isIncreasable}
         removeDisabled={!isDecreasable}
-        addPoint={handleAddPoint}
-        setToMax={handleSetToMaximumPoints}
-        removePoint={canRemove ? handleRemovePoint : undefined}
-        setToMin={canRemove ? handleSetToMinimumPoints : undefined}
+        addPoint={() => ExternalAPI.execute("incrementRated", "CloseCombatTechnique", id)}
+        setToMax={() => ExternalAPI.execute("incrementRatedToMax", "CloseCombatTechnique", id)}
+        removePoint={
+          canRemove
+            ? () => ExternalAPI.execute("decrementRated", "CloseCombatTechnique", id)
+            : undefined
+        }
+        setToMin={
+          canRemove
+            ? () => ExternalAPI.execute("decrementRatedToMin", "CloseCombatTechnique", id)
+            : undefined
+        }
         selectForInfo={handleSelectForInfo}
       />
     </ListItem>

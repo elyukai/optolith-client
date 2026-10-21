@@ -80,10 +80,14 @@ const SkillListItem: React.FC<Props> = props => {
       <SkillButtons
         addDisabled={!isIncreasable}
         removeDisabled={!isDecreasable}
-        addPoint={() => ExternalAPI.execute("incrementSkill", id)}
-        setToMax={() => ExternalAPI.execute("incrementSkillToMax", id)}
-        removePoint={canRemove ? () => ExternalAPI.execute("decrementSkill", id) : undefined}
-        setToMin={canRemove ? () => ExternalAPI.execute("decrementSkillToMin", id) : undefined}
+        addPoint={() => ExternalAPI.execute("incrementRated", "Skill", id)}
+        setToMax={() => ExternalAPI.execute("incrementRatedToMax", "Skill", id)}
+        removePoint={
+          canRemove ? () => ExternalAPI.execute("decrementRated", "Skill", id) : undefined
+        }
+        setToMin={
+          canRemove ? () => ExternalAPI.execute("decrementRatedToMin", "Skill", id) : undefined
+        }
         selectForInfo={handleSelectForInfo}
       />
     </ListItem>

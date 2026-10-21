@@ -104,8 +104,10 @@ export const attachStateSelectorsAndActionsToContextBridge = <
 
 export type WithoutClassFunctions<T> = T extends { toJSON: () => infer U }
   ? U
-  : T extends (infer U)[]
-    ? WithoutClassFunctions<U>[]
+  : T extends any[]
+    ? {
+        [K in keyof T]: WithoutClassFunctions<T[K]>
+      }
     : T extends object
       ? {
           [K in keyof T]: T[K] extends Function ? never : WithoutClassFunctions<T[K]>

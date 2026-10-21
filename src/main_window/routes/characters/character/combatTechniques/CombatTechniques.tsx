@@ -1,3 +1,4 @@
+import { observer } from "mobx-react"
 import { FC, useCallback, useMemo, useState } from "react"
 import { List } from "../../../../../shared/components/list/List.tsx"
 import { ListHeader } from "../../../../../shared/components/list/ListHeader.tsx"
@@ -13,19 +14,16 @@ import {
   compareImprovementCost,
   fromRaw,
 } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
+import type { DisplayedCombatTechnique } from "../../../../../shared/domain/rated/combatTechnique.ts"
 import { CombatTechniquesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { compareAt, numAsc, reduceCompare } from "../../../../../shared/utils/compare.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
+import { SharedState } from "../../../../external.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
-import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import {
-  DisplayedCombatTechnique,
-  selectVisibleCombatTechniques,
-} from "../../../../selectors/combatTechniquesSelectors.ts"
 import {
   changeCombatTechniquesSortOrder,
   selectCombatTechniquesSortOrder,
@@ -37,18 +35,18 @@ const isTopMarginNeeded = (
   sortOrder: CombatTechniquesSortOrder,
   curr: DisplayedCombatTechnique,
   mprev: DisplayedCombatTechnique | undefined,
-) => sortOrder === "group" && mprev !== undefined && curr.kind !== mprev.kind
+) => sortOrder === "group" && mprev !== undefined && curr.type !== mprev.type
 
 /**
  * Returns a page for managing combat techniques.
  */
-export const CombatTechniques: FC = () => {
+export const CombatTechniques: FC = observer(() => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
   const localeCompare = useLocaleCompare()
 
-  const canRemove = useAppSelector(selectCanRemove)
+  const { canRemove, closeCombatTechniques, rangedCombatTechniques } = SharedState
 
   const [filterText, setFilterText] = useState("")
   const sortOrder = useAppSelector(selectCombatTechniquesSortOrder)
@@ -56,33 +54,31 @@ export const CombatTechniques: FC = () => {
     (id: CombatTechniquesSortOrder) => dispatch(changeCombatTechniquesSortOrder(id)),
     [dispatch],
   )
-  const visibleCombatTechniques = useAppSelector(selectVisibleCombatTechniques)
+  const visibleCombatTechniques = (closeCombatTechniques as DisplayedCombatTechnique[]).concat(
+    rangedCombatTechniques,
+  )
   const list = useMemo(
     () =>
       visibleCombatTechniques
         .filter(
           c =>
-            translateMap(c.static.translations)
-              ?.name.toLowerCase()
-              .includes(filterText.toLowerCase()) ?? false,
+            translateMap(c.translations)?.name.toLowerCase().includes(filterText.toLowerCase()) ??
+            false,
         )
         .sort(
           (() => {
             switch (sortOrder) {
               case CombatTechniquesSortOrder.Name:
-                return compareAt(
-                  c => translateMap(c.static.translations)?.name ?? "",
-                  localeCompare,
-                )
+                return compareAt(c => translateMap(c.translations)?.name ?? "", localeCompare)
               case CombatTechniquesSortOrder.Group:
                 return reduceCompare(
-                  compareAt(c => (c.kind === "close" ? 1 : 2), numAsc),
-                  compareAt(c => translateMap(c.static.translations)?.name ?? "", localeCompare),
+                  compareAt(c => (c.type === "CloseCombatTechnique" ? 1 : 2), numAsc),
+                  compareAt(c => translateMap(c.translations)?.name ?? "", localeCompare),
                 )
               case CombatTechniquesSortOrder.ImprovementCost:
                 return reduceCompare(
-                  compareAt(c => fromRaw(c.static.improvement_cost), compareImprovementCost),
-                  compareAt(c => translateMap(c.static.translations)?.name ?? "", localeCompare),
+                  compareAt(c => fromRaw(c.improvement_cost), compareImprovementCost),
+                  compareAt(c => translateMap(c.translations)?.name ?? "", localeCompare),
                 )
               default:
                 return assertExhaustive(sortOrder)
@@ -143,21 +139,23 @@ export const CombatTechniques: FC = () => {
           {list.length > 0 ? (
             <List>
               {list.map((x, i) => {
-                switch (x.kind) {
-                  case "close":
+                switch (x.type) {
+                  case "CloseCombatTechnique":
                     return (
                       <CloseCombatTechniquesListItem
-                        key={`close--${x.static.id}`}
+                        key={`close--${x.id}`}
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
                         closeCombatTechnique={x}
+                        canRemove={canRemove}
                       />
                     )
-                  case "ranged":
+                  case "RangedCombatTechnique":
                     return (
                       <RangedCombatTechniquesListItem
-                        key={`ranged--${x.static.id}`}
+                        key={`ranged--${x.id}`}
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
                         rangedCombatTechnique={x}
+                        canRemove={canRemove}
                       />
                     )
                   default:
@@ -173,4 +171,4 @@ export const CombatTechniques: FC = () => {
       <InlineLibrary />
     </Page>
   )
-}
+})

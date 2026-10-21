@@ -1,3 +1,4 @@
+import { observer } from "mobx-react"
 import { FC, useCallback, useMemo, useState } from "react"
 import { Button } from "../../../../../shared/components/button/Button.tsx"
 import { List } from "../../../../../shared/components/list/List.tsx"
@@ -16,14 +17,10 @@ import { SpecialAbilitiesSortOrder } from "../../../../../shared/domain/sortOrde
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { SharedState } from "../../../../external.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
-import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import {
-  selectVisibleActiveSpecialAbilities,
-  selectVisibleInactiveSpecialAbilities,
-} from "../../../../selectors/specialAbilitySelectors.ts"
 import {
   changeSpecialAbilitiesSortOrder,
   selectSpecialAbilitiesSortOrder,
@@ -34,13 +31,13 @@ import { InactiveSpecialAbilitiesListItem } from "./InactiveSpecialAbilitiesList
 /**
  * Returns a page for managing special abilities.
  */
-export const SpecialAbilities: FC = () => {
+export const SpecialAbilities: FC = observer(() => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
   const localeCompare = useLocaleCompare()
 
-  const canRemove = useAppSelector(selectCanRemove)
+  const { canRemove, inactiveSpecialAbilities, activeSpecialAbilities } = SharedState
 
   const sortOrder = useAppSelector(selectSpecialAbilitiesSortOrder)
   const handleChangeSortOrder = useCallback(
@@ -51,13 +48,10 @@ export const SpecialAbilities: FC = () => {
   const [activeFilterText, setActiveFilterText] = useState("")
   const [inactiveFilterText, setInactiveFilterText] = useState("")
 
-  const visibleInactiveSpecialAbilities = useAppSelector(selectVisibleInactiveSpecialAbilities)
-  const visibleActiveSpecialAbilities = useAppSelector(selectVisibleActiveSpecialAbilities)
-
   const inactiveList = useMemo(
     () =>
       filterAndSortDisplayed(
-        visibleInactiveSpecialAbilities,
+        inactiveSpecialAbilities,
         inactiveFilterText,
         sortOrder,
         translate,
@@ -65,7 +59,7 @@ export const SpecialAbilities: FC = () => {
         localeCompare,
       ),
     [
-      visibleInactiveSpecialAbilities,
+      inactiveSpecialAbilities,
       inactiveFilterText,
       sortOrder,
       translate,
@@ -77,21 +71,14 @@ export const SpecialAbilities: FC = () => {
   const activeList = useMemo(
     () =>
       filterAndSortDisplayed(
-        visibleActiveSpecialAbilities,
+        activeSpecialAbilities,
         activeFilterText,
         sortOrder,
         translate,
         translateMap,
         localeCompare,
       ),
-    [
-      visibleActiveSpecialAbilities,
-      activeFilterText,
-      sortOrder,
-      translate,
-      translateMap,
-      localeCompare,
-    ],
+    [activeSpecialAbilities, activeFilterText, sortOrder, translate, translateMap, localeCompare],
   )
 
   const { isOpen: isSlideinVisible, open: openSlidein, close: closeSlidein } = useModalState()
@@ -135,10 +122,7 @@ export const SpecialAbilities: FC = () => {
             {inactiveList.length > 0 ? (
               <List>
                 {inactiveList.map(x => (
-                  <InactiveSpecialAbilitiesListItem
-                    key={`${x.kind}-${x.static.id}`}
-                    specialAbility={x}
-                  />
+                  <InactiveSpecialAbilitiesListItem key={`${x.type}-${x.id}`} specialAbility={x} />
                 ))}
               </List>
             ) : (
@@ -185,10 +169,7 @@ export const SpecialAbilities: FC = () => {
           {activeList.length > 0 ? (
             <List>
               {activeList.map(x => (
-                <ActiveSpecialAbilitiesListItem
-                  key={`${x.kind}-${x.static.id}`}
-                  specialAbility={x}
-                />
+                <ActiveSpecialAbilitiesListItem key={`${x.type}-${x.id}`} specialAbility={x} />
               ))}
             </List>
           ) : (
@@ -199,4 +180,4 @@ export const SpecialAbilities: FC = () => {
       <InlineLibrary />
     </Page>
   )
-}
+})

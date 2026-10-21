@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { DisplayedActiveDisadvantage } from "../../../../../shared/domain/activatable/disadvantagesActive.ts"
+import type { DisplayedActiveActivatable } from "../../../../../shared/domain/activatable/activatableEntry.ts"
 import { getCreateIdentifierObject } from "../../../../../shared/domain/identifier.ts"
 import { useActiveAdvantageAndDisadvantageActions } from "../../../../hooks/activatableActions.ts"
 import {
@@ -9,7 +9,7 @@ import {
 import { ActiveActivatablesListItem } from "../activatable/ActiveActivatableListItem.tsx"
 
 type Props = {
-  disadvantage: DisplayedActiveDisadvantage
+  disadvantage: DisplayedActiveActivatable<"Disadvantage">
 }
 
 /**

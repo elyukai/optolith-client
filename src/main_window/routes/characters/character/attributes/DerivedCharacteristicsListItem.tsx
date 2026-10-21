@@ -1,21 +1,11 @@
-import { FC, useCallback } from "react"
+import { FC } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { NumberBox } from "../../../../../shared/components/numberBox/NumberBox.tsx"
 import type { DisplayedDerivedCharacteristic } from "../../../../../shared/domain/energy.ts"
-import { DerivedCharacteristicIdentifier as DCId } from "../../../../../shared/domain/identifier.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { sign } from "../../../../../shared/utils/math.ts"
-import { useAppDispatch } from "../../../../hooks/redux.ts"
-import { isDisplayedEnergy } from "../../../../selectors/derivedCharacteristicsSelectors.ts"
-import {
-  decrementArcaneEnergy,
-  decrementKarmaPoints,
-  decrementLifePoints,
-  incrementArcaneEnergy,
-  incrementKarmaPoints,
-  incrementLifePoints,
-} from "../../../../slices/derivedCharacteristicsSlice.ts"
+import { ExternalAPI } from "../../../../external.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
 import { DerivedCharacteristicsListItemPermanent } from "./DerivedCharacteristicsListItemPermanent.tsx"
 
@@ -34,59 +24,26 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
 
   const { id, base, value, modifier, purchaseMaximum, purchased } = attribute
 
-  const dispatch = useAppDispatch()
   const translate = useTranslate()
   const translateMap = useTranslateMap()
-  const translations = translateMap(attribute.translations)
+  const translation = translateMap(attribute.translations)
 
-  const handleAddMaxEnergyPoint = useCallback(() => {
-    switch (id) {
-      case DCId.LifePoints:
-        dispatch(incrementLifePoints())
-        break
-      case DCId.ArcaneEnergy:
-        dispatch(incrementArcaneEnergy())
-        break
-      case DCId.KarmaPoints:
-        dispatch(incrementKarmaPoints())
-        break
-      default:
-        break
-    }
-  }, [dispatch, id])
-
-  const handleRemoveMaxEnergyPoint = useCallback(() => {
-    switch (id) {
-      case DCId.LifePoints:
-        dispatch(decrementLifePoints())
-        break
-      case DCId.ArcaneEnergy:
-        dispatch(decrementArcaneEnergy())
-        break
-      case DCId.KarmaPoints:
-        dispatch(decrementKarmaPoints())
-        break
-      default:
-        break
-    }
-  }, [dispatch, id])
-
-  const calculation = translations?.calculation?.[attribute.calculation ?? "default"]
+  const calculation = attribute.calculation.base // TODO
 
   return (
     <div className="derived-characteristics-item">
       <AttributeBorder
-        label={translations?.abbreviation ?? ""}
+        label={translation?.abbreviation ?? ""}
         value={value}
         tooltip={
           <div className="calc-attr-overlay">
             <h4>
-              <span>{translations?.name ?? ""}</span>
+              <span>{translation?.name ?? ""}</span>
               <span>{value}</span>
             </h4>
-            {calculation === undefined ? null : (
+            {calculation.kind === "Value" && calculation.Value.kind === "Constant" ? null : (
               <p className="calc-text">
-                {`${calculation} = `}
+                {`${JSON.stringify(calculation) /* TODO */} = `}
                 {base}
               </p>
             )}
@@ -114,22 +71,22 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
         {purchaseMaximum !== undefined && purchaseMaximum > 0 && !isInCharacterCreation ? (
           <NumberBox current={purchased} max={purchaseMaximum} />
         ) : null}
-        {!isInCharacterCreation && isDisplayedEnergy(attribute) ? (
+        {!isInCharacterCreation && attribute.type?.kind === "Energy" ? (
           <IconButton
             className="add"
             icon="&#xE908;"
             label={translate("Increment")}
-            onClick={handleAddMaxEnergyPoint}
-            disabled={!attribute.isIncreasable}
+            onClick={() => ExternalAPI.execute("incrementDerivedCharacteristic", id)}
+            disabled={!attribute.isPurchasedIncreasable}
           />
         ) : null}
-        {!isInCharacterCreation && isRemovingEnabled && isDisplayedEnergy(attribute) ? (
+        {!isInCharacterCreation && isRemovingEnabled && attribute.type?.kind === "Energy" ? (
           <IconButton
             className="remove"
             icon="&#xE909;"
             label={translate("Decrement")}
-            onClick={handleRemoveMaxEnergyPoint}
-            disabled={!attribute.isDecreasable}
+            onClick={() => ExternalAPI.execute("decrementDerivedCharacteristic", id)}
+            disabled={!attribute.isPurchasedDecreasable}
           />
         ) : null}
       </AttributeBorder>

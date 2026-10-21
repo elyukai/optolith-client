@@ -19,9 +19,9 @@
 
 import {
   ActivatableIdentifier,
+  Preconditions,
   SkillWithEnhancementsIdentifier,
 } from "@optolith/database-schema/gen"
-import { Preconditions } from "@optolith/database-schema/gen"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { ActivatableDependency } from "../activatable/activatableDependency.ts"
 import { All, GetById } from "../getTypes.ts"

@@ -3,7 +3,12 @@ import { computed, observable } from "mobx"
 import type { Database } from "../database.ts"
 import type { CharacterIPCActions, CharacterIPCSelectors } from "../ipc.ts"
 import type { StateActionsAsParameters, StateSelectors } from "../state.ts"
-import { ActivatableMap, TinyActivatableMap } from "./activatable/activatableEntry.ts"
+import {
+  ActivatableMap,
+  CharacterActivatables,
+  TinyActivatableMap,
+} from "./activatable/activatableEntry.ts"
+import { CharacterSpecialAbilities } from "./activatable/specialAbilities.ts"
 import { getTotalAdventurePointsFromCache } from "./adventurePoints/cache.ts"
 import { Color } from "./color.ts"
 import { CultureDependency } from "./culture.ts"
@@ -13,6 +18,7 @@ import { Pact, PactDependency } from "./pact.ts"
 import { Purse } from "./purse.ts"
 import { CharacterRace, RaceDependency } from "./race.ts"
 import { CharacterAttributes } from "./rated/attribute.ts"
+import { CharacterCombatTechniques } from "./rated/combatTechnique.ts"
 import { PrimaryAttributeDependency } from "./rated/primaryAttribute.ts"
 import {
   ActivatableRatedMap,
@@ -29,12 +35,23 @@ import { PublicationDependency } from "./sources/publicationDependency.ts"
 import { StateInstance } from "./state.ts"
 
 export class Character {
-  #db: Database
-
   /**
    * The rules settings for the character.
    */
   readonly rules: CharacterRules
+
+  /**
+   * Describes whether the character creation is finished.
+   */
+  @observable accessor isCharacterCreationFinished: boolean
+
+  @computed get isInCharacterCreation() {
+    return !this.isCharacterCreationFinished
+  }
+
+  @computed get canRemove() {
+    return !this.isCharacterCreationFinished
+  }
 
   /**
    * Total adventure points.
@@ -44,7 +61,7 @@ export class Character {
   /**
    * The start experience level identifier.
    */
-  readonly startExperienceLevel: CharacterExperienceLevel
+  readonly experienceLevel: CharacterExperienceLevel
 
   /**
    * An object storing the identifiers of the race and its optional race variant.
@@ -52,17 +69,24 @@ export class Character {
   @observable accessor race: CharacterRace | undefined
 
   readonly attributes: CharacterAttributes
-
   readonly derivedCharacteristics: CharacterDerivedCharacteristics
 
+  readonly advantages: CharacterActivatables<"Advantage">
+  readonly disadvantages: CharacterActivatables<"Disadvantage">
+
   readonly skills: CharacterSkills
+  readonly closeCombatTechniques: CharacterCombatTechniques<"CloseCombatTechnique">
+  readonly rangedCombatTechniques: CharacterCombatTechniques<"RangedCombatTechnique">
+
+  readonly specialAbilities: CharacterSpecialAbilities
 
   constructor(db: Database) {
-    this.#db = db
     this.rules = new CharacterRules(db, this, false, [])
+    this.isCharacterCreationFinished = false
     this.totalAdventurePoints = 1100
-    this.startExperienceLevel = new CharacterExperienceLevel(
+    this.experienceLevel = new CharacterExperienceLevel(
       db,
+      this,
       "2b0a18c5-40a8-4c86-98b3-a93c85e82497",
     )
     this.race = new CharacterRace(
@@ -72,7 +96,12 @@ export class Character {
     )
     this.attributes = new CharacterAttributes(db, this)
     this.derivedCharacteristics = new CharacterDerivedCharacteristics(db, this)
+    this.advantages = new CharacterActivatables(db, this, "Advantage")
+    this.disadvantages = new CharacterActivatables(db, this, "Disadvantage")
     this.skills = new CharacterSkills(db, this)
+    this.closeCombatTechniques = new CharacterCombatTechniques(db, this, "CloseCombatTechnique")
+    this.rangedCombatTechniques = new CharacterCombatTechniques(db, this, "RangedCombatTechnique")
+    this.specialAbilities = new CharacterSpecialAbilities(db, this)
   }
 
   @computed
@@ -80,7 +109,12 @@ export class Character {
     return (
       this.attributes.adventurePointsTotal.general +
       this.derivedCharacteristics.adventurePointsTotal.general +
-      this.skills.adventurePointsTotal.general
+      this.advantages.adventurePointsTotal.general +
+      this.disadvantages.adventurePointsTotal.general +
+      this.skills.adventurePointsTotal.general +
+      this.closeCombatTechniques.adventurePointsTotal.general +
+      this.rangedCombatTechniques.adventurePointsTotal.general +
+      this.specialAbilities.adventurePointsTotal.general
     )
   }
 
@@ -95,22 +129,28 @@ export class Character {
       total: this.totalAdventurePoints,
       spent: this.adventurePointsSpent,
       available: this.adventurePointsAvailable,
-      spentOnAdvantages: 0,
+      spentOnAdvantages: getTotalAdventurePointsFromCache(this.advantages.adventurePointsTotal),
       spentOnMagicalAdvantages: 0,
       spentOnBlessedAdvantages: 0,
-      spentOnDisadvantages: 0,
+      spentOnDisadvantages: getTotalAdventurePointsFromCache(
+        this.disadvantages.adventurePointsTotal,
+      ),
       spentOnMagicalDisadvantages: 0,
       spentOnBlessedDisadvantages: 0,
       spentOnRace: 0,
       spentOnProfession: 0,
       spentOnAttributes: getTotalAdventurePointsFromCache(this.attributes.adventurePointsTotal),
       spentOnSkills: getTotalAdventurePointsFromCache(this.skills.adventurePointsTotal),
-      spentOnCombatTechniques: 0,
+      spentOnCombatTechniques:
+        getTotalAdventurePointsFromCache(this.closeCombatTechniques.adventurePointsTotal) +
+        getTotalAdventurePointsFromCache(this.rangedCombatTechniques.adventurePointsTotal),
       spentOnSpells: 0,
       spentOnCantrips: 0,
       spentOnLiturgicalChants: 0,
       spentOnBlessings: 0,
-      spentOnSpecialAbilities: 0,
+      spentOnSpecialAbilities: getTotalAdventurePointsFromCache(
+        this.specialAbilities.adventurePointsTotal,
+      ),
       spentOnEnergies: getTotalAdventurePointsFromCache(
         this.derivedCharacteristics.adventurePointsTotal,
       ),
@@ -119,35 +159,83 @@ export class Character {
 
   handleIPCAction(...args: StateActionsAsParameters<CharacterIPCActions>) {
     switch (args[0]) {
-      case "incrementAttribute":
-        this.attributes.increment(...args[1])
+      case "incrementRated":
+        switch (args[1][0]) {
+          case "Attribute":
+            this.attributes.increment(args[1][1])
+            break
+          case "Skill":
+            this.skills.increment(args[1][1])
+            break
+          case "CloseCombatTechnique":
+            this.closeCombatTechniques.increment(args[1][1])
+            break
+          case "RangedCombatTechnique":
+            this.rangedCombatTechniques.increment(args[1][1])
+            break
+          default:
+            return assertExhaustive(args[1][0])
+        }
         break
-      case "decrementAttribute":
-        this.attributes.decrement(...args[1])
+      case "decrementRated":
+        switch (args[1][0]) {
+          case "Attribute":
+            this.attributes.decrement(args[1][1])
+            break
+          case "Skill":
+            this.skills.decrement(args[1][1])
+            break
+          case "CloseCombatTechnique":
+            this.closeCombatTechniques.decrement(args[1][1])
+            break
+          case "RangedCombatTechnique":
+            this.rangedCombatTechniques.decrement(args[1][1])
+            break
+          default:
+            return assertExhaustive(args[1][0])
+        }
         break
-      case "incrementAttributeToMax":
-        this.attributes.incrementToMax(...args[1])
+      case "incrementRatedToMax":
+        switch (args[1][0]) {
+          case "Attribute":
+            this.attributes.incrementToMax(args[1][1])
+            break
+          case "Skill":
+            this.skills.incrementToMax(args[1][1])
+            break
+          case "CloseCombatTechnique":
+            this.closeCombatTechniques.incrementToMax(args[1][1])
+            break
+          case "RangedCombatTechnique":
+            this.rangedCombatTechniques.incrementToMax(args[1][1])
+            break
+          default:
+            return assertExhaustive(args[1][0])
+        }
         break
-      case "decrementAttributeToMin":
-        this.attributes.decrementToMin(...args[1])
+      case "decrementRatedToMin":
+        switch (args[1][0]) {
+          case "Attribute":
+            this.attributes.decrementToMin(args[1][1])
+            break
+          case "Skill":
+            this.skills.decrementToMin(args[1][1])
+            break
+          case "CloseCombatTechnique":
+            this.closeCombatTechniques.decrementToMin(args[1][1])
+            break
+          case "RangedCombatTechnique":
+            this.rangedCombatTechniques.decrementToMin(args[1][1])
+            break
+          default:
+            return assertExhaustive(args[1][0])
+        }
         break
       case "incrementDerivedCharacteristic":
         this.derivedCharacteristics.increment(...args[1])
         break
       case "decrementDerivedCharacteristic":
         this.derivedCharacteristics.decrement(...args[1])
-        break
-      case "incrementSkill":
-        this.skills.increment(...args[1])
-        break
-      case "decrementSkill":
-        this.skills.decrement(...args[1])
-        break
-      case "incrementSkillToMax":
-        this.skills.incrementToMax(...args[1])
-        break
-      case "decrementSkillToMin":
-        this.skills.decrementToMin(...args[1])
         break
       default:
         return assertExhaustive(args)
@@ -156,11 +244,21 @@ export class Character {
 
   get selectors(): StateSelectors<CharacterIPCSelectors> {
     return {
+      canRemove: () => this.canRemove,
+      isInCharacterCreation: () => this.isInCharacterCreation,
       adventurePointsStats: () => this.adventurePointsStats,
       attributes: () => this.attributes.attributes,
       attributesTotal: () => this.attributes.attributesTotal,
       derivedCharacteristics: () => this.derivedCharacteristics.derivedCharacteristics,
+      activeAdvantages: () => this.advantages.active,
+      inactiveAdvantages: () => this.advantages.inactive,
+      activeDisadvantages: () => this.disadvantages.active,
+      inactiveDisadvantages: () => this.disadvantages.inactive,
       skills: () => this.skills.skills,
+      closeCombatTechniques: () => this.closeCombatTechniques.combatTechniques,
+      rangedCombatTechniques: () => this.rangedCombatTechniques.combatTechniques,
+      activeSpecialAbilities: () => this.specialAbilities.active,
+      inactiveSpecialAbilities: () => this.specialAbilities.inactive,
     }
   }
 }

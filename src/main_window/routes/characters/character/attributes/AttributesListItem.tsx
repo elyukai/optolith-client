@@ -31,9 +31,9 @@ export const AttributeListItem: FC<Props> = props => {
   const handleAdd = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
       if (event.shiftKey && maximum !== undefined) {
-        ExternalAPI.execute("incrementAttributeToMax", id)
+        ExternalAPI.execute("incrementRatedToMax", "Attribute", id)
       } else {
-        ExternalAPI.execute("incrementAttribute", id)
+        ExternalAPI.execute("incrementRated", "Attribute", id)
       }
     },
     [isIncreasable, maximum],
@@ -42,9 +42,9 @@ export const AttributeListItem: FC<Props> = props => {
   const handleRemove = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
       if (event.shiftKey) {
-        ExternalAPI.execute("decrementAttributeToMin", id)
+        ExternalAPI.execute("decrementRatedToMin", "Attribute", id)
       } else {
-        ExternalAPI.execute("decrementAttribute", id)
+        ExternalAPI.execute("decrementRated", "Attribute", id)
       }
     },
     [isDecreasable],

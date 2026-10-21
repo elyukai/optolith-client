@@ -78,6 +78,7 @@ export class CharacterDerivedCharacteristic {
 
   static readonly improvementCost: ImprovementCost = "D"
 
+  readonly #db: Database
   readonly #character: Character
 
   readonly id: string
@@ -86,9 +87,10 @@ export class CharacterDerivedCharacteristic {
   @observable accessor #permanentlyLost: number | undefined
   @observable accessor #permanentlyLostBoughtBack: number | undefined
 
-  constructor(id: string, dbEntry: DerivedCharacteristic, character: Character) {
+  constructor(id: string, dbEntry: DerivedCharacteristic, db: Database, character: Character) {
     this.id = id
     this.dbEntry = dbEntry
+    this.#db = db
     this.#character = character
 
     if (dbEntry.type?.kind === "Energy") {
@@ -109,12 +111,13 @@ export class CharacterDerivedCharacteristic {
   static createEmpty(
     id: string,
     dbEntry: DerivedCharacteristic | undefined,
+    db: Database,
     character: Character,
   ): CharacterDerivedCharacteristic {
     if (!dbEntry) {
       throw new Error(`DerivedCharacteristic with id ${id} not provided.`)
     }
-    return new CharacterDerivedCharacteristic(id, dbEntry, character)
+    return new CharacterDerivedCharacteristic(id, dbEntry, db, character)
   }
 
   #calculateBaseValue(baseValue: DerivedCharacteristicBase) {
@@ -246,12 +249,7 @@ export class CharacterDerivedCharacteristic {
 
   @computed
   get adventurePoints(): AdventurePointsCache {
-    return cachedAdventurePoints(
-      this.#purchased ?? 0,
-      this.constructor.minValue,
-      [],
-      this.constructor.improvementCost,
-    )
+    return cachedAdventurePoints(this.#purchased ?? 0, 0, [], this.constructor.improvementCost)
   }
 
   toJSON(): DisplayedDerivedCharacteristicBase {
@@ -304,6 +302,7 @@ export class CharacterDerivedCharacteristics {
           CharacterDerivedCharacteristic.createEmpty(
             container.id,
             container.content,
+            this.#db,
             this.#character,
           )
         ).toJSON(),
@@ -326,6 +325,7 @@ export class CharacterDerivedCharacteristics {
       this.#derivedCharacteristics[id] = CharacterDerivedCharacteristic.createEmpty(
         id,
         dbEntry,
+        this.#db,
         this.#character,
       )
     }

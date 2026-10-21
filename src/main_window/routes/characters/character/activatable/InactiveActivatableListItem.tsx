@@ -1,7 +1,4 @@
-import { UI } from "@optolith/database-schema/gen"
-import { AdventurePointsValue } from "@optolith/database-schema/gen"
 import { ActivatableIdentifier } from "@optolith/database-schema/gen"
-import { LocaleMap } from "@optolith/database-schema/gen"
 import { ReactNode, memo, useCallback, useMemo, useState } from "react"
 import { BasicInputDialog } from "../../../../../shared/components/basicInputDialog/BasicInputDialog.tsx"
 import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
@@ -18,11 +15,9 @@ import { getCostOfInstance } from "../../../../../shared/domain/activatable/acti
 import {
   ActivatableInstance,
   ActivatableOption,
+  type DisplayedInactiveActivatable,
 } from "../../../../../shared/domain/activatable/activatableEntry.ts"
-import {
-  DisplayedInactiveActivatable,
-  getSelectOptionFromDisplayedOption,
-} from "../../../../../shared/domain/activatable/activatableInactive.ts"
+import { getSelectOptionFromDisplayedOption } from "../../../../../shared/domain/activatable/activatableInactive.ts"
 import { AdvantageIdentifier, equalsIdentifier } from "../../../../../shared/domain/identifier.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
@@ -42,46 +37,34 @@ import {
 } from "../../../../slices/inlineWikiSlice.ts"
 import { InactiveActivatableListItemOption } from "./InactiveActivatableListItemOption.tsx"
 
-type Props<K extends string, T> = {
-  activatable: DisplayedInactiveActivatable<K, T>
+type Props<K extends ActivatableIdentifier["kind"]> = {
+  activatable: DisplayedInactiveActivatable<K>
   groupNameKey?: PickOfType<UI, string>
   isCustomCostAvailable?: boolean
   add: (parameters: { id: number; instance: ActivatableInstance }, cost: number) => void
-  createActivatableIdentifierObject: (id: number) => ActivatableIdentifier
 }
 
 const getLevelKey = (option: DropdownOption<number>) => option.id
 
-const InactiveActivatablesListItem = <
-  K extends string,
-  T extends {
-    id: number
-    ap_value: AdventurePointsValue | number
-    translations: LocaleMap<{ name: string }>
-  },
->(
-  props: Props<K, T>,
+const InactiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
+  props: Props<K>,
 ): ReactNode => {
+  const { activatable, groupNameKey, isCustomCostAvailable = false, add } = props
   const {
-    activatable: {
-      static: { id, ap_value, translations },
-      dynamic,
-      isAvailable,
-      options,
-      level,
-    },
-    groupNameKey,
-    isCustomCostAvailable = false,
-    add,
-    createActivatableIdentifierObject,
-  } = props
+    id,
+    dbEntry: { ap_value, translations },
+    charEntry,
+    isAvailable,
+    options,
+    level,
+  } = activatable
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
 
-  const { name = "" } = translateMap(translations) ?? {}
+  const { name = "" } = translateMap<{ name: string }>(translations) ?? {}
 
   const [selectedLevel, setSelectedLevel] = useState(() => (level === undefined ? undefined : 1))
   const [selectedOptions, setSelectedOptions] = useState<(ActivatableOption | undefined)[]>([])
@@ -133,8 +116,9 @@ const InactiveActivatablesListItem = <
   const handleDeleteCustomCost = useCallback(() => setCustomCost(undefined), [setCustomCost])
 
   const idObject = useMemo(
-    () => createActivatableIdentifierObject(id),
-    [createActivatableIdentifierObject, id],
+    (): ActivatableIdentifier =>
+      ({ kind: activatable.type, [activatable.type]: id }) as ActivatableIdentifier,
+    [activatable.type, id],
   )
 
   const handleSelectForInfo = useCallback(
@@ -146,8 +130,8 @@ const InactiveActivatablesListItem = <
     () =>
       getCostOfInstance(
         idObject,
-        typeof ap_value === "number" ? { tag: "Fixed", fixed: ap_value } : ap_value,
-        dynamic?.instances ?? [],
+        typeof ap_value === "number" ? { kind: "Fixed", Fixed: ap_value } : ap_value,
+        charEntry?.instances ?? [],
         {
           level: selectedLevel,
           options: selectedOptions.filter(isNotNullish),
@@ -257,7 +241,7 @@ const InactiveActivatablesListItem = <
           id="custom-cost-dialog"
           isOpen={showCustomCostDialog}
           title={translate("Custom AP Cost")}
-          description={translate("AP Cost for {0}", name)}
+          description={translate("AP Cost for {$category}", { category: name })}
           value={customCostPreview}
           acceptLabel={translate("Done")}
           rejectLabel={translate("Delete")}

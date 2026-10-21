@@ -8,7 +8,7 @@ type Props = {
   margin?: number
   small?: boolean
   position?: "top" | "bottom" | "left" | "right"
-  targetRef: RefObject<HTMLElement>
+  targetRef: RefObject<HTMLElement | null>
 }
 
 /**

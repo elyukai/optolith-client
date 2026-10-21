@@ -1,11 +1,7 @@
+import type { SpecialAbilityIdentifier } from "@optolith/database-schema/gen"
 import { FC } from "react"
-import {
-  SpecialAbilityTagTypeMap,
-  specialAbilityGroupTranslationKeys,
-} from "../../../../../shared/domain/activatable/specialAbilities.ts"
-import { DisplayedActiveSpecialAbility } from "../../../../../shared/domain/activatable/specialAbilitiesActive.ts"
-import { getCreateIdentifierObject } from "../../../../../shared/domain/identifier.ts"
-import { useActiveSpecialAbilityActions } from "../../../../hooks/activatableActions.ts"
+import type { DisplayedActiveActivatable } from "../../../../../shared/domain/activatable/activatableEntry.ts"
+import { specialAbilityGroupTranslationKeys } from "../../../../../shared/domain/activatable/specialAbilities.ts"
 import {
   changeAdvancedCombatSpecialAbilityLevel,
   removeAdvancedCombatSpecialAbility,
@@ -115,10 +111,6 @@ import {
   removeLycantropicGift,
 } from "../../../../slices/specialAbilities/lycantropicGiftsSlice.ts"
 import {
-  changeMagicStyleSpecialAbilityLevel,
-  removeMagicStyleSpecialAbility,
-} from "../../../../slices/specialAbilities/magicStyleSpecialAbilitiesSlice.ts"
-import {
   changeMagicalSignLevel,
   removeMagicalSign,
 } from "../../../../slices/specialAbilities/magicalSignsSlice.ts"
@@ -130,6 +122,10 @@ import {
   changeMagicalTraditionLevel,
   removeMagicalTradition,
 } from "../../../../slices/specialAbilities/magicalTraditionsSlice.ts"
+import {
+  changeMagicStyleSpecialAbilityLevel,
+  removeMagicStyleSpecialAbility,
+} from "../../../../slices/specialAbilities/magicStyleSpecialAbilitiesSlice.ts"
 import {
   changeOrbEnchantmentLevel,
   removeOrbEnchantment,
@@ -201,7 +197,7 @@ import {
 import { ActiveActivatablesListItem } from "../activatable/ActiveActivatableListItem.tsx"
 
 type Props = {
-  specialAbility: DisplayedActiveSpecialAbility
+  specialAbility: DisplayedActiveActivatable<SpecialAbilityIdentifier["kind"]>
 }
 
 // prettier-ignore
@@ -261,23 +257,19 @@ const specialAbilityActions = {
  */
 export const ActiveSpecialAbilitiesListItem: FC<Props> = props => {
   const { specialAbility } = props
-  const [removeAction, changeLevelAction] = specialAbilityActions[specialAbility.kind]
-  const { handleChangeLevel, handleRemove } = useActiveSpecialAbilityActions(
-    removeAction,
-    changeLevelAction,
-    getCreateIdentifierObject(specialAbility.kind),
-  )
+  // const [removeAction, changeLevelAction] = specialAbilityActions[specialAbility.type]
+  // const { handleChangeLevel, handleRemove } = useActiveSpecialAbilityActions(
+  //   removeAction,
+  //   changeLevelAction,
+  //   getCreateIdentifierObject(specialAbility.kind),
+  // )
 
   return (
-    <ActiveActivatablesListItem<
-      keyof SpecialAbilityTagTypeMap,
-      SpecialAbilityTagTypeMap[keyof SpecialAbilityTagTypeMap]
-    >
+    <ActiveActivatablesListItem<SpecialAbilityIdentifier["kind"]>
       activatable={specialAbility}
-      changeLevel={handleChangeLevel}
-      remove={handleRemove}
-      createActivatableIdentifierObject={getCreateIdentifierObject(specialAbility.kind)}
-      groupNameKey={specialAbilityGroupTranslationKeys[specialAbility.kind]}
+      changeLevel={() => false /* TODO handleChangeLevel */}
+      remove={() => undefined /* TODO handleRemove */}
+      groupNameKey={specialAbilityGroupTranslationKeys[specialAbility.type]}
     />
   )
 }

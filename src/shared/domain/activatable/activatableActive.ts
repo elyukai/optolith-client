@@ -6,22 +6,19 @@
 //  * @since 1.1.0
 //  */
 
-import { ResolvedSelectOption } from "optolith-database-schema/cache/activatableSelectOptions"
-import { ExperienceLevel } from "@optolith/database-schema/gen"
-import { AdventurePointsValue } from "@optolith/database-schema/gen"
-import { GeneralIdentifier } from "@optolith/database-schema/gen"
-import {
+import type { ResolvedSelectOption } from "@optolith/database-schema/cache"
+import type {
   ActivatableIdentifier,
-  SelectOptionIdentifier,
+  AdventurePointsValue,
+  ExperienceLevel,
 } from "@optolith/database-schema/gen"
-import { LocaleMap } from "@optolith/database-schema/gen"
 import { count, sum, sumWith } from "../../utils/array.ts"
 import { not } from "../../utils/function.ts"
 import { ensure, isNotNullish } from "../../utils/nullable.ts"
 import { mapObject } from "../../utils/object.ts"
 import { RangeBounds } from "../../utils/range.ts"
 import { romanize } from "../../utils/roman.ts"
-import { Translate, TranslateMap } from "../../utils/translate.ts"
+import { Translate, TranslateMap, type LocaleMap } from "../../utils/translate.ts"
 import { assertExhaustive } from "../../utils/typeSafety.ts"
 import { FilterApplyingActivatableDependencies } from "../dependencies/filterApplyingDependencies.ts"
 import { GetById } from "../getTypes.ts"
@@ -827,10 +824,10 @@ const getEntrySpecificCostOfInstance = (
               ins.level === undefined || hasCustomAdventurePointsValue(ins)
                 ? acc
                 : ins.level > acc.level
-                ? { level: ins.level, count: 1 }
-                : ins.level === acc.level
-                ? { level: acc.level, count: acc.count + 1 }
-                : acc,
+                  ? { level: ins.level, count: 1 }
+                  : ins.level === acc.level
+                    ? { level: acc.level, count: acc.count + 1 }
+                    : acc,
             { level: 0, count: 0 },
           )
 
@@ -844,8 +841,8 @@ const getEntrySpecificCostOfInstance = (
                     ins.level === undefined || hasCustomAdventurePointsValue(ins)
                       ? acc
                       : acc === undefined || (ins.level > acc && ins.level < singleHighestLevel)
-                      ? ins.level
-                      : acc,
+                        ? ins.level
+                        : acc,
                   undefined,
                 )
 
@@ -861,8 +858,8 @@ const getEntrySpecificCostOfInstance = (
             return singleHighestLevel === undefined || isEntryToAdd
               ? 0
               : secondHighestLevel === undefined
-              ? instance.level * apValue.fixed
-              : (instance.level - secondHighestLevel) * apValue.fixed
+                ? instance.level * apValue.fixed
+                : (instance.level - secondHighestLevel) * apValue.fixed
           }
 
           return isEntryToAdd ? (instance.level - highestLevel.level) * apValue.fixed : 0
@@ -1014,7 +1011,7 @@ export const getCostOfInstance = (
     return entrySpecific
   }
 
-  switch (apValue.tag) {
+  switch (apValue.kind) {
     case "Fixed":
       return apValue.fixed * (instance.level ?? 1)
     case "ByLevel":
@@ -1030,8 +1027,11 @@ export const getCostOfInstance = (
     }
     case "Indefinite":
       return 0
+    case "DependingOnActive":
+    case "DependingOnActiveInstances":
+      return undefined // TODO
     default:
-      assertExhaustive(apValue)
+      return assertExhaustive(apValue)
   }
 }
 
@@ -1075,10 +1075,10 @@ const getEntrySpecificTotalCostDifference = (
               ins.level === undefined || hasCustomAdventurePointsValue(ins)
                 ? acc
                 : ins.level > acc.level
-                ? { level: ins.level, count: 1 }
-                : ins.level === acc.level
-                ? { level: acc.level, count: acc.count + 1 }
-                : acc,
+                  ? { level: ins.level, count: 1 }
+                  : ins.level === acc.level
+                    ? { level: acc.level, count: acc.count + 1 }
+                    : acc,
             { level: 0, count: 0 },
           )
 
@@ -1093,8 +1093,8 @@ const getEntrySpecificTotalCostDifference = (
               ins.level === undefined || hasCustomAdventurePointsValue(ins)
                 ? acc
                 : acc === undefined || (ins.level > acc && ins.level < singleHighestLevel)
-                ? ins.level
-                : acc,
+                  ? ins.level
+                  : acc,
             undefined,
           )
 
@@ -1564,9 +1564,9 @@ const getNameComponents = <T>(
           const optTranslations = getSelectOptionById(opt.id)?.translations
           return optTranslations === undefined
             ? "???"
-            : mapObject(optTranslations, t10n =>
-                displayedInProfession ? t10n.name_in_profession ?? t10n.name : t10n.name,
-              ) ?? "???"
+            : (mapObject(optTranslations, t10n =>
+                displayedInProfession ? (t10n.name_in_profession ?? t10n.name) : t10n.name,
+              ) ?? "???")
         }
         case "Custom":
           return opt.value

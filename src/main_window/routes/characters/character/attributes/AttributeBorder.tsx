@@ -6,7 +6,7 @@ type Props = {
   children?: React.ReactNode
   className?: string
   label?: string
-  tooltip?: JSX.Element
+  tooltip?: React.ReactNode
   tooltipMargin?: number
   value: number | string
 }
