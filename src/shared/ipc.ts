@@ -34,6 +34,11 @@ export type CharacterIPCSelectors = {
 
 export const defaultCharacterIPCSelectors: CharacterIPCSelectors = {
   characterOverviews: [],
+  name: "",
+  startExperienceLevel: undefined,
+  currentExperienceLevel: undefined,
+  race: undefined,
+  raceVariant: undefined,
   includeAllPublications: false,
   publications: [],
   focusRules: [],

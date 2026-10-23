@@ -279,6 +279,11 @@ export class Character {
   get selectors() {
     return {
       characterOverviews: () => this.#characters.characterOverviews,
+      name: () => this.name,
+      startExperienceLevel: () => this.experienceLevel.start,
+      currentExperienceLevel: () => this.experienceLevel.current,
+      race: () => this.race?.base,
+      raceVariant: () => this.race?.variant,
       includeAllPublications: () => this.rules.includeAllPublications,
       publications: () => this.rules.publications,
       focusRules: () => this.rules.focusRules,

@@ -1,3 +1,4 @@
+import { observer } from "mobx-react"
 import { FC, useCallback, useState } from "react"
 import { AvatarWrapper } from "../../../../../shared/components/avatarWrapper/AvatarWrapper.tsx"
 import { Button } from "../../../../../shared/components/button/Button.tsx"
@@ -14,14 +15,11 @@ import { getFullRaceName } from "../../../../../shared/domain/race.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
+import { SharedState } from "../../../../external.ts"
 import { useProfessionName } from "../../../../hooks/professionName.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { selectCanAddAdventurePoints } from "../../../../selectors/characterSelectors.ts"
 import { selectCurrentCulture } from "../../../../selectors/cultureSelectors.ts"
-import {
-  selectCurrentExperienceLevel,
-  selectStartExperienceLevel,
-} from "../../../../selectors/experienceLevelSelectors.ts"
 import { selectCurrentProfession } from "../../../../selectors/professionSelectors.ts"
 import {
   selectCanDefineCustomProfessionName,
@@ -33,9 +31,7 @@ import {
   deleteAvatar,
   finishCharacterCreation,
   selectAvatar,
-  selectName,
   selectSex,
-  selectTotalAdventurePoints,
   setName,
 } from "../../../../slices/characterSlice.ts"
 import { setCustomProfessionName } from "../../../../slices/professionSlice.ts"
@@ -46,18 +42,14 @@ import "./ProfileOverview.scss"
  * Returns a page for managing the character’s profile, including the name,
  * adventure points and personal data.
  */
-export const ProfileOverview: FC = () => {
+export const ProfileOverview: FC = observer(() => {
   const dispatch = useAppDispatch()
-  const name = useAppSelector(selectName)
   const [isEditingName, setIsEditingName] = useState(false)
   const [isEditingProfessionName, setIsEditingProfessionName] = useState(false)
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const canAddAdventurePoints = useAppSelector(selectCanAddAdventurePoints)
-  const startExpLevel = useAppSelector(selectStartExperienceLevel)
-  const currentExpLevel = useAppSelector(selectCurrentExperienceLevel)
-  const totalAdventurePoints = useAppSelector(selectTotalAdventurePoints)
   const sex = useAppSelector(selectSex)
   const avatar = useAppSelector(selectAvatar)
   const currentRace = useAppSelector(selectCurrentRace)
@@ -111,14 +103,14 @@ export const ProfileOverview: FC = () => {
       className="change-name"
       cancel={handleCancelEditName}
       submit={handleEditName}
-      text={name}
+      text={SharedState.name}
       autoFocus
       submitLabel={translate("Edit Name")}
       cancelLabel={translate("Cancel")}
     />
   ) : (
     <h1 className="confirm-edit">
-      {name}
+      {SharedState.name}
       <IconButton label={translate("Edit Name")} icon="&#xE90c;" onClick={handleStartEditName} />
     </h1>
   )
@@ -183,15 +175,21 @@ export const ProfileOverview: FC = () => {
                 )}
                 <VerticalList className="el">
                   <span>
-                    {startExpLevel === undefined || currentExpLevel === undefined
+                    {SharedState.startExperienceLevel === undefined ||
+                    SharedState.currentExperienceLevel === undefined
                       ? "—"
-                      : currentExpLevel.id === startExpLevel.id
-                      ? translateMap(startExpLevel.translations)?.name ?? "—"
-                      : `${translateMap(currentExpLevel.translations)?.name ?? "—"} (${
-                          translateMap(startExpLevel.translations)?.name ?? "—"
-                        })`}
+                      : SharedState.startExperienceLevel.adventure_points ===
+                          SharedState.currentExperienceLevel.adventure_points
+                        ? (translateMap(SharedState.startExperienceLevel.translations)?.name ?? "—")
+                        : `${translateMap(SharedState.currentExperienceLevel.translations)?.name ?? "—"} (${
+                            translateMap(SharedState.startExperienceLevel.translations)?.name ?? "—"
+                          })`}
                   </span>
-                  <span>{translate("{0} AP", totalAdventurePoints ?? 0)}</span>
+                  <span>
+                    {translate("{$value} AP", {
+                      value: SharedState.adventurePointsStats.total.toFixed(),
+                    })}
+                  </span>
                 </VerticalList>
               </div>
             </GridItem>
@@ -278,4 +276,4 @@ export const ProfileOverview: FC = () => {
         /> */}
     </Page>
   )
-}
+})
