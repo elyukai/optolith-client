@@ -1,5 +1,6 @@
-import { ExperienceLevel } from "@optolith/database-schema/gen"
 import {
+  ExperienceLevel,
+  LocaleMap,
   Profession,
   ProfessionName,
   ProfessionPackage,
@@ -7,11 +8,9 @@ import {
   ProfessionVariant,
   ProfessionVersion,
 } from "@optolith/database-schema/gen"
-import { LocaleMap } from "@optolith/database-schema/gen"
 import { Nullish, isNotNullish } from "../utils/nullable.ts"
 import { TranslateMap } from "../utils/translate.ts"
 import { assertExhaustive } from "../utils/typeSafety.ts"
-import { ProfessionIdentifier } from "./identifier.ts"
 import { Sex } from "./sex.ts"
 
 /**
@@ -128,19 +127,18 @@ export type FullProfessionNameParts = {
 export const getFullProfessionNameParts = (
   translateMap: TranslateMap,
   sex: Sex,
-  profession: ProfessionParts,
+  profession: ProfessionVersion,
   professionVariant?: ProfessionVariant,
-  customName?: string,
 ): FullProfessionNameParts => {
-  if (profession.base.id === ProfessionIdentifier.OwnProfession) {
-    const name =
-      customName ?? professionNameToString(sex, translateMap(profession.translations)?.name) ?? ""
+  // TODO: if (profession.base.id === ProfessionIdentifier.OwnProfession) {
+  //   const name =
+  //     customName ?? professionNameToString(sex, translateMap(profession.translations)?.name) ?? ""
 
-    return {
-      name,
-      fullName: name,
-    }
-  }
+  //   return {
+  //     name,
+  //     fullName: name,
+  //   }
+  // }
 
   const professionName = professionNameToString(sex, translateMap(profession.translations)?.name)
   const professionSubName = professionNameToString(

@@ -1,3 +1,4 @@
+import { observer } from "mobx-react"
 import { FC, useCallback, useMemo, useState } from "react"
 import { Button } from "../../../shared/components/button/Button.tsx"
 import { Grid } from "../../../shared/components/grid/Grid.tsx"
@@ -13,8 +14,8 @@ import { useLocaleCompare } from "../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../shared/hooks/translate.ts"
 import { compareAt, reduceCompare } from "../../../shared/utils/compare.ts"
 import { assertExhaustive } from "../../../shared/utils/typeSafety.ts"
+import { SharedState } from "../../external.ts"
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.ts"
-import { selectCharacters } from "../../slices/charactersSlice.ts"
 import { changeCharactersSortOrder, selectCharactersSortOrder } from "../../slices/settingsSlice.ts"
 import "./Characters.scss"
 import { CharactersItem } from "./CharactersItem.tsx"
@@ -22,7 +23,7 @@ import { CharactersItem } from "./CharactersItem.tsx"
 /**
  * Returns a page for managing characters.
  */
-export const Characters: FC = () => {
+export const Characters: FC = observer(() => {
   const translate = useTranslate()
   const localeCompare = useLocaleCompare()
   const dispatch = useAppDispatch()
@@ -34,10 +35,9 @@ export const Characters: FC = () => {
     [dispatch],
   )
 
-  const charactersMap = useAppSelector(selectCharacters)
   const characters = useMemo(
     () =>
-      Object.values(charactersMap)
+      Object.values(SharedState.characterOverviews)
         .filter(c => c.name.toLowerCase().includes(filterText.toLowerCase()))
         .sort(
           (() => {
@@ -59,7 +59,7 @@ export const Characters: FC = () => {
             }
           })(),
         ),
-    [charactersMap, filterText, localeCompare, sortOrder],
+    [SharedState.characterOverviews, filterText, localeCompare, sortOrder],
   )
 
   return (
@@ -98,6 +98,10 @@ export const Characters: FC = () => {
               name: translate("Date Modified"),
               value: CharactersSortOrder.DateModified,
             },
+            {
+              name: translate("Date Created"),
+              value: CharactersSortOrder.DateCreated,
+            },
           ]}
           onClick={handleChangeSortOrder}
         />
@@ -130,4 +134,4 @@ export const Characters: FC = () => {
         /> */}
     </Page>
   )
-}
+})

@@ -1,6 +1,15 @@
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type {
+  Culture,
+  ProfessionVariant,
+  ProfessionVersion,
+  Race,
+  RaceVariant,
+} from "@optolith/database-schema/gen"
 import { computed, observable } from "mobx"
 import type { Database } from "../database.ts"
+import type { CharacterIPCActions } from "../ipc.ts"
+import type { StateActionsAsParameters } from "../state.ts"
 import type { LocaleEnvironment } from "../utils/locale.ts"
 import {
   ActivatableMap,
@@ -34,6 +43,12 @@ import { PublicationDependency } from "./sources/publicationDependency.ts"
 import { StateInstance } from "./state.ts"
 
 export class Character {
+  readonly #characters: Characters
+
+  readonly id: string
+
+  @observable accessor name: string
+
   /**
    * The rules settings for the character.
    */
@@ -79,7 +94,15 @@ export class Character {
 
   readonly specialAbilities: CharacterSpecialAbilities
 
-  constructor(localeEnvironment: LocaleEnvironment, db: Database) {
+  constructor(
+    localeEnvironment: LocaleEnvironment,
+    db: Database,
+    characters: Characters,
+    id: string,
+  ) {
+    this.#characters = characters
+    this.id = id
+    this.name = "Alrik"
     this.rules = new CharacterRules(db, this, localeEnvironment, false, [])
     this.isCharacterCreationFinished = false
     this.totalAdventurePoints = 1100
@@ -255,6 +278,7 @@ export class Character {
 
   get selectors() {
     return {
+      characterOverviews: () => this.#characters.characterOverviews,
       includeAllPublications: () => this.rules.includeAllPublications,
       publications: () => this.rules.publications,
       focusRules: () => this.rules.focusRules,
@@ -274,6 +298,24 @@ export class Character {
       rangedCombatTechniques: () => this.rangedCombatTechniques.combatTechniques,
       activeSpecialAbilities: () => this.specialAbilities.active,
       inactiveSpecialAbilities: () => this.specialAbilities.inactive,
+    } satisfies Record<string, () => unknown>
+  }
+
+  @computed
+  get overview(): CharacterOverview {
+    return {
+      id: this.id,
+      name: this.name,
+      avatar: undefined, // TODO: this.avatar
+      dateCreated: new Date().toISOString(), // TODO: this.dateCreated
+      dateLastModified: new Date().toISOString(), // TODO: this.dateLastModified
+      race: this.race?.base,
+      raceVariant: this.race?.variant,
+      culture: undefined, // TODO: this.culture
+      profession: undefined, // TODO: this.profession
+      professionVariant: undefined, // TODO: this.professionVariant
+      totalAdventurePoints: this.totalAdventurePoints,
+      adventurePointsSpent: this.adventurePointsSpent,
     }
   }
 }
@@ -301,6 +343,21 @@ export type AdventurePointsStats = {
   spentOnEnergies: number
 }
 
+export type CharacterOverview = {
+  id: string
+  name: string
+  avatar?: string
+  dateCreated: string
+  dateLastModified: string
+  race: Race | undefined
+  raceVariant: RaceVariant | undefined
+  culture: Culture | undefined
+  profession: ProfessionVersion | undefined
+  professionVariant: ProfessionVariant | undefined
+  totalAdventurePoints: number
+  adventurePointsSpent: number
+}
+
 export class Characters {
   @observable accessor characters: Record<string, Character>
 
@@ -313,6 +370,11 @@ export class Characters {
         "550e8400-e29b-11d4-a716-446655440000",
       ),
     }
+  }
+
+  @computed
+  get characterOverviews() {
+    return Object.values(this.characters).map(character => character.overview)
   }
 
   handleIPCAction(...args: StateActionsAsParameters<CharacterIPCActions>) {

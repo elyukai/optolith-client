@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useRef } from "react"
+import { FC, useCallback, useRef } from "react"
 import { AvatarWrapper } from "../../../shared/components/avatarWrapper/AvatarWrapper.tsx"
 import { IconButton } from "../../../shared/components/iconButton/IconButton.tsx"
 import { ListItem } from "../../../shared/components/list/ListItem.tsx"
@@ -7,86 +7,48 @@ import { ListItemName } from "../../../shared/components/list/ListItemName.tsx"
 import { ListItemSeparator } from "../../../shared/components/list/ListItemSeparator.tsx"
 import { TooltipHint } from "../../../shared/components/tooltipHint/TooltipHint.tsx"
 import { VerticalList } from "../../../shared/components/verticalList/VerticalList.tsx"
-import { getCulture, getFullCultureName } from "../../../shared/domain/culture.ts"
-import {
-  getFullProfessionNameParts,
-  getProfessionParts,
-  getProfessionVariant,
-} from "../../../shared/domain/profession.ts"
-import { getFullRaceName, getRace, getRaceVariant } from "../../../shared/domain/race.ts"
+import type { CharacterOverview } from "../../../shared/domain/character.ts"
+import { getFullCultureName } from "../../../shared/domain/culture.ts"
+import { getFullProfessionNameParts } from "../../../shared/domain/profession.ts"
+import { getFullRaceName } from "../../../shared/domain/race.ts"
 import { useTranslate } from "../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../shared/hooks/translateMap.ts"
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.ts"
-import { CharacterState, selectCustomProfessionName } from "../../slices/characterSlice.ts"
-import {
-  selectStaticCultures,
-  selectStaticExperienceLevels,
-  selectStaticProfessions,
-  selectStaticRaces,
-} from "../../slices/databaseSlice.ts"
+import { selectCustomProfessionName } from "../../slices/characterSlice.ts"
 import { goToTab } from "../../slices/routeSlice.ts"
 
 type Props = {
-  character: CharacterState
+  character: CharacterOverview
 }
 
 /**
  * Returns a single character item.
  */
 export const CharactersItem: FC<Props> = props => {
-  const { character } = props
+  const {
+    character: {
+      id,
+      name,
+      avatar,
+      race,
+      raceVariant,
+      culture,
+      profession,
+      professionVariant,
+      totalAdventurePoints,
+      adventurePointsSpent,
+    },
+  } = props
 
   const dispatch = useAppDispatch()
   const translate = useTranslate()
   const translateMap = useTranslateMap()
 
-  const experienceLevels = useAppSelector(selectStaticExperienceLevels)
-  const startExperienceLevel = experienceLevels[character.experienceLevelStartId]
-
-  const races = useAppSelector(selectStaticRaces)
-  const race = useMemo(
-    () => (character.race.id === undefined ? undefined : getRace(races, character.race.id)),
-    [character.race.id, races],
-  )
-  const raceVariant = useMemo(
-    () => (race === undefined ? undefined : getRaceVariant(race, character.race.variantId)),
-    [character.race.variantId, race],
-  )
-
-  const cultures = useAppSelector(selectStaticCultures)
-  const culture = useMemo(
-    () =>
-      character.culture.id === undefined ? undefined : getCulture(cultures, character.culture.id),
-    [character.culture.id, cultures],
-  )
-
-  const professions = useAppSelector(selectStaticProfessions)
-  const profession = useMemo(
-    () =>
-      character.profession.id === undefined ||
-      character.profession.instanceId === undefined ||
-      startExperienceLevel === undefined
-        ? undefined
-        : getProfessionParts(
-            professions,
-            character.profession.id,
-            character.profession.instanceId,
-            startExperienceLevel,
-          ),
-    [character.profession.id, character.profession.instanceId, professions, startExperienceLevel],
-  )
-  const professionVariant = useMemo(
-    () =>
-      profession === undefined
-        ? undefined
-        : getProfessionVariant(profession, character.profession.variantId),
-    [character.profession.variantId, profession],
-  )
   const customProfessionName = useAppSelector(selectCustomProfessionName)
 
   const handleOpen = useCallback(() => {
-    dispatch(goToTab(["characters", character.id, "profile"]))
-  }, [character.id, dispatch])
+    dispatch(goToTab(["characters", id, "profile"]))
+  }, [id, dispatch])
 
   const duplicateRef = useRef<HTMLButtonElement>(null)
   const exportRef = useRef<HTMLButtonElement>(null)
@@ -95,9 +57,9 @@ export const CharactersItem: FC<Props> = props => {
 
   return (
     <ListItem>
-      <AvatarWrapper src={character.avatar ?? ""} />
+      <AvatarWrapper src={avatar ?? ""} />
       <ListItemName
-        name={character.name}
+        name={name}
         // addName={pipe_(
         //   hero,
         //   HA.player,
@@ -118,14 +80,27 @@ export const CharactersItem: FC<Props> = props => {
               ? ""
               : getFullProfessionNameParts(
                   translateMap,
-                  character.personalData.sex,
+                  {
+                    type: "Custom",
+                    name: "",
+                    ruleBasedInterpretation: {
+                      asFemale: false,
+                      asMale: false,
+                      sexualCharacteristics: { hasPenis: false, hasVagina: false },
+                    },
+                  }, // TODO: character.personalData.sex,
                   profession,
                   professionVariant,
-                  customProfessionName,
+                  // TODO: customProfessionName,
                 ).fullName}
           </span>
           <span className="totalap">
-            {translate("{0} Adventure Points", character.totalAdventurePoints)}
+            {translate("{$value} Adventure Points", {
+              value:
+                adventurePointsSpent === totalAdventurePoints
+                  ? totalAdventurePoints.toFixed()
+                  : `${adventurePointsSpent.toFixed()} / ${totalAdventurePoints.toFixed()}`,
+            })}
           </span>
         </VerticalList>
       </ListItemName>

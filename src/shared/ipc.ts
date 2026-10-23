@@ -33,6 +33,7 @@ export type CharacterIPCSelectors = {
 }
 
 export const defaultCharacterIPCSelectors: CharacterIPCSelectors = {
+  characterOverviews: [],
   includeAllPublications: false,
   publications: [],
   focusRules: [],
