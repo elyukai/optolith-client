@@ -74,7 +74,7 @@ const inlineBuilderMap: InlineHTMLBuilderMap = {
   ),
 }
 
-export const InlineMarkdown: FC<{ source: string; env: Env }> = ({ source, env }) => (
+export const InlineMarkdown: FC<{ source: string; env?: Env }> = ({ source, env = {} }) => (
   <>{renderInlineFromString(source, inlineBuilderMap, { builderArgs: [undefined, env] })}</>
 )
 
@@ -306,7 +306,7 @@ const blockBuilderMap: BlockHTMLBuilderMap = {
 
 const builderMap = { ...blockBuilderMap, ...inlineBuilderMap }
 
-export const Markdown: FC<{ source: string; env: Env }> = props => {
-  const { source = "...", env } = props
+export const Markdown: FC<{ source: string; env?: Env }> = props => {
+  const { source = "...", env = {} } = props
   return <>{renderFromString(source, builderMap, { builderArgs: [undefined, env] }).flat()}</>
 }
