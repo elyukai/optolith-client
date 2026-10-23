@@ -1,37 +1,54 @@
 import type { ImprovementCost } from "@optolith/adventure-points/improvement-cost"
+import type { EntityMap } from "@optolith/database-schema/gen"
 import { action, computed, observable } from "mobx"
-import { AdventurePointsCache, emptyAdventurePointsCache } from "../adventurePoints/cache.ts"
+import type { Database } from "../../database.ts"
+import { get } from "../../mobxTyped.ts"
+import {
+  addAdventurePointsCaches,
+  AdventurePointsCache,
+  emptyAdventurePointsCache,
+} from "../adventurePoints/cache.ts"
 import {
   BoundAdventurePointsForRated,
   cachedAdventurePoints,
   cachedAdventurePointsForActivatable,
 } from "../adventurePoints/ratedEntry.ts"
+import type { Character } from "../character.ts"
 import { Enhancement } from "./enhancement.ts"
 import { RatedDependency } from "./ratedDependency.ts"
 
-export abstract class CharacterRatedEntry {
+export abstract class CharacterRatedEntry<Entity extends keyof EntityMap> {
   declare ["constructor"]: typeof CharacterRatedEntry
 
   static readonly minValue: number = 0
 
-  #getImprovementCost: (id: string) => ImprovementCost
+  protected readonly character: Character
+
   readonly id: string
   @observable accessor #value: number
   readonly dependencies: readonly RatedDependency[]
   readonly boundAdventurePoints: readonly BoundAdventurePointsForRated[]
+  readonly entityName: Entity
+  readonly dbEntry: EntityMap[Entity]
 
   constructor(
-    getImprovementCost: (id: string) => ImprovementCost,
+    character: Character,
+    entityName: Entity,
     id: string,
+    dbEntry: EntityMap[Entity],
     value: number,
     boundAdventurePoints: BoundAdventurePointsForRated[],
   ) {
-    this.#getImprovementCost = getImprovementCost
+    this.character = character
     this.id = id
     this.#value = value
     this.dependencies = []
     this.boundAdventurePoints = boundAdventurePoints
+    this.entityName = entityName
+    this.dbEntry = dbEntry
   }
+
+  abstract get improvementCost(): ImprovementCost
 
   @computed
   get value(): number {
@@ -76,7 +93,7 @@ export abstract class CharacterRatedEntry {
       this.#value,
       this.constructor.minValue,
       this.boundAdventurePoints,
-      this.#getImprovementCost(this.id),
+      this.improvementCost,
     )
   }
 
@@ -94,7 +111,7 @@ export abstract class CharacterRatedEntry {
     return this.value > this.minValue
   }
 
-  toJSON(): DisplayedRated {
+  toJSON(): DisplayedRated<EntityMap[Entity]> {
     return {
       id: this.id,
       value: this.#value,
@@ -102,17 +119,138 @@ export abstract class CharacterRatedEntry {
       maxValue: this.maxValue,
       isIncreasable: this.isIncreasable,
       isDecreasable: this.isDecreasable,
+      dbEntry: this.dbEntry,
     }
   }
 }
 
-export type DisplayedRated = {
+export type DisplayedRated<T> = {
   id: string
   value: number
   minValue: number
   maxValue?: number
   isIncreasable: boolean
   isDecreasable: boolean
+  dbEntry: T
+}
+
+type CharacterRatedEntryConstructor<
+  Entity extends keyof EntityMap,
+  T extends CharacterRatedEntry<Entity>,
+> = {
+  new (
+    character: Character,
+    entityName: Entity,
+    id: string,
+    dbEntry: EntityMap[Entity],
+    value: number,
+    boundAdventurePoints: BoundAdventurePointsForRated[],
+  ): T
+  minValue: number
+}
+
+export abstract class CharacterRatedEntries<
+  Entity extends keyof EntityMap,
+  T extends CharacterRatedEntry<Entity>,
+  AdditionalValues extends Record<string, unknown> = {},
+> {
+  readonly #db: Database
+  readonly #character: Character
+  readonly entityName: Entity
+  readonly #entryClass: CharacterRatedEntryConstructor<Entity, T>
+  @observable accessor #rated: Record<string, T> = {}
+
+  constructor(
+    db: Database,
+    character: Character,
+    entityName: Entity,
+    entryClass: CharacterRatedEntryConstructor<Entity, T>,
+  ) {
+    this.#db = db
+    this.#character = character
+    this.entityName = entityName
+    this.#entryClass = entryClass
+  }
+
+  getById(id: string): T | undefined {
+    return get(this.#rated, id)
+  }
+
+  getByIdSafe(id: string): T {
+    return this.getById(id) ?? this.#createEmptyWithoutDBEntry(id)
+  }
+
+  getValueById(id: string): number {
+    return this.getById(id)?.value ?? this.#entryClass.minValue
+  }
+
+  abstract getAdditionalValuesForDisplay(_entry: T): AdditionalValues
+
+  @computed
+  get entries() {
+    return this.#db
+      .getAllInstanceContainersOfEntity(this.entityName)
+      .map((container): DisplayedRated<EntityMap[Entity]> & AdditionalValues => {
+        const entry =
+          this.getByIdSafe(container.id) ?? this.#createEmpty(container.id, container.content)
+
+        return Object.assign({}, entry.toJSON(), this.getAdditionalValuesForDisplay(entry))
+      })
+  }
+
+  @computed
+  get adventurePointsTotal() {
+    return Object.values(this.#rated).reduce(
+      (acc, entry) => addAdventurePointsCaches(acc, entry.adventurePoints),
+      emptyAdventurePointsCache,
+    )
+  }
+
+  #createEmpty(id: string, dbEntry: EntityMap[Entity] | undefined): T {
+    if (!dbEntry) {
+      throw new Error(`Entry with id ${id} not provided.`)
+    }
+    return new this.#entryClass(
+      this.#character,
+      this.entityName,
+      id,
+      dbEntry,
+      this.#entryClass.minValue,
+      [],
+    )
+  }
+
+  #createEmptyWithoutDBEntry(id: string): T {
+    const dbEntry = this.#db.getInstanceOfEntityById(this.entityName, id)
+    return this.#createEmpty(id, dbEntry)
+  }
+
+  #ensureEntryExists(id: string): T {
+    if (!this.#rated[id]) {
+      this.#rated[id] = this.#createEmptyWithoutDBEntry(id)
+    }
+    return this.#rated[id]
+  }
+
+  @action
+  increment(id: string) {
+    this.#ensureEntryExists(id).increment()
+  }
+
+  @action
+  decrement(id: string) {
+    this.#ensureEntryExists(id).decrement()
+  }
+
+  @action
+  incrementToMax(id: string) {
+    this.#ensureEntryExists(id).incrementToMax()
+  }
+
+  @action
+  decrementToMin(id: string) {
+    this.#ensureEntryExists(id).decrementToMin()
+  }
 }
 
 /**

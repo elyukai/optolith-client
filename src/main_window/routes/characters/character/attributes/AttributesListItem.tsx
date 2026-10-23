@@ -22,9 +22,16 @@ export const AttributeListItem: FC<Props> = props => {
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
-  const translations = translateMap(attribute.translations)
+  const translations = translateMap(attribute.dbEntry.translations)
 
-  const { id, value, maxValue: maximum, isDecreasable, isIncreasable, color } = attribute
+  const {
+    id,
+    value,
+    maxValue: maximum,
+    isDecreasable,
+    isIncreasable,
+    dbEntry: { color },
+  } = attribute
 
   const valueHeader = isInCharacterCreation ? `${value} / ${maximum}` : value
 

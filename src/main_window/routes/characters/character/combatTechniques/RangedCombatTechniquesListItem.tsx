@@ -30,8 +30,7 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
     rangedCombatTechnique: {
       id,
       primaryAttributeValues,
-      improvement_cost,
-      translations,
+      dbEntry: { improvement_cost, translations },
       value,
       isIncreasable,
       isDecreasable,

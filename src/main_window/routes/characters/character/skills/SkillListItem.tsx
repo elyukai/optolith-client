@@ -30,9 +30,7 @@ const SkillListItem: React.FC<Props> = props => {
     skill: {
       id,
       skillCheckValues: check,
-      group,
-      improvement_cost,
-      translations,
+      dbEntry: { group, improvement_cost, translations },
       value,
       isIncreasable,
       isDecreasable,

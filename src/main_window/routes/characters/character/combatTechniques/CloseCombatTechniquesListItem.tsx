@@ -29,8 +29,7 @@ const CloseCombatTechniquesListItem: FC<Props> = props => {
     insertTopMargin,
     closeCombatTechnique: {
       id,
-      improvement_cost,
-      translations,
+      dbEntry: { improvement_cost, translations },
       value,
       isIncreasable,
       isDecreasable,

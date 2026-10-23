@@ -1,35 +1,20 @@
 import { isNotNullish } from "@elyukai/utils/nullable"
-import type { Attribute, Culture, Skill, SkillCheck, Skill_ID } from "@optolith/database-schema/gen"
-import { action, computed, get, observable } from "mobx"
+import type { ImprovementCost } from "@optolith/adventure-points/improvement-cost"
+import type { Attribute, Culture, Skill, SkillCheck } from "@optolith/database-schema/gen"
+import { computed } from "mobx"
 import type { Database } from "../../database.ts"
 import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
-import { addAdventurePointsCaches, emptyAdventurePointsCache } from "../adventurePoints/cache.ts"
-import type { BoundAdventurePointsForRated } from "../adventurePoints/ratedEntry.ts"
 import type { Character } from "../character.ts"
-import { CharacterRatedEntry, Rated, type DisplayedRated } from "./ratedEntry.ts"
+import {
+  CharacterRatedEntries,
+  CharacterRatedEntry,
+  Rated,
+  type DisplayedRated,
+} from "./ratedEntry.ts"
 
-export class CharacterSkill extends CharacterRatedEntry {
-  #character: Character
-
-  readonly dbEntry: Skill
-
-  constructor(
-    id: string,
-    dbEntry: Skill,
-    character: Character,
-    value: number,
-    boundAdventurePoints: BoundAdventurePointsForRated[],
-  ) {
-    super(() => this.dbEntry.improvement_cost.kind, id, value, boundAdventurePoints)
-    this.#character = character
-    this.dbEntry = dbEntry
-  }
-
-  static createEmpty(id: string, dbEntry: Skill | undefined, character: Character): CharacterSkill {
-    if (!dbEntry) {
-      throw new Error(`Skill with id ${id} not provided.`)
-    }
-    return new CharacterSkill(id, dbEntry, character, CharacterSkill.minValue, [])
+export class CharacterSkill extends CharacterRatedEntry<"Skill"> {
+  get improvementCost(): ImprovementCost {
+    return this.dbEntry.improvement_cost.kind
   }
 
   @computed
@@ -46,8 +31,8 @@ export class CharacterSkill extends CharacterRatedEntry {
   get maxValue() {
     const maximumValues = [
       Math.max(...this.skillCheckValues.map(scv => scv.value)) + 2,
-      this.#character.isInCharacterCreation
-        ? this.#character.experienceLevel.start?.max_skill_rating
+      this.character.isInCharacterCreation
+        ? this.character.experienceLevel.start?.max_skill_rating
         : undefined,
     ].filter(isNotNullish)
 
@@ -62,7 +47,7 @@ export class CharacterSkill extends CharacterRatedEntry {
   @computed
   get skillCheckValues() {
     return this.dbEntry.check.map(attributeId => {
-      const attribute = this.#character.attributes.getByIdSafe(attributeId)
+      const attribute = this.character.attributes.getByIdSafe(attributeId)
       return {
         id: attributeId,
         value: attribute.value,
@@ -75,84 +60,34 @@ export class CharacterSkill extends CharacterRatedEntry {
 /**
  * A combination of a static and corresponding dynamic skill entry, extended by value bounds and full logic for if the value can be increased or decreased.
  */
-export type DisplayedSkill = DisplayedRated &
-  Skill & {
-    skillCheckValues: { id: string; value: number; dbEntry: Attribute }[]
-    groupPosition: number
-  }
+export type DisplayedSkill = DisplayedRated<Skill> & {
+  skillCheckValues: { id: string; value: number; dbEntry: Attribute }[]
+  groupPosition: number
+}
 
-export class CharacterSkills {
+export class CharacterSkills extends CharacterRatedEntries<
+  "Skill",
+  CharacterSkill,
+  { skillCheckValues: { id: string; value: number; dbEntry: Attribute }[]; groupPosition: number }
+> {
   #db: Database
-  #character: Character
-  @observable accessor #skills: Record<string, CharacterSkill> = {}
 
   constructor(db: Database, character: Character) {
+    super(db, character, "Skill", CharacterSkill)
     this.#db = db
-    this.#character = character
   }
 
-  getById(id: Skill_ID): CharacterSkill | undefined {
-    return get(this.#skills, id)
-  }
-
-  getValueById(id: Skill_ID): number {
-    return this.getById(id)?.value ?? CharacterSkill.minValue
+  getAdditionalValuesForDisplay(entry: CharacterSkill) {
+    return {
+      skillCheckValues: entry.skillCheckValues,
+      groupPosition:
+        this.#db.getInstanceOfEntityById("SkillGroup", entry.dbEntry.group)?.position ?? 0,
+    }
   }
 
   @computed
   get skills() {
-    return this.#db.getAllInstanceContainersOfEntity("Skill").map((container): DisplayedSkill => {
-      const entry =
-        this.getById(container.id) ??
-        CharacterSkill.createEmpty(container.id, container.content, this.#character)
-
-      return {
-        ...entry.toJSON(),
-        ...container.content,
-        groupPosition:
-          this.#db.getInstanceOfEntityById("SkillGroup", container.content.group)?.position ?? 0,
-        skillCheckValues: entry.skillCheckValues,
-      }
-    })
-  }
-
-  @computed
-  get adventurePointsTotal() {
-    return Object.values(this.#skills).reduce(
-      (acc, entry) => addAdventurePointsCaches(acc, entry.adventurePoints),
-      emptyAdventurePointsCache,
-    )
-  }
-
-  #ensureEntryExists(id: Skill_ID): CharacterSkill {
-    if (!this.#skills[id]) {
-      this.#skills[id] = CharacterSkill.createEmpty(
-        id,
-        this.#db.getInstanceOfEntityById("Skill", id),
-        this.#character,
-      )
-    }
-    return this.#skills[id]
-  }
-
-  @action
-  increment(id: Skill_ID) {
-    this.#ensureEntryExists(id).increment()
-  }
-
-  @action
-  decrement(id: Skill_ID) {
-    this.#ensureEntryExists(id).decrement()
-  }
-
-  @action
-  incrementToMax(id: Skill_ID) {
-    this.#ensureEntryExists(id).incrementToMax()
-  }
-
-  @action
-  decrementToMin(id: Skill_ID) {
-    this.#ensureEntryExists(id).decrementToMin()
+    return this.entries
   }
 }
 

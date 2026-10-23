@@ -41,7 +41,7 @@ const isTopMarginNeeded = (
   sortOrder: SkillsSortOrder,
   curr: DisplayedSkill,
   mprev: DisplayedSkill | undefined,
-) => sortOrder === "group" && mprev !== undefined && curr.group !== mprev.group
+) => sortOrder === "group" && mprev !== undefined && curr.dbEntry.group !== mprev.dbEntry.group
 
 /**
  * Returns a page for managing skills.
@@ -74,23 +74,27 @@ export const Skills: FC = observer(() => {
       visibleSkills
         .filter(
           c =>
-            translateMap(c.translations)?.name.toLowerCase().includes(filterText.toLowerCase()) ??
-            false,
+            translateMap(c.dbEntry.translations)
+              ?.name.toLowerCase()
+              .includes(filterText.toLowerCase()) ?? false,
         )
         .sort(
           (() => {
             switch (sortOrder) {
               case SkillsSortOrder.Name:
-                return compareAt(c => translateMap(c.translations)?.name ?? "", localeCompare)
+                return compareAt(
+                  c => translateMap(c.dbEntry.translations)?.name ?? "",
+                  localeCompare,
+                )
               case SkillsSortOrder.Group:
                 return reduceCompare(
                   compareAt(c => c.groupPosition, numAsc),
-                  compareAt(c => translateMap(c.translations)?.name ?? "", localeCompare),
+                  compareAt(c => translateMap(c.dbEntry.translations)?.name ?? "", localeCompare),
                 )
               case SkillsSortOrder.ImprovementCost:
                 return reduceCompare(
-                  compareAt(c => fromRaw(c.improvement_cost), compareImprovementCost),
-                  compareAt(c => translateMap(c.translations)?.name ?? "", localeCompare),
+                  compareAt(c => fromRaw(c.dbEntry.improvement_cost), compareImprovementCost),
+                  compareAt(c => translateMap(c.dbEntry.translations)?.name ?? "", localeCompare),
                 )
               default:
                 return assertExhaustive(sortOrder)

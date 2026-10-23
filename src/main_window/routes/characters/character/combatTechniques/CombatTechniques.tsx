@@ -62,23 +62,27 @@ export const CombatTechniques: FC = observer(() => {
       visibleCombatTechniques
         .filter(
           c =>
-            translateMap(c.translations)?.name.toLowerCase().includes(filterText.toLowerCase()) ??
-            false,
+            translateMap(c.dbEntry.translations)
+              ?.name.toLowerCase()
+              .includes(filterText.toLowerCase()) ?? false,
         )
         .sort(
           (() => {
             switch (sortOrder) {
               case CombatTechniquesSortOrder.Name:
-                return compareAt(c => translateMap(c.translations)?.name ?? "", localeCompare)
+                return compareAt(
+                  c => translateMap(c.dbEntry.translations)?.name ?? "",
+                  localeCompare,
+                )
               case CombatTechniquesSortOrder.Group:
                 return reduceCompare(
                   compareAt(c => (c.type === "CloseCombatTechnique" ? 1 : 2), numAsc),
-                  compareAt(c => translateMap(c.translations)?.name ?? "", localeCompare),
+                  compareAt(c => translateMap(c.dbEntry.translations)?.name ?? "", localeCompare),
                 )
               case CombatTechniquesSortOrder.ImprovementCost:
                 return reduceCompare(
-                  compareAt(c => fromRaw(c.improvement_cost), compareImprovementCost),
-                  compareAt(c => translateMap(c.translations)?.name ?? "", localeCompare),
+                  compareAt(c => fromRaw(c.dbEntry.improvement_cost), compareImprovementCost),
+                  compareAt(c => translateMap(c.dbEntry.translations)?.name ?? "", localeCompare),
                 )
               default:
                 return assertExhaustive(sortOrder)
