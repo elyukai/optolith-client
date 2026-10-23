@@ -25,10 +25,10 @@ import config from "../database/contents/tsondb.config.ts"
 import { attachDatabaseEventsMain } from "../shared/database.ts"
 import { Characters } from "../shared/domain/character.ts"
 import type { CharacterIPCActions } from "../shared/ipc.ts"
-import { getGlobalSettings } from "../shared/settings/main.ts"
+import { globalSettings } from "../shared/settings/main.ts"
 import { attachStateActionHandlersToMain } from "../shared/state.ts"
 import { runAsync } from "../shared/utils/async.ts"
-import { getLocaleEnvironment } from "../shared/utils/locale.ts"
+import { LocaleEnvironment } from "../shared/utils/locale.ts"
 import { createMainWindow } from "./mainWindow.ts"
 import { setMenu } from "./menu.ts"
 import { handleNativeThemeChanges, setNativeTheme } from "./nativeTheme.ts"
@@ -63,13 +63,15 @@ if (settings === undefined) {
   throw new Error("Settings instance not found in database")
 }
 
-const characters = new Characters(db)
-
 const locales: Record<string, Locale> = Object.fromEntries(
   db
     .getAllInstanceContainersOfEntity("Locale")
     .map((localeContainer): [string, Locale] => [localeContainer.id, localeContainer.content]),
 )
+
+const localeEnvironment = new LocaleEnvironment(locales, globalSettings)
+
+const characters = new Characters(db, localeEnvironment)
 
 const setUserDataPath = async () => {
   debug("setting user data path ...")
@@ -105,8 +107,8 @@ app.whenReady().then(async () => {
     }
   })
 
-  setMenu(isMac, db, cache, locales, characters)
-  setNativeTheme(getGlobalSettings().theme)
+  setMenu(isMac, db, cache, locales, localeEnvironment, characters)
+  setNativeTheme(globalSettings.theme)
   const installUpdateInsteadOfStartup = await checkForUpdatesOnStartup(locales)
 
   debug("skip startup because of update?", installUpdateInsteadOfStartup ? "yes" : "no")
@@ -131,7 +133,9 @@ app.whenReady().then(async () => {
       "show-settings",
       runAsync(debug, async () => {
         debug("show settings")
-        await createSettingsWindow(locales, () => setMenu(isMac, db, cache, locales, characters))
+        await createSettingsWindow(locales, () =>
+          setMenu(isMac, db, cache, locales, localeEnvironment, characters),
+        )
       }),
     )
     ipcMain.on(
@@ -150,7 +154,7 @@ app.whenReady().then(async () => {
         publicationOptions: PublicationOptions,
       ) => {
         debug("generate entity description for entity %s with id %s", entity, id)
-        const setLocales = [getGlobalSettings().locale, getGlobalSettings().fallbackLocale].filter(
+        const setLocales = [globalSettings.locale, globalSettings.fallbackLocale].filter(
           isNotNullish,
         )
         if (!isNotEmpty(setLocales)) {
@@ -167,7 +171,7 @@ app.whenReady().then(async () => {
         return [
           getEntityDescription(
             db,
-            getLocaleEnvironment(locales, setLocales),
+            localeEnvironment.toObject(),
             settings,
             (parentId, optionid) =>
               cache.activatableSelectOptions[parentId.kind][fromUniformCase(parentId)]?.find(

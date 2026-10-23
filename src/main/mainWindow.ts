@@ -7,7 +7,7 @@ import * as path from "node:path"
 import type { ReadonlyTSONDB } from "tsondb/readonly"
 import { InitialSetupEventMessage } from "../main_window_preload/index.ts"
 import type { Characters } from "../shared/domain/character.ts"
-import { getGlobalSettings } from "../shared/settings/main.ts"
+import { globalSettings } from "../shared/settings/main.ts"
 import { attachStateSelectorsToWindow } from "../shared/state.ts"
 import { getWindowBackgroundColor } from "./nativeTheme.ts"
 
@@ -42,7 +42,7 @@ export const createMainWindow = async (
       center: true,
       title: "Optolith",
       acceptFirstMouse: true,
-      backgroundColor: getWindowBackgroundColor(getGlobalSettings().theme),
+      backgroundColor: getWindowBackgroundColor(globalSettings.theme),
       webPreferences: {
         preload: path.join(__dirname, "renderer_main_preload.cjs"),
       },
@@ -65,7 +65,7 @@ export const createMainWindow = async (
 
     debug("Loaded file")
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
 
     mainWindow.on("maximize", () => mainWindow?.webContents.send("maximize"))
     mainWindow.on("unmaximize", () => mainWindow?.webContents.send("unmaximize"))
@@ -104,7 +104,7 @@ export const createMainWindow = async (
       ]),
       cache,
       locales,
-      globalSettings: getGlobalSettings(),
+      globalSettings: globalSettings.toJSON(),
       systemLocale: app.getLocale(),
     }
 

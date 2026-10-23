@@ -5,9 +5,8 @@ import Debug from "debug"
 import { app, Menu, MenuItemConstructorOptions } from "electron/main"
 import type { ReadonlyTSONDB } from "tsondb/readonly"
 import type { Characters } from "../shared/domain/character.ts"
-import { getGlobalSettings } from "../shared/settings/main.ts"
 import { runAsync } from "../shared/utils/async.ts"
-import { createTranslate } from "../shared/utils/translate.ts"
+import type { LocaleEnvironment } from "../shared/utils/locale.ts"
 import { createMainWindow } from "./mainWindow.ts"
 import { createSettingsWindow } from "./settingsWindow.ts"
 
@@ -18,9 +17,10 @@ export const setMenu = (
   db: ReadonlyTSONDB<TSONDBTypes>,
   cache: Cache,
   locales: Record<string, Locale>,
+  localeEnvironment: LocaleEnvironment,
   characters: Characters,
 ) => {
-  const translate = createTranslate(locales, getGlobalSettings().locale, app.getLocale())
+  const { translate } = localeEnvironment
 
   const template: MenuItemConstructorOptions[] = [
     // { role: "appMenu" }
@@ -39,7 +39,7 @@ export const setMenu = (
                 accelerator: "Command+,",
                 click: runAsync(debug, async () => {
                   await createSettingsWindow(locales, () =>
-                    setMenu(isMac, db, cache, locales, characters),
+                    setMenu(isMac, db, cache, locales, localeEnvironment, characters),
                   )
                 }),
               },

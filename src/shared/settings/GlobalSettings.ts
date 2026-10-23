@@ -10,7 +10,7 @@ export enum Theme {
  * The global settings.
  */
 export type GlobalSettings = {
-  locale: string | undefined
+  locale: string
   fallbackLocale: string | undefined
   theme: Theme | undefined
   isEditAfterCreationEnabled: boolean

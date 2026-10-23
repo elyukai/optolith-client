@@ -5,7 +5,7 @@ import { CancellationToken, UpdateCheckResult, autoUpdater } from "electron-upda
 import * as path from "node:path"
 import * as url from "node:url"
 import appIconMacOS from "../assets/icon/AppIcon.icns"
-import { getGlobalSettings } from "../shared/settings/main.ts"
+import { globalSettings } from "../shared/settings/main.ts"
 import { InitialSetupEventMessage } from "../updater_window_preload/index.ts"
 import { getWindowBackgroundColor } from "./nativeTheme.ts"
 const debug = Debug("main:updater")
@@ -49,7 +49,7 @@ const createUpdaterWindow = async (locales: Record<string, Locale>) => {
     fullscreenable: false,
     maximizable: false,
     minimizable: false,
-    backgroundColor: getWindowBackgroundColor(getGlobalSettings().theme),
+    backgroundColor: getWindowBackgroundColor(globalSettings.theme),
   })
 
   await updaterWindow.loadURL(
@@ -62,7 +62,7 @@ const createUpdaterWindow = async (locales: Record<string, Locale>) => {
 
   const initialSetupEventMessage: InitialSetupEventMessage = {
     locales,
-    globalSettings: getGlobalSettings(),
+    globalSettings: globalSettings.toJSON(),
     systemLocale: app.getLocale(),
   }
 

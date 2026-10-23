@@ -8,7 +8,7 @@ import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import {
   attachGlobalSettingsBroadcastToWindow,
   attachGlobalSettingsChanged,
-  getGlobalSettings,
+  globalSettings,
 } from "../shared/settings/main.ts"
 import { getWindowBackgroundColor, setNativeTheme } from "./nativeTheme.ts"
 const debug = Debug("main:settings")
@@ -37,7 +37,7 @@ export const createSettingsWindow = async (
       center: true,
       title: "Optolith",
       acceptFirstMouse: true,
-      backgroundColor: getWindowBackgroundColor(getGlobalSettings().theme),
+      backgroundColor: getWindowBackgroundColor(globalSettings.theme),
       webPreferences: {
         preload: path.join(__dirname, "renderer_settings_preload.cjs"),
       },
@@ -89,7 +89,7 @@ export const createSettingsWindow = async (
     const initialSetupEventMessage: InitialSetupEventMessage = {
       locales,
       systemLocale: app.getLocale(),
-      settings: getGlobalSettings(),
+      settings: globalSettings.toJSON(),
     }
 
     settingsWindow.webContents.send("initial-setup", initialSetupEventMessage)

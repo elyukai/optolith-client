@@ -1,6 +1,6 @@
 import { BrowserWindow, nativeTheme } from "electron"
 import { Theme } from "../shared/settings/GlobalSettings.ts"
-import { getGlobalSettings } from "../shared/settings/main.ts"
+import { globalSettings } from "../shared/settings/main.ts"
 import { assertExhaustive } from "../shared/utils/typeSafety.ts"
 
 /**
@@ -58,6 +58,6 @@ export const setBackgroundColorForAllWindows = (theme: Theme | undefined) => {
  */
 export const handleNativeThemeChanges = () => {
   nativeTheme.on("updated", () => {
-    setBackgroundColorForAllWindows(getGlobalSettings().theme)
+    setBackgroundColorForAllWindows(globalSettings.theme)
   })
 }
