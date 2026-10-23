@@ -8,7 +8,7 @@ export type FocusRuleInstance = {
   /**
    * The focus rule identifier.
    */
-  id: number
+  id: string
 
   active: boolean
 
@@ -21,7 +21,7 @@ export type FocusRuleInstance = {
 /**
  * Creates an instance of a focus rule.
  */
-export const createFocusRule = (id: number): FocusRuleInstance => ({
+export const createFocusRule = (id: string): FocusRuleInstance => ({
   id,
   active: false,
   dependencies: [],

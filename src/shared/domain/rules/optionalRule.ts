@@ -8,7 +8,7 @@ export type OptionalRuleInstance = {
   /**
    * The optional rule identifier.
    */
-  id: number
+  id: string
 
   active: boolean
 
@@ -26,7 +26,7 @@ export type OptionalRuleInstance = {
 /**
  * Creates an instance of an optional rule.
  */
-export const createOptionalRule = (id: number): OptionalRuleInstance => ({
+export const createOptionalRule = (id: string): OptionalRuleInstance => ({
   id,
   active: false,
   dependencies: [],
@@ -37,5 +37,5 @@ export const createOptionalRule = (id: number): OptionalRuleInstance => ({
  */
 export const isOptionalRuleActive = (
   getDynamicOptionalRuleById: GetById.Dynamic.OptionalRule,
-  optionalRuleId: number,
+  optionalRuleId: string,
 ): boolean => getDynamicOptionalRuleById(optionalRuleId)?.active ?? false

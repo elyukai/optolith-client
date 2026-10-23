@@ -1,79 +1,57 @@
-import {
-  OptionalRule,
-  OptionalRuleTranslation,
-} from "@optolith/database-schema/gen"
+import { OptionalRuleTranslation } from "@optolith/database-schema/gen"
 import { FC, useCallback } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
-import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
-import { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
-import { OptionalRuleIdentifier } from "../../../../../shared/domain/identifier.ts"
-import { isOptionalRuleActive } from "../../../../../shared/domain/rules/optionalRule.ts"
+import type { CharacterOptionalRuleOverview } from "../../../../../shared/domain/rules.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
-import { changeInlineLibraryEntry } from "../../../../slices/inlineWikiSlice.ts"
-import { changeOptionalRuleOption, switchOptionalRule } from "../../../../slices/rulesSlice.ts"
+import { ExternalAPI } from "../../../../external.ts"
+import { InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
 
 type Props = {
-  optionalRule: {
-    optionalRule: OptionalRule
+  optionalRule: CharacterOptionalRuleOverview & {
     optionalRuleTranslation: OptionalRuleTranslation
   }
 }
 
-const getKey = (option: DropdownOption<number>) => option.id
+// const getKey = (option: DropdownOption<number>) => option.id
 
 /**
  * Returns a single optional rule item.
  */
 export const OptionalRulesItem: FC<Props> = props => {
   const {
-    optionalRule: { optionalRule, optionalRuleTranslation },
+    optionalRule: { id, optionalRuleTranslation, active, disabled },
   } = props
 
-  const dispatch = useAppDispatch()
   const translate = useTranslate()
-  const getDynamicOptionalRuleById = useAppSelector(SelectGetById.Dynamic.OptionalRule)
-
-  const handleSwitch = useCallback(
-    () => dispatch(switchOptionalRule(optionalRule.id)),
-    [dispatch, optionalRule.id],
-  )
-
+  const handleSwitch = useCallback(() => ExternalAPI.execute("toggleOptionalRule", id), [id])
   const handleChangeInlineLibraryEntry = useCallback(
-    () =>
-      dispatch(
-        changeInlineLibraryEntry({
-          tag: "OptionalRule",
-          optional_rule: optionalRule.id,
-        }),
-      ),
-    [dispatch, optionalRule.id],
+    () => InlineLibraryManager.instance.goTo(["OptionalRule", id]),
+    [id],
   )
 
-  const handleChangeOption = useCallback(
-    (option: number) =>
-      dispatch(
-        changeOptionalRuleOption({
-          id: optionalRule.id,
-          option,
-        }),
-      ),
-    [dispatch, optionalRule.id],
-  )
+  // const handleChangeOption = useCallback(
+  //   (option: number) =>
+  //     dispatch(
+  //       changeOptionalRuleOption({
+  //         id: optionalRule.id,
+  //         option,
+  //       }),
+  //     ),
+  //   [dispatch, optionalRule.id],
+  // )
 
-  const isActive = isOptionalRuleActive(getDynamicOptionalRuleById, optionalRule.id)
+  // const isActive = isOptionalRuleActive(getDynamicOptionalRuleById, optionalRule.id)
 
   return (
     <li>
       <Checkbox
-        checked={isActive}
+        checked={active}
         onClick={handleSwitch}
         label={optionalRuleTranslation.name}
-        disabled={optionalRule.is_missing_implementation}
+        disabled={disabled}
       />
-      {optionalRule.id === OptionalRuleIdentifier.HigherDefenseStats ? (
+      {/* TODO: optionalRule.id === OptionalRuleIdentifier.HigherDefenseStats ? (
         <Dropdown
           options={[
             { id: 2, name: "+2" },
@@ -84,7 +62,7 @@ export const OptionalRulesItem: FC<Props> = props => {
           disabled={!isActive}
           getKey={getKey}
         />
-      ) : null}
+      ) : null */}
       <IconButton
         icon="&#xE912;"
         label={translate("Show details")}

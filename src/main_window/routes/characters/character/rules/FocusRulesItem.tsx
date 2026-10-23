@@ -1,17 +1,14 @@
-import { FocusRule, FocusRuleTranslation } from "@optolith/database-schema/gen"
+import { FocusRuleTranslation } from "@optolith/database-schema/gen"
 import { FC, useCallback } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
-import { isFocusRuleActive } from "../../../../../shared/domain/rules/focusRule.ts"
+import type { CharacterFocusRuleOverview } from "../../../../../shared/domain/rules.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
-import { changeInlineLibraryEntry } from "../../../../slices/inlineWikiSlice.ts"
-import { switchFocusRule } from "../../../../slices/rulesSlice.ts"
+import { ExternalAPI } from "../../../../external.ts"
+import { InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
 
 type Props = {
-  focusRule: {
-    focusRule: FocusRule
+  focusRule: CharacterFocusRuleOverview & {
     focusRuleTranslation: FocusRuleTranslation
   }
 }
@@ -21,30 +18,23 @@ type Props = {
  */
 export const FocusRulesItem: FC<Props> = props => {
   const {
-    focusRule: { focusRule, focusRuleTranslation },
+    focusRule: { id, focusRuleTranslation, active, disabled },
   } = props
 
-  const dispatch = useAppDispatch()
   const translate = useTranslate()
-  const getDynamicFocusRuleById = useAppSelector(SelectGetById.Dynamic.FocusRule)
-
-  const handleSwitch = useCallback(
-    () => dispatch(switchFocusRule(focusRule.id)),
-    [dispatch, focusRule.id],
-  )
-
+  const handleSwitch = useCallback(() => ExternalAPI.execute("toggleFocusRule", id), [id])
   const handleChangeInlineLibraryEntry = useCallback(
-    () => dispatch(changeInlineLibraryEntry({ tag: "FocusRule", focus_rule: focusRule.id })),
-    [dispatch, focusRule.id],
+    () => InlineLibraryManager.instance.goTo(["FocusRule", id]),
+    [id],
   )
 
   return (
     <li>
       <Checkbox
-        checked={isFocusRuleActive(getDynamicFocusRuleById, focusRule.id)}
+        checked={active}
         onClick={handleSwitch}
         label={focusRuleTranslation.name}
-        disabled
+        disabled={disabled}
       />
       <IconButton
         icon="&#xE912;"

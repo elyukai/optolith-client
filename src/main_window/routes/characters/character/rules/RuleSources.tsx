@@ -1,64 +1,63 @@
-import {
-  Publication,
-  PublicationTranslation,
-} from "@optolith/database-schema/gen"
+import { compareNumber } from "@elyukai/utils/ordering"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { PublicationTranslation, type PublicationCategory } from "@optolith/database-schema/gen"
+import { observer } from "mobx-react"
 import { FC, useCallback, useMemo } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
+import type { CharacterPublicationOverview } from "../../../../../shared/domain/rules.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { compareAt, reduceCompare } from "../../../../../shared/utils/compare.ts"
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { selectIncludeAllPublications } from "../../../../slices/characterSlice.ts"
-import { selectStaticPublications } from "../../../../slices/databaseSlice.ts"
-import { switchIncludeAllPublications } from "../../../../slices/rulesSlice.ts"
+import { ExternalAPI, SharedState } from "../../../../external.ts"
+import { useAppDispatch } from "../../../../hooks/redux.ts"
 import { RuleSourcesListItem } from "./RuleSourcesListItem.tsx"
+
+const publicationCategoryToNumber = (category: PublicationCategory): number => {
+  switch (category.kind) {
+    case "CoreRules":
+      return 0
+    case "Adventure":
+    case "ExpansionRules":
+    case "RegionalSourcebook":
+    case "Sourcebook":
+      return 1
+    default:
+      return assertExhaustive(category)
+  }
+}
 
 /**
  * Returns a page section for managing the publications to use for a character.
  */
-export const RuleSources: FC = () => {
+export const RuleSources: FC = observer(() => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
   const localeCompare = useLocaleCompare()
 
-  const includeAllPublications = useAppSelector(selectIncludeAllPublications)
-
-  const publications = useAppSelector(selectStaticPublications)
   const publicationOptions = useMemo(
     () =>
-      Object.values(publications)
-        .map(x => ({ publication: x, publicationTranslation: translateMap(x.translations) }))
+      SharedState.publications
+        .map(x => ({ ...x, publicationTranslation: translateMap(x.dbEntry.translations) }))
         .filter(
           (
             x,
-          ): x is {
-            publication: Publication
+          ): x is CharacterPublicationOverview & {
             publicationTranslation: PublicationTranslation
           } => x.publicationTranslation !== undefined,
         )
-        .sort(
+        .toSorted(
           reduceCompare(
-            compareAt(
-              x => x.publication.category,
-              (a, b) =>
-                a === "CoreRules" && b === "CoreRules"
-                  ? 0
-                  : a === "CoreRules"
-                  ? -1
-                  : b === "CoreRules"
-                  ? 1
-                  : 0,
-            ),
-            compareAt(x => translateMap(x.publication.translations)?.name ?? "", localeCompare),
+            compareAt(x => publicationCategoryToNumber(x.dbEntry.category), compareNumber),
+            compareAt(x => x.publicationTranslation.name, localeCompare),
           ),
         ),
-    [localeCompare, publications, translateMap],
+    [localeCompare, SharedState.publications, translateMap],
   )
 
   const handleSwitchIncludeAllPublications = useCallback(
-    () => dispatch(switchIncludeAllPublications()),
+    () => ExternalAPI.execute("toggleIncludeAllPublications"),
     [dispatch],
   )
 
@@ -66,15 +65,15 @@ export const RuleSources: FC = () => {
     <>
       <h2>{translate("Rule Sources")}</h2>
       <Checkbox
-        checked={includeAllPublications ?? false}
+        checked={SharedState.includeAllPublications}
         onClick={handleSwitchIncludeAllPublications}
         label={translate("Use all publications")}
       />
       <div className="rule-books">
         {publicationOptions.map(e => (
-          <RuleSourcesListItem key={e.publication.id} publication={e} />
+          <RuleSourcesListItem key={e.id} publication={e} />
         ))}
       </div>
     </>
   )
-}
+})

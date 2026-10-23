@@ -1,58 +1,42 @@
-import type {
-  DerivedCharacteristic_ID,
-  Skill_ID,
-  SpecialAbilityIdentifier,
-} from "@optolith/database-schema/gen"
-import type {
-  DisplayedActiveActivatable,
-  DisplayedInactiveActivatable,
-} from "./domain/activatable/activatableEntry.ts"
-import type { AdventurePointsStats } from "./domain/character.ts"
-import type { DisplayedDerivedCharacteristic } from "./domain/energy.ts"
-import type { DisplayedAttribute } from "./domain/rated/attribute.ts"
-import type { DisplayedCombatTechnique } from "./domain/rated/combatTechnique.ts"
-import type { DisplayedSkill } from "./domain/rated/skill.ts"
+import type * as Gen from "@optolith/database-schema/gen"
+import type { Character } from "./domain/character.ts"
 
 export type CharacterIPCActions = {
-  incrementDerivedCharacteristic: (id: DerivedCharacteristic_ID) => void
-  decrementDerivedCharacteristic: (id: DerivedCharacteristic_ID) => void
+  toggleIncludeAllPublications: () => void
+  togglePublication: (id: Gen.Publication_ID) => void
+  toggleFocusRule: (id: Gen.FocusRule_ID) => void
+  toggleOptionalRule: (id: Gen.OptionalRule_ID) => void
+  incrementDerivedCharacteristic: (id: Gen.DerivedCharacteristic_ID) => void
+  decrementDerivedCharacteristic: (id: Gen.DerivedCharacteristic_ID) => void
   incrementRated: (
     entity: "Attribute" | "Skill" | "CloseCombatTechnique" | "RangedCombatTechnique",
-    id: Skill_ID,
+    id: Gen.Skill_ID,
   ) => void
   decrementRated: (
     entity: "Attribute" | "Skill" | "CloseCombatTechnique" | "RangedCombatTechnique",
-    id: Skill_ID,
+    id: Gen.Skill_ID,
   ) => void
   incrementRatedToMax: (
     entity: "Attribute" | "Skill" | "CloseCombatTechnique" | "RangedCombatTechnique",
-    id: Skill_ID,
+    id: Gen.Skill_ID,
   ) => void
   decrementRatedToMin: (
     entity: "Attribute" | "Skill" | "CloseCombatTechnique" | "RangedCombatTechnique",
-    id: Skill_ID,
+    id: Gen.Skill_ID,
   ) => void
 }
 
+type Selectors = Character["selectors"]
+
 export type CharacterIPCSelectors = {
-  isInCharacterCreation: boolean
-  canRemove: boolean
-  adventurePointsStats: AdventurePointsStats
-  attributes: DisplayedAttribute[]
-  attributesTotal: number
-  derivedCharacteristics: DisplayedDerivedCharacteristic[]
-  activeAdvantages: DisplayedActiveActivatable<"Advantage">[]
-  inactiveAdvantages: DisplayedInactiveActivatable<"Advantage">[]
-  activeDisadvantages: DisplayedActiveActivatable<"Disadvantage">[]
-  inactiveDisadvantages: DisplayedInactiveActivatable<"Disadvantage">[]
-  skills: DisplayedSkill[]
-  closeCombatTechniques: DisplayedCombatTechnique<"CloseCombatTechnique">[]
-  rangedCombatTechniques: DisplayedCombatTechnique<"RangedCombatTechnique">[]
-  activeSpecialAbilities: DisplayedActiveActivatable<SpecialAbilityIdentifier["kind"]>[]
-  inactiveSpecialAbilities: DisplayedInactiveActivatable<SpecialAbilityIdentifier["kind"]>[]
+  [K in keyof Selectors]: ReturnType<Selectors[K]>
 }
 
 export const defaultCharacterIPCSelectors: CharacterIPCSelectors = {
+  includeAllPublications: false,
+  publications: [],
+  focusRules: [],
+  optionalRules: [],
   isInCharacterCreation: false,
   canRemove: false,
   adventurePointsStats: {

@@ -1,47 +1,35 @@
-import {
-  OptionalRule,
-  OptionalRuleTranslation,
-} from "@optolith/database-schema/gen"
+import { OptionalRuleTranslation } from "@optolith/database-schema/gen"
+import { observer } from "mobx-react"
 import { FC, useMemo } from "react"
-import { isOptionalRuleActive } from "../../../../../shared/domain/rules/optionalRule.ts"
+import type { CharacterOptionalRuleOverview } from "../../../../../shared/domain/rules.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { compareAt } from "../../../../../shared/utils/compare.ts"
-import { useIsEntryAvailable } from "../../../../hooks/isAvailable.ts"
-import { useAppSelector } from "../../../../hooks/redux.ts"
-import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
-import { selectStaticOptionalRules } from "../../../../slices/databaseSlice.ts"
+import { SharedState } from "../../../../external.ts"
 import { OptionalRulesItem } from "./OptionalRulesItem.tsx"
 
 /**
  * Returns a page section for managing optional rules.
  */
-export const OptionalRules: FC = () => {
+export const OptionalRules: FC = observer(() => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const localeCompare = useLocaleCompare()
-  const isEntryAvailable = useIsEntryAvailable()
 
-  const optionalRules = useAppSelector(selectStaticOptionalRules)
-  const getDynamicOptionalRuleById = useAppSelector(SelectGetById.Dynamic.OptionalRule)
   const optionalRuleOptions = useMemo(
     () =>
-      Object.values(optionalRules)
-        .filter(
-          x => isEntryAvailable(x.src) || isOptionalRuleActive(getDynamicOptionalRuleById, x.id),
-        )
-        .map(x => ({ optionalRule: x, optionalRuleTranslation: translateMap(x.translations) }))
+      SharedState.optionalRules
+        .map(x => ({ ...x, optionalRuleTranslation: translateMap(x.dbEntry.translations) }))
         .filter(
           (
             x,
-          ): x is {
-            optionalRule: OptionalRule
+          ): x is CharacterOptionalRuleOverview & {
             optionalRuleTranslation: OptionalRuleTranslation
           } => x.optionalRuleTranslation !== undefined,
         )
-        .sort(compareAt(x => translateMap(x.optionalRule.translations)?.name ?? "", localeCompare)),
-    [optionalRules, localeCompare, isEntryAvailable, getDynamicOptionalRuleById, translateMap],
+        .sort(compareAt(x => x.optionalRuleTranslation.name, localeCompare)),
+    [SharedState.optionalRules, localeCompare, translateMap],
   )
 
   // const higherParadeValues = Rules.A.higherParadeValues(rules)
@@ -63,9 +51,9 @@ export const OptionalRules: FC = () => {
       <h2>{translate("Optional Rules")}</h2>
       <ul className="optional-rules">
         {optionalRuleOptions.map(optionalRule => (
-          <OptionalRulesItem key={optionalRule.optionalRule.id} optionalRule={optionalRule} />
+          <OptionalRulesItem key={optionalRule.id} optionalRule={optionalRule} />
         ))}
       </ul>
     </>
   )
-}
+})

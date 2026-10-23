@@ -1,8 +1,7 @@
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import { computed, observable } from "mobx"
 import type { Database } from "../database.ts"
-import type { CharacterIPCActions, CharacterIPCSelectors } from "../ipc.ts"
-import type { StateActionsAsParameters, StateSelectors } from "../state.ts"
+import type { LocaleEnvironment } from "../utils/locale.ts"
 import {
   ActivatableMap,
   CharacterActivatables,
@@ -80,8 +79,8 @@ export class Character {
 
   readonly specialAbilities: CharacterSpecialAbilities
 
-  constructor(db: Database) {
-    this.rules = new CharacterRules(db, this, false, [])
+  constructor(localeEnvironment: LocaleEnvironment, db: Database) {
+    this.rules = new CharacterRules(db, this, localeEnvironment, false, [])
     this.isCharacterCreationFinished = false
     this.totalAdventurePoints = 1100
     this.experienceLevel = new CharacterExperienceLevel(
@@ -159,6 +158,18 @@ export class Character {
 
   handleIPCAction(...args: StateActionsAsParameters<CharacterIPCActions>) {
     switch (args[0]) {
+      case "toggleIncludeAllPublications":
+        this.rules.toggleIncludeAllPublications()
+        break
+      case "togglePublication":
+        this.rules.togglePublication(args[1][0])
+        break
+      case "toggleFocusRule":
+        this.rules.toggleFocusRule(args[1][0])
+        break
+      case "toggleOptionalRule":
+        this.rules.toggleOptionalRule(args[1][0])
+        break
       case "incrementRated":
         switch (args[1][0]) {
           case "Attribute":
@@ -242,8 +253,12 @@ export class Character {
     }
   }
 
-  get selectors(): StateSelectors<CharacterIPCSelectors> {
+  get selectors() {
     return {
+      includeAllPublications: () => this.rules.includeAllPublications,
+      publications: () => this.rules.publications,
+      focusRules: () => this.rules.focusRules,
+      optionalRules: () => this.rules.optionalRules,
       canRemove: () => this.canRemove,
       isInCharacterCreation: () => this.isInCharacterCreation,
       adventurePointsStats: () => this.adventurePointsStats,
@@ -289,9 +304,14 @@ export type AdventurePointsStats = {
 export class Characters {
   @observable accessor characters: Record<string, Character>
 
-  constructor(db: Database) {
+  constructor(db: Database, localeEnvironment: LocaleEnvironment) {
     this.characters = {
-      "550e8400-e29b-11d4-a716-446655440000": new Character(db),
+      "550e8400-e29b-11d4-a716-446655440000": new Character(
+        localeEnvironment,
+        db,
+        this,
+        "550e8400-e29b-11d4-a716-446655440000",
+      ),
     }
   }
 
