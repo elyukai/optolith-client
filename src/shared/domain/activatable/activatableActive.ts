@@ -6,166 +6,22 @@
 //  * @since 1.1.0
 //  */
 
-import type { ResolvedSelectOption } from "@optolith/database-schema/cache"
+import { ensure } from "@elyukai/utils/nullable"
+import type { RangeBounds } from "@elyukai/utils/range"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type { ActivatableIdentifier, ExperienceLevel } from "@optolith/database-schema/gen"
 import type {
-  ActivatableIdentifier,
-  AdventurePointsValue,
-  ExperienceLevel,
-} from "@optolith/database-schema/gen"
-import { count, sum, sumWith } from "../../utils/array.ts"
-import { not } from "../../utils/function.ts"
-import { ensure, isNotNullish } from "../../utils/nullable.ts"
-import { mapObject } from "../../utils/object.ts"
-import { RangeBounds } from "../../utils/range.ts"
-import { romanize } from "../../utils/roman.ts"
-import { Translate, TranslateMap, type LocaleMap } from "../../utils/translate.ts"
-import { assertExhaustive } from "../../utils/typeSafety.ts"
-import { FilterApplyingActivatableDependencies } from "../dependencies/filterApplyingDependencies.ts"
-import { GetById } from "../getTypes.ts"
+  ActivatableNameChunk,
+  ActivatableNameComponents,
+} from "@optolith/entity-descriptions/entities/partial/activatableNameChunks"
+import type { Character } from "../character.ts"
+import type { Case } from "../databaseEnum.ts"
+import type { CharacterActivatableInstance, RawActivatableInstance } from "./activatable.ts"
 import {
-  AdvantageIdentifier,
-  DisadvantageIdentifier,
-  GeneralSpecialAbilityIdentifier,
-  MagicalSpecialAbilityIdentifier,
-  createIdentifierObject,
-  equalsIdentifier,
-} from "../identifier.ts"
-import { getCombatTechniqueValue } from "../rated/combatTechnique.ts"
-import { getLiturgicalChantValue } from "../rated/liturgicalChant.ts"
-import { getSkillValue } from "../rated/skill.ts"
-import { getSpellValue } from "../rated/spell.ts"
-import {
-  ActivatableDependency,
   appliesToInstanceStrict,
   isGeneralDependency,
+  type ActivatableDependency,
 } from "./activatableDependency.ts"
-import {
-  Activatable,
-  ActivatableInstance,
-  countOptions,
-  hasCustomAdventurePointsValue,
-  isPredefinedActivatableOption,
-  matchesOptionId,
-} from "./activatableEntry.ts"
-import { getMaximumLevel } from "./activatableInactive.ts"
-
-// import { ActivatableCategory, Category } from "../../../App/Constants/Categories.ts"
-// import { ActivatableDependent } from "../../../App/Models/ActiveEntries/ActivatableDependent.ts"
-// import { ActiveObjectWithId } from "../../../App/Models/ActiveEntries/ActiveObjectWithId.ts"
-// import { HeroModel, HeroModelRecord } from "../../../App/Models/Hero/HeroModel.ts"
-// import { ActivatableActivationValidation } from "../../../App/Models/View/ActivatableActivationValidationObject.ts"
-// import { ActivatableCombinedName } from "../../../App/Models/View/ActivatableCombinedName.ts"
-// import {
-//   ActivatableNameCost,
-//   ActivatableNameCostSafeCost,
-// } from "../../../App/Models/View/ActivatableNameCost.ts"
-// import { ActiveActivatable } from "../../../App/Models/View/ActiveActivatable.ts"
-// import { Advantage } from "../../../App/Models/Wiki/Advantage.ts"
-// import { Disadvantage } from "../../../App/Models/Wiki/Disadvantage.ts"
-// import { SpecialAbility } from "../../../App/Models/Wiki/SpecialAbility.ts"
-// import { StaticData, StaticDataRecord } from "../../../App/Models/Wiki/WikiModel.ts"
-// import { WikiEntryByCategory } from "../../../App/Models/Wiki/wikiTypeHelpers.ts"
-// import { MatchingScriptAndLanguageRelated } from "../../../App/Selectors/activatableSelectors.ts"
-// import { getActiveFromState } from "../../../App/Utilities/Activatable/activatableConvertUtils.ts"
-// import { getName } from "../../../App/Utilities/Activatable/activatableNameUtils.ts"
-// import {
-//   convertPerTierCostToFinalCost,
-//   getCost,
-// } from "../../../App/Utilities/AdventurePoints/activatableCostUtils.ts"
-// import { pipe_ } from "../../../App/Utilities/pipe.ts"
-// import { fmap } from "../../../Data/Functor.ts"
-// import { List } from "../../../Data/List.ts"
-// import { bind, liftM2, mapMaybe, Maybe } from "../../../Data/Maybe.ts"
-// import { lookup, OrderedMap } from "../../../Data/OrderedMap.ts"
-// import { Record } from "../../../Data/Record.ts"
-// import { fst, Pair, snd } from "../../../Data/Tuple.ts"
-// import { getIsRemovalOrChangeDisabled } from "./activatableActiveValidationUtils"
-
-// const SDA = StaticData.A
-// const HA = HeroModel.A
-
-// /**
-//  * Takes an Activatable category and a hero and returns the state slice matching
-//  * the passed category.
-//  */
-// export const getActivatableHeroSliceByCategory =
-//   (category: ActivatableCategory) =>
-//   (hero: HeroModelRecord): OrderedMap<string, Record<ActivatableDependent>> =>
-//     category === Category.ADVANTAGES
-//       ? HA.advantages(hero)
-//       : category === Category.DISADVANTAGES
-//       ? HA.disadvantages(hero)
-//       : HA.specialAbilities(hero)
-
-// type ActivatableWikiSliceByCategory<A extends ActivatableCategory> = A extends Category.ADVANTAGES
-//   ? Record<Advantage>
-//   : A extends Category.ADVANTAGES
-//   ? Record<Disadvantage>
-//   : Record<SpecialAbility>
-
-// /**
-//  * Takes an Activatable category and a hero and returns the state slice matching
-//  * the passed category.
-//  */
-// export const getActivatableWikiSliceByCategory =
-//   <A extends ActivatableCategory>(category: A) =>
-//   (wiki: StaticDataRecord): OrderedMap<string, ActivatableWikiSliceByCategory<A>> =>
-//     category === Category.ADVANTAGES
-//       ? (SDA.advantages(wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>)
-//       : category === Category.DISADVANTAGES
-//       ? (SDA.disadvantages(wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>)
-//       : (SDA.specialAbilities(wiki) as OrderedMap<string, ActivatableWikiSliceByCategory<A>>)
-
-// /**
-//  * Returns name, splitted and combined, as well as the AP you get when removing
-//  * the ActiveObject.
-//  * @param obj The ActiveObject with origin id.
-//  * @param wiki The wiki state.
-//  * @param state The current hero's state.
-//  * @param isEntryToAdd If the cost are going to be added or removed from AP left.
-//  * @param locale The locale-dependent messages.
-//  */
-// export const getNameCost =
-//   (isEntryToAdd: boolean) =>
-//   (automatic_advantages: List<string>) =>
-//   (staticData: StaticDataRecord) =>
-//   (hero: HeroModelRecord) =>
-//   (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableNameCost>> =>
-//     liftM2(
-//       (finalCost: Pair<number | List<number>, boolean>) =>
-//         (naming: Record<ActivatableCombinedName>) =>
-//           ActivatableNameCost({
-//             naming,
-//             active: entry,
-//             finalCost: fst(finalCost),
-//             isAutomatic: snd(finalCost),
-//           }),
-//     )(getCost(isEntryToAdd)(automatic_advantages)(staticData)(hero)(entry))(
-//       getName(staticData)(entry),
-//     )
-
-// /**
-//  * Returns name, splitted and combined, as well as the AP you get when removing
-//  * the ActiveObject.
-//  * @param obj The ActiveObject with origin id.
-//  * @param wiki The wiki state.
-//  * @param l10n The locale-dependent messages.
-//  */
-// export const getNameCostForWiki =
-//   (staticData: StaticDataRecord) =>
-//   (active: Record<ActiveObjectWithId>): Maybe<Record<ActivatableNameCost>> =>
-//     liftM2(
-//       (finalCost: Pair<number | List<number>, boolean>) =>
-//         (naming: Record<ActivatableCombinedName>) =>
-//           ActivatableNameCost({
-//             active,
-//             naming,
-//             finalCost: fst(finalCost),
-//             isAutomatic: snd(finalCost),
-//           }),
-//     )(getCost(true)(List())(staticData)(HeroModel.default)(active))(getName(staticData)(active))
-
-//// Validation
 
 // const isStyleSpecialAbilityRemovalDisabled =
 //   (hero: HeroModelRecord) =>
@@ -173,38 +29,22 @@ import { getMaximumLevel } from "./activatableInactive.ts"
 //     SpecialAbility.is(wiki_entry) && !isStyleValidToRemove(hero)(Just(wiki_entry))
 
 /**
- * A combination of a static activatable entry and its dynamic counterpart,
- * extended by which activation/instance of the entry it represents.
- */
-export type DisplayedActiveActivatable<K extends string, T> = {
-  kind: K
-  static: T
-  dynamic: Activatable
-  instanceIndex: number
-  isRemovable: boolean
-  minLevel?: number
-  maxLevel?: number
-  cost: DisplayedActiveActivatableCost
-  name: ActivatableNameComponents
-}
-
-/**
  * The cost of an activatable instance. It may be fix or varies depending on
  * other instances.
  */
 export type DisplayedActiveActivatableCost =
-  | DisplayedFixActiveActivatableCost
-  | DisplayedVariableActiveActivatableCost
+  | Case<"Fixed", number>
+  | Case<"Range", { min: number; max: number; total: number; diffWhenRemoved: number }>
 
 /**
  * Returns the cost difference when removing the instance.
  */
 export const getCostDifferenceOnRemove = (cost: DisplayedActiveActivatableCost): number => {
   switch (cost.kind) {
-    case "fix":
-      return cost.fix
-    case "variable":
-      return cost.differenceOnRemove
+    case "Fixed":
+      return cost.Fixed
+    case "Range":
+      return cost.Range.diffWhenRemoved
     default:
       return assertExhaustive(cost)
   }
@@ -233,26 +73,13 @@ export type DisplayedVariableActiveActivatableCost = {
 /**
  * Returns the full name of the activatable entry as well as its components.
  */
-export type ActivatableNameComponents = {
+export type ActivatableNameComponentsWithFull = ActivatableNameComponents & {
   full: ActivatableNameChunk
-  fullWithoutLevel: ActivatableNameChunk | [ActivatableNameChunk, ActivatableNameChunk]
-  base: ActivatableNameChunk
-  options: (ActivatableNameChunk | [ActivatableNameChunk, ActivatableNameChunk])[]
+  fullWithoutLevel: [ActivatableNameChunk, ActivatableNameChunk?]
 }
 
-/**
- * A part of the name, which can be a locale map, a string for all locales or a
- * function returning a string.
- */
-export type ActivatableNameChunk =
-  | LocaleMap<string>
-  | string
-  | ((fs: { translate: Translate; translateMap: TranslateMap }) => string)
-
 const getEntrySpecificIsRemovable = (
-  id: ActivatableIdentifier,
-  instances: ActivatableInstance[],
-  instance: ActivatableInstance,
+  instance: CharacterActivatableInstance,
   caps: {
     startExperienceLevel?: ExperienceLevel
     activeCantripsCount: number
@@ -261,19 +88,15 @@ const getEntrySpecificIsRemovable = (
     activeBlessingsCount: number
     activeLiturgicalChantsCount: number
     activeCeremoniesCount: number
-    getDynamicSkillById: GetById.Dynamic.Skill
-    getDynamicLiturgicalChantById: GetById.Dynamic.LiturgicalChant
-    getDynamicCeremonyById: GetById.Dynamic.Ceremony
-    getDynamicSpellById: GetById.Dynamic.Spell
-    getDynamicRitualById: GetById.Dynamic.Ritual
-    getDynamicCloseCombatTechniqueById: GetById.Dynamic.CloseCombatTechnique
-    getDynamicRangedCombatTechniqueById: GetById.Dynamic.RangedCombatTechnique
+    getRatingById: Character["getRatingById"]
+    getActivatableRatingById: Character["getActivatableRatingById"]
   },
 ): boolean => {
-  switch (id.tag) {
+  const { entityName, id } = instance.parent
+  switch (entityName) {
     case "Advantage":
-      switch (id.advantage) {
-        case AdvantageIdentifier.ExceptionalSkill: {
+      switch (id) {
+        case "AdvantageIdentifier.ExceptionalSkill": {
           if (caps.startExperienceLevel === undefined) {
             return true
           }
@@ -286,19 +109,14 @@ const getEntrySpecificIsRemovable = (
           }
 
           const value = (() => {
-            switch (skillId.tag) {
+            switch (skillId.kind) {
               case "Skill":
-                return getSkillValue(caps.getDynamicSkillById(skillId.skill))
-              case "LiturgicalChant":
-                return getLiturgicalChantValue(
-                  caps.getDynamicLiturgicalChantById(skillId.liturgical_chant),
-                )
-              case "Ceremony":
-                return getLiturgicalChantValue(caps.getDynamicCeremonyById(skillId.ceremony))
+                return caps.getRatingById(skillId)
               case "Spell":
-                return getSpellValue(caps.getDynamicSpellById(skillId.spell))
               case "Ritual":
-                return getSpellValue(caps.getDynamicRitualById(skillId.ritual))
+              case "LiturgicalChant":
+              case "Ceremony":
+                return caps.getActivatableRatingById(skillId)
               case "General":
               case "Blessing":
               case "Cantrip":
@@ -321,6 +139,9 @@ const getEntrySpecificIsRemovable = (
               case "RangedCombatTechnique":
               case "TargetCategory":
               case "Patron":
+              case "Advantage":
+              case "HomunculusType":
+              case "SkillApplication":
                 return undefined
               default:
                 return assertExhaustive(skillId)
@@ -331,11 +152,11 @@ const getEntrySpecificIsRemovable = (
             return true
           }
 
-          const activations = countOptions(instances, skillId)
+          const activations = instance.parent.countOptions(skillId)
           return value < caps.startExperienceLevel.max_skill_rating + activations
         }
 
-        case AdvantageIdentifier.ExceptionalCombatTechnique: {
+        case "AdvantageIdentifier.ExceptionalCombatTechnique": {
           if (caps.startExperienceLevel === undefined) {
             return true
           }
@@ -348,15 +169,10 @@ const getEntrySpecificIsRemovable = (
           }
 
           const value = (() => {
-            switch (ctId.tag) {
+            switch (ctId.kind) {
               case "CloseCombatTechnique":
-                return getCombatTechniqueValue(
-                  caps.getDynamicCloseCombatTechniqueById(ctId.close_combat_technique),
-                )
               case "RangedCombatTechnique":
-                return getCombatTechniqueValue(
-                  caps.getDynamicRangedCombatTechniqueById(ctId.ranged_combat_technique),
-                )
+                return caps.getRatingById(ctId)
               case "General":
               case "Blessing":
               case "Cantrip":
@@ -382,6 +198,9 @@ const getEntrySpecificIsRemovable = (
               case "Ritual":
               case "TargetCategory":
               case "Patron":
+              case "Advantage":
+              case "HomunculusType":
+              case "SkillApplication":
                 return undefined
               default:
                 return assertExhaustive(ctId)
@@ -398,7 +217,7 @@ const getEntrySpecificIsRemovable = (
           return true
       }
     case "GeneralSpecialAbility":
-      switch (id.general_special_ability) {
+      switch (id) {
         //       TODO: case SpecialAbilityId.Literacy: {
         //         return (
         //           isEntryRequiringMatchingScriptAndLangActive &&
@@ -441,7 +260,7 @@ const getEntrySpecificIsRemovable = (
           return true
       }
     case "CombatSpecialAbility":
-      switch (id.combat_special_ability) {
+      switch (id) {
         //       TODO: case SpecialAbilityId.CombatStyleCombination: {
         //         const armedStyleActive = countActiveGroupEntries(wiki)(hero)(
         //           SpecialAbilityGroup.CombatStylesArmed,
@@ -462,7 +281,7 @@ const getEntrySpecificIsRemovable = (
           return true
       }
     case "MagicalSpecialAbility":
-      switch (id.magical_special_ability) {
+      switch (id) {
         //       TODO: case SpecialAbilityId.PropertyKnowledge:
         //         return pipe_(
         //           active,
@@ -492,7 +311,7 @@ const getEntrySpecificIsRemovable = (
           return true
       }
     case "MagicStyleSpecialAbility":
-      switch (id.magic_style_special_ability) {
+      switch (id) {
         //       // entries transferring unfamiliar special abilities (start)
 
         //       TODO: case SpecialAbilityId.TraditionGuildMages:
@@ -593,7 +412,7 @@ const getEntrySpecificIsRemovable = (
         caps.activeCantripsCount + caps.activeSpellworksCount + caps.activeMagicalActionsCount === 0
       )
     case "KarmaSpecialAbility":
-      switch (id.karma_special_ability) {
+      switch (id) {
         //       TODO: case SpecialAbilityId.AspectKnowledge: {
         //         const all_aspcs = getActiveSelections(hero_entry)
 
@@ -626,7 +445,7 @@ const getEntrySpecificIsRemovable = (
           return true
       }
     case "LiturgicalStyleSpecialAbility":
-      switch (id.liturgical_style_special_ability) {
+      switch (id) {
         //       // Extended Blessed Special Abilities that allow to learn liturgical
         //       // chants of different traditions
         //       TODO: case SpecialAbilityId.Zugvoegel:
@@ -667,12 +486,10 @@ const getEntrySpecificIsRemovable = (
   }
 }
 
-const getIsRemovable = (
-  id: ActivatableIdentifier,
+export const getIsRemovable = (
   minLevel: number | undefined,
   dependencies: ActivatableDependency[],
-  instances: ActivatableInstance[],
-  instance: ActivatableInstance,
+  instance: CharacterActivatableInstance,
   caps: {
     startExperienceLevel?: ExperienceLevel
     activeCantripsCount: number
@@ -681,13 +498,8 @@ const getIsRemovable = (
     activeBlessingsCount: number
     activeLiturgicalChantsCount: number
     activeCeremoniesCount: number
-    getDynamicSkillById: GetById.Dynamic.Skill
-    getDynamicLiturgicalChantById: GetById.Dynamic.LiturgicalChant
-    getDynamicCeremonyById: GetById.Dynamic.Ceremony
-    getDynamicSpellById: GetById.Dynamic.Spell
-    getDynamicRitualById: GetById.Dynamic.Ritual
-    getDynamicCloseCombatTechniqueById: GetById.Dynamic.CloseCombatTechnique
-    getDynamicRangedCombatTechniqueById: GetById.Dynamic.RangedCombatTechnique
+    getRatingById: Character["getRatingById"]
+    getActivatableRatingById: Character["getActivatableRatingById"]
   },
 ): boolean =>
   minLevel === undefined &&
@@ -695,7 +507,7 @@ const getIsRemovable = (
   // // Disable if style special ability is required for
   // // extended special abilities
   // TODO: isStyleSpecialAbilityRemovalDisabled(hero)(wiki_entry) ||
-  getEntrySpecificIsRemovable(id, instances, instance, caps)
+  getEntrySpecificIsRemovable(instance, caps)
 
 const getEntrySpecificMinimumLevel = (
   id: ActivatableIdentifier,
@@ -705,21 +517,21 @@ const getEntrySpecificMinimumLevel = (
     activeSpellworksCount: number
   },
 ): number | undefined => {
-  switch (id.tag) {
+  switch (id.kind) {
     case "Advantage":
-      switch (id.advantage) {
-        case AdvantageIdentifier.LargeSpellSelection:
+      switch (id.Advantage) {
+        case "AdvantageIdentifier.LargeSpellSelection":
           return ensure(caps.activeSpellworksCount - 3, x => x > 0)
-        case AdvantageIdentifier.ManySermons:
+        case "AdvantageIdentifier.ManySermons":
           return ensure(caps.activeSermonsCount - 3, x => x > 0)
-        case AdvantageIdentifier.ManyVisions:
+        case "AdvantageIdentifier.ManyVisions":
           return ensure(caps.activeVisionsCount - 3, x => x > 0)
         default:
           return undefined
       }
     case "GeneralSpecialAbility":
-      switch (id.general_special_ability) {
-        case GeneralSpecialAbilityIdentifier.Literacy: {
+      switch (id.GeneralSpecialAbility) {
+        case "GeneralSpecialAbilityIdentifier.Literacy": {
           // TODO: return isEntryRequiringMatchingScriptAndLangActive &&
           //   scriptsWithMatchingLanguages.length < 2 &&
           //   toNewMaybe(AOWIA.sid(x))
@@ -729,7 +541,7 @@ const getEntrySpecificMinimumLevel = (
           //   : undefined
           return undefined
         }
-        case GeneralSpecialAbilityIdentifier.Language: {
+        case "GeneralSpecialAbilityIdentifier.Language": {
           // TODO: return isEntryRequiringMatchingScriptAndLangActive &&
           //   languagesWithMatchingScripts.length < 2 &&
           //   toNewMaybe(AOWIA.sid(x))
@@ -743,8 +555,8 @@ const getEntrySpecificMinimumLevel = (
           return undefined
       }
     case "MagicalSpecialAbility":
-      switch (id.magical_special_ability) {
-        case MagicalSpecialAbilityIdentifier.Imitationszauberei:
+      switch (id.MagicalSpecialAbility) {
+        case "MagicalSpecialAbilityIdentifier.Imitationszauberei":
           return caps.activeSpellworksCount
         default:
           return undefined
@@ -755,10 +567,10 @@ const getEntrySpecificMinimumLevel = (
   }
 }
 
-const getMinimumLevel = (
+export const getMinimumActiveLevel = (
   id: ActivatableIdentifier,
   dependencies: ActivatableDependency[],
-  instance: ActivatableInstance,
+  instance: RawActivatableInstance,
   caps: {
     activeSermonsCount: number
     activeVisionsCount: number
@@ -774,964 +586,3 @@ const getMinimumLevel = (
         : acc,
     getEntrySpecificMinimumLevel(id, caps),
   )
-
-const getEntrySpecificCostOfInstance = (
-  id: ActivatableIdentifier,
-  apValue: AdventurePointsValue,
-  instances: ActivatableInstance[],
-  instance: ActivatableInstance,
-  isEntryToAdd: boolean,
-) => {
-  switch (id.tag) {
-    case "Disadvantage":
-      switch (id.disadvantage) {
-        case DisadvantageIdentifier.PersonalityFlaw: {
-          const isPersonalityFlawNotPaid = (generalId: number, paidEntries: number) => {
-            const instanceOption = instance.options?.[0]
-            if (instanceOption === undefined) {
-              return false
-            }
-            const optionId: GeneralIdentifier = { tag: "General", general: generalId }
-            return (
-              matchesOptionId(optionId, instanceOption) &&
-              countOptions(instances, optionId, { ignoreWithCustomAdventurePointsValue: true }) >
-                (isEntryToAdd ? paidEntries - 1 : paidEntries)
-            )
-          }
-
-          if (
-            // 7 = "Prejudice" => more than one entry possible
-            // more than one entry of Prejudice does not contribute to AP spent
-            isPersonalityFlawNotPaid(7, 1) ||
-            // 8 = "Unworldly" => more than one entry possible
-            // more than two entries of Unworldly do not contribute to AP spent
-            isPersonalityFlawNotPaid(8, 2)
-          ) {
-            return 0
-          }
-
-          return undefined
-        }
-
-        case DisadvantageIdentifier.Principles:
-        case DisadvantageIdentifier.Obligations: {
-          if (count(instances, not(hasCustomAdventurePointsValue)) < 2) {
-            return undefined
-          }
-
-          const highestLevel = instances.reduce<{ level: number; count: number }>(
-            (acc, ins) =>
-              ins.level === undefined || hasCustomAdventurePointsValue(ins)
-                ? acc
-                : ins.level > acc.level
-                  ? { level: ins.level, count: 1 }
-                  : ins.level === acc.level
-                    ? { level: acc.level, count: acc.count + 1 }
-                    : acc,
-            { level: 0, count: 0 },
-          )
-
-          const singleHighestLevel = ensure(highestLevel, x => x.count === 1)?.level
-
-          const secondHighestLevel =
-            singleHighestLevel === undefined
-              ? undefined
-              : instances.reduce<number | undefined>(
-                  (acc, ins) =>
-                    ins.level === undefined || hasCustomAdventurePointsValue(ins)
-                      ? acc
-                      : acc === undefined || (ins.level > acc && ins.level < singleHighestLevel)
-                        ? ins.level
-                        : acc,
-                  undefined,
-                )
-
-          if (instance.level === undefined || apValue.tag !== "Fixed") {
-            return undefined
-          }
-
-          if (highestLevel.level > instance.level) {
-            return 0
-          }
-
-          if (highestLevel.level === instance.level) {
-            return singleHighestLevel === undefined || isEntryToAdd
-              ? 0
-              : secondHighestLevel === undefined
-                ? instance.level * apValue.fixed
-                : (instance.level - secondHighestLevel) * apValue.fixed
-          }
-
-          return isEntryToAdd ? (instance.level - highestLevel.level) * apValue.fixed : 0
-        }
-
-        case DisadvantageIdentifier.BadHabit: {
-          // more than three entries cannot contribute to AP spent; entries with
-          // custom cost are ignored for the rule's effect
-          return count(instances, not(hasCustomAdventurePointsValue)) > (isEntryToAdd ? 2 : 3)
-            ? 0
-            : undefined
-        }
-
-        default:
-          return undefined
-      }
-
-    // TODO: case SpecialAbilityId.SkillSpecialization: {
-    //   return pipe_ (
-    //     mcurrent_sid,
-    //     misStringM,
-    //     bindF (
-    //       current_sid =>
-    //         fmapF (lookup (current_sid)
-    //                       (StaticData.A.skills (wiki)))
-    //               (skill =>
-
-    //                 // Multiply number of final occurences of the
-    //                 // same skill...
-    //                 (countWith ((e: Record<ActiveObject>) =>
-    //                             pipe (
-    //                                    ActiveObject.AL.sid,
-    //                                    elem<string | number> (current_sid)
-    //                                  )
-    //                                  (e)
-
-    //                             // Entries with custom cost are ignored for the rule
-    //                             && isNothing (ActiveObject.AL.cost (e)))
-    //                           (all_active) + (isEntryToAdd ? 1 : 0))
-
-    //                 // ...with the skill's IC
-    //                 * getAPForActivatation (Skill.AL.ic (skill)))
-    //     )
-    //   )
-    // }
-
-    // TODO: case SpecialAbilityId.Language: {
-    //   // Native Tongue (level 4) does not cost anything
-    //   return elem (4) (mcurrent_level) ? Nothing : mcurrent_cost
-    // }
-
-    // TODO: case SpecialAbilityId.PropertyKnowledge:
-    // case SpecialAbilityId.AspectKnowledge: {
-    //   // Does not include custom cost activations in terms of calculated cost
-    //   const amount = countWith (pipe (ActiveObject.AL.cost, isNothing))
-    //                            (all_active)
-
-    //   const index = amount + (isEntryToAdd ? 0 : -1)
-
-    //   if (isNothing (mcurrent_cost)) {
-    //     return Nothing
-    //   }
-
-    //   const current_cost = fromJust (mcurrent_cost)
-
-    //   return isList (current_cost) ? subscript (current_cost) (index) : Nothing
-    // }
-
-    // TODO: case SpecialAbilityId.TraditionWitches: {
-    //   // There are two disadvantages that, when active, decrease the cost of
-    //   // this tradition by 10 AP each
-    //   const decreaseCost = (id: string) => (cost: number) =>
-    //     isDisadvantageActive (id) (hero) ? cost - 10 : cost
-
-    //   return pipe_ (
-    //     mcurrent_cost,
-    //     misNumberM,
-    //     fmap (pipe (
-    //       decreaseCost (DisadvantageId.NoFlyingBalm),
-    //       decreaseCost (DisadvantageId.NoFamiliar)
-    //     ))
-    //   )
-    // }
-
-    // TODO: case SpecialAbilityId.Recherchegespuer: {
-    //   // The AP cost for this SA consist of two parts: AP based on the IC of
-    //   // the main subject (from "SA_531"/Wissensdurst) in addition to AP based
-    //   // on the IC of the side subject selected in this SA.
-
-    //   const mhero_entry_SA_531 = lookup<string> (SpecialAbilityId.Wissensdurst)
-    //                                             (HA.specialAbilities (hero))
-
-    //   if (isNothing (mhero_entry_SA_531)) {
-    //     return Nothing
-    //   }
-
-    //   if (isNothing (mcurrent_cost) || isNothing (mcurrent_cost)) {
-    //     return Nothing
-    //   }
-
-    //   const current_cost = fromJust (mcurrent_cost)
-
-    //   if (isNumber (current_cost)) {
-    //     return Nothing
-    //   }
-
-    //   const hero_entry_SA_531 = fromJust (mhero_entry_SA_531)
-
-    //   const getCostFromHeroEntry =
-    //     pipe (
-    //       ActiveObject.AL.sid,
-    //       misStringM,
-    //       bindF (lookupF (StaticData.A.skills (wiki))),
-    //       bindF (pipe (Skill.A.ic, icToIx, subscript (current_cost)))
-    //     )
-
-    //   return liftM2 (add)
-    //                 (getCostFromHeroEntry (entry))
-    //                 (pipe_ (
-    //                   hero_entry_SA_531,
-    //                   ActivatableDependent.A.active,
-    //                   listToMaybe,
-    //                   bindF (getCostFromHeroEntry)
-    //                 ))
-    // }
-    default:
-      return undefined
-  }
-}
-
-/**
- * Returns the cost for a single activation of an activatable.
- */
-export const getCostOfInstance = (
-  id: ActivatableIdentifier,
-  apValue: AdventurePointsValue,
-  instances: ActivatableInstance[],
-  instance: ActivatableInstance,
-  getSelectOptionById: (id: SelectOptionIdentifier) => ResolvedSelectOption | undefined,
-  isToAdd: boolean,
-): number | undefined => {
-  if (instance.customAdventurePointsValue !== undefined) {
-    return instance.customAdventurePointsValue
-  }
-
-  const entrySpecific = getEntrySpecificCostOfInstance(id, apValue, instances, instance, isToAdd)
-
-  if (entrySpecific !== undefined) {
-    return entrySpecific
-  }
-
-  switch (apValue.kind) {
-    case "Fixed":
-      return apValue.fixed * (instance.level ?? 1)
-    case "ByLevel":
-      return instance.level === undefined ? undefined : apValue.by_level[instance.level - 1]
-    case "DerivedFromSelection": {
-      const selectedOptions =
-        instance.options
-          ?.filter(isPredefinedActivatableOption)
-          .map(opt => getSelectOptionById(opt.id)?.ap_value) ?? []
-      return selectedOptions.some(isNotNullish)
-        ? sumWith(selectedOptions, opt => opt ?? 0)
-        : undefined
-    }
-    case "Indefinite":
-      return 0
-    case "DependingOnActive":
-    case "DependingOnActiveInstances":
-      return undefined // TODO
-    default:
-      return assertExhaustive(apValue)
-  }
-}
-
-const getEntrySpecificTotalCostDifference = (
-  id: ActivatableIdentifier,
-  apValue: AdventurePointsValue,
-  instances: ActivatableInstance[],
-  getSelectOptionById: (id: SelectOptionIdentifier) => ResolvedSelectOption | undefined,
-) => {
-  switch (id.tag) {
-    case "Disadvantage":
-      switch (id.disadvantage) {
-        case DisadvantageIdentifier.PersonalityFlaw: {
-          const getPersonalityFlawNotPaidDifference = (generalId: number, paidEntries: number) => {
-            const optionId = createIdentifierObject("General", generalId)
-            return countOptions(instances, optionId, {
-              ignoreWithCustomAdventurePointsValue: true,
-            }) > paidEntries
-              ? (getSelectOptionById(optionId)?.ap_value ?? 0) * paidEntries
-              : 0
-          }
-
-          return sum([
-            // 7 = "Prejudice" => more than one entry possible
-            // more than one entry of Prejudice does not contribute to AP spent
-            getPersonalityFlawNotPaidDifference(7, 1),
-            // 8 = "Unworldly" => more than one entry possible
-            // more than two entries of Unworldly do not contribute to AP spent
-            getPersonalityFlawNotPaidDifference(8, 2),
-          ])
-        }
-
-        case DisadvantageIdentifier.Principles:
-        case DisadvantageIdentifier.Obligations: {
-          if (count(instances, not(hasCustomAdventurePointsValue)) < 2 || apValue.tag !== "Fixed") {
-            return 0
-          }
-
-          const highestLevel = instances.reduce<{ level: number; count: number }>(
-            (acc, ins) =>
-              ins.level === undefined || hasCustomAdventurePointsValue(ins)
-                ? acc
-                : ins.level > acc.level
-                  ? { level: ins.level, count: 1 }
-                  : ins.level === acc.level
-                    ? { level: acc.level, count: acc.count + 1 }
-                    : acc,
-            { level: 0, count: 0 },
-          )
-
-          const singleHighestLevel = ensure(highestLevel, x => x.count === 1)?.level
-
-          if (singleHighestLevel === undefined) {
-            return highestLevel.level * apValue.fixed
-          }
-
-          const secondHighestLevel = instances.reduce<number | undefined>(
-            (acc, ins) =>
-              ins.level === undefined || hasCustomAdventurePointsValue(ins)
-                ? acc
-                : acc === undefined || (ins.level > acc && ins.level < singleHighestLevel)
-                  ? ins.level
-                  : acc,
-            undefined,
-          )
-
-          return (secondHighestLevel ?? 0) * apValue.fixed
-        }
-
-        case DisadvantageIdentifier.BadHabit: {
-          // more than three entries cannot contribute to AP spent; entries with
-          // custom cost are ignored for the rule's effect
-          return count(instances, not(hasCustomAdventurePointsValue)) > 3 && apValue.tag === "Fixed"
-            ? apValue.fixed * 3
-            : 0
-        }
-
-        default:
-          return 0
-      }
-
-    // TODO: case SpecialAbilityId.SkillSpecialization: {
-    //   return pipe_ (
-    //     mcurrent_sid,
-    //     misStringM,
-    //     bindF (
-    //       current_sid =>
-    //         fmapF (lookup (current_sid)
-    //                       (StaticData.A.skills (wiki)))
-    //               (skill =>
-
-    //                 // Multiply number of final occurences of the
-    //                 // same skill...
-    //                 (countWith ((e: Record<ActiveObject>) =>
-    //                             pipe (
-    //                                    ActiveObject.AL.sid,
-    //                                    elem<string | number> (current_sid)
-    //                                  )
-    //                                  (e)
-
-    //                             // Entries with custom cost are ignored for the rule
-    //                             && isNothing (ActiveObject.AL.cost (e)))
-    //                           (all_active) + (isEntryToAdd ? 1 : 0))
-
-    //                 // ...with the skill's IC
-    //                 * getAPForActivatation (Skill.AL.ic (skill)))
-    //     )
-    //   )
-    // }
-
-    // TODO: case SpecialAbilityId.Language: {
-    //   // Native Tongue (level 4) does not cost anything
-    //   return elem (4) (mcurrent_level) ? Nothing : mcurrent_cost
-    // }
-
-    // TODO: case SpecialAbilityId.PropertyKnowledge:
-    // case SpecialAbilityId.AspectKnowledge: {
-    //   // Does not include custom cost activations in terms of calculated cost
-    //   const amount = countWith (pipe (ActiveObject.AL.cost, isNothing))
-    //                            (all_active)
-
-    //   const index = amount + (isEntryToAdd ? 0 : -1)
-
-    //   if (isNothing (mcurrent_cost)) {
-    //     return Nothing
-    //   }
-
-    //   const current_cost = fromJust (mcurrent_cost)
-
-    //   return isList (current_cost) ? subscript (current_cost) (index) : Nothing
-    // }
-
-    // TODO: case SpecialAbilityId.TraditionWitches: {
-    //   // There are two disadvantages that, when active, decrease the cost of
-    //   // this tradition by 10 AP each
-    //   const decreaseCost = (id: string) => (cost: number) =>
-    //     isDisadvantageActive (id) (hero) ? cost - 10 : cost
-
-    //   return pipe_ (
-    //     mcurrent_cost,
-    //     misNumberM,
-    //     fmap (pipe (
-    //       decreaseCost (DisadvantageId.NoFlyingBalm),
-    //       decreaseCost (DisadvantageId.NoFamiliar)
-    //     ))
-    //   )
-    // }
-
-    // TODO: case SpecialAbilityId.Recherchegespuer: {
-    //   // The AP cost for this SA consist of two parts: AP based on the IC of
-    //   // the main subject (from "SA_531"/Wissensdurst) in addition to AP based
-    //   // on the IC of the side subject selected in this SA.
-
-    //   const mhero_entry_SA_531 = lookup<string> (SpecialAbilityId.Wissensdurst)
-    //                                             (HA.specialAbilities (hero))
-
-    //   if (isNothing (mhero_entry_SA_531)) {
-    //     return Nothing
-    //   }
-
-    //   if (isNothing (mcurrent_cost) || isNothing (mcurrent_cost)) {
-    //     return Nothing
-    //   }
-
-    //   const current_cost = fromJust (mcurrent_cost)
-
-    //   if (isNumber (current_cost)) {
-    //     return Nothing
-    //   }
-
-    //   const hero_entry_SA_531 = fromJust (mhero_entry_SA_531)
-
-    //   const getCostFromHeroEntry =
-    //     pipe (
-    //       ActiveObject.AL.sid,
-    //       misStringM,
-    //       bindF (lookupF (StaticData.A.skills (wiki))),
-    //       bindF (pipe (Skill.A.ic, icToIx, subscript (current_cost)))
-    //     )
-
-    //   return liftM2 (add)
-    //                 (getCostFromHeroEntry (entry))
-    //                 (pipe_ (
-    //                   hero_entry_SA_531,
-    //                   ActivatableDependent.A.active,
-    //                   listToMaybe,
-    //                   bindF (getCostFromHeroEntry)
-    //                 ))
-    // }
-    default:
-      return 0
-  }
-}
-
-/**
- * Returns the cost for all activations of an activatable.
- */
-export const getCost = (
-  id: ActivatableIdentifier,
-  apValue: AdventurePointsValue,
-  instances: ActivatableInstance[],
-  getSelectOptionById: (id: SelectOptionIdentifier) => ResolvedSelectOption | undefined,
-): { total: number; diff: number; range: RangeBounds; values: number[] } => {
-  const values = instances.map(
-    instance =>
-      getCostOfInstance(id, apValue, instances, instance, getSelectOptionById, false) ?? 0,
-  )
-
-  const diff = getEntrySpecificTotalCostDifference(id, apValue, instances, getSelectOptionById)
-
-  return {
-    total: sum(values) + diff,
-    diff,
-    range: [Math.min(...values), Math.max(...values)],
-    values,
-  }
-}
-
-const combineChunks = (
-  a: ActivatableNameChunk,
-  b: ActivatableNameChunk,
-  join: (a: string, b: string) => string,
-): ActivatableNameChunk => {
-  if (typeof a === "string") {
-    if (typeof b === "string") {
-      return join(a, b)
-    } else if (typeof b === "function") {
-      return fs => join(a, b(fs))
-    } else if (typeof b === "object") {
-      return mapObject(b, bValue => join(a, bValue))
-    }
-    return b
-  } else if (typeof a === "function") {
-    if (typeof b === "string") {
-      return fs => join(a(fs), b)
-    } else if (typeof b === "function") {
-      return fs => join(a(fs), b(fs))
-    } else if (typeof b === "object") {
-      return fs => join(a(fs), fs.translateMap(b) ?? "???")
-    }
-    return b
-  } else if (typeof a === "object") {
-    if (typeof b === "string") {
-      return mapObject(a, aValue => join(aValue, b))
-    } else if (typeof b === "function") {
-      return fs => join(fs.translateMap(a) ?? "???", b(fs))
-    } else if (typeof b === "object") {
-      const ret: LocaleMap<string> = {}
-      for (const key of new Set([...Object.keys(a), ...Object.keys(b)])) {
-        ret[key] = join(a[key] ?? "???", b[key] ?? "???")
-      }
-      return ret
-    }
-    return b
-  }
-  return a
-}
-
-const mapChunk = (
-  chunk: ActivatableNameChunk,
-  map: (str: string) => string,
-): ActivatableNameChunk => {
-  if (typeof chunk === "string") {
-    return map(chunk)
-  } else if (typeof chunk === "function") {
-    return fs => map(chunk(fs))
-  } else if (typeof chunk === "object") {
-    return mapObject(chunk, chunkValue => map(chunkValue))
-  }
-  return chunk
-}
-
-const zipChunks = (
-  chunks: (ActivatableNameChunk | [ActivatableNameChunk, ActivatableNameChunk])[],
-): ActivatableNameChunk => {
-  const withNormalizedPairs = chunks.map(chunk => {
-    if (Array.isArray(chunk)) {
-      return combineChunks(chunk[0], chunk[1], (a, b) => `${a}: ${b}`)
-    }
-
-    return chunk
-  })
-
-  return withNormalizedPairs.reduce(
-    (acc, chunk) => (acc === "" ? chunk : combineChunks(acc, chunk, (a, b) => `${a}, ${b}`)),
-    "",
-  )
-}
-
-const combineBaseName = (
-  base: ActivatableNameChunk,
-  level: number | undefined,
-  options: ActivatableNameComponents["options"],
-  config: { levelPlacement?: "before" | "after"; useParenthesis?: boolean } = {},
-): Pick<ActivatableNameComponents, "full" | "fullWithoutLevel"> => {
-  const { levelPlacement = "after", useParenthesis = true } = config
-  const appendLevel: (str: string) => string =
-    level === undefined ? x => x : x => `${x} ${romanize(level)}`
-
-  const wrapParens = (str: string) => `(${str})`
-
-  const appendOptions = useParenthesis
-    ? (baseStr: string, optionsStr: string) =>
-        optionsStr === "" ? baseStr : `${baseStr} ${wrapParens(optionsStr)}`
-    : (baseStr: string, optionsStr: string) =>
-        optionsStr === "" ? baseStr : `${baseStr} ${optionsStr}`
-
-  const full = combineChunks(
-    base,
-    zipChunks(options),
-    (() => {
-      switch (levelPlacement) {
-        case "before":
-          return (a, b) => appendOptions(appendLevel(a), b)
-        case "after":
-          return (a, b) => appendLevel(appendOptions(a, b))
-        default:
-          return assertExhaustive(levelPlacement)
-      }
-    })(),
-  )
-
-  switch (levelPlacement) {
-    case "before":
-      return { full, fullWithoutLevel: [base, mapChunk(zipChunks(options), wrapParens)] }
-    case "after":
-      return { full, fullWithoutLevel: combineChunks(base, zipChunks(options), appendOptions) }
-    default:
-      return assertExhaustive(levelPlacement)
-  }
-}
-
-const getEntrySpecificFullName = (
-  id: ActivatableIdentifier,
-  base: ActivatableNameChunk,
-  level: number | undefined,
-  options: ActivatableNameComponents["options"],
-): Pick<ActivatableNameComponents, "full" | "fullWithoutLevel"> | undefined => {
-  switch (id.tag) {
-    case "Advantage":
-      switch (id.advantage) {
-        case AdvantageIdentifier.HatredOf: {
-          const [firstOption, ...rest] = options
-          if (firstOption === undefined || Array.isArray(firstOption)) {
-            return undefined
-          }
-          return combineBaseName(
-            combineChunks(base, firstOption, (a, b) => `${a} ${b}`),
-            level,
-            rest,
-          )
-        }
-        case AdvantageIdentifier.ImmunityToPoison:
-        case AdvantageIdentifier.ImmunityToDisease:
-          return combineBaseName(base, level, options, { useParenthesis: false })
-        default:
-          return undefined
-      }
-    case "Disadvantage":
-      switch (id.disadvantage) {
-        case DisadvantageIdentifier.PersonalityFlaw: {
-          const [selection, optionalText, ...rest] = options
-          if (selection === undefined || Array.isArray(selection) || Array.isArray(optionalText)) {
-            return undefined
-          }
-          return combineBaseName(base, level, [
-            optionalText === undefined ? selection : [selection, optionalText],
-            ...rest,
-          ])
-        }
-        case DisadvantageIdentifier.AfraidOf:
-          return combineBaseName(base, level, options, { useParenthesis: false })
-        case DisadvantageIdentifier.Principles:
-        case DisadvantageIdentifier.Obligations:
-          return combineBaseName(base, level, options, { levelPlacement: "before" })
-        default:
-          return undefined
-      }
-    case "GeneralSpecialAbility":
-      switch (id.general_special_ability) {
-        //   TODO: case SpecialAbilityId.SkillSpecialization:
-        //     return pipe (
-        //                   AOWIA.sid,
-        //                   misStringM,
-        //                   bindF (lookupF (SDA.skills (staticData))),
-        //                   bindF (skill => pipe (
-        //                                     AOWIA.sid2,
-        //                                     // If input string use input
-        //                                     misStringM,
-        //                                     // Otherwise lookup application name
-        //                                     altF_ (() => pipe (
-        //                                                         SA.applications,
-        //                                                         find<Record<Application>> (pipe (
-        //                                                           Application.AL.id,
-        //                                                           elemF (AOWIA.sid2 (hero_entry))
-        //                                                         )),
-        //                                                         fmap (AA.name)
-        //                                                       )
-        //                                                       (skill)),
-        //                                     // Merge skill name and application name
-        //                                     fmap (appl => `${SA.name (skill)}: ${appl}`)
-        //                                   )
-        //                                   (hero_entry))
-        //                 )
-        //                 (hero_entry)
-        default:
-          return undefined
-      }
-    // switch (AOWIA.id (hero_entry)) {
-    //   TODO: case SpecialAbilityId.Exorzist:
-    //     return pipe_ (
-    //       hero_entry,
-    //       AOWIA.tier,
-    //       Maybe.product,
-    //       ensure (equals (1)),
-    //       thenF (AOWIA.sid (hero_entry)),
-    //       findSelectOption (wiki_entry),
-    //       fmap (SOA.name)
-    //     )
-    //   TODO: case SpecialAbilityId.SpellEnhancement:
-    //   case SpecialAbilityId.ChantEnhancement:
-    //     return pipe (
-    //                   AOWIA.sid,
-    //                   findSelectOption (wiki_entry),
-    //                   bindF (ext => pipe (
-    //                                        bindF ((target_id: string) => {
-    //                                          const acc =
-    //                                            AOWIA.id (hero_entry)
-    //                                            === SpecialAbilityId.SpellEnhancement
-    //                                              ? SDA.spells
-    //                                              : SDA.liturgicalChants
-    //                                          return lookupF<string, ActivatableSkillEntry>
-    //                                            (acc (staticData))
-    //                                            (target_id)
-    //                                        }),
-    //                                        fmap (
-    //                                          (target_entry: ActivatableSkillEntry) =>
-    //                                            `${SAL.name (target_entry)}: ${SOA.name (ext)}`
-    //                                        )
-    //                                      )
-    //                                      (SOA.target (ext)))
-    //                 )
-    //                 (hero_entry)
-    //   TODO: case SpecialAbilityId.TraditionSavant:
-    //     return pipe (
-    //                   AOWIA.sid,
-    //                   misStringM,
-    //                   bindF (lookupF (SDA.skills (staticData))),
-    //                   fmap (SA.name)
-    //                 )
-    //                 (hero_entry)
-    //   TODO: case SpecialAbilityId.LanguageSpecializations:
-    //     return pipe (
-    //                   SDA.specialAbilities,
-    //                   lookup<string> (SpecialAbilityId.Language),
-    //                   bindF (pipe (
-    //                     findSelectOption,
-    //                     thrush (AOWIA.sid (hero_entry))
-    //                   )),
-    //                   bindF (lang => pipe (
-    //                                         AOWIA.sid2,
-    //                                         bindF (
-    //                                           ifElse<string | number, string>
-    //                                             (isString)
-    //                                             <Maybe<string>>
-    //                                             (Just)
-    //                                             (spec_id => bind (SOA.specializations (lang))
-    //                                                              (subscriptF (spec_id - 1)))
-    //                                         ),
-    //                                         fmap (spec => `${SOA.name (lang)}: ${spec}`)
-    //                                       )
-    //                                       (hero_entry))
-    //                 )
-    //                 (staticData)
-    //   TODO: case SpecialAbilityId.Fachwissen: {
-    //     const getApp = (getSid: (r: Record<ActiveObjectWithId>) => Maybe<string | number>) =>
-    //                      pipe (
-    //                        SA.applications,
-    //                        filter (pipe (AA.prerequisite, isNothing)),
-    //                        find (pipe (AA.id, elemF (getSid (hero_entry)))),
-    //                        fmap (AA.name)
-    //                      )
-    //     return pipe_ (
-    //       hero_entry,
-    //       AOWIA.sid,
-    //       misStringM,
-    //       bindF (lookupF (SDA.skills (staticData))),
-    //       bindF (skill => pipe_ (
-    //                         List (
-    //                           getApp (AOWIA.sid2) (skill),
-    //                           getApp (AOWIA.sid3) (skill)
-    //                         ),
-    //                         catMaybes,
-    //                         ensure (xs => flength (xs) === 2),
-    //                         fmap (pipe (
-    //                           sortStrings (staticData),
-    //                           formatList ("conjunction") (staticData),
-    //                           apps => `${SA.name (skill)}: ${apps}`
-    //                         ))
-    //                       ))
-    //     )
-    //   }
-    //   TODO: case SpecialAbilityId.GebieterDesAspekts:
-    //     return maybeMap (name_add => `${AAL.name (wiki_entry)} ${name_add}`)
-    //   TODO: case SpecialAbilityId.TraditionArcaneBard:
-    //   case SpecialAbilityId.TraditionArcaneDancer:
-    //   case SpecialAbilityId.TraditionSavant: {
-    //     return maybeMap (flip (addSndinParenthesis) (AAL.name (wiki_entry)))
-    //   }
-    // }
-    default:
-      return undefined
-  }
-}
-
-const getNameComponents = <T>(
-  id: ActivatableIdentifier,
-  instance: ActivatableInstance,
-  translations: LocaleMap<T>,
-  getBaseName: (translation: T) => string,
-  getSelectOptionById: (id: SelectOptionIdentifier) => ResolvedSelectOption | undefined,
-  displayedInProfession: boolean,
-): ActivatableNameComponents => {
-  const base = mapObject(translations, getBaseName)
-  const { level } = instance
-  const options: ActivatableNameComponents["options"] =
-    instance.options?.map(opt => {
-      switch (opt.type) {
-        case "Predefined": {
-          const optTranslations = getSelectOptionById(opt.id)?.translations
-          return optTranslations === undefined
-            ? "???"
-            : (mapObject(optTranslations, t10n =>
-                displayedInProfession ? (t10n.name_in_profession ?? t10n.name) : t10n.name,
-              ) ?? "???")
-        }
-        case "Custom":
-          return opt.value
-        default:
-          return assertExhaustive(opt)
-      }
-    }) ?? []
-
-  return {
-    ...(getEntrySpecificFullName(id, base, level, options) ??
-      combineBaseName(base, level, options)),
-    base,
-    options,
-  }
-}
-
-/**
- * Converts a name chunk to a displayable string.
- */
-export const nameChunkToString = (
-  chunk: ActivatableNameChunk,
-  translate: Translate,
-  translateMap: TranslateMap,
-): string => {
-  if (typeof chunk === "string") {
-    return chunk
-  } else if (typeof chunk === "function") {
-    return chunk({ translate, translateMap })
-  } else if (typeof chunk === "object") {
-    return translateMap(chunk) ?? "???"
-  }
-  return chunk
-}
-
-/**
- * Returns all activatable entries with their corresponding dynamic entry,
- * extended by which activation/instance of the entry it represents.
- */
-export const getActiveActivatables = <
-  K extends string,
-  T extends {
-    id: number
-    levels?: number
-    prerequisites?: P[]
-    ap_value: AdventurePointsValue | number
-    translations: LocaleMap<T10n>
-  },
-  P = T extends { prerequisites?: (infer P1)[] } ? P1 : never,
-  T10n = T extends { translations: LocaleMap<infer T10n1> } ? T10n1 : never,
->(
-  kind: K,
-  getStaticActivatableById: (id: number) => T | undefined,
-  dynamicActivatables: Activatable[],
-  checkPrerequisites: (prerequisites: P[], level: number, id: number) => boolean,
-  getSelectOptionsById: (id: ActivatableIdentifier) => ResolvedSelectOption[] | undefined,
-  createActivatableIdentifierObject: (id: number) => ActivatableIdentifier,
-  filterApplyingDependencies: FilterApplyingActivatableDependencies,
-  getBaseName: (translation: T10n) => string,
-  caps: {
-    startExperienceLevel?: ExperienceLevel
-    activeSermonsCount: number
-    activeVisionsCount: number
-    activeCantripsCount: number
-    activeSpellworksCount: number
-    activeMagicalActionsCount: number
-    activeBlessingsCount: number
-    activeLiturgicalChantsCount: number
-    activeCeremoniesCount: number
-    getDynamicSkillById: GetById.Dynamic.Skill
-    getDynamicLiturgicalChantById: GetById.Dynamic.LiturgicalChant
-    getDynamicCeremonyById: GetById.Dynamic.Ceremony
-    getDynamicSpellById: GetById.Dynamic.Spell
-    getDynamicRitualById: GetById.Dynamic.Ritual
-    getDynamicCloseCombatTechniqueById: GetById.Dynamic.CloseCombatTechnique
-    getDynamicRangedCombatTechniqueById: GetById.Dynamic.RangedCombatTechnique
-  },
-): DisplayedActiveActivatable<K, T>[] => {
-  const getSelectOptionById = (idObject: ActivatableIdentifier, optionId: SelectOptionIdentifier) =>
-    getSelectOptionsById(idObject)?.find(opt => equalsIdentifier(opt.id, optionId))
-
-  return dynamicActivatables.flatMap(dynamicActivatable => {
-    const staticActivatable = getStaticActivatableById(dynamicActivatable.id)
-
-    if (staticActivatable === undefined) {
-      return []
-    }
-
-    const idObject = createActivatableIdentifierObject(staticActivatable.id)
-    const dependencies =
-      dynamicActivatable === undefined
-        ? []
-        : filterApplyingDependencies(dynamicActivatable.dependencies).filter(
-            dep =>
-              dep.active === false ||
-              count(dynamicActivatable.instances, instance =>
-                appliesToInstanceStrict(dep, instance),
-              ) < 2,
-          )
-
-    const {
-      total: totalCost,
-      range: costRange,
-      diff: totalCostDiff,
-      values,
-    } = getCost(
-      idObject,
-      typeof staticActivatable.ap_value === "number"
-        ? { tag: "Fixed", fixed: staticActivatable.ap_value }
-        : staticActivatable.ap_value,
-      dynamicActivatable.instances,
-      optionId => getSelectOptionById(idObject, optionId),
-    )
-
-    return dynamicActivatable.instances.map(
-      (instance, instanceIndex): DisplayedActiveActivatable<K, T> => {
-        const minLevel = getMinimumLevel(idObject, dependencies, instance, caps)
-        const maxLevel = getMaximumLevel(
-          idObject,
-          staticActivatable.levels,
-          {},
-          dependencies,
-          level =>
-            checkPrerequisites(staticActivatable.prerequisites ?? [], level, staticActivatable.id),
-          caps,
-        )
-
-        const isRemovable = getIsRemovable(
-          idObject,
-          minLevel,
-          dependencies,
-          dynamicActivatable.instances,
-          instance,
-          caps,
-        )
-
-        return {
-          kind,
-          static: staticActivatable,
-          dynamic: dynamicActivatable,
-          instanceIndex,
-          isRemovable,
-          minLevel,
-          maxLevel,
-          cost:
-            totalCostDiff !== 0 && !hasCustomAdventurePointsValue(instance)
-              ? {
-                  kind: "variable",
-                  instancesTotal: totalCost,
-                  differenceOnRemove: values[instanceIndex] ?? 0,
-                  range: costRange,
-                }
-              : {
-                  kind: "fix",
-                  fix: values[instanceIndex] ?? 0,
-                },
-          name: getNameComponents(
-            idObject,
-            instance,
-            staticActivatable.translations,
-            getBaseName,
-            optionId => getSelectOptionById(idObject, optionId),
-            false,
-          ),
-        }
-      },
-    )
-  })
-}

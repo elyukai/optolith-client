@@ -1,16 +1,14 @@
+import { ActivatableIdentifier, AdventurePointsValue } from "@optolith/database-schema/gen"
 import { ActionCreatorWithPayload, Draft, UnknownAction, createAction } from "@reduxjs/toolkit"
-import { AdventurePointsValue } from "@optolith/database-schema/gen"
-import { ActivatableIdentifier } from "@optolith/database-schema/gen"
-import { getCost } from "../../shared/domain/activatable/activatableActive.ts"
 import {
   Activatable,
-  ActivatableInstance,
   ActivatableMap,
+  RawActivatableInstance,
   createEmptyDynamicActivatable,
-} from "../../shared/domain/activatable/activatableEntry.ts"
-import { getSelectOptionsFromCacheById } from "../../shared/domain/database.ts"
+} from "../../shared/domain/activatable/activatable.ts"
+import { getCost } from "../../shared/domain/activatable/activatableActive.ts"
+import { createIdentifierObject, equalsIdentifier } from "../../shared/domain/databaseEnum.ts"
 import { RegistrationMethod } from "../../shared/domain/dependencies/registrationHelpers.ts"
-import { createIdentifierObject, equalsIdentifier } from "../../shared/domain/identifier.ts"
 import { hasAspectById } from "../../shared/domain/rated/liturgicalChant.ts"
 import { RangeBounds } from "../../shared/utils/range.ts"
 import { DraftReducer } from "../../shared/utils/redux.ts"
@@ -30,7 +28,7 @@ export type ActivatableSlice<N extends string, E extends string> = {
      * Add the entry with the given id.
      */
     addInstance: ActionCreatorWithPayload<
-      { id: number; instance: ActivatableInstance },
+      { id: number; instance: RawActivatableInstance },
       `${N}/add${E}`
     >
 
@@ -114,7 +112,7 @@ type RecordValue<R> = R extends Record<number, infer V> ? V : never
  * Creates a slice for a map of rated entries.
  */
 export const createActivatableSlice = <
-  E extends ActivatableIdentifier["tag"],
+  E extends ActivatableIdentifier["kind"],
   P,
   IdO extends { tag: string },
   N extends (typeof tagToNamespace)[E] = (typeof tagToNamespace)[E],
@@ -169,7 +167,7 @@ export const createActivatableSlice = <
     return entry
   }
 
-  const addAction = createAction<{ id: number; instance: ActivatableInstance }, `${N}/add${E}`>(
+  const addAction = createAction<{ id: number; instance: RawActivatableInstance }, `${N}/add${E}`>(
     `${namespace}/add${config.entityName}`,
   )
 

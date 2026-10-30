@@ -1,4 +1,4 @@
-import { FC } from "react"
+import type { FC } from "react"
 
 /**
  * A filler element for the skill list.

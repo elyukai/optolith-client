@@ -1,18 +1,11 @@
+import { count } from "@elyukai/utils/array/reductions"
+import { getAdventurePointsForRatingRange } from "@optolith/adventure-points/improvement-cost"
 import { createSelector } from "@reduxjs/toolkit"
 import {
-  TinyActivatable,
-  isTinyActivatableActive,
-} from "../../shared/domain/activatable/activatableEntry.ts"
-import {
-  AdventurePointsCache,
   addAdventurePointsCaches,
+  AdventurePointsCache,
   emptyAdventurePointsCache,
 } from "../../shared/domain/adventurePoints/cache.ts"
-import {
-  ImprovementCost,
-  adventurePointsForRange,
-} from "../../shared/domain/adventurePoints/improvementCost.ts"
-import { count } from "../../shared/utils/array.ts"
 import {
   selectCurrentCharacter,
   selectDerivedCharacteristics,
@@ -226,7 +219,7 @@ export const selectAdventurePointsSpentOnEnergies = createSelector(
       derivedCharacteristics.arcaneEnergy.purchased,
       derivedCharacteristics.karmaPoints.purchased,
     ].reduce(
-      (acc, purchased) => acc + adventurePointsForRange(ImprovementCost.D, 0, purchased),
+      (acc, purchased) => acc + getAdventurePointsForRatingRange(ImprovementCost.D, 0, purchased),
       0,
     ) +
     derivedCharacteristics.arcaneEnergy.permanentlyLostBoughtBack * 2 +

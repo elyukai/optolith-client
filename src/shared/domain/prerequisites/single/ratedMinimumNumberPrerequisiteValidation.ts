@@ -1,68 +1,70 @@
-import {
+import { count } from "@elyukai/utils/array/reductions"
+import { isNotNullish } from "@elyukai/utils/nullable"
+import type {
+  Aspect_ID,
+  Property_ID,
   RatedMinimumNumberPrerequisite,
   RatedMinimumNumberPrerequisiteTarget,
+  Skill_ID,
 } from "@optolith/database-schema/gen"
-import { isNotNullish } from "../../../utils/nullable.ts"
-import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { All, GetById } from "../../getTypes.ts"
-import { GetDynamicLiturgicalChantsByAspectCapability } from "../../rated/liturgicalChant.ts"
-import { ActivatableRatedWithEnhancements, Rated } from "../../rated/ratedEntry.ts"
-import { GetDynamicSpellworksByPropertyCapability } from "../../rated/spell.ts"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type { CharacterCombatTechnique } from "../../rated/combatTechnique.ts"
+import type { CharacterLiturgicalChant } from "../../rated/liturgicalChant.ts"
+import type { CharacterActivatableRatedWithEnhancements } from "../../rated/ratedEntry.ts"
+import type { CharacterSkill } from "../../rated/skill.ts"
+import type { CharacterSpellwork } from "../../rated/spell.ts"
 
 /**
  * Counts the number of entries that match the the requirements of the rated
  * minimum number prerequisite.
  */
 export const countMatchingRatedMinimumNumberEntries = (
+  caps: {
+    getSkillById: (id: Skill_ID) => CharacterSkill | undefined
+    closeCombatTechniques: CharacterCombatTechnique<"CloseCombatTechnique">[]
+    rangedCombatTechniques: CharacterCombatTechnique<"RangedCombatTechnique">[]
+    getSpellworksByProperty: (id: Property_ID) => CharacterSpellwork<"Spell" | "Ritual">[]
+    getLiturgicalChantsByAspect: (
+      id: Aspect_ID,
+    ) => CharacterLiturgicalChant<"LiturgicalChant" | "Ceremony">[]
+  },
   minimumValue: number,
   targets: RatedMinimumNumberPrerequisiteTarget,
-  caps: {
-    getDynamicSkillById: GetById.Dynamic.Skill
-    dynamicCloseCombatTechniques: All.Dynamic.CloseCombatTechniques
-    dynamicRangedCombatTechniques: All.Dynamic.RangedCombatTechniques
-    getDynamicSpellsByProperty: GetDynamicSpellworksByPropertyCapability
-    getDynamicRitualsByProperty: GetDynamicSpellworksByPropertyCapability
-    getDynamicLiturgicalChantsByAspect: GetDynamicLiturgicalChantsByAspectCapability
-    getDynamicCeremoniesByAspect: GetDynamicLiturgicalChantsByAspectCapability
-  },
 ): number => {
-  const matchRated = (rated: Rated) => rated.value >= minimumValue
-  const matchActivatableRated = (activatableRated: ActivatableRatedWithEnhancements) =>
-    activatableRated.value !== undefined && activatableRated.value >= minimumValue
+  const matchRated = (rated: { value: number }) => rated.value >= minimumValue
+  const matchActivatableRated = (
+    activatableRated: CharacterActivatableRatedWithEnhancements<
+      "Spell" | "Ritual" | "LiturgicalChant" | "Ceremony"
+    >,
+  ) => activatableRated.value !== undefined && activatableRated.value >= minimumValue
 
-  return (() => {
-    switch (targets.tag) {
-      case "Skills":
-        return targets.skills.list
-          .map(ref => caps.getDynamicSkillById(ref.id.skill))
-          .filter(isNotNullish)
-          .filter(matchRated)
-      case "CombatTechniques":
-        switch (targets.combat_techniques.group) {
-          case "All":
-            return [
-              ...caps.dynamicCloseCombatTechniques.filter(matchRated),
-              ...caps.dynamicRangedCombatTechniques.filter(matchRated),
-            ]
-          case "Close":
-            return caps.dynamicCloseCombatTechniques.filter(matchRated)
-          case "Ranged":
-            return caps.dynamicRangedCombatTechniques.filter(matchRated)
-          default:
-            return assertExhaustive(targets.combat_techniques.group)
-        }
-      case "Spellworks":
-        return caps
-          .getDynamicSpellsByProperty(targets.spellworks.id.property)
-          .filter(matchActivatableRated)
-      case "Liturgies":
-        return caps
-          .getDynamicLiturgicalChantsByAspect(targets.liturgies.id.aspect)
-          .filter(matchActivatableRated)
-      default:
-        return assertExhaustive(targets)
-    }
-  })().length
+  switch (targets.kind) {
+    case "Skills":
+      return count(
+        targets.Skills.targets.map(caps.getSkillById),
+        e => isNotNullish(e) && matchRated(e),
+      )
+    case "CombatTechniques":
+      switch (targets.CombatTechniques.group.kind) {
+        case "All":
+          return count([...caps.closeCombatTechniques, ...caps.rangedCombatTechniques], matchRated)
+        case "Close":
+          return count(caps.closeCombatTechniques, matchRated)
+        case "Ranged":
+          return count(caps.rangedCombatTechniques, matchRated)
+        default:
+          return assertExhaustive(targets.CombatTechniques.group)
+      }
+    case "Spellworks":
+      return count(caps.getSpellworksByProperty(targets.Spellworks.property), matchActivatableRated)
+    case "Liturgies":
+      return count(
+        caps.getLiturgicalChantsByAspect(targets.Liturgies.aspect),
+        matchActivatableRated,
+      )
+    default:
+      return assertExhaustive(targets)
+  }
 }
 
 /**
@@ -70,13 +72,13 @@ export const countMatchingRatedMinimumNumberEntries = (
  */
 export const checkRatedMinimumNumberPrerequisite = (
   caps: {
-    getDynamicSkillById: GetById.Dynamic.Skill
-    dynamicCloseCombatTechniques: All.Dynamic.CloseCombatTechniques
-    dynamicRangedCombatTechniques: All.Dynamic.RangedCombatTechniques
-    getDynamicSpellsByProperty: GetDynamicSpellworksByPropertyCapability
-    getDynamicRitualsByProperty: GetDynamicSpellworksByPropertyCapability
-    getDynamicLiturgicalChantsByAspect: GetDynamicLiturgicalChantsByAspectCapability
-    getDynamicCeremoniesByAspect: GetDynamicLiturgicalChantsByAspectCapability
+    getSkillById: (id: Skill_ID) => CharacterSkill | undefined
+    closeCombatTechniques: CharacterCombatTechnique<"CloseCombatTechnique">[]
+    rangedCombatTechniques: CharacterCombatTechnique<"RangedCombatTechnique">[]
+    getSpellworksByProperty: (id: Property_ID) => CharacterSpellwork<"Spell" | "Ritual">[]
+    getLiturgicalChantsByAspect: (
+      id: Aspect_ID,
+    ) => CharacterLiturgicalChant<"LiturgicalChant" | "Ceremony">[]
   },
   p: RatedMinimumNumberPrerequisite,
-): boolean => countMatchingRatedMinimumNumberEntries(p.value, p.targets, caps) >= p.number
+): boolean => countMatchingRatedMinimumNumberEntries(caps, p.value, p.targets) >= p.number

@@ -1,13 +1,13 @@
 import type { Locale } from "@optolith/database-schema/gen"
-import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
+import { type IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
 import EventEmitter from "events"
 import {
-  GlobalSettingsEmittingAPI,
-  GlobalSettingsEvents,
+  type GlobalSettingsEmittingAPI,
+  type GlobalSettingsEvents,
   getGlobalSettingsEmittingAPI,
 } from "../shared/settings/emittingRendererPreload.ts"
-import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
-import { TypedEventEmitter } from "../shared/utils/events.ts"
+import type { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
+import type { TypedEventEmitter } from "../shared/utils/events.ts"
 
 type Events = GlobalSettingsEvents & {
   "initial-setup": [InitialSetupEventMessage]

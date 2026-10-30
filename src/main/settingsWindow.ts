@@ -1,17 +1,20 @@
 import type { Locale } from "@optolith/database-schema/gen"
 import Debug from "debug"
 import { BrowserWindow, app, ipcMain } from "electron"
+import { runInAction } from "mobx"
 import * as path from "node:path"
 import * as url from "node:url"
 import type { InitialSetupEventMessage } from "../settings_window_preload/index.ts"
-import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
+import type { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import {
   attachGlobalSettingsBroadcastToWindow,
   attachGlobalSettingsChanged,
   globalSettings,
 } from "../shared/settings/main.ts"
 import { getWindowBackgroundColor, setNativeTheme } from "./nativeTheme.ts"
+
 const debug = Debug("main:settings")
+debug.log = console.log.bind(console)
 
 let settingsWindow: BrowserWindow | undefined = undefined
 
@@ -37,7 +40,7 @@ export const createSettingsWindow = async (
       center: true,
       title: "Optolith",
       acceptFirstMouse: true,
-      backgroundColor: getWindowBackgroundColor(globalSettings.theme),
+      backgroundColor: getWindowBackgroundColor(runInAction(() => globalSettings.theme)),
       webPreferences: {
         preload: path.join(__dirname, "renderer_settings_preload.cjs"),
       },
@@ -89,7 +92,7 @@ export const createSettingsWindow = async (
     const initialSetupEventMessage: InitialSetupEventMessage = {
       locales,
       systemLocale: app.getLocale(),
-      settings: globalSettings.toJSON(),
+      settings: runInAction(() => globalSettings.toJSON()),
     }
 
     settingsWindow.webContents.send("initial-setup", initialSetupEventMessage)

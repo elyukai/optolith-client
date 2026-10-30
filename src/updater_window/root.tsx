@@ -1,12 +1,12 @@
 import type { ProgressInfo, UpdateDownloadedEvent, UpdateInfo } from "electron-updater"
-import { FC, useEffect, useState } from "react"
+import { type FC, useEffect, useState } from "react"
 import { Button } from "../shared/components/button/Button.tsx"
 import { LoadingIndicator } from "../shared/components/loadingIndicator/LoadingIndicator.tsx"
 import { ProgressBar } from "../shared/components/progressBar/ProgressBar.tsx"
 import { TitleBar } from "../shared/components/titleBar/TitleBar.tsx"
 import { useTranslate } from "../shared/hooks/translate.ts"
 import { bytify } from "../shared/utils/translate.ts"
-import { assertExhaustive } from "../shared/utils/typeSafety.ts"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import { ExternalAPI } from "./external.ts"
 import "./root.scss"
 
@@ -158,7 +158,7 @@ export const Root: FC<Props> = props => {
                   <p>
                     {translate(
                       "Version {$version} is available! Do you wish to download and install?",
-                      {version: phase.info.version},
+                      { version: phase.info.version },
                     )}
                   </p>
                   <div className="buttons">

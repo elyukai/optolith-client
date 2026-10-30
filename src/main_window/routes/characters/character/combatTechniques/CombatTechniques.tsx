@@ -1,5 +1,9 @@
+import { on } from "@elyukai/utils/function"
+import { compareNumber, reduceCompare } from "@elyukai/utils/ordering"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { compareImprovementCost } from "@optolith/adventure-points/improvement-cost"
 import { observer } from "mobx-react"
-import { FC, useCallback, useMemo, useState } from "react"
+import { type FC, useCallback, useMemo, useState } from "react"
 import { List } from "../../../../../shared/components/list/List.tsx"
 import { ListHeader } from "../../../../../shared/components/list/ListHeader.tsx"
 import { ListHeaderTag } from "../../../../../shared/components/list/ListHeaderTag.tsx"
@@ -10,20 +14,14 @@ import { Page } from "../../../../../shared/components/page/Page.tsx"
 import { RadioButtonGroup } from "../../../../../shared/components/radioButton/RadioButtonGroup.tsx"
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { TextField } from "../../../../../shared/components/textField/TextField.tsx"
-import {
-  compareImprovementCost,
-  fromRaw,
-} from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
 import type { DisplayedCombatTechnique } from "../../../../../shared/domain/rated/combatTechnique.ts"
 import { CombatTechniquesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { compareAt, numAsc, reduceCompare } from "../../../../../shared/utils/compare.ts"
-import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { SharedState } from "../../../../external.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { InlineLibrary, InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import {
   changeCombatTechniquesSortOrder,
   selectCombatTechniquesSortOrder,
@@ -62,27 +60,23 @@ export const CombatTechniques: FC = observer(() => {
       visibleCombatTechniques
         .filter(
           c =>
-            translateMap(c.dbEntry.translations)
-              ?.name.toLowerCase()
-              .includes(filterText.toLowerCase()) ?? false,
+            translateMap(c.translations)?.name.toLowerCase().includes(filterText.toLowerCase()) ??
+            false,
         )
         .sort(
           (() => {
             switch (sortOrder) {
               case CombatTechniquesSortOrder.Name:
-                return compareAt(
-                  c => translateMap(c.dbEntry.translations)?.name ?? "",
-                  localeCompare,
-                )
+                return on(c => translateMap(c.translations)?.name ?? "", localeCompare)
               case CombatTechniquesSortOrder.Group:
                 return reduceCompare(
-                  compareAt(c => (c.type === "CloseCombatTechnique" ? 1 : 2), numAsc),
-                  compareAt(c => translateMap(c.dbEntry.translations)?.name ?? "", localeCompare),
+                  on(c => (c.type === "CloseCombatTechnique" ? 1 : 2), compareNumber),
+                  on(c => translateMap(c.translations)?.name ?? "", localeCompare),
                 )
               case CombatTechniquesSortOrder.ImprovementCost:
                 return reduceCompare(
-                  compareAt(c => fromRaw(c.dbEntry.improvement_cost), compareImprovementCost),
-                  compareAt(c => translateMap(c.dbEntry.translations)?.name ?? "", localeCompare),
+                  on(c => c.improvementCost, compareImprovementCost),
+                  on(c => translateMap(c.translations)?.name ?? "", localeCompare),
                 )
               default:
                 return assertExhaustive(sortOrder)
@@ -151,6 +145,7 @@ export const CombatTechniques: FC = observer(() => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
                         closeCombatTechnique={x}
                         canRemove={canRemove}
+                        selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                       />
                     )
                   case "RangedCombatTechnique":
@@ -160,6 +155,7 @@ export const CombatTechniques: FC = observer(() => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
                         rangedCombatTechnique={x}
                         canRemove={canRemove}
+                        selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                       />
                     )
                   default:

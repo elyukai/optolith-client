@@ -1,10 +1,10 @@
-import { createSelector } from "@reduxjs/toolkit"
 import { Blessing } from "@optolith/database-schema/gen"
+import { createSelector } from "@reduxjs/toolkit"
 import {
   TinyActivatable,
   getOptions,
   isTinyActivatableActive,
-} from "../../shared/domain/activatable/activatableEntry.ts"
+} from "../../shared/domain/activatable/activatable.ts"
 import {
   AdvantageIdentifier,
   KarmaSpecialAbilityIdentifier,
@@ -41,7 +41,6 @@ import {
 import { SelectAll, SelectGetById } from "./basicCapabilitySelectors.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectFilterApplyingRatedDependencies } from "./dependencySelectors.ts"
-import { selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
 import { selectIsEntryAvailable } from "./publicationSelectors.ts"
 import { selectActiveBlessedTradition } from "./traditionSelectors.ts"
 
@@ -118,7 +117,6 @@ export const selectVisibleActiveLiturgicalChants = createSelector(
   SelectGetById.Static.LiturgicalChant,
   SelectAll.Dynamic.LiturgicalChants,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalSkill),
   SelectGetById.Dynamic.Attribute,
@@ -165,7 +163,6 @@ export const selectVisibleActiveCeremonies = createSelector(
   SelectGetById.Static.Ceremony,
   SelectAll.Dynamic.Ceremonies,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalSkill),
   SelectGetById.Dynamic.Attribute,
@@ -243,7 +240,6 @@ const selectActiveLiturgicalChantsCount = createSelector(
 const selectIsMaximumOfLiturgicalChantsReached = createSelector(
   selectActiveLiturgicalChantsCount,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   (activeCount, isInCharacterCreation, startExperienceLevel) =>
     startExperienceLevel === undefined ||
     isMaximumOfLiturgicalChantsReached(activeCount, isInCharacterCreation, startExperienceLevel),
@@ -310,8 +306,8 @@ const selectUnfamiliarTraditionsWithHighestActiveCount = createSelector(
           count > acc.count
             ? { count, traditions: [traditionId] }
             : count === acc.count
-            ? { count, traditions: [...acc.traditions, traditionId] }
-            : acc,
+              ? { count, traditions: [...acc.traditions, traditionId] }
+              : acc,
         { count: 0, traditions: [] },
       )
       .traditions.map(traditionId => Number.parseInt(traditionId, 10)),

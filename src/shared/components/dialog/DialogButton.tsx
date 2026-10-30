@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react"
+import { type FC, useCallback } from "react"
 import { Button } from "../button/Button.tsx"
 
 type Props = {

@@ -1,5 +1,5 @@
 import { observer } from "mobx-react"
-import { FC } from "react"
+import type { FC } from "react"
 import { SharedState } from "../../../../external.ts"
 import "./AttributesList.scss"
 import { AttributeListItem } from "./AttributesListItem.tsx"

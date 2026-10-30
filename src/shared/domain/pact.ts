@@ -1,39 +1,81 @@
-import { ActivatableIdentifier } from "@optolith/database-schema/gen"
-import {
-  PactCategoryReference,
-  PactDomainReference,
+import type {
+  ActivatableIdentifier,
+  PactCategory_ID,
+  PactDomain_ID,
+  PactType_ID,
 } from "@optolith/database-schema/gen"
+import { computed, observable } from "mobx"
+import type { Global } from "../global.ts"
+import type { Character } from "./character.ts"
 
 /**
  * A active pact between a character and a creature.
  */
-export type Pact = {
+export class CharacterPact {
+  readonly global: Global
+  readonly character: Character
+
   /**
    * The pact category identifier.
    */
-  category: number
+  @observable accessor categoryId: PactCategory_ID
+
+  @computed
+  get category() {
+    return this.global.db.getInstanceOfEntityById("PactCategory", this.categoryId)
+  }
 
   /**
    * The pact type identifier, which depends on the selected pact category.
    */
-  type: number
+  @observable accessor typeId: PactType_ID
+
+  @computed
+  get type() {
+    return this.global.db.getInstanceOfEntityById("PactType", this.typeId)
+  }
 
   /**
    * The pact domain identifier or a custom domain name. The pact domain
    * describes the type of creatures the pact has been made with. For example,
    * for a demon pact this is the archdemon.
    */
-  domain: PactDomain
+  @observable accessor domainId: PactDomain_ID
+
+  @computed
+  get domain() {
+    return this.global.db.getInstanceOfEntityById("PactDomain", this.domainId)
+  }
 
   /**
    * The level of the pact.
    */
-  level: number
+  @observable accessor level: number
 
   /**
    * The name of the creature the pact has been made with.
    */
-  name: string
+  @observable accessor name: string
+
+  @observable accessor dependencies: PactDependency[] = []
+
+  constructor(
+    global: Global,
+    character: Character,
+    categoryId: PactCategory_ID,
+    typeId: PactType_ID,
+    domainId: PactDomain_ID,
+    level: number,
+    name: string = "",
+  ) {
+    this.global = global
+    this.character = character
+    this.categoryId = categoryId
+    this.typeId = typeId
+    this.domainId = domainId
+    this.level = level
+    this.name = name
+  }
 }
 
 /**
@@ -62,12 +104,12 @@ export type PactDependency = {
   /**
    * The required pact category.
    */
-  category: PactCategoryReference
+  category: PactCategory_ID
 
   /**
    * The required domain(s).
    */
-  domain?: PactDomainReference[]
+  domain?: PactDomain_ID[]
 
   /**
    * The required pact level.

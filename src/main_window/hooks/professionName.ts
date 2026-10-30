@@ -1,13 +1,6 @@
 import { useMemo } from "react"
-import {
-  FullProfessionNameParts,
-  getFullProfessionNameParts,
-} from "../../shared/domain/profession.ts"
+import { FullProfessionNameParts } from "../../shared/domain/profession.ts"
 import { useTranslateMap } from "../../shared/hooks/translateMap.ts"
-import {
-  selectCurrentProfession,
-  selectCurrentProfessionVariant,
-} from "../selectors/professionSelectors.ts"
 import { selectCustomProfessionName, selectSex } from "../slices/characterSlice.ts"
 import { useAppSelector } from "./redux.ts"
 

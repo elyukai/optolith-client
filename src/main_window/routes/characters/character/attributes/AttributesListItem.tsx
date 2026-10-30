@@ -1,11 +1,11 @@
 import { toKebabCase } from "@elyukai/utils/string"
-import { FC, MouseEvent, useCallback } from "react"
+import { type FC, type MouseEvent, useCallback } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { NumberBox } from "../../../../../shared/components/numberBox/NumberBox.tsx"
 import type { DisplayedAttribute } from "../../../../../shared/domain/rated/attribute.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { ExternalAPI } from "../../../../external.ts"
+import { SharedActions } from "../../../../external.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
 
 type Props = {
@@ -22,25 +22,18 @@ export const AttributeListItem: FC<Props> = props => {
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
-  const translations = translateMap(attribute.dbEntry.translations)
+  const translations = translateMap(attribute.translations)
 
-  const {
-    id,
-    value,
-    maxValue: maximum,
-    isDecreasable,
-    isIncreasable,
-    dbEntry: { color },
-  } = attribute
+  const { id, value, maxValue: maximum, isDecreasable, isIncreasable, color } = attribute
 
   const valueHeader = isInCharacterCreation ? `${value} / ${maximum}` : value
 
   const handleAdd = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
       if (event.shiftKey && maximum !== undefined) {
-        ExternalAPI.execute("incrementRatedToMax", "Attribute", id)
+        SharedActions.incrementRatedToMax("Attribute", id)
       } else {
-        ExternalAPI.execute("incrementRated", "Attribute", id)
+        SharedActions.incrementRated("Attribute", id)
       }
     },
     [isIncreasable, maximum],
@@ -49,9 +42,9 @@ export const AttributeListItem: FC<Props> = props => {
   const handleRemove = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
       if (event.shiftKey) {
-        ExternalAPI.execute("decrementRatedToMin", "Attribute", id)
+        SharedActions.decrementRatedToMin("Attribute", id)
       } else {
-        ExternalAPI.execute("decrementRated", "Attribute", id)
+        SharedActions.decrementRated("Attribute", id)
       }
     },
     [isDecreasable],

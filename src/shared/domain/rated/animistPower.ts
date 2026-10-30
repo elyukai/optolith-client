@@ -1,9 +1,6 @@
-import { AnimistPowerImprovementCost } from "@optolith/database-schema/gen"
-import { mapNullable } from "../../utils/nullable.ts"
-import { assertExhaustive } from "../../utils/typeSafety.ts"
-import { Activatable, getFirstOptionOfType } from "../activatable/activatableEntry.ts"
-import { ImprovementCost, fromRaw } from "../adventurePoints/improvementCost.ts"
-import { GetById } from "../getTypes.ts"
+import { mapNullable } from "@elyukai/utils/nullable"
+import { AnimistPowerImprovementCost, type ImprovementCost } from "@optolith/database-schema/gen"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
 
 /**
  * Returns the improvement cost for an animist power.

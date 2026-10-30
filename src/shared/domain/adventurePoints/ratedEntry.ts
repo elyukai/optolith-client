@@ -1,8 +1,8 @@
+import { range } from "@elyukai/utils/range"
 import {
   type ImprovementCost,
   getAdventurePointsForRating,
 } from "@optolith/adventure-points/improvement-cost"
-import { range } from "../../utils/array.ts"
 import {
   AdventurePointsCache,
   addAdventurePointsCaches,
@@ -42,32 +42,31 @@ const accumulateCache = (
   boundByValue: ReadonlyMap<number | "activation", number>,
   ic: ImprovementCost,
 ): AdventurePointsCache => {
-  const { usedGeneral, usedBound } = range(startValue, endValue).reduce(
-    (acc, currentValue) => {
-      const costForStep = getAdventurePointsForRating(ic, currentValue - 1)
-      const usedBoundForStep = Math.min(costForStep, acc.remainingApplicableBound)
-      const usedGeneralForStep = costForStep - usedBoundForStep
+  const { usedGeneral, usedBound } = range(startValue, endValue)
+    .slice(1)
+    .reduce(
+      (acc, currentValue) => {
+        const costForStep = getAdventurePointsForRating(ic, currentValue)
+        const usedBoundForStep = Math.min(costForStep, acc.remainingApplicableBound)
+        const usedGeneralForStep = costForStep - usedBoundForStep
 
-      const newRemainingBound =
-        acc.remainingApplicableBound - usedBoundForStep + (boundByValue.get(currentValue) ?? 0)
+        const newRemainingBound =
+          acc.remainingApplicableBound - usedBoundForStep + (boundByValue.get(currentValue) ?? 0)
 
-      return {
-        usedGeneral: acc.usedGeneral + usedGeneralForStep,
-        usedBound: acc.usedBound + usedBoundForStep,
-        remainingApplicableBound: newRemainingBound,
-      }
-    },
-    {
-      usedGeneral: 0,
-      usedBound: 0,
-      remainingApplicableBound: boundByValue.get(initialApplicableBoundKey) ?? 0,
-    },
-  )
+        return {
+          usedGeneral: acc.usedGeneral + usedGeneralForStep,
+          usedBound: acc.usedBound + usedBoundForStep,
+          remainingApplicableBound: newRemainingBound,
+        }
+      },
+      {
+        usedGeneral: 0,
+        usedBound: 0,
+        remainingApplicableBound: boundByValue.get(initialApplicableBoundKey) ?? 0,
+      },
+    )
 
-  return {
-    general: usedGeneral,
-    bound: usedBound,
-  }
+  return new AdventurePointsCache(usedGeneral, usedBound)
 }
 
 /**
@@ -85,7 +84,7 @@ export const cachedAdventurePoints = (
     return emptyAdventurePointsCache
   } else {
     const boundByValue = groupBoundAdventurePointsByRating(boundAdventurePoints)
-    return accumulateCache(minValue + 1, value, minValue, boundByValue, ic)
+    return accumulateCache(minValue, value, minValue, boundByValue, ic)
   }
 }
 
@@ -128,9 +127,9 @@ export const cachedAdventurePointsForActivatableWithEnhancements = (
       (acc, enhancementId) => acc + getAdventurePointsModifierForEnhancement(enhancementId),
       0,
     )
-    return addAdventurePointsCaches(accumulateCache(0, value, "activation", boundByValue, ic), {
-      general: enhancementAdventurePoints,
-      bound: 0,
-    })
+    return addAdventurePointsCaches(
+      accumulateCache(0, value, "activation", boundByValue, ic),
+      new AdventurePointsCache(enhancementAdventurePoints, 0),
+    )
   }
 }

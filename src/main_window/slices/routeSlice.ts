@@ -1,30 +1,36 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit"
-import { RootState } from "../store.ts"
+import { type PayloadAction, createSlice } from "@reduxjs/toolkit"
+import type { RootState } from "../store.ts"
 
 /**
  * Possible routes.
  */
 export type RoutePath =
   | ["characters"]
-  | ["characters", string, "profile"]
-  | ["characters", string, "personal_data"]
-  | ["characters", string, "character_sheet"]
-  | ["characters", string, "pact"]
-  | ["characters", string, "rules"]
-  | ["characters", string, "race"]
-  | ["characters", string, "culture"]
-  | ["characters", string, "profession"]
-  | ["characters", string, "attributes"]
-  | ["characters", string, "advantages"]
-  | ["characters", string, "disadvantages"]
-  | ["characters", string, "skills"]
-  | ["characters", string, "combat_techniques"]
-  | ["characters", string, "special_abilities"]
-  | ["characters", string, "spells"]
-  | ["characters", string, "liturgical_chants"]
-  | ["characters", string, "equipment"]
-  | ["characters", string, "hit_zone_armor"]
-  | ["characters", string, "pets"]
+  | [
+      "characters",
+      string,
+      (
+        | "profile"
+        | "personal_data"
+        | "character_sheet"
+        | "pact"
+        | "rules"
+        | "race"
+        | "culture"
+        | "profession"
+        | "attributes"
+        | "advantages"
+        | "disadvantages"
+        | "skills"
+        | "combat_techniques"
+        | "special_abilities"
+        | "spells"
+        | "liturgical_chants"
+        | "equipment"
+        | "hit_zone_armor"
+        | "pets"
+      ),
+    ]
   | ["groups"]
   | ["library"]
   | ["faq"]
@@ -40,7 +46,7 @@ export type RouteState = {
 }
 
 const initialState: RouteState = {
-  path: ["characters", "550e8400-e29b-11d4-a716-446655440000", "special_abilities"],
+  path: ["characters", "550e8400-e29b-11d4-a716-446655440000", "skills"],
 }
 
 const routeSlice = createSlice({

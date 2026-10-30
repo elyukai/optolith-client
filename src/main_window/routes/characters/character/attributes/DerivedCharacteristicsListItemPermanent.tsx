@@ -1,26 +1,10 @@
-import { FC, useCallback } from "react"
+import type { DerivedCharacteristicTranslation } from "@optolith/database-schema/gen"
+import { type FC, useCallback } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import type { DisplayedDerivedCharacteristic } from "../../../../../shared/domain/energy.ts"
-import { DerivedCharacteristicIdentifier as DCId } from "../../../../../shared/domain/identifier.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
+import { SharedActions } from "../../../../external.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
-import { useAppDispatch } from "../../../../hooks/redux.ts"
-import {
-  addArcaneEnergyPermanentlyLost,
-  addKarmaPointsPermanentlyLost,
-  addLifePointsPermanentlyLost,
-  decrementArcaneEnergyBoughtBack,
-  decrementArcaneEnergyPermanentlyLost,
-  decrementKarmaPointsBoughtBack,
-  decrementKarmaPointsPermanentlyLost,
-  decrementLifePointsPermanentlyLost,
-  incrementArcaneEnergyBoughtBack,
-  incrementArcaneEnergyPermanentlyLost,
-  incrementKarmaPointsBoughtBack,
-  incrementKarmaPointsPermanentlyLost,
-  incrementLifePointsPermanentlyLost,
-} from "../../../../slices/derivedCharacteristicsSlice.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
 import { PermanentLossSheet } from "./PermanentLossSheet.tsx"
 import { PermanentPointsSheet } from "./PermanentPointsSheet.tsx"
@@ -28,6 +12,7 @@ import { PermanentPointsSheet } from "./PermanentPointsSheet.tsx"
 type Props = {
   attribute: DisplayedDerivedCharacteristic
   isRemovingEnabled: boolean
+  translation: DerivedCharacteristicTranslation | undefined
 }
 
 /**
@@ -35,10 +20,9 @@ type Props = {
  * derived characteristic value.
  */
 export const DerivedCharacteristicsListItemPermanent: FC<Props> = props => {
-  const { attribute, isRemovingEnabled } = props
+  const { attribute, isRemovingEnabled, translation } = props
 
   const { id, permanentlyLost = 0, permanentlyLostBoughtBack } = attribute
-  const dispatch = useAppDispatch()
   const translate = useTranslate()
 
   const {
@@ -54,97 +38,40 @@ export const DerivedCharacteristicsListItemPermanent: FC<Props> = props => {
   } = useModalState()
 
   const handleAddPermanentlyLostPoint = useCallback(() => {
-    switch (id) {
-      case DCId.LifePoints:
-        dispatch(incrementLifePointsPermanentlyLost())
-        break
-      case DCId.ArcaneEnergy:
-        dispatch(incrementArcaneEnergyPermanentlyLost())
-        break
-      case DCId.KarmaPoints:
-        dispatch(incrementKarmaPointsPermanentlyLost())
-        break
-      default:
-        assertExhaustive(id)
-    }
-  }, [dispatch, id])
+    SharedActions.incrementDerivedCharacteristicPermanentlyLost(id)
+  }, [id])
 
   const handleAddPermanentlyLostPoints = useCallback(
     (value: number) => {
-      switch (id) {
-        case DCId.LifePoints:
-          dispatch(addLifePointsPermanentlyLost(value))
-          break
-        case DCId.ArcaneEnergy:
-          dispatch(addArcaneEnergyPermanentlyLost(value))
-          break
-        case DCId.KarmaPoints:
-          dispatch(addKarmaPointsPermanentlyLost(value))
-          break
-        default:
-          assertExhaustive(id)
-      }
+      SharedActions.addDerivedCharacteristicPermanentlyLost(id, value)
     },
-    [dispatch, id],
+    [id],
   )
 
   const handleRemovePermanentlyLostPoint = useCallback(() => {
-    switch (id) {
-      case DCId.LifePoints:
-        dispatch(decrementLifePointsPermanentlyLost())
-        break
-      case DCId.ArcaneEnergy:
-        dispatch(decrementArcaneEnergyPermanentlyLost())
-        break
-      case DCId.KarmaPoints:
-        dispatch(decrementKarmaPointsPermanentlyLost())
-        break
-      default:
-        assertExhaustive(id)
-    }
-  }, [dispatch, id])
+    SharedActions.decrementDerivedCharacteristicPermanentlyLost(id)
+  }, [id])
 
   const handleAddBoughtBackPoint = useCallback(() => {
-    switch (id) {
-      case DCId.LifePoints:
-        break
-      case DCId.ArcaneEnergy:
-        dispatch(incrementArcaneEnergyBoughtBack())
-        break
-      case DCId.KarmaPoints:
-        dispatch(incrementKarmaPointsBoughtBack())
-        break
-      default:
-        assertExhaustive(id)
-    }
-  }, [dispatch, id])
+    SharedActions.incrementDerivedCharacteristicBoughtBack(id)
+  }, [id])
 
   const handleRemoveBoughtBackPoint = useCallback(() => {
-    switch (id) {
-      case DCId.LifePoints:
-        break
-      case DCId.ArcaneEnergy:
-        dispatch(decrementArcaneEnergyBoughtBack())
-        break
-      case DCId.KarmaPoints:
-        dispatch(decrementKarmaPointsBoughtBack())
-        break
-      default:
-        assertExhaustive(id)
-    }
-  }, [dispatch, id])
+    SharedActions.decrementDerivedCharacteristicBoughtBack(id)
+  }, [id])
 
   const available =
     typeof permanentlyLostBoughtBack === "number"
       ? permanentlyLost - permanentlyLostBoughtBack
       : permanentlyLost
 
-  const [label, name] =
-    id === DCId.LifePoints
-      ? [translate("pLP"), translate("Permanently Lost Life Points")]
-      : id === DCId.ArcaneEnergy
-        ? [translate("pAE"), translate("Permanently Lost Arcane Energy")]
-        : [translate("pKP"), translate("Permanently Lost Karma Points")]
+  const label = translate("p{$energy}", {
+    energy: translation?.unitAbbreviation ?? translation?.abbreviation ?? "",
+  })
+
+  const name = translate("Permanently Lost {$energy}", {
+    energy: translation?.name ?? "",
+  })
 
   return (
     <AttributeBorder
@@ -188,6 +115,7 @@ export const DerivedCharacteristicsListItemPermanent: FC<Props> = props => {
           />
           <PermanentPointsSheet
             id={id}
+            name={name}
             isOpen={isPermanentPointsSheetOpen}
             permanentlyLost={permanentlyLost}
             permanentlyLostBoughtBack={permanentlyLostBoughtBack}
@@ -213,7 +141,7 @@ export const DerivedCharacteristicsListItemPermanent: FC<Props> = props => {
           />
         </>
       )}
-      {!isRemovingEnabled && id !== DCId.LifePoints ? (
+      {!isRemovingEnabled && typeof permanentlyLostBoughtBack === "number" ? (
         <IconButton
           className="remove"
           icon="&#xE909;"

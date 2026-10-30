@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react"
+import { type FC, useEffect, useState } from "react"
 import { Main } from "../../../shared/components/main/Main.tsx"
 import { Page } from "../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"

@@ -1,50 +1,21 @@
 import type { NonEmptyArray } from "@elyukai/utils/array/nonEmpty"
 import { isNotNullish } from "@elyukai/utils/nullable"
-import { BrowserWindow, Event, ipcMain } from "electron"
+import { BrowserWindow, type Event, ipcMain } from "electron"
 import { computed, observable } from "mobx"
-import { GlobalSettings, Theme } from "./GlobalSettings.ts"
-
-const _globalSettings: GlobalSettings = observable({
-  locale: "de-DE",
-  fallbackLocale: undefined,
-  theme: undefined,
-  isEditAfterCreationEnabled: false,
-  areAnimationsEnabled: false,
-})
+import type { GlobalSettings, Theme } from "./GlobalSettings.ts"
 
 class GlobalSettingsManager {
   static instance: GlobalSettingsManager = new GlobalSettingsManager()
 
-  @computed
-  get locale(): string {
-    return _globalSettings.locale
-  }
-
-  @computed
-  get fallbackLocale(): string | undefined {
-    return _globalSettings.fallbackLocale
-  }
-
-  @computed
-  get theme(): Theme | undefined {
-    return _globalSettings.theme
-  }
-
-  @computed
-  get isEditAfterCreationEnabled(): boolean {
-    return _globalSettings.isEditAfterCreationEnabled
-  }
-
-  @computed
-  get areAnimationsEnabled(): boolean {
-    return _globalSettings.areAnimationsEnabled
-  }
+  @observable accessor locale: string | undefined
+  @observable accessor fallbackLocale: string | undefined
+  @observable accessor theme: Theme | undefined
+  @observable accessor isEditAfterCreationEnabled: boolean = false
+  @observable accessor areAnimationsEnabled: boolean = false
 
   @computed
   get locales(): NonEmptyArray<string> {
-    return [_globalSettings.locale, _globalSettings.fallbackLocale].filter(
-      isNotNullish,
-    ) as NonEmptyArray<string>
+    return [this.locale, this.fallbackLocale].filter(isNotNullish) as NonEmptyArray<string>
   }
 
   toJSON(): GlobalSettings {
@@ -67,12 +38,12 @@ class GlobalSettingsManager {
  */
 export const attachGlobalSettingsChanged = (
   settingsWindow: BrowserWindow,
-  listener: <K extends keyof GlobalSettings>(key: K, value: GlobalSettings[K]) => void,
+  listener: <K extends keyof GlobalSettings>(key: K, value: GlobalSettingsManager[K]) => void,
 ) => {
   ipcMain.on(
     "settings-window-change-setting",
-    <K extends keyof GlobalSettings>(_: Event, key: K, value: GlobalSettings[K]) => {
-      _globalSettings[key] = value
+    <K extends keyof GlobalSettings>(_: Event, key: K, value: GlobalSettingsManager[K]) => {
+      GlobalSettingsManager.instance[key] = value
       listener(key, value)
     },
   )

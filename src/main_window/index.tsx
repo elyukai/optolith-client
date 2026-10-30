@@ -34,9 +34,10 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
-import { LocalizationProvider } from "../shared/components/localizationProvider/LocalizationProvider.tsx"
+import { LocalizationContext } from "../shared/contexts/localization.ts"
 import { onGlobalSettingsUpdate } from "../shared/settings/listeningRenderer.ts"
 import "../shared/styles/index.scss"
+import { LocaleEnvironment } from "../shared/utils/locale.ts"
 import { ExternalAPI } from "./external.ts"
 import { init } from "./init.ts"
 import { Root } from "./routes/Root.tsx"
@@ -167,20 +168,16 @@ const root = createRoot(domNode)
 
 document.body.classList.add(`platform--${ExternalAPI.platform}`)
 
-ExternalAPI.on("initial-setup", ({ locales, globalSettings, database, cache }) => {
+ExternalAPI.on("initial-setup", data => {
+  const { locales, globalSettings, database, cache, systemLocale } = data
+  const localeEnvironment = new LocaleEnvironment(locales, systemLocale, globalSettings)
+  localeEnvironment.listenToLocaleChanges(ExternalAPI)
   root.render(
     <StrictMode>
       <Provider store={store}>
-        <LocalizationProvider
-          selectedLocale={globalSettings.locale}
-          selectedFallbackLocale={globalSettings.fallbackLocale}
-          selectedLocaleEvents={ExternalAPI}
-          systemLocale={ExternalAPI.systemLocale}
-          platform={ExternalAPI.platform}
-          locales={locales}
-        >
+        <LocalizationContext.Provider value={localeEnvironment}>
           <Root />
-        </LocalizationProvider>
+        </LocalizationContext.Provider>
       </Provider>
     </StrictMode>,
   )

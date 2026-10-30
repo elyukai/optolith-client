@@ -1,5 +1,5 @@
-import { FC, useCallback, useEffect, useState } from "react"
-import { TypedEventEmitter } from "../../utils/events.ts"
+import { type FC, useCallback, useEffect, useState } from "react"
+import type { TypedEventEmitter } from "../../utils/events.ts"
 import "./TitleBar.scss"
 import { TitleBarButton } from "./TitleBarButton.tsx"
 import { TitleBarTitle } from "./TitleBarTitle.tsx"

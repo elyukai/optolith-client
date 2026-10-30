@@ -2,31 +2,50 @@
  * The accumulated used adventure points value for an entry. It is
  * split by used bound and used general adventure points.
  */
-export type AdventurePointsCache = {
+export class AdventurePointsCache {
   /**
    * The used general adventure points.
    */
-  general: number
+  readonly general: number
 
   /**
    * The used bound adventure points.
    */
-  bound: number
+  readonly bound: number
+
+  constructor(general: number, bound: number) {
+    this.general = general
+    this.bound = bound
+  }
+
+  static empty: AdventurePointsCache = new AdventurePointsCache(0, 0)
+
+  toJSON(): { general: number; bound: number } {
+    return {
+      general: this.general,
+      bound: this.bound,
+    }
+  }
+
+  add(other: AdventurePointsCache): AdventurePointsCache {
+    return new AdventurePointsCache(this.general + other.general, this.bound + other.bound)
+  }
+
+  getTotal(): number {
+    return this.general + this.bound
+  }
 }
 
 /**
  * An empty adventure points cache.
  */
-export const emptyAdventurePointsCache: AdventurePointsCache = {
-  general: 0,
-  bound: 0,
-}
+export const emptyAdventurePointsCache: AdventurePointsCache = AdventurePointsCache.empty
 
 /**
  * Returns the total number of adventure points from the cache.
  */
 export const getTotalAdventurePointsFromCache = (cache: AdventurePointsCache): number =>
-  cache.general + cache.bound
+  cache.getTotal()
 
 /**
  * Adds two adventure points caches.
@@ -34,7 +53,4 @@ export const getTotalAdventurePointsFromCache = (cache: AdventurePointsCache): n
 export const addAdventurePointsCaches = (
   a: AdventurePointsCache,
   b: AdventurePointsCache,
-): AdventurePointsCache => ({
-  general: a.general + b.general,
-  bound: a.bound + b.bound,
-})
+): AdventurePointsCache => a.add(b)

@@ -1,17 +1,18 @@
 import { BrowserWindow, nativeTheme } from "electron"
-import { Theme } from "../shared/settings/GlobalSettings.ts"
+import { runInAction } from "mobx"
+import type { Theme } from "../shared/settings/GlobalSettings.ts"
 import { globalSettings } from "../shared/settings/main.ts"
-import { assertExhaustive } from "../shared/utils/typeSafety.ts"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
 
 /**
  * Sets the native theme for the application.
  */
 export const setNativeTheme = (theme: Theme | undefined) => {
   switch (theme) {
-    case Theme.Dark:
+    case "dark":
       nativeTheme.themeSource = "dark"
       break
-    case Theme.Light:
+    case "light":
       nativeTheme.themeSource = "light"
       break
     case undefined:
@@ -30,9 +31,9 @@ const LIGHT = "#f0f0f0"
  */
 export const getWindowBackgroundColor = (theme: Theme | undefined) => {
   switch (theme) {
-    case Theme.Dark:
+    case "dark":
       return DARK
-    case Theme.Light:
+    case "light":
       return LIGHT
     case undefined:
       return nativeTheme.shouldUseDarkColors ? DARK : LIGHT
@@ -58,6 +59,6 @@ export const setBackgroundColorForAllWindows = (theme: Theme | undefined) => {
  */
 export const handleNativeThemeChanges = () => {
   nativeTheme.on("updated", () => {
-    setBackgroundColorForAllWindows(globalSettings.theme)
+    setBackgroundColorForAllWindows(runInAction(() => globalSettings.theme))
   })
 }

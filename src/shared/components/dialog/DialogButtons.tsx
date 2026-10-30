@@ -1,5 +1,5 @@
-import { FC } from "react"
-import { DialogButton, DialogButtonProps } from "./DialogButton.tsx"
+import type { FC } from "react"
+import { DialogButton, type DialogButtonProps } from "./DialogButton.tsx"
 
 type Props = {
   list: DialogButtonProps[]

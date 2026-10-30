@@ -1,18 +1,17 @@
-import {
+import type {
   ActivatableIdentifier,
+  Attribute_ID,
   Race,
+  Race_ID,
   RaceVariant,
-  type Attribute_ID,
-  type Race_ID,
-  type RaceVariant_ID,
+  RaceVariant_ID,
 } from "@optolith/database-schema/gen"
+import { parensIf } from "@optolith/entity-descriptions/entities/partial/rated/activatable/parensIf"
 import { computed, observable } from "mobx"
-import type { Database } from "../database.ts"
-import { mapNullableDefault } from "../utils/nullable.ts"
-import { TranslateMap } from "../utils/translate.ts"
+import type { Global } from "../global.ts"
 
 export class CharacterRace {
-  readonly #db: Database
+  readonly global: Global
 
   /**
    * The base race identifier.
@@ -35,13 +34,13 @@ export class CharacterRace {
   @observable accessor dependencies: RaceDependency[]
 
   constructor(
-    db: Database,
+    global: Global,
     id: Race_ID,
     variantId: RaceVariant_ID,
     selectedAttributeAdjustmentId?: Attribute_ID | undefined,
     dependencies: RaceDependency[] = [],
   ) {
-    this.#db = db
+    this.global = global
     this.id = id
     this.variantId = variantId
     this.selectedAttributeAdjustmentId = selectedAttributeAdjustmentId
@@ -50,39 +49,32 @@ export class CharacterRace {
 
   @computed
   get base(): Race | undefined {
-    return this.#db.getInstanceOfEntityById("Race", this.id)
+    return this.global.db.getInstanceOfEntityById("Race", this.id)
+  }
+
+  @computed
+  get baseName(): string | undefined {
+    return this.global.locale.translateMap(this.base?.translations)?.name
   }
 
   @computed
   get variant(): RaceVariant | undefined {
-    return this.#db.getInstanceOfEntityById("RaceVariant", this.id)
+    return this.global.db.getInstanceOfEntityById("RaceVariant", this.id)
+  }
+
+  @computed
+  get variantName(): string | undefined {
+    return this.global.locale.translateMap(this.variant?.translations)?.name
+  }
+
+  @computed
+  get fullName(): string | undefined {
+    if (this.baseName === undefined) {
+      return undefined
+    }
+    return this.baseName + parensIf(this.variantName)
   }
 }
-
-/**
- * Gets a race by id.
- */
-export const getRace = (races: Record<number, Race>, id: number): Race | undefined => races[id]
-
-/**
- * Gets a race variant by id, if any.
- */
-export const getRaceVariant = (race: Race, id: number | undefined): RaceVariant | undefined =>
-  id === undefined ? undefined : race.variants.find(variant => variant.id === id)
-
-/**
- * Creates the full race name for the given race and optional race variant.
- */
-export const getFullRaceName = (
-  translateMap: TranslateMap,
-  race: Race,
-  raceVariant?: RaceVariant,
-): string =>
-  `${translateMap(race.translations)?.name ?? ""}${mapNullableDefault(
-    translateMap(raceVariant?.translations)?.name,
-    str => ` (${str})`,
-    "",
-  )}`
 
 /**
  * A dependency on a race.
@@ -107,7 +99,7 @@ export type RaceDependency = Readonly<{
   /**
    * The required race's identifier.
    */
-  id: number
+  id: Race_ID
 
   /**
    * Whether the required race is required to be active or inactive.

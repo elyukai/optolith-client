@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react"
+import { type FC, useEffect, useState } from "react"
 import { Main } from "../../../shared/components/main/Main.tsx"
 import { Markdown } from "../../../shared/components/markdown/Markdown.tsx"
 import { Page } from "../../../shared/components/page/Page.tsx"

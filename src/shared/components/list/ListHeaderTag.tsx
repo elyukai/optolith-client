@@ -1,6 +1,6 @@
+import { classList } from "@elyukai/utils/classList"
 import { useRef } from "react"
-import { classList } from "../../utils/classList.ts"
-import { FCC } from "../../utils/react.ts"
+import type { FCC } from "../../utils/react.ts"
 import { TooltipHint } from "../tooltipHint/TooltipHint.tsx"
 
 type Props = {

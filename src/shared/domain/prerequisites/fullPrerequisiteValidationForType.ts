@@ -4,62 +4,74 @@
  * prerequisites.
  */
 
-import {
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type {
+  AdvantageDisadvantagePrerequisiteGroup,
   AdvantageDisadvantagePrerequisites,
+  AnimistPowerPrerequisiteGroup,
   AnimistPowerPrerequisites,
+  ArcaneTraditionPrerequisiteGroup,
   ArcaneTraditionPrerequisites,
+  DerivedCharacteristicPrerequisiteGroup,
   DerivedCharacteristicPrerequisites,
+  EnhancementPrerequisiteGroup,
   EnhancementPrerequisites,
+  GeneralPrerequisiteGroup,
   GeneralPrerequisites,
+  GeodeRitualPrerequisiteGroup,
   GeodeRitualPrerequisites,
+  InfluencePrerequisiteGroup,
   InfluencePrerequisites,
+  LanguagePrerequisiteGroup,
   LanguagePrerequisites,
+  LiturgyPrerequisiteGroup,
   LiturgyPrerequisites,
+  PersonalityTraitPrerequisiteGroup,
   PersonalityTraitPrerequisites,
   PlainGeneralPrerequisites,
+  PreconditionGroup,
+  Preconditions,
+  ProfessionPrerequisiteGroup,
   ProfessionPrerequisites,
+  PublicationPrerequisiteGroup,
   PublicationPrerequisites,
+  SpellworkPrerequisiteGroup,
   SpellworkPrerequisites,
 } from "@optolith/database-schema/gen"
-import { Preconditions } from "@optolith/database-schema/gen"
+import { Case } from "tsondb/schema/gen"
 import {
   checkPlainPrerequisites,
   checkPrerequisitesForLevels,
 } from "./prerequisiteCombinatorValidation.ts"
-import * as SingleChecks from "./prerequisiteValidationForType.ts"
+import {
+  validatePrerequisite,
+  type CapabilitiesForType,
+  type PrerequisiteOfType,
+} from "./single/index.ts"
 
 /**
  * Checks all prerequisites for a derived characteristic.
  */
 export const checkPrerequisitesOfDerivedCharacteristic = (
   prerequisites: DerivedCharacteristicPrerequisites,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfDerivedCharacteristic>[0],
-): boolean =>
-  checkPlainPrerequisites(prerequisites, p =>
-    SingleChecks.checkPrerequisiteOfDerivedCharacteristic(capabilities, p),
-  )
+  capabilities: CapabilitiesForType<DerivedCharacteristicPrerequisiteGroup>,
+): boolean => checkPlainPrerequisites(prerequisites, p => validatePrerequisite(p, capabilities))
 
 /**
  * Checks all prerequisites for a publication.
  */
 export const checkPrerequisitesOfPublication = (
   prerequisites: PublicationPrerequisites,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfPublication>[0],
-): boolean =>
-  checkPlainPrerequisites(prerequisites, p =>
-    SingleChecks.checkPrerequisiteOfPublication(capabilities, p),
-  )
+  capabilities: CapabilitiesForType<PublicationPrerequisiteGroup>,
+): boolean => checkPlainPrerequisites(prerequisites, p => validatePrerequisite(p, capabilities))
 
 /**
  * Checks all prerequisites for a general entry without levels.
  */
 export const checkPrerequisitesOfGeneralEntry = (
   prerequisites: PlainGeneralPrerequisites,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfGeneralEntry>[0],
-): boolean =>
-  checkPlainPrerequisites(prerequisites, p =>
-    SingleChecks.checkPrerequisiteOfGeneralEntry(capabilities, p),
-  )
+  capabilities: CapabilitiesForType<GeneralPrerequisiteGroup>,
+): boolean => checkPlainPrerequisites(prerequisites, p => validatePrerequisite(p, capabilities))
 
 /**
  * Checks all prerequisites for a general entry with levels.
@@ -67,22 +79,55 @@ export const checkPrerequisitesOfGeneralEntry = (
 export const checkPrerequisitesOfGeneralEntryWithLevels = (
   prerequisites: GeneralPrerequisites,
   level: number,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfGeneralEntry>[0],
+  capabilities: CapabilitiesForType<GeneralPrerequisiteGroup>,
 ): boolean =>
-  checkPrerequisitesForLevels(prerequisites, level, p =>
-    SingleChecks.checkPrerequisiteOfGeneralEntry(capabilities, p),
-  )
+  checkPrerequisitesForLevels(prerequisites, level, p => validatePrerequisite(p, capabilities))
 
 /**
- * Checks all prerequisites for a profession.
+ * Checks all prerequisites for a profession. Prerequisites that are only for activating entries for a profession to be valid are ignored, as they are not relevant when checking if a profession can be selected in the first place.
  */
 export const checkPrerequisitesOfProfession = (
   prerequisites: ProfessionPrerequisites,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfProfession>[0],
+  capabilities: CapabilitiesForType<
+    Exclude<
+      ProfessionPrerequisiteGroup,
+      {
+        kind: "Activatable" | "Rated" | "RatedMinimumNumber" | "Energy"
+      }
+    >
+  >,
 ): boolean =>
-  checkPlainPrerequisites(prerequisites, p =>
-    SingleChecks.checkPrerequisiteOfProfession(capabilities, p),
-  )
+  checkPlainPrerequisites(prerequisites, p => {
+    switch (p.kind) {
+      case "Rule":
+      case "Sex":
+      case "Race":
+      case "Culture":
+        return validatePrerequisite(p, capabilities)
+      case "Activatable":
+      case "Energy":
+      case "Rated":
+      case "RatedMinimumNumber":
+        return true
+      default:
+        return assertExhaustive(p)
+    }
+  })
+
+export const prepareAdvantageDisadvantagePrerequisite = (
+  p: AdvantageDisadvantagePrerequisiteGroup,
+  sourceKind: "Advantage" | "Disadvantage",
+  sourceId: string,
+): PrerequisiteOfType<AdvantageDisadvantagePrerequisiteGroup["kind"]> => {
+  switch (p.kind) {
+    case "CommonSuggestedByRCP":
+      return Case("CommonSuggestedByRCP", { kind: sourceKind, id: sourceId })
+    case "NoOtherAncestorBloodAdvantage":
+      return Case("NoOtherAncestorBloodAdvantage", { id: sourceId })
+    default:
+      return p
+  }
+}
 
 /**
  * Checks all prerequisites for an advantage or disadvantage.
@@ -91,11 +136,14 @@ export const checkPrerequisitesOfAdvantageOrDisadvantage = (
   prerequisites: AdvantageDisadvantagePrerequisites,
   level: number,
   sourceKind: "Advantage" | "Disadvantage",
-  sourceId: number,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfAdvantageOrDisadvantage>[0],
+  sourceId: string,
+  capabilities: CapabilitiesForType<AdvantageDisadvantagePrerequisiteGroup>,
 ): boolean =>
   checkPrerequisitesForLevels(prerequisites, level, p =>
-    SingleChecks.checkPrerequisiteOfAdvantageOrDisadvantage(capabilities, p, sourceKind, sourceId),
+    validatePrerequisite(
+      prepareAdvantageDisadvantagePrerequisite(p, sourceKind, sourceId),
+      capabilities,
+    ),
   )
 
 /**
@@ -103,55 +151,40 @@ export const checkPrerequisitesOfAdvantageOrDisadvantage = (
  */
 export const checkPrerequisitesOfArcaneTradition = (
   prerequisites: ArcaneTraditionPrerequisites,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfArcaneTradition>[0],
-): boolean =>
-  checkPlainPrerequisites(prerequisites, p =>
-    SingleChecks.checkPrerequisiteOfArcaneTradition(capabilities, p),
-  )
+  capabilities: CapabilitiesForType<ArcaneTraditionPrerequisiteGroup>,
+): boolean => checkPlainPrerequisites(prerequisites, p => validatePrerequisite(p, capabilities))
 
 /**
  * Checks all prerequisites for a personality trait.
  */
 export const checkPrerequisitesOfPersonalityTrait = (
   prerequisites: PersonalityTraitPrerequisites,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfPersonalityTrait>[0],
-): boolean =>
-  checkPlainPrerequisites(prerequisites, p =>
-    SingleChecks.checkPrerequisiteOfPersonalityTrait(capabilities, p),
-  )
+  capabilities: CapabilitiesForType<PersonalityTraitPrerequisiteGroup>,
+): boolean => checkPlainPrerequisites(prerequisites, p => validatePrerequisite(p, capabilities))
 
 /**
  * Checks all prerequisites for a spellwork.
  */
 export const checkPrerequisitesOfSpellwork = (
   prerequisites: SpellworkPrerequisites,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfSpellwork>[0],
-): boolean =>
-  checkPlainPrerequisites(prerequisites, p =>
-    SingleChecks.checkPrerequisiteOfSpellwork(capabilities, p),
-  )
+  capabilities: CapabilitiesForType<SpellworkPrerequisiteGroup>,
+): boolean => checkPlainPrerequisites(prerequisites, p => validatePrerequisite(p, capabilities))
 
 /**
  * Checks all prerequisites for a liturgy.
  */
 export const checkPrerequisitesOfLiturgy = (
   prerequisites: LiturgyPrerequisites,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfLiturgy>[0],
-): boolean =>
-  checkPlainPrerequisites(prerequisites, p =>
-    SingleChecks.checkPrerequisiteOfLiturgy(capabilities, p),
-  )
+  capabilities: CapabilitiesForType<LiturgyPrerequisiteGroup>,
+): boolean => checkPlainPrerequisites(prerequisites, p => validatePrerequisite(p, capabilities))
 
 /**
  * Checks all prerequisites for an influence.
  */
 export const checkPrerequisitesOfInfluence = (
   prerequisites: InfluencePrerequisites,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfInfluence>[0],
-): boolean =>
-  checkPlainPrerequisites(prerequisites, p =>
-    SingleChecks.checkPrerequisiteOfInfluence(capabilities, p),
-  )
+  capabilities: CapabilitiesForType<InfluencePrerequisiteGroup>,
+): boolean => checkPlainPrerequisites(prerequisites, p => validatePrerequisite(p, capabilities))
 
 /**
  * Checks all prerequisites for a language.
@@ -159,49 +192,38 @@ export const checkPrerequisitesOfInfluence = (
 export const checkPrerequisitesOfLanguage = (
   prerequisites: LanguagePrerequisites,
   level: number,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfLanguage>[0],
+  capabilities: CapabilitiesForType<LanguagePrerequisiteGroup>,
 ): boolean =>
-  checkPrerequisitesForLevels(prerequisites, level, p =>
-    SingleChecks.checkPrerequisiteOfLanguage(capabilities, p),
-  )
+  checkPrerequisitesForLevels(prerequisites, level, p => validatePrerequisite(p, capabilities))
 
 /**
  * Checks all prerequisites for an animist power.
  */
 export const checkPrerequisitesOfAnimistPower = (
   prerequisites: AnimistPowerPrerequisites,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfAnimistPower>[0],
-): boolean =>
-  checkPlainPrerequisites(prerequisites, p =>
-    SingleChecks.checkPrerequisiteOfAnimistPower(capabilities, p),
-  )
+  capabilities: CapabilitiesForType<AnimistPowerPrerequisiteGroup>,
+): boolean => checkPlainPrerequisites(prerequisites, p => validatePrerequisite(p, capabilities))
 
 /**
  * Checks all prerequisites for a geode ritual.
  */
 export const checkPrerequisitesOfGeodeRitual = (
   prerequisites: GeodeRitualPrerequisites,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfGeodeRitual>[0],
-): boolean =>
-  checkPlainPrerequisites(prerequisites, p =>
-    SingleChecks.checkPrerequisiteOfGeodeRitual(capabilities, p),
-  )
+  capabilities: CapabilitiesForType<GeodeRitualPrerequisiteGroup>,
+): boolean => checkPlainPrerequisites(prerequisites, p => validatePrerequisite(p, capabilities))
 
 /**
  * Checks all prerequisites for an enhancement.
  */
 export const checkPrerequisitesOfEnhancement = (
   prerequisites: EnhancementPrerequisites,
-  capabilities: Parameters<typeof SingleChecks.checkPrerequisiteOfEnhancement>[0],
-): boolean =>
-  checkPlainPrerequisites(prerequisites, p =>
-    SingleChecks.checkPrerequisiteOfEnhancement(capabilities, p),
-  )
+  capabilities: CapabilitiesForType<EnhancementPrerequisiteGroup>,
+): boolean => checkPlainPrerequisites(prerequisites, p => validatePrerequisite(p, capabilities))
 
 /**
  * Checks all prerequisites for an enhancement.
  */
 export const checkPreconditions = (
   prerequisites: Preconditions,
-  capabilities: Parameters<typeof SingleChecks.checkPrecondition>[0],
-): boolean => prerequisites.every(p => SingleChecks.checkPrecondition(capabilities, p))
+  capabilities: CapabilitiesForType<PreconditionGroup>,
+): boolean => prerequisites.every(p => validatePrerequisite(p, capabilities))

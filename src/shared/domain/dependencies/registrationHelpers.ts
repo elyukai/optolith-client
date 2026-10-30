@@ -1,15 +1,19 @@
-import { Draft } from "@reduxjs/toolkit"
-import { deepEqual } from "../../utils/compare.ts"
-import { assertExhaustive } from "../../utils/typeSafety.ts"
-import { _Character } from "../character.ts"
+import { deepEqual } from "@elyukai/utils/equality"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type { Character } from "../character.ts"
 
 /**
  * Whether to add or remove a prerequisite as a dependency.
  */
-export enum RegistrationMethod {
-  Add,
-  Remove,
-}
+export type RegistrationMethod = "Add" | "Remove"
+
+/**
+ * Whether to add or remove a prerequisite as a dependency.
+ */
+export const RegistrationMethod = Object.freeze({
+  Add: "Add",
+  Remove: "Remove",
+})
 
 /**
  * Adds or removes a dependency from a dependency array. Removing a dependency
@@ -64,14 +68,13 @@ export const addOrRemoveDependencyInSlice = <
  * A function that registers or unregisters a prerequisite as a dependency on
  * the character's draft.
  */
-export type RegistrationFunction<T, SourceId, C = undefined> = (
-  method: RegistrationMethod,
-  character: Draft<_Character>,
+export type RegistrationFunction<T, SourceId> = (
   p: T,
+  method: RegistrationMethod,
+  character: Character,
   sourceId: SourceId,
   index: number,
   isPartOfDisjunction: boolean,
-  ...rest: C extends undefined ? [] : [capabilities: C]
 ) => void
 
 /**

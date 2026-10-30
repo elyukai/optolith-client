@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react"
+import { type FC, useCallback } from "react"
 import { Dialog } from "../../shared/components/dialog/Dialog.tsx"
 import { useTranslate } from "../../shared/hooks/translate.ts"
 import { useAppDispatch, useAppSelector } from "../hooks/redux.ts"

@@ -1,7 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { CloseCombatTechnique } from "@optolith/database-schema/gen"
 import { RangedCombatTechnique } from "@optolith/database-schema/gen"
-import { isActive } from "../../shared/domain/activatable/activatableEntry.ts"
+import { isActive } from "../../shared/domain/activatable/activatable.ts"
 import {
   AdvantageIdentifier,
   GeneralSpecialAbilityIdentifier,

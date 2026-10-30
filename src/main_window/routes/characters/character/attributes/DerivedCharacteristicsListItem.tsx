@@ -1,11 +1,12 @@
-import { FC } from "react"
+import { sign } from "@elyukai/utils/string/number"
+import type { FC } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
+import { InlineMarkdown } from "../../../../../shared/components/markdown/Markdown.tsx"
 import { NumberBox } from "../../../../../shared/components/numberBox/NumberBox.tsx"
 import type { DisplayedDerivedCharacteristic } from "../../../../../shared/domain/energy.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { sign } from "../../../../../shared/utils/math.ts"
-import { ExternalAPI } from "../../../../external.ts"
+import { SharedActions } from "../../../../external.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
 import { DerivedCharacteristicsListItemPermanent } from "./DerivedCharacteristicsListItemPermanent.tsx"
 
@@ -28,8 +29,6 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
   const translateMap = useTranslateMap()
   const translation = translateMap(attribute.translations)
 
-  const calculation = attribute.calculation.base // TODO
-
   return (
     <div className="derived-characteristics-item">
       <AttributeBorder
@@ -41,9 +40,10 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
               <span>{translation?.name ?? ""}</span>
               <span>{value}</span>
             </h4>
-            {calculation.kind === "Value" && calculation.Value.kind === "Constant" ? null : (
+            {attribute.calculationText === undefined ? null : (
               <p className="calc-text">
-                {`${JSON.stringify(calculation) /* TODO */} = `}
+                <InlineMarkdown source={attribute.calculationText} />
+                {` = `}
                 {base}
               </p>
             )}
@@ -76,7 +76,7 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
             className="add"
             icon="&#xE908;"
             label={translate("Increment")}
-            onClick={() => ExternalAPI.execute("incrementDerivedCharacteristic", id)}
+            onClick={() => SharedActions.incrementDerivedCharacteristic(id)}
             disabled={!attribute.isPurchasedIncreasable}
           />
         ) : null}
@@ -85,7 +85,7 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
             className="remove"
             icon="&#xE909;"
             label={translate("Decrement")}
-            onClick={() => ExternalAPI.execute("decrementDerivedCharacteristic", id)}
+            onClick={() => SharedActions.decrementDerivedCharacteristic(id)}
             disabled={!attribute.isPurchasedDecreasable}
           />
         ) : null}
@@ -94,6 +94,7 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
         <DerivedCharacteristicsListItemPermanent
           attribute={attribute}
           isRemovingEnabled={isRemovingEnabled}
+          translation={translation}
         />
       ) : null}
     </div>

@@ -1,8 +1,7 @@
 import { observer } from "mobx-react"
-import { FC, useCallback, useMemo, useState } from "react"
+import { type FC, useCallback, useState } from "react"
 import { Button } from "../../../shared/components/button/Button.tsx"
 import { Grid } from "../../../shared/components/grid/Grid.tsx"
-import { List } from "../../../shared/components/list/List.tsx"
 import { Main } from "../../../shared/components/main/Main.tsx"
 import { Options } from "../../../shared/components/options/Options.tsx"
 import { Page } from "../../../shared/components/page/Page.tsx"
@@ -10,22 +9,17 @@ import { RadioButtonGroup } from "../../../shared/components/radioButton/RadioBu
 import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"
 import { TextField } from "../../../shared/components/textField/TextField.tsx"
 import { CharactersSortOrder } from "../../../shared/domain/sortOrders.ts"
-import { useLocaleCompare } from "../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../shared/hooks/translate.ts"
-import { compareAt, reduceCompare } from "../../../shared/utils/compare.ts"
-import { assertExhaustive } from "../../../shared/utils/typeSafety.ts"
-import { SharedState } from "../../external.ts"
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.ts"
 import { changeCharactersSortOrder, selectCharactersSortOrder } from "../../slices/settingsSlice.ts"
+import { CharacterList } from "./CharacterList.tsx"
 import "./Characters.scss"
-import { CharactersItem } from "./CharactersItem.tsx"
 
 /**
  * Returns a page for managing characters.
  */
 export const Characters: FC = observer(() => {
   const translate = useTranslate()
-  const localeCompare = useLocaleCompare()
   const dispatch = useAppDispatch()
 
   const [filterText, setFilterText] = useState("")
@@ -33,33 +27,6 @@ export const Characters: FC = observer(() => {
   const handleChangeSortOrder = useCallback(
     (id: CharactersSortOrder) => dispatch(changeCharactersSortOrder(id)),
     [dispatch],
-  )
-
-  const characters = useMemo(
-    () =>
-      Object.values(SharedState.characterOverviews)
-        .filter(c => c.name.toLowerCase().includes(filterText.toLowerCase()))
-        .sort(
-          (() => {
-            switch (sortOrder) {
-              case CharactersSortOrder.Name:
-                return compareAt(c => c.name, localeCompare)
-              case CharactersSortOrder.DateModified:
-                return reduceCompare(
-                  compareAt(c => c.dateLastModified, localeCompare),
-                  compareAt(c => c.name, localeCompare),
-                )
-              case CharactersSortOrder.DateCreated:
-                return reduceCompare(
-                  compareAt(c => c.dateCreated, localeCompare),
-                  compareAt(c => c.name, localeCompare),
-                )
-              default:
-                return assertExhaustive(sortOrder)
-            }
-          })(),
-        ),
-    [SharedState.characterOverviews, filterText, localeCompare, sortOrder],
   )
 
   return (
@@ -117,11 +84,7 @@ export const Characters: FC = observer(() => {
       </Options>
       <Main>
         <Scroll stable>
-          <List>
-            {characters.map(character => (
-              <CharactersItem key={character.id} character={character} />
-            ))}
-          </List>
+          <CharacterList filterText={filterText} sortOrder={sortOrder} />
         </Scroll>
       </Main>
       {/* <HeroCreation

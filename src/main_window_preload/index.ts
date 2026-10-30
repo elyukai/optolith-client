@@ -2,22 +2,21 @@ import type { Cache } from "@optolith/database-schema/cache"
 import type { Locale } from "@optolith/database-schema/gen"
 import type { AvailableCreatorEntity } from "@optolith/entity-descriptions"
 import type { EntityDescription } from "@optolith/entity-descriptions/description"
-import type { PublicationOptions } from "@optolith/entity-descriptions/publication-options"
 import Debug from "debug"
-import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
-import EventEmitter from "node:events"
+import { contextBridge, ipcRenderer, type IpcRendererEvent } from "electron"
+import EventEmitter from "events"
 import { attackDatabaseHandlersToPreloadAPI, type DatabaseHandlers } from "../shared/database.ts"
 import type { CharacterIPCActions, CharacterIPCSelectors } from "../shared/ipc.ts"
-import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
+import type { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import {
-  GlobalSettingsEvents,
   attachGlobalSettingsEvents,
+  type GlobalSettingsEvents,
 } from "../shared/settings/listeningRendererPreload.ts"
 import {
   attachStateSelectorsAndActionsToContextBridge,
   type StateSelectorsAndActionsBridge,
 } from "../shared/state.ts"
-import { TypedEventEmitter } from "../shared/utils/events.ts"
+import type { TypedEventEmitter } from "../shared/utils/events.ts"
 
 const debugRendererCalls = Debug("mainwindowpreload:renderer")
 const debugMainEvents = Debug("mainwindowpreload:main")
@@ -55,7 +54,7 @@ export type PreloadAPI = {
   getEntityDescription: <E extends AvailableCreatorEntity>(
     entity: E,
     id: string,
-    publicationOptions: PublicationOptions,
+    characterId: string | undefined,
   ) => Promise<
     [EntityDescription<E, string> | undefined, specialTag: string | undefined] | undefined
   >

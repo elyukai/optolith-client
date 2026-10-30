@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { InputKeyEvent } from "./TextField.tsx"
+import type { InputKeyEvent } from "./TextField.tsx"
 import { TextFieldContainer } from "./TextFieldContainer.tsx"
 
 type Props = {

@@ -1,10 +1,10 @@
-import { FC, RefObject } from "react"
+import type { FC, RefObject } from "react"
 import { Markdown } from "../markdown/Markdown.tsx"
 import { TooltipToggle } from "../tooltipToggle/TooltipToggle.tsx"
 
 type Props = {
   hint: string
-  targetRef: RefObject<HTMLElement>
+  targetRef: RefObject<HTMLElement | null>
   margin?: number
 }
 

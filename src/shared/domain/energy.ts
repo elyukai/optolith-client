@@ -1,4 +1,5 @@
 import { on } from "@elyukai/utils/function"
+import { isNotNullish } from "@elyukai/utils/nullable"
 import { compareNumber } from "@elyukai/utils/ordering"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type { ImprovementCost } from "@optolith/adventure-points/improvement-cost"
@@ -7,55 +8,23 @@ import type {
   DerivedCharacteristic,
   DerivedCharacteristic_ID,
   DerivedCharacteristicBase,
+  DerivedCharacteristicModifierOperation,
+  DerivedCharacteristicModifierPrerequisiteGroup,
+  DerivedCharacteristicPurchaseMaximumValue,
 } from "@optolith/database-schema/gen"
+import { renderBaseCalculation } from "@optolith/entity-descriptions/entities/derivedCharacteristic"
 import { evaluateMathOperation } from "@optolith/entity-descriptions/entities/partial/mathOperation"
 import { action, computed, observable } from "mobx"
-import type { Database } from "../database.ts"
-import { get } from "../mobxTyped.ts"
+import { fromUniformCase } from "tsondb/schema/gen"
+import type { Global } from "../global.ts"
 import {
   addAdventurePointsCaches,
+  AdventurePointsCache,
   emptyAdventurePointsCache,
-  type AdventurePointsCache,
 } from "./adventurePoints/cache.ts"
 import { cachedAdventurePoints } from "./adventurePoints/ratedEntry.ts"
 import type { Character } from "./character.ts"
-
-/**
- * The instance of an energy entry where points can be purchased but also
- * (permanently) spent.
- */
-export type Energy = {
-  /**
-   * The number of points purchased.
-   */
-  readonly purchased: number
-
-  /**
-   * The number of points permanently lost.
-   */
-  readonly permanentlyLost: number
-}
-
-/**
- * The instance of an energy entry where points can be purchased but also
- * (permanently) spent and bought back.
- */
-export type EnergyWithBuyBack = {
-  /**
-   * The number of points purchased.
-   */
-  readonly purchased: number
-
-  /**
-   * The number of points permanently lost.
-   */
-  readonly permanentlyLost: number
-
-  /**
-   * The number of permanently lost points that have been bought back.
-   */
-  readonly permanentlyLostBoughtBack: number
-}
+import { Case } from "./databaseEnum.ts"
 
 export type DisplayedDerivedCharacteristicBase = {
   id: string
@@ -68,17 +37,80 @@ export type DisplayedDerivedCharacteristicBase = {
   isPurchasedDecreasable?: boolean
   permanentlyLost?: number
   permanentlyLostBoughtBack?: number
+  calculationText: string | undefined
 }
 
 export type DisplayedDerivedCharacteristic = DisplayedDerivedCharacteristicBase &
   DerivedCharacteristic
+
+const isModifierActive = (
+  source: DerivedCharacteristicModifierPrerequisiteGroup,
+  character: Character,
+): { active: boolean; level?: number } => {
+  switch (source.kind) {
+    case "Rule":
+      switch (source.Rule.id.kind) {
+        case "FocusRule":
+          return {
+            active:
+              character.rules.isFocusRuleActive(source.Rule.id.FocusRule) === source.Rule.active,
+          }
+        case "OptionalRule":
+          return {
+            active:
+              character.rules.isOptionalRuleActive(source.Rule.id.OptionalRule) ===
+              source.Rule.active,
+          }
+        default:
+          return assertExhaustive(source.Rule.id)
+      }
+    case "Activatable": {
+      const entry = character
+        .getActivatableCollection(source.Activatable.id.kind)
+        .getByIdSafe(fromUniformCase(source.Activatable.id))
+
+      const instanceIndexWithConfiguration = entry.getInstanceIndexWithConfiguration(
+        source.Activatable,
+      )
+
+      return {
+        active: instanceIndexWithConfiguration > -1 === source.Activatable.active,
+        level:
+          source.Activatable.level === undefined
+            ? entry.instances[instanceIndexWithConfiguration]?.level
+            : undefined,
+      }
+    }
+    default:
+      return assertExhaustive(source)
+  }
+}
+
+const applyModifier = (
+  base: number,
+  operation: DerivedCharacteristicModifierOperation,
+  value: number,
+): number => {
+  switch (operation.kind) {
+    case "Addition":
+      return base + value
+    case "Subtraction":
+      return base - value
+    case "Multiplication":
+      return base * value
+    case "Division":
+      return base / value
+    default:
+      return assertExhaustive(operation)
+  }
+}
 
 export class CharacterDerivedCharacteristic {
   declare ["constructor"]: typeof CharacterDerivedCharacteristic
 
   static readonly improvementCost: ImprovementCost = "D"
 
-  readonly #db: Database
+  readonly global: Global
   readonly #character: Character
 
   readonly id: string
@@ -87,11 +119,11 @@ export class CharacterDerivedCharacteristic {
   @observable accessor #permanentlyLost: number | undefined
   @observable accessor #permanentlyLostBoughtBack: number | undefined
 
-  constructor(id: string, dbEntry: DerivedCharacteristic, db: Database, character: Character) {
+  constructor(global: Global, character: Character, id: string, dbEntry: DerivedCharacteristic) {
+    this.global = global
+    this.#character = character
     this.id = id
     this.dbEntry = dbEntry
-    this.#db = db
-    this.#character = character
 
     if (dbEntry.type?.kind === "Energy") {
       if (dbEntry.type.Energy.purchase) {
@@ -108,16 +140,17 @@ export class CharacterDerivedCharacteristic {
     }
   }
 
+  @action
   static createEmpty(
+    global: Global,
+    character: Character,
     id: string,
     dbEntry: DerivedCharacteristic | undefined,
-    db: Database,
-    character: Character,
   ): CharacterDerivedCharacteristic {
     if (!dbEntry) {
       throw new Error(`DerivedCharacteristic with id ${id} not provided.`)
     }
-    return new CharacterDerivedCharacteristic(id, dbEntry, db, character)
+    return new CharacterDerivedCharacteristic(global, character, id, dbEntry)
   }
 
   #calculateBaseValue(baseValue: DerivedCharacteristicBase) {
@@ -131,11 +164,9 @@ export class CharacterDerivedCharacteristic {
           case "PrimaryAttribute":
             switch (value.PrimaryAttribute.kind) {
               case "Blessed":
-                // TODO
-                return 0
+                return this.#character.attributes.primaryBlessedAttribute?.value ?? 0
               case "Magical":
-                // TODO
-                return 0
+                return this.#character.attributes.highestPrimaryMagicalAttributeForArcaneEnergy ?? 0
               default:
                 return assertExhaustive(value.PrimaryAttribute)
             }
@@ -148,15 +179,22 @@ export class CharacterDerivedCharacteristic {
     )
   }
 
-  @computed
+  // @computed
   get base() {
     return this.#calculateBaseValue(this.dbEntry.calculation.base)
   }
 
   @computed
   get modifier() {
-    // TODO
-    return 0
+    return (
+      (this.dbEntry.calculation.modifiers?.reduce((acc, modifier) => {
+        const { active, level = 1 } = isModifierActive(modifier.source, this.#character)
+        if (active) {
+          return applyModifier(acc, modifier.operation, modifier.value * level)
+        }
+        return acc
+      }, this.base) ?? this.base) - this.base
+    )
   }
 
   @computed
@@ -224,7 +262,7 @@ export class CharacterDerivedCharacteristic {
   @computed
   get purchaseMaximum(): number | undefined {
     if (this.dbEntry.type?.kind === "Energy" && this.dbEntry.type.Energy.purchase) {
-      return this.#calculateBaseValue(this.dbEntry.type.Energy.purchase.maximum)
+      return this.#calculateBaseValue(Case("Value", this.dbEntry.type.Energy.purchase.maximum))
     }
     return undefined
   }
@@ -232,7 +270,11 @@ export class CharacterDerivedCharacteristic {
   @computed
   get isPurchasedIncreasable() {
     // TODO
-    if (this.purchased === undefined || this.purchaseMaximum === undefined) {
+    if (
+      this.#character.isInCharacterCreation ||
+      this.purchased === undefined ||
+      this.purchaseMaximum === undefined
+    ) {
       return undefined
     }
     return this.purchaseMaximum > this.purchased
@@ -241,7 +283,7 @@ export class CharacterDerivedCharacteristic {
   @computed
   get isPurchasedDecreasable() {
     // TODO
-    if (this.purchased === undefined) {
+    if (this.#character.isInCharacterCreation || this.purchased === undefined) {
       return undefined
     }
     return this.purchased > 0
@@ -249,7 +291,42 @@ export class CharacterDerivedCharacteristic {
 
   @computed
   get adventurePoints(): AdventurePointsCache {
-    return cachedAdventurePoints(this.#purchased ?? 0, 0, [], this.constructor.improvementCost)
+    return addAdventurePointsCaches(
+      cachedAdventurePoints(this.#purchased ?? 0, 0, [], this.constructor.improvementCost),
+      this.dbEntry.type?.kind === "Energy" &&
+        this.dbEntry.type.Energy.permanentLoss?.canBeBoughtBack !== undefined
+        ? new AdventurePointsCache(
+            this.dbEntry.type.Energy.permanentLoss.canBeBoughtBack.cost *
+              (this.#permanentlyLostBoughtBack ?? 0),
+            0,
+          )
+        : AdventurePointsCache.empty,
+    )
+  }
+
+  // @computed
+  get calculationText(): string | undefined {
+    if (
+      this.dbEntry.calculation.base.kind === "Value" &&
+      this.dbEntry.calculation.base.Value.kind === "Constant"
+    ) {
+      return undefined
+    }
+
+    const translation = this.global.locale.translateMap(this.dbEntry.translations)
+
+    if (!translation) {
+      return ""
+    }
+
+    return renderBaseCalculation(
+      this.global.db.getInstanceOfEntityById.bind(this.global.db),
+      this.global.locale.translate,
+      this.global.locale.translateMap,
+      translation,
+      this.dbEntry.calculation.base,
+      "compact",
+    )
   }
 
   toJSON(): DisplayedDerivedCharacteristicBase {
@@ -264,6 +341,7 @@ export class CharacterDerivedCharacteristic {
       isPurchasedDecreasable: this.isPurchasedDecreasable,
       permanentlyLost: this.permanentlyLost,
       permanentlyLostBoughtBack: this.permanentlyLostBoughtBack,
+      calculationText: this.calculationText,
     }
   }
 
@@ -276,34 +354,99 @@ export class CharacterDerivedCharacteristic {
   decrement() {
     this.updatePurchased(oldValue => oldValue - 1)
   }
+
+  @action
+  addPermanentlyLost(value: number) {
+    this.updatePermanentlyLost(oldValue => oldValue + value)
+  }
+
+  @action
+  decrementBoughtBack() {
+    this.updatePermanentlyLostBoughtBack(oldValue => oldValue - 1)
+  }
+
+  @action
+  decrementPermanentlyLost() {
+    this.updatePermanentlyLost(oldValue => oldValue - 1)
+  }
+
+  @action
+  incrementBoughtBack() {
+    this.updatePermanentlyLostBoughtBack(oldValue => oldValue + 1)
+  }
+
+  @action
+  incrementPermanentlyLost() {
+    this.updatePermanentlyLost(oldValue => oldValue + 1)
+  }
+
+  @computed
+  get minimumAttributeRequiredForPurchased(): { id: Attribute_ID; value: number } | undefined {
+    if (this.dbEntry.type?.kind === "Energy" && this.dbEntry.type.Energy.purchase) {
+      const id = getAttributeIdForPurchased(
+        this.#character,
+        this.dbEntry.type.Energy.purchase.maximum,
+      )
+      if (!id) {
+        return undefined
+      }
+      return {
+        id,
+        value: this.#character.attributes.getValueById(id),
+      }
+    }
+    return undefined
+  }
+}
+
+const getAttributeIdForPurchased = (
+  character: Character,
+  maximum: DerivedCharacteristicPurchaseMaximumValue,
+): Attribute_ID | undefined => {
+  switch (maximum.kind) {
+    case "Attribute":
+      return maximum.Attribute
+    case "PrimaryAttribute":
+      switch (maximum.PrimaryAttribute.kind) {
+        case "Blessed":
+          return character.attributes.primaryBlessedAttribute?.id
+        case "Magical":
+          return character.attributes.singleHighestMagicalPrimaryAttributeId
+        default:
+          return assertExhaustive(maximum.PrimaryAttribute)
+      }
+    default:
+      return assertExhaustive(maximum)
+  }
 }
 
 export class CharacterDerivedCharacteristics {
-  readonly #db: Database
+  readonly global: Global
   readonly #character: Character
-  @observable accessor #derivedCharacteristics: Record<string, CharacterDerivedCharacteristic> = {}
+  @observable accessor #derivedCharacteristics: Map<string, CharacterDerivedCharacteristic> =
+    new Map()
 
-  constructor(db: Database, character: Character) {
-    this.#db = db
+  constructor(global: Global, character: Character) {
+    this.global = global
     this.#character = character
   }
 
   getById(id: DerivedCharacteristic_ID): CharacterDerivedCharacteristic | undefined {
-    return get(this.#derivedCharacteristics, id)
+    return this.#derivedCharacteristics.get(id)
   }
 
   @computed
   get derivedCharacteristics() {
-    return this.#db
+    return this.global.db
       .getAllInstanceContainersOfEntity("DerivedCharacteristic")
       .map((container): DisplayedDerivedCharacteristic => ({
         ...(
-          this.#derivedCharacteristics[container.id] ??
+          this.#derivedCharacteristics.get(container.id) ??
           CharacterDerivedCharacteristic.createEmpty(
+            this.global,
+            this.#character,
             container.id,
             container.content,
-            this.#db,
-            this.#character,
           )
         ).toJSON(),
         ...container.content,
@@ -313,32 +456,60 @@ export class CharacterDerivedCharacteristics {
 
   @computed
   get adventurePointsTotal() {
-    return Object.values(this.#derivedCharacteristics).reduce(
-      (acc, entry) => addAdventurePointsCaches(acc, entry.adventurePoints),
-      emptyAdventurePointsCache,
-    )
+    return this.#derivedCharacteristics
+      .values()
+      .reduce(
+        (acc, entry) => addAdventurePointsCaches(acc, entry.adventurePoints),
+        emptyAdventurePointsCache,
+      )
   }
 
   #ensureEntryExists(id: Attribute_ID): CharacterDerivedCharacteristic {
-    if (!this.#derivedCharacteristics[id]) {
-      const dbEntry = this.#db.getInstanceOfEntityById("DerivedCharacteristic", id)
-      this.#derivedCharacteristics[id] = CharacterDerivedCharacteristic.createEmpty(
-        id,
-        dbEntry,
-        this.#db,
+    return this.#derivedCharacteristics.getOrInsertComputed(id, () =>
+      CharacterDerivedCharacteristic.createEmpty(
+        this.global,
         this.#character,
-      )
-    }
-    return this.#derivedCharacteristics[id]
+        id,
+        this.global.db.getInstanceOfEntityById("DerivedCharacteristic", id),
+      ),
+    )
   }
 
-  @action
   increment(id: Attribute_ID) {
     this.#ensureEntryExists(id).increment()
   }
 
-  @action
   decrement(id: Attribute_ID) {
     this.#ensureEntryExists(id).decrement()
+  }
+
+  addPermanentlyLost(id: string, value: number) {
+    this.#ensureEntryExists(id).addPermanentlyLost(value)
+  }
+
+  decrementBoughtBack(id: string) {
+    this.#ensureEntryExists(id).decrementBoughtBack()
+  }
+
+  decrementPermanentlyLost(id: string) {
+    this.#ensureEntryExists(id).decrementPermanentlyLost()
+  }
+
+  incrementBoughtBack(id: string) {
+    this.#ensureEntryExists(id).incrementBoughtBack()
+  }
+
+  incrementPermanentlyLost(id: string) {
+    this.#ensureEntryExists(id).incrementPermanentlyLost()
+  }
+
+  getMinimumValuesOfAttributeForPurchased(id: Attribute_ID): number[] {
+    return this.#derivedCharacteristics
+      .values()
+      .map(entry => entry.minimumAttributeRequiredForPurchased)
+      .filter(isNotNullish)
+      .filter(entry => entry.id === id)
+      .map(entry => entry.value)
+      .toArray()
   }
 }

@@ -1,14 +1,17 @@
 import type { Locale } from "@optolith/database-schema/gen"
 import Debug from "debug"
 import { BrowserWindow, app, ipcMain } from "electron"
-import { CancellationToken, UpdateCheckResult, autoUpdater } from "electron-updater"
+import { CancellationToken, type UpdateCheckResult, autoUpdater } from "electron-updater"
+import { runInAction } from "mobx"
 import * as path from "node:path"
 import * as url from "node:url"
 import appIconMacOS from "../assets/icon/AppIcon.icns"
 import { globalSettings } from "../shared/settings/main.ts"
-import { InitialSetupEventMessage } from "../updater_window_preload/index.ts"
+import type { InitialSetupEventMessage } from "../updater_window_preload/index.ts"
 import { getWindowBackgroundColor } from "./nativeTheme.ts"
+
 const debug = Debug("main:updater")
+debug.log = console.log.bind(console)
 
 type AvailableUpdateCheckResult = {
   cancellationToken: CancellationToken
@@ -19,12 +22,17 @@ type AvailableUpdateCheckResult = {
  * available.
  */
 const checkForUpdates = async (): Promise<AvailableUpdateCheckResult | undefined> => {
-  const res = await autoUpdater.checkForUpdates()
+  try {
+    const res = await autoUpdater.checkForUpdates()
 
-  if (res?.cancellationToken === undefined) {
+    if (res?.cancellationToken === undefined) {
+      return undefined
+    } else {
+      return res as AvailableUpdateCheckResult
+    }
+  } catch (error) {
+    debug("error while checking for updates: %O", error)
     return undefined
-  } else {
-    return res as AvailableUpdateCheckResult
   }
 }
 
@@ -49,7 +57,7 @@ const createUpdaterWindow = async (locales: Record<string, Locale>) => {
     fullscreenable: false,
     maximizable: false,
     minimizable: false,
-    backgroundColor: getWindowBackgroundColor(globalSettings.theme),
+    backgroundColor: getWindowBackgroundColor(runInAction(() => globalSettings.theme)),
   })
 
   await updaterWindow.loadURL(
@@ -62,7 +70,7 @@ const createUpdaterWindow = async (locales: Record<string, Locale>) => {
 
   const initialSetupEventMessage: InitialSetupEventMessage = {
     locales,
-    globalSettings: globalSettings.toJSON(),
+    globalSettings: runInAction(() => globalSettings.toJSON()),
     systemLocale: app.getLocale(),
   }
 
@@ -189,6 +197,7 @@ export const checkForUpdatesOnRequest = async (
   const updaterWindow = await createUpdaterWindow(locales)
   updaterWindow.show()
   const checkResult = await checkForUpdates()
+
   const isUpdateAvailable = checkResult !== undefined
 
   if (isUpdateAvailable) {

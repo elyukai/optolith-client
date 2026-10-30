@@ -1,78 +1,56 @@
-import { FC, memo, useCallback, useMemo } from "react"
+import type { Cantrip_ID } from "@optolith/database-schema/gen"
+import { memo, useCallback, type FC } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
-import { DisplayedInactiveCantrip } from "../../../../../shared/domain/rated/spellInactive.ts"
-import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
-import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
+import type { DisplayedCantrip } from "../../../../../shared/domain/rated/spell.ts"
 import {
-  changeInlineLibraryEntry,
-  selectInlineLibraryEntryId,
-} from "../../../../slices/inlineWikiSlice.ts"
+  InlineLibraryManager,
+  type DisplayableMainIdentifier,
+} from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillFill } from "../skills/SkillFill.tsx"
 
 type Props = {
   insertTopMargin?: boolean
-  cantrip: DisplayedInactiveCantrip
-  sortOrder: SpellsSortOrder
-  add: (id: number) => void
+  cantrip: DisplayedCantrip
+  displayGroup?: boolean
+  add: (id: Cantrip_ID) => void
+  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 const InactiveCantripsListItem: FC<Props> = props => {
   const {
     insertTopMargin,
-    cantrip: {
-      static: { id, property, translations },
-      isUnfamiliar,
-    },
-    sortOrder,
+    cantrip: { id, name, groupName, associatedText, isUnfamiliar },
+    displayGroup,
     add,
+    selectedInlineLibraryEntryId,
   } = props
-
-  const translate = useTranslate()
-  const translateMap = useTranslateMap()
-  const dispatch = useAppDispatch()
-  const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
-  const getProperty = useAppSelector(SelectGetById.Static.Property)
-
-  const { name = "" } = translateMap(translations) ?? {}
 
   const handleAdd = useCallback(() => {
     add(id)
   }, [add, id])
 
   const handleSelectForInfo = useCallback(
-    () => dispatch(changeInlineLibraryEntry({ tag: "Cantrip", cantrip: id })),
-    [dispatch, id],
-  )
-
-  const propertyName = useMemo(
-    () => translateMap(getProperty(property.id.property)?.translations)?.name,
-    [getProperty, property.id.property, translateMap],
+    () => InlineLibraryManager.instance.goTo(["Cantrip", id]),
+    [id],
   )
 
   return (
     <ListItem
       insertTopMargin={insertTopMargin}
-      active={inlineLibraryEntryId?.tag === "Cantrip" && inlineLibraryEntryId.cantrip === id}
+      active={
+        selectedInlineLibraryEntryId?.[0] === "Blessing" && selectedInlineLibraryEntryId[1] === id
+      }
       noIncrease
       unrecommended={isUnfamiliar}
     >
       <ListItemName name={name} onClick={handleSelectForInfo} />
       <ListItemSeparator />
-      <ListItemGroup
-        text={
-          sortOrder === SpellsSortOrder.Group
-            ? `${propertyName} / ${translate("Cantrips")}`
-            : propertyName
-        }
-      />
+      <ListItemGroup text={displayGroup ? `${associatedText} / ${groupName}` : associatedText} />
       <ListItemValues>
         <SkillFill />
       </ListItemValues>

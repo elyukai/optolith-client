@@ -3,3 +3,6 @@
  */
 export const isNonEmptyString = (value: string | null | undefined): value is string =>
   typeof value === "string" && value.length > 0
+
+export const ensureNonEmptyString = (value: string): string | undefined =>
+  value === "" ? undefined : value

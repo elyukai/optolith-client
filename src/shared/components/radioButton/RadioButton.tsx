@@ -1,4 +1,4 @@
-import { FCC } from "../../utils/react.ts"
+import type { FCC } from "../../utils/react.ts"
 import { Activate } from "../activate/Activate.tsx"
 import { Icon } from "../icon/Icon.tsx"
 import "./RadioButton.scss"

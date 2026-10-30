@@ -1,7 +1,7 @@
-import { FC, useCallback, useState } from "react"
-import { classList } from "../../utils/classList.ts"
+import { classList } from "@elyukai/utils/classList"
+import { type FC, useCallback, useState } from "react"
 import { IconButton } from "../iconButton/IconButton.tsx"
-import { InputKeyEvent, TextField } from "../textField/TextField.tsx"
+import { type InputKeyEvent, TextField } from "../textField/TextField.tsx"
 import "./EditText.scss"
 
 type Props = {

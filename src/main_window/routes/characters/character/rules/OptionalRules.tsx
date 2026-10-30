@@ -1,11 +1,9 @@
-import { OptionalRuleTranslation } from "@optolith/database-schema/gen"
+import { on } from "@elyukai/utils/function"
 import { observer } from "mobx-react"
-import { FC, useMemo } from "react"
-import type { CharacterOptionalRuleOverview } from "../../../../../shared/domain/rules.ts"
+import { type FC, useMemo } from "react"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { compareAt } from "../../../../../shared/utils/compare.ts"
 import { SharedState } from "../../../../external.ts"
 import { OptionalRulesItem } from "./OptionalRulesItem.tsx"
 
@@ -18,17 +16,7 @@ export const OptionalRules: FC = observer(() => {
   const localeCompare = useLocaleCompare()
 
   const optionalRuleOptions = useMemo(
-    () =>
-      SharedState.optionalRules
-        .map(x => ({ ...x, optionalRuleTranslation: translateMap(x.dbEntry.translations) }))
-        .filter(
-          (
-            x,
-          ): x is CharacterOptionalRuleOverview & {
-            optionalRuleTranslation: OptionalRuleTranslation
-          } => x.optionalRuleTranslation !== undefined,
-        )
-        .sort(compareAt(x => x.optionalRuleTranslation.name, localeCompare)),
+    () => SharedState.optionalRules.sort(on(x => x.name, localeCompare)),
     [SharedState.optionalRules, localeCompare, translateMap],
   )
 

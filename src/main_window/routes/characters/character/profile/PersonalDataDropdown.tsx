@@ -1,41 +1,27 @@
-import { ActionCreatorWithPayload } from "@reduxjs/toolkit"
-import { FC, useCallback } from "react"
 import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
-import { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { RootState } from "../../../../store.ts"
+import type { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
 
-type Props = {
+type Props<ID> = {
   label: string
-  selector: (state: RootState) => number | undefined
-  options: DropdownOption<number>[]
-  action: ActionCreatorWithPayload<number>
+  value: ID | undefined
+  options: DropdownOption<ID>[]
+  action: (value: ID) => void
 }
 
-const getKey = (option: DropdownOption<number>) => option.id
+const getKey = <ID extends string | number | undefined>(option: DropdownOption<ID>) => option.id
 
 /**
  * Returns a dropdown for use with personal data.
  */
-export const PersonalDataDropdown: FC<Props> = props => {
-  const { label, selector, options, action } = props
-
-  const dispatch = useAppDispatch()
-  const value = useAppSelector(selector)
-
-  const handleSetValue = useCallback(
-    (newValue: number) => {
-      dispatch(action(newValue))
-    },
-    [dispatch, action],
-  )
+export const PersonalDataDropdown = <ID extends string | number | undefined>(props: Props<ID>) => {
+  const { label, value, options, action } = props
 
   return (
     <div>
       <Dropdown
         label={label}
         value={value}
-        onChange={handleSetValue}
+        onChange={action}
         options={options}
         disabled={options.length === 1 && value === options[0]!.id}
         getKey={getKey}

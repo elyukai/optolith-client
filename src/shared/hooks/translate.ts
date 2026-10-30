@@ -1,27 +1,9 @@
-import { useContext, useMemo } from "react"
+import { useContext } from "react"
 import { LocalizationContext } from "../contexts/localization.ts"
-import { createTranslate } from "../utils/translate.ts"
+import type { Translate } from "../utils/locale.ts"
 
 /**
  * A hook that returns a translate function for the current localization
  * context.
  */
-export const useTranslate = () => {
-  const localizationContext = useContext(LocalizationContext)
-
-  const _translate = useMemo(
-    () =>
-      createTranslate(
-        localizationContext.locales,
-        localizationContext.selectedLocale,
-        localizationContext.systemLocale,
-      ),
-    [
-      localizationContext.locales,
-      localizationContext.selectedLocale,
-      localizationContext.systemLocale,
-    ],
-  )
-
-  return _translate
-}
+export const useTranslate = (): Translate => useContext(LocalizationContext).translate

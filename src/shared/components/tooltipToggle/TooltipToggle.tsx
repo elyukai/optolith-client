@@ -1,5 +1,5 @@
-import { FC, ReactNode, RefObject, useEffect, useState } from "react"
-import { classList } from "../../utils/classList.ts"
+import { classList } from "@elyukai/utils/classList"
+import { type FC, type ReactNode, type RefObject, useEffect, useState } from "react"
 import { Overlay } from "../overlay/Overlay.tsx"
 import "./TooltipToggle.scss"
 

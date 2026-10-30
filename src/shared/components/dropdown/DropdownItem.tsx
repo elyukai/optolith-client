@@ -1,6 +1,6 @@
-import { FC, useCallback } from "react"
-import { classList } from "../../utils/classList.ts"
-import { deepEqual } from "../../utils/compare.ts"
+import { classList } from "@elyukai/utils/classList"
+import { deepEqual } from "@elyukai/utils/equality"
+import { type FC, useCallback } from "react"
 
 /**
  * Configuration for a dropdown option.

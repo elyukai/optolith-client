@@ -1,4 +1,4 @@
-import { FC } from "react"
+import type { FC } from "react"
 
 /**
  * Temporary component for entry types for which a inline library component is

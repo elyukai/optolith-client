@@ -1,5 +1,5 @@
+import { classList } from "@elyukai/utils/classList"
 import * as React from "react"
-import { classList } from "../../utils/classList.ts"
 
 type Props = {
   className?: string

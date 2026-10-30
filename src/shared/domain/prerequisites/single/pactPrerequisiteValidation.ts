@@ -1,41 +1,40 @@
-import {
-  PactCategoryReference,
-  PactDomainReference,
+import { isNotNullish, mapNullable } from "@elyukai/utils/nullable"
+import type {
+  PactCategory_ID,
+  PactDomain_ID,
+  PactPrerequisite,
 } from "@optolith/database-schema/gen"
-import { PactPrerequisite } from "@optolith/database-schema/gen"
-import { filterNonNullable } from "../../../utils/array.ts"
-import { mapNullable } from "../../../utils/nullable.ts"
-import { Pact } from "../../pact.ts"
+import { CharacterPact } from "../../pact.ts"
 
 /**
  * Checks a single pact prerequisite if it’s matched.
  */
 export const checkPactPrerequisite = (
   caps: {
-    getPact: () => Pact | undefined
+    pact: CharacterPact | undefined
   },
   p: PactPrerequisite,
 ): boolean => {
-  const pact = caps.getPact()
+  const { pact } = caps
 
   if (pact === undefined) {
     return false
   }
 
-  const checkCategory = (pCategory: PactCategoryReference, i: Pact): boolean =>
-    i.category === pCategory.id.pact_category
+  const checkCategory = (pCategory: PactCategory_ID, i: CharacterPact): boolean =>
+    i.categoryId === pCategory
 
-  const checkLevel = (pLevel: number, i: Pact): boolean => i.level >= pLevel
+  const checkLevel = (pLevel: number, i: CharacterPact): boolean => i.level >= pLevel
 
-  const checkDomain = (pDomain: PactDomainReference[], i: Pact): boolean =>
-    pDomain.some(domain => i.domain.kind === "Predefined" && i.domain.id === domain.id.pact_domain)
+  const checkDomain = (pDomain: PactDomain_ID[], i: CharacterPact): boolean =>
+    pDomain.some(domain => /* TODO i.domain.kind === "Predefined" && */ i.domainId === domain)
 
   // all checks must satisfy, if applicable depending on the prerequisite
-  const checks = filterNonNullable<((i: Pact) => boolean) | undefined>([
+  const checks: (((i: CharacterPact) => boolean) | undefined)[] = [
     i => checkCategory(p.category, i),
     mapNullable(p.level, pLevel => i => checkLevel(pLevel, i)),
-    mapNullable(p.domain_id, pDomain => i => checkDomain(pDomain, i)),
-  ])
+    mapNullable(p.domain, pDomain => i => checkDomain(pDomain, i)),
+  ]
 
-  return checks.every(f => f(pact))
+  return checks.filter(isNotNullish).every(f => f(pact))
 }

@@ -1,5 +1,5 @@
-import { classList } from "../../utils/classList.ts"
-import { FCC } from "../../utils/react.ts"
+import { classList } from "@elyukai/utils/classList"
+import type { FCC } from "../../utils/react.ts"
 import "./Grid.scss"
 
 type Size = "small" | "medium" | "large"

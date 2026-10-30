@@ -1,5 +1,5 @@
-import { FC } from "react"
-import { RoutePath } from "../slices/routeSlice.ts"
+import type { FC } from "react"
+import type { RoutePath } from "../slices/routeSlice.ts"
 import "./NavigationBarSubTabs.scss"
 import { NavigationBarTab } from "./NavigationBarTab.tsx"
 

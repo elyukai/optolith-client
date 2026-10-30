@@ -1,9 +1,9 @@
-import { classList } from "../../utils/classList.ts"
-import { FCC } from "../../utils/react.ts"
+import { classList } from "@elyukai/utils/classList"
+import type { FCC } from "../../utils/react.ts"
 
 type Props = {
   addName?: string
-  large?: boolean | JSX.Element
+  large?: boolean | React.ReactElement
   name: string
   onClick?(): void
 }

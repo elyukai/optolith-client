@@ -1,11 +1,9 @@
-import { FocusRuleTranslation } from "@optolith/database-schema/gen"
+import { on } from "@elyukai/utils/function"
 import { observer } from "mobx-react"
-import { FC, useMemo } from "react"
-import type { CharacterFocusRuleOverview } from "../../../../../shared/domain/rules.ts"
+import { type FC, useMemo } from "react"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { compareAt } from "../../../../../shared/utils/compare.ts"
 import { SharedState } from "../../../../external.ts"
 import { FocusRulesItem } from "./FocusRulesItem.tsx"
 
@@ -18,17 +16,7 @@ export const FocusRules: FC = observer(() => {
   const localeCompare = useLocaleCompare()
 
   const focusRuleOptions = useMemo(
-    () =>
-      SharedState.focusRules
-        .map(x => ({ ...x, focusRuleTranslation: translateMap(x.dbEntry.translations) }))
-        .filter(
-          (
-            x,
-          ): x is CharacterFocusRuleOverview & {
-            focusRuleTranslation: FocusRuleTranslation
-          } => x.focusRuleTranslation !== undefined,
-        )
-        .toSorted(compareAt(x => x.focusRuleTranslation.name, localeCompare)),
+    () => SharedState.focusRules.toSorted(on(x => x.name, localeCompare)),
     [SharedState.focusRules, localeCompare, translateMap],
   )
 

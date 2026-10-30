@@ -1,7 +1,6 @@
-import { FC } from "react"
+import type { FC } from "react"
 import { Dialog } from "../../../../../shared/components/dialog/Dialog.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
-import { DerivedCharacteristicIdentifier as DCId } from "../../../../../shared/domain/identifier.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 
 type Props = {
@@ -14,6 +13,7 @@ type Props = {
   removeBoughtBackPoint?(): void
   removeLostPoint(): void
   close(): void
+  name: string
 }
 
 /**
@@ -22,6 +22,7 @@ type Props = {
 export const PermanentPointsSheet: FC<Props> = props => {
   const {
     id,
+    name,
     isOpen,
     permanentlyLost,
     permanentlyLostBoughtBack,
@@ -40,13 +41,7 @@ export const PermanentPointsSheet: FC<Props> = props => {
       isOpen={isOpen}
       close={close}
       className="permanent-points-editor"
-      title={
-        id === DCId.ArcaneEnergy
-          ? translate("Permanently Lost Arcane Energy")
-          : id === DCId.KarmaPoints
-            ? translate("Permanently Lost Karma Points")
-            : translate("Permanently Lost Life Points")
-      }
+      title={name}
       buttons={[
         {
           autoWidth: true,

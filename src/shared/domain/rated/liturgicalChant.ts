@@ -1,102 +1,428 @@
-import { Aspect } from "@optolith/database-schema/gen"
-import { ExperienceLevel } from "@optolith/database-schema/gen"
-import { SkillTradition } from "@optolith/database-schema/gen"
-import { LiturgyIdentifier } from "@optolith/database-schema/gen"
-import { ImprovementCost } from "@optolith/database-schema/gen"
-import { SkillCheck } from "@optolith/database-schema/gen"
-import { BlessedTradition } from "@optolith/database-schema/gen"
-import { count, countByMany } from "../../utils/array.ts"
-import { Compare, compareAt, compareNullish, numAsc, reduceCompare } from "../../utils/compare.ts"
-import { isNotNullish } from "../../utils/nullable.ts"
-import { TranslateMap } from "../../utils/translate.ts"
-import { assertExhaustive } from "../../utils/typeSafety.ts"
-import { Activatable, countOptions } from "../activatable/activatableEntry.ts"
-import { compareImprovementCost, fromRaw } from "../adventurePoints/improvementCost.ts"
-import { All } from "../getTypes.ts"
-import { AspectIdentifier, createIdentifierObject } from "../identifier.ts"
-import { LiturgiesSortOrder } from "../sortOrders.ts"
-import { DisplayedActiveLiturgy } from "./liturgicalChantActive.ts"
-import { DisplayedInactiveLiturgy } from "./liturgicalChantInactive.ts"
+import { countByMany } from "@elyukai/utils/array/reductions"
+import { on } from "@elyukai/utils/function"
+import { isNotNullish } from "@elyukai/utils/nullable"
+import { compareNullish, compareNumber, reduceCompare, type Compare } from "@elyukai/utils/ordering"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import {
-  ActivatableRatedMap,
-  ActivatableRatedValue,
-  ActivatableRatedWithEnhancements,
-  ActivatableRatedWithEnhancementsMap,
-  ActiveActivatableRatedWithEnhancements,
-  isRatedActive,
-  isRatedWithEnhancementsActive,
+  compareImprovementCost,
+  type ImprovementCost,
+} from "@optolith/adventure-points/improvement-cost"
+import type {
+  Aspect,
+  Aspect_ID,
+  BlessedTradition_ID,
+  Blessing_ID,
+  LiturgyIdentifier,
+  LiturgyTradition,
+  SkillCheck,
+} from "@optolith/database-schema/gen"
+import { renderSkillCheckPenalty } from "@optolith/entity-descriptions/entities/partial/rated/skillCheck"
+import { ResponsiveTextSize } from "@optolith/entity-descriptions/entities/partial/responsiveText"
+import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
+import { computed } from "mobx"
+import type { Global } from "../../global.ts"
+import type { TranslateMap } from "../../utils/locale.ts"
+import type { CharacterActivatable } from "../activatable/activatable.ts"
+import { TinyActivatable, TinyActivatables } from "../activatable/tinyActivatable.ts"
+import type { Character } from "../character.ts"
+import { Case } from "../databaseEnum.ts"
+import { registerOrUnregisterPrerequisitesOfLiturgyAsDependencies } from "../dependencies/fullPrerequisiteRegistrationAsDependencyForType.ts"
+import { RegistrationMethod } from "../dependencies/registrationHelpers.ts"
+import { checkPrerequisitesOfLiturgy } from "../prerequisites/fullPrerequisiteValidationForType.ts"
+import { LiturgiesSortOrder } from "../sortOrders.ts"
+import {
+  CharacterActivatableRatedEntriesWithEnhancements,
+  CharacterActivatableRatedWithEnhancements,
+  type DisplayedActiveActivatableRatedWithEnhancements,
+  type DisplayedInactiveActivatableRatedWithEnhancements,
 } from "./ratedEntry.ts"
 
-/**
- * Returns the value for a dynamic liturgical chant entry that might not exist
- * yet.
- */
-export const getLiturgicalChantValue = (
-  dynamic: ActivatableRatedWithEnhancements | undefined,
-): number | undefined => dynamic?.value
+export class CharacterBlessing extends TinyActivatable<"Blessing"> {}
 
-/**
- * Creates an initial dynamic liturgical chant entry.
- */
-export const createEmptyDynamicLiturgicalChant = (
-  id: number,
-): ActivatableRatedWithEnhancements => ({
-  id,
-  value: undefined,
-  cachedAdventurePoints: {
-    general: 0,
-    bound: 0,
-  },
-  dependencies: [],
-  boundAdventurePoints: [],
-  enhancements: [],
-})
+export class CharacterBlessings extends TinyActivatables<"Blessing", CharacterBlessing> {
+  constructor(global: Global, character: Character) {
+    super(global, character, "Blessing", CharacterBlessing)
+  }
 
-// /**
-//  * Checks if the passed liturgical chant or blessing is valid for the current
-//  * active blessed tradition.
-//  */
-// export const isOwnTradition =
-//   (blessedTradition : Record<SpecialAbility>) =>
-//   (entry : Record<LiturgicalChant> | Record<Blessing>) : boolean => {
-//     const numeric_tradition_id = mapBlessedTradIdToNumId (SAA.id (blessedTradition))
+  @computed
+  get restrictedBlessings(): Blessing_ID[] {
+    const entry = this.character.getActivatableCollection("BlessedTradition").active[0]?.dbEntry
+    return entry?.type.kind !== "Church" || entry?.type.Church?.restrictedBlessings === undefined
+      ? []
+      : entry.type.Church.restrictedBlessings.kind === "Six"
+        ? entry.type.Church.restrictedBlessings.Six
+        : entry.type.Church.restrictedBlessings.Three
+  }
 
-//     return any<BlessedTradition> (e => e === BlessedTradition.General
-//                                        || elem<BlessedTradition> (e) (numeric_tradition_id))
-//                                  (LCAL.tradition (entry))
-//   }
+  @computed
+  get inactiveForDisplay(): DisplayedBlessing[] {
+    return this.global.db
+      .getAllInstanceContainersOfEntity("Blessing")
+      .filter(({ id }) => !this.isActive(id) && !this.restrictedBlessings.includes(id))
+      .map((container): DisplayedBlessing => ({
+        type: "Blessing",
+        id: container.id,
+        name: this.global.locale.translateMap(container.content.translations)?.name ?? "",
+        groupName: this.global.locale.translate("Blessings"),
+        groupPosition: 0,
+      }))
+  }
 
-/**
- * Extracts the list of aspect identifiers from a list of tradition objects.
- */
-export const flattenAspectIds = (traditions: SkillTradition[]): number[] =>
-  traditions
-    .flatMap(tradition => {
-      switch (tradition.tag) {
-        case "GeneralAspect":
-          return [tradition.general_aspect]
-        case "Tradition":
-          return tradition.tradition.aspects ?? []
-        default:
-          return assertExhaustive(tradition)
-      }
-    })
-    .map(aspect => aspect.id.aspect)
+  @computed
+  get activeForDisplay(): DisplayedBlessing[] {
+    return this.global.db
+      .getAllInstanceContainersOfEntity("Blessing")
+      .filter(({ id }) => this.isActive(id))
+      .map((container): DisplayedBlessing => ({
+        type: "Blessing",
+        id: container.id,
+        groupPosition: 0,
+        name: this.global.locale.translateMap(container.content.translations)?.name ?? "",
+        groupName: this.global.locale.translate("Blessings"),
+      }))
+  }
+}
 
-/**
- * Checks if the passed liturgical chant features the passed aspect.
- */
-export const hasAspectById = (id: number, traditions: SkillTradition[]): boolean =>
-  traditions.some(tradition => {
-    switch (tradition.tag) {
+export type DisplayedBlessing = {
+  type: "Blessing"
+  id: Blessing_ID
+  groupPosition: number
+  name: string
+  groupName: string
+  improvementCost?: undefined
+}
+
+export class CharacterLiturgicalChant<
+  Entity extends "LiturgicalChant" | "Ceremony",
+> extends CharacterActivatableRatedWithEnhancements<Entity> {
+  override readonly derivedDependencies = []
+  readonly improvementCost = this.dbEntry.improvement_cost.kind
+
+  @computed
+  get minValue() {
+    const minimumValues: number[] = [
+      ...this.flatMinimumRestrictions,
+      ...this.activeEnhancements.values().map(enhancement => enhancement.dbEntry.skill_rating),
+      // TODO: getLiturgicalChantMinimumFromAspectKnowledgePrerequistes(
+      //   liturgicalChantsAbove10ByAspect,
+      //   activeAspectKnowledges,
+      //   flattenAspectIds(staticLiturgicalChant.traditions),
+      //   dynamicLiturgicalChant.value,
+      // ),
+    ].filter(isNotNullish)
+
+    return minimumValues.length > 0 ? Math.max(...minimumValues) : undefined
+  }
+
+  @computed
+  get bonusMaximumValue(): number {
+    return (
+      this.character.maximumSkillRatingBonusEntry?.countOptions(
+        Case<"LiturgicalChant" | "Ceremony", string>(this.entityName, this.id),
+      ) ?? 0
+    )
+  }
+
+  @computed
+  get maxValue() {
+    const maximumValues = [
+      this.getMaxValue(this.dbEntry.check, this.bonusMaximumValue),
+      this.character.aspectIdsWithUnlockedMaximum.some(aspectId => this.aspects.includes(aspectId))
+        ? undefined
+        : 14,
+    ].filter(isNotNullish)
+
+    return Math.min(...maximumValues) + this.bonusMaximumValue
+  }
+
+  @computed
+  get skillCheckValues(): ReturnType<typeof this.getAssociatedAttributeValues> {
+    return this.getAssociatedAttributeValues(this.dbEntry.check)
+  }
+
+  @computed
+  get skillCheckPenaltyText(): string | undefined {
+    return this.dbEntry.check_penalty === undefined
+      ? undefined
+      : renderSkillCheckPenalty(this.dbEntry.check_penalty).run({
+          translate: this.global.locale.translate,
+          translateMap: this.global.locale.translateMap,
+          getInstanceById: this.global.db.getInstanceOfEntityById.bind(this.global.db),
+          responsiveTextSize: ResponsiveTextSize.Compressed,
+        })
+  }
+
+  override toJSON(): DisplayedLiturgicalChant<Entity> {
+    const { activeBlessedTradition } = this.character
+    return {
+      ...super.toJSON(),
+      check: this.dbEntry.check,
+      checkPenalty: this.skillCheckPenaltyText,
+      improvementCost: this.improvementCost,
+      groupPosition: this.entityName === "LiturgicalChant" ? 1 : 2,
+      type: this.entityName,
+      name: this.global.locale.translateMap(this.dbEntry.translations)?.name ?? "",
+      groupName:
+        this.entityName === "LiturgicalChant"
+          ? this.global.locale.translate("Liturgical Chants")
+          : this.global.locale.translate("Ceremonies"),
+      associatedText:
+        activeBlessedTradition === undefined
+          ? ""
+          : getAspectsForTranslation(
+              this.dbEntry.traditions,
+              activeBlessedTradition,
+              aspectId => this.global.db.getInstanceOfEntityById("Aspect", aspectId),
+              this.global.locale.translateMap,
+            )
+              .toSorted(this.global.locale.compare)
+              .join(", "),
+    }
+  }
+
+  @computed
+  get highestRequiredAttribute(): ReturnType<typeof this.getHighestRequiredAssociatedAttribute> {
+    return super.getHighestRequiredAssociatedAttribute(this.dbEntry.check, this.bonusMaximumValue)
+  }
+
+  get isAvailable(): boolean {
+    return (
+      !this.character.isMaximumOfLiturgicalChantsReached &&
+      checkPrerequisitesOfLiturgy(
+        this.dbEntry.prerequisites ?? [],
+        this.character.prerequisiteCapabilities,
+      )
+    )
+  }
+
+  hasAspectById(id: Aspect_ID): boolean {
+    return hasAspectById(this.dbEntry.traditions, id)
+  }
+
+  @computed
+  get aspects(): Aspect_ID[] {
+    return flattenAspects(this.dbEntry.traditions)
+  }
+
+  @computed
+  get isOwnTradition(): boolean {
+    const { activeBlessedTradition } = this.character
+    return activeBlessedTradition === undefined
+      ? false
+      : this.dbEntry.traditions.some(tradition => {
+          switch (tradition.kind) {
+            case "GeneralAspect":
+              return (
+                tradition.GeneralAspect ===
+                (activeBlessedTradition.dbEntry.type.kind === "Shamanistic"
+                  ? this.global.settings.liturgicalChants.generalAspectForShamanistic
+                  : this.global.settings.liturgicalChants.generalAspectForChurch)
+              )
+            case "Tradition":
+              return tradition.Tradition.tradition === activeBlessedTradition.id
+            default:
+              return assertExhaustive(tradition)
+          }
+        })
+  }
+
+  /**
+   * Checks if any of the passed traditions matches the predicate. General
+   * aspects are ignored.
+   */
+  anyBlessedTradition(predicate: (traditionId: BlessedTradition_ID) => boolean): boolean {
+    return this.dbEntry.traditions.some(
+      tradition => tradition.kind === "Tradition" && predicate(tradition.Tradition.tradition),
+    )
+  }
+
+  override activate(): void {
+    super.activate()
+    if (this.dbEntry.prerequisites !== undefined) {
+      registerOrUnregisterPrerequisitesOfLiturgyAsDependencies(
+        this.dbEntry.prerequisites,
+        RegistrationMethod.Add,
+        this.character,
+        Case(this.entityName satisfies LiturgyIdentifier["kind"], this.id),
+      )
+    }
+  }
+
+  override deactivate(): void {
+    super.deactivate()
+    if (this.dbEntry.prerequisites !== undefined) {
+      registerOrUnregisterPrerequisitesOfLiturgyAsDependencies(
+        this.dbEntry.prerequisites,
+        RegistrationMethod.Remove,
+        this.character,
+        Case(this.entityName satisfies LiturgyIdentifier["kind"], this.id),
+      )
+    }
+  }
+}
+
+export const hasAspectById = (traditions: LiturgyTradition[], id: Aspect_ID): boolean =>
+  traditions.some(t => {
+    switch (t.kind) {
       case "GeneralAspect":
-        return tradition.general_aspect.id.aspect === id
+        return t.GeneralAspect === id
       case "Tradition":
-        return tradition.tradition.aspects?.some(aspect => aspect.id.aspect === id) ?? false
+        return t.Tradition.aspects?.includes(id) ?? false
       default:
-        return assertExhaustive(tradition)
+        return assertExhaustive(t)
     }
   })
+
+export const flattenAspects = (traditions: LiturgyTradition[]): Aspect_ID[] =>
+  traditions.flatMap(t => {
+    switch (t.kind) {
+      case "GeneralAspect":
+        return [t.GeneralAspect]
+      case "Tradition":
+        return t.Tradition.aspects ?? []
+      default:
+        return assertExhaustive(t)
+    }
+  })
+
+export type DisplayedInactiveLiturgicalChant<
+  Entity extends "LiturgicalChant" | "Ceremony" = "LiturgicalChant" | "Ceremony",
+> = {
+  [E in Entity]: DisplayedInactiveActivatableRatedWithEnhancements & {
+    type: E
+    check: SkillCheck
+    checkPenalty: string | undefined
+    groupPosition: number
+    improvementCost: ImprovementCost
+    name: string
+    groupName: string
+    associatedText: string
+  }
+}[Entity]
+
+export type DisplayedActiveLiturgicalChant<
+  Entity extends "LiturgicalChant" | "Ceremony" = "LiturgicalChant" | "Ceremony",
+> = {
+  [E in Entity]: DisplayedActiveActivatableRatedWithEnhancements & {
+    type: E
+    check: SkillCheck
+    checkPenalty: string | undefined
+    groupPosition: number
+    improvementCost: ImprovementCost
+    name: string
+    groupName: string
+    associatedText: string
+  }
+}[Entity]
+
+export type DisplayedLiturgicalChant<
+  Entity extends "LiturgicalChant" | "Ceremony" = "LiturgicalChant" | "Ceremony",
+> = DisplayedActiveLiturgicalChant<Entity> | DisplayedInactiveLiturgicalChant<Entity>
+
+export class CharacterLiturgicalChants<
+  Entity extends "LiturgicalChant" | "Ceremony",
+> extends CharacterActivatableRatedEntriesWithEnhancements<
+  Entity,
+  CharacterLiturgicalChant<Entity>
+> {
+  constructor(global: Global, character: Character, entity: Entity) {
+    super(global, character, entity, CharacterLiturgicalChant)
+  }
+
+  getActiveByAspect(aspectId: Aspect_ID): CharacterLiturgicalChant<Entity>[] {
+    return this.active.filter(e => e.hasAspectById(aspectId))
+  }
+
+  @computed
+  override get inactiveForDisplay() {
+    const checkAdditionalUnlocked: (
+      staticLiturgicalChant: CharacterLiturgicalChant<Entity>,
+    ) => boolean = () => false
+    // TODO: Serializable in database?
+    // if (isActive(birdsOfPassage)) {
+    //   const phexCount =
+    //     activeUnfamiliarLiturgicalChantsAndCeremoniesCount[BlessedTraditionIdentifier.Phex] ?? 0
+
+    //   const rahjaCount =
+    //     activeUnfamiliarLiturgicalChantsAndCeremoniesCount[BlessedTraditionIdentifier.Rahja] ?? 0
+
+    //   return ({ traditions, improvement_cost }) =>
+    //     (phexCount === 0 &&
+    //       anyBlessedTradition(
+    //         traditions,
+    //         tradition => tradition === BlessedTraditionIdentifier.Phex,
+    //       ) &&
+    //       compareImprovementCost(fromRaw(improvement_cost), ImprovementCost.C) <= 0) ||
+    //     (rahjaCount === 0 &&
+    //       anyBlessedTradition(
+    //         traditions,
+    //         tradition => tradition === BlessedTraditionIdentifier.Rahja,
+    //       ) &&
+    //       compareImprovementCost(fromRaw(improvement_cost), ImprovementCost.C) <= 0)
+    // }
+
+    // if (isActive(huntressesOfTheWhiteMaiden)) {
+    //   // This checks for either liturgical chants or ceremonies, depending on
+    //   // context the function is used in.
+    //   const firunLiturgicalChantCount =
+    //     activeUnfamiliarLiturgicalChantsCount[BlessedTraditionIdentifier.Firun] ?? 0
+
+    //   return ({ traditions, improvement_cost }) =>
+    //     firunLiturgicalChantCount === 0 &&
+    //     anyBlessedTradition(
+    //       traditions,
+    //       tradition => tradition === BlessedTraditionIdentifier.Firun,
+    //     ) &&
+    //     compareImprovementCost(fromRaw(improvement_cost), ImprovementCost.C) <= 0
+    // }
+
+    // if (isActive(followersOfTheGoldenOne)) {
+    //   return ({ traditions, improvement_cost }) =>
+    //     (Object.keys(activeUnfamiliarLiturgicalChantsAndCeremoniesCount).length === 0 ||
+    //       anyBlessedTradition(traditions, tradition =>
+    //         unfamiliarTraditionsWithHighestActiveCount.includes(tradition),
+    //       )) &&
+    //     compareImprovementCost(fromRaw(improvement_cost), ImprovementCost.B) <= 0
+    // }
+
+    return this.global.db
+      .getAllInstanceContainersOfEntity(this.entityName)
+      .map(
+        container =>
+          this.getById(container.id) ?? this.createEmpty(container.id, container.content),
+      )
+      .filter(
+        entry =>
+          isEntryFromIncludedPublication(
+            entry.dbEntry,
+            this.global.db.getInstanceOfEntityById.bind(this.global.db),
+            this.global.locale.translateMap,
+            this.character.rules.publicationOptions,
+          ) &&
+          entry.value === undefined &&
+          (entry.isOwnTradition || checkAdditionalUnlocked(entry)),
+      )
+      .map(entry => entry.toJSON() as DisplayedInactiveLiturgicalChant<Entity>)
+  }
+
+  /**
+   * Counts the number of active liturgical chants that belong to a blessed
+   * tradition that is not the active one, by tradition.
+   */
+  @computed
+  get activeUnfamiliarCountByTradition(): Partial<Record<BlessedTradition_ID, number>> {
+    return countByMany(
+      this.rated
+        .values()
+        .filter(entry => entry.active && !entry.isOwnTradition)
+        .toArray(),
+      entry =>
+        entry.dbEntry.traditions.flatMap(t =>
+          t.kind === "Tradition" ? [t.Tradition.tradition] : [],
+        ),
+    )
+  }
+}
 
 /**
  * Returns the translation of all aspects relevant to the current active blessed
@@ -104,33 +430,24 @@ export const hasAspectById = (id: number, traditions: SkillTradition[]): boolean
  * instead.
  */
 export const getAspectsForTranslation = (
-  traditions: SkillTradition[],
-  activeBlessedTradition: BlessedTradition,
-  getAspectById: (id: number) => Aspect | undefined,
+  traditions: LiturgyTradition[],
+  activeBlessedTradition: CharacterActivatable<"BlessedTradition">,
+  getAspectById: (id: string) => Aspect | undefined,
   translateMap: TranslateMap,
 ): string[] =>
   traditions
     .flatMap(tradition => {
-      switch (tradition.tag) {
-        case "GeneralAspect": {
-          const isShamanisticGeneral =
-            tradition.general_aspect.id.aspect === AspectIdentifier.AllgemeinSchamanenritus
-
-          if (isShamanisticGeneral === activeBlessedTradition.is_shamanistic) {
-            return translateMap(getAspectById(tradition.general_aspect.id.aspect)?.translations)
-              ?.name
-          } else {
-            return []
-          }
-        }
+      switch (tradition.kind) {
+        case "GeneralAspect":
+          return translateMap(getAspectById(tradition.GeneralAspect)?.translations)?.name
         case "Tradition": {
-          if (tradition.tradition.tradition.id.blessed_tradition === activeBlessedTradition.id) {
-            if (activeBlessedTradition.aspects === undefined) {
-              return translateMap(activeBlessedTradition.translations)?.name
+          if (tradition.Tradition.tradition === activeBlessedTradition.id) {
+            if (activeBlessedTradition.dbEntry.aspects === undefined) {
+              return translateMap(activeBlessedTradition.dbEntry.translations)?.name
             } else {
               return (
-                tradition.tradition.aspects?.map(
-                  aspectRef => translateMap(getAspectById(aspectRef.id.aspect)?.translations)?.name,
+                tradition.Tradition.aspects?.map(
+                  aspectId => translateMap(getAspectById(aspectId)?.translations)?.name,
                 ) ?? []
               )
             }
@@ -145,391 +462,35 @@ export const getAspectsForTranslation = (
     .filter(isNotNullish)
 
 /**
- * A capability type for getting any dynamic liturgical chants that belong to a
- * certain aspect.
- */
-export type GetDynamicLiturgicalChantsByAspectCapability = (
-  id: number,
-) => ActivatableRatedWithEnhancements[]
-
-/**
- * A capability type for getting any active dynamic liturgical chants that
- * belong to a certain aspect.
- */
-export type GetActiveDynamicLiturgicalChantsByAspectCapability = (
-  id: number,
-) => ActiveActivatableRatedWithEnhancements[]
-
-/**
- * Returns a list of active dynamic liturgical chant entries for a given aspect.
- */
-export const getActiveDynamicLiturgicalChantsByAspect = (
-  getTraditionsOfLiturgicalChant: (id: number) => SkillTradition[],
-  dynamicLiturgicalChants: ActivatableRatedWithEnhancementsMap,
-  aspectId: number,
-): ActiveActivatableRatedWithEnhancements[] =>
-  Object.values(dynamicLiturgicalChants)
-    .filter(isRatedWithEnhancementsActive)
-    .filter(dynamicLiturgicalChant => {
-      getTraditionsOfLiturgicalChant(dynamicLiturgicalChant.id).some(tradition => {
-        switch (tradition.tag) {
-          case "GeneralAspect":
-            return tradition.general_aspect.id.aspect === aspectId
-          case "Tradition":
-            return (
-              tradition.tradition.aspects?.some(aspect => aspect.id.aspect === aspectId) ?? false
-            )
-          default:
-            return assertExhaustive(tradition)
-        }
-      })
-    })
-
-/**
- * Counts the number of liturgical chants that are active and have a value
- * greater than 10 for each aspect.
- */
-export const getLiturgicalChantsAbove10ByAspect = (
-  getTraditions: (id: LiturgyIdentifier) => SkillTradition[],
-  dynamicLiturgicalChants: ActivatableRatedMap,
-  dynamicCeremonies: ActivatableRatedMap,
-): Record<number, number> => {
-  const prepareEntity = (
-    ratedMap: ActivatableRatedMap,
-    numberToId: (id: number) => LiturgyIdentifier,
-  ) =>
-    Object.values(ratedMap)
-      .filter(isRatedActive)
-      .flatMap(dynamicEntry =>
-        flattenAspectIds(getTraditions(numberToId(dynamicEntry.id))).map(
-          aspectId => [aspectId, dynamicEntry.value] as const,
-        ),
-      )
-
-  return [
-    ...prepareEntity(dynamicLiturgicalChants, id => ({
-      tag: "LiturgicalChant",
-      liturgical_chant: id,
-    })),
-    ...prepareEntity(dynamicCeremonies, id => ({ tag: "Ceremony", ceremony: id })),
-  ].reduce<Record<number, number>>(
-    (acc, [aspectId, value]) =>
-      value >= 10 ? { ...acc, [aspectId]: (acc[aspectId] ?? 0) + 1 } : acc,
-    {},
-  )
-}
-
-/**
- * Returns the highest required attribute and its value for a liturgical chant,
- * if any.
- */
-export const getHighestRequiredAttributeForLiturgicalChant = (
-  getSingleHighestCheckAttributeId: (check: SkillCheck) => number | undefined,
-  staticLiturgicalChant: { id: number; check: SkillCheck },
-  dynamicLiturgicalChant: { value: ActivatableRatedValue },
-  exceptionalSkill: Activatable | undefined,
-  type: "LiturgicalChant" | "Ceremony",
-): { id: number; value: number } | undefined => {
-  const singleHighestAttributeId = getSingleHighestCheckAttributeId(staticLiturgicalChant.check)
-
-  if (singleHighestAttributeId === undefined || dynamicLiturgicalChant.value === undefined) {
-    return undefined
-  }
-
-  const exceptionalSkillBonus = countOptions(
-    exceptionalSkill,
-    createIdentifierObject(type, staticLiturgicalChant.id),
-  )
-
-  return {
-    id: singleHighestAttributeId,
-    value: dynamicLiturgicalChant.value - 2 - exceptionalSkillBonus,
-  }
-}
-
-/**
- * Counts all active liturgical chants and ceremonies.
- */
-export const countActiveLiturgicalChants = (
-  dynamicLiturgicalChants: All.Dynamic.LiturgicalChants,
-  dynamicCeremonies: All.Dynamic.Ceremonies,
-) =>
-  count(dynamicLiturgicalChants, isRatedWithEnhancementsActive) +
-  count(dynamicCeremonies, isRatedWithEnhancementsActive)
-
-/**
- * Checks if the maximum number of liturgical chants has been reached.
- */
-export const isMaximumOfLiturgicalChantsReached = (
-  activeCount: number,
-  isInCharacterCreation: boolean,
-  startExperienceLevel: ExperienceLevel,
-) =>
-  isInCharacterCreation
-    ? activeCount >= startExperienceLevel.max_number_of_spells_liturgical_chants
-    : false
-
-/**
- * Checks if the liturgical chant belongs to a blessed tradition.
- */
-export const belongsToBlessedTradition = (
-  traditions: SkillTradition[],
-  activeTradition: BlessedTradition,
-): boolean =>
-  traditions.some(tradition => {
-    switch (tradition.tag) {
-      case "GeneralAspect":
-        return (
-          tradition.general_aspect.id.aspect ===
-          (activeTradition.is_shamanistic
-            ? AspectIdentifier.AllgemeinSchamanenritus
-            : AspectIdentifier.General)
-        )
-      case "Tradition":
-        return tradition.tradition.tradition.id.blessed_tradition === activeTradition.id
-      default:
-        return assertExhaustive(tradition)
-    }
-  })
-
-/**
- * Counts the number of active liturgical chants that belong to a blessed
- * tradition that is not the active one, by tradition.
- */
-export const countActiveByUnfamiliarTradition = <T extends { traditions: SkillTradition[] }>(
-  dynamicEntries: ActivatableRatedWithEnhancements[],
-  getStaticEntry: (id: number) => T | undefined,
-  activeBlessedTradition: BlessedTradition,
-): { [traditionId: number]: number } =>
-  countByMany(
-    dynamicEntries
-      .map(dynamicEntry => getStaticEntry(dynamicEntry.id))
-      .filter(
-        (staticEntry): staticEntry is NonNullable<typeof staticEntry> =>
-          isNotNullish(staticEntry) &&
-          !belongsToBlessedTradition(staticEntry.traditions, activeBlessedTradition),
-      ),
-    staticLiturgicalChant =>
-      staticLiturgicalChant.traditions.flatMap(tradition =>
-        tradition.tag === "Tradition" ? tradition.tradition.tradition.id.blessed_tradition : [],
-      ),
-  )
-
-/**
- * Checks if any of the passed traditions matches the predicate. General
- * aspects are ignored.
- */
-export const anyBlessedTradition = (
-  traditions: SkillTradition[],
-  predicate: (traditionId: number) => boolean,
-): boolean =>
-  traditions.some(
-    tradition =>
-      tradition.tag === "Tradition" &&
-      predicate(tradition.tradition.tradition.id.blessed_tradition),
-  )
-
-const getNameOfDisplayedLiturgy =
-  (translateMap: TranslateMap) =>
-  (liturgy: DisplayedInactiveLiturgy | DisplayedActiveLiturgy): string =>
-    (() => {
-      switch (liturgy.kind) {
-        case "blessing":
-          return translateMap(liturgy.static.translations)
-        case "liturgicalChant":
-          return translateMap(liturgy.static.translations)
-        case "ceremony":
-          return translateMap(liturgy.static.translations)
-        default:
-          return assertExhaustive(liturgy)
-      }
-    })()?.name ?? ""
-
-const getImprovementCostDisplayedLiturgy = (
-  liturgy: DisplayedInactiveLiturgy | DisplayedActiveLiturgy,
-): ImprovementCost | undefined => {
-  switch (liturgy.kind) {
-    case "blessing":
-      return undefined
-    case "liturgicalChant":
-    case "ceremony":
-      return liturgy.static.improvement_cost
-    default:
-      return assertExhaustive(liturgy)
-  }
-}
-
-const getGroupNumberDisplayedLiturgy = (
-  liturgy: DisplayedInactiveLiturgy | DisplayedActiveLiturgy,
-): number => {
-  switch (liturgy.kind) {
-    case "blessing":
-      return 1
-    case "liturgicalChant":
-      return 2
-    case "ceremony":
-      return 3
-    default:
-      return assertExhaustive(liturgy)
-  }
-}
-
-/**
  * Filters and sorts the displayed liturgies.
  */
-export const filterAndSortDisplayed = <T extends DisplayedActiveLiturgy | DisplayedInactiveLiturgy>(
+export const filterAndSortDisplayed = <T extends DisplayedLiturgicalChant | DisplayedBlessing>(
   visibileLiturgies: T[],
   filterText: string,
   sortOrder: LiturgiesSortOrder,
-  translateMap: TranslateMap,
   localeCompare: Compare<string>,
-) => {
-  const getName = getNameOfDisplayedLiturgy(translateMap)
-  return (
-    filterText === ""
-      ? visibileLiturgies
-      : visibileLiturgies.filter(c => getName(c).toLowerCase().includes(filterText.toLowerCase()))
-  ).sort(
+) =>
+  (filterText === ""
+    ? visibileLiturgies
+    : visibileLiturgies.filter(c => c.name.toLowerCase().includes(filterText.toLowerCase()))
+  ).toSorted(
     (() => {
       switch (sortOrder) {
         case LiturgiesSortOrder.Name:
-          return compareAt(getName, localeCompare)
+          return on(c => c.name, localeCompare)
         case LiturgiesSortOrder.Group:
           return reduceCompare(
-            compareAt(getGroupNumberDisplayedLiturgy, numAsc),
-            compareAt(getName, localeCompare),
+            on(c => c.groupPosition, compareNumber),
+            on(c => c.name, localeCompare),
           )
         case LiturgiesSortOrder.ImprovementCost:
           return reduceCompare(
-            compareAt(
-              c => fromRaw(getImprovementCostDisplayedLiturgy(c)),
-              compareNullish(compareImprovementCost),
-            ),
-            compareAt(getName, localeCompare),
+            on(c => Math.min(c.groupPosition, 1), compareNumber),
+            on(c => c.improvementCost, compareNullish(compareImprovementCost)),
+            on(c => c.name, localeCompare),
           )
         default:
           return assertExhaustive(sortOrder)
       }
     })(),
   )
-}
-
-// export type LiturgicalChantBlessingCombined = Record<LiturgicalChantWithRequirements>
-//                                             | Record<BlessingCombined>
-
-// const wikiEntryCombined =
-//   (x : LiturgicalChantBlessingCombined) : Record<LiturgicalChant> | Record<Blessing> =>
-//     LiturgicalChantWithRequirements.is (x)
-//       ? LiturgicalChantWithRequirements.A.wikiEntry (x)
-//       : BlessingCombined.A.wikiEntry (x)
-
-// /**
-//  * Combined `LiturgicalChantWithRequirements` and `BlessingCombined` accessors.
-//  */
-// export const LCBCA = {
-//   active: (x : LiturgicalChantBlessingCombined) : boolean =>
-//     LiturgicalChantWithRequirements.is (x)
-//       ? pipe_ (
-//           x,
-//           LiturgicalChantWithRequirements.A.stateEntry,
-//           ActivatableSkillDependent.A.active
-//         )
-//       : BlessingCombined.A.active (x),
-//   gr: (x : LiturgicalChantBlessingCombined) : Maybe<number> =>
-//     LiturgicalChantWithRequirements.is (x)
-//       ? pipe_ (
-//           x,
-//           LiturgicalChantWithRequirements.A.wikiEntry,
-//           LiturgicalChant.A.gr,
-//           Just
-//         )
-//       : Nothing,
-//   aspects: (x : LiturgicalChantBlessingCombined) : List<number> =>
-//     LiturgicalChantWithRequirements.is (x)
-//       ? pipe_ (
-//           x,
-//           LiturgicalChantWithRequirements.A.wikiEntry,
-//           LiturgicalChant.A.aspects
-//         )
-//       : List (1),
-//   tradition: (x : LiturgicalChantBlessingCombined) : List<number> =>
-//     LiturgicalChantWithRequirements.is (x)
-//       ? pipe_ (
-//           x,
-//           LiturgicalChantWithRequirements.A.wikiEntry,
-//           LiturgicalChant.A.tradition
-//         )
-//       : List (1),
-//   id: pipe (wikiEntryCombined, Blessing.AL.id),
-//   name: pipe (wikiEntryCombined, Blessing.AL.name),
-// }
-
-// const isAspectOfTraditionFromPair = (fromPair : <A> (x : Pair<A, A>) => A) =>
-//                                     (trad : Record<BlessedTraditionR>) =>
-//                                     (aspect : number) : boolean =>
-//                                       pipe_ (
-//                                         trad,
-//                                         BTA.aspects,
-//                                         maybe (false)
-//                                               (aspects => fromPair (aspects) === aspect)
-//                                       )
-
-// const isAspectOfTradition = (trad : Record<BlessedTraditionR>) =>
-//                             (aspect : number) : boolean =>
-//                               isAspectOfTraditionFromPair (fst) (trad) (aspect)
-//                               || isAspectOfTraditionFromPair (snd) (trad) (aspect)
-
-// /**
-//  * Returns the Aspects string for list display.
-//  */
-// export const getAspectsStr =
-//   (staticData : StaticDataRecord) =>
-//   (curr : LiturgicalChantBlessingCombined) =>
-//   (mtradition_id : Maybe<BlessedTradition>) : string =>
-//     pipe_ (
-//       mtradition_id,
-//       bindF (tradition_id => pipe_ (
-//                                staticData,
-//                                SDA.blessedTraditions,
-//                                find (trad => BTA.numId (trad) === tradition_id)
-//                              )),
-//       toNewMaybe
-//     )
-//       .maybe ("", tradition =>
-//         pipe_ (
-//           curr,
-//           LCBCA.aspects,
-//           mapMaybe (pipe (
-//                      ensure (isAspectOfTradition (tradition)),
-//                      bindF (lookupF (SDA.aspects (staticData))),
-//                      fmap (NumIdName.A.name)
-//                    )),
-//           List.elem (14) (LCBCA.tradition (curr))
-//             ? consF (BTA.name (tradition))
-//             : ident,
-//           xs => fnull (xs)
-//                 ? mapMaybe (pipe (
-//                             lookupF (SDA.aspects (staticData)),
-//                             fmap (NumIdName.A.name)
-//                           ))
-//                           (LCBCA.aspects (curr))
-//                 : xs,
-//           sortStrings (staticData),
-//           intercalate (", ")
-//         ))
-
-// /**
-//  * Returns the final Group/Aspects string for list display.
-//  */
-// export const getLCAddText =
-//   (staticData : StaticDataRecord) =>
-//   (sortOrder : ChantsSortOptions) =>
-//   (aspects_str : string) =>
-//   (curr : Record<LiturgicalChantWithRequirements>) =>
-//     pipe_ (
-//       guard (sortOrder === "group"),
-//       thenF (lookup (LCWRA_.gr (curr))
-//                     (SDA.liturgicalChantGroups (staticData))),
-//       maybe (aspects_str)
-//             (pipe (NumIdName.A.name, gr_str => `${aspects_str} / ${gr_str}`))
-//     )

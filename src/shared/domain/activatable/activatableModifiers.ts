@@ -1,4 +1,4 @@
-import { Activatable, firstLevel, isActive } from "./activatableEntry.ts"
+import { CharacterActivatable } from "./activatable.ts"
 
 /**
  * There are pairs of entries that are mutually exclusive and modify a certain
@@ -6,9 +6,9 @@ import { Activatable, firstLevel, isActive } from "./activatableEntry.ts"
  * returns the value modifier that is caused by the given pair of entries.
  */
 export const modifierByLevel = (
-  incrementor: Activatable | undefined,
-  decrementor: Activatable | undefined,
-): number => firstLevel(incrementor) - firstLevel(decrementor)
+  incrementor: CharacterActivatable | undefined,
+  decrementor: CharacterActivatable | undefined,
+): number => (incrementor?.firstLevel ?? 0) - (decrementor?.firstLevel ?? 0)
 
 /**
  * There are pairs of entries that are mutually exclusive and modify a certain
@@ -17,12 +17,12 @@ export const modifierByLevel = (
  * entries.
  */
 export const modifierByIsActive = (
-  incrementor: Activatable | undefined,
-  decrementor: Activatable | undefined,
-): number => (isActive(incrementor) ? 1 : isActive(decrementor) ? -1 : 0)
+  incrementor: CharacterActivatable | undefined,
+  decrementor: CharacterActivatable | undefined,
+): number => ((incrementor?.isActive ?? false) ? 1 : (decrementor?.isActive ?? false) ? -1 : 0)
 
-const countActive = (activatables: (Activatable | undefined)[]) =>
-  activatables.reduce((acc, entry) => acc + (isActive(entry) ? 1 : 0), 0)
+const countActive = (activatables: (CharacterActivatable | undefined)[]) =>
+  activatables.reduce((acc, entry) => acc + ((entry?.isActive ?? false) ? 1 : 0), 0)
 
 /**
  * There are entries that modify a certain value by being purchased, either in a
@@ -30,6 +30,6 @@ const countActive = (activatables: (Activatable | undefined)[]) =>
  * caused by the given entries.
  */
 export const modifierByIsActives = (
-  incrementors: (Activatable | undefined)[],
-  decrementors: (Activatable | undefined)[],
+  incrementors: (CharacterActivatable | undefined)[],
+  decrementors: (CharacterActivatable | undefined)[],
 ): number => countActive(incrementors) - countActive(decrementors)

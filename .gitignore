@@ -28,3 +28,4 @@ deploy/tablesSrc.json
 .merlin
 .bsb.lock
 *.tsbuildinfo
+*.p8

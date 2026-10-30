@@ -1,4 +1,7 @@
-import { CacheMap } from "optolith-database-schema/config/cache"
+import { combine } from "@elyukai/utils/maybe"
+import { error, ok, type Result } from "@elyukai/utils/result"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type { MagicalAndBlessedAdvantagesAndDisadvantagesCache } from "@optolith/database-schema/cache"
 import { useCallback } from "react"
 import {
   maximumAdventurePointsForAdventagesAndDisadvantages,
@@ -8,9 +11,7 @@ import {
   AdventurePointsCache,
   getTotalAdventurePointsFromCache,
 } from "../../shared/domain/adventurePoints/cache.ts"
-import { Result, combine, error, ok } from "../../shared/utils/result.ts"
 import { Translate } from "../../shared/utils/translate.ts"
-import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
 import {
   selectAdventurePointsAvailable,
   selectAdventurePointsSpentOnAdvantages,
@@ -260,7 +261,7 @@ export const useAreEnoughAdventurePointsAvailableToBuy = () => {
  * disadvantage identifier.
  */
 export const getSpecialAdventurePointsKind = (
-  cache: CacheMap["magicalAndBlessedAdvantagesAndDisadvantages"],
+  cache: MagicalAndBlessedAdvantagesAndDisadvantagesCache,
   kind: "advantage" | "disadvantage",
   id: number,
 ): SpecialAdventurePointsKind => {

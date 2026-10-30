@@ -1,86 +1,20 @@
-import { Cantrip } from "@optolith/database-schema/gen"
-import { ExperienceLevel } from "@optolith/database-schema/gen"
-import { Ritual } from "@optolith/database-schema/gen"
-import { Spell } from "@optolith/database-schema/gen"
-import { PropertyReference } from "@optolith/database-schema/gen"
-import { SkillCheck } from "@optolith/database-schema/gen"
-import { AnimistPower } from "@optolith/database-schema/gen"
-import { Curse } from "@optolith/database-schema/gen"
-import { DominationRitual } from "@optolith/database-schema/gen"
-import { ElvenMagicalSong } from "@optolith/database-schema/gen"
-import { GeodeRitual } from "@optolith/database-schema/gen"
-import { JesterTrick } from "@optolith/database-schema/gen"
-import { MagicalDance } from "@optolith/database-schema/gen"
-import { MagicalMelody } from "@optolith/database-schema/gen"
-import { ZibiljaRitual } from "@optolith/database-schema/gen"
+import type { ImprovementCost } from "@optolith/adventure-points/improvement-cost"
+import {
+  AnimistPower,
+  Curse,
+  DominationRitual,
+  ElvenMagicalSong,
+  ExperienceLevel,
+  GeodeRitual,
+  JesterTrick,
+  MagicalDance,
+  MagicalMelody,
+  SkillCheck,
+  ZibiljaRitual,
+} from "@optolith/database-schema/gen"
 import { isNotNullish } from "../../utils/nullable.ts"
-import { assertExhaustive } from "../../utils/typeSafety.ts"
-import {
-  Activatable,
-  TinyActivatable,
-  isTinyActivatableActive,
-} from "../activatable/activatableEntry.ts"
-import { ImprovementCost } from "../adventurePoints/improvementCost.ts"
-import { FilterApplyingRatedDependencies } from "../dependencies/filterApplyingDependencies.ts"
-import { GetById } from "../getTypes.ts"
-import { getHighestAttributeValue } from "./attribute.ts"
-import {
-  ActivatableRated,
-  ActivatableRatedWithEnhancements,
-  ActiveActivatableRated,
-  ActiveActivatableRatedWithEnhancements,
-  Rated,
-  isRatedActive,
-  isRatedWithEnhancementsActive,
-} from "./ratedEntry.ts"
-import {
-  getSpellworkMaximum,
-  getSpellworkMinimum,
-  isSpellworkDecreasable,
-  isSpellworkIncreasable,
-} from "./spellActiveBounds.ts"
-
-/**
- * A static active cantrip for combination with other types.
- */
-export type DisplayedActiveCantrip = {
-  kind: "cantrip"
-  static: Cantrip
-  dynamic: TinyActivatable
-  isUnfamiliar: boolean
-}
-
-/**
- * A combination of a static and corresponding dynamic active spell entry,
- * extended by value bounds, and full logic for if the value can be increased or
- * decreased.
- */
-export type DisplayedActiveSpell = {
-  kind: "spell"
-  static: Spell
-  dynamic: ActiveActivatableRatedWithEnhancements
-  minimum: number | undefined
-  maximum: number
-  isIncreasable: boolean
-  isDecreasable: boolean
-  isUnfamiliar: boolean
-}
-
-/**
- * A combination of a static and corresponding dynamic active ritual entry,
- * extended by value bounds, and full logic for if the value can be increased or
- * decreased.
- */
-export type DisplayedActiveRitual = {
-  kind: "ritual"
-  static: Ritual
-  dynamic: ActiveActivatableRatedWithEnhancements
-  minimum: number | undefined
-  maximum: number
-  isIncreasable: boolean
-  isDecreasable: boolean
-  isUnfamiliar: boolean
-}
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { ActivatableRated, ActiveActivatableRated, isRatedActive } from "./ratedEntry.ts"
 
 type DisplayedActiveMagicalActionBase<Kind extends string, Static> = {
   kind: Kind
@@ -198,135 +132,6 @@ export type DisplayedActiveMagicalAction =
   | DisplayedActiveAnimistPower
   | DisplayedActiveGeodeRitual
   | DisplayedActiveZibiljaRitual
-
-/**
- * A union of all displayed active spellwork and magical action kinds.
- */
-export type DisplayedActiveSpellwork =
-  | DisplayedActiveCantrip
-  | DisplayedActiveSpell
-  | DisplayedActiveRitual
-  | DisplayedActiveMagicalAction
-
-/**
- * Filters the given list of active cantrips by tradition.
- */
-export const getVisibleActiveCantrips = (
-  getStaticCantripById: GetById.Static.Cantrip,
-  dynamicCantrips: TinyActivatable[],
-  getIsUnfamiliar: (id: number) => boolean,
-): DisplayedActiveCantrip[] =>
-  dynamicCantrips
-    .filter(isTinyActivatableActive)
-    .map((dynamicCantrip): DisplayedActiveCantrip | undefined => {
-      const staticCantrip = getStaticCantripById(dynamicCantrip.id)
-
-      if (staticCantrip === undefined) {
-        return undefined
-      }
-
-      return {
-        kind: "cantrip",
-        static: staticCantrip,
-        dynamic: dynamicCantrip,
-        isUnfamiliar: getIsUnfamiliar(dynamicCantrip.id),
-      }
-    })
-    .filter(isNotNullish)
-
-/**
- * Returns all active spellworks with their corresponding dynamic
- * entries, extended by value bounds, and full logic for if the value can be
- * increased or decreased.
- * @param kind The value for the `kind` property.
- * @param getStaticSpellworkById Get a static spell or ritual by its identifier.
- * @param dynamicSpellworks A map of dynamic spells or rituals.
- * @param isInCharacterCreation Whether the character is in character creation.
- * @param startExperienceLevel The start experience level.
- * @param canRemove Whether spells or rituals can be removed.
- * @param exceptionalSkill The dynamic *Exceptional Skill* entry.
- * @param getAttributeById A function that returns a dynamic attribute entry by
- * identifier.
- * @param filterApplyingDependencies A function that filters a list of
- * dependencies by if they apply to the entry.
- * @param spellworksAbove10ByProperty A map from property identifiers to the
- * number of spells or rituals above 10 that have that aspect.
- * @param activePropertyKnowledges A list of properties that have an active
- * property knowledge.
- * @param getIsUnfamiliar Returns if the spell or ritual (depending on the
- * `kind` parameter) is unfamiliar.
- */
-export const getActiveSpellsOrRituals = <K extends "spell" | "ritual", T extends Spell | Ritual>(
-  kind: K,
-  getStaticSpellworkById: (id: number) => T | undefined,
-  dynamicSpellworks: ActivatableRatedWithEnhancements[],
-  isInCharacterCreation: boolean,
-  startExperienceLevel: ExperienceLevel,
-  canRemove: boolean,
-  exceptionalSkill: Activatable | undefined,
-  getAttributeById: (id: number) => Rated | undefined,
-  filterApplyingDependencies: FilterApplyingRatedDependencies,
-  spellworksAbove10ByProperty: Record<number, number>,
-  activePropertyKnowledges: number[],
-  getIsUnfamiliar: (id: number) => boolean,
-): {
-  kind: K
-  static: T
-  dynamic: ActiveActivatableRatedWithEnhancements
-  minimum: number | undefined
-  maximum: number
-  isIncreasable: boolean
-  isDecreasable: boolean
-  isUnfamiliar: boolean
-}[] =>
-  Object.values(dynamicSpellworks)
-    .filter(isRatedWithEnhancementsActive)
-    .map(dynamicSpellwork => {
-      const staticSpellwork = getStaticSpellworkById(dynamicSpellwork.id)
-
-      if (staticSpellwork === undefined) {
-        return undefined
-      }
-
-      const minimum = getSpellworkMinimum(
-        spellworksAbove10ByProperty,
-        activePropertyKnowledges,
-        staticSpellwork,
-        dynamicSpellwork,
-        filterApplyingDependencies,
-      )
-
-      const maximum = getSpellworkMaximum(
-        refs => getHighestAttributeValue(getAttributeById, refs),
-        activePropertyKnowledges,
-        staticSpellwork,
-        isInCharacterCreation,
-        startExperienceLevel,
-        exceptionalSkill,
-        (() => {
-          switch (kind) {
-            case "spell":
-              return "Spell"
-            case "ritual":
-              return "Ritual"
-            default:
-              return assertExhaustive(kind)
-          }
-        })(),
-      )
-
-      return {
-        kind,
-        static: staticSpellwork,
-        dynamic: dynamicSpellwork,
-        minimum,
-        maximum,
-        isDecreasable: isSpellworkDecreasable(dynamicSpellwork, minimum, canRemove),
-        isIncreasable: isSpellworkIncreasable(dynamicSpellwork, maximum),
-        isUnfamiliar: getIsUnfamiliar(dynamicSpellwork.id),
-      }
-    })
-    .filter(isNotNullish)
 
 /**
  * Returns all active magical actions of a single kind with their corresponding

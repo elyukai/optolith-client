@@ -1,11 +1,11 @@
-import { CulturePrerequisite } from "@optolith/database-schema/gen"
+import type { Culture_ID, CulturePrerequisite } from "@optolith/database-schema/gen"
 
 /**
  * Checks a single culture prerequisite if it’s matched.
  */
 export const checkCulturePrerequisite = (
   caps: {
-    getCurrentCultureIdentifier: () => number | undefined
+    cultureId: Culture_ID | undefined
   },
   p: CulturePrerequisite,
-): boolean => caps.getCurrentCultureIdentifier() === p.id.culture
+): boolean => caps.cultureId === p.id

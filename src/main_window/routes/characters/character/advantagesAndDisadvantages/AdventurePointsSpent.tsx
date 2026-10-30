@@ -1,10 +1,8 @@
 import { observer } from "mobx-react"
-import { FC } from "react"
+import type { FC } from "react"
 import { GridItem } from "../../../../../shared/components/grid/GridItem.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { SharedState } from "../../../../external.ts"
-import { useAppSelector } from "../../../../hooks/redux.ts"
-import { selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages } from "../../../../selectors/traditionSelectors.ts"
 
 /**
  * Returns a sidebar widget for showing spent and available adventure points for
@@ -14,9 +12,8 @@ export const AdventurePointsSpent: FC = observer(() => {
   const translate = useTranslate()
 
   const maximumAdventurePointsForAdventagesAndDisadvantages = 80
-  const maximumForMagicalAdvantagesDisadvantages = useAppSelector(
-    selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
-  )
+  const maximumForMagicalAdvantagesDisadvantages =
+    SharedState.maximumAdventurePointsForMagicalAdvantagesAndDisadvantages
   const maximumAdventurePointsForBlessedAdventagesAndDisadvantages = 50
 
   const stats = SharedState.adventurePointsStats

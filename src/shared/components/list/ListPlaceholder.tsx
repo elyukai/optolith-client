@@ -1,6 +1,5 @@
-import { useAppSelector } from "../../../main_window/hooks/redux.ts"
-import { selectCanRemove } from "../../../main_window/selectors/characterSelectors.ts"
-import { assertExhaustive } from "../../utils/typeSafety.ts"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { SharedState } from "../../../main_window/external.ts"
 import { IconButton } from "../iconButton/IconButton.tsx"
 import { List } from "./List.tsx"
 import { ListItem } from "./ListItem.tsx"
@@ -43,7 +42,7 @@ type Props = {
  */
 export const ListPlaceholder: React.FC<Props> = props => {
   const { type = "advantages", message } = props
-  const canRemove = useAppSelector(selectCanRemove)
+  const { canRemove } = SharedState
 
   const placeholder = (() => {
     switch (type) {

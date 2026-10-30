@@ -1,6 +1,5 @@
-import { MagicalRuneImprovementCost } from "@optolith/database-schema/gen"
-import { assertExhaustive } from "../../utils/typeSafety.ts"
-import { ImprovementCost, fromRaw } from "../adventurePoints/improvementCost.ts"
+import { MagicalRuneImprovementCost, type ImprovementCost } from "@optolith/database-schema/gen"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
 
 /**
  * Returns the improvement cost for a magical rune.

@@ -1,13 +1,13 @@
+import { isOk } from "@elyukai/utils/result"
+import {
+  getAdventurePointsForActivation,
+  getAdventurePointsForRating,
+  getAdventurePointsForRatingRange,
+  type ImprovementCost,
+} from "@optolith/adventure-points/improvement-cost"
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit"
 import { useCallback } from "react"
-import {
-  ImprovementCost,
-  adventurePointsForActivation,
-  adventurePointsForIncrement,
-  adventurePointsForRange,
-} from "../../shared/domain/adventurePoints/improvementCost.ts"
 import { useTranslate } from "../../shared/hooks/translate.ts"
-import { isOk } from "../../shared/utils/result.ts"
 import { Translate } from "../../shared/utils/translate.ts"
 import { showAlert } from "../slices/alertsSlice.ts"
 import {
@@ -28,7 +28,7 @@ const useHandleAdd = (
 ) =>
   useCallback((): void => {
     const enoughAP = areEnoughAdventurePointsAvailableToBuy(
-      adventurePointsForActivation(improvementCost),
+      getAdventurePointsForActivation(improvementCost),
     )
 
     if (enoughAP !== undefined) {
@@ -60,7 +60,7 @@ const useHandleAddPoint = (
 ) =>
   useCallback((): void => {
     const enoughAP = areEnoughAdventurePointsAvailableToBuy(
-      adventurePointsForIncrement(improvementCost, value),
+      getAdventurePointsForRating(improvementCost, value),
     )
 
     if (enoughAP !== undefined) {
@@ -94,7 +94,7 @@ const useHandleSetToMaximumPoints = (
 ) =>
   useCallback((): void => {
     const enoughAP = areEnoughAdventurePointsAvailableToBuy(
-      adventurePointsForRange(improvementCost, value, maximum),
+      getAdventurePointsForRatingRange(improvementCost, value, maximum),
     )
 
     if (enoughAP !== undefined) {

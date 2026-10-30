@@ -29,3 +29,7 @@ aside.inline-library .tde-official-style a {
   align-items: center;
   margin-bottom: 1rem;
 }
+
+body:not(.tde) .preview span[data-entity][data-instance] {
+  color: var(--tde-foreground);
+}

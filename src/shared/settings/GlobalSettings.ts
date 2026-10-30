@@ -1,16 +1,13 @@
 /**
  * The app theme.
  */
-export enum Theme {
-  Light,
-  Dark,
-}
+export type Theme = undefined | "light" | "dark"
 
 /**
  * The global settings.
  */
 export type GlobalSettings = {
-  locale: string
+  locale: string | undefined
   fallbackLocale: string | undefined
   theme: Theme | undefined
   isEditAfterCreationEnabled: boolean

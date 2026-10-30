@@ -1,5 +1,5 @@
-import { classList } from "../../utils/classList.ts"
-import { FCC } from "../../utils/react.js"
+import { classList } from "@elyukai/utils/classList"
+import type { FCC } from "../../utils/react.js"
 
 interface Props {
   className?: string

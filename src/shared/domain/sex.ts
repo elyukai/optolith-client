@@ -1,8 +1,11 @@
-import { ProfessionIdentifier } from "@optolith/database-schema/gen"
-import { ActivatableIdentifier } from "@optolith/database-schema/gen"
-import { BinarySex as RawBinarySex } from "@optolith/database-schema/gen"
-import { SexualCharacteristic } from "@optolith/database-schema/gen"
-import { assertExhaustive } from "../utils/typeSafety.ts"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type {
+  ActivatableIdentifier,
+  Profession_ID,
+  BinarySex as RawBinarySex,
+  SexualCharacteristic,
+} from "@optolith/database-schema/gen"
+import type { Case } from "tsondb/schema/gen"
 
 /**
  * The character's sex. It does not have to be binary, although it always must be specified how to handle it in the context of binary sex prerequisites. You can also provide a custom sex with a custom name.
@@ -90,7 +93,7 @@ export type SexualCharacteristicsInterpretation = {
  * sex by default or the user has chosen to, `false` otherwise.
  */
 export const matchBinarySexToSex = (sex: Sex, binarySex: RawBinarySex): boolean => {
-  switch (binarySex) {
+  switch (binarySex.kind) {
     case "Male": {
       switch (sex.type) {
         case "Male":
@@ -134,7 +137,7 @@ export const matchSexualCharacteristicToSex = (
   sex: Sex,
   sexualCharacteristic: SexualCharacteristic,
 ): boolean => {
-  switch (sexualCharacteristic) {
+  switch (sexualCharacteristic.kind) {
     case "Penis": {
       switch (sex.type) {
         case "Male":
@@ -181,7 +184,7 @@ export type SexDependency = {
         kind: "SexualCharacteristic"
         value: SexualCharacteristic
       }
-  sourceId: ProfessionIdentifier | ActivatableIdentifier
+  sourceId: Case<"Profession", Profession_ID> | ActivatableIdentifier
   index: number
   isPartOfDisjunction: boolean
 }

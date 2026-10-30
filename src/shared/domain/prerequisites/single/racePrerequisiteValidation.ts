@@ -1,17 +1,15 @@
-import { RacePrerequisite } from "@optolith/database-schema/gen"
+import type { Race_ID, RacePrerequisite } from "@optolith/database-schema/gen"
 
 /**
  * Checks a single race prerequisite if it’s matched.
  */
 export const checkRacePrerequisite = (
-  caps: { getCurrentRaceIdentifier: () => number | undefined },
+  caps: { raceId: Race_ID | undefined },
   p: RacePrerequisite,
 ): boolean => {
-  const id = caps.getCurrentRaceIdentifier()
-
-  if (id === undefined) {
+  if (caps.raceId === undefined) {
     return !p.active
   } else {
-    return id === p.id.race
+    return (caps.raceId === p.id) === p.active
   }
 }

@@ -1,8 +1,8 @@
-import { FC, useCallback, useState } from "react"
+import { parseInt } from "@elyukai/utils/string/number"
+import { isNaturalNumber } from "@elyukai/utils/string/regex"
+import { type FC, useCallback, useState } from "react"
 import { BasicInputDialog } from "../../../../../shared/components/basicInputDialog/BasicInputDialog.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { parseInt } from "../../../../../shared/utils/math.ts"
-import { isNaturalNumber } from "../../../../../shared/utils/regex.ts"
 
 type Props = {
   isOpen: boolean

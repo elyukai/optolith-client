@@ -1,5 +1,5 @@
-import { Dice, DieType } from "@optolith/database-schema/gen"
-import { randomIntRange } from "./math.ts"
+import { randomIntRange } from "@elyukai/utils/number"
+import type { Dice, DieType } from "@optolith/database-schema/gen"
 
 /**
  * Splits a dice definition into its individual dice.

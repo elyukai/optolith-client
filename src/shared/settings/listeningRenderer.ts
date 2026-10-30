@@ -1,5 +1,5 @@
-import { GlobalSettings } from "./GlobalSettings.ts"
-import { GlobalSettingsEventEmitter } from "./listeningRendererPreload.ts"
+import type { GlobalSettings } from "./GlobalSettings.ts"
+import type { GlobalSettingsEventEmitter } from "./listeningRendererPreload.ts"
 
 /**
  * Attach listeners to changes of each global setting separately.

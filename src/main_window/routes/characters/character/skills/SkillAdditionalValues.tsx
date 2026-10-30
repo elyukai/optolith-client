@@ -1,4 +1,4 @@
-import { FC } from "react"
+import type { FC } from "react"
 
 /**
  * An additional value for a skill row is defined by a value and a class name

@@ -1,6 +1,7 @@
 import { observer } from "mobx-react"
-import { FC, useCallback, useMemo, useState } from "react"
+import { type FC, useCallback, useMemo, useState } from "react"
 import { Button } from "../../../../../shared/components/button/Button.tsx"
+import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { List } from "../../../../../shared/components/list/List.tsx"
 import { ListHeader } from "../../../../../shared/components/list/ListHeader.tsx"
 import { ListHeaderTag } from "../../../../../shared/components/list/ListHeaderTag.tsx"
@@ -23,10 +24,12 @@ import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import {
   changeSpecialAbilitiesSortOrder,
+  selectShowEntriesWithoutMetPrerequisites,
   selectSpecialAbilitiesSortOrder,
+  switchShowEntriesWithoutMetPrerequisites,
 } from "../../../../slices/settingsSlice.ts"
-import { ActiveSpecialAbilitiesListItem } from "./ActiveSpecialAbilitiesListItem.tsx"
-import { InactiveSpecialAbilitiesListItem } from "./InactiveSpecialAbilitiesListItem.tsx"
+import { ActiveActivatablesListItem } from "../activatable/ActiveActivatableListItem.tsx"
+import { InactiveActivatablesListItem } from "../activatable/InactiveActivatableListItem.tsx"
 
 /**
  * Returns a page for managing special abilities.
@@ -45,6 +48,15 @@ export const SpecialAbilities: FC = observer(() => {
     [dispatch],
   )
 
+  const showEntriesWithoutMetPrerequisites = useAppSelector(
+    selectShowEntriesWithoutMetPrerequisites,
+  )
+
+  const handleSwitchShowEntriesWithoutMetPrerequisites = useCallback(
+    () => dispatch(switchShowEntriesWithoutMetPrerequisites()),
+    [dispatch],
+  )
+
   const [activeFilterText, setActiveFilterText] = useState("")
   const [inactiveFilterText, setInactiveFilterText] = useState("")
 
@@ -54,6 +66,7 @@ export const SpecialAbilities: FC = observer(() => {
         inactiveSpecialAbilities,
         inactiveFilterText,
         sortOrder,
+        showEntriesWithoutMetPrerequisites,
         translate,
         translateMap,
         localeCompare,
@@ -62,6 +75,7 @@ export const SpecialAbilities: FC = observer(() => {
       inactiveSpecialAbilities,
       inactiveFilterText,
       sortOrder,
+      showEntriesWithoutMetPrerequisites,
       translate,
       translateMap,
       localeCompare,
@@ -74,6 +88,7 @@ export const SpecialAbilities: FC = observer(() => {
         activeSpecialAbilities,
         activeFilterText,
         sortOrder,
+        true, // no effect for active entries
         translate,
         translateMap,
         localeCompare,
@@ -107,6 +122,12 @@ export const SpecialAbilities: FC = observer(() => {
             ]}
             onClick={handleChangeSortOrder}
           />
+          <Checkbox
+            checked={showEntriesWithoutMetPrerequisites}
+            onClick={handleSwitchShowEntriesWithoutMetPrerequisites}
+          >
+            {translate("Show entries with unmet prerequisites")}
+          </Checkbox>
         </Options>
         <Main classOnly>
           <ListHeader>
@@ -122,7 +143,7 @@ export const SpecialAbilities: FC = observer(() => {
             {inactiveList.length > 0 ? (
               <List>
                 {inactiveList.map(x => (
-                  <InactiveSpecialAbilitiesListItem key={`${x.type}-${x.id}`} specialAbility={x} />
+                  <InactiveActivatablesListItem key={`${x.type}-${x.id}`} activatable={x} />
                 ))}
               </List>
             ) : (
@@ -169,7 +190,7 @@ export const SpecialAbilities: FC = observer(() => {
           {activeList.length > 0 ? (
             <List>
               {activeList.map(x => (
-                <ActiveSpecialAbilitiesListItem key={`${x.type}-${x.id}`} specialAbility={x} />
+                <ActiveActivatablesListItem key={`${x.type}-${x.id}`} activatable={x} />
               ))}
             </List>
           ) : (

@@ -1,6 +1,6 @@
 import { useEffect } from "react"
-import { GlobalSettings } from "./GlobalSettings.ts"
-import { GlobalSettingsEmittingAPI } from "./emittingRendererPreload.ts"
+import type { GlobalSettingsEmittingAPI } from "./emittingRendererPreload.ts"
+import type { GlobalSettings } from "./GlobalSettings.ts"
 
 /**
  * A hook that emits a global setting change event when the setting is changed

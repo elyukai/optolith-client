@@ -1,13 +1,13 @@
 import type { Locale } from "@optolith/database-schema/gen"
-import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
-import { ProgressInfo, UpdateDownloadedEvent, UpdateInfo } from "electron-updater"
+import { type IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
+import type { ProgressInfo, UpdateDownloadedEvent, UpdateInfo } from "electron-updater"
 import EventEmitter from "events"
-import { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
+import type { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
 import {
-  GlobalSettingsEvents,
+  type GlobalSettingsEvents,
   attachGlobalSettingsEvents,
 } from "../shared/settings/listeningRendererPreload.ts"
-import { TypedEventEmitter } from "../shared/utils/events.ts"
+import type { TypedEventEmitter } from "../shared/utils/events.ts"
 
 type Events = GlobalSettingsEvents & {
   "initial-setup": [InitialSetupEventMessage]

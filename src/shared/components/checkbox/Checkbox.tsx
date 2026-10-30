@@ -1,5 +1,5 @@
-import { classList } from "../../utils/classList.ts"
-import { FCC } from "../../utils/react.ts"
+import { classList } from "@elyukai/utils/classList"
+import type { FCC } from "../../utils/react.ts"
 import { Activate } from "../activate/Activate.tsx"
 import { Icon } from "../icon/Icon.tsx"
 import "./Checkbox.scss"

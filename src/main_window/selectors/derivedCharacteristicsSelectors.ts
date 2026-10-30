@@ -7,7 +7,7 @@ import {
   firstLevel,
   isActive,
   isOptionActive,
-} from "../../shared/domain/activatable/activatableEntry.ts"
+} from "../../shared/domain/activatable/activatable.ts"
 import {
   modifierByIsActive,
   modifierByIsActives,

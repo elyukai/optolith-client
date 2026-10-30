@@ -1,5 +1,5 @@
 import { observer } from "mobx-react"
-import { FC } from "react"
+import type { FC } from "react"
 import {
   maximumAdventurePointsForAdventagesAndDisadvantages,
   maximumAdventurePointsForBlessedAdventagesAndDisadvantages,
@@ -14,9 +14,9 @@ import { SharedState } from "../external.ts"
 export const AdventurePointsTooltip: FC = observer(() => {
   const translate = useTranslate()
 
-  const isSpellcaster = true // useAppSelector(selectIsSpellcaster)
-  const isBlessedOne = true // useAppSelector(selectIsBlessedOne)
-  const maximumForMagicalAdvantagesDisadvantages = 80 // useAppSelector(
+  const isSpellcaster = true // TODO: useAppSelector(selectIsSpellcaster)
+  const isBlessedOne = true // TODO: useAppSelector(selectIsBlessedOne)
+  const maximumForMagicalAdvantagesDisadvantages = 80 // TODO: useAppSelector(
   //   selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
   // )
 

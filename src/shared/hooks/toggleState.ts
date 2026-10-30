@@ -1,4 +1,4 @@
-import { SetStateAction, useCallback, useState } from "react"
+import { type SetStateAction, useCallback, useState } from "react"
 
 /**
  * A hook that works like `useState` but its setter function toggles the state
@@ -12,7 +12,7 @@ export const useToggleState = (
   const toggleState = useCallback(
     (newState?: SetStateAction<boolean>) =>
       setState(oldState =>
-        typeof newState === "function" ? newState(oldState) : newState ?? !oldState,
+        typeof newState === "function" ? newState(oldState) : (newState ?? !oldState),
       ),
     [],
   )

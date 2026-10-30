@@ -1,52 +1,20 @@
-import { createSelector } from "@reduxjs/toolkit"
-import { EyeColor } from "@optolith/database-schema/gen"
-import { HairColor } from "@optolith/database-schema/gen"
-import { Height, Weight } from "@optolith/database-schema/gen"
-import { SocialStatus } from "@optolith/database-schema/gen"
-import { isOptionActive } from "../../shared/domain/activatable/activatableEntry.ts"
+import { unique } from "@elyukai/utils/array/filters"
+import { isNotNullish } from "@elyukai/utils/nullable"
+import {
+  EyeColor,
+  HairColor,
+  Weight,
+  type RandomHeightGeneration,
+} from "@optolith/database-schema/gen"
 import {
   DisadvantageIdentifier,
   EyeColorIdentifier,
   HairColorIdentifier,
-} from "../../shared/domain/identifier.ts"
-import { filterNonNullable, unique } from "../../shared/utils/array.ts"
-import { compareAt, numAsc } from "../../shared/utils/compare.ts"
+} from "@optolith/database-schema/types/_Identifier"
+import { createSelector } from "@reduxjs/toolkit"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
-import {
-  selectDynamicDisadvantages,
-  selectSocialStatusDependencies,
-} from "../slices/characterSlice.ts"
-import {
-  selectStaticEyeColors,
-  selectStaticHairColors,
-  selectStaticSocialStatuses,
-} from "../slices/databaseSlice.ts"
-import { selectCurrentCulture } from "./cultureSelectors.ts"
-import { selectCurrentRace, selectCurrentRaceVariant } from "./raceSelectors.ts"
-
-/**
- * Returns the social statuses that are available for the character based on
- * the culture.
- */
-export const selectAvailableSocialStatuses = createSelector(
-  selectCurrentCulture,
-  selectSocialStatusDependencies,
-  selectStaticSocialStatuses,
-  (currentCulture, socialStatusDependencies, socialStatuses): SocialStatus[] => {
-    const minimumSocialStatus =
-      socialStatusDependencies.length === 0
-        ? 1
-        : Math.max(...socialStatusDependencies.map(dep => dep.id))
-
-    return Object.values(socialStatuses)
-      .sort(compareAt(status => status.id, numAsc))
-      .filter(
-        status =>
-          status.id >= minimumSocialStatus &&
-          currentCulture?.social_status.some(ref => ref.id.social_status === status.id),
-      )
-  },
-)
+import { selectDynamicDisadvantages } from "../slices/characterSlice.ts"
+import { selectStaticEyeColors, selectStaticHairColors } from "../slices/databaseSlice.ts"
 
 const ALBINO = 1
 const GREEN_HAIR = 3
@@ -129,7 +97,9 @@ export const selectAvailableEyeColors = createSelector(
   selectAvailableEyeColorsIdDice,
   selectStaticEyeColors,
   (eyeColorIds, eyeColors): EyeColor[] =>
-    filterNonNullable(unique(eyeColorIds).map(id => eyeColors[id])),
+    unique(eyeColorIds)
+      .map(id => eyeColors[id])
+      .filter(isNotNullish),
 )
 
 /**
@@ -138,7 +108,7 @@ export const selectAvailableEyeColors = createSelector(
 export const selectRandomHeightCalculation = createSelector(
   selectCurrentRace,
   selectCurrentRaceVariant,
-  (currentRace, currentRaceVariant): Height =>
+  (currentRace, currentRaceVariant): RandomHeightGeneration =>
     currentRaceVariant?.height ??
     (currentRace?.variants.length === 1
       ? currentRace.variants[0]!.height

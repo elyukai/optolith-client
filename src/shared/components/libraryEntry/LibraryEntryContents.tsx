@@ -1,7 +1,7 @@
 import { EntityDescriptionSection } from "@optolith/entity-descriptions"
 import { FC, Fragment } from "react"
 import { groupBy } from "../../utils/array.ts"
-import { classList } from "../../utils/classList.ts"
+import { classList } from "@elyukai/utils/classList"
 import { Markdown } from "../markdown/Markdown.tsx"
 import { LibraryEntryLabelList } from "./LibraryEntryLabelList.tsx"
 

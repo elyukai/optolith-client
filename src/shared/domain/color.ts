@@ -12,7 +12,7 @@ export type PredefinedColor = {
   /**
    * The color identifier.
    */
-  id: number
+  id: string
 }
 
 /**

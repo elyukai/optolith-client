@@ -1,26 +1,20 @@
-import { PublicationPrerequisite } from "@optolith/database-schema/gen"
-import { GetById } from "../../getTypes.ts"
+import type { PublicationPrerequisite } from "@optolith/database-schema/gen"
+import {
+  isPublicationIncludedById,
+  type PublicationOptions,
+} from "@optolith/entity-descriptions/publication-options"
+import type { GetInstanceById } from "../../../database.ts"
+import type { TranslateMap } from "../../../utils/locale.ts"
 
 /**
  * Checks a single publication prerequisite if it’s matched.
  */
 export const checkPublicationPrerequisite = (
   caps: {
-    getAreAllPublicationsEnabled: () => boolean
-    getIsPublicationEnabledManually: (id: number) => boolean
-    getStaticPublicationById: GetById.Static.Publication
+    translateMap: TranslateMap
+    getInstanceById: GetInstanceById<"Publication">
+    publicationOptions: PublicationOptions
   },
   p: PublicationPrerequisite,
-): boolean => {
-  const publication = caps.getStaticPublicationById(p.id)
-
-  if (publication === undefined) {
-    return false
-  }
-
-  if (publication.contains_adult_content) {
-    return caps.getIsPublicationEnabledManually(p.id)
-  } else {
-    return caps.getAreAllPublicationsEnabled() || caps.getIsPublicationEnabledManually(p.id)
-  }
-}
+): boolean =>
+  isPublicationIncludedById(caps.translateMap, caps.getInstanceById, caps.publicationOptions, p.id)

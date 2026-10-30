@@ -1,6 +1,4 @@
-import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
 import { deepEqual } from "@elyukai/utils/equality"
-import { isNotNullish } from "@elyukai/utils/nullable"
 import type { TSONDBTypes } from "@optolith/database-schema"
 import { createCache } from "@optolith/database-schema/cache"
 import type { EntityMap, Locale } from "@optolith/database-schema/gen"
@@ -13,17 +11,19 @@ import {
   isSupportedEntity,
   type AvailableCreatorEntity,
 } from "@optolith/entity-descriptions"
-import type { PublicationOptions } from "@optolith/entity-descriptions/publication-options"
 import Debug from "debug"
 import { autoUpdater } from "electron-updater"
 import { app, ipcMain } from "electron/main"
+import { configure, runInAction } from "mobx"
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { ReadonlyTSONDB } from "tsondb/readonly"
 import { fromUniformCase } from "tsondb/schema/gen"
 import config from "../database/contents/tsondb.config.ts"
+import type { PreloadAPI } from "../main_window_preload/index.ts"
 import { attachDatabaseEventsMain } from "../shared/database.ts"
 import { Characters } from "../shared/domain/character.ts"
+import type { Global } from "../shared/global.ts"
 import type { CharacterIPCActions } from "../shared/ipc.ts"
 import { globalSettings } from "../shared/settings/main.ts"
 import { attachStateActionHandlersToMain } from "../shared/state.ts"
@@ -37,6 +37,15 @@ import { createSettingsWindow } from "./settingsWindow.ts"
 import { checkForUpdatesOnRequest, checkForUpdatesOnStartup } from "./updater.ts"
 
 const debug = Debug("main")
+debug.log = console.log.bind(console)
+
+configure({
+  // enforceActions: "always",
+  computedRequiresReaction: true,
+  // reactionRequiresObservable: true,
+  observableRequiresReaction: true,
+  disableErrorBoundaries: true,
+})
 
 app.setAppUserModelId("lukasobermann.optolith")
 const isMac = process.platform === "darwin"
@@ -69,9 +78,22 @@ const locales: Record<string, Locale> = Object.fromEntries(
     .map((localeContainer): [string, Locale] => [localeContainer.id, localeContainer.content]),
 )
 
-const localeEnvironment = new LocaleEnvironment(locales, globalSettings)
+const localeEnvironment = new LocaleEnvironment(locales, app.getSystemLocale(), globalSettings)
 
-const characters = new Characters(db, localeEnvironment)
+const global: Global = {
+  db,
+  settings,
+  locale: localeEnvironment,
+  cache,
+  getResolvedSelectOptionById: (parentId, optionid) =>
+    cache.activatableSelectOptions[parentId.kind][fromUniformCase(parentId)]?.find(option =>
+      deepEqual(option.id, optionid),
+    ),
+  getAllResolvedSelectOptions: parentId =>
+    cache.activatableSelectOptions[parentId.kind][fromUniformCase(parentId)] ?? [],
+}
+
+const characters = runInAction(() => new Characters(global))
 
 const setUserDataPath = async () => {
   debug("setting user data path ...")
@@ -108,7 +130,7 @@ app.whenReady().then(async () => {
   })
 
   setMenu(isMac, db, cache, locales, localeEnvironment, characters)
-  setNativeTheme(globalSettings.theme)
+  setNativeTheme(runInAction(() => globalSettings.theme))
   const installUpdateInsteadOfStartup = await checkForUpdatesOnStartup(locales)
 
   debug("skip startup because of update?", installUpdateInsteadOfStartup ? "yes" : "no")
@@ -120,9 +142,13 @@ app.whenReady().then(async () => {
     })
     debug("database event listeners attached")
 
-    attachStateActionHandlersToMain<CharacterIPCActions>(ipcMain, (...args) => {
-      characters.handleIPCAction(...args)
-    })
+    attachStateActionHandlersToMain<CharacterIPCActions>(
+      ipcMain,
+      (...args) => {
+        characters.handleIPCAction(...args)
+      },
+      debug,
+    )
     debug("character action listeners attached")
 
     ipcMain.handle("receive-license", () => readFileInAppPath("LICENSE"))
@@ -147,48 +173,48 @@ app.whenReady().then(async () => {
     )
     ipcMain.handle(
       "receive-entity-description",
-      (
-        _event,
-        entity: AvailableCreatorEntity,
-        id: string,
-        publicationOptions: PublicationOptions,
-      ) => {
-        debug("generate entity description for entity %s with id %s", entity, id)
-        const setLocales = [globalSettings.locale, globalSettings.fallbackLocale].filter(
-          isNotNullish,
-        )
-        if (!isNotEmpty(setLocales)) {
-          throw new Error("No locale is set in the global settings")
-        }
-        if (!isSupportedEntity(entity)) {
-          return undefined
-        }
-        const entry = db.getInstanceOfEntityById(entity, id)
-        if (entry === undefined) {
-          return undefined
-        }
+      (_event, ...args: Parameters<PreloadAPI["getEntityDescription"]>) =>
+        runInAction(() => {
+          const [entity, id, characterId] = args
+          debug("generate entity description for entity %s with id %s", entity, id)
+          if (!isSupportedEntity(entity)) {
+            return undefined
+          }
+          const entry = db.getInstanceOfEntityById(entity, id)
+          if (entry === undefined) {
+            return undefined
+          }
 
-        return [
-          getEntityDescription(
-            db,
-            localeEnvironment.toObject(),
-            settings,
-            (parentId, optionid) =>
-              cache.activatableSelectOptions[parentId.kind][fromUniformCase(parentId)]?.find(
-                option => deepEqual(option.id, optionid),
-              ),
-            parentId =>
-              cache.activatableSelectOptions[parentId.kind][fromUniformCase(parentId)] ?? [],
-            skillId => cache.newApplicationsAndUses.newApplications[skillId] ?? [],
-            skillId => cache.newApplicationsAndUses.uses[skillId] ?? [],
-            entity,
-            { id, content: entry },
-            publicationOptions,
-            "Full",
-          ),
-          getSpecialEntityDescriptionTag(entity, entry),
-        ]
-      },
+          return [
+            getEntityDescription(
+              db,
+              localeEnvironment.toObject(),
+              settings,
+              global.getResolvedSelectOptionById,
+              global.getAllResolvedSelectOptions,
+              skillId => cache.newApplicationsAndUses.newApplications[skillId] ?? [],
+              skillId => cache.newApplicationsAndUses.uses[skillId] ?? [],
+              entity,
+              { id, content: entry },
+              (characterId === undefined
+                ? undefined
+                : runInAction(
+                    () => characters.characters[characterId]?.rules.publicationOptions,
+                  )) ?? {
+                publications: [],
+                onlyCompletePublications: false,
+                onlyShowReferencesToIncludedPublications: false,
+                changeHandling: "latestOnly",
+                showPublicationGroups: "all",
+              },
+              "Full",
+              characterId === undefined
+                ? undefined
+                : runInAction(() => characters.characters[characterId]?.rules.renderingOptions),
+            ),
+            getSpecialEntityDescriptionTag(entity, entry),
+          ]
+        }),
     )
 
     await createMainWindow(locales, db, cache, characters)

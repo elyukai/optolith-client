@@ -1,6 +1,6 @@
 import { useCallback } from "react"
-import { classList } from "../../utils/classList.ts"
-import { FCC } from "../../utils/react.ts"
+import { classList } from "@elyukai/utils/classList"
+import type { FCC } from "../../utils/react.ts"
 
 type Props = {
   active: boolean

@@ -1,4 +1,5 @@
-import {
+import { someCount } from "@elyukai/utils/array/reductions"
+import type {
   PlainPrerequisites,
   PrerequisiteForLevel,
   PrerequisiteGroup,
@@ -6,8 +7,7 @@ import {
   PrerequisitesElement,
   PrerequisitesForLevels,
 } from "@optolith/database-schema/gen"
-import { someCount } from "../../utils/array.ts"
-import { assertExhaustive } from "../../utils/typeSafety.ts"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
 
 const checkPrerequisiteGroup = <T>(
   group: PrerequisiteGroup<T>,
@@ -23,13 +23,13 @@ const checkPrerequisiteElement = <T>(
   element: PrerequisitesElement<T>,
   validate: (prerequisite: T) => boolean,
 ): boolean => {
-  switch (element.tag) {
+  switch (element.kind) {
     case "Single":
-      return validate(element.single)
+      return validate(element.Single)
     case "Group":
-      return checkPrerequisiteGroup(element.group, validate)
+      return checkPrerequisiteGroup(element.Group, validate)
     case "Disjunction":
-      return checkPrerequisiteDisjunction(element.disjunction, validate)
+      return checkPrerequisiteDisjunction(element.Disjunction, validate)
     default:
       return assertExhaustive(element)
   }
@@ -40,15 +40,19 @@ const checkPrerequisiteElement = <T>(
  * matched parts, i.e. more than one sub-prerequisite is matched.
  */
 export const checkIfMultipleDisjunctionPartsAreValid = <T>(
-  element: PrerequisitesElement<T>,
+  element: PrerequisitesElement<T> | PrerequisiteForLevel<T>,
   validate: (prerequisite: T) => boolean,
 ): boolean => {
-  switch (element.tag) {
+  if ("level" in element) {
+    return checkIfMultipleDisjunctionPartsAreValid(element.prerequisite, validate)
+  }
+
+  switch (element.kind) {
     case "Single":
     case "Group":
       return false
     case "Disjunction":
-      return someCount(element.disjunction.list, validate, 2)
+      return someCount(element.Disjunction.list, validate, 2)
     default:
       return assertExhaustive(element)
   }

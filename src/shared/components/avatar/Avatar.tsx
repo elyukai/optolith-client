@@ -1,5 +1,5 @@
 import * as React from "react"
-import { classList } from "../../utils/classList.ts"
+import { classList } from "@elyukai/utils/classList"
 import "./Avatar.scss"
 
 type Props = {

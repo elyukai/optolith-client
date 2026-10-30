@@ -1,5 +1,6 @@
 // @ts-check
 import { notarize as electronNotarize } from "@electron/notarize"
+import { isAbsolute, join } from "node:path"
 
 /**
  * Notarizes the app package after it has been built. It detects the
@@ -19,7 +20,6 @@ export const notarize = async context => {
     ) {
       console.log(`Notarizing "${appName}.app" via Apple ID ...`)
       await electronNotarize({
-        tool: "notarytool",
         appPath: `${appOutDir}/${appName}.app`,
         appleId: process.env.APPLEID,
         appleIdPassword: process.env.APPLEIDPASS,
@@ -28,14 +28,14 @@ export const notarize = async context => {
       console.log(`Notarization successful`)
     } else if (
       typeof process.env.APPLEAPIKEY === "string" &&
-      typeof process.env.APPLEAPIKEYID === "string" &&
-      typeof process.env.APPLEAPIISSUER === "string"
+      typeof process.env.APPLEAPIKEYID === "string"
     ) {
       console.log(`Notarizing "${appName}.app" via App Store Connect API ...`)
       await electronNotarize({
-        tool: "notarytool",
         appPath: `${appOutDir}/${appName}.app`,
-        appleApiKey: process.env.APPLEAPIKEY,
+        appleApiKey: isAbsolute(process.env.APPLEAPIKEY)
+          ? process.env.APPLEAPIKEY
+          : join(process.cwd(), process.env.APPLEAPIKEY),
         appleApiKeyId: process.env.APPLEAPIKEYID,
         appleApiIssuer: process.env.APPLEAPIISSUER,
       })
@@ -43,7 +43,6 @@ export const notarize = async context => {
     } else if (typeof process.env.KEYCHAINPROFILE === "string") {
       console.log(`Notarizing "${appName}.app" via Keychain ...`)
       await electronNotarize({
-        tool: "notarytool",
         appPath: `${appOutDir}/${appName}.app`,
         keychain: process.env.KEYCHAIN,
         keychainProfile: process.env.KEYCHAINPROFILE,

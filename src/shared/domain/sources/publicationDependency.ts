@@ -1,4 +1,4 @@
-import { PublicationIdentifier } from "@optolith/database-schema/gen"
+import type { Publication_ID } from "@optolith/database-schema/gen"
 
 /**
  * A dependency on a publication.
@@ -7,7 +7,7 @@ export type PublicationDependency = Readonly<{
   /**
    * The identifier of the dependency source.
    */
-  sourceId: PublicationIdentifier
+  sourceId: Publication_ID
 
   /**
    * The top-level index of the prerequisite. If the prerequisite is part of a
@@ -23,5 +23,5 @@ export type PublicationDependency = Readonly<{
   /**
    * The identifier of the required publication.
    */
-  id: number
+  id: Publication_ID
 }>

@@ -1,5 +1,5 @@
-import { classList } from "../../utils/classList.ts"
-import { FCC } from "../../utils/react.ts"
+import { classList } from "@elyukai/utils/classList"
+import type { FCC } from "../../utils/react.ts"
 
 type Props = {
   group?: number
@@ -18,8 +18,8 @@ export const ListItemGroup: FCC<Props> = props => {
     group !== undefined && typeof getGroupName === "function"
       ? getGroupName(group)
       : typeof text === "string"
-      ? text
-      : children
+        ? text
+        : children
 
   return <div className={classList("group", { "small-info-text": small })}>{content}</div>
 }

@@ -1,45 +1,32 @@
-import { ActionCreatorWithPayload } from "@reduxjs/toolkit"
-import { FC, useCallback } from "react"
+import type { FC } from "react"
 import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
-import { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
+import type { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { InputButtonGroup } from "../../../../../shared/components/inputButtonGroup/InputButtonGroup.tsx"
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { RootState } from "../../../../store.ts"
 
 type Props = {
   label: string
   rerollLabel: string
-  selector: (state: RootState) => number | undefined
-  options: DropdownOption<number>[]
-  action: ActionCreatorWithPayload<number>
+  value: string | undefined
+  options: DropdownOption<string>[]
+  action: (value: string) => void
   onReroll: () => void
 }
 
-const getKey = (option: DropdownOption<number>) => option.id
+const getKey = (option: DropdownOption<string>) => option.id
 
 /**
  * Returns a dropdown with a reroll option for use with personal data.
  */
 export const PersonalDataDropdownWithReroll: FC<Props> = props => {
-  const { label, rerollLabel, selector, options, action, onReroll } = props
-
-  const dispatch = useAppDispatch()
-  const value = useAppSelector(selector)
-
-  const handleSetValue = useCallback(
-    (newValue: number) => {
-      dispatch(action(newValue))
-    },
-    [dispatch, action],
-  )
+  const { label, rerollLabel, value, options, action, onReroll } = props
 
   return (
     <InputButtonGroup className="reroll">
       <Dropdown
         label={label}
         value={value}
-        onChange={handleSetValue}
+        onChange={action}
         options={options}
         disabled={options.length === 1 && value === options[0]!.id}
         getKey={getKey}

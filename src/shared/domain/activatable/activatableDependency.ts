@@ -1,10 +1,10 @@
-import {
+import type {
   ActivatableIdentifier,
+  Preconditions,
   RequirableSelectOptionIdentifier,
 } from "@optolith/database-schema/gen"
-import { Preconditions } from "@optolith/database-schema/gen"
-import { equalsIdentifier } from "../identifier.ts"
-import { ActivatableInstance, PredefinedActivatableOption } from "./activatableEntry.ts"
+import { equalsCase } from "../databaseEnum.ts"
+import type { PredefinedActivatableOption, RawActivatableInstance } from "./activatable.ts"
 
 /**
  * A dependency on an activatable entry.
@@ -58,13 +58,13 @@ export const isGeneralDependency = (dependency: ActivatableDependency) =>
  */
 export const appliesToInstanceStrict = (
   dependency: ActivatableDependency,
-  instance: ActivatableInstance,
+  instance: RawActivatableInstance,
 ) =>
   dependency.options === undefined ||
   dependency.options.every(
     (depOpt, i) =>
       instance.options?.[i]?.type === "Predefined" &&
-      equalsIdentifier(depOpt, (instance.options![i] as PredefinedActivatableOption).id),
+      equalsCase(depOpt, (instance.options![i] as PredefinedActivatableOption).id),
   )
 
 /**
@@ -74,12 +74,11 @@ export const appliesToInstanceStrict = (
  */
 export const appliesToInstanceLoose = (
   dependency: ActivatableDependency,
-  instance: ActivatableInstance,
+  instance: RawActivatableInstance,
 ) =>
   dependency.options === undefined ||
   dependency.options.every(
     depOpt =>
-      instance.options?.some(
-        opt => opt.type === "Predefined" && equalsIdentifier(depOpt, opt.id),
-      ) ?? false,
+      instance.options?.some(opt => opt.type === "Predefined" && equalsCase(depOpt, opt.id)) ??
+      false,
   )

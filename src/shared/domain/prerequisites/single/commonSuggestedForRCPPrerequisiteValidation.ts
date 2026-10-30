@@ -1,68 +1,81 @@
-import { Culture } from "@optolith/database-schema/gen"
-import { ProfessionPackage } from "@optolith/database-schema/gen"
-import { Race, RaceVariant } from "@optolith/database-schema/gen"
-import { isNotNullish } from "../../../utils/nullable.ts"
-import { assertExhaustive } from "../../../utils/typeSafety.ts"
+import { isNotNullish } from "@elyukai/utils/nullable"
+import type { Culture, ProfessionVersion, RaceVariant } from "@optolith/database-schema/gen"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+
+const getListsBySourceKind = (
+  raceVariant: RaceVariant | undefined,
+  culture: Culture | undefined,
+  professionVersion: ProfessionVersion | undefined,
+  sourceKind: "Advantage" | "Disadvantage",
+) => {
+  switch (sourceKind) {
+    case "Advantage":
+      return {
+        automatic: [
+          raceVariant?.automatic_advantages,
+          raceVariant?.strongly_recommended_advantages,
+        ],
+        common: [
+          raceVariant?.common_advantages,
+          culture?.common_advantages,
+          professionVersion?.suggested_advantages,
+        ],
+      }
+    case "Disadvantage":
+      return {
+        automatic: [
+          raceVariant?.automatic_disadvantages,
+          raceVariant?.strongly_recommended_disadvantages,
+        ],
+        common: [
+          raceVariant?.common_disadvantages,
+          culture?.common_disadvantages,
+          professionVersion?.suggested_disadvantages,
+        ],
+      }
+    default:
+      return assertExhaustive(sourceKind)
+  }
+}
 
 /**
  * Checks a single activatable prerequisite if it’s matched.
  */
 export const checkCommonSuggestedByRCPPrerequisite = (
   caps: {
-    getRace: () => Race | undefined
-    getRaceVariant: () => RaceVariant | undefined
-    getCulture: () => Culture | undefined
-    getProfessionPackage: () => ProfessionPackage | undefined
+    raceVariant: RaceVariant | undefined
+    culture: Culture | undefined
+    professionVersion: ProfessionVersion | undefined
   },
-  sourceKind: "Advantage" | "Disadvantage",
-  sourceId: number,
+  source: {
+    kind: "Advantage" | "Disadvantage"
+    id: string
+  },
 ): boolean => {
-  const race = caps.getRace()
-  const raceVariant = caps.getRaceVariant()
-  const culture = caps.getCulture()
-  const profession = caps.getProfessionPackage()
+  const { automatic, common } = getListsBySourceKind(
+    caps.raceVariant,
+    caps.culture,
+    caps.professionVersion,
+    source.kind,
+  )
 
-  return [
-    race?.automatic_advantages,
-    race?.strongly_recommended_advantages,
-    race?.strongly_recommended_disadvantages,
-    raceVariant?.common_advantages,
-    raceVariant?.common_disadvantages,
-    culture?.common_advantages,
-    culture?.common_disadvantages,
-    profession?.suggested_advantages,
-    profession?.suggested_disadvantages,
-  ]
-    .filter(isNotNullish)
-    .flat()
-    .some(
-      (() => {
-        switch (sourceKind) {
-          case "Advantage":
-            return ref => {
-              switch (ref.id.tag) {
-                case "Advantage":
-                  return ref.id.advantage === sourceId
-                case "Disadvantage":
-                  return false
-                default:
-                  return assertExhaustive(ref.id)
-              }
-            }
-          case "Disadvantage":
-            return ref => {
-              switch (ref.id.tag) {
-                case "Advantage":
-                  return false
-                case "Disadvantage":
-                  return ref.id.disadvantage === sourceId
-                default:
-                  return assertExhaustive(ref.id)
-              }
-            }
+  return (
+    automatic
+      .filter(isNotNullish)
+      .flat()
+      .some(ref => ref.id === source.id) ||
+    common
+      .filter(isNotNullish)
+      .flat()
+      .some(ref => {
+        switch (ref.kind) {
+          case "Single":
+            return ref.Single.id === source.id
+          case "Group":
+            return ref.Group.list.some(subRef => subRef.id === source.id)
           default:
-            return assertExhaustive(sourceKind)
+            return assertExhaustive(ref)
         }
-      })(),
-    )
+      })
+  )
 }

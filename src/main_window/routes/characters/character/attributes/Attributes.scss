@@ -115,6 +115,10 @@
     }
   }
 
+  .modal-container .modal-content {
+    width: unset;
+  }
+
   .main {
     display: flex;
   }

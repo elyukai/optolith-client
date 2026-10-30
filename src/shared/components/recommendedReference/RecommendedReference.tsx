@@ -1,4 +1,4 @@
-import { FC } from "react"
+import type { FC } from "react"
 import { useTranslate } from "../../hooks/translate.ts"
 import "./RecommendedReference.scss"
 

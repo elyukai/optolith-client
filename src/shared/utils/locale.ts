@@ -1,12 +1,72 @@
-import type { NonEmptyArray } from "@elyukai/utils/array/nonEmpty"
+import { isNotEmpty, type NonEmptyArray } from "@elyukai/utils/array/nonEmpty"
+import { isNotNullish } from "@elyukai/utils/nullable"
 import type { Compare } from "@elyukai/utils/ordering"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type { Locale } from "@optolith/database-schema/gen"
 import type { LocaleEnvironment as EDLocaleEnvironment } from "@optolith/entity-descriptions"
 import { MessageFormat } from "messageformat"
 import type { MessageValue } from "messageformat/functions"
-import { computed } from "mobx"
-import type { Translate, TranslateMap, Translations } from "./translate.ts"
+import { computed, observable } from "mobx"
+import type { TypedEventEmitter } from "./events.ts"
+
+const matchSystemLocaleToSupported = (available: string[], system: string) => {
+  const systemLocale = system.slice(0, 2)
+  const matchingLocale = available.find(locale => locale.slice(0, 2) === systemLocale)
+  return matchingLocale ?? "en-US"
+}
+
+/**
+ * The type of all translations
+ */
+export type Translations = NonNullable<Locale["translations"]>
+
+/**
+ * Translates a given key into a string, optionally with parameters.
+ */
+export type Translate = <K extends keyof Translations>(
+  key: K,
+  ...rest: TranslationParamsInArray<K>
+) => string
+
+/**
+ * Extracts the parameters for a given translation key, or never if the key does not have parameters.
+ */
+export type TranslationParams<K extends keyof Translations> = Translations[K] extends string & {
+  __params: infer Params
+}
+  ? Params
+  : undefined
+
+/**
+ * Extracts the parameters for a given translation key as an array, or an empty array if the key does not have parameters.
+ */
+export type TranslationParamsInArray<K extends keyof Translations> =
+  Translations[K] extends string & {
+    __params: infer Params
+  }
+    ? [params: Params]
+    : []
+
+/**
+ * The set of translation keys that do not have parameters.
+ */
+export type TranslationKeysWithoutParams = {
+  [K in keyof Translations]-?: Translations[K] extends string & {
+    __params: object
+  }
+    ? never
+    : K
+}[keyof Translations]
+
+/**
+ * A dictionary of locale identifiers to other values.
+ */
+export type LocaleMap<T> = Record<string, T>
+
+/**
+ * Selects a value from a locale dictionary based on the selected locale.
+ */
+export type TranslateMap = <T>(map: LocaleMap<T> | undefined) => T | undefined
 
 const listFormattersCache: Partial<
   Record<
@@ -50,35 +110,49 @@ const getListFormatter = (
 }
 
 export class LocaleEnvironment {
-  #locales: Record<string, Locale>
-  #settings: { locales: NonEmptyArray<string> }
+  readonly locales: Record<string, Locale>
+  @observable accessor settings: { locale: string | undefined; fallbackLocale: string | undefined }
+  readonly systemLocale: string
 
-  constructor(locales: Record<string, Locale>, settings: { locales: NonEmptyArray<string> }) {
-    this.#locales = locales
-    this.#settings = settings
+  constructor(
+    locales: Record<string, Locale>,
+    systemLocale: string,
+    settings: { locale: string | undefined; fallbackLocale: string | undefined },
+  ) {
+    this.locales = locales
+    this.systemLocale = systemLocale
+    this.settings = settings
+  }
+
+  @computed
+  get safeLocales(): NonEmptyArray<string> {
+    const locales = [this.settings.locale, this.settings.fallbackLocale].filter(isNotNullish)
+    return isNotEmpty(locales)
+      ? locales
+      : [matchSystemLocaleToSupported(Object.keys(this.locales), this.systemLocale)]
   }
 
   @computed
   get id(): string {
-    return this.#settings.locales[0]
+    return this.safeLocales[0]
   }
 
   @computed
   get format(): (text: string, args?: Record<string, unknown>) => string {
-    const setLocales = this.#settings.locales
+    const setLocales = this.safeLocales
     return (text, args) =>
       new MessageFormat(setLocales, text, { bidiIsolation: "none" }).format(args)
   }
 
   @computed
   get compare(): Compare<string> {
-    const collator = new Intl.Collator(this.#settings.locales, { usage: "sort", numeric: true })
+    const collator = new Intl.Collator(this.safeLocales, { usage: "sort", numeric: true })
     return collator.compare.bind(collator)
   }
 
   @computed
   get formatNumber(): (value: number) => string {
-    const numberFormatter = new Intl.NumberFormat(this.#settings.locales)
+    const numberFormatter = new Intl.NumberFormat(this.safeLocales)
     return number =>
       numberFormatter
         .formatToParts(number)
@@ -88,17 +162,17 @@ export class LocaleEnvironment {
 
   @computed
   get formatDate(): (date: Date) => string {
-    const dateFormatter = new Intl.DateTimeFormat(this.#settings.locales)
+    const dateFormatter = new Intl.DateTimeFormat(this.safeLocales)
     return date => dateFormatter.format(new Date(date))
   }
 
   @computed
   get translate(): Translate {
-    const setLocales = this.#settings.locales
+    const { locales, safeLocales: setLocales } = this
 
     const getTranslation = (key: keyof Translations): string => {
       for (const localeId of setLocales) {
-        const translation = this.#locales[localeId]?.translations?.[key]
+        const translation = locales[localeId]?.translations?.[key]
         if (translation !== undefined) {
           return translation
         }
@@ -185,7 +259,7 @@ export class LocaleEnvironment {
 
   @computed
   get translateMap(): TranslateMap {
-    const setLocales = this.#settings.locales
+    const setLocales = this.safeLocales
     return translations => {
       for (const localeId of setLocales) {
         const translation = translations?.[localeId]
@@ -204,13 +278,13 @@ export class LocaleEnvironment {
       stepsMultiplier: 1,
       halffingersMultiplier: 1,
       stonesMultiplier: 1,
-      ...this.#locales[this.#settings.locales[0]]?.measurementAdjustments,
+      ...this.locales[this.safeLocales[0]]?.measurementAdjustments,
     }
   }
 
   @computed
   get join(): (list: string[], type: "conjunction" | "disjunction" | "unit") => string {
-    const setLocales = this.#settings.locales
+    const setLocales = this.safeLocales
     return (list, style) => getListFormatter(setLocales, undefined, style).format(list)
   }
 
@@ -226,5 +300,19 @@ export class LocaleEnvironment {
       join: this.join,
       measurementAdjustments: this.measurementAdjustments,
     }
+  }
+
+  listenToLocaleChanges(
+    selectedLocaleEvents: TypedEventEmitter<{
+      "locale-changed": [locale: string | undefined]
+      "fallback-locale-changed": [locale: string | undefined]
+    }>,
+  ) {
+    selectedLocaleEvents.on("locale-changed", locale => {
+      this.settings.locale = locale
+    })
+    selectedLocaleEvents.on("fallback-locale-changed", fallbackLocale => {
+      this.settings.fallbackLocale = fallbackLocale
+    })
   }
 }

@@ -1,7 +1,12 @@
-import { ActivatableIdentifier } from "@optolith/database-schema/gen"
-import { ReactNode, memo, useCallback, useState } from "react"
+import { classList } from "@elyukai/utils/classList"
+import { range } from "@elyukai/utils/range"
+import { romanize } from "@elyukai/utils/roman"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import { renderActivatableNameChunk } from "@optolith/entity-descriptions/entities/partial/activatableNameChunks"
+import { memo, useCallback, type ReactNode } from "react"
 import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
-import { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
+import type { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemButtons } from "../../../../../shared/components/list/ListItemButtons.tsx"
@@ -10,33 +15,23 @@ import { ListItemLeft } from "../../../../../shared/components/list/ListItemLeft
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
-import { nameChunkToString } from "../../../../../shared/domain/activatable/activatableActive.ts"
-import type { DisplayedActiveActivatable } from "../../../../../shared/domain/activatable/activatableEntry.ts"
-import { equalsIdentifier } from "../../../../../shared/domain/identifier.ts"
+import {
+  activatableGroupTranslationKeys,
+  type DisplayedActiveActivatable,
+} from "../../../../../shared/domain/activatable/activatable.ts"
+// import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { classList } from "../../../../../shared/utils/classList.ts"
-import { range } from "../../../../../shared/utils/range.ts"
-import { romanize } from "../../../../../shared/utils/roman.ts"
-import type { LocaleMap, Translations } from "../../../../../shared/utils/translate.ts"
-import { PickOfType } from "../../../../../shared/utils/type.ts"
-import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
-import { useAppSelector } from "../../../../hooks/redux.ts"
-import { InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
-import { selectInlineLibraryEntryId } from "../../../../slices/inlineWikiSlice.ts"
+import { SharedActions } from "../../../../external.ts"
+import {
+  InlineLibraryManager,
+  type DisplayableMainIdentifier,
+} from "../../../../inlineLibrary/InlineLibrary.tsx"
 
 type Props<K extends ActivatableIdentifier["kind"]> = {
   activatable: DisplayedActiveActivatable<K>
-  groupNameKey?: PickOfType<Translations, string>
   isCustomCostAvailable?: boolean
-  changeLevel: (
-    parameters: { id: number; index: number; level: number },
-    activeEntry: DisplayedActiveActivatable<K>,
-  ) => boolean
-  remove: (
-    parameters: { id: number; index: number },
-    activeEntry: DisplayedActiveActivatable<K>,
-  ) => void
+  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 const getLevelKey = (option: DropdownOption<number>) => option.id
@@ -44,35 +39,19 @@ const getLevelKey = (option: DropdownOption<number>) => option.id
 const ActiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
   props: Props<K>,
 ): ReactNode => {
-  const { activatable, groupNameKey, isCustomCostAvailable = false, changeLevel, remove } = props
+  const { activatable, isCustomCostAvailable = false, selectedInlineLibraryEntryId } = props
 
-  const {
-    id,
-    charEntry: dynamic,
-    instanceIndex,
-    isRemovable,
-    cost,
-    name,
-    minLevel,
-    maxLevel,
-  } = activatable
-
-  const { levels }: { levels?: number; translations: LocaleMap<{ name: string }> } =
-    activatable.dbEntry
+  const { type, id, instance, instanceIndex, isRemovable, cost, name, minLevel, maxLevel, levels } =
+    activatable
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
-  const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
-
-  const [selectedLevel, setSelectedLevel] = useState(dynamic.instances[instanceIndex]!.level)
 
   const handleLevel = useCallback(
     (level: number) => {
-      if (changeLevel({ id, index: instanceIndex, level }, activatable)) {
-        setSelectedLevel(level)
-      }
+      SharedActions.setActivatableLevel(activatable.type, id, instanceIndex, level)
     },
-    [activatable, changeLevel, id, instanceIndex],
+    [activatable, id, instanceIndex],
   )
 
   const handleSelectForInfo = useCallback(
@@ -81,11 +60,11 @@ const ActiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
   )
 
   const handleRemove = useCallback(() => {
-    remove({ id, index: instanceIndex }, activatable)
-  }, [activatable, id, instanceIndex, remove])
+    SharedActions.removeActivatable(activatable.type, id, instanceIndex)
+  }, [activatable, id, instanceIndex])
 
   const levelElement =
-    levels === undefined || selectedLevel === undefined || maxLevel === minLevel ? null : (
+    levels === undefined || instance?.level === undefined || maxLevel === minLevel ? null : (
       <Dropdown
         className="level"
         options={range([minLevel ?? 1, maxLevel ?? levels]).map(l => ({
@@ -93,7 +72,7 @@ const ActiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
           name: romanize(l),
         }))}
         getKey={getLevelKey}
-        value={selectedLevel}
+        value={instance.level}
         onChange={handleLevel}
       />
     )
@@ -104,39 +83,34 @@ const ActiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
     //   PABSA.currentCost(snd(finalProps)),
     // )
     switch (cost.kind) {
-      case "fix":
-        return cost.fix.toString()
-      case "variable":
-        return `${cost.range[0]}–${cost.range[1]}`
+      case "Fixed":
+        return cost.Fixed.toString()
+      case "Range":
+        return `${cost.Range.min}–${cost.Range.max}`
       default:
         return assertExhaustive(cost)
     }
   })()
 
+  const groupNameKey: (typeof activatableGroupTranslationKeys)[ActivatableIdentifier["kind"]] =
+    activatableGroupTranslationKeys[type]
+
   return (
     <ListItem
-      active={
-        inlineLibraryEntryId !== undefined &&
-        equalsIdentifier(inlineLibraryEntryId, identifierObject)
-      }
+      active={selectedInlineLibraryEntryId?.[0] === type && selectedInlineLibraryEntryId[1] === id}
     >
       <ListItemLeft>
         <ListItemName
-          name={nameChunkToString(
-            levelElement === null
-              ? name.full
-              : Array.isArray(name.fullWithoutLevel)
-                ? name.fullWithoutLevel[0]
-                : name.fullWithoutLevel,
-            translate,
+          name={renderActivatableNameChunk(
             translateMap,
+            levelElement === null ? name.full : name.fullWithoutLevel[0],
           )}
           onClick={handleSelectForInfo}
         />
         {levelElement}
-        {levelElement !== null && Array.isArray(name.fullWithoutLevel) ? (
+        {levelElement !== null && name.fullWithoutLevel[1] ? (
           <ListItemName
-            name={nameChunkToString(name.fullWithoutLevel[1], translate, translateMap)}
+            name={renderActivatableNameChunk(translateMap, name.fullWithoutLevel[1])}
             onClick={handleSelectForInfo}
           />
         ) : null}
@@ -147,8 +121,7 @@ const ActiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
         {isCustomCostAvailable ? (
           <button
             className={classList("cost", {
-              "custom-cost":
-                dynamic.instances[instanceIndex]!.customAdventurePointsValue !== undefined,
+              "custom-cost": instance.customAdventurePointsValue !== undefined,
             })}
           >
             {costStr}

@@ -1,10 +1,9 @@
-import { SkillIdentifier } from "@optolith/database-schema/gen"
-import {
+import type {
   ActivatableIdentifier,
+  RatedMinimumNumberPrerequisiteTarget,
+  Skill_ID,
   SkillWithEnhancementsIdentifier,
 } from "@optolith/database-schema/gen"
-import { RatedMinimumNumberPrerequisiteTarget } from "@optolith/database-schema/gen"
-import { assertExhaustive } from "../../utils/typeSafety.ts"
 
 /**
  * A required value from a prerequisite. Can either require a minimum or a
@@ -52,8 +51,8 @@ export const compareWithRestriction = (
       ? false
       : value >= restriction.minimum
     : value === undefined
-    ? true
-    : value <= restriction.maximum
+      ? true
+      : value <= restriction.maximum
 
 type FixedValue = {
   tag: "Fixed"
@@ -70,7 +69,7 @@ type MinimumNumberAtMinimumValue = {
 type Sum = {
   tag: "Sum"
   sum: number
-  targetIds: SkillIdentifier[]
+  targetIds: Skill_ID[]
 }
 
 /**
@@ -98,37 +97,3 @@ export type RatedDependency = Readonly<{
    */
   value: FixedValue | MinimumNumberAtMinimumValue | Sum
 }>
-
-/**
- * Flattens the minimum restrictions of a list of dependencies.
- */
-export const flattenMinimumRestrictions = (dependencies: RatedDependency[]): number[] =>
-  dependencies.flatMap(dep => {
-    switch (dep.value.tag) {
-      case "Fixed":
-        return isMinimumRestriction(dep.value.value) ? [dep.value.value.minimum] : []
-      case "MinimumNumberAtMinimumValue":
-        return [dep.value.minimumValue]
-      case "Sum":
-        // TODO: Implement
-        return []
-      default:
-        return assertExhaustive(dep.value)
-    }
-  })
-
-/**
- * Flattens the maximum restrictions of a list of dependencies.
- */
-export const flattenMaximumRestrictions = (dependencies: RatedDependency[]): number[] =>
-  dependencies.flatMap(dep => {
-    switch (dep.value.tag) {
-      case "Fixed":
-        return isMaximumRestriction(dep.value.value) ? [dep.value.value.maximum] : []
-      case "MinimumNumberAtMinimumValue":
-      case "Sum":
-        return []
-      default:
-        return assertExhaustive(dep.value)
-    }
-  })

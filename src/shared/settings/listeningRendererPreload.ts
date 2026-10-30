@@ -1,6 +1,6 @@
-import { IpcRenderer, IpcRendererEvent } from "electron"
-import { TypedEventEmitter } from "../utils/events.ts"
-import { GlobalSettings } from "./GlobalSettings.ts"
+import type { IpcRenderer, IpcRendererEvent } from "electron"
+import type { TypedEventEmitter } from "../utils/events.ts"
+import type { GlobalSettings } from "./GlobalSettings.ts"
 
 /**
  * A map of global setting event definitions for renderer processes other than

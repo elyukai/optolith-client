@@ -1,5 +1,9 @@
+import { on } from "@elyukai/utils/function"
+import { compareNumber, reduceCompare } from "@elyukai/utils/ordering"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { compareImprovementCost } from "@optolith/adventure-points/improvement-cost"
 import { observer } from "mobx-react"
-import { FC, useCallback, useMemo, useState } from "react"
+import { type FC, useCallback, useMemo, useState } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { Grid } from "../../../../../shared/components/grid/Grid.tsx"
 import { List } from "../../../../../shared/components/list/List.tsx"
@@ -13,21 +17,14 @@ import { RadioButtonGroup } from "../../../../../shared/components/radioButton/R
 import { RecommendedReference } from "../../../../../shared/components/recommendedReference/RecommendedReference.tsx"
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { TextField } from "../../../../../shared/components/textField/TextField.tsx"
-import {
-  compareImprovementCost,
-  fromRaw,
-} from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
 import type { DisplayedSkill } from "../../../../../shared/domain/rated/skill.ts"
 import { SkillsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { compareAt, numAsc, reduceCompare } from "../../../../../shared/utils/compare.ts"
-import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
 import { SharedState } from "../../../../external.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
-import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
+import { InlineLibrary, InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import {
   changeSkillsSortOrder,
   selectSkillsCultureRatingVisibility,
@@ -41,7 +38,7 @@ const isTopMarginNeeded = (
   sortOrder: SkillsSortOrder,
   curr: DisplayedSkill,
   mprev: DisplayedSkill | undefined,
-) => sortOrder === "group" && mprev !== undefined && curr.dbEntry.group !== mprev.dbEntry.group
+) => sortOrder === "group" && mprev !== undefined && curr.groupPosition !== mprev.groupPosition
 
 /**
  * Returns a page for managing skills.
@@ -58,7 +55,7 @@ export const Skills: FC = observer(() => {
     [dispatch],
   )
 
-  const canRemove = useAppSelector(selectCanRemove)
+  const { canRemove, skills: visibleSkills, attributes } = SharedState
 
   const [filterText, setFilterText] = useState("")
   const sortOrder = useAppSelector(selectSkillsSortOrder)
@@ -67,34 +64,28 @@ export const Skills: FC = observer(() => {
     [dispatch],
   )
 
-  const visibleSkills = SharedState.skills
-
   const list = useMemo(
     () =>
       visibleSkills
         .filter(
           c =>
-            translateMap(c.dbEntry.translations)
-              ?.name.toLowerCase()
-              .includes(filterText.toLowerCase()) ?? false,
+            translateMap(c.translations)?.name.toLowerCase().includes(filterText.toLowerCase()) ??
+            false,
         )
         .sort(
           (() => {
             switch (sortOrder) {
               case SkillsSortOrder.Name:
-                return compareAt(
-                  c => translateMap(c.dbEntry.translations)?.name ?? "",
-                  localeCompare,
-                )
+                return on(c => translateMap(c.translations)?.name ?? "", localeCompare)
               case SkillsSortOrder.Group:
                 return reduceCompare(
-                  compareAt(c => c.groupPosition, numAsc),
-                  compareAt(c => translateMap(c.dbEntry.translations)?.name ?? "", localeCompare),
+                  on(c => c.groupPosition, compareNumber),
+                  on(c => translateMap(c.translations)?.name ?? "", localeCompare),
                 )
               case SkillsSortOrder.ImprovementCost:
                 return reduceCompare(
-                  compareAt(c => fromRaw(c.dbEntry.improvement_cost), compareImprovementCost),
-                  compareAt(c => translateMap(c.dbEntry.translations)?.name ?? "", localeCompare),
+                  on(c => c.improvementCost, compareImprovementCost),
+                  on(c => translateMap(c.translations)?.name ?? "", localeCompare),
                 )
               default:
                 return assertExhaustive(sortOrder)
@@ -155,8 +146,11 @@ export const Skills: FC = observer(() => {
               {list.map((x, i) => (
                 <SkillListItem
                   key={x.id}
+                  canRemove={canRemove}
                   insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
                   skill={x}
+                  attributes={attributes}
+                  selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                 />
               ))}
             </List>

@@ -1,27 +1,11 @@
-import type { Locale } from "@optolith/database-schema/gen"
 import { createContext } from "react"
-
-/**
- * The localization context includes selected and default locales as well as
- * available locales and translations.
- */
-export type LocalizationContext = {
-  selectedLocale: string | undefined
-  selectedFallbackLocale: string | undefined
-  systemLocale: string
-  platform: NodeJS.Platform
-  locales: Record<string, Locale>
-}
+import { LocaleEnvironment } from "../utils/locale.ts"
 
 /**
  * The localization context includes selected and default locales as well as
  * available locales and translations.
  */
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const LocalizationContext = createContext<LocalizationContext>({
-  selectedLocale: undefined,
-  selectedFallbackLocale: undefined,
-  systemLocale: "en-US",
-  platform: "win32",
-  locales: {},
-})
+export const LocalizationContext = createContext<LocaleEnvironment>(
+  new LocaleEnvironment({}, "en-US", { locale: undefined, fallbackLocale: undefined }),
+)

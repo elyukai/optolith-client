@@ -1,50 +1,26 @@
-import {
-  ExternalEnhancementPrerequisite,
-  InternalEnhancementPrerequisite,
+import type {
+  Enhancement,
+  Enhancement_ID,
+  EnhancementPrerequisite,
+  SkillWithEnhancementsIdentifier,
 } from "@optolith/database-schema/gen"
-import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { GetById } from "../../getTypes.ts"
-import { Enhancement } from "../../rated/enhancement.ts"
+import type { CharacterActivatableRatedWithEnhancements } from "../../rated/ratedEntry.ts"
 
 /**
  * Checks a single external enhancement prerequisite if it’s matched.
  */
-export const checkExternalEnhancementPrerequisite = (
+export const checkEnhancementPrerequisite = (
   caps: {
-    getDynamicSpellById: GetById.Dynamic.Spell
-    getDynamicRitualById: GetById.Dynamic.Ritual
-    getDynamicLiturgicalChantById: GetById.Dynamic.LiturgicalChant
-    getDynamicCeremonyById: GetById.Dynamic.Ceremony
+    getEnhancementById: (id: Enhancement_ID) => Enhancement | undefined
+    getSkillWithEnhancementsById: (
+      id: SkillWithEnhancementsIdentifier,
+    ) =>
+      | CharacterActivatableRatedWithEnhancements<SkillWithEnhancementsIdentifier["kind"]>
+      | undefined
   },
-  p: ExternalEnhancementPrerequisite,
+  p: EnhancementPrerequisite,
 ): boolean => {
-  const entry = (() => {
-    switch (p.skill.id.tag) {
-      case "Spell":
-        return caps.getDynamicSpellById(p.skill.id.spell)
-      case "Ritual":
-        return caps.getDynamicRitualById(p.skill.id.ritual)
-      case "LiturgicalChant":
-        return caps.getDynamicLiturgicalChantById(p.skill.id.liturgical_chant)
-      case "Ceremony":
-        return caps.getDynamicCeremonyById(p.skill.id.ceremony)
-      default:
-        return assertExhaustive(p.skill.id)
-    }
-  })()
-
-  return Object.values(entry?.enhancements ?? {}).some(e => e.id === p.enhancement.id)
-}
-
-/**
- * Checks a single internal enhancement prerequisite if it’s matched.
- */
-export const checkInternalEnhancementPrerequisite = (
-  caps: {
-    getLocalEnhancements: () => Enhancement[]
-  },
-  p: InternalEnhancementPrerequisite,
-): boolean => {
-  const enhancements = caps.getLocalEnhancements()
-  return enhancements.some(e => e.id === p.id)
+  const { parent: parentId } = caps.getEnhancementById(p.id) ?? {}
+  const parent = parentId ? caps.getSkillWithEnhancementsById(parentId) : undefined
+  return parent?.activeEnhancements.values().some(e => e.id === p.id) ?? false
 }

@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback } from "react"
+import { type MouseEvent, useCallback } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { ListItemButtons } from "../../../../../shared/components/list/ListItemButtons.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"

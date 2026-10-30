@@ -1,76 +1,59 @@
-import { FC, memo, useCallback } from "react"
+import type { Blessing_ID } from "@optolith/database-schema/gen"
+import { memo, useCallback, type FC } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
-import { AspectIdentifier } from "../../../../../shared/domain/identifier.ts"
-import { DisplayedActiveBlessing } from "../../../../../shared/domain/rated/liturgicalChantActive.ts"
-import { LiturgiesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
-import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import { selectStaticAspects } from "../../../../slices/databaseSlice.ts"
+import type { DisplayedBlessing } from "../../../../../shared/domain/rated/liturgicalChant.ts"
 import {
-  changeInlineLibraryEntry,
-  selectInlineLibraryEntryId,
-} from "../../../../slices/inlineWikiSlice.ts"
+  InlineLibraryManager,
+  type DisplayableMainIdentifier,
+} from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillFill } from "../skills/SkillFill.tsx"
 
 type Props = {
   insertTopMargin?: boolean
-  blessing: DisplayedActiveBlessing
-  sortOrder: LiturgiesSortOrder
-  remove: (id: number) => void
+  blessing: DisplayedBlessing
+  displayGroup?: boolean
+  remove: (id: Blessing_ID) => void
+  canRemove: boolean
+  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 const ActiveBlessingsListItem: FC<Props> = props => {
   const {
     insertTopMargin,
-    blessing: {
-      static: { id, translations },
-    },
-    sortOrder,
+    blessing: { id, name, groupName },
+    displayGroup,
     remove,
+    canRemove,
+    selectedInlineLibraryEntryId,
   } = props
-
-  const translate = useTranslate()
-  const translateMap = useTranslateMap()
-  const dispatch = useAppDispatch()
-  const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
-  const canRemove = useAppSelector(selectCanRemove)
-  const staticAspects = useAppSelector(selectStaticAspects)
-
-  const { name = "" } = translateMap(translations) ?? {}
 
   const handleRemove = useCallback(() => {
     remove(id)
   }, [remove, id])
 
   const handleSelectForInfo = useCallback(
-    () => dispatch(changeInlineLibraryEntry({ tag: "Blessing", blessing: id })),
-    [dispatch, id],
+    () => InlineLibraryManager.instance.goTo(["Blessing", id]),
+    [id],
   )
 
-  const aspects = translateMap(staticAspects[AspectIdentifier.General]?.translations)?.name ?? ""
+  const aspects = "" // TODO
 
   return (
     <ListItem
       insertTopMargin={insertTopMargin}
-      active={inlineLibraryEntryId?.tag === "Blessing" && inlineLibraryEntryId.blessing === id}
+      active={
+        selectedInlineLibraryEntryId?.[0] === "Blessing" && selectedInlineLibraryEntryId[1] === id
+      }
       noIncrease
     >
       <ListItemName name={name} onClick={handleSelectForInfo} />
       <ListItemSeparator />
-      <ListItemGroup
-        text={
-          sortOrder === LiturgiesSortOrder.Group
-            ? `${aspects} / ${translate("Blessings")}`
-            : aspects
-        }
-      />
+      <ListItemGroup text={displayGroup ? `${aspects} / ${groupName}` : aspects} />
       <ListItemValues>
         <SkillFill />
       </ListItemValues>

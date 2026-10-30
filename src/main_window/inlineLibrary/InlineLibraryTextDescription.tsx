@@ -6,10 +6,10 @@ import type {
   EntityDescriptionSection,
   TextEntityDescription,
 } from "@optolith/entity-descriptions/description"
-import { FC } from "react"
+import type { FC } from "react"
 import { InlineMarkdown, Markdown, type Env } from "../../shared/components/markdown/Markdown.tsx"
 import { useTranslate } from "../../shared/hooks/translate.ts"
-import type { Translate } from "../../shared/utils/translate.ts"
+import type { Translate } from "../../shared/utils/locale.ts"
 
 type Props = {
   description: TextEntityDescription<AvailableCreatorEntity>

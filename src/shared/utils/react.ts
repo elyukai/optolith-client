@@ -1,4 +1,4 @@
-import { FC, ForwardRefRenderFunction, PropsWithChildren } from "react"
+import type { FC, ForwardRefRenderFunction, PropsWithChildren } from "react"
 
 /**
  * Functional Component with children

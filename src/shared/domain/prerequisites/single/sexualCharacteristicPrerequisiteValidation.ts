@@ -1,12 +1,12 @@
-import { SexualCharacteristicPrerequisite } from "@optolith/database-schema/gen"
-import { Sex, matchSexualCharacteristicToSex } from "../../sex.ts"
+import type { SexualCharacteristicPrerequisite } from "@optolith/database-schema/gen"
+import { type Sex, matchSexualCharacteristicToSex } from "../../sex.ts"
 
 /**
  * Checks a single sexual characteristic prerequisite if it’s matched.
  */
 export const checkSexualCharacteristicPrerequisite = (
   caps: {
-    getSex: () => Sex
+    sex: Sex
   },
   p: SexualCharacteristicPrerequisite,
-): boolean => matchSexualCharacteristicToSex(caps.getSex(), p.id)
+): boolean => matchSexualCharacteristicToSex(caps.sex, p.id)

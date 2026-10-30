@@ -80,7 +80,7 @@ console.log(`Files to upload: ${fileNames.join(", ")}.`)
 
 // Upload files
 
-const localDir = isPrerelease ? join("dist", "insider") : join("dist")
+const localDir = isPrerelease ? join("dist", "insider") : join("dist", "stable")
 const remoteDir = join(ROOT, isPrerelease ? "insider" : ".", os)
 
 await run({ host: HOST, username: USERNAME, password: PASSWORD }, async client => {

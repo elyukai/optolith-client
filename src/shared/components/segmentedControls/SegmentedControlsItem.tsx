@@ -1,6 +1,6 @@
-import { FC, useCallback } from "react"
+import { type FC, useCallback } from "react"
 import { Button } from "../button/Button.tsx"
-import { SegmentedOption, SegmentedOptionValue } from "./SegmentedControls.tsx"
+import type { SegmentedOption, SegmentedOptionValue } from "./SegmentedControls.tsx"
 
 type Props<A extends SegmentedOptionValue> = {
   active: A

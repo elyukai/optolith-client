@@ -1,5 +1,5 @@
 import { observer } from "mobx-react"
-import { FC, useCallback, useMemo, useState } from "react"
+import { type FC, useCallback, useMemo, useState } from "react"
 import { Button } from "../../../../../shared/components/button/Button.tsx"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { Grid } from "../../../../../shared/components/grid/Grid.tsx"
@@ -23,16 +23,14 @@ import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import {
-  selectCanRemove,
-  selectIsInCharacterCreation,
-} from "../../../../selectors/characterSelectors.ts"
-import {
   selectAdvantagesDisadvantagesCultureRatingVisibility,
+  selectShowEntriesWithoutMetPrerequisites,
   switchAdvantagesDisadvantagesCultureRatingVisibility,
+  switchShowEntriesWithoutMetPrerequisites,
 } from "../../../../slices/settingsSlice.ts"
-import { ActiveDisadvantagesListItem } from "./ActiveDisadvantagesListItem.tsx"
+import { ActiveActivatablesListItem } from "../activatable/ActiveActivatableListItem.tsx"
+import { InactiveActivatablesListItem } from "../activatable/InactiveActivatableListItem.tsx"
 import { AdventurePointsSpent } from "./AdventurePointsSpent.tsx"
-import { InactiveDisadvantagesListItem } from "./InactiveDisadvantagesListItem.tsx"
 
 /**
  * Returns a page for managing disadvantages.
@@ -43,6 +41,8 @@ export const Disadvantages: FC = observer(() => {
   const dispatch = useAppDispatch()
   const localeCompare = useLocaleCompare()
 
+  const { canRemove, isInCharacterCreation } = SharedState
+
   const cultureRatingVisibility = useAppSelector(
     selectAdvantagesDisadvantagesCultureRatingVisibility,
   )
@@ -51,17 +51,24 @@ export const Disadvantages: FC = observer(() => {
     [dispatch],
   )
 
-  const canRemove = useAppSelector(selectCanRemove)
-  const isInCharacterCreation = useAppSelector(selectIsInCharacterCreation)
-
   const [activeFilterText, setActiveFilterText] = useState("")
   const [inactiveFilterText, setInactiveFilterText] = useState("")
+
+  const showEntriesWithoutMetPrerequisites = useAppSelector(
+    selectShowEntriesWithoutMetPrerequisites,
+  )
+
+  const handleSwitchShowEntriesWithoutMetPrerequisites = useCallback(
+    () => dispatch(switchShowEntriesWithoutMetPrerequisites()),
+    [dispatch],
+  )
 
   const inactiveList = useMemo(
     () =>
       filterAndSortDisplayed(
         SharedState.inactiveDisadvantages,
         inactiveFilterText,
+        showEntriesWithoutMetPrerequisites,
         translateMap,
         localeCompare,
       ),
@@ -73,6 +80,7 @@ export const Disadvantages: FC = observer(() => {
       filterAndSortDisplayed(
         SharedState.activeDisadvantages,
         activeFilterText,
+        true, // no effect for active entries
         translateMap,
         localeCompare,
       ),
@@ -90,6 +98,12 @@ export const Disadvantages: FC = observer(() => {
             onChange={setInactiveFilterText}
             hint={translate("Search")}
           />
+          <Checkbox
+            checked={showEntriesWithoutMetPrerequisites}
+            onClick={handleSwitchShowEntriesWithoutMetPrerequisites}
+          >
+            {translate("Show entries with unmet prerequisites")}
+          </Checkbox>
           <Grid size="medium">
             <Checkbox
               checked={cultureRatingVisibility}
@@ -117,7 +131,7 @@ export const Disadvantages: FC = observer(() => {
             {inactiveList.length > 0 ? (
               <List>
                 {inactiveList.map(x => (
-                  <InactiveDisadvantagesListItem key={`disadvantage-${x.id}`} disadvantage={x} />
+                  <InactiveActivatablesListItem key={`disadvantage-${x.id}`} activatable={x} />
                 ))}
               </List>
             ) : (
@@ -155,7 +169,7 @@ export const Disadvantages: FC = observer(() => {
           {activeList.length > 0 ? (
             <List>
               {activeList.map(x => (
-                <ActiveDisadvantagesListItem key={`disadvantage-${x.id}`} disadvantage={x} />
+                <ActiveActivatablesListItem key={`disadvantage-${x.id}`} activatable={x} />
               ))}
             </List>
           ) : (

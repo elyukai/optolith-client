@@ -12,8 +12,8 @@ import {
   type ParseInnerNode,
 } from "@elyukai/markdown/render/builder"
 import { intercalate } from "@elyukai/utils/array/transformations"
+import type { FC } from "react"
 import * as React from "react"
-import { FC } from "react"
 
 export type Env = {
   outerHeadingLevel?: number

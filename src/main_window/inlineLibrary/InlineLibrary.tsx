@@ -2,12 +2,14 @@ import type { AvailableCreatorEntity } from "@optolith/entity-descriptions"
 import type { EntityDescription } from "@optolith/entity-descriptions/description"
 import { action, computed, observable } from "mobx"
 import { observer } from "mobx-react"
-import { FC, useEffect, useState } from "react"
+import { type FC, useEffect, useState } from "react"
+import { useSelector } from "react-redux"
 import "../../database/contents/assets/core.css"
 import { Aside } from "../../shared/components/aside/Aside.tsx"
 import { Button } from "../../shared/components/button/Button.tsx"
 import { Scroll } from "../../shared/components/scroll/Scroll.tsx"
 import { ExternalAPI } from "../external.ts"
+import { selectSelectedCharacterId } from "../slices/routeSlice.ts"
 import "./InlineLibrary.scss"
 import { InlineLibraryContent } from "./InlineLibraryContent.tsx"
 import { InlineLibraryPlaceholder } from "./InlineLibraryPlaceholder.tsx"
@@ -52,7 +54,10 @@ export class InlineLibraryManager {
         current: identifier,
         next: [],
       }
-    } else {
+    } else if (
+      this.#history.current[0] !== identifier[0] ||
+      this.#history.current[1] !== identifier[1]
+    ) {
       this.#history.previous.push(this.#history.current)
       this.#history.current = identifier
       this.#history.next = []
@@ -87,26 +92,17 @@ export const InlineLibrary: FC = observer(() => {
   const [description, setDescription] =
     useState<[EntityDescription<AvailableCreatorEntity, string> | undefined, string | undefined]>()
 
+  const characterId = useSelector(selectSelectedCharacterId)
+
   useEffect(() => {
     if (current !== undefined) {
-      const publications: string[] = []
-      ExternalAPI.getEntityDescription(
-        current[0],
-        current[1],
-        /* TODO */ {
-          publications,
-          onlyCompletePublications: false,
-          onlyShowReferencesToIncludedPublications: true,
-          changeHandling: "latestOnly",
-          showPublicationGroups: publications.length === 0 ? "all" : "none",
-        },
-      )
+      ExternalAPI.getEntityDescription(current[0], current[1], characterId)
         .then(setDescription)
         .catch(error => {
           console.error("Failed to get entity description:", error)
         })
     }
-  }, [current?.[0], current?.[1]])
+  }, [current?.[0], current?.[1], characterId])
 
   return (
     <Aside className="inline-library">

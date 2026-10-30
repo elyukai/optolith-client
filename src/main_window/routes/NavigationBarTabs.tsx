@@ -1,5 +1,5 @@
-import { FC } from "react"
-import { DisplayRoute } from "../hooks/visibleTabs.ts"
+import type { FC } from "react"
+import type { DisplayRoute } from "../hooks/visibleTabs.ts"
 import { NavigationBarTab } from "./NavigationBarTab.tsx"
 import "./NavigationBarTabs.scss"
 

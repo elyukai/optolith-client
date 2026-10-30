@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit"
-import { getOptions } from "../../shared/domain/activatable/activatableEntry.ts"
+import { getOptions } from "../../shared/domain/activatable/activatable.ts"
 import {
   AdvantageIdentifier,
   MagicalSpecialAbilityIdentifier,
@@ -50,7 +50,7 @@ import {
   getVisibleInactiveCantrips,
 } from "../../shared/domain/rated/spellInactive.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
-import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import {
   selectDynamicAdvantages,
   selectDynamicMagicalSpecialAbilities,
@@ -63,7 +63,6 @@ import {
 import { SelectAll, SelectGetById } from "./basicCapabilitySelectors.ts"
 import { selectCanRemove, selectIsInCharacterCreation } from "./characterSelectors.ts"
 import { selectFilterApplyingRatedDependencies } from "./dependencySelectors.ts"
-import { selectStartExperienceLevel } from "./experienceLevelSelectors.ts"
 import { selectCapabilitiesForPrerequisitesOfSpellwork } from "./prerequisiteSelectors.ts"
 import { selectIsEntryAvailable } from "./publicationSelectors.ts"
 import { selectActiveMagicalTraditions } from "./traditionSelectors.ts"
@@ -245,7 +244,6 @@ const selectActiveSpellworksCountByImprovementCost = createSelector(
 const selectIsMaximumOfSpellworksReached = createSelector(
   selectActiveSpellworksCount,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   (activeCount, isInCharacterCreation, startExperienceLevel) =>
     startExperienceLevel === undefined ||
     isMaximumOfSpellworksReached(activeCount, isInCharacterCreation, startExperienceLevel),
@@ -254,7 +252,6 @@ const selectIsMaximumOfSpellworksReached = createSelector(
 const selectIsMaximumOfUnfamiliarSpellworksReached = createSelector(
   selectActiveUnfamiliarSpellworksCount,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   (activeUnfamiliarCount, isInCharacterCreation, startExperienceLevel) =>
     startExperienceLevel === undefined ||
     isMaximumOfUnfamiliarSpellworksReached(
@@ -285,7 +282,6 @@ export const selectVisibleActiveSpells = createSelector(
   SelectGetById.Static.Spell,
   SelectAll.Dynamic.Spells,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalSkill),
   SelectGetById.Dynamic.Attribute,
@@ -335,7 +331,6 @@ export const selectVisibleActiveRituals = createSelector(
   SelectGetById.Static.Ritual,
   SelectAll.Dynamic.Rituals,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   createPropertySelector(selectDynamicAdvantages, AdvantageIdentifier.ExceptionalSkill),
   SelectGetById.Dynamic.Attribute,
@@ -385,7 +380,6 @@ export const selectVisibleActiveCurses = createSelector(
   SelectGetById.Static.Curse,
   SelectAll.Dynamic.Curses,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
@@ -429,7 +423,6 @@ export const selectVisibleActiveElvenMagicalSongs = createSelector(
   SelectGetById.Static.ElvenMagicalSong,
   SelectAll.Dynamic.ElvenMagicalSongs,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
@@ -473,7 +466,6 @@ export const selectVisibleActiveDominationRituals = createSelector(
   SelectGetById.Static.DominationRitual,
   SelectAll.Dynamic.DominationRituals,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
@@ -517,7 +509,6 @@ export const selectVisibleActiveMagicalDances = createSelector(
   SelectGetById.Static.MagicalDance,
   SelectAll.Dynamic.MagicalDances,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
@@ -561,7 +552,6 @@ export const selectVisibleActiveMagicalMelodies = createSelector(
   SelectGetById.Static.MagicalMelody,
   SelectAll.Dynamic.MagicalMelodies,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
@@ -605,7 +595,6 @@ export const selectVisibleActiveJesterTricks = createSelector(
   SelectGetById.Static.JesterTrick,
   SelectAll.Dynamic.JesterTricks,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
@@ -649,7 +638,6 @@ export const selectVisibleActiveAnimistPowers = createSelector(
   SelectGetById.Static.AnimistPower,
   SelectAll.Dynamic.AnimistPowers,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
@@ -711,7 +699,6 @@ export const selectVisibleActiveGeodeRituals = createSelector(
   SelectGetById.Static.GeodeRitual,
   SelectAll.Dynamic.GeodeRituals,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,
@@ -755,7 +742,6 @@ export const selectVisibleActiveZibiljaRituals = createSelector(
   SelectGetById.Static.ZibiljaRitual,
   SelectAll.Dynamic.ZibiljaRituals,
   selectIsInCharacterCreation,
-  selectStartExperienceLevel,
   selectCanRemove,
   SelectGetById.Dynamic.Attribute,
   selectFilterApplyingRatedDependencies,

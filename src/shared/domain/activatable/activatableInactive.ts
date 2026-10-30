@@ -1,59 +1,31 @@
-import { ResolvedSelectOption } from "optolith-database-schema/cache/activatableSelectOptions"
-import { AdventurePointsValue } from "@optolith/database-schema/gen"
-import {
+import { deepEqual } from "@elyukai/utils/equality"
+import { andEvery, orSome } from "@elyukai/utils/function"
+import { Lazy } from "@elyukai/utils/lazy"
+import { mapNullableDefault } from "@elyukai/utils/nullable"
+import { range } from "@elyukai/utils/range"
+import type {
+  ResolvedSelectOption,
+  ResolvedSelectOptionIdentifier,
+} from "@optolith/database-schema/cache"
+import type {
   ActivatableIdentifier,
-  SelectOptionIdentifier,
+  Advantage_ID,
+  AdventurePointsValue,
+  Disadvantage_ID,
+  GeneralPrerequisites,
+  PredefinedOrTextInputSelectOptionRuleValueTranslation,
+  PublicationRefs,
+  TextInputSelectOptionRuleValueTranslation,
 } from "@optolith/database-schema/gen"
-import { LocaleMap } from "@optolith/database-schema/gen"
-import { GeneralPrerequisites } from "@optolith/database-schema/gen"
-import { PublicationRefs } from "@optolith/database-schema/gen"
-import { filterNonNullable } from "../../utils/array.ts"
-import { deepEqual } from "../../utils/compare.ts"
-import { andEvery, orSome } from "../../utils/function.ts"
-import { Lazy } from "../../utils/lazy.ts"
-import { isNotNullish, mapNullableDefault } from "../../utils/nullable.ts"
-import { mapObject } from "../../utils/object.ts"
-import { range } from "../../utils/range.ts"
-import { assertExhaustive } from "../../utils/typeSafety.ts"
-import { FilterApplyingActivatableDependencies } from "../dependencies/filterApplyingDependencies.ts"
-import { GetById } from "../getTypes.ts"
-import {
-  AdvantageIdentifier,
-  DisadvantageIdentifier,
-  GeneralSpecialAbilityIdentifier,
-  KarmaSpecialAbilityIdentifier,
-  MagicStyleSpecialAbilityIdentifier,
-  MagicalSpecialAbilityIdentifier,
-  MagicalTraditionIdentifier,
-  equalsIdentifier,
-} from "../identifier.ts"
-import {
-  ActivatableDependency,
-  appliesToInstanceLoose,
-  isGeneralDependency,
-} from "./activatableDependency.ts"
-import { Activatable, ActivatableInstance, countOptions, isActive } from "./activatableEntry.ts"
+import type { LocaleMap } from "../../utils/locale.ts"
+import { Case, equalsCase } from "../databaseEnum.ts"
+import type {
+  CharacterActivatable,
+  RawActivatableInstance,
+  ResolvedSelectOptionWithResolvedAPValue,
+} from "./activatable.ts"
+import { isGeneralDependency, type ActivatableDependency } from "./activatableDependency.ts"
 import { modifierByLevel } from "./activatableModifiers.ts"
-
-/**
- * A combination of a static activatable entry and its dynamic counterpart,
- * extended by whether the entry can be activated and configuration options.
- */
-export type DisplayedInactiveActivatable<K extends string, T> = {
-  kind: K
-  static: T
-  dynamic: Activatable | undefined
-  isAvailable: boolean
-  options: DisplayedInactiveActivatableOption[]
-  level?: {
-    maximum: number
-    placement: "before" | "after"
-  }
-  /**
-   * A modified version or the adventure points value of the entry.
-   */
-  apValue?: AdventurePointsValue
-}
 
 /**
  * Configuration for a single option for an activatable entry.
@@ -68,8 +40,9 @@ export type DisplayedInactiveActivatableOption =
  */
 export type DisplayedInactiveActivatableOptionChoice = {
   kind: "choice"
-  options: ResolvedSelectOption[]
+  options: ResolvedSelectOptionWithResolvedAPValue[]
   count?: number
+  parentIndex?: number
 }
 
 /**
@@ -85,8 +58,8 @@ export const isDisplayedInactiveActivatableOptionChoice = (
  */
 export type DisplayedInactiveActivatableOptionChoiceOrCustomizableText = {
   kind: "choiceOrCustomizableText"
-  options: ResolvedSelectOption[]
-  textLabel: LocaleMap<string>
+  options: ResolvedSelectOptionWithResolvedAPValue[]
+  textLabel: LocaleMap<PredefinedOrTextInputSelectOptionRuleValueTranslation>
 }
 
 /**
@@ -103,7 +76,7 @@ export const isDisplayedInactiveActivatableOptionChoiceOrCustomizableText = (
  */
 export type DisplayedInactiveActivatableOptionText = {
   kind: "text"
-  textLabel: LocaleMap<string>
+  textLabel: LocaleMap<TextInputSelectOptionRuleValueTranslation>
 }
 
 /**
@@ -113,36 +86,36 @@ export const isDisplayedInactiveActivatableOptionText = (
   option: DisplayedInactiveActivatableOption,
 ): option is DisplayedInactiveActivatableOptionText => option.kind === "text"
 
-const hasGeneralProhibitingDependency = (dependencies: ActivatableDependency[]) =>
+export const hasGeneralProhibitingDependency = (dependencies: ActivatableDependency[]) =>
   dependencies.some(dep => dep.active === false && isGeneralDependency(dep))
 
-const hasReachedMaximumEntries = (
+export const hasReachedMaximumEntries = (
   currentCount: number,
   maximum: number | undefined,
   defaultMaximum: number,
 ) => currentCount >= (maximum ?? defaultMaximum)
 
-const getIsSelectOptionAvailable = (
+export const getIsSelectOptionAvailable = (
   isEntryAvailable: (src: PublicationRefs) => boolean,
   checkSelectOptionPrerequisites: (prerequisites: GeneralPrerequisites) => boolean,
-  hasProhibitingDependency: (optionId: SelectOptionIdentifier) => boolean,
+  hasProhibitingDependency: (optionId: ResolvedSelectOptionIdentifier) => boolean,
   isEntrySpecificAvailable: (option: ResolvedSelectOption) => boolean,
 ): ((option: ResolvedSelectOption) => boolean) =>
   andEvery<ResolvedSelectOption>(
-    option => mapNullableDefault(option.src, isEntryAvailable, true),
-    option => mapNullableDefault(option.prerequisites, checkSelectOptionPrerequisites, true),
+    option => mapNullableDefault(option.content.src, isEntryAvailable, true),
+    option =>
+      mapNullableDefault(option.content.prerequisites, checkSelectOptionPrerequisites, true),
     option => !hasProhibitingDependency(option.id),
     isEntrySpecificAvailable,
   )
 
-const getOptions = (
+export const getOptions = (
   id: ActivatableIdentifier,
   getSelectOptionsById: (id: ActivatableIdentifier) => ResolvedSelectOption[] | undefined,
   isSelectOptionAvailable: (option: ResolvedSelectOption) => boolean,
   getEntrySpecificOptions: (
     validSelectOptions: ResolvedSelectOption[] | undefined,
-  ) => DisplayedInactiveActivatableOption[] | undefined = selectOptions =>
-    filterNonNullable([selectOptions ? { kind: "choice", options: selectOptions } : undefined]),
+  ) => DisplayedInactiveActivatableOption[] | undefined,
 ): DisplayedInactiveActivatableOption[] | undefined => {
   const selectOptions = getSelectOptionsById(id)?.filter(isSelectOptionAvailable)
 
@@ -166,40 +139,12 @@ const getOptions = (
   //   ] as string[]) .includes (id)
 }
 
-const getMaxLevelByPrerequisites = (
+export const getMaxLevelByPrerequisites = (
   checkPrerequisitesForLevel: (level: number) => boolean,
   levels: number,
 ) => {
   const firstLevelNotMatching = range([2, levels]).find(level => !checkPrerequisitesForLevel(level))
   return firstLevelNotMatching === undefined ? levels : firstLevelNotMatching - 1
-}
-
-const getPropertyOrAspectKnowledgeCost = (
-  apValue: AdventurePointsValue,
-  instancesCount: number,
-): EntrySpecificDisplayParameterModifiers | undefined => {
-  switch (apValue.tag) {
-    case "ByLevel": {
-      const fixed = apValue.by_level[instancesCount]
-
-      if (fixed === undefined) {
-        return undefined
-      }
-
-      return {
-        apValue: {
-          tag: "Fixed",
-          fixed,
-        },
-      }
-    }
-    case "Fixed":
-    case "DerivedFromSelection":
-    case "Indefinite":
-      return undefined
-    default:
-      return assertExhaustive(apValue)
-  }
 }
 
 type EntrySpecificDisplayParameterModifiers = Partial<{
@@ -212,58 +157,28 @@ type EntrySpecificDisplayParameterModifiers = Partial<{
   apValue: AdventurePointsValue
 }>
 
-const getEntrySpecificDisplayParameterModifiers = <
+export const getEntrySpecificDisplayParameterModifiers = <
   T extends { id: number; levels?: number; prerequisites?: P[]; src: PublicationRefs },
   P = T extends { prerequisites?: (infer P1)[] } ? P1 : never,
 >(
   id: ActivatableIdentifier,
-  instancesCount: number,
-  apValue: AdventurePointsValue,
-  countOptionsForContext: (optionId: SelectOptionIdentifier, atIndex?: number) => number,
-  translations: LocaleMap<{ input?: string }>,
+  countOptionsForContext: (optionId: ResolvedSelectOptionIdentifier, atIndex?: number) => number,
   caps: {
     activeSermonsCount: number
     activeVisionsCount: number
     activeSpellworksCount: number
-    getDynamicAdvantageById: GetById.Dynamic.Advantage
-    getDynamicDisadvantageById: GetById.Dynamic.Advantage
+    getDynamicAdvantageById: (id: Advantage_ID) => CharacterActivatable<"Advantage"> | undefined
+    getDynamicDisadvantageById: (
+      id: Disadvantage_ID,
+    ) => CharacterActivatable<"Disadvantage"> | undefined
   },
 ): EntrySpecificDisplayParameterModifiers | undefined => {
-  switch (id.tag) {
+  switch (id.kind) {
     case "Advantage":
-      switch (id.advantage) {
-        case AdvantageIdentifier.MagicalAttunement:
-          return {
-            generateOptions: selectOptions =>
-              selectOptions
-                ? [
-                    {
-                      kind: "choiceOrCustomizableText",
-                      options: selectOptions,
-                      textLabel: mapObject(translations, t10n => t10n.input),
-                    },
-                  ]
-                : undefined,
-          }
-        case AdvantageIdentifier.ExceptionalSkill:
+      switch (id.Advantage) {
+        case "AdvantageIdentifier.ExceptionalSkill":
           return { isSelectOptionAvailable: option => countOptionsForContext(option.id) < 2 }
-        case AdvantageIdentifier.HatredOf:
-          return {
-            generateOptions: selectOptions =>
-              selectOptions
-                ? [
-                    {
-                      kind: "text",
-                      textLabel: mapObject(translations, t10n => t10n.input),
-                    },
-                    {
-                      kind: "choice",
-                      options: selectOptions,
-                    },
-                  ]
-                : undefined,
-          }
-        case AdvantageIdentifier.InspireConfidence: {
+        case "AdvantageIdentifier.InspireConfidence": {
           return {} // TODO: Implement as dynamic prerequisite instead
           // return toNewMaybe(
           //   lookup<string>(DisadvantageId.Incompetent)(HA.disadvantages(hero)),
@@ -280,34 +195,16 @@ const getEntrySpecificDisplayParameterModifiers = <
           return {}
       }
     case "Disadvantage":
-      switch (id.disadvantage) {
-        case DisadvantageIdentifier.AfraidOf:
-        case DisadvantageIdentifier.MagicalRestriction:
-        case DisadvantageIdentifier.Principles:
-        case DisadvantageIdentifier.BadHabit:
-        case DisadvantageIdentifier.Stigma:
-        case DisadvantageIdentifier.Obligations:
-          return {
-            generateOptions: selectOptions =>
-              selectOptions
-                ? [
-                    {
-                      kind: "choiceOrCustomizableText",
-                      options: selectOptions,
-                      textLabel: mapObject(translations, t10n => t10n.input),
-                    },
-                  ]
-                : undefined,
-          }
-        case DisadvantageIdentifier.PersonalityFlaw: {
+      switch (id.Disadvantage) {
+        case "DisadvantageIdentifier.PersonalityFlaw": {
           return {
             isSelectOptionAvailable: option =>
-              equalsIdentifier(option.id, { tag: "General", general: 7 }) ||
-              equalsIdentifier(option.id, { tag: "General", general: 8 }) ||
+              equalsCase(option.id, Case("General", "7")) ||
+              equalsCase(option.id, Case("General", "8")) ||
               countOptionsForContext(option.id) < 1,
           }
         }
-        case DisadvantageIdentifier.Incompetent: {
+        case "DisadvantageIdentifier.Incompetent": {
           return {} // TODO: Implement as dynamic prerequisite instead
           // const isAdvActive = pipe(lookupF(HA.advantages(hero)), isMaybeActive)
           // const isNotSocialSkill = notP(isSocialSkill(staticData))
@@ -331,8 +228,8 @@ const getEntrySpecificDisplayParameterModifiers = <
           return {}
       }
     case "GeneralSpecialAbility":
-      switch (id.general_special_ability) {
-        case GeneralSpecialAbilityIdentifier.SkillSpecialization: {
+      switch (id.GeneralSpecialAbility) {
+        case "GeneralSpecialAbilityIdentifier.SkillSpecialization": {
           return {} // TODO
           // const mcounter = getActiveSecondarySelections(mhero_entry)
           // return fmap(
@@ -383,7 +280,7 @@ const getEntrySpecificDisplayParameterModifiers = <
           //   ),
           // )
         }
-        case GeneralSpecialAbilityIdentifier.LanguageSpecialization: {
+        case "GeneralSpecialAbilityIdentifier.LanguageSpecialization": {
           return {} // TODO
           // return pipe_(
           //   staticData,
@@ -462,8 +359,8 @@ const getEntrySpecificDisplayParameterModifiers = <
           return {}
       }
     case "MagicalTradition":
-      switch (id.magical_tradition) {
-        case MagicalTraditionIdentifier.GuildMages: {
+      switch (id.MagicalTradition) {
+        case "MagicalTraditionIdentifier.GuildMages": {
           return {} // TODO
           // return fmap(
           //   filterUnfamiliar(
@@ -480,10 +377,8 @@ const getEntrySpecificDisplayParameterModifiers = <
           return {}
       }
     case "MagicalSpecialAbility":
-      switch (id.magical_special_ability) {
-        case MagicalSpecialAbilityIdentifier.PropertyKnowledge:
-          return getPropertyOrAspectKnowledgeCost(apValue, instancesCount)
-        case MagicalSpecialAbilityIdentifier.Adaptation: {
+      switch (id.MagicalSpecialAbility) {
+        case "MagicalSpecialAbilityIdentifier.Adaptation": {
           return {} // TODO
           // const isWikiEntryFromUnfamiliarTrad = isUnfamiliarSpell(
           //   HA.transferredUnfamiliarSpells(hero),
@@ -509,8 +404,8 @@ const getEntrySpecificDisplayParameterModifiers = <
           return {}
       }
     case "MagicStyleSpecialAbility":
-      switch (id.magic_style_special_ability) {
-        case MagicStyleSpecialAbilityIdentifier.ScholarDesMagierkollegsZuHoningen: {
+      switch (id.MagicStyleSpecialAbility) {
+        case "MagicStyleSpecialAbilityIdentifier.ScholarDesMagierkollegsZuHoningen": {
           return {} // TODO
           // const allowed_traditions = List(
           //   MagicalTradition.Druids,
@@ -552,7 +447,7 @@ const getEntrySpecificDisplayParameterModifiers = <
           //   )(staticData),
           // )
         }
-        case MagicStyleSpecialAbilityIdentifier.MadaschwesternStil: {
+        case "MagicStyleSpecialAbilityIdentifier.MadaschwesternStil": {
           return {} // TODO
           // return fmap(
           //   filterUnfamiliar(
@@ -569,21 +464,12 @@ const getEntrySpecificDisplayParameterModifiers = <
           return {}
       }
 
-    case "KarmaSpecialAbility": {
-      switch (id.karma_special_ability) {
-        case KarmaSpecialAbilityIdentifier.AspectKnowledge:
-          return getPropertyOrAspectKnowledgeCost(apValue, instancesCount)
-        default:
-          return {}
-      }
-    }
-
     case "Sermon": {
-      const isBlessedActive = Lazy.of(() =>
-        isActive(caps.getDynamicAdvantageById(AdvantageIdentifier.Blessed)),
+      const isBlessedActive = Lazy.of(
+        () => caps.getDynamicAdvantageById("AdvantageIdentifier.Blessed")?.isActive ?? false,
       )
-      const isPreacherActive = Lazy.of(() =>
-        isActive(caps.getDynamicAdvantageById(AdvantageIdentifier.Preacher)),
+      const isPreacherActive = Lazy.of(
+        () => caps.getDynamicAdvantageById("AdvantageIdentifier.Preacher")?.isActive ?? false,
       )
 
       if (!isBlessedActive.value && !isPreacherActive.value) {
@@ -596,19 +482,19 @@ const getEntrySpecificDisplayParameterModifiers = <
           (isPreacherActive.value &&
             3 +
               modifierByLevel(
-                caps.getDynamicAdvantageById(AdvantageIdentifier.ManySermons),
-                caps.getDynamicAdvantageById(DisadvantageIdentifier.FewerSermons),
+                caps.getDynamicAdvantageById("AdvantageIdentifier.ManySermons"),
+                caps.getDynamicAdvantageById("DisadvantageIdentifier.FewerSermons"),
               ) >
               caps.activeSermonsCount),
       }
     }
 
     case "Vision": {
-      const isBlessedActive = Lazy.of(() =>
-        isActive(caps.getDynamicAdvantageById(AdvantageIdentifier.Blessed)),
+      const isBlessedActive = Lazy.of(
+        () => caps.getDynamicAdvantageById("AdvantageIdentifier.Blessed")?.isActive ?? false,
       )
-      const isVisionaryActive = Lazy.of(() =>
-        isActive(caps.getDynamicAdvantageById(AdvantageIdentifier.Visionary)),
+      const isVisionaryActive = Lazy.of(
+        () => caps.getDynamicAdvantageById("AdvantageIdentifier.Visionary")?.isActive ?? false,
       )
 
       if (!isBlessedActive.value && !isVisionaryActive.value) {
@@ -621,8 +507,8 @@ const getEntrySpecificDisplayParameterModifiers = <
           (isVisionaryActive.value &&
             3 +
               modifierByLevel(
-                caps.getDynamicAdvantageById(AdvantageIdentifier.ManyVisions),
-                caps.getDynamicAdvantageById(DisadvantageIdentifier.FewerSermons),
+                caps.getDynamicAdvantageById("AdvantageIdentifier.ManyVisions"),
+                caps.getDynamicAdvantageById("DisadvantageIdentifier.FewerSermons"),
               ) >
               caps.activeSermonsCount),
       }
@@ -865,14 +751,14 @@ const getEntrySpecificMaximumLevel = (
     activeSpellworksCount: number
   },
 ): number | undefined => {
-  switch (id.tag) {
+  switch (id.kind) {
     case "Disadvantage":
-      switch (id.disadvantage) {
-        case DisadvantageIdentifier.SmallSpellSelection:
+      switch (id.Disadvantage) {
+        case "DisadvantageIdentifier.SmallSpellSelection":
           return 3 - caps.activeSpellworksCount
-        case DisadvantageIdentifier.FewerSermons:
+        case "DisadvantageIdentifier.FewerSermons":
           return 3 - caps.activeSermonsCount
-        case DisadvantageIdentifier.FewerVisions:
+        case "DisadvantageIdentifier.FewerVisions":
           return 3 - caps.activeVisionsCount
         default:
           return undefined
@@ -888,7 +774,7 @@ const getEntrySpecificMaximumLevel = (
 export const getMaximumLevel = (
   id: ActivatableIdentifier,
   levels: number | undefined,
-  instance: ActivatableInstance,
+  instance: RawActivatableInstance,
   dependencies: ActivatableDependency[],
   checkPrerequisites: (level: number) => boolean,
   caps: {
@@ -909,7 +795,7 @@ export const getMaximumLevel = (
         dep.level !== undefined &&
         deepEqual(
           instance.options,
-          dep.options?.map(opt => ({ type: "Predefined", id: opt } as const)),
+          dep.options?.map(opt => ({ type: "Predefined", id: opt }) as const),
         )
           ? Math.min(acc, dep.level - 1)
           : acc,
@@ -920,148 +806,12 @@ export const getMaximumLevel = (
 }
 
 /**
- * Returns all activatable entries with their corresponding dynamic entry,
- * extended by whether the entry can be activated and configuration options.
- */
-export const getInactiveActivatables = <
-  K extends string,
-  T extends {
-    id: number
-    maximum?: number
-    levels?: number
-    prerequisites?: P[]
-    ap_value: AdventurePointsValue | number
-    src: PublicationRefs
-    translations: LocaleMap<{ input?: string }>
-  },
-  P = T extends { prerequisites?: (infer P1)[] } ? P1 : never,
->(
-  kind: K,
-  staticActivatables: T[],
-  getDynamicActivatableById: (id: number) => Activatable | undefined,
-  isEntryAvailable: (src: PublicationRefs) => boolean,
-  checkPrerequisites: (prerequisites: P[], level: number, id: number) => boolean,
-  checkSelectOptionPrerequisites: (prerequisites: GeneralPrerequisites) => boolean,
-  getSelectOptionsById: (id: ActivatableIdentifier) => ResolvedSelectOption[] | undefined,
-  createActivatableIdentifierObject: (id: number) => ActivatableIdentifier,
-  filterApplyingDependencies: FilterApplyingActivatableDependencies,
-  maximumEntriesCountDefault: number,
-  caps: {
-    activeSermonsCount: number
-    activeVisionsCount: number
-    activeSpellworksCount: number
-    getDynamicAdvantageById: GetById.Dynamic.Advantage
-    getDynamicDisadvantageById: GetById.Dynamic.Disadvantage
-  },
-): DisplayedInactiveActivatable<K, T>[] =>
-  staticActivatables
-    .map((staticActivatable): DisplayedInactiveActivatable<K, T> | undefined => {
-      const idObject = createActivatableIdentifierObject(staticActivatable.id)
-      const dynamicActivatable = getDynamicActivatableById(staticActivatable.id)
-      const activations = dynamicActivatable?.instances.length ?? 0
-
-      if (
-        !isEntryAvailable(staticActivatable.src) ||
-        hasReachedMaximumEntries(activations, staticActivatable.maximum, maximumEntriesCountDefault)
-      ) {
-        return undefined
-      }
-
-      const dependencies =
-        dynamicActivatable === undefined
-          ? []
-          : filterApplyingDependencies(dynamicActivatable.dependencies)
-
-      const countOptionsForCurrent = (optionId: SelectOptionIdentifier, atIndex?: number) =>
-        countOptions(dynamicActivatable, optionId, { atIndex })
-
-      const hasProhibitingDependency = (optionId: SelectOptionIdentifier) =>
-        dependencies.some(
-          dep =>
-            dep.active === false &&
-            appliesToInstanceLoose(dep, { options: [{ type: "Predefined", id: optionId }] }),
-        )
-
-      const paramModifiers = getEntrySpecificDisplayParameterModifiers(
-        idObject,
-        activations,
-        typeof staticActivatable.ap_value === "number"
-          ? { tag: "Fixed", fixed: staticActivatable.ap_value }
-          : staticActivatable.ap_value,
-        countOptionsForCurrent,
-        staticActivatable.translations,
-        caps,
-      )
-
-      if (paramModifiers === undefined) {
-        return undefined
-      }
-
-      const {
-        isSelectOptionAvailable: isSelectOptionAvailableEntrySpecific = option =>
-          countOptionsForCurrent(option.id) < 1,
-        generateOptions,
-        isAvailable: isAvailableEntrySpecific = true,
-        levelPlacement: levelPlacementEntrySpecific = "before",
-        apValue,
-      } = paramModifiers
-
-      // TODO: Select Options may restrict available levels with prerequisites or in general with Languages
-
-      const options = getOptions(
-        idObject,
-        getSelectOptionsById,
-        getIsSelectOptionAvailable(
-          isEntryAvailable,
-          checkSelectOptionPrerequisites,
-          hasProhibitingDependency,
-          isSelectOptionAvailableEntrySpecific,
-        ),
-        generateOptions,
-      )
-
-      const maxLevel = getMaximumLevel(
-        idObject,
-        staticActivatable.levels,
-        {},
-        dependencies,
-        level =>
-          checkPrerequisites(staticActivatable.prerequisites ?? [], level, staticActivatable.id),
-        caps,
-      )
-
-      return {
-        kind,
-        static: staticActivatable,
-        dynamic: dynamicActivatable,
-        isAvailable:
-          !hasGeneralProhibitingDependency(dependencies) &&
-          checkPrerequisites(staticActivatable.prerequisites ?? [], 1, staticActivatable.id) &&
-          options !== undefined &&
-          (maxLevel === undefined || maxLevel > 0) &&
-          isAvailableEntrySpecific,
-        // TODO: hasReachedImpossibleMaximumLevel(max_level) ||
-        // TODO: doesNotApplyToMagActionsThoughRequired(required_apply_to_mag_actions)(wiki_entry)
-        options: options ?? [],
-        level:
-          maxLevel === undefined
-            ? undefined
-            : {
-                maximum: maxLevel,
-                placement: levelPlacementEntrySpecific,
-              },
-        apValue,
-      }
-    })
-    .filter(isNotNullish)
-
-/**
  * Gets a single resolved select option from a list of displayed options.
  */
 export const getSelectOptionFromDisplayedOption = (
   displayedOptions: DisplayedInactiveActivatableOption[],
-  id: SelectOptionIdentifier,
-): ResolvedSelectOption | undefined =>
+  id: ResolvedSelectOptionIdentifier,
+): ResolvedSelectOptionWithResolvedAPValue | undefined =>
   displayedOptions
     .find(
       orSome(
@@ -1069,7 +819,7 @@ export const getSelectOptionFromDisplayedOption = (
         isDisplayedInactiveActivatableOptionChoiceOrCustomizableText,
       ),
     )
-    ?.options.find(opt => equalsIdentifier(opt.id, id))
+    ?.options.find(opt => deepEqual(opt.id, id))
 
 // const isSocialSkill = (staticData: StaticDataRecord) =>
 //   pipe(

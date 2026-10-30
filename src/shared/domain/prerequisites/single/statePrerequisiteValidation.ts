@@ -1,13 +1,11 @@
-import { StatePrerequisite } from "@optolith/database-schema/gen"
-import { GetById } from "../../getTypes.ts"
-import { isStateActive } from "../../state.ts"
+import type { StatePrerequisite, State_ID } from "@optolith/database-schema/gen"
 
 /**
  * Checks a single state prerequisite if it’s matched.
  */
 export const checkStatePrerequisite = (
   caps: {
-    getDynamicStateById: GetById.Dynamic.State
+    isStateActive: (id: State_ID) => boolean
   },
   p: StatePrerequisite,
-): boolean => isStateActive(caps.getDynamicStateById, p.id.state)
+): boolean => caps.isStateActive(p.id)

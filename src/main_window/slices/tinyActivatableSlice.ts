@@ -1,5 +1,5 @@
 import { ActionCreatorWithPayload, Draft, UnknownAction, createAction } from "@reduxjs/toolkit"
-import { TinyActivatableMap } from "../../shared/domain/activatable/activatableEntry.ts"
+import { TinyActivatableMap } from "../../shared/domain/activatable/activatable.ts"
 import { Reducer, createImmerReducer } from "../../shared/utils/redux.ts"
 import { CharacterState } from "./characterSlice.ts"
 

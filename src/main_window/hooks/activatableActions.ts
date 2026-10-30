@@ -7,7 +7,7 @@ import {
   getCostDifferenceOnRemove,
   getCostOfInstance,
 } from "../../shared/domain/activatable/activatableActive.ts"
-import { ActivatableInstance } from "../../shared/domain/activatable/activatableEntry.ts"
+import { RawActivatableInstance } from "../../shared/domain/activatable/activatable.ts"
 import { equalsIdentifier } from "../../shared/domain/identifier.ts"
 import { useTranslate } from "../../shared/hooks/translate.ts"
 import { removeIndex } from "../../shared/utils/array.ts"
@@ -29,7 +29,7 @@ import { useAppDispatch, useAppSelector } from "./redux.ts"
  * Returns a set of callbacks for interaction with inactive activatable entries.
  */
 export const useInactiveActivatableActions = (
-  createAddAction: ActionCreatorWithPayload<{ id: number; instance: ActivatableInstance }>,
+  createAddAction: ActionCreatorWithPayload<{ id: number; instance: RawActivatableInstance }>,
   areEnoughAdventurePointsAvailableToBuy: (
     id: number,
     cost: number,
@@ -39,7 +39,7 @@ export const useInactiveActivatableActions = (
   const translate = useTranslate()
 
   const handleAdd = useCallback(
-    (params: { id: number; instance: ActivatableInstance }, cost: number) => {
+    (params: { id: number; instance: RawActivatableInstance }, cost: number) => {
       const enoughAP = areEnoughAdventurePointsAvailableToBuy(params.id, cost)
 
       if (isOk(enoughAP)) {
@@ -61,7 +61,7 @@ export const useInactiveActivatableActions = (
  * entries.
  */
 export const useInactiveSpecialAbilityActions = (
-  createAddAction: ActionCreatorWithPayload<{ id: number; instance: ActivatableInstance }>,
+  createAddAction: ActionCreatorWithPayload<{ id: number; instance: RawActivatableInstance }>,
 ) => {
   const areEnoughAdventurePointsAvailableToBuy = useAreEnoughAdventurePointsAvailableToBuy()
 
@@ -76,7 +76,7 @@ export const useInactiveSpecialAbilityActions = (
  */
 export const useInactiveAdvantageAndDisadvantageActions = (
   kind: "advantage" | "disadvantage",
-  createAddAction: ActionCreatorWithPayload<{ id: number; instance: ActivatableInstance }>,
+  createAddAction: ActionCreatorWithPayload<{ id: number; instance: RawActivatableInstance }>,
 ) => {
   const areEnoughAdventurePointsAvailableToBuyAnAdvantageOrDisadvantage =
     useAreEnoughAdventurePointsAvailableToBuyAnAdvantageOrDisadvantage()

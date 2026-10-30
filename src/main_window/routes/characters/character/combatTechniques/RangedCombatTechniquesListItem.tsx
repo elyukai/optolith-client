@@ -1,18 +1,18 @@
 import { toKebabCase } from "@elyukai/utils/string"
-import { FC, memo, useCallback } from "react"
+import { memo, useCallback, type FC } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
-import { fromRaw } from "../../../../../shared/domain/adventurePoints/improvementCost.ts"
 import type { DisplayedRangedCombatTechnique } from "../../../../../shared/domain/rated/combatTechnique.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { ExternalAPI } from "../../../../external.ts"
-import { useAppSelector } from "../../../../hooks/redux.ts"
-import { InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
-import { selectInlineLibraryEntryId } from "../../../../slices/inlineWikiSlice.ts"
+import { SharedActions } from "../../../../external.ts"
+import {
+  InlineLibraryManager,
+  type DisplayableMainIdentifier,
+} from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { SkillAdditionalValues } from "../skills/SkillAdditionalValues.tsx"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillImprovementCost } from "../skills/SkillImprovementCost.tsx"
@@ -22,6 +22,7 @@ type Props = {
   insertTopMargin?: boolean
   rangedCombatTechnique: DisplayedRangedCombatTechnique
   canRemove: boolean
+  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 const RangedCombatTechniquesListItem: FC<Props> = props => {
@@ -30,18 +31,19 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
     rangedCombatTechnique: {
       id,
       primaryAttributeValues,
-      dbEntry: { improvement_cost, translations },
+      improvementCost,
+      translations,
       value,
       isIncreasable,
       isDecreasable,
       attackBase,
     },
     canRemove,
+    selectedInlineLibraryEntryId,
   } = props
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
-  const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
 
   const { name = "???" } = translateMap(translations) ?? {}
 
@@ -62,8 +64,8 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
     <ListItem
       insertTopMargin={insertTopMargin}
       active={
-        inlineLibraryEntryId?.tag === "RangedCombatTechnique" &&
-        inlineLibraryEntryId.ranged_combat_technique === id
+        selectedInlineLibraryEntryId?.[0] === "RangedCombatTechnique" &&
+        selectedInlineLibraryEntryId[1] === id
       }
     >
       <ListItemName name={name} onClick={handleSelectForInfo} />
@@ -71,7 +73,7 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
       <ListItemGroup text={translate("Ranged Combat")} />
       <ListItemValues>
         <SkillRating sr={value} />
-        <SkillImprovementCost ic={fromRaw(improvement_cost)} />
+        <SkillImprovementCost ic={improvementCost} />
         <SkillAdditionalValues
           addValues={[
             { className: primaryClassName, value: primaryStr },
@@ -87,16 +89,14 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
       <SkillButtons
         addDisabled={!isIncreasable}
         removeDisabled={!isDecreasable}
-        addPoint={() => ExternalAPI.execute("incrementRated", "RangedCombatTechnique", id)}
-        setToMax={() => ExternalAPI.execute("incrementRatedToMax", "RangedCombatTechnique", id)}
+        addPoint={() => SharedActions.incrementRated("RangedCombatTechnique", id)}
+        setToMax={() => SharedActions.incrementRatedToMax("RangedCombatTechnique", id)}
         removePoint={
-          canRemove
-            ? () => ExternalAPI.execute("decrementRated", "RangedCombatTechnique", id)
-            : undefined
+          canRemove ? () => SharedActions.decrementRated("RangedCombatTechnique", id) : undefined
         }
         setToMin={
           canRemove
-            ? () => ExternalAPI.execute("decrementRatedToMin", "RangedCombatTechnique", id)
+            ? () => SharedActions.decrementRatedToMin("RangedCombatTechnique", id)
             : undefined
         }
         selectForInfo={handleSelectForInfo}

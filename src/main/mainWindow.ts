@@ -3,16 +3,19 @@ import type { Cache } from "@optolith/database-schema/cache"
 import type { Locale } from "@optolith/database-schema/gen"
 import Debug from "debug"
 import { BrowserWindow, app, ipcMain, shell } from "electron"
+import { runInAction } from "mobx"
 import * as path from "node:path"
 import type { ReadonlyTSONDB } from "tsondb/readonly"
-import { InitialSetupEventMessage } from "../main_window_preload/index.ts"
+import type { InitialSetupEventMessage } from "../main_window_preload/index.ts"
 import type { Characters } from "../shared/domain/character.ts"
 import { globalSettings } from "../shared/settings/main.ts"
 import { attachStateSelectorsToWindow } from "../shared/state.ts"
 import { getWindowBackgroundColor } from "./nativeTheme.ts"
 
 const debug = Debug("main:main")
+debug.log = console.log.bind(console)
 const debugRenderer = Debug("main:main:renderer")
+debugRenderer.log = console.log.bind(console)
 
 let mainWindow: BrowserWindow | undefined = undefined
 
@@ -42,7 +45,7 @@ export const createMainWindow = async (
       center: true,
       title: "Optolith",
       acceptFirstMouse: true,
-      backgroundColor: getWindowBackgroundColor(globalSettings.theme),
+      backgroundColor: getWindowBackgroundColor(runInAction(() => globalSettings.theme)),
       webPreferences: {
         preload: path.join(__dirname, "renderer_main_preload.cjs"),
       },
@@ -104,7 +107,7 @@ export const createMainWindow = async (
       ]),
       cache,
       locales,
-      globalSettings: globalSettings.toJSON(),
+      globalSettings: runInAction(() => globalSettings.toJSON()),
       systemLocale: app.getLocale(),
     }
 
@@ -114,7 +117,9 @@ export const createMainWindow = async (
       if (mainWindow) {
         attachStateSelectorsToWindow(
           mainWindow,
-          characters.characters["550e8400-e29b-11d4-a716-446655440000"]!.selectors,
+          runInAction(
+            () => characters.characters["550e8400-e29b-11d4-a716-446655440000"]!.selectors,
+          ),
         )
 
         mainWindow.show()

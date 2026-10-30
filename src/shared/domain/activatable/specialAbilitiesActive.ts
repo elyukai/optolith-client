@@ -13,7 +13,7 @@ import { GetById, Singleton } from "../getTypes.ts"
 import { getCreateIdentifierObject } from "../identifier.ts"
 import { checkPrerequisitesOfGeneralEntryWithLevels } from "../prerequisites/fullPrerequisiteValidationForType.ts"
 import { DisplayedActiveActivatable, getActiveActivatables } from "./activatableActive.ts"
-import { Activatable } from "./activatableEntry.ts"
+import { Activatable } from "./activatable.ts"
 import { SpecialAbilityTagTypeMap } from "./specialAbilities.ts"
 
 /**

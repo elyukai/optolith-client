@@ -1,5 +1,4 @@
-import { ImprovementCost } from "../../../shared/domain/adventurePoints/improvementCost.ts"
-import { MagicalTraditionIdentifier } from "../../../shared/domain/identifier.ts"
+import { MagicalTraditionIdentifier } from "@optolith/database-schema/types/_Identifier"
 import { getImprovementCostForAnimistPower } from "../../../shared/domain/rated/animistPower.ts"
 import { createEmptyDynamicMagicalAction } from "../../../shared/domain/rated/magicalActions.ts"
 import { createActivatableRatedSlice } from "../activatableRatedSlice.ts"

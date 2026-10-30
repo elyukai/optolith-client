@@ -1,11 +1,8 @@
+import { arrayEqual } from "@elyukai/utils/equality"
+import { isNotNullish } from "@elyukai/utils/nullable"
 import { useMemo } from "react"
-import { arrayEqual, filterNonNullable } from "../../shared/utils/array.ts"
-import { selectCanRemove } from "../selectors/characterSelectors.ts"
-import { selectCurrentCulture } from "../selectors/cultureSelectors.ts"
-import { selectCurrentRace } from "../selectors/raceSelectors.ts"
-import { selectIsBlessedOne, selectIsSpellcaster } from "../selectors/traditionSelectors.ts"
-import { selectIsCharacterCreationFinished } from "../slices/characterSlice.ts"
-import { RoutePath, selectRoute } from "../slices/routeSlice.ts"
+import { SharedState } from "../external.ts"
+import { type RoutePath, selectRoute } from "../slices/routeSlice.ts"
 import { useAppSelector } from "./redux.ts"
 
 type RouteGroupName =
@@ -74,12 +71,15 @@ export const useVisibleTabs = () => {
   const phase = 3 as number
   const isHitZoneArmorEnabled = true as boolean
   const arePactsAvailable = true as boolean
-  const isCharacterCreationFinished = useAppSelector(selectIsCharacterCreationFinished)
-  const isRemovingEnabled = useAppSelector(selectCanRemove)
-  const isRaceSelected = useAppSelector(selectCurrentRace) !== undefined
-  const isCultureSelected = useAppSelector(selectCurrentCulture) !== undefined
-  const isSpellcaster = useAppSelector(selectIsSpellcaster)
-  const isBlessedOne = useAppSelector(selectIsBlessedOne)
+
+  const {
+    isCharacterCreationFinished,
+    canRemove: isRemovingEnabled,
+    isRaceSelected,
+    isCultureSelected,
+    isSpellcaster,
+    isBlessedOne,
+  } = SharedState
 
   const characterId = currentRoute[0] === "characters" ? currentRoute[1] : undefined
 
@@ -87,37 +87,41 @@ export const useVisibleTabs = () => {
     (): DisplayRoute[] =>
       characterId === undefined
         ? []
-        : filterNonNullable([
+        : [
             {
               type: "group",
               name: "profile",
-              routes: filterNonNullable([
+              routes: [
                 "profile" as const,
                 // "personal_data",
                 isCharacterCreationFinished ? ("character_sheet" as const) : undefined,
                 arePactsAvailable ? ("pact" as const) : undefined, // "US25102", "US25008"
                 "rules" as const,
-              ]).map(route => ["characters", characterId, route]),
-            },
+              ]
+                .filter(isNotNullish)
+                .map(route => ["characters", characterId, route]),
+            } satisfies DisplayRoute,
             phase === 1
-              ? {
+              ? ({
                   type: "group",
                   name: "race_culture_profession",
-                  routes: filterNonNullable([
+                  routes: [
                     "race" as const,
                     isRaceSelected ? ("culture" as const) : undefined,
                     isRaceSelected && isCultureSelected ? ("profession" as const) : undefined,
-                  ]).map(route => ["characters", characterId, route]),
-                }
+                  ]
+                    .filter(isNotNullish)
+                    .map(route => ["characters", characterId, route]),
+                } satisfies DisplayRoute)
               : undefined,
             phase > 1
-              ? {
+              ? ({
                   type: "single",
                   route: ["characters", characterId, "attributes"],
-                }
+                } satisfies DisplayRoute)
               : undefined,
             phase > 1 || isRemovingEnabled
-              ? {
+              ? ({
                   type: "group",
                   name: "advantages_disadvantages",
                   routes: ["advantages" as const, "disadvantages" as const].map(route => [
@@ -125,33 +129,37 @@ export const useVisibleTabs = () => {
                     characterId,
                     route,
                   ]),
-                }
+                } satisfies DisplayRoute)
               : undefined,
             phase > 1
-              ? {
+              ? ({
                   type: "group",
                   name: "abilities",
-                  routes: filterNonNullable([
+                  routes: [
                     "skills" as const,
                     "combat_techniques" as const,
                     "special_abilities" as const,
                     isSpellcaster ? ("spells" as const) : undefined,
                     isBlessedOne ? ("liturgical_chants" as const) : undefined,
-                  ]).map(route => ["characters", characterId, route]),
-                }
+                  ]
+                    .filter(isNotNullish)
+                    .map(route => ["characters", characterId, route]),
+                } satisfies DisplayRoute)
               : undefined,
             phase > 1
-              ? {
+              ? ({
                   type: "group",
                   name: "belongings",
-                  routes: filterNonNullable([
+                  routes: [
                     "equipment" as const,
                     isHitZoneArmorEnabled ? ("hit_zone_armor" as const) : undefined,
                     "pets" as const,
-                  ]).map(route => ["characters", characterId, route]),
-                }
+                  ]
+                    .filter(isNotNullish)
+                    .map(route => ["characters", characterId, route]),
+                } satisfies DisplayRoute)
               : undefined,
-          ]),
+          ].filter(isNotNullish),
     [
       characterId,
       isCharacterCreationFinished,

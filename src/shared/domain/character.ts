@@ -1,53 +1,59 @@
+import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
+import { isNotNullish } from "@elyukai/utils/nullable"
+import { isInRange } from "@elyukai/utils/range"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type {
-  Culture,
-  ProfessionVariant,
-  ProfessionVersion,
-  Race,
-  RaceVariant,
+  ActivatableIdentifier,
+  Aspect_ID,
+  MagicalTradition_ID,
+  Property_ID,
+  RatedIdentifier,
+  SkillWithEnhancementsIdentifier,
+  TinyActivatableIdentifier,
 } from "@optolith/database-schema/gen"
-import { computed, observable } from "mobx"
-import type { Database } from "../database.ts"
+import { action, computed, observable } from "mobx"
+import type { Case } from "tsondb/schema/gen"
+import type { Global } from "../global.ts"
 import type { CharacterIPCActions } from "../ipc.ts"
 import type { StateActionsAsParameters } from "../state.ts"
-import type { LocaleEnvironment } from "../utils/locale.ts"
-import {
-  ActivatableMap,
-  CharacterActivatables,
-  TinyActivatableMap,
-} from "./activatable/activatableEntry.ts"
+import { CharacterActivatables, type CharacterActivatable } from "./activatable/activatable.ts"
+import { getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages } from "./activatable/advantagesDisadvantages.ts"
 import { CharacterSpecialAbilities } from "./activatable/specialAbilities.ts"
-import { getTotalAdventurePointsFromCache } from "./adventurePoints/cache.ts"
-import { Color } from "./color.ts"
-import { CultureDependency } from "./culture.ts"
-import { CharacterDerivedCharacteristics, Energy, EnergyWithBuyBack } from "./energy.ts"
+import type { TinyActivatable, TinyActivatables } from "./activatable/tinyActivatable.ts"
+import { CharacterCulture } from "./culture.ts"
+import { CharacterCurriculum } from "./curriculum.ts"
+import { fromUniformCase } from "./databaseEnum.ts"
+import { CharacterDerivedCharacteristics } from "./energy.ts"
 import { CharacterExperienceLevel } from "./experienceLevel.ts"
-import { Pact, PactDependency } from "./pact.ts"
-import { Purse } from "./purse.ts"
-import { CharacterRace, RaceDependency } from "./race.ts"
+import type { CharacterPact } from "./pact.ts"
+import { CharacterPersonalData } from "./personalData.ts"
+import { CharacterPersonalityTraits } from "./personalityTraits.ts"
+import {
+  createCapabilitiesFromCharacter,
+  type AllCapabilities,
+} from "./prerequisites/single/index.ts"
+import { CharacterProfession } from "./profession.ts"
+import type { Purse } from "./purse.ts"
+import { CharacterRace } from "./race.ts"
 import { CharacterAttributes } from "./rated/attribute.ts"
 import { CharacterCombatTechniques } from "./rated/combatTechnique.ts"
-import { PrimaryAttributeDependency } from "./rated/primaryAttribute.ts"
-import {
-  ActivatableRatedMap,
-  ActivatableRatedWithEnhancementsMap,
-  RatedMap,
-} from "./rated/ratedEntry.ts"
+import { CharacterBlessings, CharacterLiturgicalChants } from "./rated/liturgicalChant.ts"
+import type { PrimaryAttributeDependency } from "./rated/primaryAttribute.ts"
+import type { ActivatableRatedMap } from "./rated/ratedEntry.ts"
 import { CharacterSkills } from "./rated/skill.ts"
+import { CharacterCantrips, CharacterSpellworks } from "./rated/spell.ts"
 import { CharacterRules } from "./rules.ts"
-import { FocusRuleInstance } from "./rules/focusRule.ts"
-import { OptionalRuleInstance } from "./rules/optionalRule.ts"
-import { Sex, SexDependency } from "./sex.ts"
-import { SocialStatusDependency } from "./socialStatus.ts"
-import { PublicationDependency } from "./sources/publicationDependency.ts"
-import { StateInstance } from "./state.ts"
+import { CharacterStates } from "./state.ts"
 
 export class Character {
+  readonly global: Global
   readonly #characters: Characters
 
   readonly id: string
 
   @observable accessor name: string
+
+  @observable accessor avatar: string | undefined
 
   /**
    * The rules settings for the character.
@@ -67,6 +73,10 @@ export class Character {
     return !this.isCharacterCreationFinished
   }
 
+  @computed get canFinishCharacterCreation() {
+    return isInRange([0, 10], this.adventurePointsAvailable)
+  }
+
   /**
    * Total adventure points.
    */
@@ -82,6 +92,23 @@ export class Character {
    */
   @observable accessor race: CharacterRace | undefined
 
+  /**
+   * An object storing the identifier of the culture and if the cultural package has been applied.
+   */
+  @observable accessor culture: CharacterCulture | undefined
+
+  /**
+   * An object storing the identifiers of the profession, its instance and its optional profession variant.
+   */
+  @observable accessor profession: CharacterProfession | undefined
+
+  @observable accessor curriculum: CharacterCurriculum | undefined
+
+  readonly states: CharacterStates
+  readonly personalData: CharacterPersonalData
+  readonly personalityTraits: CharacterPersonalityTraits
+  @observable accessor pact: CharacterPact | undefined
+
   readonly attributes: CharacterAttributes
   readonly derivedCharacteristics: CharacterDerivedCharacteristics
 
@@ -92,38 +119,62 @@ export class Character {
   readonly closeCombatTechniques: CharacterCombatTechniques<"CloseCombatTechnique">
   readonly rangedCombatTechniques: CharacterCombatTechniques<"RangedCombatTechnique">
 
+  readonly cantrips: CharacterCantrips
+  readonly spells: CharacterSpellworks<"Spell">
+  readonly rituals: CharacterSpellworks<"Ritual">
+  readonly blessings: CharacterBlessings
+  readonly liturgicalChants: CharacterLiturgicalChants<"LiturgicalChant">
+  readonly ceremonies: CharacterLiturgicalChants<"Ceremony">
+
   readonly specialAbilities: CharacterSpecialAbilities
 
-  constructor(
-    localeEnvironment: LocaleEnvironment,
-    db: Database,
-    characters: Characters,
-    id: string,
-  ) {
+  @observable accessor magicalPrimaryAttributeDependencies: PrimaryAttributeDependency[] = []
+  @observable accessor blessedPrimaryAttributeDependencies: PrimaryAttributeDependency[] = []
+
+  readonly prerequisiteCapabilities: AllCapabilities
+
+  constructor(global: Global, characters: Characters, id: string) {
+    this.global = global
     this.#characters = characters
     this.id = id
     this.name = "Alrik"
-    this.rules = new CharacterRules(db, this, localeEnvironment, false, [])
+    this.rules = new CharacterRules(global, true, [])
     this.isCharacterCreationFinished = false
     this.totalAdventurePoints = 1100
     this.experienceLevel = new CharacterExperienceLevel(
-      db,
+      global,
       this,
       "2b0a18c5-40a8-4c86-98b3-a93c85e82497",
     )
     this.race = new CharacterRace(
-      db,
+      global,
       "252841cf-f2d4-4fb9-af56-30de48531db5",
       "48a1fe0b-ec55-4992-b47b-e1086f2a583f",
     )
-    this.attributes = new CharacterAttributes(db, this)
-    this.derivedCharacteristics = new CharacterDerivedCharacteristics(db, this)
-    this.advantages = new CharacterActivatables(db, this, "Advantage")
-    this.disadvantages = new CharacterActivatables(db, this, "Disadvantage")
-    this.skills = new CharacterSkills(db, this)
-    this.closeCombatTechniques = new CharacterCombatTechniques(db, this, "CloseCombatTechnique")
-    this.rangedCombatTechniques = new CharacterCombatTechniques(db, this, "RangedCombatTechnique")
-    this.specialAbilities = new CharacterSpecialAbilities(db, this)
+    this.culture = new CharacterCulture(global, "481c50a3-416c-4aa9-8ee9-dc93cc72c2b3")
+    this.profession = new CharacterProfession(global, this, "0a9b8d85-3d9e-4297-aea0-51549b520ed6")
+    this.states = new CharacterStates(global, this)
+    this.personalData = new CharacterPersonalData(global, this)
+    this.personalityTraits = new CharacterPersonalityTraits()
+    this.attributes = new CharacterAttributes(global, this)
+    this.derivedCharacteristics = new CharacterDerivedCharacteristics(global, this)
+    this.advantages = new CharacterActivatables(global, this, "Advantage")
+    this.disadvantages = new CharacterActivatables(global, this, "Disadvantage")
+    this.skills = new CharacterSkills(global, this)
+    this.closeCombatTechniques = new CharacterCombatTechniques(global, this, "CloseCombatTechnique")
+    this.rangedCombatTechniques = new CharacterCombatTechniques(
+      global,
+      this,
+      "RangedCombatTechnique",
+    )
+    this.cantrips = new CharacterCantrips(global, this)
+    this.spells = new CharacterSpellworks(global, this, "Spell")
+    this.blessings = new CharacterBlessings(global, this)
+    this.rituals = new CharacterSpellworks(global, this, "Ritual")
+    this.liturgicalChants = new CharacterLiturgicalChants(global, this, "LiturgicalChant")
+    this.ceremonies = new CharacterLiturgicalChants(global, this, "Ceremony")
+    this.specialAbilities = new CharacterSpecialAbilities(global, this)
+    this.prerequisiteCapabilities = createCapabilitiesFromCharacter(global, this)
   }
 
   @computed
@@ -136,6 +187,10 @@ export class Character {
       this.skills.adventurePointsTotal.general +
       this.closeCombatTechniques.adventurePointsTotal.general +
       this.rangedCombatTechniques.adventurePointsTotal.general +
+      this.spells.adventurePointsTotal.general +
+      this.rituals.adventurePointsTotal.general +
+      this.liturgicalChants.adventurePointsTotal.general +
+      this.ceremonies.adventurePointsTotal.general +
       this.specialAbilities.adventurePointsTotal.general
     )
   }
@@ -151,126 +206,354 @@ export class Character {
       total: this.totalAdventurePoints,
       spent: this.adventurePointsSpent,
       available: this.adventurePointsAvailable,
-      spentOnAdvantages: getTotalAdventurePointsFromCache(this.advantages.adventurePointsTotal),
+      spentOnAdvantages: this.advantages.adventurePointsTotal.getTotal(),
       spentOnMagicalAdvantages: 0,
       spentOnBlessedAdvantages: 0,
-      spentOnDisadvantages: getTotalAdventurePointsFromCache(
-        this.disadvantages.adventurePointsTotal,
-      ),
+      spentOnDisadvantages: this.disadvantages.adventurePointsTotal.getTotal(),
       spentOnMagicalDisadvantages: 0,
       spentOnBlessedDisadvantages: 0,
       spentOnRace: 0,
       spentOnProfession: 0,
-      spentOnAttributes: getTotalAdventurePointsFromCache(this.attributes.adventurePointsTotal),
-      spentOnSkills: getTotalAdventurePointsFromCache(this.skills.adventurePointsTotal),
+      spentOnAttributes: this.attributes.adventurePointsTotal.getTotal(),
+      spentOnSkills: this.skills.adventurePointsTotal.getTotal(),
       spentOnCombatTechniques:
-        getTotalAdventurePointsFromCache(this.closeCombatTechniques.adventurePointsTotal) +
-        getTotalAdventurePointsFromCache(this.rangedCombatTechniques.adventurePointsTotal),
-      spentOnSpells: 0,
+        this.closeCombatTechniques.adventurePointsTotal.getTotal() +
+        this.rangedCombatTechniques.adventurePointsTotal.getTotal(),
+      spentOnSpells:
+        this.spells.adventurePointsTotal.getTotal() + this.rituals.adventurePointsTotal.getTotal(),
       spentOnCantrips: 0,
-      spentOnLiturgicalChants: 0,
+      spentOnLiturgicalChants:
+        this.liturgicalChants.adventurePointsTotal.getTotal() +
+        this.ceremonies.adventurePointsTotal.getTotal(),
       spentOnBlessings: 0,
-      spentOnSpecialAbilities: getTotalAdventurePointsFromCache(
-        this.specialAbilities.adventurePointsTotal,
-      ),
-      spentOnEnergies: getTotalAdventurePointsFromCache(
-        this.derivedCharacteristics.adventurePointsTotal,
-      ),
+      spentOnSpecialAbilities: this.specialAbilities.adventurePointsTotal.getTotal(),
+      spentOnEnergies: this.derivedCharacteristics.adventurePointsTotal.getTotal(),
     }
+  }
+
+  getRatedCollection<E extends RatedIdentifier["kind"]>(entity: E): RatedCollectionByEntity<E> {
+    switch (entity) {
+      case "Attribute":
+        return this.attributes as RatedCollectionByEntity<E>
+      case "Skill":
+        return this.skills as RatedCollectionByEntity<E>
+      case "CloseCombatTechnique":
+        return this.closeCombatTechniques as RatedCollectionByEntity<E>
+      case "RangedCombatTechnique":
+        return this.rangedCombatTechniques as RatedCollectionByEntity<E>
+      case "Spell":
+        return this.spells as RatedCollectionByEntity<E>
+      case "Ritual":
+        return this.rituals as RatedCollectionByEntity<E>
+      case "LiturgicalChant":
+        return this.liturgicalChants as RatedCollectionByEntity<E>
+      case "Ceremony":
+        return this.ceremonies as RatedCollectionByEntity<E>
+      default:
+        return assertExhaustive(entity)
+    }
+  }
+
+  getRatingById(
+    id: Case<"Attribute" | "Skill" | "CloseCombatTechnique" | "RangedCombatTechnique", string>,
+  ): number {
+    return this.getRatedCollection(id.kind).getValueById(fromUniformCase(id))
+  }
+
+  getActivatableRatingById(
+    id: Case<"Spell" | "Ritual" | "LiturgicalChant" | "Ceremony", string>,
+  ): number | undefined {
+    return this.getRatedCollection(id.kind).getValueById(fromUniformCase(id))
+  }
+
+  getActivatableRatedWithEnhancementsCollection(entity: SkillWithEnhancementsIdentifier["kind"]) {
+    switch (entity) {
+      case "Spell":
+        return this.spells
+      case "Ritual":
+        return this.rituals
+      case "LiturgicalChant":
+        return this.liturgicalChants
+      case "Ceremony":
+        return this.ceremonies
+      default:
+        return assertExhaustive(entity)
+    }
+  }
+
+  getActivatableCollection<E extends ActivatableIdentifier["kind"]>(
+    entity: E,
+  ): CharacterActivatables<E> {
+    switch (entity) {
+      case "Advantage":
+        return this.advantages as CharacterActivatables<E>
+      case "Disadvantage":
+        return this.disadvantages as CharacterActivatables<E>
+      default:
+        return this.specialAbilities.getSpecialAbilitiesCollection(
+          entity,
+        ) as CharacterActivatables<E>
+    }
+  }
+
+  getTinyActivatableCollection<E extends TinyActivatableIdentifier["kind"]>(
+    entity: E,
+  ): TinyActivatables<E, TinyActivatable<E>> {
+    switch (entity) {
+      case "Blessing":
+        return this.blessings as unknown as TinyActivatables<E, TinyActivatable<E>>
+      case "Cantrip":
+        return this.cantrips as unknown as TinyActivatables<E, TinyActivatable<E>>
+      default:
+        return assertExhaustive(entity)
+    }
+  }
+
+  @computed
+  get maximumSkillRatingBonusEntry(): CharacterActivatable | undefined {
+    const id = this.global.settings.skills.maximumSkillRatingBonusEntry
+    return this.getActivatableCollection(id.kind).getById(fromUniformCase(id))
+  }
+
+  @computed
+  get maximumCombatTechniqueRatingBonusEntry(): CharacterActivatable | undefined {
+    const id = this.global.settings.combatTechniques.maximumCombatTechniqueRatingBonusEntry
+    return this.getActivatableCollection(id.kind).getById(fromUniformCase(id))
+  }
+
+  @computed
+  get activeMagicalTraditions(): CharacterActivatable<"MagicalTradition">[] {
+    return this.specialAbilities.getSpecialAbilitiesCollection("MagicalTradition").active
+  }
+
+  @computed
+  get canLearnCantrips(): boolean {
+    return (
+      isNotEmpty(this.activeMagicalTraditions) &&
+      this.activeMagicalTraditions.every(trad => trad.dbEntry.can_learn_cantrips)
+    )
+  }
+
+  @computed
+  get canLearnSpells(): boolean {
+    return (
+      isNotEmpty(this.activeMagicalTraditions) &&
+      this.activeMagicalTraditions.every(trad => trad.dbEntry.can_learn_spells)
+    )
+  }
+
+  @computed
+  get canLearnRituals(): boolean {
+    return (
+      isNotEmpty(this.activeMagicalTraditions) &&
+      this.activeMagicalTraditions.every(trad => trad.dbEntry.can_learn_rituals)
+    )
+  }
+
+  @computed
+  get applicableMagicalTraditionIds(): MagicalTradition_ID[] {
+    return this.activeMagicalTraditions
+      .flatMap(trad => [trad.id, trad.dbEntry.use_arcane_spellworks_from_tradition])
+      .filter(isNotNullish)
+  }
+
+  /**
+   * Checks if the maximum number of spellworks has been reached.
+   */
+  @computed
+  get isMaximumOfSpellworksReached() {
+    //     TODO: if (isLastTrad (SpecialAbilityId.TraditionSchelme)) {
+    //       const max_spellworks = pipe_ (
+    //                                hero,
+    //                                HA.specialAbilities,
+    //                                lookup<string> (SpecialAbilityId.Imitationszauberei),
+    //                                bindF (pipe (ADA.active, listToMaybe)),
+    //                                bindF (AOA.tier),
+    //                                fromMaybe (0)
+    //                              )
+
+    //       return current_count >= max_spellworks
+    //     }
+
+    //     // Count maximum for Intuitive Mages and Animisten
+    //     const BASE_MAX_INTU_ANIM = 3
+
+    //    TODO:  if (isLastTrad (SpecialAbilityId.TraditionIntuitiveMage)
+    //         || isLastTrad (SpecialAbilityId.TraditionAnimisten)) {
+    //       const mbonus = lookup<string> (AdvantageId.LargeSpellSelection) (HA.advantages (hero))
+    //       const mmalus = lookup<string> (DisadvantageId.SmallSpellSelection) (HA.disadvantages (hero))
+
+    //       const max_spells = modifyByLevel (BASE_MAX_INTU_ANIM) (mbonus) (mmalus)
+
+    //       if (current_count >= max_spells) {
+    //         return true
+    //       }
+    //     }
+
+    return this.isInCharacterCreation
+      ? this.spells.activeCount + this.rituals.activeCount >=
+          (this.experienceLevel.start?.max_number_of_spells_liturgical_chants ?? 0)
+      : false
+  }
+
+  @computed
+  get activeUnfamiliarCount(): number {
+    return this.spells.activeUnfamiliarCount + this.rituals.activeUnfamiliarCount
+  }
+
+  /**
+   * Checks if the maximum number of spellworks has been reached.
+   */
+  @computed
+  get isMaximumOfUnfamiliarSpellworksReached() {
+    return this.isInCharacterCreation
+      ? this.activeUnfamiliarCount >=
+          (this.experienceLevel.start?.max_number_of_unfamiliar_spells ?? 0)
+      : false
+  }
+
+  @computed
+  get propertyIdsWithUnlockedMaximum(): Property_ID[] {
+    const sourceId = this.global.settings.spellworks.maximumRatingUnlockEntry
+    return (
+      this.getActivatableCollection(sourceId.kind)
+        .getById(fromUniformCase(sourceId))
+        ?.getOptions()
+        .flatMap(option =>
+          option.type === "Predefined" && option.id.kind === "Property" ? [option.id.Property] : [],
+        ) ?? []
+    )
+  }
+
+  @computed
+  get maximumAdventurePointsForMagicalAdvantagesAndDisadvantages(): number {
+    return getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages(
+      this.activeMagicalTraditions,
+    )
+  }
+
+  @computed
+  get activeBlessedTradition(): CharacterActivatable<"BlessedTradition"> | undefined {
+    return this.specialAbilities.getSpecialAbilitiesCollection("BlessedTradition").active[0]
+  }
+
+  /**
+   * Checks if the maximum number of spellworks has been reached.
+   */
+  @computed
+  get isMaximumOfLiturgicalChantsReached() {
+    return this.isInCharacterCreation
+      ? this.liturgicalChants.activeCount + this.ceremonies.activeCount >=
+          (this.experienceLevel.start?.max_number_of_spells_liturgical_chants ?? 0)
+      : false
+  }
+
+  @computed
+  get aspectIdsWithUnlockedMaximum(): Aspect_ID[] {
+    const sourceId = this.global.settings.liturgicalChants.maximumRatingUnlockEntry
+    return (
+      this.getActivatableCollection(sourceId.kind)
+        .getById(fromUniformCase(sourceId))
+        ?.getOptions()
+        .flatMap(option =>
+          option.type === "Predefined" && option.id.kind === "Aspect" ? [option.id.Aspect] : [],
+        ) ?? []
+    )
+  }
+
+  @action
+  setName(newName: string) {
+    this.name = newName
   }
 
   handleIPCAction(...args: StateActionsAsParameters<CharacterIPCActions>) {
     switch (args[0]) {
+      case "setName":
+        return this.setName(args[1][0])
+      case "rerollHairColor":
+        return this.personalData.rerollHairColor()
+      case "rerollEyeColor":
+        return this.personalData.rerollEyeColor()
+      case "rerollSize":
+        return this.personalData.rerollSize()
+      case "rerollWeight":
+        return this.personalData.rerollWeight()
+      case "setAge":
+        return this.personalData.setAge(args[1][0])
+      case "setCharacteristics":
+        return this.personalData.setCharacteristics(args[1][0])
+      case "setDateOfBirth":
+        return this.personalData.setDateOfBirth(args[1][0])
+      case "setFamily":
+        return this.personalData.setFamily(args[1][0])
+      case "setOtherInfo":
+        return this.personalData.setOtherInfo(args[1][0])
+      case "setPlaceOfBirth":
+        return this.personalData.setPlaceOfBirth(args[1][0])
+      case "setPredefinedEyeColor":
+        return this.personalData.setPredefinedEyeColor(args[1][0])
+      case "setPredefinedHairColor":
+        return this.personalData.setPredefinedHairColor(args[1][0])
+      case "setSize":
+        return this.personalData.setSize(args[1][0])
+      case "setSocialStatus":
+        return this.personalData.setSocialStatus(args[1][0])
+      case "setTitle":
+        return this.personalData.setTitle(args[1][0])
+      case "setWeight":
+        return this.personalData.setWeight(args[1][0])
       case "toggleIncludeAllPublications":
-        this.rules.toggleIncludeAllPublications()
-        break
+        return this.rules.toggleIncludeAllPublications()
       case "togglePublication":
-        this.rules.togglePublication(args[1][0])
-        break
+        return this.rules.togglePublication(args[1][0])
       case "toggleFocusRule":
-        this.rules.toggleFocusRule(args[1][0])
-        break
+        return this.rules.toggleFocusRule(args[1][0])
       case "toggleOptionalRule":
-        this.rules.toggleOptionalRule(args[1][0])
-        break
+        return this.rules.toggleOptionalRule(args[1][0])
+      case "setCustomProfessionName":
+        return this.profession?.setCustomProfessionName(args[1][0])
       case "incrementRated":
-        switch (args[1][0]) {
-          case "Attribute":
-            this.attributes.increment(args[1][1])
-            break
-          case "Skill":
-            this.skills.increment(args[1][1])
-            break
-          case "CloseCombatTechnique":
-            this.closeCombatTechniques.increment(args[1][1])
-            break
-          case "RangedCombatTechnique":
-            this.rangedCombatTechniques.increment(args[1][1])
-            break
-          default:
-            return assertExhaustive(args[1][0])
-        }
-        break
+        return this.getRatedCollection(args[1][0])?.increment(args[1][1])
       case "decrementRated":
-        switch (args[1][0]) {
-          case "Attribute":
-            this.attributes.decrement(args[1][1])
-            break
-          case "Skill":
-            this.skills.decrement(args[1][1])
-            break
-          case "CloseCombatTechnique":
-            this.closeCombatTechniques.decrement(args[1][1])
-            break
-          case "RangedCombatTechnique":
-            this.rangedCombatTechniques.decrement(args[1][1])
-            break
-          default:
-            return assertExhaustive(args[1][0])
-        }
-        break
+        return this.getRatedCollection(args[1][0])?.decrement(args[1][1])
       case "incrementRatedToMax":
-        switch (args[1][0]) {
-          case "Attribute":
-            this.attributes.incrementToMax(args[1][1])
-            break
-          case "Skill":
-            this.skills.incrementToMax(args[1][1])
-            break
-          case "CloseCombatTechnique":
-            this.closeCombatTechniques.incrementToMax(args[1][1])
-            break
-          case "RangedCombatTechnique":
-            this.rangedCombatTechniques.incrementToMax(args[1][1])
-            break
-          default:
-            return assertExhaustive(args[1][0])
-        }
-        break
+        return this.getRatedCollection(args[1][0])?.incrementToMax(args[1][1])
       case "decrementRatedToMin":
-        switch (args[1][0]) {
-          case "Attribute":
-            this.attributes.decrementToMin(args[1][1])
-            break
-          case "Skill":
-            this.skills.decrementToMin(args[1][1])
-            break
-          case "CloseCombatTechnique":
-            this.closeCombatTechniques.decrementToMin(args[1][1])
-            break
-          case "RangedCombatTechnique":
-            this.rangedCombatTechniques.decrementToMin(args[1][1])
-            break
-          default:
-            return assertExhaustive(args[1][0])
-        }
-        break
+        return this.getRatedCollection(args[1][0])?.decrementToMin(args[1][1])
       case "incrementDerivedCharacteristic":
-        this.derivedCharacteristics.increment(...args[1])
-        break
+        return this.derivedCharacteristics.increment(...args[1])
       case "decrementDerivedCharacteristic":
-        this.derivedCharacteristics.decrement(...args[1])
-        break
+        return this.derivedCharacteristics.decrement(...args[1])
+      case "addDerivedCharacteristicPermanentlyLost":
+        return this.derivedCharacteristics.addPermanentlyLost(...args[1])
+      case "decrementDerivedCharacteristicBoughtBack":
+        return this.derivedCharacteristics.decrementBoughtBack(...args[1])
+      case "decrementDerivedCharacteristicPermanentlyLost":
+        return this.derivedCharacteristics.decrementPermanentlyLost(...args[1])
+      case "incrementDerivedCharacteristicBoughtBack":
+        return this.derivedCharacteristics.incrementBoughtBack(...args[1])
+      case "incrementDerivedCharacteristicPermanentlyLost":
+        return this.derivedCharacteristics.incrementPermanentlyLost(...args[1])
+      case "addTinyActivatable":
+        return this.getTinyActivatableCollection(args[1][0]).activate(args[1][1])
+      case "removeTinyActivatable":
+        return this.getTinyActivatableCollection(args[1][0]).deactivate(args[1][1])
+      case "activateRated":
+        return this.getActivatableRatedWithEnhancementsCollection(args[1][0])?.activate(args[1][1])
+      case "deactivateRated":
+        return this.getActivatableRatedWithEnhancementsCollection(args[1][0])?.deactivate(
+          args[1][1],
+        )
+      case "addActivatable":
+        return this.getActivatableCollection(args[1][0])?.add(args[1][1], args[1][2])
+      case "setActivatableLevel":
+        return this.getActivatableCollection(args[1][0])?.setLevel(
+          args[1][1],
+          args[1][2],
+          args[1][3],
+        )
+      case "removeActivatable":
+        return this.getActivatableCollection(args[1][0])?.remove(args[1][1], args[1][2])
       default:
         return assertExhaustive(args)
     }
@@ -280,27 +563,77 @@ export class Character {
     return {
       characterOverviews: () => this.#characters.characterOverviews,
       name: () => this.name,
+      avatar: () => this.avatar,
+      sexName: () => this.personalData.sexName,
       startExperienceLevel: () => this.experienceLevel.start,
       currentExperienceLevel: () => this.experienceLevel.current,
+      canAddAdventurePoints: () => this.isCharacterCreationFinished,
+      showFinishCharacterCreation: () => !this.isCharacterCreationFinished,
+      canFinishCharacterCreation: () => isInRange([0, 10], this.adventurePointsAvailable),
+      canDefineCustomProfessionName: () => false, // TODO
+      availableHairColors: () => this.personalData.availableHairColors,
+      availableEyeColors: () => this.personalData.availableEyeColors,
+      randomHeightCalculationString: () => this.personalData.randomHeightCalculationString,
+      randomWeightCalculationString: () => this.personalData.randomWeightCalculationString,
+      availableSocialStatuses: () => this.personalData.availableSocialStatuses,
+      availableHairColorsIdDice: () => this.personalData.availableHairColorsIdDice,
+      availableEyeColorsIdDice: () => this.personalData.availableEyeColorsIdDice,
+      age: () => this.personalData.age,
+      characteristics: () => this.personalData.characteristics,
+      dateOfBirth: () => this.personalData.dateOfBirth,
+      family: () => this.personalData.family,
+      otherInfo: () => this.personalData.otherInfo,
+      placeOfBirth: () => this.personalData.placeOfBirth,
+      eyeColor: () => this.personalData.eyeColor,
+      predefinedEyeColor: () => this.personalData.predefinedEyeColor,
+      hairColor: () => this.personalData.hairColor,
+      predefinedHairColor: () => this.personalData.predefinedHairColor,
+      size: () => this.personalData.size,
+      socialStatus: () => this.personalData.socialStatus,
+      title: () => this.personalData.title,
+      weight: () => this.personalData.weight,
+      isRaceSelected: () => this.race !== undefined,
       race: () => this.race?.base,
       raceVariant: () => this.race?.variant,
+      raceName: () => this.race?.fullName,
+      isCultureSelected: () => this.culture !== undefined,
+      cultureName: () => this.culture?.name,
+      professionName: () => this.profession?.fullNameParts?.fullName,
       includeAllPublications: () => this.rules.includeAllPublications,
       publications: () => this.rules.publications,
-      focusRules: () => this.rules.focusRules,
-      optionalRules: () => this.rules.optionalRules,
+      focusRules: () => this.rules.focusRules.rulesForDisplay,
+      optionalRules: () => this.rules.optionalRules.rulesForDisplay,
       canRemove: () => this.canRemove,
       isInCharacterCreation: () => this.isInCharacterCreation,
+      isCharacterCreationFinished: () => this.isCharacterCreationFinished,
       adventurePointsStats: () => this.adventurePointsStats,
       attributes: () => this.attributes.attributes,
       attributesTotal: () => this.attributes.attributesTotal,
+      attributesTotalMaximum: () => this.attributes.attributesTotalMaximum,
       derivedCharacteristics: () => this.derivedCharacteristics.derivedCharacteristics,
-      activeAdvantages: () => this.advantages.active,
+      maximumAdventurePointsForMagicalAdvantagesAndDisadvantages: () =>
+        this.maximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
+      activeAdvantages: () => this.advantages.activeForDisplay,
       inactiveAdvantages: () => this.advantages.inactive,
-      activeDisadvantages: () => this.disadvantages.active,
+      activeDisadvantages: () => this.disadvantages.activeForDisplay,
       inactiveDisadvantages: () => this.disadvantages.inactive,
       skills: () => this.skills.skills,
       closeCombatTechniques: () => this.closeCombatTechniques.combatTechniques,
       rangedCombatTechniques: () => this.rangedCombatTechniques.combatTechniques,
+      isSpellcaster: () => this.activeMagicalTraditions.length > 0,
+      isBlessedOne: () => this.activeBlessedTradition !== undefined,
+      inactiveCantrips: () => this.cantrips.inactiveForDisplay,
+      inactiveSpells: () => this.spells.inactiveForDisplay,
+      inactiveRituals: () => this.rituals.inactiveForDisplay,
+      inactiveBlessings: () => this.blessings.inactiveForDisplay,
+      inactiveLiturgicalChants: () => this.liturgicalChants.inactiveForDisplay,
+      inactiveCeremonies: () => this.ceremonies.inactiveForDisplay,
+      activeCantrips: () => this.cantrips.activeForDisplay,
+      activeSpells: () => this.spells.activeForDisplay,
+      activeRituals: () => this.rituals.activeForDisplay,
+      activeBlessings: () => this.blessings.activeForDisplay,
+      activeLiturgicalChants: () => this.liturgicalChants.activeForDisplay,
+      activeCeremonies: () => this.ceremonies.activeForDisplay,
       activeSpecialAbilities: () => this.specialAbilities.active,
       inactiveSpecialAbilities: () => this.specialAbilities.inactive,
     } satisfies Record<string, () => unknown>
@@ -311,19 +644,28 @@ export class Character {
     return {
       id: this.id,
       name: this.name,
-      avatar: undefined, // TODO: this.avatar
+      avatar: this.avatar,
       dateCreated: new Date().toISOString(), // TODO: this.dateCreated
       dateLastModified: new Date().toISOString(), // TODO: this.dateLastModified
-      race: this.race?.base,
-      raceVariant: this.race?.variant,
-      culture: undefined, // TODO: this.culture
-      profession: undefined, // TODO: this.profession
-      professionVariant: undefined, // TODO: this.professionVariant
+      raceName: this.race?.fullName,
+      cultureName: this.culture?.name,
+      professionName: this.profession?.fullNameParts?.fullName,
       totalAdventurePoints: this.totalAdventurePoints,
       adventurePointsSpent: this.adventurePointsSpent,
     }
   }
 }
+
+type RatedCollectionByEntity<E extends RatedIdentifier["kind"]> = {
+  Attribute: CharacterAttributes
+  Skill: CharacterSkills
+  CloseCombatTechnique: CharacterCombatTechniques<"CloseCombatTechnique">
+  RangedCombatTechnique: CharacterCombatTechniques<"RangedCombatTechnique">
+  Spell: CharacterSpellworks<"Spell">
+  Ritual: CharacterSpellworks<"Ritual">
+  LiturgicalChant: CharacterLiturgicalChants<"LiturgicalChant">
+  Ceremony: CharacterLiturgicalChants<"Ceremony">
+}[E]
 
 export type AdventurePointsStats = {
   total: number
@@ -354,11 +696,9 @@ export type CharacterOverview = {
   avatar?: string
   dateCreated: string
   dateLastModified: string
-  race: Race | undefined
-  raceVariant: RaceVariant | undefined
-  culture: Culture | undefined
-  profession: ProfessionVersion | undefined
-  professionVariant: ProfessionVariant | undefined
+  raceName: string | undefined
+  cultureName: string | undefined
+  professionName: string | undefined
   totalAdventurePoints: number
   adventurePointsSpent: number
 }
@@ -366,11 +706,10 @@ export type CharacterOverview = {
 export class Characters {
   @observable accessor characters: Record<string, Character>
 
-  constructor(db: Database, localeEnvironment: LocaleEnvironment) {
+  constructor(global: Global) {
     this.characters = {
       "550e8400-e29b-11d4-a716-446655440000": new Character(
-        localeEnvironment,
-        db,
+        global,
         this,
         "550e8400-e29b-11d4-a716-446655440000",
       ),
@@ -382,6 +721,7 @@ export class Characters {
     return Object.values(this.characters).map(character => character.overview)
   }
 
+  @action
   handleIPCAction(...args: StateActionsAsParameters<CharacterIPCActions>) {
     this.characters["550e8400-e29b-11d4-a716-446655440000"]!.handleIPCAction(...args)
   }
@@ -435,293 +775,6 @@ export type _Character = {
    */
   isCharacterCreationFinished: boolean
 
-  /**
-   * An object storing the identifiers of the race and its optional race variant.
-   */
-  race: {
-    /**
-     * The base race identifier.
-     */
-    id: number
-
-    /**
-     * The race variant identifier.
-     */
-    variantId?: number
-
-    /**
-     * The identifier of the attribute adjustment that has been selected from the race.
-     */
-    selectedAttributeAdjustmentId: number
-
-    /**
-     * Dependencies on the selected race.
-     */
-    dependencies: RaceDependency[]
-  }
-
-  /**
-   * An object storing the identifier of the culture and if the cultural package has been applied.
-   */
-  culture: {
-    /**
-     * The culture identifier.
-     */
-    id: number
-
-    /**
-     * Describes whether the cultural package has been applied when creating the character.
-     */
-    isCulturalPackageApplied: boolean
-
-    /**
-     * Dependencies on the selected culture.
-     */
-    dependencies: CultureDependency[]
-  }
-
-  /**
-   * An object storing the identifiers of the profession, its instance and its optional profession variant.
-   */
-  profession: {
-    /**
-     * The base profession identifier.
-     */
-    id: number
-
-    /**
-     * The profession instance identifier. Profession instances are versions of the same profession but slightly different values, such as in extension rule books existing professions might get an additional style special ability.
-     */
-    instanceId: number
-
-    /**
-     * The profession variant identifier.
-     */
-    variantId?: number
-
-    /**
-     * A custom name for the profession, if provided.
-     */
-    customName?: string
-  }
-
-  /**
-   * An object storing the identifiers of the profession, its instance and its optional race variant.
-   */
-  curriculum?: {
-    /**
-     * The educational institution's curriculum identifier.
-     */
-    educationalInstitutionId: number
-
-    /**
-     * The lesson package identifier.
-     */
-    lessonPackageId?: number
-  }
-
-  /**
-   * The rules settings for the character.
-   */
-  rules: {
-    /**
-     * Whether the character makes use of all publications except for publications with adult content, which have to be specified explicitly using `include_publications`.
-     */
-    includeAllPublications: boolean
-
-    /**
-     * Explicitly used publications. If `include_all_publications` is set to `true`, only affects publications that are not covered by `include_all_publications`.
-     */
-    includePublications: number[]
-
-    /**
-     * Dependencies on certain publications.
-     */
-    publicationDependencies: PublicationDependency[]
-
-    /**
-     * A map of focus rules that may be active for the character.
-     */
-    focusRules: {
-      [id: number]: FocusRuleInstance
-    }
-
-    /**
-     * A map of optional rules that maybe be active for the character.
-     */
-    optionalRules: {
-      [id: number]: OptionalRuleInstance
-    }
-  }
-
-  /**
-   * A map of states that may be active for the character.
-   */
-  states: {
-    [id: number]: StateInstance
-  }
-
-  /**
-   * Personal data such as hair color and place of birth.
-   */
-  personalData: {
-    /**
-     * The character's sex. It does not have to be binary, although it always must be specified how to handle it in the context of binary sex prerequisites. You can also provide a custom sex with a custom name.
-     */
-    sex: Sex
-
-    /**
-     * Dependencies on the character’s sex.
-     */
-    sexDependencies: SexDependency[]
-
-    /**
-     * The family names and/or family members.
-     */
-    family?: string
-
-    /**
-     * The place where the character was born.
-     */
-    placeOfBirth?: string
-
-    /**
-     * The date when the character was born.
-     */
-    dateOfBirth?: string
-
-    /**
-     * The age of the character.
-     */
-    age?: string
-
-    /**
-     * The hair color of the character.
-     */
-    hairColor?: Color
-
-    /**
-     * The eye color of the character.
-     */
-    eyeColor?: Color
-
-    /**
-     * The size of the character.
-     */
-    size?: string
-
-    /**
-     * The weight of the character.
-     */
-    weight?: string
-
-    /**
-     * The character's title(s).
-     */
-    title?: string
-
-    socialStatus: {
-      /**
-       * The social status identifier.
-       */
-      id?: number
-
-      /**
-       * The social status dependencies.
-       */
-      dependencies: SocialStatusDependency[]
-    }
-
-    /**
-     * The character's characteristics.
-     */
-    characteristics?: string
-
-    /**
-     * Other information about the character.
-     */
-    otherInfo?: string
-  }
-
-  advantages: ActivatableMap
-  disadvantages: ActivatableMap
-
-  /**
-   * Lists of active special abilities, by group.
-   */
-  specialAbilities: {
-    advancedCombatSpecialAbilities: ActivatableMap
-    advancedKarmaSpecialAbilities: ActivatableMap
-    advancedMagicalSpecialAbilities: ActivatableMap
-    advancedSkillSpecialAbilities: ActivatableMap
-    ancestorGlyphs: ActivatableMap
-    arcaneOrbEnchantments: ActivatableMap
-    attireEnchantments: ActivatableMap
-    blessedTraditions: ActivatableMap
-    bowlEnchantments: ActivatableMap
-    brawlingSpecialAbilities: ActivatableMap
-    cauldronEnchantments: ActivatableMap
-    ceremonialItemSpecialAbilities: ActivatableMap
-    chronicleEnchantments: ActivatableMap
-    combatSpecialAbilities: ActivatableMap
-    combatStyleSpecialAbilities: ActivatableMap
-    commandSpecialAbilities: ActivatableMap
-    daggerRituals: ActivatableMap
-    familiarSpecialAbilities: ActivatableMap
-    fatePointSexSpecialAbilities: ActivatableMap
-    fatePointSpecialAbilities: ActivatableMap
-    foolsHatEnchantments: ActivatableMap
-    generalSpecialAbilities: ActivatableMap
-    instrumentEnchantments: ActivatableMap
-    karmaSpecialAbilities: ActivatableMap
-    krallenkettenzauber: ActivatableMap
-    liturgicalStyleSpecialAbilities: ActivatableMap
-    lycantropicGifts: ActivatableMap
-    magicalSigns: ActivatableMap
-    magicalSpecialAbilities: ActivatableMap
-    magicalTraditions: ActivatableMap
-    magicStyleSpecialAbilities: ActivatableMap
-    orbEnchantments: ActivatableMap
-    pactGifts: ActivatableMap
-    protectiveWardingCircleSpecialAbilities: ActivatableMap
-    ringEnchantments: ActivatableMap
-    sermons: ActivatableMap
-    sexSpecialAbilities: ActivatableMap
-    sickleRituals: ActivatableMap
-    sikaryanDrainSpecialAbilities: ActivatableMap
-    skillStyleSpecialAbilities: ActivatableMap
-    spellSwordEnchantments: ActivatableMap
-    staffEnchantments: ActivatableMap
-    toyEnchantments: ActivatableMap
-    trinkhornzauber: ActivatableMap
-    vampiricGifts: ActivatableMap
-    visions: ActivatableMap
-    wandEnchantments: ActivatableMap
-    weaponEnchantments: ActivatableMap
-  }
-
-  attributes: RatedMap
-
-  magicalPrimaryAttributeDependencies: PrimaryAttributeDependency[]
-  blessedPrimaryAttributeDependencies: PrimaryAttributeDependency[]
-
-  derivedCharacteristics: {
-    lifePoints: Energy
-    arcaneEnergy: EnergyWithBuyBack
-    karmaPoints: EnergyWithBuyBack
-  }
-
-  skills: RatedMap
-
-  combatTechniques: {
-    close: RatedMap
-    ranged: RatedMap
-  }
-
-  cantrips: TinyActivatableMap
-  spells: ActivatableRatedWithEnhancementsMap
-  rituals: ActivatableRatedWithEnhancementsMap
-
   magicalActions: {
     curses: ActivatableRatedMap
     elvenMagicalSongs: ActivatableRatedMap
@@ -735,14 +788,8 @@ export type _Character = {
     magicalRunes: ActivatableRatedMap
   }
 
-  blessings: TinyActivatableMap
-  liturgicalChants: ActivatableRatedWithEnhancementsMap
-  ceremonies: ActivatableRatedWithEnhancementsMap
-
   // items: {}
   // hitZoneArmors: {}
   purse: Purse
   // creatures: {}
-  pact?: Pact
-  pactDependencies: PactDependency[]
 }

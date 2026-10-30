@@ -1,6 +1,48 @@
-import { Culture } from "@optolith/database-schema/gen"
-import { ActivatableIdentifier } from "@optolith/database-schema/gen"
-import { TranslateMap } from "../utils/translate.ts"
+import type { ActivatableIdentifier, Culture, Culture_ID } from "@optolith/database-schema/gen"
+import { computed, observable } from "mobx"
+import type { Global } from "../global.ts"
+import type { TranslateMap } from "../utils/locale.ts"
+
+export class CharacterCulture {
+  readonly global: Global
+
+  /**
+   * The culture identifier.
+   */
+  @observable accessor id: Culture_ID
+
+  /**
+   * Describes whether the cultural package has been applied when creating the character.
+   */
+  @observable accessor isCulturalPackageApplied: boolean
+
+  /**
+   * Dependencies on the selected culture.
+   */
+  @observable accessor dependencies: CultureDependency[]
+
+  constructor(
+    global: Global,
+    id: Culture_ID,
+    isCulturalPackageApplied: boolean = false,
+    dependencies: CultureDependency[] = [],
+  ) {
+    this.global = global
+    this.id = id
+    this.isCulturalPackageApplied = isCulturalPackageApplied
+    this.dependencies = dependencies
+  }
+
+  @computed
+  get base(): Culture | undefined {
+    return this.global.db.getInstanceOfEntityById("Culture", this.id)
+  }
+
+  @computed
+  get name(): string | undefined {
+    return this.global.locale.translateMap(this.base?.translations)?.name
+  }
+}
 
 /**
  * Returns a culture by id.
@@ -37,5 +79,5 @@ export type CultureDependency = Readonly<{
   /**
    * The required culture's identifier.
    */
-  id: number
+  id: Culture_ID
 }>

@@ -1,7 +1,7 @@
-import { FC, useCallback, useEffect } from "react"
+import { type FC, useCallback, useEffect } from "react"
 import { addKeybinding, removeKeybinding } from "../../utils/keybindings.ts"
 import { Dialog } from "../dialog/Dialog.tsx"
-import { InputKeyEvent, TextField } from "../textField/TextField.tsx"
+import { type InputKeyEvent, TextField } from "../textField/TextField.tsx"
 
 type Props = {
   id: string

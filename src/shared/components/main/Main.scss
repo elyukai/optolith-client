@@ -5,8 +5,9 @@ main,
   width: 100%;
   height: 100%;
   position: relative;
-  flex: 1 1 100%;
+  flex: 1 1 0;
   margin-left: 24px;
+  overflow-x: hidden;
 
   &:has(> .scroll) {
     margin-left: 21px;

@@ -1,5 +1,10 @@
-import { Action, OutputSelector, UnknownAction, createSelector } from "@reduxjs/toolkit"
-import { Draft, isDraft, nothing, produce } from "immer"
+import {
+  type Action,
+  type OutputSelector,
+  type UnknownAction,
+  createSelector,
+} from "@reduxjs/toolkit"
+import { type Draft, isDraft, nothing, produce } from "immer"
 
 type Indexed = { [key: string | number]: unknown }
 

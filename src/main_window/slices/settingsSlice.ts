@@ -1,6 +1,4 @@
-/* eslint-disable jsdoc/require-jsdoc */
-/* eslint-disable max-len */
-import { PayloadAction, createSlice } from "@reduxjs/toolkit"
+import { type PayloadAction, createSlice } from "@reduxjs/toolkit"
 import {
   CharactersSortOrder,
   CombatTechniquesSortOrder,
@@ -17,7 +15,7 @@ import {
   SpellsSortOrder,
 } from "../../shared/domain/sortOrders.ts"
 import { init } from "../init.ts"
-import { RootState } from "../store.ts"
+import type { RootState } from "../store.ts"
 
 type SettingsState = {
   locale: string | undefined
@@ -47,6 +45,7 @@ type SettingsState = {
   sheetZoomFactor: number
   // meleeItemTemplatesCombatTechniqueFilter: Maybe<MeleeCombatTechniqueId>
   // rangedItemTemplatesCombatTechniqueFilter: Maybe<RangedCombatTechniqueId>
+  showEntriesWithoutMetPrerequisites: boolean
 }
 
 const initialSettingsState: SettingsState = {
@@ -74,6 +73,7 @@ const initialSettingsState: SettingsState = {
   sheetCheckAttributeValueVisibility: false,
   sheetUseParchment: false,
   sheetZoomFactor: 1.0,
+  showEntriesWithoutMetPrerequisites: false,
 }
 
 const settingsSlice = createSlice({
@@ -159,6 +159,9 @@ const settingsSlice = createSlice({
     changeSheetZoomFactor: (state, action: PayloadAction<number>) => {
       state.sheetZoomFactor = action.payload
     },
+    switchShowEntriesWithoutMetPrerequisites: state => {
+      state.showEntriesWithoutMetPrerequisites = !state.showEntriesWithoutMetPrerequisites
+    },
   },
   extraReducers: builder => {
     builder.addCase(init, (state, action) => {
@@ -195,6 +198,7 @@ export const {
   changeSheetCheckAttributeValueVisibility,
   changeSheetUseParchment,
   changeSheetZoomFactor,
+  switchShowEntriesWithoutMetPrerequisites,
 } = settingsSlice.actions
 
 export const selectLocale = (state: RootState) => state.settings.locale
@@ -235,5 +239,7 @@ export const selectSheetUseParchment = (state: RootState) => state.settings.shee
 export const selectSheetZoomFactor = (state: RootState) => state.settings.sheetZoomFactor
 // export const selectMeleeItemTemplatesCombatTechniqueFilter = (state: RootState) => state.settings.meleeItemTemplatesCombatTechniqueFilter
 // export const selectRangedItemTemplatesCombatTechniqueFilter = (state: RootState) => state.settings.rangedItemTemplatesCombatTechniqueFilter
+export const selectShowEntriesWithoutMetPrerequisites = (state: RootState) =>
+  state.settings.showEntriesWithoutMetPrerequisites
 
 export const settingsReducer = settingsSlice.reducer

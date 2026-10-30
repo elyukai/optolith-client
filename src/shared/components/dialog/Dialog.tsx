@@ -1,9 +1,9 @@
 import { useCallback } from "react"
 import { createPortal } from "react-dom"
-import { classList } from "../../utils/classList.ts"
-import { FCC } from "../../utils/react.ts"
+import { classList } from "@elyukai/utils/classList"
+import type { FCC } from "../../utils/react.ts"
 import "./Dialog.scss"
-import { DialogButtonProps } from "./DialogButton.tsx"
+import type { DialogButtonProps } from "./DialogButton.tsx"
 import { DialogButtons } from "./DialogButtons.tsx"
 
 type Props = {

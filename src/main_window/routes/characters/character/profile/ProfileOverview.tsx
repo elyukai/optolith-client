@@ -1,5 +1,5 @@
 import { observer } from "mobx-react"
-import { FC, useCallback, useState } from "react"
+import { type FC, useCallback, useState } from "react"
 import { AvatarWrapper } from "../../../../../shared/components/avatarWrapper/AvatarWrapper.tsx"
 import { Button } from "../../../../../shared/components/button/Button.tsx"
 import { EditText } from "../../../../../shared/components/editText/EditText.tsx"
@@ -10,31 +10,10 @@ import { Main } from "../../../../../shared/components/main/Main.tsx"
 import { Page } from "../../../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { VerticalList } from "../../../../../shared/components/verticalList/VerticalList.tsx"
-import { getFullCultureName } from "../../../../../shared/domain/culture.ts"
-import { getFullRaceName } from "../../../../../shared/domain/race.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
-import { SharedState } from "../../../../external.ts"
-import { useProfessionName } from "../../../../hooks/professionName.ts"
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { selectCanAddAdventurePoints } from "../../../../selectors/characterSelectors.ts"
-import { selectCurrentCulture } from "../../../../selectors/cultureSelectors.ts"
-import { selectCurrentProfession } from "../../../../selectors/professionSelectors.ts"
-import {
-  selectCanDefineCustomProfessionName,
-  selectCanFinishCharacterCreation,
-  selectShowFinishCharacterCreation,
-} from "../../../../selectors/profileSelectors.ts"
-import { selectCurrentRace, selectCurrentRaceVariant } from "../../../../selectors/raceSelectors.ts"
-import {
-  deleteAvatar,
-  finishCharacterCreation,
-  selectAvatar,
-  selectSex,
-  setName,
-} from "../../../../slices/characterSlice.ts"
-import { setCustomProfessionName } from "../../../../slices/professionSlice.ts"
+import { SharedActions, SharedState } from "../../../../external.ts"
+import { useAppDispatch } from "../../../../hooks/redux.ts"
 import { PersonalData } from "./PersonalData.tsx"
 import "./ProfileOverview.scss"
 
@@ -49,21 +28,25 @@ export const ProfileOverview: FC = observer(() => {
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
-  const canAddAdventurePoints = useAppSelector(selectCanAddAdventurePoints)
-  const sex = useAppSelector(selectSex)
-  const avatar = useAppSelector(selectAvatar)
-  const currentRace = useAppSelector(selectCurrentRace)
-  const currentRaceVariant = useAppSelector(selectCurrentRaceVariant)
-  const currentCulture = useAppSelector(selectCurrentCulture)
-  const currentProfession = useAppSelector(selectCurrentProfession)
-  const { name: professionName = "", fullName: fullProfessionName = "" } = useProfessionName() ?? {}
-  const showFinishCharacterCreation = useAppSelector(selectShowFinishCharacterCreation)
-  const canFinishCharacterCreation = useAppSelector(selectCanFinishCharacterCreation)
-  const canDefineCustomProfessionName = useAppSelector(selectCanDefineCustomProfessionName)
+  const {
+    name,
+    avatar,
+    canAddAdventurePoints,
+    adventurePointsStats,
+    showFinishCharacterCreation,
+    canFinishCharacterCreation,
+    canDefineCustomProfessionName,
+    sexName,
+    raceName,
+    cultureName,
+    professionName,
+    startExperienceLevel,
+    currentExperienceLevel,
+  } = SharedState
 
   const handleEditName = useCallback(
     (newName: string) => {
-      dispatch(setName(newName))
+      SharedActions.setName(newName)
       setIsEditingName(false)
     },
     [dispatch],
@@ -71,7 +54,7 @@ export const ProfileOverview: FC = observer(() => {
 
   const handleEditProfessionName = useCallback(
     (newName: string) => {
-      dispatch(setCustomProfessionName(newName))
+      SharedActions.setCustomProfessionName(newName)
       setIsEditingProfessionName(false)
     },
     [dispatch],
@@ -91,10 +74,13 @@ export const ProfileOverview: FC = observer(() => {
     [setIsEditingProfessionName],
   )
 
-  const handleDeleteAvatar = useCallback(() => dispatch(deleteAvatar()), [dispatch])
+  const handleDeleteAvatar = useCallback(
+    () => undefined /* TODO: dispatch(deleteAvatar()) */,
+    [dispatch],
+  )
 
   const handlFinishCharacterCreation = useCallback(
-    () => dispatch(finishCharacterCreation()),
+    () => undefined /* TODO: dispatch(finishCharacterCreation()) */,
     [dispatch],
   )
 
@@ -103,14 +89,14 @@ export const ProfileOverview: FC = observer(() => {
       className="change-name"
       cancel={handleCancelEditName}
       submit={handleEditName}
-      text={SharedState.name}
+      text={name}
       autoFocus
       submitLabel={translate("Edit Name")}
       cancelLabel={translate("Cancel")}
     />
   ) : (
     <h1 className="confirm-edit">
-      {SharedState.name}
+      {name}
       <IconButton label={translate("Edit Name")} icon="&#xE90c;" onClick={handleStartEditName} />
     </h1>
   )
@@ -140,54 +126,28 @@ export const ProfileOverview: FC = observer(() => {
               <AvatarWrapper src={avatar ?? ""} /* TODO: onClick={openEditCharacterAvatar} */ />
               <div className="text-wrapper">
                 {nameElement}
-                {currentProfession === undefined ? null : (
+                {professionName === undefined ? null : (
                   <VerticalList className="rcp">
-                    <span>
-                      {((): string => {
-                        switch (sex.type) {
-                          case "Male":
-                            return translate("Male")
-                          case "Female":
-                            return translate("Female")
-                          case "BalThani":
-                            return translate("Bal’Thani")
-                          case "Tsajana":
-                            return translate("Tsajana")
-                          case "Custom":
-                            return sex.name
-                          default:
-                            return assertExhaustive(sex)
-                        }
-                      })()}
-                    </span>
-                    <span className="race">
-                      {currentRace === undefined
-                        ? ""
-                        : getFullRaceName(translateMap, currentRace, currentRaceVariant)}
-                    </span>
-                    <span className="culture">
-                      {currentCulture === undefined
-                        ? ""
-                        : getFullCultureName(translateMap, currentCulture)}
-                    </span>
-                    <span className="profession">{fullProfessionName}</span>
+                    <span>{sexName}</span>
+                    <span className="race">{raceName}</span>
+                    <span className="culture">{cultureName}</span>
+                    <span className="profession">{professionName}</span>
                   </VerticalList>
                 )}
                 <VerticalList className="el">
                   <span>
-                    {SharedState.startExperienceLevel === undefined ||
-                    SharedState.currentExperienceLevel === undefined
+                    {startExperienceLevel === undefined || currentExperienceLevel === undefined
                       ? "—"
-                      : SharedState.startExperienceLevel.adventure_points ===
-                          SharedState.currentExperienceLevel.adventure_points
-                        ? (translateMap(SharedState.startExperienceLevel.translations)?.name ?? "—")
-                        : `${translateMap(SharedState.currentExperienceLevel.translations)?.name ?? "—"} (${
-                            translateMap(SharedState.startExperienceLevel.translations)?.name ?? "—"
+                      : startExperienceLevel.adventure_points ===
+                          currentExperienceLevel.adventure_points
+                        ? (translateMap(startExperienceLevel.translations)?.name ?? "—")
+                        : `${translateMap(currentExperienceLevel.translations)?.name ?? "—"} (${
+                            translateMap(startExperienceLevel.translations)?.name ?? "—"
                           })`}
                   </span>
                   <span>
                     {translate("{$value} AP", {
-                      value: SharedState.adventurePointsStats.total.toFixed(),
+                      value: adventurePointsStats.total.toFixed(),
                     })}
                   </span>
                 </VerticalList>
@@ -211,7 +171,7 @@ export const ProfileOverview: FC = observer(() => {
               </Button>
               {professionNameElement}
             </GridItem>
-            {currentProfession === undefined ? null : (
+            {professionName === undefined ? null : (
               <GridItem>
                 <h3>{translate("Personal Data")}</h3>
                 <PersonalData />

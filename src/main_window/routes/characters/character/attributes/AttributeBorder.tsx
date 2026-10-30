@@ -1,6 +1,6 @@
-import { FC, useRef } from "react"
+import { classList } from "@elyukai/utils/classList"
+import { type FC, useRef } from "react"
 import { TooltipToggle } from "../../../../../shared/components/tooltipToggle/TooltipToggle.tsx"
-import { classList } from "../../../../../shared/utils/classList.ts"
 
 type Props = {
   children?: React.ReactNode

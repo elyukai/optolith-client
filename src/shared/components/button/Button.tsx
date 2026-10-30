@@ -1,6 +1,6 @@
-import { MouseEvent, forwardRef } from "react"
-import { classList } from "../../utils/classList.ts"
-import { FRRFC } from "../../utils/react.js"
+import { type MouseEvent, forwardRef } from "react"
+import { classList } from "@elyukai/utils/classList"
+import type { FRRFC } from "../../utils/react.js"
 import "./Button.scss"
 
 interface Props {

@@ -1,5 +1,5 @@
-import { MouseEvent, forwardRef } from "react"
-import { FRRFC } from "../../utils/react.ts"
+import { type MouseEvent, forwardRef } from "react"
+import type { FRRFC } from "../../utils/react.ts"
 import { Button } from "../button/Button.tsx"
 import { Icon } from "../icon/Icon.tsx"
 import "./IconButton.scss"

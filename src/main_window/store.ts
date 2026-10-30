@@ -1,23 +1,16 @@
 import { combineReducers, configureStore, type Action, type ThunkAction } from "@reduxjs/toolkit"
-import { reduceReducers } from "../shared/utils/redux.ts"
 import { alertsReducer } from "./slices/alertsSlice.ts"
-import { charactersReducer } from "./slices/charactersSlice.ts"
-import { databaseReducer } from "./slices/databaseSlice.ts"
-import { globalReducer } from "./slices/global.ts"
-import { inlineLibraryReducer } from "./slices/inlineWikiSlice.ts"
 import { routeReducer } from "./slices/routeSlice.ts"
 import { settingsReducer } from "./slices/settingsSlice.ts"
 
-const sliceReducer = combineReducers({
+const reducer = combineReducers({
   alerts: alertsReducer,
-  database: databaseReducer,
-  characters: charactersReducer,
-  inlineLibrary: inlineLibraryReducer,
+  // database: databaseReducer,
+  // characters: charactersReducer,
+  // inlineLibrary: inlineLibraryReducer,
   route: routeReducer,
   settings: settingsReducer,
 })
-
-const reducer = reduceReducers(sliceReducer, globalReducer)
 
 /**
  * The Redux store for the main window.
@@ -29,7 +22,7 @@ export const store = configureStore({
 /**
  * The root state of the Redux store.
  */
-export type RootState = ReturnType<typeof sliceReducer>
+export type RootState = ReturnType<typeof reducer>
 
 /**
  * A pre-typed version of the dispatch function.

@@ -1,29 +1,21 @@
-import { PrimaryAttributePrerequisite } from "@optolith/database-schema/gen"
-import { mapNullableDefault } from "../../../utils/nullable.ts"
-import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import {
-  DisplayedPrimaryAttribute,
-  GetBlessedPrimaryAttributeCapability,
-  GetHighestMagicalPrimaryAttributesCapability,
-} from "../../rated/primaryAttribute.ts"
+import type { PrimaryAttributePrerequisite } from "@optolith/database-schema/gen"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
 
 /**
  * Checks a single primary attribute prerequisite if it’s matched.
  */
 export const checkPrimaryAttributePrerequisite = (
   caps: {
-    getBlessedPrimaryAttribute: GetBlessedPrimaryAttributeCapability
-    getHighestMagicalPrimaryAttributes: GetHighestMagicalPrimaryAttributesCapability
+    primaryBlessedAttribute: number | undefined
+    highestPrimaryMagicalAttribute: number | undefined
   },
   p: PrimaryAttributePrerequisite,
 ): boolean => {
-  const matchRated = (rated: DisplayedPrimaryAttribute) => rated.dynamic.value >= p.value
-
-  switch (p.category) {
+  switch (p.category.kind) {
     case "Blessed":
-      return mapNullableDefault(caps.getBlessedPrimaryAttribute(), matchRated, false)
+      return (caps.primaryBlessedAttribute ?? 0) >= p.value
     case "Magical":
-      return caps.getHighestMagicalPrimaryAttributes().some(matchRated)
+      return (caps.highestPrimaryMagicalAttribute ?? 0) >= p.value
     default:
       return assertExhaustive(p.category)
   }

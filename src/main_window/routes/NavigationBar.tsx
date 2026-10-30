@@ -1,15 +1,14 @@
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import { observer } from "mobx-react"
-import { FC, useCallback, useEffect, useRef } from "react"
+import { type FC, useCallback, useEffect, useRef } from "react"
 import { AvatarWrapper } from "../../shared/components/avatarWrapper/AvatarWrapper.tsx"
 import { Button } from "../../shared/components/button/Button.tsx"
 import { IconButton } from "../../shared/components/iconButton/IconButton.tsx"
 import { TooltipToggle } from "../../shared/components/tooltipToggle/TooltipToggle.tsx"
 import { useTranslate } from "../../shared/hooks/translate.ts"
-import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
 import { ExternalAPI, SharedState } from "../external.ts"
 import { useAppDispatch, useAppSelector } from "../hooks/redux.ts"
 import { useVisibleTabs } from "../hooks/visibleTabs.ts"
-import { selectAvatar } from "../slices/characterSlice.ts"
 import { goToTab, selectRoute } from "../slices/routeSlice.ts"
 import { AdventurePointsTooltip } from "./AdventurePointsTooltip.tsx"
 import { NavigationBarBack } from "./NavigationBarBack.tsx"
@@ -32,7 +31,6 @@ export const NavigationBar: FC = observer(() => {
   const handleCharactersTab = useCallback(() => dispatch(goToTab(["characters"])), [dispatch])
   const { section, mainTabs, subTabs } = useVisibleTabs()
   const currentRoute = useAppSelector(selectRoute)
-  const avatar = useAppSelector(selectAvatar)
 
   useEffect(() => {
     switch (currentRoute[0]) {
@@ -80,7 +78,7 @@ export const NavigationBar: FC = observer(() => {
             case "pets":
               return ExternalAPI.setTitle(translate("Pets"))
             default:
-              assertExhaustive(currentRoute)
+              return assertExhaustive(currentRoute[2])
           }
         })()
 
@@ -112,7 +110,7 @@ export const NavigationBar: FC = observer(() => {
           {section === "character" ? (
             <>
               <NavigationBarBack handleSetTab={handleCharactersTab} />
-              <AvatarWrapper src={avatar ?? ""} />
+              <AvatarWrapper src={SharedState.avatar ?? ""} />
             </>
           ) : null}
           <NavigationBarTabs tabs={mainTabs} />

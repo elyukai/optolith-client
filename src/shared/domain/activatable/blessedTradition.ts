@@ -1,5 +1,4 @@
 import { BlessedTradition } from "@optolith/database-schema/gen"
-import { Activatable, isActive } from "./activatableEntry.ts"
 
 /**
  * A combination of a static and corresponding dynamic active blessed tradition

@@ -1,11 +1,10 @@
-import { FC } from "react"
-import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type { FC } from "react"
 import { useAppSelector } from "../hooks/redux.ts"
 import { selectRoute } from "../slices/routeSlice.ts"
 import { Imprint } from "./about/Imprint.tsx"
 import { LastChanges } from "./about/LastChanges.tsx"
 import { ThirdPartyLicenses } from "./about/ThirdPartyLicenses.tsx"
-import { Characters } from "./characters/Characters.tsx"
 import { Advantages } from "./characters/character/advantagesAndDisadvantages/Advantages.tsx"
 import { Disadvantages } from "./characters/character/advantagesAndDisadvantages/Disadvantages.tsx"
 import { Attributes } from "./characters/character/attributes/Attributes.tsx"
@@ -16,6 +15,7 @@ import { Rules } from "./characters/character/rules/Rules.tsx"
 import { Skills } from "./characters/character/skills/Skills.tsx"
 import { SpecialAbilities } from "./characters/character/specialAbilities/SpecialAbilities.tsx"
 import { Spells } from "./characters/character/spells/Spells.tsx"
+import { Characters } from "./characters/Characters.tsx"
 
 /**
  * Returns a page based on the currently selected route.
@@ -73,7 +73,7 @@ export const Router: FC = () => {
           case "pets":
             return null
           default:
-            assertExhaustive(route)
+            return assertExhaustive(route[2])
         }
       })()
 
@@ -92,6 +92,6 @@ export const Router: FC = () => {
       return <LastChanges />
 
     default:
-      assertExhaustive(route)
+      return assertExhaustive(route)
   }
 }

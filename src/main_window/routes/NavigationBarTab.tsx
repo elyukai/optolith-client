@@ -1,12 +1,12 @@
-import { FC, useCallback } from "react"
+import { classList } from "@elyukai/utils/classList"
+import { arrayEqual } from "@elyukai/utils/equality"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { type FC, useCallback } from "react"
 import { Tab } from "../../shared/components/tab/Tab.tsx"
 import { useTranslate } from "../../shared/hooks/translate.ts"
-import { arrayEqual } from "../../shared/utils/array.ts"
-import { classList } from "../../shared/utils/classList.ts"
-import { assertExhaustive } from "../../shared/utils/typeSafety.ts"
 import { useAppDispatch, useAppSelector } from "../hooks/redux.ts"
-import { DisplayRoute } from "../hooks/visibleTabs.ts"
-import { RoutePath, goToTab, goToTabGroup, selectRoute } from "../slices/routeSlice.ts"
+import type { DisplayRoute } from "../hooks/visibleTabs.ts"
+import { type RoutePath, goToTab, goToTabGroup, selectRoute } from "../slices/routeSlice.ts"
 import "./NavigationBarTab.scss"
 
 const getRouteTranslation = (route: RoutePath) => {
@@ -60,7 +60,7 @@ const getRouteTranslation = (route: RoutePath) => {
           case "pets":
             return "Pets" as const
           default:
-            assertExhaustive(route)
+            return assertExhaustive(route[2])
         }
       })()
 

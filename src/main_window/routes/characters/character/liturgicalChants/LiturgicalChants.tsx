@@ -1,4 +1,6 @@
-import { FC, useCallback, useMemo, useState } from "react"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { observer } from "mobx-react"
+import { useCallback, useMemo, useState, type FC } from "react"
 import { Button } from "../../../../../shared/components/button/Button.tsx"
 import { List } from "../../../../../shared/components/list/List.tsx"
 import { ListHeader } from "../../../../../shared/components/list/ListHeader.tsx"
@@ -11,50 +13,53 @@ import { RadioButtonGroup } from "../../../../../shared/components/radioButton/R
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { Slidein } from "../../../../../shared/components/slidein/Slidein.tsx"
 import { TextField } from "../../../../../shared/components/textField/TextField.tsx"
-import { filterAndSortDisplayed } from "../../../../../shared/domain/rated/liturgicalChant.ts"
-import { DisplayedActiveLiturgy } from "../../../../../shared/domain/rated/liturgicalChantActive.ts"
-import { DisplayedInactiveLiturgy } from "../../../../../shared/domain/rated/liturgicalChantInactive.ts"
+import {
+  filterAndSortDisplayed,
+  type DisplayedActiveLiturgicalChant,
+  type DisplayedBlessing,
+  type DisplayedInactiveLiturgicalChant,
+  type DisplayedLiturgicalChant,
+} from "../../../../../shared/domain/rated/liturgicalChant.ts"
 import { LiturgiesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
+import { SharedActions, SharedState } from "../../../../external.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
-import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
-import {
-  selectVisibleActiveLiturgies,
-  selectVisibleInactiveLiturgies,
-} from "../../../../selectors/liturgicalChantSelectors.ts"
-import { addBlessing, removeBlessing } from "../../../../slices/blessingsSlice.ts"
+import { InlineLibrary, InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import {
   changeLiturgiesSortOrder,
   selectLiturgiesSortOrder,
 } from "../../../../slices/settingsSlice.ts"
+import { ActiveActivatableRatedListItem } from "./ActiveActivatableRatedListItem.tsx"
 import { ActiveBlessingsListItem } from "./ActiveBlessingsListItem.tsx"
-import { ActiveCeremoniesListItem } from "./ActiveCeremoniesListItem.tsx"
-import { ActiveLiturgicalChantsListItem } from "./ActiveLiturgicalChantsListItem.tsx"
+import { InactiveActivatableRatedListItem } from "./InactiveActivatableRatedListItem.tsx"
 import { InactiveBlessingsListItem } from "./InactiveBlessingsListItem.tsx"
-import { InactiveCeremoniesListItem } from "./InactiveCeremoniesListItem.tsx"
-import { InactiveLiturgicalChantsListItem } from "./InactiveLiturgicalChantsListItem.tsx"
 
 const isTopMarginNeeded = (
   sortOrder: LiturgiesSortOrder,
-  curr: DisplayedInactiveLiturgy | DisplayedActiveLiturgy,
-  mprev: DisplayedInactiveLiturgy | DisplayedActiveLiturgy | undefined,
-) => sortOrder === "group" && mprev !== undefined && curr.kind !== mprev.kind
+  curr: DisplayedLiturgicalChant | DisplayedBlessing,
+  mprev: DisplayedLiturgicalChant | DisplayedBlessing | undefined,
+) => sortOrder === "group" && mprev !== undefined && curr.type !== mprev.type
 
 /**
  * Returns a page for managing liturgical chants.
  */
-export const LiturgicalChants: FC = () => {
+export const LiturgicalChants: FC = observer(() => {
   const translate = useTranslate()
-  const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
   const localeCompare = useLocaleCompare()
 
-  const canRemove = useAppSelector(selectCanRemove)
+  const {
+    canRemove,
+    inactiveBlessings,
+    inactiveLiturgicalChants,
+    inactiveCeremonies,
+    activeBlessings,
+    activeLiturgicalChants,
+    activeCeremonies,
+    attributes,
+  } = SharedState
 
   const [activeFilterText, setActiveFilterText] = useState("")
   const [inactiveFilterText, setInactiveFilterText] = useState("")
@@ -64,38 +69,37 @@ export const LiturgicalChants: FC = () => {
     [dispatch],
   )
 
-  const visibleInactiveLiturgies = useAppSelector(selectVisibleInactiveLiturgies)
-  const visibleActiveLiturgies = useAppSelector(selectVisibleActiveLiturgies)
+  const visibleInactiveLiturgies = (
+    inactiveLiturgicalChants as (DisplayedInactiveLiturgicalChant | DisplayedBlessing)[]
+  )
+    .concat(inactiveCeremonies)
+    .concat(inactiveBlessings)
+  const visibleActiveLiturgies = (
+    activeLiturgicalChants as (DisplayedActiveLiturgicalChant | DisplayedBlessing)[]
+  )
+    .concat(activeCeremonies)
+    .concat(activeBlessings)
 
   const inactiveList = useMemo(
     () =>
-      filterAndSortDisplayed(
-        visibleInactiveLiturgies,
-        activeFilterText,
-        sortOrder,
-        translateMap,
-        localeCompare,
-      ),
-    [activeFilterText, localeCompare, sortOrder, translateMap, visibleInactiveLiturgies],
+      filterAndSortDisplayed(visibleInactiveLiturgies, activeFilterText, sortOrder, localeCompare),
+    [activeFilterText, localeCompare, sortOrder, visibleInactiveLiturgies],
   )
 
   const activeList = useMemo(
     () =>
-      filterAndSortDisplayed(
-        visibleActiveLiturgies,
-        inactiveFilterText,
-        sortOrder,
-        translateMap,
-        localeCompare,
-      ),
-    [visibleActiveLiturgies, inactiveFilterText, sortOrder, translateMap, localeCompare],
+      filterAndSortDisplayed(visibleActiveLiturgies, inactiveFilterText, sortOrder, localeCompare),
+    [visibleActiveLiturgies, inactiveFilterText, sortOrder, localeCompare],
   )
 
   // TODO: Check AP
-  const handleAddBlessing = useCallback((id: number) => dispatch(addBlessing({ id })), [dispatch])
+  const handleAddBlessing = useCallback(
+    (id: string) => SharedActions.addTinyActivatable("Blessing", id),
+    [],
+  )
   const handleRemoveBlessing = useCallback(
-    (id: number) => dispatch(removeBlessing({ id })),
-    [dispatch],
+    (id: string) => SharedActions.addTinyActivatable("Blessing", id),
+    [],
   )
 
   const { isOpen: isSlideinVisible, open: openSlidein, close: closeSlidein } = useModalState()
@@ -152,35 +156,29 @@ export const LiturgicalChants: FC = () => {
             {inactiveList.length > 0 ? (
               <List>
                 {inactiveList.map((x, i) => {
-                  switch (x.kind) {
-                    case "blessing":
+                  switch (x.type) {
+                    case "Blessing":
                       return (
                         <InactiveBlessingsListItem
-                          key={`blessing-${x.static.id}`}
+                          key={`blessing-${x.id}`}
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           blessing={x}
-                          sortOrder={sortOrder}
+                          displayGroup={sortOrder === LiturgiesSortOrder.Group}
                           add={handleAddBlessing}
+                          selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                         />
                       )
 
-                    case "liturgicalChant":
+                    case "LiturgicalChant":
+                    case "Ceremony":
                       return (
-                        <InactiveLiturgicalChantsListItem
-                          key={`liturgicalchant-${x.static.id}`}
+                        <InactiveActivatableRatedListItem
+                          key={`${x.type}-${x.id}`}
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
-                          liturgicalChant={x}
-                          sortOrder={sortOrder}
-                        />
-                      )
-
-                    case "ceremony":
-                      return (
-                        <InactiveCeremoniesListItem
-                          key={`ceremony-${x.static.id}`}
-                          insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
-                          ceremony={x}
-                          sortOrder={sortOrder}
+                          entry={x}
+                          displayGroup={sortOrder === LiturgiesSortOrder.Group}
+                          attributes={attributes}
+                          selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                         />
                       )
 
@@ -248,35 +246,31 @@ export const LiturgicalChants: FC = () => {
           {activeList.length > 0 ? (
             <List>
               {activeList.map((x, i) => {
-                switch (x.kind) {
-                  case "blessing":
+                switch (x.type) {
+                  case "Blessing":
                     return (
                       <ActiveBlessingsListItem
-                        key={`blessing-${x.static.id}`}
+                        key={`blessing-${x.id}`}
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         blessing={x}
-                        sortOrder={sortOrder}
+                        canRemove={canRemove}
+                        displayGroup={sortOrder === LiturgiesSortOrder.Group}
                         remove={handleRemoveBlessing}
+                        selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                       />
                     )
 
-                  case "liturgicalChant":
+                  case "LiturgicalChant":
+                  case "Ceremony":
                     return (
-                      <ActiveLiturgicalChantsListItem
-                        key={`liturgicalchant-${x.static.id}`}
+                      <ActiveActivatableRatedListItem
+                        key={`${x.type}-${x.id}`}
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
-                        liturgicalChant={x}
-                        sortOrder={sortOrder}
-                      />
-                    )
-
-                  case "ceremony":
-                    return (
-                      <ActiveCeremoniesListItem
-                        key={`ceremony-${x.static.id}`}
-                        insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
-                        ceremony={x}
-                        sortOrder={sortOrder}
+                        entry={x}
+                        canRemove={canRemove}
+                        displayGroup={sortOrder === LiturgiesSortOrder.Group}
+                        attributes={attributes}
+                        selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                       />
                     )
 
@@ -293,4 +287,4 @@ export const LiturgicalChants: FC = () => {
       <InlineLibrary />
     </Page>
   )
-}
+})

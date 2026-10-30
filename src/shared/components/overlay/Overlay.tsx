@@ -16,10 +16,10 @@
  * The cross axis is orthogonal to the main axis.
  */
 
-import { RefObject, useEffect, useRef, useState } from "react"
-import { classList } from "../../utils/classList.ts"
-import { FCC } from "../../utils/react.ts"
-import { assertExhaustive } from "../../utils/typeSafety.ts"
+import { classList } from "@elyukai/utils/classList"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { type RefObject, useEffect, useRef, useState } from "react"
+import type { FCC } from "../../utils/react.ts"
 import "./Overlay.scss"
 
 type Position = "top" | "bottom" | "left" | "right"
@@ -141,8 +141,8 @@ const adjustCrossAxis = (
           left < MIN_WINDOW_OFFSET
             ? MIN_WINDOW_OFFSET
             : left + overlayRect.width > window.innerWidth - MIN_WINDOW_OFFSET
-            ? window.innerWidth - MIN_WINDOW_OFFSET - overlayRect.width
-            : left,
+              ? window.innerWidth - MIN_WINDOW_OFFSET - overlayRect.width
+              : left,
       }
     }
 
@@ -155,8 +155,8 @@ const adjustCrossAxis = (
           top < MIN_WINDOW_OFFSET
             ? MIN_WINDOW_OFFSET
             : top + overlayRect.height > window.innerHeight - MIN_WINDOW_OFFSET
-            ? window.innerHeight - MIN_WINDOW_OFFSET - overlayRect.height
-            : top,
+              ? window.innerHeight - MIN_WINDOW_OFFSET - overlayRect.height
+              : top,
         left,
       }
     }
@@ -205,7 +205,7 @@ const getArrowPosition = (
 
 const alignToElement = (
   arrowSize: number,
-  ref: RefObject<HTMLDivElement>,
+  ref: RefObject<HTMLDivElement | null>,
   trigger: Element,
   defPosition: Position,
   margin: number,
@@ -245,7 +245,7 @@ export const Overlay: FCC<Props> = props => {
   const [position, setPosition] = useState<Position>(defPosition)
   const [style, setStyle] = useState<React.CSSProperties>({ visibility: "hidden" })
   const [arrowStyle, setArrowStyle] = useState<React.CSSProperties>({})
-  const overlayRef = useRef<HTMLDivElement>(null)
+  const overlayRef = useRef<HTMLDivElement | null>(null)
 
   const arrow_size = small === true ? 6 : 12
 

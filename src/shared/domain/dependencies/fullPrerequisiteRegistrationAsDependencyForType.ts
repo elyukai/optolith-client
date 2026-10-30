@@ -1,22 +1,16 @@
-import { Draft } from "@reduxjs/toolkit"
-import {
-  AdvantageIdentifier,
-  DisadvantageIdentifier,
-} from "@optolith/database-schema/gen"
-import {
-  LiturgyIdentifier,
-  SpecialAbilityIdentifier,
-  SpellworkIdentifier,
-} from "@optolith/database-schema/gen"
-import {
+import type { RangeBounds } from "@elyukai/utils/range"
+import type {
   AdvantageDisadvantagePrerequisites,
   GeneralPrerequisites,
+  LiturgyIdentifier,
   LiturgyPrerequisites,
   PlainGeneralPrerequisites,
+  SpecialAbilityIdentifier,
+  SpellworkIdentifier,
   SpellworkPrerequisites,
 } from "@optolith/database-schema/gen"
-import { RangeBounds } from "../../utils/range.ts"
-import { _Character } from "../character.ts"
+import type { Character } from "../character.ts"
+import type { Case } from "../databaseEnum.ts"
 import {
   registerOrUnregisterPlainPrerequisites,
   registerOrUnregisterPrerequisitesForLevels,
@@ -30,35 +24,22 @@ import {
 import { RegistrationMethod } from "./registrationHelpers.ts"
 
 /**
+import type { AdvantageIdentifier, DisadvantageIdentifier } from "@optolith/database-schema/types/_Identifier"
  * Register or unregister all prerequisites of a general entry as dependencies
  * on the character's draft.
  */
 export const registerOrUnregisterPrerequisitesOfPlainGeneralAsDependencies = (
-  method: RegistrationMethod,
-  character: Draft<_Character>,
   p: PlainGeneralPrerequisites,
+  method: RegistrationMethod,
+  character: Character,
   sourceId: SpecialAbilityIdentifier,
-  capabilities: {
-    closeCombatTechniqueIds: number[]
-    rangedCombatTechniqueIds: number[]
-    blessedTraditionChurchIds: number[]
-    blessedTraditionShamanisticIds: number[]
-    magicalTraditionIds: number[]
-    magicalTraditionIdsThatCanLearnRituals: number[]
-    magicalTraditionIdsThatCanBindFamiliars: number[]
-    getSpellIdsByPropertyId: (id: number) => number[]
-    getRitualIdsByPropertyId: (id: number) => number[]
-    getLiturgicalChantIdsByAspectId: (id: number) => number[]
-    getCeremonyIdsByAspectId: (id: number) => number[]
-  },
 ): void =>
   registerOrUnregisterPlainPrerequisites(
+    registerOrUnregisterPrerequisiteOfGeneralAsDependency,
+    p,
     method,
     character,
-    p,
     sourceId,
-    registerOrUnregisterPrerequisiteOfGeneralAsDependency,
-    capabilities,
   )
 
 /**
@@ -66,33 +47,19 @@ export const registerOrUnregisterPrerequisitesOfPlainGeneralAsDependencies = (
  * on the character's draft.
  */
 export const registerOrUnregisterPrerequisitesOfGeneralAsDependencies = (
-  method: RegistrationMethod,
-  character: Draft<_Character>,
   p: GeneralPrerequisites,
+  method: RegistrationMethod,
+  character: Character,
   sourceId: SpecialAbilityIdentifier,
   levelRange: RangeBounds,
-  capabilities: {
-    closeCombatTechniqueIds: number[]
-    rangedCombatTechniqueIds: number[]
-    blessedTraditionChurchIds: number[]
-    blessedTraditionShamanisticIds: number[]
-    magicalTraditionIds: number[]
-    magicalTraditionIdsThatCanLearnRituals: number[]
-    magicalTraditionIdsThatCanBindFamiliars: number[]
-    getSpellIdsByPropertyId: (id: number) => number[]
-    getRitualIdsByPropertyId: (id: number) => number[]
-    getLiturgicalChantIdsByAspectId: (id: number) => number[]
-    getCeremonyIdsByAspectId: (id: number) => number[]
-  },
 ): void =>
   registerOrUnregisterPrerequisitesForLevels(
+    registerOrUnregisterPrerequisiteOfGeneralAsDependency,
+    p,
     method,
     character,
-    p,
     levelRange,
     sourceId,
-    registerOrUnregisterPrerequisiteOfGeneralAsDependency,
-    capabilities,
   )
 
 /**
@@ -118,34 +85,19 @@ export const registerOrUnregisterPrerequisitesOfGeneralAsDependencies = (
  * dependencies on the character's draft.
  */
 export const registerOrUnregisterPrerequisitesOfAdvantageOrDisadvantageAsDependencies = (
-  method: RegistrationMethod,
-  character: Draft<_Character>,
   p: AdvantageDisadvantagePrerequisites,
-  sourceId: AdvantageIdentifier | DisadvantageIdentifier,
+  method: RegistrationMethod,
+  character: Character,
+  sourceId: Case<"Advantage" | "Disadvantage", string>,
   levelRange: RangeBounds,
-  capabilities: {
-    ancestorBloodAdvantageIds: number[]
-    closeCombatTechniqueIds: number[]
-    rangedCombatTechniqueIds: number[]
-    blessedTraditionChurchIds: number[]
-    blessedTraditionShamanisticIds: number[]
-    magicalTraditionIds: number[]
-    magicalTraditionIdsThatCanLearnRituals: number[]
-    magicalTraditionIdsThatCanBindFamiliars: number[]
-    getSpellIdsByPropertyId: (id: number) => number[]
-    getRitualIdsByPropertyId: (id: number) => number[]
-    getLiturgicalChantIdsByAspectId: (id: number) => number[]
-    getCeremonyIdsByAspectId: (id: number) => number[]
-  },
 ): void =>
   registerOrUnregisterPrerequisitesForLevels(
+    registerOrUnregisterPrerequisiteOfAdvantageOrDisadvantageAsDependency,
+    p,
     method,
     character,
-    p,
     levelRange,
     sourceId,
-    registerOrUnregisterPrerequisiteOfAdvantageOrDisadvantageAsDependency,
-    capabilities,
   )
 
 /**
@@ -189,17 +141,17 @@ export const registerOrUnregisterPrerequisitesOfAdvantageOrDisadvantageAsDepende
  * the character's draft.
  */
 export const registerOrUnregisterPrerequisitesOfSpellworkAsDependencies = (
-  method: RegistrationMethod,
-  character: Draft<_Character>,
   p: SpellworkPrerequisites,
+  method: RegistrationMethod,
+  character: Character,
   sourceId: SpellworkIdentifier,
 ): void =>
   registerOrUnregisterPlainPrerequisites(
+    registerOrUnregisterPrerequisiteOfSpellworkAsDependency,
+    p,
     method,
     character,
-    p,
     sourceId,
-    registerOrUnregisterPrerequisiteOfSpellworkAsDependency,
   )
 
 /**
@@ -207,17 +159,17 @@ export const registerOrUnregisterPrerequisitesOfSpellworkAsDependencies = (
  * character's draft.
  */
 export const registerOrUnregisterPrerequisitesOfLiturgyAsDependencies = (
-  method: RegistrationMethod,
-  character: Draft<_Character>,
   p: LiturgyPrerequisites,
+  method: RegistrationMethod,
+  character: Character,
   sourceId: LiturgyIdentifier,
 ): void =>
   registerOrUnregisterPlainPrerequisites(
+    registerOrUnregisterPrerequisiteOfLiturgyAsDependency,
+    p,
     method,
     character,
-    p,
     sourceId,
-    registerOrUnregisterPrerequisiteOfLiturgyAsDependency,
   )
 
 /**

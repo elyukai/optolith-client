@@ -1,4 +1,4 @@
-import { FCC } from "../../utils/react.ts"
+import type { FCC } from "../../utils/react.ts"
 import { Grid } from "../grid/Grid.tsx"
 import "./Options.scss"
 

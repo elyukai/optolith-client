@@ -1,4 +1,3 @@
-import { ImprovementCost } from "../adventurePoints/improvementCost.ts"
 import { ActivatableRated } from "./ratedEntry.ts"
 
 /**

@@ -1,6 +1,6 @@
-import { classList } from "../../utils/classList.ts"
-import { FCC } from "../../utils/react.ts"
-import { isUrl } from "../../utils/regex.ts"
+import { classList } from "@elyukai/utils/classList"
+import { isUrl } from "@elyukai/utils/string/regex"
+import type { FCC } from "../../utils/react.ts"
 import { Avatar } from "../avatar/Avatar.tsx"
 import "./AvatarWrapper.scss"
 

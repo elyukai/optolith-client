@@ -12,7 +12,7 @@ import { FilterApplyingActivatableDependencies } from "../dependencies/filterApp
 import { GetById } from "../getTypes.ts"
 import { getCreateIdentifierObject } from "../identifier.ts"
 import { checkPrerequisitesOfGeneralEntryWithLevels } from "../prerequisites/fullPrerequisiteValidationForType.ts"
-import { Activatable } from "./activatableEntry.ts"
+import { Activatable } from "./activatable.ts"
 import { DisplayedInactiveActivatable, getInactiveActivatables } from "./activatableInactive.ts"
 import { SpecialAbilityTagTypeMap } from "./specialAbilities.ts"
 

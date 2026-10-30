@@ -1,36 +1,30 @@
-import {
+import type {
   BlessedTraditionPrerequisite,
   MagicalTraditionPrerequisite,
 } from "@optolith/database-schema/gen"
-import { assertExhaustive } from "../../../utils/typeSafety.ts"
-import { GetActiveBlessedTraditionCapability } from "../../activatable/blessedTradition.ts"
-import { GetActiveMagicalTraditionsCapability } from "../../activatable/magicalTradition.ts"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type { CharacterActivatable } from "../../activatable/activatable.ts"
 
 /**
  * Checks a single blessed tradition prerequisite if it’s matched.
  */
 export const checkBlessedTraditionPrerequisite = (
   caps: {
-    getActiveBlessedTradition: GetActiveBlessedTraditionCapability
+    activeBlessedTraditions: CharacterActivatable<"BlessedTradition">[]
   },
   p: BlessedTraditionPrerequisite,
 ): boolean => {
-  const activeBlessedTradition = caps.getActiveBlessedTradition()
+  const [activeBlessedTradition] = caps.activeBlessedTraditions
 
   if (activeBlessedTradition === undefined) {
     return false
   }
 
-  switch (p.restriction) {
-    case undefined:
-      return true
-    case "Church":
-      return !activeBlessedTradition.static.is_shamanistic
-    case "Shamanistic":
-      return activeBlessedTradition.static.is_shamanistic
-    default:
-      return assertExhaustive(p.restriction)
+  if (p.restriction === undefined) {
+    return true
   }
+
+  return activeBlessedTradition.dbEntry.type.kind === p.restriction.kind
 }
 
 /**
@@ -38,23 +32,23 @@ export const checkBlessedTraditionPrerequisite = (
  */
 export const checkMagicalTraditionPrerequisite = (
   caps: {
-    getActiveMagicalTraditions: GetActiveMagicalTraditionsCapability
+    activeMagicalTraditions: CharacterActivatable<"MagicalTradition">[]
   },
   p: MagicalTraditionPrerequisite,
 ): boolean => {
-  const activeMagicalTraditions = caps.getActiveMagicalTraditions()
+  const { activeMagicalTraditions } = caps
 
   if (activeMagicalTraditions.length === 0) {
     return false
   }
 
-  switch (p.restriction) {
+  switch (p.restriction?.kind) {
     case undefined:
       return true
     case "CanLearnRituals":
-      return activeMagicalTraditions.some(t => t.static.can_learn_rituals)
+      return activeMagicalTraditions.some(t => t.dbEntry.can_learn_rituals)
     case "CanBindFamiliars":
-      return activeMagicalTraditions.some(t => t.static.can_bind_familiars)
+      return activeMagicalTraditions.some(t => t.dbEntry.can_bind_familiars)
     default:
       return assertExhaustive(p.restriction)
   }

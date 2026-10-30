@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, KeyboardEvent, useCallback, useEffect, useRef } from "react"
+import { type ChangeEvent, type FC, type KeyboardEvent, useCallback, useEffect, useRef } from "react"
 import "./TextField.scss"
 import { TextFieldContainer } from "./TextFieldContainer.tsx"
 

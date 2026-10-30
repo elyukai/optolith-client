@@ -1,11 +1,14 @@
-import { MagicalTradition } from "@optolith/database-schema/gen"
-import { Compare, compareAt } from "../../utils/compare.ts"
-import { mapNullableDefault } from "../../utils/nullable.ts"
-import { TranslateMap } from "../../utils/translate.ts"
+import { ensureNonEmpty } from "@elyukai/utils/array/nonEmpty"
+import { on } from "@elyukai/utils/function"
+import { isNotNullish, mapNullableDefault } from "@elyukai/utils/nullable"
+import type { Compare } from "@elyukai/utils/ordering"
+import { renderActivatableNameChunk } from "@optolith/entity-descriptions/entities/partial/activatableNameChunks"
+import type { TranslateMap } from "../../utils/locale.ts"
 import type {
+  CharacterActivatable,
   DisplayedActiveActivatable,
   DisplayedInactiveActivatable,
-} from "./activatableEntry.ts"
+} from "./activatable.ts"
 
 /**
  * Filters and sorts the displayed advantages or disadvantages.
@@ -17,17 +20,27 @@ export const filterAndSortDisplayed = <
 >(
   visibleDisAdvantages: T[],
   filterText: string,
+  showEntriesWithoutMetPrerequisites: boolean,
   translateMap: TranslateMap,
   localeCompare: Compare<string>,
 ) => {
-  const getName = (c: T) => translateMap(c.dbEntry.translations)?.name ?? ""
+  const getName = (c: T): string =>
+    typeof c.name === "string" ? c.name : renderActivatableNameChunk(translateMap, c.name.full)
+
+  const filters = ensureNonEmpty(
+    [
+      filterText === ""
+        ? undefined
+        : (c: T) => getName(c).toLowerCase().includes(filterText.toLowerCase()) ?? false,
+      showEntriesWithoutMetPrerequisites ? undefined : (c: T) => c.active || c.isAvailable,
+    ].filter(isNotNullish),
+  )
+
   return (
-    filterText === ""
+    filters === undefined
       ? visibleDisAdvantages
-      : visibleDisAdvantages.filter(
-          c => getName(c).toLowerCase().includes(filterText.toLowerCase()) ?? false,
-        )
-  ).toSorted(compareAt(getName, localeCompare))
+      : visibleDisAdvantages.filter(entry => filters.every(filter => filter(entry)))
+  ).toSorted(on(getName, localeCompare))
 }
 
 /**
@@ -41,12 +54,12 @@ export const maximumAdventurePointsForAdventagesAndDisadvantages = 80
  * advantages and disadvantages.
  */
 export const getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages = (
-  activeMagicalTraditions: MagicalTradition[],
+  activeMagicalTraditions: CharacterActivatable<"MagicalTradition">[],
 ): number =>
   activeMagicalTraditions.reduce(
     (currentMax, tradition) =>
       mapNullableDefault(
-        tradition.alternative_magical_adventure_points_maximum,
+        tradition.dbEntry.alternative_magical_adventure_points_maximum,
         altMax => Math.min(altMax, currentMax),
         currentMax,
       ),

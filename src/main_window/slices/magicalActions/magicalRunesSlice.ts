@@ -1,4 +1,3 @@
-import { ImprovementCost } from "../../../shared/domain/adventurePoints/improvementCost.ts"
 import { createEmptyDynamicMagicalAction } from "../../../shared/domain/rated/magicalActions.ts"
 import { getImprovementCostForMagicalRune } from "../../../shared/domain/rated/magicalRune.ts"
 import { createActivatableRatedSlice } from "../activatableRatedSlice.ts"

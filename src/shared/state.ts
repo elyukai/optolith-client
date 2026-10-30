@@ -1,4 +1,5 @@
-import { observable, reaction, toJS } from "mobx"
+import type { Debugger } from "debug"
+import { action, observable, reaction, toJS } from "mobx"
 
 export type StateValues = {
   [name: string]: unknown
@@ -24,8 +25,10 @@ export type StateActionsAsParameters<A extends StateActions> = {
 export const attachStateActionHandlersToMain = <A extends StateActions>(
   ipcMain: Electron.IpcMain,
   handler: (...args: StateActionsAsParameters<A>) => void,
+  debug?: Debugger,
 ): void => {
   ipcMain.on("state:action", (_event, actionName: keyof A, ...args: unknown[]) => {
+    debug?.("execute state action %s with parameters %o", actionName, args)
     handler(actionName, args as Parameters<A[keyof A]>)
   })
 }
@@ -38,11 +41,13 @@ export const attachStateActionHandlersToMain = <A extends StateActions>(
 export const attachStateSelectorsToWindow = <S extends StateValues>(
   window: Electron.BrowserWindow,
   stateSelectors: StateSelectors<S>,
+  debug?: Debugger,
 ): void => {
   const disposers = Object.entries(stateSelectors).map(([name, selector]) =>
     reaction(
       selector,
       value => {
+        debug?.("sending changed state for slice %s", name)
         window.webContents.send("state:change", name, toJS(value))
       },
       { fireImmediately: true },
@@ -137,11 +142,15 @@ export const prepareForSerialization = <T>(obj: T): WithoutClassFunctions<T> => 
 export const transformStateSelectorsFromContextBridgeIntoObservable = <S extends StateValues>(
   bridge: StateSelectorsAndActionsBridge<S, StateActions>,
   defaultValues: S,
+  debug: Debugger,
 ): WithoutClassFunctions<S> => {
   const observableCollection = observable(defaultValues)
 
   bridge.onAnyStateChange((sliceName, value) => {
-    observableCollection[sliceName] = value
+    action(() => {
+      debug("state change for slice %s", sliceName)
+      observableCollection[sliceName] = value
+    })()
   })
 
   return observableCollection as WithoutClassFunctions<S>

@@ -1,5 +1,6 @@
+import { isNotNullish } from "@elyukai/utils/nullable"
+import { AdvantageIdentifier } from "@optolith/database-schema/types/_Identifier"
 import { createSelector } from "@reduxjs/toolkit"
-import { isActive } from "../../shared/domain/activatable/activatableEntry.ts"
 import { getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages } from "../../shared/domain/activatable/advantagesDisadvantages.ts"
 import {
   CombinedActiveBlessedTradition,
@@ -9,8 +10,6 @@ import {
   CombinedActiveMagicalTradition,
   isSpellcaster,
 } from "../../shared/domain/activatable/magicalTradition.ts"
-import { AdvantageIdentifier } from "../../shared/domain/identifier.ts"
-import { isNotNullish } from "../../shared/utils/nullable.ts"
 import { createPropertySelector } from "../../shared/utils/redux.ts"
 import { selectDynamicAdvantages } from "../slices/characterSlice.ts"
 import { SelectAll, SelectGetById } from "./basicCapabilitySelectors.ts"

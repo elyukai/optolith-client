@@ -3,15 +3,15 @@ import { useEffect, useMemo, useState } from "react"
 import { Button } from "../shared/components/button/Button.tsx"
 import { Checkbox } from "../shared/components/checkbox/Checkbox.tsx"
 import { Dropdown } from "../shared/components/dropdown/Dropdown.tsx"
-import { DropdownOption } from "../shared/components/dropdown/DropdownItem.tsx"
+import type { DropdownOption } from "../shared/components/dropdown/DropdownItem.tsx"
 import { Grid } from "../shared/components/grid/Grid.tsx"
 import { GridItem } from "../shared/components/grid/GridItem.tsx"
 import { SegmentedControls } from "../shared/components/segmentedControls/SegmentedControls.tsx"
 import { TitleBar } from "../shared/components/titleBar/TitleBar.tsx"
 import { useToggleState } from "../shared/hooks/toggleState.ts"
 import { useTranslate } from "../shared/hooks/translate.ts"
-import { GlobalSettings, Theme } from "../shared/settings/GlobalSettings.ts"
 import { useBroadcastSetting } from "../shared/settings/emittingRenderer.ts"
+import type { GlobalSettings, Theme } from "../shared/settings/GlobalSettings.ts"
 import { ExternalAPI } from "./external.ts"
 import "./root.scss"
 
@@ -108,11 +108,11 @@ export const Root: React.FC<Props> = props => {
                 },
                 {
                   name: translate("Dark"),
-                  value: Theme.Dark,
+                  value: "dark",
                 },
                 {
                   name: translate("Light"),
-                  value: Theme.Light,
+                  value: "light",
                 },
               ]}
               active={theme}

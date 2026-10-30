@@ -5,6 +5,14 @@ import { getOptimization } from "./rspack.optimization.js"
 import { rendererPlugins } from "./rspack.plugins.js"
 import { rules } from "./rspack.rules.js"
 
+const ELECTRON_MAJOR_VERSION = 45
+const ELECTRON_NODE_MAJOR_VERSION = 24
+
+/** @type {import("@rspack/core").WatchOptions | undefined} */
+const watchOptions = {
+  ignored: /[\\/]\.git[\\/]/,
+}
+
 /**
  * @param {string} name
  * @param {EnvironmentMode} mode
@@ -12,19 +20,20 @@ import { rules } from "./rspack.rules.js"
  */
 const createRendererConfig = (name, mode) => [
   {
+    watchOptions,
     name: `renderer_${name}`,
     mode,
     entry: {
       [`renderer_${name}`]: `./src/${name}_window/index.tsx`,
     },
-    target: "electron44-renderer",
+    target: `electron${ELECTRON_MAJOR_VERSION}-renderer`,
     optimization: getOptimization(`renderer_${name}`),
     module: {
       rules: rules,
     },
     resolve: {
-      symlinks: false,
       conditionNames: ["browser", "default", "import", "require"],
+      tsConfig: resolve(import.meta.dirname, "./tsconfig.json"),
     },
     output: {
       path: resolve(import.meta.dirname, ".webpack"),
@@ -42,31 +51,30 @@ const createRendererConfig = (name, mode) => [
     devtool: "source-map",
   },
   {
+    watchOptions,
     name: `renderer_${name}_preload`,
     mode,
     entry: {
       [`renderer_${name}_preload`]: `./src/${name}_window_preload/index.ts`,
     },
-    target: "electron44-preload",
+    target: ["web", "es2025"],
     module: {
       rules: rules,
     },
     resolve: {
-      symlinks: false,
+      tsConfig: resolve(import.meta.dirname, "./tsconfig.json"),
     },
     output: {
       path: resolve(import.meta.dirname, ".webpack"),
       filename: "[name].cjs",
     },
     externals: {
+      electron: "commonjs electron",
       "electron/renderer": "commonjs electron/renderer",
       "electron/common": "commonjs electron/common",
     },
     optimization: {
       minimize: false,
-    },
-    externalsPresets: {
-      electronPreload: true,
     },
   },
 ]
@@ -81,18 +89,19 @@ export default () => {
 
   return [
     {
+      watchOptions,
       name: "main",
       mode,
       entry: {
         main: "./src/main/index.ts",
       },
-      target: "electron44-main",
+      target: `electron${ELECTRON_MAJOR_VERSION}-main`,
       optimization: getOptimization("main"),
       module: {
         rules: rules,
       },
       resolve: {
-        symlinks: false,
+        tsConfig: resolve(import.meta.dirname, "./tsconfig.json"),
       },
       output: {
         path: resolve(import.meta.dirname, ".webpack"),
@@ -113,18 +122,19 @@ export default () => {
       },
     },
     // {
+    //   watchOptions,
     //   name: "database",
     //   mode,
     //   entry: {
     //     database: "./src/database/index.ts",
     //   },
-    //   target: "electron-main",
+    //   target: `electron${ELECTRON_MAJOR_VERSION}-main`,
     //   optimization: getOptimization("database"),
     //   module: {
     //     rules: rules,
     //   },
     //   resolve: {
-    //     symlinks: false,
+    //     tsConfig: resolve(import.meta.dirname, "./tsconfig.json"),
     //   },
     //   output: {
     //     path: resolve(import.meta.dirname, ".webpack"),

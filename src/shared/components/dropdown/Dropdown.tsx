@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { arrayFromNonNullable } from "../../utils/array.ts"
-import { classList } from "../../utils/classList.ts"
-import { FCC } from "../../utils/react.ts"
+import { classList } from "@elyukai/utils/classList"
+import type { FCC } from "../../utils/react.ts"
 import { Label } from "../label/Label.tsx"
 import { Scroll } from "../scroll/Scroll.tsx"
 import "./Dropdown.scss"
-import { DropdownItem, DropdownOption } from "./DropdownItem.tsx"
+import { DropdownItem, type DropdownOption } from "./DropdownItem.tsx"
+import { nullableToArray } from "@elyukai/utils/nullable"
 
 type Props<A> = {
   className?: string
@@ -117,7 +117,7 @@ export function Dropdown<A>(props: Props<A>): ReturnType<FCC<Props<A>>> {
 
   const selected = isMultiple
     ? options.filter(option => values.includes(option.id))
-    : arrayFromNonNullable(options.find(option => option.id === value))
+    : nullableToArray(options.find(option => option.id === value))
 
   const valueText =
     selected.length === 0 ? hint ?? null : selected.map(option => option.name).join(", ")

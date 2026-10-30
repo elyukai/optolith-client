@@ -1,8 +1,16 @@
-import { ActivatableIdentifier } from "@optolith/database-schema/gen"
-import { ReactNode, memo, useCallback, useMemo, useState } from "react"
+import { ensureNonEmpty } from "@elyukai/utils/array/nonEmpty"
+import { classList } from "@elyukai/utils/classList"
+import { ensure, isNotNullish } from "@elyukai/utils/nullable"
+import { range } from "@elyukai/utils/range"
+import { romanize } from "@elyukai/utils/roman"
+import { isNonEmptyString } from "@elyukai/utils/string"
+import { parseInt } from "@elyukai/utils/string/number"
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type { ActivatableIdentifier } from "@optolith/database-schema/gen"
+import { memo, useCallback, useMemo, useState, type ReactNode } from "react"
 import { BasicInputDialog } from "../../../../../shared/components/basicInputDialog/BasicInputDialog.tsx"
 import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
-import { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
+import type { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemButtons } from "../../../../../shared/components/list/ListItemButtons.tsx"
@@ -11,35 +19,26 @@ import { ListItemLeft } from "../../../../../shared/components/list/ListItemLeft
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
-import { getCostOfInstance } from "../../../../../shared/domain/activatable/activatableActive.ts"
 import {
-  ActivatableInstance,
-  ActivatableOption,
+  activatableGroupTranslationKeys,
+  getAdventurePointsForInactiveActivatableInstance,
+  type ActivatableOption,
   type DisplayedInactiveActivatable,
-} from "../../../../../shared/domain/activatable/activatableEntry.ts"
+} from "../../../../../shared/domain/activatable/activatable.ts"
 import { getSelectOptionFromDisplayedOption } from "../../../../../shared/domain/activatable/activatableInactive.ts"
-import { AdvantageIdentifier, equalsIdentifier } from "../../../../../shared/domain/identifier.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { classList } from "../../../../../shared/utils/classList.ts"
-import { parseInt } from "../../../../../shared/utils/math.ts"
-import { ensure, isNotNullish } from "../../../../../shared/utils/nullable.ts"
-import { range } from "../../../../../shared/utils/range.ts"
-import { romanize } from "../../../../../shared/utils/roman.ts"
-import { isNonEmptyString } from "../../../../../shared/utils/string.ts"
-import { PickOfType } from "../../../../../shared/utils/type.ts"
-import { assertExhaustive } from "../../../../../shared/utils/typeSafety.ts"
+import { SharedActions } from "../../../../external.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
-import { useAppSelector } from "../../../../hooks/redux.ts"
-import { InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
-import { selectInlineLibraryEntryId } from "../../../../slices/inlineWikiSlice.ts"
+import {
+  InlineLibraryManager,
+  type DisplayableMainIdentifier,
+} from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { InactiveActivatableListItemOption } from "./InactiveActivatableListItemOption.tsx"
 
 type Props<K extends ActivatableIdentifier["kind"]> = {
   activatable: DisplayedInactiveActivatable<K>
-  groupNameKey?: PickOfType<UI, string>
   isCustomCostAvailable?: boolean
-  add: (parameters: { id: number; instance: ActivatableInstance }, cost: number) => void
+  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 const getLevelKey = (option: DropdownOption<number>) => option.id
@@ -47,21 +46,10 @@ const getLevelKey = (option: DropdownOption<number>) => option.id
 const InactiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
   props: Props<K>,
 ): ReactNode => {
-  const { activatable, groupNameKey, isCustomCostAvailable = false, add } = props
-  const {
-    id,
-    dbEntry: { ap_value, translations },
-    charEntry,
-    isAvailable,
-    options,
-    level,
-  } = activatable
+  const { activatable, isCustomCostAvailable = false, selectedInlineLibraryEntryId } = props
+  const { type, id, name, instances, isAvailable, options, level, apValue } = activatable
 
   const translate = useTranslate()
-  const translateMap = useTranslateMap()
-  const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
-
-  const { name = "" } = translateMap<{ name: string }>(translations) ?? {}
 
   const [selectedLevel, setSelectedLevel] = useState(() => (level === undefined ? undefined : 1))
   const [selectedOptions, setSelectedOptions] = useState<(ActivatableOption | undefined)[]>([])
@@ -112,12 +100,6 @@ const InactiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
 
   const handleDeleteCustomCost = useCallback(() => setCustomCost(undefined), [setCustomCost])
 
-  const idObject = useMemo(
-    (): ActivatableIdentifier =>
-      ({ kind: activatable.type, [activatable.type]: id }) as ActivatableIdentifier,
-    [activatable.type, id],
-  )
-
   const handleSelectForInfo = useCallback(
     () => InlineLibraryManager.instance.goTo([activatable.type, id]),
     [activatable.type, id],
@@ -125,47 +107,33 @@ const InactiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
 
   const cost = useMemo(
     () =>
-      getCostOfInstance(
-        idObject,
-        typeof ap_value === "number" ? { kind: "Fixed", Fixed: ap_value } : ap_value,
-        charEntry?.instances ?? [],
+      getAdventurePointsForInactiveActivatableInstance(
+        apValue,
         {
           level: selectedLevel,
           options: selectedOptions.filter(isNotNullish),
           customAdventurePointsValue: customCost,
         },
         optionId => getSelectOptionFromDisplayedOption(options, optionId),
-        true,
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ap_value, customCost, options, selectedLevel, selectedOptions],
+    [apValue, instances, customCost, options, selectedLevel, selectedOptions],
   )
 
   const handleAdd = useCallback(() => {
-    add(
-      {
-        id,
-        instance: {
-          level: selectedLevel,
-          options: selectedOptions.filter(isNotNullish),
-          customAdventurePointsValue: customCost,
-        },
-      },
-      cost ?? 0,
-    )
+    SharedActions.addActivatable(activatable.type, id, {
+      level: selectedLevel,
+      options: ensureNonEmpty(selectedOptions.filter(isNotNullish)),
+      customAdventurePointsValue: customCost,
+    })
     setSelectedLevel(undefined)
     setSelectedOptions([])
-  }, [add, cost, customCost, id, selectedLevel, selectedOptions])
-
-  if (equalsIdentifier({ tag: "Advantage", advantage: AdvantageIdentifier.HatredOf }, idObject)) {
-    console.log("cost", cost)
-    console.log("options", options)
-  }
+  }, [cost, customCost, id, selectedLevel, selectedOptions])
 
   const isAddDisabled = useMemo(
     () =>
       !isAvailable ||
-      selectedOptions.filter(isNotNullish).length !==
+      selectedOptions.filter(o => isNotNullish(o) && (o.type !== "Custom" || o.value.length > 0))
+        .length !==
         options.reduce((optionsSum, option) => {
           switch (option.kind) {
             case "choice":
@@ -195,16 +163,17 @@ const InactiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
       <span className="level title">{romanize(1)}</span>
     )
 
+  const groupNameKey: (typeof activatableGroupTranslationKeys)[ActivatableIdentifier["kind"]] =
+    activatableGroupTranslationKeys[type]
+
   return (
     <ListItem
-      active={
-        inlineLibraryEntryId !== undefined && equalsIdentifier(inlineLibraryEntryId, idObject)
-      }
+      active={selectedInlineLibraryEntryId?.[0] === type && selectedInlineLibraryEntryId[1] === id}
       disabled={!isAvailable}
     >
       <ListItemLeft>
         <ListItemName name={name} onClick={handleSelectForInfo} />
-        {level?.placement === "after" ? levelElement : null}
+        {level?.placement === "before" ? levelElement : null}
         {isAvailable
           ? options.map((option, index) => (
               <InactiveActivatableListItemOption
@@ -212,12 +181,13 @@ const InactiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
                 key={index}
                 index={index}
                 onChange={handleChangeOption}
+                values={selectedOptions}
                 option={option}
                 value={selectedOptions[index]}
               />
             ))
           : null}
-        {level?.placement === "before" ? levelElement : null}
+        {level?.placement === "after" ? levelElement : null}
       </ListItemLeft>
       <ListItemSeparator />
       {groupNameKey === undefined ? null : <ListItemGroup text={translate(groupNameKey)} />}
