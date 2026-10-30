@@ -16,7 +16,7 @@ export const OptionalRules: FC = observer(() => {
   const localeCompare = useLocaleCompare()
 
   const optionalRuleOptions = useMemo(
-    () => SharedState.optionalRules.sort(on(x => x.name, localeCompare)),
+    () => SharedState.optionalRules.toSorted(on(x => x.name, localeCompare)),
     [SharedState.optionalRules, localeCompare, translateMap],
   )
 
