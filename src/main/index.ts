@@ -232,3 +232,10 @@ app.whenReady().then(async () => {
 })
 
 handleNativeThemeChanges()
+
+process.on("uncaughtException", error => {
+  // oxlint-disable-next-line no-alert
+  alert(error)
+  console.error(error)
+  process.exit(1)
+})
