@@ -76,7 +76,6 @@ const config: Configuration = {
       ? `${process.env.UPDATE_URL}/insider/\${os}`
       : `${process.env.UPDATE_URL}/\${os}`,
   },
-  // afterSign: notarize,
 }
 
 export default config
