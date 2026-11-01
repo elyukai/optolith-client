@@ -1,3 +1,4 @@
+import { ensureNonEmpty } from "@elyukai/utils/array/nonEmpty"
 import { count } from "@elyukai/utils/array/reductions"
 import { nullableToArray } from "@elyukai/utils/nullable"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
@@ -22,10 +23,8 @@ import {
   type BoundAdventurePointsForRated,
 } from "../adventurePoints/ratedEntry.ts"
 import type { Character } from "../character.ts"
-import {
-  addOrRemoveDependency,
-  type RegistrationMethod,
-} from "../dependencies/registrationHelpers.ts"
+import { registerOrUnregisterPrerequisitesOfEnhancementAsDependencies } from "../dependencies/fullPrerequisiteRegistrationAsDependencyForType.ts"
+import { addOrRemoveDependency, RegistrationMethod } from "../dependencies/registrationHelpers.ts"
 import { checkMultipleDisjunctionPartsAreValid } from "../prerequisites/disjunctionPrerequisiteMultipartValidation.ts"
 import { countMatchingRatedMinimumNumberEntries } from "../prerequisites/single/ratedMinimumNumberPrerequisiteValidation.ts"
 import { sumMatchingRatedSumEntries } from "../prerequisites/single/ratedSumPrerequisiteValidation.ts"
@@ -427,6 +426,37 @@ export abstract class CharacterActivatableRatedWithEnhancements<
       .reduce((acc, e) => acc.add(e.adventurePoints), super.adventurePoints)
   }
 
+  activateEnhancement(id: string): void {
+    const dbEntry = this.global.db.getInstanceOfEntityById("Enhancement", id)
+    if (dbEntry) {
+      const enhancement = new Enhancement(this, id, dbEntry)
+      this.activeEnhancements.set(id, enhancement)
+      if (dbEntry.prerequisites !== undefined) {
+        registerOrUnregisterPrerequisitesOfEnhancementAsDependencies(
+          dbEntry.prerequisites,
+          RegistrationMethod.Add,
+          this.character,
+          Case(this.entityName satisfies Gen.SkillWithEnhancementsIdentifier["kind"], this.id),
+        )
+      }
+    }
+  }
+
+  deactivateEnhancement(id: string): void {
+    const entry = this.activeEnhancements.get(id)
+    if (entry) {
+      this.activeEnhancements.delete(id)
+      if (entry.dbEntry.prerequisites !== undefined) {
+        registerOrUnregisterPrerequisitesOfEnhancementAsDependencies(
+          entry.dbEntry.prerequisites,
+          RegistrationMethod.Remove,
+          this.character,
+          Case(this.entityName satisfies Gen.SkillWithEnhancementsIdentifier["kind"], this.id),
+        )
+      }
+    }
+  }
+
   override toJSON(): DisplayedActivatableRatedWithEnhancements {
     const base = super.toJSON()
     if (base.active) {
@@ -528,7 +558,7 @@ export abstract class CharacterAnyRatedEntries<
   readonly global: Global
   protected readonly character: Character
   readonly entityName: Entity
-  readonly #entryClass: CharacterRatedEntryConstructor<Entity, Activatable, T>
+  readonly entryClass: CharacterRatedEntryConstructor<Entity, Activatable, T>
   readonly #isActivatable: Activatable
   @observable protected accessor rated: Map<string, T> = new Map()
 
@@ -542,7 +572,7 @@ export abstract class CharacterAnyRatedEntries<
     this.global = global
     this.character = character
     this.entityName = entityName
-    this.#entryClass = entryClass
+    this.entryClass = entryClass
     this.#isActivatable = isActivatable
   }
 
@@ -557,7 +587,7 @@ export abstract class CharacterAnyRatedEntries<
   getValueById(id: string): number | (Activatable extends true ? undefined : never) {
     return (
       this.getById(id)?.value ??
-      ((this.#isActivatable ? undefined : this.#entryClass.minValue) as T["value"])
+      ((this.#isActivatable ? undefined : this.entryClass.minValue) as T["value"])
     )
   }
 
@@ -576,13 +606,13 @@ export abstract class CharacterAnyRatedEntries<
     if (!dbEntry) {
       throw new Error(`Entry with id ${id} not provided.`)
     }
-    return new this.#entryClass(
+    return new this.entryClass(
       this.global,
       this.character,
       this.entityName,
       id,
       dbEntry,
-      (this.#isActivatable ? undefined : this.#entryClass.minValue) as T["value"],
+      (this.#isActivatable ? undefined : this.entryClass.minValue) as T["value"],
       [],
     )
   }
@@ -616,6 +646,11 @@ export abstract class CharacterAnyRatedEntries<
     this.ensureEntryExists(id).decrementToMin()
   }
 
+  @action
+  set(id: string, value: number | (Activatable extends true ? undefined : never)) {
+    this.ensureEntryExists(id).setValue(value)
+  }
+
   @computed
   get values(): T[] {
     return this.rated.values().toArray()
@@ -627,15 +662,17 @@ export abstract class CharacterAnyRatedEntries<
   }
 }
 
+type RatedEntity = {
+  [K in keyof Gen.EntityMap]: Gen.EntityMap[K] extends {
+    src?: Gen.PublicationRefs
+    translations: LocaleMap<{ name: string }>
+  }
+    ? K
+    : never
+}[keyof Gen.EntityMap]
+
 export abstract class CharacterRatedEntries<
-  Entity extends {
-    [K in keyof Gen.EntityMap]: Gen.EntityMap[K] extends {
-      src?: Gen.PublicationRefs
-      translations: LocaleMap<{ name: string }>
-    }
-      ? K
-      : never
-  }[keyof Gen.EntityMap],
+  Entity extends RatedEntity,
   T extends CharacterRatedEntry<Entity>,
 > extends CharacterAnyRatedEntries<Entity, false, T> {
   constructor(
@@ -663,6 +700,28 @@ export abstract class CharacterRatedEntries<
         (container): ReturnType<T["toJSON"]> =>
           this.getByIdSafe(container.id).toJSON() as ReturnType<T["toJSON"]>,
       )
+  }
+
+  static fromAnyJSON<Collection extends CharacterRatedEntries<any, any>>(
+    collection: Collection,
+    raw: Record<string, { value: number }> | undefined,
+  ): Collection {
+    for (const [id, entry] of Object.entries(raw ?? {})) {
+      collection.set(id, entry.value)
+    }
+    return collection
+  }
+
+  toJSON(): Record<string, { value: number }> | undefined {
+    const entries = ensureNonEmpty(
+      this.rated
+        .values()
+        .filter(entry => entry.value > this.entryClass.minValue)
+        .map(entry => [entry.id, { value: entry.value }] as const)
+        .toArray(),
+    )
+
+    return entries === undefined ? undefined : Object.fromEntries(entries)
   }
 }
 
@@ -755,6 +814,18 @@ export abstract class CharacterActivatableRatedEntries<
       )
       .toArray()
   }
+
+  toJSON(): Record<string, { value: number }> | undefined {
+    const entries = ensureNonEmpty(
+      this.rated
+        .values()
+        .filter(entry => entry.isActive())
+        .map(entry => [entry.id, { value: entry.value }] as const)
+        .toArray(),
+    )
+
+    return entries === undefined ? undefined : Object.fromEntries(entries)
+  }
 }
 
 export abstract class CharacterActivatableRatedEntriesWithEnhancements<
@@ -772,6 +843,62 @@ export abstract class CharacterActivatableRatedEntriesWithEnhancements<
     if (enhancement) {
       addOrRemoveDependency(method, enhancement.dependencies, dependency)
     }
+  }
+
+  activateEnhancement(parentId: string, enhancementId: string): void {
+    const entry = this.ensureEntryExists(parentId)
+    entry.activateEnhancement(enhancementId)
+  }
+
+  deactivateEnhancement(parentId: string, enhancementId: string): void {
+    const entry = this.ensureEntryExists(parentId)
+    entry.deactivateEnhancement(enhancementId)
+  }
+
+  static fromAnyJSON<
+    Collection extends CharacterActivatableRatedEntriesWithEnhancements<
+      any,
+      CharacterActivatableRatedWithEnhancements<any>
+    >,
+  >(
+    collection: Collection,
+    raw: Record<string, { value: number; enhancements?: Gen.Enhancement_ID[] }> | undefined,
+  ): Collection {
+    for (const [id, entry] of Object.entries(raw ?? {})) {
+      collection.set(id, entry.value)
+      for (const enhancementId of entry.enhancements ?? []) {
+        collection.activateEnhancement(id, enhancementId)
+      }
+    }
+    return collection
+  }
+
+  override toJSON():
+    | Record<string, { value: number; enhancements?: Gen.Enhancement_ID[] }>
+    | undefined {
+    const entries = ensureNonEmpty(
+      this.rated
+        .values()
+        .filter(entry => entry.isActive())
+        .map(
+          entry =>
+            [
+              entry.id,
+              {
+                value: entry.value,
+                enhancements: ensureNonEmpty(
+                  entry.activeEnhancements
+                    .values()
+                    .map(e => e.id)
+                    .toArray(),
+                ),
+              },
+            ] as const,
+        )
+        .toArray(),
+    )
+
+    return entries === undefined ? undefined : Object.fromEntries(entries)
   }
 }
 

@@ -1,8 +1,8 @@
 import { arrayEqual } from "@elyukai/utils/equality"
 import { isNotNullish } from "@elyukai/utils/nullable"
 import { useMemo } from "react"
-import { SharedState } from "../external.ts"
 import { type RoutePath, selectRoute } from "../slices/routeSlice.ts"
+import { useCharacterState } from "./characterState.ts"
 import { useAppSelector } from "./redux.ts"
 
 type RouteGroupName =
@@ -35,7 +35,7 @@ export type DisplayRouteGroup = {
   routes: RoutePath[]
 }
 
-const mainHierarchy: DisplayRoute[] = [
+export const mainHierarchy: DisplayRoute[] = [
   {
     type: "single",
     route: ["characters"],
@@ -64,7 +64,7 @@ type Section = "main" | "character"
 /**
  * A hook that returns the currently visible tabs.
  */
-export const useVisibleTabs = () => {
+export const useVisibleCharacterTabs = () => {
   const currentRoute = useAppSelector(selectRoute)
 
   // TODO: Replace these with real values
@@ -79,7 +79,7 @@ export const useVisibleTabs = () => {
     isCultureSelected,
     isSpellcaster,
     isBlessedOne,
-  } = SharedState
+  } = useCharacterState()
 
   const characterId = currentRoute[0] === "characters" ? currentRoute[1] : undefined
 

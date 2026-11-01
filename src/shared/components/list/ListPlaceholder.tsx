@@ -1,5 +1,5 @@
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
-import { SharedState } from "../../../main_window/external.ts"
+import { useCharacterState } from "../../../main_window/hooks/characterState.ts"
 import { IconButton } from "../iconButton/IconButton.tsx"
 import { List } from "./List.tsx"
 import { ListItem } from "./ListItem.tsx"
@@ -42,7 +42,7 @@ type Props = {
  */
 export const ListPlaceholder: React.FC<Props> = props => {
   const { type = "advantages", message } = props
-  const { canRemove } = SharedState
+  const { canRemove } = useCharacterState()
 
   const placeholder = (() => {
     switch (type) {

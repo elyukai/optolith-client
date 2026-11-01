@@ -18,7 +18,7 @@ import { filterAndSortDisplayed } from "../../../../../shared/domain/activatable
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedState } from "../../../../external.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
@@ -41,7 +41,8 @@ export const Disadvantages: FC = observer(() => {
   const dispatch = useAppDispatch()
   const localeCompare = useLocaleCompare()
 
-  const { canRemove, isInCharacterCreation } = SharedState
+  const { canRemove, isInCharacterCreation, inactiveDisadvantages, activeDisadvantages } =
+    useCharacterState()
 
   const cultureRatingVisibility = useAppSelector(
     selectAdvantagesDisadvantagesCultureRatingVisibility,
@@ -66,25 +67,25 @@ export const Disadvantages: FC = observer(() => {
   const inactiveList = useMemo(
     () =>
       filterAndSortDisplayed(
-        SharedState.inactiveDisadvantages,
+        inactiveDisadvantages,
         inactiveFilterText,
         showEntriesWithoutMetPrerequisites,
         translateMap,
         localeCompare,
       ),
-    [SharedState.inactiveDisadvantages, inactiveFilterText, translateMap, localeCompare],
+    [inactiveDisadvantages, inactiveFilterText, translateMap, localeCompare],
   )
 
   const activeList = useMemo(
     () =>
       filterAndSortDisplayed(
-        SharedState.activeDisadvantages,
+        activeDisadvantages,
         activeFilterText,
         true, // no effect for active entries
         translateMap,
         localeCompare,
       ),
-    [SharedState.activeDisadvantages, activeFilterText, translateMap, localeCompare],
+    [activeDisadvantages, activeFilterText, translateMap, localeCompare],
   )
 
   const { isOpen: isSlideinVisible, open: openSlidein, close: closeSlidein } = useModalState()

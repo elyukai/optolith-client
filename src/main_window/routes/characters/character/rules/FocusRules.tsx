@@ -4,7 +4,7 @@ import { type FC, useMemo } from "react"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedState } from "../../../../external.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { FocusRulesItem } from "./FocusRulesItem.tsx"
 
 /**
@@ -15,9 +15,11 @@ export const FocusRules: FC = observer(() => {
   const translateMap = useTranslateMap()
   const localeCompare = useLocaleCompare()
 
+  const { focusRules } = useCharacterState()
+
   const focusRuleOptions = useMemo(
-    () => SharedState.focusRules.toSorted(on(x => x.name, localeCompare)),
-    [SharedState.focusRules, localeCompare, translateMap],
+    () => focusRules.toSorted(on(x => x.name, localeCompare)),
+    [focusRules, localeCompare, translateMap],
   )
 
   return (

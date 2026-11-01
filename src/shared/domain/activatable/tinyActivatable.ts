@@ -1,3 +1,4 @@
+import { ensureNonEmpty } from "@elyukai/utils/array/nonEmpty"
 import { count } from "@elyukai/utils/array/reductions"
 import type {
   ActivatableIdentifier,
@@ -157,5 +158,30 @@ export abstract class TinyActivatables<
   ) {
     const entry = this.ensureEntryExists(id)
     addOrRemoveDependency(method, entry.dependencies, dependency)
+  }
+
+  static fromAnyJSON<T extends TinyActivatables<any, TinyActivatable<any>>>(
+    global: Global,
+    character: Character,
+    creator: new (global: Global, character: Character) => T,
+    raw: string[] | undefined,
+  ): T {
+    const activatables = new creator(global, character)
+
+    for (const id of raw ?? []) {
+      activatables.activate(id)
+    }
+
+    return activatables
+  }
+
+  toJSON(): string[] | undefined {
+    return ensureNonEmpty(
+      this.activatables
+        .values()
+        .filter(entry => entry.active)
+        .map(entry => entry.id)
+        .toArray(),
+    )
   }
 }

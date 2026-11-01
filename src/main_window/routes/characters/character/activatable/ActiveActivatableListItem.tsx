@@ -22,7 +22,7 @@ import {
 // import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedActions } from "../../../../external.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import {
   InlineLibraryManager,
   type DisplayableMainIdentifier,
@@ -46,10 +46,11 @@ const ActiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
+  const actions = useCharacterActions()
 
   const handleLevel = useCallback(
     (level: number) => {
-      SharedActions.setActivatableLevel(activatable.type, id, instanceIndex, level)
+      actions.setActivatableLevel(activatable.type, id, instanceIndex, level)
     },
     [activatable, id, instanceIndex],
   )
@@ -60,7 +61,7 @@ const ActiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
   )
 
   const handleRemove = useCallback(() => {
-    SharedActions.removeActivatable(activatable.type, id, instanceIndex)
+    actions.removeActivatable(activatable.type, id, instanceIndex)
   }, [activatable, id, instanceIndex])
 
   const levelElement =

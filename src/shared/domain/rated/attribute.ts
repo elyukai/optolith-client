@@ -245,6 +245,14 @@ export class CharacterAttributes extends CharacterRatedEntries<"Attribute", Char
     // TODO: magical actions
     return minima
   }
+
+  static fromJSON(
+    global: Global,
+    character: Character,
+    raw: Record<string, { value: number }> | undefined,
+  ): CharacterAttributes {
+    return super.fromAnyJSON<CharacterAttributes>(new CharacterAttributes(global, character), raw)
+  }
 }
 
 const collectMinima = (

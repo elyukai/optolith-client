@@ -128,6 +128,18 @@ export class CharacterCombatTechniques<
   get combatTechniques() {
     return this.entries
   }
+
+  static fromJSON<Entity extends CombatTechniqueIdentifier["kind"]>(
+    global: Global,
+    character: Character,
+    entity: Entity,
+    raw: Record<string, { value: number }> | undefined,
+  ): CharacterCombatTechniques<Entity> {
+    return super.fromAnyJSON<CharacterCombatTechniques<Entity>>(
+      new CharacterCombatTechniques(global, character, entity),
+      raw,
+    )
+  }
 }
 
 const getPrimaryAttributeModifier = (values: number[]): number =>

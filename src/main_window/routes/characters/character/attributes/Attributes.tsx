@@ -4,7 +4,7 @@ import { Main } from "../../../../../shared/components/main/Main.tsx"
 import { Page } from "../../../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { SharedState } from "../../../../external.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import "./Attributes.scss"
 import { AttributeList } from "./AttributesList.tsx"
 import { DerivedCharacteristicsList } from "./DerivedCharacteristicsList.tsx"
@@ -19,7 +19,7 @@ export const Attributes: FC = observer(() => {
     attributesTotalMaximum: maxTotalPoints,
     isInCharacterCreation,
     canRemove: isRemovingEnabled,
-  } = SharedState
+  } = useCharacterState()
 
   return (
     <Page id="attributes">

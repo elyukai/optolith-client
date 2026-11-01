@@ -7,7 +7,7 @@ import { ListItemValues } from "../../../../../shared/components/list/ListItemVa
 import type { DisplayedAttribute } from "../../../../../shared/domain/rated/attribute.ts"
 import type { DisplayedActiveLiturgicalChant } from "../../../../../shared/domain/rated/liturgicalChant.ts"
 import type { DisplayedActiveSpellwork } from "../../../../../shared/domain/rated/spell.ts"
-import { SharedActions } from "../../../../external.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import {
   InlineLibraryManager,
   type DisplayableMainIdentifier,
@@ -49,17 +49,13 @@ export const ActiveActivatableRatedListItem: FC<Props> = props => {
     selectedInlineLibraryEntryId,
   } = props
 
-  const handleAddPoint = useCallback(() => SharedActions.incrementRated(type, id), [id])
-  const handleRemovePoint = useCallback(() => SharedActions.decrementRated(type, id), [id])
-  const handleSetToMaximumPoints = useCallback(
-    () => SharedActions.incrementRatedToMax(type, id),
-    [id],
-  )
-  const handleSetToMinimumPoints = useCallback(
-    () => SharedActions.decrementRatedToMin(type, id),
-    [id],
-  )
-  const handleRemove = useCallback(() => SharedActions.deactivateRated(type, id), [id])
+  const actions = useCharacterActions()
+
+  const handleAddPoint = useCallback(() => actions.incrementRated(type, id), [id])
+  const handleRemovePoint = useCallback(() => actions.decrementRated(type, id), [id])
+  const handleSetToMaximumPoints = useCallback(() => actions.incrementRatedToMax(type, id), [id])
+  const handleSetToMinimumPoints = useCallback(() => actions.decrementRatedToMin(type, id), [id])
+  const handleRemove = useCallback(() => actions.deactivateRated(type, id), [id])
 
   const handleSelectForInfo = useCallback(
     () => InlineLibraryManager.instance.goTo([type, id]),

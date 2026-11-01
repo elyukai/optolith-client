@@ -5,7 +5,7 @@ import {
   maximumAdventurePointsForBlessedAdventagesAndDisadvantages,
 } from "../../shared/domain/activatable/advantagesDisadvantages.ts"
 import { useTranslate } from "../../shared/hooks/translate.ts"
-import { SharedState } from "../external.ts"
+import { useCharacterState } from "../hooks/characterState.ts"
 
 /**
  * Returns the contents for the adventure points tooltip that displays which
@@ -20,7 +20,7 @@ export const AdventurePointsTooltip: FC = observer(() => {
   //   selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
   // )
 
-  const stats = SharedState.adventurePointsStats
+  const stats = useCharacterState().adventurePointsStats
 
   return (
     <div className="ap-details">

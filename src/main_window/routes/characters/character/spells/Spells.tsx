@@ -24,7 +24,6 @@ import {
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { SharedActions, SharedState } from "../../../../external.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary, InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
@@ -33,6 +32,8 @@ import { ActiveActivatableRatedListItem } from "../liturgicalChants/ActiveActiva
 import { InactiveActivatableRatedListItem } from "../liturgicalChants/InactiveActivatableRatedListItem.tsx"
 import { ActiveCantripsListItem } from "./ActiveCantripsListItem.tsx"
 import { InactiveCantripsListItem } from "./InactiveCantripsListItem.tsx"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 
 const isTopMarginNeeded = (
   sortOrder: SpellsSortOrder,
@@ -57,7 +58,8 @@ export const Spells: FC = observer(() => {
     activeSpells,
     activeRituals,
     attributes,
-  } = SharedState
+  } = useCharacterState()
+  const actions = useCharacterActions()
 
   const [activeFilterText, setActiveFilterText] = useState("")
   const [inactiveFilterText, setInactiveFilterText] = useState("")
@@ -95,11 +97,11 @@ export const Spells: FC = observer(() => {
 
   // TODO: Check available AP
   const handleAddCantrip = useCallback(
-    (id: string) => SharedActions.addTinyActivatable("Cantrip", id),
+    (id: string) => actions.addTinyActivatable("Cantrip", id),
     [],
   )
   const handleRemoveCantrip = useCallback(
-    (id: string) => SharedActions.addTinyActivatable("Cantrip", id),
+    (id: string) => actions.addTinyActivatable("Cantrip", id),
     [],
   )
 

@@ -27,7 +27,7 @@ import {
 } from "../../../../../shared/domain/activatable/activatable.ts"
 import { getSelectOptionFromDisplayedOption } from "../../../../../shared/domain/activatable/activatableInactive.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { SharedActions } from "../../../../external.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import {
   InlineLibraryManager,
@@ -50,6 +50,7 @@ const InactiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
   const { type, id, name, instances, isAvailable, options, level, apValue } = activatable
 
   const translate = useTranslate()
+  const actions = useCharacterActions()
 
   const [selectedLevel, setSelectedLevel] = useState(() => (level === undefined ? undefined : 1))
   const [selectedOptions, setSelectedOptions] = useState<(ActivatableOption | undefined)[]>([])
@@ -120,7 +121,7 @@ const InactiveActivatablesListItem = <K extends ActivatableIdentifier["kind"]>(
   )
 
   const handleAdd = useCallback(() => {
-    SharedActions.addActivatable(activatable.type, id, {
+    actions.addActivatable(activatable.type, id, {
       level: selectedLevel,
       options: ensureNonEmpty(selectedOptions.filter(isNotNullish)),
       customAdventurePointsValue: customCost,

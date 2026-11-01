@@ -5,6 +5,7 @@ import { even } from "@elyukai/utils/number"
 import { compareNumber } from "@elyukai/utils/ordering"
 import { minus, parseInt, plusMinus, signStr } from "@elyukai/utils/string/number"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type { PersonalData as RawPersonalData } from "@optolith/character-schema/types"
 import type {
   DieType,
   EyeColor_ID,
@@ -14,7 +15,7 @@ import type {
   SocialStatus_ID,
   WeightDiceOffsetStrategy,
 } from "@optolith/database-schema/gen"
-import { action, computed, observable } from "mobx"
+import { action, computed, observable, toJS } from "mobx"
 import type { Global } from "../global.ts"
 import { randomFromArray } from "../utils/array.ts"
 import { rollDice, separateDice } from "../utils/dice.ts"
@@ -381,6 +382,47 @@ export class CharacterPersonalData {
   @action
   setWeight(newWeight: string) {
     this.weight = ensureNonEmptyString(newWeight)
+  }
+
+  static fromJSON(
+    global: Global,
+    character: Character,
+    json: RawPersonalData,
+  ): CharacterPersonalData {
+    const personalData = new CharacterPersonalData(global, character)
+    personalData.sex = json.sex
+    personalData.family = json.family
+    personalData.placeOfBirth = json.placeOfBirth
+    personalData.dateOfBirth = json.dateOfBirth
+    personalData.age = json.age
+    personalData.hairColor = json.hairColor
+    personalData.eyeColor = json.eyeColor
+    personalData.size = json.size
+    personalData.weight = json.weight
+    personalData.title = json.title
+    personalData.socialStatus = json.socialStatus
+    personalData.characteristics = json.characteristics
+    personalData.otherInfo = json.otherInfo
+
+    return personalData
+  }
+
+  toJSON(): RawPersonalData {
+    return {
+      sex: toJS(this.sex),
+      family: this.family,
+      placeOfBirth: this.placeOfBirth,
+      dateOfBirth: this.dateOfBirth,
+      age: this.age,
+      hairColor: toJS(this.hairColor),
+      eyeColor: toJS(this.eyeColor),
+      size: this.size,
+      weight: this.weight,
+      title: this.title,
+      socialStatus: this.socialStatus,
+      characteristics: this.characteristics,
+      otherInfo: this.otherInfo,
+    }
   }
 }
 

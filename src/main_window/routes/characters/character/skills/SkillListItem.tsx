@@ -7,7 +7,7 @@ import { ListItemValues } from "../../../../../shared/components/list/ListItemVa
 import type { DisplayedAttribute } from "../../../../../shared/domain/rated/attribute.ts"
 import type { DisplayedSkill } from "../../../../../shared/domain/rated/skill.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedActions } from "../../../../external.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
 import {
   InlineLibraryManager,
@@ -47,6 +47,7 @@ const SkillListItem: React.FC<Props> = props => {
   } = props
 
   const translateMap = useTranslateMap()
+  const actions = useCharacterActions()
 
   const cultureRatingVisibility = useAppSelector(selectSkillsCultureRatingVisibility)
 
@@ -77,10 +78,10 @@ const SkillListItem: React.FC<Props> = props => {
       <SkillButtons
         addDisabled={!isIncreasable}
         removeDisabled={!isDecreasable}
-        addPoint={() => SharedActions.incrementRated("Skill", id)}
-        setToMax={() => SharedActions.incrementRatedToMax("Skill", id)}
-        removePoint={canRemove ? () => SharedActions.decrementRated("Skill", id) : undefined}
-        setToMin={canRemove ? () => SharedActions.decrementRatedToMin("Skill", id) : undefined}
+        addPoint={() => actions.incrementRated("Skill", id)}
+        setToMax={() => actions.incrementRatedToMax("Skill", id)}
+        removePoint={canRemove ? () => actions.decrementRated("Skill", id) : undefined}
+        setToMin={canRemove ? () => actions.decrementRatedToMin("Skill", id) : undefined}
         selectForInfo={handleSelectForInfo}
       />
     </ListItem>

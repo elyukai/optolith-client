@@ -1,3 +1,4 @@
+import type { Culture as RawCulture } from "@optolith/character-schema/types"
 import type { ActivatableIdentifier, Culture, Culture_ID } from "@optolith/database-schema/gen"
 import { computed, observable } from "mobx"
 import type { Global } from "../global.ts"
@@ -41,6 +42,17 @@ export class CharacterCulture {
   @computed
   get name(): string | undefined {
     return this.global.locale.translateMap(this.base?.translations)?.name
+  }
+
+  static fromJSON(global: Global, raw: RawCulture): CharacterCulture {
+    return new CharacterCulture(global, raw.base, raw.isCulturalPackageApplied)
+  }
+
+  toJSON(): RawCulture {
+    return {
+      base: this.id,
+      isCulturalPackageApplied: this.isCulturalPackageApplied,
+    }
   }
 }
 

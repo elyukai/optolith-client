@@ -7,7 +7,12 @@ import {
   compareImprovementCost,
   type ImprovementCost,
 } from "@optolith/adventure-points/improvement-cost"
-import type { Property_ID, SkillCheck, SpellworkIdentifier } from "@optolith/database-schema/gen"
+import type {
+  Enhancement_ID,
+  Property_ID,
+  SkillCheck,
+  SpellworkIdentifier,
+} from "@optolith/database-schema/gen"
 import { renderSkillCheckPenalty } from "@optolith/entity-descriptions/entities/partial/rated/skillCheck"
 import { ResponsiveTextSize } from "@optolith/entity-descriptions/entities/partial/responsiveText"
 import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
@@ -116,6 +121,10 @@ export class CharacterCantrips extends TinyActivatables<"Cantrip", CharacterCant
         isUnfamiliar: entry.isUnfamiliar,
       }))
       .toArray()
+  }
+
+  static fromJSON(global: Global, character: Character, raw: string[] | undefined) {
+    return super.fromAnyJSON(global, character, CharacterCantrips, raw)
   }
 }
 
@@ -436,6 +445,18 @@ export class CharacterSpellworks<
   @computed
   get activeUnfamiliarCount(): number {
     return count(this.rated.values().toArray(), entry => entry.active && entry.isUnfamiliar)
+  }
+
+  static fromJSON<Entity extends "Spell" | "Ritual">(
+    global: Global,
+    character: Character,
+    entity: Entity,
+    raw: Record<string, { value: number; enhancements?: Enhancement_ID[] }> | undefined,
+  ): CharacterSpellworks<Entity> {
+    return super.fromAnyJSON<CharacterSpellworks<Entity>>(
+      new CharacterSpellworks(global, character, entity),
+      raw,
+    )
   }
 }
 

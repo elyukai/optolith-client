@@ -1,10 +1,12 @@
 import type { RangeBounds } from "@elyukai/utils/range"
 import type {
   AdvantageDisadvantagePrerequisites,
+  EnhancementPrerequisites,
   GeneralPrerequisites,
   LiturgyIdentifier,
   LiturgyPrerequisites,
   PlainGeneralPrerequisites,
+  SkillWithEnhancementsIdentifier,
   SpecialAbilityIdentifier,
   SpellworkIdentifier,
   SpellworkPrerequisites,
@@ -22,6 +24,7 @@ import {
   registerOrUnregisterPrerequisiteOfSpellworkAsDependency,
 } from "./prerequisiteRegistrationAsDependencyForType.ts"
 import { RegistrationMethod } from "./registrationHelpers.ts"
+import { registerOrUnregisterPrerequisiteAsDependencyForType } from "./single/index.ts"
 
 /**
 import type { AdvantageIdentifier, DisadvantageIdentifier } from "@optolith/database-schema/types/_Identifier"
@@ -248,16 +251,16 @@ export const registerOrUnregisterPrerequisitesOfLiturgyAsDependencies = (
  * Register or unregister all prerequisites of an enhancement as dependencies on
  * the character's draft.
  */
-// export const registerOrUnregisterPrerequisitesOfEnhancementAsDependencies = (
-//   method: RegistrationMethod,
-//   character: Draft<Character>,
-//   p: EnhancementPrerequisites,
-//   sourceId: SpellworkIdentifier,
-// ): void =>
-//   registerOrUnregisterPlainPrerequisites(
-//     method,
-//     character,
-//     p,
-//     sourceId,
-//     registerOrUnregisterPrerequisiteOfSpellworkAsDependency,
-//   )
+export const registerOrUnregisterPrerequisitesOfEnhancementAsDependencies = (
+  p: EnhancementPrerequisites,
+  method: RegistrationMethod,
+  character: Character,
+  sourceId: SkillWithEnhancementsIdentifier,
+): void =>
+  registerOrUnregisterPlainPrerequisites(
+    registerOrUnregisterPrerequisiteAsDependencyForType,
+    p,
+    method,
+    character,
+    sourceId,
+  )

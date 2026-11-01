@@ -3,6 +3,10 @@ import { isNotNullish } from "@elyukai/utils/nullable"
 import { isInRange } from "@elyukai/utils/range"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type {
+  Character as RawCharacter,
+  Character_ID as RawCharacter_ID,
+} from "@optolith/character-schema/types"
+import type {
   ActivatableIdentifier,
   Aspect_ID,
   MagicalTradition_ID,
@@ -16,6 +20,7 @@ import type { Case } from "tsondb/schema/gen"
 import type { Global } from "../global.ts"
 import type { CharacterIPCActions } from "../ipc.ts"
 import type { StateActionsAsParameters } from "../state.ts"
+import { ensureNonEmptyObject } from "../utils/object.ts"
 import { CharacterActivatables, type CharacterActivatable } from "./activatable/activatable.ts"
 import { getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages } from "./activatable/advantagesDisadvantages.ts"
 import { CharacterSpecialAbilities } from "./activatable/specialAbilities.ts"
@@ -33,13 +38,12 @@ import {
   type AllCapabilities,
 } from "./prerequisites/single/index.ts"
 import { CharacterProfession } from "./profession.ts"
-import type { Purse } from "./purse.ts"
+import { Purse } from "./purse.ts"
 import { CharacterRace } from "./race.ts"
 import { CharacterAttributes } from "./rated/attribute.ts"
 import { CharacterCombatTechniques } from "./rated/combatTechnique.ts"
 import { CharacterBlessings, CharacterLiturgicalChants } from "./rated/liturgicalChant.ts"
 import type { PrimaryAttributeDependency } from "./rated/primaryAttribute.ts"
-import type { ActivatableRatedMap } from "./rated/ratedEntry.ts"
 import { CharacterSkills } from "./rated/skill.ts"
 import { CharacterCantrips, CharacterSpellworks } from "./rated/spell.ts"
 import { CharacterRules } from "./rules.ts"
@@ -51,14 +55,30 @@ export class Character {
 
   readonly id: string
 
+  /**
+   * A valid semantic version (https://semver.org), representing the Optolith
+   * version this character was created with.
+   */
+  version: string
+
   @observable accessor name: string
 
   @observable accessor avatar: string | undefined
 
   /**
+   * Date of character creation, in ISO8601 format.
+   */
+  readonly dateCreated: Temporal.ZonedDateTime
+
+  /**
+   * Date of character last modified, in ISO8601 format.
+   */
+  @observable accessor dateLastModified: Temporal.ZonedDateTime
+
+  /**
    * The rules settings for the character.
    */
-  readonly rules: CharacterRules
+  @observable accessor rules: CharacterRules
 
   /**
    * Describes whether the character creation is finished.
@@ -105,54 +125,72 @@ export class Character {
   @observable accessor curriculum: CharacterCurriculum | undefined
 
   readonly states: CharacterStates
-  readonly personalData: CharacterPersonalData
+  @observable accessor personalData: CharacterPersonalData
   readonly personalityTraits: CharacterPersonalityTraits
   @observable accessor pact: CharacterPact | undefined
 
-  readonly attributes: CharacterAttributes
-  readonly derivedCharacteristics: CharacterDerivedCharacteristics
+  @observable accessor attributes: CharacterAttributes
+  @observable accessor derivedCharacteristics: CharacterDerivedCharacteristics
 
-  readonly advantages: CharacterActivatables<"Advantage">
-  readonly disadvantages: CharacterActivatables<"Disadvantage">
+  @observable accessor advantages: CharacterActivatables<"Advantage">
+  @observable accessor disadvantages: CharacterActivatables<"Disadvantage">
 
-  readonly skills: CharacterSkills
-  readonly closeCombatTechniques: CharacterCombatTechniques<"CloseCombatTechnique">
-  readonly rangedCombatTechniques: CharacterCombatTechniques<"RangedCombatTechnique">
+  @observable accessor skills: CharacterSkills
+  @observable accessor closeCombatTechniques: CharacterCombatTechniques<"CloseCombatTechnique">
+  @observable accessor rangedCombatTechniques: CharacterCombatTechniques<"RangedCombatTechnique">
 
-  readonly cantrips: CharacterCantrips
-  readonly spells: CharacterSpellworks<"Spell">
-  readonly rituals: CharacterSpellworks<"Ritual">
-  readonly blessings: CharacterBlessings
-  readonly liturgicalChants: CharacterLiturgicalChants<"LiturgicalChant">
-  readonly ceremonies: CharacterLiturgicalChants<"Ceremony">
+  @observable accessor cantrips: CharacterCantrips
+  @observable accessor spells: CharacterSpellworks<"Spell">
+  @observable accessor rituals: CharacterSpellworks<"Ritual">
+  @observable accessor blessings: CharacterBlessings
+  @observable accessor liturgicalChants: CharacterLiturgicalChants<"LiturgicalChant">
+  @observable accessor ceremonies: CharacterLiturgicalChants<"Ceremony">
 
-  readonly specialAbilities: CharacterSpecialAbilities
+  // TODO magicalActions: {
+  //   curses: ActivatableRatedMap
+  //   elvenMagicalSongs: ActivatableRatedMap
+  //   dominationRituals: ActivatableRatedMap
+  //   magicalDances: ActivatableRatedMap
+  //   magicalMelodies: ActivatableRatedMap
+  //   jesterTricks: ActivatableRatedMap
+  //   animistPowers: ActivatableRatedMap
+  //   geodeRituals: ActivatableRatedMap
+  //   zibiljaRituals: ActivatableRatedMap
+  //   magicalRunes: ActivatableRatedMap
+  // }
+
+  @observable accessor specialAbilities: CharacterSpecialAbilities
 
   @observable accessor magicalPrimaryAttributeDependencies: PrimaryAttributeDependency[] = []
   @observable accessor blessedPrimaryAttributeDependencies: PrimaryAttributeDependency[] = []
 
   readonly prerequisiteCapabilities: AllCapabilities
 
-  constructor(global: Global, characters: Characters, id: string) {
+  // items: {}
+  // hitZoneArmors: {}
+  purse: Purse
+  // creatures: {}
+
+  constructor(
+    global: Global,
+    characters: Characters,
+    id: string,
+    version: string,
+    experienceLevelId: string,
+    dateCreated: Temporal.ZonedDateTime = Temporal.Now.zonedDateTimeISO(),
+    dateLastModified: Temporal.ZonedDateTime = dateCreated,
+  ) {
     this.global = global
     this.#characters = characters
     this.id = id
-    this.name = "Alrik"
-    this.rules = new CharacterRules(global, true, [])
+    this.name = ""
+    this.version = version
+    this.dateCreated = dateCreated
+    this.dateLastModified = dateLastModified
+    this.rules = new CharacterRules(global, false, [])
     this.isCharacterCreationFinished = false
-    this.totalAdventurePoints = 1100
-    this.experienceLevel = new CharacterExperienceLevel(
-      global,
-      this,
-      "2b0a18c5-40a8-4c86-98b3-a93c85e82497",
-    )
-    this.race = new CharacterRace(
-      global,
-      "252841cf-f2d4-4fb9-af56-30de48531db5",
-      "48a1fe0b-ec55-4992-b47b-e1086f2a583f",
-    )
-    this.culture = new CharacterCulture(global, "481c50a3-416c-4aa9-8ee9-dc93cc72c2b3")
-    this.profession = new CharacterProfession(global, this, "0a9b8d85-3d9e-4297-aea0-51549b520ed6")
+    this.experienceLevel = new CharacterExperienceLevel(global, this, experienceLevelId)
+    this.totalAdventurePoints = this.experienceLevel.start?.adventure_points ?? 0
     this.states = new CharacterStates(global, this)
     this.personalData = new CharacterPersonalData(global, this)
     this.personalityTraits = new CharacterPersonalityTraits()
@@ -175,6 +213,7 @@ export class Character {
     this.ceremonies = new CharacterLiturgicalChants(global, this, "Ceremony")
     this.specialAbilities = new CharacterSpecialAbilities(global, this)
     this.prerequisiteCapabilities = createCapabilitiesFromCharacter(global, this)
+    this.purse = new Purse()
   }
 
   @computed
@@ -187,8 +226,10 @@ export class Character {
       this.skills.adventurePointsTotal.general +
       this.closeCombatTechniques.adventurePointsTotal.general +
       this.rangedCombatTechniques.adventurePointsTotal.general +
+      this.cantrips.adventurePoints.general +
       this.spells.adventurePointsTotal.general +
       this.rituals.adventurePointsTotal.general +
+      this.blessings.adventurePoints.general +
       this.liturgicalChants.adventurePointsTotal.general +
       this.ceremonies.adventurePointsTotal.general +
       this.specialAbilities.adventurePointsTotal.general
@@ -207,25 +248,26 @@ export class Character {
       spent: this.adventurePointsSpent,
       available: this.adventurePointsAvailable,
       spentOnAdvantages: this.advantages.adventurePointsTotal.getTotal(),
-      spentOnMagicalAdvantages: 0,
-      spentOnBlessedAdvantages: 0,
+      spentOnMagicalAdvantages: 0, // TODO
+      spentOnBlessedAdvantages: 0, // TODO
       spentOnDisadvantages: this.disadvantages.adventurePointsTotal.getTotal(),
-      spentOnMagicalDisadvantages: 0,
-      spentOnBlessedDisadvantages: 0,
-      spentOnRace: 0,
-      spentOnProfession: 0,
+      spentOnMagicalDisadvantages: 0, // TODO
+      spentOnBlessedDisadvantages: 0, // TODO
+      spentOnRace: 0, // TODO
+      spentOnProfession: 0, // TODO
       spentOnAttributes: this.attributes.adventurePointsTotal.getTotal(),
       spentOnSkills: this.skills.adventurePointsTotal.getTotal(),
       spentOnCombatTechniques:
         this.closeCombatTechniques.adventurePointsTotal.getTotal() +
         this.rangedCombatTechniques.adventurePointsTotal.getTotal(),
+      spentOnCantrips: this.cantrips.adventurePoints.getTotal(), // TODO
       spentOnSpells:
         this.spells.adventurePointsTotal.getTotal() + this.rituals.adventurePointsTotal.getTotal(),
-      spentOnCantrips: 0,
+      spentOnMagicalActions: 0, // TODO
       spentOnLiturgicalChants:
         this.liturgicalChants.adventurePointsTotal.getTotal() +
         this.ceremonies.adventurePointsTotal.getTotal(),
-      spentOnBlessings: 0,
+      spentOnBlessings: this.blessings.adventurePoints.getTotal(), // TODO
       spentOnSpecialAbilities: this.specialAbilities.adventurePointsTotal.getTotal(),
       spentOnEnergies: this.derivedCharacteristics.adventurePointsTotal.getTotal(),
     }
@@ -645,13 +687,213 @@ export class Character {
       id: this.id,
       name: this.name,
       avatar: this.avatar,
-      dateCreated: new Date().toISOString(), // TODO: this.dateCreated
-      dateLastModified: new Date().toISOString(), // TODO: this.dateLastModified
+      dateCreated: this.dateCreated.toJSON(),
+      dateLastModified: this.dateLastModified.toJSON(),
       raceName: this.race?.fullName,
       cultureName: this.culture?.name,
       professionName: this.profession?.fullNameParts?.fullName,
       totalAdventurePoints: this.totalAdventurePoints,
       adventurePointsSpent: this.adventurePointsSpent,
+    }
+  }
+
+  static fromJSON(
+    global: Global,
+    characters: Characters,
+    id: RawCharacter_ID,
+    json: RawCharacter,
+  ): Character {
+    const character = new Character(
+      global,
+      characters,
+      id,
+      json.version,
+      json.experienceLevel.start,
+      Temporal.ZonedDateTime.from(json.dateCreated),
+      Temporal.ZonedDateTime.from(json.dateLastModified),
+    )
+
+    character.name = json.name
+    character.totalAdventurePoints = json.adventurePoints.total
+    character.isCharacterCreationFinished = json.isCharacterCreationFinished
+    character.race = json.race ? CharacterRace.fromJSON(global, json.race) : undefined
+    character.culture = json.culture ? CharacterCulture.fromJSON(global, json.culture) : undefined
+    character.profession = json.profession
+      ? CharacterProfession.fromJSON(global, character, json.profession)
+      : undefined
+    character.curriculum = json.curriculum
+      ? CharacterCurriculum.fromJSON(json.curriculum)
+      : undefined
+    character.rules = CharacterRules.fromJSON(global, json.rules)
+    character.personalData = CharacterPersonalData.fromJSON(global, character, json.personalData)
+    character.advantages = CharacterActivatables.fromJSON(
+      global,
+      character,
+      "Advantage",
+      json.advantages,
+    )
+    character.disadvantages = CharacterActivatables.fromJSON(
+      global,
+      character,
+      "Disadvantage",
+      json.disadvantages,
+    )
+    character.specialAbilities =
+      json.specialAbilities === undefined
+        ? character.specialAbilities
+        : CharacterSpecialAbilities.fromJSON(global, character, json.specialAbilities)
+    character.attributes = CharacterAttributes.fromJSON(global, character, json.attributes)
+    character.derivedCharacteristics = CharacterDerivedCharacteristics.fromJSON(
+      global,
+      character,
+      json.derivedCharacteristics,
+    )
+    character.skills = CharacterSkills.fromJSON(global, character, json.skills)
+    character.closeCombatTechniques = CharacterCombatTechniques.fromJSON(
+      global,
+      character,
+      "CloseCombatTechnique",
+      json.combatTechniques?.melee,
+    )
+    character.rangedCombatTechniques = CharacterCombatTechniques.fromJSON(
+      global,
+      character,
+      "RangedCombatTechnique",
+      json.combatTechniques?.ranged,
+    )
+    character.cantrips = CharacterCantrips.fromJSON(global, character, json.cantrips)
+    character.spells = CharacterSpellworks.fromJSON(global, character, "Spell", json.spells)
+    character.rituals = CharacterSpellworks.fromJSON(global, character, "Ritual", json.rituals)
+
+    // TODO: magicalActions?: {
+    //   bannzeichen?: ActivatableRated[]
+    //   curses?: ActivatableRated[]
+    //   elvenMagicalSongs?: ActivatableRated[]
+    //   dominationRituals?: ActivatableRated[]
+    //   magicalMelodies?: ActivatableRated[]
+    //   magicalDances?: ActivatableRated[]
+    //   jesterTricks?: ActivatableRated[]
+    //   animistPowers?: ActivatableRated[]
+    //   geodeRituals?: ActivatableRated[]
+    //   goblinRituals?: ActivatableRated[]
+    //   zibiljaRituals?: ActivatableRated[]
+    //   magicalRunes?: ActivatableRated[]
+    // }
+
+    character.blessings = CharacterBlessings.fromJSON(global, character, json.blessings)
+    character.liturgicalChants = CharacterLiturgicalChants.fromJSON(
+      global,
+      character,
+      "LiturgicalChant",
+      json.liturgicalChants,
+    )
+    character.ceremonies = CharacterLiturgicalChants.fromJSON(
+      global,
+      character,
+      "Ceremony",
+      json.ceremonies,
+    )
+    character.purse = Purse.fromJSON(json.purse)
+
+    return character
+  }
+
+  static exampleCharacter(
+    global: Global,
+    characters: Characters,
+    id: string,
+    version: string,
+  ): Character {
+    const character = new Character(
+      global,
+      characters,
+      id,
+      version,
+      "2b0a18c5-40a8-4c86-98b3-a93c85e82497",
+      Temporal.Now.zonedDateTimeISO(),
+    )
+    character.name = "Alrik"
+    character.rules.includeAllPublications = true
+    character.race = new CharacterRace(global, "48a1fe0b-ec55-4992-b47b-e1086f2a583f")
+    character.culture = new CharacterCulture(global, "481c50a3-416c-4aa9-8ee9-dc93cc72c2b3")
+    character.profession = new CharacterProfession(
+      global,
+      character,
+      "0a9b8d85-3d9e-4297-aea0-51549b520ed6",
+    )
+    return character
+  }
+
+  toJSON(): RawCharacter {
+    return {
+      version: this.version,
+      name: this.name,
+      dateCreated: this.dateCreated.toJSON(),
+      dateLastModified: this.dateCreated.toJSON(),
+      adventurePoints: {
+        total: this.adventurePointsStats.total,
+        available: this.adventurePointsStats.available,
+        spent: this.adventurePointsStats.spent,
+        spentOnAdvantages: this.adventurePointsStats.spentOnAdvantages,
+        spentOnMagicalAdvantages: this.adventurePointsStats.spentOnMagicalAdvantages,
+        spentOnBlessedAdvantages: this.adventurePointsStats.spentOnBlessedAdvantages,
+        spentOnDisadvantages: this.adventurePointsStats.spentOnDisadvantages,
+        spentOnMagicalDisadvantages: this.adventurePointsStats.spentOnMagicalDisadvantages,
+        spentOnBlessedDisadvantages: this.adventurePointsStats.spentOnBlessedDisadvantages,
+        spentOnRace: this.adventurePointsStats.spentOnRace,
+        spentOnAttributes: this.adventurePointsStats.spentOnAttributes,
+        spentOnSkills: this.adventurePointsStats.spentOnSkills,
+        spentOnCombatTechniques: this.adventurePointsStats.spentOnCombatTechniques,
+        spentOnSpells: this.adventurePointsStats.spentOnSpells,
+        spentOnCantrips: this.adventurePointsStats.spentOnCantrips,
+        spentOnMagicalActions: this.adventurePointsStats.spentOnMagicalActions,
+        spentOnLiturgicalChants: this.adventurePointsStats.spentOnLiturgicalChants,
+        spentOnBlessings: this.adventurePointsStats.spentOnBlessings,
+        spentOnSpecialAbilities: this.adventurePointsStats.spentOnSpecialAbilities,
+        spentOnEnergies: this.adventurePointsStats.spentOnEnergies,
+      },
+      experienceLevel: {
+        current: this.experienceLevel.currentId,
+        start: this.experienceLevel.startId,
+      },
+      isCharacterCreationFinished: this.isCharacterCreationFinished,
+      race: this.race?.toJSON(),
+      culture: this.culture?.toJSON(),
+      profession: this.profession?.toJSON(),
+      curriculum: this.curriculum?.toJSON(),
+      rules: this.rules.toJSON(),
+      personalData: this.personalData.toJSON(),
+      advantages: this.advantages.toJSON(),
+      disadvantages: this.disadvantages.toJSON(),
+      specialAbilities: this.specialAbilities.toJSON(),
+      attributes: this.attributes.toJSON(),
+      derivedCharacteristics: this.derivedCharacteristics.toJSON(),
+      skills: this.skills.toJSON(),
+      combatTechniques: ensureNonEmptyObject({
+        melee: this.closeCombatTechniques.toJSON(),
+        ranged: this.rangedCombatTechniques.toJSON(),
+      }),
+      cantrips: this.cantrips.toJSON(),
+      spells: this.spells.toJSON(),
+      rituals: this.rituals.toJSON(),
+      // TODO: magicalActions?: {
+      //   bannzeichen?: ActivatableRated[]
+      //   curses?: ActivatableRated[]
+      //   elvenMagicalSongs?: ActivatableRated[]
+      //   dominationRituals?: ActivatableRated[]
+      //   magicalMelodies?: ActivatableRated[]
+      //   magicalDances?: ActivatableRated[]
+      //   jesterTricks?: ActivatableRated[]
+      //   animistPowers?: ActivatableRated[]
+      //   geodeRituals?: ActivatableRated[]
+      //   goblinRituals?: ActivatableRated[]
+      //   zibiljaRituals?: ActivatableRated[]
+      //   magicalRunes?: ActivatableRated[]
+      // }
+      blessings: this.blessings.toJSON(),
+      liturgicalChants: this.liturgicalChants.toJSON(),
+      ceremonies: this.ceremonies.toJSON(),
+      purse: this.purse.toJSON(),
     }
   }
 }
@@ -684,6 +926,7 @@ export type AdventurePointsStats = {
   spentOnCombatTechniques: number
   spentOnSpells: number
   spentOnCantrips: number
+  spentOnMagicalActions: number
   spentOnLiturgicalChants: number
   spentOnBlessings: number
   spentOnSpecialAbilities: number
@@ -704,92 +947,48 @@ export type CharacterOverview = {
 }
 
 export class Characters {
-  @observable accessor characters: Record<string, Character>
+  readonly global: Global
 
   constructor(global: Global) {
-    this.characters = {
-      "550e8400-e29b-11d4-a716-446655440000": new Character(
-        global,
-        this,
-        "550e8400-e29b-11d4-a716-446655440000",
-      ),
-    }
+    this.global = global
   }
 
+  @observable accessor characters: Map<string, Character> = new Map()
+
   @computed
-  get characterOverviews() {
-    return Object.values(this.characters).map(character => character.overview)
+  get characterOverviews(): CharacterOverview[] {
+    return this.characters
+      .values()
+      .map(character => character.overview)
+      .toArray()
   }
 
   @action
-  handleIPCAction(...args: StateActionsAsParameters<CharacterIPCActions>) {
-    this.characters["550e8400-e29b-11d4-a716-446655440000"]!.handleIPCAction(...args)
-  }
-}
-
-/**
- * All dynamic information about a character. Static information about used
- * crunch elements is stored in the database only.
- */
-export type _Character = {
-  id: string
-
-  /**
-   * A valid semantic version (https://semver.org), representing the Optolith
-   * version this character was created with.
-   */
-  version: string | undefined
-
-  /**
-   * The character's name.
-   */
-  name: string
-
-  /**
-   * The character's avatar. This is a base64 encoded image.
-   */
-  avatar?: string
-
-  /**
-   * Date of character creation, in ISO8601 format.
-   */
-  dateCreated: string
-
-  /**
-   * Date of character last modified, in ISO8601 format.
-   */
-  dateLastModified: string
-
-  /**
-   * Total adventure points.
-   */
-  totalAdventurePoints: number
-
-  /**
-   * The start experience level identifier.
-   */
-  experienceLevelStartId: number
-
-  /**
-   * Describes whether the character creation is finished.
-   */
-  isCharacterCreationFinished: boolean
-
-  magicalActions: {
-    curses: ActivatableRatedMap
-    elvenMagicalSongs: ActivatableRatedMap
-    dominationRituals: ActivatableRatedMap
-    magicalDances: ActivatableRatedMap
-    magicalMelodies: ActivatableRatedMap
-    jesterTricks: ActivatableRatedMap
-    animistPowers: ActivatableRatedMap
-    geodeRituals: ActivatableRatedMap
-    zibiljaRituals: ActivatableRatedMap
-    magicalRunes: ActivatableRatedMap
+  handleIPCAction(id: string, ...args: StateActionsAsParameters<CharacterIPCActions>) {
+    this.characters.get(id)?.handleIPCAction(...args)
   }
 
-  // items: {}
-  // hitZoneArmors: {}
-  purse: Purse
-  // creatures: {}
+  @action
+  createNewCharacter(id: string, version: string, experienceLevelId: string) {
+    const newCharacter = new Character(
+      this.global,
+      this,
+      id,
+      version,
+      experienceLevelId,
+      Temporal.Now.zonedDateTimeISO(),
+    )
+    this.characters.set(id, newCharacter)
+  }
+
+  @action
+  addCharacter(character: Character) {
+    this.characters.set(character.id, character)
+  }
+
+  @action
+  addCharacterFromJSON(id: string, json: RawCharacter) {
+    const newCharacter = Character.fromJSON(this.global, this, id, json)
+    this.characters.set(id, newCharacter)
+  }
 }

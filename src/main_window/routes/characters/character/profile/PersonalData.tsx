@@ -1,7 +1,8 @@
 import { isEmptyOr, isFloat, isNaturalNumber } from "@elyukai/utils/string/regex"
 import type { FC } from "react"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { SharedActions, SharedState } from "../../../../external.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { PersonalDataDropdown } from "./PersonalDataDropdown.tsx"
 import { PersonalDataDropdownWithReroll } from "./PersonalDataDropdownWithReroll.tsx"
 import { PersonalDataTextField } from "./PersonalDataTextField.tsx"
@@ -19,81 +20,84 @@ const validateEmptyOrFloat = (value: string | undefined) =>
 export const PersonalData: FC = () => {
   const translate = useTranslate()
 
+  const state = useCharacterState()
+  const actions = useCharacterActions()
+
   return (
     <div className="personal-data">
       <PersonalDataTextField
         label={translate("Family")}
-        value={SharedState.family}
-        action={SharedActions.setFamily}
+        value={state.family}
+        action={actions.setFamily}
       />
       <PersonalDataTextField
         label={translate("Place of Birth")}
-        value={SharedState.placeOfBirth}
-        action={SharedActions.setPlaceOfBirth}
+        value={state.placeOfBirth}
+        action={actions.setPlaceOfBirth}
       />
       <PersonalDataTextField
         label={translate("Date of Birth")}
-        value={SharedState.dateOfBirth}
-        action={SharedActions.setDateOfBirth}
+        value={state.dateOfBirth}
+        action={actions.setDateOfBirth}
       />
       <PersonalDataTextField
         label={translate("Age")}
-        value={SharedState.age}
-        action={SharedActions.setAge}
+        value={state.age}
+        action={actions.setAge}
         validator={validateEmptyOrNaturalNumber}
       />
       <PersonalDataDropdownWithReroll
         label={translate("Hair Color")}
         rerollLabel={translate("Reroll Hair Color")}
-        options={SharedState.availableHairColors}
-        value={SharedState.predefinedHairColor}
-        action={SharedActions.setPredefinedHairColor}
-        onReroll={() => SharedActions.rerollHairColor()}
+        options={state.availableHairColors}
+        value={state.predefinedHairColor}
+        action={actions.setPredefinedHairColor}
+        onReroll={() => actions.rerollHairColor()}
       />
       <PersonalDataDropdownWithReroll
         label={translate("Eye Color")}
         rerollLabel={translate("Reroll Eye Color")}
-        options={SharedState.availableEyeColors}
-        value={SharedState.predefinedEyeColor}
-        action={SharedActions.setPredefinedEyeColor}
-        onReroll={() => SharedActions.rerollEyeColor()}
+        options={state.availableEyeColors}
+        value={state.predefinedEyeColor}
+        action={actions.setPredefinedEyeColor}
+        onReroll={() => actions.rerollEyeColor()}
       />
       <PersonalDataTextFieldWithReroll
-        label={`${translate("Size")}${SharedState.randomHeightCalculationString}`}
+        label={`${translate("Size")}${state.randomHeightCalculationString}`}
         rerollLabel={translate("Reroll Size")}
-        value={SharedState.size}
-        action={SharedActions.setSize}
-        onReroll={() => SharedActions.rerollSize()}
+        value={state.size}
+        action={actions.setSize}
+        onReroll={() => actions.rerollSize()}
         validator={validateEmptyOrFloat}
       />
       <PersonalDataTextFieldWithReroll
-        label={`${translate("Weight")}${SharedState.randomWeightCalculationString}`}
+        label={`${translate("Weight")}${state.randomWeightCalculationString}`}
         rerollLabel={translate("Reroll Weight")}
-        value={SharedState.weight}
-        action={SharedActions.setWeight}
-        onReroll={() => SharedActions.rerollWeight()}
+        value={state.weight}
+        action={actions.setWeight}
+        onReroll={() => actions.rerollWeight()}
         validator={validateEmptyOrNaturalNumber}
       />
       <PersonalDataTextField
         label={translate("Title")}
-        value={SharedState.title}
-        action={SharedActions.setTitle}
+        value={state.title}
+        action={actions.setTitle}
       />
       <PersonalDataDropdown
         label={translate("Social Status")}
-        value={SharedState.socialStatus}
-        action={SharedActions.setSocialStatus}
-        options={SharedState.availableSocialStatuses}
+        value={state.socialStatus}
+        action={actions.setSocialStatus}
+        options={state.availableSocialStatuses}
       />
       <PersonalDataTextField
         label={translate("Characteristics")}
-        value={SharedState.characteristics}
-        action={SharedActions.setCharacteristics}
+        value={state.characteristics}
+        action={actions.setCharacteristics}
       />
       <PersonalDataTextField
         label={translate("Other Information")}
-        value={SharedState.otherInfo}
-        action={SharedActions.setOtherInfo}
+        value={state.otherInfo}
+        action={actions.setOtherInfo}
       />
     </div>
   )

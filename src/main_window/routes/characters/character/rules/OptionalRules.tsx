@@ -4,7 +4,7 @@ import { type FC, useMemo } from "react"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedState } from "../../../../external.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { OptionalRulesItem } from "./OptionalRulesItem.tsx"
 
 /**
@@ -15,9 +15,11 @@ export const OptionalRules: FC = observer(() => {
   const translateMap = useTranslateMap()
   const localeCompare = useLocaleCompare()
 
+  const { optionalRules } = useCharacterState()
+
   const optionalRuleOptions = useMemo(
-    () => SharedState.optionalRules.toSorted(on(x => x.name, localeCompare)),
-    [SharedState.optionalRules, localeCompare, translateMap],
+    () => optionalRules.toSorted(on(x => x.name, localeCompare)),
+    [optionalRules, localeCompare, translateMap],
   )
 
   // const higherParadeValues = Rules.A.higherParadeValues(rules)

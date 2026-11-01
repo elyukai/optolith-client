@@ -18,7 +18,6 @@ import { filterAndSortDisplayed } from "../../../../../shared/domain/activatable
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedState } from "../../../../external.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
@@ -31,6 +30,7 @@ import {
 import { ActiveActivatablesListItem } from "../activatable/ActiveActivatableListItem.tsx"
 import { InactiveActivatablesListItem } from "../activatable/InactiveActivatableListItem.tsx"
 import { AdventurePointsSpent } from "./AdventurePointsSpent.tsx"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 
 /**
  * Returns a page for managing advantages.
@@ -41,7 +41,7 @@ export const Advantages: FC = observer(() => {
   const dispatch = useAppDispatch()
   const localeCompare = useLocaleCompare()
 
-  const { canRemove, isInCharacterCreation } = SharedState
+  const { canRemove, isInCharacterCreation, inactiveAdvantages, activeAdvantages } = useCharacterState()
 
   const cultureRatingVisibility = useAppSelector(
     selectAdvantagesDisadvantagesCultureRatingVisibility,
@@ -66,25 +66,25 @@ export const Advantages: FC = observer(() => {
   const inactiveList = useMemo(
     () =>
       filterAndSortDisplayed(
-        SharedState.inactiveAdvantages,
+        inactiveAdvantages,
         inactiveFilterText,
         showEntriesWithoutMetPrerequisites,
         translateMap,
         localeCompare,
       ),
-    [SharedState.inactiveAdvantages, inactiveFilterText, translateMap, localeCompare],
+    [inactiveAdvantages, inactiveFilterText, translateMap, localeCompare],
   )
 
   const activeList = useMemo(
     () =>
       filterAndSortDisplayed(
-        SharedState.activeAdvantages,
+        activeAdvantages,
         activeFilterText,
         true, // no effect for active entries
         translateMap,
         localeCompare,
       ),
-    [SharedState.activeAdvantages, activeFilterText, translateMap, localeCompare],
+    [activeAdvantages, activeFilterText, translateMap, localeCompare],
   )
 
   const { isOpen: isSlideinVisible, open: openSlidein, close: closeSlidein } = useModalState()

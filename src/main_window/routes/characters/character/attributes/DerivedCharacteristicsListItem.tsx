@@ -6,7 +6,7 @@ import { NumberBox } from "../../../../../shared/components/numberBox/NumberBox.
 import type { DisplayedDerivedCharacteristic } from "../../../../../shared/domain/energy.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedActions } from "../../../../external.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
 import { DerivedCharacteristicsListItemPermanent } from "./DerivedCharacteristicsListItemPermanent.tsx"
 
@@ -28,6 +28,7 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const translation = translateMap(attribute.translations)
+  const actions = useCharacterActions()
 
   return (
     <div className="derived-characteristics-item">
@@ -76,7 +77,7 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
             className="add"
             icon="&#xE908;"
             label={translate("Increment")}
-            onClick={() => SharedActions.incrementDerivedCharacteristic(id)}
+            onClick={() => actions.incrementDerivedCharacteristic(id)}
             disabled={!attribute.isPurchasedIncreasable}
           />
         ) : null}
@@ -85,7 +86,7 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
             className="remove"
             icon="&#xE909;"
             label={translate("Decrement")}
-            onClick={() => SharedActions.decrementDerivedCharacteristic(id)}
+            onClick={() => actions.decrementDerivedCharacteristic(id)}
             disabled={!attribute.isPurchasedDecreasable}
           />
         ) : null}

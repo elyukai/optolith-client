@@ -6,7 +6,7 @@ import { type FC, useMemo } from "react"
 import { List } from "../../../shared/components/list/List.tsx"
 import { CharactersSortOrder } from "../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../shared/hooks/localeCompare.ts"
-import { SharedState } from "../../external.ts"
+import { SharedGlobalState } from "../../external.ts"
 import { CharacterListItem } from "./CharacterListItem.tsx"
 
 export const CharacterList: FC<{ filterText: string; sortOrder: CharactersSortOrder }> = observer(
@@ -15,7 +15,7 @@ export const CharacterList: FC<{ filterText: string; sortOrder: CharactersSortOr
 
     const characters = useMemo(
       () =>
-        Object.values(SharedState.characterOverviews)
+        Object.values(SharedGlobalState.characters)
           .filter(c => c.name.toLowerCase().includes(filterText.toLowerCase()))
           .sort(
             (() => {
@@ -37,7 +37,7 @@ export const CharacterList: FC<{ filterText: string; sortOrder: CharactersSortOr
               }
             })(),
           ),
-      [SharedState.characterOverviews, filterText, localeCompare, sortOrder],
+      [SharedGlobalState.characters, filterText, localeCompare, sortOrder],
     )
 
     return (

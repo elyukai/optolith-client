@@ -3,6 +3,7 @@ import { isNotNullish } from "@elyukai/utils/nullable"
 import { compareNumber } from "@elyukai/utils/ordering"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type { ImprovementCost } from "@optolith/adventure-points/improvement-cost"
+import type { DerivedCharacteristic as RawDerivedCharacteristic } from "@optolith/character-schema/types"
 import type {
   Attribute_ID,
   DerivedCharacteristic,
@@ -306,7 +307,7 @@ export class CharacterDerivedCharacteristic {
     )
   }
 
-  // @computed
+  @computed
   get calculationText(): string | undefined {
     if (
       this.dbEntry.calculation.base.kind === "Value" &&
@@ -331,7 +332,39 @@ export class CharacterDerivedCharacteristic {
     )
   }
 
-  toJSON(): DisplayedDerivedCharacteristicBase {
+  toJSON(): RawDerivedCharacteristic {
+    if (this.#purchased !== undefined && this.#permanentlyLost !== undefined) {
+      if (this.#permanentlyLostBoughtBack !== undefined) {
+        return {
+          type: "EnergyWithBuyBack",
+          base: this.base,
+          modifier: this.modifier,
+          purchased: this.#purchased,
+          permanentlyLost: this.#permanentlyLost,
+          permanentlyLostBoughtBack: this.#permanentlyLostBoughtBack,
+          maximum: this.value,
+        }
+      }
+
+      return {
+        type: "Energy",
+        base: this.base,
+        modifier: this.modifier,
+        purchased: this.#purchased,
+        permanentlyLost: this.#permanentlyLost,
+        maximum: this.value,
+      }
+    }
+
+    return {
+      type: "Default",
+      base: this.base,
+      modifier: this.modifier,
+      value: this.value,
+    }
+  }
+
+  forDisplay(): DisplayedDerivedCharacteristicBase {
     return {
       id: this.id,
       base: this.base,
@@ -464,7 +497,7 @@ export class CharacterDerivedCharacteristics {
             container.id,
             container.content,
           )
-        ).toJSON(),
+        ).forDisplay(),
         ...container.content,
       }))
       .toSorted(on(e => e.position, compareNumber))
@@ -527,5 +560,65 @@ export class CharacterDerivedCharacteristics {
       .filter(entry => entry.id === id)
       .map(entry => entry.value)
       .toArray()
+  }
+
+  static fromJSON(
+    global: Global,
+    character: Character,
+    raw: Record<string, RawDerivedCharacteristic> | undefined,
+  ): CharacterDerivedCharacteristics {
+    const derivedCharacteristics = new CharacterDerivedCharacteristics(global, character)
+
+    for (const [id, rawEntry] of Object.entries(raw ?? {})) {
+      const entry = derivedCharacteristics.#ensureEntryExists(id)
+
+      if (rawEntry.type === "Energy") {
+        entry.setPurchased(rawEntry.purchased)
+        entry.setPermanentlyLost(rawEntry.permanentlyLost)
+      }
+
+      if (rawEntry.type === "EnergyWithBuyBack") {
+        entry.setPurchased(rawEntry.purchased)
+        entry.setPermanentlyLost(rawEntry.permanentlyLost)
+        entry.setPermanentlyLostBoughtBack(rawEntry.permanentlyLostBoughtBack)
+      }
+    }
+
+    return derivedCharacteristics
+  }
+
+  toJSON(): Record<string, RawDerivedCharacteristic> {
+    return Object.fromEntries(
+      this.global.db
+        .getAllInstanceContainersOfEntity("DerivedCharacteristic")
+        .filter(
+          ({ content }) =>
+            isEntryFromIncludedPublication(
+              content,
+              this.global.db.getInstanceOfEntityById.bind(this.global.db),
+              this.global.locale.translateMap,
+              this.#character.rules.publicationOptions,
+            ) &&
+            (content.prerequisites === undefined ||
+              checkPrerequisitesOfDerivedCharacteristic(
+                content.prerequisites,
+                this.#character.prerequisiteCapabilities,
+              )),
+        )
+        .map((container): [string, RawDerivedCharacteristic] => [
+          container.id,
+          {
+            ...(
+              this.#derivedCharacteristics.get(container.id) ??
+              CharacterDerivedCharacteristic.createEmpty(
+                this.global,
+                this.#character,
+                container.id,
+                container.content,
+              )
+            ).toJSON(),
+          },
+        ]),
+    )
   }
 }

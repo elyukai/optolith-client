@@ -1,3 +1,4 @@
+import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
 import { deepEqual } from "@elyukai/utils/equality"
 import type { TSONDBTypes } from "@optolith/database-schema"
 import { createCache } from "@optolith/database-schema/cache"
@@ -12,9 +13,10 @@ import {
   type AvailableCreatorEntity,
 } from "@optolith/entity-descriptions"
 import Debug from "debug"
+import { dialog } from "electron"
 import { autoUpdater } from "electron-updater"
 import { app, ipcMain } from "electron/main"
-import { configure, runInAction } from "mobx"
+import { action, configure, runInAction } from "mobx"
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { ReadonlyTSONDB } from "tsondb/readonly"
@@ -22,17 +24,20 @@ import { fromUniformCase } from "tsondb/schema/gen"
 import config from "../database/contents/tsondb.config.ts"
 import type { PreloadAPI } from "../main_window_preload/index.ts"
 import { attachDatabaseEventsMain } from "../shared/database.ts"
-import { Characters } from "../shared/domain/character.ts"
+import { Character, Characters } from "../shared/domain/character.ts"
 import type { Global } from "../shared/global.ts"
 import type { CharacterIPCActions } from "../shared/ipc.ts"
 import { globalSettings } from "../shared/settings/main.ts"
-import { attachStateActionHandlersToMain } from "../shared/state.ts"
+import {
+  attachKeyedStateActionHandlersToMain,
+  attachStateActionHandlersToMain,
+} from "../shared/state.ts"
 import { runAsync } from "../shared/utils/async.ts"
 import { LocaleEnvironment } from "../shared/utils/locale.ts"
 import { createMainWindow } from "./mainWindow.ts"
 import { setMenu } from "./menu.ts"
 import { handleNativeThemeChanges, setNativeTheme } from "./nativeTheme.ts"
-import { ensureUserDataPathExists } from "./saveData.ts"
+import { constructUserDataPath, loadCharacters, saveCharacter } from "./saveData.ts"
 import { createSettingsWindow } from "./settingsWindow.ts"
 import { checkForUpdatesOnRequest, checkForUpdatesOnStartup } from "./updater.ts"
 
@@ -49,6 +54,9 @@ configure({
 
 app.setAppUserModelId("lukasobermann.optolith")
 const isMac = process.platform === "darwin"
+
+debug("setting user data path ...")
+app.setPath("userData", constructUserDataPath())
 
 debug("loading database ...")
 if (config.dataRootPath === undefined) {
@@ -93,28 +101,46 @@ const global: Global = {
     cache.activatableSelectOptions[parentId.kind][fromUniformCase(parentId)] ?? [],
 }
 
-const characters = runInAction(() => new Characters(global))
+debug("load characters ...")
 
-const setUserDataPath = async () => {
-  debug("setting user data path ...")
-  app.setPath("userData", await ensureUserDataPathExists())
+const loadedCharacters = await loadCharacters(app.getPath("userData"))
+
+debug("loaded %d characters", loadedCharacters.length)
+debug("initializing characters in memory ...")
+
+const characters = runInAction(() => {
+  const _characters = new Characters(global)
+
+  if (isNotEmpty(loadedCharacters)) {
+    for (const [id, data] of loadedCharacters) {
+      _characters.addCharacterFromJSON(id, data)
+    }
+  } else {
+    _characters.addCharacter(
+      Character.exampleCharacter(
+        global,
+        _characters,
+        "550e8400-e29b-11d4-a716-446655440000",
+        app.getVersion(),
+      ),
+    )
+  }
+
+  return _characters
+})
+
+const globalSelectors = {
+  characters: () => characters.characterOverviews,
 }
 
-const readFileInAppPath = (...path: string[]) => readFile(join(app.getAppPath(), ...path), "utf-8")
+type GlobalIPCSelectors = typeof globalSelectors
 
-const getSpecialEntityDescriptionTag = <E extends AvailableCreatorEntity>(
-  entityName: E,
-  entry: EntityMap[E],
-): string | undefined => {
-  if (entityName === "Skill") {
-    return db.getInstanceOfEntityById("SkillGroup", (entry as EntityMap["Skill"]).group)?.color.kind
-  } else if (Object.hasOwn(TraditionArtifactEnchantmentIdentifier.type.value.values, entityName)) {
-    return "TraditionArtifactEnchantment"
-  } else if (Object.hasOwn(MagicalActionIdentifier.type.value.values, entityName)) {
-    return "MagicalAction"
-  } else {
-    return undefined
-  }
+export type GlobalIPCState = {
+  [K in keyof GlobalIPCSelectors]: ReturnType<GlobalIPCSelectors[K]>
+}
+
+export type GlobalIPCActions = {
+  saveCharacter: (characterId: string) => void
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -135,17 +161,63 @@ app.whenReady().then(async () => {
 
   debug("skip startup because of update?", installUpdateInsteadOfStartup ? "yes" : "no")
   if (!installUpdateInsteadOfStartup) {
-    await setUserDataPath()
+    const handleGlobalIPCAction = action(
+      <Action extends keyof GlobalIPCActions>(
+        actionName: Action,
+        args: Parameters<GlobalIPCActions[Action]>,
+      ): Promise<void> | void => {
+        debug("execute global ipc action %s with parameters %o", actionName, args)
+        const [characterId] = args
+        const character = characters.characters.get(characterId)
+        if (character === undefined) {
+          debug("character %s not found", characterId)
+          return
+        }
+        return saveCharacter(app.getPath("userData"), characterId, character.toJSON())
+      },
+    )
+
+    debug("initialized characters in memory")
+
+    const readFileInAppPath = (...path: string[]) =>
+      readFile(join(app.getAppPath(), ...path), "utf-8")
+
+    const getSpecialEntityDescriptionTag = <E extends AvailableCreatorEntity>(
+      entityName: E,
+      entry: EntityMap[E],
+    ): string | undefined => {
+      if (entityName === "Skill") {
+        return db.getInstanceOfEntityById("SkillGroup", (entry as EntityMap["Skill"]).group)?.color
+          .kind
+      } else if (
+        Object.hasOwn(TraditionArtifactEnchantmentIdentifier.type.value.values, entityName)
+      ) {
+        return "TraditionArtifactEnchantment"
+      } else if (Object.hasOwn(MagicalActionIdentifier.type.value.values, entityName)) {
+        return "MagicalAction"
+      } else {
+        return undefined
+      }
+    }
 
     attachDatabaseEventsMain(ipcMain, db, cache, (name, _event, error) => {
       debug("error in database event %s: %O", name, error)
     })
     debug("database event listeners attached")
 
-    attachStateActionHandlersToMain<CharacterIPCActions>(
+    attachStateActionHandlersToMain<GlobalIPCActions>(
       ipcMain,
       (...args) => {
-        characters.handleIPCAction(...args)
+        handleGlobalIPCAction(...args)
+      },
+      debug,
+    )
+    debug("global action listeners attached")
+
+    attachKeyedStateActionHandlersToMain<CharacterIPCActions>(
+      ipcMain,
+      (id, ...args) => {
+        characters.handleIPCAction(id, ...args)
       },
       debug,
     )
@@ -199,7 +271,7 @@ app.whenReady().then(async () => {
               (characterId === undefined
                 ? undefined
                 : runInAction(
-                    () => characters.characters[characterId]?.rules.publicationOptions,
+                    () => characters.characters.get(characterId)?.rules.publicationOptions,
                   )) ?? {
                 publications: [],
                 onlyCompletePublications: false,
@@ -210,7 +282,7 @@ app.whenReady().then(async () => {
               "Full",
               characterId === undefined
                 ? undefined
-                : runInAction(() => characters.characters[characterId]?.rules.renderingOptions),
+                : runInAction(() => characters.characters.get(characterId)?.rules.renderingOptions),
             ),
             getSpecialEntityDescriptionTag(entity, entry),
           ]
@@ -234,8 +306,6 @@ app.whenReady().then(async () => {
 handleNativeThemeChanges()
 
 process.on("uncaughtException", error => {
-  // oxlint-disable-next-line no-alert
-  alert(error)
   console.error(error)
-  process.exit(1)
+  dialog.showErrorBox("Unexpected error", `${error.name}: ${error.message}\n\n${error.stack}`)
 })

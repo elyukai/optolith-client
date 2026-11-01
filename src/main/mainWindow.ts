@@ -9,7 +9,7 @@ import type { ReadonlyTSONDB } from "tsondb/readonly"
 import type { InitialSetupEventMessage } from "../main_window_preload/index.ts"
 import type { Characters } from "../shared/domain/character.ts"
 import { globalSettings } from "../shared/settings/main.ts"
-import { attachStateSelectorsToWindow } from "../shared/state.ts"
+import { attachKeyedStateSelectorsToWindow, attachStateSelectorsToWindow } from "../shared/state.ts"
 import { getWindowBackgroundColor } from "./nativeTheme.ts"
 
 const debug = Debug("main:main")
@@ -114,15 +114,23 @@ export const createMainWindow = async (
     ipcMain.once("initial-setup-done", () => {
       debug("initial setup done")
 
-      if (mainWindow) {
-        attachStateSelectorsToWindow(
-          mainWindow,
-          runInAction(
-            () => characters.characters["550e8400-e29b-11d4-a716-446655440000"]!.selectors,
+      if (mainWindow !== undefined) {
+        const safeWindow = mainWindow
+        runInAction(() =>
+          attachStateSelectorsToWindow(safeWindow, {
+            characters: () => characters.characterOverviews,
+          }),
+        )
+
+        runInAction(() =>
+          attachKeyedStateSelectorsToWindow(
+            safeWindow,
+            characters.characters,
+            character => character.selectors,
           ),
         )
 
-        mainWindow.show()
+        safeWindow.show()
       }
     })
 

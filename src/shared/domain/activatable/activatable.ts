@@ -1,5 +1,5 @@
 import { partition } from "@elyukai/utils/array/groups"
-import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
+import { ensureNonEmpty, isNotEmpty } from "@elyukai/utils/array/nonEmpty"
 import { count, sum, sumWith } from "@elyukai/utils/array/reductions"
 import { deepEqual } from "@elyukai/utils/equality"
 import { isNotNullish } from "@elyukai/utils/nullable"
@@ -10,6 +10,10 @@ import {
   getAdventurePointsDependingOnActiveInstancesForInactiveActivatableInstance,
   getAdventurePointsForActiveActivatableInstances,
 } from "@optolith/adventure-points/activatable"
+import type {
+  Activatable as RawActivatable,
+  ActivatableInstance as RawActivatableInstance,
+} from "@optolith/character-schema/types"
 import type {
   ResolvedSelectOption,
   ResolvedSelectOptionIdentifier,
@@ -116,7 +120,7 @@ export class CharacterActivatableInstance {
   readonly parent: CharacterActivatable<ActivatableIdentifier["kind"]>
 
   constructor(
-    instance: RawActivatableInstance,
+    instance: SerializedActivatableInstance,
     parent: CharacterActivatable<ActivatableIdentifier["kind"]>,
   ) {
     this.parent = parent
@@ -167,6 +171,14 @@ export class CharacterActivatableInstance {
       options: toJS(this.options),
       level: this.level,
       customAdventurePointsValue: this.customAdventurePointsValue,
+    }
+  }
+
+  toSerialized(): SerializedActivatableInstance {
+    return {
+      options: toJS(this.options),
+      level: this.level,
+      customAdventurePointsValue: this.customAdventurePointsValue,
       usedBoundAdventurePoints: toJS(this.usedBoundAdventurePoints),
     }
   }
@@ -180,7 +192,7 @@ export class CharacterActivatableInstance {
 
 export const getAdventurePointsForInactiveActivatableInstance = (
   apValue: DisplayedInactiveActivatable["apValue"],
-  instance: RawActivatableInstance,
+  instance: SerializedActivatableInstance,
   getSelectOptionWithResolvedAPValueById: (
     id: ResolvedSelectOptionIdentifier,
   ) => ResolvedSelectOptionWithResolvedAPValue | undefined,
@@ -645,7 +657,7 @@ export class CharacterActivatable<
     id: string,
     entity: Entity,
     dbEntry: EntityMap[Entity],
-    instances: RawActivatableInstance[],
+    instances: SerializedActivatableInstance[],
     dependencies: ActivatableDependency[],
     boundAdventurePoints: BoundAdventurePointsForActivatable[],
   ) {
@@ -804,12 +816,15 @@ export class CharacterActivatable<
     return this.instances.map(instance => instance.options?.[atIndex]).filter(isNotNullish)
   }
 
-  toJSON() {
+  toJSON(): RawActivatable | undefined {
+    const safeInstances = ensureNonEmpty(this.instances.map(instance => instance.toJSON()))
+    if (safeInstances === undefined) {
+      return undefined
+    }
+
     return {
-      type: this.entityName,
-      id: this.id,
-      instances: this.instances.map(instance => instance.toJSON()),
-      boundAdventurePoints: toJS(this.boundAdventurePoints),
+      instances: safeInstances,
+      boundAdventurePoints: ensureNonEmpty(toJS(this.boundAdventurePoints)),
     }
   }
 
@@ -922,7 +937,7 @@ export class CharacterActivatable<
         type: this.entityName,
         active: true,
         id: this.id,
-        instance: instance.toJSON(),
+        instance: instance.toSerialized(),
         instanceIndex,
         isRemovable,
         levels: "levels" in this.dbEntry ? this.dbEntry.levels : undefined,
@@ -1029,7 +1044,7 @@ export class CharacterActivatable<
       id: this.id,
       name:
         this.global.locale.translateMap<{ name: string }>(this.dbEntry.translations)?.name ?? "",
-      instances: this.instances.map(instance => instance.toJSON()),
+      instances: this.instances.map(instance => instance.toSerialized()),
       isAvailable:
         !hasGeneralProhibitingDependency(dependencies) &&
         this.checkPrerequisitesForLevel(1) &&
@@ -1053,7 +1068,7 @@ export class CharacterActivatable<
   }
 
   @action
-  add(instance: RawActivatableInstance) {
+  add(instance: SerializedActivatableInstance) {
     this.instances.push(new CharacterActivatableInstance(instance, this))
     if (this.dbEntry.prerequisites !== undefined) {
       const levelRange: RangeBounds = [1, instance.level ?? 1]
@@ -1375,7 +1390,7 @@ export type DisplayedActiveActivatable<
     type: E
     active: true
     id: string
-    instance: RawActivatableInstance
+    instance: SerializedActivatableInstance
     instanceIndex: number
     isRemovable: boolean
     levels?: number
@@ -1397,7 +1412,7 @@ export type DisplayedInactiveActivatable<
     active: false
     id: string
     name: string
-    instances: RawActivatableInstance[]
+    instances: SerializedActivatableInstance[]
     isAvailable: boolean
     options: DisplayedInactiveActivatableOption[]
     level?: {
@@ -1434,7 +1449,7 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
     return this.getById(id) ?? this.#createEmpty(id, dbEntry)
   }
 
-  getInstancesById(id: string): RawActivatableInstance[] {
+  getInstancesById(id: string): SerializedActivatableInstance[] {
     return this.getById(id)?.instances ?? []
   }
 
@@ -1511,7 +1526,7 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
   }
 
   @action
-  add(id: string, instance: RawActivatableInstance) {
+  add(id: string, instance: SerializedActivatableInstance) {
     const entry = this.#ensureEntryExists(id)
     entry.add(instance)
   }
@@ -1528,16 +1543,55 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
     entry.remove(index)
   }
 
+  @action
+  bindAdventurePoints(id: string, config: BoundAdventurePointsForActivatable) {
+    const entry = this.#ensureEntryExists(id)
+    entry.boundAdventurePoints.push(config)
+  }
+
   addOrRemoveDependency(id: string, method: RegistrationMethod, dependency: ActivatableDependency) {
     const entry = this.#ensureEntryExists(id)
     addOrRemoveDependency(method, entry.dependencies, dependency)
+  }
+
+  static fromJSON<Entity extends ActivatableIdentifier["kind"]>(
+    global: Global,
+    character: Character,
+    entity: Entity,
+    json: Record<string, RawActivatable> | undefined,
+  ): CharacterActivatables<Entity> {
+    const activatables = new CharacterActivatables(global, character, entity)
+    if (json !== undefined) {
+      for (const [id, rawEntry] of Object.entries(json)) {
+        for (const rawInstance of rawEntry.instances) {
+          activatables.add(id, rawInstance)
+        }
+
+        for (const rawBoundAP of rawEntry.boundAdventurePoints ?? []) {
+          activatables.bindAdventurePoints(id, rawBoundAP)
+        }
+      }
+    }
+    return activatables
+  }
+
+  toJSON(): Record<string, RawActivatable> | undefined {
+    const entries = ensureNonEmpty(
+      this.#activatables
+        .entries()
+        .map(([id, entry]): [string, RawActivatable | undefined] => [id, entry.toJSON()])
+        .filter((p): p is [(typeof p)[0], NonNullable<(typeof p)[1]>] => p[1] !== undefined)
+        .toArray(),
+    )
+
+    return entries === undefined ? undefined : Object.fromEntries(entries)
   }
 }
 
 /**
  * A single activation of an activatable entry.
  */
-export type RawActivatableInstance = {
+export type SerializedActivatableInstance = {
   /**
    * One or multiple options for the activatable. The meaning depends on the activatable.
    */

@@ -3,7 +3,7 @@ import { type FC, useCallback } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import type { DisplayedDerivedCharacteristic } from "../../../../../shared/domain/energy.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { SharedActions } from "../../../../external.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
 import { PermanentLossSheet } from "./PermanentLossSheet.tsx"
@@ -24,6 +24,7 @@ export const DerivedCharacteristicsListItemPermanent: FC<Props> = props => {
 
   const { id, permanentlyLost = 0, permanentlyLostBoughtBack } = attribute
   const translate = useTranslate()
+  const actions = useCharacterActions()
 
   const {
     isOpen: isPermanentPointsSheetOpen,
@@ -38,26 +39,26 @@ export const DerivedCharacteristicsListItemPermanent: FC<Props> = props => {
   } = useModalState()
 
   const handleAddPermanentlyLostPoint = useCallback(() => {
-    SharedActions.incrementDerivedCharacteristicPermanentlyLost(id)
+    actions.incrementDerivedCharacteristicPermanentlyLost(id)
   }, [id])
 
   const handleAddPermanentlyLostPoints = useCallback(
     (value: number) => {
-      SharedActions.addDerivedCharacteristicPermanentlyLost(id, value)
+      actions.addDerivedCharacteristicPermanentlyLost(id, value)
     },
     [id],
   )
 
   const handleRemovePermanentlyLostPoint = useCallback(() => {
-    SharedActions.decrementDerivedCharacteristicPermanentlyLost(id)
+    actions.decrementDerivedCharacteristicPermanentlyLost(id)
   }, [id])
 
   const handleAddBoughtBackPoint = useCallback(() => {
-    SharedActions.incrementDerivedCharacteristicBoughtBack(id)
+    actions.incrementDerivedCharacteristicBoughtBack(id)
   }, [id])
 
   const handleRemoveBoughtBackPoint = useCallback(() => {
-    SharedActions.decrementDerivedCharacteristicBoughtBack(id)
+    actions.decrementDerivedCharacteristicBoughtBack(id)
   }, [id])
 
   const available =

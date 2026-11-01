@@ -22,7 +22,6 @@ import { SkillsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedState } from "../../../../external.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary, InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import {
@@ -33,6 +32,7 @@ import {
 } from "../../../../slices/settingsSlice.ts"
 import { SkillListItem } from "./SkillListItem.tsx"
 import "./Skills.scss"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 
 const isTopMarginNeeded = (
   sortOrder: SkillsSortOrder,
@@ -55,7 +55,7 @@ export const Skills: FC = observer(() => {
     [dispatch],
   )
 
-  const { canRemove, skills: visibleSkills, attributes } = SharedState
+  const { canRemove, skills: visibleSkills, attributes } = useCharacterState()
 
   const [filterText, setFilterText] = useState("")
   const sortOrder = useAppSelector(selectSkillsSortOrder)

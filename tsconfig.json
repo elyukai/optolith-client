@@ -34,7 +34,7 @@
     "src/assets/**/*",
     "src/main/**/*",
     "src/main_window/index.tsx",
-    "src/main _window_preload/**/*",
+    "src/main_window_preload/**/*",
     "src/settings_window/**/*",
     "src/settings_window_preload/**/*",
     "src/updater_window/**/*",

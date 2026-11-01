@@ -1,6 +1,6 @@
 import { observer } from "mobx-react"
 import type { FC } from "react"
-import { SharedState } from "../../../../external.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import "./AttributesList.scss"
 import { AttributeListItem } from "./AttributesListItem.tsx"
 
@@ -17,7 +17,7 @@ export const AttributeList: FC<Props> = observer(props => {
 
   return (
     <div className="main">
-      {SharedState.attributes.map(attribute => (
+      {useCharacterState().attributes.map(attribute => (
         <AttributeListItem
           key={attribute.id}
           attribute={attribute}

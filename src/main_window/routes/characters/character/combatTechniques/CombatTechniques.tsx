@@ -19,7 +19,7 @@ import { CombatTechniquesSortOrder } from "../../../../../shared/domain/sortOrde
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedState } from "../../../../external.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary, InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import {
@@ -44,7 +44,7 @@ export const CombatTechniques: FC = observer(() => {
   const dispatch = useAppDispatch()
   const localeCompare = useLocaleCompare()
 
-  const { canRemove, closeCombatTechniques, rangedCombatTechniques } = SharedState
+  const { canRemove, closeCombatTechniques, rangedCombatTechniques } = useCharacterState()
 
   const [filterText, setFilterText] = useState("")
   const sortOrder = useAppSelector(selectCombatTechniquesSortOrder)

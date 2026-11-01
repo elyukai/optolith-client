@@ -1,3 +1,4 @@
+import type { Race as RawRace } from "@optolith/character-schema/types"
 import type {
   ActivatableIdentifier,
   Attribute_ID,
@@ -16,7 +17,10 @@ export class CharacterRace {
   /**
    * The base race identifier.
    */
-  @observable accessor id: Race_ID
+  @computed
+  get id(): Race_ID | undefined {
+    return this.variant?.race
+  }
 
   /**
    * The race variant identifier.
@@ -35,13 +39,11 @@ export class CharacterRace {
 
   constructor(
     global: Global,
-    id: Race_ID,
     variantId: RaceVariant_ID,
     selectedAttributeAdjustmentId?: Attribute_ID | undefined,
     dependencies: RaceDependency[] = [],
   ) {
     this.global = global
-    this.id = id
     this.variantId = variantId
     this.selectedAttributeAdjustmentId = selectedAttributeAdjustmentId
     this.dependencies = dependencies
@@ -49,7 +51,9 @@ export class CharacterRace {
 
   @computed
   get base(): Race | undefined {
-    return this.global.db.getInstanceOfEntityById("Race", this.id)
+    return this.id === undefined
+      ? undefined
+      : this.global.db.getInstanceOfEntityById("Race", this.id)
   }
 
   @computed
@@ -59,7 +63,7 @@ export class CharacterRace {
 
   @computed
   get variant(): RaceVariant | undefined {
-    return this.global.db.getInstanceOfEntityById("RaceVariant", this.id)
+    return this.global.db.getInstanceOfEntityById("RaceVariant", this.variantId)
   }
 
   @computed
@@ -73,6 +77,22 @@ export class CharacterRace {
       return undefined
     }
     return this.baseName + parensIf(this.variantName)
+  }
+
+  static fromJSON(global: Global, raw: RawRace): CharacterRace {
+    return new CharacterRace(global, raw.variant, raw.selectedAttributeAdjustment)
+  }
+
+  toJSON(): RawRace | undefined {
+    if (this.id === undefined) {
+      return undefined
+    }
+
+    return {
+      base: this.id,
+      variant: this.variantId,
+      selectedAttributeAdjustment: this.selectedAttributeAdjustmentId,
+    }
   }
 }
 

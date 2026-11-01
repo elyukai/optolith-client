@@ -8,9 +8,10 @@ import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { ExternalAPI, SharedState } from "../../../../external.ts"
 import { useAppDispatch } from "../../../../hooks/redux.ts"
 import { RuleSourcesListItem } from "./RuleSourcesListItem.tsx"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 
 const publicationCategoryToNumber = (category: PublicationCategory): number => {
   switch (category.kind) {
@@ -35,19 +36,22 @@ export const RuleSources: FC = observer(() => {
   const dispatch = useAppDispatch()
   const localeCompare = useLocaleCompare()
 
+  const state = useCharacterState()
+  const actions = useCharacterActions()
+
   const publicationOptions = useMemo(
     () =>
-      SharedState.publications.toSorted(
+      state.publications.toSorted(
         reduceCompare(
           on(x => publicationCategoryToNumber(x.category), compareNumber),
           on(x => x.name, localeCompare),
         ),
       ),
-    [localeCompare, SharedState.publications, translateMap],
+    [localeCompare, state.publications, translateMap],
   )
 
   const handleSwitchIncludeAllPublications = useCallback(
-    () => ExternalAPI.execute("toggleIncludeAllPublications"),
+    () => actions.toggleIncludeAllPublications(),
     [dispatch],
   )
 
@@ -55,7 +59,7 @@ export const RuleSources: FC = observer(() => {
     <>
       <h2>{translate("Rule Sources")}</h2>
       <Checkbox
-        checked={SharedState.includeAllPublications}
+        checked={state.includeAllPublications}
         onClick={handleSwitchIncludeAllPublications}
         label={translate("Use all publications")}
       />

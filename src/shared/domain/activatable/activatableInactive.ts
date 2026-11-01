@@ -21,7 +21,7 @@ import type { LocaleMap } from "../../utils/locale.ts"
 import { Case, equalsCase } from "../databaseEnum.ts"
 import type {
   CharacterActivatable,
-  RawActivatableInstance,
+  SerializedActivatableInstance,
   ResolvedSelectOptionWithResolvedAPValue,
 } from "./activatable.ts"
 import { isGeneralDependency, type ActivatableDependency } from "./activatableDependency.ts"
@@ -774,7 +774,7 @@ const getEntrySpecificMaximumLevel = (
 export const getMaximumLevel = (
   id: ActivatableIdentifier,
   levels: number | undefined,
-  instance: RawActivatableInstance,
+  instance: SerializedActivatableInstance,
   dependencies: ActivatableDependency[],
   checkPrerequisites: (level: number) => boolean,
   caps: {

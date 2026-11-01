@@ -1,5 +1,6 @@
 import { type Nullish, isNotNullish } from "@elyukai/utils/nullable"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import type { Profession as RawProfession } from "@optolith/character-schema/types"
 import type {
   Profession,
   Profession_ID,
@@ -132,6 +133,23 @@ export class CharacterProfession {
   @action
   setCustomProfessionName(newCustomProfessionName: string) {
     this.customName = newCustomProfessionName
+  }
+
+  static fromJSON(global: Global, character: Character, raw: RawProfession): CharacterProfession {
+    return new CharacterProfession(global, character, raw.package, raw.variant, raw.customName)
+  }
+
+  toJSON(): RawProfession | undefined {
+    if (this.baseId === undefined || this.versionId === undefined) {
+      return undefined
+    }
+    return {
+      base: this.baseId,
+      version: this.versionId,
+      package: this.packageId,
+      variant: this.variantId,
+      customName: this.customName,
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react"
 import type { FC } from "react"
-import { SharedState } from "../../../../external.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import "./DerivedCharacteristicsList.scss"
 import { DerivedCharacteristicsListItem } from "./DerivedCharacteristicsListItem.tsx"
 
@@ -17,7 +17,7 @@ export const DerivedCharacteristicsList: FC<Props> = observer(props => {
 
   return (
     <div className="derived-characteristics">
-      {SharedState.derivedCharacteristics.map(derivedCharacteristic => (
+      {useCharacterState().derivedCharacteristics.map(derivedCharacteristic => (
         <DerivedCharacteristicsListItem
           key={derivedCharacteristic.id}
           attribute={derivedCharacteristic}

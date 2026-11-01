@@ -7,7 +7,7 @@ import { ListItemValues } from "../../../../../shared/components/list/ListItemVa
 import type { DisplayedAttribute } from "../../../../../shared/domain/rated/attribute.ts"
 import type { DisplayedInactiveLiturgicalChant } from "../../../../../shared/domain/rated/liturgicalChant.ts"
 import type { DisplayedInactiveSpellwork } from "../../../../../shared/domain/rated/spell.ts"
-import { SharedActions } from "../../../../external.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import {
   InlineLibraryManager,
   type DisplayableMainIdentifier,
@@ -44,7 +44,9 @@ export const InactiveActivatableRatedListItem: FC<Props> = props => {
     selectedInlineLibraryEntryId,
   } = props
 
-  const handleAdd = useCallback(() => SharedActions.activateRated(type, id), [id])
+  const actions = useCharacterActions()
+
+  const handleAdd = useCallback(() => actions.activateRated(type, id), [id])
 
   const handleSelectForInfo = useCallback(
     () => InlineLibraryManager.instance.goTo([type, id]),

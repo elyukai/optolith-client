@@ -84,4 +84,12 @@ export class CharacterSkills extends CharacterRatedEntries<"Skill", CharacterSki
   get skills() {
     return this.entries
   }
+
+  static fromJSON(
+    global: Global,
+    character: Character,
+    raw: Record<string, { value: number }> | undefined,
+  ): CharacterSkills {
+    return super.fromAnyJSON<CharacterSkills>(new CharacterSkills(global, character), raw)
+  }
 }

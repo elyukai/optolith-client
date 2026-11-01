@@ -12,7 +12,8 @@ import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { VerticalList } from "../../../../../shared/components/verticalList/VerticalList.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedActions, SharedState } from "../../../../external.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useAppDispatch } from "../../../../hooks/redux.ts"
 import { PersonalData } from "./PersonalData.tsx"
 import "./ProfileOverview.scss"
@@ -42,11 +43,13 @@ export const ProfileOverview: FC = observer(() => {
     professionName,
     startExperienceLevel,
     currentExperienceLevel,
-  } = SharedState
+  } = useCharacterState()
+
+  const actions = useCharacterActions()
 
   const handleEditName = useCallback(
     (newName: string) => {
-      SharedActions.setName(newName)
+      actions.setName(newName)
       setIsEditingName(false)
     },
     [dispatch],
@@ -54,7 +57,7 @@ export const ProfileOverview: FC = observer(() => {
 
   const handleEditProfessionName = useCallback(
     (newName: string) => {
-      SharedActions.setCustomProfessionName(newName)
+      actions.setCustomProfessionName(newName)
       setIsEditingProfessionName(false)
     },
     [dispatch],

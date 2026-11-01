@@ -2,7 +2,7 @@ import { observer } from "mobx-react"
 import type { FC } from "react"
 import { GridItem } from "../../../../../shared/components/grid/GridItem.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { SharedState } from "../../../../external.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 
 /**
  * Returns a sidebar widget for showing spent and available adventure points for
@@ -11,12 +11,14 @@ import { SharedState } from "../../../../external.ts"
 export const AdventurePointsSpent: FC = observer(() => {
   const translate = useTranslate()
 
-  const maximumAdventurePointsForAdventagesAndDisadvantages = 80
-  const maximumForMagicalAdvantagesDisadvantages =
-    SharedState.maximumAdventurePointsForMagicalAdvantagesAndDisadvantages
-  const maximumAdventurePointsForBlessedAdventagesAndDisadvantages = 50
+  const {
+    maximumAdventurePointsForMagicalAdvantagesAndDisadvantages:
+      maximumForMagicalAdvantagesDisadvantages,
+    adventurePointsStats: stats,
+  } = useCharacterState()
 
-  const stats = SharedState.adventurePointsStats
+  const maximumAdventurePointsForAdventagesAndDisadvantages = 80
+  const maximumAdventurePointsForBlessedAdventagesAndDisadvantages = 50
 
   return (
     <GridItem>

@@ -5,6 +5,7 @@ import type { EntityDescription } from "@optolith/entity-descriptions/descriptio
 import Debug from "debug"
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from "electron"
 import EventEmitter from "events"
+import type { GlobalIPCActions, GlobalIPCState } from "../main/index.ts"
 import { attackDatabaseHandlersToPreloadAPI, type DatabaseHandlers } from "../shared/database.ts"
 import type { CharacterIPCActions, CharacterIPCSelectors } from "../shared/ipc.ts"
 import type { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
@@ -13,7 +14,9 @@ import {
   type GlobalSettingsEvents,
 } from "../shared/settings/listeningRendererPreload.ts"
 import {
+  attachKeyedStateSelectorsAndActionsToContextBridge,
   attachStateSelectorsAndActionsToContextBridge,
+  type KeyedStateSelectorsAndActionsBridge,
   type StateSelectorsAndActionsBridge,
 } from "../shared/state.ts"
 import type { TypedEventEmitter } from "../shared/utils/events.ts"
@@ -60,7 +63,8 @@ export type PreloadAPI = {
   >
 } & TypedEventEmitter<Events> &
   DatabaseHandlers &
-  StateSelectorsAndActionsBridge<CharacterIPCSelectors, CharacterIPCActions>
+  StateSelectorsAndActionsBridge<GlobalIPCState, GlobalIPCActions> &
+  KeyedStateSelectorsAndActionsBridge<CharacterIPCSelectors, CharacterIPCActions>
 
 const events = new EventEmitter() as TypedEventEmitter<Events>
 
@@ -130,7 +134,8 @@ const api: PreloadAPI = {
   log: (...args: unknown[]) => {
     ipcRenderer.send("main-window-log", ...args)
   },
-  ...attachStateSelectorsAndActionsToContextBridge<CharacterIPCSelectors, CharacterIPCActions>(
+  ...attachStateSelectorsAndActionsToContextBridge<GlobalIPCState, GlobalIPCActions>(ipcRenderer),
+  ...attachKeyedStateSelectorsAndActionsToContextBridge<CharacterIPCSelectors, CharacterIPCActions>(
     ipcRenderer,
   ),
   getEntityDescription: (...args) => {

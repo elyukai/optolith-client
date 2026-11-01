@@ -1,5 +1,5 @@
 import type * as Gen from "@optolith/database-schema/gen"
-import type { RawActivatableInstance } from "./domain/activatable/activatable.ts"
+import type { SerializedActivatableInstance } from "./domain/activatable/activatable.ts"
 import type { Character } from "./domain/character.ts"
 
 export type CharacterIPCActions = {
@@ -43,7 +43,7 @@ export type CharacterIPCActions = {
   addActivatable: (
     entity: Gen.ActivatableIdentifier["kind"],
     id: string,
-    instance: RawActivatableInstance,
+    instance: SerializedActivatableInstance,
   ) => void
   setActivatableLevel: (
     entity: Gen.ActivatableIdentifier["kind"],
@@ -121,8 +121,9 @@ export const defaultCharacterIPCSelectors: CharacterIPCSelectors = {
     spentOnAttributes: 0,
     spentOnSkills: 0,
     spentOnCombatTechniques: 0,
-    spentOnSpells: 0,
     spentOnCantrips: 0,
+    spentOnSpells: 0,
+    spentOnMagicalActions: 0,
     spentOnLiturgicalChants: 0,
     spentOnBlessings: 0,
     spentOnSpecialAbilities: 0,

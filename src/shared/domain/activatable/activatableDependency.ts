@@ -4,7 +4,7 @@ import type {
   RequirableSelectOptionIdentifier,
 } from "@optolith/database-schema/gen"
 import { equalsCase } from "../databaseEnum.ts"
-import type { PredefinedActivatableOption, RawActivatableInstance } from "./activatable.ts"
+import type { PredefinedActivatableOption, SerializedActivatableInstance } from "./activatable.ts"
 
 /**
  * A dependency on an activatable entry.
@@ -58,7 +58,7 @@ export const isGeneralDependency = (dependency: ActivatableDependency) =>
  */
 export const appliesToInstanceStrict = (
   dependency: ActivatableDependency,
-  instance: RawActivatableInstance,
+  instance: SerializedActivatableInstance,
 ) =>
   dependency.options === undefined ||
   dependency.options.every(
@@ -74,7 +74,7 @@ export const appliesToInstanceStrict = (
  */
 export const appliesToInstanceLoose = (
   dependency: ActivatableDependency,
-  instance: RawActivatableInstance,
+  instance: SerializedActivatableInstance,
 ) =>
   dependency.options === undefined ||
   dependency.options.every(

@@ -12,6 +12,7 @@ import type {
   Aspect_ID,
   BlessedTradition_ID,
   Blessing_ID,
+  Enhancement_ID,
   LiturgyIdentifier,
   LiturgyTradition,
   SkillCheck,
@@ -80,6 +81,10 @@ export class CharacterBlessings extends TinyActivatables<"Blessing", CharacterBl
         name: this.global.locale.translateMap(container.content.translations)?.name ?? "",
         groupName: this.global.locale.translate("Blessings"),
       }))
+  }
+
+  static fromJSON(global: Global, character: Character, raw: string[] | undefined) {
+    return super.fromAnyJSON(global, character, CharacterBlessings, raw)
   }
 }
 
@@ -420,6 +425,18 @@ export class CharacterLiturgicalChants<
         entry.dbEntry.traditions.flatMap(t =>
           t.kind === "Tradition" ? [t.Tradition.tradition] : [],
         ),
+    )
+  }
+
+  static fromJSON<Entity extends "LiturgicalChant" | "Ceremony">(
+    global: Global,
+    character: Character,
+    entity: Entity,
+    raw: Record<string, { value: number; enhancements?: Enhancement_ID[] }> | undefined,
+  ): CharacterLiturgicalChants<Entity> {
+    return super.fromAnyJSON<CharacterLiturgicalChants<Entity>>(
+      new CharacterLiturgicalChants(global, character, entity),
+      raw,
     )
   }
 }

@@ -18,7 +18,6 @@ import { SpecialAbilitiesSortOrder } from "../../../../../shared/domain/sortOrde
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedState } from "../../../../external.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
@@ -30,6 +29,7 @@ import {
 } from "../../../../slices/settingsSlice.ts"
 import { ActiveActivatablesListItem } from "../activatable/ActiveActivatableListItem.tsx"
 import { InactiveActivatablesListItem } from "../activatable/InactiveActivatableListItem.tsx"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 
 /**
  * Returns a page for managing special abilities.
@@ -40,7 +40,7 @@ export const SpecialAbilities: FC = observer(() => {
   const dispatch = useAppDispatch()
   const localeCompare = useLocaleCompare()
 
-  const { canRemove, inactiveSpecialAbilities, activeSpecialAbilities } = SharedState
+  const { canRemove, inactiveSpecialAbilities, activeSpecialAbilities } = useCharacterState()
 
   const sortOrder = useAppSelector(selectSpecialAbilitiesSortOrder)
   const handleChangeSortOrder = useCallback(

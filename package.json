@@ -11,7 +11,7 @@
   "license": "MPL-2.0",
   "main": ".webpack/main.mjs",
   "dependencies": {
-    "@optolith/character-schema": "^0.2.2",
+    "@optolith/character-schema": "^0.2.5",
     "@optolith/database-schema": "^0.114.0",
     "electron-updater": "^6.8.11",
     "tsondb": "^0.23.4"
@@ -21,7 +21,7 @@
     "@elyukai/markdown": "^0.4.0",
     "@elyukai/oxc-config": "^0.1.4",
     "@optolith/adventure-points": "^0.1.3",
-    "@optolith/entity-descriptions": "^0.43.2",
+    "@optolith/entity-descriptions": "^0.44.0",
     "@reduxjs/toolkit": "^2.13.0",
     "@rsdoctor/core": "^2.0.0",
     "@rspack/cli": "^2.2.9",

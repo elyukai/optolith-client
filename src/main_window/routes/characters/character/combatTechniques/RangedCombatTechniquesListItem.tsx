@@ -8,7 +8,7 @@ import { ListItemValues } from "../../../../../shared/components/list/ListItemVa
 import type { DisplayedRangedCombatTechnique } from "../../../../../shared/domain/rated/combatTechnique.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedActions } from "../../../../external.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import {
   InlineLibraryManager,
   type DisplayableMainIdentifier,
@@ -44,6 +44,7 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
+  const actions = useCharacterActions()
 
   const { name = "???" } = translateMap(translations) ?? {}
 
@@ -89,15 +90,13 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
       <SkillButtons
         addDisabled={!isIncreasable}
         removeDisabled={!isDecreasable}
-        addPoint={() => SharedActions.incrementRated("RangedCombatTechnique", id)}
-        setToMax={() => SharedActions.incrementRatedToMax("RangedCombatTechnique", id)}
+        addPoint={() => actions.incrementRated("RangedCombatTechnique", id)}
+        setToMax={() => actions.incrementRatedToMax("RangedCombatTechnique", id)}
         removePoint={
-          canRemove ? () => SharedActions.decrementRated("RangedCombatTechnique", id) : undefined
+          canRemove ? () => actions.decrementRated("RangedCombatTechnique", id) : undefined
         }
         setToMin={
-          canRemove
-            ? () => SharedActions.decrementRatedToMin("RangedCombatTechnique", id)
-            : undefined
+          canRemove ? () => actions.decrementRatedToMin("RangedCombatTechnique", id) : undefined
         }
         selectForInfo={handleSelectForInfo}
       />

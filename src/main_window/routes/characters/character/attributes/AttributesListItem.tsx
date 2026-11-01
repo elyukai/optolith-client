@@ -5,7 +5,7 @@ import { NumberBox } from "../../../../../shared/components/numberBox/NumberBox.
 import type { DisplayedAttribute } from "../../../../../shared/domain/rated/attribute.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { SharedActions } from "../../../../external.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
 
 type Props = {
@@ -23,6 +23,7 @@ export const AttributeListItem: FC<Props> = props => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const translations = translateMap(attribute.translations)
+  const actions = useCharacterActions()
 
   const { id, value, maxValue: maximum, isDecreasable, isIncreasable, color } = attribute
 
@@ -31,9 +32,9 @@ export const AttributeListItem: FC<Props> = props => {
   const handleAdd = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
       if (event.shiftKey && maximum !== undefined) {
-        SharedActions.incrementRatedToMax("Attribute", id)
+        actions.incrementRatedToMax("Attribute", id)
       } else {
-        SharedActions.incrementRated("Attribute", id)
+        actions.incrementRated("Attribute", id)
       }
     },
     [isIncreasable, maximum],
@@ -42,9 +43,9 @@ export const AttributeListItem: FC<Props> = props => {
   const handleRemove = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
       if (event.shiftKey) {
-        SharedActions.decrementRatedToMin("Attribute", id)
+        actions.decrementRatedToMin("Attribute", id)
       } else {
-        SharedActions.decrementRated("Attribute", id)
+        actions.decrementRated("Attribute", id)
       }
     },
     [isDecreasable],

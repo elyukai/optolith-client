@@ -6,37 +6,34 @@ import type { RootState } from "../store.ts"
  */
 export type RoutePath =
   | ["characters"]
-  | [
-      "characters",
-      string,
-      (
-        | "profile"
-        | "personal_data"
-        | "character_sheet"
-        | "pact"
-        | "rules"
-        | "race"
-        | "culture"
-        | "profession"
-        | "attributes"
-        | "advantages"
-        | "disadvantages"
-        | "skills"
-        | "combat_techniques"
-        | "special_abilities"
-        | "spells"
-        | "liturgical_chants"
-        | "equipment"
-        | "hit_zone_armor"
-        | "pets"
-      ),
-    ]
+  | ["characters", string, CharacterRoutePath]
   | ["groups"]
   | ["library"]
   | ["faq"]
   | ["imprint"]
   | ["third_party_licenses"]
   | ["last_changes"]
+
+export type CharacterRoutePath =
+  | "profile"
+  | "personal_data"
+  | "character_sheet"
+  | "pact"
+  | "rules"
+  | "race"
+  | "culture"
+  | "profession"
+  | "attributes"
+  | "advantages"
+  | "disadvantages"
+  | "skills"
+  | "combat_techniques"
+  | "special_abilities"
+  | "spells"
+  | "liturgical_chants"
+  | "equipment"
+  | "hit_zone_armor"
+  | "pets"
 
 /**
  * The sub-state for routes.

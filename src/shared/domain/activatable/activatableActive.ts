@@ -16,7 +16,7 @@ import type {
 } from "@optolith/entity-descriptions/entities/partial/activatableNameChunks"
 import type { Character } from "../character.ts"
 import type { Case } from "../databaseEnum.ts"
-import type { CharacterActivatableInstance, RawActivatableInstance } from "./activatable.ts"
+import type { CharacterActivatableInstance, SerializedActivatableInstance } from "./activatable.ts"
 import {
   appliesToInstanceStrict,
   isGeneralDependency,
@@ -570,7 +570,7 @@ const getEntrySpecificMinimumLevel = (
 export const getMinimumActiveLevel = (
   id: ActivatableIdentifier,
   dependencies: ActivatableDependency[],
-  instance: RawActivatableInstance,
+  instance: SerializedActivatableInstance,
   caps: {
     activeSermonsCount: number
     activeVisionsCount: number

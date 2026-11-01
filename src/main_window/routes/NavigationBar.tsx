@@ -1,16 +1,12 @@
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import { observer } from "mobx-react"
-import { type FC, useCallback, useEffect, useRef } from "react"
-import { AvatarWrapper } from "../../shared/components/avatarWrapper/AvatarWrapper.tsx"
-import { Button } from "../../shared/components/button/Button.tsx"
+import { useEffect, type FC, type ReactNode } from "react"
 import { IconButton } from "../../shared/components/iconButton/IconButton.tsx"
-import { TooltipToggle } from "../../shared/components/tooltipToggle/TooltipToggle.tsx"
 import { useTranslate } from "../../shared/hooks/translate.ts"
-import { ExternalAPI, SharedState } from "../external.ts"
-import { useAppDispatch, useAppSelector } from "../hooks/redux.ts"
-import { useVisibleTabs } from "../hooks/visibleTabs.ts"
-import { goToTab, selectRoute } from "../slices/routeSlice.ts"
-import { AdventurePointsTooltip } from "./AdventurePointsTooltip.tsx"
+import { ExternalAPI } from "../external.ts"
+import { useAppSelector } from "../hooks/redux.ts"
+import type { DisplayRoute } from "../hooks/visibleTabs.ts"
+import { selectRoute, type RoutePath } from "../slices/routeSlice.ts"
 import { NavigationBarBack } from "./NavigationBarBack.tsx"
 import { NavigationBarLeft } from "./NavigationBarLeft.tsx"
 import { NavigationBarRight } from "./NavigationBarRight.tsx"
@@ -25,11 +21,14 @@ const toggleDevTools = () => ExternalAPI.toggleDevTools()
 /**
  * Returns a top navigation bar.
  */
-export const NavigationBar: FC = observer(() => {
+export const NavigationBar: FC<{
+  backToMainView?: () => void
+  leftChildren?: ReactNode
+  rightChildren?: ReactNode
+  mainTabs: DisplayRoute[]
+  subTabs?: RoutePath[]
+}> = observer(({ backToMainView, leftChildren, rightChildren, mainTabs, subTabs }) => {
   const translate = useTranslate()
-  const dispatch = useAppDispatch()
-  const handleCharactersTab = useCallback(() => dispatch(goToTab(["characters"])), [dispatch])
-  const { section, mainTabs, subTabs } = useVisibleTabs()
   const currentRoute = useAppSelector(selectRoute)
 
   useEffect(() => {
@@ -97,53 +96,20 @@ export const NavigationBar: FC = observer(() => {
         return ExternalAPI.setTitle(translate("Last Changes"))
 
       default:
-        assertExhaustive(currentRoute)
+        return assertExhaustive(currentRoute)
     }
   }, [currentRoute, translate])
-
-  const ref = useRef<HTMLDivElement>(null)
 
   return (
     <nav>
       <NavigationBarWrapper>
         <NavigationBarLeft>
-          {section === "character" ? (
-            <>
-              <NavigationBarBack handleSetTab={handleCharactersTab} />
-              <AvatarWrapper src={SharedState.avatar ?? ""} />
-            </>
-          ) : null}
+          {backToMainView ? <NavigationBarBack handleSetTab={backToMainView} /> : null}
+          {leftChildren}
           <NavigationBarTabs tabs={mainTabs} />
         </NavigationBarLeft>
         <NavigationBarRight>
-          {section === "character" ? (
-            <>
-              <TooltipToggle
-                position="bottom"
-                margin={12}
-                content={<AdventurePointsTooltip />}
-                targetRef={ref}
-              />
-              <div className="collected-ap" ref={ref}>
-                {translate("{$value} AP Remaining", {
-                  value: SharedState.adventurePointsStats.available.toFixed(),
-                })}
-              </div>
-              <IconButton
-                icon="&#xE90f;"
-                label={translate("Undo")}
-                // onClick={undo}
-                disabled /* ={!isUndoAvailable} */
-              />
-              <IconButton
-                icon="&#xE910;"
-                label={translate("Redo")}
-                // onClick={redo}
-                disabled /* ={!isRedoAvailable} */
-              />
-              <Button /* onClick={saveHero} */>{translate("Save")}</Button>
-            </>
-          ) : null}
+          {rightChildren}
           {ExternalAPI.platform !== "darwin" ? (
             <IconButton icon="&#xE906;" label={translate("Show Settings")} onClick={showSettings} />
           ) : null}

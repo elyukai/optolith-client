@@ -1,5 +1,6 @@
 import { type FC, useCallback, useRef } from "react"
 import { AvatarWrapper } from "../../../shared/components/avatarWrapper/AvatarWrapper.tsx"
+import { Button } from "../../../shared/components/button/Button.tsx"
 import { IconButton } from "../../../shared/components/iconButton/IconButton.tsx"
 import { ListItem } from "../../../shared/components/list/ListItem.tsx"
 import { ListItemButtons } from "../../../shared/components/list/ListItemButtons.tsx"
@@ -9,6 +10,7 @@ import { TooltipHint } from "../../../shared/components/tooltipHint/TooltipHint.
 import { VerticalList } from "../../../shared/components/verticalList/VerticalList.tsx"
 import type { CharacterOverview } from "../../../shared/domain/character.ts"
 import { useTranslate } from "../../../shared/hooks/translate.ts"
+import { ExternalAPI } from "../../external.ts"
 import { useAppDispatch } from "../../hooks/redux.ts"
 import { goToTab } from "../../slices/routeSlice.ts"
 
@@ -74,13 +76,13 @@ export const CharacterListItem: FC<Props> = props => {
       </ListItemName>
       <ListItemSeparator />
       <ListItemButtons>
-        {/* <Button
+        <Button
           className="save"
-          // TODO: onClick={saveHero}
-          disabled// ={notMember(id)(unsavedHeroesById)}
-          >
+          onClick={() => ExternalAPI.execute("saveCharacter", id)}
+          // TODO: only allow save when unsaved changes
+        >
           {translate("Save")}
-        </Button> */}
+        </Button>
         <TooltipHint hint={translate("Duplicate Character")} targetRef={duplicateRef} margin={8} />
         <IconButton
           icon="&#xE907;"

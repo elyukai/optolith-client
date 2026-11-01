@@ -23,7 +23,8 @@ import {
 import { LiturgiesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { SharedActions, SharedState } from "../../../../external.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary, InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
@@ -59,7 +60,7 @@ export const LiturgicalChants: FC = observer(() => {
     activeLiturgicalChants,
     activeCeremonies,
     attributes,
-  } = SharedState
+  } = useCharacterState()
 
   const [activeFilterText, setActiveFilterText] = useState("")
   const [inactiveFilterText, setInactiveFilterText] = useState("")
@@ -92,13 +93,15 @@ export const LiturgicalChants: FC = observer(() => {
     [visibleActiveLiturgies, inactiveFilterText, sortOrder, localeCompare],
   )
 
+  const actions = useCharacterActions()
+
   // TODO: Check AP
   const handleAddBlessing = useCallback(
-    (id: string) => SharedActions.addTinyActivatable("Blessing", id),
+    (id: string) => actions.addTinyActivatable("Blessing", id),
     [],
   )
   const handleRemoveBlessing = useCallback(
-    (id: string) => SharedActions.addTinyActivatable("Blessing", id),
+    (id: string) => actions.addTinyActivatable("Blessing", id),
     [],
   )
 
