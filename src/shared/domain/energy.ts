@@ -14,6 +14,7 @@ import type {
 } from "@optolith/database-schema/gen"
 import { renderBaseCalculation } from "@optolith/entity-descriptions/entities/derivedCharacteristic"
 import { evaluateMathOperation } from "@optolith/entity-descriptions/entities/partial/mathOperation"
+import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
 import { action, computed, observable } from "mobx"
 import { fromUniformCase } from "tsondb/schema/gen"
 import type { Global } from "../global.ts"
@@ -25,6 +26,7 @@ import {
 import { cachedAdventurePoints } from "./adventurePoints/ratedEntry.ts"
 import type { Character } from "./character.ts"
 import { Case } from "./databaseEnum.ts"
+import { checkPrerequisitesOfDerivedCharacteristic } from "./prerequisites/fullPrerequisiteValidationForType.ts"
 
 export type DisplayedDerivedCharacteristicBase = {
   id: string
@@ -439,6 +441,20 @@ export class CharacterDerivedCharacteristics {
   get derivedCharacteristics() {
     return this.global.db
       .getAllInstanceContainersOfEntity("DerivedCharacteristic")
+      .filter(
+        ({ content }) =>
+          isEntryFromIncludedPublication(
+            content,
+            this.global.db.getInstanceOfEntityById.bind(this.global.db),
+            this.global.locale.translateMap,
+            this.#character.rules.publicationOptions,
+          ) &&
+          (content.prerequisites === undefined ||
+            checkPrerequisitesOfDerivedCharacteristic(
+              content.prerequisites,
+              this.#character.prerequisiteCapabilities,
+            )),
+      )
       .map((container): DisplayedDerivedCharacteristic => ({
         ...(
           this.#derivedCharacteristics.get(container.id) ??
