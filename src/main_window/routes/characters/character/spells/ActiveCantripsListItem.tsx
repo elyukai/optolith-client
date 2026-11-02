@@ -1,5 +1,6 @@
 import type { Cantrip_ID } from "@optolith/database-schema/gen"
-import { memo, useCallback, type FC } from "react"
+import { observer } from "mobx-react-lite"
+import { useCallback, type FC } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
@@ -22,7 +23,10 @@ type Props = {
   selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
-const ActiveCantripsListItem: FC<Props> = props => {
+/**
+ * Displays a cantrip that is currently active.
+ */
+export const ActiveCantripsListItem: FC<Props> = observer(props => {
   const {
     insertTopMargin,
     cantrip: { id, associatedText, name, groupName, isUnfamiliar },
@@ -62,11 +66,4 @@ const ActiveCantripsListItem: FC<Props> = props => {
       />
     </ListItem>
   )
-}
-
-/**
- * Displays a cantrip that is currently active.
- */
-const MemoActiveCantripsListItem = memo(ActiveCantripsListItem)
-
-export { MemoActiveCantripsListItem as ActiveCantripsListItem }
+})

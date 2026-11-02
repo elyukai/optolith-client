@@ -18,6 +18,7 @@ import { SpecialAbilitiesSortOrder } from "../../../../../shared/domain/sortOrde
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
@@ -29,7 +30,6 @@ import {
 } from "../../../../slices/settingsSlice.ts"
 import { ActiveActivatablesListItem } from "../activatable/ActiveActivatableListItem.tsx"
 import { InactiveActivatablesListItem } from "../activatable/InactiveActivatableListItem.tsx"
-import { useCharacterState } from "../../../../hooks/characterState.ts"
 
 /**
  * Returns a page for managing special abilities.
@@ -130,16 +130,16 @@ export const SpecialAbilities: FC = observer(() => {
           </Checkbox>
         </Options>
         <Main classOnly>
-          <ListHeader>
-            <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
-            <ListHeaderTag className="group">{translate("Group")}</ListHeaderTag>
-            <ListHeaderTag className="cost" hint={translate("Adventure Points")}>
-              {translate("AP")}
-            </ListHeaderTag>
-            <ListHeaderTag className="btn-placeholder" />
-            <ListHeaderTag className="btn-placeholder" />
-          </ListHeader>
           <Scroll>
+            <ListHeader>
+              <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+              <ListHeaderTag className="group">{translate("Group")}</ListHeaderTag>
+              <ListHeaderTag className="cost" hint={translate("Adventure Points")}>
+                {translate("AP")}
+              </ListHeaderTag>
+              <ListHeaderTag className="btn-placeholder" />
+              <ListHeaderTag className="btn-placeholder" />
+            </ListHeader>
             {inactiveList.length > 0 ? (
               <List>
                 {inactiveList.map(x => (
@@ -177,16 +177,16 @@ export const SpecialAbilities: FC = observer(() => {
         <Button onClick={openSlidein}>{translate("Add")}</Button>
       </Options>
       <Main>
-        <ListHeader>
-          <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
-          <ListHeaderTag className="group">{translate("Group")}</ListHeaderTag>
-          <ListHeaderTag className="cost" hint={translate("Adventure Points")}>
-            {translate("AP")}
-          </ListHeaderTag>
-          {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
-          <ListHeaderTag className="btn-placeholder" />
-        </ListHeader>
         <Scroll stable>
+          <ListHeader>
+            <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+            <ListHeaderTag className="group">{translate("Group")}</ListHeaderTag>
+            <ListHeaderTag className="cost" hint={translate("Adventure Points")}>
+              {translate("AP")}
+            </ListHeaderTag>
+            {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
+            <ListHeaderTag className="btn-placeholder" />
+          </ListHeader>
           {activeList.length > 0 ? (
             <List>
               {activeList.map(x => (

@@ -7,8 +7,9 @@
   .btn {
     flex: none;
 
-    &:not(.btn--flat):not(:first-child) {
-      margin-left: 5px;
+    &:not(.btn--flat),
+    &:has(+ .btn:not(.btn--flat)) {
+      margin-right: 0.5rem;
     }
   }
 }

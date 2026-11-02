@@ -5,6 +5,7 @@ import { Button } from "../../shared/components/button/Button.tsx"
 import { IconButton } from "../../shared/components/iconButton/IconButton.tsx"
 import { TooltipToggle } from "../../shared/components/tooltipToggle/TooltipToggle.tsx"
 import { useTranslate } from "../../shared/hooks/translate.ts"
+import { ExternalAPI } from "../external.ts"
 import { useCharacterState } from "../hooks/characterState.ts"
 import { useAppDispatch } from "../hooks/redux.ts"
 import { useVisibleCharacterTabs } from "../hooks/visibleTabs.ts"
@@ -18,7 +19,7 @@ import { NavigationBar } from "./NavigationBar.tsx"
 export const CharacterNavigationBar: FC = observer(() => {
   const translate = useTranslate()
   const dispatch = useAppDispatch()
-  const { avatar, adventurePointsStats } = useCharacterState()
+  const { avatar, adventurePointsStats, id: characterId } = useCharacterState()
   const handleCharactersTab = useCallback(() => dispatch(goToTab(["characters"])), [dispatch])
   const { mainTabs, subTabs } = useVisibleCharacterTabs()
 
@@ -53,7 +54,9 @@ export const CharacterNavigationBar: FC = observer(() => {
             // onClick={redo}
             disabled /* ={!isRedoAvailable} */
           />
-          <Button /* onClick={saveHero} */>{translate("Save")}</Button>
+          <Button onClick={() => ExternalAPI.execute("saveCharacter", characterId)}>
+            {translate("Save")}
+          </Button>
         </>
       }
       mainTabs={mainTabs}

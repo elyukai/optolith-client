@@ -161,6 +161,7 @@ export const useVisibleCharacterTabs = () => {
               : undefined,
           ].filter(isNotNullish),
     [
+      phase,
       characterId,
       isCharacterCreationFinished,
       arePactsAvailable,

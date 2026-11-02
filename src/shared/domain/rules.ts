@@ -119,12 +119,13 @@ abstract class CharacterRuleCollection<
     parent: CharacterRules,
     entityName: Entity,
     creator: typeof this.creator,
+    rules: Map<string, T> = new Map(),
   ) {
     this.global = global
     this.parent = parent
     this.entityName = entityName
     this.creator = creator
-    this.rules = new Map()
+    this.rules = rules
   }
 
   @computed
@@ -185,8 +186,8 @@ class CharacterFocusRuleCollection extends CharacterRuleCollection<
   "FocusRule",
   CharacterFocusRule
 > {
-  constructor(global: Global, parent: CharacterRules) {
-    super(global, parent, "FocusRule", CharacterFocusRule)
+  constructor(global: Global, parent: CharacterRules, rules?: Map<string, CharacterFocusRule>) {
+    super(global, parent, "FocusRule", CharacterFocusRule, rules)
     // "34f44742-03ce-49b6-8930-b83d25ecc39c": {
     //   id: "34f44742-03ce-49b6-8930-b83d25ecc39c", // Spell Enhancements
     //   active: true,
@@ -204,8 +205,8 @@ class CharacterOptionalRuleCollection extends CharacterRuleCollection<
   "OptionalRule",
   CharacterOptionalRule
 > {
-  constructor(global: Global, parent: CharacterRules) {
-    super(global, parent, "OptionalRule", CharacterOptionalRule)
+  constructor(global: Global, parent: CharacterRules, rules?: Map<string, CharacterOptionalRule>) {
+    super(global, parent, "OptionalRule", CharacterOptionalRule, rules)
   }
 }
 
@@ -213,8 +214,12 @@ class CharacterAlternativeRuleCollection extends CharacterRuleCollection<
   "AlternativeRule",
   CharacterAlternativeRule
 > {
-  constructor(global: Global, parent: CharacterRules) {
-    super(global, parent, "AlternativeRule", CharacterAlternativeRule)
+  constructor(
+    global: Global,
+    parent: CharacterRules,
+    rules?: Map<string, CharacterAlternativeRule>,
+  ) {
+    super(global, parent, "AlternativeRule", CharacterAlternativeRule, rules)
   }
 }
 
@@ -278,14 +283,17 @@ export class CharacterRules {
   constructor(
     global: Global,
     includeAllPublications: boolean,
-    includePublications: Publication_ID[],
+    includePublications: Publication_ID[] | Set<Publication_ID>,
+    focusRules?: Map<string, CharacterFocusRule>,
+    optionalRules?: Map<string, CharacterOptionalRule>,
+    alternativeRules?: Map<string, CharacterAlternativeRule>,
   ) {
     this.global = global
     this.includeAllPublications = includeAllPublications
     this.includePublications = new Set(includePublications)
-    this.focusRules = new CharacterFocusRuleCollection(global, this)
-    this.optionalRules = new CharacterOptionalRuleCollection(global, this)
-    this.alternativeRules = new CharacterAlternativeRuleCollection(global, this)
+    this.focusRules = new CharacterFocusRuleCollection(global, this, focusRules)
+    this.optionalRules = new CharacterOptionalRuleCollection(global, this, optionalRules)
+    this.alternativeRules = new CharacterAlternativeRuleCollection(global, this, alternativeRules)
   }
 
   @computed

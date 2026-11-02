@@ -18,6 +18,7 @@ import { filterAndSortDisplayed } from "../../../../../shared/domain/activatable
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
@@ -30,7 +31,6 @@ import {
 import { ActiveActivatablesListItem } from "../activatable/ActiveActivatableListItem.tsx"
 import { InactiveActivatablesListItem } from "../activatable/InactiveActivatableListItem.tsx"
 import { AdventurePointsSpent } from "./AdventurePointsSpent.tsx"
-import { useCharacterState } from "../../../../hooks/characterState.ts"
 
 /**
  * Returns a page for managing advantages.
@@ -41,7 +41,8 @@ export const Advantages: FC = observer(() => {
   const dispatch = useAppDispatch()
   const localeCompare = useLocaleCompare()
 
-  const { canRemove, isInCharacterCreation, inactiveAdvantages, activeAdvantages } = useCharacterState()
+  const { canRemove, isInCharacterCreation, inactiveAdvantages, activeAdvantages } =
+    useCharacterState()
 
   const cultureRatingVisibility = useAppSelector(
     selectAdvantagesDisadvantagesCultureRatingVisibility,
@@ -157,15 +158,15 @@ export const Advantages: FC = observer(() => {
         {isInCharacterCreation && <AdventurePointsSpent />}
       </Options>
       <Main>
-        <ListHeader>
-          <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
-          <ListHeaderTag className="cost" hint={translate("Adventure Points")}>
-            {translate("AP")}
-          </ListHeaderTag>
-          {canRemove && <ListHeaderTag className="btn-placeholder" />}
-          <ListHeaderTag className="btn-placeholder" />
-        </ListHeader>
-        <Scroll stable>
+        <Scroll>
+          <ListHeader>
+            <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+            <ListHeaderTag className="cost" hint={translate("Adventure Points")}>
+              {translate("AP")}
+            </ListHeaderTag>
+            {canRemove && <ListHeaderTag className="btn-placeholder" />}
+            <ListHeaderTag className="btn-placeholder" />
+          </ListHeader>
           {activeList.length > 0 ? (
             <List>
               {activeList.map(x => (

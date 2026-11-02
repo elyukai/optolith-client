@@ -1,12 +1,23 @@
-import { type Nullish, isNotNullish } from "@elyukai/utils/nullable"
+import { unique } from "@elyukai/utils/array/filters"
+import { on } from "@elyukai/utils/function"
+import {
+  type Nullish,
+  ensure,
+  isNotNullish,
+  mapNullable,
+  nullableToArray,
+} from "@elyukai/utils/nullable"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type { Profession as RawProfession } from "@optolith/character-schema/types"
 import type {
+  EntityMap,
+  PrerequisitesElement,
   Profession,
   Profession_ID,
   ProfessionName,
   ProfessionPackage,
   ProfessionPackage_ID,
+  ProfessionPrerequisiteGroup,
   ProfessionVariant,
   ProfessionVariant_ID,
   ProfessionVersion,
@@ -14,13 +25,15 @@ import type {
 } from "@optolith/database-schema/gen"
 import { parensIf } from "@optolith/entity-descriptions/entities/partial/rated/activatable/parensIf"
 import { action, computed, observable } from "mobx"
+import type { GetInstanceById } from "../database.ts"
 import type { Global } from "../global.ts"
-import type { Character } from "./character.ts"
+import type { BaseCharacter, Character } from "./character.ts"
+import { fromUniformCase } from "./databaseEnum.ts"
 import type { Sex } from "./sex.ts"
 
 export class CharacterProfession {
   readonly global: Global
-  readonly character: Character
+  character: BaseCharacter
 
   /**
    * The profession package identifier. Profession packages are values of a profession version for a specific experience level. Profession versions are part of the same profession but with slightly different values, such as in extension rule books existing professions might get an additional style special ability.
@@ -39,7 +52,7 @@ export class CharacterProfession {
 
   constructor(
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     packageId: ProfessionPackage_ID,
     variantId?: ProfessionVariant_ID,
     customName?: string,
@@ -135,6 +148,34 @@ export class CharacterProfession {
     this.customName = newCustomProfessionName
   }
 
+  @computed
+  get professionVariantsForDisplay(): ProfessionVariantForDisplay[] {
+    return (
+      ensure(
+        this.global.db.getAllChildInstanceContainersForParent("ProfessionVariant", this.packageId),
+        list => list.length > 1,
+      )
+        ?.map(professionVariant => {
+          const translation = this.global.locale.translateMap(
+            professionVariant.content.translations,
+          )
+          return {
+            id: professionVariant.id,
+            name:
+              translation === undefined
+                ? professionVariant.id
+                : professionNameToString(this.character.personalData.sex, translation.name),
+          }
+        })
+        .toSorted(on(pv => pv.name, this.global.locale.compare)) ?? []
+    )
+  }
+
+  @computed
+  get isVariantSelectionRequired(): boolean {
+    return this.package?.is_variant_selection_required ?? false
+  }
+
   static fromJSON(global: Global, character: Character, raw: RawProfession): CharacterProfession {
     return new CharacterProfession(global, character, raw.package, raw.variant, raw.customName)
   }
@@ -149,6 +190,65 @@ export class CharacterProfession {
     }
   }
 }
+
+export type ProfessionForDisplay = Readonly<{
+  id: ProfessionVersion_ID
+  name: string
+  apValue: number
+  sources: string
+  versionId: ProfessionVersion_ID
+  packageId: ProfessionPackage_ID
+}>
+
+export type ProfessionVariantForDisplay = Readonly<{
+  id: ProfessionVariant_ID
+  name: string
+}>
+
+export const extractActivatableFromProfessionPackage = <
+  E extends "MagicalTradition" | "BlessedTradition",
+>(
+  professionPackage: ProfessionPackage,
+  entity: E,
+  getById: GetInstanceById<E>,
+): { id: string; content: EntityMap[E] }[] =>
+  unique(
+    professionPackage.prerequisites?.flatMap(p =>
+      extractActivatableFromPrerequisiteElement(p, entity),
+    ) ?? [],
+  )
+    .map(id => mapNullable(getById(entity, id), content => ({ id, content })))
+    .filter(isNotNullish)
+
+const extractActivatableFromPrerequisiteElement = <
+  E extends "MagicalTradition" | "BlessedTradition",
+>(
+  prerequisiteElement: PrerequisitesElement<ProfessionPrerequisiteGroup>,
+  entity: E,
+) => {
+  switch (prerequisiteElement.kind) {
+    case "Disjunction":
+      return prerequisiteElement.Disjunction.list
+        .map(element => extractActivatableFromPrerequisite(element, entity))
+        .filter(isNotNullish)
+    case "Group":
+      return prerequisiteElement.Group.list
+        .map(element => extractActivatableFromPrerequisite(element, entity))
+        .filter(isNotNullish)
+    case "Single":
+      return nullableToArray(extractActivatableFromPrerequisite(prerequisiteElement.Single, entity))
+    default:
+      return assertExhaustive(prerequisiteElement)
+  }
+}
+
+const extractActivatableFromPrerequisite = <E extends "MagicalTradition" | "BlessedTradition">(
+  prerequisite: ProfessionPrerequisiteGroup,
+  entity: E,
+) =>
+  prerequisite.kind === "Activatable" && prerequisite.Activatable.id.kind === entity
+    ? fromUniformCase(prerequisite.Activatable.id)
+    : undefined
 
 /**
  * Maps a profession name that may be different for different sexes to a string.

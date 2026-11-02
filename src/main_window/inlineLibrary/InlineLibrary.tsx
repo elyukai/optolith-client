@@ -2,12 +2,13 @@ import type { AvailableCreatorEntity } from "@optolith/entity-descriptions"
 import type { EntityDescription } from "@optolith/entity-descriptions/description"
 import { action, computed, observable } from "mobx"
 import { observer } from "mobx-react-lite"
-import { type FC, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import "../../database/contents/assets/core.css"
 import { Aside } from "../../shared/components/aside/Aside.tsx"
 import { Button } from "../../shared/components/button/Button.tsx"
 import { Scroll } from "../../shared/components/scroll/Scroll.tsx"
+import type { FCC } from "../../shared/utils/react.ts"
 import { ExternalAPI } from "../external.ts"
 import { selectSelectedCharacterId } from "../slices/routeSlice.ts"
 import "./InlineLibrary.scss"
@@ -86,7 +87,7 @@ export class InlineLibraryManager {
 /**
  * Displays all information about a selected entry in a sidebar.
  */
-export const InlineLibrary: FC = observer(() => {
+export const InlineLibrary: FCC = observer(({ children }) => {
   const { current } = InlineLibraryManager.instance
 
   const [description, setDescription] =
@@ -94,18 +95,22 @@ export const InlineLibrary: FC = observer(() => {
 
   const characterId = useSelector(selectSelectedCharacterId)
 
-  useEffect(() => {
-    if (current !== undefined) {
-      ExternalAPI.getEntityDescription(current[0], current[1], characterId)
-        .then(setDescription)
-        .catch(error => {
-          console.error("Failed to get entity description:", error)
-        })
-    }
-  }, [current?.[0], current?.[1], characterId])
+  useEffect(
+    action(() => {
+      if (current !== undefined) {
+        ExternalAPI.getEntityDescription(current[0], current[1], characterId)
+          .then(setDescription)
+          .catch(error => {
+            console.error("Failed to get entity description:", error)
+          })
+      }
+    }),
+    [current?.[0], current?.[1], characterId],
+  )
 
   return (
     <Aside className="inline-library">
+      {children}
       <Scroll>
         <div className="inline-library__nav">
           <Button

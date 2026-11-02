@@ -31,7 +31,7 @@
 // import { Just } from "./Data/Maybe"
 // import { uncurryN } from "./Data/Tuple/Curry"
 // import { Unit } from "./Data/Unit"
-import { configure } from "mobx"
+import { action, configure } from "mobx"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
@@ -178,28 +178,31 @@ const root = createRoot(domNode)
 
 document.body.classList.add(`platform--${ExternalAPI.platform}`)
 
-ExternalAPI.on("initial-setup", data => {
-  const { locales, globalSettings, database, cache, systemLocale } = data
-  const localeEnvironment = new LocaleEnvironment(locales, systemLocale, globalSettings)
-  localeEnvironment.listenToLocaleChanges(ExternalAPI)
-  root.render(
-    <StrictMode>
-      <Provider store={store}>
-        <DatabaseSettingsContext.Provider value={data.settings}>
-          <LocalizationContext.Provider value={localeEnvironment}>
-            <Root />
-          </LocalizationContext.Provider>
-        </DatabaseSettingsContext.Provider>
-      </Provider>
-    </StrictMode>,
-  )
+ExternalAPI.on(
+  "initial-setup",
+  action(data => {
+    const { locales, globalSettings, database, cache, systemLocale } = data
+    const localeEnvironment = new LocaleEnvironment(locales, systemLocale, globalSettings)
+    localeEnvironment.listenToLocaleChanges(ExternalAPI)
+    root.render(
+      <StrictMode>
+        <Provider store={store}>
+          <DatabaseSettingsContext.Provider value={data.settings}>
+            <LocalizationContext.Provider value={localeEnvironment}>
+              <Root />
+            </LocalizationContext.Provider>
+          </DatabaseSettingsContext.Provider>
+        </Provider>
+      </StrictMode>,
+    )
 
-  ExternalAPI.log("React initially rendered")
-  store.dispatch(init({ database, cache, globalSettings }))
-  ExternalAPI.log("store initialized")
+    ExternalAPI.log("React initially rendered")
+    store.dispatch(init({ database, cache, globalSettings }))
+    ExternalAPI.log("store initialized")
 
-  ExternalAPI.initialSetupDone()
-})
+    ExternalAPI.initialSetupDone()
+  }),
+)
 
 onGlobalSettingsUpdate(ExternalAPI, {
   locale: newValue => store.dispatch(setLocale(newValue)),

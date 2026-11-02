@@ -24,6 +24,8 @@ import {
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary, InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
@@ -32,8 +34,6 @@ import { ActiveActivatableRatedListItem } from "../liturgicalChants/ActiveActiva
 import { InactiveActivatableRatedListItem } from "../liturgicalChants/InactiveActivatableRatedListItem.tsx"
 import { ActiveCantripsListItem } from "./ActiveCantripsListItem.tsx"
 import { InactiveCantripsListItem } from "./InactiveCantripsListItem.tsx"
-import { useCharacterState } from "../../../../hooks/characterState.ts"
-import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 
 const isTopMarginNeeded = (
   sortOrder: SpellsSortOrder,
@@ -144,23 +144,23 @@ export const Spells: FC = observer(() => {
           </Checkbox> */}
         </Options>
         <Main classOnly>
-          <ListHeader>
-            <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
-            <ListHeaderTag className="group">
-              {translate("Property")}
-              {sortOrder === "group" ? ` / ${translate("Group")}` : null}
-            </ListHeaderTag>
-            <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
-            <ListHeaderTag className="mod" hint={translate("Check Modifier")}>
-              {translate("Mod")}
-            </ListHeaderTag>
-            <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
-              {translate("IC")}
-            </ListHeaderTag>
-            <ListHeaderTag className="btn-placeholder" />
-            <ListHeaderTag className="btn-placeholder" />
-          </ListHeader>
           <Scroll>
+            <ListHeader>
+              <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+              <ListHeaderTag className="group">
+                {translate("Property")}
+                {sortOrder === "group" ? ` / ${translate("Group")}` : null}
+              </ListHeaderTag>
+              <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
+              <ListHeaderTag className="mod" hint={translate("Check Modifier")}>
+                {translate("Mod")}
+              </ListHeaderTag>
+              <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
+                {translate("IC")}
+              </ListHeaderTag>
+              <ListHeaderTag className="btn-placeholder" />
+              <ListHeaderTag className="btn-placeholder" />
+            </ListHeader>
             {inactiveList.length > 0 ? (
               <List>
                 {inactiveList.map((x, i) => {
@@ -325,27 +325,27 @@ export const Spells: FC = observer(() => {
         <RecommendedReference unfamiliarSpells />
       </Options>
       <Main>
-        <ListHeader>
-          <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
-          <ListHeaderTag className="group">
-            {translate("Property")}
-            {sortOrder === "group" ? ` / ${translate("Group")}` : null}
-          </ListHeaderTag>
-          <ListHeaderTag className="value" hint={translate("Skill Rating")}>
-            {translate("SR")}
-          </ListHeaderTag>
-          <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
-          <ListHeaderTag className="mod" hint={translate("Check Modifier")}>
-            {translate("Mod")}
-          </ListHeaderTag>
-          <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
-            {translate("IC")}
-          </ListHeaderTag>
-          {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
-          <ListHeaderTag className="btn-placeholder" />
-          <ListHeaderTag className="btn-placeholder" />
-        </ListHeader>
-        <Scroll stable>
+        <Scroll>
+          <ListHeader>
+            <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+            <ListHeaderTag className="group">
+              {translate("Property")}
+              {sortOrder === "group" ? ` / ${translate("Group")}` : null}
+            </ListHeaderTag>
+            <ListHeaderTag className="value" hint={translate("Skill Rating")}>
+              {translate("SR")}
+            </ListHeaderTag>
+            <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
+            <ListHeaderTag className="mod" hint={translate("Check Modifier")}>
+              {translate("Mod")}
+            </ListHeaderTag>
+            <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
+              {translate("IC")}
+            </ListHeaderTag>
+            {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
+            <ListHeaderTag className="btn-placeholder" />
+            <ListHeaderTag className="btn-placeholder" />
+          </ListHeader>
           {activeList.length > 0 ? (
             <List>
               {activeList.map((x, i) => {

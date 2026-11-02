@@ -10,6 +10,10 @@ aside.inline-library {
   width: 23.5rem;
 }
 
+aside.inline-library > .scroll {
+  overflow-y: hidden;
+}
+
 aside.inline-library .scroll .scroll-inner {
   padding: 1rem;
 }

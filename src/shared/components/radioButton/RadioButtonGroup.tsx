@@ -4,7 +4,7 @@ import { RadioButton } from "./RadioButton.tsx"
 /**
  * The possible type of a value of a radio option.
  */
-export type RadioOptionValue = string | number
+export type RadioOptionValue = string | number | undefined
 
 /**
  * Configuration for a radio option.
@@ -45,7 +45,7 @@ export const RadioButtonGroup = <A extends RadioOptionValue = RadioOptionValue>(
 
   return (
     <div className="radiobutton-group">
-      {label === undefined ? null : <Label text={label} />}
+      {label === undefined ? null : <Label disabled={disabled} text={label} />}
       {xs.map(e => (
         <RadioButton
           key={e.value ?? "__default__"}

@@ -121,7 +121,7 @@ export const createMainWindow = async (
         runInAction(() =>
           attachKeyedStateSelectorsToWindow(
             safeWindow,
-            characters.characters,
+            () => characters.characters,
             character => character.selectors,
           ),
         )

@@ -1,4 +1,5 @@
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { action } from "mobx"
 import { observer } from "mobx-react-lite"
 import { useEffect, useState, type FC } from "react"
 import type { CharacterIPCActions, CharacterIPCSelectors } from "../../shared/ipc.ts"
@@ -15,6 +16,9 @@ import { Attributes } from "./characters/character/attributes/Attributes.tsx"
 import { CombatTechniques } from "./characters/character/combatTechniques/CombatTechniques.tsx"
 import { LiturgicalChants } from "./characters/character/liturgicalChants/LiturgicalChants.tsx"
 import { ProfileOverview } from "./characters/character/profile/ProfileOverview.tsx"
+import { Cultures } from "./characters/character/raceCultureProfession/Cultures.tsx"
+import { Professions } from "./characters/character/raceCultureProfession/Professions.tsx"
+import { Races } from "./characters/character/raceCultureProfession/Races.tsx"
 import { Rules } from "./characters/character/rules/Rules.tsx"
 import { Skills } from "./characters/character/skills/Skills.tsx"
 import { SpecialAbilities } from "./characters/character/specialAbilities/SpecialAbilities.tsx"
@@ -32,24 +36,29 @@ export const CharacterRouter: FC<{ id: string; characterRoute: CharacterRoutePat
       defaultCharacterStateAndActionsContextValue.actions,
     )
 
-    useEffect(() => {
-      setState(SharedCharacterState[props.id] ?? defaultCharacterStateAndActionsContextValue.state)
-      setActions(
-        new Proxy(
-          {},
-          {
-            get:
-              (_, actionName) =>
-              (...args: unknown[]) =>
-                executeStateAction(
-                  props.id,
-                  actionName as keyof CharacterIPCActions,
-                  ...(args as Parameters<CharacterIPCActions[keyof CharacterIPCActions]>),
-                ),
-          },
-        ) as CharacterIPCActions,
-      )
-    }, [props.id, SharedCharacterState[props.id]])
+    useEffect(
+      action(() => {
+        setState(
+          SharedCharacterState[props.id] ?? defaultCharacterStateAndActionsContextValue.state,
+        )
+        setActions(
+          new Proxy(
+            {},
+            {
+              get:
+                (_, actionName) =>
+                (...args: unknown[]) =>
+                  executeStateAction(
+                    props.id,
+                    actionName as keyof CharacterIPCActions,
+                    ...(args as Parameters<CharacterIPCActions[keyof CharacterIPCActions]>),
+                  ),
+            },
+          ) as CharacterIPCActions,
+        )
+      }),
+      [props.id, SharedCharacterState[props.id]],
+    )
 
     return (
       <CharacterStateAndActionsContext.Provider value={{ state, actions }}>
@@ -68,11 +77,11 @@ export const CharacterRouter: FC<{ id: string; characterRoute: CharacterRoutePat
               return <Rules />
 
             case "race":
-              return null
+              return <Races />
             case "culture":
-              return null
+              return <Cultures />
             case "profession":
-              return null
+              return <Professions />
 
             case "attributes":
               return <Attributes />

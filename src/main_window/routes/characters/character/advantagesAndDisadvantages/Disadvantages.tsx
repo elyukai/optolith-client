@@ -158,15 +158,15 @@ export const Disadvantages: FC = observer(() => {
         {isInCharacterCreation && <AdventurePointsSpent />}
       </Options>
       <Main>
-        <ListHeader>
-          <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
-          <ListHeaderTag className="cost" hint={translate("Adventure Points")}>
-            {translate("AP")}
-          </ListHeaderTag>
-          {canRemove && <ListHeaderTag className="btn-placeholder" />}
-          <ListHeaderTag className="btn-placeholder" />
-        </ListHeader>
-        <Scroll stable>
+        <Scroll>
+          <ListHeader>
+            <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+            <ListHeaderTag className="cost" hint={translate("Adventure Points")}>
+              {translate("AP")}
+            </ListHeaderTag>
+            {canRemove && <ListHeaderTag className="btn-placeholder" />}
+            <ListHeaderTag className="btn-placeholder" />
+          </ListHeader>
           {activeList.length > 0 ? (
             <List>
               {activeList.map(x => (

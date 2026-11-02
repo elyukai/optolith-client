@@ -98,6 +98,17 @@ const locales: Record<string, Locale> = Object.fromEntries(
 
 const localeEnvironment = new LocaleEnvironment(locales, app.getSystemLocale(), globalSettings)
 
+const preparedExperienceLevels = observable(
+  db
+    .getAllInstanceContainersOfEntity("ExperienceLevel")
+    .toSorted(on(c => c.content.adventure_points, compareNumber))
+    .map(c => ({
+      id: c.id,
+      translations: c.content.translations,
+      adventurePoints: c.content.adventure_points,
+    })),
+)
+
 const global: Global = {
   db,
   settings,
@@ -109,6 +120,7 @@ const global: Global = {
     ),
   getAllResolvedSelectOptions: parentId =>
     cache.activatableSelectOptions[parentId.kind][fromUniformCase(parentId)] ?? [],
+  sortedExperienceLevels: preparedExperienceLevels,
 }
 
 debug("load characters ...")
@@ -137,17 +149,6 @@ const characters = runInAction(() => {
 
   return _characters
 })
-
-const preparedExperienceLevels = observable(
-  db
-    .getAllInstanceContainersOfEntity("ExperienceLevel")
-    .toSorted(on(c => c.content.adventure_points, compareNumber))
-    .map(c => ({
-      id: c.id,
-      translations: c.content.translations,
-      adventurePoints: c.content.adventure_points,
-    })),
-)
 
 const newCharacter = runInAction(() =>
   observable({
@@ -232,7 +233,7 @@ app.whenReady().then(async () => {
             return ["characters", newCharacter.newCharacter.id, "race"]
           }
           default:
-            return newCharacter.newCharacter.handleIPCAction(...args)
+            newCharacter.newCharacter.handleIPCAction(...args)
         }
       },
     )
@@ -285,8 +286,17 @@ app.whenReady().then(async () => {
 
     attachKeyedStateActionHandlersToMain<CharacterIPCActions>(
       ipcMain,
-      (id, ...args) => {
-        characters.handleIPCAction(id, ...args)
+      (event, id, ...args) => {
+        const result = characters.handleIPCAction(id, ...args)
+        if (result instanceof Promise) {
+          result.then(resolved => {
+            if (resolved !== undefined) {
+              event.sender.send("goto", resolved)
+            }
+          })
+        } else if (result !== undefined) {
+          event.sender.send("goto", result)
+        }
       },
       debug,
     )

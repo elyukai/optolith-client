@@ -91,9 +91,8 @@
 
 .small-info-text {
   font: 500 12px Alegreya Sans;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--separator-color-30);
+  color: var(--text-color);
+  font-variant-numeric: proportional-nums;
 }
 
 ul {

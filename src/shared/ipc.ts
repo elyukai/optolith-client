@@ -25,7 +25,12 @@ export type CharacterIPCActions = {
   toggleFocusRule: (id: Gen.FocusRule_ID) => void
   toggleOptionalRule: (id: Gen.OptionalRule_ID) => void
   toggleAlternativeRule: (id: Gen.OptionalRule_ID) => void
+  setRaceVariant: (id: Gen.RaceVariant_ID) => void
+  setCulture: (id: Gen.Culture_ID) => void
+  setProfessionPackage: (id: Gen.ProfessionPackage_ID) => void
+  setProfessionVariant: (id: Gen.ProfessionVariant_ID | undefined) => void
   setCustomProfessionName: (newCustomProfessionName: string) => void
+  applyRaceCultureProfession: () => void
   incrementDerivedCharacteristic: (id: Gen.DerivedCharacteristic_ID) => void
   decrementDerivedCharacteristic: (id: Gen.DerivedCharacteristic_ID) => void
   incrementDerivedCharacteristicPermanentlyLost: (id: Gen.DerivedCharacteristic_ID) => void
@@ -62,6 +67,7 @@ export type CharacterIPCSelectors = {
 }
 
 export const defaultCharacterIPCSelectors: CharacterIPCSelectors = {
+  id: "",
   name: "",
   avatar: undefined,
   sexName: "",
@@ -96,11 +102,24 @@ export const defaultCharacterIPCSelectors: CharacterIPCSelectors = {
   weight: undefined,
   isRaceSelected: false,
   race: undefined,
+  raceId: undefined,
   raceVariant: undefined,
+  raceVariantId: undefined,
   raceName: undefined,
+  races: [],
+  raceVariants: [],
   isCultureSelected: false,
+  cultureId: undefined,
   cultureName: undefined,
+  cultures: [],
+  professionId: undefined,
+  professionVersionId: undefined,
+  professionPackageId: undefined,
+  professionVariantId: undefined,
   professionName: undefined,
+  professions: [],
+  professionVariants: [],
+  isVariantSelectionRequired: false,
   includeAllPublications: false,
   publications: [],
   focusRules: [],

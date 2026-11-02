@@ -1,5 +1,6 @@
 import type { Blessing_ID } from "@optolith/database-schema/gen"
-import { memo, useCallback, type FC } from "react"
+import { observer } from "mobx-react-lite"
+import { useCallback, type FC } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
@@ -22,7 +23,10 @@ type Props = {
   selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
-const ActiveBlessingsListItem: FC<Props> = props => {
+/**
+ * Displays a blessing that is currently active.
+ */
+export const ActiveBlessingsListItem: FC<Props> = observer(props => {
   const {
     insertTopMargin,
     blessing: { id, name, groupName },
@@ -63,11 +67,4 @@ const ActiveBlessingsListItem: FC<Props> = props => {
       />
     </ListItem>
   )
-}
-
-/**
- * Displays a blessing that is currently active.
- */
-const MemoActiveBlessingsListItem = memo(ActiveBlessingsListItem)
-
-export { MemoActiveBlessingsListItem as ActiveBlessingsListItem }
+})

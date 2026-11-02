@@ -1,4 +1,5 @@
 import { sign } from "@elyukai/utils/string/number"
+import { observer } from "mobx-react-lite"
 import type { FC } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { InlineMarkdown } from "../../../../../shared/components/markdown/Markdown.tsx"
@@ -20,7 +21,7 @@ type Props = {
  * Returns a single derived characterstics value item with optional buttons to
  * manage the value.
  */
-export const DerivedCharacteristicsListItem: FC<Props> = props => {
+export const DerivedCharacteristicsListItem: FC<Props> = observer(props => {
   const { attribute, isInCharacterCreation, isRemovingEnabled } = props
 
   const { id, base, value, modifier, purchaseMaximum, purchased } = attribute
@@ -100,4 +101,4 @@ export const DerivedCharacteristicsListItem: FC<Props> = props => {
       ) : null}
     </div>
   )
-}
+})

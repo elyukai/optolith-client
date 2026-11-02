@@ -46,7 +46,8 @@ ul.list-wrapper {
           border-color: var(--strength-color);
         }
 
-        .attr--blue-orange {
+        .attr--blue-orange,
+        .attr--orange-blue {
           border-color: var(--agility-color) var(--strength-color) var(--strength-color)
             var(--agility-color);
         }

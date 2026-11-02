@@ -1,4 +1,5 @@
-import { memo, useCallback } from "react"
+import { observer } from "mobx-react-lite"
+import { useCallback } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
@@ -27,7 +28,7 @@ type Props = {
   selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
-const SkillListItem: React.FC<Props> = props => {
+export const SkillListItem: React.FC<Props> = observer(props => {
   const {
     canRemove,
     insertTopMargin,
@@ -86,8 +87,4 @@ const SkillListItem: React.FC<Props> = props => {
       />
     </ListItem>
   )
-}
-
-const MemoSkillListItem = memo(SkillListItem)
-
-export { MemoSkillListItem as SkillListItem }
+})

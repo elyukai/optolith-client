@@ -111,29 +111,29 @@ export const CombatTechniques: FC = observer(() => {
         />
       </Options>
       <Main>
-        <ListHeader>
-          <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
-          <ListHeaderTag className="group">{translate("Group")}</ListHeaderTag>
-          <ListHeaderTag className="value" hint={translate("Combat Technique Rating")}>
-            {translate("CTR")}
-          </ListHeaderTag>
-          <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
-            {translate("IC")}
-          </ListHeaderTag>
-          <ListHeaderTag className="primary" hint={translate("Primary Attribute(s)")}>
-            {translate("P")}
-          </ListHeaderTag>
-          <ListHeaderTag className="at" hint={translate("Attack")}>
-            {translate("AT")}
-          </ListHeaderTag>
-          <ListHeaderTag className="pa" hint={translate("Parry")}>
-            {translate("PA")}
-          </ListHeaderTag>
-          {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
-          <ListHeaderTag className="btn-placeholder" />
-          <ListHeaderTag className="btn-placeholder" />
-        </ListHeader>
-        <Scroll stable>
+        <Scroll>
+          <ListHeader>
+            <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+            <ListHeaderTag className="group">{translate("Group")}</ListHeaderTag>
+            <ListHeaderTag className="value" hint={translate("Combat Technique Rating")}>
+              {translate("CTR")}
+            </ListHeaderTag>
+            <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
+              {translate("IC")}
+            </ListHeaderTag>
+            <ListHeaderTag className="primary" hint={translate("Primary Attribute(s)")}>
+              {translate("P")}
+            </ListHeaderTag>
+            <ListHeaderTag className="at" hint={translate("Attack")}>
+              {translate("AT")}
+            </ListHeaderTag>
+            <ListHeaderTag className="pa" hint={translate("Parry")}>
+              {translate("PA")}
+            </ListHeaderTag>
+            {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
+            <ListHeaderTag className="btn-placeholder" />
+            <ListHeaderTag className="btn-placeholder" />
+          </ListHeader>
           {list.length > 0 ? (
             <List>
               {list.map((x, i) => {

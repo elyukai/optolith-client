@@ -1,5 +1,6 @@
 import { toKebabCase } from "@elyukai/utils/string"
-import { memo, useCallback, type FC } from "react"
+import { observer } from "mobx-react-lite"
+import { useCallback, type FC } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
@@ -25,7 +26,10 @@ type Props = {
   selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
-const CloseCombatTechniquesListItem: FC<Props> = props => {
+/**
+ * Displays a close combat technique.
+ */
+export const CloseCombatTechniquesListItem: FC<Props> = observer(props => {
   const {
     insertTopMargin,
     closeCombatTechnique: {
@@ -103,11 +107,4 @@ const CloseCombatTechniquesListItem: FC<Props> = props => {
       />
     </ListItem>
   )
-}
-
-/**
- * Displays a close combat technique.
- */
-const MemoCloseCombatTechniquesListItem = memo(CloseCombatTechniquesListItem)
-
-export { MemoCloseCombatTechniquesListItem as CloseCombatTechniquesListItem }
+})

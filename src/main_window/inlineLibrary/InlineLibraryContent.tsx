@@ -1,6 +1,5 @@
 import { isSupportedEntity, type AvailableCreatorEntity } from "@optolith/entity-descriptions"
 import type { EntityDescription } from "@optolith/entity-descriptions/description"
-import { observer } from "mobx-react-lite"
 import type { FC } from "react"
 import type { Env } from "../../shared/components/markdown/Markdown.tsx"
 import { InlineLibraryManager } from "./InlineLibrary.tsx"
@@ -15,7 +14,7 @@ type Props = {
 /**
  * Displays all information about a selected entry in a sidebar.
  */
-export const InlineLibraryContent: FC<Props> = observer(({ description, specialTag }) => {
+export const InlineLibraryContent: FC<Props> = ({ description, specialTag }) => {
   if (Array.isArray(description)) {
     return (
       <>
@@ -54,4 +53,4 @@ export const InlineLibraryContent: FC<Props> = observer(({ description, specialT
     default:
       return null
   }
-})
+}

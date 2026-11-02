@@ -59,29 +59,23 @@
     pointer-events: none;
 
     .icon {
-      .border {
-        border-color: var(--separator-color-20);
-      }
-
+      .border,
       .hook {
-        border-color: var(--separator-color-20);
+        border-color: var(--disabled-icon-color);
       }
     }
 
     &.active {
       .icon {
-        .border {
-          border-color: var(--separator-color-60);
-        }
-
+        .border,
         .hook {
-          border-color: var(--separator-color-60);
+          border-color: var(--disabled-color);
         }
       }
     }
 
     .checkbox-label {
-      color: var(--separator-color-60);
+      color: var(--disabled-color);
     }
   }
 

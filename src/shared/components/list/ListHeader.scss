@@ -1,13 +1,16 @@
 .list-header {
-  flex: none;
-  height: 32px;
-  padding: 0 42px 0 16px;
+  height: 44px;
+  padding: 12px 13px 0;
   display: flex;
   font: 500 12px Alegreya Sans;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--secondary-text-color);
-  margin-top: 12px;
+  position: sticky;
+  top: 0;
+  margin-top: -21px;
+  background-color: var(--background-color);
+  z-index: 8;
 
   + .scroll {
     flex: 1 1 0;
@@ -72,8 +75,9 @@
       width: 32px;
       margin-right: 0;
 
-      + div.btn-placeholder.has-border {
-        margin-left: 5px;
+      &.has-border,
+      &:has(+ .btn-placeholder.has-border) {
+        margin-right: 0.5rem;
       }
     }
   }

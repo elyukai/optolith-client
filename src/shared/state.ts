@@ -40,16 +40,17 @@ export const attachStateActionHandlersToMain = <A extends StateActions>(
  */
 export const attachKeyedStateActionHandlersToMain = <A extends StateActions>(
   ipcMain: Electron.IpcMain,
-  handler: (characterId: string, ...args: StateActionsAsParameters<A>) => void,
+  handler: (
+    event: Electron.IpcMainEvent,
+    characterId: string,
+    ...args: StateActionsAsParameters<A>
+  ) => void,
   debug?: Debugger,
 ): void => {
-  ipcMain.on(
-    "keyedstate:action",
-    (_event, characterId, actionName: keyof A, ...args: unknown[]) => {
-      debug?.("execute keyed state action %s with parameters %o", actionName, args)
-      handler(characterId, actionName, args as Parameters<A[keyof A]>)
-    },
-  )
+  ipcMain.on("keyedstate:action", (event, characterId, actionName: keyof A, ...args: unknown[]) => {
+    debug?.("execute keyed state action %s with parameters %o", actionName, args)
+    handler(event, characterId, actionName, args as Parameters<A[keyof A]>)
+  })
 }
 
 /**
@@ -85,7 +86,7 @@ export const attachStateSelectorsToWindow = <S extends StateValues>(
  */
 export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
   window: Electron.BrowserWindow,
-  keyedMap: Map<string, T>,
+  keyedMap: () => Map<string, T>,
   stateSelectorsFromValue: (value: T) => StateSelectors<S>,
   debug?: Debugger,
 ): void => {
@@ -106,32 +107,45 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
     keyedDisposers.set(key, disposers)
   }
 
-  keyedMap.forEach((mapValue, key) => {
+  keyedMap().forEach((mapValue, key) => {
     registerDisposersForKey(key, mapValue)
   })
 
   const mainDisposer = reaction(
-    () => Array.from(keyedMap.keys()),
-    keys => {
+    () => Object.fromEntries(keyedMap().entries()),
+    (obj, prevObj) => {
+      debug?.("reevaluating selectors")
+      const keys = Object.keys(obj)
       // Remove disposers for keys that are no longer present
       keyedDisposers.forEach((disposers, key) => {
-        if (!keys.includes(key)) {
+        if (obj[key] === undefined && obj[key] !== prevObj?.[key]) {
+          debug?.("removing disposers for key %s", key)
           disposers.forEach(cancel => cancel())
           keyedDisposers.delete(key)
         }
       })
 
-      // Add disposers for new keys
+      // Add disposers for new or changed keys
       keys.forEach(key => {
-        if (!keyedDisposers.has(key)) {
-          const mapValue = keyedMap.get(key)
+        if (obj[key] !== undefined && obj[key] !== prevObj?.[key]) {
+          if (prevObj?.[key] !== undefined) {
+            debug?.("removing disposers for key %s", key)
+            keyedDisposers.get(key)?.forEach(cancel => cancel())
+          }
+          debug?.("adding disposers for key %s", key)
+          const mapValue = obj[key]
           if (mapValue) {
             registerDisposersForKey(key, mapValue)
           }
         }
       })
     },
-    { fireImmediately: true },
+    {
+      fireImmediately: true,
+      equals: (a, b) =>
+        Object.keys(a).length === Object.keys(b).length &&
+        Object.keys(a).every(key => Object.hasOwn(b, key) && a[key] === b[key]),
+    },
   )
 
   window.on("closed", () => {

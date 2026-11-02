@@ -1,3 +1,5 @@
+import { on } from "@elyukai/utils/function"
+import { ensure } from "@elyukai/utils/nullable"
 import type { Race as RawRace } from "@optolith/character-schema/types"
 import type {
   ActivatableIdentifier,
@@ -10,9 +12,11 @@ import type {
 import { parensIf } from "@optolith/entity-descriptions/entities/partial/rated/activatable/parensIf"
 import { computed, observable } from "mobx"
 import type { Global } from "../global.ts"
+import type { BaseCharacter } from "./character.ts"
 
 export class CharacterRace {
   readonly global: Global
+  character: BaseCharacter
 
   /**
    * The base race identifier.
@@ -39,11 +43,13 @@ export class CharacterRace {
 
   constructor(
     global: Global,
+    character: BaseCharacter,
     variantId: RaceVariant_ID,
     selectedAttributeAdjustmentId?: Attribute_ID | undefined,
     dependencies: RaceDependency[] = [],
   ) {
     this.global = global
+    this.character = character
     this.variantId = variantId
     this.selectedAttributeAdjustmentId = selectedAttributeAdjustmentId
     this.dependencies = dependencies
@@ -79,8 +85,25 @@ export class CharacterRace {
     return this.baseName + parensIf(this.variantName)
   }
 
-  static fromJSON(global: Global, raw: RawRace): CharacterRace {
-    return new CharacterRace(global, raw.variant, raw.selectedAttributeAdjustment)
+  @computed
+  get raceVariantsForDisplay(): RaceVariantForDisplay[] {
+    return this.id === undefined
+      ? []
+      : (ensure(
+          this.global.db.getAllChildInstanceContainersForParent("RaceVariant", this.id),
+          list => list.length > 1,
+        )
+          ?.map(raceVariant => ({
+            id: raceVariant.id,
+            name:
+              this.global.locale.translateMap(raceVariant.content.translations)?.name ??
+              raceVariant.id,
+          }))
+          .toSorted(on(rv => rv.name, this.global.locale.compare)) ?? [])
+  }
+
+  static fromJSON(global: Global, character: BaseCharacter, raw: RawRace): CharacterRace {
+    return new CharacterRace(global, character, raw.variant, raw.selectedAttributeAdjustment)
   }
 
   toJSON(): RawRace {
@@ -91,6 +114,18 @@ export class CharacterRace {
     }
   }
 }
+
+export type RaceForDisplay = Readonly<{
+  id: Race_ID
+  name: string
+  apValue: number
+  variantId: RaceVariant_ID
+}>
+
+export type RaceVariantForDisplay = Readonly<{
+  id: RaceVariant_ID
+  name: string
+}>
 
 /**
  * A dependency on a race.

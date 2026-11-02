@@ -1,4 +1,5 @@
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { observer } from "mobx-react-lite"
 import { useCharacterState } from "../../../main_window/hooks/characterState.ts"
 import { IconButton } from "../iconButton/IconButton.tsx"
 import { List } from "./List.tsx"
@@ -40,7 +41,7 @@ type Props = {
 /**
  * A placeholder for an empty list.
  */
-export const ListPlaceholder: React.FC<Props> = props => {
+export const ListPlaceholder: React.FC<Props> = observer(props => {
   const { type = "advantages", message } = props
   const { canRemove } = useCharacterState()
 
@@ -246,4 +247,4 @@ export const ListPlaceholder: React.FC<Props> = props => {
       </div>
     </List>
   )
-}
+})

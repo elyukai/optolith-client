@@ -140,22 +140,22 @@ export const LiturgicalChants: FC = observer(() => {
           </Checkbox> */}
         </Options>
         <Main classOnly>
-          <ListHeader>
-            <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
-            <ListHeaderTag className="group">
-              {translate("Traditions")}
-              {sortOrder === LiturgiesSortOrder.Group ? ` / ${translate("Group")}` : null}
-            </ListHeaderTag>
-            <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
-            <ListHeaderTag className="mod" hint={translate("Check Modifier")}>
-              {translate("Mod")}
-            </ListHeaderTag>
-            <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
-              {translate("IC")}
-            </ListHeaderTag>
-            <ListHeaderTag className="btn-placeholder" />
-          </ListHeader>
           <Scroll>
+            <ListHeader>
+              <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+              <ListHeaderTag className="group">
+                {translate("Traditions")}
+                {sortOrder === LiturgiesSortOrder.Group ? ` / ${translate("Group")}` : null}
+              </ListHeaderTag>
+              <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
+              <ListHeaderTag className="mod" hint={translate("Check Modifier")}>
+                {translate("Mod")}
+              </ListHeaderTag>
+              <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
+                {translate("IC")}
+              </ListHeaderTag>
+              <ListHeaderTag className="btn-placeholder" />
+            </ListHeader>
             {inactiveList.length > 0 ? (
               <List>
                 {inactiveList.map((x, i) => {
@@ -225,27 +225,27 @@ export const LiturgicalChants: FC = observer(() => {
         <Button onClick={openSlidein}>{translate("Add")}</Button>
       </Options>
       <Main>
-        <ListHeader>
-          <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
-          <ListHeaderTag className="group">
-            {translate("Traditions")}
-            {sortOrder === LiturgiesSortOrder.Group ? ` / ${translate("Group")}` : null}
-          </ListHeaderTag>
-          <ListHeaderTag className="value" hint={translate("Skill Rating")}>
-            {translate("SR")}
-          </ListHeaderTag>
-          <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
-          <ListHeaderTag className="mod" hint={translate("Check Modifier")}>
-            {translate("Mod")}
-          </ListHeaderTag>
-          <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
-            {translate("IC")}
-          </ListHeaderTag>
-          {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
-          <ListHeaderTag className="btn-placeholder" />
-          <ListHeaderTag className="btn-placeholder" />
-        </ListHeader>
         <Scroll stable>
+          <ListHeader>
+            <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+            <ListHeaderTag className="group">
+              {translate("Traditions")}
+              {sortOrder === LiturgiesSortOrder.Group ? ` / ${translate("Group")}` : null}
+            </ListHeaderTag>
+            <ListHeaderTag className="value" hint={translate("Skill Rating")}>
+              {translate("SR")}
+            </ListHeaderTag>
+            <ListHeaderTag className="check">{translate("Check")}</ListHeaderTag>
+            <ListHeaderTag className="mod" hint={translate("Check Modifier")}>
+              {translate("Mod")}
+            </ListHeaderTag>
+            <ListHeaderTag className="ic" hint={translate("Improvement Cost")}>
+              {translate("IC")}
+            </ListHeaderTag>
+            {canRemove ? <ListHeaderTag className="btn-placeholder" /> : null}
+            <ListHeaderTag className="btn-placeholder" />
+            <ListHeaderTag className="btn-placeholder" />
+          </ListHeader>
           {activeList.length > 0 ? (
             <List>
               {activeList.map((x, i) => {

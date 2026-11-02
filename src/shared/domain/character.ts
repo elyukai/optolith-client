@@ -1,7 +1,11 @@
 import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
+import { reduceWhile, sumWith } from "@elyukai/utils/array/reductions"
+import { on } from "@elyukai/utils/function"
+import { Lazy } from "@elyukai/utils/lazy"
 import { isNotNullish } from "@elyukai/utils/nullable"
 import { isInRange } from "@elyukai/utils/range"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { getAdventurePointsForRatingRange } from "@optolith/adventure-points/improvement-cost"
 import type {
   Character as RawCharacter,
   Character_ID as RawCharacter_ID,
@@ -12,13 +16,17 @@ import type {
   ActivatableIdentifier,
   Aspect_ID,
   MagicalTradition_ID,
+  ProfessionPackage,
   Property_ID,
   RatedIdentifier,
   SkillWithEnhancementsIdentifier,
   TinyActivatableIdentifier,
 } from "@optolith/database-schema/gen"
+import { parensIf } from "@optolith/entity-descriptions/entities/partial/rated/activatable/parensIf"
+import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
 import { action, computed, observable } from "mobx"
 import type { Case } from "tsondb/schema/gen"
+import type { CharacterRoutePath, RoutePath } from "../../main_window/slices/routeSlice.ts"
 import type { Global } from "../global.ts"
 import type { CharacterIPCActions } from "../ipc.ts"
 import type { StateActionsAsParameters } from "../state.ts"
@@ -27,7 +35,7 @@ import { CharacterActivatables, type CharacterActivatable } from "./activatable/
 import { getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages } from "./activatable/advantagesDisadvantages.ts"
 import { CharacterSpecialAbilities } from "./activatable/specialAbilities.ts"
 import type { TinyActivatable, TinyActivatables } from "./activatable/tinyActivatable.ts"
-import { CharacterCulture } from "./culture.ts"
+import { CharacterCulture, type CultureForDisplay } from "./culture.ts"
 import { CharacterCurriculum } from "./curriculum.ts"
 import { fromUniformCase } from "./databaseEnum.ts"
 import { CharacterDerivedCharacteristics } from "./energy.ts"
@@ -39,9 +47,14 @@ import {
   createCapabilitiesFromCharacter,
   type AllCapabilities,
 } from "./prerequisites/single/index.ts"
-import { CharacterProfession } from "./profession.ts"
+import {
+  CharacterProfession,
+  extractActivatableFromProfessionPackage,
+  professionNameToString,
+  type ProfessionForDisplay,
+} from "./profession.ts"
 import { Purse } from "./purse.ts"
-import { CharacterRace } from "./race.ts"
+import { CharacterRace, type RaceForDisplay } from "./race.ts"
 import { CharacterAttributes } from "./rated/attribute.ts"
 import { CharacterCombatTechniques } from "./rated/combatTechnique.ts"
 import { CharacterBlessings, CharacterLiturgicalChants } from "./rated/liturgicalChant.ts"
@@ -84,17 +97,23 @@ export abstract class BaseCharacter {
   /**
    * Describes whether the character creation is finished.
    */
-  @observable accessor isCharacterCreationFinished: boolean
+  @computed
+  get isCharacterCreationFinished(): boolean {
+    return this.phase === "Finished"
+  }
 
-  @computed get isInCharacterCreation() {
+  @computed
+  get isInCharacterCreation() {
     return !this.isCharacterCreationFinished
   }
 
-  @computed get canRemove() {
+  @computed
+  get canRemove() {
     return !this.isCharacterCreationFinished
   }
 
-  @computed get canFinishCharacterCreation() {
+  @computed
+  get canFinishCharacterCreation() {
     return isInRange([0, 10], this.adventurePointsAvailable)
   }
 
@@ -191,7 +210,6 @@ export abstract class BaseCharacter {
     this.dateCreated = dateCreated
     this.dateLastModified = dateLastModified
     this.rules = new CharacterRules(global, false, [])
-    this.isCharacterCreationFinished = false
     this.experienceLevel = new CharacterExperienceLevel(global, this, experienceLevelId)
     this.totalAdventurePoints = this.experienceLevel.start?.adventure_points ?? 0
     this.states = new CharacterStates(global, this)
@@ -222,6 +240,10 @@ export abstract class BaseCharacter {
   @computed
   get adventurePointsSpent(): number {
     return (
+      (this.race?.base?.ap_value ?? 0) +
+      (this.phase === "RaceCultureProfession"
+        ? (this.profession?.package?.ap_value ?? 0) + (this.profession?.variant?.ap_value ?? 0)
+        : 0) +
       this.attributes.adventurePointsTotal.general +
       this.derivedCharacteristics.adventurePointsTotal.general +
       this.advantages.adventurePointsTotal.general +
@@ -256,24 +278,185 @@ export abstract class BaseCharacter {
       spentOnDisadvantages: this.disadvantages.adventurePointsTotal.getTotal(),
       spentOnMagicalDisadvantages: 0, // TODO
       spentOnBlessedDisadvantages: 0, // TODO
-      spentOnRace: 0, // TODO
-      spentOnProfession: 0, // TODO
+      spentOnRace: this.race?.base?.ap_value ?? 0,
+      spentOnProfession:
+        this.phase === "RaceCultureProfession"
+          ? (this.profession?.package?.ap_value ?? 0) + (this.profession?.variant?.ap_value ?? 0)
+          : 0,
       spentOnAttributes: this.attributes.adventurePointsTotal.getTotal(),
       spentOnSkills: this.skills.adventurePointsTotal.getTotal(),
       spentOnCombatTechniques:
         this.closeCombatTechniques.adventurePointsTotal.getTotal() +
         this.rangedCombatTechniques.adventurePointsTotal.getTotal(),
-      spentOnCantrips: this.cantrips.adventurePoints.getTotal(), // TODO
+      spentOnCantrips: this.cantrips.adventurePoints.getTotal(),
       spentOnSpells:
         this.spells.adventurePointsTotal.getTotal() + this.rituals.adventurePointsTotal.getTotal(),
       spentOnMagicalActions: 0, // TODO
       spentOnLiturgicalChants:
         this.liturgicalChants.adventurePointsTotal.getTotal() +
         this.ceremonies.adventurePointsTotal.getTotal(),
-      spentOnBlessings: this.blessings.adventurePoints.getTotal(), // TODO
+      spentOnBlessings: this.blessings.adventurePoints.getTotal(),
       spentOnSpecialAbilities: this.specialAbilities.adventurePointsTotal.getTotal(),
       spentOnEnergies: this.derivedCharacteristics.adventurePointsTotal.getTotal(),
     }
+  }
+
+  @computed
+  get racesForDisplay(): RaceForDisplay[] {
+    return this.global.db
+      .getAllInstanceContainersOfEntity("Race")
+      .filter(race =>
+        isEntryFromIncludedPublication(
+          race.content,
+          this.global.db.getInstanceOfEntityById.bind(this.global.db),
+          this.global.locale.translateMap,
+          this.rules.publicationOptions,
+        ),
+      )
+      .map(race => ({
+        id: race.id,
+        name: this.global.locale.translateMap(race.content.translations)?.name ?? race.id,
+        apValue: race.content.ap_value,
+        variantId:
+          this.global.db
+            .getAllChildInstanceContainersForParent("RaceVariant", race.id)
+            .toSorted(
+              on(
+                rv => this.global.locale.translateMap(rv.content.translations)?.name ?? "",
+                this.global.locale.compare,
+              ),
+            )[0]?.id ?? race.id,
+      }))
+  }
+
+  @computed
+  get culturesForDisplay(): CultureForDisplay[] {
+    return this.global.db
+      .getAllInstanceContainersOfEntity("Culture")
+      .filter(
+        culture =>
+          isEntryFromIncludedPublication(
+            culture.content,
+            this.global.db.getInstanceOfEntityById.bind(this.global.db),
+            this.global.locale.translateMap,
+            this.rules.publicationOptions,
+          ) &&
+          (this.race?.variant?.common_cultures?.includes(culture.id) ?? true),
+      )
+      .map(culture => ({
+        id: culture.id,
+        name: this.global.locale.translateMap(culture.content.translations)?.name ?? culture.id,
+        apValue: sumWith(culture.content.cultural_package, item =>
+          getAdventurePointsForRatingRange(
+            this.global.db.getInstanceOfEntityById("Skill", item.id)?.improvement_cost.kind ?? "A",
+            0,
+            item.points,
+          ),
+        ),
+      }))
+  }
+
+  @computed
+  get professionsForDisplay(): ProfessionForDisplay[] {
+    const commonProfessionValidator = this.culture?.getCommonProfessionPredicate() ?? (() => true)
+    const startExperienceLevel = this.experienceLevel.start
+    const lowerOrMatchingExperienceLevelsInReverseOrder =
+      startExperienceLevel === undefined
+        ? this.global.sortedExperienceLevels
+        : this.global.sortedExperienceLevels
+            .filter(el => el.adventurePoints <= startExperienceLevel.adventure_points)
+            .reverse()
+
+    return this.global.db
+      .getAllInstanceContainersOfEntity("Profession")
+      .flatMap(profession =>
+        this.global.db
+          .getAllChildInstanceContainersForParent("ProfessionVersion", profession.id)
+          .filter(professionVersion =>
+            isEntryFromIncludedPublication(
+              professionVersion.content,
+              this.global.db.getInstanceOfEntityById.bind(this.global.db),
+              this.global.locale.translateMap,
+              this.rules.publicationOptions,
+            ),
+          )
+          .map(professionVersion => {
+            const packages = this.global.db.getAllChildInstanceContainersForParent(
+              "ProfessionPackage",
+              professionVersion.id,
+            )
+
+            const professionPackage = reduceWhile(
+              lowerOrMatchingExperienceLevelsInReverseOrder,
+              (_acc: { id: string; content: ProfessionPackage } | undefined, el) =>
+                packages.find(pkg => pkg.content.experience_level === el.id),
+              acc => acc !== undefined,
+              undefined,
+            )
+
+            if (professionPackage === undefined) {
+              return undefined
+            }
+
+            return {
+              parent: profession,
+              version: professionVersion,
+              package: professionPackage,
+            }
+          })
+          .filter(
+            (combined): combined is NonNullable<typeof combined> =>
+              isNotNullish(combined) &&
+              commonProfessionValidator({
+                id: combined.parent.id,
+                profession: combined.parent.content,
+                magicalTraditions: Lazy.of(() =>
+                  extractActivatableFromProfessionPackage(
+                    combined.package.content,
+                    "MagicalTradition",
+                    this.global.db.getInstanceOfEntityById.bind(this.global.db),
+                  ),
+                ),
+                blessedTraditions: Lazy.of(() =>
+                  extractActivatableFromProfessionPackage(
+                    combined.package.content,
+                    "BlessedTradition",
+                    this.global.db.getInstanceOfEntityById.bind(this.global.db),
+                  ),
+                ),
+              }),
+          ),
+      )
+      .map((profession): ProfessionForDisplay | undefined => {
+        const translation = this.global.locale.translateMap(profession.version.content.translations)
+        if (translation === undefined) {
+          return undefined
+        }
+        return {
+          id: profession.parent.id,
+          name:
+            professionNameToString(this.personalData.sex, translation.name) +
+            parensIf(
+              translation.specification === undefined
+                ? undefined
+                : professionNameToString(this.personalData.sex, translation.specification),
+            ),
+          apValue: profession.package.content.ap_value,
+          sources: profession.version.content.src
+            .map(
+              src =>
+                this.global.locale.translateMap(
+                  this.global.db.getInstanceOfEntityById("Publication", src.id)?.translations,
+                )?.abbreviation,
+            )
+            .filter(isNotNullish)
+            .sort(this.global.locale.compare)
+            .join(", "),
+          versionId: profession.version.id,
+          packageId: profession.package.id,
+        }
+      })
+      .filter(isNotNullish)
   }
 
   getRatedCollection<E extends RatedIdentifier["kind"]>(entity: E): RatedCollectionByEntity<E> {
@@ -511,7 +694,9 @@ export abstract class BaseCharacter {
     this.name = newName
   }
 
-  handleIPCAction(...args: StateActionsAsParameters<CharacterIPCActions>) {
+  handleIPCAction(
+    ...args: StateActionsAsParameters<CharacterIPCActions>
+  ): void | { transformedCharacter?: Character; newRoute?: CharacterRoutePath } {
     switch (args[0]) {
       case "setName":
         return this.setName(args[1][0])
@@ -557,8 +742,49 @@ export abstract class BaseCharacter {
         return this.rules.toggleOptionalRule(args[1][0])
       case "toggleAlternativeRule":
         return this.rules.toggleAlternativeRule(args[1][0])
+      case "setRaceVariant":
+        this.race = new CharacterRace(this.global, this, args[1][0])
+        if (this.phase === "RaceCultureProfession") {
+          this.culture = undefined
+          this.profession = undefined
+        }
+        return
+      case "setCulture":
+        this.culture = new CharacterCulture(this.global, this, args[1][0])
+        if (this.phase === "RaceCultureProfession") {
+          this.profession = undefined
+        }
+        return
+      case "setProfessionPackage":
+        this.profession = new CharacterProfession(this.global, this, args[1][0])
+        if (this.profession.isVariantSelectionRequired) {
+          this.profession.variantId = this.profession.professionVariantsForDisplay[0]?.id
+        }
+        return
+      case "setProfessionVariant":
+        if (this.profession !== undefined) {
+          this.profession.variantId = args[1][0]
+        }
+        return
       case "setCustomProfessionName":
         return this.profession?.setCustomProfessionName(args[1][0])
+      case "applyRaceCultureProfession":
+        if (
+          this.race !== undefined &&
+          this.culture !== undefined &&
+          this.profession !== undefined &&
+          this instanceof CharacterInRaceCultureProfessionSelection
+        ) {
+          return {
+            transformedCharacter: this.transformIntoFullCharacter(
+              this.race,
+              this.culture,
+              this.profession,
+            ),
+            newRoute: "attributes",
+          }
+        }
+        return
       case "incrementRated":
         return this.getRatedCollection(args[1][0])?.increment(args[1][1])
       case "decrementRated":
@@ -608,6 +834,7 @@ export abstract class BaseCharacter {
 
   get selectors() {
     return {
+      id: () => this.id,
       name: () => this.name,
       avatar: () => this.avatar,
       sexName: () => this.personalData.sexName,
@@ -641,11 +868,24 @@ export abstract class BaseCharacter {
       weight: () => this.personalData.weight,
       isRaceSelected: () => this.race !== undefined,
       race: () => this.race?.base,
+      raceId: () => this.race?.id,
       raceVariant: () => this.race?.variant,
+      raceVariantId: () => this.race?.variantId,
       raceName: () => this.race?.fullName,
+      races: () => this.racesForDisplay,
+      raceVariants: () => this.race?.raceVariantsForDisplay,
       isCultureSelected: () => this.culture !== undefined,
+      cultureId: () => this.culture?.id,
       cultureName: () => this.culture?.name,
+      cultures: () => this.culturesForDisplay,
+      professionId: () => this.profession?.baseId,
+      professionVersionId: () => this.profession?.versionId,
+      professionPackageId: () => this.profession?.packageId,
+      professionVariantId: () => this.profession?.variantId,
       professionName: () => this.profession?.fullNameParts?.fullName,
+      professions: () => this.professionsForDisplay,
+      professionVariants: () => this.profession?.professionVariantsForDisplay,
+      isVariantSelectionRequired: () => this.profession?.isVariantSelectionRequired,
       includeAllPublications: () => this.rules.includeAllPublications,
       publications: () => this.rules.publications,
       focusRules: () => this.rules.focusRules.rulesForDisplay,
@@ -724,8 +964,9 @@ export abstract class BaseCharacter {
       "2b0a18c5-40a8-4c86-98b3-a93c85e82497",
       Temporal.Now.zonedDateTimeISO(),
       Temporal.Now.zonedDateTimeISO(),
-      new CharacterRace(global, "48a1fe0b-ec55-4992-b47b-e1086f2a583f"),
-      new CharacterCulture(global, "481c50a3-416c-4aa9-8ee9-dc93cc72c2b3"),
+      "Improvement",
+      char => new CharacterRace(global, char, "48a1fe0b-ec55-4992-b47b-e1086f2a583f"),
+      char => new CharacterCulture(global, char, "481c50a3-416c-4aa9-8ee9-dc93cc72c2b3"),
       char => new CharacterProfession(global, char, "0a9b8d85-3d9e-4297-aea0-51549b520ed6"),
     )
     character.name = "Alrik"
@@ -743,6 +984,58 @@ export class CharacterInRaceCultureProfessionSelection extends BaseCharacter {
   @observable accessor culture: CharacterCulture | undefined
   @observable accessor profession: CharacterProfession | undefined
 
+  transformIntoFullCharacter(
+    race: CharacterRace,
+    culture: CharacterCulture,
+    profession: CharacterProfession,
+  ): FullCharacter {
+    const fullCharacter = new FullCharacter(
+      this.global,
+      this.id,
+      this.version,
+      this.experienceLevel.startId,
+      this.dateCreated,
+      this.dateLastModified,
+      "Improvement",
+      char =>
+        new CharacterRace(this.global, char, race.variantId, race.selectedAttributeAdjustmentId),
+      char => new CharacterCulture(this.global, char, culture.id, culture.isCulturalPackageApplied),
+      char =>
+        new CharacterProfession(
+          this.global,
+          char,
+          profession.packageId,
+          profession.variantId,
+          profession.customName,
+        ),
+    )
+
+    fullCharacter.name = this.name
+    fullCharacter.totalAdventurePoints = this.totalAdventurePoints
+    fullCharacter.rules = new CharacterRules(
+      this.global,
+      this.rules.includeAllPublications,
+      this.rules.includePublications,
+      this.rules.focusRules.rules,
+      this.rules.optionalRules.rules,
+      this.rules.alternativeRules.rules,
+    )
+    fullCharacter.personalData = CharacterPersonalData.fromJSON(
+      this.global,
+      fullCharacter,
+      this.personalData,
+    )
+    fullCharacter.curriculum =
+      this.curriculum === undefined
+        ? undefined
+        : new CharacterCurriculum(
+            this.curriculum.educationalInstitutionId,
+            this.curriculum.lessonPackageId,
+          )
+
+    return fullCharacter
+  }
+
   static override fromJSON(
     global: Global,
     id: RawCharacter_ID,
@@ -759,8 +1052,10 @@ export class CharacterInRaceCultureProfessionSelection extends BaseCharacter {
 
     character.name = json.name
     character.totalAdventurePoints = json.adventurePoints.total
-    character.race = json.race ? CharacterRace.fromJSON(global, json.race) : undefined
-    character.culture = json.culture ? CharacterCulture.fromJSON(global, json.culture) : undefined
+    character.race = json.race ? CharacterRace.fromJSON(global, character, json.race) : undefined
+    character.culture = json.culture
+      ? CharacterCulture.fromJSON(global, character, json.culture)
+      : undefined
     character.profession = json.profession
       ? CharacterProfession.fromJSON(global, character, json.profession)
       : undefined
@@ -817,10 +1112,7 @@ export class CharacterInRaceCultureProfessionSelection extends BaseCharacter {
 }
 
 export class FullCharacter extends BaseCharacter {
-  @computed
-  get phase() {
-    return this.isCharacterCreationFinished ? "Finished" : "Improvement"
-  }
+  @observable accessor phase: "Finished" | "Improvement"
 
   /**
    * An object storing the identifiers of the race and its optional race variant.
@@ -840,8 +1132,9 @@ export class FullCharacter extends BaseCharacter {
   constructor(
     ...args: [
       ...ConstructorParameters<typeof BaseCharacter>,
-      CharacterRace,
-      CharacterCulture,
+      phase: "Finished" | "Improvement",
+      (char: FullCharacter) => CharacterRace,
+      (char: FullCharacter) => CharacterCulture,
       (char: FullCharacter) => CharacterProfession,
     ]
   ) {
@@ -852,13 +1145,15 @@ export class FullCharacter extends BaseCharacter {
       experienceLevelId,
       dateCreated,
       dateLastModified,
+      phase,
       race,
       culture,
       profession,
     ] = args
     super(global, id, version, experienceLevelId, dateCreated, dateLastModified)
-    this.race = race
-    this.culture = culture
+    this.phase = phase
+    this.race = race(this)
+    this.culture = culture(this)
     this.profession = profession(this)
   }
 
@@ -874,14 +1169,14 @@ export class FullCharacter extends BaseCharacter {
       json.experienceLevel.start,
       Temporal.ZonedDateTime.from(json.dateCreated),
       Temporal.ZonedDateTime.from(json.dateLastModified),
-      CharacterRace.fromJSON(global, json.race),
-      CharacterCulture.fromJSON(global, json.culture),
+      json.phase,
+      char => CharacterRace.fromJSON(global, char, json.race),
+      char => CharacterCulture.fromJSON(global, char, json.culture),
       char => CharacterProfession.fromJSON(global, char, json.profession),
     )
 
     character.name = json.name
     character.totalAdventurePoints = json.adventurePoints.total
-    character.isCharacterCreationFinished = json.phase === "Finished"
     character.curriculum = json.curriculum
       ? CharacterCurriculum.fromJSON(json.curriculum)
       : undefined
@@ -1105,8 +1400,20 @@ export class Characters {
   }
 
   @action
-  handleIPCAction(id: string, ...args: StateActionsAsParameters<CharacterIPCActions>) {
-    this.characters.get(id)?.handleIPCAction(...args)
+  handleIPCAction(
+    id: string,
+    ...args: StateActionsAsParameters<CharacterIPCActions>
+  ): void | RoutePath {
+    const result = this.characters.get(id)?.handleIPCAction(...args)
+
+    if (result !== undefined) {
+      if (result.transformedCharacter !== undefined) {
+        this.characters.set(id, result.transformedCharacter)
+      }
+      if (result.newRoute !== undefined) {
+        return ["characters", id, result.newRoute]
+      }
+    }
   }
 
   @action

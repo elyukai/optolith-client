@@ -1,4 +1,5 @@
 import type { DerivedCharacteristicTranslation } from "@optolith/database-schema/gen"
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import type { DisplayedDerivedCharacteristic } from "../../../../../shared/domain/energy.ts"
@@ -19,7 +20,7 @@ type Props = {
  * Returns a value item and buttons to adjust the value for a supplementary
  * derived characteristic value.
  */
-export const DerivedCharacteristicsListItemPermanent: FC<Props> = props => {
+export const DerivedCharacteristicsListItemPermanent: FC<Props> = observer(props => {
   const { attribute, isRemovingEnabled, translation } = props
 
   const { id, permanentlyLost = 0, permanentlyLostBoughtBack } = attribute
@@ -153,4 +154,4 @@ export const DerivedCharacteristicsListItemPermanent: FC<Props> = props => {
       ) : null}
     </AttributeBorder>
   )
-}
+})

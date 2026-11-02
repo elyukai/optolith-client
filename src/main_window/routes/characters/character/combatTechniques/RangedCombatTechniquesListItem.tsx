@@ -1,5 +1,6 @@
 import { toKebabCase } from "@elyukai/utils/string"
-import { memo, useCallback, type FC } from "react"
+import { observer } from "mobx-react-lite"
+import { useCallback, type FC } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
@@ -25,7 +26,10 @@ type Props = {
   selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
-const RangedCombatTechniquesListItem: FC<Props> = props => {
+/**
+ * Displays a ranged combat technique.
+ */
+export const RangedCombatTechniquesListItem: FC<Props> = observer(props => {
   const {
     insertTopMargin,
     rangedCombatTechnique: {
@@ -102,11 +106,4 @@ const RangedCombatTechniquesListItem: FC<Props> = props => {
       />
     </ListItem>
   )
-}
-
-/**
- * Displays a ranged combat technique.
- */
-const MemoRangedCombatTechniquesListItem = memo(RangedCombatTechniquesListItem)
-
-export { MemoRangedCombatTechniquesListItem as RangedCombatTechniquesListItem }
+})

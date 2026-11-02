@@ -88,16 +88,28 @@
 
     .icon {
       .border {
-        border: 1px solid var(--separator-color-20);
+        border-color: var(--disabled-icon-color);
       }
 
       .dot {
-        background: var(--separator-color-20);
+        background: var(--disabled-icon-color);
+      }
+    }
+
+    &.active {
+      .icon {
+        .border {
+          border-color: var(--disabled-color);
+        }
+
+        .dot {
+          background: var(--disabled-color);
+        }
       }
     }
 
     .radio-label {
-      color: var(--separator-color-30);
+      color: var(--disabled-color);
     }
   }
 

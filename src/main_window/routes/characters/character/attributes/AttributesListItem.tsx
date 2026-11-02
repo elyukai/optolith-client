@@ -1,4 +1,5 @@
 import { toKebabCase } from "@elyukai/utils/string"
+import { observer } from "mobx-react-lite"
 import { type FC, type MouseEvent, useCallback } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import { NumberBox } from "../../../../../shared/components/numberBox/NumberBox.tsx"
@@ -17,7 +18,7 @@ type Props = {
 /**
  * Returns a single attribute value item with buttons to adjust the value.
  */
-export const AttributeListItem: FC<Props> = props => {
+export const AttributeListItem: FC<Props> = observer(props => {
   const { attribute, isInCharacterCreation, isRemovingEnabled } = props
 
   const translate = useTranslate()
@@ -86,4 +87,4 @@ export const AttributeListItem: FC<Props> = props => {
       ) : null}
     </AttributeBorder>
   )
-}
+})
