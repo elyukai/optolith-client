@@ -1,31 +1,4 @@
 #rules {
-  .rule-books,
-  .focus-rules,
-  .optional-rules {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    grid-gap: 0 12px;
-    align-items: start;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-
-    > li {
-      display: flex;
-      align-items: center;
-      padding: 0;
-
-      > .checkbox {
-        flex: 1 1 0;
-      }
-    }
-  }
-
-  .rule-books {
-    margin-top: 24px;
-    grid-gap: 12px;
-  }
-
   .extended {
     display: flex;
 
@@ -40,6 +13,33 @@
       margin-top: 16px;
     }
   }
+}
+
+.rule-books,
+.focus-rules,
+.optional-rules,
+.alternative-rules {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 12px;
+  align-items: start;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  > li {
+    display: flex;
+    align-items: center;
+    padding: 0;
+
+    > .checkbox {
+      flex: 1 1 0;
+    }
+  }
+}
+
+.rule-books {
+  margin-top: 1.5rem;
 }
 
 .rule-books .checkbox.adult-content .checkbox-label::after {

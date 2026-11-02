@@ -2,7 +2,7 @@ import { on } from "@elyukai/utils/function"
 import { compareNumber, reduceCompare } from "@elyukai/utils/ordering"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import { compareImprovementCost } from "@optolith/adventure-points/improvement-cost"
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback, useMemo, useState } from "react"
 import { List } from "../../../../../shared/components/list/List.tsx"
 import { ListHeader } from "../../../../../shared/components/list/ListHeader.tsx"
@@ -93,7 +93,7 @@ export const CombatTechniques: FC = observer(() => {
         <RadioButtonGroup
           active={sortOrder}
           label={translate("Sort By")}
-          array={[
+          options={[
             {
               name: translate("Name"),
               value: CombatTechniquesSortOrder.Name,

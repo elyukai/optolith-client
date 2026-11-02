@@ -1,15 +1,14 @@
-import type { TSONDBTypes } from "@optolith/database-schema"
-import type { Cache } from "@optolith/database-schema/cache"
 import type { Locale } from "@optolith/database-schema/gen"
 import Debug from "debug"
 import { BrowserWindow, app, ipcMain, shell } from "electron"
 import { runInAction } from "mobx"
 import * as path from "node:path"
-import type { ReadonlyTSONDB } from "tsondb/readonly"
 import type { InitialSetupEventMessage } from "../main_window_preload/index.ts"
 import type { Characters } from "../shared/domain/character.ts"
+import type { Global } from "../shared/global.ts"
 import { globalSettings } from "../shared/settings/main.ts"
 import { attachKeyedStateSelectorsToWindow, attachStateSelectorsToWindow } from "../shared/state.ts"
+import type { GlobalIPCSelectors } from "./index.ts"
 import { getWindowBackgroundColor } from "./nativeTheme.ts"
 
 const debug = Debug("main:main")
@@ -23,9 +22,9 @@ let mainWindow: BrowserWindow | undefined = undefined
  * Creates the main window with the loaded database and returns its instance.
  */
 export const createMainWindow = async (
+  global: Global,
   locales: Record<string, Locale>,
-  database: ReadonlyTSONDB<TSONDBTypes>,
-  cache: Cache,
+  globalState: GlobalIPCSelectors,
   characters: Characters,
 ) => {
   if (mainWindow === undefined) {
@@ -101,14 +100,15 @@ export const createMainWindow = async (
     })
 
     const initialSetupEventMessage: InitialSetupEventMessage = {
-      database: database.schema.entities.map(entity => [
+      database: global.db.schema.entities.map(entity => [
         entity.name,
-        database.getAllInstanceContainersOfEntity(entity.name),
+        global.db.getAllInstanceContainersOfEntity(entity.name),
       ]),
-      cache,
+      cache: global.cache,
       locales,
       globalSettings: runInAction(() => globalSettings.toJSON()),
       systemLocale: app.getLocale(),
+      settings: global.settings,
     }
 
     ipcMain.once("initial-setup-done", () => {
@@ -116,12 +116,8 @@ export const createMainWindow = async (
 
       if (mainWindow !== undefined) {
         const safeWindow = mainWindow
-        runInAction(() =>
-          attachStateSelectorsToWindow(safeWindow, {
-            characters: () => characters.characterOverviews,
-          }),
-        )
 
+        runInAction(() => attachStateSelectorsToWindow(safeWindow, globalState))
         runInAction(() =>
           attachKeyedStateSelectorsToWindow(
             safeWindow,

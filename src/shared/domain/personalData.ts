@@ -15,19 +15,20 @@ import type {
   SocialStatus_ID,
   WeightDiceOffsetStrategy,
 } from "@optolith/database-schema/gen"
+import { isPublicationIncludedById } from "@optolith/entity-descriptions/publication-options"
 import { action, computed, observable, toJS } from "mobx"
 import type { Global } from "../global.ts"
 import { randomFromArray } from "../utils/array.ts"
 import { rollDice, separateDice } from "../utils/dice.ts"
 import { ensureNonEmptyString } from "../utils/string.ts"
-import type { Character } from "./character.ts"
+import type { BaseCharacter, Character } from "./character.ts"
 import type { Color } from "./color.ts"
 import type { Sex, SexDependency } from "./sex.ts"
 import type { SocialStatusDependency } from "./socialStatus.ts"
 
 export class CharacterPersonalData {
   readonly global: Global
-  readonly character: Character
+  readonly character: BaseCharacter
 
   /**
    * The character's sex. It does not have to be binary, although it always must be specified how to handle it in the context of binary sex prerequisites. You can also provide a custom sex with a custom name.
@@ -51,6 +52,16 @@ export class CharacterPersonalData {
       default:
         return assertExhaustive(this.sex)
     }
+  }
+
+  @computed
+  get showSexualCharacteristics(): boolean {
+    return isPublicationIncludedById(
+      this.global.locale.translateMap,
+      this.global.db.getInstanceOfEntityById.bind(this.global.db),
+      this.character.rules.publicationOptions,
+      this.global.settings.sexualCharacteristicsPublication,
+    )
   }
 
   /**
@@ -133,7 +144,7 @@ export class CharacterPersonalData {
    */
   @observable accessor otherInfo: string | undefined
 
-  constructor(global: Global, character: Character) {
+  constructor(global: Global, character: BaseCharacter) {
     this.global = global
     this.character = character
   }

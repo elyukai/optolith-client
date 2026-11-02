@@ -24,6 +24,7 @@ export type CharacterIPCActions = {
   togglePublication: (id: Gen.Publication_ID) => void
   toggleFocusRule: (id: Gen.FocusRule_ID) => void
   toggleOptionalRule: (id: Gen.OptionalRule_ID) => void
+  toggleAlternativeRule: (id: Gen.OptionalRule_ID) => void
   setCustomProfessionName: (newCustomProfessionName: string) => void
   incrementDerivedCharacteristic: (id: Gen.DerivedCharacteristic_ID) => void
   decrementDerivedCharacteristic: (id: Gen.DerivedCharacteristic_ID) => void
@@ -61,16 +62,17 @@ export type CharacterIPCSelectors = {
 }
 
 export const defaultCharacterIPCSelectors: CharacterIPCSelectors = {
-  characterOverviews: [],
   name: "",
   avatar: undefined,
   sexName: "",
+  showSexualCharacteristics: false,
   startExperienceLevel: undefined,
   currentExperienceLevel: undefined,
   canAddAdventurePoints: false,
   showFinishCharacterCreation: false,
   canFinishCharacterCreation: false,
   canDefineCustomProfessionName: false,
+  phase: "RaceCultureProfession",
   availableHairColors: [],
   availableEyeColors: [],
   randomHeightCalculationString: undefined,
@@ -103,6 +105,7 @@ export const defaultCharacterIPCSelectors: CharacterIPCSelectors = {
   publications: [],
   focusRules: [],
   optionalRules: [],
+  alternativeRules: [],
   isInCharacterCreation: false,
   isCharacterCreationFinished: false,
   canRemove: false,

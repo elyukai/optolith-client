@@ -7,7 +7,7 @@ import type { ImprovementCost } from "@optolith/adventure-points/improvement-cos
 import type { Attribute, Attribute_ID, AttributeAdjustments } from "@optolith/database-schema/gen"
 import { computed } from "mobx"
 import type { Global } from "../../global.ts"
-import type { Character } from "../character.ts"
+import type { BaseCharacter, Character } from "../character.ts"
 import { primaryAttributeDependencyToRatedDependency } from "./primaryAttribute.ts"
 import type { RatedDependency } from "./ratedDependency.ts"
 import { CharacterRatedEntries, CharacterRatedEntry, type DisplayedRated } from "./ratedEntry.ts"
@@ -118,7 +118,7 @@ export type DisplayedAttribute = DisplayedRated & {
 }
 
 export class CharacterAttributes extends CharacterRatedEntries<"Attribute", CharacterAttribute> {
-  constructor(global: Global, character: Character) {
+  constructor(global: Global, character: BaseCharacter) {
     super(global, character, "Attribute", CharacterAttribute)
   }
 

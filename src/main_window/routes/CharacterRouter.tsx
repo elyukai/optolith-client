@@ -1,5 +1,5 @@
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { useEffect, useState, type FC } from "react"
 import type { CharacterIPCActions, CharacterIPCSelectors } from "../../shared/ipc.ts"
 import {

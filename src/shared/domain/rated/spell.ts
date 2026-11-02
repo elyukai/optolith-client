@@ -19,7 +19,7 @@ import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/pu
 import { computed } from "mobx"
 import type { Global } from "../../global.ts"
 import { TinyActivatable, TinyActivatables } from "../activatable/tinyActivatable.ts"
-import type { Character } from "../character.ts"
+import type { BaseCharacter, Character } from "../character.ts"
 import { Case } from "../databaseEnum.ts"
 import { registerOrUnregisterPrerequisitesOfSpellworkAsDependencies } from "../dependencies/fullPrerequisiteRegistrationAsDependencyForType.ts"
 import { RegistrationMethod } from "../dependencies/registrationHelpers.ts"
@@ -76,7 +76,7 @@ export class CharacterCantrip extends TinyActivatable<"Cantrip"> {
 }
 
 export class CharacterCantrips extends TinyActivatables<"Cantrip", CharacterCantrip> {
-  constructor(global: Global, character: Character) {
+  constructor(global: Global, character: BaseCharacter) {
     super(global, character, "Cantrip", CharacterCantrip)
   }
 
@@ -326,7 +326,7 @@ export type DisplayedSpellwork<Entity extends "Spell" | "Ritual" = "Spell" | "Ri
 export class CharacterSpellworks<
   Entity extends "Spell" | "Ritual",
 > extends CharacterActivatableRatedEntriesWithEnhancements<Entity, CharacterSpellwork<Entity>> {
-  constructor(global: Global, character: Character, entity: Entity) {
+  constructor(global: Global, character: BaseCharacter, entity: Entity) {
     super(global, character, entity, CharacterSpellwork)
   }
 

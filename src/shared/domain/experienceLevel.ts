@@ -1,15 +1,15 @@
 import type { ExperienceLevel, ExperienceLevel_ID } from "@optolith/database-schema/gen"
 import { computed, observable } from "mobx"
 import type { Global } from "../global.ts"
-import type { Character } from "./character.ts"
+import type { BaseCharacter } from "./character.ts"
 
 export class CharacterExperienceLevel {
   readonly global: Global
-  readonly #character: Character
+  readonly #character: BaseCharacter
 
   @observable accessor startId: ExperienceLevel_ID
 
-  constructor(global: Global, character: Character, id: ExperienceLevel_ID) {
+  constructor(global: Global, character: BaseCharacter, id: ExperienceLevel_ID) {
     this.global = global
     this.#character = character
     this.startId = id

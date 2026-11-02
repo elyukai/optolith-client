@@ -139,13 +139,10 @@ export class CharacterProfession {
     return new CharacterProfession(global, character, raw.package, raw.variant, raw.customName)
   }
 
-  toJSON(): RawProfession | undefined {
-    if (this.baseId === undefined || this.versionId === undefined) {
-      return undefined
-    }
+  toJSON(): RawProfession {
     return {
-      base: this.baseId,
-      version: this.versionId,
+      base: this.baseId ?? this.versionId ?? this.packageId,
+      version: this.versionId ?? this.packageId,
       package: this.packageId,
       variant: this.variantId,
       customName: this.customName,

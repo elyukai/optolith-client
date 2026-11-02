@@ -5,6 +5,8 @@ import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type {
   Character as RawCharacter,
   Character_ID as RawCharacter_ID,
+  CharacterInRaceCultureProfessionSelection as RawCharacterInRaceCultureProfessionSelection,
+  FullCharacter as RawFullCharacter,
 } from "@optolith/character-schema/types"
 import type {
   ActivatableIdentifier,
@@ -49,9 +51,8 @@ import { CharacterCantrips, CharacterSpellworks } from "./rated/spell.ts"
 import { CharacterRules } from "./rules.ts"
 import { CharacterStates } from "./state.ts"
 
-export class Character {
+export abstract class BaseCharacter {
   readonly global: Global
-  readonly #characters: Characters
 
   readonly id: string
 
@@ -97,6 +98,8 @@ export class Character {
     return isInRange([0, 10], this.adventurePointsAvailable)
   }
 
+  abstract get phase(): CharacterCreationPhase
+
   /**
    * Total adventure points.
    */
@@ -110,17 +113,19 @@ export class Character {
   /**
    * An object storing the identifiers of the race and its optional race variant.
    */
-  @observable accessor race: CharacterRace | undefined
+  abstract race: CharacterRace | undefined
 
   /**
    * An object storing the identifier of the culture and if the cultural package has been applied.
    */
-  @observable accessor culture: CharacterCulture | undefined
+  abstract culture: CharacterCulture | undefined
 
   /**
    * An object storing the identifiers of the profession, its instance and its optional profession variant.
    */
-  @observable accessor profession: CharacterProfession | undefined
+  abstract profession: CharacterProfession | undefined
+
+  @observable accessor areRCPValuesApplied: boolean = false
 
   @observable accessor curriculum: CharacterCurriculum | undefined
 
@@ -173,7 +178,6 @@ export class Character {
 
   constructor(
     global: Global,
-    characters: Characters,
     id: string,
     version: string,
     experienceLevelId: string,
@@ -181,7 +185,6 @@ export class Character {
     dateLastModified: Temporal.ZonedDateTime = dateCreated,
   ) {
     this.global = global
-    this.#characters = characters
     this.id = id
     this.name = ""
     this.version = version
@@ -552,6 +555,8 @@ export class Character {
         return this.rules.toggleFocusRule(args[1][0])
       case "toggleOptionalRule":
         return this.rules.toggleOptionalRule(args[1][0])
+      case "toggleAlternativeRule":
+        return this.rules.toggleAlternativeRule(args[1][0])
       case "setCustomProfessionName":
         return this.profession?.setCustomProfessionName(args[1][0])
       case "incrementRated":
@@ -603,10 +608,10 @@ export class Character {
 
   get selectors() {
     return {
-      characterOverviews: () => this.#characters.characterOverviews,
       name: () => this.name,
       avatar: () => this.avatar,
       sexName: () => this.personalData.sexName,
+      showSexualCharacteristics: () => this.personalData.showSexualCharacteristics,
       startExperienceLevel: () => this.experienceLevel.start,
       currentExperienceLevel: () => this.experienceLevel.current,
       canAddAdventurePoints: () => this.isCharacterCreationFinished,
@@ -645,9 +650,11 @@ export class Character {
       publications: () => this.rules.publications,
       focusRules: () => this.rules.focusRules.rulesForDisplay,
       optionalRules: () => this.rules.optionalRules.rulesForDisplay,
+      alternativeRules: () => this.rules.alternativeRules.rulesForDisplay,
       canRemove: () => this.canRemove,
       isInCharacterCreation: () => this.isInCharacterCreation,
       isCharacterCreationFinished: () => this.isCharacterCreationFinished,
+      phase: () => this.phase,
       adventurePointsStats: () => this.adventurePointsStats,
       attributes: () => this.attributes.attributes,
       attributesTotal: () => this.attributes.attributesTotal,
@@ -697,15 +704,52 @@ export class Character {
     }
   }
 
-  static fromJSON(
-    global: Global,
-    characters: Characters,
-    id: RawCharacter_ID,
-    json: RawCharacter,
-  ): Character {
-    const character = new Character(
+  static fromJSON(global: Global, id: RawCharacter_ID, json: RawCharacter): Character {
+    switch (json.phase) {
+      case "RaceCultureProfession":
+        return CharacterInRaceCultureProfessionSelection.fromJSON(global, id, json)
+      case "Finished":
+      case "Improvement":
+        return FullCharacter.fromJSON(global, id, json)
+      default:
+        return assertExhaustive(json)
+    }
+  }
+
+  static exampleCharacter(global: Global, id: string, version: string): Character {
+    const character = new FullCharacter(
       global,
-      characters,
+      id,
+      version,
+      "2b0a18c5-40a8-4c86-98b3-a93c85e82497",
+      Temporal.Now.zonedDateTimeISO(),
+      Temporal.Now.zonedDateTimeISO(),
+      new CharacterRace(global, "48a1fe0b-ec55-4992-b47b-e1086f2a583f"),
+      new CharacterCulture(global, "481c50a3-416c-4aa9-8ee9-dc93cc72c2b3"),
+      char => new CharacterProfession(global, char, "0a9b8d85-3d9e-4297-aea0-51549b520ed6"),
+    )
+    character.name = "Alrik"
+    character.rules.includeAllPublications = true
+    return character
+  }
+
+  abstract toJSON(): RawCharacter
+}
+
+export class CharacterInRaceCultureProfessionSelection extends BaseCharacter {
+  phase = "RaceCultureProfession" as const
+
+  @observable accessor race: CharacterRace | undefined
+  @observable accessor culture: CharacterCulture | undefined
+  @observable accessor profession: CharacterProfession | undefined
+
+  static override fromJSON(
+    global: Global,
+    id: RawCharacter_ID,
+    json: RawCharacterInRaceCultureProfessionSelection,
+  ): CharacterInRaceCultureProfessionSelection {
+    const character = new CharacterInRaceCultureProfessionSelection(
+      global,
       id,
       json.version,
       json.experienceLevel.start,
@@ -715,12 +759,129 @@ export class Character {
 
     character.name = json.name
     character.totalAdventurePoints = json.adventurePoints.total
-    character.isCharacterCreationFinished = json.isCharacterCreationFinished
     character.race = json.race ? CharacterRace.fromJSON(global, json.race) : undefined
     character.culture = json.culture ? CharacterCulture.fromJSON(global, json.culture) : undefined
     character.profession = json.profession
       ? CharacterProfession.fromJSON(global, character, json.profession)
       : undefined
+    character.curriculum = json.curriculum
+      ? CharacterCurriculum.fromJSON(json.curriculum)
+      : undefined
+    character.rules = CharacterRules.fromJSON(global, json.rules)
+    character.personalData = CharacterPersonalData.fromJSON(global, character, json.personalData)
+
+    return character
+  }
+
+  toJSON(): RawCharacterInRaceCultureProfessionSelection {
+    return {
+      phase: "RaceCultureProfession",
+      version: this.version,
+      name: this.name,
+      dateCreated: this.dateCreated.toJSON(),
+      dateLastModified: this.dateCreated.toJSON(),
+      adventurePoints: {
+        total: this.adventurePointsStats.total,
+        available: this.adventurePointsStats.available,
+        spent: this.adventurePointsStats.spent,
+        spentOnAdvantages: this.adventurePointsStats.spentOnAdvantages,
+        spentOnMagicalAdvantages: this.adventurePointsStats.spentOnMagicalAdvantages,
+        spentOnBlessedAdvantages: this.adventurePointsStats.spentOnBlessedAdvantages,
+        spentOnDisadvantages: this.adventurePointsStats.spentOnDisadvantages,
+        spentOnMagicalDisadvantages: this.adventurePointsStats.spentOnMagicalDisadvantages,
+        spentOnBlessedDisadvantages: this.adventurePointsStats.spentOnBlessedDisadvantages,
+        spentOnRace: this.adventurePointsStats.spentOnRace,
+        spentOnAttributes: this.adventurePointsStats.spentOnAttributes,
+        spentOnSkills: this.adventurePointsStats.spentOnSkills,
+        spentOnCombatTechniques: this.adventurePointsStats.spentOnCombatTechniques,
+        spentOnSpells: this.adventurePointsStats.spentOnSpells,
+        spentOnCantrips: this.adventurePointsStats.spentOnCantrips,
+        spentOnMagicalActions: this.adventurePointsStats.spentOnMagicalActions,
+        spentOnLiturgicalChants: this.adventurePointsStats.spentOnLiturgicalChants,
+        spentOnBlessings: this.adventurePointsStats.spentOnBlessings,
+        spentOnSpecialAbilities: this.adventurePointsStats.spentOnSpecialAbilities,
+        spentOnEnergies: this.adventurePointsStats.spentOnEnergies,
+      },
+      experienceLevel: {
+        current: this.experienceLevel.currentId,
+        start: this.experienceLevel.startId,
+      },
+      race: this.race?.toJSON(),
+      culture: this.culture?.toJSON(),
+      profession: this.profession?.toJSON(),
+      curriculum: this.curriculum?.toJSON(),
+      rules: this.rules.toJSON(),
+      personalData: this.personalData.toJSON(),
+    }
+  }
+}
+
+export class FullCharacter extends BaseCharacter {
+  @computed
+  get phase() {
+    return this.isCharacterCreationFinished ? "Finished" : "Improvement"
+  }
+
+  /**
+   * An object storing the identifiers of the race and its optional race variant.
+   */
+  race: CharacterRace
+
+  /**
+   * An object storing the identifier of the culture and if the cultural package has been applied.
+   */
+  culture: CharacterCulture
+
+  /**
+   * An object storing the identifiers of the profession, its instance and its optional profession variant.
+   */
+  profession: CharacterProfession
+
+  constructor(
+    ...args: [
+      ...ConstructorParameters<typeof BaseCharacter>,
+      CharacterRace,
+      CharacterCulture,
+      (char: FullCharacter) => CharacterProfession,
+    ]
+  ) {
+    const [
+      global,
+      id,
+      version,
+      experienceLevelId,
+      dateCreated,
+      dateLastModified,
+      race,
+      culture,
+      profession,
+    ] = args
+    super(global, id, version, experienceLevelId, dateCreated, dateLastModified)
+    this.race = race
+    this.culture = culture
+    this.profession = profession(this)
+  }
+
+  static override fromJSON(
+    global: Global,
+    id: RawCharacter_ID,
+    json: RawFullCharacter,
+  ): FullCharacter {
+    const character = new FullCharacter(
+      global,
+      id,
+      json.version,
+      json.experienceLevel.start,
+      Temporal.ZonedDateTime.from(json.dateCreated),
+      Temporal.ZonedDateTime.from(json.dateLastModified),
+      CharacterRace.fromJSON(global, json.race),
+      CharacterCulture.fromJSON(global, json.culture),
+      char => CharacterProfession.fromJSON(global, char, json.profession),
+    )
+
+    character.name = json.name
+    character.totalAdventurePoints = json.adventurePoints.total
+    character.isCharacterCreationFinished = json.phase === "Finished"
     character.curriculum = json.curriculum
       ? CharacterCurriculum.fromJSON(json.curriculum)
       : undefined
@@ -798,34 +959,9 @@ export class Character {
     return character
   }
 
-  static exampleCharacter(
-    global: Global,
-    characters: Characters,
-    id: string,
-    version: string,
-  ): Character {
-    const character = new Character(
-      global,
-      characters,
-      id,
-      version,
-      "2b0a18c5-40a8-4c86-98b3-a93c85e82497",
-      Temporal.Now.zonedDateTimeISO(),
-    )
-    character.name = "Alrik"
-    character.rules.includeAllPublications = true
-    character.race = new CharacterRace(global, "48a1fe0b-ec55-4992-b47b-e1086f2a583f")
-    character.culture = new CharacterCulture(global, "481c50a3-416c-4aa9-8ee9-dc93cc72c2b3")
-    character.profession = new CharacterProfession(
-      global,
-      character,
-      "0a9b8d85-3d9e-4297-aea0-51549b520ed6",
-    )
-    return character
-  }
-
-  toJSON(): RawCharacter {
+  toJSON(): RawFullCharacter {
     return {
+      phase: this.phase,
       version: this.version,
       name: this.name,
       dateCreated: this.dateCreated.toJSON(),
@@ -856,10 +992,9 @@ export class Character {
         current: this.experienceLevel.currentId,
         start: this.experienceLevel.startId,
       },
-      isCharacterCreationFinished: this.isCharacterCreationFinished,
-      race: this.race?.toJSON(),
-      culture: this.culture?.toJSON(),
-      profession: this.profession?.toJSON(),
+      race: this.race.toJSON(),
+      culture: this.culture.toJSON(),
+      profession: this.profession.toJSON(),
       curriculum: this.curriculum?.toJSON(),
       rules: this.rules.toJSON(),
       personalData: this.personalData.toJSON(),
@@ -897,6 +1032,10 @@ export class Character {
     }
   }
 }
+
+export type CharacterCreationPhase = "RaceCultureProfession" | "Improvement" | "Finished"
+
+export type Character = CharacterInRaceCultureProfessionSelection | FullCharacter
 
 type RatedCollectionByEntity<E extends RatedIdentifier["kind"]> = {
   Attribute: CharacterAttributes
@@ -948,9 +1087,11 @@ export type CharacterOverview = {
 
 export class Characters {
   readonly global: Global
+  readonly appVersion: string
 
-  constructor(global: Global) {
+  constructor(global: Global, appVersion: string) {
     this.global = global
+    this.appVersion = appVersion
   }
 
   @observable accessor characters: Map<string, Character> = new Map()
@@ -969,26 +1110,13 @@ export class Characters {
   }
 
   @action
-  createNewCharacter(id: string, version: string, experienceLevelId: string) {
-    const newCharacter = new Character(
-      this.global,
-      this,
-      id,
-      version,
-      experienceLevelId,
-      Temporal.Now.zonedDateTimeISO(),
-    )
-    this.characters.set(id, newCharacter)
-  }
-
-  @action
   addCharacter(character: Character) {
     this.characters.set(character.id, character)
   }
 
   @action
   addCharacterFromJSON(id: string, json: RawCharacter) {
-    const newCharacter = Character.fromJSON(this.global, this, id, json)
+    const newCharacter = BaseCharacter.fromJSON(this.global, id, json)
     this.characters.set(id, newCharacter)
   }
 }

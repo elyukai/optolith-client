@@ -1,6 +1,6 @@
 import type { AvailableCreatorEntity } from "@optolith/entity-descriptions"
 import type { TabularEntityDescription } from "@optolith/entity-descriptions/description"
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import type { FC } from "react"
 import { InlineMarkdown, Markdown, type Env } from "../../shared/components/markdown/Markdown.tsx"
 import { useTranslate } from "../../shared/hooks/translate.ts"

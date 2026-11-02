@@ -1,8 +1,10 @@
 import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
 import { deepEqual } from "@elyukai/utils/equality"
+import { on } from "@elyukai/utils/function"
+import { compareNumber } from "@elyukai/utils/ordering"
 import type { TSONDBTypes } from "@optolith/database-schema"
 import { createCache } from "@optolith/database-schema/cache"
-import type { EntityMap, Locale } from "@optolith/database-schema/gen"
+import type { EntityMap, ExperienceLevelTranslation, Locale } from "@optolith/database-schema/gen"
 import {
   MagicalActionIdentifier,
   TraditionArtifactEnchantmentIdentifier,
@@ -16,24 +18,32 @@ import Debug from "debug"
 import { dialog } from "electron"
 import { autoUpdater } from "electron-updater"
 import { app, ipcMain } from "electron/main"
-import { action, configure, runInAction } from "mobx"
+import { action, configure, observable, runInAction } from "mobx"
+import { randomUUID } from "node:crypto"
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { ReadonlyTSONDB } from "tsondb/readonly"
 import { fromUniformCase } from "tsondb/schema/gen"
 import config from "../database/contents/tsondb.config.ts"
+import type { FinalStartConfig } from "../main_window/routes/characters/HeroCreation.tsx"
+import type { RoutePath } from "../main_window/slices/routeSlice.ts"
 import type { PreloadAPI } from "../main_window_preload/index.ts"
 import { attachDatabaseEventsMain } from "../shared/database.ts"
-import { Character, Characters } from "../shared/domain/character.ts"
+import {
+  BaseCharacter,
+  CharacterInRaceCultureProfessionSelection,
+  Characters,
+} from "../shared/domain/character.ts"
 import type { Global } from "../shared/global.ts"
 import type { CharacterIPCActions } from "../shared/ipc.ts"
 import { globalSettings } from "../shared/settings/main.ts"
 import {
   attachKeyedStateActionHandlersToMain,
   attachStateActionHandlersToMain,
+  type StateActionsAsParameters,
 } from "../shared/state.ts"
 import { runAsync } from "../shared/utils/async.ts"
-import { LocaleEnvironment } from "../shared/utils/locale.ts"
+import { LocaleEnvironment, type LocaleMap } from "../shared/utils/locale.ts"
 import { createMainWindow } from "./mainWindow.ts"
 import { setMenu } from "./menu.ts"
 import { handleNativeThemeChanges, setNativeTheme } from "./nativeTheme.ts"
@@ -109,7 +119,7 @@ debug("loaded %d characters", loadedCharacters.length)
 debug("initializing characters in memory ...")
 
 const characters = runInAction(() => {
-  const _characters = new Characters(global)
+  const _characters = new Characters(global, app.getVersion())
 
   if (isNotEmpty(loadedCharacters)) {
     for (const [id, data] of loadedCharacters) {
@@ -117,9 +127,8 @@ const characters = runInAction(() => {
     }
   } else {
     _characters.addCharacter(
-      Character.exampleCharacter(
+      BaseCharacter.exampleCharacter(
         global,
-        _characters,
         "550e8400-e29b-11d4-a716-446655440000",
         app.getVersion(),
       ),
@@ -129,11 +138,48 @@ const characters = runInAction(() => {
   return _characters
 })
 
+const preparedExperienceLevels = observable(
+  db
+    .getAllInstanceContainersOfEntity("ExperienceLevel")
+    .toSorted(on(c => c.content.adventure_points, compareNumber))
+    .map(c => ({
+      id: c.id,
+      translations: c.content.translations,
+      adventurePoints: c.content.adventure_points,
+    })),
+)
+
+const newCharacter = runInAction(() =>
+  observable({
+    newCharacter: new CharacterInRaceCultureProfessionSelection(
+      global,
+      randomUUID(),
+      app.getVersion(),
+      global.settings.defaultExperienceLevel,
+    ),
+  }),
+)
+
+const resetNewCharacter = action(() => {
+  newCharacter.newCharacter = new CharacterInRaceCultureProfessionSelection(
+    global,
+    randomUUID(),
+    app.getVersion(),
+    global.settings.defaultExperienceLevel,
+  )
+})
+
 const globalSelectors = {
   characters: () => characters.characterOverviews,
+  experienceLevels: (): {
+    id: string
+    adventurePoints: number
+    translations: LocaleMap<ExperienceLevelTranslation>
+  }[] => preparedExperienceLevels,
+  ...newCharacter.newCharacter.selectors,
 }
 
-type GlobalIPCSelectors = typeof globalSelectors
+export type GlobalIPCSelectors = typeof globalSelectors
 
 export type GlobalIPCState = {
   [K in keyof GlobalIPCSelectors]: ReturnType<GlobalIPCSelectors[K]>
@@ -141,7 +187,8 @@ export type GlobalIPCState = {
 
 export type GlobalIPCActions = {
   saveCharacter: (characterId: string) => void
-}
+  createCharacter: (startConfig: FinalStartConfig) => void
+} & CharacterIPCActions
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 app.whenReady().then(async () => {
@@ -155,25 +202,38 @@ app.whenReady().then(async () => {
     }
   })
 
-  setMenu(isMac, db, cache, locales, localeEnvironment, characters)
+  setMenu(global, isMac, locales, globalSelectors, characters)
   setNativeTheme(runInAction(() => globalSettings.theme))
   const installUpdateInsteadOfStartup = await checkForUpdatesOnStartup(locales)
 
   debug("skip startup because of update?", installUpdateInsteadOfStartup ? "yes" : "no")
   if (!installUpdateInsteadOfStartup) {
     const handleGlobalIPCAction = action(
-      <Action extends keyof GlobalIPCActions>(
-        actionName: Action,
-        args: Parameters<GlobalIPCActions[Action]>,
-      ): Promise<void> | void => {
-        debug("execute global ipc action %s with parameters %o", actionName, args)
-        const [characterId] = args
-        const character = characters.characters.get(characterId)
-        if (character === undefined) {
-          debug("character %s not found", characterId)
-          return
+      (
+        ...args: StateActionsAsParameters<GlobalIPCActions>
+      ): Promise<void | RoutePath> | void | RoutePath => {
+        debug("execute global ipc action %s with parameters %o", args[0], args[1])
+        switch (args[0]) {
+          case "saveCharacter": {
+            const [_, [characterId]] = args
+            const character = characters.characters.get(characterId)
+            if (character === undefined) {
+              debug("character %s not found", characterId)
+              return
+            }
+            return saveCharacter(app.getPath("userData"), characterId, character.toJSON())
+          }
+          case "createCharacter": {
+            newCharacter.newCharacter.name = args[1][0].name
+            newCharacter.newCharacter.personalData.sex = args[1][0].sex
+            newCharacter.newCharacter.experienceLevel.startId = args[1][0].experienceLevel
+            characters.addCharacter(newCharacter.newCharacter)
+            resetNewCharacter()
+            return ["characters", newCharacter.newCharacter.id, "race"]
+          }
+          default:
+            return newCharacter.newCharacter.handleIPCAction(...args)
         }
-        return saveCharacter(app.getPath("userData"), characterId, character.toJSON())
       },
     )
 
@@ -207,8 +267,17 @@ app.whenReady().then(async () => {
 
     attachStateActionHandlersToMain<GlobalIPCActions>(
       ipcMain,
-      (...args) => {
-        handleGlobalIPCAction(...args)
+      (event, ...args) => {
+        const result = handleGlobalIPCAction(...args)
+        if (result instanceof Promise) {
+          result.then(resolved => {
+            if (resolved !== undefined) {
+              event.sender.send("goto", resolved)
+            }
+          })
+        } else if (result !== undefined) {
+          event.sender.send("goto", result)
+        }
       },
       debug,
     )
@@ -232,7 +301,7 @@ app.whenReady().then(async () => {
       runAsync(debug, async () => {
         debug("show settings")
         await createSettingsWindow(locales, () =>
-          setMenu(isMac, db, cache, locales, localeEnvironment, characters),
+          setMenu(global, isMac, locales, globalSelectors, characters),
         )
       }),
     )
@@ -289,7 +358,7 @@ app.whenReady().then(async () => {
         }),
     )
 
-    await createMainWindow(locales, db, cache, characters)
+    await createMainWindow(global, locales, globalSelectors, characters)
   }
 
   app.on(
@@ -297,7 +366,7 @@ app.whenReady().then(async () => {
     runAsync(debug, async (_event, hasVisibleWindows) => {
       debug("activated: hasVisibleWindows = %s", hasVisibleWindows)
       if (!hasVisibleWindows) {
-        await createMainWindow(locales, db, cache, characters)
+        await createMainWindow(global, locales, globalSelectors, characters)
       }
     }),
   )

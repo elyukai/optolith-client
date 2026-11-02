@@ -1,6 +1,6 @@
 import { deepEqual } from "@elyukai/utils/equality"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
-import type { Character } from "../character.ts"
+import type { BaseCharacter } from "../character.ts"
 
 /**
  * Whether to add or remove a prerequisite as a dependency.
@@ -71,7 +71,7 @@ export const addOrRemoveDependencyInSlice = <
 export type RegistrationFunction<T, SourceId> = (
   p: T,
   method: RegistrationMethod,
-  character: Character,
+  character: BaseCharacter,
   sourceId: SourceId,
   index: number,
   isPartOfDisjunction: boolean,

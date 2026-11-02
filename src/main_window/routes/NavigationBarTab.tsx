@@ -1,6 +1,7 @@
 import { classList } from "@elyukai/utils/classList"
 import { arrayEqual } from "@elyukai/utils/equality"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback } from "react"
 import { Tab } from "../../shared/components/tab/Tab.tsx"
 import { useTranslate } from "../../shared/hooks/translate.ts"
@@ -25,7 +26,7 @@ const getRouteTranslation = (route: RoutePath) => {
           case "pact":
             return "Pact" as const
           case "rules":
-            return "Rules" as const
+            return "Rule Set" as const
 
           case "race":
             return "Race" as const
@@ -100,7 +101,7 @@ type Props = {
 /**
  * Returns a single navigation tab.
  */
-export const NavigationBarTab: FC<Props> = props => {
+export const NavigationBarTab: FC<Props> = observer(props => {
   const { className, displayRoute } = props
 
   const translate = useTranslate()
@@ -132,4 +133,4 @@ export const NavigationBarTab: FC<Props> = props => {
       )}
     />
   )
-}
+})

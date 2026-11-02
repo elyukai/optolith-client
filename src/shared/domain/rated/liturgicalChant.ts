@@ -25,7 +25,7 @@ import type { Global } from "../../global.ts"
 import type { TranslateMap } from "../../utils/locale.ts"
 import type { CharacterActivatable } from "../activatable/activatable.ts"
 import { TinyActivatable, TinyActivatables } from "../activatable/tinyActivatable.ts"
-import type { Character } from "../character.ts"
+import type { BaseCharacter, Character } from "../character.ts"
 import { Case } from "../databaseEnum.ts"
 import { registerOrUnregisterPrerequisitesOfLiturgyAsDependencies } from "../dependencies/fullPrerequisiteRegistrationAsDependencyForType.ts"
 import { RegistrationMethod } from "../dependencies/registrationHelpers.ts"
@@ -41,7 +41,7 @@ import {
 export class CharacterBlessing extends TinyActivatable<"Blessing"> {}
 
 export class CharacterBlessings extends TinyActivatables<"Blessing", CharacterBlessing> {
-  constructor(global: Global, character: Character) {
+  constructor(global: Global, character: BaseCharacter) {
     super(global, character, "Blessing", CharacterBlessing)
   }
 
@@ -330,7 +330,7 @@ export class CharacterLiturgicalChants<
   Entity,
   CharacterLiturgicalChant<Entity>
 > {
-  constructor(global: Global, character: Character, entity: Entity) {
+  constructor(global: Global, character: BaseCharacter, entity: Entity) {
     super(global, character, entity, CharacterLiturgicalChant)
   }
 

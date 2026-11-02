@@ -22,7 +22,7 @@ import {
   cachedAdventurePointsForActivatable,
   type BoundAdventurePointsForRated,
 } from "../adventurePoints/ratedEntry.ts"
-import type { Character } from "../character.ts"
+import type { BaseCharacter } from "../character.ts"
 import { registerOrUnregisterPrerequisitesOfEnhancementAsDependencies } from "../dependencies/fullPrerequisiteRegistrationAsDependencyForType.ts"
 import { addOrRemoveDependency, RegistrationMethod } from "../dependencies/registrationHelpers.ts"
 import { checkMultipleDisjunctionPartsAreValid } from "../prerequisites/disjunctionPrerequisiteMultipartValidation.ts"
@@ -40,7 +40,7 @@ export abstract class CharacterAnyRatedEntry<
   static readonly minValue: number = 0
 
   readonly global: Global
-  protected readonly character: Character
+  protected readonly character: BaseCharacter
 
   readonly id: string
   @observable accessor #value: number | (Activatable extends true ? undefined : never)
@@ -53,7 +53,7 @@ export abstract class CharacterAnyRatedEntry<
   constructor(
     isActivatable: Activatable,
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     entityName: Entity,
     id: string,
     dbEntry: Gen.EntityMap[Entity],
@@ -273,7 +273,7 @@ export abstract class CharacterRatedEntry<
 > extends CharacterAnyRatedEntry<Entity, false> {
   constructor(
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     entityName: Entity,
     id: string,
     dbEntry: Gen.EntityMap[Entity],
@@ -310,7 +310,7 @@ export abstract class CharacterActivatableRatedEntry<
 > extends CharacterAnyRatedEntry<Entity, true> {
   constructor(
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     entityName: Entity,
     id: string,
     dbEntry: Gen.EntityMap[Entity],
@@ -533,7 +533,7 @@ type CharacterRatedEntryConstructor<
 > = {
   new (
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     entityName: Entity,
     id: string,
     dbEntry: Gen.EntityMap[Entity],
@@ -556,7 +556,7 @@ export abstract class CharacterAnyRatedEntries<
   T extends CharacterAnyRatedEntry<Entity, Activatable>,
 > {
   readonly global: Global
-  protected readonly character: Character
+  protected readonly character: BaseCharacter
   readonly entityName: Entity
   readonly entryClass: CharacterRatedEntryConstructor<Entity, Activatable, T>
   readonly #isActivatable: Activatable
@@ -565,7 +565,7 @@ export abstract class CharacterAnyRatedEntries<
   constructor(
     isActivatable: Activatable,
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     entityName: Entity,
     entryClass: CharacterRatedEntryConstructor<Entity, Activatable, T>,
   ) {
@@ -677,7 +677,7 @@ export abstract class CharacterRatedEntries<
 > extends CharacterAnyRatedEntries<Entity, false, T> {
   constructor(
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     entityName: Entity,
     entryClass: CharacterRatedEntryConstructor<Entity, false, T>,
   ) {
@@ -738,7 +738,7 @@ export abstract class CharacterActivatableRatedEntries<
 > extends CharacterAnyRatedEntries<Entity, true, T> {
   constructor(
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     entityName: Entity,
     entryClass: CharacterRatedEntryConstructor<Entity, true, T>,
   ) {

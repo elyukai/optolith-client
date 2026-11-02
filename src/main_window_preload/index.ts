@@ -1,11 +1,12 @@
 import type { Cache } from "@optolith/database-schema/cache"
-import type { Locale } from "@optolith/database-schema/gen"
+import type { Locale, Settings } from "@optolith/database-schema/gen"
 import type { AvailableCreatorEntity } from "@optolith/entity-descriptions"
 import type { EntityDescription } from "@optolith/entity-descriptions/description"
 import Debug from "debug"
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from "electron"
 import EventEmitter from "events"
 import type { GlobalIPCActions, GlobalIPCState } from "../main/index.ts"
+import type { RoutePath } from "../main_window/slices/routeSlice.ts"
 import { attackDatabaseHandlersToPreloadAPI, type DatabaseHandlers } from "../shared/database.ts"
 import type { CharacterIPCActions, CharacterIPCSelectors } from "../shared/ipc.ts"
 import type { GlobalSettings } from "../shared/settings/GlobalSettings.ts"
@@ -31,6 +32,7 @@ type Events = GlobalSettingsEvents & {
   blur: []
   focus: []
   "new-character": []
+  goto: [RoutePath]
 }
 
 /**
@@ -155,6 +157,7 @@ export type InitialSetupEventMessage = {
   cache: Cache
   locales: Record<string, Locale>
   globalSettings: GlobalSettings
+  settings: Settings
   systemLocale: string
 }
 
@@ -182,6 +185,10 @@ ipcRenderer
   .on("new-character", () => {
     debugMainEvents("new-character")
     events.emit("new-character")
+  })
+  .on("goto", (_event: IpcRendererEvent, message: RoutePath) => {
+    debugMainEvents("new-character")
+    events.emit("goto", message)
   })
 
 attachGlobalSettingsEvents(ipcRenderer, events)

@@ -43,7 +43,7 @@ export type RouteState = {
 }
 
 const initialState: RouteState = {
-  path: ["characters", "550e8400-e29b-11d4-a716-446655440000", "skills"],
+  path: ["characters"],
 }
 
 const routeSlice = createSlice({

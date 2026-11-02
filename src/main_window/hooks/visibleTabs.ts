@@ -68,7 +68,6 @@ export const useVisibleCharacterTabs = () => {
   const currentRoute = useAppSelector(selectRoute)
 
   // TODO: Replace these with real values
-  const phase = 3 as number
   const isHitZoneArmorEnabled = true as boolean
   const arePactsAvailable = true as boolean
 
@@ -79,6 +78,7 @@ export const useVisibleCharacterTabs = () => {
     isCultureSelected,
     isSpellcaster,
     isBlessedOne,
+    phase,
   } = useCharacterState()
 
   const characterId = currentRoute[0] === "characters" ? currentRoute[1] : undefined
@@ -101,7 +101,7 @@ export const useVisibleCharacterTabs = () => {
                 .filter(isNotNullish)
                 .map(route => ["characters", characterId, route]),
             } satisfies DisplayRoute,
-            phase === 1
+            phase === "RaceCultureProfession"
               ? ({
                   type: "group",
                   name: "race_culture_profession",
@@ -114,13 +114,13 @@ export const useVisibleCharacterTabs = () => {
                     .map(route => ["characters", characterId, route]),
                 } satisfies DisplayRoute)
               : undefined,
-            phase > 1
+            phase === "Improvement" || phase === "Finished"
               ? ({
                   type: "single",
                   route: ["characters", characterId, "attributes"],
                 } satisfies DisplayRoute)
               : undefined,
-            phase > 1 || isRemovingEnabled
+            (phase === "Improvement" || phase === "Finished") && isRemovingEnabled
               ? ({
                   type: "group",
                   name: "advantages_disadvantages",
@@ -131,7 +131,7 @@ export const useVisibleCharacterTabs = () => {
                   ]),
                 } satisfies DisplayRoute)
               : undefined,
-            phase > 1
+            phase === "Improvement" || phase === "Finished"
               ? ({
                   type: "group",
                   name: "abilities",
@@ -146,7 +146,7 @@ export const useVisibleCharacterTabs = () => {
                     .map(route => ["characters", characterId, route]),
                 } satisfies DisplayRoute)
               : undefined,
-            phase > 1
+            phase === "Improvement" || phase === "Finished"
               ? ({
                   type: "group",
                   name: "belongings",

@@ -6,14 +6,14 @@ import type {
   PrerequisitesElement,
   PrerequisitesForLevels,
 } from "@optolith/database-schema/gen"
-import type { Character } from "../character.ts"
+import type { BaseCharacter } from "../character.ts"
 import { type RegistrationFunction, RegistrationMethod } from "./registrationHelpers.ts"
 
 const registerOrUnregisterPrerequisiteElement = <T, SourceId>(
   registerOrUnregister: RegistrationFunction<T, SourceId>,
   element: PrerequisitesElement<T>,
   method: RegistrationMethod,
-  character: Character,
+  character: BaseCharacter,
   sourceId: SourceId,
   index: number,
 ): void => {
@@ -40,7 +40,7 @@ export const registerOrUnregisterPlainPrerequisites = <T, SourceId>(
   registerOrUnregister: RegistrationFunction<T, SourceId>,
   prerequisites: PlainPrerequisites<T>,
   method: RegistrationMethod,
-  character: Character,
+  character: BaseCharacter,
   sourceId: SourceId,
 ): void =>
   prerequisites.forEach((p, index) =>
@@ -58,7 +58,7 @@ const registerOrUnregisterPrerequisiteForLevel = <T, SourceId>(
   registerOrUnregister: RegistrationFunction<T, SourceId>,
   prerequisiteForLevel: PrerequisiteForLevel<T>,
   method: RegistrationMethod,
-  character: Character,
+  character: BaseCharacter,
   levelRange: RangeBounds,
   sourceId: SourceId,
   index: number,
@@ -83,7 +83,7 @@ export const registerOrUnregisterPrerequisitesForLevels = <T, SourceId>(
   registerOrUnregister: RegistrationFunction<T, SourceId>,
   prerequisitesForLevels: PrerequisitesForLevels<T>,
   method: RegistrationMethod,
-  character: Character,
+  character: BaseCharacter,
   levelRange: RangeBounds,
   sourceId: SourceId,
 ): void =>

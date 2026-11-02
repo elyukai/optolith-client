@@ -16,7 +16,11 @@ type EnhancedWindow = Window & typeof globalThis & { optolith: PreloadAPI }
  */
 export const ExternalAPI = (window as EnhancedWindow).optolith
 
-const defaultGlobalState: GlobalIPCState = { characters: [] }
+const defaultGlobalState: GlobalIPCState = {
+  characters: [],
+  experienceLevels: [],
+  ...defaultCharacterIPCSelectors,
+}
 
 export const SharedGlobalState = transformStateSelectorsFromContextBridgeIntoObservable(
   ExternalAPI,
@@ -38,6 +42,19 @@ export const executeStateAction = <Action extends keyof CharacterIPCActions>(
   debug("execute state action %s with parameters %o", actionName, args)
   return ExternalAPI.executeKeyed(characterId, actionName, ...args)
 }
+
+export const NewCharacterActions = new Proxy(
+  {},
+  {
+    get:
+      (_, actionName) =>
+      (...args: unknown[]) =>
+        ExternalAPI.execute(
+          actionName as keyof CharacterIPCActions,
+          ...(args as Parameters<CharacterIPCActions[keyof CharacterIPCActions]>),
+        ),
+  },
+) as CharacterIPCActions
 
 // autorun(() => {
 //   console.log(toJS(SharedState.adventurePointsStats))

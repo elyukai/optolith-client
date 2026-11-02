@@ -39,7 +39,7 @@ import {
   AdventurePointsCache,
   emptyAdventurePointsCache,
 } from "../adventurePoints/cache.ts"
-import type { Character } from "../character.ts"
+import type { BaseCharacter, Character } from "../character.ts"
 import { Case, equalsCase, fromUniformCase } from "../databaseEnum.ts"
 import {
   registerOrUnregisterPrerequisitesOfAdvantageOrDisadvantageAsDependencies,
@@ -225,7 +225,7 @@ export class CharacterActivatable<
   Entity extends ActivatableIdentifier["kind"] = ActivatableIdentifier["kind"],
 > {
   readonly global: Global
-  readonly character: Character
+  readonly character: BaseCharacter
   readonly entityName: Entity
 
   /**
@@ -653,7 +653,7 @@ export class CharacterActivatable<
 
   constructor(
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     id: string,
     entity: Entity,
     dbEntry: EntityMap[Entity],
@@ -675,7 +675,7 @@ export class CharacterActivatable<
   @action
   static createEmpty<Entity extends ActivatableIdentifier["kind"]>(
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     entity: Entity,
     id: string,
     dbEntry: EntityMap[Entity] | undefined,
@@ -1431,11 +1431,11 @@ export type DisplayedInactiveActivatable<
 
 export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]> {
   readonly global: Global
-  readonly #character: Character
+  readonly #character: BaseCharacter
   readonly #entity: Entity
   @observable accessor #activatables: Map<string, CharacterActivatable<Entity>> = new Map()
 
-  constructor(global: Global, character: Character, entity: Entity) {
+  constructor(global: Global, character: BaseCharacter, entity: Entity) {
     this.global = global
     this.#character = character
     this.#entity = entity

@@ -24,12 +24,12 @@ export type StateActionsAsParameters<A extends StateActions> = {
  */
 export const attachStateActionHandlersToMain = <A extends StateActions>(
   ipcMain: Electron.IpcMain,
-  handler: (...args: StateActionsAsParameters<A>) => void,
+  handler: (event: Electron.IpcMainEvent, ...args: StateActionsAsParameters<A>) => void,
   debug?: Debugger,
 ): void => {
-  ipcMain.on("state:action", (_event, actionName: keyof A, ...args: unknown[]) => {
+  ipcMain.on("state:action", (event, actionName: keyof A, ...args: unknown[]) => {
     debug?.("execute state action %s with parameters %o", actionName, args)
-    handler(actionName, args as Parameters<A[keyof A]>)
+    handler(event, actionName, args as Parameters<A[keyof A]>)
   })
 }
 

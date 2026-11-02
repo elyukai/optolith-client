@@ -13,7 +13,7 @@ import type { Global } from "../../global.ts"
 import type { Translate, TranslateMap } from "../../utils/locale.ts"
 import { ensureNonEmptyObject } from "../../utils/object.ts"
 import { addAdventurePointsCaches, emptyAdventurePointsCache } from "../adventurePoints/cache.ts"
-import type { Character } from "../character.ts"
+import type { BaseCharacter, Character } from "../character.ts"
 import { fromUniformCase } from "../databaseEnum.ts"
 import type { AnySpecialAbilityOfGroupDependency } from "../dependencies/single/anySpecialAbilityOfGroup.ts"
 import { SpecialAbilitiesSortOrder } from "../sortOrders.ts"
@@ -32,7 +32,7 @@ export class CharacterSpecialAbilities {
 
   @observable accessor dependencies: AnySpecialAbilityOfGroupDependency[]
 
-  constructor(global: Global, character: Character) {
+  constructor(global: Global, character: BaseCharacter) {
     this.#specialAbilities = mapObject(
       SpecialAbilityIdentifier.type.value.values,
       (_value, key) => new CharacterActivatables(global, character, key),

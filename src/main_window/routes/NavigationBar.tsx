@@ -1,5 +1,5 @@
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { useEffect, type FC, type ReactNode } from "react"
 import { IconButton } from "../../shared/components/iconButton/IconButton.tsx"
 import { useTranslate } from "../../shared/hooks/translate.ts"

@@ -25,7 +25,7 @@ import {
   emptyAdventurePointsCache,
 } from "./adventurePoints/cache.ts"
 import { cachedAdventurePoints } from "./adventurePoints/ratedEntry.ts"
-import type { Character } from "./character.ts"
+import type { BaseCharacter, Character } from "./character.ts"
 import { Case } from "./databaseEnum.ts"
 import { checkPrerequisitesOfDerivedCharacteristic } from "./prerequisites/fullPrerequisiteValidationForType.ts"
 
@@ -48,7 +48,7 @@ export type DisplayedDerivedCharacteristic = DisplayedDerivedCharacteristicBase 
 
 const isModifierActive = (
   source: DerivedCharacteristicModifierPrerequisiteGroup,
-  character: Character,
+  character: BaseCharacter,
 ): { active: boolean; level?: number } => {
   switch (source.kind) {
     case "Rule":
@@ -114,7 +114,7 @@ export class CharacterDerivedCharacteristic {
   static readonly improvementCost: ImprovementCost = "D"
 
   readonly global: Global
-  readonly #character: Character
+  readonly #character: BaseCharacter
 
   readonly id: string
   readonly dbEntry: DerivedCharacteristic
@@ -122,7 +122,12 @@ export class CharacterDerivedCharacteristic {
   @observable accessor #permanentlyLost: number | undefined
   @observable accessor #permanentlyLostBoughtBack: number | undefined
 
-  constructor(global: Global, character: Character, id: string, dbEntry: DerivedCharacteristic) {
+  constructor(
+    global: Global,
+    character: BaseCharacter,
+    id: string,
+    dbEntry: DerivedCharacteristic,
+  ) {
     this.global = global
     this.#character = character
     this.id = id
@@ -146,7 +151,7 @@ export class CharacterDerivedCharacteristic {
   @action
   static createEmpty(
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     id: string,
     dbEntry: DerivedCharacteristic | undefined,
   ): CharacterDerivedCharacteristic {
@@ -435,7 +440,7 @@ export class CharacterDerivedCharacteristic {
 }
 
 const getAttributeIdForPurchased = (
-  character: Character,
+  character: BaseCharacter,
   maximum: DerivedCharacteristicPurchaseMaximumValue,
 ): Attribute_ID | undefined => {
   switch (maximum.kind) {
@@ -457,11 +462,11 @@ const getAttributeIdForPurchased = (
 
 export class CharacterDerivedCharacteristics {
   readonly global: Global
-  readonly #character: Character
+  readonly #character: BaseCharacter
   @observable accessor #derivedCharacteristics: Map<string, CharacterDerivedCharacteristic> =
     new Map()
 
-  constructor(global: Global, character: Character) {
+  constructor(global: Global, character: BaseCharacter) {
     this.global = global
     this.#character = character
   }

@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
@@ -8,14 +9,16 @@ import { InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.ts
 
 type Props = {
   focusRule: CharacterFocusRuleOverview
+  hideInfo?: boolean
 }
 
 /**
  * Returns a single focus rule item.
  */
-export const FocusRulesItem: FC<Props> = props => {
+export const FocusRulesItem: FC<Props> = observer(props => {
   const {
     focusRule: { id, name, active, disabled },
+    hideInfo,
   } = props
 
   const translate = useTranslate()
@@ -29,12 +32,14 @@ export const FocusRulesItem: FC<Props> = props => {
   return (
     <li>
       <Checkbox checked={active} onClick={handleSwitch} label={name} disabled={disabled} />
-      <IconButton
-        icon="&#xE912;"
-        label={translate("Show details")}
-        onClick={handleChangeInlineLibraryEntry}
-        flat
-      />
+      {hideInfo === true ? null : (
+        <IconButton
+          icon="&#xE912;"
+          label={translate("Show details")}
+          onClick={handleChangeInlineLibraryEntry}
+          flat
+        />
+      )}
     </li>
   )
-}
+})

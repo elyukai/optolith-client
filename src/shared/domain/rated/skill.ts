@@ -2,7 +2,7 @@ import type { ImprovementCost } from "@optolith/adventure-points/improvement-cos
 import type { Skill, SkillCheck } from "@optolith/database-schema/gen"
 import { computed } from "mobx"
 import type { Global } from "../../global.ts"
-import type { Character } from "../character.ts"
+import type { BaseCharacter, Character } from "../character.ts"
 import { Case } from "../databaseEnum.ts"
 import { CharacterRatedEntries, CharacterRatedEntry, type DisplayedRated } from "./ratedEntry.ts"
 
@@ -76,7 +76,7 @@ export type DisplayedSkill = DisplayedRated & {
 }
 
 export class CharacterSkills extends CharacterRatedEntries<"Skill", CharacterSkill> {
-  constructor(global: Global, character: Character) {
+  constructor(global: Global, character: BaseCharacter) {
     super(global, character, "Skill", CharacterSkill)
   }
 

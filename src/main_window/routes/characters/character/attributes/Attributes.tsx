@@ -1,4 +1,4 @@
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import type { FC } from "react"
 import { Main } from "../../../../../shared/components/main/Main.tsx"
 import { Page } from "../../../../../shared/components/page/Page.tsx"

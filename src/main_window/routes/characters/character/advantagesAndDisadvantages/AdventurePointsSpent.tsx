@@ -1,4 +1,4 @@
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import type { FC } from "react"
 import { GridItem } from "../../../../../shared/components/grid/GridItem.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"

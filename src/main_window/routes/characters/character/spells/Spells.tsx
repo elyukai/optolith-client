@@ -1,5 +1,5 @@
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { useCallback, useMemo, useState, type FC } from "react"
 import { Button } from "../../../../../shared/components/button/Button.tsx"
 import { List } from "../../../../../shared/components/list/List.tsx"
@@ -119,7 +119,7 @@ export const Spells: FC = observer(() => {
           <RadioButtonGroup
             active={sortOrder}
             label={translate("Sort By")}
-            array={[
+            options={[
               {
                 name: translate("Name"),
                 value: SpellsSortOrder.Name,
@@ -301,7 +301,7 @@ export const Spells: FC = observer(() => {
         <RadioButtonGroup
           active={sortOrder}
           label={translate("Sort By")}
-          array={[
+          options={[
             {
               name: translate("Name"),
               value: SpellsSortOrder.Name,

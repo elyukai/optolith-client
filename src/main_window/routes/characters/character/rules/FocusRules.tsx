@@ -1,5 +1,5 @@
 import { on } from "@elyukai/utils/function"
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { type FC, useMemo } from "react"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
@@ -10,7 +10,7 @@ import { FocusRulesItem } from "./FocusRulesItem.tsx"
 /**
  * Returns a page section for managing focus rules.
  */
-export const FocusRules: FC = observer(() => {
+export const FocusRules: FC<{ hideInfo?: boolean }> = observer(({ hideInfo }) => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const localeCompare = useLocaleCompare()
@@ -27,7 +27,7 @@ export const FocusRules: FC = observer(() => {
       <h2>{translate("Focus Rules")}</h2>
       <ul className="focus-rules">
         {focusRuleOptions.map(focusRule => (
-          <FocusRulesItem key={focusRule.id} focusRule={focusRule} />
+          <FocusRulesItem key={focusRule.id} focusRule={focusRule} hideInfo={hideInfo} />
         ))}
       </ul>
     </>

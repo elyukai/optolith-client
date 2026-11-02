@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback, useRef } from "react"
 import { AvatarWrapper } from "../../../shared/components/avatarWrapper/AvatarWrapper.tsx"
 import { Button } from "../../../shared/components/button/Button.tsx"
@@ -21,7 +22,7 @@ type Props = {
 /**
  * Returns a single character item.
  */
-export const CharacterListItem: FC<Props> = props => {
+export const CharacterListItem: FC<Props> = observer(props => {
   const {
     character: {
       id,
@@ -118,4 +119,4 @@ export const CharacterListItem: FC<Props> = props => {
       </ListItemButtons>
     </ListItem>
   )
-}
+})

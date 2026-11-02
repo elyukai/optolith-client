@@ -8,7 +8,7 @@ import type {
 import { action, computed, observable } from "mobx"
 import type { Global } from "../../global.ts"
 import { AdventurePointsCache } from "../adventurePoints/cache.ts"
-import type { Character } from "../character.ts"
+import type { BaseCharacter, Character } from "../character.ts"
 import {
   type RegistrationMethod,
   addOrRemoveDependency,
@@ -40,12 +40,12 @@ export abstract class TinyActivatable<Entity extends TinyActivatableIdentifier["
   @observable accessor active: boolean
   readonly entityName: Entity
   readonly dbEntry: EntityMap[Entity]
-  readonly character: Character
+  readonly character: BaseCharacter
   @observable accessor dependencies: TinyActivatableDependency[] = []
 
   constructor(
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     id: string,
     entityName: Entity,
     dbEntry: EntityMap[Entity] | undefined = global.db.getInstanceOfEntityById(entityName, id),
@@ -80,7 +80,7 @@ type TinyActivatableConstructor<
 > = {
   new (
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     id: string,
     entityName: Entity,
     dbEntry?: EntityMap[Entity],
@@ -93,14 +93,14 @@ export abstract class TinyActivatables<
   T extends TinyActivatable<Entity>,
 > {
   readonly global: Global
-  readonly character: Character
+  readonly character: BaseCharacter
   readonly entityName: Entity
   readonly creator: TinyActivatableConstructor<Entity, T>
   @observable accessor activatables: Map<string, T> = new Map()
 
   constructor(
     global: Global,
-    character: Character,
+    character: BaseCharacter,
     entityName: Entity,
     creator: TinyActivatableConstructor<Entity, T>,
   ) {

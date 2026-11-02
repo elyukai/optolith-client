@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
@@ -8,6 +9,7 @@ import { InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.ts
 
 type Props = {
   optionalRule: CharacterOptionalRuleOverview
+  hideInfo?: boolean
 }
 
 // const getKey = (option: DropdownOption<number>) => option.id
@@ -15,9 +17,10 @@ type Props = {
 /**
  * Returns a single optional rule item.
  */
-export const OptionalRulesItem: FC<Props> = props => {
+export const OptionalRulesItem: FC<Props> = observer(props => {
   const {
     optionalRule: { id, name, active, disabled },
+    hideInfo,
   } = props
 
   const translate = useTranslate()
@@ -56,12 +59,14 @@ export const OptionalRulesItem: FC<Props> = props => {
           getKey={getKey}
         />
       ) : null */}
-      <IconButton
-        icon="&#xE912;"
-        label={translate("Show details")}
-        onClick={handleChangeInlineLibraryEntry}
-        flat
-      />
+      {hideInfo === true ? null : (
+        <IconButton
+          icon="&#xE912;"
+          label={translate("Show details")}
+          onClick={handleChangeInlineLibraryEntry}
+          flat
+        />
+      )}
     </li>
   )
-}
+})

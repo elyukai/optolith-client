@@ -7,7 +7,7 @@ import type {
 } from "@optolith/database-schema/gen"
 import { computed } from "mobx"
 import type { Global } from "../../global.ts"
-import type { Character } from "../character.ts"
+import type { BaseCharacter, Character } from "../character.ts"
 import { Case } from "../databaseEnum.ts"
 import { CharacterRatedEntries, CharacterRatedEntry, type DisplayedRated } from "./ratedEntry.ts"
 
@@ -120,7 +120,7 @@ export type DisplayedRangedCombatTechnique = DisplayedCombatTechnique<"RangedCom
 export class CharacterCombatTechniques<
   Entity extends CombatTechniqueIdentifier["kind"],
 > extends CharacterRatedEntries<Entity, CharacterCombatTechnique<Entity>> {
-  constructor(global: Global, character: Character, entity: Entity) {
+  constructor(global: Global, character: BaseCharacter, entity: Entity) {
     super(global, character, entity, CharacterCombatTechnique)
   }
 

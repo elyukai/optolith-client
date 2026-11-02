@@ -1,5 +1,5 @@
 import { on } from "@elyukai/utils/function"
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { type FC, useMemo } from "react"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
@@ -10,7 +10,7 @@ import { OptionalRulesItem } from "./OptionalRulesItem.tsx"
 /**
  * Returns a page section for managing optional rules.
  */
-export const OptionalRules: FC = observer(() => {
+export const OptionalRules: FC<{ hideInfo?: boolean }> = observer(({ hideInfo }) => {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const localeCompare = useLocaleCompare()
@@ -41,7 +41,11 @@ export const OptionalRules: FC = observer(() => {
       <h2>{translate("Optional Rules")}</h2>
       <ul className="optional-rules">
         {optionalRuleOptions.map(optionalRule => (
-          <OptionalRulesItem key={optionalRule.id} optionalRule={optionalRule} />
+          <OptionalRulesItem
+            key={optionalRule.id}
+            optionalRule={optionalRule}
+            hideInfo={hideInfo}
+          />
         ))}
       </ul>
     </>

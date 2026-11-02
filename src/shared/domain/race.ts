@@ -83,13 +83,9 @@ export class CharacterRace {
     return new CharacterRace(global, raw.variant, raw.selectedAttributeAdjustment)
   }
 
-  toJSON(): RawRace | undefined {
-    if (this.id === undefined) {
-      return undefined
-    }
-
+  toJSON(): RawRace {
     return {
-      base: this.id,
+      base: this.id ?? this.variantId,
       variant: this.variantId,
       selectedAttributeAdjustment: this.selectedAttributeAdjustmentId,
     }

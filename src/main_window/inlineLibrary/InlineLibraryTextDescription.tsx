@@ -6,6 +6,7 @@ import type {
   EntityDescriptionSection,
   TextEntityDescription,
 } from "@optolith/entity-descriptions/description"
+import { observer } from "mobx-react-lite"
 import type { FC } from "react"
 import { InlineMarkdown, Markdown, type Env } from "../../shared/components/markdown/Markdown.tsx"
 import { useTranslate } from "../../shared/hooks/translate.ts"
@@ -43,39 +44,41 @@ const subtitleFallback = (
 /**
  * Displays all information about a selected entry in a sidebar.
  */
-export const InlineLibraryTextDescription: FC<Props> = ({ description, env, specialTag }) => {
-  const translate = useTranslate()
+export const InlineLibraryTextDescription: FC<Props> = observer(
+  ({ description, env, specialTag }) => {
+    const translate = useTranslate()
 
-  const subtitle = description.subtitle ?? subtitleFallback(description.entityName, translate)
+    const subtitle = description.subtitle ?? subtitleFallback(description.entityName, translate)
 
-  return (
-    <article className={[description.entityName, specialTag].filter(isNotNullish).join(" ")}>
-      <header>
-        <h2>
-          {description.title}
-          {description.badge === undefined ? null : (
-            <>
-              {" "}
-              <span
-                aria-hidden="true"
-                className={`badge badge--${toKebabCase(description.badge.type)}`}
-              >
-                {description.badge.value}
-              </span>
-            </>
-          )}
-        </h2>
-        {subtitle === undefined ? null : <p>{subtitle}</p>}
-      </header>
-      <InlineLibraryTextDescriptionBody body={description.body} env={env} />
-      {description.references === undefined ? null : (
-        <footer>
-          <p className="sources">{description.references}</p>
-        </footer>
-      )}
-    </article>
-  )
-}
+    return (
+      <article className={[description.entityName, specialTag].filter(isNotNullish).join(" ")}>
+        <header>
+          <h2>
+            {description.title}
+            {description.badge === undefined ? null : (
+              <>
+                {" "}
+                <span
+                  aria-hidden="true"
+                  className={`badge badge--${toKebabCase(description.badge.type)}`}
+                >
+                  {description.badge.value}
+                </span>
+              </>
+            )}
+          </h2>
+          {subtitle === undefined ? null : <p>{subtitle}</p>}
+        </header>
+        <InlineLibraryTextDescriptionBody body={description.body} env={env} />
+        {description.references === undefined ? null : (
+          <footer>
+            <p className="sources">{description.references}</p>
+          </footer>
+        )}
+      </article>
+    )
+  },
+)
 
 const InlineLibraryTextDescriptionBody: FC<{ body: EntityDescriptionSection[]; env: Env }> = ({
   body,

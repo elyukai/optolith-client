@@ -2,7 +2,7 @@ import type { ActivatableIdentifier, State, State_ID } from "@optolith/database-
 import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
 import { observable } from "mobx"
 import type { Global } from "../global.ts"
-import type { Character } from "./character.ts"
+import type { BaseCharacter } from "./character.ts"
 import {
   addOrRemoveDependency,
   type RegistrationMethod,
@@ -47,11 +47,11 @@ export type DisplayedState = {
 
 export class CharacterStates {
   readonly global: Global
-  readonly character: Character
+  readonly character: BaseCharacter
 
   @observable accessor #states: Map<State_ID, CharacterState> = new Map()
 
-  constructor(global: Global, character: Character) {
+  constructor(global: Global, character: BaseCharacter) {
     this.global = global
     this.character = character
   }

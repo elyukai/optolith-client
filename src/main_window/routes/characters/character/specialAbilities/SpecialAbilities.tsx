@@ -1,4 +1,4 @@
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback, useMemo, useState } from "react"
 import { Button } from "../../../../../shared/components/button/Button.tsx"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
@@ -110,7 +110,7 @@ export const SpecialAbilities: FC = observer(() => {
           <RadioButtonGroup
             active={sortOrder}
             label={translate("Sort By")}
-            array={[
+            options={[
               {
                 name: translate("Name"),
                 value: SpecialAbilitiesSortOrder.Name,
@@ -162,7 +162,7 @@ export const SpecialAbilities: FC = observer(() => {
         <RadioButtonGroup
           active={sortOrder}
           label={translate("Sort By")}
-          array={[
+          options={[
             {
               name: translate("Name"),
               value: SpecialAbilitiesSortOrder.Name,

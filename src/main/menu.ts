@@ -1,13 +1,11 @@
-import type { TSONDBTypes } from "@optolith/database-schema"
-import type { Cache } from "@optolith/database-schema/cache"
 import type { Locale } from "@optolith/database-schema/gen"
 import Debug from "debug"
 import { app, Menu, type MenuItemConstructorOptions } from "electron/main"
 import { runInAction } from "mobx"
-import type { ReadonlyTSONDB } from "tsondb/readonly"
 import type { Characters } from "../shared/domain/character.ts"
+import type { Global } from "../shared/global.ts"
 import { runAsync } from "../shared/utils/async.ts"
-import type { LocaleEnvironment } from "../shared/utils/locale.ts"
+import type { GlobalIPCSelectors } from "./index.ts"
 import { createMainWindow } from "./mainWindow.ts"
 import { createSettingsWindow } from "./settingsWindow.ts"
 
@@ -15,15 +13,14 @@ const debug = Debug("main:menu")
 debug.log = console.log.bind(console)
 
 export const setMenu = (
+  global: Global,
   isMac: boolean,
-  db: ReadonlyTSONDB<TSONDBTypes>,
-  cache: Cache,
   locales: Record<string, Locale>,
-  localeEnvironment: LocaleEnvironment,
+  globalSelectors: GlobalIPCSelectors,
   characters: Characters,
 ) =>
   runInAction(() => {
-    const { translate } = localeEnvironment
+    const { translate } = global.locale
 
     const template: MenuItemConstructorOptions[] = [
       // { role: "appMenu" }
@@ -42,7 +39,7 @@ export const setMenu = (
                   accelerator: "Command+,",
                   click: runAsync(debug, async () => {
                     await createSettingsWindow(locales, () =>
-                      setMenu(isMac, db, cache, locales, localeEnvironment, characters),
+                      setMenu(global, isMac, locales, globalSelectors, characters),
                     )
                   }),
                 },
@@ -83,7 +80,12 @@ export const setMenu = (
             label: translate("New Character"),
             accelerator: "CommandOrControl+N",
             click: runAsync(debug, async () => {
-              const mainWindow = await createMainWindow(locales, db, cache, characters)
+              const mainWindow = await createMainWindow(
+                global,
+                locales,
+                globalSelectors,
+                characters,
+              )
               mainWindow.webContents.send("new-character")
             }),
           },
@@ -182,7 +184,7 @@ export const setMenu = (
                   label: translate("Main Window"),
                   accelerator: "Command+0",
                   click: runAsync(debug, async () => {
-                    await createMainWindow(locales, db, cache, characters)
+                    await createMainWindow(global, locales, globalSelectors, characters)
                   }),
                 },
                 { type: "separator" },

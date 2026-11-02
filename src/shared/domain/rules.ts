@@ -248,17 +248,17 @@ export class CharacterRules {
   /**
    * Whether the character makes use of all publications except for publications with adult content, which have to be specified explicitly using `include_publications`.
    */
-  @observable accessor includeAllPublications: boolean
+  @observable accessor includeAllPublications: boolean = false
 
   /**
    * Explicitly used publications. If `include_all_publications` is set to `true`, only affects publications that are not covered by `include_all_publications`.
    */
-  @observable accessor includePublications: Set<Publication_ID>
+  @observable accessor includePublications: Set<Publication_ID> = new Set()
 
   /**
    * Dependencies on certain publications.
    */
-  @observable accessor publicationDependencies: PublicationDependency[]
+  @observable accessor publicationDependencies: PublicationDependency[] = []
 
   /**
    * A map of focus rules that may be active for the character.
@@ -283,7 +283,6 @@ export class CharacterRules {
     this.global = global
     this.includeAllPublications = includeAllPublications
     this.includePublications = new Set(includePublications)
-    this.publicationDependencies = []
     this.focusRules = new CharacterFocusRuleCollection(global, this)
     this.optionalRules = new CharacterOptionalRuleCollection(global, this)
     this.alternativeRules = new CharacterAlternativeRuleCollection(global, this)

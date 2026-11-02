@@ -1,4 +1,4 @@
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback, useState } from "react"
 import { Button } from "../../../shared/components/button/Button.tsx"
 import { Grid } from "../../../shared/components/grid/Grid.tsx"
@@ -10,10 +10,13 @@ import { Scroll } from "../../../shared/components/scroll/Scroll.tsx"
 import { TextField } from "../../../shared/components/textField/TextField.tsx"
 import { CharactersSortOrder } from "../../../shared/domain/sortOrders.ts"
 import { useTranslate } from "../../../shared/hooks/translate.ts"
+import { CharacterStateAndActionsContext } from "../../context/CharacterStateAndActions.ts"
+import { NewCharacterActions, SharedGlobalState } from "../../external.ts"
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.ts"
 import { changeCharactersSortOrder, selectCharactersSortOrder } from "../../slices/settingsSlice.ts"
 import { CharacterList } from "./CharacterList.tsx"
 import "./Characters.scss"
+import { HeroCreationDialog } from "./HeroCreation.tsx"
 
 /**
  * Returns a page for managing characters.
@@ -28,6 +31,7 @@ export const Characters: FC = observer(() => {
     (id: CharactersSortOrder) => dispatch(changeCharactersSortOrder(id)),
     [dispatch],
   )
+  const [isCharacterCreatorOpen, setIsCharacterCreatorOpen] = useState(false)
 
   return (
     <Page id="characters">
@@ -56,7 +60,7 @@ export const Characters: FC = observer(() => {
         <RadioButtonGroup
           active={sortOrder}
           label={translate("Sort By")}
-          array={[
+          options={[
             {
               name: translate("Name"),
               value: CharactersSortOrder.Name,
@@ -73,10 +77,7 @@ export const Characters: FC = observer(() => {
           onClick={handleChangeSortOrder}
         />
         <Grid size="small">
-          <Button
-            /* TODO: onClick={openCharacterCreator} */
-            primary
-          >
+          <Button onClick={() => setIsCharacterCreatorOpen(true)} primary>
             {translate("New Character")}
           </Button>
           <Button /* TODO: onClick={importHero} */>{translate("Import")}</Button>
@@ -87,14 +88,14 @@ export const Characters: FC = observer(() => {
           <CharacterList filterText={filterText} sortOrder={sortOrder} />
         </Scroll>
       </Main>
-      {/* <HeroCreation
-        close={closeCharacterCreator}
-        isOpen={isCharacterCreatorOpen}
-        createHero={createHero}
-        experienceLevels={experienceLevels}
-        staticData={staticData}
-        sortedBooks={sortedBooks}
-        /> */}
+      <CharacterStateAndActionsContext.Provider
+        value={{ state: SharedGlobalState, actions: NewCharacterActions }}
+      >
+        <HeroCreationDialog
+          close={() => setIsCharacterCreatorOpen(false)}
+          isOpen={isCharacterCreatorOpen}
+        />
+      </CharacterStateAndActionsContext.Provider>
     </Page>
   )
 })

@@ -1,4 +1,4 @@
-import type { Character } from "../../character.ts"
+import type { BaseCharacter } from "../../character.ts"
 import type { Case } from "../../databaseEnum.ts"
 import type { RegistrationFunction, RegistrationMethod } from "../registrationHelpers.ts"
 import { registerOrUnregisterActivatablePrerequisiteAsDependency } from "./activatable.ts"
@@ -81,7 +81,7 @@ export const registerOrUnregisterPrerequisiteAsDependencyForType = <
 >(
   p: T,
   method: RegistrationMethod,
-  character: Character,
+  character: BaseCharacter,
   sourceId: DerivedSourceId<T>,
   index: number,
   isPartOfDisjunction: boolean,

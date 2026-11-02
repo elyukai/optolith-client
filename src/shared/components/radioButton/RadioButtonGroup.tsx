@@ -18,7 +18,7 @@ export type RadioOption<A extends RadioOptionValue = RadioOptionValue> = {
 
 interface Props<A extends RadioOptionValue = RadioOptionValue> {
   active: A | undefined
-  array: RadioOption<A>[]
+  options: RadioOption<A>[]
   disabled?: boolean
   label?: string
   onClick?(option: A | undefined): void
@@ -31,7 +31,7 @@ interface Props<A extends RadioOptionValue = RadioOptionValue> {
 export const RadioButtonGroup = <A extends RadioOptionValue = RadioOptionValue>(
   props: Props<A>,
 ): React.ReactElement => {
-  const { active, array: xs, disabled, label, onClick, onClickJust } = props
+  const { active, options: xs, disabled, label, onClick, onClickJust } = props
 
   const onClickCombined = (optionValue: A | undefined) => () => {
     if (typeof onClick === "function") {

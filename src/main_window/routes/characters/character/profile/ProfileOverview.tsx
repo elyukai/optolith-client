@@ -1,4 +1,4 @@
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback, useState } from "react"
 import { AvatarWrapper } from "../../../../../shared/components/avatarWrapper/AvatarWrapper.tsx"
 import { Button } from "../../../../../shared/components/button/Button.tsx"

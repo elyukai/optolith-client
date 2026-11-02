@@ -2,7 +2,7 @@ import { on } from "@elyukai/utils/function"
 import { compareNumber, reduceCompare } from "@elyukai/utils/ordering"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import { compareImprovementCost } from "@optolith/adventure-points/improvement-cost"
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback, useMemo, useState } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { Grid } from "../../../../../shared/components/grid/Grid.tsx"
@@ -102,7 +102,7 @@ export const Skills: FC = observer(() => {
         <RadioButtonGroup
           active={sortOrder}
           label={translate("Sort By")}
-          array={[
+          options={[
             {
               name: translate("Name"),
               value: SkillsSortOrder.Name,

@@ -31,9 +31,11 @@
 // import { Just } from "./Data/Maybe"
 // import { uncurryN } from "./Data/Tuple/Curry"
 // import { Unit } from "./Data/Unit"
+import { configure } from "mobx"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
+import { DatabaseSettingsContext } from "../shared/contexts/databaseSettings.ts"
 import { LocalizationContext } from "../shared/contexts/localization.ts"
 import { onGlobalSettingsUpdate } from "../shared/settings/listeningRenderer.ts"
 import "../shared/styles/index.scss"
@@ -41,6 +43,7 @@ import { LocaleEnvironment } from "../shared/utils/locale.ts"
 import { ExternalAPI } from "./external.ts"
 import { init } from "./init.ts"
 import { Root } from "./routes/Root.tsx"
+import { goToTab } from "./slices/routeSlice.ts"
 import {
   setAreAnimationsEnabled,
   setFallbackLocale,
@@ -48,6 +51,13 @@ import {
   setLocale,
 } from "./slices/settingsSlice.ts"
 import { store } from "./store.ts"
+
+configure({
+  enforceActions: "always",
+  computedRequiresReaction: true,
+  reactionRequiresObservable: true,
+  observableRequiresReaction: true,
+})
 
 // webFrame.setZoomFactor (1)
 // webFrame.setVisualZoomLevelLimits (1, 1)
@@ -175,9 +185,11 @@ ExternalAPI.on("initial-setup", data => {
   root.render(
     <StrictMode>
       <Provider store={store}>
-        <LocalizationContext.Provider value={localeEnvironment}>
-          <Root />
-        </LocalizationContext.Provider>
+        <DatabaseSettingsContext.Provider value={data.settings}>
+          <LocalizationContext.Provider value={localeEnvironment}>
+            <Root />
+          </LocalizationContext.Provider>
+        </DatabaseSettingsContext.Provider>
       </Provider>
     </StrictMode>,
   )
@@ -203,4 +215,8 @@ ExternalAPI.on("blur", () => {
 
 ExternalAPI.on("focus", () => {
   document.documentElement.classList.remove("blurred")
+})
+
+ExternalAPI.on("goto", route => {
+  store.dispatch(goToTab(route))
 })

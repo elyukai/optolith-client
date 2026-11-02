@@ -2,16 +2,16 @@ import { on } from "@elyukai/utils/function"
 import { compareNumber, reduceCompare } from "@elyukai/utils/ordering"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type { PublicationCategory } from "@optolith/database-schema/gen"
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback, useMemo } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useAppDispatch } from "../../../../hooks/redux.ts"
 import { RuleSourcesListItem } from "./RuleSourcesListItem.tsx"
-import { useCharacterState } from "../../../../hooks/characterState.ts"
-import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 
 const publicationCategoryToNumber = (category: PublicationCategory): number => {
   switch (category.kind) {
@@ -63,11 +63,11 @@ export const RuleSources: FC = observer(() => {
         onClick={handleSwitchIncludeAllPublications}
         label={translate("Use all publications")}
       />
-      <div className="rule-books">
+      <ul className="rule-books">
         {publicationOptions.map(e => (
           <RuleSourcesListItem key={e.id} publication={e} />
         ))}
-      </div>
+      </ul>
     </>
   )
 })

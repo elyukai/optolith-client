@@ -2,7 +2,7 @@ import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import { type Case, fromUniformCase } from "tsondb/schema/gen"
 import type { Global } from "../../../global.ts"
-import type { Character } from "../../character.ts"
+import type { BaseCharacter } from "../../character.ts"
 import { checkActivatablePrerequisite } from "./activatablePrerequisiteValidation.ts"
 import { checkAncestorBloodPrerequisite } from "./ancestorBloodPrerequisiteValidation.ts"
 import { checkAnimistPowerPrerequisite } from "./animistPowerPrerequisiteValidation.ts"
@@ -99,7 +99,7 @@ export const validatePrerequisite = <P extends AnyPrerequisite>(
 
 export const createCapabilitiesFromCharacter = (
   global: Global,
-  character: Character,
+  character: BaseCharacter,
 ): AllCapabilities => {
   const caps: AllCapabilities = {
     get activeAdvantages() {

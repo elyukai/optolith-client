@@ -1,7 +1,7 @@
 import { on } from "@elyukai/utils/function"
 import { reduceCompare } from "@elyukai/utils/ordering"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { type FC, useMemo } from "react"
 import { List } from "../../../shared/components/list/List.tsx"
 import { CharactersSortOrder } from "../../../shared/domain/sortOrders.ts"

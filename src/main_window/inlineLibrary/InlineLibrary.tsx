@@ -1,7 +1,7 @@
 import type { AvailableCreatorEntity } from "@optolith/entity-descriptions"
 import type { EntityDescription } from "@optolith/entity-descriptions/description"
 import { action, computed, observable } from "mobx"
-import { observer } from "mobx-react"
+import { observer } from "mobx-react-lite"
 import { type FC, useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import "../../database/contents/assets/core.css"

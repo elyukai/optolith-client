@@ -11,7 +11,7 @@ import type {
   SpellworkIdentifier,
   SpellworkPrerequisites,
 } from "@optolith/database-schema/gen"
-import type { Character } from "../character.ts"
+import type { BaseCharacter } from "../character.ts"
 import type { Case } from "../databaseEnum.ts"
 import {
   registerOrUnregisterPlainPrerequisites,
@@ -34,7 +34,7 @@ import type { AdvantageIdentifier, DisadvantageIdentifier } from "@optolith/data
 export const registerOrUnregisterPrerequisitesOfPlainGeneralAsDependencies = (
   p: PlainGeneralPrerequisites,
   method: RegistrationMethod,
-  character: Character,
+  character: BaseCharacter,
   sourceId: SpecialAbilityIdentifier,
 ): void =>
   registerOrUnregisterPlainPrerequisites(
@@ -52,7 +52,7 @@ export const registerOrUnregisterPrerequisitesOfPlainGeneralAsDependencies = (
 export const registerOrUnregisterPrerequisitesOfGeneralAsDependencies = (
   p: GeneralPrerequisites,
   method: RegistrationMethod,
-  character: Character,
+  character: BaseCharacter,
   sourceId: SpecialAbilityIdentifier,
   levelRange: RangeBounds,
 ): void =>
@@ -90,7 +90,7 @@ export const registerOrUnregisterPrerequisitesOfGeneralAsDependencies = (
 export const registerOrUnregisterPrerequisitesOfAdvantageOrDisadvantageAsDependencies = (
   p: AdvantageDisadvantagePrerequisites,
   method: RegistrationMethod,
-  character: Character,
+  character: BaseCharacter,
   sourceId: Case<"Advantage" | "Disadvantage", string>,
   levelRange: RangeBounds,
 ): void =>
@@ -146,7 +146,7 @@ export const registerOrUnregisterPrerequisitesOfAdvantageOrDisadvantageAsDepende
 export const registerOrUnregisterPrerequisitesOfSpellworkAsDependencies = (
   p: SpellworkPrerequisites,
   method: RegistrationMethod,
-  character: Character,
+  character: BaseCharacter,
   sourceId: SpellworkIdentifier,
 ): void =>
   registerOrUnregisterPlainPrerequisites(
@@ -164,7 +164,7 @@ export const registerOrUnregisterPrerequisitesOfSpellworkAsDependencies = (
 export const registerOrUnregisterPrerequisitesOfLiturgyAsDependencies = (
   p: LiturgyPrerequisites,
   method: RegistrationMethod,
-  character: Character,
+  character: BaseCharacter,
   sourceId: LiturgyIdentifier,
 ): void =>
   registerOrUnregisterPlainPrerequisites(
@@ -254,7 +254,7 @@ export const registerOrUnregisterPrerequisitesOfLiturgyAsDependencies = (
 export const registerOrUnregisterPrerequisitesOfEnhancementAsDependencies = (
   p: EnhancementPrerequisites,
   method: RegistrationMethod,
-  character: Character,
+  character: BaseCharacter,
   sourceId: SkillWithEnhancementsIdentifier,
 ): void =>
   registerOrUnregisterPlainPrerequisites(
