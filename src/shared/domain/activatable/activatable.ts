@@ -1,5 +1,5 @@
 import { partition } from "@elyukai/utils/array/groups"
-import { ensureNonEmpty, isNotEmpty } from "@elyukai/utils/array/nonEmpty"
+import { ensureNonEmpty, isEmpty, isNotEmpty } from "@elyukai/utils/array/nonEmpty"
 import { count, sum, sumWith } from "@elyukai/utils/array/reductions"
 import { deepEqual } from "@elyukai/utils/equality"
 import { isNotNullish } from "@elyukai/utils/nullable"
@@ -20,10 +20,12 @@ import type {
 } from "@optolith/database-schema/cache"
 import type {
   ActivatableIdentifier,
+  AdvantageDisadvantagePrerequisites,
   AdventurePointsValueByLevel,
   EntityMap,
   FixedAdventurePointsValue,
   GeneralPrerequisites,
+  RulePrerequisite,
   SpecialAbilityIdentifier,
 } from "@optolith/database-schema/gen"
 import {
@@ -32,7 +34,7 @@ import {
   renderActivatableNameComponentsWithoutLevel,
 } from "@optolith/entity-descriptions/entities/partial/activatableNameChunks"
 import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
-import { action, computed, get, observable, toJS } from "mobx"
+import { action, computed, observable, toJS } from "mobx"
 import type { Global } from "../../global.ts"
 import {
   addAdventurePointsCaches,
@@ -971,20 +973,18 @@ export class CharacterActivatable<
   }
 
   checkPrerequisitesForLevel(level: number): boolean {
-    return this.dbEntry.prerequisites === undefined
+    return isEmpty(this.prerequisites)
       ? true
       : this.entityName === "Advantage" || this.entityName === "Disadvantage"
         ? checkPrerequisitesOfAdvantageOrDisadvantage(
-            (this.dbEntry as EntityMap[Extract<Entity, "Advantage" | "Disadvantage">])
-              .prerequisites!,
+            this.prerequisites,
             level,
             this.entityName,
             this.id,
             this.character.prerequisiteCapabilities,
           )
         : checkPrerequisitesOfGeneralEntryWithLevels(
-            (this.dbEntry as EntityMap[Exclude<Entity, "Advantage" | "Disadvantage">])
-              .prerequisites!,
+            this.prerequisites as GeneralPrerequisites,
             level,
             this.character.prerequisiteCapabilities,
           )
@@ -1067,14 +1067,42 @@ export class CharacterActivatable<
     }
   }
 
+  @computed
+  get prerequisites(): Entity extends "Advantage" | "Disadvantage"
+    ? AdvantageDisadvantagePrerequisites
+    : GeneralPrerequisites {
+    const staticPrerequisites = this.dbEntry.prerequisites ?? []
+    const dynamicPrerequisite: RulePrerequisite | undefined = (() => {
+      switch (this.entityName) {
+        case "CombatStyleSpecialAbility":
+          return { id: Case("FocusRule", this.global.settings.styles.combat), active: true }
+        case "LiturgicalStyleSpecialAbility":
+          return { id: Case("FocusRule", this.global.settings.styles.liturgical), active: true }
+        case "MagicStyleSpecialAbility":
+          return { id: Case("FocusRule", this.global.settings.styles.magic), active: true }
+        case "SkillStyleSpecialAbility":
+          return { id: Case("FocusRule", this.global.settings.styles.skill), active: true }
+        default:
+          return undefined
+      }
+    })()
+    return staticPrerequisites.concat(
+      dynamicPrerequisite === undefined
+        ? []
+        : [{ level: 1, prerequisite: Case("Single", Case("Rule", dynamicPrerequisite)) }],
+    ) as Entity extends "Advantage" | "Disadvantage"
+      ? AdvantageDisadvantagePrerequisites
+      : GeneralPrerequisites
+  }
+
   @action
   add(instance: SerializedActivatableInstance) {
     this.instances.push(new CharacterActivatableInstance(instance, this))
-    if (this.dbEntry.prerequisites !== undefined) {
+    if (isNotEmpty(this.prerequisites)) {
       const levelRange: RangeBounds = [1, instance.level ?? 1]
       if (this.entityName === "Advantage" || this.entityName === "Disadvantage") {
         registerOrUnregisterPrerequisitesOfAdvantageOrDisadvantageAsDependencies(
-          this.dbEntry.prerequisites,
+          this.prerequisites,
           RegistrationMethod.Add,
           this.character,
           Case(this.entityName satisfies "Advantage" | "Disadvantage", this.id),
@@ -1082,7 +1110,7 @@ export class CharacterActivatable<
         )
       } else {
         registerOrUnregisterPrerequisitesOfGeneralAsDependencies(
-          this.dbEntry.prerequisites as GeneralPrerequisites,
+          this.prerequisites as GeneralPrerequisites,
           RegistrationMethod.Add,
           this.character,
           Case(this.entityName satisfies SpecialAbilityIdentifier["kind"], this.id),
@@ -1097,13 +1125,13 @@ export class CharacterActivatable<
     if (this.instances[index]?.level !== undefined) {
       const oldLevel = this.instances[index].level
       this.instances[index].level = newLevel
-      if (this.dbEntry.prerequisites !== undefined) {
+      if (isNotEmpty(this.prerequisites)) {
         const method = newLevel > oldLevel ? RegistrationMethod.Add : RegistrationMethod.Remove
         const levelRange: RangeBounds =
           newLevel > oldLevel ? [oldLevel + 1, newLevel] : [newLevel + 1, oldLevel]
         if (this.entityName === "Advantage" || this.entityName === "Disadvantage") {
           registerOrUnregisterPrerequisitesOfAdvantageOrDisadvantageAsDependencies(
-            this.dbEntry.prerequisites,
+            this.prerequisites,
             method,
             this.character,
             Case(this.entityName satisfies "Advantage" | "Disadvantage", this.id),
@@ -1111,7 +1139,7 @@ export class CharacterActivatable<
           )
         } else {
           registerOrUnregisterPrerequisitesOfGeneralAsDependencies(
-            this.dbEntry.prerequisites as GeneralPrerequisites,
+            this.prerequisites as GeneralPrerequisites,
             method,
             this.character,
             Case(this.entityName satisfies SpecialAbilityIdentifier["kind"], this.id),
@@ -1129,11 +1157,11 @@ export class CharacterActivatable<
       return
     }
     this.instances.splice(index, 1)
-    if (this.dbEntry.prerequisites !== undefined) {
+    if (isNotEmpty(this.prerequisites)) {
       const levelRange: RangeBounds = [1, instance.level ?? 1]
       if (this.entityName === "Advantage" || this.entityName === "Disadvantage") {
         registerOrUnregisterPrerequisitesOfAdvantageOrDisadvantageAsDependencies(
-          this.dbEntry.prerequisites,
+          this.prerequisites,
           RegistrationMethod.Remove,
           this.character,
           Case(this.entityName satisfies "Advantage" | "Disadvantage", this.id),
@@ -1141,7 +1169,7 @@ export class CharacterActivatable<
         )
       } else {
         registerOrUnregisterPrerequisitesOfGeneralAsDependencies(
-          this.dbEntry.prerequisites as GeneralPrerequisites,
+          this.prerequisites as GeneralPrerequisites,
           RegistrationMethod.Remove,
           this.character,
           Case(this.entityName satisfies SpecialAbilityIdentifier["kind"], this.id),
@@ -1442,7 +1470,7 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
   }
 
   getById(id: string): CharacterActivatable<Entity> | undefined {
-    return get(this.#activatables, id)
+    return this.#activatables.get(id)
   }
 
   getByIdSafe(id: string, dbEntry?: EntityMap[Entity]): CharacterActivatable<Entity> {
