@@ -177,7 +177,7 @@ export const SpecialAbilities: FC = observer(() => {
         <Button onClick={openSlidein}>{translate("Add")}</Button>
       </Options>
       <Main>
-        <Scroll stable>
+        <Scroll>
           <ListHeader>
             <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
             <ListHeaderTag className="group">{translate("Group")}</ListHeaderTag>

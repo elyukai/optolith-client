@@ -120,15 +120,15 @@ export const Disadvantages: FC = observer(() => {
         </Checkbox> */}
         </Options>
         <Main classOnly>
-          <ListHeader>
-            <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
-            <ListHeaderTag className="cost" hint={translate("Adventure Points")}>
-              {translate("AP")}
-            </ListHeaderTag>
-            <ListHeaderTag className="btn-placeholder" />
-            <ListHeaderTag className="btn-placeholder" />
-          </ListHeader>
           <Scroll>
+            <ListHeader>
+              <ListHeaderTag className="name">{translate("Name")}</ListHeaderTag>
+              <ListHeaderTag className="cost" hint={translate("Adventure Points")}>
+                {translate("AP")}
+              </ListHeaderTag>
+              <ListHeaderTag className="btn-placeholder" />
+              <ListHeaderTag className="btn-placeholder" />
+            </ListHeader>
             {inactiveList.length > 0 ? (
               <List>
                 {inactiveList.map(x => (
