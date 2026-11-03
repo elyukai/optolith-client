@@ -1,6 +1,10 @@
 import { observer } from "mobx-react-lite"
 import type { FC } from "react"
 import { GridItem } from "../../../../../shared/components/grid/GridItem.tsx"
+import {
+  maximumAdventurePointsForAdventagesAndDisadvantages,
+  maximumAdventurePointsForBlessedAdventagesAndDisadvantages,
+} from "../../../../../shared/domain/activatable/advantagesDisadvantages.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 
@@ -16,9 +20,6 @@ export const AdventurePointsSpent: FC = observer(() => {
       maximumForMagicalAdvantagesDisadvantages,
     adventurePointsStats: stats,
   } = useCharacterState()
-
-  const maximumAdventurePointsForAdventagesAndDisadvantages = 80
-  const maximumAdventurePointsForBlessedAdventagesAndDisadvantages = 50
 
   return (
     <GridItem>
