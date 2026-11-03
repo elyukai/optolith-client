@@ -10,6 +10,7 @@ import type {
   RaceVariant_ID,
 } from "@optolith/database-schema/gen"
 import { parensIf } from "@optolith/entity-descriptions/entities/partial/rated/activatable/parensIf"
+import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
 import { computed, observable } from "mobx"
 import type { Global } from "../global.ts"
 import type { BaseCharacter } from "./character.ts"
@@ -63,6 +64,11 @@ export class CharacterRace {
   }
 
   @computed
+  get adventurePoints(): number {
+    return this.base?.ap_value ?? 0
+  }
+
+  @computed
   get baseName(): string | undefined {
     return this.global.locale.translateMap(this.base?.translations)?.name
   }
@@ -83,6 +89,33 @@ export class CharacterRace {
       return undefined
     }
     return this.baseName + parensIf(this.variantName)
+  }
+
+  static getRacesForDisplay(character: BaseCharacter): RaceForDisplay[] {
+    return character.global.db
+      .getAllInstanceContainersOfEntity("Race")
+      .filter(race =>
+        isEntryFromIncludedPublication(
+          race.content,
+          character.global.db.getInstanceOfEntityById.bind(character.global.db),
+          character.global.locale.translateMap,
+          character.rules.publicationOptions,
+        ),
+      )
+      .map(race => ({
+        id: race.id,
+        name: character.global.locale.translateMap(race.content.translations)?.name ?? race.id,
+        apValue: race.content.ap_value,
+        variantId:
+          character.global.db
+            .getAllChildInstanceContainersForParent("RaceVariant", race.id)
+            .toSorted(
+              on(
+                rv => character.global.locale.translateMap(rv.content.translations)?.name ?? "",
+                character.global.locale.compare,
+              ),
+            )[0]?.id ?? race.id,
+      }))
   }
 
   @computed

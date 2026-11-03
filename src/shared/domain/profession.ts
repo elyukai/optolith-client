@@ -1,5 +1,7 @@
 import { unique } from "@elyukai/utils/array/filters"
+import { reduceWhile } from "@elyukai/utils/array/reductions"
 import { on } from "@elyukai/utils/function"
+import { Lazy } from "@elyukai/utils/lazy"
 import {
   type Nullish,
   ensure,
@@ -24,6 +26,7 @@ import type {
   ProfessionVersion_ID,
 } from "@optolith/database-schema/gen"
 import { parensIf } from "@optolith/entity-descriptions/entities/partial/rated/activatable/parensIf"
+import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
 import { action, computed, observable } from "mobx"
 import type { GetInstanceById } from "../database.ts"
 import type { Global } from "../global.ts"
@@ -101,6 +104,11 @@ export class CharacterProfession {
   }
 
   @computed
+  get adventurePoints(): number {
+    return (this.package?.ap_value ?? 0) + (this.variant?.ap_value ?? 0)
+  }
+
+  @computed
   get fullNameParts(): FullProfessionNameParts | undefined {
     if (this.version === undefined) {
       return undefined
@@ -146,6 +154,113 @@ export class CharacterProfession {
   @action
   setCustomProfessionName(newCustomProfessionName: string) {
     this.customName = newCustomProfessionName
+  }
+
+  static getProfessionsForDisplay(character: BaseCharacter): ProfessionForDisplay[] {
+    const commonProfessionValidator =
+      character.culture?.getCommonProfessionPredicate() ?? (() => true)
+    const startExperienceLevel = character.experienceLevel.start
+    const lowerOrMatchingExperienceLevelsInReverseOrder =
+      startExperienceLevel === undefined
+        ? character.global.sortedExperienceLevels
+        : character.global.sortedExperienceLevels
+            .filter(el => el.adventurePoints <= startExperienceLevel.adventure_points)
+            .reverse()
+
+    return character.global.db
+      .getAllInstanceContainersOfEntity("Profession")
+      .flatMap(
+        profession =>
+          character.global.db
+            .getAllChildInstanceContainersForParent("ProfessionVersion", profession.id)
+            .filter(professionVersion =>
+              isEntryFromIncludedPublication(
+                professionVersion.content,
+                character.global.db.getInstanceOfEntityById.bind(character.global.db),
+                character.global.locale.translateMap,
+                character.rules.publicationOptions,
+              ),
+            )
+            .map(professionVersion => {
+              const packages = character.global.db.getAllChildInstanceContainersForParent(
+                "ProfessionPackage",
+                professionVersion.id,
+              )
+
+              const professionPackage = reduceWhile(
+                lowerOrMatchingExperienceLevelsInReverseOrder,
+                (_acc: { id: string; content: ProfessionPackage } | undefined, el) =>
+                  packages.find(pkg => pkg.content.experience_level === el.id),
+                acc => acc !== undefined,
+                undefined,
+              )
+
+              if (professionPackage === undefined) {
+                return undefined
+              }
+
+              return {
+                parent: profession,
+                version: professionVersion,
+                package: professionPackage,
+              }
+            })
+            .filter(
+              (combined): combined is NonNullable<typeof combined> =>
+                isNotNullish(combined) &&
+                commonProfessionValidator({
+                  id: combined.parent.id,
+                  profession: combined.parent.content,
+                  magicalTraditions: Lazy.of(() =>
+                    extractActivatableFromProfessionPackage(
+                      combined.package.content,
+                      "MagicalTradition",
+                      character.global.db.getInstanceOfEntityById.bind(character.global.db),
+                    ),
+                  ),
+                  blessedTraditions: Lazy.of(() =>
+                    extractActivatableFromProfessionPackage(
+                      combined.package.content,
+                      "BlessedTradition",
+                      character.global.db.getInstanceOfEntityById.bind(character.global.db),
+                    ),
+                  ),
+                }),
+            ),
+        // TODO: Check if values are allowed for the current experience level, and filter out those that are not
+      )
+      .map((profession): ProfessionForDisplay | undefined => {
+        const translation = character.global.locale.translateMap(
+          profession.version.content.translations,
+        )
+        if (translation === undefined) {
+          return undefined
+        }
+        return {
+          id: profession.parent.id,
+          name:
+            professionNameToString(character.personalData.sex, translation.name) +
+            parensIf(
+              translation.specification === undefined
+                ? undefined
+                : professionNameToString(character.personalData.sex, translation.specification),
+            ),
+          apValue: profession.package.content.ap_value,
+          sources: profession.version.content.src
+            .map(
+              src =>
+                character.global.locale.translateMap(
+                  character.global.db.getInstanceOfEntityById("Publication", src.id)?.translations,
+                )?.abbreviation,
+            )
+            .filter(isNotNullish)
+            .sort(character.global.locale.compare)
+            .join(", "),
+          versionId: profession.version.id,
+          packageId: profession.package.id,
+        }
+      })
+      .filter(isNotNullish)
   }
 
   @computed

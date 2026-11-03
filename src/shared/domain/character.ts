@@ -1,11 +1,7 @@
 import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
-import { reduceWhile, sumWith } from "@elyukai/utils/array/reductions"
-import { on } from "@elyukai/utils/function"
-import { Lazy } from "@elyukai/utils/lazy"
 import { isNotNullish } from "@elyukai/utils/nullable"
 import { isInRange } from "@elyukai/utils/range"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
-import { getAdventurePointsForRatingRange } from "@optolith/adventure-points/improvement-cost"
 import type {
   Character as RawCharacter,
   Character_ID as RawCharacter_ID,
@@ -16,14 +12,11 @@ import type {
   ActivatableIdentifier,
   Aspect_ID,
   MagicalTradition_ID,
-  ProfessionPackage,
   Property_ID,
   RatedIdentifier,
   SkillWithEnhancementsIdentifier,
   TinyActivatableIdentifier,
 } from "@optolith/database-schema/gen"
-import { parensIf } from "@optolith/entity-descriptions/entities/partial/rated/activatable/parensIf"
-import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
 import { action, computed, observable } from "mobx"
 import type { Case } from "tsondb/schema/gen"
 import type { CharacterRoutePath, RoutePath } from "../../main_window/slices/routeSlice.ts"
@@ -47,12 +40,7 @@ import {
   createCapabilitiesFromCharacter,
   type AllCapabilities,
 } from "./prerequisites/single/index.ts"
-import {
-  CharacterProfession,
-  extractActivatableFromProfessionPackage,
-  professionNameToString,
-  type ProfessionForDisplay,
-} from "./profession.ts"
+import { CharacterProfession, type ProfessionForDisplay } from "./profession.ts"
 import { Purse } from "./purse.ts"
 import { CharacterRace, type RaceForDisplay } from "./race.ts"
 import { CharacterAttributes } from "./rated/attribute.ts"
@@ -109,7 +97,7 @@ export abstract class BaseCharacter {
 
   @computed
   get canRemove() {
-    return !this.isCharacterCreationFinished
+    return this.isInCharacterCreation // TODO: || isEditingHeroAfterCreationPhaseEnabled
   }
 
   @computed
@@ -240,10 +228,8 @@ export abstract class BaseCharacter {
   @computed
   get adventurePointsSpent(): number {
     return (
-      (this.race?.base?.ap_value ?? 0) +
-      (this.phase === "RaceCultureProfession"
-        ? (this.profession?.package?.ap_value ?? 0) + (this.profession?.variant?.ap_value ?? 0)
-        : 0) +
+      (this.race?.adventurePoints ?? 0) +
+      (this.phase === "RaceCultureProfession" ? (this.profession?.adventurePoints ?? 0) : 0) +
       this.attributes.adventurePointsTotal.general +
       this.derivedCharacteristics.adventurePointsTotal.general +
       this.advantages.adventurePointsTotal.general +
@@ -278,11 +264,8 @@ export abstract class BaseCharacter {
       spentOnDisadvantages: this.disadvantages.adventurePointsTotal.getTotal(),
       spentOnMagicalDisadvantages: 0, // TODO
       spentOnBlessedDisadvantages: 0, // TODO
-      spentOnRace: this.race?.base?.ap_value ?? 0,
-      spentOnProfession:
-        this.phase === "RaceCultureProfession"
-          ? (this.profession?.package?.ap_value ?? 0) + (this.profession?.variant?.ap_value ?? 0)
-          : 0,
+      spentOnRace: this.race?.adventurePoints ?? 0,
+      spentOnProfession: this.profession?.adventurePoints ?? 0,
       spentOnAttributes: this.attributes.adventurePointsTotal.getTotal(),
       spentOnSkills: this.skills.adventurePointsTotal.getTotal(),
       spentOnCombatTechniques:
@@ -303,160 +286,17 @@ export abstract class BaseCharacter {
 
   @computed
   get racesForDisplay(): RaceForDisplay[] {
-    return this.global.db
-      .getAllInstanceContainersOfEntity("Race")
-      .filter(race =>
-        isEntryFromIncludedPublication(
-          race.content,
-          this.global.db.getInstanceOfEntityById.bind(this.global.db),
-          this.global.locale.translateMap,
-          this.rules.publicationOptions,
-        ),
-      )
-      .map(race => ({
-        id: race.id,
-        name: this.global.locale.translateMap(race.content.translations)?.name ?? race.id,
-        apValue: race.content.ap_value,
-        variantId:
-          this.global.db
-            .getAllChildInstanceContainersForParent("RaceVariant", race.id)
-            .toSorted(
-              on(
-                rv => this.global.locale.translateMap(rv.content.translations)?.name ?? "",
-                this.global.locale.compare,
-              ),
-            )[0]?.id ?? race.id,
-      }))
+    return CharacterRace.getRacesForDisplay(this)
   }
 
   @computed
   get culturesForDisplay(): CultureForDisplay[] {
-    return this.global.db
-      .getAllInstanceContainersOfEntity("Culture")
-      .filter(
-        culture =>
-          isEntryFromIncludedPublication(
-            culture.content,
-            this.global.db.getInstanceOfEntityById.bind(this.global.db),
-            this.global.locale.translateMap,
-            this.rules.publicationOptions,
-          ) &&
-          (this.race?.variant?.common_cultures?.includes(culture.id) ?? true),
-      )
-      .map(culture => ({
-        id: culture.id,
-        name: this.global.locale.translateMap(culture.content.translations)?.name ?? culture.id,
-        apValue: sumWith(culture.content.cultural_package, item =>
-          getAdventurePointsForRatingRange(
-            this.global.db.getInstanceOfEntityById("Skill", item.id)?.improvement_cost.kind ?? "A",
-            0,
-            item.points,
-          ),
-        ),
-      }))
+    return CharacterCulture.getCulturesForDisplay(this)
   }
 
   @computed
   get professionsForDisplay(): ProfessionForDisplay[] {
-    const commonProfessionValidator = this.culture?.getCommonProfessionPredicate() ?? (() => true)
-    const startExperienceLevel = this.experienceLevel.start
-    const lowerOrMatchingExperienceLevelsInReverseOrder =
-      startExperienceLevel === undefined
-        ? this.global.sortedExperienceLevels
-        : this.global.sortedExperienceLevels
-            .filter(el => el.adventurePoints <= startExperienceLevel.adventure_points)
-            .reverse()
-
-    return this.global.db
-      .getAllInstanceContainersOfEntity("Profession")
-      .flatMap(profession =>
-        this.global.db
-          .getAllChildInstanceContainersForParent("ProfessionVersion", profession.id)
-          .filter(professionVersion =>
-            isEntryFromIncludedPublication(
-              professionVersion.content,
-              this.global.db.getInstanceOfEntityById.bind(this.global.db),
-              this.global.locale.translateMap,
-              this.rules.publicationOptions,
-            ),
-          )
-          .map(professionVersion => {
-            const packages = this.global.db.getAllChildInstanceContainersForParent(
-              "ProfessionPackage",
-              professionVersion.id,
-            )
-
-            const professionPackage = reduceWhile(
-              lowerOrMatchingExperienceLevelsInReverseOrder,
-              (_acc: { id: string; content: ProfessionPackage } | undefined, el) =>
-                packages.find(pkg => pkg.content.experience_level === el.id),
-              acc => acc !== undefined,
-              undefined,
-            )
-
-            if (professionPackage === undefined) {
-              return undefined
-            }
-
-            return {
-              parent: profession,
-              version: professionVersion,
-              package: professionPackage,
-            }
-          })
-          .filter(
-            (combined): combined is NonNullable<typeof combined> =>
-              isNotNullish(combined) &&
-              commonProfessionValidator({
-                id: combined.parent.id,
-                profession: combined.parent.content,
-                magicalTraditions: Lazy.of(() =>
-                  extractActivatableFromProfessionPackage(
-                    combined.package.content,
-                    "MagicalTradition",
-                    this.global.db.getInstanceOfEntityById.bind(this.global.db),
-                  ),
-                ),
-                blessedTraditions: Lazy.of(() =>
-                  extractActivatableFromProfessionPackage(
-                    combined.package.content,
-                    "BlessedTradition",
-                    this.global.db.getInstanceOfEntityById.bind(this.global.db),
-                  ),
-                ),
-              }),
-          ),
-      )
-      .map((profession): ProfessionForDisplay | undefined => {
-        const translation = this.global.locale.translateMap(profession.version.content.translations)
-        if (translation === undefined) {
-          return undefined
-        }
-        return {
-          id: profession.parent.id,
-          name:
-            professionNameToString(this.personalData.sex, translation.name) +
-            parensIf(
-              translation.specification === undefined
-                ? undefined
-                : professionNameToString(this.personalData.sex, translation.specification),
-            ),
-          apValue: profession.package.content.ap_value,
-          sources: profession.version.content.src
-            .map(
-              src =>
-                this.global.locale.translateMap(
-                  this.global.db.getInstanceOfEntityById("Publication", src.id)?.translations,
-                )?.abbreviation,
-            )
-            .filter(isNotNullish)
-            .sort(this.global.locale.compare)
-            .join(", "),
-          versionId: profession.version.id,
-          packageId: profession.package.id,
-        }
-      })
-      .filter(isNotNullish)
+    return CharacterProfession.getProfessionsForDisplay(this)
   }
 
   getRatedCollection<E extends RatedIdentifier["kind"]>(entity: E): RatedCollectionByEntity<E> {

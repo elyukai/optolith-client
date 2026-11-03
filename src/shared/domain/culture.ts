@@ -1,6 +1,8 @@
+import { sumWith } from "@elyukai/utils/array/reductions"
 import type { Lazy } from "@elyukai/utils/lazy"
 import { Reader } from "@elyukai/utils/reader"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
+import { getAdventurePointsForRatingRange } from "@optolith/adventure-points/improvement-cost"
 import type { Culture as RawCulture } from "@optolith/character-schema/types"
 import type {
   ActivatableIdentifier,
@@ -22,6 +24,7 @@ import type {
   Profession_ID,
   ProfessionConstraint,
 } from "@optolith/database-schema/gen"
+import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
 import { computed, observable } from "mobx"
 import type { Global } from "../global.ts"
 import type { BaseCharacter } from "./character.ts"
@@ -68,6 +71,35 @@ export class CharacterCulture {
   @computed
   get name(): string | undefined {
     return this.global.locale.translateMap(this.base?.translations)?.name
+  }
+
+  static getCulturesForDisplay(baseCharacter: BaseCharacter): CultureForDisplay[] {
+    return baseCharacter.global.db
+      .getAllInstanceContainersOfEntity("Culture")
+      .filter(
+        culture =>
+          isEntryFromIncludedPublication(
+            culture.content,
+            baseCharacter.global.db.getInstanceOfEntityById.bind(baseCharacter.global.db),
+            baseCharacter.global.locale.translateMap,
+            baseCharacter.rules.publicationOptions,
+          ) &&
+          (baseCharacter.race?.variant?.common_cultures?.includes(culture.id) ?? true),
+      )
+      .map(culture => ({
+        id: culture.id,
+        name:
+          baseCharacter.global.locale.translateMap(culture.content.translations)?.name ??
+          culture.id,
+        apValue: sumWith(culture.content.cultural_package, item =>
+          getAdventurePointsForRatingRange(
+            baseCharacter.global.db.getInstanceOfEntityById("Skill", item.id)?.improvement_cost
+              .kind ?? "A",
+            0,
+            item.points,
+          ),
+        ),
+      }))
   }
 
   getCommonProfessionPredicate(): (env: CommonProfessionEnv) => boolean {
