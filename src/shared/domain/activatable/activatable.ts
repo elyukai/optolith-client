@@ -1453,6 +1453,10 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
     return this.getById(id)?.instances ?? []
   }
 
+  isActive(id: string): boolean {
+    return this.#activatables.get(id)?.isActive ?? false
+  }
+
   #createEmpty(
     id: string,
     dbEntry: EntityMap[Entity] | undefined = this.global.db.getInstanceOfEntityById(

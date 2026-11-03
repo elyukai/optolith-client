@@ -395,6 +395,14 @@ export abstract class BaseCharacter {
   }
 
   @computed
+  get isSpellcaster(): boolean {
+    return (
+      this.advantages.isActive(this.global.settings.supernaturalBaseAdvantages.spellcasters) &&
+      this.specialAbilities.getSpecialAbilitiesCollection("MagicalTradition").hasActive
+    )
+  }
+
+  @computed
   get canLearnCantrips(): boolean {
     return (
       isNotEmpty(this.activeMagicalTraditions) &&
@@ -497,6 +505,14 @@ export abstract class BaseCharacter {
   get maximumAdventurePointsForMagicalAdvantagesAndDisadvantages(): number {
     return getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages(
       this.activeMagicalTraditions,
+    )
+  }
+
+  @computed
+  get isBlessedOne(): boolean {
+    return (
+      this.advantages.isActive(this.global.settings.supernaturalBaseAdvantages.blessed) &&
+      this.specialAbilities.getSpecialAbilitiesCollection("BlessedTradition").hasActive
     )
   }
 
