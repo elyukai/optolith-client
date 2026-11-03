@@ -8,13 +8,12 @@ import type { DisplayedDerivedCharacteristic } from "../../../../../shared/domai
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
 import { DerivedCharacteristicsListItemPermanent } from "./DerivedCharacteristicsListItemPermanent.tsx"
 
 type Props = {
   attribute: DisplayedDerivedCharacteristic
-  isInCharacterCreation: boolean
-  isRemovingEnabled: boolean
 }
 
 /**
@@ -22,13 +21,14 @@ type Props = {
  * manage the value.
  */
 export const DerivedCharacteristicsListItem: FC<Props> = observer(props => {
-  const { attribute, isInCharacterCreation, isRemovingEnabled } = props
+  const { attribute } = props
 
   const { id, base, value, modifier, purchaseMaximum, purchased } = attribute
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const translation = translateMap(attribute.translations)
+  const { isInCharacterCreation, canRemove } = useCharacterState()
   const actions = useCharacterActions()
 
   return (
@@ -82,7 +82,7 @@ export const DerivedCharacteristicsListItem: FC<Props> = observer(props => {
             disabled={!attribute.isPurchasedIncreasable}
           />
         ) : null}
-        {!isInCharacterCreation && isRemovingEnabled && attribute.type?.kind === "Energy" ? (
+        {!isInCharacterCreation && canRemove && attribute.type?.kind === "Energy" ? (
           <IconButton
             className="remove"
             icon="&#xE909;"
@@ -93,11 +93,7 @@ export const DerivedCharacteristicsListItem: FC<Props> = observer(props => {
         ) : null}
       </AttributeBorder>
       {attribute.type?.kind === "Energy" ? (
-        <DerivedCharacteristicsListItemPermanent
-          attribute={attribute}
-          isRemovingEnabled={isRemovingEnabled}
-          translation={translation}
-        />
+        <DerivedCharacteristicsListItemPermanent attribute={attribute} translation={translation} />
       ) : null}
     </div>
   )

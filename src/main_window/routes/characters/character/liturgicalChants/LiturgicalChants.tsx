@@ -27,7 +27,7 @@ import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { InlineLibrary, InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import {
   changeLiturgiesSortOrder,
   selectLiturgiesSortOrder,
@@ -59,7 +59,6 @@ export const LiturgicalChants: FC = observer(() => {
     activeBlessings,
     activeLiturgicalChants,
     activeCeremonies,
-    attributes,
   } = useCharacterState()
 
   const [activeFilterText, setActiveFilterText] = useState("")
@@ -168,7 +167,6 @@ export const LiturgicalChants: FC = observer(() => {
                           blessing={x}
                           displayGroup={sortOrder === LiturgiesSortOrder.Group}
                           add={handleAddBlessing}
-                          selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                         />
                       )
 
@@ -180,8 +178,6 @@ export const LiturgicalChants: FC = observer(() => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           entry={x}
                           displayGroup={sortOrder === LiturgiesSortOrder.Group}
-                          attributes={attributes}
-                          selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                         />
                       )
 
@@ -256,10 +252,8 @@ export const LiturgicalChants: FC = observer(() => {
                         key={`blessing-${x.id}`}
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         blessing={x}
-                        canRemove={canRemove}
                         displayGroup={sortOrder === LiturgiesSortOrder.Group}
                         remove={handleRemoveBlessing}
-                        selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                       />
                     )
 
@@ -270,10 +264,7 @@ export const LiturgicalChants: FC = observer(() => {
                         key={`${x.type}-${x.id}`}
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         entry={x}
-                        canRemove={canRemove}
                         displayGroup={sortOrder === LiturgiesSortOrder.Group}
-                        attributes={attributes}
-                        selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                       />
                     )
 

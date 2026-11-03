@@ -24,15 +24,11 @@ import {
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
-import {
-  InlineLibraryManager,
-  type DisplayableMainIdentifier,
-} from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 
 type Props<K extends ActivatableIdentifier["kind"]> = {
   activatable: DisplayedActiveActivatable<K>
   isCustomCostAvailable?: boolean
-  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 const getLevelKey = (option: DropdownOption<number>) => option.id
@@ -42,7 +38,7 @@ const getLevelKey = (option: DropdownOption<number>) => option.id
  */
 export const ActiveActivatablesListItem = observer(
   <K extends ActivatableIdentifier["kind"]>(props: Props<K>): ReactNode => {
-    const { activatable, isCustomCostAvailable = false, selectedInlineLibraryEntryId } = props
+    const { activatable, isCustomCostAvailable = false } = props
 
     const {
       type,
@@ -68,10 +64,7 @@ export const ActiveActivatablesListItem = observer(
       [activatable, id, instanceIndex],
     )
 
-    const handleSelectForInfo = useCallback(
-      () => InlineLibraryManager.instance.goTo([activatable.type, id]),
-      [activatable.type],
-    )
+    const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary(type, id)
 
     const handleRemove = useCallback(() => {
       actions.removeActivatable(activatable.type, id, instanceIndex)
@@ -110,24 +103,20 @@ export const ActiveActivatablesListItem = observer(
       activatableGroupTranslationKeys[type]
 
     return (
-      <ListItem
-        active={
-          selectedInlineLibraryEntryId?.[0] === type && selectedInlineLibraryEntryId[1] === id
-        }
-      >
+      <ListItem active={isActiveInInlineLibrary}>
         <ListItemLeft>
           <ListItemName
             name={renderActivatableNameChunk(
               translateMap,
               levelElement === null ? name.full : name.fullWithoutLevel[0],
             )}
-            onClick={handleSelectForInfo}
+            onClick={displayInlineLibraryEntry}
           />
           {levelElement}
           {levelElement !== null && name.fullWithoutLevel[1] ? (
             <ListItemName
               name={renderActivatableNameChunk(translateMap, name.fullWithoutLevel[1])}
-              onClick={handleSelectForInfo}
+              onClick={displayInlineLibraryEntry}
             />
           ) : null}
         </ListItemLeft>
@@ -156,7 +145,7 @@ export const ActiveActivatablesListItem = observer(
           />
           <IconButton
             icon="&#xE912;"
-            onClick={handleSelectForInfo}
+            onClick={displayInlineLibraryEntry}
             flat
             label={translate("Show details")}
           />

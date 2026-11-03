@@ -1,19 +1,15 @@
 import { observer } from "mobx-react-lite"
-import { useCallback } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
-import type { DisplayedAttribute } from "../../../../../shared/domain/rated/attribute.ts"
 import type { DisplayedSkill } from "../../../../../shared/domain/rated/skill.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
+import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
-import {
-  InlineLibraryManager,
-  type DisplayableMainIdentifier,
-} from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { selectSkillsCultureRatingVisibility } from "../../../../slices/settingsSlice.ts"
 import { SkillButtons } from "./SkillButtons.tsx"
 import { SkillCheck } from "./SkillCheck.tsx"
@@ -21,16 +17,12 @@ import { SkillImprovementCost } from "./SkillImprovementCost.tsx"
 import { SkillRating } from "./SkillRating.tsx"
 
 type Props = {
-  canRemove: boolean
   insertTopMargin?: boolean
   skill: DisplayedSkill
-  attributes: DisplayedAttribute[]
-  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 export const SkillListItem: React.FC<Props> = observer(props => {
   const {
-    canRemove,
     insertTopMargin,
     skill: {
       id,
@@ -43,37 +35,31 @@ export const SkillListItem: React.FC<Props> = observer(props => {
       isDecreasable,
       commonness,
     },
-    attributes,
-    selectedInlineLibraryEntryId,
   } = props
 
   const translateMap = useTranslateMap()
+  const { canRemove } = useCharacterState()
   const actions = useCharacterActions()
 
   const cultureRatingVisibility = useAppSelector(selectSkillsCultureRatingVisibility)
 
   const { name = "???" } = translateMap(translations) ?? {}
 
-  const handleSelectForInfo = useCallback(
-    () => InlineLibraryManager.instance.goTo(["Skill", id]),
-    [id],
-  )
+  const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary("Skill", id)
 
   return (
     <ListItem
       insertTopMargin={insertTopMargin}
-      active={
-        selectedInlineLibraryEntryId?.[0] === "Skill" && selectedInlineLibraryEntryId[1] === id
-      }
+      active={isActiveInInlineLibrary}
       recommended={cultureRatingVisibility && commonness === "common"}
       unrecommended={cultureRatingVisibility && commonness === "uncommon"}
     >
-      <ListItemName name={name} onClick={handleSelectForInfo} />
+      <ListItemName name={name} onClick={displayInlineLibraryEntry} />
       <ListItemSeparator />
       <ListItemGroup text={groupName} />
       <ListItemValues>
         <SkillRating sr={value} />
-        <SkillCheck check={check} attributes={attributes} />
+        <SkillCheck check={check} />
         <SkillImprovementCost ic={improvementCost} />
       </ListItemValues>
       <SkillButtons
@@ -83,7 +69,7 @@ export const SkillListItem: React.FC<Props> = observer(props => {
         setToMax={() => actions.incrementRatedToMax("Skill", id)}
         removePoint={canRemove ? () => actions.decrementRated("Skill", id) : undefined}
         setToMin={canRemove ? () => actions.decrementRatedToMin("Skill", id) : undefined}
-        selectForInfo={handleSelectForInfo}
+        selectForInfo={displayInlineLibraryEntry}
       />
     </ListItem>
   )

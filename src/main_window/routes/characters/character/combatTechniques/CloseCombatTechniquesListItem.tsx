@@ -1,6 +1,6 @@
 import { toKebabCase } from "@elyukai/utils/string"
 import { observer } from "mobx-react-lite"
-import { useCallback, type FC } from "react"
+import type { FC } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
@@ -10,10 +10,8 @@ import type { DisplayedCloseCombatTechnique } from "../../../../../shared/domain
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
-import {
-  InlineLibraryManager,
-  type DisplayableMainIdentifier,
-} from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
+import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 import { SkillAdditionalValues } from "../skills/SkillAdditionalValues.tsx"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillImprovementCost } from "../skills/SkillImprovementCost.tsx"
@@ -22,8 +20,6 @@ import { SkillRating } from "../skills/SkillRating.tsx"
 type Props = {
   insertTopMargin?: boolean
   closeCombatTechnique: DisplayedCloseCombatTechnique
-  canRemove: boolean
-  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 /**
@@ -43,19 +39,18 @@ export const CloseCombatTechniquesListItem: FC<Props> = observer(props => {
       parryBase,
       primaryAttributeValues,
     },
-    canRemove,
-    selectedInlineLibraryEntryId,
   } = props
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
+  const { canRemove } = useCharacterState()
   const actions = useCharacterActions()
 
   const { name = "???" } = translateMap(translations) ?? {}
 
-  const handleSelectForInfo = useCallback(
-    () => InlineLibraryManager.instance.goTo(["CloseCombatTechnique", id]),
-    [id],
+  const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary(
+    "CloseCombatTechnique",
+    id,
   )
 
   const primaryStr = primaryAttributeValues
@@ -67,14 +62,8 @@ export const CloseCombatTechniquesListItem: FC<Props> = observer(props => {
   const primaryClassName = `primary ${customClassName}`
 
   return (
-    <ListItem
-      insertTopMargin={insertTopMargin}
-      active={
-        selectedInlineLibraryEntryId?.[0] === "CloseCombatTechnique" &&
-        selectedInlineLibraryEntryId[1] === id
-      }
-    >
-      <ListItemName name={name} onClick={handleSelectForInfo} />
+    <ListItem insertTopMargin={insertTopMargin} active={isActiveInInlineLibrary}>
+      <ListItemName name={name} onClick={displayInlineLibraryEntry} />
       <ListItemSeparator />
       <ListItemGroup text={translate("Close Combat")} />
       <ListItemValues>
@@ -103,7 +92,7 @@ export const CloseCombatTechniquesListItem: FC<Props> = observer(props => {
         setToMin={
           canRemove ? () => actions.decrementRatedToMin("CloseCombatTechnique", id) : undefined
         }
-        selectForInfo={handleSelectForInfo}
+        selectForInfo={displayInlineLibraryEntry}
       />
     </ListItem>
   )

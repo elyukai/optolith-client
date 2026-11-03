@@ -5,6 +5,7 @@ import { IconButton } from "../../../../../shared/components/iconButton/IconButt
 import type { DisplayedDerivedCharacteristic } from "../../../../../shared/domain/energy.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
 import { PermanentLossSheet } from "./PermanentLossSheet.tsx"
@@ -12,7 +13,6 @@ import { PermanentPointsSheet } from "./PermanentPointsSheet.tsx"
 
 type Props = {
   attribute: DisplayedDerivedCharacteristic
-  isRemovingEnabled: boolean
   translation: DerivedCharacteristicTranslation | undefined
 }
 
@@ -21,10 +21,11 @@ type Props = {
  * derived characteristic value.
  */
 export const DerivedCharacteristicsListItemPermanent: FC<Props> = observer(props => {
-  const { attribute, isRemovingEnabled, translation } = props
+  const { attribute, translation } = props
 
   const { id, permanentlyLost = 0, permanentlyLostBoughtBack } = attribute
   const translate = useTranslate()
+  const { canRemove } = useCharacterState()
   const actions = useCharacterActions()
 
   const {
@@ -107,7 +108,7 @@ export const DerivedCharacteristicsListItemPermanent: FC<Props> = observer(props
       }
       tooltipMargin={7}
     >
-      {isRemovingEnabled ? (
+      {canRemove ? (
         <>
           <IconButton
             className="edit"
@@ -143,7 +144,7 @@ export const DerivedCharacteristicsListItemPermanent: FC<Props> = observer(props
           />
         </>
       )}
-      {!isRemovingEnabled && typeof permanentlyLostBoughtBack === "number" ? (
+      {!canRemove && typeof permanentlyLostBoughtBack === "number" ? (
         <IconButton
           className="remove"
           icon="&#xE909;"

@@ -18,7 +18,6 @@ export const Attributes: FC = observer(() => {
     attributesTotal: totalPoints,
     attributesTotalMaximum: maxTotalPoints,
     isInCharacterCreation,
-    canRemove: isRemovingEnabled,
   } = useCharacterState()
 
   return (
@@ -30,16 +29,10 @@ export const Attributes: FC = observer(() => {
             {": "}
             {isInCharacterCreation ? `${totalPoints} / ${maxTotalPoints}` : totalPoints}
           </div>
-          <AttributeList
-            isInCharacterCreation={isInCharacterCreation}
-            isRemovingEnabled={isRemovingEnabled}
-          />
+          <AttributeList />
           <div className="secondary">
             {/* TODO: isInCharacterCreation ? <AttributesAdjustment /> : null */}
-            <DerivedCharacteristicsList
-              isInCharacterCreation={isInCharacterCreation}
-              isRemovingEnabled={isRemovingEnabled}
-            />
+            <DerivedCharacteristicsList />
           </div>
         </Scroll>
       </Main>

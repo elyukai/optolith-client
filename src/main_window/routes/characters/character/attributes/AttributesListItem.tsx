@@ -7,23 +7,23 @@ import type { DisplayedAttribute } from "../../../../../shared/domain/rated/attr
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
 
 type Props = {
   attribute: DisplayedAttribute
-  isInCharacterCreation: boolean
-  isRemovingEnabled: boolean
 }
 
 /**
  * Returns a single attribute value item with buttons to adjust the value.
  */
 export const AttributeListItem: FC<Props> = observer(props => {
-  const { attribute, isInCharacterCreation, isRemovingEnabled } = props
+  const { attribute } = props
 
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const translations = translateMap(attribute.translations)
+  const { isInCharacterCreation, canRemove } = useCharacterState()
   const actions = useCharacterActions()
 
   const { id, value, maxValue: maximum, isDecreasable, isIncreasable, color } = attribute
@@ -76,7 +76,7 @@ export const AttributeListItem: FC<Props> = observer(props => {
         disabled={!isIncreasable}
         label={translate("Increment")}
       />
-      {isRemovingEnabled ? (
+      {canRemove ? (
         <IconButton
           className="remove"
           icon="&#xE909;"

@@ -4,14 +4,10 @@ import { ListItemGroup } from "../../../../../shared/components/list/ListItemGro
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
-import type { DisplayedAttribute } from "../../../../../shared/domain/rated/attribute.ts"
 import type { DisplayedInactiveLiturgicalChant } from "../../../../../shared/domain/rated/liturgicalChant.ts"
 import type { DisplayedInactiveSpellwork } from "../../../../../shared/domain/rated/spell.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
-import {
-  InlineLibraryManager,
-  type DisplayableMainIdentifier,
-} from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillCheck } from "../skills/SkillCheck.tsx"
 import { SkillFill } from "../skills/SkillFill.tsx"
@@ -21,8 +17,6 @@ type Props = {
   insertTopMargin?: boolean
   entry: DisplayedInactiveSpellwork | DisplayedInactiveLiturgicalChant
   displayGroup?: boolean
-  attributes: DisplayedAttribute[]
-  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 export const InactiveActivatableRatedListItem: FC<Props> = props => {
@@ -40,37 +34,32 @@ export const InactiveActivatableRatedListItem: FC<Props> = props => {
       isAvailable,
     },
     displayGroup,
-    attributes,
-    selectedInlineLibraryEntryId,
   } = props
 
   const actions = useCharacterActions()
 
   const handleAdd = useCallback(() => actions.activateRated(type, id), [id])
 
-  const handleSelectForInfo = useCallback(
-    () => InlineLibraryManager.instance.goTo([type, id]),
-    [id],
-  )
+  const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary(type, id)
 
   return (
     <ListItem
       insertTopMargin={insertTopMargin}
-      active={selectedInlineLibraryEntryId?.[0] === type && selectedInlineLibraryEntryId[1] === id}
+      active={isActiveInInlineLibrary}
       disabled={!isAvailable}
     >
-      <ListItemName name={name} onClick={handleSelectForInfo} />
+      <ListItemName name={name} onClick={displayInlineLibraryEntry} />
       <ListItemSeparator />
       <ListItemGroup text={displayGroup ? `${associatedText} / ${groupName}` : associatedText} />
       <ListItemValues>
-        <SkillCheck check={check} checkPenalty={checkPenalty} attributes={attributes} />
+        <SkillCheck check={check} checkPenalty={checkPenalty} />
         <SkillFill />
         <SkillImprovementCost ic={improvementCost} />
       </ListItemValues>
       <SkillButtons
         addDisabled={!isAvailable}
         addPoint={handleAdd}
-        selectForInfo={handleSelectForInfo}
+        selectForInfo={displayInlineLibraryEntry}
       />
     </ListItem>
   )

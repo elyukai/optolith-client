@@ -28,7 +28,7 @@ import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { InlineLibrary, InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { changeSpellsSortOrder, selectSpellsSortOrder } from "../../../../slices/settingsSlice.ts"
 import { ActiveActivatableRatedListItem } from "../liturgicalChants/ActiveActivatableRatedListItem.tsx"
 import { InactiveActivatableRatedListItem } from "../liturgicalChants/InactiveActivatableRatedListItem.tsx"
@@ -57,7 +57,6 @@ export const Spells: FC = observer(() => {
     activeCantrips,
     activeSpells,
     activeRituals,
-    attributes,
   } = useCharacterState()
   const actions = useCharacterActions()
 
@@ -173,7 +172,6 @@ export const Spells: FC = observer(() => {
                           cantrip={x}
                           displayGroup={sortOrder === SpellsSortOrder.Group}
                           add={handleAddCantrip}
-                          selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                         />
                       )
 
@@ -185,8 +183,6 @@ export const Spells: FC = observer(() => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           entry={x}
                           displayGroup={sortOrder === SpellsSortOrder.Group}
-                          attributes={attributes}
-                          selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                         />
                       )
 
@@ -356,10 +352,8 @@ export const Spells: FC = observer(() => {
                         key={`cantrip-${x.id}`}
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         cantrip={x}
-                        canRemove={canRemove}
                         displayGroup={sortOrder === SpellsSortOrder.Group}
                         remove={handleRemoveCantrip}
-                        selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                       />
                     )
 
@@ -370,10 +364,7 @@ export const Spells: FC = observer(() => {
                         key={`${x.type}-${x.id}`}
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                         entry={x}
-                        canRemove={canRemove}
                         displayGroup={sortOrder === SpellsSortOrder.Group}
-                        attributes={attributes}
-                        selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                       />
                     )
 

@@ -4,14 +4,11 @@ import { ListItemGroup } from "../../../../../shared/components/list/ListItemGro
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
-import type { DisplayedAttribute } from "../../../../../shared/domain/rated/attribute.ts"
 import type { DisplayedActiveLiturgicalChant } from "../../../../../shared/domain/rated/liturgicalChant.ts"
 import type { DisplayedActiveSpellwork } from "../../../../../shared/domain/rated/spell.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
-import {
-  InlineLibraryManager,
-  type DisplayableMainIdentifier,
-} from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
+import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillCheck } from "../skills/SkillCheck.tsx"
 import { SkillFill } from "../skills/SkillFill.tsx"
@@ -22,9 +19,6 @@ type Props = {
   insertTopMargin?: boolean
   entry: DisplayedActiveSpellwork | DisplayedActiveLiturgicalChant
   displayGroup?: boolean
-  attributes: DisplayedAttribute[]
-  canRemove: boolean
-  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 export const ActiveActivatableRatedListItem: FC<Props> = props => {
@@ -44,11 +38,9 @@ export const ActiveActivatableRatedListItem: FC<Props> = props => {
       isIncreasable,
     },
     displayGroup,
-    attributes,
-    canRemove,
-    selectedInlineLibraryEntryId,
   } = props
 
+  const { canRemove } = useCharacterState()
   const actions = useCharacterActions()
 
   const handleAddPoint = useCallback(() => actions.incrementRated(type, id), [id])
@@ -57,22 +49,16 @@ export const ActiveActivatableRatedListItem: FC<Props> = props => {
   const handleSetToMinimumPoints = useCallback(() => actions.decrementRatedToMin(type, id), [id])
   const handleRemove = useCallback(() => actions.deactivateRated(type, id), [id])
 
-  const handleSelectForInfo = useCallback(
-    () => InlineLibraryManager.instance.goTo([type, id]),
-    [id],
-  )
+  const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary(type, id)
 
   return (
-    <ListItem
-      insertTopMargin={insertTopMargin}
-      active={selectedInlineLibraryEntryId?.[0] === type && selectedInlineLibraryEntryId[1] === id}
-    >
-      <ListItemName name={name} onClick={handleSelectForInfo} />
+    <ListItem insertTopMargin={insertTopMargin} active={isActiveInInlineLibrary}>
+      <ListItemName name={name} onClick={displayInlineLibraryEntry} />
       <ListItemSeparator />
       <ListItemGroup text={displayGroup ? `${associatedText} / ${groupName}` : associatedText} />
       <ListItemValues>
         <SkillRating sr={value} />
-        <SkillCheck check={check} checkPenalty={checkPenalty} attributes={attributes} />
+        <SkillCheck check={check} checkPenalty={checkPenalty} />
         <SkillFill />
         <SkillImprovementCost ic={improvementCost} />
       </ListItemValues>
@@ -86,7 +72,7 @@ export const ActiveActivatableRatedListItem: FC<Props> = props => {
           canRemove && value !== undefined && value > 0 ? handleSetToMinimumPoints : undefined
         }
         decrementIsRemove={value === 0}
-        selectForInfo={handleSelectForInfo}
+        selectForInfo={displayInlineLibraryEntry}
       />
     </ListItem>
   )

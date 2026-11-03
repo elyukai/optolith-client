@@ -21,7 +21,7 @@ import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { InlineLibrary, InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import {
   changeCombatTechniquesSortOrder,
   selectCombatTechniquesSortOrder,
@@ -144,8 +144,6 @@ export const CombatTechniques: FC = observer(() => {
                         key={`close--${x.id}`}
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
                         closeCombatTechnique={x}
-                        canRemove={canRemove}
-                        selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                       />
                     )
                   case "RangedCombatTechnique":
@@ -154,8 +152,6 @@ export const CombatTechniques: FC = observer(() => {
                         key={`ranged--${x.id}`}
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
                         rangedCombatTechnique={x}
-                        canRemove={canRemove}
-                        selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                       />
                     )
                   default:

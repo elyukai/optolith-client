@@ -9,9 +9,9 @@ import { ListItemValues } from "../../../../../shared/components/list/ListItemVa
 import { DisplayedActiveMagicalAction } from "../../../../../shared/domain/rated/spellActive.ts"
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { SelectGetById } from "../../../../selectors/basicCapabilitySelectors.ts"
-import { selectCanRemove } from "../../../../selectors/characterSelectors.ts"
 import {
   changeInlineLibraryEntry,
   selectInlineLibraryEntryId,
@@ -79,7 +79,7 @@ export const ActiveMagicalActionsListItem = <T extends DisplayedActiveMagicalAct
   const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
   const inlineLibraryEntryId = useAppSelector(selectInlineLibraryEntryId)
-  const canRemove = useAppSelector(selectCanRemove)
+  const { canRemove } = useCharacterState()
   const getProperty = useAppSelector(SelectGetById.Static.Property)
 
   const { name = "" } = translateMap(translations) ?? {}

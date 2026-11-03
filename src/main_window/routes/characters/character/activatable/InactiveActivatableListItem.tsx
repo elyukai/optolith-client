@@ -29,17 +29,13 @@ import {
 import { getSelectOptionFromDisplayedOption } from "../../../../../shared/domain/activatable/activatableInactive.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
+import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
-import {
-  InlineLibraryManager,
-  type DisplayableMainIdentifier,
-} from "../../../../inlineLibrary/InlineLibrary.tsx"
 import { InactiveActivatableListItemOption } from "./InactiveActivatableListItemOption.tsx"
 
 type Props<K extends ActivatableIdentifier["kind"]> = {
   activatable: DisplayedInactiveActivatable<K>
   isCustomCostAvailable?: boolean
-  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 const getLevelKey = (option: DropdownOption<number>) => option.id
@@ -49,7 +45,7 @@ const getLevelKey = (option: DropdownOption<number>) => option.id
  */
 export const InactiveActivatablesListItem = observer(
   <K extends ActivatableIdentifier["kind"]>(props: Props<K>): ReactNode => {
-    const { activatable, isCustomCostAvailable = false, selectedInlineLibraryEntryId } = props
+    const { activatable, isCustomCostAvailable = false } = props
     const { type, id, name, instances, isAvailable, options, level, apValue } = activatable
 
     const translate = useTranslate()
@@ -108,10 +104,7 @@ export const InactiveActivatablesListItem = observer(
 
     const handleDeleteCustomCost = useCallback(() => setCustomCost(undefined), [setCustomCost])
 
-    const handleSelectForInfo = useCallback(
-      () => InlineLibraryManager.instance.goTo([activatable.type, id]),
-      [activatable.type, id],
-    )
+    const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary(type, id)
 
     const cost = useMemo(
       () =>
@@ -175,14 +168,9 @@ export const InactiveActivatablesListItem = observer(
       activatableGroupTranslationKeys[type]
 
     return (
-      <ListItem
-        active={
-          selectedInlineLibraryEntryId?.[0] === type && selectedInlineLibraryEntryId[1] === id
-        }
-        disabled={!isAvailable}
-      >
+      <ListItem active={isActiveInInlineLibrary} disabled={!isAvailable}>
         <ListItemLeft>
-          <ListItemName name={name} onClick={handleSelectForInfo} />
+          <ListItemName name={name} onClick={displayInlineLibraryEntry} />
           {level?.placement === "before" ? levelElement : null}
           {isAvailable
             ? options.map((option, index) => (
@@ -239,7 +227,7 @@ export const InactiveActivatablesListItem = observer(
           />
           <IconButton
             icon="&#xE912;"
-            onClick={handleSelectForInfo}
+            onClick={displayInlineLibraryEntry}
             flat
             label={translate("Show details")}
           />

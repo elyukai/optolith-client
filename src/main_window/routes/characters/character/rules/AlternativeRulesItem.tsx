@@ -5,7 +5,7 @@ import { IconButton } from "../../../../../shared/components/iconButton/IconButt
 import type { DisplayedAlternativeRule } from "../../../../../shared/domain/rules.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
-import { InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 
 type Props = {
   alternativeRule: DisplayedAlternativeRule
@@ -24,10 +24,7 @@ export const AlternativeRulesItem: FC<Props> = observer(props => {
   const translate = useTranslate()
   const actions = useCharacterActions()
   const handleSwitch = useCallback(() => actions.toggleAlternativeRule(id), [id])
-  const handleChangeInlineLibraryEntry = useCallback(
-    () => InlineLibraryManager.instance.goTo(["AlternativeRule", id]),
-    [id],
-  )
+  const { displayInlineLibraryEntry } = useInlineLibrary("AlternativeRule", id)
 
   return (
     <li>
@@ -36,7 +33,7 @@ export const AlternativeRulesItem: FC<Props> = observer(props => {
         <IconButton
           icon="&#xE912;"
           label={translate("Show details")}
-          onClick={handleChangeInlineLibraryEntry}
+          onClick={displayInlineLibraryEntry}
           flat
         />
       )}

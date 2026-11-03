@@ -24,7 +24,7 @@ import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
-import { InlineLibrary, InlineLibraryManager } from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
 import {
   changeSkillsSortOrder,
   selectSkillsCultureRatingVisibility,
@@ -55,7 +55,7 @@ export const Skills: FC = observer(() => {
     [dispatch],
   )
 
-  const { canRemove, skills: visibleSkills, attributes } = useCharacterState()
+  const { canRemove, skills: visibleSkills } = useCharacterState()
 
   const [filterText, setFilterText] = useState("")
   const sortOrder = useAppSelector(selectSkillsSortOrder)
@@ -146,11 +146,8 @@ export const Skills: FC = observer(() => {
               {list.map((x, i) => (
                 <SkillListItem
                   key={x.id}
-                  canRemove={canRemove}
                   insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
                   skill={x}
-                  attributes={attributes}
-                  selectedInlineLibraryEntryId={InlineLibraryManager.instance.current}
                 />
               ))}
             </List>

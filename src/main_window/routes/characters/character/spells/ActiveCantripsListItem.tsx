@@ -7,10 +7,8 @@ import { ListItemName } from "../../../../../shared/components/list/ListItemName
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
 import type { DisplayedCantrip } from "../../../../../shared/domain/rated/spell.ts"
-import {
-  InlineLibraryManager,
-  type DisplayableMainIdentifier,
-} from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { useCharacterState } from "../../../../hooks/characterState.ts"
+import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillFill } from "../skills/SkillFill.tsx"
 
@@ -19,8 +17,6 @@ type Props = {
   cantrip: DisplayedCantrip
   displayGroup?: boolean
   remove: (id: Cantrip_ID) => void
-  canRemove: boolean
-  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 /**
@@ -32,29 +28,23 @@ export const ActiveCantripsListItem: FC<Props> = observer(props => {
     cantrip: { id, associatedText, name, groupName, isUnfamiliar },
     displayGroup,
     remove,
-    canRemove,
-    selectedInlineLibraryEntryId,
   } = props
 
+  const { canRemove } = useCharacterState()
   const handleRemove = useCallback(() => {
     remove(id)
   }, [remove, id])
 
-  const handleSelectForInfo = useCallback(
-    () => InlineLibraryManager.instance.goTo(["Blessing", id]),
-    [id],
-  )
+  const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary("Cantrip", id)
 
   return (
     <ListItem
       insertTopMargin={insertTopMargin}
-      active={
-        selectedInlineLibraryEntryId?.[0] === "Cantrip" && selectedInlineLibraryEntryId[1] === id
-      }
+      active={isActiveInInlineLibrary}
       noIncrease
       unrecommended={isUnfamiliar}
     >
-      <ListItemName name={name} onClick={handleSelectForInfo} />
+      <ListItemName name={name} onClick={displayInlineLibraryEntry} />
       <ListItemSeparator />
       <ListItemGroup text={displayGroup ? `${associatedText} / ${groupName}` : associatedText} />
       <ListItemValues>
@@ -62,7 +52,7 @@ export const ActiveCantripsListItem: FC<Props> = observer(props => {
       </ListItemValues>
       <SkillButtons
         removePoint={canRemove ? handleRemove : undefined}
-        selectForInfo={handleSelectForInfo}
+        selectForInfo={displayInlineLibraryEntry}
       />
     </ListItem>
   )

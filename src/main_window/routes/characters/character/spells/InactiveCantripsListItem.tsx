@@ -7,10 +7,7 @@ import { ListItemName } from "../../../../../shared/components/list/ListItemName
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
 import type { DisplayedCantrip } from "../../../../../shared/domain/rated/spell.ts"
-import {
-  InlineLibraryManager,
-  type DisplayableMainIdentifier,
-} from "../../../../inlineLibrary/InlineLibrary.tsx"
+import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillFill } from "../skills/SkillFill.tsx"
 
@@ -19,7 +16,6 @@ type Props = {
   cantrip: DisplayedCantrip
   displayGroup?: boolean
   add: (id: Cantrip_ID) => void
-  selectedInlineLibraryEntryId?: DisplayableMainIdentifier
 }
 
 /**
@@ -31,34 +27,28 @@ export const InactiveCantripsListItem: FC<Props> = observer(props => {
     cantrip: { id, name, groupName, associatedText, isUnfamiliar },
     displayGroup,
     add,
-    selectedInlineLibraryEntryId,
   } = props
 
   const handleAdd = useCallback(() => {
     add(id)
   }, [add, id])
 
-  const handleSelectForInfo = useCallback(
-    () => InlineLibraryManager.instance.goTo(["Cantrip", id]),
-    [id],
-  )
+  const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary("Cantrip", id)
 
   return (
     <ListItem
       insertTopMargin={insertTopMargin}
-      active={
-        selectedInlineLibraryEntryId?.[0] === "Blessing" && selectedInlineLibraryEntryId[1] === id
-      }
+      active={isActiveInInlineLibrary}
       noIncrease
       unrecommended={isUnfamiliar}
     >
-      <ListItemName name={name} onClick={handleSelectForInfo} />
+      <ListItemName name={name} onClick={displayInlineLibraryEntry} />
       <ListItemSeparator />
       <ListItemGroup text={displayGroup ? `${associatedText} / ${groupName}` : associatedText} />
       <ListItemValues>
         <SkillFill />
       </ListItemValues>
-      <SkillButtons addPoint={handleAdd} selectForInfo={handleSelectForInfo} />
+      <SkillButtons addPoint={handleAdd} selectForInfo={displayInlineLibraryEntry} />
     </ListItem>
   )
 })
