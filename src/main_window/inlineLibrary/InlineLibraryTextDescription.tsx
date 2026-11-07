@@ -1,3 +1,4 @@
+import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
 import { isNotNullish } from "@elyukai/utils/nullable"
 import { toKebabCase } from "@elyukai/utils/string"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
@@ -55,17 +56,41 @@ export const InlineLibraryTextDescription: FC<Props> = observer(
         <header>
           <h2>
             {description.title}
-            {description.badge === undefined ? null : (
+            {description.badges !== undefined && isNotEmpty(description.badges) ? (
               <>
                 {" "}
-                <span
-                  aria-hidden="true"
-                  className={`badge badge--${toKebabCase(description.badge.type)}`}
-                >
-                  {description.badge.value}
-                </span>
+                {description.badges.map((badge, badgeIndex) => (
+                  <span
+                    key={badgeIndex}
+                    aria-hidden="true"
+                    className={`badge ${badge.type === "effectType" ? `badge--effect badge--effect-${toKebabCase(badge.raw)}` : `badge--${toKebabCase(badge.type)}`}`}
+                  >
+                    {badge.type === "effectType"
+                      ? (() => {
+                          switch (badge.raw) {
+                            case "Beneficial":
+                              return translate("Beneficial Effect")
+                            case "Defensive":
+                              return translate("Defensive Effect")
+                            case "Healing":
+                              return translate("Healing Effect")
+                            case "PhysicalEffect":
+                              return translate("Physical Effect")
+                            case "Poison":
+                              return translate("Poison Effect")
+                            case "PsychicEffect":
+                              return translate("Psychic Effect")
+                            case "Supernatural":
+                              return translate("Supernatural Effect")
+                            default:
+                              return assertExhaustive(badge.raw)
+                          }
+                        })()
+                      : badge.value}
+                  </span>
+                ))}
               </>
-            )}
+            ) : null}
           </h2>
           {subtitle === undefined ? null : <p>{subtitle}</p>}
         </header>
@@ -140,6 +165,7 @@ const InlineLibraryTextDescriptionSection: FC<{ section: EntityDescriptionSectio
             <div key={itemIndex}>
               <dt>
                 <InlineMarkdown source={item.label} env={env} />
+                <span className="sep">: </span>
               </dt>
               <dd>
                 {typeof item.value === "string" ? (

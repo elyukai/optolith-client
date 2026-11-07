@@ -39,6 +39,7 @@
     "src/settings_window_preload/**/*",
     "src/updater_window/**/*",
     "src/updater_window_preload/**/*",
+    "src/shared/utils/elyukai-utils.d.ts",
   ],
   "exclude": [
     "node_modules",

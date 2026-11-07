@@ -1,4 +1,5 @@
 import type * as Gen from "@optolith/database-schema/gen"
+import type { SerializedSelectedRCPOptions } from "../main_window/routes/characters/character/raceCultureProfession/RCPOptionSelections/SelectedRCPOptions.ts"
 import type { SerializedActivatableInstance } from "./domain/activatable/activatable.ts"
 import type { Character } from "./domain/character.ts"
 
@@ -30,7 +31,7 @@ export type CharacterIPCActions = {
   setProfessionPackage: (id: Gen.ProfessionPackage_ID) => void
   setProfessionVariant: (id: Gen.ProfessionVariant_ID | undefined) => void
   setCustomProfessionName: (newCustomProfessionName: string) => void
-  applyRaceCultureProfession: () => void
+  applyRaceCultureProfession: (options: SerializedSelectedRCPOptions) => void
   incrementDerivedCharacteristic: (id: Gen.DerivedCharacteristic_ID) => void
   decrementDerivedCharacteristic: (id: Gen.DerivedCharacteristic_ID) => void
   incrementDerivedCharacteristicPermanentlyLost: (id: Gen.DerivedCharacteristic_ID) => void
@@ -120,6 +121,7 @@ export const defaultCharacterIPCSelectors: CharacterIPCSelectors = {
   professions: [],
   professionVariants: [],
   isVariantSelectionRequired: false,
+  raceCultureProfessionSelectOptions: undefined,
   includeAllPublications: false,
   publications: [],
   focusRules: [],

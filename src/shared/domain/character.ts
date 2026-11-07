@@ -1,4 +1,5 @@
 import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
+import { deepEqual } from "@elyukai/utils/equality"
 import { isNotNullish } from "@elyukai/utils/nullable"
 import { isInRange } from "@elyukai/utils/range"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
@@ -11,24 +12,36 @@ import type {
 import type {
   ActivatableIdentifier,
   Aspect_ID,
+  EnhancementPrerequisite,
   MagicalTradition_ID,
+  PrerequisitesElement,
+  ProfessionActivatablePrerequisite,
+  ProfessionPrerequisiteGroup,
   Property_ID,
   RatedIdentifier,
   SkillWithEnhancementsIdentifier,
   TinyActivatableIdentifier,
 } from "@optolith/database-schema/gen"
 import { action, computed, observable } from "mobx"
-import type { Case } from "tsondb/schema/gen"
+import { Case } from "tsondb/schema/gen"
 import type { CharacterRoutePath, RoutePath } from "../../main_window/slices/routeSlice.ts"
 import type { Global } from "../global.ts"
 import type { CharacterIPCActions } from "../ipc.ts"
 import type { StateActionsAsParameters } from "../state.ts"
 import { ensureNonEmptyObject } from "../utils/object.ts"
-import { CharacterActivatables, type CharacterActivatable } from "./activatable/activatable.ts"
+import {
+  CharacterActivatables,
+  type ActivatableOption,
+  type CharacterActivatable,
+} from "./activatable/activatable.ts"
 import { getMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages } from "./activatable/advantagesDisadvantages.ts"
 import { CharacterSpecialAbilities } from "./activatable/specialAbilities.ts"
 import type { TinyActivatable, TinyActivatables } from "./activatable/tinyActivatable.ts"
-import { CharacterCulture, type CultureForDisplay } from "./culture.ts"
+import {
+  CharacterCulture,
+  type CultureForDisplay,
+  type DisplayedCultureSelectOptions,
+} from "./culture.ts"
 import { CharacterCurriculum } from "./curriculum.ts"
 import { fromUniformCase } from "./databaseEnum.ts"
 import { CharacterDerivedCharacteristics } from "./energy.ts"
@@ -40,13 +53,18 @@ import {
   createCapabilitiesFromCharacter,
   type AllCapabilities,
 } from "./prerequisites/single/index.ts"
-import { CharacterProfession, type ProfessionForDisplay } from "./profession.ts"
+import {
+  CharacterProfession,
+  type DisplayedProfessionSelectOptions,
+  type ProfessionForDisplay,
+} from "./profession.ts"
 import { Purse } from "./purse.ts"
-import { CharacterRace, type RaceForDisplay } from "./race.ts"
+import { CharacterRace, type DisplayedRaceSelectOptions, type RaceForDisplay } from "./race.ts"
 import { CharacterAttributes } from "./rated/attribute.ts"
 import { CharacterCombatTechniques } from "./rated/combatTechnique.ts"
 import { CharacterBlessings, CharacterLiturgicalChants } from "./rated/liturgicalChant.ts"
 import type { PrimaryAttributeDependency } from "./rated/primaryAttribute.ts"
+import { CharacterActivatableRatedEntries } from "./rated/ratedEntry.ts"
 import { CharacterSkills } from "./rated/skill.ts"
 import { CharacterCantrips, CharacterSpellworks } from "./rated/spell.ts"
 import { CharacterRules } from "./rules.ts"
@@ -297,6 +315,21 @@ export abstract class BaseCharacter {
   @computed
   get professionsForDisplay(): ProfessionForDisplay[] {
     return CharacterProfession.getProfessionsForDisplay(this)
+  }
+
+  @computed
+  get raceCultureProfessionSelectOptions():
+    | DisplayedRaceCultureProfessionSelectOptions
+    | undefined {
+    if (this.race === undefined || this.culture === undefined || this.profession === undefined) {
+      return undefined
+    }
+
+    return {
+      race: this.race.selectOptions,
+      culture: this.culture.selectOptions,
+      profession: this.profession.selectOptions,
+    }
   }
 
   getRatedCollection<E extends RatedIdentifier["kind"]>(entity: E): RatedCollectionByEntity<E> {
@@ -550,8 +583,10 @@ export abstract class BaseCharacter {
     this.name = newName
   }
 
+  @action
   handleIPCAction(
     ...args: StateActionsAsParameters<CharacterIPCActions>
+    // oxlint-disable-next-line typescript/no-invalid-void-type
   ): void | { transformedCharacter?: Character; newRoute?: CharacterRoutePath } {
     switch (args[0]) {
       case "setName":
@@ -631,12 +666,433 @@ export abstract class BaseCharacter {
           this.profession !== undefined &&
           this instanceof CharacterInRaceCultureProfessionSelection
         ) {
+          const transformedCharacter = this.transformIntoFullCharacter(
+            this.race,
+            this.culture,
+            this.profession,
+          )
+
+          const [_, [selectedOptions]] = args
+
+          // Race
+
+          for (const advantage of this.race.variant?.automatic_advantages ?? []) {
+            transformedCharacter.advantages.add(advantage.id, {
+              level: advantage.level,
+              options: advantage.options?.map(option => ({
+                type: "Predefined",
+                id: option,
+              })),
+            })
+          }
+
+          for (const disadvantage of this.race.variant?.automatic_disadvantages ?? []) {
+            transformedCharacter.disadvantages.add(disadvantage.id, {
+              level: disadvantage.level,
+              options: disadvantage.options?.map(option => ({
+                type: "Predefined",
+                id: option,
+              })),
+            })
+          }
+
+          for (const advantage of this.race.variant?.strongly_recommended_advantages ?? []) {
+            transformedCharacter.advantages.add(advantage.id, {
+              level: advantage.level,
+              options: advantage.options?.map(option => ({
+                type: "Predefined",
+                id: option,
+              })),
+            })
+          }
+
+          for (const disadvantage of this.race.variant?.strongly_recommended_disadvantages ?? []) {
+            transformedCharacter.disadvantages.add(disadvantage.id, {
+              level: disadvantage.level,
+              options: disadvantage.options?.map(option => ({
+                type: "Predefined",
+                id: option,
+              })),
+            })
+          }
+
+          this.race.selectedAttributeAdjustmentId = selectedOptions.attributeAdjustmentId
+
+          // Culture
+
+          if (selectedOptions.buyCulturalPackage) {
+            for (const skill of this.culture.base?.cultural_package ?? []) {
+              transformedCharacter.skills.increment(skill.id, skill.points)
+            }
+          }
+
+          const nativeTongue = selectedOptions.nativeTongue ?? this.culture.base?.language[0]?.id
+
+          if (nativeTongue !== undefined) {
+            transformedCharacter
+              .getActivatableCollection(this.global.settings.language.kind)
+              .add(fromUniformCase(this.global.settings.language), {
+                level: 4,
+                options: [{ type: "Predefined", id: Case("Language", nativeTongue) }],
+              })
+          }
+
+          const nativeScript = selectedOptions.buyScript
+            ? (selectedOptions.script ?? this.culture.base?.script?.[0])
+            : undefined
+
+          if (nativeScript !== undefined) {
+            transformedCharacter
+              .getActivatableCollection(this.global.settings.script.kind)
+              .add(fromUniformCase(this.global.settings.script), {
+                options: [{ type: "Predefined", id: Case("Script", nativeScript) }],
+              })
+          }
+
+          // Profession
+
+          const curriculum =
+            this.profession.base?.group.kind === "Magical"
+              ? this.profession.base.group.Magical.curriculum
+              : undefined
+
+          if (curriculum !== undefined) {
+            transformedCharacter.curriculum = new CharacterCurriculum(curriculum)
+          }
+
+          if (
+            selectedOptions.skillSpecialization !== undefined &&
+            selectedOptions.skillSpecializationApplication !== undefined
+          ) {
+            transformedCharacter
+              .getActivatableCollection(this.global.settings.skillSpecialization.kind)
+              .add(fromUniformCase(this.global.settings.skillSpecialization), {
+                options: [
+                  { type: "Predefined", id: Case("Skill", selectedOptions.skillSpecialization) },
+                  { type: "Predefined", id: selectedOptions.skillSpecializationApplication },
+                ],
+              })
+          }
+
+          for (const [language, languageLevel] of selectedOptions.languages) {
+            transformedCharacter
+              .getActivatableCollection(this.global.settings.language.kind)
+              .add(fromUniformCase(this.global.settings.language), {
+                level: languageLevel,
+                options: [{ type: "Predefined", id: Case("Language", language) }],
+              })
+          }
+
+          for (const script of selectedOptions.scripts) {
+            transformedCharacter
+              .getActivatableCollection(this.global.settings.script.kind)
+              .add(fromUniformCase(this.global.settings.script), {
+                options: [{ type: "Predefined", id: Case("Script", script) }],
+              })
+          }
+
+          for (const [skill, skillRating] of selectedOptions.skills) {
+            transformedCharacter.skills.increment(skill, skillRating)
+          }
+
+          for (const { id: combatTechnique, ratingModifier } of selectedOptions.combatTechniques) {
+            switch (combatTechnique.kind) {
+              case "CloseCombatTechnique":
+                transformedCharacter.closeCombatTechniques.increment(
+                  fromUniformCase(combatTechnique),
+                  ratingModifier,
+                )
+                break
+              case "RangedCombatTechnique":
+                transformedCharacter.rangedCombatTechniques.increment(
+                  fromUniformCase(combatTechnique),
+                  ratingModifier,
+                )
+                break
+              default:
+                return assertExhaustive(combatTechnique)
+            }
+          }
+
+          for (const cantrip of selectedOptions.cantrips) {
+            transformedCharacter.cantrips.activate(cantrip)
+          }
+
+          for (const [entity, entityMap] of selectedOptions.spellworks) {
+            switch (entity) {
+              case "Spell":
+                for (const [id, rating] of entityMap) {
+                  transformedCharacter.spells.activate(id)
+                  transformedCharacter.spells.increment(id, rating)
+                }
+                break
+              case "Ritual":
+                for (const [id, rating] of entityMap) {
+                  transformedCharacter.rituals.activate(id)
+                  transformedCharacter.rituals.increment(id, rating)
+                }
+                break
+              default:
+                return assertExhaustive(entity)
+            }
+          }
+
+          // TODO: Uncomment once magical actions are implemented
+          // for (const [id, rating] of selectedOptions.curses) {
+          //   transformedCharacter.magicalActions.curses.activate(id)
+          //   transformedCharacter.magicalActions.curses.increment(id, rating)
+          // }
+
+          for (const [entity, entityMap] of selectedOptions.liturgies) {
+            switch (entity) {
+              case "LiturgicalChant":
+                for (const [id, rating] of entityMap) {
+                  transformedCharacter.liturgicalChants.activate(id)
+                  transformedCharacter.liturgicalChants.increment(id, rating)
+                }
+                break
+              case "Ceremony":
+                for (const [id, rating] of entityMap) {
+                  transformedCharacter.ceremonies.activate(id)
+                  transformedCharacter.ceremonies.increment(id, rating)
+                }
+                break
+              default:
+                return assertExhaustive(entity)
+            }
+          }
+
+          const applyActivatablePrerequisite = (
+            p: Omit<ProfessionActivatablePrerequisite, "active">,
+          ): void => {
+            if (p.options?.every(opt => opt.kind !== "Select")) {
+              transformedCharacter.getActivatableCollection(p.id.kind).add(fromUniformCase(p.id), {
+                level: p.level,
+                options: p.options?.map((option): ActivatableOption => {
+                  switch (option.kind) {
+                    case "Identifier":
+                      return {
+                        type: "Predefined",
+                        id: option.Identifier,
+                      }
+                    case "Text":
+                      return {
+                        type: "Custom",
+                        value:
+                          this.global.locale.translateMap(option.Text.translations)?.text ?? "",
+                      }
+                    default:
+                      return assertExhaustive(option)
+                  }
+                }),
+              })
+            }
+          }
+
+          const applyPrerequisite = (p: ProfessionPrerequisiteGroup): void => {
+            switch (p.kind) {
+              case "Activatable":
+                applyActivatablePrerequisite(p.Activatable)
+                break
+              case "Rated": {
+                const collection = this.getRatedCollection(p.Rated.id.kind)
+                if (collection instanceof CharacterActivatableRatedEntries) {
+                  collection.activate(fromUniformCase(p.Rated.id))
+                }
+                collection.increment(fromUniformCase(p.Rated.id), p.Rated.value)
+                break
+              }
+              case "Energy":
+                // TODO: How to do this?
+                break
+              case "Culture":
+              case "Race":
+              case "RatedMinimumNumber":
+              case "Rule":
+              case "Sex":
+                break
+              default:
+                return assertExhaustive(p)
+            }
+          }
+
+          const applyEnhancementPrerequisite = (p: EnhancementPrerequisite): void => {
+            const parent = this.global.db.getInstanceOfEntityById("Enhancement", p.id)?.parent
+            if (parent !== undefined) {
+              const collection = this.getActivatableRatedWithEnhancementsCollection(parent.kind)
+              if (collection instanceof CharacterActivatableRatedEntries) {
+                collection.activateEnhancement(fromUniformCase(parent), p.id)
+              }
+            }
+          }
+
+          for (const separate of selectedOptions.separate) {
+            switch (separate.kind) {
+              case "IncompleteActivatable":
+                transformedCharacter
+                  .getActivatableCollection(separate.IncompleteActivatable.id.kind)
+                  .add(
+                    fromUniformCase(separate.IncompleteActivatable.id),
+                    separate.IncompleteActivatable.instance,
+                  )
+                break
+              case "Enhancement": {
+                applyEnhancementPrerequisite(separate.Enhancement)
+                break
+              }
+              default:
+                applyPrerequisite(separate)
+            }
+          }
+
+          const applyPrerequisiteElement = (
+            p: PrerequisitesElement<ProfessionPrerequisiteGroup>,
+          ): void => {
+            switch (p.kind) {
+              case "Single":
+                applyPrerequisite(p.Single)
+                break
+              case "Disjunction":
+                break
+              case "Group":
+                for (const gp of p.Group.list) {
+                  applyPrerequisite(gp)
+                }
+                break
+              default:
+                return assertExhaustive(p)
+            }
+          }
+
+          for (const prerequisite of this.profession.package?.prerequisites ?? []) {
+            if (
+              !(
+                this.profession.variant?.prerequisites?.some(
+                  vp => vp.kind === "Remove" && deepEqual(prerequisite, vp.Remove),
+                ) ?? false
+              )
+            ) {
+              applyPrerequisiteElement(prerequisite)
+            }
+          }
+
+          for (const prerequisite of this.profession.variant?.prerequisites ?? []) {
+            if (prerequisite.kind === "Add") {
+              applyPrerequisiteElement(prerequisite.Add)
+            }
+          }
+
+          for (const specialAbility of this.profession.package?.special_abilities ?? []) {
+            if (
+              specialAbility.kind === "Constant" &&
+              !(
+                this.profession.variant?.special_abilities?.some(
+                  sa => sa.action.kind === "Remove" && deepEqual(specialAbility, sa.value),
+                ) ?? false
+              )
+            ) {
+              if (specialAbility.Constant.id.kind === "Enhancement") {
+                applyEnhancementPrerequisite({ id: specialAbility.Constant.id.Enhancement })
+              } else {
+                applyActivatablePrerequisite({
+                  ...specialAbility.Constant,
+                  id: specialAbility.Constant.id,
+                })
+              }
+            }
+          }
+
+          for (const specialAbility of this.profession.variant?.special_abilities ?? []) {
+            if (
+              specialAbility.action.kind === "Override" &&
+              specialAbility.value.kind === "Constant"
+            ) {
+              if (specialAbility.value.Constant.id.kind === "Enhancement") {
+                applyEnhancementPrerequisite({ id: specialAbility.value.Constant.id.Enhancement })
+              } else {
+                applyActivatablePrerequisite({
+                  ...specialAbility.value.Constant,
+                  id: specialAbility.value.Constant.id,
+                })
+              }
+            }
+          }
+
+          for (const { id, rating_modifier } of (this.profession.package?.skills ?? []).concat(
+            this.profession.variant?.skills ?? [],
+          )) {
+            transformedCharacter.skills.increment(id, rating_modifier)
+          }
+
+          for (const { id, rating_modifier } of (
+            this.profession.package?.combat_techniques ?? []
+          ).concat(this.profession.variant?.combat_techniques ?? [])) {
+            const stringId = fromUniformCase(id)
+            switch (id.kind) {
+              case "CloseCombatTechnique":
+                transformedCharacter.closeCombatTechniques.increment(stringId, rating_modifier)
+                break
+              case "RangedCombatTechnique":
+                transformedCharacter.rangedCombatTechniques.increment(stringId, rating_modifier)
+                break
+              default:
+                return assertExhaustive(id)
+            }
+          }
+
+          for (const cantrip of this.profession.package?.cantrips ?? []) {
+            transformedCharacter.cantrips.activate(cantrip)
+          }
+
+          for (const { id, rating_modifier: rating } of (
+            this.profession.package?.spells ?? []
+          ).concat(this.profession.variant?.spells ?? [])) {
+            if (isNotEmpty(id) && id.length === 1) {
+              switch (id[0].kind) {
+                case "MagicalAction":
+                  // TODO
+                  break
+                case "Spellwork":
+                  switch (id[0].Spellwork.id.kind) {
+                    case "Spell":
+                      transformedCharacter.spells.activate(id[0].Spellwork.id.Spell)
+                      transformedCharacter.spells.increment(id[0].Spellwork.id.Spell, rating)
+                      break
+                    case "Ritual":
+                      transformedCharacter.rituals.activate(id[0].Spellwork.id.Ritual)
+                      transformedCharacter.rituals.increment(id[0].Spellwork.id.Ritual, rating)
+                      break
+                    default:
+                      return assertExhaustive(id[0].Spellwork.id)
+                  }
+                  break
+                default:
+                  return assertExhaustive(id[0])
+              }
+            }
+          }
+
+          for (const { id, rating_modifier: rating } of (
+            this.profession.package?.liturgical_chants ?? []
+          ).concat(this.profession.variant?.liturgical_chants ?? [])) {
+            if (isNotEmpty(id) && id.length === 1) {
+              switch (id[0].kind) {
+                case "LiturgicalChant":
+                  transformedCharacter.liturgicalChants.activate(id[0].LiturgicalChant)
+                  transformedCharacter.liturgicalChants.increment(id[0].LiturgicalChant, rating)
+                  break
+                case "Ceremony":
+                  transformedCharacter.ceremonies.activate(id[0].Ceremony)
+                  transformedCharacter.ceremonies.increment(id[0].Ceremony, rating)
+                  break
+                default:
+                  return assertExhaustive(id[0])
+              }
+            }
+          }
+
           return {
-            transformedCharacter: this.transformIntoFullCharacter(
-              this.race,
-              this.culture,
-              this.profession,
-            ),
+            transformedCharacter,
             newRoute: "attributes",
           }
         }
@@ -742,6 +1198,7 @@ export abstract class BaseCharacter {
       professions: () => this.professionsForDisplay,
       professionVariants: () => this.profession?.professionVariantsForDisplay,
       isVariantSelectionRequired: () => this.profession?.isVariantSelectionRequired,
+      raceCultureProfessionSelectOptions: () => this.raceCultureProfessionSelectOptions,
       includeAllPublications: () => this.rules.includeAllPublications,
       publications: () => this.rules.publications,
       focusRules: () => this.rules.focusRules.rulesForDisplay,
@@ -1198,6 +1655,12 @@ type RatedCollectionByEntity<E extends RatedIdentifier["kind"]> = {
   LiturgicalChant: CharacterLiturgicalChants<"LiturgicalChant">
   Ceremony: CharacterLiturgicalChants<"Ceremony">
 }[E]
+
+export type DisplayedRaceCultureProfessionSelectOptions = {
+  race: DisplayedRaceSelectOptions
+  culture: DisplayedCultureSelectOptions
+  profession: DisplayedProfessionSelectOptions
+}
 
 export type AdventurePointsStats = {
   total: number

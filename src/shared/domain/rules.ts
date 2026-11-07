@@ -28,7 +28,6 @@ import {
   addOrRemoveDependency,
   type RegistrationMethod,
 } from "./dependencies/registrationHelpers.ts"
-import type { PublicationDependency } from "./sources/publicationDependency.ts"
 
 abstract class CharacterRule<Entity extends "FocusRule" | "OptionalRule" | "AlternativeRule"> {
   readonly global: Global
@@ -246,6 +245,32 @@ export type RuleDependency = {
 
   active: boolean
 }
+
+/**
+ * A dependency on a publication.
+ */
+export type PublicationDependency = Readonly<{
+  /**
+   * The identifier of the dependency source.
+   */
+  sourceId: Publication_ID
+
+  /**
+   * The top-level index of the prerequisite. If the prerequisite is part of a
+   * group or disjunction, this is the index of the group or disjunction.
+   */
+  index: number
+
+  /**
+   * Is the source prerequisite part of a prerequisite disjunction?
+   */
+  isPartOfDisjunction: boolean
+
+  /**
+   * The identifier of the required publication.
+   */
+  id: Publication_ID
+}>
 
 export class CharacterRules {
   readonly global: Global

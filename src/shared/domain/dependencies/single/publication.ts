@@ -1,5 +1,5 @@
 import type { Publication_ID, PublicationPrerequisite } from "@optolith/database-schema/gen"
-import type { PublicationDependency } from "../../sources/publicationDependency.ts"
+import type { PublicationDependency } from "../../rules.ts"
 import { type RegistrationFunction, addOrRemoveDependency } from "../registrationHelpers.ts"
 
 /**

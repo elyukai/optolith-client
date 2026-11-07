@@ -21,8 +21,9 @@ import type { LocaleMap } from "../../utils/locale.ts"
 import { Case, equalsCase } from "../databaseEnum.ts"
 import type {
   CharacterActivatable,
-  SerializedActivatableInstance,
   ResolvedSelectOptionWithResolvedAPValue,
+  SelectOptionIdentifier,
+  SerializedActivatableInstance,
 } from "./activatable.ts"
 import { isGeneralDependency, type ActivatableDependency } from "./activatableDependency.ts"
 import { modifierByLevel } from "./activatableModifiers.ts"
@@ -810,7 +811,7 @@ export const getMaximumLevel = (
  */
 export const getSelectOptionFromDisplayedOption = (
   displayedOptions: DisplayedInactiveActivatableOption[],
-  id: ResolvedSelectOptionIdentifier,
+  id: SelectOptionIdentifier,
 ): ResolvedSelectOptionWithResolvedAPValue | undefined =>
   displayedOptions
     .find(

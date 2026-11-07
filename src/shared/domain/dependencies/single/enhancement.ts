@@ -1,6 +1,6 @@
 import type { ActivatableIdentifier, EnhancementPrerequisite } from "@optolith/database-schema/gen"
 import { fromUniformCase } from "../../databaseEnum.ts"
-import type { EnhancementDependency } from "../../rated/enhancement.ts"
+import type { EnhancementDependency } from "../../rated/ratedEntry.ts"
 import type { RegistrationFunction } from "../registrationHelpers.ts"
 
 /**

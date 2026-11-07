@@ -28,7 +28,6 @@ import { addOrRemoveDependency, RegistrationMethod } from "../dependencies/regis
 import { checkMultipleDisjunctionPartsAreValid } from "../prerequisites/disjunctionPrerequisiteMultipartValidation.ts"
 import { countMatchingRatedMinimumNumberEntries } from "../prerequisites/single/ratedMinimumNumberPrerequisiteValidation.ts"
 import { sumMatchingRatedSumEntries } from "../prerequisites/single/ratedSumPrerequisiteValidation.ts"
-import type { EnhancementDependency } from "./enhancement.ts"
 import type { RatedDependency } from "./ratedDependency.ts"
 
 export abstract class CharacterAnyRatedEntry<
@@ -95,13 +94,13 @@ export abstract class CharacterAnyRatedEntry<
   }
 
   @action
-  increment() {
-    this.updateValue(oldValue => oldValue + 1)
+  increment(by = 1) {
+    this.updateValue(oldValue => oldValue + by)
   }
 
   @action
-  decrement() {
-    this.updateValue(oldValue => oldValue - 1)
+  decrement(by = 1) {
+    this.updateValue(oldValue => oldValue - by)
   }
 
   @action
@@ -217,6 +216,8 @@ export abstract class CharacterAnyRatedEntry<
           return true
         case "MinimumNumberAtMinimumValue":
           return (
+            this.value !== undefined &&
+            this.value >= dep.value.minimumValue &&
             countMatchingRatedMinimumNumberEntries(
               this.character.prerequisiteCapabilities,
               dep.value.minimumValue,
@@ -412,6 +413,27 @@ export class Enhancement<Entity extends Gen.SkillWithEnhancementsIdentifier["kin
         return assertExhaustive(dbEntry.adventurePoints)
     }
   }
+}
+
+/**
+ * A dependency on this enhancement from another enhancement or activatable.
+ */
+export type EnhancementDependency = {
+  /**
+   * The identifier of the dependency source.
+   */
+  sourceId: Gen.ActivatableIdentifier
+
+  /**
+   * The top-level index of the prerequisite. If the prerequisite is part of a
+   * group or disjunction, this is the index of the group or disjunction.
+   */
+  index: number
+
+  /**
+   * Is the source prerequisite part of a prerequisite disjunction?
+   */
+  isPartOfDisjunction: boolean
 }
 
 export abstract class CharacterActivatableRatedWithEnhancements<
@@ -627,13 +649,13 @@ export abstract class CharacterAnyRatedEntries<
   }
 
   @action
-  increment(id: string) {
-    this.ensureEntryExists(id).increment()
+  increment(id: string, by?: number) {
+    this.ensureEntryExists(id).increment(by)
   }
 
   @action
-  decrement(id: string) {
-    this.ensureEntryExists(id).decrement()
+  decrement(id: string, by?: number) {
+    this.ensureEntryExists(id).decrement(by)
   }
 
   @action

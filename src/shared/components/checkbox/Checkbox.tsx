@@ -2,7 +2,7 @@ import { classList } from "@elyukai/utils/classList"
 import type { FCC } from "../../utils/react.ts"
 import { Activate } from "../activate/Activate.tsx"
 import { Icon } from "../icon/Icon.tsx"
-import "./Checkbox.scss"
+import "./Checkbox.css"
 
 type Props = {
   checked: boolean

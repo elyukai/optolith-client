@@ -108,12 +108,6 @@ export class CharacterLiturgicalChant<
     const minimumValues: number[] = [
       ...this.flatMinimumRestrictions,
       ...this.activeEnhancements.values().map(enhancement => enhancement.dbEntry.skill_rating),
-      // TODO: getLiturgicalChantMinimumFromAspectKnowledgePrerequistes(
-      //   liturgicalChantsAbove10ByAspect,
-      //   activeAspectKnowledges,
-      //   flattenAspectIds(staticLiturgicalChant.traditions),
-      //   dynamicLiturgicalChant.value,
-      // ),
     ].filter(isNotNullish)
 
     return minimumValues.length > 0 ? Math.max(...minimumValues) : undefined

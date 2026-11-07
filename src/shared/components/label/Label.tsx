@@ -1,6 +1,6 @@
-import type { FC } from "react"
 import { classList } from "@elyukai/utils/classList"
-import "./Label.scss"
+import type { FC } from "react"
+import "./Label.css"
 
 type Props = {
   className?: string

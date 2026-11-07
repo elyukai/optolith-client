@@ -17,6 +17,7 @@ import type {
 import type {
   ResolvedSelectOption,
   ResolvedSelectOptionIdentifier,
+  ResolvedSkillApplicationIdentifier,
 } from "@optolith/database-schema/cache"
 import type {
   ActivatableIdentifier,
@@ -26,6 +27,7 @@ import type {
   FixedAdventurePointsValue,
   GeneralPrerequisites,
   RulePrerequisite,
+  SelectOptionRules,
   SpecialAbilityIdentifier,
 } from "@optolith/database-schema/gen"
 import {
@@ -196,7 +198,7 @@ export const getAdventurePointsForInactiveActivatableInstance = (
   apValue: DisplayedInactiveActivatable["apValue"],
   instance: SerializedActivatableInstance,
   getSelectOptionWithResolvedAPValueById: (
-    id: ResolvedSelectOptionIdentifier,
+    id: SelectOptionIdentifier,
   ) => ResolvedSelectOptionWithResolvedAPValue | undefined,
 ): number => {
   if (instance.customAdventurePointsValue !== undefined) {
@@ -770,7 +772,7 @@ export class CharacterActivatable<
    * but a different index can be specified.
    */
   countOptions(
-    optionId: ResolvedSelectOptionIdentifier,
+    optionId: SelectOptionIdentifier,
     options: { atIndex?: number; ignoreWithCustomAdventurePointsValue?: boolean } = {},
   ): number {
     const { atIndex = 0, ignoreWithCustomAdventurePointsValue = false } = options
@@ -923,10 +925,8 @@ export class CharacterActivatable<
         this.dbEntry.translations,
         t => t.name,
         this.global.db.getInstanceOfEntityById.bind(this.global.db),
-        (id, optionId) =>
-          this.global.cache.activatableSelectOptions[id.kind][fromUniformCase(id)]?.find(o =>
-            equalsCase(o.id, optionId),
-          ),
+        this.global.getResolvedSelectOptionById,
+        this.global.getResolvedSkillApplicationById,
         false,
       )
 
@@ -1182,105 +1182,36 @@ export class CharacterActivatable<
   get resolvedSelectOptionsWithResolvedAPValue():
     | ResolvedSelectOptionWithResolvedAPValue[]
     | undefined {
-    return this.resolvedSelectOptions
-      ?.filter(
-        rated =>
-          isEntryFromIncludedPublication(
-            rated.content,
-            this.global.db.getInstanceOfEntityById.bind(this.global.db),
-            this.global.locale.translateMap,
-            this.character.rules.publicationOptions,
-          ) &&
-          this.applyingDependencies.some(
-            dep =>
-              dep.active === false &&
-              appliesToInstanceLoose(dep, { options: [{ type: "Predefined", id: rated.id }] }),
-          ),
-      )
-      .map((option): ResolvedSelectOptionWithResolvedAPValue => ({
-        ...option,
-        content: {
-          ...option.content,
-          ap_value:
-            option.content.ap_value?.kind === "DependingOnActiveInstances"
-              ? Case(
-                  "Fixed",
-                  getAdventurePointsDependingOnActiveInstancesForInactiveActivatableInstance(
-                    option.content.ap_value.DependingOnActiveInstances,
-                    this.countOptions(option.id, { ignoreWithCustomAdventurePointsValue: true }),
-                  ),
-                )
-              : option.content.ap_value,
-        },
-      }))
+    return this.resolvedSelectOptions === undefined
+      ? undefined
+      : resolveAPValuesForResolvedSelectOptions(
+          this.resolvedSelectOptions,
+          this.global,
+          this.character,
+          id =>
+            this.applyingDependencies.some(
+              dep =>
+                dep.active === false &&
+                appliesToInstanceLoose(dep, { options: [{ type: "Predefined", id }] }),
+            ),
+          id => this.countOptions(id, { ignoreWithCustomAdventurePointsValue: true }),
+        )
   }
 
   getSelectOptionById(
-    id: ResolvedSelectOptionIdentifier,
+    id: SelectOptionIdentifier,
   ): ResolvedSelectOptionWithResolvedAPValue | undefined {
     return this.resolvedSelectOptionsWithResolvedAPValue?.find(ro => equalsCase(ro.id, id))
   }
 
   get selectOptionConfiguration(): DisplayedInactiveActivatableOption[] {
-    // TODO: Do not allow the same select option (combination?) to be selected multiple times unless specified otherwise
-    // TODO: Select Options may restrict available levels with prerequisites or in general with Languages
-    if (this.resolvedSelectOptionsWithResolvedAPValue) {
-      const options = this.resolvedSelectOptionsWithResolvedAPValue
-
-      if ("select_options" in this.dbEntry && this.dbEntry.select_options?.rules !== undefined) {
-        return this.dbEntry.select_options.rules.map((rule): DisplayedInactiveActivatableOption => {
-          switch (rule.value.kind) {
-            case "Child":
-              return {
-                kind: "choice",
-                options: this.global.db
-                  .getAllInstanceContainersOfEntity(rule.value.Child.entity.kind)
-                  .map((container): ResolvedSelectOptionWithResolvedAPValue => ({
-                    id: Case("SkillApplication", container.id),
-                    content: {
-                      ...container.content,
-                      parent: Case(
-                        this.entityName satisfies ActivatableIdentifier["kind"],
-                        this.id,
-                      ),
-                    },
-                    newApplications: [],
-                    uses: [],
-                    parentSelectOption: Case("Skill", container.content.parent),
-                  })),
-                parentIndex: rule.value.Child.parentIndex,
-              }
-            case "Predefined":
-              return {
-                kind: "choice",
-                options,
-              }
-            case "PredefinedOrTextInput":
-              return {
-                kind: "choiceOrCustomizableText",
-                options,
-                textLabel: rule.value.PredefinedOrTextInput.translations,
-              }
-            case "TextInput":
-              return {
-                kind: "text",
-                textLabel: rule.value.TextInput.translations,
-              }
-            default:
-              return assertExhaustive(rule.value)
-          }
-        })
-      } else {
-        return [
-          {
-            kind: "choice",
-            options,
-          },
-        ]
-      }
-    } else {
-      return []
-    }
+    return getSelectOptionConfiguration(
+      this.resolvedSelectOptionsWithResolvedAPValue,
+      this.entityName,
+      this.id,
+      "select_options" in this.dbEntry ? this.dbEntry.select_options?.rules : undefined,
+      this.global,
+    )
   }
 
   @computed
@@ -1398,6 +1329,104 @@ export class CharacterActivatable<
 
       return true
     })
+  }
+}
+
+export const resolveAPValuesForResolvedSelectOptions = (
+  resolvedSelectOptions: ResolvedSelectOption[],
+  global: Global,
+  character: BaseCharacter,
+  blockedByDependency: (optionId: ResolvedSelectOptionIdentifier) => boolean,
+  countOptionsWithoutCustomAPValues: (optionId: ResolvedSelectOptionIdentifier) => number,
+) =>
+  resolvedSelectOptions
+    .filter(
+      option =>
+        isEntryFromIncludedPublication(
+          option.content,
+          global.db.getInstanceOfEntityById.bind(global.db),
+          global.locale.translateMap,
+          character.rules.publicationOptions,
+        ) && !blockedByDependency(option.id),
+    )
+    // oxlint-disable-next-line oxc/no-map-spread
+    .map((option): ResolvedSelectOptionWithResolvedAPValue => ({
+      ...option,
+      content: {
+        ...option.content,
+        ap_value:
+          option.content.ap_value?.kind === "DependingOnActiveInstances"
+            ? Case(
+                "Fixed",
+                getAdventurePointsDependingOnActiveInstancesForInactiveActivatableInstance(
+                  option.content.ap_value.DependingOnActiveInstances,
+                  countOptionsWithoutCustomAPValues(option.id),
+                ),
+              )
+            : option.content.ap_value,
+      },
+    }))
+
+export const getSelectOptionConfiguration = (
+  options: ResolvedSelectOptionWithResolvedAPValue[] | undefined,
+  entityName: ActivatableIdentifier["kind"],
+  id: string,
+  selectOptionRules: SelectOptionRules | undefined,
+  global: Global,
+): DisplayedInactiveActivatableOption[] => {
+  // TODO: Do not allow the same select option (combination?) to be selected multiple times unless specified otherwise
+  // TODO: Select Options may restrict available levels with prerequisites or in general with Languages
+  if (options) {
+    if (selectOptionRules !== undefined) {
+      return selectOptionRules.map((rule): DisplayedInactiveActivatableOption => {
+        switch (rule.value.kind) {
+          case "Child":
+            return {
+              kind: "choice",
+              options: global.db
+                .getAllInstanceContainersOfEntity(rule.value.Child.entity.kind)
+                .map((container): ResolvedSelectOptionWithResolvedAPValue => ({
+                  id: Case("SkillApplication", container.id),
+                  content: {
+                    ...container.content,
+                    parent: Case(entityName, id),
+                  },
+                  newApplications: [],
+                  uses: [],
+                  parentSelectOption: Case("Skill", container.content.parent),
+                })),
+              parentIndex: rule.value.Child.parentIndex,
+            }
+          case "Predefined":
+            return {
+              kind: "choice",
+              options,
+            }
+          case "PredefinedOrTextInput":
+            return {
+              kind: "choiceOrCustomizableText",
+              options,
+              textLabel: rule.value.PredefinedOrTextInput.translations,
+            }
+          case "TextInput":
+            return {
+              kind: "text",
+              textLabel: rule.value.TextInput.translations,
+            }
+          default:
+            return assertExhaustive(rule.value)
+        }
+      })
+    } else {
+      return [
+        {
+          kind: "choice",
+          options,
+        },
+      ]
+    }
+  } else {
+    return []
   }
 }
 
@@ -1650,6 +1679,10 @@ export type SerializedActivatableInstance = {
  */
 export type ActivatableOption = PredefinedActivatableOption | CustomActivatableOption
 
+export type SelectOptionIdentifier =
+  | ResolvedSelectOptionIdentifier
+  | ResolvedSkillApplicationIdentifier
+
 /**
  * A predefined option for an activatable entry.
  */
@@ -1659,7 +1692,7 @@ export type PredefinedActivatableOption = {
   /**
    * An identifier referencing a different entry.
    */
-  id: ResolvedSelectOptionIdentifier
+  id: SelectOptionIdentifier
 }
 
 /**

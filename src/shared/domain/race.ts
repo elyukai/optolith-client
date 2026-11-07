@@ -1,5 +1,7 @@
 import { on } from "@elyukai/utils/function"
 import { ensure } from "@elyukai/utils/nullable"
+import { compareNumber } from "@elyukai/utils/ordering"
+import { sign } from "@elyukai/utils/string/number"
 import type { Race as RawRace } from "@optolith/character-schema/types"
 import type {
   ActivatableIdentifier,
@@ -10,6 +12,7 @@ import type {
   RaceVariant_ID,
 } from "@optolith/database-schema/gen"
 import { parensIf } from "@optolith/entity-descriptions/entities/partial/rated/activatable/parensIf"
+import { MISSING_VALUE } from "@optolith/entity-descriptions/entities/partial/unknown"
 import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
 import { computed, observable } from "mobx"
 import type { Global } from "../global.ts"
@@ -135,6 +138,25 @@ export class CharacterRace {
           .toSorted(on(rv => rv.name, this.global.locale.compare)) ?? [])
   }
 
+  @computed
+  get selectOptions(): DisplayedRaceSelectOptions {
+    const attributeAdjustment = this.variant?.attribute_adjustments.selectable?.[0]
+    return {
+      attributeAdjustment: attributeAdjustment?.list
+        .map(attr => {
+          const entry = this.global.db.getInstanceOfEntityById("Attribute", attr)
+          return {
+            id: attr,
+            name: `${
+              this.global.locale.translateMap(entry?.translations)?.name ?? MISSING_VALUE
+            } ${sign(attributeAdjustment.value)}`,
+            position: entry?.position ?? 0,
+          }
+        })
+        .toSorted(on(attr => attr.position, compareNumber)),
+    }
+  }
+
   static fromJSON(global: Global, character: BaseCharacter, raw: RawRace): CharacterRace {
     return new CharacterRace(global, character, raw.variant, raw.selectedAttributeAdjustment)
   }
@@ -146,6 +168,10 @@ export class CharacterRace {
       selectedAttributeAdjustment: this.selectedAttributeAdjustmentId,
     }
   }
+}
+
+export type DisplayedRaceSelectOptions = {
+  attributeAdjustment?: { id: Attribute_ID; name: string }[]
 }
 
 export type RaceForDisplay = Readonly<{

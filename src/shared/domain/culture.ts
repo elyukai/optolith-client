@@ -1,4 +1,6 @@
+import { ensureNonEmpty, type NonEmptyArray } from "@elyukai/utils/array/nonEmpty"
 import { sumWith } from "@elyukai/utils/array/reductions"
+import { on } from "@elyukai/utils/function"
 import type { Lazy } from "@elyukai/utils/lazy"
 import { Reader } from "@elyukai/utils/reader"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
@@ -15,6 +17,7 @@ import type {
   Culture,
   Culture_ID,
   GroupedCommonProfessions,
+  Language_ID,
   MagicalTradition,
   MagicalTraditionConstraint,
   MagicCommonProfessionConstraint,
@@ -23,9 +26,12 @@ import type {
   Profession,
   Profession_ID,
   ProfessionConstraint,
+  Script_ID,
 } from "@optolith/database-schema/gen"
+import { MISSING_VALUE } from "@optolith/entity-descriptions/entities/partial/unknown"
 import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
 import { computed, observable } from "mobx"
+import type { Database } from "../database.ts"
 import type { Global } from "../global.ts"
 import type { BaseCharacter } from "./character.ts"
 import { Case } from "./databaseEnum.ts"
@@ -53,7 +59,7 @@ export class CharacterCulture {
     global: Global,
     character: BaseCharacter,
     id: Culture_ID,
-    isCulturalPackageApplied: boolean = false,
+    isCulturalPackageApplied = false,
     dependencies: CultureDependency[] = [],
   ) {
     this.global = global
@@ -91,15 +97,39 @@ export class CharacterCulture {
         name:
           baseCharacter.global.locale.translateMap(culture.content.translations)?.name ??
           culture.id,
-        apValue: sumWith(culture.content.cultural_package, item =>
-          getAdventurePointsForRatingRange(
-            baseCharacter.global.db.getInstanceOfEntityById("Skill", item.id)?.improvement_cost
-              .kind ?? "A",
-            0,
-            item.points,
-          ),
-        ),
+        apValue: getAPValueForCulturalPackage(culture.content, baseCharacter.global.db),
       }))
+  }
+
+  @computed
+  get selectOptions(): DisplayedCultureSelectOptions {
+    if (this.base === undefined) {
+      return {}
+    }
+
+    return {
+      culturalPackageAPValue: getAPValueForCulturalPackage(this.base, this.global.db),
+      nativeTongue: ensureNonEmpty(this.base.language)
+        ?.map(lang => ({
+          id: lang.id,
+          name:
+            this.global.locale.translateMap(
+              this.global.db.getInstanceOfEntityById("Language", lang.id)?.translations,
+            )?.name ?? MISSING_VALUE,
+        }))
+        .toSorted(on(attr => attr.name, this.global.locale.compare)),
+      scripts:
+        this.base.script === undefined
+          ? undefined
+          : ensureNonEmpty(this.base.script)?.map(script => {
+              const entry = this.global.db.getInstanceOfEntityById("Script", script)
+              return {
+                id: script,
+                name: this.global.locale.translateMap(entry?.translations)?.name ?? MISSING_VALUE,
+                apValue: entry?.ap_value ?? 0,
+              }
+            }),
+    }
   }
 
   getCommonProfessionPredicate(): (env: CommonProfessionEnv) => boolean {
@@ -120,6 +150,21 @@ export class CharacterCulture {
       isCulturalPackageApplied: this.isCulturalPackageApplied,
     }
   }
+}
+
+const getAPValueForCulturalPackage = (culture: Culture, db: Database) =>
+  sumWith(culture.cultural_package, item =>
+    getAdventurePointsForRatingRange(
+      db.getInstanceOfEntityById("Skill", item.id)?.improvement_cost.kind ?? "A",
+      0,
+      item.points,
+    ),
+  )
+
+export type DisplayedCultureSelectOptions = {
+  culturalPackageAPValue?: number
+  nativeTongue?: NonEmptyArray<{ id: Language_ID; name: string }>
+  scripts?: NonEmptyArray<{ id: Script_ID; name: string; apValue: number }>
 }
 
 export type CommonProfessionEnv = {

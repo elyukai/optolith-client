@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { Label } from "../label/Label.tsx"
 import { RadioButton } from "./RadioButton.tsx"
 
@@ -12,7 +13,7 @@ export type RadioOptionValue = string | number | undefined
 export type RadioOption<A extends RadioOptionValue = RadioOptionValue> = {
   className?: string
   disabled?: boolean
-  name: string
+  name: ReactNode
   value: A | undefined
 }
 

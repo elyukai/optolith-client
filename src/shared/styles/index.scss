@@ -5,20 +5,15 @@
 * {
   box-sizing: border-box;
   -ms-overflow-style: none;
-
-  &:not(input):not(textarea) {
-    -moz-user-select: none;
-    -o-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
 }
 
 html {
-  font: 16px/1.35rem "Alegreya Sans", sans-serif;
+  font:
+    16px/1.35rem "Alegreya Sans",
+    sans-serif;
   letter-spacing: 0.025em;
   color: var(--text-color);
+  user-select: none;
 }
 
 html,

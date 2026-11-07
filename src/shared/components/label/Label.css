@@ -1,0 +1,12 @@
+label {
+  color: var(--text-color);
+  display: block;
+    font-size: 0.8rem;
+    line-height: 1.1;
+  padding-bottom: 0.6rem;
+
+  &.disabled,
+  .disabled & {
+    color: var(--disabled-color);
+  }
+}

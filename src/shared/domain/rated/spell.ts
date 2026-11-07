@@ -150,12 +150,6 @@ export class CharacterSpellwork<
     const minimumValues: number[] = [
       ...this.flatMinimumRestrictions,
       ...this.activeEnhancements.values().map(enhancement => enhancement.dbEntry.skill_rating),
-      // TODO: getSpellworkMinimumFromPropertyKnowledgePrerequistes(
-      //   spellsAbove10ByProperty,
-      //   activePropertyKnowledges,
-      //   staticSpellwork.property.id.property,
-      //   dynamicSpellwork.value,
-      // ),
     ].filter(isNotNullish)
 
     return minimumValues.length > 0 ? Math.max(...minimumValues) : undefined

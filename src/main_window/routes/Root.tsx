@@ -1,10 +1,11 @@
 import { classList } from "@elyukai/utils/classList"
-import { type FC, useEffect } from "react"
+import { type FC, useContext, useEffect } from "react"
 import backgroundImg from "../../assets/images/background.svg"
 import { TitleBar } from "../../shared/components/titleBar/TitleBar.tsx"
+import { LocalizationContext } from "../../shared/contexts/localization.ts"
 import { ExternalAPI } from "../external.ts"
 import { useAppSelector } from "../hooks/redux.ts"
-import { selectAreAnimationsEnabled, selectLocale } from "../slices/settingsSlice.ts"
+import { selectAreAnimationsEnabled } from "../slices/settingsSlice.ts"
 import { Alerts } from "./Alerts.tsx"
 import "./Root.scss"
 import { Router } from "./Router.tsx"
@@ -20,7 +21,7 @@ const isMaximized = () => ExternalAPI.isMaximized()
  * Returns the React application for the main window.
  */
 export const Root: FC = () => {
-  const language = useAppSelector(selectLocale)
+  const [language] = useContext(LocalizationContext).safeLocales
   const areAnimationsEnabled = useAppSelector(selectAreAnimationsEnabled)
 
   useEffect(() => {

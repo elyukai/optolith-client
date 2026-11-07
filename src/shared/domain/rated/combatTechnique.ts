@@ -11,10 +11,12 @@ import type { BaseCharacter, Character } from "../character.ts"
 import { Case } from "../databaseEnum.ts"
 import { CharacterRatedEntries, CharacterRatedEntry, type DisplayedRated } from "./ratedEntry.ts"
 
+export const COMBAT_TECHNIQUE_START_RATING = 6
+
 export class CharacterCombatTechnique<
   Entity extends CombatTechniqueIdentifier["kind"],
 > extends CharacterRatedEntry<Entity> {
-  static override readonly minValue = 6
+  static override readonly minValue = COMBAT_TECHNIQUE_START_RATING
   override readonly derivedDependencies = []
   readonly improvementCost = this.dbEntry.improvement_cost.kind
 
@@ -128,6 +130,8 @@ export class CharacterCombatTechniques<
   get combatTechniques() {
     return this.entries
   }
+
+  // TODO: Feuerspeien should only be available with special ability, and special ability should not be removable if there are any points in Feuerspeien.
 
   static fromJSON<Entity extends CombatTechniqueIdentifier["kind"]>(
     global: Global,

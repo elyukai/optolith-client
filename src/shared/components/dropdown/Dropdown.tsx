@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from "react"
 import { classList } from "@elyukai/utils/classList"
+import { nullableToArray } from "@elyukai/utils/nullable"
+import { action } from "mobx"
+import { observer } from "mobx-react-lite"
+import { useCallback, useEffect, useRef, useState } from "react"
 import type { FCC } from "../../utils/react.ts"
 import { Label } from "../label/Label.tsx"
 import { Scroll } from "../scroll/Scroll.tsx"
 import "./Dropdown.scss"
 import { DropdownItem, type DropdownOption } from "./DropdownItem.tsx"
-import { nullableToArray } from "@elyukai/utils/nullable"
 
 type Props<A> = {
   className?: string
@@ -17,10 +19,10 @@ type Props<A> = {
   required?: boolean
   value?: A
   values?: A[]
-  onChange?(option: A): void
-  onChangeList?(selected: A[]): void
-  equals?(a: A, b: A): boolean
-  getKey(option: DropdownOption<A>): string | number | undefined
+  onChange?: (option: A) => void
+  onChangeList?: (selected: A[]) => void
+  equals?: (a: A, b: A) => boolean
+  getKey: (option: DropdownOption<A>) => string | number | undefined
 }
 
 /**
@@ -34,7 +36,7 @@ export const optionFromIndexed = (name: string, index: number): DropdownOption<n
 /**
  * A dropdown with a list of options.
  */
-export function Dropdown<A>(props: Props<A>): ReturnType<FCC<Props<A>>> {
+export const Dropdown = observer(function Dropdown<A>(props: Props<A>): ReturnType<FCC<Props<A>>> {
   const {
     className,
     disabled,
@@ -72,7 +74,7 @@ export function Dropdown<A>(props: Props<A>): ReturnType<FCC<Props<A>>> {
   }, [overlayHeight])
 
   const handleChange = useCallback(
-    (option: A) => {
+    action((option: A) => {
       if (typeof onChange === "function") {
         onChange(option)
       }
@@ -82,7 +84,7 @@ export function Dropdown<A>(props: Props<A>): ReturnType<FCC<Props<A>>> {
       }
 
       setOpen(false)
-    },
+    }),
     [onChange, onChangeList, values],
   )
 
@@ -120,7 +122,7 @@ export function Dropdown<A>(props: Props<A>): ReturnType<FCC<Props<A>>> {
     : nullableToArray(options.find(option => option.id === value))
 
   const valueText =
-    selected.length === 0 ? hint ?? null : selected.map(option => option.name).join(", ")
+    selected.length === 0 ? (hint ?? null) : selected.map(option => option.name).join(", ")
 
   const downElement = (
     <div style={{ height: style }} className="down">
@@ -128,9 +130,9 @@ export function Dropdown<A>(props: Props<A>): ReturnType<FCC<Props<A>>> {
         <Scroll noInnerElement className={options.length > 5 ? "scroll-active" : ""}>
           <ul className="dropdown-options">
             {options.map(option => (
-              <DropdownItem
+              <DropdownItem<A>
                 key={getKey(option) ?? "__DEFAULT__"}
-                active={value}
+                active={selected}
                 disabled={normalizedDisabled}
                 onChange={handleChange}
                 option={option}
@@ -165,4 +167,4 @@ export function Dropdown<A>(props: Props<A>): ReturnType<FCC<Props<A>>> {
       </div>
     </div>
   )
-}
+})

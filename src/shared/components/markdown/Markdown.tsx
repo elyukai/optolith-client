@@ -69,7 +69,7 @@ const inlineBuilderMap: InlineHTMLBuilderMap = {
       }
       data-reference={node.label.toString()}
     >
-      {node.label.toString()}
+      {typeof node.label === "number" ? null : node.label}
     </sup>
   ),
 }
@@ -293,7 +293,10 @@ const blockBuilderMap: BlockHTMLBuilderMap = {
       {node.content.map((item, itemIndex) => (
         <div key={itemIndex}>
           {item.terms.flatMap((term, termIndex) => (
-            <dt key={termIndex}>{term.map((content, i) => parseInnerInline(content, i, env))}</dt>
+            <dt key={termIndex}>
+              {term.map((content, i) => parseInnerInline(content, i, env))}
+              <span className="sep">: </span>
+            </dt>
           ))}
           {item.descriptions.flatMap((def, defIndex) => (
             <dd key={defIndex}>{def.map((content, i) => parseInner(content, i, env))}</dd>

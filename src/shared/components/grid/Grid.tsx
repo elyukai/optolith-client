@@ -1,6 +1,6 @@
 import { classList } from "@elyukai/utils/classList"
 import type { FCC } from "../../utils/react.ts"
-import "./Grid.scss"
+import "./Grid.css"
 
 type Size = "small" | "medium" | "large"
 

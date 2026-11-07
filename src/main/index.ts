@@ -34,6 +34,7 @@ import {
   CharacterInRaceCultureProfessionSelection,
   Characters,
 } from "../shared/domain/character.ts"
+import { equalsCase } from "../shared/domain/databaseEnum.ts"
 import type { Global } from "../shared/global.ts"
 import type { CharacterIPCActions } from "../shared/ipc.ts"
 import { globalSettings } from "../shared/settings/main.ts"
@@ -117,6 +118,10 @@ const global: Global = {
   getResolvedSelectOptionById: (parentId, optionid) =>
     cache.activatableSelectOptions[parentId.kind][fromUniformCase(parentId)]?.find(option =>
       deepEqual(option.id, optionid),
+    ),
+  getResolvedSkillApplicationById: (skillId, applicationId) =>
+    cache.skillApplications[skillId]?.find(application =>
+      equalsCase(application.id, applicationId),
     ),
   getAllResolvedSelectOptions: parentId =>
     cache.activatableSelectOptions[parentId.kind][fromUniformCase(parentId)] ?? [],
@@ -341,10 +346,7 @@ app.whenReady().then(async () => {
               db,
               localeEnvironment.toObject(),
               settings,
-              global.getResolvedSelectOptionById,
-              global.getAllResolvedSelectOptions,
-              skillId => cache.newApplicationsAndUses.newApplications[skillId] ?? [],
-              skillId => cache.newApplicationsAndUses.uses[skillId] ?? [],
+              cache,
               entity,
               { id, content: entry },
               (characterId === undefined

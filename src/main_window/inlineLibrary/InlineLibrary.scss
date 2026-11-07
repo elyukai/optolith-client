@@ -20,6 +20,11 @@ aside.inline-library .scroll .scroll-inner {
 
 aside.inline-library .tde-official-style {
   background: none;
+  user-select: text;
+}
+
+aside.inline-library .preview dt::after {
+  display: none;
 }
 
 aside.inline-library .tde-official-style a {

@@ -172,19 +172,18 @@ export const InactiveActivatablesListItem = observer(
         <ListItemLeft>
           <ListItemName name={name} onClick={displayInlineLibraryEntry} />
           {level?.placement === "before" ? levelElement : null}
-          {isAvailable
-            ? options.map((option, index) => (
-                <InactiveActivatableListItemOption
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={index}
-                  index={index}
-                  onChange={handleChangeOption}
-                  values={selectedOptions}
-                  option={option}
-                  value={selectedOptions[index]}
-                />
-              ))
-            : null}
+          {options.map((option, index) => (
+            <InactiveActivatableListItemOption
+              // eslint-disable-next-line react/no-array-index-key
+              key={index}
+              index={index}
+              onChange={handleChangeOption}
+              values={selectedOptions}
+              option={option}
+              value={selectedOptions[index]}
+              disabled={!isAvailable}
+            />
+          ))}
           {level?.placement === "after" ? levelElement : null}
         </ListItemLeft>
         <ListItemSeparator />

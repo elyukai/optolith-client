@@ -142,6 +142,8 @@ const getEntrySpecificIsRemovable = (
               case "Advantage":
               case "HomunculusType":
               case "SkillApplication":
+              case "NewSkillApplication":
+              case "Region":
                 return undefined
               default:
                 return assertExhaustive(skillId)
@@ -201,6 +203,8 @@ const getEntrySpecificIsRemovable = (
               case "Advantage":
               case "HomunculusType":
               case "SkillApplication":
+              case "NewSkillApplication":
+              case "Region":
                 return undefined
               default:
                 return assertExhaustive(ctId)

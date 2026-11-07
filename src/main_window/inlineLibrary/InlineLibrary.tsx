@@ -68,7 +68,7 @@ export class InlineLibraryManager {
   @action
   goBack() {
     if (this.hasPrevious && this.#history !== undefined) {
-      const previous = this.#history.previous.pop()!
+      const previous = this.#history.previous.pop() as DisplayableMainIdentifier
       this.#history.next.unshift(this.#history.current)
       this.#history.current = previous
     }
@@ -77,7 +77,7 @@ export class InlineLibraryManager {
   @action
   goForward() {
     if (this.hasNext && this.#history !== undefined) {
-      const next = this.#history.next.shift()!
+      const next = this.#history.next.shift() as DisplayableMainIdentifier
       this.#history.previous.push(this.#history.current)
       this.#history.current = next
     }
