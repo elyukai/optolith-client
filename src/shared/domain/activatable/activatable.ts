@@ -137,36 +137,40 @@ export class CharacterActivatableInstance {
   }
 
   @computed
-  get adventurePoints():
-    | Case<"Fixed", number>
-    | Case<"Range", { min: number; max: number; total: number; diffWhenRemoved: number }> {
+  get adventurePoints(): DisplayedActiveActivatableCost {
+    const isAutomatic = false // TODO
+
     if (this.hasCustomAdventurePointsValue()) {
-      return Case("Fixed", this.customAdventurePointsValue!)
+      return { type: "Fixed", isAutomatic, value: this.customAdventurePointsValue }
     }
 
     const apValue = this.parent.preparedActiveAdventurePointsValue
 
     switch (apValue.kind) {
       case "Fixed":
-        return Case("Fixed", apValue.Fixed * (this.level ?? 1))
+        return { type: "Fixed", isAutomatic, value: apValue.Fixed * (this.level ?? 1) }
       case "ByLevel":
-        return Case(
-          "Fixed",
-          this.level === undefined ? 0 : (apValue.ByLevel.list[this.level - 1] ?? 0),
-        )
+        return {
+          type: "Fixed",
+          isAutomatic,
+          value: this.level === undefined ? 0 : (apValue.ByLevel.list[this.level - 1] ?? 0),
+        }
       case "DerivedFromSelection": {
         const selectedOptions =
           this.options
             ?.filter(isPredefinedActivatableOption)
             .map(opt => this.parent.getSelectOptionById(opt.id)?.content.ap_value) ?? []
 
-        return Case(
-          "Fixed",
-          selectedOptions.some(isNotNullish) ? sumWith(selectedOptions, opt => opt?.Fixed ?? 0) : 0,
-        )
+        return {
+          type: "Fixed",
+          isAutomatic,
+          value: selectedOptions.some(isNotNullish)
+            ? sumWith(selectedOptions, opt => opt?.Fixed ?? 0)
+            : 0,
+        }
       }
       case "Range":
-        return apValue
+        return { type: "Range", isAutomatic, ...apValue.Range }
       default:
         return assertExhaustive(apValue)
     }

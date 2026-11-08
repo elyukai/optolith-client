@@ -15,7 +15,6 @@ import type {
   ActivatableNameComponents,
 } from "@optolith/entity-descriptions/entities/partial/activatableNameChunks"
 import type { Character } from "../character.ts"
-import type { Case } from "../databaseEnum.ts"
 import type { CharacterActivatableInstance, SerializedActivatableInstance } from "./activatable.ts"
 import {
   appliesToInstanceStrict,
@@ -33,18 +32,25 @@ import {
  * other instances.
  */
 export type DisplayedActiveActivatableCost =
-  | Case<"Fixed", number>
-  | Case<"Range", { min: number; max: number; total: number; diffWhenRemoved: number }>
+  | { type: "Fixed"; isAutomatic: boolean; value: number }
+  | {
+      type: "Range"
+      isAutomatic: boolean
+      min: number
+      max: number
+      total: number
+      diffWhenRemoved: number
+    }
 
 /**
  * Returns the cost difference when removing the instance.
  */
 export const getCostDifferenceOnRemove = (cost: DisplayedActiveActivatableCost): number => {
-  switch (cost.kind) {
+  switch (cost.type) {
     case "Fixed":
-      return cost.Fixed
+      return cost.value
     case "Range":
-      return cost.Range.diffWhenRemoved
+      return cost.diffWhenRemoved
     default:
       return assertExhaustive(cost)
   }

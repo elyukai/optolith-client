@@ -1,10 +1,10 @@
 import { classList } from "@elyukai/utils/classList"
+import { identity } from "@elyukai/utils/function"
 import { range } from "@elyukai/utils/range"
 import { romanize } from "@elyukai/utils/roman"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type { ActivatableIdentifier } from "@optolith/database-schema/gen"
 import { renderActivatableNameChunk } from "@optolith/entity-descriptions/entities/partial/activatableNameChunks"
-// import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { observer } from "mobx-react-lite"
 import { useCallback, type ReactNode } from "react"
 import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
@@ -85,15 +85,12 @@ export const ActiveActivatablesListItem = observer(
       )
 
     const costStr = (() => {
-      // TODO
-      // renderMaybeWith((x: number | string) => (IAA.isAutomatic(item) ? `(${x})` : x))(
-      //   PABSA.currentCost(snd(finalProps)),
-      // )
-      switch (cost.kind) {
+      const wrapInParens = cost.isAutomatic ? (x: string) => `(${x})` : identity
+      switch (cost.type) {
         case "Fixed":
-          return cost.Fixed.toString()
+          return wrapInParens(cost.value.toString())
         case "Range":
-          return `${cost.Range.min}–${cost.Range.max}`
+          return wrapInParens(`${cost.min}–${cost.max}`)
         default:
           return assertExhaustive(cost)
       }
