@@ -1,4 +1,5 @@
-import { ensureNonEmpty } from "@elyukai/utils/array/nonEmpty"
+import { ensureNonEmpty, isNotEmpty } from "@elyukai/utils/array/nonEmpty"
+import { on } from "@elyukai/utils/function"
 import { isNotNullish } from "@elyukai/utils/nullable"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type { Rules as RawRules } from "@optolith/character-schema/types"
@@ -22,16 +23,19 @@ import {
   type PublicationOptions,
 } from "@optolith/entity-descriptions/publication-options"
 import { app } from "electron/main"
-import { action, computed, observable } from "mobx"
+import { action, computed, observable, toJS } from "mobx"
 import semver from "semver"
 import type { Global } from "../global.ts"
+import type { BaseCharacter } from "./character.ts"
 import {
   addOrRemoveDependency,
   type RegistrationMethod,
 } from "./dependencies/registrationHelpers.ts"
+import { checkMultipleDisjunctionPartsAreValid } from "./prerequisites/disjunctionPrerequisiteMultipartValidation.ts"
 
 abstract class CharacterRule<Entity extends "FocusRule" | "OptionalRule" | "AlternativeRule"> {
   readonly global: Global
+  readonly character: BaseCharacter
   readonly id: string
   readonly entityName: Entity
   readonly dbEntry: EntityMap[Entity]
@@ -41,13 +45,15 @@ abstract class CharacterRule<Entity extends "FocusRule" | "OptionalRule" | "Alte
 
   constructor(
     global: Global,
+    character: BaseCharacter,
     entityName: Entity,
     id: string,
-    active: boolean = false,
+    active = false,
     dbEntry: EntityMap[Entity] | undefined = global.db.getInstanceOfEntityById(entityName, id),
     dependencies: RuleDependency[] = [],
   ) {
     this.global = global
+    this.character = character
     this.id = id
     this.entityName = entityName
     if (!dbEntry) {
@@ -67,8 +73,39 @@ abstract class CharacterRule<Entity extends "FocusRule" | "OptionalRule" | "Alte
       id: this.id,
       active: this.active,
       name: this.global.locale.translateMap(this.dbEntry.translations)?.name ?? "",
-      disabled: this.dbEntry.isMissingImplementation, // TODO: Dependencies
+      disabled: this.isDisabled,
     }
+  }
+
+  @computed
+  get isDisabled(): boolean {
+    return (
+      this.dbEntry.isMissingImplementation ||
+      this.dependencies.some(dep => dep.active === this.active)
+    )
+  }
+
+  /**
+   * Flattens the list of dependencies to
+   * usable values. That means, optional dependencies (objects) will be evaluated
+   * and will be included in the resulting list, depending on whether it has to
+   * follow the optional dependency or not. The result is a plain `List` of all
+   * non-optional dependencies.
+   */
+  @computed
+  get applyingDependencies(): RuleDependency[] {
+    return this.dependencies.filter(dep => {
+      if (dep.isPartOfDisjunction) {
+        return checkMultipleDisjunctionPartsAreValid(
+          this.global.db.getInstanceOfEntityById,
+          this.character.prerequisiteCapabilities,
+          dep.sourceId,
+          dep.index,
+        )
+      }
+
+      return true
+    })
   }
 }
 
@@ -127,10 +164,11 @@ abstract class CharacterRuleCollection<
   T extends CharacterRule<Entity>,
 > {
   readonly global: Global
-  readonly parent: CharacterRules
+  readonly character: BaseCharacter
   readonly entityName: Entity
   readonly creator: new (
     global: Global,
+    character: BaseCharacter,
     entityName: Entity,
     id: string,
     active?: boolean,
@@ -141,13 +179,13 @@ abstract class CharacterRuleCollection<
 
   constructor(
     global: Global,
-    parent: CharacterRules,
+    character: BaseCharacter,
     entityName: Entity,
     creator: typeof this.creator,
     rules: Map<string, T> = new Map(),
   ) {
     this.global = global
-    this.parent = parent
+    this.character = character
     this.entityName = entityName
     this.creator = creator
     this.rules = rules
@@ -162,14 +200,21 @@ abstract class CharacterRuleCollection<
           rule.content,
           this.global.db.getInstanceOfEntityById.bind(this.global.db),
           this.global.locale.translateMap,
-          this.parent.publicationOptions,
+          this.character.rules.publicationOptions,
         ),
       )
       .map(
         rule =>
           (
             this.rules.get(rule.id) ??
-            new this.creator(this.global, this.entityName, rule.id, false, rule.content)
+            new this.creator(
+              this.global,
+              this.character,
+              this.entityName,
+              rule.id,
+              false,
+              rule.content,
+            )
           ).toSerialized() as ReturnType<T["toSerialized"]>,
       )
   }
@@ -177,7 +222,7 @@ abstract class CharacterRuleCollection<
   ensureEntryExists(id: string): T {
     return this.rules.getOrInsertComputed(
       id,
-      () => new this.creator(this.global, this.entityName, id),
+      () => new this.creator(this.global, this.character, this.entityName, id),
     )
   }
 
@@ -212,8 +257,8 @@ class CharacterFocusRuleCollection extends CharacterRuleCollection<
   "FocusRule",
   CharacterFocusRule
 > {
-  constructor(global: Global, parent: CharacterRules, rules?: Map<string, CharacterFocusRule>) {
-    super(global, parent, "FocusRule", CharacterFocusRule, rules)
+  constructor(global: Global, character: BaseCharacter, rules?: Map<string, CharacterFocusRule>) {
+    super(global, character, "FocusRule", CharacterFocusRule, rules)
     // "34f44742-03ce-49b6-8930-b83d25ecc39c": {
     //   id: "34f44742-03ce-49b6-8930-b83d25ecc39c", // Spell Enhancements
     //   active: true,
@@ -231,8 +276,12 @@ class CharacterOptionalRuleCollection extends CharacterRuleCollection<
   "OptionalRule",
   CharacterOptionalRule
 > {
-  constructor(global: Global, parent: CharacterRules, rules?: Map<string, CharacterOptionalRule>) {
-    super(global, parent, "OptionalRule", CharacterOptionalRule, rules)
+  constructor(
+    global: Global,
+    character: BaseCharacter,
+    rules?: Map<string, CharacterOptionalRule>,
+  ) {
+    super(global, character, "OptionalRule", CharacterOptionalRule, rules)
   }
 
   getOptionValue(id: string): number | undefined {
@@ -260,10 +309,10 @@ class CharacterAlternativeRuleCollection extends CharacterRuleCollection<
 > {
   constructor(
     global: Global,
-    parent: CharacterRules,
+    character: BaseCharacter,
     rules?: Map<string, CharacterAlternativeRule>,
   ) {
-    super(global, parent, "AlternativeRule", CharacterAlternativeRule, rules)
+    super(global, character, "AlternativeRule", CharacterAlternativeRule, rules)
   }
 }
 
@@ -323,7 +372,7 @@ export class CharacterRules {
   /**
    * Whether the character makes use of all publications except for publications with adult content, which have to be specified explicitly using `include_publications`.
    */
-  @observable accessor includeAllPublications: boolean = false
+  @observable accessor includeAllPublications = false
 
   /**
    * Explicitly used publications. If `include_all_publications` is set to `true`, only affects publications that are not covered by `include_all_publications`.
@@ -352,8 +401,9 @@ export class CharacterRules {
 
   constructor(
     global: Global,
-    includeAllPublications: boolean,
-    includePublications: Publication_ID[] | Set<Publication_ID>,
+    character: BaseCharacter,
+    includeAllPublications = false,
+    includePublications?: Publication_ID[] | Set<Publication_ID>,
     focusRules?: Map<string, CharacterFocusRule>,
     optionalRules?: Map<string, CharacterOptionalRule>,
     alternativeRules?: Map<string, CharacterAlternativeRule>,
@@ -361,9 +411,13 @@ export class CharacterRules {
     this.global = global
     this.includeAllPublications = includeAllPublications
     this.includePublications = new Set(includePublications)
-    this.focusRules = new CharacterFocusRuleCollection(global, this, focusRules)
-    this.optionalRules = new CharacterOptionalRuleCollection(global, this, optionalRules)
-    this.alternativeRules = new CharacterAlternativeRuleCollection(global, this, alternativeRules)
+    this.focusRules = new CharacterFocusRuleCollection(global, character, focusRules)
+    this.optionalRules = new CharacterOptionalRuleCollection(global, character, optionalRules)
+    this.alternativeRules = new CharacterAlternativeRuleCollection(
+      global,
+      character,
+      alternativeRules,
+    )
   }
 
   @computed
@@ -456,6 +510,11 @@ export class CharacterRules {
   }
 
   @action
+  setOptionalRuleOption(id: OptionalRule_ID, optionId: OptionalRuleOption_ID): void {
+    this.optionalRules.setOption(id, optionId)
+  }
+
+  @action
   toggleAlternativeRule(id: AlternativeRule_ID): void {
     this.alternativeRules.toggle(id)
   }
@@ -489,8 +548,13 @@ export class CharacterRules {
     }
   }
 
-  static fromJSON(global: Global, raw: RawRules): CharacterRules {
-    const rules = new CharacterRules(global, raw.includeAllPublications, raw.includePublications)
+  static fromJSON(global: Global, character: BaseCharacter, raw: RawRules): CharacterRules {
+    const rules = new CharacterRules(
+      global,
+      character,
+      raw.includeAllPublications,
+      raw.includePublications,
+    )
     raw.focusRules?.forEach(rawRule => {
       const rule = rules.focusRules.ensureEntryExists(rawRule.id)
       rule.active = true

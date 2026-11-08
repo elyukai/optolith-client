@@ -216,7 +216,7 @@ export abstract class BaseCharacter {
     this.version = version
     this.dateCreated = dateCreated
     this.dateLastModified = dateLastModified
-    this.rules = new CharacterRules(global, false, [])
+    this.rules = new CharacterRules(global, this)
     this.experienceLevel = new CharacterExperienceLevel(global, this, experienceLevelId)
     this.totalAdventurePoints = this.experienceLevel.start?.adventure_points ?? 0
     this.states = new CharacterStates(global, this)
@@ -1344,6 +1344,7 @@ export class CharacterInRaceCultureProfessionSelection extends BaseCharacter {
     fullCharacter.totalAdventurePoints = this.totalAdventurePoints
     fullCharacter.rules = new CharacterRules(
       this.global,
+      fullCharacter,
       this.rules.includeAllPublications,
       this.rules.includePublications,
       this.rules.focusRules.rules,
@@ -1392,7 +1393,7 @@ export class CharacterInRaceCultureProfessionSelection extends BaseCharacter {
     character.curriculum = json.curriculum
       ? CharacterCurriculum.fromJSON(json.curriculum)
       : undefined
-    character.rules = CharacterRules.fromJSON(global, json.rules)
+    character.rules = CharacterRules.fromJSON(global, character, json.rules)
     character.personalData = CharacterPersonalData.fromJSON(global, character, json.personalData)
 
     return character
@@ -1510,7 +1511,7 @@ export class FullCharacter extends BaseCharacter {
     character.curriculum = json.curriculum
       ? CharacterCurriculum.fromJSON(json.curriculum)
       : undefined
-    character.rules = CharacterRules.fromJSON(global, json.rules)
+    character.rules = CharacterRules.fromJSON(global, character, json.rules)
     character.personalData = CharacterPersonalData.fromJSON(global, character, json.personalData)
     character.advantages = CharacterActivatables.fromJSON(
       global,
