@@ -55,6 +55,7 @@ import {
 } from "./prerequisites/single/index.ts"
 import {
   CharacterProfession,
+  checkProfessionSpecialAbilityRulePrerequisites,
   type DisplayedProfessionSelectOptions,
   type ProfessionForDisplay,
 } from "./profession.ts"
@@ -666,17 +667,15 @@ export abstract class BaseCharacter {
           this.profession !== undefined &&
           this instanceof CharacterInRaceCultureProfessionSelection
         ) {
-          const transformedCharacter = this.transformIntoFullCharacter(
-            this.race,
-            this.culture,
-            this.profession,
-          )
+          const { race, culture, profession } = this
+
+          const transformedCharacter = this.transformIntoFullCharacter(race, culture, profession)
 
           const [_, [selectedOptions]] = args
 
           // Race
 
-          for (const advantage of this.race.variant?.automatic_advantages ?? []) {
+          for (const advantage of race.variant?.automatic_advantages ?? []) {
             transformedCharacter.advantages.add(advantage.id, {
               level: advantage.level,
               options: advantage.options?.map(option => ({
@@ -686,7 +685,7 @@ export abstract class BaseCharacter {
             })
           }
 
-          for (const disadvantage of this.race.variant?.automatic_disadvantages ?? []) {
+          for (const disadvantage of race.variant?.automatic_disadvantages ?? []) {
             transformedCharacter.disadvantages.add(disadvantage.id, {
               level: disadvantage.level,
               options: disadvantage.options?.map(option => ({
@@ -696,7 +695,7 @@ export abstract class BaseCharacter {
             })
           }
 
-          for (const advantage of this.race.variant?.strongly_recommended_advantages ?? []) {
+          for (const advantage of race.variant?.strongly_recommended_advantages ?? []) {
             transformedCharacter.advantages.add(advantage.id, {
               level: advantage.level,
               options: advantage.options?.map(option => ({
@@ -706,7 +705,7 @@ export abstract class BaseCharacter {
             })
           }
 
-          for (const disadvantage of this.race.variant?.strongly_recommended_disadvantages ?? []) {
+          for (const disadvantage of race.variant?.strongly_recommended_disadvantages ?? []) {
             transformedCharacter.disadvantages.add(disadvantage.id, {
               level: disadvantage.level,
               options: disadvantage.options?.map(option => ({
@@ -716,17 +715,17 @@ export abstract class BaseCharacter {
             })
           }
 
-          this.race.selectedAttributeAdjustmentId = selectedOptions.attributeAdjustmentId
+          race.selectedAttributeAdjustmentId = selectedOptions.attributeAdjustmentId
 
           // Culture
 
           if (selectedOptions.buyCulturalPackage) {
-            for (const skill of this.culture.base?.cultural_package ?? []) {
+            for (const skill of culture.base?.cultural_package ?? []) {
               transformedCharacter.skills.increment(skill.id, skill.points)
             }
           }
 
-          const nativeTongue = selectedOptions.nativeTongue ?? this.culture.base?.language[0]?.id
+          const nativeTongue = selectedOptions.nativeTongue ?? culture.base?.language[0]?.id
 
           if (nativeTongue !== undefined) {
             transformedCharacter
@@ -738,7 +737,7 @@ export abstract class BaseCharacter {
           }
 
           const nativeScript = selectedOptions.buyScript
-            ? (selectedOptions.script ?? this.culture.base?.script?.[0])
+            ? (selectedOptions.script ?? culture.base?.script?.[0])
             : undefined
 
           if (nativeScript !== undefined) {
@@ -752,8 +751,8 @@ export abstract class BaseCharacter {
           // Profession
 
           const curriculum =
-            this.profession.base?.group.kind === "Magical"
-              ? this.profession.base.group.Magical.curriculum
+            profession.base?.group.kind === "Magical"
+              ? profession.base.group.Magical.curriculum
               : undefined
 
           if (curriculum !== undefined) {
@@ -895,7 +894,7 @@ export abstract class BaseCharacter {
                 applyActivatablePrerequisite(p.Activatable)
                 break
               case "Rated": {
-                const collection = this.getRatedCollection(p.Rated.id.kind)
+                const collection = transformedCharacter.getRatedCollection(p.Rated.id.kind)
                 if (collection instanceof CharacterActivatableRatedEntries) {
                   collection.activate(fromUniformCase(p.Rated.id))
                 }
@@ -919,7 +918,9 @@ export abstract class BaseCharacter {
           const applyEnhancementPrerequisite = (p: EnhancementPrerequisite): void => {
             const parent = this.global.db.getInstanceOfEntityById("Enhancement", p.id)?.parent
             if (parent !== undefined) {
-              const collection = this.getActivatableRatedWithEnhancementsCollection(parent.kind)
+              const collection = transformedCharacter.getActivatableRatedWithEnhancementsCollection(
+                parent.kind,
+              )
               if (collection instanceof CharacterActivatableRatedEntries) {
                 collection.activateEnhancement(fromUniformCase(parent), p.id)
               }
@@ -964,10 +965,10 @@ export abstract class BaseCharacter {
             }
           }
 
-          for (const prerequisite of this.profession.package?.prerequisites ?? []) {
+          for (const prerequisite of profession.package?.prerequisites ?? []) {
             if (
               !(
-                this.profession.variant?.prerequisites?.some(
+                profession.variant?.prerequisites?.some(
                   vp => vp.kind === "Remove" && deepEqual(prerequisite, vp.Remove),
                 ) ?? false
               )
@@ -976,57 +977,71 @@ export abstract class BaseCharacter {
             }
           }
 
-          for (const prerequisite of this.profession.variant?.prerequisites ?? []) {
+          for (const prerequisite of profession.variant?.prerequisites ?? []) {
             if (prerequisite.kind === "Add") {
               applyPrerequisiteElement(prerequisite.Add)
             }
           }
 
-          for (const specialAbility of this.profession.package?.special_abilities ?? []) {
-            if (
-              specialAbility.kind === "Constant" &&
-              !(
-                this.profession.variant?.special_abilities?.some(
-                  sa => sa.action.kind === "Remove" && deepEqual(specialAbility, sa.value),
-                ) ?? false
-              )
-            ) {
+          for (const specialAbility of (
+            profession.package?.special_abilities?.filter(
+              p =>
+                !(
+                  profession.variant?.special_abilities?.some(
+                    sa => sa.action.kind === "Remove" && deepEqual(p, sa.value),
+                  ) ?? false
+                ),
+            ) ?? []
+          ).concat(
+            profession.variant?.special_abilities
+              ?.filter(p => p.action.kind === "Override")
+              .map(p => p.value) ?? [],
+          )) {
+            if (specialAbility.kind === "Constant") {
               if (specialAbility.Constant.id.kind === "Enhancement") {
                 applyEnhancementPrerequisite({ id: specialAbility.Constant.id.Enhancement })
-              } else {
+              } else if (
+                checkProfessionSpecialAbilityRulePrerequisites(
+                  specialAbility.Constant,
+                  this.global,
+                  transformedCharacter,
+                )
+              ) {
                 applyActivatablePrerequisite({
                   ...specialAbility.Constant,
                   id: specialAbility.Constant.id,
                 })
               }
-            }
-          }
-
-          for (const specialAbility of this.profession.variant?.special_abilities ?? []) {
-            if (
-              specialAbility.action.kind === "Override" &&
-              specialAbility.value.kind === "Constant"
-            ) {
-              if (specialAbility.value.Constant.id.kind === "Enhancement") {
-                applyEnhancementPrerequisite({ id: specialAbility.value.Constant.id.Enhancement })
-              } else {
-                applyActivatablePrerequisite({
-                  ...specialAbility.value.Constant,
-                  id: specialAbility.value.Constant.id,
-                })
+            } else {
+              const selection = specialAbility.Selection.options.filter(sa =>
+                checkProfessionSpecialAbilityRulePrerequisites(
+                  sa,
+                  this.global,
+                  transformedCharacter,
+                ),
+              )
+              if (isNotEmpty(selection) && selection.length === 1) {
+                if (selection[0].id.kind === "Enhancement") {
+                  applyEnhancementPrerequisite({ id: selection[0].id.Enhancement })
+                } else {
+                  applyActivatablePrerequisite({
+                    ...selection[0],
+                    id: selection[0].id,
+                  })
+                }
               }
             }
           }
 
-          for (const { id, rating_modifier } of (this.profession.package?.skills ?? []).concat(
-            this.profession.variant?.skills ?? [],
+          for (const { id, rating_modifier } of (profession.package?.skills ?? []).concat(
+            profession.variant?.skills ?? [],
           )) {
             transformedCharacter.skills.increment(id, rating_modifier)
           }
 
           for (const { id, rating_modifier } of (
-            this.profession.package?.combat_techniques ?? []
-          ).concat(this.profession.variant?.combat_techniques ?? [])) {
+            profession.package?.combat_techniques ?? []
+          ).concat(profession.variant?.combat_techniques ?? [])) {
             const stringId = fromUniformCase(id)
             switch (id.kind) {
               case "CloseCombatTechnique":
@@ -1040,13 +1055,13 @@ export abstract class BaseCharacter {
             }
           }
 
-          for (const cantrip of this.profession.package?.cantrips ?? []) {
+          for (const cantrip of profession.package?.cantrips ?? []) {
             transformedCharacter.cantrips.activate(cantrip)
           }
 
-          for (const { id, rating_modifier: rating } of (
-            this.profession.package?.spells ?? []
-          ).concat(this.profession.variant?.spells ?? [])) {
+          for (const { id, rating_modifier: rating } of (profession.package?.spells ?? []).concat(
+            profession.variant?.spells ?? [],
+          )) {
             if (isNotEmpty(id) && id.length === 1) {
               switch (id[0].kind) {
                 case "MagicalAction":
@@ -1073,8 +1088,8 @@ export abstract class BaseCharacter {
           }
 
           for (const { id, rating_modifier: rating } of (
-            this.profession.package?.liturgical_chants ?? []
-          ).concat(this.profession.variant?.liturgical_chants ?? [])) {
+            profession.package?.liturgical_chants ?? []
+          ).concat(profession.variant?.liturgical_chants ?? [])) {
             if (isNotEmpty(id) && id.length === 1) {
               switch (id[0].kind) {
                 case "LiturgicalChant":

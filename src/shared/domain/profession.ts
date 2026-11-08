@@ -61,6 +61,7 @@ import { action, computed, observable } from "mobx"
 import type { GetInstanceById } from "../database.ts"
 import type { Global } from "../global.ts"
 import {
+  getActivatablePrerequisites,
   getSelectOptionConfiguration,
   resolveAPValuesForResolvedSelectOptions,
   type ActivatableOption,
@@ -68,6 +69,7 @@ import {
 import type { DisplayedInactiveActivatableOption } from "./activatable/activatableInactive.ts"
 import type { BaseCharacter, Character } from "./character.ts"
 import { Case, fromUniformCase } from "./databaseEnum.ts"
+import { checkRulePrerequisite } from "./prerequisites/single/rulePrerequisiteValidation.ts"
 import type { Sex } from "./sex.ts"
 
 export class CharacterProfession {
@@ -1047,6 +1049,27 @@ const getOptionForSingleProfessionSpecialAbility = (
   }
 }
 
+export const checkProfessionSpecialAbilityRulePrerequisites = (
+  sa: SingleProfessionSpecialAbility,
+  global: Global,
+  character: BaseCharacter,
+) => {
+  if (sa.id.kind === "Enhancement") {
+    return true
+  }
+  const dbEntry = global.db.getInstanceOfEntityById(sa.id)
+  return (
+    dbEntry !== undefined &&
+    getActivatablePrerequisites(sa.id.kind, dbEntry, global).every(
+      p =>
+        p.level !== 1 ||
+        p.prerequisite.kind !== "Single" ||
+        p.prerequisite.Single.kind !== "Rule" ||
+        checkRulePrerequisite(character.prerequisiteCapabilities, p.prerequisite.Single.Rule),
+    )
+  )
+}
+
 const collectSelectionsFromPackageAndVariant = (
   pkg: ProfessionPackage,
   variant: ProfessionVariant | undefined,
@@ -1117,12 +1140,21 @@ const collectSelectionsFromPackageAndVariant = (
     .concat(
       variant?.special_abilities?.filter(p => p.action.kind === "Override").map(p => p.value) ?? [],
     )
-    .filter(
-      sa =>
-        sa.kind === "Selection" ||
-        (sa.Constant.options?.some(opt => opt.kind === "Select") ?? false),
-    )
-    .map((sa): DisplayedGeneralSelectOption => {
+    .filter(sa => {
+      switch (sa.kind) {
+        case "Constant": {
+          return (
+            (sa.Constant.options?.some(opt => opt.kind === "Select") ?? false) &&
+            checkProfessionSpecialAbilityRulePrerequisites(sa.Constant, global, character)
+          )
+        }
+        case "Selection":
+          return true
+        default:
+          return assertExhaustive(sa)
+      }
+    })
+    .map((sa): DisplayedGeneralSelectOption | undefined => {
       switch (sa.kind) {
         case "Constant": {
           const res = getOptionForSingleProfessionSpecialAbility(sa.Constant, global, character)
@@ -1133,13 +1165,19 @@ const collectSelectionsFromPackageAndVariant = (
           }
         }
         case "Selection":
-          return sa.Selection.options.map(saPart =>
-            getOptionForSingleProfessionSpecialAbility(saPart, global, character),
+          return ensure(
+            sa.Selection.options
+              .filter(saPart =>
+                checkProfessionSpecialAbilityRulePrerequisites(saPart, global, character),
+              )
+              .map(saPart => getOptionForSingleProfessionSpecialAbility(saPart, global, character)),
+            list => list.length > 1,
           )
         default:
           return assertExhaustive(sa)
       }
-    }),
+    })
+    .filter(isNotNullish),
   ...(pkg.spells ?? [])
     .concat(variant?.spells ?? [])
     .filter(s => s.id.length > 1)

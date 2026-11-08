@@ -26,6 +26,7 @@ import type {
   EntityMap,
   FixedAdventurePointsValue,
   GeneralPrerequisites,
+  PrerequisitesForLevels,
   RulePrerequisite,
   SelectOptionRules,
   SpecialAbilityIdentifier,
@@ -38,6 +39,7 @@ import {
 import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
 import { action, computed, observable, toJS } from "mobx"
 import type { Global } from "../../global.ts"
+import type { LocaleMap } from "../../utils/locale.ts"
 import {
   addAdventurePointsCaches,
   AdventurePointsCache,
@@ -1071,25 +1073,10 @@ export class CharacterActivatable<
   get prerequisites(): Entity extends "Advantage" | "Disadvantage"
     ? AdvantageDisadvantagePrerequisites
     : GeneralPrerequisites {
-    const staticPrerequisites = this.dbEntry.prerequisites ?? []
-    const dynamicPrerequisite: RulePrerequisite | undefined = (() => {
-      switch (this.entityName) {
-        case "CombatStyleSpecialAbility":
-          return { id: Case("FocusRule", this.global.settings.styles.combat), active: true }
-        case "LiturgicalStyleSpecialAbility":
-          return { id: Case("FocusRule", this.global.settings.styles.liturgical), active: true }
-        case "MagicStyleSpecialAbility":
-          return { id: Case("FocusRule", this.global.settings.styles.magic), active: true }
-        case "SkillStyleSpecialAbility":
-          return { id: Case("FocusRule", this.global.settings.styles.skill), active: true }
-        default:
-          return undefined
-      }
-    })()
-    return staticPrerequisites.concat(
-      dynamicPrerequisite === undefined
-        ? []
-        : [{ level: 1, prerequisite: Case("Single", Case("Rule", dynamicPrerequisite)) }],
+    return getActivatablePrerequisites(
+      this.entityName,
+      this.dbEntry,
+      this.global,
     ) as Entity extends "Advantage" | "Disadvantage"
       ? AdvantageDisadvantagePrerequisites
       : GeneralPrerequisites
@@ -1330,6 +1317,36 @@ export class CharacterActivatable<
       return true
     })
   }
+}
+
+export const getActivatablePrerequisites = <P>(
+  entityName: ActivatableIdentifier["kind"],
+  dbEntry: { prerequisites?: PrerequisitesForLevels<P>; translations: LocaleMap<{ name: string }> },
+  global: Global,
+): PrerequisitesForLevels<P | Case<"Rule", RulePrerequisite>> => {
+  const staticPrerequisites: PrerequisitesForLevels<P | Case<"Rule", RulePrerequisite>> =
+    dbEntry.prerequisites ?? []
+
+  const dynamicPrerequisite: RulePrerequisite | undefined = (() => {
+    switch (entityName) {
+      case "CombatStyleSpecialAbility":
+        return { id: Case("FocusRule", global.settings.styles.combat), active: true }
+      case "LiturgicalStyleSpecialAbility":
+        return { id: Case("FocusRule", global.settings.styles.liturgical), active: true }
+      case "MagicStyleSpecialAbility":
+        return { id: Case("FocusRule", global.settings.styles.magic), active: true }
+      case "SkillStyleSpecialAbility":
+        return { id: Case("FocusRule", global.settings.styles.skill), active: true }
+      default:
+        return undefined
+    }
+  })()
+
+  return staticPrerequisites.concat(
+    dynamicPrerequisite === undefined
+      ? []
+      : [{ level: 1, prerequisite: Case("Single", Case("Rule", dynamicPrerequisite)) }],
+  )
 }
 
 export const resolveAPValuesForResolvedSelectOptions = (
