@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import type { FC } from "react"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
-import "./AttributesList.scss"
+import "./AttributesList.css"
 import { AttributeListItem } from "./AttributesListItem.tsx"
 
 /**

@@ -28,6 +28,7 @@ export type CharacterIPCActions = {
   setOptionalRuleOption: (id: Gen.OptionalRule_ID, optionId: Gen.OptionalRuleOption_ID) => void
   toggleAlternativeRule: (id: Gen.OptionalRule_ID) => void
   setRaceVariant: (id: Gen.RaceVariant_ID) => void
+  setAttributeAdjustment: (id: Gen.Attribute_ID) => void
   setCulture: (id: Gen.Culture_ID) => void
   setProfessionPackage: (id: Gen.ProfessionPackage_ID) => void
   setProfessionVariant: (id: Gen.ProfessionVariant_ID | undefined) => void
@@ -110,6 +111,7 @@ export const defaultCharacterIPCSelectors: CharacterIPCSelectors = {
   raceName: undefined,
   races: [],
   raceVariants: [],
+  selectedAttributeAdjustment: undefined,
   isCultureSelected: false,
   cultureId: undefined,
   cultureName: undefined,
@@ -157,6 +159,7 @@ export const defaultCharacterIPCSelectors: CharacterIPCSelectors = {
   attributes: [],
   attributesTotal: 0,
   attributesTotalMaximum: 0,
+  availableAdjustments: undefined,
   derivedCharacteristics: [],
   maximumAdventurePointsForMagicalAdvantagesAndDisadvantages: 0,
   activeAdvantages: [],

@@ -1,10 +1,12 @@
 import { ensureNonEmpty, type NonEmptyArray } from "@elyukai/utils/array/nonEmpty"
 import { sumWith } from "@elyukai/utils/array/reductions"
 import { on } from "@elyukai/utils/function"
-import { isNotNullish } from "@elyukai/utils/nullable"
+import { isNotNullish, mapNullable } from "@elyukai/utils/nullable"
 import { compareNumber } from "@elyukai/utils/ordering"
+import { sign } from "@elyukai/utils/string/number"
 import type { ImprovementCost } from "@optolith/adventure-points/improvement-cost"
 import type { Attribute, Attribute_ID, AttributeAdjustments } from "@optolith/database-schema/gen"
+import { MISSING_VALUE } from "@optolith/entity-descriptions/entities/partial/unknown"
 import { computed } from "mobx"
 import type { Global } from "../../global.ts"
 import type { BaseCharacter, Character } from "../character.ts"
@@ -177,7 +179,7 @@ export class CharacterAttributes extends CharacterRatedEntries<"Attribute", Char
         entry.value > acc.value
           ? { ...entry, id: [entry.id] }
           : entry.value === acc.value
-            ? { ...acc, id: [...acc.id, entry.id] }
+            ? Object.assign(acc, { id: [...acc.id, entry.id] })
             : acc,
       { id: [first.id], value: first.value },
     )
@@ -253,6 +255,62 @@ export class CharacterAttributes extends CharacterRatedEntries<"Attribute", Char
   ): CharacterAttributes {
     return super.fromAnyJSON<CharacterAttributes>(new CharacterAttributes(global, character), raw)
   }
+
+  /**
+   * Returns an attribute adjustment option, if any is available.
+   */
+  @computed
+  get availableAdjustments(): DisplayedAttributeAdjustment | undefined {
+    const selectableAdjustment =
+      this.character.race?.variant?.attribute_adjustments?.selectable?.[0]
+    const currentId = this.character.race?.selectedAttributeAdjustmentId
+
+    if (selectableAdjustment === undefined) {
+      return undefined
+    } else {
+      const current = mapNullable(currentId, id => this.getById(id))
+
+      const canNotSwitch =
+        current !== undefined &&
+        current.maxValue !== undefined &&
+        current.maxValue - selectableAdjustment.value < current.value
+
+      if (canNotSwitch) {
+        return {
+          value: selectableAdjustment.value,
+          list: [getAttributeValuesForAdjustment(current, this.global, selectableAdjustment.value)],
+        }
+      } else {
+        return {
+          value: selectableAdjustment.value,
+          list: selectableAdjustment.list
+            .map(id => this.getByIdSafe(id))
+            .toSorted(on(e => e.dbEntry.position, compareNumber))
+            .map(attr =>
+              getAttributeValuesForAdjustment(attr, this.global, selectableAdjustment.value),
+            ),
+        }
+      }
+    }
+  }
+}
+
+const getAttributeValuesForAdjustment = (
+  attribute: CharacterAttribute,
+  global: Global,
+  modifier: number,
+): { id: string; name: string } => ({
+  id: attribute.id,
+  name: `${global.locale.translateMap(attribute.dbEntry.translations)?.name ?? MISSING_VALUE} ${sign(modifier)}`,
+})
+
+/**
+ * An adjustment value for an attribute that can be applied to one of the
+ * provided attributes.
+ */
+export type DisplayedAttributeAdjustment = {
+  value: number
+  list: { id: string; name: string }[]
 }
 
 const collectMinima = (

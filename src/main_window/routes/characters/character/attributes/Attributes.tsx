@@ -5,7 +5,8 @@ import { Page } from "../../../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
-import "./Attributes.scss"
+import { AttributesAdjustment } from "./AttributeAdjustment.tsx"
+import "./Attributes.css"
 import { AttributeList } from "./AttributesList.tsx"
 import { DerivedCharacteristicsList } from "./DerivedCharacteristicsList.tsx"
 
@@ -31,7 +32,7 @@ export const Attributes: FC = observer(() => {
           </div>
           <AttributeList />
           <div className="secondary">
-            {/* TODO: isInCharacterCreation ? <AttributesAdjustment /> : null */}
+            {isInCharacterCreation ? <AttributesAdjustment /> : null}
             <DerivedCharacteristicsList />
           </div>
         </Scroll>

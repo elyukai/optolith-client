@@ -651,6 +651,11 @@ export abstract class BaseCharacter {
           this.profession = undefined
         }
         return
+      case "setAttributeAdjustment":
+        if (this.race) {
+          this.race.selectedAttributeAdjustmentId = args[1][0]
+        }
+        return
       case "setCulture":
         this.culture = new CharacterCulture(this.global, this, args[1][0])
         if (this.phase === "RaceCultureProfession") {
@@ -1211,6 +1216,7 @@ export abstract class BaseCharacter {
       raceName: () => this.race?.fullName,
       races: () => this.racesForDisplay,
       raceVariants: () => this.race?.raceVariantsForDisplay,
+      selectedAttributeAdjustment: () => this.race?.selectedAttributeAdjustmentId,
       isCultureSelected: () => this.culture !== undefined,
       cultureId: () => this.culture?.id,
       cultureName: () => this.culture?.name,
@@ -1237,6 +1243,7 @@ export abstract class BaseCharacter {
       attributes: () => this.attributes.attributes,
       attributesTotal: () => this.attributes.attributesTotal,
       attributesTotalMaximum: () => this.attributes.attributesTotalMaximum,
+      availableAdjustments: () => this.attributes.availableAdjustments,
       derivedCharacteristics: () => this.derivedCharacteristics.derivedCharacteristics,
       maximumAdventurePointsForMagicalAdvantagesAndDisadvantages: () =>
         this.maximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
