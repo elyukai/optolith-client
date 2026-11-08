@@ -1050,6 +1050,7 @@ export class CharacterActivatable<
       isAvailable:
         !hasGeneralProhibitingDependency(dependencies) &&
         this.checkPrerequisitesForLevel(1) &&
+        this.checkAdvancedForMatchingStyle() &&
         this.selectOptionConfiguration.every(
           config => config.kind === "text" || isNotEmpty(config.options),
         ) &&
@@ -1080,6 +1081,17 @@ export class CharacterActivatable<
     ) as Entity extends "Advantage" | "Disadvantage"
       ? AdvantageDisadvantagePrerequisites
       : GeneralPrerequisites
+  }
+
+  checkAdvancedForMatchingStyle(): boolean {
+    // TODO: Implement advanced style checking logic here
+    const advancedEntities: ActivatableIdentifier["kind"][] = [
+      "AdvancedCombatSpecialAbility",
+      "AdvancedKarmaSpecialAbility",
+      "AdvancedMagicalSpecialAbility",
+      "AdvancedSkillSpecialAbility",
+    ]
+    return !advancedEntities.includes(this.entityName)
   }
 
   @action
