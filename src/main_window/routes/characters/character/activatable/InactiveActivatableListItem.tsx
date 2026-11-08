@@ -69,6 +69,13 @@ export const InactiveActivatablesListItem = observer(
           // TODO: Reset options with higher indices?
           // const newSelectedOptions = oldSelectedOptions.slice(0, index)
           newSelectedOptions[index] = option
+          // reset child options if parent option is changed
+          const indicesToReset = options
+            .map((o, i) => (o.kind === "choice" && o.parentIndex === index ? i : undefined))
+            .filter(isNotNullish)
+          for (const i of indicesToReset) {
+            newSelectedOptions[i] = undefined
+          }
           return newSelectedOptions
         })
       },

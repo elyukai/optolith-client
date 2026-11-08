@@ -69,11 +69,15 @@ export const InactiveActivatableListItemOption: FC<Props> = props => {
       return (
         <Dropdown<SelectOptionIdentifier>
           options={preparedOptions}
-          value={value?.type === "Custom" ? undefined : value?.id}
+          value={
+            (parentIndex !== undefined && parentOption === undefined) || value?.type === "Custom"
+              ? undefined
+              : value?.id
+          }
           onChange={handleDropdownChange}
           getKey={o => o.id[o.id.kind as keyof typeof o.id]}
           equals={deepEqual}
-          disabled={disabled}
+          disabled={(parentIndex !== undefined && parentOption === undefined) || disabled}
         />
       )
     }
