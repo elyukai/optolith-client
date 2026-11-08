@@ -9,6 +9,7 @@ import type {
   ExtensionRuleIdentifier,
   FocusRule_ID,
   OptionalRule_ID,
+  OptionalRuleOption_ID,
   Publication_ID,
   PublicationCategory,
   SkillWithEnhancementsIdentifier,
@@ -77,19 +78,44 @@ export class CharacterOptionalRule extends CharacterRule<"OptionalRule"> {
   /**
    * An array of one or more options. The exact meaning of each option varies based on the optional rule.
    */
-  @observable accessor options: string[] | undefined
+  @observable accessor options: string[] = []
 
   override toSerialized() {
     return {
       ...super.toSerialized(),
-      options: this.options,
+      options: this.optionsForDisplay,
+      activeOptions: toJS(this.options),
     }
+  }
+
+  @computed
+  get optionsForDisplay(): DisplayedOptionalRuleOption[] | undefined {
+    return ensureNonEmpty(
+      this.global.db.getAllChildInstanceContainersForParent("OptionalRuleOption", this.id),
+    )
+      ?.map(option => ({
+        id: option.id,
+        name: this.global.locale.translateMap(option.content.translations)?.name ?? "",
+      }))
+      .toSorted(on(option => option.name, this.global.locale.compare))
+  }
+
+  @computed
+  get optionValue(): number | undefined {
+    const option =
+      this.active && isNotEmpty(this.options)
+        ? this.global.db.getInstanceOfEntityById("OptionalRuleOption", this.options[0])
+        : undefined
+    if (option === undefined) {
+      return undefined
+    }
+    return option.value
   }
 
   override toJSON(): { id: string; options?: string[] } {
     return {
       ...super.toJSON(),
-      options: this.options,
+      options: ensureNonEmpty(this.options),
     }
   }
 }
@@ -161,9 +187,10 @@ abstract class CharacterRuleCollection<
   }
 
   @action
-  toggle(id: string): void {
+  toggle(id: string): T {
     const rule = this.ensureEntryExists(id)
     rule.active = !rule.active
+    return rule
   }
 
   isActive(id: string): boolean {
@@ -206,6 +233,24 @@ class CharacterOptionalRuleCollection extends CharacterRuleCollection<
 > {
   constructor(global: Global, parent: CharacterRules, rules?: Map<string, CharacterOptionalRule>) {
     super(global, parent, "OptionalRule", CharacterOptionalRule, rules)
+  }
+
+  getOptionValue(id: string): number | undefined {
+    return this.rules.get(id)?.optionValue
+  }
+
+  setOption(id: string, optionId: string): void {
+    const rule = this.ensureEntryExists(id)
+    rule.options[0] = optionId
+  }
+
+  @action
+  override toggle(id: string): CharacterOptionalRule {
+    const rule = super.toggle(id)
+    if (rule.optionsForDisplay !== undefined && isNotEmpty(rule.optionsForDisplay)) {
+      rule.options[0] = rule.optionsForDisplay[0].id
+    }
+    return rule
   }
 }
 
@@ -453,7 +498,7 @@ export class CharacterRules {
     raw.optionalRules?.forEach(rawRule => {
       const rule = rules.optionalRules.ensureEntryExists(rawRule.id)
       rule.active = true
-      rule.options = rawRule.options
+      rule.options = rawRule.options ?? []
     })
     raw.alternativeRules?.forEach(rawRule => {
       const rule = rules.alternativeRules.ensureEntryExists(rawRule.id)
@@ -490,11 +535,18 @@ export type CharacterFocusRuleOverview = {
   disabled: boolean
 }
 
+export type DisplayedOptionalRuleOption = {
+  id: string
+  name: string
+}
+
 export type CharacterOptionalRuleOverview = {
   id: string
   name: string
   active: boolean
   disabled: boolean
+  options?: DisplayedOptionalRuleOption[]
+  activeOptions: string[]
 }
 
 export type DisplayedAlternativeRule = {

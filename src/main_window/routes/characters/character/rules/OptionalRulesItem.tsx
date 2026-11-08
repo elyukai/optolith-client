@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite"
 import { type FC, useCallback } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
+import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
 import type { CharacterOptionalRuleOverview } from "../../../../../shared/domain/rules.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
@@ -19,7 +20,7 @@ type Props = {
  */
 export const OptionalRulesItem: FC<Props> = observer(props => {
   const {
-    optionalRule: { id, name, active, disabled },
+    optionalRule: { id, name, active, disabled, options, activeOptions },
     hideInfo,
   } = props
 
@@ -28,34 +29,18 @@ export const OptionalRulesItem: FC<Props> = observer(props => {
   const handleSwitch = useCallback(() => actions.toggleOptionalRule(id), [id])
   const { displayInlineLibraryEntry } = useInlineLibrary("OptionalRule", id)
 
-  // const handleChangeOption = useCallback(
-  //   (option: number) =>
-  //     dispatch(
-  //       changeOptionalRuleOption({
-  //         id: optionalRule.id,
-  //         option,
-  //       }),
-  //     ),
-  //   [dispatch, optionalRule.id],
-  // )
-
-  // const isActive = isOptionalRuleActive(getDynamicOptionalRuleById, optionalRule.id)
-
   return (
     <li>
       <Checkbox checked={active} onClick={handleSwitch} label={name} disabled={disabled} />
-      {/* TODO: optionalRule.id === OptionalRuleIdentifier.HigherDefenseStats ? (
-        <Dropdown
-          options={[
-            { id: 2, name: "+2" },
-            { id: 4, name: "+4" },
-          ]}
-          value={getDynamicOptionalRuleById(optionalRule.id)?.options?.[0] ?? 2}
-          onChange={handleChangeOption}
-          disabled={!isActive}
-          getKey={getKey}
+      {options === undefined ? null : (
+        <Dropdown<string>
+          options={options}
+          value={activeOptions[0] ?? options[0]?.id}
+          onChange={optionId => actions.setOptionalRuleOption(id, optionId)}
+          getKey={option => option.id}
+          disabled={!active || disabled}
         />
-      ) : null */}
+      )}
       {hideInfo === true ? null : (
         <IconButton
           icon="&#xE912;"

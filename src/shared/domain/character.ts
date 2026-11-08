@@ -632,6 +632,8 @@ export abstract class BaseCharacter {
         return this.rules.toggleFocusRule(args[1][0])
       case "toggleOptionalRule":
         return this.rules.toggleOptionalRule(args[1][0])
+      case "setOptionalRuleOption":
+        return this.rules.setOptionalRuleOption(...args[1])
       case "toggleAlternativeRule":
         return this.rules.toggleAlternativeRule(args[1][0])
       case "setRaceVariant":

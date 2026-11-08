@@ -1,3 +1,4 @@
+import { sumWith } from "@elyukai/utils/array/reductions"
 import type { ImprovementCost } from "@optolith/adventure-points/improvement-cost"
 import type {
   Attribute,
@@ -67,10 +68,21 @@ export class CharacterCombatTechnique<
       this.isEntity("CloseCombatTechnique") &&
       this.dbEntry.special.can_parry.kind === "Required"
     ) {
-      return (getPrimaryAttributeModifier(this.primaryAttributeValues.map(pav => pav.value)) +
-        Math.round(this.value / 2)) as Entity extends "CloseCombatTechnique"
-        ? number | undefined
-        : undefined
+      const base = Math.round(this.value / 2)
+      const primaryAttributeModifier = getPrimaryAttributeModifier(
+        this.primaryAttributeValues.map(pav => pav.value),
+      )
+      const otherModifiers = sumWith(
+        this.global.settings.combatTechniques.parryModifiers ?? [],
+        modifier =>
+          this.character.rules.optionalRules.isActive(modifier.source)
+            ? (this.character.rules.optionalRules.getOptionValue(modifier.source) ?? 1) *
+              modifier.modifier
+            : 0,
+      )
+      return (base +
+        primaryAttributeModifier +
+        otherModifiers) as Entity extends "CloseCombatTechnique" ? number | undefined : undefined
     }
     return undefined
   }

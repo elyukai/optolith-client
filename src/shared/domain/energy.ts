@@ -63,6 +63,7 @@ const isModifierActive = (
             active:
               character.rules.isOptionalRuleActive(source.Rule.id.OptionalRule) ===
               source.Rule.active,
+            level: character.rules.optionalRules.getOptionValue(source.Rule.id.OptionalRule),
           }
         default:
           return assertExhaustive(source.Rule.id)

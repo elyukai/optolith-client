@@ -25,6 +25,7 @@ export type CharacterIPCActions = {
   togglePublication: (id: Gen.Publication_ID) => void
   toggleFocusRule: (id: Gen.FocusRule_ID) => void
   toggleOptionalRule: (id: Gen.OptionalRule_ID) => void
+  setOptionalRuleOption: (id: Gen.OptionalRule_ID, optionId: Gen.OptionalRuleOption_ID) => void
   toggleAlternativeRule: (id: Gen.OptionalRule_ID) => void
   setRaceVariant: (id: Gen.RaceVariant_ID) => void
   setCulture: (id: Gen.Culture_ID) => void
