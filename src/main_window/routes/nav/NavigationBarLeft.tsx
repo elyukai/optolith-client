@@ -1,4 +1,4 @@
-import type { FCC } from "../../shared/utils/react.js"
+import type { FCC } from "../../../shared/utils/react.js"
 import "./NavigationBarLeft.scss"
 
 /**

@@ -9,7 +9,7 @@ import { LastChanges } from "./about/LastChanges.tsx"
 import { ThirdPartyLicenses } from "./about/ThirdPartyLicenses.tsx"
 import { CharacterRouter } from "./CharacterRouter.tsx"
 import { Characters } from "./characters/Characters.tsx"
-import { NavigationBar } from "./NavigationBar.tsx"
+import { NavigationBar } from "./nav/NavigationBar.tsx"
 
 /**
  * Returns a page based on the currently selected route.

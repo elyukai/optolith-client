@@ -3,9 +3,9 @@ import type { FC } from "react"
 import {
   maximumAdventurePointsForAdventagesAndDisadvantages,
   maximumAdventurePointsForBlessedAdventagesAndDisadvantages,
-} from "../../shared/domain/activatable/advantagesDisadvantages.ts"
-import { useTranslate } from "../../shared/hooks/translate.ts"
-import { useCharacterState } from "../hooks/characterState.ts"
+} from "../../../shared/domain/activatable/advantagesDisadvantages.ts"
+import { useTranslate } from "../../../shared/hooks/translate.ts"
+import { useCharacterState } from "../../hooks/characterState.ts"
 
 /**
  * Returns the contents for the adventure points tooltip that displays which

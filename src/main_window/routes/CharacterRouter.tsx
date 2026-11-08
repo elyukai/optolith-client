@@ -9,7 +9,6 @@ import {
 } from "../context/CharacterStateAndActions.ts"
 import { executeStateAction, SharedCharacterState } from "../external.ts"
 import type { CharacterRoutePath } from "../slices/routeSlice.ts"
-import { CharacterNavigationBar } from "./CharacterNavigationBar.tsx"
 import { Advantages } from "./characters/character/advantagesAndDisadvantages/Advantages.tsx"
 import { Disadvantages } from "./characters/character/advantagesAndDisadvantages/Disadvantages.tsx"
 import { Attributes } from "./characters/character/attributes/Attributes.tsx"
@@ -23,6 +22,7 @@ import { Rules } from "./characters/character/rules/Rules.tsx"
 import { Skills } from "./characters/character/skills/Skills.tsx"
 import { SpecialAbilities } from "./characters/character/specialAbilities/SpecialAbilities.tsx"
 import { Spells } from "./characters/character/spells/Spells.tsx"
+import { CharacterNavigationBar } from "./nav/CharacterNavigationBar.tsx"
 
 /**
  * Returns a page based on the currently selected route.
