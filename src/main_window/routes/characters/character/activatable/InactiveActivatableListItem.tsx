@@ -121,6 +121,7 @@ export const InactiveActivatablesListItem = observer(
     )
 
     const handleAdd = useCallback(() => {
+      // TODO: Check AP
       actions.addActivatable(activatable.type, id, {
         level: selectedLevel,
         options: ensureNonEmpty(selectedOptions.filter(isNotNullish)),
