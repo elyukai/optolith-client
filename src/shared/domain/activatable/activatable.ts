@@ -1564,6 +1564,23 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
       )
   }
 
+  getAdventurePointsTotalForSubtype(
+    this: CharacterActivatables<"Advantage" | "Disadvantage">,
+    subtype: "Magical" | "Blessed",
+  ): AdventurePointsCache {
+    const cachePart =
+      this.global.cache.magicalAndBlessedAdvantagesAndDisadvantages[this.#entity][subtype]
+    return this.#activatables
+      .values()
+      .reduce(
+        (acc, entry) =>
+          entry.isActive && cachePart.includes(entry.id)
+            ? addAdventurePointsCaches(acc, entry.adventurePoints)
+            : acc,
+        emptyAdventurePointsCache,
+      )
+  }
+
   #ensureEntryExists(id: string): CharacterActivatable<Entity> {
     return this.#activatables.getOrInsertComputed(id, () => this.#createEmpty(id))
   }

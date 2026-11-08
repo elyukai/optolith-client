@@ -278,11 +278,19 @@ export abstract class BaseCharacter {
       spent: this.adventurePointsSpent,
       available: this.adventurePointsAvailable,
       spentOnAdvantages: this.advantages.adventurePointsTotal.getTotal(),
-      spentOnMagicalAdvantages: 0, // TODO
-      spentOnBlessedAdvantages: 0, // TODO
+      spentOnMagicalAdvantages: this.advantages
+        .getAdventurePointsTotalForSubtype("Magical")
+        .getTotal(),
+      spentOnBlessedAdvantages: this.advantages
+        .getAdventurePointsTotalForSubtype("Blessed")
+        .getTotal(),
       spentOnDisadvantages: this.disadvantages.adventurePointsTotal.getTotal(),
-      spentOnMagicalDisadvantages: 0, // TODO
-      spentOnBlessedDisadvantages: 0, // TODO
+      spentOnMagicalDisadvantages: this.disadvantages
+        .getAdventurePointsTotalForSubtype("Magical")
+        .getTotal(),
+      spentOnBlessedDisadvantages: this.disadvantages
+        .getAdventurePointsTotalForSubtype("Blessed")
+        .getTotal(),
       spentOnRace: this.race?.adventurePoints ?? 0,
       spentOnProfession: this.profession?.adventurePoints ?? 0,
       spentOnAttributes: this.attributes.adventurePointsTotal.getTotal(),
