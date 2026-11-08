@@ -14,13 +14,12 @@ import { useCharacterState } from "../../hooks/characterState.ts"
 export const AdventurePointsTooltip: FC = observer(() => {
   const translate = useTranslate()
 
-  const isSpellcaster = true // TODO: useAppSelector(selectIsSpellcaster)
-  const isBlessedOne = true // TODO: useAppSelector(selectIsBlessedOne)
-  const maximumForMagicalAdvantagesDisadvantages = 80 // TODO: useAppSelector(
-  //   selectMaximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
-  // )
-
-  const stats = useCharacterState().adventurePointsStats
+  const {
+    adventurePointsStats: stats,
+    isBlessedOne,
+    isSpellcaster,
+    maximumAdventurePointsForMagicalAdvantagesAndDisadvantages,
+  } = useCharacterState()
 
   return (
     <div className="ap-details">
@@ -41,7 +40,7 @@ export const AdventurePointsTooltip: FC = observer(() => {
           {stats.spentOnMagicalAdvantages > 0
             ? translate("Thereof {$value}/{$max} on magic advantages", {
                 value: stats.spentOnMagicalAdvantages.toFixed(),
-                max: maximumForMagicalAdvantagesDisadvantages.toFixed(),
+                max: maximumAdventurePointsForMagicalAdvantagesAndDisadvantages.toFixed(),
               })
             : null}
         </span>
@@ -63,7 +62,7 @@ export const AdventurePointsTooltip: FC = observer(() => {
           {stats.spentOnMagicalDisadvantages < 0
             ? translate("Thereof {$value}/{$max} from magic disadvantages", {
                 value: Math.abs(stats.spentOnMagicalDisadvantages).toFixed(),
-                max: maximumForMagicalAdvantagesDisadvantages.toFixed(),
+                max: maximumAdventurePointsForMagicalAdvantagesAndDisadvantages.toFixed(),
               })
             : null}
         </span>
