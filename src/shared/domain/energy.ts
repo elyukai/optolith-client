@@ -284,11 +284,13 @@ export class CharacterDerivedCharacteristic {
 
   @computed
   get isPurchasedIncreasable() {
-    // TODO
     if (
       this.#character.isInCharacterCreation ||
       this.purchased === undefined ||
-      this.purchaseMaximum === undefined
+      this.purchaseMaximum === undefined ||
+      (this.permanentlyLost !== undefined &&
+        this.permanentlyLostBoughtBack !== undefined &&
+        this.permanentlyLost < this.permanentlyLostBoughtBack)
     ) {
       return undefined
     }
@@ -297,8 +299,7 @@ export class CharacterDerivedCharacteristic {
 
   @computed
   get isPurchasedDecreasable() {
-    // TODO
-    if (this.#character.isInCharacterCreation || this.purchased === undefined) {
+    if (!this.#character.canRemove || this.purchased === undefined) {
       return undefined
     }
     return this.purchased > 0
