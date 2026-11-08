@@ -1,3 +1,4 @@
+import { stripInlineMarkdown } from "@elyukai/markdown/render/strip"
 import { countByMany } from "@elyukai/utils/array/reductions"
 import { on } from "@elyukai/utils/function"
 import { isNotNullish } from "@elyukai/utils/nullable"
@@ -143,12 +144,14 @@ export class CharacterLiturgicalChant<
   get skillCheckPenaltyText(): string | undefined {
     return this.dbEntry.check_penalty === undefined
       ? undefined
-      : renderSkillCheckPenalty(this.dbEntry.check_penalty).run({
-          translate: this.global.locale.translate,
-          translateMap: this.global.locale.translateMap,
-          getInstanceById: this.global.db.getInstanceOfEntityById.bind(this.global.db),
-          responsiveTextSize: ResponsiveTextSize.Compressed,
-        })
+      : stripInlineMarkdown(
+          renderSkillCheckPenalty(this.dbEntry.check_penalty).run({
+            translate: this.global.locale.translate,
+            translateMap: this.global.locale.translateMap,
+            getInstanceById: this.global.db.getInstanceOfEntityById.bind(this.global.db),
+            responsiveTextSize: ResponsiveTextSize.Compressed,
+          }),
+        )
   }
 
   override toJSON(): DisplayedLiturgicalChant<Entity> {
