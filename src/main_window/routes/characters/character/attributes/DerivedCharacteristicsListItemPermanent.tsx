@@ -1,4 +1,3 @@
-import type { DerivedCharacteristicTranslation } from "@optolith/database-schema/gen"
 import { observer } from "mobx-react-lite"
 import { type FC, useCallback } from "react"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
@@ -13,7 +12,6 @@ import { PermanentPointsSheet } from "./PermanentPointsSheet.tsx"
 
 type Props = {
   attribute: DisplayedDerivedCharacteristic
-  translation: DerivedCharacteristicTranslation | undefined
 }
 
 /**
@@ -21,9 +19,9 @@ type Props = {
  * derived characteristic value.
  */
 export const DerivedCharacteristicsListItemPermanent: FC<Props> = observer(props => {
-  const { attribute, translation } = props
+  const { attribute: dc } = props
 
-  const { id, permanentlyLost = 0, permanentlyLostBoughtBack } = attribute
+  const { id, permanentlyLost = 0, permanentlyLostBoughtBack } = dc
   const translate = useTranslate()
   const { canRemove } = useCharacterState()
   const actions = useCharacterActions()
@@ -68,13 +66,9 @@ export const DerivedCharacteristicsListItemPermanent: FC<Props> = observer(props
       ? permanentlyLost - permanentlyLostBoughtBack
       : permanentlyLost
 
-  const label = translate("p{$energy}", {
-    energy: translation?.unitAbbreviation ?? translation?.abbreviation ?? "",
-  })
+  const label = translate("p{$energy}", { energy: dc.unitAbbreviation ?? dc.abbreviation })
 
-  const name = translate("Permanently Lost {$energy}", {
-    energy: translation?.name ?? "",
-  })
+  const name = translate("Permanently Lost {$energy}", { energy: dc.name })
 
   return (
     <AttributeBorder

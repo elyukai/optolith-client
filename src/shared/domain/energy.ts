@@ -12,6 +12,7 @@ import type {
   DerivedCharacteristicModifierOperation,
   DerivedCharacteristicModifierPrerequisiteGroup,
   DerivedCharacteristicPurchaseMaximumValue,
+  DerivedCharacteristicType,
 } from "@optolith/database-schema/gen"
 import { renderBaseCalculation } from "@optolith/entity-descriptions/entities/derivedCharacteristic"
 import { evaluateMathOperation } from "@optolith/entity-descriptions/entities/partial/mathOperation"
@@ -41,10 +42,15 @@ export type DisplayedDerivedCharacteristicBase = {
   permanentlyLost?: number
   permanentlyLostBoughtBack?: number
   calculationText: string | undefined
+  position: number
+  type?: DerivedCharacteristicType
+  name: string
+  abbreviation: string
+  unitAbbreviation?: string
+  description?: string
 }
 
-export type DisplayedDerivedCharacteristic = DisplayedDerivedCharacteristicBase &
-  DerivedCharacteristic
+export type DisplayedDerivedCharacteristic = DisplayedDerivedCharacteristicBase
 
 const isModifierActive = (
   source: DerivedCharacteristicModifierPrerequisiteGroup,
@@ -370,7 +376,11 @@ export class CharacterDerivedCharacteristic {
     }
   }
 
-  forDisplay(): DisplayedDerivedCharacteristicBase {
+  forDisplay(): DisplayedDerivedCharacteristicBase | undefined {
+    const translation = this.global.locale.translateMap(this.dbEntry.translations)
+    if (!translation) {
+      return
+    }
     return {
       id: this.id,
       base: this.base,
@@ -383,6 +393,12 @@ export class CharacterDerivedCharacteristic {
       permanentlyLost: this.permanentlyLost,
       permanentlyLostBoughtBack: this.permanentlyLostBoughtBack,
       calculationText: this.calculationText,
+      position: this.dbEntry.position,
+      type: this.dbEntry.type,
+      name: translation.name,
+      abbreviation: translation.abbreviation,
+      unitAbbreviation: translation.unitAbbreviation,
+      description: translation.description,
     }
   }
 
@@ -494,8 +510,8 @@ export class CharacterDerivedCharacteristics {
               this.#character.prerequisiteCapabilities,
             )),
       )
-      .map((container): DisplayedDerivedCharacteristic => ({
-        ...(
+      .map(container =>
+        (
           this.#derivedCharacteristics.get(container.id) ??
           CharacterDerivedCharacteristic.createEmpty(
             this.global,
@@ -504,8 +520,8 @@ export class CharacterDerivedCharacteristics {
             container.content,
           )
         ).forDisplay(),
-        ...container.content,
-      }))
+      )
+      .filter(isNotNullish)
       .toSorted(on(e => e.position, compareNumber))
   }
 

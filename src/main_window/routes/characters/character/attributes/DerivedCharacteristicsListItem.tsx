@@ -6,7 +6,6 @@ import { InlineMarkdown } from "../../../../../shared/components/markdown/Markdo
 import { NumberBox } from "../../../../../shared/components/numberBox/NumberBox.tsx"
 import type { DisplayedDerivedCharacteristic } from "../../../../../shared/domain/energy.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
@@ -23,23 +22,21 @@ type Props = {
 export const DerivedCharacteristicsListItem: FC<Props> = observer(props => {
   const { attribute } = props
 
-  const { id, base, value, modifier, purchaseMaximum, purchased } = attribute
+  const { id, base, value, modifier, purchaseMaximum, purchased, abbreviation, name } = attribute
 
   const translate = useTranslate()
-  const translateMap = useTranslateMap()
-  const translation = translateMap(attribute.translations)
   const { isInCharacterCreation, canRemove } = useCharacterState()
   const actions = useCharacterActions()
 
   return (
     <div className="derived-characteristics-item">
       <AttributeBorder
-        label={translation?.abbreviation ?? ""}
+        label={abbreviation}
         value={value}
         tooltip={
           <div className="calc-attr-overlay">
             <h4>
-              <span>{translation?.name ?? ""}</span>
+              <span>{name}</span>
               <span>{value}</span>
             </h4>
             {attribute.calculationText === undefined ? null : (
@@ -93,7 +90,7 @@ export const DerivedCharacteristicsListItem: FC<Props> = observer(props => {
         ) : null}
       </AttributeBorder>
       {attribute.type?.kind === "Energy" ? (
-        <DerivedCharacteristicsListItemPermanent attribute={attribute} translation={translation} />
+        <DerivedCharacteristicsListItemPermanent attribute={attribute} />
       ) : null}
     </div>
   )
