@@ -41,7 +41,7 @@ abstract class CharacterRule<Entity extends "FocusRule" | "OptionalRule" | "Alte
   readonly dbEntry: EntityMap[Entity]
 
   @observable accessor active: boolean
-  @observable accessor dependencies: RuleDependency[]
+  @observable accessor dependencies: RuleDependency[] = []
 
   constructor(
     global: Global,
@@ -50,7 +50,6 @@ abstract class CharacterRule<Entity extends "FocusRule" | "OptionalRule" | "Alte
     id: string,
     active = false,
     dbEntry: EntityMap[Entity] | undefined = global.db.getInstanceOfEntityById(entityName, id),
-    dependencies: RuleDependency[] = [],
   ) {
     this.global = global
     this.character = character
@@ -61,7 +60,6 @@ abstract class CharacterRule<Entity extends "FocusRule" | "OptionalRule" | "Alte
     }
     this.dbEntry = dbEntry
     this.active = active
-    this.dependencies = dependencies
   }
 
   toJSON(): { id: string } {
@@ -78,11 +76,12 @@ abstract class CharacterRule<Entity extends "FocusRule" | "OptionalRule" | "Alte
   }
 
   @computed
+  get isDependedOn(): boolean {
+    return this.dependencies.some(dep => dep.active === this.active)
+  }
+
   get isDisabled(): boolean {
-    return (
-      this.dbEntry.isMissingImplementation ||
-      this.dependencies.some(dep => dep.active === this.active)
-    )
+    return this.dbEntry.isMissingImplementation || this.isDependedOn
   }
 
   /**
@@ -127,14 +126,15 @@ export class CharacterOptionalRule extends CharacterRule<"OptionalRule"> {
 
   @computed
   get optionsForDisplay(): DisplayedOptionalRuleOption[] | undefined {
+    const { translateMap, compare } = this.global.locale
     return ensureNonEmpty(
       this.global.db.getAllChildInstanceContainersForParent("OptionalRuleOption", this.id),
     )
       ?.map(option => ({
         id: option.id,
-        name: this.global.locale.translateMap(option.content.translations)?.name ?? "",
+        name: translateMap(option.content.translations)?.name ?? "",
       }))
-      .toSorted(on(option => option.name, this.global.locale.compare))
+      .toSorted(on(option => option.name, compare))
   }
 
   @computed
@@ -182,41 +182,39 @@ abstract class CharacterRuleCollection<
     character: BaseCharacter,
     entityName: Entity,
     creator: typeof this.creator,
-    rules: Map<string, T> = new Map(),
+    rules?: Map<string, T>,
   ) {
     this.global = global
     this.character = character
     this.entityName = entityName
     this.creator = creator
-    this.rules = rules
+    if (rules === undefined) {
+      this.rules = new Map()
+      for (const rule of this.global.db.getAllInstanceContainersOfEntity(entityName)) {
+        this.rules.set(
+          rule.id,
+          new this.creator(global, character, entityName, rule.id, false, rule.content),
+        )
+      }
+    } else {
+      this.rules = rules
+    }
   }
 
   @computed
   get rulesForDisplay(): ReturnType<T["toSerialized"]>[] {
-    return this.global.db
-      .getAllInstanceContainersOfEntity(this.entityName)
+    return this.rules
+      .values()
       .filter(rule =>
         isEntryFromIncludedPublication(
-          rule.content,
+          rule.dbEntry,
           this.global.db.getInstanceOfEntityById.bind(this.global.db),
           this.global.locale.translateMap,
           this.character.rules.publicationOptions,
         ),
       )
-      .map(
-        rule =>
-          (
-            this.rules.get(rule.id) ??
-            new this.creator(
-              this.global,
-              this.character,
-              this.entityName,
-              rule.id,
-              false,
-              rule.content,
-            )
-          ).toSerialized() as ReturnType<T["toSerialized"]>,
-      )
+      .map(rule => rule.toSerialized() as ReturnType<T["toSerialized"]>)
+      .toArray()
   }
 
   ensureEntryExists(id: string): T {

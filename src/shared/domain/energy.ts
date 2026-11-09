@@ -77,17 +77,16 @@ const isModifierActive = (
     case "Activatable": {
       const entry = character
         .getActivatableCollection(source.Activatable.id.kind)
-        .getByIdSafe(fromUniformCase(source.Activatable.id))
+        .getById(fromUniformCase(source.Activatable.id))
 
-      const instanceIndexWithConfiguration = entry.getInstanceIndexWithConfiguration(
-        source.Activatable,
-      )
+      const instanceIndexWithConfiguration =
+        entry?.getInstanceIndexWithConfiguration(source.Activatable) ?? -1
 
       return {
         active: instanceIndexWithConfiguration > -1 === source.Activatable.active,
         level:
           source.Activatable.level === undefined
-            ? entry.instances[instanceIndexWithConfiguration]?.level
+            ? entry?.instances[instanceIndexWithConfiguration]?.level
             : undefined,
       }
     }
@@ -116,18 +115,11 @@ const applyModifier = (
 }
 
 export class CharacterDerivedCharacteristic {
-  declare ["constructor"]: typeof CharacterDerivedCharacteristic
-
-  static readonly improvementCost: ImprovementCost = "D"
-
   readonly global: Global
-  readonly #character: BaseCharacter
+  readonly character: BaseCharacter
 
   readonly id: string
   readonly dbEntry: DerivedCharacteristic
-  @observable accessor #purchased: number | undefined
-  @observable accessor #permanentlyLost: number | undefined
-  @observable accessor #permanentlyLostBoughtBack: number | undefined
 
   constructor(
     global: Global,
@@ -136,57 +128,30 @@ export class CharacterDerivedCharacteristic {
     dbEntry: DerivedCharacteristic,
   ) {
     this.global = global
-    this.#character = character
+    this.character = character
     this.id = id
     this.dbEntry = dbEntry
-
-    if (dbEntry.type?.kind === "Energy") {
-      if (dbEntry.type.Energy.purchase) {
-        this.#purchased = 0
-      }
-
-      if (dbEntry.type.Energy.permanentLoss) {
-        this.#permanentlyLost = 0
-
-        if (dbEntry.type.Energy.permanentLoss.canBeBoughtBack) {
-          this.#permanentlyLostBoughtBack = 0
-        }
-      }
-    }
   }
 
-  @action
-  static createEmpty(
-    global: Global,
-    character: BaseCharacter,
-    id: string,
-    dbEntry: DerivedCharacteristic | undefined,
-  ): CharacterDerivedCharacteristic {
-    if (!dbEntry) {
-      throw new Error(`DerivedCharacteristic with id ${id} not provided.`)
-    }
-    return new CharacterDerivedCharacteristic(global, character, id, dbEntry)
-  }
-
-  #calculateBaseValue(baseValue: DerivedCharacteristicBase) {
+  protected calculateBaseValue(baseValue: DerivedCharacteristicBase) {
     return Math.round(
       evaluateMathOperation(baseValue, value => {
         switch (value.kind) {
           case "Attribute":
-            return this.#character.attributes.getValueById(value.Attribute)
+            return this.character.attributes.getValueById(value.Attribute)
           case "Constant":
             return value.Constant
           case "PrimaryAttribute":
             switch (value.PrimaryAttribute.kind) {
               case "Blessed":
-                return this.#character.attributes.primaryBlessedAttribute?.value ?? 0
+                return this.character.attributes.primaryBlessedAttribute?.value ?? 0
               case "Magical":
-                return this.#character.attributes.highestPrimaryMagicalAttributeForArcaneEnergy ?? 0
+                return this.character.attributes.highestPrimaryMagicalAttributeForArcaneEnergy ?? 0
               default:
                 return assertExhaustive(value.PrimaryAttribute)
             }
           case "RaceBaseValue":
-            return this.#character.race?.base?.base_values?.[this.id]?.value ?? 0
+            return this.character.race?.base?.base_values?.[this.id]?.value ?? 0
           default:
             return assertExhaustive(value)
         }
@@ -196,14 +161,14 @@ export class CharacterDerivedCharacteristic {
 
   // @computed
   get base() {
-    return this.#calculateBaseValue(this.dbEntry.calculation.base)
+    return this.calculateBaseValue(this.dbEntry.calculation.base)
   }
 
   @computed
   get modifier() {
     return (
       (this.dbEntry.calculation.modifiers?.reduce((acc, modifier) => {
-        const { active, level = 1 } = isModifierActive(modifier.source, this.#character)
+        const { active, level = 1 } = isModifierActive(modifier.source, this.character)
         if (active) {
           return applyModifier(acc, modifier.operation, modifier.value * level)
         }
@@ -214,9 +179,96 @@ export class CharacterDerivedCharacteristic {
 
   @computed
   get value() {
+    return this.base + this.modifier
+  }
+
+  get adventurePoints(): AdventurePointsCache {
+    return AdventurePointsCache.empty
+  }
+
+  @computed
+  get calculationText(): string | undefined {
+    const translation = this.global.locale.translateMap(this.dbEntry.translations)
+
+    if (!translation) {
+      return ""
+    }
+
+    return renderBaseCalculation(
+      this.global.db.getInstanceOfEntityById.bind(this.global.db),
+      this.global.locale.translate,
+      this.global.locale.translateMap,
+      translation,
+      this.dbEntry.calculation.base,
+      "compact",
+    )
+  }
+
+  toJSON(): RawDerivedCharacteristic {
+    return {
+      type: "Default",
+      base: this.base,
+      modifier: this.modifier,
+      value: this.value,
+    }
+  }
+
+  forDisplay(): DisplayedDerivedCharacteristicBase | undefined {
+    const translation = this.global.locale.translateMap(this.dbEntry.translations)
+    if (!translation) {
+      return
+    }
+    return {
+      id: this.id,
+      base: this.base,
+      value: this.value,
+      modifier: this.modifier,
+      calculationText: this.calculationText,
+      position: this.dbEntry.position,
+      type: this.dbEntry.type,
+      name: translation.name,
+      abbreviation: translation.abbreviation,
+      unitAbbreviation: translation.unitAbbreviation,
+      description: translation.description,
+    }
+  }
+}
+
+export type Energy = DerivedCharacteristic & { type: { kind: "Energy" } }
+
+const isEnergy = (entry: DerivedCharacteristic): entry is Energy => entry.type?.kind === "Energy"
+
+export class CharacterEnergy extends CharacterDerivedCharacteristic {
+  declare ["constructor"]: typeof CharacterEnergy
+
+  static readonly improvementCost: ImprovementCost = "D"
+
+  override readonly dbEntry: Energy
+  @observable accessor #purchased: number | undefined
+  @observable accessor #permanentlyLost: number | undefined
+  @observable accessor #permanentlyLostBoughtBack: number | undefined
+
+  constructor(global: Global, character: BaseCharacter, id: string, dbEntry: Energy) {
+    super(global, character, id, dbEntry)
+    this.dbEntry = dbEntry
+
+    if (dbEntry.type.Energy.purchase) {
+      this.#purchased = 0
+    }
+
+    if (dbEntry.type.Energy.permanentLoss) {
+      this.#permanentlyLost = 0
+
+      if (dbEntry.type.Energy.permanentLoss.canBeBoughtBack) {
+        this.#permanentlyLostBoughtBack = 0
+      }
+    }
+  }
+
+  @computed
+  override get value() {
     return (
-      this.base +
-      this.modifier +
+      super.value +
       (this.purchased ?? 0) -
       (this.permanentlyLost ?? 0) +
       (this.permanentlyLostBoughtBack ?? 0)
@@ -277,7 +329,7 @@ export class CharacterDerivedCharacteristic {
   @computed
   get purchaseMaximum(): number | undefined {
     if (this.dbEntry.type?.kind === "Energy" && this.dbEntry.type.Energy.purchase) {
-      return this.#calculateBaseValue(Case("Value", this.dbEntry.type.Energy.purchase.maximum))
+      return this.calculateBaseValue(Case("Value", this.dbEntry.type.Energy.purchase.maximum))
     }
     return undefined
   }
@@ -285,7 +337,7 @@ export class CharacterDerivedCharacteristic {
   @computed
   get isPurchasedIncreasable() {
     if (
-      this.#character.isInCharacterCreation ||
+      this.character.isInCharacterCreation ||
       this.purchased === undefined ||
       this.purchaseMaximum === undefined ||
       (this.permanentlyLost !== undefined &&
@@ -299,18 +351,17 @@ export class CharacterDerivedCharacteristic {
 
   @computed
   get isPurchasedDecreasable() {
-    if (!this.#character.canRemove || this.purchased === undefined) {
+    if (!this.character.canRemove || this.purchased === undefined) {
       return undefined
     }
     return this.purchased > 0
   }
 
   @computed
-  get adventurePoints(): AdventurePointsCache {
+  override get adventurePoints(): AdventurePointsCache {
     return addAdventurePointsCaches(
       cachedAdventurePoints(this.#purchased ?? 0, 0, [], this.constructor.improvementCost),
-      this.dbEntry.type?.kind === "Energy" &&
-        this.dbEntry.type.Energy.permanentLoss?.canBeBoughtBack !== undefined
+      this.dbEntry.type.Energy.permanentLoss?.canBeBoughtBack !== undefined
         ? new AdventurePointsCache(
             this.dbEntry.type.Energy.permanentLoss.canBeBoughtBack.cost *
               (this.#permanentlyLostBoughtBack ?? 0),
@@ -320,32 +371,7 @@ export class CharacterDerivedCharacteristic {
     )
   }
 
-  @computed
-  get calculationText(): string | undefined {
-    if (
-      this.dbEntry.calculation.base.kind === "Value" &&
-      this.dbEntry.calculation.base.Value.kind === "Constant"
-    ) {
-      return undefined
-    }
-
-    const translation = this.global.locale.translateMap(this.dbEntry.translations)
-
-    if (!translation) {
-      return ""
-    }
-
-    return renderBaseCalculation(
-      this.global.db.getInstanceOfEntityById.bind(this.global.db),
-      this.global.locale.translate,
-      this.global.locale.translateMap,
-      translation,
-      this.dbEntry.calculation.base,
-      "compact",
-    )
-  }
-
-  toJSON(): RawDerivedCharacteristic {
+  override toJSON(): RawDerivedCharacteristic {
     if (this.#purchased !== undefined && this.#permanentlyLost !== undefined) {
       if (this.#permanentlyLostBoughtBack !== undefined) {
         return {
@@ -377,7 +403,7 @@ export class CharacterDerivedCharacteristic {
     }
   }
 
-  forDisplay(): DisplayedDerivedCharacteristicBase | undefined {
+  override forDisplay(): DisplayedDerivedCharacteristicBase | undefined {
     const translation = this.global.locale.translateMap(this.dbEntry.translations)
     if (!translation) {
       return
@@ -442,7 +468,7 @@ export class CharacterDerivedCharacteristic {
   get minimumAttributeRequiredForPurchased(): { id: Attribute_ID; value: number } | undefined {
     if (this.dbEntry.type?.kind === "Energy" && this.dbEntry.type.Energy.purchase) {
       const id = getAttributeIdForPurchased(
-        this.#character,
+        this.character,
         this.dbEntry.type.Energy.purchase.maximum,
       )
       if (!id) {
@@ -450,7 +476,7 @@ export class CharacterDerivedCharacteristic {
       }
       return {
         id,
-        value: this.#character.attributes.getValueById(id),
+        value: this.character.attributes.getValueById(id),
       }
     }
     return undefined
@@ -487,42 +513,48 @@ export class CharacterDerivedCharacteristics {
   constructor(global: Global, character: BaseCharacter) {
     this.global = global
     this.#character = character
+    for (const container of this.global.db.getAllInstanceContainersOfEntity(
+      "DerivedCharacteristic",
+    )) {
+      this.#derivedCharacteristics.set(
+        container.id,
+        isEnergy(container.content)
+          ? new CharacterEnergy(global, character, container.id, container.content)
+          : new CharacterDerivedCharacteristic(global, character, container.id, container.content),
+      )
+    }
   }
 
   getById(id: DerivedCharacteristic_ID): CharacterDerivedCharacteristic | undefined {
     return this.#derivedCharacteristics.get(id)
   }
 
+  getEnergyById(id: DerivedCharacteristic_ID): CharacterEnergy | undefined {
+    const entry = this.getById(id)
+    return entry instanceof CharacterEnergy ? entry : undefined
+  }
+
   @computed
   get derivedCharacteristics() {
-    return this.global.db
-      .getAllInstanceContainersOfEntity("DerivedCharacteristic")
+    return this.#derivedCharacteristics
+      .values()
       .filter(
-        ({ content }) =>
+        dc =>
           isEntryFromIncludedPublication(
-            content,
+            dc.dbEntry,
             this.global.db.getInstanceOfEntityById.bind(this.global.db),
             this.global.locale.translateMap,
             this.#character.rules.publicationOptions,
           ) &&
-          (content.prerequisites === undefined ||
+          (dc.dbEntry.prerequisites === undefined ||
             checkPrerequisitesOfDerivedCharacteristic(
-              content.prerequisites,
+              dc.dbEntry.prerequisites,
               this.#character.prerequisiteCapabilities,
             )),
       )
-      .map(container =>
-        (
-          this.#derivedCharacteristics.get(container.id) ??
-          CharacterDerivedCharacteristic.createEmpty(
-            this.global,
-            this.#character,
-            container.id,
-            container.content,
-          )
-        ).forDisplay(),
-      )
+      .map(dc => dc.forDisplay())
       .filter(isNotNullish)
+      .toArray()
       .toSorted(on(e => e.position, compareNumber))
   }
 
@@ -536,49 +568,40 @@ export class CharacterDerivedCharacteristics {
       )
   }
 
-  #ensureEntryExists(id: Attribute_ID): CharacterDerivedCharacteristic {
-    return this.#derivedCharacteristics.getOrInsertComputed(id, () =>
-      CharacterDerivedCharacteristic.createEmpty(
-        this.global,
-        this.#character,
-        id,
-        this.global.db.getInstanceOfEntityById("DerivedCharacteristic", id),
-      ),
-    )
-  }
-
   increment(id: Attribute_ID) {
-    this.#ensureEntryExists(id).increment()
+    this.getEnergyById(id)?.increment()
   }
 
   decrement(id: Attribute_ID) {
-    this.#ensureEntryExists(id).decrement()
+    this.getEnergyById(id)?.decrement()
   }
 
   addPermanentlyLost(id: string, value: number) {
-    this.#ensureEntryExists(id).addPermanentlyLost(value)
+    this.getEnergyById(id)?.addPermanentlyLost(value)
   }
 
   decrementBoughtBack(id: string) {
-    this.#ensureEntryExists(id).decrementBoughtBack()
+    this.getEnergyById(id)?.decrementBoughtBack()
   }
 
   decrementPermanentlyLost(id: string) {
-    this.#ensureEntryExists(id).decrementPermanentlyLost()
+    this.getEnergyById(id)?.decrementPermanentlyLost()
   }
 
   incrementBoughtBack(id: string) {
-    this.#ensureEntryExists(id).incrementBoughtBack()
+    this.getEnergyById(id)?.incrementBoughtBack()
   }
 
   incrementPermanentlyLost(id: string) {
-    this.#ensureEntryExists(id).incrementPermanentlyLost()
+    this.getEnergyById(id)?.incrementPermanentlyLost()
   }
 
   getMinimumValuesOfAttributeForPurchased(id: Attribute_ID): number[] {
     return this.#derivedCharacteristics
       .values()
-      .map(entry => entry.minimumAttributeRequiredForPurchased)
+      .map(entry =>
+        entry instanceof CharacterEnergy ? entry.minimumAttributeRequiredForPurchased : undefined,
+      )
       .filter(isNotNullish)
       .filter(entry => entry.id === id)
       .map(entry => entry.value)
@@ -593,17 +616,19 @@ export class CharacterDerivedCharacteristics {
     const derivedCharacteristics = new CharacterDerivedCharacteristics(global, character)
 
     for (const [id, rawEntry] of Object.entries(raw ?? {})) {
-      const entry = derivedCharacteristics.#ensureEntryExists(id)
+      const entry = derivedCharacteristics.getById(id)
 
-      if (rawEntry.type === "Energy") {
-        entry.setPurchased(rawEntry.purchased)
-        entry.setPermanentlyLost(rawEntry.permanentlyLost)
-      }
+      if (entry instanceof CharacterEnergy) {
+        if (rawEntry.type === "Energy") {
+          entry.setPurchased(rawEntry.purchased)
+          entry.setPermanentlyLost(rawEntry.permanentlyLost)
+        }
 
-      if (rawEntry.type === "EnergyWithBuyBack") {
-        entry.setPurchased(rawEntry.purchased)
-        entry.setPermanentlyLost(rawEntry.permanentlyLost)
-        entry.setPermanentlyLostBoughtBack(rawEntry.permanentlyLostBoughtBack)
+        if (rawEntry.type === "EnergyWithBuyBack") {
+          entry.setPurchased(rawEntry.purchased)
+          entry.setPermanentlyLost(rawEntry.permanentlyLost)
+          entry.setPermanentlyLostBoughtBack(rawEntry.permanentlyLostBoughtBack)
+        }
       }
     }
 
@@ -612,36 +637,23 @@ export class CharacterDerivedCharacteristics {
 
   toJSON(): Record<string, RawDerivedCharacteristic> {
     return Object.fromEntries(
-      this.global.db
-        .getAllInstanceContainersOfEntity("DerivedCharacteristic")
+      this.#derivedCharacteristics
+        .values()
         .filter(
-          ({ content }) =>
+          dc =>
             isEntryFromIncludedPublication(
-              content,
+              dc.dbEntry,
               this.global.db.getInstanceOfEntityById.bind(this.global.db),
               this.global.locale.translateMap,
               this.#character.rules.publicationOptions,
             ) &&
-            (content.prerequisites === undefined ||
+            (dc.dbEntry.prerequisites === undefined ||
               checkPrerequisitesOfDerivedCharacteristic(
-                content.prerequisites,
+                dc.dbEntry.prerequisites,
                 this.#character.prerequisiteCapabilities,
               )),
         )
-        .map((container): [string, RawDerivedCharacteristic] => [
-          container.id,
-          {
-            ...(
-              this.#derivedCharacteristics.get(container.id) ??
-              CharacterDerivedCharacteristic.createEmpty(
-                this.global,
-                this.#character,
-                container.id,
-                container.content,
-              )
-            ).toJSON(),
-          },
-        ]),
+        .map((dc): [string, RawDerivedCharacteristic] => [dc.id, dc.toJSON()]),
     )
   }
 }

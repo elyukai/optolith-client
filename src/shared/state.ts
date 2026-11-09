@@ -1,5 +1,5 @@
 import type { Debugger } from "debug"
-import { action, observable, reaction, toJS } from "mobx"
+import { observable, reaction, runInAction, toJS } from "mobx"
 
 export type StateValues = {
   [name: string]: unknown
@@ -63,6 +63,20 @@ export const attachStateSelectorsToWindow = <S extends StateValues>(
   stateSelectors: StateSelectors<S>,
   debug?: Debugger,
 ): void => {
+  const initialState = runInAction(
+    () =>
+      Object.fromEntries(
+        Object.entries(stateSelectors).map(([name, selector]): [string, S[keyof S]] => [
+          name,
+          toJS(selector()),
+        ]),
+      ) as S,
+  )
+
+  debug?.("sending initial state")
+  window.webContents.send("state:init", initialState)
+
+  debug?.("register reactions")
   const disposers = Object.entries(stateSelectors).map(([name, selector]) =>
     reaction(
       selector,
@@ -70,7 +84,7 @@ export const attachStateSelectorsToWindow = <S extends StateValues>(
         debug?.("sending changed state for slice %s", name)
         window.webContents.send("state:change", name, toJS(value))
       },
-      { fireImmediately: true },
+      { name: `state-selector-${name}` },
     ),
   )
 
@@ -92,20 +106,43 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
 ): void => {
   const keyedDisposers = new Map<string, (() => void)[]>()
 
+  const initialKeyedMap = keyedMap()
+
+  const initialState = runInAction(
+    () =>
+      new Map(
+        initialKeyedMap
+          .entries()
+          .map(([key, mapValue]): [string, S] => [
+            key,
+            Object.fromEntries(
+              Object.entries(stateSelectorsFromValue(mapValue)).map(
+                ([name, selector]): [string, S[keyof S]] => [name, toJS(selector())],
+              ),
+            ) as S,
+          ]),
+      ),
+  )
+
+  debug?.("sending initial state for all slices")
+  window.webContents.send("keyedstate:init", initialState)
+
   const registerDisposersForKey = (key: string, mapValue: T) => {
     const stateSelectors = stateSelectorsFromValue(mapValue)
     const disposers = Object.entries(stateSelectors).map(([name, selector]) =>
       reaction(
         selector,
-        value => {
+        (value, _prev) => {
           debug?.("sending changed state for slice %s keyed by %s", name, key)
           window.webContents.send("keyedstate:change", key, name, toJS(value))
         },
-        { fireImmediately: true },
+        { name: `state-key-${key}-selector-${name}` },
       ),
     )
     keyedDisposers.set(key, disposers)
   }
+
+  debug?.("register initial reactions for all slices")
 
   keyedMap().forEach((mapValue, key) => {
     registerDisposersForKey(key, mapValue)
@@ -114,12 +151,12 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
   const mainDisposer = reaction(
     () => Object.fromEntries(keyedMap().entries()),
     (obj, prevObj) => {
-      debug?.("reevaluating selectors")
+      debug?.("reevaluating reactions")
       const keys = Object.keys(obj)
       // Remove disposers for keys that are no longer present
       keyedDisposers.forEach((disposers, key) => {
         if (obj[key] === undefined && obj[key] !== prevObj?.[key]) {
-          debug?.("removing disposers for key %s", key)
+          debug?.("removing reactions for key %s", key)
           disposers.forEach(cancel => cancel())
           keyedDisposers.delete(key)
         }
@@ -129,10 +166,10 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
       keys.forEach(key => {
         if (obj[key] !== undefined && obj[key] !== prevObj?.[key]) {
           if (prevObj?.[key] !== undefined) {
-            debug?.("removing disposers for key %s", key)
+            debug?.("removing reactions for key %s", key)
             keyedDisposers.get(key)?.forEach(cancel => cancel())
           }
-          debug?.("adding disposers for key %s", key)
+          debug?.("adding reactions for key %s", key)
           const mapValue = obj[key]
           if (mapValue) {
             registerDisposersForKey(key, mapValue)
@@ -141,10 +178,10 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
       })
     },
     {
-      fireImmediately: true,
       equals: (a, b) =>
         Object.keys(a).length === Object.keys(b).length &&
         Object.keys(a).every(key => Object.hasOwn(b, key) && a[key] === b[key]),
+      name: "state-keyed-map",
     },
   )
 
@@ -155,6 +192,7 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
 }
 
 export type StateSelectorsAndActionsBridge<S extends StateValues, A extends StateActions> = {
+  onStateInit: (listener: (value: S) => void) => void
   onStateChange: <Slice extends keyof S>(
     sliceName: Slice,
     listener: (value: S[Slice]) => void,
@@ -166,6 +204,7 @@ export type StateSelectorsAndActionsBridge<S extends StateValues, A extends Stat
 }
 
 export type KeyedStateSelectorsAndActionsBridge<S extends StateValues, A extends StateActions> = {
+  onKeyedStateInit: (listener: (value: Map<string, S>) => void) => void
   onKeyedStateChange: <Slice extends keyof S>(
     sliceName: Slice,
     listener: (characterId: string, value: S[Slice]) => void,
@@ -195,6 +234,12 @@ export const attachStateSelectorsAndActionsToContextBridge = <
 >(
   ipcRenderer: Electron.IpcRenderer,
 ): StateSelectorsAndActionsBridge<S, A> => {
+  const onStateInit = (listener: (value: S) => void) => {
+    ipcRenderer.on("state:init", (_event, value) => {
+      listener(value)
+    })
+  }
+
   const onStateChange = <Slice extends keyof S>(
     sliceName: Slice,
     listener: (value: S[Slice]) => void,
@@ -218,7 +263,7 @@ export const attachStateSelectorsAndActionsToContextBridge = <
     ipcRenderer.send("state:action", actionName, ...args)
   }
 
-  return { onStateChange, onAnyStateChange, execute }
+  return { onStateInit, onStateChange, onAnyStateChange, execute }
 }
 
 /**
@@ -232,6 +277,12 @@ export const attachKeyedStateSelectorsAndActionsToContextBridge = <
 >(
   ipcRenderer: Electron.IpcRenderer,
 ): KeyedStateSelectorsAndActionsBridge<S, A> => {
+  const onKeyedStateInit = (listener: (value: Map<string, S>) => void) => {
+    ipcRenderer.on("keyedstate:init", (_event, value) => {
+      listener(value)
+    })
+  }
+
   const onKeyedStateChange = <Slice extends keyof S>(
     sliceName: Slice,
     listener: (characterId: string, value: S[Slice]) => void,
@@ -263,34 +314,7 @@ export const attachKeyedStateSelectorsAndActionsToContextBridge = <
     ipcRenderer.send("keyedstate:action", characterId, actionName, ...args)
   }
 
-  return { onKeyedStateChange, onAnyKeyedStateChange, executeKeyed }
-}
-
-export type WithoutClassFunctions<T> = T extends { toJSON: () => infer U }
-  ? U
-  : T extends any[]
-    ? {
-        [K in keyof T]: WithoutClassFunctions<T[K]>
-      }
-    : T extends object
-      ? {
-          [K in keyof T]: T[K] extends Function ? never : WithoutClassFunctions<T[K]>
-        }
-      : T
-
-export const prepareForSerialization = <T>(obj: T): WithoutClassFunctions<T> => {
-  if (obj === null || obj === undefined) {
-    return obj as WithoutClassFunctions<T>
-  } else if (Array.isArray(obj)) {
-    return obj.map(prepareForSerialization) as WithoutClassFunctions<T>
-  } else if (typeof obj === "object") {
-    if ("toJSON" in obj && typeof obj.toJSON === "function") {
-      return prepareForSerialization(obj.toJSON()) as WithoutClassFunctions<T>
-    }
-    return obj as WithoutClassFunctions<T>
-  } else {
-    return obj as WithoutClassFunctions<T>
-  }
+  return { onKeyedStateInit, onKeyedStateChange, onAnyKeyedStateChange, executeKeyed }
 }
 
 /**
@@ -302,17 +326,24 @@ export const transformStateSelectorsFromContextBridgeIntoObservable = <S extends
   bridge: StateSelectorsAndActionsBridge<S, StateActions>,
   defaultValues: S,
   debug: Debugger,
-): WithoutClassFunctions<S> => {
-  const observableCollection = observable<S>(defaultValues)
+): S => {
+  const observableCollection = observable.object({ ...defaultValues }, {}, { deep: false }) as S
 
-  bridge.onAnyStateChange((sliceName, value) => {
-    action(() => {
-      debug("state change for slice %s", sliceName)
-      observableCollection[sliceName] = value
-    })()
+  bridge.onStateInit(value => {
+    runInAction(() => {
+      debug("initial state received")
+      Object.assign(observableCollection, value)
+    })
   })
 
-  return observableCollection as WithoutClassFunctions<S>
+  bridge.onAnyStateChange((sliceName, value) => {
+    runInAction(() => {
+      debug("state change for slice %s", sliceName)
+      observableCollection[sliceName] = value
+    })
+  })
+
+  return observableCollection
 }
 
 /**
@@ -324,15 +355,27 @@ export const transformKeyedStateSelectorsFromContextBridgeIntoObservable = <S ex
   bridge: KeyedStateSelectorsAndActionsBridge<S, StateActions>,
   defaultValues: S,
   debug: Debugger,
-): Record<string, WithoutClassFunctions<S>> => {
-  const observableCollection = observable<Record<string, S>>({})
+): Map<string, S> => {
+  const keyed = observable.map<string, S>(undefined, { deep: false })
 
-  bridge.onAnyKeyedStateChange((id, sliceName, value) => {
-    action(() => {
-      debug("state change for slice %s", sliceName)
-      ;(observableCollection[id] ??= observable(defaultValues))[sliceName] = value
-    })()
+  const createObservableState = (state: S): S => observable.object(state, {}, { deep: false }) as S
+
+  bridge.onKeyedStateInit(value => {
+    runInAction(() => {
+      debug("initial keyed state received")
+      for (const [key, slice] of value.entries()) {
+        keyed.set(key, createObservableState(slice))
+      }
+    })
   })
 
-  return observableCollection as Record<string, WithoutClassFunctions<S>>
+  bridge.onAnyKeyedStateChange((key, sliceName, value) => {
+    runInAction(() => {
+      debug("state change for slice %s keyed by %s", sliceName, key)
+      const collection = keyed.getOrInsertComputed(key, () => createObservableState(defaultValues))
+      collection[sliceName] = value
+    })
+  })
+
+  return keyed
 }

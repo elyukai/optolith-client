@@ -26,44 +26,33 @@ const useWindowState = (getWindowState?: () => Promise<boolean>) => {
 type Props = {
   title?: string
   secondary?: boolean
-  platform: NodeJS.Platform
-  maximizeEvents?: TypedEventEmitter<{ maximize: []; unmaximize: [] }>
-  onMinimize?: () => void
-  onMaximize?: () => void
-  onRestore?: () => void
-  onClose: () => void
-  isMaximized?: () => Promise<boolean>
+  externalAPI: {
+    platform: NodeJS.Platform
+    minimize?: () => void
+    maximize?: () => void
+    restore?: () => void
+    close: () => void
+    isMaximized?: () => Promise<boolean>
+  } & TypedEventEmitter<{ maximize: []; unmaximize: [] }>
 }
 
 /**
  * The title bar for a window.
  */
-export const TitleBar: FC<Props> = props => {
-  const {
-    title,
-    secondary,
-    platform,
-    maximizeEvents,
-    onMinimize,
-    onMaximize,
-    onRestore,
-    onClose,
-    isMaximized: getIsMaximized,
-  } = props
-
-  const [isMaximized, updateIsMaximized] = useWindowState(getIsMaximized)
+export const TitleBar: FC<Props> = ({ title, secondary, externalAPI }) => {
+  const [isMaximized, updateIsMaximized] = useWindowState(externalAPI.isMaximized)
 
   useEffect(() => {
-    maximizeEvents?.on("maximize", updateIsMaximized)
-    maximizeEvents?.on("unmaximize", updateIsMaximized)
+    externalAPI.on("maximize", updateIsMaximized)
+    externalAPI.on("unmaximize", updateIsMaximized)
 
     return () => {
-      maximizeEvents?.removeListener("maximize", updateIsMaximized)
-      maximizeEvents?.removeListener("unmaximize", updateIsMaximized)
+      externalAPI.removeListener("maximize", updateIsMaximized)
+      externalAPI.removeListener("unmaximize", updateIsMaximized)
     }
-  }, [updateIsMaximized, maximizeEvents])
+  }, [updateIsMaximized, externalAPI])
 
-  if (platform === "darwin") {
+  if (externalAPI.platform === "darwin") {
     return (
       <TitleBarWrapper secondary={secondary}>
         <div className="macos-hover-area" />
@@ -76,13 +65,13 @@ export const TitleBar: FC<Props> = props => {
     <TitleBarWrapper secondary={secondary}>
       <TitleBarTitle title={title} />
       <div>
-        <TitleBarButton icon="&#xE903;" onClick={onMinimize} className="minimize" />
+        <TitleBarButton icon="&#xE903;" onClick={externalAPI.minimize} className="minimize" />
         {isMaximized ? (
-          <TitleBarButton icon="&#xE902;" onClick={onRestore} className="restore" />
+          <TitleBarButton icon="&#xE902;" onClick={externalAPI.restore} className="restore" />
         ) : (
-          <TitleBarButton icon="&#xE901;" onClick={onMaximize} className="maximize" />
+          <TitleBarButton icon="&#xE901;" onClick={externalAPI.maximize} className="maximize" />
         )}
-        <TitleBarButton icon="&#xE900;" onClick={onClose} className="close" />
+        <TitleBarButton icon="&#xE900;" onClick={externalAPI.close} className="close" />
       </div>
     </TitleBarWrapper>
   )

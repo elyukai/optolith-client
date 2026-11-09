@@ -1,4 +1,5 @@
 import type { Locale } from "@optolith/database-schema/gen"
+import { observer } from "mobx-react-lite"
 import { useEffect, useMemo, useState } from "react"
 import { Button } from "../shared/components/button/Button.tsx"
 import { Checkbox } from "../shared/components/checkbox/Checkbox.tsx"
@@ -25,7 +26,7 @@ const getLocaleKey = (option: DropdownOption<string | undefined>) => option.id
 /**
  * Root component for the settings window.
  */
-export const Root: React.FC<Props> = props => {
+export const Root: React.FC<Props> = observer(function Root(props) {
   const { locales, initialSettings } = props
 
   const [locale, setLocale] = useState(initialSettings.locale)
@@ -61,12 +62,7 @@ export const Root: React.FC<Props> = props => {
 
   return (
     <>
-      <TitleBar
-        title={translate("Settings")}
-        secondary
-        platform={ExternalAPI.platform}
-        onClose={ExternalAPI.close}
-      />
+      <TitleBar title={translate("Settings")} secondary externalAPI={ExternalAPI} />
       <main>
         <Grid>
           <GridItem width="1/2">
@@ -145,4 +141,4 @@ export const Root: React.FC<Props> = props => {
       </main>
     </>
   )
-}
+})

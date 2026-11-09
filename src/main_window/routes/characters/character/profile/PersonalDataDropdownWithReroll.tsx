@@ -28,7 +28,7 @@ export const PersonalDataDropdownWithReroll: FC<Props> = props => {
         value={value}
         onChange={action}
         options={options}
-        disabled={options.length === 1 && value === options[0]!.id}
+        disabled={options.length === 1 && value === options[0]?.id}
         getKey={getKey}
       />
       <IconButton

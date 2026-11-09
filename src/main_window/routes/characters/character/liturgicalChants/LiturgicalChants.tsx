@@ -23,7 +23,6 @@ import {
 import { LiturgiesSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
@@ -92,18 +91,6 @@ export const LiturgicalChants: FC = observer(() => {
     [visibleActiveLiturgies, inactiveFilterText, sortOrder, localeCompare],
   )
 
-  const actions = useCharacterActions()
-
-  // TODO: Check AP
-  const handleAddBlessing = useCallback(
-    (id: string) => actions.addTinyActivatable("Blessing", id),
-    [],
-  )
-  const handleRemoveBlessing = useCallback(
-    (id: string) => actions.addTinyActivatable("Blessing", id),
-    [],
-  )
-
   const { isOpen: isSlideinVisible, open: openSlidein, close: closeSlidein } = useModalState()
 
   return (
@@ -166,7 +153,6 @@ export const LiturgicalChants: FC = observer(() => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           blessing={x}
                           displayGroup={sortOrder === LiturgiesSortOrder.Group}
-                          add={handleAddBlessing}
                         />
                       )
 
@@ -253,7 +239,6 @@ export const LiturgicalChants: FC = observer(() => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         blessing={x}
                         displayGroup={sortOrder === LiturgiesSortOrder.Group}
-                        remove={handleRemoveBlessing}
                       />
                     )
 

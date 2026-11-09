@@ -21,7 +21,7 @@
 .alternative-rules {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 12px;
+  gap: 0 2rem;
   align-items: start;
   padding: 0;
   margin: 0;
@@ -39,7 +39,7 @@
 }
 
 .rule-books {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 .rule-books .checkbox.adult-content .checkbox-label::after {
@@ -48,9 +48,9 @@
   background: var(--adult-badge);
   color: var(--headings-color);
   border-radius: 3px;
-  margin-left: 10px;
-  width: 20px;
-  height: 20px;
+  margin-left: 0.5rem;
+  padding: 0.2em 0.3em;
+  margin-block: -0.2em;
   text-align: center;
   font-variant-numeric: lining-nums;
 }

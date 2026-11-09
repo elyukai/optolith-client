@@ -38,7 +38,7 @@ const isTopMarginNeeded = (
 /**
  * Returns a page for managing combat techniques.
  */
-export const CombatTechniques: FC = observer(() => {
+export const CombatTechniques: FC = observer(function CombatTechniques() {
   const translate = useTranslate()
   const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
@@ -58,25 +58,21 @@ export const CombatTechniques: FC = observer(() => {
   const list = useMemo(
     () =>
       visibleCombatTechniques
-        .filter(
-          c =>
-            translateMap(c.translations)?.name.toLowerCase().includes(filterText.toLowerCase()) ??
-            false,
-        )
+        .filter(c => c.name.toLowerCase().includes(filterText.toLowerCase()) ?? false)
         .sort(
           (() => {
             switch (sortOrder) {
               case CombatTechniquesSortOrder.Name:
-                return on(c => translateMap(c.translations)?.name ?? "", localeCompare)
+                return on(c => c.name, localeCompare)
               case CombatTechniquesSortOrder.Group:
                 return reduceCompare(
-                  on(c => (c.type === "CloseCombatTechnique" ? 1 : 2), compareNumber),
-                  on(c => translateMap(c.translations)?.name ?? "", localeCompare),
+                  on(c => c.groupPosition, compareNumber),
+                  on(c => c.name, localeCompare),
                 )
               case CombatTechniquesSortOrder.ImprovementCost:
                 return reduceCompare(
                   on(c => c.improvementCost, compareImprovementCost),
-                  on(c => translateMap(c.translations)?.name ?? "", localeCompare),
+                  on(c => c.name, localeCompare),
                 )
               default:
                 return assertExhaustive(sortOrder)
@@ -141,17 +137,17 @@ export const CombatTechniques: FC = observer(() => {
                   case "CloseCombatTechnique":
                     return (
                       <CloseCombatTechniquesListItem
-                        key={`close--${x.id}`}
+                        key={x.id}
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
-                        closeCombatTechnique={x}
+                        entry={x}
                       />
                     )
                   case "RangedCombatTechnique":
                     return (
                       <RangedCombatTechniquesListItem
-                        key={`ranged--${x.id}`}
+                        key={x.id}
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, list[i - 1])}
-                        rangedCombatTechnique={x}
+                        entry={x}
                       />
                     )
                   default:

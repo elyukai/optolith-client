@@ -1,7 +1,6 @@
 import { classList } from "@elyukai/utils/classList"
 import { nullableToArray } from "@elyukai/utils/nullable"
 import { action } from "mobx"
-import { observer } from "mobx-react-lite"
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { FCC } from "../../utils/react.ts"
 import { Label } from "../label/Label.tsx"
@@ -36,7 +35,7 @@ export const optionFromIndexed = (name: string, index: number): DropdownOption<n
 /**
  * A dropdown with a list of options.
  */
-export const Dropdown = observer(function Dropdown<A>(props: Props<A>): ReturnType<FCC<Props<A>>> {
+export const Dropdown = <A,>(props: Props<A>): ReturnType<FCC<Props<A>>> => {
   const {
     className,
     disabled,
@@ -167,4 +166,4 @@ export const Dropdown = observer(function Dropdown<A>(props: Props<A>): ReturnTy
       </div>
     </div>
   )
-})
+}

@@ -1,4 +1,6 @@
+import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type { ProgressInfo, UpdateDownloadedEvent, UpdateInfo } from "electron-updater"
+import { observer } from "mobx-react-lite"
 import { type FC, useEffect, useState } from "react"
 import { Button } from "../shared/components/button/Button.tsx"
 import { LoadingIndicator } from "../shared/components/loadingIndicator/LoadingIndicator.tsx"
@@ -6,7 +8,6 @@ import { ProgressBar } from "../shared/components/progressBar/ProgressBar.tsx"
 import { TitleBar } from "../shared/components/titleBar/TitleBar.tsx"
 import { useTranslate } from "../shared/hooks/translate.ts"
 import { bytify } from "../shared/utils/translate.ts"
-import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import { ExternalAPI } from "./external.ts"
 import "./root.scss"
 
@@ -32,7 +33,7 @@ const quitAndInstallUpdate = () => ExternalAPI.quitAndInstallUpdate()
 /**
  * Root component for the updater window.
  */
-export const Root: FC<Props> = props => {
+export const Root: FC<Props> = observer(function Root(props) {
   const { systemLocale, locale } = props
 
   const [phase, setPhase] = useState<UpdatePhase>({ type: "Checking" })
@@ -133,7 +134,7 @@ export const Root: FC<Props> = props => {
 
   return (
     <>
-      <TitleBar title={title} secondary platform={ExternalAPI.platform} onClose={close} />
+      <TitleBar title={title} secondary externalAPI={ExternalAPI} />
       <main>
         {(() => {
           switch (phase.type) {
@@ -214,4 +215,4 @@ export const Root: FC<Props> = props => {
       </main>
     </>
   )
-}
+})

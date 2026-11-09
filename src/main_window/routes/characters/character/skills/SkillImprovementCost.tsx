@@ -2,17 +2,19 @@ import type { ImprovementCost } from "@optolith/adventure-points/improvement-cos
 import type { FC } from "react"
 
 type Props = {
-  ic?: ImprovementCost
+  entry: {
+    improvementCost?: ImprovementCost
+  }
 }
 
 /**
  * Returns a row section that displays an improvement cost.
  */
 export const SkillImprovementCost: FC<Props> = props => {
-  const { ic } = props
+  const { improvementCost } = props.entry
 
-  if (ic !== undefined) {
-    return <div className="ic">{ic}</div>
+  if (improvementCost !== undefined) {
+    return <div className="ic">{improvementCost}</div>
   }
 
   return null

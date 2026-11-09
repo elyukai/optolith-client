@@ -151,13 +151,20 @@ export abstract class CharacterAnyRatedEntry<
     })
   }
 
-  getMaxValue(attributeIds: Gen.Attribute_ID[], bonusMaximumValue: number = 0) {
+  getMaxValue(
+    attributeIds: Gen.Attribute_ID[],
+    maxFromExperienceLevel:
+      | "max_attribute_value"
+      | "max_skill_rating"
+      | "max_combat_technique_rating",
+    bonusMaximumValue = 0,
+  ) {
     return (
       Math.min(
         this.character.attributes.getHighestAttributeValueOfList(attributeIds) + 2,
         ...nullableToArray(
           this.character.isInCharacterCreation
-            ? this.character.experienceLevel.start?.max_skill_rating
+            ? this.character.experienceLevel.start?.[maxFromExperienceLevel]
             : undefined,
         ),
         ...this.flatMaximumRestrictions,
@@ -167,7 +174,7 @@ export abstract class CharacterAnyRatedEntry<
 
   getHighestRequiredAssociatedAttribute(
     attributeIds: Gen.Attribute_ID[],
-    bonusMaximumValue: number = 0,
+    bonusMaximumValue = 0,
   ): { id: Gen.Attribute_ID; value: number } | undefined {
     if (this.value === undefined) {
       return undefined
@@ -596,6 +603,9 @@ export abstract class CharacterAnyRatedEntries<
     this.entityName = entityName
     this.entryClass = entryClass
     this.#isActivatable = isActivatable
+    for (const container of this.global.db.getAllInstanceContainersOfEntity(entityName)) {
+      this.rated.set(container.id, this.createEmpty(container.id, container.content))
+    }
   }
 
   getById(id: string): T | undefined {
@@ -708,20 +718,18 @@ export abstract class CharacterRatedEntries<
 
   @computed
   get entries() {
-    return this.global.db
-      .getAllInstanceContainersOfEntity(this.entityName)
+    return this.rated
+      .values()
       .filter(rated =>
         isEntryFromIncludedPublication(
-          rated.content as { src?: Gen.PublicationRefs },
+          rated.dbEntry as { src?: Gen.PublicationRefs },
           this.global.db.getInstanceOfEntityById.bind(this.global.db),
           this.global.locale.translateMap,
           this.character.rules.publicationOptions,
         ),
       )
-      .map(
-        (container): ReturnType<T["toJSON"]> =>
-          this.getByIdSafe(container.id).toJSON() as ReturnType<T["toJSON"]>,
-      )
+      .map((rated): ReturnType<T["toJSON"]> => rated.toJSON() as ReturnType<T["toJSON"]>)
+      .toArray()
   }
 
   static fromAnyJSON<Collection extends CharacterRatedEntries<any, any>>(
@@ -783,24 +791,22 @@ export abstract class CharacterActivatableRatedEntries<
 
   @computed
   get inactiveForDisplay(): Extract<ReturnType<T["toJSON"]>, { active: false }>[] {
-    return this.global.db
-      .getAllInstanceContainersOfEntity(this.entityName)
+    return this.rated
+      .values()
       .filter(
         rated =>
           isEntryFromIncludedPublication(
-            rated.content as { src?: Gen.PublicationRefs },
+            rated.dbEntry as { src?: Gen.PublicationRefs },
             this.global.db.getInstanceOfEntityById.bind(this.global.db),
             this.global.locale.translateMap,
             this.character.rules.publicationOptions,
-          ) && this.getById(rated.id)?.value === undefined,
+          ) && rated.value === undefined,
       )
       .map(
-        (container): Extract<ReturnType<T["toJSON"]>, { active: false }> =>
-          this.getByIdSafe(container.id).toJSON() as Extract<
-            ReturnType<T["toJSON"]>,
-            { active: false }
-          >,
+        (rated): Extract<ReturnType<T["toJSON"]>, { active: false }> =>
+          rated.toJSON() as Extract<ReturnType<T["toJSON"]>, { active: false }>,
       )
+      .toArray()
   }
 
   @computed

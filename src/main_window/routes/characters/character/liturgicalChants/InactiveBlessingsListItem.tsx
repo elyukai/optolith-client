@@ -1,6 +1,5 @@
-import type { Blessing_ID } from "@optolith/database-schema/gen"
 import { observer } from "mobx-react-lite"
-import { useCallback, type FC } from "react"
+import type { FC } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
@@ -8,30 +7,21 @@ import { ListItemSeparator } from "../../../../../shared/components/list/ListIte
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
 import type { DisplayedBlessing } from "../../../../../shared/domain/rated/liturgicalChant.ts"
 import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
-import { SkillButtons } from "../skills/SkillButtons.tsx"
 import { SkillFill } from "../skills/SkillFill.tsx"
+import { TinyActivatableButtons } from "../TinyActivatableButtons.tsx"
 
 type Props = {
   insertTopMargin?: boolean
   blessing: DisplayedBlessing
   displayGroup?: boolean
-  add: (id: Blessing_ID) => void
 }
 
 /**
  * Displays a blessing that is currently inactive.
  */
 export const InactiveBlessingsListItem: FC<Props> = observer(props => {
-  const {
-    insertTopMargin,
-    blessing: { id, name, groupName },
-    displayGroup,
-    add,
-  } = props
-
-  const handleAdd = useCallback(() => {
-    add(id)
-  }, [add, id])
+  const { insertTopMargin, blessing, displayGroup } = props
+  const { id, name, groupName } = blessing
 
   const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary("Blessing", id)
 
@@ -45,7 +35,11 @@ export const InactiveBlessingsListItem: FC<Props> = observer(props => {
       <ListItemValues>
         <SkillFill />
       </ListItemValues>
-      <SkillButtons addPoint={handleAdd} selectForInfo={displayInlineLibraryEntry} />
+      <TinyActivatableButtons
+        entityName="Blessing"
+        entry={blessing}
+        selectForInfo={displayInlineLibraryEntry}
+      />
     </ListItem>
   )
 })

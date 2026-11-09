@@ -1,4 +1,5 @@
 import { classList } from "@elyukai/utils/classList"
+import { observer } from "mobx-react-lite"
 import { type FC, useContext, useEffect } from "react"
 import backgroundImg from "../../assets/images/background.svg"
 import { TitleBar } from "../../shared/components/titleBar/TitleBar.tsx"
@@ -10,17 +11,10 @@ import { Alerts } from "./Alerts.tsx"
 import "./Root.scss"
 import { Router } from "./Router.tsx"
 
-// Inserting context bridge function directly into React components breaks.
-const onMinimize = () => ExternalAPI.minimize()
-const onMaximize = () => ExternalAPI.maximize()
-const onRestore = () => ExternalAPI.restore()
-const onClose = () => ExternalAPI.close()
-const isMaximized = () => ExternalAPI.isMaximized()
-
 /**
  * Returns the React application for the main window.
  */
-export const Root: FC = () => {
+export const Root: FC = observer(function Root() {
   const [language] = useContext(LocalizationContext).safeLocales
   const areAnimationsEnabled = useAppSelector(selectAreAnimationsEnabled)
 
@@ -37,19 +31,10 @@ export const Root: FC = () => {
       </div>
 
       <Alerts />
-      <TitleBar
-        platform={ExternalAPI.platform}
-        maximizeEvents={ExternalAPI}
-        onMinimize={onMinimize}
-        onMaximize={onMaximize}
-        onRestore={onRestore}
-        onClose={onClose}
-        isMaximized={isMaximized}
-      />
-
+      <TitleBar externalAPI={ExternalAPI} />
       <div id="content">
         <Router />
       </div>
     </div>
   )
-}
+})

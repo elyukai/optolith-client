@@ -56,11 +56,10 @@ const debug = Debug("main")
 debug.log = console.log.bind(console)
 
 configure({
-  // enforceActions: "always",
+  enforceActions: "always",
   computedRequiresReaction: true,
-  // reactionRequiresObservable: true,
+  reactionRequiresObservable: true,
   observableRequiresReaction: true,
-  disableErrorBoundaries: true,
 })
 
 app.setAppUserModelId("lukasobermann.optolith")

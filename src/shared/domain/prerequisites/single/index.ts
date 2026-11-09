@@ -126,8 +126,8 @@ export const createCapabilitiesFromCharacter = (
     get cultureId() {
       return character.culture?.id
     },
-    getActivatableByIdSafe<E extends ActivatableIdentifier["kind"]>(id: Case<E, string>) {
-      return character.getActivatableCollection(id.kind).getByIdSafe(fromUniformCase<E, string>(id))
+    getActivatableById<E extends ActivatableIdentifier["kind"]>(id: Case<E, string>) {
+      return character.getActivatableCollection(id.kind).getById(fromUniformCase<E, string>(id))
     },
     getEnhancementById(id) {
       return global.db.getInstanceOfEntityById("Enhancement", id)

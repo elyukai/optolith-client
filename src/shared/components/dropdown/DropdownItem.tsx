@@ -1,7 +1,6 @@
 import { classList } from "@elyukai/utils/classList"
 import { deepEqual } from "@elyukai/utils/equality"
 import { action } from "mobx"
-import { observer } from "mobx-react-lite"
 import { type FC, useCallback } from "react"
 
 /**
@@ -24,9 +23,7 @@ type Props<A> = {
 /**
  * An item in the list of options of a dropdown.
  */
-export const DropdownItem = observer(function DropdownItem<A>(
-  props: Props<A>,
-): ReturnType<FC<Props<A>>> {
+export const DropdownItem = <A,>(props: Props<A>): ReturnType<FC<Props<A>>> => {
   const { active, disabled, onChange, option, equals = deepEqual } = props
 
   const handleClick = useCallback(
@@ -49,4 +46,4 @@ export const DropdownItem = observer(function DropdownItem<A>(
       {option.name}
     </li>
   )
-})
+}

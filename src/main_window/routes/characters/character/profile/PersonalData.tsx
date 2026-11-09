@@ -1,4 +1,5 @@
 import { isEmptyOr, isFloat, isNaturalNumber } from "@elyukai/utils/string/regex"
+import { observer } from "mobx-react-lite"
 import type { FC } from "react"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
@@ -17,7 +18,7 @@ const validateEmptyOrFloat = (value: string | undefined) =>
 /**
  * Returns a page for managing personal data of the character.
  */
-export const PersonalData: FC = () => {
+export const PersonalData: FC = observer(function PersonalData() {
   const translate = useTranslate()
 
   const state = useCharacterState()
@@ -101,4 +102,4 @@ export const PersonalData: FC = () => {
       />
     </div>
   )
-}
+})

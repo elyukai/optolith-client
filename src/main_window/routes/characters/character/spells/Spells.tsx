@@ -24,7 +24,6 @@ import {
 import { SpellsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useModalState } from "../../../../hooks/modalState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
@@ -58,7 +57,6 @@ export const Spells: FC = observer(() => {
     activeSpells,
     activeRituals,
   } = useCharacterState()
-  const actions = useCharacterActions()
 
   const [activeFilterText, setActiveFilterText] = useState("")
   const [inactiveFilterText, setInactiveFilterText] = useState("")
@@ -92,16 +90,6 @@ export const Spells: FC = observer(() => {
     () =>
       filterAndSortDisplayed(visibleActiveSpellworks, inactiveFilterText, sortOrder, localeCompare),
     [visibleActiveSpellworks, inactiveFilterText, sortOrder, localeCompare],
-  )
-
-  // TODO: Check available AP
-  const handleAddCantrip = useCallback(
-    (id: string) => actions.addTinyActivatable("Cantrip", id),
-    [],
-  )
-  const handleRemoveCantrip = useCallback(
-    (id: string) => actions.addTinyActivatable("Cantrip", id),
-    [],
   )
 
   const { isOpen: isSlideinVisible, open: openSlidein, close: closeSlidein } = useModalState()
@@ -171,7 +159,6 @@ export const Spells: FC = observer(() => {
                           insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
                           cantrip={x}
                           displayGroup={sortOrder === SpellsSortOrder.Group}
-                          add={handleAddCantrip}
                         />
                       )
 
@@ -353,7 +340,6 @@ export const Spells: FC = observer(() => {
                         insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
                         cantrip={x}
                         displayGroup={sortOrder === SpellsSortOrder.Group}
-                        remove={handleRemoveCantrip}
                       />
                     )
 

@@ -4,6 +4,7 @@ import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type { ResolvedSelectOptionIdentifier } from "@optolith/database-schema/cache"
 import type { PredefinedOrTextInputSelectOptionRuleValueTranslation } from "@optolith/database-schema/gen"
 import { MISSING_VALUE } from "@optolith/entity-descriptions/entities/partial/unknown"
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback } from "react"
 import { Dropdown } from "../../../../../shared/components/dropdown/Dropdown.tsx"
 import type { DropdownOption } from "../../../../../shared/components/dropdown/DropdownItem.tsx"
@@ -29,113 +30,119 @@ type Props = {
 /**
  * Displays controls for handling a single option of an activatable entry.
  */
-export const InactiveActivatableListItemOption: FC<Props> = props => {
-  const { option, value, values, onChange, index, disabled } = props
-  const translate = useTranslate()
-  const translateMap = useTranslateMap()
-  const localeCompare = useLocaleCompare()
+export const InactiveActivatableListItemOption: FC<Props> = observer(
+  function InactiveActivatableListItemOption(props) {
+    const { option, value, values, onChange, index, disabled } = props
+    const translate = useTranslate()
+    const translateMap = useTranslateMap()
+    const localeCompare = useLocaleCompare()
 
-  const handleDropdownChange = useCallback(
-    (id: SelectOptionIdentifier | "Custom") => {
-      onChange(id === "Custom" ? { type: "Custom", value: "" } : { type: "Predefined", id }, index)
-    },
-    [index, onChange],
-  )
+    const handleDropdownChange = useCallback(
+      (id: SelectOptionIdentifier | "Custom") => {
+        onChange(
+          id === "Custom" ? { type: "Custom", value: "" } : { type: "Predefined", id },
+          index,
+        )
+      },
+      [index, onChange],
+    )
 
-  const handleTextfieldChange = useCallback(
-    (newText: string) => {
-      onChange({ type: "Custom", value: newText }, index)
-    },
-    [index, onChange],
-  )
+    const handleTextfieldChange = useCallback(
+      (newText: string) => {
+        onChange({ type: "Custom", value: newText }, index)
+      },
+      [index, onChange],
+    )
 
-  switch (option.kind) {
-    case "choice": {
-      const { options, parentIndex } = option
+    switch (option.kind) {
+      case "choice": {
+        const { options, parentIndex } = option
 
-      const parentOption = parentIndex !== undefined ? values[parentIndex] : undefined
-      const filteredOptions =
-        parentOption?.type === "Predefined"
-          ? options.filter(o => deepEqual(parentOption.id, o.parentSelectOption))
-          : options
+        const parentOption = parentIndex !== undefined ? values[parentIndex] : undefined
+        const filteredOptions =
+          parentOption?.type === "Predefined"
+            ? options.filter(o => deepEqual(parentOption.id, o.parentSelectOption))
+            : options
 
-      const preparedOptions = filteredOptions
-        .map(o => ({
-          id: o.id,
-          name: translateMap(o.content.translations)?.name ?? "…",
-        }))
-        .toSorted(on(opt => opt.name, localeCompare))
+        const preparedOptions = filteredOptions
+          .map(o => ({
+            id: o.id,
+            name: translateMap(o.content.translations)?.name ?? "…",
+          }))
+          .toSorted(on(opt => opt.name, localeCompare))
 
-      return (
-        <Dropdown<SelectOptionIdentifier>
-          options={preparedOptions}
-          value={
-            (parentIndex !== undefined && parentOption === undefined) || value?.type === "Custom"
-              ? undefined
-              : value?.id
-          }
-          onChange={handleDropdownChange}
-          getKey={o => o.id[o.id.kind as keyof typeof o.id]}
-          equals={deepEqual}
-          disabled={(parentIndex !== undefined && parentOption === undefined) || disabled}
-        />
-      )
-    }
-    case "choiceOrCustomizableText": {
-      const predefinedOptions: DropdownOption<ResolvedSelectOptionIdentifier>[] = option.options
-        .map(o => ({
-          id: o.id,
-          name: translateMap(o.content.translations)?.name ?? MISSING_VALUE,
-        }))
-        .toSorted(on(opt => opt.name, localeCompare))
-
-      const customOption: DropdownOption<"Custom"> = {
-        id: "Custom",
-        name:
-          translateMap<PredefinedOrTextInputSelectOptionRuleValueTranslation>(option.textLabel)
-            ?.optionLabel ?? translate("Custom option"),
-      }
-
-      const options: DropdownOption<"Custom" | SelectOptionIdentifier>[] = [
-        ...predefinedOptions,
-        customOption,
-      ]
-
-      return (
-        <>
-          <Dropdown<SelectOptionIdentifier | "Custom">
-            key={index}
-            options={options}
-            value={value?.type === "Custom" ? undefined : value?.id}
-            disabled={disabled || value?.type === "Custom"}
-            onChange={handleDropdownChange}
-            getKey={o =>
-              typeof o.id !== "object" ? undefined : o.id[o.id.kind as keyof typeof o.id]
+        return (
+          <Dropdown<SelectOptionIdentifier>
+            options={preparedOptions}
+            value={
+              (parentIndex !== undefined && parentOption === undefined) || value?.type === "Custom"
+                ? undefined
+                : value?.id
             }
+            onChange={handleDropdownChange}
+            getKey={o => o.id[o.id.kind as keyof typeof o.id]}
             equals={deepEqual}
+            disabled={(parentIndex !== undefined && parentOption === undefined) || disabled}
           />
+        )
+      }
+      case "choiceOrCustomizableText": {
+        const predefinedOptions: DropdownOption<ResolvedSelectOptionIdentifier>[] = option.options
+          .map(o => ({
+            id: o.id,
+            name: translateMap(o.content.translations)?.name ?? MISSING_VALUE,
+          }))
+          .toSorted(on(opt => opt.name, localeCompare))
+
+        const customOption: DropdownOption<"Custom"> = {
+          id: "Custom",
+          name:
+            translateMap<PredefinedOrTextInputSelectOptionRuleValueTranslation>(option.textLabel)
+              ?.optionLabel ?? translate("Custom option"),
+        }
+
+        const options: DropdownOption<"Custom" | SelectOptionIdentifier>[] = [
+          ...predefinedOptions,
+          customOption,
+        ]
+
+        return (
+          <>
+            <Dropdown<SelectOptionIdentifier | "Custom">
+              key={index}
+              options={options}
+              value={value?.type === "Custom" ? undefined : value?.id}
+              disabled={disabled || value?.type === "Custom"}
+              onChange={handleDropdownChange}
+              getKey={o =>
+                typeof o.id !== "object" ? undefined : o.id[o.id.kind as keyof typeof o.id]
+              }
+              equals={deepEqual}
+            />
+            <TextField
+              onChange={handleTextfieldChange}
+              value={value?.type === "Custom" ? value.value : ""}
+              hint={
+                translateMap<PredefinedOrTextInputSelectOptionRuleValueTranslation>(
+                  option.textLabel,
+                )?.inputLabel ?? translate("Custom option")
+              }
+              disabled={disabled || value?.type !== "Custom"}
+            />
+          </>
+        )
+      }
+      case "text":
+        return (
           <TextField
             onChange={handleTextfieldChange}
             value={value?.type === "Custom" ? value.value : ""}
-            hint={
-              translateMap<PredefinedOrTextInputSelectOptionRuleValueTranslation>(option.textLabel)
-                ?.inputLabel ?? translate("Custom option")
-            }
-            disabled={disabled || value?.type !== "Custom"}
+            hint={translateMap(option.textLabel)?.inputLabel}
+            disabled={disabled}
           />
-        </>
-      )
+        )
+      default:
+        return assertExhaustive(option)
     }
-    case "text":
-      return (
-        <TextField
-          onChange={handleTextfieldChange}
-          value={value?.type === "Custom" ? value.value : ""}
-          hint={translateMap(option.textLabel)?.inputLabel}
-          disabled={disabled}
-        />
-      )
-    default:
-      return assertExhaustive(option)
-  }
-}
+  },
+)

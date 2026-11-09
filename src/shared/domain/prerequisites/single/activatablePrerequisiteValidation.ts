@@ -17,27 +17,29 @@ import { equalsCase } from "../../databaseEnum.ts"
  */
 export const checkActivatablePrerequisite = (
   caps: {
-    getActivatableByIdSafe: <E extends ActivatableIdentifier["kind"]>(
+    getActivatableById: <E extends ActivatableIdentifier["kind"]>(
       id: Case<E, string>,
-    ) => CharacterActivatable<E>
+    ) => CharacterActivatable<E> | undefined
     checkPrecondition: (pre: PreconditionGroup) => boolean
   },
   p: ActivatablePrerequisite,
 ): boolean => {
-  const dynamicEntry = caps.getActivatableByIdSafe(p.id)
+  const dynamicEntry = caps.getActivatableById(p.id)
 
   if (p.when !== undefined && !p.when.every(caps.checkPrecondition)) {
     // ignore if precondition is not met
     return true
   }
 
-  if ((p.level === undefined && p.options === undefined) || !dynamicEntry.isActive) {
+  const isActive = dynamicEntry?.isActive ?? false
+
+  if ((p.level === undefined && p.options === undefined) || !isActive) {
     // Shortcut for when there are not any additional requirements, which means the prerequisite is
     // satisfied if the entry is active, and not satisfied if it is not active
     //
     // Also shortcut for when there are additional requirements for an active entry, but the entry
     // is not active, in which case it cannot be satisfied
-    return dynamicEntry.isActive === p.active
+    return isActive === p.active
   }
 
   const checkLevel =
@@ -62,5 +64,5 @@ export const checkActivatablePrerequisite = (
   // for at least one instance, all applicable checks must be satified if it
   // should be active, or it must not be satisfied for all instances if it
   // should not be active
-  return dynamicEntry.instances.some(i => checks.every(f => f(i))) === p.active
+  return (dynamicEntry?.instances.some(i => checks.every(f => f(i))) ?? false) === p.active
 }

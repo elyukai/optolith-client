@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite"
 import type { FC } from "react"
 import { Dialog } from "../../../../../shared/components/dialog/Dialog.tsx"
 import { IconButton } from "../../../../../shared/components/iconButton/IconButton.tsx"
@@ -19,7 +20,7 @@ type Props = {
 /**
  * Returns a sheet for managing lost and redeemed energy points.
  */
-export const PermanentPointsSheet: FC<Props> = props => {
+export const PermanentPointsSheet: FC<Props> = observer(function PermanentPointsSheet(props) {
   const {
     id,
     name,
@@ -96,4 +97,4 @@ export const PermanentPointsSheet: FC<Props> = props => {
       </div>
     </Dialog>
   )
-}
+})

@@ -1,4 +1,3 @@
-import { observer } from "mobx-react-lite"
 import { type FC, useCallback } from "react"
 import { Checkbox } from "../../../../../shared/components/checkbox/Checkbox.tsx"
 import type { CharacterPublicationOverview } from "../../../../../shared/domain/rules.ts"
@@ -11,7 +10,7 @@ type Props = {
 /**
  * Returns a single publication item.
  */
-export const RuleSourcesListItem: FC<Props> = observer(props => {
+export const RuleSourcesListItem: FC<Props> = props => {
   const {
     publication: { id, name, containsAdultContent, active, disabled },
   } = props
@@ -30,4 +29,4 @@ export const RuleSourcesListItem: FC<Props> = observer(props => {
       />
     </li>
   )
-})
+}

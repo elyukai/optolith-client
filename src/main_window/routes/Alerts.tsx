@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite"
 import { type FC, useCallback } from "react"
 import { Dialog } from "../../shared/components/dialog/Dialog.tsx"
 import { useTranslate } from "../../shared/hooks/translate.ts"
@@ -7,7 +8,7 @@ import { dismissAlert, selectCurrentAlert } from "../slices/alertsSlice.ts"
 /**
  * Displays the current alert, if any.
  */
-export const Alerts: FC = () => {
+export const Alerts: FC = observer(function Alerts() {
   const dispatch = useAppDispatch()
   const translate = useTranslate()
   const currentAlert = useAppSelector(selectCurrentAlert)
@@ -24,4 +25,4 @@ export const Alerts: FC = () => {
       {currentAlert.description}
     </Dialog>
   )
-}
+})

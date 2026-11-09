@@ -1,11 +1,7 @@
 import { sumWith } from "@elyukai/utils/array/reductions"
 import type { ImprovementCost } from "@optolith/adventure-points/improvement-cost"
-import type {
-  Attribute,
-  CloseCombatTechnique,
-  CombatTechniqueIdentifier,
-  RangedCombatTechnique,
-} from "@optolith/database-schema/gen"
+import type { Attribute, CombatTechniqueIdentifier } from "@optolith/database-schema/gen"
+import { MISSING_VALUE } from "@optolith/entity-descriptions/entities/partial/unknown"
 import { computed } from "mobx"
 import type { Global } from "../../global.ts"
 import type { BaseCharacter, Character } from "../character.ts"
@@ -37,7 +33,11 @@ export class CharacterCombatTechnique<
 
   @computed
   get maxValue() {
-    return this.getMaxValue(this.dbEntry.primary_attribute, this.bonusMaximumValue)
+    return this.getMaxValue(
+      this.dbEntry.primary_attribute,
+      "max_combat_technique_rating",
+      this.bonusMaximumValue,
+    )
   }
 
   @computed
@@ -96,7 +96,7 @@ export class CharacterCombatTechnique<
       attackBase: this.attackBase,
       parryBase: this.parryBase,
       improvementCost: this.improvementCost,
-      translations: this.dbEntry.translations,
+      name: this.global.locale.translateMap(this.dbEntry.translations)?.name ?? MISSING_VALUE,
     }
   }
 
@@ -122,9 +122,7 @@ export type DisplayedCombatTechnique<
     attackBase: number
     parryBase: E extends "CloseCombatTechnique" ? number | undefined : undefined
     improvementCost: ImprovementCost
-    translations: E extends "CloseCombatTechnique"
-      ? CloseCombatTechnique["translations"]
-      : RangedCombatTechnique["translations"]
+    name: string
   }
 }[Entity]
 

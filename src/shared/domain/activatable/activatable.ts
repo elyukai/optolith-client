@@ -661,6 +661,10 @@ export class CharacterActivatable<
    */
   @observable accessor boundAdventurePoints: BoundAdventurePointsForActivatable[]
 
+  readonly prerequisites: Entity extends "Advantage" | "Disadvantage"
+    ? AdvantageDisadvantagePrerequisites
+    : GeneralPrerequisites
+
   constructor(
     global: Global,
     character: BaseCharacter,
@@ -680,6 +684,13 @@ export class CharacterActivatable<
     this.dependencies = dependencies
     this.boundAdventurePoints = boundAdventurePoints
     this.resolvedSelectOptions = global.cache.activatableSelectOptions[entity][id]
+    this.prerequisites = getActivatablePrerequisites(
+      this.entityName,
+      this.dbEntry,
+      this.global,
+    ) as Entity extends "Advantage" | "Disadvantage"
+      ? AdvantageDisadvantagePrerequisites
+      : GeneralPrerequisites
   }
 
   @action
@@ -842,7 +853,7 @@ export class CharacterActivatable<
    * Returns the maximum level of an activatable entry.
    */
   getMaximumLevel(
-    instance: CharacterActivatableInstance,
+    instance: CharacterActivatableInstance | undefined,
     dependencies: ActivatableDependency[],
   ): number | undefined {
     const levels = "levels" in this.dbEntry ? this.dbEntry.levels : undefined
@@ -858,7 +869,7 @@ export class CharacterActivatable<
           dep.active === false &&
           dep.level !== undefined &&
           deepEqual(
-            instance.options,
+            instance?.options,
             dep.options?.map(opt => ({ type: "Predefined", id: opt }) as const),
           )
             ? Math.min(acc, dep.level - 1)
@@ -1024,7 +1035,7 @@ export class CharacterActivatable<
     //       appliesToInstanceLoose(dep, { options: [{ type: "Predefined", id: optionId }] }),
     //   )
 
-    const maxLevel = this.getMaximumLevel(new CharacterActivatableInstance({}, this), dependencies)
+    const maxLevel = this.getMaximumLevel(undefined, dependencies)
 
     if (this.isActive) {
       const defaultMaximum =
@@ -1072,19 +1083,6 @@ export class CharacterActivatable<
             }
           : undefined,
     }
-  }
-
-  @computed
-  get prerequisites(): Entity extends "Advantage" | "Disadvantage"
-    ? AdvantageDisadvantagePrerequisites
-    : GeneralPrerequisites {
-    return getActivatablePrerequisites(
-      this.entityName,
-      this.dbEntry,
-      this.global,
-    ) as Entity extends "Advantage" | "Disadvantage"
-      ? AdvantageDisadvantagePrerequisites
-      : GeneralPrerequisites
   }
 
   checkAdvancedForMatchingStyle(): boolean {
@@ -1217,7 +1215,6 @@ export class CharacterActivatable<
     )
   }
 
-  @computed
   get preparedActiveAdventurePointsValue():
     | Case<"Fixed", number>
     | Case<"ByLevel", AdventurePointsValueByLevel>
@@ -1265,7 +1262,6 @@ export class CharacterActivatable<
     }
   }
 
-  @computed
   get preparedInactiveAdventurePointsValue():
     | Case<"Fixed", number>
     | Case<"ByLevel", AdventurePointsValueByLevel>
@@ -1335,6 +1331,134 @@ export class CharacterActivatable<
   }
 }
 
+// const checkPrerequisitesForLevel = (entityName: ActivatableIdentifier["kind"], id: string, prerequisites: GeneralPrerequisites | AdvantageDisadvantagePrerequisites, level: number, caps: BaseCharacter["prerequisiteCapabilities"]): boolean =>
+//   isEmpty(prerequisites)
+//     ? true
+//     : entityName === "Advantage" || entityName === "Disadvantage"
+//       ? checkPrerequisitesOfAdvantageOrDisadvantage(
+//           prerequisites,
+//           level,
+//           entityName,
+//           id,
+//           caps,
+//         )
+//       : checkPrerequisitesOfGeneralEntryWithLevels(
+//           prerequisites as GeneralPrerequisites,
+//           level,
+//           caps,
+//         )
+
+// /**
+//  * Returns the maximum level of an activatable entry.
+//  */
+// const getMaximumLevel = (
+//   entityName: ActivatableIdentifier["kind"],
+//   id: string,
+//   prerequisites: GeneralPrerequisites | AdvantageDisadvantagePrerequisites,
+//   levels: number | undefined,
+//   instance: CharacterActivatableInstance | undefined,
+//   dependencies: ActivatableDependency[], caps: BaseCharacter["prerequisiteCapabilities"]
+// ): number | undefined => {
+//   if (levels === undefined) {
+//     return undefined
+//   }
+
+//   return Math.min(
+//     getMaxLevelByPrerequisites(l => checkPrerequisitesForLevel(entityName, id, prerequisites, l, caps), levels),
+//     dependencies.reduce(
+//       (acc, dep) =>
+//         dep.active === false &&
+//         dep.level !== undefined &&
+//         deepEqual(
+//           instance?.options,
+//           dep.options?.map(opt => ({ type: "Predefined", id: opt }) as const),
+//         )
+//           ? Math.min(acc, dep.level - 1)
+//           : acc,
+//       Infinity,
+//     ),
+//     /* TODO: getEntrySpecificMaximumLevel(id, caps) ?? */ levels,
+//   )
+// }
+
+// /**
+//  * Returns the activatable entry with its corresponding dynamic entry,
+//  * extended by whether it can be activated and configuration options.
+//  */
+// const getInactiveActivatable = <Entity extends ActivatableIdentifier["kind"]>(entityName: Entity, id: string, dbEntry: EntityMap[Entity], entry: CharacterActivatable<Entity> | undefined, character: BaseCharacter, global: Global): DisplayedInactiveActivatable<Entity> | undefined => {
+//   if (entry &&
+//     hasReachedMaximumEntries(
+//       entry.activationsCount,
+//       "maximum" in entry.dbEntry ? entry.dbEntry.maximum : undefined,
+//       entityName === "Advantage" || entityName === "Disadvantage" ? 1 : Infinity,
+//     )
+//   ) {
+//     return undefined
+//   }
+
+//   // TODO const idObject = Case(this.entityName satisfies ActivatableIdentifier["kind"], this.id)
+//   const dependencies = entry?.applyingDependencies ?? []
+
+//   // TODO const countOptionsForCurrent = (optionId: ResolvedSelectOptionIdentifier, atIndex?: number) =>
+//   //   this.countOptions(optionId, { atIndex })
+
+//   // TODO const hasProhibitingDependency = (optionId: ResolvedSelectOptionIdentifier) =>
+//   //   dependencies.some(
+//   //     dep =>
+//   //       dep.active === false &&
+//   //       appliesToInstanceLoose(dep, { options: [{ type: "Predefined", id: optionId }] }),
+//   //   )
+
+//   const maxLevel = getMaximumLevel(entityName, id, prerequisites, levels, undefined, dependencies, character.prerequisiteCapabilities)
+
+//   if (entry?.isActive ?? false) {
+//     const defaultMaximum =
+//       entityName === "Advantage" || entityName === "Disadvantage"
+//         ? 1
+//         : (this.resolvedSelectOptions?.length ?? 0) > 0
+//           ? undefined
+//           : 1
+
+//     const maximum =
+//       "maximum" in dbEntry && dbEntry.maximum !== undefined
+//         ? dbEntry.maximum
+//         : defaultMaximum
+
+//     if (maximum !== undefined && (entry?.activationsCount ?? 0) >= maximum) {
+//       return undefined
+//     }
+//   }
+
+//   return {
+//     type: entityName,
+//     active: false,
+//     id,
+//     name:
+//       global.locale.translateMap<{ name: string }>(dbEntry.translations)?.name ?? "",
+//     instances: entry?.instances.map(instance => instance.toSerialized()) ?? [],
+//     isAvailable:
+//       !hasGeneralProhibitingDependency(dependencies) &&
+//       checkPrerequisitesForLevel(1) &&
+//       this.checkAdvancedForMatchingStyle() &&
+//       this.selectOptionConfiguration.every(
+//         config => config.kind === "text" || isNotEmpty(config.options),
+//       ) &&
+//       (maxLevel === undefined || maxLevel > 0),
+//     options: this.selectOptionConfiguration,
+//     apValue: this.preparedInactiveAdventurePointsValue,
+//     level:
+//       "levels" in dbEntry && dbEntry.levels !== undefined && maxLevel !== undefined
+//         ? {
+//             maximum: maxLevel,
+//             placement:
+//               dbEntry.nameBuilderRules?.levelPlacement?.kind === "BeforeOptions"
+//                 ? "before"
+//                 : "after",
+//           }
+//         : undefined,
+//   }
+// }
+
 export const getActivatablePrerequisites = <P>(
   entityName: ActivatableIdentifier["kind"],
   dbEntry: { prerequisites?: PrerequisitesForLevels<P>; translations: LocaleMap<{ name: string }> },
@@ -1346,13 +1470,13 @@ export const getActivatablePrerequisites = <P>(
   const dynamicPrerequisite: RulePrerequisite | undefined = (() => {
     switch (entityName) {
       case "CombatStyleSpecialAbility":
-        return { id: Case("FocusRule", global.settings.styles.combat), active: true }
+        return { id: Case("FocusRule", global.settings.focusRules.styles.combat), active: true }
       case "LiturgicalStyleSpecialAbility":
-        return { id: Case("FocusRule", global.settings.styles.liturgical), active: true }
+        return { id: Case("FocusRule", global.settings.focusRules.styles.liturgical), active: true }
       case "MagicStyleSpecialAbility":
-        return { id: Case("FocusRule", global.settings.styles.magic), active: true }
+        return { id: Case("FocusRule", global.settings.focusRules.styles.magic), active: true }
       case "SkillStyleSpecialAbility":
-        return { id: Case("FocusRule", global.settings.styles.skill), active: true }
+        return { id: Case("FocusRule", global.settings.focusRules.styles.skill), active: true }
       default:
         return undefined
     }
@@ -1529,14 +1653,22 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
     this.global = global
     this.#character = character
     this.#entity = entity
+    for (const container of global.db.getAllInstanceContainersOfEntity(entity)) {
+      this.#activatables.set(
+        container.id,
+        CharacterActivatable.createEmpty(
+          global,
+          character,
+          entity,
+          container.id,
+          container.content,
+        ),
+      )
+    }
   }
 
   getById(id: string): CharacterActivatable<Entity> | undefined {
     return this.#activatables.get(id)
-  }
-
-  getByIdSafe(id: string, dbEntry?: EntityMap[Entity]): CharacterActivatable<Entity> {
-    return this.getById(id) ?? this.#createEmpty(id, dbEntry)
   }
 
   getInstancesById(id: string): SerializedActivatableInstance[] {
@@ -1617,12 +1749,12 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
 
   @computed
   get inactive(): DisplayedInactiveActivatable<Entity>[] {
-    return this.global.db
-      .getAllInstanceContainersOfEntity(this.#entity)
-      .map((container): DisplayedInactiveActivatable<Entity> | undefined => {
+    return this.#activatables
+      .values()
+      .map((entry): DisplayedInactiveActivatable<Entity> | undefined => {
         if (
           !isEntryFromIncludedPublication(
-            container.content,
+            entry.dbEntry,
             this.global.db.getInstanceOfEntityById.bind(this.global.db),
             this.global.locale.translateMap,
             this.#character.rules.publicationOptions,
@@ -1631,9 +1763,10 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
           return undefined
         }
 
-        return this.getByIdSafe(container.id, container.content).toJSONInactive()
+        return entry.toJSONInactive()
       })
       .filter(isNotNullish)
+      .toArray()
   }
 
   @action

@@ -1,5 +1,6 @@
 import type { ImprovementCost } from "@optolith/adventure-points/improvement-cost"
-import type { Skill, SkillCheck } from "@optolith/database-schema/gen"
+import type { SkillCheck } from "@optolith/database-schema/gen"
+import { MISSING_VALUE } from "@optolith/entity-descriptions/entities/partial/unknown"
 import { computed } from "mobx"
 import type { Global } from "../../global.ts"
 import type { BaseCharacter, Character } from "../character.ts"
@@ -22,7 +23,7 @@ export class CharacterSkill extends CharacterRatedEntry<"Skill"> {
 
   @computed
   get maxValue(): ReturnType<typeof this.getMaxValue> {
-    return this.getMaxValue(this.dbEntry.check, this.bonusMaximumValue)
+    return this.getMaxValue(this.dbEntry.check, "max_skill_rating", this.bonusMaximumValue)
   }
 
   @computed
@@ -51,8 +52,8 @@ export class CharacterSkill extends CharacterRatedEntry<"Skill"> {
       check: this.dbEntry.check,
       improvementCost: this.improvementCost,
       groupPosition: group?.position ?? 0,
-      groupName: this.global.locale.translateMap(group?.translations)?.name,
-      translations: this.dbEntry.translations,
+      groupName: this.global.locale.translateMap(group?.translations)?.name ?? MISSING_VALUE,
+      name: this.global.locale.translateMap(this.dbEntry.translations)?.name ?? MISSING_VALUE,
       commonness: this.commonness,
     }
   }
@@ -69,9 +70,9 @@ export class CharacterSkill extends CharacterRatedEntry<"Skill"> {
 export type DisplayedSkill = DisplayedRated & {
   check: SkillCheck
   groupPosition: number
-  groupName: string | undefined
+  groupName: string
+  name: string
   improvementCost: ImprovementCost
-  translations: Skill["translations"]
   commonness?: "common" | "uncommon"
 }
 

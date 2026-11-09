@@ -108,14 +108,16 @@ export abstract class TinyActivatables<
     this.character = character
     this.entityName = entityName
     this.creator = creator
+    for (const entry of this.global.db.getAllInstanceContainersOfEntity(entityName)) {
+      this.activatables.set(
+        entry.id,
+        new this.creator(global, character, entry.id, entityName, entry.content),
+      )
+    }
   }
 
   getById(id: string): T | undefined {
     return this.activatables.get(id)
-  }
-
-  getByIdSafe(id: string): T {
-    return this.getById(id) ?? new this.creator(this.global, this.character, id, this.entityName)
   }
 
   isActive(id: string): boolean {
@@ -132,23 +134,14 @@ export abstract class TinyActivatables<
     return new AdventurePointsCache(this.activeCount, 0)
   }
 
-  protected ensureEntryExists(id: string): T {
-    return this.activatables.getOrInsertComputed(
-      id,
-      () => new this.creator(this.global, this.character, id, this.entityName),
-    )
-  }
-
   @action
   activate(id: string) {
-    const entry = this.ensureEntryExists(id)
-    entry.activate()
+    this.getById(id)?.activate()
   }
 
   @action
   deactivate(id: string) {
-    const entry = this.ensureEntryExists(id)
-    entry.deactivate()
+    this.getById(id)?.deactivate()
   }
 
   addOrRemoveDependency(
@@ -156,8 +149,10 @@ export abstract class TinyActivatables<
     method: RegistrationMethod,
     dependency: TinyActivatableDependency,
   ) {
-    const entry = this.ensureEntryExists(id)
-    addOrRemoveDependency(method, entry.dependencies, dependency)
+    const entry = this.getById(id)
+    if (entry) {
+      addOrRemoveDependency(method, entry.dependencies, dependency)
+    }
   }
 
   static fromAnyJSON<T extends TinyActivatables<any, TinyActivatable<any>>>(

@@ -9,8 +9,6 @@ import { ListItemValues } from "../../../../../shared/components/list/ListItemVa
 import type { DisplayedCloseCombatTechnique } from "../../../../../shared/domain/rated/combatTechnique.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { useCharacterActions } from "../../../../hooks/characterAction.ts"
-import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 import { SkillAdditionalValues } from "../skills/SkillAdditionalValues.tsx"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
@@ -19,81 +17,59 @@ import { SkillRating } from "../skills/SkillRating.tsx"
 
 type Props = {
   insertTopMargin?: boolean
-  closeCombatTechnique: DisplayedCloseCombatTechnique
+  entry: DisplayedCloseCombatTechnique
 }
 
 /**
  * Displays a close combat technique.
  */
-export const CloseCombatTechniquesListItem: FC<Props> = observer(props => {
-  const {
-    insertTopMargin,
-    closeCombatTechnique: {
+export const CloseCombatTechniquesListItem: FC<Props> = observer(
+  function CloseCombatTechniquesListItem(props) {
+    const { insertTopMargin, entry } = props
+    const { id, name, attackBase, parryBase, primaryAttributeValues } = entry
+
+    const translate = useTranslate()
+    const translateMap = useTranslateMap()
+
+    const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary(
+      "CloseCombatTechnique",
       id,
-      improvementCost,
-      translations,
-      value,
-      isIncreasable,
-      isDecreasable,
-      attackBase,
-      parryBase,
-      primaryAttributeValues,
-    },
-  } = props
+    )
 
-  const translate = useTranslate()
-  const translateMap = useTranslateMap()
-  const { canRemove } = useCharacterState()
-  const actions = useCharacterActions()
+    const primaryStr = primaryAttributeValues
+      .map(({ dbEntry }) => translateMap(dbEntry.translations)?.abbreviation ?? "")
+      .join("/")
 
-  const { name = "???" } = translateMap(translations) ?? {}
+    const customClassName = `attr--${primaryAttributeValues.map(({ dbEntry }) => toKebabCase(dbEntry.color.kind)).join("-")}`
 
-  const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary(
-    "CloseCombatTechnique",
-    id,
-  )
+    const primaryClassName = `primary ${customClassName}`
 
-  const primaryStr = primaryAttributeValues
-    .map(({ dbEntry }) => translateMap(dbEntry.translations)?.abbreviation ?? "")
-    .join("/")
-
-  const customClassName = `attr--${primaryAttributeValues.map(({ dbEntry }) => toKebabCase(dbEntry.color.kind)).join("-")}`
-
-  const primaryClassName = `primary ${customClassName}`
-
-  return (
-    <ListItem insertTopMargin={insertTopMargin} active={isActiveInInlineLibrary}>
-      <ListItemName name={name} onClick={displayInlineLibraryEntry} />
-      <ListItemSeparator />
-      <ListItemGroup text={translate("Close Combat")} />
-      <ListItemValues>
-        <SkillRating sr={value} />
-        <SkillImprovementCost ic={improvementCost} />
-        <SkillAdditionalValues
-          addValues={[
-            { className: primaryClassName, value: primaryStr },
-            { className: "at", value: attackBase },
-            { className: "atpa" },
-            {
-              className: "pa",
-              value: parryBase ?? "—",
-            },
-          ]}
+    return (
+      <ListItem insertTopMargin={insertTopMargin} active={isActiveInInlineLibrary}>
+        <ListItemName name={name} onClick={displayInlineLibraryEntry} />
+        <ListItemSeparator />
+        <ListItemGroup text={translate("Close Combat")} />
+        <ListItemValues>
+          <SkillRating entry={entry} />
+          <SkillImprovementCost entry={entry} />
+          <SkillAdditionalValues
+            addValues={[
+              { className: primaryClassName, value: primaryStr },
+              { className: "at", value: attackBase },
+              { className: "atpa" },
+              {
+                className: "pa",
+                value: parryBase ?? "—",
+              },
+            ]}
+          />
+        </ListItemValues>
+        <SkillButtons
+          entityName="CloseCombatTechnique"
+          entry={entry}
+          selectForInfo={displayInlineLibraryEntry}
         />
-      </ListItemValues>
-      <SkillButtons
-        addDisabled={!isIncreasable}
-        removeDisabled={!isDecreasable}
-        addPoint={() => actions.incrementRated("CloseCombatTechnique", id)}
-        setToMax={() => actions.incrementRatedToMax("CloseCombatTechnique", id)}
-        removePoint={
-          canRemove ? () => actions.decrementRated("CloseCombatTechnique", id) : undefined
-        }
-        setToMin={
-          canRemove ? () => actions.decrementRatedToMin("CloseCombatTechnique", id) : undefined
-        }
-        selectForInfo={displayInlineLibraryEntry}
-      />
-    </ListItem>
-  )
-})
+      </ListItem>
+    )
+  },
+)

@@ -84,22 +84,24 @@ export class CharacterCantrips extends TinyActivatables<"Cantrip", CharacterCant
   @computed
   get inactiveForDisplay(): DisplayedCantrip[] {
     return this.character.canLearnCantrips
-      ? this.global.db
-          .getAllInstanceContainersOfEntity("Cantrip")
+      ? this.activatables
+          .values()
           .filter(({ id }) => !this.isActive(id))
           .map((container): DisplayedCantrip => ({
             type: "Cantrip",
             id: container.id,
             groupPosition: 0,
-            name: this.global.locale.translateMap(container.content.translations)?.name ?? "",
+            name: this.global.locale.translateMap(container.dbEntry.translations)?.name ?? "",
             groupName: this.global.locale.translate("Cantrips"),
             associatedText:
               this.global.locale.translateMap(
-                this.global.db.getInstanceOfEntityById("Property", container.content.property)
+                this.global.db.getInstanceOfEntityById("Property", container.dbEntry.property)
                   ?.translations,
               )?.name ?? "",
-            isUnfamiliar: this.getByIdSafe(container.id).isUnfamiliar,
+            isUnfamiliar: container.isUnfamiliar,
+            isDisabled: false, // TODO: Check dependencies
           }))
+          .toArray()
       : []
   }
 
@@ -120,6 +122,7 @@ export class CharacterCantrips extends TinyActivatables<"Cantrip", CharacterCant
               ?.translations,
           )?.name ?? "",
         isUnfamiliar: entry.isUnfamiliar,
+        isDisabled: false, // TODO: Check traditions
       }))
       .toArray()
   }
@@ -138,6 +141,7 @@ export type DisplayedCantrip = {
   associatedText: string
   isUnfamiliar: boolean
   improvementCost?: undefined
+  isDisabled: boolean
 }
 
 export class CharacterSpellwork<
@@ -168,7 +172,7 @@ export class CharacterSpellwork<
   @computed
   get maxValue() {
     const maximumValues = [
-      this.getMaxValue(this.dbEntry.check, this.bonusMaximumValue),
+      this.getMaxValue(this.dbEntry.check, "max_skill_rating", this.bonusMaximumValue),
       this.character.propertyIdsWithUnlockedMaximum.includes(this.dbEntry.property)
         ? undefined
         : 14,
@@ -184,12 +188,13 @@ export class CharacterSpellwork<
 
   @computed
   get skillCheckPenaltyText(): string | undefined {
+    const { translate, translateMap } = this.global.locale
     return this.dbEntry.check_penalty === undefined
       ? undefined
       : stripInlineMarkdown(
           renderSkillCheckPenalty(this.dbEntry.check_penalty).run({
-            translate: this.global.locale.translate,
-            translateMap: this.global.locale.translateMap,
+            translate,
+            translateMap,
             getInstanceById: this.global.db.getInstanceOfEntityById.bind(this.global.db),
             responsiveTextSize: ResponsiveTextSize.Compressed,
           }),

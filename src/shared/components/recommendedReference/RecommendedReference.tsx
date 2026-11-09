@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite"
 import type { FC } from "react"
 import { useTranslate } from "../../hooks/translate.ts"
 import "./RecommendedReference.scss"
@@ -11,7 +12,7 @@ type Props = {
  * A reference for the recommended frequency of skills, advantages, spells and
  * other kinds of entries.
  */
-export const RecommendedReference: FC<Props> = props => {
+export const RecommendedReference: FC<Props> = observer(function RecommendedReference(props) {
   const { strongly, unfamiliarSpells } = props
 
   const translate = useTranslate()
@@ -45,4 +46,4 @@ export const RecommendedReference: FC<Props> = props => {
       </div>
     </div>
   )
-}
+})

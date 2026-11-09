@@ -80,7 +80,7 @@ export abstract class BaseCharacter {
    * A valid semantic version (https://semver.org), representing the Optolith
    * version this character was created with.
    */
-  version: string
+  readonly version: string
 
   @observable accessor name: string
 
@@ -151,7 +151,7 @@ export abstract class BaseCharacter {
    */
   abstract profession: CharacterProfession | undefined
 
-  @observable accessor areRCPValuesApplied: boolean = false
+  @observable accessor areRCPValuesApplied = false
 
   @observable accessor curriculum: CharacterCurriculum | undefined
 
@@ -1323,7 +1323,7 @@ export abstract class BaseCharacter {
 }
 
 export class CharacterInRaceCultureProfessionSelection extends BaseCharacter {
-  phase = "RaceCultureProfession" as const
+  @observable accessor phase = "RaceCultureProfession" as const
 
   @observable accessor race: CharacterRace | undefined
   @observable accessor culture: CharacterCulture | undefined

@@ -5,9 +5,6 @@ import { ListItemName } from "../../../../../shared/components/list/ListItemName
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
 import type { DisplayedSkill } from "../../../../../shared/domain/rated/skill.ts"
-import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
-import { useCharacterActions } from "../../../../hooks/characterAction.ts"
-import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 import { useAppSelector } from "../../../../hooks/redux.ts"
 import { selectSkillsCultureRatingVisibility } from "../../../../slices/settingsSlice.ts"
@@ -21,29 +18,11 @@ type Props = {
   skill: DisplayedSkill
 }
 
-export const SkillListItem: React.FC<Props> = observer(props => {
-  const {
-    insertTopMargin,
-    skill: {
-      id,
-      check,
-      groupName,
-      improvementCost,
-      translations,
-      value,
-      isIncreasable,
-      isDecreasable,
-      commonness,
-    },
-  } = props
-
-  const translateMap = useTranslateMap()
-  const { canRemove } = useCharacterState()
-  const actions = useCharacterActions()
+export const SkillListItem: React.FC<Props> = observer(function SkillListItem(props) {
+  const { insertTopMargin, skill } = props
+  const { id, groupName, name, commonness } = skill
 
   const cultureRatingVisibility = useAppSelector(selectSkillsCultureRatingVisibility)
-
-  const { name = "???" } = translateMap(translations) ?? {}
 
   const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary("Skill", id)
 
@@ -58,19 +37,11 @@ export const SkillListItem: React.FC<Props> = observer(props => {
       <ListItemSeparator />
       <ListItemGroup text={groupName} />
       <ListItemValues>
-        <SkillRating sr={value} />
-        <SkillCheck check={check} />
-        <SkillImprovementCost ic={improvementCost} />
+        <SkillRating entry={skill} />
+        <SkillCheck entry={skill} />
+        <SkillImprovementCost entry={skill} />
       </ListItemValues>
-      <SkillButtons
-        addDisabled={!isIncreasable}
-        removeDisabled={!isDecreasable}
-        addPoint={() => actions.incrementRated("Skill", id)}
-        setToMax={() => actions.incrementRatedToMax("Skill", id)}
-        removePoint={canRemove ? () => actions.decrementRated("Skill", id) : undefined}
-        setToMin={canRemove ? () => actions.decrementRatedToMin("Skill", id) : undefined}
-        selectForInfo={displayInlineLibraryEntry}
-      />
+      <SkillButtons entityName="Skill" entry={skill} selectForInfo={displayInlineLibraryEntry} />
     </ListItem>
   )
 })

@@ -1,3 +1,4 @@
+import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
 import { on } from "@elyukai/utils/function"
 import { compareNumber, reduceCompare } from "@elyukai/utils/ordering"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
@@ -21,7 +22,6 @@ import type { DisplayedSkill } from "../../../../../shared/domain/rated/skill.ts
 import { SkillsSortOrder } from "../../../../../shared/domain/sortOrders.ts"
 import { useLocaleCompare } from "../../../../../shared/hooks/localeCompare.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
@@ -45,7 +45,6 @@ const isTopMarginNeeded = (
  */
 export const Skills: FC = observer(() => {
   const translate = useTranslate()
-  const translateMap = useTranslateMap()
   const dispatch = useAppDispatch()
   const localeCompare = useLocaleCompare()
 
@@ -67,32 +66,28 @@ export const Skills: FC = observer(() => {
   const list = useMemo(
     () =>
       visibleSkills
-        .filter(
-          c =>
-            translateMap(c.translations)?.name.toLowerCase().includes(filterText.toLowerCase()) ??
-            false,
-        )
+        .filter(c => c.name.toLowerCase().includes(filterText.toLowerCase()) ?? false)
         .sort(
           (() => {
             switch (sortOrder) {
               case SkillsSortOrder.Name:
-                return on(c => translateMap(c.translations)?.name ?? "", localeCompare)
+                return on(c => c.name, localeCompare)
               case SkillsSortOrder.Group:
                 return reduceCompare(
                   on(c => c.groupPosition, compareNumber),
-                  on(c => translateMap(c.translations)?.name ?? "", localeCompare),
+                  on(c => c.name, localeCompare),
                 )
               case SkillsSortOrder.ImprovementCost:
                 return reduceCompare(
                   on(c => c.improvementCost, compareImprovementCost),
-                  on(c => translateMap(c.translations)?.name ?? "", localeCompare),
+                  on(c => c.name, localeCompare),
                 )
               default:
                 return assertExhaustive(sortOrder)
             }
           })(),
         ),
-    [filterText, localeCompare, sortOrder, translateMap, visibleSkills],
+    [filterText, localeCompare, sortOrder, visibleSkills],
   )
 
   return (
@@ -141,7 +136,7 @@ export const Skills: FC = observer(() => {
             <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder" />
           </ListHeader>
-          {list.length > 0 ? (
+          {isNotEmpty(list) ? (
             <List>
               {list.map((x, i) => (
                 <SkillListItem

@@ -67,7 +67,9 @@ export const createMainWindow = async (
 
     debug("Loaded file")
 
-    // mainWindow.webContents.openDevTools()
+    if (process.argv.includes("--devtools")) {
+      mainWindow.webContents.openDevTools()
+    }
 
     mainWindow.on("maximize", () => mainWindow?.webContents.send("maximize"))
     mainWindow.on("unmaximize", () => mainWindow?.webContents.send("unmaximize"))
@@ -99,6 +101,17 @@ export const createMainWindow = async (
       ipcMain.removeAllListeners("main-window-toggle-dev-tools")
     })
 
+    const safeWindow = mainWindow
+    runInAction(() => attachStateSelectorsToWindow(safeWindow, globalState, debug))
+    runInAction(() =>
+      attachKeyedStateSelectorsToWindow(
+        safeWindow,
+        () => characters.characters,
+        character => character.selectors,
+        debug,
+      ),
+    )
+
     const initialSetupEventMessage: InitialSetupEventMessage = {
       database: global.db.schema.entities.map(entity => [
         entity.name,
@@ -115,18 +128,7 @@ export const createMainWindow = async (
       debug("initial setup done")
 
       if (mainWindow !== undefined) {
-        const safeWindow = mainWindow
-
-        runInAction(() => attachStateSelectorsToWindow(safeWindow, globalState))
-        runInAction(() =>
-          attachKeyedStateSelectorsToWindow(
-            safeWindow,
-            () => characters.characters,
-            character => character.selectors,
-          ),
-        )
-
-        safeWindow.show()
+        mainWindow.show()
       }
     })
 

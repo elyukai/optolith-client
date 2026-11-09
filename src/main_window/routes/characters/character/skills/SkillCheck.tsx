@@ -1,21 +1,23 @@
 import { toCamelCase } from "@elyukai/utils/string"
 import { minus } from "@elyukai/utils/string/number"
-import type { SkillCheck as SKillCheckType } from "@optolith/database-schema/gen"
+import type { SkillCheck as SkillCheckType } from "@optolith/database-schema/gen"
 import { observer } from "mobx-react-lite"
 import type { FC } from "react"
 import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 
 type Props = {
-  check: SKillCheckType
-  checkPenalty?: string
+  entry: {
+    check: SkillCheckType
+    checkPenalty?: string
+  }
 }
 
 /**
  * Displays a skill check in an interactive list.
  */
-export const SkillCheck: FC<Props> = observer(props => {
-  const { check, checkPenalty } = props
+export const SkillCheck: FC<Props> = observer(function SkillCheck(props) {
+  const { check, checkPenalty } = props.entry
 
   const translateMap = useTranslateMap()
   const { attributes } = useCharacterState()

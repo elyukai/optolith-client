@@ -58,30 +58,34 @@ export class CharacterBlessings extends TinyActivatables<"Blessing", CharacterBl
 
   @computed
   get inactiveForDisplay(): DisplayedBlessing[] {
-    return this.global.db
-      .getAllInstanceContainersOfEntity("Blessing")
-      .filter(({ id }) => !this.isActive(id) && !this.restrictedBlessings.includes(id))
+    return this.activatables
+      .values()
+      .filter(({ id }) => !this.isActive(id))
       .map((container): DisplayedBlessing => ({
         type: "Blessing",
         id: container.id,
-        name: this.global.locale.translateMap(container.content.translations)?.name ?? "",
+        name: this.global.locale.translateMap(container.dbEntry.translations)?.name ?? "",
         groupName: this.global.locale.translate("Blessings"),
         groupPosition: 0,
+        isDisabled: this.restrictedBlessings.includes(container.id),
       }))
+      .toArray()
   }
 
   @computed
   get activeForDisplay(): DisplayedBlessing[] {
-    return this.global.db
-      .getAllInstanceContainersOfEntity("Blessing")
+    return this.activatables
+      .values()
       .filter(({ id }) => this.isActive(id))
       .map((container): DisplayedBlessing => ({
         type: "Blessing",
         id: container.id,
         groupPosition: 0,
-        name: this.global.locale.translateMap(container.content.translations)?.name ?? "",
+        name: this.global.locale.translateMap(container.dbEntry.translations)?.name ?? "",
         groupName: this.global.locale.translate("Blessings"),
+        isDisabled: false,
       }))
+      .toArray()
   }
 
   static fromJSON(global: Global, character: Character, raw: string[] | undefined) {
@@ -96,6 +100,7 @@ export type DisplayedBlessing = {
   name: string
   groupName: string
   improvementCost?: undefined
+  isDisabled: boolean
 }
 
 export class CharacterLiturgicalChant<
@@ -126,7 +131,7 @@ export class CharacterLiturgicalChant<
   @computed
   get maxValue() {
     const maximumValues = [
-      this.getMaxValue(this.dbEntry.check, this.bonusMaximumValue),
+      this.getMaxValue(this.dbEntry.check, "max_skill_rating", this.bonusMaximumValue),
       this.character.aspectIdsWithUnlockedMaximum.some(aspectId => this.aspects.includes(aspectId))
         ? undefined
         : 14,

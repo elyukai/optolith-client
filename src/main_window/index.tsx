@@ -184,6 +184,10 @@ ExternalAPI.on(
     const { locales, globalSettings, database, cache, systemLocale } = data
     const localeEnvironment = new LocaleEnvironment(locales, systemLocale, globalSettings)
     localeEnvironment.listenToLocaleChanges(ExternalAPI)
+
+    store.dispatch(init({ database, cache, globalSettings }))
+    ExternalAPI.log("store initialized")
+
     root.render(
       <StrictMode>
         <Provider store={store}>
@@ -195,10 +199,7 @@ ExternalAPI.on(
         </Provider>
       </StrictMode>,
     )
-
     ExternalAPI.log("React initially rendered")
-    store.dispatch(init({ database, cache, globalSettings }))
-    ExternalAPI.log("store initialized")
 
     ExternalAPI.initialSetupDone()
   }),
