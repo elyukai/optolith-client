@@ -64,6 +64,7 @@ import { CharacterRace, type DisplayedRaceSelectOptions, type RaceForDisplay } f
 import { CharacterAttributes } from "./rated/attribute.ts"
 import { CharacterCombatTechniques } from "./rated/combatTechnique.ts"
 import { CharacterBlessings, CharacterLiturgicalChants } from "./rated/liturgicalChant.ts"
+import { CharacterMagicalActionCollections } from "./rated/magicalActions.ts"
 import type { PrimaryAttributeDependency } from "./rated/primaryAttribute.ts"
 import { CharacterActivatableRatedEntries, type ConsParamsTrim } from "./rated/ratedEntry.ts"
 import { CharacterSkills } from "./rated/skill.ts"
@@ -177,18 +178,7 @@ export abstract class BaseCharacter {
   @observable accessor liturgicalChants: CharacterLiturgicalChants<"LiturgicalChant">
   @observable accessor ceremonies: CharacterLiturgicalChants<"Ceremony">
 
-  // TODO magicalActions: {
-  //   curses: ActivatableRatedMap
-  //   elvenMagicalSongs: ActivatableRatedMap
-  //   dominationRituals: ActivatableRatedMap
-  //   magicalDances: ActivatableRatedMap
-  //   magicalMelodies: ActivatableRatedMap
-  //   jesterTricks: ActivatableRatedMap
-  //   animistPowers: ActivatableRatedMap
-  //   geodeRituals: ActivatableRatedMap
-  //   zibiljaRituals: ActivatableRatedMap
-  //   magicalRunes: ActivatableRatedMap
-  // }
+  readonly magicalActions: CharacterMagicalActionCollections
 
   @observable accessor specialAbilities: CharacterSpecialAbilities
 
@@ -300,6 +290,11 @@ export abstract class BaseCharacter {
       this,
       raw?.phase !== "RaceCultureProfession" ? raw?.ceremonies : undefined,
     )
+    this.magicalActions = new CharacterMagicalActionCollections(
+      global,
+      this,
+      raw?.phase !== "RaceCultureProfession" ? raw?.magicalActions : undefined,
+    )
     this.specialAbilities = new CharacterSpecialAbilities(
       global,
       this,
@@ -324,6 +319,7 @@ export abstract class BaseCharacter {
       this.cantrips.adventurePoints.general +
       this.spells.adventurePointsTotal.general +
       this.rituals.adventurePointsTotal.general +
+      this.magicalActions.adventurePointsTotal.general +
       this.blessings.adventurePoints.general +
       this.liturgicalChants.adventurePointsTotal.general +
       this.ceremonies.adventurePointsTotal.general +
@@ -366,7 +362,7 @@ export abstract class BaseCharacter {
       spentOnCantrips: this.cantrips.adventurePoints.getTotal(),
       spentOnSpells:
         this.spells.adventurePointsTotal.getTotal() + this.rituals.adventurePointsTotal.getTotal(),
-      spentOnMagicalActions: 0, // TODO
+      spentOnMagicalActions: this.magicalActions.adventurePointsTotal.getTotal(),
       spentOnLiturgicalChants:
         this.liturgicalChants.adventurePointsTotal.getTotal() +
         this.ceremonies.adventurePointsTotal.getTotal(),
