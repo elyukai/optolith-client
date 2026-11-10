@@ -162,15 +162,12 @@ export class CharacterProfession {
     const { sex } = this.character.personalData
     const { translateMap } = this.global.locale
 
-    // TODO: if (profession.base.id === ProfessionIdentifier.OwnProfession) {
-    //   const name =
-    //     customName ?? professionNameToString(sex, translateMap(profession.translations)?.name) ?? ""
-
-    //   return {
-    //     name,
-    //     fullName: name,
-    //   }
-    // }
+    if (this.customName !== undefined) {
+      return {
+        name: this.customName,
+        fullName: this.customName,
+      }
+    }
 
     const versionTranslation = translateMap(this.version.translations)
     const variantTranslation = translateMap(this.variant?.translations)
