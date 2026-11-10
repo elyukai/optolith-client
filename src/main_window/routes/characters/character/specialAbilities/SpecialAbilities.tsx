@@ -28,7 +28,7 @@ import {
   selectSpecialAbilitiesSortOrder,
   switchShowEntriesWithoutMetPrerequisites,
 } from "../../../../slices/settingsSlice.ts"
-import { ActiveActivatablesListItem } from "../activatable/ActiveActivatableListItem.tsx"
+import { ActiveActivatableListItem } from "../activatable/ActiveActivatableListItem.tsx"
 import { InactiveActivatablesListItem } from "../activatable/InactiveActivatableListItem.tsx"
 
 /**
@@ -190,7 +190,7 @@ export const SpecialAbilities: FC = observer(() => {
           {activeList.length > 0 ? (
             <List>
               {activeList.map(x => (
-                <ActiveActivatablesListItem key={`${x.type}-${x.id}`} activatable={x} />
+                <ActiveActivatableListItem key={`${x.type}-${x.id}`} activatable={x} />
               ))}
             </List>
           ) : (

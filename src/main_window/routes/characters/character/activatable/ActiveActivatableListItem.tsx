@@ -36,7 +36,7 @@ const getLevelKey = (option: DropdownOption<number>) => option.id
 /**
  * Displays an activatable entry that is currently active.
  */
-export const ActiveActivatablesListItem = observer(
+export const ActiveActivatableListItem = observer(
   <K extends ActivatableIdentifier["kind"]>(props: Props<K>): ReactNode => {
     const { activatable, isCustomCostAvailable = false } = props
 
