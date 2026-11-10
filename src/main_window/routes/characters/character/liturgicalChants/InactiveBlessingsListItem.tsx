@@ -19,27 +19,29 @@ type Props = {
 /**
  * Displays a blessing that is currently inactive.
  */
-export const InactiveBlessingsListItem: FC<Props> = observer(props => {
-  const { insertTopMargin, blessing, displayGroup } = props
-  const { id, name, groupName } = blessing
+export const InactiveBlessingsListItem: FC<Props> = observer(
+  function InactiveBlessingsListItem(props) {
+    const { insertTopMargin, blessing, displayGroup } = props
+    const { id, name, groupName } = blessing
 
-  const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary("Blessing", id)
+    const { displayInlineLibraryEntry, isActiveInInlineLibrary } = useInlineLibrary("Blessing", id)
 
-  const aspects = "" // TODO
+    const aspects = "" // TODO
 
-  return (
-    <ListItem insertTopMargin={insertTopMargin} active={isActiveInInlineLibrary} noIncrease>
-      <ListItemName name={name} onClick={displayInlineLibraryEntry} />
-      <ListItemSeparator />
-      <ListItemGroup text={displayGroup ? `${aspects} / ${groupName}` : aspects} />
-      <ListItemValues>
-        <SkillFill />
-      </ListItemValues>
-      <TinyActivatableButtons
-        entityName="Blessing"
-        entry={blessing}
-        selectForInfo={displayInlineLibraryEntry}
-      />
-    </ListItem>
-  )
-})
+    return (
+      <ListItem insertTopMargin={insertTopMargin} active={isActiveInInlineLibrary} noIncrease>
+        <ListItemName name={name} onClick={displayInlineLibraryEntry} />
+        <ListItemSeparator />
+        <ListItemGroup text={displayGroup ? `${aspects} / ${groupName}` : aspects} />
+        <ListItemValues>
+          <SkillFill />
+        </ListItemValues>
+        <TinyActivatableButtons
+          entityName="Blessing"
+          entry={blessing}
+          selectForInfo={displayInlineLibraryEntry}
+        />
+      </ListItem>
+    )
+  },
+)

@@ -19,7 +19,7 @@ type Props = {
 /**
  * Displays a blessing that is currently active.
  */
-export const ActiveBlessingsListItem: FC<Props> = observer(props => {
+export const ActiveBlessingsListItem: FC<Props> = observer(function ActiveBlessingsListItem(props) {
   const { insertTopMargin, blessing, displayGroup } = props
   const { id, name, groupName } = blessing
 
