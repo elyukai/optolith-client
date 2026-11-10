@@ -465,10 +465,10 @@ export class CharacterMagicalActionCollections {
   }
 
   @action
-  increment(entityName: MagicalActionIdentifier["kind"], id: string) {
+  increment(entityName: MagicalActionIdentifier["kind"], id: string, by?: number) {
     if (entityName in this.magicalActions) {
       // TODO: Handle currently disabled magical action entities
-      this.magicalActions[entityName as keyof typeof this.magicalActions].increment(id)
+      this.magicalActions[entityName as keyof typeof this.magicalActions].increment(id, by)
     }
   }
 
@@ -481,10 +481,10 @@ export class CharacterMagicalActionCollections {
   }
 
   @action
-  decrement(entityName: MagicalActionIdentifier["kind"], id: string) {
+  decrement(entityName: MagicalActionIdentifier["kind"], id: string, by?: number) {
     if (entityName in this.magicalActions) {
       // TODO: Handle currently disabled magical action entities
-      this.magicalActions[entityName as keyof typeof this.magicalActions].decrement(id)
+      this.magicalActions[entityName as keyof typeof this.magicalActions].decrement(id, by)
     }
   }
 

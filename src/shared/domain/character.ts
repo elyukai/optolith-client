@@ -1494,11 +1494,10 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       }
     }
 
-    // TODO: Uncomment once magical actions are implemented
-    // for (const [id, rating] of selectedOptions.curses) {
-    //   transformedCharacter.magicalActions.curses.activate(id)
-    //   transformedCharacter.magicalActions.curses.increment(id, rating)
-    // }
+    for (const [id, rating] of selectedOptions.curses) {
+      transformedCharacter.magicalActions.activate("Curse", id)
+      transformedCharacter.magicalActions.increment("Curse", id, rating)
+    }
 
     for (const [entity, entityMap] of selectedOptions.liturgies) {
       switch (entity) {
@@ -1718,7 +1717,15 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       if (isNotEmpty(id) && id.length === 1) {
         switch (id[0].kind) {
           case "MagicalAction":
-            // TODO
+            transformedCharacter.magicalActions.activate(
+              id[0].MagicalAction.id.kind,
+              fromUniformCase(id[0].MagicalAction.id),
+            )
+            transformedCharacter.magicalActions.increment(
+              id[0].MagicalAction.id.kind,
+              fromUniformCase(id[0].MagicalAction.id),
+              rating,
+            )
             break
           case "Spellwork":
             switch (id[0].Spellwork.id.kind) {
