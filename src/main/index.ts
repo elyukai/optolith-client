@@ -221,7 +221,7 @@ app.whenReady().then(async () => {
         switch (args[0]) {
           case "saveCharacter": {
             const [_, [characterId]] = args
-            const character = characters.characters.get(characterId)
+            const character: BaseCharacter | undefined = characters.characters.get(characterId)
             if (character === undefined) {
               debug("character %s not found", characterId)
               return
