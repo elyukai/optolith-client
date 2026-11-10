@@ -196,7 +196,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
     global: Global,
     id: string,
     ...args:
-      | [raw: RawCharacter & { phase: Phase }]
+      | [raw: Extract<RawCharacter, { phase: Phase }>]
       | [
           version: string,
           experienceLevelId: string,
@@ -206,10 +206,16 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
         ]
   ) {
     const raw:
-      | Omit<
+      | (Omit<
           RawFullCharacter,
           "phase" | "derivedCharacteristics" | "purse" | "race" | "culture" | "profession"
-        >
+        > &
+          Partial<
+            Pick<
+              RawFullCharacter,
+              "derivedCharacteristics" | "purse" | "race" | "culture" | "profession"
+            >
+          >)
       | undefined = args.length === 1 ? args[0] : undefined
     const [version, experienceLevelId, phase, dateCreated, dateLastModified] =
       args.length === 1
@@ -268,7 +274,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
     this.magicalActions = new CharacterMagicalActionCollections(global, this, raw?.magicalActions)
     this.specialAbilities = new CharacterSpecialAbilities(global, this, raw?.specialAbilities)
     this.prerequisiteCapabilities = createCapabilitiesFromCharacter(global, this)
-    this.purse = new Purse()
+    this.purse = new Purse(raw?.purse)
   }
 
   @computed
@@ -1186,7 +1192,6 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       )
       this.cantrips = CharacterCantrips.fromJSON(global, this, json.cantrips)
       this.blessings = CharacterBlessings.fromJSON(global, this, json.blessings)
-      this.purse = Purse.fromJSON(json.purse)
     } else {
       const [
         version,

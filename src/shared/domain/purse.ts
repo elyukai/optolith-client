@@ -8,30 +8,28 @@ export class Purse {
   /**
    * The number of kreutzers the character owns.
    */
-  @observable accessor kreutzers: number = 0
+  @observable accessor kreutzers = 0
 
   /**
    * The number of halers the character owns.
    */
-  @observable accessor halers: number = 0
+  @observable accessor halers = 0
 
   /**
    * The number of silverthalers the character owns.
    */
-  @observable accessor silverthalers: number = 0
+  @observable accessor silverthalers = 0
 
   /**
    * The number of ducats the character owns.
    */
-  @observable accessor ducats: number = 0
+  @observable accessor ducats = 0
 
-  static fromJSON(raw: RawPurse): Purse {
-    const purse = new Purse()
-    purse.kreutzers = raw.kreutzers
-    purse.halers = raw.halers
-    purse.silverthalers = raw.silverthalers
-    purse.ducats = raw.ducats
-    return purse
+  constructor(raw?: RawPurse) {
+    this.kreutzers = raw?.kreutzers ?? 0
+    this.halers = raw?.halers ?? 0
+    this.silverthalers = raw?.silverthalers ?? 0
+    this.ducats = raw?.ducats ?? 0
   }
 
   toJSON(): RawPurse {
