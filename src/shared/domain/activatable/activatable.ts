@@ -1268,7 +1268,20 @@ export class CharacterActivatable<
             this.applyingDependencies.some(
               dep =>
                 dep.active === false &&
-                appliesToInstanceLoose(dep, { options: [{ type: "Predefined", id }] }),
+                (id.kind === "Skill"
+                  ? appliesToInstanceStrict(dep, { options: [{ type: "Predefined", id }] }) ||
+                    appliesToInstanceStrict(dep, {
+                      options: [
+                        {
+                          type: "Predefined",
+                          id: Case(
+                            "SkillGroup",
+                            this.global.db.getInstanceOfEntityById(id)?.group ?? id.Skill,
+                          ),
+                        },
+                      ],
+                    })
+                  : appliesToInstanceStrict(dep, { options: [{ type: "Predefined", id }] })),
             ),
           id => this.countOptions(id, { ignoreWithCustomAdventurePointsValue: true }),
         )
