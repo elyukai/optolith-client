@@ -79,8 +79,9 @@ export abstract class CharacterAnyRatedEntry<
 
   @action
   setValue(value: number | (Activatable extends true ? undefined : never)) {
+    const { minValue = -Infinity, maxValue = Infinity } = this
     if (typeof value === "number") {
-      this.#value = Math.max(this.constructor.minValue, value)
+      this.#value = Math.min(maxValue, Math.max(this.constructor.minValue, minValue, value))
     } else {
       this.#value = value
     }
@@ -133,7 +134,6 @@ export abstract class CharacterAnyRatedEntry<
     return (
       this.character.canRemove &&
       typeof this.value === "number" &&
-      this.character.isInCharacterCreation &&
       this.value > (this.minValue ?? 0)
     )
   }
@@ -342,20 +342,30 @@ export abstract class CharacterActivatableRatedEntry<
     return this.value !== undefined
   }
 
-  isActive(): this is CharacterAnyRatedEntry<Entity, true> & { value: number; minValue: number } {
+  isActive(): this is CharacterAnyRatedEntry<Entity, true> & { value: number } {
     return this.active
+  }
+
+  @computed
+  get canActivate() {
+    return this.value === undefined && this.isAvailable
+  }
+
+  @computed
+  get canDeactivate() {
+    return this.character.canRemove && typeof this.value === "number" && this.minValue === undefined
   }
 
   @action
   activate() {
-    if (this.value === undefined) {
+    if (this.canActivate) {
       this.setValue(0)
     }
   }
 
   @action
   deactivate() {
-    if (this.value !== undefined) {
+    if (this.canDeactivate) {
       this.setValue(undefined)
     }
   }
@@ -527,7 +537,10 @@ export type DisplayedAnyRated<Activatable extends boolean> = {
 
 export type DisplayedRated = DisplayedAnyRated<false>
 
-export type DisplayedActiveActivatableRated = DisplayedAnyRated<false> & { active: true }
+export type DisplayedActiveActivatableRated = DisplayedAnyRated<true> & {
+  active: true
+  value: number
+}
 
 export type DisplayedInactiveActivatableRated = {
   id: string
