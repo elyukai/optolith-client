@@ -2,6 +2,7 @@ import type {
   ActivatableIdentifier,
   AdvantageDisadvantagePrerequisiteGroup,
   GeneralPrerequisiteGroup,
+  PersonalityTraitPrerequisiteGroup,
   PlainPrerequisites,
   PrerequisitesForLevels,
   PublicationPrerequisiteGroup,
@@ -34,12 +35,17 @@ const checkPlainPrerequisite = <P>(
  */
 export const checkMultipleDisjunctionPartsAreValid = (
   getInstanceById: GetInstanceById<
-    (ActivatableIdentifier | SkillWithEnhancementsIdentifier)["kind"] | "Publication"
+    | (ActivatableIdentifier | SkillWithEnhancementsIdentifier)["kind"]
+    | "PersonalityTrait"
+    | "Publication"
   >,
   caps: CapabilitiesForType<{
     kind: AdvantageDisadvantagePrerequisiteGroup["kind"] | "Publication"
   }>,
-  source: ActivatableIdentifier | SkillWithEnhancementsIdentifier | Case<"Publication", string>,
+  source:
+    | ActivatableIdentifier
+    | SkillWithEnhancementsIdentifier
+    | Case<"PersonalityTrait" | "Publication", string>,
   index: number,
 ): boolean => {
   switch (source.kind) {
@@ -52,10 +58,8 @@ export const checkMultipleDisjunctionPartsAreValid = (
         ),
       )
     default:
-      return checkPlainPrerequisite<GeneralPrerequisiteGroup | PublicationPrerequisiteGroup>(
-        getInstanceById(source),
-        index,
-        p => validatePrerequisite(p, caps),
-      )
+      return checkPlainPrerequisite<
+        GeneralPrerequisiteGroup | PersonalityTraitPrerequisiteGroup | PublicationPrerequisiteGroup
+      >(getInstanceById(source), index, p => validatePrerequisite(p, caps))
   }
 }
