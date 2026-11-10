@@ -72,7 +72,7 @@ import { CharacterCantrips, CharacterSpellworks } from "./rated/spell.ts"
 import { CharacterRules } from "./rules.ts"
 import { CharacterStates } from "./state.ts"
 
-export abstract class BaseCharacter {
+export abstract class BaseCharacter<Phase extends CharacterCreationPhase = CharacterCreationPhase> {
   readonly global: Global
 
   readonly id: string
@@ -125,7 +125,7 @@ export abstract class BaseCharacter {
     return isInRange([0, 10], this.adventurePointsAvailable)
   }
 
-  abstract get phase(): CharacterCreationPhase
+  @observable accessor phase: Phase
 
   /**
    * Total adventure points.
@@ -196,110 +196,77 @@ export abstract class BaseCharacter {
     global: Global,
     id: string,
     ...args:
-      | [raw: RawCharacter]
+      | [raw: RawCharacter & { phase: Phase }]
       | [
           version: string,
           experienceLevelId: string,
+          phase: Phase,
           dateCreated?: Temporal.ZonedDateTime,
           dateLastModified?: Temporal.ZonedDateTime,
         ]
   ) {
-    const raw = args.length === 1 ? args[0] : undefined
+    const raw:
+      | Omit<
+          RawFullCharacter,
+          "phase" | "derivedCharacteristics" | "purse" | "race" | "culture" | "profession"
+        >
+      | undefined = args.length === 1 ? args[0] : undefined
+    const [version, experienceLevelId, phase, dateCreated, dateLastModified] =
+      args.length === 1
+        ? [
+            args[0].version,
+            args[0].experienceLevel.start,
+            args[0].phase as Phase,
+            Temporal.ZonedDateTime.from(args[0].dateCreated),
+            Temporal.ZonedDateTime.from(args[0].dateLastModified),
+          ]
+        : args
+
     this.global = global
     this.id = id
     this.name = raw?.name ?? ""
-    this.version = args.length === 1 ? args[0].version : args[0]
-    this.dateCreated =
-      args.length === 1
-        ? Temporal.ZonedDateTime.from(args[0].dateCreated)
-        : (args[2] ?? Temporal.Now.zonedDateTimeISO())
-    this.dateLastModified =
-      args.length === 1
-        ? Temporal.ZonedDateTime.from(args[0].dateLastModified)
-        : (args[3] ?? this.dateCreated)
+    this.phase = phase
+    this.version = version
+    this.dateCreated = dateCreated ?? Temporal.Now.zonedDateTimeISO()
+    this.dateLastModified = dateLastModified ?? this.dateCreated
     this.rules = new CharacterRules(global, this, raw?.rules)
-    this.experienceLevel = new CharacterExperienceLevel(
-      global,
-      this,
-      args.length === 1 ? args[0].experienceLevel.start : args[1],
-    )
+    this.experienceLevel = new CharacterExperienceLevel(global, this, experienceLevelId)
     this.totalAdventurePoints =
       raw?.adventurePoints.total ?? this.experienceLevel.start?.adventure_points ?? 0
     this.states = new CharacterStates(global, this)
     this.personalData = new CharacterPersonalData(global, this, raw?.personalData)
     this.personalityTraits = new CharacterPersonalityTraits(global, this)
     this.curriculum = raw?.curriculum ? new CharacterCurriculum(raw.curriculum) : undefined
-    this.attributes = new CharacterAttributes(
-      global,
-      this,
-      raw?.phase !== "RaceCultureProfession" ? raw?.attributes : undefined,
-    )
+    this.attributes = new CharacterAttributes(global, this, raw?.attributes)
     this.derivedCharacteristics = new CharacterDerivedCharacteristics(global, this)
-    this.advantages = new CharacterActivatables(
-      global,
-      this,
-      "Advantage",
-      raw?.phase !== "RaceCultureProfession" ? raw?.advantages : undefined,
-    )
-    this.disadvantages = new CharacterActivatables(
-      global,
-      this,
-      "Disadvantage",
-      raw?.phase !== "RaceCultureProfession" ? raw?.disadvantages : undefined,
-    )
-    this.skills = new CharacterSkills(
-      global,
-      this,
-      raw?.phase !== "RaceCultureProfession" ? raw?.skills : undefined,
-    )
+    this.advantages = new CharacterActivatables(global, this, "Advantage", raw?.advantages)
+    this.disadvantages = new CharacterActivatables(global, this, "Disadvantage", raw?.disadvantages)
+    this.skills = new CharacterSkills(global, this, raw?.skills)
     this.closeCombatTechniques = new CharacterCombatTechniques(
       "CloseCombatTechnique",
       global,
       this,
-      raw?.phase !== "RaceCultureProfession" ? raw?.combatTechniques?.melee : undefined,
+      raw?.combatTechniques?.melee,
     )
     this.rangedCombatTechniques = new CharacterCombatTechniques(
       "RangedCombatTechnique",
       global,
       this,
-      raw?.phase !== "RaceCultureProfession" ? raw?.combatTechniques?.ranged : undefined,
+      raw?.combatTechniques?.ranged,
     )
     this.cantrips = new CharacterCantrips(global, this)
-    this.spells = new CharacterSpellworks(
-      "Spell",
-      global,
-      this,
-      raw?.phase !== "RaceCultureProfession" ? raw?.spells : undefined,
-    )
-    this.rituals = new CharacterSpellworks(
-      "Ritual",
-      global,
-      this,
-      raw?.phase !== "RaceCultureProfession" ? raw?.rituals : undefined,
-    )
+    this.spells = new CharacterSpellworks("Spell", global, this, raw?.spells)
+    this.rituals = new CharacterSpellworks("Ritual", global, this, raw?.rituals)
     this.blessings = new CharacterBlessings(global, this)
     this.liturgicalChants = new CharacterLiturgicalChants(
       "LiturgicalChant",
       global,
       this,
-      raw?.phase !== "RaceCultureProfession" ? raw?.liturgicalChants : undefined,
+      raw?.liturgicalChants,
     )
-    this.ceremonies = new CharacterLiturgicalChants(
-      "Ceremony",
-      global,
-      this,
-      raw?.phase !== "RaceCultureProfession" ? raw?.ceremonies : undefined,
-    )
-    this.magicalActions = new CharacterMagicalActionCollections(
-      global,
-      this,
-      raw?.phase !== "RaceCultureProfession" ? raw?.magicalActions : undefined,
-    )
-    this.specialAbilities = new CharacterSpecialAbilities(
-      global,
-      this,
-      raw?.phase !== "RaceCultureProfession" ? raw?.specialAbilities : undefined,
-    )
+    this.ceremonies = new CharacterLiturgicalChants("Ceremony", global, this, raw?.ceremonies)
+    this.magicalActions = new CharacterMagicalActionCollections(global, this, raw?.magicalActions)
+    this.specialAbilities = new CharacterSpecialAbilities(global, this, raw?.specialAbilities)
     this.prerequisiteCapabilities = createCapabilitiesFromCharacter(global, this)
     this.purse = new Purse()
   }
@@ -1090,9 +1057,7 @@ export abstract class BaseCharacter {
   abstract toJSON(): RawCharacter
 }
 
-export class CharacterInRaceCultureProfessionSelection extends BaseCharacter {
-  @observable accessor phase = "RaceCultureProfession" as const
-
+export class CharacterInRaceCultureProfessionSelection extends BaseCharacter<"RaceCultureProfession"> {
   @observable accessor race: CharacterRace | undefined
   @observable accessor culture: CharacterCulture | undefined
   @observable accessor profession: CharacterProfession | undefined
@@ -1118,7 +1083,16 @@ export class CharacterInRaceCultureProfessionSelection extends BaseCharacter {
         ? new CharacterProfession(global, this, raw.profession)
         : undefined
     } else {
-      super(global, id, ...args)
+      const [version, experienceLevelId, dateCreated, dateLastModified] = args
+      super(
+        global,
+        id,
+        version,
+        experienceLevelId,
+        "RaceCultureProfession",
+        dateCreated,
+        dateLastModified,
+      )
     }
   }
 
@@ -1165,9 +1139,7 @@ export class CharacterInRaceCultureProfessionSelection extends BaseCharacter {
   }
 }
 
-export class FullCharacter extends BaseCharacter {
-  @observable accessor phase: "Finished" | "Improvement"
-
+export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
   /**
    * An object storing the identifiers of the race and its optional race variant.
    */
@@ -1226,8 +1198,7 @@ export class FullCharacter extends BaseCharacter {
         culture,
         profession,
       ] = args
-      super(global, id, version, experienceLevelId, dateCreated, dateLastModified)
-      this.phase = phase
+      super(global, id, version, experienceLevelId, phase, dateCreated, dateLastModified)
       this.race =
         race instanceof CharacterRace
           ? new CharacterRace(
