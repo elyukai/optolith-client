@@ -711,20 +711,13 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
         return this.profession?.setCustomProfessionName(args[1][0])
       case "applyRaceCultureProfession":
         if (
-          this.race !== undefined &&
-          this.culture !== undefined &&
-          this.profession !== undefined &&
-          this instanceof CharacterInRaceCultureProfessionSelection
+          this instanceof CharacterInRaceCultureProfessionSelection &&
+          this.canApplyRaceCultureProfessionSelection()
         ) {
-          const { race, culture, profession } = this
-
           const [_, [selectedOptions]] = args
 
           const transformedCharacter = FullCharacter.applyRaceCultureProfessionSelection(
             this,
-            race,
-            culture,
-            profession,
             selectedOptions,
           )
 
@@ -1102,6 +1095,23 @@ export class CharacterInRaceCultureProfessionSelection extends BaseCharacter<"Ra
     }
   }
 
+  canApplyRaceCultureProfessionSelection(): this is CharacterInRaceCultureProfessionSelection & {
+    race: CharacterRace
+    culture: CharacterCulture
+    profession: CharacterProfession
+  } {
+    return this.race !== undefined && this.culture !== undefined && this.profession !== undefined
+  }
+
+  toJSON(
+    this: CharacterInRaceCultureProfessionSelection & {
+      race: CharacterRace
+      culture: CharacterCulture
+      profession: CharacterProfession
+    },
+  ): Omit<RawCharacterInRaceCultureProfessionSelection, "race" | "culture" | "profession"> &
+    Required<Pick<RawCharacterInRaceCultureProfessionSelection, "race" | "culture" | "profession">>
+  toJSON(): RawCharacterInRaceCultureProfessionSelection
   toJSON(): RawCharacterInRaceCultureProfessionSelection {
     return {
       phase: "RaceCultureProfession",
@@ -1298,27 +1308,32 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
   }
 
   static applyRaceCultureProfessionSelection(
-    character: CharacterInRaceCultureProfessionSelection,
-    race: CharacterRace,
-    culture: CharacterCulture,
-    profession: CharacterProfession,
+    character: CharacterInRaceCultureProfessionSelection & {
+      race: CharacterRace
+      culture: CharacterCulture
+      profession: CharacterProfession
+    },
     selectedOptions: SerializedSelectedRCPOptions,
   ): FullCharacter {
     const { global } = character
-    const json = character.toJSON()
-    const transformedCharacter = new FullCharacter(
-      character.global,
-      character.id,
-      Object.assign(json, {
-        phase: "Improvement" as const,
-      }),
-    )
+    const json: RawFullCharacter = {
+      ...character.toJSON(),
+      phase: "Improvement",
+      derivedCharacteristics: {},
+      purse: {
+        ducats: 0,
+        silverthalers: 0,
+        halers: 0,
+        kreutzers: 0,
+      },
+    }
+    const transformedCharacter = new FullCharacter(character.global, character.id, json)
 
     transformedCharacter.personalityTraits.insertFrom(character.personalityTraits)
 
     // Race
 
-    for (const advantage of race.variant?.automatic_advantages ?? []) {
+    for (const advantage of character.race.variant?.automatic_advantages ?? []) {
       transformedCharacter.advantages.add(advantage.id, {
         level: advantage.level,
         options: advantage.options?.map(option => ({
@@ -1328,7 +1343,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       })
     }
 
-    for (const disadvantage of race.variant?.automatic_disadvantages ?? []) {
+    for (const disadvantage of character.race.variant?.automatic_disadvantages ?? []) {
       transformedCharacter.disadvantages.add(disadvantage.id, {
         level: disadvantage.level,
         options: disadvantage.options?.map(option => ({
@@ -1338,7 +1353,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       })
     }
 
-    for (const advantage of race.variant?.strongly_recommended_advantages ?? []) {
+    for (const advantage of character.race.variant?.strongly_recommended_advantages ?? []) {
       transformedCharacter.advantages.add(advantage.id, {
         level: advantage.level,
         options: advantage.options?.map(option => ({
@@ -1348,7 +1363,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       })
     }
 
-    for (const disadvantage of race.variant?.strongly_recommended_disadvantages ?? []) {
+    for (const disadvantage of character.race.variant?.strongly_recommended_disadvantages ?? []) {
       transformedCharacter.disadvantages.add(disadvantage.id, {
         level: disadvantage.level,
         options: disadvantage.options?.map(option => ({
@@ -1358,17 +1373,17 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       })
     }
 
-    race.selectedAttributeAdjustmentId = selectedOptions.attributeAdjustmentId
+    character.race.selectedAttributeAdjustmentId = selectedOptions.attributeAdjustmentId
 
     // Culture
 
     if (selectedOptions.buyCulturalPackage) {
-      for (const skill of culture.base?.cultural_package ?? []) {
+      for (const skill of character.culture.base?.cultural_package ?? []) {
         transformedCharacter.skills.increment(skill.id, skill.points)
       }
     }
 
-    const nativeTongue = selectedOptions.nativeTongue ?? culture.base?.language[0]?.id
+    const nativeTongue = selectedOptions.nativeTongue ?? character.culture.base?.language[0]?.id
 
     if (nativeTongue !== undefined) {
       transformedCharacter
@@ -1380,7 +1395,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     }
 
     const nativeScript = selectedOptions.buyScript
-      ? (selectedOptions.script ?? culture.base?.script?.[0])
+      ? (selectedOptions.script ?? character.culture.base?.script?.[0])
       : undefined
 
     if (nativeScript !== undefined) {
@@ -1394,8 +1409,8 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     // Profession
 
     const curriculum =
-      profession.base?.group.kind === "Magical"
-        ? profession.base.group.Magical.curriculum
+      character.profession.base?.group.kind === "Magical"
+        ? character.profession.base.group.Magical.curriculum
         : undefined
 
     if (curriculum !== undefined) {
@@ -1607,10 +1622,10 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       }
     }
 
-    for (const prerequisite of profession.package?.prerequisites ?? []) {
+    for (const prerequisite of character.profession.package?.prerequisites ?? []) {
       if (
         !(
-          profession.variant?.prerequisites?.some(
+          character.profession.variant?.prerequisites?.some(
             vp => vp.kind === "Remove" && deepEqual(prerequisite, vp.Remove),
           ) ?? false
         )
@@ -1619,23 +1634,23 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       }
     }
 
-    for (const prerequisite of profession.variant?.prerequisites ?? []) {
+    for (const prerequisite of character.profession.variant?.prerequisites ?? []) {
       if (prerequisite.kind === "Add") {
         applyPrerequisiteElement(prerequisite.Add)
       }
     }
 
     for (const specialAbility of (
-      profession.package?.special_abilities?.filter(
+      character.profession.package?.special_abilities?.filter(
         p =>
           !(
-            profession.variant?.special_abilities?.some(
+            character.profession.variant?.special_abilities?.some(
               sa => sa.action.kind === "Remove" && deepEqual(p, sa.value),
             ) ?? false
           ),
       ) ?? []
     ).concat(
-      profession.variant?.special_abilities
+      character.profession.variant?.special_abilities
         ?.filter(p => p.action.kind === "Override")
         .map(p => p.value) ?? [],
     )) {
@@ -1671,15 +1686,15 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       }
     }
 
-    for (const { id, rating_modifier } of (profession.package?.skills ?? []).concat(
-      profession.variant?.skills ?? [],
+    for (const { id, rating_modifier } of (character.profession.package?.skills ?? []).concat(
+      character.profession.variant?.skills ?? [],
     )) {
       transformedCharacter.skills.increment(id, rating_modifier)
     }
 
-    for (const { id, rating_modifier } of (profession.package?.combat_techniques ?? []).concat(
-      profession.variant?.combat_techniques ?? [],
-    )) {
+    for (const { id, rating_modifier } of (
+      character.profession.package?.combat_techniques ?? []
+    ).concat(character.profession.variant?.combat_techniques ?? [])) {
       const stringId = fromUniformCase(id)
       switch (id.kind) {
         case "CloseCombatTechnique":
@@ -1693,13 +1708,13 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       }
     }
 
-    for (const cantrip of profession.package?.cantrips ?? []) {
+    for (const cantrip of character.profession.package?.cantrips ?? []) {
       transformedCharacter.cantrips.activate(cantrip)
     }
 
-    for (const { id, rating_modifier: rating } of (profession.package?.spells ?? []).concat(
-      profession.variant?.spells ?? [],
-    )) {
+    for (const { id, rating_modifier: rating } of (
+      character.profession.package?.spells ?? []
+    ).concat(character.profession.variant?.spells ?? [])) {
       if (isNotEmpty(id) && id.length === 1) {
         switch (id[0].kind) {
           case "MagicalAction":
@@ -1726,8 +1741,8 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     }
 
     for (const { id, rating_modifier: rating } of (
-      profession.package?.liturgical_chants ?? []
-    ).concat(profession.variant?.liturgical_chants ?? [])) {
+      character.profession.package?.liturgical_chants ?? []
+    ).concat(character.profession.variant?.liturgical_chants ?? [])) {
       if (isNotEmpty(id) && id.length === 1) {
         switch (id[0].kind) {
           case "LiturgicalChant":
