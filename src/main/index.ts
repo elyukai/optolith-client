@@ -232,9 +232,9 @@ app.whenReady().then(async () => {
             newCharacter.newCharacter.name = args[1][0].name
             newCharacter.newCharacter.personalData.sex = args[1][0].sex
             newCharacter.newCharacter.experienceLevel.startId = args[1][0].experienceLevel
-            characters.addCharacter(newCharacter.newCharacter)
+            const char = characters.addCharacter(newCharacter.newCharacter)
             resetNewCharacter()
-            return ["characters", newCharacter.newCharacter.id, "race"]
+            return ["characters", char.id, "race"]
           }
           default:
             newCharacter.newCharacter.handleIPCAction(...args)

@@ -108,6 +108,14 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
 
   const initialKeyedMap = keyedMap()
 
+  const getInitialKeyedState = (selectors: StateSelectors<S>): S =>
+    Object.fromEntries(
+      Object.entries(selectors).map(([name, selector]): [string, S[keyof S]] => [
+        name,
+        toJS(selector()),
+      ]),
+    ) as S
+
   const initialState = runInAction(
     () =>
       new Map(
@@ -115,11 +123,7 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
           .entries()
           .map(([key, mapValue]): [string, S] => [
             key,
-            Object.fromEntries(
-              Object.entries(stateSelectorsFromValue(mapValue)).map(
-                ([name, selector]): [string, S[keyof S]] => [name, toJS(selector())],
-              ),
-            ) as S,
+            getInitialKeyedState(stateSelectorsFromValue(mapValue)),
           ]),
       ),
   )
@@ -127,8 +131,12 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
   debug?.("sending initial state for all slices")
   window.webContents.send("keyedstate:init", initialState)
 
-  const registerDisposersForKey = (key: string, mapValue: T) => {
+  const registerDisposersForKey = (key: string, mapValue: T, fireImmediately = false) => {
     const stateSelectors = stateSelectorsFromValue(mapValue)
+    if (fireImmediately) {
+      debug?.("sending initial state for slice keyed by %s", key)
+      window.webContents.send("keyedstate:init", key, getInitialKeyedState(stateSelectors))
+    }
     const disposers = Object.entries(stateSelectors).map(([name, selector]) =>
       reaction(
         selector,
@@ -172,7 +180,7 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
           debug?.("adding reactions for key %s", key)
           const mapValue = obj[key]
           if (mapValue) {
-            registerDisposersForKey(key, mapValue)
+            registerDisposersForKey(key, mapValue, true)
           }
         }
       })
@@ -204,20 +212,18 @@ export type StateSelectorsAndActionsBridge<S extends StateValues, A extends Stat
 }
 
 export type KeyedStateSelectorsAndActionsBridge<S extends StateValues, A extends StateActions> = {
-  onKeyedStateInit: (listener: (value: Map<string, S>) => void) => void
+  onKeyedStateInit: (
+    listener: (...args: [value: Map<string, S>] | [key: string, value: S]) => void,
+  ) => void
   onKeyedStateChange: <Slice extends keyof S>(
     sliceName: Slice,
-    listener: (characterId: string, value: S[Slice]) => void,
+    listener: (key: string, value: S[Slice]) => void,
   ) => void
   onAnyKeyedStateChange: (
-    listener: <Slice extends keyof S>(
-      characterId: string,
-      sliceName: Slice,
-      value: S[Slice],
-    ) => void,
+    listener: <Slice extends keyof S>(key: string, sliceName: Slice, value: S[Slice]) => void,
   ) => void
   executeKeyed: <Action extends keyof A>(
-    characterId: string,
+    key: string,
     actionName: Action,
     ...args: Parameters<A[Action]>
   ) => void
@@ -277,9 +283,11 @@ export const attachKeyedStateSelectorsAndActionsToContextBridge = <
 >(
   ipcRenderer: Electron.IpcRenderer,
 ): KeyedStateSelectorsAndActionsBridge<S, A> => {
-  const onKeyedStateInit = (listener: (value: Map<string, S>) => void) => {
-    ipcRenderer.on("keyedstate:init", (_event, value) => {
-      listener(value)
+  const onKeyedStateInit = (
+    listener: (...args: [value: Map<string, S>] | [key: string, value: S]) => void,
+  ) => {
+    ipcRenderer.on("keyedstate:init", (_event, ...args) => {
+      listener(...(args as [value: Map<string, S>] | [key: string, value: S]))
     })
   }
 
@@ -360,10 +368,17 @@ export const transformKeyedStateSelectorsFromContextBridgeIntoObservable = <S ex
 
   const createObservableState = (state: S): S => observable.object(state, {}, { deep: false }) as S
 
-  bridge.onKeyedStateInit(value => {
+  bridge.onKeyedStateInit((...args) => {
     runInAction(() => {
-      debug("initial keyed state received")
-      for (const [key, slice] of value.entries()) {
+      if (args.length === 1) {
+        debug("initial keyed state received")
+        const [value] = args
+        for (const [key, slice] of value.entries()) {
+          keyed.set(key, createObservableState(slice))
+        }
+      } else {
+        debug("initial state for slice %s received", args[0])
+        const [key, slice] = args
         keyed.set(key, createObservableState(slice))
       }
     })

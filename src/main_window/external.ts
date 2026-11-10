@@ -55,7 +55,3 @@ export const NewCharacterActions = new Proxy(
         ),
   },
 ) as CharacterIPCActions
-
-// autorun(() => {
-//   console.log(toJS(SharedState.adventurePointsStats))
-// })

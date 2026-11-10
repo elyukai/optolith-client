@@ -1840,6 +1840,7 @@ export class Characters {
   @action
   addCharacter(character: Character) {
     this.characters.set(character.id, character)
+    return character
   }
 
   @action

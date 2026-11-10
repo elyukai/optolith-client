@@ -1,5 +1,6 @@
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import { action } from "mobx"
+import { observer } from "mobx-react-lite"
 import { useEffect, useState, type FC } from "react"
 import type { CharacterIPCActions, CharacterIPCSelectors } from "../../shared/ipc.ts"
 import {
@@ -29,19 +30,18 @@ import { CharacterNavigationBar } from "./nav/CharacterNavigationBar.tsx"
 export const CharacterRouter: FC<{
   id: string
   characterRoute: CharacterRoutePath
-}> = props => {
+}> = observer(function CharacterRouter(props) {
   const [state, setState] = useState<CharacterIPCSelectors>(
     defaultCharacterStateAndActionsContextValue.state,
   )
   const [actions, setActions] = useState<CharacterIPCActions>(
     defaultCharacterStateAndActionsContextValue.actions,
   )
+  const characterState = SharedCharacterState.get(props.id)
 
   useEffect(
     action(() => {
-      setState(
-        SharedCharacterState.get(props.id) ?? defaultCharacterStateAndActionsContextValue.state,
-      )
+      setState(characterState ?? defaultCharacterStateAndActionsContextValue.state)
       setActions(
         new Proxy(
           {},
@@ -58,7 +58,7 @@ export const CharacterRouter: FC<{
         ) as CharacterIPCActions,
       )
     }),
-    [props.id],
+    [characterState, props.id],
   )
 
   return (
@@ -115,4 +115,4 @@ export const CharacterRouter: FC<{
       })()}
     </CharacterStateAndActionsContext.Provider>
   )
-}
+})
