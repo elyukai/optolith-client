@@ -73,7 +73,13 @@ export const Disadvantages: FC = observer(() => {
         translateMap,
         localeCompare,
       ),
-    [inactiveDisadvantages, inactiveFilterText, translateMap, localeCompare],
+    [
+      inactiveDisadvantages,
+      inactiveFilterText,
+      showEntriesWithoutMetPrerequisites,
+      translateMap,
+      localeCompare,
+    ],
   )
 
   const activeList = useMemo(
