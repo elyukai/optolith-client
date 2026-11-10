@@ -23,7 +23,6 @@ import type {
   CharacterActivatable,
   ResolvedSelectOptionWithResolvedAPValue,
   SelectOptionIdentifier,
-  SerializedActivatableInstance,
 } from "./activatable.ts"
 import { isGeneralDependency, type ActivatableDependency } from "./activatableDependency.ts"
 import { modifierByLevel } from "./activatableModifiers.ts"
@@ -179,19 +178,6 @@ export const getEntrySpecificDisplayParameterModifiers = <
       switch (id.Advantage) {
         case "AdvantageIdentifier.ExceptionalSkill":
           return { isSelectOptionAvailable: option => countOptionsForContext(option.id) < 2 }
-        case "AdvantageIdentifier.InspireConfidence": {
-          return {} // TODO: Implement as dynamic prerequisite instead
-          // return toNewMaybe(
-          //   lookup<string>(DisadvantageId.Incompetent)(HA.disadvantages(hero)),
-          // ).maybe(false, incompetentStateEntry =>
-          //   toArray(ADA.active(incompetentStateEntry)).some(ao =>
-          //     toNewMaybe(AOA.sid(ao))
-          //       .bind(skillId => ensure(skillId, isString))
-          //       .bind(skillId => toNewMaybe(lookupF(SDA.skills(staticData))(skillId)))
-          //       .maybe(false, skill => Skill.A.gr(skill) === SkillGroup.Social),
-          //   ),
-          // )
-        }
         default:
           return {}
       }
@@ -204,26 +190,6 @@ export const getEntrySpecificDisplayParameterModifiers = <
               equalsCase(option.id, Case("General", "8")) ||
               countOptionsForContext(option.id) < 1,
           }
-        }
-        case "DisadvantageIdentifier.Incompetent": {
-          return {} // TODO: Implement as dynamic prerequisite instead
-          // const isAdvActive = pipe(lookupF(HA.advantages(hero)), isMaybeActive)
-          // const isNotSocialSkill = notP(isSocialSkill(staticData))
-          // return fmap(
-          //   filterMapListT(
-          //     composeT(
-          //       isNoRequiredOrActiveSelection,
-          //       filterT(e =>
-          //         // Socially Adaptable and Inspire Confidence
-          //         // require no Incompetence in social skills
-          //         isAdvActive(AdvantageId.SociallyAdaptable) ||
-          //         isAdvActive(AdvantageId.InspireConfidence)
-          //           ? isNotSocialSkill(e)
-          //           : true,
-          //       ),
-          //     ),
-          //   ),
-          // )
         }
         default:
           return {}
@@ -334,28 +300,6 @@ export const getEntrySpecificDisplayParameterModifiers = <
           //   }),
           // )
         }
-
-        //       case SpecialAbilityId.CraftInstruments: {
-        //         return join(
-        //           liftM2(
-        //             (woodworking: Record<SkillDependent>) => (metalworking: Record<SkillDependent>) =>
-        //               SkDA.value(woodworking) + SkDA.value(metalworking) >= 12 ? Just(ident) : Nothing,
-        //           )(pipe(HA.skills, lookup<string>(SkillId.Woodworking))(hero))(
-        //             pipe(HA.skills, lookup<string>(SkillId.Metalworking))(hero),
-        //           ),
-        //         )
-        //       }
-
-        //       case SpecialAbilityId.Hunter: {
-        //         return pipe_(
-        //           CombatTechniqueGroupId.Ranged,
-        //           getAllEntriesByGroup(SDA.combatTechniques(wiki))(HA.combatTechniques(hero)),
-        //           filter(pipe(SkDA.value, gte(10))),
-        //           flength,
-        //           ensure(gt(0)),
-        //           mapReplace(ident),
-        //         )
-        //       }
         default:
           return {}
       }
@@ -557,51 +501,6 @@ export const getEntrySpecificDisplayParameterModifiers = <
     //   )
     // }
 
-    // TODO: Magical Tradition restrictions
-    //       case SpecialAbilityId.TraditionGuildMages:
-    //       case SpecialAbilityId.TraditionWitches:
-    //       case SpecialAbilityId.TraditionElves:
-    //       case SpecialAbilityId.TraditionDruids:
-    //       case SpecialAbilityId.TraditionIllusionist:
-    //       case SpecialAbilityId.TraditionQabalyaMage:
-    //       case SpecialAbilityId.TraditionGeoden:
-    //       case SpecialAbilityId.TraditionZauberalchimisten:
-    //       case SpecialAbilityId.TraditionSchelme:
-    //       case SpecialAbilityId.TraditionBrobimGeoden: {
-    //         return pipe_(
-    //           hero,
-    //           HA.specialAbilities,
-    //           getMagicalTraditionsHeroEntries,
-    //           ensure(List.fnull),
-    //           mapReplace(ident),
-    //         )
-    //       }
-
-    // TODO: Only one Blessed Tradition can be active at the same time
-    //       case SpecialAbilityId.TraditionChurchOfPraios:
-    //       case SpecialAbilityId.TraditionChurchOfRondra:
-    //       case SpecialAbilityId.TraditionChurchOfBoron:
-    //       case SpecialAbilityId.TraditionChurchOfHesinde:
-    //       case SpecialAbilityId.TraditionChurchOfPhex:
-    //       case SpecialAbilityId.TraditionChurchOfPeraine:
-    //       case SpecialAbilityId.TraditionChurchOfEfferd:
-    //       case SpecialAbilityId.TraditionChurchOfTravia:
-    //       case SpecialAbilityId.TraditionChurchOfFirun:
-    //       case SpecialAbilityId.TraditionChurchOfTsa:
-    //       case SpecialAbilityId.TraditionChurchOfIngerimm:
-    //       case SpecialAbilityId.TraditionChurchOfRahja:
-    //       case SpecialAbilityId.TraditionCultOfTheNamelessOne:
-    //       case SpecialAbilityId.TraditionChurchOfAves:
-    //       case SpecialAbilityId.TraditionChurchOfIfirn:
-    //       case SpecialAbilityId.TraditionChurchOfKor:
-    //       case SpecialAbilityId.TraditionChurchOfNandus:
-    //       case SpecialAbilityId.TraditionChurchOfSwafnir:
-    //       case SpecialAbilityId.TraditionCultOfNuminoru: {
-    //         return pipe_(hero, HA.specialAbilities, getBlessedTradition, x =>
-    //           isJust(x) ? Nothing : Just(ident),
-    //         )
-    //       }
-
     // TODO
     //       case SpecialAbilityId.Recherchegespuer: {
     //         return pipe_(
@@ -622,53 +521,9 @@ export const getEntrySpecificDisplayParameterModifiers = <
     //         )
     //       }
 
-    // TODO: Traditions can only be bought if the maximum spent on or received from magical advantages and disadvantages is not above the tradition's limit
-    //       case SpecialAbilityId.TraditionArcaneBard:
-    //       case SpecialAbilityId.TraditionArcaneDancer:
-    //       case SpecialAbilityId.TraditionIntuitiveMage:
-    //       case SpecialAbilityId.TraditionSavant:
-    //       case SpecialAbilityId.TraditionAnimisten: {
-    //         return APCA.spentOnMagicalAdvantages(adventure_points) <= 25 &&
-    //           APCA.spentOnMagicalDisadvantages(adventure_points) <= 25 &&
-    //           pipe_(hero, HA.specialAbilities, getMagicalTraditionsHeroEntries, fnull)
-    //           ? Just(ident)
-    //           : Nothing
-    //       }
-
     //// IS ACTIVATION DISABLED:
 
     //       const current_id = SAA.id(wiki_entry)
-
-    //       if (CheckStyleUtils.isCombatStyleSpecialAbility(wiki_entry)) {
-    //         return isAdditionDisabledForCombatStyle(staticData)(hero)(wiki_entry)
-    //       }
-
-    //       if (CheckStyleUtils.isMagicalStyleSpecialAbility(wiki_entry)) {
-    //         const combination_hero_entry = lookup<string>(SpecialAbilityId.MagicStyleCombination)(
-    //           HA.specialAbilities(hero),
-    //         )
-
-    //         const total_active = countActiveGroupEntries(staticData)(hero)(
-    //           SpecialAbilityGroup.MagicalStyles,
-    //         )
-
-    //         return total_active >= (isMaybeActive(combination_hero_entry) ? 2 : 1)
-    //       }
-
-    //       if (CheckStyleUtils.isBlessedStyleSpecialAbility(wiki_entry)) {
-    //         return hasActiveGroupEntry(staticData)(hero)(SpecialAbilityGroup.BlessedStyles)
-    //       }
-
-    //       if (current_id === SpecialAbilityId.CombatStyleCombination) {
-    //         return !hasActiveGroupEntry(staticData)(hero)(
-    //           SpecialAbilityGroup.CombatStylesArmed,
-    //           SpecialAbilityGroup.CombatStylesUnarmed,
-    //         )
-    //       }
-
-    //       if (current_id === SpecialAbilityId.MagicStyleCombination) {
-    //         return !hasActiveGroupEntry(staticData)(hero)(SpecialAbilityGroup.MagicalStyles)
-    //       }
 
     //       if (current_id === SpecialAbilityId.SpellEnhancement) {
     //         const traditionSchelme = toNewMaybe(
@@ -729,10 +584,6 @@ export const getEntrySpecificDisplayParameterModifiers = <
     //         return isDisabled
     //       }
 
-    //       if (current_id === SpecialAbilityId.LanguageSpecializations) {
-    //         return pipe(HA.rules, RA.enableLanguageSpecializations, not)(hero)
-    //       }
-
     //       if (elem(SAA.gr(wiki_entry))(List(31, 32))) {
     //         // TODO: add option to activate vampire or lycanthropy and activate this
     //         //       SAs based on that option
@@ -742,68 +593,6 @@ export const getEntrySpecificDisplayParameterModifiers = <
     default:
       return {}
   }
-}
-
-const getEntrySpecificMaximumLevel = (
-  id: ActivatableIdentifier,
-  caps: {
-    activeSermonsCount: number
-    activeVisionsCount: number
-    activeSpellworksCount: number
-  },
-): number | undefined => {
-  switch (id.kind) {
-    case "Disadvantage":
-      switch (id.Disadvantage) {
-        case "DisadvantageIdentifier.SmallSpellSelection":
-          return 3 - caps.activeSpellworksCount
-        case "DisadvantageIdentifier.FewerSermons":
-          return 3 - caps.activeSermonsCount
-        case "DisadvantageIdentifier.FewerVisions":
-          return 3 - caps.activeVisionsCount
-        default:
-          return undefined
-      }
-    default:
-      return undefined
-  }
-}
-
-/**
- * Returns the maximum level of an activatable entry.
- */
-export const getMaximumLevel = (
-  id: ActivatableIdentifier,
-  levels: number | undefined,
-  instance: SerializedActivatableInstance,
-  dependencies: ActivatableDependency[],
-  checkPrerequisites: (level: number) => boolean,
-  caps: {
-    activeSermonsCount: number
-    activeVisionsCount: number
-    activeSpellworksCount: number
-  },
-): number | undefined => {
-  if (levels === undefined) {
-    return undefined
-  }
-
-  return Math.min(
-    getMaxLevelByPrerequisites(checkPrerequisites, levels),
-    dependencies.reduce(
-      (acc, dep) =>
-        dep.active === false &&
-        dep.level !== undefined &&
-        deepEqual(
-          instance.options,
-          dep.options?.map(opt => ({ type: "Predefined", id: opt }) as const),
-        )
-          ? Math.min(acc, dep.level - 1)
-          : acc,
-      Infinity,
-    ),
-    getEntrySpecificMaximumLevel(id, caps) ?? levels,
-  )
 }
 
 /**
@@ -821,15 +610,6 @@ export const getSelectOptionFromDisplayedOption = (
       ),
     )
     ?.options.find(opt => deepEqual(opt.id, id))
-
-// const isSocialSkill = (staticData: StaticDataRecord) =>
-//   pipe(
-//     SOA.id,
-//     ensure(isString),
-//     bindF(lookupF(SDA.skills(staticData))),
-//     fmap(pipe(SA.gr, equals(SkillGroup.Social))),
-//     or,
-//   )
 
 // const isAddExistSkillSpecAllowed =
 //   (hero: HeroModelRecord) =>

@@ -50,7 +50,7 @@ export type ActivatableDependency = Readonly<{
  * not require a specific level or options, just the entry in general.
  */
 export const isGeneralDependency = (dependency: ActivatableDependency) =>
-  dependency.level === undefined && dependency.options === undefined
+  (dependency.level === undefined || dependency.level === 1) && dependency.options === undefined
 
 /**
  * Returns whether the given dependency strictly, i.e. with exactly matching
@@ -64,7 +64,7 @@ export const appliesToInstanceStrict = (
   dependency.options.every(
     (depOpt, i) =>
       instance.options?.[i]?.type === "Predefined" &&
-      equalsCase(depOpt, (instance.options![i] as PredefinedActivatableOption).id),
+      equalsCase(depOpt, (instance.options[i] as PredefinedActivatableOption).id),
   )
 
 /**

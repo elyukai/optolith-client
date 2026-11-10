@@ -1,6 +1,6 @@
 import { partition } from "@elyukai/utils/array/groups"
 import { ensureNonEmpty, isEmpty, isNotEmpty } from "@elyukai/utils/array/nonEmpty"
-import { count, sum, sumWith } from "@elyukai/utils/array/reductions"
+import { count, countBy, sum, sumWith } from "@elyukai/utils/array/reductions"
 import { deepEqual } from "@elyukai/utils/equality"
 import { isNotNullish } from "@elyukai/utils/nullable"
 import { range, type RangeBounds } from "@elyukai/utils/range"
@@ -64,11 +64,7 @@ import {
   type ActivatableNameComponentsWithFull,
   type DisplayedActiveActivatableCost,
 } from "./activatableActive.ts"
-import {
-  appliesToInstanceLoose,
-  appliesToInstanceStrict,
-  type ActivatableDependency,
-} from "./activatableDependency.ts"
+import { appliesToInstanceStrict, type ActivatableDependency } from "./activatableDependency.ts"
 import {
   getMaxLevelByPrerequisites,
   hasGeneralProhibitingDependency,
@@ -849,6 +845,31 @@ export class CharacterActivatable<
     }
   }
 
+  // const getEntrySpecificMaximumLevel = (
+  //   id: ActivatableIdentifier,
+  //   caps: {
+  //     activeSermonsCount: number
+  //     activeVisionsCount: number
+  //     activeSpellworksCount: number
+  //   },
+  // ): number | undefined => {
+  //   switch (id.kind) {
+  //     case "Disadvantage":
+  //       switch (id.Disadvantage) {
+  //         case "DisadvantageIdentifier.SmallSpellSelection":
+  //           return 3 - caps.activeSpellworksCount
+  //         case "DisadvantageIdentifier.FewerSermons":
+  //           return 3 - caps.activeSermonsCount
+  //         case "DisadvantageIdentifier.FewerVisions":
+  //           return 3 - caps.activeVisionsCount
+  //         default:
+  //           return undefined
+  //       }
+  //     default:
+  //       return undefined
+  //   }
+  // }
+
   /**
    * Returns the maximum level of an activatable entry.
    */
@@ -1065,7 +1086,7 @@ export class CharacterActivatable<
       isAvailable:
         !hasGeneralProhibitingDependency(dependencies) &&
         this.checkPrerequisitesForLevel(1) &&
-        this.checkAdvancedForMatchingStyle() &&
+        this.checkCustomPrerequisites() &&
         this.selectOptionConfiguration.every(
           config => config.kind === "text" || isNotEmpty(config.options),
         ) &&
@@ -1085,15 +1106,69 @@ export class CharacterActivatable<
     }
   }
 
-  checkAdvancedForMatchingStyle(): boolean {
-    // TODO: Implement advanced style checking logic here
-    const advancedEntities: ActivatableIdentifier["kind"][] = [
-      "AdvancedCombatSpecialAbility",
-      "AdvancedKarmaSpecialAbility",
-      "AdvancedMagicalSpecialAbility",
-      "AdvancedSkillSpecialAbility",
-    ]
-    return !advancedEntities.includes(this.entityName)
+  isOfEntity<E extends ActivatableIdentifier["kind"]>(
+    entityName: E,
+  ): this is CharacterActivatable<E> {
+    return (this.entityName satisfies ActivatableIdentifier["kind"]) === entityName
+  }
+
+  checkCustomPrerequisites(): boolean {
+    if (this.isOfEntity("BlessedTradition")) {
+      // Only one Blessed Tradition can be active at the same time
+      return this.character.activeBlessedTradition === undefined
+    } else if (this.isOfEntity("MagicalTradition")) {
+      // Only one Magical Tradition can be active at the same time, unless the activatable allows multiple traditions
+      const allowsMultiple = this.dbEntry.allows_multiple_traditions
+      const validWithOtherTraditions = allowsMultiple
+        ? this.character.activeMagicalTraditions.every(
+            trad => trad.dbEntry.allows_multiple_traditions,
+          )
+        : isEmpty(this.character.activeMagicalTraditions)
+      // TODO: Removing a tradition with multiple traditions must check if the highest primary attribute might get changed and thus certain dependencies might not be fulfilled anymore.
+
+      const validWithReducedAPForAdvantagesAndDisadvantages =
+        this.dbEntry.alternative_magical_adventure_points_maximum === undefined
+          ? true
+          : this.character.adventurePointsStats.spentOnMagicalAdvantages <=
+              this.dbEntry.alternative_magical_adventure_points_maximum &&
+            this.character.adventurePointsStats.spentOnMagicalDisadvantages <=
+              this.dbEntry.alternative_magical_adventure_points_maximum
+
+      return validWithOtherTraditions && validWithReducedAPForAdvantagesAndDisadvantages
+    } else if (
+      this.isOfEntity("AdvancedCombatSpecialAbility") ||
+      this.isOfEntity("AdvancedKarmaSpecialAbility") ||
+      this.isOfEntity("AdvancedMagicalSpecialAbility") ||
+      this.isOfEntity("AdvancedSkillSpecialAbility")
+    ) {
+      return false // TODO: Implement advanced style checking logic here
+    } else if (this.isOfEntity("CombatStyleSpecialAbility")) {
+      const hasCombination = false // TODO: Combat Style Combination
+      const countByType = countBy(
+        this.character.specialAbilities.getSpecialAbilitiesCollection(this.entityName).active,
+        entry => entry.dbEntry.type.kind,
+      )
+      const thisCount = countByType[this.dbEntry.type.kind] ?? 0
+      const { Armed: armedCount = 0, Unarmed: unarmedCount = 0 } = countByType
+      const totalCount = armedCount + unarmedCount
+      return thisCount < (hasCombination ? 2 : 1) && totalCount < 3
+    } else if (this.isOfEntity("MagicStyleSpecialAbility")) {
+      const hasCombination = false // TODO: Magic Style Combination
+      return (
+        this.character.specialAbilities.getSpecialAbilitiesCollection(this.entityName).activeCount <
+        (hasCombination ? 2 : 1)
+      )
+    } else if (
+      this.isOfEntity("LiturgicalStyleSpecialAbility") ||
+      this.isOfEntity("SkillStyleSpecialAbility")
+    ) {
+      return !this.character.specialAbilities.getSpecialAbilitiesCollection(this.entityName)
+        .hasActive
+    } else if (this.isOfEntity("PactGift")) {
+      return false // TODO: Implement pact gift logic here
+    }
+
+    return true
   }
 
   @action
