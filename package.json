@@ -41,6 +41,7 @@
     "debug": "^4.4.3",
     "electron": "^45.2.0",
     "electron-builder": "^26.18.0",
+    "eslint-plugin-mobx": "^0.2.1",
     "events": "^3.3.0",
     "glob": "^13.0.6",
     "globals": "^17.13.0",
