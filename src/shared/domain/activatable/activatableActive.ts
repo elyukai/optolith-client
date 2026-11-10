@@ -150,6 +150,7 @@ const getEntrySpecificIsRemovable = (
               case "SkillApplication":
               case "NewSkillApplication":
               case "Region":
+              case "SkillGroup":
                 return undefined
               default:
                 return assertExhaustive(skillId)
@@ -211,6 +212,7 @@ const getEntrySpecificIsRemovable = (
               case "SkillApplication":
               case "NewSkillApplication":
               case "Region":
+              case "SkillGroup":
                 return undefined
               default:
                 return assertExhaustive(ctId)

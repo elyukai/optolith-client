@@ -11,7 +11,7 @@
   "license": "MPL-2.0",
   "main": ".webpack/main.mjs",
   "dependencies": {
-    "@optolith/database-schema": "^0.120.1",
+    "@optolith/database-schema": "^0.121.0",
     "electron-updater": "^6.8.11",
     "tsondb": "^0.23.5"
   },
