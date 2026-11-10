@@ -41,14 +41,32 @@ export type CharacterIPCActions = {
   decrementDerivedCharacteristicPermanentlyLost: (id: Gen.DerivedCharacteristic_ID) => void
   incrementDerivedCharacteristicBoughtBack: (id: Gen.DerivedCharacteristic_ID) => void
   decrementDerivedCharacteristicBoughtBack: (id: Gen.DerivedCharacteristic_ID) => void
-  incrementRated: (entity: Gen.RatedIdentifier["kind"], id: string) => void
-  decrementRated: (entity: Gen.RatedIdentifier["kind"], id: string) => void
-  incrementRatedToMax: (entity: Gen.RatedIdentifier["kind"], id: string) => void
-  decrementRatedToMin: (entity: Gen.RatedIdentifier["kind"], id: string) => void
+  incrementRated: (
+    entity: Gen.RatedIdentifier["kind"] | Gen.MagicalActionIdentifier["kind"],
+    id: string,
+  ) => void
+  decrementRated: (
+    entity: Gen.RatedIdentifier["kind"] | Gen.MagicalActionIdentifier["kind"],
+    id: string,
+  ) => void
+  incrementRatedToMax: (
+    entity: Gen.RatedIdentifier["kind"] | Gen.MagicalActionIdentifier["kind"],
+    id: string,
+  ) => void
+  decrementRatedToMin: (
+    entity: Gen.RatedIdentifier["kind"] | Gen.MagicalActionIdentifier["kind"],
+    id: string,
+  ) => void
   addTinyActivatable: (entity: Gen.TinyActivatableIdentifier["kind"], id: string) => void
   removeTinyActivatable: (entity: Gen.TinyActivatableIdentifier["kind"], id: string) => void
-  activateRated: (entity: Gen.SkillWithEnhancementsIdentifier["kind"], id: string) => void
-  deactivateRated: (entity: Gen.SkillWithEnhancementsIdentifier["kind"], id: string) => void
+  activateRated: (
+    entity: Gen.SkillWithEnhancementsIdentifier["kind"] | Gen.MagicalActionIdentifier["kind"],
+    id: string,
+  ) => void
+  deactivateRated: (
+    entity: Gen.SkillWithEnhancementsIdentifier["kind"] | Gen.MagicalActionIdentifier["kind"],
+    id: string,
+  ) => void
   addActivatable: (
     entity: Gen.ActivatableIdentifier["kind"],
     id: string,
@@ -177,6 +195,8 @@ export const defaultCharacterIPCSelectors: CharacterIPCSelectors = {
   inactiveSpells: [],
   activeRituals: [],
   inactiveRituals: [],
+  activeMagicalActions: [],
+  inactiveMagicalActions: [],
   activeBlessings: [],
   inactiveBlessings: [],
   activeLiturgicalChants: [],

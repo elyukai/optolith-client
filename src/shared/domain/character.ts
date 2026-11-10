@@ -762,13 +762,113 @@ export abstract class BaseCharacter {
         }
         return
       case "incrementRated":
-        return this.getRatedCollection(args[1][0])?.increment(args[1][1])
+        switch (args[1][0]) {
+          case "Attribute":
+          case "Skill":
+          case "CloseCombatTechnique":
+          case "RangedCombatTechnique":
+          case "Spell":
+          case "Ritual":
+          case "LiturgicalChant":
+          case "Ceremony":
+            return this.getRatedCollection(args[1][0])?.increment(args[1][1])
+          case "AnimistPower":
+          case "Bannzeichen":
+          case "Curse":
+          case "DominationRitual":
+          case "ElvenMagicalSong":
+          case "GeodeRitual":
+          case "GoblinRitual":
+          case "JesterTrick":
+          case "MagicalDance":
+          case "MagicalMelody":
+          case "MagicalRune":
+          case "ZibiljaRitual":
+            return this.magicalActions.increment(args[1][0], args[1][1])
+          default:
+            return assertExhaustive(args[1][0])
+        }
       case "decrementRated":
-        return this.getRatedCollection(args[1][0])?.decrement(args[1][1])
+        switch (args[1][0]) {
+          case "Attribute":
+          case "Skill":
+          case "CloseCombatTechnique":
+          case "RangedCombatTechnique":
+          case "Spell":
+          case "Ritual":
+          case "LiturgicalChant":
+          case "Ceremony":
+            return this.getRatedCollection(args[1][0])?.decrement(args[1][1])
+          case "AnimistPower":
+          case "Bannzeichen":
+          case "Curse":
+          case "DominationRitual":
+          case "ElvenMagicalSong":
+          case "GeodeRitual":
+          case "GoblinRitual":
+          case "JesterTrick":
+          case "MagicalDance":
+          case "MagicalMelody":
+          case "MagicalRune":
+          case "ZibiljaRitual":
+            return this.magicalActions.decrement(args[1][0], args[1][1])
+          default:
+            return assertExhaustive(args[1][0])
+        }
       case "incrementRatedToMax":
-        return this.getRatedCollection(args[1][0])?.incrementToMax(args[1][1])
+        switch (args[1][0]) {
+          case "Attribute":
+          case "Skill":
+          case "CloseCombatTechnique":
+          case "RangedCombatTechnique":
+          case "Spell":
+          case "Ritual":
+          case "LiturgicalChant":
+          case "Ceremony":
+            return this.getRatedCollection(args[1][0])?.incrementToMax(args[1][1])
+          case "AnimistPower":
+          case "Bannzeichen":
+          case "Curse":
+          case "DominationRitual":
+          case "ElvenMagicalSong":
+          case "GeodeRitual":
+          case "GoblinRitual":
+          case "JesterTrick":
+          case "MagicalDance":
+          case "MagicalMelody":
+          case "MagicalRune":
+          case "ZibiljaRitual":
+            return this.magicalActions.incrementToMax(args[1][0], args[1][1])
+          default:
+            return assertExhaustive(args[1][0])
+        }
       case "decrementRatedToMin":
-        return this.getRatedCollection(args[1][0])?.decrementToMin(args[1][1])
+        switch (args[1][0]) {
+          case "Attribute":
+          case "Skill":
+          case "CloseCombatTechnique":
+          case "RangedCombatTechnique":
+          case "Spell":
+          case "Ritual":
+          case "LiturgicalChant":
+          case "Ceremony":
+            return this.getRatedCollection(args[1][0])?.decrementToMin(args[1][1])
+          case "AnimistPower":
+          case "Bannzeichen":
+          case "Curse":
+          case "DominationRitual":
+          case "ElvenMagicalSong":
+          case "GeodeRitual":
+          case "GoblinRitual":
+          case "JesterTrick":
+          case "MagicalDance":
+          case "MagicalMelody":
+          case "MagicalRune":
+          case "ZibiljaRitual":
+            return this.magicalActions.decrementToMin(args[1][0], args[1][1])
+          default:
+            return assertExhaustive(args[1][0])
+        }
       case "incrementDerivedCharacteristic":
         return this.derivedCharacteristics.increment(...args[1])
       case "decrementDerivedCharacteristic":
@@ -788,11 +888,55 @@ export abstract class BaseCharacter {
       case "removeTinyActivatable":
         return this.getTinyActivatableCollection(args[1][0]).deactivate(args[1][1])
       case "activateRated":
-        return this.getActivatableRatedWithEnhancementsCollection(args[1][0])?.activate(args[1][1])
+        switch (args[1][0]) {
+          case "Spell":
+          case "Ritual":
+          case "LiturgicalChant":
+          case "Ceremony":
+            return this.getActivatableRatedWithEnhancementsCollection(args[1][0])?.activate(
+              args[1][1],
+            )
+          case "AnimistPower":
+          case "Bannzeichen":
+          case "Curse":
+          case "DominationRitual":
+          case "ElvenMagicalSong":
+          case "GeodeRitual":
+          case "GoblinRitual":
+          case "JesterTrick":
+          case "MagicalDance":
+          case "MagicalMelody":
+          case "MagicalRune":
+          case "ZibiljaRitual":
+            return this.magicalActions.activate(args[1][0], args[1][1])
+          default:
+            return assertExhaustive(args[1][0])
+        }
       case "deactivateRated":
-        return this.getActivatableRatedWithEnhancementsCollection(args[1][0])?.deactivate(
-          args[1][1],
-        )
+        switch (args[1][0]) {
+          case "Spell":
+          case "Ritual":
+          case "LiturgicalChant":
+          case "Ceremony":
+            return this.getActivatableRatedWithEnhancementsCollection(args[1][0])?.deactivate(
+              args[1][1],
+            )
+          case "AnimistPower":
+          case "Bannzeichen":
+          case "Curse":
+          case "DominationRitual":
+          case "ElvenMagicalSong":
+          case "GeodeRitual":
+          case "GoblinRitual":
+          case "JesterTrick":
+          case "MagicalDance":
+          case "MagicalMelody":
+          case "MagicalRune":
+          case "ZibiljaRitual":
+            return this.magicalActions.deactivate(args[1][0], args[1][1])
+          default:
+            return assertExhaustive(args[1][0])
+        }
       case "addActivatable":
         return this.getActivatableCollection(args[1][0])?.add(args[1][1], args[1][2])
       case "setActivatableLevel":
@@ -893,12 +1037,14 @@ export abstract class BaseCharacter {
       inactiveCantrips: () => this.cantrips.inactiveForDisplay,
       inactiveSpells: () => this.spells.inactiveForDisplay,
       inactiveRituals: () => this.rituals.inactiveForDisplay,
+      inactiveMagicalActions: () => this.magicalActions.inactiveForDisplay,
       inactiveBlessings: () => this.blessings.inactiveForDisplay,
       inactiveLiturgicalChants: () => this.liturgicalChants.inactiveForDisplay,
       inactiveCeremonies: () => this.ceremonies.inactiveForDisplay,
       activeCantrips: () => this.cantrips.activeForDisplay,
       activeSpells: () => this.spells.activeForDisplay,
       activeRituals: () => this.rituals.activeForDisplay,
+      activeMagicalActions: () => this.magicalActions.activeForDisplay,
       activeBlessings: () => this.blessings.activeForDisplay,
       activeLiturgicalChants: () => this.liturgicalChants.activeForDisplay,
       activeCeremonies: () => this.ceremonies.activeForDisplay,
@@ -1067,22 +1213,6 @@ export class FullCharacter extends BaseCharacter {
         json.derivedCharacteristics,
       )
       this.cantrips = CharacterCantrips.fromJSON(global, this, json.cantrips)
-
-      // TODO: magicalActions?: {
-      //   bannzeichen?: ActivatableRated[]
-      //   curses?: ActivatableRated[]
-      //   elvenMagicalSongs?: ActivatableRated[]
-      //   dominationRituals?: ActivatableRated[]
-      //   magicalMelodies?: ActivatableRated[]
-      //   magicalDances?: ActivatableRated[]
-      //   jesterTricks?: ActivatableRated[]
-      //   animistPowers?: ActivatableRated[]
-      //   geodeRituals?: ActivatableRated[]
-      //   goblinRituals?: ActivatableRated[]
-      //   zibiljaRituals?: ActivatableRated[]
-      //   magicalRunes?: ActivatableRated[]
-      // }
-
       this.blessings = CharacterBlessings.fromJSON(global, this, json.blessings)
       this.purse = Purse.fromJSON(json.purse)
     } else {
@@ -1183,20 +1313,7 @@ export class FullCharacter extends BaseCharacter {
       cantrips: this.cantrips.toJSON(),
       spells: this.spells.toJSON(),
       rituals: this.rituals.toJSON(),
-      // TODO: magicalActions?: {
-      //   bannzeichen?: ActivatableRated[]
-      //   curses?: ActivatableRated[]
-      //   elvenMagicalSongs?: ActivatableRated[]
-      //   dominationRituals?: ActivatableRated[]
-      //   magicalMelodies?: ActivatableRated[]
-      //   magicalDances?: ActivatableRated[]
-      //   jesterTricks?: ActivatableRated[]
-      //   animistPowers?: ActivatableRated[]
-      //   geodeRituals?: ActivatableRated[]
-      //   goblinRituals?: ActivatableRated[]
-      //   zibiljaRituals?: ActivatableRated[]
-      //   magicalRunes?: ActivatableRated[]
-      // }
+      magicalActions: this.magicalActions.toJSON(),
       blessings: this.blessings.toJSON(),
       liturgicalChants: this.liturgicalChants.toJSON(),
       ceremonies: this.ceremonies.toJSON(),

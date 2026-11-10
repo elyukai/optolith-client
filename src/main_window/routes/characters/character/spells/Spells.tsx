@@ -14,6 +14,11 @@ import { RecommendedReference } from "../../../../../shared/components/recommend
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { Slidein } from "../../../../../shared/components/slidein/Slidein.tsx"
 import { TextField } from "../../../../../shared/components/textField/TextField.tsx"
+import type {
+  DisplayedActiveMagicalAction,
+  DisplayedInactiveMagicalAction,
+  DisplayedMagicalAction,
+} from "../../../../../shared/domain/rated/magicalActions.ts"
 import {
   filterAndSortDisplayed,
   type DisplayedActiveSpellwork,
@@ -36,8 +41,8 @@ import { InactiveCantripsListItem } from "./InactiveCantripsListItem.tsx"
 
 const isTopMarginNeeded = (
   sortOrder: SpellsSortOrder,
-  curr: DisplayedSpellwork | DisplayedCantrip,
-  mprev: DisplayedSpellwork | DisplayedCantrip | undefined,
+  curr: DisplayedSpellwork | DisplayedCantrip | DisplayedMagicalAction,
+  mprev: DisplayedSpellwork | DisplayedCantrip | DisplayedMagicalAction | undefined,
 ) => sortOrder === "group" && mprev !== undefined && curr.type !== mprev.type
 
 /**
@@ -53,9 +58,11 @@ export const Spells: FC = observer(() => {
     inactiveCantrips,
     inactiveSpells,
     inactiveRituals,
+    inactiveMagicalActions,
     activeCantrips,
     activeSpells,
     activeRituals,
+    activeMagicalActions,
   } = useCharacterState()
 
   const [activeFilterText, setActiveFilterText] = useState("")
@@ -67,13 +74,21 @@ export const Spells: FC = observer(() => {
   )
 
   const visibleInactiveSpellworks = (
-    inactiveSpells as (DisplayedInactiveSpellwork | DisplayedCantrip)[]
+    inactiveSpells as (
+      | DisplayedInactiveSpellwork
+      | DisplayedCantrip
+      | DisplayedInactiveMagicalAction
+    )[]
   )
     .concat(inactiveRituals)
     .concat(inactiveCantrips)
-  const visibleActiveSpellworks = (activeSpells as (DisplayedActiveSpellwork | DisplayedCantrip)[])
+    .concat(inactiveMagicalActions)
+  const visibleActiveSpellworks = (
+    activeSpells as (DisplayedActiveSpellwork | DisplayedCantrip | DisplayedActiveMagicalAction)[]
+  )
     .concat(activeRituals)
     .concat(activeCantrips)
+    .concat(activeMagicalActions)
 
   const inactiveList = useMemo(
     () =>
@@ -164,6 +179,18 @@ export const Spells: FC = observer(() => {
 
                     case "Spell":
                     case "Ritual":
+                    case "AnimistPower":
+                    case "Bannzeichen":
+                    case "Curse":
+                    case "DominationRitual":
+                    case "ElvenMagicalSong":
+                    case "GeodeRitual":
+                    case "GoblinRitual":
+                    case "JesterTrick":
+                    case "MagicalDance":
+                    case "MagicalMelody":
+                    case "MagicalRune":
+                    case "ZibiljaRitual":
                       return (
                         <InactiveActivatableRatedListItem
                           key={`${x.type}-${x.id}`}
@@ -172,96 +199,6 @@ export const Spells: FC = observer(() => {
                           displayGroup={sortOrder === SpellsSortOrder.Group}
                         />
                       )
-
-                    // case "curse":
-                    //   return (
-                    //     <InactiveCursesListItem
-                    //       key={`curse-${x.static.id}`}
-                    //       insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
-                    //       curse={x}
-                    //       sortOrder={sortOrder}
-                    //     />
-                    //   )
-
-                    // case "elvenMagicalSong":
-                    //   return (
-                    //     <InactiveElvenMagicalSongsListItem
-                    //       key={`elven-magical-song-${x.static.id}`}
-                    //       insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
-                    //       elvenMagicalSong={x}
-                    //       sortOrder={sortOrder}
-                    //     />
-                    //   )
-
-                    // case "dominationRitual":
-                    //   return (
-                    //     <InactiveDominationRitualsListItem
-                    //       key={`domination-ritual-${x.static.id}`}
-                    //       insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
-                    //       dominationRitual={x}
-                    //       sortOrder={sortOrder}
-                    //     />
-                    //   )
-
-                    // case "magicalDance":
-                    //   return (
-                    //     <InactiveMagicalDancesListItem
-                    //       key={`magical-dance-${x.static.id}`}
-                    //       insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
-                    //       magicalDance={x}
-                    //       sortOrder={sortOrder}
-                    //     />
-                    //   )
-
-                    // case "magicalMelody":
-                    //   return (
-                    //     <InactiveMagicalMelodiesListItem
-                    //       key={`magical-melody-${x.static.id}`}
-                    //       insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
-                    //       magicalMelody={x}
-                    //       sortOrder={sortOrder}
-                    //     />
-                    //   )
-
-                    // case "jesterTrick":
-                    //   return (
-                    //     <InactiveJesterTricksListItem
-                    //       key={`jester-trick-${x.static.id}`}
-                    //       insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
-                    //       jesterTrick={x}
-                    //       sortOrder={sortOrder}
-                    //     />
-                    //   )
-
-                    // case "animistPower":
-                    //   return (
-                    //     <InactiveAnimistPowersListItem
-                    //       key={`animist-power-${x.static.id}`}
-                    //       insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
-                    //       animistPower={x}
-                    //       sortOrder={sortOrder}
-                    //     />
-                    //   )
-
-                    // case "geodeRitual":
-                    //   return (
-                    //     <InactiveGeodeRitualsListItem
-                    //       key={`geode-ritual-${x.static.id}`}
-                    //       insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
-                    //       geodeRitual={x}
-                    //       sortOrder={sortOrder}
-                    //     />
-                    //   )
-
-                    // case "zibiljaRitual":
-                    //   return (
-                    //     <InactiveZibiljaRitualsListItem
-                    //       key={`zibilja-ritual-${x.static.id}`}
-                    //       insertTopMargin={isTopMarginNeeded(sortOrder, x, inactiveList[i - 1])}
-                    //       zibiljaRitual={x}
-                    //       sortOrder={sortOrder}
-                    //     />
-                    //   )
 
                     default:
                       return assertExhaustive(x)
@@ -345,6 +282,18 @@ export const Spells: FC = observer(() => {
 
                   case "Spell":
                   case "Ritual":
+                  case "AnimistPower":
+                  case "Bannzeichen":
+                  case "Curse":
+                  case "DominationRitual":
+                  case "ElvenMagicalSong":
+                  case "GeodeRitual":
+                  case "GoblinRitual":
+                  case "JesterTrick":
+                  case "MagicalDance":
+                  case "MagicalMelody":
+                  case "MagicalRune":
+                  case "ZibiljaRitual":
                     return (
                       <ActiveActivatableRatedListItem
                         key={`${x.type}-${x.id}`}
@@ -353,96 +302,6 @@ export const Spells: FC = observer(() => {
                         displayGroup={sortOrder === SpellsSortOrder.Group}
                       />
                     )
-
-                  // case "curse":
-                  //   return (
-                  //     <ActiveCursesListItem
-                  //       key={`curse-${x.static.id}`}
-                  //       insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
-                  //       curse={x}
-                  //       sortOrder={sortOrder}
-                  //     />
-                  //   )
-
-                  // case "elvenMagicalSong":
-                  //   return (
-                  //     <ActiveElvenMagicalSongsListItem
-                  //       key={`elven-magical-song-${x.static.id}`}
-                  //       insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
-                  //       elvenMagicalSong={x}
-                  //       sortOrder={sortOrder}
-                  //     />
-                  //   )
-
-                  // case "dominationRitual":
-                  //   return (
-                  //     <ActiveDominationRitualsListItem
-                  //       key={`domination-ritual-${x.static.id}`}
-                  //       insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
-                  //       dominationRitual={x}
-                  //       sortOrder={sortOrder}
-                  //     />
-                  //   )
-
-                  // case "magicalDance":
-                  //   return (
-                  //     <ActiveMagicalDancesListItem
-                  //       key={`magical-dance-${x.static.id}`}
-                  //       insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
-                  //       magicalDance={x}
-                  //       sortOrder={sortOrder}
-                  //     />
-                  //   )
-
-                  // case "magicalMelody":
-                  //   return (
-                  //     <ActiveMagicalMelodiesListItem
-                  //       key={`magical-melody-${x.static.id}`}
-                  //       insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
-                  //       magicalMelody={x}
-                  //       sortOrder={sortOrder}
-                  //     />
-                  //   )
-
-                  // case "jesterTrick":
-                  //   return (
-                  //     <ActiveJesterTricksListItem
-                  //       key={`jester-trick-${x.static.id}`}
-                  //       insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
-                  //       jesterTrick={x}
-                  //       sortOrder={sortOrder}
-                  //     />
-                  //   )
-
-                  // case "animistPower":
-                  //   return (
-                  //     <ActiveAnimistPowersListItem
-                  //       key={`animist-power-${x.static.id}`}
-                  //       insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
-                  //       animistPower={x}
-                  //       sortOrder={sortOrder}
-                  //     />
-                  //   )
-
-                  // case "geodeRitual":
-                  //   return (
-                  //     <ActiveGeodeRitualsListItem
-                  //       key={`geode-ritual-${x.static.id}`}
-                  //       insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
-                  //       geodeRitual={x}
-                  //       sortOrder={sortOrder}
-                  //     />
-                  //   )
-
-                  // case "zibiljaRitual":
-                  //   return (
-                  //     <ActiveZibiljaRitualsListItem
-                  //       key={`zibilja-ritual-${x.static.id}`}
-                  //       insertTopMargin={isTopMarginNeeded(sortOrder, x, activeList[i - 1])}
-                  //       zibiljaRitual={x}
-                  //       sortOrder={sortOrder}
-                  //     />
-                  //   )
 
                   default:
                     return assertExhaustive(x)

@@ -1,9 +1,13 @@
+import { stripInlineMarkdown } from "@elyukai/markdown/render/strip"
+import { findMap } from "@elyukai/utils/array/filters"
 import { isNotNullish } from "@elyukai/utils/nullable"
 import { omitUndefinedKeys } from "@elyukai/utils/object"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type { ImprovementCost } from "@optolith/adventure-points/improvement-cost"
-import type { MagicalActionIdentifier } from "@optolith/database-schema/gen"
-import { computed } from "mobx"
+import type { MagicalActionIdentifier, SkillCheck } from "@optolith/database-schema/gen"
+import { renderSkillCheckPenalty } from "@optolith/entity-descriptions/entities/partial/rated/skillCheck"
+import { ResponsiveTextSize } from "@optolith/entity-descriptions/entities/partial/responsiveText"
+import { action, computed } from "mobx"
 import type { Global } from "../../global.ts"
 import { AdventurePointsCache } from "../adventurePoints/cache.ts"
 import type { BaseCharacter } from "../character.ts"
@@ -11,6 +15,8 @@ import {
   CharacterActivatableRatedEntries,
   CharacterActivatableRatedEntry,
   type ConsParamsTrim,
+  type DisplayedActiveActivatableRated,
+  type DisplayedInactiveActivatableRated,
 } from "./ratedEntry.ts"
 
 export abstract class CharacterMagicalAction<
@@ -31,7 +37,42 @@ export abstract class CharacterMagicalAction<
 
   @computed
   get isAvailable(): boolean {
-    return false // TODO: Implement availability check based on tradition
+    return true // TODO: Implement availability check based on tradition
+  }
+
+  @computed
+  get skillCheckPenaltyText(): string | undefined {
+    const { translate, translateMap } = this.global.locale
+    return "check_penalty" in this.dbEntry && this.dbEntry.check_penalty !== undefined
+      ? stripInlineMarkdown(
+          renderSkillCheckPenalty(this.dbEntry.check_penalty).run({
+            translate,
+            translateMap,
+            getInstanceById: this.global.db.getInstanceOfEntityById.bind(this.global.db),
+            responsiveTextSize: ResponsiveTextSize.Compressed,
+          }),
+        )
+      : undefined
+  }
+
+  abstract get groupName(): string
+
+  override toJSON(): DisplayedMagicalAction<Entity> {
+    return {
+      ...super.toJSON(),
+      check: this.dbEntry.check,
+      checkPenalty: this.skillCheckPenaltyText,
+      improvementCost: this.improvementCost,
+      groupPosition: 3,
+      type: this.entityName,
+      name:
+        this.global.locale.translateMap<{ name: string }>(this.dbEntry.translations)?.name ?? "",
+      groupName: this.groupName,
+      associatedText:
+        this.global.locale.translateMap(
+          this.global.db.getInstanceOfEntityById("Property", this.dbEntry.property)?.translations,
+        )?.name ?? "",
+    }
   }
 }
 
@@ -46,6 +87,11 @@ export class CharacterAnimistPower extends CharacterMagicalAction<"AnimistPower"
         return assertExhaustive(this.dbEntry.improvement_cost)
     }
   }
+
+  @computed
+  get groupName(): string {
+    return this.global.locale.translate("Animist Powers")
+  }
 }
 
 export class CharacterBannzeichen extends CharacterMagicalAction<"Bannzeichen"> {
@@ -59,39 +105,97 @@ export class CharacterBannzeichen extends CharacterMagicalAction<"Bannzeichen"> 
         return assertExhaustive(this.dbEntry.improvement_cost)
     }
   }
+
+  @computed
+  get groupName(): string {
+    return this.global.locale.translate("Bannzeichen")
+  }
 }
 
 export class CharacterCurse extends CharacterMagicalAction<"Curse"> {
   readonly improvementCost = this.global.settings.magicalActions.curseImprovementCost.kind
+
+  @computed
+  get groupName(): string {
+    return this.global.locale.translate("Curses")
+  }
 }
 
 export class CharacterDominationRitual extends CharacterMagicalAction<"DominationRitual"> {
   readonly improvementCost =
     this.global.settings.magicalActions.dominationRitualImprovementCost.kind
+
+  @computed
+  get groupName(): string {
+    return this.global.locale.translate("Domination Rituals")
+  }
 }
 
 export class CharacterElvenMagicalSong extends CharacterMagicalAction<"ElvenMagicalSong"> {
   readonly improvementCost = this.dbEntry.improvement_cost.kind
+
+  @computed
+  override get isAvailable(): boolean {
+    return (
+      super.isAvailable &&
+      this.dbEntry.is_distorted ===
+        findMap(this.character.activeMagicalTraditions, trad =>
+          trad.dbEntry.magicalActions?.kind === this.entityName
+            ? trad.dbEntry.magicalActions.ElvenMagicalSong.areDistorted
+            : undefined,
+        )
+    )
+  }
+
+  @computed
+  get groupName(): string {
+    return this.global.locale.translate("Elven Magical Songs")
+  }
 }
 
 export class CharacterGeodeRitual extends CharacterMagicalAction<"GeodeRitual"> {
   readonly improvementCost = this.global.settings.magicalActions.geodeRitualImprovementCost.kind
+
+  @computed
+  get groupName(): string {
+    return this.global.locale.translate("Geode Rituals")
+  }
 }
 
 export class CharacterGoblinRitual extends CharacterMagicalAction<"GoblinRitual"> {
   readonly improvementCost = this.dbEntry.improvement_cost.kind
+
+  @computed
+  get groupName(): string {
+    return this.global.locale.translate("Goblin Rituals")
+  }
 }
 
 export class CharacterJesterTrick extends CharacterMagicalAction<"JesterTrick"> {
   readonly improvementCost = this.dbEntry.improvement_cost.kind
+
+  @computed
+  get groupName(): string {
+    return this.global.locale.translate("Jester Tricks")
+  }
 }
 
 export class CharacterMagicalDance extends CharacterMagicalAction<"MagicalDance"> {
   readonly improvementCost = this.dbEntry.improvement_cost.kind
+
+  @computed
+  get groupName(): string {
+    return this.global.locale.translate("Magical Dances")
+  }
 }
 
 export class CharacterMagicalMelody extends CharacterMagicalAction<"MagicalMelody"> {
   readonly improvementCost = this.dbEntry.improvement_cost.kind
+
+  @computed
+  get groupName(): string {
+    return this.global.locale.translate("Magical Melodies")
+  }
 }
 
 export class CharacterMagicalRune extends CharacterMagicalAction<"MagicalRune"> {
@@ -105,116 +209,177 @@ export class CharacterMagicalRune extends CharacterMagicalAction<"MagicalRune"> 
         return assertExhaustive(this.dbEntry.improvement_cost)
     }
   }
+
+  @computed
+  get groupName(): string {
+    return this.global.locale.translate("Magical Runes")
+  }
 }
 
 export class CharacterZibiljaRitual extends CharacterMagicalAction<"ZibiljaRitual"> {
   readonly improvementCost = this.dbEntry.improvement_cost.kind
+
+  @computed
+  get groupName(): string {
+    return this.global.locale.translate("Zibilja Rituals")
+  }
 }
 
-export class CharacterAnimistPowerCollection extends CharacterActivatableRatedEntries<
+export type DisplayedInactiveMagicalAction<
+  Entity extends MagicalActionIdentifier["kind"] = MagicalActionIdentifier["kind"],
+> = {
+  [E in Entity]: DisplayedInactiveActivatableRated & {
+    type: E
+    check: SkillCheck
+    checkPenalty: string | undefined
+    groupPosition: number
+    improvementCost: ImprovementCost
+    name: string
+    groupName: string
+    associatedText: string
+  }
+}[Entity]
+
+export type DisplayedActiveMagicalAction<
+  Entity extends MagicalActionIdentifier["kind"] = MagicalActionIdentifier["kind"],
+> = {
+  [E in Entity]: DisplayedActiveActivatableRated & {
+    type: E
+    check: SkillCheck
+    checkPenalty: string | undefined
+    groupPosition: number
+    improvementCost: ImprovementCost
+    name: string
+    groupName: string
+    associatedText: string
+  }
+}[Entity]
+
+export type DisplayedMagicalAction<
+  Entity extends MagicalActionIdentifier["kind"] = MagicalActionIdentifier["kind"],
+> = DisplayedActiveMagicalAction<Entity> | DisplayedInactiveMagicalAction<Entity>
+
+export abstract class CharacterMagicalActionCollection<
+  Entity extends MagicalActionIdentifier["kind"],
+  Entry extends CharacterMagicalAction<Entity>,
+> extends CharacterActivatableRatedEntries<Entity, Entry> {
+  @computed
+  get isAvailable(): boolean {
+    return this.character.activeMagicalTraditions.some(
+      trad => trad.dbEntry.magicalActions?.kind === this.entityName,
+    )
+  }
+
+  @computed
+  override get inactiveForDisplay() {
+    return this.isAvailable ? super.inactiveForDisplay : []
+  }
+}
+
+export class CharacterAnimistPowerCollection extends CharacterMagicalActionCollection<
   "AnimistPower",
   CharacterAnimistPower
 > {
-  constructor(...args: ConsParamsTrim<typeof CharacterActivatableRatedEntries, 2>) {
+  constructor(...args: ConsParamsTrim<typeof CharacterMagicalActionCollection, 2>) {
     super(CharacterAnimistPower, "AnimistPower", ...args)
   }
 }
 
-export class CharacterBannzeichenCollection extends CharacterActivatableRatedEntries<
+export class CharacterBannzeichenCollection extends CharacterMagicalActionCollection<
   "Bannzeichen",
   CharacterBannzeichen
 > {
-  constructor(...args: ConsParamsTrim<typeof CharacterActivatableRatedEntries, 2>) {
+  constructor(...args: ConsParamsTrim<typeof CharacterMagicalActionCollection, 2>) {
     super(CharacterBannzeichen, "Bannzeichen", ...args)
   }
 }
 
-export class CharacterCurseCollection extends CharacterActivatableRatedEntries<
+export class CharacterCurseCollection extends CharacterMagicalActionCollection<
   "Curse",
   CharacterCurse
 > {
-  constructor(...args: ConsParamsTrim<typeof CharacterActivatableRatedEntries, 2>) {
+  constructor(...args: ConsParamsTrim<typeof CharacterMagicalActionCollection, 2>) {
     super(CharacterCurse, "Curse", ...args)
   }
 }
 
-export class CharacterDominationRitualCollection extends CharacterActivatableRatedEntries<
+export class CharacterDominationRitualCollection extends CharacterMagicalActionCollection<
   "DominationRitual",
   CharacterDominationRitual
 > {
-  constructor(...args: ConsParamsTrim<typeof CharacterActivatableRatedEntries, 2>) {
+  constructor(...args: ConsParamsTrim<typeof CharacterMagicalActionCollection, 2>) {
     super(CharacterDominationRitual, "DominationRitual", ...args)
   }
 }
 
-export class CharacterElvenMagicalSongCollection extends CharacterActivatableRatedEntries<
+export class CharacterElvenMagicalSongCollection extends CharacterMagicalActionCollection<
   "ElvenMagicalSong",
   CharacterElvenMagicalSong
 > {
-  constructor(...args: ConsParamsTrim<typeof CharacterActivatableRatedEntries, 2>) {
+  constructor(...args: ConsParamsTrim<typeof CharacterMagicalActionCollection, 2>) {
     super(CharacterElvenMagicalSong, "ElvenMagicalSong", ...args)
   }
 }
 
-export class CharacterGeodeRitualCollection extends CharacterActivatableRatedEntries<
+export class CharacterGeodeRitualCollection extends CharacterMagicalActionCollection<
   "GeodeRitual",
   CharacterGeodeRitual
 > {
-  constructor(...args: ConsParamsTrim<typeof CharacterActivatableRatedEntries, 2>) {
+  constructor(...args: ConsParamsTrim<typeof CharacterMagicalActionCollection, 2>) {
     super(CharacterGeodeRitual, "GeodeRitual", ...args)
   }
 }
 
-export class CharacterGoblinRitualCollection extends CharacterActivatableRatedEntries<
+export class CharacterGoblinRitualCollection extends CharacterMagicalActionCollection<
   "GoblinRitual",
   CharacterGoblinRitual
 > {
-  constructor(...args: ConsParamsTrim<typeof CharacterActivatableRatedEntries, 2>) {
+  constructor(...args: ConsParamsTrim<typeof CharacterMagicalActionCollection, 2>) {
     super(CharacterGoblinRitual, "GoblinRitual", ...args)
   }
 }
 
-export class CharacterJesterTrickCollection extends CharacterActivatableRatedEntries<
+export class CharacterJesterTrickCollection extends CharacterMagicalActionCollection<
   "JesterTrick",
   CharacterJesterTrick
 > {
-  constructor(...args: ConsParamsTrim<typeof CharacterActivatableRatedEntries, 2>) {
+  constructor(...args: ConsParamsTrim<typeof CharacterMagicalActionCollection, 2>) {
     super(CharacterJesterTrick, "JesterTrick", ...args)
   }
 }
 
-export class CharacterMagicalDanceCollection extends CharacterActivatableRatedEntries<
+export class CharacterMagicalDanceCollection extends CharacterMagicalActionCollection<
   "MagicalDance",
   CharacterMagicalDance
 > {
-  constructor(...args: ConsParamsTrim<typeof CharacterActivatableRatedEntries, 2>) {
+  constructor(...args: ConsParamsTrim<typeof CharacterMagicalActionCollection, 2>) {
     super(CharacterMagicalDance, "MagicalDance", ...args)
   }
 }
 
-export class CharacterMagicalMelodyCollection extends CharacterActivatableRatedEntries<
+export class CharacterMagicalMelodyCollection extends CharacterMagicalActionCollection<
   "MagicalMelody",
   CharacterMagicalMelody
 > {
-  constructor(...args: ConsParamsTrim<typeof CharacterActivatableRatedEntries, 2>) {
+  constructor(...args: ConsParamsTrim<typeof CharacterMagicalActionCollection, 2>) {
     super(CharacterMagicalMelody, "MagicalMelody", ...args)
   }
 }
 
-export class CharacterMagicalRuneCollection extends CharacterActivatableRatedEntries<
+export class CharacterMagicalRuneCollection extends CharacterMagicalActionCollection<
   "MagicalRune",
   CharacterMagicalRune
 > {
-  constructor(...args: ConsParamsTrim<typeof CharacterActivatableRatedEntries, 2>) {
+  constructor(...args: ConsParamsTrim<typeof CharacterMagicalActionCollection, 2>) {
     super(CharacterMagicalRune, "MagicalRune", ...args)
   }
 }
 
-export class CharacterZibiljaRitualCollection extends CharacterActivatableRatedEntries<
+export class CharacterZibiljaRitualCollection extends CharacterMagicalActionCollection<
   "ZibiljaRitual",
   CharacterZibiljaRitual
 > {
-  constructor(...args: ConsParamsTrim<typeof CharacterActivatableRatedEntries, 2>) {
+  constructor(...args: ConsParamsTrim<typeof CharacterMagicalActionCollection, 2>) {
     super(CharacterZibiljaRitual, "ZibiljaRitual", ...args)
   }
 }
@@ -283,6 +448,68 @@ export class CharacterMagicalActionCollections {
       (acc, entry) => acc.add(entry.adventurePointsTotal),
       AdventurePointsCache.empty,
     )
+  }
+
+  @computed
+  get inactiveForDisplay() {
+    return Object.values(this.magicalActions).flatMap(
+      (entry): DisplayedInactiveMagicalAction[] => entry.inactiveForDisplay,
+    )
+  }
+
+  @computed
+  get activeForDisplay() {
+    return Object.values(this.magicalActions).flatMap(
+      (entry): DisplayedActiveMagicalAction[] => entry.activeForDisplay,
+    )
+  }
+
+  @action
+  increment(entityName: MagicalActionIdentifier["kind"], id: string) {
+    if (entityName in this.magicalActions) {
+      // TODO: Handle currently disabled magical action entities
+      this.magicalActions[entityName as keyof typeof this.magicalActions].increment(id)
+    }
+  }
+
+  @action
+  incrementToMax(entityName: MagicalActionIdentifier["kind"], id: string) {
+    if (entityName in this.magicalActions) {
+      // TODO: Handle currently disabled magical action entities
+      this.magicalActions[entityName as keyof typeof this.magicalActions].incrementToMax(id)
+    }
+  }
+
+  @action
+  decrement(entityName: MagicalActionIdentifier["kind"], id: string) {
+    if (entityName in this.magicalActions) {
+      // TODO: Handle currently disabled magical action entities
+      this.magicalActions[entityName as keyof typeof this.magicalActions].decrement(id)
+    }
+  }
+
+  @action
+  decrementToMin(entityName: MagicalActionIdentifier["kind"], id: string) {
+    if (entityName in this.magicalActions) {
+      // TODO: Handle currently disabled magical action entities
+      this.magicalActions[entityName as keyof typeof this.magicalActions].decrementToMin(id)
+    }
+  }
+
+  @action
+  activate(entityName: MagicalActionIdentifier["kind"], id: string) {
+    if (entityName in this.magicalActions) {
+      // TODO: Handle currently disabled magical action entities
+      this.magicalActions[entityName as keyof typeof this.magicalActions].activate(id)
+    }
+  }
+
+  @action
+  deactivate(entityName: MagicalActionIdentifier["kind"], id: string) {
+    if (entityName in this.magicalActions) {
+      // TODO: Handle currently disabled magical action entities
+      this.magicalActions[entityName as keyof typeof this.magicalActions].deactivate(id)
+    }
   }
 
   toJSON():

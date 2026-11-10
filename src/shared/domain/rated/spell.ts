@@ -21,6 +21,7 @@ import { registerOrUnregisterPrerequisitesOfSpellworkAsDependencies } from "../d
 import { RegistrationMethod } from "../dependencies/registrationHelpers.ts"
 import { checkPrerequisitesOfSpellwork } from "../prerequisites/fullPrerequisiteValidationForType.ts"
 import { SpellsSortOrder } from "../sortOrders.ts"
+import type { DisplayedMagicalAction } from "./magicalActions.ts"
 import {
   CharacterActivatableRatedEntriesWithEnhancements,
   CharacterActivatableRatedWithEnhancements,
@@ -454,7 +455,9 @@ export class CharacterSpellworks<
 /**
  * Filters and sorts the displayed liturgies.
  */
-export const filterAndSortDisplayed = <T extends DisplayedSpellwork | DisplayedCantrip>(
+export const filterAndSortDisplayed = <
+  T extends DisplayedSpellwork | DisplayedCantrip | DisplayedMagicalAction,
+>(
   visibileSpellworks: T[],
   filterText: string,
   sortOrder: SpellsSortOrder,
@@ -471,6 +474,7 @@ export const filterAndSortDisplayed = <T extends DisplayedSpellwork | DisplayedC
         case SpellsSortOrder.Group:
           return reduceCompare(
             on(c => c.groupPosition, compareNumber),
+            on(c => c.groupName, localeCompare),
             on(c => c.name, localeCompare),
           )
         case SpellsSortOrder.Property:

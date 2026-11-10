@@ -5,6 +5,7 @@ import { ListItemName } from "../../../../../shared/components/list/ListItemName
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
 import type { DisplayedInactiveLiturgicalChant } from "../../../../../shared/domain/rated/liturgicalChant.ts"
+import type { DisplayedInactiveMagicalAction } from "../../../../../shared/domain/rated/magicalActions.ts"
 import type { DisplayedInactiveSpellwork } from "../../../../../shared/domain/rated/spell.ts"
 import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
@@ -14,7 +15,10 @@ import { SkillImprovementCost } from "../skills/SkillImprovementCost.tsx"
 
 type Props = {
   insertTopMargin?: boolean
-  entry: DisplayedInactiveSpellwork | DisplayedInactiveLiturgicalChant
+  entry:
+    | DisplayedInactiveSpellwork
+    | DisplayedInactiveLiturgicalChant
+    | DisplayedInactiveMagicalAction
   displayGroup?: boolean
 }
 

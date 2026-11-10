@@ -1,4 +1,5 @@
 import type {
+  MagicalActionIdentifier,
   RatedIdentifier,
   SkillWithEnhancementsIdentifier,
 } from "@optolith/database-schema/gen"
@@ -11,7 +12,7 @@ import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 
 type Props = {
-  entityName: RatedIdentifier["kind"]
+  entityName: RatedIdentifier["kind"] | MagicalActionIdentifier["kind"]
   entry:
     | {
         id: string
@@ -33,8 +34,8 @@ type Props = {
 }
 
 const isActivatableRated = (
-  entityName: RatedIdentifier["kind"],
-): entityName is SkillWithEnhancementsIdentifier["kind"] =>
+  entityName: RatedIdentifier["kind"] | MagicalActionIdentifier["kind"],
+): entityName is SkillWithEnhancementsIdentifier["kind"] | MagicalActionIdentifier["kind"] =>
   entityName !== "Skill" &&
   entityName !== "CloseCombatTechnique" &&
   entityName !== "RangedCombatTechnique"

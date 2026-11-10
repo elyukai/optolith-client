@@ -1,10 +1,11 @@
-import { type FC } from "react"
+import type { FC } from "react"
 import { ListItem } from "../../../../../shared/components/list/ListItem.tsx"
 import { ListItemGroup } from "../../../../../shared/components/list/ListItemGroup.tsx"
 import { ListItemName } from "../../../../../shared/components/list/ListItemName.tsx"
 import { ListItemSeparator } from "../../../../../shared/components/list/ListItemSeparator.tsx"
 import { ListItemValues } from "../../../../../shared/components/list/ListItemValues.tsx"
 import type { DisplayedActiveLiturgicalChant } from "../../../../../shared/domain/rated/liturgicalChant.ts"
+import type { DisplayedActiveMagicalAction } from "../../../../../shared/domain/rated/magicalActions.ts"
 import type { DisplayedActiveSpellwork } from "../../../../../shared/domain/rated/spell.ts"
 import { useInlineLibrary } from "../../../../hooks/inlineLibrary.ts"
 import { SkillButtons } from "../skills/SkillButtons.tsx"
@@ -15,7 +16,7 @@ import { SkillRating } from "../skills/SkillRating.tsx"
 
 type Props = {
   insertTopMargin?: boolean
-  entry: DisplayedActiveSpellwork | DisplayedActiveLiturgicalChant
+  entry: DisplayedActiveSpellwork | DisplayedActiveLiturgicalChant | DisplayedActiveMagicalAction
   displayGroup?: boolean
 }
 
