@@ -1,26 +1,26 @@
+import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
 import type { ActivatableIdentifier, State, State_ID } from "@optolith/database-schema/gen"
 import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
-import { observable } from "mobx"
+import { computed, observable } from "mobx"
 import type { Global } from "../global.ts"
 import type { BaseCharacter } from "./character.ts"
 import {
   addOrRemoveDependency,
   type RegistrationMethod,
 } from "./dependencies/registrationHelpers.ts"
+import { checkMultipleDisjunctionPartsAreValid } from "./prerequisites/disjunctionPrerequisiteMultipartValidation.ts"
 
 export class CharacterState {
   readonly global: Global
+  readonly character: BaseCharacter
   readonly id: string
   readonly dbEntry: State
-  @observable accessor active: boolean = false
+  @observable accessor active = false
   @observable accessor dependencies: StateDependency[] = []
 
-  constructor(
-    global: Global,
-    id: string,
-    dbEntry: State | undefined = global.db.getInstanceOfEntityById("State", id),
-  ) {
+  constructor(global: Global, character: BaseCharacter, id: string, dbEntry: State) {
     this.global = global
+    this.character = character
     this.id = id
     if (!dbEntry) {
       throw new Error(`State with id ${id} not found in database.`)
@@ -33,8 +33,31 @@ export class CharacterState {
       id: this.id,
       dbEntry: this.dbEntry,
       active: this.active,
-      disabled: false, // TODO
+      disabled: isNotEmpty(this.applyingDependencies),
     }
+  }
+
+  /**
+   * Flattens the list of dependencies to
+   * usable values. That means, optional dependencies (objects) will be evaluated
+   * and will be included in the resulting list, depending on whether it has to
+   * follow the optional dependency or not. The result is a plain `List` of all
+   * non-optional dependencies.
+   */
+  @computed
+  get applyingDependencies(): StateDependency[] {
+    return this.dependencies.filter(dep => {
+      if (dep.isPartOfDisjunction) {
+        return checkMultipleDisjunctionPartsAreValid(
+          this.global.db.getInstanceOfEntityById,
+          this.character.prerequisiteCapabilities,
+          dep.sourceId,
+          dep.index,
+        )
+      }
+
+      return true
+    })
   }
 }
 
@@ -54,6 +77,9 @@ export class CharacterStates {
   constructor(global: Global, character: BaseCharacter) {
     this.global = global
     this.character = character
+    for (const state of global.db.getAllInstanceContainersOfEntity("State")) {
+      this.#states.set(state.id, new CharacterState(global, character, state.id, state.content))
+    }
   }
 
   isActive(id: State_ID): boolean {
@@ -65,32 +91,25 @@ export class CharacterStates {
   }
 
   getAll(): DisplayedState[] {
-    return this.global.db
-      .getAllInstanceContainersOfEntity("State")
+    return this.#states
+      .values()
       .filter(state =>
         isEntryFromIncludedPublication(
-          state.content,
+          state.dbEntry,
           this.global.db.getInstanceOfEntityById.bind(this.global.db),
           this.global.locale.translateMap,
           this.character.rules.publicationOptions,
         ),
       )
-      .map(container => {
-        const entry =
-          this.getById(container.id) ??
-          new CharacterState(this.global, container.id, container.content)
-
-        return entry.toJSON()
-      })
-  }
-
-  #ensureEntryExists(id: string): CharacterState {
-    return this.#states.getOrInsertComputed(id, () => new CharacterState(this.global, id))
+      .map(container => container.toJSON())
+      .toArray()
   }
 
   addOrRemoveDependency(id: string, method: RegistrationMethod, dependency: StateDependency) {
-    const entry = this.#ensureEntryExists(id)
-    addOrRemoveDependency(method, entry.dependencies, dependency)
+    const entry = this.getById(id)
+    if (entry) {
+      addOrRemoveDependency(method, entry.dependencies, dependency)
+    }
   }
 }
 

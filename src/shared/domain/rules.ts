@@ -399,6 +399,7 @@ export type PublicationDependency = Readonly<{
 
 export class CharacterRules {
   readonly global: Global
+  readonly character: BaseCharacter
 
   /**
    * Whether the character makes use of all publications except for publications with adult content, which have to be specified explicitly using `include_publications`.
@@ -444,6 +445,7 @@ export class CharacterRules {
         ]
   ) {
     this.global = global
+    this.character = character
     if (typeof args[0] === "object") {
       const [raw] = args
       this.includeAllPublications = raw.includeAllPublications ?? false
@@ -517,10 +519,9 @@ export class CharacterRules {
           containsAdultContent: publication.content.containsAdultContent,
           explicityActive: this.includePublications.has(publication.id),
           active: isPublicationIncluded(translation, options, publication.id, publication.content),
-          disabled: isPublicationIncludedInGroup(
-            publication.content,
-            options.showPublicationGroups,
-          ), // TODO: Dependencies
+          disabled:
+            isPublicationIncludedInGroup(publication.content, options.showPublicationGroups) ||
+            this.applyingDependencies.some(dep => dep.id === publication.id),
         }
       })
       .filter(isNotNullish)
@@ -550,9 +551,32 @@ export class CharacterRules {
   togglePublication(id: Publication_ID): void {
     if (this.includePublications.has(id)) {
       this.includePublications.delete(id)
-    } else {
+    } else if (!this.applyingDependencies.some(dep => dep.id === id)) {
       this.includePublications.add(id)
     }
+  }
+
+  /**
+   * Flattens the list of dependencies to
+   * usable values. That means, optional dependencies (objects) will be evaluated
+   * and will be included in the resulting list, depending on whether it has to
+   * follow the optional dependency or not. The result is a plain `List` of all
+   * non-optional dependencies.
+   */
+  @computed
+  get applyingDependencies(): PublicationDependency[] {
+    return this.publicationDependencies.filter(dep => {
+      if (dep.isPartOfDisjunction) {
+        return checkMultipleDisjunctionPartsAreValid(
+          this.global.db.getInstanceOfEntityById,
+          this.character.prerequisiteCapabilities,
+          Case("Publication", dep.sourceId),
+          dep.index,
+        )
+      }
+
+      return true
+    })
   }
 
   @action
