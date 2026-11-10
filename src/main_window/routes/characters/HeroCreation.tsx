@@ -1,4 +1,5 @@
 import { parensIf } from "@optolith/entity-descriptions/entities/partial/rated/activatable/parensIf"
+import { action } from "mobx"
 import { observer, useLocalObservable } from "mobx-react-lite"
 import { useCallback, useContext, useState } from "react"
 import { Checkbox } from "../../../shared/components/checkbox/Checkbox.tsx"
@@ -153,9 +154,9 @@ export const HeroCreationDialog: React.FC<Props> = observer(props => {
       <TextField
         label={translate("Name of Character")}
         value={startConfig.name}
-        onChange={newName => {
+        onChange={action(newName => {
           startConfig.name = newName
-        }}
+        })}
         fullWidth
         autoFocus
       />
@@ -165,9 +166,9 @@ export const HeroCreationDialog: React.FC<Props> = observer(props => {
           <RadioButtonGroup
             label={translate("Sex")}
             active={startConfig.sexType}
-            onClick={sexType => {
+            onClick={action(sexType => {
               startConfig.sexType = sexType
-            }}
+            })}
             options={[
               {
                 value: "Male",
@@ -195,9 +196,9 @@ export const HeroCreationDialog: React.FC<Props> = observer(props => {
             <TextField
               label={translate("Custom Sex Name")}
               value={startConfig.customSexName ?? ""}
-              onChange={newName => {
+              onChange={action(newName => {
                 startConfig.customSexName = newName
-              }}
+              })}
               fullWidth
             />
           )}
@@ -207,38 +208,38 @@ export const HeroCreationDialog: React.FC<Props> = observer(props => {
             <Grid size="small">
               <Checkbox
                 checked={startConfig.sexRuleBasedInterpretation.asMale}
-                onClick={() => {
+                onClick={action(() => {
                   startConfig.sexRuleBasedInterpretation.asMale =
                     !startConfig.sexRuleBasedInterpretation.asMale
-                }}
+                })}
                 label={translate("Counts as male when checking binary sex prerequisites")}
               />
               <Checkbox
                 checked={startConfig.sexRuleBasedInterpretation.asFemale}
-                onClick={() => {
+                onClick={action(() => {
                   startConfig.sexRuleBasedInterpretation.asFemale =
                     !startConfig.sexRuleBasedInterpretation.asFemale
-                }}
+                })}
                 label={translate("Counts as female when checking binary sex prerequisites")}
               />
               {showSexualCharacteristics ? (
                 <>
                   <Checkbox
                     checked={startConfig.sexRuleBasedInterpretation.sexualCharacteristics.hasPenis}
-                    onClick={() => {
+                    onClick={action(() => {
                       startConfig.sexRuleBasedInterpretation.sexualCharacteristics.hasPenis =
                         !startConfig.sexRuleBasedInterpretation.sexualCharacteristics.hasPenis
-                    }}
+                    })}
                     label={translate(
                       "Counts as having a penis when checking sex characteristic prerequisites",
                     )}
                   />
                   <Checkbox
                     checked={startConfig.sexRuleBasedInterpretation.sexualCharacteristics.hasVagina}
-                    onClick={() => {
+                    onClick={action(() => {
                       startConfig.sexRuleBasedInterpretation.sexualCharacteristics.hasVagina =
                         !startConfig.sexRuleBasedInterpretation.sexualCharacteristics.hasVagina
-                    }}
+                    })}
                     label={translate(
                       "Counts as having a vagina when checking sex characteristic prerequisites",
                     )}
