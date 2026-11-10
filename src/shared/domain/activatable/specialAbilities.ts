@@ -13,7 +13,7 @@ import type { Global } from "../../global.ts"
 import type { Translate, TranslateMap } from "../../utils/locale.ts"
 import { ensureNonEmptyObject } from "../../utils/object.ts"
 import { addAdventurePointsCaches, emptyAdventurePointsCache } from "../adventurePoints/cache.ts"
-import type { BaseCharacter, Character } from "../character.ts"
+import type { BaseCharacter } from "../character.ts"
 import { fromUniformCase } from "../databaseEnum.ts"
 import type { AnySpecialAbilityOfGroupDependency } from "../dependencies/single/anySpecialAbilityOfGroup.ts"
 import { SpecialAbilitiesSortOrder } from "../sortOrders.ts"
@@ -30,16 +30,21 @@ export class CharacterSpecialAbilities {
     [Entity in SpecialAbilityIdentifierType["kind"]]: CharacterActivatables<Entity>
   }
 
-  @observable accessor dependencies: AnySpecialAbilityOfGroupDependency[]
+  @observable accessor dependencies: AnySpecialAbilityOfGroupDependency[] = []
 
-  constructor(global: Global, character: BaseCharacter) {
+  constructor(
+    global: Global,
+    character: BaseCharacter,
+    raw?: {
+      [Entity in SpecialAbilityIdentifierType["kind"]]?: Record<string, RawActivatable>
+    },
+  ) {
     this.#specialAbilities = mapObject(
       SpecialAbilityIdentifier.type.value.values,
-      (_value, key) => new CharacterActivatables(global, character, key),
+      (_value, key) => new CharacterActivatables(global, character, key, raw?.[key]),
     ) as {
       [Entity in SpecialAbilityIdentifierType["kind"]]: CharacterActivatables<Entity>
     }
-    this.dependencies = []
   }
 
   @computed
@@ -78,27 +83,6 @@ export class CharacterSpecialAbilities {
 
   remove(id: SpecialAbilityIdentifierType, index: number): void {
     this.#specialAbilities[id.kind].remove(fromUniformCase(id), index)
-  }
-
-  static fromJSON(
-    global: Global,
-    character: Character,
-    raw: {
-      [Entity in SpecialAbilityIdentifierType["kind"]]?: Record<string, RawActivatable>
-    },
-  ): CharacterSpecialAbilities {
-    const specialAbilities = new CharacterSpecialAbilities(global, character)
-
-    for (const [kind, entries] of Object.entries(raw)) {
-      if (kind in specialAbilities.#specialAbilities) {
-        const typedKind = kind as SpecialAbilityIdentifierType["kind"]
-        ;(specialAbilities.#specialAbilities[typedKind] as CharacterActivatables<
-          typeof typedKind
-        >) = CharacterActivatables.fromJSON(global, character, typedKind, entries)
-      }
-    }
-
-    return specialAbilities
   }
 
   toJSON():

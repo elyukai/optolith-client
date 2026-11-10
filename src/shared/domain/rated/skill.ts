@@ -2,10 +2,13 @@ import type { ImprovementCost } from "@optolith/adventure-points/improvement-cos
 import type { SkillCheck } from "@optolith/database-schema/gen"
 import { MISSING_VALUE } from "@optolith/entity-descriptions/entities/partial/unknown"
 import { computed } from "mobx"
-import type { Global } from "../../global.ts"
-import type { BaseCharacter, Character } from "../character.ts"
 import { Case } from "../databaseEnum.ts"
-import { CharacterRatedEntries, CharacterRatedEntry, type DisplayedRated } from "./ratedEntry.ts"
+import {
+  CharacterRatedEntries,
+  CharacterRatedEntry,
+  type ConsParamsTrim,
+  type DisplayedRated,
+} from "./ratedEntry.ts"
 
 export class CharacterSkill extends CharacterRatedEntry<"Skill"> {
   readonly improvementCost = this.dbEntry.improvement_cost.kind
@@ -77,20 +80,12 @@ export type DisplayedSkill = DisplayedRated & {
 }
 
 export class CharacterSkills extends CharacterRatedEntries<"Skill", CharacterSkill> {
-  constructor(global: Global, character: BaseCharacter) {
-    super(global, character, "Skill", CharacterSkill)
+  constructor(...args: ConsParamsTrim<typeof CharacterRatedEntries, 2>) {
+    super(CharacterSkill, "Skill", ...args)
   }
 
   @computed
   get skills() {
     return this.entries
-  }
-
-  static fromJSON(
-    global: Global,
-    character: Character,
-    raw: Record<string, { value: number }> | undefined,
-  ): CharacterSkills {
-    return super.fromAnyJSON<CharacterSkills>(new CharacterSkills(global, character), raw)
   }
 }

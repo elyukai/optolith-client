@@ -58,15 +58,15 @@ export class CharacterCulture {
   constructor(
     global: Global,
     character: BaseCharacter,
-    id: Culture_ID,
-    isCulturalPackageApplied = false,
-    dependencies: CultureDependency[] = [],
+    ...args:
+      | [raw: RawCulture]
+      | [id: Culture_ID, isCulturalPackageApplied: boolean, dependencies: CultureDependency[]]
   ) {
     this.global = global
     this.character = character
-    this.id = id
-    this.isCulturalPackageApplied = isCulturalPackageApplied
-    this.dependencies = dependencies
+    this.id = args.length === 1 ? args[0].base : args[0]
+    this.isCulturalPackageApplied = args.length === 1 ? args[0].isCulturalPackageApplied : args[1]
+    this.dependencies = args.length === 1 ? [] : args[2]
   }
 
   @computed
@@ -138,10 +138,6 @@ export class CharacterCulture {
       Case("Plain", { constraints: [], operation: Case("Difference") })
 
     return env => matchesCommonProfessions(commonProfessions).run(env)
-  }
-
-  static fromJSON(global: Global, character: BaseCharacter, raw: RawCulture): CharacterCulture {
-    return new CharacterCulture(global, character, raw.base, raw.isCulturalPackageApplied)
   }
 
   toJSON(): RawCulture {

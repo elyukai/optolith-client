@@ -593,10 +593,11 @@ export abstract class CharacterAnyRatedEntries<
 
   constructor(
     isActivatable: Activatable,
+    entryClass: CharacterRatedEntryConstructor<Entity, Activatable, T>,
+    entityName: Entity,
     global: Global,
     character: BaseCharacter,
-    entityName: Entity,
-    entryClass: CharacterRatedEntryConstructor<Entity, Activatable, T>,
+    raw?: Record<string, { value: number }>,
   ) {
     this.global = global
     this.character = character
@@ -605,6 +606,11 @@ export abstract class CharacterAnyRatedEntries<
     this.#isActivatable = isActivatable
     for (const container of this.global.db.getAllInstanceContainersOfEntity(entityName)) {
       this.rated.set(container.id, this.createEmpty(container.id, container.content))
+    }
+    if (raw !== undefined) {
+      for (const [id, entry] of Object.entries(raw ?? {})) {
+        this.set(id, entry.value)
+      }
     }
   }
 
@@ -707,13 +713,8 @@ export abstract class CharacterRatedEntries<
   Entity extends RatedEntity,
   T extends CharacterRatedEntry<Entity>,
 > extends CharacterAnyRatedEntries<Entity, false, T> {
-  constructor(
-    global: Global,
-    character: BaseCharacter,
-    entityName: Entity,
-    entryClass: CharacterRatedEntryConstructor<Entity, false, T>,
-  ) {
-    super(false, global, character, entityName, entryClass)
+  constructor(...args: ConsParamsTrim<typeof CharacterAnyRatedEntries<Entity, false, T>, 1>) {
+    super(false, ...args)
   }
 
   @computed
@@ -732,16 +733,6 @@ export abstract class CharacterRatedEntries<
       .toArray()
   }
 
-  static fromAnyJSON<Collection extends CharacterRatedEntries<any, any>>(
-    collection: Collection,
-    raw: Record<string, { value: number }> | undefined,
-  ): Collection {
-    for (const [id, entry] of Object.entries(raw ?? {})) {
-      collection.set(id, entry.value)
-    }
-    return collection
-  }
-
   toJSON(): Record<string, { value: number }> | undefined {
     const entries = ensureNonEmpty(
       this.rated
@@ -755,24 +746,43 @@ export abstract class CharacterRatedEntries<
   }
 }
 
+export type TupleSliceEnd<
+  T extends unknown[],
+  End extends number,
+  CutOff extends unknown[] = [],
+> = CutOff["length"] extends End
+  ? CutOff
+  : T extends [infer First, ...infer Rest]
+    ? TupleSliceEnd<Rest, End, [...CutOff, First]>
+    : []
+
+export type TupleSlice<
+  T extends unknown[],
+  Start extends number = 0,
+  End extends number = T["length"],
+> = TupleTrimStart<TupleSliceEnd<T, End>, Start>
+
+export type TupleTrimStart<
+  T extends unknown[],
+  Start extends number,
+  CutOff extends unknown[] = [],
+> = CutOff["length"] extends Start
+  ? T
+  : T extends [infer First, ...infer Rest]
+    ? TupleTrimStart<Rest, Start, [...CutOff, First]>
+    : []
+
+export type ConsParamsTrim<
+  T extends abstract new (...args: any) => unknown,
+  Start extends number = 0,
+> = TupleTrimStart<ConstructorParameters<T>, Start>
+
 export abstract class CharacterActivatableRatedEntries<
-  Entity extends {
-    [K in keyof Gen.EntityMap]: Gen.EntityMap[K] extends {
-      src?: Gen.PublicationRefs
-      translations: LocaleMap<{ name: string }>
-    }
-      ? K
-      : never
-  }[keyof Gen.EntityMap],
+  Entity extends RatedEntity,
   T extends CharacterActivatableRatedEntry<Entity>,
 > extends CharacterAnyRatedEntries<Entity, true, T> {
-  constructor(
-    global: Global,
-    character: BaseCharacter,
-    entityName: Entity,
-    entryClass: CharacterRatedEntryConstructor<Entity, true, T>,
-  ) {
-    super(true, global, character, entityName, entryClass)
+  constructor(...args: ConsParamsTrim<typeof CharacterAnyRatedEntries<Entity, true, T>, 1>) {
+    super(true, ...args)
   }
 
   isActive(id: string): boolean {
@@ -860,6 +870,22 @@ export abstract class CharacterActivatableRatedEntriesWithEnhancements<
   Entity extends Gen.SkillWithEnhancementsIdentifier["kind"],
   T extends CharacterActivatableRatedWithEnhancements<Entity>,
 > extends CharacterActivatableRatedEntries<Entity, T> {
+  constructor(
+    entryClass: CharacterRatedEntryConstructor<Entity, true, T>,
+    entityName: Entity,
+    global: Global,
+    character: BaseCharacter,
+    raw?: Record<string, { value: number; enhancements?: Gen.Enhancement_ID[] }>,
+  ) {
+    super(entryClass, entityName, global, character, raw)
+
+    for (const [id, entry] of Object.entries(raw ?? {})) {
+      for (const enhancementId of entry.enhancements ?? []) {
+        this.activateEnhancement(id, enhancementId)
+      }
+    }
+  }
+
   addOrRemoveEnhancementDependency(
     parentId: string,
     enhancmenetId: string,
@@ -881,24 +907,6 @@ export abstract class CharacterActivatableRatedEntriesWithEnhancements<
   deactivateEnhancement(parentId: string, enhancementId: string): void {
     const entry = this.ensureEntryExists(parentId)
     entry.deactivateEnhancement(enhancementId)
-  }
-
-  static fromAnyJSON<
-    Collection extends CharacterActivatableRatedEntriesWithEnhancements<
-      any,
-      CharacterActivatableRatedWithEnhancements<any>
-    >,
-  >(
-    collection: Collection,
-    raw: Record<string, { value: number; enhancements?: Gen.Enhancement_ID[] }> | undefined,
-  ): Collection {
-    for (const [id, entry] of Object.entries(raw ?? {})) {
-      collection.set(id, entry.value)
-      for (const enhancementId of entry.enhancements ?? []) {
-        collection.activateEnhancement(id, enhancementId)
-      }
-    }
-    return collection
   }
 
   override toJSON():

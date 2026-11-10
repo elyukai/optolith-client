@@ -45,7 +45,7 @@ import {
   AdventurePointsCache,
   emptyAdventurePointsCache,
 } from "../adventurePoints/cache.ts"
-import type { BaseCharacter, Character } from "../character.ts"
+import type { BaseCharacter } from "../character.ts"
 import { Case, equalsCase, fromUniformCase } from "../databaseEnum.ts"
 import {
   registerOrUnregisterPrerequisitesOfAdvantageOrDisadvantageAsDependencies,
@@ -1649,7 +1649,12 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
   readonly #entity: Entity
   @observable accessor #activatables: Map<string, CharacterActivatable<Entity>> = new Map()
 
-  constructor(global: Global, character: BaseCharacter, entity: Entity) {
+  constructor(
+    global: Global,
+    character: BaseCharacter,
+    entity: Entity,
+    raw?: Record<string, RawActivatable>,
+  ) {
     this.global = global
     this.#character = character
     this.#entity = entity
@@ -1664,6 +1669,17 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
           container.content,
         ),
       )
+    }
+    if (raw !== undefined) {
+      for (const [id, rawEntry] of Object.entries(raw)) {
+        for (const rawInstance of rawEntry.instances) {
+          this.add(id, rawInstance)
+        }
+
+        for (const rawBoundAP of rawEntry.boundAdventurePoints ?? []) {
+          this.bindAdventurePoints(id, rawBoundAP)
+        }
+      }
     }
   }
 
@@ -1796,27 +1812,6 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
   addOrRemoveDependency(id: string, method: RegistrationMethod, dependency: ActivatableDependency) {
     const entry = this.#ensureEntryExists(id)
     addOrRemoveDependency(method, entry.dependencies, dependency)
-  }
-
-  static fromJSON<Entity extends ActivatableIdentifier["kind"]>(
-    global: Global,
-    character: Character,
-    entity: Entity,
-    json: Record<string, RawActivatable> | undefined,
-  ): CharacterActivatables<Entity> {
-    const activatables = new CharacterActivatables(global, character, entity)
-    if (json !== undefined) {
-      for (const [id, rawEntry] of Object.entries(json)) {
-        for (const rawInstance of rawEntry.instances) {
-          activatables.add(id, rawInstance)
-        }
-
-        for (const rawBoundAP of rawEntry.boundAdventurePoints ?? []) {
-          activatables.bindAdventurePoints(id, rawBoundAP)
-        }
-      }
-    }
-    return activatables
   }
 
   toJSON(): Record<string, RawActivatable> | undefined {

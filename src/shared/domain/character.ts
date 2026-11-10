@@ -5,7 +5,6 @@ import { isInRange } from "@elyukai/utils/range"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type {
   Character as RawCharacter,
-  Character_ID as RawCharacter_ID,
   CharacterInRaceCultureProfessionSelection as RawCharacterInRaceCultureProfessionSelection,
   FullCharacter as RawFullCharacter,
 } from "@optolith/character-schema/types"
@@ -24,6 +23,7 @@ import type {
 } from "@optolith/database-schema/gen"
 import { action, computed, observable } from "mobx"
 import { Case } from "tsondb/schema/gen"
+import type { SerializedSelectedRCPOptions } from "../../main_window/routes/characters/character/raceCultureProfession/RCPOptionSelections/SelectedRCPOptions.ts"
 import type { CharacterRoutePath, RoutePath } from "../../main_window/slices/routeSlice.ts"
 import type { Global } from "../global.ts"
 import type { CharacterIPCActions } from "../ipc.ts"
@@ -65,7 +65,7 @@ import { CharacterAttributes } from "./rated/attribute.ts"
 import { CharacterCombatTechniques } from "./rated/combatTechnique.ts"
 import { CharacterBlessings, CharacterLiturgicalChants } from "./rated/liturgicalChant.ts"
 import type { PrimaryAttributeDependency } from "./rated/primaryAttribute.ts"
-import { CharacterActivatableRatedEntries } from "./rated/ratedEntry.ts"
+import { CharacterActivatableRatedEntries, type ConsParamsTrim } from "./rated/ratedEntry.ts"
 import { CharacterSkills } from "./rated/skill.ts"
 import { CharacterCantrips, CharacterSpellworks } from "./rated/spell.ts"
 import { CharacterRules } from "./rules.ts"
@@ -205,41 +205,106 @@ export abstract class BaseCharacter {
   constructor(
     global: Global,
     id: string,
-    version: string,
-    experienceLevelId: string,
-    dateCreated: Temporal.ZonedDateTime = Temporal.Now.zonedDateTimeISO(),
-    dateLastModified: Temporal.ZonedDateTime = dateCreated,
+    ...args:
+      | [raw: RawCharacter]
+      | [
+          version: string,
+          experienceLevelId: string,
+          dateCreated?: Temporal.ZonedDateTime,
+          dateLastModified?: Temporal.ZonedDateTime,
+        ]
   ) {
+    const raw = args.length === 1 ? args[0] : undefined
     this.global = global
     this.id = id
-    this.name = ""
-    this.version = version
-    this.dateCreated = dateCreated
-    this.dateLastModified = dateLastModified
-    this.rules = new CharacterRules(global, this)
-    this.experienceLevel = new CharacterExperienceLevel(global, this, experienceLevelId)
-    this.totalAdventurePoints = this.experienceLevel.start?.adventure_points ?? 0
-    this.states = new CharacterStates(global, this)
-    this.personalData = new CharacterPersonalData(global, this)
-    this.personalityTraits = new CharacterPersonalityTraits()
-    this.attributes = new CharacterAttributes(global, this)
-    this.derivedCharacteristics = new CharacterDerivedCharacteristics(global, this)
-    this.advantages = new CharacterActivatables(global, this, "Advantage")
-    this.disadvantages = new CharacterActivatables(global, this, "Disadvantage")
-    this.skills = new CharacterSkills(global, this)
-    this.closeCombatTechniques = new CharacterCombatTechniques(global, this, "CloseCombatTechnique")
-    this.rangedCombatTechniques = new CharacterCombatTechniques(
+    this.name = raw?.name ?? ""
+    this.version = args.length === 1 ? args[0].version : args[0]
+    this.dateCreated =
+      args.length === 1
+        ? Temporal.ZonedDateTime.from(args[0].dateCreated)
+        : (args[2] ?? Temporal.Now.zonedDateTimeISO())
+    this.dateLastModified =
+      args.length === 1
+        ? Temporal.ZonedDateTime.from(args[0].dateLastModified)
+        : (args[3] ?? this.dateCreated)
+    this.rules = new CharacterRules(global, this, raw?.rules)
+    this.experienceLevel = new CharacterExperienceLevel(
       global,
       this,
+      args.length === 1 ? args[0].experienceLevel.start : args[1],
+    )
+    this.totalAdventurePoints =
+      raw?.adventurePoints.total ?? this.experienceLevel.start?.adventure_points ?? 0
+    this.states = new CharacterStates(global, this)
+    this.personalData = new CharacterPersonalData(global, this, raw?.personalData)
+    this.personalityTraits = new CharacterPersonalityTraits(global, this)
+    this.curriculum = raw?.curriculum ? new CharacterCurriculum(raw.curriculum) : undefined
+    this.attributes = new CharacterAttributes(
+      global,
+      this,
+      raw?.phase !== "RaceCultureProfession" ? raw?.attributes : undefined,
+    )
+    this.derivedCharacteristics = new CharacterDerivedCharacteristics(global, this)
+    this.advantages = new CharacterActivatables(
+      global,
+      this,
+      "Advantage",
+      raw?.phase !== "RaceCultureProfession" ? raw?.advantages : undefined,
+    )
+    this.disadvantages = new CharacterActivatables(
+      global,
+      this,
+      "Disadvantage",
+      raw?.phase !== "RaceCultureProfession" ? raw?.disadvantages : undefined,
+    )
+    this.skills = new CharacterSkills(
+      global,
+      this,
+      raw?.phase !== "RaceCultureProfession" ? raw?.skills : undefined,
+    )
+    this.closeCombatTechniques = new CharacterCombatTechniques(
+      "CloseCombatTechnique",
+      global,
+      this,
+      raw?.phase !== "RaceCultureProfession" ? raw?.combatTechniques?.melee : undefined,
+    )
+    this.rangedCombatTechniques = new CharacterCombatTechniques(
       "RangedCombatTechnique",
+      global,
+      this,
+      raw?.phase !== "RaceCultureProfession" ? raw?.combatTechniques?.ranged : undefined,
     )
     this.cantrips = new CharacterCantrips(global, this)
-    this.spells = new CharacterSpellworks(global, this, "Spell")
+    this.spells = new CharacterSpellworks(
+      "Spell",
+      global,
+      this,
+      raw?.phase !== "RaceCultureProfession" ? raw?.spells : undefined,
+    )
+    this.rituals = new CharacterSpellworks(
+      "Ritual",
+      global,
+      this,
+      raw?.phase !== "RaceCultureProfession" ? raw?.rituals : undefined,
+    )
     this.blessings = new CharacterBlessings(global, this)
-    this.rituals = new CharacterSpellworks(global, this, "Ritual")
-    this.liturgicalChants = new CharacterLiturgicalChants(global, this, "LiturgicalChant")
-    this.ceremonies = new CharacterLiturgicalChants(global, this, "Ceremony")
-    this.specialAbilities = new CharacterSpecialAbilities(global, this)
+    this.liturgicalChants = new CharacterLiturgicalChants(
+      "LiturgicalChant",
+      global,
+      this,
+      raw?.phase !== "RaceCultureProfession" ? raw?.liturgicalChants : undefined,
+    )
+    this.ceremonies = new CharacterLiturgicalChants(
+      "Ceremony",
+      global,
+      this,
+      raw?.phase !== "RaceCultureProfession" ? raw?.ceremonies : undefined,
+    )
+    this.specialAbilities = new CharacterSpecialAbilities(
+      global,
+      this,
+      raw?.phase !== "RaceCultureProfession" ? raw?.specialAbilities : undefined,
+    )
     this.prerequisiteCapabilities = createCapabilitiesFromCharacter(global, this)
     this.purse = new Purse()
   }
@@ -645,7 +710,7 @@ export abstract class BaseCharacter {
       case "toggleAlternativeRule":
         return this.rules.toggleAlternativeRule(args[1][0])
       case "setRaceVariant":
-        this.race = new CharacterRace(this.global, this, args[1][0])
+        this.race = new CharacterRace(this.global, this, args[1][0], undefined, [])
         if (this.phase === "RaceCultureProfession") {
           this.culture = undefined
           this.profession = undefined
@@ -657,7 +722,7 @@ export abstract class BaseCharacter {
         }
         return
       case "setCulture":
-        this.culture = new CharacterCulture(this.global, this, args[1][0])
+        this.culture = new CharacterCulture(this.global, this, args[1][0], false, [])
         if (this.phase === "RaceCultureProfession") {
           this.profession = undefined
         }
@@ -684,442 +749,15 @@ export abstract class BaseCharacter {
         ) {
           const { race, culture, profession } = this
 
-          const transformedCharacter = this.transformIntoFullCharacter(race, culture, profession)
-
           const [_, [selectedOptions]] = args
 
-          // Race
-
-          for (const advantage of race.variant?.automatic_advantages ?? []) {
-            transformedCharacter.advantages.add(advantage.id, {
-              level: advantage.level,
-              options: advantage.options?.map(option => ({
-                type: "Predefined",
-                id: option,
-              })),
-            })
-          }
-
-          for (const disadvantage of race.variant?.automatic_disadvantages ?? []) {
-            transformedCharacter.disadvantages.add(disadvantage.id, {
-              level: disadvantage.level,
-              options: disadvantage.options?.map(option => ({
-                type: "Predefined",
-                id: option,
-              })),
-            })
-          }
-
-          for (const advantage of race.variant?.strongly_recommended_advantages ?? []) {
-            transformedCharacter.advantages.add(advantage.id, {
-              level: advantage.level,
-              options: advantage.options?.map(option => ({
-                type: "Predefined",
-                id: option,
-              })),
-            })
-          }
-
-          for (const disadvantage of race.variant?.strongly_recommended_disadvantages ?? []) {
-            transformedCharacter.disadvantages.add(disadvantage.id, {
-              level: disadvantage.level,
-              options: disadvantage.options?.map(option => ({
-                type: "Predefined",
-                id: option,
-              })),
-            })
-          }
-
-          race.selectedAttributeAdjustmentId = selectedOptions.attributeAdjustmentId
-
-          // Culture
-
-          if (selectedOptions.buyCulturalPackage) {
-            for (const skill of culture.base?.cultural_package ?? []) {
-              transformedCharacter.skills.increment(skill.id, skill.points)
-            }
-          }
-
-          const nativeTongue = selectedOptions.nativeTongue ?? culture.base?.language[0]?.id
-
-          if (nativeTongue !== undefined) {
-            transformedCharacter
-              .getActivatableCollection(this.global.settings.language.kind)
-              .add(fromUniformCase(this.global.settings.language), {
-                level: 4,
-                options: [{ type: "Predefined", id: Case("Language", nativeTongue) }],
-              })
-          }
-
-          const nativeScript = selectedOptions.buyScript
-            ? (selectedOptions.script ?? culture.base?.script?.[0])
-            : undefined
-
-          if (nativeScript !== undefined) {
-            transformedCharacter
-              .getActivatableCollection(this.global.settings.script.kind)
-              .add(fromUniformCase(this.global.settings.script), {
-                options: [{ type: "Predefined", id: Case("Script", nativeScript) }],
-              })
-          }
-
-          // Profession
-
-          const curriculum =
-            profession.base?.group.kind === "Magical"
-              ? profession.base.group.Magical.curriculum
-              : undefined
-
-          if (curriculum !== undefined) {
-            transformedCharacter.curriculum = new CharacterCurriculum(curriculum)
-          }
-
-          if (
-            selectedOptions.skillSpecialization !== undefined &&
-            selectedOptions.skillSpecializationApplication !== undefined
-          ) {
-            transformedCharacter
-              .getActivatableCollection(this.global.settings.skillSpecialization.kind)
-              .add(fromUniformCase(this.global.settings.skillSpecialization), {
-                options: [
-                  { type: "Predefined", id: Case("Skill", selectedOptions.skillSpecialization) },
-                  { type: "Predefined", id: selectedOptions.skillSpecializationApplication },
-                ],
-              })
-          }
-
-          for (const [language, languageLevel] of selectedOptions.languages) {
-            transformedCharacter
-              .getActivatableCollection(this.global.settings.language.kind)
-              .add(fromUniformCase(this.global.settings.language), {
-                level: languageLevel,
-                options: [{ type: "Predefined", id: Case("Language", language) }],
-              })
-          }
-
-          for (const script of selectedOptions.scripts) {
-            transformedCharacter
-              .getActivatableCollection(this.global.settings.script.kind)
-              .add(fromUniformCase(this.global.settings.script), {
-                options: [{ type: "Predefined", id: Case("Script", script) }],
-              })
-          }
-
-          for (const [skill, skillRating] of selectedOptions.skills) {
-            transformedCharacter.skills.increment(skill, skillRating)
-          }
-
-          for (const { id: combatTechnique, ratingModifier } of selectedOptions.combatTechniques) {
-            switch (combatTechnique.kind) {
-              case "CloseCombatTechnique":
-                transformedCharacter.closeCombatTechniques.increment(
-                  fromUniformCase(combatTechnique),
-                  ratingModifier,
-                )
-                break
-              case "RangedCombatTechnique":
-                transformedCharacter.rangedCombatTechniques.increment(
-                  fromUniformCase(combatTechnique),
-                  ratingModifier,
-                )
-                break
-              default:
-                return assertExhaustive(combatTechnique)
-            }
-          }
-
-          for (const cantrip of selectedOptions.cantrips) {
-            transformedCharacter.cantrips.activate(cantrip)
-          }
-
-          for (const [entity, entityMap] of selectedOptions.spellworks) {
-            switch (entity) {
-              case "Spell":
-                for (const [id, rating] of entityMap) {
-                  transformedCharacter.spells.activate(id)
-                  transformedCharacter.spells.increment(id, rating)
-                }
-                break
-              case "Ritual":
-                for (const [id, rating] of entityMap) {
-                  transformedCharacter.rituals.activate(id)
-                  transformedCharacter.rituals.increment(id, rating)
-                }
-                break
-              default:
-                return assertExhaustive(entity)
-            }
-          }
-
-          // TODO: Uncomment once magical actions are implemented
-          // for (const [id, rating] of selectedOptions.curses) {
-          //   transformedCharacter.magicalActions.curses.activate(id)
-          //   transformedCharacter.magicalActions.curses.increment(id, rating)
-          // }
-
-          for (const [entity, entityMap] of selectedOptions.liturgies) {
-            switch (entity) {
-              case "LiturgicalChant":
-                for (const [id, rating] of entityMap) {
-                  transformedCharacter.liturgicalChants.activate(id)
-                  transformedCharacter.liturgicalChants.increment(id, rating)
-                }
-                break
-              case "Ceremony":
-                for (const [id, rating] of entityMap) {
-                  transformedCharacter.ceremonies.activate(id)
-                  transformedCharacter.ceremonies.increment(id, rating)
-                }
-                break
-              default:
-                return assertExhaustive(entity)
-            }
-          }
-
-          const applyActivatablePrerequisite = (
-            p: Omit<ProfessionActivatablePrerequisite, "active">,
-          ): void => {
-            if (p.options?.every(opt => opt.kind !== "Select")) {
-              transformedCharacter.getActivatableCollection(p.id.kind).add(fromUniformCase(p.id), {
-                level: p.level,
-                options: p.options?.map((option): ActivatableOption => {
-                  switch (option.kind) {
-                    case "Identifier":
-                      return {
-                        type: "Predefined",
-                        id: option.Identifier,
-                      }
-                    case "Text":
-                      return {
-                        type: "Custom",
-                        value:
-                          this.global.locale.translateMap(option.Text.translations)?.text ?? "",
-                      }
-                    default:
-                      return assertExhaustive(option)
-                  }
-                }),
-              })
-            }
-          }
-
-          const applyPrerequisite = (p: ProfessionPrerequisiteGroup): void => {
-            switch (p.kind) {
-              case "Activatable":
-                applyActivatablePrerequisite(p.Activatable)
-                break
-              case "Rated": {
-                const collection = transformedCharacter.getRatedCollection(p.Rated.id.kind)
-                if (collection instanceof CharacterActivatableRatedEntries) {
-                  collection.activate(fromUniformCase(p.Rated.id))
-                }
-                collection.increment(fromUniformCase(p.Rated.id), p.Rated.value)
-                break
-              }
-              case "Energy":
-                // TODO: How to do this?
-                break
-              case "Culture":
-              case "Race":
-              case "RatedMinimumNumber":
-              case "Rule":
-              case "Sex":
-                break
-              default:
-                return assertExhaustive(p)
-            }
-          }
-
-          const applyEnhancementPrerequisite = (p: EnhancementPrerequisite): void => {
-            const parent = this.global.db.getInstanceOfEntityById("Enhancement", p.id)?.parent
-            if (parent !== undefined) {
-              const collection = transformedCharacter.getActivatableRatedWithEnhancementsCollection(
-                parent.kind,
-              )
-              if (collection instanceof CharacterActivatableRatedEntries) {
-                collection.activateEnhancement(fromUniformCase(parent), p.id)
-              }
-            }
-          }
-
-          for (const separate of selectedOptions.separate) {
-            switch (separate.kind) {
-              case "IncompleteActivatable":
-                transformedCharacter
-                  .getActivatableCollection(separate.IncompleteActivatable.id.kind)
-                  .add(
-                    fromUniformCase(separate.IncompleteActivatable.id),
-                    separate.IncompleteActivatable.instance,
-                  )
-                break
-              case "Enhancement": {
-                applyEnhancementPrerequisite(separate.Enhancement)
-                break
-              }
-              default:
-                applyPrerequisite(separate)
-            }
-          }
-
-          const applyPrerequisiteElement = (
-            p: PrerequisitesElement<ProfessionPrerequisiteGroup>,
-          ): void => {
-            switch (p.kind) {
-              case "Single":
-                applyPrerequisite(p.Single)
-                break
-              case "Disjunction":
-                break
-              case "Group":
-                for (const gp of p.Group.list) {
-                  applyPrerequisite(gp)
-                }
-                break
-              default:
-                return assertExhaustive(p)
-            }
-          }
-
-          for (const prerequisite of profession.package?.prerequisites ?? []) {
-            if (
-              !(
-                profession.variant?.prerequisites?.some(
-                  vp => vp.kind === "Remove" && deepEqual(prerequisite, vp.Remove),
-                ) ?? false
-              )
-            ) {
-              applyPrerequisiteElement(prerequisite)
-            }
-          }
-
-          for (const prerequisite of profession.variant?.prerequisites ?? []) {
-            if (prerequisite.kind === "Add") {
-              applyPrerequisiteElement(prerequisite.Add)
-            }
-          }
-
-          for (const specialAbility of (
-            profession.package?.special_abilities?.filter(
-              p =>
-                !(
-                  profession.variant?.special_abilities?.some(
-                    sa => sa.action.kind === "Remove" && deepEqual(p, sa.value),
-                  ) ?? false
-                ),
-            ) ?? []
-          ).concat(
-            profession.variant?.special_abilities
-              ?.filter(p => p.action.kind === "Override")
-              .map(p => p.value) ?? [],
-          )) {
-            if (specialAbility.kind === "Constant") {
-              if (specialAbility.Constant.id.kind === "Enhancement") {
-                applyEnhancementPrerequisite({ id: specialAbility.Constant.id.Enhancement })
-              } else if (
-                checkProfessionSpecialAbilityRulePrerequisites(
-                  specialAbility.Constant,
-                  this.global,
-                  transformedCharacter,
-                )
-              ) {
-                applyActivatablePrerequisite({
-                  ...specialAbility.Constant,
-                  id: specialAbility.Constant.id,
-                })
-              }
-            } else {
-              const selection = specialAbility.Selection.options.filter(sa =>
-                checkProfessionSpecialAbilityRulePrerequisites(
-                  sa,
-                  this.global,
-                  transformedCharacter,
-                ),
-              )
-              if (isNotEmpty(selection) && selection.length === 1) {
-                if (selection[0].id.kind === "Enhancement") {
-                  applyEnhancementPrerequisite({ id: selection[0].id.Enhancement })
-                } else {
-                  applyActivatablePrerequisite({
-                    ...selection[0],
-                    id: selection[0].id,
-                  })
-                }
-              }
-            }
-          }
-
-          for (const { id, rating_modifier } of (profession.package?.skills ?? []).concat(
-            profession.variant?.skills ?? [],
-          )) {
-            transformedCharacter.skills.increment(id, rating_modifier)
-          }
-
-          for (const { id, rating_modifier } of (
-            profession.package?.combat_techniques ?? []
-          ).concat(profession.variant?.combat_techniques ?? [])) {
-            const stringId = fromUniformCase(id)
-            switch (id.kind) {
-              case "CloseCombatTechnique":
-                transformedCharacter.closeCombatTechniques.increment(stringId, rating_modifier)
-                break
-              case "RangedCombatTechnique":
-                transformedCharacter.rangedCombatTechniques.increment(stringId, rating_modifier)
-                break
-              default:
-                return assertExhaustive(id)
-            }
-          }
-
-          for (const cantrip of profession.package?.cantrips ?? []) {
-            transformedCharacter.cantrips.activate(cantrip)
-          }
-
-          for (const { id, rating_modifier: rating } of (profession.package?.spells ?? []).concat(
-            profession.variant?.spells ?? [],
-          )) {
-            if (isNotEmpty(id) && id.length === 1) {
-              switch (id[0].kind) {
-                case "MagicalAction":
-                  // TODO
-                  break
-                case "Spellwork":
-                  switch (id[0].Spellwork.id.kind) {
-                    case "Spell":
-                      transformedCharacter.spells.activate(id[0].Spellwork.id.Spell)
-                      transformedCharacter.spells.increment(id[0].Spellwork.id.Spell, rating)
-                      break
-                    case "Ritual":
-                      transformedCharacter.rituals.activate(id[0].Spellwork.id.Ritual)
-                      transformedCharacter.rituals.increment(id[0].Spellwork.id.Ritual, rating)
-                      break
-                    default:
-                      return assertExhaustive(id[0].Spellwork.id)
-                  }
-                  break
-                default:
-                  return assertExhaustive(id[0])
-              }
-            }
-          }
-
-          for (const { id, rating_modifier: rating } of (
-            profession.package?.liturgical_chants ?? []
-          ).concat(profession.variant?.liturgical_chants ?? [])) {
-            if (isNotEmpty(id) && id.length === 1) {
-              switch (id[0].kind) {
-                case "LiturgicalChant":
-                  transformedCharacter.liturgicalChants.activate(id[0].LiturgicalChant)
-                  transformedCharacter.liturgicalChants.increment(id[0].LiturgicalChant, rating)
-                  break
-                case "Ceremony":
-                  transformedCharacter.ceremonies.activate(id[0].Ceremony)
-                  transformedCharacter.ceremonies.increment(id[0].Ceremony, rating)
-                  break
-                default:
-                  return assertExhaustive(id[0])
-              }
-            }
-          }
+          const transformedCharacter = FullCharacter.applyRaceCultureProfessionSelection(
+            this,
+            race,
+            culture,
+            profession,
+            selectedOptions,
+          )
 
           return {
             transformedCharacter,
@@ -1289,30 +927,18 @@ export abstract class BaseCharacter {
     }
   }
 
-  static fromJSON(global: Global, id: RawCharacter_ID, json: RawCharacter): Character {
-    switch (json.phase) {
-      case "RaceCultureProfession":
-        return CharacterInRaceCultureProfessionSelection.fromJSON(global, id, json)
-      case "Finished":
-      case "Improvement":
-        return FullCharacter.fromJSON(global, id, json)
-      default:
-        return assertExhaustive(json)
-    }
-  }
-
   static exampleCharacter(global: Global, id: string, version: string): Character {
     const character = new FullCharacter(
       global,
       id,
       version,
       "2b0a18c5-40a8-4c86-98b3-a93c85e82497",
-      Temporal.Now.zonedDateTimeISO(),
-      Temporal.Now.zonedDateTimeISO(),
+      undefined,
+      undefined,
       "Improvement",
-      char => new CharacterRace(global, char, "48a1fe0b-ec55-4992-b47b-e1086f2a583f"),
-      char => new CharacterCulture(global, char, "481c50a3-416c-4aa9-8ee9-dc93cc72c2b3"),
-      char => new CharacterProfession(global, char, "0a9b8d85-3d9e-4297-aea0-51549b520ed6"),
+      ["48a1fe0b-ec55-4992-b47b-e1086f2a583f", undefined, []],
+      ["481c50a3-416c-4aa9-8ee9-dc93cc72c2b3", false, []],
+      ["0a9b8d85-3d9e-4297-aea0-51549b520ed6"],
     )
     character.name = "Alrik"
     character.rules.includeAllPublications = true
@@ -1329,89 +955,29 @@ export class CharacterInRaceCultureProfessionSelection extends BaseCharacter {
   @observable accessor culture: CharacterCulture | undefined
   @observable accessor profession: CharacterProfession | undefined
 
-  transformIntoFullCharacter(
-    race: CharacterRace,
-    culture: CharacterCulture,
-    profession: CharacterProfession,
-  ): FullCharacter {
-    const fullCharacter = new FullCharacter(
-      this.global,
-      this.id,
-      this.version,
-      this.experienceLevel.startId,
-      this.dateCreated,
-      this.dateLastModified,
-      "Improvement",
-      char =>
-        new CharacterRace(this.global, char, race.variantId, race.selectedAttributeAdjustmentId),
-      char => new CharacterCulture(this.global, char, culture.id, culture.isCulturalPackageApplied),
-      char =>
-        new CharacterProfession(
-          this.global,
-          char,
-          profession.packageId,
-          profession.variantId,
-          profession.customName,
-        ),
-    )
-
-    fullCharacter.name = this.name
-    fullCharacter.totalAdventurePoints = this.totalAdventurePoints
-    fullCharacter.rules = new CharacterRules(
-      this.global,
-      fullCharacter,
-      this.rules.includeAllPublications,
-      this.rules.includePublications,
-      this.rules.focusRules.rules,
-      this.rules.optionalRules.rules,
-      this.rules.alternativeRules.rules,
-    )
-    fullCharacter.personalData = CharacterPersonalData.fromJSON(
-      this.global,
-      fullCharacter,
-      this.personalData,
-    )
-    fullCharacter.curriculum =
-      this.curriculum === undefined
-        ? undefined
-        : new CharacterCurriculum(
-            this.curriculum.educationalInstitutionId,
-            this.curriculum.lessonPackageId,
-          )
-
-    return fullCharacter
-  }
-
-  static override fromJSON(
+  constructor(
     global: Global,
-    id: RawCharacter_ID,
-    json: RawCharacterInRaceCultureProfessionSelection,
-  ): CharacterInRaceCultureProfessionSelection {
-    const character = new CharacterInRaceCultureProfessionSelection(
-      global,
-      id,
-      json.version,
-      json.experienceLevel.start,
-      Temporal.ZonedDateTime.from(json.dateCreated),
-      Temporal.ZonedDateTime.from(json.dateLastModified),
-    )
-
-    character.name = json.name
-    character.totalAdventurePoints = json.adventurePoints.total
-    character.race = json.race ? CharacterRace.fromJSON(global, character, json.race) : undefined
-    character.culture = json.culture
-      ? CharacterCulture.fromJSON(global, character, json.culture)
-      : undefined
-    character.profession = json.profession
-      ? CharacterProfession.fromJSON(global, character, json.profession)
-      : undefined
-    character.curriculum = json.curriculum
-      ? CharacterCurriculum.fromJSON(json.curriculum)
-      : undefined
-    character.rules = CharacterRules.fromJSON(global, character, json.rules)
-    character.personalData = CharacterPersonalData.fromJSON(global, character, json.personalData)
-
-    return character
+    id: string,
+    ...args:
+      | [raw: RawCharacterInRaceCultureProfessionSelection]
+      | [
+          version: string,
+          experienceLevelId: string,
+          dateCreated?: Temporal.ZonedDateTime,
+          dateLastModified?: Temporal.ZonedDateTime,
+        ]
+  ) {
+    if (args.length === 1) {
+      const [raw] = args
+      super(global, id, raw)
+      this.race = raw.race ? new CharacterRace(global, this, raw.race) : undefined
+      this.culture = raw.culture ? new CharacterCulture(global, this, raw.culture) : undefined
+      this.profession = raw.profession
+        ? new CharacterProfession(global, this, raw.profession)
+        : undefined
+    } else {
+      super(global, id, ...args)
+    }
   }
 
   toJSON(): RawCharacterInRaceCultureProfessionSelection {
@@ -1476,128 +1042,97 @@ export class FullCharacter extends BaseCharacter {
   profession: CharacterProfession
 
   constructor(
-    ...args: [
-      ...ConstructorParameters<typeof BaseCharacter>,
-      phase: "Finished" | "Improvement",
-      (char: FullCharacter) => CharacterRace,
-      (char: FullCharacter) => CharacterCulture,
-      (char: FullCharacter) => CharacterProfession,
-    ]
-  ) {
-    const [
-      global,
-      id,
-      version,
-      experienceLevelId,
-      dateCreated,
-      dateLastModified,
-      phase,
-      race,
-      culture,
-      profession,
-    ] = args
-    super(global, id, version, experienceLevelId, dateCreated, dateLastModified)
-    this.phase = phase
-    this.race = race(this)
-    this.culture = culture(this)
-    this.profession = profession(this)
-  }
-
-  static override fromJSON(
     global: Global,
-    id: RawCharacter_ID,
-    json: RawFullCharacter,
-  ): FullCharacter {
-    const character = new FullCharacter(
-      global,
-      id,
-      json.version,
-      json.experienceLevel.start,
-      Temporal.ZonedDateTime.from(json.dateCreated),
-      Temporal.ZonedDateTime.from(json.dateLastModified),
-      json.phase,
-      char => CharacterRace.fromJSON(global, char, json.race),
-      char => CharacterCulture.fromJSON(global, char, json.culture),
-      char => CharacterProfession.fromJSON(global, char, json.profession),
-    )
+    id: string,
+    ...args:
+      | [raw: RawFullCharacter]
+      | [
+          version: string,
+          experienceLevelId: string,
+          dateCreated: Temporal.ZonedDateTime | undefined,
+          dateLastModified: Temporal.ZonedDateTime | undefined,
+          phase: "Finished" | "Improvement",
+          race: CharacterRace | ConsParamsTrim<typeof CharacterRace, 2>,
+          culture: CharacterCulture | ConsParamsTrim<typeof CharacterCulture, 2>,
+          profession: CharacterProfession | ConsParamsTrim<typeof CharacterProfession, 2>,
+        ]
+  ) {
+    if (args.length === 1) {
+      const [json] = args
+      super(global, id, json)
+      this.race = new CharacterRace(global, this, json.race)
+      this.culture = new CharacterCulture(global, this, json.culture)
+      this.profession = new CharacterProfession(global, this, json.profession)
+      this.phase = json.phase
 
-    character.name = json.name
-    character.totalAdventurePoints = json.adventurePoints.total
-    character.curriculum = json.curriculum
-      ? CharacterCurriculum.fromJSON(json.curriculum)
-      : undefined
-    character.rules = CharacterRules.fromJSON(global, character, json.rules)
-    character.personalData = CharacterPersonalData.fromJSON(global, character, json.personalData)
-    character.advantages = CharacterActivatables.fromJSON(
-      global,
-      character,
-      "Advantage",
-      json.advantages,
-    )
-    character.disadvantages = CharacterActivatables.fromJSON(
-      global,
-      character,
-      "Disadvantage",
-      json.disadvantages,
-    )
-    character.specialAbilities =
-      json.specialAbilities === undefined
-        ? character.specialAbilities
-        : CharacterSpecialAbilities.fromJSON(global, character, json.specialAbilities)
-    character.attributes = CharacterAttributes.fromJSON(global, character, json.attributes)
-    character.derivedCharacteristics = CharacterDerivedCharacteristics.fromJSON(
-      global,
-      character,
-      json.derivedCharacteristics,
-    )
-    character.skills = CharacterSkills.fromJSON(global, character, json.skills)
-    character.closeCombatTechniques = CharacterCombatTechniques.fromJSON(
-      global,
-      character,
-      "CloseCombatTechnique",
-      json.combatTechniques?.melee,
-    )
-    character.rangedCombatTechniques = CharacterCombatTechniques.fromJSON(
-      global,
-      character,
-      "RangedCombatTechnique",
-      json.combatTechniques?.ranged,
-    )
-    character.cantrips = CharacterCantrips.fromJSON(global, character, json.cantrips)
-    character.spells = CharacterSpellworks.fromJSON(global, character, "Spell", json.spells)
-    character.rituals = CharacterSpellworks.fromJSON(global, character, "Ritual", json.rituals)
+      this.derivedCharacteristics = CharacterDerivedCharacteristics.fromJSON(
+        global,
+        this,
+        json.derivedCharacteristics,
+      )
+      this.cantrips = CharacterCantrips.fromJSON(global, this, json.cantrips)
 
-    // TODO: magicalActions?: {
-    //   bannzeichen?: ActivatableRated[]
-    //   curses?: ActivatableRated[]
-    //   elvenMagicalSongs?: ActivatableRated[]
-    //   dominationRituals?: ActivatableRated[]
-    //   magicalMelodies?: ActivatableRated[]
-    //   magicalDances?: ActivatableRated[]
-    //   jesterTricks?: ActivatableRated[]
-    //   animistPowers?: ActivatableRated[]
-    //   geodeRituals?: ActivatableRated[]
-    //   goblinRituals?: ActivatableRated[]
-    //   zibiljaRituals?: ActivatableRated[]
-    //   magicalRunes?: ActivatableRated[]
-    // }
+      // TODO: magicalActions?: {
+      //   bannzeichen?: ActivatableRated[]
+      //   curses?: ActivatableRated[]
+      //   elvenMagicalSongs?: ActivatableRated[]
+      //   dominationRituals?: ActivatableRated[]
+      //   magicalMelodies?: ActivatableRated[]
+      //   magicalDances?: ActivatableRated[]
+      //   jesterTricks?: ActivatableRated[]
+      //   animistPowers?: ActivatableRated[]
+      //   geodeRituals?: ActivatableRated[]
+      //   goblinRituals?: ActivatableRated[]
+      //   zibiljaRituals?: ActivatableRated[]
+      //   magicalRunes?: ActivatableRated[]
+      // }
 
-    character.blessings = CharacterBlessings.fromJSON(global, character, json.blessings)
-    character.liturgicalChants = CharacterLiturgicalChants.fromJSON(
-      global,
-      character,
-      "LiturgicalChant",
-      json.liturgicalChants,
-    )
-    character.ceremonies = CharacterLiturgicalChants.fromJSON(
-      global,
-      character,
-      "Ceremony",
-      json.ceremonies,
-    )
-    character.purse = Purse.fromJSON(json.purse)
-
-    return character
+      this.blessings = CharacterBlessings.fromJSON(global, this, json.blessings)
+      this.purse = Purse.fromJSON(json.purse)
+    } else {
+      const [
+        version,
+        experienceLevelId,
+        dateCreated,
+        dateLastModified,
+        phase,
+        race,
+        culture,
+        profession,
+      ] = args
+      super(global, id, version, experienceLevelId, dateCreated, dateLastModified)
+      this.phase = phase
+      this.race =
+        race instanceof CharacterRace
+          ? new CharacterRace(
+              global,
+              this,
+              race.variantId,
+              race.selectedAttributeAdjustmentId,
+              race.dependencies,
+            )
+          : new CharacterRace(global, this, ...race)
+      this.culture =
+        culture instanceof CharacterCulture
+          ? new CharacterCulture(
+              global,
+              this,
+              culture.id,
+              culture.isCulturalPackageApplied,
+              culture.dependencies,
+            )
+          : new CharacterCulture(global, this, ...culture)
+      this.profession =
+        profession instanceof CharacterProfession
+          ? new CharacterProfession(
+              global,
+              this,
+              profession.packageId,
+              profession.variantId,
+              profession.customName,
+            )
+          : new CharacterProfession(global, this, ...profession)
+    }
   }
 
   toJSON(): RawFullCharacter {
@@ -1671,6 +1206,456 @@ export class FullCharacter extends BaseCharacter {
       ceremonies: this.ceremonies.toJSON(),
       purse: this.purse.toJSON(),
     }
+  }
+
+  static applyRaceCultureProfessionSelection(
+    character: CharacterInRaceCultureProfessionSelection,
+    race: CharacterRace,
+    culture: CharacterCulture,
+    profession: CharacterProfession,
+    selectedOptions: SerializedSelectedRCPOptions,
+  ): FullCharacter {
+    const { global } = character
+    const json = character.toJSON()
+    const transformedCharacter = new FullCharacter(
+      character.global,
+      character.id,
+      Object.assign(json, {
+        phase: "Improvement" as const,
+      }),
+    )
+
+    transformedCharacter.personalityTraits.insertFrom(character.personalityTraits)
+
+    // Race
+
+    for (const advantage of race.variant?.automatic_advantages ?? []) {
+      transformedCharacter.advantages.add(advantage.id, {
+        level: advantage.level,
+        options: advantage.options?.map(option => ({
+          type: "Predefined",
+          id: option,
+        })),
+      })
+    }
+
+    for (const disadvantage of race.variant?.automatic_disadvantages ?? []) {
+      transformedCharacter.disadvantages.add(disadvantage.id, {
+        level: disadvantage.level,
+        options: disadvantage.options?.map(option => ({
+          type: "Predefined",
+          id: option,
+        })),
+      })
+    }
+
+    for (const advantage of race.variant?.strongly_recommended_advantages ?? []) {
+      transformedCharacter.advantages.add(advantage.id, {
+        level: advantage.level,
+        options: advantage.options?.map(option => ({
+          type: "Predefined",
+          id: option,
+        })),
+      })
+    }
+
+    for (const disadvantage of race.variant?.strongly_recommended_disadvantages ?? []) {
+      transformedCharacter.disadvantages.add(disadvantage.id, {
+        level: disadvantage.level,
+        options: disadvantage.options?.map(option => ({
+          type: "Predefined",
+          id: option,
+        })),
+      })
+    }
+
+    race.selectedAttributeAdjustmentId = selectedOptions.attributeAdjustmentId
+
+    // Culture
+
+    if (selectedOptions.buyCulturalPackage) {
+      for (const skill of culture.base?.cultural_package ?? []) {
+        transformedCharacter.skills.increment(skill.id, skill.points)
+      }
+    }
+
+    const nativeTongue = selectedOptions.nativeTongue ?? culture.base?.language[0]?.id
+
+    if (nativeTongue !== undefined) {
+      transformedCharacter
+        .getActivatableCollection(global.settings.language.kind)
+        .add(fromUniformCase(global.settings.language), {
+          level: 4,
+          options: [{ type: "Predefined", id: Case("Language", nativeTongue) }],
+        })
+    }
+
+    const nativeScript = selectedOptions.buyScript
+      ? (selectedOptions.script ?? culture.base?.script?.[0])
+      : undefined
+
+    if (nativeScript !== undefined) {
+      transformedCharacter
+        .getActivatableCollection(global.settings.script.kind)
+        .add(fromUniformCase(global.settings.script), {
+          options: [{ type: "Predefined", id: Case("Script", nativeScript) }],
+        })
+    }
+
+    // Profession
+
+    const curriculum =
+      profession.base?.group.kind === "Magical"
+        ? profession.base.group.Magical.curriculum
+        : undefined
+
+    if (curriculum !== undefined) {
+      transformedCharacter.curriculum = new CharacterCurriculum(curriculum)
+    }
+
+    if (
+      selectedOptions.skillSpecialization !== undefined &&
+      selectedOptions.skillSpecializationApplication !== undefined
+    ) {
+      transformedCharacter
+        .getActivatableCollection(global.settings.skillSpecialization.kind)
+        .add(fromUniformCase(global.settings.skillSpecialization), {
+          options: [
+            { type: "Predefined", id: Case("Skill", selectedOptions.skillSpecialization) },
+            { type: "Predefined", id: selectedOptions.skillSpecializationApplication },
+          ],
+        })
+    }
+
+    for (const [language, languageLevel] of selectedOptions.languages) {
+      transformedCharacter
+        .getActivatableCollection(global.settings.language.kind)
+        .add(fromUniformCase(global.settings.language), {
+          level: languageLevel,
+          options: [{ type: "Predefined", id: Case("Language", language) }],
+        })
+    }
+
+    for (const script of selectedOptions.scripts) {
+      transformedCharacter
+        .getActivatableCollection(global.settings.script.kind)
+        .add(fromUniformCase(global.settings.script), {
+          options: [{ type: "Predefined", id: Case("Script", script) }],
+        })
+    }
+
+    for (const [skill, skillRating] of selectedOptions.skills) {
+      transformedCharacter.skills.increment(skill, skillRating)
+    }
+
+    for (const { id: combatTechnique, ratingModifier } of selectedOptions.combatTechniques) {
+      switch (combatTechnique.kind) {
+        case "CloseCombatTechnique":
+          transformedCharacter.closeCombatTechniques.increment(
+            fromUniformCase(combatTechnique),
+            ratingModifier,
+          )
+          break
+        case "RangedCombatTechnique":
+          transformedCharacter.rangedCombatTechniques.increment(
+            fromUniformCase(combatTechnique),
+            ratingModifier,
+          )
+          break
+        default:
+          return assertExhaustive(combatTechnique)
+      }
+    }
+
+    for (const cantrip of selectedOptions.cantrips) {
+      transformedCharacter.cantrips.activate(cantrip)
+    }
+
+    for (const [entity, entityMap] of selectedOptions.spellworks) {
+      switch (entity) {
+        case "Spell":
+          for (const [id, rating] of entityMap) {
+            transformedCharacter.spells.activate(id)
+            transformedCharacter.spells.increment(id, rating)
+          }
+          break
+        case "Ritual":
+          for (const [id, rating] of entityMap) {
+            transformedCharacter.rituals.activate(id)
+            transformedCharacter.rituals.increment(id, rating)
+          }
+          break
+        default:
+          return assertExhaustive(entity)
+      }
+    }
+
+    // TODO: Uncomment once magical actions are implemented
+    // for (const [id, rating] of selectedOptions.curses) {
+    //   transformedCharacter.magicalActions.curses.activate(id)
+    //   transformedCharacter.magicalActions.curses.increment(id, rating)
+    // }
+
+    for (const [entity, entityMap] of selectedOptions.liturgies) {
+      switch (entity) {
+        case "LiturgicalChant":
+          for (const [id, rating] of entityMap) {
+            transformedCharacter.liturgicalChants.activate(id)
+            transformedCharacter.liturgicalChants.increment(id, rating)
+          }
+          break
+        case "Ceremony":
+          for (const [id, rating] of entityMap) {
+            transformedCharacter.ceremonies.activate(id)
+            transformedCharacter.ceremonies.increment(id, rating)
+          }
+          break
+        default:
+          return assertExhaustive(entity)
+      }
+    }
+
+    const applyActivatablePrerequisite = (
+      p: Omit<ProfessionActivatablePrerequisite, "active">,
+    ): void => {
+      if (p.options?.every(opt => opt.kind !== "Select")) {
+        transformedCharacter.getActivatableCollection(p.id.kind).add(fromUniformCase(p.id), {
+          level: p.level,
+          options: p.options?.map((option): ActivatableOption => {
+            switch (option.kind) {
+              case "Identifier":
+                return {
+                  type: "Predefined",
+                  id: option.Identifier,
+                }
+              case "Text":
+                return {
+                  type: "Custom",
+                  value: global.locale.translateMap(option.Text.translations)?.text ?? "",
+                }
+              default:
+                return assertExhaustive(option)
+            }
+          }),
+        })
+      }
+    }
+
+    const applyPrerequisite = (p: ProfessionPrerequisiteGroup): void => {
+      switch (p.kind) {
+        case "Activatable":
+          applyActivatablePrerequisite(p.Activatable)
+          break
+        case "Rated": {
+          const collection = transformedCharacter.getRatedCollection(p.Rated.id.kind)
+          if (collection instanceof CharacterActivatableRatedEntries) {
+            collection.activate(fromUniformCase(p.Rated.id))
+          }
+          collection.increment(fromUniformCase(p.Rated.id), p.Rated.value)
+          break
+        }
+        case "Energy":
+          // TODO: How to do this?
+          break
+        case "Culture":
+        case "Race":
+        case "RatedMinimumNumber":
+        case "Rule":
+        case "Sex":
+          break
+        default:
+          return assertExhaustive(p)
+      }
+    }
+
+    const applyEnhancementPrerequisite = (p: EnhancementPrerequisite): void => {
+      const parent = global.db.getInstanceOfEntityById("Enhancement", p.id)?.parent
+      if (parent !== undefined) {
+        const collection = transformedCharacter.getActivatableRatedWithEnhancementsCollection(
+          parent.kind,
+        )
+        if (collection instanceof CharacterActivatableRatedEntries) {
+          collection.activateEnhancement(fromUniformCase(parent), p.id)
+        }
+      }
+    }
+
+    for (const separate of selectedOptions.separate) {
+      switch (separate.kind) {
+        case "IncompleteActivatable":
+          transformedCharacter
+            .getActivatableCollection(separate.IncompleteActivatable.id.kind)
+            .add(
+              fromUniformCase(separate.IncompleteActivatable.id),
+              separate.IncompleteActivatable.instance,
+            )
+          break
+        case "Enhancement": {
+          applyEnhancementPrerequisite(separate.Enhancement)
+          break
+        }
+        default:
+          applyPrerequisite(separate)
+      }
+    }
+
+    const applyPrerequisiteElement = (
+      p: PrerequisitesElement<ProfessionPrerequisiteGroup>,
+    ): void => {
+      switch (p.kind) {
+        case "Single":
+          applyPrerequisite(p.Single)
+          break
+        case "Disjunction":
+          break
+        case "Group":
+          for (const gp of p.Group.list) {
+            applyPrerequisite(gp)
+          }
+          break
+        default:
+          return assertExhaustive(p)
+      }
+    }
+
+    for (const prerequisite of profession.package?.prerequisites ?? []) {
+      if (
+        !(
+          profession.variant?.prerequisites?.some(
+            vp => vp.kind === "Remove" && deepEqual(prerequisite, vp.Remove),
+          ) ?? false
+        )
+      ) {
+        applyPrerequisiteElement(prerequisite)
+      }
+    }
+
+    for (const prerequisite of profession.variant?.prerequisites ?? []) {
+      if (prerequisite.kind === "Add") {
+        applyPrerequisiteElement(prerequisite.Add)
+      }
+    }
+
+    for (const specialAbility of (
+      profession.package?.special_abilities?.filter(
+        p =>
+          !(
+            profession.variant?.special_abilities?.some(
+              sa => sa.action.kind === "Remove" && deepEqual(p, sa.value),
+            ) ?? false
+          ),
+      ) ?? []
+    ).concat(
+      profession.variant?.special_abilities
+        ?.filter(p => p.action.kind === "Override")
+        .map(p => p.value) ?? [],
+    )) {
+      if (specialAbility.kind === "Constant") {
+        if (specialAbility.Constant.id.kind === "Enhancement") {
+          applyEnhancementPrerequisite({ id: specialAbility.Constant.id.Enhancement })
+        } else if (
+          checkProfessionSpecialAbilityRulePrerequisites(
+            specialAbility.Constant,
+            global,
+            transformedCharacter,
+          )
+        ) {
+          applyActivatablePrerequisite({
+            ...specialAbility.Constant,
+            id: specialAbility.Constant.id,
+          })
+        }
+      } else {
+        const selection = specialAbility.Selection.options.filter(sa =>
+          checkProfessionSpecialAbilityRulePrerequisites(sa, global, transformedCharacter),
+        )
+        if (isNotEmpty(selection) && selection.length === 1) {
+          if (selection[0].id.kind === "Enhancement") {
+            applyEnhancementPrerequisite({ id: selection[0].id.Enhancement })
+          } else {
+            applyActivatablePrerequisite({
+              ...selection[0],
+              id: selection[0].id,
+            })
+          }
+        }
+      }
+    }
+
+    for (const { id, rating_modifier } of (profession.package?.skills ?? []).concat(
+      profession.variant?.skills ?? [],
+    )) {
+      transformedCharacter.skills.increment(id, rating_modifier)
+    }
+
+    for (const { id, rating_modifier } of (profession.package?.combat_techniques ?? []).concat(
+      profession.variant?.combat_techniques ?? [],
+    )) {
+      const stringId = fromUniformCase(id)
+      switch (id.kind) {
+        case "CloseCombatTechnique":
+          transformedCharacter.closeCombatTechniques.increment(stringId, rating_modifier)
+          break
+        case "RangedCombatTechnique":
+          transformedCharacter.rangedCombatTechniques.increment(stringId, rating_modifier)
+          break
+        default:
+          return assertExhaustive(id)
+      }
+    }
+
+    for (const cantrip of profession.package?.cantrips ?? []) {
+      transformedCharacter.cantrips.activate(cantrip)
+    }
+
+    for (const { id, rating_modifier: rating } of (profession.package?.spells ?? []).concat(
+      profession.variant?.spells ?? [],
+    )) {
+      if (isNotEmpty(id) && id.length === 1) {
+        switch (id[0].kind) {
+          case "MagicalAction":
+            // TODO
+            break
+          case "Spellwork":
+            switch (id[0].Spellwork.id.kind) {
+              case "Spell":
+                transformedCharacter.spells.activate(id[0].Spellwork.id.Spell)
+                transformedCharacter.spells.increment(id[0].Spellwork.id.Spell, rating)
+                break
+              case "Ritual":
+                transformedCharacter.rituals.activate(id[0].Spellwork.id.Ritual)
+                transformedCharacter.rituals.increment(id[0].Spellwork.id.Ritual, rating)
+                break
+              default:
+                return assertExhaustive(id[0].Spellwork.id)
+            }
+            break
+          default:
+            return assertExhaustive(id[0])
+        }
+      }
+    }
+
+    for (const { id, rating_modifier: rating } of (
+      profession.package?.liturgical_chants ?? []
+    ).concat(profession.variant?.liturgical_chants ?? [])) {
+      if (isNotEmpty(id) && id.length === 1) {
+        switch (id[0].kind) {
+          case "LiturgicalChant":
+            transformedCharacter.liturgicalChants.activate(id[0].LiturgicalChant)
+            transformedCharacter.liturgicalChants.increment(id[0].LiturgicalChant, rating)
+            break
+          case "Ceremony":
+            transformedCharacter.ceremonies.activate(id[0].Ceremony)
+            transformedCharacter.ceremonies.increment(id[0].Ceremony, rating)
+            break
+          default:
+            return assertExhaustive(id[0])
+        }
+      }
+    }
+
+    return transformedCharacter
   }
 }
 
@@ -1775,7 +1760,17 @@ export class Characters {
 
   @action
   addCharacterFromJSON(id: string, json: RawCharacter) {
-    const newCharacter = BaseCharacter.fromJSON(this.global, id, json)
-    this.characters.set(id, newCharacter)
+    switch (json.phase) {
+      case "RaceCultureProfession":
+        return this.characters.set(
+          id,
+          new CharacterInRaceCultureProfessionSelection(this.global, id, json),
+        )
+      case "Finished":
+      case "Improvement":
+        return this.characters.set(id, new FullCharacter(this.global, id, json))
+      default:
+        return assertExhaustive(json)
+    }
   }
 }

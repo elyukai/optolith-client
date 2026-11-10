@@ -3,10 +3,13 @@ import type { ImprovementCost } from "@optolith/adventure-points/improvement-cos
 import type { Attribute, CombatTechniqueIdentifier } from "@optolith/database-schema/gen"
 import { MISSING_VALUE } from "@optolith/entity-descriptions/entities/partial/unknown"
 import { computed } from "mobx"
-import type { Global } from "../../global.ts"
-import type { BaseCharacter, Character } from "../character.ts"
 import { Case } from "../databaseEnum.ts"
-import { CharacterRatedEntries, CharacterRatedEntry, type DisplayedRated } from "./ratedEntry.ts"
+import {
+  CharacterRatedEntries,
+  CharacterRatedEntry,
+  type ConsParamsTrim,
+  type DisplayedRated,
+} from "./ratedEntry.ts"
 
 export const COMBAT_TECHNIQUE_START_RATING = 6
 
@@ -132,8 +135,13 @@ export type DisplayedRangedCombatTechnique = DisplayedCombatTechnique<"RangedCom
 export class CharacterCombatTechniques<
   Entity extends CombatTechniqueIdentifier["kind"],
 > extends CharacterRatedEntries<Entity, CharacterCombatTechnique<Entity>> {
-  constructor(global: Global, character: BaseCharacter, entity: Entity) {
-    super(global, character, entity, CharacterCombatTechnique)
+  constructor(
+    ...args: ConsParamsTrim<
+      typeof CharacterRatedEntries<Entity, CharacterCombatTechnique<Entity>>,
+      1
+    >
+  ) {
+    super(CharacterCombatTechnique, ...args)
   }
 
   @computed
@@ -142,18 +150,6 @@ export class CharacterCombatTechniques<
   }
 
   // TODO: Feuerspeien should only be available with special ability, and special ability should not be removable if there are any points in Feuerspeien.
-
-  static fromJSON<Entity extends CombatTechniqueIdentifier["kind"]>(
-    global: Global,
-    character: Character,
-    entity: Entity,
-    raw: Record<string, { value: number }> | undefined,
-  ): CharacterCombatTechniques<Entity> {
-    return super.fromAnyJSON<CharacterCombatTechniques<Entity>>(
-      new CharacterCombatTechniques(global, character, entity),
-      raw,
-    )
-  }
 }
 
 const getPrimaryAttributeModifier = (values: number[]): number =>

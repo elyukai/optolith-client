@@ -13,13 +13,18 @@ export class CharacterCurriculum {
    */
   @observable accessor lessonPackageId: LessonPackage_ID | undefined
 
-  constructor(educationalInstitutionId: Curriculum_ID, lessonPackageId?: LessonPackage_ID) {
-    this.educationalInstitutionId = educationalInstitutionId
-    this.lessonPackageId = lessonPackageId
-  }
-
-  static fromJSON(raw: RawCurriculum): CharacterCurriculum {
-    return new CharacterCurriculum(raw.educationalInstitution, raw.lessonPackage)
+  constructor(
+    ...args:
+      | [raw: RawCurriculum]
+      | [educationalInstitutionId: Curriculum_ID, lessonPackageId?: LessonPackage_ID]
+  ) {
+    if (typeof args[0] === "string") {
+      this.educationalInstitutionId = args[0]
+      this.lessonPackageId = args[1]
+    } else {
+      this.educationalInstitutionId = args[0].educationalInstitution
+      this.lessonPackageId = args[0].lessonPackage
+    }
   }
 
   toJSON(): RawCurriculum {

@@ -9,10 +9,14 @@ import type { Attribute, Attribute_ID, AttributeAdjustments } from "@optolith/da
 import { MISSING_VALUE } from "@optolith/entity-descriptions/entities/partial/unknown"
 import { computed } from "mobx"
 import type { Global } from "../../global.ts"
-import type { BaseCharacter, Character } from "../character.ts"
 import { primaryAttributeDependencyToRatedDependency } from "./primaryAttribute.ts"
 import type { RatedDependency } from "./ratedDependency.ts"
-import { CharacterRatedEntries, CharacterRatedEntry, type DisplayedRated } from "./ratedEntry.ts"
+import {
+  CharacterRatedEntries,
+  CharacterRatedEntry,
+  type ConsParamsTrim,
+  type DisplayedRated,
+} from "./ratedEntry.ts"
 
 /**
  * Returns the modifier if the attribute specified by `id` is a member of the
@@ -120,8 +124,8 @@ export type DisplayedAttribute = DisplayedRated & {
 }
 
 export class CharacterAttributes extends CharacterRatedEntries<"Attribute", CharacterAttribute> {
-  constructor(global: Global, character: BaseCharacter) {
-    super(global, character, "Attribute", CharacterAttribute)
+  constructor(...args: ConsParamsTrim<typeof CharacterRatedEntries, 2>) {
+    super(CharacterAttribute, "Attribute", ...args)
   }
 
   @computed
@@ -246,14 +250,6 @@ export class CharacterAttributes extends CharacterRatedEntries<"Attribute", Char
     collectMinima(minima, this.character.ceremonies.values)
     // TODO: magical actions
     return minima
-  }
-
-  static fromJSON(
-    global: Global,
-    character: Character,
-    raw: Record<string, { value: number }> | undefined,
-  ): CharacterAttributes {
-    return super.fromAnyJSON<CharacterAttributes>(new CharacterAttributes(global, character), raw)
   }
 
   /**

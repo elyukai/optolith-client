@@ -8,12 +8,7 @@ import {
   compareImprovementCost,
   type ImprovementCost,
 } from "@optolith/adventure-points/improvement-cost"
-import type {
-  Enhancement_ID,
-  Property_ID,
-  SkillCheck,
-  SpellworkIdentifier,
-} from "@optolith/database-schema/gen"
+import type { Property_ID, SkillCheck, SpellworkIdentifier } from "@optolith/database-schema/gen"
 import { renderSkillCheckPenalty } from "@optolith/entity-descriptions/entities/partial/rated/skillCheck"
 import { ResponsiveTextSize } from "@optolith/entity-descriptions/entities/partial/responsiveText"
 import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
@@ -29,6 +24,7 @@ import { SpellsSortOrder } from "../sortOrders.ts"
 import {
   CharacterActivatableRatedEntriesWithEnhancements,
   CharacterActivatableRatedWithEnhancements,
+  type ConsParamsTrim,
   type DisplayedActiveActivatableRatedWithEnhancements,
   type DisplayedInactiveActivatableRatedWithEnhancements,
 } from "./ratedEntry.ts"
@@ -328,8 +324,13 @@ export type DisplayedSpellwork<Entity extends "Spell" | "Ritual" = "Spell" | "Ri
 export class CharacterSpellworks<
   Entity extends "Spell" | "Ritual",
 > extends CharacterActivatableRatedEntriesWithEnhancements<Entity, CharacterSpellwork<Entity>> {
-  constructor(global: Global, character: BaseCharacter, entity: Entity) {
-    super(global, character, entity, CharacterSpellwork)
+  constructor(
+    ...args: ConsParamsTrim<
+      typeof CharacterActivatableRatedEntriesWithEnhancements<Entity, CharacterSpellwork<Entity>>,
+      1
+    >
+  ) {
+    super(CharacterSpellwork, ...args)
   }
 
   getActiveByProperty(propertyId: Property_ID): CharacterSpellwork<Entity>[] {
@@ -447,18 +448,6 @@ export class CharacterSpellworks<
   @computed
   get activeUnfamiliarCount(): number {
     return count(this.rated.values().toArray(), entry => entry.active && entry.isUnfamiliar)
-  }
-
-  static fromJSON<Entity extends "Spell" | "Ritual">(
-    global: Global,
-    character: Character,
-    entity: Entity,
-    raw: Record<string, { value: number; enhancements?: Enhancement_ID[] }> | undefined,
-  ): CharacterSpellworks<Entity> {
-    return super.fromAnyJSON<CharacterSpellworks<Entity>>(
-      new CharacterSpellworks(global, character, entity),
-      raw,
-    )
   }
 }
 

@@ -48,15 +48,20 @@ export class CharacterRace {
   constructor(
     global: Global,
     character: BaseCharacter,
-    variantId: RaceVariant_ID,
-    selectedAttributeAdjustmentId?: Attribute_ID | undefined,
-    dependencies: RaceDependency[] = [],
+    ...args:
+      | [raw: RawRace]
+      | [
+          variantId: RaceVariant_ID,
+          selectedAttributeAdjustmentId: Attribute_ID | undefined,
+          dependencies: RaceDependency[],
+        ]
   ) {
     this.global = global
     this.character = character
-    this.variantId = variantId
-    this.selectedAttributeAdjustmentId = selectedAttributeAdjustmentId
-    this.dependencies = dependencies
+    this.variantId = typeof args[0] === "string" ? args[0] : args[0].variant
+    this.selectedAttributeAdjustmentId =
+      typeof args[0] === "string" ? args[1] : args[0].selectedAttributeAdjustment
+    this.dependencies = typeof args[0] === "string" ? (args[2] ?? []) : []
   }
 
   @computed
@@ -155,10 +160,6 @@ export class CharacterRace {
         })
         .toSorted(on(attr => attr.position, compareNumber)),
     }
-  }
-
-  static fromJSON(global: Global, character: BaseCharacter, raw: RawRace): CharacterRace {
-    return new CharacterRace(global, character, raw.variant, raw.selectedAttributeAdjustment)
   }
 
   toJSON(): RawRace {

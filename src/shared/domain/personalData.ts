@@ -21,7 +21,7 @@ import type { Global } from "../global.ts"
 import { randomFromArray } from "../utils/array.ts"
 import { rollDice, separateDice } from "../utils/dice.ts"
 import { ensureNonEmptyString } from "../utils/string.ts"
-import type { BaseCharacter, Character } from "./character.ts"
+import type { BaseCharacter } from "./character.ts"
 import type { Color } from "./color.ts"
 import type { Sex, SexDependency } from "./sex.ts"
 import type { SocialStatusDependency } from "./socialStatus.ts"
@@ -144,9 +144,24 @@ export class CharacterPersonalData {
    */
   @observable accessor otherInfo: string | undefined
 
-  constructor(global: Global, character: BaseCharacter) {
+  constructor(global: Global, character: BaseCharacter, raw?: RawPersonalData) {
     this.global = global
     this.character = character
+    if (raw !== undefined) {
+      this.sex = raw.sex
+      this.family = raw.family
+      this.placeOfBirth = raw.placeOfBirth
+      this.dateOfBirth = raw.dateOfBirth
+      this.age = raw.age
+      this.hairColor = raw.hairColor
+      this.eyeColor = raw.eyeColor
+      this.size = raw.size
+      this.weight = raw.weight
+      this.title = raw.title
+      this.socialStatus = raw.socialStatus
+      this.characteristics = raw.characteristics
+      this.otherInfo = raw.otherInfo
+    }
   }
 
   @computed
@@ -393,29 +408,6 @@ export class CharacterPersonalData {
   @action
   setWeight(newWeight: string) {
     this.weight = ensureNonEmptyString(newWeight)
-  }
-
-  static fromJSON(
-    global: Global,
-    character: Character,
-    json: RawPersonalData,
-  ): CharacterPersonalData {
-    const personalData = new CharacterPersonalData(global, character)
-    personalData.sex = json.sex
-    personalData.family = json.family
-    personalData.placeOfBirth = json.placeOfBirth
-    personalData.dateOfBirth = json.dateOfBirth
-    personalData.age = json.age
-    personalData.hairColor = json.hairColor
-    personalData.eyeColor = json.eyeColor
-    personalData.size = json.size
-    personalData.weight = json.weight
-    personalData.title = json.title
-    personalData.socialStatus = json.socialStatus
-    personalData.characteristics = json.characteristics
-    personalData.otherInfo = json.otherInfo
-
-    return personalData
   }
 
   toJSON(): RawPersonalData {

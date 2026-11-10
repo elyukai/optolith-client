@@ -67,7 +67,7 @@ import {
   type ActivatableOption,
 } from "./activatable/activatable.ts"
 import type { DisplayedInactiveActivatableOption } from "./activatable/activatableInactive.ts"
-import type { BaseCharacter, Character } from "./character.ts"
+import type { BaseCharacter } from "./character.ts"
 import { Case, fromUniformCase } from "./databaseEnum.ts"
 import { checkRulePrerequisite } from "./prerequisites/single/rulePrerequisiteValidation.ts"
 import type { Sex } from "./sex.ts"
@@ -94,15 +94,15 @@ export class CharacterProfession {
   constructor(
     global: Global,
     character: BaseCharacter,
-    packageId: ProfessionPackage_ID,
-    variantId?: ProfessionVariant_ID,
-    customName?: string,
+    ...args:
+      | [raw: RawProfession]
+      | [packageId: ProfessionPackage_ID, variantId?: ProfessionVariant_ID, customName?: string]
   ) {
     this.global = global
     this.character = character
-    this.packageId = packageId
-    this.variantId = variantId
-    this.customName = customName
+    this.packageId = typeof args[0] === "object" ? args[0].package : args[0]
+    this.variantId = typeof args[0] === "object" ? args[0].variant : args[1]
+    this.customName = typeof args[0] === "object" ? args[0].customName : args[2]
   }
 
   @computed
@@ -335,10 +335,6 @@ export class CharacterProfession {
   @computed
   get isVariantSelectionRequired(): boolean {
     return this.package?.is_variant_selection_required ?? false
-  }
-
-  static fromJSON(global: Global, character: Character, raw: RawProfession): CharacterProfession {
-    return new CharacterProfession(global, character, raw.package, raw.variant, raw.customName)
   }
 
   toJSON(): RawProfession {

@@ -13,7 +13,6 @@ import type {
   Aspect_ID,
   BlessedTradition_ID,
   Blessing_ID,
-  Enhancement_ID,
   LiturgyIdentifier,
   LiturgyTradition,
   SkillCheck,
@@ -35,6 +34,7 @@ import { LiturgiesSortOrder } from "../sortOrders.ts"
 import {
   CharacterActivatableRatedEntriesWithEnhancements,
   CharacterActivatableRatedWithEnhancements,
+  type ConsParamsTrim,
   type DisplayedActiveActivatableRatedWithEnhancements,
   type DisplayedInactiveActivatableRatedWithEnhancements,
 } from "./ratedEntry.ts"
@@ -332,8 +332,16 @@ export class CharacterLiturgicalChants<
   Entity,
   CharacterLiturgicalChant<Entity>
 > {
-  constructor(global: Global, character: BaseCharacter, entity: Entity) {
-    super(global, character, entity, CharacterLiturgicalChant)
+  constructor(
+    ...args: ConsParamsTrim<
+      typeof CharacterActivatableRatedEntriesWithEnhancements<
+        Entity,
+        CharacterLiturgicalChant<Entity>
+      >,
+      1
+    >
+  ) {
+    super(CharacterLiturgicalChant, ...args)
   }
 
   getActiveByAspect(aspectId: Aspect_ID): CharacterLiturgicalChant<Entity>[] {
@@ -427,18 +435,6 @@ export class CharacterLiturgicalChants<
         entry.dbEntry.traditions.flatMap(t =>
           t.kind === "Tradition" ? [t.Tradition.tradition] : [],
         ),
-    )
-  }
-
-  static fromJSON<Entity extends "LiturgicalChant" | "Ceremony">(
-    global: Global,
-    character: Character,
-    entity: Entity,
-    raw: Record<string, { value: number; enhancements?: Enhancement_ID[] }> | undefined,
-  ): CharacterLiturgicalChants<Entity> {
-    return super.fromAnyJSON<CharacterLiturgicalChants<Entity>>(
-      new CharacterLiturgicalChants(global, character, entity),
-      raw,
     )
   }
 }
