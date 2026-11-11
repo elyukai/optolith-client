@@ -18,7 +18,6 @@ import { renderBaseCalculation } from "@optolith/entity-descriptions/entities/de
 import { evaluateMathOperation } from "@optolith/entity-descriptions/entities/partial/mathOperation"
 import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
 import { action, computed, observable } from "mobx"
-import { fromUniformCase } from "tsondb/schema/gen"
 import type { Global } from "../global.ts"
 import {
   addAdventurePointsCaches,
@@ -75,9 +74,7 @@ const isModifierActive = (
           return assertExhaustive(source.Rule.id)
       }
     case "Activatable": {
-      const entry = character
-        .getActivatableCollection(source.Activatable.id.kind)
-        .getById(fromUniformCase(source.Activatable.id))
+      const entry = character.getActivatableById(source.Activatable.id)
 
       const instanceIndexWithConfiguration =
         entry?.getInstanceIndexWithConfiguration(source.Activatable) ?? -1

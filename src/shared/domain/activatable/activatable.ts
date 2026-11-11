@@ -636,9 +636,7 @@ export class CharacterActivatable<
               option.type === "Custom"
                 ? 0
                 : (this.getSelectOptionById(option.id)?.content.ap_value?.Fixed ?? 0),
-            id =>
-              this.character.getActivatableCollection(id.kind).getById(fromUniformCase(id))
-                ?.isActive ?? false,
+            id => this.character.isActivatableActive(id),
             "medium",
           ),
           0,
@@ -1345,9 +1343,7 @@ export class CharacterActivatable<
           "Fixed",
           getAdventurePointsDependingOnActiveForInactiveActivatableInstance(
             this.dbEntry.ap_value.DependingOnActive,
-            id =>
-              this.character.getActivatableCollection(id.kind).getById(fromUniformCase(id))
-                ?.isActive ?? false,
+            id => this.character.isActivatableActive(id),
           ),
         )
       case "DependingOnActiveInstances": {
@@ -1391,9 +1387,7 @@ export class CharacterActivatable<
           "Fixed",
           getAdventurePointsDependingOnActiveForInactiveActivatableInstance(
             this.dbEntry.ap_value.DependingOnActive,
-            id =>
-              this.character.getActivatableCollection(id.kind).getById(fromUniformCase(id))
-                ?.isActive ?? false,
+            id => this.character.isActivatableActive(id),
           ),
         )
       case "DependingOnActiveInstances":

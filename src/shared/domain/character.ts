@@ -465,14 +465,14 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
 
   @computed
   get maximumSkillRatingBonusEntry(): CharacterActivatable | undefined {
-    const id = this.global.settings.skills.maximumSkillRatingBonusEntry
-    return this.getActivatableCollection(id.kind).getById(fromUniformCase(id))
+    return this.getActivatableById(this.global.settings.skills.maximumSkillRatingBonusEntry)
   }
 
   @computed
   get maximumCombatTechniqueRatingBonusEntry(): CharacterActivatable | undefined {
-    const id = this.global.settings.combatTechniques.maximumCombatTechniqueRatingBonusEntry
-    return this.getActivatableCollection(id.kind).getById(fromUniformCase(id))
+    return this.getActivatableById(
+      this.global.settings.combatTechniques.maximumCombatTechniqueRatingBonusEntry,
+    )
   }
 
   @computed
@@ -578,8 +578,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
   get propertyIdsWithUnlockedMaximum(): Property_ID[] {
     const sourceId = this.global.settings.spellworks.maximumRatingUnlockEntry
     return (
-      this.getActivatableCollection(sourceId.kind)
-        .getById(fromUniformCase(sourceId))
+      this.getActivatableById(sourceId)
         ?.getOptions()
         .flatMap(option =>
           option.type === "Predefined" && option.id.kind === "Property" ? [option.id.Property] : [],
