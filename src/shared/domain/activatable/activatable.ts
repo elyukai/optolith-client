@@ -71,6 +71,10 @@ import {
   hasReachedMaximumEntries,
   type DisplayedInactiveActivatableOption,
 } from "./activatableInactive.ts"
+import {
+  isAdvancedSpecialAbilityEntityName,
+  type AdvancedSpecialAbilityEntityName,
+} from "./specialAbilities.ts"
 
 /**
  * Bound adventure points are granted by the GM and can only be spent on the
@@ -1141,19 +1145,31 @@ export class CharacterActivatable<
       this.isOfEntity("AdvancedMagicalSpecialAbility") ||
       this.isOfEntity("AdvancedSkillSpecialAbility")
     ) {
-      return false // TODO: Implement advanced style checking logic here
+      const available = this.character.specialAbilities.availableAdvancedSpecialAbilities
+      if (available.any > 0) {
+        return true
+      }
+      return available.specific.some(spec =>
+        equalsCase(
+          spec.id,
+          Case(this.entityName satisfies AdvancedSpecialAbilityEntityName, this.id),
+        ),
+      )
     } else if (this.isOfEntity("CombatStyleSpecialAbility")) {
-      const hasCombination = false // TODO: Combat Style Combination
+      const hasCombination = this.character.isActivatableActive(
+        this.global.settings.focusRules.styles.combatCombination,
+      )
       const countByType = countBy(
         this.character.specialAbilities.getSpecialAbilitiesCollection(this.entityName).active,
         entry => entry.dbEntry.type.kind,
       )
       const thisCount = countByType[this.dbEntry.type.kind] ?? 0
       const { Armed: armedCount = 0, Unarmed: unarmedCount = 0 } = countByType
-      const totalCount = armedCount + unarmedCount
-      return thisCount < (hasCombination ? 2 : 1) && totalCount < 3
+      return thisCount < (hasCombination ? 2 : 1) && armedCount + unarmedCount < 3
     } else if (this.isOfEntity("MagicStyleSpecialAbility")) {
-      const hasCombination = false // TODO: Magic Style Combination
+      const hasCombination = this.character.isActivatableActive(
+        this.global.settings.focusRules.styles.magicCombination,
+      )
       return (
         this.character.specialAbilities.getSpecialAbilitiesCollection(this.entityName).activeCount <
         (hasCombination ? 2 : 1)
@@ -1258,6 +1274,11 @@ export class CharacterActivatable<
   get resolvedSelectOptionsWithResolvedAPValue():
     | ResolvedSelectOptionWithResolvedAPValue[]
     | undefined {
+    const restrictedOptionsForAdvanced = isAdvancedSpecialAbilityEntityName(this.entityName)
+      ? this.character.specialAbilities.availableAdvancedSpecialAbilities.specific.find(
+          spec => spec.id === Case(this.entityName as AdvancedSpecialAbilityEntityName, this.id),
+        )?.restrictedOptions
+      : undefined
     return this.resolvedSelectOptions === undefined
       ? undefined
       : resolveAPValuesForResolvedSelectOptions(
@@ -1282,7 +1303,9 @@ export class CharacterActivatable<
                       ],
                     })
                   : appliesToInstanceStrict(dep, { options: [{ type: "Predefined", id }] })),
-            ),
+            ) ||
+            (restrictedOptionsForAdvanced !== undefined &&
+              !restrictedOptionsForAdvanced.some(opt => equalsCase(opt, id))),
           id => this.countOptions(id, { ignoreWithCustomAdventurePointsValue: true }),
         )
   }

@@ -440,6 +440,16 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
     }
   }
 
+  getActivatableById<E extends ActivatableIdentifier["kind"]>(
+    id: Case<E, string>,
+  ): CharacterActivatable<E> | undefined {
+    return this.getActivatableCollection(id.kind).getById(fromUniformCase<E, string>(id))
+  }
+
+  isActivatableActive<E extends ActivatableIdentifier["kind"]>(id: Case<E, string>): boolean {
+    return this.getActivatableCollection(id.kind).isActive(fromUniformCase<E, string>(id))
+  }
+
   getTinyActivatableCollection<E extends TinyActivatableIdentifier["kind"]>(
     entity: E,
   ): TinyActivatables<E, TinyActivatable<E>> {
