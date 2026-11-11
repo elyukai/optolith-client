@@ -58,17 +58,18 @@ import {
   checkPrerequisitesOfAdvantageOrDisadvantage,
   checkPrerequisitesOfGeneralEntryWithLevels,
 } from "../prerequisites/fullPrerequisiteValidationForType.ts"
-import {
-  getIsRemovable,
-  getMinimumActiveLevel,
-  type ActivatableNameComponentsWithFull,
-  type DisplayedActiveActivatableCost,
+import type {
+  ActivatableNameComponentsWithFull,
+  DisplayedActiveActivatableCost,
 } from "./activatableActive.ts"
-import { appliesToInstanceStrict, type ActivatableDependency } from "./activatableDependency.ts"
+import {
+  appliesToInstanceStrict,
+  isGeneralDependency,
+  type ActivatableDependency,
+} from "./activatableDependency.ts"
 import {
   getMaxLevelByPrerequisites,
   hasGeneralProhibitingDependency,
-  hasReachedMaximumEntries,
   type DisplayedInactiveActivatableOption,
 } from "./activatableInactive.ts"
 import {
@@ -197,6 +198,503 @@ export class CharacterActivatableInstance {
     customAdventurePointsValue: number
   } {
     return this.customAdventurePointsValue !== undefined
+  }
+
+  getEntrySpecificMinimumLevel(): number | undefined {
+    switch (this.parent.entityName) {
+      case "Advantage":
+        switch (this.parent.id) {
+          case "AdvantageIdentifier.LargeSpellSelection":
+            return undefined // TODO ensure(caps.activeSpellworksCount - 3, x => x > 0)
+          case "AdvantageIdentifier.ManySermons":
+            return undefined // TODO ensure(caps.activeSermonsCount - 3, x => x > 0)
+          case "AdvantageIdentifier.ManyVisions":
+            return undefined // TODO ensure(caps.activeVisionsCount - 3, x => x > 0)
+          default:
+            return undefined
+        }
+      case "GeneralSpecialAbility":
+        switch (this.parent.id) {
+          case "GeneralSpecialAbilityIdentifier.Literacy": {
+            // TODO: return isEntryRequiringMatchingScriptAndLangActive &&
+            //   scriptsWithMatchingLanguages.length < 2 &&
+            //   toNewMaybe(AOWIA.sid(x))
+            //     .bind(sid => newEnsure(sid, isNumber))
+            //     .maybe(false, sid => scriptsWithMatchingLanguages.includes(sid))
+            //   ? 3
+            //   : undefined
+            return undefined
+          }
+          case "GeneralSpecialAbilityIdentifier.Language": {
+            // TODO: return isEntryRequiringMatchingScriptAndLangActive &&
+            //   languagesWithMatchingScripts.length < 2 &&
+            //   toNewMaybe(AOWIA.sid(x))
+            //     .bind(sid => newEnsure(sid, isNumber))
+            //     .maybe(false, sid => languagesWithMatchingScripts.includes(sid))
+            //   ? 3
+            //   : undefined
+            return undefined
+          }
+          default:
+            return undefined
+        }
+      case "MagicalSpecialAbility":
+        switch (this.parent.id) {
+          case "MagicalSpecialAbilityIdentifier.Imitationszauberei":
+            return undefined // TODO caps.activeSpellworksCount
+          default:
+            return undefined
+        }
+
+      default:
+        return undefined
+    }
+  }
+
+  @computed
+  get minimumLevel(): number | undefined {
+    return this.parent.applyingDependencies.reduce<number | undefined>(
+      (acc, dep) =>
+        dep.active === true && dep.level !== undefined && appliesToInstanceStrict(dep, this)
+          ? acc === undefined
+            ? dep.level
+            : Math.max(acc, dep.level)
+          : acc,
+      this.getEntrySpecificMinimumLevel(),
+    )
+  }
+
+  getEntrySpecificIsRemovable(): boolean {
+    const { entityName, id } = this.parent
+    const taggedId = Case(entityName, id)
+
+    if (equalsCase(taggedId, this.parent.global.settings.skills.maximumSkillRatingBonusEntry)) {
+      if (this.parent.character.experienceLevel.start === undefined) {
+        return true
+      }
+
+      const skillId = this.options?.[0]?.type === "Predefined" ? this.options[0].id : undefined
+
+      if (skillId === undefined) {
+        return true
+      }
+
+      const value = (() => {
+        switch (skillId.kind) {
+          case "Skill":
+            return this.parent.character.getRatingById(skillId)
+          case "Spell":
+          case "Ritual":
+          case "LiturgicalChant":
+          case "Ceremony":
+            return this.parent.character.getActivatableRatingById(skillId)
+          case "General":
+          case "Blessing":
+          case "Cantrip":
+          case "TradeSecret":
+          case "Script":
+          case "AnimalShape":
+          case "ArcaneBardTradition":
+          case "ArcaneDancerTradition":
+          case "SexPractice":
+          case "Race":
+          case "Culture":
+          case "BlessedTradition":
+          case "Element":
+          case "Property":
+          case "Aspect":
+          case "Disease":
+          case "Poison":
+          case "Language":
+          case "CloseCombatTechnique":
+          case "RangedCombatTechnique":
+          case "TargetCategory":
+          case "Patron":
+          case "Advantage":
+          case "HomunculusType":
+          case "SkillApplication":
+          case "NewSkillApplication":
+          case "Region":
+          case "SkillGroup":
+            return undefined
+          default:
+            return assertExhaustive(skillId)
+        }
+      })()
+
+      if (value === undefined) {
+        return true
+      }
+
+      const activations = this.parent.countOptions(skillId)
+      return value < this.parent.character.experienceLevel.start.max_skill_rating + activations
+    } else if (
+      equalsCase(
+        taggedId,
+        this.parent.global.settings.combatTechniques.maximumCombatTechniqueRatingBonusEntry,
+      )
+    ) {
+      if (this.parent.character.experienceLevel.start === undefined) {
+        return true
+      }
+
+      const ctId = this.options?.[0]?.type === "Predefined" ? this.options[0].id : undefined
+
+      if (ctId === undefined) {
+        return true
+      }
+
+      const value = (() => {
+        switch (ctId.kind) {
+          case "CloseCombatTechnique":
+          case "RangedCombatTechnique":
+            return this.parent.character.getRatingById(ctId)
+          case "General":
+          case "Blessing":
+          case "Cantrip":
+          case "TradeSecret":
+          case "Script":
+          case "AnimalShape":
+          case "ArcaneBardTradition":
+          case "ArcaneDancerTradition":
+          case "SexPractice":
+          case "Race":
+          case "Culture":
+          case "BlessedTradition":
+          case "Element":
+          case "Property":
+          case "Aspect":
+          case "Disease":
+          case "Poison":
+          case "Language":
+          case "Skill":
+          case "LiturgicalChant":
+          case "Ceremony":
+          case "Spell":
+          case "Ritual":
+          case "TargetCategory":
+          case "Patron":
+          case "Advantage":
+          case "HomunculusType":
+          case "SkillApplication":
+          case "NewSkillApplication":
+          case "Region":
+          case "SkillGroup":
+            return undefined
+          default:
+            return assertExhaustive(ctId)
+        }
+      })()
+
+      if (value === undefined) {
+        return true
+      }
+
+      return value <= this.parent.character.experienceLevel.start.max_combat_technique_rating
+    }
+
+    switch (entityName) {
+      case "GeneralSpecialAbility":
+        switch (id) {
+          //       TODO: case SpecialAbilityId.Literacy: {
+          //         return (
+          //           isEntryRequiringMatchingScriptAndLangActive &&
+          //           scriptsWithMatchingLanguages.length < 2 &&
+          //           toNewMaybe(AOWIA.sid(active))
+          //             .bind(sid => newEnsure(sid, isNumber))
+          //             .maybe(false, sid => scriptsWithMatchingLanguages.includes(sid))
+          //         )
+          //       }
+
+          //       TODO: case SpecialAbilityId.Language: {
+          //         const isRequiredByEntryRequiringMatchingScriptAndLanguage =
+          //           isEntryRequiringMatchingScriptAndLangActive &&
+          //           languagesWithMatchingScripts.length < 2 &&
+          //           toNewMaybe(AOWIA.sid(active))
+          //             .bind(sid => newEnsure(sid, isNumber))
+          //             .maybe(false, sid => languagesWithMatchingScripts.includes(sid))
+
+          //         const isRequiredByDependingLanguage = toNewMaybe(AOWIA.sid(active))
+          //           .bind(sid => newEnsure(sid, isNumber))
+          //           .maybe(false, sid =>
+          //             languagesWithDependingScripts
+          //               .findM(languageGroupOfScript => languageGroupOfScript.includes(sid))
+          //               .maybe(
+          //                 false,
+          //                 languageGroupOfScript =>
+          //                   languageGroupOfScript.mapMaybe(idOfGroup =>
+          //                     toNewMaybe(
+          //                       find((ao: Record<ActiveObject>) => Maybe.elemF(AOA.sid(ao))(idOfGroup))(
+          //                         ADA.active(hero_entry),
+          //                       ),
+          //                     ),
+          //                   ).length < 2,
+          //               ),
+          //           )
+
+          //         return isRequiredByEntryRequiringMatchingScriptAndLanguage || isRequiredByDependingLanguage
+          //       }
+          default:
+            return true
+        }
+      case "CombatSpecialAbility":
+        switch (id) {
+          //       TODO: case SpecialAbilityId.CombatStyleCombination: {
+          //         const armedStyleActive = countActiveGroupEntries(wiki)(hero)(
+          //           SpecialAbilityGroup.CombatStylesArmed,
+          //         )
+
+          //         const unarmedStyleActive = countActiveGroupEntries(wiki)(hero)(
+          //           SpecialAbilityGroup.CombatStylesUnarmed,
+          //         )
+
+          //         const totalActive = armedStyleActive + unarmedStyleActive
+
+          //         // default is 1 per group (armed/unarmed), but with this SA 1 more in
+          //         // one group: maximum of 3, but max 2 per group. If max is reached, this
+          //         // SA cannot be removed
+          //         return totalActive >= 3 || armedStyleActive >= 2 || unarmedStyleActive >= 2
+          //       }
+          default:
+            return true
+        }
+      case "MagicalSpecialAbility":
+        switch (id) {
+          //       TODO: case SpecialAbilityId.PropertyKnowledge:
+          //         return pipe_(
+          //           active,
+          //           AOWIA.sid,
+          //           misNumberM,
+          //           maybe(false)(prop_id =>
+          //             OrderedMap.any(
+          //               (spell: Record<ActivatableSkillDependent>) =>
+          //                 ASDA.value(spell) > 14 &&
+          //                 pipe_(
+          //                   spell,
+          //                   ASDA.id,
+          //                   lookupF(SDA.spells(wiki)),
+          //                   maybe(true)(pipe(SA.property, equals(prop_id))),
+          //                 ),
+          //             )(HA.spells(hero)),
+          //           ),
+          //         )
+          //       TODO: case SpecialAbilityId.MagicStyleCombination: {
+          //         const totalActive = countActiveGroupEntries(wiki)(hero)(13)
+
+          //         // default is 1, but with this SA its 2. If it's 2 this SA is neccessary
+          //         // and cannot be removed
+          //         return totalActive >= 2
+          //       }
+          default:
+            return true
+        }
+      case "MagicStyleSpecialAbility":
+        switch (id) {
+          //       // entries transferring unfamiliar special abilities (start)
+
+          //       TODO: case SpecialAbilityId.TraditionGuildMages:
+          //       case SpecialAbilityId.MadaschwesternStil:
+          //       case SpecialAbilityId.ScholarDesMagierkollegsZuHoningen:
+          //       case SpecialAbilityId.Zaubervariabilitaet:
+          //       case SpecialAbilityId.ScholarDerHalleDesLebensZuNorburg:
+          //       case SpecialAbilityId.ScholarDesKreisesDerEinfuehlung: {
+          //         const m_static_spell_enhancements = pipe_(
+          //           wiki,
+          //           SDA.specialAbilities,
+          //           lookup<string>(SpecialAbilityId.SpellEnhancement),
+          //         )
+
+          //         const active_spell_enhancements = pipe_(
+          //           hero,
+          //           HA.specialAbilities,
+          //           lookup<string>(SpecialAbilityId.SpellEnhancement),
+          //           liftM2((static_spell_enhancements: Record<SpecialAbility>) =>
+          //             pipe(
+          //               ADA.active,
+          //               mapMaybe(
+          //                 pipe(
+          //                   AOA.sid,
+          //                   misNumberM,
+          //                   findSelectOption(static_spell_enhancements),
+          //                   bindF(SOA.target),
+          //                 ),
+          //               ),
+          //             ),
+          //           )(m_static_spell_enhancements),
+          //           fromMaybe(List<string>()),
+          //         )
+
+          //         type Target = string | UnfamiliarGroup
+
+          //         const targets =
+          //           id === SpecialAbilityId.Zaubervariabilitaet
+          //             ? List<Target>(UnfamiliarGroup.Spells)
+          //             : catMaybes(
+          //                 List(
+          //                   pipe_(active, AOWIA.sid, misStringM),
+          //                   pipe_(active, AOWIA.sid2, misStringM),
+          //                   pipe_(active, AOWIA.sid3, misStringM),
+          //                 ),
+          //               )
+
+          //         const target_matches_id = (target: Target) => (spell_id: string) =>
+          //           typeof target === "string"
+          //             ? // The target must be the same …
+          //               target === spell_id
+          //             : // … or it must be from the same category
+          //               target === UnfamiliarGroup.Spells
+
+          //         const relevant_spell_enhancements = pipe_(
+          //           active_spell_enhancements,
+          //           filter(spell_id => any(Functn.flip(target_matches_id)(spell_id))(targets)),
+          //         )
+
+          //         // spell enhancements must exist to possibly be a dependency
+          //         // also, a spell must be selected and it has to have an active spell
+          //         // enhancement to be relevant
+          //         if (
+          //           notNull(active_spell_enhancements) &&
+          //           notNull(targets) &&
+          //           notNull(relevant_spell_enhancements)
+          //         ) {
+          //           const transferred = HA.transferredUnfamiliarSpells(hero)
+
+          //           return pipe_(
+          //             relevant_spell_enhancements,
+          //             // check for alternative transferred dependency matches for all
+          //             // targets that would allow this entry to be removed
+          //             all(spell_id =>
+          //               pipe_(
+          //                 transferred,
+          //                 // It cannot be the same entry
+          //                 any(tu => TUA.srcId(tu) !== id && target_matches_id(TUA.id(tu))(spell_id)),
+          //               ),
+          //             ),
+          //             // if all spell enhancement have alternative, it can be safely
+          //             // removed and thus removal is "not" disabled
+          //             not,
+          //           )
+          //         }
+
+          //         return false
+          //       }
+
+          //       default:
+          //         return false
+          //     }
+          default:
+            return true
+        }
+      case "MagicalTradition":
+        return (
+          this.parent.character.cantrips.activeCount +
+            this.parent.character.spells.activeCount +
+            this.parent.character.rituals.activeCount +
+            this.parent.character.magicalActions.activeCount ===
+          0
+        )
+      case "KarmaSpecialAbility":
+        switch (id) {
+          //       TODO: case SpecialAbilityId.AspectKnowledge: {
+          //         const all_aspcs = getActiveSelections(hero_entry)
+
+          //         return pipe_(
+          //           active,
+          //           AOWIA.sid,
+          //           misNumberM,
+          //           maybe(false)(aspc_id => {
+          //             const other_aspcs = sdelete<string | number>(aspc_id)(all_aspcs)
+
+          //             return OrderedMap.any(
+          //               (chant: Record<ActivatableSkillDependent>) =>
+          //                 ASDA.value(chant) > 14 &&
+          //                 pipe_(
+          //                   chant,
+          //                   ASDA.id,
+          //                   lookupF(SDA.liturgicalChants(wiki)),
+          //                   maybe(true)(
+          //                     pipe(
+          //                       LCA.aspects,
+          //                       aspcs => elem(aspc_id)(aspcs) && all(notElemF(other_aspcs))(aspcs),
+          //                     ),
+          //                   ),
+          //                 ),
+          //             )(HA.liturgicalChants(hero))
+          //           }),
+          //         )
+          //       }
+          default:
+            return true
+        }
+      case "LiturgicalStyleSpecialAbility":
+        switch (id) {
+          //       // Extended Blessed Special Abilities that allow to learn liturgical
+          //       // chants of different traditions
+          //       TODO: case SpecialAbilityId.Zugvoegel:
+          //       case SpecialAbilityId.JaegerinnenDerWeissenMaid:
+          //       case SpecialAbilityId.AnhaengerDesGueldenen: {
+          //         const mblessed_tradition = getBlessedTraditionFromWiki(SDA.specialAbilities(wiki))(
+          //           HA.specialAbilities(hero),
+          //         )
+
+          //         // Wiki entries for all active liturgical chants
+          //         const active_chants = pipe_(
+          //           hero,
+          //           HA.liturgicalChants,
+          //           elems,
+          //           filter<Record<ActivatableSkillDependent>>(ASDA.active),
+          //           mapByIdKeyMap(SDA.liturgicalChants(wiki)),
+          //         )
+
+          //         // If there are chants active that do not belong to the own tradition
+          //         const mactive_unfamiliar_chants = fmap(
+          //           pipe(isOwnTradition, notP, any, thrush(active_chants)),
+          //         )(mblessed_tradition)
+
+          //         return or(mactive_unfamiliar_chants)
+          //       }
+          default:
+            return true
+        }
+      case "BlessedTradition":
+        return (
+          this.parent.character.blessings.activeCount +
+            this.parent.character.liturgicalChants.activeCount +
+            this.parent.character.ceremonies.activeCount ===
+          0
+        )
+      default:
+        return true
+    }
+  }
+
+  @computed
+  get isDependedOn(): boolean {
+    return (
+      this.parent.dependenciesForActiveInstances.every(
+        dep => isGeneralDependency(dep) || appliesToInstanceStrict(dep, this),
+      ) ||
+      (this.parent.entityName !== "Advantage" &&
+        this.parent.entityName !== "Disadvantage" &&
+        this.parent.character.specialAbilities.applyingDependencies.some(
+          dep => dep.group === this.parent.entityName,
+        ) &&
+        this.parent.activationsCount < 2 &&
+        this.parent.character.specialAbilities.getSpecialAbilitiesCollection(this.parent.entityName)
+          .activeCount < 2)
+    )
+  }
+
+  @computed
+  get isRemovable(): boolean {
+    return (
+      this.minimumLevel === undefined &&
+      !this.isDependedOn &&
+      // // Disable if style special ability is required for
+      // // extended special abilities
+      // TODO: isStyleSpecialAbilityRemovalDisabled(hero)(wiki_entry) ||
+      this.getEntrySpecificIsRemovable()
+    )
   }
 }
 
@@ -903,35 +1401,24 @@ export class CharacterActivatable<
     )
   }
 
-  toJSONActive(): DisplayedActiveActivatable<Entity>[] {
-    const idObject = Case(this.entityName satisfies ActivatableIdentifier["kind"], this.id)
-    const dependencies = this.applyingDependencies.filter(
+  /**
+   * Filters out dependencies that multiple instances of this activatable entry match. A dependency only needs to be enforced if there is only one instance matching it.
+   */
+  @computed
+  get dependenciesForActiveInstances(): ActivatableDependency[] {
+    return this.applyingDependencies.filter(
       dep =>
         dep.active === false ||
         count(this.instances, instance => appliesToInstanceStrict(dep, instance)) < 2,
     )
+  }
 
-    const caps = {
-      startExperienceLevel: this.character.experienceLevel.start,
-      activeCantripsCount: this.character.cantrips.activeCount,
-      activeSpellworksCount: this.character.spells.activeCount + this.character.rituals.activeCount,
-      activeMagicalActionsCount: 0, // TODO
-      activeBlessingsCount: this.character.blessings.activeCount,
-      activeLiturgicalChantsCount: this.character.liturgicalChants.activeCount,
-      activeCeremoniesCount: this.character.ceremonies.activeCount,
-      activeSermonsCount:
-        this.character.specialAbilities.getSpecialAbilitiesCollection("Sermon").activeCount,
-      activeVisionsCount:
-        this.character.specialAbilities.getSpecialAbilitiesCollection("Vision").activeCount,
-      getRatingById: this.character.getRatingById.bind(this.character),
-      getActivatableRatingById: this.character.getActivatableRatingById.bind(this.character),
-    }
+  toJSONActive(): DisplayedActiveActivatable<Entity>[] {
+    const dependencies = this.dependenciesForActiveInstances
 
     return this.instances.map((instance, instanceIndex): DisplayedActiveActivatable<Entity> => {
-      const minLevel = getMinimumActiveLevel(idObject, dependencies, instance, caps)
+      const { minimumLevel: minLevel, isRemovable } = instance
       const maxLevel = this.getMaximumLevel(instance, dependencies)
-
-      const isRemovable = getIsRemovable(minLevel, dependencies, instance, caps)
 
       //   TODO: Ignore selection for name when above level 1
       // case SpecialAbilityId.Exorzist:
@@ -944,8 +1431,6 @@ export class CharacterActivatable<
       //       findSelectOption (wiki_entry),
       //       fmap (SOA.name)
       //     )
-
-      // TODO: AnySpecialAbilityOfGroup dependency handling
 
       const nameComponents = getNameComponents<{ name: string }>(
         this.global.locale.translate,
@@ -1030,53 +1515,33 @@ export class CharacterActivatable<
           )
   }
 
+  @computed
+  get hasReachedMaximumEntries(): boolean {
+    const maximum = "maximum" in this.dbEntry ? this.dbEntry.maximum : undefined
+    const defaultMaximum =
+      this.entityName === "Advantage" ||
+      this.entityName === "Disadvantage" ||
+      (this.resolvedSelectOptions?.length ?? 0) === 0
+        ? 1
+        : Infinity
+    return this.activationsCount >= (maximum ?? defaultMaximum)
+  }
+
   /**
    * Returns the activatable entry with its corresponding dynamic entry,
    * extended by whether it can be activated and configuration options.
    */
   toJSONInactive(): DisplayedInactiveActivatable<Entity> | undefined {
-    if (
-      hasReachedMaximumEntries(
-        this.activationsCount,
-        "maximum" in this.dbEntry ? this.dbEntry.maximum : undefined,
-        this.entityName === "Advantage" || this.entityName === "Disadvantage" ? 1 : Infinity,
-      )
-    ) {
+    if (this.hasReachedMaximumEntries) {
       return undefined
     }
 
-    // TODO const idObject = Case(this.entityName satisfies ActivatableIdentifier["kind"], this.id)
     const dependencies = this.applyingDependencies
-
-    // TODO const countOptionsForCurrent = (optionId: ResolvedSelectOptionIdentifier, atIndex?: number) =>
-    //   this.countOptions(optionId, { atIndex })
-
-    // TODO const hasProhibitingDependency = (optionId: ResolvedSelectOptionIdentifier) =>
-    //   dependencies.some(
-    //     dep =>
-    //       dep.active === false &&
-    //       appliesToInstanceLoose(dep, { options: [{ type: "Predefined", id: optionId }] }),
-    //   )
-
     const maxLevel = this.getMaximumLevel(undefined, dependencies)
-
-    if (this.isActive) {
-      const defaultMaximum =
-        this.entityName === "Advantage" || this.entityName === "Disadvantage"
-          ? 1
-          : (this.resolvedSelectOptions?.length ?? 0) > 0
-            ? undefined
-            : 1
-
-      const maximum =
-        "maximum" in this.dbEntry && this.dbEntry.maximum !== undefined
-          ? this.dbEntry.maximum
-          : defaultMaximum
-
-      if (maximum !== undefined && this.activationsCount >= maximum) {
-        return undefined
-      }
-    }
+    const hasrReachedImpossibleMaxLevel = maxLevel !== undefined && maxLevel < 1
+    const hasNoEmptySelectOptionConfiguration = this.selectOptionConfiguration.every(
+      config => config.kind === "text" || isNotEmpty(config.options),
+    )
 
     return {
       type: this.entityName,
@@ -1089,10 +1554,8 @@ export class CharacterActivatable<
         !hasGeneralProhibitingDependency(dependencies) &&
         this.checkPrerequisitesForLevel(1) &&
         this.checkCustomPrerequisites() &&
-        this.selectOptionConfiguration.every(
-          config => config.kind === "text" || isNotEmpty(config.options),
-        ) &&
-        (maxLevel === undefined || maxLevel > 0),
+        hasNoEmptySelectOptionConfiguration &&
+        !hasrReachedImpossibleMaxLevel,
       options: this.selectOptionConfiguration,
       apValue: this.preparedInactiveAdventurePointsValue,
       level:

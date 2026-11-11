@@ -1,5 +1,6 @@
 import { stripInlineMarkdown } from "@elyukai/markdown/render/strip"
 import { findMap } from "@elyukai/utils/array/filters"
+import { sumWith } from "@elyukai/utils/array/reductions"
 import { isNotNullish } from "@elyukai/utils/nullable"
 import { omitUndefinedKeys } from "@elyukai/utils/object"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
@@ -462,6 +463,11 @@ export class CharacterMagicalActionCollections {
     return Object.values(this.magicalActions).flatMap(
       (entry): DisplayedActiveMagicalAction[] => entry.activeForDisplay,
     )
+  }
+
+  @computed
+  get activeCount(): number {
+    return sumWith(Object.values(this.magicalActions), entry => entry.activeCount)
   }
 
   @action
