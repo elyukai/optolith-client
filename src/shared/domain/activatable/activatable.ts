@@ -747,7 +747,7 @@ export class CharacterActivatable<
   /**
    * One or multiple activations of the activatable.
    */
-  @observable accessor instances: CharacterActivatableInstance[]
+  @observable accessor instances: CharacterActivatableInstance[] = []
 
   /**
    * The accumulated used adventure points value of all instances.
@@ -1147,7 +1147,7 @@ export class CharacterActivatable<
   /**
    * The activatable's dependencies.
    */
-  @observable accessor dependencies: ActivatableDependency[]
+  @observable accessor dependencies: ActivatableDependency[] = []
 
   /**
    * A list of bound adventure points. Bound adventure points are granted by the
@@ -1155,7 +1155,7 @@ export class CharacterActivatable<
    * buying the activatable entry. They may specify for which configuration of
    * an entry they count, just like a prerequisite.
    */
-  @observable accessor boundAdventurePoints: BoundAdventurePointsForActivatable[]
+  @observable accessor boundAdventurePoints: BoundAdventurePointsForActivatable[] = []
 
   readonly prerequisites: Entity extends "Advantage" | "Disadvantage"
     ? AdvantageDisadvantagePrerequisites
@@ -1164,21 +1164,15 @@ export class CharacterActivatable<
   constructor(
     global: Global,
     character: BaseCharacter,
-    id: string,
     entity: Entity,
+    id: string,
     dbEntry: EntityMap[Entity],
-    instances: SerializedActivatableInstance[],
-    dependencies: ActivatableDependency[],
-    boundAdventurePoints: BoundAdventurePointsForActivatable[],
   ) {
     this.global = global
     this.character = character
     this.entityName = entity
     this.id = id
     this.dbEntry = dbEntry
-    this.instances = instances.map(instance => new CharacterActivatableInstance(instance, this))
-    this.dependencies = dependencies
-    this.boundAdventurePoints = boundAdventurePoints
     this.resolvedSelectOptions = global.cache.activatableSelectOptions[entity][id]
     this.prerequisites = getActivatablePrerequisites(
       this.entityName,
@@ -1187,20 +1181,6 @@ export class CharacterActivatable<
     ) as Entity extends "Advantage" | "Disadvantage"
       ? AdvantageDisadvantagePrerequisites
       : GeneralPrerequisites
-  }
-
-  @action
-  static createEmpty<Entity extends ActivatableIdentifier["kind"]>(
-    global: Global,
-    character: BaseCharacter,
-    entity: Entity,
-    id: string,
-    dbEntry: EntityMap[Entity] | undefined,
-  ): CharacterActivatable<Entity> {
-    if (!dbEntry) {
-      throw new Error(`Attribute with id ${id} not provided.`)
-    }
-    return new CharacterActivatable(global, character, id, entity, dbEntry, [], [], [])
   }
 
   /**
@@ -1897,6 +1877,11 @@ export class CharacterActivatable<
       return true
     })
   }
+
+  @action
+  addOrRemoveDependency(method: RegistrationMethod, dependency: ActivatableDependency) {
+    addOrRemoveDependency(method, this.dependencies, dependency)
+  }
 }
 
 // const checkPrerequisitesForLevel = (entityName: ActivatableIdentifier["kind"], id: string, prerequisites: GeneralPrerequisites | AdvantageDisadvantagePrerequisites, level: number, caps: BaseCharacter["prerequisiteCapabilities"]): boolean =>
@@ -2229,9 +2214,10 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
     for (const container of global.db.getAllInstanceContainersOfEntity(entity)) {
       this.#activatables.set(
         container.id,
-        CharacterActivatable.createEmpty(
+        new CharacterActivatable<Entity>(
           global,
           character,
+          this,
           entity,
           container.id,
           container.content,
@@ -2263,16 +2249,6 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
     return this.#activatables.get(id)?.isActive ?? false
   }
 
-  #createEmpty(
-    id: string,
-    dbEntry: EntityMap[Entity] | undefined = this.global.db.getInstanceOfEntityById(
-      this.#entity,
-      id,
-    ),
-  ): CharacterActivatable<Entity> {
-    return CharacterActivatable.createEmpty(this.global, this.#character, this.#entity, id, dbEntry)
-  }
-
   @computed
   get adventurePointsTotal() {
     return this.#activatables
@@ -2299,10 +2275,6 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
             : acc,
         emptyAdventurePointsCache,
       )
-  }
-
-  #ensureEntryExists(id: string): CharacterActivatable<Entity> {
-    return this.#activatables.getOrInsertComputed(id, () => this.#createEmpty(id))
   }
 
   @computed
@@ -2355,31 +2327,26 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
 
   @action
   add(id: string, instance: SerializedActivatableInstance) {
-    const entry = this.#ensureEntryExists(id)
-    entry.add(instance)
+    this.getById(id)?.add(instance)
   }
 
   @action
   setLevel(id: string, index: number, newLevel: number) {
-    const entry = this.#ensureEntryExists(id)
-    entry.setLevel(index, newLevel)
+    this.getById(id)?.setLevel(index, newLevel)
   }
 
   @action
   remove(id: string, index: number) {
-    const entry = this.#ensureEntryExists(id)
-    entry.remove(index)
+    this.getById(id)?.remove(index)
   }
 
   @action
   bindAdventurePoints(id: string, config: BoundAdventurePointsForActivatable) {
-    const entry = this.#ensureEntryExists(id)
-    entry.boundAdventurePoints.push(config)
+    this.getById(id)?.boundAdventurePoints.push(config)
   }
 
   addOrRemoveDependency(id: string, method: RegistrationMethod, dependency: ActivatableDependency) {
-    const entry = this.#ensureEntryExists(id)
-    addOrRemoveDependency(method, entry.dependencies, dependency)
+    this.getById(id)?.addOrRemoveDependency(method, dependency)
   }
 
   toJSON(): Record<string, RawActivatable> | undefined {
