@@ -735,6 +735,7 @@ export class CharacterActivatable<
   readonly global: Global
   readonly character: BaseCharacter
   readonly entityName: Entity
+  readonly parent: CharacterActivatables<Entity>
 
   /**
    * The activatable identifier.
@@ -1164,12 +1165,14 @@ export class CharacterActivatable<
   constructor(
     global: Global,
     character: BaseCharacter,
+    parent: CharacterActivatables<Entity>,
     entity: Entity,
     id: string,
     dbEntry: EntityMap[Entity],
   ) {
     this.global = global
     this.character = character
+    this.parent = parent
     this.entityName = entity
     this.id = id
     this.dbEntry = dbEntry
@@ -1623,6 +1626,13 @@ export class CharacterActivatable<
         .hasActive
     } else if (this.isOfEntity("PactGift")) {
       return false // TODO: Implement pact gift logic here
+    } else if (this.isOfEntity("Sermon") || this.isOfEntity("Vision")) {
+      // TODO: implement logic for Sermon and Vision prerequisites
+      return (
+        this.character.advantages.isActive(
+          this.global.settings.supernaturalBaseAdvantages.blessed,
+        ) || !this.parent.hasActive
+      )
     }
 
     return true
