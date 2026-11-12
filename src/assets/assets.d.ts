@@ -18,6 +18,17 @@ declare module "*.svg" {
   export default url
 }
 
-declare module "*.scss" {}
+declare module "*.scss" {
+  const url: string
+  export default url
+}
 
-declare module "*.css" {}
+declare module "*.css" {
+  const url: string
+  export default url
+}
+
+declare module "*.jpg" {
+  const url: string
+  export default url
+}

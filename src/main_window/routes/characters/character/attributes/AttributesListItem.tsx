@@ -5,7 +5,6 @@ import { IconButton } from "../../../../../shared/components/iconButton/IconButt
 import { NumberBox } from "../../../../../shared/components/numberBox/NumberBox.tsx"
 import type { DisplayedAttribute } from "../../../../../shared/domain/rated/attribute.ts"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
-import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { AttributeBorder } from "./AttributeBorder.tsx"
@@ -21,12 +20,20 @@ export const AttributeListItem: FC<Props> = observer(props => {
   const { attribute } = props
 
   const translate = useTranslate()
-  const translateMap = useTranslateMap()
-  const translations = translateMap(attribute.translations)
   const { isInCharacterCreation, canRemove } = useCharacterState()
   const actions = useCharacterActions()
 
-  const { id, value, maxValue: maximum, isDecreasable, isIncreasable, color } = attribute
+  const {
+    id,
+    value,
+    maxValue: maximum,
+    isDecreasable,
+    isIncreasable,
+    color,
+    name,
+    abbreviation,
+    description,
+  } = attribute
 
   const valueHeader = isInCharacterCreation ? `${value} / ${maximum}` : value
 
@@ -55,15 +62,15 @@ export const AttributeListItem: FC<Props> = observer(props => {
   return (
     <AttributeBorder
       className={`attr--${toKebabCase(color.kind)}`}
-      label={translations?.abbreviation ?? id}
+      label={abbreviation}
       value={value}
       tooltip={
         <div className="calc-attr-overlay">
           <h4>
-            <span>{translations?.name ?? id}</span>
+            <span>{name}</span>
             <span>{valueHeader}</span>
           </h4>
-          {translations === undefined ? null : <p>{translations.description}</p>}
+          <p>{description}</p>
         </div>
       }
       tooltipMargin={11}

@@ -1,0 +1,26 @@
+table.combat-techniques {
+  td {
+    &.at {
+      border-right: 0.3mm solid grey;
+    }
+  }
+
+  th,
+  td {
+    &.primary {
+      width: 14mm;
+    }
+
+    &.ic,
+    &.value,
+    &.at,
+    &.pa {
+      width: 10mm;
+    }
+
+    &:nth-child(2n + 1),
+    &:last-child {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+}

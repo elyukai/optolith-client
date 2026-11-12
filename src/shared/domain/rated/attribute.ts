@@ -102,12 +102,19 @@ export class CharacterAttribute extends CharacterRatedEntry<"Attribute"> {
     )
   }
 
-  override toJSON(): DisplayedAttribute {
+  override toJSON(): DisplayedAttribute | undefined {
+    const base = super.toJSON()
+    const translation = this.global.locale.translateMap(this.dbEntry.translations)
+
+    if (base === undefined || translation === undefined) {
+      return undefined
+    }
+
     return {
-      ...super.toJSON(),
-      translations: this.dbEntry.translations,
+      ...base,
       color: this.dbEntry.color,
       position: this.dbEntry.position,
+      ...translation,
     }
   }
 }
@@ -120,7 +127,9 @@ export class CharacterAttribute extends CharacterRatedEntry<"Attribute"> {
 export type DisplayedAttribute = DisplayedRated & {
   position: number
   color: Attribute["color"]
-  translations: Attribute["translations"]
+  name: string
+  abbreviation: string
+  description: string
 }
 
 export class CharacterAttributes extends CharacterRatedEntries<"Attribute", CharacterAttribute> {

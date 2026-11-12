@@ -1,6 +1,7 @@
 import { stripInlineMarkdown } from "@elyukai/markdown/render/strip"
 import { findMap } from "@elyukai/utils/array/filters"
 import { sumWith } from "@elyukai/utils/array/reductions"
+import { Lazy } from "@elyukai/utils/lazy"
 import { isNotNullish } from "@elyukai/utils/nullable"
 import { omitUndefinedKeys } from "@elyukai/utils/object"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
@@ -8,6 +9,19 @@ import type { ImprovementCost } from "@optolith/adventure-points/improvement-cos
 import type { MagicalActionIdentifier, SkillCheck } from "@optolith/database-schema/gen"
 import { renderSkillCheckPenalty } from "@optolith/entity-descriptions/entities/partial/rated/skillCheck"
 import { ResponsiveTextSize } from "@optolith/entity-descriptions/entities/partial/responsiveText"
+import {
+  renderAnimistPowerPerformanceParameters,
+  renderBannzeichenPerformanceParameters,
+  renderCursePerformanceParameters,
+  renderDominationRitualPerformanceParameters,
+  renderElvenMagicalSongPerformanceParameters,
+  renderGeodeRitualPerformanceParameters,
+  renderGoblinRitualPerformanceParameters,
+  renderJesterTrickPerformanceParameters,
+  renderMagicalDanceOrMelodyPerformanceParameters,
+  renderMagicalRunePerformanceParameters,
+  renderZibiljaRitualPerformanceParameters,
+} from "@optolith/entity-descriptions/entities/spell"
 import { action, computed } from "mobx"
 import type { Global } from "../../global.ts"
 import { AdventurePointsCache } from "../adventurePoints/cache.ts"
@@ -58,6 +72,13 @@ export abstract class CharacterMagicalAction<
 
   abstract get groupName(): string
 
+  abstract renderParametersForDisplay(): {
+    cost: string
+    castingTime?: string
+    range?: string
+    duration?: string
+  }
+
   override toJSON(): DisplayedMagicalAction<Entity> {
     return {
       ...super.toJSON(),
@@ -73,6 +94,7 @@ export abstract class CharacterMagicalAction<
         this.global.locale.translateMap(
           this.global.db.getInstanceOfEntityById("Property", this.dbEntry.property)?.translations,
         )?.name ?? "",
+      parameters: this.renderParametersForDisplay(),
     }
   }
 }
@@ -93,6 +115,11 @@ export class CharacterAnimistPower extends CharacterMagicalAction<"AnimistPower"
   get groupName(): string {
     return this.global.locale.translate("Animist Powers")
   }
+
+  renderParametersForDisplay() {
+    const env = this.character.spellParameterRenderingEnvironment
+    return renderAnimistPowerPerformanceParameters(this.dbEntry.parameters).run(env)
+  }
 }
 
 export class CharacterBannzeichen extends CharacterMagicalAction<"Bannzeichen"> {
@@ -111,6 +138,16 @@ export class CharacterBannzeichen extends CharacterMagicalAction<"Bannzeichen"> 
   get groupName(): string {
     return this.global.locale.translate("Bannzeichen")
   }
+
+  renderParametersForDisplay() {
+    const env = this.character.spellParameterRenderingEnvironment
+    const options = Lazy.of(() =>
+      this.global.db
+        .getAllChildInstanceContainersForParent("BannzeichenOption", this.id)
+        .map(item => item.content),
+    )
+    return renderBannzeichenPerformanceParameters(options, this.dbEntry.parameters).run(env)
+  }
 }
 
 export class CharacterCurse extends CharacterMagicalAction<"Curse"> {
@@ -119,6 +156,11 @@ export class CharacterCurse extends CharacterMagicalAction<"Curse"> {
   @computed
   get groupName(): string {
     return this.global.locale.translate("Curses")
+  }
+
+  renderParametersForDisplay() {
+    const env = this.character.spellParameterRenderingEnvironment
+    return renderCursePerformanceParameters(this.dbEntry.parameters).run(env)
   }
 }
 
@@ -129,6 +171,11 @@ export class CharacterDominationRitual extends CharacterMagicalAction<"Dominatio
   @computed
   get groupName(): string {
     return this.global.locale.translate("Domination Rituals")
+  }
+
+  renderParametersForDisplay() {
+    const env = this.character.spellParameterRenderingEnvironment
+    return renderDominationRitualPerformanceParameters(this.dbEntry.parameters).run(env)
   }
 }
 
@@ -152,6 +199,11 @@ export class CharacterElvenMagicalSong extends CharacterMagicalAction<"ElvenMagi
   get groupName(): string {
     return this.global.locale.translate("Elven Magical Songs")
   }
+
+  renderParametersForDisplay() {
+    const env = this.character.spellParameterRenderingEnvironment
+    return renderElvenMagicalSongPerformanceParameters(this.dbEntry.parameters).run(env)
+  }
 }
 
 export class CharacterGeodeRitual extends CharacterMagicalAction<"GeodeRitual"> {
@@ -160,6 +212,11 @@ export class CharacterGeodeRitual extends CharacterMagicalAction<"GeodeRitual"> 
   @computed
   get groupName(): string {
     return this.global.locale.translate("Geode Rituals")
+  }
+
+  renderParametersForDisplay() {
+    const env = this.character.spellParameterRenderingEnvironment
+    return renderGeodeRitualPerformanceParameters(this.dbEntry.parameters).run(env)
   }
 }
 
@@ -170,6 +227,11 @@ export class CharacterGoblinRitual extends CharacterMagicalAction<"GoblinRitual"
   get groupName(): string {
     return this.global.locale.translate("Goblin Rituals")
   }
+
+  renderParametersForDisplay() {
+    const env = this.character.spellParameterRenderingEnvironment
+    return renderGoblinRitualPerformanceParameters(this.dbEntry.parameters).run(env)
+  }
 }
 
 export class CharacterJesterTrick extends CharacterMagicalAction<"JesterTrick"> {
@@ -178,6 +240,11 @@ export class CharacterJesterTrick extends CharacterMagicalAction<"JesterTrick"> 
   @computed
   get groupName(): string {
     return this.global.locale.translate("Jester Tricks")
+  }
+
+  renderParametersForDisplay() {
+    const env = this.character.spellParameterRenderingEnvironment
+    return renderJesterTrickPerformanceParameters(this.dbEntry.parameters).run(env)
   }
 }
 
@@ -188,6 +255,11 @@ export class CharacterMagicalDance extends CharacterMagicalAction<"MagicalDance"
   get groupName(): string {
     return this.global.locale.translate("Magical Dances")
   }
+
+  renderParametersForDisplay() {
+    const env = this.character.spellParameterRenderingEnvironment
+    return renderMagicalDanceOrMelodyPerformanceParameters(this.dbEntry.parameters).run(env)
+  }
 }
 
 export class CharacterMagicalMelody extends CharacterMagicalAction<"MagicalMelody"> {
@@ -196,6 +268,11 @@ export class CharacterMagicalMelody extends CharacterMagicalAction<"MagicalMelod
   @computed
   get groupName(): string {
     return this.global.locale.translate("Magical Melodies")
+  }
+
+  renderParametersForDisplay() {
+    const env = this.character.spellParameterRenderingEnvironment
+    return renderMagicalDanceOrMelodyPerformanceParameters(this.dbEntry.parameters).run(env)
   }
 }
 
@@ -215,6 +292,16 @@ export class CharacterMagicalRune extends CharacterMagicalAction<"MagicalRune"> 
   get groupName(): string {
     return this.global.locale.translate("Magical Runes")
   }
+
+  renderParametersForDisplay() {
+    const env = this.character.spellParameterRenderingEnvironment
+    const options = Lazy.of(() =>
+      this.global.db
+        .getAllChildInstanceContainersForParent("MagicalRuneOption", this.id)
+        .map(item => item.content),
+    )
+    return renderMagicalRunePerformanceParameters(options, this.dbEntry.parameters).run(env)
+  }
 }
 
 export class CharacterZibiljaRitual extends CharacterMagicalAction<"ZibiljaRitual"> {
@@ -223,6 +310,11 @@ export class CharacterZibiljaRitual extends CharacterMagicalAction<"ZibiljaRitua
   @computed
   get groupName(): string {
     return this.global.locale.translate("Zibilja Rituals")
+  }
+
+  renderParametersForDisplay() {
+    const env = this.character.spellParameterRenderingEnvironment
+    return renderZibiljaRitualPerformanceParameters(this.dbEntry.parameters).run(env)
   }
 }
 
@@ -238,6 +330,13 @@ export type DisplayedInactiveMagicalAction<
     name: string
     groupName: string
     associatedText: string
+    isUnfamiliar?: undefined
+    parameters: {
+      cost: string
+      castingTime?: string
+      range?: string
+      duration?: string
+    }
   }
 }[Entity]
 
@@ -253,6 +352,13 @@ export type DisplayedActiveMagicalAction<
     name: string
     groupName: string
     associatedText: string
+    isUnfamiliar?: undefined
+    parameters: {
+      cost: string
+      castingTime?: string
+      range?: string
+      duration?: string
+    }
   }
 }[Entity]
 

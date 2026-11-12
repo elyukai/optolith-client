@@ -1,0 +1,214 @@
+/* #sheets {
+  .scroll-inner {
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
+  }
+} */
+
+table {
+  border-spacing: 0;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.sheet:hover .has-sheet-inline-info {
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--link);
+}
+
+@media print {
+  .has-sheet-inline-info {
+    text-decoration: none;
+  }
+}
+
+.print-document {
+  margin-top: 0;
+}
+
+.sheet-wrapper {
+  display: flex;
+
+  &:not(:first-child):not(.scroll) {
+    margin-top: 24px;
+  }
+
+  &.zoom-100 {
+    .sheet-wrapper {
+      width: 21cm;
+      height: 29.7cm;
+
+      .sheet {
+        transform: scale(1);
+      }
+    }
+  }
+
+  &.zoom-125 {
+    .sheet-wrapper {
+      width: 26.25cm;
+      height: 37.125cm;
+
+      .sheet {
+        transform: scale(1.25);
+      }
+    }
+  }
+
+  &.zoom-150 {
+    .sheet-wrapper {
+      width: 31.5cm;
+      height: 44.55cm;
+
+      .sheet {
+        transform: scale(1.5);
+      }
+    }
+  }
+
+  &.zoom-175 {
+    .sheet-wrapper {
+      width: 31.5cm;
+      height: 51.975cm;
+
+      .sheet {
+        transform: scale(1.75);
+      }
+    }
+  }
+
+  &.zoom-200 {
+    .sheet-wrapper {
+      width: 42cm;
+      height: 58.74cm;
+
+      .sheet {
+        transform: scale(2);
+      }
+    }
+  }
+
+  .sheet {
+    transform-origin: top left;
+    flex: none;
+    width: 21cm;
+    height: 29.7cm;
+    background: white;
+    text-align: left;
+    padding: 8.5mm;
+    font: 9pt/16px Alegreya;
+    color: black;
+    letter-spacing: 0;
+    display: flex;
+    flex-direction: column;
+    user-select: text;
+    position: relative;
+    overflow: hidden;
+
+    * {
+      user-select: text;
+    }
+
+    ::selection {
+      background: var(--selection-color);
+      color: var(--headings-color);
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: black;
+      margin: 0;
+    }
+
+    h1 {
+      font: italic bold 18pt/0.9 Alegreya;
+    }
+
+    h2 {
+      font: 17px/13px "Alegreya SC";
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font: bold 16px Alegreya;
+      letter-spacing: 0;
+      width: 100%;
+      margin-top: 4mm;
+      margin-bottom: 1mm;
+    }
+
+    th,
+    td {
+      border-style: solid;
+      border-color: #c8c8c8;
+      border-width: 0;
+      padding: 0 1mm;
+      white-space: nowrap;
+
+      &:not(.name, .notes) {
+        text-align: center;
+      }
+    }
+
+    th {
+      height: 5mm;
+      border-width: 0.75pt 0;
+      font: bold 8pt/9pt "Alegreya SC";
+      border-color: grey;
+      padding-block: 0.5mm;
+    }
+
+    td {
+      height: 4.5mm;
+      border-width: 0 0 0.25pt;
+      font: 500 9pt "Alegreya Sans";
+      vertical-align: middle;
+
+      &.name {
+        font-weight: 500;
+      }
+
+      &.value,
+      &.sr {
+        font-weight: 700;
+      }
+
+      &.check,
+      &.enc,
+      &.primary,
+      &.ic {
+        font-family: "Alegreya SC";
+        font-size: 7.5pt;
+      }
+    }
+
+    > img.background {
+      display: none;
+      position: absolute;
+      width: 100%;
+      height: auto;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    &.paper {
+      background-image: url("../../../../../assets/images/Character-Sheet-Background.jpg");
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+  }
+}
+
+.sheet-options {
+  flex: none;
+  margin-right: 24px;
+}
+
+p.maptool-hint {
+  margin: 0 0 0.5rem;
+}

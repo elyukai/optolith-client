@@ -8,7 +8,17 @@ import {
   compareImprovementCost,
   type ImprovementCost,
 } from "@optolith/adventure-points/improvement-cost"
-import type { Property_ID, SkillCheck, SpellworkIdentifier } from "@optolith/database-schema/gen"
+import type {
+  Property_ID,
+  Ritual,
+  SkillCheck,
+  Spell,
+  SpellworkIdentifier,
+} from "@optolith/database-schema/gen"
+import {
+  renderFastPerformanceParameters,
+  renderSlowPerformanceParameters,
+} from "@optolith/entity-descriptions/entities/partial/rated/activatable/index"
 import { renderSkillCheckPenalty } from "@optolith/entity-descriptions/entities/partial/rated/skillCheck"
 import { ResponsiveTextSize } from "@optolith/entity-descriptions/entities/partial/responsiveText"
 import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
@@ -216,6 +226,17 @@ export class CharacterSpellwork<
         this.global.locale.translateMap(
           this.global.db.getInstanceOfEntityById("Property", this.dbEntry.property)?.translations,
         )?.name ?? "",
+      parameters: (() => {
+        const env = this.character.spellParameterRenderingEnvironment
+        switch (this.entityName) {
+          case "Spell":
+            return renderFastPerformanceParameters((this.dbEntry as Spell).parameters).run(env)
+          case "Ritual":
+            return renderSlowPerformanceParameters((this.dbEntry as Ritual).parameters).run(env)
+          default:
+            return assertExhaustive(this.entityName)
+        }
+      })(),
     }
   }
 
@@ -301,6 +322,12 @@ export type DisplayedInactiveSpellwork<Entity extends "Spell" | "Ritual" = "Spel
     name: string
     groupName: string
     associatedText: string
+    parameters: {
+      cost: string
+      castingTime: string
+      range: string
+      duration: string
+    }
   }
 }[Entity]
 
@@ -315,6 +342,12 @@ export type DisplayedActiveSpellwork<Entity extends "Spell" | "Ritual" = "Spell"
     name: string
     groupName: string
     associatedText: string
+    parameters: {
+      cost: string
+      castingTime: string
+      range: string
+      duration: string
+    }
   }
 }[Entity]
 

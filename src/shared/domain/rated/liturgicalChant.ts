@@ -13,10 +13,16 @@ import type {
   Aspect_ID,
   BlessedTradition_ID,
   Blessing_ID,
+  Ceremony,
+  LiturgicalChant,
   LiturgyIdentifier,
   LiturgyTradition,
   SkillCheck,
 } from "@optolith/database-schema/gen"
+import {
+  renderFastPerformanceParameters,
+  renderSlowPerformanceParameters,
+} from "@optolith/entity-descriptions/entities/partial/rated/activatable/index"
 import { renderSkillCheckPenalty } from "@optolith/entity-descriptions/entities/partial/rated/skillCheck"
 import { ResponsiveTextSize } from "@optolith/entity-descriptions/entities/partial/responsiveText"
 import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/publication-options"
@@ -184,6 +190,19 @@ export class CharacterLiturgicalChant<
             )
               .toSorted(this.global.locale.compare)
               .join(", "),
+      parameters: (() => {
+        const env = this.character.liturgicalChantParameterRenderingEnvironment
+        switch (this.entityName) {
+          case "LiturgicalChant":
+            return renderFastPerformanceParameters(
+              (this.dbEntry as LiturgicalChant).parameters,
+            ).run(env)
+          case "Ceremony":
+            return renderSlowPerformanceParameters((this.dbEntry as Ceremony).parameters).run(env)
+          default:
+            return assertExhaustive(this.entityName)
+        }
+      })(),
     }
   }
 
@@ -304,6 +323,12 @@ export type DisplayedInactiveLiturgicalChant<
     name: string
     groupName: string
     associatedText: string
+    parameters: {
+      cost: string
+      castingTime: string
+      range: string
+      duration: string
+    }
   }
 }[Entity]
 
@@ -319,6 +344,12 @@ export type DisplayedActiveLiturgicalChant<
     name: string
     groupName: string
     associatedText: string
+    parameters: {
+      cost: string
+      castingTime: string
+      range: string
+      duration: string
+    }
   }
 }[Entity]
 

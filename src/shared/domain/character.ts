@@ -21,6 +21,7 @@ import type {
   SkillWithEnhancementsIdentifier,
   TinyActivatableIdentifier,
 } from "@optolith/database-schema/gen"
+import { ResponsiveTextSize } from "@optolith/entity-descriptions/entities/partial/responsiveText"
 import { action, computed, observable } from "mobx"
 import { Case } from "tsondb/schema/gen"
 import type { SerializedSelectedRCPOptions } from "../../main_window/routes/characters/character/raceCultureProfession/RCPOptionSelections/SelectedRCPOptions.ts"
@@ -44,7 +45,7 @@ import {
 } from "./culture.ts"
 import { CharacterCurriculum } from "./curriculum.ts"
 import { fromUniformCase } from "./databaseEnum.ts"
-import { CharacterDerivedCharacteristics } from "./energy.ts"
+import { CharacterDerivedCharacteristics, type CharacterEnergy } from "./energy.ts"
 import { CharacterExperienceLevel } from "./experienceLevel.ts"
 import type { CharacterPact } from "./pact.ts"
 import { CharacterPersonalData } from "./personalData.ts"
@@ -594,6 +595,13 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
   }
 
   @computed
+  get associatedMagicalEnergy(): CharacterEnergy | undefined {
+    return this.derivedCharacteristics.getEnergyById(
+      this.global.settings.spellworks.associatedEnergy,
+    )
+  }
+
+  @computed
   get isBlessedOne(): boolean {
     return (
       this.advantages.isActive(this.global.settings.supernaturalBaseAdvantages.blessed) &&
@@ -628,6 +636,40 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
           option.type === "Predefined" && option.id.kind === "Aspect" ? [option.id.Aspect] : [],
         ) ?? []
     )
+  }
+
+  @computed
+  get associatedBlessedEnergy(): CharacterEnergy | undefined {
+    return this.derivedCharacteristics.getEnergyById(
+      this.global.settings.liturgicalChants.associatedEnergy,
+    )
+  }
+
+  @computed
+  get liturgicalChantParameterRenderingEnvironment() {
+    return {
+      format: this.global.locale.format,
+      translate: this.global.locale.translate,
+      translateMap: this.global.locale.translateMap,
+      localeJoin: this.global.locale.join,
+      energyUnit: "KarmaPoints" as const,
+      getInstanceById: this.global.db.getInstanceOfEntityById.bind(this.global.db),
+      responsiveTextSize: ResponsiveTextSize.Compressed,
+    }
+  }
+
+  @computed
+  get spellParameterRenderingEnvironment() {
+    return {
+      format: this.global.locale.format,
+      translate: this.global.locale.translate,
+      translateMap: this.global.locale.translateMap,
+      localeJoin: this.global.locale.join,
+      localeCompare: this.global.locale.compare,
+      energyUnit: "ArcaneEnergy" as const,
+      getInstanceById: this.global.db.getInstanceOfEntityById.bind(this.global.db),
+      responsiveTextSize: ResponsiveTextSize.Compressed,
+    }
   }
 
   @action
@@ -1005,10 +1047,13 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
       activeDisadvantages: () => this.disadvantages.activeForDisplay,
       inactiveDisadvantages: () => this.disadvantages.inactive,
       skills: () => this.skills.skills,
+      skillsByGroup: () => this.skills.skillsByGroup,
       closeCombatTechniques: () => this.closeCombatTechniques.combatTechniques,
       rangedCombatTechniques: () => this.rangedCombatTechniques.combatTechniques,
       isSpellcaster: () => this.isSpellcaster,
       isBlessedOne: () => this.isBlessedOne,
+      associatedMagicalEnergy: () => this.associatedMagicalEnergy?.forDisplay(),
+      associatedBlessedEnergy: () => this.associatedBlessedEnergy?.forDisplay(),
       inactiveCantrips: () => this.cantrips.inactiveForDisplay,
       inactiveSpells: () => this.spells.inactiveForDisplay,
       inactiveRituals: () => this.rituals.inactiveForDisplay,

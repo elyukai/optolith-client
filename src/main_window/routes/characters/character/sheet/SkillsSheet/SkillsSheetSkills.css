@@ -1,0 +1,38 @@
+#skills-sheet .upper {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+
+  table.skills {
+    width: 50%;
+
+    &:first-child td:last-child {
+      border-right: 0.3mm solid grey;
+    }
+
+    th {
+      text-align: center;
+    }
+
+    tr.group td {
+      font-weight: bold;
+    }
+
+    th,
+    td {
+      &.sr,
+      &.ic,
+      &.routine {
+        width: 6mm;
+      }
+
+      &.comment {
+        width: 20mm;
+      }
+
+      &:nth-child(2n) {
+        background: rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+}

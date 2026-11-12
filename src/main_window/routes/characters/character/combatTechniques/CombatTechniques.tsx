@@ -52,9 +52,10 @@ export const CombatTechniques: FC = observer(function CombatTechniques() {
     (id: CombatTechniquesSortOrder) => dispatch(changeCombatTechniquesSortOrder(id)),
     [dispatch],
   )
-  const visibleCombatTechniques = (closeCombatTechniques as DisplayedCombatTechnique[]).concat(
-    rangedCombatTechniques,
-  )
+  const visibleCombatTechniques: DisplayedCombatTechnique[] = [
+    ...closeCombatTechniques,
+    ...rangedCombatTechniques,
+  ]
   const list = useMemo(
     () =>
       visibleCombatTechniques

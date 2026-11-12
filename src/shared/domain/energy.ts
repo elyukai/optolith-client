@@ -47,6 +47,7 @@ export type DisplayedDerivedCharacteristicBase = {
   abbreviation: string
   unitAbbreviation?: string
   description?: string
+  isCombatRelated: boolean
 }
 
 export type DisplayedDerivedCharacteristic = DisplayedDerivedCharacteristicBase
@@ -227,6 +228,7 @@ export class CharacterDerivedCharacteristic {
       abbreviation: translation.abbreviation,
       unitAbbreviation: translation.unitAbbreviation,
       description: translation.description,
+      isCombatRelated: this.dbEntry.isCombatRelated,
     }
   }
 }
@@ -423,6 +425,7 @@ export class CharacterEnergy extends CharacterDerivedCharacteristic {
       abbreviation: translation.abbreviation,
       unitAbbreviation: translation.unitAbbreviation,
       description: translation.description,
+      isCombatRelated: this.dbEntry.isCombatRelated,
     }
   }
 

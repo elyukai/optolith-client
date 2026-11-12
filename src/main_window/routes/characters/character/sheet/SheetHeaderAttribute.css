@@ -1,0 +1,68 @@
+.sheet-attribute {
+  flex: none;
+  outline-width: 0.55mm;
+  outline-style: solid;
+  outline-color: transparent;
+  border: 0.3mm solid black;
+  width: calc((var(--stretch, 1) * (var(--size) + var(--gap)) - var(--gap)));
+  height: var(--size);
+
+  &.sheet-attribute--red {
+    outline-color: red;
+  }
+
+  &.sheet-attribute--purple {
+    outline-color: #90c;
+  }
+
+  &.sheet-attribute--green {
+    outline-color: #3c3;
+  }
+
+  &.sheet-attribute--black {
+    outline-color: black;
+  }
+
+  &.sheet-attribute--yellow {
+    outline-color: yellow;
+  }
+
+  &.sheet-attribute--blue {
+    outline-color: blue;
+  }
+
+  &.sheet-attribute--white {
+    outline-color: white;
+  }
+
+  &.sheet-attribute--orange {
+    outline-color: #f60;
+  }
+
+  &.sheet-attribute--orange,
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &.sheet-attribute--stretch {
+    flex: 1 1 0;
+    width: auto;
+  }
+
+  .label {
+    font: bold 8pt/1.2 Alegreya;
+    color: black;
+    letter-spacing: 0.05em;
+    display: block;
+    top: 0;
+    padding: 0.6mm 1.1mm 0;
+  }
+
+  .value {
+    text-align: center;
+    font: bold 16pt/1.2 Alegreya Sans;
+    color: black;
+    letter-spacing: 0.05em;
+    display: block;
+  }
+}

@@ -1,7 +1,6 @@
 import { sumWith } from "@elyukai/utils/array/reductions"
 import type { ImprovementCost } from "@optolith/adventure-points/improvement-cost"
 import type { Attribute, CombatTechniqueIdentifier } from "@optolith/database-schema/gen"
-import { MISSING_VALUE } from "@optolith/entity-descriptions/entities/partial/unknown"
 import { computed } from "mobx"
 import { Case } from "../databaseEnum.ts"
 import {
@@ -90,16 +89,23 @@ export class CharacterCombatTechnique<
     return undefined
   }
 
-  override toJSON(): DisplayedCombatTechnique<Entity> {
+  override toJSON(): DisplayedCombatTechnique<Entity> | undefined {
+    const base = super.toJSON()
+    const translation = this.global.locale.translateMap(this.dbEntry.translations)
+
+    if (base === undefined || translation === undefined) {
+      return undefined
+    }
+
     return {
-      ...super.toJSON(),
+      ...base,
       groupPosition: this.entityName === "CloseCombatTechnique" ? 0 : 1,
       type: this.entityName,
       primaryAttributeValues: this.primaryAttributeValues,
       attackBase: this.attackBase,
       parryBase: this.parryBase,
       improvementCost: this.improvementCost,
-      name: this.global.locale.translateMap(this.dbEntry.translations)?.name ?? MISSING_VALUE,
+      name: translation.name,
     }
   }
 

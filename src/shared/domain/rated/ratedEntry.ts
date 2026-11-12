@@ -1,6 +1,6 @@
 import { ensureNonEmpty } from "@elyukai/utils/array/nonEmpty"
 import { count } from "@elyukai/utils/array/reductions"
-import { nullableToArray } from "@elyukai/utils/nullable"
+import { isNotNullish, nullableToArray } from "@elyukai/utils/nullable"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import {
   improvementCostToLinearNumber,
@@ -138,7 +138,7 @@ export abstract class CharacterAnyRatedEntry<
     )
   }
 
-  abstract toJSON(): { id: string }
+  abstract toJSON(): { id: string } | undefined
 
   getAssociatedAttributeValues(attributeIds: Gen.Attribute_ID[]) {
     return attributeIds.map(attributeId => {
@@ -301,7 +301,7 @@ export abstract class CharacterRatedEntry<
     )
   }
 
-  toJSON(): DisplayedRated {
+  toJSON(): DisplayedRated | undefined {
     return {
       id: this.id,
       value: this.value,
@@ -731,7 +731,7 @@ export abstract class CharacterRatedEntries<
   }
 
   @computed
-  get entries() {
+  get entries(): NonNullable<ReturnType<T["toJSON"]>>[] {
     return this.rated
       .values()
       .filter(rated =>
@@ -743,6 +743,7 @@ export abstract class CharacterRatedEntries<
         ),
       )
       .map((rated): ReturnType<T["toJSON"]> => rated.toJSON() as ReturnType<T["toJSON"]>)
+      .filter(isNotNullish)
       .toArray()
   }
 

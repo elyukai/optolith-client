@@ -3,7 +3,6 @@ import { minus } from "@elyukai/utils/string/number"
 import type { SkillCheck as SkillCheckType } from "@optolith/database-schema/gen"
 import { observer } from "mobx-react-lite"
 import type { FC } from "react"
-import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 
 type Props = {
@@ -18,8 +17,6 @@ type Props = {
  */
 export const SkillCheck: FC<Props> = observer(function SkillCheck(props) {
   const { check, checkPenalty } = props.entry
-
-  const translateMap = useTranslateMap()
   const { attributes } = useCharacterState()
 
   return (
@@ -36,7 +33,7 @@ export const SkillCheck: FC<Props> = observer(function SkillCheck(props) {
             key={`${id}-${index + 1}`}
             className={`check attr--${toCamelCase(entry.color.kind)}`}
           >
-            <span className="short">{translateMap(entry.translations)?.abbreviation ?? "??"}</span>
+            <span className="short">{entry.abbreviation}</span>
             <span className="value">{entry.value}</span>
           </div>
         )

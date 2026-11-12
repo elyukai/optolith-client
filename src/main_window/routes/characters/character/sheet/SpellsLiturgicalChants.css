@@ -1,0 +1,42 @@
+table.spells,
+table.liturgical-chants {
+  th {
+    &.cost,
+    &.cast-time,
+    &.range,
+    &.duration {
+      hyphens: auto;
+      white-space: normal;
+      text-wrap: balance;
+    }
+  }
+
+  th,
+  td {
+    &:nth-child(2n + 1) {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    &.cost,
+    &.cast-time,
+    &.range,
+    &.duration {
+      width: 18mm;
+    }
+
+    &.check,
+    &.property,
+    &.aspect {
+      width: 14mm;
+    }
+
+    &.value,
+    &.ic {
+      width: 6mm;
+    }
+
+    &.unfamiliar {
+      font-style: italic;
+    }
+  }
+}

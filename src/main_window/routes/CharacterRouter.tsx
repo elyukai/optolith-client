@@ -19,6 +19,7 @@ import { Cultures } from "./characters/character/raceCultureProfession/Cultures.
 import { Professions } from "./characters/character/raceCultureProfession/Professions.tsx"
 import { Races } from "./characters/character/raceCultureProfession/Races.tsx"
 import { Rules } from "./characters/character/rules/Rules.tsx"
+import { Sheets } from "./characters/character/sheet/Sheets.tsx"
 import { Skills } from "./characters/character/skills/Skills.tsx"
 import { SpecialAbilities } from "./characters/character/specialAbilities/SpecialAbilities.tsx"
 import { Spells } from "./characters/character/spells/Spells.tsx"
@@ -71,7 +72,7 @@ export const CharacterRouter: FC<{
           case "personal_data":
             return null
           case "character_sheet":
-            return null
+            return <Sheets />
           case "pact":
             return null
           case "rules":
