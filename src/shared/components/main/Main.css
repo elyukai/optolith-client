@@ -9,7 +9,19 @@ main,
   margin-left: 24px;
   overflow-x: hidden;
 
+  @media print {
+    margin-left: 0;
+    display: block;
+    width: auto;
+    height: auto;
+    overflow: auto;
+  }
+
   &:has(> .scroll) {
     margin-left: 21px;
+
+    @media print {
+      margin-left: 0;
+    }
   }
 }

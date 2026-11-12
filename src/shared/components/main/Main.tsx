@@ -1,5 +1,5 @@
 import type { FCC } from "../../utils/react.ts"
-import "./Main.scss"
+import "./Main.css"
 
 type Props = {
   classOnly?: boolean

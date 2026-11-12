@@ -4,10 +4,21 @@
   width: 100%;
   height: 100%;
 
+  @media print {
+    padding: 0;
+    width: auto;
+    height: auto;
+  }
+
   > .scroll-area {
     overflow: auto;
     height: 100%;
     width: 100%;
+
+    @media print {
+      width: auto;
+      height: auto;
+    }
 
     &.scroll-area--stable {
       scrollbar-gutter: stable;
@@ -50,6 +61,10 @@
 
     :is(main, .main-content) > & > .scroll-inner {
       padding: 21px 21px 21px 0;
+
+      @media print {
+        padding: 0;
+      }
     }
   }
 }

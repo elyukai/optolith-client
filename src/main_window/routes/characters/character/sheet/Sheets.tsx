@@ -9,6 +9,7 @@ import { Options } from "../../../../../shared/components/options/Options.tsx"
 import { Page } from "../../../../../shared/components/page/Page.tsx"
 import { Scroll } from "../../../../../shared/components/scroll/Scroll.tsx"
 import { useTranslate } from "../../../../../shared/hooks/translate.ts"
+import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux.ts"
 import { InlineLibrary } from "../../../../inlineLibrary/InlineLibrary.tsx"
@@ -29,6 +30,7 @@ import { SpellsSheet } from "./SpellsSheet/SpellsSheet.tsx"
 
 export const Sheets: FC = observer(function Shee() {
   const translate = useTranslate()
+  const { printToPDF } = useCharacterActions()
   const { isBlessedOne, isSpellcaster } = useCharacterState()
 
   const dispatch = useAppDispatch()
@@ -44,7 +46,7 @@ export const Sheets: FC = observer(function Shee() {
   return (
     <Page id="sheets">
       <Options>
-        <Button>{translate("Print to PDF")}</Button>
+        <Button onClick={() => printToPDF()}>{translate("Print to PDF")}</Button>
         {/* <BorderButton
           className="export-rptok"
           label={translate(staticData)("sheets.exportasrptokbtn")}

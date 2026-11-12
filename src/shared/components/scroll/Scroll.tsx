@@ -1,6 +1,6 @@
 import { classList } from "@elyukai/utils/classList"
 import type { FCC } from "../../utils/react.ts"
-import "./Scroll.scss"
+import "./Scroll.css"
 
 interface Props {
   className?: string

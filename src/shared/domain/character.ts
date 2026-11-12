@@ -22,7 +22,9 @@ import type {
   TinyActivatableIdentifier,
 } from "@optolith/database-schema/gen"
 import { ResponsiveTextSize } from "@optolith/entity-descriptions/entities/partial/responsiveText"
+import { BrowserWindow, dialog } from "electron/main"
 import { action, computed, observable } from "mobx"
+import { writeFile } from "node:fs/promises"
 import { Case } from "tsondb/schema/gen"
 import type { SerializedSelectedRCPOptions } from "../../main_window/routes/characters/character/raceCultureProfession/RCPOptionSelections/SelectedRCPOptions.ts"
 import type { CharacterRoutePath, RoutePath } from "../../main_window/slices/routeSlice.ts"
@@ -685,6 +687,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
 
   @action
   handleIPCAction(
+    event: Electron.IpcMainEvent,
     ...args: StateActionsAsParameters<CharacterIPCActions>
     // oxlint-disable-next-line typescript/no-invalid-void-type
   ): void | { transformedCharacter?: Character; newRoute?: CharacterRoutePath } {
@@ -970,6 +973,48 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
         )
       case "removeActivatable":
         return this.getActivatableCollection(args[1][0])?.remove(args[1][1], args[1][2])
+      case "printToPDF": {
+        const window = BrowserWindow.fromWebContents(event.sender)
+        event.sender
+          .printToPDF({
+            margins: {
+              bottom: 0,
+              left: 0,
+              right: 0,
+              top: 0,
+            },
+            pageSize: "A4",
+            printBackground: true,
+            preferCSSPageSize: true,
+          })
+          .then(async data => {
+            const options: Electron.SaveDialogOptions = {
+              title: this.global.locale.translate("Save Character Sheet as PDF"),
+              defaultPath: `${this.name}.pdf`,
+              filters: [{ name: "PDF", extensions: ["pdf"] }],
+            }
+            const result = await (window === null
+              ? dialog.showSaveDialog(options)
+              : dialog.showSaveDialog(window, options))
+            if (!result.canceled) {
+              const path = result.filePath
+              await writeFile(path, data)
+              const messageOptions: Electron.MessageBoxOptions = {
+                message: this.global.locale.translate("Character Sheet saved as PDF"),
+              }
+              await (window === null
+                ? dialog.showMessageBox(messageOptions)
+                : dialog.showMessageBox(window, messageOptions))
+            }
+          })
+          .catch(error => {
+            dialog.showErrorBox(
+              this.global.locale.translate("Error during save"),
+              error?.toString() ?? "",
+            )
+          })
+        return
+      }
       default:
         return assertExhaustive(args)
     }
@@ -1901,10 +1946,11 @@ export class Characters {
 
   @action
   handleIPCAction(
+    event: Electron.IpcMainEvent,
     id: string,
     ...args: StateActionsAsParameters<CharacterIPCActions>
   ): void | RoutePath {
-    const result = this.characters.get(id)?.handleIPCAction(...args)
+    const result = this.characters.get(id)?.handleIPCAction(event, ...args)
 
     if (result !== undefined) {
       if (result.transformedCharacter !== undefined) {

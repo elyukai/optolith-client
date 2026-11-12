@@ -115,3 +115,36 @@ ul {
     }
   }
 }
+
+@media print {
+  body {
+    background: white;
+  }
+
+  html, body, #root, #body, #content, .page, main, .main-content {
+    overflow: auto;
+    height: auto;
+    width: auto;
+    display: block;
+  }
+
+  .background-image,
+  #content > nav,
+  aside.options,
+  aside.inline-library,
+  .titlebar {
+    display: none;
+  }
+
+  main:has(> .scroll) {
+    margin: 0;
+  }
+
+  .scroll {
+    padding: 0;
+
+    > .scroll-area {
+      overflow: visible;
+    }
+  }
+}

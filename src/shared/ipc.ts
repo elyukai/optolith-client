@@ -79,6 +79,7 @@ export type CharacterIPCActions = {
     newLevel: number,
   ) => void
   removeActivatable: (entity: Gen.ActivatableIdentifier["kind"], id: string, index: number) => void
+  printToPDF: () => void
 }
 
 type Selectors = Character["selectors"]

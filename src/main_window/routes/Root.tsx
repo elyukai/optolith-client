@@ -8,7 +8,7 @@ import { ExternalAPI } from "../external.ts"
 import { useAppSelector } from "../hooks/redux.ts"
 import { selectAreAnimationsEnabled } from "../slices/settingsSlice.ts"
 import { Alerts } from "./Alerts.tsx"
-import "./Root.scss"
+import "./Root.css"
 import { Router } from "./Router.tsx"
 
 /**

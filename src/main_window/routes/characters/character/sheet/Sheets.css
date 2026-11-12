@@ -6,6 +6,10 @@
   }
 } */
 
+@page {
+  margin: 0;
+}
+
 table {
   border-spacing: 0;
   white-space: nowrap;
@@ -31,61 +35,67 @@ table {
 .sheet-wrapper {
   display: flex;
 
+  @media print {
+    display: block;
+  }
+
   &:not(:first-child):not(.scroll) {
     margin-top: 24px;
   }
 
-  &.zoom-100 {
-    .sheet-wrapper {
-      width: 21cm;
-      height: 29.7cm;
+  @media not print {
+    &.zoom-100 {
+      .sheet-wrapper {
+        width: 21cm;
+        height: 29.7cm;
 
-      .sheet {
-        transform: scale(1);
+        .sheet {
+          transform: scale(1);
+        }
       }
     }
-  }
 
-  &.zoom-125 {
-    .sheet-wrapper {
-      width: 26.25cm;
-      height: 37.125cm;
+    &.zoom-125 {
+      .sheet-wrapper {
+        width: 26.25cm;
+        height: 37.125cm;
 
-      .sheet {
-        transform: scale(1.25);
+        .sheet {
+          transform: scale(1.25);
+        }
       }
     }
-  }
 
-  &.zoom-150 {
-    .sheet-wrapper {
-      width: 31.5cm;
-      height: 44.55cm;
+    &.zoom-150 {
+      .sheet-wrapper {
+        width: 31.5cm;
+        height: 44.55cm;
 
-      .sheet {
-        transform: scale(1.5);
+        .sheet {
+          transform: scale(1.5);
+        }
       }
     }
-  }
 
-  &.zoom-175 {
-    .sheet-wrapper {
-      width: 31.5cm;
-      height: 51.975cm;
+    &.zoom-175 {
+      .sheet-wrapper {
+        width: 31.5cm;
+        height: 51.975cm;
 
-      .sheet {
-        transform: scale(1.75);
+        .sheet {
+          transform: scale(1.75);
+        }
       }
     }
-  }
 
-  &.zoom-200 {
-    .sheet-wrapper {
-      width: 42cm;
-      height: 58.74cm;
+    &.zoom-200 {
+      .sheet-wrapper {
+        width: 42cm;
+        height: 58.74cm;
 
-      .sheet {
-        transform: scale(2);
+        .sheet {
+          transform: scale(2);
+        }
       }
     }
   }

@@ -215,6 +215,7 @@ app.whenReady().then(async () => {
   if (!installUpdateInsteadOfStartup) {
     const handleGlobalIPCAction = action(
       (
+        event: Electron.IpcMainEvent,
         ...args: StateActionsAsParameters<GlobalIPCActions>
       ): Promise<void | RoutePath> | void | RoutePath => {
         debug("execute global ipc action %s with parameters %o", args[0], args[1])
@@ -237,7 +238,7 @@ app.whenReady().then(async () => {
             return ["characters", char.id, "race"]
           }
           default:
-            newCharacter.newCharacter.handleIPCAction(...args)
+            newCharacter.newCharacter.handleIPCAction(event, ...args)
         }
       },
     )
@@ -273,7 +274,7 @@ app.whenReady().then(async () => {
     attachStateActionHandlersToMain<GlobalIPCActions>(
       ipcMain,
       (event, ...args) => {
-        const result = handleGlobalIPCAction(...args)
+        const result = handleGlobalIPCAction(event, ...args)
         if (result instanceof Promise) {
           result.then(resolved => {
             if (resolved !== undefined) {
@@ -291,7 +292,7 @@ app.whenReady().then(async () => {
     attachKeyedStateActionHandlersToMain<CharacterIPCActions>(
       ipcMain,
       (event, id, ...args) => {
-        const result = characters.handleIPCAction(id, ...args)
+        const result = characters.handleIPCAction(event, id, ...args)
         if (result instanceof Promise) {
           result.then(resolved => {
             if (resolved !== undefined) {
