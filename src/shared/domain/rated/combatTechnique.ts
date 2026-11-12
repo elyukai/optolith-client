@@ -158,6 +158,22 @@ export class CharacterCombatTechniques<
   // TODO: Feuerspeien should only be available with special ability, and special ability should not be removable if there are any points in Feuerspeien.
 }
 
+export class CharacterCloseCombatTechniques extends CharacterCombatTechniques<"CloseCombatTechnique"> {
+  constructor(
+    ...args: ConsParamsTrim<typeof CharacterCombatTechniques<"CloseCombatTechnique">, 1>
+  ) {
+    super("CloseCombatTechnique", ...args)
+  }
+}
+
+export class CharacterRangedCombatTechniques extends CharacterCombatTechniques<"RangedCombatTechnique"> {
+  constructor(
+    ...args: ConsParamsTrim<typeof CharacterCombatTechniques<"RangedCombatTechnique">, 1>
+  ) {
+    super("RangedCombatTechnique", ...args)
+  }
+}
+
 const getPrimaryAttributeModifier = (values: number[]): number =>
   // return +1 for every 3 points above 8
   Math.max(Math.floor((Math.max(...values) - 8) / 3), 0)

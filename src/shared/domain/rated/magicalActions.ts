@@ -507,46 +507,53 @@ export class CharacterMagicalActionCollections {
     ZibiljaRitual: CharacterZibiljaRitualCollection
   }
 
-  constructor(
-    global: Global,
-    character: BaseCharacter,
-    raw?: {
-      // TODO: AnimistPower
-      // TODO: Bannzeichen
-      Curse?: Record<string, { value: number }>
-      DominationRitual?: Record<string, { value: number }>
-      ElvenMagicalSong?: Record<string, { value: number }>
-      GeodeRitual?: Record<string, { value: number }>
-      GoblinRitual?: Record<string, { value: number }>
-      JesterTrick?: Record<string, { value: number }>
-      MagicalDance?: Record<string, { value: number }>
-      MagicalMelody?: Record<string, { value: number }>
-      // TODO: MagicalRune
-      ZibiljaRitual?: Record<string, { value: number }>
-    },
-  ) {
+  constructor(global: Global, character: BaseCharacter) {
     this.magicalActions = {
       // TODO: AnimistPower: new CharacterAnimistPowerCollection(global, character, raw?.AnimistPower),
       // TODO: Bannzeichen: new CharacterBannzeichenCollection(global, character, raw?.Bannzeichen),
-      Curse: new CharacterCurseCollection(global, character, raw?.Curse),
-      DominationRitual: new CharacterDominationRitualCollection(
-        global,
-        character,
-        raw?.DominationRitual,
-      ),
-      ElvenMagicalSong: new CharacterElvenMagicalSongCollection(
-        global,
-        character,
-        raw?.ElvenMagicalSong,
-      ),
-      GeodeRitual: new CharacterGeodeRitualCollection(global, character, raw?.GeodeRitual),
-      GoblinRitual: new CharacterGoblinRitualCollection(global, character, raw?.GoblinRitual),
-      JesterTrick: new CharacterJesterTrickCollection(global, character, raw?.JesterTrick),
-      MagicalDance: new CharacterMagicalDanceCollection(global, character, raw?.MagicalDance),
-      MagicalMelody: new CharacterMagicalMelodyCollection(global, character, raw?.MagicalMelody),
-      // TODO: MagicalRune: new CharacterMagicalRuneCollection(global, character, raw?.MagicalRune),
-      ZibiljaRitual: new CharacterZibiljaRitualCollection(global, character, raw?.ZibiljaRitual),
+      Curse: new CharacterCurseCollection(global, character),
+      DominationRitual: new CharacterDominationRitualCollection(global, character),
+      ElvenMagicalSong: new CharacterElvenMagicalSongCollection(global, character),
+      GeodeRitual: new CharacterGeodeRitualCollection(global, character),
+      GoblinRitual: new CharacterGoblinRitualCollection(global, character),
+      JesterTrick: new CharacterJesterTrickCollection(global, character),
+      MagicalDance: new CharacterMagicalDanceCollection(global, character),
+      MagicalMelody: new CharacterMagicalMelodyCollection(global, character),
+      // TODO: MagicalRune: new CharacterMagicalRuneCollection(global, character),
+      ZibiljaRitual: new CharacterZibiljaRitualCollection(global, character),
     }
+  }
+
+  fromJSON(
+    raw:
+      | {
+          // TODO: AnimistPower
+          // TODO: Bannzeichen
+          Curse?: Record<string, { value: number }>
+          DominationRitual?: Record<string, { value: number }>
+          ElvenMagicalSong?: Record<string, { value: number }>
+          GeodeRitual?: Record<string, { value: number }>
+          GoblinRitual?: Record<string, { value: number }>
+          JesterTrick?: Record<string, { value: number }>
+          MagicalDance?: Record<string, { value: number }>
+          MagicalMelody?: Record<string, { value: number }>
+          // TODO: MagicalRune
+          ZibiljaRitual?: Record<string, { value: number }>
+        }
+      | undefined,
+  ) {
+    // TODO: this.magicalActions.AnimistPower.fromJSON(raw?.AnimistPower)
+    // TODO: this.magicalActions.Bannzeichen.fromJSON(raw?.Bannzeichen)
+    this.magicalActions.Curse.fromJSON(raw?.Curse)
+    this.magicalActions.DominationRitual.fromJSON(raw?.DominationRitual)
+    this.magicalActions.ElvenMagicalSong.fromJSON(raw?.ElvenMagicalSong)
+    this.magicalActions.GeodeRitual.fromJSON(raw?.GeodeRitual)
+    this.magicalActions.GoblinRitual.fromJSON(raw?.GoblinRitual)
+    this.magicalActions.JesterTrick.fromJSON(raw?.JesterTrick)
+    this.magicalActions.MagicalDance.fromJSON(raw?.MagicalDance)
+    this.magicalActions.MagicalMelody.fromJSON(raw?.MagicalMelody)
+    // TODO: this.magicalActions.MagicalRune.fromJSON(raw?.MagicalRune)
+    this.magicalActions.ZibiljaRitual.fromJSON(raw?.ZibiljaRitual)
   }
 
   @computed

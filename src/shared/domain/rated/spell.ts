@@ -25,7 +25,7 @@ import { isEntryFromIncludedPublication } from "@optolith/entity-descriptions/pu
 import { computed } from "mobx"
 import type { Global } from "../../global.ts"
 import { TinyActivatable, TinyActivatables } from "../activatable/tinyActivatable.ts"
-import type { BaseCharacter, Character } from "../character.ts"
+import type { BaseCharacter } from "../character.ts"
 import { Case } from "../databaseEnum.ts"
 import { registerOrUnregisterPrerequisitesOfSpellworkAsDependencies } from "../dependencies/fullPrerequisiteRegistrationAsDependencyForType.ts"
 import { RegistrationMethod } from "../dependencies/registrationHelpers.ts"
@@ -132,10 +132,6 @@ export class CharacterCantrips extends TinyActivatables<"Cantrip", CharacterCant
         isDisabled: false, // TODO: Check traditions
       }))
       .toArray()
-  }
-
-  static fromJSON(global: Global, character: Character, raw: string[] | undefined) {
-    return super.fromAnyJSON(global, character, CharacterCantrips, raw)
   }
 }
 

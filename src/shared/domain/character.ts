@@ -63,7 +63,11 @@ import {
 import { Purse } from "./purse.ts"
 import { CharacterRace, type DisplayedRaceSelectOptions, type RaceForDisplay } from "./race.ts"
 import { CharacterAttributes } from "./rated/attribute.ts"
-import { CharacterCombatTechniques } from "./rated/combatTechnique.ts"
+import {
+  CharacterCloseCombatTechniques,
+  CharacterRangedCombatTechniques,
+  type CharacterCombatTechniques,
+} from "./rated/combatTechnique.ts"
 import { CharacterBlessings, CharacterLiturgicalChants } from "./rated/liturgicalChant.ts"
 import { CharacterMagicalActionCollections } from "./rated/magicalActions.ts"
 import type { PrimaryAttributeDependency } from "./rated/primaryAttribute.ts"
@@ -169,8 +173,8 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
   @observable accessor disadvantages: CharacterActivatables<"Disadvantage">
 
   @observable accessor skills: CharacterSkills
-  @observable accessor closeCombatTechniques: CharacterCombatTechniques<"CloseCombatTechnique">
-  @observable accessor rangedCombatTechniques: CharacterCombatTechniques<"RangedCombatTechnique">
+  @observable accessor closeCombatTechniques: CharacterCloseCombatTechniques
+  @observable accessor rangedCombatTechniques: CharacterRangedCombatTechniques
 
   @observable accessor cantrips: CharacterCantrips
   @observable accessor spells: CharacterSpellworks<"Spell">
@@ -244,38 +248,40 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
     this.personalData = new CharacterPersonalData(global, this, raw?.personalData)
     this.personalityTraits = new CharacterPersonalityTraits(global, this)
     this.curriculum = raw?.curriculum ? new CharacterCurriculum(raw.curriculum) : undefined
-    this.attributes = new CharacterAttributes(global, this, raw?.attributes)
+    this.attributes = new CharacterAttributes(global, this)
     this.derivedCharacteristics = new CharacterDerivedCharacteristics(global, this)
-    this.advantages = new CharacterActivatables(global, this, "Advantage", raw?.advantages)
-    this.disadvantages = new CharacterActivatables(global, this, "Disadvantage", raw?.disadvantages)
-    this.skills = new CharacterSkills(global, this, raw?.skills)
-    this.closeCombatTechniques = new CharacterCombatTechniques(
-      "CloseCombatTechnique",
-      global,
-      this,
-      raw?.combatTechniques?.melee,
-    )
-    this.rangedCombatTechniques = new CharacterCombatTechniques(
-      "RangedCombatTechnique",
-      global,
-      this,
-      raw?.combatTechniques?.ranged,
-    )
+    this.advantages = new CharacterActivatables(global, this, "Advantage")
+    this.disadvantages = new CharacterActivatables(global, this, "Disadvantage")
+    this.skills = new CharacterSkills(global, this)
+    this.closeCombatTechniques = new CharacterCloseCombatTechniques(global, this)
+    this.rangedCombatTechniques = new CharacterRangedCombatTechniques(global, this)
     this.cantrips = new CharacterCantrips(global, this)
-    this.spells = new CharacterSpellworks("Spell", global, this, raw?.spells)
-    this.rituals = new CharacterSpellworks("Ritual", global, this, raw?.rituals)
+    this.spells = new CharacterSpellworks("Spell", global, this)
+    this.rituals = new CharacterSpellworks("Ritual", global, this)
     this.blessings = new CharacterBlessings(global, this)
-    this.liturgicalChants = new CharacterLiturgicalChants(
-      "LiturgicalChant",
-      global,
-      this,
-      raw?.liturgicalChants,
-    )
-    this.ceremonies = new CharacterLiturgicalChants("Ceremony", global, this, raw?.ceremonies)
-    this.magicalActions = new CharacterMagicalActionCollections(global, this, raw?.magicalActions)
-    this.specialAbilities = new CharacterSpecialAbilities(global, this, raw?.specialAbilities)
+    this.liturgicalChants = new CharacterLiturgicalChants("LiturgicalChant", global, this)
+    this.ceremonies = new CharacterLiturgicalChants("Ceremony", global, this)
+    this.magicalActions = new CharacterMagicalActionCollections(global, this)
+    this.specialAbilities = new CharacterSpecialAbilities(global, this)
     this.prerequisiteCapabilities = createCapabilitiesFromCharacter(global, this)
     this.purse = new Purse(raw?.purse)
+
+    // prefill with raw data if available
+    this.attributes.fromJSON(raw?.attributes)
+    this.derivedCharacteristics.fromJSON(raw?.derivedCharacteristics)
+    this.advantages.fromJSON(raw?.advantages)
+    this.disadvantages.fromJSON(raw?.disadvantages)
+    this.skills.fromJSON(raw?.skills)
+    this.closeCombatTechniques.fromJSON(raw?.combatTechniques?.melee)
+    this.rangedCombatTechniques.fromJSON(raw?.combatTechniques?.ranged)
+    this.cantrips.fromJSON(raw?.cantrips)
+    this.spells.fromJSON(raw?.spells)
+    this.rituals.fromJSON(raw?.rituals)
+    this.blessings.fromJSON(raw?.blessings)
+    this.liturgicalChants.fromJSON(raw?.liturgicalChants)
+    this.ceremonies.fromJSON(raw?.ceremonies)
+    this.magicalActions.fromJSON(raw?.magicalActions)
+    this.specialAbilities.fromJSON(raw?.specialAbilities)
   }
 
   @computed
@@ -1248,14 +1254,6 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       this.culture = new CharacterCulture(global, this, json.culture)
       this.profession = new CharacterProfession(global, this, json.profession)
       this.phase = json.phase
-
-      this.derivedCharacteristics = CharacterDerivedCharacteristics.fromJSON(
-        global,
-        this,
-        json.derivedCharacteristics,
-      )
-      this.cantrips = CharacterCantrips.fromJSON(global, this, json.cantrips)
-      this.blessings = CharacterBlessings.fromJSON(global, this, json.blessings)
     } else {
       const [
         version,

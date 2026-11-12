@@ -1,3 +1,4 @@
+import { unique } from "@elyukai/utils/array/filters"
 import { ensureNonEmpty } from "@elyukai/utils/array/nonEmpty"
 import { count } from "@elyukai/utils/array/reductions"
 import type {
@@ -8,7 +9,7 @@ import type {
 import { action, computed, observable } from "mobx"
 import type { Global } from "../../global.ts"
 import { AdventurePointsCache } from "../adventurePoints/cache.ts"
-import type { BaseCharacter, Character } from "../character.ts"
+import type { BaseCharacter } from "../character.ts"
 import {
   type RegistrationMethod,
   addOrRemoveDependency,
@@ -116,6 +117,12 @@ export abstract class TinyActivatables<
     }
   }
 
+  fromJSON(raw: string[] | undefined): void {
+    for (const id of unique(raw ?? [])) {
+      this.activate(id)
+    }
+  }
+
   getById(id: string): T | undefined {
     return this.activatables.get(id)
   }
@@ -153,21 +160,6 @@ export abstract class TinyActivatables<
     if (entry) {
       addOrRemoveDependency(method, entry.dependencies, dependency)
     }
-  }
-
-  static fromAnyJSON<T extends TinyActivatables<any, TinyActivatable<any>>>(
-    global: Global,
-    character: Character,
-    creator: new (global: Global, character: Character) => T,
-    raw: string[] | undefined,
-  ): T {
-    const activatables = new creator(global, character)
-
-    for (const id of raw ?? []) {
-      activatables.activate(id)
-    }
-
-    return activatables
   }
 
   toJSON(): string[] | undefined {

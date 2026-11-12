@@ -610,7 +610,6 @@ export abstract class CharacterAnyRatedEntries<
     entityName: Entity,
     global: Global,
     character: BaseCharacter,
-    raw?: Record<string, { value: number }>,
   ) {
     this.global = global
     this.character = character
@@ -620,6 +619,9 @@ export abstract class CharacterAnyRatedEntries<
     for (const container of this.global.db.getAllInstanceContainersOfEntity(entityName)) {
       this.rated.set(container.id, this.createEmpty(container.id, container.content))
     }
+  }
+
+  fromJSON(raw: Record<string, { value: number }> | undefined): void {
     if (raw !== undefined) {
       for (const [id, entry] of Object.entries(raw ?? {})) {
         this.set(id, entry.value)
@@ -884,18 +886,15 @@ export abstract class CharacterActivatableRatedEntriesWithEnhancements<
   Entity extends Gen.SkillWithEnhancementsIdentifier["kind"],
   T extends CharacterActivatableRatedWithEnhancements<Entity>,
 > extends CharacterActivatableRatedEntries<Entity, T> {
-  constructor(
-    entryClass: CharacterRatedEntryConstructor<Entity, true, T>,
-    entityName: Entity,
-    global: Global,
-    character: BaseCharacter,
-    raw?: Record<string, { value: number; enhancements?: Gen.Enhancement_ID[] }>,
+  override fromJSON(
+    raw: Record<string, { value: number; enhancements?: Gen.Enhancement_ID[] }> | undefined,
   ) {
-    super(entryClass, entityName, global, character, raw)
-
-    for (const [id, entry] of Object.entries(raw ?? {})) {
-      for (const enhancementId of entry.enhancements ?? []) {
-        this.activateEnhancement(id, enhancementId)
+    if (raw !== undefined) {
+      for (const [id, entry] of Object.entries(raw ?? {})) {
+        this.set(id, entry.value)
+        for (const enhancementId of entry.enhancements ?? []) {
+          this.activateEnhancement(id, enhancementId)
+        }
       }
     }
   }

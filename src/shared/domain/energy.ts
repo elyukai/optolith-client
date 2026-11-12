@@ -25,7 +25,7 @@ import {
   emptyAdventurePointsCache,
 } from "./adventurePoints/cache.ts"
 import { cachedAdventurePoints } from "./adventurePoints/ratedEntry.ts"
-import type { BaseCharacter, Character } from "./character.ts"
+import type { BaseCharacter } from "./character.ts"
 import { Case } from "./databaseEnum.ts"
 import { checkPrerequisitesOfDerivedCharacteristic } from "./prerequisites/fullPrerequisiteValidationForType.ts"
 
@@ -525,6 +525,27 @@ export class CharacterDerivedCharacteristics {
     }
   }
 
+  fromJSON(raw: Record<string, RawDerivedCharacteristic> | undefined): void {
+    if (raw !== undefined) {
+      for (const [id, rawEntry] of Object.entries(raw ?? {})) {
+        const entry = this.getById(id)
+
+        if (entry instanceof CharacterEnergy) {
+          if (rawEntry.type === "Energy") {
+            entry.setPurchased(rawEntry.purchased)
+            entry.setPermanentlyLost(rawEntry.permanentlyLost)
+          }
+
+          if (rawEntry.type === "EnergyWithBuyBack") {
+            entry.setPurchased(rawEntry.purchased)
+            entry.setPermanentlyLost(rawEntry.permanentlyLost)
+            entry.setPermanentlyLostBoughtBack(rawEntry.permanentlyLostBoughtBack)
+          }
+        }
+      }
+    }
+  }
+
   getById(id: DerivedCharacteristic_ID): CharacterDerivedCharacteristic | undefined {
     return this.#derivedCharacteristics.get(id)
   }
@@ -606,33 +627,6 @@ export class CharacterDerivedCharacteristics {
       .filter(entry => entry.id === id)
       .map(entry => entry.value)
       .toArray()
-  }
-
-  static fromJSON(
-    global: Global,
-    character: Character,
-    raw: Record<string, RawDerivedCharacteristic> | undefined,
-  ): CharacterDerivedCharacteristics {
-    const derivedCharacteristics = new CharacterDerivedCharacteristics(global, character)
-
-    for (const [id, rawEntry] of Object.entries(raw ?? {})) {
-      const entry = derivedCharacteristics.getById(id)
-
-      if (entry instanceof CharacterEnergy) {
-        if (rawEntry.type === "Energy") {
-          entry.setPurchased(rawEntry.purchased)
-          entry.setPermanentlyLost(rawEntry.permanentlyLost)
-        }
-
-        if (rawEntry.type === "EnergyWithBuyBack") {
-          entry.setPurchased(rawEntry.purchased)
-          entry.setPermanentlyLost(rawEntry.permanentlyLost)
-          entry.setPermanentlyLostBoughtBack(rawEntry.permanentlyLostBoughtBack)
-        }
-      }
-    }
-
-    return derivedCharacteristics
   }
 
   toJSON(): Record<string, RawDerivedCharacteristic> {

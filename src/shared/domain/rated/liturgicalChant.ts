@@ -31,7 +31,7 @@ import type { Global } from "../../global.ts"
 import type { TranslateMap } from "../../utils/locale.ts"
 import type { CharacterActivatable } from "../activatable/activatable.ts"
 import { TinyActivatable, TinyActivatables } from "../activatable/tinyActivatable.ts"
-import type { BaseCharacter, Character } from "../character.ts"
+import type { BaseCharacter } from "../character.ts"
 import { Case } from "../databaseEnum.ts"
 import { registerOrUnregisterPrerequisitesOfLiturgyAsDependencies } from "../dependencies/fullPrerequisiteRegistrationAsDependencyForType.ts"
 import { RegistrationMethod } from "../dependencies/registrationHelpers.ts"
@@ -92,10 +92,6 @@ export class CharacterBlessings extends TinyActivatables<"Blessing", CharacterBl
         isDisabled: false,
       }))
       .toArray()
-  }
-
-  static fromJSON(global: Global, character: Character, raw: string[] | undefined) {
-    return super.fromAnyJSON(global, character, CharacterBlessings, raw)
   }
 }
 

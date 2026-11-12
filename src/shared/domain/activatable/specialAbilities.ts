@@ -42,20 +42,30 @@ export class CharacterSpecialAbilities {
 
   @observable accessor dependencies: AnySpecialAbilityOfGroupDependency[] = []
 
-  constructor(
-    global: Global,
-    character: BaseCharacter,
-    raw?: {
-      [Entity in SpecialAbilityIdentifierType["kind"]]?: Record<string, RawActivatable>
-    },
-  ) {
+  constructor(global: Global, character: BaseCharacter) {
     this.global = global
     this.character = character
     this.#specialAbilities = mapObject(
       SpecialAbilityIdentifier.type.value.values,
-      (_value, key) => new CharacterActivatables(global, character, key, raw?.[key]),
+      (_value, key) => new CharacterActivatables(global, character, key),
     ) as {
       [Entity in SpecialAbilityIdentifierType["kind"]]: CharacterActivatables<Entity>
+    }
+  }
+
+  fromJSON(
+    raw:
+      | {
+          [Entity in SpecialAbilityIdentifierType["kind"]]?: Record<string, RawActivatable>
+        }
+      | undefined,
+  ): void {
+    if (raw !== undefined) {
+      for (const [entity, entityRaw] of Object.entries(raw)) {
+        if (Object.hasOwn(this.#specialAbilities, entity)) {
+          this.#specialAbilities[entity as SpecialAbilityIdentifierType["kind"]].fromJSON(entityRaw)
+        }
+      }
     }
   }
 

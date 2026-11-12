@@ -2212,12 +2212,7 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
   readonly #entity: Entity
   @observable accessor #activatables: Map<string, CharacterActivatable<Entity>> = new Map()
 
-  constructor(
-    global: Global,
-    character: BaseCharacter,
-    entity: Entity,
-    raw?: Record<string, RawActivatable>,
-  ) {
+  constructor(global: Global, character: BaseCharacter, entity: Entity) {
     this.global = global
     this.#character = character
     this.#entity = entity
@@ -2234,6 +2229,9 @@ export class CharacterActivatables<Entity extends ActivatableIdentifier["kind"]>
         ),
       )
     }
+  }
+
+  fromJSON(raw: Record<string, RawActivatable> | undefined): void {
     if (raw !== undefined) {
       for (const [id, rawEntry] of Object.entries(raw)) {
         for (const rawInstance of rawEntry.instances) {
