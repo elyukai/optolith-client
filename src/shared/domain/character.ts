@@ -1144,24 +1144,6 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
     }
   }
 
-  static exampleCharacter(global: Global, id: string, version: string): Character {
-    const character = new FullCharacter(
-      global,
-      id,
-      version,
-      "2b0a18c5-40a8-4c86-98b3-a93c85e82497",
-      undefined,
-      undefined,
-      "Improvement",
-      ["48a1fe0b-ec55-4992-b47b-e1086f2a583f", undefined, []],
-      ["481c50a3-416c-4aa9-8ee9-dc93cc72c2b3", false, []],
-      ["0a9b8d85-3d9e-4297-aea0-51549b520ed6"],
-    )
-    character.name = "Alrik"
-    character.rules.includeAllPublications = true
-    return character
-  }
-
   abstract toJSON(): RawCharacter
 }
 

@@ -1,4 +1,3 @@
-import { isNotEmpty } from "@elyukai/utils/array/nonEmpty"
 import { deepEqual } from "@elyukai/utils/equality"
 import { on } from "@elyukai/utils/function"
 import { compareNumber } from "@elyukai/utils/ordering"
@@ -29,9 +28,9 @@ import type { RoutePath } from "../main_window/slices/routeSlice.ts"
 import type { PreloadAPI } from "../main_window_preload/index.ts"
 import { attachDatabaseEventsMain } from "../shared/database.ts"
 import {
-  BaseCharacter,
   CharacterInRaceCultureProfessionSelection,
   Characters,
+  type BaseCharacter,
 } from "../shared/domain/character.ts"
 import { equalsCase } from "../shared/domain/databaseEnum.ts"
 import type { Global } from "../shared/global.ts"
@@ -136,18 +135,8 @@ debug("initializing characters in memory ...")
 const characters = runInAction(() => {
   const _characters = new Characters(global, app.getVersion())
 
-  if (isNotEmpty(loadedCharacters)) {
-    for (const [id, data] of loadedCharacters) {
-      _characters.addCharacterFromJSON(id, data)
-    }
-  } else {
-    _characters.addCharacter(
-      BaseCharacter.exampleCharacter(
-        global,
-        "550e8400-e29b-11d4-a716-446655440000",
-        app.getVersion(),
-      ),
-    )
+  for (const [id, data] of loadedCharacters) {
+    _characters.addCharacterFromJSON(id, data)
   }
 
   return _characters
