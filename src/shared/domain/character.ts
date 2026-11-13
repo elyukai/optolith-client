@@ -1638,7 +1638,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     const applyActivatablePrerequisite = (
       p: Omit<ProfessionActivatablePrerequisite, "active">,
     ): void => {
-      if (p.options?.every(opt => opt.kind !== "Select")) {
+      if (p.options?.every(opt => opt.kind !== "Select") ?? true) {
         fullCharacter.getActivatableCollection(p.id.kind).add(fromUniformCase(p.id), {
           level: p.level,
           options: p.options?.map((option): ActivatableOption => {
@@ -1736,22 +1736,22 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       }
     }
 
-    for (const prerequisite of fullCharacter.profession.package?.prerequisites ?? []) {
-      if (
-        !(
-          fullCharacter.profession.variant?.prerequisites?.some(
-            vp => vp.kind === "Remove" && deepEqual(prerequisite, vp.Remove),
-          ) ?? false
-        )
-      ) {
-        applyPrerequisiteElement(prerequisite)
-      }
-    }
-
-    for (const prerequisite of fullCharacter.profession.variant?.prerequisites ?? []) {
-      if (prerequisite.kind === "Add") {
-        applyPrerequisiteElement(prerequisite.Add)
-      }
+    for (const prerequisite of (
+      fullCharacter.profession.package?.prerequisites?.filter(
+        p =>
+          !(
+            fullCharacter.profession.variant?.prerequisites?.some(
+              vp => vp.kind === "Remove" && deepEqual(p, vp.Remove),
+            ) ?? false
+          ),
+      ) ?? []
+    ).concat(
+      fullCharacter.profession.variant?.prerequisites
+        ?.filter(p => p.kind === "Add")
+        .map(p => p.Add) ?? [],
+    )) {
+      console.log(JSON.stringify(prerequisite))
+      applyPrerequisiteElement(prerequisite)
     }
 
     for (const specialAbility of (
