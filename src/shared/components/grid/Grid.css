@@ -2,28 +2,31 @@
   display: grid;
   grid-template-columns: repeat(6, 1fr);
 
-  &.grid--small {
-    grid-gap: 0.625rem;
+  > :is(.checkbox, .radiobutton-group), > .grid-item > :is(.checkbox, .radiobutton-group) {
+    margin-block: var(--checkbox-grid-margin-balance, 0rem);
 
-    > :is(.checkbox, .radiobutton-group), > .grid-item > :is(.checkbox, .radiobutton-group) {
-      margin-block: -0.25rem;
+    &:first-child {
+      margin-top: 0;
     }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &.grid--small {
+    gap: 0.625rem;
+    --checkbox-grid-margin-balance: -0.25rem;
   }
 
   &.grid--medium {
-    grid-gap: 1rem;
-
-    > :is(.checkbox, .radiobutton-group), > .grid-item > :is(.checkbox, .radiobutton-group) {
-      margin-block: -0.5rem;
-    }
+    gap: 1rem;
+    --checkbox-grid-margin-balance: -0.5rem;
   }
 
   &.grid--large {
-    grid-gap: 1.5rem;
-
-    > :is(.checkbox, .radiobutton-group), > .grid-item > :is(.checkbox, .radiobutton-group) {
-      margin-block: -0.6rem;
-    }
+    gap: 1.5rem;
+    --checkbox-grid-margin-balance: -0.6rem;
 
     > :is(.checkbox, .grid-item:has(> .checkbox)) + :is(.checkbox, .grid-item:has(> .checkbox)) {
       margin-top: -0.9rem;
