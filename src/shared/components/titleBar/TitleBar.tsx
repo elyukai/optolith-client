@@ -1,6 +1,6 @@
 import { type FC, useCallback, useEffect, useState } from "react"
 import type { TypedEventEmitter } from "../../utils/events.ts"
-import "./TitleBar.scss"
+import "./TitleBar.css"
 import { TitleBarButton } from "./TitleBarButton.tsx"
 import { TitleBarTitle } from "./TitleBarTitle.tsx"
 import { TitleBarWrapper } from "./TitleBarWrapper.tsx"
@@ -30,7 +30,7 @@ type Props = {
     platform: NodeJS.Platform
     minimize?: () => void
     maximize?: () => void
-    restore?: () => void
+    unmaximize?: () => void
     close: () => void
     isMaximized?: () => Promise<boolean>
   } & TypedEventEmitter<{ maximize: []; unmaximize: [] }>
@@ -65,13 +65,25 @@ export const TitleBar: FC<Props> = ({ title, secondary, externalAPI }) => {
     <TitleBarWrapper secondary={secondary}>
       <TitleBarTitle title={title} />
       <div>
-        <TitleBarButton icon="&#xE903;" onClick={externalAPI.minimize} className="minimize" />
+        <TitleBarButton
+          icon="&#xE903;"
+          onClick={() => externalAPI.minimize?.()}
+          className="minimize"
+        />
         {isMaximized ? (
-          <TitleBarButton icon="&#xE902;" onClick={externalAPI.restore} className="restore" />
+          <TitleBarButton
+            icon="&#xE902;"
+            onClick={() => externalAPI.unmaximize?.()}
+            className="restore"
+          />
         ) : (
-          <TitleBarButton icon="&#xE901;" onClick={externalAPI.maximize} className="maximize" />
+          <TitleBarButton
+            icon="&#xE901;"
+            onClick={() => externalAPI.maximize?.()}
+            className="maximize"
+          />
         )}
-        <TitleBarButton icon="&#xE900;" onClick={externalAPI.close} className="close" />
+        <TitleBarButton icon="&#xE900;" onClick={() => externalAPI.close()} className="close" />
       </div>
     </TitleBarWrapper>
   )

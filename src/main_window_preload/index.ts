@@ -4,6 +4,7 @@ import type { AvailableCreatorEntity } from "@optolith/entity-descriptions"
 import type { EntityDescription } from "@optolith/entity-descriptions/description"
 import Debug from "debug"
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from "electron"
+// oxlint-disable-next-line unicorn/prefer-node-protocol
 import EventEmitter from "events"
 import type { GlobalIPCActions, GlobalIPCState } from "../main/index.ts"
 import type { RoutePath } from "../main_window/slices/routeSlice.ts"
@@ -47,7 +48,7 @@ export type PreloadAPI = {
   isFocused: () => Promise<boolean>
   minimize: () => void
   maximize: () => void
-  restore: () => void
+  unmaximize: () => void
   close: () => void
   getLicense: () => Promise<string>
   getChangelog: () => Promise<string>
@@ -100,9 +101,9 @@ const api: PreloadAPI = {
     debugRendererCalls("maximize")
     ipcRenderer.send("main-window-maximize")
   },
-  restore: () => {
-    debugRendererCalls("restore")
-    ipcRenderer.send("main-window-restore")
+  unmaximize: () => {
+    debugRendererCalls("unmaximize")
+    ipcRenderer.send("main-window-unmaximize")
   },
   close: () => {
     debugRendererCalls("close")

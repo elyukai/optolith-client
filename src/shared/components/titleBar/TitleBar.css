@@ -15,19 +15,15 @@
   }
 }
 
-:root.blurred .titlebar-inner {
-  border-bottom-color: var(--separator-color-20);
-}
-
 .titlebar-inner {
   height: var(--titlebar-height);
   width: 100%;
   position: relative;
   border-bottom: 1px solid var(--separator-color-30);
-}
 
-:root.blurred .titlebar-title {
-  opacity: 0.25;
+  :root.blurred & {
+    border-bottom-color: var(--separator-color-20);
+  }
 }
 
 .titlebar-title {
@@ -38,6 +34,10 @@
   color: var(--headings-color);
   white-space: nowrap;
   display: flex;
+
+  :root.blurred & {
+    opacity: 0.25;
+  }
 }
 
 .platform--win32,
@@ -49,37 +49,6 @@
 
   .titlebar-title {
     margin-left: 10px;
-  }
-
-  .titlebar-btn {
-    width: 46px;
-    height: 30px;
-    font: 16px/28px TDE Heroes;
-    color: var(--accent-color);
-    -webkit-app-region: no-drag;
-    text-align: center;
-    background: none;
-    border-radius: none;
-    border: none;
-    margin: 0;
-    padding: 0;
-
-    &:disabled {
-      color: var(--separator-color-20);
-    }
-
-    &:not(:disabled):hover {
-      color: var(--headings-color);
-      background: var(--separator-color-20);
-
-      &.close {
-        background: var(--windows-titlebar-close);
-      }
-    }
-  }
-
-  .titlebar--secondary .titlebar-btn {
-    width: 30px;
   }
 }
 
@@ -98,5 +67,36 @@
 
   .titlebar-title {
     justify-content: center;
+  }
+}
+
+.titlebar-btn {
+  width: 46px;
+  height: 30px;
+  font: 16px/28px TDE Heroes;
+  color: var(--accent-color);
+  -webkit-app-region: no-drag;
+  text-align: center;
+  background: none;
+  border-radius: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+
+  &:disabled {
+    color: var(--separator-color-20);
+  }
+
+  &:not(:disabled):hover {
+    color: var(--headings-color);
+    background: var(--separator-color-20);
+
+    &.close {
+      background: var(--windows-titlebar-close);
+    }
+  }
+
+  .titlebar--secondary & {
+    width: 30px;
   }
 }

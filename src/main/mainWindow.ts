@@ -81,7 +81,7 @@ export const createMainWindow = async (
 
     ipcMain.on("main-window-minimize", () => mainWindow?.minimize())
     ipcMain.on("main-window-maximize", () => mainWindow?.maximize())
-    ipcMain.on("main-window-restore", () => mainWindow?.restore())
+    ipcMain.on("main-window-unmaximize", () => mainWindow?.unmaximize())
     ipcMain.on("main-window-close", () => mainWindow?.close())
     ipcMain.on("main-window-toggle-dev-tools", () => mainWindow?.webContents.toggleDevTools())
     ipcMain.on("main-window-set-title", (_, title) => mainWindow?.setTitle(title))
@@ -96,7 +96,7 @@ export const createMainWindow = async (
 
       ipcMain.removeAllListeners("main-window-minimize")
       ipcMain.removeAllListeners("main-window-maximize")
-      ipcMain.removeAllListeners("main-window-restore")
+      ipcMain.removeAllListeners("main-window-unmaximize")
       ipcMain.removeAllListeners("main-window-close")
       ipcMain.removeAllListeners("main-window-toggle-dev-tools")
     })
