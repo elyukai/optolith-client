@@ -3,8 +3,6 @@ import { on } from "@elyukai/utils/function"
 import { isNotNullish } from "@elyukai/utils/nullable"
 import { assertExhaustive } from "@elyukai/utils/typeSafety"
 import type {
-  AlternativeRule as RawAlternativeRule,
-  FocusRule as RawFocusRule,
   OptionalRule as RawOptionalRule,
   Rules as RawRules,
 } from "@optolith/character-schema/types"
@@ -188,20 +186,22 @@ abstract class CharacterRuleCollection<
     character: BaseCharacter,
     entityName: Entity,
     creator: typeof this.creator,
-    rules?: { id: string }[] | Map<string, T>,
   ) {
     this.global = global
     this.character = character
     this.entityName = entityName
     this.creator = creator
-    if (rules === undefined || Array.isArray(rules)) {
-      this.rules = new Map()
-      for (const rule of this.global.db.getAllInstanceContainersOfEntity(entityName)) {
-        this.rules.set(
-          rule.id,
-          new this.creator(global, character, entityName, rule.id, false, rule.content),
-        )
-      }
+    this.rules = new Map()
+    for (const rule of this.global.db.getAllInstanceContainersOfEntity(entityName)) {
+      this.rules.set(
+        rule.id,
+        new this.creator(global, character, entityName, rule.id, false, rule.content),
+      )
+    }
+  }
+
+  fromJSON(rules: { id: string }[] | Map<string, T> | undefined): void {
+    if (rules !== undefined) {
       if (Array.isArray(rules)) {
         for (const rule of rules) {
           const ruleInstance = this.rules.get(rule.id)
@@ -209,9 +209,15 @@ abstract class CharacterRuleCollection<
             ruleInstance.active = true
           }
         }
+      } else {
+        for (const [ruleId, rule] of rules) {
+          const ruleInstance = this.rules.get(ruleId)
+          if (ruleInstance !== undefined) {
+            ruleInstance.active = true
+            ruleInstance.dependencies = rule.dependencies
+          }
+        }
       }
-    } else {
-      this.rules = rules
     }
   }
 
@@ -269,22 +275,8 @@ class CharacterFocusRuleCollection extends CharacterRuleCollection<
   "FocusRule",
   CharacterFocusRule
 > {
-  constructor(
-    global: Global,
-    character: BaseCharacter,
-    rules?: RawFocusRule[] | Map<string, CharacterFocusRule>,
-  ) {
-    super(global, character, "FocusRule", CharacterFocusRule, rules)
-    // "34f44742-03ce-49b6-8930-b83d25ecc39c": {
-    //   id: "34f44742-03ce-49b6-8930-b83d25ecc39c", // Spell Enhancements
-    //   active: true,
-    //   dependencies: [],
-    // },
-    // "00c0b31b-f3f7-4590-9be7-2dd2ba39171b": {
-    //   id: "00c0b31b-f3f7-4590-9be7-2dd2ba39171b", // Liturgical Chant Enhancements
-    //   active: true,
-    //   dependencies: [],
-    // },
+  constructor(global: Global, character: BaseCharacter) {
+    super(global, character, "FocusRule", CharacterFocusRule)
   }
 }
 
@@ -292,24 +284,29 @@ class CharacterOptionalRuleCollection extends CharacterRuleCollection<
   "OptionalRule",
   CharacterOptionalRule
 > {
-  constructor(
-    global: Global,
-    character: BaseCharacter,
-    rules?: RawOptionalRule[] | Map<string, CharacterOptionalRule>,
-  ) {
-    super(
-      global,
-      character,
-      "OptionalRule",
-      CharacterOptionalRule,
-      Array.isArray(rules) ? undefined : rules,
-    )
-    if (Array.isArray(rules)) {
-      for (const rule of rules) {
-        const ruleInstance = this.rules.get(rule.id)
-        if (ruleInstance !== undefined) {
-          ruleInstance.active = true
-          ruleInstance.options = rule.options ?? []
+  constructor(global: Global, character: BaseCharacter) {
+    super(global, character, "OptionalRule", CharacterOptionalRule)
+  }
+
+  override fromJSON(
+    rules: RawOptionalRule[] | Map<string, CharacterOptionalRule> | undefined,
+  ): void {
+    if (rules !== undefined) {
+      if (Array.isArray(rules)) {
+        for (const rule of rules) {
+          const ruleInstance = this.rules.get(rule.id)
+          if (ruleInstance !== undefined) {
+            ruleInstance.active = true
+          }
+        }
+      } else {
+        for (const [ruleId, rule] of rules) {
+          const ruleInstance = this.rules.get(ruleId)
+          if (ruleInstance !== undefined) {
+            ruleInstance.active = true
+            ruleInstance.dependencies = rule.dependencies
+            ruleInstance.options = [...rule.options]
+          }
         }
       }
     }
@@ -338,12 +335,8 @@ class CharacterAlternativeRuleCollection extends CharacterRuleCollection<
   "AlternativeRule",
   CharacterAlternativeRule
 > {
-  constructor(
-    global: Global,
-    character: BaseCharacter,
-    rules?: RawAlternativeRule[] | Map<string, CharacterAlternativeRule>,
-  ) {
-    super(global, character, "AlternativeRule", CharacterAlternativeRule, rules)
+  constructor(global: Global, character: BaseCharacter) {
+    super(global, character, "AlternativeRule", CharacterAlternativeRule)
   }
 }
 
@@ -431,51 +424,20 @@ export class CharacterRules {
    */
   readonly alternativeRules: CharacterAlternativeRuleCollection
 
-  constructor(
-    global: Global,
-    character: BaseCharacter,
-    ...args:
-      | [raw: RawRules]
-      | [
-          includeAllPublications?: boolean,
-          includePublications?: Publication_ID[] | Set<Publication_ID>,
-          focusRules?: Map<string, CharacterFocusRule>,
-          optionalRules?: Map<string, CharacterOptionalRule>,
-          alternativeRules?: Map<string, CharacterAlternativeRule>,
-        ]
-  ) {
+  constructor(global: Global, character: BaseCharacter) {
     this.global = global
     this.character = character
-    if (typeof args[0] === "object") {
-      const [raw] = args
-      this.includeAllPublications = raw.includeAllPublications ?? false
-      this.includePublications = new Set(raw.includePublications ?? [])
-      this.focusRules = new CharacterFocusRuleCollection(global, character, raw.focusRules)
-      this.optionalRules = new CharacterOptionalRuleCollection(global, character, raw.optionalRules)
-      this.alternativeRules = new CharacterAlternativeRuleCollection(
-        global,
-        character,
-        raw.alternativeRules,
-      )
-    } else {
-      const [
-        includeAllPublications = false,
-        includePublications,
-        focusRules,
-        optionalRules,
-        alternativeRules,
-      ] = args
+    this.focusRules = new CharacterFocusRuleCollection(global, character)
+    this.optionalRules = new CharacterOptionalRuleCollection(global, character)
+    this.alternativeRules = new CharacterAlternativeRuleCollection(global, character)
+  }
 
-      this.includeAllPublications = includeAllPublications
-      this.includePublications = new Set(includePublications)
-      this.focusRules = new CharacterFocusRuleCollection(global, character, focusRules)
-      this.optionalRules = new CharacterOptionalRuleCollection(global, character, optionalRules)
-      this.alternativeRules = new CharacterAlternativeRuleCollection(
-        global,
-        character,
-        alternativeRules,
-      )
-    }
+  fromJSON(raw: RawRules | undefined): void {
+    this.includeAllPublications = raw?.includeAllPublications ?? false
+    this.includePublications = new Set(raw?.includePublications ?? [])
+    this.focusRules.fromJSON(raw?.focusRules)
+    this.optionalRules.fromJSON(raw?.optionalRules)
+    this.alternativeRules.fromJSON(raw?.alternativeRules)
   }
 
   copyFrom(other: CharacterRules): void {

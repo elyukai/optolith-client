@@ -245,7 +245,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
     this.version = version
     this.dateCreated = dateCreated ?? Temporal.Now.zonedDateTimeISO()
     this.dateLastModified = dateLastModified ?? this.dateCreated
-    this.rules = new CharacterRules(global, this, raw?.rules)
+    this.rules = new CharacterRules(global, this)
     this.experienceLevel = new CharacterExperienceLevel(global, this, experienceLevelId)
     this.totalAdventurePoints =
       raw?.adventurePoints.total ?? this.experienceLevel.start?.adventure_points ?? 0
@@ -272,6 +272,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
     this.purse = new Purse(raw?.purse)
 
     // prefill with raw data if available
+    this.rules.fromJSON(raw?.rules)
     this.attributes.fromJSON(raw?.attributes)
     this.derivedCharacteristics.fromJSON(raw?.derivedCharacteristics)
     this.advantages.fromJSON(raw?.advantages)
