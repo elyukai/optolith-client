@@ -8,7 +8,6 @@
   color: var(--secondary-text-color);
   position: sticky;
   top: 0;
-  margin-top: -21px;
   background-color: var(--background-color);
   z-index: 8;
 
@@ -80,12 +79,5 @@
         margin-right: 0.5rem;
       }
     }
-  }
-}
-
-section > .page,
-.slidein-backdrop > .slidein > .slidein-content {
-  > .main-content > .list-header + .scroll .scroll-inner {
-    padding-top: 0;
   }
 }
