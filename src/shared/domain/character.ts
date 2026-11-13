@@ -12,6 +12,7 @@ import type {
   ActivatableIdentifier,
   Aspect_ID,
   EnhancementPrerequisite,
+  ExperienceLevel_ID,
   MagicalTradition_ID,
   PrerequisitesElement,
   ProfessionActivatablePrerequisite,
@@ -24,6 +25,7 @@ import type {
 import { ResponsiveTextSize } from "@optolith/entity-descriptions/entities/partial/responsiveText"
 import { BrowserWindow, dialog } from "electron/main"
 import { action, computed, observable } from "mobx"
+import { randomUUID } from "node:crypto"
 import { writeFile } from "node:fs/promises"
 import { Case } from "tsondb/schema/gen"
 import type { SerializedSelectedRCPOptions } from "../../main_window/routes/characters/character/raceCultureProfession/RCPOptionSelections/SelectedRCPOptions.ts"
@@ -77,6 +79,7 @@ import { CharacterActivatableRatedEntries, type ConsParamsTrim } from "./rated/r
 import { CharacterSkills } from "./rated/skill.ts"
 import { CharacterCantrips, CharacterSpellworks } from "./rated/spell.ts"
 import { CharacterRules } from "./rules.ts"
+import type { Sex } from "./sex.ts"
 import { CharacterStates } from "./state.ts"
 
 export abstract class BaseCharacter<Phase extends CharacterCreationPhase = CharacterCreationPhase> {
@@ -1963,8 +1966,25 @@ export class Characters {
   }
 
   @action
-  addCharacter(character: Character) {
-    this.characters.set(character.id, character)
+  createNewCharacter(
+    name: string,
+    experienceLevel: ExperienceLevel_ID,
+    sex: Sex,
+    rules?: CharacterRules,
+  ) {
+    const id = randomUUID()
+    const character = new CharacterInRaceCultureProfessionSelection(
+      this.global,
+      id,
+      this.appVersion,
+      experienceLevel,
+    )
+    character.name = name
+    character.personalData.sex = sex
+    if (rules !== undefined) {
+      character.rules.copyFrom(rules)
+    }
+    this.characters.set(id, character)
     return character
   }
 

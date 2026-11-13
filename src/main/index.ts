@@ -19,7 +19,6 @@ import { dialog } from "electron"
 import { autoUpdater } from "electron-updater"
 import { app, ipcMain } from "electron/main"
 import { action, configure, observable, runInAction } from "mobx"
-import { randomUUID } from "node:crypto"
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { ReadonlyTSONDB } from "tsondb/readonly"
@@ -158,7 +157,7 @@ const newCharacter = runInAction(() =>
   observable({
     newCharacter: new CharacterInRaceCultureProfessionSelection(
       global,
-      randomUUID(),
+      "new",
       app.getVersion(),
       global.settings.defaultExperienceLevel,
     ),
@@ -166,12 +165,7 @@ const newCharacter = runInAction(() =>
 )
 
 const resetNewCharacter = action(() => {
-  newCharacter.newCharacter = new CharacterInRaceCultureProfessionSelection(
-    global,
-    randomUUID(),
-    app.getVersion(),
-    global.settings.defaultExperienceLevel,
-  )
+  newCharacter.newCharacter.rules.reset()
 })
 
 const globalSelectors = {
@@ -230,12 +224,16 @@ app.whenReady().then(async () => {
             return saveCharacter(app.getPath("userData"), characterId, character.toJSON())
           }
           case "createCharacter": {
-            newCharacter.newCharacter.name = args[1][0].name
-            newCharacter.newCharacter.personalData.sex = args[1][0].sex
-            newCharacter.newCharacter.experienceLevel.startId = args[1][0].experienceLevel
-            const char = characters.addCharacter(newCharacter.newCharacter)
-            resetNewCharacter()
-            return ["characters", char.id, "race"]
+            return runInAction(() => {
+              const char = characters.createNewCharacter(
+                args[1][0].name,
+                args[1][0].experienceLevel,
+                args[1][0].sex,
+                newCharacter.newCharacter.rules,
+              )
+              resetNewCharacter()
+              return ["characters", char.id, "race"]
+            })
           }
           default:
             newCharacter.newCharacter.handleIPCAction(event, ...args)

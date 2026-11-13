@@ -478,6 +478,24 @@ export class CharacterRules {
     }
   }
 
+  copyFrom(other: CharacterRules): void {
+    this.includeAllPublications = other.includeAllPublications
+    this.includePublications = new Set(other.includePublications)
+    this.publicationDependencies = [...other.publicationDependencies]
+    this.focusRules.rules = new Map(other.focusRules.rules)
+    this.optionalRules.rules = new Map(other.optionalRules.rules)
+    this.alternativeRules.rules = new Map(other.alternativeRules.rules)
+  }
+
+  reset(): void {
+    this.includeAllPublications = false
+    this.includePublications.clear()
+    this.publicationDependencies = []
+    this.focusRules.rules.clear()
+    this.optionalRules.rules.clear()
+    this.alternativeRules.rules.clear()
+  }
+
   @computed
   get publicationOptions(): PublicationOptions {
     return {
