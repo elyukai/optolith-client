@@ -176,7 +176,10 @@ export const Advantages: FC = observer(() => {
           {activeList.length > 0 ? (
             <List>
               {activeList.map(x => (
-                <ActiveActivatableListItem key={`advantage-${x.id}`} activatable={x} />
+                <ActiveActivatableListItem
+                  key={`advantage-${x.id}-${x.instanceIndex}`}
+                  activatable={x}
+                />
               ))}
             </List>
           ) : (

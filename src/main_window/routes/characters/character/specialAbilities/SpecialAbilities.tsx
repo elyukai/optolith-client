@@ -190,7 +190,10 @@ export const SpecialAbilities: FC = observer(() => {
           {activeList.length > 0 ? (
             <List>
               {activeList.map(x => (
-                <ActiveActivatableListItem key={`${x.type}-${x.id}`} activatable={x} />
+                <ActiveActivatableListItem
+                  key={`${x.type}-${x.id}-${x.instanceIndex}`}
+                  activatable={x}
+                />
               ))}
             </List>
           ) : (
