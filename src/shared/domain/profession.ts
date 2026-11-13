@@ -587,7 +587,8 @@ const getFinalSkillSpecializationSelectOption = (
             id: application.id,
             name:
               global.locale.translateMap(application.content.translations)?.name ?? MISSING_VALUE,
-          })) ?? [],
+          }))
+          .toSorted(on(app => app.name, global.locale.compare)) ?? [],
     }))
     .toSorted(on(sw => sw.name, global.locale.compare))
 }
