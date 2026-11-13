@@ -1410,14 +1410,14 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
         kreutzers: 0,
       },
     }
-    const transformedCharacter = new FullCharacter(character.global, character.id, json)
+    const fullCharacter = new FullCharacter(character.global, character.id, json)
 
-    transformedCharacter.personalityTraits.copyFrom(character.personalityTraits)
+    fullCharacter.personalityTraits.copyFrom(character.personalityTraits)
 
     // Race
 
-    for (const advantage of transformedCharacter.race.variant?.automatic_advantages ?? []) {
-      transformedCharacter.advantages.add(advantage.id, {
+    for (const advantage of fullCharacter.race.variant?.automatic_advantages ?? []) {
+      fullCharacter.advantages.add(advantage.id, {
         level: advantage.level,
         options: advantage.options?.map(option => ({
           type: "Predefined",
@@ -1426,8 +1426,8 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       })
     }
 
-    for (const disadvantage of transformedCharacter.race.variant?.automatic_disadvantages ?? []) {
-      transformedCharacter.disadvantages.add(disadvantage.id, {
+    for (const disadvantage of fullCharacter.race.variant?.automatic_disadvantages ?? []) {
+      fullCharacter.disadvantages.add(disadvantage.id, {
         level: disadvantage.level,
         options: disadvantage.options?.map(option => ({
           type: "Predefined",
@@ -1436,20 +1436,19 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       })
     }
 
-    for (const advantage of transformedCharacter.race.variant?.strongly_recommended_advantages ??
+    for (const advantage of fullCharacter.race.variant?.strongly_recommended_advantages ?? []) {
+      fullCharacter.advantages.add(advantage.id, {
+        level: advantage.level,
+        options: advantage.options?.map(option => ({
+          type: "Predefined",
+          id: option,
+        })),
+      })
+    }
+
+    for (const disadvantage of fullCharacter.race.variant?.strongly_recommended_disadvantages ??
       []) {
-      transformedCharacter.advantages.add(advantage.id, {
-        level: advantage.level,
-        options: advantage.options?.map(option => ({
-          type: "Predefined",
-          id: option,
-        })),
-      })
-    }
-
-    for (const disadvantage of transformedCharacter.race.variant
-      ?.strongly_recommended_disadvantages ?? []) {
-      transformedCharacter.disadvantages.add(disadvantage.id, {
+      fullCharacter.disadvantages.add(disadvantage.id, {
         level: disadvantage.level,
         options: disadvantage.options?.map(option => ({
           type: "Predefined",
@@ -1458,21 +1457,20 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       })
     }
 
-    transformedCharacter.race.selectedAttributeAdjustmentId = selectedOptions.attributeAdjustmentId
+    fullCharacter.race.selectedAttributeAdjustmentId = selectedOptions.attributeAdjustmentId
 
     // Culture
 
     if (selectedOptions.buyCulturalPackage) {
-      for (const skill of transformedCharacter.culture.base?.cultural_package ?? []) {
-        transformedCharacter.skills.increment(skill.id, skill.points)
+      for (const skill of fullCharacter.culture.base?.cultural_package ?? []) {
+        fullCharacter.skills.increment(skill.id, skill.points)
       }
     }
 
-    const nativeTongue =
-      selectedOptions.nativeTongue ?? transformedCharacter.culture.base?.language[0]?.id
+    const nativeTongue = selectedOptions.nativeTongue ?? fullCharacter.culture.base?.language[0]?.id
 
     if (nativeTongue !== undefined) {
-      transformedCharacter
+      fullCharacter
         .getActivatableCollection(global.settings.language.kind)
         .add(fromUniformCase(global.settings.language), {
           level: 4,
@@ -1481,11 +1479,11 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     }
 
     const nativeScript = selectedOptions.buyScript
-      ? (selectedOptions.script ?? transformedCharacter.culture.base?.script?.[0])
+      ? (selectedOptions.script ?? fullCharacter.culture.base?.script?.[0])
       : undefined
 
     if (nativeScript !== undefined) {
-      transformedCharacter
+      fullCharacter
         .getActivatableCollection(global.settings.script.kind)
         .add(fromUniformCase(global.settings.script), {
           options: [{ type: "Predefined", id: Case("Script", nativeScript) }],
@@ -1500,14 +1498,14 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
         : undefined
 
     if (curriculum !== undefined) {
-      transformedCharacter.curriculum = new CharacterCurriculum(curriculum)
+      fullCharacter.curriculum = new CharacterCurriculum(curriculum)
     }
 
     if (
       selectedOptions.skillSpecialization !== undefined &&
       selectedOptions.skillSpecializationApplication !== undefined
     ) {
-      transformedCharacter
+      fullCharacter
         .getActivatableCollection(global.settings.skillSpecialization.kind)
         .add(fromUniformCase(global.settings.skillSpecialization), {
           options: [
@@ -1518,7 +1516,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     }
 
     for (const [language, languageLevel] of selectedOptions.languages) {
-      transformedCharacter
+      fullCharacter
         .getActivatableCollection(global.settings.language.kind)
         .add(fromUniformCase(global.settings.language), {
           level: languageLevel,
@@ -1527,7 +1525,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     }
 
     for (const script of selectedOptions.scripts) {
-      transformedCharacter
+      fullCharacter
         .getActivatableCollection(global.settings.script.kind)
         .add(fromUniformCase(global.settings.script), {
           options: [{ type: "Predefined", id: Case("Script", script) }],
@@ -1535,19 +1533,19 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     }
 
     for (const [skill, skillRating] of selectedOptions.skills) {
-      transformedCharacter.skills.increment(skill, skillRating)
+      fullCharacter.skills.increment(skill, skillRating)
     }
 
     for (const { id: combatTechnique, ratingModifier } of selectedOptions.combatTechniques) {
       switch (combatTechnique.kind) {
         case "CloseCombatTechnique":
-          transformedCharacter.closeCombatTechniques.increment(
+          fullCharacter.closeCombatTechniques.increment(
             fromUniformCase(combatTechnique),
             ratingModifier,
           )
           break
         case "RangedCombatTechnique":
-          transformedCharacter.rangedCombatTechniques.increment(
+          fullCharacter.rangedCombatTechniques.increment(
             fromUniformCase(combatTechnique),
             ratingModifier,
           )
@@ -1558,21 +1556,21 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     }
 
     for (const cantrip of selectedOptions.cantrips) {
-      transformedCharacter.cantrips.activate(cantrip)
+      fullCharacter.cantrips.activate(cantrip)
     }
 
     for (const [entity, entityMap] of selectedOptions.spellworks) {
       switch (entity) {
         case "Spell":
           for (const [id, rating] of entityMap) {
-            transformedCharacter.spells.activate(id)
-            transformedCharacter.spells.increment(id, rating)
+            fullCharacter.spells.activate(id)
+            fullCharacter.spells.increment(id, rating)
           }
           break
         case "Ritual":
           for (const [id, rating] of entityMap) {
-            transformedCharacter.rituals.activate(id)
-            transformedCharacter.rituals.increment(id, rating)
+            fullCharacter.rituals.activate(id)
+            fullCharacter.rituals.increment(id, rating)
           }
           break
         default:
@@ -1581,22 +1579,22 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     }
 
     for (const [id, rating] of selectedOptions.curses) {
-      transformedCharacter.magicalActions.activate("Curse", id)
-      transformedCharacter.magicalActions.increment("Curse", id, rating)
+      fullCharacter.magicalActions.activate("Curse", id)
+      fullCharacter.magicalActions.increment("Curse", id, rating)
     }
 
     for (const [entity, entityMap] of selectedOptions.liturgies) {
       switch (entity) {
         case "LiturgicalChant":
           for (const [id, rating] of entityMap) {
-            transformedCharacter.liturgicalChants.activate(id)
-            transformedCharacter.liturgicalChants.increment(id, rating)
+            fullCharacter.liturgicalChants.activate(id)
+            fullCharacter.liturgicalChants.increment(id, rating)
           }
           break
         case "Ceremony":
           for (const [id, rating] of entityMap) {
-            transformedCharacter.ceremonies.activate(id)
-            transformedCharacter.ceremonies.increment(id, rating)
+            fullCharacter.ceremonies.activate(id)
+            fullCharacter.ceremonies.increment(id, rating)
           }
           break
         default:
@@ -1608,7 +1606,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       p: Omit<ProfessionActivatablePrerequisite, "active">,
     ): void => {
       if (p.options?.every(opt => opt.kind !== "Select")) {
-        transformedCharacter.getActivatableCollection(p.id.kind).add(fromUniformCase(p.id), {
+        fullCharacter.getActivatableCollection(p.id.kind).add(fromUniformCase(p.id), {
           level: p.level,
           options: p.options?.map((option): ActivatableOption => {
             switch (option.kind) {
@@ -1636,7 +1634,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
           applyActivatablePrerequisite(p.Activatable)
           break
         case "Rated": {
-          const collection = transformedCharacter.getRatedCollection(p.Rated.id.kind)
+          const collection = fullCharacter.getRatedCollection(p.Rated.id.kind)
           if (collection instanceof CharacterActivatableRatedEntries) {
             collection.activate(fromUniformCase(p.Rated.id))
           }
@@ -1660,9 +1658,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     const applyEnhancementPrerequisite = (p: EnhancementPrerequisite): void => {
       const parent = global.db.getInstanceOfEntityById("Enhancement", p.id)?.parent
       if (parent !== undefined) {
-        const collection = transformedCharacter.getActivatableRatedWithEnhancementsCollection(
-          parent.kind,
-        )
+        const collection = fullCharacter.getActivatableRatedWithEnhancementsCollection(parent.kind)
         if (collection instanceof CharacterActivatableRatedEntries) {
           collection.activateEnhancement(fromUniformCase(parent), p.id)
         }
@@ -1672,7 +1668,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     for (const separate of selectedOptions.separate) {
       switch (separate.kind) {
         case "IncompleteActivatable":
-          transformedCharacter
+          fullCharacter
             .getActivatableCollection(separate.IncompleteActivatable.id.kind)
             .add(
               fromUniformCase(separate.IncompleteActivatable.id),
@@ -1707,10 +1703,10 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       }
     }
 
-    for (const prerequisite of transformedCharacter.profession.package?.prerequisites ?? []) {
+    for (const prerequisite of fullCharacter.profession.package?.prerequisites ?? []) {
       if (
         !(
-          transformedCharacter.profession.variant?.prerequisites?.some(
+          fullCharacter.profession.variant?.prerequisites?.some(
             vp => vp.kind === "Remove" && deepEqual(prerequisite, vp.Remove),
           ) ?? false
         )
@@ -1719,23 +1715,23 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       }
     }
 
-    for (const prerequisite of transformedCharacter.profession.variant?.prerequisites ?? []) {
+    for (const prerequisite of fullCharacter.profession.variant?.prerequisites ?? []) {
       if (prerequisite.kind === "Add") {
         applyPrerequisiteElement(prerequisite.Add)
       }
     }
 
     for (const specialAbility of (
-      transformedCharacter.profession.package?.special_abilities?.filter(
+      fullCharacter.profession.package?.special_abilities?.filter(
         p =>
           !(
-            transformedCharacter.profession.variant?.special_abilities?.some(
+            fullCharacter.profession.variant?.special_abilities?.some(
               sa => sa.action.kind === "Remove" && deepEqual(p, sa.value),
             ) ?? false
           ),
       ) ?? []
     ).concat(
-      transformedCharacter.profession.variant?.special_abilities
+      fullCharacter.profession.variant?.special_abilities
         ?.filter(p => p.action.kind === "Override")
         .map(p => p.value) ?? [],
     )) {
@@ -1746,7 +1742,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
           checkProfessionSpecialAbilityRulePrerequisites(
             specialAbility.Constant,
             global,
-            transformedCharacter,
+            fullCharacter,
           )
         ) {
           applyActivatablePrerequisite({
@@ -1756,7 +1752,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
         }
       } else {
         const selection = specialAbility.Selection.options.filter(sa =>
-          checkProfessionSpecialAbilityRulePrerequisites(sa, global, transformedCharacter),
+          checkProfessionSpecialAbilityRulePrerequisites(sa, global, fullCharacter),
         )
         if (isNotEmpty(selection) && selection.length === 1) {
           if (selection[0].id.kind === "Enhancement") {
@@ -1771,43 +1767,43 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       }
     }
 
-    for (const { id, rating_modifier } of (
-      transformedCharacter.profession.package?.skills ?? []
-    ).concat(transformedCharacter.profession.variant?.skills ?? [])) {
-      transformedCharacter.skills.increment(id, rating_modifier)
+    for (const { id, rating_modifier } of (fullCharacter.profession.package?.skills ?? []).concat(
+      fullCharacter.profession.variant?.skills ?? [],
+    )) {
+      fullCharacter.skills.increment(id, rating_modifier)
     }
 
     for (const { id, rating_modifier } of (
-      transformedCharacter.profession.package?.combat_techniques ?? []
-    ).concat(transformedCharacter.profession.variant?.combat_techniques ?? [])) {
+      fullCharacter.profession.package?.combat_techniques ?? []
+    ).concat(fullCharacter.profession.variant?.combat_techniques ?? [])) {
       const stringId = fromUniformCase(id)
       switch (id.kind) {
         case "CloseCombatTechnique":
-          transformedCharacter.closeCombatTechniques.increment(stringId, rating_modifier)
+          fullCharacter.closeCombatTechniques.increment(stringId, rating_modifier)
           break
         case "RangedCombatTechnique":
-          transformedCharacter.rangedCombatTechniques.increment(stringId, rating_modifier)
+          fullCharacter.rangedCombatTechniques.increment(stringId, rating_modifier)
           break
         default:
           return assertExhaustive(id)
       }
     }
 
-    for (const cantrip of transformedCharacter.profession.package?.cantrips ?? []) {
-      transformedCharacter.cantrips.activate(cantrip)
+    for (const cantrip of fullCharacter.profession.package?.cantrips ?? []) {
+      fullCharacter.cantrips.activate(cantrip)
     }
 
     for (const { id, rating_modifier: rating } of (
-      transformedCharacter.profession.package?.spells ?? []
-    ).concat(transformedCharacter.profession.variant?.spells ?? [])) {
+      fullCharacter.profession.package?.spells ?? []
+    ).concat(fullCharacter.profession.variant?.spells ?? [])) {
       if (isNotEmpty(id) && id.length === 1) {
         switch (id[0].kind) {
           case "MagicalAction":
-            transformedCharacter.magicalActions.activate(
+            fullCharacter.magicalActions.activate(
               id[0].MagicalAction.id.kind,
               fromUniformCase(id[0].MagicalAction.id),
             )
-            transformedCharacter.magicalActions.increment(
+            fullCharacter.magicalActions.increment(
               id[0].MagicalAction.id.kind,
               fromUniformCase(id[0].MagicalAction.id),
               rating,
@@ -1816,12 +1812,12 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
           case "Spellwork":
             switch (id[0].Spellwork.id.kind) {
               case "Spell":
-                transformedCharacter.spells.activate(id[0].Spellwork.id.Spell)
-                transformedCharacter.spells.increment(id[0].Spellwork.id.Spell, rating)
+                fullCharacter.spells.activate(id[0].Spellwork.id.Spell)
+                fullCharacter.spells.increment(id[0].Spellwork.id.Spell, rating)
                 break
               case "Ritual":
-                transformedCharacter.rituals.activate(id[0].Spellwork.id.Ritual)
-                transformedCharacter.rituals.increment(id[0].Spellwork.id.Ritual, rating)
+                fullCharacter.rituals.activate(id[0].Spellwork.id.Ritual)
+                fullCharacter.rituals.increment(id[0].Spellwork.id.Ritual, rating)
                 break
               default:
                 return assertExhaustive(id[0].Spellwork.id)
@@ -1834,17 +1830,17 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     }
 
     for (const { id, rating_modifier: rating } of (
-      transformedCharacter.profession.package?.liturgical_chants ?? []
-    ).concat(transformedCharacter.profession.variant?.liturgical_chants ?? [])) {
+      fullCharacter.profession.package?.liturgical_chants ?? []
+    ).concat(fullCharacter.profession.variant?.liturgical_chants ?? [])) {
       if (isNotEmpty(id) && id.length === 1) {
         switch (id[0].kind) {
           case "LiturgicalChant":
-            transformedCharacter.liturgicalChants.activate(id[0].LiturgicalChant)
-            transformedCharacter.liturgicalChants.increment(id[0].LiturgicalChant, rating)
+            fullCharacter.liturgicalChants.activate(id[0].LiturgicalChant)
+            fullCharacter.liturgicalChants.increment(id[0].LiturgicalChant, rating)
             break
           case "Ceremony":
-            transformedCharacter.ceremonies.activate(id[0].Ceremony)
-            transformedCharacter.ceremonies.increment(id[0].Ceremony, rating)
+            fullCharacter.ceremonies.activate(id[0].Ceremony)
+            fullCharacter.ceremonies.increment(id[0].Ceremony, rating)
             break
           default:
             return assertExhaustive(id[0])
@@ -1852,7 +1848,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
       }
     }
 
-    return transformedCharacter
+    return fullCharacter
   }
 }
 
