@@ -1,4 +1,5 @@
 import { classList } from "@elyukai/utils/classList"
+import { equal } from "@elyukai/utils/equality"
 import { nullableToArray } from "@elyukai/utils/nullable"
 import { action } from "mobx"
 import { useCallback, useEffect, useRef, useState } from "react"
@@ -48,7 +49,7 @@ export const Dropdown = <A,>(props: Props<A>): ReturnType<FCC<Props<A>>> => {
     required,
     value,
     values,
-    equals,
+    equals = equal,
     getKey,
   } = props
 
@@ -117,8 +118,10 @@ export const Dropdown = <A,>(props: Props<A>): ReturnType<FCC<Props<A>>> => {
   const style = isOpen ? overlayHeight : 0
 
   const selected = isMultiple
-    ? options.filter(option => values.includes(option.id))
-    : nullableToArray(options.find(option => option.id === value))
+    ? options.filter(option => values.some(id => equals(id, option.id)))
+    : nullableToArray(
+        value === undefined ? undefined : options.find(option => equals(value, option.id)),
+      )
 
   const valueText =
     selected.length === 0 ? (hint ?? null) : selected.map(option => option.name).join(", ")
