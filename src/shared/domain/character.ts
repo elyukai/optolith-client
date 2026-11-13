@@ -1012,6 +1012,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
             }
           })
           .catch(error => {
+            console.error(error)
             dialog.showErrorBox(
               this.global.locale.translate("Error during save"),
               error?.toString() ?? "",
