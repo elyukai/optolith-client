@@ -1430,7 +1430,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     }
     const transformedCharacter = new FullCharacter(character.global, character.id, json)
 
-    transformedCharacter.personalityTraits.insertFrom(character.personalityTraits)
+    transformedCharacter.personalityTraits.copyFrom(character.personalityTraits)
 
     // Race
 

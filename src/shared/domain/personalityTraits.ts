@@ -60,7 +60,7 @@ export class CharacterPersonalityTraits {
   @observable accessor activeByLevel: Map<number, PersonalityTrait_ID> = new Map()
   @observable accessor dependencies: PersonalityTraitDependency[] = []
 
-  insertFrom(other: CharacterPersonalityTraits): void {
+  copyFrom(other: CharacterPersonalityTraits): void {
     for (const [level, id] of other.activeByLevel) {
       this.activeByLevel.set(level, id)
     }
