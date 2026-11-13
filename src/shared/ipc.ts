@@ -80,6 +80,8 @@ export type CharacterIPCActions = {
   ) => void
   removeActivatable: (entity: Gen.ActivatableIdentifier["kind"], id: string, index: number) => void
   printToPDF: () => void
+  finishCharacterCreation: () => void
+  addAdventurePoints: (amount: number) => void
 }
 
 type Selectors = Character["selectors"]

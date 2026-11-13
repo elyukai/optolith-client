@@ -15,6 +15,7 @@ import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useAppDispatch } from "../../../../hooks/redux.ts"
+import { OverviewAddAP } from "./OverviewAddAP.tsx"
 import { PersonalData } from "./PersonalData.tsx"
 import "./ProfileOverview.scss"
 
@@ -82,10 +83,7 @@ export const ProfileOverview: FC = observer(() => {
     [dispatch],
   )
 
-  const handlFinishCharacterCreation = useCallback(
-    () => undefined /* TODO: dispatch(finishCharacterCreation()) */,
-    [dispatch],
-  )
+  const [isAddAPOpen, setIsAddAPOpen] = useState(false)
 
   const nameElement = isEditingName ? (
     <EditText
@@ -158,10 +156,7 @@ export const ProfileOverview: FC = observer(() => {
             </GridItem>
             <GridItem className="main-profile-actions">
               {canAddAdventurePoints ? (
-                <Button
-                  className="add-ap"
-                  disabled // TODO: onClick={openAddAdventurePoints}
-                >
+                <Button className="add-ap" disabled onClick={() => setIsAddAPOpen(true)}>
                   {translate("Add AP")}
                 </Button>
               ) : null}
@@ -184,7 +179,7 @@ export const ProfileOverview: FC = observer(() => {
               <GridItem>
                 <Button
                   className="end-char-creation"
-                  onClick={handlFinishCharacterCreation}
+                  onClick={() => actions.finishCharacterCreation()}
                   primary
                   disabled={!canFinishCharacterCreation}
                 >
@@ -224,13 +219,9 @@ export const ProfileOverview: FC = observer(() => {
           </Grid>
         </Scroll>
       </Main>
-      {/* TODO: <OverviewAddAP
-        close={closeAddAdventurePoints}
-        isOpen={isAddAdventurePointsOpen}
-        isRemovingEnabled={isRemovingEnabled}
-        addAdventurePoints={addAdventurePoints}
-        staticData={staticData}
-        /> */}
+      {canAddAdventurePoints ? (
+        <OverviewAddAP isOpen={isAddAPOpen} close={() => setIsAddAPOpen(false)} />
+      ) : null}
       {/* TODO: <AvatarChange
         setPath={setAvatar}
         close={closeEditCharacterAvatar}

@@ -121,6 +121,11 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
   }
 
   @computed
+  get canAddAdventurePoints(): boolean {
+    return this.isCharacterCreationFinished
+  }
+
+  @computed
   get isInCharacterCreation() {
     return !this.isCharacterCreationFinished
   }
@@ -131,8 +136,13 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
   }
 
   @computed
+  get showFinishCharacterCreation(): boolean {
+    return this.phase === "Improvement"
+  }
+
+  @computed
   get canFinishCharacterCreation() {
-    return isInRange([0, 10], this.adventurePointsAvailable)
+    return this.phase === "Improvement" && isInRange([0, 10], this.adventurePointsAvailable)
   }
 
   @observable accessor phase: Phase
@@ -690,6 +700,24 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
   }
 
   @action
+  finishCharacterCreation() {
+    if (this.canFinishCharacterCreation) {
+      this.phase = "Finished" as Phase
+    }
+  }
+
+  @action
+  addAdventurePoints(amount: number) {
+    if (this.canAddAdventurePoints) {
+      if (this.canRemove) {
+        this.totalAdventurePoints += amount
+      } else {
+        this.totalAdventurePoints += Math.max(0, amount)
+      }
+    }
+  }
+
+  @action
   handleIPCAction(
     event: Electron.IpcMainEvent,
     ...args: StateActionsAsParameters<CharacterIPCActions>
@@ -1020,6 +1048,10 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
           })
         return
       }
+      case "finishCharacterCreation":
+        return this.finishCharacterCreation()
+      case "addAdventurePoints":
+        return this.addAdventurePoints(args[1][0])
       default:
         return assertExhaustive(args)
     }
@@ -1034,8 +1066,8 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
       showSexualCharacteristics: () => this.personalData.showSexualCharacteristics,
       startExperienceLevel: () => this.experienceLevel.start,
       currentExperienceLevel: () => this.experienceLevel.current,
-      canAddAdventurePoints: () => this.isCharacterCreationFinished,
-      showFinishCharacterCreation: () => !this.isCharacterCreationFinished,
+      canAddAdventurePoints: () => this.canAddAdventurePoints,
+      showFinishCharacterCreation: () => this.showFinishCharacterCreation,
       canFinishCharacterCreation: () => isInRange([0, 10], this.adventurePointsAvailable),
       canDefineCustomProfessionName: () => false, // TODO
       availableHairColors: () => this.personalData.availableHairColors,
