@@ -1818,12 +1818,14 @@ export class CharacterActivatable<
         const diffWhenRemoved = values.at(-1) ?? 0
         const min = Math.min(...values)
         const max = Math.max(...values)
-        return Case("Range", {
-          min,
-          max,
-          total,
-          diffWhenRemoved,
-        })
+        return min === max
+          ? Case("Fixed", min)
+          : Case("Range", {
+              min,
+              max,
+              total,
+              diffWhenRemoved,
+            })
       }
       case "Indefinite":
         return Case("Fixed", 0)
