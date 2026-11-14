@@ -51,6 +51,7 @@ export const ActiveActivatableListItem = observer(
       minLevel,
       maxLevel,
       levels,
+      addNativeTongueLevel,
     } = activatable
 
     const translate = useTranslate()
@@ -74,10 +75,20 @@ export const ActiveActivatableListItem = observer(
       levels === undefined || instance?.level === undefined || maxLevel === minLevel ? null : (
         <Dropdown
           className="level"
-          options={range([minLevel ?? 1, maxLevel ?? levels]).map(l => ({
-            id: l,
-            name: romanize(l),
-          }))}
+          options={range([
+            minLevel ?? 1,
+            (maxLevel ?? levels) + (addNativeTongueLevel ? 1 : 0),
+          ]).map((l, i, arr) =>
+            addNativeTongueLevel && i === arr.length - 1
+              ? {
+                  id: l,
+                  name: translate("NT"),
+                }
+              : {
+                  id: l,
+                  name: romanize(l),
+                },
+          )}
           getKey={getLevelKey}
           value={instance.level}
           onChange={handleLevel}

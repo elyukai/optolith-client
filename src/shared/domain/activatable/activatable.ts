@@ -1399,6 +1399,14 @@ export class CharacterActivatable<
   toJSONActive(): DisplayedActiveActivatable<Entity>[] {
     const dependencies = this.dependenciesForActiveInstances
 
+    const addNativeTongueLevel =
+      equalsCase(
+        this.global.settings.language,
+        Case(this.entityName satisfies ActivatableIdentifier["kind"], this.id),
+      ) &&
+      "levels" in this.dbEntry &&
+      this.dbEntry.levels !== undefined
+
     return this.instances.map((instance, instanceIndex): DisplayedActiveActivatable<Entity> => {
       const { minimumLevel: minLevel, isRemovable } = instance
       const maxLevel = this.getMaximumLevel(instance, dependencies)
@@ -1451,6 +1459,7 @@ export class CharacterActivatable<
         instanceIndex,
         isRemovable,
         levels: "levels" in this.dbEntry ? this.dbEntry.levels : undefined,
+        addNativeTongueLevel,
         minLevel,
         maxLevel,
         cost: instance.adventurePoints,
@@ -1526,6 +1535,14 @@ export class CharacterActivatable<
       config => config.kind === "text" || isNotEmpty(config.options),
     )
 
+    const addNativeTongueLevel =
+      equalsCase(
+        this.global.settings.language,
+        Case(this.entityName satisfies ActivatableIdentifier["kind"], this.id),
+      ) &&
+      "levels" in this.dbEntry &&
+      this.dbEntry.levels !== undefined
+
     return {
       type: this.entityName,
       active: false,
@@ -1551,6 +1568,7 @@ export class CharacterActivatable<
                   : "after",
             }
           : undefined,
+      addNativeTongueLevel,
     }
   }
 
@@ -2175,6 +2193,7 @@ export type DisplayedActiveActivatable<
     maxLevel?: number
     cost: DisplayedActiveActivatableCost
     name: ActivatableNameComponentsWithFull
+    addNativeTongueLevel: boolean
   }
 }[Entity]
 
@@ -2203,6 +2222,7 @@ export type DisplayedInactiveActivatable<
       | Case<"Fixed", FixedAdventurePointsValue>
       | Case<"ByLevel", AdventurePointsValueByLevel>
       | Case<"DerivedFromSelection">
+    addNativeTongueLevel: boolean
   }
 }[Entity]
 

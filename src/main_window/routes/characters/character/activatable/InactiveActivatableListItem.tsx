@@ -47,7 +47,8 @@ export const InactiveActivatablesListItem = observer(function InactiveActivatabl
   K extends ActivatableIdentifier["kind"],
 >(props: Props<K>): ReactNode {
   const { activatable, isCustomCostAvailable = false } = props
-  const { type, id, name, instances, isAvailable, options, level, apValue } = activatable
+  const { type, id, name, instances, isAvailable, options, level, apValue, addNativeTongueLevel } =
+    activatable
 
   const translate = useTranslate()
   const actions = useCharacterActions()
@@ -160,7 +161,17 @@ export const InactiveActivatablesListItem = observer(function InactiveActivatabl
     level === undefined || !isAvailable ? null : level.maximum > 1 ? (
       <Dropdown
         className="level"
-        options={range([1, level.maximum]).map(l => ({ id: l, name: romanize(l) }))}
+        options={range([1, level.maximum + (addNativeTongueLevel ? 1 : 0)]).map((l, i, arr) =>
+          addNativeTongueLevel && i === arr.length - 1
+            ? {
+                id: l,
+                name: translate("NT"),
+              }
+            : {
+                id: l,
+                name: romanize(l),
+              },
+        )}
         getKey={getLevelKey}
         value={selectedLevel}
         onChange={handleChangeLevel}
