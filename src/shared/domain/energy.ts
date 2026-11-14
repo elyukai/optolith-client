@@ -466,7 +466,11 @@ export class CharacterEnergy extends CharacterDerivedCharacteristic {
 
   @computed
   get minimumAttributeRequiredForPurchased(): { id: Attribute_ID; value: number } | undefined {
-    if (this.dbEntry.type?.kind === "Energy" && this.dbEntry.type.Energy.purchase) {
+    if (
+      this.dbEntry.type?.kind === "Energy" &&
+      this.dbEntry.type.Energy.purchase &&
+      this.purchased !== undefined
+    ) {
       const id = getAttributeIdForPurchased(
         this.character,
         this.dbEntry.type.Energy.purchase.maximum,
@@ -476,7 +480,7 @@ export class CharacterEnergy extends CharacterDerivedCharacteristic {
       }
       return {
         id,
-        value: this.character.attributes.getValueById(id),
+        value: this.purchased,
       }
     }
     return undefined
