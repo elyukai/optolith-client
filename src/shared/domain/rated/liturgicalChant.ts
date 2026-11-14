@@ -258,9 +258,9 @@ export class CharacterLiturgicalChant<
     )
   }
 
-  override activate(): void {
-    super.activate()
-    if (this.dbEntry.prerequisites !== undefined) {
+  override activate(): boolean {
+    const res = super.activate()
+    if (res && this.dbEntry.prerequisites !== undefined) {
       registerOrUnregisterPrerequisitesOfLiturgyAsDependencies(
         this.dbEntry.prerequisites,
         RegistrationMethod.Add,
@@ -268,11 +268,12 @@ export class CharacterLiturgicalChant<
         Case(this.entityName satisfies LiturgyIdentifier["kind"], this.id),
       )
     }
+    return res
   }
 
-  override deactivate(): void {
-    super.deactivate()
-    if (this.dbEntry.prerequisites !== undefined) {
+  override deactivate(): boolean {
+    const res = super.deactivate()
+    if (res && this.dbEntry.prerequisites !== undefined) {
       registerOrUnregisterPrerequisitesOfLiturgyAsDependencies(
         this.dbEntry.prerequisites,
         RegistrationMethod.Remove,
@@ -280,6 +281,7 @@ export class CharacterLiturgicalChant<
         Case(this.entityName satisfies LiturgyIdentifier["kind"], this.id),
       )
     }
+    return res
   }
 }
 

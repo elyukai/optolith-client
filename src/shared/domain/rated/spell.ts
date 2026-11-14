@@ -106,7 +106,7 @@ export class CharacterCantrips extends TinyActivatables<"Cantrip", CharacterCant
                   ?.translations,
               )?.name ?? "",
             isUnfamiliar: container.isUnfamiliar,
-            isDisabled: false, // TODO: Check dependencies
+            isDisabled: false, // TODO: Check traditions
           }))
           .toArray()
       : []
@@ -129,7 +129,7 @@ export class CharacterCantrips extends TinyActivatables<"Cantrip", CharacterCant
               ?.translations,
           )?.name ?? "",
         isUnfamiliar: entry.isUnfamiliar,
-        isDisabled: false, // TODO: Check traditions
+        isDisabled: false, // TODO: Check dependencies
       }))
       .toArray()
   }
@@ -282,9 +282,9 @@ export class CharacterSpellwork<
     }
   }
 
-  override activate(): void {
-    super.activate()
-    if (this.dbEntry.prerequisites !== undefined) {
+  override activate(): boolean {
+    const res = super.activate()
+    if (res && this.dbEntry.prerequisites !== undefined) {
       registerOrUnregisterPrerequisitesOfSpellworkAsDependencies(
         this.dbEntry.prerequisites,
         RegistrationMethod.Add,
@@ -292,11 +292,12 @@ export class CharacterSpellwork<
         Case(this.entityName satisfies SpellworkIdentifier["kind"], this.id),
       )
     }
+    return res
   }
 
-  override deactivate(): void {
-    super.deactivate()
-    if (this.dbEntry.prerequisites !== undefined) {
+  override deactivate(): boolean {
+    const res = super.deactivate()
+    if (res && this.dbEntry.prerequisites !== undefined) {
       registerOrUnregisterPrerequisitesOfSpellworkAsDependencies(
         this.dbEntry.prerequisites,
         RegistrationMethod.Remove,
@@ -304,6 +305,7 @@ export class CharacterSpellwork<
         Case(this.entityName satisfies SpellworkIdentifier["kind"], this.id),
       )
     }
+    return res
   }
 }
 

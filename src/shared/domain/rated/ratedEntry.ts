@@ -278,7 +278,7 @@ export abstract class CharacterAnyRatedEntry<
 
 export abstract class CharacterRatedEntry<
   Entity extends keyof Gen.EntityMap,
-> extends CharacterAnyRatedEntry<Entity, false> {
+> extends CharacterAnyRatedEntry<Entity> {
   constructor(
     global: Global,
     character: BaseCharacter,
@@ -357,17 +357,21 @@ export abstract class CharacterActivatableRatedEntry<
   }
 
   @action
-  activate() {
+  activate(): boolean {
     if (this.canActivate) {
       this.setValue(0)
+      return true
     }
+    return false
   }
 
   @action
-  deactivate() {
+  deactivate(): boolean {
     if (this.canDeactivate) {
       this.setValue(undefined)
+      return true
     }
+    return false
   }
 
   abstract get isAvailable(): boolean
