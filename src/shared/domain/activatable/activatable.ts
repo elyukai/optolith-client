@@ -1391,7 +1391,7 @@ export class CharacterActivatable<
   get dependenciesForActiveInstances(): ActivatableDependency[] {
     return this.applyingDependencies.filter(
       dep =>
-        dep.active === false ||
+        dep.active === true &&
         count(this.instances, instance => appliesToInstanceStrict(dep, instance)) < 2,
     )
   }
