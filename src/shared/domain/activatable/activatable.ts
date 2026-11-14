@@ -663,7 +663,7 @@ export class CharacterActivatableInstance {
   @computed
   get isDependedOn(): boolean {
     return (
-      this.parent.dependenciesForActiveInstances.every(
+      this.parent.dependenciesForActiveInstances.some(
         dep => isGeneralDependency(dep) || appliesToInstanceStrict(dep, this),
       ) ||
       (this.parent.entityName !== "Advantage" &&
