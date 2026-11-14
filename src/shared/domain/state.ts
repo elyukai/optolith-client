@@ -49,7 +49,7 @@ export class CharacterState {
     return this.dependencies.filter(dep => {
       if (dep.isPartOfDisjunction) {
         return checkMultipleDisjunctionPartsAreValid(
-          this.global.db.getInstanceOfEntityById,
+          this.global.db.getInstanceOfEntityById.bind(this.global.db),
           this.character.prerequisiteCapabilities,
           dep.sourceId,
           dep.index,

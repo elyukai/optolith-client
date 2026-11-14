@@ -100,7 +100,7 @@ abstract class CharacterRule<Entity extends "FocusRule" | "OptionalRule" | "Alte
     return this.dependencies.filter(dep => {
       if (dep.isPartOfDisjunction) {
         return checkMultipleDisjunctionPartsAreValid(
-          this.global.db.getInstanceOfEntityById,
+          this.global.db.getInstanceOfEntityById.bind(this.global.db),
           this.character.prerequisiteCapabilities,
           dep.sourceId,
           dep.index,
@@ -548,7 +548,7 @@ export class CharacterRules {
     return this.publicationDependencies.filter(dep => {
       if (dep.isPartOfDisjunction) {
         return checkMultipleDisjunctionPartsAreValid(
-          this.global.db.getInstanceOfEntityById,
+          this.global.db.getInstanceOfEntityById.bind(this.global.db),
           this.character.prerequisiteCapabilities,
           Case("Publication", dep.sourceId),
           dep.index,
