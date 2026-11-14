@@ -72,9 +72,7 @@ const config: Configuration = {
   },
   publish: {
     provider: "generic",
-    url: isPrerelease
-      ? `${process.env.UPDATE_URL}/insider/\${os}`
-      : `${process.env.UPDATE_URL}/\${os}`,
+    url: isPrerelease ? `${process.env.UPDATE_URL}/insider` : `${process.env.UPDATE_URL}/stable`,
   },
 }
 
