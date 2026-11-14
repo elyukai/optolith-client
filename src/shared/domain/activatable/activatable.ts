@@ -391,6 +391,26 @@ export class CharacterActivatableInstance {
       }
 
       return value <= this.parent.character.experienceLevel.start.max_combat_technique_rating
+    } else if (
+      equalsCase(taggedId, this.parent.global.settings.focusRules.styles.combatCombination)
+    ) {
+      const countByType = countBy(
+        this.parent.character.specialAbilities.getSpecialAbilitiesCollection(
+          "CombatStyleSpecialAbility",
+        ).active,
+        entry => entry.dbEntry.type.kind,
+      )
+      const { Armed: armedCount = 0, Unarmed: unarmedCount = 0 } = countByType
+      const totalCount = armedCount + unarmedCount
+      return armedCount < 2 && unarmedCount < 2 && totalCount < 3
+    } else if (
+      equalsCase(taggedId, this.parent.global.settings.focusRules.styles.magicCombination)
+    ) {
+      return (
+        this.parent.character.specialAbilities.getSpecialAbilitiesCollection(
+          "MagicStyleSpecialAbility",
+        ).activeCount < 2
+      )
     }
 
     switch (entityName) {
@@ -437,27 +457,6 @@ export class CharacterActivatableInstance {
           default:
             return true
         }
-      case "CombatSpecialAbility":
-        switch (id) {
-          //       TODO: case SpecialAbilityId.CombatStyleCombination: {
-          //         const armedStyleActive = countActiveGroupEntries(wiki)(hero)(
-          //           SpecialAbilityGroup.CombatStylesArmed,
-          //         )
-
-          //         const unarmedStyleActive = countActiveGroupEntries(wiki)(hero)(
-          //           SpecialAbilityGroup.CombatStylesUnarmed,
-          //         )
-
-          //         const totalActive = armedStyleActive + unarmedStyleActive
-
-          //         // default is 1 per group (armed/unarmed), but with this SA 1 more in
-          //         // one group: maximum of 3, but max 2 per group. If max is reached, this
-          //         // SA cannot be removed
-          //         return totalActive >= 3 || armedStyleActive >= 2 || unarmedStyleActive >= 2
-          //       }
-          default:
-            return true
-        }
       case "MagicalSpecialAbility":
         switch (id) {
           //       TODO: case SpecialAbilityId.PropertyKnowledge:
@@ -478,13 +477,6 @@ export class CharacterActivatableInstance {
           //             )(HA.spells(hero)),
           //           ),
           //         )
-          //       TODO: case SpecialAbilityId.MagicStyleCombination: {
-          //         const totalActive = countActiveGroupEntries(wiki)(hero)(13)
-
-          //         // default is 1, but with this SA its 2. If it's 2 this SA is neccessary
-          //         // and cannot be removed
-          //         return totalActive >= 2
-          //       }
           default:
             return true
         }
