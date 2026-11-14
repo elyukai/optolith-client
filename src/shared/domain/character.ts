@@ -11,6 +11,7 @@ import type {
 import type {
   ActivatableIdentifier,
   Aspect_ID,
+  Blessing_ID,
   EnhancementPrerequisite,
   ExperienceLevel_ID,
   MagicalTradition_ID,
@@ -1858,6 +1859,26 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
             break
           default:
             return assertExhaustive(id[0])
+        }
+      }
+    }
+
+    if (fullCharacter.activeBlessedTradition !== undefined) {
+      const restrictedBlessings =
+        fullCharacter.activeBlessedTradition.dbEntry.type.kind === "Church"
+          ? fullCharacter.activeBlessedTradition.dbEntry.type.Church.restrictedBlessings ===
+            undefined
+            ? []
+            : fromUniformCase<"Three" | "Six", Blessing_ID[]>(
+                fullCharacter.activeBlessedTradition.dbEntry.type.Church.restrictedBlessings,
+              )
+          : undefined
+
+      if (restrictedBlessings !== undefined) {
+        for (const blessing of fullCharacter.blessings.activatables.values()) {
+          if (!restrictedBlessings.includes(blessing.id)) {
+            blessing.activate()
+          }
         }
       }
     }
