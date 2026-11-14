@@ -2116,45 +2116,54 @@ export const getSelectOptionConfiguration = (
   // TODO: Select Options may restrict available levels with prerequisites or in general with Languages
   if (options) {
     if (selectOptionRules !== undefined) {
-      return selectOptionRules.map((rule): DisplayedInactiveActivatableOption => {
-        switch (rule.value.kind) {
-          case "Child":
-            return {
-              kind: "choice",
-              options: global.db
-                .getAllInstanceContainersOfEntity(rule.value.Child.entity.kind)
-                .map((container): ResolvedSelectOptionWithResolvedAPValue => ({
-                  id: Case("SkillApplication", container.id),
-                  content: {
-                    ...container.content,
-                    parent: Case(entityName, id),
-                  },
-                  newApplications: [],
-                  uses: [],
-                  parentSelectOption: Case("Skill", container.content.parent),
-                })),
-              parentIndex: rule.value.Child.parentIndex,
+      return selectOptionRules.flatMap(rule =>
+        replicate(
+          ((): DisplayedInactiveActivatableOption => {
+            switch (rule.value.kind) {
+              case "Child":
+                return {
+                  kind: "choice",
+                  options: global.db
+                    .getAllInstanceContainersOfEntity(rule.value.Child.entity.kind)
+                    .map((container): ResolvedSelectOptionWithResolvedAPValue => ({
+                      id: Case("SkillApplication", container.id),
+                      content: {
+                        ...container.content,
+                        parent: Case(entityName, id),
+                      },
+                      newApplications: [],
+                      uses: [],
+                      parentSelectOption: Case("Skill", container.content.parent),
+                    })),
+                  parentIndex: rule.value.Child.parentIndex,
+                }
+              case "Predefined":
+                return {
+                  kind: "choice",
+                  options,
+                }
+              case "PredefinedOrTextInput":
+                return {
+                  kind: "choiceOrCustomizableText",
+                  options,
+                  textLabel: rule.value.PredefinedOrTextInput.translations,
+                }
+              case "TextInput":
+                return {
+                  kind: "text",
+                  textLabel: rule.value.TextInput.translations,
+                }
+              default:
+                return assertExhaustive(rule.value)
             }
-          case "Predefined":
-            return {
-              kind: "choice",
-              options,
-            }
-          case "PredefinedOrTextInput":
-            return {
-              kind: "choiceOrCustomizableText",
-              options,
-              textLabel: rule.value.PredefinedOrTextInput.translations,
-            }
-          case "TextInput":
-            return {
-              kind: "text",
-              textLabel: rule.value.TextInput.translations,
-            }
-          default:
-            return assertExhaustive(rule.value)
-        }
-      })
+          })(),
+          rule.multiple === undefined
+            ? 1
+            : rule.multiple.kind === "Constant"
+              ? rule.multiple.Constant
+              : rule.multiple.Range.max,
+        ),
+      )
     } else {
       return [
         {
