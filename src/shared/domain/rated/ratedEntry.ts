@@ -382,6 +382,7 @@ export abstract class CharacterActivatableRatedEntry<
           maxValue: this.maxValue,
           isIncreasable: this.isIncreasable,
           isDecreasable: this.isDecreasable,
+          canDeactivate: this.canDeactivate,
         }
       : {
           id: this.id,
@@ -540,6 +541,7 @@ export type DisplayedRated = DisplayedAnyRated<false>
 export type DisplayedActiveActivatableRated = DisplayedAnyRated<true> & {
   active: true
   value: number
+  canDeactivate: boolean
 }
 
 export type DisplayedInactiveActivatableRated = {

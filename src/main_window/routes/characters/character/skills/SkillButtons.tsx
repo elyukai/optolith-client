@@ -20,6 +20,7 @@ type Props = {
         isAvailable: boolean
         isIncreasable?: undefined
         isDecreasable?: undefined
+        canDeactivate?: undefined
         value?: undefined
       }
     | {
@@ -28,9 +29,10 @@ type Props = {
         isAvailable?: undefined
         isIncreasable: boolean
         isDecreasable: boolean
+        canDeactivate: boolean
         value: number
       }
-  selectForInfo(): void
+  selectForInfo: () => void
 }
 
 const isActivatableRated = (
@@ -45,7 +47,7 @@ const isActivatableRated = (
  */
 export const SkillButtons: React.FC<Props> = observer(function SkillButtons(props) {
   const { entityName, entry, selectForInfo } = props
-  const { active, isAvailable, isIncreasable, isDecreasable, value, id } = entry
+  const { active, isAvailable, isIncreasable, isDecreasable, value, id, canDeactivate } = entry
 
   const translate = useTranslate()
   const { canRemove } = useCharacterState()
@@ -73,10 +75,10 @@ export const SkillButtons: React.FC<Props> = observer(function SkillButtons(prop
 
   const handleRemovePoint = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
-      if (canRemove && active !== false && isDecreasable) {
-        if (isActivatableRated(entityName) && active === true && value === 0) {
-          actions.deactivateRated(entityName, id)
-        } else if (event.shiftKey) {
+      if (active === true && canDeactivate && isActivatableRated(entityName) && value === 0) {
+        actions.deactivateRated(entityName, id)
+      } else if (active !== false && isDecreasable) {
+        if (event.shiftKey) {
           actions.decrementRatedToMin(entityName, id)
         } else {
           actions.decrementRated(entityName, id)
@@ -109,7 +111,7 @@ export const SkillButtons: React.FC<Props> = observer(function SkillButtons(prop
             <IconButton
               icon={active === true && value === 0 ? "\uE90b" : "\uE909"}
               onClick={handleRemovePoint}
-              disabled={!isDecreasable}
+              disabled={active === true && value === 0 ? !canDeactivate : !isDecreasable}
               label={translate("Decrement")}
               flat
             />
