@@ -1639,7 +1639,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     const applyActivatablePrerequisite = (
       p: Omit<ProfessionActivatablePrerequisite, "active">,
     ): void => {
-      if (p.options?.every(opt => opt.kind !== "Select") ?? true) {
+      if (p.options === undefined || p.options?.every(opt => opt.kind !== "Select")) {
         fullCharacter.getActivatableCollection(p.id.kind).add(fromUniformCase(p.id), {
           level: p.level,
           options: p.options?.map((option): ActivatableOption => {
