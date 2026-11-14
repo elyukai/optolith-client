@@ -309,7 +309,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
       this.attributes.adventurePointsTotal.general +
       this.derivedCharacteristics.adventurePointsTotal.general +
       this.advantages.adventurePointsTotal.general +
-      this.disadvantages.adventurePointsTotal.general +
+      -this.disadvantages.adventurePointsTotal.general +
       this.skills.adventurePointsTotal.general +
       this.closeCombatTechniques.adventurePointsTotal.general +
       this.rangedCombatTechniques.adventurePointsTotal.general +
