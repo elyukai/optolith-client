@@ -310,6 +310,6 @@ const blockBuilderMap: BlockHTMLBuilderMap = {
 const builderMap = { ...blockBuilderMap, ...inlineBuilderMap }
 
 export const Markdown: FC<{ source: string; env?: Env }> = props => {
-  const { source = "...", env = {} } = props
+  const { source, env = {} } = props
   return <>{renderFromString(source, builderMap, { builderArgs: [undefined, env] }).flat()}</>
 }

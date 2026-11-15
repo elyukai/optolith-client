@@ -452,6 +452,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
   getActivatableCollection<E extends ActivatableIdentifier["kind"]>(
     entity: E,
   ): CharacterActivatables<E> {
+    // oxlint-disable-next-line typescript/switch-exhaustiveness-check
     switch (entity) {
       case "Advantage":
         return this.advantages as CharacterActivatables<E>
@@ -830,7 +831,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
           case "Ritual":
           case "LiturgicalChant":
           case "Ceremony":
-            return this.getRatedCollection(args[1][0])?.increment(args[1][1])
+            return this.getRatedCollection(args[1][0]).increment(args[1][1])
           case "AnimistPower":
           case "Bannzeichen":
           case "Curse":
@@ -857,7 +858,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
           case "Ritual":
           case "LiturgicalChant":
           case "Ceremony":
-            return this.getRatedCollection(args[1][0])?.decrement(args[1][1])
+            return this.getRatedCollection(args[1][0]).decrement(args[1][1])
           case "AnimistPower":
           case "Bannzeichen":
           case "Curse":
@@ -884,7 +885,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
           case "Ritual":
           case "LiturgicalChant":
           case "Ceremony":
-            return this.getRatedCollection(args[1][0])?.incrementToMax(args[1][1])
+            return this.getRatedCollection(args[1][0]).incrementToMax(args[1][1])
           case "AnimistPower":
           case "Bannzeichen":
           case "Curse":
@@ -911,7 +912,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
           case "Ritual":
           case "LiturgicalChant":
           case "Ceremony":
-            return this.getRatedCollection(args[1][0])?.decrementToMin(args[1][1])
+            return this.getRatedCollection(args[1][0]).decrementToMin(args[1][1])
           case "AnimistPower":
           case "Bannzeichen":
           case "Curse":
@@ -952,7 +953,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
           case "Ritual":
           case "LiturgicalChant":
           case "Ceremony":
-            return this.getActivatableRatedWithEnhancementsCollection(args[1][0])?.activate(
+            return this.getActivatableRatedWithEnhancementsCollection(args[1][0]).activate(
               args[1][1],
             )
           case "AnimistPower":
@@ -977,7 +978,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
           case "Ritual":
           case "LiturgicalChant":
           case "Ceremony":
-            return this.getActivatableRatedWithEnhancementsCollection(args[1][0])?.deactivate(
+            return this.getActivatableRatedWithEnhancementsCollection(args[1][0]).deactivate(
               args[1][1],
             )
           case "AnimistPower":
@@ -997,15 +998,15 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
             return assertExhaustive(args[1][0])
         }
       case "addActivatable":
-        return this.getActivatableCollection(args[1][0])?.add(args[1][1], args[1][2])
+        return this.getActivatableCollection(args[1][0]).add(args[1][1], args[1][2])
       case "setActivatableLevel":
-        return this.getActivatableCollection(args[1][0])?.setLevel(
+        return this.getActivatableCollection(args[1][0]).setLevel(
           args[1][1],
           args[1][2],
           args[1][3],
         )
       case "removeActivatable":
-        return this.getActivatableCollection(args[1][0])?.remove(args[1][1], args[1][2])
+        return this.getActivatableCollection(args[1][0]).remove(args[1][1], args[1][2])
       case "printToPDF": {
         const window = BrowserWindow.fromWebContents(event.sender)
         event.sender
@@ -1639,7 +1640,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     const applyActivatablePrerequisite = (
       p: Omit<ProfessionActivatablePrerequisite, "active">,
     ): void => {
-      if (p.options === undefined || p.options?.every(opt => opt.kind !== "Select")) {
+      if (p.options === undefined || p.options.every(opt => opt.kind !== "Select")) {
         fullCharacter.getActivatableCollection(p.id.kind).add(fromUniformCase(p.id), {
           level: p.level,
           options: p.options?.map((option): ActivatableOption => {
@@ -1700,6 +1701,7 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
     }
 
     for (const separate of selectedOptions.separate) {
+      // oxlint-disable-next-line typescript/switch-exhaustiveness-check
       switch (separate.kind) {
         case "IncompleteActivatable":
           fullCharacter

@@ -260,6 +260,7 @@ app.whenReady().then(async () => {
         ...args: StateActionsAsParameters<GlobalIPCActions>
       ): Promise<void | RoutePath> => {
         debug("execute global ipc action %s with parameters %o", args[0], args[1])
+        // oxlint-disable-next-line typescript/switch-exhaustiveness-check
         switch (args[0]) {
           case "saveCharacter": {
             const [_, [characterId]] = args

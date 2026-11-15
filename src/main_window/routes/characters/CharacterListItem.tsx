@@ -79,7 +79,9 @@ export const CharacterListItem: FC<Props> = observer(props => {
       <ListItemButtons>
         <Button
           className="save"
-          onClick={() => ExternalAPI.execute("saveCharacter", id)}
+          onClick={() => {
+            ExternalAPI.execute("saveCharacter", id)
+          }}
           // TODO: only allow save when unsaved changes
         >
           {translate("Save")}
