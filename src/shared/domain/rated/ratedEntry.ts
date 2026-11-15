@@ -96,12 +96,12 @@ export abstract class CharacterAnyRatedEntry<
 
   @action
   increment(by = 1) {
-    this.updateValue(oldValue => oldValue + by)
+    this.updateValue(oldValue => oldValue + Math.max(0, by))
   }
 
   @action
   decrement(by = 1) {
-    this.updateValue(oldValue => oldValue - by)
+    this.updateValue(oldValue => oldValue - Math.max(0, by))
   }
 
   @action
