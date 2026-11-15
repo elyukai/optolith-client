@@ -205,62 +205,6 @@ export const getIdSpecificAffectedAndDispatchProps =
     const mselected_level = selectedOptions.selectedTier
 
     switch (id) {
-      // Entry with Skill selection (string id)
-      case AdvantageId.Aptitude:
-      case AdvantageId.ExceptionalSkill:
-      case AdvantageId.ExceptionalCombatTechnique:
-      case AdvantageId.WeaponAptitude:
-      case DisadvantageId.Incompetent:
-      case SpecialAbilityId.AdaptionZauber:
-      case SpecialAbilityId.FavoriteSpellwork:
-      case SpecialAbilityId.Forschungsgebiet:
-      case SpecialAbilityId.Expertenwissen:
-      case SpecialAbilityId.Wissensdurst:
-      case SpecialAbilityId.Lieblingsliturgie:
-      case SpecialAbilityId.WegDerGelehrten:
-      case SpecialAbilityId.WegDerKuenstlerin: {
-        return getPropsForEntryWithSkillSel (misStringM)
-                                            (staticData)
-                                            (mselected)
-                                            (entry)
-                                            (id)
-      }
-
-      case AdvantageId.ImmunityToPoison:
-      case AdvantageId.ImmunityToDisease:
-      case DisadvantageId.NegativeTrait:
-      case DisadvantageId.Maimed: {
-        return Pair (
-          ActivatableActivationOptions ({
-            id,
-            selectOptionId1: mselected,
-            cost: Nothing,
-          }),
-          PropertiesAffectedByState ({
-            currentCost: getSelectOptionCost (IAA.wikiEntry (entry) as Activatable)
-                                             (mselected),
-          })
-        )
-      }
-
-      case DisadvantageId.AfraidOf: {
-        return Pair (
-          ActivatableActivationOptions ({
-            id,
-            selectOptionId1: mselected,
-            input: minput_text,
-            level: mselected_level,
-            cost: Nothing,
-          }),
-          PropertiesAffectedByState ({
-            currentCost: liftM2 (multiply)
-                                (mselected_level)
-                                (pipe_ (entry, IAA.cost, misNumberM)),
-            disabled: Just (isNothing (mselected) && isNothing (minput_text)),
-          })
-        )
-      }
-
       case DisadvantageId.Principles:
       case DisadvantageId.Obligations: {
         const active_selections =
@@ -315,38 +259,6 @@ export const getIdSpecificAffectedAndDispatchProps =
                           />
                       )
                     )),
-          })
-        )
-      }
-
-      case AdvantageId.MagicalAttunement:
-      case DisadvantageId.MagicalRestriction: {
-        return Pair (
-          ActivatableActivationOptions ({
-            id,
-            selectOptionId1: mselected,
-            input: minput_text,
-            cost: Nothing,
-          }),
-          PropertiesAffectedByState ({
-            currentCost: getPlainCostFromEntry (entry),
-            disabled: Just (isNothing (mselected) && isNothing (minput_text)),
-          })
-        )
-      }
-
-      case AdvantageId.HatredOf: {
-        return Pair (
-          ActivatableActivationOptions ({
-            id,
-            selectOptionId1: mselected,
-            input: minput_text,
-            cost: Nothing,
-          }),
-          PropertiesAffectedByState ({
-            currentCost: getSelectOptionCost (IAA.wikiEntry (entry) as Activatable)
-                                             (mselected),
-            disabled: Just (isNothing (mselected) || isNothing (minput_text)),
           })
         )
       }
@@ -456,27 +368,6 @@ export const getIdSpecificAffectedAndDispatchProps =
         )
       }
 
-      case SpecialAbilityId.Language: {
-        return Pair (
-          ActivatableActivationOptions ({
-            id,
-            selectOptionId1: mselected,
-            level: mselected_level,
-            cost: Nothing,
-          }),
-          PropertiesAffectedByState ({
-            currentCost:
-              pipe_ (
-                mselected,
-                misNumberM,
-                thenF (liftM2 ((l: number) => (c: number) => l === 4 ? 0 : c * l)
-                              (mselected_level)
-                              (getPlainCostFromEntry (entry)))
-              ),
-          })
-        )
-      }
-
       case SpecialAbilityId.LanguageSpecializations: {
         const moption = getCurrentSelectOption (entry) (mselected)
 
@@ -524,48 +415,6 @@ export const getIdSpecificAffectedAndDispatchProps =
                   filter (so => List.notElem (SOA.id (so)) (active_specializations_for_language)),
                 )),
               ),
-          })
-        )
-      }
-
-      case SpecialAbilityId.Fachwissen: {
-        const getApps =
-          (mother_id: Maybe<string | number>) =>
-            pipe_ (
-              mselected,
-              misStringM,
-              bindF (lookupF (SDA.skills (staticData))),
-              fmap (SkA.applications),
-              joinMaybeList,
-              maybe (ident as ident<List<Record<Application>>>)
-                    ((other_id: string | number) => filter (pipe (AA.id, notEquals (other_id))))
-                    (mother_id),
-              ensure (notNull),
-              fmap (map ((e: Record<Application>) => SelectOption ({
-                                id: AA.id (e),
-                                name: AA.name (e),
-                                src: IAA_.src (entry),
-                                errata: Nothing,
-                              })))
-            )
-
-        return Pair (
-          ActivatableActivationOptions ({
-            id,
-            selectOptionId1: mselected,
-            selectOptionId2: mselected2,
-            selectOptionId3: mselected3,
-            cost: Nothing,
-          }),
-          PropertiesAffectedByState ({
-            currentCost: getCostForEntryWithSkillSel (misStringM)
-                                                     (staticData)
-                                                     (entry)
-                                                     (mselected),
-            // Flipped ID passed to getApps is correct, because it need the
-            // *other* select option to filter
-            secondSelectOptions: getApps (mselected3),
-            thirdSelectOptions: getApps (mselected2),
           })
         )
       }
