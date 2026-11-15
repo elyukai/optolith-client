@@ -53,7 +53,9 @@ export const createMainWindow = async (
     })
 
     mainWindow.webContents.setWindowOpenHandler(details => {
-      shell.openExternal(details.url).catch(err => debug("unexpected error: %O", err))
+      shell.openExternal(details.url).catch((err: unknown) => {
+        debug("unexpected error: %O", err)
+      })
       return { action: "deny" }
     })
 
@@ -92,15 +94,17 @@ export const createMainWindow = async (
     })
 
     const safeWindow = mainWindow
-    runInAction(() => attachStateSelectorsToWindow(safeWindow, globalState, debug))
-    runInAction(() =>
+    runInAction(() => {
+      attachStateSelectorsToWindow(safeWindow, globalState, debug)
+    })
+    runInAction(() => {
       attachKeyedStateSelectorsToWindow(
         safeWindow,
         () => characters.characters,
         character => character.selectors,
         debug,
-      ),
-    )
+      )
+    })
 
     const initialSetupEventMessage: InitialSetupEventMessage = {
       database: global.db.schema.entities.map(entity => [
