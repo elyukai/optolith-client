@@ -142,6 +142,21 @@ export class CharacterActivatableInstance {
   get adventurePoints(): DisplayedActiveActivatableCost {
     const isAutomatic = false // TODO
 
+    if (
+      equalsCase(
+        Case(this.parent.entityName, this.parent.id),
+        this.parent.global.settings.language,
+      ) &&
+      this.level !== undefined &&
+      "levels" in this.parent.dbEntry &&
+      this.parent.dbEntry.levels !== undefined &&
+      this.level > this.parent.dbEntry.levels
+    ) {
+      // TODO: Needs to show immediately in InactiveActivatableListItem and not only once added
+      // TODO: Needs to be applied to calculated total
+      return { type: "Fixed", isAutomatic, value: 0 }
+    }
+
     if (this.hasCustomAdventurePointsValue()) {
       return { type: "Fixed", isAutomatic, value: this.customAdventurePointsValue }
     }
