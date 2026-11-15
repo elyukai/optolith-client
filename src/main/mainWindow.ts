@@ -71,34 +71,24 @@ export const createMainWindow = async (
       mainWindow.webContents.openDevTools()
     }
 
-    mainWindow.on("maximize", () => mainWindow?.webContents.send("maximize"))
-    mainWindow.on("unmaximize", () => mainWindow?.webContents.send("unmaximize"))
-    mainWindow.on("blur", () => mainWindow?.webContents.send("blur"))
-    mainWindow.on("focus", () => mainWindow?.webContents.send("focus"))
+    const onMaximize = () => mainWindow?.webContents.send("maximize")
+    const onUnmaximize = () => mainWindow?.webContents.send("unmaximize")
+    const onBlur = () => mainWindow?.webContents.send("blur")
+    const onFocus = () => mainWindow?.webContents.send("focus")
 
-    ipcMain.handle("main-window-receive-is-maximized", () => mainWindow?.isMaximized())
-    ipcMain.handle("main-window-receive-is-focused", () => mainWindow?.isFocused())
-
-    ipcMain.on("main-window-minimize", () => mainWindow?.minimize())
-    ipcMain.on("main-window-maximize", () => mainWindow?.maximize())
-    ipcMain.on("main-window-unmaximize", () => mainWindow?.unmaximize())
-    ipcMain.on("main-window-close", () => mainWindow?.close())
-    ipcMain.on("main-window-toggle-dev-tools", () => mainWindow?.webContents.toggleDevTools())
-    ipcMain.on("main-window-set-title", (_, title) => mainWindow?.setTitle(title))
-    ipcMain.on("main-window-log", (_, formatter, ...args) => debugRenderer(formatter, ...args))
+    mainWindow.on("maximize", onMaximize)
+    mainWindow.on("unmaximize", onUnmaximize)
+    mainWindow.on("blur", onBlur)
+    mainWindow.on("focus", onFocus)
 
     mainWindow.on("closed", () => {
       debug("closed")
+      mainWindow?.removeListener("maximize", onMaximize)
+      mainWindow?.removeListener("unmaximize", onUnmaximize)
+      mainWindow?.removeListener("blur", onBlur)
+      mainWindow?.removeListener("focus", onFocus)
+
       mainWindow = undefined
-
-      ipcMain.removeHandler("main-window-receive-is-maximized")
-      ipcMain.removeHandler("main-window-receive-is-focused")
-
-      ipcMain.removeAllListeners("main-window-minimize")
-      ipcMain.removeAllListeners("main-window-maximize")
-      ipcMain.removeAllListeners("main-window-unmaximize")
-      ipcMain.removeAllListeners("main-window-close")
-      ipcMain.removeAllListeners("main-window-toggle-dev-tools")
     })
 
     const safeWindow = mainWindow

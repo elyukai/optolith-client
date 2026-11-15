@@ -14,7 +14,7 @@ import {
   type AvailableCreatorEntity,
 } from "@optolith/entity-descriptions"
 import Debug from "debug"
-import { dialog } from "electron"
+import { BrowserWindow, dialog } from "electron"
 import { autoUpdater } from "electron-updater"
 import { app, ipcMain } from "electron/main"
 import { action, configure, observable, runInAction } from "mobx"
@@ -51,6 +51,7 @@ import { createSettingsWindow } from "./settingsWindow.ts"
 import { checkForUpdatesOnRequest, checkForUpdatesOnStartup } from "./updater.ts"
 
 const debug = Debug("main")
+const debugRenderer = Debug("renderer")
 debug.log = console.log.bind(console)
 
 configure({
@@ -185,6 +186,54 @@ app.whenReady().then(async () => {
   debug("ready")
   autoUpdater.autoDownload = false
   autoUpdater.channel = "alpha"
+
+  const handleWithWindow = (
+    channel: string,
+    listener: (window: BrowserWindow, ...args: any[]) => unknown,
+  ) => {
+    ipcMain.handle(channel, (event: Electron.IpcMainInvokeEvent, ...args) => {
+      const window = BrowserWindow.fromWebContents(event.sender)
+      if (window !== null) {
+        listener(window, ...args)
+      }
+    })
+  }
+
+  const listenWithWindow = (
+    channel: string,
+    listener: (window: BrowserWindow, ...args: any[]) => void,
+  ) => {
+    ipcMain.on(channel, (event: Electron.IpcMainEvent, ...args) => {
+      const window = BrowserWindow.fromWebContents(event.sender)
+      if (window !== null) {
+        listener(window, ...args)
+      }
+    })
+  }
+
+  handleWithWindow("is-maximized", window => window.isMaximized())
+  handleWithWindow("is-focused", window => window.isFocused())
+  listenWithWindow("minimize", window => {
+    window.minimize()
+  })
+  listenWithWindow("maximize", window => {
+    window.maximize()
+  })
+  listenWithWindow("unmaximize", window => {
+    window.unmaximize()
+  })
+  listenWithWindow("close", window => {
+    window.close()
+  })
+  ipcMain.on("toggle-dev-tools", event => {
+    event.sender.toggleDevTools()
+  })
+  listenWithWindow("set-title", (window, title: string) => {
+    window.setTitle(title)
+  })
+  ipcMain.on("log", (_event: Electron.IpcMainEvent, formatter: string, ...args: unknown[]) => {
+    debugRenderer(formatter, ...args)
+  })
 
   app.on("window-all-closed", () => {
     debug("all windows closed")

@@ -87,27 +87,27 @@ const api: PreloadAPI = {
   },
   isMaximized: () => {
     debugRendererCalls("get is maximized")
-    return ipcRenderer.invoke("main-window-receive-is-maximized")
+    return ipcRenderer.invoke("is-maximized")
   },
   isFocused: () => {
     debugRendererCalls("get is focused")
-    return ipcRenderer.invoke("main-window-receive-is-focused")
+    return ipcRenderer.invoke("is-focused")
   },
   minimize: () => {
     debugRendererCalls("minimize")
-    ipcRenderer.send("main-window-minimize")
+    ipcRenderer.send("minimize")
   },
   maximize: () => {
     debugRendererCalls("maximize")
-    ipcRenderer.send("main-window-maximize")
+    ipcRenderer.send("maximize")
   },
   unmaximize: () => {
     debugRendererCalls("unmaximize")
-    ipcRenderer.send("main-window-unmaximize")
+    ipcRenderer.send("unmaximize")
   },
   close: () => {
     debugRendererCalls("close")
-    ipcRenderer.send("main-window-close")
+    ipcRenderer.send("close")
   },
   getLicense: () => {
     debugRendererCalls("get license")
@@ -123,7 +123,7 @@ const api: PreloadAPI = {
   },
   toggleDevTools: () => {
     debugRendererCalls("toggle dev tools")
-    ipcRenderer.send("main-window-toggle-dev-tools")
+    ipcRenderer.send("toggle-dev-tools")
   },
   showSettings: () => {
     debugRendererCalls("show settings")
@@ -131,11 +131,11 @@ const api: PreloadAPI = {
   },
   setTitle: title => {
     debugRendererCalls('set title to "%s"', title)
-    ipcRenderer.send("main-window-set-title", title)
+    ipcRenderer.send("set-title", title)
   },
   ...attackDatabaseHandlersToPreloadAPI(debugRendererCalls, ipcRenderer),
   log: (...args: unknown[]) => {
-    ipcRenderer.send("main-window-log", ...args)
+    ipcRenderer.send("log", ...args)
   },
   ...attachStateSelectorsAndActionsToContextBridge<GlobalIPCState, GlobalIPCActions>(ipcRenderer),
   ...attachKeyedStateSelectorsAndActionsToContextBridge<CharacterIPCSelectors, CharacterIPCActions>(
