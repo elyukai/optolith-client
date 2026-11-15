@@ -243,7 +243,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
         ? [
             args[0].version,
             args[0].experienceLevel.start,
-            args[0].phase as Phase,
+            args[0].phase,
             Temporal.ZonedDateTime.from(args[0].dateCreated),
             Temporal.ZonedDateTime.from(args[0].dateLastModified),
           ]
@@ -252,7 +252,7 @@ export abstract class BaseCharacter<Phase extends CharacterCreationPhase = Chara
     this.global = global
     this.id = id
     this.name = raw?.name ?? ""
-    this.phase = phase
+    this.phase = phase as Phase
     this.version = version
     this.dateCreated = dateCreated ?? Temporal.Now.zonedDateTimeISO()
     this.dateLastModified = dateLastModified ?? this.dateCreated
