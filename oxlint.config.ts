@@ -18,5 +18,9 @@ export default defineConfig({
     "typescript/no-unsafe-argument": "off",
     "typescript/no-unsafe-member-access": "off",
     "typescript/no-unsafe-assignment": "off",
+    "typescript/no-invalid-void-type": "off",
+    "typescript/return-await": ["error", "error-handling-correctness-only"],
+    "typescript/no-confusing-void-expression": "off",
   },
+  ignorePatterns: ["src/App/**/*", "src/Control/**/*", "src/Data/**/*", "src/Debug/**/*"],
 })
