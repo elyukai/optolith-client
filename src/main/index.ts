@@ -266,11 +266,13 @@ app.whenReady().then(async () => {
       (event, ...args) => {
         const result = handleGlobalIPCAction(event, ...args)
         if (result instanceof Promise) {
-          result.then(resolved => {
-            if (resolved !== undefined) {
-              event.sender.send("goto", resolved)
-            }
-          })
+          result
+            .then(resolved => {
+              if (resolved !== undefined) {
+                event.sender.send("goto", resolved)
+              }
+            })
+            .catch(console.error)
         } else if (result !== undefined) {
           event.sender.send("goto", result)
         }
@@ -284,11 +286,13 @@ app.whenReady().then(async () => {
       (event, id, ...args) => {
         const result = characters.handleIPCAction(event, id, ...args)
         if (result instanceof Promise) {
-          result.then(resolved => {
-            if (resolved !== undefined) {
-              event.sender.send("goto", resolved)
-            }
-          })
+          result
+            .then(resolved => {
+              if (resolved !== undefined) {
+                event.sender.send("goto", resolved)
+              }
+            })
+            .catch(console.error)
         } else if (result !== undefined) {
           event.sender.send("goto", result)
         }
@@ -305,9 +309,9 @@ app.whenReady().then(async () => {
       "show-settings",
       runAsync(debug, async () => {
         debug("show settings")
-        await createSettingsWindow(locales, () =>
-          setMenu(global, isMac, locales, globalSelectors, characters),
-        )
+        await createSettingsWindow(locales, () => {
+          setMenu(global, isMac, locales, globalSelectors, characters)
+        })
       }),
     )
     ipcMain.on(
@@ -386,5 +390,5 @@ handleNativeThemeChanges()
 
 process.on("uncaughtException", error => {
   console.error(error)
-  dialog.showErrorBox("Unexpected error", `${error.name}: ${error.message}\n\n${error.stack}`)
+  dialog.showErrorBox("Unexpected error", `${error.name}: ${error.message}\n\n${error.stack ?? ""}`)
 })

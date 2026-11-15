@@ -22,9 +22,6 @@ export class CharacterState {
     this.global = global
     this.character = character
     this.id = id
-    if (!dbEntry) {
-      throw new Error(`State with id ${id} not found in database.`)
-    }
     this.dbEntry = dbEntry
   }
 

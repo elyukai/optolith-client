@@ -32,7 +32,9 @@ export const ActiveActivatableRatedListItem: FC<Props> = observer(
       <ListItem insertTopMargin={insertTopMargin} active={isActiveInInlineLibrary}>
         <ListItemName name={name} onClick={displayInlineLibraryEntry} />
         <ListItemSeparator />
-        <ListItemGroup text={displayGroup ? `${associatedText} / ${groupName}` : associatedText} />
+        <ListItemGroup
+          text={displayGroup === true ? `${associatedText} / ${groupName}` : associatedText}
+        />
         <ListItemValues>
           <SkillRating entry={entry} />
           <SkillCheck entry={entry} />

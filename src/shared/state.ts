@@ -89,7 +89,9 @@ export const attachStateSelectorsToWindow = <S extends StateValues>(
   )
 
   window.on("closed", () => {
-    disposers.forEach(cancel => cancel())
+    disposers.forEach(cancel => {
+      cancel()
+    })
   })
 }
 
@@ -165,7 +167,9 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
       keyedDisposers.forEach((disposers, key) => {
         if (obj[key] === undefined && obj[key] !== prevObj?.[key]) {
           debug?.("removing reactions for key %s", key)
-          disposers.forEach(cancel => cancel())
+          disposers.forEach(cancel => {
+            cancel()
+          })
           keyedDisposers.delete(key)
         }
       })
@@ -175,7 +179,9 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
         if (obj[key] !== undefined && obj[key] !== prevObj?.[key]) {
           if (prevObj?.[key] !== undefined) {
             debug?.("removing reactions for key %s", key)
-            keyedDisposers.get(key)?.forEach(cancel => cancel())
+            keyedDisposers.get(key)?.forEach(cancel => {
+              cancel()
+            })
           }
           debug?.("adding reactions for key %s", key)
           const mapValue = obj[key]
@@ -195,7 +201,11 @@ export const attachKeyedStateSelectorsToWindow = <T, S extends StateValues>(
 
   window.on("closed", () => {
     mainDisposer()
-    keyedDisposers.forEach(disposers => disposers.forEach(cancel => cancel()))
+    keyedDisposers.forEach(disposers => {
+      disposers.forEach(cancel => {
+        cancel()
+      })
+    })
   })
 }
 
@@ -335,7 +345,7 @@ export const transformStateSelectorsFromContextBridgeIntoObservable = <S extends
   defaultValues: S,
   debug: Debugger,
 ): S => {
-  const observableCollection = observable.object({ ...defaultValues }, {}, { deep: false }) as S
+  const observableCollection = observable.object({ ...defaultValues }, {}, { deep: false })
 
   bridge.onStateInit(value => {
     runInAction(() => {
@@ -366,7 +376,7 @@ export const transformKeyedStateSelectorsFromContextBridgeIntoObservable = <S ex
 ): Map<string, S> => {
   const keyed = observable.map<string, S>(undefined, { deep: false })
 
-  const createObservableState = (state: S): S => observable.object(state, {}, { deep: false }) as S
+  const createObservableState = (state: S): S => observable.object(state, {}, { deep: false })
 
   bridge.onKeyedStateInit((...args) => {
     runInAction(() => {

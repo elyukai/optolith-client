@@ -10,7 +10,7 @@ import "./AttributeAdjustment.css"
 /**
  * Returns a widget for changing the attribute adjustment set for the race.
  */
-export const AttributesAdjustment: FC = observer(() => {
+export const AttributesAdjustment: FC = observer(function AttributesAdjustment() {
   const translate = useTranslate()
   const { availableAdjustments: adjustments, selectedAttributeAdjustment: currentAdjustmentId } =
     useCharacterState()

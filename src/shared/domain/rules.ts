@@ -494,7 +494,7 @@ export class CharacterRules {
         }
         return {
           id: publication.id,
-          name: translation.name ?? "",
+          name: translation.name,
           category: publication.content.category,
           containsAdultContent: publication.content.containsAdultContent,
           explicityActive: this.includePublications.has(publication.id),
