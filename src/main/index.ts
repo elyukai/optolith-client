@@ -88,6 +88,8 @@ if (settings === undefined) {
   throw new Error("Settings instance not found in database")
 }
 
+debug("found settings")
+
 const locales: Record<string, Locale> = Object.fromEntries(
   db
     .getAllInstanceContainersOfEntity("Locale")
@@ -369,6 +371,14 @@ app.whenReady().then(async () => {
       }
     }),
   )
+
+  app.on("before-quit", () => {
+    debug("before quit")
+  })
+
+  app.on("will-quit", () => {
+    debug("will quit")
+  })
 })
 
 handleNativeThemeChanges()
