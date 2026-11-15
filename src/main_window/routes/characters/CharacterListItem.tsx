@@ -107,7 +107,9 @@ export const CharacterListItem: FC<Props> = observer(props => {
         <TooltipHint hint={translate("Delete Character")} targetRef={deleteRef} margin={8} />
         <IconButton
           icon="&#xE90b;"
-          // TODO: onClick={deleteHero}
+          onClick={() => {
+            ExternalAPI.execute("deleteCharacter", id)
+          }}
           label={translate("Delete Character")}
           ref={deleteRef}
         />
