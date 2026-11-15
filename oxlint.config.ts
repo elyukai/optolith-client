@@ -5,7 +5,7 @@ export default defineConfig({
   extends: [config],
   jsPlugins: ["eslint-plugin-mobx"],
   options: {
-    typeAware: false,
+    typeAware: true,
   },
   rules: {
     "prefer-arrow-callback": ["off", { allowNamedFunctions: true }],
@@ -13,5 +13,10 @@ export default defineConfig({
     "mobx/unconditional-make-observable": "error",
     // "mobx/missing-observer": "warn"],
     "typescript/no-explicit-any": ["error", { ignoreRestArgs: true }],
+    "typescript/no-unsafe-call": "off",
+    "typescript/no-unsafe-return": "off",
+    "typescript/no-unsafe-argument": "off",
+    "typescript/no-unsafe-member-access": "off",
+    "typescript/no-unsafe-assignment": "off",
   },
 })
