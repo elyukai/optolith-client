@@ -15,6 +15,7 @@ import { useTranslateMap } from "../../../../../shared/hooks/translateMap.ts"
 import { useCharacterActions } from "../../../../hooks/characterAction.ts"
 import { useCharacterState } from "../../../../hooks/characterState.ts"
 import { useAppDispatch } from "../../../../hooks/redux.ts"
+import { ActivatableList } from "../sheet/ActivatableList.tsx"
 import { OverviewAddAP } from "./OverviewAddAP.tsx"
 import { PersonalData } from "./PersonalData.tsx"
 import "./ProfileOverview.scss"
@@ -44,6 +45,9 @@ export const ProfileOverview: FC = observer(() => {
     professionName,
     startExperienceLevel,
     currentExperienceLevel,
+    isCharacterCreationFinished,
+    activeAdvantages,
+    activeDisadvantages,
   } = useCharacterState()
 
   const actions = useCharacterActions()
@@ -192,30 +196,12 @@ export const ProfileOverview: FC = observer(() => {
                 </p>
               </GridItem>
             ) : null}
-            {
-              // TODO: Maybe.elem(3)(phase)
-              //   ? (
-              //     <GridItem>
-              //       <h3>{translate("profile.advantages")}</h3>
-              //       {maybeRNull((advantages: List<Record<ActiveActivatable>>) => (
-              //                       <ActivatableTextList
-              //                         list={advantages}
-              //                         staticData={staticData}
-              //                         />
-              //                     ))
-              //                   (maybeAdvantages)}
-              //       <h3>{translate("profile.disadvantages")}</h3>
-              //       {maybeRNull((disadvantages: List<Record<ActiveActivatable>>) => (
-              //                       <ActivatableTextList
-              //                         list={disadvantages}
-              //                         staticData={staticData}
-              //                         />
-              //                     ))
-              //                   (maybeDisadvantages)}
-              //     </GridItem>
-              //   )
-              // : null
-            }
+            {isCharacterCreationFinished ? (
+              <GridItem>
+                <ActivatableList label={translate("Advantages")} list={activeAdvantages} />
+                <ActivatableList label={translate("Disadvantages")} list={activeDisadvantages} />
+              </GridItem>
+            ) : null}
           </Grid>
         </Scroll>
       </Main>
