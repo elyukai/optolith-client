@@ -29,7 +29,7 @@ export const loadCharacters = async (
     const characterFolders = characters.filter(character => character.isDirectory())
     debug("%d possible folders found", characterFolders.length)
 
-    return Promise.all(
+    return await Promise.all(
       characterFolders.map(async characterFolder => {
         const characterId = characterFolder.name
         const characterPath = path.join(charactersPath, characterId, "character.json")
