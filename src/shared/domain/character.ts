@@ -2039,4 +2039,9 @@ export class Characters {
         return assertExhaustive(json)
     }
   }
+
+  @action
+  deleteCharacter(id: string) {
+    this.characters.delete(id)
+  }
 }

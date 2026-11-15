@@ -57,3 +57,11 @@ export const saveCharacter = async (
   const characterFilePath = path.join(characterFolderPath, "character.json")
   await fs.writeFile(characterFilePath, JSON.stringify(characterData), "utf-8")
 }
+
+export const deleteCharacter = async (
+  userDataPath: string,
+  characterId: RawCharacter_ID,
+): Promise<void> => {
+  const characterFolderPath = path.join(userDataPath, "characters", characterId)
+  await fs.rm(characterFolderPath, { recursive: true, force: true })
+}

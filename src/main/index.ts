@@ -46,7 +46,12 @@ import { LocaleEnvironment, type LocaleMap } from "../shared/utils/locale.ts"
 import { createMainWindow } from "./mainWindow.ts"
 import { setMenu } from "./menu.ts"
 import { handleNativeThemeChanges, setNativeTheme } from "./nativeTheme.ts"
-import { constructUserDataPath, loadCharacters, saveCharacter } from "./saveData.ts"
+import {
+  constructUserDataPath,
+  deleteCharacter,
+  loadCharacters,
+  saveCharacter,
+} from "./saveData.ts"
 import { createSettingsWindow } from "./settingsWindow.ts"
 import { checkForUpdatesOnRequest, checkForUpdatesOnStartup } from "./updater.ts"
 
@@ -178,6 +183,7 @@ export type GlobalIPCState = {
 
 export type GlobalIPCActions = {
   saveCharacter: (characterId: string) => void
+  deleteCharacter: (characterId: string) => void
   createCharacter: (startConfig: FinalStartConfig) => void
 } & CharacterIPCActions
 
@@ -249,10 +255,10 @@ app.whenReady().then(async () => {
   debug("skip startup because of update?", installUpdateInsteadOfStartup ? "yes" : "no")
   if (!installUpdateInsteadOfStartup) {
     const handleGlobalIPCAction = action(
-      (
+      async (
         event: Electron.IpcMainEvent,
         ...args: StateActionsAsParameters<GlobalIPCActions>
-      ): Promise<void | RoutePath> | void | RoutePath => {
+      ): Promise<void | RoutePath> => {
         debug("execute global ipc action %s with parameters %o", args[0], args[1])
         switch (args[0]) {
           case "saveCharacter": {
@@ -275,6 +281,33 @@ app.whenReady().then(async () => {
               resetNewCharacter()
               return ["characters", char.id, "race"]
             })
+          }
+          case "deleteCharacter": {
+            const window = BrowserWindow.fromWebContents(event.sender)
+            if (window === null) {
+              debug("window not found for deleteCharacter action")
+              return
+            }
+            const res = await dialog.showMessageBox(window, {
+              message: localeEnvironment.translate(
+                "Do you really want to delete character {$name}?",
+                {
+                  name: characters.characters.get(args[1][0])?.name ?? args[1][0],
+                },
+              ),
+              type: "warning",
+              buttons: [
+                localeEnvironment.translate("Cancel"),
+                localeEnvironment.translate("Delete"),
+              ],
+            })
+            if (res.response === 1) {
+              runInAction(() => {
+                characters.deleteCharacter(args[1][0])
+              })
+              return deleteCharacter(app.getPath("userData"), args[1][0])
+            }
+            return
           }
           default:
             newCharacter.newCharacter.handleIPCAction(event, ...args)
