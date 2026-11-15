@@ -184,6 +184,7 @@ export type GlobalIPCActions = {
 app.whenReady().then(async () => {
   debug("ready")
   autoUpdater.autoDownload = false
+  autoUpdater.channel = "alpha"
 
   app.on("window-all-closed", () => {
     debug("all windows closed")
