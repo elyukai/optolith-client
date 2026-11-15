@@ -25,7 +25,16 @@ type Props = {
       }
     | {
         id: string
-        active?: true
+        active?: undefined
+        isAvailable?: undefined
+        isIncreasable: boolean
+        isDecreasable: boolean
+        canDeactivate?: undefined
+        value: number
+      }
+    | {
+        id: string
+        active: true
         isAvailable?: undefined
         isIncreasable: boolean
         isDecreasable: boolean
