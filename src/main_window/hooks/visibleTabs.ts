@@ -95,7 +95,7 @@ export const useVisibleCharacterTabs = () => {
                 "profile" as const,
                 // "personal_data",
                 isCharacterCreationFinished ? ("character_sheet" as const) : undefined,
-                arePactsAvailable ? ("pact" as const) : undefined, // "US25102", "US25008"
+                arePactsAvailable ? ("pact" as const) : undefined,
                 "rules" as const,
               ]
                 .filter(isNotNullish)

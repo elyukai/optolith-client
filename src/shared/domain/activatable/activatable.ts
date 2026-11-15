@@ -636,9 +636,8 @@ export class CharacterActivatableInstance {
         }
       case "LiturgicalStyleSpecialAbility":
         switch (id) {
-          //       // Extended Blessed Special Abilities that allow to learn liturgical
-          //       // chants of different traditions
-          //       TODO: case SpecialAbilityId.Zugvoegel:
+          //       TODO: // Extended Blessed Special Abilities that allow to learn liturgical chants of different traditions
+          //       case SpecialAbilityId.Zugvoegel:
           //       case SpecialAbilityId.JaegerinnenDerWeissenMaid:
           //       case SpecialAbilityId.AnhaengerDesGueldenen: {
           //         const mblessed_tradition = getBlessedTraditionFromWiki(SDA.specialAbilities(wiki))(
