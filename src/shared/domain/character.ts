@@ -67,7 +67,7 @@ import {
 } from "./profession.ts"
 import { Purse } from "./purse.ts"
 import { CharacterRace, type DisplayedRaceSelectOptions, type RaceForDisplay } from "./race.ts"
-import { CharacterAttributes } from "./rated/attribute.ts"
+import { CharacterAttribute, CharacterAttributes } from "./rated/attribute.ts"
 import {
   CharacterCloseCombatTechniques,
   CharacterRangedCombatTechniques,
@@ -1673,7 +1673,12 @@ export class FullCharacter extends BaseCharacter<"Finished" | "Improvement"> {
           if (collection instanceof CharacterActivatableRatedEntries) {
             collection.activate(fromUniformCase(p.Rated.id))
           }
-          collection.increment(fromUniformCase(p.Rated.id), p.Rated.value)
+          collection.increment(
+            fromUniformCase(p.Rated.id),
+            collection instanceof CharacterAttributes
+              ? p.Rated.value - CharacterAttribute.minValue
+              : p.Rated.value,
+          )
           break
         }
         case "Energy":
