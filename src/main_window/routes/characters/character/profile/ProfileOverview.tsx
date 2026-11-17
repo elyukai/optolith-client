@@ -160,7 +160,7 @@ export const ProfileOverview: FC = observer(() => {
             </GridItem>
             <GridItem className="main-profile-actions">
               {canAddAdventurePoints ? (
-                <Button className="add-ap" disabled onClick={() => setIsAddAPOpen(true)}>
+                <Button className="add-ap" onClick={() => setIsAddAPOpen(true)}>
                   {translate("Add AP")}
                 </Button>
               ) : null}
