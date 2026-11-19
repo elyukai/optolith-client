@@ -82,7 +82,12 @@ export class CharacterAttribute extends CharacterRatedEntry<"Attribute"> {
             : 0) + getModIfStaticAdjustment(this.id, staticAdjustments)
         : 0
 
-      return (this.character.experienceLevel.start?.max_attribute_value ?? 0) + adjustment
+      const maxFromTotal = this.value + this.character.attributes.attributesTotalRemaining
+
+      return Math.min(
+        (this.character.experienceLevel.start?.max_attribute_value ?? 0) + adjustment,
+        maxFromTotal,
+      )
     }
 
     if (true /* TODO: isAttributeValueLimitEnabled */) {
@@ -96,8 +101,7 @@ export class CharacterAttribute extends CharacterRatedEntry<"Attribute"> {
   override get isIncreasable() {
     return (
       (this.character.isCharacterCreationFinished ||
-        this.character.attributes.attributesTotalMaximum >
-          this.character.attributes.attributesTotal) &&
+        this.character.attributes.attributesTotalRemaining > 0) &&
       super.isIncreasable
     )
   }
@@ -153,6 +157,11 @@ export class CharacterAttributes extends CharacterRatedEntries<"Attribute", Char
   @computed
   get attributesTotalMaximum(): number {
     return this.character.experienceLevel.start?.max_attribute_total ?? 0
+  }
+
+  @computed
+  get attributesTotalRemaining(): number {
+    return this.attributesTotalMaximum - this.attributesTotal
   }
 
   @computed
